@@ -88,8 +88,10 @@ function loadAfterConf() {
                                          "../speed_test",
                                          "../form_builder",
                                          "../vidjil_menu_decorator",
+                                         "../vidjil_vmi",
                                          "../../test/QUnit/testFiles/data_test",
                                         ], function(){
+                                            
                                             if (typeof main == "undefined"){
                                                 require(["../main"]);
                                             }else{
@@ -98,6 +100,8 @@ function loadAfterConf() {
                                             if (typeof config.addons !== "undefined") {
                                                 require(config.addons);
                                             }
+                                            require(["../screen_MRD"]);
+                                            
                                         })
                             })
                 },

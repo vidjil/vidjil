@@ -26,6 +26,7 @@
 #  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 
 from __future__ import print_function
+from __future__ import division
 
 import check_python_version
 import sys
@@ -199,7 +200,7 @@ class Window:
     def __add__(self, other):
         """Concat two windows, extending lists such as 'reads'"""
         #data we don't need to duplicate
-        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline"]
+        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd"]
         obj = Window(1)
         
         # 'id' and 'top' will be taken from 'topmost' clone
@@ -211,7 +212,32 @@ class Window:
                                  self.d, len(self.d["reads"]),
                                  other.d, len(other.d["reads"]),
                                  myList)
-                    
+        # MRD data, only if none is empty
+        # TODO: Make this more generic to work with any MRD setup
+        zeroed = {"copy_number": [0],
+                  "R2": [0],
+                  "family": ["None"],
+                   "norm_coeff": [0]}
+        if "mrd" in self.d or "mrd" in other.d:
+            if "mrd" in self.d:
+                first = self.d["mrd"]
+            else:
+                first = zeroed
+                for key in first.keys():
+                    first[key] = first[key] * len(self.d["reads"])
+
+            if "mrd" in other.d:
+                second = other.d["mrd"]
+            else:
+                second = zeroed
+                for key in second.keys():
+                    second[key] = second[key] * len(other.d["reads"])
+
+            obj.d["mrd"] = {}
+            concatenate_with_padding(obj.d["mrd"],
+                                     first, len(self.d["reads"]),
+                                     second, len(other.d["reads"]))
+                        
         # All other data, including 'top'
         # When there are conflicting keys, keep data from the 'topmost' clone
         order = [other, self] if other.d["top"] < self.d["top"] else [self, other]
@@ -221,8 +247,24 @@ class Window:
                 if key not in obj.d:
                     obj.d[key] = source.d[key]
 
+        # !! No name field if fuse with an empty clone
+        if "name" in self.d and "name" in other.d and self.d["name"] != other.d["name"]:
+            if obj.d["name"] == self.d["name"]:
+                name = other.d["name"]
+            else:
+                name = self.d["name"]
+
+            msg = "Clone have different names between samples: %s" % name
+            obj.addWarning(code="W81", msg=msg, level="warn")
         return obj
         
+    def addWarning(self, code, msg, level):
+        # init warn field if not already present
+        if not "warn" in self.d:
+            self.d["warn"] = []
+        self.d["warn"].append( {"code":code, "msg":msg, "level": level})
+        return
+
     def get_nb_reads(self, cid, point=0):
         return self[cid]["reads"][point]
 
@@ -432,6 +474,27 @@ class Samples:
 
     def __str__(self):
         return "<Samples: %s>" % self.d
+        
+class MRD: 
+
+    def __init__(self, number=1):
+        self.d={}
+        self.d["number"] = number
+            
+    def __add__(self, other):
+        obj=MRD()
+
+        concatenate_with_padding(obj.d, 
+                                 self.d, self.d['number'], 
+                                 other.d, other.d['number'],
+                                 ['number'])
+
+        obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
+        
+        return obj
+
+    def __str__(self):
+        return "<MRD: %s>" % self.d
 
 class Diversity: 
 
@@ -728,6 +791,13 @@ class ListWindows(VidjilJson):
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
+        if "mrd" in self.d or "mrd" in other.d:
+            if not "mrd" in self.d:
+                self.d["mrd"] = MRD()
+            if not "mrd" in other.d:
+                other.d["mrd"] = MRD()
+
+            obj.d["mrd"] = self.d["mrd"] + other.d["mrd"]
         
         try:
             ### Verify that same file is not present twice
@@ -1103,7 +1173,7 @@ class ListWindows(VidjilJson):
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity):
+        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity) or isinstance(obj, MRD):
             result = {}
             for key in obj.d :
                 result[key]= obj.d[key]
@@ -1124,6 +1194,13 @@ class ListWindows(VidjilJson):
         if "samples" in obj_dict:
             obj = ListWindows()
             obj.d=obj_dict
+            return obj
+
+        if "coefficients" in obj_dict:
+            obj = MRD()
+            obj.d=obj_dict
+            # TODO: make this more generic
+            obj.d["number"] = len(obj_dict['prevalent'])
             return obj
 
         if "id" in obj_dict:
@@ -1234,6 +1311,107 @@ class ListWindows(VidjilJson):
             obj[values[0]][0] += 1
             obj[values[0]][1] += nb_reads
         return obj
+
+
+    ##########################
+    ###  Morisita's index  ###
+    ##########################
+    def computeOverlaps(self):
+        '''
+        Compute, for each combinaison of sample, various overlap indexs
+        '''
+        nb_sample = self.d["samples"].d["number"]
+        self.d["overlaps"] = {}
+        self.d["overlaps"]["morisita"] = []
+        self.d["overlaps"]["jaccard"]  = []
+
+        for pos_0 in range(0, nb_sample):
+            morisita = []
+            jaccard  = []
+            for pos_1 in range(0, nb_sample):
+                print( "Overlap: %s vs %s" % (pos_0, pos_1) )
+                morisita.append( self.computeOverlapMorisita(pos_0, pos_1) )
+                jaccard.append(  self.computeOverlapJaccard(pos_0, pos_1)  )
+            self.d["overlaps"]["morisita"].append( morisita)
+            self.d["overlaps"]["jaccard"].append(  jaccard )
+            
+        return
+
+
+    def computeOverlapMorisita(self, pos_0, pos_1):
+        """
+        Morisita-Horn similarity index
+        This index apply to quantitative data.
+        Allow to evaluate the similarity between different groups, and is not sensible by richness of sampling
+        Formula:  CMH = 2 ∑▒((ai x bi))/((da+db)x(Na x Nb))
+        da = ∑ai2/Na2
+        db = ∑bi2/Nb2
+        Na = Total number of species at site A
+        Nb = Total number of species at site B
+        ai = Number of species i at site A
+        bi = Number of species i at site B
+        # Values between 0 (completly different communityes) and 1 (maximal similarity).
+        # 2 groups are similare (poor diversity) if CMH value is superior to 0.5
+        # and dissemblables if value is under 0,5 (high diversity).
+        !!! Computed only on present clones (so should be run with `-Y all`)
+        """
+        clones    = self.d["clones"]
+
+        m  = 0
+        da = 0
+        db = 0
+
+        for clone in clones:
+            ai = clone.d["reads"][pos_0]
+            bi = clone.d["reads"][pos_1]
+            m  += (ai * bi)
+            da += (ai*ai)
+            db += (bi*bi)
+
+        d = (da+db)/2
+        if m == 0: #if really no shared clones
+            res =  0
+        else:
+            res = round( (m/d), 3) 
+
+        return res
+
+
+    def computeOverlapJaccard(self, pos_0, pos_1):
+        """
+        Jaccard similarity index
+        Formula :
+            I = Nc / (N1 + N2 - Nc)
+        Nc : number of shared taxons between stations
+        N1 et N2 : number of taxons present only in stations 1 or 2
+        This index is from 0 to 1 and take into account only positive relations.
+        If index increase, an important number of species is present in only one location,
+        with a poor inter-location biodiversity.
+        """
+        clones    = self.d["clones"]
+        reads     = self.d["reads"].d["segmented"]
+        N1 = self.get_nb_species_of_sample(pos_0)
+        N2 = self.get_nb_species_of_sample(pos_1)
+
+        Nc = 0
+        for clone in clones:
+            ai = clone.d["reads"][pos_0]
+            bi = clone.d["reads"][pos_1]
+            Nc  += bool(ai * bi)
+        # print( "Nc: %s" % Nc)
+        if Nc == 0: # if really no shared clones
+            return 0
+
+        I = round( (Nc / (N1 + N2 - Nc)), 3)
+        return I
+
+
+    def get_nb_species_of_sample(self, pos):
+        X = 0
+        for clone in self.d["clones"]:
+            if clone.d["reads"][pos]:
+                X += 1
+        return X
 
 
 
@@ -1364,13 +1542,17 @@ def exec_command(command, directory, input_file):
     
     Returns the output filename (a .vidjil). 
     '''
+    # split command
+    soft = command.split()[0]
+    args = command[len(soft):]
+
     assert (not os.path.sep in command), "No {} allowed in the command name".format(os.path.sep)
     ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
 
     basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    command_fullpath = basedir+os.path.sep+directory+os.path.sep+command
-    com = '%s %s %s' % (quote(command_fullpath), quote(os.path.abspath(input_file)), ff.name)
-    print(com)
+    command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
+    com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
+    print("Preprocess command: \n%s" % com)
     os.system(com)
     print()
     return ff.name
@@ -1404,7 +1586,8 @@ def main():
 
     group_options.add_argument('--first', '-f', type=int, default=0, help='take only into account the first FIRST files (0 for all) (%(default)s)')
 
-    group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR)')
+    group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR). \
+                                             Program should take arguments -i/-o for input of vidjil file and output of temporary modified vidjil file.')
 
     group_options.add_argument("--distribution", "-d", action='append', type=str, help='compute the given distribution; callable multiple times')
     group_options.add_argument('--distributions-all', '-D', action='store_true', default=False, help='compute a preset of distributions')
@@ -1412,6 +1595,7 @@ def main():
     group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
 
     group_options.add_argument('--export-airr', action='store_true', default=False, help='export data in AIRR format.')
+    group_options.add_argument('--overlaps', action='store_true', default=False, help='Compute overlaps index of repertoires.')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
 
@@ -1557,6 +1741,11 @@ def main():
             os.unlink(fasta_file.name)
     else : 
         jlist_fused.d["similarity"] = [];
+        
+
+    if args.overlaps:
+        print("### Overlaps index")
+        jlist_fused.computeOverlaps()
     
     if args.no_clones:
         # TODO: do not generate the list of clones in this case

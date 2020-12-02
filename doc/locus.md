@@ -2,9 +2,9 @@
 
 [V(D)J recombinations](http://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
-high-throughput sequencing (NGS/HTS) now
-enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](https://omictools.com/rep-seq-category)
-methods and software.
+High-throughput sequencing (NGS/HTS) now
+enables the deep sequencing of a lymphoid population with dedicated
+sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 # Library preparation and sequencing for human RepSeq studies
 

@@ -8,7 +8,7 @@
 <div class="db_block">
     <div class="db_block_left">
         search
-        <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'filter' : this.value} )"
+        <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'filter' : this.value, 'page': 0} )"
         onfocus="new VidjilAutoComplete().setupTags(this);"
         data-needs-atwho="true" data-keys="{{=group_ids}}">
     </div>
@@ -38,17 +38,18 @@
         
        {{for i in range(0, min(len(query), step)) :}}
            {{data = query[i]}}
-           <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=data.sample_set_id}}' , 'config_id' : {{=data.most_used_conf}} } )" >
+           <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=data.sample_set_id}}' , 'config_id' : '-1' })" >
 	       <td class="uid">{{=data.sample_set_id}}</td>
                {{ for field in fields: }}
   		   <td>
 		       {{= field['call'](data)}}
                    </td>
                {{ pass }}
-            {{ total_file_count += data.file_count ; total_size += data.size }}
+            {{ file_count, size =  helper.get_files_values(data) }}
+            {{ total_file_count += file_count ; total_size += size }}
                
 {{if isAdmin:}} <td onclick="db.call('sample_set/permission', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-key" title="set permissions"></i> </td> {{else:}} <td></td> {{pass}}
-                {{if data.has_permission:}}
+                {{if data.sample_set_id in admin_permissions:}}
 		<td onclick="db.call('sample_set/form', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-pencil-2" title="{{='edit %s information' % 'sample_set'}}"></i> </td>
 		<td onclick="db.call('sample_set/confirm', {'id' :'{{=data.sample_set_id}}'} )" > <i class="icon-erase" title="{{='delete %s' % helper.get_type_display()}}"></i> </td>
                 {{else:}}  <td></td><td></td>{{pass}}
@@ -64,7 +65,7 @@
 
 {{if auth.can_create_patient():}}
 <span class="button2" onclick="db.call('sample_set/form', {'type': '{{=helper.type}}'})"> + new {{=helper.get_type_display()}}s </span>
-<span class="button2" onclick="db.call('sample_set/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
+<span class="button2 devel-mode" onclick="db.call('sample_set/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
 {{else:}}
 <!-- <span class="button2 inactive" onclick="db.call('sample_set/add')" title="you don't have permission to create new {{=helper.get_type_display()}}s"> add sample_set </span> -->
 {{pass}}
@@ -82,11 +83,11 @@
  {{ if page > 0 or len(query) > step: }}
     page:
     {{ if page > 0: }}
-        <i class="icon-left-open-1" onclick="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'page': {{=page-1}}})"></i>
+    <i class="icon-left-open-1" onclick="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'filter': '{{=request.vars['filter']}}', 'page': {{=page-1}}})"></i>
     {{ pass }}
     {{= page + 1 }}
     {{if len(query) > step : }}
-        <i class="icon-right-open-1" onclick="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'page': {{=page+1}}})"></i>
+    <i class="icon-right-open-1" onclick="db.call('sample_set/all', {'type': '{{=helper.get_type()}}', 'filter': '{{=request.vars['filter']}}', 'page': {{=page+1}}})"></i>
     {{ pass }}
  {{ pass }}
 </div>

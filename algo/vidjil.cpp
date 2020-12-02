@@ -97,6 +97,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 // Fixed filenames/suffixes
 #define CLONES_FILENAME ".vdj.fa"
+#define CLONE_DIR "seq/"
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME ".windows.fa"
 #define SEGMENTED_FILENAME ".detected.vdj.fa"
@@ -290,16 +291,16 @@ int main (int argc, char **argv)
 
 
   // ----------------------------------------------------------------------------------------------------------------------
-  group = "Germline presets (at least one -g or -V/(-D)/-J option must be given)";
+  group = "Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)";
 
   vector <string> multi_germlines ;
   app.add_option("--germline,-g", multi_germlines, R"Z(
-         -g <.g FILE>(:FILTER)
-                    multiple locus/germlines, with tuned parameters.
+         -g <.g FILE>(:FOCUS) ...
+                    germline preset(s) (.g file(s)), detecting multiple recombinations, with tuned parameters.
                     Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
-                    The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
+                    One can focus on some recombinations, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
          -g PATH
-                    multiple locus/germlines, shortcut for '-g PATH/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
+                    human germline preset, shortcut for '-g PATH/)Z" DEFAULT_MULTI_GERMLINE_FILE R"Z(',
                     processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with incomplete/unusal recombinations)Z")
     -> group(group) -> type_name("GERMLINES");
 
@@ -313,7 +314,7 @@ int main (int argc, char **argv)
 
 
   app.add_option("-D", v_reps_D,
-                 "custom D germline multi-fasta file(s), analyze into V(D)J components")
+                 "custom D germline multi-fasta file(s) for V(D)J designation")
     -> group(group) -> type_name("FILE");
 
   app.add_option("-J", v_reps_J,
@@ -566,7 +567,7 @@ int main (int argc, char **argv)
     -> group(group);
 
   bool output_sequences_by_cluster = false;
-  app.add_flag("--out-reads", output_sequences_by_cluster, "output all reads by clones (" CLONE_FILENAME "*), to be used only on small datasets") -> group(group);
+  app.add_flag("--out-reads", output_sequences_by_cluster, "output all reads by clones (in " CLONE_DIR "/" CLONE_FILENAME "* files), to be used only on small datasets") -> group(group);
 
   bool output_affects = false;
   app.add_flag("--out-affects,-K", output_affects,
@@ -585,6 +586,16 @@ int main (int argc, char **argv)
 
   bool out_gz = false;
   app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .vdj.fa.gz, and .vidjil.gz files") -> group(group) -> level();
+
+  bool output_vdjfa = false;
+  app.add_flag("--out-vdjfa", output_vdjfa,
+               "output clones in a " CLONES_FILENAME " file (only for clone sequence data)")
+    -> group(group) -> level();
+
+  bool output_clone_files = false;
+  app.add_flag("--out-clone-files", output_clone_files,
+               "output clones in individual files (in " CLONE_DIR "/" CLONE_FILENAME "* files)")
+    -> group(group) -> level();
 
   bool no_airr = false;
   bool no_vidjil = false;
@@ -700,7 +711,7 @@ int main (int argc, char **argv)
   for(string lab : windows_labels_explicit)
     windows_labels[lab] = string("--label");
   
-  string out_seqdir = out_dir + "/seq/" ;
+  string out_seqdir = out_dir + "/" + CLONE_DIR ;
 
   if (verbose)
     cout << "# verbose " << verbose << endl ;
@@ -731,10 +742,16 @@ int main (int argc, char **argv)
     return 2;
   }
 
-  const char *outseq_cstr = out_seqdir.c_str();
-  if (mkpath(outseq_cstr, 0755) == -1) {
-    cerr << ERROR_STRING << "Directory creation: " << out_seqdir << endl; perror("");
-    return 2;
+  if (output_sequences_by_cluster)
+    output_clone_files = true;
+
+  if (output_clone_files)
+  {
+    const char *outseq_cstr = out_seqdir.c_str();
+    if (mkpath(outseq_cstr, 0755) == -1) {
+      cerr << ERROR_STRING << "Directory creation: " << out_seqdir << endl; perror("");
+      return 2;
+    }
   }
 
   // Compute basename if not given as an option
@@ -1302,11 +1319,19 @@ int main (int argc, char **argv)
     cout << "  ==> suggested edges in " << out_dir+ f_basename + EDGES_FILENAME
         << endl ;
 
-    cout << "  ==> " << f_clones << "   \t(for post-processing with other software)" << endl ;
-    ostream* out_clones = new_ofgzstream(f_clones.c_str(), out_gz) ;
+    ostream* out_clones = NULL;
+    if (output_vdjfa)
+    {
+      cout << "  ==> " << f_clones << "   \t(for sequence post-processing with other software)" << endl;
+      cout << "!! To get structured data, do not parse the Fasta headers, but rather work on the .vidjil file." << endl;
+      out_clones = new_ofgzstream(f_clones.c_str(), out_gz);
+    }
 
-    cout << "  ==> " << out_seqdir + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
-    cout << endl ;
+    if (output_clone_files)
+    {
+      cout << "  ==> " << out_seqdir + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ;
+      cout << endl ;
+    }
 
     global_interrupted = false;
     signal(SIGINT, sigintHandler);
@@ -1367,7 +1392,8 @@ int main (int argc, char **argv)
         // If max_representatives is reached, we stop here but still outputs the window
         if ((max_representatives >= 0) && (num_clone >= max_representatives + 1))
           {
-            *out_clones << window_str << endl ;
+            if (output_vdjfa)
+              *out_clones << window_str << endl ;
             continue;
           }
       }
@@ -1391,15 +1417,21 @@ int main (int argc, char **argv)
 
 
       //$$ Open CLONE_FILENAME
+      ofstream *out_clone = NULL;
 
-      string clone_file_name = out_seqdir+ CLONE_FILENAME + string_of_int(num_clone) ;
-      ofstream out_clone(clone_file_name.c_str());
+      if (output_clone_files)
+      {
+        string clone_file_name = out_seqdir+ CLONE_FILENAME + string_of_int(num_clone) ;
+        out_clone = new ofstream(clone_file_name.c_str());
 
+        *out_clone << window_str ;
+      }
 
       //$$ Output window
       if (clone_on_stdout)
+      {
         cout << window_str ;
-      out_clone << window_str ;
+      }
 
 	//$$ Compute a representative sequence
 	// Display statistics on auditionned sequences
@@ -1464,7 +1496,16 @@ int main (int argc, char **argv)
           {
             if (clone_on_stdout)
               cout << representative << endl ;
-            *out_clones << representative << endl ;
+
+            if (output_vdjfa)
+              *out_clones << representative << endl ;
+
+            if (output_clone_files)
+            {
+              out_clone->close();
+              delete out_clone;
+            }
+
             continue;
           }
 
@@ -1490,8 +1531,12 @@ int main (int argc, char **argv)
 	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
   if (clone_on_stdout)
     cout << seg << endl ;
-	out_clone << seg << endl ;
-	*out_clones << seg << endl ;
+
+  if (output_clone_files)
+    *out_clone << seg << endl ;
+
+  if (output_vdjfa)
+    *out_clones << seg << endl ;
     
         seg.toOutput(clone);
 
@@ -1519,13 +1564,16 @@ int main (int argc, char **argv)
                 }
 
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
+        if (output_clone_files)
+        {
               if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543))
-                out_clone << ">" << seg.box_V->ref_label << endl << seg.box_V->ref << endl ;
+                *out_clone << ">" << seg.box_V->ref_label << endl << seg.box_V->ref << endl ;
               if ((segmented_germline->seg_method == SEG_METHOD_543) || (segmented_germline->seg_method == SEG_METHOD_ONE))
-                out_clone << ">" << seg.box_D->ref_label << endl << seg.box_D->ref << endl ;
+                *out_clone << ">" << seg.box_D->ref_label << endl << seg.box_D->ref << endl ;
               if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543))
-                out_clone << ">" << seg.box_J->ref_label << endl << seg.box_J->ref << endl ;
-	      out_clone << endl;
+                *out_clone << ">" << seg.box_J->ref_label << endl << seg.box_J->ref << endl ;
+              *out_clone << endl;
+        }
 	   } // end if (seg.isSegmented())
 
         seg.checkWarnings(clone, clone_on_stdout);
@@ -1536,18 +1584,26 @@ int main (int argc, char **argv)
 	    
 	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
 	      {
-		out_clone << *itt ;
+          *out_clone << *itt ;
 	      }
 	  }
 	
   if (clone_on_stdout)
     cout << endl ;
-      out_clone.close();
+
+      if (output_clone_files)
+      {
+        out_clone->close();
+        delete out_clone;
+      }
+
     } // end for clones
     signal(SIGINT, SIG_DFL);
 
     out_edges.close() ;
-    delete out_clones;
+
+    if (output_vdjfa)
+      delete out_clones;
 
     if (num_clone > last_num_clone_on_stdout)
       {

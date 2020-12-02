@@ -5,8 +5,8 @@ Vidjil is an open-source platform for the analysis of high-throughput sequencing
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
 With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
 high-throughput sequencing (NGS/HTS) now
-enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](https://omictools.com/rep-seq-category)
-methods and software.
+enables the deep sequencing of a lymphoid population with dedicated
+sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 This is the help of the [Vidjil web application](http://app.vidjil.org/).
 Further help can always be asked to <support@vidjil.org>. We can also arrange phone or video meeting.
@@ -15,17 +15,38 @@ The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 
 # Requirements
 
-## Web application
+## Supported browsers
 
-The Vidjil web application runs in any modern browser. It has been successfully tested on the following platforms
+The Vidjil web application runs in any modern browser.
+We recommend to either regularly update one's web browsers,
+or to use long-term releases, such as [Firefox ESR](https://www.mozilla.org/en-US/firefox/enterprise).
+As of September 2020, we recommend using Firefox or Chrome/Chromium :
 
-  - Firefox version \>= 32
-  - Chrome version \>= 38
-  - IE version \>= 10.0 (Vidjil will not run on IE 9.0 or below)
-  - Opera version \>= XX
-  - Safari version \>= 6.0
+  - Firefox, *version \>= 78 ESR*
+  - Chrome, *version \>= 79*
 
-## The .vidjil files
+These platforms will be supported to at least *June 2023*.
+Chrome 79, and possibly other recent versions, are tested through our continuous integration pipelines.
+
+## Legacy browsers
+
+We also provide an extended support on
+
+  - Firefox, versions 32 to 77
+  - Chrome, version 49 to 78
+
+Some of these legacy platforms are also tested through our continuous integration pipelines.
+However, old platforms have security flaws and are not recommended for routine usage involving clinical data.
+They may not get the new features, and *this extended support may be dropped in September 2021*.
+
+## Other browsers
+
+Vidjil is also reported to work with recent Edge, IE (version >= 10.0), Opera or Safari browsers,
+but these browsers are not officialy supported.
+Note that Vidjil will not run on IE 9.0 or below.
+
+
+## Getting .vidjil files
 
 The vidjil web application displays `.vidjil` files that summarize the V(D)J
 recombinations and the sequences found in one or several samples.
@@ -33,7 +54,7 @@ recombinations and the sequences found in one or several samples.
 The easiest way to get these files is to [request an account](http://app.vidjil.org/) on the public Vidjil test server.
 You will then be able to upload,
 manage, process your samples (`.fasta`, `.fastq`, `.gz`, `.bam`, or `.clntab` files) directly on the web application
-(see *The patient/experiment database and the server*), and the server behind the patient/experiment
+(see *The sample database and the server*), and the server behind the sample
 database computes these `.vidjil` files with vidjil-algo.
 Otherwise, such `.vidjil` files can be obtained either:
 
@@ -50,8 +71,8 @@ Contact us if you want help on converting such data.
 
   - Open data by:
     
-      - either with “patients”/“open patient” if you are connected to a patient/experiment database, such as on <http://app.vidjil.org/>.
-        In this case, there are always some "Demo" datasets for demonstration purposes.
+      - either with “samples”/“open samples” if you are connected to a sample database, such as on <http://app.vidjil.org/> or <http://health.vidjil.org/>.
+        In these cases, there are always some "Demo" datasets for demonstration purposes.
         Once a patient/run/set is selected, you can access the results by clicking on the link near `See results` (bottom right).
     
       - or with “file”/“import/export”, manually selecting a `.vidjil` file
@@ -73,7 +94,7 @@ Contact us if you want help on converting such data.
 
   - Your analysis (clone tagging, renaming, clustering) can be saved:
     
-      - either with “patients”/“save analysis” if you are connected to a patient/experiment database
+      - either with “samples”/“save analysis” if you are connected to a sample database
       - or with “file”/“export .analysis”
 
 You are advised to go through to the tutorial available from <http://www.vidjil.org/doc>
@@ -92,7 +113,7 @@ to learn the essential features of Vidjil.
 <!-- The name can be edited (“edit”). -->
 
   - *date.* Date of the current sample
-    (can be edited in the database, on the patient/run/sample set tab).
+    (can be edited in the database, on the patient/run/set tab).
     When displaying multiple samples from a same patient/run/set,
     you can change the sample viewed by clicking on the `←` and `→` buttons,
     or cycle trough them by clicking on the "▶" button.
@@ -148,7 +169,7 @@ find detailed informations retrieved from IMGT or from CloneDB.
 #### Detailed information from CloneDB
 
 (experimental feature)
-If you are connected to a patient/experiment database where CloneDB is enabled,
+If you are connected to a sample database where CloneDB is enabled,
 and if CloneDB was launched on the selected clone,
 you can see here occurrences of this clone in CloneDB
 as well as links to the relevant patients/runs/sets.
@@ -247,11 +268,12 @@ These buttons open another window/tab.
      of stereotyped antigen receptor sequences for CLL
 
 
-# The patient/experiment database and the server
+# The sample database and the server
 
-If a server with a patient/experiment database is configured with your
-installation of Vidjil (as on <http://app.vidjil.org/>), the
-'patient' menu gives you access to the server.
+If a server with a sample database is configured with your
+installation of Vidjil (as on the public test server <http://app.vidjil.org/>
+or on the healthcare server <http://health.vidjil.org/>), the
+'samples' menu gives you access to the server.
 
 With authentication, you can add 'patients', 'runs', or 'sets', they are just three different ways to group 'samples'.
 Samples are `.fasta`, `.fastq`, `.gz` or `.clntab` files, possibly pre-processed.
@@ -259,6 +281,12 @@ Once you uploaded samples (either in 'patients', 'runs', or 'sets'),
 you can process your data and save the results of your analysis.
 
 ## Patients
+
+<i>
+⚠️ The public <http://app.vidjil.org/> server is for Research Use Only
+and is not compliant for clinical use.
+Clinical data have to be uploaded on a [certified healthcare server](http://www.vidjil.org/doc/healthcare).
+</i>
 
 Once you are authenticated, this page shows the patient list. Here you
 can see your patients and patients whose permission has been given to you.
@@ -275,10 +303,42 @@ They are just different ways to group samples.
 Sets can for example gather a set of samples of a same experiment.
 Runs can be used to gather samples that have been sequenced in the same run.
 
+## Batch creation of patients/runs/sets
+<a name='batch-creation'></a>
+
+Patients, runs and sets can be added one by one (`add patient`, `add run`, `add set`).
+They can also be created by pasting data from a properly formatted table
+created by any spreadsheet editor such as LibreCalc/LibreOffice or Excel.
+
+Data has to be presented with the following columns, but some cells may be empty.
+Do not copy any header row, but only the data rows.
+
+*Patient* : 5 columns (patient id, first name, last name, birth date, info)
+
+|     |        |      |            |      |
+| --- | ------ | ---- | ---------- | ---- |
+| 42  | John   | Doe  |            | #ALL |
+|     | George | Sand | 1804-02-01 |      |
+
+*Run* : 4 columns (run id, name, date, info)
+
+|         |       |            |                    |
+| ------- | ----- | ---------- | ------------------ |
+| 2020r84 | Lib84 | 2020-09-15 |                    |
+| 2020r85 | Lib85 | 2020-09-15 | new IGH-DJ primers |
+
+*Set* : 2 columns (set name, info)
+
+|           |                         |
+| --------- | ----------------------- |
+| CohortCLL | Retrospective 2015-2019 |
+| Mouse1604 |                         |
+
+
 ## Permanent address (URL) to a set of samples
 
-Addresses such as <http://app.vidjil.org/?set=3241&config=39> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
-Moreover, the address also encodes other parameters, for instance <http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31> (selected axes and selected clones).
+Addresses such as <http://app.vidjil.org/3241-25> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
+Moreover, the address may also encode other parameters, for instance <https://app.vidjil.org/3241-25?plot=clone%20average%20read%20length,J/3%27%20gene,bar&clone=30> (selected axes and selected clones).
 
 To discuss on some results or to raise any issue, you can share such addresses with other users (with whom you share access grants, see below),
 to your local IT staff or to the Vidjil team.
@@ -318,6 +378,7 @@ At the moment the only preprocess avalaible on the public server (<http://app.vi
     **highly** recommended to merge those reads in order to have a read that consists
     of the whole DNA fragment instead of split fragments.
     To merge R1/R2 fragments, select an adapted *pre-process scenario* and provide both R1/R2 files at once when adding a sample.
+    On the public test server, the default scenarios use the [Flash2](https://academic.oup.com/bioinformatics/article/27/21/2957/217265) read merger with the option `-M 300`.
     
     There are two scenarios to merge reads. Indeed in case the merging is not
     possible for some paired-end reads we must keep only one of the fragments (either R1 or
@@ -341,7 +402,7 @@ The server mainteners can add new configurations tailored to specific needs, con
 The « reload » button (bottom left) updates the view. It is useful to see if the status of the task changed.
 It should do `QUEUED` → `ASSIGNED` → `RUNNING` → `COMPLETED`.
 It is possible to launch several processes at the same time (some will wait in the `QUEUED` / `ASSIGNED` states), and also to launch processes while you
-are uploading data. Finally, you can safely close the window with the patient/experiment database (and even your web browser) when some process are queued/launched.
+are uploading data. Finally, you can safely close the window with the sample database (and even your web browser) when some process are queued/launched.
 The only thing you should not do is to close completely your web browser (or the webpage) while sequences are uploading.
 
 Once a task is completed, a click on the `See results` link (bottom right) will open the main window to browse the clones.
@@ -419,7 +480,7 @@ inside a clone can have different lengths or can be shifted,
 especially in the case of overlapping paired-end sequencing. There can be also
 some sequencing errors.
 The `.vidjil` file has to give one consensus sequence per clone, and
-Rep-Seq algorithms have to deal with great care to these difference in
+RepSeq algorithms have to deal with great care to these difference in
 order not to gather reads from different clones.
 
 For **vidjil-algo**, it is required that the window centered on
@@ -456,9 +517,12 @@ One often wants to "see all clones and reads", but a complete list is difficult
 to see in itself. In a typical dataset with about 10<sup>6</sup> reads, even in
 the presence of a dominant clone, there can be 10<sup>4</sup> or 10<sup>5</sup> different
 clones detected. A dominant clone can have thousands or even more reads.
-There are ways to retrieve the full list of clones and reads (for example by launching
-the command-line program), but, for most of the cases, one may want to focus on some clones
-with their consensus sequences.
+
+For most of the cases, one may want to focus on some clones with their consensus sequences,
+Vidjil allows both:
+- to fully study these "top clones"
+- to study the distribution of the "smaller clones"
+- when this is needed, to retrieve the full list of clones and/or reads
 
 ## The "top" slider in the "filter" menu
 
@@ -488,16 +552,34 @@ It should then show up in any sample.
 in the `.analysis` file, it will always be shown even if it does not
 meet the "top" filter.
 
-## The "smaller clones"
+## Studying the distribution of "smaller clones"
 
-There is a virtual clone per locus in the clone list which groups all clones that are hidden
-(because of the "top" or because of hiding some tags). The sum of
-ratios in the list of clones is always 100%: thus the "smaller clones"
-changes when one use the "filter" menu.
+The top 50/top 100 clones are displayed but all of them are computed and are useful to study full repertoires,
+including assessing the polyclonal background and the diversity of the repertoires.
+Clones that are hidden (because of the "top" or because of hiding some tags)
+are gathered into virtual clones, shown with light gray.
+Note that selecting `color by clone` emphasizes the difference between the top clones, colored, and these virtual clones.
+Depending on the analysis configuration, these "smaller clones" are shown, in the clone list:
+
+- either *gathered by read length*, the Genescan-like plot showing the clone distribution.
+  This is the default on  default configurations on the public server,
+
+- or *gathered by locus* into a unique virtual clone.
+
+In both cases, the sum of ratios in the list of clones is always 100%: thus these "smaller clones"
+changes when one uses the "filter" menu.
 
 Note that the ratios include the "smaller clones": if a clone
 is reported to have 10.54%, this 10.54% ratio relates to the number of
 analyzed reads, including the hidden clones.
+
+## Export the full list of clones
+
+The full list of clones can be retrieved by launching the command-line vidjil-algo.
+
+On the public server, we also provide `Export all clones (AIRR)` configuration to export
+a `.tsv` file that can be further processed or opened in any spreadsheet editor.
+XXX TODO XXX
 
 ## Going back to the analyzed reads
 
@@ -634,6 +716,15 @@ only the logged-in users with proper authorization can access to these data.
 This includes the uploader of the data,
 possibly users of the same groups if such groups were defined, and the server maintainers.
 
+# Settings
+
+The settings menu allows to set:
+ -clone size format     [scientific notation / percentage]
+ -sample key            [sample name / shortened name / sampling date / day since first sampling]
+ -clone junction format [junction length / AA sequence / mixed (display AA sequence only for short junction)]
+ -clone alleles format  [hide alleles / display alleles / mixed (display only for marginal alleles)]
+
+These settings are kept in your web browser ``localStorage'' between several sessions.
 
 # Keyboard shortcuts
 
@@ -674,7 +765,7 @@ the letter corresponding to the locus of interest.
 |           |                                                          |
 | --------- | -------------------------------------------------------- |
 | `Ctrl-s`  | save the analysis (when connected to a database)         |
-| `Shift-p` | open the 'patient' window (when connected to a database) |
+| `Shift-p` | open the database panel (when connected to a database)   |
 
 # References
 

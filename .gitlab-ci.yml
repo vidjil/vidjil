@@ -51,12 +51,13 @@ test_germlines:
     - /^feature-.*g.*\/.*$/
     - schedules
 
-# Doc
+# Includes
 
 include:
-  - local: '/doc/.gitlab-ci.yml'
+  - local: '/doc/.gitlab-ci.yml' # Doc
   - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
   - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
+  - template: Code-Quality.gitlab-ci.yml # Code quality
 
 # Algorithm
 
@@ -127,6 +128,7 @@ algo_valgrind_functional:
 
 release_valgrind_functional:
   <<: *valgrind_functional
+  allow_failure: true
   only:
     - /^feature-.*a.*\/release$/
 
@@ -187,6 +189,7 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    when: always
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
@@ -206,7 +209,8 @@ test_browser_unit:
     - HEADLESS=1 make -C browser/test functional
   artifacts:
     paths:
-    - browser/
+    - browser/ 
+    when: always
     reports:
       junit: browser/test/test/TEST-*.xml
   only:
@@ -233,6 +237,7 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    when: always
     reports:
       junit: browser/test/test/TEST-*.xml
   only:
@@ -284,7 +289,14 @@ old-chrome-browser-functional-external-chrome:
   tags:
     - legacy
 
+# Code quality
+
 code_quality:
+  stage: test_quality
+  artifacts:
+    paths: [gl-code-quality-report.json]
+
+code_quality_custom:
   stage: test_quality
   script: make -C browser quality
   only:
@@ -301,8 +313,8 @@ code_quality:
 test_server_unit:
     stage: test_unit
     script:
-      - virtualenv $CI_BUILD_REF_SLUG
-      - source $CI_BUILD_REF_SLUG/bin/activate
+      - virtualenv $CI_COMMIT_SHORT_SHA
+      - source $CI_COMMIT_SHORT_SHA/bin/activate
       - pip install -r requirements.txt
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
@@ -411,6 +423,7 @@ deploy_review_server:
     - make -C browser icons
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
+    - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_BUILD_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
     - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/web2py/applications/vidjil/modules/defs.py
     - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/web2py/applications/vidjil/modules/defs.py
     - mv docker docker_${CI_BUILD_REF_SLUG}
@@ -422,7 +435,7 @@ deploy_review_server:
     - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=/WEB2PY_ADMIN_PASSWORD=$REVIEW_SERVER_ADMIN_PASSWORD/" docker-compose.yml
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
-    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers"
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
   environment:
     name: review_server/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/browser/
@@ -457,12 +470,7 @@ deploy_prod:
   stage: deploy_prod
   script:
     - ssh $PROD_CLIENT_SERVER "
-         cd $PROD_CLIENT_PATH;
-         git fetch
-         && git reset --hard origin/prod-client
-         && make -C browser
-         && make -C browser sha1
-         && cp doc/analysis-example.vidjil browser/"
+         cd $PROD_CLIENT_PATH;"
   environment:
     name: production
     url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil

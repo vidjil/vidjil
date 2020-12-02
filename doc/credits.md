@@ -87,6 +87,11 @@ BMC Genomics 2014, 15:409
 
 ## Some publications using Vidjil
 
+Chrystelle Abdo et al.,
+*Caution encouraged in next-generation sequencing immunogenetic analyses in acute lymphoblastic leukemia*
+Blood, 2020, 136(9):1105–1107
+<https://doi.org/10.1182/blood.2020005613>
+
 Jean-Sebastien Allain et al.,
 *IGHV segment utilization in immunoglobulin gene rearrangement differentiates patients with anti-myelin-associated glycoprotein neuropathy from others immunoglobulin M-gammopathies*,
 Haematologica, 2018, 103:e207-e210
@@ -102,6 +107,22 @@ Sébastien Bender et al.,
 Blood, 2020,
 <https://doi.org/10.1182/blood.2019004197>
 
+Monika Brüggemann et al., on behalf of the EuroClonality-NGS working group,
+*Standardized next-generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukaemia; a EuroClonality-NGS validation study*
+Leukemia, 2019, 33, 2241–2253,
+<https://doi.org/10.1038/s41375-019-0496-7>
+
+Roberta Cavagna et al.,
+*Capture-based Next-Generation Sequencing Improves the Identification of Immunoglobulin/T-Cell Receptor Clonal Markers and Gene Mutations in Adult Acute Lymphoblastic Leukemia Patients Lacking Molecular Probes*
+Cancers, 2020, 12(6), 1505,
+<https://doi.org/10.3390/cancers12061505>
+
+Frédéric Davi et al., on behalf of ERIC, the European Research Initiative on CLL, and the EuroClonality-NGS Working Group,
+*Immunoglobulin gene analysis in chronic lymphocytic leukemia in the era of next generation sequencing*
+ 2020
+Leukemia, 2020,
+<https://doi.org/10.1038/s41375-020-0923-9>
+
 Yann Ferret et al.,
 *Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
 British Journal of Haematology, 2016, 173, 413–420
@@ -111,6 +132,11 @@ Henrike J. Fischer et al.,
 *Modulation of CNS autoimmune responses by CD8+ T cells coincides with their oligoclonal expansion*
 Journal of Neuroimmunology, 2015, S0165-5728(15)30065-5
 <http://dx.doi.org/10.1016/j.jneuroim.2015.10.020>
+
+Navarro Nilo Giusti et al., 2020
+*Test trial of spike-in immunoglobulin heavy-chain (IGH) controls for next generation sequencing quantification of minimal residual disease in acute lymphoblastic leukaemia*
+British Journal of Haematology, 2020, 189: e150-e154
+<https://doi.org/10.1111/bjh.16571>
 
 Irene Jo et al.,
 *Considerations for monitoring minimal residual disease using immunoglobulin clonality in patients with precursor B-cell lymphoblastic leukemia*,
@@ -124,7 +150,7 @@ British Journal of Haematology, 2020,
 
 Kenji Kimura et al.,
 *Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next Generation Sequencing*,
-ASH 2019,
+ASH 2019, Blood,
 <https://doi.org/10.1182/blood-2019-125028>
 
 Michaela Kotrova et al.,
@@ -152,10 +178,20 @@ Mikaël Salson et al.,
 Leukemia Research, 2017, 53, 1–7
 <http://dx.doi.org/10.1016/j.leukres.2016.11.009>
 
+Masashi Sanada et al.,
+*Targeted-Capture Sequencing Is a Useful Method for MRD Markers Screening in KMT2A (MLL) Rearranged Leukemia*,
+ASH 2019, Blood, 134(S1):2759
+<https://doi.org/10.1182/blood-2019-125421>
+
 Florian Scherer et al.,
 *Distinct biological subtypes and patterns of genome evolution in lymphoma revealed by circulating tumor DNA*,
 Science Translational Medicine, 2016, 8, 364ra155
 <http://dx.doi.org/10.1126/scitranslmed.aai8545>
+
+V. Seitz et al.,
+*Evidence for a role of RUNX1 as recombinase cofactor for TCRβ rearrangements and pathological deletions in ETV6-RUNX1 ALL*
+Scientific Reports, 2020, 10: 10024
+<https://doi.org/10.1038/s41598-020-65744-0>
 
 Udo zur Stadt et al.,
 *Characterization of novel, recurrent genomic rearrangements as sensitive MRD targets in childhood B-cell precursor ALL*
@@ -167,6 +203,11 @@ Lucia Stranavova et al.,
 Frontiers in Immunology, 2019,
 <https://doi.org/10.3389/fimmu.2019.02549>
 
+Amelie Trinquand et al.,
+*Towards molecular stratification of pediatric T-cell lymphoblastic lymphomas based on Minimal Disseminated Disease and NOTCH1/FBXW7 mutational status: the French EURO-LB02 experience (preprint)*
+medRxiv 2020.09.08.20189829,
+<https://www.medrxiv.org/content/10.1101/2020.09.08.20189829v1>
+
 Gary Wright et al.,
 *Clinical benefit of a high‐throughput sequencing approach for minimal residual disease in acute lymphoblastic leukemia*,
 Pediatric Blood & Cancer, 2019,
@@ -176,3 +217,8 @@ Wen‐Qing Yao et al.,
 *Angioimmunoblastic T‐cell lymphoma contains multiple clonal T‐cell populations derived from a common TET2 mutant progenitor cell*
 The Journal of Pathology, 2019,
 <https://doi.org/10.1002/path.5376>
+
+Yasuda et al.,
+*Clinical utility of target capture‐based panel sequencing in hematological malignancies: A multicenter feasibility study*
+Cancer Science, 2020, 111(9):3367-3378,
+<https://dx.doi.org/10.1111/cas.14552>

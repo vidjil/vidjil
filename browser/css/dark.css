@@ -4,9 +4,15 @@
 /* default tag color */
 /* #dcffed also available */
 #vmi-menu {
-  position: unset;
-  bottom: unset;
+  top: 32px;
+  right: 0;
   width: unset;
+  background-color: #000000;
+  margin: 6px 0 0 0;
+}
+#vmi-menu div {
+  padding: 5px;
+  border: 1px solid;
 }
 html {
   height: 100%;
@@ -52,14 +58,15 @@ ul {
 }
 #visu-container {
   position: relative;
+  display: flex;
   flex: 1 1 auto;
+  flex-flow: column;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
-  height: 100%;
-  margin: auto;
+  width: 100%;
   overflow: hidden;
   background: #000000;
 }
@@ -107,28 +114,38 @@ ul {
   user-select: none;
   overflow: hidden;
 }
-#mid-container {
+#vidjil-panels {
   position: fixed;
-  display: flex;
-  flex: 1 1 auto;
   top: 32px;
+  left: 0;
   bottom: 125px ;
-  width: calc(100% - 6px + 6px);
-  overflow: hidden;
   background: #000000;
   margin: 6px;
+  display: flex;
+  flex: auto;
+  overflow: hidden;
+}
+.vidjil-panels-left {
+  width: calc(100% - 6px - 70px);
+}
+.vidjil-panels-full {
+  width: calc(100% - 6px);
+}
+#mid-container {
+  display: flex;
+  flex: auto;
+  overflow: hidden;
 }
 #right-container {
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
+  display: flex;
+  flex: 1 0 auto;
+  flex-flow: column;
   float: right;
-  width: 0px;
+  width: 475px;
 }
 #left-container {
   display: flex;
+  flex: 1 0 auto;
   flex-flow: column;
   position: relative;
   width: 475px;
@@ -142,10 +159,15 @@ ul {
 #visu,
 #visu2 {
   height: 50%;
+  display: flex;
+  flex: auto;
   width: 100%;
 }
 #visu2 {
   max-height: calc(100% - 6px);
+}
+#visu3 {
+  height: 100%;
 }
 line {
   stroke: #586e75;
@@ -414,6 +436,7 @@ line {
 #list {
   flex: 1 1 auto;
   height: 0px;
+  min-height: 20%;
   max-height: 100%;
   display: flex;
   flex-direction: column;
@@ -445,12 +468,9 @@ line {
   padding-right: 30px;
 }
 .list {
-  width: 445px;
-  display: block;
   padding: 2px;
 }
 .listElem {
-  width: 445px;
   font-size: 13px;
   cursor: pointer;
   -webkit-transition: color 0.2s;
@@ -459,19 +479,20 @@ line {
   transition: color 0.2s;
   padding: 1px 4px 4px 1px;
   height: 14px;
+  display: flex;
 }
 .selected {
   color: #fdf6e3;
 }
 .nameBox {
-  width: 300px;
   margin-right: 10px;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
-  float: left;
   white-space: nowrap;
+  display: flex;
+  flex: 1 1 auto;
 }
 .seq-fixed .nameBox {
   width: 250px;
@@ -479,7 +500,6 @@ line {
 .list .axisBox,
 .axisBox span {
   max-width: 52px;
-  float: right;
   overflow: hidden;
   display: inline-block;
   max-height: 16px;
@@ -500,9 +520,8 @@ line {
 }
 .starBox {
   width: 16px;
-  float: right;
   height: 16px;
-  display: inline-block;
+  display: inline-flex;
   user-select: none;
   overflow: hidden;
 }
@@ -517,9 +536,8 @@ line {
 .infoBox {
   font-size: 90%;
   width: 16px;
-  float: right;
   height: 15px;
-  display: inline-block;
+  display: inline-flex;
   user-select: none;
   text-align: center;
   border: solid;
@@ -588,8 +606,6 @@ line {
 }
 /*style segmenter element*/
 .list_select {
-  width: 445px;
-  display: block;
   border: solid;
   border-width: 2px;
   padding: 0px;
@@ -606,7 +622,7 @@ line {
 }
 .seq-fixed {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
   width: auto;
   margin: -2px;
   padding: 2px;
@@ -974,6 +990,10 @@ div.button {
   padding-left: 10px;
   padding-right: 10px;
 }
+.clipboard-button {
+  margin-left: -5px;
+  padding: 3px;
+}
 .smallbutton {
   cursor: pointer;
   font-size: 13px;
@@ -1063,9 +1083,8 @@ span.logo {
 }
 #bot-container {
   position: fixed;
-  left: 0;
   bottom: 0;
-  width: 100%;
+  left: 6px;
   border-top: solid;
   border-width: 6px;
   min-height: 125px;
@@ -1155,9 +1174,11 @@ span.logo {
   text-align: center;
   vertical-align: middle;
 }
-#info_timepoint td {
+#info_timepoint,
+#info_timepoint td,
+.info_overlaps td {
   min-width: 150px;
-  max-width: 700px;
+  max-width: 100%;
   overflow-wrap: break-word;
   word-wrap: break-word;
   border-style: solid;
@@ -1166,15 +1187,21 @@ span.logo {
   vertical-align: middle;
 }
 #info_window table,
-#info_timepoint table {
+#info_timepoint table,
+.info_overlaps {
   border-style: solid;
   border-color: #333333;
   border-collapse: collapse;
 }
 #info_window table .header,
-#info_timepoint table .header {
+#info_timepoint table .header,
+.info_overlaps table .header {
   border-width: 2px;
   background-color: #333333;
+}
+.info_overlaps_line {
+  background-color: #333333;
+  font-weight: bold;
 }
 span.ok {
   color: green;
@@ -1331,11 +1358,9 @@ span.warningReads {
 .axis_select select[selected=selected] {
   color: #fdf6e3;
 }
-#visu-separator {
+.visu-separator {
   position: relative;
   height: 6px;
-  cursor: move;
-  cursor: -webkit-grab;
   background: #333333;
 }
 #bot-separator {
@@ -1346,14 +1371,16 @@ span.warningReads {
   position: relative;
   top: -6px;
 }
-#vertical-separator {
+#vertical-separator,
+#vertical-separator-right {
   position: relative;
   float: left;
-  height: 100%;
   width: 6px;
-  line-height: calc(100% - 1px);
   background: #333333;
   cursor: pointer;
+}
+#vertical-separator-right {
+  float: right;
 }
 #visu-separator:hover,
 #vertical-separator:hover,
@@ -1820,6 +1847,10 @@ table.log textarea {
 .tagColor8 {
   background: #839496;
 }
+.tagColor9 {
+  background: #bdbdbd;
+  margin-left: 7px;
+}
 .inactiveTag {
   background-image: linear-gradient(45deg, transparent -25%, #000000 100%, #000000 100%, transparent 0%);
 }
@@ -1894,11 +1925,12 @@ table.log textarea {
   border: 1px solid #333333;
   overflow-wrap: break-word;
   overflow-y: hidden;
-  max-width: 457px;
   min-height: 32px;
   max-height: 32px;
-  width: 100%;
+  width: 99%;
   background-color: #000000;
+  margin-left: auto;
+  margin-right: auto;
 }
 .patient_info_text {
   margin-bottom: 5px;
@@ -2271,6 +2303,33 @@ form .form_label {
 }
 .list_lock_on {
   color: #839496;
+}
+.set_group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-bottom: 25px;
+  margin-right: 15px;
+  flex-flow: column;
+  width: 48%;
+}
+.set_group_header {
+  width: 100%;
+}
+.set_cell {
+  word-break: break-all;
+}
+.set_data {
+  width: 100%;
+}
+.analysis_button {
+  display: inline-flex;
+}
+.margined-top {
+  margin-top: 10px;
+}
+.margined-bottom {
+  margin-bottom: 10px;
 }
 div.tooltip {
   position: absolute;

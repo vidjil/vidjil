@@ -76,6 +76,19 @@ QUnit.test("load with new order && stock_order", function(assert) {
 
     // Note, respective clone 0 size: 0.05, 0.1, 0.075, 0.15
     assert.equal( m.clones[0].getSize(), m.clones[0].getSize(3), "clone 0 hve size corresponding to timepoint 3 (loading order)")
+
+    // Test loading file with duplicate sample present in order field of analysis
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    m.initClones()
+    analysis_data_stock_order_with_error =  JSON.parse(JSON.stringify(analysis_data_stock_order))
+    analysis_data_stock_order_with_error.samples.order = [3, 3, 0, 1]
+    m.parseJsonAnalysis(analysis_data_stock_order_with_error)
+    m.initClones()
+
+    assert.deepEqual(m.samples.order,         [3,0,1], "Correct order after loading analysis with dusplicate sample in order" )
+    assert.deepEqual(m.samples.stock_order, [2,3,0,1], "Correct stock_order after loading analysis with dusplicate sample in order" )
+    
 });
 
 
@@ -646,5 +659,20 @@ QUnit.test("getSampleWithSelectedClones", function(assert) {
     m.select(2)
     assert.deepEqual( m.getSampleWithSelectedClones(), [0,1,2], "clone 1 and 2, should return samples 1 and 2 and 3")
 
+  
+});
+
+
+QUnit.test("getSampleName", function(assert) {
+
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    m.initClones()
+
+    assert.equal( m.getSampleName(0), "Diag.fa", "Correct name getted as no values for m.samples.names (values from server)")
+
+    // Simulate data from server opening
+    m.samples.names = ["f0", "f1", "f2", "f3"]
+    assert.equal( m.getSampleName(0), "f0", "Correct name getted if values from server")
 
 });

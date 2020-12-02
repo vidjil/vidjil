@@ -1,0 +1,1064 @@
+{
+  "clones": [
+    {
+      "_average_read_length": [
+        149.313720703125
+      ],
+      "_coverage": [
+        0.9912015795707703
+      ],
+      "_coverage_info": [
+        "148 bp (99% of 149.3 bp)"
+      ],
+      "germline": "IGK",
+      "id": "GCATGCAACGCATAGAGTTTCCCTGGGGTACTTTTGGCCAGGGGACCAAG",
+      "name": "IGKV2D-40*01 3/CTGGGGT/4 IGKJ2*02",
+      "reads": [
+        51
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 4,
+          "name": "IGKJ2*02",
+          "start": 110
+        },
+        "5": {
+          "delRight": 3,
+          "name": "IGKV2D-40*01",
+          "stop": 102
+        },
+        "N": 7,
+        "affectSigns": {
+          "seq": "----------------- -----------                 -     -     - ----------------------- --- --------------------------------------------------          ",
+          "start": 1,
+          "stop": 148
+        },
+        "affectValues": {
+          "seq": "kkkkkkkkkkkkkkkkk_kkkkkkkkkkk_________________K_____K_____K?KKKKKKKKKKKKKKKKKKKKKKK?KKK?KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK__________",
+          "start": 1,
+          "stop": 148
+        },
+        "cdr3": {
+          "aa": "MQRIEFPWGT",
+          "seq": "ATGCAACGCATAGAGTTTCCCTGGGGTACT",
+          "start": 83,
+          "stop": 112
+        },
+        "evalue": {
+          "val": "3.655592e-86"
+        },
+        "evalue_left": {
+          "val": "3.655592e-86"
+        },
+        "evalue_right": {
+          "val": "6.932951e-156"
+        },
+        "junction": {
+          "aa": "CMQRIEFPWGTF",
+          "productive": true,
+          "start": 80,
+          "stop": 115
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!GGGGFFFFFGGGGHGGHGGFEFFFFGGGGFGGGGGGGGFGGGGGGGGGGF!!!!!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 148
+        }
+      },
+      "seg_stat": {
+        "3": 51
+      },
+      "sequence": "GTTCAGTGGCAGTGGGTCAGGCACTGATTTCACACTGAAAATCAGCAGGGTGGAGGCTGAGGATGTTGGAGTTTATTACTGCATGCAACGCATAGAGTTTCCCTGGGGTACTTTTGGCCAGGGGACCAAGGTGGAGATCAAACGTAAG",
+      "top": 3,
+      "warn": [
+        {
+          "code": "W53",
+          "level": "info",
+          "msg": "Similar to another clone IGKV2D-40*01 3/CTGGGGT/4 IGKJ2*02"
+        },
+        {
+          "code": "W69",
+          "level": "warn",
+          "msg": "Several genes with equal probability: IGKV2D-40*01 IGKV2-40*01"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        149.19354248046875
+      ],
+      "_coverage": [
+        0.9920000433921814
+      ],
+      "_coverage_info": [
+        "148 bp (99% of 149.2 bp)"
+      ],
+      "germline": "IGK",
+      "id": "GCATGCAACGTATAGAATTTCCCTGGGGTACTTTTGGCCAGGGGACCAAG",
+      "name": "IGKV2D-40*01 3/CTGGGGT/4 IGKJ2*02",
+      "reads": [
+        31
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 4,
+          "name": "IGKJ2*02",
+          "start": 110
+        },
+        "5": {
+          "delRight": 3,
+          "name": "IGKV2D-40*01",
+          "stop": 102
+        },
+        "N": 7,
+        "affectSigns": {
+          "seq": "----------------- -----------                 -     ------- ----------------------- --- --------------------------------------------------          ",
+          "start": 1,
+          "stop": 148
+        },
+        "affectValues": {
+          "seq": "kkkkkkkkkkkkkkkkk_kkkkkkkkkkk_________________K_____KKKKKKK?KKKKKKKKKKKKKKKKKKKKKKK?KKK?KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK__________",
+          "start": 1,
+          "stop": 148
+        },
+        "cdr3": {
+          "aa": "MQRIEFPWGT",
+          "seq": "ATGCAACGTATAGAATTTCCCTGGGGTACT",
+          "start": 83,
+          "stop": 112
+        },
+        "evalue": {
+          "val": "3.655592e-86"
+        },
+        "evalue_left": {
+          "val": "3.655592e-86"
+        },
+        "evalue_right": {
+          "val": "1.236874e-170"
+        },
+        "junction": {
+          "aa": "CMQRIEFPWGTF",
+          "productive": true,
+          "start": 80,
+          "stop": 115
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FGGFEGGGGGFGFGGGFGGEEEFFGGGGGGGGGGGGGGEGGGGGGFFGFE!!!!!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 148
+        }
+      },
+      "seg_stat": {
+        "3": 31
+      },
+      "sequence": "GTTCAGTGGCAGTGGGTCAGGCACTGATTTCACACTGAAAATCAGCAGGGTGGAGGCTGAGGATGTTGGAGTTTATTACTGCATGCAACGTATAGAATTTCCCTGGGGTACTTTTGGCCAGGGGACCAAGGTGGAGATCAAACGTAAG",
+      "top": 4,
+      "warn": [
+        {
+          "code": "W53",
+          "level": "info",
+          "msg": "Similar to another clone IGKV2D-40*01 3/CTGGGGT/4 IGKJ2*02"
+        },
+        {
+          "code": "W69",
+          "level": "warn",
+          "msg": "Several genes with equal probability: IGKV2D-40*01 IGKV2-40*01"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        149.24346923828125
+      ],
+      "_coverage": [
+        0.991668164730072
+      ],
+      "_coverage_info": [
+        "148 bp (99% of 149.2 bp)"
+      ],
+      "germline": "IGK",
+      "id": "GCATGCAACGTATAGAGTTTCCCTGGGGTACTTTTGGCCAGGGGACCAAG",
+      "name": "IGKV2D-40*01 3/CTGGGGT/4 IGKJ2*02",
+      "reads": [
+        44288
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 4,
+          "name": "IGKJ2*02",
+          "start": 110
+        },
+        "5": {
+          "delRight": 3,
+          "name": "IGKV2D-40*01",
+          "stop": 102
+        },
+        "N": 7,
+        "affectSigns": {
+          "seq": "----------------- -----------                 ------------- ----------------------- --- --------------------------------------------------          ",
+          "start": 1,
+          "stop": 148
+        },
+        "affectValues": {
+          "seq": "kkkkkkkkkkkkkkkkk_kkkkkkkkkkk_________________KKKKKKKKKKKKK?KKKKKKKKKKKKKKKKKKKKKKK?KKK?KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK__________",
+          "start": 1,
+          "stop": 148
+        },
+        "cdr3": {
+          "aa": "MQRIEFPWGT",
+          "seq": "ATGCAACGTATAGAGTTTCCCTGGGGTACT",
+          "start": 83,
+          "stop": 112
+        },
+        "evalue": {
+          "val": "3.655592e-86"
+        },
+        "evalue_left": {
+          "val": "3.655592e-86"
+        },
+        "evalue_right": {
+          "val": "3.179068e-186"
+        },
+        "junction": {
+          "aa": "CMQRIEFPWGTF",
+          "productive": true,
+          "start": 80,
+          "stop": 115
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!GHGGFGGGHGGGGGGHHGGFFFFFGFGGGGGGGGGGGGFGGGGGGGGGGF!!!!!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 148
+        }
+      },
+      "seg_stat": {
+        "3": 44288
+      },
+      "sequence": "GTTCAGTGGCAGTGGGTCAGGCACTGATTTCACACTGAAAATCAGCAGGGTGGAGGCTGAGGATGTTGGAGTTTATTACTGCATGCAACGTATAGAGTTTCCCTGGGGTACTTTTGGCCAGGGGACCAAGGTGGAGATCAAACGTAAG",
+      "top": 1,
+      "warn": [
+        {
+          "code": "W69",
+          "level": "warn",
+          "msg": "Several genes with equal probability: IGKV2D-40*01 IGKV2-40*01"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        148.9127197265625
+      ],
+      "_coverage": [
+        0.9871554374694824
+      ],
+      "_coverage_info": [
+        "147 bp (98% of 148.9 bp)"
+      ],
+      "germline": "IGK",
+      "id": "GCATGCAACGTATAGAGTTTCCCTGGGGTACTTTTGGCCAGGGGACCAGG",
+      "name": "IGKV2D-40*01 3/CTGGGGT/4 IGKJ2*02",
+      "reads": [
+        401
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 4,
+          "name": "IGKJ2*02",
+          "start": 110
+        },
+        "5": {
+          "delRight": 3,
+          "name": "IGKV2D-40*01",
+          "stop": 102
+        },
+        "N": 7,
+        "affectSigns": {
+          "seq": "----------         ---------                 ------------- ----------------------- --- --------------------------------------------------          ",
+          "start": 1,
+          "stop": 147
+        },
+        "affectValues": {
+          "seq": "kkkkkkkkkk_________kkkkkkkkk_________________KKKKKKKKKKKKK?KKKKKKKKKKKKKKKKKKKKKKK?KKK?KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK__________",
+          "start": 1,
+          "stop": 147
+        },
+        "cdr3": {
+          "aa": "MQRIEFPWGT",
+          "seq": "ATGCAACGTATAGAGTTTCCCTGGGGTACT",
+          "start": 83,
+          "stop": 112
+        },
+        "evalue": {
+          "val": "1.853723e-52"
+        },
+        "evalue_left": {
+          "val": "1.853723e-52"
+        },
+        "evalue_right": {
+          "val": "3.179068e-186"
+        },
+        "junction": {
+          "aa": "CMQRIEFPWGTF",
+          "productive": true,
+          "start": 80,
+          "stop": 115
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!GGHGFGGGGGGGGGGGGGGFFFFFHGGGGGGGHGGGGGFGGGGGGGFGFF!!!!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 147
+        }
+      },
+      "seg_stat": {
+        "3": 401
+      },
+      "sequence": "GTTCAGTGGCAGTGGGTCAGGCACTGATTTCACACTGAAAATCAGCAGGGTGGAGGCTGAGGATGTTGGAGTTTATTACTGCATGCAACGTATAGAGTTTCCCTGGGGTACTTTTGGCCAGGGGACCAGGTGGAGATCAAACGTAAG",
+      "top": 2,
+      "warn": [
+        {
+          "code": "W53",
+          "level": "warn",
+          "msg": "Similar to another clone IGKV2D-40*01 3/CTGGGGT/4 IGKJ2*02"
+        },
+        {
+          "code": "W69",
+          "level": "warn",
+          "msg": "Several genes with equal probability: IGKV2D-40*01 IGKV2-40*01"
+        }
+      ]
+    },
+    {
+      "germline": "IGH",
+      "id": "GCCGTGTATTACTATGATAGTAGTGGTTATCCCCTTTTTGACTACTGGGG",
+      "reads": [
+        1
+      ],
+      "seg_stat": {
+        "3": 1
+      },
+      "sequence": 0,
+      "top": 9
+    },
+    {
+      "germline": "TRG",
+      "id": "GCCGTTTACTACCGTGCTGCGCGCCCGACACACCTAAGAAACTCTTTGGC",
+      "reads": [
+        1
+      ],
+      "seg_stat": {
+        "3": 1
+      },
+      "sequence": 0,
+      "top": 8
+    },
+    {
+      "germline": "IGK",
+      "id": "GCCTACAATATTATAGTGATTCTCATAGCTTTGGCCAGGGGACACGACTG",
+      "reads": [
+        3
+      ],
+      "seg_stat": {
+        "3": 3
+      },
+      "sequence": 0,
+      "top": 6
+    },
+    {
+      "germline": "TRD+",
+      "id": "TTTTTATACTGATGTGTTTCATTGTGCACAGTGCTACAAAACCTACAGAG",
+      "reads": [
+        20
+      ],
+      "seg_stat": {
+        "3": 20
+      },
+      "sequence": 0,
+      "top": 5
+    },
+    {
+      "germline": "TRD+",
+      "id": "TTTTTATGCTGATGTGTTTCATTCTGGGCACCGATAAACTCATCTTTGGA",
+      "reads": [
+        1
+      ],
+      "seg_stat": {
+        "3": 1
+      },
+      "sequence": 0,
+      "top": 7
+    }
+  ],
+  "config": {
+    "all": false,
+    "alternative-genes": "0",
+    "analysis-e-value-D": "0.05",
+    "analysis-filter": "1",
+    "cdr3": true,
+    "clean-memory": false,
+    "cluster-N": "10",
+    "cluster-epsilon": "0",
+    "cluster-load-matrix": false,
+    "cluster-save-matrix": false,
+    "consensus-on-longest-sequences": false,
+    "dir": "./out/",
+    "e-value": "1",
+    "germline": "germline/homo-sapiens.g",
+    "help-advanced": false,
+    "label-filter": false,
+    "label-json": "docker/vidjil-server/conf/boldrini/Boldrini-spikes.json",
+    "labels": [
+      {
+        "copies": "10",
+        "family": "VH1",
+        "name": "Boldrini-VH1-A",
+        "sequence": "TTTTGAAGGATGGTAG"
+      },
+      {
+        "copies": "40",
+        "family": "VH1",
+        "name": "Boldrini-VH1-B",
+        "sequence": "TGCGAGACATTCTTTTGACTACT"
+      },
+      {
+        "copies": "160",
+        "family": "VH1",
+        "name": "Boldrini-VH1-C",
+        "sequence": "AGATCGGGGGGGAGGGTTCGGGGAGTTTTCCCCCGCCCATT"
+      },
+      {
+        "copies": "10",
+        "family": "VH2",
+        "name": "Boldrini-VH2-A",
+        "sequence": "CCCCAACCCAGACCCCGTCTTTTCCTGGTCCGTTCGTATT"
+      },
+      {
+        "copies": "40",
+        "family": "VH2",
+        "name": "Boldrini-VH2-B",
+        "sequence": "ACACAGCCACGTATTACTGCCCCTTGGCCTCCTCAATTACGATATTTTGACTGGTTATCCTACTGGGGCCAGGGAACCCT"
+      },
+      {
+        "copies": "160",
+        "family": "VH2",
+        "name": "Boldrini-VH2-C",
+        "sequence": "GGACACAGCCACATATTACTGTGCACGGAAGGGACCTTTACGATTTTTGGAGTGGTTATTAGGCCCTCTTACTACGGTATGGACGTCTGGGG"
+      },
+      {
+        "copies": "10",
+        "family": "VH3",
+        "name": "Boldrini-VH3-A",
+        "sequence": "ATAGCAGCTCGCTCACAGA"
+      },
+      {
+        "copies": "40",
+        "family": "VH3",
+        "name": "Boldrini-VH3-B",
+        "sequence": "AGGTGAGATCGGGG"
+      },
+      {
+        "copies": "160",
+        "family": "VH3",
+        "name": "Boldrini-VH3-C",
+        "sequence": "TTACTGTCCTCCCGAACGAACCCCTCCGAACCCCCTATAGCAGCTCGGAGTATGGGTGTCAAACTACTACGGTAT"
+      },
+      {
+        "copies": "40",
+        "family": "VH4",
+        "name": "Boldrini-VH4-B",
+        "sequence": "GGGGATGGTCAGTGG"
+      },
+      {
+        "copies": "160",
+        "family": "VH4",
+        "name": "Boldrini-VH4-C",
+        "sequence": "TGTATTACTGTGCGAGAAGGGGTATAGCAGCAGCTGGTGCCTACTTTGACTACTGGGGCCAGGGAACCCT"
+      },
+      {
+        "copies": "10",
+        "family": "VH5",
+        "name": "Boldrini-VH5-A",
+        "sequence": "GCGAGACGGG"
+      },
+      {
+        "copies": "40",
+        "family": "VH5",
+        "name": "Boldrini-VH5-B",
+        "sequence": "CCCTCCGCCACCCTGAGAGCCCACCTGGGGGAGGTTTGA"
+      },
+      {
+        "copies": "160",
+        "family": "VH5",
+        "name": "Boldrini-VH5-C",
+        "sequence": "ATGCCAAAACGGGGA"
+      },
+      {
+        "copies": "10",
+        "family": "VH6",
+        "name": "Boldrini-VH6-A",
+        "sequence": "CTCCCGAGGACACGGCTGTGTATGGGTAGGTATAGCAGCAGGTCCGCGCGTCTTGGACTTGACTACTGGGGCCA"
+      },
+      {
+        "copies": "40",
+        "family": "VH6",
+        "name": "Boldrini-VH6-B",
+        "sequence": "AAGAGGTCTGGAACATTATTAC"
+      },
+      {
+        "copies": "160",
+        "family": "VH6",
+        "name": "Boldrini-VH6-C",
+        "sequence": "CTGTGTATTACTGTGCAAGTCCCAGGCCCCAACGTATTACGATTTTTGGAGTGGCCCCCAAGAGCGTTCGACCCCTG"
+      },
+      {
+        "copies": "40",
+        "family": "VH7",
+        "name": "Boldrini-VH7-B",
+        "sequence": "TCCCCTCGAGGGGTCT"
+      },
+      {
+        "copies": "160",
+        "family": "VH7",
+        "name": "Boldrini-VH7-C",
+        "sequence": "CCCCCCTGGCGGGCGTCCA"
+      }
+    ],
+    "max-consensus": "100",
+    "min-ratio": "0",
+    "min-reads": "1",
+    "not-analyzed-as-clones": false,
+    "out-affects": false,
+    "out-analyzed": false,
+    "out-reads": false,
+    "out-unanalyzed": false,
+    "plain-index": false,
+    "several-D": true,
+    "verbose": false,
+    "window": "50"
+  },
+  "diversity": {
+    "index_Ds_diversity": 0.6860131621360779,
+    "index_E_equitability": 0.2516569197177887,
+    "index_H_entropy": 2.8567278951813933
+  },
+  "germlines": {
+    "custom": {
+      "3": [],
+      "4": [],
+      "5": [],
+      "shortcut": "X"
+    },
+    "ref": "http://www.vidjil.org/germlines/germline-59.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "germline": {
+      "IGH": [
+        4302
+      ],
+      "IGH+": [
+        13
+      ],
+      "IGK": [
+        74825
+      ],
+      "IGK+": [
+        0
+      ],
+      "IGL": [
+        3075
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        0
+      ],
+      "TRB+": [
+        0
+      ],
+      "TRD": [
+        322
+      ],
+      "TRD+": [
+        470
+      ],
+      "TRG": [
+        2064
+      ],
+      "unexpected": [
+        37
+      ]
+    },
+    "segmented": [
+      85108
+    ],
+    "total": [
+      89117
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "./vidjil-algo /home/joao_meidanis/boldrini/vidjil/docker/button-patients/diag-2530-0B_S3_L001_R1_001.fastq.gz -c clones -3 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 --label-json docker/vidjil-server/conf/boldrini/Boldrini-spikes.json "
+    ],
+    "log": [
+      "  ==> junction detected in 85108 reads (95.5%)\n  ==> found 4416 windows in 85108 reads (95.5% of 89117 reads)\n                          reads av. len     clones clo/rds\n  IGH               ->     4302   150.7        336   0.078\n  IGH+              ->       13   148.7          3   0.231\n  IGK               ->    74825   149.2       2455   0.033\n  IGK+              ->        0       -          0       -\n  IGL               ->     3075    99.3        526   0.171\n  TRA               ->        0       -          0       -\n  TRA+D             ->        0       -          0       -\n  TRB               ->        0       -          0       -\n  TRB+              ->        0       -          0       -\n  TRD               ->      322   149.6         84   0.261\n  TRD+              ->      470   148.4        107   0.228\n  TRG               ->     2064   150.1        887   0.430\n  unexpected        ->       37    97.0         18   0.486\n\n  SEG               ->    85108   147.4\n  SEG_+             ->        0       -\n  SEG_-             ->    85108   147.4\n  SEG changed w     ->     1457    50.4\n\n  UNSEG too short   ->        0       -\n  UNSEG strand      ->       28   149.9\n  UNSEG too few V/J ->      470   111.6\n  UNSEG only V/5'   ->       91   111.3\n  UNSEG only J/3'   ->     3420   148.5\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->        0       -\n  UNSEG too short w ->        0       -\n"
+    ],
+    "number": 1,
+    "original_names": [
+      "/home/joao_meidanis/boldrini/vidjil/docker/button-patients/diag-2530-0B_S3_L001_R1_001.fastq.gz"
+    ],
+    "producer": [
+      "vidjil-algo dev ff39f8efe (2020-01-09)"
+    ],
+    "run_timestamp": [
+      "2020-01-13 12:59:00"
+    ]
+  },
+  "similarity": [
+    [
+      0.0,
+      3.0,
+      29.0,
+      1.0,
+      26.0,
+      2.0,
+      26.0,
+      26.0,
+      26.0,
+      1.0,
+      1.0,
+      26.0,
+      1.0,
+      1.0,
+      3.0,
+      1.0,
+      5.0,
+      1.0,
+      5.0,
+      5.0
+    ],
+    [
+      3.0,
+      0.0,
+      28.0,
+      3.0,
+      26.0,
+      4.0,
+      26.0,
+      27.0,
+      27.0,
+      4.0,
+      4.0,
+      27.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      5.0,
+      4.0,
+      5.0,
+      7.0
+    ],
+    [
+      29.0,
+      28.0,
+      0.0,
+      28.0,
+      29.0,
+      28.0,
+      28.0,
+      28.0,
+      29.0,
+      30.0,
+      29.0,
+      29.0,
+      29.0,
+      28.0,
+      31.0,
+      29.0,
+      29.0,
+      30.0,
+      29.0,
+      29.0
+    ],
+    [
+      1.0,
+      3.0,
+      28.0,
+      0.0,
+      26.0,
+      2.0,
+      27.0,
+      25.0,
+      26.0,
+      2.0,
+      2.0,
+      26.0,
+      2.0,
+      2.0,
+      4.0,
+      2.0,
+      5.0,
+      2.0,
+      5.0,
+      5.0
+    ],
+    [
+      26.0,
+      26.0,
+      29.0,
+      26.0,
+      0.0,
+      25.0,
+      5.0,
+      1.0,
+      1.0,
+      25.0,
+      26.0,
+      1.0,
+      26.0,
+      26.0,
+      26.0,
+      26.0,
+      27.0,
+      26.0,
+      28.0,
+      24.0
+    ],
+    [
+      2.0,
+      4.0,
+      28.0,
+      2.0,
+      25.0,
+      0.0,
+      26.0,
+      24.0,
+      25.0,
+      3.0,
+      3.0,
+      25.0,
+      3.0,
+      3.0,
+      5.0,
+      3.0,
+      7.0,
+      3.0,
+      7.0,
+      5.0
+    ],
+    [
+      26.0,
+      26.0,
+      28.0,
+      27.0,
+      5.0,
+      26.0,
+      0.0,
+      5.0,
+      5.0,
+      25.0,
+      27.0,
+      5.0,
+      25.0,
+      26.0,
+      26.0,
+      26.0,
+      25.0,
+      26.0,
+      26.0,
+      26.0
+    ],
+    [
+      26.0,
+      27.0,
+      28.0,
+      25.0,
+      1.0,
+      24.0,
+      5.0,
+      0.0,
+      1.0,
+      25.0,
+      26.0,
+      1.0,
+      26.0,
+      26.0,
+      27.0,
+      26.0,
+      27.0,
+      26.0,
+      28.0,
+      23.0
+    ],
+    [
+      26.0,
+      27.0,
+      29.0,
+      26.0,
+      1.0,
+      25.0,
+      5.0,
+      1.0,
+      0.0,
+      25.0,
+      26.0,
+      1.0,
+      26.0,
+      26.0,
+      27.0,
+      26.0,
+      27.0,
+      26.0,
+      28.0,
+      23.0
+    ],
+    [
+      1.0,
+      4.0,
+      30.0,
+      2.0,
+      25.0,
+      3.0,
+      25.0,
+      25.0,
+      25.0,
+      0.0,
+      2.0,
+      25.0,
+      2.0,
+      2.0,
+      4.0,
+      2.0,
+      6.0,
+      2.0,
+      6.0,
+      6.0
+    ],
+    [
+      1.0,
+      4.0,
+      29.0,
+      2.0,
+      26.0,
+      3.0,
+      27.0,
+      26.0,
+      26.0,
+      2.0,
+      0.0,
+      26.0,
+      2.0,
+      2.0,
+      4.0,
+      2.0,
+      6.0,
+      2.0,
+      6.0,
+      6.0
+    ],
+    [
+      26.0,
+      27.0,
+      29.0,
+      26.0,
+      1.0,
+      25.0,
+      5.0,
+      1.0,
+      1.0,
+      25.0,
+      26.0,
+      0.0,
+      26.0,
+      26.0,
+      27.0,
+      26.0,
+      27.0,
+      26.0,
+      28.0,
+      24.0
+    ],
+    [
+      1.0,
+      4.0,
+      29.0,
+      2.0,
+      26.0,
+      3.0,
+      25.0,
+      26.0,
+      26.0,
+      2.0,
+      2.0,
+      26.0,
+      0.0,
+      2.0,
+      4.0,
+      2.0,
+      6.0,
+      2.0,
+      6.0,
+      6.0
+    ],
+    [
+      1.0,
+      4.0,
+      28.0,
+      2.0,
+      26.0,
+      3.0,
+      26.0,
+      26.0,
+      26.0,
+      2.0,
+      2.0,
+      26.0,
+      2.0,
+      0.0,
+      4.0,
+      2.0,
+      6.0,
+      2.0,
+      6.0,
+      6.0
+    ],
+    [
+      3.0,
+      4.0,
+      31.0,
+      4.0,
+      26.0,
+      5.0,
+      26.0,
+      27.0,
+      27.0,
+      4.0,
+      4.0,
+      27.0,
+      4.0,
+      4.0,
+      0.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      8.0
+    ],
+    [
+      1.0,
+      4.0,
+      29.0,
+      2.0,
+      26.0,
+      3.0,
+      26.0,
+      26.0,
+      26.0,
+      2.0,
+      2.0,
+      26.0,
+      2.0,
+      2.0,
+      4.0,
+      0.0,
+      6.0,
+      2.0,
+      6.0,
+      6.0
+    ],
+    [
+      5.0,
+      5.0,
+      29.0,
+      5.0,
+      27.0,
+      7.0,
+      25.0,
+      27.0,
+      27.0,
+      6.0,
+      6.0,
+      27.0,
+      6.0,
+      6.0,
+      4.0,
+      6.0,
+      0.0,
+      6.0,
+      2.0,
+      10.0
+    ],
+    [
+      1.0,
+      4.0,
+      30.0,
+      2.0,
+      26.0,
+      3.0,
+      26.0,
+      26.0,
+      26.0,
+      2.0,
+      2.0,
+      26.0,
+      2.0,
+      2.0,
+      4.0,
+      2.0,
+      6.0,
+      0.0,
+      6.0,
+      6.0
+    ],
+    [
+      5.0,
+      5.0,
+      29.0,
+      5.0,
+      28.0,
+      7.0,
+      26.0,
+      28.0,
+      28.0,
+      6.0,
+      6.0,
+      28.0,
+      6.0,
+      6.0,
+      4.0,
+      6.0,
+      2.0,
+      6.0,
+      0.0,
+      10.0
+    ],
+    [
+      5.0,
+      7.0,
+      29.0,
+      5.0,
+      24.0,
+      5.0,
+      26.0,
+      23.0,
+      23.0,
+      6.0,
+      6.0,
+      24.0,
+      6.0,
+      6.0,
+      8.0,
+      6.0,
+      10.0,
+      6.0,
+      10.0,
+      0.0
+    ]
+  ],
+  "vidjil_json_version": "2016b"
+}

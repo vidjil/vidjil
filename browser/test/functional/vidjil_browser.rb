@@ -145,6 +145,10 @@ class VidjilBrowser < Watir::Browser
     return element(:id => 'info_selected_locus').span(:index => 1)
   end
 
+  def info_colorBy
+    return div(:id => "info").div(:class => "info_color")
+  end
+
   # Return the div containing the information (status bar)
   def infoline
     return div(:id => segmenter_id).div(:class => 'focus')
@@ -369,6 +373,11 @@ class VidjilBrowser < Watir::Browser
     return tag_selector.button(:text => 'ok')
   end
 
+  # Enter in dev mode
+  def devel_mode
+    $b.execute_script('$(".devel-mode").show();')
+  end
+
   # Unselect everything, both on clones, and move away from menus (as if we click on the back)
   def unselect
     $b.execute_script('m.unselectAll()')
@@ -393,6 +402,10 @@ class VidjilBrowser < Watir::Browser
 
   def update_icon
     return div(:id => 'updateIcon')
+  end
+
+  def modal_container
+    return div(:class =>  ["modal", "info-container"])
   end
 
   protected

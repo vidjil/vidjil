@@ -1,0 +1,17 @@
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil -o fuse_warnings.vidjil ; cat fuse_warnings.vidjil
+
+$ Fuse the three files
+2: ListWindows: .9500, 9500.
+
+
+$ Middle file has the good 40-bp windows
+1: "id": "clone_1"
+1: "id": "clone_2"
+1: "id": "clone_3"
+
+$ fields 'warn' present 3 times (sample, clone, level)
+1: "level": "warn"
+
+$ Correct warning is present
+1: W81
+1: Clone have different names between samples: clone_name_3b

@@ -1,11 +1,11 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -b out-a $VIDJIL_DATA/clones_simul.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -b out-a --out-vdjfa $VIDJIL_DATA/clones_simul.fa
 
 $ Output
 1: out-a.vidjil
 1: out-a.tsv
 1: out-a.vdj.fa
 
-!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --gz -b out-b $VIDJIL_DATA/clones_simul.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --gz -b out-b --out-vdjfa $VIDJIL_DATA/clones_simul.fa
 
 $ Compressed output
 1: out-b.vidjil.gz

@@ -726,23 +726,6 @@ Clone.prototype = {
     
 
     /**
-     * Return true if the clone share the same axes than the given distribution clone
-     * @return {Clone} dclone   A distributon clone to compare with
-     * @return {Array} dvalues  A list of values for 
-     * @return {Boolean} True if share the same axes
-     */
-    sameAsDistribClone: function(dclone, dvalues, t){
-
-        var axes = dclone.axes
-        var values = this.getDistributionsValues(axes, t, round=true)
-
-        if (dvalues.equals(values)){
-            return true
-        }
-        return false
-    },
-
-    /**
      * Define a list of compatible real clones that share the same values for available axis
      * The list is sample dependant and differ for each sample
      * This list is called at the creation of the clone
@@ -750,21 +733,15 @@ Clone.prototype = {
     defineCompatibleClones: function(){
         var nb_sample = this.m.samples.number
         this.lst_compatible_clones = new Array(nb_sample)
-        for (var sample = 0; sample < this.lst_compatible_clones.length; sample++) {
-            this.lst_compatible_clones[sample] = []
-        }
 
         if (this.hasSizeDistrib()){
             var axes       = this.axes
             var dvalues    = this.getDistributionsValues(axes, 0, round=true)
-            for (var i = 0; i < this.m.clones.length; i++) {
-                var clone = this.m.clones[i]
-                if (clone.hasSizeConstant()) {
-                    for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
-                        if (clone.sameAsDistribClone(this, dvalues, timepoint)){
-                            this.lst_compatible_clones[timepoint].push(i)
-                        }
-                    }
+            for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
+                if (this.m.distribs_compatible_clones[axes][timepoint][dvalues] != undefined){
+                    this.lst_compatible_clones[timepoint] = this.m.distribs_compatible_clones[axes][timepoint][dvalues]
+                } else {
+                    this.lst_compatible_clones[timepoint] = []
                 }
             }
         }
@@ -1047,7 +1024,9 @@ Clone.prototype = {
     }, 
     
     getTag: function () {
-        if (this.tag) {
+        if (this.hasSizeDistrib()) {
+            return this.m.distrib_tag;
+        } else if (this.tag) {
             return this.tag;
         } else {
             return this.m.default_tag;
@@ -1354,8 +1333,26 @@ Clone.prototype = {
         var time_length = this.m.samples.order.length
         var html = ""
 
-        var header = function(content) { return "<tr><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; }
-        var row_1  = function(item, content) { return "<tr><td>" + item + "</td><td colspan='" + time_length + "'>" + content + "</td></tr>" ; }
+        // Functions to format html row
+        var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
+        var header = function(content, title) { 
+            title = (title == undefined) ? clean_title(content) : clean_title(title)
+            return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
+        }
+        var row_1  = function(item, content, title) { 
+            title = (title == undefined) ? clean_title(item) : clean_title(title)
+            return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
+        }
+        var row_from_list  = function(item, content, title) { 
+            title = (title == undefined) ?clean_title(item) : clean_title(title)
+            var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+            for (var i = 0; i < content.length; i++) {
+                col  = content[i]
+                div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+            }
+            div += "</tr>" ;
+            return div;
+        }
 
         if (isCluster) {
             html = "<h2>Cluster info : " + this.getName() + "</h2>"
@@ -1377,9 +1374,22 @@ Clone.prototype = {
         //warnings
         if (this.isWarned()) {
             html += header("warnings")
-
+            var warnings = {}
+            // Create a dict of all warning present, and add each sample with it
+            // One warning msg by entrie, without duplication.
             for (i = 0; i < this.warn.length; i++) {
-                html += row_1(this.warn[i].code, this.warn[i].msg);
+                if (this.warn[i] != 0 && this.warn[i] != undefined){
+                    if (warnings[this.warn[i].msg] == undefined){
+                        warnings[this.warn[i].msg] = {"code":this.warn[i].code, "msg": this.warn[i].msg, "samples":[i]}
+                    } else {
+                        warnings[this.warn[i].msg].samples.push(i)
+                    }
+                }
+            }
+            // put warning html content, with list of concerned sample, without duplication
+            for (var warn in warnings) {
+                var pluriel = warnings[warn].samples.length > 1 ? "s" : ""
+                html += row_1(warnings[warn].code, warnings[warn].msg);
             }
         }
 
@@ -1415,6 +1425,15 @@ Clone.prototype = {
             for (var k = 0; k < time_length; k++) {
                 html += "<td>" + this.getStrSize(this.m.samples.order[k]) + "</td>"
             }
+
+            // Specific part for MRD script
+            if ('mrd' in this && this.getHtmlInfo_prevalent != undefined){
+                values = this.getHtmlInfo_prevalent()
+                for (var mrd_val = 0; mrd_val < values.length; mrd_val++) {
+                    html += row_from_list(values[mrd_val][0], values[mrd_val][1], values[mrd_val][2])
+                }
+            }
+
             html += header("representative sequence")
         }else{
             html += header("sequence")
@@ -1472,7 +1491,7 @@ Clone.prototype = {
         if (this.hasSizeConstant()) {
             html += header("segmentation" +
                 " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" + //Use to hide/display lists 
-                this.getHTMLModifState()) // icon if manual changement
+                this.getHTMLModifState(), "segmentation") // icon if manual changement
         } else {
             html += header("segmentation")
         }
@@ -1637,9 +1656,9 @@ Clone.prototype = {
         }
 
         // Gather all elements
-        div_elem.appendChild(span_info);
-        div_elem.appendChild(span_star);
         div_elem.appendChild(span_axis);
+        div_elem.appendChild(span_star);
+        div_elem.appendChild(span_info);
     },
 
     toCSVheader: function (m) {
@@ -1682,7 +1701,7 @@ Clone.prototype = {
             return; 
         }
 
-        if (this.m.tag[this.getTag()].display || this.hasSizeDistrib()) {
+        if (this.m.tag[this.getTag()].display){
             this.active = true;
         }
         else {
@@ -1691,7 +1710,8 @@ Clone.prototype = {
     },
 
     disable: function () {
-        if (!this.hasSizeConstant()) return
+        if (!this.hasSizeConstant() && !this.hasSizeDistrib()) return
+        if (this.hasSizeDistrib() && this.m.tag[this.getTag()].display) return
         this.active = false;
     },
 
@@ -1990,6 +2010,8 @@ Clone.prototype = {
             return x.equals(axes)
         }
     },
+
+
 };
 
 

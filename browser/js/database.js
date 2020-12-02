@@ -291,6 +291,34 @@ Database.prototype = {
         });
     },
 
+    callUrlJson : function(url, args) {
+        var self=this;
+
+        $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: url,
+            data: {'data': JSON.stringify(args)},
+            timeout: DB_TIMEOUT_CALL,
+            xhrFields: {withCredentials: true},
+            success: function (result) {
+                self.display_result(result, url, args)
+                self.connected = true;
+            },
+            error: function (request, status, error) {
+                self.connected = false;
+                if (status === "timeout") {
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                } else {
+                    self.check_cert()
+                }
+                self.warn("callUrlJson: " + status + " - " + url.replace(self.db_address, '') + "?" + self.argsToStr(args))
+            }
+
+        });
+
+    },
+
     callLinkable: function (linkable) {
         var href = linkable.attr('href');
         var type = linkable.data('linkable-type');
@@ -593,13 +621,22 @@ Database.prototype = {
         if ( document.getElementById('upload_form') ){
             $('#upload_form').on('submit', function(e) {
                 e.preventDefault();
+
+                //clear empty values before submiting data
+                var upload_form = $('#upload_form').serializeObject()
+                if ("file" in upload_form)
+                    upload_form.file = upload_form.file.filter(function(el) {
+                        return typeof el != "object" || Array.isArray(el) || Object.keys(el).length > 0;
+                    });
+                var data = JSON.stringify(upload_form)
+
                 $.ajax({
                     type     : "POST",
                     cache: false,
                     crossDomain: true,
                     xhrFields: {withCredentials: true},
                     url      : $(this).attr('action'),
-                    data     : {'data': JSON.stringify($('#upload_form').serializeObject())},
+                    data     : {'data': data},
                     success  : function(result) {
                         var js = self.display_result(result)
                         var id, fileSelect, files, file, filename;
@@ -797,6 +834,7 @@ Database.prototype = {
             xhrField: {withCredentials: true},
             success: function (result) {
                 db.call("default/home");
+                db.clear_login_info();
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
@@ -806,6 +844,23 @@ Database.prototype = {
                 }
             }
         });
+    },
+
+    extract_login_info: function() {
+        var login_info = document.getElementById('db_auth_name');
+        if(login_info != null) {
+            var container = document.getElementById('login-container');
+            container.innerHTML = login_info.innerHTML;
+            var logout = document.createElement('a');
+            logout.classList.add('button');
+            logout.text = '(logout)';
+            logout.onclick = function() {db.logout()};
+            container.appendChild(logout);
+        }
+    },
+
+    clear_login_info: function() {
+        document.getElementById('login-container').innerHTML = '';
     },
 
     /*récupére et initialise le browser avec un fichier .data
@@ -1040,6 +1095,7 @@ Database.prototype = {
         this.div.style.display = "block";
         this.msg.innerHTML = msg;
             
+        this.extract_login_info();
         this.uploader.display()
     },
 
@@ -1217,6 +1273,29 @@ Database.prototype = {
         var $cb=$(cb);
         $('[name^=\"sample_set_ids\"]').prop('checked', $cb.is(':checked'));
         this.updateStatsButton();
+    },
+
+    callGroupStats: function() {
+        var group_ids = [];
+        $('[name^="group_ids"]:checked').each(function() {
+            group_ids.push($(this).val());
+        });
+        this.callUrlJson(DB_ADDRESS + 'my_account/index', {'group_ids': group_ids});
+    },
+
+    callJobStats: function() {
+        var group_ids = [];
+        $('[name^="group_ids"]:checked').each(function() {
+            group_ids.push($(this).val());
+        });
+        this.callUrlJson(DB_ADDRESS + 'my_account/jobs', {'group_ids': group_ids});
+    },
+
+    stopGroupPropagate: function(e) {
+        if(!e) {
+            e = window.event
+        }
+        e.stopPropagation();
     },
 
     // Log functions, to server

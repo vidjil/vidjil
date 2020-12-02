@@ -15,20 +15,45 @@
 {{ else: }}
     <div class="buttons_add_elements">
       Patients, runs and sets are different ways to group samples.
-      You can create at once several of these sets:
+      You can <a target='_blank' href="http://www.vidjil.org/doc/#batch-creation">create at once</a> several of them:
       <span class="button2"
-            onclick="document.getElementById('fieldset_container').appendChild(new PatientFormBuilder().build(this.dataset.index++));"
+            onclick="addPatientForm()"
             id="patient_button"
+            title="add patient input row to the form"
             data-index="{{=len(sets[defs.SET_TYPE_PATIENT])}}">add patient</span>
+      <span class="button2 clipboard-button"
+            onclick="readClipBoard('patient'); antiSpam(this,1000)"
+            id="patient_clipboard"
+            title="paste patients from clipboard">
+            <i class="icon-newspaper"></i></span>
       <span class="button2"
-            onclick="document.getElementById('fieldset_container').appendChild(new RunFormBuilder().build(this.dataset.index++));"
+            onclick="addRunForm()"
             id="run_button"
             data-index="{{=len(sets[defs.SET_TYPE_RUN])}}">add run</span>
+      <span class="button2 clipboard-button"
+            onclick="readClipBoard('run'); antiSpam(this,1000)"
+            id="run_clipboard"
+            title="paste runs from clipboard">
+            <i class="icon-newspaper"></i></span>
       <span class="button2"
-            onclick="document.getElementById('fieldset_container').appendChild(new GenericFormBuilder().build(this.dataset.index++));"
+            onclick="addSetForm()"
             id="generic_button"
             data-index="{{=len(sets[defs.SET_TYPE_GENERIC])}}">add set</span>
+      <span class="button2 clipboard-button"
+            onclick="readClipBoard('generic'); antiSpam(this,1000)"
+            id="set_clipboard"
+            title="paste sample sets from clipboard">
+            <i class="icon-newspaper"></i></span>
       <div class="clear"></div>
+    </div>
+{{ pass }}
+{{ if hasattr(defs, 'HEALTHCARE_COMPLIANCE') and not defs.HEALTHCARE_COMPLIANCE: }}
+    <div>
+      <p>
+        <span class='warn'><b>⚠️ Research Use Only.</b></span>
+        This server is not compliant for clinical use.
+        See options for using Vidjil while <a href="http://www.vidjil.org/doc/healthcare">hosting healthcare data</a>.
+      </p>
     </div>
 {{ pass }}
     <div id="fieldset_container">

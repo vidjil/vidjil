@@ -61,7 +61,29 @@ def index():
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" and request.vars["config_id"] != "None":
         config_id = long(request.vars["config_id"])
-        config_name = db.config[request.vars["config_id"]].name
+        config = True
+    elif request.vars["config_id"] and request.vars["config_id"] == "-1":
+        most_used_query = db(
+                (db.fused_file.sample_set_id == sample_set.id)
+            ).select(
+                db.fused_file.config_id.with_alias('id'),
+                db.fused_file.id.count().with_alias('use_count'),
+                groupby=db.fused_file.config_id,
+                orderby=db.fused_file.id.count(),
+                limitby=(0,1)
+            )
+        if len(most_used_query) > 0:
+            config_id = most_used_query[0].id
+            config = True
+        else:
+            config_id = -1
+            config = False
+    else:
+        config_id = -1
+        config = False
+
+    if config :
+        config_name = db.config[config_id].name
 
         fused = db(
             (db.fused_file.sample_set_id == sample_set_id)
@@ -73,7 +95,6 @@ def index():
         ).select(orderby=~db.analysis_file.analyze_date)
         
         
-        config = True
         fused_count = fused.count()
         fused_file = fused.select()
         fused_filename = info_file["filename"] +"_"+ config_name + ".vidjil"
@@ -81,17 +102,6 @@ def index():
         analysis_file = analysis
         analysis_filename = info_file["filename"]+"_"+ config_name + ".analysis"
         
-    else:
-        config_id = -1
-        config = False
-        fused_count = 0
-        fused_file = ""
-        fused_filename = ""
-        analysis_count = 0
-        analysis_file = ""
-        analysis_filename = ""
-
-    if config :
 	query =[]
 	
         query2 = db(
@@ -113,6 +123,12 @@ def index():
 		previous=row.sequence_file.id
 
     else:
+        fused_count = 0
+        fused_file = ""
+        fused_filename = ""
+        analysis_count = 0
+        analysis_file = ""
+        analysis_filename = ""
 
         query = db(
                 (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
@@ -124,6 +140,22 @@ def index():
                     & (db.results_file.hidden == False)
                 )
             )
+
+    all_sequence_files = [r.sample_set_membership.sequence_file_id for r in query]
+
+    (shared_sets, sample_sets) = get_associated_sample_sets(all_sequence_files, [sample_set_id])
+    
+    samplesets = SampleSets(sample_sets.keys())
+    sets_names = samplesets.get_names()
+
+    ## assign set to each rows
+    for row in query:
+        row.list_share_set = []
+        if row.sequence_file.id in shared_sets:
+            for elt in shared_sets[row.sequence_file.id]:
+                values = {"title": sets_names[elt],
+                          "sample_type": sample_sets[elt].sample_type, "id":elt}
+                row.list_share_set.append(values)
 
     tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()
@@ -142,6 +174,7 @@ def index():
         'table_name': "sample_set"})
     #if (auth.can_view_patient(request.vars["id"]) ):
     return dict(query=query,
+                has_shared_sets = len(shared_sets) > 0,
                 pre_process_list=pre_process_list,
                 config_id=config_id,
                 info=info_file,
@@ -177,8 +210,7 @@ def all():
 
     step = None
     page = None
-    is_not_filtered = "sort" not in request.vars and "filter" not in request.vars
-    if request.vars['page'] is not None and is_not_filtered:
+    if request.vars['page'] is not None:
         page = int(request.vars['page'])
         step = 50
 
@@ -189,21 +221,27 @@ def all():
     search, tags = parse_search(request.vars["filter"])
     group_ids = get_involved_groups()
 
-    list = SampleSetList(type, page, step, tags=tags)
-    list.load_creator_names()
-    list.load_sample_information()
-    list.load_config_information()
-    if isAdmin or len(get_group_list(auth)) > 1:
-        list.load_permitted_groups()
-    list.load_anon_permissions()
-    result = list.get_values()
-
-    # failsafe if filtered display all results
-    step = len(list) if step is None else step
-    page = 0 if page is None else page
-
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
+
+    f = time.time()
+    slist = SampleSetList(helper, page, step, tags, search)
+
+    log.debug("list loaded (%.3fs)" % (time.time() - f))
+
+    mid = time.time()
+
+    set_ids = set([s.sample_set_id for s in slist.result])
+    admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set)).select(db.sample_set.id)]
+    admin_permissions = list(set(admin_permissions) & set_ids)
+
+    log.debug("permission load (%.3fs)" % (time.time() - mid))
+
+    # failsafe if filtered display all results
+    step = len(slist) if step is None else step
+    page = 0 if page is None else page
+    result = slist.result
+
     fields = helper.get_fields()
     sort_fields = helper.get_sort_fields()
 
@@ -216,7 +254,6 @@ def all():
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-    result = helper.filter(search, result)
     log.info("%s list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
         'record_id': None,
         'table_name': "sample_set"})
@@ -227,6 +264,7 @@ def all():
                 fields = fields,
                 helper = helper,
                 group_ids = group_ids,
+                admin_permissions = admin_permissions,
                 isAdmin = isAdmin,
                 reverse = reverse,
                 step = step,
@@ -253,13 +291,12 @@ def stats():
     search, tags = parse_search(request.vars["filter"])
     group_ids = get_involved_groups()
 
-    list = SampleSetList(type, tags=tags)
-    list.load_sample_information()
-    list.load_anon_permissions()
-    result = list.get_values()
-
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
+
+    slist = SampleSetList(helper, tags=tags)
+    result = slist.result
+
     fields = helper.get_reduced_fields()
 
     ##sort result
@@ -277,7 +314,7 @@ def stats():
     log.info("%s stat list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
         'record_id': None,
         'table_name': "sample_set"})
-    log.debug("stat list (%.3fs)" % time.time()-start)
+    log.debug("stat list (%.3f s)" % (time.time()-start))
 
     return dict(query = result,
                 fields = fields,
@@ -554,6 +591,21 @@ def submit():
                 register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
     if not error:
+        if not bool(length_mapping):
+            creation_group_tuple = get_default_creation_group(auth)
+            response.view = 'sample_set/form.html'
+            sets = {
+                'patient': [],
+                'run': [],
+                'generic': []
+            }
+            return dict(message=T("form is empty"),
+                    groups=creation_group_tuple[0],
+                    group_ids = get_involved_groups(),
+                    master_group=creation_group_tuple[1],
+                    sets=sets,
+                    isEditing = False)
+
         max_num = max(length_mapping.keys())
         msg = "successfully added/edited set(s)"
         if sum_sets == 1:

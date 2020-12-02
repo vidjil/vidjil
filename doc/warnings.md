@@ -58,4 +58,5 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 ## Comparisons between several samples or patients (such as with clonedb)
 - [ ] W8x Potential contamination or public clone #1744 
 - [ ]     Known public clone 
+- [x] W81 Clone have different names between samples #4566
 
