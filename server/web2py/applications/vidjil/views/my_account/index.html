@@ -13,17 +13,18 @@
         {{ for role in keys: }}
             <div id="{{=role}}_info" class="set_group">
                 <div class="set_group_header">
-                    {{=role}} ({{=result[role]['permissions']}})
+                    Group <b>{{=role}}<b> <span style='font-size: 80%;'>({{=result[role]['permissions']}})</span>
                     <hr>
                 </div>
                 {{ for set_type in ['patient', 'run', 'set']: }}
                     {{ r = result[role][set_type]['count'] }}
                     <div class="set_cell margined-bottom">
-                        <span class="button_token {{=r['sample_type']}}_token">{{=set_type}}s</span>:
                         <span class="{{=set_type}}_num_sets">{{=r['num_sets']}}</span>
-                        <span class="{{=set_type}}_num_samples">(samples: {{=r['num_samples']}})</span>
-                        <span>/ last month:</span>
-                        <span>jobs: {{=result[role][set_type]['num_jobs']}} {{=result[role][set_type]['statuses']}}</span>
+                        <span class="button_token {{=r['sample_type']}}_token">{{=set_type}}s</span>
+                        <span class="{{=set_type}}_num_samples">({{=r['num_samples']}} samples),</span>
+                        <span>{{=result[role][set_type]['num_jobs']}} jobs last month
+                          <span style='font-size: 80%;'>{{=result[role][set_type]['statuses']}}</span>
+                        </span>
                     </div>
                     {{pass}}
                 <div class="set_data margined-bottom">
@@ -32,7 +33,7 @@
                         {{pass}}
                 </div>
                 <div class="set_data">
-                    <div>fuses:</div>
+                    <div>results:</div>
                 {{ for fuse in result[role]['fuses']: }}
                     <div class="analysis_button">
                         <span class="button button_token {{=fuse[3]}}_token">
@@ -48,7 +49,7 @@
                     {{pass}}
                 </div>
                 <div class="set_data">
-                    <div>analyses:</div>
+                    <div>saved analyses:</div>
                 {{ for analysis in result[role]['analyses']: }}
                     <div class="analysis_button">
                         <span class="button button_token {{=analysis[1]}}_token">
