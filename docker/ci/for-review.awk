@@ -41,6 +41,8 @@ after_nginx{
     print "        depends_on:"
     print "            uwsgi:"
     print "              condition: service_started"
+    print "        links:"
+    print "            - uwsgi:uwsgi"
     after_nginx=0
 }
 after_volumes{
