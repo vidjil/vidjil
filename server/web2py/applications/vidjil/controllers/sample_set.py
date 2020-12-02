@@ -1023,18 +1023,26 @@ def delete():
             log.error(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+        sequence_file_id_sample_sets = {}
         #delete data file
         query = db( (db.sample_set_membership.sample_set_id == sample_set.id)
                     & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                 ).select(db.sequence_file.id)
         for row in query :
-            db(db.results_file.sequence_file_id == row.id).delete()
+            sample_sets = get_sequence_file_sample_sets(row.id)
+            sequence_file_id_sample_sets[row.id] = sample_sets
+            if len(sample_sets) == 1:
+                db(db.results_file.sequence_file_id == row.id).delete()
 
         #delete sequence file
         query = db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
             & (db.sample_set_membership.sample_set_id == sample_set.id)
             ).select(db.sequence_file.id)
         for row in query :
+            if not row.id in sequence_file_id_sample_sets: 
+                sample_sets = get_sequence_file_sample_sets(row.id)
+                sequence_file_id_sample_sets[row.id] = sample_sets
+            if len(sequence_file_id_sample_sets[row.id]) == 1:
             db(db.sequence_file.id == row.id).delete()
 
         #delete patient sample_set
