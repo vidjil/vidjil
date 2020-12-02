@@ -425,32 +425,6 @@ Model_loader.prototype = {
         return fields;
     },
 
-    /**
-     * recalculating the array is sometimes necessary if the analysis and fused_file have diverged.
-     * @param  {Array} arr Order as loaded from analysis file
-     * @return {Array}     [description]
-     */
-    calculateOrder: function(arr) {
-
-        tmp = arr.slice();
-        res = arr.slice();
-        previous = -1;
-        while(tmp.length > 0) {
-            min = tmp[0];
-            min_idx = 0;
-            for(var i = 0; i < tmp.length; i++) {
-                if (tmp[i] < min) {
-                    min = tmp[i];
-                    min_idx = i;
-                }
-            }
-            idx = arr.indexOf(min);
-            tmp.splice(min_idx, 1);
-            res[idx] = ++previous;
-        }
-        return res;
-    },
-
     buildDict: function(first, second) {
         dict = {};
         for (var i = 0; i < first.length; i++){
