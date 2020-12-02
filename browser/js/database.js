@@ -478,6 +478,7 @@ Database.prototype = {
         //the json result look like a .vidjil file so we load it
         if (res.reads){
             this.m.parseJsonData(result, 100)
+            this.m.file_source = "database";
             this.m.loadGermline()
                 .initClones();
             this.load_analysis(args);
@@ -977,6 +978,7 @@ Database.prototype = {
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.m.resume()
+                self.m.url_manager.clean();
                 self.display_result(result, "", args);
                 self.connected = true;
             },

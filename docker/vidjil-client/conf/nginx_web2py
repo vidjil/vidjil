@@ -3,7 +3,7 @@ server {
         server_name     $hostname;
 
         location / {
-                return 301 https://$host/browser;
+                return 301 https://$host$request_uri;
         }
 }
 
