@@ -45,11 +45,6 @@ services:
             - ../germline:/usr/share/vidjil/germline
     nginx:
         image: vidjil/client:latest
-        depends_on:
-            uwsgi:
-              condition: service_started
-        links:
-                - uwsgi:uwsgi
         ports:
             - "80:80"
             - "443:443"
