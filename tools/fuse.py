@@ -229,7 +229,7 @@ class Window:
             else:
                 name = self.d["name"]
 
-            msg = "Clone have different names between samples (pos %s): %s" % (len(self.d["reads"]), name)
+            msg = "Merged clone has different V(D)J designations in some samples (pos %s): %s" % (len(self.d["reads"]), name)
             obj.addWarning(code="W81", msg=msg, level="warn")
 
         # !! No name field if fuse with an empty clone
@@ -247,7 +247,7 @@ class Window:
                 junction = "not productive"
 
             # show number/position of the corresponding sample ?
-            msg = "Clone have different productivity between samples (pos %s): %s" % (len(self.d["reads"]), junction)
+            msg = "Merged clone has different productivities in some samples (pos %s): %s" % (len(self.d["reads"]), junction)
             obj.addWarning(code="W82", msg=msg, level="warn")
         return obj
         

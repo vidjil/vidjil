@@ -12,14 +12,14 @@ $ Middle file has the good 40-bp windows
 $ fields 'warn' present 2 times (w81 & w82)
 2: "level": "warn"
 
-$ Correct warning is present: W81 (name)
+$ Correct warning is present: W81 (designation)
 1: W81
-1: Clone have different names between samples \(pos 1\): clone_name_3b
+1: .*different .* designations .*\(pos 1\): clone_name_3b
 
 
 $ Correct warning is present: W82 (productivity)
 1: W82
-1: Clone have different productivity between samples \(pos 1\): not productive
+1: .* different productivities.*\(pos 1\): not productive
 
 
 ### Same tests but with 4 samples
@@ -37,11 +37,11 @@ $ fields 'warn' present 2 times (w81 & w82)
 
 $ Correct warning is present: W81 (name)
 2: W81
-1: Clone have different names between samples \(pos 1\): clone_name_3b
-1: Clone have different names between samples \(pos 3\): clone_name_3b
+1: .*different .* designations .*\(pos 1\): clone_name_3b
+1: .*different .* designations .*\(pos 3\): clone_name_3b
 
 
 $ Correct warning is present: W82 (productivity)
 2: W82
-1: Clone have different productivity between samples \(pos 1\): not productive
-1: Clone have different productivity between samples \(pos 3\): not productive
+1: .*different productivities .*\(pos 1\): not productive
+1: .*different productivities .*\(pos 3\): not productive
