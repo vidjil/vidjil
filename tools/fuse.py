@@ -254,8 +254,26 @@ class Window:
             else:
                 name = self.d["name"]
 
-            msg = "Clone have different names between samples: %s" % name
+            msg = "Merged clone has different V(D)J designations in some samples (pos %s): %s" % (len(self.d["reads"]), name)
             obj.addWarning(code="W81", msg=msg, level="warn")
+
+        # !! No name field if fuse with an empty clone
+        # !! If imported from airr, junction is present but empty
+        if ("seg" in self.d and "junction" in self.d["seg"]) and ("seg" in other.d and "junction" in other.d["seg"])\
+          and ("productive" in self.d["seg"]["junction"] and "productive" in other.d["seg"]["junction"]) \
+          and self.d["seg"]["junction"]["productive"] != other.d["seg"]["junction"]["productive"]:
+            if obj.d["seg"]["junction"]["productive"] == self.d["seg"]["junction"]["productive"]:
+                junction = other.d["seg"]["junction"]["productive"]
+            else:
+                junction = self.d["seg"]["junction"]["productive"]
+            if junction:
+                junction = "productive"
+            else:
+                junction = "not productive"
+
+            # show number/position of the corresponding sample ?
+            msg = "Merged clone has different productivities in some samples (pos %s): %s" % (len(self.d["reads"]), junction)
+            obj.addWarning(code="W82", msg=msg, level="warn")
         return obj
         
     def addWarning(self, code, msg, level):

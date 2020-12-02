@@ -1,7 +1,15 @@
 {
     "notes": "Sample with clone 1 and 3;", 
     "clones": [
-        {"germline": "IGK", "id": "clone_1", "name": "clone_name_1", "reads": [500], "top": 1}, 
+        {"germline": "IGK", "id": "clone_1", "name": "clone_name_1", "reads": [500], "top": 1,
+            "seg": {"junction": {
+                      "aa": "CQKYNSALALTF",
+                      "productive": true,
+                      "start": 81,
+                      "stop": 116
+                    }
+            }
+        },
         {"germline": "IGK", "id": "clone_3", "name": "clone_name_3", "reads": [500], "top": 2}], 
     "clusters": [],
     "germlines": {}, 

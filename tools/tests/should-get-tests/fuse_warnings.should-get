@@ -9,9 +9,39 @@ $ Middle file has the good 40-bp windows
 1: "id": "clone_2"
 1: "id": "clone_3"
 
-$ fields 'warn' present 3 times (sample, clone, level)
-1: "level": "warn"
+$ fields 'warn' present 2 times (w81 & w82)
+2: "level": "warn"
 
-$ Correct warning is present
+$ Correct warning is present: W81 (designation)
 1: W81
-1: Clone have different names between samples: clone_name_3b
+1: .*different .* designations .*\(pos 1\): clone_name_3b
+
+
+$ Correct warning is present: W82 (productivity)
+1: W82
+1: .* different productivities.*\(pos 1\): not productive
+
+
+### Same tests but with 4 samples
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil  ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil -o fuse_warnings_many_samples.vidjil ; cat fuse_warnings_many_samples.vidjil
+
+
+
+$ Middle file has the good 40-bp windows
+1: "id": "clone_1"
+1: "id": "clone_2"
+1: "id": "clone_3"
+
+$ fields 'warn' present 2 times (w81 & w82)
+4: "level": "warn"
+
+$ Correct warning is present: W81 (name)
+2: W81
+1: .*different .* designations .*\(pos 1\): clone_name_3b
+1: .*different .* designations .*\(pos 3\): clone_name_3b
+
+
+$ Correct warning is present: W82 (productivity)
+2: W82
+1: .*different productivities .*\(pos 1\): not productive
+1: .*different productivities .*\(pos 3\): not productive
