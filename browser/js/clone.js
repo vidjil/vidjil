@@ -1333,8 +1333,26 @@ Clone.prototype = {
         var time_length = this.m.samples.order.length
         var html = ""
 
-        var header = function(content) { return "<tr><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; }
-        var row_1  = function(item, content) { return "<tr><td>" + item + "</td><td colspan='" + time_length + "'>" + content + "</td></tr>" ; }
+        // Functions to format html row
+        var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
+        var header = function(content, title) { 
+            title = (title == undefined) ? clean_title(content) : clean_title(title)
+            return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
+        }
+        var row_1  = function(item, content, title) { 
+            title = (title == undefined) ? clean_title(item) : clean_title(title)
+            return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
+        }
+        var row_from_list  = function(item, content, title) { 
+            title = (title == undefined) ?clean_title(item) : clean_title(title)
+            var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+            for (var i = 0; i < content.length; i++) {
+                col  = content[i]
+                div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+            }
+            div += "</tr>" ;
+            return div;
+        }
 
         if (isCluster) {
             html = "<h2>Cluster info : " + this.getName() + "</h2>"
@@ -1356,9 +1374,22 @@ Clone.prototype = {
         //warnings
         if (this.isWarned()) {
             html += header("warnings")
-
+            var warnings = {}
+            // Create a dict of all warning present, and add each sample with it
+            // One warning msg by entrie, without duplication.
             for (i = 0; i < this.warn.length; i++) {
-                html += row_1(this.warn[i].code, this.warn[i].msg);
+                if (this.warn[i] != 0 && this.warn[i] != undefined){
+                    if (warnings[this.warn[i].msg] == undefined){
+                        warnings[this.warn[i].msg] = {"code":this.warn[i].code, "msg": this.warn[i].msg, "samples":[i]}
+                    } else {
+                        warnings[this.warn[i].msg].samples.push(i)
+                    }
+                }
+            }
+            // put warning html content, with list of concerned sample, without duplication
+            for (var warn in warnings) {
+                var pluriel = warnings[warn].samples.length > 1 ? "s" : ""
+                html += row_1(warnings[warn].code, warnings[warn].msg);
             }
         }
 
@@ -1394,6 +1425,15 @@ Clone.prototype = {
             for (var k = 0; k < time_length; k++) {
                 html += "<td>" + this.getStrSize(this.m.samples.order[k]) + "</td>"
             }
+
+            // Specific part for MRD script
+            if ('mrd' in this && this.getHtmlInfo_prevalent != undefined){
+                values = this.getHtmlInfo_prevalent()
+                for (var mrd_val = 0; mrd_val < values.length; mrd_val++) {
+                    html += row_from_list(values[mrd_val][0], values[mrd_val][1], values[mrd_val][2])
+                }
+            }
+
             html += header("representative sequence")
         }else{
             html += header("sequence")
@@ -1451,7 +1491,7 @@ Clone.prototype = {
         if (this.hasSizeConstant()) {
             html += header("segmentation" +
                 " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" + //Use to hide/display lists 
-                this.getHTMLModifState()) // icon if manual changement
+                this.getHTMLModifState(), "segmentation") // icon if manual changement
         } else {
             html += header("segmentation")
         }
@@ -1970,6 +2010,8 @@ Clone.prototype = {
             return x.equals(axes)
         }
     },
+
+
 };
 
 

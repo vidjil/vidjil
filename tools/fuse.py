@@ -200,7 +200,7 @@ class Window:
     def __add__(self, other):
         """Concat two windows, extending lists such as 'reads'"""
         #data we don't need to duplicate
-        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline"]
+        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd"]
         obj = Window(1)
         
         # 'id' and 'top' will be taken from 'topmost' clone
@@ -212,7 +212,32 @@ class Window:
                                  self.d, len(self.d["reads"]),
                                  other.d, len(other.d["reads"]),
                                  myList)
-                    
+        # MRD data, only if none is empty
+        # TODO: Make this more generic to work with any MRD setup
+        zeroed = {"copy_number": [0],
+                  "R2": [0],
+                  "family": ["None"],
+                   "norm_coeff": [0]}
+        if "mrd" in self.d or "mrd" in other.d:
+            if "mrd" in self.d:
+                first = self.d["mrd"]
+            else:
+                first = zeroed
+                for key in first.keys():
+                    first[key] = first[key] * len(self.d["reads"])
+
+            if "mrd" in other.d:
+                second = other.d["mrd"]
+            else:
+                second = zeroed
+                for key in second.keys():
+                    second[key] = second[key] * len(other.d["reads"])
+
+            obj.d["mrd"] = {}
+            concatenate_with_padding(obj.d["mrd"],
+                                     first, len(self.d["reads"]),
+                                     second, len(other.d["reads"]))
+                        
         # All other data, including 'top'
         # When there are conflicting keys, keep data from the 'topmost' clone
         order = [other, self] if other.d["top"] < self.d["top"] else [self, other]
@@ -449,6 +474,27 @@ class Samples:
 
     def __str__(self):
         return "<Samples: %s>" % self.d
+        
+class MRD: 
+
+    def __init__(self, number=1):
+        self.d={}
+        self.d["number"] = number
+            
+    def __add__(self, other):
+        obj=MRD()
+
+        concatenate_with_padding(obj.d, 
+                                 self.d, self.d['number'], 
+                                 other.d, other.d['number'],
+                                 ['number'])
+
+        obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
+        
+        return obj
+
+    def __str__(self):
+        return "<MRD: %s>" % self.d
 
 class Diversity: 
 
@@ -745,6 +791,13 @@ class ListWindows(VidjilJson):
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
+        if "mrd" in self.d or "mrd" in other.d:
+            if not "mrd" in self.d:
+                self.d["mrd"] = MRD()
+            if not "mrd" in other.d:
+                other.d["mrd"] = MRD()
+
+            obj.d["mrd"] = self.d["mrd"] + other.d["mrd"]
         
         try:
             ### Verify that same file is not present twice
@@ -1120,7 +1173,7 @@ class ListWindows(VidjilJson):
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity):
+        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity) or isinstance(obj, MRD):
             result = {}
             for key in obj.d :
                 result[key]= obj.d[key]
@@ -1141,6 +1194,13 @@ class ListWindows(VidjilJson):
         if "samples" in obj_dict:
             obj = ListWindows()
             obj.d=obj_dict
+            return obj
+
+        if "coefficients" in obj_dict:
+            obj = MRD()
+            obj.d=obj_dict
+            # TODO: make this more generic
+            obj.d["number"] = len(obj_dict['prevalent'])
             return obj
 
         if "id" in obj_dict:
