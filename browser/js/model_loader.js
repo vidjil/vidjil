@@ -460,6 +460,10 @@ Model_loader.prototype = {
                         clone[key][idx] = dict[id][key];
                     }
             }
+        } else {
+            analysis.id = []
+            analysis.order = []
+            analysis.stock_order = []
         }
 
         // Fix case of error where same timepoint is present multiple time in order
