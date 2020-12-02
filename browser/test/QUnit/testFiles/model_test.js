@@ -345,9 +345,6 @@ QUnit.test("model: analysis sample data application", function(assert) {
     assert.equal(bool, true, "sample fields filtered");
     assert.equal(ff.length, 2, "remaining sample fields");
 
-    var order = m.calculateOrder([0, 1, 5, 2, 3]);
-    assert.deepEqual(order, [0, 1, 4, 2, 3], "reorder array of order values");
-
     var dict = m.buildDict(["1", "3", "4", "6"], ["1", "3", "4", "5"]);
     assert.deepEqual(dict, {"1":{}, "3":{}, "4":{}, "5":{}, "6":{}}, "build a dict of all present ids");
 
