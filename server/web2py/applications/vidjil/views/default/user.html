@@ -39,6 +39,23 @@ demo login: <i>demo@vidjil.org</i>
 </p>
 
 <div id="login_messages" class="message_container"></div>
+
+
+{{ if not hasattr(defs, 'HEALTHCARE_COMPLIANCE') or not defs.HEALTHCARE_COMPLIANCE: }}
+<p>
+  <span class='warn'><b>⚠️ Research Use Only.</b></span>
+  This server is not compliant for clinical use and comes with no warranty.
+  See options for using Vidjil while <a href="http://www.vidjil.org/doc/healthcare">hosting healthcare data</a>.
+</p>
+{{ else: }}
+<p>
+  ☤ This server has been set up to be <b>compliant for clinical use</b> by the server maintainers.
+  You should ensuire that you comply with the applicable regulations in your country
+  concerning storage and processing of healthcare data.
+</p>
+{{ pass }}
+
+
 <hr />
 
 <h3>About</h3>
@@ -63,9 +80,6 @@ if you use the Vidjil web platform for your research.
 <h4>Disclaimer</h4>
 <p>Vidjil is free software, and you are welcome to redistribute it
   under <a href='http://git.vidjil.org/blob/master/doc/LICENSE'>certain conditions</a>.
-This software is for research use only and comes with no warranty.
-  Moreover, you should ensure that you comply with the applicable regulations in your country
-  concerning storage and processing of health-related personal data.
 </p>
 
 {{pass}}
