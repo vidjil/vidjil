@@ -69,6 +69,7 @@ class TestTag < ServerTest
   def test_search_sample
     table = go_to_list
 
+    $b.devel_mode()
     $b.span(:class => "button2", :text => "compare samples/patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
