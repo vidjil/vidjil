@@ -47,7 +47,7 @@
       <div class="clear"></div>
     </div>
 {{ pass }}
-{{ if hasattr(defs, 'HEALTHCARE_COMPLIANCE') and not defs.HEALTHCARE_COMPLIANCE: }}
+{{ if not hasattr(defs, 'HEALTHCARE_COMPLIANCE') or not defs.HEALTHCARE_COMPLIANCE: }}
     <div>
       <p>
         <span class='warn'><b>⚠️ Research Use Only.</b></span>
