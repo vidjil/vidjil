@@ -27,7 +27,7 @@
                         <span class="button_token {{=r['sample_type']}}_token">{{=set_type}}s</span>,
                         <span class="{{=set_type}}_num_samples devel-mode">({{=r['num_samples']}} samples)</span>
                         <span>{{=result[role][set_type]['num_jobs']}} processes last month
-                          <span style='font-size: 80%;'>{{=result[role][set_type]['statuses']}}</span>
+                          <span title='C: Completed, F: Failed, Q: Queued, S: Stopped' style='font-size: 80%;'>{{=result[role][set_type]['statuses']}}</span>
                         </span>
                     </div>
                     {{pass}}
