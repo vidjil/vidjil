@@ -15,16 +15,15 @@ class TestMyAccount < ServerTest
       login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
       Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     end
-    $b.devel_mode()
   end
 
   def  go_to_my_account
-    $b.a(class: 'button', text: 'my account').click
+    $b.a(class: 'button', text: 'usage').click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
   end
 
   def go_to_jobs
-    $b.a(class: 'button', text: 'my jobs').click
+    $b.a(class: 'button', text: 'processes').click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
