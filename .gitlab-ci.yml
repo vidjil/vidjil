@@ -309,7 +309,7 @@ old-chrome-browser-functional-external-chrome:
     - schedules
     - /tutorial/
   tags:
-    - web
+    - web-pandoc
 
 .browser-tutorial-chrome:
   extends: .browser-tutorial
