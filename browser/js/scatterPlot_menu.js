@@ -43,8 +43,8 @@ function ScatterPlot_menu(default_preset) {
         "compare two samples" :     { "x" : "size",                     "y": "size (other sample)"},
       //"plot by similarity" :      { "x" : "tsneX",                    "y": "tsneY"},
       //"plot by similarity and by locus" :             { "x" : "tsneX_system", "y": "tsneY_system"},
-        "clone average read length / GC content " :     { "x":"clone average read length",    "y" : "GC content"},
-        "clone consensus coverage / GC content " :      { "x": "clone consensus length",      "y" : "GC content"},
+        "clone average read length / GC content" :     { "x":"clone average read length",    "y" : "GC content"},
+        "clone consensus coverage / GC content" :      { "x": "clone consensus length",      "y" : "GC content"},
         "number of samples sharing each clone" :        { "x": "number of samples",           "y" : "locus"},
       //"interpolated length between BIOMED2 primers (inclusive)" : { "x": "primers", "y" : "size"},
         "number of deletions for the segment V/5 in 3" :{ "x": "V/5' deletions in 3'"},
@@ -70,6 +70,7 @@ ScatterPlot_menu.prototype = {
         anchor.className = "sp_menu_anchor";
         var menu = document.createElement('div');
         menu.className = "sp_menu";
+        menu.id        = this.id+"_sp_menu";
         var content = document.createElement('div');
         content.className = "sp_menu_content";
         
