@@ -285,7 +285,7 @@ Model.prototype = {
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].reset();
         }
-        
+
     },
     
     
@@ -380,6 +380,7 @@ Model.prototype = {
                 $("#external_normalization").show();
             }
         }
+        this.displayTop(50) // reset value
     }, //end initClones
 
 changeCloneNotation: function(cloneNotationType, update, save) {
@@ -994,7 +995,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 div.style.color = ""
             }
         } catch (err) {
-            // ne rien faire.
+            // Don't exist into Qunit pipeline
         }
     },
 
@@ -1427,7 +1428,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (html_label !== null) {
             var count = 0;
             for (var i=0; i<this.clones.length; i++){
-                if (this.clone(i).top < top && this.clone(i).hasSizeConstant() ) count++;
+                if (this.clone(i).top <= top && this.clone(i).hasSizeConstant() ) count++;
                 //todo: test ?
             }
             html_label.innerHTML = count + ' clones (top ' + top + ')' ;
