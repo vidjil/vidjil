@@ -460,6 +460,13 @@ Model_loader.prototype = {
                         clone[key][idx] = dict[id][key];
                     }
             }
+            if (!("order" in analysis)){
+                // Possible case for first analysis. In this case, don't hide previous samples
+                analysis.order = []
+                for (var j = 0; j < analysis.id.length; j++) {
+                    analysis.order.push( j )
+                }
+            }
         } else {
             analysis.id = []
             analysis.order = []

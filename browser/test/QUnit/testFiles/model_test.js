@@ -358,7 +358,7 @@ QUnit.test("model: analysis sample data application", function(assert) {
     dest = {"original_names": ["1", "4", "2"], "val": ["a", "b", "c"], "lav": ["c", "b", "a"]};
     src = {"id": ["1", "2", "3"], "val": ["f", "o", "o"]};
     var res = m.copySampleFields(dest, src);
-    var expected = {"original_names": ["1", "4", "2"], "val": ["f", "b", "o"], "lav": ["c", "b", "a"],"order": [1],"stock_order": [0, 2, 1]};
+    var expected = {"original_names": ["1", "4", "2"], "val": ["f", "b", "o"], "lav": ["c", "b", "a"],"order": [0, 2, 1],"stock_order": [0, 2, 1]};
     assert.deepEqual(res, expected, "copy all relevant fields from analysis to samples");
 
     m.parseJsonData(json_data, 100);
