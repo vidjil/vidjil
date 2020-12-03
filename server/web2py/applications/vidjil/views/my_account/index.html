@@ -1,7 +1,7 @@
 {{extend 'db_layout.html'}}
 
 <div>
-    <h3>My Account &ndash;
+    <h3>Stats &ndash;
       {{ if request.vars["filter"]: }}
         {{=request.vars["filter"]}}
       {{ else: }}
@@ -26,7 +26,7 @@
                         <span class="{{=set_type}}_num_sets">{{=r['num_sets']}}</span>
                         <span class="button_token {{=r['sample_type']}}_token">{{=set_type}}s</span>,
                         <span class="{{=set_type}}_num_samples devel-mode">({{=r['num_samples']}} samples)</span>
-                        <span>{{=result[role][set_type]['num_jobs']}} jobs last month
+                        <span>{{=result[role][set_type]['num_jobs']}} processes last month
                           <span style='font-size: 80%;'>{{=result[role][set_type]['statuses']}}</span>
                         </span>
                     </div>
@@ -81,7 +81,7 @@
     <br />
     <div class="db_block">
         <div class="db_block_left">
-            filter
+            filter on tags
             <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('my_account/index', {'filter' : this.value, 'group_ids': {{=group_ids}}  } )"
             onfocus="new VidjilAutoComplete().setupTags(this);"
             data-needs-atwho="true" data-keys="{{=involved_group_ids}}">
