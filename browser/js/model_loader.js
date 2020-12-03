@@ -490,33 +490,64 @@ Model_loader.prototype = {
             }
         }
 
-        // Delete values of analysis that are not present in current loaded samples
-        var pos = 0
-        for (var delpos = 0; delpos < analysis.id.length; delpos++) {
-            var analysis_file = analysis.id[delpos]
-            if (samples.original_names.indexOf(analysis_file) == -1){
-                // delete this value and decrease greater values
-                analysis.id.splice(delpos,1); // remove file
-                analysis.order = removeEltAndDecrease(analysis.order, delpos)
-                analysis.stock_order = removeEltAndDecrease(analysis.stock_order, delpos)
-                delpos = delpos-1
-            } else { pos += 1 }
-        }
+        this.delRemovedSample(analysis, samples)
 
-        pos = analysis.id.length
-        // Add values of samples that are not present in analysis
-        for (var addpos = 0; addpos < samples.original_names.length; addpos++) {
-            var sample_file = samples.original_names[addpos]
-            if (analysis.id.indexOf(sample_file) == -1){
-                analysis.id.push( sample_file )
-                analysis.order.push(pos)
-                analysis.stock_order.push(pos)
-                pos += 1
-            }
-        }
         clone.order = analysis.order
         clone.stock_order = analysis.stock_order
         return clone;
+    },
+
+
+    /**
+     * Make housekeeping of order_stock_order field of analysis
+     * Allow to remove deleted samples and add new one and keep a consistant order
+     * @param {string} analysis - json_text / content of .analysis file
+     * @param {string} samples  - json_text / content of .vidjil file
+     * */ 
+    delRemovedSample: function (analysis, samples) {
+        var self = this
+
+        var current_names  = samples.original_names
+        var analysis_names = analysis.id
+        var order = analysis.order
+        var stock = analysis.stock_order
+
+        // Convert value into filename and delete delted samples from arrays
+        // ... for order field
+        for (var i = 0; i < order.length; i++) {
+            order[i] = analysis_names[order[i]]
+        }
+        for (var k = order.length - 1; k >= 0; k--) {
+            if (current_names.indexOf(order[k]) == -1){
+                order.splice(k, 1)
+            }
+        }
+
+        // ... for stock_order field
+        for (var j = 0; j < stock.length; j++) {
+            stock[j] = analysis_names[stock[j]]
+        }
+        for (var l = stock.length - 1; l >= 0; l--) {
+            if (current_names.indexOf(stock[l]) == -1){
+                stock.splice(l, 1)
+            }
+        }
+
+        // Add new samples
+        for (var m = 0; m < current_names.length; m++) {
+            if (stock.indexOf(current_names[m]) == -1){
+                order.push(current_names[m])
+                stock.push(current_names[m])
+            }
+        }
+
+        // retro convert filename into position in the loaded analysis
+        for (var p = 0; p < order.length; p++) {
+            order[p] = current_names.indexOf(order[p])
+        }
+        for (var q = 0; q < stock.length; q++) {
+            stock[q] = current_names.indexOf(stock[q])
+        }
     },
 
 
