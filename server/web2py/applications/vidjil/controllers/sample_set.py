@@ -811,7 +811,12 @@ def getFusedStats(fuse):
                 result_index = data['samples']['results_file_id'].index(results_file_id)
             elif "original_names" in data['samples']:
                 basenames = [os.path.basename(x) for x in data['samples']['original_names']]
-                result_index = basenames.index(os.path.basename(res['sequence_file']))
+                result_basename = os.path.basename(res['sequence_file']) if res['sequence_file'] else None
+                if result_basename in basenames:
+                    result_index = basenames.index(result_basename)
+                else:
+                    # No corresponding data (old file ?), we skip this result_file
+                    continue
 
             sorted_clones = sorted(top_clones, key=lambda clone: clone['reads'][result_index], reverse=True)
             if 'name' in sorted_clones[0]:
