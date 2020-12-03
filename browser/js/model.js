@@ -1396,13 +1396,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
 
         this.displayTop();
-        try {
-            document.getElementById("top_slider").min = 5
-            document.getElementById("top_slider").max = 100
-            document.getElementById("top_slider").value = 10
-        } catch (err) {
-            // Don't exist into Qunit pipeline
-        }
     },
 
 
