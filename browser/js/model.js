@@ -1701,18 +1701,21 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             tmp[j].sort(compare);
         }
 
-        //reset cluster
+        //reset clusters
         for (var k = 0; k < this.clones.length; k++) {
             this.clusters[k] = []
+            this.clone(k).mergedId = undefined
         }
 
-        //new cluster
+        //new clusters
         for (var l in tmp) {
-            this.clusters[tmp[l][0]] = tmp[l]
-            this.clusters[tmp[l][0]].name = l
+            var cluster = tmp[l]
+            var cluster_main_clone = tmp[l][0]
+            this.clusters[cluster_main_clone] = cluster
+            this.clusters[cluster_main_clone].name = l
 
-            for (var m = 1; j < tmp[l].length; j++) {
-                this.clusters[tmp[l][m]] = []
+            for (var m = 1; m < tmp[l].length; m++) {
+                this.clone(tmp[l][m]).mergedId = cluster_main_clone 
             }
         }
         this.update()
@@ -1753,6 +1756,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         for (var i = 0; i < this.clones.length; i++) {
             this.clusters[i] = [i]
+            this.clone(i).mergedId = undefined
         }
 
         this.update()
@@ -1775,9 +1779,18 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     restoreClusters: function () {
         if (this.clusters_copy.length > 0){
             this.clusters = this.clusters_copy.pop()
+            
+            for (var c = 0; c < this.clones.length; c++) {
+                this.clone(c).mergedId = undefined
+            }
+            for (var i = 0; i < this.clusters.length; i++) {
+                var cluster = this.clusters[i]
+                for (var j = 1; j < cluster.length; j++) {
+                    this.clone(cluster[j]).mergedId = cluster[0]
+                }
+            }
             this.update()
         }
-        
     },
 
 ////////////////////////////////////
