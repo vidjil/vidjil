@@ -118,6 +118,38 @@ class TestScatterplot < BrowserTest
     assert (  axis[3].text == "0.01" ), ">> incorrect fourth legend, got '" + axis[3].text + "', expected '0.01'"
   end
 
+  def test_05_multiple_select_with_inapropriate_distrib_clone
+    ## reset, time 0, preset 0
+    $b.send_keys 0
+    $b.graph_x_legend("0").fire_event('click')
+    $b.update_icon.wait_while(&:present?)
+
+    slider = $b.menu_item("top_slider")
+    slider.click
+    $b.menu_filter.hover
+    slider.send_keys :arrow_left
+    slider.send_keys :arrow_left
+    slider.send_keys :arrow_left
+    
+    $b.clone_in_list("0").click
+    $b.update_icon.wait_while(&:present?)
+    assert (     $b.clone_in_segmenter('0').present? ), ">> First click; Correct selection of clone 0 by click in scatterplot"
+    assert ( not $b.clone_in_segmenter('1').present? ), ">> First click; Clone 1 should not be present in segmenter"
+    # assert ( not $b.clone_in_scatterplot("18").present? ), "distrib clone is present"
+
+    $b.send_keys 4
+    $b.update_icon.wait_while(&:present?)
+    $b.send_keys 0
+    $b.update_icon.wait_while(&:present?)
+
+    circle_18 = $b.element(:id => "visu_circle18")
+    circle_18.fire_event('click') # allow to click if clone is not visible or under another element
+
+    # control by segmenter the curent state of selection
+    segmenter_stat = $b.div(:id => "segmenter").element(:class => "stats_content")
+    assert ( segmenter_stat.text.include? "1 clone, 50 reads (20.00%)" ), "segmenter show correct information of selection (without selection of distrib clone)"
+  end
+
   def test_07_open_click_by_dblclick
      ## reset, time 0, preset 0
     $b.send_keys 0
