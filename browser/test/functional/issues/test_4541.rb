@@ -77,6 +77,16 @@ class TestGraph < BrowserTest
     assert (    $b.graph_x_legend('2').text == 'file2_name')
   end
 
+  def test_06_load_analysis_duplicate_in_order
+    set_browser("/browser/test/data/issues/issues_4541/4541_06.fused", "/browser/test/data/issues/issues_4541/4541_06.analysis")
+    assert ( $b.span(:id => "visu2_title").text == "4 / 5" ), "Ratio show is correct at init"
+    assert (    $b.graph_x_legend('4').text == 'Rechute')
+    assert (    $b.graph_x_legend('1').text == 'Fu-1')
+    assert (not $b.graph_x_legend('2').present?)
+    assert (    $b.graph_x_legend('0').text == 'file_diag_1')
+    assert (    $b.graph_x_legend('3').text == 'file_fu_3')
+  end
+
 
   # Not really a test
   def test_zz_close
