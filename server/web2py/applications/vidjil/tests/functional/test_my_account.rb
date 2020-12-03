@@ -18,7 +18,7 @@ class TestMyAccount < ServerTest
   end
 
   def  go_to_my_account
-    $b.a(class: 'button', text: 'stats').click
+    $b.a(class: 'button', text: 'usage').click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
   end
 
