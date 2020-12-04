@@ -83,7 +83,10 @@ const char* const segmented_mesg[] = { "?",
                                        "UNSEG too short w",
                                       } ;
 
-
+// Unproductivity causes
+#define UNPROD_TOO_SHORT     "too-short"
+#define UNPROD_OUT_OF_FRAME  "out-of-frame"
+#define UNPROD_STOP_CODON    "stop-codon"
 
 /**
  * An alignment box (AlignBox) gather all parameters for a recombined gene segment (V, D, J, other D...)
