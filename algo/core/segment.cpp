@@ -1311,9 +1311,12 @@ void FineSegmenter::findCDR3(){
     return ;
   }
 
+  // Now a junction is detected. Is it productive?
+  JUNCTIONproductive = false ;
+
   // We require at least one more nucleotide to export a CDR3
   if (JUNCTIONend - JUNCTIONstart + 1 < 7) {
-    JUNCTIONproductive = false ;
+    JUNCTIONunproductive = UNPROD_TOO_SHORT;
     return ;
   }
   
@@ -1326,10 +1329,25 @@ void FineSegmenter::findCDR3(){
   if (CDR3nuc.length() % 3 == 0)
     {
       CDR3aa = nuc_to_aa(CDR3nuc);
+      string sequence_startV_stopJ = subsequence(getSequence().sequence, box_V->start+1, box_J->end+1);
+      int frame = (JUNCTIONstart-1 - box_V->start) % 3;
+
+      if (hasInFrameStopCodon(sequence_startV_stopJ, frame))
+      {
+        // Non-productive CDR3
+        JUNCTIONunproductive = UNPROD_STOP_CODON;
+      }
+      else
+      {
+        // Productive CDR3
+        JUNCTIONproductive = true;
+      }
     }
   else
     {
       // Non-productive CDR3
+      JUNCTIONunproductive = UNPROD_OUT_OF_FRAME;
+
       // We want to output a '#' somewhere around the end of the N, and then restart
       // at the start of the first codon fully included in the germline J
       int CDR3startJfull = JUNCTIONend - ((JUNCTIONend - box_J->start) / 3) * 3 + 1 ;
@@ -1342,11 +1360,7 @@ void FineSegmenter::findCDR3(){
   JUNCTIONaa = nuc_to_aa(subsequence(getSequence().sequence, JUNCTIONstart, CDR3start-1))
     + CDR3aa + nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, JUNCTIONend));
 
-  string sequence_startV_stopJ = subsequence(getSequence().sequence, box_V->start+1, box_J->end+1);
-  int frame = (JUNCTIONstart-1 - box_V->start) % 3;
   // Reminder: JUNCTIONstart is 1-based
-
-  JUNCTIONproductive = (CDR3nuc.length() % 3 == 0) && (!hasInFrameStopCodon(sequence_startV_stopJ, frame));
 }
 
 void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
@@ -1412,6 +1426,10 @@ void FineSegmenter::toOutput(CloneOutput *clone){
             {"aa", JUNCTIONaa},
             {"productive", JUNCTIONproductive}
         });
+        if (JUNCTIONunproductive.length())
+        {
+          clone->set(KEY_SEG, "junction", "unproductive", JUNCTIONunproductive);
+        }
     }
   }
 }

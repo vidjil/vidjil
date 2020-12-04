@@ -193,6 +193,7 @@ protected:
   int JUNCTIONstart, JUNCTIONend;
   string JUNCTIONaa;
   bool JUNCTIONproductive;
+  string JUNCTIONunproductive;
 
   int CDR3start, CDR3end;
   string CDR3nuc;
