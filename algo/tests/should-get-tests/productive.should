@@ -2,7 +2,7 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG $VIDJIL_DATA/productive_stop_outframe.fa
 !OPTIONS: --mod jR
 
-$ Two identical junctions, and the last one with a spurious nucleotide
+$ Two identical junctions, and one with a spurious nucleotide
 :clones[0].seg.junction.aa: CATWDRKNYYKKLF
 :clones[1].seg.junction.aa: CATWDRKNYYKKLF
 :clones[2].seg.junction.aa: CATWDRK#NYYKKLF
@@ -11,8 +11,10 @@ $ But only one productive
 :clones[0].seg.junction.productive: False
 :clones[1].seg.junction.productive: True
 :clones[2].seg.junction.productive: False
+:clones[3].seg.junction.productive: False
 
 $ Cause of unproductivity
 :clones[0].seg.junction.unproductive: stop-codon
 0:clones[1].seg.junction.unproductive
 :clones[2].seg.junction.unproductive: out-of-frame
+:clones[3].seg.junction.unproductive: too-short

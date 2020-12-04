@@ -12,3 +12,8 @@ gaattattataagaaactctttggcagtggaacaacactggttgtcacag
 >TRGV1*01 0/AAG/0 TRGJ1*01  [TRG]  {CATWDRK#NYYKKLF}
 ctgcaaaatctaattaaaaaTGAttctgggttctattactgtgccacctgggacaggAAG
 gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+# Too short
+>TRGV1*01 15//19 TRGJ1*01  [TRG]  {}
+ctgcaaaatctaattaaaaaTGAttctgggttctattactgt
+tttggcagtggaacaacactggttgtcacag
