@@ -2003,11 +2003,18 @@ Clone.prototype = {
             }
         }
 
+
         if (mode == "bar"){
             return (x.indexOf(axes[0]) != -1)
         } else {
-            // console.default.warn("same_axes_as_scatter: The scatter mode is not correct; '"+mode+"'")
-            return x.equals(axes)
+            // if scatterplot is in "one_system" mode
+            if (this.m.system != "multi" || typeof this.m.system != 'undefined'){
+                var locus = this.getLocus()
+                var same_locus = (this.m.current_system == locus)
+                return (x.equals(axes) && same_locus)
+            } else {
+                return x.equals(axes)
+            }
         }
     },
 

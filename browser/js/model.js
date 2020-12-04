@@ -66,6 +66,7 @@ function Model() {
     this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
     this.available_axes = Axis.prototype.available()
+    this.current_system = undefined
 
     setInterval(function(){return self.updateIcon()}, 100); 
 }
@@ -324,6 +325,7 @@ Model.prototype = {
                 }
             }
         }
+        this.current_system = system
         
         return  this.germlineV.load(system, "V", this)
                     .germlineD.load(system, "D", this)

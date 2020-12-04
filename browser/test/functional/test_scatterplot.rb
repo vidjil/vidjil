@@ -131,6 +131,8 @@ class TestScatterplot < BrowserTest
     slider.send_keys :arrow_left
     slider.send_keys :arrow_left
     
+    $b.send_keys [:control, :shift, 'k']
+
     $b.clone_in_list("0").click
     $b.update_icon.wait_while(&:present?)
     assert (     $b.clone_in_segmenter('0').present? ), ">> First click; Correct selection of clone 0 by click in scatterplot"
