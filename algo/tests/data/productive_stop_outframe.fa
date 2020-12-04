@@ -7,3 +7,8 @@ gaattattataagaaactctttggcagtggaacaacactggttgtcacag
 >TRGV1*01 0/AA/0 TRGJ1*01  [TRG]  {CATWDRKNYYKKLF}
 ctgcaaaatctaattaaaaaTGAttctgggttctattactgtgccacctgggacaggAA
 gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+# Not in-frame
+>TRGV1*01 0/AAG/0 TRGJ1*01  [TRG]  {CATWDRK#NYYKKLF}
+ctgcaaaatctaattaaaaaTGAttctgggttctattactgtgccacctgggacaggAAG
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
