@@ -18,6 +18,46 @@ To work with actual data, the easiest way is to copy `js/conf.js.sample` to `js/
 This will unlock the `patients` menu and allow your local client
 to access the public server at <http://app.vidjil.org/>.
 
+## Installation with Docker
+
+This section is intended for people wanting to install a vidjil client using docker
+WITHOUT a vidjil server. If you wish to install a vidjil server altogether with your client
+please refer to the docker section in dev-server.md.
+
+### Setup 
+
+The config file for the vidjil client who will be used can be found at vidjil-client/conf/conf.js
+
+Since this instalation does not provide a Vidjil server it is recommended to disable the use of databases,
+
+``` json
+"use_database" : false,
+```
+
+or to provide an URL to connect to an existing one online.
+
+``` json
+"db_address" : "https://VIDJILSERVERURL/vidjil",
+```
+
+### Starting the environment
+
+The vidjil Docker environment is managed by Docker Compose since it is composed of 
+several different services, but a single of those services, nginx, is needed to run the vidjil client,
+for a more detailled explanation on other services see dev-server.md.
+
+Ensure your docker-compose.yml contains the correct reference to the
+vidjil-client image you want to use. Usually this will be vidjil/vidjil-client:latest,
+but more tags are available at <https://hub.docker.com/r/vidjil/vidjil/tags/>.
+
+Running the following command will automatically download any missing
+images and start the environment:
+
+``` bash
+docker-compose up nginx
+```
+
+
 ## Client API and permanent URLs
 
 The client can be opened on a data file specified from a `data` attribute,
