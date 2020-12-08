@@ -72,15 +72,19 @@ Both GET and POST requests are accepted.
 Note that the `browser/index.html` file and the `.vidjil/.analysis` files should be hosted on the same server.
 Otherwise, the server hosting the `.vidjil/.analysis` files must accept cross-domain queries.
 
-The client can also load data from a server (see below, requires logging), as in <http://app.vidjil.org/?set=3241&config=39>
+The client can also load data from a server (see below, requires logging) using url parameters to pass file identifiers,
+as in <http://app.vidjil.org/?set=3241&config=39>
 
 |             |               |
 | ----------- | ------------- |
 | `set=xx`    | sample set id |
-| `config=xx` | config id     |
+| `config=yy` | config id     |
+
+or directly inside the UTL for a shortened version, as in <http://app.vidjil.org/3241-39/>
+
 
 Older formats (patients, run…) are also supported for compatibility but deprecated.
-Moreover, the state of the client can be encoded in the URL, as in <http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31>
+Moreover, the state of the client can be encoded in the URL, as in <http://app.vidjil.org/3241-39/?plot=v,size,bar&clone=11,31>
 
 |                  |                       |
 | ---------------- | --------------------- |
