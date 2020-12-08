@@ -508,6 +508,14 @@ The productivitiy as computed by Vidjil-algo may differ from what computes
 other software. For instance, as of September 2019, IMGT/V-QUEST removes by default
 insertions and deletions from the sequences to compute the productivity, as it
 considers them as sequencing errors.
+
+
+## Does V(D)J designations and predictivity change between samples ?
+In some case, V(D)J designations and productivity of a clone may differ between samples. 
+This can be du to error in the sequence given (reads longer/shorter, stretch) or du to evolution in the vidjil algorithm (between older and recent release). 
+In these cases, since release 2020.12, a warning is shown to specify this variation. See <http://gitlab.vidjil.org/blob/dev/doc/warnings.md> for more informations.
+
+
 # Can I see all the clones and all the reads ?
 
 The interest of NGS/RepSeq studies is to provide a deep view of any

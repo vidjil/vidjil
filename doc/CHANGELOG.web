@@ -2,6 +2,27 @@
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
+## 2020-12-09
+
+Add  two new warning intersample
+* Add warning to show variation in V(D)J designation or productivity 
+  prediction between samples (#4566, #4578)
+
+Improve quality testing
+* The tutotiral is now tested, step by step (#2880)
+
+Improve internal database usage
+* Refactor some queries of the database. This allow to get more informations in the same query
+  In exchange, the result come a little more slower. (#3169)
+
+
+Other points
+* Fix error on clusterBy function from the interface (#4495)
+* It is now possible to paste data for patients creation directly from clipboard. 
+  See 
+
+
+
 ## 2020-07-13
 
 Better study full repertoires
