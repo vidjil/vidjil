@@ -73,6 +73,32 @@ If you need to give permissions to all users of the server, you can simply
 do that by given permission to public group.
 You can also give permissions to some specifics users of the list.
 
+## Adding additional step before and after fuse
+
+If needed, it is possible to include your own additional processing step before and after fuse.
+Here is the way to add it on your server:
+  - Create a python script that make your analysis. 
+    This script need to take input file with `-i` argument, and export with `-o`. 
+    This can also be a wrapper that will launch another pipeline with multiple process.
+  - Adapt the path where preprocess will be stored and available. 
+    This can be done by modify `PRE_PROCESS_DIR` variable definition in the `tools/defs.py` file. 
+    Default path is relative to the `defs/py` file, so `.` value will be interpreted as `tools/` directory.
+  - Add call for it into process page. This should be done in the `Fuse command` field. 
+    Script call should be done with `--pre` or `--post` (depending of the waited time trigger) 
+    follow by the name of the script.
+
+For exemple, the MRD script (author Joao Medianis; Boldrini center, Brasil) 
+include into the vidjil pipeline 
+is setted as follow:
+```
+-t 100 --pre spike-normalization.py  
+```
+
+Warning: Add an external script can be dangerous for various reason. 
+This can be a breaking reach of your server, or even an important 
+computation task that will overload it. 
+Be sure of scripts that you add before adding them in production.
+
 # Users, groups, and permissions
 
 ## Users
