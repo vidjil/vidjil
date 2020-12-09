@@ -152,19 +152,19 @@ relationship to that parent.
 
 ## Creating groups
 
-When creating the groups for an organisation the parent group MUST be the
+When creating the groups for an organization the parent group MUST be the
 first group created. Assigning a parent to a group cannot be done after
 creation. A group cannot change parents.
 Users can be created at any time. They can also be added
 or removed from groups whenever it is convenient
 
-### Example: create organisation Foobar with sub groups/roles
+### Example: create organization with sub groups/roles
 
-  - Create group Foobar (select None for parent group).
-  - Create roles (eg. Technician, Engineer, Doctor). Be sure to select
-    Foobar as the parent group.
+  - Create group, for example `lab_xxx` (select `None` for parent group).
+  - Create roles (eg. `Technician`, `Engineer`, `Doctor`). Be sure to select
+    `lab_xxx` as the parent group.
   - From the group's detailed view, 
-    set the permissions for the newly created groups Technician, Engineer and Doctor.
+    set the permissions for the newly created groups `Technician`, `Engineer` and `Doctor`.
     Be sure to
     assign at least the 'view patient' permission or members will not be able
     to see any patients from the parent group.
@@ -188,6 +188,11 @@ to the whole group.
   id of this user.
 - Attach the user to this new group `user_xxx`
 - Create the new users and attach them to the first group `lab_xxx`.
+
+### Adding roles to an organization
+
+XXX TODO XXX
+
 
 ## Adding an user to a group
 
