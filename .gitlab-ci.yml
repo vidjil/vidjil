@@ -322,7 +322,6 @@ old-chrome-browser-functional-external-chrome:
 
 ff32-browser-tutorial:
   extends: .browser-tutorial
-  allow_failure: true
   variables:
     FIREFOX_VERSION: 32
 
