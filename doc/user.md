@@ -437,29 +437,24 @@ The different permissions that can be attributed are:
 
 ## Usage and processes pages
 
-These pages allow to follow the activity that you or your group made on the server.
+These pages allow to follow your activity and the activity of your groups.
 
 ### Usage page
 
-On this page, you will be able to see data and processing done for each of your groups.
+The usage page detail, for each of your groups, data usage and last processes.
 For each group, you will find:
-  - A reminder of the rights that you have on it is present. 
-  - For each type of sets (patient/runs/sets), the number of entries, of process done the last month, the status of them (XXX C/computed, E/error ? )
-  - List of tags used
-  - Result list and links to last process (XXX limits)
+  - A reminder of your permissions in that group (full permissions: admin anon create read run save upload,
+    or some more restricted permissions)
+  - The number of each type of sets (patient/runs/sets), with the number of processes done the last month and their status
+    (C: Completed, F: Failed, Q: Queued, S: Stopped)
+  - The list of the most frequent tags
+  - Links to last processes
 
 ### Processes page
 
-On this page you will get a table filled with the list of last analysis made. 
-You will get complement informations for each analysis:
-  - Related patient/runs/sets link and name
-  - Filename of the analysis and related informations
-  - Config of the analysis
-  - Status of the analysis (QUEUED, COMPLETED, ERROR)
-  - Date of execution
+This page list the last processes that you ran, with information such as its configuration and its status.
+Each sample is provided with links to the related patient/runs/sets.
 
-
-## Process page
 
 # How do you define clones, their sequences, their V(D)J designation and their productivity?
 
