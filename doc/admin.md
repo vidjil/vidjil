@@ -5,21 +5,21 @@ This help covers administrative features that are mostly accessible from the web
 and is complementary to the [Docker/Server documentation](server.md).
 Users should consult the [Web Platform User Manual](user.md).
 
-# Analysis configurations
-
-This page shows the configurations list. 
-Config are just parameters for running Vidjil-algo or other V(D)J analysis software.
-
-Each configuration has permissions for 
+# Configuring pre-processes, processes and post-processes
 
 
-# Pre-process configurations
+## Pre-processes (after sample upload)
 
-Custom pre-processing steps can be added before launching an analysis,
-for example to filter out some reads, to demultiplex UMI or to merge paired-end reads.
+Custom pre-processing steps can be added.
+They are called right after the upload of each sample, before launching the main processes.
+They can be used, for example to filter out some reads, to demultiplex UMI or to merge paired-end reads.
 Admins can add new pre-processes, and users can select a pre-process if they are allowed to.
 
-## Adding a pre-process
+Warning:
+Adding externl program may bring additional security or performance issues.
+Be sure of scripts that you add before putting them on a production server.
+
+### Adding a pre-process
 
 Steps may differ if you use a plain-installation or a docker image.
 
@@ -73,31 +73,47 @@ If you need to give permissions to all users of the server, you can simply
 do that by given permission to public group.
 You can also give permissions to some specifics users of the list.
 
-## Adding additional step before and after fuse
 
-If needed, it is possible to include your own additional processing step before and after fuse.
-Here is the way to add it on your server:
-  - Create a python script that make your analysis. 
-    This script need to take input file with `-i` argument, and export with `-o`. 
-    This can also be a wrapper that will launch another pipeline with multiple process.
-  - Adapt the path where preprocess will be stored and available. 
-    This can be done by modify `PRE_PROCESS_DIR` variable definition in the `tools/defs.py` file. 
-    Default path is relative to the `defs/py` file, so `.` value will be interpreted as `tools/` directory.
-  - Add call for it into process page. This should be done in the `Fuse command` field. 
-    Script call should be done with `--pre` or `--post` (depending of the waited time trigger) 
-    follow by the name of the script.
+## Main process and "fuse" configuration
 
-For exemple, the MRD script (author Joao Medianis; Boldrini center, Brasil) 
-include into the vidjil pipeline 
-is setted as follow:
-```
--t 100 --pre spike-normalization.py  
-```
+This page shows the configurations list for the main analysis process.
+Config are just parameters for:
 
-Warning: Add an external script can be dangerous for various reason. 
-This can be a breaking reach of your server, or even an important 
-computation task that will overload it. 
-Be sure of scripts that you add before adding them in production.
+- **running Vidjil-algo or other V(D)J analysis software on each sample**,
+  producing a `.vidjil` file for each sample.
+  The default install sets up some default configs that should work for the majority of applications.
+
+- **``fusing'' (trough fuse.py) these results into a unique `.vidjil` file**.
+  The defaults options are `-t 100`, other options can be seen in the help of `fuse.py`,
+  possibly with additional pre- and post-processes (see below)
+
+Each configuration has permissions for some groups.
+
+
+## Pre- and post-processes (around fuse)
+
+It is possible to run further pre- or post-process scripts around the "fusing" of results
+by giving `--pre` and/or `--post` options to fue.
+These scripts can also be wrappers of other software.
+This can be useful to further process the results files, possibly taking into according to the result of several
+sample, as in a MRD setup developed by Joao Medianis (Boldrini center, Brasil).
+
+### Adding such a pre/post-process
+
+  - Your script need to take an input `.vidjil` file with `-i` argument, and export another `.vidjil` file with `-o`,
+    such as in the call `spike-normalization.py -i res-samples.vidjil -o res-samples.vidjil`
+
+  - The script should be available in the path referenced as `PRE_PROCESS_DIR` in `tools/defs.py`.
+    The default path is relative to the `defs/py` file, so `.`  will be interpreted as `tools/` directory.
+
+  - The script should be referenced in the `Fuse command` field of one "config" in the `processes config` page,
+    as for example in `-t 100 --pre spike-normalization.py`.
+    A `--pre` script will be called on each `.vidjil` file, before the actual fusing,
+    whereas a `--post` script will be called on the combined `.vidjil` file after the fusing.
+
+
+When the users selects this config, these pre- and post-processes will also be called.
+
 
 # Users, groups, and permissions
 
