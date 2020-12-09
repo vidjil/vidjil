@@ -18,7 +18,7 @@ class TestPreProcess < ServerTest
   end
 
   def go_to_list
-    $b.a(:class => "button", :text => "pre-process").click
+    $b.a(:class => "button", :text => "pre-process configs").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
