@@ -531,11 +531,17 @@ insertions and deletions from the sequences to compute the productivity, as it
 considers them as sequencing errors.
 
 
-## Does V(D)J designations and predictivity change between samples ?
-In some case, V(D)J designations and productivity of a clone may differ between samples. 
-This can be du to error in the sequence given (reads longer/shorter, stretch) or du to evolution in the vidjil algorithm (between older and recent release). 
-In these cases, since release 2020.12, a warning is shown to specify this variation. See <http://gitlab.vidjil.org/blob/dev/doc/warnings.md> for more informations.
+## How can there be discrepancies in annotations of a same clone in different samples?
 
+Sometimes, the "same" clone show different properties between different samples --
+as for exemple different V(D)J designations or productivity prediction.
+Warnings [W81 and W82](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) are now raised for such situations.
+
+Such differences may come from [the way sequences are clustered](/vidjil-format/#what-is-a-clone).
+When different sequences are clustered in a "same" clone,
+some of them may having shorter or longer consensus sequences, or a mutation, or a stretch.
+This can also be due to clustering results of different analysis programs, for example
+with different releases of vidjil-algo.
 
 # Can I see all the clones and all the reads ?
 
