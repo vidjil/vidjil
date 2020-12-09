@@ -16,8 +16,8 @@ They can be used, for example to filter out some reads, to demultiplex UMI or to
 Admins can add new pre-processes, and users can select a pre-process if they are allowed to.
 
 Warning:
-Adding externl program may bring additional security or performance issues.
-Be sure of scripts that you add before putting them on a production server.
+Adding an external program may bring additional security or performance issues.
+Make sure you trust scripts you need to add before putting them on a production server.
 
 ### Adding a pre-process
 
@@ -95,16 +95,16 @@ Each configuration has permissions for some groups.
 It is possible to run further pre- or post-process scripts around the "fusing" of results
 by giving `--pre` and/or `--post` options to fue.
 These scripts can also be wrappers of other software.
-This can be useful to further process the results files, possibly taking into according to the result of several
-sample, as in a MRD setup developed by Joao Medianis (Boldrini center, Brasil).
+This can be useful to further process the result files, possibly taking into account several result files
+ as in a MRD setup developed by Joao Medianis (Boldrini center, Brasil).
 
 ### Adding such a pre/post-process
 
-  - Your script need to take an input `.vidjil` file with `-i` argument, and export another `.vidjil` file with `-o`,
+  - Your script needs to take as an input a `.vidjil` file with `-i` argument, and export another `.vidjil` file with `-o`,
     such as in the call `spike-normalization.py -i res-samples.vidjil -o res-samples.vidjil`
 
   - The script should be available in the path referenced as `PRE_PROCESS_DIR` in `tools/defs.py`.
-    The default path is relative to the `defs/py` file, so `.`  will be interpreted as `tools/` directory.
+    The default path is relative to the `defs.py` file, so `.`  will be interpreted as `tools/` directory.
 
   - The script should be referenced in the `Fuse command` field of one "config" in the `processes config` page,
     as for example in `-t 100 --pre spike-normalization.py`.
@@ -112,7 +112,7 @@ sample, as in a MRD setup developed by Joao Medianis (Boldrini center, Brasil).
     whereas a `--post` script will be called on the combined `.vidjil` file after the fusing.
 
 
-When the users selects this config, these pre- and post-processes will also be called.
+When the users select this config, these pre- and post-processes will also be called.
 
 
 # Users, groups, and permissions

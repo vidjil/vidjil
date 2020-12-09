@@ -452,7 +452,7 @@ For each group, you will find:
 
 ### Processes page
 
-This page list the last processes that you ran, with information such as its configuration and its status.
+This page lists the last processes you ran, with information such as its configuration and its status.
 Each sample is provided with links to the related patient/runs/sets.
 
 
@@ -533,13 +533,13 @@ considers them as sequencing errors.
 
 ## How can there be discrepancies in annotations of a same clone in different samples?
 
-Sometimes, the "same" clone show different properties between different samples --
+Sometimes, the "same" clone shows different properties between different samples --
 as for exemple different V(D)J designations or productivity prediction.
 Warnings [W81 and W82](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) are now raised for such situations.
 
 Such differences may come from [the way sequences are clustered](/vidjil-format/#what-is-a-clone).
 When different sequences are clustered in a "same" clone,
-some of them may having shorter or longer consensus sequences, or a mutation, or a stretch.
+some of them may actually have different mutations or lengths even if they share the same window.
 This can also be due to clustering results of different analysis programs, for example
 with different releases of vidjil-algo.
 

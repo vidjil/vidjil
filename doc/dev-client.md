@@ -26,9 +26,9 @@ please refer to the docker section in dev-server.md.
 
 ### Setup 
 
-The config file for the vidjil client who will be used can be found at vidjil-client/conf/conf.js
+The config file that will be used by the client can be found at vidjil-client/conf/conf.js
 
-Since this instalation does not provide a Vidjil server it is recommended to disable the use of databases,
+Since this installation does not provide a Vidjil server it is recommended to disable the use of databases,
 
 ``` json
 "use_database" : false,
@@ -43,8 +43,8 @@ or to provide an URL to connect to an existing one online.
 ### Starting the environment
 
 The vidjil Docker environment is managed by Docker Compose since it is composed of 
-several different services, but a single of those services, nginx, is needed to run the vidjil client,
-for a more detailled explanation on other services see dev-server.md.
+several different services, but a single service, nginx, is required to run the vidjil client,
+for a more detailed explanation on other services see dev-server.md.
 
 Ensure your docker-compose.yml contains the correct reference to the
 vidjil-client image you want to use. Usually this will be vidjil/vidjil-client:latest,
@@ -80,7 +80,7 @@ as in <http://app.vidjil.org/?set=3241&config=39>
 | `set=xx`    | sample set id |
 | `config=yy` | config id     |
 
-or directly inside the UTL for a shortened version, as in <http://app.vidjil.org/3241-39/>
+or directly inside the URL for a shortened version, as in <http://app.vidjil.org/3241-39/>
 
 
 Older formats (patients, run…) are also supported for compatibility but deprecated.
