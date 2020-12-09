@@ -347,7 +347,7 @@ to your local IT staff or to the Vidjil team.
 
 Clicking on a patient, a run or a set give acccess to the "samples" page. Each sample is
 a `.fasta`, `.fastq`, `.gz` or `.clntab` file that will be processed by one or several
-pipelines with one or several *configurations* that set software options.
+pipelines with one or several *process configurations* that set software options.
 
 Depending on your granted access, you can add a new sample to the list (`+ sample`),
 download sample files when they are available (`dl`) or delete sequence files (`X`).
@@ -355,7 +355,7 @@ Note that sample files may be deleted (in particular to save server disk space),
 which is not the case for the results (unless the user wants so).
 
 You can see which samples have been processed with the selected
-config, and access to the results (`See results`, bottom right).
+process, and access to the results (`See results`, bottom right).
 
 ### Adding a sample
 
@@ -388,16 +388,16 @@ At the moment the only preprocess avalaible on the public server (<http://app.vi
     really depends on users and their sequencing protocols. You must choose to keep the fragment that most
     probably contains both a part of the V and the J genes.
 
-## Processing samples, configs
+## Processing samples and process configurations
 
 Depending on your granted accesses, you can schedule a processing for a sequence file (select a config and `run`).
 The processing can take a few seconds to a few hours, depending on the
-software lauched, the options set in the config, the size of the sample and the server load.
+software lauched, the options set in the process configuration, the size of the sample and the server load.
 
 The base human configurations with **vidjil-algo** are « TRG », « IGH », « multi » (`-g germline`), « multi+inc » (`-g germline -i`), « multi+inc+xxx » (`-g germline -i -2`, default advised configuration).
-See [Libraries and recombinations](locus.md) for information on these configurations.
-There are also configuration for other species and for other RepSeq algorithms, such as « MiXCR ».
-The server mainteners can add new configurations tailored to specific needs, contact us if you have other needs.
+See [Libraries and recombinations](locus.md) for information on these processes.
+There are also processes for other species and for other RepSeq algorithms, such as « MiXCR ».
+The server mainteners can add new process configurations tailored to specific needs, contact us if you have other needs.
 
 The « reload » button (bottom left) updates the view. It is useful to see if the status of the task changed.
 It should do `QUEUED` → `ASSIGNED` → `RUNNING` → `COMPLETED`.
@@ -435,10 +435,31 @@ The different permissions that can be attributed are:
   - View Details: Permissions to view patient/run/set data in an unencrypted manner for the patients/runs/sets of a group
   - Save: Permissions to save an analysis for the patients/runs/sets of a group
 
+## Usage and processes pages
+
+These pages allow to follow your activity and the activity of your groups.
+
+### Usage page
+
+The usage page detail, for each of your groups, data usage and last processes.
+For each group, you will find:
+  - A reminder of your permissions in that group (full permissions: admin anon create read run save upload,
+    or some more restricted permissions)
+  - The number of each type of sets (patient/runs/sets), with the number of processes done the last month and their status
+    (C: Completed, F: Failed, Q: Queued, S: Stopped)
+  - The list of the most frequent tags
+  - Links to last processes
+
+### Processes page
+
+This page lists the last processes you ran, with information such as its configuration and its status.
+Each sample is provided with links to the related patient/runs/sets.
+
+
 # How do you define clones, their sequences, their V(D)J designation and their productivity?
 
 The Vidjil web application allows to run several RepSeq algorithms.
-Each RepSeq algorithm (selected by « config », see above)
+Each RepSeq algorithm (selected by « process configuration », see above)
 has its own definition of what a clone is (or, more precisely
 a clonotype), how to output its sequence and how to assign a V(D)J designation.
 Knowing how clones are defined is important to be aware of the
@@ -508,6 +529,20 @@ The productivitiy as computed by Vidjil-algo may differ from what computes
 other software. For instance, as of September 2019, IMGT/V-QUEST removes by default
 insertions and deletions from the sequences to compute the productivity, as it
 considers them as sequencing errors.
+
+
+## How can there be discrepancies in annotations of a same clone in different samples?
+
+Sometimes, the "same" clone shows different properties between different samples --
+as for exemple different V(D)J designations or productivity prediction.
+Warnings [W81 and W82](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) are now raised for such situations.
+
+Such differences may come from [the way sequences are clustered](/vidjil-format/#what-is-a-clone).
+When different sequences are clustered in a "same" clone,
+some of them may actually have different mutations or lengths even if they share the same window.
+This can also be due to clustering results of different analysis programs, for example
+with different releases of vidjil-algo.
+
 # Can I see all the clones and all the reads ?
 
 The interest of NGS/RepSeq studies is to provide a deep view of any
@@ -559,10 +594,10 @@ including assessing the polyclonal background and the diversity of the repertoir
 Clones that are hidden (because of the "top" or because of hiding some tags)
 are gathered into virtual clones, shown with light gray.
 Note that selecting `color by clone` emphasizes the difference between the top clones, colored, and these virtual clones.
-Depending on the analysis configuration, these "smaller clones" are shown, in the clone list:
+Depending on the process configuration, these "smaller clones" are shown, in the clone list:
 
 - either *gathered by read length*, the Genescan-like plot showing the clone distribution.
-  This is the default on  default configurations on the public server,
+  This is the default on  default processes on the public server,
 
 - or *gathered by locus* into a unique virtual clone.
 
@@ -577,7 +612,7 @@ analyzed reads, including the hidden clones.
 
 The full list of clones can be retrieved by launching the command-line vidjil-algo.
 
-On the public server, we also provide `Export all clones (AIRR)` configuration to export
+On the public server, we also provide `Export all clones (AIRR)` process to export
 a `.tsv` file that can be further processed or opened in any spreadsheet editor.
 XXX TODO XXX
 
@@ -586,7 +621,7 @@ XXX TODO XXX
 The web application displays one consensus sequence per clone (see [Representative](#what-is-the-sequence-displayed-for-each-clone) above).
 In some situations, one may want to go back to the reads.
 
-For **vidjil-algo**, analyzing a dataset with the *default + extract reads* config
+For **vidjil-algo**, analyzing a dataset with the *default + extract reads* process
 generates a `.detected.vdj.fa` file with the reads with detected V(D)J recombinations.
 This file can be downloaded through the `out` link near each sample.
 It enables to use vidjil-algo as a *filtering tool*,
@@ -594,7 +629,7 @@ shrinking a large read set into a manageable number of (pre-)clones
 that will be deeply analyzed and possibly further clustered by
 other software.
 
-Other custom configs are possible, in particular to retrieve reads for a particular clone.
+Other custom processes are possible, in particular to retrieve reads for a particular clone.
 Contact us if you are interested.
 
 # How can I assess the quality of the data and the analysis ?
@@ -621,7 +656,7 @@ There can be several causes leading to low ratios:
     and contact us if you would like to analyze data from species that are not currently available.
 
   - There are incomplete/exceptional recombinations
-    (Vidjil can process some of them, config `multi+inc`, see [locus documentation](http://www.vidjil.org/doc/locus/) for details)
+    (Vidjil can analyze some of them with the process `multi+inc`, see [locus documentation](http://www.vidjil.org/doc/locus/) for details)
 
   - There are too many hypersomatic mutations
     (usually Vidjil can process mutations until 10% mutation rate… above that threshold, some sequences may be lost).
@@ -638,7 +673,8 @@ There can be several causes leading to low ratios:
     Reads with no similarity to either V or J are reported as not analyzed (`UNSEG only V/J` or even `UNSEG too few V/J`).
     Reads with a V/J junction detected but not long enough are also reported as not analyzed (`UNSEG too short w`).
     Finally, some slightly short reads are analyzed but with slightly shifted or shortened windows (`SEG changed w`).
-    The related clones are marked with a warning (W50), as they may, in some cases, falsely cluster reads from different clones.
+    The related clones are marked with a [W50](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) warning,
+    as they may, in some cases, falsely cluster reads from different clones.
 
   - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region.
     Solutions are to merge the ends with very conservative parameters (see *Read merging* above),
@@ -708,7 +744,7 @@ This opens a mail template with reference to the sample,
 and possibly with references to the selected clones.
 
 Indeed, the address <http://app.vidjil.org/?set=XXXXX&config=XXX&clone=XXX>
-reflects the sample you are studying with a given configuration.
+reflects the sample you are studying with a given process configuration.
 When you select one or several clones, the address is updated.
 
 Note that, even knowing this address,
