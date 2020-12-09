@@ -291,14 +291,14 @@ Clinical data have to be uploaded on a [certified healthcare server](http://www.
 Once you are authenticated, this page shows the patient list. Here you
 can see your patients and patients whose permission has been given to you.
 
-New patients can be added ('add patient'), edited ('e') or deleted ('X').
+New patients can be added (`+ new patients`), edited (`✏️`)  or deleted (`⌫`).
 By default, you are the only one who can see and update this new patient.
-If you have an admin access, you can grant access to other users ('p').
+If you have an admin access, you can grant access to other users (`p`).
 
 ## Runs and sets
 
-Runs and sets can be manipulated the same way as patients. They can be added ('add run/set'),
-edited ('e') or deleted ('X').
+Runs and sets can be manipulated the same way as patients. They can be added (`+ new runs`, `+ new sets`),
+edited (`✏️`) or deleted (`⌫`).
 They are just different ways to group samples.
 Sets can for example gather a set of samples of a same experiment.
 Runs can be used to gather samples that have been sequenced in the same run.
@@ -349,8 +349,8 @@ Clicking on a patient, a run or a set give acccess to the "samples" page. Each s
 a `.fasta`, `.fastq`, `.gz` or `.clntab` file that will be processed by one or several
 pipelines with one or several *process configurations* that set software options.
 
-Depending on your granted access, you can add a new sample to the list (`+ sample`),
-download sample files when they are available (`dl`) or delete sequence files (`X`).
+Depending on your granted access, you can add a new sample to the list (`+ add samples`),
+download sample files when they are available (`⬇`) or delete sequence files (`⌫`).
 Note that sample files may be deleted (in particular to save server disk space),
 which is not the case for the results (unless the user wants so).
 
@@ -359,7 +359,7 @@ process, and access to the results (`See results`, bottom right).
 
 ### Adding a sample
 
-To add a sample (`+ sample`), you must add at least one sample file. Each sample file must
+To add a sample (`+ add samples`), you must add at least one sample file. Each sample file must
 be linked to a patient, a run or a set. One of those fields will be automatically
 completed depending on whether you accessed the sample page.
 These fields provide autocompletion to help you enter the correct
@@ -432,7 +432,7 @@ The different permissions that can be attributed are:
   - Create: Permissions to create patients/runs/sets
   - Upload: Permissions to upload samples to the patients/runs/sets of a group
   - Run: Permissions to run Vidjil on an uploaded samples to the patients/runs/sets of a group
-  - View Details: Permissions to view patient/run/set data in an unencrypted manner for the patients/runs/sets of a group
+  - (Anon) View Details: Permissions to view patient/run/set data in an unencrypted manner for the patients/runs/sets of a group
   - Save: Permissions to save an analysis for the patients/runs/sets of a group
 
 ## Usage and processes pages
@@ -443,10 +443,11 @@ These pages allow to follow your activity and the activity of your groups.
 
 The usage page detail, for each of your groups, data usage and last processes.
 For each group, you will find:
+
   - A reminder of your permissions in that group (full permissions: admin anon create read run save upload,
     or some more restricted permissions)
   - The number of each type of sets (patient/runs/sets), with the number of processes done the last month and their status
-    (C: Completed, F: Failed, Q: Queued, S: Stopped)
+    (`C`: completed, `F`: failed, `Q`: queued, `S`: stopped)
   - The list of the most frequent tags
   - Links to last processes
 
@@ -743,7 +744,7 @@ link inside the web application.
 This opens a mail template with reference to the sample,
 and possibly with references to the selected clones.
 
-Indeed, the address <http://app.vidjil.org/?set=XXXXX&config=XXX&clone=XXX>
+Indeed, the address <http://app.vidjil.org/3241-25?clone=3>
 reflects the sample you are studying with a given process configuration.
 When you select one or several clones, the address is updated.
 
@@ -755,10 +756,11 @@ possibly users of the same groups if such groups were defined, and the server ma
 # Settings
 
 The settings menu allows to set:
- -clone size format     [scientific notation / percentage]
- -sample key            [sample name / shortened name / sampling date / day since first sampling]
- -clone junction format [junction length / AA sequence / mixed (display AA sequence only for short junction)]
- -clone alleles format  [hide alleles / display alleles / mixed (display only for marginal alleles)]
+
+ - the clone size format     [scientific notation / percentage]
+ - the sample key            [sample name / shortened name / sampling date / day since first sampling]
+ - the format for clone junction [junction length / AA sequence / mixed (display AA sequence only for short junction)]
+ - the format for clone alleles  [hide alleles / display alleles / mixed (display only for marginal alleles)]
 
 These settings are kept in your web browser ``localStorage'' between several sessions.
 
