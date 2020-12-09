@@ -175,6 +175,20 @@ these groups. Any patient created should automatically be assigned to the
 parent group. Any patient created for the parent group will be
 accessible by any member of one of the child groups.
 
+### Example: converting a previous user account into a group account
+
+Sometimes a user has a account, does some analyses, and then want to create accounts
+for other members of her team.
+The following procedure makes that the data uploaded by the user will be available
+to the whole group.
+
+- Modify the personal group of this user by renaming it to a group account, such as `lab_xxx`
+- Create a new personal group for this user.
+  This is simply a new group with a name as `user_xxx`, where `xxx` is the
+  id of this user.
+- Attach the user to this new group `user_xxx`
+- Create the new users and attach them to the first group `lab_xxx`.
+
 ## Adding an user to a group
 
 Adding a user to a group gives him access to the data of the group.
