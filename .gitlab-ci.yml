@@ -50,7 +50,7 @@ test_germlines:
     - make -C germline tests
   only:
     - /^feature-.*g.*\/.*$/
-    - schedules
+
 
 # Includes
 
