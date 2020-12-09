@@ -673,7 +673,8 @@ There can be several causes leading to low ratios:
     Reads with no similarity to either V or J are reported as not analyzed (`UNSEG only V/J` or even `UNSEG too few V/J`).
     Reads with a V/J junction detected but not long enough are also reported as not analyzed (`UNSEG too short w`).
     Finally, some slightly short reads are analyzed but with slightly shifted or shortened windows (`SEG changed w`).
-    The related clones are marked with a warning (W50), as they may, in some cases, falsely cluster reads from different clones.
+    The related clones are marked with a [W50](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) warning,
+    as they may, in some cases, falsely cluster reads from different clones.
 
   - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region.
     Solutions are to merge the ends with very conservative parameters (see *Read merging* above),
