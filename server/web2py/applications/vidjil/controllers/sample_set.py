@@ -1043,7 +1043,7 @@ def delete():
                 sample_sets = get_sequence_file_sample_sets(row.id)
                 sequence_file_id_sample_sets[row.id] = sample_sets
             if len(sequence_file_id_sample_sets[row.id]) == 1:
-            db(db.sequence_file.id == row.id).delete()
+                db(db.sequence_file.id == row.id).delete()
 
         #delete patient sample_set
         db(db.sample_set.id == sample_set.id).delete()
