@@ -18,6 +18,46 @@ To work with actual data, the easiest way is to copy `js/conf.js.sample` to `js/
 This will unlock the `patients` menu and allow your local client
 to access the public server at <http://app.vidjil.org/>.
 
+## Installation with Docker
+
+This section is intended for people wanting to install a vidjil client using docker
+WITHOUT a vidjil server. If you wish to install a vidjil server altogether with your client
+please refer to the docker section in dev-server.md.
+
+### Setup 
+
+The config file that will be used by the client can be found at vidjil-client/conf/conf.js
+
+Since this installation does not provide a Vidjil server it is recommended to disable the use of databases,
+
+``` json
+"use_database" : false,
+```
+
+or to provide an URL to connect to an existing one online.
+
+``` json
+"db_address" : "https://VIDJILSERVERURL/vidjil",
+```
+
+### Starting the environment
+
+The vidjil Docker environment is managed by Docker Compose since it is composed of 
+several different services, but a single service, nginx, is required to run the vidjil client,
+for a more detailed explanation on other services see dev-server.md.
+
+Ensure your docker-compose.yml contains the correct reference to the
+vidjil-client image you want to use. Usually this will be vidjil/vidjil-client:latest,
+but more tags are available at <https://hub.docker.com/r/vidjil/vidjil/tags/>.
+
+Running the following command will automatically download any missing
+images and start the environment:
+
+``` bash
+docker-compose up nginx
+```
+
+
 ## Client API and permanent URLs
 
 The client can be opened on a data file specified from a `data` attribute,
@@ -32,15 +72,19 @@ Both GET and POST requests are accepted.
 Note that the `browser/index.html` file and the `.vidjil/.analysis` files should be hosted on the same server.
 Otherwise, the server hosting the `.vidjil/.analysis` files must accept cross-domain queries.
 
-The client can also load data from a server (see below, requires logging), as in <http://app.vidjil.org/?set=3241&config=39>
+The client can also load data from a server (see below, requires logging) using url parameters to pass file identifiers,
+as in <http://app.vidjil.org/?set=3241&config=39>
 
 |             |               |
 | ----------- | ------------- |
 | `set=xx`    | sample set id |
-| `config=xx` | config id     |
+| `config=yy` | config id     |
+
+or directly inside the URL for a shortened version, as in <http://app.vidjil.org/3241-39/>
+
 
 Older formats (patients, run…) are also supported for compatibility but deprecated.
-Moreover, the state of the client can be encoded in the URL, as in <http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31>
+Moreover, the state of the client can be encoded in the URL, as in <http://app.vidjil.org/3241-39/?plot=v,size,bar&clone=11,31>
 
 |                  |                       |
 | ---------------- | --------------------- |

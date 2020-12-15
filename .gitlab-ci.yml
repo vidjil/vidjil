@@ -13,6 +13,7 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
+  - test_tutorial
   - test_shouldvdj
   - test_functional_external
   - coverage
@@ -49,7 +50,7 @@ test_germlines:
     - make -C germline tests
   only:
     - /^feature-.*g.*\/.*$/
-    - schedules
+
 
 # Includes
 
@@ -189,6 +190,7 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    when: always
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
@@ -208,7 +210,8 @@ test_browser_unit:
     - HEADLESS=1 make -C browser/test functional
   artifacts:
     paths:
-    - browser/
+    - browser/ 
+    when: always
     reports:
       junit: browser/test/test/TEST-*.xml
   only:
@@ -235,6 +238,7 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    when: always
     reports:
       junit: browser/test/test/TEST-*.xml
   only:
@@ -283,6 +287,55 @@ chrome-browser-functional-external:
     
 old-chrome-browser-functional-external-chrome:
   extends: .browser-functional-external-chrome
+  tags:
+    - legacy
+
+
+
+.browser-tutorial:
+  stage: test_tutorial
+  retry: 2
+  script:
+    - make -C browser
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.6.1
+    - HEADLESS=1 make test_tutorial
+  artifacts:
+    paths:
+    - browser/
+    reports:
+      junit: browser/test/test/TEST-*.xml
+  only:
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
+    - prod-client
+    - schedules
+    - /tutorial/
+  tags:
+    - web-pandoc
+
+.browser-tutorial-chrome:
+  extends: .browser-tutorial
+  variables:
+    WATIR_CHROME: "1"
+
+
+ff32-browser-tutorial:
+  extends: .browser-tutorial
+  allow_failure: true
+  variables:
+    FIREFOX_VERSION: 32
+
+ff45-browser-tutorial:
+  extends: .browser-tutorial
+  variables:
+    FIREFOX_VERSION: 45
+
+chrome-browser-tutorial:
+  extends: .browser-tutorial-chrome
+        
+old-chrome-browser-tutorial:
+  extends: .browser-tutorial-chrome
   tags:
     - legacy
 
@@ -420,8 +473,10 @@ deploy_review_server:
     - make -C browser icons
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
+    - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_BUILD_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
     - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/web2py/applications/vidjil/modules/defs.py
     - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/web2py/applications/vidjil/modules/defs.py
+    - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
     - mv docker docker_${CI_BUILD_REF_SLUG}
     - cd docker_${CI_BUILD_REF_SLUG}
     - TMP_DOCKER=$(tempfile)
@@ -434,7 +489,7 @@ deploy_review_server:
     - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
   environment:
     name: review_server/$CI_BUILD_REF_NAME
-    url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/browser/
+    url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/
     on_stop: stop_deploy_review_server
     auto_stop_in: 2 months
   only:

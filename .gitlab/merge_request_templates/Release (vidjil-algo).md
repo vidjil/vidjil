@@ -40,8 +40,7 @@ After these steps, we merge back the release in `dev`:
 
 ## After the release: deploy
 
-Sometimes, the deploy stages can occur several days after the release.
-
+* [ ] Click `deploy_release_prod` in the `deploy_prod` stage, deploying the release on `vidjil-algo-next` on the public server
 * [ ] Open a new internal issue with the `Deploy (vidjil-algo)` template : vdj#XXXXX
 
 

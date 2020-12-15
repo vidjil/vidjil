@@ -20,6 +20,7 @@ class ExternalTest < BrowserTest
   def test_10_imgt
     begin
       $b.clone_in_scatterplot('25').wait_until(&:present?)
+      sleep 1
       $b.clone_in_scatterplot('25').click
       $b.update_icon.wait_while(&:present?)
       $b.span(:id => "toIMGT" ).click

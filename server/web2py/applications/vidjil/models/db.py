@@ -109,6 +109,10 @@ auth.messages.group_description = 'Group of user %(id)04d - %(first_name)s %(las
 from gluon.contrib.login_methods.rpx_account import use_janrain
 use_janrain(auth, filename='private/janrain.key')
 
+# TODO: create a custom adapter ?
+if defs.DB_ADDRESS.split(':')[0] == 'mysql':
+    db.executesql("SET sql_mode='PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';")
+
 #########################################################################
 ## Define your tables below for example
 ##
@@ -284,6 +288,15 @@ db.define_table('tag_ref',
                 Field('tag_id', 'reference tag'),
                 Field('table_name', 'string'),
                 Field('record_id', 'integer'))
+
+# try to create an index on these un-indexed columns, if it fails, we assume they already exist
+try:
+    db.executesql('CREATE INDEX table_name_index ON tag_ref (table_name);')
+    db.executesql('CREATE INDEX record_id_index ON tag_ref (record_id);')
+    db.executesql('CREATE INDEX name_index ON auth_permission (name);')
+    db.executesql('CREATE INDEX record_id_index ON auth_permission (record_id);')
+except:
+        pass
 
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)

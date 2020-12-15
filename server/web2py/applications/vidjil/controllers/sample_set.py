@@ -61,7 +61,29 @@ def index():
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" and request.vars["config_id"] != "None":
         config_id = long(request.vars["config_id"])
-        config_name = db.config[request.vars["config_id"]].name
+        config = True
+    elif request.vars["config_id"] and request.vars["config_id"] == "-1":
+        most_used_query = db(
+                (db.fused_file.sample_set_id == sample_set.id)
+            ).select(
+                db.fused_file.config_id.with_alias('id'),
+                db.fused_file.id.count().with_alias('use_count'),
+                groupby=db.fused_file.config_id,
+                orderby=db.fused_file.id.count(),
+                limitby=(0,1)
+            )
+        if len(most_used_query) > 0:
+            config_id = most_used_query[0].id
+            config = True
+        else:
+            config_id = -1
+            config = False
+    else:
+        config_id = -1
+        config = False
+
+    if config :
+        config_name = db.config[config_id].name
 
         fused = db(
             (db.fused_file.sample_set_id == sample_set_id)
@@ -73,7 +95,6 @@ def index():
         ).select(orderby=~db.analysis_file.analyze_date)
         
         
-        config = True
         fused_count = fused.count()
         fused_file = fused.select()
         fused_filename = info_file["filename"] +"_"+ config_name + ".vidjil"
@@ -81,17 +102,6 @@ def index():
         analysis_file = analysis
         analysis_filename = info_file["filename"]+"_"+ config_name + ".analysis"
         
-    else:
-        config_id = -1
-        config = False
-        fused_count = 0
-        fused_file = ""
-        fused_filename = ""
-        analysis_count = 0
-        analysis_file = ""
-        analysis_filename = ""
-
-    if config :
 	query =[]
 	
         query2 = db(
@@ -113,6 +123,12 @@ def index():
 		previous=row.sequence_file.id
 
     else:
+        fused_count = 0
+        fused_file = ""
+        fused_filename = ""
+        analysis_count = 0
+        analysis_file = ""
+        analysis_filename = ""
 
         query = db(
                 (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
@@ -194,8 +210,7 @@ def all():
 
     step = None
     page = None
-    is_not_filtered = "sort" not in request.vars and "filter" not in request.vars
-    if request.vars['page'] is not None and is_not_filtered:
+    if request.vars['page'] is not None:
         page = int(request.vars['page'])
         step = 50
 
@@ -206,21 +221,27 @@ def all():
     search, tags = parse_search(request.vars["filter"])
     group_ids = get_involved_groups()
 
-    list = SampleSetList(type, page, step, tags=tags)
-    list.load_creator_names()
-    list.load_sample_information()
-    list.load_config_information()
-    if isAdmin or len(get_group_list(auth)) > 1:
-        list.load_permitted_groups()
-    list.load_anon_permissions()
-    result = list.get_values()
-
-    # failsafe if filtered display all results
-    step = len(list) if step is None else step
-    page = 0 if page is None else page
-
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
+
+    f = time.time()
+    slist = SampleSetList(helper, page, step, tags, search)
+
+    log.debug("list loaded (%.3fs)" % (time.time() - f))
+
+    mid = time.time()
+
+    set_ids = set([s.sample_set_id for s in slist.result])
+    admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set)).select(db.sample_set.id)]
+    admin_permissions = list(set(admin_permissions) & set_ids)
+
+    log.debug("permission load (%.3fs)" % (time.time() - mid))
+
+    # failsafe if filtered display all results
+    step = len(slist) if step is None else step
+    page = 0 if page is None else page
+    result = slist.result
+
     fields = helper.get_fields()
     sort_fields = helper.get_sort_fields()
 
@@ -233,7 +254,6 @@ def all():
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-    result = helper.filter(search, result)
     log.info("%s list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
         'record_id': None,
         'table_name': "sample_set"})
@@ -244,6 +264,7 @@ def all():
                 fields = fields,
                 helper = helper,
                 group_ids = group_ids,
+                admin_permissions = admin_permissions,
                 isAdmin = isAdmin,
                 reverse = reverse,
                 step = step,
@@ -270,13 +291,12 @@ def stats():
     search, tags = parse_search(request.vars["filter"])
     group_ids = get_involved_groups()
 
-    list = SampleSetList(type, tags=tags)
-    list.load_sample_information()
-    list.load_anon_permissions()
-    result = list.get_values()
-
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
+
+    slist = SampleSetList(helper, tags=tags)
+    result = slist.result
+
     fields = helper.get_reduced_fields()
 
     ##sort result
@@ -294,7 +314,7 @@ def stats():
     log.info("%s stat list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
         'record_id': None,
         'table_name': "sample_set"})
-    log.debug("stat list (%.3fs)" % time.time()-start)
+    log.debug("stat list (%.3f s)" % (time.time()-start))
 
     return dict(query = result,
                 fields = fields,
@@ -791,7 +811,12 @@ def getFusedStats(fuse):
                 result_index = data['samples']['results_file_id'].index(results_file_id)
             elif "original_names" in data['samples']:
                 basenames = [os.path.basename(x) for x in data['samples']['original_names']]
-                result_index = basenames.index(os.path.basename(res['sequence_file']))
+                result_basename = os.path.basename(res['sequence_file']) if res['sequence_file'] else None
+                if result_basename in basenames:
+                    result_index = basenames.index(result_basename)
+                else:
+                    # No corresponding data (old file ?), we skip this result_file
+                    continue
 
             sorted_clones = sorted(top_clones, key=lambda clone: clone['reads'][result_index], reverse=True)
             if 'name' in sorted_clones[0]:

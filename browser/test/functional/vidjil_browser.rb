@@ -137,6 +137,11 @@ class VidjilBrowser < Watir::Browser
     return element(:id => 'info_point')
   end
 
+  # Information on the currently displayed point
+  def info_name
+    return element(:id => 'info_sample_name')
+  end
+
   def info_segmented
     return element(:id => 'info_segmented').span(:index => 1)
   end
@@ -211,6 +216,10 @@ class VidjilBrowser < Watir::Browser
     return menu_item_export('export_fasta_align', extra)
   end
 
+  def menu_item_export_add_germline(extra = {})
+    return menu_item_export('export_add_germline', extra)
+  end
+
   def menu_item(id, extra = {})
     item = element(extra.merge(:id => id))
     assert(item.exists?)
@@ -277,8 +286,12 @@ class VidjilBrowser < Watir::Browser
   end
 
   # Return the y axis label of the scatterplot
-  def scatterplot_y_label(number)
+  def scatterplot_y_label(number=1)
     return scatterplot_labels(number)[1]
+  end
+
+  def scatterplot_locus(locus, number=1)
+    return scatterplot(number).div(:class => 'sp_system_label').span(:title => locus)
   end
 
   def segmenter_checkbox_aa
@@ -371,6 +384,11 @@ class VidjilBrowser < Watir::Browser
   # Return the button that validates the changes in the tag selector
   def tag_selector_normalisation_validator
     return tag_selector.button(:text => 'ok')
+  end
+
+  # Enter in dev mode
+  def devel_mode
+    $b.execute_script('$(".devel-mode").show();')
   end
 
   # Unselect everything, both on clones, and move away from menus (as if we click on the back)

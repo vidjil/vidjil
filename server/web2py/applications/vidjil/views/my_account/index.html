@@ -1,0 +1,91 @@
+{{extend 'db_layout.html'}}
+
+<div>
+    <h3>Usage &ndash;
+      {{ if request.vars["filter"]: }}
+        {{=request.vars["filter"]}}
+      {{ else: }}
+        all samples
+      {{pass}}
+    </h3>
+
+    <div class="db_block">
+        {{ for role in keys: }}
+            <div id="{{=role}}_info" class="set_group">
+                <div class="set_group_header">
+                    Group <b>{{=role}}</b>
+                    {{if result[role]['permissions']:}}
+                      <span style='font-size: 80%;'>({{=result[role]['permissions']}})</span>
+                    {{pass}}
+                    <hr>
+                </div>
+                {{ for set_type in ['patient', 'run', 'set']: }}
+                    {{ r = result[role][set_type]['count'] }}
+                    {{ if r['num_sets']: }}
+                    <div class="set_cell margined-bottom">
+                        <span class="{{=set_type}}_num_sets">{{=r['num_sets']}}</span>
+                        <span class="button_token {{=r['sample_type']}}_token">{{=set_type}}s</span>,
+                        <span class="{{=set_type}}_num_samples devel-mode">({{=r['num_samples']}} samples)</span>
+                        <span>{{=result[role][set_type]['num_jobs']}} processes last month
+                          <span title='C: Completed, F: Failed, Q: Queued, S: Stopped' style='font-size: 80%;'>{{=result[role][set_type]['statuses']}}</span>
+                        </span>
+                    </div>
+                    {{pass}}
+                    {{pass}}
+                <div class="set_data margined-bottom">
+                    {{ for tag in result[role]['tags']: }}
+                        <a onclick="event.preventDefault();event.stopPropagation();db.callLinkable($(this))" href="/my_account/index" class="tag-link" data-linkable-type="tag" data-linkable-target-param="filter" data-linkable-name="#{{=tag.split(' ')[0]}}">#{{=tag}}</a>
+                        {{pass}}
+                </div>
+                {{ if result[role]['fuses']: }}
+                <div class="set_data">
+                    <div>results:</div>
+                {{ for fuse in result[role]['fuses']: }}
+                    <div class="analysis_button">
+                        <span class="button button_token {{=fuse[3]}}_token">
+                            {{ if fuse[3] == 'patient': }}
+                                {{ split_name = fuse[4].split(' ') }}
+                                {{ name = vidjil_utils.display_names(fuse[1], split_name[0], split_name[1]) }}
+                            {{else:}}
+                                {{ name = fuse[4] }}
+                                {{ pass }}
+                            <a href="/?sample_set_id={{=fuse[1]}}&config={{=fuse[2]}}">{{=name}}: {{=fuse[0]}}</a>
+                        </span>
+                    </div>
+                    {{pass}}
+                </div>
+                {{pass}}
+                {{ if result[role]['analyses']: }}
+                <div class="set_data">
+                    <div>saved analyses:</div>
+                {{ for analysis in result[role]['analyses']: }}
+                    <div class="analysis_button">
+                        <span class="button button_token {{=analysis[1]}}_token">
+                            {{ if analysis[1] == 'patient': }}
+                                {{ split_name = analysis[2].split(' ') }}
+                                {{ name = vidjil_utils.display_names(analysis[0], split_name[0], split_name[1]) }}
+                            {{ else: }}
+                                {{ name = analysis[2] }}
+                                {{pass}}
+
+                            <span onclick="db.call('sample_set/index', {'id': {{=analysis[0]}}, 'config_id': -1})">{{=name}}</span>
+                        </span>
+                    </div>
+                    {{pass}}
+                </div>
+                {{pass}}
+            </div>
+            {{pass}}
+    </div>
+
+    <br />
+    <div class="db_block">
+        <div class="db_block_left">
+            filter on tags
+            <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('my_account/index', {'filter' : this.value, 'group_ids': {{=group_ids}}  } )"
+            onfocus="new VidjilAutoComplete().setupTags(this);"
+            data-needs-atwho="true" data-keys="{{=involved_group_ids}}">
+        </div>
+    </div>
+
+</div>

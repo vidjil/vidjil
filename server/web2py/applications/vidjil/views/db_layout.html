@@ -4,6 +4,8 @@
 	<a class="button button_token patient_token" onclick="db.call('sample_set/all', {'type': 'patient', 'page': 0});">patients</a>
 	<a class="button button_token run_token" onclick="db.call('sample_set/all', {'type': 'run', 'page': 0});">runs</a>
 	<a class="button button_token generic_token" onclick="db.call('sample_set/all', {'type': 'generic', 'page': 0} );">sets</a>
+        <a class="button" onclick="db.call('my_account/index');">usage</a>
+        <a class="button" onclick="db.call('my_account/jobs');">processes</a>
         <a class="button" onclick="db.call('notification/index');">news</a>
         <!-- <a class="button" onclick="db.call('log/index');">log</a> -->
         {{if auth.is_admin():}}
@@ -49,7 +51,10 @@
                 
         
                 {{if not auth.is_impersonating() :}}                     
-                    {{=auth.user.first_name}} {{=auth.user.last_name}} <a href="#" onclick="db.call('user/edit', {'id': '{{=auth.user_id}}'})"><i class="icon-pencil-2" title="Edit my personal informations"></i></a>
+                    <span id="db_auth_name">
+                        {{=auth.user.first_name}} {{=auth.user.last_name}}
+                    </span>
+                    <a href="#" onclick="db.call('user/edit', {'id': '{{=auth.user_id}}'})"><i class="icon-pencil-2" title="Edit my personal informations"></i></a>
                 {{pass}}
         
         

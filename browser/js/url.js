@@ -1,17 +1,23 @@
 function Url(model, win) {
     View.call(this, model);
     this.m = model;
-    this.window = (typeof win != "undefined") ? win : window
+    this.window = (typeof win != "undefined") ? win : window;
 
     this.encoder = new UrlEncoder();
-    this.url_dict = this.parseUrlParams(this.window.location.search.toString())
-    this.sp = this.m.sp
+    this.url_dict = this.parseUrlParams(this.window.location.search.toString());
+    this.sp = this.m.sp;
 
     this.m.start(this.url_dict);
 }
 
 Url.prototype= {
     update: function () {
+
+        //keep url up to date only for database file
+        if (this.m.file_source != "database") {
+            this.clean();
+            return;
+        }
 
         // get selected clones
         var selectedList = this.m.getSelected();
@@ -109,10 +115,20 @@ Url.prototype= {
     },
 
     parseUrlParams:function (urlparams) {
-        params={} 
+        params={};
+        
+        var url = this.window.location;
+        var url_last_segment = url.pathname.substr(1).split('/').pop();
+        var positionnal_params = url_last_segment.split('-');
+        var pos_param_keys = this.getPositionnalParams();
+        if (positionnal_params.length > 1 && positionnal_params[0] != "index.html")
+            for (var j = 0; j < positionnal_params.length; j++) 
+                params[pos_param_keys[j]] = positionnal_params[j];
+
         if (urlparams.length === 0) {
             return params;
         }
+
         url_param = urlparams.substr(1).split("&");
         for (var i = 0; i < url_param.length; i++) {
             var tmparr = url_param[i].split("=");
@@ -133,14 +149,8 @@ Url.prototype= {
                 params[key].push(val);
             }
         }
-
-        var url = this.window.location;
-        var positionnal_params = url.pathname.substr(1).split('-');
-        var pos_param_keys = this.getPositionnalParams();
-        if (positionnal_params.length > 1 && positionnal_params[0] != "index.html")
-        for (var j = 0; j < positionnal_params.length; j++) 
-            params[pos_param_keys[j]] = positionnal_params[j];
-        return params
+            
+        return params;
     },
 
     generateParamsString: function(params_dict) {
@@ -167,10 +177,17 @@ Url.prototype= {
         return positionnal_params.join('-') + '?' + params_list.join("&");
     },
 
-    pushUrl: function(params) {
-        var new_url = params;
+    pushUrl: function(url) {
+        if (typeof config != 'undefined' && 
+            (config.url_rewriting != undefined && !config.url_rewriting)) return;
+
+        if (url==this.current_state) return;
+
+        if (this.m.file_source != "database") return;
+
         try  {
-            this.window.history.pushState('plop', 'plop', new_url);
+            this.window.history.pushState('plop', 'plop', url);
+            this.current_state = url;
         } catch(error) {
             console.log(error);
         }
@@ -195,6 +212,22 @@ Url.prototype= {
         this.url_dict = {};
         this.pushUrl("");
         db.load_custom_data();
+    },
+
+    clean: function(){
+        var url = this.window.location;
+        var original_pathname = url.pathname;
+        var positionnal_params = url.pathname.substr(1).split('-');
+        if (positionnal_params.length > 1 && positionnal_params[0] != "index.html"){   
+            var split = original_pathname.split('/');
+            if (split[split.length-1] == "")
+                split.splice(split.length-1, 1);
+            split.splice(split.length-1, 1);
+            original_pathname = split.join('/');
+        } 
+
+        if (original_pathname == "") original_pathname = "/";
+        this.pushUrl(original_pathname);
     }
 
 };

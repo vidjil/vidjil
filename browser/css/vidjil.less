@@ -23,9 +23,15 @@
 /* #dcffed also available */
 
 #vmi-menu {
-  position: unset;
-  bottom: unset;
+  top: @top_container_height;
+  right: 0;
   width: unset;
+  background-color: @background;
+  margin: @margin 0 0 0;
+  div {
+    padding: 5px;
+    border: 1px solid;
+  }
 }
 
 html{
@@ -85,14 +91,15 @@ ul{
 
 #visu-container{
   position: relative;
+  display: flex;
   flex: 1 1 auto;
+  flex-flow: column;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
-  height :100%;
-  margin : auto;
+  width: 100%;
   overflow : hidden;
   background : @background;
 }
@@ -151,30 +158,43 @@ ul{
   overflow:hidden;
 }
 
-#mid-container {
+#vidjil-panels {
   position : fixed;
-  display: flex;
-  flex: 1 1 auto;
   top : @top_container_height;
+  left : 0;
   bottom : 125px ;
-  width: calc(~"100%" - @margin + @margin);
-  overflow: hidden;
   background: @background;
   margin: @margin;
+  display: flex;
+  flex: auto;
+  overflow: hidden;
+}
+
+.vidjil-panels-left {
+  width: calc(~"100%" - @margin - @vmi_menu_width);
+}
+
+.vidjil-panels-full {
+  width: calc(~"100%" - @margin);
+}
+
+#mid-container {
+  display: flex;
+  flex: auto;
+  overflow: hidden;
 }
 
 #right-container{
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
+  display: flex;
+  flex: 1 0 auto;
+  flex-flow: column;
   float : right;
-  width : 0px;
+  width : @width_left_container;
 }
 
 #left-container {
   display: flex;
+  flex: 1 0 auto;
   flex-flow: column;
   position: relative;
   width : @width_left_container;
@@ -188,11 +208,17 @@ ul{
 
 #visu, #visu2 {
   height : 50%;
+  display: flex;
+  flex: auto;
   width : 100%;
 }
 
 #visu2 {
   max-height: calc(~"100%" - @margin)
+}
+
+#visu3 {
+  height: 100%;
 }
 
 line {
@@ -514,9 +540,9 @@ line {
 @width_axisBox : 52px;
 @width_infoBox : 20px;
 @width_systemBox : 12px;
-@width_listElem : (@width_left_container - @width_scrollbar);
 @margin : 6px;
 @margin_nameBox : 10px;
+@vmi_menu_width : 70px;
 
 .list:hover, .tagElem:hover, .data:hover{
   background :@border;
@@ -531,6 +557,7 @@ line {
 #list{
   flex: 1 1 auto;
   height: 0px; // set scrollbar flex will override height
+  min-height: 20%;
   max-height: 100%;
   display: flex;
   flex-direction: column;
@@ -571,13 +598,10 @@ line {
 }
 
 .list{
-  width : 	445px;
-  display :	block;
   padding : 	2px;
 }
 
 .listElem{
-  width : @width_listElem;
   font-size: 13px;
   cursor:pointer;
   -webkit-transition: color 0.2s;
@@ -586,6 +610,7 @@ line {
   transition: color 0.2s;
   padding: 1px 4px 4px 1px;
   height :14px;
+  display: flex;
 }
 
 .selected{
@@ -593,14 +618,14 @@ line {
 }
 
 .nameBox {
-  width: 300px;
   margin-right: @margin_nameBox;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
-  float:left;
   white-space:nowrap;
+  display: flex;
+  flex: 1 1 auto;
 }
 
 .seq-fixed .nameBox {
@@ -609,7 +634,6 @@ line {
 
 .list .axisBox, .axisBox span {
   max-width: @width_axisBox;
-  float: right;
   overflow: hidden;
   display: inline-block;
   max-height: 16px;
@@ -635,9 +659,8 @@ line {
 
 .starBox{
   width: @width_starBox;
-  float: right;
   height: 16px;
-  display: inline-block;
+  display: inline-flex;
   user-select :none;
   overflow: hidden;
 }
@@ -655,9 +678,8 @@ line {
 .infoBox{
   font-size: 90%;
   width: 16px;
-  float: right;
   height: 15px;
-  display: inline-block;
+  display: inline-flex;
   user-select: none;
   text-align: center;
   border: solid;
@@ -736,8 +758,6 @@ line {
 
 							  /*style segmenter element*/
 .list_select{
-  width : 445px;
-  display : block;
   border : solid;
   border-width : 2px;
   padding : 0px;
@@ -756,7 +776,7 @@ line {
 
 .seq-fixed {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
 //  width: (@width_left_container - @width_scrollbar);
   width : auto;
   margin: -2px;
@@ -1262,9 +1282,8 @@ span.logo
 
 #bot-container {
   position: fixed;
-  left: 0;
   bottom: 0;
-  width: 100%;
+  left: @margin;
   border-top: solid;
   border-width: 6px;
   min-height: 125px;
@@ -1536,11 +1555,9 @@ span.warningReads {
    color: @select;
 }
 
-#visu-separator {
+.visu-separator {
     position: relative;
     height: @margin;
-    cursor: move;
-    cursor: -webkit-grab;
     background: @border;
 }
 
@@ -1553,14 +1570,16 @@ span.warningReads {
     top: -@margin;
 }
 
-#vertical-separator {
+#vertical-separator, #vertical-separator-right {
     position: relative;
     float: left;
-    height: 100%;
     width: @margin;
-    line-height: calc(~"100% - 1px");
     background : @border;
     cursor: pointer;
+}
+
+#vertical-separator-right {
+    float: right;
 }
 
 #visu-separator:hover , #vertical-separator:hover, #bot-separator:hover {
@@ -2162,11 +2181,12 @@ flex-grow : 1;
     border: 1px solid @border;
     overflow-wrap: break-word;
     overflow-y: hidden;
-    max-width: 457px;
     min-height: @infoContainerHeight;
     max-height: @infoContainerHeight;
-    width: 100%;
+    width: 99%;
     background-color: @background;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .patient_info_text {
@@ -2631,4 +2651,38 @@ form {
 }
 .list_lock_on {
   color: @default;
+}
+
+.set_group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-bottom: 25px;
+  margin-right: 15px;
+  flex-flow: column;
+  width: 48%;
+}
+
+.set_group_header {
+    width: 100%;
+}
+
+.set_cell {
+  word-break: break-all;
+}
+
+.set_data {
+  width: 100%;
+}
+
+.analysis_button {
+  display: inline-flex;
+}
+
+.margined-top {
+  margin-top: 10px;
+}
+
+.margined-bottom {
+  margin-bottom: 10px;
 }

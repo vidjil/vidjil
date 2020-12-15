@@ -2,6 +2,26 @@
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
+## 2020-12-09
+
+Improve ergonomy
+* Possibility to create at once multiple patients/runs/sets by pasting data from the clipboard
+
+Add new warnings
+* Add warnings when the server is not approved for healthcare data (!813, see >vidjil.org/doc/healthcare>)
+* Add warning to show variation in V(D)J designation or productivity prediction between samples (#4566, #4578)
+
+Improve quality testing
+* The tutorial is now tested, step by step (#2880)
+
+Improve internal database usage
+* Refactor some queries of the database. Filtering and searches are now way faster.
+  Note that the basic query may be a little bit slower. (#3169)
+
+Other points
+* Fix error on clusterBy (#4495)
+* Many other bug fixes
+
 ## 2020-07-13
 
 Better study full repertoires

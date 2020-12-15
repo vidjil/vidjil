@@ -45,6 +45,9 @@ Model_loader.prototype = {
         if (typeof config != 'undefined' && typeof config.autoload_analysis != 'undefined')
             params.analysis = config.autoload_analysis
 
+        if (typeof config != 'undefined' && typeof config.server_id != 'undefined')
+            document.getElementById('server-id').innerText = config.server_id
+
         /** load the default vidjil file, open the database or display the welcome popup depending on the case*/
         if (typeof params.data !== "undefined") {
             if (typeof params.analysis !== "undefined"){
@@ -116,7 +119,7 @@ Model_loader.prototype = {
             self.dataFileName = document.getElementById(id)
                 .files[0].name;
             self.check_export_monitor()
-
+            self.file_source = "local";
         }
 
     }, 
@@ -201,6 +204,7 @@ Model_loader.prototype = {
                 self.update_selected_system()
                 self.dataFileName = url_split[url_split.length-1]
                 self.check_export_monitor()
+                self.file_source = "database";
 
                 // self.applyUrlParams(paramsDict);
                 callback()
