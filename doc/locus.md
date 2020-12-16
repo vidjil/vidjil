@@ -83,6 +83,7 @@ However, even as few as 50 bp well-centered on the CDR3 usually detect many reco
 The key point, depending on the library preparation, is thus what position the CDR3 is actually in the read.
 
 Anyway, with short reads, the identified recombinations may be skewed towards shorter sequences, such as:
+
  - more VJ than VDJ recombinations
  - shorter N and more deleted V, J and possibly D genes
 Those biases could occur inside one locus but also favor loci/systems with shorter recombinations
