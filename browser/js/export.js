@@ -820,14 +820,19 @@ Report.prototype = {
     },
 
     getCloneExportColor : function(cloneID){
+        var color;
         switch (this.colorMode) {
             case "tag":
-                return this.m.tag[this.m.clone(cloneID).getTag()].color;
-
+                rcolor = this.m.tag[this.m.clone(cloneID).getTag()].color;
+                break;
             case "colorBy":
+                color = this.m.clone(cloneID).getColor();
+                break;
             default:
-                return this.m.clone(cloneID).getColor();
+                color = this.m.clone(cloneID).getColor();
+                break;
         }
+        return color;
     }
     
 }
