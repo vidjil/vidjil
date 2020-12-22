@@ -179,6 +179,7 @@ You can achieve this with the following steps:
     To do so, you should tell `certbot` to put those files in the `/opt/vidjil/certs` 
     directory (this can be changed in the `docker-compose.yml` file.
     You can generate the certificates with the command `certbot certonly --webroot -w /opt/vidjil/certs -d myvidjil.org`. 
+    You'll need to update the Nginx configuration in `docker/vidjil-client/conf/nginx_web2py`
     Then 
     ```shell
     cp /etc/letsencrypt/live/vdd.vidjil.org/fullchain.pem vidjil-client/ssl/web2py.crt
@@ -186,6 +187,7 @@ You can achieve this with the following steps:
     ```
     The certificates can be renewed with `certbot renew` but beware to copy the certificates after that.
     Instead of copying the certificates, you may wish to mount `/etc/letsencrypt` in the Docker image as a volume (*eg.* `/etc/letsencrypt:/etc/nginx/ssl`).
+    However beware, because you would not be able to start Nginx till the certificates are in place.
     On certificate renewal (with `certbot`), you then need to restart the Nginx server.
     
 If necessary, in `docker-compose.yml`, update `nginx.volumes`, line `./vidjil-client/ssl:/etc/nginx/ssl`, to set the directory with the certificates.
