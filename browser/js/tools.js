@@ -791,3 +791,28 @@ function getProxy() {
     });
     throw "No proxy";
 }
+
+/**
+ * @return an array without duplication
+ */
+function removeDuplicate(array) {
+    clean_array = array.filter(function(item, pos) {
+        return array.indexOf(item) == pos;
+    })
+    return clean_array
+}
+
+/**
+ * Filter value given of an array and decrease greater values
+ */
+function removeEltAndDecrease(array, value) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] > value) {
+            array[i] = array[i] - 1 
+        } else if (array[i] == value) {
+            array.splice(i, 1)
+            i = i-1
+        }
+    }
+    return array
+}

@@ -9,9 +9,6 @@ class TestScatterplot < BrowserTest
     super
     if not defined? $b
       set_browser("/tools/tests/data/fused_multiple.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
 
       # Make upload menu appear to test the application with this menu too
       $b.execute_script("$('#upload_summary')[0].style.display='block';")
@@ -93,11 +90,14 @@ class TestScatterplot < BrowserTest
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_in_scatterplot('1').width > 4),  ">> clone 1 should be visible in scatterplot at time 0"
     assert ( $b.clone_in_scatterplot('2').width > 4),  ">> clone 2 should be visible in scatterplot at time 0"
-    
+    print $b.clone_in_scatterplot('2').width # to test current chrome value
+
     $b.send_keys :arrow_right
 
     $b.update_icon.wait_while(&:present?)
+    $b.until { $b.clone_in_scatterplot('2').width < 4 }
     assert ( $b.clone_in_scatterplot('1').width > 4),  ">> clone 1 should still be visible in scatterplot at time 1"
+    print $b.clone_in_scatterplot('2').width # to test current chrome value
     assert ( $b.clone_in_scatterplot('2').width < 4),  ">> clone 2 should NOT be visible in scatterplot at time 1 "
 
   end

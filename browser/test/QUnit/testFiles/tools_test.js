@@ -424,3 +424,21 @@ QUnit.test("Get n first sequences", function(assert) {
     assert.equal(getNFirstSequences(seqs, -1), seqs);
     assert.equal(getNFirstSequences(seqs, 2), ">seq1\nAT\n>seq2\nTC\n");
 });
+
+QUnit.test("remove duplicates", function(assert) {
+
+  var array = [1,2,3,4]
+  assert.deepEqual(removeDuplicate(array), [1,2,3,4], "correct array after removeDuplicate (1)")
+  var array = [4,3,2,1]
+  assert.deepEqual(removeDuplicate(array), [4,3,2,1], "correct array after removeDuplicate (2)")
+  var array = [0,1,2,3,6,7]
+  assert.deepEqual(removeDuplicate(array), [0,1,2,3,6,7], "correct array after removeDuplicate (3)")
+  var array = [0,1,2,3,3,3,4,0]
+  assert.deepEqual(removeDuplicate(array), [0,1,2,3,4], "correct array after removeDuplicate (4)")
+});
+
+QUnit.test("remove elt in decrease", function(assert) {
+
+  var listel = [0,1,2,4,5,7,8]
+  assert.deepEqual(removeEltAndDecrease(listel, 3), [0,1,2,3,4,6,7], "correct array after removeEltAndDecrease (3)")
+});

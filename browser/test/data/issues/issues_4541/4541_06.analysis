@@ -1,0 +1,28 @@
+{
+  "clones": [],
+  "producer": "browser",
+  "samples": {
+    "id": [
+      "file_deleted_1",
+      "file_fu_1",
+      "file_fu_2",
+      "file_deleted_2",
+      "file_rechute"
+    ],
+    "names": [
+      "impossible",
+      "Fu-1",
+      "Fu-2",
+      "impossible 2",
+      "Rechute"
+    ],
+    "order": [
+      4, 1, 0
+    ],
+    "stock_order": [
+      4, 1, 2, 0, 3
+    ]
+  },
+  "timestamp": "2020-12-2 20:27:27",
+  "vidjil_json_version": "2014.09"
+}
