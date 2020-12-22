@@ -95,6 +95,7 @@ class TestScatterplot < BrowserTest
     $b.send_keys :arrow_right
 
     $b.update_icon.wait_while(&:present?)
+    $b.wait_until( $b.clone_in_scatterplot('2').width < 4 )
     assert ( $b.clone_in_scatterplot('1').width > 4),  ">> clone 1 should still be visible in scatterplot at time 1"
     print $b.clone_in_scatterplot('2').width # to test current chrome value
     assert ( $b.clone_in_scatterplot('2').width < 4),  ">> clone 2 should NOT be visible in scatterplot at time 1 "
