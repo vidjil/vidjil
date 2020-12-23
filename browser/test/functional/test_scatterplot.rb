@@ -142,7 +142,7 @@ class TestScatterplot < BrowserTest
     $b.send_keys 0
     $b.update_icon.wait_while(&:present?)
 
-    circle_18 = $b.element(:id => "visu_circle18")
+    circle_18 = $b.clone_in_scatterplot('18')
     circle_18.fire_event('click') # allow to click if clone is not visible or under another element
 
     # control by segmenter the curent state of selection
