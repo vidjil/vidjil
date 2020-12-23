@@ -146,7 +146,7 @@ class TestScatterplot < BrowserTest
     circle_18.fire_event('click') # allow to click if clone is not visible or under another element
 
     # control by segmenter the curent state of selection
-    segmenter_stat = $b.div(:id => "segmenter").element(:class => "stats_content")
+    segmenter_stat = $b.statsline
     assert ( segmenter_stat.text.include? "1 clone, 50 reads (20.00%)" ), "segmenter show correct information of selection (without selection of distrib clone)"
   end
 
