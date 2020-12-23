@@ -2010,7 +2010,7 @@ Clone.prototype = {
             // if scatterplot is in "one_system" mode
             if (this.m.system != "multi" || typeof this.m.system != 'undefined'){
                 var locus = this.getLocus()
-                var same_locus = (this.m.current_system == locus)
+                var same_locus = (this.m.getCurrentSystem() == locus)
                 return (x.equals(axes) && same_locus)
             } else {
                 return x.equals(axes)
