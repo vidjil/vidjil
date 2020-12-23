@@ -217,6 +217,10 @@ ScatterPlot_menu.prototype = {
         var elem = this.select_preset;
         this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y);
         this.m.update();
+        if (typeof db !== 'undefined')
+        {
+          db.debug('preset-' + (elem.selectedIndex - 1));
+        }
     },
 
     updatePreset: function(){
