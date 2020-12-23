@@ -130,8 +130,6 @@ class TestScatterplot < BrowserTest
     slider.send_keys :arrow_left
     slider.send_keys :arrow_left
     slider.send_keys :arrow_left
-    
-    $b.send_keys [:control, :shift, 'k']
 
     $b.clone_in_list("0").click
     $b.update_icon.wait_while(&:present?)
