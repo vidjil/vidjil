@@ -717,11 +717,12 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 | sequence  | string | The query nucleotide sequence. Usually, this is the unmodified input sequence, which may be reverse complemented if necessary. In some cases, this field may contain consensus sequences or other types of collapsed input sequences if these steps are performed prior to alignment. <br />*This contains the consensus/representative sequence of each clone.*
 | rev_comp  | boolean | True if the alignment is on the opposite strand (reverse complemented) with respect to the query sequence. If True then all output data, such as alignment coordinates and sequences, are based on the reverse complement of 'sequence'. <br />*Set to null, as vidjil-algo gather reads from both strands in clones* |
 | v_call, d_call, j_call  | string  | V/D/J gene with allele. For example, IGHV4-59\*01. <br /> *implemented. In the case of uncomplete/unexpected recombinations (locus with a `+`), we still use `v/d/j_call`. Note that this value can be null on clones beyond the `--max-designations` option.* |
-| feature_sequence_start, feature_sequence_end | number | Position of the start and the end of various features on the sequence. For the moment features are V, D, J and CDR3. |
-| V_support, J_support | number | V gene alignment E-value measure of support for V/J gene assignment. |
+| v_sequence_start, v_sequence_end <br />d_sequence_start, d_sequence_end  <br /> j_sequence_start, j_sequence_end | number |   Start/end position of the V/D/J genes and of the CDR3 in the query sequence (1-based closed interval).   <br />*implemented* |
+| v_support, j_support | number | V/J gene alignment E-value, p-value, likelihood.  <br />*implemented* |
 | junction  | string  |      Junction region nucleotide sequence, where the junction is defined as the CDR3 plus the two flanking conserved codons. <br />*null*
 | junction_aa  | string  | Junction region amino acid sequence.      <br />*implemented*
 | cdr3_aa | string | Amino acid translation of the cdr3 field.   <br />*implemented*
+| cdr3_sequence_start, cdr3_sequence_end  | number |   Start/end position of the CDR3 in the query sequence (1-based closed interval).   <br />*implemented* |
 | productive | boolean | True if the V(D)J sequence is predicted to be productive.  <br /> *true, false, or null when no CDR3 has been detected* |
 | sequence_alignment  | string  | Aligned portion of query sequence, including any indel corrections or numbering spacers, such as IMGT-gaps. Typically, this will include only the V(D)J region, but that is not a requirement. <br /> *null*                                         |
 | germline_alignment | string  | Assembled, aligned, fully length inferred germline sequence spanning the same region as the sequence_alignment field (typically the V(D)J region) and including the same set of corrections and spacers (if any). <br />*null*
