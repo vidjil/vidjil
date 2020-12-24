@@ -15,6 +15,7 @@ Tuesday XX (D-8)
 - [ ] Live tests on `dev`
 - [ ] Bikeshed strings
 - [ ] List complete 
++ [ ] List all the changes, checking that the milestone contains all relevant issues/MR
 - [ ] Finalize `CHANGELOG.web`
 - [ ] Finalize ~doc
 - [ ] Finalize `docker/CHANGELOG`
