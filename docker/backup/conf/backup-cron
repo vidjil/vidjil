@@ -1,0 +1,11 @@
+
+# An example of backup strategy (beware than /mnt/backup should exist)
+
+# A backup since yesterday every three hours
+# 0 */3 * * * root cd /usr/share/vidjil/server && sh backup.sh -y vidjil /mnt/backup >> /var/log/cron.log 2>&1
+
+# A backup since the start of the month every three days
+# 51 3 */3 * * root cd /usr/share/vidjil/server && sh backup.sh -i vidjil /mnt/backup >> /var/log/cron.log 2>&1
+
+# A full backup twice a month
+# 33 2 1,15 * * root cd /usr/share/vidjil/server && sh backup.sh vidjil /mnt/backup >> /var/log/cron.log 2>&1
