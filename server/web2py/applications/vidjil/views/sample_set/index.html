@@ -17,7 +17,7 @@
         <div class="db_block_left"> {{=info["label"]}} </div>
         
         <div class="db_block_right"> {{if auth.can_process_sample_set(request.vars['id']) :}}
-            process
+            process config
             <span>
                 <select id="choose_config" name="config" onchange="db.call('sample_set/index', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
