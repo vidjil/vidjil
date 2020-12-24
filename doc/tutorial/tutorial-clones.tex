@@ -702,12 +702,8 @@ and the $y$ axis selects the order of the boxes sharing a same $x$).
 In the bar plot mode, pass the mouse over the bars: What happens?}
 \begin{verbatim}
   def test_B_clones_28_switch_scatterplot_mode
-    if $b.driver.capabilities.browser_name == 'firefox'
-      if $b.driver.capabilities.version == '32.0'
-        print "\n ** Skip test; browser " + $b.driver.capabilities.browser_name + "; " + $b.driver.capabilities.version  + " **\n"
-        skip "Issue #4595 must be solved first"
-      end
-    end
+
+    skip_on_browser('firefox', '32.0', 'See issue #4595')
 
     $b.send_keys 0
     $b.update_icon.wait_while(&:present?)
@@ -742,11 +738,7 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 \begin{verbatim}
   def test_B_clones_29_shortcut_preset
 
-    if $b.driver.capabilities.browser_name == 'firefox'
-      if $b.driver.capabilities.version == '32.0'
-        skip "Issue #4595 must be solved first"
-      end
-    end
+    skip_on_browser('firefox', '32.0', 'See issue #4595')
 
     $b.send_keys 0
     $b.update_icon.wait_while(&:present?)
