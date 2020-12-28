@@ -167,6 +167,18 @@ map <string, string> CloneOutputAIRR::fields()
   fields["d_call"] = get(KEY_SEG, "4", "name");
   fields["j_call"] = get(KEY_SEG, "3", "name");
   
+  fields["v_sequence_start"]    = get(KEY_SEG, "5", "start");
+  fields["v_sequence_end"]      = get(KEY_SEG, "5", "stop");
+  fields["d_sequence_start"]    = get(KEY_SEG, "4", "start");
+  fields["d_sequence_end"]      = get(KEY_SEG, "4", "stop");
+  fields["j_sequence_start"]    = get(KEY_SEG, "3", "start");
+  fields["j_sequence_end"]      = get(KEY_SEG, "3", "stop");
+  fields["cdr3_sequence_start"] = get(KEY_SEG, "cdr3", "start");
+  fields["cdr3_sequence_end"]   = get(KEY_SEG, "cdr3", "stop");
+
+  fields["v_support"] = get(KEY_SEG, "evalue_left", "val");
+  fields["j_support"] = get(KEY_SEG, "evalue_right", "val");
+
   fields["cdr3_aa"] = get(KEY_SEG, "cdr3", "aa");
   fields["junction"] = NULL_VAL;
   fields["junction_aa"] = get(KEY_SEG, "junction", "aa");
@@ -192,6 +204,15 @@ void SampleOutputAIRR::out(ostream &s)
     "junction",
     "cdr3_aa",
     "warnings",
+
+    "v_sequence_start", "v_sequence_end",
+    "d_sequence_start", "d_sequence_end",
+    "j_sequence_start", "j_sequence_end",
+
+    "cdr3_sequence_start", "cdr3_sequence_end",
+
+    "v_support", "j_support",
+
     "rev_comp",
     "sequence_alignment",
     "germline_alignment",

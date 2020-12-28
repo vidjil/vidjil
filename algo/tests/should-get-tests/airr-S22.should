@@ -43,6 +43,16 @@ $ Junction of the first clone appears once, but CDR3 twice (it is also included 
 1:CTREEQYSSWYFDFW		
 w2:TREEQYSSWYFDF
 
+$ V/D/J start/end positions of the first clone
+b1: 72 91 102 103
+bf1: 1 72 91 102 103 147
+
+$ cdr3 start/end positions of the first clone
+b1: 69 137
+
+$ V/J e-values
+rb1: 0[.][0-9]*e.00 7[.][0-9]*e[-]76
+
 $ The first clone has one warning
 1:TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG .* W69
 
