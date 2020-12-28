@@ -331,6 +331,9 @@ Model.prototype = {
                     
     }, //end loadGermline
 
+    getCurrentSystem: function(){
+        return this.germlineV.system
+    },
     /**
      * compute some meta-data for each clones
      * */

@@ -315,8 +315,11 @@ ScatterPlot_selector.prototype = {
                     node_y = mid_y + this.margin[0];
                 }
                 
-                if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
-                nodes_selected.push(i);
+                if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2 && 
+                     (!clone.hasSizeDistrib() || (clone.sameAxesAsScatter(this) && clone.getSize()) ) ) {
+                        nodes_selected.push(i);
+                }
+
             }
             
             this.selector
@@ -336,6 +339,7 @@ ScatterPlot_selector.prototype = {
      * @param {integer} cloneID - clone index
      * */
     clickNode: function(cloneID) {
+        if (this.m.clone(cloneID).hasSizeDistrib() && !this.m.clone(cloneID).sameAxesAsScatter(this)) {return}
         this.m.unselectAllUnlessKey(d3.event)
         this.m.select(cloneID)
     },
