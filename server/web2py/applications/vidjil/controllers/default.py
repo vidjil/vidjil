@@ -623,7 +623,7 @@ def user():
             # Set up a new user, after register
 
             # Default permissions
-            add_default_group_permissions(auth, auth.user_group())
+            add_default_group_permissions(auth, auth.user_group(), anon=True)
 
             # Appartenance to the public group
             group_id = db(db.auth_group.role == 'public').select()[0].id
