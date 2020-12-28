@@ -29,6 +29,9 @@ Bear in mind that to ensure readability at most 50 curves are displayed in this 
     # XXX don't know why, but class_name and class don't work. Use outer_html.include instead XXX
     assert ( $b.circle(:id => "visu_circle1").outer_html.include? "circle_focus" ), "focus given to the clone in scatterplot"
     assert ( $b.li(:class => ["list", "list_focus"]).id == "1"),                    "focus given to the clone in list"
+
+    skip_on_browser('firefox', '32.0', 'See issue #4595')
+
     assert ( $b.path(:id => "polyline1").outer_html.include? 'graph_focus'),        "focus given to the clone in timeline graph"
     assert ( $b.div(:class => ["focus", "cloneName"]).text == "interesting clone (IGHV3-9*01 7/CCCGGA/17 IGHJ6*02)"), "clone name is set in focus"
   end
@@ -72,6 +75,8 @@ We will look now at how the V gene distribution evolves along the time.
     $b.graph_x_legend("0").click
     $b.update_icon.wait_while(&:present?)
     assert ($b.info_name.text == "LIL-L3-0"), "Correct name of sample before play lunched"
+
+    skip_on_browser('firefox', '32.0', 'See issue #4595')
 
     ## launch "play" function
     $b.div(:class => ["play_button", "button"]).click

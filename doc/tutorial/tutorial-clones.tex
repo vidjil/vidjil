@@ -702,6 +702,9 @@ and the $y$ axis selects the order of the boxes sharing a same $x$).
 In the bar plot mode, pass the mouse over the bars: What happens?}
 \begin{verbatim}
   def test_B_clones_28_switch_scatterplot_mode
+
+    skip_on_browser('firefox', '32.0', 'See issue #4595')
+
     $b.send_keys 0
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset 0"
@@ -734,6 +737,9 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 \question{Press the keys \texttt{0} to \texttt{9} on the numeric keypad. What happens ?}
 \begin{verbatim}
   def test_B_clones_29_shortcut_preset
+
+    skip_on_browser('firefox', '32.0', 'See issue #4595')
+
     $b.send_keys 0
     $b.update_icon.wait_while(&:present?)
 
