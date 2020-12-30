@@ -17,7 +17,7 @@
         <div class="db_block_left"> {{=info["label"]}} </div>
         
         <div class="db_block_right"> {{if auth.can_process_sample_set(request.vars['id']) :}}
-            config
+            process config
             <span>
                 <select id="choose_config" name="config" onchange="db.call('sample_set/index', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
@@ -156,7 +156,7 @@
                    <td>
                    {{if row.sequence_file.data_file != None and ( row.results_file.id != None or ( status not in ["RUNNING", "QUEUED", "ASSIGNED"]) ) and (not has_pre_process or (row.sequence_file.pre_process_flag != None and row.sequence_file.pre_process_flag != "FAILED")) :}}
                        {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
-                           <span class="pointer" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"><i class="icon-cog-2" title="Run the selected configuration for this file"></i></span>
+                           <span class="pointer" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"><i class="icon-cog-2" title="Run a process with the selected configuration for this file"></i></span>
                        {{pass}}
                    {{pass}}
                    </td>
