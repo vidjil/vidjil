@@ -1,6 +1,8 @@
 #include "output.h"
 
 #define NULL_VAL ""
+#define AIRR_TRUE "T"
+#define AIRR_FALSE "F"
 
 string getout(json v)
 {
@@ -149,8 +151,8 @@ void SampleOutputVidjil::out(ostream &s, bool with_clones)
 
 string TF_format_bool(string val)
 {
-  if (val == "false") return "F" ;
-  if (val == "true") return "T" ;
+  if (val == "false") return AIRR_FALSE ;
+  if (val == "true") return AIRR_TRUE ;
   return val ;
 }
 
