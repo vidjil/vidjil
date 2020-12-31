@@ -29,9 +29,9 @@ $ One clone has 8 reads, two clones have 5 reads
 1:IGH 8
 2:IGH 5
 
-$ Two clones are productive, no clone is labeled as non-productive
-2:\tT\t
-0:\tF\t
+$ Two clones are productive (productive, vj_in_frame, NOT stop_codon), no clone is labeled as non-productive
+2:\tT\tT\tF\t
+0:\tF\t[FT]\t[FT]\t
 
 $ v_call for 2 clones (-z 2)
 2:IGHV

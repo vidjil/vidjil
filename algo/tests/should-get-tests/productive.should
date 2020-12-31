@@ -18,3 +18,16 @@ $ Cause of unproductivity
 0:clones[1].seg.junction.unproductive
 :clones[2].seg.junction.unproductive: out-of-frame
 :clones[3].seg.junction.unproductive: too-short
+
+!OUTPUT_FILE: out/productive_stop_outframe.tsv
+!LAUNCH: echo
+!OPTIONS: --mod Jr
+
+$ Clone 001, AIRR: NOT productive, vdj_in_frame, stop_codon
+1:001.*\tF\tT\tT\t
+
+$ Clone 002, AIRR: productive, vdj_in_frame, NOT stop_codon
+1:002.*\tT\tT\tF\t
+
+$ Clone 003, AIRR: NOT productive, NOT vdj_in_frame, NULL stop_codon
+1:003.*\tF\tF\t\t
