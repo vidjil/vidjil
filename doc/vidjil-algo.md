@@ -724,6 +724,8 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 | cdr3_aa | string | Amino acid translation of the cdr3 field.   <br />*implemented*
 | cdr3_sequence_start, cdr3_sequence_end  | number |   Start/end position of the CDR3 in the query sequence (1-based closed interval).   <br />*implemented* |
 | productive | boolean | True if the V(D)J sequence is predicted to be productive.  <br /> *true, false, or null when no CDR3 has been detected* |
+| vj_in_frame | boolean | True if the V and J gene alignments are in-frame. <br /> *true, false, or null when no CDR3 has been detected* |
+| stop_codon | boolean | True if the aligned sequence contains a stop codon. <br /> *true, false, or null when vj_in_frame is false* |
 | sequence_alignment  | string  | Aligned portion of query sequence, including any indel corrections or numbering spacers, such as IMGT-gaps. Typically, this will include only the V(D)J region, but that is not a requirement. <br /> *null*                                         |
 | germline_alignment | string  | Assembled, aligned, fully length inferred germline sequence spanning the same region as the sequence_alignment field (typically the V(D)J region) and including the same set of corrections and spacers (if any). <br />*null*
 | v_cigar, d_cigar, j_cigar | string  | CIGAR strings for the V/D/J gene <br />*null*.
