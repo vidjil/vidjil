@@ -29,7 +29,7 @@ class BrowserTest < MiniTest::Test
   # Skip a test on a given browser version
   def skip_on_browser(name, version, message)
     if $b.driver.capabilities.browser_name == name
-      if $b.driver.capabilities.version == version
+      if version == nil or $b.driver.capabilities.version == version
         nameversion = "(" + $b.driver.capabilities.browser_name + "/" + $b.driver.capabilities.version  + ")"
         print nameversion
         skip message + " " + nameversion
