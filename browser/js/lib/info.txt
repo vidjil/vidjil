@@ -1,6 +1,6 @@
 
     d3-v3		: framework svg pour graphique/scatterplot
-    * @version          3.4.11 (2014)
+    * @version          5.14.1 (2019)
     * @author           Michael Bostock
     * @link             http://d3js.org/
     * @license          BSD Licensed
