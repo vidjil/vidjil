@@ -12,10 +12,10 @@ Tuesday XX (D-8)
 
 ### Deploy week
 
+- [ ] Deploy on `dev`, either with `git pull` or with Docker
 - [ ] Live tests on `dev`
 - [ ] Bikeshed strings
-- [ ] List complete 
-+ [ ] List all the changes, checking that the milestone contains all relevant issues/MR
+- [ ] List all the changes, checking that the milestone contains all relevant issues/MR
 - [ ] Finalize `CHANGELOG.web`
 - [ ] Finalize ~doc
 - [ ] Finalize `docker/CHANGELOG`
