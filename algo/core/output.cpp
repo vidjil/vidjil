@@ -1,6 +1,9 @@
 #include "output.h"
+#include "segment.h"
 
 #define NULL_VAL ""
+#define AIRR_TRUE "T"
+#define AIRR_FALSE "F"
 
 string getout(json v)
 {
@@ -149,8 +152,8 @@ void SampleOutputVidjil::out(ostream &s, bool with_clones)
 
 string TF_format_bool(string val)
 {
-  if (val == "false") return "F" ;
-  if (val == "true") return "T" ;
+  if (val == "false") return AIRR_FALSE ;
+  if (val == "true") return AIRR_TRUE ;
   return val ;
 }
 
@@ -182,7 +185,18 @@ map <string, string> CloneOutputAIRR::fields()
   fields["cdr3_aa"] = get(KEY_SEG, "cdr3", "aa");
   fields["junction"] = NULL_VAL;
   fields["junction_aa"] = get(KEY_SEG, "junction", "aa");
+
   fields["productive"] = TF_format_bool(get(KEY_SEG, "junction", "productive"));
+  bool productive = (fields["productive"] == AIRR_TRUE); // thsus false for both AIRR_FALSE and NULL_VAL
+  string unproductive = get(KEY_SEG, "junction", "unproductive");
+  fields["vj_in_frame"] = productive ? AIRR_TRUE
+                        : unproductive == UNPROD_STOP_CODON ? AIRR_TRUE
+                        : unproductive == UNPROD_OUT_OF_FRAME ? AIRR_FALSE
+                        : NULL_VAL;
+  fields["stop_codon"] = productive ? AIRR_FALSE
+                       : unproductive == UNPROD_STOP_CODON ? AIRR_TRUE
+                       : NULL_VAL;
+
   fields["rev_comp"] = NULL_VAL;
 
   fields["warnings"] = getWarnings();
@@ -200,6 +214,7 @@ void SampleOutputAIRR::out(ostream &s)
     "sequence",
     
     "productive",
+    "vj_in_frame", "stop_codon",
     "junction_aa",
     "junction",
     "cdr3_aa",
