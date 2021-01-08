@@ -25,6 +25,10 @@ void ProbaPrecomputer::precomputeProba(float index_load, int length) {
   if (length < MAX_PRECOMPUTED_PROBA) {
     // By definition of MAX_PRECOMPUTED_PROBA they exist
     double probability_having_system = precomputed_proba_with_system.at(index_load)[length];
+#ifdef SEED_COVER
+    // Experimental, see #3342
+    probability_having_system *= length;
+#endif
     double probability_not_having_system = 1;
     precomputed_proba[index_load][length] = std::vector<double>(length+1);
     std::vector<double> &precomp_proba = precomputed_proba[index_load][length];
