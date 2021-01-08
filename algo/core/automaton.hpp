@@ -342,9 +342,12 @@ map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bo
           found_affects.push_back(info);
         }
 
-        // Uncomment this for #3342
-        //        bitset_it.first->second.setConsecutive(i - info.getLength() + 1, info.getLength());
+#ifdef SEED_COVER
+        // Experimental, see #3342
+        bitset_it.first->second.setConsecutive(i - info.getLength() + 1, info.getLength());
+#else
         lookup_bitsets[hash]->set(i - info.getLength() + 1);
+#endif
     }
   }
 #ifdef DEBUG
