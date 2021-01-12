@@ -50,7 +50,7 @@
         "IGHC": {
             "shortcut": "C",
             "color" : "#6c71c4",
-            "description": "Sus Scrofa immunoglobulin, heavy locus, with classes",
+            "description": "Sus Scrofa immunoglobulin, heavy locus, with constant heavy chains",
             "recombinations": [ {
                 "5": ["IGHV.fa"],
                 "4": ["IGHJ.fa"],
@@ -75,7 +75,7 @@
         "IGH+": {
             "shortcut": "h",
             "color" : "#8c91e4",
-            "description": "Sus Scrofa immunoglobulin, heavy locus , incomplete Dh-Jh recombinations",
+            "description": "Sus Scrofa immunoglobulin, heavy locus, incomplete Dh-Jh recombinations",
             "follows": "IGH",
             "recombinations": [ {
                 "5": ["IGHD.fa"],
