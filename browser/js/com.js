@@ -34,18 +34,15 @@ function Com(default_console) {
     var self = this;
     this.default = default_console;
     
-    var wrapper = function(key) {
-        return function() {
-            var args = Array.prototype.slice.call(arguments)[0];
-            return self.default[key](args);
-        }
-    };
-    
     for (var key in default_console){
         if (typeof this.default[key] == 'function') {
-            if (key!='log') this[key] = wrapper(key)
+            //if (key!='log') this[key] = wrapper(key)
+            if (key!='log') 
+                this[key] = default_console[key].bind(window.console);
+            else
+                this.basicLog = default_console[key].bind(window.console);
         }else{
-            this[key] = this.default[key]
+            this[key] = this.default[key];
         }
     }
     
