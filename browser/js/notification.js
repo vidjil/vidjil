@@ -2,6 +2,7 @@
 function Notification(m) {
 	this.m = m
 	this.m.notification = this
+	this.old = []; 	//store id of already displayed notification for this session
 }
 
 
@@ -71,11 +72,14 @@ Notification.prototype = {
 
 			priorities = { 'urgent': 3, 'info': 1 };
 
+			if (this.old.indexOf(messages[i].notification.id) == -1) {
+				this.old.push(messages[i].notification.id);
 				console.log({
 					msg: display_title, type: 'flash',
 					call: { path: 'notification/index', args: { 'id': messages[i].notification.id } },
 					priority: priorities[messages[i].notification.priority]
 				});
 			}
+		}
 	}
 }
