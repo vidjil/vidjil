@@ -224,7 +224,7 @@ Com.prototype = {
 
         if (priority >= this.min_priority){
             var div = jQuery('<div/>', {
-                'text': str,
+                'html': str,
                 'style': 'display : none',
                 'class': 'flash_'+priority ,
                 'click': function(){$(this).fadeOut(25, function() { $(this).remove();} );}
