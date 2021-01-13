@@ -149,7 +149,7 @@ Com.prototype = {
             if (typeof obj.msg != "undefined") text += obj.msg
             switch (obj.type) {
                 case "flash":
-                    this.flash(text, obj.priority)
+                    this.flash(text, obj.priority, obj.call)
                     break;
                 case "popup":
                     this.popupMsg(text)
@@ -195,8 +195,6 @@ Com.prototype = {
         document.body.appendChild(this.log_container);
         document.body.appendChild(this.popup_container);
         
-        
-        
         this.div_dataBox = document.createElement("div");
         this.div_dataBox.className = "modal data-container";
         
@@ -220,9 +218,10 @@ Com.prototype = {
      * @param {string} str - message to display
      * @param {integr} priority 
      * */
-    flash: function (str, priority){
+    flash: function (str, priority, call){
         priority = typeof priority !== 'undefined' ? priority : 0;
         
+
         if (priority >= this.min_priority){
             var div = jQuery('<div/>', {
                 'text': str,
@@ -231,6 +230,24 @@ Com.prototype = {
                 'click': function(){$(this).fadeOut(25, function() { $(this).remove();} );}
             }).appendTo(this.flash_container)
             .slideDown(200);
+
+            if (call){
+                var div2 = jQuery('<div/>').appendTo(div);
+
+                jQuery('<div/>', {
+                    'text': "see details",
+                    'class': "button",
+                    'click': function(){ db.call(call.path, call.args); }
+                }).appendTo(div2);
+
+                if (priority >= this.ERROR){
+                    jQuery('<div/>', {
+                        'text': "dismiss",
+                        'class': "button",
+                        'click': function(){$(this).fadeOut(25, function() { $(this).remove();} );}
+                    }).appendTo(div2);
+                }
+            }
             
             if (priority < this.ERROR){
                 setTimeout(function(){
