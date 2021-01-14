@@ -51,10 +51,10 @@ void testOnlineBioReaderMaxNth() {
 
 
 void testFastaNbSequences() {
-  TAP_TEST_EQUAL(nb_sequences_in_file("../../germline/homo-sapiens/IGHV.fa"), 357, TEST_FASTA_NB_SEQUENCES, "ccc");
+  TAP_TEST_EQUAL(nb_sequences_in_file("../../germline/homo-sapiens/IGHV.fa"), 547, TEST_FASTA_NB_SEQUENCES, "ccc");
 
   int a1 = approx_nb_sequences_in_file("../../germline/homo-sapiens/IGHV.fa");
-  TAP_TEST(a1 >= 350 && a1 <= 370, TEST_FASTA_NB_SEQUENCES, "");
+  TAP_TEST(a1 >= 540 && a1 <= 560, TEST_FASTA_NB_SEQUENCES, "");
 
   int a2 = nb_sequences_in_file("data/Stanford_S22.fasta", true);
   TAP_TEST(a2 >= 13100 && a2 <= 13200, TEST_FASTA_NB_SEQUENCES, "");
