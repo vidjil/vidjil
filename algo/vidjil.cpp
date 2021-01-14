@@ -139,6 +139,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define WARN_PERCENT_SEGMENTED 40
 #define WARN_COVERAGE 0.6
 #define WARN_NUM_CLONES_SIMILAR 10
+#define WARN_RATIO_NB_READS 5
 
 // display
 #define CLONES_ON_STDOUT 50
@@ -1172,6 +1173,12 @@ int main (int argc, char **argv)
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
+    if ((float) nb_total_reads / (float) nb_reads_for_evalue > WARN_RATIO_NB_READS)
+    {
+      output.add_warning(W21_DOUBTFUL_MULTIPLIER, "Bad e-value multiplier.", LEVEL_WARN);
+      cout << "  ! The estimated number of reads was far below the actual number of reads" << endl ;
+      cout << "  ! There may be false positives, you should run with an higher --read-number" << endl ;
+    }
 
     //$$ Display statistics on segmentation causes
 
