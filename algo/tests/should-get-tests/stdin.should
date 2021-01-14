@@ -1,0 +1,28 @@
+
+!LAUNCH: cat ../should-vdj-tests/Demo-X5.should-vdj.fa | $LAUNCHER $VIDJIL_DIR/$EXEC --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG -
+
+$ Display message with the estimation of read number
+1:reading from stdin, estimating 100 reads
+
+$ Detect recombinations in one read
+1:junction detected in 1 reads
+
+$ Detect and designate one read on TRG
+1:TRG .* -> .* 1 
+1:TRGV10.* ./AGAC/3 TRGJP1
+
+
+
+# When --read-number gives a bad estimation, there is a warning
+
+!LAUNCH: cat ../should-vdj-tests/Demo-X5.should-vdj.fa | $LAUNCHER $VIDJIL_DIR/$EXEC --read-number 1 --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG -
+
+$ Display message with the estimation of read number
+1:reading from stdin, estimating 1 reads
+
+$ Detect and designate at least one read on TRG
+1:TRG .* -> .* [1-9]
+1:TRGV10.* ./AGAC/3 TRGJP1
+
+$ Warning
+1:.W21. Bad e-value multiplier
