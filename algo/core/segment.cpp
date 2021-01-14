@@ -469,9 +469,9 @@ KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
 
 KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold, double multiplier)
 {
-  box_V = new AlignBox();
+  box_V = new AlignBox("5", V_COLOR);
   box_D = new AlignBox();
-  box_J = new AlignBox();
+  box_J = new AlignBox("3", J_COLOR);
 
   CDR3start = -1;
   CDR3end = -1;
