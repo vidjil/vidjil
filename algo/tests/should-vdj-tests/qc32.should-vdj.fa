@@ -1,5 +1,5 @@
 #     attactgtgccacctgggATgttaggagaaactctt
 # V8  attactgtgccacctgggAT      |||||||||
 # J1                    ttattataagaaactctt
->TRGV8*01 3/GTTAGG/8 TRGJ1*02 [TRG] BUG
+>TRGV8*01 3/GTTAGG/11 TRGJ1 [TRG] BUG
 cacagcgtcttctgtactatgactcctacaactccagggttgtgttggaatcaggaatcagtcgagaaaagtatcatacttatgcaagcacagggaagagccttaaatttatactggaaaatctaattgaacgtgactctggggtctattactgtgccacctgggATgttaggagaaactctttggcagtggaacaacact
