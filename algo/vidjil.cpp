@@ -253,6 +253,7 @@ int main (int argc, char **argv)
                                   - FASTQ (.fq/.fastq, .fq.gz/.fastq.gz)
                                   - BAM (.bam)
                               Paired-end reads should be merged before given as an input to vidjil-algo.
+                              Uncompressed FASTA/FASTQ reads can be given from standard input with ')Z" STDIN_FILENAME R"Z('.
                  )Z")
     -> required() -> type_name("");
 
