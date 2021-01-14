@@ -12,9 +12,6 @@ using namespace std;
 
 #define GENE_ALIGN 20
 
-#define V_COLOR "\033[1;42m"
-#define J_COLOR "\033[1;43m"
-#define NO_COLOR "\033[0m"
 
 void usage(int argc, const char **argv) {
   if (argc != 7) {
@@ -86,26 +83,12 @@ int main(int argc, const char** argv)
     // Read on stdin
     read = read_sequence(cin);
   }
-  
+
   align_against_collection(read, interestingV, -1, false, false, false, &box_V, VDJ);
   align_against_collection(read, interestingJ, -1, false, true, false, &box_J, VDJ);
-  
-  int align_V_length = min(GENE_ALIGN, box_V.end - box_V.start + 1);
-  int align_J_length = min(GENE_ALIGN, (int)read.size() - box_J.start + 1);
-  int start_V = box_V.end - align_V_length + 1;
-  int end_J = box_J.start + align_J_length - 1;
 
-  cout << "read        \t" << start_V << "\t" ;
+  Sequence seq = create_sequence("read", "read", read, "");
 
-  cout << V_COLOR << read.substr(start_V, align_V_length)
-       << NO_COLOR
-       << read.substr(box_V.end+1, (box_J.start - 1) - (box_V.end + 1) +1)
-       << J_COLOR
-       << read.substr(box_J.start, align_J_length)
-       << NO_COLOR
-       << "\t" << end_J << endl ;
-
-  cout << box_V.refToString(start_V, end_J) << "\t" << box_V << endl ;
-  cout << box_J.refToString(start_V, end_J) << "\t" << box_J << endl ;
+  show_colored_read_germlines(cout, seq, &box_V, &box_J, GENE_ALIGN);
   return 0;
 }
