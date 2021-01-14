@@ -442,8 +442,13 @@ class FineSegmenter : public Segmenter
   void findCDR3();
 
   void checkWarnings(CloneOutput *clone, bool phony=true);
-  void toOutput(CloneOutput *clone);
+
+  /**
+   * Show sequence, with aligments
+   */
+  void showAlignments(ostream &out);
   
+  void toOutput(CloneOutput *clone);
 };
 
 

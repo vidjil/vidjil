@@ -1413,6 +1413,10 @@ void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
     }
 }
 
+void FineSegmenter::showAlignments(ostream &out){
+  show_colored_read_germlines(out, getSequence(), box_V, box_J, SHOW_MAX_GENE_ALIGNMENT);
+}
+
 void FineSegmenter::toOutput(CloneOutput *clone){
   json seg;
 
