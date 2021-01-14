@@ -168,6 +168,10 @@ Positionals
                                   - BAM (.bam)
                               Paired-end reads should be merged before given as an input to vidjil-algo.
                               Uncompressed FASTA/FASTQ reads can be given from standard input with '-'.
+
+Input
+  -x, --first-reads INT       maximal number of reads to process ('all': no limit, default), only first reads
+  -X, --sampled-reads INT     maximal number of reads to process ('all': no limit, default), sampled reads
 ```
 
 The main input file of Vidjil-algo is a *set of reads*, given as a `.fasta`
@@ -183,6 +187,10 @@ Vidjil-algo can also process BAM files, but please note that:
 2.  In case of paired-end sequencing, the reads must have already been merged
     in the BAM file.
 
+The `--first-reads` option restricts the analysis on a few sequences, for example to probe a large file or to test some parameters.
+However, read files may be not homogeneous, with biais in the sequences at the start of the file.
+The `--sampled-reads` option rather considers *regularly sampled sequences* from the file.
+It is thus generally safe to run `--sampled-reads 1000` to have a fast insight of what there is in some data.
 
 ## Germline presets: locus and recombination selection
 
@@ -373,10 +381,6 @@ The default is `--trim 0`.
 The following options control how many clones are output and analyzed.
 
 ``` diff
-Input
-  -x, --first-reads INT       maximal number of reads to process ('all': no limit, default), only first reads
-  -X, --sampled-reads INT     maximal number of reads to process ('all': no limit, default), sampled reads
-
 Limits to report and to analyze clones (second pass)
   -r, --min-reads INT=5       minimal number of reads supporting a clone
   --min-ratio FLOAT=0         minimal percentage of reads supporting a clone
