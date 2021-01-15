@@ -175,7 +175,7 @@ Com.prototype = {
         
         this.log_container = document.createElement("div")
         this.log_container.className = "log_container";
-        
+
         this.popup_container = document.createElement("div")
         this.popup_container.className = "popup_container";
         
@@ -209,6 +209,28 @@ Com.prototype = {
         this.div_dataBox.appendChild(div_data);
         
         document.body.appendChild(this.div_dataBox);
+
+        /*
+        $(".log_container").hover(function () {
+            $(this).stop()
+            .css('overflow-y', 'scroll')
+            .css('overflow-x', '')
+            .animate({
+                width: '400',
+                height: '75%',
+                opacity: 0.85
+            });
+        }, function () {
+            $(this).stop()
+            .css('overflow-y', 'hidden')
+            .css('overflow-x', 'hidden')
+            .animate({
+                width: 10,
+                height: 10,
+                opacity: 0.5
+            });
+        });
+        */
     },
 
     
