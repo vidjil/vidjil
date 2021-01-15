@@ -287,7 +287,7 @@ Com.prototype = {
      * @param {string} str - message to print
      * @param {integr} priority 
      * */
-    customLog: function(str, priority){
+    customLog: function(str, priority, call){
         priority = typeof priority !== 'undefined' ? priority : 0;
         var self = this;
         
@@ -298,12 +298,22 @@ Com.prototype = {
             while (strDate.length < 8) strDate += " "
                 
             var div = jQuery('<div/>', {
-                'text': strDate+" | "+str,
+                'html': strDate+" | "+str,
                 'class': 'log_'+priority
             }).appendTo(this.log_container)
             .slideDown(200, function(){
                 self.log_container.scrollTop = self.log_container.scrollHeight;
             });
+
+            if (call){
+                var div2 = jQuery('<div/>').appendTo(div);
+
+                jQuery('<div/>', {
+                    'text': "see details",
+                    'class': "button",
+                    'click': function(){ db.call(call.path, call.args); }
+                }).appendTo(div2);
+            }
             
         }else{
 	  if (priority >= this.min_priority_console)
