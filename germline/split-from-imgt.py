@@ -317,7 +317,13 @@ SPECIES = {
     "Rattus norvegicus_BN/SsNHsdMCW": 'rattus-norvegicus/',
     "Rattus norvegicus_BN; Sprague-Dawley": 'rattus-norvegicus/',
     "Gallus gallus": "gallus-gallus/",
-    "Gallus gallus_Red Jungle fowl": "gallus-gallus/"
+    "Gallus gallus_Red Jungle fowl": "gallus-gallus/",
+    "Sus scrofa": "sus-scrofa/",
+    "Sus scrofa_Duroc": "sus-scrofa/",
+    "Sus scrofa_Minnesota miniature swine": "sus-scrofa/",
+    "Sus scrofa_Landrace boar": "sus-scrofa/",
+    "Sus scrofa_Yorkshire": "sus-scrofa/"
+
 }
 
 
