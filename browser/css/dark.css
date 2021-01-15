@@ -804,7 +804,6 @@ span .end-codon {
 #axis_choice,
 #add_clone_menu {
   z-index: 2;
-  border: solid;
   position: fixed;
   top: 200px;
   min-width: 400px;
@@ -814,6 +813,10 @@ span .end-codon {
   padding: 10px;
   background: #000000;
   display: none;
+  border: solid;
+  border-width: 1px;
+  border-color: #839496;
+  box-shadow: 2px 2px 5px #839496;
 }
 #add_clone_menu {
   margin-left: -325px;
@@ -863,7 +866,6 @@ span .end-codon {
 /*	//////////////////////////////////////////////////////////////	*/
 .popup_container {
   z-index: 20;
-  border: solid;
   min-width: 500px;
   max-width: 80%;
   font-size: 13px;
@@ -877,6 +879,10 @@ span .end-codon {
   -moz-transform: translate(-50%, -50%);
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+  border: solid;
+  border-width: 1px;
+  border-color: #839496;
+  box-shadow: 2px 2px 5px #839496;
 }
 /* Main style for <a> Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
 a {
@@ -938,17 +944,11 @@ a.tag-link {
   position: absolute;
   top: 0px;
   right: 0px;
-  border: solid;
   background: inherit;
-  border-radius: 20px;
-  width: 15px;
-  height: 15px;
-  text-align: center;
-  font-weight: bolder;
   cursor: pointer;
   padding: 1px;
-  font-size: 90%;
-  color: #333333;
+  margin: 1px;
+  font-size: large;
 }
 .closeButton:hover {
   color: #fdf6e3;
@@ -1156,11 +1156,7 @@ span.logo {
 .list_clones,
 .bot-bar,
 #bot-container,
-.popup_container,
-#file_menu,
-.tagSelector,
-.closeButton,
-#axis_choice {
+.tagSelector {
   border-color: #333333;
 }
 #info_window td {
@@ -1624,7 +1620,7 @@ h3 .uid {
   z-index: 100;
 }
 .log_container {
-  height: 500px;
+  height: 75%;
   width: 400px;
   position: absolute;
   display: block;
@@ -1632,11 +1628,12 @@ h3 .uid {
   right: 0px;
   padding: 5px;
   margin: 5px;
-  background: #073642;
+  background: #333333;
   border-color: #333333;
   z-index: 15;
   border: solid;
   border-width: 1px;
+  box-shadow: 2px 2px 5px #839496;
   opacity: 0.85;
   overflow-y: scroll;
   display: none;
@@ -1648,14 +1645,14 @@ h3 .uid {
   width: 350px;
   min-height: 20px;
   border: solid;
-  border-width: 2px;
+  border-width: 1px;
   display: block;
-  border-radius: 5px;
   padding: 5px;
   margin: 5px;
   background: #000000;
   border-color: #333333;
   transition: background 1s linear;
+  box-shadow: 1px 1px 2px;
 }
 .log_0,
 .log_1,
@@ -1667,9 +1664,8 @@ h3 .uid {
   margin: 5px;
   background: #000000;
   border: solid;
-  border-width: 2px;
-  border-radius: 2px;
-  border-color: #000000;
+  border-width: 1px;
+  padding: 5px;
 }
 .flash_1,
 .log_1 {
