@@ -278,7 +278,7 @@ Com.prototype = {
             }
             
         }
-        
+        this.customLog(str, priority, call);
         this.log(str, priority);
     },
     
