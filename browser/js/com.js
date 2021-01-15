@@ -335,6 +335,13 @@ Com.prototype = {
     closeLog: function () {
         $(this.log_container).fadeToggle(200);
     },
+
+    /**
+     * open/close the log window 
+     * */
+    toggleLog: function () {
+        $(this.log_container).fadeToggle(200);
+    },
     
     /**
      * display a popup message in a small window
