@@ -17,6 +17,7 @@ nav:
         - Tutorial "Mastering the Vidjil web application" 🔗: http://www.vidjil.org/doc/tutorial/mastering-vidjil.html
         - Demo access to app.vidjil.org 🔗: http://app.vidjil.org/
         - Hosting options, healthcare compliance: healthcare.md
+        - Privacy policy: privacy.md
     - Bioinformatician:
         - vidjil-algo, command-line manual: vidjil-algo.md
         - fuse.py, converting and merging immune repertoire data: tools.md
