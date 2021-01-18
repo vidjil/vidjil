@@ -1,11 +1,11 @@
 
-### Privacy policy
+# Privacy policy
 
 The VidjiNet consortium is committed to user privacy.
 Our policy on the protection of individuals about the processing of personal data
 is based on the 95/46/EC European regulation (General Data Protection Regulation).
 
-# Emails and issues tracking
+## Emails and issues tracking
 
 When you send a message to <contact@vidjil.net>, your personal data is collected in order to reply.
 If you agree, your name, email address may also be conserved in the relevant mailing list
