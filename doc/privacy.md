@@ -3,11 +3,11 @@
 
 The VidjiNet consortium is committed to user privacy.
 Our policy on the protection of individuals about the processing of personal data
-is based on the 95/46/EC European regulation (General Data Protection Regulation).
+is based on the 95/46/EC European regulation ([General Data Protection Regulation](https://gdpr.eu/)).
 
 ## Emails and issues tracking
 
-When you send a message to <contact@vidjil.net>, your personal data is collected in order to reply.
+When you send a message to <support@vidjil.org>, your personal data is collected in order to reply.
 If you agree, your name, email address may also be conserved in the relevant mailing list
 to send occasional updates on the platform and   the community.
 Your personal data is never shared with third-parties without your explicit consent.
@@ -71,7 +71,7 @@ The shared data must not contain any personally identifiable information (PII).
 If you want to verify, modify, export, or delete your personal data stored
 by the VidjilNet consortium or on any of the servers managed by the consortium,
 or if you have any question about this data protection policy,
-you can [contact us](mailto:support@vidjil.net?subject=Personal data).
+you can [contact us](mailto:support@vidjil.org?subject=Personal data).
 
 Please clearly state the nature of your request (verifying, modifying, exporting, or deleting personal data)
 and, if applicable, include the URL of the data your request refers to.
