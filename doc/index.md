@@ -24,6 +24,7 @@ sequencing methods and software, called either Rep-Seq or AIRR-Seq.
   - [Libraries and recombinations](locus.md), documentation on library preparation and sequencing as well on detected immune recombinations
   - [Demo access](http://app.vidjil.org/) 🔗 to the patient, experiment and sample public test server
   - [Hosting options](healthcare.md) and healthcare compliance
+  - [Privacy policy](privacy.md) and GDPR compliance
 
 ### Bioinformatician
   - [Vidjil-algo documentation](vidjil-algo.md), usage from the command-line
