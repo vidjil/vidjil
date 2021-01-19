@@ -22,13 +22,14 @@ CTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGTAAG
 
 
 #This sequence may be problematic due to a long deletion ( > 100 nt)
->IGHV3-7*01 (112/CCAGGACC/6, 112/CC/0) IGHD2-2 (16/GAATACCTAGTACC/12, 16/GAATACCTAGT/9, 16/GAA/2)  (IGHJ4*01, IGHJ4*02) [IGH]
+>IGHV3-41*01 111/GGCC/0 IGHD2-2 (16/GAATACCTAGTACC/12, 16/GAATACCTAGT/9, 16/GAA/2)  (IGHJ4*01, IGHJ4*02) [IGH]
 CTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCAGGATTCTCCTTTAGTAGCTTTGACATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGAGTGGCACATATCTGGAATGATGGAAGTCAGAAATGCTCTGCGG
 CCAGGACCTTGTAGTAGGAA
 TACCTAGTACCACTGGGGCAAGGAAACCCTGGTCACCGTCTCCTCAGGT
 
-#>IGHV3-7*01     AGCTATTGGATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTGGCCAACATAAAGCAAGATGGAAGTGAGAAATACTATGTGGactctgt...        actactttg-actactggggccagggaaccctggtcaccgtctcctcag IGHJ4*02
-#                ||||*|***|||||||||||||||||||||||||||||||||||||||||*|||||*|**||***|*|*|||||||||*||||||*||*||*||                    |||*|*| ||*|||||||| ||| ||||||||
+#>IGHV3-7*01     AGCTATTGGATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTGGCCAACATAAAGCAAGATGGAAGTgAGAAATACTATGtGGactctgt...        actactttg-actactggggccagggaaccctggtcaccgtctcctcag IGHJ4*02
+#>IGHV3-41*01    agctAtgGcatgagctgggtccgccaggctccagggaaggggctggagtgagtggcacatatctggaaTgatGGAAGTCAGAAATaCTaTGCAGactctgt...
+#                ||||*|*|*||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||*||*|||*|                    |||*|*| ||*|||||||| ||| ||||||||
 #>Clone_complet  agctttgacatgagctgggtccgccaggctccagggaaggggctggagtgagtggcacatatctggaaTGATGGAAGTCAGAAATGCTCTGCGGCCAGGACCTTGTAGTAGGAATACCTAGTACCACTGGGGCAAGGAAACCCTGGTCACCGTCTCCTCAGGT
 #                **|****|||||**||||||||||||||||||||||||||||||||||||*||*|*|**||***|*||                            ||||**|||||||||
 #>IGHV3-72*02    GACCACTACATGGACTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTTGGCCGTACTAGAAAcaaagctaacag...             ||||**|||||||||
