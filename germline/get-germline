@@ -5,13 +5,14 @@ wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-GeneList
 wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP 
 wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP
 
-errors=$(tempfile)
-python split-germlines.py IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP IMGTGENEDB-GeneList 2> $errors
+
+LOG=split-germlines.log
+ERR=split-germlines.err
+(python split-germlines.py IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP IMGTGENEDB-GeneList | tee $LOG) 2> $ERR
 
 wget -O IMGT_RELEASE http://www.imgt.org/download/GENE-DB/RELEASE
 
 wget -N -P homo-sapiens http://vidjil.org/germline/IGK-INTRON.fa
 wget -N -P homo-sapiens http://vidjil.org/germline/IGK-KDE.fa
 
-cat $errors
-rm -f $errors
+cat $ERR
