@@ -96,18 +96,18 @@ def get_gene_coord(imgt_line):
                              'imgt_data': '|'.join(elements[1:5]),
                              'seq': ''}
 
-def paste_updown_on_fasta(fasta, up, down):
+def paste_updown_on_fasta(fasta, up, down, info=''):
     '''
     Put upstream and/or downstream data on an existing FASTA sequences
-    >>> paste_updown_on_fasta('>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT', 'CCCC', 'GGGG')
-    '>seq\\nCCCC\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\nGGGG\\n'
+    >>> paste_updown_on_fasta('>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT', 'CCCC', 'GGGG', 'foo')
+    '>seqfoo\\nCCCC\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\nGGGG\\n'
     >>> paste_updown_on_fasta('>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\n', '', 'GGGG')
     '>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\nGGGG\\n'
     >>> paste_updown_on_fasta('>seq\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT', 'CCCC', '')
     '>seq\\nCCCC\\nAAAAAAAAAAAAAAAAAAA\\nTTTTTTTTTTT\\n'
     '''
     lines = fasta.split('\n')
-    return lines[0]+'\n' + (up+'\n' if up else '') + '\n'.join(filter(None, lines[1:])) + '\n'\
+    return lines[0]+info+'\n' + (up+'\n' if up else '') + '\n'.join(filter(None, lines[1:])) + '\n'\
         + (down+'\n' if down else '')
 
 def check_imgt_ncbi_consistency(imgt_info, imgt_data, ncbi_target, ncbi_start, ncbi_end):
@@ -211,11 +211,10 @@ def retrieve_genes(f_name, genes, tag, additional_length, gene_list):
             if coord['imgt_name'].endswith('*01'):
                 check_imgt_ncbi_consistency(coord, gene_data, coord['target'], coord['target_start'],
                                             coord['target_end'])
-            up_down = ncbi.get_updownstream_sequences(coord['target'], coord['target_start'],
+            up_down, up_down_info = ncbi.get_updownstream_sequences(coord['target'], coord['target_start'],
                                                       coord['target_end'], min_updownstream)
             # We put the up and downstream data before and after the sequence we retrieved previously
-            gene_data = paste_updown_on_fasta(gene_data, up_down[0], up_down[1])
-
+            gene_data = paste_updown_on_fasta(gene_data, up_down[0], up_down[1], '#' + up_down_info)
 
         # post-process gene_data
         if coord['imgt_data'].split('|')[-1] == FEATURE_J_REGION:
