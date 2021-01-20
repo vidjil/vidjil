@@ -19,7 +19,7 @@ from xml.dom import minidom, Node
 
 
 
-# The two following functions should be refactored as one (used in split-from-imgt and get-CD)
+# The two following functions should be refactored as one (used in split-germlines and get-CD)
 
 def get_gene_sequence(gene, other_gene_name, start, end, additional_length):
     '''
