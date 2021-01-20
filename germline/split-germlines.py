@@ -188,7 +188,7 @@ def retrieve_genes(f_name, genes, tag, additional_length, gene_list):
             except KeyError:
                 print('! No positions for %s (%s: %s)' % (gene_id, gene, str(coord)))
 
-    min_updownstream = compute_updownstream_length(genes, additional_length)
+    min_updownstream = compute_updownstream_length(genes, additional_length) if additional_length else 0
     print('     %s, ' % f_name + 'genes: %d, ' % len(genes) + 'up/downstream: %dbp' % min_updownstream)
 
         # gene: is the name of the sequence where the VDJ gene was identified according to IMGT. The gene is just a part of the sequence
@@ -198,10 +198,17 @@ def retrieve_genes(f_name, genes, tag, additional_length, gene_list):
     for info in genes:
         (gene, coord) = info
 
+        if coord['imgt_name'] in CUSTOM_UPDOWNSTREAM:
+            ud = CUSTOM_UPDOWNSTREAM[coord['imgt_name']]
+            print('# Custom up/downstream for %s: %d instead of %d' % (coord['imgt_name'], ud, min_updownstream))
+            updownstream = ud
+        else:
+            updownstream = min_updownstream
+
         gene_id = coord['gene_id'] if 'gene_id' in coord else None
 
         if GENES_SEQ_FROM_NCBI:
-            gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], min_updownstream)
+            gene_data = ncbi.get_gene_sequence(gene, coord['imgt_data'] + tag, coord['from'], coord['to'], updownstream)
         else:
             # IMGT
             gene_data = coord['seq']
@@ -212,7 +219,7 @@ def retrieve_genes(f_name, genes, tag, additional_length, gene_list):
                 check_imgt_ncbi_consistency(coord, gene_data, coord['target'], coord['target_start'],
                                             coord['target_end'])
             up_down, up_down_info = ncbi.get_updownstream_sequences(coord['target'], coord['target_start'],
-                                                      coord['target_end'], min_updownstream)
+                                                      coord['target_end'], updownstream)
             # We put the up and downstream data before and after the sequence we retrieved previously
             gene_data = paste_updown_on_fasta(gene_data, up_down[0], up_down[1], '#' + up_down_info)
 
@@ -233,6 +240,13 @@ j118 = re.compile('t..gg....gg.')
 MAX_GAP_J = 36          # maximal position of Phe/Trp (36 for TRAJ52*01)
 PHE_TRP_WARN_SIZE = 15  # small sequences are on a second line
 PHE_TRP_WARN_MSG = 'No Phe/Trp-Gly-X-Gly pattern'
+
+CUSTOM_UPDOWNSTREAM = {
+    # see #4647
+    'IGHJ1P*01': 10,
+    'IGHJ1P*02': 10,
+    'IGHD7-27*01': -50,
+}
 
 CUSTOM_118 = { '': 0    # custom position of 118 in sequences without the Trp-Gly-X-Gly pattern
     #                               118
