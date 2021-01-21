@@ -810,7 +810,7 @@ span .end-codon {
   margin-left: -250px;
   left: 50%;
   font-size: 13px;
-  padding: 10px;
+  padding: 20px;
   background: #000000;
   display: none;
   border: solid;
@@ -869,7 +869,7 @@ span .end-codon {
   min-width: 500px;
   max-width: 80%;
   font-size: 13px;
-  padding: 10px;
+  padding: 20px;
   background: #000000;
   display: none;
   position: fixed;
