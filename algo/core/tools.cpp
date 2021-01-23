@@ -518,6 +518,12 @@ void sigintHandler(int sig_num)
 */
 string extractGeneName(string label){
 	string result;
+
+  size_t pipe_pos = label.find("|");
+  if (pipe_pos != string::npos) {
+    label = label.substr(pipe_pos+1);
+  }
+
 	size_t star_pos;
 	star_pos = label.rfind("*");
 	if(star_pos != string::npos){
