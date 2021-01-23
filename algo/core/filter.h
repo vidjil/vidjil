@@ -19,7 +19,7 @@ class FilterWithACAutomaton {
     /* The size of the BioReader returned after filtering.*/
 
     int filtered_sequences_nb;
-    FilterWithACAutomaton(BioReader &origin, string seed);
+    FilterWithACAutomaton(BioReader &origin, string seed, float keys_compress=1.0);
 
     ~FilterWithACAutomaton();
 
@@ -93,7 +93,7 @@ class FilterWithACAutomaton {
     The param "seed" is used while inserting sequences in the automaton. By default
     the seed has a size of 10.
   */
-  void buildACAutomatonToFilterBioReader(string seed);
+  void buildACAutomatonToFilterBioReader(string seed, float keys_compress);
 
   /**
   * Return the vector of indexes used while building the automaton.
