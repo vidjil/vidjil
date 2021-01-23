@@ -1,5 +1,6 @@
 #ifndef FILTER_H
 #define FILTER_H
+#include <iostream>
 #include "bioreader.hpp"
 #include "automaton.hpp"
 

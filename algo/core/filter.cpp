@@ -40,6 +40,7 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed){
       asciiNumber++;
     }
     if(asciiNumber > 127){
+      cerr << WARNING_STRING << "Pre-filtering disabled" << endl;
       delete automaton; delete indexes;
       automaton = nullptr;
       indexes = nullptr;
