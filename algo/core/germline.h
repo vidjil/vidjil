@@ -33,6 +33,7 @@ enum SEGMENTATION_METHODS {
 #define PSEUDO_NOT_ANALYZED       "not analyzed"
 #define PSEUDO_NOT_ANALYZED_CODE  'z'
 
+#define KEYS_COMPRESS  2.0
 
 using namespace std;
 using json = nlohmann::json;
