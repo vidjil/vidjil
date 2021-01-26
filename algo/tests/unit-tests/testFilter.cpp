@@ -353,6 +353,8 @@ void testGetNSignicativeKmers(){
 
   FilterWithACAutomaton *f = new FilterWithACAutomaton(seqV, "########");
 
+  int total_filtered = 0;
+
   // Check filter behaviour for each IGHV gene
   for(int i = 0; i < seqV.size(); ++i){
     Sequence seq = seqV.read(i);
@@ -366,8 +368,14 @@ void testGetNSignicativeKmers(){
     }
     TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENE_NOT_FOUND);
     TAP_TEST(filtered.size() < seqV.size() / 10, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR + ", " + seq.label + ", " + string_of_int(filtered.size()) + "/" + string_of_int(seqV.size()));
+
+    total_filtered += filtered.size();
   }
   delete f;
+
+  float ratio = ((float) total_filtered) / (seqV.size()*seqV.size());
+
+  TAP_TEST_APPROX(ratio, 0.02, 0.005, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, "Average filtering ratio on IGHV");
 }
 
 /*
