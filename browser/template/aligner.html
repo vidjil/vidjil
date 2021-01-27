@@ -5,7 +5,57 @@
                                 onclick="javascript:self.m.merge()"> Cluster </div>
 
                         <div id="align" class="aligner-menu" title="Align the sequences"
-                                onclick="javascript:segment.toggleAlign()"> Align </div>
+                                onclick="javascript:segment.toggleAlign()"> Align
+                        </div>
+
+                        <div id="align-settings" class="aligner-menu" title="Alignement settings">
+                                <span ><i class="icon-menu"></i></span>
+                                <div class="menu-content">
+                                        <a title="matches">
+                                                <span><input type="checkbox" id="highlight_match" autocomplete="off"><label
+                                                                for="highlight_match">Use '*' for matches</label></span>
+                                        </a>
+                                </div>
+                        </div>
+
+                        <div id="align-external-tool" class="aligner-menu" title="send selected sequences to external site for analysis" ><i class="icon-forward-1"></i>
+                                <div class="menu-content">
+                                        <a id="toIMGT" title="Send sequences to IMGT/V-QUEST and see the results in a new tab"
+                                                class="aligner-button" onclick="javascript:segment.sendTo('imgt');">❯IMGT/V-QUEST</a>
+                                        <a id="toIgBlast" title="Send sequences to NCBI IgBlast and see the results in a new tab"
+                                                class="aligner-button" onclick="javascript:segment.sendTo('igBlast');">❯IgBlast</a>
+                                        <span class="devel-mode"><a id="toARResT"
+                                                        title="Send sequences to ARResT/CompileJunctions and see the results in a new tab"
+                                                        class="aligner-button"
+                                                        onclick="javascript:segment.sendTo('arrest');">❯ARResT/CJ</a></span>
+                                        <span class="devel-mode"><a id="toCloneDB"
+                                                        title="Send sequences to EC-NGS/CloneDB in the background"
+                                                        class="aligner-button"
+                                                        onclick="javascript:db.callCloneDB(m.getSelected());">❯CloneDB</a></span>
+                                        <a id="toBlast" title="Send sequences to Ensembl Blast and see the results in a new tab"
+                                                class="aligner-button" onclick="javascript:segment.sendTo('blast');">❯Blast</a>
+                                        <a id="toAssignSubsets"
+                                                title="Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset"
+                                                class="aligner-button">❯AssignSubsets</a>
+                                </div>
+                        </div>
+
+                        <div id="align-segment-info" class="aligner-menu" title="display segmentation info"> 
+                                <span  ><i class="icon-cog"></i></span>
+                                <div class="menu-content">
+         
+                                </div>
+                        </div>
+
+                        <div id="align-imgt" class="aligner-menu"
+                        title="settings for IMGT, click to reload" onclick="javascript:segment.sendTo('IMGTSeg');"> IMGT 
+                           <span title="reload IMGT info" ></span><i class="demo-icon icon-arrows-ccw"></i></span>
+                           <div class="menu-content">
+    
+                           </div>
+                        </div>
+
+                                
 
                         <div id="aligner-stats" class="stats"><span class="stats_content" title="">
                                 <a class="focus_selected" id="focus_selected">(focus)</a> 
@@ -39,8 +89,8 @@
                         <span class="delBox"><i class="icon-cancel" title="Unselect this clone"></i></span>
                         <span class="nameBox2"></span>
                 </span>
-                <span class="infoBox"><i class="icon-info" title="clone information"></i></span>
                 <span class="starBox" id="color60"><i id="tag_icon_60" title="clone_tag" class="icon-star-2"></i></span>
+                <span class="infoBox"><i class="icon-info" title="clone information"></i></span>
                 <span class="axisBox"></span>
         </div>
 </template>
@@ -48,89 +98,19 @@
 <template id="aligner-M">
         <div class="seq-mobil">
                 <div class="sequence-holder2" style="position:relative;">
-                        <div class="seq-nuc"></div>
-                        <div class="seq-mut"></div>
-                        <div class="seq-mut2"></div>
-                        <div class="seq-v"></div>
-                        <div class="seq-d"></div>
-                        <div class="seq-dd"></div>
-                        <div class="seq-ddd"></div>
-                        <div class="seq-j"></div>
-                        <div class="seq-aa-separator"></div>
-                        <div class="seq-cdr3"></div>
+                        <div>
+                                <div class="seq_nuc"></div>
+                        </div>
+   
                 </div>
         </div>
 </template>
 
 
-<template id="aligner-highlight-menu">
-        <div class="aligner-menu highlight-menu"> <i class="icon-cog"></i>
-                <div class="highlight-menu-content">
-                
-                        <a title="Display V/D/J genes computed by Vidjil">
-                                <span><input type="checkbox" id="highlight_vdj" autocomplete="off" checked><label
-                                                for="highlight_vdj">VDJ</label></span>
-                        </a>
-
-                        <a title="Send sequences to IMGT/V-QUEST and loads the results in the sequence panel">
-                                <span><input type="checkbox" id="highlight_vdj_imgt" autocomplete="off"><label
-                                                for="highlight_vdj_imgt">VDJ (by IMGT)</label></span>
-                                <span title="reload" onclick="javascript:segment.sendTo('IMGTSeg');"><i class="demo-icon icon-arrows-ccw"></i></span>
-                        </a>
-
-                        <a title="Display CDR3 computed by Vidjil">
-                                <span><input type="checkbox" id="highlight_cdr3" autocomplete="off"><label
-                                                for="highlight_cdr3">CDR3</label></span>
-                        </a>
-
-                        <a title="Display FR1/2/3 computed by Vidjil">
-                                <span><input type="checkbox" id="highlight_fr" autocomplete="off"><label
-                                                for="highlight_fr">FR1/2/3</label></span>
-                        </a>
-
-                        <a title="Display AA sequence">
-                                <span><input type="checkbox" id="highlight_aa" autocomplete="off"><label
-                                                for="highlight_aa">AA</label></span>
-                        </a>
-                </div>
-        </div>
+<template id="aligner-checkbox">
+        <a title="">
+                <span><input class="aligner-checkbox-input" type="checkbox" id="highlight_mutation" autocomplete="off" checked>
+                        <label class="aligner-checkbox-label" for="highlight_mutation">Highlight mutation</label></span>
+        </a>
 </template>
 
-<template id="aligner-align-settings-menu">
-        <div class="aligner-menu align-settings-menu"> <i class=" icon-menu"></i>
-                <div class="align-settings-menu-content">
-                        <a title="Highlight mutations">
-                                <span><input type="checkbox" id="highlight_mutation" autocomplete="off" checked><label
-                                                for="highlight_mutation">Highlight mutation</label></span>
-                        </a>
-                        <a title="matches">
-                                <span><input type="checkbox" id="highlight_match" autocomplete="off"><label
-                                                for="highlight_match">Use '.' for matches</label></span>
-                        </a>
-                </div>
-        </div>
-</template>
-
-<template id="aligner-external-tool-menu">
-        <div class="aligner-menu external-tool-menu"><i class="icon-forward-1"></i>
-                <div class="external-tool-menu-content">
-                        <a id="toIMGT" title="Send sequences to IMGT/V-QUEST and see the results in a new tab"
-                                class="aligner-button" onclick="javascript:segment.sendTo('imgt');">❯IMGT/V-QUEST</a>
-                        <a id="toIgBlast" title="Send sequences to NCBI IgBlast and see the results in a new tab"
-                                class="aligner-button" onclick="javascript:segment.sendTo('igBlast');">❯IgBlast</a>
-                        <span class="devel-mode"><a id="toARResT"
-                                        title="Send sequences to ARResT/CompileJunctions and see the results in a new tab"
-                                        class="aligner-button"
-                                        onclick="javascript:segment.sendTo('arrest');">❯ARResT/CJ</a></span>
-                        <span class="devel-mode"><a id="toCloneDB"
-                                        title="Send sequences to EC-NGS/CloneDB in the background"
-                                        class="aligner-button"
-                                        onclick="javascript:db.callCloneDB(m.getSelected());">❯CloneDB</a></span>
-                        <a id="toBlast" title="Send sequences to Ensembl Blast and see the results in a new tab"
-                                class="aligner-button" onclick="javascript:segment.sendTo('blast');">❯Blast</a>
-                        <a id="toAssignSubsets"
-                                title="Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset"
-                                class="aligner-button">❯AssignSubsets</a>
-                </div>
-        </div>
-</template>

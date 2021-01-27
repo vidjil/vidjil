@@ -182,8 +182,7 @@ position : fixed;
   width: calc(~"100%" - @margin + @margin);
   overflow: hidden;
   background: @background;
-  margin: @margin;
-  margin: @margin @margin 0px @margin;
+  margin: @margin 0px 0px 0px;
   border-bottom-color: white;
   border-bottom-style: solid;
   border-bottom-width: @margin;
@@ -629,8 +628,7 @@ line {
   height: 16px;
   position: relative;
   white-space:nowrap;
-  display: flex;
-  flex: 1 1 auto;
+  flex: 1 1000 auto;
 }
 
 .list .axisBox, .axisBox span {
@@ -1125,7 +1123,6 @@ span.logo
 #bot-container {
   position: fixed;
   bottom: 0;
-  width: 100%;
   min-height: 125px;
 }
 

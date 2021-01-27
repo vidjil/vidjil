@@ -129,7 +129,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
     }
 
     //update imgt button according to request processing
-    if (typeof imgt4segButton != "undefined"){
+    if (imgt4segButton){
         imgt4segButton.removeAllChildren();
         imgt4segButton.appendChild(icon('icon-spin4 animate-spin', 'Sequences sent to IMGT/V-QUEST'));
     }
@@ -208,7 +208,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
             modelRef.updateElemStyle(modelRef.getSelected());
 
             var imgt4segButton= document.getElementById("toIMGTSeg");
-            if (typeof imgt4segButton != "undefined"){
+            if (imgt4segButton){
                 imgt4segButton.innerHTML = '▼';
             }
             console.log({
@@ -216,6 +216,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
                 "msg": logmsg+ ")" + httpRequest.statusText
             });
 
+            /*
             // sai : segmenter axis inputs ; activate productivity-IMGT and VIdentity-IMGT
             var sai = document.getElementById('segmenter_axis_select').getElementsByTagName('input');
             for (var index in sai) {
@@ -279,6 +280,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
 
             span.appendChild(input);
             span.appendChild(label);
+            */
         }
     };
     httpRequest.onerror = function () {

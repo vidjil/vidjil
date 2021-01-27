@@ -1,4 +1,4 @@
-SEGMENT_KEYS = ["4", "4a", "4b", "cdr3"];
+require(['./js/aligner_layer.js']);
 
 CHAR_WIDTH = 15;
 
@@ -12,7 +12,8 @@ function genSeq(id, locus, model, segmenter) {
     this.locus = locus;
     this.use_marge = true; 
     this.is_clone = false;
-    }
+    this.is_aligned = false;
+}
 
 genSeq.prototype = {
     /**
@@ -20,7 +21,10 @@ genSeq.prototype = {
      * retrieve the one in the model or use the one given in parameter <br>
      * @param {string} str
      * */
-    load: function (str) {
+    load: function (str, isAligned) {
+        this.is_aligned = false;
+        if (typeof isAligned == 'undefined') this.is_aligned = isAligned;
+
         if (typeof str !== 'undefined') this.use_marge = false;
         str = typeof str !== 'undefined' ? str : this.m.germline[this.locus][this.id];
 
@@ -74,7 +78,7 @@ genSeq.prototype = {
     toString:function(){
         var highlights=[];
 
-       return this.highlightToString(highlights);
+        return this.highlightToString(highlights);
 
     },
 
@@ -176,56 +180,10 @@ function Sequence(id, model, segmenter) {
     this.pos = [];
     this.use_marge = true;
     this.is_clone = true;
+    this.is_aligned = false;
     this.locus = this.m.clone(id).germline;
 
-    this.layers = [
-        {
-            'menu_name': "VDJ",
-            'height': 15,
-            'position': 0, 
-            'segment':[{   
-                'className' : "seq-v",
-                'start' : function(c){return c.seg["5"].start;},
-                'stop' : function(c){return c.seg["5"].stop;},
-                'color' : "green"
-            },
-            {   
-                'className' : "seq-d",
-                'start' : function(c){return c.seg["4"].start;},
-                'stop' : function(c){return c.seg["4"].stop;},
-                'color' : "red"
-            },
-            {   
-                'className' : "seq-j",
-                'start' : function(c){return c.seg["3"].start;},
-                'stop' : function(c){return c.seg["3"].stop;},
-                'color' : "yellow"
-            },
-            {   
-                'className' : "seq-dd",
-                'start' : function(c){return c.seg["4a"].start;},
-                'stop' : function(c){return c.seg["4a"].stop;},
-                'color' : "red"
-            },
-            {   
-                'className' : "seq-ddd",
-                'start' : function(c){return c.seg["4b"].start;},
-                'stop' : function(c){return c.seg["4b"].stop;},
-                'color' : "red"
-            }]
-        },
-        {
-            'menu_name': "CDR3",
-            'height': 5,
-            'position': 15, 
-            'segment':[{   
-                    'className' : "seq-cdr3",
-                    'start' : function(c){return c.seg.cdr3.start;},
-                    'stop' : function(c){return c.seg.cdr3.stop;},
-                    'color' : "pink"
-            }]
-        }
-    ];
+    this.layers = LAYERS;
 }
 
 Sequence.prototype = {
@@ -234,7 +192,10 @@ Sequence.prototype = {
      * retrieve the one in the model or use the one given in parameter <br>
      * @param {string} str
      * */
-    load: function (str) {
+    load: function (str, isAligned) {
+        this.is_aligned = false;
+        if (typeof isAligned !== 'undefined') this.is_aligned = isAligned;
+
         if (typeof str !== 'undefined') this.use_marge = false;
         str = typeof str !== 'undefined' ? str : this.m.clone(this.id).sequence;
 
@@ -305,93 +266,201 @@ Sequence.prototype = {
     },
 
     toString: function(div) {
-        var div_nuc = div.getElementsByClassName("seq-nuc")[0];
+        this.div = div;
+        this.updateSequence();
+        this.updateLayers();
+    },
+    
+    substitutionString: function(){
+        var seq,ref;
+        if (this.segmenter.amino) {
+            seq = this.seqAA;
+            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
+        } else {
+            seq = this.seq;
+            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
+        }
+
+        var sub = [];
+        for (var a in this.seq)
+            if (this.seq[a] != ref[a] && this.seq[a] != '-' && ref[a] != '-')
+                sub[a] = this.seq[a];
+            else
+                sub[a] = '\u00A0';
+
+        return sub.join('');
+    },
+
+    deletionString: function(){
+        var seq,ref;
+        if (this.segmenter.amino) {
+            seq = this.seqAA;
+            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
+        } else {
+            seq = this.seq;
+            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
+        }
+
+        var del = [];
+        for (var a in this.seq)
+            if (this.seq[a] != ref[a] && this.seq[a] == '-')
+                del[a] = '-';
+            else
+                del[a] = '\u00A0';
+
+        return del.join('');
+    },   
+
+    insertionString: function(){
+        var seq,ref;
+        if (this.segmenter.amino) {
+            seq = this.seqAA;
+            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
+        } else {
+            seq = this.seq;
+            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
+        }
+
+        var ins = [];
+        for (var a in this.seq)
+            if (this.seq[a] != ref[a] && ref[a] == '-')
+                ins[a] = this.seq[a];
+            else
+                ins[a] = '\u00A0';
+
+        return ins.join('');
+    },   
+
+    updateSequence: function(){
+        //check letterspacing
+        var div_nuc = this.div.getElementsByClassName("seq_nuc")[0];
         div_nuc.style.letterSpacing = "0px";
-        var c_size = this.average_char_size(div_nuc);
-        var l_spacing = CHAR_WIDTH - c_size;
-        div_nuc.style.letterSpacing = l_spacing + "px";
-        div_nuc.innerHTML = this.seq.join('');
+
+        this.c_size = this.average_char_size(div_nuc);
+        this.l_spacing = CHAR_WIDTH - this.c_size;
+        div_nuc.style.letterSpacing = this.l_spacing + "px";
 
         var clone = this.m.clone(this.id);
+        if (this.segmenter.use_dot && this.segmenter.aligned &&
+            (typeof clone.sequence != 'undefined' && clone.sequence !== 0 ) &&
+            (this.id != this.segmenter.sequence[this.segmenter.sequence_order[0]].id)){
+
+            var ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
+
+            this.seq_a =[];
+            for (var a in this.seq){
+                if (this.seq[a] != ref[a] && this.seq[a] != '-' && ref[a] != '-'){
+                    this.seq_a[a] = this.seq[a];
+                }else{
+                    this.seq_a[a] = '*';
+                    if(this.seq[a] == '-' || ref[a] == '-')
+                        this.seq_a[a] = this.seq[a];
+                }
+            }
+            div_nuc.innerHTML = this.seq_a.join('');
+        }else{
+            div_nuc.innerHTML = this.seq.join('');
+        }
+    },
+
+    updateLayers: function(){
+
+        var clone = this.m.clone(this.id);
+        var div_nuc = this.div.getElementsByClassName("seq_nuc")[0];
+
         if (typeof clone.sequence != 'undefined' && clone.sequence !== 0) {
             for (var i in this.layers){
                 var l = this.layers[i];
-                for (var j in l.segment){
-                    var s = l.segment[j];
 
-                    var div_h = div.getElementsByClassName(s.className)[0];
-                    var start = this.segment_start(clone,s.start);
-                    var stop = this.segment_stop(clone,s.stop);
-                    
-                    if (start != undefined && stop != undefined){
-                        var width = Math.floor(CHAR_WIDTH * (stop - start));
-                        var left = Math.floor(CHAR_WIDTH * start) - Math.round(l_spacing*2)/4;
-                        div_h.style.width = width + "px";
-                        div_h.style.left = left + "px";
-                    }
-                }    
-            }
-
-
-            if (this.segmenter.aligned && this.id != this.segmenter.sequence[this.segmenter.sequence_order[0]].id){
-                var seq,ref;
-                if (this.segmenter.amino) {
-                    seq = this.seqAA;
-                    ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
-                } else {
-                    seq = this.seq;
-                    ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
-                }
-    
-                this.seq_mut=[];
-                this.seq_mut2=[];
-                this.seq_a =[];
-                for (var a in this.seq){
-                    if (this.seq[a] != ref[a] && this.seq[a] != '-' && ref[a] != '-'){
-                        this.seq_mut2[a] = this.seq[a];
-                        this.seq_mut[a] = '_';
-                        this.seq_a[a] = this.seq[a];
-                    }else{
-                        this.seq_mut[a] = '\u00A0';
-                        this.seq_mut2[a] = '\u00A0';
-                        this.seq_a[a] = '.';
-                        if(this.seq[a] == '-' || ref[a] == '-')
-                            this.seq_a[a] = this.seq[a];
-                    }
+                // create layer if needed
+                var div_layer = this.div.getElementsByClassName("seq_layer_"+i)[0];
+                if (!div_layer){
+                    div_layer = document.createElement('div');
+                    $(div_layer).addClass("seq_layer").insertAfter(div_nuc);
                 }
 
-                var div_mut = div.getElementsByClassName("seq-mut")[0];
-                div_mut.style.letterSpacing = l_spacing + "px";
-                div_mut.innerHTML = this.seq_mut.join('');
+                // check layer condition
+                var isOk = true;
+                if (l.condition){   
+                    try{
+                        isOk = l.condition(this,undefined);
+                    }catch(e){
+                        isOk = false;
+                    }
+                }
+                if (!isOk || !l.enabled) {
+                    div_layer.style.display = "none";
+                    continue;   //next layer
+                }
+                div_layer.style.display = "block";
 
-                var div_mut2 = div.getElementsByClassName("seq-mut2")[0];
-                div_mut2.style.letterSpacing = l_spacing + "px";
-                div_mut2.innerHTML = this.seq_mut2.join('');
 
-                if (this.segmenter.use_dot)
-                    div_nuc.innerHTML = this.seq_a.join('');
+                //reset custom attributes
+                div_layer.setAttribute("style", "");
+
+                // set start / stop
+                var start = this.segment_start(clone,l.start);
+                var stop = this.segment_stop(clone,l.stop);
+                if (start != undefined && stop != undefined){
+                    var width = Math.floor(CHAR_WIDTH * (stop - start))-6;
+                    var left = Math.floor(CHAR_WIDTH * start) - Math.round(this.l_spacing*2)/4;
+                    div_layer.style.width = width + "px";
+                    div_layer.style.left = (left+3) + "px";
+                }  
+
+                //set title
+                if (l.title){
+                    if (typeof l.title == "function")
+                        try{
+                            div_layer.title = l.title(this, this.m.clone(this.id));
+                        }catch(e){
+                            div_layer.title = i;
+                        }
+                    else
+                        div_layer.title = l.title;
+                }
+
+                //set text
+                if (l.text){
+                    if (typeof l.text == "function")
+                        try{
+                            div_layer.innerHTML = l.text(this, this.m.clone(this.id));
+                        }catch(e){
+                            div_layer.innerHTML = i;
+                        }
+                    else
+                        div_layer.innerHTML = l.text;
+                }
+
+                //set classname
+                var className = "seq_layer seq_layer_"+i;          
+                if (l.className) className += " "+ l.className;
+                div_layer.className = className;
+
+                //set custom style
+                for (var s in l.style) div_layer.style[s] = l.style[s]; 
+                div_layer.style.letterSpacing = this.l_spacing + "px";
             }
-
         }
     },
 
     segment_start: function(clone, fct){
         try{
-            return this.pos[fct(clone)];
+            return this.pos[fct(this,clone)];
         }catch(e){
             return undefined;
         }
     },
     segment_stop: function(clone, fct){
         try{
-            return this.pos[fct(clone)]+1;
+            return this.pos[fct(this,clone)]+1;
         }catch(e){
             return undefined;
         }
     },
 
     average_char_size: function(parent, classname){
-        var size = 100;
+        var size = 1000;
         var text = "";
         for (var i = 0; i < size; i++) text+="A";
         var div = document.createElement("div");

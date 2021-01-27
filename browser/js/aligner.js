@@ -1,3 +1,6 @@
+require(['./js/aligner_menu.js']);
+require(['./js/aligner_layer.js']);
+
 /** segment 
  * Segment is a view object to see the sequences of the selected clones in the model <br>
  * some function are provided to allow alignement / highlight / imgt request / ...
@@ -12,7 +15,7 @@ function Aligner(id, model, database) {
     View.call(this, model);
     this.db = database;
     
-    this.id = id; //ID de la div contenant le segmenteur
+    this.id = id;
     this.m = model;
     this.memtab = [];
     this.sequence = {};
@@ -33,6 +36,279 @@ Aligner.prototype = {
         this.build();
     },
 
+    /**
+     * build needed html elements (button / highlight menu)
+     * 
+     * */
+    build: function () {
+        var self = this;
+        try {
+            self.build_segmenter();
+            for (var c_id = 0; c_id < self.m.clones.length; c_id++)
+                self.build_sequence(c_id);
+            self.build_align_settings_menu();
+            //self.build_external_tool_menu(); 
+            //self.build_highlight_menu();    
+            self.build_menu();         
+                
+        } catch(err) {
+            sendErrorToDb(err, this.db);
+        }
+    },
+
+    build_menu: function(){
+        var self = this;
+
+        for (var i in ALIGNER_MENU){
+            var menu = ALIGNER_MENU[i];
+
+            var parent = document.getElementById(menu.id);
+            var menuC = parent.getElementsByClassName("menu-content")[0];
+            
+            for (var c in menu.checkbox){
+                var mc = menu.checkbox[c];
+                var template = document.getElementById("aligner-checkbox");
+                var clone = template.content.firstElementChild.cloneNode(true);
+
+                var input = clone.getElementsByClassName("aligner-checkbox-input")[0];
+                var label = clone.getElementsByClassName("aligner-checkbox-label")[0];
+
+                var id  = "aligner_checkbox_"+mc.id;
+                clone.title = mc.title;
+                input.id = id;
+                input.checked = mc.enabled;
+                label.setAttribute("for", id);
+                label.innerHTML = mc.text;
+
+                menuC.appendChild(clone);
+                this.connect_checkbox(id, mc.layers);
+
+            }
+        }
+    }, 
+
+    connect_checkbox: function(id, layers){
+        var self = this;
+
+        $(function () {
+            $('#'+id).change(function (e) {                
+                self.toggleLayers(layers, this.checked, true);
+                e.stopPropagation();
+            }).change(); //ensure visible state matches initially
+          });
+    },
+
+    build_segmenter: function () {
+        var self = this;
+
+        // create a new dom element from aligner template  
+        var template = document.getElementById("aligner");
+        var clone = template.content.firstElementChild.cloneNode(true);
+
+        // remove content from div assigned to aligner and put template copy in it
+        var parent = document.getElementById(this.id);
+        parent.removeAllChildren();
+        parent.appendChild(clone);
+
+
+        // restore mouse functions
+        this.div_segmenter = clone.getElementsByClassName("segmenter")[0];
+        self.min_H = 100;
+        self.max_H = 500;
+        $(this.div_segmenter)
+            .scroll(function () {
+                var leftScroll = $(self.div_segmenter).scrollLeft();
+                $('.seq-fixed').css({ 'left': +leftScroll });
+            })
+            .mouseenter(function () {
+                if (!self.fixed && !self.is_open) {
+                    var seg = $(self.div_segmenter);
+                    var cur_H = seg.height();
+                    var auto_H = seg.css('height', 'auto').height();
+
+                    if (auto_H > self.min_H+10) {
+                        if (auto_H > self.max_H) auto_H = self.max_H;
+                        if (cur_H  < self.min_H) cur_H  = self.min_H;
+                        seg.stop().height(cur_H).animate({ height: auto_H+20 }, 250);
+                        $(".menu-content").css("bottom", (auto_H+40)+"px");
+                    } else {
+                        seg.stop().height(self.min_H);
+                        $(".menu-content").css("bottom", (auto_H+24)+"px");
+                    }
+                    self.is_open = true;
+                }
+            });
+
+        $('#' + this.id)
+            .mouseleave(function (e) {
+                if (e.relatedTarget !== null && self.is_open) {
+                    setTimeout(function () {
+                        if ($(".tagSelector").hasClass("hovered")) return;
+
+                        var seg = $(self.div_segmenter);
+
+                        if (!self.fixed  && seg.height() > self.min_H) 
+                            seg.stop().animate({ height: self.min_H }, 250);
+                        else 
+                            seg.stop();
+                        
+                        $(".menu-content").css("bottom", (self.min_H+24)+"px");
+                        self.is_open = false;
+                        
+                    }, 200);
+                }
+            });
+    },
+
+    build_sequence: function(cloneID){
+        if ( !this.m.clone(cloneID).hasSequence() ){
+            // This clone should not be added to the segmenter
+            return;
+        }
+        var parent = document.getElementById("listSeq");
+        var template = document.getElementById("aligner-sequence");
+        var clone = template.content.firstElementChild.cloneNode(true);
+        clone.id = "seq" + cloneID;
+        parent.appendChild(clone);
+
+        var spanM = this.build_spanM(cloneID)
+        clone.getElementsByClassName("sequence-holder")[0].appendChild(spanM);
+
+        this.index[cloneID] = new IndexedDom(clone);
+
+    },
+/*
+    build_highlight_menu: function(){
+        var self = this;
+        var parent = document.getElementById(this.id).getElementsByClassName("bot-bar")[0];
+        var nextSibling = document.getElementById("aligner-stats");
+        var template = document.getElementById("aligner-highlight-menu");
+        var clone = template.content.firstElementChild.cloneNode(true);
+        parent.insertBefore(clone, nextSibling);
+
+        this.index["highlight-menu"] = new IndexedDom(clone);
+
+        $(function () {
+            $('#highlight_vdj').change(function () {                
+               $('.seq-v').toggle(this.checked);
+               $('.seq-d').toggle(this.checked);
+               $('.seq-dd').toggle(this.checked);
+               $('.seq-ddd').toggle(this.checked);
+               $('.seq-j').toggle(this.checked);
+            }).change(); //ensure visible state matches initially
+          });
+
+          $(function () {
+            $('#highlight_cdr3').change(function () {                
+               $('.seq-cdr3').toggle(this.checked);
+            }).change(); //ensure visible state matches initially
+          });
+    }, 
+
+    build_external_tool_menu: function(){
+        var parent = document.getElementById(this.id).getElementsByClassName("bot-bar")[0];
+        var nextSibling = document.getElementById("aligner-stats");
+        var template = document.getElementById("aligner-external-tool-menu");
+        var clone = template.content.firstElementChild.cloneNode(true);
+        parent.insertBefore(clone, nextSibling);
+
+        this.index["external-tool-menu"] = new IndexedDom(clone);
+    }, 
+
+    build_align_settings_menu: function(){
+        var self = this;
+        var parent = document.getElementById(this.id).getElementsByClassName("bot-bar")[0];
+        var nextSibling = document.getElementById("aligner-stats");
+        var template = document.getElementById("aligner-align-settings-menu");
+        var clone = template.content.firstElementChild.cloneNode(true);
+        parent.insertBefore(clone, nextSibling);
+
+        this.index["align-settings-menu"] = new IndexedDom(clone);
+
+        $(function () {
+            $('#highlight_mutation').change(function () {                
+               $('.seq-mut').toggle(this.checked);
+               $('.seq-mut2').toggle(this.checked);
+            }).change(); //ensure visible state matches initially
+          });
+
+          $(function () {
+            $('#highlight_match').change(function () {                
+               self.use_dot = this.checked;
+               self.update();
+            }).change(); //ensure visible state matches initially
+          });
+    }, 
+
+    */
+
+   build_align_settings_menu: function(){
+    var self = this;
+      $(function () {
+        $('#highlight_match').change(function () {                
+           self.use_dot = this.checked;
+           self.update();
+        }).change(); //ensure visible state matches initially
+      });
+}, 
+
+    /**
+     * complete a node with a clone sequence
+     * @param {integer} cloneID - clone index 
+     * */
+    build_spanM: function (cloneID) {
+        //copy template
+        var template = document.getElementById("aligner-M");
+        var clone = template.content.firstElementChild.cloneNode(true);
+
+        return clone;
+    },
+    
+    /**
+     * complete a node with a clone information
+     * @param {integer} cloneID - clone index 
+     * */
+    build_spanF: function (cloneID) {
+
+        var self = this;
+        var clone = this.m.clone(cloneID);
+        
+        //copy template
+        var template = document.getElementById("aligner-F");
+        var cloneT = template.content.firstElementChild.cloneNode(true);
+
+        //???
+        clone.div_elem(cloneT, false);
+
+        //edit
+        if (this.m.focus == cloneID && cloneT.addClass) cloneT.addClass("list_focus");
+        cloneT.getElementsByClassName("nameBox")[0].title = clone.getName();
+        cloneT.getElementsByClassName("nameBox")[0].style.color = clone.color;
+        cloneT.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(clone.getShortName()));
+        cloneT.getElementsByClassName("delBox")[0].onclick = function () {
+            clone.unselect();
+            self.aligned = false;
+        };
+        if (this.m.clone_info == cloneID) 
+        cloneT.getElementsByClassName("infoBox")[0].className += " infoBox-open";
+        cloneT.getElementsByClassName("axisBox")[0].color = clone.getColor();
+        //this.fillAxisBox(cloneT.getElementsByClassName("axisBox")[0], clone);
+
+        return cloneT;
+    },
+
+    toggleLayers: function(layers, enabled, update){
+        if (typeof update == "undefined") update = false;
+
+        for (var l in layers)
+            LAYERS[layers[l]].enabled = enabled;
+
+        if (update)
+            for (var s in this.sequence)
+                this.sequence[s].updateLayers(layers);
+    },
+
+
     getCGIAddress: function(){
         var cgi_address = "";
 
@@ -43,41 +319,6 @@ Aligner.prototype = {
             }
         }
         return cgi_address;
-    },
-    
-    /**
-     * build needed html elements (button / highlight menu)
-     * 
-     * */
-    build: function () {
-        var self = this;
-        try {
-            var parent = document.getElementById(this.id);
-            parent.removeAllChildren();
-
-            var template = document.getElementById("aligner");
-            var clone = template.content.firstElementChild.cloneNode(true);
-
-            parent.appendChild(clone);
-
-            this.div_segmenter = clone.getElementsByClassName("segmenter")[0];
-            $(this.div_segmenter)
-                .scroll(function(){
-                    var leftScroll = $(self.div_segmenter).scrollLeft();
-                    $('.seq-fixed').css({'left':+leftScroll});
-                });
- 
-            
-            for (var c_id = 0; c_id < self.m.clones.length; c_id++)
-                self.build_sequence(c_id);
-
-            self.build_align_settings_menu();
-            self.build_external_tool_menu(); 
-            self.build_highlight_menu(); 
-                
-        } catch(err) {
-            sendErrorToDb(err, this.db);
-        }
     },
 
     /**
@@ -185,8 +426,8 @@ Aligner.prototype = {
         list = this.sequenceListInSegmenter();
         if (align !== null) {
             if (list.length > 1) {
-                align.className = "button";
-                cluster.className = "button";
+                align.className = "aligner-menu button";
+                cluster.className = "aligner-menu button";
             }
             else {
                 align.className = "button inactive";
@@ -199,51 +440,6 @@ Aligner.prototype = {
         return Object.keys(this.sequence);
     },
 
-
-    /**
-     * complete a node with a clone information
-     * @param {integer} cloneID - clone index 
-     * */
-    build_spanF: function (cloneID) {
-
-        var self = this;
-        var clone = this.m.clone(cloneID);
-        
-        //copy template
-        var template = document.getElementById("aligner-F");
-        var cloneT = template.content.firstElementChild.cloneNode(true);
-
-        //???
-        clone.div_elem(cloneT, false);
-
-        //edit
-        if (this.m.focus == cloneID) cloneT.addClass("list_focus");
-        cloneT.getElementsByClassName("nameBox")[0].title = clone.getName();
-        cloneT.getElementsByClassName("nameBox")[0].style.color = clone.color;
-        cloneT.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(clone.getShortName()));
-        cloneT.getElementsByClassName("delBox")[0].onclick = function () {
-            clone.unselect();
-            self.aligned = false;
-        };
-        if (this.m.clone_info == cloneID) 
-        cloneT.getElementsByClassName("infoBox")[0].className += " infoBox-open";
-        cloneT.getElementsByClassName("axisBox")[0].color = clone.getColor();
-        //this.fillAxisBox(cloneT.getElementsByClassName("axisBox")[0], clone);
-
-        return cloneT;
-    },
-
-    /**
-     * complete a node with a clone sequence
-     * @param {integer} cloneID - clone index 
-     * */
-    build_spanM: function (cloneID) {
-        //copy template
-        var template = document.getElementById("aligner-M");
-        var clone = template.content.firstElementChild.cloneNode(true);
-
-        return clone;
-    },
 
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
@@ -293,86 +489,6 @@ Aligner.prototype = {
         }
 
     },
-
-    build_sequence: function(cloneID){
-        if ( !this.m.clone(cloneID).hasSequence() ){
-            // This clone should not be added to the segmenter
-            return;
-        }
-        var parent = document.getElementById("listSeq");
-        var template = document.getElementById("aligner-sequence");
-        var clone = template.content.firstElementChild.cloneNode(true);
-        clone.id = "seq" + cloneID;
-        parent.appendChild(clone);
-
-        var spanM = this.build_spanM(cloneID)
-        clone.getElementsByClassName("sequence-holder")[0].appendChild(spanM);
-
-        this.index[cloneID] = new IndexedDom(clone);
-
-    },
-
-    build_highlight_menu: function(){
-        var self = this;
-        var parent = document.getElementById(this.id).getElementsByClassName("bot-bar")[0];
-        var nextSibling = document.getElementById("aligner-stats");
-        var template = document.getElementById("aligner-highlight-menu");
-        var clone = template.content.firstElementChild.cloneNode(true);
-        parent.insertBefore(clone, nextSibling);
-
-        this.index["highlight-menu"] = new IndexedDom(clone);
-
-        $(function () {
-            $('#highlight_vdj').change(function () {                
-               $('.seq-v').toggle(this.checked);
-               $('.seq-d').toggle(this.checked);
-               $('.seq-dd').toggle(this.checked);
-               $('.seq-ddd').toggle(this.checked);
-               $('.seq-j').toggle(this.checked);
-            }).change(); //ensure visible state matches initially
-          });
-
-          $(function () {
-            $('#highlight_cdr3').change(function () {                
-               $('.seq-cdr3').toggle(this.checked);
-            }).change(); //ensure visible state matches initially
-          });
-    }, 
-
-    build_external_tool_menu: function(){
-        var parent = document.getElementById(this.id).getElementsByClassName("bot-bar")[0];
-        var nextSibling = document.getElementById("aligner-stats");
-        var template = document.getElementById("aligner-external-tool-menu");
-        var clone = template.content.firstElementChild.cloneNode(true);
-        parent.insertBefore(clone, nextSibling);
-
-        this.index["external-tool-menu"] = new IndexedDom(clone);
-    }, 
-
-    build_align_settings_menu: function(){
-        var self = this;
-        var parent = document.getElementById(this.id).getElementsByClassName("bot-bar")[0];
-        var nextSibling = document.getElementById("aligner-stats");
-        var template = document.getElementById("aligner-align-settings-menu");
-        var clone = template.content.firstElementChild.cloneNode(true);
-        parent.insertBefore(clone, nextSibling);
-
-        this.index["align-settings-menu"] = new IndexedDom(clone);
-
-        $(function () {
-            $('#highlight_mutation').change(function () {                
-               $('.seq-mut').toggle(this.checked);
-               $('.seq-mut2').toggle(this.checked);
-            }).change(); //ensure visible state matches initially
-          });
-
-          $(function () {
-            $('#highlight_match').change(function () {                
-               self.use_dot = this.checked;
-               self.update();
-            }).change(); //ensure visible state matches initially
-          });
-    }, 
 
     /**
     * select all the germline of a clone .
@@ -642,10 +758,10 @@ Aligner.prototype = {
         try{
             if( selected.length && this.index.length){
                 for (var i = 0; i < selected.length; i++) {
-                    this.index[selected[i]].content("seq-mobil", 
-                                                    this.sequence[selected[i]].load().toString(this));
+                    this.sequence[selected[i]].load()
                 }
             }
+            this.update();
         } catch (err) {
         }
     },
@@ -661,7 +777,7 @@ Aligner.prototype = {
 
 	    // Load all (aligned) sequences
         for (var i = 0; i < json.seq.length; i++) {
-            this.sequence[this.memTab[i]].load(json.seq[i]);
+            this.sequence[this.memTab[i]].load(json.seq[i], true);
     	}
 
 	    // Render all (aligned) sequences

@@ -337,7 +337,7 @@ Clone.prototype = {
     /**
      * Get the start and stop position of a given field (e.g. cdr3)
      * Getted positions are 0 based.
-     * If it does not exist return null
+     * If start OR stop position does not exist return null
      */
     getSegStartStop: function(field_name) {
         if (this.hasSequence() && this.hasSeg(field_name) &&
@@ -346,6 +346,40 @@ Clone.prototype = {
             return {'start': this.seg[field_name].start,
                     'stop': this.seg[field_name].stop}
         }
+        return null;
+    },
+
+    /**
+     * Get the start position of a given field
+     * if start position is missing and stop position exist > we assume this field start at the beginning of the sequence > return 0
+     * if start AND stop position are missing > this field has no defined position > return null
+     */
+    getSegStart: function(field_name) {
+        var hasStart = typeof this.seg[field_name].start !== 'undefined';
+        var hasStop = typeof this.seg[field_name].stop !== 'undefined';
+
+        if (this.hasSequence() && this.hasSeg(field_name) && (hasStart || hasStop) ) {
+            if (hasStart) return this.seg[field_name].start;
+            else return 0
+        }
+
+        return null;
+    },
+
+        /**
+     * Get the start position of a given field
+     * if stop position is missing and start position exist > we assume this field stop at the end of the sequence > return last position
+     * if start AND stop position are missing > this field has no defined position > return null
+     */
+    getSegStop: function(field_name) {
+        var hasStart = typeof this.seg[field_name].start !== 'undefined';
+        var hasStop = typeof this.seg[field_name].stop !== 'undefined';
+
+        if (this.hasSequence() && this.hasSeg(field_name) && (hasStart || hasStop) ) {
+            if (hasStop) return this.seg[field_name].stop;
+            else return this.sequence.length-1;
+        }
+
         return null;
     },
 

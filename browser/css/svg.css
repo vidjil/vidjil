@@ -123,12 +123,6 @@ ul {
   display: flex;
   flex: auto;
   overflow: hidden;
-  background: #FFFFFF;
-  margin: 6px;
-  margin: 6px 6px 0px 6px;
-  border-bottom-color: white;
-  border-bottom-style: solid;
-  border-bottom-width: 6px;
 }
 .vidjil-panels-left {
   width: calc(100% - 6px - 70px);
@@ -137,9 +131,18 @@ ul {
   width: calc(100% - 6px);
 }
 #mid-container {
+  position: fixed;
   display: flex;
-  flex: auto;
+  flex: 1 1 auto;
+  top: 32px;
+  bottom: 125px ;
+  width: calc(100% - 6px + 6px);
   overflow: hidden;
+  background: #FFFFFF;
+  margin: 6px 0px 0px 0px;
+  border-bottom-color: white;
+  border-bottom-style: solid;
+  border-bottom-width: 6px;
 }
 #right-container {
   display: flex;
@@ -496,8 +499,7 @@ line {
   height: 16px;
   position: relative;
   white-space: nowrap;
-  display: flex;
-  flex: 1 1 auto;
+  flex: 1 1000 auto;
 }
 .list .axisBox,
 .axisBox span {
@@ -936,7 +938,6 @@ span.logo {
 #bot-container {
   position: fixed;
   bottom: 0;
-  width: 100%;
   min-height: 125px;
 }
 .tn {
@@ -2142,6 +2143,33 @@ form .form_label {
 .list_lock_on {
   color: #777777;
 }
+.set_group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-bottom: 25px;
+  margin-right: 15px;
+  flex-flow: column;
+  width: 48%;
+}
+.set_group_header {
+  width: 100%;
+}
+.set_cell {
+  word-break: break-all;
+}
+.set_data {
+  width: 100%;
+}
+.analysis_button {
+  display: inline-flex;
+}
+.margined-top {
+  margin-top: 10px;
+}
+.margined-bottom {
+  margin-bottom: 10px;
+}
 .segmenter .axisBox > span {
   margin: 0 3px;
 }
@@ -2151,7 +2179,6 @@ form .form_label {
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
-  width: 100%;
   border-color: #333333;
   border: solid;
   border-width: 1px;
@@ -2164,7 +2191,6 @@ form .form_label {
   padding: 2px 5px;
 }
 .list_select {
-  width: 445px;
   display: block;
   border: solid;
   border-width: 2px;
@@ -2183,8 +2209,8 @@ form .form_label {
 }
 .seq-fixed {
   position: relative;
-  display: inline-block;
-  width: auto;
+  display: flex;
+  width: 445px;
   margin: -2px;
   padding: 2px;
   padding-left: 5px;
@@ -2195,6 +2221,7 @@ form .form_label {
 .seq-mobil {
   font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
   top: 0px;
+  left: 455px;
   position: absolute;
   font-size: 1em;
   display: inline-block;
@@ -2346,8 +2373,9 @@ span .end-codon {
   background-color: #ddd;
 }
 .seq-nuc {
-  position: relative;
+  position: absolute;
   opacity: 1;
+  top: 0px;
 }
 .seq-mut {
   position: absolute;
