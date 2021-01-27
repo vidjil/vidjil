@@ -558,6 +558,7 @@ For most of the cases, one may want to focus on some clones with their consensus
 Vidjil allows both:
 - to fully study these "top clones"
 - to study the distribution of the "smaller clones"
+- to estimate diversity and overlap indices
 - when this is needed, to retrieve the full list of clones and/or reads
 
 ## The "top" slider in the "filter" menu
@@ -609,6 +610,21 @@ Note that the ratios include the "smaller clones": if a clone
 is reported to have 10.54%, this 10.54% ratio relates to the number of
 analyzed reads, including the hidden clones.
 
+## Studying diversity and overlap indices
+
+Several indices are computed to assess the diversity and overlap of sample(s):
+
+- On one sample, [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) such as
+  Shannon's diversity, Shannon's equitability and Simpson's diversity, as computed by [vijdil-algo](vidjil-algo.md#diversity-measures).
+  Some of these indices have values between 0 (no diversity, one clone clusters all analyzed reads)
+  and 1 (full diversity, each analyzed read belongs to a different clone).
+
+- On several samples, overlap indexes such as [Morisita's overlap index](https://en.wikipedia.org/wiki/Morisita%27s_overlap_index)
+  having values between 0 (no overlap between the two samples)
+  and 1 (full overlap, clones in the same proportion in both samples).
+
+Some of these indices are currently shown on the sample information panel (“🛈” next to the sample name in the info panel).
+Contact us if you have other needs.
 
 ## Exporting the full list of clones
 
