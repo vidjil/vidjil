@@ -609,13 +609,21 @@ Note that the ratios include the "smaller clones": if a clone
 is reported to have 10.54%, this 10.54% ratio relates to the number of
 analyzed reads, including the hidden clones.
 
-## Export the full list of clones
 
-The full list of clones can be retrieved by launching the command-line vidjil-algo.
+## Exporting the full list of clones
 
-On the public server, we also provide `Export all clones (AIRR)` process to export
-a `.tsv` file that can be further processed or opened in any spreadsheet editor.
-XXX TODO XXX
+The `Export all clones (AIRR)` process exports all clones
+in the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
+Such a `.tsv` file that can be further processed or opened in any spreadsheet editor.
+The exported fields are described in the [documentation of vidjil-algo](vidjil-algo.md#airr-tsv-output).
+Once the process has run, click on `See the output files` (at the right of `COMPLETED`)
+to download this file.
+Note that results can then not be visualized on the main Vidjil window.
+
+For more specific analyses, we advise to work with bioinformaticians.
+The full list of clones can be retrieved by launching the command-line `vidjil-algo` (see [documentation](vidjil-algo.md)),
+Parsing the `.vidjil` files gives then all information computed on each clone (see [documentation](vidjil-format.md)).
+
 
 ## Going back to the analyzed reads
 
