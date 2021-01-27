@@ -632,7 +632,7 @@ In some situations, one may want to go back to the reads.
 
 For **vidjil-algo**, analyzing a dataset with the *default + extract reads* process
 generates a `.detected.vdj.fa` file with the reads with detected V(D)J recombinations.
-This file can be downloaded through the `out` link near each sample.
+This file can be downloaded through the `See the output files` link near each sample.
 It enables to use vidjil-algo as a *filtering tool*,
 shrinking a large read set into a manageable number of (pre-)clones
 that will be deeply analyzed and possibly further clustered by
