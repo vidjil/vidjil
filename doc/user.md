@@ -554,10 +554,13 @@ to see in itself. In a typical dataset with about 10<sup>6</sup> reads, even in
 the presence of a dominant clone, there can be 10<sup>4</sup> or 10<sup>5</sup> different
 clones detected. A dominant clone can have thousands or even more reads.
 
-For most of the cases, one may want to focus on some clones with their consensus sequences,
+Whereas many applications require to focus on some clones with their consensus sequences,
+repertoire studies usually consider all clones,
+for example to assess their diversity or to compare repertoires between samples.
 Vidjil allows both:
-- to fully study these "top clones"
-- to study the distribution of the "smaller clones"
+
+- to fully study some "top clones"
+- to study the distribution of all the clones
 - to estimate diversity and overlap indices
 - when this is needed, to retrieve the full list of clones and/or reads
 
@@ -589,12 +592,15 @@ It should then show up in any sample.
 in the `.analysis` file, it will always be shown even if it does not
 meet the "top" filter.
 
-## Studying the distribution of "smaller clones"
+## Studying the distribution of all clones, including "smaller clones"
 
-The top 50/top 100 clones are displayed but all of them are computed and are useful to study full repertoires,
+Vidjil detects all clones, even if, by default,
+only the top 50 or 100 clones are displayed with a full analysis.
+The other clones, that are hidden (because of the "top" or because of hiding some tags)
+are gathered into *virtual clones*, shown with light gray.
+
+This enables to study full repertoires,
 including assessing the polyclonal background and the diversity of the repertoires.
-Clones that are hidden (because of the "top" or because of hiding some tags)
-are gathered into virtual clones, shown with light gray.
 Note that selecting `color by clone` emphasizes the difference between the top clones, colored, and these virtual clones.
 Depending on the process configuration, these "smaller clones" are shown, in the clone list:
 
@@ -612,7 +618,7 @@ analyzed reads, including the hidden clones.
 
 ## Studying diversity and overlap indices
 
-Several indices are computed to assess the diversity and overlap of sample(s):
+Several indices are computed on the full list of clones to assess the diversity and overlap of sample(s):
 
 - On one sample, [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) such as
   Shannon's diversity, Shannon's equitability and Simpson's diversity, as computed by [vijdil-algo](vidjil-algo.md#diversity-measures).
