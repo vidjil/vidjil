@@ -587,6 +587,11 @@ int main (int argc, char **argv)
   bool out_gz = false;
   app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .vdj.fa.gz, and .vidjil.gz files") -> group(group) -> level();
 
+  bool show_alignments = false;
+  app.add_flag("--show-junction", show_alignments,
+               "show germline genes around the junction (experimental, not showing the exact alignment)")
+    -> group(group) -> level();
+
   bool output_vdjfa = false;
   app.add_flag("--out-vdjfa", output_vdjfa,
                "output clones in a " CLONES_FILENAME " file (only for clone sequence data)")
@@ -1782,7 +1787,12 @@ int main (int argc, char **argv)
         clone->set("germline", g->code);
         nb_segmented_by_germline[g->code]++ ;
 
-        cout << s << endl;        
+        cout << s ;
+
+        if (show_alignments)
+          s.showAlignments(cout);
+
+        cout << endl ;
       }
 
     // Finish output preparation

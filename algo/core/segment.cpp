@@ -124,10 +124,7 @@ void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
   }
 }
 
-
-#define NO_COLOR "\033[0m"
-
-int AlignBox::posInRef(int i) {
+int AlignBox::posInRef(int i) const {
   // Works now only for V/J boxes
 
   if (del_left >= 0) // J
@@ -139,15 +136,15 @@ int AlignBox::posInRef(int i) {
   return -99;
 }
 
-string AlignBox::refToString(int from, int to) {
+string AlignBox::refToString(int from, int to) const {
 
   stringstream s;
 
-  s << ref_label << "  \t" ;
+  s << left << setw(SHOW_NAME_WIDTH) << ref_label << " " ;
 
   int j = posInRef(from);
 
-  s << j << "\t" ;
+  s << right << setw(4) << j << " " ;
 
   if (from > start)
     s << color;
@@ -172,11 +169,37 @@ string AlignBox::refToString(int from, int to) {
   if (to < end)
     s << NO_COLOR;
 
-  s << "\t" << j  ;
+  s << right << setw(4) << j  ;
 
   return s.str();
 }
 
+void show_colored_read(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int start_5, int end_3)
+{
+  out << left << setw(SHOW_NAME_WIDTH) << seq.label.substr(0,SHOW_NAME_WIDTH) << " "
+      << right << setw(4) << start_5 << " " ;
+
+  out << V_COLOR << seq.sequence.substr(start_5, box_V->end - start_5 + 1)
+      << NO_COLOR
+      << seq.sequence.substr(box_V->end+1, (box_J->start - 1) - (box_V->end + 1) +1)
+      << J_COLOR
+      << seq.sequence.substr(box_J->start, end_3 - box_J->start + 1)
+      << NO_COLOR ;
+  
+  out << right << setw(4) << end_3 << endl ;
+}
+
+void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int max_gene_align)
+{
+  int align_V_length = min(max_gene_align, box_V->end - box_V->start + 1);
+  int align_J_length = min(max_gene_align, (int)seq.sequence.size() - box_J->start + 1);
+  int start_V = box_V->end - align_V_length + 1;
+  int end_J = box_J->start + align_J_length - 1;
+
+  show_colored_read(out, seq, box_V, box_J, start_V, end_J);
+  out << box_V->refToString(start_V, end_J) << "   " << *box_V << endl ;
+  out << box_J->refToString(start_V, end_J) << "   " << *box_J << endl ;
+}
 
 
 ostream &operator<<(ostream &out, const AlignBox &box)
@@ -446,9 +469,9 @@ KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
 
 KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold, double multiplier)
 {
-  box_V = new AlignBox();
+  box_V = new AlignBox("5", V_COLOR);
   box_D = new AlignBox();
-  box_J = new AlignBox();
+  box_J = new AlignBox("3", J_COLOR);
 
   CDR3start = -1;
   CDR3end = -1;
@@ -1388,6 +1411,10 @@ void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
         }
       }
     }
+}
+
+void FineSegmenter::showAlignments(ostream &out){
+  show_colored_read_germlines(out, getSequence(), box_V, box_J, SHOW_MAX_GENE_ALIGNMENT);
 }
 
 void FineSegmenter::toOutput(CloneOutput *clone){
