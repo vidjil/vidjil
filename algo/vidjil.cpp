@@ -130,6 +130,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_SEGMENT_COST   VDJ
 
 #define DEFAULT_TRIM 0
+#define DEFAULT_STDIN_READ_NB  100
 
 #define MAX_CLONES_FOR_SIMILARITY 20
 
@@ -138,6 +139,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define WARN_PERCENT_SEGMENTED 40
 #define WARN_COVERAGE 0.6
 #define WARN_NUM_CLONES_SIMILAR 10
+#define WARN_RATIO_NB_READS 5
 
 // display
 #define CLONES_ON_STDOUT 50
@@ -253,6 +255,7 @@ int main (int argc, char **argv)
                                   - FASTQ (.fq/.fastq, .fq.gz/.fastq.gz)
                                   - BAM (.bam)
                               Paired-end reads should be merged before given as an input to vidjil-algo.
+                              Uncompressed FASTA/FASTQ reads can be given from standard input with ')Z" STDIN_FILENAME R"Z('.
                  )Z")
     -> required() -> type_name("");
 
@@ -289,6 +292,11 @@ int main (int argc, char **argv)
                  "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads")
     -> group(group) -> transform(string_NO_LIMIT);
 
+  long long force_read_number = NO_LIMIT_VALUE;
+  app.add_option("--read-number", force_read_number,
+                 "estimate for read number used in e-value computation (default: '" NO_LIMIT "', count all reads, but takes " 
+                 + string_of_int(DEFAULT_STDIN_READ_NB) + " for stdin)")
+    -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)";
@@ -726,6 +734,15 @@ int main (int argc, char **argv)
       cout << "# using default sequence file: " << f_reads << endl ;
     }
 
+  bool reads_stdin = (f_reads == STDIN_FILENAME);
+  if (reads_stdin)
+   {
+      if (force_read_number == NO_LIMIT_VALUE)
+        force_read_number = DEFAULT_STDIN_READ_NB ;
+
+      cout << "# reading from stdin, estimating " << force_read_number << " reads" << endl ;
+   }
+
   size_t min_cover_representative = (size_t) min(min_reads_clone, DEFAULT_MIN_COVER_REPRESENTATIVE);
 
   // Check seed buffer  
@@ -960,7 +977,9 @@ int main (int argc, char **argv)
     cout << endl ;
 
     // Number of reads for e-value computation
-    unsigned long long nb_reads_for_evalue = (expected_value > NO_LIMIT_VALUE) ? nb_sequences_in_file(f_reads, true) : 1 ;
+    unsigned long long nb_reads_for_evalue = (expected_value == NO_LIMIT_VALUE) ? 1
+                                           : (force_read_number > NO_LIMIT_VALUE) ? force_read_number
+                                           : nb_sequences_in_file(f_reads, true);
 
     if (expected_value_kmer == NO_LIMIT_VALUE)
     {
@@ -1159,6 +1178,12 @@ int main (int argc, char **argv)
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
+    if ((float) nb_total_reads / (float) nb_reads_for_evalue > WARN_RATIO_NB_READS)
+    {
+      output.add_warning(W21_DOUBTFUL_MULTIPLIER, "Bad e-value multiplier.", LEVEL_WARN);
+      cout << "  ! The estimated number of reads was far below the actual number of reads" << endl ;
+      cout << "  ! There may be false positives, you should run with an higher --read-number" << endl ;
+    }
 
     //$$ Display statistics on segmentation causes
 

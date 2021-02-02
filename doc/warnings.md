@@ -23,6 +23,7 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 
 ## Output of an analysis, global warnings
 - [x] W20 Very few V(D)J recombinations found (0.7%)
+- [x] W21 Doubtful e-value multiplier
 - [ ] W2x Sequences with known adapters #1669
 - [ ] W2x CDR3 detection without gapped germlines   #2187   (ou bien par clone ?)
 

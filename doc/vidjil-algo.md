@@ -150,17 +150,6 @@ make -C src test                # run self-tests (can take 5 to 60 minutes)
 
 # Input and parameters
 
-The main input file of Vidjil-algo is a *set of reads*, given as a `.fasta`
-or `.fastq` file, possibly compressed with gzip (`.gz`).
-This set of reads can reach several gigabytes and 2\*10<sup>9</sup> reads. It is
-never loaded entirely in the memory, but reads are processed one by
-one by Vidjil-algo.
-Vidjil-algo can also process BAM files, but please note that:
-
-1.  The reads don't need to be aligned beforehand.
-2.  In case of paired-end sequencing, the reads must have already been merged
-    in the BAM file.
-
 The `-h` and `-H` help options provide the list of parameters that can be
 used. We detail here the options of the main `-c clones` command.
 
@@ -168,6 +157,40 @@ The default options are very conservative (large window, no further
 automatic clusterization, see below), leaving the user or other
 software making detailed analysis and decisions on the final
 clustering.
+
+### Input selection
+
+```
+Positionals
+  reads_file                  reads file, in one of the following formats:
+                                  - FASTA (.fa/.fasta, .fa.gz/.fasta.gz)
+                                  - FASTQ (.fq/.fastq, .fq.gz/.fastq.gz)
+                                  - BAM (.bam)
+                              Paired-end reads should be merged before given as an input to vidjil-algo.
+                              Uncompressed FASTA/FASTQ reads can be given from standard input with '-'.
+
+Input
+  -x, --first-reads INT       maximal number of reads to process ('all': no limit, default), only first reads
+  -X, --sampled-reads INT     maximal number of reads to process ('all': no limit, default), sampled reads
+```
+
+The main input file of Vidjil-algo is a *set of reads*, given as a `.fasta`
+or `.fastq` file, possibly compressed with gzip (`.gz`).
+This set of reads can reach several gigabytes and 2\*10<sup>9</sup> reads. It is
+never loaded entirely in the memory, but reads are processed one by
+one by Vidjil-algo.
+FASTA/FASTQ reads can also be given on the standard input by giving `-` instead of a file.
+
+Vidjil-algo can also process BAM files, but please note that:
+
+1.  The reads don't need to be aligned beforehand.
+2.  In case of paired-end sequencing, the reads must have already been merged
+    in the BAM file.
+
+The `--first-reads` option restricts the analysis on a few sequences, for example to probe a large file or to test some parameters.
+However, read files may be not homogeneous, with biais in the sequences at the start of the file.
+The `--sampled-reads` option rather considers *regularly sampled sequences* from the file.
+It is thus generally safe to run `--sampled-reads 1000` to have a fast insight of what there is in some data.
 
 ## Germline presets: locus and recombination selection
 
@@ -358,10 +381,6 @@ The default is `--trim 0`.
 The following options control how many clones are output and analyzed.
 
 ``` diff
-Input
-  -x, --first-reads INT       maximal number of reads to process ('all': no limit, default), only first reads
-  -X, --sampled-reads INT     maximal number of reads to process ('all': no limit, default), sampled reads
-
 Limits to report and to analyze clones (second pass)
   -r, --min-reads INT=5       minimal number of reads supporting a clone
   --min-ratio FLOAT=0         minimal percentage of reads supporting a clone
