@@ -47,8 +47,8 @@ sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 These documentations and additional developer and maintainer documentation
 are available from the [doc/](http://gitlab.vidjil.org/tree/master/doc) directory in the source files,
-including development notes on Vidjil-algo (`dev-algo.md`)
-and on the web application client (`dev-client.md`) and the server (`dev-server.md`).
+including development notes on Vidjil-algo (`dev-algo.md`), on the germlines (`dev-germline.md`),
+on the web application client (`dev-client.md`), and on the server (`dev-server.md`).
 
 ### Further help
 
