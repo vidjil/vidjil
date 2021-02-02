@@ -8,11 +8,11 @@ Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
 ## Vidjil core development
 
-  - Mathieu Giraud, 2011-2020
-  - Mikaël Salson, 2011-2020
-  - Marc Duez, 2012-2016, 2019-2020
+  - Mathieu Giraud, 2011-2021
+  - Mikaël Salson, 2011-2021
+  - Marc Duez, 2012-2016, 2019-2021
   - Tatiana Rocher, 2014-2017
-  - Florian Thonier, 2015-2020
+  - Florian Thonier, 2015-2021
   - Ryan Herbert, 2015-2020
   - Aurélien Béliard, 2016-2017
 
@@ -65,7 +65,7 @@ The development of Vidjil is funded by:
   - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
   - Inria Lille, 2015-2018
   - InCA, 2016-2019
-  - VidjilNet consortium at Inria, 2018-2020
+  - VidjilNet consortium at Inria, 2018-2021
 
 
 ## References
