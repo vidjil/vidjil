@@ -598,7 +598,17 @@ Aligner.prototype = {
      * */
     show: function () {
         if (Object.keys(this.sequence).length > 0) {
-            var mid = (this.sequence[this.sequence_order[0]].seq.length/2)*CHAR_WIDTH;
+            var sequence = this.sequence[this.sequence_order[0]]
+            var mid = (sequence.seq.length/2)*CHAR_WIDTH;
+
+            try {
+                if (sequence.id && this.m.clone(sequence.id).seg.cdr3){
+                    cdr3 = this.m.clone(sequence.id).seg.cdr3;
+                    mid = ((sequence.pos[cdr3.start]+sequence.pos[cdr3.stop])/2) * CHAR_WIDTH - (window.innerWidth/2) + 225;
+                }
+            } catch (error) {}
+            
+
             $(this.div_segmenter)
                 .animate({
                     scrollLeft: 0
@@ -659,6 +669,7 @@ Aligner.prototype = {
             success: function (result) {
                 self.aligned = true ;
                 self.displayAjaxResult(result);
+                self.show();
             },
             error: function () {
                 console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
