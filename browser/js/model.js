@@ -2815,6 +2815,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {boolean} bool - isFiltered value given to all clones
      * */
     reset_filter: function (bool) {
+        if (!bool)
+            this.filter_string = undefined;
+            
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
             c.isFiltered=bool
@@ -2828,6 +2831,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {string} str - required string to pass the filter
      * */
     filter: function (str) {
+        this.filter_string = str;
         this.reset_filter(true)
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
