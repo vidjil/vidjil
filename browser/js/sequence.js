@@ -485,7 +485,7 @@ Sequence.prototype = {
                 var div_layer = this.div.getElementsByClassName("seq_layer_"+i)[0];
                 if (!div_layer){
                     div_layer = document.createElement('div');
-                    $(div_layer).addClass("seq_layer").insertAfter(div_nuc);
+                    $(div_layer).addClass("seq_layer").addClass("seq_layer_"+i).insertAfter(div_nuc);
                 }
 
                 // check layer condition
