@@ -1393,7 +1393,7 @@ void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
       // Non-recombined D7-27/J1 sequence
       if ((box_V->ref_label.find("IGHD7-27") != string::npos)
           && (box_J->ref_label.find("IGHJ1") != string::npos)
-          && ((getMidLength() >= 90) || (getMidLength() <= 94)))
+          && ((getMidLength() >= 90) && (getMidLength() <= 94)))
         {
           clone->add_warning(W61_NON_RECOMBINED_D7_27_J1, "Non-recombined D7-27/J1 sequence", LEVEL_ERROR, phony);
         }
