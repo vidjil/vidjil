@@ -206,7 +206,7 @@ Sequence.prototype = {
         this.seq = str.split("");
         this.seqAA = str.split("");
         this.computePos();
-        this.computeAAseq();
+        //this.computeAAseq();
 
         return this;
     },
@@ -214,63 +214,121 @@ Sequence.prototype = {
     /**
      * use the cdr3 (if available) to compute the amino acid sequence <br>
      * */
-    computeAAseq: function () {
+    aminoString: function () {
         var start = -1;
-        var stop = -1;
-                
+        
+        this.segmenter.amino = true;
+
         var clone = this.m.clone(this.id);
-        if (!clone.hasSequence()) return;
+        if (!clone.hasSequence()) return "";
 
         if (clone.hasSeg('cdr3')){
             if (typeof clone.seg.cdr3.start != "undefined") {
                 start = this.pos[clone.seg.cdr3.start];
-                stop = this.pos[clone.seg.cdr3.stop];
             }else if (clone.seg.cdr3.constructor === String){
                 start = this.pos[clone.sequence.indexOf(clone.seg.cdr3)];
-                stop = this.pos[clone.sequence.indexOf(clone.seg.cdr3) + clone.seg.cdr3.length -1];
             }
         }
-        if (start == undefined || stop == undefined){
-            console.error( "Sequence error. Start/stop position of cdr3 are undefined");
-            return;
+        if (typeof start == "undefined" || start == -1){
+            this.seqAA = [];
+            return "";
         }
-
-        for (var h=0; h<this.seq.length; h++) this.seqAA[h] = " ";
         
-        var i = 0;
+        for (var h=0; h<this.seq.length; h++) this.seqAA[h] = '\u00A0';
+        
+        var i = start%3;
 
         while (i<this.seq.length){
-
-            if (i < start || i > stop)
-            {
-                i++;
-                continue;
-            }
                 
             var code = "";
             var pos;
             
-            while (code.length<3 && i<=stop){
+            while (code.length<3){
                 if (this.seq[i] != "-") {
                     code += this.seq[i];
-                    this.seqAA[i] = " ";
+                    this.seqAA[i] = '\u00A0';
+                }else{
+                    this.seqAA[i] = '-';
                 }
                 if(code.length == 2) pos = i;
                 i++;
             }
 
-            if (code.length == 3){
+            if (code.length == 3)
                 this.seqAA[pos] = tableAAdefault(code);
+        }
+
+        return this.seqAA.join('');
+    },
+
+    aminoSplitString: function () {
+        var start = -1;
+                
+        var clone = this.m.clone(this.id);
+        if (!clone.hasSequence()) return "";
+
+        if (clone.hasSeg('cdr3')){
+            if (typeof clone.seg.cdr3.start != "undefined") {
+                start = this.pos[clone.seg.cdr3.start];
+            }else if (clone.seg.cdr3.constructor === String){
+                start = this.pos[clone.sequence.indexOf(clone.seg.cdr3)];
             }
         }
+        if (typeof start == "undefined" || start == -1){
+            this.seqAAs = [];
+            return "";
+        }
+        
+        this.seqAAs = [];
+        for (var h=0; h<this.seq.length; h++) this.seqAAs[h] = '\u00A0';
+        
+        var i = start%3;
+        while (i<this.seq.length){
+                
+            var code = "";
+            
+            while (code.length<3){
+                if (this.seq[i] != "-") code += this.seq[i];
+                
+                if(code.length == 3) this.seqAAs[i] = '|';
+
+                i++;
+            }
+        }
+
+        return this.seqAAs.join('');
     },
 
     toString: function(div) {
         this.div = div;
-        this.updateSequence();
+        this.updateLetterSpacing();
         this.updateLayers();
     },
-    
+
+    nucleoString: function(){
+        var clone = this.m.clone(this.id);
+        
+        if (this.segmenter.use_dot && this.segmenter.aligned &&
+            (typeof clone.sequence != 'undefined' && clone.sequence !== 0 ) &&
+            (this.id != this.segmenter.sequence[this.segmenter.sequence_order[0]].id)){
+
+            var ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
+
+            this.seq_a = [];
+            for (var a in this.seq){
+                if (this.seq[a] != ref[a] && this.seq[a] != '-' && ref[a] != '-'){
+                    this.seq_a[a] = this.seq[a];
+                }else{
+                    this.seq_a[a] = '*';
+                    if(this.seq[a] == '-' || ref[a] == '-')
+                        this.seq_a[a] = this.seq[a];
+                }
+            }
+            return this.seq_a.join('');
+        }else{
+            return this.seq.join('');
+        }
+    },
     substitutionString: function(){
         var seq,ref;
         if (this.segmenter.amino) {
