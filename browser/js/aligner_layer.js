@@ -18,7 +18,7 @@ LAYERS = {
     {
         'className': "seq_layer_text",
         'text': function (s,c) { return s.aminoSplitString(); },
-        'style': { 'margin-left': (CHAR_WIDTH/2)+"px", 'opacity': "0.5" },
+        'style': { 'margin-left': (CHAR_WIDTH/2)+"px", 'opacity': "0.35" },
         'enabled': true
     },
 
