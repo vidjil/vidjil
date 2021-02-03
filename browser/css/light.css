@@ -2392,35 +2392,47 @@ span .end-codon {
   /* W3C */
 }
 .seq_layer_highlight {
-  opacity: 0.2;
+  border-left: solid black 1px;
+  border-right: solid black 1px;
+  opacity: 0.1;
   height: 15px;
   top: 5px;
+  margin-left: -2px;
+  padding-right: 4px;
 }
 .seq_layer_bracket {
-  height: 8px;
-  top: 18px;
+  height: 2px;
+  top: 20px;
   border: solid;
   border-top: none;
   border-width: 2px;
   margin: -2px;
-  opacity: 0.75;
+  opacity: 0.6;
   z-index: 1;
+  margin-left: -3px;
+  padding-right: 2px;
 }
 .seq_layer_bracket_top {
-  height: 6px;
+  height: 2px;
   top: 4px;
   border: solid;
   border-bottom: none;
   border-width: 2px;
   margin: -2px;
-  opacity: 0.75;
+  opacity: 0.6;
   z-index: 1;
+  margin-left: -3px;
+  padding-right: 2px;
 }
 .seq_layer_underline {
+  border-left: solid black 1px;
+  border-right: solid black 1px;
   height: 3px;
-  top: 20px;
-  opacity: 0.75;
+  top: 18px;
+  opacity: 0.3;
   z-index: 2;
+  margin-left: -2px;
+  padding-right: 4px;
 }
 .seq_layer_quality {
   height: 5px;
