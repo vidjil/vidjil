@@ -744,7 +744,7 @@ class TestCase(TestCaseAbstract):
                     else:
                         self.count = 1
 
-            except (json.decoder.JSONDecodeError, KeyError):
+            except (ValueError, KeyError):
                 # No json, or non-existent key: count is 0
                 self.json_data = JSON_KEY_NOT_FOUND
                 self.count = 0
