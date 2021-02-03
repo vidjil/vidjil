@@ -3,16 +3,24 @@ ALIGNER_MENU = {
         'id': 'align-segment-info',
         'checkbox': [{
             'id': 'VDJ',
-            'text': 'VDJ genes',
+            'text': 'V/D/J genes',
             'layers': ["V","D","J","D2","D3"],
-            'title': 'highlight V/D/J genes',
+            'title': 'Highlight V/D/J genes computed by analysis software',
             'enabled': true
         },
         {
             'id': 'CDR3',
             'text': 'CDR3',
             'layers': ["CDR3"],
-            'title': 'highlight CDR3',
+            'title': 'Highlight CDR3 computed by analysis software',
+            'enabled': false
+            
+        },
+        {
+            'id': 'Quality',
+            'text': 'Q-score',
+            'layers': ["quality"],
+            'title': 'Quality score of representative sequence',
             'enabled': false
             
         }]
@@ -22,25 +30,23 @@ ALIGNER_MENU = {
     'align': {
         'id': 'align-settings',
         'checkbox': [{
-            'id': 'insert',
-            'text': 'Insertion',
-            'layers': ["insertion"],
-            'title': 'highlight insertion',
+            'id': 'mutation',
+            'text': 'Highlight differences',
+            'layers': ["insertion", "substitution", "deletion"],
+            'title': 'Color insertion, deletion and mutation',
             'enabled': true
-        },
-        {
-            'id': 'subs',
-            'text': 'Substitution',
-            'layers': ["substitution"],
-            'title': 'highlight insertion',
-            'enabled': true
-        },
-        {
-            'id': 'del',
-            'text': 'Deletion',
-            'layers': ["deletion"],
-            'title': 'highlight deletion',
-            'enabled': true
+        },{
+            'id': 'amino_split',
+            'text': 'AA separator',
+            'layers': ["amino_separator"],
+            'title': 'Display a separator between AA (AA positions based on cdr3)',
+            'enabled': false
+        },{
+            'id': 'amino',
+            'text': 'Use AA sequence',
+            'layers': ["amino"],
+            'title': 'Display Amino Acid sequence instead of nucleotids (AA positions based on cdr3)',
+            'enabled': false
         }]
     },
 
