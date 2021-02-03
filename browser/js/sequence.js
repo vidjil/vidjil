@@ -533,9 +533,15 @@ Sequence.prototype = {
                 if (l.text){
                     if (typeof l.text == "function")
                         try{
-                            div_layer.innerHTML = l.text(this, this.m.clone(this.id));
+                            text = l.text(this, this.m.clone(this.id));
+                            if (typeof text == "string") { 
+                                div_layer.innerHTML = l.text(this, this.m.clone(this.id));
+                            }else {
+                                div_layer.innerHTML = "";
+                                div_layer.append(text);
+                            }
                         }catch(e){
-                            div_layer.innerHTML = i;
+                            div_layer.innerHTML = "";
                         }
                     else
                         div_layer.innerHTML = l.text;
