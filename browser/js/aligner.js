@@ -158,6 +158,15 @@ Aligner.prototype = {
                     }, 200);
                 }
             });
+
+        // Focus/hide/label
+        document.getElementById("focus_selected").onclick = function () { self.m.focusSelected(); };
+        document.getElementById("hide_selected").onclick = function () { self.m.hideSelected(); };
+        document.getElementById("star_selected").onclick = function (e) {
+            if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
+        document.getElementById("fixsegmenter").onclick = function () { self.switchFixed(); };
+        this.setFixed(false);
+
     },
 
     build_sequence: function(cloneID){
@@ -186,36 +195,38 @@ Aligner.prototype = {
         var clone = template.content.firstElementChild.cloneNode(true);
         parent.insertBefore(clone, nextSibling);
 
-        this.index["highlight-menu"] = new IndexedDom(clone);
-
-        $(function () {
-            $('#highlight_vdj').change(function () {                
-               $('.seq-v').toggle(this.checked);
-               $('.seq-d').toggle(this.checked);
-               $('.seq-dd').toggle(this.checked);
+    /**
+     * Switch the fixed status of the segmenter.
+     * @post old this.fixed == ! this.fixed
+     */
+    switchFixed: function() {
+        this.setFixed(!this.fixed);
+    },
                $('.seq-ddd').toggle(this.checked);
                $('.seq-j').toggle(this.checked);
             }).change(); //ensure visible state matches initially
           });
 
-          $(function () {
-            $('#highlight_cdr3').change(function () {                
-               $('.seq-cdr3').toggle(this.checked);
-            }).change(); //ensure visible state matches initially
-          });
-    }, 
+    /**
+     * Set the fixed status of the segmenter.
+     * Should be used rather than directly modifying the fixe property
+     */
+    setFixed: function(fixed) {
+        this.fixed = fixed;
+        this.updateFixedPicture();
+    },
 
-    build_external_tool_menu: function(){
-        var parent = document.getElementById(this.id).getElementsByClassName("bot-bar")[0];
-        var nextSibling = document.getElementById("aligner-stats");
-        var template = document.getElementById("aligner-external-tool-menu");
-        var clone = template.content.firstElementChild.cloneNode(true);
-        parent.insertBefore(clone, nextSibling);
-
-        this.index["external-tool-menu"] = new IndexedDom(clone);
-    }, 
-
-    build_align_settings_menu: function(){
+    updateFixedPicture: function() {
+        fix_icons = $('#fixsegmenter i');
+        if (fix_icons.length > 0) {
+            fix_icons = fix_icons[0];
+            if (this.fixed) {
+                fix_icons.className = 'icon-pin';
+            } else {
+                fix_icons.className = 'icon-pin-outline';
+            }
+        }
+    },
         var self = this;
         var parent = document.getElementById(this.id).getElementsByClassName("bot-bar")[0];
         var nextSibling = document.getElementById("aligner-stats");
@@ -250,7 +261,7 @@ Aligner.prototype = {
            self.update();
         }).change(); //ensure visible state matches initially
       });
-}, 
+    }, 
 
     /**
      * complete a node with a clone sequence
