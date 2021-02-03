@@ -1,5 +1,5 @@
-var SYMBOL_VOID = "-" ; // Preferably "–";
-var SYMBOL_MATCH = "*" ; // Preferably "·";
+var SYMBOL_VOID = "–";
+var SYMBOL_MATCH = "·";
 
 var SILENT="silent";
 var SUBST="substitution";
