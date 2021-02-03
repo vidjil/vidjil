@@ -589,6 +589,7 @@ Aligner.prototype = {
             if (this.isClone(list[i])) {
                 var c = this.m.clone(list[i]);
                 
+                if (c.seg.imgt) continue;
                 if (typeof (c.getSequence()) !== 0){
                     request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
                 } else {
@@ -603,13 +604,15 @@ Aligner.prototype = {
                 request += ">" +list[i] + "\n" +this.m.germline[this.sequence[list[i]].locus][list[i]] + "\n";
             }
         }
-        if (address == 'IMGTSeg') {
-            imgtPostForSegmenter(this.m.species, request, system, this);
-            var change_options = {'xv_ntseq' : 'false', // Deactivate default output
-                                  'xv_summary' : 'true'}; // Activate Summary output
-            imgtPostForSegmenter(this.m.species, request, system, this, change_options);
-        } else {
-            window[address+"Post"](this.m.species, request, system);
+        if (request != ""){
+            if (address == 'IMGTSeg') {
+                imgtPostForSegmenter(this.m.species, request, system, this);
+                var change_options = {'xv_ntseq' : 'false', // Deactivate default output
+                                    'xv_summary' : 'true'}; // Activate Summary output
+                imgtPostForSegmenter(this.m.species, request, system, this, change_options);
+            } else {
+                window[address+"Post"](this.m.species, request, system);
+            }
         }
 
         this.update();
