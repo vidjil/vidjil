@@ -389,9 +389,10 @@ Sequence.prototype = {
         }
 
         var sub = [];
-        for (var a in this.seq)
-            if (this.seq[a] != ref[a] && this.seq[a] != '-' && ref[a] != '-')
-                sub[a] = this.seq[a];
+        for (var a in seq)
+            if (seq[a] != ref[a] && seq[a] != '-' && ref[a] != '-' && 
+                seq[a] != '\u00A0' && ref[a] != '\u00A0')
+                sub[a] = seq[a];
             else
                 sub[a] = '\u00A0';
 
@@ -410,7 +411,8 @@ Sequence.prototype = {
 
         var del = [];
         for (var a in this.seq)
-            if (this.seq[a] != ref[a] && this.seq[a] == '-')
+            if (seq[a] != ref[a] && seq[a] == '-' && 
+            seq[a] != '\u00A0' && ref[a] != '\u00A0')
                 del[a] = '-';
             else
                 del[a] = '\u00A0';
@@ -431,49 +433,49 @@ Sequence.prototype = {
         var ins = [];
         for (var a in this.seq)
             if (this.seq[a] != ref[a] && ref[a] == '-')
-                ins[a] = this.seq[a];
+                ins[a] = seq[a];
             else
                 ins[a] = '\u00A0';
 
         return ins.join('');
     },   
 
-    updateSequence: function(){
-        //check letterspacing
-        var div_nuc = this.div.getElementsByClassName("seq_nuc")[0];
-        div_nuc.style.letterSpacing = "0px";
+    searchString: function(){
+        if (typeof this.m.filter_string == 'undefined') return "";
 
-        this.c_size = this.average_char_size(div_nuc);
-        this.l_spacing = CHAR_WIDTH - this.c_size;
-        div_nuc.style.letterSpacing = this.l_spacing + "px";
+        var seq = this.seq;  
 
-        var clone = this.m.clone(this.id);
-        if (this.segmenter.use_dot && this.segmenter.aligned &&
-            (typeof clone.sequence != 'undefined' && clone.sequence !== 0 ) &&
-            (this.id != this.segmenter.sequence[this.segmenter.sequence_order[0]].id)){
+        var str = seq.filter(function(e){return e != '-';}).join('');
 
-            var ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
+        var search = [];
+        search.push(this.m.filter_string.toUpperCase());    //sequence
+        search.push(this.m.filter_string.toUpperCase().split("").reverse().join("")); //reverse sequence
 
-            this.seq_a =[];
-            for (var a in this.seq){
-                if (this.seq[a] != ref[a] && this.seq[a] != '-' && ref[a] != '-'){
-                    this.seq_a[a] = this.seq[a];
-                }else{
-                    this.seq_a[a] = '*';
-                    if(this.seq[a] == '-' || ref[a] == '-')
-                        this.seq_a[a] = this.seq[a];
-                }
+        var hitmap = [];
+        for (var i in seq) hitmap.push(false);
+
+        for (var s in search){
+        var pointer = str.indexOf(search[s], pointer);
+            while ( pointer != -1 ){
+                for (var h = pointer; h< pointer+search[s].length; h++)
+                    hitmap[h] = true;
+                pointer = str.indexOf(search[s], pointer+1);
             }
-            div_nuc.innerHTML = this.seq_a.join('');
-        }else{
-            div_nuc.innerHTML = this.seq.join('');
         }
+
+        var result = [];
+        for (var j in seq) result[j] = '\u00A0';
+        for (var k in hitmap)
+            if (hitmap[k])
+                result[this.pos[k]] = seq[this.pos[k]];
+        
+        return result.join('');
     },
 
     updateLayers: function(){
 
         var clone = this.m.clone(this.id);
-        var div_nuc = this.div.getElementsByClassName("seq_nuc")[0];
+        var div_nuc = this.div.getElementsByClassName("seq_layer_nuc")[0];
 
         if (typeof clone.sequence != 'undefined' && clone.sequence !== 0) {
             for (var i in this.layers){
