@@ -1,4 +1,35 @@
 LAYERS = {
+    'nuc':
+    {
+        'className': "seq_layer_text",
+        'condition': function (s,c) { return !LAYERS.amino.enabled; },
+        'text': function (s,c) { return s.nucleoString(); },
+        'enabled': true
+    },
+
+    'amino':
+    {
+        'className': "seq_layer_text",
+        'text': function (s,c) { return s.aminoString(); },
+        'enabled': true
+    },
+
+    'amino_separator':
+    {
+        'className': "seq_layer_text",
+        'text': function (s,c) { return s.aminoSplitString(); },
+        'style': { 'margin-left': (CHAR_WIDTH/2)+"px", 'opacity': "0.5" },
+        'enabled': true
+    },
+
+    'quality':
+    {
+        'title': 'fastq_quality',
+        'text': function (s,c) { return s.qualityString(); },
+        'className': "seq_layer_quality",
+        'enabled': true
+    },
+
     'V':
     {
         'title': function (s,c) { return c.seg["5"].name;},
@@ -53,10 +84,11 @@ LAYERS = {
         'style': { 'borderColor': "darkred" },
         'enabled': false
     },
+    
 
     'substitution':
     {
-        'className': "seq_text",
+        'className': "seq_layer_text",
         'condition': function (s,c) { return s.is_aligned; },
         'text': function (s,c) { return s.substitutionString(); },
         'style': { 'color': "blue", 'fontWeight': "bold" },
@@ -64,7 +96,7 @@ LAYERS = {
     },
     'insertion':
     {
-        'className': "seq_text",
+        'className': "seq_layer_text",
         'condition': function (s,c) { return s.is_aligned; },
         'text': function (s,c) { return s.insertionString(); },
         'style': { 'color': "green", 'fontWeight': "bold" },
@@ -72,10 +104,20 @@ LAYERS = {
     },
     'deletion':
     {
-        'className': "seq_text",
+        'className': "seq_layer_text",
         'condition': function (s,c) { return s.is_aligned; },
         'text': function (s,c) { return s.deletionString(); },
         'style': { 'color': "red", 'fontWeight': "bold" },
+        'enabled': true
+    },
+
+
+    'search':
+    {
+        'className': "seq_layer_text",
+        'condition': function (s,c) { return !s.segmenter.amino; },
+        'text': function (s,c) { return s.searchString(); },
+        'style': { 'color': "pink", 'fontWeight': "bold" },
         'enabled': true
     },
 
