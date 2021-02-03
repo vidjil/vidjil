@@ -554,11 +554,15 @@ to see in itself. In a typical dataset with about 10<sup>6</sup> reads, even in
 the presence of a dominant clone, there can be 10<sup>4</sup> or 10<sup>5</sup> different
 clones detected. A dominant clone can have thousands or even more reads.
 
-For most of the cases, one may want to focus on some clones with their consensus sequences,
+Whereas many applications require to focus on some clones with their consensus sequences,
+repertoire studies usually consider all clones,
+for example to assess their diversity or to compare repertoires between samples.
 Vidjil allows both:
-- to fully study these "top clones"
-- to study the distribution of the "smaller clones"
-- when this is needed, to retrieve the full list of clones and/or reads
+
+- by default, to fully study "top clones"
+- when this is needed, to retrieve the full list of clones and/or reads for further analysis
+- to study the distribution of all the clones
+- to estimate diversity and overlap indices
 
 ## The "top" slider in the "filter" menu
 
@@ -588,12 +592,15 @@ It should then show up in any sample.
 in the `.analysis` file, it will always be shown even if it does not
 meet the "top" filter.
 
-## Studying the distribution of "smaller clones"
+## Studying the distribution of all clones, including "smaller clones"
 
-The top 50/top 100 clones are displayed but all of them are computed and are useful to study full repertoires,
+Vidjil detects all clones, even if, by default,
+only the top 50 or 100 clones are displayed with a full analysis.
+The other clones, that are hidden (because of the "top" or because of hiding some tags)
+are gathered into *virtual clones*, shown with light gray.
+
+This enables to study full repertoires,
 including assessing the polyclonal background and the diversity of the repertoires.
-Clones that are hidden (because of the "top" or because of hiding some tags)
-are gathered into virtual clones, shown with light gray.
 Note that selecting `color by clone` emphasizes the difference between the top clones, colored, and these virtual clones.
 Depending on the process configuration, these "smaller clones" are shown, in the clone list:
 
@@ -609,13 +616,36 @@ Note that the ratios include the "smaller clones": if a clone
 is reported to have 10.54%, this 10.54% ratio relates to the number of
 analyzed reads, including the hidden clones.
 
-## Export the full list of clones
+## Studying diversity and overlap indices
 
-The full list of clones can be retrieved by launching the command-line vidjil-algo.
+Several indices are computed on the full list of clones to assess the diversity and overlap of sample(s):
 
-On the public server, we also provide `Export all clones (AIRR)` process to export
-a `.tsv` file that can be further processed or opened in any spreadsheet editor.
-XXX TODO XXX
+- On one sample, [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) such as
+  Shannon's diversity, Shannon's equitability and Simpson's diversity, as computed by [vijdil-algo](vidjil-algo.md#diversity-measures).
+  Some of these indices have values between 0 (no diversity, one clone clusters all analyzed reads)
+  and 1 (full diversity, each analyzed read belongs to a different clone).
+
+- On several samples, overlap indexes such as [Morisita's overlap index](https://en.wikipedia.org/wiki/Morisita%27s_overlap_index)
+  having values between 0 (no overlap between the two samples)
+  and 1 (full overlap, clones in the same proportion in both samples).
+
+Some of these indices are currently shown on the sample information panel (“🛈” next to the sample name in the info panel).
+Contact us if you have other needs.
+
+## Exporting the full list of clones
+
+The `Export all clones (AIRR)` process exports all clones
+in the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
+Such a `.tsv` file that can be further processed or opened in any spreadsheet editor.
+The exported fields are described in the [documentation of vidjil-algo](vidjil-algo.md#airr-tsv-output).
+Once the process has run, click on `See the output files` (at the right of `COMPLETED`)
+to download this file.
+Note that results can then not be visualized on the main Vidjil window.
+
+For more specific analyses, we advise to work with bioinformaticians.
+The full list of clones can be retrieved by launching the command-line `vidjil-algo` (see [documentation](vidjil-algo.md)),
+Parsing the `.vidjil` files gives then all information computed on each clone (see [documentation](vidjil-format.md)).
+
 
 ## Going back to the analyzed reads
 
@@ -624,7 +654,7 @@ In some situations, one may want to go back to the reads.
 
 For **vidjil-algo**, analyzing a dataset with the *default + extract reads* process
 generates a `.detected.vdj.fa` file with the reads with detected V(D)J recombinations.
-This file can be downloaded through the `out` link near each sample.
+This file can be downloaded through the `See the output files` link near each sample.
 It enables to use vidjil-algo as a *filtering tool*,
 shrinking a large read set into a manageable number of (pre-)clones
 that will be deeply analyzed and possibly further clustered by
