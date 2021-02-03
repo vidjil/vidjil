@@ -574,23 +574,24 @@ Sequence.prototype = {
         }
     },
 
-    average_char_size: function(parent, classname){
+    updateLetterSpacing: function(){
+        var div_nuc = this.div.getElementsByClassName("seq_layer_test")[0];
+        div_nuc.style.letterSpacing = "0px";
+
         var size = 1000;
         var text = "";
         for (var i = 0; i < size; i++) text+="A";
         var div = document.createElement("div");
-        div.className = classname;
-        div.style.display = "inline-block";
+        div.style.display = "block";
         div.textContent = text;
-        parent.appendChild(div);
-        average_size = div.offsetWidth/size;
-        console.log(average_size); 
-        parent.removeChild(div);
-        return average_size;
+        div_nuc.appendChild(div);
+        this.c_size = div.offsetWidth/size;
+        console.log(this.c_size); 
+        div_nuc.removeChild(div);
+        this.l_spacing = CHAR_WIDTH - this.c_size;
+
+        div_nuc.style.letterSpacing = this.l_spacing+"px";
     },
-
- 
-
 };
 Sequence.prototype = $.extend(Object.create(genSeq.prototype), Sequence.prototype);
 
