@@ -161,7 +161,7 @@ or removed from groups whenever it is convenient
 ### Example: create organization with sub groups/roles
 
   - Create group, for example `lab_xxx` (select `None` for parent group).
-  - Create roles (eg. `Technician`, `Engineer`, `Doctor`). Be sure to select
+  - Create sub-group for roles (eg. `Technician`, `Engineer`, `Doctor`). Be sure to select
     `lab_xxx` as the parent group.
   - From the group's detailed view, 
     set the permissions for the newly created groups `Technician`, `Engineer` and `Doctor`.
@@ -178,20 +178,32 @@ accessible by any member of one of the child groups.
 ### Example: converting a previous user account into a group account
 
 Sometimes a user has a account, does some analyses, and then want to create accounts
-for other members of her team.
-The following procedure makes that the data uploaded by the user will be available
+for other members of his team.
+The following procedure makes that whole data uploaded by the user will be available
 to the whole group.
 
 - Modify the personal group of this user by renaming it to a group account, such as `lab_xxx`
-- Create a new personal group for this user.
+- Create the new users 
+- Attach them to the first group `lab_xxx`.
+
+If needed, you can also recreate a personal group for the user.
+
+- Create a new group for this user. Reuse the name of the previous personal group.
   This is simply a new group with a name as `user_xxx`, where `xxx` is the
   id of this user.
+- Set the rights needed for this user on his own group.
 - Attach the user to this new group `user_xxx`
-- Create the new users and attach them to the first group `lab_xxx`.
 
 ### Adding roles to an organization
 
-XXX TODO XXX
+You can use various panel of rights depending of the roles that you want create.
+For example, in hospital, 
+you propably want that only a subgroup of people, `medecins`, 
+have ability to save an analysis.
+
+Their is no preset of rights defined.
+You can select manualy, inside detailled view of each group and sub-group,
+the rights that you wang to grant depending of the profils that you want create. 
 
 
 ## Adding an user to a group
