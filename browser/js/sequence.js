@@ -1,7 +1,7 @@
 require(['./js/aligner_layer.js',
         './js/aligner_amino.js']);
 
-CHAR_WIDTH = 15;
+CHAR_WIDTH = 12;
 
 
 function genSeq(id, locus, model, segmenter) {
