@@ -215,37 +215,29 @@
   background-color: #ddd
 }
 
-
-.seq-mut{
-  position:absolute;
-  opacity: 1;
-  top:0px;
-  font-weight: bold;
-}
-.seq-mut2{
-  position:absolute;
-  opacity: 1;
-  top:0px;
-  font-weight: bold;
-}
-
-.seq_nuc{
-  position: absolute; 
-  top: 5px;
-}
-
 .seq_layer{
   position:absolute;
   top: 0px;
 }
 
-.seq_text{
+.seq_layer_text{
   position: absolute; 
   top: 5px;
+  z-index: 3;
+}
+
+.seq_layer_text2{
+  position: absolute; 
+  top: 20px;
+  -webkit-transform:scale(1,0.5); /* Safari and Chrome */
+  -moz-transform:scale(1,0.5); /* Firefox */
+  -ms-transform:scale(1,0.5); /* IE 9 */
+  -o-transform:scale(1,0.5); /* Opera */
+  transform:scale(1,0.5); /* W3C */
 }
 
 .seq_layer_highlight{
-  opacity: 0.1;
+  opacity: 0.2;
   height:15px;
   top:5px;
 }
