@@ -329,6 +329,55 @@ Sequence.prototype = {
             return this.seq.join('');
         }
     },
+
+    qualityString: function(){
+        var max_quality_illumina = 40;
+        var max_quality_sanger = 93;
+
+        var max_quality = max_quality_illumina;
+
+        var clone = this.m.clone(this.id);
+        var result = document.createElement('div');
+        result.style.height = "100%";
+        result.style.width = "max-content";
+        result.style.display = "table";
+
+        this.quality = [];
+        for (var j=0; j<this.seq.length; j++) this.quality[j] = -1;
+
+        for (var i=0; i<this.pos.length; i++){
+            var p = this.pos[i];
+            this.quality[p] = clone.seg.quality.seq[i];
+        }
+
+        var width = 0;
+        for (var k=0; k<this.quality.length-1; k++){
+            width += CHAR_WIDTH;
+
+            if (k+1 == this.quality.length || 
+                (this.quality[k+1] != this.quality[k])){
+                var block = document.createElement("span");
+                block.style.width = width+"px";
+                block.className = "seq_quality_block";
+
+                if (this.quality[k] == -1){
+                    block.title = "quality : xxx";
+                    block.style.background = "grey";
+                }
+                else{
+                    var q = this.quality[k].charCodeAt(0)-33;
+                    block.title = "quality : '"+ this.quality[k] + "' ("+q+"/"+max_quality+")";
+                    //block.style.background = d3.interpolateTurbo( 1 - 0.6*((quality)/max_quality));
+                    block.style.background = d3.interpolateSinebow( 0.4*((q)/max_quality)  );
+                }
+                result.appendChild(block);
+                width = 0;
+            }
+        }
+
+        return result;
+    },
+    
     substitutionString: function(){
         var seq,ref;
         if (this.segmenter.amino) {
