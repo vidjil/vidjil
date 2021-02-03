@@ -346,7 +346,7 @@ void testFilterBioReaderWithACAutomaton(){
 
 void testGetNSignicativeKmers(){
   BioReader filtered;
-  BioReader seqV("../../germline/homo-sapiens/IGHV.fa", 2);
+  BioReader seqV("../../germline/homo-sapiens/IGHV.fa", 2, "|");
 
   string SIZE_ERROR = "Filtered BioReader should be 10x smaller";
   string GENE_NOT_FOUND = "Filtering sequence not found after filter";
