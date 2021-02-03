@@ -559,10 +559,10 @@ repertoire studies usually consider all clones,
 for example to assess their diversity or to compare repertoires between samples.
 Vidjil allows both:
 
-- to fully study some "top clones"
+- by default, to fully study "top clones"
+- when this is needed, to retrieve the full list of clones and/or reads for further analysis
 - to study the distribution of all the clones
 - to estimate diversity and overlap indices
-- when this is needed, to retrieve the full list of clones and/or reads
 
 ## The "top" slider in the "filter" menu
 
