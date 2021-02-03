@@ -68,7 +68,7 @@ genSeq.prototype = {
         this.pos = [];
         var j = 0;
         for (var i = 0; i < this.seq.length; i++) {
-            if (this.seq[i] != "-") {
+            if (this.seq[i] != SYMBOL_VOID) {
                 this.pos.push(i);
             }
         }
@@ -245,11 +245,11 @@ Sequence.prototype = {
             var pos;
             
             while (code.length<3){
-                if (this.seq[i] != "-") {
+                if (this.seq[i] != SYMBOL_VOID) {
                     code += this.seq[i];
                     this.seqAA[i] = '\u00A0';
                 }else{
-                    this.seqAA[i] = '-';
+                    this.seqAA[i] = SYMBOL_VOID;
                 }
                 if(code.length == 2) pos = i;
                 i++;
@@ -289,7 +289,7 @@ Sequence.prototype = {
             var code = "";
             
             while (code.length<3){
-                if (this.seq[i] != "-") code += this.seq[i];
+                if (this.seq[i] != SYMBOL_VOID) code += this.seq[i];
                 
                 if(code.length == 3) this.seqAAs[i] = '|';
 
@@ -317,11 +317,11 @@ Sequence.prototype = {
 
             this.seq_a = [];
             for (var a in this.seq){
-                if (this.seq[a] != ref[a] && this.seq[a] != '-' && ref[a] != '-'){
+                if (this.seq[a] != ref[a] && this.seq[a] != SYMBOL_VOID && ref[a] != SYMBOL_VOID){
                     this.seq_a[a] = this.seq[a];
                 }else{
-                    this.seq_a[a] = '*';
-                    if(this.seq[a] == '-' || ref[a] == '-')
+                    this.seq_a[a] = SYMBOL_MATCH;
+                    if(this.seq[a] == SYMBOL_VOID || ref[a] == SYMBOL_VOID)
                         this.seq_a[a] = this.seq[a];
                 }
             }
@@ -391,7 +391,7 @@ Sequence.prototype = {
 
         var sub = [];
         for (var a in seq)
-            if (seq[a] != ref[a] && seq[a] != '-' && ref[a] != '-' && 
+            if (seq[a] != ref[a] && seq[a] != SYMBOL_VOID && ref[a] != SYMBOL_VOID &&
                 seq[a] != '\u00A0' && ref[a] != '\u00A0')
                 sub[a] = seq[a];
             else
@@ -412,9 +412,9 @@ Sequence.prototype = {
 
         var del = [];
         for (var a in this.seq)
-            if (seq[a] != ref[a] && seq[a] == '-' && 
+            if (seq[a] != ref[a] && seq[a] == SYMBOL_VOID &&
             seq[a] != '\u00A0' && ref[a] != '\u00A0')
-                del[a] = '-';
+                del[a] = SYMBOL_VOID;
             else
                 del[a] = '\u00A0';
 
@@ -433,7 +433,7 @@ Sequence.prototype = {
 
         var ins = [];
         for (var a in this.seq)
-            if (this.seq[a] != ref[a] && ref[a] == '-')
+            if (this.seq[a] != ref[a] && ref[a] == SYMBOL_VOID)
                 ins[a] = seq[a];
             else
                 ins[a] = '\u00A0';
@@ -446,7 +446,7 @@ Sequence.prototype = {
 
         var seq = this.seq;  
 
-        var str = seq.filter(function(e){return e != '-';}).join('');
+        var str = seq.filter(function(e){return e != SYMBOL_VOID;}).join('');
 
         var search = [];
         search.push(this.m.filter_string.toUpperCase());    //sequence
