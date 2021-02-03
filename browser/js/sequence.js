@@ -204,6 +204,7 @@ Sequence.prototype = {
             str = this.m.clone(this.id).id;
         }
         
+        str = str.replace(/\-/g, SYMBOL_VOID);
         this.seq = str.split("");
         this.seqAA = str.split("");
         this.computePos();
