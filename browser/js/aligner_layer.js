@@ -91,7 +91,7 @@ LAYERS = {
         'className': "seq_layer_text",
         'condition': function (s,c) { return s.is_aligned; },
         'text': function (s,c) { return s.substitutionString(); },
-        'style': { 'color': "blue", 'fontWeight': "bold" },
+        'style': { 'color': "black", 'fontWeight': "bold" },
         'enabled': true
     },
     'insertion':
@@ -99,7 +99,7 @@ LAYERS = {
         'className': "seq_layer_text",
         'condition': function (s,c) { return s.is_aligned; },
         'text': function (s,c) { return s.insertionString(); },
-        'style': { 'color': "green", 'fontWeight': "bold" },
+        'style': { 'color': "black", 'fontWeight': "bold" },
         'enabled': true
     },
     'deletion':
@@ -107,7 +107,7 @@ LAYERS = {
         'className': "seq_layer_text",
         'condition': function (s,c) { return s.is_aligned; },
         'text': function (s,c) { return s.deletionString(); },
-        'style': { 'color': "red", 'fontWeight': "bold" },
+        'style': { 'color': "black", 'fontWeight': "bold" },
         'enabled': true
     },
 
@@ -117,7 +117,7 @@ LAYERS = {
         'className': "seq_layer_text",
         'condition': function (s,c) { return !s.segmenter.amino; },
         'text': function (s,c) { return s.searchString(); },
-        'style': { 'color': "pink", 'fontWeight': "bold" },
+        'style': { 'color': "#400", 'fontWeight': "bold" },
         'enabled': true
     },
 
