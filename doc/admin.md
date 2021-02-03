@@ -152,19 +152,19 @@ relationship to that parent.
 
 ## Creating groups
 
-When creating the groups for an organisation the parent group MUST be the
+When creating the groups for an organization the parent group MUST be the
 first group created. Assigning a parent to a group cannot be done after
 creation. A group cannot change parents.
 Users can be created at any time. They can also be added
 or removed from groups whenever it is convenient
 
-### Example: create organisation Foobar with sub groups/roles
+### Example: create organization with sub groups/roles
 
-  - Create group Foobar (select None for parent group).
-  - Create roles (eg. Technician, Engineer, Doctor). Be sure to select
-    Foobar as the parent group.
+  - Create group, for example `lab_xxx` (select `None` for parent group).
+  - Create sub-group for roles (eg. `Technician`, `Engineer`, `Doctor`). Be sure to select
+    `lab_xxx` as the parent group.
   - From the group's detailed view, 
-    set the permissions for the newly created groups Technician, Engineer and Doctor.
+    set the permissions for the newly created groups `Technician`, `Engineer` and `Doctor`.
     Be sure to
     assign at least the 'view patient' permission or members will not be able
     to see any patients from the parent group.
@@ -174,6 +174,39 @@ Users will now be able, if permissions allow it, to create patients for
 these groups. Any patient created should automatically be assigned to the
 parent group. Any patient created for the parent group will be
 accessible by any member of one of the child groups.
+
+### Example: converting a previous user account into a group account
+
+Sometimes a user has a account, does some analyses, and then want to create accounts
+for other members of her team.
+The following procedure makes that whole data uploaded by the user will be available
+to the whole group.
+
+- Modify the personal group of this user by renaming it to a group account, such as `lab_xxx`
+- Create the new users 
+- Attach them to the first group `lab_xxx`.
+
+If needed, you can also recreate a personal group for the user.
+
+- Create a new group for this user. Reuse the name of the previous personal group.
+  This is simply a new group with a name as `user_xxx`, where `xxx` is the
+  id of this user.
+- Set the permissions for this user into his own group.
+- Attach the user to this new group `user_xxx`
+
+### Adding roles to an organization
+
+You can use various panel of rights depending of the roles that you want create.
+For example, in a hospital,
+you may want that only a subgroup of people, let say `doctors`, 
+are allowed to save an analysis.
+
+Their is no preset of rights defined.
+You can select manualy, inside detailled view of each group and sub-group,
+To do this, there is not any preset of permissions, but
+you rather have to select, inside the detailed view of each group and sub-group,
+the permissions you want to grant for each of these groups.
+
 
 ## Adding an user to a group
 
