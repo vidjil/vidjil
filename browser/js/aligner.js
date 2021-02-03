@@ -186,14 +186,6 @@ Aligner.prototype = {
         this.index[cloneID] = new IndexedDom(clone);
 
     },
-/*
-    build_highlight_menu: function(){
-        var self = this;
-        var parent = document.getElementById(this.id).getElementsByClassName("bot-bar")[0];
-        var nextSibling = document.getElementById("aligner-stats");
-        var template = document.getElementById("aligner-highlight-menu");
-        var clone = template.content.firstElementChild.cloneNode(true);
-        parent.insertBefore(clone, nextSibling);
 
     /**
      * Switch the fixed status of the segmenter.
@@ -202,10 +194,6 @@ Aligner.prototype = {
     switchFixed: function() {
         this.setFixed(!this.fixed);
     },
-               $('.seq-ddd').toggle(this.checked);
-               $('.seq-j').toggle(this.checked);
-            }).change(); //ensure visible state matches initially
-          });
 
     /**
      * Set the fixed status of the segmenter.
@@ -227,31 +215,6 @@ Aligner.prototype = {
             }
         }
     },
-        var self = this;
-        var parent = document.getElementById(this.id).getElementsByClassName("bot-bar")[0];
-        var nextSibling = document.getElementById("aligner-stats");
-        var template = document.getElementById("aligner-align-settings-menu");
-        var clone = template.content.firstElementChild.cloneNode(true);
-        parent.insertBefore(clone, nextSibling);
-
-        this.index["align-settings-menu"] = new IndexedDom(clone);
-
-        $(function () {
-            $('#highlight_mutation').change(function () {                
-               $('.seq-mut').toggle(this.checked);
-               $('.seq-mut2').toggle(this.checked);
-            }).change(); //ensure visible state matches initially
-          });
-
-          $(function () {
-            $('#highlight_match').change(function () {                
-               self.use_dot = this.checked;
-               self.update();
-            }).change(); //ensure visible state matches initially
-          });
-    }, 
-
-    */
 
    build_align_settings_menu: function(){
     var self = this;
