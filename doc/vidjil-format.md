@@ -388,17 +388,20 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     //  - "seq" : a sequence
                     //  - "val" : a numerical value
                     //  - "info" : a textual vlaue
-                    //
-                    // JUNCTION//CDR3 should be stored that way (in fields called "junction" of "cdr3"),
-                    // its productivity must be stored in a boolean field called "productive".
-                    // "seq" field should not be filled for cdr3 or junction (it is extracted from the sequence itself).
-                    // However a "aa" field may be used to give the amino-acid translation of the cdr3 or junction.
+
         "somefeature": { "start": 56, "stop": 61, "seq": "ACTGTA", "val": 145.7, "info": "analyzed with xyz" },
 
                     // Numerical or textual features concerning all the sequence or its analysis (such as 'evalue')
                     // can be provided by omitting "start" and "stop" elements.
         "someotherfeature": {"val": 0.004521},
         "anotherfeature": {"info": "VH CDR3 stereotypy"},
+
+                    // JUNCTION//CDR3 should be stored that way (in fields called "junction" or "cdr3"),
+                    // Its productivity must be stored in a boolean field called "productive".
+                    // When the sequence is not productive, the "unproductive" field may contain the reason (mainly "stop-codon" or "out-of-frame")
+                    // "seq" field should not be filled for cdr3 or junction (it is extracted from the sequence itself).
+                    // However a "aa" field may be used to give the amino-acid translation of the cdr3 or junction.
+        "junction": { "start": 41, "stop": 82, "aa": "CATWDRKNYYKKLF", "productive": false, "unproductive": "stop-codon" },
      }
 
 
