@@ -8,11 +8,11 @@ Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
 ## Vidjil core development
 
-  - Mathieu Giraud, 2011-2020
-  - Mikaël Salson, 2011-2020
-  - Marc Duez, 2012-2016, 2019-2020
+  - Mathieu Giraud, 2011-2021
+  - Mikaël Salson, 2011-2021
+  - Marc Duez, 2012-2016, 2019-2021
   - Tatiana Rocher, 2014-2017
-  - Florian Thonier, 2015-2020
+  - Florian Thonier, 2015-2021
   - Ryan Herbert, 2015-2020
   - Aurélien Béliard, 2016-2017
 
@@ -65,7 +65,7 @@ The development of Vidjil is funded by:
   - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
   - Inria Lille, 2015-2018
   - InCA, 2016-2019
-  - VidjilNet consortium at Inria, 2018-2020
+  - VidjilNet consortium at Inria, 2018-2021
 
 
 ## References
@@ -163,10 +163,20 @@ Michaela Kotrova et al.,
 Cytometry Part A, 93(11):1118-1124, 2018
 <http://dx.doi.org/10.1002/cyto.a.23604>
 
+Zhenhua Li et al.,
+*Identifying IGH disease clones for MRD monitoring in childhood B-cell acute lymphoblastic leukemia using RNA-Seq*n
+Leukemia, 2020, 34:2418-2429
+<http://dx.doi.org/10.1038/s41375-020-0774-4>
+
 Ralf A. Linker et al.,
-*Thymocyte-derived BDNF influences T-cell maturation at the DN3/DN4 transition stage*
+*Thymocyte-derived BDNF influences T-cell maturation at the DN3/DN4 transition stage*,
 European Journal of Immunology, 2015, 45, 1326-1338
 <http://dx.doi.org/10.1002/eji.201444985>
+
+Ming Liang Oon et al.,
+*T-Cell Lymphoma Clonality by Copy Number Variation Analysis of T-Cell Receptor Genes*,
+Cancers, 2021, 13(2), 340
+<https://dx.doi.org/10.3390/cancers13020340>
 
 Edit Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
