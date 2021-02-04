@@ -99,11 +99,11 @@ Aligner.prototype = {
             for (var i in inputs)
                 if (inputs[i].checked) selectedAxis.push(Axis.prototype.getAxisProperties(inputs[i].value));
 
-            if (selectedAxis.length <= 3){
+            if (selectedAxis.length <= 5){
                 self.selectedAxis = selectedAxis;
                 self.update();
             }else{
-                console.log({ msg: "selection is limited to 3", type: "flash", priority: 2 });
+                console.log({ msg: "selection is limited to 5", type: "flash", priority: 2 });
                 this.checked = false;
             }
             
