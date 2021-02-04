@@ -118,7 +118,7 @@ ul {
   position: fixed;
   top: 32px;
   left: 0;
-  bottom: 125px ;
+  bottom: 155px;
   background: #000000;
   margin: 6px;
   display: flex;
@@ -136,14 +136,12 @@ ul {
   display: flex;
   flex: 1 1 auto;
   top: 32px;
-  bottom: 125px ;
+  bottom: 155px;
   width: calc(100% - 6px + 6px);
   overflow: hidden;
   background: #000000;
   margin: 6px 0px 0px 0px;
   border-bottom-color: white;
-  border-bottom-style: solid;
-  border-bottom-width: 6px;
 }
 #right-container {
   display: flex;
@@ -934,12 +932,12 @@ span.logo {
   overflow: hidden;
 }
 #bot-placeholder {
-  flex: 0 0 135px;
+  flex: 0 0 155px;
 }
 #bot-container {
   position: fixed;
   bottom: 0;
-  min-height: 125px;
+  min-height: 155px;
 }
 .tn {
   width: 120px;
@@ -2322,7 +2320,8 @@ span .end-codon {
 .segmenter {
   overflow-x: scroll !important;
   overflow-y: auto;
-  min-height: 100px;
+  min-height: 130px;
+  margin-top: 1px;
 }
 #segmenter {
   display: flex;

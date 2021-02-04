@@ -4,6 +4,7 @@
 
 @infoContainerHeight : 32px;
 @locusSpacingMargin : 12px;
+@segmenterHeight : 155px;
 
 /* default tag color */
 @tagColor0 : #DC322F;
@@ -157,7 +158,7 @@ ul{
   position : fixed;
   top : @top_container_height;
   left : 0;
-  bottom : 125px ;
+  bottom : @segmenterHeight;
   background: @background;
   margin: @margin;
   display: flex;
@@ -178,14 +179,12 @@ position : fixed;
   display: flex;
   flex: 1 1 auto;
   top : @top_container_height;
-  bottom : 125px ;
+  bottom : @segmenterHeight ;
   width: calc(~"100%" - @margin + @margin);
   overflow: hidden;
   background: @background;
   margin: @margin 0px 0px 0px;
   border-bottom-color: white;
-  border-bottom-style: solid;
-  border-bottom-width: @margin;
 }
 
 #right-container{
@@ -1117,13 +1116,13 @@ span.logo
 }
 
 #bot-placeholder {
-  flex: 0 0 135px;
+  flex: 0 0 @segmenterHeight;
 }
 
 #bot-container {
   position: fixed;
   bottom: 0;
-  min-height: 125px;
+  min-height: @segmenterHeight;
 }
 
 .tn{

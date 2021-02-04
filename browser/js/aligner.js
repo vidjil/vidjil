@@ -113,7 +113,7 @@ Aligner.prototype = {
 
         // restore mouse functions
         this.div_segmenter = clone.getElementsByClassName("segmenter")[0];
-        self.min_H = 100;
+        self.min_H = 130;
         self.max_H = 500;
         $(this.div_segmenter)
             .scroll(function () {
