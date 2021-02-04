@@ -237,7 +237,7 @@ AXIS_DEFAULT = {
                         reverse: true
                     },
         autofill:   true,
-        isInAligner:true
+        isInAligner:false
     },
     "number of samples" : {
         name:       "number of samples",
@@ -278,7 +278,7 @@ AXIS_DEFAULT = {
                     },
         fct: function(clone) {return clone.numberInCloneDB()},
         autofill: true,
-        isInAligner: true
+        isInAligner: false
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
     "cloneDB patients/runs/sets occurrences": {   
@@ -290,7 +290,7 @@ AXIS_DEFAULT = {
                     },
         fct: function(clone) {return clone.numberSampleSetInCloneDB()},
         autofill: true,
-        isInAligner: true
+        isInAligner: false
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
 /*  "tsneX": {
