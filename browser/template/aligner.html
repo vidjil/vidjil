@@ -27,29 +27,29 @@
                                 </div>
                         </div>
 
-                        <div id="align-external-tool" class="aligner-menu" title="send selected sequences to external site for analysis" ><i class="icon-forward-1"></i>
+                        <div id="align-external-tool" class="aligner-menu" title="External analyis" ><i class="icon-forward-1"></i>
                                 <div class="menu-content">
                                         <a id="toIMGT" title="Send sequences to IMGT/V-QUEST and see the results in a new tab"
-                                                class="aligner-button" onclick="javascript:segment.sendTo('imgt');">❯IMGT/V-QUEST</a>
+                                                class="aligner-button" onclick="javascript:segment.sendTo('imgt');"><i class="icon-forward-1"></i> IMGT/V-QUEST</a>
                                         <a id="toIgBlast" title="Send sequences to NCBI IgBlast and see the results in a new tab"
-                                                class="aligner-button" onclick="javascript:segment.sendTo('igBlast');">❯IgBlast</a>
+                                                class="aligner-button" onclick="javascript:segment.sendTo('igBlast');"><i class="icon-forward-1"></i> IgBlast</a>
                                         <span class="devel-mode"><a id="toARResT"
                                                         title="Send sequences to ARResT/CompileJunctions and see the results in a new tab"
                                                         class="aligner-button"
-                                                        onclick="javascript:segment.sendTo('arrest');">❯ARResT/CJ</a></span>
+                                                        onclick="javascript:segment.sendTo('arrest');"><i class="icon-forward-1"></i> ARResT/CJ</a></span>
                                         <span class="devel-mode"><a id="toCloneDB"
                                                         title="Send sequences to EC-NGS/CloneDB in the background"
                                                         class="aligner-button"
-                                                        onclick="javascript:db.callCloneDB(m.getSelected());">❯CloneDB</a></span>
+                                                        onclick="javascript:db.callCloneDB(m.getSelected());"><i class="icon-forward-1"></i> CloneDB</a></span>
                                         <a id="toBlast" title="Send sequences to Ensembl Blast and see the results in a new tab"
-                                                class="aligner-button" onclick="javascript:segment.sendTo('blast');">❯Blast</a>
+                                                class="aligner-button" onclick="javascript:segment.sendTo('blast');"><i class="icon-forward-1"></i> Blast</a>
                                         <a id="toAssignSubsets"
                                                 title="Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset"
-                                                class="aligner-button">❯AssignSubsets</a>
+                                                class="aligner-button"><i class="icon-forward-1"></i> AssignSubsets</a>
                                 </div>
                         </div>
 
-                        <div id="align-segment-info" class="aligner-menu" title="Sequences features">
+                        <div id="align-segment-info" class="aligner-menu" title="Sequence features">
                                 <span  ><i class="icon-menu"></i></span>
                                 <div class="menu-content">
          
@@ -57,7 +57,7 @@
                         </div>
 
                         <div id="align-imgt" class="aligner-menu"
-                        title="Sequences features from IMGT, [click to reload]" onclick="javascript:segment.sendTo('IMGTSeg');"> <i class="icon-menu"></i> IMGT
+                        title="Sequence features from IMGT [click to reload]" onclick="javascript:segment.sendTo('IMGTSeg');"> <i class="icon-menu"></i> IMGT
                            <span title="reload IMGT info" ></span><i class="demo-icon icon-arrows-ccw"></i></span>
                            <div class="menu-content">
     

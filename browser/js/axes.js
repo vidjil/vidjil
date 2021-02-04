@@ -152,7 +152,7 @@ AXIS_DEFAULT = {
         isInAligner: true
     },
     "productivity IMGT": {
-        name :      "productivity IMGT",
+        name :      "productivity [IMGT]",
         doc:        "productivity (as computed by IMGT/V-QUEST)",
         labels:     {
             "not productive":   {text:"not productive"},
@@ -164,7 +164,7 @@ AXIS_DEFAULT = {
         isInAligner: true
     },
     "VIdentity IMGT": {
-        name:       "VIdentity IMGT",
+        name:       "V identity [IMGT]",
         doc:        "V identity (as computed by IMGT/V-QUEST)",
         fct:        function(clone) { return clone.getVIdentityIMGT() },
         pretty: function(val) {
