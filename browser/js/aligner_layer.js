@@ -80,7 +80,7 @@ LAYERS = {
         'title': 'CDR3',
         'start': function (s,c) { return c.getSegStart("cdr3"); },
         'stop': function (s,c) { return c.getSegStop("cdr3"); },
-        'className': "seq_layer_bracket",
+        'className': "seq_layer_bracket_top",
         'style': { 'borderColor': "#444" },
         'enabled': false
     },
@@ -180,7 +180,7 @@ LAYERS = {
         'title': 'IMGT - CDR1',
         'start': function (s,c) { return c.seg.imgt["CDR1-IMGT start"] - 1; },
         'stop': function (s,c) { return c.seg.imgt["CDR1-IMGT end"] - 1; },
-        'className': "seq_layer_bracket_top",
+        'className': "seq_layer_bracket",
         'style': { 'borderColor': "#888" },
         'enabled': false
     },
@@ -189,7 +189,7 @@ LAYERS = {
         'title': 'IMGT - CDR2',
         'start': function (s,c) { return c.seg.imgt["CDR2-IMGT start"] - 1; },
         'stop': function (s,c) { return c.seg.imgt["CDR2-IMGT end"] - 1; },
-        'className': "seq_layer_bracket_top",
+        'className': "seq_layer_bracket",
         'style': { 'borderColor': "#444" },
         'enabled': false
     },
@@ -198,7 +198,7 @@ LAYERS = {
         'title': 'IMGT - CDR3',
         'start': function (s,c) { return c.seg.imgt["CDR3-IMGT start"] - 1; },
         'stop': function (s,c) { return c.seg.imgt["CDR3-IMGT end"] - 1; },
-        'className': "seq_layer_bracket_top",
+        'className': "seq_layer_bracket",
         'style': { 'borderColor': "#444" },
         'enabled': false
     },
@@ -207,7 +207,7 @@ LAYERS = {
         'title': 'IMGT - FR1',
         'start': function (s,c) { return c.seg.imgt["FR1-IMGT start"] - 1; },
         'stop': function (s,c) { return c.seg.imgt["FR1-IMGT end"] - 1; },
-        'className': "seq_layer_bracket_top",
+        'className': "seq_layer_bracket",
         'style': { 'borderColor': "#aaa" },
         'enabled': false
     },
@@ -216,7 +216,7 @@ LAYERS = {
         'title': 'IMGT - FR2',
         'start': function (s,c) { return c.seg.imgt["FR2-IMGT start"] - 1; },
         'stop': function (s,c) { return c.seg.imgt["FR2-IMGT end"] - 1; },
-        'className': "seq_layer_bracket_top",
+        'className': "seq_layer_bracket",
         'style': { 'borderColor': "#aaa" },
         'enabled': false
     },
@@ -225,7 +225,7 @@ LAYERS = {
         'title': 'IMGT - FR3',
         'start': function (s,c) { return c.seg.imgt["FR3-IMGT start"] - 1; },
         'stop': function (s,c) { return c.seg.imgt["FR3-IMGT end"] - 1; },
-        'className': "seq_layer_bracket_top",
+        'className': "seq_layer_bracket",
         'style': { 'borderColor': "#aaa" },
         'enabled': false
     }
