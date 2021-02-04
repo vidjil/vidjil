@@ -346,16 +346,19 @@ void testFilterBioReaderWithACAutomaton(){
 
 void testGetNSignicativeKmers(){
   BioReader filtered;
-  BioReader seqV("../../germline/homo-sapiens/IGHV.fa", 2);
+  BioReader seqV("../../germline/homo-sapiens/IGHV.fa", 2, "|");
 
-  string SIZE_ERROR = "Filtered size must be less than original one";
+  string SIZE_ERROR = "Filtered BioReader should be 10x smaller";
   string GENE_NOT_FOUND = "Filtering sequence not found after filter";
 
+  FilterWithACAutomaton *f = new FilterWithACAutomaton(seqV, "########");
+
+  int total_filtered = 0;
+
+  // Check filter behaviour for each IGHV gene
   for(int i = 0; i < seqV.size(); ++i){
     Sequence seq = seqV.read(i);
-    FilterWithACAutomaton *f = new FilterWithACAutomaton(seqV, "########");
     filtered = f->filterBioReaderWithACAutomaton(seq.sequence, 1);
-    delete f;
     int j = 0;
     while(j < filtered.size()){
       if(extractGeneName(filtered.label(j)) == extractGeneName(seq.label)){
@@ -364,8 +367,15 @@ void testGetNSignicativeKmers(){
       ++j;
     }
     TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENE_NOT_FOUND);
-    TAP_TEST(filtered.size() < seqV.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
+    TAP_TEST(filtered.size() < seqV.size() / 10, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR + ", " + seq.label + ", " + string_of_int(filtered.size()) + "/" + string_of_int(seqV.size()));
+
+    total_filtered += filtered.size();
   }
+  delete f;
+
+  float ratio = ((float) total_filtered) / (seqV.size()*seqV.size());
+
+  TAP_TEST_APPROX(ratio, 0.02, 0.005, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, "Average filtering ratio on IGHV");
 }
 
 /*
