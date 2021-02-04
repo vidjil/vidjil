@@ -47,9 +47,8 @@ Aligner.prototype = {
             for (var c_id = 0; c_id < self.m.clones.length; c_id++)
                 self.build_sequence(c_id);
             self.build_align_settings_menu();
-            //self.build_external_tool_menu(); 
-            //self.build_highlight_menu();    
-            self.build_menu();         
+            self.build_menu();
+            self.build_axis_menu();
                 
         } catch(err) {
             sendErrorToDb(err, this.db);
@@ -86,6 +85,61 @@ Aligner.prototype = {
             }
         }
     }, 
+
+    build_axis_menu: function(){
+        var self = this;
+
+        var available_axis = Axis.prototype.available();
+
+        var self_update = function() {
+            var menu = document.getElementById("segmenter_axis_select");
+            var inputs = menu.getElementsByTagName("input");
+            var selectedAxis = [];
+
+            for (var i in inputs)
+                if (inputs[i].checked) selectedAxis.push(Axis.prototype.getAxisProperties(inputs[i].value));
+
+            if (selectedAxis.length <= 3){
+                self.selectedAxis = selectedAxis;
+                self.update();
+            }else{
+                console.log({ msg: "selection is limited to 3", type: "flash", priority: 2 });
+                this.checked = false;
+            }
+            
+        };
+
+        var menu = document.getElementById("segmenter_axis_select");
+        for (var i in available_axis) {
+            var axis_p = Axis.prototype.getAxisProperties(available_axis[i]);
+            if (!axis_p.isInAligner) continue;
+
+            var axis_button = document.createElement('a');
+            var axis_option = document.createElement('span');
+            var axis_input = document.createElement('input');
+            axis_input.setAttribute('type', "checkbox");
+            axis_input.setAttribute('value', available_axis[i]);
+            axis_input.setAttribute('id', "sai"+i); // segmenter axis input
+            axis_input.className = "aligner-checkbox-input";
+            if (available_axis[i] == "size" ||
+                available_axis[i] == "productivity IMGT" ||
+                available_axis[i] == "VIdentity IMGT" ) axis_input.setAttribute('checked', "");
+            axis_input.onchange = self_update;
+
+            var axis_label = document.createElement('label');
+            axis_label.setAttribute('for', "sai"+i);
+            axis_label.className = "aligner-checkbox-label";
+            axis_label.appendChild(document.createTextNode(available_axis[i]));
+
+            axis_option.appendChild(axis_input);
+            axis_option.appendChild(axis_label);
+            axis_button.appendChild(axis_option);
+            menu.appendChild(axis_button);
+        }
+        this.selectedAxis = [Axis.prototype.getAxisProperties("productivity IMGT"),
+                            Axis.prototype.getAxisProperties("VIdentity IMGT"),
+                            Axis.prototype.getAxisProperties("size")];
+    },
 
     connect_checkbox: function(id, layers){
         var self = this;
@@ -266,7 +320,7 @@ Aligner.prototype = {
         if (this.m.clone_info == cloneID) 
         cloneT.getElementsByClassName("infoBox")[0].className += " infoBox-open";
         cloneT.getElementsByClassName("axisBox")[0].color = clone.getColor();
-        //this.fillAxisBox(cloneT.getElementsByClassName("axisBox")[0], clone);
+        this.fillAxisBox(cloneT.getElementsByClassName("axisBox")[0], clone);
 
         return cloneT;
     },
@@ -418,6 +472,7 @@ Aligner.prototype = {
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
         var available_axis = Axis.prototype.available();
+        
         for (var i in this.selectedAxis) {
             var span = document.createElement('span');
             var axis = this.selectedAxis[i];
