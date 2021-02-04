@@ -2,6 +2,7 @@ QUnit.module("Tools", {
 });
 
 QUnit.test("test get_codons", function(assert) {
+    SYMBOL_VOID = "-"; // overwrite default "–"
     var r = 'ATGATAGAC';
     var s = 'AAACCCGGG';
     var codons = get_codons(r, s, 0);
