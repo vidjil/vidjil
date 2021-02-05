@@ -1,7 +1,17 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
-2020-08-XX  The Vidjil Team
+2021-02-05  The Vidjil Team
+	* New report of unproductivity causes in 'seg.junction.unproductive' (core/segment.cpp) #4599
+	* New fields in AIRR .tsv output, 'vj_in_frame', 'stop_codon', '{v,j}_support', '{v,d,j,cdr3}_sequence_{start,end}' (core/output.cpp) #3569 #4643
+	* Ability to get the input reads from stdin with '-' (core/fasta.cpp) #4642
+	* New advanced option --read-number to override e-value multiplier, new warning W21 on doubtful multipliers (vidjil.cpp) !887
+	* New experimental option --show-junction, displaying germline genes on stdout (core/segment.cpp) !886
+	* Bugs closed (W61 warning check)
+	* New and updated documentation, including on input selection and on custom germline presets (-g)
+	* New and updated tests
+
+2020-08-21  The Vidjil Team
 	* Cleaned output, no .vdj.fa and seq/clone-*.fa by default, new options --out-vdjfa and --out-clone-files #4386 #4387
 	  Pipelines should not rely on the format of the headers in the .vdj.fa file, but rather parse the .vidjil file #3795
 	* Extended test and support to g++ 10.1, while reworking the documentation on supported compilers !733

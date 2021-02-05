@@ -1,5 +1,5 @@
 
-!LAUNCH: cat ../should-vdj-tests/Demo-X5.should-vdj.fa | $LAUNCHER $VIDJIL_DIR/$EXEC --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG -
+!LAUNCH: cat ../should-vdj-tests/Demo-X5.should-vdj.fa | $LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG -
 
 $ Display message with the estimation of read number
 1:reading from stdin, estimating 100 reads
@@ -15,7 +15,7 @@ $ Detect and designate one read on TRG
 
 # When --read-number gives a bad estimation, there is a warning
 
-!LAUNCH: cat ../should-vdj-tests/Demo-X5.should-vdj.fa | $LAUNCHER $VIDJIL_DIR/$EXEC --read-number 1 --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG -
+!LAUNCH: cat ../should-vdj-tests/Demo-X5.should-vdj.fa | $LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA --read-number 1 --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG -
 
 $ Display message with the estimation of read number
 1:reading from stdin, estimating 1 reads

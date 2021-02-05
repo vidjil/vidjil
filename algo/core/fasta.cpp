@@ -51,6 +51,7 @@ OnlineFasta::~OnlineFasta() {
 void OnlineFasta::init() {
   if (filename == STDIN_FILENAME) {
     input = &cin;
+    input_allocated = false;
   }
   else if (! filename.empty()) {
     input = new igzstream(filename.c_str());
