@@ -226,9 +226,9 @@ Sequence.prototype = {
 
         if (clone.hasSeg('cdr3')){
             if (typeof clone.seg.cdr3.start != "undefined") {
-                start = this.pos[clone.seg.cdr3.start];
+                start = clone.seg.cdr3.start;
             }else if (clone.seg.cdr3.constructor === String){
-                start = this.pos[clone.sequence.indexOf(clone.seg.cdr3)];
+                start = clone.sequence.indexOf(clone.seg.cdr3);
             }
         }
         if (typeof start == "undefined" || start == -1){
@@ -238,7 +238,8 @@ Sequence.prototype = {
         
         for (var h=0; h<this.seq.length; h++) this.seqAA[h] = '\u00A0';
         
-        var i = start%3;
+        var i = this.pos[start%3];
+        
 
         while (i<this.seq.length){
                 
@@ -271,9 +272,9 @@ Sequence.prototype = {
 
         if (clone.hasSeg('cdr3')){
             if (typeof clone.seg.cdr3.start != "undefined") {
-                start = this.pos[clone.seg.cdr3.start];
+                start = clone.seg.cdr3.start;
             }else if (clone.seg.cdr3.constructor === String){
-                start = this.pos[clone.sequence.indexOf(clone.seg.cdr3)];
+                start = clone.sequence.indexOf(clone.seg.cdr3);
             }
         }
         if (typeof start == "undefined" || start == -1){
@@ -284,7 +285,7 @@ Sequence.prototype = {
         this.seqAAs = [];
         for (var h=0; h<this.seq.length; h++) this.seqAAs[h] = '\u00A0';
         
-        var i = start%3;
+        var i = this.pos[start%3];
         while (i<this.seq.length){
                 
             var code = "";
@@ -373,8 +374,9 @@ Sequence.prototype = {
                 }
                 else{
                     block.title = "quality : '"+ this.quality[k] + "' ("+q+"/"+max_quality+")";
-                    //block.style.background = d3.interpolateTurbo( 1 - 0.6*((quality)/max_quality));
+                    //block.style.background = d3.interpolateTurbo( 1 - 0.6*((q)/max_quality));
                     block.style.background = d3.interpolateSinebow( 0.4*((q)/max_quality)  );
+                    block.style.height = ((q*100)/max_quality)+"%";
                 }
                 result.appendChild(block);
                 width = 0;
