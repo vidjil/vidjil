@@ -68,7 +68,7 @@ Notification.prototype = {
 	integrateHeaderMessages: function (messages) {
 		for (var i = 0; i < messages.length; ++i) {
 
-			display_title = "Server Notification : <br>" + unescape(messages[i].notification.title);
+			display_title = unescape(messages[i].notification.title);
 
 			priorities = { 'urgent': 3, 'info': 1 };
 

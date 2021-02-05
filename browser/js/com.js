@@ -264,7 +264,7 @@ Com.prototype = {
 
                 if (priority >= this.ERROR){
                     jQuery('<div/>', {
-                        'text': "dismiss",
+                        'text': "×",
                         'class': "button",
                         'click': function(){$(this).fadeOut(25, function() { $(this).remove();} );}
                     }).appendTo(div2);
