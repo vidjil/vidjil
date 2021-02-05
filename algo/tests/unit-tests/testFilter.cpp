@@ -351,7 +351,7 @@ void testGetNSignicativeKmers(){
   string SIZE_ERROR = "Filtered BioReader should be 10x smaller";
   string GENE_NOT_FOUND = "Filtering sequence not found after filter";
 
-  FilterWithACAutomaton *f = new FilterWithACAutomaton(seqV, "########");
+  FilterWithACAutomaton *f = new FilterWithACAutomaton(seqV, "########", 2.0);
 
   int total_filtered = 0;
 
