@@ -218,54 +218,64 @@ Sequence.prototype = {
      * */
     aminoString: function () {
         var start = -1;
-        
-        this.segmenter.amino = true;
-
+        var stop = -1;
+        var cdr3aa = "";
+                
         var clone = this.m.clone(this.id);
         if (!clone.hasSequence()) return "";
 
         if (clone.hasSeg('cdr3')){
             if (typeof clone.seg.cdr3.start != "undefined") {
                 start = clone.seg.cdr3.start;
+                stop = clone.seg.cdr3.stop;
+                cdr3aa = clone.seg.cdr3.aa;
             }else if (clone.seg.cdr3.constructor === String){
                 start = clone.sequence.indexOf(clone.seg.cdr3);
+                stop = start + clone.seg.cdr3.length;
             }
-        }
-        if (typeof start == "undefined" || start == -1){
-            this.seqAA = [];
-            return "";
         }
         
         for (var h=0; h<this.seq.length; h++) this.seqAA[h] = '\u00A0';
         
-        var i = this.pos[start%3];
-        
+        var i = start%3;
 
-        while (i<this.seq.length){
-                
-            var code = "";
-            var pos;
-            
-            while (code.length<3){
-                if (this.seq[i] != SYMBOL_VOID) {
-                    code += this.seq[i];
-                    this.seqAA[i] = '\u00A0';
-                }else{
-                    this.seqAA[i] = SYMBOL_VOID;
-                }
-                if(code.length == 2) pos = i;
-                i++;
-            }
+        var end = this.seq.length;
+        if (cdr3aa != "" && cdr3aa.indexOf("#") != -1)
+            end = start +3 *cdr3aa.indexOf("#") ;
 
-            if (code.length == 3)
-                this.seqAA[pos] = tableAAdefault(code);
+        var code;
+        while (i<end){  
+            code = this.seq[i]+this.seq[i+1]+this.seq[i+2];   
+            this.seqAA[i] = '\u00A0';
+            this.seqAA[i+1] = tableAAdefault(code);
+            this.seqAA[i+2] = '\u00A0';
+            i=i+3;
         }
 
-        return this.seqAA.join('');
+        if (cdr3aa != "" && cdr3aa.indexOf("#") != -1){
+            start2 = stop +1 -((cdr3aa.length - cdr3aa.indexOf("#")-1)*3);
+            end = this.seq.length;
+
+            while (i<start2){
+                this.seqAA[i] = '#';
+                i++;
+            } 
+
+            while (i<end){  
+                code = this.seq[i]+this.seq[i+1]+this.seq[i+2];   
+                this.seqAA[i] = '\u00A0';
+                this.seqAA[i+1] = tableAAdefault(code);
+                this.seqAA[i+2] = '\u00A0';      
+                i=i+3;
+            }
+        }
+        return this.align(this.seqAA.join(''), SYMBOL_VOID);
     },
 
     aminoSplitString: function () {
         var start = -1;
+        var stop = -1;
+        var cdr3aa = "";
                 
         var clone = this.m.clone(this.id);
         if (!clone.hasSequence()) return "";
@@ -273,33 +283,54 @@ Sequence.prototype = {
         if (clone.hasSeg('cdr3')){
             if (typeof clone.seg.cdr3.start != "undefined") {
                 start = clone.seg.cdr3.start;
+                stop = clone.seg.cdr3.stop;
+                cdr3aa = clone.seg.cdr3.aa;
             }else if (clone.seg.cdr3.constructor === String){
                 start = clone.sequence.indexOf(clone.seg.cdr3);
+                stop = start + clone.seg.cdr3.length;
             }
         }
+
         if (typeof start == "undefined" || start == -1){
             this.seqAAs = [];
             return "";
         }
-        
+
         this.seqAAs = [];
         for (var h=0; h<this.seq.length; h++) this.seqAAs[h] = '\u00A0';
         
-        var i = this.pos[start%3];
-        while (i<this.seq.length){
-                
-            var code = "";
-            
-            while (code.length<3){
-                if (this.seq[i] != SYMBOL_VOID) code += this.seq[i];
-                
-                if(code.length == 3) this.seqAAs[i] = '|';
+        var i = start%3;
 
-                i++;
-            }
+        var end = this.seq.length;
+        if (cdr3aa != "" && cdr3aa.indexOf("#") != -1)
+            end = start +3 *cdr3aa.indexOf("#") ;
+
+        while (i<end){  
+            this.seqAAs[i+2] = '|';
+            i=i+3;
         }
 
-        return this.seqAAs.join('');
+        if (cdr3aa != "" && cdr3aa.indexOf("#") != -1){
+            start2 = stop +1 -((cdr3aa.length - cdr3aa.indexOf("#")-1)*3);
+            end = this.seq.length;
+
+            i = start2;
+            this.seqAAs[i-1] = '|';
+
+            while (i<end){  
+                this.seqAAs[i+2] = '|';      
+                i=i+3;
+            }
+        }
+    
+        return this.align(this.seqAAs.join(''), '\u00A0');
+    },
+
+    align: function(str, char){
+        result = [];
+        for (var i in this.seq) result.push(char);
+        for (var j in this.pos) result[this.pos[j]] = str[j];
+        return result.join('');
     },
 
     toString: function(div) {
