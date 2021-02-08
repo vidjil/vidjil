@@ -21,7 +21,6 @@ function Aligner(id, model, database) {
     this.sequence = {};
     this.sequence_order = [];
     this.is_open = false;
-    this.amino = false;
     this.aligned = false;   
     this.selectedAxis = [];
     this.index = [];

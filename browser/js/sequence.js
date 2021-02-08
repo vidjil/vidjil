@@ -92,7 +92,7 @@ genSeq.prototype = {
         currentSpan = document.createElement('span');
         currentSpan.id = "sequence-clone-"+ this.id;
 
-        var canDisplaySynMutations = (! this.segmenter.amino &&
+        var canDisplaySynMutations = (!LAYERS.amino.enabled &&
                                       this.m.clones.hasOwnProperty(this.segmenter.sequence_order[0]) &&
                                       this.m.clones[this.segmenter.sequence_order[0]].isProductive());
         var reference_phase = (canDisplaySynMutations) ? (this.m.clones[this.segmenter.sequence_order[0]].getPhase()) : undefined;
@@ -101,7 +101,7 @@ genSeq.prototype = {
         var ref = '';
         var seq = '';
 
-        if (this.segmenter.amino) {
+        if (LAYERS.amino.enabled) {
             seq = this.seqAA;
             ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
         } else {
@@ -419,7 +419,7 @@ Sequence.prototype = {
     
     substitutionString: function(){
         var seq,ref;
-        if (this.segmenter.amino) {
+        if (LAYERS.amino.enabled) {
             seq = this.seqAA;
             ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
         } else {
@@ -440,7 +440,7 @@ Sequence.prototype = {
 
     deletionString: function(){
         var seq,ref;
-        if (this.segmenter.amino) {
+        if (LAYERS.amino.enabled) {
             seq = this.seqAA;
             ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
         } else {
@@ -461,7 +461,7 @@ Sequence.prototype = {
 
     insertionString: function(){
         var seq,ref;
-        if (this.segmenter.amino) {
+        if (LAYERS.amino.enabled) {
             seq = this.seqAA;
             ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
         } else {
