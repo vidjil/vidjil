@@ -223,6 +223,7 @@ Sequence.prototype = {
                 
         var clone = this.m.clone(this.id);
         if (!clone.hasSequence()) return "";
+        var seq = clone.sequence;
 
         if (clone.hasSeg('cdr3')){
             if (typeof clone.seg.cdr3.start != "undefined") {
@@ -235,17 +236,17 @@ Sequence.prototype = {
             }
         }
         
-        for (var h=0; h<this.seq.length; h++) this.seqAA[h] = '\u00A0';
+        for (var h=0; h<seq.length; h++) this.seqAA[h] = '\u00A0';
         
         var i = start%3;
 
-        var end = this.seq.length;
+        var end = seq.length;
         if (cdr3aa != "" && cdr3aa.indexOf("#") != -1)
             end = start +3 *cdr3aa.indexOf("#") ;
 
         var code;
         while (i<end){  
-            code = this.seq[i]+this.seq[i+1]+this.seq[i+2];   
+            code = seq[i]+seq[i+1]+seq[i+2];   
             this.seqAA[i] = '\u00A0';
             this.seqAA[i+1] = tableAAdefault(code);
             this.seqAA[i+2] = '\u00A0';
@@ -254,7 +255,7 @@ Sequence.prototype = {
 
         if (cdr3aa != "" && cdr3aa.indexOf("#") != -1){
             start2 = stop +1 -((cdr3aa.length - cdr3aa.indexOf("#")-1)*3);
-            end = this.seq.length;
+            end = seq.length;
 
             while (i<start2){
                 this.seqAA[i] = '#';
@@ -262,14 +263,15 @@ Sequence.prototype = {
             } 
 
             while (i<end){  
-                code = this.seq[i]+this.seq[i+1]+this.seq[i+2];   
+                code = seq[i]+seq[i+1]+seq[i+2];   
                 this.seqAA[i] = '\u00A0';
                 this.seqAA[i+1] = tableAAdefault(code);
                 this.seqAA[i+2] = '\u00A0';      
                 i=i+3;
             }
         }
-        return this.align(this.seqAA.join(''), SYMBOL_VOID);
+        this.seqAA = this.align(this.seqAA.join(''), SYMBOL_VOID).split("");
+        return this.seqAA.join('');
     },
 
     aminoSplitString: function () {
@@ -279,6 +281,7 @@ Sequence.prototype = {
                 
         var clone = this.m.clone(this.id);
         if (!clone.hasSequence()) return "";
+        var seq = clone.sequence;
 
         if (clone.hasSeg('cdr3')){
             if (typeof clone.seg.cdr3.start != "undefined") {
@@ -297,11 +300,11 @@ Sequence.prototype = {
         }
 
         this.seqAAs = [];
-        for (var h=0; h<this.seq.length; h++) this.seqAAs[h] = '\u00A0';
+        for (var h=0; h<seq.length; h++) this.seqAAs[h] = '\u00A0';
         
         var i = start%3;
 
-        var end = this.seq.length;
+        var end = seq.length;
         if (cdr3aa != "" && cdr3aa.indexOf("#") != -1)
             end = start +3 *cdr3aa.indexOf("#") ;
 
@@ -312,7 +315,7 @@ Sequence.prototype = {
 
         if (cdr3aa != "" && cdr3aa.indexOf("#") != -1){
             start2 = stop +1 -((cdr3aa.length - cdr3aa.indexOf("#")-1)*3);
-            end = this.seq.length;
+            end = seq.length;
 
             i = start2;
             this.seqAAs[i-1] = '|';
