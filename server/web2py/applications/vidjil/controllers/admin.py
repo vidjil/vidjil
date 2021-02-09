@@ -199,6 +199,7 @@ def reset_workers():
         running_jobs = db((db.scheduler_task.status == RUNNING) | (db.scheduler_task.status == ASSIGNED)).count()
         if running_jobs == 0:
             db(db.scheduler_worker.id > 0).delete()
+            scheduler.die()
             db.commit()
             res = {"success" : "true", "message" : "Workers have been reset "}
         else:
