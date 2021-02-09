@@ -49,9 +49,9 @@ def monitor():
 
 
     return dict (worker = len(db().select(db.scheduler_worker.ALL)),
-                 queued = len(db(db.scheduler_task.status=='QUEUED').select()),
-                 assigned = len(db(db.scheduler_task.status=='ASSIGNED').select()),
-                 running = len(db(db.scheduler_task.status=='RUNNING').select()),
+                 queued = len(db(db.scheduler_task.status==QUEUED).select()),
+                 assigned = len(db(db.scheduler_task.status==ASSIGNED).select()),
+                 running = len(db(db.scheduler_task.status==RUNNING).select()),
                  last_results = last_results)
     
     
