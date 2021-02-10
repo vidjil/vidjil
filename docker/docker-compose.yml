@@ -73,6 +73,8 @@ services:
         build: ./backup
         volumes_from:
             - uwsgi
+        volumes:
+            - ./backup/conf:/etc/backup
         depends_on:
             - mysql
         links:
