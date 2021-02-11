@@ -272,9 +272,9 @@ int main (int argc, char **argv)
   string cmd = COMMAND_CLONES;
   app.add_option("-c", cmd, "command"
 
-                 "\n  \t\t" COMMAND_CLONES    "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)"
-                 "\n  \t\t" COMMAND_WINDOWS   "  \t locus detection, window extraction"
-                 "\n  \t\t" COMMAND_DETECT    "  \t locus detection"
+                 "\n  \t\t" COMMAND_CLONES    "  \t locus/V(D)J detection, window extraction, clone clustering (default command, most efficient, all outputs)"
+                 "\n  \t\t" COMMAND_WINDOWS   "  \t locus/V(D)J detection, window extraction"
+                 "\n  \t\t" COMMAND_DETECT    "  \t locus/V(D)J detection"
                  "\n  \t\t" COMMAND_SEGMENT   "  \t detailed V(D)J designation, without prior clustering (not as efficient)"
                  "\n  \t\t" COMMAND_GERMLINES "  \t statistics on k-mers in different germlines")
     -> group(group) -> type_name("COMMAND");
@@ -815,9 +815,11 @@ int main (int argc, char **argv)
   switch(command) {
   case CMD_DETECT: cout << "Detecting V(D)J recombinations" << endl;
     break;
-  case CMD_CLONES: cout << "Analysing clones" << endl; 
+  case CMD_WINDOWS: cout << "Detecting V(D)J recombinations and extracting windows" << endl;
     break;
-  case CMD_SEGMENT: cout << "Segmenting V(D)J" << endl;
+  case CMD_CLONES: cout << "Detecting V(D)J recombinations and analyzing clones" << endl;
+    break;
+  case CMD_SEGMENT: cout << "Designating V(D)J recombinations" << endl;
     break;
   case CMD_GERMLINES: cout << "Discovering germlines" << endl;
     break;
@@ -1138,12 +1140,12 @@ int main (int argc, char **argv)
     //$$ Kmer Segmentation
 
     cout << endl;
-    cout << "Loop through reads, ";
+    cout << "Loop through reads, detecting V(D)J recombinations";
 
     if (wmer_size != NO_LIMIT_VALUE)
-      cout << "looking for windows up to " << wmer_size << "bp" << endl;
+      cout << " while extracting windows up to " << wmer_size << "bp" << endl;
     else
-      cout << "considering all analyzed reads as windows" << endl;
+      cout << " while considering all detected reads as windows" << endl;
 
     ofstream *out_segmented = NULL;
     ofstream *out_unsegmented = NULL;
