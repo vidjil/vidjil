@@ -22,6 +22,11 @@ test_tutorial:
 	$(MAKE) -C doc/tutorial tutorial-test.rb
 	$(MAKE) -C browser/test tutorial 
 
+test_tutorial_server:
+	$(MAKE) -C doc/tutorial tutorial-server.rb
+	wget http://vidjil.org/seqs/tutorial_dataset.zip
+	unzip -o tutorial_dataset.zip
+	$(MAKE) -C server tutorial
 
 shouldvdj_generate:
 	@echo
