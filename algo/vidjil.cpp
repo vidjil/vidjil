@@ -86,12 +86,13 @@
 #define DEFAULT_RATIO_READS_CLONE 0.0
 #define NO_LIMIT "all"
 
+#define COMMAND_DETECT "detect"
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_CLONES "clones"
 #define COMMAND_SEGMENT "designations"
 #define COMMAND_GERMLINES "germlines"
  
-enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
+enum { CMD_DETECT, CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_OUT_DIR "./out/" 
 
@@ -270,8 +271,10 @@ int main (int argc, char **argv)
 
   string cmd = COMMAND_CLONES;
   app.add_option("-c", cmd, "command"
+
                  "\n  \t\t" COMMAND_CLONES    "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)"
                  "\n  \t\t" COMMAND_WINDOWS   "  \t locus detection, window extraction"
+                 "\n  \t\t" COMMAND_DETECT    "  \t locus detection"
                  "\n  \t\t" COMMAND_SEGMENT   "  \t detailed V(D)J designation, without prior clustering (not as efficient)"
                  "\n  \t\t" COMMAND_GERMLINES "  \t statistics on k-mers in different germlines")
     -> group(group) -> type_name("COMMAND");
@@ -631,16 +634,14 @@ int main (int argc, char **argv)
 
   app.add_flag_function("--filter-reads", [&](int n) {
       UNUSED(n);
-      cmd = COMMAND_WINDOWS;
+      cmd = COMMAND_DETECT;
       output_segmented = true;
       expected_value = EVALUE_FILTER_READS ;
       multi_germline_unexpected_recombinations_12 = true;
-      max_representatives = 0;
-      max_clones = 0;
       return true;
     },
     "filter possibly huge datasets, with a permissive threshold, to extract reads that may have V(D)J recombinations"
-    PAD_HELP "(equivalent to -c " COMMAND_WINDOWS " --out-detected --e-value " STR(EVALUE_FILTER_READS) " -2 --max-consensus 0)")
+    PAD_HELP "(equivalent to -c " COMMAND_DETECT " --out-detected --e-value " STR(EVALUE_FILTER_READS) " -2)")
     -> group(group);
 
   app.add_option("--grep-reads",
@@ -689,6 +690,11 @@ int main (int argc, char **argv)
     command = CMD_CLONES;
   else if (cmd == COMMAND_SEGMENT)
     command = CMD_SEGMENT;
+  else if (cmd == COMMAND_DETECT) {
+    command = CMD_DETECT;
+    no_airr = true;
+    no_vidjil = true;
+  }
   else if (cmd == COMMAND_WINDOWS)
     command = CMD_WINDOWS;
   else if (cmd == COMMAND_GERMLINES)
@@ -807,7 +813,7 @@ int main (int argc, char **argv)
   json j_labels = load_into_map_from_json(windows_labels, windows_labels_json);
 
   switch(command) {
-  case CMD_WINDOWS: cout << "Extracting windows" << endl; 
+  case CMD_DETECT: cout << "Detecting V(D)J recombinations" << endl;
     break;
   case CMD_CLONES: cout << "Analysing clones" << endl; 
     break;
@@ -1126,7 +1132,7 @@ int main (int argc, char **argv)
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
   ////////////////////////////////////////
-  if (command == CMD_CLONES || command == CMD_WINDOWS) {
+  if (command == CMD_CLONES || command == CMD_WINDOWS || command == CMD_DETECT) {
 
     //////////////////////////////////
     //$$ Kmer Segmentation
@@ -1236,6 +1242,10 @@ int main (int argc, char **argv)
     
     cout << stream_segmentation_info.str();
 
+
+  // CMD_DETECT stops here
+  if (command == CMD_CLONES || command == CMD_WINDOWS) {
+
 	//////////////////////////////////
 	//$$ Sort windows
 	
@@ -1321,6 +1331,7 @@ int main (int argc, char **argv)
 	cout << "No clustering" << endl ; 
       }
 
+    // CMD_WINDOWS stops here
 
     //$$ Further analyze some clones (-z)
     if (command == CMD_CLONES) {
@@ -1754,6 +1765,7 @@ int main (int argc, char **argv)
     if (jsonLevenshteinComputed)
       output.set("similarity", jsonLevenshtein);
 
+    } // end if (command == CMD_CLONES) || (command == CMD_WINDOWS)
 
     //$$ Clean
 
