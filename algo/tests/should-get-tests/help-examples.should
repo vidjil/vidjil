@@ -8,17 +8,17 @@ cd $VIDJIL_DIR ; sh help-examples.sh
 # Run 7 times (-h + 6 examples)
 7:vidjil-algo -- V.D.J recombinations analysis
 
-# '-c clone', three times
+# '-c clones', three times
 3: end of clones
 
 # '--filter-reads'
-1:Detecting
+1:Detecting V.D.J recombinations$
 
-# '-c windows'
-1:Extracting windows
+# '-c clones' / '-c windows'
+4:Detecting V.D.J recombinations and
 
 # '-c designations'
-1:Segmenting V.D.J
+1:Designating V.D.J recombinations
 
 # '-c germlines'
 1:Discovering germlines
