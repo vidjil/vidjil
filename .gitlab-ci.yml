@@ -14,6 +14,7 @@ stages:
   - test_germlines
   - test_functional
   - test_tutorial
+  - test_tutorial_server
   - test_shouldvdj
   - test_functional_external
   - coverage
@@ -337,6 +338,33 @@ old-chrome-browser-tutorial:
   extends: .browser-tutorial-chrome
   tags:
     - legacy
+
+
+
+server_tutorial_server:
+  stage: test_tutorial_server
+  retry: 1
+  script:
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.1.1
+    - HEADLESS=1 make test_tutorial_server
+  artifacts:
+    paths:
+      - browser/
+      - server/web2py/applications/vidjil/
+    reports:
+      junit: server/web2py/applications/vidjil/test/TEST-*.xml
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - prod-client
+    - schedules
+    - /tutorial/
+  tags:
+    - web-pandoc
+  variables:
+    FIREFOX_VERSION: 45
+
 
 # Code quality
 
