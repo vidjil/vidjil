@@ -697,14 +697,7 @@ Presets
 
 It is possible to extract all reads with or without detected recombinations,
 possibly to give them to other software.
-The recommanded way is to use the `--filter-reads` preset, that launches Vidjil-algo without clone clustering and analysis,
-while outputing a `out/basename.detected.vdj.fa` file. This file contains reads /that may have V(D)J recombinations/,
-evaluated with a very permissive threshold.
-This preset is very useful for whole RNA-Seq or capture datasets that contain few reads with V(D)J recombinations
-
-Internally, running Vidjil-algo with `-U` gives such a file `out/basename.detected.vdj.fa`, with all detected reads.
-This detection only relies on the ultra-fast first pass analysis (`-c detect`), based on k-mer heuristics.
-Other options are available to get the non analyzed reads:
+- `-U` gives a file `out/basename.detected.vdj.fa` with all reads having a detected V(D)J recombination
 
   - `-u` gives a set of files `out/basename.UNSEG_*`, with not detected reads gathered by cause.
     It outputs only reads sharing significantly sequences with V/J germline genes or with some ambiguity:
@@ -718,7 +711,10 @@ However, they are very useful in some situations, especially to understand
 why some dataset gives low detection rate.
 For example `-uu -X 1000` splits the not detected reads from the 1000 first reads.
 
-
+When processing large datasets, such as RNA-Seq or capture, one may want to pre-filter read by keeping only the ones that potentially harbour a V(D)J recombination.
+In such a case, the recommanded option is to use the `--filter-reads` preset, that launches Vidjil-algo without clone clustering and analysis,
+while outputing a `out/basename.detected.vdj.fa` file. This file contains reads /that may have V(D)J recombinations/, evaluated with a very permissive threshold.
+The resulting file is usually much smaller on such datasets and can then be transferred or analysed in-depth more easily.
 ## AIRR .tsv output
 
 Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
