@@ -25,12 +25,19 @@ to merge them (when applicable) and to filter them, with a first iteration of Vi
 before uploading to a Vidjil server. 
 This filtering will produce much smaller files that could also be used by other software.
 
+We offer two versions:
+
+- The latest stable version, `vidjil-algo-latest`, which is in production for clinical applications.
+- Tha alpha version, `vidjil-algo-alpha`, that provides at least 5× speed-up on multiple locus filtering.
+Sensibility should be equivalent or even better than with the stable version.
+Work is underway to release this version for production for Q4 2021.
+
 ### Installation
 
 **Install `vidjil-algo`**
 
  - Requirements ([more documentation](vidjil-algo.md#installation)): on a recent Ubuntu system, `sudo apt-get install zlib1g-dev`
- - Dowload and extract <http://www.vidjil.org/releases/vidjil-algo-latest.tar.gz>
+ - Download and extract <http://www.vidjil.org/releases/vidjil-algo-latest.tar.gz>  or <http://www.vidjil.org/releases/vidjil-algo-alpha.tar.gz>
  - Inside `vidjil-algo` directory, build it with `make`  (it boths compile vijdil-algo and fetches germlines genes repertoires created from IMGT and NCBI)
 
 **Install `flash2`**
