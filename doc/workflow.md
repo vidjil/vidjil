@@ -30,7 +30,7 @@ We offer two versions:
 - The latest stable version, `vidjil-algo-latest`, which is in production for clinical applications.
 - Tha alpha version, `vidjil-algo-alpha`, that provides at least 5× speed-up on multiple locus filtering.
 Sensibility should be equivalent or even better than with the stable version.
-Work is underway to release this version for production for Q4 2021.
+Work is underway to release this version for production.
 
 ### Installation
 
