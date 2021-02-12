@@ -24,6 +24,7 @@ nav:
         - Specification of the .vidjil format: vidjil-format.md
         - Specification of the warnings: warnings.md
         - Specification of the .should-vdj.fa tests: should-vdj.md
+        - Post-sequencer workflow: workflow.md
         - Further developer documentation: http://www.vidjil.org/doc/#further-developer-documentation
     - Server administrator:
         - Server administration (web): admin.md
