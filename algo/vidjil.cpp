@@ -601,7 +601,7 @@ int main (int argc, char **argv)
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
   bool out_gz = false;
-  app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .vdj.fa.gz, and .vidjil.gz files") -> group(group) -> level();
+  app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .fa.gz, and .vidjil.gz files") -> group(group) -> level();
 
   bool show_alignments = false;
   app.add_flag("--show-junction", show_alignments,
@@ -1147,9 +1147,9 @@ int main (int argc, char **argv)
     else
       cout << " while considering all detected reads as windows" << endl;
 
-    ofstream *out_segmented = NULL;
-    ofstream *out_unsegmented = NULL;
-    ofstream *out_unsegmented_detail[STATS_SIZE];
+    ostream *out_segmented = NULL;
+    ostream *out_unsegmented = NULL;
+    ostream *out_unsegmented_detail[STATS_SIZE];
     ofstream *out_affects = NULL;
  
     WindowExtractor we(multigermline);
@@ -1158,15 +1158,19 @@ int main (int argc, char **argv)
  
     if (output_segmented) {
       string f_segmented = out_dir + f_basename + SEGMENTED_FILENAME ;
+      if (out_gz)
+        f_segmented += GZ_SUFFIX;
       cout << "  ==> " << f_segmented << endl ;
-      out_segmented = new ofstream(f_segmented.c_str());
+      out_segmented = new_ofgzstream(f_segmented.c_str(), out_gz);
       we.setSegmentedOutput(out_segmented);
     }
 
     if (output_unsegmented) {
       string f_unsegmented = out_dir + f_basename + UNSEGMENTED_FILENAME ;
+      if (out_gz)
+        f_unsegmented += GZ_SUFFIX;
       cout << "  ==> " << f_unsegmented << endl ;
-      out_unsegmented = new ofstream(f_unsegmented.c_str());
+      out_unsegmented = new_ofgzstream(f_unsegmented.c_str(), out_gz);
       we.setUnsegmentedOutput(out_unsegmented);
     }
 
@@ -1182,8 +1186,10 @@ int main (int argc, char **argv)
           replace(s.begin(), s.end(), '\'', '_');
 
           string f_unsegmented_detail = out_dir + f_basename + "." + s + UNSEGMENTED_DETAIL_FILENAME ;
+          if (out_gz)
+            f_unsegmented_detail += GZ_SUFFIX;
           cout << "  ==> " << f_unsegmented_detail << endl ;
-          out_unsegmented_detail[i] = new ofstream(f_unsegmented_detail.c_str());
+          out_unsegmented_detail[i] = new_ofgzstream(f_unsegmented_detail.c_str(), out_gz);
         }
 
       we.setUnsegmentedDetailOutput(out_unsegmented_detail, output_unsegmented_detail_full);
