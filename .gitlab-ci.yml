@@ -347,7 +347,7 @@ server_tutorial_server:
   script:
     - source /etc/profile.d/rvm.sh
     - rvm use 2.1.1
-    - HEADLESS=1 make test_tutorial_server
+    - HEADLESS=1 URL=http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/ make test_tutorial_server
   artifacts:
     paths:
       - browser/

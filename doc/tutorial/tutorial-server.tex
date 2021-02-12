@@ -16,7 +16,44 @@ The \href{http://www.vidjil.net}{VidjilNet} consortium offers health-certified o
 \question{ Retrieve the toy dataset at
   \href{http://vidjil.org/seqs/tutorial_dataset.zip}{\tt vidjil.org/seqs/tutorial\_dataset.zip}
   and extract the files from the archive.}
+\begin{verbatim}
 
+load 'vidjil_browser.rb'
+load 'server_test.rb'
+
+class LiveTestSampleSets < ServerTest
+
+  def setup
+    super
+    if not defined? $b
+      if ENV['URL']
+        set_browser(URL)
+      else
+        set_browser("https://localhost/browser/")
+      end
+    end
+    $b.login(logins("admin", "user"), logins("admin", "password"))
+  end
+
+   def go_to_list_patient
+    $b.a(:class => "button button_token patient_token", :text => "patients").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    table = $b.table(:id => "table")
+    table.wait_until_present
+    table
+  end
+
+  def test_00_demo_logged_in
+    # login_form = $b.form(:id => 'login_form')
+    assert(!$b.login_form.present?)
+  end
+  ######################################
+  ### Tracking clones on several samples
+  ######################################
+
+
+\end{verbatim}
 You should now have three files. We will imagine that those three files are
 the results from a single sequencing run. More precisely, each one corresponds to
 a single patient. Thus we now want to upload those files and assign all of
@@ -29,6 +66,15 @@ them to a same \com{run} and each of them to a single \com{patient}.
   Go at the bottom of the page and click on \com{+ new patients} to create the
   three patients.
 }
+\begin{verbatim}
+  def test_001_start
+    table = go_to_list_patient
+    lines = table.tbody.rows
+    puts "Demo sees %s patients." % lines.count
+    assert(lines.count < 20)
+  end
+
+\end{verbatim}
 
 Note that usually you should check whether the patient has
 already been created by searching her/his name in the search box at the
@@ -47,6 +93,15 @@ upper left corner
   We want to create two additional patients and one run.
   Thus click twice on \com{add patient} and once on \com{add run}.
 }
+\begin{verbatim}
+  def test_002_add_new_patient
+    $b.a(:class => "button button_token patient_token", :text => "patients").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    $b.element(:class => "button2", :text => "+ new patients").click
+  end
+
+\end{verbatim}
 
   Now you should have three lines with Patient 1, Patient 2, Patient 3 and one
   line with Run 1.
@@ -59,9 +114,37 @@ upper left corner
   Click again on \com{add patient} so that the line appears again (it is now
   called Patient 4).
 }
+\begin{verbatim}
+  def test_003_add_new_patient
+    ## Add 2 new patients + run lines
+    $b.span(:id => "patient_button").click
+    $b.span(:id => "patient_button").click
+    # delete last line
+    form = $b.set_add_form
+    form.elements(:class => "icon-cancel")[2].click
+    # add another new line
+    $b.span(:id => "patient_button").click
+  end
+
+\end{verbatim}
 
 \question{ Now you can fill the mandatory fields (circled with red) and,
   optionally, the other fields.}
+\begin{verbatim}
+ 
+  def test_004_fill_new_patient
+
+    ## Add 2 new patients + run lines
+    $b.span(:id => "run_button").click
+
+    ## Fill forms
+    $b.fill_patient_form(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "")
+    $b.fill_patient_form(1, "id_p2", "First_name_2", "Last_name_2", "2000-01-01", "")
+    $b.fill_patient_form(3, "id_p3", "First_name_3", "Last_name_3", "2000-01-01", "")
+    $b.fill_run_form(0, "id_r1", "run_name 1", "2010-01-01", "run informations #tagtest")
+  end
+
+\end{verbatim}
 
 The last field is optional but it is very important (the field called
 \com{patient/run information (\#tags can be used)}.
@@ -80,6 +163,24 @@ can be suggested later on).
 \question{For patient 1 in this last field, enter \texttt{\#diagnosis of
     patient with \#B-ALL}. For patient 2, enter \texttt{\#blood sample \#CLL}.
   For patient 4, enter \texttt{bone \#marrow \#B-ALL}}
+\begin{verbatim}
+  def test_005_change_description
+    ## Fill forms
+    $b.fill_patient_form(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "#diagnosis of patient with #B-ALL")
+    $b.fill_patient_form(1, "id_p2", "First_name_2", "Last_name_2", "2000-01-01", "#blood sample #CLL")
+    $b.fill_patient_form(3, "id_p3", "First_name_3", "Last_name_3", "2000-01-01", "bone #marrow #B-ALL")
+    $b.set_add_form.input(:type => 'submit').click
+
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    # land on patient page
+    tokens = $b.elements(:class => ["set_token", "patient_token"])
+    assert( tokens[0].text == "Last_name_3 First_name_3" )
+    assert( tokens[1].text == "Last_name_2 First_name_2" )
+    assert( tokens[2].text == "Last_name_1 First_name_1" )
+  end
+
+\end{verbatim}
 
 \marginpar{{\bf New!}
  Note that patients (and runs and samples) can also be created at once by
@@ -90,16 +191,51 @@ the sequence files yet.
 
 \question{Now go to the \com{runs} page. You should see the run you have just
   created. Click on it. Then click on \com{+ add samples}.}
+\begin{verbatim}
+  def test_006_add_new_run
+    $b.a(:class => "button button_token run_token", :text => "runs").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    # $b.element(:class => "button2", :text => "+ new runs").click
+    run = $b.element(:class => ["set_token", "run_token"], :text => "run_name 1").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+  end
+
+\end{verbatim}
 
 Similarly to the patient/run creation page, we can add as many samples as we
 want on this page.
 
 \question{As we need to upload three samples, click twice on the \com{add
     other sample} button so that you have three lines to add a sample.}
+\begin{verbatim}
+  def test_007_add_new_samples_line_in_run
+    $b.element(:class => "button2", :text => "+ add samples").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    # change source for file (if available)
+    if $b.element(:type => "radio", :id => "source_computer").present?
+      $b.element(:type => "radio", :id => "source_computer").click
+    end
+  
+    $b.span(:id => "file_button").click
+    $b.span(:id => "file_button").click
+  end
+
+\end{verbatim}
 
 \question{For sample 1, choose the file corresponding to patient 1 (and
   respectively for patient 2 and 3). You can also add extra information, with
   tags, as previously.}
+\begin{verbatim}
+  def test_008_upload_new_samples_in_run
+    path = "../../../../../../tutorial/"
+    $b.fill_sample_form(0, "2010-01-01", "Sample 1 from tutorial server test #functional #tutorial", path+"run1-sample1.fasta", nil)
+    $b.fill_sample_form(1, "2010-01-01", "Sample 2 from tutorial server test #functional #tutorial", path+"run1-sample2.fasta", nil)
+    $b.fill_sample_form(2, "2010-01-01", "Sample 3 from tutorial server test #functional #tutorial", path+"run1-sample3.fasta", nil)
+  end
+
+\end{verbatim}
 
 Note the \com{common sets} field. This field means that all the samples will
 be added to this run (the one you created). If you would like to \textbf{all}
@@ -112,9 +248,27 @@ need to modify this field.
   it. A list should appear with the last patients/runs/sets you created.
   Either click on the correct patient or type the first letters of her/his
   name. Then validate with \com{Enter} or by clicking on the correct entry.}
+\begin{verbatim}
+ 
+  def test_009_upload_sample_set_common_sets
+    # $b.fill_sample_token_input_by_arrow(0, 3) # by arrow move; select third sample in list (patient "Last_name_1")
+    $b.fill_sample_token_input_by_name(0, "Last_name_1")  # by text setting
+    $b.fill_sample_token_input_by_name(1, "Last_name_2")  # by text setting
+    $b.fill_sample_token_input_by_name(2, "Last_name_3")  # by text setting
+    $b.send_keys :enter
+  end
+
+\end{verbatim}
 
 \question{When you have associated each sample to its corresponding patient
   you can upload the samples by clicking on the \com{Submit samples} button.}
+\begin{verbatim}
+  def test_010_upload_sample_submit
+    $b.input(:id => "submit_samples_btn").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+  end
+
+\end{verbatim}
 
 Now you are back on the page of the run where you should see the three samples
 that are being uploaded.
@@ -122,6 +276,17 @@ that are being uploaded.
 \question{When the upload is finished you launch the analysis by selecting the
 configuration in the drop down at the right (\com{multi+inc+xxx}) and then
 clicking on the gearwheel.}
+\begin{verbatim}
+  def test_011_upload_sample_submit
+    $b.select_configutation_in_available_list("multi+inc+xxx")
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    gearwheels = $b.elements(:class => "icon-cog-2")
+    for gearwheel in gearwheels
+      gearwheel.click
+    end
+  end
+
+\end{verbatim}
 
 You can have a coffee, a tea, or something else, while the process is
 launched.
@@ -131,6 +296,33 @@ launched.
   Your process usually goes through the following stages: \com{QUEUED},
   (possibly \com{STOPPED}), \com{ASSIGNED}, \com{RUNNING}, \com{COMPLETED} (or
   \com{FAILED} when there is an issue, in such a case please contact us)}
+\begin{verbatim}
+  def test_012_sample_analysis
+    def wait_and_reload(timeout, repeatition)
+      repeatition.times do
+        print "new repeatition"
+        $b.span(:id => "db_reload").click
+        table = $b.table(:id => "table")
+        line_0 = table.tbody.rows[0]
+        line_1 = table.tbody.rows[1]
+        line_2 = table.tbody.rows[2]
+        sleep timeout
+        line_completed_0 = line_0.element(:class => "button", :text => "COMPLETED").present?
+        line_completed_1 = line_1.element(:class => "button", :text => "COMPLETED").present?
+        line_completed_2 = line_2.element(:class => "button", :text => "COMPLETED").present?
+        if line_completed_0 and line_completed_1 and line_completed_2
+          return true
+        end
+      end
+      return false
+    end
+
+    completed = wait_and_reload(10, 30) # 5minutes
+    assert( completed == true)
+
+  end
+
+\end{verbatim}
 
 Then you can view the results as explained before.
 Instead we will remain on the server.
@@ -139,3 +331,26 @@ Instead we will remain on the server.
   using the tags you entered previously.
   Enter \texttt{\#B-ALL} in the search box (notice the autocompletion that helps you)
   and validate with \com{Enter}.}
+\begin{verbatim}
+  def test_013_patient_page_and_filter
+    $b.go_to_list_patient
+
+    filter = $b.text_field(:id => "db_filter_input")
+    filter.wait_until_present
+    filter.set('#B-ALL')
+
+    filter.fire_event('onchange')
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    # assert on sample 2 not present
+    token = $b.element(:class => ["set_token", "patient_token"], :text => "Last_name_2 First_name_2")
+    assert( ! token.present? )
+  end
+
+\end{verbatim}
+
+
+\begin{verbatim}
+
+end
+\end{verbatim}
