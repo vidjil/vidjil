@@ -60,9 +60,9 @@ Starting from `R1.fastq` and `R2.fastq`:
 
  - Merge:  `flash2   R1.fastq R2.fastq -m 300 -t 4 -z`   (`-t 4` : run on 4 threads)
  - Concatenate the files you want to keep, as for example  `cat out.extendedFrags.fastq  out.notCombined_1.fastq.gz > merged-reads.fastq.gz`
- - Filter:  `vidjil-algo --filter-reads -g germline/homo-sapiens.g merged-reads.fastq.gz`
+ - Filter:  `vidjil-algo --filter-reads --gz -g germline/homo-sapiens.g merged-reads.fastq.gz`
  
-The resulting `reads-merged.detected.fa` files can be uploaded on any Vidjil server,
+The resulting `merged-reads.filtered.fa.gz` file can be uploaded on any Vidjil server,
 or re-analyzed with vidjil-algo or with other software.
 
 
