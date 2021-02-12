@@ -1,4 +1,19 @@
 
+# Post-sequencer workflow before upload to a Vidjil server
+
+This help is intended for bioinformaticians preparing workflows after their sequencer output.
+See also considerations on [libraries and recombinations](locus.md).
+
+## File formats
+
+It is recommended to upload `.fastq.gz` files to the Vidjil server.
+Indeed, vidjil-algo takes into account the quality information in the output of the representative sequence.
+
+When the base quality is not available, it is also possible to upload `fa.gz` files.
+Note that vidjil-algo (and the Vidjil server) also accept uncompressed `.fastq` or `.fa` files
+and even `.bam` files (but the added information of `.bam` files is not taken into account,
+so uploading such files is not optimal).
+
 
 ## Local pre-filtering of large datasets
 
