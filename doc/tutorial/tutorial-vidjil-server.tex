@@ -1,0 +1,50 @@
+
+\begin{verbatim}
+
+load 'vidjil_browser.rb'
+load 'server_test.rb'
+
+class LiveTestSampleSets < ServerTest
+
+  def setup
+    super
+    if not defined? $b
+      if ENV['URL']
+        set_browser(URL)
+      else
+        set_browser("https://localhost/browser/")
+      end
+    end
+    $b.login(logins("admin", "user"), logins("admin", "password"))
+  end
+
+   def go_to_list_patient
+    $b.a(:class => "button button_token patient_token", :text => "patients").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    table = $b.table(:id => "table")
+    table.wait_until_present
+    table
+  end
+
+  def test_00_demo_logged_in
+    # login_form = $b.form(:id => 'login_form')
+    assert(!$b.login_form.present?)
+  end
+  ######################################
+  ### Tracking clones on several samples
+  ######################################
+
+
+\end{verbatim}
+
+\input{tutorial-server}
+
+\begin{verbatim}
+
+  # Not really a test
+  def test_zz_close
+    close_everything
+  end
+end
+\end{verbatim}
