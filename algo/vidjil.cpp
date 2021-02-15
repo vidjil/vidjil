@@ -636,6 +636,7 @@ int main (int argc, char **argv)
       cmd = COMMAND_DETECT;
       output_segmented = true;
       expected_value = EVALUE_FILTER_READS ;
+      multi_germline_one_unique_index = true;
       multi_germline_unexpected_recombinations_12 = true;
       return true;
     },
