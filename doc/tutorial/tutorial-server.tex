@@ -16,44 +16,7 @@ The \href{http://www.vidjil.net}{VidjilNet} consortium offers health-certified o
 \question{ Retrieve the toy dataset at
   \href{http://vidjil.org/seqs/tutorial_dataset.zip}{\tt vidjil.org/seqs/tutorial\_dataset.zip}
   and extract the files from the archive.}
-\begin{verbatim}
 
-load 'vidjil_browser.rb'
-load 'server_test.rb'
-
-class LiveTestSampleSets < ServerTest
-
-  def setup
-    super
-    if not defined? $b
-      if ENV['URL']
-        set_browser(URL)
-      else
-        set_browser("https://localhost/browser/")
-      end
-    end
-    $b.login(logins("admin", "user"), logins("admin", "password"))
-  end
-
-   def go_to_list_patient
-    $b.a(:class => "button button_token patient_token", :text => "patients").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
-
-    table = $b.table(:id => "table")
-    table.wait_until_present
-    table
-  end
-
-  def test_00_demo_logged_in
-    # login_form = $b.form(:id => 'login_form')
-    assert(!$b.login_form.present?)
-  end
-  ######################################
-  ### Tracking clones on several samples
-  ######################################
-
-
-\end{verbatim}
 You should now have three files. We will imagine that those three files are
 the results from a single sequencing run. More precisely, each one corresponds to
 a single patient. Thus we now want to upload those files and assign all of
@@ -349,8 +312,3 @@ Instead we will remain on the server.
 
 \end{verbatim}
 
-
-\begin{verbatim}
-
-end
-\end{verbatim}
