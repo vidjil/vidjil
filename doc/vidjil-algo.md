@@ -699,11 +699,11 @@ It is possible to extract all reads with or without detected recombinations,
 possibly to give them to other software.
 - `-U` gives a file `out/basename.detected.vdj.fa` with all reads having a detected V(D)J recombination
 
-  - `-u` gives a set of files `out/basename.UNSEG_*`, with not detected reads gathered by cause.
-    It outputs only reads sharing significantly sequences with V/J germline genes or with some ambiguity:
-    it may be interesting to further study RNA-Seq datasets.
-
-  - `-uu` gives the same set of files, including **all** not detected reads (including `UNSEG too short` and `UNSEG too few V/J`),
+  - `-u` gives a set of files `out/basename.UNSEG_*` with reads where /no V(D)J recombination was detected/, 
+    but with nevertheless some significant similarity to some V/J germline genes,
+  
+  - `-uu` further produce files with all /other/ reads where no V(D)J recombination was detected
+    (including `UNSEG too short` and `UNSEG too few V/J`),
     and `-uuu` further outputs all these reads in a file `out/basename.undetected.vdj.fa`.
 
 As these options may generate large files, they are generally not recommended.
