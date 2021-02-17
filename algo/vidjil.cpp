@@ -1247,12 +1247,11 @@ int main (int argc, char **argv)
 	//$$ Output windows
 	//////////////////////////////////
 
-	string f_all_windows = out_dir + f_basename + WINDOWS_FILENAME;
-	cout << "  ==> " << f_all_windows << endl << endl ;
-
-	ofstream out_all_windows(f_all_windows.c_str());
-        windowsStorage->printSortedWindows(out_all_windows);
-
+  string f_all_windows = out_dir + f_basename + WINDOWS_FILENAME;
+  std::ostream *out_all_windows = new_ofgzstream(f_all_windows, out_gz);
+  windowsStorage->printSortedWindows(*out_all_windows);
+  delete out_all_windows;
+  cout << endl;
 
     //$$ compute, display and store diversity measures
     json jsonDiversity = windowsStorage->computeDiversity(nb_segmented);
