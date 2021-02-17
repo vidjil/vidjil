@@ -117,6 +117,11 @@ Roberta Cavagna et al.,
 Cancers, 2020, 12(6), 1505,
 <https://doi.org/10.3390/cancers12061505>
 
+Rodolfo P. Correia et al.,
+*High‐throughput sequencing of immunoglobulin heavy chain for minimal residual disease detection in B‐lymphoblastic leukemia*,
+Int. Journal of Laboratory Hematology, 2021,
+<https://doi.org/10.1111/ijlh.13453>
+
 Frédéric Davi et al., on behalf of ERIC, the European Research Initiative on CLL, and the EuroClonality-NGS Working Group,
 *Immunoglobulin gene analysis in chronic lymphocytic leukemia in the era of next generation sequencing*
  2020
@@ -177,6 +182,16 @@ Ming Liang Oon et al.,
 *T-Cell Lymphoma Clonality by Copy Number Variation Analysis of T-Cell Receptor Genes*,
 Cancers, 2021, 13(2), 340
 <https://dx.doi.org/10.3390/cancers13020340>
+
+Alejandro Medina et al.,
+*Comparison of next-generation sequencing (NGS) and next-generation flow (NGF) for minimal residual disease (MRD) assessment in multiple myeloma*,
+Blood Cancer Journal, 10, 108,
+<https://doi.org/10.1038/s41408-020-00377-0>
+
+Dai Nishijima et al.,
+*Capture Sequencing Is a Useful Method for Comprehensive Clonality Analysis Based on Ig/TCR Gene Rearrangements in Acute Lymphoblastic Leukemia*,
+ASH 2018, Blood, 132(S1):1543,
+<https://doi.org/10.1182/blood-2018-99-115624>
 
 Edit Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
