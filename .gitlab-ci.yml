@@ -414,7 +414,7 @@ test_server_unit:
 
 .test_server_base:
   stage: test_functional
-  before-script:
+  before_script:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
     - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
