@@ -1,6 +1,11 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2021-02-18  The Vidjil Team
+	* New preset --filter-reads to filter potentially huge datasets (vidjil.cpp) #4681
+	* Better --gz option, outputting also .fa.gz and .affects.gz files (vidjil.cpp) #4692
+	* New and updated documentation
+
 2021-02-05  The Vidjil Team
 	* New report of unproductivity causes in 'seg.junction.unproductive' (core/segment.cpp) #4599
 	* New fields in AIRR .tsv output, 'vj_in_frame', 'stop_codon', '{v,j}_support', '{v,d,j,cdr3}_sequence_{start,end}' (core/output.cpp) #3569 #4643
