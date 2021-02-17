@@ -85,7 +85,7 @@ The key point, depending on the library preparation, is thus what position the C
 Anyway, with short reads, the identified recombinations may be skewed towards shorter sequences, such as:
 
  - more VJ than VDJ recombinations
- - shorter N and more deleted V, J and possibly D genes
+ - shorter N and more deleted D genes
 Those biases could occur inside one locus but also favor loci/systems with shorter recombinations
 
 
