@@ -1142,7 +1142,7 @@ int main (int argc, char **argv)
     ostream *out_segmented = NULL;
     ostream *out_unsegmented = NULL;
     ostream *out_unsegmented_detail[STATS_SIZE];
-    ofstream *out_affects = NULL;
+    ostream *out_affects = NULL;
  
     WindowExtractor we(multigermline);
     if (! output_sequences_by_cluster)
@@ -1181,8 +1181,7 @@ int main (int argc, char **argv)
 
     if (output_affects) {
       string f_affects = out_dir + f_basename + AFFECTS_FILENAME ;
-      cout << "  ==> " << f_affects << endl ;
-      out_affects = new ofstream(f_affects.c_str());
+      out_affects = new_ofgzstream(f_affects, out_gz);
       we.setAffectsOutput(out_affects);
     }
 
