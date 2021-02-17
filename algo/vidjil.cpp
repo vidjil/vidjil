@@ -1879,19 +1879,13 @@ int main (int argc, char **argv)
 
   //$ Output .vidjil(.gz) json
 
-  std::ostream *out_json = new_ofgzstream(f_json, out_gz);
+  std::ostream *out_json = new_ofgzstream(f_json, out_gz,
+                                          !no_vidjil
+                                          ? "\t(main output file, may be opened by the Vidjil web application)"
+                                          : "\t(only metadata, no clone output)");
   SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
 
   outputVidjil -> out(*out_json, !no_vidjil);
-
-  if (!no_vidjil)
-  {
-    cout << "\t(main output file, may be opened by the Vidjil web application)" << endl;
-  }
-  else
-  {
-    cout << "\t(only metadata, no clone output)" << endl;
-  }
   // In the case of ogzstream, delete actually calls .close() that is mandatory to make it work
   delete out_json;
 
