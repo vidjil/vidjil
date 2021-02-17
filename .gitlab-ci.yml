@@ -343,11 +343,12 @@ old-chrome-browser-tutorial:
 
 server_tutorial_server:
   stage: test_tutorial_server
+  extends: .test_server_base
   retry: 1
   script:
     - source /etc/profile.d/rvm.sh
-    - rvm use 2.1.1
-    - HEADLESS=1 URL=http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/ make test_tutorial_server
+    - rvm use 2.6.1
+    - HEADLESS=1 make test_tutorial_server
   artifacts:
     paths:
       - browser/
@@ -357,7 +358,8 @@ server_tutorial_server:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
-    - prod-client
+    - prod-server
+    - dev
     - schedules
     - /tutorial/
   tags:
@@ -410,9 +412,9 @@ test_server_unit:
     tags:
       - web
 
-.test_server_functional:
+.test_server_base:
   stage: test_functional
-  script:
+  before-script:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
     - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
@@ -427,9 +429,6 @@ test_server_unit:
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
-    - source /etc/profile.d/rvm.sh
-    - rvm use 2.6.1
-    - HEADLESS=1 make functional_server
   after_script:
     - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
@@ -445,6 +444,14 @@ test_server_unit:
   tags:
     - x86_64
     - docker
+
+.test_server_functional:
+  stage: test_functional
+  extends: .test_server_base
+  script:
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.6.1
+    - HEADLESS=1 make functional_server
 
 ff32-server-functional:
   extends: .test_server_functional
