@@ -86,12 +86,13 @@
 #define DEFAULT_RATIO_READS_CLONE 0.0
 #define NO_LIMIT "all"
 
+#define COMMAND_DETECT "detect"
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_CLONES "clones"
 #define COMMAND_SEGMENT "designations"
 #define COMMAND_GERMLINES "germlines"
  
-enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
+enum { CMD_DETECT, CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_OUT_DIR "./out/" 
 
@@ -134,6 +135,10 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define MAX_CLONES_FOR_SIMILARITY 20
 
+#define EVALUE_FILTER_READS 1e6
+#define STR_(X) #X
+#define STR(X) STR_(X)
+
 // warn
 #define WARN_MAX_CLONES 5000
 #define WARN_PERCENT_SEGMENTED 40
@@ -166,6 +171,7 @@ string usage_examples(char *progname)
        << "                                                                                               #  including unexpected recombinations (-2), assign V(D)J genes and try to detect the CDR3s (-3))" << endl
        << "  " << progname << " -c clones       -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
        << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
+       << "  " << progname << " --filter-reads  -g germline/homo-sapiens.g               demo/LIL-L4.fastq.gz      # (pre-filter, extract all reads that may have V(D)J recombinations)" << endl
        << "  " << progname << " -c windows      -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
        << "  " << progname << " -c designations -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, here on 50 sampled reads)" << endl
        << "  " << progname << " -c germlines    -g germline/homo-sapiens.g               demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
@@ -265,8 +271,10 @@ int main (int argc, char **argv)
 
   string cmd = COMMAND_CLONES;
   app.add_option("-c", cmd, "command"
-                 "\n  \t\t" COMMAND_CLONES    "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)"
-                 "\n  \t\t" COMMAND_WINDOWS   "  \t locus detection, window extraction"
+
+                 "\n  \t\t" COMMAND_CLONES    "  \t locus/V(D)J detection, window extraction, clone clustering (default command, most efficient, all outputs)"
+                 "\n  \t\t" COMMAND_WINDOWS   "  \t locus/V(D)J detection, window extraction"
+                 "\n  \t\t" COMMAND_DETECT    "  \t locus/V(D)J detection"
                  "\n  \t\t" COMMAND_SEGMENT   "  \t detailed V(D)J designation, without prior clustering (not as efficient)"
                  "\n  \t\t" COMMAND_GERMLINES "  \t statistics on k-mers in different germlines")
     -> group(group) -> type_name("COMMAND");
@@ -624,6 +632,18 @@ int main (int argc, char **argv)
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Presets";
 
+  app.add_flag_function("--filter-reads", [&](int n) {
+      UNUSED(n);
+      cmd = COMMAND_DETECT;
+      output_segmented = true;
+      expected_value = EVALUE_FILTER_READS ;
+      multi_germline_unexpected_recombinations_12 = true;
+      return true;
+    },
+    "filter possibly huge datasets, with a permissive threshold, to extract reads that may have V(D)J recombinations"
+    PAD_HELP "(equivalent to -c " COMMAND_DETECT " --out-detected --e-value " STR(EVALUE_FILTER_READS) " -2)")
+    -> group(group);
+
   app.add_option("--grep-reads",
     [&only_labeled_windows,&windows_labels_explicit,&output_sequences_by_cluster](CLI::results_t res) {
       only_labeled_windows = true;
@@ -670,6 +690,11 @@ int main (int argc, char **argv)
     command = CMD_CLONES;
   else if (cmd == COMMAND_SEGMENT)
     command = CMD_SEGMENT;
+  else if (cmd == COMMAND_DETECT) {
+    command = CMD_DETECT;
+    no_airr = true;
+    no_vidjil = true;
+  }
   else if (cmd == COMMAND_WINDOWS)
     command = CMD_WINDOWS;
   else if (cmd == COMMAND_GERMLINES)
@@ -788,11 +813,13 @@ int main (int argc, char **argv)
   json j_labels = load_into_map_from_json(windows_labels, windows_labels_json);
 
   switch(command) {
-  case CMD_WINDOWS: cout << "Extracting windows" << endl; 
+  case CMD_DETECT: cout << "Detecting V(D)J recombinations" << endl;
     break;
-  case CMD_CLONES: cout << "Analysing clones" << endl; 
+  case CMD_WINDOWS: cout << "Detecting V(D)J recombinations and extracting windows" << endl;
     break;
-  case CMD_SEGMENT: cout << "Segmenting V(D)J" << endl;
+  case CMD_CLONES: cout << "Detecting V(D)J recombinations and analyzing clones" << endl;
+    break;
+  case CMD_SEGMENT: cout << "Designating V(D)J recombinations" << endl;
     break;
   case CMD_GERMLINES: cout << "Discovering germlines" << endl;
     break;
@@ -1107,18 +1134,18 @@ int main (int argc, char **argv)
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
   ////////////////////////////////////////
-  if (command == CMD_CLONES || command == CMD_WINDOWS) {
+  if (command == CMD_CLONES || command == CMD_WINDOWS || command == CMD_DETECT) {
 
     //////////////////////////////////
     //$$ Kmer Segmentation
 
     cout << endl;
-    cout << "Loop through reads, ";
+    cout << "Loop through reads, detecting V(D)J recombinations";
 
     if (wmer_size != NO_LIMIT_VALUE)
-      cout << "looking for windows up to " << wmer_size << "bp" << endl;
+      cout << " while extracting windows up to " << wmer_size << "bp" << endl;
     else
-      cout << "considering all analyzed reads as windows" << endl;
+      cout << " while considering all detected reads as windows" << endl;
 
     ofstream *out_segmented = NULL;
     ofstream *out_unsegmented = NULL;
@@ -1217,6 +1244,10 @@ int main (int argc, char **argv)
     
     cout << stream_segmentation_info.str();
 
+
+  // CMD_DETECT stops here
+  if (command == CMD_CLONES || command == CMD_WINDOWS) {
+
 	//////////////////////////////////
 	//$$ Sort windows
 	
@@ -1302,6 +1333,7 @@ int main (int argc, char **argv)
 	cout << "No clustering" << endl ; 
       }
 
+    // CMD_WINDOWS stops here
 
     //$$ Further analyze some clones (-z)
     if (command == CMD_CLONES) {
@@ -1735,6 +1767,7 @@ int main (int argc, char **argv)
     if (jsonLevenshteinComputed)
       output.set("similarity", jsonLevenshtein);
 
+    } // end if (command == CMD_CLONES) || (command == CMD_WINDOWS)
 
     //$$ Clean
 
