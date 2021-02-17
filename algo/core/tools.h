@@ -14,6 +14,7 @@ typedef string junction ;
 #define ERROR_STRING "[error] "
 #define WARNING_STRING "[warning] "
 
+#define GZ_SUFFIX ".gz"
 
 #define NO_LIMIT_VALUE  -1  // Value for 'all' on command-line options
 #define NO_LIMIT_VALUE_STRING  "-1"
@@ -295,7 +296,7 @@ void json_add_warning(json &clone, string code, string msg, string level=LEVEL_W
 /*
    Opens a ostream, possibly gz-compressed
 */
-std::ostream* new_ofgzstream(const char *f, bool gz);
+std::ostream* new_ofgzstream(string &f, bool gz, string message="");
 
 
 //////////////////////////////////////////////////

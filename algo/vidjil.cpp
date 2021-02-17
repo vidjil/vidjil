@@ -109,7 +109,6 @@ enum { CMD_DETECT, CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define COMP_FILENAME "comp.vidjil"
 #define AIRR_SUFFIX ".tsv"
 #define JSON_SUFFIX ".vidjil"
-#define GZ_SUFFIX ".gz"
 
 #define DEFAULT_K      0
 #define DEFAULT_W      50
@@ -601,7 +600,7 @@ int main (int argc, char **argv)
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
   bool out_gz = false;
-  app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .vdj.fa.gz, and .vidjil.gz files") -> group(group) -> level();
+  app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .fa.gz, and .vidjil.gz files") -> group(group) -> level();
 
   bool show_alignments = false;
   app.add_flag("--show-junction", show_alignments,
@@ -891,13 +890,6 @@ int main (int argc, char **argv)
   string f_airr = out_dir + f_basename + AIRR_SUFFIX ;
   string f_json = out_dir + f_basename + JSON_SUFFIX ;
 
-  if (out_gz)
-  {
-    f_clones += GZ_SUFFIX;
-    f_airr += GZ_SUFFIX;
-    f_json += GZ_SUFFIX;
-  }
-
   ostringstream stream_cmdline;
   for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
 
@@ -1147,9 +1139,9 @@ int main (int argc, char **argv)
     else
       cout << " while considering all detected reads as windows" << endl;
 
-    ofstream *out_segmented = NULL;
-    ofstream *out_unsegmented = NULL;
-    ofstream *out_unsegmented_detail[STATS_SIZE];
+    ostream *out_segmented = NULL;
+    ostream *out_unsegmented = NULL;
+    ostream *out_unsegmented_detail[STATS_SIZE];
     ofstream *out_affects = NULL;
  
     WindowExtractor we(multigermline);
@@ -1158,15 +1150,13 @@ int main (int argc, char **argv)
  
     if (output_segmented) {
       string f_segmented = out_dir + f_basename + SEGMENTED_FILENAME ;
-      cout << "  ==> " << f_segmented << endl ;
-      out_segmented = new ofstream(f_segmented.c_str());
+      out_segmented = new_ofgzstream(f_segmented, out_gz);
       we.setSegmentedOutput(out_segmented);
     }
 
     if (output_unsegmented) {
       string f_unsegmented = out_dir + f_basename + UNSEGMENTED_FILENAME ;
-      cout << "  ==> " << f_unsegmented << endl ;
-      out_unsegmented = new ofstream(f_unsegmented.c_str());
+      out_unsegmented = new_ofgzstream(f_unsegmented, out_gz);
       we.setUnsegmentedOutput(out_unsegmented);
     }
 
@@ -1182,8 +1172,7 @@ int main (int argc, char **argv)
           replace(s.begin(), s.end(), '\'', '_');
 
           string f_unsegmented_detail = out_dir + f_basename + "." + s + UNSEGMENTED_DETAIL_FILENAME ;
-          cout << "  ==> " << f_unsegmented_detail << endl ;
-          out_unsegmented_detail[i] = new ofstream(f_unsegmented_detail.c_str());
+          out_unsegmented_detail[i] = new_ofgzstream(f_unsegmented_detail, out_gz);
         }
 
       we.setUnsegmentedDetailOutput(out_unsegmented_detail, output_unsegmented_detail_full);
@@ -1384,9 +1373,8 @@ int main (int argc, char **argv)
     ostream* out_clones = NULL;
     if (output_vdjfa)
     {
-      cout << "  ==> " << f_clones << "   \t(for sequence post-processing with other software)" << endl;
+      out_clones = new_ofgzstream(f_clones, out_gz, "   \t(for sequence post-processing with other software)");
       cout << "!! To get structured data, do not parse the Fasta headers, but rather work on the .vidjil file." << endl;
-      out_clones = new_ofgzstream(f_clones.c_str(), out_gz);
     }
 
     if (output_clone_files)
@@ -1884,14 +1872,18 @@ int main (int argc, char **argv)
   //$ Output AIRR .tsv(.gz)
   if (!no_airr)
   {
-    cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
-    std::ostream *out_airr = new_ofgzstream(f_airr.c_str(), out_gz);
+    std::ostream *out_airr = new_ofgzstream(f_airr, out_gz, "   \t(AIRR output)");
     static_cast<SampleOutputAIRR *>(&output) -> out(*out_airr);
     delete out_airr;
   }
 
   //$ Output .vidjil(.gz) json
-  cout << "  ==> " << f_json ;
+
+  std::ostream *out_json = new_ofgzstream(f_json, out_gz);
+  SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
+
+  outputVidjil -> out(*out_json, !no_vidjil);
+
   if (!no_vidjil)
   {
     cout << "\t(main output file, may be opened by the Vidjil web application)" << endl;
@@ -1900,12 +1892,6 @@ int main (int argc, char **argv)
   {
     cout << "\t(only metadata, no clone output)" << endl;
   }
-
-  std::ostream *out_json = new_ofgzstream(f_json.c_str(), out_gz);
-  SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
-
-  outputVidjil -> out(*out_json, !no_vidjil);
-
   // In the case of ogzstream, delete actually calls .close() that is mandatory to make it work
   delete out_json;
 
