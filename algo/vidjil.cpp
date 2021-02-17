@@ -1142,7 +1142,7 @@ int main (int argc, char **argv)
     ostream *out_segmented = NULL;
     ostream *out_unsegmented = NULL;
     ostream *out_unsegmented_detail[STATS_SIZE];
-    ofstream *out_affects = NULL;
+    ostream *out_affects = NULL;
  
     WindowExtractor we(multigermline);
     if (! output_sequences_by_cluster)
@@ -1181,8 +1181,7 @@ int main (int argc, char **argv)
 
     if (output_affects) {
       string f_affects = out_dir + f_basename + AFFECTS_FILENAME ;
-      cout << "  ==> " << f_affects << endl ;
-      out_affects = new ofstream(f_affects.c_str());
+      out_affects = new_ofgzstream(f_affects, out_gz);
       we.setAffectsOutput(out_affects);
     }
 
@@ -1247,12 +1246,11 @@ int main (int argc, char **argv)
 	//$$ Output windows
 	//////////////////////////////////
 
-	string f_all_windows = out_dir + f_basename + WINDOWS_FILENAME;
-	cout << "  ==> " << f_all_windows << endl << endl ;
-
-	ofstream out_all_windows(f_all_windows.c_str());
-        windowsStorage->printSortedWindows(out_all_windows);
-
+  string f_all_windows = out_dir + f_basename + WINDOWS_FILENAME;
+  std::ostream *out_all_windows = new_ofgzstream(f_all_windows, out_gz);
+  windowsStorage->printSortedWindows(*out_all_windows);
+  delete out_all_windows;
+  cout << endl;
 
     //$$ compute, display and store diversity measures
     json jsonDiversity = windowsStorage->computeDiversity(nb_segmented);
@@ -1879,19 +1877,13 @@ int main (int argc, char **argv)
 
   //$ Output .vidjil(.gz) json
 
-  std::ostream *out_json = new_ofgzstream(f_json, out_gz);
+  std::ostream *out_json = new_ofgzstream(f_json, out_gz,
+                                          !no_vidjil
+                                          ? "\t(main output file, may be opened by the Vidjil web application)"
+                                          : "\t(only metadata, no clone output)");
   SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
 
   outputVidjil -> out(*out_json, !no_vidjil);
-
-  if (!no_vidjil)
-  {
-    cout << "\t(main output file, may be opened by the Vidjil web application)" << endl;
-  }
-  else
-  {
-    cout << "\t(only metadata, no clone output)" << endl;
-  }
   // In the case of ogzstream, delete actually calls .close() that is mandatory to make it work
   delete out_json;
 
