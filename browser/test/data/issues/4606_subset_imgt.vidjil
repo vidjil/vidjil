@@ -1,0 +1,115 @@
+{
+  "clones": [
+    {
+      "_average_read_length": [
+        369.0
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "369 bp (100% of 369.0 bp)"
+      ],
+      "germline": "IGH",
+      "id": "subset_2_chimeric",
+      "name": "IGHV3-21*01 2/CTTTACCTCTGGGG/14 IGHD3-3*01 7/ACGGC/1 IGHJ6*02",
+      "reads": [
+        3
+      ],
+      "seg": {
+        
+        "cdr3": {
+          "aa": "ARLYLWGEWLTAYYYYYGMDV",
+          "seq": "GCGAGACTTTACCTCTGGGGGGAGTGGTTAACGGCTTACTACTACTACTACGGTATGGACGTC",
+          "start": 268,
+          "stop": 330
+        },
+        "junction": {
+          "aa": "CARLYLWGEWLTAYYYYYGMDVW",
+          "productive": true,
+          "start": 265,
+          "stop": 333
+        }
+      },
+      "sequence": "GGGGGAGGCCTGGTCAAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTATAGCATGAACTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTCTCATCCATTAGTAGTAGTAGTAGTTACATATACTACGCAGACTCAGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCACTGTATCTGCAAATGAACAGCCTGAGAGCCGAGGACACGGCTGTGTATTACTGTGCGAGAgatTACaatggaatggatgtgTGGGGCCAAGGGACCACGGTCACCGTCTCCTCAGGTAAG",
+      "top": 1
+    }
+  ],
+  
+  "germlines": {
+    "custom": {
+      "3": [],
+      "4": [],
+      "5": [],
+      "shortcut": "X"
+    },
+    "ref": "http://www.vidjil.org/germlines/germline-59.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "germline": {
+      "IGH": [
+        6
+      ],
+      "IGH+": [
+        0
+      ],
+      "IGK": [
+        0
+      ],
+      "IGK+": [
+        0
+      ],
+      "IGL": [
+        0
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        0
+      ],
+      "TRB+": [
+        0
+      ],
+      "TRD": [
+        0
+      ],
+      "TRD+": [
+        0
+      ],
+      "TRG": [
+        0
+      ]
+    },
+    "segmented": [
+      6
+    ],
+    "total": [
+      6
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "cmd line"
+    ],
+    "log": [
+      "log"
+    ],
+    "number": 1,
+    "original_names": [
+      "test_subset.fasta"
+    ],
+    "producer": [
+      "vidjil-algo dev a79706ac2 (2021-02-15)"
+    ],
+    "run_timestamp": [
+      "2021-02-16 20:50:19"
+    ]
+  },
+  "vidjil_json_version": "2016b"
+}
