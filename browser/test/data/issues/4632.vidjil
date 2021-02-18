@@ -98,12 +98,13 @@
   "clones": [
     {
       "germline": "IGH+",
-      "name": "IGHD3-16*01 18/TGTTGA/8 IGHJ4*02",
+      "id": "TGTGGTATTATGATTACGTTTGGTGTTGAGACTACTGGGGCCAGGGAACC",
       "reads": [
         19047,
         42
       ],
-      "id": "TGTGGTATTATGATTACGTTTGGTGTTGAGACTACTGGGGCCAGGGAACC"
+      "top": 1,
+      "name": "IGHD3-16*01 18/TGTTGA/8 IGHJ4*02"
     }
   ],
   "clusters": [],
