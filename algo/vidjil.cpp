@@ -1247,7 +1247,7 @@ int main (int argc, char **argv)
 	//////////////////////////////////
 
   string f_all_windows = out_dir + f_basename + WINDOWS_FILENAME;
-  std::ostream *out_all_windows = new_ofgzstream(f_all_windows, out_gz);
+  std::ostream *out_all_windows = new_ofgzstream(f_all_windows, false);
   windowsStorage->printSortedWindows(*out_all_windows);
   delete out_all_windows;
   cout << endl;
