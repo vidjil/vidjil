@@ -452,6 +452,14 @@ test_server_unit:
     - source /etc/profile.d/rvm.sh
     - rvm use 2.6.1
     - HEADLESS=1 make functional_server
+  artifacts:
+    reports:
+      junit: server/web2py/applications/vidjil/tests/test/TEST-*.xml
+    path:
+      - server/web2py/applications/vidjil/tests/test/
+      - browser/test/
+    when:
+      "always"
 
 ff32-server-functional:
   extends: .test_server_functional
