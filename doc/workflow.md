@@ -59,7 +59,7 @@ supposing that R1 reads are "more centered" on the V(D)J junction than R2 reads.
 
 Starting from `R1.fastq` and `R2.fastq` (`flash2` only works with `.fastq` files):
 
- - Merge:  `flash2   R1.fastq R2.fastq -m 300 -t 4 -z`   (`-t 4` : run on 4 threads)
+ - Merge:  `flash2   R1.fastq R2.fastq -M 300 -t 4 -z`   (`-t 4` : run on 4 threads)
  - Concatenate the files you want to keep, as for example  `cat out.extendedFrags.fastq  out.notCombined_1.fastq.gz > merged-reads.fastq.gz`
  - Filter:  `vidjil-algo --filter-reads --gz -g germline/homo-sapiens.g merged-reads.fastq.gz`
    (`germline/` is the path to the gene repertoires directory, in `vidjil-algo-.../`)
