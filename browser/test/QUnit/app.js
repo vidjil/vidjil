@@ -1,8 +1,8 @@
 //
 require(['js/lib/d3.v5.min'], function(d3) {window.d3 = d3;});
 
-var lib = [         "js/lib/qunit-2.9.1",
-                    "js/lib/jquery-3.3.1.min",
+
+var lib = [         "js/lib/jquery-3.3.1.min",
                     "js/lib/blanket.1.1.9",
                     "js/lib/file"
           ];
@@ -73,16 +73,17 @@ var test_files = [  "testFiles/form_test",
 
 
 function startQunitTap(){
-    var qunitTap = require(['js/lib/qunit-tap']);
-    var tap_output;
-    qunitTap(QUnit, function() { 
-            if (typeof arguments != "undefined"){
-                tap_output+=arguments[0]+"\n";
-            }
-        });
+    
+        var tap_output;
+        qunitTap(QUnit, function() { 
+                if (typeof arguments != "undefined"){
+                    tap_output+=arguments[0]+"\n";
+                }
+            });
 }
 
 function startQunit(){
+
     QUnit.assert.includes = function(result, pattern, message ) {
         // Checks that the result includes the pattern
         // TODO: see and use qunit-regexp !
@@ -98,12 +99,12 @@ function startQunit(){
         this.push(res, result, expected + "±" + margin, message);
     };
 
+    
     QUnit.start();
 }
 
 function startTests(){
-    startQunitTap();
-            
+    
     jQuery.fn.d3Click = function () {
         this.each(function (i, e) {
             var evt = document.createEvent("MouseEvents");
@@ -120,10 +121,9 @@ function startTests(){
     startQunit();
 }
 
-
+startQunitTap();
 require(lib,
-    function(){
-        QUnit.config.autostart=false;
+    function(){     
         require(lib_plugin, function(){
             require(lib_vidjil,
                 function(){
@@ -131,4 +131,5 @@ require(lib,
             });
         });
     });
+    
 
