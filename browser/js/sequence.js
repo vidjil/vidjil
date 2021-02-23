@@ -59,6 +59,8 @@ genSeq.prototype = {
         }
     },
 
+    updateLayers: function () {},
+
 
     /**
      * save the position of each nucleotide in an array <br>
@@ -183,6 +185,7 @@ function Sequence(id, model, segmenter) {
     this.is_clone = true;
     this.is_aligned = false;
     this.locus = this.m.clone(id).germline;
+    this.div = this.segmenter.index[id].getElement("main");
 
     this.layers = LAYERS;
 }
@@ -248,7 +251,7 @@ Sequence.prototype = {
         while (i<end){  
             code = seq[i]+seq[i+1]+seq[i+2];   
             this.seqAA[i] = '\u00A0';
-            this.seqAA[i+1] = tableAAdefault(code);
+            this.seqAA[i+1] = tableAAdefault(code.toUpperCase());
             this.seqAA[i+2] = '\u00A0';
             i=i+3;
         }
@@ -265,7 +268,7 @@ Sequence.prototype = {
             while (i<end){  
                 code = seq[i]+seq[i+1]+seq[i+2];   
                 this.seqAA[i] = '\u00A0';
-                this.seqAA[i+1] = tableAAdefault(code);
+                this.seqAA[i+1] = tableAAdefault(code.toUpperCase());
                 this.seqAA[i+2] = '\u00A0';      
                 i=i+3;
             }
@@ -337,7 +340,7 @@ Sequence.prototype = {
     },
 
     toString: function(div) {
-        this.div = div;
+        if (typeof this.div == "undefined") this.div = div;
         this.updateLetterSpacing();
         this.updateLayers();
     },
@@ -373,9 +376,11 @@ Sequence.prototype = {
 
         var max_quality = max_quality_illumina;
 
+        var h = 6; // height in pixel
+
         var clone = this.m.clone(this.id);
         var result = document.createElement('div');
-        result.style.height = "100%";
+        result.style.height = h+"px";
         result.style.width = "max-content";
         result.style.display = "table";
 
@@ -410,7 +415,9 @@ Sequence.prototype = {
                     block.title = "quality : '"+ this.quality[k] + "' ("+q+"/"+max_quality+")";
                     //block.style.background = d3.interpolateTurbo( 1 - 0.6*((q)/max_quality));
                     block.style.background = d3.interpolateSinebow( 0.4*((q)/max_quality)  );
-                    block.style.height = ((q*100)/max_quality)+"%";
+                    block.style.position = "relative"
+                    block.style.top = Math.floor((h-((q*h)/max_quality))) + "px";
+                    block.style.height = 3  + "px";
                 }
                 result.appendChild(block);
                 width = 0;
@@ -487,7 +494,7 @@ Sequence.prototype = {
 
         var seq = this.seq;  
 
-        var str = seq.filter(function(e){return e != SYMBOL_VOID;}).join('');
+        var str = seq.filter(function(e){return e != SYMBOL_VOID;}).join('').toUpperCase();
 
         var search = [];
         search.push(this.m.filter_string.toUpperCase());    //sequence
@@ -515,22 +522,13 @@ Sequence.prototype = {
     },
 
     updateLayers: function(){
-
         var clone = this.m.clone(this.id);
-        var div_nuc = this.div.getElementsByClassName("seq_layer_nuc")[0];
 
         if (typeof clone.sequence != 'undefined' && clone.sequence !== 0) {
             for (var i in this.layers){
                 var l = this.layers[i];
 
-                // create layer if needed
-                var div_layer = this.div.getElementsByClassName("seq_layer_"+i)[0];
-                if (!div_layer){
-                    div_layer = document.createElement('div');
-                    $(div_layer).addClass("seq_layer").addClass("seq_layer_"+i).insertAfter(div_nuc);
-                }
-
-                // check layer condition
+                // check if layer condition are met
                 var isOk = true;
                 if (l.condition){   
                     try{
@@ -539,77 +537,100 @@ Sequence.prototype = {
                         isOk = false;
                     }
                 }
-                if (!isOk || !l.enabled) {
-                    div_layer.style.display = "none";
-                    continue;   //next layer
-                }
-                div_layer.style.display = "block";
 
-
-                //reset custom attributes
-                div_layer.setAttribute("style", "");
-
-                // set start / stop
-                var start = this.segment_start(clone,l.start);
-                var stop = this.segment_stop(clone,l.stop);
-                if (start != undefined && stop != undefined){
-                    var width = Math.floor(CHAR_WIDTH * (stop - start))-6;
-                    var left = Math.floor(CHAR_WIDTH * start) - Math.round(this.l_spacing*2)/4;
-                    div_layer.style.width = width + "px";
-                    div_layer.style.left = (left+3) + "px";
-                }  
-
-                //set title
-                if (l.title){
-                    if (typeof l.title == "function")
-                        try{
-                            div_layer.title = l.title(this, this.m.clone(this.id));
-                        }catch(e){
-                            div_layer.title = i;
-                        }
-                    else
-                        div_layer.title = l.title;
-                }
-
-                //set text
-                if (l.text){
-                    if (typeof l.text == "function")
-                        try{
-                            text = l.text(this, this.m.clone(this.id));
-                            if (typeof text == "string") { 
-                                div_layer.innerHTML = l.text(this, this.m.clone(this.id));
-                            }else {
-                                div_layer.innerHTML = "";
-                                div_layer.append(text);
-                            }
-                        }catch(e){
-                            div_layer.innerHTML = "";
-                        }
-                    else
-                        div_layer.innerHTML = l.text;
-                }
-
-                //set classname
-                var className = "seq_layer seq_layer_"+i;          
-                if (l.className) className += " "+ l.className;
-                div_layer.className = className;
-
-                //set custom style
-                for (var s in l.style) div_layer.style[s] = l.style[s]; 
-                div_layer.style.letterSpacing = this.l_spacing + "px";
+                this.updateLayerDiv(i, (isOk && l.enabled) );
             }
         }
     },
 
-    segment_start: function(clone, fct){
+    // create or update a 
+    updateLayerDiv: function(layer, display){
+        var l = this.layers[layer];
+
+        //store anchor div dom pointer for next uses
+        if (!this.div_nuc) 
+        this.div_nuc = this.div.getElementsByClassName("seq_layer_nuc")[0];
+
+        // create layer div in aligner if needed
+        var div_layer = this.div.getElementsByClassName("seq_layer_"+layer)[0];
+        if (!div_layer){
+            div_layer = document.createElement('div');
+            $(div_layer).addClass("seq_layer").addClass("seq_layer_"+layer).insertAfter(this.div_nuc);
+        }
+
+        if (display){
+            div_layer.style.display = "block";
+         } else {
+            div_layer.style.display = "none";
+            return div_layer;
+         }
+
+        //reset custom attributes
+        div_layer.setAttribute("style", "");
+
+        // set start / stop
+        var start = this.segment_start(l.start);
+        var stop = this.segment_stop(l.stop);
+        if (start != undefined && stop != undefined){
+            var width = Math.floor(CHAR_WIDTH * (stop - start))-6;
+            var left = Math.floor(CHAR_WIDTH * start) - Math.round(this.l_spacing*2)/4;
+            div_layer.style.width = width + "px";
+            div_layer.style.left = (left+3) + "px";
+        }  
+
+        //set title
+        if (l.title){
+            if (typeof l.title == "function")
+                try{
+                    div_layer.title = l.title(this, this.m.clone(this.id));
+                }catch(e){
+                    div_layer.title = layer;
+                }
+            else
+                div_layer.title = l.title;
+        }
+
+        //set text
+        if (l.text){
+            if (typeof l.text == "function")
+                try{
+                    text = l.text(this, this.m.clone(this.id));
+                    if (typeof text == "string") { 
+                        div_layer.innerHTML = l.text(this, this.m.clone(this.id));
+                    }else {
+                        div_layer.innerHTML = "";
+                        div_layer.append(text);
+                    }
+                }catch(e){
+                    div_layer.innerHTML = "";
+                }
+            else
+                div_layer.innerHTML = l.text;
+        }
+
+        //set classname
+        var className = "seq_layer seq_layer_"+layer;          
+        if (l.className) className += " "+ l.className;
+        div_layer.className = className;
+
+        //set custom style
+        for (var s in l.style) div_layer.style[s] = l.style[s]; 
+        div_layer.style.letterSpacing = this.l_spacing + "px";
+
+        return div_layer;
+    },
+
+    segment_start: function(fct){
         try{
+            var clone = this.m.clone(this.id);
             return this.pos[fct(this,clone)];
         }catch(e){
             return undefined;
         }
     },
-    segment_stop: function(clone, fct){
+    segment_stop: function(fct){
         try{
+            var clone = this.m.clone(this.id);
             return this.pos[fct(this,clone)]+1;
         }catch(e){
             return undefined;

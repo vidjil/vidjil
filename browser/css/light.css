@@ -2436,19 +2436,15 @@ span .end-codon {
 .seq_layer_quality {
   height: 5px;
   top: 24px;
-  opacity: 0.75;
   z-index: 2;
 }
 .seq_quality_block {
-  opacity: 0.75;
-  height: 3px;
-  margin-top: 1px;
+  opacity: 1;
+  height: 5px;
   float: left;
 }
 .seq_quality_block:hover {
-  opacity: 1;
-  height: 5px;
-  margin-top: 0px;
+  opacity: 0.5;
 }
 .seq_layer_bracket:hover,
 .seq_layer_bracket_top:hover {

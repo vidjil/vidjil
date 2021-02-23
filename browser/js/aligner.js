@@ -1,5 +1,6 @@
-require(['./js/aligner_menu.js']);
-require(['./js/aligner_layer.js']);
+require(['./js/aligner_menu.js',
+         './js/aligner_layer.js', 
+         './js/view.js']);
 
 /** segment 
  * Segment is a view object to see the sequences of the selected clones in the model <br>
@@ -308,7 +309,7 @@ Aligner.prototype = {
         clone.div_elem(cloneT, false);
 
         //edit
-        if (this.m.focus == cloneID && cloneT.addClass) cloneT.addClass("list_focus");
+        if (this.m.focus == cloneID) $(cloneT).addClass("list_focus");
         cloneT.getElementsByClassName("nameBox")[0].title = clone.getName();
         cloneT.getElementsByClassName("nameBox")[0].style.color = clone.color;
         cloneT.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(clone.getShortName()));
@@ -403,7 +404,7 @@ Aligner.prototype = {
                 if (liDom == null) continue;
                 liDom.display("main", "block");
                 liDom.replace("seq-fixed", this.build_spanF(cloneID));
-                var seq = this.sequence[cloneID].toString(this.index[cloneID].getElement("main"));
+                var seq = this.sequence[cloneID].toString();
                 liDom.content("seq-mobil", seq);        
             } else {    
                 if (this.sequence[cloneID]){                         
@@ -546,7 +547,7 @@ Aligner.prototype = {
         var clone = template.content.firstElementChild.cloneNode(true);
 
         //edit
-        if (this.m.focus == geneID) clone.addClass("list_focus");
+        if (this.m.focus == geneID) $(clone).addClass("list_focus");
         clone.getElementsByClassName("nameBox")[0].title = geneID;
         clone.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(geneID));
         clone.getElementsByClassName("delBox")[0].onclick = function () {
@@ -800,7 +801,7 @@ Aligner.prototype = {
         try{
             if( selected.length && this.index.length){
                 for (var i = 0; i < selected.length; i++) {
-                    this.sequence[selected[i]].load()
+                    this.sequence[selected[i]].load();
                 }
             }
             this.update();
@@ -827,7 +828,7 @@ Aligner.prototype = {
 
             // global container
             var seq = this.sequence[this.memTab[j]];
-            seq.toString(this.index[this.memTab[j]].getElement("main"));
+            seq.toString();
         }
 
     },
