@@ -374,8 +374,8 @@ QUnit.test("computeStartStop(arrayToProcess,sequence)", function(assert) {
             "CDR3-IMGT": {
                 "seq": "",
                 "tooltip": "CDR3-IMGT",
-                "start": 124,
-                "stop": 111
+                "start": 111,
+                "stop": 124
             }
 
         };
