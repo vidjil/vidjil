@@ -72,14 +72,13 @@ var test_files = [  "testFiles/form_test",
 
 
 
+var tap_output;
 function startQunitTap(){
-    
-        var tap_output;
-        qunitTap(QUnit, function() { 
-                if (typeof arguments != "undefined"){
-                    tap_output+=arguments[0]+"\n";
-                }
-            });
+    qunitTap(QUnit, function() { 
+            if (typeof arguments != "undefined"){
+                tap_output+=arguments[0]+"\n";
+            }
+        });
 }
 
 function startQunit(){
