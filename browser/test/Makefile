@@ -24,7 +24,7 @@ functional-rbx: ../../doc/analysis-example1.vidjil
 nightmare: SHELL:=/bin/bash
 nightmare:
 	cd QUnit ; \
-	npm link nightmare ; \
+	npm link nightmare --unsafe-perm=true ; \
 	[ `xvfb-run -a node nightmare.js | tee >(cat >&2) | grep -c '^not ok'` -eq 0 ] && [ -f tap_output ]
 
 quality:
