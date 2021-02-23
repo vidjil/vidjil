@@ -168,9 +168,18 @@ QUnit.test("sequence", function(assert) {
     segment.init()
     segment.update()
 
-    var seq4 = new Sequence(4, m, segment)
-    seq4.load()
+    segment.addToSegmenter(1);
+    segment.addToSegmenter(2);
+    segment.addToSegmenter(3);
+    segment.addToSegmenter(4);
 
+    var seq1 = segment.sequence[1];
+    var seq2 = segment.sequence[2];
+    var seq3 = segment.sequence[3];
+    var seq4 = segment.sequence[4];
+
+
+    //test string functions that can be used by layers
     var nucleic4 = seq4.nucleoString();
     assert.equal(nucleic4,    "catcatcatgatgctacgatcttac",  nucleic4.toUpperCase() + " nucleic sequence");
 
@@ -184,16 +193,7 @@ QUnit.test("sequence", function(assert) {
     var search4 = seq4.searchString().replace(/(?=\s)[^\r\n\t]/g, '_');
     assert.equal(search4,     "catcatcat_____tac_____tac", search4 + " search 'cat' in sequence");
 
-    var seq1 = new Sequence(1, m, segment)
-    seq1.load()
-
-    assert.notEqual(seq1.nucleoString().indexOf("cccccg"), -1, "v part of segmented sequence")
-    assert.notEqual(seq1.nucleoString().indexOf("tccccccca"), -1, "n part of segmented sequence")
-    assert.notEqual(seq1.nucleoString().indexOf("tca"), -1, "j part of segmented sequence")
-
-    segment.addToSegmenter(3);
-    var seq3 = segment.sequence[3];
-    seq3.load()
+    //check highlight box position for one default layer
     seq3.updateLetterSpacing();
     var seq3_cdr3 = seq3.updateLayerDiv('IMGT_CDR3', true);
     assert.equal(seq3_cdr3.style.width, "162px",   "div cdr3 width => 162px    // cdr_length*CHAR_WIDTH + 6 // CHAR_WIDTH = 12; cdr3_length = 13")
@@ -239,6 +239,8 @@ QUnit.test("align", function (assert) {
     m.select(0)
     m.select(1)
 
+
+
     var done = assert.async(3);
     var delay = 0;
     var step = 500;
@@ -250,11 +252,33 @@ QUnit.test("align", function (assert) {
 
     //test align
     setTimeout( function() {
-        var aligned_sequence1 = segment.index[0].getElement("seq-mobil").innerText
+        var seq1 = segment.sequence[0];
+        var seq2 = segment.sequence[1];
+        var aligned_sequence1 = seq1.nucleoString();
         assert.ok(aligned_sequence1.includes("–"), "aligned sequence should contains '–' " + aligned_sequence1 )
 
-        var aligned_sequence2 = segment.index[1].getElement("seq-mobil").innerText
+        var aligned_sequence2 = seq2.nucleoString()
         assert.ok(aligned_sequence2.includes("–"), "aligned sequence should contains '–'" + aligned_sequence2 )
+
+        var nucleo2 = seq2.nucleoString();
+        assert.equal( nucleo2, "ATGCATGCATGCATGCCCCCCCCCCCCCCCCCCAAA–––––––––––TTTTTTTTGATCGAT–CGATCGATCGAT",
+                      nucleo2.toUpperCase() + " reference sequence spaced");
+
+        var nucleo1 = seq1.nucleoString();
+        assert.equal( nucleo1, "ATCCATGTATGCATG–––––CCCCCCCCCCCCCAAATTTTTTTTTTTTTTTTTTTGATCGATCCGATCGAT–GAT",
+                      nucleo1.toUpperCase() + " aligned sequence");
+
+        var delet1 = seq1.deletionString();
+        assert.equal( delet1.replace(/(?=\s)[^\r\n\t]/g, ' '), "               –––––                                                   –   ",
+                      delet1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " deleted nuclotide");
+
+        var sub1 = seq1.substitutionString();
+        assert.equal( sub1.replace(/(?=\s)[^\r\n\t]/g, ' '), "  C    T                                                                   ",
+                      sub1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " substituted nucleotide");
+
+        var insert1 = seq1.insertionString();
+        assert.equal( insert1.replace(/(?=\s)[^\r\n\t]/g, ' '),  "                                    TTTTTTTTTTT               C            ", 
+                      insert1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " inserted nucleotide");
 
         segment.resetAlign()
         done()
@@ -309,45 +333,4 @@ QUnit.test("reset", function (assert) {
     }, delay+=step)
  
 })
- /*
-QUnit.test("highlight", function (assert) {
-    var m = new Model();
-    m.parseJsonData(json_data, 100);
-    m.initClones();
-    var segment = new Aligner("segment",m)
-    segment.init();
 
-    var clone = m.clone(3);
-    clone.seg["5"].start = 15  // 15 nt before V
-    clone.seg["3"].stop  = 221 // 20 nt after J
-    m.select(3)
-    segment.addToSegmenter(3);
-
-    // "<span class='seq-marge'></span>                                             // Marge
-    // <span></span>
-    // <span style=\"color: black;\" class=\"before5\">GGAAGGCCCCACAGC</span>       // before V
-    // <span class=\"V\">GTCTTCTGTACTAT...TCTGGGGTCTATTACTGTGCCACCTGGGACAGG</span>  // seg V
-    // <span class=\"N\">CTGA</span>                                                // insert N1
-    // <span class=\"N\"></span>                                                    // insert N2
-    // <span class=\"J\">AGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTC</span>              // seg J
-    // <span style=\"color: black;\" class=\"after3\">ATAGTAACTTCGCCTGGTAA</span>"  // after J
-    // 
-    var str   = segment.sequence[3].toString()
-    var spans = str.split("</span>")
-    assert.equal(spans.length, 9, "correct number of spans");
-
-    assert.includes(spans[0], "seq-marge", "")
-    assert.includes(spans[2], "GGAAGGCCCCACAGC",      "segment highlight: seq before V")
-    assert.includes(spans[2], "class=\"before5\"",    "segment highlight: color of seq before V")
-    assert.includes(spans[3], "GTCTTCTGTACTAT",       "segment highlight: part seq V")
-    assert.includes(spans[3], "class=\"V\"",          "segment highlight: class V")
-    assert.includes(spans[4], ">CTGA",                "segment highlight: seq N1 (VJ)")
-    assert.includes(spans[4], "class=\"N\"",          "segment highlight: class N")
-    assert.includes(spans[6], "AGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTC", "segment highlight: seq J")
-    assert.includes(spans[6], "class=\"J\"",          "segment highlight: class J")
-    assert.includes(spans[7], "ATAGTAACTTCGCCTGGTAA", "segment highlight: seq after J")
-    assert.includes(spans[7], "class=\"after3\"",     "segment highlight: color of seq after J")
-
-})
-
-*/

@@ -267,7 +267,7 @@ json_data_align = {
     },
     "clones": [
       {
-          "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCAAATTTTTTTTTTTTTTTTTTTGATCGATCGATCGATCGAT",
+          "sequence" : "ATCCATGTATGCATGCCCCCCCCCCCCCAAATTTTTTTTTTTTTTTTTTTGATCGATCCGATCGATGAT",
           "name" : "testalign1",
           "id" : "id0",
           "reads" : [20] ,
@@ -275,7 +275,7 @@ json_data_align = {
           "germline" : "TRG",
       },
       {
-          "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCCCCCCAAATTTTTTTTTTTTTTGATCGATCGATCGATCGAT",
+          "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCCCCCCAAATTTTTTTTGATCGATCGATCGATCGAT",
           "name" : "testalign2",
           "id" : "id1",
           "reads" : [25],
