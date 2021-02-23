@@ -11,7 +11,7 @@ var lib_plugin = [  "js/lib/jquery.form",
                     "js/lib/jquery.zclip"
                  ];
 
-var lib_vidjil = [  "js/conf",
+var lib_vidjil = [  //"js/conf",
                     "js/view",
                     "js/compare",
                     "js/menu",
