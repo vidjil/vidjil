@@ -3284,11 +3284,15 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var timename  = this.samples.original_names[0]
         var distribs = this.distributions.repertoires[timename]
         // Create the list of all available distributions (on the first timepoint, but should be similar for each)
-        for (var i = 0; i < distribs.length; i++) {
-            var distrib = distribs[i]
-            raw_distribs_axes.push( distrib.axes )
+        if (distribs != undefined){
+            for (var i = 0; i < distribs.length; i++) {
+                var distrib = distribs[i]
+                raw_distribs_axes.push( distrib.axes )
+            }
+            console.log("Their are " + raw_distribs_axes.length + " distribs to load")
+        } else {
+            console.log("Their are no distribs to load")
         }
-        console.log("Their are " + raw_distribs_axes.length + " distribs to load")
 
         var same_distribs;
         var current_distrib;
