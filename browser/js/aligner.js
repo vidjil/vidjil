@@ -219,6 +219,8 @@ Aligner.prototype = {
         document.getElementById("star_selected").onclick = function (e) {
             if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
         document.getElementById("fixsegmenter").onclick = function () { self.switchFixed(); };
+        document.getElementById("cluster").onclick = function () { self.m.merge(); };
+        document.getElementById("align").onclick = function () { self.toggleAlign(); };
         this.setFixed(false);
 
     },
