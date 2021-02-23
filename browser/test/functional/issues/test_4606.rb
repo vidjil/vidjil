@@ -29,7 +29,6 @@ class TestGraph < BrowserTest
     $b.window(:title => "IMGT/V-QUEST").use do
       assert ($b.text.include? "Number of analysed sequences: 1"), ">> fail IMGT analysis"
       assert ($b.text.include? "no rearrangement found (stop codons)"), ">> IMGT expected V not found"
-      assert ($b.table(id: "summary_synthesis").last.text == ""), ">> return no subset in table"
     end
     $b.window(:title => "").use
     $b.window(:title => "IMGT/V-QUEST").close
@@ -46,7 +45,6 @@ class TestGraph < BrowserTest
       assert ($b.text.include? "Number of analysed sequences: 1"), ">> fail IMGT analysis"
       assert ($b.text.include? "Homsap IGHV3-21*01"), ">> IMGT expected V not found"
       assert ($b.text.include? "Homsap IGHJ6*02"), ">> IMGT expected J not found"
-      assert ($b.table(id: "summary_synthesis").last.text == "#2 (a)"), ">> return no subset #2 in table"
       assert ($b.text.include? "(a) Subset #2 is characterized by the expression of stereotyped B cell receptor immunoglobulin"), ">> return information on subset#2 if detected"
     end
     $b.window(:title => "").use
@@ -65,7 +63,6 @@ class TestGraph < BrowserTest
       assert ($b.text.include? "Number of analysed sequences: 1"), ">> fail IMGT analysis"
       assert ($b.text.include? "Homsap IGHV4-39*01"), ">> IMGT expected V not found"
       assert ($b.text.include? "Homsap IGHJ5*02"), ">> IMGT expected J not found"
-      assert ($b.table(id: "summary_synthesis").last.text == "#8 (a)"), ">> return subset #8 in table"
       assert ($b.text.include? "(a) Subset #8 is characterized by the expression of stereotyped B cell receptor immunoglobulin"), ">> return information on subset#2 if detected"
     end
     $b.window(:title => "").use
