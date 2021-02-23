@@ -251,7 +251,7 @@ with other software useful for RepSeq studies.
 These buttons open another window/tab.
 
    - [`❯ IMGT/V-QUEST`](http://www.imgt.org/IMGT_vquest):
-     The reference analysis from IMGT®.
+     The reference analysis from IMGT®, including subset #2 and #8 search.
      The `▼` button further allows to retrieve back results from IMGT/V-QUEST
      and to display them within Vidjil.
 
