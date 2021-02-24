@@ -1,6 +1,9 @@
 //
 require(['js/lib/d3.v5.min'], function(d3) {window.d3 = d3;});
 
+requirejs.config({
+    waitSeconds: 0
+});
 
 var lib = [         "js/lib/jquery-3.3.1.min",
                     "js/lib/blanket.1.1.9",
