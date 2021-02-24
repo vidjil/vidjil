@@ -29,6 +29,8 @@ class TestGraph < BrowserTest
     $b.window(:title => "IMGT/V-QUEST").use do
       assert ($b.text.include? "Number of analysed sequences: 1"), ">> fail IMGT analysis"
       assert ($b.text.include? "no rearrangement found (stop codons)"), ">> IMGT expected V not found"
+      assert ($b.text.include? "subset"), ">> mention of subset in the table header"
+      assert (not $b.text.include? "Subset"), ">> no mention of subset (except 'subset' in the table header)"
     end
     $b.window(:title => "").use
     $b.window(:title => "IMGT/V-QUEST").close
