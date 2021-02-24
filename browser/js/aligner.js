@@ -1,6 +1,5 @@
-require(['./js/aligner_menu.js',
-         './js/aligner_layer.js', 
-         './js/view.js']);
+require(['./js/aligner_menu',
+         './js/aligner_layer']);
 
 /** segment 
  * Segment is a view object to see the sequences of the selected clones in the model <br>
