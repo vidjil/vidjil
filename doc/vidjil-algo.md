@@ -1,4 +1,4 @@
-# vidjil-algo 2021.02
+# vidjil-algo 2021.02.2
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
@@ -689,31 +689,32 @@ Detailed output per read (generally not recommended, large files, but may be use
         -uuu        output undetected reads, all reads, including a .undetected.vdj.fa file (use only for debug)
   --out-reads                 output all reads by clones (clone.fa-*), to be used only on small datasets
   -K, --out-affects           output detailed k-mer affectation for each read (in .affects file) (use only for debug, for example -KX 100)
+
+Presets
+  --filter-reads              filter possibly huge datasets, with a permissive threshold, to extract reads that may have V(D)J recombinations
+                              (equivalent to -c detect --out-detected --e-value 1e6 -2)
 ```
 
 It is possible to extract all reads with or without detected recombinations,
 possibly to give them to other software.
-Runing Vidjil-algo with `-U` gives a file `out/basename.detected.vdj.fa`, with all detected reads.
-On datasets generated with rather specific V(D)J primers, this is generally not recommended, as it may generate a large file.
-However, the `-U` option is very useful for whole RNA-Seq or capture datasets that contain few reads with V(D)J recombinations.
-Moreover `-U` only uses the ultra-fast first passs analysis, based on k-mer heuristics.
+- `-U` gives a file `out/basename.detected.vdj.fa` with all reads having a detected V(D)J recombination
 
-
-Similarly, options are available to get the non analyzed reads:
-
-  - `-u` gives a set of files `out/basename.UNSEG_*`, with not detected reads gathered by cause.
-    It outputs only reads sharing significantly sequences with V/J germline genes or with some ambiguity:
-    it may be interesting to further study RNA-Seq datasets.
-
-  - `-uu` gives the same set of files, including **all** not detected reads (including `UNSEG too short` and `UNSEG too few V/J`),
+  - `-u` gives a set of files `out/basename.UNSEG_*` with reads where /no V(D)J recombination was detected/, 
+    but with nevertheless some significant similarity to some V/J germline genes,
+  
+  - `-uu` further produce files with all /other/ reads where no V(D)J recombination was detected
+    (including `UNSEG too short` and `UNSEG too few V/J`),
     and `-uuu` further outputs all these reads in a file `out/basename.undetected.vdj.fa`.
 
-Again, as these options may generate large files, they are generally not recommended.
+As these options may generate large files, they are generally not recommended.
 However, they are very useful in some situations, especially to understand
 why some dataset gives low detection rate.
 For example `-uu -X 1000` splits the not detected reads from the 1000 first reads.
 
-
+When processing large datasets, such as RNA-Seq or capture, one may want to pre-filter read by keeping only the ones that potentially harbour a V(D)J recombination.
+In such a case, the recommanded option is to use the `--filter-reads` preset, that launches Vidjil-algo without clone clustering and analysis,
+while outputing a `out/basename.detected.vdj.fa` file. This file contains reads /that may have V(D)J recombinations/, evaluated with a very permissive threshold.
+The resulting file is usually much smaller on such datasets and can then be transferred or analysed in-depth more easily.
 ## AIRR .tsv output
 
 Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).

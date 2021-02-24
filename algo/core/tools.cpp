@@ -494,14 +494,20 @@ string extractGeneName(string label){
 /*
    Opens a ostream, possibly gz-compressed
 */
-std::ostream* new_ofgzstream(const char *f, bool gz)
+std::ostream* new_ofgzstream(string &f, bool gz, string message)
 {
+  
   if (gz)
   {
-    return new ogzstream(f);
+    f += GZ_SUFFIX;
+  }
+  cout << "  ==> " << f <<  message << endl ;
+
+  if (gz) {
+    return new ogzstream(f.c_str());
   }
   else
   {
-    return new ofstream(f);
+    return new ofstream(f.c_str());
   }
 }

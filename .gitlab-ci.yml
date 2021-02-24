@@ -195,7 +195,7 @@ test_browser_unit:
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - dev
     - schedules
   tags:
@@ -218,7 +218,7 @@ test_browser_unit:
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - schedules
   tags:
     - web
@@ -245,7 +245,7 @@ test_browser_unit:
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - schedules
   tags:
     - web
@@ -309,7 +309,7 @@ old-chrome-browser-functional-external-chrome:
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - schedules
     - /tutorial/
   tags:
@@ -382,7 +382,7 @@ code_quality_custom:
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - dev
     - schedules
   tags:
@@ -407,7 +407,7 @@ test_server_unit:
     only:
       - /^feature-.*s.*\/.*$/
       - /^hotfix-.*s.*\/.*$/
-      - prod-server
+      - /^prod-server/
       - dev
       - schedules
     tags:
@@ -439,7 +439,7 @@ test_server_unit:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
-    - prod-server
+    - /^prod-server/
     - dev
     - schedules
   tags:
@@ -552,8 +552,8 @@ deploy_docker:
     - docker rmi $TAG "vidjil/$TYPE:latest"
   when: manual
   only:
-    - prod-server
-    - prod-client
+    - /^prod-server/
+    - /^prod-client/
   tags:
     - web
     - docker
@@ -567,7 +567,7 @@ deploy_prod:
     name: production
     url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
   only:
-    - prod-client
+    - /^prod-client/
   tags:
     - web
 
