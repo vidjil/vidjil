@@ -641,10 +641,12 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
 	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
 	    // See #1941 and #3416
-        if (typeof this.diversity[key][time] != null) {
-            return this.diversity[key][time]
-	    } else if (typeof this.diversity[key][time] != 'undefined') {
-            return this.diversity[key][time].toFixed(3);
+	    if (typeof this.diversity[key][time] != 'undefined') {
+            if (this.diversity[key][time] != null) {
+                return this.diversity[key][time].toFixed(3);
+            } else {
+                return this.diversity[key][time]
+            }
 	    } else {
             return this.diversity[key].toFixed(3);
 	    }
