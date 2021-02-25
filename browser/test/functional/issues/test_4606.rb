@@ -29,7 +29,7 @@ class TestImgtSubset < BrowserTest
     $b.window(:title => "IMGT/V-QUEST").use do
       assert ($b.text.include? "Number of analysed sequences: 1"), ">> fail IMGT analysis"
       assert ($b.text.include? "no rearrangement found (stop codons)"), ">> IMGT expected V not found"
-      assert ($b.table(:class => "summary_synthesis").text.include? "subset"), ">> mention of subset in the table header"
+      assert ($b.table(:class => "summary_synthesis").ths.last.text.include? "subset"), ">> mention of subset in the table header"
       assert (not $b.ul(:id => "warning_list").exists? ), ">> no warning; no mention of subset"
 
     end
