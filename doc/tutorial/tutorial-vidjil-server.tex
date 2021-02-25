@@ -12,7 +12,7 @@ class LiveTestSampleSets < ServerTest
       if ENV['URL']
         set_browser(URL)
       else
-        set_browser("https://localhost/browser/")
+        set_browser("http://localhost/browser/")
       end
     end
     $b.login(logins("admin", "user"), logins("admin", "password"))
@@ -32,7 +32,7 @@ class LiveTestSampleSets < ServerTest
     assert(!$b.login_form.present?)
   end
   ######################################
-  ### Tracking clones on several samples
+  ### Manipulate server and database
   ######################################
 
 
