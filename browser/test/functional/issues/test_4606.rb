@@ -3,7 +3,7 @@ load 'vidjil_browser.rb'
 load 'browser_test.rb'
 
 #browser test suite
-class TestGraph < BrowserTest
+class TestImgtSubset < BrowserTest
 
  def setup
     super
