@@ -207,7 +207,7 @@ forget to make a backup of any file you replace.)
   - Set the desired mail domain and credentials for the `postfix` container and update `vidjil-server/conf/defs.py`
     `SMTP_CREDENTIALS` and `FROM_EMAIL` to match
 
-  - Comment backup/reporter services in `docker-compose.yml`
+  - Comment reporter services in `docker-compose.yml`
 
   - It is avised to first launch  with `docker-compose up mysql`.
 The first time, this container creates the database and it takes some time.
@@ -345,8 +345,7 @@ you can look into:
 
 ## Launching manually the backup
 
-The backup should be handled by the backup container. If so, connect to this
-container and run (for a full backup, otherwise add the `-i` option when
+The backup should be handled by the backup container, see [*Making backups* below](#makingbackups). Otherwise you can use the `backup.sh` script by connecting to the `backup` or `uwsgi` container (for a full backup, otherwise add the `-i` option when
 running `backup.sh`):
 
 ```sh
@@ -841,29 +840,23 @@ retrieved.
 
 Web2py and Vidjil are no exception to this rule.
 
-## Making backups
+## <a name="makingbackups"></a> Making backups
 
 The top priority is to backup *files created during the analysis*
 (either by a software or a human).
 Should the data be lost, valuable man-hours would be lost.
-In order to prevent this, we make twice a day incremental backups of the
+In order to prevent this, we make several times a day incremental backups of the
 data stored on the public Vidjil servers.
 
-This does not apply to uploaded files. We public servers that they should
+This does not apply to uploaded files. We inform users that they should
 keep a backup of their original sequence files.
 
-To ease the backup, the `backup.sh` script provides an example.  For this
-script to be ran automatically, it is required that `mysqldump` does not ask
-for a password. The credentials informations should be provided in a `~/.my.cnf` file (in the case of MySQL).
+To ease the backup, the `backup.sh` script provides an example. 
+It can be used through the backup container, for which you have two configuration files to update.
 
-``` conf
-[client]
-user = backup
-password = "strongpassword"
-host = localhost
-```
-It is also advised that the backup user has a read-only access to the database.
+The `docker/backup/conf/backup.cnf` gives the authentication information to the database so that a backup user (read rights only required) can connect to the database.
 
+Then the backup strategy can be configured in the `docker/backup/conf/backup-cron` file. The cron file states how often the backup script will be called. There are three options: backing up all results/analyses since yesterday, since the start of the month, since forever. On top of that the database is exported under two formats (CSV and SQL).
 
 ## Autodelete and Permissions
 

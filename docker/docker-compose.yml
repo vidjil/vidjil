@@ -70,12 +70,16 @@ services:
             - mysql
             - postfix
     backup:
-        image: vidjil/server:latest
-        command: bash -c "echo '0 5 * * * cd /usr/share/vidjil/server; sh backup.sh /mnt/backup 2>1&' > /etc/cron.d/backup-cron && cron && tail -f /var/log/cron.log"
+        build: ./backup
         volumes_from:
             - uwsgi
+        volumes:
+            - ./backup/conf:/etc/backup
+        depends_on:
+            - mysql
         links:
             - mysql
+            - uwsgi:uwsgi
     reporter:
         build: ./reporter
         image: reporter:latest
