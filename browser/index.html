@@ -26,8 +26,9 @@
 
         <link rel="shortcut icon" href="./images/favicon-v.ico" type="image/x-icon">
         <link rel="icon" href="./images/favicon-v.ico" type="image/x-icon">
-        <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu/stylesheet.css" /> 
-        <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu-mono/stylesheet.css" /> 
+
+        <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu/stylesheet.css" />
+        <link rel="stylesheet" type="text/css" href="css/fonts/ubuntu-mono/stylesheet.css" />
         <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/fontello.css" />
         <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/animation.css" />
         <link rel="stylesheet" href="css/vmi/vmi.css" />
@@ -83,17 +84,13 @@
         <!-- TOP-CONTAINER -->
         <div id="top-container" onmouseout="hideSelector()">
             <div id="menu-container">
-                <div class="menu devel-mode" onmouseover="showSelector('vmiSelector');">vmi
-                    <!-- Div is filld programmatically with vmi menu -->
-                    <div class="selector" id="vmiSelector"></div>
-                </div>
                 <div class="menu" id="top_info">
                     <!--Div is filled programmatically -->
                 </div>
-                <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none">patients
+                <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none">samples
                     <div id="dbSelector" class="selector"><div>
                         <div class="menu_box">
-                            <a class="buttonSelector" onclick="javascript:db.call('sample_set/all', {'type': 'patient', 'page': 0})">open patient list</a>
+                            <a class="buttonSelector" onclick="javascript:db.call('sample_set/all', {'type': 'patient', 'page': 0})">open list</a>
                         </div>
                         <div class="menu_box">
                             <div id="last_loaded_file">
@@ -135,7 +132,7 @@
                             <a class="buttonSelector disabledClass" id="export_fasta_align" onclick="javascript:segment.exportAlignFasta()">export aligned fasta (selected clones)</a>
                         </div>
                         <div class="menu_box">
-                            <a class="buttonSelector" id="export_fasta" onclick="javascript:segment.add_all_germline_to_segmenter()">add germline genes (experimental)</a>
+                            <a class="buttonSelector" id="export_add_germline" onclick="javascript:segment.add_all_germline_to_segmenter()">add germline genes (experimental)</a>
                         </div>
                     </div></div>
                 </div>
@@ -146,18 +143,18 @@
                           <a class="buttonSelector" onclick="m.restoreClusters();">revert to previous clusters</a>
                         </div>
                         <div class="menu_box">
-                          <a class="buttonSelector" onclick="m.merge();">cluster selected clones</a>
-                          <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V/5' </a>
-                          <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J/3' </a>
-                          <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getSegAASequence('junction')});">cluster by CDR3 </a>
-                          <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).germline});">cluster by locus </a>
-                          <a class="buttonSelector devel-mode" onclick="m.similarity_builder.DBscan(95,0.001);">cluster by DBscan (experimental) </a>
-                          <a class="buttonSelector" onclick="m.similarity_builder.cluster_me(95,0.1);">cluster by similarity </a>
+                          <a id="clusterBy_selected"   class="buttonSelector" onclick="m.merge();">cluster selected clones</a>
+                          <a id="clusterBy_5"          class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V/5' </a>
+                          <a id="clusterBy_3"          class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J/3' </a>
+                          <a id="clusterBy_cdr3"       class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getSegAASequence('junction')});">cluster by CDR3 </a>
+                          <a id="clusterBy_locus"      class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).germline});">cluster by locus </a>
+                          <a id="clusterBy_dbscan"     class="buttonSelector devel-mode" onclick="m.similarity_builder.DBscan(95,0.001);">cluster by DBscan (experimental) </a>
+                          <a id="clusterBy_similarity" class="buttonSelector" onclick="m.similarity_builder.cluster_me(95,0.1);">cluster by similarity </a>
                           <div id="clusterby_button"> </div>
                         </div>
                         <div class="menu_box">
-                          <a class="buttonSelector" onclick="m.break();">break selected clusters</a>
-                          <a class="buttonSelector" onclick="m.resetClusters();">break all clusters</a>
+                          <a id="cluster_break_selected" class="buttonSelector" onclick="m.break();">break selected clusters</a>
+                          <a id="cluster_break_all" class="buttonSelector" onclick="m.resetClusters();">break all clusters</a>
                         </div>
                     </div></div>
                 </div>
@@ -177,12 +174,19 @@
                 </div>
 
                 <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();" onmouseover="showSelector('filterSelector');" > filter
-                    <div id="filterSelector" class="selector"><div>
+                    <div id="filterSelector" class="selector">
+                      <div>
                         <div class="menu_box">
-                            <span id="top_label"></span></br>
-                            <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
+                          <span id="top_label"></span></br>
+                          <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
                         </div>
-                    </div></div>
+                        <div class="menu_box">
+                          <div id="filter_switch_sample" title="Hide clones that are not present in the current sample">
+                            <input id="filter_switch_sample_check" type="checkbox"></input> Focus on clones of one sample
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                 </div>
 
                 <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();" onmouseover=" showSelector('settingsSelector');" > settings
@@ -195,29 +199,55 @@
                         </div>
                         <div class="menu_box">
                             size display</br>
-                            <label for="menuNotationScientific" class="buttonSelector" onclick="m.changeNotation('scientific', true)"><input id="menuNotationScientific" type="radio" name="notation" value="scientific" />scientific notation</label>
-                            <label for="menuNotationPercent" class="buttonSelector" onclick="m.changeNotation('percent', true)"><input id="menuNotationPercent" type="radio" name="notation" value="percent" checked />percent</label>
+                            <label    for="menuNotation_scientific"     class="buttonSelector" onclick="m.changeNotation('scientific', true, true)">
+                                <input id="menuNotation_scientific"     type="radio" name="notation" value="scientific" />scientific notation
+                            </label>
+                            <label    for="menuNotation_percent"        class="buttonSelector" onclick="m.changeNotation('percent', true, true)">
+                                <input id="menuNotation_percent"        type="radio" name="notation" value="percent" checked />percent
+                            </label>
                         </div>
-
                         <div class="menu_box">
                             sample key</br>
-                            <label for="menuTimeFormName" class="buttonSelector" onclick="m.changeTimeFormat('name', true)"><input id="menuTimeFormName" type="radio" name="time" value="name" checked />name</label>
-                            <label for="menuTimeFormShort" class="buttonSelector" onclick="m.changeTimeFormat('short_name', true)"><input id="menuTimeFormShort" type="radio" name="time" value="short_name"/>name (short)</label>
-                            <label for="menuTimeFormSample" class="buttonSelector" onclick="m.changeTimeFormat('sampling_date', true)"><input id="menuTimeFormSample" type="radio" name="time" value="sampling_date" />sampling date</label>
-                            <label for="menuTimeFormSamplePlus" class="buttonSelector" onclick="m.changeTimeFormat('delta_date', true)"><input id="menuTimeFormSamplePlus" type="radio" name="time" value="delta_date" />day after first sample</label>
+                            <label    for="menuTimeForm_name"           class="buttonSelector" onclick="m.changeTimeFormat('name', true, true)">
+                                <input id="menuTimeForm_name"           type="radio" name="time" value="name" checked   />name
+                            </label>
+                            <label    for="menuTimeForm_short_name"     class="buttonSelector" onclick="m.changeTimeFormat('short_name', true, true)">
+                                <input id="menuTimeForm_short_name"     type="radio" name="time" value="short_name"     />name (short)
+                            </label>
+                            <label    for="menuTimeForm_sampling_date"  class="buttonSelector" onclick="m.changeTimeFormat('sampling_date', true, true)">
+                                <input id="menuTimeForm_sampling_date"  type="radio" name="time" value="sampling_date"  />sampling date
+                            </label>
+                            <label    for="menuTimeForm_delta_date"     class="buttonSelector" onclick="m.changeTimeFormat('delta_date', true, true)">
+                                <input id="menuTimeForm_delta_date"     type="radio" name="time" value="delta_date"     />day after first sample
+                            </label>
                         </div>
                         <div class="menu_box">
                              N regions in clone names</br>
-                             <label for="menuCloneNotNucNum" class="buttonSelector" onclick="m.changeCloneNotation('nucleotide_number', true)"><input id="menuCloneNotNucNum" type="radio" name="show_name" value="nucleotide_number" />length</label>
-                             <label for="menuCloneNotSeqShort" class="buttonSelector" onclick="m.changeCloneNotation('short_sequence', true)"><input id="menuCloneNotSeqShort" type="radio" name="show_name" value="short_sequence" checked />sequence (when short)</label>
-                             <label for="menuCloneNotSeq" class="buttonSelector" onclick="m.changeCloneNotation('full_sequence', true)"><input id="menuCloneNotSeq" type="radio" name="show_name" value="full_sequence" />sequence (always)</label>
+                             <label   for="menuCloneNot_nucleotide_number"  class="buttonSelector" onclick="m.changeCloneNotation('nucleotide_number', true, true)">
+                                <input id="menuCloneNot_nucleotide_number"  type="radio" name="show_name" value="nucleotide_number" />length
+                            </label>
+                             <label   for="menuCloneNot_short_sequence"     class="buttonSelector" onclick="m.changeCloneNotation('short_sequence', true, true)">
+                                <input id="menuCloneNot_short_sequence"     type="radio" name="show_name" value="short_sequence" checked />sequence (when short)
+                            </label>
+                             <label   for="menuCloneNot_full_sequence"      class="buttonSelector" onclick="m.changeCloneNotation('full_sequence', true, true)">
+                                <input id="menuCloneNot_full_sequence"      type="radio" name="show_name" value="full_sequence" />sequence (always)
+                            </label>
                         </div>
                         <div class="menu_box">
                              alleles in clone names</br>
-                             <label for="menu_allele_never" class="buttonSelector" onclick="m.changeAlleleNotation('never', true)"><input id="menu_allele_never" type="radio" name="menu_allele" value="never" />never</label>
-                             <label for="menu_allele_when_not_01" class="buttonSelector" onclick="m.changeAlleleNotation('when_not_01', true)"><input id="menu_allele_when_not_01" type="radio" name="menu_allele" value="when_not_01" checked />when not *01</label>
-                             <label for="menu_allele_always" class="buttonSelector" onclick="m.changeAlleleNotation('always', true)"><input id="menu_allele_always" type="radio" name="menu_allele" value="always" />always</label>
+                             <label   for="menuAlleleNot_never"         class="buttonSelector" onclick="m.changeAlleleNotation('never', true, true)">
+                                <input id="menuAlleleNot_never"         type="radio" name="menu_allele" value="never" />never
+                            </label>
+                             <label   for="menuAlleleNot_when_not_01"   class="buttonSelector" onclick="m.changeAlleleNotation('when_not_01', true, true)">
+                                <input id="menuAlleleNot_when_not_01"   type="radio" name="menu_allele" value="when_not_01" checked />when not *01
+                            </label>
+                             <label   for="menuAlleleNot_always"        class="buttonSelector" onclick="m.changeAlleleNotation('always', true, true)">
+                                <input id="menuAlleleNot_always"        type="radio" name="menu_allele" value="always" />always
+                            </label>
                         </div>
+                        <div class="menu_box">
+                            <a class="buttonSelector" onclick="m.resetSettings();">reset settings</a>
+                       </div>
 
 
                         <div class="menu_box devel-mode">
@@ -277,9 +307,14 @@
 
 
         <div id="menu_right_part">
+            <div id="server-id" class="menu"></div>
             
             <div id="fps" style="display: none"> </div>
             <div id="header_messages" class="message_container header"></div>
+
+            <div id="login-container" class="menu"></div>
+
+            <div id='updateIcon' style="display: none; align-items: center; background: transparent; width:1px"></div>
 
             <div id='live-ajax' style="display: flex; align-items: center">
                 <div id='live-ajax-msg'>
@@ -313,7 +348,6 @@
                 </div></div>
                 </div>
 
-
             <div class="menu" id="alert"></div>
             <div id="logo"  onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span class='logo'>(beta)</span></div>
 <!--
@@ -325,33 +359,57 @@
         </div>  
         <!-- fin top-container-->
         
-        <!-- MID-CONTAINER -->
-        <div id="mid-container" onmouseover="hideSelector()">
+        <div id="vmiSelector"></div>
+        <div id='vidjil-panels'>
+            <!-- MID-CONTAINER -->
+            <div id="mid-container" onmouseover="hideSelector()">
 
-            <!-- LEFT-CONTAINER -->
-            <div id="left-container">
+                <!-- LEFT-CONTAINER -->
+                <div id="left-container">
+                </div>
+                <!-- fin left-container -->
+
+                <div id="vertical-separator"></div>
+
+                <!-- VISU-CONTAINER  -->
+                <div id="visu-container">
+                </div>
+
+                <div id="vertical-separator-right"></div>
+
+                <!-- RIGHT-CONTAINER -->
+                <div id="right-container">
+                </div>
+
             </div>
-            <!-- fin left-container -->
+            <!-- fin mid-container -->
 
-            <div id="vertical-separator"></div>
-
-            <!-- RIGHT-CONTAINER -->
-            <div id="right-container"></div>
-
-            <!-- VISU-CONTAINER  -->
-            <div id="visu-container">
-            </div>
-
+            <!-- BOT-CONTAINER / SEGMENTER-CONTAINER -->
+            <div id="bot-container"> </div>
         </div>
-        <!-- fin mid-container -->
-
-        <!-- BOT-CONTAINER / SEGMENTER-CONTAINER -->
-        <div id="bot-container"> </div>
 
         <form id="form"></form>
 
         <div id="tip-container"></div>
 
     </body> 
+
+
+    <template id='clipboard-popup'> 
+        <div>
+        <div>
+            Add several patients, runs, or sample sets
+           <br>
+        </div>
+        <div>
+            <form name="clipboardForm">
+                <textarea   name="clipboardData" id="clipboardData" rows="6" cols="70" 
+                            placeholder="Paste table data here"></textarea>
+                <input name="Submit"  type="submit" value="Continue"/>
+            </form>   
+            See the <a target='_blank' href='http://www.vidjil.org/doc/#batch-creation'>required format</a>
+        </div>
+        </div>
+    </template>
 
 </html>

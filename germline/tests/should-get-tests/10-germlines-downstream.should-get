@@ -1,0 +1,9 @@
+!NO_LAUNCHER:
+!LAUNCH: (cd $VIDJIL_DIR/germline ; cat homo-sapiens/TRBJ+down.fa | tr -d '\n' | tr '>' '\n')
+
+$ TRBJ1-1 has the correct 71bp downstream
+1: GTAAGACATTTTTCAGGTTCTTTTGCAGATCCGTCACAGGGAAAAGTGGGTCCACAGTGTCCCTTTTAGAG
+
+$ The 16 sequences have 71bp downstream, and no more
+16: [AGCT]{71}
+0: [AGCT]{72}

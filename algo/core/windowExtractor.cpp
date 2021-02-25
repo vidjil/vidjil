@@ -1,9 +1,6 @@
 #include "windowExtractor.h"
 #include "segment.h"
-
-// Progress bar
-#define PROGRESS_POINT 25000
-#define PROGRESS_LINE 40
+#include "tools.h"
 
 WindowExtractor::WindowExtractor(MultiGermline *multigermline): out_segmented(NULL), out_unsegmented(NULL), out_unsegmented_detail(NULL), out_affects(NULL),
                                                                 max_reads_per_window(~0), multigermline(multigermline){
@@ -21,7 +18,8 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
                                          map<string, string> &windows_labels, bool only_labeled_windows,
                                          bool keep_unsegmented_as_clone,
                                          double nb_expected, int nb_reads_for_evalue,
-                                         VirtualReadScore *scorer) {
+                                         VirtualReadScore *scorer,
+                                         SampleOutput *output) {
   init_stats();
 
   WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
@@ -30,7 +28,17 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 
   unsigned long long int bp_total = 0;
 
+  global_interrupted = false ;
+  signal(SIGINT, sigintHandler);
+
   while (reads->hasNext()) {
+
+    if (global_interrupted)
+    {
+      string msg = "Interrupted after processing " + string_of_int(nb_reads) + " reads" ;
+      if (output) output->add_warning(W09_INTERRUPTED, msg, LEVEL_WARN);
+      break;
+    }
 
     try {
       reads->next();
@@ -122,6 +130,7 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 	cout.flush() ;
       }
   }
+  signal(SIGINT, SIG_DFL);
 
   cout << endl ;
 
@@ -162,7 +171,7 @@ void WindowExtractor::setUnsegmentedOutput(ostream *out) {
   out_unsegmented = out;
 }
 
-void WindowExtractor::setUnsegmentedDetailOutput(ofstream **outs, bool unsegmented_detail_full) {
+void WindowExtractor::setUnsegmentedDetailOutput(ostream **outs, bool unsegmented_detail_full) {
   out_unsegmented_detail = outs;
   this->unsegmented_detail_full = unsegmented_detail_full;
 }

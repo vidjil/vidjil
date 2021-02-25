@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011-2019 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2020 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
   Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -29,6 +29,7 @@
 #include <list>
 #include <stdexcept>
 
+#define STDIN_FILENAME "-"
 #define SAMPLE_APPROX_NB_SEQUENCES 200
 
 using namespace std;

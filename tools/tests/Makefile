@@ -4,6 +4,8 @@ all: should doctests
 should-get-tests/fuse-doc.tap: should-get-tests/fuse-doc.should-get force
 	$(MAKE) -C ../../doc analysis-example1.vidjil
 
+data/fused_multiple.vidjil: data/fused_multiple.vidjil.gz
+	gunzip -k $^
 should: should-get-tests/fuse-doc.tap
 	python3 ../should.py should-get-tests/*.should-get
 

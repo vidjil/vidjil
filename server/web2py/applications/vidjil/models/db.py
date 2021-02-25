@@ -88,7 +88,7 @@ auth.define_tables(username=False, signature=False)
 mail = auth.settings.mailer
 mail.settings.server = defs.SMTP_SERVER
 mail.settings.sender = defs.FROM_EMAIL
-mail.settings.login = None
+mail.settings.login = defs.SMTP_CREDENTIALS
 
 ## configure auth policy
 auth.settings.registration_requires_verification = False
@@ -108,6 +108,10 @@ auth.messages.group_description = 'Group of user %(id)04d - %(first_name)s %(las
 ## register with janrain.com, write your domain:api_key in private/janrain.key
 from gluon.contrib.login_methods.rpx_account import use_janrain
 use_janrain(auth, filename='private/janrain.key')
+
+# TODO: create a custom adapter ?
+if defs.DB_ADDRESS.split(':')[0] == 'mysql':
+    db.executesql("SET sql_mode='PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';")
 
 #########################################################################
 ## Define your tables below for example
@@ -197,13 +201,18 @@ db.define_table('sequence_file',
 
 
 
+db.define_table('classification',
+                Field('name', 'string'),
+                Field('info','text'))
+
 
 db.define_table('config',
                 Field('name', 'string'),
                 Field('program', 'string'),
                 Field('command', 'string'),
                 Field('fuse_command', 'string'),
-                Field('info','text'))
+                Field('info','text'),
+                Field('classification', 'reference classification', ondelete='SET NULL'))
 
 
 db.define_table('results_file',
@@ -279,6 +288,15 @@ db.define_table('tag_ref',
                 Field('tag_id', 'reference tag'),
                 Field('table_name', 'string'),
                 Field('record_id', 'integer'))
+
+# try to create an index on these un-indexed columns, if it fails, we assume they already exist
+try:
+    db.executesql('CREATE INDEX table_name_index ON tag_ref (table_name);')
+    db.executesql('CREATE INDEX record_id_index ON tag_ref (record_id);')
+    db.executesql('CREATE INDEX name_index ON auth_permission (name);')
+    db.executesql('CREATE INDEX record_id_index ON auth_permission (record_id);')
+except:
+        pass
 
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)

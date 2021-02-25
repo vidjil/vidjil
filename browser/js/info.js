@@ -22,8 +22,7 @@
  */
 
 function Info(id, model, builder) {
-    View.call(this, model);
-    this.id = id;
+    View.call(this, model, id);
     this.builder = builder;
 }
 
@@ -64,6 +63,7 @@ Info.prototype = {
             var point_value = this.m.getStrTime(this.m.t, "name");
             point_value = point_value !== "" ? point_value : "-/-";
             var point_name_container = document.createElement("div");
+            point_name_container.id  = "info_sample_name"
             point_name_container.className += "inline-block_90 centered ellipsis";
             point_name_container.title = point_value;
             point_name_container.appendChild(document.createTextNode(point_value));
@@ -190,6 +190,7 @@ Info.prototype = {
             parent.appendChild(div_sequence_info);
 
             this.builder.initTag();
+            this.colorMethod = this.m.colorMethod
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -281,6 +282,16 @@ Info.prototype = {
         else
             this.m[fieldName][this.m.t] = value;
         this.post_save(this);
+    },
+
+    /**
+     * Update the view. Change the color method if an update is detected in model
+     * @param {integer[]} - list - array of clone index
+     * */
+    updateElemStyle: function (list) {
+        if (this.m.colorMethod != this.colorMethod)
+            this.update()
+        this.colorMethod = this.m.colorMethod
     },
 
     create_sample_info_container: function(info, className, id, placeholder, target) {
@@ -495,6 +506,7 @@ Info.prototype = {
                 spantag.onclick = span_onclick;
                 span2.appendChild(spantag);
             }
+
             break;
         case 'productive':
             span0.appendChild(document.createTextNode('not productive '));

@@ -6,7 +6,7 @@
 #include <ctype.h>
 
 void Germline::init(string _code, char _shortcut,
-                    string seed,
+                    string seed_5, string seed_4, string seed_3,
                     int max_indexing, bool build_automaton)
 {
   seg_method = SEG_METHOD_53 ;
@@ -15,7 +15,9 @@ void Germline::init(string _code, char _shortcut,
   index = 0 ;
   this->max_indexing = max_indexing;
 
-  this->seed = expand_seed(seed);
+  this->seed_5 = expand_seed(seed_5);
+  this->seed_4 = expand_seed(seed_4);
+  this->seed_3 = expand_seed(seed_3);
 
   affect_5 = "V" ;
   affect_4 = "" ;
@@ -24,20 +26,20 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
   affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
-  filter_5 = build_automaton ? new FilterWithACAutomaton(rep_5, this->seed) : nullptr;
+  filter_5 = build_automaton ? new FilterWithACAutomaton(rep_5, this->seed_5) : nullptr;
 }
 
 
 Germline::Germline(string _code, char _shortcut,
-                   string seed, int max_indexing, bool build_automaton)
+                   string seed_5, string seed_4, string seed_3, int max_indexing, bool build_automaton)
 {
-  init(_code, _shortcut, seed, max_indexing, build_automaton);
+  init(_code, _shortcut, seed_5, seed_4, seed_3, max_indexing, build_automaton);
 }
 
 
 Germline::Germline(string _code, char _shortcut,
                    string f_rep_5, string f_rep_4, string f_rep_3,
-                   string seed, int max_indexing, bool build_automaton)
+                   string seed_5, string seed_4, string seed_3, int max_indexing, bool build_automaton)
 {
 
   f_reps_5.push_back(f_rep_5);
@@ -49,7 +51,7 @@ Germline::Germline(string _code, char _shortcut,
   rep_4 = BioReader(f_rep_4, 2, "|");
   rep_3 = BioReader(f_rep_3, 2, "|");
 
-  init(_code, _shortcut, seed, max_indexing, build_automaton);
+  init(_code, _shortcut, seed_5, seed_4, seed_3, max_indexing, build_automaton);
 
   if (rep_4.size())
     seg_method = SEG_METHOD_543 ;
@@ -58,7 +60,7 @@ Germline::Germline(string _code, char _shortcut,
 
 Germline::Germline(string _code, char _shortcut,
                    list <string> _f_reps_5, list <string> _f_reps_4, list <string> _f_reps_3,
-                   string seed, int max_indexing, bool build_automaton)
+                   string seed_5, string seed_4, string seed_3, int max_indexing, bool build_automaton)
 {
 
   f_reps_5 = _f_reps_5 ;
@@ -74,7 +76,7 @@ Germline::Germline(string _code, char _shortcut,
   for (list<string>::const_iterator it = f_reps_5.begin(); it != f_reps_5.end(); ++it)
     rep_5.add(*it);
 
-  init(_code, _shortcut, seed, max_indexing, build_automaton);
+  init(_code, _shortcut, seed_5, seed_4, seed_3, max_indexing, build_automaton);
 
   for (list<string>::const_iterator it = f_reps_4.begin(); it != f_reps_4.end(); ++it)
     rep_4.add(*it);
@@ -89,20 +91,20 @@ Germline::Germline(string _code, char _shortcut,
 
 Germline::Germline(string _code, char _shortcut, 
            BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
-                   string seed, int max_indexing, bool build_automaton)
+                   string seed_5, string seed_4, string seed_3, int max_indexing, bool build_automaton)
 {
   rep_5 = _rep_5 ;
   rep_4 = _rep_4 ;
   rep_3 = _rep_3 ;
 
-  init(_code, _shortcut, seed, max_indexing, build_automaton);
+  init(_code, _shortcut, seed_5, seed_4, seed_3, max_indexing, build_automaton);
 
   if (rep_4.size())
     seg_method = SEG_METHOD_543 ;
 }
 
 Germline::Germline(string code, char shortcut, string path, json json_recom,
-                   string seed, int max_indexing, bool build_automaton)
+                   string seed_5, string seed_4, string seed_3, int max_indexing, bool build_automaton)
 {
 
   bool regular = (code.find("+") == string::npos);
@@ -119,7 +121,7 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
     rep_5.add(path + filename);
   }
 
-  init(code, shortcut, seed, max_indexing, build_automaton);
+  init(code, shortcut, seed_5, seed_4, seed_3, max_indexing, build_automaton);
 
   if (json_recom.find("4") != json_recom.end()) {
     for (json::iterator it = json_recom["4"].begin();
@@ -167,10 +169,12 @@ void Germline::finish() {
 
 void Germline::new_index(IndexTypes type)
 {
-  assert(! seed.empty() && (seed.find(SEED_YES) != std::string::npos));
+  assert(! seed_5.empty() && (seed_5.find(SEED_YES) != std::string::npos));
+  assert(! seed_4.empty() && (seed_4.find(SEED_YES) != std::string::npos));
+  assert(! seed_3.empty() && (seed_3.find(SEED_YES) != std::string::npos));
 
   bool rc = true ;
-  index = KmerStoreFactory<KmerAffect>::createIndex(type, seed, rc);
+  index = KmerStoreFactory<KmerAffect>::createIndex(type, seed_5, rc);
   index->refs = 1;
 
   update_index();
@@ -178,8 +182,10 @@ void Germline::new_index(IndexTypes type)
 
 void Germline::set_index(IKmerStore<KmerAffect> *_index)
 {
-  index = _index;
-  index->refs++ ;
+  if (index != _index) {
+    index = _index;
+    index->refs++ ;
+  }
 }
 
 
@@ -187,19 +193,19 @@ void Germline::update_index(IKmerStore<KmerAffect> *_index)
 {
   if (!_index) _index = index ;
 
-  _index->insert(rep_5, affect_5, max_indexing, seed);
-  _index->insert(rep_4, affect_4, 0, seed);
-  _index->insert(rep_3, affect_3, -max_indexing, seed);
+  _index->insert(rep_5, affect_5, max_indexing, seed_5);
+  _index->insert(rep_4, affect_4, 0, seed_4);
+  _index->insert(rep_3, affect_3, -max_indexing, seed_3);
 }
 
 void Germline::mark_as_ambiguous(Germline *other)
 {
-  index->insert(other->rep_5, AFFECT_AMBIGUOUS_SYMBOL, max_indexing, seed);
+  index->insert(other->rep_5, AFFECT_AMBIGUOUS_SYMBOL, max_indexing, seed_5);
 
   if (other->affect_4.size())
-    index->insert(other->rep_4, AFFECT_AMBIGUOUS_SYMBOL, 0, seed);
+    index->insert(other->rep_4, AFFECT_AMBIGUOUS_SYMBOL, 0, seed_4);
 
-  index->insert(other->rep_3, AFFECT_AMBIGUOUS_SYMBOL, -max_indexing, seed);
+  index->insert(other->rep_3, AFFECT_AMBIGUOUS_SYMBOL, -max_indexing, seed_3);
 }
 
 void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
@@ -229,15 +235,18 @@ ostream &operator<<(ostream &out, const Germline &germline)
   out << setw(5) << left << germline.code << right << " '" << germline.shortcut << "' "
       << " ";
 
-  size_t seed_span = germline.seed.size();
-  size_t seed_w = seed_weight(germline.seed);
+  size_t seed_5_span = germline.seed_5.size();
+  size_t seed_5_w = seed_weight(germline.seed_5);
+  size_t seed_3_span = germline.seed_3.size();
+  size_t seed_3_w = seed_weight(germline.seed_3);
 
   if (germline.index) {
     out << " 0x" << hex << setw(2) << setfill('0') << germline.index->id << dec << setfill(' ') << " " ;
     out << fixed << setprecision(3) << setw(8)
-        << 100 * germline.index->getIndexLoad(KmerAffect(germline.affect_5, 1, seed_span)) << "%" << " "
-        << 100 * germline.index->getIndexLoad(KmerAffect(germline.affect_3, 1, seed_span)) << "%";
-    out << " l" << germline.seed.length() << " k" << seed_w << " " << germline.seed ;
+        << 100 * germline.index->getIndexLoad(KmerAffect(germline.affect_5, 1, seed_5_span)) << "%" << " "
+        << 100 * germline.index->getIndexLoad(KmerAffect(germline.affect_3, 1, seed_3_span)) << "%";
+    out << " l" << germline.seed_5.length() << " k" << seed_5_w << " " << germline.seed_5 ;
+    out << " l" << germline.seed_3.length() << " k" << seed_3_w << " " << germline.seed_3 ;
   }
 
   out << endl;
@@ -324,8 +333,26 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     char shortcut = json_value["shortcut"].dump()[1];
     string code = it.key();
     json json_parameters = json_value["parameters"];
-    string seed = json_parameters["seed"];
+    string seed;
+    string seed_5, seed_4, seed_3;
 
+    if (json_parameters.find("seed") != json_parameters.end()) {
+      seed = json_parameters["seed"];
+    }
+    if (default_seed.size() > 0)
+      seed = default_seed;
+    if (seed.size() > 0)
+      seed_5 = seed_4 = seed_3 = seed;
+    if (json_parameters.find("seed_5") != json_parameters.end()) {
+      seed_5 = json_parameters["seed_5"];
+    }
+    if (json_parameters.find("seed_4") != json_parameters.end()) {
+      seed_4 = json_parameters["seed_4"];
+    }
+    if (json_parameters.find("seed_3") != json_parameters.end()) {
+      seed_3 = json_parameters["seed_3"];
+    }
+    
     if (default_max_indexing == 0) {
       if (json_parameters.count("trim_sequences") > 0) {
         max_indexing = json_parameters["trim_sequences"];
@@ -353,12 +380,10 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
       break ;
     }
 
-    seed = (default_seed.size() == 0) ? seed : default_seed;
-
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
       add_germline(new Germline(code, shortcut, path + "/", *it2,
-                                seed, max_indexing, build_automaton));
+                                seed_5, seed_4, seed_3, max_indexing, build_automaton));
     }
   }
 

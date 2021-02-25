@@ -44,6 +44,7 @@ SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
  * */
 function Model() {
     var self=this;
+    m=this;
     console.log("creation Model")
     
     for (var f in Model_loader.prototype) {
@@ -52,17 +53,21 @@ function Model() {
     this.germline = {};
     this.create_germline_obj();
     this.view = [];
+    this.checkLocalStorage();
+    this.reset();
     this.setAll();
     this.checkBrowser();
     this.germlineList = new GermlineList()
     this.build();
-    window.onresize = function () { self.resize(); };
+    //window.onresize = function () { self.resize(); };
 
     this.NORM_FALSE     = "no_norm"
     this.NORM_EXPECTED  = "expected"
     this.NORM_EXTERNAL  = "external"
     this.normalization_mode = this.NORM_FALSE
-    this.axes = new Axes(this)
+    this.available_axes = Axis.prototype.available()
+
+    setInterval(function(){return self.updateIcon()}, 100); 
 }
 
 
@@ -73,6 +78,7 @@ Model.prototype = {
     build: function () {
         var self =this;
         
+        this.waiting_screen_is_on = false;
         this.waiting_screen = document.createElement("div");
         this.waiting_screen.className = "waiting_screen";
         
@@ -123,28 +129,36 @@ Model.prototype = {
           $(this).removeClass('hovered');
         });
 
+        this.show_only_one_sample = false
+        $("#filter_switch_sample").click(function(){
+            self.show_only_one_sample = !self.show_only_one_sample
+            var check = document.getElementById("filter_switch_sample_check")
+            check.checked = self.show_only_one_sample
+            self.update()
+        })
+
         
         // Table of conversion between axes name and distribution names
         this.distrib_convertion = {
             // Axes --> Fuse
-            "v":    "seg5",
-            "d":    "seg4",
-            "j":    "seg3",
-            "lengthCDR3":    "lenCDR3",
-            "locus" :        "germline",
+            "V/5' gene":        "seg5",
+            "D/4' gene":        "seg4",
+            "J/3' gene":        "seg3",
+            "CDR3 length (nt)": "lenCDR3",
+            "locus" :           "germline",
             // Particular, take the nb reads value of the distribution
-            "size":          "size",
+            "size":             "size",
             // Should be in Array format
-            "consensusLength" : "lenSeqConsensus",
-            "averageLength" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
+            "clone consensus length" :      "lenSeqConsensus",
+            "clone average read length" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
             /////////////////////
             // Fuse --> Axes
-            "seg5":    "v",
-            "seg4":    "d",
-            "seg3":    "j",
-            "lenCDR3":         "lengthCDR3",
-            "lenSeqConsensus": "consensusLength",
-            "lenSeqAverage":   "averageLength",
+            "seg5":             "V/5' gene",
+            "seg4":             "D/4' gene",
+            "seg3":             "J/3' gene",
+            "lenCDR3":          "CDR3 length (nt)",
+            "lenSeqConsensus":  "clone consensus length",
+            "lenSeqAverage":    "clone average read length",
         }
         // List of axe that must be in an array format
         this.distrib_axe_is_timmed = {
@@ -162,13 +176,22 @@ Model.prototype = {
      * Set all the properties. Called in the constructor.
      */
     setAll: function () {
-        this.reset();
-
         this.system_selected = []
-        this.colorMethod = "Tag";
-        this.changeNotation("percent", false)
-        this.changeTimeFormat("name", false)
-        this.top = 50;
+        this.top = 50
+
+        if (this.localStorage){
+            if (localStorage.getItem('colorMethod'))    this.colorMethod = localStorage.getItem('colorMethod')
+            if (localStorage.getItem('timeFormat'))     this.time_type = localStorage.getItem('timeFormat')
+            if (localStorage.getItem('notation'))       this.notation_type  = localStorage.getItem('notation')
+            if (localStorage.getItem('alleleNotation')) this.alleleNotation = localStorage.getItem('alleleNotation')
+            if (localStorage.getItem('cloneNotation'))  this.cloneNotationType = localStorage.getItem('cloneNotation')
+        }
+        
+        this.changeColorMethod(this.colorMethod,    false)
+        this.changeNotation(this.notation_type,     false)
+        this.changeTimeFormat(this.time_type,       false)
+        this.changeAlleleNotation(this.alleleNotation, false)
+        this.changeCloneNotation(this.cloneNotationType, false)
     },
     /**
      * remove all elements from the previous .vidjil file but keep current user parameters and linked views
@@ -193,6 +216,9 @@ Model.prototype = {
         this.tOther = 0;  // Other (previously) selected time/sample
         this.focus = -1;
 
+        this.colorMethod = "Tag"
+        this.notation_type = "percent"
+        this.time_type = "name"
 
         this.display_window = false
         this.isPlaying = false;
@@ -249,15 +275,17 @@ Model.prototype = {
             {"color" : "#2aa198", "name" : "custom 1", "display" : true},
             {"color" : "#d33682", "name" : "custom 2", "display" : true},
             {"color" : "#859900", "name" : "custom 3", "display" : true},
-            {"color" : "", "name" : "-/-", "display" : true}
+            {"color" : "",        "name" : "-/-", "display" : true},
+            {"color" : "#bdbdbd", "name" : "smaller clones", "display" : true}
         ]
 
         this.default_tag=8;
+        this.distrib_tag=9;
 
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].reset();
         }
-        
+
     },
     
     
@@ -303,6 +331,9 @@ Model.prototype = {
                     
     }, //end loadGermline
 
+    getCurrentSystem: function(){
+        return this.germlineV.system
+    },
     /**
      * compute some meta-data for each clones
      * */
@@ -313,12 +344,12 @@ Model.prototype = {
         $("#expected_normalization").hide();
 
         // time_type to name_short if there is many samples
-        if (this.samples.order.length > 6)
+        if (this.samples.order.length > 6 && !localStorage.getItem("timeFormat"))
             this.changeTimeFormat("short_name", false)
 
         // time_type to delta_date if we have enough different dates
         deltas = this.dateDiffMinMax()
-        if (deltas.max > 1)
+        if (deltas.max > 1 && !localStorage.getItem("timeFormat"))
             this.changeTimeFormat("delta_date", false)
         
         //      NSIZE
@@ -352,17 +383,32 @@ Model.prototype = {
                 $("#external_normalization").show();
             }
         }
+        this.displayTop(50) // reset value
     }, //end initClones
 
-changeCloneNotation: function(cloneNotationType) {
-    this.cloneNotationType = cloneNotationType;
-    this.update();
+changeCloneNotation: function(cloneNotationType, update, save) {
+    this.cloneNotationType = cloneNotationType
+
+    if (this.localStorage && save) localStorage.setItem('cloneNotation', cloneNotationType)
+
+    var menu = document.getElementById("menuCloneNot_" + cloneNotationType)
+    if (menu) menu.checked = true
+
+    update = (update==undefined) ? true : update
+    if (update) this.update();
 },
 
 
-changeAlleleNotation: function(alleleNotation) {
+changeAlleleNotation: function(alleleNotation, update, save) {
     this.alleleNotation = alleleNotation;
-    this.update();
+
+    if (this.localStorage && save) localStorage.setItem('alleleNotation', alleleNotation)
+    
+    var menu = document.getElementById("menuAlleleNot_" + alleleNotation)
+    if (menu) menu.checked = true
+
+    update = (update==undefined) ? true : update
+    if (update) this.update();
 },
     
     /**
@@ -461,39 +507,55 @@ changeAlleleNotation: function(alleleNotation) {
 	if (typeof (clusters) == 'undefined')
 	    return ;
 
+        var biggest_clone;
+
         for (var i = 0; i < clusters.length; i++) {
 
-            var new_cluster = [];
-            var tmp = [];
-            
+            var clusterByIds = [];
+            var unfoundClone = [];
+            var cloneID;
+
+            // Create cluster by clone id
+            biggest_clone = undefined;
             for (var j=0; j<clusters[i].length;j++){
                 if (typeof this.mapID[clusters[i][j]] != 'undefined'){
-                    var cloneID = this.mapID[clusters[i][j]]
-                    new_cluster = new_cluster.concat(this.clusters[cloneID]);
-                    this.clusters[cloneID] = [];
-                }else{
-                    tmp.push(clusters[i][j])
+                    cloneID = this.mapID[clusters[i][j]]
+                    if (typeof this.clusters[cloneID] != 'undefined'){
+                        clusterByIds = clusterByIds.concat(this.clusters[cloneID]);
+                    } else {
+                        console.error("Error on cluster loading of clone "+cloneID)
+                    }
+                    // order may be unconserved...
+                    // Look for the biggest clone (with the smallest top)
+                    if (biggest_clone == undefined || this.clone(cloneID).top < this.clone(biggest_clone).top){
+                        biggest_clone = cloneID
+                    }
+                } else {
+                    unfoundClone.push( clusters[i][j] )
                 }
             }
-            
-            if (new_cluster.length !== 0){
-                var l = new_cluster[0]
-                for (var k=0; k<new_cluster.length;k++){
-                    if (this.clone(new_cluster[k]).top < this.clone(l).top) l = new_cluster[k]
+
+            if (clusterByIds.length !== 0){
+                this.clusters[biggest_clone] = clusterByIds;
+
+                // Set mergeId values
+                for (var pos=0; pos<clusterByIds.length;pos++){
+                    cloneID = clusterByIds[pos]
+
+                    // Set the mergeId value for cluterized clones
+                    var clone = this.clones[cloneID] 
+                    if (clone.index != biggest_clone){
+                        clone.mergedId = biggest_clone
+                        this.clusters[cloneID] = []
+                    }
                 }
-                this.clusters[l] = new_cluster;
-                
-                if (tmp.length !== 0){
-                    tmp.push(this.clone(l).id)
-                    this.analysis_clusters.push(tmp);
-                }
-                
-            }else{
-                
-                if (tmp.length !== 0){
-                    this.analysis_clusters.push(tmp);
-                }
+
             }
+
+            if (unfoundClone.length !== 0){
+                this.analysis_clusters.push(unfoundClone);
+            }
+
         }
     },
 
@@ -580,9 +642,13 @@ changeAlleleNotation: function(alleleNotation) {
 	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
 	    // See #1941 and #3416
 	    if (typeof this.diversity[key][time] != 'undefined') {
-		return this.diversity[key][time].toFixed(3);
+            if (this.diversity[key][time] != null) {
+                return this.diversity[key][time].toFixed(3);
+            } else {
+                return this.diversity[key][time]
+            }
 	    } else {
-		return this.diversity[key].toFixed(3);
+            return this.diversity[key].toFixed(3);
 	    }
 	}
     },
@@ -739,7 +805,7 @@ changeAlleleNotation: function(alleleNotation) {
           clone.normalized_reads[time] != null &&
           raw == undefined) {
               return clone.normalized_reads[time] ;
-      } else if (clone.hasSizeDistrib()){          
+      } else if (clone.hasSizeDistrib() && !isNaN(clone.current_reads[time])){          
         return clone.current_reads[time]
       } else {
         return clone.reads[time] ;
@@ -811,34 +877,30 @@ changeAlleleNotation: function(alleleNotation) {
      * compute min/max clones sizes and abundance color scale<br>
      * clone size can change depending the parameter so it's neccesary to recompute precision from time to time
      * */
-    update_precision: function () {
-        var min_size = 1
-        var max
+    update_precision: function () { 
+        this.min_size = 1
+        this.max_size = 0
         for (var i=0; i<this.samples.order.length; i++){
             var t = this.samples.order[i]
             var size = this.min_sizes[t]
             size = this.normalize(this.min_sizes[t], t)
-            if (size < min_size) min_size = size
+            if (size < this.min_size) this.min_size = size
         }
-        
-        this.max_size = 1
-        this.min_size = min_size
-        if (this.normalization_mode != this.NORM_FALSE){
-            for (var j=0; j<this.samples.order.length; j++){
-                if(this.normalization.size_list[j]==0){
-                max = this.normalization.expected_size
-                }else{
-                max = this.normalization.expected_size/this.normalization.size_list[j]
-                }
-                if (max>this.max_size) this.max_size=max;
+
+
+        for (var j=0;j<this.clones.length;j++){
+            if (this.clone(j).isActive() && this.clone(j).hasSizeConstant()) {
+                max_s = this.clones[j].getMaxSize()
+                if (max_s > this.max_size)
+                    this.max_size  = max_s
             }
-        }
+        }    
         
         //*2 pour avoir une marge minimum d'un demi-log
         // 1/0 == infinity
         this.precision=(1/this.min_size)*2
         
-        this.scale_color = d3.scale.log()
+        this.scale_color = d3.scaleLog()
             .domain([1, this.precision])
             .range([250, 0]);
     },
@@ -940,7 +1002,7 @@ changeAlleleNotation: function(alleleNotation) {
                 div.style.color = ""
             }
         } catch (err) {
-            // ne rien faire.
+            // Don't exist into Qunit pipeline
         }
     },
 
@@ -1057,6 +1119,7 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     multiSelect: function (list) {
 
+        if (list.length == 0) return;
         console.log("select() (clone " + list + ")");
 
         var tmp = []
@@ -1075,8 +1138,8 @@ changeAlleleNotation: function(alleleNotation) {
             this.orderedSelectedClones.push(tmp[j].id);
             list[j] = tmp[j].id
         }
-        this.updateElemStyle(list);
-        this.update();
+        this.updateModel();
+        this.updateElemStyle(this.orderedSelectedClones);
     },
 
     /**
@@ -1095,9 +1158,12 @@ changeAlleleNotation: function(alleleNotation) {
     unselectAll: function () {
         console.log("unselectAll()");
         this.orderedSelectedClones = [];
-        var list = this.getSelected();
-        for (var i = 0; i < list.length; i++) {
-            this.clone(list[i]).select = false;
+        var list = [];
+        for (var i=0; i<this.clones.length; i++){
+            if (this.clone(i).select == true){
+                list.push(i);
+                this.clone(i).select = false;
+            }
         }
         this.updateElemStyle(list);
     },
@@ -1222,23 +1288,19 @@ changeAlleleNotation: function(alleleNotation) {
      * this function must be call for major change in the model
      * */
     update: function () {
-        var startTime = new Date()
-            .getTime();
-        var elapsedTime = 0;
-
         this.update_normalization();
         this.update_precision();
         this.updateModel();
 
         for (var i = 0; i < this.view.length; i++) {
-            this.view[i].update();
+            if (this.view[i].useSmartUpdate)
+                this.view[i].smartUpdate();
+            else
+                this.view[i].update();
         }
-        
-        elapsedTime = new Date()
-            .getTime() - startTime;
-        console.log("update(): " + elapsedTime + "ms");
+        this.updateIcon();
+        this.computeOrderWithStock()
     },
-
 
     /**
      * ask all linked views to update a clone list
@@ -1252,8 +1314,12 @@ changeAlleleNotation: function(alleleNotation) {
         this.updateModel()
         
         for (var i = 0; i < this.view.length; i++) {
-            this.view[i].updateElem(list);
+            if (this.view[i].useSmartUpdateElem)
+                this.view[i].smartUpdateElem(list);
+            else
+                this.view[i].updateElem(list);
         }
+        this.updateIcon();
     },
 
     /**
@@ -1266,8 +1332,42 @@ changeAlleleNotation: function(alleleNotation) {
             this.clone(list[i]).updateCloneTagIcon();
         }
         for (i = 0; i < this.view.length; i++) {
-            this.view[i].updateElemStyle(list);
+            if (this.view[i].useSmartUpdateElemStyle)
+                this.view[i].smartUpdateElemStyle(list);
+            else
+                this.view[i].updateElemStyle(list);
         }
+        this.updateIcon();
+    },
+
+    /**
+     * return true if a view has not finished an update
+     */
+    updateIsPending:function(){
+        //check if a view is waiting an update
+        for (var i = 0; i < this.view.length; i++) 
+            if (this.view[i].updateIsPending())
+                return true;
+
+        //check waiting screen
+        if (this.waiting_screen_is_on) 
+            return true;
+
+        return false;
+    },
+
+    /**
+     * display an icon in the top-container if a view has not finished an update
+     */
+    updateIcon:function(){
+        if (typeof (this.divUpdateIcon) == "undefined")
+            this.divUpdateIcon = document.getElementById("updateIcon");
+        if (this.divUpdateIcon==null) return
+
+        if (this.updateIsPending())
+            this.divUpdateIcon.style.display = "flex";
+        else
+            this.divUpdateIcon.style.display = "none";
     },
     
     /**
@@ -1321,8 +1421,9 @@ changeAlleleNotation: function(alleleNotation) {
         this.top = top;
 
         // top show cannot be greater than the number of clones
-        if (top > this.countRealClones())
-            top = this.countRealClones()
+        var max_clones = this.countRealClones();
+        if (top > max_clones)
+            top = max_clones;
         this.current_top = top
 
         var html_slider = document.getElementById('top_slider');
@@ -1334,7 +1435,7 @@ changeAlleleNotation: function(alleleNotation) {
         if (html_label !== null) {
             var count = 0;
             for (var i=0; i<this.clones.length; i++){
-                if (this.clone(i).top < top && this.clone(i).hasSizeConstant() ) count++;
+                if (this.clone(i).top <= top && this.clone(i).hasSizeConstant() ) count++;
                 //todo: test ?
             }
             html_label.innerHTML = count + ' clones (top ' + top + ')' ;
@@ -1348,7 +1449,14 @@ changeAlleleNotation: function(alleleNotation) {
      * added)
      * */
     countRealClones: function() {
-        return this.clones.length - this.system_available.length;
+        var sum = 0;
+        for (var i = 0; i < this.clones.length; i++) {
+            var clone = this.clones[i]
+            if (clone.hasSizeConstant()){
+                sum += 1
+            }
+        }
+        return sum
     },
 
     /**
@@ -1412,21 +1520,65 @@ changeAlleleNotation: function(alleleNotation) {
         html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
         html += "<tr><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
 
+        var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
         if ( typeof this.diversity != 'undefined') {
-            html += "<tr><td class='header' colspan='2'> diversity </td></tr>"
-            for (var key in this.diversity) {
-                html += "<tr><td> " + key.replace('index_', '') + "</td><td>" + this.getDiversity(key, timeID) + '</td></tr>'
+            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
+            for (var key_diversity in this.diversity) {
+                html += "<tr><td> " + key_diversity.replace('index_', '') + "</td><td>" + this.getDiversity(key_diversity, timeID) + '</td></tr>'
             }
         }
 
         if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
-            html += "<tr><td class='header' colspan='2'> diversity </td></tr>"
+            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
             for (var k in this.samples.diversity[timeID]) {
                 html += "<tr><td> " + k.replace('index_', '') + "</td><td>" + this.samples.diversity[timeID][k].toFixed(3) + '</td></tr>'
             }
         }
 
+
+
         html += "</table></div>"
+
+        if ( typeof this.overlaps != 'undefined') {
+            html += "<br/><h3>Overlaps index</h3>"
+
+            var overlap_links = {
+                "morisita": "https://en.wikipedia.org/wiki/Morisita%27s_overlap_index",
+                "jaccard": "https://en.wikipedia.org/wiki/Jaccard_index"
+            }
+            for (var key_overlap in this.overlaps) {
+                var overlap_name = key_overlap.charAt(0).toUpperCase() + key_overlap.slice(1);
+                html += "<h4 style='display:inline'>"+overlap_name+"'s index</h4>"
+                html += "<a title='Help link for "+overlap_name+"\'s index' class='icon-help-circled-1' target='_blank' href='"+overlap_links[key_overlap]+"' style='text-decoration: none;'></a>"
+                html += "<table class='info_overlaps' id='overlap_"+key_overlap+"'>"
+                var overlap = this.overlaps[key_overlap]
+                html += "<tr><td  class='header'></td>" // header with samples names
+                for (var posSample = 0; posSample < overlap.length; posSample++) {
+                    html += "<td  class='header'>"+this.getSampleName(posSample)+"</td>"
+                }
+                html += '</tr>'
+                for (posSample = 0; posSample < overlap.length; posSample++) {
+                    if (posSample == this.t){
+                        html += "<tr class='info_overlaps_line' >"
+                    } else {
+                        html += "<tr>"
+                    }
+                    html += "<td class='header'>"+this.getSampleName(posSample)+"</td>"
+                    values = overlap[posSample]
+                    for (var i = 0; i < (overlap[posSample].length); i++) {
+                        value = overlap[posSample][i]
+
+                        if (i == posSample){
+                            html += "<td class=''>" + "--" + '</td>'
+                        } else {
+                            html += "<td>" + value + '</td>'
+                        }
+                    }
+                    html += '</tr>'
+                }
+                html += "</table>"
+            }
+        }
         return html
     },
 
@@ -1557,18 +1709,21 @@ changeAlleleNotation: function(alleleNotation) {
             tmp[j].sort(compare);
         }
 
-        //reset cluster
+        //reset clusters
         for (var k = 0; k < this.clones.length; k++) {
             this.clusters[k] = []
+            this.clone(k).mergedId = undefined
         }
 
-        //new cluster
+        //new clusters
         for (var l in tmp) {
-            this.clusters[tmp[l][0]] = tmp[l]
-            this.clusters[tmp[l][0]].name = l
+            var cluster = tmp[l]
+            var cluster_main_clone = tmp[l][0]
+            this.clusters[cluster_main_clone] = cluster
+            this.clusters[cluster_main_clone].name = l
 
-            for (var m = 1; j < tmp[l].length; j++) {
-                this.clusters[tmp[l][m]] = []
+            for (var m = 1; m < tmp[l].length; m++) {
+                this.clone(tmp[l][m]).mergedId = cluster_main_clone 
             }
         }
         this.update()
@@ -1609,6 +1764,7 @@ changeAlleleNotation: function(alleleNotation) {
 
         for (var i = 0; i < this.clones.length; i++) {
             this.clusters[i] = [i]
+            this.clone(i).mergedId = undefined
         }
 
         this.update()
@@ -1631,9 +1787,18 @@ changeAlleleNotation: function(alleleNotation) {
     restoreClusters: function () {
         if (this.clusters_copy.length > 0){
             this.clusters = this.clusters_copy.pop()
+            
+            for (var c = 0; c < this.clones.length; c++) {
+                this.clone(c).mergedId = undefined
+            }
+            for (var i = 0; i < this.clusters.length; i++) {
+                var cluster = this.clusters[i]
+                for (var j = 1; j < cluster.length; j++) {
+                    this.clone(cluster[j]).mergedId = cluster[0]
+                }
+            }
             this.update()
         }
-        
     },
 
 ////////////////////////////////////
@@ -1671,6 +1836,110 @@ changeAlleleNotation: function(alleleNotation) {
      * */
     changeTimeOrder: function (list) {
         this.samples.order = list
+        this.update()
+    },
+        /**
+     * Invert the value of a sample (show/hide).
+     * Update the checkbox, the sample in model order, and the model 
+     * @param  {[type]} time The timepoint to invert
+     */
+    switchTime: function(time){
+        var pos_timepoint_in_order = this.samples.order.indexOf(time)
+        if (pos_timepoint_in_order == -1){
+            // Add new timepoint
+            this.addTimeOrder( time )
+            this.changeTime(time)
+        } else if (this.samples.order.length != 1) {
+            // Remove timepoint; Don't if there is only one sample
+            this.removeTimeOrder(time)
+            this.changeTime(this.samples.order[0])
+        }
+        this.update()
+        return
+    },
+
+    /**
+     * Show all timepoint in the timeline graphic.
+     * Add all samples that are not already in the list of actif samples
+     * Each sample added will be put at the end of the list.
+     */
+    showAllTime: function(){
+        // keep current timepoint active if exist, else, give active to first timepoint
+        var keeptime = this.t
+        for (var time = 0; time < this.samples.number; time++) {
+            if (this.samples.order.indexOf(time) == -1) this.addTimeOrder(time)
+        }
+        this.changeTime(keeptime)
+        return
+    },
+
+    /**
+     * Remove all sample of the graph except one
+     */
+    hideAllTime: function(){
+        this.changeTimeOrder( [this.t] )
+        return
+    },
+
+    /**
+     * replace the current time order with a new one
+     * @param {integer[]} list - list of time/sample index
+     * */
+    changeTimeStockOrder: function (list) {
+        this.samples.stock_order = list
+        this.update()
+    },
+
+    /**
+     * Order the samples order list with the stock_order
+     */
+    computeOrderWithStock: function(){
+        /*
+          order     = [a, b, e, c]    // change e before c; d is not available
+          old_stock = [a, b, c, d, e] // original order
+          new_stock = [a, b, e, c, d] // new order
+         */
+        var order      = this.samples.order
+        var old_stock  = this.samples.stock_order
+        var time_stock = 0
+
+        for (var time = 0; time < order.length; time++) {
+
+            while (order.indexOf(old_stock[time_stock]) == -1){
+                time_stock += 1
+            }
+
+            if (order[time] != old_stock[time_stock]){
+                var index_old = old_stock.indexOf(order[time])
+                old_stock.splice(index_old, 1)
+                old_stock.splice(time_stock, 0, order[time])
+            } // else nothing
+
+            time_stock++
+        }
+        return old_stock
+    },
+
+
+    /**
+     * Add a sample in the time order; at the end of the list
+     * @param {Number} time Time point to add at the list
+     */
+    addTimeOrder: function (time) {
+        var index = this.samples.stock_order.indexOf(time)
+        this.samples.order.splice(index, 0, time)
+        this.update()
+    },
+    
+    /**
+     * Add a sample in the time order; at the end of the list
+     * @param {Number} time Time point to add at the list
+     */
+    removeTimeOrder: function (time) {
+        var index = this.samples.order.indexOf(time)
+        if (this.samples.order.length != 1 && index != -1) {
+            this.samples.order.splice(index, 1)
+        }
         this.update()
     },
     
@@ -1963,6 +2232,26 @@ changeAlleleNotation: function(alleleNotation) {
 
     },
 
+    /**
+     * check browser local storage availability
+     * */
+    checkLocalStorage: function () {
+        try {
+            this.localStorage = window.localStorage
+            var x = '__storage_test__'
+            this.localStorage.setItem(x, x)
+            this.localStorage.removeItem(x)
+        }
+        catch(e) {
+            return e instanceof DOMException && (
+                e.code === 22 ||
+                e.code === 1014 ||
+                e.name === 'QuotaExceededError' ||
+                e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                (this.localStorage && this.localStorage.length !== 0)
+        }
+    },
+
 
     NB_READS_THRESHOLD_QUANTIFIABLE: 5,
 
@@ -2194,6 +2483,16 @@ changeAlleleNotation: function(alleleNotation) {
         if (top>maxTop) top=maxTop;
         this.tagSelector.style.top=top+"px";
 
+        var tagSelectorW = $(this.tagSelector).outerWidth()
+        var maxLeft = $(window).width() - tagSelectorW;
+        var tmp = e.clientX;
+        if(typeof e.currentTarget !== 'undefined') {
+            tmp = e.currentTarget.offsetLeft + (e.currentTarget.offsetWidth/2);
+        }
+        var left = tmp + (tagSelectorW/2);
+        if (left>maxLeft) left=maxLeft;
+        this.tagSelector.style.left=left+"px";
+
         // If multiple clones Ids; disabled normalization div
         if (clonesIDs.length > 1) {
             $("#"+div.id).addClass("disabledbutton");
@@ -2230,30 +2529,63 @@ changeAlleleNotation: function(alleleNotation) {
     /**
      * change default notation display for sizes
      * @param {string} notation - notation type ('scientific' , 'percent')
-     * @pram {bool} update - will update the display after
+     * @param {bool} update - will update the display after
+     * @param {bool} save - will save value in user preferences (localStorage) 
      * */
-    changeNotation: function (notation, update) {
+    changeNotation: function (notation, update, save) {
         this.notation_type = notation
+        if (this.localStorage && save) localStorage.setItem('notation', notation)
+
+        var menu = document.getElementById("menuNotation_" + notation)
+        if (menu) menu.checked = true
+
         if (update) this.update()
     },
     
     /**
      * change default time format for sample/time names
      * @param {string} notation - format ('name', 'sampling_date', 'delta_date', 'delta_date_no_zero')
-     * @pram {bool} update - will update the display after
+     * @param {bool} update - will update the display after
+     * @param {bool} save - will save value in user preferences (localStorage) 
      * */
-    changeTimeFormat: function (time, update) {
+    changeTimeFormat: function (time, update, save) {
         this.time_type = time
+        if (this.localStorage && save) localStorage.setItem('timeFormat', time)
+
+        var menu = document.getElementById("menuTimeForm_" + time)
+        if (menu) menu.checked = true
+
         if (update) this.update()
     },
     
     /**
      * change default color method
-     * @param {string} colorM - TODO 
+     * @param {string} colorM 
+     * @param {bool} update - will update the display after default = true
+     * @param {bool} save - will save value in user preferences (localStorage) 
      * */
-    changeColorMethod: function (colorM) {
-        this.colorMethod = colorM;
-        this.update();
+    changeColorMethod: function (colorM, update, save) {
+        update = (update==undefined) ? true : update;
+
+        this.colorMethod = colorM
+        if (this.localStorage && save) localStorage.setItem('colorMethod', colorM)
+        var menu = document.getElementById("color_menu_select")
+        if (menu) menu.value = colorM
+
+        if (!update) return 
+        var list = []
+        for (var i = 0; i<this.clones.length; i++) list.push(i)
+        this.updateElemStyle(list)
+    },
+
+    resetSettings: function () {
+        localStorage.clear()
+        this.changeColorMethod("Tag",       false)
+        this.changeNotation("percent",      false)
+        this.changeTimeFormat("name",       false)
+        this.changeAlleleNotation("when_not_01", false)
+        this.changeCloneNotation("short_sequence", false)
+        console.log({ msg: "user preferences have been reset", type: "flash", priority: 1 });
     },
     
     /**
@@ -2460,12 +2792,16 @@ changeAlleleNotation: function(alleleNotation) {
         this.waiting_screen.style.display = "block";
         this.waiting_msg.innerHTML= text;
         if (typeof shortcut != 'undefined') shortcut.on = false;
+        this.waiting_screen_is_on = true;
+        this.updateIcon();
     },
     
     resume: function(){
         this.waiting_screen.style.display = "none";
         this.waiting_msg.removeAllChildren();
         if (typeof shortcut != 'undefined') shortcut.on = true;
+        this.waiting_screen_is_on = false;
+        this.updateIcon();
     },
     
     
@@ -2952,18 +3288,38 @@ changeAlleleNotation: function(alleleNotation) {
         var timename  = this.samples.original_names[0]
         var distribs = this.distributions.repertoires[timename]
         // Create the list of all available distributions (on the first timepoint, but should be similar for each)
-        for (var i = 0; i < distribs.length; i++) {
-            var distrib = distribs[i]
-            raw_distribs_axes.push( distrib.axes )
+        if (distribs != undefined){
+            for (var i = 0; i < distribs.length; i++) {
+                var distrib = distribs[i]
+                raw_distribs_axes.push( distrib.axes )
+            }
+            console.log("Their are " + raw_distribs_axes.length + " distribs to load")
+        } else {
+            console.log("Their are no distribs to load")
         }
-        console.log("Their are " + raw_distribs_axes.length + " distribs to load")
 
         var same_distribs;
         var current_distrib;
+
+        this.distribs_compatible_clones = {}
+
+        // Fill this.distribs_compatible_clones
         for (var pos_axes = 0; pos_axes < raw_distribs_axes.length; pos_axes++) {
             var axes = raw_distribs_axes[pos_axes]
+            this.distribs_compatible_clones[axes] = []
+            for (var sample = 0; sample < this.samples.number; sample++) {
+                this.distribs_compatible_clones[axes][sample] = {}
+                for (var c_pos = 0; c_pos < this.clones.length; c_pos++) {
+                    values = this.clones[c_pos].getDistributionsValues(axes, sample)
+                    if (typeof this.distribs_compatible_clones[axes][sample][values] != typeof []){ // equivalent python defaultdict
+                        this.distribs_compatible_clones[axes][sample][values] = []
+                    }
+                    this.distribs_compatible_clones[axes][sample][values].push(this.clones[c_pos].index)
+                }
+            }
+
             same_distribs = []
-            // Get the list of all distributions of axees given
+            // Get the list of all distributions of axes given
             for (var pos_time = 0; pos_time < this.samples.number; pos_time++) {
                 var time = this.samples.order.indexOf(pos_time)
                 current_distrib = this.getDistrib(axes, time)
@@ -2985,22 +3341,6 @@ changeAlleleNotation: function(alleleNotation) {
 
     },
 
-    /**
-     * Return the clone corresponding to an axes list and to axes values
-     *  !!!! pas utilisé pour le moment !!!
-     * @param  {Array} axes   List of axes to search
-     * @param  {Array} values List of values to get
-     * @return {Clone}        [description]
-     */
-    getCloneWithDistribValues: function(axes, values){
-        for (var c = 0; c < this.clones.length; c++) {
-            var clone = this.clones[c]
-            if (clone.sameAsDistribClone()){
-                return clone
-            }
-        }
-        return
-    },
 
     /**
      * Create clones from a list of information concatenated directly from distributions
@@ -3203,5 +3543,54 @@ changeAlleleNotation: function(alleleNotation) {
 
     },
 
+    /**
+     * Return a list of samples with selected clones
+     * @return {Array} list of samples
+     */
+    getSampleWithSelectedClones: function(){
+        var selected = this.getSelected()
+        if (selected.length == 0) {
+            return this.samples.order
+        }
+
+        var list = []
+        for (var pos = 0; pos < selected.length; pos++) {
+            var clone = this.clones[selected[pos]]
+            for (var time = 0; time < clone.reads.length; time++) {
+                if (clone.reads[time] != 0 && list.indexOf(time) == -1) {
+                    list.push(time)
+                }
+            }
+        }
+        return list
+    },
+
+    /**
+     * Remove all sample of the graph except one
+     */
+    hideNotShare: function(){
+        // get list of sample with shared clone
+        if (this.getSelected().length == 0) {
+            return
+        }
+        this.changeTimeOrder( this.getSampleWithSelectedClones() )
+        // this.updateList()
+        // this.m.update()
+        return
+    },
+
+    /**
+     * Get the name of a samples.
+     * If getted from the server, the correct name to send come from original_names field
+     * Else return value from samples.names
+     */
+    getSampleName: function(posSample){
+        var name_server = this.samples.original_names[posSample]
+        var name_file = this.samples.names[posSample]
+        if (name_file == ""){
+            return name_server
+        }
+        return name_file
+    },
 
 }; //end prototype Model

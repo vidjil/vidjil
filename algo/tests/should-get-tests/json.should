@@ -9,7 +9,7 @@ $ From homo-sapiens.g
 $ Number of reads
 1:"total": \[13153\]
 
-$ Number of segmented reads
+$ Number of detected reads
 1:"segmented": \[13153\]
 
 $ Most abundant window
@@ -53,7 +53,7 @@ $ Segmentation details - N1, N2
 1:"N2": 0,
 
 $ Segmentation details - CDR3, JUNCTION
-1:"cdr3": ."aa": "TREEQYSSWYFDF", "start": 73, "stop": 111.
+1:"cdr3": ."aa": "TREEQYSSWYFDF", "seq": "ACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTC", "start": 73, "stop": 111.
 1:"junction": ."aa": "CTREEQYSSWYFDFW", .* "start": 70, "stop": 114.
 
 $ Second sequence has a DNA sequence provided

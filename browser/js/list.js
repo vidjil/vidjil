@@ -20,16 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
-/* 
- * info.js
- *
- * contains tools to manipulate element of the left-container :
- * favorites list
- * clone list
- * info panel
- *
- *
- */
 
 
 /** 
@@ -50,18 +40,21 @@ function List(id_list, id_data, model, database) {
     
     this.id = id_list; //ID de la div contenant la liste
     this.id_data = id_data;
-    this.index = []
+    this.index = [];
+    this.index_cluster = [];
     this.index_data = {};
+    this.sort_lock = true; // By default, lock the list in the current state
 
     this.build();
     
     this.sort_option = {
-        "-" : function () {},
+        "-"    : function () {},
         "size" : function(){self.sortListBy(function(id){return self.m.clone(id).getSize();})},
         "V/5'" : function(){self.sortListByV()},
         "J/3'" : function(){self.sortListByJ()}
     }
 
+    this.sort_option_selected = "-"; // Store the selected sort method
     this.selectedAxis = {};
 }
 
@@ -153,11 +146,11 @@ List.prototype = {
         div_list_clones.id = "list_clones"
         for (var i = 0; i < this.m.clones.length; i++) {
             var div = document.createElement('li');
-            div.className = "list";
             div.id = i;
+            div.className = "list";
 
             div_list_clones.appendChild(div);
-            this.index[i] = div;
+            this.index[i] = new IndexedDom(div);
         }
         
         for (var j = 0; j < this.m.clones.length; j++) {
@@ -290,6 +283,13 @@ List.prototype = {
         sort.className = "list_sort_select"
         sort.onchange = function() {
             self.sort_option[this.value]()
+            self.sort_option_selected = this.value
+            // close the lock
+            self.sort_lock = true
+            self.current_sample = self.m.t
+            var div = document.getElementById("div_sortLock")
+            div.className  = "icon-lock-1 list_lock_on"
+            div.title  = "Release sort as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.m.t, "names")
         }
         
         for (var key in this.sort_option) {
@@ -302,6 +302,30 @@ List.prototype = {
         sort_span.appendChild(document.createTextNode("sort by "));
         sort_span.appendChild(sort);
 
+        this.current_sample = this.m.t
+        var lock_div = document.createElement("icon")
+        lock_div.id = "div_sortLock"
+        lock_div.className = "icon-lock-1 list_lock_on"
+        lock_div.title  = "Release sort as '" + this.sort_option_selected +"' on sample " + this.m.getStrTime(this.m.t, "names")
+        lock_div.onclick = function(){
+            var div = document.getElementById("div_sortLock")
+            if (self.sort_lock == true){
+                self.sort_lock = false
+                div.className  = "icon-lock-open list_lock_off"
+                self.current_sample = self.m.t
+                div.title  = "Freeze list as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.current_sample, "names")
+                // Apply sort method at unlock
+                self.sort_option[self.sort_option_selected]()
+            } else {
+                self.sort_lock = true
+                div.className  = "icon-lock-1 list_lock_on"
+                self.current_sample = self.m.t
+                div.title  = "Release sort as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.current_sample, "names")
+            }
+        }
+
+        sort_span.appendChild( lock_div )
+
         var axis_span = document.createElement('span');
         axis_span.className = "list_axis devel-mode";
 
@@ -309,18 +333,18 @@ List.prototype = {
         axis.setAttribute('name', 'axis_list[]');
         axis.id = "list_axis_select";
 
-        var axOpts = Clone.prototype.axisOptions();
-        var available_axis = (new Axes(this.m)).available();
-        for (var i in axOpts) {
-            var axis_option = document.createElement("option");
-            axis_option.setAttribute('value', axOpts[i]);
-            axis_option.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
-            axis.appendChild(axis_option);
+        //var axOpts = Clone.prototype.axisOptions()
+        var available_axis = Axis.prototype.available()
+        for (var i in available_axis) {
+            var axis_option = document.createElement("option")
+            axis_option.setAttribute('value', available_axis[i])
+            axis_option.appendChild(document.createTextNode(available_axis[i]))
+            axis.appendChild(axis_option)
         }
-        axis.value = "size";
-        this.selectedAxis = available_axis.size;
+        axis.value = "size"
+        this.selectedAxis = Axis.prototype.getAxisProperties("size")
         axis.onchange = function() {
-            self.selectedAxis = available_axis[axis.value];
+            self.selectedAxis = Axis.prototype.getAxisProperties(axis.value)
             self.update()
         }
 
@@ -345,10 +369,7 @@ List.prototype = {
      * update all content for list and data list
      * */
     update: function () {
-        var startTime = new Date()
-            .getTime();
-        var elapsedTime = 0;
-        
+
         var list = [];
         for (var i = 0; i < this.m.clones.length; i++) {
             list.push(i);
@@ -356,12 +377,18 @@ List.prototype = {
         this.updateElem(list);
         this.update_data_list()
         
-        elapsedTime = new Date()
-            .getTime() - startTime;
-        //console.log("update List: " + elapsedTime + "ms");
-        
-        //TODO check order 
-        document.getElementById("list_sort_select").selectedIndex = 0;
+        // Apply selected sort function if no sort lock
+        if (this.sort_lock == false){
+            this.sort_option[this.sort_option_selected]()
+            this.current_sample = this.m.t
+            var div = document.getElementById("div_sortLock")
+            div.title  = "Freeze list as '" + this.sort_option_selected +"' on sample " + self.m.getStrTime(this.current_sample, "names")
+        } else {
+            if (this.current_sample != this.m.t) {
+                document.getElementById("list_sort_select").selectedIndex = 0;
+                this.sort_option_selected = "-"
+            }
+        }
     },
 
     /**
@@ -405,14 +432,13 @@ List.prototype = {
         }
         div_elem.className = "listElem";
         div_elem.id        = "listElem_"+cloneID
-        div_elem.style.display = "block";
 
         var span_name = document.createElement('span');
         span_name.className = "nameBox";
         if (clone.hasSizeConstant())
             span_name.className += " cloneName";
         span_name.ondblclick = function () {
-            self.editName(cloneID, this);
+            self.editName(cloneID);
         }
         span_name.onclick = function (e) {
             self.clickList(e, cloneID);
@@ -427,6 +453,7 @@ List.prototype = {
         span_cluster.setAttribute("cloneID", cloneID);
         span_cluster.className = "clusterBox";
         span_cluster.id = "clusterBox_"+cloneID;
+        span_cluster.onclick = function () {self.toggleCluster(this)};
 
         var firstChild = div_elem.childNodes[0];
         div_elem.insertBefore(span_cluster, firstChild);
@@ -442,13 +469,7 @@ List.prototype = {
     },
 
     updateElem: function (list) {
-        var cluster_hide = function () {
-            self.hideCluster(this)
-        }
-
-        var cluster_show = function () {
-            self.showCluster(this)
-        }
+        var self = this;
 
         for (var i = 0; i < list.length; i++) {
             var cloneID = list[i]
@@ -456,66 +477,47 @@ List.prototype = {
             if (typeof this.index[cloneID] == "undefined") return false;
 
             var clone = this.m.clone(cloneID);
-
-            var self = this;
-            var div_elem = this.index[cloneID];
+            var cloneDom = this.index[cloneID];
             
-            // pas testé; vraiment necessaire ?
-            if  (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
-                    (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  
-                  )
-                )
-            {
-                div_elem.style.display = "none";
-            } else {
-                if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
-                    // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
-                    div_elem.style.display = "none";
-                } else if (clone.isFiltered){
-                    div_elem.style.display = "none";
-                } else {
-                    div_elem.style.display = "block";
-                    
-                    //complete namebox/cloneName
-                    var span_name = div_elem.getElementsByClassName("nameBox")[0];
-                    if (clone.hasSizeConstant())
-                        span_name = div_elem.getElementsByClassName("cloneName")[0];
-                    if (typeof span_name == "undefined") return false;
-                    if (typeof span_name == "undefined") console.log(cloneID);
-                    span_name.innerHTML = clone.getShortName();
-                    span_name.title = clone.getNameAndCode();
-                    span_name.style.color = clone.getColor();
-                    
-                    //update clone axis
-                    var span_axis = div_elem.getElementsByClassName("axisBox")[0];
-                    span_axis.style.color = clone.getColor();
-                    var axis = this.selectedAxis;
-                    span_axis.removeAllChildren();
-                    span_axis.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
-                    // span_axis.setAttribute('title', clone.getPrintableSize());
+            if (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
+                (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  )||
+                (clone.isFiltered) || 
+                (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]))){ // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
+                
+                cloneDom.display("main", "none");
+                continue;
+            }
+            
+            cloneDom.display("main", "block");
+            
+            var divClass = "nameBox"
+            if (clone.hasSizeConstant())
+                divClass = "cloneName";
+            if (cloneDom.getElement(divClass) == null) return false
 
-                    //update cluster icon
-                    var span_cluster = div_elem.getElementsByClassName("clusterBox")[0];
-                    span_cluster.removeAllChildren();
-                    if (this.m.clusters[cloneID].length > 1) {
-                        if (clone.split) {
-                            span_cluster.onclick = cluster_hide;
-                            span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
-                            this.showClusterContent(cloneID, false)
-                        } else {
-                            span_cluster.onclick = cluster_show;
-                            span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
-                            this.hideClusterContent(cloneID, false)
-                        }
-                        self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
-                    } else {
-                        span_cluster.appendChild(document.createTextNode(' '));
-                        //update cluster display
-                        var display = clone.split
-                        if (this.m.clusters[cloneID].length < 2) display = false
-                        document.getElementById("cluster"+cloneID).style.display = "none";
-                    }
+            cloneDom.color(  divClass, clone.getColor());
+            cloneDom.content(divClass, clone.getShortName());
+            cloneDom.title(  divClass, clone.getNameAndCode());
+            
+            //update clone axis
+            var axis = this.selectedAxis;
+            cloneDom.color("axisBox", clone.getColor());
+            cloneDom.content("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : axis.fct(clone))
+
+            //update cluster icon
+            if (this.m.clusters[cloneID].length > 1) {
+                if (clone.split) {
+                    cloneDom.content("clusterBox", icon('icon-minus', 'Hide the subclones').outerHTML)
+                    this.showClusterContent(cloneID, false)
+                } else {
+                    cloneDom.content("clusterBox", icon('icon-plus', 'Show the subclones').outerHTML)
+                    this.hideClusterContent(cloneID, false)
                 }
+                self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
+            } else {
+                cloneDom.getElement("clusterBox").appendChild(document.createTextNode(' '));
+                if (this.m.clusters[cloneID].length < 2) display = false
+                document.getElementById("cluster"+cloneID).style.display = "none";
             }
         }
     },
@@ -554,6 +556,7 @@ List.prototype = {
             div_clone.onmouseover = function () {
                 self.m.focusIn(id);
             }
+            self.index_cluster[id] = new IndexedDom(div_clone);
             if (clone.isSelected) div_clone.className = "listElem selected";
 
             var span_name = document.createElement('span');
@@ -598,9 +601,9 @@ List.prototype = {
             }
 
             div_clone.appendChild(img);
-            div_clone.appendChild(span_info);
             div_clone.appendChild(span_name);
             div_clone.appendChild(span_stat);
+            div_clone.appendChild(span_info);
             div_cluster.appendChild(div_clone);
         }
 
@@ -615,14 +618,15 @@ List.prototype = {
      * @param {integer} cloneID - clone index
      * @param {dom_object} elem - div where will be the edit field
      * */
-    editName: function (cloneID, elem) {
+    editName: function (cloneID) {
         var self = this;
         if (document.getElementById("new_name")) {
             this.update();
         }
-        var divParent = elem;
+        var divParent = this.index[cloneID].getElement("nameBox");
         var old_event = divParent.onclick;
-        divParent.removeAllChildren();
+        this.index[cloneID].getElement("nameBox").removeAllChildren();
+        this.index[cloneID].clear("nameBox");
 
         if (cloneID[0] == 's')
             cloneID = cloneID.substr(3);
@@ -657,6 +661,7 @@ List.prototype = {
         a.onclick = function (event) {
             event.preventDefault()
             event.stopPropagation()
+            self.index[cloneID]= new IndexedDom(self.index[cloneID].getElement("main"));
             var newName = document.getElementById("new_name")
                 .value;
             self.m.clone(cloneID).changeName(newName);
@@ -669,7 +674,7 @@ List.prototype = {
     /** 
      * */
     buildElem: function (cloneID) {
-        var div = this.index[cloneID];
+        var div = this.index[cloneID].getElement("main");
         div.style.display = "block";
         if (!this.m.clone(cloneID).isActive()) div.style.display = "none";
         div.removeAllChildren();
@@ -691,53 +696,39 @@ List.prototype = {
     updateElemStyle: function (list) {
         for (var i = 0; i < list.length; i++) {
 
-            var div = this.index[list[i]];
-
+            var cloneDom = this.index[list[i]];
+            var clusterDom = this.index_cluster[list[i]];
             var clone = this.m.clone(list[i])
-
 
             if (!((clone.isActive() && this.m.clusters[list[i]].length !== 0) ||
                   (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) != -1))){
-                div.style.display = "none";
+                cloneDom.display("main", "none");
             }else{
                 if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
                     // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
-                    div.style.display = "none";
+                    cloneDom.display("main", "none");
                 } else if (clone.isFiltered){
-                    div.style.display = "none";
-                } else {
-                
-                    div.style.display = "block";
+                    cloneDom.display("main", "none");
+                } else {               
+                    cloneDom.display("main", "block");
                     //color
                     var color = clone.getColor();
-
-                    $("#" + list[i] + " .nameBox:first")
-                        .css("color", color)
-                    $("#" + list[i] + " .axisBox:first")
-                        .css("color", color)
-                    $("#_" + list[i] + " .nameBox:first")
-                        .css("color", color)
-                    $("#_" + list[i] + " .axisBox:first")
-                        .css("color", color)
+                    cloneDom.color("nameBox", color)
+                    cloneDom.color("axisBox", color)
 
                     //clone selected ?
-                    div.className = "list";
-                    
-                    if (clone.isSelected()) {
-                        $(div).addClass("list_select");
-                    } 
-                    if (this.m.focus ==list[i]) {
-                        $(div).addClass("list_focus");
-                    } 
+                    var classname = "list";
+                    if (clone.isSelected())     classname += " list_select";
+                    if (this.m.focus ==list[i]) classname += " list_focus";
+                    cloneDom.classname("main", classname);
 
                     //cluster sequence selected?
-                    var div2 = document.getElementById("_" + list[i]);
-                    if (div2) {
-                        if (clone.isSelected()) {
-                            div2.className = "listElem selected";
-                        } else {
-                            div2.className = "listElem";
-                        }
+                    if (clusterDom) {
+                        clusterDom.color("nameBox", color)
+                        clusterDom.color("axisBox", color)
+
+                        if (clone.isSelected()) clusterDom.classname("main", "listElem list_select");
+                        else                    clusterDom.classname("main", "listElem");
                     }
                 }
             }
@@ -816,15 +807,20 @@ List.prototype = {
     },
 
     /**
-     * toggle on the display for a given clone of all clones merged with it
+     * toggle the display for a given clone of all clones merged with it
      * Action by direct click on the show button of the list element
      * @param {String} div - div name of the show button 
      * */
-    showCluster: function (div) {
+    toggleCluster: function (div) {
         var cloneID = div.getAttribute("cloneID");
         var self = this
-        this.m.clone(cloneID).split = true
-        this.showClusterContent(cloneID, true)
+        if (this.m.clone(cloneID).split){
+            this.m.clone(cloneID).split = false
+            this.hideClusterContent(cloneID, true)
+        }else{
+            this.m.clone(cloneID).split = true
+            this.showClusterContent(cloneID, true)
+        }
     },
 
     /**
@@ -835,25 +831,10 @@ List.prototype = {
     showClusterContent: function(cloneID, update){
         var self = this
         var fct;
-        if (update == true || update == undefined) {
-            fct = function () { self.m.updateElem([cloneID]) }
-        } else if (update == false) {
-            fct = function(){}
-        }
+        if (update == true || update == undefined) 
+            self.m.updateElem([cloneID]) 
         $("#cluster" + cloneID)
-            .show(50, fct );
-    },
-
-    /**
-     * toggle off the display for a given clone of all clones merged with it
-     * Action by direct click on the hide button of the list element
-     * @param {String} div - div name of the hide button 
-     * */
-    hideCluster: function (div) {
-        var cloneID = div.getAttribute("cloneID");
-        var self = this
-        this.m.clone(cloneID).split = false
-        this.hideClusterContent(cloneID, true)
+            .show(50);
     },
 
     /**
@@ -864,13 +845,10 @@ List.prototype = {
     hideClusterContent: function(cloneID, update){
         var self = this
         var fct;
-        if (update == true || update == undefined) {
-            fct = function () { self.m.updateElem([cloneID]) }
-        } else if (update == false) {
-            fct = function(){}
-        }
+        if (update == true || update == undefined) 
+            self.m.updateElem([cloneID]) 
         $("#cluster" + cloneID)
-            .hide(50, fct );
+            .hide(50);
     },
     
     /**

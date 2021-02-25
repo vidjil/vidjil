@@ -1,0 +1,29 @@
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS -o fuse_export_airr.airr --export-airr -t 5  ../data/fused_multiple.vidjil.gz && cat fuse_export_airr.airr
+
+$ check original name (not present)
+0: "../data/demo_multiple.vidjil"
+$ check number of occurence of file_1 (present in 4 clones)
+r5: file_1
+$ check number of occurence of file_2 (present in 3 clones)
+r4:  file_2
+$ check number of occurence of file_3 (present in 4 clones)
+r5: file_3
+
+
+
+#$ Check number of clone (lines+header)
+#r12: ^
+
+$ Check number of line for clone 1 (present in the 3 files)
+3: IGH_top_1
+$ Check number of line for clone 2 (present in the 3 files)
+3: IGH_top_2
+$ Check number of line for clone 3 (present in only 2 files)
+2: IGH_top_3
+$ Check number of line for clone 4 (present in the 3 files)
+3: IGH_top_4
+
+
+$ Check export warnings (only code)
+3: W69
+

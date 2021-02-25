@@ -619,6 +619,30 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
         db.auth_membership.insert(user_id=id_first_user, group_id=id_public_group)
 
+
+        ### Base config classification
+        db.classification.insert(
+            name = 'Vidjil-algo',
+            info = 'Vidjil-algo'
+        )
+        db.classification.insert(
+            name = 'Sub groups',
+            info = 'Sub groups'
+        )
+        db.classification.insert(
+            name = 'Other germlines',
+            info = 'Other germlines'
+        )
+        db.classification.insert(
+            name = 'Other species',
+            info = 'Other species'
+        )
+        db.classification.insert(
+            name = 'Experimentals',
+            info = 'Experimentals'
+        )
+
+
         ## base Vidjil configs
 
         db.config.insert(
@@ -626,42 +650,48 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             program = 'vidjil',
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -U ',
             fuse_command = '-t 100',
-            info = 'Same as the default "multi+inc+xxx" (multi-locus, with some incomplete/unusual/unexpected recombinations), and extract analyzed reads in the "out" temporary directory.'
+            info = 'Same as the default "multi+inc+xxx" (multi-locus, with some incomplete/unusual/unexpected recombinations), and extract analyzed reads in the "out" temporary directory.',
+            classification = 1
         )
         db.config.insert(
             name = 'multi+inc+xxx',
             program = 'vidjil',
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ',
             fuse_command = '-t 100',
-            info = 'multi-locus, with some incomplete/unusual/unexpected recombinations'
+            info = 'multi-locus, with some incomplete/unusual/unexpected recombinations',
+            classification = 1
         )
         db.config.insert(
             name = 'multi+inc',
             program = 'vidjil',
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -w 50 ',
             fuse_command = '-t 100',
-            info = 'multi-locus, with some incomplete/unusual recombinations'
+            info = 'multi-locus, with some incomplete/unusual recombinations',
+            classification = 1
         )
         db.config.insert(
             name = 'multi',
             program = 'vidjil',
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -d -w 50 ',
             fuse_command = '-t 100',
-            info = 'multi-locus, only complete recombinations'
+            info = 'multi-locus, only complete recombinations',
+            classification = 2
         )
         db.config.insert(
             name = 'TRG',
             program = 'vidjil',
             command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:TRG ',
             fuse_command = '-t 100',
-            info = 'TRG, VgJg'
+            info = 'TRG, VgJg',
+            classification = 2
         )
         db.config.insert(
             name = 'IGH',
             program = 'vidjil',
             command = '-c clones -w 60 -d -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH ',
             fuse_command = '-t 100',
-            info = 'IGH, Vh(Dh)Jh'
+            info = 'IGH, Vh(Dh)Jh',
+            classification = 2
         )
 
         ## permission

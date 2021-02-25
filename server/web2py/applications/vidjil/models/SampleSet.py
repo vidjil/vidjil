@@ -35,7 +35,8 @@ class SampleSet(object):
         return self.tag_decorator.sanitize(text)
 
     def get_configs(self, data):
-        return data['conf_list']
+        conf_list = get_conf_list_select()
+        return data._extra[conf_list]
 
     def get_list_path(self):
         return '/sample_set/all'
@@ -45,28 +46,44 @@ class SampleSet(object):
 
     def get_config_urls(self, data):
         configs = []
-        for conf in data['conf_list']:
-            filename =  "(%s %s)" % (self.get_name(data), conf['name'])
-            if conf['fused_file'] is not None :
+        http_origin = ""
+        if request.env['HTTP_ORIGIN'] is not None:
+            http_origin = request.env['HTTP_ORIGIN'] + "/"
+        key = get_conf_list_select()
+        conf_list = [] if data._extra[key] is None else data._extra[key].split(',')
+        for conf in conf_list:
+            c = conf.split(';')
+            filename =  "(%s %s)" % (self.get_name(data), c[1])
+            if c[2] is not None :
                 configs.append(
-                    str(A(conf['name'],
-                        _href="index.html?sample_set_id=%d&config=%d" % (data['sample_set_id'], conf['id']), _type="text/html",
-                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %d }, '%s' ); }" % (data['sample_set_id'], conf['id'], filename))))
+                    str(A(c[1],
+                        _href="index.html?sample_set_id=%d&config=%s" % (data['sample_set_id'], c[0]), _type="text/html",
+                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c[0], filename))))
             else:
-                configs.append(conf['name'])
+                configs.append(c[1])
         return XML(", ".join(configs))
 
     def get_groups(self, data):
-        return data['group_list']
+        key = get_group_names_select()
+        return data._extra[key]
 
     def get_groups_string(self, data):
-        return ', '.join([group for group in data['group_list'] if group != 'admin'])
+        key = get_group_names_select()
+        group_list = [] if data._extra[key] is None else data._extra[key].split(',')
+        return ', '.join([group for group in group_list if group != 'admin'])
 
     def get_creator(self, data):
         return data['creator']
 
+    def get_files_values(self, data):
+        key = get_file_sizes_select()
+        size = 0 if data._extra[key] is None else data._extra[key]
+        file_count = data.file_count
+        return file_count, size
+
     def get_files(self, data):
-        return '%d (%s)' % (data['file_count'], vidjil_utils.format_size(data['size']))
+        file_count, size = self.get_files_values(data)
+        return '%d (%s)' % (file_count, vidjil_utils.format_size(size))
 
     def get_fields(self):
         fields = []
@@ -146,6 +163,18 @@ class SampleSet(object):
     def validate(self, data):
         pass
 
+    @abstractmethod
+    def get_dedicated_fields(self):
+        pass
+
+    @abstractmethod
+    def get_dedicated_group(self):
+        pass
+
+    @abstractmethod
+    def get_filtered_fields(self, search):
+        pass
+
 def get_sample_name(sample_set_id):
     '''
     Return the name associated with a sample set (eg. a run or a
@@ -186,3 +215,17 @@ def get_sample_set_id_from_results_file(results_file_id):
                 ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
     return sample_set_id
 
+def get_conf_list_select():
+    return "GROUP_CONCAT(DISTINCT (config.id || ';' || config.name || ';' || fused_file.fused_file))"
+
+def get_config_ids_select():
+    return "GROUP_CONCAT(DISTINCT config.id)"
+
+def get_config_names_select():
+    return "GROUP_CONCAT(DISTINCT config.name)"
+
+def get_group_names_select():
+    return "GROUP_CONCAT(DISTINCT auth_group.role)"
+
+def get_file_sizes_select():
+    return "COUNT(DISTINCT sequence_file.id) * SUM(sequence_file.size_file) / COUNT(*)"

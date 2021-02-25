@@ -3,7 +3,7 @@
 # We launch three times a sequence of interest (buggy-D.fa) with a various
 # number of distinct reads (mutations randomly inserted in the middle).
 
-# The segmentation of one sequence should not depend on the number of the
+# The designation of one sequence should not depend on the number of the
 # other reads. This is what is tested, we first put 10 sequences, then 5 and
 # finally just the sequence of interest alone.
 
@@ -14,5 +14,5 @@
 $ Three times the same window
 3: TGTGCGGGATCTTCGTCCTCTTATCATAATAATGGTTTTTTGGCGGGGGAGTCATGGGGC
 
-$ Three times the same segmentation
-f3: IGHV4-34.*IGHD.*IGHJ4
+$ Three times the same designation
+3: IGHV4-34.*IGHD.*IGHJ4

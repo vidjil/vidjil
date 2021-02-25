@@ -76,13 +76,17 @@ class VidjilBrowser < Watir::Browser
   # Return the clone on the scatterplot
   # Beware the id must be a string
   def clone_in_scatterplot(id, extra={}, number=1)
+
     circle = element(extra.merge(:id => scatterplot_id(number) + "_circle"+id))
-    if circle.exists? and not circle.present?
-      bar = element(extra.merge(:id => scatterplot_id(number) + "_bar"+id))
-      if bar.exists? and bar.present?
-        return bar
-      end
+    if circle.exists? and circle.present?
+      return circle
     end
+
+    bar = element(extra.merge(:id => scatterplot_id(number) + "_bar"+id))
+    if bar.exists? and bar.present?
+      return bar
+    end
+    
     return circle
   end
 
@@ -133,12 +137,21 @@ class VidjilBrowser < Watir::Browser
     return element(:id => 'info_point')
   end
 
+  # Information on the currently displayed point
+  def info_name
+    return element(:id => 'info_sample_name')
+  end
+
   def info_segmented
     return element(:id => 'info_segmented').span(:index => 1)
   end
 
   def info_selected_locus
     return element(:id => 'info_selected_locus').span(:index => 1)
+  end
+
+  def info_colorBy
+    return div(:id => "info").div(:class => "info_color")
   end
 
   # Return the div containing the information (status bar)
@@ -201,6 +214,10 @@ class VidjilBrowser < Watir::Browser
 
   def menu_item_export_fasta_align(extra = {})
     return menu_item_export('export_fasta_align', extra)
+  end
+
+  def menu_item_export_add_germline(extra = {})
+    return menu_item_export('export_add_germline', extra)
   end
 
   def menu_item(id, extra = {})
@@ -269,8 +286,12 @@ class VidjilBrowser < Watir::Browser
   end
 
   # Return the y axis label of the scatterplot
-  def scatterplot_y_label(number)
+  def scatterplot_y_label(number=1)
     return scatterplot_labels(number)[1]
+  end
+
+  def scatterplot_locus(locus, number=1)
+    return scatterplot(number).div(:class => 'sp_system_label').span(:title => locus)
   end
 
   def segmenter_checkbox_aa
@@ -365,6 +386,11 @@ class VidjilBrowser < Watir::Browser
     return tag_selector.button(:text => 'ok')
   end
 
+  # Enter in dev mode
+  def devel_mode
+    $b.execute_script('$(".devel-mode").show();')
+  end
+
   # Unselect everything, both on clones, and move away from menus (as if we click on the back)
   def unselect
     $b.execute_script('m.unselectAll()')
@@ -376,10 +402,23 @@ class VidjilBrowser < Watir::Browser
     return div(:id => 'list_clones')
   end
   
+  def listLock()
+    return element(:id => "div_sortLock")
+  end
+
+
   def until(extra = {})
     default = {timeout: 3}
     default.merge(extra)
     Watir::Wait.until(default) { yield }
+  end
+
+  def update_icon
+    return div(:id => 'updateIcon')
+  end
+
+  def modal_container
+    return div(:class =>  ["modal", "info-container"])
   end
 
   protected
@@ -404,7 +443,7 @@ class VidjilBrowser < Watir::Browser
   end
 
   def scatterplot_legend(axis, index, number=1)
-    return scatterplot_axis(axis, number).element(:class => 'sp_legend', :index => index)
+    return scatterplot_axis(axis, number).element(:tag_name => 'text', :index => index)
   end
 
 

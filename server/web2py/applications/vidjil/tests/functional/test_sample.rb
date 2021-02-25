@@ -25,9 +25,8 @@ class TestSample < ServerTest
     # load patient list
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    table = $b.table(:id => "table")
-    table.wait_until(&:present?)
-    table
+    $b.table(:id => "table").wait_until(&:present?)
+    $b.table(:id => "table")
   end
 
   def go_to_set(index)
@@ -89,13 +88,86 @@ class TestSample < ServerTest
       form.text_field(:id => "file_info_%d" % i).set("#my_file_%d" % i)
       # TODO test other sets
     end
+
+    form_class = form.input(:type => "submit").class_name
+    assert( !(form_class.include? "disabledClass") ) # Submit button is not disabled before click
+
     form.input(:type => "submit").click
+    
+    form_class = form.input(:type => "submit").class_name
+    assert( (form_class.include? "disabledClass") ) # Submit button should be disabled after click
 
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
 
     lines = table.tbody.rows
     assert(lines.count == count + $num_additional_files + 1)
+
+    # Then search for #test4 in the patient list and check that
+    # the number of files is correct
+    table = go_to_patient_list
+    filter = $b.text_field(:id => "db_filter_input")
+    filter.wait_until(&:present?)
+    filter.set('#test4')
+
+    filter.fire_event('onchange')
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    table = $b.table(:id => 'table')
+    lines = table.tbody.rows
+    assert(lines.count == 1)
+
+    nb_files = count + $num_additional_files + 1
+    nb_files_cell = lines[0].cell(:index => 7)
+    assert (nb_files_cell.text.include? nb_files.to_s+" ("), "Nb files cell contains "+nb_files_cell.text+" instead of "+nb_files.to_s+" expected"
+
+    # Check that we also have the "default + extra reads" config
+    results_cell = lines[0].cell(:index => 4)
+    assert (results_cell.text.include? "default + extract reads"), "Results cell contains "+results_cell.text
+  end
+
+  def test_add_with_pre_process
+    # Add with a pre-process and check that some fields are required
+    table = go_to_set_by_tag "#test1"
+    count = table.tbody.rows.count
+
+    add_button = $b.span(:text => "+ add samples")
+    add_button.wait_until(&:present?)
+    add_button.click
+
+    form = $b.form(:id => "upload_form")
+    form.wait_until(&:present?)
+
+    $b.input(:id => "source_computer").click
+    $b.select(:id => "pre_process").select(/test pre-process 0/)
+
+    form = $b.form(:id => "upload_form")
+    form.wait_until(&:present?)
+
+    # Adding another sample
+    $b.span(:id => "file_button").click
+
+    form.file_field(:id => 'file_upload_1_0').set(File.expand_path(__FILE__))
+    form.file_field(:id => 'file_upload_1_1').set(File.expand_path(__FILE__))
+
+    form.input(:type => "submit").click
+    # Form should not be submitted because we didn't fill all fields
+    assert ($b.form(:id => "upload_form").present?)
+
+    form.file_field(:id => 'file_upload_2_0').set(File.expand_path(__FILE__))
+
+    form.input(:type => "submit").click
+    # Form should not be submitted because we didn't fill all fields
+    assert ($b.form(:id => "upload_form").present?)
+
+    form.file_field(:id => 'file_upload_2_1').set(File.expand_path(__FILE__))
+    $b.form(:id => "upload_form").input(:css => "[type=submit]:not(.disabledClass)").click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    
+    table = $b.table(:id => "table")
+    table.wait_until(&:present?)
+
+    lines = table.tbody.rows
+    assert(lines.count == count + 2)
   end
 
   def test_edit
@@ -146,6 +218,9 @@ class TestSample < ServerTest
   end
 
   def test_set_association_create
+
+    ##  1. get the patient, run, set IDs of the sample sets which have #set_assoc_0 in the description 
+    
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
@@ -166,6 +241,8 @@ class TestSample < ServerTest
     table.wait_until(&:present?)
 
     set_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
+
+    ## 2. Add a sample in the patient and make the association with the other sets
 
     samples_table = go_to_set_by_tag "#set_assoc_0"
     $b.span(:class => "button2", :text => "+ add samples").click
@@ -192,6 +269,7 @@ class TestSample < ServerTest
     form.text_field(:id => "file_sampling_date_0").set("2010-10-10")
     form.text_field(:id => "file_info_0").set("#my_file_add")
 
+    # Include the three sets (patient, run and set we identified previously)
     val = ":p 0 (2010-10-10) (#{patient_id})|:r run 0 (#{run_id})|:s generic 0 (#{set_id})"
     $b.execute_script("return $('#file_set_list').val('#{val}');")
 
@@ -199,6 +277,22 @@ class TestSample < ServerTest
 
     samples_table = $b.table(:id => "table")
     samples_table.wait_until(&:present?)
+    # Check that the "associated sets" header appears
+    assert(samples_table.td(:text => "associated sets").present?)
+    # We are on the patient we should have a link to the run and the set
+    $b.screenshot.save('/tmp/ci.png')
+    # Get the row with the created file
+    tag = samples_table.a(:text=>"#my_file_add")
+    assert(tag.present?)
+    tr = tag.parent.parent
+    assert (tr.present?)
+    assert (tr.tag_name == "tr")
+    assert(tr.span(:class => ["set_token", "run_token"], :text => "run 0").present?)
+    generic_span = tr.span(:class => ["generic_token", "set_token"], :title => "generic 0")
+    assert(generic_span.present?)
+    assert (generic_span.onclick.include? "db.call('sample_set/index'"), "onclick contains: "+generic_span.onclick
+
+    # Checking in the edit form that the three sets appear
     samples_table.a(:text => "#set_assoc_0").parent.parent.i(:class => "icon-pencil-2").click
 
     form = $b.form(:id => "upload_form")
@@ -265,7 +359,10 @@ class TestSample < ServerTest
   def test_run
     table = go_to_set_by_tag "#set_assoc_0"
 
-    $b.select_list(:id => "choose_config").select("2")
+    config_list = $b.select_list(:id => "choose_config")
+    assert ( config_list.optgroup(:label => "Vidjil-algo").exist? ), "optgroup is present in configlist"
+
+    config_list.select("2")
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
     samples_table = $b.table(:id => "table")

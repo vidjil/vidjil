@@ -1,5 +1,5 @@
 DB_ADDRESS = ""
-DB_TIMEOUT_CALL = 30000               // Regular call
+DB_TIMEOUT_CALL = 60000               // Regular call
 DB_TIMEOUT_GET_DATA = DB_TIMEOUT_CALL           // Get patient/sample .data
 DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
 
@@ -39,6 +39,7 @@ function Database(model, address) {
         this.m = model
         this.uploader = new Uploader()
         this.build()
+        this.m.db = this
         
         window.onbeforeunload = function(e){
             if ( self.uploader.is_uploading() ){
@@ -290,6 +291,34 @@ Database.prototype = {
         });
     },
 
+    callUrlJson : function(url, args) {
+        var self=this;
+
+        $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: url,
+            data: {'data': JSON.stringify(args)},
+            timeout: DB_TIMEOUT_CALL,
+            xhrFields: {withCredentials: true},
+            success: function (result) {
+                self.display_result(result, url, args)
+                self.connected = true;
+            },
+            error: function (request, status, error) {
+                self.connected = false;
+                if (status === "timeout") {
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                } else {
+                    self.check_cert()
+                }
+                self.warn("callUrlJson: " + status + " - " + url.replace(self.db_address, '') + "?" + self.argsToStr(args))
+            }
+
+        });
+
+    },
+
     callLinkable: function (linkable) {
         var href = linkable.attr('href');
         var type = linkable.data('linkable-type');
@@ -372,8 +401,17 @@ Database.prototype = {
         if ($option.attr('required_files') == "1"){
             $(".file_2").hide();
             $(".upload_file").val("");
+            $(".upload_field").each(function() {
+                $(this).prop("required", false);
+            });
         }else{
             $(".file_2").show();
+            if ($(".is_editing").length == 0) {
+                // Not editing a sample, but creating new ones
+                $(".upload_field").each(function() {
+                    $(this).prop("required", true);
+                });
+            }
         }
     },
 
@@ -440,6 +478,7 @@ Database.prototype = {
         //the json result look like a .vidjil file so we load it
         if (res.reads){
             this.m.parseJsonData(result, 100)
+            this.m.file_source = "database";
             this.m.loadGermline()
                 .initClones();
             this.load_analysis(args);
@@ -583,13 +622,22 @@ Database.prototype = {
         if ( document.getElementById('upload_form') ){
             $('#upload_form').on('submit', function(e) {
                 e.preventDefault();
+
+                //clear empty values before submiting data
+                var upload_form = $('#upload_form').serializeObject()
+                if ("file" in upload_form)
+                    upload_form.file = upload_form.file.filter(function(el) {
+                        return typeof el != "object" || Array.isArray(el) || Object.keys(el).length > 0;
+                    });
+                var data = JSON.stringify(upload_form)
+
                 $.ajax({
                     type     : "POST",
                     cache: false,
                     crossDomain: true,
                     xhrFields: {withCredentials: true},
                     url      : $(this).attr('action'),
-                    data     : {'data': JSON.stringify($('#upload_form').serializeObject())},
+                    data     : {'data': data},
                     success  : function(result) {
                         var js = self.display_result(result)
                         var id, fileSelect, files, file, filename;
@@ -787,6 +835,7 @@ Database.prototype = {
             xhrField: {withCredentials: true},
             success: function (result) {
                 db.call("default/home");
+                db.clear_login_info();
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
@@ -796,6 +845,23 @@ Database.prototype = {
                 }
             }
         });
+    },
+
+    extract_login_info: function() {
+        var login_info = document.getElementById('db_auth_name');
+        if(login_info != null) {
+            var container = document.getElementById('login-container');
+            container.innerHTML = login_info.innerHTML;
+            var logout = document.createElement('a');
+            logout.classList.add('button');
+            logout.text = '(logout)';
+            logout.onclick = function() {db.logout()};
+            container.appendChild(logout);
+        }
+    },
+
+    clear_login_info: function() {
+        document.getElementById('login-container').innerHTML = '';
     },
 
     /*récupére et initialise le browser avec un fichier .data
@@ -912,6 +978,7 @@ Database.prototype = {
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.m.resume()
+                self.m.url_manager.clean();
                 self.display_result(result, "", args);
                 self.connected = true;
             },
@@ -1009,7 +1076,7 @@ Database.prototype = {
                         xhrFields: {withCredentials: true},
 		        timeout: DB_TIMEOUT_CALL,
 		        success: function (result) {
-		        	notification.parse_notification(result)
+		        	m.notification.parse_notification(result)
 		            
 		        }, 
 		        error: function (request, status, error) {
@@ -1030,6 +1097,7 @@ Database.prototype = {
         this.div.style.display = "block";
         this.msg.innerHTML = msg;
             
+        this.extract_login_info();
         this.uploader.display()
     },
 
@@ -1207,6 +1275,29 @@ Database.prototype = {
         var $cb=$(cb);
         $('[name^=\"sample_set_ids\"]').prop('checked', $cb.is(':checked'));
         this.updateStatsButton();
+    },
+
+    callGroupStats: function() {
+        var group_ids = [];
+        $('[name^="group_ids"]:checked').each(function() {
+            group_ids.push($(this).val());
+        });
+        this.callUrlJson(DB_ADDRESS + 'my_account/index', {'group_ids': group_ids});
+    },
+
+    callJobStats: function() {
+        var group_ids = [];
+        $('[name^="group_ids"]:checked').each(function() {
+            group_ids.push($(this).val());
+        });
+        this.callUrlJson(DB_ADDRESS + 'my_account/jobs', {'group_ids': group_ids});
+    },
+
+    stopGroupPropagate: function(e) {
+        if(!e) {
+            e = window.event
+        }
+        e.stopPropagation();
     },
 
     // Log functions, to server

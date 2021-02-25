@@ -44,7 +44,7 @@ class Germline {
   int max_indexing;
 
   void init(string _code, char _shortcut,
-            string seed, int max_indexing, bool build_automaton=false);
+            string seed_5, string seed_4, string seed_3, int max_indexing, bool build_automaton=false);
 
  public:
   /*
@@ -53,21 +53,26 @@ class Germline {
 
   Germline(string _code, char _shortcut,
            list <string> f_rep_5, list <string> f_rep_4, list <string> f_rep_3,
-           string seed="", int max_indexing=0, bool build_automaton=false);
+           string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
+           bool build_automaton=false);
 
   Germline(string _code, char _shortcut,
   	   string f_rep_5, string f_rep_4, string f_rep_3,
-	   string seed="", int max_indexing=0, bool build_automaton=false);
+	   string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
+           bool build_automaton=false);
 
   Germline(string _code, char _shortcut,
       BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
-	   string seed="", int max_indexing=0, bool build_automaton=false);
+	   string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
+           bool build_automaton=false);
 
   Germline(string _code, char _shortcut,
-	   string seed="", int max_indexing=0, bool build_automaton=false);
+	   string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
+           bool build_automaton=false);
 
   Germline(string _code, char shortcut, string path, json json_recom,
-           string seed="", int max_indexing=0, bool build_automaton=false);
+           string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
+           bool build_automaton=false);
 
   ~Germline();
 
@@ -79,7 +84,9 @@ class Germline {
   /**
    * The string used for indexing the germline.
    */
-  string seed;
+  string seed_5;
+  string seed_4;
+  string seed_3;
 
   /**
    * Finishes the construction of the germline so that it can be used

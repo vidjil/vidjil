@@ -9,9 +9,6 @@ class TestNormalization < BrowserTest
         super
         if not defined? $b
           set_browser("/doc/analysis-example.vidjil")
-          if $b.div(id: 'tip-container').present?
-            $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-          end
         end
     end
 
@@ -34,7 +31,7 @@ class TestNormalization < BrowserTest
         $b.clone_info('25')[:star].click
         $b.tag_selector_edit_normalisation.set '0.1'
         $b.send_keys :enter
-        
+        $b.update_icon.wait_while(&:present?)
         assert ($b.clone_info('25')[:size].text == '10.00%'), "Span show correct normalized size"
 
         $b.menu_settings.click
@@ -43,7 +40,7 @@ class TestNormalization < BrowserTest
         
         $b.input(:id => 'reset_norm').click
         $b.send_keys :escape
-        
+        $b.update_icon.wait_while(&:present?)
         assert ($b.clone_info('25')[:size].text == '0.129%'), "Span show correct size after reset normalization"
     end
 
@@ -57,7 +54,7 @@ class TestNormalization < BrowserTest
         assert ($b.div(:id => 'normalizetest25').present?), "Form still have the input for expected normalization"
         
         $b.div(:id => 'normalize_external').click
-        
+        $b.update_icon.wait_while(&:present?)
         assert ($b.clone_info('1')[:size].text == '0.122%'), "Span should show correct normalized size (external) (" + $b.clone_info('1')[:size].text+")"
     end
 

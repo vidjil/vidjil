@@ -24,10 +24,11 @@
 NOTIFICATION_PERIOD = 300000			  // Time interval to check for notifications periodically (ms)
 AJAX_TIMEOUT_START = 200                  // Delay before cursor wait
 AJAX_TIMEOUT_LONG  = 600                  // Delay before spinner at the top-right
-AJAX_TIMEOUT_MSG1  = 5000                 // Delay before first message
-AJAX_TIMEOUT_MSG2  = 12000                // Delay before second message
+AJAX_TIMEOUT_MSG1  = 10000                 // Delay before first message
+AJAX_TIMEOUT_MSG2  = 30000                // Delay before second message
 var timeout;
 var ajaxOn = 0;
+var devel_mode = false;
 
 /* Console (optional)
  * Setting here a console replaces the default javascript console with a custom one.
@@ -53,13 +54,10 @@ var db = new Database(m);
 var notification = new Notification(m)
 
 try {
-    var vmi = new VMI();
-    vmi.setupDrawer();
 
     /* use template to create DOM elements from string */
     var template = document.createElement('template');
-    template.innerHTML = ["<div id=\"visu-separator\" >...",
-        "<div class=\"visu2_menu_anchor devel-mode\">",
+    template.innerHTML = ["<div class=\"visu2_menu_anchor devel-mode\">",
         "<div class=\"visu2_menu\">",
         "<div class=\"visu2_menu_content\">",
         "<label for=\"visu2_mode_sp\" onclick=\"switch_visu2('scatterplot')\">",
@@ -75,18 +73,13 @@ try {
         "</div>",
         "</div>",
         "</div>"].join('');
-    var separator = template.content.firstChild;
-    var panel_instructions = [{'mid-container': ["left-container", "visu-container"]},"bot-container"];
-    vmi.setupPanels(panel_instructions, document.body);
 
-    vmi.addView("info", "left-container", "");
-    vmi.addView("list", "left-container", "");
-    vmi.addView("data", "left-container", "");
-    vmi.addView("visu2", "visu-container", "");
+    var separator = template.content.firstChild;
+
     document.getElementById("visu-container").appendChild(separator);
-    vmi.addView("visu", "visu-container", "");
-    vmi.addView("segmenter", "bot-container", "");
-    vmi.setOverlays(["info-row", "list-row", "data-row", "visu-container", "bot-container"]);
+
+    var vidjil_vmi = new VidjilVMI();
+    vidjil_vmi.setup();
 
     /* Views
      * Each view is rendered inside a <div> html element (whose id is given as the first paramter),
@@ -97,7 +90,8 @@ try {
     var graph = new Graph("visu2", m, db);               // Time graph
     var list_clones = new List("list", "data", m, db);   // List of clones
     var sp = new ScatterPlot("visu", m, db);             // Scatterplot (both grid and bar plot view)
-    var sp2;
+    var sp2 = new View(m, "visu3"); // Dummy view
+    // var sp2 = new ScatterPlot("visu3", m, db, 5);
     var segment = new Segment("segmenter", m, db);   // Segmenter
 
 
@@ -140,10 +134,6 @@ try {
     var my_tips = new TipsOfTheDay(tips, new TipDecorator(), available_tips);
     my_tips.set_container(document.getElementById('tip-container'))
     my_tips.display()
-
-    var menu_container = document.getElementById('vmiSelector');
-    var menu = vmi.setMenuOptions(new VidjilMenuDecorator());
-    menu_container.appendChild(menu);
 } catch(err) {
     this.db.log_error(err)
 }

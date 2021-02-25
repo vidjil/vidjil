@@ -1,16 +1,17 @@
 var DEFAULT_DB_ADDRESS="https://db.vidjil.org/vidjil/";
 
 requirejs.config({
-    baseUrl: 'js/lib',
+    baseUrl: './js/lib',
     paths: {
         app: '',
-        jquery: 'jquery-3.3.1.min'
+        jquery: 'jquery-3.3.1.min',
+        d3: 'd3.v5.min',
     }
 });
 
 // Load required libraries first
+require(['d3'], function(d3) {window.d3 = d3;});
 require(["jquery",
-         "d3.v3",
          "jquery.form",
          "file",
          "tsne",
@@ -49,8 +50,7 @@ function loadAfterConf() {
 
         require(["../germline"],
                 function() {
-                    require(["../generic_axis",
-                             "../closeable"],
+                    require(["../closeable"],
                             function() {
                                 require(["../compare",
                                          "../menu",
@@ -62,10 +62,11 @@ function loadAfterConf() {
                                          "../clone",
                                          "../dynprog",
                                          "../list",
-                                         "../germline_axis",
-                                         "../numerical_axis",
                                          "../axes",
+                                         "../axis",
                                          "../graph",
+                                         "../scatterPlot_menu",
+                                         "../scatterPlot_selector",
                                          "../scatterPlot",
                                          "../builder",
                                          "../info",
@@ -82,12 +83,15 @@ function loadAfterConf() {
                                          "../autocomplete",
                                          "../tips",
                                          "../tokeniser",
+                                         "../indexedDom",
                                          // Speed test
                                          "../speed_test",
                                          "../form_builder",
                                          "../vidjil_menu_decorator",
+                                         "../vidjil_vmi",
                                          "../../test/QUnit/testFiles/data_test",
                                         ], function(){
+                                            
                                             if (typeof main == "undefined"){
                                                 require(["../main"]);
                                             }else{
@@ -96,6 +100,8 @@ function loadAfterConf() {
                                             if (typeof config.addons !== "undefined") {
                                                 require(config.addons);
                                             }
+                                            require(["../screen_MRD"]);
+                                            
                                         })
                             })
                 },

@@ -1,10 +1,10 @@
 
-Here are aggregated notes forming the developer documentation on the Vidjil web client.
-This documentation is a work-in-progress, it is far from being as polished as the user documentation.
-Help can also be found in the source code and in the commit messages.
+Here are aggregated notes forming a part of the developer documentation on the Vidjil web client.
+These notes are a work-in-progress, they are not as polished as the user documentation.
+Developers should also have a look at the [documentation for bioinformaticians and server administrators](/),
+at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
 
-
-# Client
+# Development notes -- Client
 
 ## Installation
 
@@ -17,6 +17,46 @@ able to open `.vidjil` files with the `import/export` menu.
 To work with actual data, the easiest way is to copy `js/conf.js.sample` to `js/conf.js`.
 This will unlock the `patients` menu and allow your local client
 to access the public server at <http://app.vidjil.org/>.
+
+## Installation with Docker
+
+This section is intended for people wanting to install a vidjil client using docker
+WITHOUT a vidjil server. If you wish to install a vidjil server altogether with your client
+please refer to the docker section in dev-server.md.
+
+### Setup 
+
+The config file that will be used by the client can be found at vidjil-client/conf/conf.js
+
+Since this installation does not provide a Vidjil server it is recommended to disable the use of databases,
+
+``` json
+"use_database" : false,
+```
+
+or to provide an URL to connect to an existing one online.
+
+``` json
+"db_address" : "https://VIDJILSERVERURL/vidjil",
+```
+
+### Starting the environment
+
+The vidjil Docker environment is managed by Docker Compose since it is composed of 
+several different services, but a single service, nginx, is required to run the vidjil client,
+for a more detailed explanation on other services see dev-server.md.
+
+Ensure your docker-compose.yml contains the correct reference to the
+vidjil-client image you want to use. Usually this will be vidjil/vidjil-client:latest,
+but more tags are available at <https://hub.docker.com/r/vidjil/vidjil/tags/>.
+
+Running the following command will automatically download any missing
+images and start the environment:
+
+``` bash
+docker-compose up nginx
+```
+
 
 ## Client API and permanent URLs
 
@@ -32,15 +72,19 @@ Both GET and POST requests are accepted.
 Note that the `browser/index.html` file and the `.vidjil/.analysis` files should be hosted on the same server.
 Otherwise, the server hosting the `.vidjil/.analysis` files must accept cross-domain queries.
 
-The client can also load data from a server (see below, requires logging), as in <http://app.vidjil.org/?set=3241&config=39>
+The client can also load data from a server (see below, requires logging) using url parameters to pass file identifiers,
+as in <http://app.vidjil.org/?set=3241&config=39>
 
 |             |               |
 | ----------- | ------------- |
 | `set=xx`    | sample set id |
-| `config=xx` | config id     |
+| `config=yy` | config id     |
+
+or directly inside the URL for a shortened version, as in <http://app.vidjil.org/3241-39/>
+
 
 Older formats (patients, run…) are also supported for compatibility but deprecated.
-Moreover, the state of the client can be encoded in the URL, as in <http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31>
+Moreover, the state of the client can be encoded in the URL, as in <http://app.vidjil.org/3241-39/?plot=v,size,bar&clone=11,31>
 
 |                  |                       |
 | ---------------- | --------------------- |
@@ -72,14 +116,18 @@ as well with the locus selection.
   - Other objects: `Report`, `Shortcut`
     Extends functionalities but requires elements from the full `index.html`.
 
+
 ### Clone attributes
+
+Clone use [boolean mask](https://en.wikipedia.org/wiki/Mask_(computing)) in order to specify attributes. 
+These attributes allow specific behavior inside the client.
 
 
 C_SIZE_CONSTANT
 C_SIZE_DISTRIB
 C_SIZE_OTHER
 
-Each clone has one (and only one) of these attributes.
+Each clone has one (and only one) attributes linked to his type/size.
 Either its raw size is constant (`_CONSTANT`), either it is computed from other clones (`_DISTRIB`, `_OTHER`).
 Note that, that in each case, the displayed size can be different from the raw size
 due to normalizations.
@@ -103,6 +151,78 @@ Each clone that has values on the current axes will be displayed in the 'scatter
 
 Each clone that has a sequence will be displayed in the bottom 'segmenter' panel.
 
+### Creation of common clones
+
+Three types of clone are now created combining some of the attributes
+In the following example, `data` is an map specifying values for a clone (locus, segments, number of reads, ...).
+
+
+* `Constant` clone: actual individual clones,
+described into an item of the `clones` list in the `.vidjil` file
+
+```javascript
+// Constant
+new Clone(data, model, index, C_SIZE_CONSTANT | C_CLUSTERIZABLE | C_INTERACTABLE | C_IN_SCATTERPLOT);
+```
+
+* `Other`, or smaller clones: corresponding to the sum of each clones of a given locus, with size dynamically computed to take into account the current filter and viewable constant clones.
+
+```javascript
+// Other
+new Clone(data, model, index, C_SIZE_OTHER);
+```
+
+* `Distribution` clones correspond to `distributions` lists of the `.vidjil` file. 
+See "distributions" in `vidjil-format.md`.
+They are aggregate information on clones that won't be shown individually in the client,
+and are useful to display views such a "simulated Genescan".
+They are generated by `model.loadAllDistribClones()`, that agregates such data for each sample. 
+
+```javascript
+// Distributions
+new Clone(data, model, index, C_SIZE_DISTRIB | C_INTERACTABLE | C_IN_SCATTERPLOT );
+```
+### Update mechanism
+
+Views object are used to display the content of an Object.model() 
+The views are using 3 different update functions to synchronyze the data stored in the model and the content they display.
+If you make any change to the model you should use one of these functions to resync the view with it.
+
+#### updateElemStyle(list[])
+	
+##### What does it do :
+UpdateElemStyle take a list of clone ID and update the look of those clones in the view.
+really fast, this usually does not need any complex redraw and is dealt with a simple change in a css attribute.
+
+##### When should it be used :
+* if the clone state(selected/onFocus/hidden/...) has changed but not his data values (name/size/v/d/j/...)
+* if the colorMethod used in the model has changed
+
+#### updateElem(list[])
+
+##### What does it do :
+UpdateElem take a list of clone ID and update them fully in the view.
+
+##### When should it be used :
+* after an operation that modify a clone data values(name/size/v/d/j/...)
+* after a clone rename or any clustering operations for example.
+
+#### update() 
+
+##### What does it do :
+redraw the view from scratch.
+
+##### When should it be used :
+* after a change in the view parameters (like the selected axis or the scale used)
+* if a change on how is computed the clones data values(name/size/v/d/j/...) is made.
+(for example, anything that change the results of the getSize() or getName() functions for the clones, like a change in the germline selection, the normalization or the selected sample)
+
+#### model updates
+most of the time you will not call the view updates functions but the model equivalent that take care to call the updates on all the views linked to it.
+
+m.update()
+m.updateElem()
+m.updateElemList()
 
 ## Integrating the client
 
@@ -256,14 +376,14 @@ webpage.
     `browser/tests/functional`, with Watir.
     The functional tests are built using two base files:
     
-      - vidjil<sub>browser</sub>.rb  
+      - `vidjil_browser.rb`  
         abstracts the vidjil browser (avoid using IDs or
         class names that could change in the test). The tests must rely as
-        much as possible on vidjil<sub>browser</sub>. If access to some
+        much as possible on `vidjil_browser`. If access to some
         data/input/menus are missing they must be addded there.
-      - browser<sub>test</sub>.rb  
+      - `browser_test.rb`  
         prepares the environment for the tests. Each test
-        file will extend this class (as can be seen in test<sub>multilocus</sub>.rb)
+        file will extend this class (as can be seen in `test_multilocus.rb`)
     
     The file `segmenter_test.rb` extends the class in `browser_test.rb` to adapt
     it to the purpose of testing the analyze autonomous app.
@@ -312,7 +432,7 @@ webpage.
         
         The Firefox version used can be set with an environment variable (see
         below). By default, the tests only work with Firefox ≤ 45. But this can be
-        modified with an environment variable. All Firefox releases are [available here](https://download-installer.cdn.mozilla.net/pub/firefox/releases/%20).
+        modified with an environment variable. All Firefox releases are [available here](https://download-installer.cdn.mozilla.net/pub/firefox/releases/).
         
         One can instead choose to launch functional tests using chrome. You should
         install `chromium-browser` as well as `chromium-chromedriver`. On old Chrome
@@ -321,7 +441,17 @@ webpage.
         written in the `notes.txt` file of each version).
 
 3.  Launch client tests
+
+    As indicated previously, `rvm` must have been loaded. Thus you may need to
+    first launch:
+    ```bash
+    source /etc/profile.d/rvm.sh
+    rvm use 2.6.1
+    ```
     
+    Then you can launch the tests (potentially by altering its behaviour with
+    environment variables, see below).
+
     ``` bash
     make functional
     ```
@@ -329,17 +459,15 @@ webpage.
     1.  Environment variables
         
         By default the tests are launched on the Firefox installed on the system.
-        This can be modified by providing the `FUNCTIONAL_CLIENT_BROWSER_PATH`
-        environment variable (which can contain several pathes, separated with
-        spaces) to the `launch_functional_tests` script. Or, if one wants to launch
-        individual test scripts, to set the `WATIR_BROWSER_PATH` environment
-        variable.
+        This can be modified by providing the `WATIR_BROWSER_PATH` environment
+        variable that defines the path to another Firefox version.
         
         Other environment variables that can be specified to tune the default behaviour
         
           - `WATIR_CHROME`  
             should be set to something evaluated to `True` (*e.g.* 1) if the
-            tests must be launched using Chrome
+            tests must be launched using Chrome (in such a case
+            `WATIR_BROWSER_PATH` is useless)
           - `WATIR_MARIONETTE`  
             should be set to something evalued to `True` (*e.g. 1*)
             if the tests must be launched on a recent Firefox version (\> 45)
@@ -384,6 +512,13 @@ webpage.
     
     1.  `x11vnc -display :99 -localhost`
     2.  `vncviewer :0`
+
+    This will work when the headless mode is launched on the local machine.
+    Otherwise, when one wants to view what is going on on a distant host, one
+    should additionally do port forwarding through SSH, with `ssh -L
+    5900:localhost:5900 distant_host`, where 5900 is the port number on which
+    the VNC server is launched. Then `vncviewer` can be launched locally with
+    `vncviewer :5900`.
 
 5.  Interactive mode
     

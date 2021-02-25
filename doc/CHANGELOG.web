@@ -2,8 +2,51 @@
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
+## 2020-12-09
 
-2017-10-XX Release %"Web 2017.10"
+Improve ergonomy
+* Possibility to create at once multiple patients/runs/sets by pasting data from the clipboard
+
+Add new warnings
+* Add warnings when the server is not approved for healthcare data (!813, see >vidjil.org/doc/healthcare>)
+* Add warning to show variation in V(D)J designation or productivity prediction between samples (#4566, #4578)
+
+Improve quality testing
+* The tutorial is now tested, step by step (#2880)
+
+Improve internal database usage
+* Refactor some queries of the database. Filtering and searches are now way faster.
+  Note that the basic query may be a little bit slower. (#3169)
+
+Other points
+* Fix error on clusterBy (#4495)
+* Many other bug fixes
+
+## 2020-07-13
+
+Better study full repertoires
+* Genescan-like distributions on the full repertoire (preset 4) (!595, !551, !525)
+* New configuration to export the full list of clones in AIRR format (with no clone limitation)
+
+Clone list
+* New options to lock clone sorting (!630, !564)
+
+Time graph, working with several samples
+* Better options to hide/show samples in the time graph (!565)
+* Possibility to hide clones not present in the current sample (!564)
+* New design of curves
+
+Other points
+* Better organization of configurations (!627)
+* Free text zone in report
+* Read merger: Flash instead of PEAR (#3911)
+* Many bug fixes
+
+## 2020-01
+	* New behaviour of graphList (#4105); Now you can hide/show sample directly from a list with checkbox, and button for automation
+	  You can also hidding them by double clicking on their label in the timeline graphic.
+
+## 2017-10
 	* New tag mechanism to store/filter default or custom metadata on patient/runs/sets #2170 #2172 #2683
 	* Added a second grid view when there is only one sample #2244
 	* New experimental feature to add germline genes in the segmenter #1925

@@ -17,7 +17,7 @@ $ Some changed windows are lighlty shortened
 63: w95/-10
 29: w90/-10
 
-$ Find the good number of segmented sequences (including "too short sequences")
+$ Find the good number of detected sequences (including "too short sequences")
 1: junction detected in 13153 reads .100%.
 
 $ Find the good number of windows in Stanford S22

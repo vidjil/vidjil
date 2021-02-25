@@ -13,6 +13,7 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
+  - test_tutorial
   - test_shouldvdj
   - test_functional_external
   - coverage
@@ -49,8 +50,15 @@ test_germlines:
     - make -C germline tests
   only:
     - /^feature-.*g.*\/.*$/
-    - schedules
 
+
+# Includes
+
+include:
+  - local: '/doc/.gitlab-ci.yml' # Doc
+  - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
+  - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
+  - template: Code-Quality.gitlab-ci.yml # Code quality
 
 # Algorithm
 
@@ -121,6 +129,7 @@ algo_valgrind_functional:
 
 release_valgrind_functional:
   <<: *valgrind_functional
+  allow_failure: true
   only:
     - /^feature-.*a.*\/release$/
 
@@ -173,33 +182,6 @@ deploy_release_prod:
           make -C vidjil-algo-${release_name};\
           ln -sfT vidjil-algo-${release_name} next"
 
-.testing-compilers: &test_various_compilers
-  stage: multiple_tests
-  tags:
-    - several-compilers
-  script:
-    - |
-      for CXX in $COMPILERS; do
-        echo "**** Using $CXX for compilation ****"
-        make -C algo clean
-        make -C algo CXX=$CXX unit
-        make -C algo CXX=$CXX should
-        make -C algo CXX=$CXX valgrind_unit
-      done
-
-test_various_compilers_manual:
-  <<: *test_various_compilers
-  when: manual
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
-
-test_various_compilers_release:
-  <<: *test_various_compilers
-  only:
-    - /^feature-.*a.*\/release$/
-
-
 # Client
 
 test_browser_unit:
@@ -208,10 +190,11 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    when: always
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - dev
     - schedules
   tags:
@@ -227,12 +210,22 @@ test_browser_unit:
     - HEADLESS=1 make -C browser/test functional
   artifacts:
     paths:
-    - browser/
+    - browser/ 
+    when: always
+    reports:
+      junit: browser/test/test/TEST-*.xml
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - schedules
+  tags:
+    - web
+
+.browser-functional-chrome:
+  extends: .browser-functional
+  variables:
+    WATIR_CHROME: "1"
 
 .browser-functional-external:
   stage: test_functional_external
@@ -245,50 +238,120 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    when: always
+    reports:
+      junit: browser/test/test/TEST-*.xml
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - schedules
-
-test_browser-functional:
-  extends: .browser-functional
-  variables:
-    BROWSERS: "--browsers-from-file"
   tags:
     - web
 
-test_legacy-browser-functional:
+.browser-functional-external-chrome:
+  extends: .browser-functional-external
+  variables:
+    WATIR_CHROME: "1"
+    
+ff32-browser-functional:
   extends: .browser-functional
   variables:
-    WATIR_CHROME: "1"
-    IGNORE_FUNCTIONAL_CBP: "1"
+    FIREFOX_VERSION: 32
+
+ff45-browser-functional:
+  extends: .browser-functional
+  variables:
+    FIREFOX_VERSION: 45
+
+chrome-browser-functional:
+  extends: .browser-functional-chrome
+        
+old-chrome-browser-functional:
+  extends: .browser-functional-chrome
   tags:
     - legacy
 
-test_browser-functional-external:
+ff32-browser-functional-external:
   extends: .browser-functional-external
   variables:
-    BROWSERS: "--browsers-from-file"
-  tags:
-    - web
+    FIREFOX_VERSION: 32
 
-test_legacy-browser-functional-external:
+ff45-browser-functional-external:
   extends: .browser-functional-external
   variables:
-    WATIR_CHROME: "1"
-    IGNORE_FUNCTIONAL_CBP: "1"
+    FIREFOX_VERSION: 45
+
+chrome-browser-functional-external:
+  extends: .browser-functional-external-chrome
+    
+old-chrome-browser-functional-external-chrome:
+  extends: .browser-functional-external-chrome
   tags:
     - legacy
 
+
+
+.browser-tutorial:
+  stage: test_tutorial
+  retry: 2
+  script:
+    - make -C browser
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.6.1
+    - HEADLESS=1 make test_tutorial
+  artifacts:
+    paths:
+    - browser/
+    reports:
+      junit: browser/test/test/TEST-*.xml
+  only:
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
+    - /^prod-client/
+    - schedules
+    - /tutorial/
+  tags:
+    - web-pandoc
+
+.browser-tutorial-chrome:
+  extends: .browser-tutorial
+  variables:
+    WATIR_CHROME: "1"
+
+
+ff32-browser-tutorial:
+  extends: .browser-tutorial
+  variables:
+    FIREFOX_VERSION: 32
+
+ff45-browser-tutorial:
+  extends: .browser-tutorial
+  variables:
+    FIREFOX_VERSION: 45
+
+chrome-browser-tutorial:
+  extends: .browser-tutorial-chrome
+        
+old-chrome-browser-tutorial:
+  extends: .browser-tutorial-chrome
+  tags:
+    - legacy
+
+# Code quality
 
 code_quality:
+  stage: test_quality
+  artifacts:
+    paths: [gl-code-quality-report.json]
+
+code_quality_custom:
   stage: test_quality
   script: make -C browser quality
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - dev
     - schedules
   tags:
@@ -299,8 +362,8 @@ code_quality:
 test_server_unit:
     stage: test_unit
     script:
-      - virtualenv $CI_BUILD_REF_SLUG
-      - source $CI_BUILD_REF_SLUG/bin/activate
+      - virtualenv $CI_COMMIT_SHORT_SHA
+      - source $CI_COMMIT_SHORT_SHA/bin/activate
       - pip install -r requirements.txt
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
@@ -313,54 +376,76 @@ test_server_unit:
     only:
       - /^feature-.*s.*\/.*$/
       - /^hotfix-.*s.*\/.*$/
-      - prod-server
+      - /^prod-server/
       - dev
       - schedules
     tags:
       - web
 
-test_server_functional:
+.test_server_functional:
   stage: test_functional
   script:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
-    - sed -i '/\/etc\/nginx\/ssl\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
+    - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
+    - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml
+    - sed -i 's/\/opt\/vidjil\/databases/databases/' ./docker/docker-compose.yml
+    - echo -e "volumes:\n    databases:" >> ./docker/docker-compose.yml
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
+    - mkdir -p docker/postfix/ssl
     - cd docker && docker-compose up -d && cd ..
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
     - source /etc/profile.d/rvm.sh
     - rvm use 2.6.1
-    - HEADLESS=1 make functional_server BROWSERS="--browsers-from-file" || (cd docker && docker-compose stop; docker stop $(docker ps -aq); docker rm $(docker ps -aq); docker rmi "vidjil/server:test" "vidjil/client:test"; false)
-    - cd docker && docker-compose stop
-    - docker stop $(docker ps -aq)
-    - docker rm $(docker ps -aq)
+    - HEADLESS=1 make functional_server
+  after_script:
+    - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
+  artifacts:
+    reports:
+      junit: server/web2py/applications/vidjil/tests/test/TEST-*.xml
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
-    - prod-server
+    - /^prod-server/
     - dev
     - schedules
   tags:
     - x86_64
     - docker
 
+ff32-server-functional:
+  extends: .test_server_functional
+  variables:
+    FIREFOX_VERSION: 32
+
+ff45-server-functional:
+  extends: .test_server_functional
+  variables:
+    FIREFOX_VERSION: 45
+
+
 
 # Benchmark
 
 benchmark_algo:
+  image:  gcc:6.3
+  extends: .install-algo-dependencies
   stage: benchmark
   script:
-    - cd algo/tests ; python3 benchmark-releases.py -bi
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
+  artifacts:
+    paths:
+      - algo/tests/benchmark.log
   when: manual
   only:
     - /^feature-.*a.*\/.*$/
   tags:
-    - several-compilers
+    - cidocker
 
 
 # Deployment
@@ -381,6 +466,37 @@ deploy_review:
   tags:
     - web
 
+deploy_review_server:
+  stage: deploy_review
+  script:
+    - make -C browser icons
+    - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
+    - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
+    - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_BUILD_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
+    - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/web2py/applications/vidjil/modules/defs.py
+    - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/web2py/applications/vidjil/modules/defs.py
+    - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
+    - mkdir browser/cgi
+    - cp docker/vidjil-client/conf/*.cgi browser/cgi
+    - mv docker docker_${CI_BUILD_REF_SLUG}
+    - cd docker_${CI_BUILD_REF_SLUG}
+    - TMP_DOCKER=$(tempfile)
+    - cp docker-compose.yml $TMP_DOCKER
+    - awk -f ci/for-review.awk $TMP_DOCKER > docker-compose.yml
+    - rm -f $TMP_DOCKER
+    - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=/WEB2PY_ADMIN_PASSWORD=$REVIEW_SERVER_ADMIN_PASSWORD/" docker-compose.yml
+    - cd ..
+    - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
+  environment:
+    name: review_server/$CI_BUILD_REF_NAME
+    url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/
+    on_stop: stop_deploy_review_server
+    auto_stop_in: 2 months
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+
 deploy_docker:
   stage: deploy_prod
   script:
@@ -396,8 +512,8 @@ deploy_docker:
     - docker rmi $TAG "vidjil/$TYPE:latest"
   when: manual
   only:
-    - prod-server
-    - prod-client
+    - /^prod-server/
+    - /^prod-client/
   tags:
     - web
     - docker
@@ -406,17 +522,12 @@ deploy_prod:
   stage: deploy_prod
   script:
     - ssh $PROD_CLIENT_SERVER "
-         cd $PROD_CLIENT_PATH;
-         git fetch
-         && git reset --hard origin/prod-client
-         && make -C browser
-         && make -C browser sha1
-         && cp doc/analysis-example.vidjil browser/"
+         cd $PROD_CLIENT_PATH;"
   environment:
     name: production
     url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
   only:
-    - prod-client
+    - /^prod-client/
   tags:
     - web
 
@@ -449,3 +560,15 @@ stop_deploy_review:
     - /^hotfix-.*c.*\/.*$/
   tags:
     - web
+
+stop_deploy_review_server:
+  stage: deploy_review
+  script:
+    - ssh $REVIEW_SERVER "set -o xtrace; docker-compose -f $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG/docker_$CI_BUILD_REF_SLUG/docker-compose.yml down -v ; rm -rf $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh $CI_BUILD_REF_SLUG"
+  when: manual
+  environment:
+    name: review_server/$CI_BUILD_REF_NAME
+    action: stop
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/

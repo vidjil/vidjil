@@ -1,0 +1,30 @@
+
+build_doc:
+  image: python:3.8
+  stage: tgz_release
+  before_script:
+    - pip3 install mkdocs-gitlab-plugin requests
+  script:
+    - make -C doc html
+    - cd tools ; python validate-links.py
+  artifacts:
+    paths:
+      - site/
+    expire_in: 1 month
+  only:
+      - /^[^\/]*doc[^\/]*\//
+      # branch name should contain doc before the first /
+      # eg.: doc/blabla or feature-adoc/blabla
+      - /^feature-.*a.*\/release$/
+  allow_failure: true
+  tags:
+    - cidocker
+
+deploy_doc:
+  stage: deploy_prod
+  script:
+    - scp -r site/ $VIDJIL_WWW:doc/
+  when: manual
+  only:
+      - /^[^\/]*doc[^\/]*\//
+      - /^feature-.*a.*\/release$/

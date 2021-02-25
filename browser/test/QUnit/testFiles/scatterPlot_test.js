@@ -3,7 +3,9 @@ QUnit.module("Scatterplot", {
 });
 
 QUnit.test("grid", function(assert) {
-    var m = new Model(m);
+    m = new Model();
+    assert.expect(21);
+
     m.parseJsonData(json_data,100)
     m.loadGermline()
     m.initClones()
@@ -14,64 +16,72 @@ QUnit.test("grid", function(assert) {
     assert.equal(sp.returnActiveclones(), 5, "returnActiveClones -> 5");
     
     sp.buildSystemGrid()
-    assert.deepEqual(sp.systemGrid,  {"IGH": {"x": 0.92,"y": 0.75},
-                                "TRG": {"x": 0.92,"y": 0.25}, 
-                                "label": [
-                                    {"enabled": true,"text": "TRG","x": 0.81,"y": 0.25 },
-                                    {"enabled": true,"text": "IGH","x": 0.80,"y": 0.75}]}, 
-            "buildSystemGrid()");
+    assert.deepEqual(sp.systemGrid, {   
+                                        "IGH": {"x": 0.92,"y": 0.75},
+                                        "TRG": {"x": 0.92,"y": 0.25}, 
+                                        "label": [
+                                                    {"enabled": true,"text": "TRG","x": 0.81,"y": 0.25 },
+                                                    {"enabled": true,"text": "IGH","x": 0.80,"y": 0.75}
+                                                 ]
+                                    }, 
+                                    "buildSystemGrid()");
     
     assert.equal(sp.nodes.length, 7 , "check nodes");
-    assert.equal(sp.select_preset.selectedIndex, 1, "check whether the default preset is selectionned")
 
-    sp.changeSplitMethod(sp.AXIS_GENE_V, sp.AXIS_GENE_V, sp.MODE_GRID);
+    sp.changeSplitMethod("V/5' gene", "V/5' gene", "grid");
     sp.update()
-    assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
-    assert.equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
+    assert.equal(sp.axisX.getPos(m.clone(1)), sp.axisY.getPos(m.clone(1)), "check splitMethod V/V /plot : xpos = ypos");
     assert.equal(document.getElementById("visu_circle1").className.baseVal, "circle", "check splitMethod V/V /plot : check if plot are displayed")
-    
+    assert.equal(document.getElementById("visu_circle2").className.baseVal, "circle", "check splitMethod V/V /plot : check if plot are displayed")
+
     sp.switchMode()
-    assert.equal(sp.select_preset.selectedIndex, 0, "check whether no preset is selectionned")
-    assert.equal(sp.mode, sp.MODE_BAR)
+    assert.equal(sp.mode, "bar")
     sp.update()
 
-    assert.equal(document.getElementById("visu_bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
+    assert.equal(document.getElementById("visu_bar1").className.baseVal, "circle_hidden", "in 'bar' we hide unused system ")
+    assert.equal(document.getElementById("visu_bar2").className.baseVal, "circle", "check splitMethod V/V /plot : check if bar are displayed")
 
-    assert.equal(sp.axisX.labels[0].text, "IGHV1-2", "first label for 'v' axis is 'IGHV1-2'")
-    assert.equal(sp.axisX.labels[1].text, "?", "second label for 'v' axis is '?'")
+    var keys = Object.keys(sp.axisX.labels)
+    assert.equal(sp.axisX.labels[keys[0]].text, "IGHV1-2", "first label for 'v' axis is 'IGHV1-2'")
+    assert.equal(sp.axisX.labels[keys[1]].text, "undefined V", "second label for 'v' axis is '?'")
 
     assert.equal(m.clone(2).getGene('5'), "IGHV1-2*01", "clone 2 is 'IGHV1-2*01'")
-    assert.equal(sp.nodes[2].bar_x, sp.axisX.labels[0].pos, "node 2, bar x position is on 'IGVH4'")
+    assert.equal(sp.axisX.getPos(m.clone(2)), sp.axisX.getValuePos('IGHV1-2'), "node 2, bar x position is on 'IGHV1-2'")
 
-
+    var done = assert.async(2); 
+    var delay = 0;
+    var step = 500;
     $(document.getElementsByClassName("sp_legend")[0]).d3Click() //click label ighv4
-    assert.deepEqual(m.getSelected(), [2], "check click label");
+
+    setTimeout(function() {
+        assert.deepEqual(m.getSelected(), [2], "check click label");
+        sp.changeSplitMethod("N length", "size", "bar");
+        sp.update()
+
+        assert.equal(   sp.select_x.selectedIndex,      9,                      'select_x index')
+        assert.equal(   sp.select_y.selectedIndex,      17,                     'select_y index')
+        assert.approx(  sp.nodes[1].bar_h/sp.resizeH,   0.40, 0.05,             "node 1, bar h position " + m.clone(1).getSize())
+        assert.equal(   sp.axisX.getPos(m.clone(1)),    sp.axisX.getValuePos(9),"node 1, bar x position " + m.clone(1).getNlength())
+        assert.approx(  sp.nodes[1].bar_y/sp.resizeW,   0.40, 0.05,             "node 1, bar y position")
+        assert.approx(  sp.nodes[2].bar_h/sp.resizeH,   0.50, 0.05,             "node 2, bar h position")
+
+        m.clone(0).reads = [10000,1,1,1]
+        m.update()
+        done();
+    }, delay+=step);
+
+    setTimeout(function() {
+        assert.approx(  sp.nodes[2].bar_h/sp.resizeH,      0.01, 0.001,         "node 2, bar h is small, but not too much " +m.clone(2).getSize())
+        done();
+    }, delay+=step);
     
-
-    sp.available_axis["nLength"].axis.MAX_NB_STEPS_IN_AXIS = 8
-    sp.changeSplitMethod("nLength", "size", sp.MODE_BAR);
-    sp.update()
-
-    assert.equal(sp.select_x.selectedIndex, 8, 'select_x index');
-    assert.equal(sp.select_y.selectedIndex, 14, 'select_y index');
-
-    assert.equal(sp.nodes[1].bar_h , 0.3333333333333333, "node 1, bar h position")
-    assert.equal(sp.nodes[1].bar_x , (sp.axisX.labels[5].pos + sp.axisX.labels[6].pos)/2,
-                 "node 1, bar x position is between labels 5th ('8') and 6th ('10')")
-    assert.equal(sp.axisX.labels[5].text, "8", "Correct 5th label ('10')")
-    assert.equal(sp.nodes[1].bar_y , 0.3333333333333333, "node 1, bar y position")
-
-    assert.approx(sp.nodes[2].bar_h, 0.40, 0.05, "node 2, bar h is about 0.40")
-    m.clone(0).reads = [10000,1,1,1]
-    m.update()
-    assert.equal(sp.nodes[2].bar_h, 0.01, "node 2, bar h is small, but not too much")
 });
 
 
 
 QUnit.test("node sizes", function(assert) {
 
-    var m = new Model(m);
+    m = new Model()
     m.parseJsonData(json_data, 100)
     m.loadGermline()
     m.initClones()
@@ -91,7 +101,7 @@ QUnit.test("node sizes", function(assert) {
 
 QUnit.test("other plot", function(assert) {
 
-    var m = new Model(m);
+    m = new Model()
     m.parseJsonData(json_data, 100)
     m.loadGermline()
     m.initClones()
@@ -105,10 +115,10 @@ QUnit.test("other plot", function(assert) {
 
     m.tOther = 1
     var preset = sp.preset["compare two samples"]
-    sp.changeSplitMethod(preset.x, preset.y, preset.mode)
+    sp.changeSplitMethod(preset.x, preset.y, "grid")
 
-    assert.equal(sp.splitY, "sizeOtherSample")
-        assert.equal(sp.otherVisibility, true)
+    assert.equal(sp.splitY, "size (other sample)")
+    assert.equal(sp.otherVisibility, true)
 
     assert.equal(sp.nodes[2].s, 0.25, "node 0, size (other sample time 1)")
 
@@ -120,7 +130,7 @@ QUnit.test("other plot", function(assert) {
 
 QUnit.test("multiple selection", function(assert) {
 
-    var m = new Model(m);
+    m = new Model()
     m.parseJsonData(json_data, 100);
     m.loadGermline();
     m.initClones();
@@ -159,7 +169,7 @@ QUnit.test("multiple selection", function(assert) {
         test2();
 
         done();
-    });
+    }, 1000);
 
     function test1() {
         sp.activeSelectorAt([sp_width*0.5, sp_height*0.5]);

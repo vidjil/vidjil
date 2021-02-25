@@ -1,8 +1,8 @@
-cd $VIDJIL_DIR/germline
-awk -F '|' '$0 ~ /^>/ {print $2}' homo-sapiens/IGHD.fa > tmp_ighdnames && \
-awk -F '|' '$0 ~ /^>/ {print $2}' homo-sapiens/IGHD+up.fa > tmp_ighdupnames && \
-cat tmp_ighdupnames && \
-diff -q tmp_ighdnames tmp_ighdupnames && rm -f tmp_ighdupnames tmp_ighdnames
+!NO_LAUNCHER:
+!LAUNCH: (cd $VIDJIL_DIR/germline; awk -F '|' '$0 ~ /^>/ {print $2}' homo-sapiens/IGHD.fa > tmp_ighdnames && \
+          awk -F '|' '$0 ~ /^>/ {print $2}' homo-sapiens/IGHD+up.fa > tmp_ighdupnames && \
+          cat tmp_ighdupnames && \
+          diff -q tmp_ighdnames tmp_ighdupnames && rm -f tmp_ighdupnames tmp_ighdnames )
 
 $ Some genes in correct relative order
 l1: IGHD1-1.01.*IGHD1-14.01.*IGHD1-20.01.*IGHD1-26.01.*IGHD1-7.01.*IGHD1/OR15-1a.*IGHD1/OR15-1b.*IGHD2-15

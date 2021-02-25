@@ -1,0 +1,52 @@
+
+
+##### Test on fuse file with spike normalization
+!LAUNCH: python ../../fuse.py spike_out2.vidjil spike_out2.vidjil -o spike_fuse_2_2.vidjil  && cat spike_fuse_2_2.vidjil
+
+$ clones in the output, same as in the input
+8: "seg_stat"
+
+$ "normalized_reads" expected in this sample
+6: "normalized_reads"
+
+$ mrd field; 6 for clones, 1 for sample
+7: "mrd"
+
+$ Good value normalized_reads for the first clone, (and 6th); present 2 times after fuse
+4: 0.3739975328711452
+
+$ ampl_coeff value is present 2 time
+2: 16.69631843174755
+
+
+
+##### Test on fuse file with NO spike normalization (or no MRD)
+!OUTPUT_FILE: spike_fuse_1_1.vidjil
+!LAUNCH: python ../../fuse.py spike_out1.vidjil spike_out1.vidjil -o spike_fuse_1_1.vidjil;
+
+$ MRD key is NOT present
+j0:mrd
+
+
+### One file without MRD + 1 file with MRD
+!OUTPUT_FILE: spike_fuse_1_2.vidjil
+!LAUNCH: python ../../fuse.py spike_out1.vidjil spike_out2.vidjil -o spike_fuse_1_2.vidjil;
+
+$ MRD firld is present at top level
+j:mrd
+$ MRD key is NOt present for clone 0
+j0:clones[0].mrd
+$ MRD key is present for clone 1
+j:clones[1].mrd
+
+$ UNI_COEFF values for mixed fused files
+j: mrd.UNI_COEFF[0]: 0
+j: mrd.UNI_COEFF[1]: 0.02677504183600287
+
+$ ampl_coeff values for mixed fused files
+j: mrd.ampl_coeff[0]: 0
+j: mrd.ampl_coeff[1]: 16.69631843174755
+
+$ prevalent values for mixed fused files
+j: mrd.prevalent[0]: 0
+j: mrd.prevalent[1]: IGH

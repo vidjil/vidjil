@@ -7,9 +7,6 @@ class TestSimple < BrowserTest
     super
     if not defined? $b
       set_browser("/doc/analysis-example1.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
     end
   end
   
@@ -25,19 +22,20 @@ class TestSimple < BrowserTest
   end
 
   def test_01_legend_scatterplot
-    assert ($b.scatterplot_x_legend(0).text == "TRGV5"), "First legend should be TRGV5"
-    assert ($b.scatterplot_y_legend(0).text == "TRGJ1"), "First legend should be TRGJ1"
+    assert ($b.scatterplot_x_legend(0).text == "TRGV5"), "First legend should be TRGV5, it is " + $b.scatterplot_x_legend(0).text 
+    assert ($b.scatterplot_y_legend(0).text == "TRGJ1"), "First legend should be TRGJ1, it is " + $b.scatterplot_y_legend(0).text
 
     assert ($b.scatterplot_x_legend(0, 2).text == "?"), "Legend should be ?, it is " + $b.scatterplot_x_legend(0, 2).text
     assert ($b.scatterplot_x_legend(1, 2).text == "100"), "Legend should be 100, it is " + $b.scatterplot_x_legend(1, 2).text
-    assert ($b.scatterplot_x_legend(2, 2).text == "150"), "Legend should be 150, it is " + $b.scatterplot_x_legend(2, 2).text
-    assert ($b.scatterplot_y_legend(0, 2).text == "0%"), "First legend sould be 0%"
+    assert ($b.scatterplot_x_legend(2, 2).text == "200"), "Legend should be 200, it is " + $b.scatterplot_x_legend(2, 2).text
+    assert ($b.scatterplot_y_legend(0, 2).text == "100%"), "First legend sould be 0%, it is " + $b.scatterplot_y_legend(0, 2).text
   end
 
   def test_02_deactivate_locus
     initial_read_nb = $b.info_selected_locus.text
     $b.locus_topleft('TRG').click
     $b.clone_in_scatterplot('0').wait_while(&:present?)
+    $b.update_icon.wait_while(&:present?)
     assert ($b.info_selected_locus.text == "no read"), "When unselected we have no reads"
 
     # Reactivate

@@ -29,8 +29,10 @@
  * */
 function Shortcut (model) {
     this.m = model
+    View.call(this, model)
     this.init()
     this.on = true
+    this.inProgress = 0
 }
 
 var NB_CLONES_CHANGE = 10;
@@ -45,18 +47,37 @@ Shortcut.prototype = {
         
         this.system_shortcuts = {}
         for (var system in germline_data.systems){
-            var keycode = germline_data.systems[system].shortcut.toUpperCase().charCodeAt(0)
 
-            if (typeof this.system_shortcuts[keycode] == "undefined")
-                this.system_shortcuts[keycode] = []
-            
-            this.system_shortcuts[keycode].push(system)
+            if (germline_data.systems[system].shortcut != undefined){ // at init/load, some data are not present
+                var keycode = germline_data.systems[system].shortcut.toUpperCase().charCodeAt(0)
+
+                if (typeof this.system_shortcuts[keycode] == "undefined")
+                    this.system_shortcuts[keycode] = []
+
+                this.system_shortcuts[keycode].push(system)
+            } else {
+                console.default.log("Shortcuts; system undefined: " + system)
+            }
         }
         
         document.onkeydown = function (e) { self.checkKey(e); }
         document.onkeyup = function (e) { self.m.sp.active_move = false; }
+        document.onmousedown = function (e) { self.checkMouse(e); }
     },
-    
+
+    updateInProgress: function() {
+        if (this.inProgress>0) return true
+        return false
+    },
+
+    checkMouse : function (e) {
+        var self = this
+
+        this.inProgress++
+        setTimeout(function(){
+            self.inProgress--
+        }, 500)
+    },
     
     /**
      * called each time a key is pressed <br>
@@ -64,6 +85,13 @@ Shortcut.prototype = {
      * @param {event} e - onkeydown event
      * */
     checkKey : function (e) {
+        var self = this
+
+        this.inProgress++
+        setTimeout(function(){
+            self.inProgress--
+        }, 500)
+
         if (!this.on)
             return ;
 
@@ -98,7 +126,6 @@ Shortcut.prototype = {
         if (! e.ctrlKey && ! e.metaKey &&
             typeof this.system_shortcuts[key] != "undefined") {
 
-            var self = this
             var germlines = this.system_shortcuts[key].filter(function(g) {return self.m.system_available.indexOf(g) != -1})
             if (germlines.length === 0)
                 return
@@ -150,10 +177,12 @@ Shortcut.prototype = {
             if (e.ctrlKey || e.metakey){
                 var d_m = $("#debug_menu")
                 if (d_m.css("display") == "none"){
+                    devel_mode = true;
                     $("#debug_menu").css("display", "");
                     $(".devel-mode").show();
                     $(".beta-mode").show();
                 }else{
+                    devel_mode = false;
                     $("#debug_menu").css("display", "none");
                     $(".devel-mode").hide();
                     $(".beta-mode").hide();
@@ -206,3 +235,4 @@ Shortcut.prototype = {
         }
     }
 }
+Shortcut.prototype = $.extend(Object.create(View.prototype), Shortcut.prototype)

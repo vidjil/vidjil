@@ -74,9 +74,9 @@
  * */
 function Graph(id, model, database) {
     //
-    View.call(this, model); 
+    View.call(this, model, id);
+    this.useSmartUpdateElemStyle = false;
     
-    this.id = id;
     this.resizeW = 1; //coeff d'agrandissement/réduction largeur                
     this.resizeH = 1; //coeff d'agrandissement/réduction hauteur        
     
@@ -106,6 +106,14 @@ function Graph(id, model, database) {
 
     this.m.graph = this // TODO: find a better way to do this
     this.db = database;
+
+    this.lineGenerator = d3.line().curve(d3.curveMonotoneX);
+
+    //flag used to count the number of transition (multiple transition can run at the same time)
+    //increase every time a transition is started
+    //decrease every time a transition is completed
+    //0 means all started transition have been completed
+    this.inProgress = 0
 }
 
 Graph.prototype = {
@@ -164,7 +172,7 @@ Graph.prototype = {
                 })
                 .on("mouseover", function () {
                     self.m.focusOut();
-                    $("#" + self.id + "_list")
+                    $("#" + this.id + "_table")
                         .stop(true, true)
                         .hide("fast")
                 })
@@ -183,7 +191,7 @@ Graph.prototype = {
                 })
                 .on("mouseover", function () {
                     self.m.focusOut();
-                    $("#" + self.id + "_list")
+                    $("#" + this.id + "_table")
                         .stop(true, true)
                         .hide("fast")
                 })
@@ -191,9 +199,6 @@ Graph.prototype = {
             this.axis_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "axis_container")
-            this.reso_container = d3.select("#" + this.id + "_clipped")
-                .append("svg:g")
-                .attr("id", "reso_container")
             this.data_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "data_container")
@@ -206,6 +211,9 @@ Graph.prototype = {
             this.text_container = d3.select("#" + this.id + "_clipped")
                 .append("svg:g")
                 .attr("id", "text_container")
+            this.reso_container = d3.select("#" + this.id + "_clipped")
+                .append("svg:g")
+                .attr("id", "reso_container")
 
             this.build_menu()
                 .build_list();
@@ -215,7 +223,11 @@ Graph.prototype = {
         
         return this
     },
-    
+
+    updateInProgress: function() {
+        if (this.inProgress>0) return true
+        return false
+    },
 
     /* constructor for the menu in the top-right corner of the graph
      * 
@@ -227,10 +239,23 @@ Graph.prototype = {
         var div = document.createElement('div')
         div.id = "" + this.id + "_menu"
         div.className = "graph_menu"
-        div.appendChild(icon('icon-dot-3', 'Drag here samples to hide them'))
+
+        var list_title_line = document.createElement('div')
+        var list_title = document.createElement('span')
+        list_title.id = this.id +"_title"
+
+        var list_title_samples = document.createElement('span')
+        list_title_samples.textContent = " sample" + (this.m.samples.number > 1 ? "s" : "")
+        list_title_samples.id = this.id +"_title_samples"
+        list_title_samples.style.display = "none"
+
+        list_title_line.appendChild(list_title)
+        list_title_line.appendChild(list_title_samples)
+
+        div.appendChild(list_title_line)
         
-        var list = document.createElement('div')
-        list.id = "" + this.id + "_list"
+        var list = document.createElement('table')
+        list.id = this.id +"_table"
         list.className = "graph_list"
         
         div.appendChild(list)
@@ -245,44 +270,237 @@ Graph.prototype = {
                 self.dragTimePoint()
             })
             .on("mouseover", function () {
-                $("#" + self.id + "_list")
+                $("#"+ self.id +"_table")
                     .stop(true, true)
-                    .show("fast")
+                    .show()
+                $("#"+ self.id +"_title_samples")
+                    .stop(true, true)
+                    .show()
+                self.updateList()
+            })
+            .on("mouseout", function () {
+                $("#"+ self.id +"_table")
+                    .stop(true, true)
+                    .hide()
+                $("#"+ self.id +"_title_samples")
+                    .stop(true, true)
+                    .hide()
             })
             
+        this.updateCountActiveSample()
         return this
     },
     
-    /* used to build and update the list of disabled timepoint displayed in the top-right menu
-     * 
-     * */
+    /**
+     *  used to build and update the list of disabled timepoint displayed in the top-right menu
+     */
     build_list : function() {
         var self = this;
         
         var list = document.getElementById("" + this.id + "_list")
-        list.removeAllChildren();
+
+        this.updateCountActiveSample()
+
+        // Update table to store each line
+        var table = document.getElementById(""+this.id +"_table")
+        table.removeAllChildren()
+
+        // Show All
+        var line   = document.createElement("tr")
+        var line_content   = document.createElement("td")
+        line_content.id = this.id +"_listElem_showAll"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "show all"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)   
+
+        // Hide All
+        line   = document.createElement("tr")
+        line_content   = document.createElement("td")
+        line_content.id = this.id +"_listElem_hideAll"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "focus on selected samples"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)
+
+        // Hide not share
+        line   = document.createElement("tr")
+        line_content   = document.createElement("td")
+        line_content.id = this.id +"_listElem_hideNotShare"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "focus on selected clones"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)
 
         for (var i=0; i<this.m.samples.number; i++){
-            if ( this.m.samples.order.indexOf(i) == -1){
-                $("<div/>", {
-                    'class': "graph_listElem",
-                    'text': this.m.getStrTime(i),
-                    'time': i
-                }).appendTo("#" + this.id + "_list");
-            }
+            // Create a line for each sample, with checkbox and name (text)
+            var list_content   = document.createElement("tr")
+            list_content.id    = this.id +"_listElem_"+i
+            list_content.classList.add("graph_listElem")
+            list_content.dataset.time = i
+            // case: Name of sample
+            var line_content_text   = document.createElement("td")
+            line_content_text.classList.add("graph_listElem_text")
+            line_content_text.id    = this.id +"_listElem_text_"+i
+            line_content_text.textContent  = this.m.getStrTime(i)
+            line_content_text.dataset.time = i
+            // case: checkbox
+            var line_content_check  = document.createElement("td")
+            var content_check  = document.createElement("input")
+            content_check.classList.add("graph_listElem_check")
+            content_check.type = "checkbox"
+            content_check.id   = this.id +"_listElem_check_"+i
+            content_check.dataset.time = i
+            line_content_check.appendChild(content_check)
+
+            list_content.appendChild(line_content_check)
+            list_content.appendChild(line_content_text)
+
+            // Add all descripion of sample keys as tooltip
+            var tooltip = this.m.getStrTime(i, "names")
+            tooltip    += String.fromCharCode(13) + this.m.getStrTime(i, "sampling_date")
+            tooltip    += String.fromCharCode(13) + this.m.getStrTime(i, "delta_date")
+            list_content.title = tooltip
+
+            table.appendChild(list_content) 
         }
-        
-        $(".graph_listElem").mousedown(function () {
-            var time = parseInt( $(this).attr("time") )
-            self.startDrag(time)
+
+        $("#"+this.id +"_listElem_showAll").click(function () {
+            console.log( "self.showAllTimepoint()" )
+            self.m.showAllTime()
         })
-        
+        $("#"+this.id +"_listElem_hideAll").click(function () {
+            console.log( "self.hideAllTimepoint( true )" )
+            self.m.hideAllTime()
+        })
+        $("#"+this.id +"_listElem_hideNotShare").click(function () {
+            console.log( "self.hideNotShare()" )
+            self.m.hideNotShare()
+        })
+
+        $(".graph_listElem").click(function () {
+            var time = parseInt( this.dataset.time )
+            if (self.m.samples.order.indexOf(time) != -1){
+                self.m.changeTime(time)
+            }
+        })
+        $(".graph_listElem").dblclick(function () {
+            var time = parseInt( this.dataset.time )
+            self.m.switchTime(time)
+        })
+        $(".graph_listElem_check").click(function () {
+            var time = parseInt( this.dataset.time )
+            self.m.switchTime(time)
+        })
+
+        // Update checkbox state at init
+        this.updateList()
     },
+
+    /**
+     * Update the content of checkbox for each sample, depending if his presence into the model samples order list
+     */
+    updateList : function() {
+        for (var time = 0; time < this.m.samples.number; time++) {
+            this.updateListCheckbox(time)
+            this.updateListName(time)
+        }
+        return
+    },
+
+    /**
+     * Update, in the graph list, the sample with the selected css rule
+     */
+    updateListElemSelected: function(){
+        var time = this.m.t
+        var elem = document.getElementsByClassName("graph_listElem_selected")
+        // remove css rule of previous sample
+        if (elem.length != 0) {
+            // dont change if previous and current sample are the same
+            if (elem[0].id == this.id +'_listElem_text_'+time && this.m.samples.order.length != 0){ return }
+            elem[0].classList.remove("graph_listElem_selected")
+        }
+        // Add css rule to current timepoint (and if at least one is show)
+        if (time != undefined && this.m.samples.order.length > 1){
+            elem = document.getElementById(this.id +'_listElem_text_'+time)
+            elem.classList.add("graph_listElem_selected")
+        }
+        return
+    },
+
+    /**
+     * Update the state of the checkbox of a sample. Use the model samples order as reference.
+     * @param  {[type]} time The timepoint to update
+     */
+    updateListCheckbox: function(time){
+        var checkbox_id  = this.id +"_listElem_check_"+time
+        var checkbox     = document.getElementById(checkbox_id)
+        checkbox.checked = (this.m.samples.order.indexOf(time) != -1)
+        return
+    },
+
+    /**
+     * Update the text of a sample. Adapt it with the model time_type format
+     * @param  {Number} time The timepoint to update
+     */
+    updateListName: function(time){
+        var name_id  = this.id +"_listElem_text_"+time
+        var name     = document.getElementById(name_id)
+        name.textContent  = this.m.getStrTime(time)
+        return
+    },
+
+    /**
+     * Show all timepoint in the timeline graphic.
+     * Add all samples that are not already in the list of actif samples
+     * Each sample added will be put at the end of the list.
+     */
+    showAllTimepoint: function(){
+        var self = this
+        this.inProgress++
+        setTimeout(function(){
+            self.inProgress--
+        }, 250)
+
+        // keep current timepoint active if exist, else, give active to first timepoint
+        var keeptime = this.m.t
+        for (var time = 0; time < this.m.samples.number; time++) {
+            if (this.m.samples.order.indexOf(time) == -1) this.m.addTimeOrder(time)
+        }
+        this.updateList()
+        this.m.changeTime(keeptime)
+        this.m.update()
+        return
+    },
+
+
+
+    /**
+     * Update count of active samples
+     * This value is shown in the first line of the graphList
+     */
+    updateCountActiveSample: function(){
+        var div   = document.getElementById(this.id +"_title")
+        if (this.m.samples.number > 1 && this.m.samples.number != undefined){
+            div.textContent  = ""+this.m.samples.order.length+" / " + this.m.samples.number
+        } else if (this.m.samples.number == 0 && this.m.samples.number != undefined){
+            // If no sample in the model
+            div.textContent  = "..."
+        }
+    },
+
+
+
 
     /* repositionne le graphique en fonction de la taille de la div le contenant
      *
      * */
     resize: function (div_width, div_height) {
+        if(!this.m.isReady()) return      //don't resize if model is not ready
+
         var div = document.getElementById(this.id)
         
         var speed = 0
@@ -331,33 +549,28 @@ Graph.prototype = {
      * */
     update : function (speed) {
         speed = typeof speed !== 'undefined' ? speed : 500;
-        var startTime = new Date()
-            .getTime();
-        var elapsedTime = 0;
-        
+        this.updateListElemSelected();
+        this.updateCountActiveSample();
+        if (this.m.samples.number > 1){
+            this.updateList()
+        }
+
+        this.g_clone = this.clones_container.selectAll("path")
+            .data(this.data_clone);
         this.initAxis()
             .initData()
             .updateRes()
             .updateClones()
-            .draw(speed);
-        
-        elapsedTime = new Date()
-            .getTime() - startTime;
-
-        // console.log("update Graph: " + elapsedTime + "ms");
-        
-        return this
+            .drawAxis(speed)
+            .drawData(speed)
+            .drawRes(speed)
     },
     
     /* update resolution curves
      * 
      * */
     updateRes : function () {
-        if(this.mode != "stack"){
-            this.data_res[0].path = this.constructPathR(1);
-            this.data_res[1].path = this.constructPathR(5);
-        }
-
+        this.initRes();
         return this
     },
     
@@ -431,7 +644,7 @@ Graph.prototype = {
             document.getElementById("clones_container")
                 .appendChild(line);
         }
-        this.drawClones(0);
+        this.drawClones(0, list);
         
         return this
     },
@@ -509,6 +722,7 @@ Graph.prototype = {
             this.m.changeTime(result[0])
             this.m.changeTimeOrder(result)
             this.build_list()
+            this.m.update()
         }
     },
 
@@ -540,6 +754,8 @@ Graph.prototype = {
         var res = []
         for (var i = 0; i < this.m.samples.number; i++) {
             res[i] = (r / this.m.reads.segmented[i])
+            if(this.m.reads.segmented[i]==0) res[i] = 1;
+            if(res[i] > this.displayMax) res[i] = this.displayMax;
         }
         
         if (typeof res !== "undefined" && res.length !== 0) {
@@ -561,16 +777,15 @@ Graph.prototype = {
             p.push([1, (1 - this.scale_x(size[this.m.samples.order[this.graph_col.length - 1]] * this.m.precision))]);
             p.push([1, 1 + 0.1]);
             
-            var x = (p[0][0] * this.resizeW + this.marge4)
-            var y = (p[0][1] * this.resizeH + this.marge5)
-            var che = ' M ' + x + ',' + y;
-            for (var m = 1; m < p.length; m++) {
+            var tab = []
+            for (var m = 0; m < p.length; m++) {
                 x = (p[m][0] * this.resizeW + this.marge4)
                 y = (p[m][1] * this.resizeH + this.marge5)
-                che += ' L ' + x + ',' + y;
+                if (isNaN(x)) return ' M 0,' + this.resizeH;
+                if (isNaN(y)) return ' M 0,' + this.resizeH;
+                tab.push([x.toFixed(3),y.toFixed(3)]);
             }
-            che += ' Z ';
-            return che;
+            return this.lineGenerator(tab);
                 
         } else return "";
     }, //fin constructPathR()
@@ -584,10 +799,22 @@ Graph.prototype = {
         t = 0;
         var p;
 
+        var clone = self.m.clone(id)
+        if (!clone.isActive() && !clone.isSelected() && !clone.isFocus()) return ' M 0,' + self.resizeH;
+        if (clone.top > self.display_limit)return ' M 0,' + self.resizeH;
+
         var size = []
+        var selected_point       = this.m.t
+        var value_selected_point = this.m.clone(id).getSize(selected_point)
+
         for (var i = 0; i < this.graph_col.length; i++) {
-            if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
-            else size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
+            // bypass clone size if it is not present in the current timepoint; TODO, add a switch on this behavior
+            if (this.m.show_only_one_sample && value_selected_point == 0) {
+                size[i] = 0
+            } else {
+                if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
+                else          size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
+            }
         }
 
         var x = this.graph_col[0];
@@ -598,14 +825,11 @@ Graph.prototype = {
             if (size[0] === 0) {
                 p = [];
             } else {
-                p = [
-                    [(x + (Math.random() * 0.05) - 0.125), (1 - y)]
-                ];
-                p.push([(x + (Math.random() * 0.05) + 0.075), (1 - y)]);
+                p = [ [(x + (Math.random() * 0.05) - 0.125), (1 - y)],
+                      [(x + (Math.random() * 0.05) + 0.075), (1 - y)]];
             }
         }
         
-
         //plusieurs points de suivi
         else {
 
@@ -616,14 +840,10 @@ Graph.prototype = {
             if (size[0] === 0) {
                 p = [];
             } else {
-                p = [
-                    [(x - 0.03), (1 - y)]
-                ];
-                p.push([(x), (1 - y)]);
+                p = [ [(x - 0.03), (1 - y)],
+                      [(x),        (1 - y)] ];
 
-                if (to == size[0]) {
-                    p.push([(x + 0.03), (1 - y)]);
-                }
+                if (to == size[0]) p.push([(x + 0.03), (1 - y)]);
             }
 
             //points suivants
@@ -636,40 +856,30 @@ Graph.prototype = {
                     y = this.scale_x(size[k] * this.m.precision)
 
                     if (size[k] === 0) {
-                        if (p.length !== 0) {
-                            p.push([(x), (1 + 0.03)]);
-                        }
+                        if (p.length !== 0) p.push([(x), (1 + 0.03)]);    
                     } else {
-
                         //si premiere apparition du clone sur le graphique
-                        if (p.length === 0) {
-                            p.push([(x - 0.03), (1 - y)]);
-                        }
+                        if (p.length === 0) p.push([(x - 0.03), (1 - y)]);
 
                         p.push([(x), (1 - y)]);
 
                         //si derniere apparition du clone sur le graphique
-                        if (to == size[k]) {
-                            p.push([(x + 0.03), (1 - y)]);
-                        }
-
+                        if (to == size[k]) p.push([(x + 0.03), (1 - y)]);
                     }
-
                 }
             }
-
         }
         
+        var tab = []
         if (p.length !== 0){
-            x = (p[0][0] * self.resizeW + self.marge4)
-            y = (p[0][1] * self.resizeH + self.marge5)
-            var che = ' M ' + x + ',' + y;
-            for (var m = 1; m < p.length; m++) {
+            for (var m = 0; m < p.length; m++) {
                 x = (p[m][0] * self.resizeW + self.marge4)
                 y = (p[m][1] * self.resizeH + self.marge5)
-                che += ' L ' + x + ',' + y;
+                if (isNaN(x)) return ' M 0,' + self.resizeH;
+                if (isNaN(y)) return ' M 0,' + self.resizeH;
+                tab.push([x.toFixed(3),y.toFixed(3)]);
             }
-            return che;
+            return this.lineGenerator(tab);
         }else{
             return ' M 0,' + self.resizeH;
         }
@@ -728,7 +938,6 @@ Graph.prototype = {
             .initData()
             .initClones()
             .initRes()
-            .build_path_events()
         
         return this
     },
@@ -797,6 +1006,9 @@ Graph.prototype = {
             .attr("id", function (d) {
                 return "poly" + d.name;
             })
+            .attr("d", function (p) {
+                return p.path
+            })
         this.g_clone.exit()
             .remove();
             
@@ -824,17 +1036,16 @@ Graph.prototype = {
             path: this.constructPathR(5)
         });
 
-        this.g_res = this.reso_container.selectAll("g")
+        this.g_res = this.reso_container.selectAll("path")
             .data(this.data_res);
         this.g_res.enter()
-            .append("svg:g")
+            .append("svg:path")
             .attr("id", function (d) {
                 return d.name;
+            })
+            .attr("d", function (p) {
+                return p.path
             });
-        this.g_res.exit()
-            .remove();
-
-        this.g_res.append("path")
         this.g_res.exit()
             .remove();
             
@@ -928,6 +1139,8 @@ Graph.prototype = {
             time_name = this.m.getStrTime(l);
             if (time_name.length > maxchar+3) time_name = time_name.substring(0,maxchar)+" ..."
             if (l == this.m.t) time_name = this.m.getStrTime(l);
+            // If focus on this sample only (todo: #4221; add an search icon, hard with d3js)
+            if (this.m.show_only_one_sample && l == this.m.t) time_name += " *"
 
             d.type = "axis_v";
             d.text = time_name;
@@ -969,19 +1182,10 @@ Graph.prototype = {
      * 
      * */
     initOrdinateClones : function () {
-        
+        this.m.update_precision()
         var max = this.m.precision*this.m.max_size
-        //get ready for something really dirty
-        for (var i=0; i<this.m.samples.order.length; i++) {
-            for (var j=0; j<this.m.clones.length; j++){
-                if (this.m.clone(j).hasSizeConstant()) {
-                    var size = this.m.precision*this.m.clone(j).getSize()
-                    if (size>max) max=size;
-                }
-            }
-        }
         
-        this.scale_x = d3.scale.log()
+        this.scale_x = d3.scaleLog()
             .domain([1, max])
             .range([0, 1]);
         
@@ -996,19 +1200,28 @@ Graph.prototype = {
             this.data_axis.push({"type" : "axis_h", "class" : "graph_text", "text" : "50%" ,"orientation" : "hori", "pos" : 0.5});
             this.data_axis.push({"type" : "axis_h", "class" : "graph_text", "text" : "100%" ,"orientation" : "hori", "pos" : 0});
         }else{
-            var height = 1;
-            while(height<this.m.max_size) height = height*10
-            while ((height * this.m.precision) > 0.5) {
 
+            //increase the max value displayable in graph until we can display the current biggest clone
+            this.displayMax = 0.00001;
+            while(this.displayMax<this.m.max_size) this.displayMax = this.displayMax*10
+
+            //update scale
+            this.scale_x = d3.scaleLog()
+            .domain([1, this.m.precision*this.displayMax])
+            .range([0, 1]);
+            
+            //compute axis label
+            var axis_value = this.displayMax
+            while ((axis_value * this.m.precision) > 0.5) {
                 var d = {};
                 d.type = "axis_h";
-                d.text = this.m.formatSize(height, false)
+                d.text = this.m.formatSize(axis_value, false)
                 d['class'] = "graph_text";
                 d.orientation = "hori";
-                d.pos = 1 - this.scale_x(height * this.m.precision);
+                d.pos = 1 - this.scale_x(axis_value * this.m.precision);
                 if (d.pos>=-0.1) this.data_axis.push(d);
 
-                height = height / 10;
+                axis_value = axis_value/10;
             }
         }
 
@@ -1047,12 +1260,12 @@ Graph.prototype = {
         
         //choose the best scale (linear/log) depending of the space between min/max
         if ( g_min!==0 && (g_min*100)<g_max){
-            this.scale_data = d3.scale.log()
+            this.scale_data = d3.scaleLog()
                 .domain([g_max, g_min])
                 .range([0, 1]);
         }else{
             if ( (g_min*2)<g_max) g_min = 0
-            this.scale_data = d3.scale.linear()
+            this.scale_data = d3.scaleLinear()
                 .domain([g_max, g_min])
                 .range([0, 1]);
         }
@@ -1155,6 +1368,10 @@ Graph.prototype = {
             axis = axis
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
         axis
             .attr("x1", function (d) {
@@ -1175,7 +1392,7 @@ Graph.prototype = {
             })
             .attr("class", function (d) {
                 return d.type
-            })
+            });
 
         //legendes
         var label = this.g_text
@@ -1183,6 +1400,10 @@ Graph.prototype = {
             label = label
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
         label
             .text(function (d) {
@@ -1210,7 +1431,7 @@ Graph.prototype = {
             })
             .attr("class", function (d) {
                 return d['class']
-            });
+            })
 
         this.text_container.selectAll("text")
             .on("click", function (d) {
@@ -1218,6 +1439,19 @@ Graph.prototype = {
             })
             .on("mousedown", function (d) {
                 if (d.type == "axis_v" || d.type == "axis_v2") return self.startDrag(d.time)
+            })
+            .on("dblclick", function (d) {
+                var pos = self.m.samples.order.indexOf(d.time)
+                if (self.m.samples.order.length != 1 && pos != -1) {
+                    self.m.removeTimeOrder(d.time)
+                }
+                self.m.update()
+                // change current time to use first element of the current samples list
+                if (self.m.samples.order.length > 0){
+                    var new_time = self.m.samples.order[0]
+                    self.m.changeTime(new_time)
+                }
+
             })
         
         return this
@@ -1230,82 +1464,55 @@ Graph.prototype = {
         var self = this;
 
         var c = 0;
-        
-        if (this.mode=="stack"){
-            //volumes
-            this.g_clone
-                .style("fill", function (d) {
-                    return self.m.clone(d.id).getColor();
-                })
-                .style("stroke", "none")
-                .attr("class", function (p) {
-                    var clone = self.m.clone(p.id)
-                    if (!clone.isActive()) return "graph_inactive";
-                    if (clone.isSelected()) return "graph_select";
-                    if (clone.isFocus()) return "graph_focus";
-                    c++
-                    return "graph_line";
-                })
-                .attr("id", function (d) {
-                    return "poly" + d.name;
-                })
-        }else{
-            //courbes
-            selected_clones = this.g_clone;
-            if (typeof list != "undefined"){
-                selected_clones = this.g_clone.filter(function(d, i) {
-                    if (list.indeOf(d.id) != -1) return true;
-                    return false
-                });
-            }
-            
-            selected_clones
-                .style("fill", "none")
-                .style("stroke", function (d) {
-                    return self.m.clone(d.id).getColor();
-                })
-                .attr("class", function (p) {
-                    var clone = self.m.clone(p.id)
-                    if (!clone.isActive()) return "graph_inactive";
-                    if (clone.isSelected()) return "graph_select";
-                    if (clone.isFocus()) return "graph_focus";
-                    c++
-                    if (c < self.display_limit2 ) return "graph_line";
-                    if (clone.top > self.display_limit) return "graph_inactive";
-                    return "graph_line";
-                })
-                .attr("id", function (d) {
-                    return "poly" + d.name;
-                })
-                
+
+        selected_clones = this.g_clone;
+        if (typeof list != "undefined"){
+            selected_clones = this.g_clone.filter(function(d) {
+                if (list.indexOf(d.id) != -1) return true;
+                return false
+            });
         }
         
-        var clone = this.g_clone
         if (speed !== 0){
-            clone = clone
+            selected_clones = selected_clones
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
-        clone.attr("d", function (p) {
-                return p.path
+        selected_clones
+            .style("fill", "none")
+            .style("stroke", function (d) {
+                return self.m.clone(d.id).getColor();
             })
-            
-        return this
-    },
-    
-    build_path_events : function (){
-        var self = this;
-        this.clones_container.selectAll("path")
+            .attr("class", function (p) {
+                var clone = self.m.clone(p.id)
+                if (!clone.isActive()) return "graph_inactive";
+                if (clone.isSelected()) return "graph_select";
+                if (clone.isFocus()) return "graph_focus";
+                c++
+                if (c < self.display_limit2 ) return "graph_line";
+                if (clone.top > self.display_limit) return "graph_inactive";
+                return "graph_line";
+            })
+            .attr("id", function (d) {
+                return "poly" + d.name;
+            })
             .on("mouseover", function (d) {
                 self.m.focusIn(d.id);
             })
             .on("click", function (d) {
                 self.clickGraph(d.id);
+            })               
+            .attr("d", function (d) {
+                return d.path
             });
+        
             
-        return this;
+        return this
     },
-
     
     /* renderer function for data curves
      * 
@@ -1318,6 +1525,10 @@ Graph.prototype = {
             data = data
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
         data.attr("d", function (p) {
                 var x,y,che;
@@ -1365,23 +1576,27 @@ Graph.prototype = {
     drawRes: function (speed) {
         var self = this;
         
-        var res = this.g_res.selectAll("path")
+        var res = this.g_res
         if (speed !== 0){
-            res = res 
+            res = res
             .transition()
             .duration(speed)
+            .on("start", function(){self.inProgress++}) 
+            .on("end", function(){self.inProgress--}) 
+            .on("interrupt", function(){self.inProgress--}) 
+            .on("cancel", function(){self.inProgress--}) 
         }
-        
-        res.attr("d", function (p) {
+        res  
+        .attr("d", function (p) {
                 return p.path
-            })
+            });
             
         return this
     },
 
     shouldRefresh: function() {
         this.init();
-        this.update();
+        this.smartUpdate();
         this.resize();
     }
 

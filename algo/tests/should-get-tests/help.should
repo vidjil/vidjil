@@ -15,7 +15,7 @@ $ Do not display advanced options
 0: custom Cost
 
 $ Correct number of regular options
-24:^..-
+26:^..-
 
 
 !NO_LAUNCHER:
@@ -36,5 +36,5 @@ $ Display advanced options
 : , experimental options
 : custom Cost
 
-$ Correct number of options
-54:^..-
+$ Correct number of options, including advanced options
+63:^..-

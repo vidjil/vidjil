@@ -1,12 +1,11 @@
-<link rel="stylesheet" type="text/css" href="org-mode.css" />
 
-Here are aggregated notes forming the developer documentation on the Vidjil server,
+Here are aggregated notes forming a part of the developer documentation on the Vidjil server,
 on client-server interaction as well as on packaging.
-This documentation is a work-in-progress, it is far from being as polished as the user or maintainer documentation.
-Help can also be found in the source code and in the commit messages.
+These notes are a work-in-progress, they are not as polished as the user documentation.
+Developers should also have a look at the [documentation for bioinformaticians and server administrators](/),
+at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
 
-
-# Server
+# Development notes -- Server
 
 ## Notifications
 
@@ -117,6 +116,17 @@ logs (see #3558).
 When a job timeouts it is not killed (see #2213). In `gluon/scheduler.py` a
 worker seems to be able to kill a process when the worker's state (and not the
 task's state) is `STOP_TASK`.
+
+## Batch creation of patients/runs/sets
+
+Data should be tabulated (row separated with a break line, cells separated with a tabulation).
+
+Browser cannot access data from the clipboard in the following cases:
+ - the browser does not support it (FF)
+ - the user refused to grant the access
+
+In that cases, a textarea is provided.
+
 # Tests
 
 # Packaging
@@ -322,6 +332,67 @@ docker-compose up --build
 
 This will also start the environment for you.
 
+## Deploy a local version for developpment purpose
+
+You may want to make some modification into the code of Vidjil web application, server, browser or tools side.
+In these cases, you should get a copy of the vidjil repository where you will be able to make your changes, and also set some modifiaction into the `docker-compose.yml`.
+
+### Clone another vidjil repository into a subdirectory of vidjil. 
+
+In this example, the repository will be located into `vidjil/code/`
+
+```bash
+# clone a new vidjil repository
+git clone https://gitlab.inria.fr/vidjil/vidjil.git  code/
+# move into this new repository
+cd code
+# init this repository with server
+make server browser germline
+```
+
+### Update the docker-compose.yml
+
+After cloning a clean repository, you must add modifications in the `docker-compose.yml` file into fuse and nginx volumes.
+
+Modifications for `fuse volumes` declaration.
+```
+ # Link to server files
+ - ../code/server/web2py/applications/vidjil/controllers:/usr/share/vidjil/server/web2py/applications/vidjil/controllers
+ - ../code/server/web2py/applications/vidjil/models:/usr/share/vidjil/server/web2py/applications/vidjil/models
+ - ../code/server/web2py/applications/vidjil/modules:/usr/share/vidjil/server/web2py/applications/vidjil/modules
+ - ../code/server/web2py/applications/vidjil/scripts:/usr/share/vidjil/server/web2py/applications/vidjil/scripts
+ - ../code/server/web2py/applications/vidjil/static:/usr/share/vidjil/server/web2py/applications/vidjil/static
+ - ../code/server/web2py/applications/vidjil/tests:/usr/share/vidjil/server/web2py/applications/vidjil/tests
+ - ../code/server/web2py/applications/vidjil/views:/usr/share/vidjil/server/web2py/applications/vidjil/views   
+ # Browser & tools
+ - ../code/browser:/usr/share/vidjil/tools:Z
+```
+
+Modifications for `nginx volumes` declaration.
+```
+- ../code/browser:/usr/share/vidjil/browser:Z
+```
+
+
+### Add configuration files into the code/ repository
+
+As some files are virtualy linked into docker image from the docker directory, you should add them into `code/`.
+```bash
+cp docker/vidjil-client/conf/conf.js copy/browser/js/
+cp docker/vidjil-server/conf/defs.py copy/server/web2py/applications/vidjil/modules/
+```
+
+### Restart docker-compose
+
+After that, you should restart your docker instance to apply these new settings.
+
+``` bash
+docker-compose up
+```
+From now, the code present into `code/` will be use for the server and the browser.
+You will be able to test modifications before staging them into the repository.
+
+
 ## Building images for DockerHub
 
 Make sure your Dockerfile is up to date with any changes you may want to
@@ -509,4 +580,52 @@ optional arguments:
 
 ``` bash
 sh copy_files <file source> <file destination> <input file>
+```
+
+## Review environments (CI)
+To deploy review environments, we need to customise the Docker configuration.
+So that the docker containers are named depending on the branch they're built on we rename the docker directory.
+Also a script rewrites the `docker-compose.yml` file in order to:
+
+* provide the path to the SSL certificates
+* set volumes that will point to the source code
+* mount the volumes to existing sequence files and results
+* have a dedicated volume for the database (so that each branch has its own database)
+* the `network_mode` has to be set to `bridge` in order to work with the Nginx proxy
+
+Also a sample database is loaded in the `uwsgi-entrypoint.sh` script (from the `docker/ci/ci.sql` file).
+
+Self-signed certificates need to exist on the host and two scripts `install_certs.sh` and `uninstall_certs.sh` are used to copy the certificates in the right directory when setting the review environment.
+
+Here is the `install_certs.sh`:
+```shell
+#!/bin/bash
+
+BRANCH=$1
+DIR=$(dirname $0)
+
+echo "Install certificates for $BRANCH"
+
+cd $DIR/$BRANCH/docker_$BRANCH/vidjil-client/
+mkdir ssl
+cd ssl
+ln ~/nginx/certs/web2py.crt
+ln ~/nginx/certs/web2py.info
+ln ~/nginx/certs/web2py.key
+cp ~/nginx/certs/web2py.crt ~/nginx/certs/$BRANCH.server.ci.vidjil.org.crt
+cp ~/nginx/certs/web2py.info ~/nginx/certs/$BRANCH.server.ci.vidjil.org.info
+cp ~/nginx/certs/web2py.key ~/nginx/certs/$BRANCH.server.ci.vidjil.org.key
+```
+
+And the `uninstall_certs.sh`:
+```shell
+#!/bin/bash
+
+BRANCH=$1
+DIR=$(dirname $0)
+
+echo "Uninstall certificates for $BRANCH"
+
+rm -f $DIR/$BRANCH/docker_$BRANCH/vidjil-client/ssl/web2py.{ctr,info,key}
+rm -f  ~/nginx/certs/$BRANCH.ci.vidjil.org.crt ~/nginx/certs/$BRANCH.ci.vidjil.org.info ~/nginx/certs/$BRANCH.ci.vidjil.org.key
 ```

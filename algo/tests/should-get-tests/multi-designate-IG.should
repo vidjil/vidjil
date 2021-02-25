@@ -1,0 +1,23 @@
+### Focusing on Ig recombinations with -g:IGH,IGK,IGL
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -e 0.1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH,IGK,IGL $VIDJIL_DATA/multi-complete.fa ; cat out/multi-complete.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
+
+$ Detect the Ig recombinations
+1:IGH SEG
+1:IGK SEG
+1:IGL SEG
+
+$ Do not detect the TR recombinations
+4:TR.* UNSEG
+
+$ Report the undetected sequences in the json output
+1: "germline": "not analyzed", "id": "000001", "name": "TRA
+1: "germline": "not analyzed", "id": "000002", "name": "TRB
+1: "germline": "not analyzed", "id": "000003", "name": "TRG
+1: "germline": "not analyzed", "id": "000004", "name": "TRD
+
+$ Count the undetected sequences in the json output
+1: "not analyzed": .4.
+
+$ Count the detected sequences in the json output
+1: "segmented": .3.
+

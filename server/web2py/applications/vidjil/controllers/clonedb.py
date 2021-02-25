@@ -45,6 +45,7 @@ def search_clonedb(sequences, sample_set_id):
     log.debug("Seaching {} sequences in CloneDB for group {}".format(len(sequences), parent_group))
     try:
         occurrences = grep_clones.launch_search(args)
+        # Get occurrences for each sample with informations on its corresponding sample sets
     except ValueError:
         return error_message('Are you sure your account has an enabled CloneDB?')
     except Exception as e:
@@ -78,8 +79,9 @@ def get_info_of_viewable_sample_set(sample_sets, config, sample_names, sample_ta
             info['name'].append(sample_names.get(sample_id))
             tags = sample_tags.get(sample_id)
             if tags:
-                for row in tags:
-                    info['sample_tags'].append("#" + row)
+                info['sample_tags'].append([ '#'+row for row in tags ])
+            else:
+                info['sample_tags'].append([])
         else:
             info['name'].append(None)
     return info

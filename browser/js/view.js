@@ -29,9 +29,38 @@
  * @class View
  * @constructor 
  * */
-function View(model) {
+function View(model, id) {
+    var self = this;
     this.m = model;
+    this.id = id;
     this.m.view.push(this); //Model's sync
+
+    //smartUpdate
+    this.useSmartUpdate = true;
+    this.updateCallCount = 0;
+    this.updateTime = new Date().getTime();
+    this.updateMinWait = 50;    //update will at least wait XXX(ms) before starting 
+    this.updateMaxWait = 2000;  //update will start anyway if the wait has been more than XXX(ms)
+
+    //smartUpdateElem
+    this.useSmartUpdateElem = true;
+    this.updateElemCallCount = 0;
+    this.updateElemTime = new Date().getTime();
+    this.updateElemList = {};
+    this.updateElemMinWait = 50;    //update will at least wait XXX(ms) before starting 
+    this.updateElemMaxWait = 200;   //update will start anyway if the wait has been more than XXX(ms)
+
+    //smartUpdateElemStyle
+    this.useSmartUpdateElemStyle = true;
+    this.updateElemStyleCallCount = 0;
+    this.updateElemStyleTime = new Date().getTime();
+    this.updateElemStyleList = {};
+    this.updateElemStyleMinWait = 10;   //update will at least wait XXX(ms) before starting 
+    this.updateElemStyleMaxWait = 50;   //update will start anyway if the wait has been more than XXX(ms)
+    
+    //auto-resize (don't try to set auto-resize for view without a main div)
+    if (typeof this.id != "undefined") 
+        this.initAutoResize()
 }
     
 View.prototype = {
@@ -55,7 +84,54 @@ View.prototype = {
         }
         this.updateElem(list); 
     },
-    
+
+    /**
+     * wait a small delay (updateMinWait) before starting the update
+     * any addictional update() call during the wait will be discarded and will restart the delay
+     * update will be 
+     * can be used instead of update()
+     * is used by model.js instead of update() if useSmartUpdate is true
+     * @param {*} speed  update speed transition in ms
+     */
+    smartUpdate: function (speed) {
+        var self = this;
+
+        if (this.updateCallCount==0)
+            this.updateTime = new Date().getTime();
+        this.updateCallCount++;
+        
+        var count =  this.updateCallCount;
+        setTimeout(function() { self.smartUpdate2(speed, count); }, this.updateMinWait);
+    },
+
+    /**
+     * [DO NOT USE]
+     * should be used only by smartUpdate()
+     * @param {*} speed  update speed transition in ms
+     * @param {*} callcount number of update already pending
+     */
+    smartUpdate2 : function(speed, callcount){   
+        var elapsedTime = new Date().getTime() - this.updateTime;
+
+        if (this.updateCallCount==0) //an update has already been done
+        {
+            this.smartUpdate(speed); //reschedule this update for next round
+            return this;
+        }
+
+        if ( callcount == this.updateCallCount || 
+        //counter did not increased during the timeout -> ready for update
+             elapsedTime > this.updateMaxWait)
+        //already XXXms has passed since first call -> start update anyway
+        {
+            var tmp = this.updateCallCount;
+            this.updateCallCount = 0;
+            var startTime = new Date().getTime();           
+            this.update(speed);
+        }     
+        return this
+    },
+
     /**
      * update(size/style/position) a list of selected clones <br>
      * a slight function for operation who impact only a bunch of clones (merge/split/...)
@@ -63,9 +139,51 @@ View.prototype = {
      * @param {integer[]} list - array of clone index
      * */
     updateElem : function (list) {
-        
+
     },
     
+    /**
+     * same as smartUpdate but for updateElem
+     * */
+    smartUpdateElem: function (list) {
+        var self = this;
+
+        for(var i = 0 ; i < list.length; i++)
+            this.updateElemList[list[i]] = true;
+
+        if (this.updateElemCallCount==0)
+            this.updateElemTime = new Date().getTime();
+        this.updateElemCallCount++;
+        
+        var count =  this.updateElemCallCount;
+        setTimeout(function() { self.smartUpdateElem2(count); }, this.updateElemMinWait);
+    },
+
+    smartUpdateElem2 : function(callcount){
+        var elapsedTime = new Date().getTime() - this.updateElemTime;
+
+        if (Object.keys(this.updateElemList).length == 0) 
+            return this
+
+        if (this.updateElemCallCount==0)
+        {
+            this.smartUpdateElem([]);
+            return this;
+        }
+
+        if (callcount == this.updateElemCallCount || elapsedTime > this.updateElemMaxWait)
+        {
+            var tmp = this.updateElemCallCount;
+            this.updateElemCallCount = 0;
+            var startTime = new Date().getTime();
+            
+            this.updateElem(Object.keys(this.updateElemList));
+            this.updateElemList = {};
+        }
+        
+        return this
+    },
+
     /**
      * update(style only) a list of selected clones <br>
      * a slight function for operation who impact only styles of clones (select/focus)
@@ -75,7 +193,132 @@ View.prototype = {
     updateElemStyle : function () {
         
     },
+
+    /**
+     * same as smartUpdate but for updateElemStyle
+     * */
+    smartUpdateElemStyle: function (list) {
+        var self = this;
+
+        for(var i = 0 ; i < list.length; i++)
+            this.updateElemStyleList[list[i]] = true;
+
+        if (this.updateElemStyleCallCount==0)
+            this.updateElemStyleTime = new Date().getTime();
+        this.updateElemStyleCallCount++;
+        
+        var count =  this.updateElemStyleCallCount;
+        setTimeout(function() { self.smartUpdateElemStyle2(count); }, this.updateElemStyleMinWait);
+    },
+
+    smartUpdateElemStyle2 : function(callcount){   
+        var elapsedTime = new Date().getTime() - this.updateElemStyleTime;
+
+        if (Object.keys(this.updateElemStyleList).length == 0) 
+            return this
+
+        if (this.updateElemStyleCallCount==0)
+        {
+            this.smartUpdateElem([]);
+            return this;
+        }
+
+        if (callcount == this.updateElemStyleCallCount || elapsedTime > this.updateElemStyleMaxWait)
+        {
+            var tmp = this.updateElemStyleCallCount;
+            this.updateElemStyleCallCount = 0;
+            var startTime = new Date().getTime();
+            
+            this.updateElemStyle(Object.keys(this.updateElemStyleList));
+            this.updateElemStyleList = {};
+        }
+        return this
+    },
+
+    /**
+     * return true if an update/elem/style has been call but is pending
+     * @abstract
+     * */
+    updateIsPending: function(){
+        var result = false
+        if (!this.delay) this.delay = 0
+
+
+        if (this.useSmartUpdate && this.updateCallCount>0)
+            result = true
+        else if (this.useSmartUpdateElem && Object.keys(this.updateElemList).length>0)
+            result = true
+        else if (this.useSmartUpdateElemStyle && Object.keys(this.updateElemStyleList).length>0)
+            result = true
+        else 
+            result = this.updateInProgress()
+
+ 
+        if (result) 
+            this.delay = 5
+        else 
+            this.delay--
+
+
+        return (this.delay > 0)
+    },
+
+    /**
+     * @abstract
+     * */
+    updateInProgress: function(){
+        return false
+    },
     
+    /**
+     * set an observer on the view main div to detect size changes and trigger a resize
+     * 
+     * */
+    initAutoResize: function(){
+        var self = this;
+
+        this.autoresizeCounter = 0;
+
+        if (typeof ResizeObserver != "undefined"){
+            //modern browser solution
+            this.resizeObserver = new ResizeObserver( function(){self.autoResize()} ) 
+            this.resizeObserver.observe(document.getElementById(this.id)); 
+        }
+        else{
+            //fallback for older browser
+            var div = document.getElementById(this.id)
+            this.memWidth = div.offsetWidth
+            this.memHeight= div.offsetHeight
+
+            setInterval( function(){
+                var div = document.getElementById(self.id)
+                var w = div.offsetWidth
+                var h = div.offsetHeight
+                if (div.offsetWidth  != self.memWidth ||
+                    div.offsetHeight != self.memHeight ){
+                        self.memWidth  = div.offsetWidth
+                        self.memHeight = div.offsetHeight
+                        self.autoResize()
+                    }
+            }, 500)
+        }
+    },
+
+    /**
+     * called by resizeObserver on size change
+     * 
+     * */
+    autoResize: function() {
+        var self = this
+
+        this.autoresizeCounter++
+        setTimeout(function(){
+            self.autoresizeCounter--
+            if (self.autoresizeCounter==0)
+                self.resize()
+        }, 500)
+    },
+
     /**
      * resize view to match his div size <br>
      * each view must be able to match the size of it's div

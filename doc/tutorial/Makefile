@@ -9,3 +9,8 @@ $(PDF): %.pdf: %.tex
 
 $(HTML): %.html: %.tex
 	htlatex $^
+
+tutorial-test.rb: *.tex
+	pandoc --lua-filter extract-code.lua mastering-vidjil.tex -o /dev/null > tutorial-test.rb
+	mv tutorial-test.rb ../../browser/test/functional/tutorial-test.rb
+

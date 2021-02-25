@@ -59,12 +59,16 @@ Builder.prototype = {
                 .on("click", function () {
                     self.toggle_left_container()
                 });
+            d3.select("#vertical-separator-right")
+                .on("click", function () {
+                    self.toggle_right_container()
+                });
 
             this.build_top_container()
             this.build_clusterSelector()
             this.initTag();
 
-            if (this.m.samples.order.length == 1)
+            if (this.m.samples.stock_order.length == 1)
                 // One sample, two scatterplots
                 setTimeout(function() {
                     switch_visu2('scatterplot');
@@ -120,12 +124,8 @@ Builder.prototype = {
     },
     
     resizeGraph : function (graphSize) {
-        var spSize = 100 - graphSize
-
-        document.getElementById("visu")
-            .style.height = spSize + "%"
-        document.getElementById("visu2")
-            .style.height = graphSize + "%"
+        var graph = document.getElementById('visu2');
+        graph.style.height = graphSize + "%"
     },
 
     dropSeparator: function () {
@@ -134,7 +134,7 @@ Builder.prototype = {
 
             var sel = window.getSelection();
             sel.removeAllRanges();
-            this.m.resize();
+            //this.m.resize();
         }
     },
     
@@ -391,6 +391,13 @@ Builder.prototype = {
         document.getElementById("top_slider")
             .max = max_top;
             
+
+        // init switch onlyOneSample
+        var onlyOneSample = document.getElementById("filter_switch_sample_check")
+        onlyOneSample.checked = this.m.show_only_one_sample
+
+
+
         //init notation
         if (this.m.notation_type == "scientific") {
             document.getElementById("notation").checked = true
@@ -450,19 +457,28 @@ Builder.prototype = {
     */
     },
 
-    toggle_left_container: function () {
-        var $left = $("#left-container")
+    toggle_container: function(container_id) {
+        var $container = $("#"+container_id)
         var val = 'none';
-        if ($left.css('display') === "none") {
+        if ($container.css('display') === "none") {
             val = 'flex';
         }
-        $left.css('display', val);
-        this.m.resize();
+        $container.css('display', val);
+        //this.m.resize();
+    },
+
+    toggle_left_container: function () {
+        this.toggle_container('left-container');
+    },
+
+    toggle_right_container: function() {
+        this.toggle_container('right-container');
     },
 
     build_top_container: function () {
         var self = this;
         var parent = document.getElementById("top_info");
+        if (parent == null) return;
         parent.removeAllChildren();
         parent.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
 

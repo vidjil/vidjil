@@ -21,6 +21,9 @@ var config = {
     "cgi_address" : "https://db.vidjil.org/cgi/", // Public test server
     // "cgi_address" : "http://127.0.1.1/cgi-bin/",
 
+    /* Proxy for accessing resources without cross-domain issues */
+    "proxy": "https://db.vidjil.org/proxy/",
+
     /* Used for the standalone http://app.vidjil.org/analyze page */
     "segmenter_address" : "https://db.vidjil.org/vidjil/segmenter",
 
@@ -66,6 +69,8 @@ var config = {
      */
     /* "addons" : ["js/lib/important-lib.js", "js/myscript.js"], */
 
+    //rewrite url to include sample/display infos (default : true)
+    //"url_rewriting" : false
 
     /****************
      * Tips of the day

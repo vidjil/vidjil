@@ -26,7 +26,7 @@ public:
   void set(string key, string subkey, json val);
   void set(string key, string subkey, string subsubkey, json val);
 
-  void add_warning(string code, string msg, string level);
+  void add_warning(string code, string msg, string level, bool phony=true);
 
 };
 
@@ -69,7 +69,7 @@ public:
 class SampleOutputVidjil : public SampleOutput
 {
 public:
-  void out(ostream &s);
+  void out(ostream &s, bool with_clones=true);
 };
 
 // AIRR

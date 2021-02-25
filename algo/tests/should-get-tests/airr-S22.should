@@ -29,9 +29,9 @@ $ One clone has 8 reads, two clones have 5 reads
 1:IGH 8
 2:IGH 5
 
-$ Two clones are productive, no clone is labeled as non-productive
-2:\tT\t
-0:\tF\t
+$ Two clones are productive (productive, vj_in_frame, NOT stop_codon), no clone is labeled as non-productive
+2:\tT\tT\tF\t
+0:\tF\t[FT]\t[FT]\t
 
 $ v_call for 2 clones (-z 2)
 2:IGHV
@@ -42,6 +42,16 @@ w2:TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG
 $ Junction of the first clone appears once, but CDR3 twice (it is also included in the junction)
 1:CTREEQYSSWYFDFW		
 w2:TREEQYSSWYFDF
+
+$ V/D/J start/end positions of the first clone
+b1: 72 91 102 103
+bf1: 1 72 91 102 103 147
+
+$ cdr3 start/end positions of the first clone
+b1: 69 137
+
+$ V/J e-values
+rb1: 0[.][0-9]*e.00 7[.][0-9]*e[-]76
 
 $ The first clone has one warning
 1:TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG .* W69

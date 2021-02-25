@@ -1,3 +1,182 @@
+function addPatientForm(content) {
+    var fieldSet = document.getElementById('fieldset_container')
+    var index = document.getElementById('patient_button').dataset.index++
+    var div = new PatientFormBuilder().build(index, content)
+    fieldSet.appendChild(div);
+}
+
+function addRunForm(content) {
+    var fieldSet = document.getElementById('fieldset_container')
+    var index = document.getElementById('run_button').dataset.index++
+    var div = new RunFormBuilder().build(index, content)
+    fieldSet.appendChild(div);
+}
+
+function addSetForm(content) {
+    var fieldSet = document.getElementById('fieldset_container')
+    var index = document.getElementById('generic_button').dataset.index++
+    var div = new GenericFormBuilder().build(index, content)
+    fieldSet.appendChild(div);
+}
+
+function addForms(array_content) {
+    for (var c in array_content)
+        addForm(array_content[c])
+    if (array_content.length > 0)
+        removeEmptyForms()
+}
+
+function addForm(content){
+    switch (content.type) {
+        case 'patient':
+            addPatientForm(content)
+            break
+        case 'run':
+            addRunForm(content)
+            break
+        case 'generic':
+            addSetForm(content)
+            break
+        default:
+            console.log({msg: "addForm() : unknow type", priority: 1})
+      }
+}
+
+function antiSpam(object, timer){
+    object.classList.add('disabledClass'); 
+    setTimeout(function(o){o.classList.remove('disabledClass')}, timer, object)
+}
+
+function removeEmptyForms(){
+    var fc = document.getElementById('fieldset_container')
+    var fl = fc.getElementsByClassName('form_line')
+
+    for (var i = 0; i<fl.length; i++ ){
+        var fields = fl[i].getElementsByClassName('form-control')
+        var isEmpty=true
+
+        for (var j = 0; j<fields.length; j++ )
+            if (fields[j].value != '') isEmpty=false
+        
+        if (isEmpty)
+            fl[i].parentNode.removeChild(fl[i])
+    } 
+}
+
+/*
+*/
+function parseClipboard(clipboard, type){
+    if (console instanceof Com){
+        console.closePopupMsg()
+    }
+
+    var lines = clipboard.split('\n')
+    var parsed_lines = []
+
+    for(var i = 0; i < lines.length; i++){
+        var cells = lines[i].split('\t')
+
+        switch (cells.length) {
+            case 5:
+                parsed_lines.push({     type : 'patient', 
+                                        patient_id : cells[0],
+                                        first_name : cells[1],
+                                        last_name : cells[2],
+                                        birth : cells[3],
+                                        info : cells[4]})
+                break
+            case 4:    
+                parsed_lines.push({     type : 'run', 
+                                        run_id : cells[0],
+                                        name : cells[1],
+                                        date : cells[2],
+                                        info : cells[3]})
+                break
+            case 2:    
+                parsed_lines.push({     type : 'generic', 
+                                        name : cells[0],
+                                        info : cells[1]})
+                break
+            default:
+        }
+    }
+
+    var filtered_lines 
+    if (type != undefined)
+        filtered_lines = parsed_lines.filter(function(a){return a.type == type})
+    else
+        filtered_lines = parsed_lines 
+
+    
+    var error_msg = ""
+    switch (type) {
+        case "patient":
+            error_msg = "Unable to parse data, please be sure to have valid patient data in clipboard<br>"+
+            "Data should have 5 columns (patient id, first name, last name, birth date, info)<br>" +
+            "See the <a target='_blank' href='http://www.vidjil.org/doc/#batch-creation'>required format</a>. <br>"
+            break
+        case "run":
+            error_msg = "Unable to parse data, please be sure to have valid run data in clipboard<br>"+
+            "Data should have 4 columns (run id, name, date, info)<br>" +
+            "See the <a target='_blank' href='http://www.vidjil.org/doc/#batch-creation'>required format</a>. <br>"
+            break
+        case "generic":
+            error_msg = "Unable to parse data, please be sure to have valid sample set data in clipboard<br>"+
+            "Data should have 2 columns (set name, info)<br>" +
+            "See the <a target='_blank' href='http://www.vidjil.org/doc/#batch-creation'>required format</a> <br>"
+            break
+        default:
+            error_msg = "Unable to parse data, please be sure to have valid sample set data in clipboard<br>"+
+            "Patient data should have 5 columns (patient id, first name, last name, birth date, info)<br>" +
+            "Run data should have 4 columns (run id, name, date, info)<br>" +
+            "Saple set data should have 2 columns (set name, info)<br>" +
+            "See the <a target='_blank' href='http://www.vidjil.org/doc/#batch-creation'>required format</a>. <br>"
+    }
+
+    if (filtered_lines.length == 0)
+        console.log({"type": "popup", "msg": error_msg})
+
+    return filtered_lines
+}
+
+function readClipBoard(type) {
+    //clipboard API is missing (old browser)
+    if (!navigator.clipboard){
+        readClipBoard2(type)
+        return
+    }
+    
+    //clipboard API is incomplete (firefox...)
+    var permissionQuery = { name: 'clipboard-read', allowWithoutGesture: false }
+    navigator.permissions.query(permissionQuery)
+    if (!navigator.clipboard.readText){
+        readClipBoard2(type)
+        return
+    }
+
+    //user did not allowed clipboard acces?
+    navigator.clipboard
+        .readText()
+        .then(function(clipboard){
+            var parsed_content = parseClipboard(clipboard, type)
+            addForms(parsed_content)
+        })
+        .catch(function(err){
+            readClipBoard2(type)
+            return
+        });
+}
+
+function readClipBoard2(type) {
+    var template = document.getElementById("clipboard-popup")
+    var clone = template.content.firstElementChild.cloneNode(true)
+    /*jshint scripturl:true*/
+    clone.getElementsByTagName('form')[0].action = "javascript:addForms(parseClipboard(clipboardData.value, '"+type+"'))"
+    console.popupHTML(clone)
+}
+
+
+
 function capitalise(text) {
     return text.charAt(0).toUpperCase() + text.slice(1)
 }
@@ -20,6 +199,8 @@ function add_file(target_id, index, group_ids) {
     $('#jstree_loader_' + index).trigger('load');
 }
 
+
+
 function FormBuilder() {
     if (typeof FormBuilder.instance === 'object') {
         return FormBuilder.instance;
@@ -31,23 +212,22 @@ function FormBuilder() {
     this.index = 0;
 }
 
-FormBuilder.prototype = Object.create(Closeable.prototype);
-
-FormBuilder.prototype.build_wrapper = function() {
+FormBuilder.prototype = {
+    build_wrapper: function() {
         var d = document.createElement('div');
         d.className = "field_div";
         return d;
-    }
+    },
 
-FormBuilder.prototype.build_label = function(txt, object, field) {
+    build_label: function(txt, object, field) {
         var l = document.createElement('label');
         l.htmlFor = field + "_" + this.index;
         l.id = object + "_" + field + "__label_" + this.index;
         $(l).text(txt + ":"); // for compatibility with older browsers (FF32, IE7/8)
         return l;
-    }
+    },
 
-FormBuilder.prototype.build_input = function(id, className, name, input_type, set_type, placeholder, required) {
+    build_input: function(id, className, name, input_type, set_type, placeholder, content, required) {
         var i = document.createElement('input');
         i.id = set_type + "_" + id + "_" + this.index;
         i.className = "form-control " + className;
@@ -58,14 +238,17 @@ FormBuilder.prototype.build_input = function(id, className, name, input_type, se
             i.required = required;
         }
 
+        if (content != undefined) 
+            i.value = content
+
         if (typeof placeholder !== "undefined") {
             i.placeholder = placeholder;
         }
 
         return i;
-    }
+    },
 
-FormBuilder.prototype.build_field = function(id, name, label, required) {
+    build_field: function(id, name, label, content, required) {
         if (typeof name === "undefined") {
             name = id;
         }
@@ -75,11 +258,11 @@ FormBuilder.prototype.build_field = function(id, name, label, required) {
         }
 
         var d = this.build_wrapper();
-        d.appendChild(this.build_input(id, 'string', name, 'text', this.type, label, required));
+        d.appendChild(this.build_input(id, 'string', name, 'text', this.type, label, content, required));
         return d;
-    }
+    },
 
-FormBuilder.prototype.build_textarea = function(id, className, name, set_type, placeholder) {
+    build_textarea: function(id, className, name, set_type, placeholder) {
         var t = document.createElement('textarea');
         t.id = set_type + "_" + id + "_" + this.index;
         t.className = "form-control " + className;
@@ -87,9 +270,9 @@ FormBuilder.prototype.build_textarea = function(id, className, name, set_type, p
         t.rows = 1;
         t.placeholder = placeholder;
         return t;
-    }
+    },
 
-FormBuilder.prototype.build_div = function(type) {
+    build_div: function(type) {
         var d = document.createElement('div');
         var c = document.createElement('div');
         c.className = "clear";
@@ -98,16 +281,17 @@ FormBuilder.prototype.build_div = function(type) {
         s.className = "left form_label"
         $(s).text(capitalise(type == 'generic' ? 'set' : type) + " " + (this.index+1)); // for compatibility with older browsers (FF32, IE7/8)
         d.appendChild(s);
+        d.className = "form_line"
         return d;
-    }
+    },
 
-FormBuilder.prototype.build_legend = function(text) {
+    build_legend: function(text) {
         var l = document.createElement('legend');
         $(l).text(text); // for compatibility with older browsers (FF32, IE7/8)
         return l;
-    }
+    },
 
-FormBuilder.prototype.build_date = function(id, object, name, label) {
+    build_date: function(id, object, name, label, content) {
         if (typeof name === "undefined") {
             name = id;
         }
@@ -117,18 +301,18 @@ FormBuilder.prototype.build_date = function(id, object, name, label) {
         }
 
         var d = this.build_wrapper();
-        var i = this.build_input(id, 'date', name, 'text', object, 'yyyy-mm-dd', false);
+        var i = this.build_input(id, 'date', name, 'text', object, 'yyyy-mm-dd', content, false);
         i.pattern = "(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))";
         i.title = label;
         d.appendChild(i);
         return d;
-    }
+    },
 
-FormBuilder.prototype.build_info = function(object, keys, label) {
+    build_info: function(object, keys, label, content) {
         var d = this.build_wrapper();
         var id = 'info';
 
-        var txt = this.build_input('info', "text", 'info', 'text', object, label + ' information (#tags can be used)');
+        var txt = this.build_input('info', "text", 'info', 'text', object, label + ' information (#tags can be used)', content, false);
         $(txt).data('needs-atwho', true);
         $(txt).on('focus', function() {
             $(this).data('keys', keys);
@@ -141,252 +325,244 @@ FormBuilder.prototype.build_info = function(object, keys, label) {
         }
         d.appendChild(txt);
         return d;
-    }
+    },
 
-function SetFormBuilder() {
-    this.type = 'foobar';
-    FormBuilder.call(this);
-}
-
-SetFormBuilder.prototype = Object.create(FormBuilder.prototype);
-
-SetFormBuilder.prototype.set_id = function() {
+    set_id: function(content) {
         var id = 'id_label';
-        var f = this.build_field(id, id, capitalise(this.type)+' ID');
+        var f = this.build_field(id, id, capitalise(this.type)+' ID', content);
         f.firstChild.className += " stringid";
         return f;
-    };
+    },
+}
+FormBuilder.prototype = $.extend(Object.create(Closeable.prototype), FormBuilder.prototype)
 
-SetFormBuilder.prototype.build_date = function(id, name, label) {
-        return Object.getPrototypeOf(SetFormBuilder.prototype).build_date.call(this, id, this.type, name, label);
-    }
+
+
+
 
 function PatientFormBuilder() {
-    SetFormBuilder.call(this);
+    FormBuilder.call(this);
     this.type = 'patient'
 }
 
-PatientFormBuilder.prototype = Object.create(SetFormBuilder.prototype);
+PatientFormBuilder.prototype = {
 
-PatientFormBuilder.prototype.build = function(index) {
+    build: function(index, content) {
         this.index = index;
+        this.content = content
+        if (this.content == undefined) this.content = {}
+
         var div = this.build_div(this.type);
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
-        div.appendChild(this.set_id());
-        div.appendChild(this.build_field('first_name', undefined, undefined, true));
-        div.appendChild(this.build_field('last_name', undefined, undefined, true));
-        div.appendChild(this.build_date('birth'));
-        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'patient'));
+        div.appendChild(this.set_id(this.content.patient_id));
+        div.appendChild(this.build_field('first_name', undefined, undefined ,this.content.first_name, true));
+        div.appendChild(this.build_field('last_name', undefined, undefined ,this.content.last_name, true));
+        div.appendChild(this.build_date('birth', this.type, undefined, undefined, this.content.birth));
+        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'patient', this.content.info));
         return div;
-    };
+    }
+}
+PatientFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), PatientFormBuilder.prototype)
 
-PatientFormBuilder.prototype.createCloseButton = function() {
-        var self = this;
-        var close = Object.getPrototypeOf(PatientFormBuilder.prototype).createCloseButton.call(this);
-        $(close).click(function() {
-            var button = document.getElementById('patient_button');
-        });
-        return close;
-    };
+
+
+
 
 function RunFormBuilder() {
-    SetFormBuilder.call(this);
+    FormBuilder.call(this);
     this.type = 'run';
 }
 
-RunFormBuilder.prototype = Object.create(SetFormBuilder.prototype);
+RunFormBuilder.prototype = {
 
-RunFormBuilder.prototype.build = function(index) {
+    build: function(index, content) {
         this.index = index;
+        this.content = content
+        if (this.content == undefined) this.content = {}
+
         var div = this.build_div(this.type);
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
-        div.appendChild(this.set_id());
-        div.appendChild(this.build_field('name', undefined, undefined, true));
-        div.appendChild(this.build_date('run_date', 'run_date', 'Date'));
-        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'run'));
+        div.appendChild(this.set_id(this.content.run_id));
+        div.appendChild(this.build_field('name', undefined, undefined, this.content.name, true));
+        div.appendChild(this.build_date('run_date', this.type, 'run_date', 'Date', this.content.date));
+        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'run', this.content.info));
         // div.appendChild(this.build_field('sequencer'));
         // div.appendChild(this.build_field('pcr', 'pcr', 'PCR'));
         return div;
-    };
+    }
+}
+RunFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), RunFormBuilder.prototype)
 
-RunFormBuilder.prototype.createCloseButton = function() {
-        var self = this;
-        var close = Object.getPrototypeOf(RunFormBuilder.prototype).createCloseButton.call(this);
-        $(close).click(function() {
-            var button = document.getElementById('run_button');
-        });
-        return close;
-    };
+
+
+
+
 
 function GenericFormBuilder() {
-    SetFormBuilder.call(this);
+    FormBuilder.call(this);
     this.type = 'generic';
 }
 
-GenericFormBuilder.prototype = Object.create(SetFormBuilder.prototype);
+GenericFormBuilder.prototype ={
 
-GenericFormBuilder.prototype.build = function(index) {
+    build: function(index, content) {
         this.index = index;
+        this.content = content
+        if (this.content == undefined) this.content = {}
+
         var div = this.build_div(this.type);
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_input('id', 'text', 'id', 'hidden', this.type));
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
-        div.appendChild(this.build_field('name', undefined, undefined, true));
-        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'set'));
+        div.appendChild(this.build_field('name', undefined, undefined, this.content.name ,true));
+        div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'set', this.content.info));
         return div;
     }
+}
+GenericFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), GenericFormBuilder.prototype)
 
-GenericFormBuilder.prototype.createCloseButton = function() {
-        var self = this;
-        var close = Object.getPrototypeOf(GenericFormBuilder.prototype).createCloseButton.call(this);
-        $(close).click(function() {
-            var button = document.getElementById('generic_button');
-        });
-        return close;
-    };
+
+
+
 
 function FileFormBuilder(group_ids, source, num_files) {
     FormBuilder.call(this);
     this.group_ids = group_ids;
     this.source = source;
     this.num_files = num_files;
+    this.type = "file"
 
 }
 
-FileFormBuilder.prototype = Object.create(FormBuilder.prototype);
+FileFormBuilder.prototype = {
 
-FileFormBuilder.prototype.build = function(index) {
-    this.index = index;
-    var div = this.build_div('sample');
-    div.appendChild(this.createCloseButton());
-    div.appendChild(this.build_hidden_fields());
-    div.appendChild(this.build_file_div());
-    div.appendChild(this.build_date('sampling_date', 'file'));
-    div.appendChild(this.build_info('file', this.group_ids, 'sample'));
-    div.appendChild(this.build_set_div());
-    return div;
-}
+    build: function(index) {
+        this.index = index;
+        var div = this.build_div('sample');
+        div.appendChild(this.createCloseButton());
+        div.appendChild(this.build_hidden_fields());
+        div.appendChild(this.build_file_div());
+        div.appendChild(this.build_date('sampling_date', this.type, 'sampling_date'));
+        div.appendChild(this.build_info('file', this.group_ids, 'sample'));
+        div.appendChild(this.build_set_div());
+        return div;
+    },
 
-FileFormBuilder.prototype.build_file_div = function() {
-    var self = this;
-    var hide_second = this.source || this.num_files < 2;
-    var d = document.createElement('div');
-    d.className="field_div";
-    var file1 = this.build_file_field(1, this.source);
-    var file_input = file1.getElementsByTagName('input')[0];
-    file_input.onchange = function() {
-        db.upload_file_onChange('file_filename_' + self.index, this.value);
-    }
-    d.appendChild(file1);
-    d.appendChild(this.build_file_field(2, hide_second));
-    d.appendChild(this.build_jstree(!this.source));
-    return d;
-}
-
-FileFormBuilder.prototype.build_hidden_fields = function() {
-    var d = document.createElement('div');
-    d.className = "hidden";
-    var i = this.build_input('filename', 'filename', 'filename', 'text', 'file');
-    i.hidden = true;
-    i.className = '';
-    d.appendChild(i);
-    i = this.build_input('id', '', 'id', 'text', 'file');
-    i.hidden = true;
-    i.className = '';
-    d.appendChild(i);
-    return d;
-}
-
-FileFormBuilder.prototype.build_set_div = function() {
-    var self = this;
-    var f = document.createElement('div');
-    f.className = "field_div"
-
-    var d = document.createElement('div');
-    d.className = "token_div form-control";
-    d.onclick = function() {
-        $('#token_input_' + self.index).focus();
-    };
-    f.appendChild(d);
-
-    var i = this.build_input('set_list', '', 'set_ids', 'text', 'file');
-    i.hidden = true;
-    i.className = '';
-    d.appendChild(i);
-
-    var set_div = document.createElement('div');
-    set_div.id = "set_div_" + this.index;
-    set_div.className = "token_container";
-    d.appendChild(set_div);
-
-    var i2 = document.createElement('input');
-    i2.type = 'text';
-    i2.id = 'token_input_' + this.index;
-    i2.className = 'token_input';
-    i2.autocomplete = "off";
-    i2.onfocus = function() {
-        new VidjilAutoComplete().setupSamples(this);
-        new Tokeniser(document.getElementById('set_div_' + self.index), document.getElementById('file_set_list_' + self.index));
-    }
-    i2.dataset.needsAtwho = true;
-    i2.dataset.needsTokeniser = true;
-    i2.dataset.groupIds = "[" + this.group_ids + "]";
-    i2.dataset.keys = '["generic", "patient", "run"]';
-    i2.placeholder = "other patient/run/sets";
-    d.appendChild(i2);
-
-    return f;
-}
-
-FileFormBuilder.prototype.build_file_field = function(id, hidden) {
-    var d = this.build_wrapper();
-    d.className += " file_" + id;
-    if (this.source || hidden) {
-        d.style.display = "none";
-    }
-    var i = this.build_input('upload_' + id, 'upload_field', 'file'+id, 'file', 'file');
-    if (this.source) {
-        i.disabled = true;
-    }
-    i.title = "(.fa, .fastq, .fa.gz, .fastq.gz, .clntab)";
-    d.appendChild(i);
-    return d;
-}
-
-FileFormBuilder.prototype.build_jstree = function() {
-    var self = this;
-    var w = this.build_wrapper();
-    var d = document.createElement('div');
-    d.id = "jstree_field_" + self.index;
-    w.appendChild(d);
-
-    d.className += " jstree_field form-control";
-    if (!this.source) {
-        d.hidden = true;
-    }
-    d.onclick = function() {
-        db.display_jstree(self.index);
-    }
-
-    var sel = document.createElement('span');
-    sel.className = "button2";
-    sel.appendChild(document.createTextNode(('browse')));
-    d.appendChild(sel);
-    var indicator = document.createElement('span');
-    indicator.id = "file_indicator_" + self.index;
-    d.appendChild(indicator);
-    return d;
-}
-
-FileFormBuilder.prototype.createCloseButton = function() {
+    build_file_div: function() {
         var self = this;
-        var close = Object.getPrototypeOf(FileFormBuilder.prototype).createCloseButton.call(this);
-        $(close).click(function() {
-            var button = document.getElementById('file_button');
-        });
-        return close;
+        var hide_second = this.source || this.num_files < 2;
+        var d = document.createElement('div');
+        d.className="field_div";
+        var file1 = this.build_file_field(1, this.source);
+        var file_input = file1.getElementsByTagName('input')[0];
+        file_input.onchange = function() {
+            db.upload_file_onChange('file_filename_' + self.index, this.value);
+        }
+        d.appendChild(file1);
+        d.appendChild(this.build_file_field(2, hide_second));
+        d.appendChild(this.build_jstree(!this.source));
+        return d;
+    },
+
+    build_hidden_fields: function() {
+        var d = document.createElement('div');
+        d.className = "hidden";
+        var i = this.build_input('filename', 'filename', 'filename', 'text', 'file');
+        i.hidden = true;
+        i.className = '';
+        d.appendChild(i);
+        i = this.build_input('id', '', 'id', 'text', 'file');
+        i.hidden = true;
+        i.className = '';
+        d.appendChild(i);
+        return d;
+    },
+
+    build_set_div: function() {
+        var self = this;
+        var f = document.createElement('div');
+        f.className = "field_div"
+
+        var d = document.createElement('div');
+        d.className = "token_div form-control";
+        d.onclick = function() {
+            $('#token_input_' + self.index).focus();
+        };
+        f.appendChild(d);
+
+        var i = this.build_input('set_list', '', 'set_ids', 'text', 'file');
+        i.hidden = true;
+        i.className = '';
+        d.appendChild(i);
+
+        var set_div = document.createElement('div');
+        set_div.id = "set_div_" + this.index;
+        set_div.className = "token_container";
+        d.appendChild(set_div);
+
+        var i2 = document.createElement('input');
+        i2.type = 'text';
+        i2.id = 'token_input_' + this.index;
+        i2.className = 'token_input';
+        i2.autocomplete = "off";
+        i2.onfocus = function() {
+            new VidjilAutoComplete().setupSamples(this);
+            new Tokeniser(document.getElementById('set_div_' + self.index), document.getElementById('file_set_list_' + self.index));
+        }
+        i2.dataset.needsAtwho = true;
+        i2.dataset.needsTokeniser = true;
+        i2.dataset.groupIds = "[" + this.group_ids + "]";
+        i2.dataset.keys = '["generic", "patient", "run"]';
+        i2.placeholder = "other patient/run/sets";
+        d.appendChild(i2);
+
+        return f;
+    },
+
+    build_file_field: function(id, hidden) {
+        var d = this.build_wrapper();
+        d.className += " file_" + id;
+        if (this.source || hidden) {
+            d.style.display = "none";
+        }
+        var i = this.build_input('upload_' + id, 'upload_field', 'file'+id, 'file', 'file');
+        if (this.source) {
+            i.disabled = true;
+        } else if (! hidden) {
+            i.required = true;
+        }
+        i.title = "(.fa, .fastq, .fa.gz, .fastq.gz, .clntab)";
+        d.appendChild(i);
+        return d;
+    },
+
+    build_jstree: function() {
+        var self = this;
+        var w = this.build_wrapper();
+        var d = document.createElement('div');
+        d.id = "jstree_field_" + self.index;
+        w.appendChild(d);
+
+        d.className += " jstree_field form-control";
+        if (!this.source) {
+            d.hidden = true;
+        }
+        d.onclick = function() {
+            db.display_jstree(self.index);
+        }
+
+        var sel = document.createElement('span');
+        sel.className = "button2";
+        sel.appendChild(document.createTextNode(('browse')));
+        d.appendChild(sel);
+        var indicator = document.createElement('span');
+        indicator.id = "file_indicator_" + self.index;
+        d.appendChild(indicator);
+        return d;
     }
+}
+FileFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), FileFormBuilder.prototype)

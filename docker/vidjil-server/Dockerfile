@@ -10,8 +10,11 @@ run set -x \
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
 	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+	&& for i in $(seq 1 3); do \
+              gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+              && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+              && break || sleep 5; \
+           done\
 	&& rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
 	&& chmod +x /usr/local/bin/gosu
 
@@ -44,6 +47,6 @@ copy ./scripts/fuse-entrypoint.sh /entrypoints/fuse-entrypoint.sh
 run mkdir /usr/share/vidjil/server/web2py/applications/vidjil/databases && touch /usr/share/vidjil/server/web2py/applications/vidjil/databases/sql.log
 run mkdir /var/vidjil
 run touch /var/vidjil/vidjil.log && touch /var/vidjil/vidjil-debug.log
-run cd /usr/share/vidjil/server/web2py && python -c "from gluon.main import save_password; save_password('default',443)"
+run PASSWORD=`openssl rand -base64 10` && cd /usr/share/vidjil/server/web2py && python -c "from gluon.main import save_password; save_password('${PASSWORD}',443)"
 run chown -R www-data:www-data /usr/share/vidjil
 run useradd -ms /bin/bash vidjil && usermod -aG sudo vidjil

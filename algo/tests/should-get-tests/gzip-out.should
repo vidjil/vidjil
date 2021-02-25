@@ -1,0 +1,33 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH -b out-a --out-vdjfa --out-detected --out-undetected $VIDJIL_DATA/clones_simul.fa
+
+$ Output
+1: out-a.vidjil
+1: out-a.tsv
+1: out-a.vdj.fa
+1: out-a.detected.vdj.fa
+1: out-a.UNSEG_only_V_5_.fa
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --gz -b out-b --out-vdjfa --out-detected --out-undetected $VIDJIL_DATA/clones_simul.fa
+
+$ Compressed output
+1: out-b.vidjil.gz
+1: out-b.tsv.gz
+1: out-b.vdj.fa.gz
+1: out-b.detected.vdj.fa.gz
+1: out-b.UNSEG_only_V_5_.fa.gz
+
+!NO_LAUNCHER:
+!NO_EXTRA:
+gunzip -f out/out-b.vidjil.gz && diff -s -I '"....-..-..' -I "gz" -I "out-" out/out-a.vidjil out/out-b.vidjil ; echo "Diff .vidjil.gz: $?"
+gunzip -f out/out-b.tsv.gz    && diff -s out/out-a.tsv out/out-b.tsv ; echo "Diff .tsv.gz: $?"
+gunzip -f out/out-b.vdj.fa.gz    && diff -s out/out-a.vdj.fa out/out-b.vdj.fa ; echo "Diff .vdj.fa.gz: $?"
+gunzip -f out/out-b.detected.vdj.fa.gz   && diff -s out/out-a.detected.vdj.fa out/out-b.detected.vdj.fa; echo "Diff detected: $?"
+gunzip -f out/out-b.UNSEG_only_V_5_.fa.gz   && diff -s out/out-a.UNSEG_only_V_5_.fa out/out-b.UNSEG_only_V_5_.fa; echo "Diff UNSEG_only_V_5: $?"
+
+
+$ Same output
+1:Diff .vidjil.gz: 0
+1:Diff .tsv.gz: 0
+1:Diff .vdj.fa.gz: 0
+1:Diff detected: 0
+1:Diff UNSEG_only_V_5: 0

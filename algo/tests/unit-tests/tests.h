@@ -46,6 +46,9 @@ enum {
   TEST_TRIM_SEQUENCE,
   TEST_GENERATE_ALL_SEEDS,
 
+  /* Germline tests */
+  TEST_GERMLINE,
+
   /* Storage tests */
   TEST_ARRAY_KMERSTORE,
   TEST_MAP_KMERSTORE,
@@ -193,6 +196,9 @@ enum {
 
   /* Bugs */
   TEST_BUG2224,
+
+  // ProbaPrecomputer
+  TEST_PROBA_PRECOMPUTER,
 
   NB_TESTS
 };
@@ -364,6 +370,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FINE_SEGMENT_OVERLAP, "Test fine segmentation with an overlap");
   RECORD_TAP_TEST(TEST_SEGMENT_REVCOMP, "Test segmentation on a sequence and its revcomp");
   RECORD_TAP_TEST(TEST_BUG2224, "Test issue #2224 (seed longer than sequence)");
+  RECORD_TAP_TEST(TEST_PROBA_PRECOMPUTER, "Test ProbaPrecomputer::getProba");
 }
 
 TAP_DECLARATIONS

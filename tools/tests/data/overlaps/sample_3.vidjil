@@ -1,0 +1,114 @@
+{
+    "notes":"Sample with clone 1-4; default reads to 1000 (diff on clone 5 compare to sample 1)",
+    "clones": [
+        {
+            "germline": "IGK",
+            "id": "clone_1",
+            "reads": [
+                1000
+            ],
+            "top": 1
+        }, {
+            "germline": "IGK",
+            "id": "clone_2",
+            "reads": [
+                1000
+            ],
+            "top": 2
+        }, {
+            "germline": "IGK",
+            "id": "clone_3",
+            "reads": [
+                1000
+            ],
+            "top": 3
+        }, {
+            "germline": "IGK",
+            "id": "clone_4",
+            "reads": [
+                1000
+            ],
+            "top": 4
+        }, {
+            "germline": "IGK",
+            "id": "clone_5",
+            "reads": [
+                0
+            ],
+            "top": 5
+        }, {
+            "germline": "IGK",
+            "id": "clone_6",
+            "reads": [
+                0
+            ],
+            "top": 6
+        }, {
+            "germline": "IGK",
+            "id": "clone_7",
+            "reads": [
+                0
+            ],
+            "top": 7
+        }, {
+            "germline": "IGK",
+            "id": "clone_8",
+            "reads": [
+                0
+            ],
+            "top": 8
+        }
+    ],
+    "clusters": [],
+    "diversity": {
+        "index_Ds_diversity": [
+            0.999773621559143
+        ],
+        "index_E_equitability": [
+            0.718931078910828
+        ],
+        "index_H_entropy": [
+            10.0674523124544
+        ]
+    },
+    "germlines": {},
+    "producer": "vidjil fuse",
+    "reads": {
+        "germline": {
+            "IGK": [
+                9500
+            ]
+        },
+        "segmented": [
+            9500
+        ],
+        "total": [
+            9500
+        ]
+    },
+    "samples": {
+        "commandline": [
+            "cmdline_3"
+        ],
+        "log": [
+            "log_3"
+        ],
+        "number": 1,
+        "original_names": [
+            "seq_3"
+        ],
+        "producer": [
+            "vidjil-algo 2018.02"
+        ],
+        "run_timestamp": [
+            "2018-03-28 10:26:11"
+        ],
+        "timestamp": [
+            "2018-04-06 13:48:48"
+        ]
+    },
+    "timestamp": "2019-04-08 15:18:00",
+    "vidjil_json_version": "2016b",
+    "warn": [
+    ]
+}

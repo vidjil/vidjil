@@ -1,7 +1,9 @@
-
 #include "output.h"
+#include "segment.h"
 
 #define NULL_VAL ""
+#define AIRR_TRUE "T"
+#define AIRR_FALSE "F"
 
 string getout(json v)
 {
@@ -54,8 +56,11 @@ void CloneOutput::setSeg(string subkey, json val)
   set(KEY_SEG, subkey, val);
 }
 
-void Output::add_warning(string code, string msg, string level)
+void Output::add_warning(string code, string msg, string level, bool phony)
 {
+  if (phony) {
+    cout << WARNING_STRING << "(" + code + ")" << " " << msg << endl;
+  }
   json_add_warning(j, code, msg, level);
 }
 
@@ -129,12 +134,13 @@ CloneOutput* SampleOutput::getClone(junction junction)
 
 // .vidjil json output
 
-void SampleOutputVidjil::out(ostream &s)
+void SampleOutputVidjil::out(ostream &s, bool with_clones)
 {
    json j_clones;
 
-   for (auto it: clones)
-      j_clones.push_back(it.second->toJson());
+   if (with_clones)
+      for (auto it: clones)
+         j_clones.push_back(it.second->toJson());
 
    j["clones"] = j_clones;
 
@@ -146,8 +152,8 @@ void SampleOutputVidjil::out(ostream &s)
 
 string TF_format_bool(string val)
 {
-  if (val == "false") return "F" ;
-  if (val == "true") return "T" ;
+  if (val == "false") return AIRR_FALSE ;
+  if (val == "true") return AIRR_TRUE ;
   return val ;
 }
 
@@ -164,10 +170,33 @@ map <string, string> CloneOutputAIRR::fields()
   fields["d_call"] = get(KEY_SEG, "4", "name");
   fields["j_call"] = get(KEY_SEG, "3", "name");
   
+  fields["v_sequence_start"]    = get(KEY_SEG, "5", "start");
+  fields["v_sequence_end"]      = get(KEY_SEG, "5", "stop");
+  fields["d_sequence_start"]    = get(KEY_SEG, "4", "start");
+  fields["d_sequence_end"]      = get(KEY_SEG, "4", "stop");
+  fields["j_sequence_start"]    = get(KEY_SEG, "3", "start");
+  fields["j_sequence_end"]      = get(KEY_SEG, "3", "stop");
+  fields["cdr3_sequence_start"] = get(KEY_SEG, "cdr3", "start");
+  fields["cdr3_sequence_end"]   = get(KEY_SEG, "cdr3", "stop");
+
+  fields["v_support"] = get(KEY_SEG, "evalue_left", "val");
+  fields["j_support"] = get(KEY_SEG, "evalue_right", "val");
+
   fields["cdr3_aa"] = get(KEY_SEG, "cdr3", "aa");
   fields["junction"] = NULL_VAL;
   fields["junction_aa"] = get(KEY_SEG, "junction", "aa");
+
   fields["productive"] = TF_format_bool(get(KEY_SEG, "junction", "productive"));
+  bool productive = (fields["productive"] == AIRR_TRUE); // thsus false for both AIRR_FALSE and NULL_VAL
+  string unproductive = get(KEY_SEG, "junction", "unproductive");
+  fields["vj_in_frame"] = productive ? AIRR_TRUE
+                        : unproductive == UNPROD_STOP_CODON ? AIRR_TRUE
+                        : unproductive == UNPROD_OUT_OF_FRAME ? AIRR_FALSE
+                        : NULL_VAL;
+  fields["stop_codon"] = productive ? AIRR_FALSE
+                       : unproductive == UNPROD_STOP_CODON ? AIRR_TRUE
+                       : NULL_VAL;
+
   fields["rev_comp"] = NULL_VAL;
 
   fields["warnings"] = getWarnings();
@@ -185,10 +214,20 @@ void SampleOutputAIRR::out(ostream &s)
     "sequence",
     
     "productive",
+    "vj_in_frame", "stop_codon",
     "junction_aa",
     "junction",
     "cdr3_aa",
     "warnings",
+
+    "v_sequence_start", "v_sequence_end",
+    "d_sequence_start", "d_sequence_end",
+    "j_sequence_start", "j_sequence_end",
+
+    "cdr3_sequence_start", "cdr3_sequence_end",
+
+    "v_support", "j_support",
+
     "rev_comp",
     "sequence_alignment",
     "germline_alignment",

@@ -9,11 +9,11 @@
 \usepackage{hyperref}
 \newlength\myleftmargin
 \setlength{\myleftmargin}{2cm}
-\usepackage[margin=3.5cm, top=2cm, bottom=2cm,left=\myleftmargin,a4paper]{geometry}
+\usepackage[margin=3.5cm, top=2.5cm, bottom=2cm,left=\myleftmargin,right=5.5cm,a4paper]{geometry}
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{array}
-
+\usepackage{fancyvrb}
 
 \setlength{\parskip}{2mm}
 \setlength{\parindent}{0pt}
@@ -24,11 +24,20 @@
 \newcounter{questionum}
 \setcounter{questionum}{0}
 
+% \renewenvironment{verbatim}{\tiny\color{gray}\VerbatimEnvironment\begin{Verbatim}}{\end{Verbatim}}
+% \renewenvironment{verbatim}{\tiny\color{gray}\VerbatimEnvironment\begin{Verbatim}[lastline=1]}{\end{Verbatim}}
+
 \newcommand\com[1]{\textsf{#1}}
 
 \newcommand\question[1]{\par\noindent\textbf{\thequestionum}.~#1\addtocounter{questionum}{1}}
+\setlength{\marginparsep}{1em}
+\setlength{\marginparwidth}{4cm}
+
+\newcommand\reponse[1]{\textcolor{white}{#1}}
+\newcommand\fl{\,\ensuremath{\longrightarrow}\,}
+
 \let\oldmarginpar\marginpar
-\renewcommand\marginpar[1]{\oldmarginpar{\tiny#1}}
+\renewcommand\marginpar[1]{\oldmarginpar{\footnotesize\itshape #1}}
 
 \usepackage{titling}
 
