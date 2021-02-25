@@ -29,8 +29,9 @@ class TestGraph < BrowserTest
     $b.window(:title => "IMGT/V-QUEST").use do
       assert ($b.text.include? "Number of analysed sequences: 1"), ">> fail IMGT analysis"
       assert ($b.text.include? "no rearrangement found (stop codons)"), ">> IMGT expected V not found"
-      assert ($b.text.include? "subset"), ">> mention of subset in the table header"
-      assert (not $b.text.include? "Subset"), ">> no mention of subset (except 'subset' in the table header)"
+      assert ($b.table(:class => "summary_synthesis").text.include? "subset"), ">> mention of subset in the table header"
+      assert (not $b.ul(:id => "warning_list").exists? ), ">> no warning; no mention of subset"
+
     end
     $b.window(:title => "").use
     $b.window(:title => "IMGT/V-QUEST").close
@@ -47,7 +48,8 @@ class TestGraph < BrowserTest
       assert ($b.text.include? "Number of analysed sequences: 1"), ">> fail IMGT analysis"
       assert ($b.text.include? "Homsap IGHV3-21*01"), ">> IMGT expected V not found"
       assert ($b.text.include? "Homsap IGHJ6*02"), ">> IMGT expected J not found"
-      assert ($b.text.include? "(a) Subset #2 is characterized by the expression of stereotyped B cell receptor immunoglobulin"), ">> return information on subset#2 if detected"
+      assert ($b.table(:class => "summary_synthesis").tds.last.text.include? "#2 (a)"), ">> Subset case text have mention of correct subset (#2)"
+      assert ($b.ul(:id => "warning_list").text.include? "(a) Subset #2 is characterized by the expression of stereotyped B cell receptor immunoglobulin"), ">> return information on subset#2 if detected"
     end
     $b.window(:title => "").use
     $b.window(:title => "IMGT/V-QUEST").close
@@ -65,7 +67,8 @@ class TestGraph < BrowserTest
       assert ($b.text.include? "Number of analysed sequences: 1"), ">> fail IMGT analysis"
       assert ($b.text.include? "Homsap IGHV4-39*01"), ">> IMGT expected V not found"
       assert ($b.text.include? "Homsap IGHJ5*02"), ">> IMGT expected J not found"
-      assert ($b.text.include? "(a) Subset #8 is characterized by the expression of stereotyped B cell receptor immunoglobulin"), ">> return information on subset#2 if detected"
+      assert ($b.table(:class => "summary_synthesis").tds.last.text.include? "#8 (a)"), ">> Subset case text have mention of correct subset (#8)"
+      assert ($b.ul(:id => "warning_list").text.include? "(a) Subset #8 is characterized by the expression of stereotyped B cell receptor immunoglobulin"), ">> return information on subset#2 if detected"
     end
     $b.window(:title => "").use
     $b.window(:title => "IMGT/V-QUEST").close
