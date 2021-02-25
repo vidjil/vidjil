@@ -235,7 +235,7 @@ class VidjilBrowser < Watir::Browser
   end
 
   def merge
-    return element(:id => 'merge')
+    return element(:id => 'cluster')
   end
 
   def select_tag(id, extra={})
