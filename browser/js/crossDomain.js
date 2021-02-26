@@ -84,6 +84,7 @@ function imgtPost(species, data, system) {
     imgtInput.sequences = data;
     if (system[0] == "I") {
         imgtInput.receptorOrLocusType = "IG";
+        imgtInput.cllSubsetSearch = "true";
     }
     if (system[0] == "T") {
         imgtInput.receptorOrLocusType = "TR";
