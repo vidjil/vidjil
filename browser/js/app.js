@@ -57,7 +57,7 @@ function loadAfterConf() {
                                          "js/dbscan",
                                          "js/germline_builder",
                                          "js/aligner",
-                                         "js/sequence",
+                                         "js/aligner_sequence",
                                          "js/model_loader",
                                          "js/model",
                                          "js/clone",

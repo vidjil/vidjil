@@ -47,7 +47,7 @@ var lib_vidjil = [  //"js/conf",
                     "js/tokeniser",
                     "js/indexedDom",
                     "js/form_builder",
-                    "js/sequence",
+                    "js/aligner_sequence",
                     "js/aligner",
                 ];
 
