@@ -254,9 +254,17 @@ Sequence.prototype = {
         
         var i = start%3;
 
+        if (clone.hasSeg('5') && typeof clone.seg['5'].start != undefined)
+            while (i+3 <= clone.seg['5'].start)
+                i = i+3;
+
         var end = seq.length;
         if (cdr3aa != "" && cdr3aa.indexOf("#") != -1)
             end = start +3 *cdr3aa.indexOf("#") ;
+
+        if (clone.hasSeg('3') && typeof clone.seg['3'].stop != undefined)
+            while (end > clone.seg['3'].stop)
+                end = end-3;
 
         var code;
         while (i<end){  
@@ -270,6 +278,10 @@ Sequence.prototype = {
         if (cdr3aa != "" && cdr3aa.indexOf("#") != -1){
             start2 = stop +1 -((cdr3aa.length - cdr3aa.indexOf("#")-1)*3);
             end = seq.length;
+
+            if (clone.hasSeg('3') && typeof clone.seg['3'].stop != undefined)
+                while (end > clone.seg['3'].stop)
+                    end = end-3;
 
             while (i<start2){
                 this.seqAA[i] = '#';
