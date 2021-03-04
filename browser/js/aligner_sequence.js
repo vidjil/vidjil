@@ -304,6 +304,7 @@ Sequence.prototype = {
         var start = -1;
         var stop = -1;
         var cdr3aa = "";
+        this.AAlink = [];
                 
         var clone = this.m.clone(this.id);
         if (!clone.hasSequence()) return "";
@@ -334,7 +335,11 @@ Sequence.prototype = {
         if (cdr3aa != "" && cdr3aa.indexOf("#") != -1)
             end = start +3 *cdr3aa.indexOf("#") ;
 
-        while (i<end){  
+        while (i<end){
+            code = seq[i]+seq[i+1]+seq[i+2];   
+            this.AAlink[this.pos[i]] = {code : code, index : 0};
+            this.AAlink[this.pos[i+1]] = {code : code, index : 1};
+            this.AAlink[this.pos[i+2]] = {code : code, index : 2};  
             this.seqAAs[i+2] = '|';
             i=i+3;
         }
@@ -346,7 +351,11 @@ Sequence.prototype = {
             i = start2;
             this.seqAAs[i-1] = '|';
 
-            while (i<end){  
+            while (i<end){ 
+                code = seq[i]+seq[i+1]+seq[i+2];   
+                this.AAlink[this.pos[i]] = {code : code, index : 0};
+                this.AAlink[this.pos[i+1]] = {code : code, index : 1};
+                this.AAlink[this.pos[i+2]] = {code : code, index : 2}; 
                 this.seqAAs[i+2] = '|';      
                 i=i+3;
             }
@@ -452,6 +461,31 @@ Sequence.prototype = {
         }
 
         return result;
+    },
+
+    muteSubstitutionString: function(){
+        var seq,ref;
+        seq = this.seq;
+        ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
+
+        var sub = [];
+        for (var a in seq)
+            if (seq[a] != ref[a] && seq[a] != SYMBOL_VOID && ref[a] != SYMBOL_VOID &&
+                seq[a] != '\u00A0' && ref[a] != '\u00A0'){
+                    
+                    var code = this.AAlink[a].code;
+                    var split = this.AAlink[a].code.split('');
+                    split[this.AAlink[a].index] = ref[a];
+                    var code2 = split.join('');
+                    if (tableAAdefault(code.toUpperCase()) == tableAAdefault(code2.toUpperCase()))
+                        sub[a] = "_";
+                    else
+                        sub[a] = '\u00A0';
+                }
+            else
+                sub[a] = '\u00A0';
+
+        return sub.join('');
     },
     
     substitutionString: function(){

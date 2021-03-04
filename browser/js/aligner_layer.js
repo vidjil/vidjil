@@ -84,13 +84,20 @@ LAYERS = {
         'style': { 'borderColor': "#444" },
         'enabled': false
     },
-    
 
     'substitution':
     {
         'className': "seq_layer_text",
         'condition': function (s,c) { return s.is_aligned; },
         'text': function (s,c) { return s.substitutionString(); },
+        'style': { 'color': "black", 'fontWeight': "bold", 'pointer-events': "none" },
+        'enabled': true
+    },
+    'muteSubstitution':
+    {
+        'className': "seq_layer_text",
+        'condition': function (s,c) { return s.is_aligned; },
+        'text': function (s,c) { return s.muteSubstitutionString(); },
         'style': { 'color': "black", 'fontWeight': "bold", 'pointer-events': "none" },
         'enabled': true
     },

@@ -32,7 +32,7 @@ ALIGNER_MENU = {
         'checkbox': [{
             'id': 'mutation',
             'text': 'Highlight mutations',
-            'layers': ["insertion", "substitution", "deletion"],
+            'layers': ["insertion", "muteSubstitution", "substitution", "deletion"],
             'title': 'Highlight substitutions, insertions, and deletions',
             'enabled': true
         },{
