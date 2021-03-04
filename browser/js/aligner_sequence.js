@@ -296,8 +296,8 @@ Sequence.prototype = {
                 i=i+3;
             }
         }
-        this.seqAA = this.align(this.seqAA.join(''), SYMBOL_VOID).split("");
-        return this.seqAA.join('');
+
+        return this.align(this.seqAA.join(''), SYMBOL_VOID);
     },
 
     aminoSplitString: function () {
@@ -457,8 +457,9 @@ Sequence.prototype = {
     substitutionString: function(){
         var seq,ref;
         if (LAYERS.amino.enabled) {
-            seq = this.seqAA;
-            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
+            seq = this.align(this.seqAA.join(''), SYMBOL_VOID)
+            var r = this.segmenter.sequence[this.segmenter.sequence_order[0]];
+            ref = r.aminoString();
         } else {
             seq = this.seq;
             ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
@@ -478,8 +479,9 @@ Sequence.prototype = {
     deletionString: function(){
         var seq,ref;
         if (LAYERS.amino.enabled) {
-            seq = this.seqAA;
-            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
+            seq = this.align(this.seqAA.join(''), SYMBOL_VOID)
+            var r = this.segmenter.sequence[this.segmenter.sequence_order[0]];
+            ref = r.align(r.seqAA.join(''), SYMBOL_VOID)
         } else {
             seq = this.seq;
             ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
@@ -499,8 +501,9 @@ Sequence.prototype = {
     insertionString: function(){
         var seq,ref;
         if (LAYERS.amino.enabled) {
-            seq = this.seqAA;
-            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
+            seq = this.align(this.seqAA.join(''), SYMBOL_VOID)
+            var r = this.segmenter.sequence[this.segmenter.sequence_order[0]];
+            ref = r.align(r.seqAA.join(''), SYMBOL_VOID)
         } else {
             seq = this.seq;
             ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
