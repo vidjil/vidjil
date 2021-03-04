@@ -228,16 +228,27 @@ Sequence.prototype = {
         if (!clone.hasSequence()) return "";
         var seq = clone.sequence;
 
+        var cdr3;
         if (clone.hasSeg('cdr3')){
-            if (typeof clone.seg.cdr3.start != "undefined") {
-                start = clone.seg.cdr3.start;
-                stop = clone.seg.cdr3.stop;
-                cdr3aa = clone.seg.cdr3.aa;
-            }else if (clone.seg.cdr3.constructor === String){
-                start = clone.sequence.indexOf(clone.seg.cdr3);
-                stop = start + clone.seg.cdr3.length;
+            //use cdr3 to find AA position if available
+            cdr3 = clone.seg.cdr3;
+        }else{
+            //or use main clone in aligner as ref
+            var clone2 = this.m.clone(this.segmenter.sequence[this.segmenter.sequence_order[0]].id);
+            if (clone2.hasSeg('cdr3')){
+                cdr3 = clone2.seg.cdr3;
             }
         }
+        
+        if (typeof cdr3.start != "undefined") {
+            start = cdr3.start;
+            stop = cdr3.stop;
+            cdr3aa = cdr3.aa;
+        }else if (cdr3.constructor === String){
+            start = clone.sequence.indexOf(cdr3);
+            stop = start + cdr3.length;
+        }
+        
         
         for (var h=0; h<seq.length; h++) this.seqAA[h] = '\u00A0';
         
