@@ -392,24 +392,16 @@ Aligner.prototype = {
         var self = this;
         list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
         var sliderNeedUpdate = (Object.keys(this.sequence).length==0);//slider move only if we add sequence to an empty segmenter
+        var cloneID, liDom;
 
+        // remove unselected sequences
         for (var i = 0; i < list.length; i++) {     
-
-            var cloneID = list[i];
-
-            var liDom = this.index[cloneID];
+            cloneID = list[i];
+            liDom = this.index[cloneID];
             
-            if (this.m.clone(cloneID).isSelected()) {               // the clone is selected
-                this.addToSegmenter(cloneID);
-                liDom = this.index[cloneID];
-                if (liDom == null) continue;
-                liDom.display("main", "block");
-                liDom.replace("seq-fixed", this.build_spanF(cloneID));
-                var seq = this.sequence[cloneID].toString();
-                liDom.content("seq-mobil", seq);        
-            } else {    
+            if (!this.m.clone(cloneID).isSelected()) {            
                 if (this.sequence[cloneID]){                         
-                    delete this.sequence[cloneID];                  //  > delete the sequence 
+                    delete this.sequence[cloneID];       
                     this.sequence_order.splice( this.sequence_order.indexOf(cloneID), 1 );
                 }
 
@@ -417,10 +409,38 @@ Aligner.prototype = {
                 if (liDom == null) 
                     continue;                                    
                 else
-                    liDom.display("main", "none");                          //  > hide the dom element
+                    liDom.display("main", "none");
             }
         }
 
+        // update sequences already in segmenter
+        for (var k = 0; k < this.sequence_order.length; k++) {   
+            cloneID = this.sequence_order[k];
+            list.splice( list.indexOf(cloneID), 1 );
+
+            liDom = this.index[cloneID];
+            if (liDom == null) continue;
+            liDom.display("main", "block");
+            liDom.replace("seq-fixed", this.build_spanF(cloneID));
+            liDom.content("seq-mobil", this.sequence[cloneID].toString());  
+        }
+
+        // add newly selected sequences
+        for (var j = 0; j < list.length; j++) {     
+            cloneID = list[j];
+            liDom = this.index[cloneID];
+            
+            if (this.m.clone(cloneID).isSelected()) {
+                this.addToSegmenter(cloneID);
+                liDom = this.index[cloneID];
+                if (liDom == null) continue;
+                liDom.display("main", "block");
+                liDom.replace("seq-fixed", this.build_spanF(cloneID));
+                liDom.content("seq-mobil", this.sequence[cloneID].toString());        
+            } 
+        }
+
+        // update 
         if (sliderNeedUpdate) this.show();
         this.updateAlignmentButton();
         this.updateStats();  
@@ -824,14 +844,7 @@ Aligner.prototype = {
             this.sequence[this.memTab[i]].load(json.seq[i], true);
     	}
 
-	    // Render all (aligned) sequences
-        for (var j = 0; j < json.seq.length; j++) {
-
-            // global container
-            var seq = this.sequence[this.memTab[j]];
-            seq.toString();
-        }
-
+	    this.update();
     },
     
     /**
