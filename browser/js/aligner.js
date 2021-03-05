@@ -405,10 +405,7 @@ Aligner.prototype = {
                     this.sequence_order.splice( this.sequence_order.indexOf(cloneID), 1 );
                 }
 
-                liDom = this.index[cloneID];
-                if (liDom == null) 
-                    continue;                                    
-                else
+                if (liDom != null) 
                     liDom.display("main", "none");
             }
         }
@@ -416,13 +413,15 @@ Aligner.prototype = {
         // update sequences already in segmenter
         for (var k = 0; k < this.sequence_order.length; k++) {   
             cloneID = this.sequence_order[k];
-            list.splice( list.indexOf(cloneID), 1 );
-
             liDom = this.index[cloneID];
-            if (liDom == null) continue;
-            liDom.display("main", "block");
-            liDom.replace("seq-fixed", this.build_spanF(cloneID));
-            liDom.content("seq-mobil", this.sequence[cloneID].toString());  
+
+            if(list.indexOf(cloneID) != -1){
+                list.splice( list.indexOf(cloneID), 1 );
+                this.addToSegmenter(cloneID);
+                liDom.display("main", "block");
+                liDom.replace("seq-fixed", this.build_spanF(cloneID));
+                liDom.content("seq-mobil", this.sequence[cloneID].toString());  
+            }
         }
 
         // add newly selected sequences
@@ -432,8 +431,6 @@ Aligner.prototype = {
             
             if (this.m.clone(cloneID).isSelected()) {
                 this.addToSegmenter(cloneID);
-                liDom = this.index[cloneID];
-                if (liDom == null) continue;
                 liDom.display("main", "block");
                 liDom.replace("seq-fixed", this.build_spanF(cloneID));
                 liDom.content("seq-mobil", this.sequence[cloneID].toString());        
