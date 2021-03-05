@@ -775,9 +775,9 @@ Disks failures or other events could have triggered a read-only partition.
 For some reasons, that are not clear yet, it may happen that workers are not
 assigned any additional jobs even if they don't have any ongoing jobs.
 
-In such a (rare) case, it may be useful to restart web2py schedulers
-with `service web2py-scheduler restart` or `initctl restart web2py-scheduler`
-depending on your installation.
+In such a (rare) case, it may be useful to restart the workers by clicking on
+the *reset workers* link in the Vidjil administration interface. Restarting
+workers won't be performed if jobs are currently running or assigned.
 
 
 ## Debugging Web2py workers
