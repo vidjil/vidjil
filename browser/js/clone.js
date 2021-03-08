@@ -1396,7 +1396,9 @@ Clone.prototype = {
 
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.90); m.closeInfoBox();'>correlated</a> clones</p>"
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
-        html += "<p>Download table as <a class='button' id='download_info_"+ this.index +"'onclick='export_table_to_csv(" + this.index + ")'>CSV</a></p>"
+        html += "<p>Download clone information as "
+        html += "<a class='button' id='download_info_"+ this.index +"_airr' onclick='m.export_as_airr([" + this.index + "])'>AIRR</a>"
+        html += "</p>"
 
         //column
         html += "<div id='info_window'><table id='clone_download_info_"+this.index+"'><tr><th>Files names</th>"
@@ -2059,6 +2061,88 @@ Clone.prototype = {
             }
         }
     },
+
+
+    getUnproductivityCause: function(){
+        if (this.seg.junction != undefined && !this.isProductive()){
+            if (this.seg.junction.unproductive != undefined) { 
+                return this.seg.junction.unproductive
+            } else {
+                return undefined
+            }
+        }
+        return ""
+    },
+
+    isInFrame: function(){
+        if (this.isProductive()){
+            return true
+        } else {
+            var unproductivity_cause = this.getUnproductivityCause()
+            if (unproductivity_cause != undefined && unproductivity_cause == "out-of-frame"){
+                return false
+            }
+        }
+        return undefined
+    },
+
+    hasStopCodon: function(){
+        if (this.isProductive()){
+            return false
+        } else {
+            var unproductivity_cause = this.getUnproductivityCause()
+            if (unproductivity_cause != undefined) {
+                if (unproductivity_cause == "stop-codon"){
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+        return undefined
+    },
+
+    get_airr_values: function(time){
+        values = {
+            "sample": time,
+            "duplicate_count":    this.getRawReads(this.m.samples.order[time]),
+            "locus": this.germline,
+            "v_call":     this.getGene("5"),
+            "d_call":     this.getGene("4"),
+            "j_call":     this.getGene("3"),
+            "sequence_id":       this.id,
+            "sequence": this.sequence,
+            "productive":   this.isProductive(), //["seg","junction","productive"],
+            "vj_in_frame":  this.isInFrame() == true ? "T" : (this.isInFrame() == false ? "F": ""), //["seg","junction","unproductive"], // les deux ne sont pas compatible
+            "stop_codon":  this.hasStopCodon() == true ? "T" : (this.hasStopCodon() == false ? "F": ""), //["seg","junction","unproductive"], // les deux ne sont pas compatible
+            "junction_aa":  "todo", //["seg","junction","aa"],
+            "cdr3_aa":      "todo", //["seg","cdr3","aa"],
+            "warnings":     "todo" //["warn"],
+        }
+
+        // Other seg info
+        var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
+        for (var s in this.seg) {
+            if (exclude_seg_info.indexOf(s) == -1 && this.seg[s] instanceof Object) {
+                if ("info" in this.seg[s]) {
+                    // Textual field
+                    values["_"+s] = this.seg[s].info
+                } else if ("val" in this.seg[s]) {
+                    // Numerical field
+                    values["_"+s] = this.seg[s].val
+                } else {
+                    // Sequence field
+                    var nt_seq = this.getSegNtSequence(s);
+                    if (nt_seq !== '') {
+                        values["_"+s] = this.getSegNtSequence(s)
+                    }
+                }
+            }
+        }        
+
+        return values
+
+    }
 
 
 };

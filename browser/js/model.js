@@ -3597,4 +3597,42 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return name_file
     },
 
+    export_as_airr: function(cloneIds){
+        var airr_values = []
+        var time_length = this.samples.order.length
+
+        for (var i = 0; i < cloneIds.length; i++) {
+            var cloneId = cloneIds[i]
+            var clone = this.clone(cloneId)
+            for (var time = 0; time < time_length; time++) {
+                airr_values.push(clone.get_airr_values(time))
+            }
+        }
+
+        // to export
+        list_keys = []
+        for (var i = 0; i < airr_values.length; i++) {
+            var values = airr_values[i]
+            for (key in values){
+                list_keys.push(key)
+            }
+        }
+        list_keys = Array.from(new Set(list_keys))
+
+        csv = [list_keys]
+        for (var m = 0; m < airr_values.length; m++) {
+            var values = airr_values[m]
+            liste = []
+            for (var i = 0; i < list_keys.length; i++) {
+                var key = list_keys[i]
+                liste.push( values[key] )
+            }
+            csv.push(liste)
+        }
+
+        // Download CSV
+        var filename = "information_clone_"+cloneId
+        download_csv(csv.join("\n"), filename);
+    },
+
 }; //end prototype Model
