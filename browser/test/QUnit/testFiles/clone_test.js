@@ -64,7 +64,8 @@ QUnit.module("Clone", {
                 "aa" : "WKIC",
                 "start": 3,
                 "stop": 14,
-                "productive": false
+                "productive": false,
+                "unproductive": "out-of-frame"
             },
             "somefeature":
             {
@@ -152,6 +153,13 @@ var json_clone7 = {
         },
         "N1": 15,
         "N2": 0,
+        "junction": {
+                "aa" : "WKIC",
+                "start": 3,
+                "stop": 14,
+                "productive": false,
+                "unproductive": "stop-codon"
+            },
       },
       "sequence": "bbbbbVVVVVnnDDDJJJJJJJJJJaaaaaa",
       "top": 7
@@ -734,4 +742,74 @@ QUnit.test("clonedb", function(assert) {
 
     assert.equal(m.clones[1].numberInCloneDB(), undefined, "");
     assert.equal(m.clones[1].numberSampleSetInCloneDB(), undefined, "");
+});
+
+
+QUnit.test("export_airr", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    var c1 = new Clone(json_clone1, m, 0, c_attributes);
+    var c3 = new Clone(json_clone3, m, 0, c_attributes);
+    var c7 = new Clone(json_clone7, m, 0, c_attributes);
+    m.initClones();
+
+    var airr_c1_getted =  c1.get_airr_values(0)
+    var airr_c3_getted =  c3.get_airr_values(0)
+    var airr_c7_getted =  c7.get_airr_values(0)
+    console.log( airr_c7_getted )
+
+    var airr_c1 = {
+      "sample": 0,
+      "duplicate_count": 0,
+      "locus": "TRG",
+      "v_call": "undefined V",
+      "d_call": "IGHD2*03",
+      "j_call": "IGHV4*01",
+      "sequence_id": "id1",
+      "sequence": "aaaaaaaaaattttttttt",
+      "productive": true,
+      "vj_in_frame": "T",
+      "stop_codon": "F",
+      "_evalue": 0.01,
+      "_cdr3": "aaatttttt",
+      "_junction": "att"
+    }
+    var keys = Object.keys(airr_c1)
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i]
+        assert.equal(airr_c1_getted[key], airr_c1[key], "Correct airr field getted for c1; key "+ key);
+    }
+
+    var airr_c7 = {
+      "sample": 0,
+      "duplicate_count": 0,
+      "locus": "IGH",
+      "v_call": "IGHV1-69*06",
+      "d_call": "IGHD3-3*01",
+      "j_call": "IGHJ6*02",
+      "sequence_id": "id7",
+      "sequence": "bbbbbVVVVVnnDDDJJJJJJJJJJaaaaaa",
+      "productive": false,
+      "vj_in_frame": "",
+      "stop_codon": "T",
+      "_N1": 15,
+      "_N2": 0
+    }
+    var keys = Object.keys(airr_c7)
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i]
+        assert.equal(airr_c7_getted[key], airr_c7[key], "Correct airr field getted for c7; key "+ key);
+    }
+
+    // case of productive
+    var airr_c3 = {
+      "productive": false,
+      "vj_in_frame": "F",
+      "stop_codon": "F",
+    }
+    var keys = Object.keys(airr_c3)
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i]
+        assert.equal(airr_c3_getted[key], airr_c3[key], "Correct airr field getted for c3; key "+ key);
+    }
 });
