@@ -233,7 +233,9 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
 
     html = m.clones[0].getHtmlInfo();
     assert.includes(html, "<h2>Cluster info : hello</h2>")
-    assert.includes(html, "<div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
+    assert.includes(html, "<p>Download clone information as <a class='button' id='download_info_0_airr' onclick='m.export_as_airr([0])'>AIRR</a>",
+             "download buttons")
+    assert.includes(html, "<table id='clone_info_table_0'><tr><th>Samples names</th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
     assert.includes(html, "tr id='modal_line_clone_name'><td id='modal_line_title_clone_name'>clone name</td><td colspan='4' id='modal_line_value_clone_name'>hello</td></tr>",
@@ -745,6 +747,7 @@ QUnit.test("clonedb", function(assert) {
 });
 
 
+
 QUnit.test("export_airr", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data, 100);
@@ -779,6 +782,7 @@ QUnit.test("export_airr", function(assert) {
         var key = keys[i]
         assert.equal(airr_c1_getted[key], airr_c1[key], "Correct airr field getted for c1; key "+ key);
     }
+
 
     var airr_c7 = {
       "sample": 0,
