@@ -3594,6 +3594,14 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     export_as_airr: function(cloneIds){
+        if (cloneIds == undefined){
+            cloneIds = this.getSelected()
+
+        }
+        if (cloneIds.length == 0){
+            console.log( "Export AIRR: please select clones to be exported")
+            return
+        }
         var airr_values = []
         var time_length = this.samples.order.length
 
@@ -3627,7 +3635,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
 
         // Download CSV
-        var filename = "information_clone_"+cloneId
+        var filename = "information_clone_"+cloneIds.join("_")+".airr"
         download_csv(csv.join("\n"), filename);
     },
 
