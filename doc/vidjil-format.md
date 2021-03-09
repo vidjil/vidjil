@@ -529,7 +529,7 @@ file in JSON format must be created, as in the following example:
     ]
   }
 }
-````
+```
 
 and given to `vidjil-algo` by means of the flag `--label-json
 spikes.json`.  Notice that the family of each spike-in must be
@@ -543,7 +543,7 @@ one to the `Fuse command:` field in the analysis config:
 
 ```javascript
 -t 100 --pre spike_normalization.py
-````
+```
 
 The `spike-normalization.py` script is responsible for collecting read
 counts for the spike-ins, combining them with their copy numbers, and
@@ -583,7 +583,7 @@ data fields in the `vidjil` file.  Part of the info is set into an
     "IGK"
   ]
 }
-````
+```
 
 The item `coefficients`, one per family, contains the coefficients that
 multiplied by a read count will yield a normalized value.  Here, `UNI`
@@ -613,7 +613,7 @@ and are arrays containing one value per time point.
     "normalized_reads": [ 195.50763372699805 ]
   }
 ]
-````
+```
 
 Here, field `R2` indicates the Pearson R2 coefficient for the linear
 regression used in this clone; `copy_number` is the estimated copy
