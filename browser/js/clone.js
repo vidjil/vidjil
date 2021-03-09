@@ -1364,10 +1364,11 @@ Clone.prototype = {
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
         html += "<p>Download clone information as "
         html += "<a class='button' id='download_info_"+ this.index +"_airr' onclick='m.export_as_airr([" + this.index + "])'>AIRR</a>"
+        html += "<a class='button' id='download_info_"+ this.index +"_csv' onclick='export_table_to_csv(" + this.index + ")'>CSV</a>"
         html += "</p>"
 
         //column
-        html += "<div id='info_window'><table id='clone_download_info_"+this.index+"'><tr><th>Files names</th>"
+        html += "<div id='info_window'><table id='clone_info_table_"+this.index+"'><tr><th>Samples names</th>"
 
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.m.getStrTime(this.m.samples.order[i], "name") + "</td>"
@@ -2065,6 +2066,7 @@ Clone.prototype = {
     get_airr_values: function(time){
         values = {
             "sample": time,
+            "sample_name": this.m.samples.original_names[time],
             "duplicate_count":    this.getRawReads(this.m.samples.order[time]),
             "locus": this.germline,
             "v_call":     this.getGene("5"),
@@ -2075,11 +2077,20 @@ Clone.prototype = {
             "productive":   this.isProductive(), //["seg","junction","productive"],
             "vj_in_frame":  this.isInFrame() == true ? "T" : (this.isInFrame() == false ? "F": ""), //["seg","junction","unproductive"], // les deux ne sont pas compatible
             "stop_codon":  this.hasStopCodon() == true ? "T" : (this.hasStopCodon() == false ? "F": ""), //["seg","junction","unproductive"], // les deux ne sont pas compatible
-            "junction_aa":  "todo", //["seg","junction","aa"],
-            "cdr3_aa":      "todo", //["seg","cdr3","aa"],
-            "warnings":     "todo" //["warn"],
+            "junction_aa": this.getSegAASequence('junction'),
+            "cdr3_aa":     this.getSegAASequence('cdr3'),
         }
 
+        var warnings = []
+        for (var i = 0; i < this.warn.length; i++) {
+            var warn = this.warn[i]
+            if (warn != undefined && warn != 0){
+
+                warnings.push( warn.code + "; " + warn.msg)
+            }
+        }
+        values.warnings = warnings.join("; ")
+            
         // Other seg info
         var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
         for (var s in this.seg) {
