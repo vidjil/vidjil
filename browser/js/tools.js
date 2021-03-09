@@ -822,7 +822,7 @@ function removeEltAndDecrease(array, value) {
 
 function export_table_to_csv(cloneId) {
     var csv   = [];
-    var table = document.getElementById("clone_download_info_"+ cloneId)
+    var table = document.getElementById("clone_info_table_"+ cloneId)
     var rows  = table.querySelectorAll("table tr");
     
     for (var i = 0; i < rows.length; i++) {
