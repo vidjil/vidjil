@@ -3618,9 +3618,11 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
 
         // to export
+        var values;
+        var key;
         list_keys = []
-        for (var i = 0; i < airr_values.length; i++) {
-            var values = airr_values[i]
+        for (v = 0; v < airr_values.length; v++) {
+            values = airr_values[v]
             for (key in values){
                 list_keys.push(key)
             }
@@ -3629,10 +3631,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         csv = [list_keys]
         for (var m = 0; m < airr_values.length; m++) {
-            var values = airr_values[m]
+            values = airr_values[m]
             liste = []
-            for (var i = 0; i < list_keys.length; i++) {
-                var key = list_keys[i]
+            for (var j = 0; j < list_keys.length; j++) {
+                key = list_keys[j]
                 liste.push( values[key] )
             }
             csv.push(liste)
