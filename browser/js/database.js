@@ -826,25 +826,7 @@ Database.prototype = {
     },
 
     logout: function() {
-        var self = this;
-        $.ajax({
-            type: "POST",
-            timeout: DB_TIMEOUT_CALL,
-            crossDomain: true,
-            url: self.db_address + 'default/user/logout',
-            xhrField: {withCredentials: true},
-            success: function (result) {
-                db.call("default/home");
-                db.clear_login_info();
-            },
-            error: function (request, status, error) {
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                } else {
-                    self.call("default/home");
-                }
-            }
-        });
+        db.call('default/user/logout');
     },
 
     extract_login_info: function() {
