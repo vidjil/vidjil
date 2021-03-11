@@ -826,6 +826,12 @@ Database.prototype = {
     },
 
     logout: function() {
+        document.getElementById('login-container').innerHTML = "";
+        var dbc = document.getElementById('db_content');
+        if (dbc) {
+            document.getElementById('db_auth').innerHTML = "";
+            dbc.innerHTML = "";
+        }
         db.call('default/user/logout');
     },
 
