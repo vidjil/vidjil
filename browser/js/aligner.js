@@ -418,9 +418,11 @@ Aligner.prototype = {
             if(list.indexOf(cloneID) != -1){
                 list.splice( list.indexOf(cloneID), 1 );
                 this.addToSegmenter(cloneID);
-                liDom.display("main", "block");
-                liDom.replace("seq-fixed", this.build_spanF(cloneID));
-                liDom.content("seq-mobil", this.sequence[cloneID].toString());  
+                if (liDom != null) {
+                    liDom.display("main", "block");
+                    liDom.replace("seq-fixed", this.build_spanF(cloneID));
+                    liDom.content("seq-mobil", this.sequence[cloneID].toString());        
+                }
             }
         }
 
@@ -431,9 +433,11 @@ Aligner.prototype = {
             
             if (this.m.clone(cloneID).isSelected()) {
                 this.addToSegmenter(cloneID);
-                liDom.display("main", "block");
-                liDom.replace("seq-fixed", this.build_spanF(cloneID));
-                liDom.content("seq-mobil", this.sequence[cloneID].toString());        
+                if (liDom != null) {
+                    liDom.display("main", "block");
+                    liDom.replace("seq-fixed", this.build_spanF(cloneID));
+                    liDom.content("seq-mobil", this.sequence[cloneID].toString());        
+                }
             } 
         }
 
