@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -w 10 -e 10 --all -g $VIDJIL_DIR/germline $VIDJIL_DATA/trd-dd2-dd3.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -w 10 -e 20 --all -g $VIDJIL_DIR/germline $VIDJIL_DATA/trd-dd2-dd3.fa
 
 $ Segment 6 reads, thanks to -i
 1:junction detected in 6 reads
