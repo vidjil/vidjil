@@ -1,8 +1,8 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC -c clones -z 2 -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta  > /dev/null ; cat out/Stanford_S22.tsv
 
-$ There are four lines, all with tabs
-4:
-4:\t
+$ There are at least four lines, all with tabs
+>4:
+>4:\t
 
 $ The required AIRR fields are present
 :v_call	d_call j_call
@@ -22,12 +22,12 @@ $ Optional AIRR fields
 $ Custom AIRR fields
 :warnings
 
-$ Three clones on IGH
-3:IGH
+$ At least three clones on IGH
+>3:IGH
 
 $ One clone has 8 reads, two clones have 5 reads
 1:IGH 8
-2:IGH 5
+>2:IGH 5
 
 $ Two clones are productive (productive, vj_in_frame, NOT stop_codon), no clone is labeled as non-productive
 2:\tT\tT\tF\t
