@@ -341,7 +341,7 @@ void testExtractor(IndexTypes index) {
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_ONLY_J), 42.75, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_J));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_ONLY_V), 48, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_V));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_AMBIGUOUS), 72, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_AMBIGUOUS));
-  TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW), 20, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW));
+  TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW), 21, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW), 71, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW));
 
   TAP_TEST(out_seg.tellp() > 0, TEST_EXTRACTOR_OUT_SEG, "");
