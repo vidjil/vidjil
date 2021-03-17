@@ -139,9 +139,23 @@ try {
 }
 
 if (typeof config !== 'undefined' && typeof config.alert !== 'undefined') {
-    $("#top-container").addClass("alert")
-    $("#alert").append(config.alert)
-    $("#alert").click(function () { console.log({'type': 'popup', 'default': config.alert}) })
+    var alert_title, alert_msg;
+
+    if (typeof config.alert == 'string'){
+        alert_title = config.alert;
+        alert_msg = undefined;
+    }else{
+        alert_title = config.alert.title;
+        alert_msg = config.alert.msg;
+    }
+
+    $("#top-container").addClass("alert");
+    $("#alert").append(alert_title);
+
+    if (alert_msg){
+        console.log({'type': 'flash', priority:3, 'msg': alert_msg})
+        $("#alert").click(function () { console.log({'type': 'flash', priority:2, 'msg': alert_msg}) })
+    }
 }
 
 console.log("=== main.js finished ===");
