@@ -29,10 +29,10 @@ $ Clones #01 and #02 are clustered (not together): their windows appear two time
 2:"CTGTGCGAGAGTGGGCAGCAGCTGGTCTGATGCTTTTGATTATCTGGGGC"
 2:"GCGAGAGCGATCCCCCGGTATTACTATGATACTAGTGGCCCAAACGACTA"
 
-$ Clones #03 is not clustered: its windows appear only once .vidjil ('id')
-1:"TGTGAGAGAGCGATCCCCCGGTATTACTAGGATACTAGTGGCCCAAACGA"
+$ Some other clone is not clustered: its windows appear only once .vidjil ('id')
+1:"TGCGATAGCGATCCCGCGGTATTACTATGATACTAGTGGCCCAAACGACT"
 
-$ Clones #01, #02 and #03 have the start of their sequence in .vidjil, on the good strand
+$ Clones #01, #02 and other have the start of their sequence in .vidjil, on the good strand
 1: "sequence": "ACGCTGGCAATGGTAACACAAAATATTCACAGAAG
 1: "sequence": "TAGTGGTGCCATATACTACGCAGACTCTGTGAAGG
-1: "sequence": "CATTAGTAGTAATAGTGGTGCCATATACTACGCAG
+1: "sequence": "TATACTACGCAGACTCTGTGAAGGGCCGATTCACC
