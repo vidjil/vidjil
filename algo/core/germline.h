@@ -33,7 +33,7 @@ enum SEGMENTATION_METHODS {
 #define PSEUDO_NOT_ANALYZED       "not analyzed"
 #define PSEUDO_NOT_ANALYZED_CODE  'z'
 
-#define KEYS_COMPRESS  2.0
+#define KEYS_COMPRESS  1.65   //  enough for ~208 *01 genes (191 IGHV + ...) / 127
 
 using namespace std;
 using json = nlohmann::json;
