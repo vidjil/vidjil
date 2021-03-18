@@ -129,6 +129,8 @@ def go(cmd, log=None, time=False):
     else:
         flog = sys.stdout
     print(cmd, end=' ')
+    sys.stdout.flush()
+
     if time:
         time_file = NamedTemporaryFile(mode='w+', delete=False)
         cmd = "/usr/bin/time -o {} -f '%U\t%S\t%M' {}".format(time_file.name, cmd)
@@ -138,8 +140,13 @@ def go(cmd, log=None, time=False):
 
     if returncode:
         print('FAILED', end=' ')
+        if not time:
+            print()
+        sys.stdout.flush()
         raise subprocess.CalledProcessError(returncode, cmd)
     elif not time:
+        print()
+        sys.stdout.flush()
         return
     else:
         (utime, stime, mem) = [ float(i) for i in time_file.read().split() ]
@@ -147,6 +154,7 @@ def go(cmd, log=None, time=False):
     mem = mem // 1000
     os.unlink(time_file.name)
     print(color(ANSI.YELLOW, '%5.2fu %5.2fs %6.1fM' % (utime, stime, mem)))
+    sys.stdout.flush()
 
     return (stime + utime, mem)
 
