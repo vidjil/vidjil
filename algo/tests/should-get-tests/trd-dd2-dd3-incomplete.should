@@ -1,8 +1,8 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC -w 10 -e 20 --all -g $VIDJIL_DIR/germline $VIDJIL_DATA/trd-dd2-dd3.fa
 
-$ Segment 6 reads, thanks to -i
-1:junction detected in 6 reads
+$ Segment 8 reads
+1:junction detected in 8 reads
 
-$ 4 reads are detected on TRD+ (with -w 10, otherwise the reads are too short)
-1: TRD[+] .*->.* 4
+$ 6 reads are detected on TRD+ (with -w 10, otherwise the reads are too short)
+1: TRD[+] .*->.* 6
 
