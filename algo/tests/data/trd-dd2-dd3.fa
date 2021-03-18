@@ -3,21 +3,33 @@ gcaccatcagagagagatgaagggtcttactactgtgcctgtgacacc
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
 
+# without DD2 upstream, the recombination can not be detected, 'TODO' is expected here
 >TRDD2*01_0//0_TRDJ1*01  [TRD+]  TODO
 ccttcctac
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
-# same sequence, with DD2 upstream
+# same sequence, with some DD2 upstream
+>TRDD2*01_0//0_TRDJ1*01  [TRD+]
+TGTGccttcctac
+acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
+
+# same sequence, with more DD2 upstream
 >TRDD2*01_0//0_TRDJ1*01  [TRD+]
 TGTGTTTCATTGTGccttcctac
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
 
+# without DD2 upstream, the recombination can not be detected, 'TODO' is expected here
 >TRDD2*01_0//0_TRDD3*01  [TRD+]  TODO
 ccttcctac
 actgggggatacg
 
-# same sequence, with DD2 upstream and DD3 downstream
+# same sequence, with some DD2 upstream
+>TRDD2*01_0//0_TRDD3*01  [TRD+]
+GTGccttcctac
+actgggggatacg
+
+# same sequence, with more DD2 upstream and DD3 downstream
 >TRDD2*01_0//0_TRDD3*01  [TRD+]
 TGTGTTTCATTGTGccttcctac
 actgggggatacgCACAGTGCTA
