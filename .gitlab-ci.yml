@@ -432,7 +432,7 @@ ff45-server-functional:
 
 # Benchmark
 
-benchmark_algo:
+.benchmark-algo:
   image:  gcc:6.3
   extends: .install-algo-dependencies
   stage: benchmark
@@ -446,6 +446,16 @@ benchmark_algo:
     - /^feature-.*a.*\/.*$/
   tags:
     - cidocker
+
+benchmark-algo:
+  extends: .benchmark-algo
+  script:
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -b -c -i 2018.10 -i 2019.03 -i 2020.04 -i 2021.02.2 -i alpha-2102
+
+benchmark-algo-full:
+  extends: .benchmark-algo
+  script:
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
 
 
 # Deployment
