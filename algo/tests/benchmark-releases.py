@@ -16,6 +16,7 @@ CURRENT = 'HEAD'
 
 WARN_RATIO = 0.10
 
+LIMIT2e5 = '-x 200000 '
 LIMIT1e5 = '-x 100000 '
 LIMIT1e4 = '-x 10000 '
 LIMIT1e3 = '-x 1000 '
@@ -26,6 +27,7 @@ IGH = '-g ' + GERM_VAR + '/homo-sapiens.g:IGH '
 L4 = '../../demo/LIL-L4.fastq.gz '
 S22 = '../../demo/Stanford_S22.fasta '
 
+FILTER = '--filter-reads '
 CONSENSUS_NO = '-y 0 -z 0 '
 CONSENSUS_ALL = '-y all -z 0 '
 DESIGNATIONS = '-c designations '
@@ -35,6 +37,8 @@ from collections import OrderedDict
 BENCHS = OrderedDict([
   ('init', '-x 1 ' + MULTI + L4 + CONSENSUS_NO),
   ('germ', LIMIT1e5 + MULTI + L4 + '-c germlines '),
+
+  ('filter', LIMIT2e5 + FILTER + MULTI + L4),
 
   ('multi-0', LIMIT1e5 + MULTI + L4 + CONSENSUS_NO),
   ('multi-1', LIMIT1e5 + MULTI + L4 + CONSENSUS_ALL),
