@@ -6,6 +6,8 @@ BIN = DEST + 'bin/'
 GERM = DEST + 'germline/'
 RUN = DEST + 'run/'
 
+GERM_VAR = '${GERMLINE}'
+
 OUT = 'benchmark.log'
 
 CURRENT = 'HEAD'
@@ -19,8 +21,8 @@ LIMIT1e4 = '-x 10000 '
 LIMIT1e3 = '-x 1000 '
 LIMIT1e2 = '-x 100 '
 
-MULTI = '-g ../../germline/homo-sapiens.g '
-IGH = '-g ../../germline/homo-sapiens.g:IGH '
+MULTI = '-g ' + GERM_VAR + '/homo-sapiens.g '
+IGH = '-g ' + GERM_VAR + '/homo-sapiens.g:IGH '
 L4 = '../../demo/LIL-L4.fastq.gz '
 S22 = '../../demo/Stanford_S22.fasta '
 
@@ -229,6 +231,7 @@ def run_all(tag, args, retries):
         log = RUN + '/%s-%s.log' % (tag, release)
 
         cmd = '%s/%s ' % (BIN, release) + convert(args, release)
+        cmd = cmd.replace(GERM_VAR, '%s/%s' % (GERM, release))
         try:
             benchs = []
             for i in range(retries) :
