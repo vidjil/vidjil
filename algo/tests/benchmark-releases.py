@@ -142,9 +142,7 @@ def go(cmd, log=None, time=False):
         flog.close()
 
     if returncode:
-        print('FAILED', end=' ')
-        if not time:
-            print()
+        print(color(ANSI.RED, "FAILED"))
         sys.stdout.flush()
         raise subprocess.CalledProcessError(returncode, cmd)
     elif not time:
@@ -185,7 +183,7 @@ def get_releases():
 def install(release, tgz):
     os.system('mkdir -p %s' % BIN)
     os.system('mkdir -p %s' % GERM)
-    print('== %s' % release)
+    print('==', color(ANSI.MAGENTA, release))
 
     dir = SRC + release
     go('mkdir -p %s' % dir)
@@ -217,7 +215,7 @@ def install_from_archive(install_versions):
             if (not install_versions) or release in install_versions:
                 install(release, tgz)
         except subprocess.CalledProcessError:
-            print("FAILED")
+            print(color(ANSI.RED, "Install failed   "))
 
 def installed():
     return sorted([f.replace(BIN, '') for f in glob.glob('%s/*' % BIN)])
@@ -230,11 +228,13 @@ def run_all(tag, args, retries):
         print(color(ANSI.MAGENTA, '%9s' % release), end=' ')
         log = RUN + '/%s-%s.log' % (tag, release)
 
-        cmd = '%s/%s ' % (BIN, release) + convert(args, release)
+        cmd = '%s/%-9s ' % (BIN, release) + convert(args, release)
         cmd = cmd.replace(GERM_VAR, '%s/%s' % (GERM, release))
         try:
             benchs = []
             for i in range(retries) :
+                if i:
+                    print('%9s' % '', end=' ')
                 benchs.append(go(cmd, log, True))
             time = min([b[0] for b in benchs])
             mem = min([b[1] for b in benchs])
