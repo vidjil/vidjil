@@ -3,6 +3,7 @@ ARCHIVE = 'http://www.vidjil.org/releases/'
 DEST = 'bench/'
 SRC = DEST + 'src/'
 BIN = DEST + 'bin/'
+GERM = DEST + 'germline/'
 RUN = DEST + 'run/'
 
 OUT = 'benchmark.log'
@@ -181,6 +182,7 @@ def get_releases():
 
 def install(release, tgz):
     os.system('mkdir -p %s' % BIN)
+    os.system('mkdir -p %s' % GERM)
     print('== %s' % release)
 
     dir = SRC + release
@@ -191,12 +193,16 @@ def install(release, tgz):
     if release == CURRENT:
         go('make -C ../../algo', log)
         go('cp ../../vidjil-algo %s/%s ' % (BIN, release), log)
+        go('make -C ../.. germline', log)
+        go('cp -pr ../../germline %s/%s ' % (GERM, release), log)
+        print()
         return
 
     go('wget %s/%s -O %s/src.tgz' % (ARCHIVE, tgz, dir), log)
     go('cd %s ; tar xfz src.tgz' % dir, log)
-    go('cd %s/*%s* ; make vidjil-algo || make CXX=g++-6' % (dir, release), log)
+    go('cd %s/*%s* ; make vidjil-algo germline || make CXX=g++-6 vidjil-algo germline' % (dir, release), log)
     res = go('cp %s/*%s*/vidjil* %s/%s ' % (dir, release, BIN, release), log)
+    go('cp -pr %s/*%s*/germline %s/%s ' % (dir, release, GERM, release), log)
 
     print()
 
@@ -293,7 +299,6 @@ def show_benchs(f, watched_release=None, colorize=True):
 
 def bench_all(retries, selected_benchs):
     try:
-        go("make -C ../.. germline")
         go("make -C ../.. data")
         go("make -C ../.. demo")
         print()
