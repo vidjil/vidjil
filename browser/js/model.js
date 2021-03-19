@@ -3136,20 +3136,30 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
     /*
      * Generic function to add a feature based on sequence for each clones
+     * Sequence can be an array of sequence. In this case, the function will search for best matching sequence in the array before adding feature
      */
     addSegFeatureFromSeq : function (feature, sequence) {
-        if (this.clones.length > 100 ) {
-            numberToProcess = 100
-        } else {
-            numberToProcess = this.clones.length
-        }
+        numberToProcess = this.clones.length
 
+        var best_sequence;
         for (var i = 0; i < numberToProcess; i++) {
-            if ( this.clones[i].hasSequence() ) {
+            var clone = this.clones[i]
+            if ( clone.seg[feature] == undefined && clone.hasSequence() ) {
+                // filter to extend only in one direction; depending of feature naming
+                var extend = ([5, 3].indexOf(feature.substr(feature.length - 1)) != -1) ? feature.substr(feature.length - 1) : undefined
+
                 // TODO : sequence 0 ou undefined ? bypass la fct ?
-                if (this.clones[i].sequence.indexOf(sequence) != -1) {
-                    this.clones[i].addSegFeatureFromSeq(feature, sequence)
+                if (Array.isArray(sequence)){
+                    var values = clone.getBestMatchingSequence(sequence, extend)
+                    best_sequence = values[0]
+                    extend        = values[1]
+                    if (best_sequence == undefined){
+                        continue
+                    }
+                } else {
+                    best_sequence = sequence
                 }
+                clone.addSegFeatureFromSeq(feature, best_sequence, extend)
             }
         }
     },
@@ -3184,15 +3194,12 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.cleanPreviousFeature("primer3")
         for (var i = 0; i < this.system_available.length; i++) {
             var germline = this.system_available[i].replace("+", "")
+            if (this.primersSetData[this.primerSetCurrent][germline] != undefined){
+                primer5 = this.primersSetData[this.primerSetCurrent][germline].primer5
+                primer3 = this.primersSetData[this.primerSetCurrent][germline].primer3
 
-            primer5 = this.primersSetData[this.primerSetCurrent][germline].primer5
-            primer3 = this.primersSetData[this.primerSetCurrent][germline].primer3
-
-            for (var p = 0; p < primer5.length; p++) {
-                this.addSegFeatureFromSeq("primer5", primer5[p])
-            }
-            for (var q = 0; q < primer3.length; q++) {
-                this.addSegFeatureFromSeq("primer3", primer3[q])
+                this.addSegFeatureFromSeq("primer5", primer5)
+                this.addSegFeatureFromSeq("primer3", primer3)
             }
         }
     },

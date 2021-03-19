@@ -784,6 +784,13 @@ QUnit.test("primer detection align", function(assert) {
     assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, []),  [undefined, false],"seq full; primer3, no extend")
     assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, [5]), ["GGTCACCGTCTCCTCAGGTAAG", true],"seq full; primer3, extend 5" )
     assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, [3]), ["GGTCACCGTCTCCTCAGGTAAG", true],"seq full; primer3, extend 3" )
+    clone.addSegFeatureFromSeq("primer5", "CTGGGTGCGACAGGCCCCT",    true)
+    clone.addSegFeatureFromSeq("primer3", "GGTCACCGTCTCCTCAGGTAAG", true)
+    assert.deepEqual( clone.seg["primer5"], {"seq":"CTGGGTGCGACAGGCCCCT",    "start":104, "stop":122}, "Primer5 value")
+    assert.deepEqual( clone.seg["primer3"], {"seq":"GGTCACCGTCTCCTCAGGTAAG", "start":331, "stop":352}, "Primer3 value")
+    assert.equal( clone.getSegLengthDoubleFeature('primer5', 'primer3'), 249, "Correct length for genescan ecngs" ) // ~245
+    delete clone.seg["primer5"]
+    delete clone.seg["primer3"]
 
 
     // Sequence with 5' and 3' deletion
@@ -797,7 +804,14 @@ QUnit.test("primer detection align", function(assert) {
     assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, []),   [undefined, false],            "seq short; primer3, no extend")
     assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, [5]),  ["GGTCACCGTCTCCTCAGGTAAG", true], "seq short; primer3, extend 5" )
     assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, [3]),  ["GGTCACCGTCTCCTCAGGTAAG", true], "seq short; primer3, extend 3" )
+    clone.addSegFeatureFromSeq("primer5", "CTGGGTGCGACAGGCCCCT",    true)
+    clone.addSegFeatureFromSeq("primer3", "GGTCACCGTCTCCTCAGGTAAG", true)
+    assert.deepEqual( clone.seg["primer5"], {"seq":"CTGGGTGCGACAGGCCCCT",    "start":-16, "stop":2}, "Primer5 value")
+    assert.deepEqual( clone.seg["primer3"], {"seq":"GGTCACCGTCTCCTCAGGTAAG", "start":212, "stop":233}, "Primer3 value")
 
+    assert.equal( clone.getSegLengthDoubleFeature('primer5', 'primer3'), 249, "Correct length for genescan ecngs" ) // ~245
+    delete clone.seg["primer5"]
+    delete clone.seg["primer3"]
 });
 
 
