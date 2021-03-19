@@ -3593,18 +3593,17 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return name_file
     },
 
-    export_as_airr: function(cloneIds){
-        if (cloneIds == undefined){
-            cloneIds = this.getSelected()
+    /**
+     * Get clones data in AIRR format
+     * @param  {Array} cloneIds Array of clone ids to export
+     * @return {string}         return data as a string in airr format
+     */
+    getClonesAsAIRR: function(cloneIds){
 
-        }
-        if (cloneIds.length == 0){
-            console.log( "Export AIRR: please select clones to be exported")
-            return
-        }
         var airr_values = []
         var time_length = this.samples.order.length
 
+        // Get data as hash for each clone and each time
         for (var i = 0; i < cloneIds.length; i++) {
             var cloneId = cloneIds[i]
             var clone = this.clone(cloneId)
@@ -3613,7 +3612,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         }
 
-        // to export
+        // Make a concatenation of AIRR keys that can be different between clones
         var values;
         var key;
         list_keys = []
@@ -3625,6 +3624,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
         list_keys = Array.from(new Set(list_keys))
 
+        // Concat content as CSV
         csv = [list_keys]
         for (var m = 0; m < airr_values.length; m++) {
             values = airr_values[m]
@@ -3636,9 +3636,57 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             csv.push(liste)
         }
 
-        // Download CSV
-        var filename = "information_clone_"+cloneIds.join("_")+".airr"
-        download_csv(csv.join("\n"), filename);
+        return csv.join("\n")
     },
+
+
+    /**
+     * Get clones data in JSON format
+     * @param  {Array} cloneIds Array of clone ids to export
+     * @return {string}         return data as a string in json format
+     */
+    exportAsJson: function(cloneIds){
+        var data = []
+        for (var i = 0; i < cloneIds.length; i++) {
+            var clone = this.clone(cloneIds[i]).getAsJson()
+            data.push( clone )
+        }
+        // TODO: add sample filename
+        var dataStr = JSON.stringify(data);
+        return dataStr
+    },
+
+
+
+    /**
+     * Export clones in the expected format
+     * Array of clones can be undefined. In this case, will replace by the list of selected clone
+     * @param  {string} file_format file format; allow to thrown an error in console
+     * @param  {Array}  cloneIds    Array of clones 'to clean'
+     */
+    exportCloneAs: function(file_format, cloneIds){
+        if (cloneIds == undefined || !Array.isArray(cloneIds)){
+            cloneIds = this.getSelected()
+        }
+        if (cloneIds.length == 0){
+            console.error( "Export "+file_format+": please select clones to be exported")
+            return
+        }
+
+        // Get data in correct format
+        if (file_format == "airr") {
+            data = this.getClonesAsAIRR(cloneIds)
+        } else if (file_format == "json") {
+            data = this.exportAsJson(cloneIds)
+        } else {
+            console.error("exportCloneAs; unknow file format: " + file_format)
+            return
+        }
+
+        // Download data in a file
+        var filename = "information_clone_"+cloneIds.join("_")+"." + file_format
+        download_csv(data, filename);
+    },
+
 
 }; //end prototype Model
