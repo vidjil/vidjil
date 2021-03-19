@@ -254,6 +254,8 @@ ostream &operator<<(ostream &out, const Germline &germline)
     out << " 0x" << hex << setw(2) << setfill('0') << germline.index->id << dec << setfill(' ') << " " ;
 
     out_index_seed(out, germline, germline.seed_5, germline.affect_5);
+    if (germline.rep_4.size())
+      out_index_seed(out, germline, germline.seed_4, germline.affect_4);
     out_index_seed(out, germline, germline.seed_3, germline.affect_3);
   }
 
