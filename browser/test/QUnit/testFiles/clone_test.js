@@ -735,3 +735,69 @@ QUnit.test("clonedb", function(assert) {
     assert.equal(m.clones[1].numberInCloneDB(), undefined, "");
     assert.equal(m.clones[1].numberSampleSetInCloneDB(), undefined, "");
 });
+
+
+QUnit.test("primer detection align", function(assert) {
+
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.populatePrimerSet()
+
+    // Clone with seg start and stop position
+    var clone8 = {
+      "germline": "IGH",
+      "id": "id7",
+      "name": "clone with exact position",
+      "reads": [0,0,0,0],
+      "seg": {
+        "3": {
+          "delLeft": 0,
+          "name": "IGHJ1*01",
+          "start": 297
+        },
+        "5": {
+          "delRight": 0,
+          "name": "IGHV1-2*01",
+          "stop": 296
+        }
+      },
+      "sequence": "init",
+    }
+
+    var clone = new Clone(clone8, m, 0, c_attributes);
+    m.initClones();
+
+    primer5_ecngs_igh  = m.primersSetData.ecngs.IGH.primer5
+    primer3_ecngs_igh  = m.primersSetData.ecngs.IGH.primer3
+    primer3_biomed_igh = m.primersSetData.biomed2.IGH.primer5
+    primer3_biomed_igh = m.primersSetData.biomed2.IGH.primer3
+    primer5_ecngs_trd  = m.primersSetData.ecngs.TRD.primer5
+    primer3_ecngs_trd  = m.primersSetData.ecngs.TRD.primer3
+
+    //"IGHV1-2*01 // IGHJ1*01",
+    // var igh_V1_2_J1_full
+    clone.sequence = "CAGGTGCAGCTGGTGCAGTCTGGGGCTGAGGTGAAGAAGCCTGGGGCCTCAGTGAAGGTCTCCTGCAAGGCTTCTGGATACACCTTCACCGGCTACTATATGCACTGGGTGCGACAGGCCCCTGGACAAGGGCTTGAGTGGATGGGACGGATCAACCCTAACAGTGGTGGCACAAACTATGCACAGAAGTTTCAGGGCAGGGTCACCAGTACCAGGGACACGTCCATCAGCACAGCCTACATGGAGCTGAGCAGGCTGAGATCTGACGACACGGTCGTGTATTACTGTGCGAGAGAGCTGAATACTTCCAGCACTGGGGCCAGGGCACCCTGGTCACCGTCTCCTCAG"
+    assert.deepEqual( clone.getBestMatchingSequence(primer5_ecngs_igh, false), ["CTGGGTGCGACAGGCCCCT", false], "seq full; primer5, no extend" )
+    assert.deepEqual( clone.getBestMatchingSequence(primer5_ecngs_igh, [5]),   ["CTGGGTGCGACAGGCCCCT", false], "seq full; primer5, extend 5" )
+
+    // not full match, but if extend, have bas_align call
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, []),  [undefined, false],"seq full; primer3, no extend")
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, [5]), ["GGTCACCGTCTCCTCAGGTAAG", true],"seq full; primer3, extend 5" )
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, [3]), ["GGTCACCGTCTCCTCAGGTAAG", true],"seq full; primer3, extend 3" )
+
+
+    // Sequence with 5' and 3' deletion
+    clone.seg[5].stop  = 176
+    clone.seg[3].start = 177
+    clone.sequence = "CCTGGACAAGGGCTTGAGTGGATGGGACGGATCAACCCTAACAGTGGTGGCACAAACTATGCACAGAAGTTTCAGGGCAGGGTCACCAGTACCAGGGACACGTCCATCAGCACAGCCTACATGGAGCTGAGCAGGCTGAGATCTGACGACACGGTCGTGTATTACTGTGCGAGAGAGCTGAATACTTCCAGCACTGGGGC"
+    assert.deepEqual( clone.getBestMatchingSequence(primer5_ecngs_igh, false), [undefined, false],           "seq short; primer5, no extend" )
+    assert.deepEqual( clone.getBestMatchingSequence(primer5_ecngs_igh, [5]),  ["CTGGGTGCGACAGGCCCCT", true], "seq short; primer5, extend 5" )
+
+    // not full match, but if extend, have bas_align call
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, []),   [undefined, false],            "seq short; primer3, no extend")
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, [5]),  ["GGTCACCGTCTCCTCAGGTAAG", true], "seq short; primer3, extend 5" )
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_ecngs_igh, [3]),  ["GGTCACCGTCTCCTCAGGTAAG", true], "seq short; primer3, extend 3" )
+
+});
+
+
