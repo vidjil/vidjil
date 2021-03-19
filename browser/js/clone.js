@@ -247,17 +247,10 @@ Clone.prototype = {
 
     /**
      * Add a new feature from a nucleotide sequence
-     */
-    addSegFeatureFromSeq: function(field_name, sequence)
-    {
-        this.computeSegFeatureFromSeq(field_name, sequence);
-    },
-
-    /**
      * Compute feature positions (start/stop) from its sequence, unless they are already present
      * Computed positions are converted to start from 0 and can be used without manipualtions
      */
-    computeSegFeatureFromSeq: function(field_name, sequence, extend)
+    addSegFeatureFromSeq: function(field_name, sequence, extend)
     {
         positions = this.getSegStartStop(field_name)
 
