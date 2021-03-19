@@ -282,6 +282,69 @@ Clone.prototype = {
 
 
     /**
+     * Return the best matching sequence from a list of sequence
+     * Can be used to find the best matching primer from a list of primers
+     * If no perfect match, can search in germline sequence (longer) and use alignment option
+     * @param  {Array} sequences Array of sequence to search in clone
+     * @param  {Array} extend    Array of germline sequence to extend. Available option are 5 and 3
+     * @return {Array}           [best sequence found, use extension]
+     */
+    getBestMatchingSequence: function(sequences, extend){
+        var best_seq   = []
+        var best_rst   = []
+        var best_score = 0
+
+        // Look for perfect match in clone sequence
+        for (var seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
+            var sequence = sequences[seq_pos]
+            if (this.sequence.indexOf(sequence) != -1) {
+                best_seq.push(sequence)
+            }
+        }
+        if (best_seq.length > 0){
+            // TODO; if multiple perfect match, return longer sequence
+            return [best_seq[0], false]
+        }
+
+        // No perfect match, look in germline sequence with alignement tool
+        var genes = (extend != undefined) ? extend : [5, 3]
+
+        // Look if germline sequence is available
+        for (var g = 0; g < genes.length; g++) {
+            var gene_way = genes[g]
+            var gene = this.getGene(gene_way);
+            if (gene !== undefined) {
+                var germName = this.germline.substring(0, 3);
+                if (this.m.germline[germName] != undefined) {
+                    germseq_found = this.m.findGermlineFromGene(gene);
+                    if (germseq_found != undefined){
+                        // Get germline sequence; look for best sequence
+                        germseq = germseq_found.toUpperCase().replace(/\./g, '');
+                        for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
+                            var sequence = sequences[seq_pos]
+                            var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1])
+                            if (rst[0] > best_score){
+                                best_seq   = [sequence]
+                                best_rst   = [rst]
+                                best_score = rst[0]
+                            } else if (rst[0] == best_score){
+                                best_seq.push(sequence)
+                                best_rst.push(rst)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!best_seq.length) {
+            return [undefined, false]
+        }
+        return [best_seq[0], true]
+    },
+
+
+    /**
      * Get the amino-acid sequence of the provided field (in the seg part)
      */
     getSegAASequence: function(field_name) {
