@@ -248,36 +248,62 @@ Clone.prototype = {
     /**
      * Add a new feature from a nucleotide sequence
      */
-
-    addSegFeatureFromSeq: function(field_name, seq)
+    addSegFeatureFromSeq: function(field_name, sequence)
     {
-        this.seg[field_name] = {};
-        this.seg[field_name].seq = seq;
-        this.computeSegFeatureFromSeq(field_name);
+        this.computeSegFeatureFromSeq(field_name, sequence);
     },
 
     /**
      * Compute feature positions (start/stop) from its sequence, unless they are already present
      * Computed positions are converted to start from 0 and can be used without manipualtions
      */
-    computeSegFeatureFromSeq: function(field_name)
+    computeSegFeatureFromSeq: function(field_name, sequence, extend)
     {
         positions = this.getSegStartStop(field_name)
 
-	if (positions !== null)
+        if (positions !== null){
             // Start/stop do already exist
             return ;
+        }
 
-        seq = this.seg[field_name].seq
 
-        var pos = this.sequence.indexOf(seq)
+        var pos = this.sequence.indexOf(sequence)
+        if (pos != -1) { // perfect match exist
+            this.seg[field_name] = {};
+            this.seg[field_name].seq = sequence;
+            this.seg[field_name].start = pos
+            this.seg[field_name].stop  = pos + sequence.length -1
+        } else if (extend == true || extend == undefined) {
+            // No perfect match; try extension with germline sequence
+            var genes =  [5, 3]
+            for (var g = 0; g < genes.length; g++) {
+                var gene_way = genes[g]
+                if (field_name.indexOf(gene_way.toString()) != -1){ // Warning; need to clarify rule for feature naming
+                    germseq = this.getExtendedSequence(gene_way)
+                    if (germseq != undefined){
+                        var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1]) // return [score, start pos, ~cigar]
+                        var germpos = rst[1]
+                        if (rst[0] > (sequence.length/2) ){
+                            if (gene_way == 5){
+                                computed_pos = this.seg["5"].stop + germpos - germseq.length - this.seg["5"].delRight //-sequence.length  // start n'existe pas si extention; (this.seg["5"].start != undefined ? this.seg["5"].start : 0)
+                                console.log( "(5) computed_pos = germpos; germseq.length; sequence.length; this.seg['5'].delRight; this.seg['5'].stop; (this.seg['5'].start != undefined ? this.seg['5'].start : 0)")
+                                console.log( computed_pos+" = "+germpos+"; "+germseq.length+"; "+sequence.length+"; "+this.seg["5"].delRight+"; "+this.seg["5"].stop+"; "+(this.seg["5"].start != undefined ? this.seg["5"].start : 0))
+                            } else if (gene_way == 3){
+                                computed_pos = germpos + this.seg["3"].start - this.seg["3"].delLeft
+                                console.log( "(3) computed_pos = germpos + this.seg['3'].start - this.seg['3'].delLeft")
+                                console.log( computed_pos+" = "+germpos+" + "+this.seg["3"].start+" - "+this.seg["3"].delLeft)
+                            }
+                            this.seg[field_name] = {};
+                            this.seg[field_name].seq = sequence;
+                            this.seg[field_name].start = computed_pos
+                            this.seg[field_name].stop  = computed_pos + sequence.length -1
+                            break
+                        }
+                    }
 
-        if (pos < 0)
-            // No feature here
-            return;
-
-        this.seg[field_name].start = pos
-        this.seg[field_name].stop  = pos + seq.length -1
+                }
+            }
+        }
     },
 
     /**
@@ -399,13 +425,13 @@ Clone.prototype = {
      * If no start and stop are given, return 0
      */
     getSegLengthDoubleFeature: function(field_name1, field_name2) {
-	positions1 = this.getSegStartStop(field_name1)
-	positions2 = this.getSegStartStop(field_name2)
+    	var positions1 = this.getSegStartStop(field_name1)
+    	var positions2 = this.getSegStartStop(field_name2)
 
-	if (positions1 !== null && positions2 !== null) {
-	    return positions2.stop - positions1.start + 1
-	} else {
-	    return 'undefined';
+    	if (positions1 !== null && positions2 !== null) {
+    	    return positions2.stop - positions1.start +1
+    	} else {
+    	    return 'undefined';
         }
     },
 
