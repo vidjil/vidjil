@@ -1,3 +1,7 @@
+// Script getted from https://github.com/lh3/bioseq-js
+// Release under MIT licence
+// Developped by Heng Li (DFCI & Harvard University, Boston, MA, USA)
+
 /**************************
  *** Common data tables ***
  **************************/
