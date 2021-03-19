@@ -19,7 +19,8 @@ require(["jquery",
          "jquery.caret",
          "jquery.atwho",
          "vmi",
-         "svgExport"], function() {
+         "svgExport",
+         "bioseq"], function() {
              // Then config file (needed by Vidjil)
              require(['../conf'], function() {
                  loadAfterConf()
