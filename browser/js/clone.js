@@ -280,6 +280,26 @@ Clone.prototype = {
         this.seg[field_name].stop  = pos + seq.length -1
     },
 
+    /**
+     * Get extended sequence of clone
+     * @param  {Number} gene_way Germline sequence to get (available option are 5, 4 or 3)
+     * @return {string}          If found, the clean germline sequence
+     */
+    getExtendedSequence: function(gene_way){
+        var gene = this.getGene(gene_way);
+        if (gene !== undefined) {
+            var germName = this.germline.substring(0, 3);
+            if (this.m.germline[germName] != undefined) {
+                germseq_found = this.m.findGermlineFromGene(gene);
+                if (germseq_found != undefined){
+                    germseq = germseq_found.toUpperCase().replace(/\./g, '');
+                    return germseq
+                }
+            }
+        }
+        return
+    },
+
 
     /**
      * Return the best matching sequence from a list of sequence
@@ -312,26 +332,18 @@ Clone.prototype = {
         // Look if germline sequence is available
         for (var g = 0; g < genes.length; g++) {
             var gene_way = genes[g]
-            var gene = this.getGene(gene_way);
-            if (gene !== undefined) {
-                var germName = this.germline.substring(0, 3);
-                if (this.m.germline[germName] != undefined) {
-                    germseq_found = this.m.findGermlineFromGene(gene);
-                    if (germseq_found != undefined){
-                        // Get germline sequence; look for best sequence
-                        germseq = germseq_found.toUpperCase().replace(/\./g, '');
-                        for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
-                            var sequence = sequences[seq_pos]
-                            var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1])
-                            if (rst[0] > best_score){
-                                best_seq   = [sequence]
-                                best_rst   = [rst]
-                                best_score = rst[0]
-                            } else if (rst[0] == best_score){
-                                best_seq.push(sequence)
-                                best_rst.push(rst)
-                            }
-                        }
+            germseq = this.getExtendedSequence(gene_way)
+            if (germseq != undefined){
+                for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
+                    var sequence = sequences[seq_pos]
+                    var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1])
+                    if (rst[0] > best_score){
+                        best_seq   = [sequence]
+                        best_rst   = [rst]
+                        best_score = rst[0]
+                    } else if (rst[0] == best_score){
+                        best_seq.push(sequence)
+                        best_rst.push(rst)
                     }
                 }
             }
