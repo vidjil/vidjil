@@ -412,19 +412,6 @@ QUnit.test('clone: get info from seg', function(assert) {
     assert.equal(c2.getDeletion('5', 'delRight'), 18, 'return length of the deletion for c2')
 });
 
-QUnit.test("clone : feature defined by a nucleotide sequence", function(assert) {
-    var m = new Model()
-    m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0, c_attributes)
-    var c2 = new Clone(json_clone2, m, 1, c_attributes)
-    var c3 = new Clone(json_clone3, m, 2, c_attributes)
-    m.initClones()
-
-    assert.deepEqual(c3.getSegStartStop('somefeature'), null, "start/stop positions are not present")
-    c3.computeSegFeatureFromSeq('somefeature')
-    assert.deepEqual(c3.getSegStartStop('somefeature'), {"start": 6, "stop": 12}, "start/stop positions, computed from sequence")
-    assert.equal(c3.getSegLength('somefeature'), 7, "length of the feature");
-});
 
 QUnit.test("getSequence/RevComp", function(assert) {
     var m = new Model();
@@ -737,8 +724,22 @@ QUnit.test("clonedb", function(assert) {
 });
 
 
-QUnit.test("primer detection align", function(assert) {
 
+QUnit.test("clone : feature defined by a nucleotide sequence", function(assert) {
+    // Test with sequence already in a feature inside clone
+    var m = new Model()
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
+    m.initClones()
+
+    assert.deepEqual(c3.getSegStartStop('somefeature'), null, "start/stop positions are not present")
+    c3.addSegFeatureFromSeq('somefeature')
+    assert.deepEqual(c3.getSegStartStop('somefeature'), {"start": 6, "stop": 12}, "start/stop positions, computed from sequence")
+    assert.equal(c3.getSegLength('somefeature'), 7, "length of the feature");
+
+    // Test with given sequence for new feature
     var m = new Model();
     m.parseJsonData(json_data, 100);
     m.populatePrimerSet()
