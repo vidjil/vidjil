@@ -332,10 +332,11 @@ Clone.prototype = {
         var best_seq   = []
         var best_rst   = []
         var best_score = 0
+        var sequence;
 
         // Look for perfect match in clone sequence
         for (var seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
-            var sequence = sequences[seq_pos]
+            sequence = sequences[seq_pos]
             if (this.sequence.indexOf(sequence) != -1) {
                 best_seq.push(sequence)
             }
@@ -354,7 +355,7 @@ Clone.prototype = {
             germseq = this.getExtendedSequence(gene_way)
             if (germseq != undefined){
                 for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
-                    var sequence = sequences[seq_pos]
+                    sequence = sequences[seq_pos]
                     var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1])
                     if (rst[0] > best_score){
                         best_seq   = [sequence]
