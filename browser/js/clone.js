@@ -321,6 +321,32 @@ Clone.prototype = {
 
 
     /**
+     * Compute feature positions (start/stop) from its sequence, unless they are already present
+     * Computed positions are converted to start from 0 and can be used without manipualtions
+     */
+    computeSegFeatureFromSeq: function(field_name)
+    {
+        positions = this.getSegStartStop(field_name)
+
+    if (positions !== null)
+            // Start/stop do already exist
+            return ;
+
+        seq = this.seg[field_name].seq
+
+        var pos = this.sequence.indexOf(seq)
+
+        if (pos < 0)
+            // No feature here
+            return;
+
+        this.seg[field_name].start = pos
+        this.seg[field_name].stop  = pos + seq.length -1
+    },
+
+
+
+    /**
      * Return the best matching sequence from a list of sequence
      * Can be used to find the best matching primer from a list of primers
      * If no perfect match, can search in germline sequence (longer) and use alignment option
