@@ -233,8 +233,10 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
 
     html = m.clones[0].getHtmlInfo();
     assert.includes(html, "<h2>Cluster info : hello</h2>")
-    assert.includes(html, "<p>Download clone information as <a class='button' id='download_info_0_airr' onclick='m.export_as_airr([0])'>AIRR</a>",
-             "download buttons")
+    assert.includes(html, "<a class='button' id='download_info_0_airr' onclick='m.exportCloneAs(\"airr\", [0])'>AIRR</a>",
+             "download buttons (AIRR)")
+    assert.includes(html, "<a class='button devel-mode' id='download_info_0_json' onclick='m.exportCloneAs(\"json\", [0])'>JSON</a>",
+             "download buttons (JSON)")
     assert.includes(html, "<table id='clone_info_table_0'><tr><th>Samples names</th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
