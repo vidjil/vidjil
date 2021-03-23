@@ -272,8 +272,8 @@ Clone.prototype = {
                 // perfect match exist
                 this.seg[field_name] = {};
                 this.seg[field_name].seq = sequence;
-                this.seg[field_name].start = pos
-                this.seg[field_name].stop  = pos + sequence.length -1
+                this.seg[field_name].start = pos +1 // seq is 1-based
+                this.seg[field_name].stop  = pos + sequence.length
             } else if (extend == true || extend == undefined) {
                 // No perfect match; try extension with germline sequence
                 // Warning; predictive approach can't be perfect
@@ -284,17 +284,21 @@ Clone.prototype = {
                         germseq = this.getExtendedSequence(gene_way)
                         if (germseq != undefined){
                             var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1]) // return [score, start pos, ~cigar]
-                            var germpos = rst[1]
+                            var germpos = rst[1] // -1 to be 0-based
                             if (rst[0] > (sequence.length/2) ){
                                 if (gene_way == 5){
-                                    computed_pos = this.seg["5"].stop + germpos - germseq.length - this.seg["5"].delRight //-sequence.length  // start n'existe pas si extention; (this.seg["5"].start != undefined ? this.seg["5"].start : 0)
+                                    computed_pos = this.seg["5"].stop + germpos - germseq.length //-sequence.length  // start n'existe pas si extention; (this.seg["5"].start != undefined ? this.seg["5"].start : 0)
+                                    console.log( "(5) computed_pos = germpos; germseq.length; sequence.length; this.seg['5'].delRight; this.seg['5'].stop; (this.seg['5'].start != undefined ? this.seg['5'].start : 0)")
+                                    console.log( computed_pos+" = "+germpos+"; "+germseq.length+"; "+sequence.length+"; "+this.seg["5"].delRight+"; "+this.seg["5"].stop+"; "+(this.seg["5"].start != undefined ? this.seg["5"].start : 0))
                                 } else if (gene_way == 3){
-                                    computed_pos = germpos + this.seg["3"].start - this.seg["3"].delLeft
+                                    computed_pos = this.seg["3"].start + (germpos - this.seg["3"].delLeft)
+                                    console.log( "computed_pos = this.seg[3].start; germpos; this.seg[3].delLeft; sequence.length")
+                                    console.log( computed_pos+" = "+this.seg["3"].start+"; "+germpos+"; "+this.seg["3"].delLeft+"; "+sequence.length)
                                 }
                                 this.seg[field_name] = {};
                                 this.seg[field_name].seq = sequence;
                                 this.seg[field_name].start = computed_pos
-                                this.seg[field_name].stop  = computed_pos + sequence.length -1
+                                this.seg[field_name].stop  = computed_pos + sequence.length
                                 break
                             }
                         }
@@ -399,7 +403,8 @@ Clone.prototype = {
     getSegNtSequence: function(field_name) {
         positions = this.getSegStartStop(field_name)
         if (positions !== null) {
-            return this.sequence.substr(positions.start, positions.stop - positions.start+1)
+            // return this.sequence.substr(positions.start-1, (positions.stop+1) - positions.start)
+            return this.sequence.substr(positions.start-1, (positions.stop - positions.start-1))
         }
         return '';
     },
@@ -412,7 +417,7 @@ Clone.prototype = {
     getSegLength: function(field_name) {
         positions = this.getSegStartStop(field_name)
         if (positions !== null) {
-            return positions.stop - positions.start + 1
+            return (positions.stop+1) - positions.start
         } else {
             return 'undefined';
         }
@@ -429,7 +434,7 @@ Clone.prototype = {
     	var positions2 = this.getSegStartStop(field_name2)
 
     	if (positions1 !== null && positions2 !== null) {
-    	    return positions2.stop - positions1.start +1
+    	    return positions2.stop - (positions1.start - 1)
     	} else {
     	    return 'undefined';
         }
