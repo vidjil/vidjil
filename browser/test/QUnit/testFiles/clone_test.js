@@ -819,3 +819,53 @@ QUnit.test("export_airr", function(assert) {
         assert.equal(airr_c3_getted[key], airr_c3[key], "Correct airr field getted for c3; key "+ key);
     }
 });
+
+
+QUnit.test("export_json", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    var c7 = new Clone(json_clone7, m, 0, c_attributes);
+    m.initClones();
+
+    var json_c7_getted =  c7.getAsJson(0)
+    var expected_json7 = {
+      "seg": {
+        "3": {
+          "delLeft": 1, "delRight": 40,
+          "name": "IGHJ6*02",
+          "start": 15, "stop": 24
+        },
+        "4": {
+          "delLeft": 4, "delRight": 9,
+          "name": "IGHD3-3*01",
+          "start": 12, "stop": 14
+        },
+        "5": {
+          "delLeft": 0, "delRight": 2,
+          "name": "IGHV1-69*06",
+          "start": 5, "stop": 9
+        },
+        "N1": {"val": 15 },
+        "N2": {"val": 0 },
+        "junction": {
+          "aa": "WKIC",
+          "start": 2, "stop": 13,
+          "productive": false,
+          "unproductive": "stop-codon"
+        }
+      },
+      "id": "id7",
+      "index": 0,
+      "sequence": "bbbbbVVVVVnnDDDJJJJJJJJJJaaaaaa",
+      "reads": [0, 0, 0, 0 ],
+      "top": 7,
+      "sample": ["Diag.fa", "Fu-1.fa", "Fu-2.fa", "Fu-3.fa"]
+    }
+
+    assert.deepEqual(json_c7_getted.seg, expected_json7.seg,           "correct json values getted; seg" )
+    assert.deepEqual(json_c7_getted.sequence, expected_json7.sequence, "correct json values getted; sequence" )
+    assert.deepEqual(json_c7_getted.top, expected_json7.top,           "correct json values getted; top" )
+    assert.deepEqual(json_c7_getted.id, expected_json7.id,             "correct json values getted; id" )
+    assert.deepEqual(json_c7_getted.sample, m.samples.original_names,  "correct json values getted; sample original_names" )
+
+});
