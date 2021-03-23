@@ -3655,9 +3655,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             var clone = this.clone(cloneIds[i]).getAsJson()
             data.push( clone )
         }
-        // TODO: add sample filename
-        var dataStr = JSON.stringify(data);
-        return dataStr
+        return data
     },
 
 
@@ -3681,7 +3679,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (file_format == "airr") {
             data = this.getClonesAsAIRR(cloneIds)
         } else if (file_format == "json") {
-            data = this.exportAsJson(cloneIds)
+            data = JSON.stringify(this.exportAsJson(cloneIds))
         } else {
             console.error("exportCloneAs; unknow file format: " + file_format)
             return
