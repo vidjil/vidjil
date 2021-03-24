@@ -1518,7 +1518,7 @@ int main (int argc, char **argv)
         output.addClone(it->first, clone);
         clone->set("sequence", kseg->getSequence().sequence);
         clone->set("_coverage", { repComp.getCoverage() });
-        clone->set("_average_read_length", { windowsStorage->getAverageLength(it->first) });
+        clone->set("_average_read_length", { fixed_string_of_float(windowsStorage->getAverageLength(it->first), 2) });
         clone->set("_coverage_info", {repComp.getCoverageInfo()});
         //From KmerMultiSegmenter
         kseg->toOutput(clone);
