@@ -431,13 +431,20 @@ string KmerSegmenter::getInfoLineWithAffects() const
 {
    stringstream ss;
 
-   ss << "# "
+   ss << "= " << right << setw(10) << segmented_germline->code << " "
       << right << setw(3) << score << " "
       << left << setw(30)
-      << getInfoLine() ;
+      << getInfoLine();
 
    if (getSegmentationStatus() != UNSEG_TOO_SHORT)
-     ss << getKmerAffectAnalyser()->toString();
+   {
+     ss << endl;
+     ss << "# " << right << setw(10) << segmented_germline->code << " "
+        << getKmerAffectAnalyser()->toStringValues();
+     ss << endl;
+     ss << "$ " << right << setw(10) << segmented_germline->code << " "
+        << getKmerAffectAnalyser()->toStringSigns();
+   }
 
    return ss.str();
 }
