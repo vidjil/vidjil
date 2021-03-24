@@ -2,6 +2,7 @@
 # Release cycles
 
 The Vidjil project tries to keep [agile develompent](https://en.wikipedia.org/wiki/Agile_software_development) while producing certified, qualified healthcare software for clinical needs.
+See also our [roadmap](roadmap.md).
 
 - We target [continuous delivery](https://en.wikipedia.org/wiki/Continuous_delivery)
   on the public server [app.vidjil.org](http://app.vidjil.org).
@@ -33,5 +34,5 @@ several [freeze](https://en.wikipedia.org/wiki/Freeze_(software_engineering)) wi
 | *Deploy stable release on healthcare servers and qualification* <br />Continuous deployment on the public servers resumes. |  June   |  December |
 
 
-For [server mainteners](server.md), the last stable release of the complete Vidjil platform is available on <https://hub.docker.com/u/vidjil>. 
+For [server maintainers](server.md), the last stable release of the complete Vidjil platform is available on <https://hub.docker.com/u/vidjil>. 
 For bioinformaticians, the last stable release of the [vidjil-algo](vidjil-algo.md) analysis engine is available on <http://www.vidjil.org/releases/vidjil-latest.tar.gz>.
