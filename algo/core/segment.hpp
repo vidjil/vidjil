@@ -2,7 +2,7 @@
   This file is part of Vidjil <http://www.vidjil.org>
   Copyright (C) 2011-2020 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
-  Contributors: 
+  Contributors:
       Mathieu Giraud <mathieu.giraud@vidjil.org>
       Mikaël Salson <mikael.salson@vidjil.org>
       Marc Duez <marc.duez@vidjil.org>
@@ -188,7 +188,7 @@ void show_colored_read(ostream &out, Sequence seq, const AlignBox *box_V, const 
       << J_COLOR
       << seq.sequence.substr(box_J->start, end_3 - box_J->start + 1)
       << NO_COLOR ;
-  
+
   out << right << setw(4) << end_3 << endl ;
 }
 
@@ -307,7 +307,7 @@ template <typename Shortcut, typename Affect>
 int Segmenter<Shortcut, Affect>::getLeft() const {
   return box_V->end;
 }
-  
+
 template <typename Shortcut, typename Affect>
 int Segmenter<Shortcut, Affect>::getRight() const {
   return box_J->start;
@@ -322,7 +322,7 @@ template <typename Shortcut, typename Affect>
 int Segmenter<Shortcut, Affect>::getLeftD() const {
   return box_D->start;
 }
-  
+
 template <typename Shortcut, typename Affect>
 int Segmenter<Shortcut, Affect>::getRightD() const {
   return box_D->end;
@@ -372,7 +372,7 @@ template <typename Shortcut, typename Affect>
 string Segmenter<Shortcut, Affect>::removeChevauchement()
 {
   assert(isSegmented());
-  
+
   string chevauchement = "" ;
 
   if (box_V->end >= box_J->start)
@@ -390,12 +390,12 @@ string Segmenter<Shortcut, Affect>::removeChevauchement()
 
 
 template <typename Shortcut, typename Affect>
-bool Segmenter<Shortcut, Affect>::finishSegmentation() 
+bool Segmenter<Shortcut, Affect>::finishSegmentation()
 {
   assert(isSegmented());
-  
+
   string seq = getSequence().sequence;
-    
+
   seg_V = seq.substr(0, box_V->end+1) ;
   seg_N = seq.substr(box_V->end+1, box_J->start-box_V->end-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
   seg_J = seq.substr(box_J->start) ;
@@ -408,7 +408,7 @@ bool Segmenter<Shortcut, Affect>::finishSegmentation()
 }
 
 template <typename Shortcut, typename Affect>
-bool Segmenter<Shortcut, Affect>::finishSegmentationD() 
+bool Segmenter<Shortcut, Affect>::finishSegmentationD()
 {
   string seq = getSequence().sequence;
 
@@ -452,10 +452,10 @@ string KmerSegmenter<Shortcut, Affect>::getInfoLineWithAffects() const
 {
    stringstream ss;
 
-   ss << "# "
+   ss << "= " << right << setw(10) << segmented_germline->code << " "
       << right << setw(3) << score << " "
       << left << setw(30)
-      << this->getInfoLine() ;
+      << getInfoLine();
 
    if (this->getSegmentationStatus() != UNSEG_TOO_SHORT)
      ss << this->getKmerAffectAnalyser()->toString();
@@ -494,7 +494,7 @@ template <typename Shortcut, typename Affect>
 KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut, Affect> *index, int segmentation_method, MultiGermline<Shortcut, Affect> *germlines, Germline<Shortcut, Affect> *required_germline, ostream *out_unsegmented, double threshold, double multiplier)
 {
   set<KmerAffect> before_set, after_set;
-  
+
   this->box_V = new AlignBox("5", V_COLOR);
   this->box_D = new AlignBox();
   this->box_J = new AlignBox("3", J_COLOR);
@@ -521,15 +521,15 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
   int s = (size_t)index->getS() ;
   int length = this->sequence.length() ;
 
-  if (length < s) 
+  if (length < s)
     {
       this->because = UNSEG_TOO_SHORT;
       kaa = NULL;
       return ;
     }
- 
+
   kaa = new MultipleAffectAnalyser<Shortcut>(*(index), this->sequence);
-  
+
   // Check strand consistency among the affectations.
   int strand=0;
   int nb_strand[2] = {0,0};     // In cell 0 we'll put the number of negative
@@ -692,7 +692,7 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
 
 template <typename Shortcut, typename Affect>
 void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set, int strand) {
-  
+
   std::set<Shortcut> before_shortcuts, after_shortcuts;
   std::list<Germline<Shortcut, Affect> *> possible_germlines;
   std::list<std::pair<KmerAffect, KmerAffect>> matching_affects;
@@ -710,7 +710,7 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
   }
 
   assert(germlines != nullptr);
-  
+
   for (auto left: before_shortcuts) {
     for (auto right: after_shortcuts) {
       std::set<Shortcut> shortcuts = {left, right};
@@ -746,7 +746,7 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
         // Unexpected germline ?
     before = *(before_set.begin());
     after = *(after_set.begin());
-  }    
+  }
 #ifdef DEBUG
   PRINT_VAR(segmented_germline->getCode());
   PRINT_VAR(segmented_germline);
@@ -798,7 +798,7 @@ void KmerSegmenter<Shortcut, Affect>::computeSegmentation(int strand, KmerAffect
     this->because = UNSEG_AMBIGUOUS;
     return ;
   }
-  
+
 
    // There was a good segmentation point
 
@@ -820,7 +820,7 @@ void KmerSegmenter<Shortcut, Affect>::computeSegmentation(int strand, KmerAffect
    + string_of_int(this->box_V->end + FIRST_POS) + " "
    + string_of_int(this->box_J->start + FIRST_POS) + " "
    + string_of_int(this->sequence.size() - 1 + FIRST_POS) ;
-  
+
   // removeChevauchement is called once info was already computed: it is only to output info_extra
   this->info_extra += this->removeChevauchement();
   this->finishSegmentation();
@@ -861,13 +861,13 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
 
       int score_r[overlap+1];
       int score_l[overlap+1];
-      
+
       //LEFT
       DynProg dp_l = DynProg(seq_left, revcomp(box_left->ref, reverse_V),
 			   DynProg::Local, segment_cost);
       score_l[0] = dp_l.compute();
 
-      
+
       //RIGHT
       // reverse right sequence
       string ref_right=string(box_right->ref.rbegin(), box_right->ref.rend());
@@ -894,7 +894,7 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
 #ifdef DEBUG_OVERLAP
      cout << "=== check_and_resolve_overlap" << endl;
      cout << seq << endl;
-     cout << "boxes: " << *box_left << "/" << *box_right << endl ; 
+     cout << "boxes: " << *box_left << "/" << *box_right << endl ;
 
       // cout << dp_l ;
       // cout << dp_r ;
@@ -953,7 +953,7 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
                               AlignBox *box, Cost segment_cost, bool banded_dp,
                               double evalue_threshold)
 {
-  
+
   int best_score = MINUS_INF ;
 
   box->rep = rep;
@@ -970,20 +970,20 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
   // With reverse_ref, the read is reversed to prevent calling revcomp on each reference sequence
   string sequence_or_rc = revcomp(read, reverse_ref);
   bool onlyBottomTriangle = !local && banded_dp ;
-  
+
   for (int r = 0 ; r < rep->size() ; r++)
     {
       if (r == forbidden_rep_id)
         continue;
 
       DynProg dp = DynProg(sequence_or_rc, rep->sequence(r),
-			   dpMode, // DynProg::SemiGlobalTrans, 
+			   dpMode, // DynProg::SemiGlobalTrans,
 			   segment_cost, // DNA
 			   reverse_both, reverse_both,
                           rep->read(r).marked_pos);
 
       int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
-      
+
       if (score > best_score)
       {
          dp.backtrack();
@@ -1001,12 +1001,12 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
          box->del_left = dp.first_j;     // around start position
          best_best_j = dp.best_j;        // around end position
        }
-	
+
 	score_r.push_back(make_pair(score, r));
 
-	// #define DEBUG_SEGMENT      
+	// #define DEBUG_SEGMENT
 
-#ifdef DEBUG_SEGMENT	
+#ifdef DEBUG_SEGMENT
 	cout << rep->label(r) << " " << score << " " << dp.first_i <<  " " << dp.best_i << endl ;
 #endif
 
@@ -1039,7 +1039,7 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
     return;
   }
 
-#ifdef DEBUG_SEGMENT	
+#ifdef DEBUG_SEGMENT
   cout << "reverse_both " << reverse_both << "   reverse_left " << reverse_ref << "   local " << local << endl;
   cout << "best:   " << *box <<  "   read length: " << read.length() << "   ref length: " <<   box->ref.size()  << endl;
 #endif
@@ -1053,7 +1053,7 @@ string format_del(int deletions)
 }
 
 template <typename Shortcut, typename Affect>
-FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, Affect> *germline, Cost segment_c,  
+FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, Affect> *germline, Cost segment_c,
                 double threshold, double multiplier, int kmer_threshold, int alternative_genes)
 {
   this->box_V = new AlignBox("5");
@@ -1131,7 +1131,7 @@ FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, 
     this->reversed = kseg->isReverse();
     delete kseg ;
   }
-  
+
   this->sequence_or_rc = revcomp(this->sequence, this->reversed); // sequence, possibly reversed
 
   // the threshold is lowered by the number of independent tests made
@@ -1185,7 +1185,7 @@ FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, 
     {
       this->evalue_left = BAD_EVALUE ;
     }
-      
+
   if (this->box_J->start == (int) string::npos)
     {
       this->evalue_right = BAD_EVALUE ;
@@ -1232,7 +1232,7 @@ bool FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *g
 
     // Create a zone where to look for D, adding some nucleotides on both sides
     int l = box_Y->end - extend_DD_on_Y;
-    if (l<0) 
+    if (l<0)
       l=0 ;
 
     int r = box_Z->start + extend_DD_on_Z;
@@ -1241,7 +1241,7 @@ bool FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *g
 
     if (r > (int) seq.length())
       r = seq.length();
-      
+
     string str = seq.substr(l, r-l);
 
     // the threshold is lowered by the number of independent tests made
@@ -1271,11 +1271,11 @@ bool FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *g
     int save_box_Y_del_right = box_Y->del_right ;
     int save_box_Z_del_left = box_Z->del_left;
     int save_box_Z_start = box_Z->start ;
-    
+
     //overlap VD
     this->seg_N1 = check_and_resolve_overlap(seq, 0, box_DD->end,
                                        box_Y, box_DD, this->segment_cost);
-    
+
     //overlap DJ
     this->seg_N2 = check_and_resolve_overlap(seq, box_DD->start, seq.length(),
                                        box_DD, box_Z, this->segment_cost);
@@ -1381,7 +1381,7 @@ void FineSegmenter<Shortcut, Affect>::findCDR3(){
   // - Sequence may be too short on either side, and thus the backtrack did not find a suitable 'marked_pos'
   if (this->JUNCTIONstart == 0 || this->JUNCTIONend == 0) {
     this->JUNCTIONstart = -1 ;
-    this->JUNCTIONend = -1 ;    
+    this->JUNCTIONend = -1 ;
     return;
   }
 
@@ -1400,7 +1400,7 @@ void FineSegmenter<Shortcut, Affect>::findCDR3(){
     this->JUNCTIONunproductive = UNPROD_TOO_SHORT;
     return ;
   }
-  
+
   // IMGT-CDR3 is, on each side, 3 nucleotides shorter than IMGT-JUNCTION
   this->CDR3start = this->JUNCTIONstart + 3;
   this->CDR3end = this->JUNCTIONend - 3;
@@ -1544,7 +1544,7 @@ void KmerSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone) {
         {"stop", sequenceSize},
         {"seq", getKmerAffectAnalyser()->toStringValues()}
       });
-    
+
       clone->setSeg("affectSigns", {
         {"start", 1},
         {"stop", sequenceSize},
