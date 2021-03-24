@@ -3674,6 +3674,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         // Get data in correct format
         if (file_format == "airr") {
             data = this.getClonesAsAIRR(cloneIds)
+            file_format = "tsv"
         } else if (file_format == "json") {
             data = JSON.stringify(this.exportAsJson(cloneIds))
         } else {
@@ -3682,7 +3683,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
 
         // Download data in a file
-        var filename = "information_clone_"+cloneIds.join("_")+"." + file_format
+        var filename = "clone_" + cloneIds.join("_") + "." + file_format
         download_csv(data, filename);
     },
 
