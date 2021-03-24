@@ -88,10 +88,10 @@ string fixed_string_of_float(float number, int precision)
    return ss.str();
 }
 
-string scientific_string_of_double(double number)
+string scientific_string_of_double(double number, int precision)
 {
    stringstream ss;
-   ss << scientific << number ;
+   ss << scientific << setprecision(precision) << number ;
    return ss.str();
 }
 
