@@ -1,11 +1,21 @@
 !OUTPUT_FILE: out/bug4225-j.affects
-!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline -r 1 -1 -2 -K bug4225-j.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -c windows -g $VIDJIL_DIR/germline -r 1 -1 -2 -K bug4225-j.fa
+
+$ Show name and sequence
+1:>igkj1 GTGGACGTTCGGCCAAGGGACCAAGGTGGAAATCAAAC
+
+$ Display three lines per system
+3:TRG
+3:IGH\+
 
 $ Find only +k and ? affects before the stretch of _ for all loci
-16: seed .*(\+k| \?){28}( _)+$
+16:^\#.* (k|\?){28}_+$
+16:^\$.* (\+| ){28}( )+$
 
 !OUTPUT_FILE: out/chimera-fake-half.affects
-!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline -r 1 -4 -K ../data/chimera-fake-half.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -c windows -g $VIDJIL_DIR/germline/homo-sapiens.g:TRB -r 1 -4 -K ../data/chimera-fake-half.fa
 
-$ Find only +B and ? affects on the TRB and unexpected lines
-2: seed .* _(\+B| \?){48} _
+$ Find only 48 +B affects on the TRB and unexpected lines
+2:^\#.* (_){40}(B){48}(_){10}
+2:^\$.* (\s){40}(\+){48}(\s){10}
+
