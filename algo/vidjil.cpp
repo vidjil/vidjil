@@ -427,7 +427,7 @@ int main (int argc, char **argv)
 
   bool keep_unsegmented_as_clone = false;
   app.add_flag("--not-analyzed-as-clones", keep_unsegmented_as_clone,
-               "consider not analyzed reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --not-analyzed-as-clones -AX 20)")
+               "consider not analyzed reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --not-analyzed-as-clones --all -X 20)")
     -> group(group) -> level();
 
 
@@ -855,7 +855,7 @@ int main (int argc, char **argv)
   if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES)
     {
       cout << endl
-	   << "* WARNING: " << PROGNAME << " was run with '-A' option or with a large '-z' option" << endl ;
+	   << "* WARNING: " << PROGNAME << " was run with '--all' option or with a large '--max-designations/-z' option" << endl ;
     }
   
   if (command == CMD_SEGMENT)
@@ -1335,7 +1335,7 @@ int main (int argc, char **argv)
     if (sort_clones.size() == 0)
       {
 	cout << "  ! No clones with current parameters." << endl;
-	cout << "  ! See the 'Limits to report a clone' options (-r, --ratio, -z, -A)." << endl;
+	cout << "  ! See the 'Limits to report and to analyze clones' options (-r, --min-ratio, -z, --all)." << endl;
       }
     else
       {
