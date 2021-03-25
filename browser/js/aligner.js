@@ -320,6 +320,9 @@ Aligner.prototype = {
         };
         if (this.m.clone_info == cloneID) 
         cloneT.getElementsByClassName("infoBox")[0].className += " infoBox-open";
+        cloneT.getElementsByClassName("infoBox")[0].onclick = function () {
+            self.m.displayInfoBox(cloneID);
+        }
         cloneT.getElementsByClassName("axisBox")[0].color = clone.getColor();
         this.fillAxisBox(cloneT.getElementsByClassName("axisBox")[0], clone);
 
