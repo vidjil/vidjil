@@ -67,20 +67,18 @@ Aligner.prototype = {
                 var mc = menu.checkbox[c];
                 var template = document.getElementById("aligner-checkbox");
                 var clone = template.content.firstElementChild.cloneNode(true);
-
                 var input = clone.getElementsByClassName("aligner-checkbox-input")[0];
-                var label = clone.getElementsByClassName("aligner-checkbox-label")[0];
+                var text = clone.getElementsByClassName("aligner-checkbox-text")[0];
 
                 var id  = "aligner_checkbox_"+mc.id;
                 clone.title = mc.title;
                 input.id = id;
                 input.checked = mc.enabled;
-                label.setAttribute("for", id);
-                label.innerHTML = mc.text;
+                clone.setAttribute("for", id);
+                text.innerHTML = mc.text;
 
+                this.connect_checkbox(clone, mc.layers);
                 menuC.appendChild(clone);
-                this.connect_checkbox(id, mc.layers);
-
             }
         }
     }, 
@@ -90,31 +88,17 @@ Aligner.prototype = {
 
         var available_axis = Axis.prototype.available();
 
-        var self_update = function() {
-            var menu = document.getElementById("segmenter_axis_select");
-            var inputs = menu.getElementsByTagName("input");
-            var selectedAxis = [];
-
-            for (var i in inputs)
-                if (inputs[i].checked) selectedAxis.push(Axis.prototype.getAxisProperties(inputs[i].value));
-
-            if (selectedAxis.length <= 5){
-                self.selectedAxis = selectedAxis;
-                self.update();
-            }else{
-                console.log({ msg: "selection is limited to 5", type: "flash", priority: 2 });
-                this.checked = false;
-            }
-            
-        };
-
         var menu = document.getElementById("segmenter_axis_select");
         for (var i in available_axis) {
             var axis_p = Axis.prototype.getAxisProperties(available_axis[i]);
             if (!axis_p.isInAligner) continue;
 
-            var axis_button = document.createElement('a');
+            var axis_label = document.createElement('label');
+            axis_label.setAttribute('for', "sai"+i);
+            axis_label.className = "aligner-checkbox-label";
+
             var axis_option = document.createElement('span');
+            var axis_text = document.createTextNode(available_axis[i]);
             var axis_input = document.createElement('input');
             axis_input.setAttribute('type', "checkbox");
             axis_input.setAttribute('value', available_axis[i]);
@@ -123,32 +107,55 @@ Aligner.prototype = {
             if (available_axis[i] == "size" ||
                 available_axis[i] == "productivity IMGT" ||
                 available_axis[i] == "VIdentity IMGT" ) axis_input.setAttribute('checked', "");
-            axis_input.onchange = self_update;
 
-            var axis_label = document.createElement('label');
-            axis_label.setAttribute('for', "sai"+i);
-            axis_label.className = "aligner-checkbox-label";
-            axis_label.appendChild(document.createTextNode(available_axis[i]));
-
-            axis_option.appendChild(axis_input);
+            axis_label.appendChild(axis_input);
+            axis_label.appendChild(axis_text);
             axis_option.appendChild(axis_label);
-            axis_button.appendChild(axis_option);
-            menu.appendChild(axis_button);
+            menu.appendChild(axis_label);
+
+            $(axis_input).unbind("click");
+            $(axis_input).click(function(e) {
+                self.updateAxisBox();    
+                e.stopPropagation();            
+            })
         }
+
         this.selectedAxis = [Axis.prototype.getAxisProperties("productivity IMGT"),
                             Axis.prototype.getAxisProperties("VIdentity IMGT"),
                             Axis.prototype.getAxisProperties("size")];
     },
 
-    connect_checkbox: function(id, layers){
+    //check axis selected in menu to update and update axisBox dom elements accordingly
+    updateAxisBox:function (){
         var self = this;
+        var menu = document.getElementById("segmenter_axis_select");
+        var inputs = menu.getElementsByTagName("input");
+        var selectedAxis = [];
 
+        for (var i in inputs)
+            if (inputs[i].checked) selectedAxis.push(Axis.prototype.getAxisProperties(inputs[i].value));
+
+        if (selectedAxis.length <= 5){
+            self.selectedAxis = selectedAxis;
+            self.update();
+        }else{
+            console.log({ msg: "selection is limited to 5", type: "flash", priority: 2 });
+            this.checked = false;
+        }
+    },
+
+    connect_checkbox: function(elem, layers){
+        var self = this;
+        
+        //connect event to checkbox and checkbox_label
         $(function () {
-            $('#'+id).change(function (e) {                
-                self.toggleLayers(layers, this.checked, true);
+            $(elem).find('input').unbind("click");
+            $(elem).find('input').click(function(e){
+                var input = elem.getElementsByTagName("input");
+                self.toggleLayers(layers, input.checked, true);
                 e.stopPropagation();
-            }).change(); //ensure visible state matches initially
-          });
+            });
+        });
     },
 
     build_segmenter: function () {
