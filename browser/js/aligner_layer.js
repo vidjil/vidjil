@@ -11,7 +11,7 @@ LAYERS = {
     {
         'className': "seq_layer_text",
         'text': function (s,c) { return s.aminoString(); },
-        'enabled': true
+        'enabled': false
     },
 
     'amino_separator':
