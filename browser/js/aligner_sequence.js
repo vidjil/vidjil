@@ -1,5 +1,4 @@
-require(['./js/aligner_layer.js',
-        './js/aligner_amino.js']);
+require(['./js/aligner_amino.js']);
 
 CHAR_WIDTH = 12;
 
