@@ -255,15 +255,16 @@ Clone.prototype = {
         // Does feature and position exist in clone ?
         positions = this.getSegStartStop(field_name)
 
+        // Start/stop do already exist
         if (positions !== null){
-            // Start/stop do already exist
             return ;
         }
 
+        // try to get sequence from existing feature in the clone if not given
         if (sequence == undefined && this.seg[field_name] != undefined && this.seg[field_name].seq != undefined){
-            // try to get sequence from existing feature in the clone
             sequence = this.seg[field_name].seq
         }
+
 
         if (sequence != undefined){
             // Insert sequence and positions if possible
@@ -274,6 +275,7 @@ Clone.prototype = {
                 this.seg[field_name].seq = sequence;
                 this.seg[field_name].start = pos +1 // seq is 1-based
                 this.seg[field_name].stop  = pos + sequence.length
+                return
             } else if (extend == true || extend == undefined) {
                 // No perfect match; try extension with germline sequence
                 // Warning; predictive approach can't be perfect
@@ -285,20 +287,17 @@ Clone.prototype = {
                         if (germseq != undefined){
                             var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1]) // return [score, start pos, ~cigar]
                             var germpos = rst[1] // -1 to be 0-based
-                            if (rst[0] > (sequence.length/2) ){
+                            var nb_match = bsa_cigar2match(rst[2]) // Get number of match
+                            if (nb_match > (sequence.length/2) ){
                                 if (gene_way == 5){
-                                    computed_pos = this.seg["5"].stop + germpos - germseq.length //-sequence.length  // start n'existe pas si extention; (this.seg["5"].start != undefined ? this.seg["5"].start : 0)
-                                    console.log( "(5) computed_pos = germpos; germseq.length; sequence.length; this.seg['5'].delRight; this.seg['5'].stop; (this.seg['5'].start != undefined ? this.seg['5'].start : 0)")
-                                    console.log( computed_pos+" = "+germpos+"; "+germseq.length+"; "+sequence.length+"; "+this.seg["5"].delRight+"; "+this.seg["5"].stop+"; "+(this.seg["5"].start != undefined ? this.seg["5"].start : 0))
+                                    computed_pos = this.seg["5"].stop + germpos - germseq.length + this.seg["5"].delRight
                                 } else if (gene_way == 3){
-                                    computed_pos = this.seg["3"].start + (germpos - this.seg["3"].delLeft)
-                                    console.log( "computed_pos = this.seg[3].start; germpos; this.seg[3].delLeft; sequence.length")
-                                    console.log( computed_pos+" = "+this.seg["3"].start+"; "+germpos+"; "+this.seg["3"].delLeft+"; "+sequence.length)
+                                    computed_pos = this.seg["3"].start - this.seg["3"].delLeft + germpos  -1
                                 }
                                 this.seg[field_name] = {};
                                 this.seg[field_name].seq = sequence;
-                                this.seg[field_name].start = computed_pos
-                                this.seg[field_name].stop  = computed_pos + sequence.length
+                                this.seg[field_name].start = computed_pos + 1
+                                this.seg[field_name].stop  = computed_pos + sequence.length// + end_adding
                                 break
                             }
                         }
@@ -366,8 +365,9 @@ Clone.prototype = {
             if (germseq != undefined){
                 for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
                     sequence = sequences[seq_pos]
-                    var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1])
-                    if (rst[0] > best_score){
+                    rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1])
+                    var nb_match = bsa_cigar2match(rst[2])
+                    if (rst[0] > best_score && nb_match > (sequence.length/2) ){
                         best_seq   = [sequence]
                         best_rst   = [rst]
                         best_score = rst[0]
@@ -404,7 +404,7 @@ Clone.prototype = {
         positions = this.getSegStartStop(field_name)
         if (positions !== null) {
             // return this.sequence.substr(positions.start-1, (positions.stop+1) - positions.start)
-            return this.sequence.substr(positions.start-1, (positions.stop - positions.start-1))
+            return this.sequence.substr(positions.start-1, this.getSegLength(field_name))
         }
         return '';
     },
@@ -434,7 +434,7 @@ Clone.prototype = {
     	var positions2 = this.getSegStartStop(field_name2)
 
     	if (positions1 !== null && positions2 !== null) {
-    	    return positions2.stop - (positions1.start - 1)
+    	    return positions2.stop - positions1.start + 1
     	} else {
     	    return 'undefined';
         }
