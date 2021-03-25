@@ -151,7 +151,7 @@ Aligner.prototype = {
         $(function () {
             $(elem).find('input').unbind("click");
             $(elem).find('input').click(function(e){
-                var input = elem.getElementsByTagName("input");
+                var input = elem.getElementsByTagName("input")[0];
                 self.toggleLayers(layers, input.checked, true);
                 e.stopPropagation();
             });
