@@ -79,10 +79,10 @@
                     <div id="align-settings" class="aligner-menu" title="Alignement settings">
                             <span ><i class="icon-cog"></i></span>
                             <div class="menu-content">
-                                    <a title="matches">
-                                            <span><input type="checkbox" id="highlight_match" autocomplete="off"><label
-                                                            for="highlight_match">Show only mutations</label></span>
-                                    </a>
+                                <label for="highlight_match" title="matches">
+                                            <span><input type="checkbox" id="highlight_match" autocomplete="off"></span>span>
+                                            <span>Show only mutations</span>
+                                </label>    
                             </div>
                     </div>
 
@@ -122,6 +122,7 @@
 
                        </div>
                     </div>
+                    <div class="focus cloneName"></div>
 
                             
 
@@ -178,8 +179,9 @@
 
 
 <template id="aligner-checkbox">
-    <a title="">
-            <span><input class="aligner-checkbox-input" type="checkbox" id="highlight_mutation" autocomplete="off" checked>
-                    <label class="aligner-checkbox-label" for="highlight_mutation">Highlight mutation</label></span>
-    </a>
+        <label title="" class="aligner-checkbox-label" for="highlight_mutation">
+            <span><input class="aligner-checkbox-input" type="checkbox" id="highlight_mutation" autocomplete="off" checked></span>
+            <span class="aligner-checkbox-text" >Highlight mutation</span>
+        </label>
 </template>
+
