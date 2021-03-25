@@ -974,13 +974,13 @@ clicked on.
   number of analyzed reads? Why did it change?}
 \begin{verbatim}
   def test_B_clones_35_locus_switch
-    assert ( not $b.locus_topleft("TRG").classes.include? "inactive" ), "locus TRG present in info panel"
-    assert ( not $b.locus_topleft("IGH").classes.include? "inactive" ), "locus IGH present in info panel"
+    assert ( not $b.locus_topleft("TRG").classes.include? "unchecked" ), "locus TRG present in info panel"
+    assert ( not $b.locus_topleft("IGH").classes.include? "unchecked" ), "locus IGH present in info panel"
     $b.locus_topleft("IGH").click(:shift)
     $b.update_icon.wait_while(&:present?)
 
-    assert ( $b.locus_topleft("TRG").classes.include? "inactive" ), "locus TRG NOT present in info panel after switch"
-    assert ( not $b.locus_topleft("IGH").classes.include? "inactive" ), "locus IGH present in info panel after switch"
+    assert ( $b.locus_topleft("TRG").classes.include? "unchecked" ), "locus TRG NOT present in info panel after switch"
+    assert ( not $b.locus_topleft("IGH").classes.include? "unchecked" ), "locus IGH present in info panel after switch"
   end
 \end{verbatim}
 
@@ -989,8 +989,8 @@ clicked on.
   def test_B_clones_36_activate_again_locus
     $b.locus_topleft("TRG").click
     $b.update_icon.wait_while(&:present?)
-    assert ( not $b.locus_topleft("TRG").classes.include? "inactive" ), "locus TRG present in info panel after switch"
-    assert ( not $b.locus_topleft("IGH").classes.include? "inactive" ), "locus IGH present in info panel after switch"
+    assert ( not $b.locus_topleft("TRG").classes.include? "unchecked" ), "locus TRG present in info panel after switch"
+    assert ( not $b.locus_topleft("IGH").classes.include? "unchecked" ), "locus IGH present in info panel after switch"
   end
 \end{verbatim}
 
