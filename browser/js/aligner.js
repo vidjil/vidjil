@@ -114,10 +114,7 @@ Aligner.prototype = {
             menu.appendChild(axis_label);
 
             $(axis_input).unbind("click");
-            $(axis_input).click(function(e) {
-                self.updateAxisBox();    
-                e.stopPropagation();            
-            })
+            self.connect_axisbox(axis_input);
         }
 
         this.selectedAxis = [Axis.prototype.getAxisProperties("productivity IMGT"),
@@ -126,22 +123,26 @@ Aligner.prototype = {
     },
 
     //check axis selected in menu to update and update axisBox dom elements accordingly
-    updateAxisBox:function (){
+    connect_axisbox:function (elem){
         var self = this;
-        var menu = document.getElementById("segmenter_axis_select");
-        var inputs = menu.getElementsByTagName("input");
-        var selectedAxis = [];
 
-        for (var i in inputs)
-            if (inputs[i].checked) selectedAxis.push(Axis.prototype.getAxisProperties(inputs[i].value));
-
-        if (selectedAxis.length <= 5){
-            self.selectedAxis = selectedAxis;
-            self.update();
-        }else{
-            console.log({ msg: "selection is limited to 5", type: "flash", priority: 2 });
-            this.checked = false;
-        }
+        $(elem).click(function(e) {
+            var menu = document.getElementById("segmenter_axis_select");
+            var inputs = menu.getElementsByTagName("input");
+            var selectedAxis = [];
+    
+            for (var i in inputs)
+                if (inputs[i].checked) selectedAxis.push(Axis.prototype.getAxisProperties(inputs[i].value));
+    
+            if (selectedAxis.length <= 5){
+                self.selectedAxis = selectedAxis;
+                self.update();
+            }else{
+                console.log({ msg: "selection is limited to 5", type: "flash", priority: 2 });
+                this.checked = false;
+            }
+            e.stopPropagation();            
+        })
     },
 
     connect_checkbox: function(elem, layers){
