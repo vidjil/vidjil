@@ -23,7 +23,8 @@ class ExternalTest < BrowserTest
       sleep 1
       $b.clone_in_scatterplot('25').click
       $b.update_icon.wait_while(&:present?)
-      $b.span(:id => "toIMGT" ).click
+      $b.div(:id => "align-external-tool" ).hover
+      $b.a(:id => "toIMGT" ).click
       
       assert ( $b.window(:title => "IMGT/V-QUEST").exists? ) , ">> fail opening IMGT "
       $b.window(:title => "IMGT/V-QUEST").use do
@@ -38,7 +39,8 @@ class ExternalTest < BrowserTest
 
       $b.clone_in_scatterplot('26').click
       $b.update_icon.wait_while(&:present?)
-      $b.span(:id => "toIMGT" ).click
+      $b.div(:id => "align-external-tool" ).hover
+      $b.a(:id => "toIMGT" ).click
       assert ( $b.window(:title => "IMGT/V-QUEST").exists? ) , ">> fail opening second IMGT "
 
       $b.window(:title => "IMGT/V-QUEST").use do

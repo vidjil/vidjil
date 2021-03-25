@@ -23,7 +23,9 @@ class TestImgtSubset < BrowserTest
     $b.clone_in_list("0").click
     $b.update_icon.wait_while(&:present?)
 
-    $b.span(:id => "toIMGT" ).click
+
+    $b.div(:id => "align-external-tool" ).hover
+    $b.a(:id => "toIMGT" ).click
     assert ( $b.window(:title => "IMGT/V-QUEST").exists? ) , ">> fail opening second IMGT "
 
     $b.window(:title => "IMGT/V-QUEST").use do
@@ -41,7 +43,8 @@ class TestImgtSubset < BrowserTest
     $b.clone_in_list("1").click
     $b.update_icon.wait_while(&:present?)
 
-    $b.span(:id => "toIMGT" ).click
+    $b.div(:id => "align-external-tool" ).hover
+    $b.a(:id => "toIMGT" ).click
     assert ( $b.window(:title => "IMGT/V-QUEST").exists? ) , ">> fail opening second IMGT "
 
     $b.window(:title => "IMGT/V-QUEST").use do
@@ -60,7 +63,8 @@ class TestImgtSubset < BrowserTest
     $b.clone_in_list("2").click
     $b.update_icon.wait_while(&:present?)
 
-    $b.span(:id => "toIMGT" ).click
+    $b.div(:id => "align-external-tool" ).hover
+    $b.a(:id => "toIMGT" ).click
     assert ( $b.window(:title => "IMGT/V-QUEST").exists? ) , ">> fail opening second IMGT "
 
     $b.window(:title => "IMGT/V-QUEST").use do
