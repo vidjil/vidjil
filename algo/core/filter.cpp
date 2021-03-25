@@ -182,7 +182,8 @@ ostream &operator<<(ostream &out, const FilterWithACAutomaton& obj){
   int total_sequences_origin = total_filtered_calls * origin_bioreader_size;
   float aligned_rate = ((float)total_sequences_filtered/(float)total_sequences_origin) * 100;
 
-  out << fixed << setw(8) << total_sequences_filtered << "/"
+  out << right
+      << fixed << setw(8) << total_sequences_filtered << "/"
       << fixed << setw(8) << total_sequences_origin << "    "
       << fixed << setprecision(1) << setw(6) << aligned_rate << "%"
       << endl ;

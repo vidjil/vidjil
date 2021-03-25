@@ -1458,7 +1458,7 @@ int main (int argc, char **argv)
             {
               cout << "." ;
               if (!(num_clone % (PROGRESS_POINT_CLONES * PROGRESS_LINE)))
-              cout << setw(10) << num_clone / 1000 << "k clones " << endl;
+              cout << right << setw(10) << num_clone / 1000 << "k clones " << endl;
               cout.flush() ;
             }
         }

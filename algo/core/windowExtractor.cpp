@@ -126,7 +126,9 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 	cout << "." ;
 
 	if (!(nb_reads % (PROGRESS_POINT * PROGRESS_LINE)))
-	  cout << setw(10) << nb_reads / 1000 << "k reads " << fixed << setprecision(2) << setw(14) << bp_total / 1E6 << " Mbp" << endl ;
+	  cout << right
+         << setw(10) << nb_reads / 1000 << "k reads "
+         << fixed << setprecision(2) << setw(14) << bp_total / 1E6 << " Mbp" << endl ;
 
 	cout.flush() ;
       }
