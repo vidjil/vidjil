@@ -297,7 +297,29 @@ Sequence.prototype = {
             }
         }
 
-        return this.align(this.seqAA.join(''), SYMBOL_VOID);
+        var aa = this.align(this.seqAA.join(''), SYMBOL_VOID);
+        
+        if (this.segmenter.use_dot && this.segmenter.aligned &&
+            (typeof clone.sequence != 'undefined' && clone.sequence !== 0 ) &&
+            (this.id != this.segmenter.sequence[this.segmenter.sequence_order[0]].id)){
+
+            var ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].aminoString();
+
+            this.seq_a = [];
+            for (var a in aa){
+                if (aa[a] == '\u00A0' ||
+                   (aa[a] != ref[a] && aa[a] != SYMBOL_VOID && ref[a] != SYMBOL_VOID)){
+                    this.seq_a[a] = aa[a];
+                }else{
+                    this.seq_a[a] = SYMBOL_MATCH;
+                    if(aa[a] == SYMBOL_VOID || ref[a] == SYMBOL_VOID)
+                        this.seq_a[a] = aa[a];
+                }
+            }
+            return this.seq_a.join('');
+        }else{
+            return aa
+        }
     },
 
     aminoSplitString: function () {
