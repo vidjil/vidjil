@@ -1857,7 +1857,7 @@ int main (int argc, char **argv)
 
   //$ Output statistics on filter()
   if (verbose && (kmer_threshold != NO_LIMIT_VALUE)) {
-    cout << "Statistics on clone analysis (-Z):" << endl;
+    cout << "Statistics on filtered genes for clone analysis (--analysis-filter):" << endl;
     for(list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       FilterWithACAutomaton *f =  (*it)->getFilter_5();
       if (f)
