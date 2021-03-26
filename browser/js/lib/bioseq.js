@@ -324,21 +324,3 @@ function bsa_cigar2str(cigar)
 		s.push((cigar[k]>>4).toString() + "MIDNSHP=XB".charAt(cigar[k]&0xf));
 	return s.join("");
 }
-
-
-/**
- * Return the number of match from an alignment cigar
- */
-function bsa_cigar2match(cigar)
-{
-	var sum = 0
-
-	for (var k = 0; k < cigar.length; ++k){
-		var match = (cigar[k]>>4 )
-		var type  = (cigar[k]&0xf)
-		if (type == 0){
-			sum += match
-		}
-	}
-	return sum
-}
