@@ -383,11 +383,15 @@ QUnit.test("model: primer detection", function(assert) {
 
     // model primer setting
     assert.equal(m.switchPrimersSet("no set"), 1, "primer set doesn't exist")
+    assert.equal(m.switchPrimersSet("ecngs"), 0, "primer set exist & are set")
+
+    // Test switch to a Qunit dataset
+    m.primersSetData = primersSetData // no primer for IGH, One primer for TRG
     assert.equal(m.switchPrimersSet("primer_test"), 0, "primer set exist & are set")
 
     // primer found inside clones
-    assert.equal(typeof m.clones[2]["seg"]["primer5"], "undefined", "Control neg primer 5 not in sequence")
-    assert.equal(typeof m.clones[2]["seg"]["primer3"], "undefined", "Control neg primer 3 not in sequence")
+    assert.equal(m.clones[2]["seg"]["primer5"], undefined, "Control neg primer 5 not in sequence")
+    assert.equal(m.clones[2]["seg"]["primer3"], undefined, "Control neg primer 3 not in sequence")
     assert.deepEqual(m.clones[3]["seg"]["primer5"], { seq: "GGAAGGCCCCACAGCG", start: 0, stop: 15 },    "Found primer 5")
     assert.deepEqual(m.clones[3]["seg"]["primer3"], { seq: "AACTTCGCCTGGTAA",  start: 226, stop: 240 }, "Found primer 3")
 

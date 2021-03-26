@@ -3128,13 +3128,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
       this.primersSetData.primer_fictif.TRD.primer5 = ["GATTTTACTCAAGGACGGTT", "GCAAAGAACCTGGCTGT", "AGATTTTACTCAAGGAC"] // V3, V2,
       this.primersSetData.primer_fictif.TRD.primer3 = ["AGGAACCCGTGTGACT", "GAACACAACTCATCGTGGA", "GAACTGGCATCAAACTCTTC"] // J1, J2, J3
 
-      // Test qunits
-      this.primersSetData.primer_test.IGH = {};
-      this.primersSetData.primer_test.IGH.primer5 = [] // IGH seq from model_test.js
-      this.primersSetData.primer_test.IGH.primer3 = []
-      this.primersSetData.primer_test.TRG = {};
-      this.primersSetData.primer_test.TRG.primer5 = ["GGAAGGCCCCACAGCG"] // TRG seq from model_test.js
-      this.primersSetData.primer_test.TRG.primer3 = ["AACTTCGCCTGGTAA"]
     },
 
 
@@ -3225,6 +3218,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.primerSetCurrent = primersSet;
             console.log("Current primer set : "+ this.primerSetCurrent)
             this.switchPrimers();
+            console.log("Switch primers values : "+ this.primerSetCurrent)
             this.update();
             return 0
         }
