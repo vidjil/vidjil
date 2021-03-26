@@ -3153,11 +3153,12 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                     var values = clone.getBestMatchingSequence(sequence, extend)
                     best_sequence = values[0]
                     extend        = values[1]
-                    if (best_sequence == undefined){
-                        continue
-                    }
                 } else {
                     best_sequence = sequence
+                }
+
+                if (best_sequence == undefined){
+                    continue
                 }
                 clone.addSegFeatureFromSeq(feature, best_sequence, extend)
             }
@@ -3188,7 +3189,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             console.log("Primer set unknow")
             return -1
         }
-        primersSet = this.primerSetCurrent
 
         this.cleanPreviousFeature("primer5")
         this.cleanPreviousFeature("primer3")
@@ -3224,7 +3224,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.update();
             return 0
         }
-        this.update();
     },
 
     
