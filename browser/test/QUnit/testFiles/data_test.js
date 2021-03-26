@@ -405,3 +405,15 @@ analysis_data_clusters = {
     ]
   ]
 }
+
+
+
+// Test qunits
+primersSetData = {};
+primersSetData.primer_test = {};
+primersSetData.primer_test.IGH = {};
+primersSetData.primer_test.IGH.primer5 = [] // IGH seq from model_test.js
+primersSetData.primer_test.IGH.primer3 = []
+primersSetData.primer_test.TRG = {};
+primersSetData.primer_test.TRG.primer5 = ["GGAAGGCCCCACAGCG"] // TRG seq from model_test.js
+primersSetData.primer_test.TRG.primer3 = ["AACTTCGCCTGGTAA"]
