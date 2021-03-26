@@ -273,8 +273,8 @@ Clone.prototype = {
                 // perfect match exist
                 this.seg[field_name] = {};
                 this.seg[field_name].seq = sequence;
-                this.seg[field_name].start = pos +1 // seq is 1-based
-                this.seg[field_name].stop  = pos + sequence.length
+                this.seg[field_name].start = pos // seq is 0-based
+                this.seg[field_name].stop  = pos + sequence.length -1
                 return
             } else if (extend == true || extend == undefined) {
                 // No perfect match; try extension with germline sequence
@@ -286,18 +286,18 @@ Clone.prototype = {
                         germseq = this.getExtendedSequence(gene_way)
                         if (germseq != undefined){
                             var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1]) // return [score, start pos, ~cigar]
-                            var germpos = rst[1] // -1 to be 0-based
+                            var germpos = rst[1] -1 //to be 0-based
                             var nb_match = bsa_cigar2match(rst[2]) // Get number of match
                             if (nb_match > (sequence.length/2) ){
                                 if (gene_way == 5){
-                                    computed_pos = this.seg["5"].stop + germpos - germseq.length + this.seg["5"].delRight
+                                    computed_pos = this.seg["5"].stop + germpos - germseq.length + this.seg["5"].delRight +1
                                 } else if (gene_way == 3){
-                                    computed_pos = this.seg["3"].start - this.seg["3"].delLeft + germpos  -1
+                                    computed_pos = this.seg["3"].start - this.seg["3"].delLeft + germpos
                                 }
                                 this.seg[field_name] = {};
                                 this.seg[field_name].seq = sequence;
                                 this.seg[field_name].start = computed_pos + 1
-                                this.seg[field_name].stop  = computed_pos + sequence.length// + end_adding
+                                this.seg[field_name].stop  = computed_pos + sequence.length
                                 break
                             }
                         }
@@ -404,7 +404,7 @@ Clone.prototype = {
         positions = this.getSegStartStop(field_name)
         if (positions !== null) {
             // return this.sequence.substr(positions.start-1, (positions.stop+1) - positions.start)
-            return this.sequence.substr(positions.start-1, this.getSegLength(field_name))
+            return this.sequence.substr(positions.start, this.getSegLength(field_name))
         }
         return '';
     },
