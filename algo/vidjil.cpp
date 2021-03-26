@@ -1516,9 +1516,18 @@ int main (int argc, char **argv)
 
         CloneOutput *clone  = new CloneOutput();
         output.addClone(it->first, clone);
-        clone->set("sequence", kseg->getSequence().sequence);
-        clone->set("_coverage", { repComp.getCoverage() });
+
+        // Basic information that will always be output
         clone->set("_average_read_length", { fixed_string_of_float(windowsStorage->getAverageLength(it->first), 2) });
+        clone->set("sequence", kseg->getSequence().sequence);
+
+        //$$ If max_clones is reached, we will not run a FineSegmenter but we will still output the representative
+        bool stop_analysis = ((max_clones >= 0) && (num_clone >= max_clones + 1)
+            && ! windowsStorage->isInterestingJunction(it->first));
+
+        if (!stop_analysis)
+        {
+        clone->set("_coverage", { repComp.getCoverage() });
         clone->set("_coverage_info", {repComp.getCoverageInfo()});
         //From KmerMultiSegmenter
         kseg->toOutput(clone);
@@ -1536,11 +1545,9 @@ int main (int argc, char **argv)
         if (label.length())
           clone->set("label", label) ;
 
-        //$$ If max_clones is reached, we stop here but still outputs the representative
+        }
 
-        if ((max_clones >= 0) && (num_clone >= max_clones + 1)
-            && ! windowsStorage->isInterestingJunction(it->first))
-
+        if (stop_analysis)
           {
             if (clone_on_stdout)
               cout << representative << endl ;
