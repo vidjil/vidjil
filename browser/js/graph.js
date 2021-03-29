@@ -1473,6 +1473,7 @@ Graph.prototype = {
                 var time = d.time
                 var tooltip = self.getTooltip(time, true, true)
                 div.transition()
+                    .delay(1000)
                     .duration(200)
                     .style("opacity", 1);
                 div .html(tooltip)
@@ -1641,8 +1642,15 @@ Graph.prototype = {
         }
         var tooltip = "";
         tooltip    += this.m.getStrTime(time, "names")
-        tooltip    += breakChar + this.m.getStrTime(time, "sampling_date")
-        tooltip    += breakChar + this.m.getStrTime(time, "delta_date")
+        var sampling_date = this.m.getStrTime(time, "sampling_date")
+        var delta_date    = this.m.getStrTime(time, "delta_date")
+        tooltip    += ( (sampling_date != "-/-") ? (breakChar + sampling_date) : "" )
+        tooltip    += ( (delta_date != "-/-") ? (breakChar + delta_date) : "" )
+        // duplicate from info; refactor
+        var read_number = this.m.reads.segmented
+        var percent = (read_number[this.m.t] / this.m.reads.total[this.m.t]) * 100;
+        var reads   = this.m.toStringThousands(read_number[this.m.t]) + " (" + percent.toFixed(2) + "%)";
+        tooltip    += breakChar + reads
         return tooltip
     },
 
