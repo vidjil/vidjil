@@ -976,16 +976,19 @@ span .end-codon-not-first {
 
 #file_menu, #axis_choice, #add_clone_menu {
   z-index:2;
-  border:solid;
   position: fixed;
   top: 200px;
   min-width:400px;
   margin-left:-250px;
   left :50%;
   font-size: 13px;
-  padding: 10px;
+  padding: 20px;
   background:@background;
   display:none;
+  border:solid; 
+  border-width:1px;
+  border-color: @default;
+  box-shadow: 2px 2px 5px @default;
 }
 
 #add_clone_menu {
@@ -1040,11 +1043,10 @@ span .end-codon-not-first {
 
 .popup_container{
   z-index:20;
-  border:solid; 
   min-width:500px;
   max-width:80%;
   font-size: 13px; 
-  padding: 10px;
+  padding: 20px;
   background: @background;
   display:none;
   position:fixed;
@@ -1053,7 +1055,11 @@ span .end-codon-not-first {
   -ms-transform: translate(-50%,-50%);
   -moz-transform:translate(-50%,-50%);
   -webkit-transform: translate(-50%,-50%);
-   transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+  border:solid; 
+  border-width:1px;
+  border-color: @default;
+  box-shadow: 2px 2px 5px @default;
 }
 
 /* Main style for <a> Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
@@ -1117,17 +1123,11 @@ span.sample-tag, a.tag-link {
   position: absolute;
   top: 0px;
   right: 0px;
-  border: solid;
   background: inherit;
-  border-radius: 20px;
-  width: 15px;
-  height: 15px;
-  text-align: center;
-  font-weight: bolder;
   cursor: pointer;
   padding: 1px;
-  font-size: 90%; 
-  color: @border;
+  margin: 1px;
+  font-size: large;
 }
 
 .closeButton:hover{
@@ -1358,7 +1358,7 @@ span.logo
   color: grey;
 }
 
-.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, .popup_container, #file_menu, .tagSelector, .closeButton, #axis_choice
+.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, .tagSelector
 {
   border-color: @border; 
 }
@@ -1846,7 +1846,7 @@ h3 .uid {
 }
 
 .log_container {
-    height : 500px;
+    height : 75%;
     width : 400px;
     position : absolute;
     display : block;
@@ -1854,11 +1854,12 @@ h3 .uid {
     right : 0px;
     padding: 5px;
     margin: 5px;
-    background: @highlight;
+    background: @border;
     border-color: @border;
     z-index: 15;
     border: solid;
     border-width: 1px;
+    box-shadow: 2px 2px 5px @default;
     opacity: 0.85;
     overflow-y: scroll;
     display: none;
@@ -1868,14 +1869,14 @@ h3 .uid {
     width: 350px;
     min-height: 20px;
     border: solid;
-    border-width: 2px;
+    border-width: 1px;
     display: block;
-    border-radius: 5px;
     padding: 5px;
     margin: 5px;
     background: @background;
     border-color: @border;
     transition: background 1s linear;
+    box-shadow: 1px 1px 2px;
 }
 
 .log_0, .log_1, .log_2, .log_3 {
@@ -1885,9 +1886,8 @@ h3 .uid {
     margin: 5px;
     background: @background;
     border: solid;
-    border-width: 2px;
-    border-radius: 2px;
-    border-color: @background;
+    border-width: 1px;
+    padding: 5px;
 }
 
 .flash_1, .log_1 {

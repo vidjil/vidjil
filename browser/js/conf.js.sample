@@ -8,8 +8,18 @@ var config = {
     /****************
     * Static alerts
     */
+
+    /* Diplay an alert in the header */
     // "alert": "Rescue server",
 
+    /* With more details available in a notification window */
+    /*
+    "alert": {
+        title: "Server Down", 
+        msg :"Server is under maintenance until xx:xx (UTC+1)" +
+             "<br> A rescue server for urgent works is available at <a href='https://www.rescue.vidjil.org'>www.rescue.vidjil.org</a>"
+    },
+    */
 
     /****************
      * External services
