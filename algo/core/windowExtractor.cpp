@@ -54,7 +54,8 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 
     if (out_affects) {
       Sequence seq = reads->getSequence();
-      *out_affects << ">" << setw(11) << left << seq.label << " " << seq.sequence << endl;
+      *out_affects << ">" << seq.label << endl
+                   << setw(13) << " " << seq.sequence << endl;
     }
     
     KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, out_affects, nb_expected, nb_reads_for_evalue);
