@@ -241,6 +241,8 @@ MAX_GAP_J = 36          # maximal position of Phe/Trp (36 for TRAJ52*01)
 PHE_TRP_WARN_SIZE = 15  # small sequences are on a second line
 PHE_TRP_WARN_MSG = 'No Phe/Trp-Gly-X-Gly pattern'
 
+# Upstream: negative length
+# Downstream: positive length
 CUSTOM_UPDOWNSTREAM = {
     # see #4647
     'IGHJ1P*01': 10,
