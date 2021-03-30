@@ -176,6 +176,7 @@ Aligner.prototype = {
         this.div_segmenter = clone.getElementsByClassName("segmenter")[0];
         self.min_H = 130;
         self.max_H = 500;
+        $(".menu-content").css("bottom", (self.min_H+22)+"px");
         $(this.div_segmenter)
             .scroll(function () {
                 var leftScroll = $(self.div_segmenter).scrollLeft();
@@ -187,14 +188,14 @@ Aligner.prototype = {
                     var cur_H = seg.height();
                     var auto_H = seg.css('height', 'auto').height();
 
-                    if (auto_H > self.min_H+10) {
+                    if (auto_H > self.min_H) {
                         if (auto_H > self.max_H) auto_H = self.max_H;
                         if (cur_H  < self.min_H) cur_H  = self.min_H;
-                        seg.stop().height(cur_H).animate({ height: auto_H+20 }, 250);
-                        $(".menu-content").css("bottom", (auto_H+40)+"px");
+                        $(".menu-content").css("bottom", (auto_H+22)+"px");
+                        seg.stop().height(cur_H).animate({ height: auto_H }, 250);
                     } else {
+                        $(".menu-content").css("bottom", (self.min_H+22)+"px");
                         seg.stop().height(self.min_H);
-                        $(".menu-content").css("bottom", (auto_H+24)+"px");
                     }
                     self.is_open = true;
                 }
@@ -213,7 +214,7 @@ Aligner.prototype = {
                         else 
                             seg.stop();
                         
-                        $(".menu-content").css("bottom", (self.min_H+24)+"px");
+                        $(".menu-content").css("bottom", (self.min_H+22)+"px");
                         self.is_open = false;
                         
                     }, 200);

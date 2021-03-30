@@ -576,6 +576,10 @@ line {
   min-width: 60px;
   padding: 2px 2px 1px 2px;
   cursor: pointer;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 .hiddenCheckBox {
   display: none;
@@ -2355,7 +2359,7 @@ span .end-codon {
 .menu-content {
   display: none;
   position: absolute;
-  bottom: 124px;
+  bottom: 154px;
   background-color: white;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
