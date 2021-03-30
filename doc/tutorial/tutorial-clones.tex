@@ -177,7 +177,7 @@ Usually we may want to tag them in order to remember them later on.
     $b.clone_info("0")[:star].click ## clone rechute
     $b.tag_item('4')[:name].click
     $b.update_icon.wait_while(&:present?)
-    $b.clone_in_list("1").click ## select other clone to see real color of clone 0
+    $b.clone_in_list("5").click ## select other clone to see real color of clone 0
 
     # New color
     assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
