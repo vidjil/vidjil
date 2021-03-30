@@ -2327,3 +2327,25 @@ form .form_label {
 .margined-bottom {
   margin-bottom: 10px;
 }
+div.tooltip {
+  position: absolute;
+  text-align: left;
+  padding: 2px;
+  font: 14px sans-serif;
+  color: #ffffff;
+  background: #444343;
+  border: 0px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.labelFocusMinor {
+  color: grey;
+  opacity: 0.7;
+  font-size: 12px;
+}
+.labelFocusMajor {
+  color: black;
+  opacity: 1;
+  font-weight: bold;
+  font-size: 16px;
+}
