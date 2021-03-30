@@ -205,7 +205,7 @@ function main() {
 
     // Prepare Vidjil model
     model = new Model();
-    segmenter = new Aligner('segmenter_container', model);
+    segment = new Aligner('segmenter_container', model);
     scatter = new ScatterPlot('scatter_container', model);
     console = new Com(window.console);
     shortcut = new Shortcut(model)
@@ -221,7 +221,7 @@ function main() {
         if (data) {
             disableSubmitButt(true);
             // Clean views with transition
-            var segContainer = document.getElementById(segmenter.id);
+            var segContainer = document.getElementById(segment.id);
             displayVidjilViews(false);
             var funct = function () {
                 removePrefixedEvent(segContainer, 'TransitionEnd', funct);
