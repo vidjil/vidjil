@@ -39,7 +39,7 @@ class TestGraph < BrowserTest
     sleep 1.5 # no update icon in this case; so whould use a fixed time
     assert ( $tooltip.style('opacity') == "1" ), "correct opacity of tooltip when label is hover"
 
-    content = "T8045-BC082-fu1\n2019-12-27\n+10\n250 000 (57.19%)"
+    content = "T8045-BC082-fu1\n2019-12-27\n+10\n250 000 reads (57.19%)"
     assert ( $tooltip.text == content), "Correct text in the sample tooltip"
   end
 
@@ -51,7 +51,7 @@ class TestGraph < BrowserTest
     sleep 2 
     assert ( $tooltip.style('opacity') == "1" ), "correct opacity of tooltip when label is hover"
 
-    content = "helloworld\n741 684 (94.26%)"
+    content = "helloworld\n741 684 reads (94.26%)"
     assert ( $tooltip.text == content), "Correct text in the sample tooltip"
   end
 

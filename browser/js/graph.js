@@ -1649,7 +1649,7 @@ Graph.prototype = {
         // duplicate from info; refactor
         var read_number = this.m.reads.segmented
         var percent = (read_number[this.m.t] / this.m.reads.total[this.m.t]) * 100;
-        var reads   = this.m.toStringThousands(read_number[this.m.t]) + " (" + percent.toFixed(2) + "%)";
+        var reads   = this.m.toStringThousands(read_number[this.m.t]) + " reads (" + percent.toFixed(2) + "%)";
         tooltip    += breakChar + reads
         return tooltip
     },
