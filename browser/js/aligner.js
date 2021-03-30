@@ -652,7 +652,7 @@ Aligner.prototype = {
             if (this.isClone(list[i])) {
                 var c = this.m.clone(list[i]);
                 
-                if (c.seg.imgt) continue;
+                if (c.seg.imgt && address == 'IMGTSeg') continue;
                 if (typeof (c.getSequence()) !== 0){
                     request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
                 } else {
