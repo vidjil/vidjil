@@ -513,7 +513,7 @@ Aligner.prototype = {
             span.removeAllChildren();
             span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
             span.setAttribute('title', this.selectedAxis[i].doc);
-            span.className = available_axis[i];
+            span.className = axis.name;
             axisBox.appendChild(span);
         }
     },
