@@ -273,14 +273,20 @@ json_data_align = {
           "reads" : [20] ,
           "top" : 1,
           "germline" : "TRG",
+          "seg" : {
+            "cdr3" : {"start": 1, "stop": 11, "aa": "W#WA", "seq": "atcatgatgcta"}
+          }
       },
       {
-          "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCCCCCCAAATTTTTTTTGATCGATCGATCGATCGAT",
+          "sequence" : "ATTCATGCATGCATGCCCCCCCCCCCCCCCCCCAAATTTTTTTTGATCGATCGATCGATCGAT",
           "name" : "testalign2",
           "id" : "id1",
           "reads" : [25],
           "top" : 2,
-          "germline" : "IGH",
+          "germline" : "IGH",          
+          "seg" : {
+            "cdr3" : {"start": 1, "stop": 11, "aa": "W#WA", "seq": "atcatgatgcta"}
+          }
       }
     ]
   };

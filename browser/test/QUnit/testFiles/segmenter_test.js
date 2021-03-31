@@ -262,7 +262,7 @@ QUnit.test("align", function (assert) {
         assert.ok(aligned_sequence2.includes("–"), "aligned sequence should contains '–'" + aligned_sequence2 )
 
         var nucleo2 = seq2.nucleoString();
-        assert.equal( nucleo2, "ATGCATGCATGCATGCCCCCCCCCCCCCCCCCCAAA–––––––––––TTTTTTTTGATCGAT–CGATCGATCGAT",
+        assert.equal( nucleo2, "ATTCATGCATGCATGCCCCCCCCCCCCCCCCCCAAA–––––––––––TTTTTTTTGATCGAT–CGATCGATCGAT",
                       nucleo2.toUpperCase() + " reference sequence spaced");
 
         var nucleo1 = seq1.nucleoString();
@@ -280,6 +280,12 @@ QUnit.test("align", function (assert) {
         var insert1 = seq1.insertionString();
         assert.equal( insert1.replace(/(?=\s)[^\r\n\t]/g, ' '),  "                                    TTTTTTTTTTT               C            ", 
                       insert1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " inserted nucleotide");
+
+        var amino1 = seq1.aminoString();
+        var aminosplit1 = seq1.aminoSplitString();
+        var mute1 = seq1.muteSubstitutionString();
+        assert.equal( mute1.replace(/(?=\s)[^\r\n\t]/g, ' '),  "  _    _                                                                   ", 
+                      mute1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " mute substitution");
 
         segment.resetAlign()
         done()

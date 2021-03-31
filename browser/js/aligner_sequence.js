@@ -239,13 +239,15 @@ Sequence.prototype = {
             }
         }
         
-        if (typeof cdr3.start != "undefined") {
-            start = cdr3.start;
-            stop = cdr3.stop;
-            cdr3aa = cdr3.aa;
-        }else if (cdr3.constructor === String){
-            start = clone.sequence.indexOf(cdr3);
-            stop = start + cdr3.length;
+        if (typeof cdr3 != "undefined" ){
+            if (typeof cdr3.start != "undefined") {
+                start = cdr3.start;
+                stop = cdr3.stop;
+                cdr3aa = cdr3.aa;
+            }else if (cdr3.constructor === String){
+                start = clone.sequence.indexOf(cdr3);
+                stop = start + cdr3.length;
+            }
         }
         
         
