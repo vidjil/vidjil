@@ -2193,6 +2193,8 @@ form .form_label {
   float: right;
   width: 347px;
   padding: 2px 5px;
+  overflow: hidden;
+  height: 16px;
 }
 .list_select {
   display: block;
