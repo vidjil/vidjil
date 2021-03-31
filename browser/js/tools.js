@@ -818,25 +818,6 @@ function removeEltAndDecrease(array, value) {
 }
 
 
-function export_table_to_csv(cloneId) {
-    var csv   = [];
-    var table = document.getElementById("clone_info_table_"+ cloneId)
-    var rows  = table.querySelectorAll("table tr");
-    
-    for (var i = 0; i < rows.length; i++) {
-        var row = [], cols = rows[i].querySelectorAll("td, th");
-        
-        for (var j = 0; j < cols.length; j++) 
-            row.push(cols[j].innerText);
-        
-        csv.push(row.join(","));        
-    }
-
-    // Download CSV
-    var filename = "information_clone_"+cloneId
-    download_csv(csv.join("\n"), filename);
-}
-
 
 function download_csv(csv, filename) {
     var csvFile;
