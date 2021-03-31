@@ -753,19 +753,24 @@ QUnit.test("clonedb", function(assert) {
 QUnit.test("export_airr", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data, 100);
-    var c1 = new Clone(json_clone1, m, 0, c_attributes);
-    var c3 = new Clone(json_clone3, m, 0, c_attributes);
-    var c7 = new Clone(json_clone7, m, 0, c_attributes);
     m.initClones();
+    var c1 = new Clone(json_clone1, m, 0, c_attributes);
+    var c3 = new Clone(json_clone3, m, 1, c_attributes);
+    var c7 = new Clone(json_clone7, m, 2, c_attributes);
+    
+    m.clone(0).reads = [0]  // As it, getAsAirr should return undefined
+    m.clone(1).reads = [1]  // else airr will return undefined
+    m.clone(2).reads = [10] // else airr will return undefined
+    console.log( m )
 
-    var airr_c1_getted =  c1.get_airr_values(0)
-    var airr_c3_getted =  c3.get_airr_values(0)
-    var airr_c7_getted =  c7.get_airr_values(0)
-    console.log( airr_c7_getted )
+    var airr_c1_getted =  c1.getAsAirr(0)
+    var airr_c3_getted =  c3.getAsAirr(0)
+    var airr_c7_getted =  c7.getAsAirr(0)
 
+    assert.deepEqual(undefined, airr_c1_getted, "getAsAirr return undefined as clone size is null for this time point")
     var airr_c1 = {
       "sample": 0,
-      "duplicate_count": 0,
+      "duplicate_count": 1,
       "locus": "TRG",
       "v_call": "undefined V",
       "d_call": "IGHD2*03",
@@ -779,6 +784,9 @@ QUnit.test("export_airr", function(assert) {
       "_cdr3": "aaatttttt",
       "_junction": "att"
     }
+
+    m.clone(0).reads = [1] // set a positive value again
+    airr_c1_getted =  c1.getAsAirr(0) // update values
     var keys = Object.keys(airr_c1)
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i]
@@ -788,7 +796,7 @@ QUnit.test("export_airr", function(assert) {
 
     var airr_c7 = {
       "sample": 0,
-      "duplicate_count": 0,
+      "duplicate_count": 10,
       "locus": "IGH",
       "v_call": "IGHV1-69*06",
       "d_call": "IGHD3-3*01",

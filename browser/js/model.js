@@ -3608,7 +3608,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             var cloneId = cloneIds[i]
             var clone = this.clone(cloneId)
             for (var time = 0; time < time_length; time++) {
-                airr_values.push(clone.get_airr_values(time))
+                var val_airr = clone.getAsAirr(time)
+                if (val_airr != undefined){
+                    airr_values.push(clone.getAsAirr(time))
+                }
             }
         }
 

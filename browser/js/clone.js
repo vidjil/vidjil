@@ -2063,7 +2063,11 @@ Clone.prototype = {
         return undefined
     },
 
-    get_airr_values: function(time){
+    getAsAirr: function(time){
+        if (!this.getRawReads(this.m.samples.order[time]) > 0){
+            return
+        }
+
         values = {
             "sample": time,
             "sample_name": this.m.samples.original_names[time],
