@@ -2064,7 +2064,7 @@ Clone.prototype = {
     },
 
     getAsAirr: function(time){
-        if (!this.getRawReads(this.m.samples.order[time]) > 0){
+        if ( (this.getRawReads(this.m.samples.order[time]) > 0) == false ){
             return
         }
 
