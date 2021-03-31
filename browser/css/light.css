@@ -2176,6 +2176,7 @@ form .form_label {
 }
 .segmenter .axisBox > span {
   margin: 0 3px;
+  background: #ffffff;
 }
 .bot-bar {
   -khtml-user-select: none;
