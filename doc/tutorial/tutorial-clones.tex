@@ -902,11 +902,12 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
     assert ( not $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is NOT present in the segmenter"
     $b.clone_in_list("1").click
 
-    $b.menu_import_export.hover
-    $b.menu_item_export_add_germline.click
-    $b.update_icon.wait_while(&:present?)
+    # menu entry is currently disabled TODO : revert
+    # $b.menu_import_export.hover
+    # $b.menu_item_export_add_germline.click
+    # $b.update_icon.wait_while(&:present?)
 
-    assert ( $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is present in the segmenter"
+    # assert ( $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is present in the segmenter"
 
     # todo, align; mutation; not available without server side
   end
