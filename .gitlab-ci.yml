@@ -412,6 +412,7 @@ test_server_unit:
     expire_in: 1 week
     paths:
     - browser/test
+    - server/web2py/ap‎plications/vidjil‎/test
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
