@@ -709,7 +709,7 @@ line {
   left: 50%;
   font-size: 13px;
   padding: 20px;
-  background: #FFFFFF;
+  background: #ffffff;
   display: none;
   border: solid;
   border-width: 1px;
@@ -768,7 +768,7 @@ line {
   max-width: 80%;
   font-size: 13px;
   padding: 20px;
-  background: #FFFFFF;
+  background: #ffffff;
   display: none;
   position: fixed;
   left: 50%;
@@ -1001,6 +1001,7 @@ span.logo {
 #list_menu,
 #top-container,
 .list_clones,
+.bot-bar,
 #bot-container,
 .tagSelector {
   border-color: #333333;
@@ -2173,8 +2174,31 @@ form .form_label {
 .margined-bottom {
   margin-bottom: 10px;
 }
+div.tooltip {
+  position: absolute;
+  text-align: left;
+  padding: 2px;
+  font: 14px sans-serif;
+  color: #ffffff;
+  background: #444343;
+  border: 0px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.labelFocusMinor {
+  color: grey;
+  opacity: 0.7;
+  font-size: 12px;
+}
+.labelFocusMajor {
+  color: black;
+  opacity: 1;
+  font-weight: bold;
+  font-size: 16px;
+}
 .segmenter .axisBox > span {
   margin: 0 3px;
+  background: #ffffff;
 }
 .bot-bar {
   -khtml-user-select: none;
@@ -2192,6 +2216,8 @@ form .form_label {
   float: right;
   width: 347px;
   padding: 2px 5px;
+  overflow: hidden;
+  height: 16px;
 }
 .list_select {
   display: block;
@@ -2358,7 +2384,7 @@ span .end-codon {
 .menu-content {
   display: none;
   position: absolute;
-  bottom: 124px;
+  bottom: 154px;
   background-color: white;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
