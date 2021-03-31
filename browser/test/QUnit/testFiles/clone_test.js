@@ -761,7 +761,6 @@ QUnit.test("export_airr", function(assert) {
     m.clone(0).reads = [0]  // As it, getAsAirr should return undefined
     m.clone(1).reads = [1]  // else airr will return undefined
     m.clone(2).reads = [10] // else airr will return undefined
-    console.log( m )
 
     var airr_c1_getted =  c1.getAsAirr(0)
     var airr_c3_getted =  c3.getAsAirr(0)
