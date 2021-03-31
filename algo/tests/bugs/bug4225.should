@@ -2,7 +2,8 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC -c windows -g $VIDJIL_DIR/germline -r 1 -1 -2 -K bug4225-j.fa
 
 $ Show name and sequence
-1:>igkj1 GTGGACGTTCGGCCAAGGGACCAAGGTGGAAATCAAAC
+1:>igkj1
+1:GTGGACGTTCGGCCAAGGGACCAAGGTGGAAATCAAAC
 
 $ Display three lines per system
 3:TRG
