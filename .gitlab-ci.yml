@@ -461,6 +461,10 @@ test_server_unit:
   artifacts:
     reports:
       junit: server/web2py/applications/vidjil/tests/test/TEST-*.xml
+    paths:
+      - browser/
+      - server/web2py/applications/vidjil/
+    when: always
 
 
 ff32-server-functional:
