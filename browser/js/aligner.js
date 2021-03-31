@@ -188,7 +188,7 @@ Aligner.prototype = {
                     var cur_H = seg.height();
                     var auto_H = seg.css('height', 'auto').height();
 
-                    if (auto_H > self.min_H) {
+                    if (auto_H >= self.min_H+20) {
                         if (auto_H > self.max_H) auto_H = self.max_H;
                         if (cur_H  < self.min_H) cur_H  = self.min_H;
                         $(".menu-content").css("bottom", (auto_H+22)+"px");
