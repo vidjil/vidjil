@@ -411,7 +411,7 @@ test_server_unit:
     when: always
     expire_in: 1 week
     paths:
-    - server/web2py/ap‎plications/vidjil‎/test
+    - server/web2py/ap‎plications/vidjil‎/tests
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
