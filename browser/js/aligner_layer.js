@@ -27,7 +27,7 @@ LAYERS = {
         'title': 'fastq_quality',
         'text': function (s,c) { return s.qualityString(); },
         'className': "seq_layer_quality",
-        'enabled': true
+        'enabled': false
     },
 
     'V':

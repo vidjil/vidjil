@@ -454,27 +454,30 @@ Sequence.prototype = {
                 var block = document.createElement("span");
                 block.style.width = width+"px";
                 block.className = "seq_quality_block";
-                var q = this.quality[k].charCodeAt(0)-33;
 
                 if (this.quality[k] == -1){
                     block.title = "quality : xxx";
                     block.style.background = "grey";
-                }
-                if (q == 0){
-                    block.title = "quality : 0";
-                    block.style.background = "white";
-                }
-                else{
-                    block.title = "quality : '"+ this.quality[k] + "' ("+q+"/"+max_quality+")";
-                    //block.style.background = d3.interpolateTurbo( 1 - 0.6*((q)/max_quality));
-                    //block.style.background = d3.interpolateSinebow( 0.4*((q)/max_quality)  );
-                    //block.style.background = "linear-gradient(" + d3.interpolateTurbo( 1 - 0.6*((q)/max_quality)) +","+ 
-                    //                            d3.interpolateTurbo( 1 - 0.6*((q+2*max_quality)/max_quality/3)) +","+
-                    //                            d3.interpolateTurbo( 1 - 0.6*((q+2*max_quality)/max_quality/3)) +","+
-                    //                            d3.interpolateTurbo( 1 - 0.6) +")";
-                    block.style.position = "relative";
-                    block.style.top = Math.floor((h-((q*h)/max_quality))) + "px";
                     block.style.height = 3  + "px";
+                }else{
+                    var q = this.quality[k].charCodeAt(0)-33;
+            
+                    if (q == 0){
+                        block.title = "quality : 0";
+                        block.style.background = "white";
+                    }
+                    else{
+                        block.title = "quality : '"+ this.quality[k] + "' ("+q+"/"+max_quality+")";
+                        block.style.background = d3.interpolateTurbo( 1 - 0.6*((q)/max_quality));
+                        //block.style.background = d3.interpolateSinebow( 0.4*((q)/max_quality)  );
+                        //block.style.background = "linear-gradient(" + d3.interpolateTurbo( 1 - 0.6*((q)/max_quality)) +","+ 
+                        //                            d3.interpolateTurbo( 1 - 0.6*((q+2*max_quality)/max_quality/3)) +","+
+                        //                            d3.interpolateTurbo( 1 - 0.6*((q+2*max_quality)/max_quality/3)) +","+
+                        //                            d3.interpolateTurbo( 1 - 0.6) +")";
+                        block.style.position = "relative";
+                        block.style.top = Math.floor((h-((q*h)/max_quality))) + "px";
+                        block.style.height = 3  + "px";
+                    }
                 }
                 result.appendChild(block);
                 width = 0;
