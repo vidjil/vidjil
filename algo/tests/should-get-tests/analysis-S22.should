@@ -5,22 +5,22 @@ $ Germlines are custom
 1: custom germlines
 
 $ Parses IGHV.fa germline
-1: 104369 bp in 357 sequences
+1: 156380 bp in 550 sequences
 
 $ Parses IGHD.fa germline
 1: 1070 bp in  44 sequences
 
-$ Parses germline/homo-sapiens/IGHJ.fa
-1: 701 bp in  13 sequences
+$ Parses IGHJ.fa germline
+1: 1034 bp in  19 sequences
 
 $ Find the good index loads
-1:custom .* 0.078% l13 k12 .* 0.002% l13 k12
+1:custom .* 0.149% l13 k12 .* 0.003% l13 k12
 
 $ Find approximately the good number of sequences for e-value computation
 1: approx. 131.. sequences
 
 $ Find the good number of windows in Stanford S22
-1: found 10767 windows in 13153 reads
+1: found 10769 windows in 13153 reads
 
 $ First clone -- find the good number of reads
 2:clone-001--.*--0000008
