@@ -2,6 +2,7 @@ QUnit.module("Tools", {
 });
 
 QUnit.test("test get_codons", function(assert) {
+    SYMBOL_VOID = "-"; // overwrite default "–"
     var r = 'ATGATAGAC';
     var s = 'AAACCCGGG';
     var codons = get_codons(r, s, 0);
@@ -373,8 +374,8 @@ QUnit.test("computeStartStop(arrayToProcess,sequence)", function(assert) {
             "CDR3-IMGT": {
                 "seq": "",
                 "tooltip": "CDR3-IMGT",
-                "start": 124,
-                "stop": 111
+                "start": 111,
+                "stop": 124
             }
 
         };

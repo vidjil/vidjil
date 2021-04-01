@@ -4,6 +4,7 @@
 
 @infoContainerHeight : 32px;
 @locusSpacingMargin : 12px;
+@segmenterHeight : 155px;
 
 /* default tag color */
 @tagColor0 : #DC322F;
@@ -61,7 +62,7 @@ body, svg {
   font-family: @bold-font;
 }
 
-.seq-fixed .cloneName, .listElem .cloneName {
+.cloneName, .listElem .cloneName {
   bottom: 1px;
 }
 
@@ -72,11 +73,6 @@ textarea {
 }
 
 /* texts that are not sequences nor identifiers */
-
-#info, .popup_msg, .menu, .menu a
-{
-}
-
 
 h2
 {
@@ -162,7 +158,7 @@ ul{
   position : fixed;
   top : @top_container_height;
   left : 0;
-  bottom : 125px ;
+  bottom : @segmenterHeight;
   background: @background;
   margin: @margin;
   display: flex;
@@ -179,9 +175,16 @@ ul{
 }
 
 #mid-container {
+position : fixed;
   display: flex;
-  flex: auto;
+  flex: 1 1 auto;
+  top : @top_container_height;
+  bottom : @segmenterHeight ;
+  width: calc(~"100%" - @margin + @margin);
   overflow: hidden;
+  background: @background;
+  margin: @margin 0px 0px 0px;
+  border-bottom-color: white;
 }
 
 #right-container{
@@ -624,12 +627,7 @@ line {
   height: 16px;
   position: relative;
   white-space:nowrap;
-  display: flex;
-  flex: 1 1 auto;
-}
-
-.seq-fixed .nameBox {
-  width: 250px;
+  flex: 1 1000 auto;
 }
 
 .list .axisBox, .axisBox span {
@@ -638,10 +636,6 @@ line {
   display: inline-block;
   max-height: 16px;
   position: relative;
-}
-
-.segmenter .axisBox>span {
-  margin : 0 3px;
 }
 
 .identityBox {
@@ -720,6 +714,10 @@ line {
     min-width: 60px;
     padding: 2px 2px 1px 2px;
     cursor : pointer;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }	      
 
 .hiddenCheckBox {
@@ -754,116 +752,6 @@ line {
 .list_sort{
     margin-right : 20px;
     float: right;
-}
-
-							  /*style segmenter element*/
-.list_select{
-  border : solid;
-  border-width : 2px;
-  padding : 0px;
-  border-color : @select;
-}
-.list_focus{
-    background : @border !important;
-}
-
-.sequence-line { 
-    white-space: nowrap;
-}
-.sequence-line:hover { 
-    font-weight: bold;
-}
-
-.seq-fixed {
-  position: relative;
-  display: inline-flex;
-//  width: (@width_left_container - @width_scrollbar);
-  width : auto;
-  margin: -2px;
-  padding: 2px;
-  padding-left: 5px;
-  left:0px;
-  cursor:pointer;
-  z-index:1;
-}
-
-.seq-mobil {
-  margin-left: @width_left_container;
-  letter-spacing: 0.12em;
-  font-family : @monospace-font; 
-  position: relative;
-  bottom: 3px;
-  font-size:1em;
-}
-
-.seq-marge {
-  word-spacing: normal;
-}
-
-.V {
-  color: #000;
-  background-color: #efe;
-}
-.D {
-  color: #000;
-  background-color: #fee;
-}
-.J {
-  color: #000;
-  background-color: #ffffe2;
-}
-.N, .N + .J, .N + .D {
-  box-shadow: -1px 0 0 @default;
-}
-
-.highlight_border, .highlight_seq {
-    display: inline-flex;
-    height: 1em;
-    position: relative;
-}
-.highlight_border {
-    border-bottom: solid;
-    margin: -1px;
-    border-width: 4px;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: -moz-none;
-    -ms-user-select: none;
-    user-select: none;
-    pointer-events: none;
-    opacity: 0.3;
-    bottom: 1px;
-}
-.highlight_seq {
-  top: .9em;
-  padding-bottom: 1px;
-  opacity: 0.6;
-
-  font-size: 70%;
-  letter-spacing: .428em; /* (1-.7) / .7 */
-  left: .214em;
-}
-.highlight{
-    display: inline-block;
-    width: 0px;
-    word-spacing: normal;
-}
-span .substitution, span .indel, span .insertion, span .deletion {
-  font-weight: bold;
-  color: #800;
-}
-span .substitution {
-  border-bottom: 1px solid #800;
-}
-span .silent {
-  border-bottom: 3px double #008;
-  color: #008;
-}
-
-span .end-codon {
-  box-shadow: 1px 0 0 @default;
-}
-span .end-codon-not-first {
 }
 
 							  /*tag*/
@@ -1115,7 +1003,7 @@ span.sample-tag, a.tag-link {
   width : 100%;
 }
 
-#file_menu, #menu, #list_clones, #tagSelector, #display-menu, #bot-container, #segmenter_axis_menu, .seq-fixed{
+#file_menu, #menu, #list_clones, #tagSelector, #display-menu, #bot-container{
  background : @background;
 }
 
@@ -1137,9 +1025,7 @@ span.sample-tag, a.tag-link {
 .button, .button_right, .button_left{
   cursor:pointer;
   font-size: 13px;
-  padding: 0px 3px;
-  margin-right:5px;
-  margin-left:5px;
+  padding: 2px 5px;
   min-width : 16px;
   color: @default;
 }
@@ -1204,60 +1090,15 @@ span.logo
   color: #f88;
 }
 
-.bot-bar {
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: -moz-none;
-    -ms-user-select: none;
-    user-select: none;
-    height: 20px;
-    border-bottom: solid;
-    width: 100%;
-    padding-top: 2px;
-}
-
-.menu-segmenter {
-    position: relative;
-    float: left;
-    width: @width_left_container +200;
-}
-
-#toIMGTSeg {
-    width: 12px;
-    display: inline-block;
-    text-align: center;
-}
-
-.menu-highlight {
-    position: relative;
-    float: left;
-    width: eval(@width_highlight);
-}
-
 .devel-mode, .beta-mode {
     display: none;
 }
 
 .focus {
-    position: relative;
-    text-align: center;
-    float: left;
-    width: calc(~"100%" - (@width_left_container +  @width_stats + @width_highlight + 50));
-    overflow: hidden;
-    height: 1.1em;
-}
-.stats {
-  position: relative;
-  text-align: right;
-  float: right;
-  width: @width_stats - 3px;
-  padding-right: 3px;
-}
-
-.segmenter {
-    overflow-x: scroll !important; 
-    overflow-y: auto;
-    height : 100px;
+  width: calc(~"100%" - 760px);
+  overflow: hidden;
+  height: 13px;
+  display: inline-block;
 }
 
 .selector{
@@ -1277,21 +1118,13 @@ span.logo
 }
 
 #bot-placeholder {
-  flex: 0 0 135px;
+  flex: 0 0 @segmenterHeight;
 }
 
 #bot-container {
   position: fixed;
   bottom: 0;
-  left: @margin;
-  border-top: solid;
-  border-width: 6px;
-  min-height: 125px;
-}
-
-#segmenter {
-  display: flex;
-  flex-flow: column;
+  min-height: @segmenterHeight;
 }
 
 .tn{
@@ -1955,6 +1788,11 @@ select>option:hover {
 
 .inactive {
     opacity: 0.5;
+    pointer-events: none;
+}
+
+.unchecked {
+  opacity: 0.5;
 }
 
 .suggest_box {
@@ -2250,11 +2088,6 @@ textarea#edit_value {
    position: relative;
    background: inherit;
    display: inline-block;
-}
-
-#highlightCheckboxes {
-    height: 100%;
-    float: left;
 }
 
 label.highlight_label {

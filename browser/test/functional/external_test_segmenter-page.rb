@@ -56,8 +56,8 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
 
   def test_04_segmenter_highlights
     for i in ['0', '1']
-      for gene in ['V', 'J']
-        span = $b.clone_in_segmenter(i).span(:class => gene)
+      for gene in ['seq_layer_V', 'seq_layer_J']
+        span = $b.clone_in_segmenter(i).div(:class => gene)
         assert (span.present?), "#{gene} span should be visible"
       end
     end
