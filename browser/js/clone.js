@@ -1397,8 +1397,8 @@ Clone.prototype = {
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.90); m.closeInfoBox();'>correlated</a> clones</p>"
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
         html += "<p>Download clone information as "
-        html += "<a class='button' id='download_info_"+ this.index +"_airr' onclick='m.export_as_airr([" + this.index + "])'>AIRR</a>"
-        html += "<a class='button' id='download_info_"+ this.index +"_csv' onclick='export_table_to_csv(" + this.index + ")'>CSV</a>"
+        html += "<a class='button' id='download_info_"+ this.index +"_airr' onclick='m.exportCloneAs(\"airr\", [" + this.index + "])'>AIRR</a>"
+        html += "<a class='button devel-mode' id='download_info_"+ this.index +"_airr' onclick='m.exportCloneAs(\"json\", [" + this.index + "])'>JSON</a>"
         html += "</p>"
 
         //column
@@ -2153,6 +2153,23 @@ Clone.prototype = {
 
         return values
 
+    },
+
+    getAsJson: function(){
+        data = {}
+        data.seg      = this.seg
+        data.id       = this.id
+        data.index    = this.index
+        data.sequence = this.sequence
+        data.reads    = this.reads
+        data.top      = this.top
+        data.reads    = this.reads
+        data.sample   = this.m.samples.original_names
+
+        data.GCContent            = this.GCContent
+        data._average_read_length = this._average_read_length
+        data.consensusLength      = this.consensusLength
+        return data
     }
 
 
