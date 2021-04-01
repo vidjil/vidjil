@@ -1,10 +1,10 @@
 #include "filter.h"
 #include "math.hpp"
 
-FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed) : originalBioReader(origin){
+FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed, float keys_compress) : originalBioReader(origin){
   this->filtered_sequences_nb = 0;
   this->filtered_sequences_calls = 0;
-  buildACAutomatonToFilterBioReader(seed);
+  buildACAutomatonToFilterBioReader(seed, keys_compress);
 }
 
 FilterWithACAutomaton::~FilterWithACAutomaton(){
@@ -16,7 +16,7 @@ FilterWithACAutomaton::~FilterWithACAutomaton(){
     }
 }
 
-void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed){
+void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed, float keys_compress){
   char asciiChar;
   int asciiNumber;
   string currentLabel;
@@ -32,12 +32,22 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed){
   asciiNumber = SPECIFIC_KMERS_NUMBER;
   automaton->insert(originalBioReader.sequence(0),std::string("") + char(asciiNumber), true, 0, seed);
   indexes->push_back(0);
+
+  int previousAsciiNumber = asciiNumber;
+  int rawNumber = 0;
+
   previousLabel = extractGeneName(originalBioReader.label(0));
   for(int i = 1;i < originalBioReader.size(); ++i){
     currentLabel = extractGeneName(originalBioReader.label(i));
     if(currentLabel != previousLabel){
+      asciiNumber = SPECIFIC_KMERS_NUMBER + 1 + (int) rawNumber / keys_compress;
+      rawNumber++;
+    }
+
+    if (asciiNumber > previousAsciiNumber)
+    {
       indexes->push_back(i);
-      asciiNumber++;
+      previousAsciiNumber = asciiNumber;
     }
     if(asciiNumber > 127){
       cerr << WARNING_STRING << "Pre-filtering disabled" << endl;

@@ -5,7 +5,8 @@
 
 # Most sequences are not reported as 'only V', but as 'too few V/J'
 1: UNSEG only V/.* 1
-1: UNSEG too few V/J .* 11
-
+# see #4730
+f1: UNSEG too few V/J .* 11
+1: UNSEG too few V/J .* 9
 
 

@@ -108,9 +108,10 @@ extern bool global_interrupted;
 void sigintHandler(int sig_num);
 
 /* 
-	Extract the gene name from a label. This take the whole part
-	before the star and returns it. If there is no star in the
-	name the whole label is returned.
+  Extract the gene name from a label.
+  If there is a pipe '|', consider only what is after the (first) pipe.
+  If there is a star '*', consider only what is before the start
+  M99686|IGHV5-51*01|Homo sapiens|...   -> IGHV5-51
 	IGHV-01*05	->	IGHV-01
 	IGHV-7500AB	->	IGHV-7500AB
 */

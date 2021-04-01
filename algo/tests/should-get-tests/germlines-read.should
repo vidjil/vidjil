@@ -4,14 +4,14 @@ $ number of reads and kmers
 1:13153 reads, 3020179 kmers
 
 $ k-mers, IGHV
-1:13116 .* 1219953 .*IGHV
+1:13135 .* 1285374 .*IGHV
 
-$ k-mers, IGHJ
-1:37 .* 435550 .*IGHJ
+$ k-mers, IGHJ+down
+1:18 .* 432827 .*IGHJ.down
 
 $ k-mers, ambiguous
-1:53416   .*\\?
+1:71163   .*\\?
 
 $ k-mers, unknown
-1:1406774 .*_
+1:1324958 .*_
 
