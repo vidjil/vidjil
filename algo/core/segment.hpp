@@ -1478,7 +1478,7 @@ void FineSegmenter<Shortcut, Affect>::showAlignments(ostream &out){
 }
 
 template <typename Shortcut, typename Affect>
-void FineSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone){
+void FineSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone, bool details){
   json seg;
 
   for (AlignBox *box: boxes)
@@ -1527,16 +1527,20 @@ json toJsonSegVal(string s) {
 }
 
 template <typename Shortcut, typename Affect>
-void KmerSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone) {
+void KmerSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone, bool details) {
     json seg;
     int sequenceSize = this->sequence.size();
 
-    if (this->evalue > NO_LIMIT_VALUE)
-      clone->setSeg("evalue", toJsonSegVal(scientific_string_of_double(this->evalue)));
-    if (this->evalue_left > NO_LIMIT_VALUE)
-      clone->setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(this->evalue_left)));
-    if (this->evalue_right > NO_LIMIT_VALUE)
-      clone->setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(this->evalue_right)));
+    if (evalue > NO_LIMIT_VALUE)
+      clone->setSeg("evalue", toJsonSegVal(scientific_string_of_double(evalue)));
+
+    if (!details)
+      return ;
+
+    if (evalue_left > NO_LIMIT_VALUE)
+      clone->setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(evalue_left)));
+    if (evalue_right > NO_LIMIT_VALUE)
+      clone->setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(evalue_right)));
 
     if (getKmerAffectAnalyser() != NULL) {
       clone->setSeg("affectValues", {
