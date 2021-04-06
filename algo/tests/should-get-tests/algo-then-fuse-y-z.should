@@ -1,0 +1,32 @@
+!REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
+
+!OUTPUT_FILE: out/y2z0-y2z1.vidjil
+!OPTIONS: --mod jR
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -b y2z0 -r1 -x3 -y2 -z0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; $VIDJIL_DIR/$EXEC -b y2z1 -r1 -x3 -y2 -z1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; python $VIDJIL_DIR/tools/fuse.py out/y2z0.vidjil out/y2z1.vidjil -o out/y2z0-y2z1.vidjil
+
+$ Points list
+2:samples.original_names
+:samples.original_names[0]: data//Stanford_S22.fasta
+:samples.original_names[1]: data//Stanford_S22.fasta
+
+$ First clone (-z 1)
+:clones[0].id: TGTATTACTGTGCGAGAGTGGGCAGCAGCTGGTCTGATGCTTTTGATTAT
+:clones[0]._average_read_length[0]: 233
+:clones[0]._average_read_length[1]: 233
+:clones[0].seg.evalue.val: 1.17e-95
+:clones[0].sequence:
+:clones[0].seg.5.name: IGHV1-3
+
+$ Second clone
+:clones[1].id: GCGAGAGCGATCCCCCGGTATTACTATGATACTAGTGGCCCAAACGACTA
+:clones[1]._average_read_length[0]: 243
+:clones[1]._average_read_length[1]: 243
+:clones[1].seg.evalue.val: 5.92e-97
+:clones[1].sequence:
+0:clones[1].seg.5.name:
+
+$ Third clone (-y 2, no consensus)
+:clones[2].id: GATAAAATTGGGTATTATGATTACGTTTGGGGGAGTTATCGTTTGGGTCT
+0:clones[2]._average_read_length:
+:clones[2].sequence: 0
