@@ -1525,24 +1525,7 @@ int main (int argc, char **argv)
         // Basic information that will always be output
         clone->set("_average_read_length", { fixed_string_of_float(windowsStorage->getAverageLength(it->first), 2) });
         clone->set("sequence", kseg->getSequence().sequence);
-
-        //$$ If max_clones is reached, we will not run a FineSegmenter but we will still output the representative
-        bool stop_analysis = ((max_clones >= 0) && (num_clone >= max_clones + 1)
-            && ! windowsStorage->isInterestingJunction(it->first));
-
-        if (!stop_analysis || output_details)
-        {
         clone->set("_coverage", { repComp.getCoverage() });
-        clone->set("_coverage_info", {repComp.getCoverageInfo()});
-        //From KmerMultiSegmenter
-        kseg->toOutput(clone);
-
-        if (repComp.getQuality().length())
-        clone->set("seg", "quality", {
-            {"start", 1},
-            {"stop", kseg->getSequence().sequence.length()},
-            {"seq", repComp.getQuality()}
-        });
 
         if (repComp.getCoverage() < WARN_COVERAGE)
           clone->add_warning(W51_LOW_COVERAGE, "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3), LEVEL_WARN, clone_on_stdout);
@@ -1550,6 +1533,23 @@ int main (int argc, char **argv)
         if (label.length())
           clone->set("label", label) ;
 
+        //$$ If max_clones is reached, we will not run a FineSegmenter but we will still output the representative
+        bool stop_analysis = ((max_clones >= 0) && (num_clone >= max_clones + 1)
+            && ! windowsStorage->isInterestingJunction(it->first));
+
+        kseg->toOutput(clone, (!stop_analysis || output_details));
+
+        if (!stop_analysis || output_details)
+        {
+        clone->set("_coverage_info", {repComp.getCoverageInfo()});
+        //From KmerMultiSegmenter
+
+        if (repComp.getQuality().length())
+        clone->set("seg", "quality", {
+            {"start", 1},
+            {"stop", kseg->getSequence().sequence.length()},
+            {"seq", repComp.getQuality()}
+        });
         }
 
         if (stop_analysis)
