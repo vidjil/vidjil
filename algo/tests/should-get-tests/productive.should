@@ -1,23 +1,32 @@
 !OUTPUT_FILE: out/productive_stop_outframe.vidjil
-!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG $VIDJIL_DATA/productive_stop_outframe.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG,IGH $VIDJIL_DATA/productive_stop_outframe.fa
 !OPTIONS: --mod jR
 
-$ Two identical junctions, and one with a spurious nucleotide
+$ Two identical TRG junctions, and one with a spurious nucleotide
 :clones[0].seg.junction.aa: CATWDRKNYYKKLF
 :clones[1].seg.junction.aa: CATWDRKNYYKKLF
 :clones[2].seg.junction.aa: CATWDRK#NYYKKLF
 
-$ But only one productive
+$ Two identical IGH junctions
+:clones[4].seg.junction.aa: CARAIPRYYYDTSGPNDYW
+:clones[5].seg.junction.aa: CARAIPRYYYDTSGPNDYW
+
+$ But only one TRG and one IGH productive
 :clones[0].seg.junction.productive: False
 :clones[1].seg.junction.productive: True
 :clones[2].seg.junction.productive: False
 :clones[3].seg.junction.productive: False
+:clones[4].seg.junction.productive: True
+:clones[5].seg.junction.productive: False
 
 $ Cause of unproductivity
 :clones[0].seg.junction.unproductive: stop-codon
 0:clones[1].seg.junction.unproductive
 :clones[2].seg.junction.unproductive: out-of-frame
 :clones[3].seg.junction.unproductive: too-short
+0:clones[4].seg.junction.unproductive
+:clones[5].seg.junction.unproductive: no-WPGxG-pattern
+
 
 !OUTPUT_FILE: out/productive_stop_outframe.tsv
 !LAUNCH: echo
