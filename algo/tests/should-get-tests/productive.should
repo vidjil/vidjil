@@ -7,17 +7,21 @@ $ Two identical TRG junctions, and one with a spurious nucleotide
 :clones[1].seg.junction.aa: CATWDRKNYYKKLF
 :clones[2].seg.junction.aa: CATWDRK#NYYKKLF
 
-$ Two identical IGH junctions
+$ Two identical IGH junctions, and another one
 :clones[4].seg.junction.aa: CARAIPRYYYDTSGPNDYW
 :clones[5].seg.junction.aa: CARAIPRYYYDTSGPNDYW
+:clones[6].seg.junction.aa: CARGIVGTTDATFDYW
 
-$ But only one TRG and one IGH productive
+$ But only one TRG productive
 :clones[0].seg.junction.productive: False
 :clones[1].seg.junction.productive: True
 :clones[2].seg.junction.productive: False
 :clones[3].seg.junction.productive: False
+
+$ and only one IGH productive
 :clones[4].seg.junction.productive: True
 :clones[5].seg.junction.productive: False
+:clones[6].seg.junction.productive: False
 
 $ Cause of unproductivity
 :clones[0].seg.junction.unproductive: stop-codon
@@ -26,6 +30,7 @@ $ Cause of unproductivity
 :clones[3].seg.junction.unproductive: too-short
 0:clones[4].seg.junction.unproductive
 :clones[5].seg.junction.unproductive: no-WPGxG-pattern
+:clones[6].seg.junction.unproductive: no-WPGxG-pattern
 
 
 !OUTPUT_FILE: out/productive_stop_outframe.tsv
