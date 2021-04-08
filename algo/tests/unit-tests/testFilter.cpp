@@ -348,10 +348,13 @@ void testGetNSignicativeKmers(){
   BioReader filtered;
   BioReader seqV("../../germline/homo-sapiens/IGHV.fa", 2, "|");
 
-  string SIZE_ERROR = "Filtered BioReader should be 10x smaller";
+  string SIZE_ERROR = "Filtered BioReader should be ";
   string GENE_NOT_FOUND = "Filtering sequence not found after filter";
 
-  FilterWithACAutomaton *f = new FilterWithACAutomaton(seqV, "########");
+  FilterWithACAutomaton *f = new FilterWithACAutomaton(seqV, "########", 2.0);
+
+  // These sequences are known to trigger a <10x filter, see #4660
+  const std::vector<std::string> NO_10X_FILTER { "IGHV4-39*04", "IGHV4-59*09", "IGHV4-61*07", "IGHV(III)-44*01", "IGHV(III)-44D*01" } ;
 
   int total_filtered = 0;
 
@@ -367,7 +370,10 @@ void testGetNSignicativeKmers(){
       ++j;
     }
     TAP_TEST(j < filtered.size(), TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENE_NOT_FOUND);
-    TAP_TEST(filtered.size() < seqV.size() / 10, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR + ", " + seq.label + ", " + string_of_int(filtered.size()) + "/" + string_of_int(seqV.size()));
+
+    float expected_filtered_ratio = std::find(NO_10X_FILTER.begin(), NO_10X_FILTER.end(), seq.label) == NO_10X_FILTER.end() ? 10 : 1.20 ;
+
+    TAP_TEST(filtered.size() < seqV.size() / expected_filtered_ratio, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR + fixed_string_of_float(expected_filtered_ratio, 2) + "x smaller, " + seq.label + ", " + string_of_int(filtered.size()) + "/" + string_of_int(seqV.size()));
 
     total_filtered += filtered.size();
   }

@@ -427,7 +427,7 @@ int main (int argc, char **argv)
 
   bool keep_unsegmented_as_clone = false;
   app.add_flag("--not-analyzed-as-clones", keep_unsegmented_as_clone,
-               "consider not analyzed reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --not-analyzed-as-clones -AX 20)")
+               "consider not analyzed reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --not-analyzed-as-clones --all -X 20)")
     -> group(group) -> level();
 
 
@@ -855,7 +855,7 @@ int main (int argc, char **argv)
   if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES)
     {
       cout << endl
-	   << "* WARNING: " << PROGNAME << " was run with '-A' option or with a large '-z' option" << endl ;
+	   << "* WARNING: " << PROGNAME << " was run with '--all' option or with a large '--max-designations/-z' option" << endl ;
     }
   
   if (command == CMD_SEGMENT)
@@ -1335,7 +1335,7 @@ int main (int argc, char **argv)
     if (sort_clones.size() == 0)
       {
 	cout << "  ! No clones with current parameters." << endl;
-	cout << "  ! See the 'Limits to report a clone' options (-r, --ratio, -z, -A)." << endl;
+	cout << "  ! See the 'Limits to report and to analyze clones' options (-r, --min-ratio, -z, --all)." << endl;
       }
     else
       {
@@ -1458,7 +1458,7 @@ int main (int argc, char **argv)
             {
               cout << "." ;
               if (!(num_clone % (PROGRESS_POINT_CLONES * PROGRESS_LINE)))
-              cout << setw(10) << num_clone / 1000 << "k clones " << endl;
+              cout << right << setw(10) << num_clone / 1000 << "k clones " << endl;
               cout.flush() ;
             }
         }
@@ -1518,7 +1518,7 @@ int main (int argc, char **argv)
         output.addClone(it->first, clone);
         clone->set("sequence", kseg->getSequence().sequence);
         clone->set("_coverage", { repComp.getCoverage() });
-        clone->set("_average_read_length", { windowsStorage->getAverageLength(it->first) });
+        clone->set("_average_read_length", { fixed_string_of_float(windowsStorage->getAverageLength(it->first), 2) });
         clone->set("_coverage_info", {repComp.getCoverageInfo()});
         //From KmerMultiSegmenter
         kseg->toOutput(clone);
@@ -1857,7 +1857,7 @@ int main (int argc, char **argv)
 
   //$ Output statistics on filter()
   if (verbose && (kmer_threshold != NO_LIMIT_VALUE)) {
-    cout << "Statistics on clone analysis (-Z):" << endl;
+    cout << "Statistics on filtered genes for clone analysis (--analysis-filter):" << endl;
     for(list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       FilterWithACAutomaton *f =  (*it)->getFilter_5();
       if (f)

@@ -53,7 +53,9 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
     nb_reads++;
 
     if (out_affects) {
-      *out_affects << reads->getSequence();
+      Sequence seq = reads->getSequence();
+      *out_affects << ">" << seq.label << endl
+                   << setw(13) << " " << seq.sequence << endl;
     }
     
     KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, out_affects, nb_expected, nb_reads_for_evalue);
@@ -114,7 +116,7 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 
     // Last line of detailed affects output
     if (out_affects) {
-      *out_affects << "#>" << seg->label << " " <<  seg->getInfoLine() << endl << endl;
+      *out_affects << "==> " << seg->label << " " << seg->getInfoLine() << endl << endl;
     }
 
     // Progress bar
@@ -125,7 +127,9 @@ WindowsStorage *WindowExtractor::extract(OnlineBioReader *reads,
 	cout << "." ;
 
 	if (!(nb_reads % (PROGRESS_POINT * PROGRESS_LINE)))
-	  cout << setw(10) << nb_reads / 1000 << "k reads " << fixed << setprecision(2) << setw(14) << bp_total / 1E6 << " Mbp" << endl ;
+	  cout << right
+         << setw(10) << nb_reads / 1000 << "k reads "
+         << fixed << setprecision(2) << setw(14) << bp_total / 1E6 << " Mbp" << endl ;
 
 	cout.flush() ;
       }

@@ -35,8 +35,7 @@ VidjilVMI.prototype = {
         this.vmi.addView("info", this.left_id, "", []);
         this.vmi.addView("visu", this.visu_id, "", []);
         this.vmi.addView("visu2", this.visu_id, "", []);
-        var segmenter_view = this.vmi.addView("segmenter", this.bot_id, "", [], segmenter_callback);
-        segmenter_view.setMutable(false);
+        this.vmi.addView("segmenter", this.bot_id, "", []);
         this.vmi.addView("visu3", this.right_id, "", []);
         this.vmi.setOverlays([this.visu_id]);
 

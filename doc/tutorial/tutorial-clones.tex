@@ -177,7 +177,7 @@ Usually we may want to tag them in order to remember them later on.
     $b.clone_info("0")[:star].click ## clone rechute
     $b.tag_item('4')[:name].click
     $b.update_icon.wait_while(&:present?)
-    $b.clone_in_list("1").click ## select other clone to see real color of clone 0
+    $b.clone_in_list("5").click ## select other clone to see real color of clone 0
 
     # New color
     assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
@@ -902,11 +902,12 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
     assert ( not $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is NOT present in the segmenter"
     $b.clone_in_list("1").click
 
-    $b.menu_import_export.hover
-    $b.menu_item_export_add_germline.click
-    $b.update_icon.wait_while(&:present?)
+    # menu entry is currently disabled TODO : revert
+    # $b.menu_import_export.hover
+    # $b.menu_item_export_add_germline.click
+    # $b.update_icon.wait_while(&:present?)
 
-    assert ( $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is present in the segmenter"
+    # assert ( $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is present in the segmenter"
 
     # todo, align; mutation; not available without server side
   end
@@ -977,13 +978,13 @@ clicked on.
   number of analyzed reads? Why did it change?}
 \begin{verbatim}
   def test_B_clones_35_locus_switch
-    assert ( not $b.locus_topleft("TRG").classes.include? "inactive" ), "locus TRG present in info panel"
-    assert ( not $b.locus_topleft("IGH").classes.include? "inactive" ), "locus IGH present in info panel"
+    assert ( not $b.locus_topleft("TRG").classes.include? "unchecked" ), "locus TRG present in info panel"
+    assert ( not $b.locus_topleft("IGH").classes.include? "unchecked" ), "locus IGH present in info panel"
     $b.locus_topleft("IGH").click(:shift)
     $b.update_icon.wait_while(&:present?)
 
-    assert ( $b.locus_topleft("TRG").classes.include? "inactive" ), "locus TRG NOT present in info panel after switch"
-    assert ( not $b.locus_topleft("IGH").classes.include? "inactive" ), "locus IGH present in info panel after switch"
+    assert ( $b.locus_topleft("TRG").classes.include? "unchecked" ), "locus TRG NOT present in info panel after switch"
+    assert ( not $b.locus_topleft("IGH").classes.include? "unchecked" ), "locus IGH present in info panel after switch"
   end
 \end{verbatim}
 
@@ -992,8 +993,8 @@ clicked on.
   def test_B_clones_36_activate_again_locus
     $b.locus_topleft("TRG").click
     $b.update_icon.wait_while(&:present?)
-    assert ( not $b.locus_topleft("TRG").classes.include? "inactive" ), "locus TRG present in info panel after switch"
-    assert ( not $b.locus_topleft("IGH").classes.include? "inactive" ), "locus IGH present in info panel after switch"
+    assert ( not $b.locus_topleft("TRG").classes.include? "unchecked" ), "locus TRG present in info panel after switch"
+    assert ( not $b.locus_topleft("IGH").classes.include? "unchecked" ), "locus IGH present in info panel after switch"
   end
 \end{verbatim}
 

@@ -129,7 +129,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
     }
 
     //update imgt button according to request processing
-    if (typeof imgt4segButton != "undefined"){
+    if (imgt4segButton){
         imgt4segButton.removeAllChildren();
         imgt4segButton.appendChild(icon('icon-spin4 animate-spin', 'Sequences sent to IMGT/V-QUEST'));
     }
@@ -207,78 +207,11 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
             }
             modelRef.updateElemStyle(modelRef.getSelected());
 
-            var imgt4segButton= document.getElementById("toIMGTSeg");
-            if (typeof imgt4segButton != "undefined"){
-                imgt4segButton.innerHTML = '▼';
-            }
             console.log({
                 "type": "log",
                 "msg": logmsg+ ")" + httpRequest.statusText
             });
 
-            // sai : segmenter axis inputs ; activate productivity-IMGT and VIdentity-IMGT
-            var sai = document.getElementById('segmenter_axis_select').getElementsByTagName('input');
-            for (var index in sai) {
-                if (!sai[index].checked && (sai[index].value == "productivity IMGT" || sai[index].value == "VIdentity IMGT"))
-                    sai[index].click();
-            }
-
-            var span = document.getElementById('highlightCheckboxes');
-            span.removeAllChildren();
-            var input = document.createElement('input');
-            input.type = 'checkbox';
-            input.id = 'imgt_cdr3_input_check';
-            input.checked = false;
-            $(input).on("click", function() {
-                if(this.checked) {
-                    segmenter.highlight[1].field = "CDR3-IMGT";
-                    segmenter.highlight[1].color = "red";
-
-                } else {
-                    segmenter.highlight[1].field = "";
-                }
-                    segmenter.update();
-
-            });
-            var label = document.createElement('label');
-            label.setAttribute("for", 'imgt_cdr3_input_check');
-            label.innerHTML = 'CDR3-IMGT';
-
-            input.setAttribute("title", 'Display CDR3 computed by IMGT/V-QUEST');
-            label.setAttribute("title", 'Display CDR3 computed by IMGT/V-QUEST');
-
-            span.appendChild(input);
-            span.appendChild(label);
-
-            input = document.createElement('input');
-            input.type = 'checkbox';
-            input.id = 'imgt_vdj_input_check';
-            input.checked = false;
-            $(input).on("click", function() {
-                if(this.checked) {
-                    segmenter.highlight[2].field = "V-REGION";
-                    segmenter.highlight[2].color = "#4b4";
-                    segmenter.highlight[3].field = "D-REGION";
-                    segmenter.highlight[3].color = "#b44";
-                    segmenter.highlight[4].field = "J-REGION";
-                    segmenter.highlight[4].color = "#aa2";
-                } else {
-                    segmenter.highlight[2].field = "";
-                    segmenter.highlight[3].field = "";
-                    segmenter.highlight[4].field = "";
-
-                }
-                    segmenter.update();
-
-            });
-            label = document.createElement('label');
-            label.setAttribute("for", 'imgt_vdj_input_check');
-            label.innerHTML = "V/D/J-IMGT";
-            input.setAttribute("title", "Display 5'V-REGION, D-REGION and 3'J-REGION computed by IMGT/V-QUEST");
-            label.setAttribute("title", "Display 5'V-REGION, D-REGION and 3'J-REGION computed by IMGT/V-QUEST");
-
-            span.appendChild(input);
-            span.appendChild(label);
         }
     };
     httpRequest.onerror = function () {
@@ -287,11 +220,6 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
             "msg": "imgtPostForSegmenter: error while requesting IMGT website: " + httpRequest.statusText,
             "priority": 2
         });
-        var imgt4segButton= document.getElementById("toIMGTSeg");
-        if (typeof imgt4segButton != "undefined"){
-            imgt4segButton.removeAttribute("style");
-            imgt4segButton.textContent=imgt4segButton.textContent.replace(" (loading)","");
-        }
     };
 
     //test with a local file

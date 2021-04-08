@@ -2815,6 +2815,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {boolean} bool - isFiltered value given to all clones
      * */
     reset_filter: function (bool) {
+        if (!bool)
+            this.filter_string = undefined;
+            
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
             c.isFiltered=bool
@@ -2828,6 +2831,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {string} str - required string to pass the filter
      * */
     filter: function (str) {
+        this.filter_string = str;
         this.reset_filter(true)
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
@@ -3608,6 +3612,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             var cloneId = cloneIds[i]
             var clone = this.clone(cloneId)
             for (var time = 0; time < time_length; time++) {
+
                 var val_airr = clone.getAsAirr(time)
                 if (val_airr != undefined){
                     airr_values.push(clone.getAsAirr(time))
@@ -3686,6 +3691,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
 
         // Download data in a file
+
         var filename = "clone_" + cloneIds.join("_") + "." + file_format
         download_csv(data, filename);
     },

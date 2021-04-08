@@ -90,9 +90,8 @@ try {
     var graph = new Graph("visu2", m, db);               // Time graph
     var list_clones = new List("list", "data", m, db);   // List of clones
     var sp = new ScatterPlot("visu", m, db);             // Scatterplot (both grid and bar plot view)
-    var sp2 = new View(m, "visu3"); // Dummy view
-    // var sp2 = new ScatterPlot("visu3", m, db, 5);
-    var segment = new Segment("segmenter", m, db);   // Segmenter
+    var sp2;
+    var segment = new Aligner("segmenter", m, db);   // Segmenter
 
 
     /* Similarity

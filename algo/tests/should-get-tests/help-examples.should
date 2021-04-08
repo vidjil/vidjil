@@ -26,4 +26,4 @@ cd $VIDJIL_DIR ; sh help-examples.sh
 
 # LIL-L4, detects first clone
 1:Clone .001 .* 30..\%
-1:clone-001--TRG.* TRGV9.01 0/AC/1 TRGJ1.02
+1:clone-001--TRG.* TRGV9.01 0/AC/4 TRGJ1.01
