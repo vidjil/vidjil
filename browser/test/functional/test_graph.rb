@@ -194,6 +194,35 @@ class TestGraph < BrowserTest
 
   end
 
+  def test_08_mouseover 
+    ## reset, time 0, preset 0
+    $b.send_keys 0
+    $b.graph_x_legend("0").fire_event('click')
+    $b.update_icon.wait_while(&:present?)
+
+
+    # Use show all and hide all button
+    $b.div(:id => 'visu2_menu').click
+    $b.update_icon.wait_while(&:present?) # wait update
+    $b.td(:id => 'visu2_listElem_showAll').click
+    $b.update_icon.wait_while(&:present?) # wait update
+
+    # Hover the sample in graphList. Label in graph should be changed in size
+    menu = $b.div(:id => 'visu2_menu')
+    $b.td(:id => "visu2_listElem_text_0").hover
+    assert ( $b.element(tag_name: 'text', :id => 'time0').style('font-size') == "16px" ), "sample 0 have correct label size when hover 0 in graphlist"
+    assert ( $b.element(tag_name: 'text', :id => 'time1').style('font-size') == "12px" ), "sample 1 have correct label size when hover 1 in graphlist"
+
+
+    $b.td(:id => "visu2_listElem_text_1").hover
+    assert ( $b.element(tag_name: 'text', :id => 'time1').style('font-size') == "16px" ), "sample 1 have correct label size when hover 1 in graphlist"
+    assert ( $b.element(tag_name: 'text', :id => 'time0').style('font-size') == "12px" ), "sample 0 have correct label size when hover 0 in graphlist"
+
+    $b.clone_in_list('4').click
+    $b.update_icon.wait_while(&:present?) # wait update
+    assert ( $b.graph_x_legend('0', :class => 'graph_time2').exists? ), "sample 1 have correct label size when no hover in graphlist (bold as select)"
+  end
+
   # Not really a test
   def test_zz_close
     close_everything

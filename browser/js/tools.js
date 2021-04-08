@@ -1,3 +1,6 @@
+var SYMBOL_VOID = "–";
+var SYMBOL_MATCH = "·";
+
 var SILENT="silent";
 var SUBST="substitution";
 var INS="insertion";
@@ -33,7 +36,7 @@ function get_codons(ref, seq, frame) {
 
     // Search first nucleotide pos
     for (pos; pos < ref.length; pos++) {
-        if (ref[pos] != '-') {
+        if (ref[pos] != SYMBOL_VOID) {
             if (frame == 0)
                 break;
             frame--;
@@ -52,7 +55,7 @@ function get_codons(ref, seq, frame) {
     var nb_nuc = 0;
     for (; pos < ref.length; pos++) {
         if (nb_nuc == 3 ||
-            (ref[pos] != '-' && current_codon_seq.length > 0 &&
+            (ref[pos] != SYMBOL_VOID && current_codon_seq.length > 0 &&
              nb_nuc == 0)) {
             codons_ref.push(current_codon_ref);
             codons_seq.push(current_codon_seq);
@@ -61,9 +64,9 @@ function get_codons(ref, seq, frame) {
             nb_nuc = 0;
         }
 
-        if (ref[pos] == '-') {
+        if (ref[pos] == SYMBOL_VOID) {
             current_codon_seq += seq[pos];
-            current_codon_ref += '-';
+            current_codon_ref += SYMBOL_VOID;
         } else {
             current_codon_ref += ref[pos];
             current_codon_seq += seq[pos];
@@ -95,9 +98,9 @@ function get_mutations(ref, seq, frame, with_end_codon) {
     for (var i = 0; i < codons.ref.length ; i++) {
         for (var p = 0; p < codons.ref[i].length; p++) {
             if (codons.ref[i][p] != codons.seq[i][p]) {
-                if (codons.ref[i][p] == '-') {
+                if (codons.ref[i][p] == SYMBOL_VOID) {
                     mutations[nb_pos] = INS;
-                } else if (codons.seq[i][p] == '-') {
+                } else if (codons.seq[i][p] == SYMBOL_VOID) {
                     mutations[nb_pos] = DEL;
                 } else {
                     var codon1 = codons.ref[i];
@@ -109,7 +112,7 @@ function get_mutations(ref, seq, frame, with_end_codon) {
                         // other sequences) that need to be ignored
                         for (var j = 0; j < codons.ref[i].length; j++) {
                             if (codons.ref[i][j] != codons.seq[i][j] ||
-                                codons.ref[i][j] != '-') {
+                                codons.ref[i][j] != SYMBOL_VOID) {
                                 codon1 += codons.ref[i][j];
                                 codon2 += codons.seq[i][j];
                             }

@@ -199,8 +199,8 @@ json_data = {
                 "5'J-REGION accepted mut nb": "0",
                 "Accepted D-GENE nb": "0",
                 "CDR3-IMGT": "gccacctgggacaggctgaaggattggatcaagacg",
-                "CDR3-IMGT start": "125",
-                "CDR3-IMGT end": "112",
+                "CDR3-IMGT start": "112",
+                "CDR3-IMGT end": "125",
                 "CDR3-IMGT-nt nb": "36",
                 "CDR3-IMGT (with frameshift)": "",
                 "CDR3-IMGT (AA)": "ATWDRLKDWIKT",
@@ -225,6 +225,7 @@ json_data = {
         "name": "unseg sequence",
         "germline" : "IGH",
         "seg" : {
+            "cdr3" : {"start": 2, "stop": 12, "aa": "W#WA", "seq": "atcatgatgcta"},
             "f1" : {"start": 4, "stop": 7},
             "f2" : {"seq": "tacgat"}, // 15 -> 20
         },
@@ -266,20 +267,26 @@ json_data_align = {
     },
     "clones": [
       {
-          "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCAAATTTTTTTTTTTTTTTTTTTGATCGATCGATCGATCGAT",
+          "sequence" : "ATCCATGTATGCATGCCCCCCCCCCCCCAAATTTTTTTTTTTTTTTTTTTGATCGATCCGATCGATGAT",
           "name" : "testalign1",
           "id" : "id0",
           "reads" : [20] ,
           "top" : 1,
           "germline" : "TRG",
+          "seg" : {
+            "cdr3" : {"start": 1, "stop": 11, "aa": "W#WA", "seq": "atcatgatgcta"}
+          }
       },
       {
-          "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCCCCCCAAATTTTTTTTTTTTTTGATCGATCGATCGATCGAT",
+          "sequence" : "ATTCATGCATGCATGCCCCCCCCCCCCCCCCCCAAATTTTTTTTGATCGATCGATCGATCGAT",
           "name" : "testalign2",
           "id" : "id1",
           "reads" : [25],
           "top" : 2,
-          "germline" : "IGH",
+          "germline" : "IGH",          
+          "seg" : {
+            "cdr3" : {"start": 1, "stop": 11, "aa": "W#WA", "seq": "atcatgatgcta"}
+          }
       }
     ]
   };

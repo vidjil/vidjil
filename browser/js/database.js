@@ -14,6 +14,7 @@ var SEQ_LENGTH_CLONEDB = 40; // Length of the sequence retrieved for CloneDB
  * */
 function Database(model, address) {
     var self = this;
+    this.uploader = new Uploader()
     
     //check if a default address is available in config.js
     if (typeof config !== 'undefined' && config.use_database !== undefined && config.use_database) {
@@ -37,7 +38,6 @@ function Database(model, address) {
         this.upload = {};
         this.url = []
         this.m = model
-        this.uploader = new Uploader()
         this.build()
         this.m.db = this
         

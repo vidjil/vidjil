@@ -2815,6 +2815,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {boolean} bool - isFiltered value given to all clones
      * */
     reset_filter: function (bool) {
+        if (!bool)
+            this.filter_string = undefined;
+            
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
             c.isFiltered=bool
@@ -2828,6 +2831,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {string} str - required string to pass the filter
      * */
     filter: function (str) {
+        this.filter_string = str;
         this.reset_filter(true)
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
@@ -3083,7 +3087,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
       this.primersSetData.biomed2.IGH.primer5 = ["GGCCTCAGTGAAGGTCTCCTGCAAG", "GTCTGGTCCTACGCTGGTGAAACCC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCGGAGACCCTGTCCCTCACCTG", "CGGGGAGTCTCTGAAGATCTCCTGC", "TCGCAGACCCTCTCACTCACCTGTG", "CTGGGTGCGACAGGCCCCTGGACAA", "TGGATCCGTCAGCCCCCAGGGAAGG", "GGTCCGCCAGGCTCCAGGGAA", "TGGATCCGCCAGCCCCCAGGGAAGG", "GGGTGCGCCAGATGCCCGGGAAAGG", "TGGATCAGGCAGTCCCCATCGAGAG", "TTGGGTGCGACAGGCCCCTGGACAA", "TGGAGCTGAGCAGCCTGAGATCTGA", "CAATGACCAACATGGACCCTGTGGA", "TCTGCAAATGAACAGCCTGAGAGCC", "GAGCTCTGTGACCGCCGCGGACACG", "CAGCACCGCCTACCTGCAGTGGAGC", "GTTCTCCCTGCAGCTGAACTCTGTG", "CAGCACGGCATATCTGCAGATCAG"] ;
       this.primersSetData.biomed2.IGH.primer3 = ["CCAGTGGCAGAGGAGTCCATTC", "GTCACCGTCTCCTCAGGTA"]; // GTCACCGTCTCCTCAGGTA is a consensus sequence use because official one (CCAGTGGCAGAGGAGTCCATTC) doesn't work properly
                                                                            // GGTCACCGTCTCCTCAGGTGAG
-
 
       // Primer ECNGS, can include degenerated sequences
       this.primersSetData.ecngs.IGH = {};

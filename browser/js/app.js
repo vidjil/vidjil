@@ -1,11 +1,11 @@
 var DEFAULT_DB_ADDRESS="https://db.vidjil.org/vidjil/";
 
 requirejs.config({
-    baseUrl: './js/lib',
+    baseUrl: '',
     paths: {
         app: '',
-        jquery: 'jquery-3.3.1.min',
-        d3: 'd3.v5.min',
+        jquery: './js/lib/jquery-3.3.1.min',
+        d3: './js/lib/d3.v5.min',
     }
 });
 
@@ -22,7 +22,7 @@ require(["jquery",
          "svgExport",
          "bioseq"], function() {
              // Then config file (needed by Vidjil)
-             require(['../conf'], function() {
+             require(['js/conf'], function() {
                  loadAfterConf()
              },
                      function(err) {loadAfterConf()})
@@ -30,7 +30,7 @@ require(["jquery",
 
 
 // Show git_sha1, when it exists
-require(["../git-sha1"], function () { console.log("Vidjil client " + git_sha1) }, function(err) { })
+require(["js/git-sha1"], function () { console.log("Vidjil client " + git_sha1) }, function(err) { })
 
 
 function loadAfterConf() {
@@ -40,68 +40,69 @@ function loadAfterConf() {
         config.use_database = false;
     }
 
-    require(['../../doctips/tips'],
+    require(['doctips/tips'],
             function(){},
             function(err) {
                 console.log("missing tips.js");
             })
     // Then load views (otherwise that could generate some errors if
     // some files are loaded before the views)
-    require(["../view"], function() {
+    require(["js/view"], function() {
 
-        require(["../germline"],
+        require(["js/germline"],
                 function() {
-                    require(["../closeable"],
+                    require(["js/closeable"],
                             function() {
-                                require(["../compare",
-                                         "../menu",
-                                         "../dbscan",
-                                         "../germline_builder",
-                                         "../segmenter",
-                                         "../model_loader",
-                                         "../model",
-                                         "../clone",
-                                         "../dynprog",
-                                         "../list",
-                                         "../axes",
-                                         "../axis",
-                                         "../graph",
-                                         "../scatterPlot_menu",
-                                         "../scatterPlot_selector",
-                                         "../scatterPlot",
-                                         "../builder",
-                                         "../info",
-                                         "../com",
-                                         "../vidjil-style",
-                                         "../crossDomain",
-                                         "../database",
-                                         "../shortcut",
-                                         "../notification",
-                                         "../export",
-                                         "../similarity",
-                                         "../tools",
-                                         "../url",
-                                         "../autocomplete",
-                                         "../tips",
-                                         "../tokeniser",
-                                         "../indexedDom",
+                                require(["js/compare",
+                                         "js/menu",
+                                         "js/dbscan",
+                                         "js/germline_builder",
+                                         "js/aligner",
+                                         "js/aligner_sequence",
+                                         "js/model_loader",
+                                         "js/model",
+                                         "js/clone",
+                                         "js/dynprog",
+                                         "js/list",
+                                         "js/axes",
+                                         "js/axis",
+                                         "js/graph",
+                                         "js/scatterPlot_menu",
+                                         "js/scatterPlot_selector",
+                                         "js/scatterPlot",
+                                         "js/builder",
+                                         "js/info",
+                                         "js/com",
+                                         "js/vidjil-style",
+                                         "js/crossDomain",
+                                         "js/database",
+                                         "js/shortcut",
+                                         "js/notification",
+                                         "js/export",
+                                         "js/similarity",
+                                         "js/tools",
+                                         "js/url",
+                                         "js/autocomplete",
+                                         "js/tips",
+                                         "js/tokeniser",
+                                         "js/indexedDom",
                                          // Speed test
-                                         "../speed_test",
-                                         "../form_builder",
-                                         "../vidjil_menu_decorator",
-                                         "../vidjil_vmi",
-                                         "../../test/QUnit/testFiles/data_test",
+                                         "js/speed_test",
+                                         "js/form_builder",
+                                         "js/vidjil_menu_decorator",
+                                         "js/vidjil_vmi",
+                                         "test/QUnit/testFiles/data_test",
                                         ], function(){
                                             
                                             if (typeof main == "undefined"){
-                                                require(["../main"]);
+                                                require(["js/main"]);
                                             }else{
                                                 main();
                                             }
                                             if (typeof config.addons !== "undefined") {
                                                 require(config.addons);
                                             }
-                                            require(["../screen_MRD"]);
+                                            require(["js/screen_MRD"]);
                                             
                                         })
                             })

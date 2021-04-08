@@ -482,7 +482,7 @@ QUnit.test("findGermlineFromGene", function(assert) {
     gene3a_name = "IGHJ6*01"
     gene3a_seq  = "......attactactactactacggtatggacgtctgggggcaagggaccacggtcaccgtctcctcag"
     gene3b_name = "TRGJ1*02"
-    gene3b_seq  = "...................ttattataagaaactctttggcagtggaacaacacttgttgtcacag"
+    gene3b_seq  = "................gaattattataagaaactctttggcagtggaacaacacttgttgtcacag"
     var getted = m.findGermlineFromGene(gene5_name)
     assert.equal(getted, gene5_seq, 'function return the correct sequence for the gene V: IGHV1-18*01')
 

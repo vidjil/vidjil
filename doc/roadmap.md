@@ -20,7 +20,7 @@ Items generally go through the following stages:
     Take between weeks and months
  - **Beta**: available for selected users, feedback with these users. Contact us if you are interested.
     Usually 1 to 3 months
- - **Availability**: available for everyone, with appropriate documentation
+ - **Availability**: available for everyone, with appropriate documentation, part of the current [release](releases.md).
 
 These stages can be 
 pending and not scheduled (no icon), 

@@ -3,7 +3,10 @@ ARCHIVE = 'http://www.vidjil.org/releases/'
 DEST = 'bench/'
 SRC = DEST + 'src/'
 BIN = DEST + 'bin/'
+GERM = DEST + 'germline/'
 RUN = DEST + 'run/'
+
+GERM_VAR = '${GERMLINE}'
 
 OUT = 'benchmark.log'
 
@@ -13,16 +16,18 @@ CURRENT = 'HEAD'
 
 WARN_RATIO = 0.10
 
+LIMIT2e5 = '-x 200000 '
 LIMIT1e5 = '-x 100000 '
 LIMIT1e4 = '-x 10000 '
 LIMIT1e3 = '-x 1000 '
 LIMIT1e2 = '-x 100 '
 
-MULTI = '-g ../../germline/homo-sapiens.g '
-IGH = '-g ../../germline/homo-sapiens.g:IGH '
+MULTI = '-g ' + GERM_VAR + '/homo-sapiens.g '
+IGH = '-g ' + GERM_VAR + '/homo-sapiens.g:IGH '
 L4 = '../../demo/LIL-L4.fastq.gz '
 S22 = '../../demo/Stanford_S22.fasta '
 
+FILTER = '--filter-reads '
 CONSENSUS_NO = '-y 0 -z 0 '
 CONSENSUS_ALL = '-y all -z 0 '
 DESIGNATIONS = '-c designations '
@@ -32,6 +37,8 @@ from collections import OrderedDict
 BENCHS = OrderedDict([
   ('init', '-x 1 ' + MULTI + L4 + CONSENSUS_NO),
   ('germ', LIMIT1e5 + MULTI + L4 + '-c germlines '),
+
+  ('filter', LIMIT2e5 + FILTER + MULTI + L4),
 
   ('multi-0', LIMIT1e5 + MULTI + L4 + CONSENSUS_NO),
   ('multi-1', LIMIT1e5 + MULTI + L4 + CONSENSUS_ALL),
@@ -129,6 +136,8 @@ def go(cmd, log=None, time=False):
     else:
         flog = sys.stdout
     print(cmd, end=' ')
+    sys.stdout.flush()
+
     if time:
         time_file = NamedTemporaryFile(mode='w+', delete=False)
         cmd = "/usr/bin/time -o {} -f '%U\t%S\t%M' {}".format(time_file.name, cmd)
@@ -137,9 +146,12 @@ def go(cmd, log=None, time=False):
         flog.close()
 
     if returncode:
-        print('FAILED', end=' ')
+        print(color(ANSI.RED, "FAILED"))
+        sys.stdout.flush()
         raise subprocess.CalledProcessError(returncode, cmd)
     elif not time:
+        print()
+        sys.stdout.flush()
         return
     else:
         (utime, stime, mem) = [ float(i) for i in time_file.read().split() ]
@@ -147,6 +159,7 @@ def go(cmd, log=None, time=False):
     mem = mem // 1000
     os.unlink(time_file.name)
     print(color(ANSI.YELLOW, '%5.2fu %5.2fs %6.1fM' % (utime, stime, mem)))
+    sys.stdout.flush()
 
     return (stime + utime, mem)
 
@@ -173,7 +186,8 @@ def get_releases():
 
 def install(release, tgz):
     os.system('mkdir -p %s' % BIN)
-    print('== %s' % release)
+    os.system('mkdir -p %s' % GERM)
+    print('==', color(ANSI.MAGENTA, release))
 
     dir = SRC + release
     go('mkdir -p %s' % dir)
@@ -183,12 +197,16 @@ def install(release, tgz):
     if release == CURRENT:
         go('make -C ../../algo', log)
         go('cp ../../vidjil-algo %s/%s ' % (BIN, release), log)
+        go('make -C ../.. germline', log)
+        go('cp -pr ../../germline %s/%s ' % (GERM, release), log)
+        print()
         return
 
     go('wget %s/%s -O %s/src.tgz' % (ARCHIVE, tgz, dir), log)
     go('cd %s ; tar xfz src.tgz' % dir, log)
-    go('cd %s/*%s* ; make vidjil-algo || make CXX=g++-6' % (dir, release), log)
+    go('cd %s/*%s* ; make vidjil-algo germline || make CXX=g++-6 vidjil-algo germline' % (dir, release), log)
     res = go('cp %s/*%s*/vidjil* %s/%s ' % (dir, release, BIN, release), log)
+    go('cp -pr %s/*%s*/germline %s/%s ' % (dir, release, GERM, release), log)
 
     print()
 
@@ -201,7 +219,7 @@ def install_from_archive(install_versions):
             if (not install_versions) or release in install_versions:
                 install(release, tgz)
         except subprocess.CalledProcessError:
-            print("FAILED")
+            print(color(ANSI.RED, "Install failed   "))
 
 def installed():
     return sorted([f.replace(BIN, '') for f in glob.glob('%s/*' % BIN)])
@@ -214,10 +232,13 @@ def run_all(tag, args, retries):
         print(color(ANSI.MAGENTA, '%9s' % release), end=' ')
         log = RUN + '/%s-%s.log' % (tag, release)
 
-        cmd = '%s/%s ' % (BIN, release) + convert(args, release)
+        cmd = '%s/%-9s ' % (BIN, release) + convert(args, release)
+        cmd = cmd.replace(GERM_VAR, '%s/%s' % (GERM, release))
         try:
             benchs = []
             for i in range(retries) :
+                if i:
+                    print('%9s' % '', end=' ')
                 benchs.append(go(cmd, log, True))
             time = min([b[0] for b in benchs])
             mem = min([b[1] for b in benchs])
@@ -285,7 +306,6 @@ def show_benchs(f, watched_release=None, colorize=True):
 
 def bench_all(retries, selected_benchs):
     try:
-        go("make -C ../.. germline")
         go("make -C ../.. data")
         go("make -C ../.. demo")
         print()
