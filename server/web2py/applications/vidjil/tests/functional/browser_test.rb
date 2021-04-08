@@ -54,13 +54,19 @@ class BrowserTest < MiniTest::Test
     $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
   end
 
+
+
   def close_everything
     if defined? $b
-      puts "\nTests finished, closing browser."
-      $b.close
-      if ENV['HEADLESS']
-        $headless.destroy
-      end
+        puts "\nTests finished, closing browser."
+        if ENV['HEADLESS']
+          $b.close
+          $headless.destroy
+        else
+          if ENV['KEEPOPEN'] == "0"
+            $b.close
+          end
+        end
     end
   end
 
