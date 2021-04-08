@@ -20,48 +20,7 @@
     <script>QUnit.config.autostart=false;  </script>
     <script type="text/javascript" src="../../js/lib/qunit-tap.js"></script>
     <script data-main="app.js"     src="../../js/lib/require.js"></script>    
-    <script type="text/javascript" src='../../js/lib/d3.v5.min.js'></script>
-    <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="../../js/lib/jquery.form.js"></script>
-    <script type="text/javascript" src='../../js/lib/file.js'></script>
-    <script type="text/javascript" src='../../js/lib/jquery.zclip.js'></script>
-    <script type="text/javascript" src='../../js/lib/bioseq.js'></script>
 
-    <script type="text/javascript" src='../../js/conf.js' data-cover></script>
-    <script type="text/javascript" src='../../js/view.js' data-cover></script>
-    <script type="text/javascript" src='../../js/compare.js' data-cover></script>
-    <script type="text/javascript" src='../../js/menu.js' data-cover></script>
-    <script type="text/javascript" src='../../js/dbscan.js' data-cover></script>
-    <script type="text/javascript" src='../../js/germline.js' ></script>
-    <script type="text/javascript" src='../../../germline/germlines.data' ></script>
-    <script type="text/javascript" src='../../js/germline_builder.js' data-cover></script>
-    <script type="text/javascript" src='../../js/segmenter.js' data-cover></script>
-    <script type="text/javascript" src='../../js/model_loader.js' data-cover></script>
-    <script type="text/javascript" src='../../js/model.js' data-cover></script>
-    <script type="text/javascript" src='../../js/clone.js' data-cover></script>
-    <script type="text/javascript" src='../../js/info.js' data-cover></script>
-    <script type="text/javascript" src='../../js/list.js' data-cover></script>
-    <script type="text/javascript" src="../../js/axis.js" data-cover> </script>
-    <script type="text/javascript" src='../../js/axes.js' data-cover></script>
-    <script type="text/javascript" src="../../js/graph.js" data-cover> </script>
-    <script type="text/javascript" src="../../js/scatterPlot_menu.js" data-cover> </script>
-    <script type="text/javascript" src="../../js/scatterPlot_selector.js" data-cover> </script>
-    <script type="text/javascript" src="../../js/scatterPlot.js" data-cover> </script>
-    <script type="text/javascript" src='../../js/builder.js' data-cover></script>
-    <script type="text/javascript" src='../../js/com.js' data-cover></script>
-    <script type="text/javascript" src='../../js/vidjil-style.js' data-cover></script>
-    <script type="text/javascript" src='../../js/crossDomain.js' data-cover></script>
-    <script type="text/javascript" src='../../js/pdf.js'></script>
-    <script type="text/javascript" src='../../js/database.js' data-cover></script>
-    <script type="text/javascript" src='../../js/notification.js' data-cover></script>
-    <script type="text/javascript" src='../../js/tools.js' data-cover></script>
-    <script type="text/javascript" src='../../js/url.js' data-cover></script>
-    <script type="text/javascript" src='../../js/shortcut.js' data-cover></script>
-    <script type="text/javascript" src='../../js/speed_test.js' data-cover></script>
-    <script type="text/javascript" src='../../js/closeable.js' data-cover></script>
-    <script type="text/javascript" src='../../js/tokeniser.js' data-cover></script>
-    <script type="text/javascript" src='../../js/indexedDom.js' data-cover></script>
-    <script type="text/javascript" src='../../js/form_builder.js' data-cover></script>
 
     <script type="text/javascript" src="./testFiles/data_test.js"></script>
     <script type="text/javascript" src="./testFiles/test2.analysis"></script>
@@ -82,57 +41,7 @@
     <div id="qunit"></div>
     <div id="qunit-fixture"></div>
 
-    <!-- Load QUnit -->
-    <script type="text/javascript" src="../../js/lib/qunit-2.9.1.js"></script>
-    <script type="text/javascript" src="./qunit-vidjil.js"></script>
-    <script type="text/javascript" src="../../js/lib/qunit-tap.js"></script>
-    <script src="../../js/lib/blanket.1.1.9.js"></script>
-    <script>
-
-
-    var tap_output;
-    qunitTap(QUnit, function() { 
-            if (typeof arguments != "undefined"){
-                tap_output+=arguments[0]+"\n" 
-            }
-        });
-
-    jQuery.fn.d3Click = function () {
-        this.each(function (i, e) {
-            var evt = document.createEvent("MouseEvents");
-            evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            e.dispatchEvent(evt);
-        });
-    };
-
-    var c_attributes = C_CLUSTERIZABLE
-       | C_INTERACTABLE
-       | C_IN_SCATTERPLOT
-       | C_SIZE_CONSTANT
-    </script>
-    <script src="./testFiles/form_test.js"></script>
-    <script src="./testFiles/dbscan_test.js"></script>
-    <script src="./testFiles/model_test.js"></script>
-    <script src="./testFiles/model_loader_test.js"></script>
-    <script src="./testFiles/clone_test.js"></script>
-    <script src="./testFiles/scatterPlot_test.js"></script>
-    <!--<script src="./testFiles/axis_test.js"></script>-->
-    <script src="./testFiles/graph_test.js"></script>
-    <script src="./testFiles/com_test.js"></script>
-    <script src="./testFiles/info_test.js"></script>
-    <script src="./testFiles/list_test.js"></script>
-    <script src="./testFiles/indexedDom_test.js"></script>
-    <script src="./testFiles/segmenter_test.js"></script>
-    <script src="./testFiles/tools_test.js"></script>
-    <script src="./testFiles/germline_test.js"></script>
-    <script src="./testFiles/url_test.js"></script>
-    <script src="./testFiles/shortcut_test.js"></script>
-    <script src="./testFiles/speed_test.js"></script>
-    <script src="./testFiles/tokeniser_test.js"></script>
-    <script src="./testFiles/compare_test.js"></script>
-
-    <!-- libs -->
-    <script src="./testFiles/lib/bioseq_test.js"></script>
+    
 </body>
 
 
