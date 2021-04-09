@@ -12,15 +12,15 @@ requirejs.config({
 // Load required libraries first
 require(['d3'], function(d3) {window.d3 = d3;});
 require(["jquery",
-         "jquery.form",
-         "file",
-         "tsne",
-         "jstree.min",
-         "jquery.caret",
-         "jquery.atwho",
-         "vmi",
-         "svgExport",
-         "bioseq"], function() {
+         "js/lib/jquery.form",
+         "js/lib/file",
+         "js/lib/tsne",
+         "js/lib/jstree.min",
+         "js/lib/jquery.caret",
+         "js/lib/jquery.atwho",
+         "js/lib/vmi",
+         "js/lib/svgExport",
+         "js/lib/bioseq"], function() {
              // Then config file (needed by Vidjil)
              require(['js/conf'], function() {
                  loadAfterConf()
