@@ -2105,7 +2105,8 @@ Clone.prototype = {
 
 
     getAsAirr: function(time){
-        if ( this.getRawReads(this.m.samples.order[time]) <= 0 ){
+        var rawreads = this.getRawReads(this.m.samples.order[time])
+        if ( isNaN(rawreads) || rawreads <= 0 ){
             return
         }
 

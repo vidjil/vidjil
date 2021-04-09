@@ -767,6 +767,11 @@ QUnit.test("export_airr", function(assert) {
     var airr_c7_getted =  c7.getAsAirr(0)
 
     assert.deepEqual(undefined, airr_c1_getted, "getAsAirr return undefined as clone size is null for this time point")
+    
+    // If reads is not well fill
+    airr_c1_getted =  c1.getAsAirr(10) // Pos 10 not exist, so reads should return Nan, and airr undefined
+    assert.deepEqual(undefined, airr_c1_getted, "getAsAirr return undefined as clone size is null for this time point")
+    
     var airr_c1 = {
       "sample": 0,
       "duplicate_count": 1,
