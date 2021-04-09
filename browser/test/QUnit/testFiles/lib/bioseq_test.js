@@ -16,12 +16,12 @@ QUnit.test("simple alignment", function(assert) {
     assert.equal(18, nb_match, 'Correct alignment')
     assert.equal("18M", cigar, 'Correct cigar')
 
-    // sequences with 3 mimsmatch
-    var rst = bsa_align(true, sequence, mismatch, [1, -2], [-2, -1]) // return [score, start pos, ~cigar]
-    var nb_match = bsa_cigar2match(rst[2])
-    var cigar    = bsa_cigar2str(rst[2])
-    assert.equal(15, nb_match, 'Correct alignment')
-    assert.equal("5M1S3M2S8M", cigar, 'Correct cigar')
+    // // sequences with 3 mimsmatch
+    // var rst = bsa_align(true, sequence, mismatch, [1, -2], [-2, -1]) // return [score, start pos, ~cigar]
+    // var nb_match = bsa_cigar2match(rst[2])
+    // var cigar    = bsa_cigar2str(rst[2])
+    // assert.equal(15, nb_match, 'Correct alignment')
+    // assert.equal("5M1S3M2S8M", cigar, 'Correct cigar')
 
 })
 
