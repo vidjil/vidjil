@@ -62,13 +62,13 @@ class Sample_setController(unittest.TestCase):
 
     def test2ChangePermission(self):
         request.vars["sample_set_id"] = permission_sample_set
-        request.vars["group_id"] = fake_group_id
+        request.vars["group_id"] = permission_group_id
 
         resp = change_permission()
-        self.assertFalse(auth.get_group_access('sample_set', permission_sample_set, fake_group_id), "fail to remove permission")
+        self.assertFalse(auth.get_group_access('sample_set', permission_sample_set, permission_group_id), "fail to remove permission")
 
         resp = change_permission()
-        self.assertTrue(auth.get_group_access('sample_set', permission_sample_set, fake_group_id), "fail to add permission")
+        self.assertTrue(auth.get_group_access('sample_set', permission_sample_set, permission_group_id), "fail to add permission")
 
     def testForm(self):
         request.vars["type"] = "patient"
