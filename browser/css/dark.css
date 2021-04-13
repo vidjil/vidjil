@@ -120,7 +120,7 @@ ul {
   left: 0;
   bottom: 155px;
   background: #000000;
-  margin: 6px;
+  margin: 6px 0px;
   display: flex;
   flex: auto;
   overflow: hidden;
@@ -129,7 +129,7 @@ ul {
   width: calc(100% - -64px);
 }
 .vidjil-panels-full {
-  width: calc(100% - 6px);
+  width: 100%;
 }
 #mid-container {
   position: fixed;
@@ -137,7 +137,7 @@ ul {
   flex: 1 1 auto;
   top: 32px;
   bottom: 155px;
-  width: calc(100% - 12px);
+  width: 100%;
   overflow: hidden;
   background: #000000;
   margin: 6px 0px 0px 0px;
@@ -388,6 +388,7 @@ line {
   dominant-baseline: middle;
 }
 .sp_system {
+  display: flex;
   position: absolute;
   top: -0.5em;
 }
@@ -1002,6 +1003,7 @@ span.logo {
 #list_menu,
 #top-container,
 .list_clones,
+.bot-bar,
 #bot-container,
 .tagSelector {
   border-color: #333333;
@@ -2174,6 +2176,28 @@ form .form_label {
 .margined-bottom {
   margin-bottom: 10px;
 }
+div.tooltip {
+  position: absolute;
+  text-align: left;
+  padding: 2px;
+  font: 14px sans-serif;
+  color: #ffffff;
+  background: #444343;
+  border: 0px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.labelFocusMinor {
+  color: grey;
+  opacity: 0.7;
+  font-size: 12px;
+}
+.labelFocusMajor {
+  color: black;
+  opacity: 1;
+  font-weight: bold;
+  font-size: 16px;
+}
 .segmenter .axisBox > span {
   margin: 0 3px;
   background: #000000;
@@ -2471,26 +2495,4 @@ span .end-codon {
 .seq_layer_underline:hover {
   height: 5px;
   opacity: 1;
-}
-div.tooltip {
-  position: absolute;
-  text-align: left;
-  padding: 2px;
-  font: 14px sans-serif;
-  color: #ffffff;
-  background: #444343;
-  border: 0px;
-  border-radius: 3px;
-  pointer-events: none;
-}
-.labelFocusMinor {
-  color: grey;
-  opacity: 0.7;
-  font-size: 12px;
-}
-.labelFocusMajor {
-  color: black;
-  opacity: 1;
-  font-weight: bold;
-  font-size: 16px;
 }
