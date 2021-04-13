@@ -1077,6 +1077,22 @@ Clone.prototype = {
 
         return (this.seg.junction.productive ? "productive" : "not productive")
     },
+    getProductivityNameDetailed: function () {
+        if (typeof this.seg.junction == "undefined"){
+            return "no CDR3 detected"
+        } else if (this.isProductive() == true) {
+            return "productive"
+        } else if (this.isProductive() == false) {
+            if (this.isInFrame() == false){
+                return "out of frame"
+            } else if (this.hasStopCodon() == true) {
+                return "stop codon"
+            } else {
+                return "not productive"
+            }
+        }
+    },
+
 
     getProductivityIMGT: function () {
         if (typeof this.seg.imgt !== 'undefined' &&
