@@ -160,7 +160,7 @@ ul{
   left : 0;
   bottom : @segmenterHeight;
   background: @background;
-  margin: @margin;
+  margin: @margin 0px;
   display: flex;
   flex: auto;
   overflow: hidden;
@@ -171,7 +171,7 @@ ul{
 }
 
 .vidjil-panels-full {
-  width: calc(~"100%" - @margin);
+  width: 100%;
 }
 
 #mid-container {
@@ -180,7 +180,7 @@ position : fixed;
   flex: 1 1 auto;
   top : @top_container_height;
   bottom : @segmenterHeight ;
-  width: calc(~"100%" - @margin + @margin);
+  width: 100%;
   overflow: hidden;
   background: @background;
   margin: @margin 0px 0px 0px;
