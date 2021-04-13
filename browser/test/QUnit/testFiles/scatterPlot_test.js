@@ -59,7 +59,7 @@ QUnit.test("grid", function(assert) {
         sp.update()
 
         assert.equal(   sp.select_x.selectedIndex,      9,                      'select_x index')
-        assert.equal(   sp.select_y.selectedIndex,      17,                     'select_y index')
+        assert.equal(   sp.select_y.selectedIndex,      18,                     'select_y index')
         assert.approx(  sp.nodes[1].bar_h/sp.resizeH,   0.40, 0.05,             "node 1, bar h position " + m.clone(1).getSize())
         assert.equal(   sp.axisX.getPos(m.clone(1)),    sp.axisX.getValuePos(9),"node 1, bar x position " + m.clone(1).getNlength())
         assert.approx(  sp.nodes[1].bar_y/sp.resizeW,   0.40, 0.05,             "node 1, bar y position")
@@ -195,4 +195,32 @@ QUnit.test("multiple selection", function(assert) {
 
         assert.deepEqual(m.getSelected().sort(), expected_cloneIDs.sort(), "the selected clones are test{1,2,4}");
     }
+})
+
+QUnit.test("axes productivity detailed", function(assert) {
+
+    assert.expect(7);
+    var ready = assert.async(1);
+
+    m = new Model();
+    m.parseJsonData(json_data_productivity,100)
+    m.loadGermline()
+    m.initClones()
+
+    var sp = new ScatterPlot("visu",m);
+    sp.init();
+
+    assert.equal(sp.returnActiveclones(), 5, "returnActiveClones -> 5");
+    sp.changeSplitMethod("productivity detailed", "productivity detailed", "grid");
+
+    var axes_legend = document.getElementById("visu_axis_x_container").childNodes
+    setTimeout( function() {
+        assert.equal( axes_legend[0].__data__.text, "no CDR3 detected", "sp legend productivity; no CDR3 detected")
+        assert.equal( axes_legend[1].__data__.text, "productive",       "sp legend productivity; productive")
+        assert.equal( axes_legend[2].__data__.text, "non productive",   "sp legend productivity; non productive")
+        assert.equal( axes_legend[3].__data__.text, "stop codon",   "sp legend productivity; stop codon")
+        assert.equal( axes_legend[4].__data__.text, "out of frame", "sp legend productivity; out of frame")
+        assert.equal( axes_legend[5].__data__.text, "?",            "sp legend productivity; '?'")
+        ready()
+    }, 150);
 })

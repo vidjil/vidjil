@@ -735,3 +735,24 @@ QUnit.test("clonedb", function(assert) {
     assert.equal(m.clones[1].numberInCloneDB(), undefined, "");
     assert.equal(m.clones[1].numberSampleSetInCloneDB(), undefined, "");
 });
+
+
+QUnit.test("productivity detailed", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data_productivity, 100);
+    m.initClones();
+    console.log( json_data_productivity )
+    console.log( m.clones )
+
+    var c1 = m.clones[0]
+    var c2 = m.clones[1]
+    var c3 = m.clones[2]
+    var c4 = m.clones[3]
+    var c5 = m.clones[4]
+
+    assert.equal(c1.getProductivityNameDetailed(), "out of frame",     "detailed productivity; out-of-frame");
+    assert.equal(c2.getProductivityNameDetailed(), "stop codon",       "detailed productivity; stop-codon");
+    assert.equal(c3.getProductivityNameDetailed(), "not productive",   "detailed productivity; unproductive simple");
+    assert.equal(c4.getProductivityNameDetailed(), "no CDR3 detected", "detailed productivity; without junction");
+    assert.equal(c5.getProductivityNameDetailed(), "productive",       "detailed productivity; productive");
+});
