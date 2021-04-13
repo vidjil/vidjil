@@ -389,3 +389,66 @@ analysis_data_clusters = {
     ]
   ]
 }
+
+
+json_data_productivity = JSON.parse(JSON.stringify(json_data_raw));
+json_data_productivity.clones = [
+    {
+      "name": "clone out-of-frame",
+      "germline": "IGH",
+      "id": "id1",
+      "reads": [10,10,15,15],
+      "seg": {
+        "junction": {
+            "productive": false,
+            "unproductive": "out-of-frame"
+        },
+      },
+      "top": 1
+    },
+    {
+      "name": "clone stop-codon",
+      "germline": "IGH",
+      "id": "id2",
+      "reads": [10,10,15,15],
+      "seg": {
+        "junction": {
+            "productive": false,
+            "unproductive": "stop-codon"
+        },
+      },
+      "top": 2
+    },
+    {
+      "name": "clone unproductive simple",
+      "germline": "IGH",
+      "id": "id7",
+      "reads": [10,10,15,15],
+      "seg": {
+        "junction": {
+            "productive": false
+        },
+      },
+      "top": 3
+    },
+    {
+      "name": "clone without junction",
+      "germline": "IGH",
+      "id": "id7",
+      "reads": [10,10,15,15],
+      "seg": {},
+      "top": 4
+    },
+    {
+      "name": "clone productive",
+      "germline": "IGH",
+      "id": "id7",
+      "reads": [10,10,15,15],
+      "seg": {
+        "junction": {
+            "productive": true
+        },
+      },
+      "top": 5
+    }
+]
