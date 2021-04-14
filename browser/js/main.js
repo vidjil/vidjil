@@ -157,7 +157,7 @@ if (typeof config !== 'undefined' && typeof config.alert !== 'undefined') {
     }
 }
 
-if (config.healthcare || false)
+if (typeof config !== 'undefined' && (config.healthcare || false))
 {
     document.getElementById("logospan").innerHTML = "(health)";
 }

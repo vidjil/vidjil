@@ -86,14 +86,14 @@ function Com(default_console) {
             "</br> Please regenerate a newer .vidjil file. " +
             BUTTON_CLOSE_POPUP,
 
-        "welcome": " <h2>Vidjil <span class='logo'>" + ((config.healthcare || false) ? "(health)" : "(beta)") + "</span></h2>" +
+        "welcome": " <h2>Vidjil <span class='logo'>" + ((typeof config !== 'undefined' && (config.healthcare || false)) ? "(health)" : "(beta)") + "</span></h2>" +
             "(c) 2011-2021, The Vidjil Team: " +
             "Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
             " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" +
             (typeof git_sha1 !== "undefined" ? " &ndash; " + git_sha1 : "") +
             "<br/><br/>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics lab</a> at CRIStAL (UMR 9189 CNRS, Univ. Lille) and the <a href='http://www.vidjil.net'>VidjilNet consortium</a> (Inria). " +
             "We are grateful to the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille, the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille, IFR-114, IRCL) and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group, as well to all members of the <a href='http://www.vidjil.net'>VidjilNet consortium</a>." +
-            "<br/><br/>" + (config.hosting || "") +
+            "<br/><br/>" + (typeof config !== 'undefined' ? (config.hosting || "") : "") +
             "<br/><br/>Vidjil is free software, and you are welcome to redistribute it under <a href='http://git.vidjil.org/blob/master/doc/LICENSE'>certain conditions</a>. " +
             "Please cite <a href='http://dx.doi.org/10.1371/journal.pone.0166126'>(Duez et al., 2016)</a> if you use the Vidjil web application." +
             BUTTON_CLOSE_POPUP,
