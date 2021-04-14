@@ -196,8 +196,30 @@ QUnit.test("sequence", function(assert) {
     //check highlight box position for one default layer
     seq3.updateLetterSpacing();
     var seq3_cdr3 = seq3.updateLayerDiv('IMGT_CDR3', true);
-    assert.equal(seq3_cdr3.style.width, "162px",   "div cdr3 width => 162px    // cdr_length*CHAR_WIDTH + 6 // CHAR_WIDTH = 12; cdr3_length = 13")
-    assert.equal(seq3_cdr3.style.left, "1329.5px", "div cdr3 start => 1329.5px // cdr_start*CHAR_WIDTH - letterspacing")
+
+    //use layer functions to retrieve start/stop position 
+    char_start = seq3.segment_start(LAYERS['IMGT_CDR3'].start);
+    char_stop  = seq3.segment_stop( LAYERS['IMGT_CDR3'].stop);
+
+    assert.equal(char_start, 111);
+    assert.equal(char_stop, 125);
+
+    //check layer div position match start/stop position % CHAR_WIDTH
+    assert.equal(seq3_cdr3.style.width, ((char_stop-char_start-1)*CHAR_WIDTH)+6+"px" );
+    assert.equal(seq3_cdr3.style.left,  ( char_start*CHAR_WIDTH)-2.5+"px" );
+
+    //toFasta
+    var done = assert.async(1);
+    var delay = 0;
+    var step = 200;
+
+    assert.equal(segment.toFasta(), "");
+    m.select(3);
+
+    setTimeout( function() {
+        assert.equal(segment.toFasta(), "> test4 // 2.500%\nGGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA\n", "fasta seq ")
+        done()
+    }, delay+=step);
 
 });
 
@@ -223,6 +245,15 @@ QUnit.test("segt", function (assert) {
     segment.addSequenceTosegmenter("test","igh", "accccccgtgtagtagtcc")
     assert.equal(segment.sequence["test"].seq.join("").toLowerCase(),"accccccgtgtagtagtcc"," test sequence ")
     assert.equal(segment.sequence["test"].is_clone, false);
+
+    m.clone(3).addSegFeatureFromSeq('test_feature','CACCCAGGAGGTGGAGCTGGATATTGAGACT');
+    f1 = m.clone(3).getSegFeature("test_feature");
+    assert.equal(f1.start, 93 , "feature start");
+    assert.equal(f1.stop, 123, "feature stop");
+    assert.equal(f1.seq,'CACCCAGGAGGTGGAGCTGGATATTGAGACT', "feature sequence");
+    assert.equal(m.clone(3).getSegNtSequence("test_feature"), "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "feature sequence 3");
+    assert.deepEqual(f1,{"seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 93, "stop": 123}, "feature sequence 4");
+       
   })
 
 QUnit.test("align", function (assert) {
