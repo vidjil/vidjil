@@ -1391,6 +1391,18 @@ void FineSegmenter::findCDR3(){
     + CDR3aa + nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, JUNCTIONend));
 
   // Reminder: JUNCTIONstart is 1-based
+
+  // IGH without a {WP}GxG pattern
+  if (JUNCTIONproductive && (segmented_germline->code.find("IGH") != string::npos))
+  {
+    string FR4aastart = nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, CDR3end+1+11));
+
+    if (!WPGxG(FR4aastart))
+    {
+      JUNCTIONproductive = false;
+      JUNCTIONunproductive = UNPROD_NO_WPGxG;
+    }
+  }
 }
 
 void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
