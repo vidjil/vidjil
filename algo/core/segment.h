@@ -365,7 +365,7 @@ class KmerSegmenter : public Segmenter
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
   string getInfoLineWithAffects() const;
-  void toOutput(CloneOutput *clone);
+  void toOutput(CloneOutput *clone, bool details=true);
 
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
@@ -448,7 +448,7 @@ class FineSegmenter : public Segmenter
    */
   void showAlignments(ostream &out);
   
-  void toOutput(CloneOutput *clone);
+  void toOutput(CloneOutput *clone, bool details=true);
 };
 
 
