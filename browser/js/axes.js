@@ -156,10 +156,9 @@ AXIS_DEFAULT = {
         labels:     {
                         "no CDR3 detected": {text:"no CDR3 detected"},
                         "productive":       {text:"productive"},
-                        "non productive":   {text:"non productive"},
-                        "stop codon":       {text:"stop codon"},
-                        "out of frame":     {text:"out of frame"},
-                        "undefined":        {text:"?"}
+                        "stop-codon":       {text:"stop codon"},
+                        "out-of-frame":     {text:"out of frame"},
+                        "no-WPGxG-pattern": {text:"no {WP}GxG pattern"}
                     },
         fct:        function(clone) {return clone.getProductivityNameDetailed()},
         sort :      false,
