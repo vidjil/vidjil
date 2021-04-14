@@ -6,6 +6,19 @@
 var config = {
 
     /****************
+    * Client identification
+    */
+
+    /* Mail for the 'get support' link. You can leave it to support@vidjil.org even with your own instances. */
+    "support": "support@vidjil.org",
+
+    /* Hosting information and healthcare compliance */
+    "hosting": "⚠️ Research Use Only. This instance of Vidjil is hosted by Xxxxxxxx Xxxxxxxxx. This instance is not compliant for clinical use and comes with no warranty. See options for using Vidjil while <a href='http://www.vidjil.org/doc/healthcare'>hosting healthcare data</a>.",
+
+    /* Please see <http://www.vidjil.org/doc/server#healthcare> */
+    "healthcare": false,
+
+    /****************
     * Static alerts
     */
 
