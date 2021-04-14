@@ -1412,9 +1412,13 @@ Clone.prototype = {
 
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.90); m.closeInfoBox();'>correlated</a> clones</p>"
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
-        
+        html += "<p>Download clone information as "
+        html += "<a class='button' id='download_info_"+ this.index +"_airr' onclick='m.exportCloneAs(\"airr\", [" + this.index + "])'>AIRR</a>"
+        html += "<a class='button devel-mode' id='download_info_"+ this.index +"_json' onclick='m.exportCloneAs(\"json\", [" + this.index + "])'>JSON</a>"
+        html += "</p>"
+
         //column
-        html += "<div id='info_window'><table><tr><th></th>"
+        html += "<div id='info_window'><table id='clone_info_table_"+this.index+"'><tr><th>Samples names</th>"
 
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.m.getStrTime(this.m.samples.order[i], "name") + "</td>"
@@ -1698,6 +1702,7 @@ Clone.prototype = {
         // Info
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
+        span_info.id = "clone_infoBox_"+this.index;
         if (!this.hasSizeOther()) {
             span_info.onclick = function () {
                 self.m.displayInfoBox(self.index);
@@ -2073,6 +2078,121 @@ Clone.prototype = {
             }
         }
     },
+
+
+    getUnproductivityCause: function(){
+        if (this.seg.junction != undefined && !this.isProductive()){
+            if (this.seg.junction.unproductive != undefined) { 
+                return this.seg.junction.unproductive
+            } else {
+                return undefined
+            }
+        }
+        return ""
+    },
+
+    isInFrame: function(){
+        if (this.isProductive()){
+            return true
+        } else {
+            var unproductivity_cause = this.getUnproductivityCause()
+            if (unproductivity_cause != undefined && unproductivity_cause == "out-of-frame"){
+                return false
+            }
+        }
+        return undefined
+    },
+
+    hasStopCodon: function(){
+        if (this.isProductive()){
+            return false
+        } else {
+            var unproductivity_cause = this.getUnproductivityCause()
+            if (unproductivity_cause != undefined) {
+                if (unproductivity_cause == "stop-codon"){
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+        return undefined
+    },
+
+
+    getAsAirr: function(time){
+        var rawreads = this.getRawReads(this.m.samples.order[time])
+        if ( isNaN(rawreads) || rawreads <= 0 ){
+            return
+        }
+
+        values = {
+            "sample": time,
+            "sample_name": this.m.samples.original_names[time],
+            "duplicate_count":    this.getRawReads(this.m.samples.order[time]),
+            "locus": this.germline,
+            "v_call":     this.getGene("5"),
+            "d_call":     this.getGene("4"),
+            "j_call":     this.getGene("3"),
+            "sequence_id":       this.id,
+            "sequence": this.sequence,
+            "productive":   this.isProductive(), //["seg","junction","productive"],
+            "vj_in_frame":  this.isInFrame() == true ? "T" : (this.isInFrame() == false ? "F": ""), //["seg","junction","unproductive"], // les deux ne sont pas compatible
+            "stop_codon":  this.hasStopCodon() == true ? "T" : (this.hasStopCodon() == false ? "F": ""), //["seg","junction","unproductive"], // les deux ne sont pas compatible
+            "junction_aa": this.getSegAASequence('junction'),
+            "cdr3_aa":     this.getSegAASequence('cdr3'),
+        }
+
+        var warnings = []
+        for (var i = 0; i < this.warn.length; i++) {
+            var warn = this.warn[i]
+            if (warn != undefined && warn != 0){
+
+                warnings.push( warn.code + "; " + warn.msg)
+            }
+        }
+        values.warnings = warnings.join("; ")
+            
+        // Other seg info
+        var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
+        for (var s in this.seg) {
+            if (exclude_seg_info.indexOf(s) == -1 && this.seg[s] instanceof Object) {
+                if ("info" in this.seg[s]) {
+                    // Textual field
+                    values["_"+s] = this.seg[s].info
+                } else if ("val" in this.seg[s]) {
+                    // Numerical field
+                    values["_"+s] = this.seg[s].val
+                } else {
+                    // Sequence field
+                    var nt_seq = this.getSegNtSequence(s);
+                    if (nt_seq !== '') {
+                        values["_"+s] = this.getSegNtSequence(s)
+                    }
+                }
+            }
+        }        
+
+        return values
+
+    },
+
+    getAsJson: function(){
+        data = {}
+        data.seg      = this.seg
+        data.id       = this.id
+        data.index    = this.index
+        data.sequence = this.sequence
+        data.reads    = this.reads
+        data.top      = this.top
+        data.reads    = this.reads
+        data.sample   = this.m.samples.original_names
+
+        data.GCContent            = this.GCContent
+        data._average_read_length = this._average_read_length
+        data.consensusLength      = this.consensusLength
+        return data
+    }
 
 
 };

@@ -305,6 +305,7 @@ old-chrome-browser-functional-external-chrome:
     - browser/
     reports:
       junit: browser/test/test/TEST-*.xml
+    when: always
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/

@@ -574,6 +574,7 @@ List.prototype = {
 
             var span_info = document.createElement('span')
             span_info.className = "infoBox";
+            span_info.id      = "clone_infoBox_"+id;
             span_info.onclick = function () {
                 self.m.displayInfoBox(id);
             }
