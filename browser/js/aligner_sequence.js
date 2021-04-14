@@ -76,19 +76,10 @@ genSeq.prototype = {
         this.pos.push(this.seq.length);
         return this;
     },
-
+/*
     toString:function(){
         var highlights=[];
 
-        return this.highlightToString(highlights);
-
-    },
-
-    /**
-    *return sequence completed with html tag <br>
-    * @return {string}
-    **/
-    highlightToString: function(highlights, window_start) {
         result = document.createElement('span');
         currentSpan = document.createElement('span');
         currentSpan.id = "sequence-clone-"+ this.id;
@@ -165,6 +156,7 @@ genSeq.prototype = {
         }
         return marge + result.innerHTML;
     },
+    */
 };
 
 
