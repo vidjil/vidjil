@@ -249,7 +249,7 @@ def get_data():
     
     query = db( ( db.fused_file.sample_set_id == request.vars["sample_set_id"])
                & ( db.fused_file.config_id == request.vars["config"] )
-               ).select(db.fused_file.ALL).first()
+               ).select(db.fused_file.ALL, orderby=db.fused_file.fuse_date).last()
     if query is not None:
         fused_file = defs.DIR_RESULTS+'/'+query.fused_file
         sequence_file_list = query.sequence_file_list

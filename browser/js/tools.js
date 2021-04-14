@@ -821,6 +821,7 @@ function removeEltAndDecrease(array, value) {
 }
 
 
+
 /**
  * Return the number of match from an alignment cigar
  * Cigar is given by function bsa_align of bioseq library
@@ -837,4 +838,31 @@ function bsa_cigar2match(cigar)
         }
     }
     return sum
+
+
+function download_csv(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    // CSV FILE
+    csvFile = new Blob([csv], {type: "text/csv"});
+
+    // Download link
+    downloadLink = document.createElement("a");
+
+    // File name
+    downloadLink.download = filename;
+
+    // We have to create a link to the file
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    // Make sure that the link is not displayed
+    downloadLink.style.display = "none";
+
+    // Add the link to your DOM
+    document.body.appendChild(downloadLink);
+
+    // Lanzamos
+    downloadLink.click();
+>>>>>>> 2ac0ed7f6f87906b940cd91edaf0ba5a5d6bd500
 }

@@ -21,7 +21,7 @@ QUnit.test("convert", function(assert) {
 
     assert.deepEqual(m.getConvertedSeg(seg, "3"), {"name": "J", "start": 3}, "getConvertedSeg: Ok");
 
-    assert.deepEqual(m.convertSeg(json_clone3.seg), {"5": {"stop": 5}, "4": {"name": "IGHD2*03"}, "3": {"name": "IGHV4*01", "start": 15}, "junction": {"aa": "WKIC", "productive": false, "start": 2, "stop": 13}, "somefeature": { "seq": "aaaattt" }}, "convertSeg: Ok");
+    assert.deepEqual(m.convertSeg(json_clone3.seg), {"5": {"stop": 5}, "4": {"name": "IGHD2*03"}, "3": {"name": "IGHV4*01", "start": 15}, "junction": {"aa": "WKIC", "productive": false, "unproductive": "out-of-frame", "start": 2, "stop": 13}, "somefeature": { "seq": "aaaattt" }}, "convertSeg: Ok");
     assert.deepEqual(m.convertSeg(seg), {"3": {"name": "J", "start": 3}, "4": {"name": "D", "start": 1, "stop": 2}, "5": {"name": "V", "stop": 0}, "score": {"val": 42}, "cdr3": {"start": 0, "stop": 3}, "foo": {"start": 17, "stop": 42}}, "convertSeg: Ok");
 
     assert.deepEqual(m.convertSeg(json_clone1.seg)['5'], {"start": 1, "stop": 5}, "convertSeg on old 0-based 5/4/3 fields");
@@ -683,4 +683,57 @@ QUnit.test("getSampleName", function(assert) {
     m.samples.names = ["f0", "f1", "f2", "f3"]
     assert.equal( m.getSampleName(0), "f0", "Correct name getted if values from server")
 
+});
+
+
+QUnit.test("export clone informations", function(assert) {
+
+    // Create and populate model
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+
+    // select some clones
+    m.multiSelect([0,2,3])
+
+    // Test on AIRR export format
+    var airr = m.getClonesAsAIRR([0,2,3])
+    var airr_splitted = airr.split("\n")
+    assert.equal(1+(3*4), airr_splitted.length, "correct number of lines in airr export")
+
+    var line_title = "sample,sample_name,duplicate_count,locus,v_call,d_call,j_call,sequence_id,sequence,productive,vj_in_frame,stop_codon,junction_aa,cdr3_aa,warnings,_cdr3,_N"
+    var line_c0_1  = "0,Diag.fa,10,TRG,TRGV4*01,undefined D,TRGJ2*03,id1,aaaaaaaaaaaaaaaaaaaAG,false,,F,,AG,,aa,"
+    var line_c0_2  = "1,Fu-1.fa,10,TRG,TRGV4*01,undefined D,TRGJ2*03,id1,aaaaaaaaaaaaaaaaaaaAG,false,,F,,AG,,aa,"
+    var line_c2_1  = "0,Diag.fa,25,IGH,IGHV1-2*01,IGHD2-2*02,IGHJ6*01,id3,cccccccccccccccccccc,false,,F,,,,,"
+    var line_c3_1  = "0,Diag.fa,5,TRG,TRGV4*01,undefined D,TRGJ2*02,id4,GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA,false,,F,,,,,4"
+    assert.deepEqual(airr_splitted[0], line_title, "correct value for line title in airr export")
+    assert.deepEqual(airr_splitted[1], line_c0_1, "correct value for line 1 of clone0 in airr export")
+    assert.deepEqual(airr_splitted[2], line_c0_2, "correct value for line 2 of clone0 in airr export")
+    assert.deepEqual(airr_splitted[5], line_c2_1, "correct value for line 1 of clone2 in airr export")
+    assert.deepEqual(airr_splitted[9], line_c3_1, "correct value for line 1 of clone3 in airr export")
+
+    // test on JOSN export format
+    var json = m.exportAsJson([0, 2, 3])
+    console.log( json )
+    assert.deepEqual(3, json.length, "correct number of elements in json export")
+    var json_value_0 = {
+        "seg":{
+            "3":{"name":"TRGJ2*03","start":6},"5":{"name":"TRGV4*01","stop":5},
+            "cdr3":{"start":4,"stop":5,"aa":"AG"},
+            "clonedb":{"clones_names":{"A":[2,0.25],"B":[124,0.01]}}
+        },
+        "id":"id1","index":0,
+        "sequence":"aaaaaaaaaaaaaaaaaaaAG","reads":[10,10,15,15],"top":1,
+        "sample":["Diag.fa","Fu-1.fa","Fu-2.fa","Fu-3.fa"],"_average_read_length":[21]
+    }
+    assert.deepEqual(json_value_0.seg, json[0].seg, "correct value for element 0 in json export; seg")
+    assert.deepEqual(json_value_0.sequence, json[0].sequence, "correct value for element 0 in json export; sequence")
+    assert.deepEqual(json_value_0.sample, json[0].sample, "correct value for element 0 in json export; sample")
+
+    // select some clones
+    m.multiSelect([0,2,3])
+    // ** Don't call, open a download file popup ** //
+    // var airr_without_list = m.exportCloneAs("airr")
+    // assert.deepEqual(airr, airr_without_list, "Get export informations by model exportCloneAs function")
 });

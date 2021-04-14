@@ -48,6 +48,11 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
 
     # Must remove rgb from the start of the fill style, and the closing parentheses at the end,
     # as tagColor is a rgba color with four components, and not just a rgb as the fill color.
+    print "*****"
+    print $b.clone_in_scatterplot('0').style('fill')
+    print $b.clone_in_scatterplot('0').style('fill')[4..-2]
+    print tagColor.index($b.clone_in_scatterplot('0').style('fill')[4..-2])
+    print "*****"
     assert (tagColor.index($b.clone_in_scatterplot('0').style('fill')[4..-2]) > 0), "Clone has not changed color in scatterplot"
 
     # Check that scatterplot is still on the right

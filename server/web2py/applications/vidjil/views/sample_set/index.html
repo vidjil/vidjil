@@ -218,14 +218,13 @@
         {{for row in db( (db.fused_file.sample_set_id == request.vars["id"]) & 
                          (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) &
                          (db.config.id ==db.fused_file.config_id)
-                       ).select() :}}
+                       ).select(db.config.name, db.config.id, db.fused_file.sample_set_id, distinct=True) :}}
         
-            {{if row.fused_file.fused_file is not None :}}     
+              
                 <a class="button2" href="{{=http_origin}}?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >
-            {{pass}}
                 {{=row.config.name}} </a>
         {{pass}}
         {{ if fused_count > 0: }}

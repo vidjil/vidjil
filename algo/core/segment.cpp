@@ -1424,7 +1424,7 @@ void FineSegmenter::showAlignments(ostream &out){
   show_colored_read_germlines(out, getSequence(), box_V, box_J, SHOW_MAX_GENE_ALIGNMENT);
 }
 
-void FineSegmenter::toOutput(CloneOutput *clone){
+void FineSegmenter::toOutput(CloneOutput *clone, bool details){
   json seg;
 
   for (AlignBox *box: boxes)
@@ -1472,12 +1472,16 @@ json toJsonSegVal(string s) {
   return {{"val", s}};
 }
 
-void KmerSegmenter::toOutput(CloneOutput *clone) {
+void KmerSegmenter::toOutput(CloneOutput *clone, bool details) {
     json seg;
     int sequenceSize = sequence.size();
 
     if (evalue > NO_LIMIT_VALUE)
       clone->setSeg("evalue", toJsonSegVal(scientific_string_of_double(evalue)));
+
+    if (!details)
+      return ;
+
     if (evalue_left > NO_LIMIT_VALUE)
       clone->setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(evalue_left)));
     if (evalue_right > NO_LIMIT_VALUE)

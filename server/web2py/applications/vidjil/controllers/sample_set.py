@@ -1084,7 +1084,7 @@ def permission():
             row.perms = ', '.join(map(lambda x: x.name, permissions))
 
             row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[stype], request.vars['id'], group=row.id))
-            row.read =  auth.get_group_access(sample_set.sample_type, data.id, row.id)
+            row.read =  auth.get_group_access("sample_set", request.vars["id"] , row.id)
 
         log.info("load permission page for sample_set (%s)" % request.vars["id"],
                 extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': "sample_set"})
@@ -1102,7 +1102,6 @@ def change_permission():
         ssid = request.vars["sample_set_id"]
         sample_set = db.sample_set[ssid]
         sample_type = sample_set.sample_type
-        data_id = db(db[sample_type].sample_set_id == ssid).select().first().id
 
         error = ""
         if request.vars["group_id"] == "" :
@@ -1111,14 +1110,14 @@ def change_permission():
             error += "missing sample_set_id, "
 
         if error=="":
-            if auth.get_group_access(sample_type,
-                      data_id,
+            if auth.get_group_access("sample_set",
+                      ssid,
                       int(request.vars["group_id"])):
-                auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db[sample_type], data_id)
+                auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
                 res = {"message" : "access '%s' deleted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
             else :
 
-                auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db[sample_type], data_id)
+                auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
                 res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
 
             log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
