@@ -151,6 +151,20 @@ AXIS_DEFAULT = {
         pretty: function(tag) { return icon_pm(tag, "productive", "not productive") },
         isInAligner: true
     },
+    "productivity detailed": {
+        name:       "productivity detailed",
+        labels:     {
+                        "no CDR3 detected": {text:"no CDR3 detected"},
+                        "productive":       {text:"productive"},
+                        "stop-codon":       {text:"stop codon"},
+                        "out-of-frame":     {text:"out of frame"},
+                        "no-WPGxG-pattern": {text:"no {WP}GxG pattern"},
+                        "not-productive":   {text:"not productive"}
+                    },
+        fct:        function(clone) {return clone.getProductivityNameDetailed()},
+        sort :      false,
+        isInAligner: true
+    },
     "productivity IMGT": {
         name :      "productivity [IMGT]",
         doc:        "productivity (as computed by IMGT/V-QUEST)",
