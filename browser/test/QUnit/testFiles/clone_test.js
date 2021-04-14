@@ -762,8 +762,8 @@ QUnit.test("productivity detailed", function(assert) {
     var c4 = m.clones[3]
     var c5 = m.clones[4]
 
-    assert.equal(c1.getProductivityNameDetailed(), "out of frame",     "detailed productivity; out-of-frame");
-    assert.equal(c2.getProductivityNameDetailed(), "stop codon",       "detailed productivity; stop-codon");
+    assert.equal(c1.getProductivityNameDetailed(), "out-of-frame",     "detailed productivity; out-of-frame");
+    assert.equal(c2.getProductivityNameDetailed(), "stop-codon",       "detailed productivity; stop-codon");
     assert.equal(c3.getProductivityNameDetailed(), "not productive",   "detailed productivity; unproductive simple");
     assert.equal(c4.getProductivityNameDetailed(), "no CDR3 detected", "detailed productivity; without junction");
     assert.equal(c5.getProductivityNameDetailed(), "productive",       "detailed productivity; productive");
