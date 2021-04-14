@@ -1,6 +1,15 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2021-04-28  The Vidjil Team
+	* New unproductivity cause, reporting IGH sequences without a {WP}GxG pattern !935
+	* Updated germlines from IMGT/GENE-DB, as well with 60bp up/downstream !885 !892
+	* Included Sus Scrofa and Gallus Gallus germlines !478 !839
+	* JUNCTION/CDR3 analysis by default, deprecating -3 option !947
+	* Smaller --max-consensus output, without debug information, new advanced option --out-details !724
+	* Updated outputs (e-values, affects) !932
+	* New and updated documentation and online help
+
 2021-02-18  The Vidjil Team
 	* New preset --filter-reads to filter potentially huge datasets (vidjil.cpp) #4681
 	* Better --gz option, outputting also .fa.gz and .affects.gz files (vidjil.cpp) #4692
