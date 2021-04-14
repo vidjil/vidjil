@@ -1082,13 +1082,12 @@ Clone.prototype = {
             return "no CDR3 detected"
         } else if (this.isProductive() == true) {
             return "productive"
-        } else if (this.isProductive() == false) {
-            if (this.isInFrame() == false){
-                return "out of frame"
-            } else if (this.hasStopCodon() == true) {
-                return "stop codon"
+        } else {
+            var cause = this.getUnproductivityCause() 
+            if (cause != undefined) {
+                return cause
             } else {
-                return "not productive"
+                return "not-productive"
             }
         }
     },

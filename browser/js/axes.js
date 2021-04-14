@@ -158,7 +158,8 @@ AXIS_DEFAULT = {
                         "productive":       {text:"productive"},
                         "stop-codon":       {text:"stop codon"},
                         "out-of-frame":     {text:"out of frame"},
-                        "no-WPGxG-pattern": {text:"no {WP}GxG pattern"}
+                        "no-WPGxG-pattern": {text:"no {WP}GxG pattern"},
+                        "not-productive":   {text:"not productive"}
                     },
         fct:        function(clone) {return clone.getProductivityNameDetailed()},
         sort :      false,

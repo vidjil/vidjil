@@ -761,12 +761,16 @@ QUnit.test("productivity detailed", function(assert) {
     var c3 = m.clones[2]
     var c4 = m.clones[3]
     var c5 = m.clones[4]
+    var c6 = m.clones[5]
 
     assert.equal(c1.getProductivityNameDetailed(), "out-of-frame",     "detailed productivity; out-of-frame");
     assert.equal(c2.getProductivityNameDetailed(), "stop-codon",       "detailed productivity; stop-codon");
-    assert.equal(c3.getProductivityNameDetailed(), "not productive",   "detailed productivity; unproductive simple");
+    assert.equal(c3.getProductivityNameDetailed(), "not-productive",   "detailed productivity; unproductive simple");
     assert.equal(c4.getProductivityNameDetailed(), "no CDR3 detected", "detailed productivity; without junction");
     assert.equal(c5.getProductivityNameDetailed(), "productive",       "detailed productivity; productive");
+    assert.equal(c6.getProductivityNameDetailed(), "no-WPGxG-pattern", "detailed productivity; no-WPGxG-pattern");
+});
+
 
 QUnit.test("export_airr", function(assert) {
     var m = new Model();

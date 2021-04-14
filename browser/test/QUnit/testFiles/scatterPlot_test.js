@@ -210,17 +210,17 @@ QUnit.test("axes productivity detailed", function(assert) {
     var sp = new ScatterPlot("visu",m);
     sp.init();
 
-    assert.equal(sp.returnActiveclones(), 5, "returnActiveClones -> 5");
+    assert.equal(sp.returnActiveclones(), 6, "returnActiveClones -> 6");
     sp.changeSplitMethod("productivity detailed", "productivity detailed", "grid");
 
     var axes_legend = document.getElementById("visu_axis_x_container").childNodes
     setTimeout( function() {
         assert.equal( axes_legend[0].__data__.text, "no CDR3 detected", "sp legend productivity; no CDR3 detected")
         assert.equal( axes_legend[1].__data__.text, "productive",       "sp legend productivity; productive")
-        assert.equal( axes_legend[2].__data__.text, "non productive",   "sp legend productivity; non productive")
-        assert.equal( axes_legend[3].__data__.text, "stop codon",   "sp legend productivity; stop codon")
-        assert.equal( axes_legend[4].__data__.text, "out of frame", "sp legend productivity; out of frame")
-        assert.equal( axes_legend[5].__data__.text, "?",            "sp legend productivity; '?'")
+        assert.equal( axes_legend[2].__data__.text, "stop codon",   "sp legend productivity; stop codon")
+        assert.equal( axes_legend[3].__data__.text, "out of frame", "sp legend productivity; out of frame")
+        assert.equal( axes_legend[4].__data__.text, "no {WP}GxG pattern",   "sp legend productivity; no {WP}GxG pattern")
+        assert.equal( axes_legend[5].__data__.text, "not productive",   "sp legend productivity; not productive")
         ready()
     }, 150);
 })
