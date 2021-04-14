@@ -167,21 +167,15 @@
                                 onclick="javascript:report.reportHTML()">export report (monitor)</a>
                         </div>
                         <div class="menu_box">
-                            <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export
-                                analysis</a>
-                            <a class="buttonSelector" id="export_svg1"
-                                onclick="javascript:m.exportViewToPNG(document.querySelector('#visu2_svg'))">export top
-                                graph (PNG)</a>
-                            <a class="buttonSelector" id="export_svg2"
-                                onclick="javascript:m.exportViewToPNG(document.querySelector('#visu_svg'))">export
-                                bottom graph (PNG)</a>
-                            <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv
-                                (visible clones)</a>
-                            <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export
-                                fasta (selected clones)</a>
-                            <a class="buttonSelector disabledClass" id="export_fasta_align"
-                                onclick="javascript:segment.exportAlignFasta()">export aligned fasta (selected
-                                clones)</a>
+                            <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>
+                            <a class="buttonSelector" id="export_svg1" onclick="javascript:m.exportViewToPNG(document.querySelector('#visu2_svg'))">export top graph (PNG)</a>
+                            <a class="buttonSelector" id="export_svg2" onclick="javascript:m.exportViewToPNG(document.querySelector('#visu_svg'))">export bottom graph (PNG)</a>
+                            <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
+                            <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export fasta (selected clones)</a>
+                            <a class="buttonSelector" id="export_airr" onclick="javascript:m.exportCloneAs('airr')">export AIRR (selected clones)</a>
+                            <a class="buttonSelector devel-mode" id="export_json" onclick="javascript:m.exportCloneAs('json')">export JSON (selected clones)</a>
+                            <a class="buttonSelector disabledClass" id="export_fasta_align" onclick="javascript:segment.exportAlignFasta()">export aligned fasta (selected clones)</a>
+
                         </div>
                         <div class="menu_box devel-mode">
                             <a class="buttonSelector" id="export_add_germline" onclick="javascript:segment.add_all_germline_to_segmenter()">add germline genes (experimental)</a>

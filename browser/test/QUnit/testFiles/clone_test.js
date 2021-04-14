@@ -64,7 +64,8 @@ QUnit.module("Clone", {
                 "aa" : "WKIC",
                 "start": 3,
                 "stop": 14,
-                "productive": false
+                "productive": false,
+                "unproductive": "out-of-frame"
             },
             "somefeature":
             {
@@ -152,6 +153,13 @@ var json_clone7 = {
         },
         "N1": 15,
         "N2": 0,
+        "junction": {
+                "aa" : "WKIC",
+                "start": 3,
+                "stop": 14,
+                "productive": false,
+                "unproductive": "stop-codon"
+            },
       },
       "sequence": "bbbbbVVVVVnnDDDJJJJJJJJJJaaaaaa",
       "top": 7
@@ -225,7 +233,11 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
 
     html = m.clones[0].getHtmlInfo();
     assert.includes(html, "<h2>Cluster info : hello</h2>")
-    assert.includes(html, "<div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
+    assert.includes(html, "<a class='button' id='download_info_0_airr' onclick='m.exportCloneAs(\"airr\", [0])'>AIRR</a>",
+             "download buttons (AIRR)")
+    assert.includes(html, "<a class='button devel-mode' id='download_info_0_json' onclick='m.exportCloneAs(\"json\", [0])'>JSON</a>",
+             "download buttons (JSON)")
+    assert.includes(html, "<table id='clone_info_table_0'><tr><th>Samples names</th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
     assert.includes(html, "tr id='modal_line_clone_name'><td id='modal_line_title_clone_name'>clone name</td><td colspan='4' id='modal_line_value_clone_name'>hello</td></tr>",
@@ -734,4 +746,139 @@ QUnit.test("clonedb", function(assert) {
 
     assert.equal(m.clones[1].numberInCloneDB(), undefined, "");
     assert.equal(m.clones[1].numberSampleSetInCloneDB(), undefined, "");
+});
+
+
+
+QUnit.test("export_airr", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.initClones();
+    var c1 = new Clone(json_clone1, m, 0, c_attributes);
+    var c3 = new Clone(json_clone3, m, 1, c_attributes);
+    var c7 = new Clone(json_clone7, m, 2, c_attributes);
+    
+    m.clone(0).reads = [0]  // As it, getAsAirr should return undefined
+    m.clone(1).reads = [1]  // else airr will return undefined
+    m.clone(2).reads = [10] // else airr will return undefined
+
+    var airr_c1_getted =  c1.getAsAirr(0)
+    var airr_c3_getted =  c3.getAsAirr(0)
+    var airr_c7_getted =  c7.getAsAirr(0)
+
+    assert.deepEqual(undefined, airr_c1_getted, "getAsAirr return undefined as clone size is null for this time point")
+    
+    // If reads is not well fill
+    airr_c1_getted =  c1.getAsAirr(10) // Pos 10 not exist, so reads should return Nan, and airr undefined
+    assert.deepEqual(undefined, airr_c1_getted, "getAsAirr return undefined as clone size is null for this time point")
+    
+    var airr_c1 = {
+      "sample": 0,
+      "duplicate_count": 1,
+      "locus": "TRG",
+      "v_call": "undefined V",
+      "d_call": "IGHD2*03",
+      "j_call": "IGHV4*01",
+      "sequence_id": "id1",
+      "sequence": "aaaaaaaaaattttttttt",
+      "productive": true,
+      "vj_in_frame": "T",
+      "stop_codon": "F",
+      "_evalue": 0.01,
+      "_cdr3": "aaatttttt",
+      "_junction": "att"
+    }
+
+
+    m.clone(0).reads = [1] // set a positive value again
+    airr_c1_getted =  c1.getAsAirr(0) // update values
+    var keys = Object.keys(airr_c1)
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i]
+        assert.equal(airr_c1_getted[key], airr_c1[key], "Correct airr field getted for c1; key "+ key);
+    }
+
+
+    var airr_c7 = {
+      "sample": 0,
+      "duplicate_count": 10,
+      "locus": "IGH",
+      "v_call": "IGHV1-69*06",
+      "d_call": "IGHD3-3*01",
+      "j_call": "IGHJ6*02",
+      "sequence_id": "id7",
+      "sequence": "bbbbbVVVVVnnDDDJJJJJJJJJJaaaaaa",
+      "productive": false,
+      "vj_in_frame": "",
+      "stop_codon": "T",
+      "_N1": 15,
+      "_N2": 0
+    }
+    var keys = Object.keys(airr_c7)
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i]
+        assert.equal(airr_c7_getted[key], airr_c7[key], "Correct airr field getted for c7; key "+ key);
+    }
+
+    // case of productive
+    var airr_c3 = {
+      "productive": false,
+      "vj_in_frame": "F",
+      "stop_codon": "F",
+    }
+    var keys = Object.keys(airr_c3)
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i]
+        assert.equal(airr_c3_getted[key], airr_c3[key], "Correct airr field getted for c3; key "+ key);
+    }
+});
+
+
+QUnit.test("export_json", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    var c7 = new Clone(json_clone7, m, 0, c_attributes);
+    m.initClones();
+
+    var json_c7_getted =  c7.getAsJson(0)
+    var expected_json7 = {
+      "seg": {
+        "3": {
+          "delLeft": 1, "delRight": 40,
+          "name": "IGHJ6*02",
+          "start": 15, "stop": 24
+        },
+        "4": {
+          "delLeft": 4, "delRight": 9,
+          "name": "IGHD3-3*01",
+          "start": 12, "stop": 14
+        },
+        "5": {
+          "delLeft": 0, "delRight": 2,
+          "name": "IGHV1-69*06",
+          "start": 5, "stop": 9
+        },
+        "N1": {"val": 15 },
+        "N2": {"val": 0 },
+        "junction": {
+          "aa": "WKIC",
+          "start": 2, "stop": 13,
+          "productive": false,
+          "unproductive": "stop-codon"
+        }
+      },
+      "id": "id7",
+      "index": 0,
+      "sequence": "bbbbbVVVVVnnDDDJJJJJJJJJJaaaaaa",
+      "reads": [0, 0, 0, 0 ],
+      "top": 7,
+      "sample": ["Diag.fa", "Fu-1.fa", "Fu-2.fa", "Fu-3.fa"]
+    }
+
+    assert.deepEqual(json_c7_getted.seg, expected_json7.seg,           "correct json values getted; seg" )
+    assert.deepEqual(json_c7_getted.sequence, expected_json7.sequence, "correct json values getted; sequence" )
+    assert.deepEqual(json_c7_getted.top, expected_json7.top,           "correct json values getted; top" )
+    assert.deepEqual(json_c7_getted.id, expected_json7.id,             "correct json values getted; id" )
+    assert.deepEqual(json_c7_getted.sample, m.samples.original_names,  "correct json values getted; sample original_names" )
+
 });

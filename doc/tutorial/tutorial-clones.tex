@@ -922,6 +922,9 @@ Some clones may be less trustable than other ones\dots{} Let's see how to spot t
   right side. Click on the warning. What are the warnings due to?}
 \begin{verbatim}
   def test_B_clones_34
+    # click outside of menu_item_export to close it
+    $b.graph_x_legend("0").click
+
     $b.clone_in_list("11").click #first clone with warning
 
     # <i title="W53: Similar to clone #2 - TRGV10*01 13//5 TRGJP1*01undefined: undefinedundefined: undefinedundefined: undefinedundefined: undefined" class="icon-warning-1"></i>
