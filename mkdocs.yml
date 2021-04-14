@@ -33,6 +33,7 @@ nav:
     - Quality, roadmap, credits:
         - Software and development quality: quality.md
         - Public datasets supporting Vidjil publications 🔗: http://www.vidjil.org/data
+        - Release cycle: releases.md
         - Roadmap: roadmap.md
         - Credits, references: credits.md
 

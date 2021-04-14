@@ -1,6 +1,12 @@
 load 'browser_test.rb'
 class ServerTest < BrowserTest
 
+
+  ## Comment to allow test to run in writing order; allow to debug error
+  # def self.test_order
+  #   :random
+  # end
+  
   def datapath filename
     File.expand_path(File.join(File.dirname(__FILE__), filename))
   end

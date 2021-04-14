@@ -407,6 +407,14 @@ class TestClones < BrowserTest
   end
 
 
+  def test_11_download_gethtmlinfo
+    $b.clone_in_list("0").click
+    $b.element(:id => "clone_infoBox_0").click
+    # test presence of clone information content
+    assert ($b.a(:id => "download_info_0_airr").present?), ">> Download button is present in getHTMLinfo returned"
+  end
+
+
   # Not really a test
   def test_zz_close
     close_everything

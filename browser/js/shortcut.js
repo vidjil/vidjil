@@ -159,6 +159,7 @@ Shortcut.prototype = {
             else
                 m.previousTime();
             break;
+            
         case 39 :   // Right arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
@@ -189,9 +190,15 @@ Shortcut.prototype = {
                 }
             }
             break;
+
         case 80 :   //shift+p : open patient
             e.preventDefault()
             if(e.shiftKey || e.metakey) db.reload()
+            break;
+
+        case 76 :   // Ctrl+l
+            e.preventDefault()
+            if (console.toggleLog) console.toggleLog();
             break;
 
         default:

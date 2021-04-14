@@ -90,9 +90,8 @@ try {
     var graph = new Graph("visu2", m, db);               // Time graph
     var list_clones = new List("list", "data", m, db);   // List of clones
     var sp = new ScatterPlot("visu", m, db);             // Scatterplot (both grid and bar plot view)
-    var sp2 = new View(m, "visu3"); // Dummy view
-    // var sp2 = new ScatterPlot("visu3", m, db, 5);
-    var segment = new Segment("segmenter", m, db);   // Segmenter
+    var sp2;
+    var segment = new Aligner("segmenter", m, db);   // Segmenter
 
 
     /* Similarity
@@ -139,9 +138,23 @@ try {
 }
 
 if (typeof config !== 'undefined' && typeof config.alert !== 'undefined') {
-    $("#top-container").addClass("alert")
-    $("#alert").append(config.alert)
-    $("#alert").click(function () { console.log({'type': 'popup', 'default': config.alert}) })
+    var alert_title, alert_msg;
+
+    if (typeof config.alert == 'string'){
+        alert_title = config.alert;
+        alert_msg = undefined;
+    }else{
+        alert_title = config.alert.title;
+        alert_msg = config.alert.msg;
+    }
+
+    $("#top-container").addClass("alert");
+    $("#alert").append(alert_title);
+
+    if (alert_msg){
+        console.log({'type': 'flash', priority:3, 'msg': alert_msg})
+        $("#alert").click(function () { console.log({'type': 'flash', priority:2, 'msg': alert_msg}) })
+    }
 }
 
 console.log("=== main.js finished ===");

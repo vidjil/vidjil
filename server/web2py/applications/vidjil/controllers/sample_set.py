@@ -1023,19 +1023,27 @@ def delete():
             log.error(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+        sequence_file_id_sample_sets = {}
         #delete data file
         query = db( (db.sample_set_membership.sample_set_id == sample_set.id)
                     & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                 ).select(db.sequence_file.id)
         for row in query :
-            db(db.results_file.sequence_file_id == row.id).delete()
+            sample_sets = get_sequence_file_sample_sets(row.id)
+            sequence_file_id_sample_sets[row.id] = sample_sets
+            if len(sample_sets) == 1:
+                db(db.results_file.sequence_file_id == row.id).delete()
 
         #delete sequence file
         query = db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
             & (db.sample_set_membership.sample_set_id == sample_set.id)
             ).select(db.sequence_file.id)
         for row in query :
-            db(db.sequence_file.id == row.id).delete()
+            if not row.id in sequence_file_id_sample_sets: 
+                sample_sets = get_sequence_file_sample_sets(row.id)
+                sequence_file_id_sample_sets[row.id] = sample_sets
+            if len(sequence_file_id_sample_sets[row.id]) == 1:
+                db(db.sequence_file.id == row.id).delete()
 
         #delete patient sample_set
         db(db.sample_set.id == sample_set.id).delete()
@@ -1076,7 +1084,7 @@ def permission():
             row.perms = ', '.join(map(lambda x: x.name, permissions))
 
             row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[stype], request.vars['id'], group=row.id))
-            row.read =  auth.get_group_access(sample_set.sample_type, data.id, row.id)
+            row.read =  auth.get_group_access("sample_set", request.vars["id"] , row.id)
 
         log.info("load permission page for sample_set (%s)" % request.vars["id"],
                 extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': "sample_set"})
@@ -1094,7 +1102,6 @@ def change_permission():
         ssid = request.vars["sample_set_id"]
         sample_set = db.sample_set[ssid]
         sample_type = sample_set.sample_type
-        data_id = db(db[sample_type].sample_set_id == ssid).select().first().id
 
         error = ""
         if request.vars["group_id"] == "" :
@@ -1103,14 +1110,14 @@ def change_permission():
             error += "missing sample_set_id, "
 
         if error=="":
-            if auth.get_group_access(sample_type,
-                      data_id,
+            if auth.get_group_access("sample_set",
+                      ssid,
                       int(request.vars["group_id"])):
-                auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db[sample_type], data_id)
+                auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
                 res = {"message" : "access '%s' deleted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
             else :
 
-                auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db[sample_type], data_id)
+                auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
                 res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
 
             log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})

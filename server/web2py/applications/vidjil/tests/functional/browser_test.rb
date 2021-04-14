@@ -54,13 +54,32 @@ class BrowserTest < MiniTest::Test
     $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
   end
 
+
+
   def close_everything
     if defined? $b
-      puts "\nTests finished, closing browser."
-      $b.close
-      if ENV['HEADLESS']
-        $headless.destroy
-      end
+        puts "\nTests finished, closing browser."
+        if ENV['HEADLESS']
+          $b.close
+          $headless.destroy
+        else
+          if ENV['KEEPOPEN'] == "0"
+            $b.close
+          end
+        end
+    end
+  end
+
+  def teardown
+    #Save image if test fails
+    unless passed?
+      #Where to save the image and the file name
+      folder_path = File.expand_path(File.dirname(__FILE__))
+      folder_path.sub! '/functional', ''
+      screenshot_file = folder_path+"/screenshot_teardown_#{Time.now.strftime('%Y%m%d-%H%M%S')}.png"
+
+      #Save the image
+      $b.screenshot.save screenshot_file
     end
   end
 

@@ -1,5 +1,5 @@
 !NO_EXTRA:
-!LAUNCH: ../../tools/align -m 1 -i 2 -j 1 -x $VIDJIL_DATA/trd-dd2-dd3.fa $VIDJIL_DIR/germline/homo-sapiens/TRDD.fa 
+!LAUNCH: ../../tools/align -m 1 -i 3 -j 1 -x $VIDJIL_DATA/trd-dd2-dd3.fa $VIDJIL_DIR/germline/homo-sapiens/TRDD.fa 
 
 $ Load correct sequences
 1:TRDD2.01_0//0_TRDJ1.01 .*trd-dd2-dd3.fa

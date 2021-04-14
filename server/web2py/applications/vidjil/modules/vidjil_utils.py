@@ -622,24 +622,28 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
 
         ### Base config classification
         db.classification.insert(
-            name = 'Vidjil-algo',
-            info = 'Vidjil-algo'
+            name = 'Human V(D)J recombinations',
+            info = 'Analysis with vidjil-algo of human TR/IG recombinations'
         )
         db.classification.insert(
-            name = 'Sub groups',
-            info = 'Sub groups'
+            name = 'Other recombinations',
+            info = 'Analysis with vidjil-algo of human non-V(D)J recombinations'
         )
         db.classification.insert(
-            name = 'Other germlines',
-            info = 'Other germlines'
+            name = 'Analysis with/for other software',
+            info = 'Analysis that use other repertoire software or generate with vidjil-algo compatible output formats'
         )
         db.classification.insert(
             name = 'Other species',
-            info = 'Other species'
+            info = 'Analysis with vidjil-algo of V(D)J recombinations for other species. Contact us at support@vidjil.org should you need other species.'
         )
         db.classification.insert(
-            name = 'Experimentals',
-            info = 'Experimentals'
+            name = 'Experimental configs',
+            info = '"Experimental analyses, under development,may evolve without notice.'
+        )
+        db.classification.insert(
+            name = 'Old configs, do not use',
+            info = '"Old configurations. We do not recommend to use them. Should you need something, contact us at  support@vidijl.org'
         )
 
 
@@ -692,6 +696,22 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             fuse_command = '-t 100',
             info = 'IGH, Vh(Dh)Jh',
             classification = 2
+        )
+        db.config.insert(
+            name = 'Clonality',
+            program = 'vidjil',
+            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -w 90 -y all --no-airr',
+            fuse_command = '-t 100 -d lenSeqAverage --overlaps',
+            info = 'incomplete germlines + larger window (90bp), thus 20bp more on each side. This configuration is advised for studies on IGH clonality',
+            classification = 1
+        )
+        db.config.insert(
+            name = 'Export all clones (AIRR)',
+            program = 'vidjil',
+            command = '-c clones -3 -y all -z all -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -r 5 --no-vidjil',
+            fuse_command = '-t 100',
+            info = 'Export all clones in the tabular AIRR format. The results can not be browsed online. See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output',
+            classification = 3
         )
 
         ## permission

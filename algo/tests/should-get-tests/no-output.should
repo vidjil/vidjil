@@ -1,7 +1,7 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vidjil
 
-$ There are three clones in the .vidjil
-3:"id"
+$ There are at least three   clones in the .vidjil
+>3:"id"
 
 $ Correct output message
 1:Vidjil web application
@@ -22,8 +22,8 @@ $ There is no deprecated .vdj.fa file
 
 !LAUNCH: rm out/Stanford_S22.tsv ; $LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; touch out/Stanford_S22.tsv ; cat out/Stanford_S22.tsv
 
-$ The AIRR .tsv file has four lines
-4:
+$ The AIRR .tsv file has at least four lines
+>4:
 
 !LAUNCH: rm out/Stanford_S22.tsv ; $LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA --no-airr -z 0 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; touch out/Stanford_S22.tsv ; cat out/Stanford_S22.tsv
 

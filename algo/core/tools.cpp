@@ -88,10 +88,10 @@ string fixed_string_of_float(float number, int precision)
    return ss.str();
 }
 
-string scientific_string_of_double(double number)
+string scientific_string_of_double(double number, int precision)
 {
    stringstream ss;
-   ss << scientific << number ;
+   ss << scientific << setprecision(precision) << number ;
    return ss.str();
 }
 
@@ -470,16 +470,14 @@ void sigintHandler(int sig_num)
 }
 #pragma GCC diagnostic pop
 
-
-/* 
-	 Return the part of label before the star
-	 For example:
-	 IGHV5-51*01 -> IGHV5-51
-	 If there is no star in the name, the whole label is returned.
-	 IGHV10-40 -> IGHV10-40
-*/
 string extractGeneName(string label){
 	string result;
+
+  size_t pipe_pos = label.find("|");
+  if (pipe_pos != string::npos) {
+    label = label.substr(pipe_pos+1);
+  }
+
 	size_t star_pos;
 	star_pos = label.rfind("*");
 	if(star_pos != string::npos){

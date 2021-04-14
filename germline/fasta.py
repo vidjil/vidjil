@@ -62,6 +62,9 @@ def parse_as_Fasta(fasta):
     for (header, sequence) in parse(fasta):
         yield Fasta(header, sequence)
 
+def verbose_open(name):
+    print (" <== %s" % name)
+    return open(name)
 
 class Fasta():
 

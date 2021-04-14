@@ -34,18 +34,15 @@ function Com(default_console) {
     var self = this;
     this.default = default_console;
     
-    var wrapper = function(key) {
-        return function() {
-            var args = Array.prototype.slice.call(arguments)[0];
-            return self.default[key](args);
-        }
-    };
-    
     for (var key in default_console){
         if (typeof this.default[key] == 'function') {
-            if (key!='log') this[key] = wrapper(key)
+            //if (key!='log') this[key] = wrapper(key)
+            if (key!='log') 
+                this[key] = default_console[key].bind(window.console);
+            else
+                this.basicLog = default_console[key].bind(window.console);
         }else{
-            this[key] = this.default[key]
+            this[key] = this.default[key];
         }
     }
     
@@ -152,7 +149,7 @@ Com.prototype = {
             if (typeof obj.msg != "undefined") text += obj.msg
             switch (obj.type) {
                 case "flash":
-                    this.flash(text, obj.priority)
+                    this.flash(text, obj.priority, obj.call)
                     break;
                 case "popup":
                     this.popupMsg(text)
@@ -178,7 +175,7 @@ Com.prototype = {
         
         this.log_container = document.createElement("div")
         this.log_container.className = "log_container";
-        
+
         this.popup_container = document.createElement("div")
         this.popup_container.className = "popup_container";
         
@@ -198,8 +195,6 @@ Com.prototype = {
         document.body.appendChild(this.log_container);
         document.body.appendChild(this.popup_container);
         
-        
-        
         this.div_dataBox = document.createElement("div");
         this.div_dataBox.className = "modal data-container";
         
@@ -214,6 +209,28 @@ Com.prototype = {
         this.div_dataBox.appendChild(div_data);
         
         document.body.appendChild(this.div_dataBox);
+
+        /*
+        $(".log_container").hover(function () {
+            $(this).stop()
+            .css('overflow-y', 'scroll')
+            .css('overflow-x', '')
+            .animate({
+                width: '400',
+                height: '75%',
+                opacity: 0.85
+            });
+        }, function () {
+            $(this).stop()
+            .css('overflow-y', 'hidden')
+            .css('overflow-x', 'hidden')
+            .animate({
+                width: 10,
+                height: 10,
+                opacity: 0.5
+            });
+        });
+        */
     },
 
     
@@ -223,17 +240,36 @@ Com.prototype = {
      * @param {string} str - message to display
      * @param {integr} priority 
      * */
-    flash: function (str, priority){
+    flash: function (str, priority, call){
         priority = typeof priority !== 'undefined' ? priority : 0;
         
+
         if (priority >= this.min_priority){
             var div = jQuery('<div/>', {
-                'text': str,
+                'html': str,
                 'style': 'display : none',
                 'class': 'flash_'+priority ,
                 'click': function(){$(this).fadeOut(25, function() { $(this).remove();} );}
             }).appendTo(this.flash_container)
             .slideDown(200);
+
+            if (call){
+                var div2 = jQuery('<div/>').appendTo(div);
+
+                jQuery('<div/>', {
+                    'text': "see details",
+                    'class': "button",
+                    'click': function(){ db.call(call.path, call.args); }
+                }).appendTo(div2);
+
+                if (priority >= this.ERROR){
+                    jQuery('<div/>', {
+                        'text': "×",
+                        'class': "button",
+                        'click': function(){$(this).fadeOut(25, function() { $(this).remove();} );}
+                    }).appendTo(div2);
+                }
+            }
             
             if (priority < this.ERROR){
                 setTimeout(function(){
@@ -242,7 +278,7 @@ Com.prototype = {
             }
             
         }
-        
+        this.customLog(str, priority, call);
         this.log(str, priority);
     },
     
@@ -251,7 +287,7 @@ Com.prototype = {
      * @param {string} str - message to print
      * @param {integr} priority 
      * */
-    customLog: function(str, priority){
+    customLog: function(str, priority, call){
         priority = typeof priority !== 'undefined' ? priority : 0;
         var self = this;
         
@@ -262,12 +298,22 @@ Com.prototype = {
             while (strDate.length < 8) strDate += " "
                 
             var div = jQuery('<div/>', {
-                'text': strDate+" | "+str,
+                'html': strDate+" | "+str,
                 'class': 'log_'+priority
             }).appendTo(this.log_container)
             .slideDown(200, function(){
                 self.log_container.scrollTop = self.log_container.scrollHeight;
             });
+
+            if (call){
+                var div2 = jQuery('<div/>').appendTo(div);
+
+                jQuery('<div/>', {
+                    'text': "see details",
+                    'class': "button",
+                    'click': function(){ db.call(call.path, call.args); }
+                }).appendTo(div2);
+            }
             
         }else{
 	  if (priority >= this.min_priority_console)
@@ -287,6 +333,13 @@ Com.prototype = {
      * close the log window 
      * */
     closeLog: function () {
+        $(this.log_container).fadeToggle(200);
+    },
+
+    /**
+     * open/close the log window 
+     * */
+    toggleLog: function () {
         $(this.log_container).fadeToggle(200);
     },
     
