@@ -87,14 +87,12 @@ function Com(default_console) {
             BUTTON_CLOSE_POPUP,
 
         "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>" +
-            "(c) 2011-2020, the Vidjil team " +
-            (typeof git_sha1 !== "undefined" ? "&ndash; " + git_sha1 : "") + "</br>" +
-            "<br />Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
-            " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" + "</br>" +
-            "</br>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics team</a> (CRIStAL, CNRS, Univ. Lille) and the <a href='http://vidjil.net'>VidjilNet consortium</a> (Inria) " +
-            "in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille, " +
-            "the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)" +
-            " and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group." +
+            "(c) 2011-2021, The Vidjil Team: " +
+            "Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
+            " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" +
+            (typeof git_sha1 !== "undefined" ? " &ndash; " + git_sha1 : "") +
+            "<br/><br/>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics lab</a> at CRIStAL (UMR 9189 CNRS, Univ. Lille) and the <a href='http://www.vidjil.net'>VidjilNet consortium</a> (Inria). " +
+            "We are grateful to the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille, the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille, IFR-114, IRCL) and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group, as well to all members of the <a href='http://www.vidjil.net'>VidjilNet consortium</a>." +
             "<br/>" +
             "<br/>Vidjil is hosted by the <a href='http://hpc.univ-lille.fr/'>scientific computing facility</a> at the Lille University." +
             "<br/>" +
