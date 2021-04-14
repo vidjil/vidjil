@@ -422,7 +422,7 @@ json_data_productivity.clones = [
     {
       "name": "clone unproductive simple",
       "germline": "IGH",
-      "id": "id7",
+      "id": "id3",
       "reads": [10,10,15,15],
       "seg": {
         "junction": {
@@ -434,7 +434,7 @@ json_data_productivity.clones = [
     {
       "name": "clone without junction",
       "germline": "IGH",
-      "id": "id7",
+      "id": "id4",
       "reads": [10,10,15,15],
       "seg": {},
       "top": 4
@@ -442,7 +442,7 @@ json_data_productivity.clones = [
     {
       "name": "clone productive",
       "germline": "IGH",
-      "id": "id7",
+      "id": "id5",
       "reads": [10,10,15,15],
       "seg": {
         "junction": {
@@ -450,5 +450,18 @@ json_data_productivity.clones = [
         },
       },
       "top": 5
+    },
+    {
+      "name": "clone stop-codon",
+      "germline": "IGH",
+      "id": "id6",
+      "reads": [10,10,15,15],
+      "seg": {
+        "junction": {
+            "productive": false,
+            "unproductive": "no-WPGxG-pattern"
+        },
+      },
+      "top": 6
     }
 ]
