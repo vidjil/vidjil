@@ -838,7 +838,7 @@ function bsa_cigar2match(cigar)
         }
     }
     return sum
-
+}
 
 function download_csv(csv, filename) {
     var csvFile;
@@ -864,5 +864,4 @@ function download_csv(csv, filename) {
 
     // Lanzamos
     downloadLink.click();
->>>>>>> 2ac0ed7f6f87906b940cd91edaf0ba5a5d6bd500
 }
