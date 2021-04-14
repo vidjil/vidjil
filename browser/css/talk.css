@@ -120,7 +120,7 @@ ul {
   left: 0;
   bottom: 155px;
   background: #ffffff;
-  margin: 6px;
+  margin: 6px 0px;
   display: flex;
   flex: auto;
   overflow: hidden;
@@ -129,7 +129,7 @@ ul {
   width: calc(100% - -64px);
 }
 .vidjil-panels-full {
-  width: calc(100% - 6px);
+  width: 100%;
 }
 #mid-container {
   position: fixed;
@@ -137,7 +137,7 @@ ul {
   flex: 1 1 auto;
   top: 32px;
   bottom: 155px;
-  width: calc(100% - 12px);
+  width: 100%;
   overflow: hidden;
   background: #ffffff;
   margin: 6px 0px 0px 0px;
@@ -388,6 +388,7 @@ line {
   dominant-baseline: middle;
 }
 .sp_system {
+  display: flex;
   position: absolute;
   top: -0.5em;
 }
