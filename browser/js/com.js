@@ -86,7 +86,7 @@ function Com(default_console) {
             "</br> Please regenerate a newer .vidjil file. " +
             BUTTON_CLOSE_POPUP,
 
-        "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>" +
+        "welcome": " <h2>Vidjil <span class='logo'>" + ((config.healthcare || false) ? "(health)" : "(beta)") + "</span></h2>" +
             "(c) 2011-2021, The Vidjil Team: " +
             "Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
             " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" +
