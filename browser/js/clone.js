@@ -1051,24 +1051,35 @@ Clone.prototype = {
         }
     },
 
-    getRevCompSequence : function () {
-        if (typeof (this.sequence) != 'undefined' && this.sequence !== 0){
-            var dict_comp  = {
+    /**
+     * Return the reverse complement sequence
+     * If no raw sequence given, use the sequence of the clone
+     * @param  {[type]} sequence Sequence that can be given, as germline sequence of the clone
+     * @return {[type]}          [description]
+     */
+    getRevCompSequence : function (sequence) {
+        if (sequence == undefined){
+            if (this.sequence != undefined && this.sequence !== 0){
+                console.log( "reset sequence by raw")
+                sequence = this.sequence
+            } else {
+                return "0"
+            }
+        }
+
+        var dict_comp  = {
           'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C',
           'Y': 'R', 'R': 'Y', // pyrimidine (CT) / purine (AG)
           'W': 'S', 'S': 'W', // weak (AT) / strong (GC)
           'K': 'M', 'M': 'K', // keto (TG) / amino (AC)
           'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D',
           'N': 'N'
-          }
-            var revcompSeq = ""
-            for (var i = this.sequence.length -1 ; i > -1; i--) { // test -1
-                revcompSeq += dict_comp[this.sequence[i].toUpperCase()]
-            }
-            return revcompSeq
-        }else{
-            return "0";
         }
+        var revcompSeq = ""
+        for (var i = sequence.length -1 ; i > -1; i--) { // test -1
+            revcompSeq += dict_comp[sequence[i].toUpperCase()]
+        }
+        return revcompSeq
     },
     
     getPrintableSegSequence: function () {
