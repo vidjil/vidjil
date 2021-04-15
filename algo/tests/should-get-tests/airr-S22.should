@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -c clones -z 2 -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta  > /dev/null ; cat out/Stanford_S22.tsv
+!LAUNCH: $VIDJIL_DIR/$EXEC -c clones -z 2 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta  > /dev/null ; cat out/Stanford_S22.tsv
 
 $ There are at least four lines, all with tabs
 >4:

@@ -1,7 +1,7 @@
 !REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
 !OUTPUT_FILE: out/limits.vidjil
 
-!LAUNCH: $VIDJIL_DIR/$EXEC -3 --max-clones 10 -y 5 -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH  -r 4  -b limits $VIDJIL_DATA/Stanford_S22.fasta
+!LAUNCH: $VIDJIL_DIR/$EXEC --max-clones 10 -y 5 -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH  -r 4  -b limits $VIDJIL_DATA/Stanford_S22.fasta
 
 # Test limits in the .vidjil json output
 
@@ -19,7 +19,7 @@ w10: "id"
 
 
 
-!LAUNCH: $VIDJIL_DIR/$EXEC -3 --max-clones 10 -y 5 -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH  -r 4  -b limits --out-details $VIDJIL_DATA/Stanford_S22.fasta
+!LAUNCH: $VIDJIL_DIR/$EXEC --max-clones 10 -y 5 -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH  -r 4  -b limits --out-details $VIDJIL_DATA/Stanford_S22.fasta
 
 $ With --out-details, there are exactly five clones with more details (-y 5)
 w5: "affectValues"
