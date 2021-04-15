@@ -71,6 +71,8 @@ With datasets with billions of reads,
 this is usally enough to detect  dominant clones
 with something like a few hundred reads,
 but quantification is more limited.
+For such libraries, it may be worth to set up a [post-sequencer workflow](http://www.vidjil.org/doc/workflow/)
+to work with smaller files.
 
 ## Read length
 

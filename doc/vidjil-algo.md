@@ -746,6 +746,8 @@ When processing large datasets, such as RNA-Seq or capture, one may want to pre-
 In such a case, the recommanded option is to use the `--filter-reads` preset, that launches Vidjil-algo without clone clustering and analysis,
 while outputing a `out/basename.detected.vdj.fa` file. This file contains reads /that may have V(D)J recombinations/, evaluated with a very permissive threshold.
 The resulting file is usually much smaller on such datasets and can then be transferred or analysed in-depth more easily.
+This filtering can also be part of a [post-sequencer workflow](http://www.vidjil.org/doc/workflow/).
+
 ## AIRR .tsv output
 
 Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
