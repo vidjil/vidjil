@@ -457,6 +457,15 @@ void json_add_warning(json &clone, string code, string msg, string level)
   clone["warn"] += { {"code", code}, {"level", level}, {"msg", msg} } ;
 }
 
+
+bool WPGxG(string aa)
+{
+  if (aa[0] != 'W' && aa[0] != 'P') return false ;
+  if (aa[1] != 'G') return false ;
+  if (aa[3] != 'G') return false ;
+  return true ;
+}
+
 // Signal handling
 
 bool global_interrupted;
