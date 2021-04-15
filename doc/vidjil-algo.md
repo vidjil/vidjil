@@ -17,7 +17,8 @@ This manual can be browsed online:
  - <http://www.vidjil.org/doc/vidjil-algo>                (last stable release)
  - <http://gitlab.vidjil.org/blob/dev/doc/vidjil-algo.md> (development version)
 
-Other documentation (users and administrators of the web application, developpers) can be found from <http://www.vidjil.org/doc/>.
+Other documentations for life scientists, bioinformaticians, server administrators, and developpers
+can be found ats <http://www.vidjil.org/doc/>.
 
 
 ## About
