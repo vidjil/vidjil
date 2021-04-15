@@ -74,9 +74,10 @@ class BrowserTest < MiniTest::Test
     #Save image if test fails
     unless passed?
       #Where to save the image and the file name
+      print 'failed test : ' + method_name.to_s
       folder_path = File.expand_path(File.dirname(__FILE__))
       folder_path.sub! '/functional', ''
-      screenshot_file = folder_path+"/screenshot_teardown_#{Time.now.strftime('%Y%m%d-%H%M%S')}.png"
+      screenshot_file = folder_path+"/screenshot_teardown_#{Time.now.strftime('%Y%m%d-%H%M%S')}_#{method_name.to_s}.png"
 
       #Save the image
       $b.screenshot.save screenshot_file
