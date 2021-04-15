@@ -12,6 +12,9 @@ class TestLogin < ServerTest
     if logout.present?
       logout.click
       Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+
+      $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
+      Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     end
   end
 
