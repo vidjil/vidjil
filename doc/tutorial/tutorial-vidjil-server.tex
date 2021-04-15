@@ -36,6 +36,7 @@ class LiveTestSampleSets < ServerTest
     $b.get_group_line("admin").click
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     $b.set_grp_right("anon", true) # remove anon
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
   end
   ######################################
   ### Manipulate server and database
