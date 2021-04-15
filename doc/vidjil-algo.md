@@ -829,7 +829,7 @@ The following commands work in both cases, detecting the locus for each recombin
 clustering such reads into clones, and further analyzing the clones.
 
 ``` bash
-./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -3 -r 1  demo/Demo-X5.fa
+./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -r 1  demo/Demo-X5.fa
   # Detect the locus for each read, cluster and report clones starting from the first read (-r 1).
   # including unexpected recombinations (-2). Assign the V(D)J genes and try to detect the CDR3s (-3).
   # Demo-X5 is a collection of sequences on all human locus, including some incomplete or unusual recombinations:
@@ -837,7 +837,7 @@ clustering such reads into clones, and further analyzing the clones.
 ```
 
 ``` bash
-./vidjil-algo -g germline/homo-sapiens.g:IGH -3 demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g:IGH demo/Stanford_S22.fasta
    # Cluster the reads and report the clones, based on windows overlapping IGH CDR3s.
    # Assign the V(D)J genes and try to detect the CDR3 of each clone.
    # Main output files are both out/Stanford_S22.vidjil and out/Stanford_S22.tsv.
@@ -846,7 +846,7 @@ clustering such reads into clones, and further analyzing the clones.
 ```
 
 ``` bash
-./vidjil-algo -g germline/homo-sapiens.g -2 -3 -d demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g -2 -d demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
    # Assign the VDJ genes (including multiple D) and try to detect the CDR3 of each clone.
@@ -888,7 +888,7 @@ It is also possible to explicitly require V(D)J designation for each read (`-c d
 no clone clustering, not recommended for large datasets)
 
 ``` bash
-./vidjil-algo -c designations -g germline/homo-sapiens.g -2 -3 -d -x 50 demo/Stanford_S22.fasta
+./vidjil-algo -c designations -g germline/homo-sapiens.g -2 -d -x 50 demo/Stanford_S22.fasta
    # Detailed V(D)J designation, including multiple D, and CDR3 detection on the first 50 reads, without clone clustering
    # (this is not as efficient as '-c clones', no clustering)
 ```
