@@ -123,6 +123,7 @@ algo_valgrind_unit:
 algo_valgrind_functional:
   <<: *valgrind_functional
   when: manual
+  dependencies: []
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
@@ -447,6 +448,7 @@ ff45-server-functional:
     paths:
       - algo/tests/benchmark.log
   when: manual
+  dependencies: []
   only:
     - /^feature-.*a.*\/.*$/
   tags:
@@ -471,6 +473,7 @@ deploy_review:
     - make -C browser icons
     - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
     - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG
+  dependencies: []
   environment:
     name: review/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
@@ -508,6 +511,7 @@ deploy_review_server:
     url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/
     on_stop: stop_deploy_review_server
     auto_stop_in: 2 months
+  dependencies: []
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
@@ -570,6 +574,7 @@ stop_deploy_review:
   environment:
     name: review/$CI_BUILD_REF_NAME
     action: stop
+  dependencies: []
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
@@ -581,6 +586,7 @@ stop_deploy_review_server:
   script:
     - ssh $REVIEW_SERVER "set -o xtrace; docker-compose -f $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG/docker_$CI_BUILD_REF_SLUG/docker-compose.yml down -v ; rm -rf $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh $CI_BUILD_REF_SLUG"
   when: manual
+  dependencies: []
   environment:
     name: review_server/$CI_BUILD_REF_NAME
     action: stop
