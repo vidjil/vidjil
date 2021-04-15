@@ -472,6 +472,7 @@ deploy_review:
     - make -C browser icons
     - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
     - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG
+  dependencies: []
   environment:
     name: review/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
@@ -509,6 +510,7 @@ deploy_review_server:
     url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/
     on_stop: stop_deploy_review_server
     auto_stop_in: 2 months
+  dependencies: []
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
