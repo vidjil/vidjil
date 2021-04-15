@@ -143,6 +143,78 @@ QUnit.test("filters", function(assert) {
         ready()
     }, 500);
 
+
+});
+QUnit.test("filters degenerated", function(assert) {
+
+    nb = 7
+    assert.expect(nb*2);
+    var ready = assert.async(nb);
+    var delay = 150
+
+    var m = new Model();
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+    
+    var list = new List("list","data",m);
+    list.init();
+
+    var clone_list = document.getElementById('list').lastChild.childNodes
+    m.updateElemStyle([0,1,2,3]);
+
+    list.sortListBy(function(id){return -m.clone(id).top});
+    var subseq   = "catcatcatgatgctacg" // clone test5; pos 6 in list
+    var mismatch = "cattatcatgttgctacg" // 3x mismatch
+    var revcomp  = "cgtagcatcatgatgatg"
+    var degen    = "catcwwcatgatgctacg"
+    var ext5     = "gaagtcagtcatcaggca" // TRGV4; clone test1
+    m.filter(subseq);
+    setTimeout( function() {
+        assert.ok( !$(clone_list[2]).is(':visible'), `filter by subseq: test1 is NOT visible`);
+        assert.ok(  $(clone_list[6]).is(':visible'), `filter by subseq: test5 is visible`);
+        m.filter(revcomp);
+        ready()
+    }, 1* delay);
+    setTimeout( function() {
+        assert.ok( !$(clone_list[2]).is(':visible'), `filter by revcomp: test1 is NOT visible`);
+        assert.ok(  $(clone_list[6]).is(':visible'), `filter by revcomp: test5 is visible`);
+        m.filter(degen);
+        ready()
+    }, 2* delay);
+    setTimeout( function() {
+        assert.ok( !$(clone_list[2]).is(':visible'), `filter by degenerated sequence: test1 is NOT visible`);
+        assert.ok(  $(clone_list[6]).is(':visible'), `filter by degenerated sequence: test5 is visible`);
+        m.filter(ext5);
+        ready()
+    }, 3* delay);
+    setTimeout( function() {
+        assert.ok( !$(clone_list[2]).is(':visible'), `filter by extended 5' seq; without extended search: test1 is NOT visible`);
+        assert.ok( !$(clone_list[3]).is(':visible'), `filter by extended 5' seq; without extended search: test2 is NOT visible`);
+        m.search_extend = true
+        m.filter(ext5);
+        ready()
+    }, 4* delay);
+    setTimeout( function() {
+        assert.ok(  $(clone_list[2]).is(':visible'), `filter by extended 5' seq; with extended search: test1 is NOT visible`);
+        assert.ok( !$(clone_list[3]).is(':visible'), `filter by extended 5' seq; with extended search: test2 is visible`);
+        m.search_ratio_limit = 0.7
+        m.filter(mismatch);
+        ready()
+    }, 5* delay);
+    setTimeout( function() {
+        assert.ok( !$(clone_list[2]).is(':visible'), `filter id ('mismatch; search_ratio_limit to 0.9') : test1 is NOT visible`);
+        assert.ok( $(clone_list[6]).is(':visible'),  `filter id ('mismatch; search_ratio_limit to 0.9') : test5 is visible`);
+        m.search_ratio_limit = 1
+        m.filter(mismatch);
+        ready()
+    }, 6* delay);
+    setTimeout( function() {
+        assert.ok( !$(clone_list[2]).is(':visible'), `filter id ('mismatch; search_ratio_limit to 1.0') : test1 is NOT visible`);
+        assert.ok( !$(clone_list[6]).is(':visible'), `filter id ('mismatch; search_ratio_limit to 1.0') : test5 is NOT visible`);
+        ready()
+    }, 7* delay);
+
 });
 
 QUnit.test("tag/norm", function(assert) {
