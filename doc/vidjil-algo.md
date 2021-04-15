@@ -409,7 +409,7 @@ consensus (see below), but you can safely put `--max-consensus all` if you want
 to compute all consensus sequences.
 
 The `--max-designations` option limits the number of clones that are fully analyzed,
-*with their V(D)J designation and possibly a CDR3 detection*,
+*with their V(D)J designation and an analysis of their CDR3*,
 in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis).
@@ -449,6 +449,23 @@ The default `--analysis-filter 3` is generally safe.
 Setting `--analysis-filter all` removes this pre-processing step, running a full dynamic programming
 with all germline sequences that is much slower.
 
+## CDR3 analysis
+
+The full analysis of clones beyond the `--max-designations` threshold also includes
+a CDR3/JUNCTION detection based on the position
+of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
+with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
+as provided by `make germline`.
+The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
+
+CDR3 are reported as *productive* when they come from an in-frame recombination
+and when the sequence does not contain any in-frame stop codons.
+Note that some other software only consider stop codons in the CDR3,
+and may thus under-estimate non-productivity.
+When the sequence is long enough to start before the start of the V gene
+or to end after the end of the J gene, vidjil-algo do not consider these intronic sequences
+in the productivity estimation.
+
 ## Sequences of interest
 
 Vidjil-algo allows to indicate that specific sequences should be followed and output,
@@ -484,38 +501,22 @@ with the `--grep-reads <sequence>` preset, equivalent to
 All the reads with the windows related to the sequence will be extracted 
 to files such as `out/seq/clone.fa-1`.
 
-## Further clone analysis: V(D)J designation, CDR3 detection
 Note that such sequences must have been detected as a V(D)J (or V(D)J-like) recombination
 in the first pass: the `--label`, `-label-file`, or `--label-filter` options can not
  detect a recombination that was not detected when removing all the thresholds with `--all`.
+
 To increase the sensitivity, see above the `--e-value` option, or,
 to look for non-recombined sequences, see above the experimental `1` sequence analysis.
 
-``` diff
-Clone analysis (second pass)
-  -d, --several-D             try to detect several D (experimental)
-  -3, --cdr3                  CDR3/JUNCTION detection (requires gapped V/J germlines)
-```
+## Options for further clone analysis
 
-The `-3` option launches a CDR3/JUNCTION detection based on the position
-of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
-with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
-as provided by `make germline`.
-The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
-
-CDR3 are reported as *productive* when they come from an in-frame recombination
-and when the sequence does not contain any in-frame stop codons.
-Note that some other software only consider stop codons in the CDR3,
-and may thus under-estimate non-productivity.
-When the sequence is long enough to start before the start of the V gene
-or to end after the end of the J gene, vidjil-algo do not consider these intronic sequences
-in the productivity estimation.
+The `--several-D` option tries to detect several D.
 
 The advanced `--analysis-cost` option sets the parameters used in the comparisons between
 the clone sequence and the V(D)J germline genes. The default values should work.
 
 The e-value set by `-e` is also applied to the V/J designation.
-The `-E` option further sets the e-value for the detection of D segments.
+The `-E` advanced option further sets the e-value for the detection of D segments.
 
 ## Further clustering (experimental)
 
