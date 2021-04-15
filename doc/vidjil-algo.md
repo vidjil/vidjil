@@ -452,14 +452,18 @@ with all germline sequences that is much slower.
 ## CDR3 analysis
 
 The full analysis of clones beyond the `--max-designations` threshold also includes
-a CDR3/JUNCTION detection based on the position
-of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
+a CDR3/JUNCTION detection and productivity estimation based on the position
+of Cys104 and Phe118/Trp118 amino acids. The detection relies on alignment
 with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
 as provided by `make germline`.
 The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
 
-CDR3 are reported as *productive* when they come from an in-frame recombination
-and when the sequence does not contain any in-frame stop codons.
+CDR3 are reported as *productive* when they come from an in-frame recombination,
+the sequence does not contain any in-frame stop codons,
+and, for IGH recombinations, when the FR4 begins with the `{WP}-GxG` pattern.
+This follows the ERIC guidelines ([Rosenquist et al., 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5508071/)).
+When a clone is reported as non-productive, the cause is detailed in the `seg.junction.unproductive` field
+of the `.vidjil` output and also in some fields of the AIRR output.
 Note that some other software only consider stop codons in the CDR3,
 and may thus under-estimate non-productivity.
 When the sequence is long enough to start before the start of the V gene
