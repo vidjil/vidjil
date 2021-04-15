@@ -497,7 +497,7 @@ int main (int argc, char **argv)
     ->group(group) -> level();
 
   // ----------------------------------------------------------------------------------------------------------------------
-  group = "Clone analysis (second pass)";
+  group = "Clone analysis (second pass), V/D/J designation, CDR3/JUNCTION analysis with productivity estimation";
 
   double expected_value = THRESHOLD_NB_EXPECTED;
   app.add_option("--e-value,-e", expected_value,
@@ -525,10 +525,6 @@ int main (int argc, char **argv)
 
   bool several_D = false;
   app.add_flag("-d,--several-D", several_D, "try to detect several D (experimental)") -> group(group);
-
-  bool detect_CDR3 = false;
-  app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)")
-    -> group(group);
 
   int alternative_genes = 0;
   app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one", true)
@@ -676,6 +672,7 @@ int main (int argc, char **argv)
 
 #define DEPRECATED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); deprecated = true ; return app.exit(CLI::ConstructionError((text), 1));}) -> level(3);
 
+  DEPRECATED("-3", "'-3' is deprecated and has to be removed, CDR3/JUNCTION are now always analyzed on clones under the '--max-designations' threshold");
   DEPRECATED("-t", "'-t' is deprecated, please use '--trim'");
   DEPRECATED("-A", "'-A' is deprecated, please use '--all'");
   DEPRECATED("-a", "'-a' is deprecated, please use '--out-reads'");
@@ -1583,8 +1580,7 @@ int main (int argc, char **argv)
         if (segmented_germline->seg_method == SEG_METHOD_543)
           seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
 
-        if (detect_CDR3)
-          seg.findCDR3();
+        seg.findCDR3();
 
           
 	// Output representative, possibly segmented... 
@@ -1828,8 +1824,7 @@ int main (int argc, char **argv)
                 if (germline->seg_method == SEG_METHOD_543)
                   s.FineSegmentD(germline, several_D, expected_value_D, fine_evalue_multiplier);
 
-                if (detect_CDR3)
-                  s.findCDR3();
+                s.findCDR3();
 
                 g = germline ;
               }
