@@ -3074,50 +3074,107 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * TODO : Give the posibility to user to load his own primer set
      */
     populatePrimerSet : function () {
-        this.primersSetData = {"biomed2" : {}, "primer_fictif": {}, "primer_test": {} }
+      console.log("Model; populatePrimerSet()")
+      this.primersSetData = {"biomed2" : {}, "primer_fictif": {}, "primer_test": {}, "ecngs": {}, "ecngs_FR1": {} }
+      // warning: Primer3 are in reverse complement state
+      // WARNING: TRA & IGL are missing
 
-
-      // Seq de primer biomed2 des TCRD
+      //  Primer Biomed2, can include degenerated sequences
       this.primersSetData.biomed2.TRD = {}; // TODO : init by defaultdict equivalent
-      this.primersSetData.biomed2.TRD.primer5 = [];
-      this.primersSetData.biomed2.TRD.primer3 = [];
-      // Seq de primer biomed2 des IGH
-      this.primersSetData.biomed2.IGH = {}; // TODO : init by defaultdict equivalent
-      this.primersSetData.biomed2.IGH.primer5 = ["GGCCTCAGTGAAGGTCTCCTGCAAG", "GTCTGGTCCTACGCTGGTGAAACCC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCGGAGACCCTGTCCCTCACCTG", "CGGGGAGTCTCTGAAGATCTCCTGC", "TCGCAGACCCTCTCACTCACCTGTG", "CTGGGTGCGACAGGCCCCTGGACAA", "TGGATCCGTCAGCCCCCAGGGAAGG", "GGTCCGCCAGGCTCCAGGGAA", "TGGATCCGCCAGCCCCCAGGGAAGG", "GGGTGCGCCAGATGCCCGGGAAAGG", "TGGATCAGGCAGTCCCCATCGAGAG", "TTGGGTGCGACAGGCCCCTGGACAA", "TGGAGCTGAGCAGCCTGAGATCTGA", "CAATGACCAACATGGACCCTGTGGA", "TCTGCAAATGAACAGCCTGAGAGCC", "GAGCTCTGTGACCGCCGCGGACACG", "CAGCACCGCCTACCTGCAGTGGAGC", "GTTCTCCCTGCAGCTGAACTCTGTG", "CAGCACGGCATATCTGCAGATCAG"] ;
-      this.primersSetData.biomed2.IGH.primer3 = ["CCAGTGGCAGAGGAGTCCATTC", "GTCACCGTCTCCTCAGGTA"]; // GTCACCGTCTCCTCAGGTA is a consensus sequence use because official one (CCAGTGGCAGAGGAGTCCATTC) doesn't work properly
+      this.primersSetData.biomed2.TRD.primer5 = ["CAGCCAAATCCTTCAGTCTCAA", "CCCTGCATTATTGATAGCCAT", "ACCCTGCTGAAGGTCCTACAT", "ATGACCAGCAAAATGCAACAG", "GTACCGGATAAGGCCAGATTA", "ATACCGAGAAAAGGACATCTATG", "ATGCAAAAAGTGGTCGCTATT", "TTGTACCTCCAGATAGGTTCC", "CTCACGGGGCTCCACGAAGAG", "GTTCCACGATGAGTTGTGTTC", "GTTCCACAGTCACACGGGTTC"];
+      this.primersSetData.biomed2.TRD.primer5.concat(["TGGGACCCAGGGTGAGGATAT", "AGCGGGTGGTGATGGCAAAGT"]); // D
+      this.primersSetData.biomed2.TRD.primer3 = ["TGTACCTAGAATGCTTTTGCC", "GGAACCTATCTGGAGGTACAA", "CTCTTCGTGGAGCCCCGTGAG", "GAACACAACTCATCGTGGAAC", "GAACCCGTGTGACTGTGGAAC"];
 
+      this.primersSetData.biomed2.TRB = {};
+      this.primersSetData.biomed2.TRB.primer5 = ["TTATGTTTACTGGTATCGTAAGAAGC", "CAAAATGTACTGGTATCAACAA", "ATACATGTACTGGTATCGACAAGAC", "GGCCATGTACTGGTATAGACAAG", "GTATATGTCCTGGTATCGACAAGA", "TAACCTTTATTGGTATCGACGTGT", "GGCCATGTACTGGTACCGACA", "TCATGTTTACTGGTATCGGCAG", "TTATGTTTATTGGTATCAACAGAATCA", "AACTATGTTTTGGTATCGTCA", "CAACCTATACTGGTACCGACA", "TACCCTTTACTGGTACCGGCAG", "ATACTTCTATTGGTACAGAGACAAATCT", "CACGGTCTACTGGTACCAGCA", "CGTCATGTACTGGTACCAGCA", "CACGATGTTCTGGTACCGTCAGCA", "CAGTGTGTCCTGGTACCAACAG", "AACCCTTTATTGGTACCGACA", "ATCCCTTTTTTGGTACCAACAG", "AACCCTTTATTGGTATCAACAG", "CGCTATGTATTGGTACAAGCA", "CTCCCGTTTTCTGGTACAGACAGAC", "CGCTATGTATTGGTATAAACAG"];
+      this.primersSetData.biomed2.TRB.primer5.concat(["GCCAAACAGCCTTACAAAGAC", "TTTCCAAGCCCCACACAGTC"]); // D
+      this.primersSetData.biomed2.TRB.primer3 = ["CACCAGATTCACAGTTGTAGGTAAG", "GACCAGGTTAACCGTTGTAGGTAAG", "AAGTTGGCTCACTGTTGTAGGTAAG", "GAACCCAGCTCTCTGTCTTGGGTATG", "GACTCGACTCTCCATCCTAGGTAAG", "CAGGCTCACTGTGACAGGTATG", "TCACCGTGCTAGGTAAGAAGG", "AGGCTGACCGTACTGGGTAAG", "TGACAGTGCTCGGTAAGCGGG", "TCTCAGTGCTGGGTAAGCTGG", "AGGCTGACCGTGCTGGGCGAG", "CAGGCTCACGGTTACAGGTAAG", "GTGCTCGGTGTGCGCG"]; // complement
+
+      this.primersSetData.biomed2.TRG = {};
+      this.primersSetData.biomed2.TRG.primer5 = ["CTTCCACTTCCACTTTGAAA", "ACCTGGTGAAGTCATACAGTTC", "ACTGGTACCTACACCAGGAGG", "GGAAGGCCCCACAGCRTCTT", "AGCATGGGTAAGACAAGCAA", "CGGCACTGTCAGAAAGGAATC", "GGTTGTGTTGGAATCAGGAGTCA", "TTGCTCAGGTGGGAAGACTA"];
+      this.primersSetData.biomed2.TRG.primer3 = ["cAAcAcTGGTTGTcAcAGGTA","AAAGcTTATcATTAcAGGTAAGT","cATAGTAAcTTcGccTGGTAA"] // complement
+
+      this.primersSetData.biomed2.IGH = {};
+      this.primersSetData.biomed2.IGH.primer5 = ["GGCCTCAGTGAAGGTCTCCTGCAAG", "GTCTGGTCCTACGCTGGTGAAACCC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCGGAGACCCTGTCCCTCACCTG", "CGGGGAGTCTCTGAAGATCTCCTGT", "TCGCAGACCCTCTCACTCACCTGTG", "CTGGGTGCGACAGGCCCCTGGACAA", "TGGATCCGTCAGCCCCCAGGGAAGG", "GGTCCGCCAGGCTCCAGGGAA", "TGGATCCGCCAGCCCCCAGGGAAGG", "GGGTGCGCCAGATGCCCGGGAAAGG", "TGGATCAGGCAGTCCCCATCGAGAG", "TTGGGTGCGACAGGCCCCTGGACAA"] ;
+      this.primersSetData.biomed2.IGH.primer3 = ["CCAGTGGCAGAGGAGTCCATTC", "GTCACCGTCTCCTCAGGTA"]; // complement
+
+      this.primersSetData.biomed2.IGK = {};
+      this.primersSetData.biomed2.IGK.primer5 = ["TCAAGGTTCAGCGGCAGTGGATCTG", "GGCCTCCATCTCCTGCAGGTCTAGTC", "CCCAGGCTCCTCATCTATGATGCATCC", "CAACTGCAAGTCCAGCCAGAGTGTTTT", "CCTGCAAAGCCAGCCAAGACATTGAT", "GACCGATTTCACCCTCACAATTAATCC", ];
+      this.primersSetData.biomed2.IGK.primer5.concat(["CGTGGCACCGCGAGCTGTAGAC"]) // intron
+      this.primersSetData.biomed2.IGK.primer3 = ["GGGACCAAGGTGGAGATCAAACGTAAG", "GGGACACGACTGGAGATTAAACGTAAG"];  // complement
+      this.primersSetData.biomed2.IGK.primer3.concat(["GTCTACAGCTCGCGGTGCCACG"]) // KDE
+
+
+
+      // Primer ECNGS, can include degenerated sequences
+      this.primersSetData.ecngs.IGH = {};
+      this.primersSetData.ecngs.IGH.primer5  = ["CTGGGTGCGACAGGCCCCT", "CAGGCTCCTGGAAAAGGGCTTGA", "CCCCCGGACAAAGGCTTGA", "CCCGGACAAGCGCTTGAG", "CGACAGGCTCGTGGACAAC", "CGTCAGCCCCCAGGAAAGG", "CCGCCAGGCTCCAGGGAA", "ATGCACTGGGTCCGCCAAG", "CCAGGCTCCAGGAAAGGG", "GCCAGGCTCCCGGGAAGG", "CAGGCTCCAGGCAAGGGG", "ATGCACTGGGTCCGTCAAGC", "GCACTGGGTCTGCCAGGCTC", "CCAGGCTTCCGGGAAAGGG", "ATGCACTGGGTCCGGCAAG", "GGCAGCCCCCAGGGAAGG", "GCCAGCACCCAGGGAAGG", "CAGCCACCAGGGAAGGGCC", "AACTGGGTGCGACAGGCCAC", "CTGGGTGCGCCAGATGCC", "GAACTGGATCAGGCAGTCCC", "GGTTAGATCTGTCAGCCCTCAG", "ATGAGCTGGGTCCGCCAAG", "CTGGGTCCGCCAAGCTACAGGAAA", "GGTCCGCCAGGCTCCAGGGAA", "GGTCCGCCAAGCTCCAGGGAA", "TCCGCCAGCCCCCAGGGAAGG"]
+      this.primersSetData.ecngs.IGH.primer5.concat(["GATTCYGAACAGCCCCGAGTCA", "GATTTTGTGGGGGYTCGTGTC", "GTTTGRRGTGAGGTCTGTGTCA", "GTTTRGRRTGAGGTCTGTGTCACT", "CTTTTTGTGAAGGSCCCTCCTR", "GTTATTGTCAGGSGRTGTCAGAC", "GTTATTGTCAGGGGGTGYCAGRC", "GTTTCTGAAGSTGTCTGTRTCAC"])
+      this.primersSetData.ecngs.IGH.primer3  = ["GGTCACCGTCTCCTCAGGTAAG", "GGTCACCGTCTCCTCAGGTGAG"] // complement
+
+      this.primersSetData.ecngs.IGKDE = {};
+      this.primersSetData.ecngs.IGK_DE   = ["GCAGCTGCAGACTCATGAGGAG"]
+      this.primersSetData.ecngs.IGK_INTR = ["GAGTGGCTTTGGTGGCCATGC"]
+
+      this.primersSetData.ecngs.IGK = {};
+      this.primersSetData.ecngs.IGK.primer5 = ["AAGTGGGGTCCCATCAAGGTTCAG", "AGTCCCATCTCGGTTCAGTGGCAG", "GAAACAGGGGTCCCATCAAGGTTC", "TCCCAGACAGATTCAGTGGCAGTG", "CTGGAGTGCCAGATAGGTTCAGTG", "CCCTGGAGTCCCAGACAGGTTCAG", "GCATCCCAGCCAGGTTCAGTG", "GTCCCTGACCGATTCAGTGGCA", "AATCCCACCTCGATTCAGTGGC", "CTCAGGGGTCCCCTCGAGGTT", "AGACACTGGGGTCCCAGCCA"]
+      this.primersSetData.ecngs.IGK.primer3 = ["GGGACCAAGGTGGAGATCAAACGT", "GGGACCAAAGTGGATATCAAACGT", "GGGACACGACTGGAGATTAAACGT"] // complement
+
+      this.primersSetData.ecngs.TRB = {};
+      this.primersSetData.ecngs.TRB.primer5  = ["CTCAGTTGAAAGGCCTGATGGA", "TCAGCTAAGTGCCTCCCAAATT", "GCCAAAGGAACGATTTTCTGCT", "CTGAAGGGTACAGCGTCTCTC", "TTTCTCATCAACCATGCAAGCC", "TGAGCGATTTTTAGCCCAATGC", "GGAGATGCACAAGAAGCGATTC", "ACAAAGGAGAGATCTCTGATGGA", "TCCTCTGAGTCAACAGTCTCCA", "AGGGAGATGTTCCTGAAGGGTA", "CCTGAGGGGTACAGTGTCTCTA", "CTGAGGCCACATATGAGAGTGG", "CAGAATCTCTCAGCCTCCAGAC", "AGTTCCAAATCGCTTCTCACCT", "TCGCTTCTCACCTGAATGCCC", "GGAAACTTCCCTGGTCGATTC", "ACTTCCCTGATCGATTCTCAGC", "TTCCCTAATCGATTCTCAGGGC", "GATTCTCAGGTCTCCAGTTCCC", "CTCAGGTCACCAGTTCCCTAAC", "CCTAGATTTTCAGGTCGCCAGT", "TACAACTGCCAAAGGAGAGGTC", "TACCACTGGCAAAGGAGAAGTC", "TAAAGGAGAAGTCCCGAATGGC", "GGAGAAGTTCCCAATGGCTACA", "CAACGATCGGTTCTTTGCAGTC", "TAAATCAGGGCTGCTCAGTGAT", "CAGTGATCGGTTCTCTGCAGAG", "CTCAACTAGACAAATCGGGGCT", "CTTGAACGATTCTCCGCACAAC", "ATAAAGGAGAAGTCCCCGATGG", "CAAAGGAGAAGTCTCAGATGGC", "ATCGATTTTCTGCAGAGAGGCT", "CCGAGGATCGATTCTCAGCTAA", "CTCTAGATGATTCGGGGATGCC", "GGAAGCATCCCTGATCGATTCT", "CGGTATGCCCAACAATCGATTC", "TGAAGCAGACACCCCTGATAAC"]
+      this.primersSetData.ecngs.TRB.primer5.concat(["CCTCCACTCCCCTCAAAGGA", "CAGACTAACCTCTGCCACCTG"])
+      this.primersSetData.ecngs.TRB.primer3  = ["GGCACCAGACTCACAGTTGTAG", "GGACCAGGTTAACCGTTGTAG", "GGACCAGGTTAACCGTTGTAG", "GGGAAGTTGGCTCACTGTTGTA", "GGGAAGTTGGCTCACTGTTGTA", "GGAACCCAGCTCTCTGTCTTG", "GGAACCCAGCTCTCTGTCTTG", "GGGACTCGACTCTCCATCCTAG", "GGGACTCGACTCTCCATCCTAG", "GACCAGGCTCACTGTGACAG", "GACCAGGCTCACTGTGACAG", "CTCACCGTGCTAGGTAAGAAGG", "CTCACCGTGCTAGGTAAGAAGG", "CTAGGCTGACCGTACTGGGTAA", "CTAGGCTGACCGTACTGGGTAA", "GGCTGACAGTGCTCGGTAAG", "GGCTGACAGTGCTCGGTAAG", "GGCTCTCAGTGCTGGGTAAG", "GGCTCTCAGTGCTGGGTAAG", "GGCTCCTGGTGCTCGGTGA", "GGCTCCTGGTGCTCGGTGA", "GACCGTGCTGGGTGAGTTTTC", "GACCGTGCTGGGTGAGTTTTC", "GGCTGACCGTGCTGGGTGA", "GGCTGACCGTGCTGGGTGA", "CTCACGGTCACAGGTGAGATTC", "CTCACGGTCACAGGTGAGATTC"] // complement
+
+      this.primersSetData.ecngs.TRD = {};
+      this.primersSetData.ecngs.TRD.primer5  = ["GAATGCAAAAAGTGGTCGCTATTC", "TGCAAAGAACCTGGCTGTACT", "TGCAGATTTTACTCAAGGACGG", "GCAAAATGCAACAGAAGGTCG","GATAAAAATGAAGATGGAAGATTCACTGT", "CTCCTTCAATAAAAGTGCCAAGC", "ATTGAAAAGAAGTCAGGAAGACTAAGT", "TCCAGAAAGCAGCCAAATCC"]
+      this.primersSetData.ecngs.TRD.primer5.concat(["AGGGGTATTGTGGATGGCAG", "CCCAGGGAAATGGCACTTTTG"])
+      this.primersSetData.ecngs.TRD.primer3  = ["ACCCGTGTGACTGTGGAA", "AACACAACTCATCGTGGAACC", "ACTGGCATCAAACTCTTCGTG", "AACCTATCTGGAGGTACAACAAC", "TGCAAGTAAGTGTTTCTAGCCA"] // complement
+
+      this.primersSetData.ecngs.TRG = {};
+      this.primersSetData.ecngs.TRG.primer5 = ["GCACAAGGAACAACTTGAGATTG", "TGGAAGCACAAGGAAGAACTTGAGAA", "GCACAGGGAAGAGCCTTAAATT", "CAGGAGGTGGAGCTGGATATT", "CAAGCATGAGGAGGAGCTGGAAATTG", "ACGTCTACATCCACTCTCACC", "CTCTCACTTCAATCCTTACCATCAA", "GCTCACACTTCCACTTCCACTTTGAAAATAAAGT"]
+      this.primersSetData.ecngs.TRG.primer3 = ["CTTTGGCAGTGGAACAACACT", "CAAGGTATTTGGTCCCGGAAC", "TATTTGCTGAAGGGACTAAGCTC", "CGTTTGCAAAAGGGACTAGG"] // complement
+
+      // IGH FR1
+      this.primersSetData.ecngs_FR1.IGH = {}
+      this.primersSetData.ecngs_FR1.IGH.primer5  = ["CTGGGGCTGAGGTGAAGAAG", "GCAGTCTGGAGCAGAGGTGAAAA", "TCACCTTGAAGGAGTCTGGTCC", "AGGTGCAGCTGGTGGAGTC", "GAGGTGCAGCTGTTGGAGTC", "CCAGGACTGGTGAAGCCTTC", "CAGTGGGGCGCAGGACTGTT", "CCAGGACTGGTGAAGCCTCC", "GTACAGCTGCAGCAGTCAGG", "GCTGGTGCAATCTGGGTCTG", "CCTCAGTGAAGGTTTCCTGCAAGG", "AAACCCACAGAGACCCTCACGCTGAC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCACAGACCCTGTCCCTCACCTG", "TCGCAGACCCTCTCACTCACCTGTG"]
+      this.primersSetData.ecngs_FR1.IGH.primer5.concat(["GATTCYGAACAGCCCCGAGTCA", "GATTTTGTGGGGGYTCGTGTC", "GTTTGRRGTGAGGTCTGTGTCA", "GTTTRGRRTGAGGTCTGTGTCACT", "CTTTTTGTGAAGGSCCCTCCTR", "GTTATTGTCAGGSGRTGTCAGAC", "GTTATTGTCAGGGGGTGYCAGRC", "GTTTCTGAAGSTGTCTGTRTCAC"])
+      this.primersSetData.ecngs_FR1.IGH.primer3  = ["GGTCACCGTCTCCTCAGGTAAG", "GGTCACCGTCTCCTCAGGTGAG"] // complement
 
       // test fictif; sequence inclut dans les sequences de clones
       this.primersSetData.primer_fictif.TRD = {};
       this.primersSetData.primer_fictif.TRD.primer5 = ["GATTTTACTCAAGGACGGTT", "GCAAAGAACCTGGCTGT", "AGATTTTACTCAAGGAC"] // V3, V2,
       this.primersSetData.primer_fictif.TRD.primer3 = ["AGGAACCCGTGTGACT", "GAACACAACTCATCGTGGA", "GAACTGGCATCAAACTCTTC"] // J1, J2, J3
 
-      // Test qunits
-      this.primersSetData.primer_test.IGH = {};
-      this.primersSetData.primer_test.IGH.primer5 = [] // IGH seq from model_test.js
-      this.primersSetData.primer_test.IGH.primer3 = []
-      this.primersSetData.primer_test.TRG = {};
-      this.primersSetData.primer_test.TRG.primer5 = ["GGAAGGCCCCACAGCG"] // TRG seq from model_test.js
-      this.primersSetData.primer_test.TRG.primer3 = ["AACTTCGCCTGGTAA"]
     },
 
 
     /*
      * Generic function to add a feature based on sequence for each clones
+     * Sequence can be an array of sequence. In this case, the function will search for best matching sequence in the array before adding feature
      */
     addSegFeatureFromSeq : function (feature, sequence) {
-        if (this.clones.length > 100 ) {
-            numberToProcess = 100
-        } else {
-            numberToProcess = this.clones.length
-        }
+        numberToProcess = this.clones.length
 
+        var best_sequence;
         for (var i = 0; i < numberToProcess; i++) {
-            if ( this.clones[i].hasSequence() ) {
+            var clone = this.clones[i]
+            if ( clone.seg[feature] == undefined && clone.hasSequence() ) {
+                // filter to extend only in one direction; depending of feature naming
+                var extend = ([5, 3].indexOf(feature.substr(feature.length - 1)) != -1) ? feature.substr(feature.length - 1) : undefined
+
                 // TODO : sequence 0 ou undefined ? bypass la fct ?
-                if (this.clones[i].sequence.indexOf(sequence) != -1) {
-                    this.clones[i].addSegFeatureFromSeq(feature, sequence)
+                if (Array.isArray(sequence)){
+                    var values = clone.getBestMatchingSequence(sequence, extend)
+                    best_sequence = values[0]
+                    extend        = values[1]
+                } else {
+                    best_sequence = sequence
                 }
+
+                if (best_sequence == undefined){
+                    continue
+                }
+                clone.addSegFeatureFromSeq(feature, best_sequence, extend)
             }
         }
     },
@@ -3146,21 +3203,17 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             console.log("Primer set unknow")
             return -1
         }
-        primersSet = this.primerSetCurrent
 
         this.cleanPreviousFeature("primer5")
         this.cleanPreviousFeature("primer3")
         for (var i = 0; i < this.system_available.length; i++) {
             var germline = this.system_available[i].replace("+", "")
+            if (this.primersSetData[this.primerSetCurrent][germline] != undefined){
+                primer5 = this.primersSetData[this.primerSetCurrent][germline].primer5
+                primer3 = this.primersSetData[this.primerSetCurrent][germline].primer3
 
-            primer5 = this.primersSetData[this.primerSetCurrent][germline].primer5
-            primer3 = this.primersSetData[this.primerSetCurrent][germline].primer3
-
-            for (var p = 0; p < primer5.length; p++) {
-                this.addSegFeatureFromSeq("primer5", primer5[p])
-            }
-            for (var q = 0; q < primer3.length; q++) {
-                this.addSegFeatureFromSeq("primer3", primer3[q])
+                this.addSegFeatureFromSeq("primer5", primer5)
+                this.addSegFeatureFromSeq("primer3", primer3)
             }
         }
     },
@@ -3182,10 +3235,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.primerSetCurrent = primersSet;
             console.log("Current primer set : "+ this.primerSetCurrent)
             this.switchPrimers();
+            console.log("Switch primers values : "+ this.primerSetCurrent)
             this.update();
             return 0
         }
-        this.update();
     },
 
     

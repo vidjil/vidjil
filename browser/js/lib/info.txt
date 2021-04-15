@@ -1,4 +1,10 @@
 
+    bioseq.js   : fast and lightweight javascript library for affine-gap local and banded global pairwise alignment (Smith-Waterman)
+    * @version          d8adcf1 (2019-08-08)
+    * @author           Heng Li (lh3)
+    * @link             https://github.com/lh3/bioseq-js
+    * @license          MIT
+
     d3-v3		: framework svg pour graphique/scatterplot
     * @version          5.14.1 (2019)
     * @author           Michael Bostock

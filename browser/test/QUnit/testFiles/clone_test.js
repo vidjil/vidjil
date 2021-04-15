@@ -424,19 +424,6 @@ QUnit.test('clone: get info from seg', function(assert) {
     assert.equal(c2.getDeletion('5', 'delRight'), 18, 'return length of the deletion for c2')
 });
 
-QUnit.test("clone : feature defined by a nucleotide sequence", function(assert) {
-    var m = new Model()
-    m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0, c_attributes)
-    var c2 = new Clone(json_clone2, m, 1, c_attributes)
-    var c3 = new Clone(json_clone3, m, 2, c_attributes)
-    m.initClones()
-
-    assert.deepEqual(c3.getSegStartStop('somefeature'), null, "start/stop positions are not present")
-    c3.computeSegFeatureFromSeq('somefeature')
-    assert.deepEqual(c3.getSegStartStop('somefeature'), {"start": 6, "stop": 12}, "start/stop positions, computed from sequence")
-    assert.equal(c3.getSegLength('somefeature'), 7, "length of the feature");
-});
 
 QUnit.test("getSequence/RevComp", function(assert) {
     var m = new Model();
@@ -769,6 +756,121 @@ QUnit.test("productivity detailed", function(assert) {
     assert.equal(c4.getProductivityNameDetailed(), "no CDR3 detected", "detailed productivity; without junction");
     assert.equal(c5.getProductivityNameDetailed(), "productive",       "detailed productivity; productive");
     assert.equal(c6.getProductivityNameDetailed(), "no-WPGxG-pattern", "detailed productivity; no-WPGxG-pattern");
+});
+
+
+QUnit.test("clone : feature defined by a nucleotide sequence", function(assert) {
+    // Test with sequence already in a feature inside clone
+    var m = new Model()
+    m.parseJsonData(json_data)
+    var c3 = new Clone(json_clone3, m, 0, c_attributes)
+    m.initClones()
+
+    assert.deepEqual(c3.getSegStartStop('somefeature'), null, "start/stop positions are not present")
+    c3.addSegFeatureFromSeq('somefeature')
+    assert.deepEqual(c3.getSegStartStop('somefeature'), {"start": 6, "stop": 12}, "start/stop positions, computed from sequence")
+    assert.equal(c3.getSegLength('somefeature'), 7, "length of the feature");
+    assert.equal(c3.getSegNtSequence('somefeature'), "aaaattt" , "Seq of the feature");
+
+    // Test with given sequence for new feature
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.populatePrimerSet()
+
+    m.germline.IGH = {
+        "IGH5seg":"ACTGAAGTCATTGGAAAAAATTTTTAAAAATTTTTAAAAATTTTTAAAAATTTTTAAAAATTTTTAAAAATTTTTAAAAATTTTTAAAAATTTTTAAAAA", 
+        "IGH4seg":"gtgtgtgtgtgtgtgtgtgt", 
+        "IGH3seg":"GGGGGCCCCCGGGGGCCCCCGGGGGCTATCATATGCATACGGGGGCCCCC"
+    }
+
+    // Clone with seg start and stop position
+    var clone8 = {
+      "germline": "IGH",
+      "id": "id7",
+      "name": "clone with exact position",
+      "reads": [0,0,0,0],
+      "seg": {
+        "3": {
+          "delLeft": 0,
+          "name": "IGH3seg",
+          "start": -1
+        },
+        "5": {
+          "delRight": 0,
+          "name": "IGH5seg",
+          "stop": -1,
+          "start": 0
+        }
+      },
+      "sequence": "init",
+    }
+    var clone = new Clone(clone8, m, 0, c_attributes);
+    m.initClones();
+
+    primer5_fictif = ["ACTGAAGTCATTGGA", "ttggttggtgttggttggtgttggttggtgttggttggtg","aaccaaccaaaaccaaccaaaaccaaccaaaaccaaccaa","atgcggatgcatgcggatgcatgcggatgcatgcggatgc"]
+    primer3_fictif = ["CTATCATATGCATAT", "ttaattaatattaattaatattaattaatattaattaata","aaccaaccaaaaccaaccaaaaccaaccaaaaccaaccaa"]
+
+
+    //"IGHV1-2*01 // IGHJ1*01",
+    // var igh_V1_2_J1_full
+    clone.sequence     = m.germline.IGH.IGH5seg + m.germline.IGH.IGH3seg
+    clone.seg[5].stop  = 99
+    clone.seg[3].start = 100
+    assert.deepEqual( clone.getBestMatchingSequence(primer5_fictif, false), [primer5_fictif[0], false], "seq full; BestMatching; primer5, no extend" )
+    assert.deepEqual( clone.getBestMatchingSequence(primer5_fictif, [5]),   [primer5_fictif[0], false], "seq full; BestMatching; primer5, extend 5" )
+
+    // not full match, but if extend, have bas_align call
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_fictif, []),  [undefined, false],"seq full; BestMatching; primer3, no extend")
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_fictif, [5]), [undefined, false],"seq full; BestMatching; primer3, extend 5" )
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_fictif, [3]), [primer3_fictif[0], true],"seq full; BestMatching; primer3, extend 3" )
+    clone.addSegFeatureFromSeq("primer5", primer5_fictif[0], true)
+    clone.addSegFeatureFromSeq("primer3", primer3_fictif[0], true)
+    assert.deepEqual( clone.seg["primer5"], {"seq":primer5_fictif[0], "start":0, "stop":14}, "seq full; addSegFeatureFromSeq; Primer5 value")
+    assert.deepEqual( clone.seg["primer3"], {"seq":primer3_fictif[0], "start":125, "stop":139}, "seq full; addSegFeatureFromSeq; Primer3 value")
+    assert.equal( clone.getSegLengthDoubleFeature('primer5', 'primer3'), 140, "seq full; Correct length for genescan ecngs" ) // ~245
+    delete clone.seg["primer5"] // delete for next addSegFeatureFromSeq call
+    delete clone.seg["primer3"]
+
+
+    // Sequence with 5' and 3' deletion
+    clone.sequence     = m.germline.IGH.IGH5seg.substr(20, 80) + m.germline.IGH.IGH3seg.substr(0, 25)
+    clone.seg[5].stop  = 79
+    clone.seg[3].start = 80
+    assert.deepEqual( clone.getBestMatchingSequence(primer5_fictif, false), [undefined, false],       "seq short; primer5, no extend" )
+    assert.deepEqual( clone.getBestMatchingSequence(primer5_fictif, [5]),  [primer5_fictif[0], true], "seq short; primer5, extend 5" )
+
+    // not full match, but if extend, have bas_align call
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_fictif, []),   [undefined, false], "seq short; primer3, no extend")
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_fictif, [5]),  [undefined, false], "seq short; primer3, extend 5" )
+    assert.deepEqual( clone.getBestMatchingSequence(primer3_fictif, [3]),  [primer3_fictif[0], true], "seq short; primer3, extend 3" )
+    
+    clone.addSegFeatureFromSeq("primer5", primer5_fictif[0], true)
+    clone.addSegFeatureFromSeq("primer3", primer3_fictif[0], true)
+    
+    assert.deepEqual( clone.seg["primer5"], {"seq":primer5_fictif[0], "start":-20, "stop":-6},  "seq short; addSegFeatureFromSeq; Primer5 value")
+    assert.deepEqual( clone.seg["primer3"], {"seq":primer3_fictif[0], "start":105, "stop":119}, "seq short; addSegFeatureFromSeq; Primer3 value")
+    assert.equal( clone.getSegLengthDoubleFeature('primer5', 'primer3'), 140, "seq short; Correct length for genescan ecngs" )
+    
+    delete clone.seg["primer5"]
+    delete clone.seg["primer3"]
+
+    // Sequence with 5'(-10) and 3'(-5) deletion, and D insertion (20nt)
+    clone.sequence = m.germline.IGH.IGH5seg.substr(20, 70) + m.germline.IGH.IGH4seg + m.germline.IGH.IGH3seg.substr(5, 25)
+    clone.seg[5].stop     = 69
+    clone.seg[3].start    = 90
+    clone.seg[5].delRight = 10
+    clone.seg[3].delLeft  = 5
+    clone.seg[4]   = {"delLeft": 0, "delRight": 0, "name": "IGH4seg", "start": 70, "stop": 89 }
+
+    clone.addSegFeatureFromSeq("primer5", primer5_fictif[0], true)
+    clone.addSegFeatureFromSeq("primer3", primer3_fictif[0], true)
+    assert.deepEqual( clone.seg["primer5"], {"seq":primer5_fictif[0], "start":-20, "stop":-6}, "Seq with D; Primer5 value")
+    assert.deepEqual( clone.seg["primer3"], {"seq":primer3_fictif[0], "start":110, "stop":124}, "Seq with D; Primer3 value")
+    assert.equal( clone.getSegLengthDoubleFeature('primer5', 'primer3'), 145, "Seq with D; Correct length for genescan ecngs (-10+20-5)" ) // ~245
+    delete clone.seg["primer5"]
+    delete clone.seg["primer3"]
+
+    
 });
 
 

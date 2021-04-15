@@ -247,37 +247,141 @@ Clone.prototype = {
 
     /**
      * Add a new feature from a nucleotide sequence
-     */
-
-    addSegFeatureFromSeq: function(field_name, seq)
-    {
-        this.seg[field_name] = {};
-        this.seg[field_name].seq = seq;
-        this.computeSegFeatureFromSeq(field_name);
-    },
-
-    /**
      * Compute feature positions (start/stop) from its sequence, unless they are already present
      * Computed positions are converted to start from 0 and can be used without manipualtions
      */
-    computeSegFeatureFromSeq: function(field_name)
+    addSegFeatureFromSeq: function(field_name, sequence, extend)
     {
+        // Does feature and position exist in clone ?
         positions = this.getSegStartStop(field_name)
 
-	if (positions !== null)
-            // Start/stop do already exist
+        // Start/stop do already exist
+        if (positions !== null){
             return ;
+        }
 
-        seq = this.seg[field_name].seq
+        // try to get sequence from existing feature in the clone if not given
+        if (sequence == undefined && this.seg[field_name] != undefined && this.seg[field_name].seq != undefined){
+            sequence = this.seg[field_name].seq
+        }
 
-        var pos = this.sequence.indexOf(seq)
 
-        if (pos < 0)
-            // No feature here
-            return;
+        if (sequence != undefined){
+            // Insert sequence and positions if possible
+            var pos = this.sequence.indexOf(sequence)
+            if (pos != -1) {
+                // perfect match exist
+                this.seg[field_name] = {};
+                this.seg[field_name].seq = sequence;
+                this.seg[field_name].start = pos // seq is 0-based
+                this.seg[field_name].stop  = pos + sequence.length -1
+                return
+            } else if (extend == true || extend == undefined) {
+                // No perfect match; try extension with germline sequence
+                // Warning; predictive approach can't be perfect
+                var genes =  [5, 3]
+                for (var g = 0; g < genes.length; g++) {
+                    var gene_way = genes[g]
+                    if (field_name.indexOf(gene_way.toString()) != -1){ // Warning; need to clarify rule for feature naming
+                        germseq = this.getExtendedSequence(gene_way)
+                        if (germseq != undefined){
+                            var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1]) // return [score, start pos, ~cigar]
+                            var germpos = rst[1] -1 //to be 0-based
+                            var nb_match = bsa_cigar2match(rst[2]) // Get number of match
+                            if (nb_match > (sequence.length/2) ){
+                                if (gene_way == 5){
+                                    computed_pos = this.seg["5"].stop + germpos - germseq.length + this.seg["5"].delRight +1
+                                } else if (gene_way == 3){
+                                    computed_pos = this.seg["3"].start - this.seg["3"].delLeft + germpos
+                                }
+                                this.seg[field_name] = {};
+                                this.seg[field_name].seq = sequence;
+                                this.seg[field_name].start = computed_pos + 1
+                                this.seg[field_name].stop  = computed_pos + sequence.length
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
 
-        this.seg[field_name].start = pos
-        this.seg[field_name].stop  = pos + seq.length -1
+    /**
+     * Get extended sequence of clone
+     * @param  {Number} gene_way Germline sequence to get (available option are 5, 4 or 3)
+     * @return {string}          If found, the clean germline sequence
+     */
+    getExtendedSequence: function(gene_way){
+        var gene = this.getGene(gene_way);
+        if (gene !== undefined) {
+            var germName = this.germline.substring(0, 3);
+            if (this.m.germline[germName] != undefined) {
+                germseq_found = this.m.findGermlineFromGene(gene);
+                if (germseq_found != undefined){
+                    germseq = germseq_found.toUpperCase().replace(/\./g, '');
+                    return germseq
+                }
+            }
+        }
+        return
+    },
+
+
+    /**
+     * Return the best matching sequence from a list of sequence
+     * Can be used to find the best matching primer from a list of primers
+     * If no perfect match, can search in germline sequence (longer) and use alignment option
+     * @param  {Array} sequences Array of sequence to search in clone
+     * @param  {Array} extend    Array of germline sequence to extend. Available option are 5 and 3
+     * @return {Array}           [best sequence found, use extension]
+     */
+    getBestMatchingSequence: function(sequences, extend){
+        var best_seq   = []
+        var best_rst   = []
+        var best_score = 0
+        var sequence;
+
+        // Look for perfect match in clone sequence
+        for (var seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
+            sequence = sequences[seq_pos]
+            if (this.sequence.indexOf(sequence) != -1) {
+                best_seq.push(sequence)
+            }
+        }
+        if (best_seq.length > 0){
+            // TODO; if multiple perfect match, return longer sequence
+            return [best_seq[0], false]
+        }
+
+        // No perfect match, look in germline sequence with alignement tool
+        var genes = (extend != undefined) ? extend : [5, 3]
+
+        // Look if germline sequence is available
+        for (var g = 0; g < genes.length; g++) {
+            var gene_way = genes[g]
+            germseq = this.getExtendedSequence(gene_way)
+            if (germseq != undefined){
+                for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
+                    sequence = sequences[seq_pos]
+                    rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1])
+                    var nb_match = bsa_cigar2match(rst[2])
+                    if (rst[0] > best_score && nb_match > (sequence.length/2) ){
+                        best_seq   = [sequence]
+                        best_rst   = [rst]
+                        best_score = rst[0]
+                    } else if (rst[0] == best_score){
+                        best_seq.push(sequence)
+                        best_rst.push(rst)
+                    }
+                }
+            }
+        }
+
+        if (!best_seq.length) {
+            return [undefined, false]
+        }
+        return [best_seq[0], true]
     },
 
 
@@ -298,7 +402,8 @@ Clone.prototype = {
     getSegNtSequence: function(field_name) {
         positions = this.getSegStartStop(field_name)
         if (positions !== null) {
-            return this.sequence.substr(positions.start, positions.stop - positions.start+1)
+            // return this.sequence.substr(positions.start-1, (positions.stop+1) - positions.start)
+            return this.sequence.substr(positions.start, this.getSegLength(field_name))
         }
         return '';
     },
@@ -311,7 +416,7 @@ Clone.prototype = {
     getSegLength: function(field_name) {
         positions = this.getSegStartStop(field_name)
         if (positions !== null) {
-            return positions.stop - positions.start + 1
+            return (positions.stop+1) - positions.start
         } else {
             return 'undefined';
         }
@@ -324,13 +429,13 @@ Clone.prototype = {
      * If no start and stop are given, return 0
      */
     getSegLengthDoubleFeature: function(field_name1, field_name2) {
-	positions1 = this.getSegStartStop(field_name1)
-	positions2 = this.getSegStartStop(field_name2)
+    	var positions1 = this.getSegStartStop(field_name1)
+    	var positions2 = this.getSegStartStop(field_name2)
 
-	if (positions1 !== null && positions2 !== null) {
-	    return positions2.stop - positions1.start + 1
-	} else {
-	    return 'undefined';
+    	if (positions1 !== null && positions2 !== null) {
+    	    return positions2.stop - positions1.start + 1
+    	} else {
+    	    return 'undefined';
         }
     },
 

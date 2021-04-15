@@ -49,6 +49,7 @@ function ScatterPlot_menu(default_preset) {
       //"interpolated length between BIOMED2 primers (inclusive)" : { "x": "primers", "y" : "size"},
         "number of deletions for the segment V/5 in 3" :{ "x": "V/5' deletions in 3'"},
         "number of deletions for the segment J/3 in 5" :{ "x": "J/3' deletions in 5'"},
+        "Primers" :{ "x": "primers"},
     };
 
     this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset 

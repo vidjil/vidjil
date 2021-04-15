@@ -19,7 +19,8 @@ require(["jquery",
          "js/lib/jquery.caret",
          "js/lib/jquery.atwho",
          "js/lib/vmi",
-         "js/lib/svgExport"], function() {
+         "js/lib/svgExport",
+         "js/lib/bioseq"], function() {
              // Then config file (needed by Vidjil)
              require(['js/conf'], function() {
                  loadAfterConf()
