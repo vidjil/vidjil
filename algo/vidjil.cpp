@@ -165,14 +165,14 @@ string usage_examples(char *progname)
   stringstream ss;
   ss
        << "Examples (see " DOCUMENTATION ")" << endl
-       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
        << "                                                                                               #  cluster reads and report clones starting from the first read (-r 1)," << endl
-       << "                                                                                               #  including unexpected recombinations (-2), assign V(D)J genes and try to detect the CDR3s (-3))" << endl
-       << "  " << progname << " -c clones       -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
-       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
+       << "                                                                                               #  including unexpected recombinations (-2), designate V(D)J genes and analyze CDR3s" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g:IGH           demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g      -2 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
        << "  " << progname << " --filter-reads  -g germline/homo-sapiens.g               demo/LIL-L4.fastq.gz      # (pre-filter, extract all reads that may have V(D)J recombinations)" << endl
        << "  " << progname << " -c windows      -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
-       << "  " << progname << " -c designations -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, here on 50 sampled reads)" << endl
+       << "  " << progname << " -c designations -g germline/homo-sapiens.g      -2 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, here on 50 sampled reads)" << endl
        << "  " << progname << " -c germlines    -g germline/homo-sapiens.g               demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
 
