@@ -161,13 +161,19 @@
                        {{pass}}
                    {{pass}}
                    </td>
-                   <td>
-                    {{if row.sequence_file.data_file != None and ( row.results_file.id != None or ( status not in ["RUNNING", "QUEUED", "ASSIGNED"]) ) and (not has_pre_process or (row.sequence_file.pre_process_flag != None and row.sequence_file.pre_process_flag != "FAILED")) :}}
-                        {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
-                            <span class="pointer" onclick="myUrl.loadCustomUrl(db, {'custom': '{{=row.results_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config' : {{=config_id}} } )"> <i class=" icon-forward" title="open this sample results in client"></i></span>
-                        {{pass}}
+                   
+                    {{if row.results_file.id and row.results_file.data_file:}}
+                    <td><a class="button" href="{{=http_origin}}?custom={{=row.results_file.id}}&sample_set_id={{=request.vars["id"]}}&config={{=config_id}}" type="text/html"
+                                onclick= "event.preventDefault();
+                                        if( event.which == 2 ) { window.open(this.href); }
+                                        else { myUrl.loadCustomUrl(db, {'custom': '{{=row.results_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config' : {{=config_id}}  } ); } " >
+                            <i class="icon-forward" title="open this sample results in client"></i>
+                        
+                    </a></td>
+                    {{else:}}
+                    <td></td>
                     {{pass}}
-                   </td>
+                   
                 </tr>
             {{pass}}
 
