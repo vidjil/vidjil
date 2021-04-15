@@ -294,6 +294,9 @@ void output_label_average(ostream &out, string label, long long int nb, double a
 
 void json_add_warning(json &clone, string code, string msg, string level=LEVEL_WARN);
 
+/* Returns whether the string matches, at first position, the {WP}GxG pattern */
+bool WPGxG(string aa);
+
 /*
    Opens a ostream, possibly gz-compressed
 */
