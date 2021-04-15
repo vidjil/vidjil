@@ -251,17 +251,19 @@ section of the `docker-compose.yml` file or by stopping the service using port
 
 The following configuration files are found in the `vidjil/docker` directory:
 
-  - `conf/conf.js` various variables for the vidjil browser
-  - `conf/defs.py` various variables for the vidjil server
-  - `conf/gzip.conf` configuration for gzip in nginx
-  - `conf/gzip_static.conf` same as the previous but for static resources
-  - `conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
-  - `sites/nginx` configuration required when running vidjil with nginx
-  - `scripts/nginx-entrypoint.sh` entrypoint for the nginx
-  - `service` (not currently in use)
-  - `scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi
+  - `vidjil-client/conf/conf.js` various variables for the vidjil client
+  - `vidjil-client/conf/nginx_gzip.conf` configuration for gzip in nginx
+  - `vidjil-client/conf/nginx_gzip_static.conf`  same as the previous but for static resources
+
+  - `vidjil-server/conf/defs.py` various variables for the vidjil server
+  - `vidjil-server/conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
+  - `vidjil-server/scripts/nginx-entrypoint.sh` entrypoint for the nginx
+  - `vidjil-server/scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi
 service. Ensures the owner of some relevant volumes are correct within
 the container and starts uwsgi
+
+  - `sites/nginx` configuration required when running vidjil with nginx
+  - `service` (not currently in use)
 
 Here are some notable configuration changes you should consider:
 
