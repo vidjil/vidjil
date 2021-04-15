@@ -435,7 +435,7 @@ def get_custom_data():
             config_id = db.results_file[id].config_id
             name = vidjil_utils.anon_ids([patient_run.id])[0] if sample_set.sample_type == defs.SET_TYPE_PATIENT else patient_run.name
             filename = db.sequence_file[sequence_file_id].filename
-            data["samples"]["original_names"].append(name + "_" + filename)
+            data["samples"]["original_names"].append(name + "_" + filename+ " ("+id+")")
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
             data["samples"]["commandline"].append(db.config[config_id].command)
