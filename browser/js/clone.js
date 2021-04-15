@@ -283,23 +283,20 @@ Clone.prototype = {
                 for (var g = 0; g < genes.length; g++) {
                     var gene_way = genes[g]
                     if (field_name.indexOf(gene_way.toString()) != -1){ // Warning; need to clarify rule for feature naming
-                        germseq = this.getExtendedSequence(gene_way)
-                        if (germseq != undefined){
-                            var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1]) // return [score, start pos, ~cigar]
-                            var germpos = rst[1] -1 //to be 0-based
-                            var nb_match = bsa_cigar2match(rst[2]) // Get number of match
-                            if (nb_match > (sequence.length/2) ){
-                                if (gene_way == 5){
-                                    computed_pos = this.seg["5"].stop + germpos - germseq.length + this.seg["5"].delRight +1
-                                } else if (gene_way == 3){
-                                    computed_pos = this.seg["3"].start - this.seg["3"].delLeft + germpos
-                                }
-                                this.seg[field_name] = {};
-                                this.seg[field_name].seq = sequence;
-                                this.seg[field_name].start = computed_pos + 1
-                                this.seg[field_name].stop  = computed_pos + sequence.length
-                                break
+                        var res_search = this.searchSequence(sequence, gene_way)
+                        if (res_search.ratio >= 0.75){
+                            germseq = this.getExtendedSequence(gene_way)
+                            var germpos = res_search.rst[1] -1 //to be 0-based
+                            if (gene_way == 5){
+                                computed_pos = this.seg["5"].stop + germpos - germseq.length + this.seg["5"].delRight +1
+                            } else if (gene_way == 3){
+                                computed_pos = this.seg["3"].start - this.seg["3"].delLeft + germpos
                             }
+                            this.seg[field_name] = {};
+                            this.seg[field_name].seq = sequence;
+                            this.seg[field_name].start = computed_pos + 1
+                            this.seg[field_name].stop  = computed_pos + sequence.length
+                            break
                         }
                     }
                 }
@@ -327,6 +324,39 @@ Clone.prototype = {
         return
     },
 
+    /**
+     * Search for a sub sequence in the sequence. 
+     * If no support seuqence given, use default sequence of this clone
+     * @param  {string}  search_sequence  Sequence to search
+     * @param  {Number}  geneway          If search in germline genes, give th position of the gene
+     * @param  {boolean} revcomp          Set if the search should be done on revcomp sequence
+     * @return {hash}                  [description]
+     */
+    searchSequence: function(search_sequence, geneway, revcomp){
+        var sequence;
+        if (geneway == undefined && this.hasSequence()) {
+            sequence = this.sequence
+        } else if (geneway != undefined && this.hasSequence() && this.getGene(geneway) != undefined){
+            sequence = this.getExtendedSequence(geneway)
+        } else {
+            return undefined // no sequence available
+        }
+        if (revcomp == true){
+            sequence = this.getRevCompSequence(sequence)
+        }
+
+        var rst      = bsa_align(true, sequence, search_sequence, BIOSEQ_MATRIX, BIOSEQ_GAPS)
+        if (rst == null){ // case if sequence to find is not nucleotide sequence
+            // TODO: make a specific function to get nt statut of a sequence
+            return undefined
+
+        }
+        var ratio = rst[0] / (BIOSEQ_MATRIX[0] * search_sequence.length)
+
+        return {"ratio": ratio, "rst": rst, "pos": rst[1]}
+
+    },
+
 
     /**
      * Return the best matching sequence from a list of sequence
@@ -340,13 +370,13 @@ Clone.prototype = {
         var best_seq   = []
         var best_rst   = []
         var best_score = 0
-        var sequence;
+        var sequence_to_search;
 
         // Look for perfect match in clone sequence
         for (var seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
-            sequence = sequences[seq_pos]
-            if (this.sequence.indexOf(sequence) != -1) {
-                best_seq.push(sequence)
+            sequence_to_search = sequences[seq_pos]
+            if (this.sequence.indexOf(sequence_to_search) != -1) {
+                best_seq.push(sequence_to_search)
             }
         }
         if (best_seq.length > 0){
@@ -363,16 +393,15 @@ Clone.prototype = {
             germseq = this.getExtendedSequence(gene_way)
             if (germseq != undefined){
                 for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
-                    sequence = sequences[seq_pos]
-                    rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1])
-                    var nb_match = bsa_cigar2match(rst[2])
-                    if (rst[0] > best_score && nb_match > (sequence.length/2) ){
-                        best_seq   = [sequence]
-                        best_rst   = [rst]
-                        best_score = rst[0]
-                    } else if (rst[0] == best_score){
-                        best_seq.push(sequence)
-                        best_rst.push(rst)
+                    sequence_to_search = sequences[seq_pos]
+                    var res_search = this.searchSequence(sequence_to_search, gene_way)
+                    if (res_search.rst[0] > best_score && res_search.ratio >= 0.75 ){
+                        best_seq   = [sequence_to_search]
+                        best_rst   = [res_search.rst]
+                        best_score = res_search.rst[0]
+                    } else if (res_search.rst[0] == best_score){
+                        best_seq.push(sequence_to_search)
+                        best_rst.push(res_search.rst)
                     }
                 }
             }
