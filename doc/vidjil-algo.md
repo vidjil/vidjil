@@ -74,10 +74,36 @@ Vidjil-algo is developed with continuous integration using systematic unit and f
 The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) for that,
 and the tested compilers are run through Docker containers described in `.gitlab-ci-compilers.yml`.
 
-## Build requirements (optional)
+## Installation (static binaries, x86_64 platforms)
 
-This paragraph details the requirements to build Vidjil-algo from source.
-You can also download a static binary, see [installation](#installation).
+Run the following commands:
+
+``` sh
+curl http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -o vidjil-algo
+chmod 755 vidjil-algo
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/doc/vidjil-algo.md
+
+### Germlines
+mkdir germline
+cd germline
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/homo-sapiens.g
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/germline_id
+curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/get-saved-germline | sh
+cd ..
+
+### Demo sequences (optional)
+mkdir demo
+cd demo
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/Demo-X5.fa
+curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/get-sequences | sh
+cd ..
+
+./vidjil-algo -h
+```
+
+## Installation (from source)
+
+### Build requirements
 
 To compile Vidjil-algo, make sure:
 
@@ -87,15 +113,19 @@ To compile Vidjil-algo, make sure:
     `zlib-devel` package under Fedora/CentOS).
   - to have GNU make (`gmake` under FreeBSD).
 
-## Installation
 
 ### Download
 
-These instructions targets *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>
-or <http://bioinfo.lifl.fr/vidjil/>.
+These instructions targets *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>.
 
-Development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
-and compiling and running vidjil-algo on the development code can involve slightly different commands,
+``` sh
+curl -O http://www.vidjil.org/releases/vidjil-algo-latest.tar.gz
+tar xvfz vidjil-algo-latest.tar.gz
+cd vidjil-algo-*
+```
+
+Note that development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
+and compiling and running vidjil-algo on the development code can involve slightly different commands than below,
 including replacing `src` by `algo`.
 
 ### Compiling
@@ -130,7 +160,7 @@ make LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
 make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"   ### old FreeBSD
 ```
 
-## Self-tests (optional)
+### Self-tests (optional)
 
 You can run the tests with the following commands:
 
