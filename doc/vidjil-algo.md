@@ -85,12 +85,7 @@ To compile Vidjil-algo, make sure:
   - to have a C++11 compiler (as `g++` 4.8 or above, or `clang` 3.4 or above).
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
-  - to have GNU make (`gmake` under FreeBSD). On some FreeBSD distributions, it was required to use commands such as
-``` bash
-make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
-```
-    The `gcc49` at the end of the command line is to be replaced by the `gcc` version used.
-
+  - to have GNU make (`gmake` under FreeBSD).
 
 ## Installation
 
@@ -132,6 +127,7 @@ On some older systems you may need to replace the `make` commands with:
 
 ``` bash
 make LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
+make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"   ### old FreeBSD
 ```
 
 ## Self-tests (optional)
