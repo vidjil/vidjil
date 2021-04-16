@@ -51,7 +51,10 @@ class BrowserTest < MiniTest::Test
     
     # check the 'db_content' window opens
     assert ($b.div(:id => 'db_content').wait_until(&:present?)), "db content is not present"
-    $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+
+    if $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').exist?
+      $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+    end
   end
 
 
