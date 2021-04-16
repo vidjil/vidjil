@@ -147,7 +147,7 @@ QUnit.test("filters", function(assert) {
 });
 QUnit.test("filters degenerated", function(assert) {
 
-    nb = 7
+    nb = 6
     assert.expect(nb*2);
     var ready = assert.async(nb);
     var delay = 150
@@ -202,12 +202,12 @@ QUnit.test("filters degenerated", function(assert) {
         m.search_ratio_limit = 1
         m.filter(mismatch);
         ready()
-    }, 6* delay);
+    }, 5* delay);
     setTimeout( function() {
         assert.ok( !$(clone_list[2]).is(':visible'), `filter id ('mismatch; search_ratio_limit to 1.0') : test1 is NOT visible`);
         assert.ok( !$(clone_list[6]).is(':visible'), `filter id ('mismatch; search_ratio_limit to 1.0') : test5 is NOT visible`);
         ready()
-    }, 7* delay);
+    }, 6* delay);
 
 });
 
