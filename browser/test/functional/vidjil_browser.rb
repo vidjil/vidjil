@@ -633,14 +633,15 @@ class VidjilBrowser < Watir::Browser
     # run vidjil 'run'
     # save analysis 'save'
     # real info 'anon'
-    checkboxs = div(:class => "db_block_left").elements(:type => "checkbox")
-    for elt in checkboxs
-      if elt.inner_html.include? "'"+name+"'"
-        puts "Set right " + name+ ": "+value
-        elt.set(value)
-        return
-      end
+    check_right = checkbox(:id => "group_right_"+name)
+    puts "Set right " + name+ " from "+value.to_s + " to " + check_right.checked?.to_s
+    if    value == false and check_right.checked? == true
+       check_right.click
+    elsif value == true  and check_right.checked? == false
+       check_right.click
     end
+    puts "Set right " + name+ " from "+value.to_s + " to " + check_right.checked?.to_s + " (done)"
+    return
   end
 
   
