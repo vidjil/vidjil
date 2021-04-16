@@ -503,6 +503,7 @@ Builder.prototype = {
 
             var save_analysis = document.createElement("a");
             save_analysis.className = "buttonSelector"
+            if (typeof this.m.custom != 'undefined') save_analysis.className = "buttonSelector devel-mode"
             save_analysis.appendChild(document.createTextNode("save"));
             save_analysis.onclick = function() {
                 db.save_analysis();
