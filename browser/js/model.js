@@ -67,6 +67,7 @@ function Model() {
     this.normalization_mode = this.NORM_FALSE
     this.available_axes = Axis.prototype.available()
 
+    this.search_ratio_limit     = 0.80
     setInterval(function(){return self.updateIcon()}, 100); 
 }
 
@@ -2685,7 +2686,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      */
     findGermlineFromGene: function(gene_name){
         // If germline can be determined from gene name
-        var locus = gene_name.substring(0, 4).toUpperCase()
+        var locus = gene_name.substring(0, 3).toUpperCase()
         if (this.germline[locus] != undefined) {
             return this.germline[locus][gene_name]
         }
@@ -2833,22 +2834,28 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     filter: function (str) {
         this.filter_string = str;
         this.reset_filter(true)
+        str = str.toUpperCase()
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
-            if (c.getName().toUpperCase().indexOf(str.toUpperCase())               !=-1 ){
-                c.isFiltered = false; 
+            if (c.getName().toUpperCase().indexOf(str)               !=-1 ){
+                c.isFiltered = false; continue;
             }
-            if (c.getSequence().toUpperCase().indexOf(str.toUpperCase())           !=-1 ){
-                c.isFiltered = false; 
+            if (c.getSegAASequence('cdr3').toUpperCase().indexOf(str)!=-1 ){
+                c.isFiltered = false; continue;
             }
-            if (c.getSegAASequence('cdr3').toUpperCase().indexOf(str.toUpperCase())!=-1 ){
-                c.isFiltered = false; 
+            if (c.getSequenceName().toUpperCase().indexOf(str)       !=-1 ){
+                c.isFiltered = false; continue;
             }
-            if (c.getRevCompSequence().toUpperCase().indexOf(str.toUpperCase())    !=-1 ){
-                c.isFiltered = false; 
+
+            var sequence = c.getSequence()
+            var revseq   = c.getRevCompSequence(sequence)
+            var searched_sequence = c.searchSequence(sequence, str)
+            if (searched_sequence != undefined && searched_sequence.ratio >= this.search_ratio_limit){
+                c.isFiltered = false; continue;
             }
-            if (c.getSequenceName().toUpperCase().indexOf(str.toUpperCase())       !=-1 ){
-                c.isFiltered = false; 
+            var searched_revcomp  = c.searchSequence(revseq, str)
+            if (searched_revcomp != undefined && searched_revcomp.ratio >= this.search_ratio_limit){
+                c.isFiltered = false; continue;
             }
     	}
         this.update()

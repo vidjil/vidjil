@@ -703,10 +703,10 @@ QUnit.test("export clone informations", function(assert) {
     assert.equal(1+(3*4), airr_splitted.length, "correct number of lines in airr export")
 
     var line_title = "sample,sample_name,duplicate_count,locus,v_call,d_call,j_call,sequence_id,sequence,productive,vj_in_frame,stop_codon,junction_aa,cdr3_aa,warnings,_cdr3,_N"
-    var line_c0_1  = "0,Diag.fa,10,TRG,TRGV4*01,undefined D,TRGJ2*03,id1,aaaaaaaaaaaaaaaaaaaAG,false,,F,,AG,,aa,"
-    var line_c0_2  = "1,Fu-1.fa,10,TRG,TRGV4*01,undefined D,TRGJ2*03,id1,aaaaaaaaaaaaaaaaaaaAG,false,,F,,AG,,aa,"
+    var line_c0_1  = "0,Diag.fa,10,TRG,TRGV4*01,undefined D,TRGJ2*01,id1,aaaaaaaaaaaaaaaaaaaAG,false,,F,,AG,,aa,"
+    var line_c0_2  = "1,Fu-1.fa,10,TRG,TRGV4*01,undefined D,TRGJ2*01,id1,aaaaaaaaaaaaaaaaaaaAG,false,,F,,AG,,aa,"
     var line_c2_1  = "0,Diag.fa,25,IGH,IGHV1-2*01,IGHD2-2*02,IGHJ6*01,id3,cccccccccccccccccccc,false,,F,,,,,"
-    var line_c3_1  = "0,Diag.fa,5,TRG,TRGV4*01,undefined D,TRGJ2*02,id4,GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA,false,,F,,,,,4"
+    var line_c3_1  = "0,Diag.fa,5,TRG,TRGV4*01,undefined D,TRGJ1*01,id4,GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA,false,,F,,,,,4"
     assert.deepEqual(airr_splitted[0], line_title, "correct value for line title in airr export")
     assert.deepEqual(airr_splitted[1], line_c0_1, "correct value for line 1 of clone0 in airr export")
     assert.deepEqual(airr_splitted[2], line_c0_2, "correct value for line 2 of clone0 in airr export")
@@ -719,7 +719,7 @@ QUnit.test("export clone informations", function(assert) {
     assert.deepEqual(3, json.length, "correct number of elements in json export")
     var json_value_0 = {
         "seg":{
-            "3":{"name":"TRGJ2*03","start":6},"5":{"name":"TRGV4*01","stop":5},
+            "3":{"name":"TRGJ2*01","start":6},"5":{"name":"TRGV4*01","stop":5},
             "cdr3":{"start":4,"stop":5,"aa":"AG"},
             "clonedb":{"clones_names":{"A":[2,0.25],"B":[124,0.01]}}
         },

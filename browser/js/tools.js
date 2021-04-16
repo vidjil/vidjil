@@ -8,6 +8,9 @@ var DEL="deletion";
 var END_CODON = "end-codon ";
 var END_CODON_NOT_FIRST = "end-codon-not-first ";
 var LOCUS_ORDER = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "TRA+D", "TRD+", "IGH", "IGH+", "IGK", "IGK+", "IGL"]
+
+var BIOSEQ_MATRIX = [ 2, -2]
+var BIOSEQ_GAPS   = [-2, -2]
 /**
  * Get codons from two aligned sequences
  * @pre both sequences are aligned together ref.length == seq.length

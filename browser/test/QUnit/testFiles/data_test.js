@@ -52,7 +52,7 @@ json_data.clones = [
         "germline" : "TRG",
         "seg" : {
             "5" : "TRGV4*01",
-            "3" : "TRGJ2*03",
+            "3" : "TRGJ2*01",
             "3start" : 6,
             "5end" : 5,
             "cdr3" : {"start": 5, "stop": 6, aa: "AG"},
@@ -79,7 +79,7 @@ json_data.clones = [
         "germline" : "TRG",
         "seg" : {
             "5" : "TRGV5*01",
-            "3" : "TRGJ2*02",
+            "3" : "TRGJ1*01",
             "3start" : 15,
             "5end" : 5,
             "fr1" : {"start" :2, "stop":5}
@@ -120,7 +120,7 @@ json_data.clones = [
         "top": 4,
         "reads": [5, 5, 5, 50],
         "seg": {
-            "3": "TRGJ2*02",
+            "3": "TRGJ1*01",
             "5": "TRGV4*01",
             "3del": 5,
             "3start": 183,
@@ -224,11 +224,10 @@ json_data.clones = [
     },
     {
         "sequence" : "catcatcatgatgctacgatcttac",
-        "name" : "test5",
         "id" : "id5",
         "reads" : [4,4,4,40],
         "top" : 5,
-        "name": "unseg sequence",
+        "name": "test5; unseg sequence",
         "germline" : "IGH",
         "seg" : {
             "cdr3" : {"start": 2, "stop": 12, "aa": "W#WA", "seq": "atcatgatgcta"},

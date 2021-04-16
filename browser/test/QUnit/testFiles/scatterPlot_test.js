@@ -177,7 +177,7 @@ QUnit.test("multiple selection", function(assert) {
         sp.stopSelectorAt([sp_width*0.8, sp_height]);
 
         assert.equal(m.getSelected().length, 1, "only one clone is selected");
-        assert.equal(m.clone(m.getSelected()[0]).name, "unseg sequence", "the selected clone is 'unseg sequence' (test5)");
+        assert.equal(m.clone(m.getSelected()[0]).name, "test5; unseg sequence", "the selected clone is 'unseg sequence' (test5)");
     }
 
     function test2() {

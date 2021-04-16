@@ -250,7 +250,7 @@ Clone.prototype = {
      * Compute feature positions (start/stop) from its sequence, unless they are already present
      * Computed positions are converted to start from 0 and can be used without manipualtions
      */
-    addSegFeatureFromSeq: function(field_name, sequence, extend)
+    addSegFeatureFromSeq: function(field_name, sequence_to_add, extend)
     {
         // Does feature and position exist in clone ?
         positions = this.getSegStartStop(field_name)
@@ -260,21 +260,21 @@ Clone.prototype = {
             return ;
         }
 
-        // try to get sequence from existing feature in the clone if not given
-        if (sequence == undefined && this.seg[field_name] != undefined && this.seg[field_name].seq != undefined){
-            sequence = this.seg[field_name].seq
+        // try to get sequence_to_add from existing feature in the clone if not given
+        if (sequence_to_add == undefined && this.seg[field_name] != undefined && this.seg[field_name].seq != undefined){
+            sequence_to_add = this.seg[field_name].seq
         }
 
 
-        if (sequence != undefined){
+        if (sequence_to_add != undefined){
             // Insert sequence and positions if possible
-            var pos = this.sequence.indexOf(sequence)
+            var pos = this.sequence.indexOf(sequence_to_add)
             if (pos != -1) {
                 // perfect match exist
                 this.seg[field_name] = {};
-                this.seg[field_name].seq = sequence;
+                this.seg[field_name].seq = sequence_to_add;
                 this.seg[field_name].start = pos // seq is 0-based
-                this.seg[field_name].stop  = pos + sequence.length -1
+                this.seg[field_name].stop  = pos + sequence_to_add.length -1
                 return
             } else if (extend == true || extend == undefined) {
                 // No perfect match; try extension with germline sequence
@@ -283,23 +283,21 @@ Clone.prototype = {
                 for (var g = 0; g < genes.length; g++) {
                     var gene_way = genes[g]
                     if (field_name.indexOf(gene_way.toString()) != -1){ // Warning; need to clarify rule for feature naming
-                        germseq = this.getExtendedSequence(gene_way)
-                        if (germseq != undefined){
-                            var rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1]) // return [score, start pos, ~cigar]
-                            var germpos = rst[1] -1 //to be 0-based
-                            var nb_match = bsa_cigar2match(rst[2]) // Get number of match
-                            if (nb_match > (sequence.length/2) ){
-                                if (gene_way == 5){
-                                    computed_pos = this.seg["5"].stop + germpos - germseq.length + this.seg["5"].delRight +1
-                                } else if (gene_way == 3){
-                                    computed_pos = this.seg["3"].start - this.seg["3"].delLeft + germpos
-                                }
-                                this.seg[field_name] = {};
-                                this.seg[field_name].seq = sequence;
-                                this.seg[field_name].start = computed_pos + 1
-                                this.seg[field_name].stop  = computed_pos + sequence.length
-                                break
+                        var sequence = this.getExtendedRevCompSequence(gene_way)
+                        var res_search = this.searchSequence(sequence, sequence_to_add)
+                        if (res_search.ratio >= 0.75){
+                            germseq = this.getExtendedSequence(gene_way)
+                            var germpos = res_search.rst[1] -1 //to be 0-based
+                            if (gene_way == 5){
+                                computed_pos = this.seg["5"].stop + germpos - germseq.length + this.seg["5"].delRight +1
+                            } else if (gene_way == 3){
+                                computed_pos = this.seg["3"].start - this.seg["3"].delLeft + germpos
                             }
+                            this.seg[field_name] = {};
+                            this.seg[field_name].seq = sequence_to_add;
+                            this.seg[field_name].start = computed_pos + 1
+                            this.seg[field_name].stop  = computed_pos + sequence_to_add.length
+                            break
                         }
                     }
                 }
@@ -327,6 +325,51 @@ Clone.prototype = {
         return
     },
 
+    /**
+     * Return sequence asked, extended or not, revcomp or not
+     * If no support sequence given, use default sequence of this clone
+     * @param  {Number}  geneway          position of extended sequence to get (available 5 and 3)
+     * @param  {boolean} revcomp          Set if the search should be return in revcomp mode
+     * @return {string}                   The getted sequence
+     */
+    getExtendedRevCompSequence: function(geneway, revcomp){
+        var sequence;
+        if (geneway == undefined && this.hasSequence()) {
+            sequence = this.sequence
+        } else if (geneway != undefined && this.hasSequence() && this.getGene(geneway) != undefined){
+            sequence = this.getExtendedSequence(geneway)
+        } else {
+            return undefined // no sequence available
+        }
+        if (revcomp == true){
+            sequence = this.getRevCompSequence(sequence)
+        }
+        return sequence
+    },
+
+    /**
+     * Search for a sub sequence in the sequence. 
+     * @param  {string}  sequence         Sequence support
+     * @param  {string}  search_sequence  Sequence to search
+     * @return {hash}                     Bioseq results
+     */
+    searchSequence: function(sequence, search_sequence){
+        if (sequence == undefined && search_sequence == undefined){
+            console.error("searchSequence: sequence/search_sequence undefined")
+            return undefined
+        }
+        var rst      = bsa_align(true, sequence, search_sequence, BIOSEQ_MATRIX, BIOSEQ_GAPS)
+        if (rst == null){ // case if sequence to find is not nucleotide sequence
+            // TODO: make a specific function to get nt statut of a sequence
+            return undefined
+
+        }
+        var ratio = rst[0] / (BIOSEQ_MATRIX[0] * search_sequence.length)
+
+        return {"ratio": ratio, "rst": rst, "pos": rst[1]}
+
+    },
+
 
     /**
      * Return the best matching sequence from a list of sequence
@@ -340,13 +383,13 @@ Clone.prototype = {
         var best_seq   = []
         var best_rst   = []
         var best_score = 0
-        var sequence;
+        var sequence_to_search;
 
         // Look for perfect match in clone sequence
         for (var seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
-            sequence = sequences[seq_pos]
-            if (this.sequence.indexOf(sequence) != -1) {
-                best_seq.push(sequence)
+            sequence_to_search = sequences[seq_pos]
+            if (this.sequence.indexOf(sequence_to_search) != -1) {
+                best_seq.push(sequence_to_search)
             }
         }
         if (best_seq.length > 0){
@@ -363,16 +406,16 @@ Clone.prototype = {
             germseq = this.getExtendedSequence(gene_way)
             if (germseq != undefined){
                 for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
-                    sequence = sequences[seq_pos]
-                    rst = bsa_align(true, germseq, sequence, [1, -2], [-2, -1])
-                    var nb_match = bsa_cigar2match(rst[2])
-                    if (rst[0] > best_score && nb_match > (sequence.length/2) ){
-                        best_seq   = [sequence]
-                        best_rst   = [rst]
-                        best_score = rst[0]
-                    } else if (rst[0] == best_score){
-                        best_seq.push(sequence)
-                        best_rst.push(rst)
+                    sequence_to_search = sequences[seq_pos]
+                    var sequence = this.getExtendedRevCompSequence(gene_way)
+                    var res_search = this.searchSequence(sequence, sequence_to_search)
+                    if (res_search.rst[0] > best_score && res_search.ratio >= 0.75 ){
+                        best_seq   = [sequence_to_search]
+                        best_rst   = [res_search.rst]
+                        best_score = res_search.rst[0]
+                    } else if (res_search.rst[0] == best_score){
+                        best_seq.push(sequence_to_search)
+                        best_rst.push(res_search.rst)
                     }
                 }
             }
@@ -1015,31 +1058,41 @@ Clone.prototype = {
     },
     
     getSequence : function () {
-        if (typeof (this.sequence) != 'undefined' && this.sequence !== 0){
+        if (this.hasSequence()){
             return this.sequence.toUpperCase()
         }else{
             return "0";
         }
     },
 
-    getRevCompSequence : function () {
-        if (typeof (this.sequence) != 'undefined' && this.sequence !== 0){
-            var dict_comp  = {
+    /**
+     * Return the reverse complement sequence
+     * If no raw sequence given, use the sequence of the clone
+     * @param  {[type]} sequence Sequence that can be given, as germline sequence of the clone
+     * @return {[type]}          [description]
+     */
+    getRevCompSequence : function (sequence) {
+        if (sequence == undefined){
+            if (this.hasSequence()){
+                sequence = this.sequence
+            } else {
+                return "0"
+            }
+        }
+
+        var dict_comp  = {
           'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C',
           'Y': 'R', 'R': 'Y', // pyrimidine (CT) / purine (AG)
           'W': 'S', 'S': 'W', // weak (AT) / strong (GC)
           'K': 'M', 'M': 'K', // keto (TG) / amino (AC)
           'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D',
           'N': 'N'
-          }
-            var revcompSeq = ""
-            for (var i = this.sequence.length -1 ; i > -1; i--) { // test -1
-                revcompSeq += dict_comp[this.sequence[i].toUpperCase()]
-            }
-            return revcompSeq
-        }else{
-            return "0";
         }
+        var revcompSeq = ""
+        for (var i = sequence.length -1 ; i > -1; i--) { // test -1
+            revcompSeq += dict_comp[sequence[i].toUpperCase()]
+        }
+        return revcompSeq
     },
     
     getPrintableSegSequence: function () {
