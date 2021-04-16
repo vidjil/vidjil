@@ -250,7 +250,7 @@ Clone.prototype = {
      * Compute feature positions (start/stop) from its sequence, unless they are already present
      * Computed positions are converted to start from 0 and can be used without manipualtions
      */
-    addSegFeatureFromSeq: function(field_name, sequence, extend)
+    addSegFeatureFromSeq: function(field_name, sequence_to_add, extend)
     {
         // Does feature and position exist in clone ?
         positions = this.getSegStartStop(field_name)
@@ -260,21 +260,21 @@ Clone.prototype = {
             return ;
         }
 
-        // try to get sequence from existing feature in the clone if not given
-        if (sequence == undefined && this.seg[field_name] != undefined && this.seg[field_name].seq != undefined){
-            sequence = this.seg[field_name].seq
+        // try to get sequence_to_add from existing feature in the clone if not given
+        if (sequence_to_add == undefined && this.seg[field_name] != undefined && this.seg[field_name].seq != undefined){
+            sequence_to_add = this.seg[field_name].seq
         }
 
 
-        if (sequence != undefined){
+        if (sequence_to_add != undefined){
             // Insert sequence and positions if possible
-            var pos = this.sequence.indexOf(sequence)
+            var pos = this.sequence.indexOf(sequence_to_add)
             if (pos != -1) {
                 // perfect match exist
                 this.seg[field_name] = {};
-                this.seg[field_name].seq = sequence;
+                this.seg[field_name].seq = sequence_to_add;
                 this.seg[field_name].start = pos // seq is 0-based
-                this.seg[field_name].stop  = pos + sequence.length -1
+                this.seg[field_name].stop  = pos + sequence_to_add.length -1
                 return
             } else if (extend == true || extend == undefined) {
                 // No perfect match; try extension with germline sequence
@@ -283,7 +283,8 @@ Clone.prototype = {
                 for (var g = 0; g < genes.length; g++) {
                     var gene_way = genes[g]
                     if (field_name.indexOf(gene_way.toString()) != -1){ // Warning; need to clarify rule for feature naming
-                        var res_search = this.searchSequence(sequence, gene_way)
+                        var sequence = this.getSearchSequence(gene_way)
+                        var res_search = this.searchSequence(sequence, sequence_to_add)
                         if (res_search.ratio >= 0.75){
                             germseq = this.getExtendedSequence(gene_way)
                             var germpos = res_search.rst[1] -1 //to be 0-based
@@ -293,9 +294,9 @@ Clone.prototype = {
                                 computed_pos = this.seg["3"].start - this.seg["3"].delLeft + germpos
                             }
                             this.seg[field_name] = {};
-                            this.seg[field_name].seq = sequence;
+                            this.seg[field_name].seq = sequence_to_add;
                             this.seg[field_name].start = computed_pos + 1
-                            this.seg[field_name].stop  = computed_pos + sequence.length
+                            this.seg[field_name].stop  = computed_pos + sequence_to_add.length
                             break
                         }
                     }
@@ -332,7 +333,7 @@ Clone.prototype = {
      * @param  {boolean} revcomp          Set if the search should be done on revcomp sequence
      * @return {hash}                  [description]
      */
-    searchSequence: function(search_sequence, geneway, revcomp){
+    getSearchSequence: function(geneway, revcomp){
         var sequence;
         if (geneway == undefined && this.hasSequence()) {
             sequence = this.sequence
@@ -344,7 +345,22 @@ Clone.prototype = {
         if (revcomp == true){
             sequence = this.getRevCompSequence(sequence)
         }
+        return sequence
 
+    },
+
+    /**
+     * Search for a sub sequence in the sequence. 
+     * If no support seuqence given, use default sequence of this clone
+     * @param  {string}  sequence         Sequence support
+     * @param  {string}  search_sequence  Sequence to search
+     * @return {hash}                     Bioseq results
+     */
+    searchSequence: function(sequence, search_sequence){
+        if (sequence == undefined && search_sequence == undefined){
+            console.error("searchSequence: sequence/search_sequence undefined")
+            return undefined
+        }
         var rst      = bsa_align(true, sequence, search_sequence, BIOSEQ_MATRIX, BIOSEQ_GAPS)
         if (rst == null){ // case if sequence to find is not nucleotide sequence
             // TODO: make a specific function to get nt statut of a sequence
@@ -394,7 +410,8 @@ Clone.prototype = {
             if (germseq != undefined){
                 for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
                     sequence_to_search = sequences[seq_pos]
-                    var res_search = this.searchSequence(sequence_to_search, gene_way)
+                    var sequence = this.getSearchSequence(gene_way)
+                    var res_search = this.searchSequence(sequence, sequence_to_search)
                     if (res_search.rst[0] > best_score && res_search.ratio >= 0.75 ){
                         best_seq   = [sequence_to_search]
                         best_rst   = [res_search.rst]
