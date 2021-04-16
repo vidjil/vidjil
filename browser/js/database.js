@@ -942,10 +942,8 @@ Database.prototype = {
             return
         }
         
-        if (typeof args == 'undefined'){
-            args={}
-            args.custom = this.getListInput("custom_result[]")
-        }
+        if (typeof args == 'undefined') args={};
+        if (typeof args.custom == 'undefined') args.custom = this.getListInput("custom_result[]");
         
         console.log("db : custom data "+list)
         
