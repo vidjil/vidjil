@@ -2847,11 +2847,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 c.isFiltered = false; continue;
             }
 
-            var searched_sequence = c.searchSequence(str, undefined)
+            var sequence = c.getSequence()
+            var revseq   = c.getRevCompSequence(sequence)
+            var searched_sequence = c.searchSequence(sequence, str)
             if (searched_sequence != undefined && searched_sequence.ratio >= this.search_ratio_limit){
                 c.isFiltered = false; continue;
             }
-            var searched_revcomp  = c.searchSequence(str, undefined, true)
+            var searched_revcomp  = c.searchSequence(revseq, str)
             if (searched_revcomp != undefined && searched_revcomp.ratio >= this.search_ratio_limit){
                 c.isFiltered = false; continue;
             }
