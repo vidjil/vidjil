@@ -51,16 +51,25 @@ class BrowserTest < MiniTest::Test
     
     # check the 'db_content' window opens
     assert ($b.div(:id => 'db_content').wait_until(&:present?)), "db content is not present"
-    $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+
+    if $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').exist?
+      $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+    end
   end
+
+
 
   def close_everything
     if defined? $b
-      puts "\nTests finished, closing browser."
-      $b.close
-      if ENV['HEADLESS']
-        $headless.destroy
-      end
+        puts "\nTests finished, closing browser."
+        if ENV['HEADLESS']
+          $b.close
+          $headless.destroy
+        else
+          if ENV['KEEPOPEN'] == "0"
+            $b.close
+          end
+        end
     end
   end
 
@@ -71,7 +80,6 @@ class BrowserTest < MiniTest::Test
       folder_path = File.expand_path(File.dirname(__FILE__))
       folder_path.sub! '/functional', ''
       screenshot_file = folder_path+"/screenshot_teardown_#{Time.now.strftime('%Y%m%d-%H%M%S')}.png"
-
       #Save the image
       $b.screenshot.save screenshot_file
     end

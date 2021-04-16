@@ -421,6 +421,256 @@ class VidjilBrowser < Watir::Browser
     return div(:class =>  ["modal", "info-container"])
   end
 
+
+  ##################################
+  ### Server manipulation functions
+  ##################################
+  def login_form
+    return form(:id => 'login_form')
+  end
+
+  def login(mail, password)
+    if login_form.present?
+      login_form.text_field(:id => "auth_user_email").set(mail)
+      login_form.text_field(:id => "auth_user_password").set(password)
+      login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
+      puts "Login sent"
+      Watir::Wait.until(30) {execute_script("return jQuery.active") == 0}
+    end
+  end
+
+  def logout
+    a(:class => "button button_token patient_token", :text => "patients").click
+    Watir::Wait.until(30) {execute_script("return jQuery.active") == 0}
+    a(:class => "button", :text => "(logout)").click
+    Watir::Wait.until(30) {execute_script("return jQuery.active") == 0}
+  end
+
+  def impersonate(username)
+    select_list(:id => "choose_user").select(username)
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+  end
+
+
+  def edit_user_table
+    return form(:id => "data_form")
+  end
+  def register_user_table
+    return form(:id => "login_form")
+  end
+
+  def set_add_form
+    form(:id => "object_form")
+  end
+
+
+  ### Fill forms
+  def fill_patient_form(pos, pid, pfirstname, plastname, pbirth, pinfo)
+    $b.set_add_form.text_field(:id => "patient_id_label_"+ pos.to_s).set(pid)
+    $b.set_add_form.text_field(:id => "patient_first_name_"+ pos.to_s).set(pfirstname)
+    $b.set_add_form.text_field(:id => "patient_last_name_"+ pos.to_s).set(plastname)
+    $b.set_add_form.text_field(:id => "patient_birth_"+ pos.to_s).set(pbirth)
+    $b.set_add_form.text_field(:id => "patient_info_"+ pos.to_s).set(pinfo)
+  end
+  def fill_run_form(pos, pid, rname, rdate, rinfo)
+    $b.set_add_form.text_field(:id => "run_id_label_"+ pos.to_s).set(pid)
+    $b.set_add_form.text_field(:id => "run_name_"+ pos.to_s).set(rname)
+    $b.set_add_form.text_field(:id => "run_run_date_"+ pos.to_s).set(rdate)
+    $b.set_add_form.text_field(:id => "run_info_"+ pos.to_s).set(rinfo)
+  end
+  def fill_sample_form(pos, sdate, sinfo, sfile1, sfile2)
+    $b.text_field(:id => "file_sampling_date_"+pos.to_s).set("2010-01-01")
+    $b.text_field(:id => "file_info_"+pos.to_s).set("Sample from functional test #functional")
+    $b.file_field(:id => "file_upload_1_"+pos.to_s).set(datapath(sfile1))
+    if sfile2 != nil
+      $b.file_field(:id => "file_upload_2_"+pos.to_s).set(datapath(sfile2))
+    end
+  end
+
+  
+  def fill_sample_token_input_by_arrow(pos, arrow_repeat)
+    input(:id => "token_input_"+pos.to_s).click
+    arrow_repeat.times do
+      send_keys :arrow_down
+    end
+    send_keys :enter
+  end
+
+  def select_configutation_in_available_list(name)
+    $b.select_list(:id, "choose_config").select_value(name) #"2") 
+    # n°25 on app, n°2 on localhost; but watir select work with "value" and "text"
+    # https://github.com/watir/watir-classic/blob/master/lib/watir-classic/input_elements.rb#L45-L55
+  end
+
+  def fill_sample_token_input_by_name(pos, value)
+    input(:id => "token_input_"+pos.to_s).click
+    sleep 0.1 # todo; remove sleep
+    send_keys value
+    sleep 0.3
+    send_keys :enter
+
+  end
+
+  def go_to_list_patient
+    a(:class => "button button_token patient_token", :text => "patients").click
+    Watir::Wait.until(30) {execute_script("return jQuery.active") == 0}
+
+    tablepatient = table(:id => "table")
+    tablepatient.wait_until_present
+    tablepatient
+  end
+
+  def db_table_container
+    return div(:id => "db_table_container")
+  end
+
+  def set_selected_owner_grp(owner)
+    $b.select_list(:id, "group_select").select_value(owner)
+  end
+
+  def set_selected_preprocess(pre_process_name)
+    $b.select_list(:id, "pre_process").select_value(pre_process_name)
+  end
+
+
+
+  def go_to_admin
+    div(:id => "db_menu").a(:class => "button", :text => "admin").click
+  end
+
+
+
+  ### Users
+  def go_to_users
+    # div(:id => "db_menu").a(:class => "button", :text => "users").click
+    a(:class => "button", :text => "users").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+  end
+  def go_to_user_groups(usermail)
+    go_to_users
+    get_user_line(usermail).click
+    # a(:class => "button", :text => "users").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+  end
+
+  def get_user_line(usermail)
+    tableuser = table(:id => "table")
+    lines = tableuser.tbody.rows
+    for line in lines
+      if line.inner_html.include? usermail
+        print "return user line for "+ usermail
+        return line
+      end
+    end
+    return false
+  end
+  def create_user(first_name, last_name, email, password)
+    $b.go_to_users
+    $b.element(:class => "button2", :text => "+ new user").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    $b.fill_form_register_user(first_name, last_name, email, password)
+    $b.register_user_table.element(:value => "Sign Up").click
+
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    assert( $b.h3(:text => /user info/).present? )
+  end
+  def fill_form_register_user(first_name, last_name, email, password)
+    register_user_table.text_field(:id => "auth_user_first_name").set(first_name)
+    register_user_table.text_field(:id => "auth_user_last_name").set(last_name)
+    register_user_table.text_field(:id => "auth_user_email").set(email)
+    register_user_table.text_field(:id => "auth_user_password").set(password)
+    register_user_table.text_field(:id => "auth_user_password_two").set(password)
+  end
+  
+
+  ### Groups manipulation
+  def go_to_groups
+    a(:class => "button", :text => "groups").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+  end
+  def form_new_group
+    return form(:id => "data_form")
+  end
+  def fill_form_new_group(grp_name, grp_parent, grp_info)
+    form_new_group.text_field(:id => "group_name").set(grp_name)
+    form_new_group.textarea(:id => "group_info").set(grp_info)
+    form_new_group.select_list(:id => "group_parent").select(grp_parent) 
+  end
+
+  def get_group_line(grp_name)
+    tableuser = table(:id => "table")
+    lines = tableuser.tbody.rows
+    for line in lines
+      if line.inner_html.include? grp_name # TODO; plus strict ?
+        print "return group line for "+ grp_name
+        return line
+      end
+    end
+    return false
+  end
+  def delete_group(grp_name)
+    go_to_groups
+    line = get_group_line(grp_name)
+    i(:class => "icon-erase", :title => "delete group").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    if div(:text => /Are you sure you want to delete this group/).present?
+      button(:text => "continue").click
+      Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    end
+  end
+  def add_user_to_group(user_name)
+    # make it from a group open with invite list
+    select_list(:id => "select_user").select(user_name)
+    span(:class => "button", :text => "add").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+  end
+  def set_grp_right(name, value)
+    # create patient 'create'
+    # view patient 'read'
+    # edit patient 'admin'
+    # upload sequence 'upload'
+    # run vidjil 'run'
+    # save analysis 'save'
+    # real info 'anon'
+    check_right = checkbox(:id => "group_right_"+name)
+    puts "Set right " + name+ " from "+value.to_s + " to " + check_right.checked?.to_s
+    if    value == false and check_right.checked? == true
+       check_right.click
+    elsif value == true  and check_right.checked? == false
+       check_right.click
+    end
+    puts "Set right " + name+ " from "+value.to_s + " to " + check_right.checked?.to_s + " (done)"
+    return
+  end
+
+  
+
+  ### News
+  def go_to_news
+    div(:id => "db_menu").a(:class => "button", :text => "news").click
+  end
+  def news_form
+    return form(:id => "data_form")
+  end
+  def news_add(type, priority, title, message, expiration)
+    go_to_news
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    span(:class => "button2", :text => "+ add news").click
+    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+
+    fill_form_news(type, priority, title, message, expiration)
+  end
+
+  def fill_form_news(type, priority, title, message, expiration)
+    news_form.select_list(:name => "message_type").select_value(type)
+    news_form.select_list(:name => "priority").select_value(priority)
+    news_form.text_field(:id => "notification_title").set( title )
+    news_form.text_field(:id => "notification_message_content").set( message )
+    news_form.text_field(:id => "notification_expiration").set( expiration )
+  end
+
   protected
 
   def scatterplot_id(number=1)
@@ -444,6 +694,12 @@ class VidjilBrowser < Watir::Browser
 
   def scatterplot_legend(axis, index, number=1)
     return scatterplot_axis(axis, number).element(:tag_name => 'text', :index => index)
+  end
+
+  ## Load a local file into a file input
+  # Give the path waited for this type of fields
+  def datapath(filename)
+    File.expand_path(File.join(File.dirname(__FILE__), filename))
   end
 
 
