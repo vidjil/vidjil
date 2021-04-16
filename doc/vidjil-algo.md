@@ -245,7 +245,7 @@ The `germline/*.g` presets configure the analyzed recombinations.
 The following presets are provided:
 
   - `germline/homo-sapiens.g`: Homo sapiens, TR (`TRA`, `TRB`, `TRG`, `TRD`) and Ig (`IGH`, `IGK`, `IGL`) locus,
-    including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see <locus.md>.
+    including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see <libraries-recombinations.md>.
   - `germline/homo-sapiens-isotypes.g`: Homo sapiens heavy chain locus, looking for sequences with, on one side, IGHJ (or even IGHV) genes,
     and, on the other side, an IGH constant chain.
   - `germline/homo-sapiens-isoforms.g`: Homo sapiens IKZF1 and ERG recombinations.
@@ -302,7 +302,7 @@ The optional `4` entry  (`IGHD.fa`) is taken only there into account.
 However, if a D is not detected and designated, the read will be designated as VJ.
 
 
-The `TRD+` entry, for incomplete recombinations (see <locus.md>), shows an example where
+The `TRD+` entry, for incomplete recombinations (see <libraries-recombinations.md>), shows an example where
 both Vd-Dd3, Dd2-Jd (possibly Dd2-Dd-Jd), and Dd2-Dd3 recombinations are searched:
 
 ```json
@@ -766,7 +766,7 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 
 | Name  | Type | AIRR 1.2 Description <br /> *vidjil-algo implementation* |
 | ----- | ---- |  ------------------------------------------------------- |
-| locus | string | Gene locus (chain type). For example, `IGH`, `IGK`, `IGL`, `TRA`, `TRB`, `TRD`, or `TRG`.<br />*Vidjil-algo outputs all these loci. Moreover, the incomplete recombinations analyzed by vidjil-algo are reported as `IGH+`, `IGK+`, `TRA+D`, `TRB+`, `TRD+`, and `xxx` for unexpected recombinations. See  <locus.md>.*
+| locus | string | Gene locus (chain type). For example, `IGH`, `IGK`, `IGL`, `TRA`, `TRB`, `TRD`, or `TRG`.<br />*Vidjil-algo outputs all these loci. Moreover, the incomplete recombinations analyzed by vidjil-algo are reported as `IGH+`, `IGK+`, `TRA+D`, `TRB+`, `TRD+`, and `xxx` for unexpected recombinations. See  <libraries-recombinations.md>.*
 | duplicate_count | number | Number of reads contributing to the (UMI) consensus for this sequence. For example, the sum of the number of reads for all UMIs that contribute to the query sequence. <br />*Number of reads gathered in the clone.*
 | sequence_id | string  | Unique query sequence identifier within the file. Most often this will be the input sequence header or a substring thereof, but may also be a custom identifier defined by the tool in cases where query sequences have been combined in some fashion prior to alignment. <br />*This identifier is the (50 bp by default) window extacted around the junction.* |
 | clone_id 	| string | 	Clonal cluster assignment for the query sequence. <br />*This identifier is again the (50 bp by default) window extacted around the junction.*

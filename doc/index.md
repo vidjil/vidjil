@@ -7,7 +7,7 @@ sequencing data from lymphocytes.** [V(D)J recombinations](http://en.wikipedia.o
 essential for immunological diversity. They are also useful markers of
 pathologies, and in leukemia, are used to quantify the minimal residual
 disease during patient follow-up.
-With adapted [library preparation and sequencing](locus.md),
+With adapted [library preparation and sequencing](libraries-recombinations.md),
 high-throughput sequencing (NGS/HTS) now
 enables the deep sequencing of a lymphoid population with dedicated
 sequencing methods and software, called either Rep-Seq or AIRR-Seq.
@@ -21,7 +21,7 @@ sequencing methods and software, called either Rep-Seq or AIRR-Seq.
     🔗.
     Start by this tutorial to have an overview of Vidjil.
   - Web platform [user manual](user.md). This is the main user manual of the Vidjil platform.
-  - [Libraries and recombinations](locus.md), documentation on library preparation and sequencing as well on detected immune recombinations
+  - [Libraries and recombinations](libraries-recombinations.md), documentation on library preparation and sequencing as well on detected immune recombinations
   - [Demo access](http://app.vidjil.org/) 🔗 to the patient, experiment and sample public test server
   - [Hosting options](healthcare.md) and healthcare compliance
   - [Privacy policy](privacy.md) and GDPR compliance
