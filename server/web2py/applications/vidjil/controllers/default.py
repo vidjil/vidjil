@@ -457,7 +457,7 @@ def get_custom_data():
 def get_analysis():
     error = ""
 
-    if "custom" in request.vars :
+    if "custom" in request.vars and "sample_set_id" not in request.vars :
         res = {"success" : "true"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -475,9 +475,6 @@ def get_analysis():
         error += "id sample_set file needed, "
     if not auth.can_view_sample_set(request.vars["sample_set_id"]):
         error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
-
-    if "custom" in request.vars :
-        return gluon.contrib.simplejson.dumps(get_default_analysis(), separators=(',',':'))
     
     if error == "" :
         
