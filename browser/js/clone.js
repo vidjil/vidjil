@@ -283,7 +283,7 @@ Clone.prototype = {
                 for (var g = 0; g < genes.length; g++) {
                     var gene_way = genes[g]
                     if (field_name.indexOf(gene_way.toString()) != -1){ // Warning; need to clarify rule for feature naming
-                        var sequence = this.getSearchSequence(gene_way)
+                        var sequence = this.getExtendedRevCompSequence(gene_way)
                         var res_search = this.searchSequence(sequence, sequence_to_add)
                         if (res_search.ratio >= 0.75){
                             germseq = this.getExtendedSequence(gene_way)
@@ -326,14 +326,13 @@ Clone.prototype = {
     },
 
     /**
-     * Search for a sub sequence in the sequence. 
-     * If no support seuqence given, use default sequence of this clone
-     * @param  {string}  search_sequence  Sequence to search
-     * @param  {Number}  geneway          If search in germline genes, give th position of the gene
-     * @param  {boolean} revcomp          Set if the search should be done on revcomp sequence
-     * @return {hash}                  [description]
+     * Return sequence asked, extended or not, revcomp or not
+     * If no support sequence given, use default sequence of this clone
+     * @param  {Number}  geneway          position of extended sequence to get (available 5 and 3)
+     * @param  {boolean} revcomp          Set if the search should be return in revcomp mode
+     * @return {string}                   The getted sequence
      */
-    getSearchSequence: function(geneway, revcomp){
+    getExtendedRevCompSequence: function(geneway, revcomp){
         var sequence;
         if (geneway == undefined && this.hasSequence()) {
             sequence = this.sequence
@@ -346,7 +345,6 @@ Clone.prototype = {
             sequence = this.getRevCompSequence(sequence)
         }
         return sequence
-
     },
 
     /**
@@ -409,7 +407,7 @@ Clone.prototype = {
             if (germseq != undefined){
                 for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
                     sequence_to_search = sequences[seq_pos]
-                    var sequence = this.getSearchSequence(gene_way)
+                    var sequence = this.getExtendedRevCompSequence(gene_way)
                     var res_search = this.searchSequence(sequence, sequence_to_search)
                     if (res_search.rst[0] > best_score && res_search.ratio >= 0.75 ){
                         best_seq   = [sequence_to_search]
