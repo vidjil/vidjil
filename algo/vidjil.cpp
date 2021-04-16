@@ -670,9 +670,10 @@ int main (int argc, char **argv)
   // Deprecated options
   bool deprecated = false;
 
+#define IGNORED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); cout << endl << "* WARNING: " << text << endl << endl ; })-> level(3);
 #define DEPRECATED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); deprecated = true ; return app.exit(CLI::ConstructionError((text), 1));}) -> level(3);
 
-  DEPRECATED("-3", "'-3' is deprecated and has to be removed, CDR3/JUNCTION are now always analyzed on clones under the '--max-designations' threshold");
+  IGNORED("-3", "'-3' is deprecated. This option is ignored and has to be removed, CDR3/JUNCTION are now always analyzed on clones under the '--max-designations' threshold");
   DEPRECATED("-t", "'-t' is deprecated, please use '--trim'");
   DEPRECATED("-A", "'-A' is deprecated, please use '--all'");
   DEPRECATED("-a", "'-a' is deprecated, please use '--out-reads'");
