@@ -13,7 +13,7 @@ nav:
     - / : index.md
     - Life scientist:
         - Web application user manual: user.md
-        - Libraries and recombinations: locus.md
+        - Libraries and recombinations: libraries-recombinations.md
         - Tutorial "Mastering the Vidjil web application" 🔗: http://www.vidjil.org/doc/tutorial/mastering-vidjil.html
         - Demo access to app.vidjil.org 🔗: http://app.vidjil.org/
         - Hosting options, healthcare compliance: healthcare.md
