@@ -524,6 +524,10 @@ class VidjilBrowser < Watir::Browser
     return div(:id => "db_table_container")
   end
 
+  def set_selected_owner_grp(owner)
+    $b.select_list(:id, "group_select").select_value(owner)
+  end
+
   def set_selected_preprocess(pre_process_name)
     $b.select_list(:id, "pre_process").select_value(pre_process_name)
   end
