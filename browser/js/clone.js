@@ -351,7 +351,6 @@ Clone.prototype = {
 
     /**
      * Search for a sub sequence in the sequence. 
-     * If no support seuqence given, use default sequence of this clone
      * @param  {string}  sequence         Sequence support
      * @param  {string}  search_sequence  Sequence to search
      * @return {hash}                     Bioseq results
