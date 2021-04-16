@@ -27,16 +27,24 @@ class LiveTestSampleSets < ServerTest
     table
   end
 
-  def test_00_demo_logged_in
+  def test_000_demo_logged_in
     # login_form = $b.form(:id => 'login_form')
     assert(!$b.login_form.present?)
 
-    ## Give right to real data (anon)
+    ## Give right to real data (anon) for grp ADMIN
     $b.go_to_groups()
     $b.get_group_line("admin").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(5) {$b.execute_script("return jQuery.active") == 0}
     $b.set_grp_right("anon", true) # remove anon
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+    Watir::Wait.until(5) {$b.execute_script("return jQuery.active") == 0}
+
+
+    ## Give right to real data (anon) for grp PUBLIC
+    $b.go_to_groups()
+    $b.get_group_line("public").click
+    Watir::Wait.until(5) {$b.execute_script("return jQuery.active") == 0}
+    $b.set_grp_right("anon", true) # remove anon
+    Watir::Wait.until(5) {$b.execute_script("return jQuery.active") == 0}
   end
   ######################################
   ### Manipulate server and database
