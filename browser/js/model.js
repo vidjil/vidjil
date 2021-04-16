@@ -34,9 +34,6 @@
 VIDJIL_JSON_VERSION = '2014.09';
 
 SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
-SEARCH_EXTEND_NULL = undefined
-SEARCH_EXTEND_5    = 5
-SEARCH_EXTEND_3    = 3
 
 /** Model constructor
  * Used to parse a .vidjil file (local file or from url) and store his content in a more convenient way, <br>
@@ -71,7 +68,6 @@ function Model() {
     this.available_axes = Axis.prototype.available()
 
     this.search_ratio_limit     = 0.80
-    this.search_extend          = false
     setInterval(function(){return self.updateIcon()}, 100); 
 }
 
@@ -2851,23 +2847,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 c.isFiltered = false; continue;
             }
 
-            var extend_sequence = [SEARCH_EXTEND_NULL]
-            if (this.search_extend){
-                extend_sequence = extend_sequence.concat([SEARCH_EXTEND_5, SEARCH_EXTEND_3])
+            var searched_sequence = c.searchSequence(str, undefined)
+            if (searched_sequence != undefined && searched_sequence.ratio >= this.search_ratio_limit){
+                c.isFiltered = false; continue;
             }
-            for (var pos = 0; pos < extend_sequence.length; pos++) {
-                if (c.isFiltered == false){ // don't pass on already filtered
-                    continue
-                }
-                var l = extend_sequence[pos]
-                var searched_sequence = c.searchSequence(str, l)
-                if (searched_sequence != undefined && searched_sequence.ratio >= this.search_ratio_limit){
-                    c.isFiltered = false; continue;
-                }
-                var searched_revcomp  = c.searchSequence(str, l, true)
-                if (searched_revcomp != undefined && searched_revcomp.ratio >= this.search_ratio_limit){
-                    c.isFiltered = false; continue;
-                }
+            var searched_revcomp  = c.searchSequence(str, undefined, true)
+            if (searched_revcomp != undefined && searched_revcomp.ratio >= this.search_ratio_limit){
+                c.isFiltered = false; continue;
             }
     	}
         this.update()

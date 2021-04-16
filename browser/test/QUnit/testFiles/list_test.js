@@ -192,16 +192,10 @@ QUnit.test("filters degenerated", function(assert) {
         assert.ok( !$(clone_list[2]).is(':visible'), `filter by extended 5' seq; without extended search: test1 is NOT visible`);
         assert.ok( !$(clone_list[3]).is(':visible'), `filter by extended 5' seq; without extended search: test2 is NOT visible`);
         m.search_extend = true
-        m.filter(ext5);
-        ready()
-    }, 4* delay);
-    setTimeout( function() {
-        assert.ok(  $(clone_list[2]).is(':visible'), `filter by extended 5' seq; with extended search: test1 is NOT visible`);
-        assert.ok( !$(clone_list[3]).is(':visible'), `filter by extended 5' seq; with extended search: test2 is visible`);
         m.search_ratio_limit = 0.7
         m.filter(mismatch);
         ready()
-    }, 5* delay);
+    }, 4* delay);
     setTimeout( function() {
         assert.ok( !$(clone_list[2]).is(':visible'), `filter id ('mismatch; search_ratio_limit to 0.9') : test1 is NOT visible`);
         assert.ok( $(clone_list[6]).is(':visible'),  `filter id ('mismatch; search_ratio_limit to 0.9') : test5 is visible`);
