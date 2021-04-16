@@ -99,6 +99,7 @@ upper left corner
 
     ## Add 2 new patients + run lines
     $b.span(:id => "run_button").click
+    $b.set_selected_owner_grp("public")
 
     ## Fill forms
     $b.fill_patient_form(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "")
@@ -138,9 +139,9 @@ can be suggested later on).
 
     # land on patient page
     tokens = $b.elements(:class => ["set_token", "patient_token"])
-    assert( tokens[0].text == "Last_name_3 First_name_3" )
-    assert( tokens[1].text == "Last_name_2 First_name_2" )
-    assert( tokens[2].text == "Last_name_1 First_name_1" )
+    assert( tokens[0].text.include? "Last_name_3 First_name_3" )
+    assert( tokens[1].text.include? "Last_name_2 First_name_2" )
+    assert( tokens[2].text.include? "Last_name_1 First_name_1" )
   end
 
 \end{verbatim}
