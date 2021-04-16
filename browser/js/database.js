@@ -949,13 +949,14 @@ Database.prototype = {
         
         console.log("db : custom data "+list)
         
+
+        var id_vars = ["sample_set_id", "patient_id", "run_id", "config", "custom"];
+        for (var j = 0; j < id_vars.length; j++) {
+            this.m[id_vars[j]] = args[id_vars[j]];
+        }
+
         var arg = this.argsToStr(args)
         this.m.custom = arg;
-
-        var id_vars = ["sample_set_id", "patient_id", "run_id", "config"];
-        for (var j = 0; j < id_vars.length; j++) {
-            this.m[id_vars[j]] = undefined;
-        }
         
         this.m.wait("Comparing samples...")
         $.ajax({
@@ -1018,8 +1019,11 @@ Database.prototype = {
             var fd = new FormData();
             fd.append("fileToUpload", blob);
             fd.append("info", self.m.info);
-            fd.append("samples_info", self.m.samples.info);
-            fd.append("samples_id", self.m.samples.id);
+
+            if (self.m.sample != undefined && self.m.samples.info != undefined && self.m.samples.id != undefined){
+                fd.append("samples_info", self.m.samples.info);
+                fd.append("samples_id", self.m.samples.id);
+            }
             
             $.ajax({
                 type: "POST",
