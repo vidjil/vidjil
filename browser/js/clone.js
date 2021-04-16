@@ -1044,7 +1044,7 @@ Clone.prototype = {
     },
     
     getSequence : function () {
-        if (typeof (this.sequence) != 'undefined' && this.sequence !== 0){
+        if (this.hasSequence()){
             return this.sequence.toUpperCase()
         }else{
             return "0";
@@ -1059,8 +1059,7 @@ Clone.prototype = {
      */
     getRevCompSequence : function (sequence) {
         if (sequence == undefined){
-            if (this.sequence != undefined && this.sequence !== 0){
-                console.log( "reset sequence by raw")
+            if (this.hasSequence()){
                 sequence = this.sequence
             } else {
                 return "0"
