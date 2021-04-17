@@ -17,7 +17,6 @@ https://gitlab.inria.fr/vidjil/vidjil/pipelines/XXXXX
 (if tests passed on different pipelines, indicate below the relevant pipelines)
 
 Usual tests should pass, but also:
-* [ ] prepare_release
 * [ ] valgrind_unit
 * [ ] valgrind_functional
 * [ ] multiple_tests

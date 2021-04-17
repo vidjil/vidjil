@@ -18,7 +18,6 @@ stages:
   - test_shouldvdj
   - test_functional_external
   - coverage
-  - prepare_release
   - tgz_release
   - valgrind_unit
   - valgrind_functional
@@ -134,13 +133,6 @@ release_valgrind_functional:
   allow_failure: true
   only:
     - /^feature-.*a.*\/release$/
-
-prepare_release:
-  stage: prepare_release
-  script: make -C algo release RELEASE_TAG='rc'
-  when: manual
-  only:
-    - /^feature-.*a.*\/.*$/
 
 tgz_release:
   stage: tgz_release
