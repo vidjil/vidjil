@@ -1,7 +1,8 @@
 #
 # Demo-X5 is a collection of sequences on all human locus, including some incomplete or unusual recombinations:
 # IGH (VDJ, DJ), IGK (VJ, V-KDE, Intron-KDE), IGL, TRA, TRB (VJ, DJ), TRG and TRD (VDDJ, Dd2-Dd3, Vd-Ja).
-# All these recombinations should be processed with: vidjil-algo -g germline/homo-sapiens.g -2 -3 -r 1
+# All these recombinations should be detected with:
+# ./vidjil-algo -g germline/homo-sapiens.g -2 -r 1 demo/Demo-X5.fa
 #
 # Reference:
 #  Marc Duez et al.,

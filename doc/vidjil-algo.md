@@ -409,7 +409,7 @@ consensus (see below), but you can safely put `--max-consensus all` if you want
 to compute all consensus sequences.
 
 The `--max-designations` option limits the number of clones that are fully analyzed,
-*with their V(D)J designation and possibly a CDR3 detection*,
+*with their V(D)J designation and an analysis of their CDR3*,
 in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis).
@@ -449,6 +449,23 @@ The default `--analysis-filter 3` is generally safe.
 Setting `--analysis-filter all` removes this pre-processing step, running a full dynamic programming
 with all germline sequences that is much slower.
 
+## CDR3 analysis
+
+The full analysis of clones beyond the `--max-designations` threshold also includes
+a CDR3/JUNCTION detection based on the position
+of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
+with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
+as provided by `make germline`.
+The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
+
+CDR3 are reported as *productive* when they come from an in-frame recombination
+and when the sequence does not contain any in-frame stop codons.
+Note that some other software only consider stop codons in the CDR3,
+and may thus under-estimate non-productivity.
+When the sequence is long enough to start before the start of the V gene
+or to end after the end of the J gene, vidjil-algo do not consider these intronic sequences
+in the productivity estimation.
+
 ## Sequences of interest
 
 Vidjil-algo allows to indicate that specific sequences should be followed and output,
@@ -484,38 +501,22 @@ with the `--grep-reads <sequence>` preset, equivalent to
 All the reads with the windows related to the sequence will be extracted 
 to files such as `out/seq/clone.fa-1`.
 
-## Further clone analysis: V(D)J designation, CDR3 detection
 Note that such sequences must have been detected as a V(D)J (or V(D)J-like) recombination
 in the first pass: the `--label`, `-label-file`, or `--label-filter` options can not
  detect a recombination that was not detected when removing all the thresholds with `--all`.
+
 To increase the sensitivity, see above the `--e-value` option, or,
 to look for non-recombined sequences, see above the experimental `1` sequence analysis.
 
-``` diff
-Clone analysis (second pass)
-  -d, --several-D             try to detect several D (experimental)
-  -3, --cdr3                  CDR3/JUNCTION detection (requires gapped V/J germlines)
-```
+## Options for further clone analysis
 
-The `-3` option launches a CDR3/JUNCTION detection based on the position
-of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
-with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
-as provided by `make germline`.
-The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
-
-CDR3 are reported as *productive* when they come from an in-frame recombination
-and when the sequence does not contain any in-frame stop codons.
-Note that some other software only consider stop codons in the CDR3,
-and may thus under-estimate non-productivity.
-When the sequence is long enough to start before the start of the V gene
-or to end after the end of the J gene, vidjil-algo do not consider these intronic sequences
-in the productivity estimation.
+The `--several-D` option tries to detect several D.
 
 The advanced `--analysis-cost` option sets the parameters used in the comparisons between
 the clone sequence and the V(D)J germline genes. The default values should work.
 
 The e-value set by `-e` is also applied to the V/J designation.
-The `-E` option further sets the e-value for the detection of D segments.
+The `-E` advanced option further sets the e-value for the detection of D segments.
 
 ## Further clustering (experimental)
 
@@ -829,27 +830,27 @@ The following commands work in both cases, detecting the locus for each recombin
 clustering such reads into clones, and further analyzing the clones.
 
 ``` bash
-./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -3 -r 1  demo/Demo-X5.fa
+./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -r 1  demo/Demo-X5.fa
   # Detect the locus for each read, cluster and report clones starting from the first read (-r 1).
-  # including unexpected recombinations (-2). Assign the V(D)J genes and try to detect the CDR3s (-3).
+  # including unexpected recombinations (-2). Designate the V(D)J genes and analyze the CDR3s.
   # Demo-X5 is a collection of sequences on all human locus, including some incomplete or unusual recombinations:
   # IGH (VDJ, DJ), IGK (VJ, V-KDE, Intron-KDE), IGL, TRA, TRB (VJ, DJ), TRG and TRD (VDDJ, Dd2-Dd3, Vd-Ja).
 ```
 
 ``` bash
-./vidjil-algo -g germline/homo-sapiens.g:IGH -3 demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g:IGH demo/Stanford_S22.fasta
    # Cluster the reads and report the clones, based on windows overlapping IGH CDR3s.
-   # Assign the V(D)J genes and try to detect the CDR3 of each clone.
+   # Designate the V(D)J genes and analyze the CDR3 of each clone.
    # Main output files are both out/Stanford_S22.vidjil and out/Stanford_S22.tsv.
    # Summary of clones is available on stdout.
 
 ```
 
 ``` bash
-./vidjil-algo -g germline/homo-sapiens.g -2 -3 -d demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g -2 -d demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
-   # Assign the VDJ genes (including multiple D) and try to detect the CDR3 of each clone.
+   # Designate the VDJ genes (including multiple D) and analyze the CDR3 of each clone.
    # Main output files are both out/reads.vidjil and out/reads.tsv.
    # Summary of clones is available on stdout.
 ```
@@ -860,7 +861,7 @@ clustering such reads into clones, and further analyzing the clones.
 ./vidjil-algo -g germline/homo-sapiens.g -2 -U demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
-   # Assign the VDJ genes and try to detect the CDR3 of each clone.
+   # Designate the VDJ genes and analyze the CDR3 of each clone.
    # The out/reads.detected.vdj.fa include all reads where a V(D)J recombination was found
 ```
 
@@ -888,8 +889,8 @@ It is also possible to explicitly require V(D)J designation for each read (`-c d
 no clone clustering, not recommended for large datasets)
 
 ``` bash
-./vidjil-algo -c designations -g germline/homo-sapiens.g -2 -3 -d -x 50 demo/Stanford_S22.fasta
-   # Detailed V(D)J designation, including multiple D, and CDR3 detection on the first 50 reads, without clone clustering
+./vidjil-algo -c designations -g germline/homo-sapiens.g -2 -d -x 50 demo/Stanford_S22.fasta
+   # Detailed V(D)J designation, including multiple D, and CDR3 analysis on the first 50 reads, without clone clustering
    # (this is not as efficient as '-c clones', no clustering)
 ```
 

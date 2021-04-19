@@ -1,5 +1,5 @@
 !OUTPUT_FILE: out/productive_stop_outframe.vidjil
-!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -3 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG,IGH $VIDJIL_DATA/productive_stop_outframe.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG,IGH $VIDJIL_DATA/productive_stop_outframe.fa
 !OPTIONS: --mod jR
 
 $ Two identical TRG junctions, and one with a spurious nucleotide

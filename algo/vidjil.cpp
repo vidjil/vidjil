@@ -165,14 +165,14 @@ string usage_examples(char *progname)
   stringstream ss;
   ss
        << "Examples (see " DOCUMENTATION ")" << endl
-       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
        << "                                                                                               #  cluster reads and report clones starting from the first read (-r 1)," << endl
-       << "                                                                                               #  including unexpected recombinations (-2), assign V(D)J genes and try to detect the CDR3s (-3))" << endl
-       << "  " << progname << " -c clones       -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
-       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
+       << "                                                                                               #  including unexpected recombinations (-2), designate V(D)J genes and analyze CDR3s" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g:IGH           demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g      -2 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
        << "  " << progname << " --filter-reads  -g germline/homo-sapiens.g               demo/LIL-L4.fastq.gz      # (pre-filter, extract all reads that may have V(D)J recombinations)" << endl
        << "  " << progname << " -c windows      -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
-       << "  " << progname << " -c designations -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, here on 50 sampled reads)" << endl
+       << "  " << progname << " -c designations -g germline/homo-sapiens.g      -2 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, here on 50 sampled reads)" << endl
        << "  " << progname << " -c germlines    -g germline/homo-sapiens.g               demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
 
@@ -497,7 +497,7 @@ int main (int argc, char **argv)
     ->group(group) -> level();
 
   // ----------------------------------------------------------------------------------------------------------------------
-  group = "Clone analysis (second pass)";
+  group = "Clone analysis (second pass), V/D/J designation, CDR3/JUNCTION analysis with productivity estimation";
 
   double expected_value = THRESHOLD_NB_EXPECTED;
   app.add_option("--e-value,-e", expected_value,
@@ -525,10 +525,6 @@ int main (int argc, char **argv)
 
   bool several_D = false;
   app.add_flag("-d,--several-D", several_D, "try to detect several D (experimental)") -> group(group);
-
-  bool detect_CDR3 = false;
-  app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)")
-    -> group(group);
 
   int alternative_genes = 0;
   app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one", true)
@@ -674,8 +670,10 @@ int main (int argc, char **argv)
   // Deprecated options
   bool deprecated = false;
 
+#define IGNORED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); cout << endl << "* WARNING: " << text << endl << endl ; })-> level(3);
 #define DEPRECATED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); deprecated = true ; return app.exit(CLI::ConstructionError((text), 1));}) -> level(3);
 
+  IGNORED("-3", "'-3' is deprecated. This option is ignored and has to be removed, CDR3/JUNCTION are now always analyzed on clones under the '--max-designations' threshold");
   DEPRECATED("-t", "'-t' is deprecated, please use '--trim'");
   DEPRECATED("-A", "'-A' is deprecated, please use '--all'");
   DEPRECATED("-a", "'-a' is deprecated, please use '--out-reads'");
@@ -1583,8 +1581,7 @@ int main (int argc, char **argv)
         if (segmented_germline->seg_method == SEG_METHOD_543)
           seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
 
-        if (detect_CDR3)
-          seg.findCDR3();
+        seg.findCDR3();
 
           
 	// Output representative, possibly segmented... 
@@ -1828,8 +1825,7 @@ int main (int argc, char **argv)
                 if (germline->seg_method == SEG_METHOD_543)
                   s.FineSegmentD(germline, several_D, expected_value_D, fine_evalue_multiplier);
 
-                if (detect_CDR3)
-                  s.findCDR3();
+                s.findCDR3();
 
                 g = germline ;
               }

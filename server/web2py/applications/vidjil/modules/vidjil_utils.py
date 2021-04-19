@@ -652,7 +652,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.config.insert(
             name = 'default + extract reads',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -U ',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -U ',
             fuse_command = '-t 100',
             info = 'Same as the default "multi+inc+xxx" (multi-locus, with some incomplete/unusual/unexpected recombinations), and extract analyzed reads in the "out" temporary directory.',
             classification = 1
@@ -660,7 +660,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.config.insert(
             name = 'multi+inc+xxx',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, with some incomplete/unusual/unexpected recombinations',
             classification = 1
@@ -668,7 +668,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.config.insert(
             name = 'multi+inc',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -w 50 ',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, with some incomplete/unusual recombinations',
             classification = 1
@@ -676,7 +676,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.config.insert(
             name = 'multi',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -d -w 50 ',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -d -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, only complete recombinations',
             classification = 2
@@ -684,7 +684,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.config.insert(
             name = 'TRG',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:TRG ',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g:TRG ',
             fuse_command = '-t 100',
             info = 'TRG, VgJg',
             classification = 2
@@ -692,7 +692,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.config.insert(
             name = 'IGH',
             program = 'vidjil',
-            command = '-c clones -w 60 -d -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH ',
+            command = '-c clones -w 60 -d -z 100 -r 1 -g germline/homo-sapiens.g:IGH ',
             fuse_command = '-t 100',
             info = 'IGH, Vh(Dh)Jh',
             classification = 2
@@ -700,7 +700,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.config.insert(
             name = 'Clonality',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -w 90 -y all --no-airr',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -w 90 -y all --no-airr',
             fuse_command = '-t 100 -d lenSeqAverage --overlaps',
             info = 'incomplete germlines + larger window (90bp), thus 20bp more on each side. This configuration is advised for studies on IGH clonality',
             classification = 1
@@ -708,7 +708,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.config.insert(
             name = 'Export all clones (AIRR)',
             program = 'vidjil',
-            command = '-c clones -3 -y all -z all -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -r 5 --no-vidjil',
+            command = '-c clones -y all -z all -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -r 5 --no-vidjil',
             fuse_command = '-t 100',
             info = 'Export all clones in the tabular AIRR format. The results can not be browsed online. See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output',
             classification = 3
