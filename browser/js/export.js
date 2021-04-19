@@ -809,8 +809,7 @@ Report.prototype = {
             }
         }/**/
 
-
-        var link = "mailto:support@vidjil.org" +
+        var link = "mailto:" + (typeof config !== 'undefined' ? (config.support || "support@vidjil.org") : "support@vidjil.org") +
             "?subject=" + escape("[Vidjil] Question") +
             "&body=" + escape("Dear Vidjil team," +
                               "\n\nI have a question on the results I obtain on the following sample: " + window.location.href +

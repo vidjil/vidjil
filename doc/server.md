@@ -251,17 +251,19 @@ section of the `docker-compose.yml` file or by stopping the service using port
 
 The following configuration files are found in the `vidjil/docker` directory:
 
-  - `conf/conf.js` various variables for the vidjil browser
-  - `conf/defs.py` various variables for the vidjil server
-  - `conf/gzip.conf` configuration for gzip in nginx
-  - `conf/gzip_static.conf` same as the previous but for static resources
-  - `conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
-  - `sites/nginx` configuration required when running vidjil with nginx
-  - `scripts/nginx-entrypoint.sh` entrypoint for the nginx
-  - `service` (not currently in use)
-  - `scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi
+  - `vidjil-client/conf/conf.js` various variables for the vidjil client
+  - `vidjil-client/conf/nginx_gzip.conf` configuration for gzip in nginx
+  - `vidjil-client/conf/nginx_gzip_static.conf`  same as the previous but for static resources
+
+  - `vidjil-server/conf/defs.py` various variables for the vidjil server
+  - `vidjil-server/conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
+  - `vidjil-server/scripts/nginx-entrypoint.sh` entrypoint for the nginx
+  - `vidjil-server/scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi
 service. Ensures the owner of some relevant volumes are correct within
 the container and starts uwsgi
+
+  - `sites/nginx` configuration required when running vidjil with nginx
+  - `service` (not currently in use)
 
 Here are some notable configuration changes you should consider:
 
@@ -270,10 +272,12 @@ Here are some notable configuration changes you should consider:
 
   - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
     They are used for admin emails monitoring the server an reporting errors.
+    Change also the `hosting` variable in `vidjil-client/conf/confs.js`.
 
   - <a name='healthcare'></a>
     If, according yo your local regulations, the server is suitable for hosting clinical data,
-    you may update the `HEALTHCARE_COMPLIANCE` variable to remove warnings related to non-healthcare compliance.
+    you may update the `HEALTHCARE_COMPLIANCE` variable in `vidjil-server/conf/defs.py`
+    and the `healthcare` variable in `vidjil-client/conf/confs.js` to remove warnings related to non-healthcare compliance.
     Updating this variable is the sole responsibility of the institution responsible for the server,
     and should be done in accordance with the regulations that apply in your country.
     See also the [hosting options](healthcare.md) offered by the VidjilNet consortium.
