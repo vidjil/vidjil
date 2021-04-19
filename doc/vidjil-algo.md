@@ -17,7 +17,7 @@ This manual can be browsed online:
  - <http://www.vidjil.org/doc/vidjil-algo>                (last stable release)
  - <http://gitlab.vidjil.org/blob/dev/doc/vidjil-algo.md> (development version)
 
-Other documentations for life scientists, bioinformaticians, server administrators, and developpers
+Other documentations for life scientists, bioinformaticians, server administrators, and developers
 can be found ats <http://www.vidjil.org/doc/>.
 
 
@@ -117,7 +117,7 @@ To compile Vidjil-algo, make sure:
 
 ### Download
 
-These instructions targets *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>.
+These instructions target *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>.
 
 ``` sh
 curl -O http://www.vidjil.org/releases/vidjil-algo-latest.tar.gz

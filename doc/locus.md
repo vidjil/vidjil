@@ -95,7 +95,7 @@ Those biases could occur inside one locus but also favor loci/systems with short
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
 It was designed to detect all the common V(D)J recombinations,
-even the incomplete/special recombinations occuring during the hematopoeisis
+even the incomplete/special recombinations occurring during the hematopoeisis
 -- such recombinations systems are denoted with a `+`.
 
 In particular, Vidjil-algo detects all the human recombinations
@@ -120,7 +120,7 @@ selecting the best locus for each read.
 
 When using Vidjil-algo through the command-line, the configuration of analyzed recombinations is done in the `germline/homo-sapiens.g` preset.
 
-The detection of complete recombinations is reliable and provided that the reads
+The detection of complete recombinations is reliable provided the reads
 are long enough around the V(D)J junction (see above).
 
 The detection of incomplete/special recombinaisons is more challenging and may fail in some cases.
