@@ -17,7 +17,8 @@ This manual can be browsed online:
  - <http://www.vidjil.org/doc/vidjil-algo>                (last stable release)
  - <http://gitlab.vidjil.org/blob/dev/doc/vidjil-algo.md> (development version)
 
-Other documentation (users and administrators of the web application, developpers) can be found from <http://www.vidjil.org/doc/>.
+Other documentations for life scientists, bioinformaticians, server administrators, and developers
+can be found ats <http://www.vidjil.org/doc/>.
 
 
 ## About
@@ -74,10 +75,10 @@ Vidjil-algo is developed with continuous integration using systematic unit and f
 The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) for that,
 and the tested compilers are run through Docker containers described in `.gitlab-ci-compilers.yml`.
 
-## Build requirements (optional)
 
-This paragraph details the requirements to build Vidjil-algo from source.
-You can also download a static binary, see [installation](#installation).
+## Installation (from source)
+
+### Build requirements
 
 To compile Vidjil-algo, make sure:
 
@@ -85,22 +86,21 @@ To compile Vidjil-algo, make sure:
   - to have a C++11 compiler (as `g++` 4.8 or above, or `clang` 3.4 or above).
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
-  - to have GNU make (`gmake` under FreeBSD). On some FreeBSD distributions, it was required to use commands such as
-``` bash
-make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
-```
-    The `gcc49` at the end of the command line is to be replaced by the `gcc` version used.
+  - to have GNU make (`gmake` under FreeBSD).
 
-
-## Installation
 
 ### Download
 
-These instructions targets *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>
-or <http://bioinfo.lifl.fr/vidjil/>.
+These instructions target *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>.
 
-Development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
-and compiling and running vidjil-algo on the development code can involve slightly different commands,
+``` sh
+curl -O http://www.vidjil.org/releases/vidjil-algo-latest.tar.gz
+tar xvfz vidjil-algo-latest.tar.gz
+cd vidjil-algo-*
+```
+
+Note that development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
+and compiling and running vidjil-algo on the development code can involve slightly different commands than below,
 including replacing `src` by `algo`.
 
 ### Compiling
@@ -132,9 +132,10 @@ On some older systems you may need to replace the `make` commands with:
 
 ``` bash
 make LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
+make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"   ### old FreeBSD
 ```
 
-## Self-tests (optional)
+### Self-tests (optional)
 
 You can run the tests with the following commands:
 
@@ -147,6 +148,35 @@ make -C src/tests/data
 
 make -C src test                # run self-tests (can take 5 to 60 minutes)
 ```
+
+
+## Installation (static binaries, x86_64 platforms)
+
+Run the following commands:
+
+``` sh
+curl http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -o vidjil-algo
+chmod 755 vidjil-algo
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/doc/vidjil-algo.md
+
+### Germlines
+mkdir germline
+cd germline
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/homo-sapiens.g
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/germline_id
+curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/get-saved-germline | sh
+cd ..
+
+### Demo sequences (optional)
+mkdir demo
+cd demo
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/Demo-X5.fa
+curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/get-sequences | sh
+cd ..
+
+./vidjil-algo -h
+```
+
 
 # Input and parameters
 
@@ -452,14 +482,18 @@ with all germline sequences that is much slower.
 ## CDR3 analysis
 
 The full analysis of clones beyond the `--max-designations` threshold also includes
-a CDR3/JUNCTION detection based on the position
-of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
+a CDR3/JUNCTION detection and productivity estimation based on the position
+of Cys104 and Phe118/Trp118 amino acids. The detection relies on alignment
 with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
 as provided by `make germline`.
 The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
 
-CDR3 are reported as *productive* when they come from an in-frame recombination
-and when the sequence does not contain any in-frame stop codons.
+CDR3 are reported as *productive* when they come from an in-frame recombination,
+the sequence does not contain any in-frame stop codons,
+and, for IGH recombinations, when the FR4 begins with the `{WP}-GxG` pattern.
+This follows the ERIC guidelines ([Rosenquist et al., 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5508071/)).
+When a clone is reported as non-productive, the cause is detailed in the `seg.junction.unproductive` field
+of the `.vidjil` output and also in some fields of the AIRR output.
 Note that some other software only consider stop codons in the CDR3,
 and may thus under-estimate non-productivity.
 When the sequence is long enough to start before the start of the V gene
@@ -716,6 +750,8 @@ When processing large datasets, such as RNA-Seq or capture, one may want to pre-
 In such a case, the recommanded option is to use the `--filter-reads` preset, that launches Vidjil-algo without clone clustering and analysis,
 while outputing a `out/basename.detected.vdj.fa` file. This file contains reads /that may have V(D)J recombinations/, evaluated with a very permissive threshold.
 The resulting file is usually much smaller on such datasets and can then be transferred or analysed in-depth more easily.
+This filtering can also be part of a [post-sequencer workflow](http://www.vidjil.org/doc/workflow/).
+
 ## AIRR .tsv output
 
 Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
