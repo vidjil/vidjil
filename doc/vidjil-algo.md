@@ -75,32 +75,6 @@ Vidjil-algo is developed with continuous integration using systematic unit and f
 The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) for that,
 and the tested compilers are run through Docker containers described in `.gitlab-ci-compilers.yml`.
 
-## Installation (static binaries, x86_64 platforms)
-
-Run the following commands:
-
-``` sh
-curl http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -o vidjil-algo
-chmod 755 vidjil-algo
-curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/doc/vidjil-algo.md
-
-### Germlines
-mkdir germline
-cd germline
-curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/homo-sapiens.g
-curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/germline_id
-curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/get-saved-germline | sh
-cd ..
-
-### Demo sequences (optional)
-mkdir demo
-cd demo
-curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/Demo-X5.fa
-curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/get-sequences | sh
-cd ..
-
-./vidjil-algo -h
-```
 
 ## Installation (from source)
 
@@ -174,6 +148,35 @@ make -C src/tests/data
 
 make -C src test                # run self-tests (can take 5 to 60 minutes)
 ```
+
+
+## Installation (static binaries, x86_64 platforms)
+
+Run the following commands:
+
+``` sh
+curl http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -o vidjil-algo
+chmod 755 vidjil-algo
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/doc/vidjil-algo.md
+
+### Germlines
+mkdir germline
+cd germline
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/homo-sapiens.g
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/germline_id
+curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/get-saved-germline | sh
+cd ..
+
+### Demo sequences (optional)
+mkdir demo
+cd demo
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/Demo-X5.fa
+curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/get-sequences | sh
+cd ..
+
+./vidjil-algo -h
+```
+
 
 # Input and parameters
 
