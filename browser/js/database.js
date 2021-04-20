@@ -1007,6 +1007,11 @@ Database.prototype = {
     
     save_analysis: function () {
         var self = this;
+
+        if (typeof this.m.custom != 'undefined'){
+            console.log({ msg: "'save' has been disabled for custom file. <br/> Use the complete related sample set (patient/run) if you wish to keep your modification.", type: "flash", priority: 2 });
+            return
+        }
         
         if (self.last_file == self.m.db_key){
             
