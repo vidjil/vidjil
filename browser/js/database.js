@@ -942,20 +942,19 @@ Database.prototype = {
             return
         }
         
-        if (typeof args == 'undefined'){
-            args={}
-            args.custom = this.getListInput("custom_result[]")
-        }
+        if (typeof args == 'undefined') args={};
+        if (typeof args.custom == 'undefined') args.custom = this.getListInput("custom_result[]");
         
         console.log("db : custom data "+list)
         
+
+        var id_vars = ["sample_set_id", "patient_id", "run_id", "config", "custom"];
+        for (var j = 0; j < id_vars.length; j++) {
+            this.m[id_vars[j]] = args[id_vars[j]];
+        }
+
         var arg = this.argsToStr(args)
         this.m.custom = arg;
-
-        var id_vars = ["sample_set_id", "patient_id", "run_id", "config"];
-        for (var j = 0; j < id_vars.length; j++) {
-            this.m[id_vars[j]] = undefined;
-        }
         
         this.m.wait("Comparing samples...")
         $.ajax({
@@ -1008,6 +1007,12 @@ Database.prototype = {
     
     save_analysis: function () {
         var self = this;
+
+        if (typeof this.m.custom != 'undefined' &&
+            getComputedStyle(document.querySelector('.devel-mode')).display != "block"){
+            console.log({ msg: "'save' has been disabled for custom file. <br/> Use the complete related sample set (patient/run) if you wish to keep your modification.", type: "flash", priority: 2 });
+            return
+        }
         
         if (self.last_file == self.m.db_key){
             
@@ -1018,8 +1023,11 @@ Database.prototype = {
             var fd = new FormData();
             fd.append("fileToUpload", blob);
             fd.append("info", self.m.info);
-            fd.append("samples_info", self.m.samples.info);
-            fd.append("samples_id", self.m.samples.id);
+
+            if (self.m.sample != undefined && self.m.samples.info != undefined && self.m.samples.id != undefined){
+                fd.append("samples_info", self.m.samples.info);
+                fd.append("samples_id", self.m.samples.id);
+            }
             
             $.ajax({
                 type: "POST",

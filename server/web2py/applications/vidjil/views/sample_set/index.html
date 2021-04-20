@@ -67,6 +67,7 @@
                 <td class="column5"></td>
                 <td class="column5"></td>
                 <td class="column5"></td>
+                <td class="column5"></td>
 
             </tr>
         </thead>
@@ -160,6 +161,19 @@
                        {{pass}}
                    {{pass}}
                    </td>
+                   
+                    {{if row.results_file.id and row.results_file.data_file:}}
+                    <td><a class="button" href="{{=http_origin}}?custom={{=row.results_file.id}}&sample_set_id={{=request.vars["id"]}}&config={{=config_id}}" type="text/html"
+                                onclick= "event.preventDefault();
+                                        if( event.which == 2 ) { window.open(this.href); }
+                                        else { myUrl.loadCustomUrl(db, {'custom': '{{=row.results_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config' : {{=config_id}}  } ); } " >
+                            <i class="icon-forward" title="open this sample results in client"></i>
+                        
+                    </a></td>
+                    {{else:}}
+                    <td></td>
+                    {{pass}}
+                   
                 </tr>
             {{pass}}
 

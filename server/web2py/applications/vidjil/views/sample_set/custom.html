@@ -108,7 +108,7 @@
 
     <div class="db_block_right">
         <span class="devel-mode button2" onclick="db.call('sample_set/multi_sample_stats', {'custom_result': db.getListInput('custom_result[]') })" >preview / quality control</span>
-        <span class="button2" onclick="myUrl.loadCustomUrl(db)" > see results </span>
+        <span class="button2" onclick="myUrl.loadCustomUrl(db, { 'sample_set_id':{{=request.vars["id"]}} })" > see results </span>
     </div>
 
 </div>
