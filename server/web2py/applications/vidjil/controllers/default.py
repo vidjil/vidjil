@@ -510,9 +510,7 @@ def save_analysis():
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
 
-    if not "sample_set_id" in request.vars :
-        error += "It is currently not possible to save an analysis on a comparison of samples, "
-    elif not auth.can_save_sample_set(request.vars['sample_set_id']) :
+    if not auth.can_save_sample_set(request.vars['sample_set_id']) :
         error += "you do not have permission to save changes on this sample set"
 
     if error == "" :
