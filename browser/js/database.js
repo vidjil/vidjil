@@ -1008,7 +1008,8 @@ Database.prototype = {
     save_analysis: function () {
         var self = this;
 
-        if (typeof this.m.custom != 'undefined'){
+        if (typeof this.m.custom != 'undefined' &&
+            getComputedStyle(document.querySelector('.devel-mode')).display != "block"){
             console.log({ msg: "'save' has been disabled for custom file. <br/> Use the complete related sample set (patient/run) if you wish to keep your modification.", type: "flash", priority: 2 });
             return
         }
