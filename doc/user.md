@@ -237,35 +237,73 @@ or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
 ## The sequence panel (bottom panel)
 
-The sequence panel displays nucleotide sequences from selected clones.
+Nucleotide or amino acid sequences of selected clones can be inspected using the Sequence panel.
 
-  - See "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)" below
-  - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions. Silent mutations are identified, as soon as a CDR3 is detected, and represented with a double border in blue.
-  - You can remove sequences from the aligner (and the selection) by clicking on the “X” at the left.
-  - You can unselect all sequences by clicking on the background of the grid.
+We invite you to read "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)" below before using this tool.
 
-## Further sequence analysis with external software
 
-The sequence panel displays buttons to further analyze the selected sequences
-with other software useful for RepSeq studies.
-These buttons open another window/tab.
+### Select clones to inspect
+  - Select a single clone : click on it's representative element in any panel. (it can be a plot in the gridpanel, a line in the graph panel or an entry in the list panel)
+  - Select multiple clone : it's possible to do a rectangular selection of an area of the .scatterplot using a click-and-drag to select multiple clones at the same time.
+  - Add a clone to the selection : Ctrl+click 
+  - Remove a clone from the selction : click on the 'X' at the left.
+  - Remove all selected clone : click on the background of the grid.
 
-   - [`❯ IMGT/V-QUEST`](http://www.imgt.org/IMGT_vquest):
-     The reference analysis from IMGT®, including subset #2 and #8 search.
-     The `▼` button further allows to retrieve back results from IMGT/V-QUEST
-     and to display them within Vidjil.
+The first sequence selected is often used as the reference when further inspecting the
 
-   - [`❯ IgBlast`](https://www.ncbi.nlm.nih.gov/igblast/):
-     Nucleotide alignment with IG/TR germline sequences
+##  Using the sequence panel tools  
 
-   - `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
+At the top of this panel you can find a menu providing multiple tools to inspect the sequences, that are in order:
 
-   - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
-     Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
+### Cluster: regroup clones
+This button will create a cluster with the selected clones 
+a cluster of clones will appear like a single clone in the application with the first selected clone acting as it's representative.
 
-   - [`❯ AssignSubsets`](https://station1.arrest.tools/subsets) (availaible for clones with IGH recombinations):
-     Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
-     of stereotyped antigen receptor sequences for CLL
+### Align:
+provide an alignement of the sequences, the sequence of the first clone in the list is used as the reference and all the other sequences are aligned against it.
+by default 
+
+  - `-` is a gap.
+  - `*` is a match .
+  - a single line under a character is a mismatch.
+  - a double line under a character is a mismatch that does not impact the resulting amino acid sequence.
+  - `#` in an Amino acid sequence is 
+
+
+### External Analysis: Further sequence analysis with external software
+This sub menu display a range of other analysis software available online used for RepSeq studies.
+These buttons will send the sequences of selected clones to them for analysis and open the resulting page in another window/tab.
+
+  - [`❯ IMGT/V-QUEST`](http://www.imgt.org/IMGT_vquest):
+    The reference analysis from IMGT®, including subset #2 and #8 search.
+
+  - [`❯ IgBlast`](https://www.ncbi.nlm.nih.gov/igblast/):
+    Nucleotide alignment with IG/TR germline sequences
+
+  - `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
+
+  - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
+    Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
+
+  - [`❯ AssignSubsets`](https://station1.arrest.tools/subsets) (availaible for clones with IGH recombinations):
+    Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
+    of stereotyped antigen receptor sequences for CLL
+
+### Sequence Feature
+The analysis software can sometime provide positions of genes or specific regions that can be highlighted using this menu.
+The content of his menu depends on the analysis software(and parameter) used but usually contains at least the following genes/regions 
+
+  - V/D/J Genes
+  - CDR3 position
+
+### Sequence Feature `IMGT`
+Same as Sequence Feature but this time the information that can be displayed are provided by IMGT/V-QUEST online analysis software.
+
+  - V/D/J Genes
+  - FR1/FR2/FR3
+  - CDR1/CDR2/CDR3 
+
+It is required to use the refresh button after adding new clones to the selection to avoid overloading the IMGT servers that provide us this feature. 
 
 
 # The sample database and the server
