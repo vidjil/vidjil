@@ -3,8 +3,11 @@
 
 # Test examples embedded in 'doc/vidjil-algo.md'
 
-# Run eight times
-8:vidjil-algo -- V.D.J recombinations analysis .*vidjil.org
+# Run nine times
+9:vidjil-algo -- V.D.J recombinations analysis .*vidjil.org
+
+# '-h', two times
+2:Examples
 
 # '-c clone' (or implied), five times
 5: end of clones
