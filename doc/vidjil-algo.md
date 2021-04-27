@@ -67,7 +67,7 @@ Vidjil-algo is systematically tested with the following compilers :
 
 These compilers are available on recent OS X and on the following Linux distributions:
   - CentOS 7, 8
-  - Debian Jessie 8.0, Stretch 9.0, Buster 10.0
+  - Debian Jessie 8.0, Stretch 9.0, Buster 10.0, Bullseye 11
   - FreeBSD 9.2, 10, 11, 12
   - Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS
 
