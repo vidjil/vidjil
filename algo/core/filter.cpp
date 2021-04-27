@@ -17,8 +17,7 @@ FilterWithACAutomaton::~FilterWithACAutomaton(){
 }
 
 void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed, float keys_compress){
-  char asciiChar;
-  int asciiNumber;
+  unsigned int asciiNumber;
   string currentLabel;
   string previousLabel;
 
@@ -30,10 +29,10 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed, float
   automaton = new PointerACAutomaton<KmerStringAffect>(seed, false, true);
   indexes = new vector<int>();
   asciiNumber = SPECIFIC_KMERS_NUMBER;
-  automaton->insert(originalBioReader.sequence(0),std::string("") + char(asciiNumber), true, 0, seed);
+  automaton->insert(originalBioReader.sequence(0), std::to_string(asciiNumber), true, 0, seed);
   indexes->push_back(0);
 
-  int previousAsciiNumber = asciiNumber;
+  unsigned int previousAsciiNumber = asciiNumber;
   int rawNumber = 0;
 
   previousLabel = extractGeneName(originalBioReader.label(0));
@@ -49,15 +48,7 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed, float
       indexes->push_back(i);
       previousAsciiNumber = asciiNumber;
     }
-    if(asciiNumber > 127){
-      cerr << WARNING_STRING << "Pre-filtering disabled" << endl;
-      delete automaton; delete indexes;
-      automaton = nullptr;
-      indexes = nullptr;
-      return;
-    }
-    asciiChar = char(asciiNumber);
-    automaton->insert(originalBioReader.sequence(i),std::string("") + asciiChar, true, 0, seed);
+    automaton->insert(originalBioReader.sequence(i),std::to_string(asciiNumber), true, 0, seed);
     previousLabel = currentLabel;
   }
   indexes->push_back(originalBioReader.size());
@@ -150,8 +141,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
 }
 
 void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, BioReader &dst, KmerStringAffect k) const{
-  char asciiChar = k.getLabel().at(0);
-  unsigned int asciiNum = int(asciiChar);
+  unsigned int asciiNum = stoi(k.getLabel());
 
   if(asciiNum > indexes->size() || !k.isGeneric()){
     throw invalid_argument("Incorrect K-mer transmitted.");
@@ -162,8 +152,7 @@ void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, Bio
 }
 
 int FilterWithACAutomaton::getSizeLongestTransferredSequence(const BioReader &reader, KmerStringAffect k) const{
-  char asciiChar = k.getLabel().at(0);
-  unsigned int asciiNum = int(asciiChar);
+  unsigned int asciiNum = stoi(k.getLabel());
 
   if(asciiNum > indexes->size() || !k.isGeneric()){
     throw invalid_argument("Incorrect K-mer transmitted.");
