@@ -292,6 +292,14 @@ bool KmerStringAffect::isUnknown() const {
   return *this == KSA_UNKNOWN;
 }
 
+bool KmerStringAffect::isNull() const {
+  return isUnknown();
+}
+
+bool KmerStringAffect::isGeneric() const {
+  return !(isUnknown() || isAmbiguous());
+}
+
 string KmerStringAffect::toString() const {
   if (isUnknown()) {
     return " _";

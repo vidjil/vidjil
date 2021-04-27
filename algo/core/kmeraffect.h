@@ -305,9 +305,19 @@ public:
   bool isAmbiguous() const;
 
   /**
+   * @return true iff the value is the same as the one given by default constructor
+   */
+  bool isNull() const;
+
+  /**
    * @return true iff the affectation is unkwown yet.
    */
   bool isUnknown() const;
+
+  /**
+  * @return true if the K-mer is not odd (ambiguous or unknown)
+  */
+  bool isGeneric() const;
 
   string toString() const;
 };
