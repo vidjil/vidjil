@@ -191,3 +191,18 @@ test_clang7_release:
   extends:
     - .testing-clang
     - .testing_various_compilers_release
+test_clang11_manual:
+  image: debian:11-slim
+  variables:
+    CLANG_VERSION: "11"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_manual
+test_clang11_release:
+  image: debian:11-slim
+  variables:
+    CLANG_VERSION: "11"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_release
+    
