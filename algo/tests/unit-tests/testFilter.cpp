@@ -148,13 +148,13 @@ vector<int> getDebugIndexes3(){
   Check the integrity of the automatonBuilderFilteringBioReader
   function. This test is separe in two parts. The first one
   will check if the vector of indexes received is accurate
-  while the second part will check that every KmerAffect inside
+  while the second part will check that every KmerStringAffect inside
   the revceivedAutomaton wear the good label.
 */
 void testAutomatonBuilderFilteringBioReader(){
   vector<int> *v1, *v2, *v3;
-  AbstractACAutomaton<KmerAffect> *a1, *a2, *a3;
-  KmerAffect tmpKmer;
+  AbstractACAutomaton<KmerStringAffect> *a1, *a2, *a3;
+  KmerStringAffect tmpKmer;
   seqtype tmpSeq;
   BioReader testedBioReader1;
   BioReader testedBioReader2;
@@ -164,7 +164,7 @@ void testAutomatonBuilderFilteringBioReader(){
   vector<int> expectedIndexes3;
   FilterWithACAutomaton *f1, *f2, *f3;
   seqtype seq;
-  KmerAffect k;
+  KmerStringAffect k;
   char asciiChar;
   unsigned int asciiNum;
 
@@ -173,7 +173,7 @@ void testAutomatonBuilderFilteringBioReader(){
   const string TEST_CONTENT_ERROR =
                             "The expected vector doesn't have the good content";
   const string TEST_LABEL_ERROR =
-                            "The KmerAffect doesn't have the good label";
+                            "The KmerStringAffect doesn't have the good label";
 
   testedBioReader1 = getDebugBioReader1();
   testedBioReader2 = getDebugBioReader2();
@@ -221,7 +221,7 @@ void testAutomatonBuilderFilteringBioReader(){
     TEST_CONTENT_ERROR);
   }
 
-  /* test automaton KmerAffect label */
+  /* test automaton KmerStringAffect label */
   for(unsigned int i = 0, l = SPECIFIC_KMERS_NUMBER;i < expectedIndexes1.size() - 1; ++i, ++l){
     for(int j = expectedIndexes1[i]; j < expectedIndexes1[i + 1]; ++j){
       seq = testedBioReader1.sequence(j);
@@ -257,8 +257,8 @@ void testAutomatonBuilderFilteringBioReader(){
 
 void testFilterBioReaderWithACAutomaton(){
   vector<int> *v1, *v2, *v3;
-  AbstractACAutomaton<KmerAffect> *a1, *a2, *a3;
-  KmerAffect tmpKmer;
+  AbstractACAutomaton<KmerStringAffect> *a1, *a2, *a3;
+  KmerStringAffect tmpKmer;
   seqtype sequence1, sequence2, sequence3;
   BioReader testedBioReader1, testedBioReader2, testedBioReader3;
   BioReader filteredBioReader1, filteredBioReader2, filteredBioReader3;
@@ -302,10 +302,10 @@ void testFilterBioReaderWithACAutomaton(){
     TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, SIZE_ERROR);
 
   //check filtered BioReaders content
-  map<KmerAffect, int> m1 = a1->getMultiResults(sequence1);
+  map<KmerStringAffect, int> m1 = a1->getMultiResults(sequence1);
   list<Sequence> l1 = filteredBioReader1.getAll();
   for(auto const m : m1){
-    KmerAffect tmpKmer = m.first;
+    KmerStringAffect tmpKmer = m.first;
     if(!tmpKmer.isGeneric()){
       continue;
     }
@@ -315,10 +315,10 @@ void testFilterBioReaderWithACAutomaton(){
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
   }
-  map<KmerAffect, int> m2 = a2->getMultiResults(sequence2);
+  map<KmerStringAffect, int> m2 = a2->getMultiResults(sequence2);
   list<Sequence> l2 = filteredBioReader2.getAll();
   for(auto const m : m2){
-    KmerAffect tmpKmer = m.first;
+    KmerStringAffect tmpKmer = m.first;
     if(!tmpKmer.isGeneric()){
       continue;
     }
@@ -328,10 +328,10 @@ void testFilterBioReaderWithACAutomaton(){
               TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, GENES_ERROR);
     }
   }
-  map<KmerAffect, int> m3 = a3->getMultiResults(sequence3);
+  map<KmerStringAffect, int> m3 = a3->getMultiResults(sequence3);
   list<Sequence> l3 = filteredBioReader3.getAll();
   for(auto const m : m3){
-    KmerAffect tmpKmer = m.first;
+    KmerStringAffect tmpKmer = m.first;
     if(!tmpKmer.isGeneric()){
       continue;
     }
@@ -470,7 +470,7 @@ void testBehaviourWhenHugeBioReader(){
   FilterWithACAutomaton *f;
   hugeBioReader.add("../../germline/homo-sapiens/IGHV.fa");
   hugeBioReader.add("../../germline/homo-sapiens/IGLV.fa");
-  AbstractACAutomaton<KmerAffect>* automaton;
+  AbstractACAutomaton<KmerStringAffect>* automaton;
   f = new FilterWithACAutomaton(hugeBioReader, "#########");
   automaton = f->getAutomaton();
   TAP_TEST(!automaton, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON,
