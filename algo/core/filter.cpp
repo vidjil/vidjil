@@ -27,7 +27,7 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed, float
     indexes = nullptr;
     return;
   }
-  automaton = new PointerACAutomaton<KmerAffect>(seed, false, true);
+  automaton = new PointerACAutomaton<KmerStringAffect>(seed, false, true);
   indexes = new vector<int>();
   asciiNumber = SPECIFIC_KMERS_NUMBER;
   automaton->insert(originalBioReader.sequence(0),std::string("") + char(asciiNumber), true, 0, seed);
@@ -72,7 +72,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     seqtype &seq, int kmer_threshold, int pvalue){
 
   BioReader result;
-  map<KmerAffect, int> mapAho;
+  map<KmerStringAffect, int> mapAho;
   this->filtered_sequences_calls += 1;
   if(!automaton || !indexes || kmer_threshold < 0){
     this->filtered_sequences_nb += originalBioReader.size();
@@ -110,17 +110,17 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     sorted map */
   }else{
     /* sort map */
-    using Comparator = bool (*) (pair<KmerAffect, int>, pair<KmerAffect, int>);
-    Comparator compFunctor = [](pair<KmerAffect, int> elem1 ,pair<KmerAffect, int> elem2){
+    using Comparator = bool (*) (pair<KmerStringAffect, int>, pair<KmerStringAffect, int>);
+    Comparator compFunctor = [](pair<KmerStringAffect, int> elem1 ,pair<KmerStringAffect, int> elem2){
       return (elem1.second == elem2.second) ? elem1.first > elem2.first : elem1.second > elem2.second;
     };
     // Use a set to use the comparator and sort function
-    set<pair<KmerAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
+    set<pair<KmerStringAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
     // Iterate over the pair and not the map
     int nbKmers = 0;
     int nb_kmers_limit = -1;    // Limit number of kmers, defined when the last gene of interest is reached
     
-    for(pair<KmerAffect, int> element : setOfWords){
+    for(pair<KmerStringAffect, int> element : setOfWords){
       // Add corresponding sequences to the BioReader
         if(!element.first.isGeneric()){
           continue;
@@ -149,7 +149,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
   return (result.size() == 0) ? originalBioReader : result;
 }
 
-void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, BioReader &dst, KmerAffect k) const{
+void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, BioReader &dst, KmerStringAffect k) const{
   char asciiChar = k.getLabel().at(0);
   unsigned int asciiNum = int(asciiChar);
 
@@ -161,7 +161,7 @@ void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, Bio
   }
 }
 
-int FilterWithACAutomaton::getSizeLongestTransferredSequence(const BioReader &reader, KmerAffect k) const{
+int FilterWithACAutomaton::getSizeLongestTransferredSequence(const BioReader &reader, KmerStringAffect k) const{
   char asciiChar = k.getLabel().at(0);
   unsigned int asciiNum = int(asciiChar);
 
@@ -181,7 +181,7 @@ vector<int>* FilterWithACAutomaton::getIndexes() const{
   return this->indexes;
 }
 
-AbstractACAutomaton<KmerAffect>* FilterWithACAutomaton::getAutomaton() const{
+AbstractACAutomaton<KmerStringAffect>* FilterWithACAutomaton::getAutomaton() const{
   return this->automaton;
 }
 
