@@ -40,13 +40,13 @@ BENCHS = OrderedDict([
 
   ('filter', LIMIT2e5 + FILTER + MULTI + L4),
 
+  ('igh-0', LIMIT1e5 + IGH + L4 + CONSENSUS_NO),
   ('multi-0', LIMIT1e5 + MULTI + L4 + CONSENSUS_NO),
-  ('multi-1', LIMIT1e5 + MULTI + L4 + CONSENSUS_ALL),
+  ('multi-y', LIMIT1e5 + MULTI + L4 + CONSENSUS_ALL),
   ('multi-a', LIMIT1e3 + MULTI + L4 + DESIGNATIONS + '-z 1000'),
 
-  ('igh-0', LIMIT1e5 + IGH + S22 + CONSENSUS_NO),
-  ('igh-1', LIMIT1e5 + IGH + S22 + CONSENSUS_ALL),
-  ('igh-a', LIMIT1e3 + IGH + S22 + DESIGNATIONS),
+  ('S22-y', LIMIT1e3 + IGH + S22 + CONSENSUS_ALL),
+  ('S22-a', LIMIT1e3 + IGH + S22 + DESIGNATIONS),
 ])
 
 COMPATIBILITY = [
