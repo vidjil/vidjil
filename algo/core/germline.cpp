@@ -26,7 +26,7 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
   affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
-  filter_5 = build_automaton ? new FilterWithACAutomaton(rep_5, this->seed_5, KEYS_COMPRESS) : nullptr;
+  filter_5 = build_automaton ? new FilterWithACAutomaton(rep_5, this->seed_5) : nullptr;
 }
 
 
