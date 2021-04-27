@@ -462,18 +462,6 @@ void testExAequoKmersWhenSignificantParameter(){
   delete f;
 }
 
-void testBehaviourWhenHugeBioReader(){
-  BioReader hugeBioReader;
-  FilterWithACAutomaton *f;
-  hugeBioReader.add("../../germline/homo-sapiens/IGHV.fa");
-  hugeBioReader.add("../../germline/homo-sapiens/IGLV.fa");
-  AbstractACAutomaton<KmerStringAffect>* automaton;
-  f = new FilterWithACAutomaton(hugeBioReader, "#########");
-  automaton = f->getAutomaton();
-  TAP_TEST(!automaton, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON,
-    "Automaton should not be constructed on a BioReader containing more than 127 sequences.");
-  delete f;
-}
 
 /* Test the good behaviour of Filter's transferBioReaderSequences function. */
 void testTransferBioReaderSequences(){
@@ -487,19 +475,6 @@ void testTransferBioReaderSequences(){
   const string ERROR_INCORRECT_BIOREADER = "The BioReader doesn't have the correct number of sequences.";
   testedBioReader1 = getDebugBioReader1();
   f = new FilterWithACAutomaton(testedBioReader1, "####");
-  affect.length = 1;
-
-  /* When k-mer's label has a n°ascii over 127, the transfer should not operate. */
-  affect.c = char(128);
-  kmer = new KmerAffect(affect);
-  try{
-    f->transferBioReaderSequences(testedBioReader1, res, *kmer);
-  }catch(...){
-    caught = true;
-  }
-  TAP_TEST(caught, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NO_EXCEPTION_THROWN);
-  TAP_TEST_EQUAL(res.size(), 0, TEST_FILTER_BIOREADER_WITH_AC_AUTOMATON, ERROR_NON_EMPTY_BIOREADER);
-  delete kmer;
 
   /* When k-mer's label has a n°ascii above the number of genes contained in the BioReader, the transfer should not operate. */
 
@@ -678,7 +653,6 @@ void testPvalueRoleInFiltration() {
 void testFilter(){
   testAutomatonBuilderFilteringBioReader();
   testFilterBioReaderWithACAutomaton();
-  testBehaviourWhenHugeBioReader();
   testGetNSignicativeKmers();
   testExAequoKmersWhenSignificantParameter();
   testTransferBioReaderSequences();
