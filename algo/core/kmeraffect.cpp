@@ -225,16 +225,19 @@ ostream &operator<<(ostream &os, const KmerAffect &kmer) {
 KmerStringAffect::KmerStringAffect() {
   label = "";
   strand = 0;
+  length = 0;
 }
 
 KmerStringAffect::KmerStringAffect(const KmerStringAffect &ksa):
-  label(ksa.label),strand(ksa.strand){}
+  label(ksa.label),strand(ksa.strand),length(ksa.length){}
 
 
 KmerStringAffect::KmerStringAffect(const string &label,
-                                   int strand) {
+                                   int strand,
+                                   unsigned char length) {
   this->label = label;
   this->strand = strand;
+  this->length = length;
 }
 
 KmerStringAffect &KmerStringAffect::operator+=(const KmerStringAffect &kmer) {
@@ -257,6 +260,7 @@ KmerStringAffect &KmerStringAffect::operator+=(const KmerStringAffect &kmer) {
 KmerStringAffect &KmerStringAffect::operator=(const KmerStringAffect &ka) {
   label = ka.label;
   strand = ka.strand;
+  length = ka.length;
   return *this;
 }
 
@@ -270,6 +274,10 @@ int KmerStringAffect::getStrand() const {
 
 string KmerStringAffect::getLabel() const {
   return label;
+}
+
+unsigned char KmerStringAffect::getLength() const {
+  return length;
 }
 
 KmerStringAffect KmerStringAffect::getUnknown() {

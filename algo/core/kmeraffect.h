@@ -236,6 +236,7 @@ class KmerStringAffect {
 public:
   string label;
   int strand;
+  unsigned char length;
 
   /**
    * Construct an unknown affectation.
@@ -245,9 +246,8 @@ public:
   KmerStringAffect(const KmerStringAffect &);
   /**
    * Construct an affectation as stated by the parameters
-   * @post affect_strand(affect) == strand AND affect_char(affect) == kmer[0]
    */
-  KmerStringAffect(const string &label, int strand=1);
+  KmerStringAffect(const string &label, int strand=1, unsigned char length=0);
   /**
    * Add another affectation to the current one.
    * @post The current affectation is not modified if the parameter is the same
@@ -282,6 +282,11 @@ public:
    * @return the label of the affectation.
    */
   string getLabel() const;
+
+  /**
+   * @return the length of such an affectation
+   */
+  unsigned char getLength() const;
 
   /**
    * @return the unknown affectation
