@@ -316,7 +316,7 @@ string KmerStringAffect::toString() const {
 }
 
 bool operator==(const KmerStringAffect &k1, const KmerStringAffect &k2) {
-  return k1.strand == k2.strand && (k1.label == k2.label || k1.strand == 0);
+  return k1.strand == k2.strand && k1.label == k2.label;
 }
 bool operator!=(const KmerStringAffect &k1, const KmerStringAffect &k2) {
   return ! (k1 == k2);
