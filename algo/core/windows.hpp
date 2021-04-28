@@ -295,7 +295,7 @@ void WindowsStorage<Tshortcut, Affect>::sortedWindowsToOutput(SampleOutput *outp
     CloneOutput *clone = output->getClone(it->first);
 
     if (status_by_window[it->first][SEG_CHANGED_WINDOW])
-      clone->add_warning(W50_WINDOW, "Short or shifted window", LEVEL_WARN);
+      clone->add_warning(W50_WINDOW, "Short or shifted window", LEVEL_WARN, false);
 
     clone->set("id", it->first);
     clone->set("reads", { it->second });
