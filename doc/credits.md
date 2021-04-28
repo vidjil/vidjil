@@ -148,6 +148,11 @@ Irene Jo et al.,
 Clinica Chimica Acta, 2019,
 <https://doi.org/10.1016/j.cca.2018.10.037>
 
+Natalia Izotova et al.,
+*Long-term lymphoid progenitors independently sustain naïve T and NK cell production in humans*,
+Nature Communications, 2021,
+<https://doi.org/10.1038/s41467-021-21834-9>
+
 Takashi Kanamori et al.,
 *Genomic analysis of multiple myeloma using targeted capture sequencing in the Japanese cohort*,
 British Journal of Haematology, 2020,
