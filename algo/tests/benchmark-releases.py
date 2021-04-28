@@ -40,13 +40,13 @@ BENCHS = OrderedDict([
 
   ('filter', LIMIT2e5 + FILTER + MULTI + L4),
 
+  ('igh-0', LIMIT1e5 + IGH + L4 + CONSENSUS_NO),
   ('multi-0', LIMIT1e5 + MULTI + L4 + CONSENSUS_NO),
-  ('multi-1', LIMIT1e5 + MULTI + L4 + CONSENSUS_ALL),
+  ('multi-y', LIMIT1e5 + MULTI + L4 + CONSENSUS_ALL),
   ('multi-a', LIMIT1e3 + MULTI + L4 + DESIGNATIONS + '-z 1000'),
 
-  ('igh-0', LIMIT1e5 + IGH + S22 + CONSENSUS_NO),
-  ('igh-1', LIMIT1e5 + IGH + S22 + CONSENSUS_ALL),
-  ('igh-a', LIMIT1e3 + IGH + S22 + DESIGNATIONS),
+  ('S22-y', LIMIT1e3 + IGH + S22 + CONSENSUS_ALL),
+  ('S22-a', LIMIT1e3 + IGH + S22 + DESIGNATIONS),
 ])
 
 COMPATIBILITY = [
@@ -58,7 +58,8 @@ INFOS = {
   '2019.03': 'Aho by default',
   '2018.07': '--analysis-filter (always 3)',
   '2018.10': '--analysis-filter 1',
-  '2020.04': '#4287',
+  '2020.04': 'Report info only when not null #4287',
+  '2021.04': 'Update germlines (~ +50% IGH) !885',
 }
 
 # Simple colored output

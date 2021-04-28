@@ -1,4 +1,5 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -c clones -z 2 -2 -r 1 -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/Demo-X5.should-vdj.fa  > /dev/null ; cat out/Demo-X5.should-vdj.tsv
+!OUTPUT_FILE: out/Demo-X5.should-vdj.tsv
+!LAUNCH: $VIDJIL_DIR/$EXEC -c clones -z 2 -2 -r 1 -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/Demo-X5.should-vdj.fa
  
 $ There are 15 = 1 + 14 lines, all with tabs
 15:

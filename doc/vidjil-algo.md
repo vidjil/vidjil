@@ -1,4 +1,4 @@
-# vidjil-algo 2021.02.2
+# vidjil-algo 2021.04
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
@@ -63,11 +63,11 @@ Vidjil-algo is open-source, released under GNU GPLv3+ license.
 Vidjil-algo is systematically tested with the following compilers :
 
   - gcc/g++ 4.8, 5.3, 6.3, 7.3, 8.4, 9.3, 10.1
-  - clang 3.4, 4.0, 6.0, 7.0
+  - clang 3.4, 4.0, 6.0, 7.0, 11.0
 
 These compilers are available on recent OS X and on the following Linux distributions:
   - CentOS 7, 8
-  - Debian Jessie 8.0, Stretch 9.0, Buster 10.0
+  - Debian Jessie 8.0, Stretch 9.0, Buster 10.0, Bullseye 11
   - FreeBSD 9.2, 10, 11, 12
   - Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS
 
