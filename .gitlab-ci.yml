@@ -157,7 +157,7 @@ copy_release:
         scp algo/releases/vidjil-algo*.tar.gz algo/releases/vidjil-algo*/vidjil-algo-*_* $repo
       done
       release_name=$(cat algo/release)
-      ssh $VIDJIL_WWW "cd /var/www/html/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-latest.tgz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-latest_x86_64"
+      ssh $VIDJIL_WWW "cd /var/www/html/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-algo-latest.tgz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-algo-latest_x86_64"
       ssh $VIDJIL_BONSAI "cd /bio1/www/html/vidjil; scp vidjil-algo-${release_name}* $VIDJIL_BONSAI_PROD:/bio1/www/html/vidjil"
   when: manual
   only:
