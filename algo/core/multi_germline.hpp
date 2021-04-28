@@ -301,6 +301,11 @@ void MultiGermline<Tshortcut, Affect>::addToIndex(IKmerStore<Tshortcut, Affect> 
   for (const auto& germline : germlines) {
     germline->finish(index);
   }
+  if (germlines.empty())
+  {
+    cerr << ERROR_STRING << "No matching germlines" << endl;
+    exit(2);
+  }
   index->finish_building();
   this->index = index;
 }
