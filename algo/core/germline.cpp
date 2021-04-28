@@ -432,6 +432,12 @@ void MultiGermline::finish() {
   for (auto germline: germlines) {
     germline->finish();
   }
+
+  if (germlines.empty())
+  {
+    cerr << ERROR_STRING << "No matching germlines" << endl;
+    exit(2);
+  }
 }
 
 /* Mark k-mers common to several germlines as ambiguous */
