@@ -244,12 +244,12 @@ We invite you to read "[What is the sequence displayed for each clone ?](#what-i
 
 ### Select clones to inspect
   - Select a single clone : click on it's representative element in any panel. (it can be a plot in the gridpanel, a line in the graph panel or an entry in the list panel)
-  - Select multiple clone : it's possible to do a rectangular selection of an area of the .scatterplot using a click-and-drag to select multiple clones at the same time.
+  - Select multiple clone : it's possible to do a rectangular selection of an area of the grid panel using a click-and-drag to select multiple clones at the same time.
   - Add a clone to the selection : Ctrl+click 
   - Remove a clone from the selction : click on the 'X' at the left.
   - Remove all selected clone : click on the background of the grid.
 
-The first sequence selected is often used as the reference when further inspecting the
+The first clone selected is often used as the reference when further inspecting the sequences
 
 ##  Using the sequence panel tools  
 
@@ -264,10 +264,22 @@ provide an alignement of the sequences, the sequence of the first clone in the l
 by default 
 
   - `-` is a gap.
-  - `*` is a match .
+  - `*` is a match.
   - a single line under a character is a mismatch.
   - a double line under a character is a mismatch that does not impact the resulting amino acid sequence.
-  - `#` in an Amino acid sequence is 
+  - `#` in an Amino acid sequence indicate a frameshift in the junction.
+
+  look at the available options available in the sub-menu "[Alignement Settings](### Alignement settings)" below to see how to customize.
+
+### Data Colums
+Every clone can have a lot of different available data depending on the analysis software used for the processing, use this menu to select which data you want to be displayed alongside the clone name.
+
+### Alignement settings
+Customize the alignement display
+
+  - highlight mismatch
+  - hide match
+  - switch between Amino Acid and nucleotidic sequence
 
 
 ### External Analysis: Further sequence analysis with external software
