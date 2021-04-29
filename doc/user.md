@@ -582,11 +582,13 @@ by clicking on the links just above the sequence panel (bottom left).
 This opens another window/tab.
 
 ## How is productivity computed? Why do I have some discrepancies with other software?
-Vidjil-algo computes the productivity by checking that the CDR3 comes from
-an in-frame recombination and that there is no stop codon in the full
-sequence.
 
-The productivitiy as computed by Vidjil-algo may differ from what computes
+Vidjil-algo reports CDR3 as *productive* when they come from
+an in-frame recombination, the sequence does not contain any in-frame stop codons,
+and, for IGH recombinations, when the FR4 begins with the `{WP}-GxG` pattern.
+This follows the ERIC guidelines ([Rosenquist et al., 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5508071/)).
+
+The productivity as computed by Vidjil-algo may differ from what computes
 other software. For instance, as of September 2019, IMGT/V-QUEST removes by default
 insertions and deletions from the sequences to compute the productivity, as it
 considers them as sequencing errors.
