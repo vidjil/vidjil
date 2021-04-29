@@ -287,7 +287,7 @@ This sub menu display a range of other analysis software available online used f
 These buttons will send the sequences of selected clones to them for analysis and open the resulting page in another window/tab.
 
   - [`❯ IMGT/V-QUEST`](http://www.imgt.org/IMGT_vquest):
-    The reference analysis from IMGT®, including subset #2 and #8 search.
+    The reference analysis from IMGT®, including subset `#2` and `#8` search.
 
   - [`❯ IgBlast`](https://www.ncbi.nlm.nih.gov/igblast/):
     Nucleotide alignment with IG/TR germline sequences
