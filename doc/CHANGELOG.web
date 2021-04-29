@@ -1,10 +1,30 @@
 
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
+## 2021-05-05
+
+Improve analysis
+* New detecton and prediction of primers position for set biomed2 and EC-NGS
+* Add graph entry to show relatve distance between primer (genescan view) limited at the top 100 samples per sample
+* Detailed reason of non productivity, associated with new axis for graphical visualisation
+
+Improve ergonomy
+* Better handling of saved settings as color_by and naming choices
+* Add a button to allow opening one sample and his analysis from patient database
+* Color setting is use in report page
+* refactoring of aligner
+
+
+Improve quality testing
+* The server part of the tutorial is now tested
+
+Other points
+* Fix disgracious position in graph
+* Add more explicite warning about healthcare compliance
+* Fix logout error for some instance (app.vidjil.org)
 
 ## 2020-12-09
 
-Improve ergonomy
 * Possibility to create at once multiple patients/runs/sets by pasting data from the clipboard
 
 Add new warnings
