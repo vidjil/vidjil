@@ -237,49 +237,50 @@ or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
 ## The sequence panel (bottom panel)
 
-Nucleotide or amino acid sequences of selected clones can be inspected using the Sequence panel.
+The sequence panel shows, for the selected clones:
 
-We invite you to read "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)" below before using this tool.
+ - the nucleotide or amino acid *sequences* -- see below "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)"
+ - some *features* on these sequences
 
 
-### Select clones to inspect
-  - Select a single clone : click on it's representative element in any panel. (it can be a plot in the gridpanel, a line in the graph panel or an entry in the list panel)
-  - Select multiple clone : it's possible to do a rectangular selection of an area of the grid panel using a click-and-drag to select multiple clones at the same time.
+### Selecting clones for inspection
+
+Clones can be (un)selected by several ways:
+
+  - Select one clone: click on its representative element in any panel (a plot in the gridpanel, a line in the graph panel, or an entry in the list panel)
+  - Select multiple clones at once:  click-and-drag a rectangular selection of an area of the grid panel
   - Add a clone to the selection : Ctrl+click 
-  - Remove a clone from the selction : click on the 'X' at the left.
-  - Remove all selected clone : click on the background of the grid.
-
-The first clone selected is often used as the reference when further inspecting the sequences
-
-##  Using the sequence panel tools  
-
-At the top of this panel you can find a menu providing multiple tools to inspect the sequences, that are in order:
+  - Remove a clone from the selection : click on the 'X' at the left
+  - Remove all selected clones : click on the background of the grid panel
 
 ### Cluster: regroup clones
-This button will create a cluster with the selected clones 
-a cluster of clones will appear like a single clone in the application with the first selected clone acting as it's representative.
 
-### Align:
-provide an alignement of the sequences, the sequence of the first clone in the list is used as the reference and all the other sequences are aligned against it.
-by default 
+The `cluster` button will create a cluster with the selected clones
+Such a cluster will appear as a single clone,
+with the first (largest) selected clone acting as its representative.
 
-  - `-` is a gap.
-  - `*` is a match.
-  - a single line under a character is a mismatch.
-  - a double line under a character is a mismatch that does not impact the resulting amino acid sequence.
-  - `#` in an Amino acid sequence indicate a frameshift in the junction.
+### Align
 
-  look at the available options available in the sub-menu "[Alignement Settings](### Alignement settings)" below to see how to customize.
+The `align` button aligns all the selected sequences,
+the sequence of the first (largest) clone used as a reference.
 
-### Data Colums
-Every clone can have a lot of different available data depending on the analysis software used for the processing, use this menu to select which data you want to be displayed alongside the clone name.
+  - `*` is a match
+  - `-` is a gap
+  - a single line under a character is a nucleotide mismatch
+  - a double line under a character is a silent nucelotide mismatch (not impacting the resulting amino acid sequence)
+  - `#` in an amino acid sequence indicates a frameshift in the junction (and thus an unproductive sequence)
 
-### Alignement settings
-Customize the alignement display
+The alignment settings `⚙` menu allows to customize such alignements, by
 
-  - highlight mismatch
-  - hide match
-  - switch between Amino Acid and nucleotidic sequence
+ - highlighting mismatches
+ - hiding matches
+ - switching between amino acid and nucleotide sequences
+
+
+### Data Columns
+
+The analysis software, on some configurations, may provide additional data for each clone.
+The data columns `‖` menu allows to select such data.
 
 
 ### External Analysis: Further sequence analysis with external software
@@ -287,7 +288,8 @@ This sub menu display a range of other analysis software available online used f
 These buttons will send the sequences of selected clones to them for analysis and open the resulting page in another window/tab.
 
   - [`❯ IMGT/V-QUEST`](http://www.imgt.org/IMGT_vquest):
-    The reference analysis from IMGT®, including subset `#2` and `#8` search.
+    The reference analysis from IMGT®, including search for subset `#2` and `#8`.
+    See [below](#imgt-sequence-features)
 
   - [`❯ IgBlast`](https://www.ncbi.nlm.nih.gov/igblast/):
     Nucleotide alignment with IG/TR germline sequences
@@ -301,21 +303,25 @@ These buttons will send the sequences of selected clones to them for analysis an
     Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
     of stereotyped antigen receptor sequences for CLL
 
-### Sequence Feature
-The analysis software can sometime provide positions of genes or specific regions that can be highlighted using this menu.
-The content of his menu depends on the analysis software(and parameter) used but usually contains at least the following genes/regions 
+### Sequence Features
 
-  - V/D/J Genes
+Depending on the analysis software and on its configuration, there can be positions of genes or specific regions of interest that can be highlighted.
+The sequence feature `☰` menu usually contains at least the following genes/regions:
+
+  - V/D/J genes
   - CDR3 position
 
-### Sequence Feature `IMGT`
-Same as Sequence Feature but this time the information that can be displayed are provided by IMGT/V-QUEST online analysis software.
+### IMGT Sequence Features
 
-  - V/D/J Genes
-  - FR1/FR2/FR3
+The `☰ IMGT` menu further allows to select features provided by IMGT/V-QUEST:
+
+  - V/D/J genes
+  - FR1/FR2/FR3/FR4
   - CDR1/CDR2/CDR3 
 
-It is required to use the refresh button after adding new clones to the selection to avoid overloading the IMGT servers that provide us this feature. 
+To avoid overloading the IMGT servers that provide us this feature,
+after adding new clones to the selection,
+one has to click on the refresh `↻` button to request the features for the new sequences.
 
 
 # The sample database and the server
