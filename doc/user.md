@@ -854,7 +854,7 @@ The settings menu allows to set:
  - the format for clone junction [junction length / AA sequence / mixed (display AA sequence only for short junction)]
  - the format for clone alleles  [hide alleles / display alleles / mixed (display only for marginal alleles)]
 
-These settings are kept in your web browser ``localStorage'' between several sessions.
+These settings, together with the color option, are kept in your web browser ``localStorage'' between several sessions.
 
 # Keyboard shortcuts
 
