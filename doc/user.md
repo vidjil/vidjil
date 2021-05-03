@@ -223,6 +223,10 @@ When there is only one sample, two such views are shown.
 
   - On the bar plots, the Y axis corresponds to the order of clones inside each bar.
 
+  See [axis page](axis.md) to get more informations on available axis and avalability of them inside client components.
+
+## Status bar
+
   - At the bottom of the plot view, the “status bar“ displays information
     on the selected clone.
 
