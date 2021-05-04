@@ -124,6 +124,12 @@ to learn the essential features of Vidjil.
     By hovering the mouse, one also sees the *total*
     number of reads for that sample.
 
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_info.png"/>
+      <p style="text-align:center">Informations panel. Give various informations on patients/runs/sets and on each samples</p>
+    </p>
+  </figure>
+
 ## The list of clones (left panel)
 
 When they were processed by **vidjil-algo**, clones are described with identifiers
@@ -158,6 +164,12 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
       this clone would appear in the gray zone in the sample graph.
     - A clone with a minus symbol `−` has not been detected in that sample,
       but has been detected in another sample that is not currently displayed.
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_list.png"/>
+      <p style="text-align:center">The list of clones. Some clonotype here are merged together, some tagged. Other show warning icon.</p>
+    </p>
+  </figure>
 
 ### Detailed information on each clone
 The “🛈” button opens a window showing detailed information (V(D)J designation,
@@ -206,7 +218,11 @@ It shows the most frequent clones of each sample, tracked into every sample.
 
   - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 
-
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_graph.png"/>
+      <p style="text-align:center">Timeline graphic that allow to follow clonotype size variation during time.</p>
+    </p>
+  </figure>
 
 ## The plot view and the plot presets
 
@@ -223,7 +239,12 @@ When there is only one sample, two such views are shown.
 
   - On the bar plots, the Y axis corresponds to the order of clones inside each bar.
 
-  See [axis page](axis.md) to get more informations on available axis and avalability of them inside client components.
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_scatterplot.png"/>
+      <p style="text-align:center">Default scatterplot at analysis loading (axis V/J). See [axis page](axis.md) to get more informations on available axis and avalability of them inside client components.</p>
+    </p>
+  </figure>
+
 
 ## Status bar
 
@@ -247,6 +268,12 @@ The sequence panel shows, for the selected clones:
  - some *features* on these sequences
 
 
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_sequence.png"/>
+      <p style="text-align:center">For each clonotype, name and sequences are shown. Some other feature can also be added.</p>
+    </p>
+  </figure>
+
 ### Selecting clones for inspection
 
 Clones can be (un)selected by several ways:
@@ -262,6 +289,12 @@ Clones can be (un)selected by several ways:
 The `cluster` button will create a cluster with the selected clones
 Such a cluster will appear as a single clone,
 with the first (largest) selected clone acting as its representative.
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_list_merge_2.png"/>
+      <p style="text-align:center">Even after a merge, it still possible to access to all information of subclonotype, and if needed to remove them from the merge.</p>
+    </p>
+  </figure>
 
 ### Align
 
@@ -307,6 +340,7 @@ These buttons will send the sequences of selected clones to them for analysis an
     Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
     of stereotyped antigen receptor sequences for CLL
 
+
 ### Sequence Features
 
 Depending on the analysis software and on its configuration, there can be positions of genes or specific regions of interest that can be highlighted.
@@ -341,6 +375,13 @@ Once you uploaded samples (either in 'patients', 'runs', or 'sets'),
 you can process your data and save the results of your analysis.
 
 ## Patients
+
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/table_db_content_patient_list.png"/>
+      <p style="text-align:center">An example of database content and organization.</p>
+    </p>
+  </figure>
 
 <i>
 ⚠️ The public <http://app.vidjil.org/> server is for Research Use Only
@@ -416,6 +457,13 @@ which is not the case for the results (unless the user wants so).
 
 You can see which samples have been processed with the selected
 process, and access to the results (`See results`, bottom right).
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/table_db_content_patient_0_multi_config.png"/>
+      <p style="text-align:center">Example of demo patient LIL-L3. This patient is available from demo account. Their are 5 samples analyzed with default configuration.</p>
+    </p>
+  </figure>
+
 
 ### Adding a sample
 
