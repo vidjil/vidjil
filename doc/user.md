@@ -126,9 +126,14 @@ to learn the essential features of Vidjil.
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/panel_info.png"/>
-      <p style="text-align:center">Informations panel. Give various informations on patients/runs/sets and on each samples</p>
-    </p>
   </figure>
+  <i>
+      The information panel.
+      The patient/run/set or sample information may contain tags such as `#T-ALL`.
+      In this sample,
+      V(D)J recombinations were detected
+      in about 82% of the reads.</p>
+  </i>
 
 ## The list of clones (left panel)
 
@@ -167,9 +172,19 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/panel_list.png"/>
-      <p style="text-align:center">The list of clones. Some clonotype here are merged together, some tagged. Other show warning icon.</p>
-    </p>
   </figure>
+  <i>The list of clones.
+    The main clonotype is
+    `IGHV3-9*01 7/CCCGGA/17 IGHJ6*02`,
+    with 7 deletions on the 3' side of the V,
+    17 deletions on the 5' side of the J,
+    and a insertion of `CCCGGA` in the N region.
+    Here the settings shorten this
+    name by not showing the `*01` allele.
+    This clonotype is actually a cluster (+)
+    of sub-clones.
+    The `TRGV10 4//8 JP2` clonotype has a warning.
+  </i>
 
 ### Detailed information on each clone
 The “🛈” button opens a window showing detailed information (V(D)J designation,
@@ -220,8 +235,11 @@ It shows the most frequent clones of each sample, tracked into every sample.
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/panel_graph.png"/>
-      <p style="text-align:center">Timeline graphic that allow to follow clonotype size variation during time.</p>
-    </p>
+  </figure>
+  <i>
+  This sample graph show the evolution of a T-ALL patient relapsing at D+268/D+308 with a clonotype
+  that was not the main one at the diagnosis.The view was filtered to show only clonotypes of interest.
+  </i>
   </figure>
 
 ## The plot view and the plot presets
@@ -241,9 +259,12 @@ When there is only one sample, two such views are shown.
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/panel_scatterplot.png"/>
-      <p style="text-align:center">Default scatterplot at analysis loading (axis V/J). See [axis page](axis.md) to get more informations on available axis and avalability of them inside client components.</p>
-    </p>
+      </p>
   </figure>
+
+<i>
+  Grid view with the default [axes](axes.md) (V/5' and J/3' gene) focusing on the TRG locus. The TRGV10/TRGJP10 clonotype appears in red because it has been tagged as `clone 1` from the clonotype list. Clicking on IGH focus on the IGH locus.
+</i>
 
 
 ## Status bar
@@ -292,9 +313,9 @@ with the first (largest) selected clone acting as its representative.
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/panel_list_merge_2.png"/>
-      <p style="text-align:center">Even after a merge, it still possible to access to all information of subclonotype, and if needed to remove them from the merge.</p>
-    </p>
   </figure>
+  <i>The top clonotype is actually a cluster of several sub-clonotypes. It is still possible to access to all the information of such sub-clonotype. Clicking on "x" remove a sub-clonotype from the cluster.</p>
+  </i>
 
 ### Align
 
