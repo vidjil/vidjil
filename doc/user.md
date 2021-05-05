@@ -124,6 +124,17 @@ to learn the essential features of Vidjil.
     By hovering the mouse, one also sees the *total*
     number of reads for that sample.
 
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_info.png"/>
+  </figure>
+  <i>
+      The information panel.
+      The patient/run/set or sample information may contain tags such as `#T-ALL`.
+      In this sample,
+      V(D)J recombinations were detected
+      in about 82% of the reads.</p>
+  </i>
+
 ## The list of clones (left panel)
 
 When they were processed by **vidjil-algo**, clones are described with identifiers
@@ -158,6 +169,22 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
       this clone would appear in the gray zone in the sample graph.
     - A clone with a minus symbol `−` has not been detected in that sample,
       but has been detected in another sample that is not currently displayed.
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_list.png"/>
+  </figure>
+  <i>The list of clones.
+    The main clonotype is
+    `IGHV3-9*01 7/CCCGGA/17 IGHJ6*02`,
+    with 7 deletions on the 3' side of the V,
+    17 deletions on the 5' side of the J,
+    and a insertion of `CCCGGA` in the N region.
+    Here the settings shorten this
+    name by not showing the `*01` allele.
+    This clonotype is actually a cluster (+)
+    of sub-clones.
+    The `TRGV10 4//8 JP2` clonotype has a warning.
+  </i>
 
 ### Detailed information on each clone
 The “🛈” button opens a window showing detailed information (V(D)J designation,
@@ -206,7 +233,14 @@ It shows the most frequent clones of each sample, tracked into every sample.
 
   - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 
-
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_graph.png"/>
+  </figure>
+  <i>
+  This sample graph show the evolution of a T-ALL patient relapsing at D+268/D+308 with a clonotype
+  that was not the main one at the diagnosis.The view was filtered to show only clonotypes of interest.
+  </i>
+  </figure>
 
 ## The plot view and the plot presets
 
@@ -217,11 +251,24 @@ When there is only one sample, two such views are shown.
     All the analyzes locus are on the right of the grid. You can select another locus by clicking on it or by using the associated shortcuts (see *Keyboard shortcuts* below).
 
   - The “plot“ menu allow to customize the plots, by selecting the X and Y axes and also by switching between grid and bar plots.
+    There are [20+ available axes](axes.md) to study the clones.
     Some presets are available.
     For example, the preset 4, similar to a "Genescan analysis", shows a bar plot of the clones according to the length of their consensus sequence,
     and the preset 7 shows the distribution of CDR3 lengths.
 
   - On the bar plots, the Y axis corresponds to the order of clones inside each bar.
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_scatterplot.png"/>
+      </p>
+  </figure>
+
+<i>
+  Grid view with the default axes (V/5' and J/3' gene) focusing on the TRG locus. The TRGV10/TRGJP10 clonotype appears in red because it has been tagged as `clone 1` from the clonotype list. Clicking on IGH focus on the IGH locus.
+</i>
+
+
+## Status bar
 
   - At the bottom of the plot view, the “status bar“ displays information
     on the selected clone.
@@ -237,35 +284,105 @@ or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
 ## The sequence panel (bottom panel)
 
-The sequence panel displays nucleotide sequences from selected clones.
+The sequence panel shows, for the selected clones:
 
-  - See "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)" below
-  - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions. Silent mutations are identified, as soon as a CDR3 is detected, and represented with a double border in blue.
-  - You can remove sequences from the aligner (and the selection) by clicking on the “X” at the left.
-  - You can unselect all sequences by clicking on the background of the grid.
+ - the nucleotide or amino acid *sequences* -- see below "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)"
+ - some *features* on these sequences
 
-## Further sequence analysis with external software
 
-The sequence panel displays buttons to further analyze the selected sequences
-with other software useful for RepSeq studies.
-These buttons open another window/tab.
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_sequence.png"/>
+      <p style="text-align:center">For each clonotype, name and sequences are shown. Some other feature can also be added.</p>
+    </p>
+  </figure>
 
-   - [`❯ IMGT/V-QUEST`](http://www.imgt.org/IMGT_vquest):
-     The reference analysis from IMGT®, including subset #2 and #8 search.
-     The `▼` button further allows to retrieve back results from IMGT/V-QUEST
-     and to display them within Vidjil.
+### Selecting clones for inspection
 
-   - [`❯ IgBlast`](https://www.ncbi.nlm.nih.gov/igblast/):
-     Nucleotide alignment with IG/TR germline sequences
+Clones can be (un)selected by several ways:
 
-   - `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
+  - Select one clone: click on its representative element in any panel (a plot in the gridpanel, a line in the graph panel, or an entry in the list panel)
+  - Select multiple clones at once:  click-and-drag a rectangular selection of an area of the grid panel
+  - Add a clone to the selection : Ctrl+click 
+  - Remove a clone from the selection : click on the 'X' at the left
+  - Remove all selected clones : click on the background of the grid panel
 
-   - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
-     Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
+### Cluster: regroup clones
 
-   - [`❯ AssignSubsets`](https://station1.arrest.tools/subsets) (availaible for clones with IGH recombinations):
-     Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
-     of stereotyped antigen receptor sequences for CLL
+The `cluster` button will create a cluster with the selected clones
+Such a cluster will appear as a single clone,
+with the first (largest) selected clone acting as its representative.
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/panel_list_merge_2.png"/>
+  </figure>
+  <i>The top clonotype is actually a cluster of several sub-clonotypes. It is still possible to access to all the information of such sub-clonotype. Clicking on "x" remove a sub-clonotype from the cluster.</p>
+  </i>
+
+### Align
+
+The `align` button aligns all the selected sequences,
+the sequence of the first (largest) clone used as a reference.
+
+  - `*` is a match
+  - `-` is a gap
+  - a single line under a character is a nucleotide mismatch
+  - a double line under a character is a silent nucelotide mismatch (not impacting the resulting amino acid sequence)
+  - `#` in an amino acid sequence indicates a frameshift in the junction (and thus an unproductive sequence)
+
+The alignment settings `⚙` menu allows to customize such alignements, by
+
+ - highlighting mismatches
+ - hiding matches
+ - switching between amino acid and nucleotide sequences
+
+
+### Data Columns
+
+The analysis software, on some configurations, may provide additional [data
+axes](axes.md) for each clone.
+The data columns `‖` menu allows to select such data.
+
+
+### External Analysis: Further sequence analysis with external software
+This sub menu display a range of other analysis software available online used for RepSeq studies.
+These buttons will send the sequences of selected clones to them for analysis and open the resulting page in another window/tab.
+
+  - [`❯ IMGT/V-QUEST`](http://www.imgt.org/IMGT_vquest):
+    The reference analysis from IMGT®, including search for subset `#2` and `#8`.
+    See [below](#imgt-sequence-features)
+
+  - [`❯ IgBlast`](https://www.ncbi.nlm.nih.gov/igblast/):
+    Nucleotide alignment with IG/TR germline sequences
+
+  - `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
+
+  - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
+    Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
+
+  - [`❯ AssignSubsets`](https://station1.arrest.tools/subsets) (availaible for clones with IGH recombinations):
+    Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
+    of stereotyped antigen receptor sequences for CLL
+
+
+### Sequence Features
+
+Depending on the analysis software and on its configuration, there can be positions of genes or specific regions of interest that can be highlighted.
+The sequence feature `☰` menu usually contains at least the following genes/regions:
+
+  - V/D/J genes
+  - CDR3 position
+
+### IMGT Sequence Features
+
+The `☰ IMGT` menu further allows to select features provided by IMGT/V-QUEST:
+
+  - V/D/J genes
+  - FR1/FR2/FR3/FR4
+  - CDR1/CDR2/CDR3 
+
+To avoid overloading the IMGT servers that provide us this feature,
+after adding new clones to the selection,
+one has to click on the refresh `↻` button to request the features for the new sequences.
 
 
 # The sample database and the server
@@ -282,11 +399,20 @@ you can process your data and save the results of your analysis.
 
 ## Patients
 
-<i>
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/table_db_content_patient_list.png"/>
+  </figure>
+  <i>
+  The main page on the sample database show a list of patients, or runs or sets,
+  with links to the samples and the results.
+  </i>
+
+<b>
 ⚠️ The public <http://app.vidjil.org/> server is for Research Use Only
 and is not compliant for clinical use.
 Clinical data have to be uploaded on a [certified healthcare server](http://www.vidjil.org/doc/healthcare).
-</i>
+</b>
 
 Once you are authenticated, this page shows the patient list. Here you
 can see your patients and patients whose permission has been given to you.
@@ -356,6 +482,16 @@ which is not the case for the results (unless the user wants so).
 
 You can see which samples have been processed with the selected
 process, and access to the results (`See results`, bottom right).
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/table_db_content_patient_0_multi_config.png"/>
+  </figure>
+  <i>
+      The demo patient LIL-L3, available
+      from the demo account, has 5 samples here analyzed
+      with the default `multi+inc+xxx` configuration.</p>
+  </i>
+
 
 ### Adding a sample
 
@@ -522,11 +658,13 @@ by clicking on the links just above the sequence panel (bottom left).
 This opens another window/tab.
 
 ## How is productivity computed? Why do I have some discrepancies with other software?
-Vidjil-algo computes the productivity by checking that the CDR3 comes from
-an in-frame recombination and that there is no stop codon in the full
-sequence.
 
-The productivitiy as computed by Vidjil-algo may differ from what computes
+Vidjil-algo reports CDR3 as *productive* when they come from
+an in-frame recombination, the sequence does not contain any in-frame stop codons,
+and, for IGH recombinations, when the FR4 begins with the `{WP}-GxG` pattern.
+This follows the ERIC guidelines ([Rosenquist et al., 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5508071/)).
+
+The productivity as computed by Vidjil-algo may differ from what computes
 other software. For instance, as of September 2019, IMGT/V-QUEST removes by default
 insertions and deletions from the sequences to compute the productivity, as it
 considers them as sequencing errors.
@@ -792,7 +930,7 @@ The settings menu allows to set:
  - the format for clone junction [junction length / AA sequence / mixed (display AA sequence only for short junction)]
  - the format for clone alleles  [hide alleles / display alleles / mixed (display only for marginal alleles)]
 
-These settings are kept in your web browser ``localStorage'' between several sessions.
+These settings, together with the color option, are kept in your web browser ``localStorage'' between several sessions.
 
 # Keyboard shortcuts
 

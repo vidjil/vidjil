@@ -308,6 +308,64 @@ following.
     Finally modify the [index.html](../browser/index.html) file to add the new color method in the
     select box (which is under the `color_menu` ID).
 
+## Sequence panel
+
+### Add a sequence feature
+
+A sequence feature can be used to highlight a specific part of a sequence.
+Here for example is the sequence feature describing how to highlight the V region as available in aligner_layer.js
+
+''' js
+    'V':
+    {
+        'title': function (s,c) { return c.seg["5"].name;},
+        'start': function (s,c) { return c.getSegStart("5"); },
+        'stop': function (s,c) { return c.getSegStop("5"); },
+        'className': "seq_layer_highlight",
+        'style': { 'background': "#4c4" },
+        'enabled': true
+    }
+'''
+each sequence feature contains fields used to customize and locate the feature on the sequence.
+
+  - title : [text] the content of the html title field of the feature.
+  - start : [int] the position of the first nucleotide of the selected region.
+  - stop : [int] the position of the last nucleotide of the selected region .
+  - text : [int] (optional) text to overlay on top of the sequence.
+  - condition : [boolean] (optional) sequence feature will be displayed only if true.
+  - classname : [text] (optional) html classname used to customize the sequence feature look.
+  - style : [object] (optional) additional css properties to further customize the sequence feature.
+  - enabled : [boolean] default visibility
+
+most field can take a static value or a function that will be able to return a specific value for each clone.
+
+''' js
+  function (s,c) { ...}
+'''
+
+ - s : the aligner_sequence object (check aligner_sequence.js to see available functions)
+ - c : the clone object (check clone.js to see functions / data available)
+
+### How to add a sequence feature in the menu
+
+You can set the 'enabled' sequence feature field to true to always display it, or, you can edit the aligner_menu file to add an entry to the sequence panel menu allowing you to enable/disable your sequence feature with a checkbox.
+
+example : the aligner_menu.js entry allowing to enable/disable the V/D/J regions of the sequence
+
+''' js
+  {
+    'text': 'V/D/J genes',
+    'title': 'Highlight V/D/J genes',
+    'layers': ["V","D","J"],
+    'enabled': true
+  }
+'''
+
+ - text : [text] checkbox text to display in the sequence menu panel
+ - title : [text] the content of the html title field of the checkbox.
+ - layers : [array] a list of sequence feature name defined in aligner_layer.js to enable/disable
+ - enabled : [boolean] default checkbox value
+
 ## Classes
 
 ### Clone
