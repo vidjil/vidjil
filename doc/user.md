@@ -338,7 +338,8 @@ The alignment settings `⚙` menu allows to customize such alignements, by
 
 ### Data Columns
 
-The analysis software, on some configurations, may provide additional data for each clone.
+The analysis software, on some configurations, may provide additional [data
+axes](axes.md) for each clone.
 The data columns `‖` menu allows to select such data.
 
 

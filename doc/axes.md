@@ -1,9 +1,10 @@
 
 # Analysis axes
 
-Information computed on each clonotype can be show as *axes*
-on the grid view, and sometimes in *columns* in the aligner and
-used by the *color by* menu.
+Information computed on each clonotype are detailed on the clone information panel (`🛈` button).
+They can be shown as *axes* on the grid view.
+Some of them can be shown as *data columns* in the aligner (`‖` button)
+and used by the *color by* menu.
 
 ## Basic axes
 
