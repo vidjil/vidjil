@@ -6,17 +6,16 @@ As we are using continuous integration and deployment, some features are pushed 
 
 Improve analysis
 * New sequence aligner, flexible display of nucleotide/AA sequences, VDJ, CDR, and FR features
-* New detecton and prediction of primer positions (Biomed2 and EuroClonality-NGS primer sets)
-* Add graph entry to show relatve distance between primer (genescan view) limited at the top 100 samples per sample
-* New report and axis, detailed reason of non-productivity
+* New detection of primer positions and computation of interpolated length (BIOMED-2 and EuroClonality-NGS primer sets)
+* New report and axis, detailed cause of non-productivity
 
 Improve ergonomy
 * Better handling of saved settings (color by, naming choices)
 * New button to open one sample with its analysis from the patient/sample database
-* Color setting is used in repot
+* Color settings are used in report
 
 Improve quality testing
-* The server part of the tutorial is now tested
+* The tutorial is better tested, including interactions with the sample database
 
 Other points
 * Fix disgracious position in graph
