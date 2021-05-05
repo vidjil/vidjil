@@ -401,15 +401,17 @@ you can process your data and save the results of your analysis.
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/table_db_content_patient_list.png"/>
-      <p style="text-align:center">An example of database content and organization.</p>
-    </p>
   </figure>
+  <i>
+  The main page on the sample database show a list of patients, or runs or sets,
+  with links to the samples and the results.
+  </i>
 
-<i>
+<b>
 ⚠️ The public <http://app.vidjil.org/> server is for Research Use Only
 and is not compliant for clinical use.
 Clinical data have to be uploaded on a [certified healthcare server](http://www.vidjil.org/doc/healthcare).
-</i>
+</b>
 
 Once you are authenticated, this page shows the patient list. Here you
 can see your patients and patients whose permission has been given to you.
@@ -482,9 +484,12 @@ process, and access to the results (`See results`, bottom right).
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/table_db_content_patient_0_multi_config.png"/>
-      <p style="text-align:center">Example of demo patient LIL-L3. This patient is available from demo account. Their are 5 samples analyzed with default configuration.</p>
-    </p>
   </figure>
+  <i>
+      The demo patient LIL-L3, available
+      from the demo account, has 5 samples here analyzed
+      with the default `multi+inc+xxx` configuration.</p>
+  </i>
 
 
 ### Adding a sample
