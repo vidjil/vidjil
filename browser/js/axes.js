@@ -266,8 +266,8 @@ AXIS_DEFAULT = {
         isInAligner:true
     },
     "primers": {
-        name:       "primers",
-        doc:        "interpolated length, between BIOMED2 primers (inclusive)",
+        name:       "interpolated length between primers",
+        doc:        "interpolated length, between selected primer set (inclusive)",
         fct:        function(clone) {return clone.getSegLengthDoubleFeature('primer5', 'primer3')},
         autofill:   true
     }, 
