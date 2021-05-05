@@ -251,6 +251,7 @@ When there is only one sample, two such views are shown.
     All the analyzes locus are on the right of the grid. You can select another locus by clicking on it or by using the associated shortcuts (see *Keyboard shortcuts* below).
 
   - The “plot“ menu allow to customize the plots, by selecting the X and Y axes and also by switching between grid and bar plots.
+    There are [20+ available axes](axes.md) to study the clones.
     Some presets are available.
     For example, the preset 4, similar to a "Genescan analysis", shows a bar plot of the clones according to the length of their consensus sequence,
     and the preset 7 shows the distribution of CDR3 lengths.
@@ -263,7 +264,7 @@ When there is only one sample, two such views are shown.
   </figure>
 
 <i>
-  Grid view with the default [axes](axes.md) (V/5' and J/3' gene) focusing on the TRG locus. The TRGV10/TRGJP10 clonotype appears in red because it has been tagged as `clone 1` from the clonotype list. Clicking on IGH focus on the IGH locus.
+  Grid view with the default axes (V/5' and J/3' gene) focusing on the TRG locus. The TRGV10/TRGJP10 clonotype appears in red because it has been tagged as `clone 1` from the clonotype list. Clicking on IGH focus on the IGH locus.
 </i>
 
 
