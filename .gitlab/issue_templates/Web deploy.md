@@ -33,6 +33,7 @@ Wednesday XX (D0)
 - [ ] MR `feature-cs/release` to `prod-client` !XXX and `prod-server` !XXX
 - [ ] Disconnect the client through `conf.js`
 - [ ] Deploy 
+- [ ] Link vidjil-algo to latest if needed
 - [ ] Live test on the prod server
 - [ ] Reconnect the client
 - [ ] Notification "Maintenance finished" + news
