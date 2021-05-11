@@ -13,8 +13,10 @@ class DefaultController(unittest.TestCase)
 BEWARE that the name is NOT in plural (controllers->Controller)
 
 require: 
+apt-get install python-pip
 pip install unittest2
 pip install unittest-xml-reporting
+pip install mock
 
 Execute with:
 >   python web2py.py -S vidjil -M -R testRunner.py
