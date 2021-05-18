@@ -108,7 +108,13 @@
 
     <div class="db_block_right">
         <span class="devel-mode button2" onclick="db.call('sample_set/multi_sample_stats', {'custom_result': db.getListInput('custom_result[]') })" >preview / quality control</span>
-        <span class="button2" onclick="myUrl.loadCustomUrl(db, { 'sample_set_id':{{=request.vars["id"]}} })" > see results </span>
+        <span class="button2" 
+          {{if request.vars["id"] != None: }}
+            onclick="myUrl.loadCustomUrl(db, {'sample_set_id':{{=request.vars["id"]}} })" 
+          {{else:}}
+            onclick="myUrl.loadCustomUrl(db, undefined)" 
+          {{pass}}
+          > see results </span>
     </div>
 
 </div>
