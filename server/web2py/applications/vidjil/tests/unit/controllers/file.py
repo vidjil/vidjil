@@ -89,6 +89,7 @@ class FileController(unittest.TestCase):
         self.assertNotEqual(resp.find('"redirect":"sample_set/index"'), -1, "add_form() failed")
 
         # nfs test
+        defs.FILE_SOURCE = os.path.join(os.path.dirname(__file__), '../../../../../demo/')
         data['source'] = "nfs"
 
         myfile['filename'] = "//Demo-X5.fa"
@@ -143,6 +144,7 @@ class FileController(unittest.TestCase):
         self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
 
         # nfs test
+        defs.FILE_SOURCE = os.path.join(os.path.dirname(__file__), '../../../../../demo/')
         data['source'] = "nfs"
 
         myfile['filename'] = "//Demo-X5.fa"
@@ -163,7 +165,18 @@ class FileController(unittest.TestCase):
 
         resp = submit()
         self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
-       
+
+        # edit back to defaultsource computer
+        data['source'] = "computer"
+        data['pre_process'] = "0"
+
+        myfile['filename'] = "plopapi"
+        myfile['filename2'] = ""
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
        
     def testUpload(self):
         class emptyClass( object ):
