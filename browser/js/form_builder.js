@@ -454,7 +454,7 @@ FileFormBuilder.prototype = {
 
     build_file_div: function() {
         var self = this;
-        var hide_second = this.source || this.num_files < 2;
+        var hide_second = this.num_files < 2;
         var d = document.createElement('div');
         d.className="field_div";
         var file1 = this.build_file_field(1, this.source);
@@ -464,7 +464,8 @@ FileFormBuilder.prototype = {
         }
         d.appendChild(file1);
         d.appendChild(this.build_file_field(2, hide_second));
-        d.appendChild(this.build_jstree(!this.source));
+        d.appendChild(this.build_jstree(1, !this.source));
+        d.appendChild(this.build_jstree(2, hide_second));
         return d;
     },
 
@@ -472,6 +473,10 @@ FileFormBuilder.prototype = {
         var d = document.createElement('div');
         d.className = "hidden";
         var i = this.build_input('filename', 'filename', 'filename', 'text', 'file');
+        i.hidden = true;
+        i.className = '';
+        d.appendChild(i);
+        i = this.build_input('filename2', 'filename2', 'filename2', 'text', 'file');
         i.hidden = true;
         i.className = '';
         d.appendChild(i);
@@ -524,12 +529,13 @@ FileFormBuilder.prototype = {
     },
 
     build_file_field: function(id, hidden) {
+        var self = this;
         var d = this.build_wrapper();
-        d.className += " file_" + id;
+        d.id = "file_field_" + id + "_" + self.index;
         if (this.source || hidden) {
             d.style.display = "none";
         }
-        var i = this.build_input('upload_' + id, 'upload_field', 'file'+id, 'file', 'file');
+        var i = this.build_input('upload_' + id, 'upload_field file_'+ id, 'file'+id, 'file', 'file');
         if (this.source) {
             i.disabled = true;
         } else if (! hidden) {
