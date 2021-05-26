@@ -394,26 +394,6 @@ Database.prototype = {
             }
         });
     },
-    
-    
-    pre_process_onChange : function (field) {
-        var $option = $(field).find(":selected");
-        if ($option.attr('required_files') == "1"){
-            $(".file_2").hide();
-            $(".upload_file").val("");
-            $(".upload_field").each(function() {
-                $(this).prop("required", false);
-            });
-        }else{
-            $(".file_2").show();
-            if ($(".is_editing").length == 0) {
-                // Not editing a sample, but creating new ones
-                $(".upload_field").each(function() {
-                    $(this).prop("required", true);
-                });
-            }
-        }
-    },
 
     upload_file_onChange : function (target_id, value) {
         var target = document.getElementById(target_id);
