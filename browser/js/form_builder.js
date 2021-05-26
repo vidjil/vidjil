@@ -553,7 +553,7 @@ FileFormBuilder.prototype = {
         w.id = "jstree_field_" + id + "_" + self.index;
         w.appendChild(d);
 
-        d.className += " jstree_field form-control file_" + id;;
+        d.className += " jstree_field form-control file_" + id;
         if (!this.source || hidden) {
             d.style.display = "none";
         }
