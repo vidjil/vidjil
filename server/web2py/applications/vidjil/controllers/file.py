@@ -378,7 +378,7 @@ def upload():
 
         db.sequence_file[request.vars["id"]] = dict(pre_process_flag=None,
                                                     pre_process_result=None)
-        if data_file is not None and data_file2 is not None and request.vars['pre_process'] != '0':
+        if data_file is not None and data_file2 is not None and request.vars['pre_process'] is not None and request.vars['pre_process'] != '0':
             db.sequence_file[request.vars["id"]] = dict(pre_process_flag = "WAIT")
             old_task_id = db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id
             if db.scheduler_task[old_task_id] != None:

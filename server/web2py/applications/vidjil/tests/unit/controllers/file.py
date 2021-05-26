@@ -68,6 +68,7 @@ class FileController(unittest.TestCase):
 
         data = {}
         data['set_ids'] = ":p plapipou ("+str(fake_patient_id)+")"
+        data['source'] = "computer"
 
         myfile= {
             "id": "",
@@ -77,6 +78,7 @@ class FileController(unittest.TestCase):
             "sequencer": "plop",
             "producer": "plop",
             "filename": "plopapi",
+            "filename2": "",
             "set_ids": ""
         }
         data['file'] = [myfile]
@@ -85,7 +87,28 @@ class FileController(unittest.TestCase):
 
         resp = submit()
         self.assertNotEqual(resp.find('"redirect":"sample_set/index"'), -1, "add_form() failed")
-    
+
+        # nfs test
+        data['source'] = "nfs"
+
+        myfile['filename'] = "//Demo-X5.fa"
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertNotEqual(resp.find('"redirect":"sample_set/index"'), -1, "add_form() failed")
+
+        # nfs + pre-process
+        data['source'] = "nfs"
+        data['pre_process'] = str(fake_pre_process_id)
+
+        myfile['filename'] = "//Demo-X5.fa"
+        myfile['filename2'] = "//Demo-X5.fa"
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertNotEqual(resp.find('"redirect":"sample_set/index"'), -1, "add_form() failed")
     
     def testEdit(self):
         request.vars['sample_set_id'] = fake_sample_set_id
@@ -99,10 +122,12 @@ class FileController(unittest.TestCase):
         data = {}
         data['set_ids']=":p plapipou ("+str(fake_patient_id)+")"
         data["sample_type"] = defs.SET_TYPE_PATIENT
+        data['source'] = "computer"
 
         myfile = {
             "id" : fake_file_id,
             "filename" : "plopapi",
+            "filename2": "",
             "sampling_date" : "1992-02-02",
             "info" : "plop",
             "pcr" : "plop",
@@ -113,8 +138,29 @@ class FileController(unittest.TestCase):
         data['file'] = [myfile]
 
         request.vars['data'] = json.dumps(data)
-        
-        
+
+        resp = submit()
+        self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
+
+        # nfs test
+        data['source'] = "nfs"
+
+        myfile['filename'] = "//Demo-X5.fa"
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
+
+        # nfs + pre-process
+        data['source'] = "nfs"
+        data['pre_process'] = str(fake_pre_process_id)
+
+        myfile['filename'] = "//Demo-X5.fa"
+        myfile['filename2'] = "//Demo-X5.fa"
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
         resp = submit()
         self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
        
