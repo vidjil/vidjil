@@ -546,19 +546,19 @@ FileFormBuilder.prototype = {
         return d;
     },
 
-    build_jstree: function() {
+    build_jstree: function(id, hidden) {
         var self = this;
         var w = this.build_wrapper();
         var d = document.createElement('div');
-        d.id = "jstree_field_" + self.index;
+        w.id = "jstree_field_" + id + "_" + self.index;
         w.appendChild(d);
 
-        d.className += " jstree_field form-control";
-        if (!this.source) {
-            d.hidden = true;
+        d.className += " jstree_field form-control file_" + id;;
+        if (!this.source || hidden) {
+            d.style.display = "none";
         }
         d.onclick = function() {
-            db.display_jstree(self.index);
+            db.display_jstree(id, self.index);
         }
 
         var sel = document.createElement('span');
@@ -566,9 +566,9 @@ FileFormBuilder.prototype = {
         sel.appendChild(document.createTextNode(('browse')));
         d.appendChild(sel);
         var indicator = document.createElement('span');
-        indicator.id = "file_indicator_" + self.index;
+        indicator.id = "file_indicator_" + id + "_" + self.index;
         d.appendChild(indicator);
-        return d;
+        return w;
     }
 }
 FileFormBuilder.prototype = $.extend(Object.create(FormBuilder.prototype), FileFormBuilder.prototype)
