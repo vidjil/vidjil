@@ -1380,7 +1380,7 @@ h3 .uid {
 #db_table_container {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(70%);
+  height: calc(100% - 30px);
   position: relative;
 }
 #db_fixed_header {
