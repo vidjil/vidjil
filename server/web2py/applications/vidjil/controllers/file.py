@@ -279,15 +279,28 @@ def submit():
                 mes += " file was replaced"
 
             file_data, filepath = manage_filename(f["filename"])
-            filename = file_data['filename']
             if 'data_file' in file_data and file_data['data_file'] is not None:
                 os.symlink(filepath, defs.DIR_SEQUENCES + file_data['data_file'])
                 file_data['size_file'] = os.path.getsize(filepath)
                 file_data['network'] = True
                 file_data['data_file'] = str(file_data['data_file'])
+
+            if data["source"] == "nfs" :
+                file_data2, filepath2 = manage_filename(f["filename2"])
+                if 'data_file' in file_data2 and file_data2['data_file'] is not None:
+                    file_data['data_file2'] = str(file_data2['data_file'])
+                    os.symlink(filepath2, defs.DIR_SEQUENCES + file_data2['data_file'])
+
             db.sequence_file[fid] = file_data
 
         link_to_sample_sets(fid, id_dict)
+
+        # pre-process for nfs files can be started immediately
+        data_file = db.sequence_file[fid].data_file
+        data_file2 = db.sequence_file[fid].data_file2
+        if data["source"] == "nfs" :
+            if data_file is not None and data_file2 is not None and pre_process != '0':
+                schedule_pre_process(fid, pre_process)
 
         log.info(mes, extra={'user_id': auth.user.id,
                 'record_id': f['id'],
