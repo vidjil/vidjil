@@ -1,4 +1,5 @@
-<div>
+
+<div class="form_line">
     <span class="left form_label" style="line-height: 33px">Sample {{=i+1}}</span>
     {{ if file is not None and 'error' in file and len(file['error']) > 0: }}
         <div class="error">error: {{=", ".join(file['error'])}}</div>
@@ -8,6 +9,7 @@
     {{ pass }}
     <div class="hidden">
         <input type="hidden" id="file_filename_{{=i}}" class="filename" name="file[{{=i}}][filename]" type="text" value="">
+        <input type="hidden" id="file_filename2_{{=i}}" class="filename" name="file[{{=i}}][filename2]" type="text" value="">
         <input type="hidden" id="file_id_{{=i}}" name="file[{{=i}}][id]"
             value="{{if 'id' in file:}}{{=file['id']}}{{pass}}" >
         <input type="hidden" id="sample_set_id" name="sample_set_id" value="{{if "sample_set_id" in request.vars:}}{{=request.vars["sample_set_id"]}}{{pass}}" >
@@ -18,19 +20,20 @@
     </div>
 
     <div class="field_div">
-        <div id="file_field_1_{{=i}}" class="field_div file_1" {{if network_source:}} style="display: none" {{pass}}>
-            <input class="upload_field form-control" id="file_upload_1_{{=i}}" type="file"
+
+        <div id="file_field_1_{{=i}}" class="field_div" {{if network_source:}} style="display: none" {{pass}}>
+            <input class="upload_field file_1 form-control" id="file_upload_1_{{=i}}" type="file"
             {{if network_source:}}
                 disabled
             {{elif not isEditing:}}
                 required
             {{pass}}
-                onchange="db.upload_file_onChange('file_filename_{{=i}}', this.value)"
                 title="first file for this sample (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)"
             >
         </div>
-        <div id="file_2_{{=i}}" class="field_div file_2" {{if required_files < 2:}}style="display: none"{{pass}}>
-            <input class="upload_field form-control" id="file_upload_2_{{=i}}" type="file"
+
+        <div id="file_field_2_{{=i}}" class="field_div" {{if network_source or required_files < 2:}}style="display: none"{{pass}}>
+            <input class="upload_field file_2 form-control" id="file_upload_2_{{=i}}" type="file"
             {{if network_source:}}
                 disabled
             {{elif not isEditing and required_files >= 2:}}
@@ -39,14 +42,31 @@
                 title="second file for this sample (.fa, .fastq, .fa.gz, .fastq.gz)"
             >
         </div>
-        <div id="jstree_field_{{=i}}"
-            class="field_div jstree_field form-control"
-            {{if not network_source:}} hidden {{pass}}
-            data-index={{=i}}
-            onclick="db.display_jstree(this.dataset.index)">
-            <span class="button2">browse</span>
-            <span id="file_indicator_{{=i}}"></span>
+
+        <div    id="jstree_field_1_{{=i}}" class="field_div" 
+
+                data-index={{=i}}
+                onclick="db.display_jstree(1, this.dataset.index)">
+            <div    class=" jstree_field form-control file_1" 
+                    {{if not network_source:}} hidden {{pass}}
+                    style="display: block;">
+                <span class="button2">browse</span>
+                <span id="file_indicator_1_{{=i}}"></span>
+            </div>
         </div>
+
+        <div    id="jstree_field_2_{{=i}}" class="field_div"
+                data-index={{=i}}
+                onclick="db.display_jstree(2, this.dataset.index)">
+            <div    class=" jstree_field form-control file_2" 
+                    {{if required_files < 2:}}style="display: none"{{pass}}
+                    {{if not network_source:}} hidden {{pass}}
+                    style="display: block;">
+                <span class="button2">browse</span>
+                <span id="file_indicator_2_{{=i}}"></span>
+            </div>
+        </div>
+
     </div>
     <div class="field_div">
         <input class="date form-control" id="file_sampling_date_{{=i}}" name="file[{{=i}}][sampling_date]" type="text" title="sampling date"
