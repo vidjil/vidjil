@@ -694,20 +694,22 @@ Database.prototype = {
         });
     },
 
-    display_jstree: function(caller_index) {
-        $("#jstree_button").data("index", caller_index);
+    display_jstree: function(file_index, upload_index) {
+        $("#jstree_button").data("file_index", file_index);
+        $("#jstree_button").data("upload_index", upload_index);
         $("#jstree_container").show();
-        $('#file_indicator_' + caller_index).text("");
-        $('#file_filename_' + caller_index).val("");
+        $('#file_indicator_' + file_index + "_" + upload_index).text("");
+        $('#file_filename_' + upload_index).val("");
     },
 
     close_jstree: function() {
         $("#jstree_container").hide();
     },
 
-    select_jstree: function(caller_index) {
-        $('#file_indicator_' + caller_index).text($('#file_indicator').text());
-        $('#file_filename_' + caller_index).val($('#file_filename').val());
+    select_jstree: function(file_index, upload_index)  {
+        $('#file_indicator_' + file_index + "_" + upload_index).text($('#file_indicator').text());
+        $('#file_indicator_' + file_index + "_" + upload_index).prop('title', $('#file_filename').prop("value"));
+        $('#file_filename_' + file_index + "_" + upload_index).val($('#file_filename').val());
         $("#jstree_container").hide();
     },
 
@@ -732,16 +734,12 @@ Database.prototype = {
         }
     },
 
-    toggle_jstree: function(){
+    update_jstree: function(){
         var tree = $('.jstree_field');
-        var enable = tree.prop('hidden');
+        var enable = this.upload_source == "nfs";
         tree.prop('hidden', !enable);
     },
 
-    toggle_file_source: function() {
-        this.toggle_upload_fields();
-        this.toggle_jstree()
-    },
     
     /**
      * reload the current db page
