@@ -603,6 +603,8 @@ Database.prototype = {
             $('#upload_form').on('submit', function(e) {
                 e.preventDefault();
 
+                self.update_upload_fields();
+
                 //clear empty values before submiting data
                 var upload_form = $('#upload_form').serializeObject()
                 if ("file" in upload_form)
@@ -713,25 +715,81 @@ Database.prototype = {
         $("#jstree_container").hide();
     },
 
-    toggle_upload_fields: function() {
-        var elem = $('.upload_field');
-        var disable = !elem.prop('disabled');
-        elem.prop('disabled', disable);
-        if (disable) {
-            elem.closest("div").hide();
-            elem.val(undefined);
-            $('.filename').val(undefined);
-        } else {
-            elem.closest("div").show();
+    update_upload_fields: function() {     
+        //retrieve current radio buttons value
+        var radios = document.getElementsByName("source");
+        for (var i=0; i<radios.length; i++) 
+            if (radios[i].checked)
+                this.upload_source = radios[i].value;
+
+        var option = $("#pre_process").find(":selected");
+        this.pprocess_required_file = parseInt(option.attr('required_files'))
+        
+        // retrieve upload fields
+        var upload_fields = $('.upload_field');
+        var jstree_fields = $('.jstree_field');
+
+        // reset field, display/enable all upload field
+        jstree_fields.closest("div").show();
+        jstree_fields.prop("disabled", false);
+        jstree_fields.prop("required", true);
+        upload_fields.closest("div").show();
+        upload_fields.prop("disabled", false);
+        upload_fields.prop("required", true);
+
+        // hide/disabe unnecessary field for selected upload source
+        if (this.upload_source == "nfs"){
+            upload_fields.closest("div").hide();            
+            upload_fields.prop("disabled", true);
+            upload_fields.prop("required", false);
+        }
+        if (this.upload_source == "computer"){
+            jstree_fields.closest("div").hide();            
+            jstree_fields.prop("disabled", true);
+            jstree_fields.prop("required", false);
         }
 
-        var pre_process = $('#pre_process');
-        pre_process.prop('disabled', disable);
-        pre_process.closest("div").prop('hidden', disable);
-
-        if (!disable) {
-            this.pre_process_onChange(pre_process);
+        // hide/disable unnecessary field for selected pre-process
+        if (this.pprocess_required_file == 1){
+            upload_fields.filter('.file_2').closest("div").hide();            
+            upload_fields.filter('.file_2').prop("disabled", true);
+            upload_fields.filter('.file_2').prop("required", false);
+            jstree_fields.closest("div").filter('.file_2').hide();            
+            jstree_fields.filter('.file_2').prop("disabled", true);
+            jstree_fields.filter('.file_2').prop("required", false);
         }
+        
+        this.update_hidden_fields();
+        this.update_jstree();
+    },
+
+    update_hidden_fields:function(){
+        //reset default filename
+        var forms = $('.form_line')
+        for (var i=0; i<forms.length; i++){
+            var filename="";
+            var filename2="";
+            
+                if (this.upload_source == "computer"){
+                    filename = $(forms[i]).find(".upload_field.file_1")[0].value;
+                    var lastIndex = filename.lastIndexOf('\\');
+                    if (lastIndex > 0) filename = filename.substring(lastIndex + 1);
+
+                    filename2 = $(forms[i]).find(".upload_field.file_2")[0].value;
+                    var lastIndex2 = filename2.lastIndexOf('\\');
+                    if (lastIndex2 > 0) filename2 = filename2.substring(lastIndex2 + 1);
+                }   
+    
+                if (this.upload_source == "nfs"){
+                    filename = $(forms[i]).find("[id^=file_indicator_1]").prop('title');
+                    filename2 = $(forms[i]).find("[id^=file_indicator_2]").prop('title');
+                }
+            
+
+            $(forms[i]).find("[id^=file_filename_]")[0].value = filename;
+            $(forms[i]).find("[id^=file_filename2_]")[0].value = filename2;
+        }
+        
     },
 
     update_jstree: function(){
