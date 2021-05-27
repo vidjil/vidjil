@@ -72,7 +72,7 @@ class TestSample < ServerTest
 
     jstree = $b.div(:id => "jstree")
     for i in 0..$num_additional_files
-      $b.div(:id => "jstree_field_%d" % i).span(:text => "browse").click
+      $b.div(:id => "jstree_field_1_%d" % i).span(:text => "browse").click
       assert(jstree.present?)
       jstree_file = jstree.a(:id => "//Demo-X5.fa_anchor")
       unless jstree_file.present? and jstree_file.present?
@@ -254,7 +254,7 @@ class TestSample < ServerTest
     $b.input(:id => "source_nfs").click
 
     jstree = $b.div(:id => "jstree")
-    $b.div(:id => "jstree_field_0").span(:text => "browse").click
+    $b.div(:id => "jstree_field_1_0").span(:text => "browse").click
     assert(jstree.present?)
     jstree_file = jstree.a(:id => "//Demo-X5.fa_anchor")
     unless jstree_file.present? and jstree_file.present?
