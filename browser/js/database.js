@@ -604,6 +604,8 @@ Database.prototype = {
                 e.preventDefault();
 
                 self.update_upload_fields();
+                if (!self.check_upload_fields()) return;
+                
 
                 //clear empty values before submiting data
                 var upload_form = $('#upload_form').serializeObject()
@@ -715,6 +717,40 @@ Database.prototype = {
         $("#jstree_container").hide();
     },
 
+    check_upload_fields: function(){
+        file1 = $("[id^=file_filename_]");
+        file2 = $("[id^=file_filename2_]");
+
+        if ( $("#submitForm_isEditing").prop("checked")){
+            if (this.pprocess_required_file >1)
+                if ((file1[0].value == "" && file2[0].value != "") ||
+                    (file1[0].value != "" && file2[0].value == "")){
+                    console.log({"type": "flash",
+                        "msg" : "missing file: both file fields must be filled if you wish to update current uploaded file.", 
+                        "priority": 2});  
+                    return false;
+                }
+
+        }else{
+            var flag = true;
+            for (var i=0; i<file1.length; i++)
+                if (file1[i].value == "" ) flag = false;
+            
+            if (this.pprocess_required_file >1)
+                for (var j=0; j<file2.length; j++)
+                    if (file2[j].value == "" ) flag = false;
+
+            if (!flag) {
+                console.log({"type": "flash",
+                "msg" : "missing file: please ensure all file fields are filled before submitting.", 
+                "priority": 2});  
+                return false
+            } 
+        }
+
+        return true;
+    },
+
     update_upload_fields: function() {     
         //retrieve current radio buttons value
         var radios = document.getElementsByName("source");
@@ -732,31 +768,25 @@ Database.prototype = {
         // reset field, display/enable all upload field
         jstree_fields.closest("div").show();
         jstree_fields.prop("disabled", false);
-        jstree_fields.prop("required", true);
         upload_fields.closest("div").show();
         upload_fields.prop("disabled", false);
-        upload_fields.prop("required", true);
 
         // hide/disabe unnecessary field for selected upload source
         if (this.upload_source == "nfs"){
             upload_fields.closest("div").hide();            
             upload_fields.prop("disabled", true);
-            upload_fields.prop("required", false);
         }
         if (this.upload_source == "computer"){
             jstree_fields.closest("div").hide();            
             jstree_fields.prop("disabled", true);
-            jstree_fields.prop("required", false);
         }
 
         // hide/disable unnecessary field for selected pre-process
         if (this.pprocess_required_file == 1){
             upload_fields.filter('.file_2').closest("div").hide();            
             upload_fields.filter('.file_2').prop("disabled", true);
-            upload_fields.filter('.file_2').prop("required", false);
             jstree_fields.closest("div").filter('.file_2').hide();            
             jstree_fields.filter('.file_2').prop("disabled", true);
-            jstree_fields.filter('.file_2').prop("required", false);
         }
         
         this.update_hidden_fields();
