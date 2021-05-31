@@ -10,6 +10,7 @@
    {{ required_files = 1 }}
     {{ if source_module_active: }}
         <span>file source: </span>
+        <input hidden type=checkbox id="submitForm_isEditing" name="isEditing" {{ if isEditing: }} checked {{ pass }}>
         <label for="source_computer">my computer</label>
         <input type="radio" id="source_computer" name="source" value="computer" onchange="db.update_upload_fields()" {{ if not network_source: }} checked="checked" {{pass}}/>
         <label for="source_nfs">network</label>
