@@ -253,7 +253,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
 
     if grep_reads:
         # TODO: security, assert grep_reads XXXX
-        vidjil_cmd += ' --grep-reads "%s" ' % grep_reads
+        vidjil_cmd += ' --out-clone-files --grep-reads "%s" ' % grep_reads
     
     os.makedirs(out_folder)
     out_log = out_folder+'/'+output_filename+'.vidjil.log'
