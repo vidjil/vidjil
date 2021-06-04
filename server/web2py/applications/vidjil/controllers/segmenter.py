@@ -55,7 +55,7 @@ def segment_sequences(sequences):
             germline_folder = defs.DIR_VIDJIL + '/germline/'
 
             ## config de vidjil
-            config = '-c designations -2 -3 -g germline'
+            config = '-c designations -3 -g germline'
             config = config.replace( ' germline' ,germline_folder)
 
             ## commande complete
