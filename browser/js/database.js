@@ -606,7 +606,8 @@ Database.prototype = {
                 self.update_upload_fields();
                 if (!self.check_upload_fields()) return;
             
-                self.temporarilyDisableClickedLink()
+                $("#submit_samples_btn").addClass("disabledClass");
+                setTimeout(function(){$("#submit_samples_btn").removeClass("disabledClass")}, 3000)
 
                 //clear empty values before submiting data
                 var upload_form = $('#upload_form').serializeObject()
