@@ -89,13 +89,10 @@ class TestSample < ServerTest
       # TODO test other sets
     end
 
-    form_class = form.input(:type => "submit").class_name
-    assert( !(form_class.include? "disabledClass") ) # Submit button is not disabled before click
+    assert( !form.input(:type => "submit").obscured? ) # Submit button is not disabled before click
 
     form.input(:type => "submit").click
-    
-    form_class = form.input(:type => "submit").class_name
-    assert( (form_class.include? "disabledClass") ) # Submit button should be disabled after click
+    assert( form.input(:type => "submit").obscured?  ) # Submit button should be disabled after click
 
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
