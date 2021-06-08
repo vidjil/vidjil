@@ -189,7 +189,7 @@ You can achieve this with the following steps:
     However beware, because you would not be able to start Nginx till the certificates are in place.
     On certificate renewal (with `certbot`), you then need to restart the Nginx server. The following `cron` line can be used for certificate renewal (you may want to update the paths):
     ```
-0 0 1 * * root (test -x /usr/bin/certbot -a \! -d /run/systemd/system && perl -e 'sleep int(rand(14400))' && certbot --webroot -w /opt/vidjil/certs renew && (cd /path/to/vidjil/docker/vidjil/docker; sudo -u vidjil docker-compose stop nginx && sudo -u vidjil docker-compose rm -f nginx && sudo -u vidjil docker-compose up -d nginx)) >> /var/log/certbot.log 2>&1
+0 0 1 * * root (test -x /usr/bin/certbot && perl -e 'sleep int(rand(14400))' && certbot --webroot -w /opt/vidjil/certs renew && (cd /path/to/vidjil/docker/vidjil/docker; sudo -u vidjil docker-compose stop nginx && sudo -u vidjil docker-compose rm -f nginx && sudo -u vidjil docker-compose up -d nginx)) >> /var/log/certbot.log 2>&1
   ```
 
     
