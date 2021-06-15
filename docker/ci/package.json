@@ -1,0 +1,9 @@
+{
+  "name": "pji_project",
+  "version": "0.1.0",
+  "private": true,
+  "eslintConfig": {},
+  "devDependencies": {
+    "cypress": "^7.2.0"
+  }
+}
