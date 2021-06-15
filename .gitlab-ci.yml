@@ -13,6 +13,7 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
+  - test_cypress_client
   - test_tutorial
   - test_tutorial_server
   - test_shouldvdj
@@ -629,3 +630,58 @@ stop_deploy_review_server:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
+
+
+.test_cypress_base:
+  stage: test_cypress_client
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker pull "vidjilci/cypress_with_browsers:latest"
+    # - docker build ./docker/ci  -t "vidjilci/cypress_with_browsers:latest"
+    - cd browser/
+    - make icons
+    - cd ..
+    # Cypress
+    # - echo $CYPRESS_PATH
+    - docker run -v $PWD/$CYPRESS_PATH:/app/cypress -v $PWD/browser/test/data:/app/cypress/fixtures/data  -v $PWD/browser/test/doc:/app/cypress/fixtures/doc  -v $PWD:/app/vidjil -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash" --env BROWSER=$BROWSER --env HOST=$HOST  --env PROJECT=$PROJECT "vidjilci/cypress_with_browsers:latest" bash script.bash
+  variables:
+    BROWSER: browsers/firefox_legacy/firefox
+    CYPRESS_PATH: browser/test/cypress
+    PROJECT: ./browser/test/
+    HOST: local
+  artifacts:
+    reports:
+      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+    paths:
+      - $CYPRESS_PATH
+    expire_in: 7 day
+    when: always
+  tags:
+    - docker
+
+
+## cypress client
+client_firefox_legacy:
+  extends:
+    - .test_cypress_base
+  variables:
+    BROWSER: browsers/firefox_legacy/firefox
+
+client_firefox_latest:
+  extends:
+    - .test_cypress_base
+  variables:
+    BROWSER: browsers/firefox_latest/firefox
+
+client_chrome_latest:
+  extends:
+    - .test_cypress_base
+  variables:
+    BROWSER: browsers/chrome_latest/chrome
+
+client_chrome_legacy:
+  extends:
+    - .test_cypress_base
+  variables:
+    BROWSER: browsers/chrome_legacy/chrome
+
