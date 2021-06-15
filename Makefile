@@ -55,6 +55,27 @@ functional_server:
 headless_server:
 	$(MAKE) -C server headless
 
+
+###############################
+### Browser tests WITH CYPRESS
+build_cypress_image:
+	docker build ./docker/ci  -t "vidjilci/cypress_with_browsers:latest"
+
+functional_browser_cypress_open:
+	# Need to create a symbolic link; but allow to directly see
+	# Usefull for debugging
+	cypress open --env workdir=$(PWD),host=local
+functional_browser_cypress:
+	docker run \
+		-v $(PWD)/browser/test/cypress:/app/cypress \
+		-v $(PWD)/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v $(PWD)/doc/:/app/cypress/fixtures/doc/  \
+		-v $(PWD):/app/vidjil \
+		-v "$(PWD)/docker/ci/cypress_script.bash":"/app/script.bash" \
+		--env BROWSER=electron --env HOST=local  --env PROJECT="./browser/test/"  -it "vidjilci/cypress_with_browsers:latest" bash 
+###############################
+
+
 tutorial-test.rb:
 	$(MAKE) -C doc/tutorial tutorial-test.rb
 ###
