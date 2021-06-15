@@ -1354,6 +1354,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (this.waiting_screen_is_on) 
             return true;
 
+        if (this.loading_is_pending == true)
+            return true;
+
         return false;
     },
 
