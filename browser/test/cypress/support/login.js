@@ -18,7 +18,7 @@ Cypress.Commands.add('login', (host) => {
     cy.get('#auth_user_email')
       .type('test@vidjil.org')
     cy.get('#auth_user_password')
-      .type('xxx')
+      .type(Cypress.env('CI_PASSWORD_TEST'))
     cy.get('#submit_record__row > .w2p_fw > input').click()
     cy.waitForUpdates()
   } else if (host=="app"){

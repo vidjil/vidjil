@@ -8,24 +8,7 @@ before_script:
 
 stages:
   - test_tools
-  - test_quality
-  - test_unit
-  - deploy_review
-  - test_germlines
-  - test_functional
   - test_cypress_client
-  - test_tutorial
-  - test_tutorial_server
-  - test_shouldvdj
-  - test_functional_external
-  - coverage
-  - tgz_release
-  - valgrind_unit
-  - valgrind_functional
-  - multiple_tests
-  - benchmark
-  - publish_release
-  - deploy_prod
 
 # Anchors
 
@@ -642,11 +625,22 @@ stop_deploy_review_server:
     - make -C doc analysis-example || true
     # Cypress
     - echo -e "Run cypress with browser; $CYPRESS_PATH"
-    - docker run -v $PWD/$CYPRESS_PATH:/app/cypress -v $PWD/browser/test/data:/app/cypress/fixtures/data  -v $PWD/doc:/app/cypress/fixtures/doc  -v $PWD:/app/vidjil -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash" --env BROWSER=$BROWSER --env HOST=$HOST  --env PROJECT=$PROJECT "vidjilci/cypress_with_browsers:latest" bash script.bash
+    - >
+      docker run
+      -v $PWD/$CYPRESS_PATH:/app/cypress
+      -v $PWD/browser/test/data:/app/cypress/fixtures/data
+      -v $PWD/doc:/app/cypress/fixtures/doc
+      -v $PWD:/app/vidjil
+      -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash"
+      --env BROWSER=$BROWSER
+      --env HOST=$HOST
+      --env PROJECT=$PROJECT
+      --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
+      --network="host"
+      "vidjilci/cypress_with_browsers:latest" bash script.bash
   variables:
     BROWSER: electron
     CYPRESS_PATH: browser/test/cypress
-    PROJECT: ./browser/test/
     HOST: local
   artifacts:
     reports:
