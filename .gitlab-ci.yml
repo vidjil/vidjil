@@ -286,7 +286,6 @@ old-chrome-browser-functional-external-chrome:
     - legacy
 
 
-
 .browser-tutorial:
   stage: test_tutorial
   retry: 2
@@ -637,15 +636,15 @@ stop_deploy_review_server:
   script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker pull "vidjilci/cypress_with_browsers:latest"
-    # - docker build ./docker/ci  -t "vidjilci/cypress_with_browsers:latest"
     - cd browser/
     - make icons
     - cd ..
+    - make -C doc analysis-example || true
     # Cypress
-    # - echo $CYPRESS_PATH
-    - docker run -v $PWD/$CYPRESS_PATH:/app/cypress -v $PWD/browser/test/data:/app/cypress/fixtures/data  -v $PWD/browser/test/doc:/app/cypress/fixtures/doc  -v $PWD:/app/vidjil -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash" --env BROWSER=$BROWSER --env HOST=$HOST  --env PROJECT=$PROJECT "vidjilci/cypress_with_browsers:latest" bash script.bash
+    - echo -e "Run cypress with browser; $CYPRESS_PATH"
+    - docker run -v $PWD/$CYPRESS_PATH:/app/cypress -v $PWD/browser/test/data:/app/cypress/fixtures/data  -v $PWD/doc:/app/cypress/fixtures/doc  -v $PWD:/app/vidjil -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash" --env BROWSER=$BROWSER --env HOST=$HOST  --env PROJECT=$PROJECT "vidjilci/cypress_with_browsers:latest" bash script.bash
   variables:
-    BROWSER: browsers/firefox_legacy/firefox
+    BROWSER: electron
     CYPRESS_PATH: browser/test/cypress
     PROJECT: ./browser/test/
     HOST: local
