@@ -1,35 +1,11 @@
 // ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 // import 'cypress-wait-until';
 var lil_l3 = {"app": {"id":61, "config":2}, "localhost": {"id":3241, "config":25}}
 
-      file:///home/florian/vidjil_issues/vidjil_raw_2/browser/index.html
+
 
 Cypress.Commands.add('close_disclamer', () => { 
-  cy.get("div.popup_container")
+  cy.get("div.popup_container", { timeout: 10000 })
     .should('be.visible')
     .and('contain', 'The Vidjil Team')
     .get('.center > button')
