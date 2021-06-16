@@ -40,10 +40,8 @@ describe('Actions v1', function () {
     // cy.get('#list_clones').children().should('have.length', 6)
 
     cy.get('#listElem_5 > .nameBox').should('have.text', "clone_cluster1")
+
     // second sample open with analysis, so size is smaller
-    // cy.waitForUpdates()
-    cy.get("body").type("{rightarrow}")
-    cy.update_icon()
     cy.get('#listElem_5 > .axisBox > .sizeBox').should('have.text', "0.014%")
 
     cy.get('#listElem_6 > .nameBox').should('not.visible');
@@ -57,7 +55,6 @@ describe('Actions v1', function () {
  it('test_00_list_clones',  function() {
     cy.set_browser("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis")
   //   # change current sample to start on sample 0 (second in loaded order)
-  cy.get("body").type("{rightarrow}")
   cy.update_icon()
 
   //   # declare variables
