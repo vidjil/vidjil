@@ -3,5 +3,6 @@
   "reporterOptions": {
     "mochaFile": "cypress/reports/test-cypress-[hash].xml"
   },
-  "pluginsFile": false
+  "pluginsFile": false,
+  "video": false
 }

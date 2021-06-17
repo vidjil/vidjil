@@ -62,8 +62,8 @@ build_cypress_image:
 	docker build ./docker/ci  -t "vidjilci/cypress_with_browsers:latest"
 
 functional_browser_cypress_open:
-	# Need to create a symbolic link; but allow to directly see
-	# Usefull for debugging
+	# Need to create a symbolic link; but allow to directly see result
+	# Usefull for fast debugging; allow to launch script one by one
 	cypress open --env workdir=$(PWD),host=local
 functional_browser_cypress:
 	docker run \
@@ -72,7 +72,8 @@ functional_browser_cypress:
 		-v $(PWD)/doc/:/app/cypress/fixtures/doc/  \
 		-v $(PWD):/app/vidjil \
 		-v "$(PWD)/docker/ci/cypress_script.bash":"/app/script.bash" \
-		--env BROWSER=electron --env HOST=local  --env PROJECT="./browser/test/"  -it "vidjilci/cypress_with_browsers:latest" bash 
+		-v "$(PWD)/docker/ci/cypress.json":"/app/cypress.json" \
+		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash
 ###############################
 
 
