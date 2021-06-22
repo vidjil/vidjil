@@ -107,6 +107,11 @@ Sébastien Bender et al.,
 Blood, 2020,
 <https://doi.org/10.1182/blood.2019004197>
 
+Marie-Laure Boulland et al.,
+*Reliable IGHV status assessment by next generation sequencing in routine practice for chronic lymphocytic leukemia*,
+Leukemia & Lymphoma, 2021,
+<https://doi.org/10.1080/10428194.2021.1933476>
+
 Monika Brüggemann et al., on behalf of the EuroClonality-NGS working group,
 *Standardized next-generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukaemia; a EuroClonality-NGS validation study*,
 Leukemia, 2019, 33, 2241–2253,
@@ -232,6 +237,11 @@ Lucia Stranavova et al.,
 *Heterologous Cytomegalovirus and Allo-Reactivity by Shared T Cell Receptor Repertoire in Kidney Transplantation*,
 Frontiers in Immunology, 2019,
 <https://doi.org/10.3389/fimmu.2019.02549>
+
+Manuela Tosi et al.,
+*MRD-Based Therapeutic Decisions in Genetically Defined Subsets of Adolescents and Young Adult Philadelphia-Negative ALL*
+Cancers 2021, 13(9), 2108,
+<https://doi.org/10.3390/cancers13092108>
 
 Amelie Trinquand et al.,
 *Towards molecular stratification of pediatric T-cell lymphoblastic lymphomas based on Minimal Disseminated Disease and NOTCH1/FBXW7 mutational status: the French EURO-LB02 experience (preprint)*,
