@@ -8,8 +8,24 @@ before_script:
 
 stages:
   - test_tools
+  - test_quality
+  - test_unit
+  - deploy_review
+  - test_germlines
+  - test_functional
   - test_cypress_client
-
+  - test_tutorial
+  - test_tutorial_server
+  - test_shouldvdj
+  - test_functional_external
+  - coverage
+  - tgz_release
+  - valgrind_unit
+  - valgrind_functional
+  - multiple_tests
+  - benchmark
+  - publish_release
+  - deploy_prod
 # Anchors
 
 .coverage_dependency:
