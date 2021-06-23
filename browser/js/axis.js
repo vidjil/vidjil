@@ -103,6 +103,7 @@ Axis.prototype = {
         this.fct = json.fct    
         this.color = json.color
         this.sort = json.sort
+        this.min_step = json.min_step
 
         this.germline = "multi" 
         if ('germline' in json)
@@ -230,7 +231,8 @@ Axis.prototype = {
                 var delta = this.scale.max - this.scale.min
                 
                 var nice = nice_min_max_steps(this.scale.min, this.scale.max, max)
-                this.step = nice.step
+                if (typeof this.min_step == "undefined") this.min_step = nice.step
+                this.step = Math.max(nice.step, this.min_step)
                 this.precision = nice_number_digits(this.step, 1)
 
                 this.scale.nice_min = nice.min
