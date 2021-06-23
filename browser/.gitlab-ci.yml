@@ -2,7 +2,6 @@
 .test_cypress_base:
   stage: test_cypress_client
   script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker pull "vidjilci/cypress_with_browsers:latest"
     - cd browser/
     - make icons
