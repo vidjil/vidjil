@@ -58,7 +58,7 @@ include:
   - local: '/doc/.gitlab-ci.yml' # Doc
   - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
   - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
-  - local: 'browser/.gitlab-ci.yml' # Vidjil-algo pipelines
+  - local: 'browser/.gitlab-ci.yml' # Client pipelines
   - template: Code-Quality.gitlab-ci.yml # Code quality
 
 # Algorithm
