@@ -468,7 +468,7 @@ python fuse.py -d lenSeqAverage -d seg3,seg5 sample_42.vidjil
 The command `fuse.py -l` yields the list of available axes,
 but currently only `lenSeqAverage` and `seq3,seq5` are supported.
 Adding axes can be done trough in `get_values()` in `tools/fuse.py`.
-Note that axes should also be added to `browser/js/axes.js` to be displayed in the client.
+Note that axes should also be added to `browser/js/axis_conf.js` to be displayed in the client.
 
 
 ## `germlines` list \[optional\]\[work in progress, to be documented\]

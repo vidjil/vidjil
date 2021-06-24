@@ -64,7 +64,7 @@ function loadAfterConf() {
                                          "js/clone",
                                          "js/dynprog",
                                          "js/list",
-                                         "js/axes",
+                                         "js/axis_conf",
                                          "js/axis",
                                          "js/graph",
                                          "js/scatterPlot_menu",
