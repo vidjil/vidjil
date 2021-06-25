@@ -282,6 +282,9 @@ List.prototype = {
         sort.id = "list_sort_select"
         sort.className = "list_sort_select"
         sort.onchange = function() {
+            self.update_is_pending = true
+            self.m.updateIcon()
+
             self.sort_option[this.value]()
             self.sort_option_selected = this.value
             // close the lock
@@ -290,6 +293,8 @@ List.prototype = {
             var div = document.getElementById("div_sortLock")
             div.className  = "icon-lock-1 list_lock_on"
             div.title  = "Release sort as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.m.t, "names")
+            self.update_is_pending = false
+            self.m.updateIcon()
         }
         
         for (var key in this.sort_option) {

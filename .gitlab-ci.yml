@@ -13,6 +13,7 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
+  - test_cypress_client
   - test_tutorial
   - test_tutorial_server
   - test_shouldvdj
@@ -25,7 +26,6 @@ stages:
   - benchmark
   - publish_release
   - deploy_prod
-
 # Anchors
 
 .coverage_dependency:
@@ -58,6 +58,7 @@ include:
   - local: '/doc/.gitlab-ci.yml' # Doc
   - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
   - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
+  - local: 'browser/.gitlab-ci.yml' # Client pipelines
   - template: Code-Quality.gitlab-ci.yml # Code quality
 
 # Algorithm
@@ -283,7 +284,6 @@ old-chrome-browser-functional-external-chrome:
   extends: .browser-functional-external-chrome
   tags:
     - legacy
-
 
 
 .browser-tutorial:
@@ -629,3 +629,4 @@ stop_deploy_review_server:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
+

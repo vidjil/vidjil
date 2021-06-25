@@ -614,3 +614,67 @@ webpage.
     If you have to launch `irb` on a remote server without X (only using `Xvfb`)
     you may be interested to use the [redirection over SSH](https://en.wikipedia.org/wiki/Xvfb#Remote_control_over_SSH).
 
+
+### Functional with cypress (release candidate)
+
+To avoid `Watir` limitation on latest versions of browsers, we adopt [Cypress](https://docs.cypress.io/guides/overview/why-cypress#In-a-nutshell).
+The testing pipeline is build on a docker image which include legacy and latest version of chrome and firefox (as at june 2021).
+We will progressivly convert Watir tests on Cypress.
+
+1.  Instalation
+
+The docker image to used can be build from local repository, or downloaded from dockerhub repository.
+Docker should be installed for these tests.
+
+  1. Local build
+
+  ```bash
+  docker build ./docker/ci  -t "vidjilci/cypress_with_browsers:latest"
+  ```
+
+  2. Dockerhub pull
+  ```bash
+  docker pull "vidjilci/cypress_with_browsers:latest"
+  ```
+
+2. Usage
+
+The default usage of cypress pipeline use docker image and is launch in headless mode. 
+See the makefile rule `functional_browser_cypress`.
+This rule launch the next command:
+  ```bash
+  docker run \
+      -v $(PWD)/browser/test/cypress:/app/cypress \
+      -v $(PWD)/browser/test/data/:/app/cypress/fixtures/data/  \
+      -v $(PWD)/doc/:/app/cypress/fixtures/doc/  \
+      -v $(PWD):/app/vidjil \
+      -v "$(PWD)/docker/ci/cypress_script.bash":"/app/script.bash" \
+      -v "$(PWD)/docker/ci/cypress.json":"/app/cypress.json" \
+      --env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash
+  ```
+
+Various local volumes are mounted for these tests.
+Tests scripts are located in `browser/test/cypress`. 
+In this directory you can find scripts of `support` (shared functions), `fixtures` (datas used during tests) and finally `integration` (testing scripts).
+
+3. Interactive mode
+
+For interactive mode, Cypress should be installed on local computer and some symbolic links should be created.
+More informations will be provided next.
+
+4. Troubleshooting
+
+  1. Xvfb error
+
+  Sometime during developpement, the cypress pipeline can failed. In some case, the XVDB server can still open after test ending and the docker image still open.
+  In this case, stop the docker container.
+  ```bash
+  docker ps
+  docker stop $container_id
+  ```
+
+  2. Right error on produced files (report and screenshot)
+  Files produced by cypress docker are made with root right. These files should be deleted with root privilege.
+  ```bash
+  sudo rm -r browser/test/cypress/report browser/test/cypress/screenshots
+  ```

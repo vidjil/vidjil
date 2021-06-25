@@ -103,7 +103,7 @@ Model_loader.prototype = {
         var self = this;
 
         console.log("load()");
-
+        this.loading_is_pending = true
         if (document.getElementById(id)
             .files.length === 0) {
             return;
@@ -127,6 +127,7 @@ Model_loader.prototype = {
             self.check_export_monitor()
             self.file_source = "local";
         }
+        this.loading_is_pending = false
 
     }, 
 
