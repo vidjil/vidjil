@@ -178,6 +178,11 @@ Michaela Kotrova et al.,
 Cytometry Part A, 93(11):1118-1124, 2018
 <http://dx.doi.org/10.1002/cyto.a.23604>
 
+Anton W. Langerak,
+*High-Throughput Immunogenetics for Clinical and Research Applications in Immunohematology: Potential and Challenges*,
+Journal of Immunology, 2017, 198(10):3765-3774,
+<https://dx.doi.org/10.4049/jimmunol.1602050>
+
 Zhenhua Li et al.,
 *Identifying IGH disease clones for MRD monitoring in childhood B-cell acute lymphoblastic leukemia using RNA-Seq*,
 Leukemia, 2020, 34:2418-2429,
@@ -207,6 +212,11 @@ Edit Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
 Blood, 2018,
 <https://dx.doi.org/10.1182/blood-2017-10-810739>
+
+Rathana Kim et al.,
+*Adult T-cell acute lymphoblastic leukemias with IL7R pathway mutations are slow-responders who do not benefit from allogeneic stem-cell transplantation*,
+Leukemia, 2020, 34, 1730-1740,
+<https://dx.doi.org/10.1038/s41375-019-0685-4>
 
 Mikaël Salson et al.,
 *High-throughput sequencing in acute lymphoblastic leukemia: Follow-up of minimal residual disease and emergence of new clones*,
@@ -247,6 +257,10 @@ Amelie Trinquand et al.,
 *Towards molecular stratification of pediatric T-cell lymphoblastic lymphomas based on Minimal Disseminated Disease and NOTCH1/FBXW7 mutational status: the French EURO-LB02 experience (preprint)*,
 medRxiv 2020.09.08.20189829,
 <https://www.medrxiv.org/content/10.1101/2020.09.08.20189829v1>
+
+Patrik Villarèse et al.,
+*One step next generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukemia*,
+ed. Anton W. Langerak, Methods in Molecular Biology, forthcoming
 
 Gary Wright et al.,
 *Clinical benefit of a high‐throughput sequencing approach for minimal residual disease in acute lymphoblastic leukemia*,
