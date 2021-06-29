@@ -132,7 +132,8 @@ AXIS_DEFAULT = {
         name:       "N length",
         doc:        "N length, from the end of the V/5' segment to the start of the J/3' segment (excluded)",
         fct:        function(clone) {return clone.getNlength()},
-        autofill:   true
+        autofill:   true,
+        min_step:   1
     },
     "CDR3 length (nt)": {
         name:       "CDR3 length (nt)",
@@ -148,22 +149,22 @@ AXIS_DEFAULT = {
                         "productive":       {text:"productive"},
                     },
         fct:        function(clone) {return clone.getProductivityName()},
-        pretty: function(tag) { return icon_pm(tag, "productive", "not productive") },
+        pretty:     function(tag) { return icon_pm(tag, "productive", "not productive") },
         isInAligner: true
     },
     "productivity detailed": {
         name:       "productivity detailed",
         labels:     {
-                        "no CDR3 detected": {text:"no CDR3 detected"},
                         "productive":       {text:"productive"},
-                        "stop-codon":       {text:"stop codon"},
-                        "out-of-frame":     {text:"out of frame"},
-                        "no-WPGxG-pattern": {text:"no {WP}GxG pattern"},
                         "not-productive":   {text:"not productive"}
                     },
         fct:        function(clone) {return clone.getProductivityNameDetailed()},
-        sort :      false,
-        isInAligner: true
+        sort :      function(a,b){
+                        var order = ["productive","not-productive","stop-codon","out-of-frame","no-WPGxG-pattern","no CDR3 detected"]
+                        return order.indexOf(a) - order.indexOf(b);
+                    },
+        isInAligner:true,
+        autofill :  true
     },
     "productivity IMGT": {
         name :      "productivity [IMGT]",

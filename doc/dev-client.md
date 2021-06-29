@@ -91,7 +91,7 @@ Moreover, the state of the client can be encoded in the URL, as in <http://app.v
 | `plot=x,y,m`     | plot (x axis, y axis) |
 | `clone=xx,xx,xx` | selected clone ids    |
 
-For `plot` the axis names are found in `browser/js/axes.js`. `m` is optional, and defines the type of plot (either `grid` or `bar`).
+For `plot` the axis names are found in `browser/js/axis_conf.js`. `m` is optional, and defines the type of plot (either `grid` or `bar`).
 
 We intend to encode more parameters in the URL.
 
@@ -283,14 +283,35 @@ In the `console.log`, the field `priority` takes one of those priorities.
 You want to add a dimension in the scatterplot or as a color? Read the
 following.
 
-1.  Scatterplot
+1.  Axis
     
-    In [scatterPlot.js](../browser/js/scatterPlot.js), the `available_axis` object defines the dimensions that
+    In [axes.js](../browser/js/axes.js), the `AXIS_DEFAULT` object defines the dimensions that
     can be displayed. It suffices to add an entry so that it will be proposed
     in the X and Y axis. This kind of way of doing should be generalized to
     the other components.
+
+    Here is some of the settings you can use to customize your axis.
+      - name
+        a short description of the axis
+      - doc
+        a more detailled description of the axis
+      - fct
+        a javascript function that must return a value to be displayed on the axis for a given clone ID
+      - scale
+        used to define numerical axis min/max value 
+      - labels 
+        a list of labels that must always be present on the axis even if no clones has returned the corresponding value.
+      - autofill
+        autofill : true mean the list of label will be created or extended with all unique values returned by the clones.
+        It will also create an adapted scale with the min/max value returned by the clones in case of a numerical axis.
+      - sort
+        you can provide a custom comparison function to sort the labels in a specific order
+
+    There is also other settings that can be used to customize even further labels appearance or display, please check the already defined axes in [axes.js] to learn more about them. 
     
-    The presets are defined in the `preset` object.
+2.  Preset
+
+    The presets are defined in the `preset` object that can be found in [scatterPlot_menu.js].
 
 2.  Color
     

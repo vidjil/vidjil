@@ -215,12 +215,12 @@ QUnit.test("axes productivity detailed", function(assert) {
 
     var axes_legend = document.getElementById("visu_axis_x_container").childNodes
     setTimeout( function() {
-        assert.equal( axes_legend[0].__data__.text, "no CDR3 detected", "sp legend productivity; no CDR3 detected")
-        assert.equal( axes_legend[1].__data__.text, "productive",       "sp legend productivity; productive")
-        assert.equal( axes_legend[2].__data__.text, "stop codon",   "sp legend productivity; stop codon")
-        assert.equal( axes_legend[3].__data__.text, "out of frame", "sp legend productivity; out of frame")
-        assert.equal( axes_legend[4].__data__.text, "no {WP}GxG pattern",   "sp legend productivity; no {WP}GxG pattern")
-        assert.equal( axes_legend[5].__data__.text, "not productive",   "sp legend productivity; not productive")
+        assert.equal( axes_legend[0].__data__.text, "productive", "sp legend productivity; productive")
+        assert.equal( axes_legend[1].__data__.text, "not productive",       "sp legend productivity; not productive")
+        assert.equal( axes_legend[2].__data__.text, "out-of-frame", "sp legend productivity; out of frame")
+        assert.equal( axes_legend[3].__data__.text, "stop-codon",   "sp legend productivity; stop codon")
+        assert.equal( axes_legend[4].__data__.text, "no CDR3 detected",   "sp legend productivity; no cdr3 detected")
+        assert.equal( axes_legend[5].__data__.text, "no-WPGxG-pattern",   "sp legend productivity; no-WPGxG-pattern")
         ready()
     }, 150);
 })
