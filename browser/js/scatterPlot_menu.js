@@ -66,21 +66,27 @@ ScatterPlot_menu.prototype = {
     initMenu: function() {
         var self = this;
         
-        var divParent = document.getElementById(this.id)
+        var template = document.getElementById("scatterplot-menu-content");
+        var clone = template.content.firstElementChild.cloneNode(true);   
+        
+        this.menu = document.createElement('div');
+        this.menu.className = "sp_menu";
+        this.menu.id        = this.id+"_sp_menu";
+        this.menu.appendChild(document.createTextNode("plot"));
+        this.menu.appendChild(clone);
+
         var anchor = document.createElement('div');
         anchor.className = "sp_menu_anchor";
-        var menu = document.createElement('div');
-        menu.className = "sp_menu";
-        menu.id        = this.id+"_sp_menu";
-        var content = document.createElement('div');
-        content.className = "sp_menu_content";
-        
-        var div_x = document.createElement('div');
-        div_x.className = "axis_select axis_select_x";
+        anchor.appendChild(this.menu);
 
-        var div_y = document.createElement('div');
-        div_y.className = "axis_select axis_select_y";
-        
+        var divParent = document.getElementById(this.id)
+        divParent.insertBefore(anchor, divParent.firstChild);
+
+        this.initButton();
+        this.initSelect();
+        this.initPreset();
+        this.initSlider();
+    },
         var div_preset = document.createElement('div');
         div_preset.className = "axis_select axis_select_preset";
 
