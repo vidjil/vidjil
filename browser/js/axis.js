@@ -192,8 +192,6 @@ Axis.prototype = {
                 else if (s.max > 0) s.min_p = s.max/10
                 else                s.min_p = 0.1        //TODO: case of negative log scale
             }
-
-
         }
 
         return this
@@ -224,13 +222,21 @@ Axis.prototype = {
         var max = this.maxLabel - Object.keys(this.labels).length
         if (max < 4) max = 5
 
+
         if (this.scale){
             var labelCount = 0
 
+            //select min/max range before computing labels
+            var smin = this.scale.min;
+            var smax = this.scale.max;
+            if (this.useCustomScale){
+                smin = this.scale_custom_min;
+                smax = this.scale_custom_max;
+            }
+
             if (this.scale.mode == "linear"){
-                var delta = this.scale.max - this.scale.min
                 
-                var nice = nice_min_max_steps(this.scale.min, this.scale.max, max)
+                var nice = nice_min_max_steps(smin, smax, max)
                 if (typeof this.min_step == "undefined") this.min_step = nice.step
                 this.step = Math.max(nice.step, this.min_step)
                 this.precision = nice_number_digits(this.step, 1)
@@ -262,14 +268,14 @@ Axis.prototype = {
             }
 
             if (this.scale.mode == "log"){
-                this.scale.nice_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(this.scale.max))))
+                this.scale.nice_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(smax))))
                 this.scale.nice_min = Math.pow(10, Math.floor(Math.log10(Math.abs(this.scale.min_p))))
                 this.scale.nice_min_label = (this.scale.nice_min).toFixed(nice_number_digits(this.scale.nice_min, 1)) + "_l"
                 this.scale.nice_max_label = (this.scale.nice_max).toFixed(nice_number_digits(this.scale.nice_max, 1)) + "_l"
 
                 //add labels
                 if (this.scale.reverse){
-                    if (this.scale.min == 0 && this.labels[0] == undefined)
+                    if (smin == 0 && this.labels[0] == undefined)
                         this.labels[0] = {text: "0", type:"slim", side: "right"}
                     for (var k = this.scale.nice_max; k >= this.scale.nice_min; k=k/10){
                         this.addScaleLabel(k, "logScale")
@@ -280,7 +286,7 @@ Axis.prototype = {
                         this.addScaleLabel(z, "logScale")
                         labelCount++
                     } 
-                    if (this.scale.min == 0 && this.labels[0] == undefined)
+                    if (smin == 0 && this.labels[0] == undefined)
                         this.labels[0] = {text: "0", type:"slim", side: "left"}
                 }
             }
