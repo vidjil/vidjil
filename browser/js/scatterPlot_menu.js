@@ -87,8 +87,6 @@ ScatterPlot_menu.prototype = {
         this.initPreset();
         this.initSlider();
     },
-        var div_preset = document.createElement('div');
-        div_preset.className = "axis_select axis_select_preset";
 
     initButton: function() {
         var self = this;
@@ -148,63 +146,39 @@ ScatterPlot_menu.prototype = {
         }
     },
 
+    initPreset: function(){
+        var self=this;
+
+        this.select_preset = $(this.menu).find("[name='select_preset[]']")[0];
+
         var p = 0
         for (var i in this.preset) {
             element = document.createElement("option");
             element.setAttribute('value', i);
             element.appendChild(document.createTextNode('[' + (p < 10 ? p : '⇧' + (p-10)) + '] ' + i));
             this.select_preset.appendChild(element);
-	    p += 1;
+	        p += 1;
         }
-        
-        div_x.appendChild(document.createTextNode("x "));
-        div_x.appendChild(this.select_x);
-        div_y.appendChild(document.createTextNode("y "));
-        div_y.appendChild(this.select_y);
-        div_preset.appendChild(document.createTextNode("preset "));
-        div_preset.appendChild(this.select_preset);
-        
-        var span_icon_bar = document.createElement('div');
-        span_icon_bar.className = "sp_menu_icon";
-        span_icon_bar.id = this.id+"_bar";
-        jQuery.get("images/bar.svg", function(data) {
-                var svg = jQuery(data).find('svg');
-                $(span_icon_bar).empty().append(svg);
-            }, 'xml');
-        span_icon_bar.onclick = function(){
-                self.updateMode("bar");
-            };
-        
-        span_icon_plot = document.createElement('div');
-        span_icon_plot.className = "sp_menu_icon";
-        span_icon_plot.id = this.id+"_plot";
-        jQuery.get("images/plot.svg", function(data) {
-                var svg = jQuery(data).find('svg');
-                $(span_icon_plot).empty().append(svg);
-            }, 'xml');
-        span_icon_plot.onclick = function(){
-                self.updateMode("grid");
-            };
-        
-        var div_mode = document.createElement('div');
-        div_mode.className = "sp_menu_mode";
-        div_mode.appendChild(span_icon_bar);
-        div_mode.appendChild(span_icon_plot);
-        
-        //Added all childs
-        content.appendChild(div_preset);
-        content.appendChild(div_mode);
-        content.appendChild(div_x);
-        content.appendChild(div_y);
-        menu.appendChild(document.createTextNode("plot"));
-        menu.appendChild(content)
-        anchor.appendChild(menu);
-        divParent.insertBefore(anchor, divParent.firstChild);
-        
-        if (this.mode=="bar") $("#"+this.id+"_bar").addClass("sp_selected_mode")
-        if (this.mode=="grid") $("#"+this.id+"_plot").addClass("sp_selected_mode")
+
+        this.select_preset.onchange = function() {
+            self.updatePreset();
+        }
 
         this.setPreset(this.default_preset)
+    },
+
+    initSlider: function(){
+        var self = this;
+
+        this.slider_x = $(this.menu).find(".slider_x")[0];
+
+        $( this.slider_x ).slider({
+            range: true,
+            stop: function( event, ui ) {
+                self.updateScaleX();
+            }
+        });
+
     },
 
     /**
@@ -225,15 +199,51 @@ ScatterPlot_menu.prototype = {
         this.select_y.selectedIndex = select_y
 
         $(".sp_menu_icon").removeClass("sp_selected_mode");
-        $("#"+this.id+"_"+this.mode).addClass("sp_selected_mode");
+        $(this.menu).find(".sp_menu_icon_"+this.mode).addClass("sp_selected_mode");
 
+        if (this.axisX.scale){
+            var a = this.axisX
+
+            if (typeof a.scale_custom_min == "undefined") a.scale_custom_min = a.scale.min;
+            if (typeof a.scale_custom_max == "undefined") a.scale_custom_max = a.scale.max;
+
+            $(this.slider_x).show();
+            $(this.slider_x).slider( "option", "values", [ a.scale_custom_min, a.scale_custom_max ] )
+                            .slider( "option", "min", a.scale.min)
+                            .slider( "option", "max", a.scale.max)
+                            //.slider( "option", "step", a.min_step );
+
+            $(this.menu).find(".slider_x_min").html(a.scale.min);
+            $(this.menu).find(".slider_x_value1").html(a.scale_custom_min);
+            $(this.menu).find(".slider_x_value2").html(a.scale_custom_max);
+            $(this.menu).find(".slider_x_max").html(a.scale.max);
+
+        } else {
+            $(this.slider_x).hide();
+        }
+        
         return this;
+    },
+
+    updateScaleX: function(){
+        console.log("pouet updateScaleX")
+        this.axisX.useCustomScale = true;
+        this.axisX.scale_custom_min = $(this.slider_x).slider( "option", "values")[0];
+        this.axisX.scale_custom_max = $(this.slider_x).slider( "option", "values")[1];
+        this.smartUpdate();
+    },
+
+    resetCustomScale: function(){
+        this.axisX.scale_custom_min = undefined;
+        this.axisX.scale_custom_max = undefined;
+        this.axisX.useCustomScale = undefined;
     },
 
     /**
      * retrieve and apply selected preset in the preset menu selector
      * */
     changePreset: function(){
+        this.resetCustomScale();
         var elem = this.select_preset;
         this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y);
         this.m.update();
