@@ -90,50 +90,63 @@ ScatterPlot_menu.prototype = {
         var div_preset = document.createElement('div');
         div_preset.className = "axis_select axis_select_preset";
 
-        this.select_x = document.createElement('select');
-        //Initialisation du menu déroulant
-        this.select_x.setAttribute('name', 'select_x[]');
+    initButton: function() {
+        var self = this;
+
+        this.span_icon_bar =  $(this.menu).find(".sp_menu_icon_bar" )[0];
+        this.span_icon_grid = $(this.menu).find(".sp_menu_icon_grid")[0];
+
+        jQuery.get("images/plot.svg", function(data) {
+            var svg = jQuery(data).find('svg');
+            $(self.span_icon_grid).empty().append(svg);
+        }, 'xml');
+        this.span_icon_grid.onclick = function(){
+            self.updateMode("grid");
+        };
+
+        this.span_icon_bar.id = this.id+"_bar";
+        jQuery.get("images/bar.svg", function(data) {
+            var svg = jQuery(data).find('svg');
+            $(self.span_icon_bar).empty().append(svg);
+        }, 'xml');
+        this.span_icon_bar.onclick = function(){
+            self.updateMode("bar");
+        };
+
+        if (this.mode=="bar")  $(this.span_icon_bar ).addClass("sp_selected_mode")
+        if (this.mode=="grid") $(this.span_icon_grid).addClass("sp_selected_mode")
+    },
+
+    initSelect: function() {
+        var self = this;
+
+        this.select_x = $(this.menu).find("[name='select_x[]']")[0];
+        this.select_y = $(this.menu).find("[name='select_y[]']")[0];
+
+        var element;
+        for (var key in this.available_axis) {
+            var axisP = Axis.prototype.getAxisProperties(this.available_axis[key])
+            if (typeof axisP.hide == "undefined" || !axisP.hide){
+
+                element = document.createElement("option");
+                element.setAttribute('value', axisP.name);
+                element.appendChild(document.createTextNode( axisP.name));
+
+                this.select_x.appendChild(element);
+                this.select_y.appendChild(element.cloneNode(true));
+            }
+        }
+
         this.select_x.onchange = function() {
             self.changeXaxis();
             self.cancelPreset();
         }
 
-        this.select_y = document.createElement('select');
-        this.select_y.setAttribute('name', 'select_y[]');
         this.select_y.onchange = function() {
             self.changeYaxis();
             self.cancelPreset();
         }
-        
-        //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
-        var element;
-        for (var key in this.available_axis) {
-            var axisP = Axis.prototype.getAxisProperties(this.available_axis[key])
-            if (typeof axisP.hide == "undefined" || !axisP.hide){
-                element = document.createElement("option");
-                element.setAttribute('value', axisP.name);
-                var text = document.createTextNode( axisP.name);
-                element.appendChild(text);
-
-                var element2 = element.cloneNode(true);
-
-                this.select_x.appendChild(element);
-                this.select_y.appendChild(element2);
-            }
-        }
-
-        this.select_preset = document.createElement('select');
-        this.select_preset.className = "axis_select_preset_select";
-        //Initialisation du menu déroulant
-        this.select_preset.setAttribute('name', 'select_preset[]');
-        this.select_preset.onchange = function() {
-            self.updatePreset();
-        }
-        
-        element = document.createElement("option");
-        element.setAttribute('value', "custom");
-        element.appendChild(document.createTextNode("–"));
-        this.select_preset.appendChild(element);
+    },
 
         var p = 0
         for (var i in this.preset) {
