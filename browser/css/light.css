@@ -1134,9 +1134,9 @@ span.warningReads {
 }
 .sp_menu:hover .sp_menu_content,
 .sp_menu_content:focus {
-  padding: 8px 0px 0px 0px;
-  width: 180px;
-  height: 130px;
+  padding: 8px 8px 8px 8px;
+  width: 200px;
+  height: 200px;
 }
 .visu2_menu:hover .visu2_menu_content,
 .visu2_menu_content:focus {
