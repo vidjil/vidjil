@@ -1031,24 +1031,6 @@ ScatterPlot.prototype = {
 
         return this;
     },
-  
-    /**
-     * retrieve and apply selected splitMethod in the axisX menu selector
-     * */
-    changeXaxis: function() {
-        var elem = this.select_x;
-        this.changeSplitMethod(elem.value, this.splitY, this.mode);
-        this.smartUpdate();
-    },
-
-    /**
-     * retrieve and apply selected splitMethod in the axisY menu selector
-     * */
-    changeYaxis: function() {
-        var elem = this.select_y;
-        this.changeSplitMethod(this.splitX, elem.value, this.mode);
-        this.smartUpdate();
-    },
     
     /* Fonction permettant de mettre à jour de l'axe des X
      * @param data - Un tableau d'objets, concernant les données et les légendages (pour l'axe de X)
