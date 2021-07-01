@@ -271,7 +271,7 @@ Axis.prototype = {
             }
 
             if (this.scale.mode == "log"){
-                this.scale.nice_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(this.scale.max))))
+                this.scale.nice_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(smax))))
                 this.scale.nice_min = Math.pow(10, Math.floor(Math.log10(Math.abs(this.scale.min_p))))
                 this.scale.nice_custom_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(smax))))
                 this.scale.nice_custom_min = Math.pow(10, Math.floor(Math.log10(Math.abs(smin))))
