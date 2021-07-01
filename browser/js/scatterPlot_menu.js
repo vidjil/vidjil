@@ -243,6 +243,26 @@ ScatterPlot_menu.prototype = {
         }
     },
 
+    /**
+     * retrieve and apply selected splitMethod in the axisX menu selector
+     * */
+    changeXaxis: function() {
+        this.resetCustomScale();
+        var elem = this.select_x;
+        this.changeSplitMethod(elem.value, this.splitY, this.mode);
+        this.smartUpdate();
+    },
+
+    /**
+     * retrieve and apply selected splitMethod in the axisY menu selector
+     * */
+    changeYaxis: function() {
+        this.resetCustomScale();
+        var elem = this.select_y;
+        this.changeSplitMethod(this.splitX, elem.value, this.mode);
+        this.smartUpdate();
+    },
+
     updatePreset: function(){
         this.changePreset();
     },
