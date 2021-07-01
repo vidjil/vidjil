@@ -94,4 +94,38 @@ describe('Actions v1', function () {
 
 
 
+
+  it('Handle a cluster in list',  function() {
+    // link to issue #4806
+    cy.openAnalysis("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis")
+
+    // Open a loaded cluster
+    cy.get('#listElem_6')
+      .should("not.be.visible")
+    cy.get('#clusterBox_5 > .icon-plus').click()
+
+    // remove sub clone
+    cy.get('#clusterBox_5 > .icon-minus')
+      .should("exist")
+    cy.get('#delBox_list_6 > .icon-cancel')
+      .should('be.visible')
+      .click()
+    cy.update_icon()
+
+    // Test that icon disapear
+    cy.get('#clusterBox_5 > .icon-plus')
+      .should("not.exist")
+    cy.get('#clusterBox_5 > .icon-minus')
+      .should("not.exist")
+    cy.get('#clusterBox_5')
+      .should("contain", " ")
+
+    // Subclone should be visible in main list
+    cy.get('#listElem_6')
+      .should("be.visible")
+    return
+  })
+
+
+
 })

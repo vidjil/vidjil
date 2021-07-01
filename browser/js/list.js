@@ -520,7 +520,7 @@ List.prototype = {
                 }
                 self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
             } else {
-                cloneDom.getElement("clusterBox").appendChild(document.createTextNode(' '));
+                cloneDom.getElement("clusterBox").innerHTML = "<text> </text>";
                 if (this.m.clusters[cloneID].length < 2) display = false
                 document.getElementById("cluster"+cloneID).style.display = "none";
             }
