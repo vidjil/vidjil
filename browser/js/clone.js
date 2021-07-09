@@ -1536,6 +1536,7 @@ Clone.prototype = {
      *
      * */
     getHtmlInfo: function () {
+        var self = this;
         var isCluster = this.getCluster().length
         var time_length = this.m.samples.order.length
         var html = ""
@@ -1559,6 +1560,28 @@ Clone.prototype = {
             }
             div += "</tr>" ;
             return div;
+        }
+
+        var row_cast_content = function(title, content) {
+            if ("info" in content) {
+                // Textual field
+                return row_1(title, content.info)
+            } else if ("name" in content) {
+                // Textual field
+                return row_1(title, content.name)
+            } else if ("val" in content) {
+                // Numerical field
+                return row_1(title, content.val)
+            } else if ("seq" in content) {
+                // Sequence field with pos
+                return row_1(title, content.seq)
+            } else {
+                // Sequence field
+                var nt_seq = self.getSegNtSequence(title);
+                if (nt_seq !== '') {
+                    return row_1(title, self.getSegNtSequence(title))
+                }
+            }
         }
 
         if (isCluster) {
@@ -1749,20 +1772,10 @@ Clone.prototype = {
         // Other seg info
         var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
         for (var s in this.seg) {
-            if (exclude_seg_info.indexOf(s) == -1 && this.seg[s] instanceof Object) {
-		if ("info" in this.seg[s]) {
-		    // Textual field
-		    html += row_1(s, this.seg[s].info)
-		} else if ("val" in this.seg[s]) {
-		    // Numerical field
-		    html += row_1(s, this.seg[s].val)
-		} else {
-		    // Sequence field
-		    var nt_seq = this.getSegNtSequence(s);
-		    if (nt_seq !== '') {
-			html += row_1(s, this.getSegNtSequence(s))
-		    }
-		}
+            if (exclude_seg_info.indexOf(s) == -1 &&
+                this.seg[s] instanceof Object &&
+                !s.includes("script_") ) {
+                  html += row_cast_content(s, this.seg[s])
             }
         }
         if (typeof this.seg.junction != 'undefined' &&
@@ -1800,6 +1813,21 @@ Clone.prototype = {
                         html += row_1(item, this.seg[external_tool][item])
                     }
                 }
+            }
+        }
+
+        // Result of external script
+        // Other seg info
+        for (s in this.seg) {
+            if (this.seg[s] instanceof Object &&
+                s.includes("script_") ) {
+                  html += header("Results of script '"+s.substring(7)+"'")
+                  console.log( this.seg[s].toString() )
+                  for (var sub in this.seg[s]) {
+                      console.log(`sub ${sub};; ${this.seg[s][sub].toString()}`)
+                      console.log( row_cast_content(sub, this.seg[s][sub]) )
+                      html += row_cast_content(sub, this.seg[s][sub])
+                  }
             }
         }
 
