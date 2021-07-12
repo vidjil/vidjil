@@ -1817,15 +1817,11 @@ Clone.prototype = {
         }
 
         // Result of external script
-        // Other seg info
         for (s in this.seg) {
             if (this.seg[s] instanceof Object &&
                 s.includes("script_") ) {
                   html += header("Results of script '"+s.substring(7)+"'")
-                  console.log( this.seg[s].toString() )
                   for (var sub in this.seg[s]) {
-                      console.log(`sub ${sub};; ${this.seg[s][sub].toString()}`)
-                      console.log( row_cast_content(sub, this.seg[s][sub]) )
                       html += row_cast_content(sub, this.seg[s][sub])
                   }
             }
