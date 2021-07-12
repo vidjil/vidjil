@@ -18,7 +18,7 @@
     <table class="db_table" id="table">
         <thead>
 	    <tr>
-	      <td class="column4"></td>
+	      <td class="column_50"></td>
             {{ for header in fields: }}
 	        {{if isAdmin or header['public']:}}
 	            <td class="{{if header['width']:}}column_{{=header['width']}}{{pass}} pointer"
@@ -29,9 +29,9 @@
                 {{ pass }}
             {{ pass }}
                 
-                <td class="column5"> </td>
-                <td class="column5"> </td>
-                <td class="column5"> </td>
+                <td class="column_20"> </td>
+                <td class="column_20"> </td>
+                <td class="column_20"> </td>
             </tr>
         </thead>
         

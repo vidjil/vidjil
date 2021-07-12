@@ -9,11 +9,11 @@
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
-            <tr><td class="column1">id</td>
+            <tr><td class="column_100">id</td>
                 <td class="column_200"> group / user</td>
                 <td class="column_200">permissions</td>
-                <td class="column1">access from</td>
-                <td class="column1"> access</td>
+                <td class="column_100">access from</td>
+                <td class="column_100"> access</td>
             </tr>
         </thead>
         {{admin = auth.can_modify_pre_process(request.vars["id"])}}
