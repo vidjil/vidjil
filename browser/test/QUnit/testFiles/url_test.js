@@ -3,16 +3,37 @@ QUnit.module("Url", {
 });
 
 /* ------------------------------------ */
-var current_url = "mock://"
+var initial_url = "mock://";
+var current_url = initial_url;
+
+function getSearch(url) {
+    var search = url.split('?')[1] ;
+    return (search == "" ? "" : '?' + search)
+}
+
+function getPathname(url) {
+    // remove protocol
+    var pathname = url.split('//');
+    pathname = pathname[pathname.length-1];
+    // remove search
+    pathname = pathname.split('?')[0];
+    // remove hostname
+    pathname = pathname.split('/');
+    return '/' + pathname.slice(1).join('/');
+}
+
 var windowMock = {
     mocked: true,
     location: {
-        search: {
-            toString: function() { var search = (current_url + '?').split('?')[1] ;
-                                   return (search == "" ? "" : '?' + search) }
-        }},
+        search: "",
+        pathname: ""
+    },
     history: {
-        pushState: function(x, y, url) { current_url = url }
+        pushState: function(x, y, url) {
+            current_url = url;
+            windowMock.location.search = getSearch(url);
+            windowMock.location.pathname = getPathname(url);
+        }
     }
 };
 windowMock.window = windowMock
@@ -24,6 +45,7 @@ QUnit.test("clone : modifyURL", function(assert) { with (windowMock) {
     var db = new Database(m)
     var notification = new Notification(m)
     m.parseJsonData(json_data,100)
+    m.file_source = "database";         //overwrite file_source to force url rewrite (url rewrite is disabled for local files)
     var sp = new ScatterPlot("visu",m);
     sp.init();
     var url= new Url(m, window);
@@ -88,6 +110,7 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
     var db = new Database(m)
     var notification = new Notification(m)
     m.parseJsonData(json_data,100)
+    m.file_source = "database";
     var sp = new ScatterPlot("visu",m);
     sp.init();
     var url= new Url(m, window);
@@ -113,4 +136,95 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
 
 }});
 
+QUnit.test("url: parse", function(assert) { with (windowMock) {
+    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar?param1=foo&param2=bar');
+    var m = new Model();
+    m.file_source = "database";
+    var url = new Url(m, windowMock);
 
+    var params = url.parseUrlParams('?param1=foo&param2=bar');
+    assert.deepEqual(params, {
+        "param1": "foo",
+        "param2": "bar"
+    }, "test url parse correct url");
+
+    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar?fakeparam&realparam=real');
+    url = new Url(m, windowMock);
+    params = url.parseUrlParams('?fakeparam&realparam=real');
+    assert.deepEqual(params, {
+        'realparam': 'real'
+    });
+}})
+
+QUnit.test("url: select clones", function(assert) { with (windowMock) {
+    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar?clone=1,2');
+    // create model
+    var m = new Model();
+    m.parseJsonData(json_data,100)
+    m.file_source = "database";
+    m.loadGermline()
+    m.initClones()
+    // Init scatterplot (before URL object)
+    var sp = new ScatterPlot("visu",m);
+    sp.init();
+    // Init ur manager
+    var url = new Url(m, windowMock);
+    m.url_manager = url;
+
+    // Verify that clones are correctly see
+    var params = url.parseUrlParams('?clone=1,2');
+    console.log( params )
+    assert.deepEqual(params, {
+        "clone": "1,2"
+    }, "test url parse correct url for clone selectionjjb  ");
+
+    // Apply url selection on clones
+    m.url_manager.applyURL()
+    assert.notOk( m.clone(0).select, "Clone 0 should NOT be selected")
+    assert.ok(    m.clone(1).select, "Clone 1 should be selected")
+    assert.ok(    m.clone(2).select, "Clone 2 should be selected")
+    assert.notOk( m.clone(3).select, "Clone 3 should NOT be selected")
+}})
+
+QUnit.test("url: generate", function(assert) { with (windowMock) {
+    var params = {
+        'param1': 'first',
+        'param2': 'second',
+        'param3': 'third'
+    };
+
+    var m = new Model();
+    m.file_source = "database";
+    var url = new Url(m, windowMock);
+    var param_string = url.generateParamsString(params);
+    assert.equal(param_string, "?param1=first&param2=second&param3=third");
+}});
+
+QUnit.test("url: positional parse", function(assert) { with (windowMock) {
+    var m = new Model();
+    m.file_source = "database";
+    windowMock.history.pushState('plop', 'plop', 'mock://foo.bar/1-3?param3=third');
+    var url = new Url(m, windowMock);
+
+    var params = url.parseUrlParams('?param3=third');
+    assert.deepEqual(params, {
+        'sample_set_id': '1',
+        'config': '3',
+        'param3': 'third'
+    });
+}});
+
+QUnit.test("url: positional generate", function(assert) { with (windowMock) {
+    var params = {
+        'sample_set_id': 1,
+        'config': 4,
+        'foobar': 'barfoo',
+        'param4': 'fourth'
+    };
+
+    var m = new Model();
+    m.file_source = "database";
+    var url = new Url(m, windowMock);
+    var param_string = url.generateParamsString(params);
+    assert.equal(param_string, '1-4?foobar=barfoo&param4=fourth');
+}});

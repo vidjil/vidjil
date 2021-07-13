@@ -49,7 +49,11 @@ OnlineFasta::~OnlineFasta() {
 }
 
 void OnlineFasta::init() {
-  if (! filename.empty()) {
+  if (filename == STDIN_FILENAME) {
+    input = &cin;
+    input_allocated = false;
+  }
+  else if (! filename.empty()) {
     input = new igzstream(filename.c_str());
 
     if (this->input->fail()) {

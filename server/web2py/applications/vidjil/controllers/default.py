@@ -108,7 +108,7 @@ def run_request():
     enough_space = vidjil_utils.check_enough_space(defs.DIR_RESULTS)
     if not enough_space:
         mail.send(to=defs.ADMIN_EMAILS,
-            subject="[Vidjil] Server space",
+            subject=defs.EMAIL_SUBJECT_START+" Server space",
             message="The space in directory %s has passed below %d%%." % (defs.DIR_RESULTS, defs.FS_LOCK_THRESHHOLD))
         return error_message("Runs are temporarily disabled. System admins have been made aware of the situation.")
 
@@ -293,7 +293,7 @@ def get_data():
     
     query = db( ( db.fused_file.sample_set_id == request.vars["sample_set_id"])
                & ( db.fused_file.config_id == request.vars["config"] )
-               ).select(db.fused_file.ALL).first()
+               ).select(db.fused_file.ALL, orderby=db.fused_file.fuse_date).last()
     if query is not None:
         fused_file = defs.DIR_RESULTS+'/'+query.fused_file
         sequence_file_list = query.sequence_file_list
@@ -479,7 +479,7 @@ def get_custom_data():
             config_id = db.results_file[id].config_id
             name = vidjil_utils.anon_ids([patient_run.id])[0] if sample_set.sample_type == defs.SET_TYPE_PATIENT else patient_run.name
             filename = db.sequence_file[sequence_file_id].filename
-            data["samples"]["original_names"].append(name + "_" + filename)
+            data["samples"]["original_names"].append(name + "_" + filename+ " ("+id+")")
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
             data["samples"]["commandline"].append(db.config[config_id].command)
@@ -501,7 +501,7 @@ def get_custom_data():
 def get_analysis():
     error = ""
 
-    if "custom" in request.vars :
+    if "custom" in request.vars and "sample_set_id" not in request.vars :
         res = {"success" : "true"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -519,9 +519,6 @@ def get_analysis():
         error += "id sample_set file needed, "
     if not auth.can_view_sample_set(request.vars["sample_set_id"]):
         error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
-
-    if "custom" in request.vars :
-        return gluon.contrib.simplejson.dumps(get_default_analysis(), separators=(',',':'))
     
     if error == "" :
         
@@ -557,9 +554,7 @@ def save_analysis():
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
 
-    if not "sample_set_id" in request.vars :
-        error += "It is currently not possible to save an analysis on a comparison of samples, "
-    elif not auth.can_save_sample_set(request.vars['sample_set_id']) :
+    if not auth.can_save_sample_set(request.vars['sample_set_id']) :
         error += "you do not have permission to save changes on this sample set"
 
     if error == "" :
@@ -630,7 +625,7 @@ def error():
     user_str = user_str.replace('<','').replace('>','').strip()
 
     mail.send(to=defs.ADMIN_EMAILS,
-              subject="[Vidjil] Server error - %s" % user_str,
+              subject=defs.EMAIL_SUBJECT_START+" Server error - %s" % user_str,
               message="<html>Ticket: %s<br/>At: %s<br />User: %s</html>" % (ticket_url, requested_uri, user_str))
 
     return "Server error"
@@ -667,7 +662,7 @@ def user():
             # Set up a new user, after register
 
             # Default permissions
-            add_default_group_permissions(auth, auth.user_group())
+            add_default_group_permissions(auth, auth.user_group(), anon=True)
 
             # Appartenance to the public group
             group_id = db(db.auth_group.role == 'public').select()[0].id

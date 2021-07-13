@@ -247,37 +247,184 @@ Clone.prototype = {
 
     /**
      * Add a new feature from a nucleotide sequence
-     */
-
-    addSegFeatureFromSeq: function(field_name, seq)
-    {
-        this.seg[field_name] = {};
-        this.seg[field_name].seq = seq;
-        this.computeSegFeatureFromSeq(field_name);
-    },
-
-    /**
      * Compute feature positions (start/stop) from its sequence, unless they are already present
      * Computed positions are converted to start from 0 and can be used without manipualtions
      */
-    computeSegFeatureFromSeq: function(field_name)
+    addSegFeatureFromSeq: function(field_name, sequence_to_add, extend)
     {
+        // Does feature and position exist in clone ?
         positions = this.getSegStartStop(field_name)
 
-	if (positions !== null)
-            // Start/stop do already exist
+        // Start/stop do already exist
+        if (positions !== null){
             return ;
+        }
 
-        seq = this.seg[field_name].seq
+        // try to get sequence_to_add from existing feature in the clone if not given
+        if (sequence_to_add == undefined && this.seg[field_name] != undefined && this.seg[field_name].seq != undefined){
+            sequence_to_add = this.seg[field_name].seq
+        }
 
-        var pos = this.sequence.indexOf(seq)
 
-        if (pos < 0)
-            // No feature here
-            return;
+        if (sequence_to_add != undefined){
+            // Insert sequence and positions if possible
+            var pos = this.sequence.indexOf(sequence_to_add)
+            if (pos != -1) {
+                // perfect match exist
+                this.seg[field_name] = {};
+                this.seg[field_name].seq = sequence_to_add;
+                this.seg[field_name].start = pos // seq is 0-based
+                this.seg[field_name].stop  = pos + sequence_to_add.length -1
+                return
+            } else if (extend == true || extend == undefined) {
+                // No perfect match; try extension with germline sequence
+                // Warning; predictive approach can't be perfect
+                var genes =  [5, 3]
+                for (var g = 0; g < genes.length; g++) {
+                    var gene_way = genes[g]
+                    if (field_name.indexOf(gene_way.toString()) != -1){ // Warning; need to clarify rule for feature naming
+                        var sequence = this.getExtendedRevCompSequence(gene_way)
+                        var res_search = this.searchSequence(sequence, sequence_to_add)
+                        if (res_search.ratio >= 0.75){
+                            germseq = this.getExtendedSequence(gene_way)
+                            var germpos = res_search.rst[1] -1 //to be 0-based
+                            if (gene_way == 5){
+                                computed_pos = this.seg["5"].stop + germpos - germseq.length + this.seg["5"].delRight +1
+                            } else if (gene_way == 3){
+                                computed_pos = this.seg["3"].start - this.seg["3"].delLeft + germpos
+                            }
+                            this.seg[field_name] = {};
+                            this.seg[field_name].seq = sequence_to_add;
+                            this.seg[field_name].start = computed_pos + 1
+                            this.seg[field_name].stop  = computed_pos + sequence_to_add.length
+                            break
+                        }
+                    }
+                }
+            }
+        }
+    },
 
-        this.seg[field_name].start = pos
-        this.seg[field_name].stop  = pos + seq.length -1
+    /**
+     * Get extended sequence of clone
+     * @param  {Number} gene_way Germline sequence to get (available option are 5, 4 or 3)
+     * @return {string}          If found, the clean germline sequence
+     */
+    getExtendedSequence: function(gene_way){
+        var gene = this.getGene(gene_way);
+        if (gene !== undefined) {
+            var germName = this.germline.substring(0, 3);
+            if (this.m.germline[germName] != undefined) {
+                germseq_found = this.m.findGermlineFromGene(gene);
+                if (germseq_found != undefined){
+                    germseq = germseq_found.toUpperCase().replace(/\./g, '');
+                    return germseq
+                }
+            }
+        }
+        return
+    },
+
+    /**
+     * Return sequence asked, extended or not, revcomp or not
+     * If no support sequence given, use default sequence of this clone
+     * @param  {Number}  geneway          position of extended sequence to get (available 5 and 3)
+     * @param  {boolean} revcomp          Set if the search should be return in revcomp mode
+     * @return {string}                   The getted sequence
+     */
+    getExtendedRevCompSequence: function(geneway, revcomp){
+        var sequence;
+        if (geneway == undefined && this.hasSequence()) {
+            sequence = this.sequence
+        } else if (geneway != undefined && this.hasSequence() && this.getGene(geneway) != undefined){
+            sequence = this.getExtendedSequence(geneway)
+        } else {
+            return undefined // no sequence available
+        }
+        if (revcomp == true){
+            sequence = this.getRevCompSequence(sequence)
+        }
+        return sequence
+    },
+
+    /**
+     * Search for a sub sequence in the sequence. 
+     * @param  {string}  sequence         Sequence support
+     * @param  {string}  search_sequence  Sequence to search
+     * @return {hash}                     Bioseq results
+     */
+    searchSequence: function(sequence, search_sequence){
+        if (sequence == undefined && search_sequence == undefined){
+            console.error("searchSequence: sequence/search_sequence undefined")
+            return undefined
+        }
+        var rst      = bsa_align(true, sequence, search_sequence, BIOSEQ_MATRIX, BIOSEQ_GAPS)
+        if (rst == null){ // case if sequence to find is not nucleotide sequence
+            // TODO: make a specific function to get nt statut of a sequence
+            return undefined
+
+        }
+        var ratio = rst[0] / (BIOSEQ_MATRIX[0] * search_sequence.length)
+
+        return {"ratio": ratio, "rst": rst, "pos": rst[1]}
+
+    },
+
+
+    /**
+     * Return the best matching sequence from a list of sequence
+     * Can be used to find the best matching primer from a list of primers
+     * If no perfect match, can search in germline sequence (longer) and use alignment option
+     * @param  {Array} sequences Array of sequence to search in clone
+     * @param  {Array} extend    Array of germline sequence to extend. Available option are 5 and 3
+     * @return {Array}           [best sequence found, use extension]
+     */
+    getBestMatchingSequence: function(sequences, extend){
+        var best_seq   = []
+        var best_rst   = []
+        var best_score = 0
+        var sequence_to_search;
+
+        // Look for perfect match in clone sequence
+        for (var seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
+            sequence_to_search = sequences[seq_pos]
+            if (this.sequence.indexOf(sequence_to_search) != -1) {
+                best_seq.push(sequence_to_search)
+            }
+        }
+        if (best_seq.length > 0){
+            // TODO; if multiple perfect match, return longer sequence
+            return [best_seq[0], false]
+        }
+
+        // No perfect match, look in germline sequence with alignement tool
+        var genes = (extend != undefined) ? extend : [5, 3]
+
+        // Look if germline sequence is available
+        for (var g = 0; g < genes.length; g++) {
+            var gene_way = genes[g]
+            germseq = this.getExtendedSequence(gene_way)
+            if (germseq != undefined){
+                for (seq_pos = 0; seq_pos < sequences.length; seq_pos++) {
+                    sequence_to_search = sequences[seq_pos]
+                    var sequence = this.getExtendedRevCompSequence(gene_way)
+                    var res_search = this.searchSequence(sequence, sequence_to_search)
+                    if (res_search.rst[0] > best_score && res_search.ratio >= 0.75 ){
+                        best_seq   = [sequence_to_search]
+                        best_rst   = [res_search.rst]
+                        best_score = res_search.rst[0]
+                    } else if (res_search.rst[0] == best_score){
+                        best_seq.push(sequence_to_search)
+                        best_rst.push(res_search.rst)
+                    }
+                }
+            }
+        }
+
+        if (!best_seq.length) {
+            return [undefined, false]
+        }
+        return [best_seq[0], true]
     },
 
 
@@ -298,7 +445,8 @@ Clone.prototype = {
     getSegNtSequence: function(field_name) {
         positions = this.getSegStartStop(field_name)
         if (positions !== null) {
-            return this.sequence.substr(positions.start, positions.stop - positions.start+1)
+            // return this.sequence.substr(positions.start-1, (positions.stop+1) - positions.start)
+            return this.sequence.substr(positions.start, this.getSegLength(field_name))
         }
         return '';
     },
@@ -311,7 +459,7 @@ Clone.prototype = {
     getSegLength: function(field_name) {
         positions = this.getSegStartStop(field_name)
         if (positions !== null) {
-            return positions.stop - positions.start + 1
+            return (positions.stop+1) - positions.start
         } else {
             return 'undefined';
         }
@@ -324,20 +472,20 @@ Clone.prototype = {
      * If no start and stop are given, return 0
      */
     getSegLengthDoubleFeature: function(field_name1, field_name2) {
-	positions1 = this.getSegStartStop(field_name1)
-	positions2 = this.getSegStartStop(field_name2)
+    	var positions1 = this.getSegStartStop(field_name1)
+    	var positions2 = this.getSegStartStop(field_name2)
 
-	if (positions1 !== null && positions2 !== null) {
-	    return positions2.stop - positions1.start + 1
-	} else {
-	    return 'undefined';
+    	if (positions1 !== null && positions2 !== null) {
+    	    return positions2.stop - positions1.start + 1
+    	} else {
+    	    return 'undefined';
         }
     },
 
     /**
      * Get the start and stop position of a given field (e.g. cdr3)
      * Getted positions are 0 based.
-     * If it does not exist return null
+     * If start OR stop position does not exist return null
      */
     getSegStartStop: function(field_name) {
         if (this.hasSequence() && this.hasSeg(field_name) &&
@@ -346,6 +494,40 @@ Clone.prototype = {
             return {'start': this.seg[field_name].start,
                     'stop': this.seg[field_name].stop}
         }
+        return null;
+    },
+
+    /**
+     * Get the start position of a given field
+     * if start position is missing and stop position exist > we assume this field start at the beginning of the sequence > return 0
+     * if start AND stop position are missing > this field has no defined position > return null
+     */
+    getSegStart: function(field_name) {
+        var hasStart = typeof this.seg[field_name].start !== 'undefined';
+        var hasStop = typeof this.seg[field_name].stop !== 'undefined';
+
+        if (this.hasSequence() && this.hasSeg(field_name) && (hasStart || hasStop) ) {
+            if (hasStart) return this.seg[field_name].start;
+            else return 0
+        }
+
+        return null;
+    },
+
+        /**
+     * Get the start position of a given field
+     * if stop position is missing and start position exist > we assume this field stop at the end of the sequence > return last position
+     * if start AND stop position are missing > this field has no defined position > return null
+     */
+    getSegStop: function(field_name) {
+        var hasStart = typeof this.seg[field_name].start !== 'undefined';
+        var hasStop = typeof this.seg[field_name].stop !== 'undefined';
+
+        if (this.hasSequence() && this.hasSeg(field_name) && (hasStart || hasStop) ) {
+            if (hasStop) return this.seg[field_name].stop;
+            else return this.sequence.length-1;
+        }
+
         return null;
     },
 
@@ -726,23 +908,6 @@ Clone.prototype = {
     
 
     /**
-     * Return true if the clone share the same axes than the given distribution clone
-     * @return {Clone} dclone   A distributon clone to compare with
-     * @return {Array} dvalues  A list of values for 
-     * @return {Boolean} True if share the same axes
-     */
-    sameAsDistribClone: function(dclone, dvalues, t){
-
-        var axes = dclone.axes
-        var values = this.getDistributionsValues(axes, t, round=true)
-
-        if (dvalues.equals(values)){
-            return true
-        }
-        return false
-    },
-
-    /**
      * Define a list of compatible real clones that share the same values for available axis
      * The list is sample dependant and differ for each sample
      * This list is called at the creation of the clone
@@ -750,21 +915,15 @@ Clone.prototype = {
     defineCompatibleClones: function(){
         var nb_sample = this.m.samples.number
         this.lst_compatible_clones = new Array(nb_sample)
-        for (var sample = 0; sample < this.lst_compatible_clones.length; sample++) {
-            this.lst_compatible_clones[sample] = []
-        }
 
         if (this.hasSizeDistrib()){
             var axes       = this.axes
             var dvalues    = this.getDistributionsValues(axes, 0, round=true)
-            for (var i = 0; i < this.m.clones.length; i++) {
-                var clone = this.m.clones[i]
-                if (clone.hasSizeConstant()) {
-                    for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
-                        if (clone.sameAsDistribClone(this, dvalues, timepoint)){
-                            this.lst_compatible_clones[timepoint].push(i)
-                        }
-                    }
+            for (var timepoint = 0; timepoint < nb_sample; timepoint++) {
+                if (this.m.distribs_compatible_clones[axes][timepoint][dvalues] != undefined){
+                    this.lst_compatible_clones[timepoint] = this.m.distribs_compatible_clones[axes][timepoint][dvalues]
+                } else {
+                    this.lst_compatible_clones[timepoint] = []
                 }
             }
         }
@@ -899,31 +1058,41 @@ Clone.prototype = {
     },
     
     getSequence : function () {
-        if (typeof (this.sequence) != 'undefined' && this.sequence !== 0){
+        if (this.hasSequence()){
             return this.sequence.toUpperCase()
         }else{
             return "0";
         }
     },
 
-    getRevCompSequence : function () {
-        if (typeof (this.sequence) != 'undefined' && this.sequence !== 0){
-            var dict_comp  = {
+    /**
+     * Return the reverse complement sequence
+     * If no raw sequence given, use the sequence of the clone
+     * @param  {[type]} sequence Sequence that can be given, as germline sequence of the clone
+     * @return {[type]}          [description]
+     */
+    getRevCompSequence : function (sequence) {
+        if (sequence == undefined){
+            if (this.hasSequence()){
+                sequence = this.sequence
+            } else {
+                return "0"
+            }
+        }
+
+        var dict_comp  = {
           'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C',
           'Y': 'R', 'R': 'Y', // pyrimidine (CT) / purine (AG)
           'W': 'S', 'S': 'W', // weak (AT) / strong (GC)
           'K': 'M', 'M': 'K', // keto (TG) / amino (AC)
           'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D',
           'N': 'N'
-          }
-            var revcompSeq = ""
-            for (var i = this.sequence.length -1 ; i > -1; i--) { // test -1
-                revcompSeq += dict_comp[this.sequence[i].toUpperCase()]
-            }
-            return revcompSeq
-        }else{
-            return "0";
         }
+        var revcompSeq = ""
+        for (var i = sequence.length -1 ; i > -1; i--) { // test -1
+            revcompSeq += dict_comp[sequence[i].toUpperCase()]
+        }
+        return revcompSeq
     },
     
     getPrintableSegSequence: function () {
@@ -932,13 +1101,23 @@ Clone.prototype = {
         }
 
         var s = ''
-        s += this.sequence.substring(0,  this.seg['5'].stop+1)
-        s += '\n'
+        if (this.seg['5'].start != undefined && this.seg['5'].start != 0){
+            s += this.sequence.substring(0,  this.seg['5'].start) + '\n'
+            s += this.sequence.substring(this.seg['5'].start,  this.seg['5'].stop+1) + '\n'
+        } else {
+            s += this.sequence.substring(0,  this.seg['5'].stop+1) + '\n'
+        }
+
         if (this.seg['5'].stop+1 < this.seg['3'].start ) {
             s += this.sequence.substring(this.seg['5'].stop+1, this.seg['3'].start)
             s += '\n'
         }
-        s += this.sequence.substring(this.seg['3'].start)
+        if (this.seg['3'].stop != undefined && this.seg['3'].stop != this.sequence.length){
+            s += this.sequence.substring(this.seg['3'].start, this.seg['3'].stop+1) +'\n'
+            s += this.sequence.substring(this.seg['3'].stop+1)
+        } else {
+            s += this.sequence.substring(this.seg['3'].start)
+        }
         return s
     },
 
@@ -1037,7 +1216,9 @@ Clone.prototype = {
     }, 
     
     getTag: function () {
-        if (this.tag) {
+        if (this.hasSizeDistrib()) {
+            return this.m.distrib_tag;
+        } else if (this.tag) {
             return this.tag;
         } else {
             return this.m.default_tag;
@@ -1054,6 +1235,21 @@ Clone.prototype = {
 
         return (this.seg.junction.productive ? "productive" : "not productive")
     },
+    getProductivityNameDetailed: function () {
+        if (typeof this.seg.junction == "undefined"){
+            return "no CDR3 detected"
+        } else if (this.isProductive() == true) {
+            return "productive"
+        } else {
+            var cause = this.getUnproductivityCause() 
+            if (cause != undefined) {
+                return cause
+            } else {
+                return "not-productive"
+            }
+        }
+    },
+
 
     getProductivityIMGT: function () {
         if (typeof this.seg.imgt !== 'undefined' &&
@@ -1344,8 +1540,26 @@ Clone.prototype = {
         var time_length = this.m.samples.order.length
         var html = ""
 
-        var header = function(content) { return "<tr><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; }
-        var row_1  = function(item, content) { return "<tr><td>" + item + "</td><td colspan='" + time_length + "'>" + content + "</td></tr>" ; }
+        // Functions to format html row
+        var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
+        var header = function(content, title) { 
+            title = (title == undefined) ? clean_title(content) : clean_title(title)
+            return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
+        }
+        var row_1  = function(item, content, title) { 
+            title = (title == undefined) ? clean_title(item) : clean_title(title)
+            return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
+        }
+        var row_from_list  = function(item, content, title) { 
+            title = (title == undefined) ?clean_title(item) : clean_title(title)
+            var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+            for (var i = 0; i < content.length; i++) {
+                col  = content[i]
+                div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+            }
+            div += "</tr>" ;
+            return div;
+        }
 
         if (isCluster) {
             html = "<h2>Cluster info : " + this.getName() + "</h2>"
@@ -1355,9 +1569,13 @@ Clone.prototype = {
 
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.90); m.closeInfoBox();'>correlated</a> clones</p>"
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
-        
+        html += "<p>Download clone information as "
+        html += "<a class='button' id='download_info_"+ this.index +"_airr' onclick='m.exportCloneAs(\"airr\", [" + this.index + "])'>AIRR</a>"
+        html += "<a class='button devel-mode' id='download_info_"+ this.index +"_json' onclick='m.exportCloneAs(\"json\", [" + this.index + "])'>JSON</a>"
+        html += "</p>"
+
         //column
-        html += "<div id='info_window'><table><tr><th></th>"
+        html += "<div id='info_window'><table id='clone_info_table_"+this.index+"'><tr><th>Samples names</th>"
 
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.m.getStrTime(this.m.samples.order[i], "name") + "</td>"
@@ -1367,9 +1585,22 @@ Clone.prototype = {
         //warnings
         if (this.isWarned()) {
             html += header("warnings")
-
+            var warnings = {}
+            // Create a dict of all warning present, and add each sample with it
+            // One warning msg by entrie, without duplication.
             for (i = 0; i < this.warn.length; i++) {
-                html += row_1(this.warn[i].code, this.warn[i].msg);
+                if (this.warn[i] != 0 && this.warn[i] != undefined){
+                    if (warnings[this.warn[i].msg] == undefined){
+                        warnings[this.warn[i].msg] = {"code":this.warn[i].code, "msg": this.warn[i].msg, "samples":[i]}
+                    } else {
+                        warnings[this.warn[i].msg].samples.push(i)
+                    }
+                }
+            }
+            // put warning html content, with list of concerned sample, without duplication
+            for (var warn in warnings) {
+                var pluriel = warnings[warn].samples.length > 1 ? "s" : ""
+                html += row_1(warnings[warn].code, warnings[warn].msg);
             }
         }
 
@@ -1405,6 +1636,15 @@ Clone.prototype = {
             for (var k = 0; k < time_length; k++) {
                 html += "<td>" + this.getStrSize(this.m.samples.order[k]) + "</td>"
             }
+
+            // Specific part for MRD script
+            if ('mrd' in this && this.getHtmlInfo_prevalent != undefined){
+                values = this.getHtmlInfo_prevalent()
+                for (var mrd_val = 0; mrd_val < values.length; mrd_val++) {
+                    html += row_from_list(values[mrd_val][0], values[mrd_val][1], values[mrd_val][2])
+                }
+            }
+
             html += header("representative sequence")
         }else{
             html += header("sequence")
@@ -1462,7 +1702,7 @@ Clone.prototype = {
         if (this.hasSizeConstant()) {
             html += header("segmentation" +
                 " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" + //Use to hide/display lists 
-                this.getHTMLModifState()) // icon if manual changement
+                this.getHTMLModifState(), "segmentation") // icon if manual changement
         } else {
             html += header("segmentation")
         }
@@ -1580,12 +1820,18 @@ Clone.prototype = {
       * start to fill a node with clone informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete
       * */
-    div_elem: function (div_elem) {
-
-        div_elem.removeAllChildren();
-        
+    div_elem: function (div_elem, clear) {
         var self = this;
 
+        if(typeof clear != undefined && clear==false ){
+            div_elem.getElementsByClassName("starBox")[0].onclick = function (e) {
+                self.m.openTagSelector([self.index], e);
+            }
+            return; 
+        }
+        
+
+        div_elem.removeAllChildren(); 
         // Tag/Star
         var span_star = document.createElement('span')
         span_star.setAttribute('class', 'starBox');
@@ -1613,6 +1859,7 @@ Clone.prototype = {
         // Info
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
+        span_info.id = "clone_infoBox_"+this.index;
         if (!this.hasSizeOther()) {
             span_info.onclick = function () {
                 self.m.displayInfoBox(self.index);
@@ -1627,9 +1874,9 @@ Clone.prototype = {
         }
 
         // Gather all elements
-        div_elem.appendChild(span_info);
-        div_elem.appendChild(span_star);
         div_elem.appendChild(span_axis);
+        div_elem.appendChild(span_star);
+        div_elem.appendChild(span_info);
     },
 
     toCSVheader: function (m) {
@@ -1672,7 +1919,7 @@ Clone.prototype = {
             return; 
         }
 
-        if (this.m.tag[this.getTag()].display || this.hasSizeDistrib()) {
+        if (this.m.tag[this.getTag()].display){
             this.active = true;
         }
         else {
@@ -1681,7 +1928,8 @@ Clone.prototype = {
     },
 
     disable: function () {
-        if (!this.hasSizeConstant()) return
+        if (!this.hasSizeConstant() && !this.hasSizeDistrib()) return
+        if (this.hasSizeDistrib() && this.m.tag[this.getTag()].display) return
         this.active = false;
     },
 
@@ -1828,7 +2076,6 @@ Clone.prototype = {
             round = true
         }
         var values = []
-        var available_axes = Axis.prototype.available()
 
         for (var a = 0; a < axes.length; a++) {
             var axe  = axes[a]
@@ -1836,8 +2083,8 @@ Clone.prototype = {
             if (axe == undefined || naxe == undefined){
                 console.default.error("Getter: not axis " + axe + "; ("+naxe+")")
             }
-            if (available_axes.indexOf(naxe) != -1 ) {
-                var axis_p = Axis.prototype.getAxisProperties(naxe)
+            if (this.m.available_axes.indexOf(naxe) != -1 ) {
+                var axis_p = AXIS_DEFAULT[naxe]
                 var value = axis_p.fct(this, timepoint)
                 values.push( value )
             } else {
@@ -1974,13 +2221,137 @@ Clone.prototype = {
             }
         }
 
+
         if (mode == "bar"){
             return (x.indexOf(axes[0]) != -1)
         } else {
-            // console.default.warn("same_axes_as_scatter: The scatter mode is not correct; '"+mode+"'")
-            return x.equals(axes)
+            // if scatterplot is in "one_system" mode
+            if (this.m.system != "multi" || typeof this.m.system != 'undefined'){
+                var locus = this.getLocus()
+                var same_locus = (this.m.getCurrentSystem() == locus)
+                return (x.equals(axes) && same_locus)
+            } else {
+                return x.equals(axes)
+            }
         }
     },
+
+
+    getUnproductivityCause: function(){
+        if (this.seg.junction != undefined && !this.isProductive()){
+            if (this.seg.junction.unproductive != undefined) { 
+                return this.seg.junction.unproductive
+            } else {
+                return undefined
+            }
+        }
+        return ""
+    },
+
+    isInFrame: function(){
+        if (this.isProductive()){
+            return true
+        } else {
+            var unproductivity_cause = this.getUnproductivityCause()
+            if (unproductivity_cause != undefined && unproductivity_cause == "out-of-frame"){
+                return false
+            }
+        }
+        return undefined
+    },
+
+    hasStopCodon: function(){
+        if (this.isProductive()){
+            return false
+        } else {
+            var unproductivity_cause = this.getUnproductivityCause()
+            if (unproductivity_cause != undefined) {
+                if (unproductivity_cause == "stop-codon"){
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+        return undefined
+    },
+
+
+    getAsAirr: function(time){
+        var rawreads = this.getRawReads(this.m.samples.order[time])
+        if ( isNaN(rawreads) || rawreads <= 0 ){
+            return
+        }
+
+        values = {
+            "sample": time,
+            "sample_name": this.m.samples.original_names[time],
+            "duplicate_count":    this.getRawReads(this.m.samples.order[time]),
+            "locus": this.germline,
+            "v_call":     this.getGene("5"),
+            "d_call":     this.getGene("4"),
+            "j_call":     this.getGene("3"),
+            "sequence_id":       this.id,
+            "sequence": this.sequence,
+            "productive":   this.isProductive(), //["seg","junction","productive"],
+            "vj_in_frame":  this.isInFrame() == true ? "T" : (this.isInFrame() == false ? "F": ""), //["seg","junction","unproductive"], // les deux ne sont pas compatible
+            "stop_codon":  this.hasStopCodon() == true ? "T" : (this.hasStopCodon() == false ? "F": ""), //["seg","junction","unproductive"], // les deux ne sont pas compatible
+            "junction_aa": this.getSegAASequence('junction'),
+            "cdr3_aa":     this.getSegAASequence('cdr3'),
+        }
+
+        var warnings = []
+        for (var i = 0; i < this.warn.length; i++) {
+            var warn = this.warn[i]
+            if (warn != undefined && warn != 0){
+
+                warnings.push( warn.code + "; " + warn.msg)
+            }
+        }
+        values.warnings = warnings.join("; ")
+            
+        // Other seg info
+        var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
+        for (var s in this.seg) {
+            if (exclude_seg_info.indexOf(s) == -1 && this.seg[s] instanceof Object) {
+                if ("info" in this.seg[s]) {
+                    // Textual field
+                    values["_"+s] = this.seg[s].info
+                } else if ("val" in this.seg[s]) {
+                    // Numerical field
+                    values["_"+s] = this.seg[s].val
+                } else {
+                    // Sequence field
+                    var nt_seq = this.getSegNtSequence(s);
+                    if (nt_seq !== '') {
+                        values["_"+s] = this.getSegNtSequence(s)
+                    }
+                }
+            }
+        }        
+
+        return values
+
+    },
+
+    getAsJson: function(){
+        data = {}
+        data.seg      = this.seg
+        data.id       = this.id
+        data.index    = this.index
+        data.sequence = this.sequence
+        data.reads    = this.reads
+        data.top      = this.top
+        data.reads    = this.reads
+        data.sample   = this.m.samples.original_names
+
+        data.GCContent            = this.GCContent
+        data._average_read_length = this._average_read_length
+        data.consensusLength      = this.consensusLength
+        return data
+    }
+
+
 };
 
 

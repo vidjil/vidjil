@@ -25,9 +25,8 @@ class TestSample < ServerTest
     # load patient list
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    table = $b.table(:id => "table")
-    table.wait_until(&:present?)
-    table
+    $b.table(:id => "table").wait_until(&:present?)
+    $b.table(:id => "table")
   end
 
   def go_to_set(index)
@@ -89,7 +88,14 @@ class TestSample < ServerTest
       form.text_field(:id => "file_info_%d" % i).set("#my_file_%d" % i)
       # TODO test other sets
     end
+
+    form_class = form.input(:type => "submit").class_name
+    assert( !(form_class.include? "disabledClass") ) # Submit button is not disabled before click
+
     form.input(:type => "submit").click
+    
+    form_class = form.input(:type => "submit").class_name
+    assert( (form_class.include? "disabledClass") ) # Submit button should be disabled after click
 
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
@@ -154,8 +160,9 @@ class TestSample < ServerTest
     assert ($b.form(:id => "upload_form").present?)
 
     form.file_field(:id => 'file_upload_2_1').set(File.expand_path(__FILE__))
-    form.input(:type => "submit").click
-
+    $b.form(:id => "upload_form").input(:css => "[type=submit]:not(.disabledClass)").click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
 
@@ -211,6 +218,9 @@ class TestSample < ServerTest
   end
 
   def test_set_association_create
+
+    ##  1. get the patient, run, set IDs of the sample sets which have #set_assoc_0 in the description 
+    
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
@@ -231,6 +241,8 @@ class TestSample < ServerTest
     table.wait_until(&:present?)
 
     set_id = table.a(:text => "#set_assoc_0").parent.parent.td(:class => 'uid').text
+
+    ## 2. Add a sample in the patient and make the association with the other sets
 
     samples_table = go_to_set_by_tag "#set_assoc_0"
     $b.span(:class => "button2", :text => "+ add samples").click
@@ -257,6 +269,7 @@ class TestSample < ServerTest
     form.text_field(:id => "file_sampling_date_0").set("2010-10-10")
     form.text_field(:id => "file_info_0").set("#my_file_add")
 
+    # Include the three sets (patient, run and set we identified previously)
     val = ":p 0 (2010-10-10) (#{patient_id})|:r run 0 (#{run_id})|:s generic 0 (#{set_id})"
     $b.execute_script("return $('#file_set_list').val('#{val}');")
 
@@ -264,6 +277,22 @@ class TestSample < ServerTest
 
     samples_table = $b.table(:id => "table")
     samples_table.wait_until(&:present?)
+    # Check that the "associated sets" header appears
+    assert(samples_table.td(:text => "associated sets").present?)
+    # We are on the patient we should have a link to the run and the set
+    $b.screenshot.save('/tmp/ci.png')
+    # Get the row with the created file
+    tag = samples_table.a(:text=>"#my_file_add")
+    assert(tag.present?)
+    tr = tag.parent.parent
+    assert (tr.present?)
+    assert (tr.tag_name == "tr")
+    assert(tr.span(:class => ["set_token", "run_token"], :text => "run 0").present?)
+    generic_span = tr.span(:class => ["generic_token", "set_token"], :title => "generic 0")
+    assert(generic_span.present?)
+    assert (generic_span.onclick.include? "db.call('sample_set/index'"), "onclick contains: "+generic_span.onclick
+
+    # Checking in the edit form that the three sets appear
     samples_table.a(:text => "#set_assoc_0").parent.parent.i(:class => "icon-pencil-2").click
 
     form = $b.form(:id => "upload_form")
@@ -331,7 +360,7 @@ class TestSample < ServerTest
     table = go_to_set_by_tag "#set_assoc_0"
 
     config_list = $b.select_list(:id => "choose_config")
-    assert ( config_list.optgroup(:label => "Vidjil-algo").exist? ), "optgroup is present in configlist"
+    assert ( config_list.optgroup(:label => "Human V(D)J recombinations").exist? ), "optgroup is present in configlist"
 
     config_list.select("2")
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}

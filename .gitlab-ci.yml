@@ -13,10 +13,12 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
+  - test_cypress_client
+  - test_tutorial
+  - test_tutorial_server
   - test_shouldvdj
   - test_functional_external
   - coverage
-  - prepare_release
   - tgz_release
   - valgrind_unit
   - valgrind_functional
@@ -24,7 +26,6 @@ stages:
   - benchmark
   - publish_release
   - deploy_prod
-
 # Anchors
 
 .coverage_dependency:
@@ -49,13 +50,16 @@ test_germlines:
     - make -C germline tests
   only:
     - /^feature-.*g.*\/.*$/
-    - schedules
 
-# Doc
+
+# Includes
 
 include:
-  - local: '/doc/.gitlab-ci.yml'
+  - local: '/doc/.gitlab-ci.yml' # Doc
   - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
+  - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
+  - local: 'browser/.gitlab-ci.yml' # Client pipelines
+  - template: Code-Quality.gitlab-ci.yml # Code quality
 
 # Algorithm
 
@@ -120,21 +124,16 @@ algo_valgrind_unit:
 algo_valgrind_functional:
   <<: *valgrind_functional
   when: manual
+  dependencies: []
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
 
 release_valgrind_functional:
   <<: *valgrind_functional
+  allow_failure: true
   only:
     - /^feature-.*a.*\/release$/
-
-prepare_release:
-  stage: prepare_release
-  script: make -C algo release RELEASE_TAG='rc'
-  when: manual
-  only:
-    - /^feature-.*a.*\/.*$/
 
 tgz_release:
   stage: tgz_release
@@ -159,7 +158,7 @@ copy_release:
         scp algo/releases/vidjil-algo*.tar.gz algo/releases/vidjil-algo*/vidjil-algo-*_* $repo
       done
       release_name=$(cat algo/release)
-      ssh $VIDJIL_WWW "cd /var/www/html/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-latest.tgz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-latest_x86_64"
+      ssh $VIDJIL_WWW "cd /var/www/html/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-algo-latest.tgz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-algo-latest_x86_64"
       ssh $VIDJIL_BONSAI "cd /bio1/www/html/vidjil; scp vidjil-algo-${release_name}* $VIDJIL_BONSAI_PROD:/bio1/www/html/vidjil"
   when: manual
   only:
@@ -186,10 +185,11 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    when: always
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - dev
     - schedules
   tags:
@@ -205,13 +205,14 @@ test_browser_unit:
     - HEADLESS=1 make -C browser/test functional
   artifacts:
     paths:
-    - browser/
+    - browser/ 
+    when: always
     reports:
       junit: browser/test/test/TEST-*.xml
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - schedules
   tags:
     - web
@@ -232,12 +233,13 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    when: always
     reports:
       junit: browser/test/test/TEST-*.xml
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - schedules
   tags:
     - web
@@ -283,13 +285,98 @@ old-chrome-browser-functional-external-chrome:
   tags:
     - legacy
 
+
+.browser-tutorial:
+  stage: test_tutorial
+  retry: 2
+  script:
+    - make -C browser
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.6.1
+    - HEADLESS=1 make test_tutorial
+  artifacts:
+    paths:
+    - browser/
+    reports:
+      junit: browser/test/test/TEST-*.xml
+    when: always
+  only:
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
+    - /^prod-client/
+    - schedules
+    - /tutorial/
+  tags:
+    - web-pandoc
+
+.browser-tutorial-chrome:
+  extends: .browser-tutorial
+  variables:
+    WATIR_CHROME: "1"
+
+
+ff32-browser-tutorial:
+  extends: .browser-tutorial
+  variables:
+    FIREFOX_VERSION: 32
+
+ff45-browser-tutorial:
+  extends: .browser-tutorial
+  variables:
+    FIREFOX_VERSION: 45
+
+chrome-browser-tutorial:
+  extends: .browser-tutorial-chrome
+        
+old-chrome-browser-tutorial:
+  extends: .browser-tutorial-chrome
+  tags:
+    - legacy
+
+
+
+server_tutorial_server:
+  stage: test_tutorial_server
+  extends: .test_server_base
+  retry: 1
+  script:
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.6.1
+    - HEADLESS=1 make test_tutorial_server
+  artifacts:
+    paths:
+      - browser/
+      - server/web2py/applications/vidjil/
+    reports:
+      junit: server/web2py/applications/vidjil/test/TEST-*.xml
+    when: always
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - prod-server
+    - dev
+    - schedules
+    - /tutorial/
+  tags:
+    - web-pandoc
+  variables:
+    FIREFOX_VERSION: 45
+
+
+# Code quality
+
 code_quality:
+  stage: test_quality
+  artifacts:
+    paths: [gl-code-quality-report.json]
+
+code_quality_custom:
   stage: test_quality
   script: make -C browser quality
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - prod-client
+    - /^prod-client/
     - dev
     - schedules
   tags:
@@ -314,15 +401,15 @@ test_server_unit:
     only:
       - /^feature-.*s.*\/.*$/
       - /^hotfix-.*s.*\/.*$/
-      - prod-server
+      - /^prod-server/
       - dev
       - schedules
     tags:
       - web
 
-.test_server_functional:
+.test_server_base:
   stage: test_functional
-  script:
+  before_script:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
     - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
@@ -332,28 +419,46 @@ test_server_unit:
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
+    - mkdir -p docker/postfix/ssl
     - cd docker && docker-compose up -d && cd ..
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
-    - source /etc/profile.d/rvm.sh
-    - rvm use 2.6.1
-    - HEADLESS=1 make functional_server
   after_script:
     - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
   artifacts:
     reports:
       junit: server/web2py/applications/vidjil/tests/test/TEST-*.xml
+    when: always
+    expire_in: 1 week
+    paths:
+    - server/web2py/ap‎plications/vidjil‎/tests/
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
-    - prod-server
+    - /^prod-server/
     - dev
     - schedules
   tags:
     - x86_64
     - docker
+
+.test_server_functional:
+  stage: test_functional
+  extends: .test_server_base
+  script:
+    - source /etc/profile.d/rvm.sh
+    - rvm use 2.6.1
+    - HEADLESS=1 make functional_server
+  artifacts:
+    reports:
+      junit: server/web2py/applications/vidjil/tests/test/TEST-*.xml
+    paths:
+      - browser/
+      - server/web2py/applications/vidjil/
+    when: always
+
 
 ff32-server-functional:
   extends: .test_server_functional
@@ -369,15 +474,31 @@ ff45-server-functional:
 
 # Benchmark
 
-benchmark_algo:
+.benchmark-algo:
+  image:  gcc:6.3
+  extends: .install-algo-dependencies
   stage: benchmark
   script:
-    - cd algo/tests ; python3 benchmark-releases.py -bic
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
+  artifacts:
+    paths:
+      - algo/tests/benchmark.log
   when: manual
+  dependencies: []
   only:
     - /^feature-.*a.*\/.*$/
   tags:
-    - several-compilers
+    - cidocker
+
+benchmark-algo:
+  extends: .benchmark-algo
+  script:
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -b -c -i 2018.10 -i 2019.03 -i 2020.04 -i 2021.02.2 -i alpha-2102
+
+benchmark-algo-full:
+  extends: .benchmark-algo
+  script:
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
 
 
 # Deployment
@@ -388,6 +509,7 @@ deploy_review:
     - make -C browser icons
     - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
     - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG
+  dependencies: []
   environment:
     name: review/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
@@ -404,23 +526,28 @@ deploy_review_server:
     - make -C browser icons
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
+    - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_BUILD_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
     - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/web2py/applications/vidjil/modules/defs.py
+    - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/web2py/applications/vidjil/modules/defs.py
+    - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
+    - mkdir browser/cgi
+    - cp docker/vidjil-client/conf/*.cgi browser/cgi
     - mv docker docker_${CI_BUILD_REF_SLUG}
     - cd docker_${CI_BUILD_REF_SLUG}
     - TMP_DOCKER=$(tempfile)
     - cp docker-compose.yml $TMP_DOCKER
     - awk -f ci/for-review.awk $TMP_DOCKER > docker-compose.yml
-    - sed -i '$e cat ci/fuse-entrypoint.sh' vidjil-server/scripts/fuse-entrypoint.sh
     - rm -f $TMP_DOCKER
     - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=/WEB2PY_ADMIN_PASSWORD=$REVIEW_SERVER_ADMIN_PASSWORD/" docker-compose.yml
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
-    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; ls -lnd ../browser | cut -d ' ' -f 3 > ../uid; docker-compose up -d mysql fuse uwsgi nginx workers"
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
   environment:
     name: review_server/$CI_BUILD_REF_NAME
-    url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/browser/
+    url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/
     on_stop: stop_deploy_review_server
-  when: manual
+    auto_stop_in: 2 months
+  dependencies: []
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
@@ -440,8 +567,8 @@ deploy_docker:
     - docker rmi $TAG "vidjil/$TYPE:latest"
   when: manual
   only:
-    - prod-server
-    - prod-client
+    - /^prod-server/
+    - /^prod-client/
   tags:
     - web
     - docker
@@ -450,17 +577,12 @@ deploy_prod:
   stage: deploy_prod
   script:
     - ssh $PROD_CLIENT_SERVER "
-         cd $PROD_CLIENT_PATH;
-         git fetch
-         && git reset --hard origin/prod-client
-         && make -C browser
-         && make -C browser sha1
-         && cp doc/analysis-example.vidjil browser/"
+         cd $PROD_CLIENT_PATH;"
   environment:
     name: production
     url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
   only:
-    - prod-client
+    - /^prod-client/
   tags:
     - web
 
@@ -488,6 +610,7 @@ stop_deploy_review:
   environment:
     name: review/$CI_BUILD_REF_NAME
     action: stop
+  dependencies: []
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
@@ -499,9 +622,11 @@ stop_deploy_review_server:
   script:
     - ssh $REVIEW_SERVER "set -o xtrace; docker-compose -f $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG/docker_$CI_BUILD_REF_SLUG/docker-compose.yml down -v ; rm -rf $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh $CI_BUILD_REF_SLUG"
   when: manual
+  dependencies: []
   environment:
     name: review_server/$CI_BUILD_REF_NAME
     action: stop
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
+

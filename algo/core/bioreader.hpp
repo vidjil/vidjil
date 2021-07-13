@@ -29,6 +29,7 @@
 #include <list>
 #include <stdexcept>
 
+#define STDIN_FILENAME "-"
 #define SAMPLE_APPROX_NB_SEQUENCES 200
 
 using namespace std;

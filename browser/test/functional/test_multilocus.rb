@@ -9,9 +9,6 @@ class TestMultilocus < BrowserTest
     super
     if not defined? $b
       set_browser("/doc/analysis-example.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
 
       # Make upload menu appear to test the application with this menu too
       $b.execute_script("$('#upload_summary')[0].style.display='block';")
@@ -156,6 +153,7 @@ class TestMultilocus < BrowserTest
     check_when_list_or_scatterplot_clicked
 
     $b.unselect
+    $b.update_icon.wait_while(&:present?)
     assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
   end
 
@@ -166,6 +164,7 @@ class TestMultilocus < BrowserTest
     check_when_list_or_scatterplot_clicked
 
     $b.unselect
+    $b.update_icon.wait_while(&:present?)
     assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
   end
 
@@ -230,9 +229,7 @@ class TestMultilocus < BrowserTest
 
   def test_14_export_sample_report
 
-    if $b.driver.capabilities.browser_name == 'chrome'
-      skip "Issue #3699 must be solved first"
-    end
+    skip_on_browser('chrome', nil, 'Issue #3699 must be solved first')
 
     assert ($b.scatterplot_x_legend(0).text.include? 'TRB'), "Current system should be TRB"
 
@@ -275,9 +272,7 @@ class TestMultilocus < BrowserTest
 
   def test_14b_export_sample_report
 
-    if $b.driver.capabilities.browser_name == 'chrome'
-      skip "Issue #3699 must be solved first"
-    end
+    skip_on_browser('chrome', nil, 'Issue #3699 must be solved first')
 
     # Select a clone
     $b.clone_in_scatterplot('43').click

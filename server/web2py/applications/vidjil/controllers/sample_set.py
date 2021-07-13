@@ -61,7 +61,29 @@ def index():
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" and request.vars["config_id"] != "None":
         config_id = long(request.vars["config_id"])
-        config_name = db.config[request.vars["config_id"]].name
+        config = True
+    elif request.vars["config_id"] and request.vars["config_id"] == "-1":
+        most_used_query = db(
+                (db.fused_file.sample_set_id == sample_set.id)
+            ).select(
+                db.fused_file.config_id.with_alias('id'),
+                db.fused_file.id.count().with_alias('use_count'),
+                groupby=db.fused_file.config_id,
+                orderby=db.fused_file.id.count(),
+                limitby=(0,1)
+            )
+        if len(most_used_query) > 0:
+            config_id = most_used_query[0].id
+            config = True
+        else:
+            config_id = -1
+            config = False
+    else:
+        config_id = -1
+        config = False
+
+    if config :
+        config_name = db.config[config_id].name
 
         fused = db(
             (db.fused_file.sample_set_id == sample_set_id)
@@ -73,7 +95,6 @@ def index():
         ).select(orderby=~db.analysis_file.analyze_date)
         
         
-        config = True
         fused_count = fused.count()
         fused_file = fused.select()
         fused_filename = info_file["filename"] +"_"+ config_name + ".vidjil"
@@ -81,17 +102,6 @@ def index():
         analysis_file = analysis
         analysis_filename = info_file["filename"]+"_"+ config_name + ".analysis"
         
-    else:
-        config_id = -1
-        config = False
-        fused_count = 0
-        fused_file = ""
-        fused_filename = ""
-        analysis_count = 0
-        analysis_file = ""
-        analysis_filename = ""
-
-    if config :
 	query =[]
 	
         query2 = db(
@@ -113,6 +123,12 @@ def index():
 		previous=row.sequence_file.id
 
     else:
+        fused_count = 0
+        fused_file = ""
+        fused_filename = ""
+        analysis_count = 0
+        analysis_file = ""
+        analysis_filename = ""
 
         query = db(
                 (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
@@ -125,15 +141,26 @@ def index():
                 )
             )
 
+
+    all_sequence_files = [r.sample_set_membership.sequence_file_id for r in query]
+
+    (shared_sets, sample_sets) = get_associated_sample_sets(all_sequence_files, [sample_set_id])
+    
+    samplesets = SampleSets(sample_sets.keys())
+    sets_names = samplesets.get_names()
+
+    ## assign set to each rows
     for row in query:
+        row.list_share_set = []
+        if row.sequence_file.id in shared_sets:
+            for elt in shared_sets[row.sequence_file.id]:
+                values = {"title": sets_names[elt],
+                          "sample_type": sample_sets[elt].sample_type, "id":elt}
+                row.list_share_set.append(values)
         if row.results_file.scheduler_task_id != None and db.scheduler_task[row.results_file.scheduler_task_id] != None:
             row.results_file.status = db.scheduler_task[row.results_file.scheduler_task_id].status
         else:
             row.results_file.status = ""
-
-
-
-
 
     tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()
@@ -143,11 +170,16 @@ def index():
 
     classification   = getConfigsByClassification()
 
+    http_origin = ""
+    if request.env['HTTP_ORIGIN'] is not None:
+        http_origin = request.env['HTTP_ORIGIN'] + "/"
+
     log.info('sample_set (%s)' % request.vars["id"], extra={'user_id': auth.user.id,
         'record_id': request.vars["id"],
         'table_name': "sample_set"})
     #if (auth.can_view_patient(request.vars["id"]) ):
     return dict(query=query,
+                has_shared_sets = len(shared_sets) > 0,
                 pre_process_list=pre_process_list,
                 config_id=config_id,
                 info=info_file,
@@ -162,7 +194,8 @@ def index():
                 sample_type = db.sample_set[request.vars["id"]].sample_type,
                 config=config,
                 classification=classification,
-                tag_decorator=tag_decorator)
+                tag_decorator=tag_decorator,
+                http_origin=http_origin)
 
 ## return a list of generic sample_sets
 def all():
@@ -182,8 +215,7 @@ def all():
 
     step = None
     page = None
-    is_not_filtered = "sort" not in request.vars and "filter" not in request.vars
-    if request.vars['page'] is not None and is_not_filtered:
+    if request.vars['page'] is not None:
         page = int(request.vars['page'])
         step = 50
 
@@ -194,21 +226,27 @@ def all():
     search, tags = parse_search(request.vars["filter"])
     group_ids = get_involved_groups()
 
-    list = SampleSetList(type, page, step, tags=tags)
-    list.load_creator_names()
-    list.load_sample_information()
-    list.load_config_information()
-    if isAdmin or len(get_group_list(auth)) > 1:
-        list.load_permitted_groups()
-    list.load_anon_permissions()
-    result = list.get_values()
-
-    # failsafe if filtered display all results
-    step = len(list) if step is None else step
-    page = 0 if page is None else page
-
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
+
+    f = time.time()
+    slist = SampleSetList(helper, page, step, tags, search)
+
+    log.debug("list loaded (%.3fs)" % (time.time() - f))
+
+    mid = time.time()
+
+    set_ids = set([s.sample_set_id for s in slist.result])
+    admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set)).select(db.sample_set.id)]
+    admin_permissions = list(set(admin_permissions) & set_ids)
+
+    log.debug("permission load (%.3fs)" % (time.time() - mid))
+
+    # failsafe if filtered display all results
+    step = len(slist) if step is None else step
+    page = 0 if page is None else page
+    result = slist.result
+
     fields = helper.get_fields()
     sort_fields = helper.get_sort_fields()
 
@@ -221,7 +259,6 @@ def all():
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-    result = helper.filter(search, result)
     log.info("%s list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
         'record_id': None,
         'table_name': "sample_set"})
@@ -232,6 +269,7 @@ def all():
                 fields = fields,
                 helper = helper,
                 group_ids = group_ids,
+                admin_permissions = admin_permissions,
                 isAdmin = isAdmin,
                 reverse = reverse,
                 step = step,
@@ -258,13 +296,12 @@ def stats():
     search, tags = parse_search(request.vars["filter"])
     group_ids = get_involved_groups()
 
-    list = SampleSetList(type, tags=tags)
-    list.load_sample_information()
-    list.load_anon_permissions()
-    result = list.get_values()
-
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
+
+    slist = SampleSetList(helper, tags=tags)
+    result = slist.result
+
     fields = helper.get_reduced_fields()
 
     ##sort result
@@ -282,7 +319,7 @@ def stats():
     log.info("%s stat list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
         'record_id': None,
         'table_name': "sample_set"})
-    log.debug("stat list (%.3fs)" % time.time()-start)
+    log.debug("stat list (%.3f s)" % (time.time()-start))
 
     return dict(query = result,
                 fields = fields,
@@ -544,7 +581,7 @@ def submit():
 
                 if (p['id'] % 100) == 0:
                     mail.send(to=defs.ADMIN_EMAILS,
-                    subject="[Vidjil] %d" % p['id'],
+                    subject=defs.EMAIL_SUBJECT_START+" %d" % p['id'],
                     message="The %dth %s has just been created." % (p['id'], set_type))
 
             else :
@@ -559,6 +596,21 @@ def submit():
                 register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
     if not error:
+        if not bool(length_mapping):
+            creation_group_tuple = get_default_creation_group(auth)
+            response.view = 'sample_set/form.html'
+            sets = {
+                'patient': [],
+                'run': [],
+                'generic': []
+            }
+            return dict(message=T("form is empty"),
+                    groups=creation_group_tuple[0],
+                    group_ids = get_involved_groups(),
+                    master_group=creation_group_tuple[1],
+                    sets=sets,
+                    isEditing = False)
+
         max_num = max(length_mapping.keys())
         msg = "successfully added/edited set(s)"
         if sum_sets == 1:
@@ -713,7 +765,7 @@ def getConfigsByClassification():
     classification   = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
     if auth.can_process_sample_set(request.vars['id']) :
         for class_elt in db( (db.classification)).select(orderby=db.classification.id):
-            configs = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+            configs = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
             if len(configs): # don't show empty optgroup
                 classification["%02d_%s" % (i, class_elt)]["name"]    = class_elt.name
                 classification["%02d_%s" % (i, class_elt)]["info"]    = class_elt.info
@@ -721,7 +773,7 @@ def getConfigsByClassification():
             i += 1
         classification["%02d_noclass" % i]["name"]    = "–"
         classification["%02d_noclass" % i]["info"]    = ""
-        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.id)
+        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
     return classification
 
 def getStatHeaders():
@@ -747,64 +799,78 @@ def getStatHeaders():
             #('abundance', 'parser', lbc)
         ]
 
-def getFusedStats(file_name, res, dest):
+def getFusedStats(fuse):
     log.debug("getFusedStats()")
-    file_path = "%s%s" % (defs.DIR_RESULTS, file_name)
-    parser = VidjilParser()
-    parser.addPrefix('clones.item', 'clones.item.top', operator.le, 100)
-    parser.addPrefix("reads")
-    parser.addPrefix("samples")
+    file_path = "%s%s" % (defs.DIR_RESULTS, fuse['fused_file_name'])
+    results_files = fuse['results_files']
+    d = {}
+    with open(file_path, 'r') as json_file :
+        data = json.load(json_file)
+        top_clones = data['clones'][:data['samples']['number']]
 
-    mjson = parser.extract(file_path)
-    data = json.loads(mjson)
-    result_index = -1
-    if "results_file_id" in data['samples']:
-        result_index = data['samples']['results_file_id'].index(res['resuts_file_id'])
-    elif "original_names" in data['samples']:
-        result_index = data['samples']['original_names'].index(defs.DIR_SEQUENCES + res['sequence_file'])
-    dest['main clone'] = data['clones'][0]['name']
-    reads = data['reads']['total'][result_index]
-    # dest['reads'] = reads
-    mapped_reads = data['reads']['segmented'][result_index]
-    dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
-    dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
-    dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
+        for results_file_id in results_files:
+            dest = {}
+            res = results_files[results_file_id]
+            result_index = -1
+            if "results_file_id" in data['samples']:
+                result_index = data['samples']['results_file_id'].index(results_file_id)
+            elif "original_names" in data['samples']:
+                basenames = [os.path.basename(x) for x in data['samples']['original_names']]
+                result_basename = os.path.basename(res['sequence_file']) if res['sequence_file'] else None
+                if result_basename in basenames:
+                    result_index = basenames.index(result_basename)
+                else:
+                    # No corresponding data (old file ?), we skip this result_file
+                    continue
 
-    tmp = {}
-    for c in data['clones']:
-        try:
-            arl = int(math.ceil(c['_average_read_length'][result_index]))
-        except:
-            continue
-        if arl > 0:
-            if arl not in tmp:
-                tmp[arl] = 0.0
-            tmp[arl] += float(c['reads'][result_index])
-    min_len = 100 #int(min(tmp.keys()))
-    max_len = 600 #int(max(tmp.keys()))
-    tmp_list = []
-
-    if mapped_reads == 0:
-        mapped_reads = 1
-    for i in range(min_len, max_len):
-        if i in tmp:
-            if tmp[i]:
-                scaled_val = (2.5 + math.log10(tmp[i]/mapped_reads)) / 2
-                display_val = max(0.01, min(1, scaled_val)) * 100
+            sorted_clones = sorted(top_clones, key=lambda clone: clone['reads'][result_index], reverse=True)
+            if 'name' in sorted_clones[0]:
+                dest['main clone'] = sorted_clones[0]['name']
             else:
-                display_val = 0
-            real_val = 100.0*(tmp[i]/mapped_reads)
-        else:
-            display_val = 0
-            real_val = 0
-        tmp_list.append((i, display_val, real_val))
-    dest['read lengths'] = tmp_list
+                dest['main clone'] = sorted_clones[0]['germline']
+            reads = data['reads']['total'][result_index]
+            # dest['reads'] = reads
+            mapped_reads = data['reads']['segmented'][result_index]
+            dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
+            dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
+            dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
 
-    #dest['bool'] = False
-    #dest['bool_true'] = True
-    dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
-    dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
-    return dest
+            tmp = {}
+            for c in data['clones']:
+                try:
+                    arl = int(math.ceil(c['_average_read_length'][result_index]))
+                except:
+                    continue
+                if arl > 0:
+                    if arl not in tmp:
+                        tmp[arl] = 0.0
+                    tmp[arl] += float(c['reads'][result_index])
+            min_len = 100 #int(min(tmp.keys()))
+            max_len = 600 #int(max(tmp.keys()))
+            tmp_list = []
+
+            if mapped_reads == 0:
+                mapped_reads = 1
+            for i in range(min_len, max_len):
+                if i in tmp:
+                    if tmp[i]:
+                        scaled_val = (2.5 + math.log10(tmp[i]/mapped_reads)) / 2
+                        display_val = max(0.01, min(1, scaled_val)) * 100
+                    else:
+                        display_val = 0
+                    real_val = 100.0*(tmp[i]/mapped_reads)
+                else:
+                    display_val = 0
+                    real_val = 0
+                tmp_list.append((i, display_val, real_val))
+            dest['read lengths'] = tmp_list
+
+            #dest['bool'] = False
+            #dest['bool_true'] = True
+            dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
+            dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
+            d[results_file_id] = dest
+    return d
 
 def getResultsStats(file_name, dest):
     import ijson.backends.yajl2_cffi as ijson
@@ -846,7 +912,7 @@ def getStatData(results_file_ids):
             db.sequence_file.data_file.with_alias("sequence_file"),
             db.sample_set.id.with_alias("set_id"),
             db.sample_set.sample_type.with_alias("sample_type"),
-            db.fused_file.fused_file.with_alias("fused_file"),
+            db.fused_file.fused_file.with_alias("fused_file"), db.fused_file.fused_file.with_alias("fused_file_id"),
             db.patient.first_name, db.patient.last_name, db.patient.info.with_alias('set_info'), db.patient.sample_set_id,
             db.run.name,
             db.generic.name,
@@ -863,15 +929,23 @@ def getStatData(results_file_ids):
     tmp_data = {}
     for res in query:
         set_type = res['sample_type']
-        if res.results_file_id not in tmp_data:
+        if res.fused_file_id not in tmp_data:
+            tmp_fuse = {}
+            tmp_fuse['results_files'] = {}
+            tmp_fuse['fused_file_name'] = res.fused_file
+            tmp_data[res.fused_file_id] = tmp_fuse
+        else:
+            tmp_fuse = tmp_data[res.fused_file_id]
+
+        if res.results_file_id not in tmp_fuse['results_files']:
             tmp = res.copy()
             tmp['sets'] = []
-            tmp_data[tmp['results_file_id']] = tmp
+            tmp_fuse['results_files'][tmp['results_file_id']] = tmp
             tmp.pop('set_id', None)
             tmp.pop(set_type, None)
             tmp.pop('set_info', None)
         else:
-            tmp = tmp_data[res['results_file_id']]
+            tmp = tmp_fuse['results_files'][res['results_file_id']]
 
         sample_set = {}
         sample_set['id'] = res['set_id']
@@ -882,20 +956,21 @@ def getStatData(results_file_ids):
 
 
     data = []
-    for key in tmp_data:
-        res = tmp_data[key]
-        d = {}
-        set_type = res['sample_type']
-        headers = getStatHeaders()
-        d = getFusedStats(res['fused_file'], res, d)
+    for fuse_id in tmp_data:
+        fuse = tmp_data[fuse_id]
+        d = getFusedStats(fuse)
         #d = getResultsStats(res['data_file'], d)
-        for head, htype, model in headers:
-            if htype == 'db':
-                d[head] = res[head]
-            d[head] = model.decorate(d[head])
-        d['sequence_file_id'] = res['results_file']['sequence_file_id']
-        d['config_id'] = res['results_file']['config_id']
-        data.append(d)
+        headers = getStatHeaders()
+        for results_file_id in d:
+            res = fuse['results_files'][results_file_id]
+            r = d[results_file_id]
+            for head, htype, model in headers:
+                if htype == 'db':
+                    r[head] = res[head]
+                r[head] = model.decorate(r[head])
+            r['sequence_file_id'] = res['results_file']['sequence_file_id']
+            r['config_id'] = res['results_file']['config_id']
+            data.append(r)
     return data
 
 def multi_sample_stats():
@@ -953,19 +1028,27 @@ def delete():
             log.error(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+        sequence_file_id_sample_sets = {}
         #delete data file
         query = db( (db.sample_set_membership.sample_set_id == sample_set.id)
                     & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                 ).select(db.sequence_file.id)
         for row in query :
-            db(db.results_file.sequence_file_id == row.id).delete()
+            sample_sets = get_sequence_file_sample_sets(row.id)
+            sequence_file_id_sample_sets[row.id] = sample_sets
+            if len(sample_sets) == 1:
+                db(db.results_file.sequence_file_id == row.id).delete()
 
         #delete sequence file
         query = db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
             & (db.sample_set_membership.sample_set_id == sample_set.id)
             ).select(db.sequence_file.id)
         for row in query :
-            db(db.sequence_file.id == row.id).delete()
+            if not row.id in sequence_file_id_sample_sets: 
+                sample_sets = get_sequence_file_sample_sets(row.id)
+                sequence_file_id_sample_sets[row.id] = sample_sets
+            if len(sequence_file_id_sample_sets[row.id]) == 1:
+                db(db.sequence_file.id == row.id).delete()
 
         #delete patient sample_set
         db(db.sample_set.id == sample_set.id).delete()
@@ -1006,7 +1089,7 @@ def permission():
             row.perms = ', '.join(map(lambda x: x.name, permissions))
 
             row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[stype], request.vars['id'], group=row.id))
-            row.read =  auth.get_group_access(sample_set.sample_type, data.id, row.id)
+            row.read =  auth.get_group_access("sample_set", request.vars["id"] , row.id)
 
         log.info("load permission page for sample_set (%s)" % request.vars["id"],
                 extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': "sample_set"})
@@ -1024,7 +1107,6 @@ def change_permission():
         ssid = request.vars["sample_set_id"]
         sample_set = db.sample_set[ssid]
         sample_type = sample_set.sample_type
-        data_id = db(db[sample_type].sample_set_id == ssid).select().first().id
 
         error = ""
         if request.vars["group_id"] == "" :
@@ -1033,14 +1115,14 @@ def change_permission():
             error += "missing sample_set_id, "
 
         if error=="":
-            if auth.get_group_access(sample_type,
-                      data_id,
+            if auth.get_group_access("sample_set",
+                      ssid,
                       int(request.vars["group_id"])):
-                auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db[sample_type], data_id)
+                auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
                 res = {"message" : "access '%s' deleted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
             else :
 
-                auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db[sample_type], data_id)
+                auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
                 res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
 
             log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})

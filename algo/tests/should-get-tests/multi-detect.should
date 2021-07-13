@@ -73,5 +73,6 @@ $ Detect one read on IGL
 !LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline $VIDJIL_DATA/multi-tiny.fa
 
 $ Do not detect recombinations in any of the seven reads, they are too small
-1:UNSEG too few .* -> .* 7
+1:UNSEG too few .* -> .* 6
+1:UNSEG only J.* -> .* 1
 

@@ -1,0 +1,30 @@
+{
+    "reads": {
+        "total": [15, 15],
+        "segmented": [15, 15],
+        "germline": {
+            "IGH": [15, 15]
+        },
+        "distribution": {
+            "IGH": [15, 15],
+            "0.01": [15, 15]
+        }
+    },
+    "samples": {
+        "number": 2,
+        "original_names": ["first.fasta", "second.fasta"]
+    },
+    "clones": [
+    {
+        "top": 1,
+        "reads": [10, 5],
+        "germline": "IGH"
+    },
+    {
+        "name": "secondary clone",
+        "top": 1,
+        "reads": [5, 10],
+        "germline": "IGH"
+    }
+    ]
+}

@@ -1,19 +1,25 @@
 
 build_doc:
+  image: python:3.8
   stage: tgz_release
+  before_script:
+    - pip3 install mkdocs-gitlab-plugin requests
   script:
     - make -C doc html
-    - find site -name "*.html" -type f | xargs python tools/validate-links.py
+    - cd tools ; python validate-links.py
   artifacts:
     paths:
       - site/
     expire_in: 1 month
+    when: always
   only:
       - /^[^\/]*doc[^\/]*\//
       # branch name should contain doc before the first /
       # eg.: doc/blabla or feature-adoc/blabla
+      - /^feature-.*a.*\/release$/
+  allow_failure: true
   tags:
-    - doc
+    - cidocker
 
 deploy_doc:
   stage: deploy_prod
@@ -22,3 +28,4 @@ deploy_doc:
   when: manual
   only:
       - /^[^\/]*doc[^\/]*\//
+      - /^feature-.*a.*\/release$/

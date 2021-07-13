@@ -1,4 +1,6 @@
+<div class="form_line">
 <span class="left form_label">Run {{=i+1}}</span>
+<i class="icon-cancel" onclick="var elem = this.parentNode;elem.parentNode.removeChild(elem);"></i>
 <input type="hidden" id="run_id_{{=i}}" name="run[{{=i}}][id]" value="{{if set is not None:}}{{=set['id']}}{{pass}}">
 <input type="hidden" sample_set_id="run_sample_set_id_{{=i}}" name="run[{{=i}}][sample_set_id]" value="{{if set is not None:}}{{=set['sample_set_id']}}{{pass}}">
 {{ if set is not None and 'error' in set and len(set['error']) > 0: }}
@@ -41,5 +43,6 @@
 <div class="field_div">
     <input id="run_pcr_{{=i}}" name="run[{{=i}}][pcr]" type="text" class="form-control pcr"
         value="{{if set is not None and set['pcr'] is not None:}}{{=set['pcr']}}{{pass}}" placeholder="primers, capture...">
+</div>
 </div>
 

@@ -4,6 +4,7 @@
 
 @infoContainerHeight : 32px;
 @locusSpacingMargin : 12px;
+@segmenterHeight : 155px;
 
 /* default tag color */
 @tagColor0 : #DC322F;
@@ -14,6 +15,7 @@
 @tagColor5 : #2aa198;
 @tagColor6 : #d33682;
 @tagColor7 : #859900;
+@tagColor9 : #bdbdbd;
 
 @runTokenColor : #ffdde0;
 @patientTokenColor : #eed0ff;
@@ -22,9 +24,15 @@
 /* #dcffed also available */
 
 #vmi-menu {
-  position: unset;
-  bottom: unset;
+  top: @top_container_height;
+  right: 0;
   width: unset;
+  background-color: @background;
+  margin: @margin 0 0 0;
+  div {
+    padding: 5px;
+    border: 1px solid;
+  }
 }
 
 html{
@@ -54,7 +62,7 @@ body, svg {
   font-family: @bold-font;
 }
 
-.seq-fixed .cloneName, .listElem .cloneName {
+.cloneName, .listElem .cloneName {
   bottom: 1px;
 }
 
@@ -65,11 +73,6 @@ textarea {
 }
 
 /* texts that are not sequences nor identifiers */
-
-#info, .popup_msg, .menu, .menu a
-{
-}
-
 
 h2
 {
@@ -84,14 +87,15 @@ ul{
 
 #visu-container{
   position: relative;
+  display: flex;
   flex: 1 1 auto;
+  flex-flow: column;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
-  height :100%;
-  margin : auto;
+  width: 100%;
   overflow : hidden;
   background : @background;
 }
@@ -150,30 +154,50 @@ ul{
   overflow:hidden;
 }
 
-#mid-container {
+#vidjil-panels {
   position : fixed;
+  top : @top_container_height;
+  left : 0;
+  bottom : @segmenterHeight;
+  background: @background;
+  margin: @margin 0px;
+  display: flex;
+  flex: auto;
+  overflow: hidden;
+}
+
+.vidjil-panels-left {
+  width: calc(~"100%" - @margin - @vmi_menu_width);
+}
+
+.vidjil-panels-full {
+  width: 100%;
+}
+
+#mid-container {
+position : fixed;
   display: flex;
   flex: 1 1 auto;
   top : @top_container_height;
-  bottom : 125px ;
-  width: calc(~"100%" - @margin + @margin);
+  bottom : @segmenterHeight ;
+  width: 100%;
   overflow: hidden;
   background: @background;
-  margin: @margin;
+  margin: @margin 0px 0px 0px;
+  border-bottom-color: white;
 }
 
 #right-container{
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
+  display: flex;
+  flex: 1 0 auto;
+  flex-flow: column;
   float : right;
-  width : 0px;
+  width : @width_left_container;
 }
 
 #left-container {
   display: flex;
+  flex: 1 0 auto;
   flex-flow: column;
   position: relative;
   width : @width_left_container;
@@ -187,11 +211,17 @@ ul{
 
 #visu, #visu2 {
   height : 50%;
+  display: flex;
+  flex: auto;
   width : 100%;
 }
 
 #visu2 {
   max-height: calc(~"100%" - @margin)
+}
+
+#visu3 {
+  height: 100%;
 }
 
 line {
@@ -450,6 +480,7 @@ line {
 }
 
 .sp_system{
+  display:flex;
   position:absolute;
   top: -0.5em;
 }
@@ -513,9 +544,9 @@ line {
 @width_axisBox : 52px;
 @width_infoBox : 20px;
 @width_systemBox : 12px;
-@width_listElem : (@width_left_container - @width_scrollbar);
 @margin : 6px;
 @margin_nameBox : 10px;
+@vmi_menu_width : 70px;
 
 .list:hover, .tagElem:hover, .data:hover{
   background :@border;
@@ -530,6 +561,7 @@ line {
 #list{
   flex: 1 1 auto;
   height: 0px; // set scrollbar flex will override height
+  min-height: 20%;
   max-height: 100%;
   display: flex;
   flex-direction: column;
@@ -570,13 +602,10 @@ line {
 }
 
 .list{
-  width : 	445px;
-  display :	block;
   padding : 	2px;
 }
 
 .listElem{
-  width : @width_listElem;
   font-size: 13px;
   cursor:pointer;
   -webkit-transition: color 0.2s;
@@ -585,6 +614,7 @@ line {
   transition: color 0.2s;
   padding: 1px 4px 4px 1px;
   height :14px;
+  display: flex;
 }
 
 .selected{
@@ -592,31 +622,21 @@ line {
 }
 
 .nameBox {
-  width: 300px;
   margin-right: @margin_nameBox;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
-  float:left;
   white-space:nowrap;
-}
-
-.seq-fixed .nameBox {
-  width: 250px;
+  flex: 1 1000 auto;
 }
 
 .list .axisBox, .axisBox span {
   max-width: @width_axisBox;
-  float: right;
   overflow: hidden;
   display: inline-block;
   max-height: 16px;
   position: relative;
-}
-
-.segmenter .axisBox>span {
-  margin : 0 3px;
 }
 
 .identityBox {
@@ -634,9 +654,8 @@ line {
 
 .starBox{
   width: @width_starBox;
-  float: right;
   height: 16px;
-  display: inline-block;
+  display: inline-flex;
   user-select :none;
   overflow: hidden;
 }
@@ -654,9 +673,8 @@ line {
 .infoBox{
   font-size: 90%;
   width: 16px;
-  float: right;
   height: 15px;
-  display: inline-block;
+  display: inline-flex;
   user-select: none;
   text-align: center;
   border: solid;
@@ -697,6 +715,10 @@ line {
     min-width: 60px;
     padding: 2px 2px 1px 2px;
     cursor : pointer;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }	      
 
 .hiddenCheckBox {
@@ -731,118 +753,6 @@ line {
 .list_sort{
     margin-right : 20px;
     float: right;
-}
-
-							  /*style segmenter element*/
-.list_select{
-  width : 445px;
-  display : block;
-  border : solid;
-  border-width : 2px;
-  padding : 0px;
-  border-color : @select;
-}
-.list_focus{
-    background : @border !important;
-}
-
-.sequence-line { 
-    white-space: nowrap;
-}
-.sequence-line:hover { 
-    font-weight: bold;
-}
-
-.seq-fixed {
-  position: relative;
-  display: inline-block;
-//  width: (@width_left_container - @width_scrollbar);
-  width : auto;
-  margin: -2px;
-  padding: 2px;
-  padding-left: 5px;
-  left:0px;
-  cursor:pointer;
-  z-index:1;
-}
-
-.seq-mobil {
-  margin-left: @width_left_container;
-  letter-spacing: 0.12em;
-  font-family : @monospace-font; 
-  position: relative;
-  bottom: 3px;
-  font-size:1em;
-}
-
-.seq-marge {
-  word-spacing: normal;
-}
-
-.V {
-  color: #000;
-  background-color: #efe;
-}
-.D {
-  color: #000;
-  background-color: #fee;
-}
-.J {
-  color: #000;
-  background-color: #ffffe2;
-}
-.N, .N + .J, .N + .D {
-  box-shadow: -1px 0 0 @default;
-}
-
-.highlight_border, .highlight_seq {
-    display: inline-flex;
-    height: 1em;
-    position: relative;
-}
-.highlight_border {
-    border-bottom: solid;
-    margin: -1px;
-    border-width: 4px;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: -moz-none;
-    -ms-user-select: none;
-    user-select: none;
-    pointer-events: none;
-    opacity: 0.3;
-    bottom: 1px;
-}
-.highlight_seq {
-  top: .9em;
-  padding-bottom: 1px;
-  opacity: 0.6;
-
-  font-size: 70%;
-  letter-spacing: .428em; /* (1-.7) / .7 */
-  left: .214em;
-}
-.highlight{
-    display: inline-block;
-    width: 0px;
-    word-spacing: normal;
-}
-span .substitution, span .indel, span .insertion, span .deletion {
-  font-weight: bold;
-  color: #800;
-}
-span .substitution {
-  border-bottom: 1px solid #800;
-}
-span .silent {
-  border-bottom: 3px double #008;
-  color: #008;
-}
-
-span .end-codon {
-  box-shadow: 1px 0 0 @default;
-}
-span .end-codon-not-first {
 }
 
 							  /*tag*/
@@ -955,16 +865,19 @@ span .end-codon-not-first {
 
 #file_menu, #axis_choice, #add_clone_menu {
   z-index:2;
-  border:solid;
   position: fixed;
   top: 200px;
   min-width:400px;
   margin-left:-250px;
   left :50%;
   font-size: 13px;
-  padding: 10px;
+  padding: 20px;
   background:@background;
   display:none;
+  border:solid; 
+  border-width:1px;
+  border-color: @default;
+  box-shadow: 2px 2px 5px @default;
 }
 
 #add_clone_menu {
@@ -1019,11 +932,10 @@ span .end-codon-not-first {
 
 .popup_container{
   z-index:20;
-  border:solid; 
   min-width:500px;
   max-width:80%;
   font-size: 13px; 
-  padding: 10px;
+  padding: 20px;
   background: @background;
   display:none;
   position:fixed;
@@ -1032,7 +944,11 @@ span .end-codon-not-first {
   -ms-transform: translate(-50%,-50%);
   -moz-transform:translate(-50%,-50%);
   -webkit-transform: translate(-50%,-50%);
-   transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+  border:solid; 
+  border-width:1px;
+  border-color: @default;
+  box-shadow: 2px 2px 5px @default;
 }
 
 /* Main style for <a> Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
@@ -1088,7 +1004,7 @@ span.sample-tag, a.tag-link {
   width : 100%;
 }
 
-#file_menu, #menu, #list_clones, #tagSelector, #display-menu, #bot-container, #segmenter_axis_menu, .seq-fixed{
+#file_menu, #menu, #list_clones, #tagSelector, #display-menu, #bot-container{
  background : @background;
 }
 
@@ -1096,17 +1012,11 @@ span.sample-tag, a.tag-link {
   position: absolute;
   top: 0px;
   right: 0px;
-  border: solid;
   background: inherit;
-  border-radius: 20px;
-  width: 15px;
-  height: 15px;
-  text-align: center;
-  font-weight: bolder;
   cursor: pointer;
   padding: 1px;
-  font-size: 90%; 
-  color: @border;
+  margin: 1px;
+  font-size: large;
 }
 
 .closeButton:hover{
@@ -1116,9 +1026,7 @@ span.sample-tag, a.tag-link {
 .button, .button_right, .button_left{
   cursor:pointer;
   font-size: 13px;
-  padding: 0px 3px;
-  margin-right:5px;
-  margin-left:5px;
+  padding: 2px 5px;
   min-width : 16px;
   color: @default;
 }
@@ -1154,6 +1062,11 @@ div.button {
     padding-right: 10px;
 }
 
+.clipboard-button {
+    margin-left: -5px;
+    padding: 3px;
+}
+
 .smallbutton {
     cursor:pointer;
     font-size: 13px;
@@ -1178,60 +1091,15 @@ span.logo
   color: #f88;
 }
 
-.bot-bar {
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: -moz-none;
-    -ms-user-select: none;
-    user-select: none;
-    height: 20px;
-    border-bottom: solid;
-    width: 100%;
-    padding-top: 2px;
-}
-
-.menu-segmenter {
-    position: relative;
-    float: left;
-    width: @width_left_container +200;
-}
-
-#toIMGTSeg {
-    width: 12px;
-    display: inline-block;
-    text-align: center;
-}
-
-.menu-highlight {
-    position: relative;
-    float: left;
-    width: eval(@width_highlight);
-}
-
 .devel-mode, .beta-mode {
     display: none;
 }
 
 .focus {
-    position: relative;
-    text-align: center;
-    float: left;
-    width: calc(~"100%" - (@width_left_container +  @width_stats + @width_highlight + 50));
-    overflow: hidden;
-    height: 1.1em;
-}
-.stats {
-  position: relative;
-  text-align: right;
-  float: right;
-  width: @width_stats - 3px;
-  padding-right: 3px;
-}
-
-.segmenter {
-    overflow-x: scroll !important; 
-    overflow-y: auto;
-    height : 100px;
+  width: calc(~"100%" - 760px);
+  overflow: hidden;
+  height: 13px;
+  display: inline-block;
 }
 
 .selector{
@@ -1251,22 +1119,13 @@ span.logo
 }
 
 #bot-placeholder {
-  flex: 0 0 135px;
+  flex: 0 0 @segmenterHeight;
 }
 
 #bot-container {
   position: fixed;
-  left: 0;
   bottom: 0;
-  width: 100%;
-  border-top: solid;
-  border-width: 6px;
-  min-height: 125px;
-}
-
-#segmenter {
-  display: flex;
-  flex-flow: column;
+  min-height: @segmenterHeight;
 }
 
 .tn{
@@ -1333,7 +1192,7 @@ span.logo
   color: grey;
 }
 
-.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, .popup_container, #file_menu, .tagSelector, .closeButton, #axis_choice
+.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, .tagSelector
 {
   border-color: @border; 
 }
@@ -1350,9 +1209,9 @@ span.logo
   vertical-align: middle;
 }
 
-#info_timepoint td{
+#info_timepoint, #info_timepoint td, .info_overlaps td{
   min-width : 150px;
-  max-width : 700px;
+  max-width : 100%;
   overflow-wrap: break-word;
   word-wrap: break-word;
   border-style:solid;
@@ -1361,15 +1220,20 @@ span.logo
   vertical-align: middle;
 }
 
-#info_window table, #info_timepoint table{
+#info_window table, #info_timepoint table, .info_overlaps {
   border-style:solid;
   border-color: @border;
   border-collapse: collapse;
 }
 
-#info_window table .header, #info_timepoint table .header{
+#info_window table .header, #info_timepoint table .header, .info_overlaps table .header{
   border-width : 2px;
   background-color: @border;
+}
+
+.info_overlaps_line {
+  background-color: @border;
+  font-weight: bold;
 }
 
 span.ok { color: green; }
@@ -1525,11 +1389,9 @@ span.warningReads {
    color: @select;
 }
 
-#visu-separator {
+.visu-separator {
     position: relative;
     height: @margin;
-    cursor: move;
-    cursor: -webkit-grab;
     background: @border;
 }
 
@@ -1542,14 +1404,16 @@ span.warningReads {
     top: -@margin;
 }
 
-#vertical-separator {
+#vertical-separator, #vertical-separator-right {
     position: relative;
     float: left;
-    height: 100%;
     width: @margin;
-    line-height: calc(~"100% - 1px");
     background : @border;
     cursor: pointer;
+}
+
+#vertical-separator-right {
+    float: right;
 }
 
 #visu-separator:hover , #vertical-separator:hover, #bot-separator:hover {
@@ -1619,21 +1483,8 @@ span.warningReads {
 .db_table .column_150{    width: 150px;   }
 .db_table .column_100{    width: 100px;   }
 .db_table .column_50{    width: 50px;   }
+.db_table .column_20{    width: 20px;   }
 
-.db_table .column1{
-    width: 100px;
-}
-
-.db_table .column2{
-    width: 150px;
-}
-
-.db_table .column4{
-    width: 50px;
-}
-.db_table .column5{
-    width: 20px;
-}
 
 .db_table .column_sep {
     width: 50px;
@@ -1820,7 +1671,7 @@ h3 .uid {
 }
 
 .log_container {
-    height : 500px;
+    height : 75%;
     width : 400px;
     position : absolute;
     display : block;
@@ -1828,11 +1679,12 @@ h3 .uid {
     right : 0px;
     padding: 5px;
     margin: 5px;
-    background: @highlight;
+    background: @border;
     border-color: @border;
     z-index: 15;
     border: solid;
     border-width: 1px;
+    box-shadow: 2px 2px 5px @default;
     opacity: 0.85;
     overflow-y: scroll;
     display: none;
@@ -1842,14 +1694,14 @@ h3 .uid {
     width: 350px;
     min-height: 20px;
     border: solid;
-    border-width: 2px;
+    border-width: 1px;
     display: block;
-    border-radius: 5px;
     padding: 5px;
     margin: 5px;
     background: @background;
     border-color: @border;
     transition: background 1s linear;
+    box-shadow: 1px 1px 2px;
 }
 
 .log_0, .log_1, .log_2, .log_3 {
@@ -1859,9 +1711,8 @@ h3 .uid {
     margin: 5px;
     background: @background;
     border: solid;
-    border-width: 2px;
-    border-radius: 2px;
-    border-color: @background;
+    border-width: 1px;
+    padding: 5px;
 }
 
 .flash_1, .log_1 {
@@ -1929,6 +1780,11 @@ select>option:hover {
 
 .inactive {
     opacity: 0.5;
+    pointer-events: none;
+}
+
+.unchecked {
+  opacity: 0.5;
 }
 
 .suggest_box {
@@ -2063,6 +1919,10 @@ flex-grow : 1;
 .tagColor8{
     background : @default;
 }
+.tagColor9{
+    background : @tagColor9;
+    margin-left: 7px;
+}
 .inactiveTag{
     background-image : linear-gradient(45deg, transparent -25%, @background 100%, @background 100%, transparent 0%)
 }
@@ -2151,11 +2011,12 @@ flex-grow : 1;
     border: 1px solid @border;
     overflow-wrap: break-word;
     overflow-y: hidden;
-    max-width: 457px;
     min-height: @infoContainerHeight;
     max-height: @infoContainerHeight;
-    width: 100%;
+    width: 99%;
     background-color: @background;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .patient_info_text {
@@ -2219,11 +2080,6 @@ textarea#edit_value {
    position: relative;
    background: inherit;
    display: inline-block;
-}
-
-#highlightCheckboxes {
-    height: 100%;
-    float: left;
 }
 
 label.highlight_label {
@@ -2620,4 +2476,63 @@ form {
 }
 .list_lock_on {
   color: @default;
+}
+
+
+.set_group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-bottom: 25px;
+  margin-right: 15px;
+  flex-flow: column;
+  width: 48%;
+}
+
+.set_group_header {
+    width: 100%;
+}
+
+.set_cell {
+  word-break: break-all;
+}
+
+.set_data {
+  width: 100%;
+}
+
+.analysis_button {
+  display: inline-flex;
+}
+
+.margined-top {
+  margin-top: 10px;
+}
+
+.margined-bottom {
+  margin-bottom: 10px;
+}
+
+div.tooltip { 
+    position: absolute;     
+    text-align: left;     
+    padding: 2px;       
+    font: 14px sans-serif;    
+    color: #ffffff;
+    background: #444343; 
+    border: 0px;    
+    border-radius: 3px;     
+    pointer-events: none;     
+}
+
+.labelFocusMinor {
+  color: grey;
+  opacity: 0.7;
+  font-size: 12px;
+}
+.labelFocusMajor {
+  color: black;
+  opacity: 1;
+  font-weight: bold;
+  font-size: 16px;
 }

@@ -24,7 +24,7 @@ VALGRIND_OUTPUT_XML=--xml=yes --xml-file='$(REPORTS_PATH)/valgrind.xml.%p'
 VALGRIND_OUTPUT=--error-exitcode=1
 
 SHOULD_TIMEOUT=140
-SHOULD_TIMEOUT_VALGRIND=300
+SHOULD_TIMEOUT_VALGRIND=500
 
 ifeq ($(XML_OUTPUT), 1)
   VALGRIND_OUTPUT=$(VALGRIND_OUTPUT_XML)
@@ -51,7 +51,7 @@ test: all
 	cat ./unit-tests/tests.cpp.tap
 	@echo "*** All unit tests passed"
 
-all: core $(EXEC)
+all: $(EXEC)
 	@echo "All tests compiled."
 
 snapshot:
@@ -133,8 +133,8 @@ valgrind_%:
 valgrind_tests: vidjil ./unit-tests/tests
 	$(VALGRIND_CMD) ./unit-tests/tests
 
-$(EXEC): % : %.o $(LIB) 
-	$(CXX) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
+$(EXEC): % : core %.o $(LIB) 
+	$(CXX) -o $@ $@.o $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
 
 
 ../%.a:

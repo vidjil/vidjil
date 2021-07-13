@@ -1,6 +1,6 @@
 
-cd $VIDJIL_DIR/germline
-cat homo-sapiens/TRDD+up.fa 
+!NO_LAUNCHER:
+!LAUNCH: (cd $VIDJIL_DIR/germline; cat "homo-sapiens/TRDD+up.fa")
 
 $ Three sequences
 3:>

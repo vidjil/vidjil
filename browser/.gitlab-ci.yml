@@ -1,0 +1,65 @@
+
+.test_cypress_base:
+  stage: test_cypress_client
+  script:
+    - docker pull "vidjilci/cypress_with_browsers:latest"
+    - cd browser/
+    - make icons
+    - cd ..
+    - make -C doc analysis-example || true
+    # Cypress
+    - echo -e "Run cypress with browser; $CYPRESS_PATH"
+    - >
+      docker run
+      -v $PWD/$CYPRESS_PATH:/app/cypress
+      -v $PWD/browser/test/data:/app/cypress/fixtures/data
+      -v $PWD/doc:/app/cypress/fixtures/doc
+      -v $PWD:/app/vidjil
+      -v "$PWD/docker/ci/cypress.json":"/app/cypress.json"
+      -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash"
+      --env BROWSER=$BROWSER
+      --env HOST=$HOST
+      --env PROJECT=$PROJECT
+      --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
+      --network="host"
+      "vidjilci/cypress_with_browsers:latest" bash script.bash
+  variables:
+    BROWSER: electron
+    CYPRESS_PATH: browser/test/cypress
+    HOST: local
+  artifacts:
+    reports:
+      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+    paths:
+      - $CYPRESS_PATH
+    expire_in: 7 day
+    when: always
+  tags:
+    - docker
+
+
+## cypress client
+client_firefox_legacy:
+  extends:
+    - .test_cypress_base
+  variables:
+    BROWSER: browsers/firefox_legacy/firefox
+
+client_firefox_latest:
+  extends:
+    - .test_cypress_base
+  variables:
+    BROWSER: browsers/firefox_latest/firefox
+
+client_chrome_latest:
+  extends:
+    - .test_cypress_base
+  variables:
+    BROWSER: browsers/chrome_latest/chrome
+
+client_chrome_legacy:
+  extends:
+    - .test_cypress_base
+  variables:
+    BROWSER: browsers/chrome_legacy/chrome
+

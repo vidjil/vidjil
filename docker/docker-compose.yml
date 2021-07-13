@@ -23,9 +23,12 @@ services:
               condition: service_healthy
             fuse:
               condition: service_started
+            postfix:
+              condition: service_started
         links:
             - mysql:mysql
             - fuse:fuse
+            - postfix:postfix
     fuse:
         image: vidjil/server:latest
         command: bash /entrypoints/fuse-entrypoint.sh
@@ -42,17 +45,13 @@ services:
             - ../germline:/usr/share/vidjil/germline
     nginx:
         image: vidjil/client:latest
-        depends_on:
-            uwsgi:
-              condition: service_started
-        links:
-                - uwsgi:uwsgi
         ports:
             - "80:80"
             - "443:443"
         command: bash /entrypoints/nginx-entrypoint.sh
         volumes:
             - /opt/vidjil/log/nginx:/var/log/nginx
+            - /opt/vidjil/certs:/etc/letsencrypt/well-known
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
@@ -69,13 +68,18 @@ services:
               condition: service_healthy
         links:
             - mysql
+            - postfix
     backup:
-        image: vidjil/server:latest
-        command: bash -c "echo '0 5 * * * cd /usr/share/vidjil/server; sh backup.sh /mnt/backup 2>1&' > /etc/cron.d/backup-cron && cron && tail -f /var/log/cron.log"
+        build: ./backup
         volumes_from:
             - uwsgi
+        volumes:
+            - ./backup/conf:/etc/backup
+        depends_on:
+            - mysql
         links:
             - mysql
+            - uwsgi:uwsgi
     reporter:
         build: ./reporter
         image: reporter:latest
@@ -88,3 +92,12 @@ services:
               condition: service_started
         links:
             - uwsgi:uwsgi
+    postfix:
+        image: catatnight/postfix
+        expose:
+            - 587
+        volumes:
+            - ./postfix/ssl:/etc/postfix/certs
+        environment:
+            - maildomain=vidjil.org
+            - smtp_user=vidjil:smtp_pass

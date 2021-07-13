@@ -9,9 +9,6 @@ class TestClones < BrowserTest
     super
     if not defined? $b
       set_browser("/tools/tests/data/fused_multiple.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
 
       # Make upload menu appear to test the application with this menu too
       $b.execute_script("$('#upload_summary')[0].style.display='block';")
@@ -215,6 +212,7 @@ class TestClones < BrowserTest
 
     $b.clone_in_list("20").click
     $b.a(:id => "hide_selected").click
+    $b.update_icon.wait_while(&:present?)
     assert ( not $b.clone_in_list('20').present?),        ">> Hidded distrib clone DON'T exist in list"
     $b.clone_in_scatterplot('20').wait_while(&:present?) # ">> Hidded distrib clone DON'T exist in scatterplot"
     $b.clear_filter.click
@@ -361,11 +359,11 @@ class TestClones < BrowserTest
     assert ( $b.clone_info('18')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "distrib clone haven't changed color"
 
     # change color method and observe variation or not
-    $b.select(:id => 'color_menu_select').click
-    $b.send_keys :arrow_down
-    $b.send_keys :arrow_down
-    $b.send_keys :arrow_down
-    $b.send_keys :enter
+    color_select = $b.select(:id => 'color_menu_select')
+    color_select.click
+    color_v_option = color_select.option(value: 'V')
+    color_v_option.click
+    $b.clone_in_list('22').hover
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_info('0')[:name].style('color')  !=  'rgba(101, 123, 131, 1)' ) ,    "real clone should have changed color (diff from grey)"
     assert ( $b.clone_info('16')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "other clone shouldn't have changed color"
@@ -406,6 +404,14 @@ class TestClones < BrowserTest
     assert (stats.text.include? '5+5 clones'), ">> Correct stats, should have '5+5' clones"
     assert (stats.text.include? '200 reads'),  ">> Correct stats, should have 50 reads"
     assert (stats.text.include? '80.00%'),     ">> Correct stats, should be at 80.00%"
+  end
+
+
+  def test_11_download_gethtmlinfo
+    $b.clone_in_list("0").click
+    $b.element(:id => "clone_infoBox_0").click
+    # test presence of clone information content
+    assert ($b.a(:id => "download_info_0_airr").present?), ">> Download button is present in getHTMLinfo returned"
   end
 
 

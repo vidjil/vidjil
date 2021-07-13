@@ -116,6 +116,17 @@ logs (see #3558).
 When a job timeouts it is not killed (see #2213). In `gluon/scheduler.py` a
 worker seems to be able to kill a process when the worker's state (and not the
 task's state) is `STOP_TASK`.
+
+## Batch creation of patients/runs/sets
+
+Data should be tabulated (row separated with a break line, cells separated with a tabulation).
+
+Browser cannot access data from the clipboard in the following cases:
+ - the browser does not support it (FF)
+ - the user refused to grant the access
+
+In that cases, a textarea is provided.
+
 # Tests
 
 # Packaging
@@ -569,4 +580,52 @@ optional arguments:
 
 ``` bash
 sh copy_files <file source> <file destination> <input file>
+```
+
+## Review environments (CI)
+To deploy review environments, we need to customise the Docker configuration.
+So that the docker containers are named depending on the branch they're built on we rename the docker directory.
+Also a script rewrites the `docker-compose.yml` file in order to:
+
+* provide the path to the SSL certificates
+* set volumes that will point to the source code
+* mount the volumes to existing sequence files and results
+* have a dedicated volume for the database (so that each branch has its own database)
+* the `network_mode` has to be set to `bridge` in order to work with the Nginx proxy
+
+Also a sample database is loaded in the `uwsgi-entrypoint.sh` script (from the `docker/ci/ci.sql` file).
+
+Self-signed certificates need to exist on the host and two scripts `install_certs.sh` and `uninstall_certs.sh` are used to copy the certificates in the right directory when setting the review environment.
+
+Here is the `install_certs.sh`:
+```shell
+#!/bin/bash
+
+BRANCH=$1
+DIR=$(dirname $0)
+
+echo "Install certificates for $BRANCH"
+
+cd $DIR/$BRANCH/docker_$BRANCH/vidjil-client/
+mkdir ssl
+cd ssl
+ln ~/nginx/certs/web2py.crt
+ln ~/nginx/certs/web2py.info
+ln ~/nginx/certs/web2py.key
+cp ~/nginx/certs/web2py.crt ~/nginx/certs/$BRANCH.server.ci.vidjil.org.crt
+cp ~/nginx/certs/web2py.info ~/nginx/certs/$BRANCH.server.ci.vidjil.org.info
+cp ~/nginx/certs/web2py.key ~/nginx/certs/$BRANCH.server.ci.vidjil.org.key
+```
+
+And the `uninstall_certs.sh`:
+```shell
+#!/bin/bash
+
+BRANCH=$1
+DIR=$(dirname $0)
+
+echo "Uninstall certificates for $BRANCH"
+
+rm -f $DIR/$BRANCH/docker_$BRANCH/vidjil-client/ssl/web2py.{ctr,info,key}
+rm -f  ~/nginx/certs/$BRANCH.ci.vidjil.org.crt ~/nginx/certs/$BRANCH.ci.vidjil.org.info ~/nginx/certs/$BRANCH.ci.vidjil.org.key
 ```

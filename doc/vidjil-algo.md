@@ -1,11 +1,11 @@
-# vidjil-algo 2020.01
+# vidjil-algo 2021.04
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
 
 ```
   Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire -- [[http://www.vidjil.org]]
-  Copyright (C) 2011-2019 by Bonsai bioinformatics
+  Copyright (C) 2011-2021 by Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   and VidjilNet consortium.
   contact@vidjil.org
@@ -17,7 +17,8 @@ This manual can be browsed online:
  - <http://www.vidjil.org/doc/vidjil-algo>                (last stable release)
  - <http://gitlab.vidjil.org/blob/dev/doc/vidjil-algo.md> (development version)
 
-Other documentation (users and administrators of the web application, developpers) can be found from <http://www.vidjil.org/doc/>.
+Other documentations for life scientists, bioinformaticians, server administrators, and developers
+can be found ats <http://www.vidjil.org/doc/>.
 
 
 ## About
@@ -27,7 +28,9 @@ diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
 With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
-high-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [Rep-Seq](http://omictools.com/rep-seq-c424-p1.html) methods and software.
+high-throughput sequencing (NGS/HTS) now
+enables the deep sequencing of a lymphoid population with dedicated
+sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 Vidjil-algo processes high-throughput sequencing data to extract V(D)J
 junctions and gather them into clones. Vidjil-algo starts
@@ -57,129 +60,48 @@ Vidjil-algo is open-source, released under GNU GPLv3+ license.
 
 ## Supported platforms
 
-Vidjil-algo has been successfully tested on the following platforms :
+Vidjil-algo is systematically tested with the following compilers :
 
-  - CentOS 6.3 amd64
-  - CentOS 6.3 i386
-  - CentOS 7.2 i386
-  - Debian Squeeze 6.0
-  - Debian Wheezy 7.0 amd64
-  - Fedora 19
-  - FreeBSD 9.2
-  - Ubuntu 12.04 LTS amd64
-  - Ubuntu 14.04 LTS amd64
-  - Ubuntu 16.04 LTS
-  - Ubuntu 18.04 LTS
-  - OS X 10.9, 10.10, 10.11
+  - gcc/g++ 4.8, 5.3, 6.3, 7.3, 8.4, 9.3, 10.1
+  - clang 3.4, 4.0, 6.0, 7.0, 11.0
+
+These compilers are available on recent OS X and on the following Linux distributions:
+
+  - CentOS 7, 8
+  - Debian Jessie 8.0, Stretch 9.0, Buster 10.0, Bullseye 11
+  - FreeBSD 9.2, 10, 11, 12
+  - Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS
 
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
-The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) and [Jenkins](https://jenkins-ci.org/) for that.
+The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) for that,
+and the tested compilers are run through Docker containers described in `.gitlab-ci-compilers.yml`.
 
-## Build requirements (optional)
 
-This paragraph details the requirements to build Vidjil-algo from source.
-You can also download a static binary, see [installation](#installation).
+## Installation (from source)
+
+### Build requirements
 
 To compile Vidjil-algo, make sure:
 
   - to be on a POSIX system ;
-  - to have a C++11 compiler (as `g++` 4.8 or above, `g++` 8.3 being supported, or `clang` 3.3 or above).
+  - to have a C++11 compiler (as `g++` 4.8 or above, or `clang` 3.4 or above).
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
+  - to have GNU make (`gmake` under FreeBSD).
 
-### CentOS 6
-
-g++-4.8 is included in the devtools 2.0.
-
-``` bash
-sudo wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo
-sudo yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++ devtoolset-2-valgrind
-
-# scl enable devtoolset-2 bash     # either open a shell running devtools
-source /opt/rh/devtoolset-2/enable # ... or source devtools in the same shell
-```
-
-### CentOS 7.2
-
-g++-4.8 is included.
-
-### FreeBSD 9.2
-
-g++-4.8 is included in FreeBSD 9.2.
-
-You may also need to install the `gzstream` library with:
-
-``` bash
-pkg install gzstream
-```
-
-Also Vidjil-algo uses GNU make which requires `gmake` under FreeBSD.
-At the time of redacting the documentation, `g++` requires extra options to
-ensure flawless compilation and execution of Vidjil-algo:
-
-``` bash
-make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
-```
-
-The `gcc49` at the end of the command line is to be replaced by the `gcc` version
-used.
-
-### Debian Squeeze 6.0 / Wheezy 7.0
-
-g++-4.8 should be pinned from testing.
-Put in `/etc/apt/preferences` the following lines:
-
-``` bash
-Package: *
-Pin: release n=wheezy # (or squeeze)
-Pin-Priority: 900
-
-Package: g++-4.8, gcc-4.8, valgrind*
-Pin: release n=jessie
-Pin-Priority: 950
-```
-
-Then g++ 4.8 can be installed.
-
-``` bash
-apt-get update
-apt-get install -t jessie g++-4.8 valgrind
-```
-
-### Ubuntu 16.04 LTS, Ubuntu 18.04 LTS
-
-Recent versions of `g++` are included.
-
-### Ubuntu 14.04 LTS
-
-``` bash
-sudo apt-get install g++-4.8
-```
-
-### Ubuntu 12.04 LTS
-
-g++-4.8 is included in the devtools 2.0.
-
-``` bash
-sudo apt-get install python-software-properties
-sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-sudo apt-get update
-sudo apt-get install g++-4.8
-```
-
-### OS X
-
-Xcode should be installed first.
-
-## Installation
 
 ### Download
 
-These instructions targets *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>
-or <http://bioinfo.lifl.fr/vidjil/>.
+These instructions target *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>.
 
-Development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
-and compiling and running vidjil-algo on the development code can involve slightly different commands,
+``` sh
+curl -O http://www.vidjil.org/releases/vidjil-algo-latest.tar.gz
+tar xvfz vidjil-algo-latest.tar.gz
+cd vidjil-algo-*
+```
+
+Note that development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
+and compiling and running vidjil-algo on the development code can involve slightly different commands than below,
 including replacing `src` by `algo`.
 
 ### Compiling
@@ -211,9 +133,10 @@ On some older systems you may need to replace the `make` commands with:
 
 ``` bash
 make LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
+make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"   ### old FreeBSD
 ```
 
-## Self-tests (optional)
+### Self-tests (optional)
 
 You can run the tests with the following commands:
 
@@ -227,18 +150,36 @@ make -C src/tests/data
 make -C src test                # run self-tests (can take 5 to 60 minutes)
 ```
 
+
+## Installation (static binaries, x86_64 platforms)
+
+Run the following commands:
+
+``` sh
+curl http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -o vidjil-algo
+chmod 755 vidjil-algo
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/doc/vidjil-algo.md
+
+### Germlines
+mkdir germline
+cd germline
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/homo-sapiens.g
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/germline_id
+curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/get-saved-germline | sh
+cd ..
+
+### Demo sequences (optional)
+mkdir demo
+cd demo
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/Demo-X5.fa
+curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/get-sequences | sh
+cd ..
+
+./vidjil-algo -h
+```
+
+
 # Input and parameters
-
-The main input file of Vidjil-algo is a *set of reads*, given as a `.fasta`
-or `.fastq` file, possibly compressed with gzip (`.gz`).
-This set of reads can reach several gigabytes and 2\*10<sup>9</sup> reads. It is
-never loaded entirely in the memory, but reads are processed one by
-one by Vidjil-algo.
-Vidjil-algo can also process BAM files, but please note that:
-
-1.  The reads don't need to be aligned beforehand.
-2.  In case of paired-end sequencing, the reads must have already been merged
-    in the BAM file.
 
 The `-h` and `-H` help options provide the list of parameters that can be
 used. We detail here the options of the main `-c clones` command.
@@ -248,22 +189,55 @@ automatic clusterization, see below), leaving the user or other
 software making detailed analysis and decisions on the final
 clustering.
 
-## Recombination / locus selection
+### Input selection
 
+```
+Positionals
+  reads_file                  reads file, in one of the following formats:
+                                  - FASTA (.fa/.fasta, .fa.gz/.fasta.gz)
+                                  - FASTQ (.fq/.fastq, .fq.gz/.fastq.gz)
+                                  - BAM (.bam)
+                              Paired-end reads should be merged before given as an input to vidjil-algo.
+                              Uncompressed FASTA/FASTQ reads can be given from standard input with '-'.
+
+Input
+  -x, --first-reads INT       maximal number of reads to process ('all': no limit, default), only first reads
+  -X, --sampled-reads INT     maximal number of reads to process ('all': no limit, default), sampled reads
+```
+
+The main input file of Vidjil-algo is a *set of reads*, given as a `.fasta`
+or `.fastq` file, possibly compressed with gzip (`.gz`).
+This set of reads can reach several gigabytes and 2\*10<sup>9</sup> reads. It is
+never loaded entirely in the memory, but reads are processed one by
+one by Vidjil-algo.
+FASTA/FASTQ reads can also be given on the standard input by giving `-` instead of a file.
+
+Vidjil-algo can also process BAM files, but please note that:
+
+1.  The reads don't need to be aligned beforehand.
+2.  In case of paired-end sequencing, the reads must have already been merged
+    in the BAM file.
+
+The `--first-reads` option restricts the analysis on a few sequences, for example to probe a large file or to test some parameters.
+However, read files may be not homogeneous, with biais in the sequences at the start of the file.
+The `--sampled-reads` option rather considers *regularly sampled sequences* from the file.
+It is thus generally safe to run `--sampled-reads 1000` to have a fast insight of what there is in some data.
+
+## Germline presets: locus and recombination selection
 
 ``` diff
-Germline presets (at least one -g or -V/(-D)/-J option must be given)
+Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)
   -g, --germline GERMLINES ...
 
-         -g <.g FILE>(:FILTER)
-                    multiple locus/germlines, with tuned parameters.
+         -g <.g FILE>(:FOCUS) ...
+                    germline preset(s) (.g file(s)), detecting multiple recombinations, with tuned parameters.
                     Common values are '-g germline/homo-sapiens.g' or '-g germline/mus-musculus.g'
-                    The list of locus/recombinations can be restricted, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
+                    One can focus on some recombinations, such as in '-g germline/homo-sapiens.g:IGH,IGK,IGL'
          -g PATH
-                    multiple locus/germlines, shortcut for '-g PATH/homo-sapiens.g',
+                    human germline preset, shortcut for '-g PATH/homo-sapiens.g',
                     processes human TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with incomplete/unusal recombinations
   -V FILE ...                 custom V germline multi-fasta file(s)
-  -D FILE ...                 custom D germline multi-fasta file(s), analyze into V(D)J components
+  -D FILE ...                 custom D germline multi-fasta file(s) for V(D)J designation
   -J FILE ...                 custom V germline multi-fasta file(s)
   -2                          try to detect unexpected recombinations
 ```
@@ -272,15 +246,13 @@ The `germline/*.g` presets configure the analyzed recombinations.
 The following presets are provided:
 
   - `germline/homo-sapiens.g`: Homo sapiens, TR (`TRA`, `TRB`, `TRG`, `TRD`) and Ig (`IGH`, `IGK`, `IGL`) locus,
-    including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see [locus](locus)).
+    including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see <locus.md>.
   - `germline/homo-sapiens-isotypes.g`: Homo sapiens heavy chain locus, looking for sequences with, on one side, IGHJ (or even IGHV) genes,
     and, on the other side, an IGH constant chain.
-  - `germline/homo-sapiens-cd.g`: Homo sapiens, common CD genes (experimental, does not check for recombinations)
+  - `germline/homo-sapiens-isoforms.g`: Homo sapiens IKZF1 and ERG recombinations.
+  - `germline/homo-sapiens-cd.g`: Homo sapiens, common CD genes (experimental, does not check for recombinations).
   - `germline/mus-musculus.g`: Mus musculus (strains BALB/c and C57BL/6)
   - `germline/rattus-norvegicus.g`: Rattus norvegicus (strains BN/SsNHsdMCW and Sprague-Dawley)
-
-New `germline/*.g` presets for other species or for custom recombinations can be created, possibly referring to other `.fasta` files.
-Please contact us if you need help in configuring other germlines.
 
   - Recombinations can be filtered, such as in
     `-g germline/homo-sapiens.g:IGH` (only IGH, complete recombinations),
@@ -293,6 +265,74 @@ Please contact us if you need help in configuring other germlines.
 
 Finally, the advanced `-V/(-D)/-J` options enable to select custom V, (D) and J repertoires given as `.fasta` files.
 
+## Custom `germline/*.g` presets
+
+New `germline/*.g` presets for other species or for custom recombinations can be created, possibly referring to other `.fasta` files.
+This is an advanced usage, please contact us if you need help in configuring such other germlines.
+
+Inside a `.g` file, the `systems` entries details how vidjil-algo looks for recombinations.
+Let's look at the `IGH` entry in the `germline/homo-sapiens.g` preset:
+
+```json
+        "IGH": {
+            "shortcut": "H",
+            "color" : "#6c71c4",
+            "description": "Human immunoglobulin, heavy locus (14q32.33)",
+            "recombinations": [ {
+                "5": ["IGHV.fa"],
+                "4": ["IGHD.fa"],
+                "3": ["IGHJ+down.fa"]
+            } ],
+            "parameters": {
+                "seed": "12s"
+            }
+        }
+```
+
+The `shortcut` must be a unique 1-character string.
+The `color` and `description` fields are not used by `vidjil-algo`, but rather by the web application.
+The `parameters.seed` value of `12s` is equivalent to `-s 12s` advanced option on k-mer size described below.
+
+Here `recombinations` describes one sequence analysis mode, called `543`:
+a VJ junction is detected when there is a significant similarity (in terms of numbers of k-mers, see below) against sequences in `IGHV.fa` in the 5' region,
+followed by a significant similarity in the 3' region against sequences in `IGHJ+down.fa`
+– here we take both J genes and downstream sequences to improve the detection.
+
+In a second pass (V(D)J designation), full alignment is done against these sequences.
+The optional `4` entry  (`IGHD.fa`) is taken only there into account.
+However, if a D is not detected and designated, the read will be designated as VJ.
+
+
+The `TRD+` entry, for incomplete recombinations (see <locus.md>), shows an example where
+both Vd-Dd3, Dd2-Jd (possibly Dd2-Dd-Jd), and Dd2-Dd3 recombinations are searched:
+
+```json
+    "recombinations": [ {
+        "5": ["TRDV.fa"],
+        "3": ["TRDD3+down.fa"]
+    }, {
+        "5": ["TRDD2+up.fa"],
+        "4": ["TRDD.fa"],
+        "3": ["TRDJ+down.fa"]
+    }, {
+        "5": ["TRDD2+up.fa"],
+        "3": ["TRDD3+down.fa"]
+    } ]
+```
+
+There is also an experimental sequence analysis mode, called `1`,
+that detects similarities and designates sequences *without recombinations*,
+as in `germline/homo-sapiens-cd.g`:
+
+```json
+     "recombinations": [ { "1": ["CD-sorting.fa"] } ]
+```
+
+This can be used to detect non-recombined known sequences,
+as shown here with usual CD sequences in RNA-seq data.
+However, putting too many sequences here may generate many hits
+that may hide actual recombinations.
+
 ## Main algorithm parameters
 
 ``` diff
@@ -302,7 +342,7 @@ Recombination detection ("window" prediction, first pass)
     (all these options, except -w, are overriden when using -g)
   -k, --kmer INT              k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
   -w, --window INT            w-mer size used for the length of the extracted window ('all': use all the read, no window clustering)
-  -e, --e-value FLOAT=1       maximal e-value for determining if a V-J segmentation can be trusted
+  -e, --e-value FLOAT=1       maximal e-value for trusting the detection of a V-J recombination
   --trim INT                  trim V and J genes (resp. 5' and 3' regions) to keep at most <INT> nt  (0: no trim)
   -s, --seed SEED=10s         seed, possibly spaced, used for the V/J affectation (default: depends on germline), given either explicitely or by an alias
                                10s:#####-##### 12s:######-###### 13s:#######-###### 9c:#########
@@ -312,7 +352,7 @@ The `-s`, `-k` are the options of the seed-based heuristic that detects
 "junctions", that is a zone in a read that is similar to V genes on its
 left end and similar to J genes in its right end. A detailed
 explanation can be found in (Giraud, Salson and al., 2014).
-*These options are for advanced usage, the defaults values should work.*
+*These options are for advanced usage, the default values, as set in the `germline/*.g` presets, should work.*
 The `-s` or `-k` option selects the seed used for the k-mer V/J affectation.
 
 The `-w` option fixes the size of the "window" that is the main
@@ -330,7 +370,7 @@ the start of the J, or at least some specific N region to uniquely identify the 
 Setting `-w` to higher values (such as `-w 60` or `-w 100`) makes the clone clustering
 even more conservative, enabling to split clones with low specificity (such as IGH with very
 large D, short or no N regions and almost no somatic hypermutations). However, such settings
-may "segment" (analyze) less reads, depending on the read length of your data, and may also
+may detect recombinations in less reads, depending on the read length of your data, and may also
 return more clones, as any sequencing error in the window is not corrected.
 
 The special `-w all` option takes all the read as the windows, completely disabling
@@ -372,10 +412,6 @@ The default is `--trim 0`.
 The following options control how many clones are output and analyzed.
 
 ``` diff
-Input
-  -x, --first-reads INT       maximal number of reads to process ('all': no limit, default), only first reads
-  -X, --sampled-reads INT     maximal number of reads to process ('all': no limit, default), sampled reads
-
 Limits to report and to analyze clones (second pass)
   -r, --min-reads INT=5       minimal number of reads supporting a clone
   --min-ratio FLOAT=0         minimal percentage of reads supporting a clone
@@ -404,7 +440,7 @@ consensus (see below), but you can safely put `--max-consensus all` if you want
 to compute all consensus sequences.
 
 The `--max-designations` option limits the number of clones that are fully analyzed,
-*with their V(D)J designation and possibly a CDR3 detection*,
+*with their V(D)J designation and an analysis of their CDR3*,
 in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis).
@@ -416,7 +452,7 @@ for the IGH locus. However, they
 are not at the core of the Vidjil clone clustering method (which
 relies only on the 'window', see above).
 To check the quality of these designations, the automated test suite include
-sequences with manually curated V(D)J designations (see [should-vdj.org](http://git.vidjil.org/blob/master/doc/should-vdj.org)).
+[sequences with manually curated V(D)J designations](should-vdj.md).
 
 If you want to analyze more clones, you should use `--max-designations 200` or
 `--max-designations 500`. It is not recommended to use larger values: outputting more
@@ -444,6 +480,27 @@ The default `--analysis-filter 3` is generally safe.
 Setting `--analysis-filter all` removes this pre-processing step, running a full dynamic programming
 with all germline sequences that is much slower.
 
+## CDR3 analysis
+
+The full analysis of clones beyond the `--max-designations` threshold also includes
+a CDR3/JUNCTION detection and productivity estimation based on the position
+of Cys104 and Phe118/Trp118 amino acids. The detection relies on alignment
+with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
+as provided by `make germline`.
+The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
+
+CDR3 are reported as *productive* when they come from an in-frame recombination,
+the sequence does not contain any in-frame stop codons,
+and, for IGH recombinations, when the FR4 begins with the `{WP}-GxG` pattern.
+This follows the ERIC guidelines ([Rosenquist et al., 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5508071/)).
+When a clone is reported as non-productive, the cause is detailed in the `seg.junction.unproductive` field
+of the `.vidjil` output and also in some fields of the AIRR output.
+Note that some other software only consider stop codons in the CDR3,
+and may thus under-estimate non-productivity.
+When the sequence is long enough to start before the start of the V gene
+or to end after the end of the J gene, vidjil-algo do not consider these intronic sequences
+in the productivity estimation.
+
 ## Sequences of interest
 
 Vidjil-algo allows to indicate that specific sequences should be followed and output,
@@ -461,7 +518,7 @@ The first column of the file is the sequence to be followed
 while the remaining columns consist of the sequence's label.
 In Vidjil-algo output, the labels are output alongside their sequences.
 
-A sequence given `--label <sequence>` or with `-label-file <file>` can be exactly the size
+A sequence given `--label <sequence>` or with `--label-file <file>` can be exactly the size
 of the window (`-w`, that is 50 by default). In this case, it is guaranteed that
 such a window will be output if it is detected in the reads.
 More generally, when the provided sequence differs in length with the windows
@@ -479,56 +536,52 @@ with the `--grep-reads <sequence>` preset, equivalent to
 All the reads with the windows related to the sequence will be extracted 
 to files such as `out/seq/clone.fa-1`.
 
-## Further clone analysis and CDR3 detection
+Note that such sequences must have been detected as a V(D)J (or V(D)J-like) recombination
+in the first pass: the `--label`, `-label-file`, or `--label-filter` options can not
+ detect a recombination that was not detected when removing all the thresholds with `--all`.
 
-``` diff
-Clone analysis (second pass)
-  -d, --several-D             try to detect several D (experimental)
-  -3, --cdr3                  CDR3/JUNCTION detection (requires gapped V/J germlines)
-```
+To increase the sensitivity, see above the `--e-value` option, or,
+to look for non-recombined sequences, see above the experimental `1` sequence analysis.
 
-The `-3` option launches a CDR3/JUNCTION detection based on the position
-of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
-with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
-as provided by `make germline`.
-The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
+## Options for further clone analysis
 
-CDR3 are reported as *productive* when they come from an in-frame recombination
-and when the full sequence does not contain any in-frame stop codons.
-Note that some other software only consider stop codons in the CDR3,
-and may thus under-estimate non-productivity. Vidjil-algo looks for in-frame stop codons
-on all the available sequence (and may sometimes over-estimate non-productivity when
-the sequence contains intronic regions).
+The `--several-D` option tries to detect several D.
 
 The advanced `--analysis-cost` option sets the parameters used in the comparisons between
 the clone sequence and the V(D)J germline genes. The default values should work.
 
 The e-value set by `-e` is also applied to the V/J designation.
-The `-E` option further sets the e-value for the detection of D segments.
+The `-E` advanced option further sets the e-value for the detection of D segments.
 
 ## Further clustering (experimental)
 
 The following options are experimental and have no consequences on the `.vdj.fa` file,
 nor on the standard output. They instead add a `clusters` sections in the `.vidjil` file
 that will be visualized in the web application.
+Any such clustering should be avoided when one wants to precisely study hypermutations.
+The web application provides other options to inspect clones and cluster them.
 
-The `--cluster-epsilon` option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
+The `--cluster-epsilon` option triggers an automatic clustering using the
+[DBSCAN](https://en.wikipedia.org/wiki/DBSCAN) algorithm (Ester and al., 1996).
 Using `--cluster-epsilon 5` usually clusters reads within a distance of 1 mismatch (default score
-being +1 for a match and -4 for a mismatch). However, more distant reads can also
-be clustered when there are more than 10 reads within the distance threshold.
+being +1 for a match and -4 for a mismatch). With that option, more distant reads will also
+be clustered as soon there are more than 10 reads within the distance threshold.
 This behaviour can be controlled with the `-cluster-N` option.
 
+Setting `--cluster-epsilon 10`, possibly with `--cluster-N 5` or `--cluster-N 1`
+will perform more aggressive clustering and is generally not advised.
+
 The `--cluster-forced-edges` option allows to specify a file for manually clustering two windows
-considered as similar. Such a file may be automatically produced by vidjil
+considered as similar. Such a file may be automatically produced by vidjil-algo
 (`out/edges`), depending on the option provided. Only the two first columns
-(separed by one space) are important to vidjil, they only consist of the
+(separed by one space) are important to vidjil-algo, they only consist of the
 two windows that must be clustered.
 
 # Output
 
 ## Main output files
 
-The main output of Vidjil-algo (with the default `-c clones` command) are the three following files:
+The default output of Vidjil-algo (with the default `-c clones` command) are the two following files:
 
   - The `.vidjil` file is the *main output file*, containing the most information.
     The file is in a `.json` format,
@@ -545,30 +598,39 @@ The main output of Vidjil-algo (with the default `-c clones` command) are the th
   - The `.tsv` file is the AIRR output, for compatibility with other software
     using the same format. See [below](#airr-tsv-output) for details.
 
-  - The `.vdj.fa` file is *a FASTA file for further processing by other bioinformatics tools*.
-    Even if it is advised to rather use the full information in the `.vijdil` file,
-    the `.vdj.fa` is a convenient way to have sequences of clones for further processing.
-    These sequences are at least the windows (and their count in the headers) or
-    the consensus sequences (`--max-consensus`) when they have been computed.
-    The [headers](#the-vdjfa-format) are described below.
-    Some other informations such as the further clustering are not output in this file.
-    
-    The `.vdj.fa` output enables to use Vidjil-algo as a *filtering tool*,
-    shrinking a large read set into a manageable number of (pre-)clones
-    that will be deeply analyzed and possibly further clustered by
-    other software.
 
-By default, the three output files are named
-`out/basename.vidjil`, `out/basename.tsv`, and `out/basename.vdj.fa`, where:
+By default, these output files are named
+`out/basename.vidjil` and `out/basename.tsv`, where:
 
   - `out` is the directory where all the outputs are stored (can be changed with the `--dir` option).
   - `basename` is the basename of the input `.fasta/.fastq` file (can be overriden with the `--base` option)
 
+With the `--gz` option, both files are output
+as compressed `.vidjil.gz` and `.tsv.gz` files.
 
 Vidjil-algo also outputs the first 50 clones on the standard output.
 More data can be printed on the standard output with the `-v` option.
 
 ## Auxiliary output files
+
+### `.vdj.fa`
+
+With the `--out-vdjfa` option, a `.vdj.fa` file is created (or, with `--gz`, a `.vdj.fa.gz` file).
+This is *a FASTA file for further processing by other bioinformatics tools*.
+Even if it is advised to rather use the full information in the `.vijdil` file,
+the `.vdj.fa` is a convenient way to have sequences of clones for further processing.
+These sequences are at least the windows (and their count in the headers) or
+the consensus sequences (`--max-consensus`) when they have been computed.
+The [headers](#headers-in-the-vdjfa-files-deprecated) are described below, but the format of the headers is deprecated
+and will not be enforced in future releases.
+Some other informations such as the further clustering are not output in this file.
+
+The `.vdj.fa` output enables to use Vidjil-algo as a *filtering tool*,
+shrinking a large read set into a manageable number of (pre-)clones
+that will be deeply analyzed and possibly further clustered by
+other software.
+
+### `.windows.fa`
 
 The `out/basename.windows.fa` file contains the list of windows, with number of occurrences:
 
@@ -584,7 +646,10 @@ ATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGAC
 Windows of size 50 (modifiable by `-w`) have been extracted.
 The first window has 8 occurrences, the second window has 5 occurrences.
 
-The `out/seq/clone.fa-*` contains the detailed analysis by clone, with
+### `seq/clone.fa-*`
+
+With the `--out-clone-files` option, one `out/seq/clone.fa-*` file is created for each clone.
+It contains the detailed analysis by clone, with
 the window, the consensus sequence, as well as with the most similar V, (D) and J germline genes:
 
 ``` diff
@@ -619,9 +684,9 @@ and 1 (full diversity, each analyzed read belongs to a different clone).
 These values are now computed on the windows, before any further clustering.
 PCR and sequencing errors can thus lead to slightly over-estimate the diversity.
 
-## Details on non analyzed reads
+## Reads without detected recombinations
 
-Vidjil-algo outputs details statistics on the reads that are not analyzed.
+Vidjil-algo outputs details statistics on the reads where no recombination was detected
 Basically, **an unanalyzed read is a read where Vidjil-algo cannot identify a window at the junction of V and J genes**.
 To properly analyze a read, Vijdil-algo needs that the sequence spans enough V region and J region
 (or, more generally, 5' region and 3' regions when looking for incomplete or unusual recombinations).
@@ -653,41 +718,46 @@ that can lead to few analyzed reads.
 
 ``` diff
 Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)
-  -U, --out-analyzed          output analyzed reads (in .segmented.vdj.fa file)
-  -u, --out-unanalyzed        
-        -u          output unanalyzed reads, gathered by cause, except for very short and 'too few V/J' reads (in *.fa files)
-        -uu         output unanalyzed reads, gathered by cause, all reads (in *.fa files) (use only for debug)
-        -uuu        output unanalyzed reads, all reads, including a .unsegmented.vdj.fa file (use only for debug)
+  -U, --out-detected          output reads with detected recombinations (in .detected.vdj.fa file)
+  -u, --out-undetected
+        -u          output undetected reads, gathered by cause, except for very short and 'too few V/J' reads (in *.fa files)
+        -uu         output undetected reads, gathered by cause, all reads (in *.fa files) (use only for debug)
+        -uuu        output undetected reads, all reads, including a .undetected.vdj.fa file (use only for debug)
   --out-reads                 output all reads by clones (clone.fa-*), to be used only on small datasets
   -K, --out-affects           output detailed k-mer affectation for each read (in .affects file) (use only for debug, for example -KX 100)
+
+Presets
+  --filter-reads              filter possibly huge datasets, with a permissive threshold, to extract reads that may have V(D)J recombinations
+                              (equivalent to -c detect --out-detected --e-value 1e6 -2)
 ```
 
-It is possible to extract all analyzed or not analyzed reads, possibly to give them to other software.
-Runing Vidjil-algo with `-U` gives a file `out/basename.analyzed.vdj.fa`, with all analyzed reads.
-On datasets generated with rather specific V(D)J primers, this is generally not recommended, as it may generate a large file.
-However, the `-U` option is very useful for whole RNA-Seq or capture datasets that contain few reads with V(D)J recombinations.
-Moreover `-U` only uses the ultra-fast first passs analysis, based on k-mer heuristics.
+It is possible to extract all reads with or without detected recombinations,
+possibly to give them to other software.
+- `-U` gives a file `out/basename.detected.vdj.fa` with all reads having a detected V(D)J recombination
 
+  - `-u` gives a set of files `out/basename.UNSEG_*` with reads where /no V(D)J recombination was detected/, 
+    but with nevertheless some significant similarity to some V/J germline genes,
+  
+  - `-uu` further produce files with all /other/ reads where no V(D)J recombination was detected
+    (including `UNSEG too short` and `UNSEG too few V/J`),
+    and `-uuu` further outputs all these reads in a file `out/basename.undetected.vdj.fa`.
 
-Similarly, options are available to get the non analyzed reads:
+As these options may generate large files, they are generally not recommended.
+However, they are very useful in some situations, especially to understand
+why some dataset gives low detection rate.
+For example `-uu -X 1000` splits the not detected reads from the 1000 first reads.
 
-  - `-u` gives a set of files `out/basename.UNSEG_*`, with not analyzed reads gathered by cause.
-    It outputs only reads sharing significantly sequences with V/J germline genes or with some ambiguity:
-    it may be interesting to further study RNA-Seq datasets.
-
-  - `-uu` gives the same set of files, including **all** not analyzed reads (including `UNSEG too short` and `UNSEG too few V/J`),
-    and `-uuu` further outputs all these reads in a file `out/basename.unsegmented.vdj.fa`.
-
-Again, as these options may generate large files, they are generally not recommended.
-However, they are very useful in some situations, especially to understand why some dataset gives poor segmentation result.
-For example `-uu -X 1000` splits the not analyzed reads from the 1000 first reads.
-
+When processing large datasets, such as RNA-Seq or capture, one may want to pre-filter read by keeping only the ones that potentially harbour a V(D)J recombination.
+In such a case, the recommanded option is to use the `--filter-reads` preset, that launches Vidjil-algo without clone clustering and analysis,
+while outputing a `out/basename.detected.vdj.fa` file. This file contains reads /that may have V(D)J recombinations/, evaluated with a very permissive threshold.
+The resulting file is usually much smaller on such datasets and can then be transferred or analysed in-depth more easily.
+This filtering can also be part of a [post-sequencer workflow](http://www.vidjil.org/doc/workflow/).
 
 ## AIRR .tsv output
 
 Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
 We export all required fields, some optional fields, as also some custom fields (+).
-We also propose in [fuse.py](/tools) a way to convert AIRR format to the `.vidjil` format.
+We also propose in [fuse.py](tools.md) a way to convert AIRR format to the `.vidjil` format.
 
 Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
 By default (`-c clones`), we thus report in the AIRR format *clones*.
@@ -697,7 +767,7 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 
 | Name  | Type | AIRR 1.2 Description <br /> *vidjil-algo implementation* |
 | ----- | ---- |  ------------------------------------------------------- |
-| locus | string | Gene locus (chain type). For example, `IGH`, `IGK`, `IGL`, `TRA`, `TRB`, `TRD`, or `TRG`.<br />*Vidjil-algo outputs all these loci. Moreover, the incomplete recombinations analyzed by vidjil-algo are reported as `IGH+`, `IGK+`, `TRA+D`, `TRB+`, `TRD+`, and `xxx` for unexpected recombinations. See  [locus](locus).*
+| locus | string | Gene locus (chain type). For example, `IGH`, `IGK`, `IGL`, `TRA`, `TRB`, `TRD`, or `TRG`.<br />*Vidjil-algo outputs all these loci. Moreover, the incomplete recombinations analyzed by vidjil-algo are reported as `IGH+`, `IGK+`, `TRA+D`, `TRB+`, `TRD+`, and `xxx` for unexpected recombinations. See  <locus.md>.*
 | duplicate_count | number | Number of reads contributing to the (UMI) consensus for this sequence. For example, the sum of the number of reads for all UMIs that contribute to the query sequence. <br />*Number of reads gathered in the clone.*
 | sequence_id | string  | Unique query sequence identifier within the file. Most often this will be the input sequence header or a substring thereof, but may also be a custom identifier defined by the tool in cases where query sequences have been combined in some fashion prior to alignment. <br />*This identifier is the (50 bp by default) window extacted around the junction.* |
 | clone_id 	| string | 	Clonal cluster assignment for the query sequence. <br />*This identifier is again the (50 bp by default) window extacted around the junction.*
@@ -705,10 +775,15 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 | sequence  | string | The query nucleotide sequence. Usually, this is the unmodified input sequence, which may be reverse complemented if necessary. In some cases, this field may contain consensus sequences or other types of collapsed input sequences if these steps are performed prior to alignment. <br />*This contains the consensus/representative sequence of each clone.*
 | rev_comp  | boolean | True if the alignment is on the opposite strand (reverse complemented) with respect to the query sequence. If True then all output data, such as alignment coordinates and sequences, are based on the reverse complement of 'sequence'. <br />*Set to null, as vidjil-algo gather reads from both strands in clones* |
 | v_call, d_call, j_call  | string  | V/D/J gene with allele. For example, IGHV4-59\*01. <br /> *implemented. In the case of uncomplete/unexpected recombinations (locus with a `+`), we still use `v/d/j_call`. Note that this value can be null on clones beyond the `--max-designations` option.* |
+| v_sequence_start, v_sequence_end <br />d_sequence_start, d_sequence_end  <br /> j_sequence_start, j_sequence_end | number |   Start/end position of the V/D/J genes and of the CDR3 in the query sequence (1-based closed interval).   <br />*implemented* |
+| v_support, j_support | number | V/J gene alignment E-value, p-value, likelihood.  <br />*implemented* |
 | junction  | string  |      Junction region nucleotide sequence, where the junction is defined as the CDR3 plus the two flanking conserved codons. <br />*null*
 | junction_aa  | string  | Junction region amino acid sequence.      <br />*implemented*
 | cdr3_aa | string | Amino acid translation of the cdr3 field.   <br />*implemented*
+| cdr3_sequence_start, cdr3_sequence_end  | number |   Start/end position of the CDR3 in the query sequence (1-based closed interval).   <br />*implemented* |
 | productive | boolean | True if the V(D)J sequence is predicted to be productive.  <br /> *true, false, or null when no CDR3 has been detected* |
+| vj_in_frame | boolean | True if the V and J gene alignments are in-frame. <br /> *true, false, or null when no CDR3 has been detected* |
+| stop_codon | boolean | True if the aligned sequence contains a stop codon. <br /> *true, false, or null when vj_in_frame is false* |
 | sequence_alignment  | string  | Aligned portion of query sequence, including any indel corrections or numbering spacers, such as IMGT-gaps. Typically, this will include only the V(D)J region, but that is not a requirement. <br /> *null*                                         |
 | germline_alignment | string  | Assembled, aligned, fully length inferred germline sequence spanning the same region as the sequence_alignment field (typically the V(D)J region) and including the same set of corrections and spacers (if any). <br />*null*
 | v_cigar, d_cigar, j_cigar | string  | CIGAR strings for the V/D/J gene <br />*null*.
@@ -718,13 +793,14 @@ Our implementation of .tsv may evolve in future versions.
 Contact us if a particular feature does interest you.
 
 
-## The .vdj.fa format
+## Headers in the .vdj.fa files (deprecated)
 
-The `.vdj.fa` format is compatible with the FASTA format,
-and details V(D)J recombinations in the FASTA headers.
-The format is described below, but may evolve in future releases.
-For post-processing tools needing some of that information, it is not recommended to parse these headers,
-but rather to use the `.vidjil` file that contains more information in a structured way.
+The `.vdj.fa` format is compatible with the FASTA format.
+
+The FASTA header of each sequence gives some details on the V(D)J recombinations.
+The format of these headers is described below, but is considered as deprecated and may be removed in future releases in Q3 2021.
+For post-processing tools needing some of that information, it is thus not recommended to parse these headers,
+but rather to use either the `.vidjil` file that contains more information in a structured way, or the AIRR `.tsv` output.
 
 In a `.vdj.fa` format, a line starting with a \> is of the following form:
 
@@ -757,7 +833,7 @@ The following lines are for VDJ recombinations:
         Jgene         name of the J gene being rearranged
 
         comments      optional comments. In Vidjil, the following comments are now used:
-                      - "seed" when this comes for the first pass (.segmented.vdj.fa). See the warning above.
+                      - "seed" when this comes for the first pass (.detected.vdj.fa). See the warning above.
                       - "!ov x" when there is an overlap of x bases between last V seed and first J seed
                       - the name of the locus (TRA, TRB, TRG, TRD, IGH, IGL, IGK, possibly followed
                         by a + for incomplete/unusual recombinations)
@@ -773,7 +849,7 @@ applicable being removed:
 ``` diff
 >name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  comments
 ```
-In the `.segmented.vdj.fa` file, the start/end positions of V and J genes are only an estimation,
+In the `.detected.vdj.fa` file, the start/end positions of V and J genes are only an estimation,
 get from the k-mer heuristics, as the center of the window may be shifted up to 15 bases from the actual center.
 In the final `.vdj.fa` file, these values are the correct ones computed after dynamic programming comparison
 with germline genes.
@@ -791,26 +867,29 @@ The following commands work in both cases, detecting the locus for each recombin
 clustering such reads into clones, and further analyzing the clones.
 
 ``` bash
-./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -3 -r 1  demo/Demo-X5.fa
+./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -r 1  demo/Demo-X5.fa
   # Detect the locus for each read, cluster and report clones starting from the first read (-r 1).
-  # including unexpected recombinations (-2). Assign the V(D)J genes and try to detect the CDR3s (-3).
+  # including unexpected recombinations (-2). Designate the V(D)J genes and analyze the CDR3s.
   # Demo-X5 is a collection of sequences on all human locus, including some incomplete or unusual recombinations:
   # IGH (VDJ, DJ), IGK (VJ, V-KDE, Intron-KDE), IGL, TRA, TRB (VJ, DJ), TRG and TRD (VDDJ, Dd2-Dd3, Vd-Ja).
 ```
 
 ``` bash
-./vidjil-algo -g germline/homo-sapiens.g:IGH -3 demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g:IGH demo/Stanford_S22.fasta
    # Cluster the reads and report the clones, based on windows overlapping IGH CDR3s.
-   # Assign the V(D)J genes and try to detect the CDR3 of each clone.
-   # Summary of clones is available both on stdout, in out/Stanford_S22.vdj.fa and in out/Stanford_S22.vidjil.
+   # Designate the V(D)J genes and analyze the CDR3 of each clone.
+   # Main output files are both out/Stanford_S22.vidjil and out/Stanford_S22.tsv.
+   # Summary of clones is available on stdout.
+
 ```
 
 ``` bash
-./vidjil-algo -g germline/homo-sapiens.g -2 -3 -d demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g -2 -d demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
-   # Assign the VDJ genes (including multiple D) and try to detect the CDR3 of each clone.
-   # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
+   # Designate the VDJ genes (including multiple D) and analyze the CDR3 of each clone.
+   # Main output files are both out/reads.vidjil and out/reads.tsv.
+   # Summary of clones is available on stdout.
 ```
 
 ## Sorting reads from whole RNA-Seq or capture datasets
@@ -819,12 +898,12 @@ clustering such reads into clones, and further analyzing the clones.
 ./vidjil-algo -g germline/homo-sapiens.g -2 -U demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
-   # Assign the VDJ genes and try to detect the CDR3 of each clone.
-   # The out/reads.segmented.vdj.fa include all reads where a V(D)J recombination was found
+   # Designate the VDJ genes and analyze the CDR3 of each clone.
+   # The out/reads.detected.vdj.fa include all reads where a V(D)J recombination was found
 ```
 
 Typical whole RNA-Seq or capture datasets may be huge (several GB) but with only a (very) small portion of recombined sequences.
-Using Vidjil with `-U` will create a `out/reads.segmented.vdj.fa` file
+Using Vidjil with `-U` will create a `out/reads.detected.vdj.fa` file
 that includes all reads where a V(D)J recombination (or an unexpected recombination, with `-2`) was found.
 This file will be relatively small (a few kB or MB) and can be taken again as an input for Vidjil-algo or for other programs.
 
@@ -847,8 +926,8 @@ It is also possible to explicitly require V(D)J designation for each read (`-c d
 no clone clustering, not recommended for large datasets)
 
 ``` bash
-./vidjil-algo -c designations -g germline/homo-sapiens.g -2 -3 -d -x 50 demo/Stanford_S22.fasta
-   # Detailed V(D)J designation, including multiple D, and CDR3 detection on the first 50 reads, without clone clustering
+./vidjil-algo -c designations -g germline/homo-sapiens.g -2 -d -x 50 demo/Stanford_S22.fasta
+   # Detailed V(D)J designation, including multiple D, and CDR3 analysis on the first 50 reads, without clone clustering
    # (this is not as efficient as '-c clones', no clustering)
 ```
 

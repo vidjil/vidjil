@@ -51,6 +51,16 @@ AlignBox::AlignBox(string _key, string _color) {
   ref_label = "";
 }
 
+void AlignBox::reverse() {
+  int start_ = start;
+  start = seq_length - end - 1;
+  end = seq_length - start_ - 1;
+
+  int del_left_ = del_left;
+  del_left = del_right;
+  del_right = del_left_;
+}
+
 int AlignBox::getLength() {
   return end - start + 1 ;
 }
@@ -71,18 +81,28 @@ string AlignBox::getSequence(string sequence) {
   return sequence.substr(start, end-start+1);
 }
 
+bool AlignBox::CoverFirstPos()
+{
+  return (start <= 0);
+}
+
+bool AlignBox::CoverLastPos()
+{
+  return (end >= seq_length - 1);
+}
+
 void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
 
   json j;
   j["name"] = ref_label;
 
-  if (key != "3") // no end information for J
+  if (key != "3" || !CoverLastPos()) // end information for J
     {
       j["stop"] = end + 1;
       j["delRight"] = del_right;
     }
 
-  if (key != "5") // no start information for V
+  if (key != "5" || !CoverFirstPos()) // start information for V
     {
       j["start"] = start + 1;
       j["delLeft"] = del_left;
@@ -104,10 +124,7 @@ void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
   }
 }
 
-
-#define NO_COLOR "\033[0m"
-
-int AlignBox::posInRef(int i) {
+int AlignBox::posInRef(int i) const {
   // Works now only for V/J boxes
 
   if (del_left >= 0) // J
@@ -119,15 +136,15 @@ int AlignBox::posInRef(int i) {
   return -99;
 }
 
-string AlignBox::refToString(int from, int to) {
+string AlignBox::refToString(int from, int to) const {
 
   stringstream s;
 
-  s << ref_label << "  \t" ;
+  s << left << setw(SHOW_NAME_WIDTH) << ref_label << " " ;
 
   int j = posInRef(from);
 
-  s << j << "\t" ;
+  s << right << setw(4) << j << " " ;
 
   if (from > start)
     s << color;
@@ -152,11 +169,37 @@ string AlignBox::refToString(int from, int to) {
   if (to < end)
     s << NO_COLOR;
 
-  s << "\t" << j  ;
+  s << right << setw(4) << j  ;
 
   return s.str();
 }
 
+void show_colored_read(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int start_5, int end_3)
+{
+  out << left << setw(SHOW_NAME_WIDTH) << seq.label.substr(0,SHOW_NAME_WIDTH) << " "
+      << right << setw(4) << start_5 << " " ;
+
+  out << V_COLOR << seq.sequence.substr(start_5, box_V->end - start_5 + 1)
+      << NO_COLOR
+      << seq.sequence.substr(box_V->end+1, (box_J->start - 1) - (box_V->end + 1) +1)
+      << J_COLOR
+      << seq.sequence.substr(box_J->start, end_3 - box_J->start + 1)
+      << NO_COLOR ;
+  
+  out << right << setw(4) << end_3 << endl ;
+}
+
+void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int max_gene_align)
+{
+  int align_V_length = min(max_gene_align, box_V->end - box_V->start + 1);
+  int align_J_length = min(max_gene_align, (int)seq.sequence.size() - box_J->start + 1);
+  int start_V = box_V->end - align_V_length + 1;
+  int end_J = box_J->start + align_J_length - 1;
+
+  show_colored_read(out, seq, box_V, box_J, start_V, end_J);
+  out << box_V->refToString(start_V, end_J) << "   " << *box_V << endl ;
+  out << box_J->refToString(start_V, end_J) << "   " << *box_J << endl ;
+}
 
 
 ostream &operator<<(ostream &out, const AlignBox &box)
@@ -388,13 +431,20 @@ string KmerSegmenter::getInfoLineWithAffects() const
 {
    stringstream ss;
 
-   ss << "# "
+   ss << "= " << right << setw(10) << segmented_germline->code << " "
       << right << setw(3) << score << " "
       << left << setw(30)
-      << getInfoLine() ;
+      << getInfoLine();
 
    if (getSegmentationStatus() != UNSEG_TOO_SHORT)
-     ss << getKmerAffectAnalyser()->toString();
+   {
+     ss << endl;
+     ss << "# " << right << setw(10) << segmented_germline->code << " "
+        << getKmerAffectAnalyser()->toStringValues();
+     ss << endl;
+     ss << "$ " << right << setw(10) << segmented_germline->code << " "
+        << getKmerAffectAnalyser()->toStringSigns();
+   }
 
    return ss.str();
 }
@@ -426,9 +476,9 @@ KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
 
 KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold, double multiplier)
 {
-  box_V = new AlignBox();
+  box_V = new AlignBox("5", V_COLOR);
   box_D = new AlignBox();
-  box_J = new AlignBox();
+  box_J = new AlignBox("3", J_COLOR);
 
   CDR3start = -1;
   CDR3end = -1;
@@ -867,11 +917,12 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 {
   
   int best_score = MINUS_INF ;
+
+  box->rep = &rep;
   box->ref_nb = MINUS_INF ;
-  int best_best_i = (int) string::npos ;
+  box->start = (int) string::npos ;
+  box->end = (int) string::npos ;
   int best_best_j = (int) string::npos ;
-  int best_first_i = (int) string::npos ;
-  int best_first_j = (int) string::npos ;
 
   vector<pair<int, int> > score_r;
 
@@ -895,44 +946,49 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
 
       int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
       
-      if (local==true){ 
-	dp.backtrack();
-      }
-      
       if (score > best_score)
-	{
-	  best_score = score ;
-	  best_best_i = dp.best_i ;
-	  best_best_j = dp.best_j ;
-	  best_first_i = dp.first_i ;
-	  best_first_j = dp.first_j ;
-	  box->ref_nb = r ;
-	  box->ref_label = rep.label(r) ;
+      {
+         dp.backtrack();
+         best_score = score ;
 
-          if (!local)
-            dp.backtrack();
-          box->marked_pos = dp.marked_pos_i ;
-	}
+         // Reference identification
+         box->ref_nb = r ;
+
+         // Alignment positions *on the read*
+         box->start = dp.first_i;            // start position
+         box->end = dp.best_i ;              // end position
+         box->marked_pos = dp.marked_pos_i ; // marked position
+
+         // Alignment positions *on the reference*
+         box->del_left = dp.first_j;     // around start position
+         best_best_j = dp.best_j;        // around end position
+       }
 	
 	score_r.push_back(make_pair(score, r));
 
 	// #define DEBUG_SEGMENT      
 
 #ifdef DEBUG_SEGMENT	
-	cout << rep.label(r) << " " << score << " " << dp.best_i << endl ;
+	cout << rep.label(r) << " " << score << " " << dp.first_i <<  " " << dp.best_i << endl ;
 #endif
 
     }
 
-  int length = best_best_i;     // end position of the alignment in the read
-  int del_end = rep.sequence(box->ref_nb).size() - best_best_j;
-  if (reverse_ref || reverse_both) {
-    length = read.length() - length - 1;
-    del_end = best_best_j;
+  sort(score_r.begin(),score_r.end(),comp_pair);
+  box->score = score_r;
+
+  box->ref_label = rep.label(box->ref_nb) ;
+  box->ref = rep.sequence(box->ref_nb);
+  box->del_right = box->ref.size() - best_best_j - 1;
+  box->seq_length = read.length();
+
+  if (reverse_both) {
+    box->reverse();
   }
-  length = min(length, (int) rep.sequence(box->ref_nb).size());
-  length += del_end;
-  // length is an estimation of the number of aligned nucleotides. It would be better with #2138
+
+  // Should we run a full DP?
+  int length = min(box->getLength(), (int) box->ref.size());
+  // length is an estimation of the number of aligned nucleotides.
   int min_number_of_matches = min(int(length * FRACTION_ALIGNED_AT_WORST), length - BOTTOM_TRIANGLE_SHIFT); // Minimal number of matches we can have with a triangle
   int max_number_of_insertions = length - min_number_of_matches;
   int score_with_limit_number_of_indels =  min_number_of_matches * segment_cost.match + max_number_of_insertions * segment_cost.insertion;
@@ -945,26 +1001,12 @@ void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id
     return;
   }
 
-    sort(score_r.begin(),score_r.end(),comp_pair);
-
-  box->ref = rep.sequence(box->ref_nb);
-  box->del_right = reverse_both ? best_best_j : box->ref.size() - best_best_j - 1;
-  box->del_left = best_first_j;
-  box->start = best_first_i;
-  box->rep = &rep; 
-  box->score = score_r;
-
 #ifdef DEBUG_SEGMENT	
-  cout << "best: " << box->ref_label << " " << best_score ;
-  cout << "del/del2/begin:" << (box->del_right) << "/" << (box->del_left) << "/" << (box->start) << endl;
-  cout << endl;
+  cout << "reverse_both " << reverse_both << "   reverse_left " << reverse_ref << "   local " << local << endl;
+  cout << "best:   " << *box <<  "   read length: " << read.length() << "   ref length: " <<   box->ref.size()  << endl;
 #endif
 
-  if (reverse_ref)
-    // Why -1 here and +1 in dynprog.cpp /// best_i = m - best_i + 1 ;
-    best_best_i = read.length() - best_best_i - 1 ;
 
-  box->end = best_best_i ;
 }
 
 string format_del(int deletions)
@@ -1085,10 +1127,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
   }
   align_against_collection(sequence_or_rc, germline->rep_3, NO_FORBIDDEN_ID, reverse_J, !reverse_J, false,
                            box_J, segment_cost, false, standardised_threshold_evalue);
-  // J was run with '!reverseJ', we copy the box informations from right to left
-  // Should this directly be handled in align_against_collection() ?
-  box_J->start = box_J->end ;
-  box_J->del_left = box_J->del_right;
 
   /* E-values */
   evalue_left  = multiplier * sequence.size() * germline->rep_5.totalSize() * segment_cost.toPValue(box_V->score[0].first);
@@ -1122,10 +1160,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
     //overlap VJ
   seg_N = check_and_resolve_overlap(sequence_or_rc, 0, sequence_or_rc.length(),
                                     box_V, box_J, segment_cost, reverse_V, reverse_J);
-
-  // Reset extreme positions
-  box_V->start = 0;
-  box_J->end = sequence.length()-1;
 
   // Why could this happen ?
   if (box_J->start>=(int) sequence.length())
@@ -1307,9 +1341,12 @@ void FineSegmenter::findCDR3(){
     return ;
   }
 
+  // Now a junction is detected. Is it productive?
+  JUNCTIONproductive = false ;
+
   // We require at least one more nucleotide to export a CDR3
   if (JUNCTIONend - JUNCTIONstart + 1 < 7) {
-    JUNCTIONproductive = false ;
+    JUNCTIONunproductive = UNPROD_TOO_SHORT;
     return ;
   }
   
@@ -1322,10 +1359,25 @@ void FineSegmenter::findCDR3(){
   if (CDR3nuc.length() % 3 == 0)
     {
       CDR3aa = nuc_to_aa(CDR3nuc);
+      string sequence_startV_stopJ = subsequence(getSequence().sequence, box_V->start+1, box_J->end+1);
+      int frame = (JUNCTIONstart-1 - box_V->start) % 3;
+
+      if (hasInFrameStopCodon(sequence_startV_stopJ, frame))
+      {
+        // Non-productive CDR3
+        JUNCTIONunproductive = UNPROD_STOP_CODON;
+      }
+      else
+      {
+        // Productive CDR3
+        JUNCTIONproductive = true;
+      }
     }
   else
     {
       // Non-productive CDR3
+      JUNCTIONunproductive = UNPROD_OUT_OF_FRAME;
+
       // We want to output a '#' somewhere around the end of the N, and then restart
       // at the start of the first codon fully included in the germline J
       int CDR3startJfull = JUNCTIONend - ((JUNCTIONend - box_J->start) / 3) * 3 + 1 ;
@@ -1338,20 +1390,31 @@ void FineSegmenter::findCDR3(){
   JUNCTIONaa = nuc_to_aa(subsequence(getSequence().sequence, JUNCTIONstart, CDR3start-1))
     + CDR3aa + nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, JUNCTIONend));
 
-  JUNCTIONproductive = (CDR3nuc.length() % 3 == 0) && (! hasInFrameStopCodon(getSequence().sequence, (JUNCTIONstart-1)%3));
   // Reminder: JUNCTIONstart is 1-based
+
+  // IGH without a {WP}GxG pattern
+  if (JUNCTIONproductive && (segmented_germline->code.find("IGH") != string::npos))
+  {
+    string FR4aastart = nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, CDR3end+1+11));
+
+    if (!WPGxG(FR4aastart))
+    {
+      JUNCTIONproductive = false;
+      JUNCTIONunproductive = UNPROD_NO_WPGxG;
+    }
+  }
 }
 
-void FineSegmenter::checkWarnings(CloneOutput *clone)
+void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
 {
   if (isSegmented())
     {
       // Non-recombined D7-27/J1 sequence
       if ((box_V->ref_label.find("IGHD7-27") != string::npos)
           && (box_J->ref_label.find("IGHJ1") != string::npos)
-          && ((getMidLength() >= 90) || (getMidLength() <= 94)))
+          && ((getMidLength() >= 90) && (getMidLength() <= 94)))
         {
-          clone->add_warning("W61", "Non-recombined D7-27/J1 sequence", LEVEL_ERROR);
+          clone->add_warning(W61_NON_RECOMBINED_D7_27_J1, "Non-recombined D7-27/J1 sequence", LEVEL_ERROR, phony);
         }
 
       // Multiple candidate assignations
@@ -1363,13 +1426,17 @@ void FineSegmenter::checkWarnings(CloneOutput *clone)
             if (it.first < box->score[0].first) break;
             genes += " " + box->rep->label(it.second);
           }
-          clone->add_warning("W69", "Several genes with equal probability:" + genes, LEVEL_WARN);
+          clone->add_warning("W69", "Several genes with equal probability:" + genes, LEVEL_WARN, phony);
         }
       }
     }
 }
 
-void FineSegmenter::toOutput(CloneOutput *clone){
+void FineSegmenter::showAlignments(ostream &out){
+  show_colored_read_germlines(out, getSequence(), box_V, box_J, SHOW_MAX_GENE_ALIGNMENT);
+}
+
+void FineSegmenter::toOutput(CloneOutput *clone, bool details){
   json seg;
 
   for (AlignBox *box: boxes)
@@ -1405,6 +1472,10 @@ void FineSegmenter::toOutput(CloneOutput *clone){
             {"aa", JUNCTIONaa},
             {"productive", JUNCTIONproductive}
         });
+        if (JUNCTIONunproductive.length())
+        {
+          clone->set(KEY_SEG, "junction", "unproductive", JUNCTIONunproductive);
+        }
     }
   }
 }
@@ -1413,12 +1484,16 @@ json toJsonSegVal(string s) {
   return {{"val", s}};
 }
 
-void KmerSegmenter::toOutput(CloneOutput *clone) {
+void KmerSegmenter::toOutput(CloneOutput *clone, bool details) {
     json seg;
     int sequenceSize = sequence.size();
 
     if (evalue > NO_LIMIT_VALUE)
       clone->setSeg("evalue", toJsonSegVal(scientific_string_of_double(evalue)));
+
+    if (!details)
+      return ;
+
     if (evalue_left > NO_LIMIT_VALUE)
       clone->setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(evalue_left)));
     if (evalue_right > NO_LIMIT_VALUE)

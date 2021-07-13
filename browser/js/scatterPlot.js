@@ -213,7 +213,8 @@ ScatterPlot.prototype = {
             .attr("id", function(d) {
                 return self.id + "_circle" + d.id;
             })
-            .attr("class", "circle_hidden")     
+            .attr("class", "circle_hidden")
+            .on("dblclick",function(d){ self.m.displayInfoBox(d.id) });
 
     },
 
@@ -298,7 +299,7 @@ ScatterPlot.prototype = {
     },
 
     includeBar: function(clone, log) {
-        var system_grid = (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') )) 
+        var system_grid = (!this.use_system_grid || (this.use_system_grid && this.m.getCurrentSystem() == clone.get('germline') )) 
         var showVirtual;
 
         // Set if the clone should be show on is virtual/distrib status
@@ -518,7 +519,7 @@ ScatterPlot.prototype = {
 
             var xpos = 0.8
 
-            if (system != this.m.germlineV.system) {
+            if (system != this.m.getCurrentSystem()) {
                 this.systemGrid.label.push({
                     "text": system,
                     "enabled": enabled,
@@ -545,6 +546,8 @@ ScatterPlot.prototype = {
      * @param {float} [div_height]
      * */
     resize: function(div_width, div_height) {
+        if(!this.m.isReady()) return      //don't resize if model is not ready
+
         var print = true
         if (typeof div_height == 'undefined') {
             var div = document.getElementById(this.id)
@@ -689,15 +692,29 @@ ScatterPlot.prototype = {
     },
 
     /**
-     * update current clone's radius closer to their expected radius
+     * increase or decrease the radius of a node(r2) until it reaches the expected size(r1)
+     * this function is called once per frame
      * */
     updateRadius: function() {
+        epsilon = 0.2                       // expansion threshold (default 0.2px)
+        expansion_speed = 0.03              // the speed of a node expansion (default 3% of missing radius per frame)
+        minimum_radius = 2                  // minimum radius for non empty clones (default 2px)
         return function(d) {
+            //expansion continue until the node radius reach the expected value
             if (d.r1 != d.r2) {
-                var delta = d.r1 - d.r2;
-                d.r2 += 0.03 * delta;
-                if (d.r2 < 0.01) d.r2 = 0;
-                else if (d.r2 < 2) d.r2 = 2;
+                var delta = d.r1 - d.r2
+                
+                //if node radius is close enough to the expected radius, 
+                if (delta < epsilon && delta > -epsilon) 
+                    //stop expansion and use the expected value instead
+                    d.r2 = d.r1
+                else
+                    //apply expansion
+                    d.r2 += expansion_speed * delta
+
+                //don't let non empty clones shrink too much
+                if (d.r1 != 0  && d.r2 < minimum_radius)
+                    d.r2 = minimum_radius
             }
         }
     },
@@ -806,7 +823,7 @@ ScatterPlot.prototype = {
      * update all clones (color / position / axis)
      * */
     updateClones: function() {    
-        for (var i = 0; i < this.nodes.length; i++) {
+        for (var i = 0; i < this.m.clones.length; i++) {
             this.updateClone(i);
         }
 
@@ -817,8 +834,8 @@ ScatterPlot.prototype = {
         
         this.updateElemStyle();
 
-        if (this.m.germlineV.system != this.system) {
-            this.system = this.m.germlineV.system
+        if (this.m.getCurrentSystem() != this.system) {
+            this.system = this.m.getCurrentSystem() //
             this.changeSplitMethod(this.splitX, this.splitY, this.mode)
         }
         return this;
@@ -882,8 +899,7 @@ ScatterPlot.prototype = {
         var clone = this.m.clone(cloneID)      
         var node = this.nodes[cloneID]
 
-        if (this.m.clone(cloneID)
-            .isActive()) {
+        if (clone && clone.isActive()) {
 
             var seqID, size;
             if (clone.hasSizeDistrib()){
@@ -942,7 +958,7 @@ ScatterPlot.prototype = {
         if (xpos  === undefined) node.hasValidAxisPosition = false
         if (ypos  === undefined) node.hasValidAxisPosition = false
 
-        if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
+        if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.getCurrentSystem()) {
             node.use_system_grid = true
             node.x2 = Math.random()*0.01 + this.systemGrid[sys].x * this.resizeW;
             node.y2 = Math.random()*0.01 + this.systemGrid[sys].y * this.resizeH;

@@ -239,9 +239,20 @@ Graph.prototype = {
         var div = document.createElement('div')
         div.id = "" + this.id + "_menu"
         div.className = "graph_menu"
-        var list_title = document.createElement('div')
+
+        var list_title_line = document.createElement('div')
+        var list_title = document.createElement('span')
         list_title.id = this.id +"_title"
-        div.appendChild(list_title)
+
+        var list_title_samples = document.createElement('span')
+        list_title_samples.textContent = " sample" + (this.m.samples.number > 1 ? "s" : "")
+        list_title_samples.id = this.id +"_title_samples"
+        list_title_samples.style.display = "none"
+
+        list_title_line.appendChild(list_title)
+        list_title_line.appendChild(list_title_samples)
+
+        div.appendChild(list_title_line)
         
         var list = document.createElement('table')
         list.id = this.id +"_table"
@@ -262,10 +273,16 @@ Graph.prototype = {
                 $("#"+ self.id +"_table")
                     .stop(true, true)
                     .show()
+                $("#"+ self.id +"_title_samples")
+                    .stop(true, true)
+                    .show()
                 self.updateList()
             })
             .on("mouseout", function () {
                 $("#"+ self.id +"_table")
+                    .stop(true, true)
+                    .hide()
+                $("#"+ self.id +"_title_samples")
                     .stop(true, true)
                     .hide()
             })
@@ -288,21 +305,32 @@ Graph.prototype = {
         var table = document.getElementById(""+this.id +"_table")
         table.removeAllChildren()
 
-
+        // Show All
         var line   = document.createElement("tr")
         var line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_showAll"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "show all samples"
+        line_content.textContent = "show all"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)   
 
+        // Hide All
         line   = document.createElement("tr")
         line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_hideAll"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "hide all samples"
+        line_content.textContent = "focus on selected samples"
+        line_content.colSpan = "2"
+        line.appendChild(line_content)
+        table.appendChild(line)
+
+        // Hide not share
+        line   = document.createElement("tr")
+        line_content   = document.createElement("td")
+        line_content.id = this.id +"_listElem_hideNotShare"
+        line_content.classList.add("graph_listAll")
+        line_content.textContent = "focus on selected clones"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)
@@ -330,6 +358,20 @@ Graph.prototype = {
 
             list_content.appendChild(line_content_check)
             list_content.appendChild(line_content_text)
+
+            // Add all descripion of sample keys as tooltip
+            var tooltip = this.getTooltip(i, false, false)
+            list_content.title = tooltip
+
+            /* jshint ignore:start */
+            list_content.onmouseover = function() {
+                self.graphListFocus(this.dataset.time)
+            };
+            list_content.onmouseout = function() {
+                self.graphListFocus(undefined)
+            };
+            /* jshint ignore:end */
+
             table.appendChild(list_content) 
         }
 
@@ -340,6 +382,10 @@ Graph.prototype = {
         $("#"+this.id +"_listElem_hideAll").click(function () {
             console.log( "self.hideAllTimepoint( true )" )
             self.m.hideAllTime()
+        })
+        $("#"+this.id +"_listElem_hideNotShare").click(function () {
+            console.log( "self.hideNotShare()" )
+            self.m.hideNotShare()
         })
 
         $(".graph_listElem").click(function () {
@@ -385,7 +431,7 @@ Graph.prototype = {
             elem[0].classList.remove("graph_listElem_selected")
         }
         // Add css rule to current timepoint (and if at least one is show)
-        if (time != undefined && this.m.samples.order.length != 0){
+        if (time != undefined && this.m.samples.order.length > 1){
             elem = document.getElementById(this.id +'_listElem_text_'+time)
             elem.classList.add("graph_listElem_selected")
         }
@@ -445,9 +491,9 @@ Graph.prototype = {
      */
     updateCountActiveSample: function(){
         var div   = document.getElementById(this.id +"_title")
-        if (this.m.samples.number != 0 && this.m.samples.number != undefined){
+        if (this.m.samples.number > 1 && this.m.samples.number != undefined){
             div.textContent  = ""+this.m.samples.order.length+" / " + this.m.samples.number
-        } else {
+        } else if (this.m.samples.number == 0 && this.m.samples.number != undefined){
             // If no sample in the model
             div.textContent  = "..."
         }
@@ -455,10 +501,13 @@ Graph.prototype = {
 
 
 
+
     /* repositionne le graphique en fonction de la taille de la div le contenant
      *
      * */
     resize: function (div_width, div_height) {
+        if(!this.m.isReady()) return      //don't resize if model is not ready
+
         var div = document.getElementById(this.id)
         
         var speed = 0
@@ -509,7 +558,10 @@ Graph.prototype = {
         speed = typeof speed !== 'undefined' ? speed : 500;
         this.updateListElemSelected();
         this.updateCountActiveSample();
-        this.updateList()
+        this.graphListFocus(undefined)
+        if (this.m.samples.number > 1){
+            this.updateList()
+        }
 
         this.g_clone = this.clones_container.selectAll("path")
             .data(this.data_clone);
@@ -1389,6 +1441,13 @@ Graph.prototype = {
                 return d['class']
             })
 
+        if (document.getElementById(this.id + "_tooltip") == null){
+            d3.select("body").append("div")
+              .attr("class", "tooltip")
+              .attr("id", this.id + "_tooltip")
+              .style("opacity", 0);
+        }
+
         this.text_container.selectAll("text")
             .on("click", function (d) {
                 if (d.type == "axis_v" || d.type == "axis_v2") return self.m.changeTime(d.time)
@@ -1409,7 +1468,25 @@ Graph.prototype = {
                 }
 
             })
-        
+            .on("mouseover", function(d) {
+                var div = d3.select("#"+self.id + "_tooltip")
+                var time = d.time
+                var tooltip = self.getTooltip(time, true, true)
+                div.transition()
+                    .delay(1000)
+                    .duration(200)
+                    .style("opacity", 1);
+                div .html(tooltip)
+                    .style("left", (d3.event.pageX + 24) + "px")
+                    .style("top", (d3.event.pageY - 32) + "px");
+                })
+            .on("mouseout", function(d) {
+                var div = d3.select("#"+self.id + "_tooltip")
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
         return this
     },
     
@@ -1554,6 +1631,45 @@ Graph.prototype = {
         this.init();
         this.smartUpdate();
         this.resize();
+    },
+
+    getTooltip: function(time, htmlFormat, includeName){
+        var breakChar
+        if (htmlFormat){
+            breakChar = "<br/>"
+        } else {
+            breakChar = String.fromCharCode(13)
+        }
+        var tooltip = "";
+        tooltip    += this.m.getStrTime(time, "names")
+        var sampling_date = this.m.getStrTime(time, "sampling_date")
+        var delta_date    = this.m.getStrTime(time, "delta_date")
+        tooltip    += ( (sampling_date != "-/-") ? (breakChar + sampling_date) : "" )
+        tooltip    += ( (delta_date != "-/-") ? (breakChar + delta_date) : "" )
+        // duplicate from info; refactor
+        var read_number = this.m.reads.segmented
+        var percent = (read_number[this.m.t] / this.m.reads.total[this.m.t]) * 100;
+        var reads   = this.m.toStringThousands(read_number[this.m.t]) + " reads (" + percent.toFixed(2) + "%)";
+        tooltip    += breakChar + reads
+        return tooltip
+    },
+
+    graphListFocus: function(timeFocus){
+        var div;
+        for (var time = 0; time < this.m.samples.number; time++) {
+            div = document.getElementById("time"+time)
+            if (div != null){ // at init of graph, these div could be not already created
+                div.classList.remove("labelFocusMinor")
+                div.classList.remove("labelFocusMajor")
+                if (timeFocus != undefined ){
+                    if (timeFocus == time){
+                        div.classList.add("labelFocusMajor")
+                    } else {
+                        div.classList.add("labelFocusMinor")
+                    }
+                }
+            }
+        }
     }
 
 

@@ -103,6 +103,7 @@ Axis.prototype = {
         this.fct = json.fct    
         this.color = json.color
         this.sort = json.sort
+        this.min_step = json.min_step
 
         this.germline = "multi" 
         if ('germline' in json)
@@ -148,6 +149,7 @@ Axis.prototype = {
             clone = m.clone(cloneID)
 
             if (clone.isInScatterplot() &&
+                !clone.isFiltered &&
                 (this.germline == "multi" || this.germline == clone.germline)){
                 value = this.fct(clone)
 
@@ -229,7 +231,8 @@ Axis.prototype = {
                 var delta = this.scale.max - this.scale.min
                 
                 var nice = nice_min_max_steps(this.scale.min, this.scale.max, max)
-                this.step = nice.step
+                if (typeof this.min_step == "undefined") this.min_step = nice.step
+                this.step = Math.max(nice.step, this.min_step)
                 this.precision = nice_number_digits(this.step, 1)
 
                 this.scale.nice_min = nice.min
@@ -266,15 +269,19 @@ Axis.prototype = {
 
                 //add labels
                 if (this.scale.reverse){
-                    for (var k = this.scale.nice_min; k < this.scale.nice_max+1; k=k*10){
+                    if (this.scale.min == 0 && this.labels[0] == undefined)
+                        this.labels[0] = {text: "0", type:"slim", side: "right"}
+                    for (var k = this.scale.nice_max; k >= this.scale.nice_min; k=k/10){
                         this.addScaleLabel(k, "logScale")
                         labelCount++
                     } 
                 }else{
-                    for (var z = this.scale.nice_min; z < this.scale.nice_max+1; z=z*10){
+                    for (var z = this.scale.nice_min; z <= this.scale.nice_max; z=z*10){
                         this.addScaleLabel(z, "logScale")
                         labelCount++
                     } 
+                    if (this.scale.min == 0 && this.labels[0] == undefined)
+                        this.labels[0] = {text: "0", type:"slim", side: "left"}
                 }
             }
             this.scaledMargin = max/labelCount
@@ -620,13 +627,13 @@ Axis.prototype = {
 
     //return position of a given value
     getValuePos: function(v){
-        //continuous value
-        if (this.scale && typeof v == "number" && !isNaN(v))
-            return this.scale.fct(v) 
-        
         //discret value
         if (v in this.labels) 
             return this.labels[v].position
+
+        //continuous value
+        if (this.scale && typeof v == "number" && !isNaN(v))
+            return this.scale.fct(v) 
 
         return undefined
     },

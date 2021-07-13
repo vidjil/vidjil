@@ -26,7 +26,18 @@ class BrowserTest < MiniTest::Test
     end
   end
 
-  def set_browser(vidjil_file, analysis_file=nil)
+  # Skip a test on a given browser version
+  def skip_on_browser(name, version, message)
+    if $b.driver.capabilities.browser_name == name
+      if version == nil or $b.driver.capabilities.version == version
+        nameversion = "(" + $b.driver.capabilities.browser_name + "/" + $b.driver.capabilities.version  + ")"
+        print nameversion
+        skip message + " " + nameversion
+      end
+    end
+  end
+
+  def set_browser(vidjil_file, analysis_file=nil, local_storage=nil, close_tooltip=true)
     folder_path = File.expand_path(File.dirname(__FILE__))
     folder_path.sub! '/browser/test/functional', ''
     index_path = 'file://' + folder_path + '/browser/index.html'
@@ -39,15 +50,27 @@ class BrowserTest < MiniTest::Test
     if ENV['LIVE_SERVER']
       index_path = ENV['LIVE_SERVER'] + '/?data='
     end
-      
-    print "Open browser\n"
-    $b = VidjilBrowser.new
 
+    if not defined? $b
+      print "Open browser\n"
+      $b = VidjilBrowser.new
+    end
+    
     print "Resize\n"
     $b.window.resize_to(1500, 800)
 
     print "Testing Vidjil client at " + index_path + "\n"
     $b.goto index_path
+
+    if local_storage != nil and $b.driver.respond_to? :local_storage
+      $b.driver.execute_script("localStorage.clear();")
+      print "Set localStorage :\n"
+      local_storage.each do |key, value|
+        $b.driver.local_storage[key] = value
+        print "       [" + key + "] => " + value+ "\n"
+      end
+      $b.refresh
+    end
 
     # check that the browser loaded correctly
     if not $b.div(:id => 'logo').present?
@@ -93,15 +116,35 @@ class BrowserTest < MiniTest::Test
 
     $b.div(:id => 'file_menu').button(:text => 'start').click
 
+    # close tooltip
+    if close_tooltip and $b.div(id: 'tip-container').present?
+      $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+    end
+
   end
 
   def close_everything
     if defined? $b
-      if ENV['HEADLESS']
-        $headless.destroy
-      else
-        $b.close
-      end
+        if ENV['HEADLESS']
+          $headless.destroy
+        else
+          if ENV['KEEPOPEN'] == "0"
+            $b.close
+          end
+        end
+    end
+  end
+
+  def teardown
+    #Save image if test fails
+    unless passed?
+      #Where to save the image and the file name
+      folder_path = File.expand_path(File.dirname(__FILE__))
+      folder_path.sub! '/functional', ''
+      screenshot_file = folder_path+"/screenshot_teardown_#{Time.now.strftime('%Y%m%d-%H%M%S')}.png"
+
+      #Save the image
+      $b.screenshot.save screenshot_file
     end
   end
 

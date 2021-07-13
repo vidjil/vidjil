@@ -1,10 +1,14 @@
-.testing-compilers:
-  stage: multiple_tests
-  tags:
-    - cidocker
+.install-algo-dependencies:
   before_script:
     - apt-get update
     - apt-get install -y time valgrind python3 wget tar
+    
+
+.testing-compilers:
+  extends: .install-algo-dependencies
+  stage: multiple_tests
+  tags:
+    - cidocker
   script:
     - $CXX --version
     - make demo data germline
@@ -121,6 +125,16 @@ test_gcc9_release:
   extends:
     - .testing-gcc
     - .testing_various_compilers_release
+test_gcc10_manual:
+  image: gcc:10
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_manual
+test_gcc10_release:
+  image: gcc:10
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_release
 test_clang34_manual:
   image: debian:8-slim
   variables:
@@ -177,3 +191,18 @@ test_clang7_release:
   extends:
     - .testing-clang
     - .testing_various_compilers_release
+test_clang11_manual:
+  image: debian:bullseye-slim
+  variables:
+    CLANG_VERSION: "11"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_manual
+test_clang11_release:
+  image: debian:bullseye-slim
+  variables:
+    CLANG_VERSION: "11"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_release
+    

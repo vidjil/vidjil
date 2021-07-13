@@ -341,7 +341,7 @@ void testExtractor(IndexTypes index) {
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_ONLY_J), 42.75, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_J));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_ONLY_V), 48, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_V));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_AMBIGUOUS), 72, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_AMBIGUOUS));
-  TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW), 20, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW));
+  TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW), 21, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW), 71, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW));
 
   TAP_TEST(out_seg.tellp() > 0, TEST_EXTRACTOR_OUT_SEG, "");
@@ -433,12 +433,14 @@ void testProbability(IndexTypes index) {
 
   KmerAffectAnalyser *kaa = kseg.getKmerAffectAnalyser();
 
-  TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 3), 0, TEST_PROBABILITY_SEGMENTATION, "");
+  // We have only 2 k-mers, thus we can't have 3 "not unknowns". Thus, it is the probability of having 2 among 2 (with p=.75), same as the test below
+  TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 3), .75 * .75 , TEST_PROBABILITY_SEGMENTATION, "");
   TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 2), .75 * .75, TEST_PROBABILITY_SEGMENTATION, "");
   TAP_TEST(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 1) == .75 * 2 * .25 + kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 2), TEST_PROBABILITY_SEGMENTATION, "");
   TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 0), 1, TEST_PROBABILITY_SEGMENTATION, "");
 
-  TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 3), 0, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
+  // Same: we only have 2
+  TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 2), .25 * .25, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
   TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 2), .25 * .25, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
   TAP_TEST_EQUAL(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 0), 1, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
 }

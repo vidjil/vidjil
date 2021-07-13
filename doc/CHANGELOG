@@ -1,6 +1,60 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2021-04-28  The Vidjil Team
+	* New unproductivity cause, reporting IGH sequences without a {WP}GxG pattern !935
+	* Updated germlines from IMGT/GENE-DB, as well with 60bp up/downstream !885 !892
+	* Included Sus Scrofa and Gallus Gallus germlines !478 !839
+	* JUNCTION/CDR3 analysis by default, deprecating -3 option !947
+	* Smaller --max-consensus output, without debug information, new advanced option --out-details !724
+	* Updated outputs (e-values, affects) !932
+	* New and updated documentation and online help
+
+2021-02-18  The Vidjil Team
+	* New preset --filter-reads to filter potentially huge datasets (vidjil.cpp) #4681
+	* Better --gz option, outputting also .fa.gz and .affects.gz files (vidjil.cpp) #4692
+	* New and updated documentation
+
+2021-02-05  The Vidjil Team
+	* New report of unproductivity causes in 'seg.junction.unproductive' (core/segment.cpp) #4599
+	* New fields in AIRR .tsv output, 'vj_in_frame', 'stop_codon', '{v,j}_support', '{v,d,j,cdr3}_sequence_{start,end}' (core/output.cpp) #3569 #4643
+	* Ability to get the input reads from stdin with '-' (core/fasta.cpp) #4642
+	* New advanced option --read-number to override e-value multiplier, new warning W21 on doubtful multipliers (vidjil.cpp) !887
+	* New experimental option --show-junction, displaying germline genes on stdout (core/segment.cpp) !886
+	* Bugs closed (W61 warning check)
+	* New and updated documentation, including on input selection and on custom germline presets (-g)
+	* New and updated tests
+
+2020-08-21  The Vidjil Team
+	* Cleaned output, no .vdj.fa and seq/clone-*.fa by default, new options --out-vdjfa and --out-clone-files #4386 #4387
+	  Pipelines should not rely on the format of the headers in the .vdj.fa file, but rather parse the .vidjil file #3795
+	* Extended test and support to g++ 10.1, while reworking the documentation on supported compilers !733
+	* Updated documentation
+	* Updated the functional test framework (tools/should.py) !669 !784, new and updated tests
+
+2020-06-12  The Vidjil Team
+	* New report of 'start of V' and 'end of J' positions #2138, improving the productivity estimation #2142
+	  This is based on a streamlined alignment for reverse sequences (core/segment.cpp) !706
+	* Faster and improved probability computations (core/proba.cpp) !679
+	  This will bring further speed-ups in a future release
+	* Ctrl-C now gracefully stops execution with a warning W09 and some output #4286
+	* Streamlined handling of warnings #3360, also reported with -c designations #3811
+	* Better and more reproducible speed and memory benchmarks (benchmark-releases.py, #4275) #918, new profiling #918
+	* Adoption of 'detected' term, renamed output files to '.detected.vdj.fa' #3413
+	* Updated documentation
+	* New and updated tests
+	* Better release process through a merge request template !685
+
+2020-05-02  The Vidjil Team
+	* Bug closed (crash in very rare cases #4272)
+
+2020-04-29  The Vidjil Team
+	* New --gz option to output compressed files #4253 #4269 #4270
+	* Improved seed framework, with different seeds on V/D/J parts. Analysis will be improved in further releases #3954
+	* Bugs closed (missing affectations #4225, crash in rare cases #4263)
+	* New Docker framework for tests on multiple compilers #4203
+	* New and updated tests
+
 2020-01-24  The Vidjil Team
 	* Improved e-value estimation, -e is now the global e-value, new advanced option --e-value-kmer
 	  Sequences on larger datasets will now be better analyzed #3594 !538

@@ -168,6 +168,26 @@ do a correct gathering.
             "reads": [ 1021, 0 ],
             "germline": "TRG",
             "top": 5
+        },
+        {
+            "id": "clone_cluster1",
+            "name": "clone_cluster1",
+            "sequence": "GATACAaaaaaccccc",
+            "reads": [ 1021, 0 ],
+            "germline": "TRG",
+            "top": 6
+        },
+        {
+            "id": "clone_cluster2",
+            "name": "clone_cluster2",
+            "sequence": "AAAAATTTTTAAAAATTTTTAAAAATTTTT",
+            "reads": [ 521, 42 ],
+            "germline": "TRG",
+            "top": 7,
+            "seg":
+              {
+                  "cdr3": {"start": 10, "stop": 20}
+              }
         }
     ]
 }
@@ -194,7 +214,6 @@ some clones, and added external data (`data`).
     ],
          "number": 2, 
          "names": ["diag", "fu1"],
-         "original_names": ["file1.fastq", "file2.fastq"],
          "order": [1, 0],
          "stock_order": [1, 0]
     },
@@ -233,7 +252,8 @@ some clones, and added external data (`data`).
     ],
 
     "clusters": [
-        [ "clone2", "clone3"],
+        [ "clone3", "clone2"],
+        [ "clone_cluster2", "clone_cluster1"],
         [ "clone-5", "clone-10", "clone-179" ]
     ],
 
@@ -253,10 +273,16 @@ some clones, and added external data (`data`).
 }
 ```
 
-The `order` field defines the order in which order the points should be
-considered. In that case we should first consider the second point (whose `name`
+The `stock_order` and `order` fields define the order in which the points should be considered.
+
+* `stock_order` contains the order for all the existing samples and thus remembers positions of each samples, hidden or not.
+* `order` only remembers the currently shown samples.
+
+In the example above we should first consider the second point (whose `name`
 is *fu1)* and the point to be considered in second should be the first one in
 the file (whose `name` is *diag*).
+If `order` value was `[1]`, only the second sample would be shown and the first would be hidden.
+In such a case `stock_order` should still contain two values.
 
 The `clusters` field indicate clones (by their `id`) that have been further clustered.
 Usually, these clones were defined in a related `.vidjil` file (as *clone2* and *clone3*,
@@ -276,14 +302,15 @@ representative clone of the cluster.
 
 ## Statistics: the `reads` element \[.vidjil only, required\]
 
-The number of analyzed reads (`segmented`) may be higher than the sum of the read number of all clones,
+The number of reads with detected recombinations (`segmented`)
+may be higher than the sum of the read number of all clones,
 when one choose to report only the 'top' clones (`-t` option for fuse).
 
 ``` javascript
 {
     "total" : [],          // total number of reads per sample (with samples.number elements)
-    "segmented" : [],      // number of analyzed/segmented reads per sample (with samples.number elements)
-    "germline" : {         // number of analyzed/segmented reads per sample/germline (with samples.number elements)
+    "segmented" : [],      // number of reads with detected recombinations per sample (with samples.number elements)
+    "germline" : {         // number of reads with detected recombinations per sample/germline (with samples.number elements)
         "TRG" : [],
         "IGH" : []
     }
@@ -344,7 +371,7 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     // settings web application menu
 
    "seg":           // detailed V(D)J designation/segmentation and other sequences features or values [optional]
-                    // on the web application, clones that are not segmented will be shown on the grid with '?/?'
+                    // on the web application, clones that are not detected will be shown on the grid with '?/?'
                     // positions are related to the 'sequence'
                     // names of V/D/J genes should match the ones in files referenced in germline/germline.data
                     // Positions on the sequence start at 1.
@@ -361,17 +388,20 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     //  - "seq" : a sequence
                     //  - "val" : a numerical value
                     //  - "info" : a textual vlaue
-                    //
-                    // JUNCTION//CDR3 should be stored that way (in fields called "junction" of "cdr3"),
-                    // its productivity must be stored in a boolean field called "productive".
-                    // "seq" field should not be filled for cdr3 or junction (it is extracted from the sequence itself).
-                    // However a "aa" field may be used to give the amino-acid translation of the cdr3 or junction.
+
         "somefeature": { "start": 56, "stop": 61, "seq": "ACTGTA", "val": 145.7, "info": "analyzed with xyz" },
 
                     // Numerical or textual features concerning all the sequence or its analysis (such as 'evalue')
                     // can be provided by omitting "start" and "stop" elements.
         "someotherfeature": {"val": 0.004521},
         "anotherfeature": {"info": "VH CDR3 stereotypy"},
+
+                    // JUNCTION//CDR3 should be stored that way (in fields called "junction" or "cdr3"),
+                    // Its productivity must be stored in a boolean field called "productive".
+                    // When the sequence is not productive, the "unproductive" field may contain the reason (mainly "stop-codon" or "out-of-frame")
+                    // "seq" field should not be filled for cdr3 or junction (it is extracted from the sequence itself).
+                    // However a "aa" field may be used to give the amino-acid translation of the cdr3 or junction.
+        "junction": { "start": 41, "stop": 82, "aa": "CATWDRKNYYKKLF", "productive": false, "unproductive": "stop-codon" },
      }
 
 
@@ -438,7 +468,7 @@ python fuse.py -d lenSeqAverage -d seg3,seg5 sample_42.vidjil
 The command `fuse.py -l` yields the list of available axes,
 but currently only `lenSeqAverage` and `seq3,seq5` are supported.
 Adding axes can be done trough in `get_values()` in `tools/fuse.py`.
-Note that axes should also be added to `browser/js/axes.js` to be displayed in the client.
+Note that axes should also be added to `browser/js/axis_conf.js` to be displayed in the client.
 
 
 ## `germlines` list \[optional\]\[work in progress, to be documented\]
@@ -455,6 +485,143 @@ extend the `germline.data` default file with a custom germline
     }
 }
 ```
+
+## `MRD data` \[optional\]\[work in progress, to be documented\]
+
+Vidjil offers support for the use of spike-ins to serve as a yardstick
+to obtain copy numbers from read counts, with the goal of estimating
+Minimal Residual Disease (MRD) values.  To use this feature, users
+should:
+
+  - add spike-ins in known copy numbers in their lab preps
+  - inform `vidjil-algo` the sequences and copy numbers of these spike-ins
+  - add a pre-processing step in the analysis configuration to insert
+    the normalized values (MRD estimations) into the `vidjil` file
+
+The web application can then take the info from the `vidjil` file and
+display it.
+
+To inform `vidjil-algo` of the spike-in sequences and copy numbers, a
+file in JSON format must be created, as in the following example:
+
+```javascript
+{
+  "config": {
+    "labels": [
+      {
+        "name": "spike-1",
+        "copies": "10",
+        "sequence": "GGAACTGGGCCTGGGGATACGGAAATATCGGTACACCGATAAAC",
+        "family": "TRDV1"
+      },
+      {
+        "name": "spike-2",
+        "copies": "40",
+        "sequence": "GGGAATACCTCGGTGCGGTGGGGGATCCCAAGACCCCCCTCTACACCGATAA",
+        "family": "TRDV1"
+      },
+      {
+        "name": "spike-3",
+        "copies": "160",
+        "sequence": "GCTCTTGGGGTGCATCAGTCCATGACCCACCGATAAACTCATC",
+        "family": "TRDV1"
+      }
+    ]
+  }
+}
+```
+
+and given to `vidjil-algo` by means of the flag `--label-json
+spikes.json`.  Notice that the family of each spike-in must be
+informed as well, because it has been determined that performing the
+procedure within a family yields better results
+(https://doi.org/10.1111/bjh.16571).
+
+For the pre-processing step, Vidjil offers a script called
+`spike-normalization.py`, so one can add a line such as the following
+one to the `Fuse command:` field in the analysis config:
+
+```javascript
+-t 100 --pre spike_normalization.py
+```
+
+The `spike-normalization.py` script is responsible for collecting read
+counts for the spike-ins, combining them with their copy numbers, and
+computing normalized values from the read counts of other clones in
+the same family.  If a family does not have at least 3 spike-ins, or
+if its linear regression's Person R2 coefficient is below 0.8, a
+universal normalization is used instead.  The universal normalization
+takes into consideration all spike-ins from all families.
+
+With this, the Vidjil web interface will show a normalized value,
+intended as an estimate of the MRD value, instead of the usual read
+percentage for each clone.  To switch between displaying normalized
+values or read percentages, the corresponding option in the setting
+menu can be used.
+
+Only clones from the prevalent germline, that is, the germline with
+more reads in the sample, are normalized by this process.
+
+The information flow of normalization is as follows.  The
+post-analysis script `tools/spike-normalization.py` writes multiple
+data fields in the `vidjil` file.  Part of the info is set into an
+`mrd` field, and contains data for each sample.  
+```javascript
+"mrd": {
+  "coefficients": {
+    "IGHV5": 0.15380390002746497,
+    "UNI": 0.15380390002746497,
+    "IGHV1": 0.15380390002746497
+  },
+  "UNI_R2": [
+    0.964285714285714
+  ],
+  "ampl_coeff": [
+    64.89233726998077
+  ],
+  "prevalent": [
+    "IGK"
+  ]
+}
+```
+
+The item `coefficients`, one per family, contains the coefficients that
+multiplied by a read count will yield a normalized value.  Here, `UNI`
+stands for the universal coefficient, based on all spike-ins.  Field
+`UNI_R2` shows the Pearson R2 coefficient of the linear regression for
+the universal coefficient.  Field `ampl_coeff` contains the ratio
+between the total number of reads captured by Vidjil and spike-in
+reads.  Although not used in calculations, it is an important
+parameter to assess the quality of the sample.  If spike-ins reads
+make up too large a fraction of the entire collection, this can lead
+to distortions.  Finally, `prevalent` indicates the prevalent germline
+in the sample.
+
+The remaining set of fields is set into each clone, under key `mrd`,
+and are arrays containing one value per time point.
+
+```javascript
+"clones": [
+  {
+    ...
+    "mrd": {
+      "R2": [ 0.95 ],
+      "copy_number": [ 41.37324910738808 ],
+      "family": [ "UNI" ],
+      "norm_coeff": [ 0.11118547904332683 ]
+    },
+    "normalized_reads": [ 195.50763372699805 ]
+  }
+]
+```
+
+Here, field `R2` indicates the Pearson R2 coefficient for the linear
+regression used in this clone; `copy_number` is the estimated copy
+number of this clone, obtained by mutiplying this clone's coefficient
+by its read count; `family` is the clone family; and
+`normalized_reads` is the estimated value of MRD for this clone.
+
+TODO: COMMENTS?
 
 ## Further clustering of clones: the `clusters` list \[optional\]
 
@@ -473,7 +640,7 @@ against them (not implemented now).
 ## Tagging some clones: `tags` list \[optional\]
 
 The `tags` list describe the custom tag names as well as tags that should be hidden by default.
-The default tag names are defined in [../browser/js/vidjil-style.js](../browser/js/vidjil-style.js).
+The default tag names are defined in [../browser/js/vidjil-style.js](http://gitlab.vidjil.org/-/blob/master/browser/js/vidjil-style.js).
 
 ``` javascript
 "key" : "value"  // "key" is the tag id from 0 to 7 and "value" is the custom tag name attributed

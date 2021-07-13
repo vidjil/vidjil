@@ -16,7 +16,7 @@ class TestSampleSet < ServerTest
     end
   end
 
-  def go_to_list
+  def go_to_patients
     $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
@@ -24,13 +24,21 @@ class TestSampleSet < ServerTest
     table
   end
 
+  def go_to_runs
+    $b.a(:class => ["button", "button_token", "run_token"], :text => "runs").click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    table = $b.table(:id => "table")
+    table.wait_until(&:present?)
+    table
+  end
+
   def test_patient_001_list
-    table = go_to_list
+    table = go_to_patients
     assert(table.tbody.present?)
   end
 
   def test_patient_add
-    table = go_to_list
+    table = go_to_patients
 
     count = table.tbody.rows.count
 
@@ -81,7 +89,7 @@ class TestSampleSet < ServerTest
   end
 
   def test_patient_edit
-    table = go_to_list
+    table = go_to_patients
 
     # click edit button for first line in table
     line = table.td(:text => /test patient 3/).parent
@@ -104,13 +112,13 @@ class TestSampleSet < ServerTest
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => 'table')
     table.wait_until(&:present?)
-    table = go_to_list
+    table = go_to_patients
     line = table.td(:class => "uid", :text => sample_set_id).parent
     assert(line.td(:index => 3).text == "#edited")
   end
 
   def test_patient_delete
-    table = go_to_list
+    table = go_to_patients
 
     count = table.tbody.rows.count
     # click delete button for first line in table
@@ -127,8 +135,39 @@ class TestSampleSet < ServerTest
     assert(lines.count == count-1)
   end
 
+  def test_association_set_delete
+    table = go_to_patients
+
+    count = table.tbody.rows.count
+    # click delete button for first assoc_set_1>patient
+    line = table.td(:text => /#set_assoc_1/).parent
+    line.i(:class => "icon-erase").click
+
+    delete_button = $b.button(:text => "delete")
+    delete_button.wait_until(&:present?)
+    delete_button.click
+
+    table = $b.table(:id => "table")
+    table.wait_until(&:present?)
+    lines = table.tbody.rows
+    assert(lines.count == count-1)
+
+    # check if assoc_set_1>run still exist
+    table = go_to_runs
+    
+    line = table.td(:text => /#set_assoc_1/).parent
+    line.click
+    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+
+    # check that samples of assoc_set_1 still exist in run
+    table = $b.table(:id => "table")
+    table.wait_until(&:present?)
+    lines = table.tbody.rows
+    assert(lines.count == 1)
+  end
+
   def test_patient_search
-    table = go_to_list
+    table = go_to_patients
 
     filter = $b.text_field(:id => "db_filter_input")
     filter.wait_until(&:present?)
@@ -143,7 +182,7 @@ class TestSampleSet < ServerTest
 
 =begin
   def test_patient_autocomplete
-    table = go_to_list
+    table = go_to_patients
 
     $b.execute_script("new VidjilAutoComplete().clearCache()")
     filter = $b.text_field(:id => "db_filter_input")

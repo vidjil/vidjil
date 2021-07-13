@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html>
+
+
 <head>
     <meta charset="utf-8">
     <title>QUnit - The Vidjil Project</title>
@@ -14,55 +16,18 @@
         }
     </style>
 
-    <script type="text/javascript" src='../../js/lib/d3.v5.min.js'></script>
-    <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="../../js/lib/jquery.form.js"></script>
-    <script type="text/javascript" src='../../js/lib/file.js'></script>
-    <script type="text/javascript" src='../../js/lib/jquery.zclip.js'></script>
+    <script type="text/javascript" src="../../js/lib/qunit-2.9.1.js"></script>
+    <script>QUnit.config.autostart=false;  </script>
+    <script type="text/javascript" src="../../js/lib/qunit-tap.js"></script>
+    <script data-main="app.js"     src="../../js/lib/require.js"></script>    
 
-    <script type="text/javascript" src='../../js/conf.js' data-cover></script>
-    <script type="text/javascript" src='../../js/view.js' data-cover></script>
-    <script type="text/javascript" src='../../js/compare.js' data-cover></script>
-    <script type="text/javascript" src='../../js/menu.js' data-cover></script>
-    <script type="text/javascript" src='../../js/dbscan.js' data-cover></script>
-    <script type="text/javascript" src='../../js/germline.js' ></script>
-    <script type="text/javascript" src='../../../germline/germlines.data' ></script>
-    <script type="text/javascript" src='../../js/germline_builder.js' data-cover></script>
-    <script type="text/javascript" src='../../js/segmenter.js' data-cover></script>
-    <script type="text/javascript" src='../../js/model_loader.js' data-cover></script>
-    <script type="text/javascript" src='../../js/model.js' data-cover></script>
-    <script type="text/javascript" src='../../js/clone.js' data-cover></script>
-    <script type="text/javascript" src='../../js/info.js' data-cover></script>
-    <script type="text/javascript" src='../../js/list.js' data-cover></script>
-    <script type="text/javascript" src="../../js/axis.js" data-cover> </script>
-    <script type="text/javascript" src='../../js/axes.js' data-cover></script>
-    <script type="text/javascript" src="../../js/graph.js" data-cover> </script>
-    <script type="text/javascript" src="../../js/scatterPlot_menu.js" data-cover> </script>
-    <script type="text/javascript" src="../../js/scatterPlot_selector.js" data-cover> </script>
-    <script type="text/javascript" src="../../js/scatterPlot.js" data-cover> </script>
-    <script type="text/javascript" src='../../js/builder.js' data-cover></script>
-    <script type="text/javascript" src='../../js/com.js' data-cover></script>
-    <script type="text/javascript" src='../../js/vidjil-style.js' data-cover></script>
-    <script type="text/javascript" src='../../js/crossDomain.js' data-cover></script>
-    <script type="text/javascript" src='../../js/pdf.js'></script>
-    <script type="text/javascript" src='../../js/database.js' data-cover></script>
-    <script type="text/javascript" src='../../js/notification.js' data-cover></script>
-    <script type="text/javascript" src='../../js/tools.js' data-cover></script>
-    <script type="text/javascript" src='../../js/url.js' data-cover></script>
-    <script type="text/javascript" src='../../js/shortcut.js' data-cover></script>
-    <script type="text/javascript" src='../../js/speed_test.js' data-cover></script>
-    <script type="text/javascript" src='../../js/closeable.js' data-cover></script>
-    <script type="text/javascript" src='../../js/tokeniser.js' data-cover></script>
-    <script type="text/javascript" src='../../js/indexedDom.js' data-cover></script>
-    <script type="text/javascript" src='../../js/form_builder.js' data-cover></script>
 
     <script type="text/javascript" src="./testFiles/data_test.js"></script>
     <script type="text/javascript" src="./testFiles/test2.analysis"></script>
-    <!-- needed to load form with jQuery -->
-    <script>QUnit.config.autostart=false;</script>
 </head>
-<body>
 
+
+<body>
     <div style="opacity:0% !important; position:absolute; z-index:-5">
         <div id="data-container" ></div>
         <div id="visu" style="width:800px; height:500px;"></div>
@@ -76,52 +41,151 @@
     <div id="qunit"></div>
     <div id="qunit-fixture"></div>
 
-    <!-- Load QUnit -->
-    <script type="text/javascript" src="../../js/lib/qunit-2.9.1.js"></script>
-    <script type="text/javascript" src="./qunit-vidjil.js"></script>
-    <script type="text/javascript" src="../../js/lib/qunit-tap.js"></script>
-    <script src="../../js/lib/blanket.1.1.9.js"></script>
-    <script>
-
-
-    var tap_output;
-    qunitTap(QUnit, function() { 
-            if (typeof arguments != "undefined"){
-                tap_output+=arguments[0]+"\n" 
-            }
-        });
-
-    jQuery.fn.d3Click = function () {
-        this.each(function (i, e) {
-            var evt = document.createEvent("MouseEvents");
-            evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            e.dispatchEvent(evt);
-        });
-    };
-
-    var c_attributes = C_CLUSTERIZABLE
-       | C_INTERACTABLE
-       | C_IN_SCATTERPLOT
-       | C_SIZE_CONSTANT
-    </script>
-    <script src="./testFiles/dbscan_test.js"></script>
-    <script src="./testFiles/model_test.js"></script>
-    <script src="./testFiles/model_loader_test.js"></script>
-    <script src="./testFiles/clone_test.js"></script>
-    <script src="./testFiles/scatterPlot_test.js"></script>
-    <!--<script src="./testFiles/axis_test.js"></script>-->
-    <script src="./testFiles/graph_test.js"></script>
-    <script src="./testFiles/com_test.js"></script>
-    <script src="./testFiles/info_test.js"></script>
-    <script src="./testFiles/list_test.js"></script>
-    <script src="./testFiles/indexedDom_test.js"></script>
-    <script src="./testFiles/segmenter_test.js"></script>
-    <script src="./testFiles/tools_test.js"></script>
-    <script src="./testFiles/germline_test.js"></script>
-    <script src="./testFiles/url_test.js"></script>
-    <script src="./testFiles/shortcut_test.js"></script>
-    <script src="./testFiles/speed_test.js"></script>
-    <script src="./testFiles/tokeniser_test.js"></script>
-    <script src="./testFiles/compare_test.js"></script>
+    
 </body>
+
+
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<template id='aligner'>
+    <div class="aligner">
+            <div class="bot-bar">
+                    <div id="cluster" class="aligner-menu" title="Merge the selected clones into a unique cluster"
+                            onclick="javascript:self.m.merge()"> Cluster </div>
+
+                    <div id="align" class="aligner-menu" title="Align the sequences"
+                            onclick="javascript:segment.toggleAlign()"> Align
+                    </div>
+
+                    <div id="segmenter_axis_menu" class="aligner-menu pointer" title="Data columns"> 
+                            <span  ><i class="icon-pause-1"></i></span>
+                    <span class="menu-content">
+                            <div id="segmenter_axis_select">
+
+                            </div>
+                    </span>
+                    </div>
+
+                    <div id="align-settings" class="aligner-menu" title="Alignement settings">
+                            <span ><i class="icon-cog"></i></span>
+                            <div class="menu-content">
+                                <label for="highlight_match" title="matches">
+                                            <span><input type="checkbox" id="highlight_match" autocomplete="off"></span>
+                                            <span>Show only mutations</span>
+                                </label>    
+                            </div>
+                    </div>
+
+                    <div id="align-external-tool" class="aligner-menu" title="External analyis" ><i class="icon-forward-1"></i>
+                            <div class="menu-content">
+                                    <a id="toIMGT" title="Send sequences to IMGT/V-QUEST and see the results in a new tab"
+                                            class="aligner-button" onclick="javascript:segment.sendTo('imgt');"><i class="icon-forward-1"></i> IMGT/V-QUEST</a>
+                                    <a id="toIgBlast" title="Send sequences to NCBI IgBlast and see the results in a new tab"
+                                            class="aligner-button" onclick="javascript:segment.sendTo('igBlast');"><i class="icon-forward-1"></i> IgBlast</a>
+                                    <span class="devel-mode"><a id="toARResT"
+                                                    title="Send sequences to ARResT/CompileJunctions and see the results in a new tab"
+                                                    class="aligner-button"
+                                                    onclick="javascript:segment.sendTo('arrest');"><i class="icon-forward-1"></i> ARResT/CJ</a></span>
+                                    <span class="devel-mode"><a id="toCloneDB"
+                                                    title="Send sequences to EC-NGS/CloneDB in the background"
+                                                    class="aligner-button"
+                                                    onclick="javascript:db.callCloneDB(m.getSelected());"><i class="icon-forward-1"></i> CloneDB</a></span>
+                                    <a id="toBlast" title="Send sequences to Ensembl Blast and see the results in a new tab"
+                                            class="aligner-button" onclick="javascript:segment.sendTo('blast');"><i class="icon-forward-1"></i> Blast</a>
+                                    <a id="toAssignSubsets"
+                                            title="Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset"
+                                            class="aligner-button" onclick="javascript:segment.sendTo('assignSubsets');"><i class="icon-forward-1"></i> AssignSubsets</a>
+                            </div>
+                    </div>
+
+                    <div id="align-segment-info" class="aligner-menu" title="Sequence features">
+                            <span  ><i class="icon-menu"></i></span>
+                            <div class="menu-content">
+     
+                            </div>
+                    </div>
+
+                    <div id="align-imgt" class="aligner-menu"
+                    title="Sequence features from IMGT [click to reload]" onclick="javascript:segment.sendTo('IMGTSeg');"> <i class="icon-menu"></i> IMGT
+                       <span title="reload IMGT info" ></span><i class="demo-icon icon-arrows-ccw"></i></span>
+                       <div class="menu-content">
+
+                       </div>
+                    </div>
+                    <div class="focus cloneName"></div>
+
+                            
+
+                    <div id="aligner-stats" class="stats"><span  title="">
+                            <span class="stats_content"></span>
+                            <a class="focus_selected" id="focus_selected">(focus)</a> 
+                            <a class="focus_selected" id="hide_selected">(hide)</a>
+                            <span class="button" id="star_selected" title="Tag selected clones">
+                                    <i id="tag_icon__multiple" class="icon-star-2"></i></span>
+                            <span id="fixsegmenter" class="button">
+                                    <i title="fix the segmenter in his position" class="icon-pin-outline"></i></span>
+                    </div>
+            </div>
+
+            <div class="segmenter" style="height: 100px;">
+                    <ul id="listSeq">
+
+                    </ul>
+            </div>
+    </div>
+</template>
+
+<template id="aligner-sequence">
+    <li class="sequence-line" style="display: none;">
+            <div class="sequence-holder" style="position:relative;">
+                    <div class="seq-fixed"></div>
+            </div>
+    </li>
+</template>
+
+<template id="aligner-F">
+    <div class="seq-fixed cloneName">
+            <span class="nameBox" title="clone name">
+                    <span class="delBox"><i class="icon-cancel" title="Unselect this clone"></i></span>
+                    <span class="nameBox2"></span>
+            </span>
+            <span class="axisBox"></span>
+            <span class="starBox" id="color60"><i id="tag_icon_60" title="clone_tag" class="icon-star-2"></i></span>
+            <span class="infoBox"><i class="icon-info" title="clone information"></i></span>
+    </div>
+</template>
+
+<template id="aligner-M">
+    <div class="seq-mobil">
+            <div class="sequence-holder2" style="position:relative;">
+                    <div>
+                            <div class="seq_layer seq_layer_test"></div>
+                            <div class="seq_layer_nuc"></div>
+                    </div>
+
+            </div>
+    </div>
+</template>
+
+
+<template id="aligner-checkbox">
+        <label title="" class="aligner-checkbox-label" for="highlight_mutation">
+            <span><input class="aligner-checkbox-input" type="checkbox" id="highlight_mutation" autocomplete="off" checked></span>
+            <span class="aligner-checkbox-text" >Highlight mutation</span>
+        </label>
+</template>
+

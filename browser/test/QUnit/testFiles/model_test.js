@@ -21,7 +21,7 @@ QUnit.test("convert", function(assert) {
 
     assert.deepEqual(m.getConvertedSeg(seg, "3"), {"name": "J", "start": 3}, "getConvertedSeg: Ok");
 
-    assert.deepEqual(m.convertSeg(json_clone3.seg), {"5": {"stop": 5}, "4": {"name": "IGHD2*03"}, "3": {"name": "IGHV4*01", "start": 15}, "junction": {"aa": "WKIC", "productive": false, "start": 2, "stop": 13}, "somefeature": { "seq": "aaaattt" }}, "convertSeg: Ok");
+    assert.deepEqual(m.convertSeg(json_clone3.seg), {"5": {"stop": 5}, "4": {"name": "IGHD2*03"}, "3": {"name": "IGHV4*01", "start": 15}, "junction": {"aa": "WKIC", "productive": false, "unproductive": "out-of-frame", "start": 2, "stop": 13}, "somefeature": { "seq": "aaaattt" }}, "convertSeg: Ok");
     assert.deepEqual(m.convertSeg(seg), {"3": {"name": "J", "start": 3}, "4": {"name": "D", "start": 1, "stop": 2}, "5": {"name": "V", "stop": 0}, "score": {"val": 42}, "cdr3": {"start": 0, "stop": 3}, "foo": {"start": 17, "stop": 42}}, "convertSeg: Ok");
 
     assert.deepEqual(m.convertSeg(json_clone1.seg)['5'], {"start": 1, "stop": 5}, "convertSeg on old 0-based 5/4/3 fields");
@@ -61,6 +61,41 @@ QUnit.test("load", function(assert) {
     }, 100)
     
 });
+
+
+QUnit.test("load with new order && stock_order", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100) //[ "Diag.fa", "Fu-1.fa", "Fu-2.fa", "Fu-3.fa" ]
+    m.initClones()
+    m.parseJsonAnalysis(JSON.parse(JSON.stringify(analysis_data_stock_order)))  // [ "Diag.fa", "Fu-0.fa", "Fu-1.fa", "Fu-2.fa" ]
+    m.initClones()
+    // fu-3 is replaced with fu-0
+    // "order": [ 3, 0, 1 ],
+    // "stock_order": [2, 3, 0, 1 ]
+    // become ==> "order": [ 2, 0, 3 ] and "stock_order": [1, 2, 0, 3 ]
+
+    assert.deepEqual(m.samples.order,         [ 2, 0, 3], "Correct order after loading" )
+    assert.deepEqual(m.samples.stock_order, [1, 2, 0, 3], "Correct stock_order after loading" )
+    assert.equal(m.t, 2, "Correct time selected after analysis loading")
+
+    // Note, respective clone 0 size: 0.05, 0.1, 0.075, 0.15
+    assert.equal( m.clones[0].getSize(), m.clones[0].getSize(2), "clone 0 hve size corresponding to timepoint 2 (loading order)")
+
+    // Test loading file with duplicate sample present in order field of analysis
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    m.initClones()
+    // Copy and modify
+    analysis_data_stock_order_with_error =  JSON.parse(JSON.stringify(analysis_data_stock_order))
+    analysis_data_stock_order_with_error.samples.order = [3, 3, 0, 1] // become [2, 0]
+    m.parseJsonAnalysis(analysis_data_stock_order_with_error)
+    m.initClones()
+
+    assert.deepEqual(m.samples.order,          [2, 0, 3], "Correct order after loading analysis with dusplicate sample in order" )
+    assert.deepEqual(m.samples.stock_order, [1, 2, 0, 3], "Correct stock_order after loading analysis with dusplicate sample in order" )
+    
+});
+
 
 QUnit.test("time control", function(assert) {
     var m = new Model();
@@ -310,9 +345,6 @@ QUnit.test("model: analysis sample data application", function(assert) {
     assert.equal(bool, true, "sample fields filtered");
     assert.equal(ff.length, 2, "remaining sample fields");
 
-    var order = m.calculateOrder([0, 1, 5, 2, 3]);
-    assert.deepEqual(order, [0, 1, 4, 2, 3], "reorder array of order values");
-
     var dict = m.buildDict(["1", "3", "4", "6"], ["1", "3", "4", "5"]);
     assert.deepEqual(dict, {"1":{}, "3":{}, "4":{}, "5":{}, "6":{}}, "build a dict of all present ids");
 
@@ -321,10 +353,12 @@ QUnit.test("model: analysis sample data application", function(assert) {
     var field = m.copyField(dest, src, "val");
     assert.deepEqual(field, {"1": {"val": "f"}, "2": {"val": "o"}}, "copy the contents of analysis sample fields");
 
+    // Here sample "3" is deleted as it is not present, and sample "4" is added.
+    // It take position of 3
     dest = {"original_names": ["1", "4", "2"], "val": ["a", "b", "c"], "lav": ["c", "b", "a"]};
     src = {"id": ["1", "2", "3"], "val": ["f", "o", "o"]};
     var res = m.copySampleFields(dest, src);
-    var expected = {"original_names": ["1", "4", "2"], "val": ["f", "b", "o"], "lav": ["c", "b", "a"]};
+    var expected = {"original_names": ["1", "4", "2"], "val": ["f", "b", "o"], "lav": ["c", "b", "a"],"order": [0, 2, 1],"stock_order": [0, 2, 1]};
     assert.deepEqual(res, expected, "copy all relevant fields from analysis to samples");
 
     m.parseJsonData(json_data, 100);
@@ -333,7 +367,7 @@ QUnit.test("model: analysis sample data application", function(assert) {
     assert.notEqual(m.samples.names[1], "fu0", "missing sample successfully ignored");
     assert.equal(m.samples.names[1], "fu1", "correctly shifted samples");
 
-    assert.deepEqual(m.samples.order, [0,3,1,2], "order converted");
+    assert.deepEqual(m.samples.order, [0,1,2,3], "order converted");
 });
 
 
@@ -349,11 +383,15 @@ QUnit.test("model: primer detection", function(assert) {
 
     // model primer setting
     assert.equal(m.switchPrimersSet("no set"), 1, "primer set doesn't exist")
+    assert.equal(m.switchPrimersSet("ecngs"), 0, "primer set exist & are set")
+
+    // Test switch to a Qunit dataset
+    m.primersSetData = primersSetData // no primer for IGH, One primer for TRG
     assert.equal(m.switchPrimersSet("primer_test"), 0, "primer set exist & are set")
 
     // primer found inside clones
-    assert.equal(typeof m.clones[2]["seg"]["primer5"], "undefined", "Control neg primer 5 not in sequence")
-    assert.equal(typeof m.clones[2]["seg"]["primer3"], "undefined", "Control neg primer 3 not in sequence")
+    assert.equal(m.clones[2]["seg"]["primer5"], undefined, "Control neg primer 5 not in sequence")
+    assert.equal(m.clones[2]["seg"]["primer3"], undefined, "Control neg primer 3 not in sequence")
     assert.deepEqual(m.clones[3]["seg"]["primer5"], { seq: "GGAAGGCCCCACAGCG", start: 0, stop: 15 },    "Found primer 5")
     assert.deepEqual(m.clones[3]["seg"]["primer3"], { seq: "AACTTCGCCTGGTAA",  start: 226, stop: 240 }, "Found primer 3")
 
@@ -444,7 +482,7 @@ QUnit.test("findGermlineFromGene", function(assert) {
     gene3a_name = "IGHJ6*01"
     gene3a_seq  = "......attactactactactacggtatggacgtctgggggcaagggaccacggtcaccgtctcctcag"
     gene3b_name = "TRGJ1*02"
-    gene3b_seq  = "...................ttattataagaaactctttggcagtggaacaacacttgttgtcacag"
+    gene3b_seq  = "................gaattattataagaaactctttggcagtggaacaacacttgttgtcacag"
     var getted = m.findGermlineFromGene(gene5_name)
     assert.equal(getted, gene5_seq, 'function return the correct sequence for the gene V: IGHV1-18*01')
 
@@ -476,8 +514,9 @@ QUnit.test("getFasta", function(assert) {
     m.select(1)
     var fasta = m.getFasta()
     console.log( fasta )
+    clone = m.clone(0)
 
-    fasta_to_get = ">hello    19 nt, 10 reads (5.000%, 10.00% of TRG)\naaaaaa\naaaattttt\ntttt\n\n>IGHV3-23*01 6/ACGTG/4 IGHD1-1*01 5/CCCACGTGGGGG/4 IGHJ5*02    11 nt, 10 reads (5.000%, 10.00% of IGH)\nAACGTACCAGG\n\n"
+    fasta_to_get = ">hello    19 nt, 10 reads (5.000%, 10.00% of TRG)\na\naaaaa\naaaattttt\ntttt\n\n>IGHV3-23*01 6/ACGTG/4 IGHD1-1*01 5/CCCACGTGGGGG/4 IGHJ5*02    11 nt, 10 reads (5.000%, 10.00% of IGH)\nAACGTACCAGG\n\n"
     assert.equal(fasta, fasta_to_get, "getFasta return the correct content")
 
 });
@@ -606,6 +645,95 @@ QUnit.test("computeOrderWithStock", function(assert) {
     assert.deepEqual( m.samples.stock_order, waited, "Correct stock_order if apply m.switchTimeOrder")
 
 
+});
+
+QUnit.test("getSampleWithSelectedClones", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+
+    // clone 1 present only in sample 1 and 2
+    m.clones[1].reads[2] = 0
+    m.clones[1].reads[3] = 0
+
+    // clone 2 present only in sample 2 and 3
+    m.clones[2].reads[0] = 0
+    m.clones[2].reads[3] = 0
+
+    assert.deepEqual( m.getSampleWithSelectedClones(), [0,1,2,3], "no selection, should return list of all actives samples")
+    m.select(1)
+    assert.deepEqual( m.getSampleWithSelectedClones(), [0,1], "clone 1, should return samples 1 and 2")
+    m.select(2)
+    assert.deepEqual( m.getSampleWithSelectedClones(), [0,1,2], "clone 1 and 2, should return samples 1 and 2 and 3")
+
+  
+});
 
 
+QUnit.test("getSampleName", function(assert) {
+
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
+    m.initClones()
+
+    assert.equal( m.getSampleName(0), "Diag.fa", "Correct name getted as no values for m.samples.names (values from server)")
+
+    // Simulate data from server opening
+    m.samples.names = ["f0", "f1", "f2", "f3"]
+    assert.equal( m.getSampleName(0), "f0", "Correct name getted if values from server")
+
+});
+
+
+QUnit.test("export clone informations", function(assert) {
+
+    // Create and populate model
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+
+    // select some clones
+    m.multiSelect([0,2,3])
+
+    // Test on AIRR export format
+    var airr = m.getClonesAsAIRR([0,2,3])
+    var airr_splitted = airr.split("\n")
+    assert.equal(1+(3*4), airr_splitted.length, "correct number of lines in airr export")
+
+    var line_title = "sample,sample_name,duplicate_count,locus,v_call,d_call,j_call,sequence_id,sequence,productive,vj_in_frame,stop_codon,junction_aa,cdr3_aa,warnings,_cdr3,_N"
+    var line_c0_1  = "0,Diag.fa,10,TRG,TRGV4*01,undefined D,TRGJ2*01,id1,aaaaaaaaaaaaaaaaaaaAG,false,,F,,AG,,aa,"
+    var line_c0_2  = "1,Fu-1.fa,10,TRG,TRGV4*01,undefined D,TRGJ2*01,id1,aaaaaaaaaaaaaaaaaaaAG,false,,F,,AG,,aa,"
+    var line_c2_1  = "0,Diag.fa,25,IGH,IGHV1-2*01,IGHD2-2*02,IGHJ6*01,id3,cccccccccccccccccccc,false,,F,,,,,"
+    var line_c3_1  = "0,Diag.fa,5,TRG,TRGV4*01,undefined D,TRGJ1*01,id4,GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA,false,,F,,,,,4"
+    assert.deepEqual(airr_splitted[0], line_title, "correct value for line title in airr export")
+    assert.deepEqual(airr_splitted[1], line_c0_1, "correct value for line 1 of clone0 in airr export")
+    assert.deepEqual(airr_splitted[2], line_c0_2, "correct value for line 2 of clone0 in airr export")
+    assert.deepEqual(airr_splitted[5], line_c2_1, "correct value for line 1 of clone2 in airr export")
+    assert.deepEqual(airr_splitted[9], line_c3_1, "correct value for line 1 of clone3 in airr export")
+
+    // test on JOSN export format
+    var json = m.exportAsJson([0, 2, 3])
+    console.log( json )
+    assert.deepEqual(3, json.length, "correct number of elements in json export")
+    var json_value_0 = {
+        "seg":{
+            "3":{"name":"TRGJ2*01","start":6},"5":{"name":"TRGV4*01","stop":5},
+            "cdr3":{"start":4,"stop":5,"aa":"AG"},
+            "clonedb":{"clones_names":{"A":[2,0.25],"B":[124,0.01]}}
+        },
+        "id":"id1","index":0,
+        "sequence":"aaaaaaaaaaaaaaaaaaaAG","reads":[10,10,15,15],"top":1,
+        "sample":["Diag.fa","Fu-1.fa","Fu-2.fa","Fu-3.fa"],"_average_read_length":[21]
+    }
+    assert.deepEqual(json_value_0.seg, json[0].seg, "correct value for element 0 in json export; seg")
+    assert.deepEqual(json_value_0.sequence, json[0].sequence, "correct value for element 0 in json export; sequence")
+    assert.deepEqual(json_value_0.sample, json[0].sample, "correct value for element 0 in json export; sample")
+
+    // select some clones
+    m.multiSelect([0,2,3])
+    // ** Don't call, open a download file popup ** //
+    // var airr_without_list = m.exportCloneAs("airr")
+    // assert.deepEqual(airr, airr_without_list, "Get export informations by model exportCloneAs function")
 });

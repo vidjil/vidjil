@@ -1,3 +1,6 @@
+var SYMBOL_VOID = "–";
+var SYMBOL_MATCH = "·";
+
 var SILENT="silent";
 var SUBST="substitution";
 var INS="insertion";
@@ -5,6 +8,9 @@ var DEL="deletion";
 var END_CODON = "end-codon ";
 var END_CODON_NOT_FIRST = "end-codon-not-first ";
 var LOCUS_ORDER = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "TRA+D", "TRD+", "IGH", "IGH+", "IGK", "IGK+", "IGL"]
+
+var BIOSEQ_MATRIX = [ 2, -2]
+var BIOSEQ_GAPS   = [-2, -2]
 /**
  * Get codons from two aligned sequences
  * @pre both sequences are aligned together ref.length == seq.length
@@ -33,7 +39,7 @@ function get_codons(ref, seq, frame) {
 
     // Search first nucleotide pos
     for (pos; pos < ref.length; pos++) {
-        if (ref[pos] != '-') {
+        if (ref[pos] != SYMBOL_VOID) {
             if (frame == 0)
                 break;
             frame--;
@@ -52,7 +58,7 @@ function get_codons(ref, seq, frame) {
     var nb_nuc = 0;
     for (; pos < ref.length; pos++) {
         if (nb_nuc == 3 ||
-            (ref[pos] != '-' && current_codon_seq.length > 0 &&
+            (ref[pos] != SYMBOL_VOID && current_codon_seq.length > 0 &&
              nb_nuc == 0)) {
             codons_ref.push(current_codon_ref);
             codons_seq.push(current_codon_seq);
@@ -61,9 +67,9 @@ function get_codons(ref, seq, frame) {
             nb_nuc = 0;
         }
 
-        if (ref[pos] == '-') {
+        if (ref[pos] == SYMBOL_VOID) {
             current_codon_seq += seq[pos];
-            current_codon_ref += '-';
+            current_codon_ref += SYMBOL_VOID;
         } else {
             current_codon_ref += ref[pos];
             current_codon_seq += seq[pos];
@@ -95,9 +101,9 @@ function get_mutations(ref, seq, frame, with_end_codon) {
     for (var i = 0; i < codons.ref.length ; i++) {
         for (var p = 0; p < codons.ref[i].length; p++) {
             if (codons.ref[i][p] != codons.seq[i][p]) {
-                if (codons.ref[i][p] == '-') {
+                if (codons.ref[i][p] == SYMBOL_VOID) {
                     mutations[nb_pos] = INS;
-                } else if (codons.seq[i][p] == '-') {
+                } else if (codons.seq[i][p] == SYMBOL_VOID) {
                     mutations[nb_pos] = DEL;
                 } else {
                     var codon1 = codons.ref[i];
@@ -109,7 +115,7 @@ function get_mutations(ref, seq, frame, with_end_codon) {
                         // other sequences) that need to be ignored
                         for (var j = 0; j < codons.ref[i].length; j++) {
                             if (codons.ref[i][j] != codons.seq[i][j] ||
-                                codons.ref[i][j] != '-') {
+                                codons.ref[i][j] != SYMBOL_VOID) {
                                 codon1 += codons.ref[i][j];
                                 codon2 += codons.seq[i][j];
                             }
@@ -790,4 +796,75 @@ function getProxy() {
         "priority": 2
     });
     throw "No proxy";
+}
+
+/**
+ * @return an array without duplication
+ */
+function removeDuplicate(array) {
+    clean_array = array.filter(function(item, pos) {
+        return array.indexOf(item) == pos;
+    })
+    return clean_array
+}
+
+/**
+ * Filter value given of an array and decrease greater values
+ */
+function removeEltAndDecrease(array, value) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] > value) {
+            array[i] = array[i] - 1 
+        } else if (array[i] == value) {
+            array.splice(i, 1)
+            i = i-1
+        }
+    }
+    return array
+}
+
+
+
+/**
+ * Return the number of match from an alignment cigar
+ * Cigar is given by function bsa_align of bioseq library
+ */
+function bsa_cigar2match(cigar)
+{
+    var sum = 0
+
+    for (var k = 0; k < cigar.length; ++k){
+        var match = (cigar[k]>>4 )
+        var type  = (cigar[k]&0xf)
+        if (type == 0){
+            sum += match
+        }
+    }
+    return sum
+}
+
+function download_csv(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    // CSV FILE
+    csvFile = new Blob([csv], {type: "text/csv"});
+
+    // Download link
+    downloadLink = document.createElement("a");
+
+    // File name
+    downloadLink.download = filename;
+
+    // We have to create a link to the file
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    // Make sure that the link is not displayed
+    downloadLink.style.display = "none";
+
+    // Add the link to your DOM
+    document.body.appendChild(downloadLink);
+
+    // Lanzamos
+    downloadLink.click();
 }

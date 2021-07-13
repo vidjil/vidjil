@@ -2,7 +2,9 @@
 
 [V(D)J recombinations](http://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
-High-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [RepSeq](http://omictools.com/rep-seq-c424-p1.html) methods and software.
+High-throughput sequencing (NGS/HTS) now
+enables the deep sequencing of a lymphoid population with dedicated
+sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 # Library preparation and sequencing for human RepSeq studies
 
@@ -32,7 +34,7 @@ and quantify immune recombinations.
  - Many studies are still successfully using primer sets based on
    the older **EuroClonality/BIOMED-2** sets
    published in [(van Dongen, 2003)](http://dx.doi.org/10.1038/sj.leu.2403202).
-   See for example (Ferret, 2016)](https://hal.archives-ouvertes.fr/hal-01279160)
+   See for example [(Ferret, 2016)](http://dx.doi.org/10.1111/bjh.13981)
    (1-step, 23 primers in 5 tubes, TRG, TRD/TRD+, IGK, IGK+).
 
 These primer sets were designed and evaluated for onco-hematological studies on lymphoma and/or leukemia samples
@@ -69,6 +71,8 @@ With datasets with billions of reads,
 this is usally enough to detect  dominant clones
 with something like a few hundred reads,
 but quantification is more limited.
+For such libraries, it may be worth to set up a [post-sequencer workflow](http://www.vidjil.org/doc/workflow/)
+to work with smaller files.
 
 ## Read length
 
@@ -81,25 +85,23 @@ However, even as few as 50 bp well-centered on the CDR3 usually detect many reco
 The key point, depending on the library preparation, is thus what position the CDR3 is actually in the read.
 
 Anyway, with short reads, the identified recombinations may be skewed towards shorter sequences, such as:
+
  - more VJ than VDJ recombinations
- - shorter N and more deleted V, J and possibly D genes
+ - shorter N and more deleted D genes
 Those biases could occur inside one locus but also favor loci/systems with shorter recombinations
 
 
 # Analyzed human immune recombinations in Vidjil
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
-It was designed to analyze all the common V(D)J recombinations,
-even the incomplete/special recombinations occuring during the hematopoeisis.
-In particular, Vidjil analyzes all the human recombinations
-targeted by the EuroClonality-NGS (2019) and the EuroClonality/BIOMED-2 (2003) primer sets.
+It was designed to detect all the common V(D)J recombinations,
+even the incomplete/special recombinations occurring during the hematopoeisis
+-- such recombinations systems are denoted with a `+`.
 
-The Vidjil web application displays these recombinations on several loci,
-as long as this information
-is provided in the `.vidjil` file computed by the analysis program.
+In particular, Vidjil-algo detects all the human recombinations
+targeted by the EuroClonality-NGS (2019) and the EuroClonality/BIOMED-2 (2003) primer sets.
 Vidjil-algo currently analyzes the following recombinations,
 selecting the best locus for each read.
-The configuration of analyzed recombinations is done in the `germline/homo-sapiens.g` preset.
 
 |                      |         | complete recombinations                        |           | incomplete/special recombinations |
 | -------------------- | ------- | ---------------------------------------------- | --------- | --------------------------------- |
@@ -115,8 +117,11 @@ The configuration of analyzed recombinations is done in the `germline/homo-sapie
 |                      |         | `-g germline/homo-sapiens.g:IGH,IGL,IGK`       |           |                                   |
 | server configuration |         | `multi`                                        |           | `multi+inc`                       |
 
-The detection of complete recombinations is reliable and should work provided that the reads
-are long enough (especially the J region).
+
+When using Vidjil-algo through the command-line, the configuration of analyzed recombinations is done in the `germline/homo-sapiens.g` preset.
+
+The detection of complete recombinations is reliable provided the reads
+are long enough around the V(D)J junction (see above).
 
 The detection of incomplete/special recombinaisons is more challenging and may fail in some cases.
 In particular, as D genes may be very short, detecting TRD+ (Dd2/Dd3) and IGH+ (Dh-Jh) recombinations
@@ -126,3 +131,6 @@ Finally, the `-2` command line option and the `multi+inc+xxx` server configurati
 detect unexpected or chimeric recombinations between genes of different germlines or on different
 strands (such as PCR dimers or +V/-V recombinations).
 These recombinations, tagged as `xxx`, can be technological artefacts or unusual biological recombinations.
+
+Note that the Vidjil web application can also display recombinations detected by other software,
+as long as this information is provided in the `.vidjil` file computed by such other software.

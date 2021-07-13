@@ -13,9 +13,8 @@ $ Segment two reads on IgVC/IgJC (second -g option)
 1: IgVC .* -> .* 1
 1: IgJC .* -> .* 1 
 
-
-!LAUNCH: cat out/isotypes.vidjil
 !NO_LAUNCHER:
+!LAUNCH: cat out/isotypes.vidjil
 
 $ Both germlines are in .vidjil
 1: /germline"
@@ -24,4 +23,3 @@ $ Both germlines are in .vidjil
 $ Check that some options are correctly reported
 1: "max-consensus": "100"
 1: "plain-index": false
-1: "cdr3": false

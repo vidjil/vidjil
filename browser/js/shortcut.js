@@ -47,12 +47,17 @@ Shortcut.prototype = {
         
         this.system_shortcuts = {}
         for (var system in germline_data.systems){
-            var keycode = germline_data.systems[system].shortcut.toUpperCase().charCodeAt(0)
 
-            if (typeof this.system_shortcuts[keycode] == "undefined")
-                this.system_shortcuts[keycode] = []
-            
-            this.system_shortcuts[keycode].push(system)
+            if (germline_data.systems[system].shortcut != undefined){ // at init/load, some data are not present
+                var keycode = germline_data.systems[system].shortcut.toUpperCase().charCodeAt(0)
+
+                if (typeof this.system_shortcuts[keycode] == "undefined")
+                    this.system_shortcuts[keycode] = []
+
+                this.system_shortcuts[keycode].push(system)
+            } else {
+                console.default.log("Shortcuts; system undefined: " + system)
+            }
         }
         
         document.onkeydown = function (e) { self.checkKey(e); }
@@ -154,6 +159,7 @@ Shortcut.prototype = {
             else
                 m.previousTime();
             break;
+            
         case 39 :   // Right arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
@@ -172,19 +178,27 @@ Shortcut.prototype = {
             if (e.ctrlKey || e.metakey){
                 var d_m = $("#debug_menu")
                 if (d_m.css("display") == "none"){
+                    devel_mode = true;
                     $("#debug_menu").css("display", "");
                     $(".devel-mode").show();
                     $(".beta-mode").show();
                 }else{
+                    devel_mode = false;
                     $("#debug_menu").css("display", "none");
                     $(".devel-mode").hide();
                     $(".beta-mode").hide();
                 }
             }
             break;
+
         case 80 :   //shift+p : open patient
             e.preventDefault()
             if(e.shiftKey || e.metakey) db.reload()
+            break;
+
+        case 76 :   // Ctrl+l
+            e.preventDefault()
+            if (console.toggleLog) console.toggleLog();
             break;
 
         default:

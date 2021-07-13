@@ -18,6 +18,16 @@ test_tools_if_python:
 test_tools:
 	$(MAKE) -C tools/tests
 
+test_tutorial:
+	$(MAKE) -C doc/tutorial tutorial-test.rb
+	$(MAKE) -C browser/test tutorial 
+
+test_tutorial_server:
+	$(MAKE) -C doc/tutorial tutorial-server.rb
+	wget http://vidjil.org/seqs/tutorial_dataset.zip
+	unzip -o tutorial_dataset.zip
+	$(MAKE) -C server tutorial
+
 shouldvdj_generate:
 	@echo
 	rm -rf data/gen
@@ -45,6 +55,30 @@ functional_server:
 headless_server:
 	$(MAKE) -C server headless
 
+
+###############################
+### Browser tests WITH CYPRESS
+build_cypress_image:
+	docker build ./docker/ci  -t "vidjilci/cypress_with_browsers:latest"
+
+functional_browser_cypress_open:
+	# Need to create a symbolic link; but allow to directly see result
+	# Usefull for fast debugging; allow to launch script one by one
+	cypress open --env workdir=$(PWD),host=local
+functional_browser_cypress:
+	docker run \
+		-v $(PWD)/browser/test/cypress:/app/cypress \
+		-v $(PWD)/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v $(PWD)/doc/:/app/cypress/fixtures/doc/  \
+		-v $(PWD):/app/vidjil \
+		-v "$(PWD)/docker/ci/cypress_script.bash":"/app/script.bash" \
+		-v "$(PWD)/docker/ci/cypress.json":"/app/cypress.json" \
+		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash
+###############################
+
+
+tutorial-test.rb:
+	$(MAKE) -C doc/tutorial tutorial-test.rb
 ###
 
 data:

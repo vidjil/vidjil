@@ -87,9 +87,8 @@ function processResult(data) {
     model.multiSelect(cloneIds);
 
     // Delete merge button
-    var menuSegmenter = document.getElementsByClassName('menu-segmenter')[0];
-    var mergeButt = document.getElementById('merge');
-    menuSegmenter.removeChild(mergeButt);
+    var mergeButt = document.getElementById('cluster');
+    mergeButt.style.display = "none";
 }
 
 /**
@@ -206,7 +205,7 @@ function main() {
 
     // Prepare Vidjil model
     model = new Model();
-    segmenter = new Segment('segmenter_container', model);
+    segment = new Aligner('segmenter_container', model);
     scatter = new ScatterPlot('scatter_container', model);
     console = new Com(window.console);
     shortcut = new Shortcut(model)
@@ -222,7 +221,7 @@ function main() {
         if (data) {
             disableSubmitButt(true);
             // Clean views with transition
-            var segContainer = document.getElementById(segmenter.id);
+            var segContainer = document.getElementById(segment.id);
             displayVidjilViews(false);
             var funct = function () {
                 removePrefixedEvent(segContainer, 'TransitionEnd', funct);

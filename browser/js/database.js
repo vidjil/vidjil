@@ -14,6 +14,7 @@ var SEQ_LENGTH_CLONEDB = 40; // Length of the sequence retrieved for CloneDB
  * */
 function Database(model, address) {
     var self = this;
+    this.uploader = new Uploader()
     
     //check if a default address is available in config.js
     if (typeof config !== 'undefined' && config.use_database !== undefined && config.use_database) {
@@ -37,7 +38,6 @@ function Database(model, address) {
         this.upload = {};
         this.url = []
         this.m = model
-        this.uploader = new Uploader()
         this.build()
         this.m.db = this
         
@@ -291,6 +291,34 @@ Database.prototype = {
         });
     },
 
+    callUrlJson : function(url, args) {
+        var self=this;
+
+        $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: url,
+            data: {'data': JSON.stringify(args)},
+            timeout: DB_TIMEOUT_CALL,
+            xhrFields: {withCredentials: true},
+            success: function (result) {
+                self.display_result(result, url, args)
+                self.connected = true;
+            },
+            error: function (request, status, error) {
+                self.connected = false;
+                if (status === "timeout") {
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                } else {
+                    self.check_cert()
+                }
+                self.warn("callUrlJson: " + status + " - " + url.replace(self.db_address, '') + "?" + self.argsToStr(args))
+            }
+
+        });
+
+    },
+
     callLinkable: function (linkable) {
         var href = linkable.attr('href');
         var type = linkable.data('linkable-type');
@@ -450,6 +478,7 @@ Database.prototype = {
         //the json result look like a .vidjil file so we load it
         if (res.reads){
             this.m.parseJsonData(result, 100)
+            this.m.file_source = "database";
             this.m.loadGermline()
                 .initClones();
             this.load_analysis(args);
@@ -593,13 +622,22 @@ Database.prototype = {
         if ( document.getElementById('upload_form') ){
             $('#upload_form').on('submit', function(e) {
                 e.preventDefault();
+
+                //clear empty values before submiting data
+                var upload_form = $('#upload_form').serializeObject()
+                if ("file" in upload_form)
+                    upload_form.file = upload_form.file.filter(function(el) {
+                        return typeof el != "object" || Array.isArray(el) || Object.keys(el).length > 0;
+                    });
+                var data = JSON.stringify(upload_form)
+
                 $.ajax({
                     type     : "POST",
                     cache: false,
                     crossDomain: true,
                     xhrFields: {withCredentials: true},
                     url      : $(this).attr('action'),
-                    data     : {'data': JSON.stringify($('#upload_form').serializeObject())},
+                    data     : {'data': data},
                     success  : function(result) {
                         var js = self.display_result(result)
                         var id, fileSelect, files, file, filename;
@@ -788,24 +826,30 @@ Database.prototype = {
     },
 
     logout: function() {
-        var self = this;
-        $.ajax({
-            type: "POST",
-            timeout: DB_TIMEOUT_CALL,
-            crossDomain: true,
-            url: self.db_address + 'default/user/logout',
-            xhrField: {withCredentials: true},
-            success: function (result) {
-                db.call("default/home");
-            },
-            error: function (request, status, error) {
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                } else {
-                    self.call("default/home");
-                }
-            }
-        });
+        document.getElementById('login-container').innerHTML = "";
+        var dbc = document.getElementById('db_content');
+        if (dbc) {
+            document.getElementById('db_auth').innerHTML = "";
+            dbc.innerHTML = "";
+        }
+        db.call('default/user/logout');
+    },
+
+    extract_login_info: function() {
+        var login_info = document.getElementById('db_auth_name');
+        if(login_info != null) {
+            var container = document.getElementById('login-container');
+            container.innerHTML = login_info.innerHTML;
+            var logout = document.createElement('a');
+            logout.classList.add('button');
+            logout.text = '(logout)';
+            logout.onclick = function() {db.logout()};
+            container.appendChild(logout);
+        }
+    },
+
+    clear_login_info: function() {
+        document.getElementById('login-container').innerHTML = '';
     },
 
     /*récupére et initialise le browser avec un fichier .data
@@ -898,20 +942,19 @@ Database.prototype = {
             return
         }
         
-        if (typeof args == 'undefined'){
-            args={}
-            args.custom = this.getListInput("custom_result[]")
-        }
+        if (typeof args == 'undefined') args={};
+        if (typeof args.custom == 'undefined') args.custom = this.getListInput("custom_result[]");
         
         console.log("db : custom data "+list)
         
+
+        var id_vars = ["sample_set_id", "patient_id", "run_id", "config", "custom"];
+        for (var j = 0; j < id_vars.length; j++) {
+            this.m[id_vars[j]] = args[id_vars[j]];
+        }
+
         var arg = this.argsToStr(args)
         this.m.custom = arg;
-
-        var id_vars = ["sample_set_id", "patient_id", "run_id", "config"];
-        for (var j = 0; j < id_vars.length; j++) {
-            this.m[id_vars[j]] = undefined;
-        }
         
         this.m.wait("Comparing samples...")
         $.ajax({
@@ -922,6 +965,7 @@ Database.prototype = {
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.m.resume()
+                self.m.url_manager.clean();
                 self.display_result(result, "", args);
                 self.connected = true;
             },
@@ -963,6 +1007,12 @@ Database.prototype = {
     
     save_analysis: function () {
         var self = this;
+
+        if (typeof this.m.custom != 'undefined' &&
+            getComputedStyle(document.querySelector('.devel-mode')).display != "block"){
+            console.log({ msg: "'save' has been disabled for custom file. <br/> Use the complete related sample set (patient/run) if you wish to keep your modification.", type: "flash", priority: 2 });
+            return
+        }
         
         if (self.last_file == self.m.db_key){
             
@@ -973,8 +1023,11 @@ Database.prototype = {
             var fd = new FormData();
             fd.append("fileToUpload", blob);
             fd.append("info", self.m.info);
-            fd.append("samples_info", self.m.samples.info);
-            fd.append("samples_id", self.m.samples.id);
+
+            if (self.m.sample != undefined && self.m.samples.info != undefined && self.m.samples.id != undefined){
+                fd.append("samples_info", self.m.samples.info);
+                fd.append("samples_id", self.m.samples.id);
+            }
             
             $.ajax({
                 type: "POST",
@@ -1040,6 +1093,7 @@ Database.prototype = {
         this.div.style.display = "block";
         this.msg.innerHTML = msg;
             
+        this.extract_login_info();
         this.uploader.display()
     },
 
@@ -1217,6 +1271,29 @@ Database.prototype = {
         var $cb=$(cb);
         $('[name^=\"sample_set_ids\"]').prop('checked', $cb.is(':checked'));
         this.updateStatsButton();
+    },
+
+    callGroupStats: function() {
+        var group_ids = [];
+        $('[name^="group_ids"]:checked').each(function() {
+            group_ids.push($(this).val());
+        });
+        this.callUrlJson(DB_ADDRESS + 'my_account/index', {'group_ids': group_ids});
+    },
+
+    callJobStats: function() {
+        var group_ids = [];
+        $('[name^="group_ids"]:checked').each(function() {
+            group_ids.push($(this).val());
+        });
+        this.callUrlJson(DB_ADDRESS + 'my_account/jobs', {'group_ids': group_ids});
+    },
+
+    stopGroupPropagate: function(e) {
+        if(!e) {
+            e = window.event
+        }
+        e.stopPropagation();
     },
 
     // Log functions, to server

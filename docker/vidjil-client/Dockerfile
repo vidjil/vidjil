@@ -7,7 +7,7 @@ with a full installation of the Vidjil client."
 run sed -i 's/^\(user .*\)$/user www-data;/' /etc/nginx/nginx.conf
 
 run set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends wget make unzip git sudo curl fcgiwrap && rm -rf /var/lib/apt/lists/*
+	&& apt-get update && apt-get install -y --no-install-recommends wget make unzip git sudo curl ca-certificates fcgiwrap && rm -rf /var/lib/apt/lists/*
 
 arg git_branch=dev
 arg remote_repo=https://gitlab.inria.fr/vidjil/vidjil.git
@@ -31,6 +31,7 @@ run ln -s /etc/vidjil/nginx_gzip_static.conf /etc/nginx/conf.d/web2py/gzip_stati
 run ln -s /etc/vidjil/nginx_gzip.conf /etc/nginx/conf.d/web2py/gzip.conf
 run ln -s /etc/vidjil/uwsgi.conf /etc/nginx/conf.d/web2py/uwsgi.conf
 run ln -s /etc/vidjil/germline.js /usr/share/vidjil/browser/js/germline.js
+run ln -s /usr/share/vidjil/browser /usr/share/vidjil/b
 
 copy ./scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
 run chown -R www-data:www-data /usr/share/vidjil
