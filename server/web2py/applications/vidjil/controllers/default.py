@@ -158,6 +158,7 @@ def run_request():
 def run_all_request():
     error = ""
     enough_space = vidjil_utils.check_enough_space(defs.DIR_RESULTS)
+    extra_info = ''
     if not enough_space:
         mail.send(to=defs.ADMIN_EMAILS,
             subject="[Vidjil] Server space",
@@ -174,9 +175,9 @@ def run_all_request():
     if not "config_id" in request.vars:
         error += "id config needed, "
     else:
-        extra_info += 'with config '+db.config[id_config].name
-        if not auth.can_use_config(id_config) :
-            error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
+        extra_info += 'with config '+db.config[request.vars["config_id"]].name
+        if not auth.can_use_config(request.vars["config_id"]) :
+            error += "you do not have permission to launch process for this config ("+str(request.vars["config_id"])+"), "
 
     if error != "":
         res = {"success" : "false",
@@ -184,19 +185,20 @@ def run_all_request():
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
-    process_all = True if not 'run_all' in request.vars or request.vars['run_all'] == True
     id_sample_set = request.vars["sample_set_id"]
     ids_sequence_file = request.vars["sequence_file_ids"]
+    if type(ids_sequence_file) is int or type(ids_sequence_file) is int:
+        ids_sequence_file =  [ids_sequence_file]
+    ids_sequence_file = [int(i) for i in ids_sequence_file]
     id_config = request.vars["config_id"]
 
     # Filter the sequence_file IDS: we only keep sequence file IDs that do belong to the sample set (as we only checked the permission for this sample set)
     sequence_file_ids = [i.id for i in db((db.sample_set.id == id_sample_set) & (db.sequence_file.id.belongs(ids_sequence_file))).select(db.sequence_file.id, join=[db.sample_set_membership.on(db.sample_set_membership.sample_set_id == db.sample_set.id), db.sequence_file.on(db.sequence_file.id == db.sample_set_membership.sequence_file_id)])]
 
-    res = ''
+    log.info("run_all requested for {} files ".format(len(sequence_file_ids))+extra_info, extra={'user_id': auth.user.id, 'sample_set_id': id_sample_set})
     for s_id in sequence_file_ids:
-        res += schedule_run(s_id, id_config)
-        log.info("run_all requested "+extra_info, extra={'user_id': auth.user.id, 'record_id': request.vars['sequence_file_id'], 'table_name': 'sequence_file'})
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        schedule_run(s_id, id_config)
+    return gluon.contrib.simplejson.dumps({'success': 'true', 'redirect': 'reload'}, separators=(',',':'))
 
     
 def run_contamination():

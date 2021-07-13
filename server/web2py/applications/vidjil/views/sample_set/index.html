@@ -91,7 +91,7 @@
                 <td class="column5" id="footer_run_icon_all">
                        {{if config_id > 0 and auth.can_use_config(config_id) :}}
                        {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
-                              {{ launch_sequence_files = [ row.sequence_file.id for row in query ] }}
+                              {{ launch_sequence_files = [ int(row.sequence_file.id) for row in query ] }}
                               <span class="pointer devel-mode" 
                                onclick="db.call('default/run_all_request', {'sequence_file_ids' : {{=launch_sequence_files}}, 'sample_set_id': {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } ) "
                               ><i class="icon-cog-2" title="Run the selected configuration for all samples">
@@ -103,7 +103,7 @@
                        {{if config_id > 0 and auth.can_use_config(config_id) :}}
                           {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
 
-                              {{ launch_sequence_files = [row.sequence_file.id for row in query if row.results_file.status in ["FAILED",'']] }}
+                              {{ launch_sequence_files = [int(row.sequence_file.id) for row in query if row.results_file.status in ["FAILED",'']] }}
                            {{pass}}
                               {{ if len(launch_sequence_files) > 0: }}
                                <span class="pointer" 
