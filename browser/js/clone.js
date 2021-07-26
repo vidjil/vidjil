@@ -1800,28 +1800,20 @@ Clone.prototype = {
             }
         }
         
-        //IMGT info
+        // Result of external script or tools
         var other_infos = {"imgt": "<a target='_blank' href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a>",
                            "clonedb": "<a target='_blank' href='http://ecngs.vidjil.org/clonedb'>CloneDB</a> "+ (this.numberSampleSetInCloneDB() > 0 ? "<br /> A similar clone exists in "+this.numberSampleSetInCloneDB()+" other patients/runs/sets" : "")};
-        for (var external_tool in other_infos) {
-            if (typeof this.seg[external_tool] != 'undefined' &&
-                this.seg[external_tool] !== null) {
-                html += header("Results of "+other_infos[external_tool])
-                for (var item in this.seg[external_tool]) {
-                    if (! (this.seg[external_tool][item] instanceof Object) &&
-                        ! (this.seg[external_tool][item] instanceof Array)) {
-                        html += row_1(item, this.seg[external_tool][item])
-                    }
-                }
-            }
-        }
-
-        // Result of external script
         for (s in this.seg) {
             if (this.seg[s] instanceof Object &&
-                s.includes("script_") ) {
-                  html += header("Results of script '"+s.substring(7)+"'")
-                  for (var sub in this.seg[s]) {
+                s.includes("script_") || other_infos[s] != undefined ) {
+                  if (other_infos[s] != undefined){ // External tools
+                    html += header("Results of "+other_infos[s])
+                  } else { // External scripts
+                    html += header("Results of script '"+s.substring(7)+"'")
+                  }
+                  var keys = Object.keys(this.seg[s]).sort();
+                  for (var key_seg = 0; key_seg < keys.length; key_seg++) {
+                      var sub = keys[key_seg]
                       html += row_cast_content(sub, this.seg[s][sub])
                   }
             }
