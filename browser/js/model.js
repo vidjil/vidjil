@@ -3611,7 +3611,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     /**
-     * Return a list of samples with selected clones
+     * Return a list of samples with selected clones, in the same order than in stock_order
      * @return {Array} list of samples
      */
     getSampleWithSelectedClones: function(){
@@ -3629,7 +3629,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 }
             }
         }
-        return list
+
+        // Reorder list as in stock_order
+        nlist = []
+        for (var i = 0; i < this.samples.stock_order.length; i++) {
+            pos = this.samples.stock_order[i]
+            if (list.indexOf( pos ) != -1 ){
+                nlist.push( pos )
+            }
+        }
+        return nlist
     },
 
     /**
