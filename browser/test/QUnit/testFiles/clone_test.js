@@ -392,17 +392,16 @@ QUnit.test("getHtmlInfo; feature from script", function(assert) {
     var c1 = new Clone(json_clone1, m, 0, c_attributes)
     m.initClones()
 
-    m.clones[0].seg = {
-        "script_AAA": {
-            "5": {"stop": 99, "name": "IGHV3-11*01", "delRight": 3 },
-            "evalue_right": {"val": "7.79e-111"}
-        },
-        "script_BBB": {
-            "feature_val": {"val": "7.79e-111"},
-            "feature_str": {"info": "a feature value"},
-            "feature_seq": {"seq": "CARLY" },
-        }
+    m.clones[0].seg_AAA = {
+        "5": {"stop": 99, "name": "IGHV3-11*01", "delRight": 3 },
+        "evalue_right": {"val": "7.79e-111"}
     }
+    m.clones[0].seg_BBB = {
+        "feature_val": {"val": "7.79e-111"},
+        "feature_str": {"info": "a feature value"},
+        "feature_seq": {"seq": "CARLY" },
+    }
+    
     html_script = m.clones[0].getHtmlInfo();
     console.log( html_script)
     console.log( m.clones[0].sequence)
