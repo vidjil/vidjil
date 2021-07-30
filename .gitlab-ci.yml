@@ -13,7 +13,9 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
-  - test_cypress_client
+  - test_cypress_client_supported
+  - test_cypress_client_latest
+  - test_cypress_client_legacy
   - test_tutorial
   - test_tutorial_server
   - test_shouldvdj

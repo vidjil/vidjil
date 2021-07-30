@@ -639,7 +639,14 @@ webpage.
 ### Functional with cypress (release candidate)
 
 To avoid `Watir` limitation on latest versions of browsers, we adopt [Cypress](https://docs.cypress.io/guides/overview/why-cypress#In-a-nutshell).
-The testing pipeline is build on a docker image which include legacy and latest version of chrome and firefox (as at june 2021).
+The testing pipeline is build on a docker image which include chrome and firefox browser in differents version;
+
+|                              | firefox | Chromium    |
+|:-----------------------------|:--------|:------------|
+|Legacy (until september 2021) | 62.0    | 75.0.3770.0 |
+|Supported                     | 78.0    | 79.0.3945.0 |
+|Latest (as at june 2021)      | 89.0    | 93.0.4524.0 |
+
 We will progressivly convert Watir tests on Cypress.
 
 1.  Instalation

@@ -29,7 +29,6 @@ dep.mk
 /browser/cgi/align.cgi
 /browser/js/conf.js
 node_modules/
-cypress/
 server/web2py/applications/vidjil/errors
 *.bak
 
