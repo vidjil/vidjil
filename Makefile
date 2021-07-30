@@ -74,6 +74,23 @@ functional_browser_cypress:
 		-v "$(PWD)/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "$(PWD)/docker/ci/cypress.json":"/app/cypress.json" \
 		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash
+
+
+
+functional_server_cypress_open:
+	cypress open --env workdir=$(PWD),host=local --project ./server/web2py/applications/vidjil/tests
+functional_server_cypress:
+	# Need to have a local server deploy with the ci data integrated
+	docker run \
+		-v $(PWD)/server/web2py/applications/vidjil/tests/cypress:/app/cypress \
+		-v $(PWD)/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v $(PWD)/doc/:/app/cypress/fixtures/doc/  \
+		-v $(PWD):/app/vidjil \
+		-v "$(PWD)/docker/ci/cypress_script.bash":"/app/script.bash" \
+		-v "$(PWD)/docker/ci/cypress.json":"/app/cypress.json" \
+		--network="host" \
+		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash
+
 ###############################
 
 

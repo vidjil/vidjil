@@ -13,7 +13,12 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
-  - test_cypress_client
+  - test_cypress_client_supported
+  - test_cypress_client_latest
+  - test_cypress_client_legacy
+  - test_cypress_server_supported
+  - test_cypress_server_latest
+  - test_cypress_server_legacy
   - test_tutorial
   - test_tutorial_server
   - test_shouldvdj
@@ -59,6 +64,7 @@ include:
   - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
   - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
   - local: 'browser/.gitlab-ci.yml' # Client pipelines
+  - local: 'server/.gitlab-ci.yml' # Server pipelines
   - template: Code-Quality.gitlab-ci.yml # Code quality
 
 # Algorithm

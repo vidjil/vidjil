@@ -1,0 +1,95 @@
+
+.test_cypress_server:
+  stage: test_cypress_server
+  script:
+    - docker pull "vidjilci/cypress_with_browsers:latest"
+    - >
+      docker run
+      -v $PWD/$CYPRESS_PATH:/app/cypress
+      -v $PWD/browser/test/data:/app/cypress/fixtures/data
+      -v $PWD/doc:/app/cypress/fixtures/doc
+      -v $PWD:/app/vidjil
+      -v "$PWD/docker/ci/cypress.json":"/app/cypress.json"
+      -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash"
+      --env BROWSER=$BROWSER
+      --env HOST=$HOST
+      --env PROJECT=$PROJECT
+      --env URL=$URL
+      --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
+      --shm-size=1GB
+      --network="host"
+      "vidjilci/cypress_with_browsers:latest" bash script.bash
+  variables:
+    CYPRESS_PATH: server/web2py/applications/vidjil/tests/cypress
+    HOST: local
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+  needs: []
+  tags:
+    - x86_64
+    - docker
+
+
+## Cypress with server
+server_firefox_supported:
+  extends:
+    - .test_server_base
+    - .test_cypress_base
+    - .test_cypress_server
+  stage: test_cypress_server_supported
+  variables:
+    BROWSER: browsers/firefox_supported/firefox
+  needs: []
+
+server_firefox_latest:
+  extends:
+    - .test_server_base
+    - .test_cypress_base
+    - .test_cypress_server
+  stage: test_cypress_server_latest
+  variables:
+    BROWSER: browsers/firefox_latest/firefox
+  needs: [server_chrome_supported, server_firefox_supported]
+
+server_firefox_legacy:
+  extends:
+    - .test_server_base
+    - .test_cypress_base
+    - .test_cypress_server
+  stage: test_cypress_server_legacy
+  variables:
+    BROWSER: browsers/firefox_legacy/firefox
+  needs: [server_chrome_latest, server_firefox_latest]
+
+
+server_chrome_supported:
+  extends:
+    - .test_server_base
+    - .test_cypress_base
+    - .test_cypress_server
+  stage: test_cypress_server_supported
+  variables:
+    BROWSER: browsers/chrome_supported/chrome
+  needs: []
+
+server_chrome_latest:
+  extends:
+    - .test_server_base
+    - .test_cypress_base
+    - .test_cypress_server
+  stage: test_cypress_server_latest
+  variables:
+    BROWSER: browsers/chrome_latest/chrome
+  needs: [server_chrome_supported, server_firefox_supported]
+
+server_chrome_legacy:
+  extends:
+    - .test_server_base
+    - .test_cypress_base
+    - .test_cypress_server
+  stage: test_cypress_server_legacy
+  variables:
+    BROWSER: browsers/chrome_legacy/chrome
+  needs: [server_chrome_latest, server_firefox_latest]
+
