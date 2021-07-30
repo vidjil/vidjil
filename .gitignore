@@ -49,3 +49,7 @@ germline/IMGT_RELEASE
 vidjil-algo
 
 server/web2py/gluon/packages/dal/
+
+cypress/reports
+cypress/screenshots
+cypress/videos

@@ -32,3 +32,9 @@ beforeEach(() => {
     cy.spy(win.console, "log");
   })
 })
+
+before(function() {
+  // runs once before all tests in the block
+    cy.initDatabase(Cypress.env('host'))
+})
+

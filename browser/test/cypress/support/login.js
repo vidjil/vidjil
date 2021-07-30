@@ -2,20 +2,24 @@
 
 Cypress.Commands.add('login', (host) => { 
   if (host=="local"){
-      cy.visit('https://localhost/browser')
+      cy.visit('http://localhost/browser')
       cy.waitForUpdates()
       // log in
-      cy.get('#auth_user_email')
+      cy.get('#auth_user_email', { timeout: 10000 })
+        .should('exist')
+        .should('be.visible')
         .type('plop@plop.com')
       cy.get('#auth_user_password')
         .type('foobartest')
       cy.get('#submit_record__row > .w2p_fw > input').click()
       cy.waitForUpdates()
   } else if (host=="review"){
-    cy.visit('https://localhost/browser')
+    cy.visit(Cypress.env('URL'))
     cy.waitForUpdates()
     // log in
-    cy.get('#auth_user_email')
+    cy.get('#auth_user_email', { timeout: 10000 })
+      .should('exist')
+      .should('be.visible')
       .type('test@vidjil.org')
     cy.get('#auth_user_password')
       .type(Cypress.env('CI_PASSWORD_TEST'))
@@ -26,7 +30,9 @@ Cypress.Commands.add('login', (host) => {
     cy.waitForUpdates()
     
     // log in
-    cy.get('#auth_user_email')
+    cy.get('#auth_user_email', { timeout: 10000 })
+      .should('exist')
+      .should('be.visible')
       .type('demo@vidjil.org')
     cy.get('#auth_user_password')
       .type('demo')
