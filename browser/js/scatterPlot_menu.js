@@ -72,7 +72,9 @@ ScatterPlot_menu.prototype = {
         this.menu = document.createElement('div');
         this.menu.className = "sp_menu";
         this.menu.id        = this.id+"_sp_menu";
-        this.menu.appendChild(document.createTextNode("plot"));
+        var img = document.createElement("i");
+        img.className = "icon-cog";
+        this.menu.appendChild(img);
         this.menu.appendChild(clone);
 
         var anchor = document.createElement('div');
