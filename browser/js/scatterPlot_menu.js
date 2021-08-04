@@ -225,6 +225,7 @@ ScatterPlot_menu.prototype = {
         var select_y = 0
         var i=0
         
+        //
         for (var key in this.available_axis) {
             var axisName = this.available_axis[key]
             if (axisName == this.splitX) select_x = i
@@ -234,38 +235,101 @@ ScatterPlot_menu.prototype = {
         this.select_x.selectedIndex = select_x
         this.select_y.selectedIndex = select_y
 
-        $(".sp_menu_icon").removeClass("sp_selected_mode");
+        //update bar/plot mode icon
+        $(this.menu).find(".sp_menu_icon").removeClass("sp_selected_mode");
         $(this.menu).find(".sp_menu_icon_"+this.mode).addClass("sp_selected_mode");
 
-        if (this.axisX.scale){
-            var a = this.axisX
+        //hide axis_y for bar mode(y axis is fixed to size in bar mode)
+        if (this.mode == "bar")
+            $(this.menu).find(".menu_box_axis_y").hide();
+        else
+            $(this.menu).find(".menu_box_axis_y").show();
 
-            if (typeof a.scale_custom_min == "undefined") a.scale_custom_min = a.scale.min;
-            if (typeof a.scale_custom_max == "undefined") a.scale_custom_max = a.scale.max;
+        this.updateSlider(this.slider_box_x,this.slider_x,this.axisX)
+        this.updateSlider(this.slider_box_y,this.slider_y,this.axisY)
 
-            $(this.slider_x).show();
-            $(this.slider_x).slider( "option", "values", [ a.scale_custom_min, a.scale_custom_max ] )
-                            .slider( "option", "min", a.scale.min)
-                            .slider( "option", "max", a.scale.max)
-                            //.slider( "option", "step", a.min_step );
-
-            $(this.menu).find(".slider_x_min").html(a.scale.min);
-            $(this.menu).find(".slider_x_value1").html(a.scale_custom_min);
-            $(this.menu).find(".slider_x_value2").html(a.scale_custom_max);
-            $(this.menu).find(".slider_x_max").html(a.scale.max);
-
-        } else {
-            $(this.slider_x).hide();
-        }
-        
         return this;
     },
 
+    updateSlider:function (slider_box,slider,axis){
+        var a = axis;
+        if (a.scale){
+        
+            if (typeof a.scale_custom_min == "undefined" || !a.useCustomScale) a.scale_custom_min = a.scale.nice_min;
+            if (typeof a.scale_custom_max == "undefined" || !a.useCustomScale) a.scale_custom_max = a.scale.nice_max;
+
+            if (a.scale.mode == "log"){
+                a.loop_floor = 1000;
+                while(a.loop_floor>a.scale.min_p) a.loop_floor = a.loop_floor/10;
+                a.loop_floor = Math.pow(10, Math.ceil (Math.log10(Math.abs(a.loop_floor))))
+              
+                $(slider).slider( "option", "min", this.convertLogtoLoop(a,a.loop_floor))
+                         .slider( "option", "max", this.convertLogtoLoop(a,a.scale.max))
+                         .slider( "option", "values", [ this.convertLogtoLoop(a,a.scale_custom_min),
+                                                        this.convertLogtoLoop(a,a.scale_custom_max)])
+
+                $(slider_box).find(".sp_slider_left").html(a.scale_custom_min.toPrecision(1));
+                $(slider_box).find(".sp_slider_right").html(a.scale_custom_max.toPrecision(1));
+            }else{
+                $(slider).slider( "option", "min", a.scale.min)
+                         .slider( "option", "max", a.scale.max)
+                         .slider( "option", "values", [ a.scale_custom_min, a.scale_custom_max ] )
+                         
+                $(slider_box).find(".sp_slider_left").html(a.scale_custom_min);
+                $(slider_box).find(".sp_slider_right").html(a.scale_custom_max);
+            }
+
+            $(slider_box).show();
+            return;
+        }
+
+        $(slider_box).hide();
+    },
+
+    //used to update preview value during mouseover / does not update the scale 
+    updateDisplayX: function(values){
+        if (this.axisX.scale.mode == "log"){
+            $(this.menu).find(".slider_x_value1").html(this.convertLoopToLog(this.axisX, values[0]).toPrecision(1));
+            $(this.menu).find(".slider_x_value2").html(this.convertLoopToLog(this.axisX, values[1]).toPrecision(1));
+            return;
+        }
+        $(this.menu).find(".slider_x_value1").html(values[0]);
+        $(this.menu).find(".slider_x_value2").html(values[1]);
+    },
+
+    updateDisplayY: function(values){
+        if (this.axisY.scale.mode == "log"){
+            $(this.menu).find(".slider_y_value1").html(this.convertLoopToLog(this.axisY, values[0]).toPrecision(1));
+            $(this.menu).find(".slider_y_value2").html(this.convertLoopToLog(this.axisY, values[1]).toPrecision(1));
+            return;
+        }
+        $(this.menu).find(".slider_y_value1").html($(this.slider_y).slider( "option", "values")[0]);
+        $(this.menu).find(".slider_y_value2").html($(this.slider_y).slider( "option", "values")[1]);
+    },
+
     updateScaleX: function(){
-        console.log("pouet updateScaleX")
         this.axisX.useCustomScale = true;
+        if (this.axisX.scale.mode == "log"){
+            this.axisX.scale_custom_min = this.convertLoopToLog(this.axisX, $(this.slider_x).slider( "option", "values")[0]);
+            this.axisX.scale_custom_max = this.convertLoopToLog(this.axisX, $(this.slider_x).slider( "option", "values")[1]);
+            this.smartUpdate();
+            return;
+        }
         this.axisX.scale_custom_min = $(this.slider_x).slider( "option", "values")[0];
         this.axisX.scale_custom_max = $(this.slider_x).slider( "option", "values")[1];
+        this.smartUpdate();
+    },
+
+    updateScaleY: function(){
+        this.axisY.useCustomScale = true;
+        if (this.axisY.scale.mode == "log"){
+            this.axisY.scale_custom_min = this.convertLoopToLog(this.axisY, $(this.slider_y).slider( "option", "values")[0]);
+            this.axisY.scale_custom_max = this.convertLoopToLog(this.axisY, $(this.slider_y).slider( "option", "values")[1]);
+            this.smartUpdate();
+            return;
+        }
+        this.axisY.scale_custom_min = $(this.slider_y).slider( "option", "values")[0];
+        this.axisY.scale_custom_max = $(this.slider_y).slider( "option", "values")[1];
         this.smartUpdate();
     },
 
