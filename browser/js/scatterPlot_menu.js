@@ -201,6 +201,20 @@ ScatterPlot_menu.prototype = {
             }
         });
 
+
+        this.slider_y = $(this.menu).find(".slider_y")[0];
+        this.slider_box_y = $(this.menu).find(".slider_box_y")[0];
+
+        $( this.slider_y ).slider({
+            range: true,
+            slide: function( event, ui ) {
+                self.updateDisplayY(ui.values);
+            },
+            stop: function( event, ui ) {
+                self.updateScaleY();
+            }
+        });
+
     },
 
     //used to convert integer value of handle position into a log 
