@@ -651,6 +651,9 @@ Axis.prototype = {
         //discret value
         if (v in this.labels) 
             return this.labels[v].position
+        
+        if (this.useCustomScale && v<this.scale_custom_min && this.labels[0])
+            return this.labels[0].position
 
         //continuous value
         if (this.scale && typeof v == "number" && !isNaN(v))
