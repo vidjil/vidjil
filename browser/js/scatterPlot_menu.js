@@ -88,6 +88,7 @@ ScatterPlot_menu.prototype = {
         this.initSelect();
         this.initPreset();
         this.initSlider();
+        this.updateMenu();
     },
 
     initButton: function() {
@@ -181,6 +182,21 @@ ScatterPlot_menu.prototype = {
             }
         });
 
+    },
+
+    convertLogtoLoop:function(axis, log){
+        var loop=1;
+        var log2 = axis.loop_floor;
+        while (log>log2*1.0001){
+            log2=log2*10;
+            loop++;
+        } 
+        return loop;
+    },
+    convertLoopToLog:function(axis, loop){
+        var log = axis.loop_floor;
+        for (var i=1; i<loop; i++)log=log*10;
+        return log;
     },
 
     /**
