@@ -174,11 +174,29 @@ ScatterPlot_menu.prototype = {
         var self = this;
 
         this.slider_x = $(this.menu).find(".slider_x")[0];
+        this.slider_box_x = $(this.menu).find(".slider_box_x")[0];
 
         $( this.slider_x ).slider({
             range: true,
+            slide: function( event, ui ) {
+                self.updateDisplayX(ui.values);
+            },
             stop: function( event, ui ) {
                 self.updateScaleX();
+            }
+        });
+
+
+        this.slider_y = $(this.menu).find(".slider_y")[0];
+        this.slider_box_y = $(this.menu).find(".slider_box_y")[0];
+
+        $( this.slider_y ).slider({
+            range: true,
+            slide: function( event, ui ) {
+                self.updateDisplayY(ui.values);
+            },
+            stop: function( event, ui ) {
+                self.updateScaleY();
             }
         });
 
