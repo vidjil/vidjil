@@ -258,7 +258,8 @@ ScatterPlot.prototype = {
                 return (self.m.clone(d.id)
                     .getColor());
             })
-            .attr("class", "circle_hidden")     
+            .attr("class", "circle_hidden")   
+            .on("dblclick",function(d){ self.m.displayInfoBox(d.id) });  
     },
 
     /**
