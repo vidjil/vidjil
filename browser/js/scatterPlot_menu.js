@@ -307,27 +307,45 @@ ScatterPlot_menu.prototype = {
         $(this.menu).find(".slider_y_value2").html($(this.slider_y).slider( "option", "values")[1]);
     },
 
-    updateScaleX: function(){
+    updateScaleX: function(min,max){
         this.axisX.useCustomScale = true;
+
+        if (typeof min != "undefined"){
+            this.axisX.scale_custom_min = min;
+            this.axisX.scale_custom_max = max;
+            this.smartUpdate();
+            return;
+        }
+        
         if (this.axisX.scale.mode == "log"){
             this.axisX.scale_custom_min = this.convertLoopToLog(this.axisX, $(this.slider_x).slider( "option", "values")[0]);
             this.axisX.scale_custom_max = this.convertLoopToLog(this.axisX, $(this.slider_x).slider( "option", "values")[1]);
             this.smartUpdate();
             return;
         }
+
         this.axisX.scale_custom_min = $(this.slider_x).slider( "option", "values")[0];
         this.axisX.scale_custom_max = $(this.slider_x).slider( "option", "values")[1];
         this.smartUpdate();
     },
 
-    updateScaleY: function(){
-        this.axisY.useCustomScale = true;
+    updateScaleY: function(min, max){
+        this.axisX.useCustomScale = true;
+
+        if (typeof min != "undefined"){
+            this.axisX.scale_custom_min = min;
+            this.axisX.scale_custom_max = max;
+            this.smartUpdate();
+            return;
+        }
+
         if (this.axisY.scale.mode == "log"){
             this.axisY.scale_custom_min = this.convertLoopToLog(this.axisY, $(this.slider_y).slider( "option", "values")[0]);
             this.axisY.scale_custom_max = this.convertLoopToLog(this.axisY, $(this.slider_y).slider( "option", "values")[1]);
             this.smartUpdate();
             return;
         }
+        
         this.axisY.scale_custom_min = $(this.slider_y).slider( "option", "values")[0];
         this.axisY.scale_custom_max = $(this.slider_y).slider( "option", "values")[1];
         this.smartUpdate();
