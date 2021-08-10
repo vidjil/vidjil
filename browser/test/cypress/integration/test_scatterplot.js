@@ -2,7 +2,7 @@
 
 var localhost = true
 console.log( Cypress.env('workdir') )
-var url = "https://localhost/"
+var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
 console.log( url )
 
 
