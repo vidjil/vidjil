@@ -224,3 +224,50 @@ QUnit.test("axes productivity detailed", function(assert) {
         ready()
     }, 150);
 })
+
+
+QUnit.test("Axis scale", function(assert) {
+
+    var ready = assert.async(1);
+
+    m = new Model();
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+
+    var sp = new ScatterPlot("visu",m);
+    sp.init();
+    sp.setPreset(4);
+    
+
+    var delay = 0;
+    var step = 200;
+    setTimeout( function() {
+        assert.equal( sp.axisX.scale.nice_min, 0,  "min value of axisX")
+        assert.equal( sp.axisX.scale.nice_max, 260, "max value of axisX")
+        assert.equal( sp.axisX.fct(m.clone(3)), 241, "axis value of clone 3")
+
+        var minPos = sp.axisX.getValuePos(0);
+        var maxPos = sp.axisX.getValuePos(260);
+        var delta = maxPos-minPos;
+        var clonePos = sp.axisX.getPos(m.clone(3));
+        assert.equal( clonePos.toPrecision(3), (minPos+delta*(241/260)).toPrecision(3), "axis position of clone 3")
+        
+        sp.updateScaleX(100, 300);
+    }, delay+=step);
+
+    setTimeout( function() {
+        assert.equal( sp.axisX.scale.nice_min, 100,  "min value of axisX after rescale")
+        assert.equal( sp.axisX.scale.nice_max, 300, "max value of axisX after rescale")
+        assert.equal( sp.axisX.fct(m.clone(3)), 241, "axis value of clone 3")
+
+        var minPos = sp.axisX.getValuePos(100);
+        var maxPos = sp.axisX.getValuePos(300);
+        var delta = maxPos-minPos;
+        var clonePos = sp.axisX.getPos(m.clone(3));
+        assert.equal( clonePos.toPrecision(3), (minPos+delta*(141/200)).toPrecision(3), "position of clone 1 after rescale")
+    
+        ready()
+    }, delay+=step);
+
+})
