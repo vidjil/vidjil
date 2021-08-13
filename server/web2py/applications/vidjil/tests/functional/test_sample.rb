@@ -72,7 +72,7 @@ class TestSample < ServerTest
 
     jstree = $b.div(:id => "jstree")
     for i in 0..$num_additional_files
-      $b.div(:id => "jstree_field_%d" % i).span(:text => "browse").click
+      $b.div(:id => "jstree_field_1_%d" % i).span(:text => "browse").click
       assert(jstree.present?)
       jstree_file = jstree.a(:id => "//Demo-X5.fa_anchor")
       unless jstree_file.present? and jstree_file.present?
@@ -89,13 +89,10 @@ class TestSample < ServerTest
       # TODO test other sets
     end
 
-    form_class = form.input(:type => "submit").class_name
-    assert( !(form_class.include? "disabledClass") ) # Submit button is not disabled before click
+    assert( !form.input(:type => "submit").obscured? ) # Submit button is not disabled before click
 
     form.input(:type => "submit").click
-    
-    form_class = form.input(:type => "submit").class_name
-    assert( (form_class.include? "disabledClass") ) # Submit button should be disabled after click
+    assert( form.input(:type => "submit").obscured?  ) # Submit button should be disabled after click
 
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
@@ -254,7 +251,7 @@ class TestSample < ServerTest
     $b.input(:id => "source_nfs").click
 
     jstree = $b.div(:id => "jstree")
-    $b.div(:id => "jstree_field_0").span(:text => "browse").click
+    $b.div(:id => "jstree_field_1_0").span(:text => "browse").click
     assert(jstree.present?)
     jstree_file = jstree.a(:id => "//Demo-X5.fa_anchor")
     unless jstree_file.present? and jstree_file.present?
