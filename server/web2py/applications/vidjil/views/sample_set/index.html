@@ -85,7 +85,12 @@
                 <td class="column_sep"></td>
 
                 <td class="column2"></td>
-                <td class="column_100">Run all</td>
+                <td class="column_100" style="padding: 2px 5px">
+                    {{ launch_sequence_files = [int(row.sequence_file.id) for row in query if row.results_file.status in ["FAILED",'']] }}
+                    {{ if len(launch_sequence_files) > 0 and (config_id > 0 and auth.can_use_config(config_id)): }}
+                         Run all
+                    {{pass}}
+                </td>
                 <td class="column5"></td>
                 <td class="column5"></td>
                 <td class="column5" id="footer_run_icon_all">
@@ -115,6 +120,7 @@
                           {{pass}}
                       {{pass}}
                 </td>
+                <td class="column_20"></td>
 
             </tr>
         </tfoot>
