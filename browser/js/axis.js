@@ -657,7 +657,9 @@ Axis.prototype = {
 
         //continuous value
         if (this.scale && typeof v == "number" && !isNaN(v))
-            return this.scale.fct(v) 
+            //do not retirn position for clone outside scale domain
+            if (v >= this.scale.domain[0] && v <= this.scale.domain[1])
+                return this.scale.fct(v) 
 
         return undefined
     },
