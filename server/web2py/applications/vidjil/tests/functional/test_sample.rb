@@ -14,6 +14,7 @@ class TestSample < ServerTest
       login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
       login_form.text_field(:id => "auth_user_password").set('foobartest')
       login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
+      print( "login submit")
     end
   end
 

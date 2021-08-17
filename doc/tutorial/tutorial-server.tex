@@ -241,11 +241,11 @@ that are being uploaded.
 configuration in the drop down at the right (\com{multi+inc+xxx}) and then
 clicking on the gearwheel.}
 \begin{verbatim}
-  def test_011_upload_sample_submit
+  def test_011_launch_analysis_sample
     $b.select_configutation_in_available_list("multi+inc+xxx")
     Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
     gearwheels = $b.elements(:class => "icon-cog-2")
-    for gearwheel in gearwheels
+    for gearwheel in gearwheels[1..-1]
       gearwheel.click
     end
   end
