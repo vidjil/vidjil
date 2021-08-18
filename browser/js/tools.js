@@ -726,7 +726,7 @@ function locus_cmp(valA, valB){
  * @param  {Array}  labels List of predefined labels
  * @return {Number}        A number -1 if A before B, else 1
  */
-function sortLabels(valA, valB, labels){
+function sortFromList(valA, valB, labels){
     // Ordered list of all generic label
     var index_A = labels.indexOf(valA)
     var index_B = labels.indexOf(valB)
