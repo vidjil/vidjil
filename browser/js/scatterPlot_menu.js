@@ -182,7 +182,7 @@ ScatterPlot_menu.prototype = {
                 self.updateDisplayX(ui.values);
             },
             stop: function( event, ui ) {
-                self.updateScaleX();
+                self.updateScaleX(ui.values);
             }
         });
 
@@ -196,13 +196,14 @@ ScatterPlot_menu.prototype = {
                 self.updateDisplayY(ui.values);
             },
             stop: function( event, ui ) {
-                self.updateScaleY();
+                self.updateScaleY(ui.values);
             }
         });
 
     },
 
-    convertLogtoLoop:function(axis, log){
+    //used to convert integer value of handle position into a log 
+    convertLogToLoop:function(axis, log){
         var loop=1;
         var log2 = axis.loop_floor;
         while (log>log2*1.0001){
@@ -215,6 +216,21 @@ ScatterPlot_menu.prototype = {
         var log = axis.loop_floor;
         for (var i=1; i<loop; i++)log=log*10;
         return log;
+    },
+
+    //used to convert integer value of handle position into a float
+    convertFloatToLoop(axis, float){
+        //min_step value can change over time so we keep the initial in memory 
+        if (typeof axis.min_step0 == "undefined") 
+            axis.min_step0 = axis.min_step
+
+        return Math.round(float/axis.min_step0)
+    },
+    convertLoopToFloat(axis, loop){
+        if (typeof axis.min_step0 == "undefined") 
+            axis.min_step0 = axis.min_step
+
+        return loop*axis.min_step0;
     },
 
     /**
@@ -258,27 +274,40 @@ ScatterPlot_menu.prototype = {
             if (typeof a.scale_custom_min == "undefined" || !a.useCustomScale) a.scale_custom_min = a.scale.nice_min;
             if (typeof a.scale_custom_max == "undefined" || !a.useCustomScale) a.scale_custom_max = a.scale.nice_max;
 
+            //log slider
             if (a.scale.mode == "log"){
                 a.loop_floor = 1000;
                 while(a.loop_floor>a.scale.min_p) a.loop_floor = a.loop_floor/10;
                 a.loop_floor = Math.pow(10, Math.ceil (Math.log10(Math.abs(a.loop_floor))))
               
-                $(slider).slider( "option", "min", this.convertLogtoLoop(a,a.loop_floor))
-                         .slider( "option", "max", this.convertLogtoLoop(a,a.scale.max))
-                         .slider( "option", "values", [ this.convertLogtoLoop(a,a.scale_custom_min),
-                                                        this.convertLogtoLoop(a,a.scale_custom_max)])
-
+                $(slider).slider( "option", "min", this.convertLogToLoop(a,a.loop_floor))
+                         .slider( "option", "max", this.convertLogToLoop(a,a.scale.max))
+                         .slider( "option", "values", [ this.convertLogToLoop(a,a.scale_custom_min),
+                                                        this.convertLogToLoop(a,a.scale_custom_max)])
                 $(slider_box).find(".sp_slider_left").html(a.scale_custom_min.toPrecision(1));
                 $(slider_box).find(".sp_slider_right").html(a.scale_custom_max.toPrecision(1));
-            }else{
-                $(slider).slider( "option", "min", a.scale.min)
-                         .slider( "option", "max", a.scale.max)
-                         .slider( "option", "values", [ a.scale_custom_min, a.scale_custom_max ] )
-                         
-                $(slider_box).find(".sp_slider_left").html(a.scale_custom_min);
-                $(slider_box).find(".sp_slider_right").html(a.scale_custom_max);
+                $(slider_box).show();
+                return;
             }
 
+            //float slider
+            if (a.min_step < 1){
+                $(slider).slider( "option", "min", this.convertFloatToLoop(a,a.scale.min))
+                         .slider( "option", "max", this.convertFloatToLoop(a,a.scale.max))
+                         .slider( "option", "values", [ this.convertFloatToLoop(a,a.scale_custom_min),
+                                                        this.convertFloatToLoop(a,a.scale_custom_max)])
+                $(slider_box).find(".sp_slider_left").html(a.scale_custom_min.toPrecision(2));
+                $(slider_box).find(".sp_slider_right").html(a.scale_custom_max.toPrecision(2));
+                $(slider_box).show();
+                return;
+            }
+
+            //integer slider
+            $(slider).slider( "option", "min", a.scale.min)
+                        .slider( "option", "max", a.scale.max)
+                        .slider( "option", "values", [ a.scale_custom_min, a.scale_custom_max ] )      
+            $(slider_box).find(".sp_slider_left").html(a.scale_custom_min);
+            $(slider_box).find(".sp_slider_right").html(a.scale_custom_max);
             $(slider_box).show();
             return;
         }
@@ -293,6 +322,13 @@ ScatterPlot_menu.prototype = {
             $(this.menu).find(".slider_x_value2").html(this.convertLoopToLog(this.axisX, values[1]).toPrecision(1));
             return;
         }
+
+        if (this.axisX.min_step < 1){
+            $(this.menu).find(".slider_x_value1").html(this.convertLoopToFloat(this.axisX, values[0]).toPrecision(2));
+            $(this.menu).find(".slider_x_value2").html(this.convertLoopToFloat(this.axisX, values[1]).toPrecision(2));
+            return;
+        }
+
         $(this.menu).find(".slider_x_value1").html(values[0]);
         $(this.menu).find(".slider_x_value2").html(values[1]);
     },
@@ -303,51 +339,68 @@ ScatterPlot_menu.prototype = {
             $(this.menu).find(".slider_y_value2").html(this.convertLoopToLog(this.axisY, values[1]).toPrecision(1));
             return;
         }
+
+        if (this.axisY.min_step < 1){
+            $(this.menu).find(".slider_y_value1").html(this.convertLoopToFloat(this.axisY, values[0]).toPrecision(2));
+            $(this.menu).find(".slider_y_value2").html(this.convertLoopToFloat(this.axisY, values[1]).toPrecision(2));
+            return;
+        }
+
         $(this.menu).find(".slider_y_value1").html($(this.slider_y).slider( "option", "values")[0]);
         $(this.menu).find(".slider_y_value2").html($(this.slider_y).slider( "option", "values")[1]);
     },
 
-    updateScaleX: function(min,max){
+    updateScaleX: function(values){
         this.axisX.useCustomScale = true;
 
-        if (typeof min != "undefined"){
-            this.axisX.scale_custom_min = min;
-            this.axisX.scale_custom_max = max;
+        if (values[0] == values[1]){
+            this.smartUpdate();
+            return;
+        }
+
+        if (this.axisX.min_step < 1){
+            this.axisX.scale_custom_min = this.convertLoopToFloat(this.axisX, values[0]);
+            this.axisX.scale_custom_max = this.convertLoopToFloat(this.axisX, values[1]);
             this.smartUpdate();
             return;
         }
         
         if (this.axisX.scale.mode == "log"){
-            this.axisX.scale_custom_min = this.convertLoopToLog(this.axisX, $(this.slider_x).slider( "option", "values")[0]);
-            this.axisX.scale_custom_max = this.convertLoopToLog(this.axisX, $(this.slider_x).slider( "option", "values")[1]);
+            this.axisX.scale_custom_min = this.convertLoopToLog(this.axisX, values[0]);
+            this.axisX.scale_custom_max = this.convertLoopToLog(this.axisX, values[1]);
             this.smartUpdate();
             return;
         }
 
-        this.axisX.scale_custom_min = $(this.slider_x).slider( "option", "values")[0];
-        this.axisX.scale_custom_max = $(this.slider_x).slider( "option", "values")[1];
+        this.axisX.scale_custom_min = values[0];
+        this.axisX.scale_custom_max = values[1];
         this.smartUpdate();
     },
 
-    updateScaleY: function(min, max){
-        this.axisX.useCustomScale = true;
+    updateScaleY: function(values){
+        this.axisY.useCustomScale = true;
 
-        if (typeof min != "undefined"){
-            this.axisX.scale_custom_min = min;
-            this.axisX.scale_custom_max = max;
+        if (values[0] == values[1]){
+            this.smartUpdate();
+            return;
+        }
+
+        if (this.axisY.min_step < 1){
+            this.axisY.scale_custom_min = this.convertLoopToFloat(this.axisY, values[0]);
+            this.axisY.scale_custom_max = this.convertLoopToFloat(this.axisY, values[1]);
             this.smartUpdate();
             return;
         }
 
         if (this.axisY.scale.mode == "log"){
-            this.axisY.scale_custom_min = this.convertLoopToLog(this.axisY, $(this.slider_y).slider( "option", "values")[0]);
-            this.axisY.scale_custom_max = this.convertLoopToLog(this.axisY, $(this.slider_y).slider( "option", "values")[1]);
+            this.axisY.scale_custom_min = this.convertLoopToLog(this.axisY, values[0]);
+            this.axisY.scale_custom_max = this.convertLoopToLog(this.axisY, values[1]);
             this.smartUpdate();
             return;
         }
-        
-        this.axisY.scale_custom_min = $(this.slider_y).slider( "option", "values")[0];
-        this.axisY.scale_custom_max = $(this.slider_y).slider( "option", "values")[1];
+
+        this.axisY.scale_custom_min = values[0];
+        this.axisY.scale_custom_max = values[1];
         this.smartUpdate();
     },
 
