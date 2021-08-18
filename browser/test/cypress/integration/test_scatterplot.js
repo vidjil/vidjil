@@ -90,10 +90,10 @@ describe('Actions v1', function () {
     cy.get('#visu').find('select[name*="select_x[]"]').select('clone consensus length',{ force: true })
     cy.get('#visu_axis_x_container').children('line').should('have.length', 7) // 0/20/40/60/80/100/120
 
-    cy.window().then((win) => {win.sp.updateScaleX(40,120);});
+    cy.window().then((win) => {win.sp.updateScaleX([40,120]);});
     cy.get('#visu_axis_x_container').children('line').should('have.length', 9) // 40/50/60/70/80/90/100/110/120
 
-    cy.window().then((win) => {win.sp.updateScaleX(91,114);});
+    cy.window().then((win) => {win.sp.updateScaleX([91,114]);});
     cy.get('#visu_axis_x_container').children('line').should('have.length', 6) // 90/95/100/105/110/115
 
     return
