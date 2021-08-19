@@ -50,7 +50,8 @@ function loadAfterConf() {
     // some files are loaded before the views)
     require(["js/view"], function() {
 
-        require(["js/germline"],
+        require(["js/germline",
+                 "js/vidjil-style"],
                 function() {
                     require(["js/closeable"],
                             function() {
@@ -60,6 +61,7 @@ function loadAfterConf() {
                                          "js/aligner",
                                          "js/aligner_sequence",
                                          "js/model_loader",
+                                         "js/model_color",
                                          "js/model",
                                          "js/clone",
                                          "js/dynprog",
@@ -73,7 +75,6 @@ function loadAfterConf() {
                                          "js/builder",
                                          "js/info",
                                          "js/com",
-                                         "js/vidjil-style",
                                          "js/crossDomain",
                                          "js/database",
                                          "js/shortcut",
