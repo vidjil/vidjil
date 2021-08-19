@@ -292,6 +292,11 @@ Info.prototype = {
         if (this.m.colorMethod != this.colorMethod)
             this.update()
         this.colorMethod = this.m.colorMethod
+
+        if (this.m.axisColor.name != this.axisColorName){
+            this.axisColorName = this.m.axisColor.name
+            this.update()
+        }
     },
 
     create_sample_info_container: function(info, className, id, placeholder, target) {
@@ -482,6 +487,29 @@ Info.prototype = {
         var span2 = document.createElement('span');
         var span3 = document.createElement('span');
 
+        if (m.axisColor){
+            this.axisColorName = this.m.axisColor.name
+            var a = m.axisColor;
+
+            if (a.labels){
+                var keys = Object.keys(a.labels);
+                for (var i = 0; i < keys.length; i++) {
+                    var l = a.labels[keys[i]]
+                    if (typeof l.color != "undefined"){
+                        var spantag = document.createElement('span');
+                        spantag.className = "tagColorBox tagColor8";
+                        spantag.style.backgroundColor = l.color;
+                        spantag.value = keys[i];
+                        spantag.onclick = function(){
+                            self.m.multiSelect(self.m.axisColor.getLabelInfo(this.value).clones)
+                        };
+                        span2.appendChild(spantag);
+                    }
+                }
+            }
+
+        }
+/*
         switch (this.m.colorMethod) {
         case "N":
             span0.appendChild(document.createTextNode("N length"));
@@ -538,6 +566,7 @@ Info.prototype = {
 
             break;
         }
+*/
 
         div.appendChild(span0);
         div.appendChild(span1);
