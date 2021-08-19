@@ -35,11 +35,10 @@
 function ScatterPlot(id, model, database, default_preset) {
     var self = this
 
-    for (var i in ScatterPlot_menu.prototype) ScatterPlot.prototype[i] = ScatterPlot_menu.prototype[i]
-    for (var j in ScatterPlot_selector.prototype) ScatterPlot.prototype[j] = ScatterPlot_selector.prototype[j]
     ScatterPlot_menu.call(this, default_preset)
     ScatterPlot_selector.call(this)
     View.call(this, model, id)
+
     this.db = database
     this.id = id
 
@@ -1427,4 +1426,6 @@ ScatterPlot.prototype = {
     }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype)
+ScatterPlot.prototype = $.extend(Object.create(ScatterPlot_menu.prototype), ScatterPlot.prototype)
+ScatterPlot.prototype = $.extend(Object.create(ScatterPlot_selector.prototype), ScatterPlot.prototype)
 
