@@ -677,11 +677,8 @@ Axis.prototype = {
     getColor: function(clone) {
         var v = this.fct(clone)
 
-        if (v in this.labels && this.labels[v].color)
-            if (this.labels[v].color === "") 
-                return undefined
-            else
-                return this.labels[v].color
+        if (v in this.labels && typeof this.labels[v].color != "undefined")
+            return this.labels[v].color
 
         var pos = this.getValuePos(v)
         if (pos === undefined) return undefined
