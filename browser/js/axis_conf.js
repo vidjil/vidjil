@@ -150,9 +150,9 @@ AXIS_DEFAULT = {
     "productivity": {
         name:       "productivity",
         labels:     {
-                        "not productive":   {text:"not productive"},
-                        "no CDR3 detected": {text:"no CDR3 detected"},
-                        "productive":       {text:"productive"},
+                        "not productive":   {text:"not productive", color: colorProductivity('false')},
+                        "no CDR3 detected": {text:"no CDR3 detected", color: "" },
+                        "productive":       {text:"productive", color: colorProductivity('true') },
                     },
         fct:        function(clone) {return clone.getProductivityName()},
         pretty:     function(tag) { return icon_pm(tag, "productive", "not productive") },
