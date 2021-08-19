@@ -50,6 +50,9 @@ function Model() {
     for (var f in Model_loader.prototype) {
         this[f] = Model_loader.prototype[f]
     }
+
+    Model_color.call(this)
+
     this.germline = {};
     this.create_germline_obj();
     this.view = [];
@@ -181,6 +184,7 @@ Model.prototype = {
         this.top = 50
 
         if (this.localStorage){
+            if (localStorage.getItem('colorAxis'))      this.colorAxis = new Axis(localStorage.getItem('colorMethod')).compute(100)
             if (localStorage.getItem('colorMethod'))    this.colorMethod = localStorage.getItem('colorMethod')
             if (localStorage.getItem('timeFormat'))     this.time_type = localStorage.getItem('timeFormat')
             if (localStorage.getItem('notation'))       this.notation_type  = localStorage.getItem('notation')
@@ -188,6 +192,7 @@ Model.prototype = {
             if (localStorage.getItem('cloneNotation'))  this.cloneNotationType = localStorage.getItem('cloneNotation')
         }
         
+        this.changeColorAxis(this.colorAxis.name,    false)
         this.changeColorMethod(this.colorMethod,    false)
         this.changeNotation(this.notation_type,     false)
         this.changeTimeFormat(this.time_type,       false)
@@ -216,10 +221,6 @@ Model.prototype = {
         this.t = 0;          // Selected time/sample
         this.tOther = 0;  // Other (previously) selected time/sample
         this.focus = -1;
-
-        this.colorMethod = "Tag"
-        this.notation_type = "percent"
-        this.time_type = "name"
 
         this.display_window = false
         this.isPlaying = false;
@@ -282,6 +283,11 @@ Model.prototype = {
 
         this.default_tag=8;
         this.distrib_tag=9;
+
+        this.colorMethod = "Tag"
+        this.colorAxis = new Axis("tag").compute(100)
+        this.notation_type = "percent"
+        this.time_type = "name"
 
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].reset();
@@ -1391,6 +1397,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * reset the display limit
      * */
     init: function () {
+
+        this.initColorSelector();
+
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].init();
         }
@@ -2584,6 +2593,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
     resetSettings: function () {
         localStorage.clear()
+        this.changeColorAxis("tag",         false)
         this.changeColorMethod("Tag",       false)
         this.changeNotation("percent",      false)
         this.changeTimeFormat("name",       false)
@@ -3770,3 +3780,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
 
 }; //end prototype Model
+
+
+Model.prototype = $.extend(Object.create(Model_color.prototype), Model.prototype)
