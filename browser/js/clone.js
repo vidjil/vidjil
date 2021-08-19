@@ -1304,12 +1304,16 @@ Clone.prototype = {
      * */
     updateColor: function () {
 
-        var allele;
         if (!this.hasSizeConstant()){
             this.color = "rgba(150, 150, 150, 0.65)"
             return
         }
 
+        var a = this.m.axisColor;
+
+        this.color = a.getColor(this);
+        return; 
+        
         switch (this.m.colorMethod){
             
             case "abundance":
