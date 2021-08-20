@@ -219,14 +219,14 @@ ScatterPlot_menu.prototype = {
     },
 
     //used to convert integer value of handle position into a float
-    convertFloatToLoop(axis, float){
+    convertFloatToLoop: function(axis, float){
         //min_step value can change over time so we keep the initial in memory 
         if (typeof axis.min_step0 == "undefined") 
             axis.min_step0 = axis.min_step
 
         return Math.round(float/axis.min_step0)
     },
-    convertLoopToFloat(axis, loop){
+    convertLoopToFloat: function(axis, loop){
         if (typeof axis.min_step0 == "undefined") 
             axis.min_step0 = axis.min_step
 
