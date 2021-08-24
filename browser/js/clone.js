@@ -1231,13 +1231,13 @@ Clone.prototype = {
     
     getProductivityName: function () {
         if (typeof this.seg.junction == "undefined")
-            return "no CDR3 detected"
+            return "no CDR3"
 
         return (this.seg.junction.productive ? "productive" : "not productive")
     },
     getProductivityNameDetailed: function () {
         if (typeof this.seg.junction == "undefined"){
-            return "no CDR3 detected"
+            return "no CDR3"
         } else if (this.isProductive() == true) {
             return "productive"
         } else {
@@ -1313,7 +1313,7 @@ Clone.prototype = {
 
         this.color = a.getColor(this);
         return; 
-        
+
         switch (this.m.colorMethod){
             
             case "abundance":

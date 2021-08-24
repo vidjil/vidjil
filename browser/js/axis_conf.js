@@ -150,11 +150,15 @@ AXIS_DEFAULT = {
     "productivity": {
         name:       "productivity",
         labels:     {
-                        "not productive":   {text:"not productive", color: colorProductivity('false')},
-                        "no CDR3 detected": {text:"no CDR3 detected", color: "" },
-                        "productive":       {text:"productive", color: colorProductivity('true') },
+                        "not productive":   {text:"not productive", color: colorProductivity('false'),side: "right"},
+                        "no CDR3":          {text:"no CDR3", color: "", side: "right" },
+                        "productive":       {text:"productive", color: colorProductivity('true'),side: "left" },
                     },
         fct:        function(clone) {return clone.getProductivityName()},
+        sort :      function(a,b){
+            var order = ["productive","not-productive","no CDR3"]
+            return order.indexOf(a) - order.indexOf(b);
+        },
         pretty:     function(tag) { return icon_pm(tag, "productive", "not productive") },
         isInAligner: true
     },
@@ -166,8 +170,8 @@ AXIS_DEFAULT = {
                     },
         fct:        function(clone) {return clone.getProductivityNameDetailed()},
         sort :      function(a,b){
-                        var order = ["productive","not-productive","stop-codon","out-of-frame","no-WPGxG-pattern","no CDR3 detected"]
-                        return sortFromList(a, b, order);
+                        var order = ["productive","not-productive","stop-codon","out-of-frame","no-WPGxG-pattern","no CDR3"]
+                        return order.indexOf(a) - order.indexOf(b);
                     },
         isInAligner:true,
         autofill :  true
