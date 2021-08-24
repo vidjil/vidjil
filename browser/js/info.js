@@ -491,23 +491,53 @@ Info.prototype = {
             this.axisColorName = this.m.axisColor.name
             var a = m.axisColor;
 
+            var useScale = false;
+            if (typeof a.scale != "undefined") useScale = true;
+
             if (a.labels){
                 var keys = Object.keys(a.labels);
+
+                var labelCount = 0;
+                for (var j = 0; j < keys.length; j++) 
+                    if (typeof a.labels[keys[j]].color != "undefined") labelCount++;
+
                 for (var i = 0; i < keys.length; i++) {
                     var l = a.labels[keys[i]]
-                    if (typeof l.color != "undefined"){
-                        var spantag = document.createElement('span');
-                        spantag.className = "tagColorBox tagColor8";
-                        spantag.style.backgroundColor = l.color;
-                        spantag.value = keys[i];
-                        spantag.onclick = function(){
-                            self.m.multiSelect(self.m.axisColor.getLabelInfo(this.value).clones)
-                        };
-                        span2.appendChild(spantag);
+                    if (typeof l.color == "undefined") continue
+
+                    var spantag = document.createElement('span');
+                    spantag.className = "tagColorBox tagColor8";
+                    spantag.style.backgroundColor = l.color;
+                    spantag.title = l.text;
+                    spantag.value = keys[i];
+                    spantag.onclick = function(){
+                        self.m.multiSelect(self.m.axisColor.getLabelInfo(this.value).clones)
+                    };
+
+                    if (l.side && l.side == "left"){
+                        if (labelCount<=3 && !useScale)
+                            span0.appendChild(document.createTextNode(l.text))
+                        span0.appendChild(spantag);
+                    }
+                    if (typeof l.side == "undefined"){
+                        if (labelCount<=3 && !useScale)
+                            span1.appendChild(document.createTextNode(l.text))
+                        span1.appendChild(spantag);
+                    }
+
+                    if (l.side && l.side == "right"){
+                        span3.appendChild(spantag);
+                        if (labelCount<=3 && !useScale)
+                            span3.appendChild(document.createTextNode(l.text))
                     }
                 }
             }
-
+            if (useScale){
+                var spanG = document.createElement('span');
+                spanG.className = "gradient";
+                spanG.style.backgroundImage = a.getCSSColorGradient()
+                span2.appendChild(spanG)
+            }
         }
 /*
         switch (this.m.colorMethod) {
