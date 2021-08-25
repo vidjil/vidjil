@@ -287,7 +287,7 @@ Axis.prototype = {
                 //add labels
                 if (this.scale.reverse){
                     if (this.labels[0] == undefined)
-                        this.labels[0] = {text: "0", type:"slim", side: "right"}
+                        this.labels[0] = {text: "0", type:"slim", side: "right", color : "#657b83"}
                     for (var k = nmax; k >= nmin; k=k/10){
                         this.addScaleLabel(k, "logScale")
                         labelCount++
@@ -298,7 +298,7 @@ Axis.prototype = {
                         labelCount++
                     } 
                     if (this.labels[0] == undefined)
-                        this.labels[0] = {text: "0", type:"slim", side: "left"}
+                        this.labels[0] = {text: "0", type:"slim", side: "left" , color : "#657b83"}
                 }
             }
             this.scaledMargin = max/labelCount
@@ -675,11 +675,9 @@ Axis.prototype = {
     getPosColor: function(pos){
         if (pos === undefined) return undefined
         
-        if (this.color){
-            var offset = 0
-            if (this.color.offset) offset = this.color.offset
-            return this.color.fct((pos+offset)%1)
-        }
+        if (this.color)
+            return this.color((pos)%1)
+        
         return oldColorGenerator(pos)
     },
 
