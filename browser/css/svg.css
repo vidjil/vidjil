@@ -647,6 +647,7 @@ line {
   user-select: none;
   margin-bottom: -3px;
   margin-top: 3px;
+  background: #777777;
 }
 #normalized_size {
   width: 80px;
@@ -974,8 +975,9 @@ span.logo {
   filter: "progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d24b6', endColorstr='#b82424',GradientType=1 )";
   /* IE6-9 */
   width: 180px;
-  height: 8px;
+  height: 14px;
   margin-top: 4px;
+  margin-bottom: -3px;
   display: inline-block;
 }
 #fps {
