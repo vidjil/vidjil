@@ -80,10 +80,28 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "[cloneDB] Hits (set)"
                 ]
 
+// list of Axis available for aligner
 AXIS_ALIGNER = [    
                     "Size",
                     "Sequence length",
                     "Read length",
+                    "GC content",
+                    "Productivity",
+                    "Number of samples",
+                    "[IMGT] Productivity",
+                    "[IMGT] VIdentity",
+                ]
+
+// list of Axis available as color
+AXIS_COLOR = [    
+                    "Size",
+                    "Tag",
+                    "Clone",
+                    "CDR3",
+                    "Locus",
+                    "V/5' gene",
+                    "D/4' gene",
+                    "J/3' gene",
                     "GC content",
                     "Productivity",
                     "[IMGT] Productivity",
@@ -92,8 +110,35 @@ AXIS_ALIGNER = [
                 ]
 
 
-// 
+// Axis properties
 AXIS_DEFAULT = {
+    "Clone": {
+        doc:        "",
+        labels:     function(){
+                        var l = {}
+                        for (var i=0; i<m.clones.length; i++){
+                            var index = m.clone(i).index
+                            l[m.clone(i).index] =  { text:   index,   
+                                                     color:  colorGeneratorIndex(index)}
+                        }
+                        return l
+                    },
+        fct:        function(clone) {return clone.index},
+    },
+    "CDR3": {
+        doc:        "",
+        labels:     function(){
+                        var l = {}
+                        for (var i=0; i<m.clones.length; i++){
+                            var junction = m.clone(i).getSegAASequence('junction');
+                            l[junction] =  { text:   junction,   
+                                                     color:  colorGeneratorString(junction)}
+                        }
+                        return l
+                    },
+        fct:        function(clone) {return clone.getSegAASequence('junction')},
+        autofill:   false
+    },
     "V/5' gene": {
         doc:        "V gene (or 5' segment), gathering all alleles",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineV.labels))},
