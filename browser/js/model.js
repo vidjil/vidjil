@@ -148,21 +148,21 @@ Model.prototype = {
             "V/5' gene":        "seg5",
             "D/4' gene":        "seg4",
             "J/3' gene":        "seg3",
-            "CDR3 length (nt)": "lenCDR3",
-            "locus" :           "germline",
+            "CDR3 length":      "lenCDR3",
+            "Locus" :           "germline",
             // Particular, take the nb reads value of the distribution
-            "size":             "size",
+            "Size":             "size",
             // Should be in Array format
-            "clone consensus length" :      "lenSeqConsensus",
-            "clone average read length" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
+            "Sequence length" : "lenSeqConsensus",
+            "Read length" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
             /////////////////////
             // Fuse --> Axes
             "seg5":             "V/5' gene",
             "seg4":             "D/4' gene",
             "seg3":             "J/3' gene",
-            "lenCDR3":          "CDR3 length (nt)",
-            "lenSeqConsensus":  "clone consensus length",
-            "lenSeqAverage":    "clone average read length",
+            "lenCDR3":          "CDR3 length",
+            "lenSeqConsensus":  "Sequence length",
+            "lenSeqAverage":    "Read length",
         }
         // List of axe that must be in an array format
         this.distrib_axe_is_timmed = {
@@ -183,17 +183,20 @@ Model.prototype = {
         this.system_selected = []
         this.top = 50
 
-        if (this.localStorage){
-            if (localStorage.getItem('colorAxis'))      this.colorAxis = new Axis(localStorage.getItem('colorMethod')).compute(100)
-            if (localStorage.getItem('colorMethod'))    this.colorMethod = localStorage.getItem('colorMethod')
-            if (localStorage.getItem('timeFormat'))     this.time_type = localStorage.getItem('timeFormat')
-            if (localStorage.getItem('notation'))       this.notation_type  = localStorage.getItem('notation')
-            if (localStorage.getItem('alleleNotation')) this.alleleNotation = localStorage.getItem('alleleNotation')
-            if (localStorage.getItem('cloneNotation'))  this.cloneNotationType = localStorage.getItem('cloneNotation')
+        try {
+            if (this.localStorage){
+                if (localStorage.getItem('colorAxis'))      this.colorAxis = new Axis(localStorage.getItem('colorAxis')).compute(100)
+                if (localStorage.getItem('timeFormat'))     this.time_type = localStorage.getItem('timeFormat')
+                if (localStorage.getItem('notation'))       this.notation_type  = localStorage.getItem('notation')
+                if (localStorage.getItem('alleleNotation')) this.alleleNotation = localStorage.getItem('alleleNotation')
+                if (localStorage.getItem('cloneNotation'))  this.cloneNotationType = localStorage.getItem('cloneNotation')
+            }
+            
+        } catch (e) {
+            console.log("invalid data stored in localStorage")
         }
-        
+
         this.changeColorAxis(this.colorAxis.name,    false)
-        this.changeColorMethod(this.colorMethod,    false)
         this.changeNotation(this.notation_type,     false)
         this.changeTimeFormat(this.time_type,       false)
         this.changeAlleleNotation(this.alleleNotation, false)
@@ -285,7 +288,7 @@ Model.prototype = {
         this.distrib_tag=9;
 
         this.colorMethod = "Tag"
-        this.colorAxis = new Axis("tag").compute(100)
+        this.colorAxis = new Axis("Tag").compute(100)
         this.notation_type = "percent"
         this.time_type = "name"
 
@@ -2593,8 +2596,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
     resetSettings: function () {
         localStorage.clear()
-        this.changeColorAxis("tag",         false)
-        this.changeColorMethod("Tag",       false)
+        this.changeColorAxis("Tag",         false)
         this.changeNotation("percent",      false)
         this.changeTimeFormat("name",       false)
         this.changeAlleleNotation("when_not_01", false)
