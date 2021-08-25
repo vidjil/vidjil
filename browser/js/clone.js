@@ -1312,83 +1312,8 @@ Clone.prototype = {
         var a = this.m.axisColor;
 
         this.color = a.getColor(this);
-        return; 
-
-        switch (this.m.colorMethod){
-            
-            case "abundance":
-                var size = this.getSize()
-                if (this.getCluster().length===0)
-                    size = this.getSequenceSize()
-                if (size === 0)
-                    this.color = ""
-                else
-                    this.color = colorGenerator(this.m.scale_color(size * this.m.precision))
-
-                break;
-        
-            case "clone":
-                this.color = colorGeneratorIndex(this.index)
-                break;
-        
-            case "cdr3":
-                this.color = this.getCDR3Color()
-                break;
-        
-            case "Tag":
-                this.color =  this.m.tag[this.getTag()].color
-                if (this.color == "default") this.color = ""
-                break;
-
-            case "dbscan":
-                this.color =  this.colorDBSCAN
-                break;
-
-            case "system":
-                this.color = this.m.germlineList.getColor(this.germline)
-                break;
-
-            case "productive":
-                this.color = ""
-                if (this.hasSeg('junction') &&
-                    typeof this.seg.junction.productive != 'undefined') 
-                    this.color = colorProductivity(this.seg.junction.productive)
-                break;
-
-            case "N":
-                this.color =  this.colorN
-                break;
-
-            case "V":
-                this.color = ""
-                if (this.getGene("5") != "undefined V"){
-                    var alleleV = this.m.germlineV.allele[this.getGene("5")]
-                    if (typeof alleleV != 'undefined' ) this.color = alleleV.color
-                }
-                break;
-
-            case "D":
-                this.color = ""
-                if (this.getGene("4") != "undefined D"){
-                    var alleleD = this.m.germlineD.allele[this.getGene("4")]
-                    if (typeof alleleD != 'undefined' ) this.color = alleleD.color
-                }
-                break;
-
-            case "J":
-                this.color = ""
-                if (this.getGene("3") != "undefined J"){
-                    var alleleJ = this.m.germlineJ.allele[this.getGene("3")]
-                    if (typeof alleleJ != 'undefined' ) this.color = alleleJ.color
-                }
-                break;
-        
-            default:
-                this.color = ""
-        }
-
         this.true_color = this.color
-
+    
         if (this.m.focus == this.index)
             this.color = ""
     },
@@ -1842,16 +1767,7 @@ Clone.prototype = {
         html += "</table></div>"
         return html
     },
-/*
-    axisOptions: function() {
-        return [
-            "clone consensus length", "clone average read length", "GC content", "N length",
-            "CDR3 length (nt)", "productivity", "productivity-IMGT",
-            "VIdentity-IMGT", "clone consensus coverage",
-            "tag", "coverage", "size", "number of samples", "primers"
-        ];
-    },
-*/
+
     /**
       * start to fill a node with clone informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete
