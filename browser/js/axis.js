@@ -53,7 +53,9 @@ Axis.prototype = {
     
     //return json descriptor of a registered Axis
     getAxisProperties: function(name){
-        return AXIS_DEFAULT[name]
+        var axisP = AXIS_DEFAULT[name]
+        axisP.name  = name
+        return axisP
     },
 
     //register an axis json descriptor 
@@ -73,6 +75,7 @@ Axis.prototype = {
     init: function(axis_name){
         if (AXIS_DEFAULT[axis_name]){
             this.load(AXIS_DEFAULT[axis_name])
+            this.name = axis_name
             return this
         }
         console.error("no axis descriptor named " + axis_name + " found")
@@ -87,15 +90,10 @@ Axis.prototype = {
     //load a json Axis descriptor
     load: function(json){
         //check
-        if (!('name' in json)){
-            console.error("missing required field in unknow Axis descriptor 'name'")
-            return
-        }
         if (!('fct' in json)){
             console.error("missing required field in '" + this.name + "' Axis descriptor 'fct'")
             return
         }
-
 
         this.json = json
         this.name = json.name   
