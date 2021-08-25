@@ -1298,6 +1298,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * this function must be call for major change in the model
      * */
     update: function () {
+        this.axisColor.reload().compute(100);
         this.update_normalization();
         this.update_precision();
         this.updateModel();
