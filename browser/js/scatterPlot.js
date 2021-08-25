@@ -71,7 +71,7 @@ function ScatterPlot(id, model, database, default_preset) {
     this.otherVisibility = false
 
     // Plot axis
-    this.available_axis = Axis.prototype.available();
+    this.available_axis = AXIS_SCATTERPLOT;
 
     if (typeof this.m.sp == "undefined")
         this.m.sp = this
