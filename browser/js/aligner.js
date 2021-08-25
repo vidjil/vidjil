@@ -86,27 +86,27 @@ Aligner.prototype = {
     build_axis_menu: function(){
         var self = this;
 
-        var available_axis = Axis.prototype.available();
+        var available_axis = AXIS_ALIGNER;
 
         var menu = document.getElementById("segmenter_axis_select");
         for (var i in available_axis) {
             var axis_p = Axis.prototype.getAxisProperties(available_axis[i]);
-            if (!axis_p.isInAligner) continue;
 
             var axis_label = document.createElement('label');
             axis_label.setAttribute('for', "sai"+i);
             axis_label.className = "aligner-checkbox-label";
+            axis_label.title = axis_p.doc;
 
             var axis_option = document.createElement('span');
-            var axis_text = document.createTextNode(available_axis[i]);
+            var axis_text = document.createTextNode(axis_p.name);
             var axis_input = document.createElement('input');
             axis_input.setAttribute('type', "checkbox");
-            axis_input.setAttribute('value', available_axis[i]);
+            axis_input.setAttribute('value', axis_p.name);
             axis_input.setAttribute('id', "sai"+i); // segmenter axis input
             axis_input.className = "aligner-checkbox-input";
-            if (available_axis[i] == "size" ||
-                available_axis[i] == "productivity IMGT" ||
-                available_axis[i] == "VIdentity IMGT" ) axis_input.setAttribute('checked', "");
+            if (axis_p.name == "Size" ||
+                axis_p.name == "[IMGT] Productivity" ||
+                axis_p.name == "[IMGT] VIdentity" ) axis_input.setAttribute('checked', "");
 
             axis_label.appendChild(axis_input);
             axis_label.appendChild(axis_text);
@@ -117,9 +117,9 @@ Aligner.prototype = {
             self.connect_axisbox(axis_input);
         }
 
-        this.selectedAxis = [Axis.prototype.getAxisProperties("productivity IMGT"),
-                            Axis.prototype.getAxisProperties("VIdentity IMGT"),
-                            Axis.prototype.getAxisProperties("size")];
+        this.selectedAxis = [Axis.prototype.getAxisProperties("[IMGT] Productivity"),
+                            Axis.prototype.getAxisProperties("[IMGT] VIdentity"),
+                            Axis.prototype.getAxisProperties("Size")];
     },
 
     //check axis selected in menu to update and update axisBox dom elements accordingly
@@ -505,7 +505,6 @@ Aligner.prototype = {
 
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
-        var available_axis = Axis.prototype.available();
         
         for (var i in this.selectedAxis) {
             var span = document.createElement('span');
