@@ -19,7 +19,7 @@ Model_color.prototype = {
         //abort init if color_menu does not exist on this page (test page / segmenter page)
         if (typeof this.select_color == "undefined") return;
 
-        var available_axis = Axis.prototype.available();
+        var available_axis = AXIS_COLOR
         for (var key in available_axis) {
             var axisP = Axis.prototype.getAxisProperties(available_axis[key])
             if (typeof axisP.hide == "undefined" || !axisP.hide){
