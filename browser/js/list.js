@@ -347,7 +347,7 @@ List.prototype = {
             axis.appendChild(axis_option)
         }
         axis.value = "size"
-        this.selectedAxis = Axis.prototype.getAxisProperties("size")
+        this.selectedAxis = Axis.prototype.getAxisProperties("Size")
         axis.onchange = function() {
             self.selectedAxis = Axis.prototype.getAxisProperties(axis.value)
             self.update()
