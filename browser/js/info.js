@@ -492,7 +492,18 @@ Info.prototype = {
             var a = m.axisColor;
 
             var useScale = false;
-            if (typeof a.scale != "undefined") useScale = true;
+            if (typeof a.scale != "undefined"){
+                useScale = true;
+                var spanG = document.createElement('span');
+                spanG.className = "gradient";
+                spanG.style.backgroundImage = a.getCSSColorGradient()
+                $(spanG).mousemove(function(event){            
+                    var relX = event.pageX - $(this).offset().left;
+                    $(this).width
+                    $(this).prop("title",m.axisColor.scale.fct.invert(relX/180).toPrecision(2));
+                });
+                span2.appendChild(spanG)
+            }
 
             if (a.labels){
                 var keys = Object.keys(a.labels);
@@ -501,15 +512,30 @@ Info.prototype = {
                 for (var j = 0; j < keys.length; j++) 
                     if (typeof a.labels[keys[j]].color != "undefined") labelCount++;
 
+                var boxWidth
+                if (labelCount > 20) boxWidth = Math.ceil(250/labelCount)-1+"px";
+                if (labelCount > 10 && useScale) boxWidth = Math.ceil(125/labelCount)-1+"px";
+
                 for (var i = 0; i < keys.length; i++) {
                     var l = a.labels[keys[i]]
                     if (typeof l.color == "undefined") continue
+                    if (labelCount>100) continue;
+                    if (labelCount>50 && useScale) continue;
 
                     var spantag = document.createElement('span');
-                    spantag.className = "tagColorBox tagColor8";
+                    spantag.className = "tagColorBox";
                     spantag.style.backgroundColor = l.color;
                     spantag.title = l.text;
                     spantag.value = keys[i];
+
+                    if (labelCount >20){
+                        spantag.style.width = boxWidth
+                        spantag.style.margin = "1px"
+                    }else if (labelCount > 10 && useScale){
+                        spantag.style.width = boxWidth
+                        spantag.style.margin = "1px"
+                    }
+
                     spantag.onclick = function(){
                         self.m.multiSelect(self.m.axisColor.getLabelInfo(this.value).clones)
                     };
@@ -532,71 +558,7 @@ Info.prototype = {
                     }
                 }
             }
-            if (useScale){
-                var spanG = document.createElement('span');
-                spanG.className = "gradient";
-                spanG.style.backgroundImage = a.getCSSColorGradient()
-                span2.appendChild(spanG)
-            }
         }
-/*
-        switch (this.m.colorMethod) {
-        case "N":
-            span0.appendChild(document.createTextNode("N length"));
-
-            span1.appendChild(document.createTextNode(" 0 "));
-
-            span2.className = "gradient";
-
-            span3.appendChild(document.createTextNode(" " + this.m.n_max + " "));
-
-            break;
-        case "Tag":
-
-            var span_onclick = function () {
-                self.builder.nextDisplayTag(this);
-            }
-
-            for (var i = 0; i < this.m.tag.length; i++) {
-                var spantag = document.createElement('span');
-                spantag.className = "tagColorBox tagColor" + i;
-                spantag.id = "fastTag" + i;
-                spantag.onclick = span_onclick;
-                span2.appendChild(spantag);
-            }
-
-            break;
-        case 'productive':
-            span0.appendChild(document.createTextNode('not productive '));
-            var spanNotProductive = document.createElement('span');
-            spanNotProductive.style.backgroundColor = colorProductivity('false');
-            spanNotProductive.className = 'tagColorBox';
-            var spanProductive = document.createElement('span');
-            spanProductive.style.backgroundColor = colorProductivity('true');
-            spanProductive.className = 'tagColorBox';
-            span1.appendChild(spanNotProductive);
-            span1.appendChild(spanProductive);
-            span2.appendChild(document.createTextNode('productive'));
-
-            var spanNoCDR3 = document.createElement('span');
-            spanNoCDR3.className = 'tagColorBox tagColor8';
-            span3.style.marginLeft = '20px';
-            span3.appendChild(document.createTextNode(' no CDR3 '));
-            span3.appendChild(spanNoCDR3);
-
-            break;
-        case "abundance":
-            span0.appendChild(document.createTextNode("abundance"));
-
-            span1.appendChild(document.createTextNode(" 0% "));
-
-            span2.className = "gradient";
-
-            span3.appendChild(document.createTextNode(" 100%"));
-
-            break;
-        }
-*/
 
         div.appendChild(span0);
         div.appendChild(span1);
