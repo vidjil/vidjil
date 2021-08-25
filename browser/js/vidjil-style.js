@@ -21,61 +21,93 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
-  
-  /*ressort une couleur format RGB*/
-  function colorGenerator(h,s,v){
+
+function hashString(str) {
+    var hash = 0, i, chr;
+    if (str.length === 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        chr = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0;
+    }
+    return hash;
+};
+
+/*ressort une couleur format RGB*/
+function colorGenerator(h, s, v) {
     s = typeof s !== 'undefined' ? s : 0.8
     v = typeof v !== 'undefined' ? v : 0.72
-    h=h/60;
-    var i=Math.floor(h);
-    var f=h-i;
-    var p =Math.floor(( v * ( 1 - s ) )*255);
-    var q =Math.floor(( v * ( 1 - ( s * f) ) )*255);
-    var t =Math.floor(( v * ( 1 - ( s * (1-f) ) ) )*255);
-    v=Math.floor(v*255);
-    
-    if (i===0){
-      return "rgb("+v+","+t+","+p+")";
+    h = h / 60;
+    var i = Math.floor(h);
+    var f = h - i;
+    var p = Math.floor((v * (1 - s)) * 255);
+    var q = Math.floor((v * (1 - (s * f))) * 255);
+    var t = Math.floor((v * (1 - (s * (1 - f)))) * 255);
+    v = Math.floor(v * 255);
+
+    if (i === 0) {
+        return "rgb(" + v + "," + t + "," + p + ")";
     }
-    if (i===1){
-      return "rgb("+q+","+v+","+p+")";
+    if (i === 1) {
+        return "rgb(" + q + "," + v + "," + p + ")";
     }
-    if (i===2){
-      return "rgb("+p+","+v+","+t+")";
+    if (i === 2) {
+        return "rgb(" + p + "," + v + "," + t + ")";
     }
-    if (i===3){
-      return "rgb("+p+","+q+","+v+")";
+    if (i === 3) {
+        return "rgb(" + p + "," + q + "," + v + ")";
     }
-    if (i===4){
-      return "rgb("+t+","+p+","+v+")";
+    if (i === 4) {
+        return "rgb(" + t + "," + p + "," + v + ")";
     }
-    if (i===5){
-      return "rgb("+v+","+p+","+q+")";
+    if (i === 5) {
+        return "rgb(" + v + "," + p + "," + q + ")";
     }
-  }
-function oldColorGenerator(t){
-  return colorGenerator((t*300))
+}
+function oldColorGenerator(t) {
+    return colorGenerator((t * 300))
 }
 
 function colorGeneratorIndex(i) {
     var z = 6
     var h = (i % z) / (z - 1)
     var s = [0.6, 0.9, 0.75, 0.45][Math.floor(i / z) % 4]
-    var vv = [1.0, 1.1, 0.9][Math.floor(i / (z*z)) % 3]
+    var vv = [1.0, 1.1, 0.9][Math.floor(i / (z * z)) % 3]
 
-    return colorGenerator(h*300, s, s*vv)
+    return colorGenerator(h * 300, s, s * vv)
 }
 
-// Get the color for a productive or non productive clone
+function colorGeneratorString(str) {
+    if (typeof str == "undefined")
+        return '';
+    if (str.length == 0)
+        return '';
 
+    return colorGeneratorIndex(hashString(str));
+};
+
+
+function colorGeneratorBool(bool) {
+    if (typeof bool == 'undefined') {
+        return '';
+    } else if (bool === true || bool == 'true' ||
+        bool == 'TRUE') {
+        return '#2aa198';
+    } else if (bool === false || bool == 'false' ||
+        bool == 'FALSE') {
+        return '#d33682';
+    }
+    return '';
+}
+// Get the color for a productive or non productive clone
 function colorProductivity(is_productive) {
     if (typeof is_productive == 'undefined') {
         return '';
     } else if (is_productive === true || is_productive == 'true' ||
-            is_productive == 'TRUE') {
+        is_productive == 'TRUE') {
         return '#2aa198';
     } else if (is_productive === false || is_productive == 'false' ||
-            is_productive == 'FALSE'){
+        is_productive == 'FALSE') {
         return '#d33682';
     }
     return '';
