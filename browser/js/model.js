@@ -375,12 +375,8 @@ Model.prototype = {
         }
         this.n_max = n_max
         
-        //      COLOR_N
-        for (var j = 0; j < this.clones.length; j++) {
-            clone = this.clone(j)
-            clone.colorN = colorGenerator((((clone.getNlength() / n_max) - 1) * (-250)));
-            clone.tag = this.default_tag;
-        }
+        for (var j = 0; j < this.clones.length; j++) 
+            this.clone(j).tag = this.default_tag;
         
         this.applyAnalysis(this.analysis);
         this.initData();
