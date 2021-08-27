@@ -380,7 +380,12 @@ Axis.prototype = {
 
         if (typeof this.sort == "string"){
             if (this.sort == "alphabetical")
-                array.sort()
+                array.sort(function(a,b){
+                        if (a.includes("undefined") || a.includes("?")){
+                            return -1
+                        }
+                        return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'})
+                    })
             else if (this.sort == "reverse_alphabetical")
                 array.sort().reverse()
             

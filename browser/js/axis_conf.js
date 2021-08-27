@@ -59,6 +59,7 @@ AXIS_DEFAULT = {
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineV.labels))},
         fct:        function(clone) {return clone.getGene("5", false)},
         germline:   function(){return m.germlineV.system},
+        sort :      "alphabetical"
     },
     "V/5 allele": {
         name:       "V/5 allele",
@@ -66,6 +67,7 @@ AXIS_DEFAULT = {
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineV.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("5", true)},
         germline:   function(){return m.germlineV.system},
+        sort :      "alphabetical",
         autofill:   false
     },
     "D/4' gene": {
@@ -74,6 +76,7 @@ AXIS_DEFAULT = {
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineD.labels))},
         fct:        function(clone) {return clone.getGene("4", false)},
         germline:   function(){return m.germlineD.system},
+        sort :      "alphabetical",
     },
     "D/4 allele": {
         name:       "D/4 allele",
@@ -81,6 +84,7 @@ AXIS_DEFAULT = {
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineD.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("4", true)},
         germline:   function(){return m.germlineD.system},
+        sort :      "alphabetical",
         autofill:   false
     },
     "J/3' gene": {
@@ -89,6 +93,7 @@ AXIS_DEFAULT = {
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineJ.labels))},
         fct:        function(clone) {return clone.getGene("3", false)},
         germline:   function(){return m.germlineJ.system},
+        sort :      "alphabetical",
     },
     "J/3 allele": {
         name:       "J/3 allele",
@@ -96,6 +101,7 @@ AXIS_DEFAULT = {
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineJ.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("3", true)},
         germline:   function(){return m.germlineJ.system},
+        sort :      "alphabetical",
         autofill:   false
     },
     "clone consensus length" : {
