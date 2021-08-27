@@ -307,6 +307,7 @@ AXIS_DEFAULT = {
     "Locus" : {
         doc:        "locus or recombination system",
         fct:        function(clone){return clone.germline},
+        color:      function(t,c) {return m.germlineList.list[c.germline].color},
         autofill:   true
     },
     "Size" : {
