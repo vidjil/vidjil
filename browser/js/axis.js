@@ -672,30 +672,28 @@ Axis.prototype = {
         return undefined
     },
 
-    getPosColor: function(pos){
-        if (pos === undefined) return undefined
-        
-        if (this.color)
-            return this.color((pos)%1)
-        
-        return oldColorGenerator(pos)
-    },
+    getColor: function(pos, clone) {
+        try {
+            var v = this.fct(clone)
 
-    getColor: function(clone) {
-        var v = this.fct(clone)
+            if (v in this.labels && typeof this.labels[v].color != "undefined")
+                return this.labels[v].color
 
-        if (v in this.labels && typeof this.labels[v].color != "undefined")
-            return this.labels[v].color
+            if (typeof pos == "undefined")
+                pos = this.getValuePos(v)
 
-        var pos = this.getValuePos(v)
-        return this.getPosColor(pos)
+            if (this.color)
+                return this.color(pos, clone)
+        } catch (e) {
+            return undefined
+        }
     },
 
     getCSSColorGradient(){
         var text = "linear-gradient(90deg";
         
         for (var i = 0; i<100; i=i+10)
-            text += ", " + this.getPosColor(i/100) + " " + i + "%";
+            text += ", " + this.getColor(i/100) + " " + i + "%";
         
         text += ")";
         return text;

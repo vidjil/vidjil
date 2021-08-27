@@ -1311,7 +1311,7 @@ Clone.prototype = {
 
         var a = this.m.axisColor;
 
-        this.color = a.getColor(this);
+        this.color = a.getColor(undefined, this);
         this.true_color = this.color
     
         if (this.m.focus == this.index)
