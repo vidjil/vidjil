@@ -654,7 +654,7 @@ Axis.prototype = {
         return this.getValuePos(v)
     },
 
-    //return position of a given value
+    //return position[0,1] of a given value
     getValuePos: function(v){
         //discret value
         if (v in this.labels) 
@@ -665,7 +665,7 @@ Axis.prototype = {
 
         //continuous value
         if (this.scale && typeof v == "number" && !isNaN(v))
-            //do not retirn position for clone outside scale domain
+            //do not return position for clone outside scale domain
             if (v >= this.scale.domain[0] && v <= this.scale.domain[1])
                 return this.scale.fct(v) 
 
@@ -674,16 +674,21 @@ Axis.prototype = {
 
     getColor: function(pos, clone) {
         try {
-            var v = this.fct(clone)
 
-            if (v in this.labels && typeof this.labels[v].color != "undefined")
-                return this.labels[v].color
+            if (typeof clone != "undefined"){
+                var v = this.fct(clone)
 
-            if (typeof pos == "undefined")
-                pos = this.getValuePos(v)
+                if (v in this.labels && typeof this.labels[v].color != "undefined")
+                    return this.labels[v].color
+
+                if (typeof pos == "undefined")
+                    pos = this.getValuePos(v)
+            }
 
             if (this.color)
                 return this.color(pos, clone)
+
+            return undefined
         } catch (e) {
             return undefined
         }
