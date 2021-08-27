@@ -461,9 +461,10 @@ QUnit.test("localCompare behavior", function(assert) {
     list1.sort(collator.compare)
     list2.sort(collator.compare)
     list3.sort(collator.compare)
+    list4.sort(collator.compare)
 
-    assert.deepEqual(list1, sorted_list1, "localCompare, test on list1")
-    assert.deepEqual(list2, sorted_list2, "localCompare, test on list2")
-    assert.deepEqual(list3, sorted_list3, "localCompare, test on list3")
-    assert.deepEqual(list4, sorted_list4, "localCompare, test on list4")
+    assert.deepEqual(list1, sorted_list1, "localCompare, test on list1, simple genes")
+    assert.deepEqual(list2, sorted_list2, "localCompare, test on list2, genes and alleles")
+    assert.deepEqual(list3, sorted_list3, "localCompare, test on list3, introns")
+    assert.deepEqual(list4, sorted_list4, "localCompare, test on list4, other genes")
 });

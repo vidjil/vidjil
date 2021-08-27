@@ -381,7 +381,9 @@ Axis.prototype = {
         if (typeof this.sort == "string"){
             if (this.sort == "alphabetical")
                 array.sort(function(a,b){
-                        if (a.includes("undefined") || a.includes("?")){
+                        // TODO: Change line when old version of browser will be replaced
+                        // if (a == undefined || a.includes("undefined") || a.includes("?") ){
+                        if (a == undefined || a.search("undefined") != -1 ){
                             return -1
                         }
                         return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'})
