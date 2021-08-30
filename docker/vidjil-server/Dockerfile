@@ -6,7 +6,8 @@ with a full installation of the Vidjil algoright and browser/server."
 
 env GOSU_VERSION 1.10
 run set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates wget cron unzip make python ipython python-enum34 python-requests git python-ijson libyajl2 python-cffi gnupg2 && rm -rf /var/lib/apt/lists/* \
+	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates wget cron unzip make python ipython python-enum34 python-requests git python-ijson libyajl2 python-cffi python-pip gnupg2 gcc libsasl2-dev python-dev python-setuptools libldap2-dev libssl-dev libsasl2-dev && rm -rf /var/lib/apt/lists/* \
+	&& pip install python-ldap \
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
 	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
