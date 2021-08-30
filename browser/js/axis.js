@@ -98,7 +98,8 @@ Axis.prototype = {
         this.json = json
         this.name = json.name   
         this.doc = ('doc' in json) ? json.doc : json.name
-        this.fct = json.fct    
+        this.fct = json.fct
+        this.pretty = json.pretty   
         this.color = json.color
         this.sort = json.sort
         this.min_step = json.min_step
@@ -672,6 +673,18 @@ Axis.prototype = {
         return undefined
     },
 
+    invert: function(pos){
+        var v = this.scale.fct.invert(pos)
+
+        if (this.pretty) v = this.pretty(v)
+
+        if (typeof v == "string" ||typeof v == "number") 
+            v = document.createTextNode(v)
+
+        return v
+    },
+
+
     getColor: function(pos, clone) {
         try {
 
@@ -687,6 +700,9 @@ Axis.prototype = {
 
             if (this.color)
                 return this.color(pos, clone)
+
+            if (typeof pos != "undefined")
+                return oldColorGenerator(pos)
 
             return undefined
         } catch (e) {
