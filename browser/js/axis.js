@@ -710,7 +710,7 @@ Axis.prototype = {
         }
     },
 
-    getCSSColorGradient(){
+    getCSSColorGradient: function(){
         var text = "linear-gradient(90deg";
         
         for (var i = 0; i<100; i=i+10)

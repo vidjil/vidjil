@@ -494,7 +494,6 @@ Info.prototype = {
                 spanG.style.backgroundImage = a.getCSSColorGradient()
                 $(spanG).mousemove(function(event){            
                     var relX = event.pageX - $(this).offset().left;
-                    $(this).width
                     $(this).prop("title",m.axisColor.invert(relX/180).innerText);
                 });
 
@@ -536,7 +535,7 @@ Info.prototype = {
                     }
 
                     spantag.onclick = function(){
-                        self.m.multiSelect(self.m.axisColor.getLabelInfo(this.value).clones)
+                        self.m.multiSelect(self.m.axisColor.getLabelInfo(self.value).clones)
                     };
 
                     if (l.side && l.side == "left"){

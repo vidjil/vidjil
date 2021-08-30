@@ -31,7 +31,7 @@ function hashString(str) {
         hash |= 0;
     }
     return hash;
-};
+}
 
 /*ressort une couleur format RGB*/
 function colorGenerator(h, s, v) {
@@ -84,7 +84,7 @@ function colorGeneratorString(str) {
         return '';
 
     return colorGeneratorIndex(hashString(str));
-};
+}
 
 
 function colorGeneratorBool(bool) {
