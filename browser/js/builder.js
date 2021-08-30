@@ -29,7 +29,6 @@ function Builder(model, database) {
     if(typeof database != 'undefined') {
         this.db = database;
     }
-    this.colorMethod = "";
     this.width_left_container = $("#left-container")
         .css("width")
 

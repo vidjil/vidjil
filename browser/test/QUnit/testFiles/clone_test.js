@@ -552,9 +552,9 @@ QUnit.test("tag / color", function(assert) {
     assert.equal(c1.getTag(), 5, "changeTag() >> tag : 5");
     assert.equal(c1.getColor(), "#2aa198", "getColor() >> default tag color : ");
     
-    m.changeColorMethod("abundance")
+    m.changeColorAxis("Size")
     c1.updateColor()
-    assert.equal(c1.getColor(), "rgb(36,183,88)", "getColor() >> abundance color : ");
+    assert.equal(c1.getColor(), "rgb(202, 157, 0)", "getColor() >> abundance color : ");
     
 });
 
@@ -564,15 +564,17 @@ QUnit.test("color by CDR3", function(assert) {
     var c1 = new Clone(json_clone1, m, 0, c_attributes);
     var c2 = new Clone(json_clone2, m, 0, c_attributes);
     m.initClones();
-    var color = c1.getCDR3Color();
+    m.changeColorAxis("CDR3");
+    var color = c1.getColor()
     c1.seg.junction.aa = "AZERTY";
-    var color2 = c1.getCDR3Color();
+    c1.updateColor()
+    var color2 = c1.getColor()
 
     // Actually it could happen that some different CDR3s have the same colours
     assert.equal(color != color2, true, "two CDR3 should have different"
-                 + " colors");
+                 + " colors" + color + " " + color2);
 
-    assert.equal(c2.getCDR3Color(), '');
+    assert.equal(c2.getColor(), '');
 });
 
 QUnit.test("export", function(assert) {
@@ -607,7 +609,7 @@ QUnit.test("export", function(assert) {
         "1", "custom name", "id4",
         "TRG", "-/-",
         "undefined V", "IGHD2*03", "IGHV4*01",
-        "no CDR3 detected",
+        "no CDR3",
         "",
         "",
         "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGTATTACC",
@@ -730,7 +732,7 @@ QUnit.test("productivity", function(assert) {
     c1.seg.junction.start = 6;
     assert.equal(c1.getPhase(), 0, "Phase of modified clone 1 should be 0");
 
-    assert.equal(c2.getProductivityName(), "no CDR3 detected", "clone 2 doesn't have information about productivity");
+    assert.equal(c2.getProductivityName(), "no CDR3", "clone 2 doesn't have information about productivity");
     assert.equal(c2.isProductive(), false, "clone 2 doesn't have information about productivity");
     assert.equal(c2.getPhase(), 'undefined', "No phase for clone 2");
 
@@ -796,7 +798,7 @@ QUnit.test("productivity detailed", function(assert) {
     assert.equal(c1.getProductivityNameDetailed(), "out-of-frame",     "detailed productivity; out-of-frame");
     assert.equal(c2.getProductivityNameDetailed(), "stop-codon",       "detailed productivity; stop-codon");
     assert.equal(c3.getProductivityNameDetailed(), "not-productive",   "detailed productivity; unproductive simple");
-    assert.equal(c4.getProductivityNameDetailed(), "no CDR3 detected", "detailed productivity; without junction");
+    assert.equal(c4.getProductivityNameDetailed(), "no CDR3", "detailed productivity; without junction");
     assert.equal(c5.getProductivityNameDetailed(), "productive",       "detailed productivity; productive");
     assert.equal(c6.getProductivityNameDetailed(), "no-WPGxG-pattern", "detailed productivity; no-WPGxG-pattern");
 });

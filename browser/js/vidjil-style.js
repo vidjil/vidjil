@@ -99,19 +99,6 @@ function colorGeneratorBool(bool) {
     }
     return '';
 }
-// Get the color for a productive or non productive clone
-function colorProductivity(is_productive) {
-    if (typeof is_productive == 'undefined') {
-        return '';
-    } else if (is_productive === true || is_productive == 'true' ||
-        is_productive == 'TRUE') {
-        return '#2aa198';
-    } else if (is_productive === false || is_productive == 'false' ||
-        is_productive == 'FALSE') {
-        return '#d33682';
-    }
-    return '';
-}
 
 /* Get an icon */
 

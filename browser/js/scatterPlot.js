@@ -1344,7 +1344,7 @@ ScatterPlot.prototype = {
         }
 
         oldOtherVisibility = this.otherVisibility
-        this.otherVisibility = this.splitX == "size (other sample)" || this.splitY == "size (other sample)" 
+        this.otherVisibility = this.splitX == "Size (other)" || this.splitY == "Size (other)" 
         if (this.otherVisibility != oldOtherVisibility)
             this.updateClones()
 

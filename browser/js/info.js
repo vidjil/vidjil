@@ -190,7 +190,6 @@ Info.prototype = {
             parent.appendChild(div_sequence_info);
 
             this.builder.initTag();
-            this.colorMethod = this.m.colorMethod
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -289,10 +288,6 @@ Info.prototype = {
      * @param {integer[]} - list - array of clone index
      * */
     updateElemStyle: function (list) {
-        if (this.m.colorMethod != this.colorMethod)
-            this.update()
-        this.colorMethod = this.m.colorMethod
-
         if (this.m.axisColor.name != this.axisColorName){
             this.axisColorName = this.m.axisColor.name
             this.update()

@@ -1930,22 +1930,6 @@ Clone.prototype = {
     },
 
     /**
-     * Deterministically return a color associated with the CDR3 (if any)
-     */
-    getCDR3Color: function() {
-        var junction = this.getSegAASequence('junction');
-        if (junction.length == 0)
-            return '';
-        // Convert CDR3 to int
-        var intcdr3 = 0;
-        junction = junction.toUpperCase();
-        for (var i = 0; i < junction.length; i++) {
-            intcdr3 += (junction.charCodeAt(i)-65) * (Math.pow(26, i));
-        }
-        return colorGeneratorIndex(intcdr3);
-    },
-
-    /**
     * Get the number of occurrences of the clone in cloneDB
     * @return {int} res - the number of occurrences, undefined if cloneDB wasn't called
     */

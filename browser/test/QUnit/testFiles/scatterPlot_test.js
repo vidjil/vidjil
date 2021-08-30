@@ -55,11 +55,11 @@ QUnit.test("grid", function(assert) {
 
     setTimeout(function() {
         assert.deepEqual(m.getSelected(), [2], "check click label");
-        sp.changeSplitMethod("N length", "size", "bar");
+        sp.changeSplitMethod("N length", "Size", "bar");
         sp.update()
 
         assert.equal(   sp.select_x.selectedIndex,      9,                      'select_x index')
-        assert.equal(   sp.select_y.selectedIndex,      18,                     'select_y index')
+        assert.equal(   sp.select_y.selectedIndex,      6,                      'select_y index')
         assert.approx(  sp.nodes[1].bar_h/sp.resizeH,   0.40, 0.05,             "node 1, bar h position " + m.clone(1).getSize())
         assert.equal(   sp.axisX.getPos(m.clone(1)),    sp.axisX.getValuePos(9),"node 1, bar x position " + m.clone(1).getNlength())
         assert.approx(  sp.nodes[1].bar_y/sp.resizeW,   0.40, 0.05,             "node 1, bar y position")
@@ -117,7 +117,7 @@ QUnit.test("other plot", function(assert) {
     var preset = sp.preset["compare two samples"]
     sp.changeSplitMethod(preset.x, preset.y, "grid")
 
-    assert.equal(sp.splitY, "size (other sample)")
+    assert.equal(sp.splitY, "Size (other)")
     assert.equal(sp.otherVisibility, true)
 
     assert.equal(sp.nodes[2].s, 0.25, "node 0, size (other sample time 1)")
@@ -211,17 +211,17 @@ QUnit.test("axes productivity detailed", function(assert) {
     sp.init();
 
     assert.equal(sp.returnActiveclones(), 6, "returnActiveClones -> 6");
-    sp.changeSplitMethod("productivity detailed", "productivity detailed", "grid");
+    sp.changeSplitMethod("Productivity+", "Productivity+", "grid");
 
     var axes_legend = document.getElementById("visu_axis_x_container").childNodes
     setTimeout( function() {
         assert.equal( axes_legend.length, 12, "Correct number of availabel axis (6*2)" )
-        assert.equal( axes_legend[0].__data__.text, "productive", "sp legend productivity; productive")
-        assert.equal( axes_legend[1].__data__.text, "not productive",       "sp legend productivity; not productive")
-        assert.equal( axes_legend[2].__data__.text, "out-of-frame", "sp legend productivity; out of frame")
-        assert.equal( axes_legend[3].__data__.text, "stop-codon",   "sp legend productivity; stop codon")
-        assert.equal( axes_legend[4].__data__.text, "no CDR3 detected",   "sp legend productivity; no cdr3 detected")
-        assert.equal( axes_legend[5].__data__.text, "no-WPGxG-pattern",   "sp legend productivity; no-WPGxG-pattern")
+        assert.equal( axes_legend[0].__data__.text, "productive",       "sp legend productivity; productive")
+        assert.equal( axes_legend[1].__data__.text, "not productive",   "sp legend productivity; not productive")
+        assert.equal( axes_legend[2].__data__.text, "out-of-frame",     "sp legend productivity; out of frame")
+        assert.equal( axes_legend[3].__data__.text, "stop-codon",       "sp legend productivity; stop codon")
+        assert.equal( axes_legend[4].__data__.text, "no CDR3",          "sp legend productivity; no cdr3 detected")
+        assert.equal( axes_legend[5].__data__.text, "no-WPGxG-pattern", "sp legend productivity; no-WPGxG-pattern")
         m.clone(0).seg.junction.productive   = false
         m.clone(0).seg.junction.unproductive = "new_label_of_unproductivity"
         m.update()
@@ -354,7 +354,7 @@ QUnit.test("Axis scale Log", function(assert) {
 
     var sp = new ScatterPlot("visu",m);
     sp.init();
-    sp.changeSplitMethod("size", "size", "grid");
+    sp.changeSplitMethod("Size", "Size", "grid");
     
 
     var delay = 0;

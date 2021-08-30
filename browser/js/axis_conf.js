@@ -58,6 +58,7 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "D/4 allele",
                     "J/3' gene",
                     "J/3 allele",
+                    "Size",
                     "Sequence length",
                     "Read length",
                     "N length",
@@ -70,7 +71,6 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "[IMGT] Productivity",
                     "[IMGT] VIdentity",    
                     "Locus",
-                    "Size",
                     "Size (other)",
                     "Number of samples",
                     "Primers gap",
@@ -136,6 +136,7 @@ AXIS_DEFAULT = {
                         }
                         return l
                     },
+        color:      function(t,c) {return colorGeneratorString(c.getSegAASequence('junction'))},
         fct:        function(clone) {return clone.getSegAASequence('junction')},
         autofill:   false
     },
@@ -224,9 +225,9 @@ AXIS_DEFAULT = {
     "Productivity": {
         doc:        "clone productivity",
         labels:     {
-                        "not productive":   {text:"not productive", color: colorProductivity('false'),side: "right"},
+                        "not productive":   {text:"not productive", color: colorGeneratorBool('false'),side: "right"},
                         "no CDR3":          {text:"no CDR3", color: "", side: "right" },
-                        "productive":       {text:"productive", color: colorProductivity('true'),side: "left" },
+                        "productive":       {text:"productive", color: colorGeneratorBool('true'),side: "left" },
                     },
         fct:        function(clone) {return clone.getProductivityName()},
         sort :      function(a,b){

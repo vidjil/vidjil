@@ -287,7 +287,6 @@ Model.prototype = {
         this.default_tag=8;
         this.distrib_tag=9;
 
-        this.colorMethod = "Tag"
         this.colorAxis = new Axis("Tag").compute(100)
         this.notation_type = "percent"
         this.time_type = "name"
@@ -2569,26 +2568,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (menu) menu.checked = true
 
         if (update) this.update()
-    },
-    
-    /**
-     * change default color method
-     * @param {string} colorM 
-     * @param {bool} update - will update the display after default = true
-     * @param {bool} save - will save value in user preferences (localStorage) 
-     * */
-    changeColorMethod: function (colorM, update, save) {
-        update = (update==undefined) ? true : update;
-
-        this.colorMethod = colorM
-        if (this.localStorage && save) localStorage.setItem('colorMethod', colorM)
-        var menu = document.getElementById("color_menu_select")
-        if (menu) menu.value = colorM
-
-        if (!update) return 
-        var list = []
-        for (var i = 0; i<this.clones.length; i++) list.push(i)
-        this.updateElemStyle(list)
     },
 
     resetSettings: function () {
