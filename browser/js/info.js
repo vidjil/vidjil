@@ -500,9 +500,13 @@ Info.prototype = {
                 $(spanG).mousemove(function(event){            
                     var relX = event.pageX - $(this).offset().left;
                     $(this).width
-                    $(this).prop("title",m.axisColor.scale.fct.invert(relX/180).toPrecision(2));
+                    $(this).prop("title",m.axisColor.invert(relX/180).innerText);
                 });
+
+                if (m.axisColor.scale.mode == "linear")
+                    span2.appendChild(m.axisColor.invert(0))
                 span2.appendChild(spanG)
+                span2.appendChild(m.axisColor.invert(1))
             }
 
             if (a.labels){
