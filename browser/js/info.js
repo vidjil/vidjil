@@ -288,8 +288,10 @@ Info.prototype = {
      * @param {integer[]} - list - array of clone index
      * */
     updateElemStyle: function (list) {
-        if (this.m.axisColor.name != this.axisColorName){
+        if (this.m.axisColor.name != this.axisColorName ||
+            this.m.filterStamp != this.filterStamp){
             this.axisColorName = this.m.axisColor.name
+            this.filterStamp = this.m.filterStamp
             this.update()
         }
     },
@@ -526,6 +528,9 @@ Info.prototype = {
                     spantag.title = l.text;
                     spantag.value = keys[i];
 
+                    if (this.m.checkFilter(this.m.axisColor.name, "=", keys[i]) >=0)
+                        spantag.className += " inactiveTag"
+
                     if (labelCount >20){
                         spantag.style.width = boxWidth
                         spantag.style.margin = "1px"
@@ -535,7 +540,14 @@ Info.prototype = {
                     }
 
                     spantag.onclick = function(){
-                        self.m.multiSelect(self.m.axisColor.getLabelInfo(self.value).clones)
+                        var v = this.value
+                        var a = self.m.axisColor.name
+                        if (window.event.ctrlKey) {
+                            var c = self.m.axisColor.getLabelInfo(v).clones
+                            self.m.multiSelect(c)
+                            return
+                        }
+                        self.m.toggleFilter(a,  "=", v);
                     };
 
                     if (l.side && l.side == "left"){
