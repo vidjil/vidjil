@@ -97,6 +97,7 @@ ScatterPlot_menu.prototype = {
         this.span_icon_bar =  $(this.menu).find(".sp_menu_icon_bar" )[0];
         this.span_icon_grid = $(this.menu).find(".sp_menu_icon_grid")[0];
 
+        this.span_icon_grid.id = this.id+"_plot";
         jQuery.get("images/plot.svg", function(data) {
             var svg = jQuery(data).find('svg');
             $(self.span_icon_grid).empty().append(svg);
