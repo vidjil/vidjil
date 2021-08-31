@@ -58,8 +58,86 @@ Model_color.prototype = {
 
         console.log("!!!! changeColorAxis !!!!!")
 
+    },
+
+    // generic method to filter out specific clone
+    // axis_name : see axis_conf for available axis
+    // operator "=" / ">" / "<"
+    addFilter: function(axis_name, operator ,value){
+        this.initFilter()
+        this.filters.push({ axis:       axis_name,
+                            operator:   operator,
+                            value:      value});
+        this.filterStamp++
+        this.updateStyle()
+    },
+
+    initFilter: function(){
+        if (!this.filters) this.filters = []
+        if (!this.filterStamp) this.filterStamp=0; 
+    },
+
+    removeFilter: function (index){
+        this.initFilter()
+        if (index > -1 & index < this.filters.length) 
+            this.filters.splice(index, 1)
+        this.filterStamp++
+        this.updateStyle()
+    },
+
+    toggleFilter: function(axis_name, operator ,value){
+        var index = this.checkFilter(axis_name, operator ,value)
+        if (index >=0)
+            this.removeFilter(index)
+        else
+            this.addFilter(axis_name, operator ,value)
+    },
+
+    //return index of filter id if exist, return 
+    checkFilter: function(axis_name, operator ,value){
+        this.initFilter()
+        for(var i=0; i<this.filters.length; i++)
+            if (this.filters[i].axis == axis_name && 
+                this.filters[i].operator == operator && 
+                this.filters[i].value == value)
+                return i
+        
+        return -1
+    },
+
+    resetFilter: function(){
+        this.filters = []
+        this.filterStamp++
+        this.updateStyle()
+    },
+
+    applyFilter : function(){
+        if (!this.filters) return;
+
+        for (var i=0; i<this.filters.length; i++){
+            for (var j=0; j<this.clones.length; j++){
+                try {
+                    var c = this.clone(j);
+                    var f = this.filters[i]
+                    var a = Axis.prototype.getAxisProperties(f.axis)
+                    switch (f.operator) {
+                        case "=":
+                            if (!c.active) break;
+                            if (a.fct(c) == f.value) c.disable()
+                            break;
+                        case ">":
+                            if (!c.active) break;
+                            if (a.fct(c) > f.value) c.disable()
+                            break;
+                        case "=":
+                            if (!c.active) break;
+                            if (a.fct(c) < f.value) c.disable()
+                            break;
+                        default:
+                            break;
+                    }
+                } catch (e) {}
+            }
+        }
     }
-
-
-
 }

@@ -1867,16 +1867,9 @@ Clone.prototype = {
     },
 
     enable: function (top) {
-        if (this.top > top || this.hasSizeOther()){
-            return; 
-        }
+        if (this.top > top || this.hasSizeOther()) return; 
 
-        if (this.m.tag[this.getTag()].display){
-            this.active = true;
-        }
-        else {
-            this.m.someClonesFiltered = true
-        }
+        this.active = true;
     },
 
     disable: function () {

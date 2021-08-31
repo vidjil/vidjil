@@ -219,7 +219,6 @@ Model.prototype = {
         this.data = {}; // external data
         this.data_info = {};
         this.clone_info = -1;
-        this.someClonesFiltered = false;
 
         this.t = 0;          // Selected time/sample
         this.tOther = 0;  // Other (previously) selected time/sample
@@ -1211,7 +1210,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * */
     updateModel: function () {
 
-        this.someClonesFiltered = false
         var clone;
 
         for (var i = 0; i < this.clusters.length; i++) {
@@ -1247,7 +1245,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             for (var l = 0; l < this.clones.length; l++) {
                 if (this.system_selected.indexOf(this.clone(l).get('germline')) == -1) {
                     this.clones[l].disable()
-                    this.someClonesFiltered = true
                 }
             }
         }
@@ -1256,9 +1253,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         for (var m = 0; m < this.clones.length; m++) {
             if (this.clone(m).isFiltered) {
                 this.clone(m).disable();
-                this.someClonesFiltered = true
             }
         }
+
+        this.applyFilter()
         
         this.computeOtherSize();
 
@@ -1383,12 +1381,12 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * ask all linked views to update the style of all clones
      * */
     updateStyle: function () {
+        this.updateModel()
         var list = []
         for (var i=0; i<this.clones.length; i++) list[i]=i
         for (var j = 0; j < this.view.length; j++) {
             this.view[j].updateElemStyle(list);
         }
-        this.updateModel()
     },
 
     /**
@@ -1508,7 +1506,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             var c = self.clone(pos);
             c.reads = newOthers[c.germline];
             c.name = c.germline + " smaller clones";
-            if (self.someClonesFiltered)
+            if (this.filters && this.filters.length >0)
                 c.name += " + filtered clones";
         })
     },
