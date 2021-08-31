@@ -430,7 +430,12 @@ class VidjilBrowser < Watir::Browser
   end
 
   def login(mail, password)
-    if login_form.present?
+    # Don't login if already did
+    if logoutbtn.present?
+      return
+    end
+
+    if login_form.wait_until_present
       login_form.text_field(:id => "auth_user_email").set(mail)
       login_form.text_field(:id => "auth_user_password").set(password)
       login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
@@ -439,11 +444,15 @@ class VidjilBrowser < Watir::Browser
     end
   end
 
+  def logoutbtn
+    return $b.a(:class => "button", :text => "(logout)")
+  end
+
   def logout
-    a(:class => "button button_token patient_token", :text => "patients").click
-    Watir::Wait.until(30) {execute_script("return jQuery.active") == 0}
-    a(:class => "button", :text => "(logout)").click
-    Watir::Wait.until(30) {execute_script("return jQuery.active") == 0}
+    if logoutbtn.present?
+      logoutbtn.click
+      Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
+    end
   end
 
   def impersonate(username)

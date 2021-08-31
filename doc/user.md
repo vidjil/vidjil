@@ -657,6 +657,21 @@ Once clones are selected, you can send their sequence to **IMGT/V-QUEST** and **
 by clicking on the links just above the sequence panel (bottom left).
 This opens another window/tab.
 
+## Why do some clonotypes not have V(D)J designations?
+
+In a first step, vidjil-algo detects and cluster clones that have significant similarities to both V and J regions.
+In a second step, vidjil-algo designates V, (D), and J genes on the clones.
+Sequences without V(D)J designations are the ones that successfully went through the first step but not through the second step.
+
+Such sequences can be *actual clones* that need to be investigated, especially clones with unusual recombinations, such as translocations.
+They can be also *spurious clones*: For example low-complexity sequences may share significant regions to low-complexity regions of V or J genes.
+Such spurious clones may appear especially on large datasets
+coming from full RNA-seq or whole-genome sequencing.
+
+Once these clones as selected, you can send their sequences to **Blast** or to **IgBlast** and/or to share us these sequences
+(with `help > get support`, see below) for further inspection.
+
+
 ## How is productivity computed? Why do I have some discrepancies with other software?
 
 Vidjil-algo reports CDR3 as *productive* when they come from

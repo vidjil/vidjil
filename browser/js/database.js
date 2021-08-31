@@ -394,26 +394,6 @@ Database.prototype = {
             }
         });
     },
-    
-    
-    pre_process_onChange : function (field) {
-        var $option = $(field).find(":selected");
-        if ($option.attr('required_files') == "1"){
-            $(".file_2").hide();
-            $(".upload_file").val("");
-            $(".upload_field").each(function() {
-                $(this).prop("required", false);
-            });
-        }else{
-            $(".file_2").show();
-            if ($(".is_editing").length == 0) {
-                // Not editing a sample, but creating new ones
-                $(".upload_field").each(function() {
-                    $(this).prop("required", true);
-                });
-            }
-        }
-    },
 
     upload_file_onChange : function (target_id, value) {
         var target = document.getElementById(target_id);
@@ -623,6 +603,12 @@ Database.prototype = {
             $('#upload_form').on('submit', function(e) {
                 e.preventDefault();
 
+                self.update_upload_fields();
+                if (!self.check_upload_fields()) return;
+            
+                $("#submit_samples_btn").addClass("disabledClass");
+                setTimeout(function(){$("#submit_samples_btn").removeClass("disabledClass")}, 3000)
+
                 //clear empty values before submiting data
                 var upload_form = $('#upload_form').serializeObject()
                 if ("file" in upload_form)
@@ -714,54 +700,136 @@ Database.prototype = {
         });
     },
 
-    display_jstree: function(caller_index) {
-        $("#jstree_button").data("index", caller_index);
+    display_jstree: function(file_index, upload_index) {
+        $("#jstree_button").data("file_index", file_index);
+        $("#jstree_button").data("upload_index", upload_index);
         $("#jstree_container").show();
-        $('#file_indicator_' + caller_index).text("");
-        $('#file_filename_' + caller_index).val("");
+        $('#file_indicator_' + file_index + "_" + upload_index).text("");
+        $('#file_filename_' + upload_index).val("");
     },
 
     close_jstree: function() {
         $("#jstree_container").hide();
     },
 
-    select_jstree: function(caller_index) {
-        $('#file_indicator_' + caller_index).text($('#file_indicator').text());
-        $('#file_filename_' + caller_index).val($('#file_filename').val());
+    select_jstree: function(file_index, upload_index)  {
+        $('#file_indicator_' + file_index + "_" + upload_index).text($('#file_indicator').text());
+        $('#file_indicator_' + file_index + "_" + upload_index).prop('title', $('#file_filename').prop("value"));
+        $('#file_filename_' + file_index + "_" + upload_index).val($('#file_filename').val());
         $("#jstree_container").hide();
     },
 
-    toggle_upload_fields: function() {
-        var elem = $('.upload_field');
-        var disable = !elem.prop('disabled');
-        elem.prop('disabled', disable);
-        if (disable) {
-            elem.closest("div").hide();
-            elem.val(undefined);
-            $('.filename').val(undefined);
-        } else {
-            elem.closest("div").show();
+    check_upload_fields: function(){
+        file1 = $("[id^=file_filename_]");
+        file2 = $("[id^=file_filename2_]");
+
+        if ( $("#submitForm_isEditing").prop("checked")){
+            if (this.pprocess_required_file >1)
+                if ((file1[0].value == "" && file2[0].value != "") ||
+                    (file1[0].value != "" && file2[0].value == "")){
+                    console.log({"type": "flash",
+                        "msg" : "missing file: both file fields must be filled if you wish to update current uploaded file.", 
+                        "priority": 2});  
+                    return false;
+                }
+
+        }else{
+            var flag = true;
+            for (var i=0; i<file1.length; i++)
+                if (file1[i].value == "" ) flag = false;
+            
+            if (this.pprocess_required_file >1)
+                for (var j=0; j<file2.length; j++)
+                    if (file2[j].value == "" ) flag = false;
+
+            if (!flag) {
+                console.log({"type": "flash",
+                "msg" : "missing file: please ensure all file fields are filled before submitting.", 
+                "priority": 2});  
+                return false
+            } 
         }
 
-        var pre_process = $('#pre_process');
-        pre_process.prop('disabled', disable);
-        pre_process.closest("div").prop('hidden', disable);
-
-        if (!disable) {
-            this.pre_process_onChange(pre_process);
-        }
+        return true;
     },
 
-    toggle_jstree: function(){
+    update_upload_fields: function() {     
+        //retrieve current radio buttons value
+        var radios = document.getElementsByName("source");
+        for (var i=0; i<radios.length; i++) 
+            if (radios[i].checked)
+                this.upload_source = radios[i].value;
+
+        var option = $("#pre_process").find(":selected");
+        this.pprocess_required_file = parseInt(option.attr('required_files'))
+        
+        // retrieve upload fields
+        var upload_fields = $('.upload_field');
+        var jstree_fields = $('.jstree_field');
+
+        // reset field, display/enable all upload field
+        jstree_fields.closest("div").show();
+        jstree_fields.prop("disabled", false);
+        upload_fields.closest("div").show();
+        upload_fields.prop("disabled", false);
+
+        // hide/disabe unnecessary field for selected upload source
+        if (this.upload_source == "nfs"){
+            upload_fields.closest("div").hide();            
+            upload_fields.prop("disabled", true);
+        }
+        if (this.upload_source == "computer"){
+            jstree_fields.closest("div").hide();            
+            jstree_fields.prop("disabled", true);
+        }
+
+        // hide/disable unnecessary field for selected pre-process
+        if (this.pprocess_required_file == 1){
+            upload_fields.filter('.file_2').closest("div").hide();            
+            upload_fields.filter('.file_2').prop("disabled", true);
+            jstree_fields.closest("div").filter('.file_2').hide();            
+            jstree_fields.filter('.file_2').prop("disabled", true);
+        }
+        
+        this.update_hidden_fields();
+        this.update_jstree();
+    },
+
+    update_hidden_fields:function(){
+        //reset default filename
+        var forms = $('.form_line')
+        for (var i=0; i<forms.length; i++){
+            var filename="";
+            var filename2="";
+            
+                if (this.upload_source == "computer"){
+                    filename = $(forms[i]).find(".upload_field.file_1")[0].value;
+                    var lastIndex = filename.lastIndexOf('\\');
+                    if (lastIndex > 0) filename = filename.substring(lastIndex + 1);
+
+                    filename2 = $(forms[i]).find(".upload_field.file_2")[0].value;
+                    var lastIndex2 = filename2.lastIndexOf('\\');
+                    if (lastIndex2 > 0) filename2 = filename2.substring(lastIndex2 + 1);
+                }   
+    
+                if (this.upload_source == "nfs"){
+                    filename = $(forms[i]).find("[id^=file_indicator_1]").prop('title');
+                    filename2 = $(forms[i]).find("[id^=file_indicator_2]").prop('title');
+                }
+            
+
+            $(forms[i]).find("[id^=file_filename_]")[0].value = filename;
+            $(forms[i]).find("[id^=file_filename2_]")[0].value = filename2;
+        }
+        
+    },
+
+    update_jstree: function(){
         var tree = $('.jstree_field');
-        var enable = tree.prop('hidden');
+        var enable = this.upload_source == "nfs";
         tree.prop('hidden', !enable);
     },
 
-    toggle_file_source: function() {
-        this.toggle_upload_fields();
-        this.toggle_jstree()
-    },
     
     /**
      * reload the current db page

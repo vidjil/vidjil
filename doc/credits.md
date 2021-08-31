@@ -107,6 +107,11 @@ Sébastien Bender et al.,
 Blood, 2020,
 <https://doi.org/10.1182/blood.2019004197>
 
+Marie-Laure Boulland et al.,
+*Reliable IGHV status assessment by next generation sequencing in routine practice for chronic lymphocytic leukemia*,
+Leukemia & Lymphoma, 2021,
+<https://doi.org/10.1080/10428194.2021.1933476>
+
 Monika Brüggemann et al., on behalf of the EuroClonality-NGS working group,
 *Standardized next-generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukaemia; a EuroClonality-NGS validation study*,
 Leukemia, 2019, 33, 2241–2253,
@@ -148,6 +153,11 @@ Irene Jo et al.,
 Clinica Chimica Acta, 2019,
 <https://doi.org/10.1016/j.cca.2018.10.037>
 
+Natalia Izotova et al.,
+*Long-term lymphoid progenitors independently sustain naïve T and NK cell production in humans*,
+Nature Communications, 2021,
+<https://doi.org/10.1038/s41467-021-21834-9>
+
 Takashi Kanamori et al.,
 *Genomic analysis of multiple myeloma using targeted capture sequencing in the Japanese cohort*,
 British Journal of Haematology, 2020,
@@ -167,6 +177,11 @@ Michaela Kotrova et al.,
 *Next‐generation amplicon TRB locus sequencing can overcome limitations of flow‐cytometric Vβ expression analysis and confirms clonality in all T‐cell ,prolymphocytic leukemia cases*,
 Cytometry Part A, 93(11):1118-1124, 2018
 <http://dx.doi.org/10.1002/cyto.a.23604>
+
+Anton W. Langerak,
+*High-Throughput Immunogenetics for Clinical and Research Applications in Immunohematology: Potential and Challenges*,
+Journal of Immunology, 2017, 198(10):3765-3774,
+<https://dx.doi.org/10.4049/jimmunol.1602050>
 
 Zhenhua Li et al.,
 *Identifying IGH disease clones for MRD monitoring in childhood B-cell acute lymphoblastic leukemia using RNA-Seq*,
@@ -198,6 +213,11 @@ Edit Porpaczy et al.,
 Blood, 2018,
 <https://dx.doi.org/10.1182/blood-2017-10-810739>
 
+Rathana Kim et al.,
+*Adult T-cell acute lymphoblastic leukemias with IL7R pathway mutations are slow-responders who do not benefit from allogeneic stem-cell transplantation*,
+Leukemia, 2020, 34, 1730-1740,
+<https://dx.doi.org/10.1038/s41375-019-0685-4>
+
 Mikaël Salson et al.,
 *High-throughput sequencing in acute lymphoblastic leukemia: Follow-up of minimal residual disease and emergence of new clones*,
 Leukemia Research, 2017, 53, 1–7,
@@ -228,10 +248,19 @@ Lucia Stranavova et al.,
 Frontiers in Immunology, 2019,
 <https://doi.org/10.3389/fimmu.2019.02549>
 
+Manuela Tosi et al.,
+*MRD-Based Therapeutic Decisions in Genetically Defined Subsets of Adolescents and Young Adult Philadelphia-Negative ALL*
+Cancers 2021, 13(9), 2108,
+<https://doi.org/10.3390/cancers13092108>
+
 Amelie Trinquand et al.,
 *Towards molecular stratification of pediatric T-cell lymphoblastic lymphomas based on Minimal Disseminated Disease and NOTCH1/FBXW7 mutational status: the French EURO-LB02 experience (preprint)*,
 medRxiv 2020.09.08.20189829,
 <https://www.medrxiv.org/content/10.1101/2020.09.08.20189829v1>
+
+Patrik Villarèse et al.,
+*One step next generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukemia*,
+ed. Anton W. Langerak, Methods in Molecular Biology, forthcoming
 
 Gary Wright et al.,
 *Clinical benefit of a high‐throughput sequencing approach for minimal residual disease in acute lymphoblastic leukemia*,
