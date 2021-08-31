@@ -537,7 +537,7 @@ By default in the bottom plot (the \textit{grid}), the clones
     $b.clone_in_list("0").click
     $b.send_keys 0
 
-    $b.scatterplot_x_legend(6).click # clonotype with IGHV3-13
+    $b.scatterplot_x_legend(8).click # clonotype with IGHV3-13
 
     ## control that these clonotype is selected and visible in semgenter
     assert ( not $b.clone_in_segmenter('0').present? ), "clone 0 chould not be present";
