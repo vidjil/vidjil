@@ -379,7 +379,11 @@ Axis.prototype = {
         }
 
         if (typeof this.sort == "string"){
-            if (this.sort == "alphabetical")
+            if (this.sort == "alphabetical"){
+                array.sort()
+            } else if (this.sort == "reverse_alphabetical"){
+                array.sort().reverse()
+            } else if (this.sort == "alphanumerical") {
                 array.sort(function(a,b){
                         // TODO: Change line when old version of browser will be replaced
                         // if (a == undefined || a.includes("undefined") || a.includes("?") ){
@@ -388,8 +392,7 @@ Axis.prototype = {
                         }
                         return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'})
                     })
-            else if (this.sort == "reverse_alphabetical")
-                array.sort().reverse()
+            }
             
             return
         }
