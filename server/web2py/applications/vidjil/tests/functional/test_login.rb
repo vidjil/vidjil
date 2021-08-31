@@ -8,14 +8,7 @@ class TestLogin < ServerTest
     if not defined? $b
       set_browser("http://localhost/browser")
     end
-    logout = $b.a(:class => "button", :text => "(logout)")
-    if logout.present?
-      logout.click
-      Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-
-      $b.a(:class => ["button", "button_token", "patient_token"], :text => "patients").click
-      Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    end
+    $b.logout()
   end
 
 =begin
@@ -39,25 +32,13 @@ class TestLogin < ServerTest
 =end
 
   def test_failed_login
-    login_form = $b.form(:id => 'login_form')
-    assert(login_form.present?)
-    login_form.text_field(:id => "auth_user_email").set('foo@bar.com')
-    login_form.text_field(:id => "auth_user_password").set('foobar')
-    login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
-    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-
-    login_form = $b.form(:id => 'login_form')
-    assert(login_form.present?)
+    $b.login('foo@bar.com', 'foobar')
+    assert($b.login_form.present?)
   end
 
   def test_successful_login
-    login_form = $b.form(:id => 'login_form')
-    assert(login_form.present?)
-    login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
-    login_form.text_field(:id => "auth_user_password").set('foobartest')
-    login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
-    Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    assert(!login_form.present?)
+    $b.login('plop@plop.com', 'foobartest')
+    assert(!$b.login_form.present?)
   end
 end
 
