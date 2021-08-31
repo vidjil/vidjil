@@ -541,13 +541,13 @@ Info.prototype = {
 
                     spantag.onclick = function(){
                         var v = this.value
-                        var a = self.m.axisColor.name
+                        var a = m.axisColor
                         if (window.event.ctrlKey) {
-                            var c = self.m.axisColor.getLabelInfo(v).clones
-                            self.m.multiSelect(c)
+                            var c = a.getLabelInfo(v).clones
+                            m.multiSelect(c)
                             return
                         }
-                        self.m.toggleFilter(a,  "=", v);
+                        m.toggleFilter(a.name, "=", v)
                     };
 
                     if (l.side && l.side == "left"){
