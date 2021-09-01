@@ -1109,6 +1109,9 @@ span.warningReads {
 }
 .sp_menu,
 .visu2_menu {
+  transition-property: all;
+  transition-delay: 0.25s;
+  transition-duration: 0.25s;
   background: #ffffff;
   display: inline-block;
   padding: 2px, 1px;
@@ -1117,23 +1120,30 @@ span.warningReads {
 }
 .sp_menu_content,
 .visu2_menu_content {
+  transition-property: all;
+  transition-delay: 0.25s;
+  transition-duration: 0.25s;
   padding: 0px;
   width: 0px;
-  height: 0px;
+  max-height: 0px;
   opacity: 0;
   font-size: 0%;
-  overflow: hidden;
-  transition-property: all;
-  transition-duration: 0s;
 }
 .sp_menu:hover {
+  transition-property: all;
+  transition-delay: 0s;
+  transition-duration: 0s;
   border: none;
 }
 .sp_menu:hover .sp_menu_content,
 .sp_menu_content:focus {
+  transition-property: all;
+  transition-delay: 0s;
+  transition-duration: 0s;
   padding: 8px 8px 8px 8px;
   width: 250px;
   height: auto;
+  max-height: 500px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   margin-top: -18px;
