@@ -12,6 +12,7 @@ var lib = [         "js/lib/jquery-3.3.1.min",
           ];
 
 var lib_plugin = [  "js/lib/jquery.form",
+                    "js/lib/jquery-ui",
                     "js/lib/jquery.zclip"
                  ];
 

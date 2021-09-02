@@ -9,12 +9,8 @@ class TestSample < ServerTest
       set_browser("http://localhost/browser")
       $num_additional_files = 2
     end
-    login_form = $b.form(:id => 'login_form')
-    if login_form.present?
-      login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
-      login_form.text_field(:id => "auth_user_password").set('foobartest')
-      login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
-    end
+
+    $b.login('plop@plop.com', 'foobartest')
   end
 
   def go_to_first_set

@@ -669,7 +669,7 @@ insertions.
     assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset V/N length"
     assert ( $b.scatterplot_y_label.text == "N length" ), "Correct legend for axe Y for preset V/N length"
     assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X for this preset is 'IGHV1-2'"
-    assert ( $b.scatterplot_y_legend(0).text == "?"), "scatterplot_legend Y for this preset is '?'"
+    assert ( $b.scatterplot_y_legend(0).text == "0"), "scatterplot_legend Y for this preset is '0'"
   end
 \end{verbatim}
 
@@ -686,7 +686,7 @@ Then you can continue aligning and clustering clones if necessary.
     assert ( $b.scatterplot_y_label.text == "GC content" ), "Correct legend for axe Y for preset 0"
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_legend(0).text == "?"), "scatterplot_legend X pos 0 for this preset is '?'"
-    assert ( $b.scatterplot_x_legend(1).text == "0"), "scatterplot_legend X pos 1 for this preset is '0'"
+    assert ( $b.scatterplot_x_legend(1).text == "80"), "scatterplot_legend X pos 1 for this preset is '80'"
     assert ( $b.scatterplot_y_legend(0).text == "0.40"), "scatterplot_legend Y for this preset is '0.40'"
   end
 \end{verbatim}
