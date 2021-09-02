@@ -11,6 +11,36 @@
 
 \begin{document}
 
+
+\begin{verbatim}
+# coding: utf-8
+load 'vidjil_browser.rb'
+load 'browser_test.rb'
+
+#browser test suite
+class TestList < BrowserTest
+
+  def setup
+    super
+    if not defined? $b
+      set_browser("/browser/test/data/demo_lil_l3_tutorial.vidjil")
+      if $b.div(id: 'tip-container').present?
+        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+      end
+    end
+  end
+
+  # position of clones
+  # clone 0, top clone of last sample (relapse)
+  # clone 1, top clone of first sample
+  # clone 4, second clone of first sample
+  # clone 7, 11, 13; clone 3, 4 and 5 of first sample
+
+  def after_tests
+  end
+\end{verbatim}
+
+
 \maketitle
 
 \textit{The goal of this practical session is to learn
@@ -77,5 +107,15 @@ The section~\ref{sec:tracking} will deal with the comparison of several samples.
 \vfill
 \flushright \it Aurélien Béliard, Aurélie Caillault, Marc Duez, Mathieu Giraud, Tatiana Rocher, Mikaël Salson, Florian Thonier
 \\ \texttt{contact@vidjil.org}
+
+
+\begin{verbatim}
+
+  # Not really a test
+  def test_zz_close
+    close_everything
+  end
+end
+\end{verbatim}
 
 \end{document}

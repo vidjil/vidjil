@@ -744,7 +744,7 @@ class TestCase(TestCaseAbstract):
                     else:
                         self.count = 1
 
-            except (json.decoder.JSONDecodeError, KeyError):
+            except (ValueError, KeyError):
                 # No json, or non-existent key: count is 0
                 self.json_data = JSON_KEY_NOT_FOUND
                 self.count = 0
@@ -981,13 +981,29 @@ class TestSuite():
                 continue
 
             # Launch the command
-            test_lines, exit_test = self.launch([current_cmd], verbose, colorize)
-            self.one_test(exit_test, test_lines, verbose, colorize)
+            if not self.skip:
+                test_lines, exit_test = self.launch([current_cmd], verbose, colorize)
+                self.one_test(exit_test, test_lines, verbose, colorize)
+                self.cmds.append(current_cmd)
 
-            self.cmds.append(current_cmd)
+                if not self.source:
+                    # Regular testing, stdout added to 'current_test_lines'
+                    current_test_lines += test_lines
+                    self.test_lines += test_lines
+
+                else:
+                    # !OUTPUT_FILE:, the content of the file overrides 'current_test_lines'
+                    try:
+                        with open(self.source) as f:
+                            current_test_lines = f.readlines()
+                    except OSError:
+                        msg = self.source + ' not found'
+                        self.skip_set(msg)
+                        exit_test.status = Sta(S_FAILED)
+                        exit_test.info += ' - ' + msg
+                        current_test_lines = []
+
             current_cmd = ''
-            current_test_lines += test_lines
-            self.test_lines += test_lines
 
         # end of loop on should_lines
 
@@ -1040,7 +1056,7 @@ class TestSuite():
         if verbose > 0:
             self.print_stderr(colorize)
 
-        return open(self.source).readlines() if self.source else self.stdout, exit_test
+        return self.stdout, exit_test
 
 
 

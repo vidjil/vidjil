@@ -1,4 +1,4 @@
-json_data = {
+json_data_raw = {
   "vidjil_json_version": ["2014.09"],
   "reads": {
     "segmented": [200,100,200,100],
@@ -37,6 +37,12 @@ json_data = {
     "dataTest2" : [2,1,2,20]
   },
   "clones": [
+  ]
+};
+
+
+json_data = JSON.parse(JSON.stringify(json_data_raw));
+json_data.clones = [
     {
         "sequence" : "aaaaaaaaaaaaaaaaaaaAG",
         "name" : "test1",
@@ -46,7 +52,7 @@ json_data = {
         "germline" : "TRG",
         "seg" : {
             "5" : "TRGV4*01",
-            "3" : "TRGJ2*03",
+            "3" : "TRGJ2*01",
             "3start" : 6,
             "5end" : 5,
             "cdr3" : {"start": 5, "stop": 6, aa: "AG"},
@@ -73,7 +79,7 @@ json_data = {
         "germline" : "TRG",
         "seg" : {
             "5" : "TRGV5*01",
-            "3" : "TRGJ2*02",
+            "3" : "TRGJ1*01",
             "3start" : 15,
             "5end" : 5,
             "fr1" : {"start" :2, "stop":5}
@@ -114,7 +120,7 @@ json_data = {
         "top": 4,
         "reads": [5, 5, 5, 50],
         "seg": {
-            "3": "TRGJ2*02",
+            "3": "TRGJ1*01",
             "5": "TRGV4*01",
             "3del": 5,
             "3start": 183,
@@ -199,8 +205,8 @@ json_data = {
                 "5'J-REGION accepted mut nb": "0",
                 "Accepted D-GENE nb": "0",
                 "CDR3-IMGT": "gccacctgggacaggctgaaggattggatcaagacg",
-                "CDR3-IMGT start": "125",
-                "CDR3-IMGT end": "112",
+                "CDR3-IMGT start": "112",
+                "CDR3-IMGT end": "125",
                 "CDR3-IMGT-nt nb": "36",
                 "CDR3-IMGT (with frameshift)": "",
                 "CDR3-IMGT (AA)": "ATWDRLKDWIKT",
@@ -218,13 +224,13 @@ json_data = {
     },
     {
         "sequence" : "catcatcatgatgctacgatcttac",
-        "name" : "test5",
         "id" : "id5",
         "reads" : [4,4,4,40],
         "top" : 5,
-        "name": "unseg sequence",
+        "name": "test5; unseg sequence",
         "germline" : "IGH",
         "seg" : {
+            "cdr3" : {"start": 2, "stop": 12, "aa": "W#WA", "seq": "atcatgatgcta"},
             "f1" : {"start": 4, "stop": 7},
             "f2" : {"seq": "tacgat"}, // 15 -> 20
         },
@@ -233,56 +239,33 @@ json_data = {
         ],
     }
   ]
-};
 
-json_data_align = {
-    "vidjil_json_version": ["2014.09"],
-    "reads": {
-      "segmented": [200,100,200,100],
-      "total": [200,100,200,100],
-      "germline": {
-        "TRG": [100,50,100,50],
-        "IGH": [100,50,100,50]
-      }
-    },
-    "samples": {
-      "timestamp": ["2014-10-20 13:59:02", "2014-10-25 14:00:32", "2014-11-20 14:03:13", "2014-12-20 14:04:48"],
-      "commandline": [
-        "./vidjil -c clones -g germline/ -r 1 -o ./out0 -z 200 -n 5 Diag.fa ",
-      ],
-      "number": 4,
-      "original_names": [
-        "Diag.fa",
-      ],
-      "log": [
-        "  ==> segmented 362296 reads (38.7%)\n  ==> found 11526 40-windows in 335725 segments (35.8%) inside 937164 sequences\n ",
-      ],
-      "producer": ["ha","hi","ho","hu"],
-      "run_timestamp": ["2015-10-20 13:59:02", "2015-10-25 14:00:32", "2015-11-20 14:03:13", "2015-12-20 14:04:48"]
-    },
-    "data": {
-      "dataTest1" : [45],
-      "dataTest2" : [2]
-    },
-    "clones": [
+json_data_align = JSON.parse(JSON.stringify(json_data_raw));
+json_data_align.clones = [
       {
-          "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCAAATTTTTTTTTTTTTTTTTTTGATCGATCGATCGATCGAT",
+          "sequence" : "ATCCATGTATGCATGCCCCCCCCCCCCCAAATTTTTTTTTTTTTTTTTTTGATCGATCCGATCGATGAT",
           "name" : "testalign1",
           "id" : "id0",
           "reads" : [20] ,
           "top" : 1,
           "germline" : "TRG",
+          "seg" : {
+            "cdr3" : {"start": 1, "stop": 11, "aa": "W#WA", "seq": "atcatgatgcta"}
+          }
       },
       {
-          "sequence" : "ATGCATGCATGCATGCCCCCCCCCCCCCCCCCCAAATTTTTTTTTTTTTTGATCGATCGATCGATCGAT",
+          "sequence" : "ATTCATGCATGCATGCCCCCCCCCCCCCCCCCCAAATTTTTTTTGATCGATCGATCGATCGAT",
           "name" : "testalign2",
           "id" : "id1",
           "reads" : [25],
           "top" : 2,
-          "germline" : "IGH",
+          "germline" : "IGH",          
+          "seg" : {
+            "cdr3" : {"start": 1, "stop": 11, "aa": "W#WA", "seq": "atcatgatgcta"}
+          }
       }
     ]
-  };
+
 
 
 
@@ -405,3 +388,90 @@ analysis_data_clusters = {
     ]
   ]
 }
+
+
+// Test qunits
+primersSetData = {};
+primersSetData.primer_test = {};
+primersSetData.primer_test.IGH = {};
+primersSetData.primer_test.IGH.primer5 = [] // IGH seq from model_test.js
+primersSetData.primer_test.IGH.primer3 = []
+primersSetData.primer_test.TRG = {};
+primersSetData.primer_test.TRG.primer5 = ["GGAAGGCCCCACAGCG"] // TRG seq from model_test.js
+primersSetData.primer_test.TRG.primer3 = ["AACTTCGCCTGGTAA"]
+
+json_data_productivity = JSON.parse(JSON.stringify(json_data_raw));
+json_data_productivity.clones = [
+    {
+      "name": "clone out-of-frame",
+      "germline": "IGH",
+      "id": "id1",
+      "reads": [10,10,15,15],
+      "seg": {
+        "junction": {
+            "productive": false,
+            "unproductive": "out-of-frame"
+        },
+      },
+      "top": 1
+    },
+    {
+      "name": "clone stop-codon",
+      "germline": "IGH",
+      "id": "id2",
+      "reads": [10,10,15,15],
+      "seg": {
+        "junction": {
+            "productive": false,
+            "unproductive": "stop-codon"
+        },
+      },
+      "top": 2
+    },
+    {
+      "name": "clone unproductive simple",
+      "germline": "IGH",
+      "id": "id3",
+      "reads": [10,10,15,15],
+      "seg": {
+        "junction": {
+            "productive": false
+        },
+      },
+      "top": 3
+    },
+    {
+      "name": "clone without junction",
+      "germline": "IGH",
+      "id": "id4",
+      "reads": [10,10,15,15],
+      "seg": {},
+      "top": 4
+    },
+    {
+      "name": "clone productive",
+      "germline": "IGH",
+      "id": "id5",
+      "reads": [10,10,15,15],
+      "seg": {
+        "junction": {
+            "productive": true
+        },
+      },
+      "top": 5
+    },
+    {
+      "name": "clone stop-codon",
+      "germline": "IGH",
+      "id": "id6",
+      "reads": [10,10,15,15],
+      "seg": {
+        "junction": {
+            "productive": false,
+            "unproductive": "no-WPGxG-pattern"
+        },
+      },
+      "top": 6
+    }
+]
+

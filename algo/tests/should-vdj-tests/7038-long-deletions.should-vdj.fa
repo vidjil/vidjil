@@ -1,5 +1,16 @@
-# IGHV3-30  GGAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTATGCTATGCACTGGGTCCGCCAGGCTCCAGGCAAGGGGCTAGAGTGGGTGGCAGTTATATCATATGATGGAAGTAATAAATACTACGCAGACTCCGTGAAGGGCCGATTCACCATCTCCAG
-#           ||||||||||||||||||||||||||||||||||||||||
+
+
+# IGHV3-30*01                      caggtgCagCtggtggaGtctg-ggggaggcgtggtccagcctg    ==> 4 sub,         213 5'-del
+#                                        .  .       .                     
+# IGHV3/OR16-7*03                  GaggtgCagCtggtggaGtctgCgggAGggcTtggtAcagcctC    ==> 13 sub, 1 ins, 124 5'-del
+#                                  .     .  .       .    .   ..   .    .      .
+# read             CACAGGGGTCCAGTGTCAGGTGTAGGTGGTGGAATCTG-GGGGAGGCGTGGTCCAGCCTG
+
+# IGHV3-30  GGAGGTCCCTgAGACTCTCCTGTGCAGCCTCTGGATTCACcTTCAGTAGCTATGCTATGCACTGGGTCCGCCAGGCTCCAGGCAAGGGGCTAGAGTGGGTGGCAGTTATATCATATGATGGAAGTAATAAATACTACGCAGACTCCGTGAAGGGCCGATTCACCATCTCCAG
+#           ||||||||||.|||||||||||||||||||||||||||||
+# IGHV3/OR16-7*03
+#           ggGggtcccttagactctcctgtgcagcctctgAattcacTttcagtaacgcctggatgagctgggtccgccaggctccagggaaggggctggagtgggttggccgtattaaaagcaaagctaatggtgggacaacagactacgctgcacctgtgaaaggcagat
+#           ||.|||||||.||||||||||||||||||||||.|||||||
 # read      GGAGGTCCCTAAGACTCCCCTGTGCAGCCTCTGGATTCACTGGTCACCGTCTCCTCAGGTAAG
 #                                                  |||||||||||||||||||
 # IGHJ1*01        GCTGAATACTTCCAGCACTGGGGCCAGGGCACCCTGGTCACCGTCTCCTCAG

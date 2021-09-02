@@ -7,9 +7,6 @@ class TestSimple < BrowserTest
     super
     if not defined? $b
       set_browser("/doc/analysis-example1.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
     end
   end
   
@@ -38,6 +35,7 @@ class TestSimple < BrowserTest
     initial_read_nb = $b.info_selected_locus.text
     $b.locus_topleft('TRG').click
     $b.clone_in_scatterplot('0').wait_while(&:present?)
+    $b.update_icon.wait_while(&:present?)
     assert ($b.info_selected_locus.text == "no read"), "When unselected we have no reads"
 
     # Reactivate

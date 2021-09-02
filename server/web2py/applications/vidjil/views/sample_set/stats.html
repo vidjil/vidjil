@@ -17,7 +17,7 @@
     </div>
 </div>
 <div class="db_block_right">
-    config
+    process config
     <span>
         <select id="choose_config" name="config" onchange="db.updateStatsButton()">
             <option value="-1" selected> --- </option>
@@ -43,7 +43,7 @@
     <table class="db_table" id="table" border="1">
         <thead>
             <tr>
-                <td class="column4"> </td>
+                <td class="column_50"> </td>
             {{ for header in fields: }}
 	        {{if isAdmin or header['public']:}}
 	            <td class="{{if header['width']:}}column_{{=header['width']}}{{pass}} pointer"
@@ -58,7 +58,7 @@
         <tbody>
         {{for row in query :}}
             <tr>
-                <td class="column4">
+                <td class="column_50">
                     <input type="checkbox"
                         name="sample_set_ids[]"
                         value="{{=row['sample_set_id']}}"

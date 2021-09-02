@@ -42,9 +42,9 @@ void testGermline() {
                     "8s", "###-###", "7c");
 
   testGermline1(g1);
-  testIndexLoad(g1, KMER_INDEX, 0.24);
+  testIndexLoad(g1, KMER_INDEX, 0.40);
   delete g1->index;
-  testIndexLoad(g1, AC_AUTOMATON, 0.12);
+  testIndexLoad(g1, AC_AUTOMATON, 0.20);
   
   delete g1;
 }

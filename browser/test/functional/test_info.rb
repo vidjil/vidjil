@@ -9,9 +9,6 @@ class TestInfo < BrowserTest
     super
     if not defined? $b
       set_browser("/tools/tests/data/fused_multiple.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
 
       # Make upload menu appear to test the application with this menu too
       $b.execute_script("$('#upload_summary')[0].style.display='block';")
@@ -48,6 +45,10 @@ class TestInfo < BrowserTest
     assert (     $b.info_colorBy.span(:text => "0%").exist? ),             "info colorMethod is on abundance (0%)"
     assert (     $b.info_colorBy.span(:class => "gradient").exist? ),      "info colorMethod is on abundance (gradient class)"
     assert (     $b.info_colorBy.span(:text => "100%").exist? ),           "info colorMethod is on abundance (100%)"
+  end
+
+  def test_003_play_button
+    $b.div(:class => "play_button button").click
   end
 
 

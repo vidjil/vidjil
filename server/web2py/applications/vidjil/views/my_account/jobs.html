@@ -1,0 +1,54 @@
+{{extend 'db_layout.html'}}
+
+<div>
+    <div class="db_block">
+        <div class="db_block_left">
+            search
+            <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('my_account/jobs', {'filter' : this.value, 'group_ids': {{=group_ids}}  } )"
+            onfocus="new VidjilAutoComplete().setupTags(this);"
+            data-needs-atwho="true" data-keys="{{=involved_group_ids}}">
+        </div>
+    </div>
+    <div id="db_table_container" class="db_block">
+        <table class="db_table" id="table">
+            <thead>
+            <tr>
+                <td class="column_50"></td>
+                <td>name</td>
+                <td>filename</td>
+                <td>info</td>
+                <td class="column_150">config</td>
+                <td class="column_100">status</td>
+                <td class="column_150">start time</td>
+            </tr>
+            </thead>
+            {{ for row in result: }}
+                <tr class="pointer" onclick="db.call('sample_set/index', {'id': {{=row.sample_set_id}}, 'config_id': {{=row.config_id}}})">
+                    <td class="uid"><span class="{{=row.sample_type}}_token">{{=row.sample_set_id}}</span></td>
+                    {{ if row.sample_type == 'patient': }}
+                        {{split_name = row._extra[names['patient']].split(' ')}}
+                        {{ name = vidjil_utils.display_names(row.sample_set_id, split_name[0], split_name[1]) }}
+                    {{ else: }}
+                        {{ name = row[row.sample_type].name }}
+                    {{pass}}
+                    <td>{{=name}}</td>
+                    <td>{{=row.filename}}</td>
+                    {{ info = tagdecorator.decorate(row.info, 'tag', 'sequence_file', '/my_account/jobs') }}
+                    <td>{{=tagdecorator.sanitize(info)}}</td>
+                    <td class="column_150">
+                        {{ if row.status == 'COMPLETED':}}
+                            <a href="/?sample_set_id={{=row.sample_set_id}}&config={{=row.config_id}}" onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : {{=row.sample_set_id}}, 'config' :  {{=row.config_id}} }, '{{=row.filename}}' ); }" >
+                                {{=row.config}}
+                            </a>
+                        {{ else: }}
+                            {{=row.config}}
+                        {{ pass }}
+                    </td>
+                    <td class="column_100">{{=row.status}}</td>
+                    <td class="column_150">{{=row.time}}</td>
+                </tr>
+                {{pass}}
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>
+    </div>
+</div>

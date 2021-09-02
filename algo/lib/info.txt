@@ -11,8 +11,8 @@
     * @link             http://www.cs.unc.edu/Research/compgeom/gzstream/
     * @license          LGPL
 
-    json                : Json library
-    * @version          2.1.1
+    json                : JSON for Modern C++
+    * @version          3.9.1
     * @author           Niels Lohmann
     * @link             https://github.com/nlohmann/json
     * @license          MIT

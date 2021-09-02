@@ -23,7 +23,7 @@ QUnit.test("with views", function(assert) {
     var m = new Model();
     
     var sp = new ScatterPlot("visu", m);
-    var segment = new Segment("segment", m);   
+    var segment = new Aligner("segment", m);   
     var list = new List("list", "data", m);
     
     console.log(speedTest(m));

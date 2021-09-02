@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil-algo <http://www.vidjil.org>
-  Copyright (C) 2011-2020 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2021 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -86,12 +86,13 @@
 #define DEFAULT_RATIO_READS_CLONE 0.0
 #define NO_LIMIT "all"
 
+#define COMMAND_DETECT "detect"
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_CLONES "clones"
 #define COMMAND_SEGMENT "designations"
 #define COMMAND_GERMLINES "germlines"
  
-enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
+enum { CMD_DETECT, CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_OUT_DIR "./out/" 
 
@@ -108,7 +109,6 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define COMP_FILENAME "comp.vidjil"
 #define AIRR_SUFFIX ".tsv"
 #define JSON_SUFFIX ".vidjil"
-#define GZ_SUFFIX ".gz"
 
 #define DEFAULT_K      0
 #define DEFAULT_W      50
@@ -130,14 +130,20 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_SEGMENT_COST   VDJ
 
 #define DEFAULT_TRIM 0
+#define DEFAULT_STDIN_READ_NB  100
 
 #define MAX_CLONES_FOR_SIMILARITY 20
+
+#define EVALUE_FILTER_READS 1e6
+#define STR_(X) #X
+#define STR(X) STR_(X)
 
 // warn
 #define WARN_MAX_CLONES 5000
 #define WARN_PERCENT_SEGMENTED 40
 #define WARN_COVERAGE 0.6
 #define WARN_NUM_CLONES_SIMILAR 10
+#define WARN_RATIO_NB_READS 5
 
 // display
 #define CLONES_ON_STDOUT 50
@@ -159,13 +165,14 @@ string usage_examples(char *progname)
   stringstream ss;
   ss
        << "Examples (see " DOCUMENTATION ")" << endl
-       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -r 1  demo/Demo-X5.fa           # (basic usage, detect the locus for each read," << endl
        << "                                                                                               #  cluster reads and report clones starting from the first read (-r 1)," << endl
-       << "                                                                                               #  including unexpected recombinations (-2), assign V(D)J genes and try to detect the CDR3s (-3))" << endl
-       << "  " << progname << " -c clones       -g germline/homo-sapiens.g:IGH    -3     demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
-       << "  " << progname << " -c clones       -g germline/homo-sapiens.g   -2 -3 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
+       << "                                                                                               #  including unexpected recombinations (-2), designate V(D)J genes and analyze CDR3s" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g:IGH           demo/Stanford_S22.fasta   # (restrict to complete recombinations on the IGH locus)" << endl
+       << "  " << progname << " -c clones       -g germline/homo-sapiens.g      -2 -z 20 demo/LIL-L4.fastq.gz      # (basic usage, output detailed V(D)J analysis on the first 20 clones)" << endl
+       << "  " << progname << " --filter-reads  -g germline/homo-sapiens.g               demo/LIL-L4.fastq.gz      # (pre-filter, extract all reads that may have V(D)J recombinations)" << endl
        << "  " << progname << " -c windows      -g germline/homo-sapiens.g   -y 0 -uu -U demo/LIL-L4.fastq.gz      # (splits all the reads into (large) files depending on the detection of V(D)J recombinations)" << endl
-       << "  " << progname << " -c designations -g germline/homo-sapiens.g   -2 -3 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, here on 50 sampled reads)" << endl
+       << "  " << progname << " -c designations -g germline/homo-sapiens.g      -2 -X 50 demo/Stanford_S22.fasta   # (full analysis of each read, here on 50 sampled reads)" << endl
        << "  " << progname << " -c germlines    -g germline/homo-sapiens.g               demo/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
 
@@ -203,7 +210,7 @@ string string_NO_LIMIT(string s)
 int main (int argc, char **argv)
 {
   cout << "# " << PROGNAME << " -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
-       << "# Copyright (C) 2011-2020 by the Vidjil team" << endl
+       << "# Copyright (C) 2011-2021 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille" << endl 
        << "# VidjilNet consortium" << endl 
        << endl
@@ -253,6 +260,7 @@ int main (int argc, char **argv)
                                   - FASTQ (.fq/.fastq, .fq.gz/.fastq.gz)
                                   - BAM (.bam)
                               Paired-end reads should be merged before given as an input to vidjil-algo.
+                              Uncompressed FASTA/FASTQ reads can be given from standard input with ')Z" STDIN_FILENAME R"Z('.
                  )Z")
     -> required() -> type_name("");
 
@@ -262,8 +270,10 @@ int main (int argc, char **argv)
 
   string cmd = COMMAND_CLONES;
   app.add_option("-c", cmd, "command"
-                 "\n  \t\t" COMMAND_CLONES    "  \t locus detection, window extraction, clone clustering (default command, most efficient, all outputs)"
-                 "\n  \t\t" COMMAND_WINDOWS   "  \t locus detection, window extraction"
+
+                 "\n  \t\t" COMMAND_CLONES    "  \t locus/V(D)J detection, window extraction, clone clustering (default command, most efficient, all outputs)"
+                 "\n  \t\t" COMMAND_WINDOWS   "  \t locus/V(D)J detection, window extraction"
+                 "\n  \t\t" COMMAND_DETECT    "  \t locus/V(D)J detection"
                  "\n  \t\t" COMMAND_SEGMENT   "  \t detailed V(D)J designation, without prior clustering (not as efficient)"
                  "\n  \t\t" COMMAND_GERMLINES "  \t statistics on k-mers in different germlines")
     -> group(group) -> type_name("COMMAND");
@@ -289,6 +299,11 @@ int main (int argc, char **argv)
                  "maximal number of reads to process ('" NO_LIMIT "': no limit, default), sampled reads")
     -> group(group) -> transform(string_NO_LIMIT);
 
+  long long force_read_number = NO_LIMIT_VALUE;
+  app.add_option("--read-number", force_read_number,
+                 "estimate for read number used in e-value computation (default: '" NO_LIMIT "', count all reads, but takes " 
+                 + string_of_int(DEFAULT_STDIN_READ_NB) + " for stdin)")
+    -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)";
@@ -412,7 +427,7 @@ int main (int argc, char **argv)
 
   bool keep_unsegmented_as_clone = false;
   app.add_flag("--not-analyzed-as-clones", keep_unsegmented_as_clone,
-               "consider not analyzed reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --not-analyzed-as-clones -AX 20)")
+               "consider not analyzed reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example --not-analyzed-as-clones --all -X 20)")
     -> group(group) -> level();
 
 
@@ -482,7 +497,7 @@ int main (int argc, char **argv)
     ->group(group) -> level();
 
   // ----------------------------------------------------------------------------------------------------------------------
-  group = "Clone analysis (second pass)";
+  group = "Clone analysis (second pass), V/D/J designation, CDR3/JUNCTION analysis with productivity estimation";
 
   double expected_value = THRESHOLD_NB_EXPECTED;
   app.add_option("--e-value,-e", expected_value,
@@ -510,10 +525,6 @@ int main (int argc, char **argv)
 
   bool several_D = false;
   app.add_flag("-d,--several-D", several_D, "try to detect several D (experimental)") -> group(group);
-
-  bool detect_CDR3 = false;
-  app.add_flag("-3,--cdr3", detect_CDR3, "CDR3/JUNCTION detection (requires gapped V/J germlines)")
-    -> group(group);
 
   int alternative_genes = 0;
   app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one", true)
@@ -585,7 +596,12 @@ int main (int argc, char **argv)
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
   bool out_gz = false;
-  app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .vdj.fa.gz, and .vidjil.gz files") -> group(group) -> level();
+  app.add_flag("--gz", out_gz, "output compressed .tsv.gz, .fa.gz, and .vidjil.gz files") -> group(group) -> level();
+
+  bool show_alignments = false;
+  app.add_flag("--show-junction", show_alignments,
+               "show germline genes around the junction (experimental, not showing the exact alignment)")
+    -> group(group) -> level();
 
   bool output_vdjfa = false;
   app.add_flag("--out-vdjfa", output_vdjfa,
@@ -602,6 +618,11 @@ int main (int argc, char **argv)
   app.add_flag("--no-airr", no_airr, "do not output AIRR .tsv") -> group(group) -> level();
   app.add_flag("--no-vidjil", no_vidjil, "do not output clones in .vidjil") -> group(group) -> level();
 
+  bool output_details = false;
+  app.add_flag("--out-details", output_details,
+               "output in AIRR .tsv and in .vidjil more details for clones, even beyond --max-designations")
+    -> group(group) -> level();
+
   int verbose = 0 ;
   app.add_flag_function("--verbose,-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
 
@@ -610,6 +631,18 @@ int main (int argc, char **argv)
 
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Presets";
+
+  app.add_flag_function("--filter-reads", [&](int n) {
+      UNUSED(n);
+      cmd = COMMAND_DETECT;
+      output_segmented = true;
+      expected_value = EVALUE_FILTER_READS ;
+      multi_germline_unexpected_recombinations_12 = true;
+      return true;
+    },
+    "filter possibly huge datasets, with a permissive threshold, to extract reads that may have V(D)J recombinations"
+    PAD_HELP "(equivalent to -c " COMMAND_DETECT " --out-detected --e-value " STR(EVALUE_FILTER_READS) " -2)")
+    -> group(group);
 
   app.add_option("--grep-reads",
     [&only_labeled_windows,&windows_labels_explicit,&output_sequences_by_cluster](CLI::results_t res) {
@@ -637,8 +670,10 @@ int main (int argc, char **argv)
   // Deprecated options
   bool deprecated = false;
 
+#define IGNORED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); cout << endl << "* WARNING: " << text << endl << endl ; })-> level(3);
 #define DEPRECATED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); deprecated = true ; return app.exit(CLI::ConstructionError((text), 1));}) -> level(3);
 
+  IGNORED("-3", "'-3' is deprecated. This option is ignored and has to be removed, CDR3/JUNCTION are now always analyzed on clones under the '--max-designations' threshold");
   DEPRECATED("-t", "'-t' is deprecated, please use '--trim'");
   DEPRECATED("-A", "'-A' is deprecated, please use '--all'");
   DEPRECATED("-a", "'-a' is deprecated, please use '--out-reads'");
@@ -657,6 +692,11 @@ int main (int argc, char **argv)
     command = CMD_CLONES;
   else if (cmd == COMMAND_SEGMENT)
     command = CMD_SEGMENT;
+  else if (cmd == COMMAND_DETECT) {
+    command = CMD_DETECT;
+    no_airr = true;
+    no_vidjil = true;
+  }
   else if (cmd == COMMAND_WINDOWS)
     command = CMD_WINDOWS;
   else if (cmd == COMMAND_GERMLINES)
@@ -721,6 +761,15 @@ int main (int argc, char **argv)
       cout << "# using default sequence file: " << f_reads << endl ;
     }
 
+  bool reads_stdin = (f_reads == STDIN_FILENAME);
+  if (reads_stdin)
+   {
+      if (force_read_number == NO_LIMIT_VALUE)
+        force_read_number = DEFAULT_STDIN_READ_NB ;
+
+      cout << "# reading from stdin, estimating " << force_read_number << " reads" << endl ;
+   }
+
   size_t min_cover_representative = (size_t) min(min_reads_clone, DEFAULT_MIN_COVER_REPRESENTATIVE);
 
   // Check seed buffer  
@@ -766,11 +815,13 @@ int main (int argc, char **argv)
   json j_labels = load_into_map_from_json(windows_labels, windows_labels_json);
 
   switch(command) {
-  case CMD_WINDOWS: cout << "Extracting windows" << endl; 
+  case CMD_DETECT: cout << "Detecting V(D)J recombinations" << endl;
     break;
-  case CMD_CLONES: cout << "Analysing clones" << endl; 
+  case CMD_WINDOWS: cout << "Detecting V(D)J recombinations and extracting windows" << endl;
     break;
-  case CMD_SEGMENT: cout << "Segmenting V(D)J" << endl;
+  case CMD_CLONES: cout << "Detecting V(D)J recombinations and analyzing clones" << endl;
+    break;
+  case CMD_SEGMENT: cout << "Designating V(D)J recombinations" << endl;
     break;
   case CMD_GERMLINES: cout << "Discovering germlines" << endl;
     break;
@@ -807,7 +858,7 @@ int main (int argc, char **argv)
   if (max_clones == NO_LIMIT_VALUE || max_clones > WARN_MAX_CLONES)
     {
       cout << endl
-	   << "* WARNING: " << PROGNAME << " was run with '-A' option or with a large '-z' option" << endl ;
+	   << "* WARNING: " << PROGNAME << " was run with '--all' option or with a large '--max-designations/-z' option" << endl ;
     }
   
   if (command == CMD_SEGMENT)
@@ -841,13 +892,6 @@ int main (int argc, char **argv)
   string f_clones = out_dir + f_basename + CLONES_FILENAME ;
   string f_airr = out_dir + f_basename + AIRR_SUFFIX ;
   string f_json = out_dir + f_basename + JSON_SUFFIX ;
-
-  if (out_gz)
-  {
-    f_clones += GZ_SUFFIX;
-    f_airr += GZ_SUFFIX;
-    f_json += GZ_SUFFIX;
-  }
 
   ostringstream stream_cmdline;
   for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
@@ -955,7 +999,9 @@ int main (int argc, char **argv)
     cout << endl ;
 
     // Number of reads for e-value computation
-    unsigned long long nb_reads_for_evalue = (expected_value > NO_LIMIT_VALUE) ? nb_sequences_in_file(f_reads, true) : 1 ;
+    unsigned long long nb_reads_for_evalue = (expected_value == NO_LIMIT_VALUE) ? 1
+                                           : (force_read_number > NO_LIMIT_VALUE) ? force_read_number
+                                           : nb_sequences_in_file(f_reads, true);
 
     if (expected_value_kmer == NO_LIMIT_VALUE)
     {
@@ -1083,23 +1129,23 @@ int main (int argc, char **argv)
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
   ////////////////////////////////////////
-  if (command == CMD_CLONES || command == CMD_WINDOWS) {
+  if (command == CMD_CLONES || command == CMD_WINDOWS || command == CMD_DETECT) {
 
     //////////////////////////////////
     //$$ Kmer Segmentation
 
     cout << endl;
-    cout << "Loop through reads, ";
+    cout << "Loop through reads, detecting V(D)J recombinations";
 
     if (wmer_size != NO_LIMIT_VALUE)
-      cout << "looking for windows up to " << wmer_size << "bp" << endl;
+      cout << " while extracting windows up to " << wmer_size << "bp" << endl;
     else
-      cout << "considering all analyzed reads as windows" << endl;
+      cout << " while considering all detected reads as windows" << endl;
 
-    ofstream *out_segmented = NULL;
-    ofstream *out_unsegmented = NULL;
-    ofstream *out_unsegmented_detail[STATS_SIZE];
-    ofstream *out_affects = NULL;
+    ostream *out_segmented = NULL;
+    ostream *out_unsegmented = NULL;
+    ostream *out_unsegmented_detail[STATS_SIZE];
+    ostream *out_affects = NULL;
  
     WindowExtractor we(multigermline);
     if (! output_sequences_by_cluster)
@@ -1107,15 +1153,13 @@ int main (int argc, char **argv)
  
     if (output_segmented) {
       string f_segmented = out_dir + f_basename + SEGMENTED_FILENAME ;
-      cout << "  ==> " << f_segmented << endl ;
-      out_segmented = new ofstream(f_segmented.c_str());
+      out_segmented = new_ofgzstream(f_segmented, out_gz);
       we.setSegmentedOutput(out_segmented);
     }
 
     if (output_unsegmented) {
       string f_unsegmented = out_dir + f_basename + UNSEGMENTED_FILENAME ;
-      cout << "  ==> " << f_unsegmented << endl ;
-      out_unsegmented = new ofstream(f_unsegmented.c_str());
+      out_unsegmented = new_ofgzstream(f_unsegmented, out_gz);
       we.setUnsegmentedOutput(out_unsegmented);
     }
 
@@ -1131,8 +1175,7 @@ int main (int argc, char **argv)
           replace(s.begin(), s.end(), '\'', '_');
 
           string f_unsegmented_detail = out_dir + f_basename + "." + s + UNSEGMENTED_DETAIL_FILENAME ;
-          cout << "  ==> " << f_unsegmented_detail << endl ;
-          out_unsegmented_detail[i] = new ofstream(f_unsegmented_detail.c_str());
+          out_unsegmented_detail[i] = new_ofgzstream(f_unsegmented_detail, out_gz);
         }
 
       we.setUnsegmentedDetailOutput(out_unsegmented_detail, output_unsegmented_detail_full);
@@ -1141,8 +1184,7 @@ int main (int argc, char **argv)
 
     if (output_affects) {
       string f_affects = out_dir + f_basename + AFFECTS_FILENAME ;
-      cout << "  ==> " << f_affects << endl ;
-      out_affects = new ofstream(f_affects.c_str());
+      out_affects = new_ofgzstream(f_affects, out_gz);
       we.setAffectsOutput(out_affects);
     }
 
@@ -1154,6 +1196,12 @@ int main (int argc, char **argv)
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
+    if ((float) nb_total_reads / (float) nb_reads_for_evalue > WARN_RATIO_NB_READS)
+    {
+      output.add_warning(W21_DOUBTFUL_MULTIPLIER, "Bad e-value multiplier.", LEVEL_WARN);
+      cout << "  ! The estimated number of reads was far below the actual number of reads" << endl ;
+      cout << "  ! There may be false positives, you should run with an higher --read-number" << endl ;
+    }
 
     //$$ Display statistics on segmentation causes
 
@@ -1187,6 +1235,10 @@ int main (int argc, char **argv)
     
     cout << stream_segmentation_info.str();
 
+
+  // CMD_DETECT stops here
+  if (command == CMD_CLONES || command == CMD_WINDOWS) {
+
 	//////////////////////////////////
 	//$$ Sort windows
 	
@@ -1197,12 +1249,11 @@ int main (int argc, char **argv)
 	//$$ Output windows
 	//////////////////////////////////
 
-	string f_all_windows = out_dir + f_basename + WINDOWS_FILENAME;
-	cout << "  ==> " << f_all_windows << endl << endl ;
-
-	ofstream out_all_windows(f_all_windows.c_str());
-        windowsStorage->printSortedWindows(out_all_windows);
-
+  string f_all_windows = out_dir + f_basename + WINDOWS_FILENAME;
+  std::ostream *out_all_windows = new_ofgzstream(f_all_windows, false);
+  windowsStorage->printSortedWindows(*out_all_windows);
+  delete out_all_windows;
+  cout << endl;
 
     //$$ compute, display and store diversity measures
     json jsonDiversity = windowsStorage->computeDiversity(nb_segmented);
@@ -1272,6 +1323,7 @@ int main (int argc, char **argv)
 	cout << "No clustering" << endl ; 
       }
 
+    // CMD_WINDOWS stops here
 
     //$$ Further analyze some clones (-z)
     if (command == CMD_CLONES) {
@@ -1286,7 +1338,7 @@ int main (int argc, char **argv)
     if (sort_clones.size() == 0)
       {
 	cout << "  ! No clones with current parameters." << endl;
-	cout << "  ! See the 'Limits to report a clone' options (-r, --ratio, -z, -A)." << endl;
+	cout << "  ! See the 'Limits to report and to analyze clones' options (-r, --min-ratio, -z, --all)." << endl;
       }
     else
       {
@@ -1322,9 +1374,8 @@ int main (int argc, char **argv)
     ostream* out_clones = NULL;
     if (output_vdjfa)
     {
-      cout << "  ==> " << f_clones << "   \t(for sequence post-processing with other software)" << endl;
+      out_clones = new_ofgzstream(f_clones, out_gz, "   \t(for sequence post-processing with other software)");
       cout << "!! To get structured data, do not parse the Fasta headers, but rather work on the .vidjil file." << endl;
-      out_clones = new_ofgzstream(f_clones.c_str(), out_gz);
     }
 
     if (output_clone_files)
@@ -1410,7 +1461,7 @@ int main (int argc, char **argv)
             {
               cout << "." ;
               if (!(num_clone % (PROGRESS_POINT_CLONES * PROGRESS_LINE)))
-              cout << setw(10) << num_clone / 1000 << "k clones " << endl;
+              cout << right << setw(10) << num_clone / 1000 << "k clones " << endl;
               cout.flush() ;
             }
         }
@@ -1468,19 +1519,11 @@ int main (int argc, char **argv)
 
         CloneOutput *clone  = new CloneOutput();
         output.addClone(it->first, clone);
+
+        // Basic information that will always be output
+        clone->set("_average_read_length", { fixed_string_of_float(windowsStorage->getAverageLength(it->first), 2) });
         clone->set("sequence", kseg->getSequence().sequence);
         clone->set("_coverage", { repComp.getCoverage() });
-        clone->set("_average_read_length", { windowsStorage->getAverageLength(it->first) });
-        clone->set("_coverage_info", {repComp.getCoverageInfo()});
-        //From KmerMultiSegmenter
-        kseg->toOutput(clone);
-
-        if (repComp.getQuality().length())
-        clone->set("seg", "quality", {
-            {"start", 1},
-            {"stop", kseg->getSequence().sequence.length()},
-            {"seq", repComp.getQuality()}
-        });
 
         if (repComp.getCoverage() < WARN_COVERAGE)
           clone->add_warning(W51_LOW_COVERAGE, "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3), LEVEL_WARN, clone_on_stdout);
@@ -1488,11 +1531,26 @@ int main (int argc, char **argv)
         if (label.length())
           clone->set("label", label) ;
 
-        //$$ If max_clones is reached, we stop here but still outputs the representative
+        //$$ If max_clones is reached, we will not run a FineSegmenter but we will still output the representative
+        bool stop_analysis = ((max_clones >= 0) && (num_clone >= max_clones + 1)
+            && ! windowsStorage->isInterestingJunction(it->first));
 
-        if ((max_clones >= 0) && (num_clone >= max_clones + 1)
-            && ! windowsStorage->isInterestingJunction(it->first))
+        kseg->toOutput(clone, (!stop_analysis || output_details));
 
+        if (!stop_analysis || output_details)
+        {
+        clone->set("_coverage_info", {repComp.getCoverageInfo()});
+        //From KmerMultiSegmenter
+
+        if (repComp.getQuality().length())
+        clone->set("seg", "quality", {
+            {"start", 1},
+            {"stop", kseg->getSequence().sequence.length()},
+            {"seq", repComp.getQuality()}
+        });
+        }
+
+        if (stop_analysis)
           {
             if (clone_on_stdout)
               cout << representative << endl ;
@@ -1523,8 +1581,7 @@ int main (int argc, char **argv)
         if (segmented_germline->seg_method == SEG_METHOD_543)
           seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
 
-        if (detect_CDR3)
-          seg.findCDR3();
+        seg.findCDR3();
 
           
 	// Output representative, possibly segmented... 
@@ -1588,8 +1645,11 @@ int main (int argc, char **argv)
 	      }
 	  }
 	
-  if (clone_on_stdout)
-    cout << endl ;
+      if (clone_on_stdout)
+      {
+        cout << endl ;
+        cerr.flush();
+      }
 
       if (output_clone_files)
       {
@@ -1705,6 +1765,7 @@ int main (int argc, char **argv)
     if (jsonLevenshteinComputed)
       output.set("similarity", jsonLevenshtein);
 
+    } // end if (command == CMD_CLONES) || (command == CMD_WINDOWS)
 
     //$$ Clean
 
@@ -1767,8 +1828,7 @@ int main (int argc, char **argv)
                 if (germline->seg_method == SEG_METHOD_543)
                   s.FineSegmentD(germline, several_D, expected_value_D, fine_evalue_multiplier);
 
-                if (detect_CDR3)
-                  s.findCDR3();
+                s.findCDR3();
 
                 g = germline ;
               }
@@ -1782,7 +1842,12 @@ int main (int argc, char **argv)
         clone->set("germline", g->code);
         nb_segmented_by_germline[g->code]++ ;
 
-        cout << s << endl;        
+        cout << s ;
+
+        if (show_alignments)
+          s.showAlignments(cout);
+
+        cout << endl ;
       }
 
     // Finish output preparation
@@ -1803,7 +1868,7 @@ int main (int argc, char **argv)
 
   //$ Output statistics on filter()
   if (verbose && (kmer_threshold != NO_LIMIT_VALUE)) {
-    cout << "Statistics on clone analysis (-Z):" << endl;
+    cout << "Statistics on filtered genes for clone analysis (--analysis-filter):" << endl;
     for(list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       FilterWithACAutomaton *f =  (*it)->getFilter_5();
       if (f)
@@ -1816,28 +1881,20 @@ int main (int argc, char **argv)
   //$ Output AIRR .tsv(.gz)
   if (!no_airr)
   {
-    cout << "  ==> " << f_airr << "   \t(AIRR output)" << endl;
-    std::ostream *out_airr = new_ofgzstream(f_airr.c_str(), out_gz);
+    std::ostream *out_airr = new_ofgzstream(f_airr, out_gz, "   \t(AIRR output)");
     static_cast<SampleOutputAIRR *>(&output) -> out(*out_airr);
     delete out_airr;
   }
 
   //$ Output .vidjil(.gz) json
-  cout << "  ==> " << f_json ;
-  if (!no_vidjil)
-  {
-    cout << "\t(main output file, may be opened by the Vidjil web application)" << endl;
-  }
-  else
-  {
-    cout << "\t(only metadata, no clone output)" << endl;
-  }
 
-  std::ostream *out_json = new_ofgzstream(f_json.c_str(), out_gz);
+  std::ostream *out_json = new_ofgzstream(f_json, out_gz,
+                                          !no_vidjil
+                                          ? "\t(main output file, may be opened by the Vidjil web application)"
+                                          : "\t(only metadata, no clone output)");
   SampleOutputVidjil *outputVidjil = static_cast<SampleOutputVidjil *>(&output);
 
   outputVidjil -> out(*out_json, !no_vidjil);
-
   // In the case of ogzstream, delete actually calls .close() that is mandatory to make it work
   delete out_json;
 

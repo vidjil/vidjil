@@ -1,0 +1,14 @@
+# Testing --show-junction, after removing ANSI codes
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations --show-junction -x 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta | sed 's/\x1b\[[0-9;]*m//g'
+
+$ Read has correct positions
+1:lcl.FLN1FA002RW 145 .* 222
+
+$ Read is correctly cut
+1:[^ACGT]TGTGT.*GGAAC[^ACGT] 
+
+$ V gene has a correct position and is correctly cut
+1:IGHV3-48.01  276.*[^ACGT]TGTGTATTACTGTGCGAGAGA[.]{20}
+
+$ J gene has a correct position and is correctly cut
+1:IGHJ4.02 .*[.]{20}ACTACTTTGACTACTGGGGCCAGGGAAC[^ACGT] 29 

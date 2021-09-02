@@ -389,7 +389,7 @@ Info.prototype = {
             var span = document.createElement('span');
             span.className = "systemBoxNameMenu "+key;
             if (this.m.system_selected.indexOf(key) == -1)
-                span.className = "systemBoxNameMenu inactive " + key;
+                span.className = "systemBoxNameMenu unchecked " + key;
             span.appendChild(span_system);
             span.appendChild(checkbox);
             span.appendChild(document.createTextNode(key));

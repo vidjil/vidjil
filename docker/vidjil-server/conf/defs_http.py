@@ -10,6 +10,10 @@ SMTP_CREDENTIALS = 'vidjil:smtp_pass' # set to None if no auth required
 FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
 
+### Server healthcare compliance
+### Please see <http://www.vidjil.org/doc/server#healthcare>
+HEALTHCARE_COMPLIANCE = False
+
 ### address for the sql database
 ###
 DB_ADDRESS = 'sqlite://storage.sqlite'

@@ -67,6 +67,7 @@ function Model() {
     this.normalization_mode = this.NORM_FALSE
     this.available_axes = Axis.prototype.available()
 
+    this.search_ratio_limit     = 0.80
     setInterval(function(){return self.updateIcon()}, 100); 
 }
 
@@ -285,7 +286,7 @@ Model.prototype = {
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].reset();
         }
-        
+
     },
     
     
@@ -331,6 +332,9 @@ Model.prototype = {
                     
     }, //end loadGermline
 
+    getCurrentSystem: function(){
+        return this.germlineV.system
+    },
     /**
      * compute some meta-data for each clones
      * */
@@ -380,6 +384,7 @@ Model.prototype = {
                 $("#external_normalization").show();
             }
         }
+        this.displayTop(50) // reset value
     }, //end initClones
 
 changeCloneNotation: function(cloneNotationType, update, save) {
@@ -640,7 +645,11 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             } else if (typeof this.diversity[key][time] != 'undefined') {
         	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
         	    // See #1941 and #3416
-        		return this.diversity[key][time].toFixed(3);
+        		if (this.diversity[key][time] != null) {
+                    return this.diversity[key][time].toFixed(3);
+                } else {
+                    return this.diversity[key][time]
+                }
     	    } else {
     		    return this.diversity[key].toFixed(3);
     	    }
@@ -996,7 +1005,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 div.style.color = ""
             }
         } catch (err) {
-            // ne rien faire.
+            // Don't exist into Qunit pipeline
         }
     },
 
@@ -1347,6 +1356,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (this.waiting_screen_is_on) 
             return true;
 
+        if (this.loading_is_pending == true)
+            return true;
+
         return false;
     },
 
@@ -1429,7 +1441,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (html_label !== null) {
             var count = 0;
             for (var i=0; i<this.clones.length; i++){
-                if (this.clone(i).top < top && this.clone(i).hasSizeConstant() ) count++;
+                if (this.clone(i).top <= top && this.clone(i).hasSizeConstant() ) count++;
                 //todo: test ?
             }
             html_label.innerHTML = count + ' clones (top ' + top + ')' ;
@@ -1703,18 +1715,21 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             tmp[j].sort(compare);
         }
 
-        //reset cluster
+        //reset clusters
         for (var k = 0; k < this.clones.length; k++) {
             this.clusters[k] = []
+            this.clone(k).mergedId = undefined
         }
 
-        //new cluster
+        //new clusters
         for (var l in tmp) {
-            this.clusters[tmp[l][0]] = tmp[l]
-            this.clusters[tmp[l][0]].name = l
+            var cluster = tmp[l]
+            var cluster_main_clone = tmp[l][0]
+            this.clusters[cluster_main_clone] = cluster
+            this.clusters[cluster_main_clone].name = l
 
-            for (var m = 1; j < tmp[l].length; j++) {
-                this.clusters[tmp[l][m]] = []
+            for (var m = 1; m < tmp[l].length; m++) {
+                this.clone(tmp[l][m]).mergedId = cluster_main_clone 
             }
         }
         this.update()
@@ -1755,6 +1770,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         for (var i = 0; i < this.clones.length; i++) {
             this.clusters[i] = [i]
+            this.clone(i).mergedId = undefined
         }
 
         this.update()
@@ -1777,9 +1793,18 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     restoreClusters: function () {
         if (this.clusters_copy.length > 0){
             this.clusters = this.clusters_copy.pop()
+            
+            for (var c = 0; c < this.clones.length; c++) {
+                this.clone(c).mergedId = undefined
+            }
+            for (var i = 0; i < this.clusters.length; i++) {
+                var cluster = this.clusters[i]
+                for (var j = 1; j < cluster.length; j++) {
+                    this.clone(cluster[j]).mergedId = cluster[0]
+                }
+            }
             this.update()
         }
-        
     },
 
 ////////////////////////////////////
@@ -2464,6 +2489,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (top>maxTop) top=maxTop;
         this.tagSelector.style.top=top+"px";
 
+        var tagSelectorW = $(this.tagSelector).outerWidth()
+        var maxLeft = $(window).width() - tagSelectorW;
+        var tmp = e.clientX;
+        if(typeof e.currentTarget !== 'undefined') {
+            tmp = e.currentTarget.offsetLeft + (e.currentTarget.offsetWidth/2);
+        }
+        var left = tmp + (tagSelectorW/2);
+        if (left>maxLeft) left=maxLeft;
+        this.tagSelector.style.left=left+"px";
+
         // If multiple clones Ids; disabled normalization div
         if (clonesIDs.length > 1) {
             $("#"+div.id).addClass("disabledbutton");
@@ -2656,7 +2691,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      */
     findGermlineFromGene: function(gene_name){
         // If germline can be determined from gene name
-        var locus = gene_name.substring(0, 4).toUpperCase()
+        var locus = gene_name.substring(0, 3).toUpperCase()
         if (this.germline[locus] != undefined) {
             return this.germline[locus][gene_name]
         }
@@ -2786,6 +2821,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {boolean} bool - isFiltered value given to all clones
      * */
     reset_filter: function (bool) {
+        if (!bool)
+            this.filter_string = undefined;
+            
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
             c.isFiltered=bool
@@ -2799,23 +2837,30 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {string} str - required string to pass the filter
      * */
     filter: function (str) {
+        this.filter_string = str;
         this.reset_filter(true)
+        str = str.toUpperCase()
         for (var i=0; i<this.clones.length; i++){
             var c = this.clone(i)
-            if (c.getName().toUpperCase().indexOf(str.toUpperCase())               !=-1 ){
-                c.isFiltered = false; 
+            if (c.getName().toUpperCase().indexOf(str)               !=-1 ){
+                c.isFiltered = false; continue;
             }
-            if (c.getSequence().toUpperCase().indexOf(str.toUpperCase())           !=-1 ){
-                c.isFiltered = false; 
+            if (c.getSegAASequence('cdr3').toUpperCase().indexOf(str)!=-1 ){
+                c.isFiltered = false; continue;
             }
-            if (c.getSegAASequence('cdr3').toUpperCase().indexOf(str.toUpperCase())!=-1 ){
-                c.isFiltered = false; 
+            if (c.getSequenceName().toUpperCase().indexOf(str)       !=-1 ){
+                c.isFiltered = false; continue;
             }
-            if (c.getRevCompSequence().toUpperCase().indexOf(str.toUpperCase())    !=-1 ){
-                c.isFiltered = false; 
+
+            var sequence = c.getSequence()
+            var revseq   = c.getRevCompSequence(sequence)
+            var searched_sequence = c.searchSequence(sequence, str)
+            if (searched_sequence != undefined && searched_sequence.ratio >= this.search_ratio_limit){
+                c.isFiltered = false; continue;
             }
-            if (c.getSequenceName().toUpperCase().indexOf(str.toUpperCase())       !=-1 ){
-                c.isFiltered = false; 
+            var searched_revcomp  = c.searchSequence(revseq, str)
+            if (searched_revcomp != undefined && searched_revcomp.ratio >= this.search_ratio_limit){
+                c.isFiltered = false; continue;
             }
     	}
         this.update()
@@ -3041,50 +3086,107 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * TODO : Give the posibility to user to load his own primer set
      */
     populatePrimerSet : function () {
-        this.primersSetData = {"biomed2" : {}, "primer_fictif": {}, "primer_test": {} }
+      console.log("Model; populatePrimerSet()")
+      this.primersSetData = {"biomed2" : {}, "primer_fictif": {}, "primer_test": {}, "ecngs": {}, "ecngs_FR1": {} }
+      // warning: Primer3 are in reverse complement state
+      // WARNING: TRA & IGL are missing
 
-
-      // Seq de primer biomed2 des TCRD
+      //  Primer Biomed2, can include degenerated sequences
       this.primersSetData.biomed2.TRD = {}; // TODO : init by defaultdict equivalent
-      this.primersSetData.biomed2.TRD.primer5 = [];
-      this.primersSetData.biomed2.TRD.primer3 = [];
-      // Seq de primer biomed2 des IGH
-      this.primersSetData.biomed2.IGH = {}; // TODO : init by defaultdict equivalent
-      this.primersSetData.biomed2.IGH.primer5 = ["GGCCTCAGTGAAGGTCTCCTGCAAG", "GTCTGGTCCTACGCTGGTGAAACCC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCGGAGACCCTGTCCCTCACCTG", "CGGGGAGTCTCTGAAGATCTCCTGC", "TCGCAGACCCTCTCACTCACCTGTG", "CTGGGTGCGACAGGCCCCTGGACAA", "TGGATCCGTCAGCCCCCAGGGAAGG", "GGTCCGCCAGGCTCCAGGGAA", "TGGATCCGCCAGCCCCCAGGGAAGG", "GGGTGCGCCAGATGCCCGGGAAAGG", "TGGATCAGGCAGTCCCCATCGAGAG", "TTGGGTGCGACAGGCCCCTGGACAA", "TGGAGCTGAGCAGCCTGAGATCTGA", "CAATGACCAACATGGACCCTGTGGA", "TCTGCAAATGAACAGCCTGAGAGCC", "GAGCTCTGTGACCGCCGCGGACACG", "CAGCACCGCCTACCTGCAGTGGAGC", "GTTCTCCCTGCAGCTGAACTCTGTG", "CAGCACGGCATATCTGCAGATCAG"] ;
-      this.primersSetData.biomed2.IGH.primer3 = ["CCAGTGGCAGAGGAGTCCATTC", "GTCACCGTCTCCTCAGGTA"]; // GTCACCGTCTCCTCAGGTA is a consensus sequence use because official one (CCAGTGGCAGAGGAGTCCATTC) doesn't work properly
+      this.primersSetData.biomed2.TRD.primer5 = ["CAGCCAAATCCTTCAGTCTCAA", "CCCTGCATTATTGATAGCCAT", "ACCCTGCTGAAGGTCCTACAT", "ATGACCAGCAAAATGCAACAG", "GTACCGGATAAGGCCAGATTA", "ATACCGAGAAAAGGACATCTATG", "ATGCAAAAAGTGGTCGCTATT", "TTGTACCTCCAGATAGGTTCC", "CTCACGGGGCTCCACGAAGAG", "GTTCCACGATGAGTTGTGTTC", "GTTCCACAGTCACACGGGTTC"];
+      this.primersSetData.biomed2.TRD.primer5.concat(["TGGGACCCAGGGTGAGGATAT", "AGCGGGTGGTGATGGCAAAGT"]); // D
+      this.primersSetData.biomed2.TRD.primer3 = ["TGTACCTAGAATGCTTTTGCC", "GGAACCTATCTGGAGGTACAA", "CTCTTCGTGGAGCCCCGTGAG", "GAACACAACTCATCGTGGAAC", "GAACCCGTGTGACTGTGGAAC"];
 
+      this.primersSetData.biomed2.TRB = {};
+      this.primersSetData.biomed2.TRB.primer5 = ["TTATGTTTACTGGTATCGTAAGAAGC", "CAAAATGTACTGGTATCAACAA", "ATACATGTACTGGTATCGACAAGAC", "GGCCATGTACTGGTATAGACAAG", "GTATATGTCCTGGTATCGACAAGA", "TAACCTTTATTGGTATCGACGTGT", "GGCCATGTACTGGTACCGACA", "TCATGTTTACTGGTATCGGCAG", "TTATGTTTATTGGTATCAACAGAATCA", "AACTATGTTTTGGTATCGTCA", "CAACCTATACTGGTACCGACA", "TACCCTTTACTGGTACCGGCAG", "ATACTTCTATTGGTACAGAGACAAATCT", "CACGGTCTACTGGTACCAGCA", "CGTCATGTACTGGTACCAGCA", "CACGATGTTCTGGTACCGTCAGCA", "CAGTGTGTCCTGGTACCAACAG", "AACCCTTTATTGGTACCGACA", "ATCCCTTTTTTGGTACCAACAG", "AACCCTTTATTGGTATCAACAG", "CGCTATGTATTGGTACAAGCA", "CTCCCGTTTTCTGGTACAGACAGAC", "CGCTATGTATTGGTATAAACAG"];
+      this.primersSetData.biomed2.TRB.primer5.concat(["GCCAAACAGCCTTACAAAGAC", "TTTCCAAGCCCCACACAGTC"]); // D
+      this.primersSetData.biomed2.TRB.primer3 = ["CACCAGATTCACAGTTGTAGGTAAG", "GACCAGGTTAACCGTTGTAGGTAAG", "AAGTTGGCTCACTGTTGTAGGTAAG", "GAACCCAGCTCTCTGTCTTGGGTATG", "GACTCGACTCTCCATCCTAGGTAAG", "CAGGCTCACTGTGACAGGTATG", "TCACCGTGCTAGGTAAGAAGG", "AGGCTGACCGTACTGGGTAAG", "TGACAGTGCTCGGTAAGCGGG", "TCTCAGTGCTGGGTAAGCTGG", "AGGCTGACCGTGCTGGGCGAG", "CAGGCTCACGGTTACAGGTAAG", "GTGCTCGGTGTGCGCG"]; // complement
+
+      this.primersSetData.biomed2.TRG = {};
+      this.primersSetData.biomed2.TRG.primer5 = ["CTTCCACTTCCACTTTGAAA", "ACCTGGTGAAGTCATACAGTTC", "ACTGGTACCTACACCAGGAGG", "GGAAGGCCCCACAGCRTCTT", "AGCATGGGTAAGACAAGCAA", "CGGCACTGTCAGAAAGGAATC", "GGTTGTGTTGGAATCAGGAGTCA", "TTGCTCAGGTGGGAAGACTA"];
+      this.primersSetData.biomed2.TRG.primer3 = ["cAAcAcTGGTTGTcAcAGGTA","AAAGcTTATcATTAcAGGTAAGT","cATAGTAAcTTcGccTGGTAA"] // complement
+
+      this.primersSetData.biomed2.IGH = {};
+      this.primersSetData.biomed2.IGH.primer5 = ["GGCCTCAGTGAAGGTCTCCTGCAAG", "GTCTGGTCCTACGCTGGTGAAACCC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCGGAGACCCTGTCCCTCACCTG", "CGGGGAGTCTCTGAAGATCTCCTGT", "TCGCAGACCCTCTCACTCACCTGTG", "CTGGGTGCGACAGGCCCCTGGACAA", "TGGATCCGTCAGCCCCCAGGGAAGG", "GGTCCGCCAGGCTCCAGGGAA", "TGGATCCGCCAGCCCCCAGGGAAGG", "GGGTGCGCCAGATGCCCGGGAAAGG", "TGGATCAGGCAGTCCCCATCGAGAG", "TTGGGTGCGACAGGCCCCTGGACAA"] ;
+      this.primersSetData.biomed2.IGH.primer3 = ["CCAGTGGCAGAGGAGTCCATTC", "GTCACCGTCTCCTCAGGTA"]; // complement
+
+      this.primersSetData.biomed2.IGK = {};
+      this.primersSetData.biomed2.IGK.primer5 = ["TCAAGGTTCAGCGGCAGTGGATCTG", "GGCCTCCATCTCCTGCAGGTCTAGTC", "CCCAGGCTCCTCATCTATGATGCATCC", "CAACTGCAAGTCCAGCCAGAGTGTTTT", "CCTGCAAAGCCAGCCAAGACATTGAT", "GACCGATTTCACCCTCACAATTAATCC", ];
+      this.primersSetData.biomed2.IGK.primer5.concat(["CGTGGCACCGCGAGCTGTAGAC"]) // intron
+      this.primersSetData.biomed2.IGK.primer3 = ["GGGACCAAGGTGGAGATCAAACGTAAG", "GGGACACGACTGGAGATTAAACGTAAG"];  // complement
+      this.primersSetData.biomed2.IGK.primer3.concat(["GTCTACAGCTCGCGGTGCCACG"]) // KDE
+
+
+
+      // Primer ECNGS, can include degenerated sequences
+      this.primersSetData.ecngs.IGH = {};
+      this.primersSetData.ecngs.IGH.primer5  = ["CTGGGTGCGACAGGCCCCT", "CAGGCTCCTGGAAAAGGGCTTGA", "CCCCCGGACAAAGGCTTGA", "CCCGGACAAGCGCTTGAG", "CGACAGGCTCGTGGACAAC", "CGTCAGCCCCCAGGAAAGG", "CCGCCAGGCTCCAGGGAA", "ATGCACTGGGTCCGCCAAG", "CCAGGCTCCAGGAAAGGG", "GCCAGGCTCCCGGGAAGG", "CAGGCTCCAGGCAAGGGG", "ATGCACTGGGTCCGTCAAGC", "GCACTGGGTCTGCCAGGCTC", "CCAGGCTTCCGGGAAAGGG", "ATGCACTGGGTCCGGCAAG", "GGCAGCCCCCAGGGAAGG", "GCCAGCACCCAGGGAAGG", "CAGCCACCAGGGAAGGGCC", "AACTGGGTGCGACAGGCCAC", "CTGGGTGCGCCAGATGCC", "GAACTGGATCAGGCAGTCCC", "GGTTAGATCTGTCAGCCCTCAG", "ATGAGCTGGGTCCGCCAAG", "CTGGGTCCGCCAAGCTACAGGAAA", "GGTCCGCCAGGCTCCAGGGAA", "GGTCCGCCAAGCTCCAGGGAA", "TCCGCCAGCCCCCAGGGAAGG"]
+      this.primersSetData.ecngs.IGH.primer5.concat(["GATTCYGAACAGCCCCGAGTCA", "GATTTTGTGGGGGYTCGTGTC", "GTTTGRRGTGAGGTCTGTGTCA", "GTTTRGRRTGAGGTCTGTGTCACT", "CTTTTTGTGAAGGSCCCTCCTR", "GTTATTGTCAGGSGRTGTCAGAC", "GTTATTGTCAGGGGGTGYCAGRC", "GTTTCTGAAGSTGTCTGTRTCAC"])
+      this.primersSetData.ecngs.IGH.primer3  = ["GGTCACCGTCTCCTCAGGTAAG", "GGTCACCGTCTCCTCAGGTGAG"] // complement
+
+      this.primersSetData.ecngs.IGKDE = {};
+      this.primersSetData.ecngs.IGK_DE   = ["GCAGCTGCAGACTCATGAGGAG"]
+      this.primersSetData.ecngs.IGK_INTR = ["GAGTGGCTTTGGTGGCCATGC"]
+
+      this.primersSetData.ecngs.IGK = {};
+      this.primersSetData.ecngs.IGK.primer5 = ["AAGTGGGGTCCCATCAAGGTTCAG", "AGTCCCATCTCGGTTCAGTGGCAG", "GAAACAGGGGTCCCATCAAGGTTC", "TCCCAGACAGATTCAGTGGCAGTG", "CTGGAGTGCCAGATAGGTTCAGTG", "CCCTGGAGTCCCAGACAGGTTCAG", "GCATCCCAGCCAGGTTCAGTG", "GTCCCTGACCGATTCAGTGGCA", "AATCCCACCTCGATTCAGTGGC", "CTCAGGGGTCCCCTCGAGGTT", "AGACACTGGGGTCCCAGCCA"]
+      this.primersSetData.ecngs.IGK.primer3 = ["GGGACCAAGGTGGAGATCAAACGT", "GGGACCAAAGTGGATATCAAACGT", "GGGACACGACTGGAGATTAAACGT"] // complement
+
+      this.primersSetData.ecngs.TRB = {};
+      this.primersSetData.ecngs.TRB.primer5  = ["CTCAGTTGAAAGGCCTGATGGA", "TCAGCTAAGTGCCTCCCAAATT", "GCCAAAGGAACGATTTTCTGCT", "CTGAAGGGTACAGCGTCTCTC", "TTTCTCATCAACCATGCAAGCC", "TGAGCGATTTTTAGCCCAATGC", "GGAGATGCACAAGAAGCGATTC", "ACAAAGGAGAGATCTCTGATGGA", "TCCTCTGAGTCAACAGTCTCCA", "AGGGAGATGTTCCTGAAGGGTA", "CCTGAGGGGTACAGTGTCTCTA", "CTGAGGCCACATATGAGAGTGG", "CAGAATCTCTCAGCCTCCAGAC", "AGTTCCAAATCGCTTCTCACCT", "TCGCTTCTCACCTGAATGCCC", "GGAAACTTCCCTGGTCGATTC", "ACTTCCCTGATCGATTCTCAGC", "TTCCCTAATCGATTCTCAGGGC", "GATTCTCAGGTCTCCAGTTCCC", "CTCAGGTCACCAGTTCCCTAAC", "CCTAGATTTTCAGGTCGCCAGT", "TACAACTGCCAAAGGAGAGGTC", "TACCACTGGCAAAGGAGAAGTC", "TAAAGGAGAAGTCCCGAATGGC", "GGAGAAGTTCCCAATGGCTACA", "CAACGATCGGTTCTTTGCAGTC", "TAAATCAGGGCTGCTCAGTGAT", "CAGTGATCGGTTCTCTGCAGAG", "CTCAACTAGACAAATCGGGGCT", "CTTGAACGATTCTCCGCACAAC", "ATAAAGGAGAAGTCCCCGATGG", "CAAAGGAGAAGTCTCAGATGGC", "ATCGATTTTCTGCAGAGAGGCT", "CCGAGGATCGATTCTCAGCTAA", "CTCTAGATGATTCGGGGATGCC", "GGAAGCATCCCTGATCGATTCT", "CGGTATGCCCAACAATCGATTC", "TGAAGCAGACACCCCTGATAAC"]
+      this.primersSetData.ecngs.TRB.primer5.concat(["CCTCCACTCCCCTCAAAGGA", "CAGACTAACCTCTGCCACCTG"])
+      this.primersSetData.ecngs.TRB.primer3  = ["GGCACCAGACTCACAGTTGTAG", "GGACCAGGTTAACCGTTGTAG", "GGACCAGGTTAACCGTTGTAG", "GGGAAGTTGGCTCACTGTTGTA", "GGGAAGTTGGCTCACTGTTGTA", "GGAACCCAGCTCTCTGTCTTG", "GGAACCCAGCTCTCTGTCTTG", "GGGACTCGACTCTCCATCCTAG", "GGGACTCGACTCTCCATCCTAG", "GACCAGGCTCACTGTGACAG", "GACCAGGCTCACTGTGACAG", "CTCACCGTGCTAGGTAAGAAGG", "CTCACCGTGCTAGGTAAGAAGG", "CTAGGCTGACCGTACTGGGTAA", "CTAGGCTGACCGTACTGGGTAA", "GGCTGACAGTGCTCGGTAAG", "GGCTGACAGTGCTCGGTAAG", "GGCTCTCAGTGCTGGGTAAG", "GGCTCTCAGTGCTGGGTAAG", "GGCTCCTGGTGCTCGGTGA", "GGCTCCTGGTGCTCGGTGA", "GACCGTGCTGGGTGAGTTTTC", "GACCGTGCTGGGTGAGTTTTC", "GGCTGACCGTGCTGGGTGA", "GGCTGACCGTGCTGGGTGA", "CTCACGGTCACAGGTGAGATTC", "CTCACGGTCACAGGTGAGATTC"] // complement
+
+      this.primersSetData.ecngs.TRD = {};
+      this.primersSetData.ecngs.TRD.primer5  = ["GAATGCAAAAAGTGGTCGCTATTC", "TGCAAAGAACCTGGCTGTACT", "TGCAGATTTTACTCAAGGACGG", "GCAAAATGCAACAGAAGGTCG","GATAAAAATGAAGATGGAAGATTCACTGT", "CTCCTTCAATAAAAGTGCCAAGC", "ATTGAAAAGAAGTCAGGAAGACTAAGT", "TCCAGAAAGCAGCCAAATCC"]
+      this.primersSetData.ecngs.TRD.primer5.concat(["AGGGGTATTGTGGATGGCAG", "CCCAGGGAAATGGCACTTTTG"])
+      this.primersSetData.ecngs.TRD.primer3  = ["ACCCGTGTGACTGTGGAA", "AACACAACTCATCGTGGAACC", "ACTGGCATCAAACTCTTCGTG", "AACCTATCTGGAGGTACAACAAC", "TGCAAGTAAGTGTTTCTAGCCA"] // complement
+
+      this.primersSetData.ecngs.TRG = {};
+      this.primersSetData.ecngs.TRG.primer5 = ["GCACAAGGAACAACTTGAGATTG", "TGGAAGCACAAGGAAGAACTTGAGAA", "GCACAGGGAAGAGCCTTAAATT", "CAGGAGGTGGAGCTGGATATT", "CAAGCATGAGGAGGAGCTGGAAATTG", "ACGTCTACATCCACTCTCACC", "CTCTCACTTCAATCCTTACCATCAA", "GCTCACACTTCCACTTCCACTTTGAAAATAAAGT"]
+      this.primersSetData.ecngs.TRG.primer3 = ["CTTTGGCAGTGGAACAACACT", "CAAGGTATTTGGTCCCGGAAC", "TATTTGCTGAAGGGACTAAGCTC", "CGTTTGCAAAAGGGACTAGG"] // complement
+
+      // IGH FR1
+      this.primersSetData.ecngs_FR1.IGH = {}
+      this.primersSetData.ecngs_FR1.IGH.primer5  = ["CTGGGGCTGAGGTGAAGAAG", "GCAGTCTGGAGCAGAGGTGAAAA", "TCACCTTGAAGGAGTCTGGTCC", "AGGTGCAGCTGGTGGAGTC", "GAGGTGCAGCTGTTGGAGTC", "CCAGGACTGGTGAAGCCTTC", "CAGTGGGGCGCAGGACTGTT", "CCAGGACTGGTGAAGCCTCC", "GTACAGCTGCAGCAGTCAGG", "GCTGGTGCAATCTGGGTCTG", "CCTCAGTGAAGGTTTCCTGCAAGG", "AAACCCACAGAGACCCTCACGCTGAC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCACAGACCCTGTCCCTCACCTG", "TCGCAGACCCTCTCACTCACCTGTG"]
+      this.primersSetData.ecngs_FR1.IGH.primer5.concat(["GATTCYGAACAGCCCCGAGTCA", "GATTTTGTGGGGGYTCGTGTC", "GTTTGRRGTGAGGTCTGTGTCA", "GTTTRGRRTGAGGTCTGTGTCACT", "CTTTTTGTGAAGGSCCCTCCTR", "GTTATTGTCAGGSGRTGTCAGAC", "GTTATTGTCAGGGGGTGYCAGRC", "GTTTCTGAAGSTGTCTGTRTCAC"])
+      this.primersSetData.ecngs_FR1.IGH.primer3  = ["GGTCACCGTCTCCTCAGGTAAG", "GGTCACCGTCTCCTCAGGTGAG"] // complement
 
       // test fictif; sequence inclut dans les sequences de clones
       this.primersSetData.primer_fictif.TRD = {};
       this.primersSetData.primer_fictif.TRD.primer5 = ["GATTTTACTCAAGGACGGTT", "GCAAAGAACCTGGCTGT", "AGATTTTACTCAAGGAC"] // V3, V2,
       this.primersSetData.primer_fictif.TRD.primer3 = ["AGGAACCCGTGTGACT", "GAACACAACTCATCGTGGA", "GAACTGGCATCAAACTCTTC"] // J1, J2, J3
 
-      // Test qunits
-      this.primersSetData.primer_test.IGH = {};
-      this.primersSetData.primer_test.IGH.primer5 = [] // IGH seq from model_test.js
-      this.primersSetData.primer_test.IGH.primer3 = []
-      this.primersSetData.primer_test.TRG = {};
-      this.primersSetData.primer_test.TRG.primer5 = ["GGAAGGCCCCACAGCG"] // TRG seq from model_test.js
-      this.primersSetData.primer_test.TRG.primer3 = ["AACTTCGCCTGGTAA"]
     },
 
 
     /*
      * Generic function to add a feature based on sequence for each clones
+     * Sequence can be an array of sequence. In this case, the function will search for best matching sequence in the array before adding feature
      */
     addSegFeatureFromSeq : function (feature, sequence) {
-        if (this.clones.length > 100 ) {
-            numberToProcess = 100
-        } else {
-            numberToProcess = this.clones.length
-        }
+        numberToProcess = this.clones.length
 
+        var best_sequence;
         for (var i = 0; i < numberToProcess; i++) {
-            if ( this.clones[i].hasSequence() ) {
+            var clone = this.clones[i]
+            if ( clone.seg[feature] == undefined && clone.hasSequence() ) {
+                // filter to extend only in one direction; depending of feature naming
+                var extend = ([5, 3].indexOf(feature.substr(feature.length - 1)) != -1) ? feature.substr(feature.length - 1) : undefined
+
                 // TODO : sequence 0 ou undefined ? bypass la fct ?
-                if (this.clones[i].sequence.indexOf(sequence) != -1) {
-                    this.clones[i].addSegFeatureFromSeq(feature, sequence)
+                if (Array.isArray(sequence)){
+                    var values = clone.getBestMatchingSequence(sequence, extend)
+                    best_sequence = values[0]
+                    extend        = values[1]
+                } else {
+                    best_sequence = sequence
                 }
+
+                if (best_sequence == undefined){
+                    continue
+                }
+                clone.addSegFeatureFromSeq(feature, best_sequence, extend)
             }
         }
     },
@@ -3113,21 +3215,17 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             console.log("Primer set unknow")
             return -1
         }
-        primersSet = this.primerSetCurrent
 
         this.cleanPreviousFeature("primer5")
         this.cleanPreviousFeature("primer3")
         for (var i = 0; i < this.system_available.length; i++) {
             var germline = this.system_available[i].replace("+", "")
+            if (this.primersSetData[this.primerSetCurrent][germline] != undefined){
+                primer5 = this.primersSetData[this.primerSetCurrent][germline].primer5
+                primer3 = this.primersSetData[this.primerSetCurrent][germline].primer3
 
-            primer5 = this.primersSetData[this.primerSetCurrent][germline].primer5
-            primer3 = this.primersSetData[this.primerSetCurrent][germline].primer3
-
-            for (var p = 0; p < primer5.length; p++) {
-                this.addSegFeatureFromSeq("primer5", primer5[p])
-            }
-            for (var q = 0; q < primer3.length; q++) {
-                this.addSegFeatureFromSeq("primer3", primer3[q])
+                this.addSegFeatureFromSeq("primer5", primer5)
+                this.addSegFeatureFromSeq("primer3", primer3)
             }
         }
     },
@@ -3149,10 +3247,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.primerSetCurrent = primersSet;
             console.log("Current primer set : "+ this.primerSetCurrent)
             this.switchPrimers();
+            console.log("Switch primers values : "+ this.primerSetCurrent)
             this.update();
             return 0
         }
-        this.update();
     },
 
     
@@ -3259,11 +3357,15 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var timename  = this.samples.original_names[0]
         var distribs = this.distributions.repertoires[timename]
         // Create the list of all available distributions (on the first timepoint, but should be similar for each)
-        for (var i = 0; i < distribs.length; i++) {
-            var distrib = distribs[i]
-            raw_distribs_axes.push( distrib.axes )
+        if (distribs != undefined){
+            for (var i = 0; i < distribs.length; i++) {
+                var distrib = distribs[i]
+                raw_distribs_axes.push( distrib.axes )
+            }
+            console.log("Their are " + raw_distribs_axes.length + " distribs to load")
+        } else {
+            console.log("Their are no distribs to load")
         }
-        console.log("Their are " + raw_distribs_axes.length + " distribs to load")
 
         var same_distribs;
         var current_distrib;
@@ -3511,7 +3613,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     /**
-     * Return a list of samples with selected clones
+     * Return a list of samples with selected clones, in the same order than in stock_order
      * @return {Array} list of samples
      */
     getSampleWithSelectedClones: function(){
@@ -3529,7 +3631,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 }
             }
         }
-        return list
+
+        // Reorder list as in stock_order
+        nlist = []
+        for (var i = 0; i < this.samples.stock_order.length; i++) {
+            pos = this.samples.stock_order[i]
+            if (list.indexOf( pos ) != -1 ){
+                nlist.push( pos )
+            }
+        }
+        return nlist
     },
 
     /**
@@ -3559,5 +3670,105 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
         return name_file
     },
+
+    /**
+     * Get clones data in AIRR format
+     * @param  {Array} cloneIds Array of clone ids to export
+     * @return {string}         return data as a string in airr format
+     */
+    getClonesAsAIRR: function(cloneIds){
+
+        var airr_values = []
+        var time_length = this.samples.order.length
+
+        // Get data as hash for each clone and each time
+        for (var i = 0; i < cloneIds.length; i++) {
+            var cloneId = cloneIds[i]
+            var clone = this.clone(cloneId)
+            for (var time = 0; time < time_length; time++) {
+
+                var val_airr = clone.getAsAirr(time)
+                if (val_airr != undefined){
+                    airr_values.push(clone.getAsAirr(time))
+                }
+            }
+        }
+
+        // Make a concatenation of AIRR keys that can be different between clones
+        var values;
+        var key;
+        list_keys = []
+        for (v = 0; v < airr_values.length; v++) {
+            values = airr_values[v]
+            for (key in values){
+                list_keys.push(key)
+            }
+        }
+        list_keys = Array.from(new Set(list_keys))
+
+        // Concat content as CSV
+        csv = [list_keys]
+        for (var m = 0; m < airr_values.length; m++) {
+            values = airr_values[m]
+            liste = []
+            for (var j = 0; j < list_keys.length; j++) {
+                key = list_keys[j]
+                liste.push( values[key] )
+            }
+            csv.push(liste)
+        }
+
+        return csv.join("\n")
+    },
+
+
+    /**
+     * Get clones data in JSON format
+     * @param  {Array} cloneIds Array of clone ids to export
+     * @return {string}         return data as a string in json format
+     */
+    exportAsJson: function(cloneIds){
+        var data = []
+        for (var i = 0; i < cloneIds.length; i++) {
+            var clone = this.clone(cloneIds[i]).getAsJson()
+            data.push( clone )
+        }
+        return data
+    },
+
+
+
+    /**
+     * Export clones in the expected format
+     * Array of clones can be undefined. In this case, will replace by the list of selected clone
+     * @param  {string} file_format file format; allow to thrown an error in console
+     * @param  {Array}  cloneIds    Array of clones 'to clean'
+     */
+    exportCloneAs: function(file_format, cloneIds){
+        if (cloneIds == undefined || !Array.isArray(cloneIds)){
+            cloneIds = this.getSelected()
+        }
+        if (cloneIds.length == 0){
+            console.error( "Export "+file_format+": please select clones to be exported")
+            return
+        }
+
+        // Get data in correct format
+        if (file_format == "airr") {
+            data = this.getClonesAsAIRR(cloneIds)
+            file_format = "tsv"
+        } else if (file_format == "json") {
+            data = JSON.stringify(this.exportAsJson(cloneIds))
+        } else {
+            console.error("exportCloneAs; unknow file format: " + file_format)
+            return
+        }
+
+        // Download data in a file
+
+        var filename = "clone_" + cloneIds.join("_") + "." + file_format
+        download_csv(data, filename);
+    },
+
 
 }; //end prototype Model

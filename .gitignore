@@ -29,7 +29,6 @@ dep.mk
 /browser/cgi/align.cgi
 /browser/js/conf.js
 node_modules/
-cypress/
 server/web2py/applications/vidjil/errors
 *.bak
 
@@ -50,3 +49,9 @@ germline/IMGT_RELEASE
 vidjil-algo
 
 server/web2py/gluon/packages/dal/
+
+cypress/reports
+cypress/screenshots
+cypress/videos
+
+docker/volumes/

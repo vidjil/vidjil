@@ -258,7 +258,8 @@ ScatterPlot.prototype = {
                 return (self.m.clone(d.id)
                     .getColor());
             })
-            .attr("class", "circle_hidden")     
+            .attr("class", "circle_hidden")   
+            .on("dblclick",function(d){ self.m.displayInfoBox(d.id) });  
     },
 
     /**
@@ -299,7 +300,7 @@ ScatterPlot.prototype = {
     },
 
     includeBar: function(clone, log) {
-        var system_grid = (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') )) 
+        var system_grid = (!this.use_system_grid || (this.use_system_grid && this.m.getCurrentSystem() == clone.get('germline') )) 
         var showVirtual;
 
         // Set if the clone should be show on is virtual/distrib status
@@ -519,7 +520,7 @@ ScatterPlot.prototype = {
 
             var xpos = 0.8
 
-            if (system != this.m.germlineV.system) {
+            if (system != this.m.getCurrentSystem()) {
                 this.systemGrid.label.push({
                     "text": system,
                     "enabled": enabled,
@@ -834,8 +835,8 @@ ScatterPlot.prototype = {
         
         this.updateElemStyle();
 
-        if (this.m.germlineV.system != this.system) {
-            this.system = this.m.germlineV.system
+        if (this.m.getCurrentSystem() != this.system) {
+            this.system = this.m.getCurrentSystem() //
             this.changeSplitMethod(this.splitX, this.splitY, this.mode)
         }
         return this;
@@ -958,7 +959,7 @@ ScatterPlot.prototype = {
         if (xpos  === undefined) node.hasValidAxisPosition = false
         if (ypos  === undefined) node.hasValidAxisPosition = false
 
-        if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
+        if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.getCurrentSystem()) {
             node.use_system_grid = true
             node.x2 = Math.random()*0.01 + this.systemGrid[sys].x * this.resizeW;
             node.y2 = Math.random()*0.01 + this.systemGrid[sys].y * this.resizeH;
@@ -1030,24 +1031,6 @@ ScatterPlot.prototype = {
         this.system_label_update(this.systemGrid.label);
 
         return this;
-    },
-  
-    /**
-     * retrieve and apply selected splitMethod in the axisX menu selector
-     * */
-    changeXaxis: function() {
-        var elem = this.select_x;
-        this.changeSplitMethod(elem.value, this.splitY, this.mode);
-        this.smartUpdate();
-    },
-
-    /**
-     * retrieve and apply selected splitMethod in the axisY menu selector
-     * */
-    changeYaxis: function() {
-        var elem = this.select_y;
-        this.changeSplitMethod(this.splitX, elem.value, this.mode);
-        this.smartUpdate();
     },
     
     /* Fonction permettant de mettre à jour de l'axe des X

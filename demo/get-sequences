@@ -10,6 +10,10 @@ Downloading public data
 - LIL-L4 dataset from
   Giraud, Salson, et al. Fast multiclonal clusterization of V(D)J recombinations
   from high-throughput sequencing. BMC Genomics 2014, 15:409.
+
+- LIL-L3 vidjil fudes files. Analysis of files from
+  Giraud, Salson, et al. Fast multiclonal clusterization of V(D)J recombinations
+  from high-throughput sequencing. BMC Genomics 2014, 15:409.
 EOF
 
 wget -nc -q http://www.vidjil.org/seqs/Stanford_S22.tar.gz
@@ -17,13 +21,24 @@ tar xvzf Stanford_S22.tar.gz
 
 echo "Retrieving demo dataset, please be patient…"
 wget -nc -q http://www.vidjil.org/seqs/LIL-L4.fastq.gz
+
+
 status=$?
 # wget -nc -O exits with 1 when file already exists but thit is is not an
 # error and should not fail the Makefile!
-if [ $status -eq 1 ]; then
-    exit 0
+if [ $status -le 1 ]; then
+    true
 else
     exit $status
 fi
 
 
+echo "Retrieving demo analysis file, please be patient…"
+wget -nc -q http://www.vidjil.org/data/demo_lil_l3_tutorial.vidjil -O ../browser/test/data/demo_lil_l3_tutorial.vidjil
+
+status=$?
+if [ $status -le 1 ]; then
+    true
+else
+    exit $status
+fi

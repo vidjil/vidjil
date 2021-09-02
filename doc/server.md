@@ -179,14 +179,19 @@ You can achieve this with the following steps:
     To do so, you should tell `certbot` to put those files in the `/opt/vidjil/certs` 
     directory (this can be changed in the `docker-compose.yml` file.
     You can generate the certificates with the command `certbot certonly --webroot -w /opt/vidjil/certs -d myvidjil.org`. 
+    You'll need to update the Nginx configuration in `docker/vidjil-client/conf/nginx_web2py`
     Then 
     ```shell
     cp /etc/letsencrypt/live/vdd.vidjil.org/fullchain.pem vidjil-client/ssl/web2py.crt
     cp /etc/letsencrypt/live/vdd.vidjil.org/privkey.pem vidjil-client/ssl/web2py.key
     ```
-    The certificates can be renewed with `certbot renew` but beware to copy the certificates after that.
-    Instead of copying the certificates, you may wish to mount `/etc/letsencrypt` in the Docker image as a volume (*eg.* `/etc/letsencrypt:/etc/nginx/ssl`).
-    On certificate renewal (with `certbot`), you then need to restart the Nginx server.
+    The certificates can be renewed with `certbot renew` to do so, you may wish to mount `/etc/letsencrypt` in the Docker image as a volume (*eg.* `/etc/letsencrypt:/etc/nginx/ssl`).
+    However beware, because you would not be able to start Nginx till the certificates are in place.
+    On certificate renewal (with `certbot`), you then need to restart the Nginx server. The following `cron` line can be used for certificate renewal (you may want to update the paths):
+    ```
+0 0 1 * * root (test -x /usr/bin/certbot && perl -e 'sleep int(rand(14400))' && certbot --webroot -w /opt/vidjil/certs renew && (cd /path/to/vidjil/docker/vidjil/docker; sudo -u vidjil docker-compose stop nginx && sudo -u vidjil docker-compose rm -f nginx && sudo -u vidjil docker-compose up -d nginx)) >> /var/log/certbot.log 2>&1
+  ```
+
     
 If necessary, in `docker-compose.yml`, update `nginx.volumes`, line `./vidjil-client/ssl:/etc/nginx/ssl`, to set the directory with the certificates.
     The same can be done for the `postfix` container.
@@ -205,7 +210,7 @@ forget to make a backup of any file you replace.)
   - Set the desired mail domain and credentials for the `postfix` container and update `vidjil-server/conf/defs.py`
     `SMTP_CREDENTIALS` and `FROM_EMAIL` to match
 
-  - Comment backup/reporter services in `docker-compose.yml`
+  - Comment reporter services in `docker-compose.yml`
 
   - It is avised to first launch  with `docker-compose up mysql`.
 The first time, this container creates the database and it takes some time.
@@ -249,17 +254,19 @@ section of the `docker-compose.yml` file or by stopping the service using port
 
 The following configuration files are found in the `vidjil/docker` directory:
 
-  - `conf/conf.js` various variables for the vidjil browser
-  - `conf/defs.py` various variables for the vidjil server
-  - `conf/gzip.conf` configuration for gzip in nginx
-  - `conf/gzip_static.conf` same as the previous but for static resources
-  - `conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
-  - `sites/nginx` configuration required when running vidjil with nginx
-  - `scripts/nginx-entrypoint.sh` entrypoint for the nginx
-  - `service` (not currently in use)
-  - `scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi
+  - `vidjil-client/conf/conf.js` various variables for the vidjil client
+  - `vidjil-client/conf/nginx_gzip.conf` configuration for gzip in nginx
+  - `vidjil-client/conf/nginx_gzip_static.conf`  same as the previous but for static resources
+
+  - `vidjil-server/conf/defs.py` various variables for the vidjil server
+  - `vidjil-server/conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
+  - `vidjil-server/scripts/nginx-entrypoint.sh` entrypoint for the nginx
+  - `vidjil-server/scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi
 service. Ensures the owner of some relevant volumes are correct within
 the container and starts uwsgi
+
+  - `sites/nginx` configuration required when running vidjil with nginx
+  - `service` (not currently in use)
 
 Here are some notable configuration changes you should consider:
 
@@ -268,6 +275,15 @@ Here are some notable configuration changes you should consider:
 
   - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
     They are used for admin emails monitoring the server an reporting errors.
+    Change also the `hosting` variable in `vidjil-client/conf/confs.js`.
+
+  - <a name='healthcare'></a>
+    If, according yo your local regulations, the server is suitable for hosting clinical data,
+    you may update the `HEALTHCARE_COMPLIANCE` variable in `vidjil-server/conf/defs.py`
+    and the `healthcare` variable in `vidjil-client/conf/confs.js` to remove warnings related to non-healthcare compliance.
+    Updating this variable is the sole responsibility of the institution responsible for the server,
+    and should be done in accordance with the regulations that apply in your country.
+    See also the [hosting options](healthcare.md) offered by the VidjilNet consortium.
 
   - To allow users to select files from a mounted volume,
     set `FILE_SOURCE` and `FILE_TYPES` in `vidjil-server/conf/defs.py`.
@@ -336,8 +352,7 @@ you can look into:
 
 ## Launching manually the backup
 
-The backup should be handled by the backup container. If so, connect to this
-container and run (for a full backup, otherwise add the `-i` option when
+The backup should be handled by the backup container, see [*Making backups* below](#makingbackups). Otherwise you can use the `backup.sh` script by connecting to the `backup` or `uwsgi` container (for a full backup, otherwise add the `-i` option when
 running `backup.sh`):
 
 ```sh
@@ -731,6 +746,8 @@ Now we need to configure the database connection parameters:
     ```
 
 This tells the browser to access the server on the current domain.
+You may also add a variable called `server_id` in order to name different
+instances and environments; it will be displayed in the top menu.
 
   - copy vidjil/server/web2py/applications/vidjil/modules/defs.py.sample
     to vidjil/server/web2py/applications/vidjil/modules/defs.py
@@ -765,9 +782,9 @@ Disks failures or other events could have triggered a read-only partition.
 For some reasons, that are not clear yet, it may happen that workers are not
 assigned any additional jobs even if they don't have any ongoing jobs.
 
-In such a (rare) case, it may be useful to restart web2py schedulers
-with `service web2py-scheduler restart` or `initctl restart web2py-scheduler`
-depending on your installation.
+In such a (rare) case, it may be useful to restart the workers by clicking on
+the *reset workers* link in the Vidjil administration interface. Restarting
+workers won't be performed if jobs are currently running or assigned.
 
 
 ## Debugging Web2py workers
@@ -830,29 +847,23 @@ retrieved.
 
 Web2py and Vidjil are no exception to this rule.
 
-## Making backups
+## <a name="makingbackups"></a> Making backups
 
 The top priority is to backup *files created during the analysis*
 (either by a software or a human).
 Should the data be lost, valuable man-hours would be lost.
-In order to prevent this, we make twice a day incremental backups of the
+In order to prevent this, we make several times a day incremental backups of the
 data stored on the public Vidjil servers.
 
-This does not apply to uploaded files. We public servers that they should
+This does not apply to uploaded files. We inform users that they should
 keep a backup of their original sequence files.
 
-To ease the backup, the `backup.sh` script provides an example.  For this
-script to be ran automatically, it is required that `mysqldump` does not ask
-for a password. The credentials informations should be provided in a `~/.my.cnf` file (in the case of MySQL).
+To ease the backup, the `backup.sh` script provides an example. 
+It can be used through the backup container, for which you have two configuration files to update.
 
-``` conf
-[client]
-user = backup
-password = "strongpassword"
-host = localhost
-```
-It is also advised that the backup user has a read-only access to the database.
+The `docker/backup/conf/backup.cnf` gives the authentication information to the database so that a backup user (read rights only required) can connect to the database.
 
+Then the backup strategy can be configured in the `docker/backup/conf/backup-cron` file. The cron file states how often the backup script will be called. There are three options: backing up all results/analyses since yesterday, since the start of the month, since forever. On top of that the database is exported under two formats (CSV and SQL).
 
 ## Autodelete and Permissions
 

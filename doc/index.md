@@ -23,6 +23,8 @@ sequencing methods and software, called either Rep-Seq or AIRR-Seq.
   - Web platform [user manual](user.md). This is the main user manual of the Vidjil platform.
   - [Libraries and recombinations](locus.md), documentation on library preparation and sequencing as well on detected immune recombinations
   - [Demo access](http://app.vidjil.org/) 🔗 to the patient, experiment and sample public test server
+  - [Hosting options](healthcare.md) and healthcare compliance
+  - [Privacy policy](privacy.md) and GDPR compliance
 
 ### Bioinformatician
   - [Vidjil-algo documentation](vidjil-algo.md), usage from the command-line
@@ -45,8 +47,8 @@ sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 These documentations and additional developer and maintainer documentation
 are available from the [doc/](http://gitlab.vidjil.org/tree/master/doc) directory in the source files,
-including development notes on Vidjil-algo (`dev-algo.md`)
-and on the web application client (`dev-client.md`) and the server (`dev-server.md`).
+including development notes on Vidjil-algo (`dev-algo.md`), on the germlines (`dev-germline.md`),
+on the web application client (`dev-client.md`), and on the server (`dev-server.md`).
 
 ### Further help
 

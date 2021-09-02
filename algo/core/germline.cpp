@@ -230,23 +230,33 @@ Germline::~Germline()
     }
 }
 
+void out_index_seed(ostream &out,
+               const Germline &germline,
+               string seed_x,
+               string affect_x)
+{
+  size_t seed_x_span = seed_x.size();
+
+  out << " " << fixed << setprecision(3) << setw(5)
+      << 100 * germline.index->getIndexLoad(KmerAffect(affect_x, 1, seed_x_span)) << "%"
+      << " l" << left << setw(2) << seed_x.length()
+      << " k" << left << setw(2) << seed_weight(seed_x)
+      << " " << left << setw(15) << seed_x ;
+
+}
+
 ostream &operator<<(ostream &out, const Germline &germline)
 {
   out << setw(5) << left << germline.code << right << " '" << germline.shortcut << "' "
       << " ";
 
-  size_t seed_5_span = germline.seed_5.size();
-  size_t seed_5_w = seed_weight(germline.seed_5);
-  size_t seed_3_span = germline.seed_3.size();
-  size_t seed_3_w = seed_weight(germline.seed_3);
-
   if (germline.index) {
     out << " 0x" << hex << setw(2) << setfill('0') << germline.index->id << dec << setfill(' ') << " " ;
-    out << fixed << setprecision(3) << setw(8)
-        << 100 * germline.index->getIndexLoad(KmerAffect(germline.affect_5, 1, seed_5_span)) << "%" << " "
-        << 100 * germline.index->getIndexLoad(KmerAffect(germline.affect_3, 1, seed_3_span)) << "%";
-    out << " l" << germline.seed_5.length() << " k" << seed_5_w << " " << germline.seed_5 ;
-    out << " l" << germline.seed_3.length() << " k" << seed_3_w << " " << germline.seed_3 ;
+
+    out_index_seed(out, germline, germline.seed_5, germline.affect_5);
+    if (germline.rep_4.size())
+      out_index_seed(out, germline, germline.seed_4, germline.affect_4);
+    out_index_seed(out, germline, germline.seed_3, germline.affect_3);
   }
 
   out << endl;
@@ -421,6 +431,12 @@ void MultiGermline::finish() {
   }
   for (auto germline: germlines) {
     germline->finish();
+  }
+
+  if (germlines.empty())
+  {
+    cerr << ERROR_STRING << "No matching germlines" << endl;
+    exit(2);
   }
 }
 

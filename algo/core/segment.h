@@ -57,6 +57,12 @@
                                           */
 #define FRACTION_ALIGNED_AT_WORST .5 /* Fraction of the sequence that should be aligned before deactivating the heuristics */
 
+#define SHOW_NAME_WIDTH 15
+#define SHOW_MAX_GENE_ALIGNMENT 20
+#define V_COLOR "\033[1;42m"
+#define J_COLOR "\033[1;43m"
+#define NO_COLOR "\033[0m"
+
 using namespace std;
 using json = nlohmann::json;
 
@@ -83,7 +89,11 @@ const char* const segmented_mesg[] = { "?",
                                        "UNSEG too short w",
                                       } ;
 
-
+// Unproductivity causes
+#define UNPROD_TOO_SHORT     "too-short"
+#define UNPROD_OUT_OF_FRAME  "out-of-frame"
+#define UNPROD_STOP_CODON    "stop-codon"
+#define UNPROD_NO_WPGxG      "no-WPGxG-pattern"
 
 /**
  * An alignment box (AlignBox) gather all parameters for a recombined gene segment (V, D, J, other D...)
@@ -142,13 +152,13 @@ class AlignBox
    * Returns the position in the reference string corresponding to the position in the read
    * Preliminary implementation, only works for the start of V and J boxes
    */
-  int posInRef(int i);
+  int posInRef(int i) const;
 
   /**
    * Format the reference string in a given range position, possibly adding the ANSI colors
    * where there is the alignment
    */
-  string refToString(int from, int to);
+  string refToString(int from, int to) const;
 
   /* Identifier, label and sequence of the reference sequence (the best one) */
   int ref_nb;
@@ -158,6 +168,12 @@ class AlignBox
   /* Scores and identifiers of other possible reference sequence */
   vector<pair<int, int> > score;
 };
+
+/**
+ * Show sequence, and possibly alignments against the germline genes, possibly adding the ANSI colors
+ */
+void show_colored_read(ostream &out, Sequence seq, const AlignBox *boxV, const AlignBox *boxJ, int start_5, int end_3);
+void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int max_gene_align);
 
 ostream &operator<<(ostream &out, const AlignBox &box);
 
@@ -190,6 +206,7 @@ protected:
   int JUNCTIONstart, JUNCTIONend;
   string JUNCTIONaa;
   bool JUNCTIONproductive;
+  string JUNCTIONunproductive;
 
   int CDR3start, CDR3end;
   string CDR3nuc;
@@ -349,7 +366,7 @@ class KmerSegmenter : public Segmenter
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
   string getInfoLineWithAffects() const;
-  void toOutput(CloneOutput *clone);
+  void toOutput(CloneOutput *clone, bool details=true);
 
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
@@ -426,8 +443,13 @@ class FineSegmenter : public Segmenter
   void findCDR3();
 
   void checkWarnings(CloneOutput *clone, bool phony=true);
-  void toOutput(CloneOutput *clone);
+
+  /**
+   * Show sequence, with aligments
+   */
+  void showAlignments(ostream &out);
   
+  void toOutput(CloneOutput *clone, bool details=true);
 };
 
 

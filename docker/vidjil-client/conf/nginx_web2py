@@ -1,13 +1,9 @@
-upstream uwsgi {
-    server uwsgi:8000;
-}
-
 server {
         listen 80;
         server_name     $hostname;
 
         location / {
-                return 301 https://$host/browser;
+                return 301 https://$host$request_uri;
         }
 }
 
@@ -26,8 +22,7 @@ server {
         uwsgi_max_temp_file_size 20480m;
         client_max_body_size 20G;
 
-        include /etc/vidjil/server_location.conf;
-        include /etc/vidjil/client_location.conf;        
+        include /etc/vidjil/*_location.conf;  
 
         # Used for Let's Encrypt challenges
         location /.well-known {

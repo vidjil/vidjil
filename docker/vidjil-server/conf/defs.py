@@ -11,6 +11,10 @@ FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
 EMAIL_SUBJECT_START = '[Vidjil]' # Customize the start of the email subject
 
+### Server healthcare compliance
+### Please see <http://www.vidjil.org/doc/server#healthcare>
+HEALTHCARE_COMPLIANCE = False
+
 ### address for the sql database
 ### sqlite (not recommended)
 # DB_ADDRESS = 'sqlite://storage.sqlite'

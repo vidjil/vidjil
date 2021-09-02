@@ -18,6 +18,46 @@ To work with actual data, the easiest way is to copy `js/conf.js.sample` to `js/
 This will unlock the `patients` menu and allow your local client
 to access the public server at <http://app.vidjil.org/>.
 
+## Installation with Docker
+
+This section is intended for people wanting to install a vidjil client using docker
+WITHOUT a vidjil server. If you wish to install a vidjil server altogether with your client
+please refer to the docker section in dev-server.md.
+
+### Setup 
+
+The config file that will be used by the client can be found at vidjil-client/conf/conf.js
+
+Since this installation does not provide a Vidjil server it is recommended to disable the use of databases,
+
+``` json
+"use_database" : false,
+```
+
+or to provide an URL to connect to an existing one online.
+
+``` json
+"db_address" : "https://VIDJILSERVERURL/vidjil",
+```
+
+### Starting the environment
+
+The vidjil Docker environment is managed by Docker Compose since it is composed of 
+several different services, but a single service, nginx, is required to run the vidjil client,
+for a more detailed explanation on other services see dev-server.md.
+
+Ensure your docker-compose.yml contains the correct reference to the
+vidjil-client image you want to use. Usually this will be vidjil/vidjil-client:latest,
+but more tags are available at <https://hub.docker.com/r/vidjil/vidjil/tags/>.
+
+Running the following command will automatically download any missing
+images and start the environment:
+
+``` bash
+docker-compose up nginx
+```
+
+
 ## Client API and permanent URLs
 
 The client can be opened on a data file specified from a `data` attribute,
@@ -32,22 +72,26 @@ Both GET and POST requests are accepted.
 Note that the `browser/index.html` file and the `.vidjil/.analysis` files should be hosted on the same server.
 Otherwise, the server hosting the `.vidjil/.analysis` files must accept cross-domain queries.
 
-The client can also load data from a server (see below, requires logging), as in <http://app.vidjil.org/?set=3241&config=39>
+The client can also load data from a server (see below, requires logging) using url parameters to pass file identifiers,
+as in <http://app.vidjil.org/?set=3241&config=39>
 
 |             |               |
 | ----------- | ------------- |
 | `set=xx`    | sample set id |
-| `config=xx` | config id     |
+| `config=yy` | config id     |
+
+or directly inside the URL for a shortened version, as in <http://app.vidjil.org/3241-39/>
+
 
 Older formats (patients, run…) are also supported for compatibility but deprecated.
-Moreover, the state of the client can be encoded in the URL, as in <http://app.vidjil.org/?set=3241&config=39&plot=v,size,bar&clone=11,31>
+Moreover, the state of the client can be encoded in the URL, as in <http://app.vidjil.org/3241-39/?plot=v,size,bar&clone=11,31>
 
 |                  |                       |
 | ---------------- | --------------------- |
 | `plot=x,y,m`     | plot (x axis, y axis) |
 | `clone=xx,xx,xx` | selected clone ids    |
 
-For `plot` the axis names are found in `browser/js/axes.js`. `m` is optional, and defines the type of plot (either `grid` or `bar`).
+For `plot` the axis names are found in `browser/js/axis_conf.js`. `m` is optional, and defines the type of plot (either `grid` or `bar`).
 
 We intend to encode more parameters in the URL.
 
@@ -239,14 +283,35 @@ In the `console.log`, the field `priority` takes one of those priorities.
 You want to add a dimension in the scatterplot or as a color? Read the
 following.
 
-1.  Scatterplot
+1.  Axis
     
-    In [scatterPlot.js](../browser/js/scatterPlot.js), the `available_axis` object defines the dimensions that
+    In [axes.js](../browser/js/axes.js), the `AXIS_DEFAULT` object defines the dimensions that
     can be displayed. It suffices to add an entry so that it will be proposed
     in the X and Y axis. This kind of way of doing should be generalized to
     the other components.
+
+    Here is some of the settings you can use to customize your axis.
+      - name
+        a short description of the axis
+      - doc
+        a more detailled description of the axis
+      - fct
+        a javascript function that must return a value to be displayed on the axis for a given clone ID
+      - scale
+        used to define numerical axis min/max value 
+      - labels 
+        a list of labels that must always be present on the axis even if no clones has returned the corresponding value.
+      - autofill
+        autofill : true mean the list of label will be created or extended with all unique values returned by the clones.
+        It will also create an adapted scale with the min/max value returned by the clones in case of a numerical axis.
+      - sort
+        you can provide a custom comparison function to sort the labels in a specific order
+
+    There is also other settings that can be used to customize even further labels appearance or display, please check the already defined axes in [axes.js] to learn more about them. 
     
-    The presets are defined in the `preset` object.
+2.  Preset
+
+    The presets are defined in the `preset` object that can be found in [scatterPlot_menu.js].
 
 2.  Color
     
@@ -263,6 +328,64 @@ following.
     
     Finally modify the [index.html](../browser/index.html) file to add the new color method in the
     select box (which is under the `color_menu` ID).
+
+## Sequence panel
+
+### Add a sequence feature
+
+A sequence feature can be used to highlight a specific part of a sequence.
+Here for example is the sequence feature describing how to highlight the V region as available in aligner_layer.js
+
+''' js
+    'V':
+    {
+        'title': function (s,c) { return c.seg["5"].name;},
+        'start': function (s,c) { return c.getSegStart("5"); },
+        'stop': function (s,c) { return c.getSegStop("5"); },
+        'className': "seq_layer_highlight",
+        'style': { 'background': "#4c4" },
+        'enabled': true
+    }
+'''
+each sequence feature contains fields used to customize and locate the feature on the sequence.
+
+  - title : [text] the content of the html title field of the feature.
+  - start : [int] the position of the first nucleotide of the selected region.
+  - stop : [int] the position of the last nucleotide of the selected region .
+  - text : [int] (optional) text to overlay on top of the sequence.
+  - condition : [boolean] (optional) sequence feature will be displayed only if true.
+  - classname : [text] (optional) html classname used to customize the sequence feature look.
+  - style : [object] (optional) additional css properties to further customize the sequence feature.
+  - enabled : [boolean] default visibility
+
+most field can take a static value or a function that will be able to return a specific value for each clone.
+
+''' js
+  function (s,c) { ...}
+'''
+
+ - s : the aligner_sequence object (check aligner_sequence.js to see available functions)
+ - c : the clone object (check clone.js to see functions / data available)
+
+### How to add a sequence feature in the menu
+
+You can set the 'enabled' sequence feature field to true to always display it, or, you can edit the aligner_menu file to add an entry to the sequence panel menu allowing you to enable/disable your sequence feature with a checkbox.
+
+example : the aligner_menu.js entry allowing to enable/disable the V/D/J regions of the sequence
+
+''' js
+  {
+    'text': 'V/D/J genes',
+    'title': 'Highlight V/D/J genes',
+    'layers': ["V","D","J"],
+    'enabled': true
+  }
+'''
+
+ - text : [text] checkbox text to display in the sequence menu panel
+ - title : [text] the content of the html title field of the checkbox.
+ - layers : [array] a list of sequence feature name defined in aligner_layer.js to enable/disable
+ - enabled : [boolean] default checkbox value
 
 ## Classes
 
@@ -512,3 +635,74 @@ webpage.
     If you have to launch `irb` on a remote server without X (only using `Xvfb`)
     you may be interested to use the [redirection over SSH](https://en.wikipedia.org/wiki/Xvfb#Remote_control_over_SSH).
 
+
+### Functional with cypress (release candidate)
+
+To avoid `Watir` limitation on latest versions of browsers, we adopt [Cypress](https://docs.cypress.io/guides/overview/why-cypress#In-a-nutshell).
+The testing pipeline is build on a docker image which include chrome and firefox browser in differents version;
+
+|                              | firefox | Chromium    |
+|:-----------------------------|:--------|:------------|
+|Legacy (until september 2021) | 62.0    | 75.0.3770.0 |
+|Supported                     | 78.0    | 79.0.3945.0 |
+|Latest (as at june 2021)      | 89.0    | 93.0.4524.0 |
+
+We will progressivly convert Watir tests on Cypress.
+
+1.  Instalation
+
+The docker image to used can be build from local repository, or downloaded from dockerhub repository.
+Docker should be installed for these tests.
+
+  1. Local build
+
+  ```bash
+  docker build ./docker/ci  -t "vidjilci/cypress_with_browsers:latest"
+  ```
+
+  2. Dockerhub pull
+  ```bash
+  docker pull "vidjilci/cypress_with_browsers:latest"
+  ```
+
+2. Usage
+
+The default usage of cypress pipeline use docker image and is launch in headless mode. 
+See the makefile rule `functional_browser_cypress`.
+This rule launch the next command:
+  ```bash
+  docker run \
+      -v $(PWD)/browser/test/cypress:/app/cypress \
+      -v $(PWD)/browser/test/data/:/app/cypress/fixtures/data/  \
+      -v $(PWD)/doc/:/app/cypress/fixtures/doc/  \
+      -v $(PWD):/app/vidjil \
+      -v "$(PWD)/docker/ci/cypress_script.bash":"/app/script.bash" \
+      -v "$(PWD)/docker/ci/cypress.json":"/app/cypress.json" \
+      --env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash
+  ```
+
+Various local volumes are mounted for these tests.
+Tests scripts are located in `browser/test/cypress`. 
+In this directory you can find scripts of `support` (shared functions), `fixtures` (datas used during tests) and finally `integration` (testing scripts).
+
+3. Interactive mode
+
+For interactive mode, Cypress should be installed on local computer and some symbolic links should be created.
+More informations will be provided next.
+
+4. Troubleshooting
+
+  1. Xvfb error
+
+  Sometime during developpement, the cypress pipeline can failed. In some case, the XVDB server can still open after test ending and the docker image still open.
+  In this case, stop the docker container.
+  ```bash
+  docker ps
+  docker stop $container_id
+  ```
+
+  2. Right error on produced files (report and screenshot)
+  Files produced by cypress docker are made with root right. These files should be deleted with root privilege.
+  ```bash
+  sudo rm -r browser/test/cypress/report browser/test/cypress/screenshots
+  ```

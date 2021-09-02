@@ -3,6 +3,14 @@
 \section{Tracking clones on several samples}
 
 \label{sec:tracking}
+\begin{verbatim}
+
+
+  ######################################
+  ### Tracking clones on several samples
+  ######################################
+
+\end{verbatim}
 
 Load now some data with several samples, such as again the \textit{Demo LIL-L3} dataset.
 The \textit{time graph} shows the evolution of the top clones of each sample into all the samples.
@@ -11,10 +19,45 @@ Bear in mind that to ensure readability at most 50 curves are displayed in this 
 
 \question{Pass the mouse over the bubbles in the grid or over the lines in the time graph.
   Click on some clone. What happens ?}
+\begin{verbatim}
+  def test_C_samples_01
+    assert ( $b.circle(:id => "visu_circle1").present? ), "clone circle is presentin the graph"
+    $b.circle(:id => "visu_circle1").hover
+    $b.update_icon.wait_while(&:present?)
+
+    ## control effect
+    # XXX don't know why, but class_name and class don't work. Use outer_html.include instead XXX
+    assert ( $b.circle(:id => "visu_circle1").outer_html.include? "circle_focus" ), "focus given to the clone in scatterplot"
+    assert ( $b.li(:class => ["list", "list_focus"]).id == "1"),                    "focus given to the clone in list"
+
+    skip_on_browser('firefox', '32.0', 'See issue #4595')
+
+    assert ( $b.path(:id => "polyline1").outer_html.include? 'graph_focus'),        "focus given to the clone in timeline graph"
+    assert ( $b.div(:class => ["focus", "cloneName"]).text == "interesting clone (IGHV3-9*01 7/CCCGGA/17 IGHJ6*02)"), "clone name is set in focus"
+  end
+\end{verbatim}
 
 \question{Click on the label of the time graph to select another sample.
   What happens to the number of analyzed reads ? to the size of the top clones
   ?}
+\begin{verbatim}
+  def test_C_samples_02
+    ## control init state
+    cinfo = $b.clone_info("1")
+    assert ( cinfo[:size].text == "9.665%"), "correct size at init of test"
+    assert ($b.info_segmented.text == "1 967 338 (82.31%)"), "Correct number of reads segmented(info panel) before change of timepoint"
+    assert ($b.info_selected_locus.text == "1 965 646 (82.24%)"), "Correct number of reads selected(info panel) before change of timepoint"
+
+    ## change time point
+    $b.graph_x_legend("1").click
+    $b.update_icon.wait_while(&:present?)
+    ## control
+    assert ( cinfo[:size].text == "−"), "correct size after change of timeoint"
+    assert ($b.info_segmented.text == "1 892 104 (77.19%)"), "Correct number of reads segmented(info panel) after timepoint changed"
+    assert ($b.info_selected_locus.text == "1 889 135 (77.07%)"), "Correct number of reads selected(info panel) after timepoint changed"
+
+  end
+\end{verbatim}
 
 When switching the time point, the views dynamically update which allows to
 easily track the changes along time. Also note that the number of analyzed
@@ -26,6 +69,29 @@ reads were unsegmented.
 We will look now at how the V gene distribution evolves along the time.
 \question{In the grid, select the preset \com{V distribution}. Then click
   on the \com{play} icon in the upper left part (below the \textit{i} icon).}
+\begin{verbatim}
+  def test_C_samples_03_play_
+    ## control init state
+    $b.graph_x_legend("0").click
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.info_name.text == "LIL-L3-0"), "Correct name of sample before play lunched"
+
+    skip_on_browser('firefox', '32.0', 'See issue #4595')
+
+    ## launch "play" function
+    $b.div(:class => ["play_button", "button"]).click
+    $b.wait_while{ $b.info_name.text == "LIL-L3-0" }
+    assert ($b.info_name.text == "LIL-L3-1"), "Correct name of sample after play lunched, step 1"
+    $b.wait_while{ $b.info_name.text == "LIL-L3-1" }
+    assert ($b.info_name.text == "LIL-L3-2"), "Correct name of sample after play lunched, step 2" 
+    $b.wait_while{ $b.info_name.text == "LIL-L3-2" }
+    assert ($b.info_name.text == "LIL-L3-3"), "Correct name of sample after play lunched, step 3"
+    $b.wait_while{ $b.info_name.text == "LIL-L3-3" }
+    assert ($b.info_name.text == "LIL-L3-4"), "Correct name of sample after play lunched, step 4"
+    $b.wait_while{ $b.info_name.text == "LIL-L3-4" }
+    assert ($b.info_name.text == "LIL-L3-0"), "Correct name of sample after play lunched, step 5; return to first sample"
+  end
+\end{verbatim}
 
 By doing so you can look at how the V distribution changes along the time.
 Of course you can also change the data displayed in the grid to look at
@@ -40,15 +106,74 @@ clones, when having several samples).
 
 \question{Select a sample, order the list by size, and pass the mouse through the list
   of top 50 clones. What happens in the graph when hovering clones that are not in the top 50 ?}
+\begin{verbatim}
+  def test_C_samples_04_lock_order_list
+    l0 = $b.list.div(index: 0)
+    assert ( $b.listLock.attribute_value("class") == "icon-lock-1 list_lock_on"), "lock start in good state (locked)"
+    $b.select(:id => 'list_sort_select').select("size")
+    $b.listLock.click
+
+    assert ( $b.listLock.attribute_value("class") == "icon-lock-open list_lock_off"), "lock is in the good state after click (open)"
+    assert ( l0.id == "listElem_453" ), "opening; correct id of the first element (smaller TRG clones)"
+
+    $b.graph_x_legend("4").click
+    $b.update_icon.wait_while(&:present?)
+    l0 = $b.list.div(index: 0)
+    assert ( l0.id == "listElem_0" ), "opening; correct id of the first element after changing timepoint"
+
+  end
+\end{verbatim}
 
 \bigskip
 
 If you have many samples, you may wish to reorder the samples.
 
 \question{Drag the label of one sample to reorder the samples.}
+\begin{verbatim}
+  def test_C_samples_05
+  end
+\end{verbatim}
 
-\question{Drag one label to the box with the pin icon to hide this sample.}
+It is possible to hide some samples to have a better view of your analysis. This can be very usefull to hide for example samples without a clone.
+Another case of usage is to load a run analysis with a lot of sample, and to restrict the list of active samples to retain only one that share a particular clone.
 
+Open the menu to the upper right corner of graph. you can see that their are 3 buttons and 5 entries in the list corresponding to the list of samples.
+See the effet of the button here
+\question{Hover a sample name. See what happend.}
+\begin{verbatim}
+  def test_C_samples_06
+  end
+\end{verbatim}
+
+\question{It is possible to switch the current sample showed by clicking on corresponding line LIL-L3-3. What happened ?}
+\begin{verbatim}
+  def test_C_samples_07_switch_current_sample_by_click
+    $b.graph_x_legend("0").click
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.info_name.text == "LIL-L3-0"), "Correct name of sample at init"
+    $b.div(:id => 'visu2_menu').hover
+    $b.table(:id => "visu2_table").wait_until(&:present?)
+
+    ## select active sample
+    $b.tr(:id => "visu2_listElem_3").click
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.info_name.text == "LIL-L3-3"), "Correct name of sample after click on the corresponding row"
+
+    ## switch OFF this sample by dbl click
+    $b.tr(:id => "visu2_listElem_3").double_click
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.info_name.text == "LIL-L3-0"), "Correct name of sample after sample switch (double_click)"
+    
+
+    ## switch ON this sample by checkbox click
+    $b.div(:id => 'visu2_menu').hover
+    $b.checkbox(:id => "visu2_listElem_check_3").click
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.info_name.text == "LIL-L3-3"), "Correct name of sample after checkbox switch (activate LIL-L3-3)"
+    
+  end
+\end{verbatim}
+It is also possible to switch on/off the status of a sample by clicking on the checkbox, double clicking on the line, or double clicking on the label in the timeline graph.
 
 \bigskip
 
@@ -58,10 +183,42 @@ compare different research or medical situations.
 \question{In the \com{color by} menu, choose \com{by abundance}. Select a different
   sample. What happens ? Are there some clones with a significant different concentration in both samples ?
 Revert the color by choosing \com{by tag}.}
+\begin{verbatim}
+  def test_C_samples_08_compare_sample
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
+    
+    select_color = $b.select_list(:id => "color_menu_select")
+    select_color.select("abundance")
+    $b.update_icon.wait_while(&:present?)
+
+    assert ( $b.info_colorBy.span(:class => "gradient").exist? ), "color gradient is present"
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(133, 183, 36, 1)' )
+
+    $b.graph_x_legend("4").click ## set current sample
+    $b.update_icon.wait_while(&:present?)
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(183, 62, 36, 1)' )
+  end
+\end{verbatim}
 
 Another option is to directly plot a log-log curve comparing two samples.
 
 \question{In the \com{plot} menu, choose the preset \com{compare two samples}. Click
   successively on two labels in the time graph to select the samples to be compared.
   Are there again some clones with a significant different concentration in both samples ?}
+\begin{verbatim}
+  def test_C_samples_09_compare_sample
+    $b.graph_x_legend("0").click ## set previous sample
+    $b.graph_x_legend("4").click ## set current sample
+    $b.send_keys 9
+    $b.update_icon.wait_while(&:present?)
+
+    assert ( $b.scatterplot_x_label.text == "size" ), "Correct legend for axe X"
+    assert ( $b.scatterplot_y_label.text == "size (other sample)" ), "Correct legend for axe Y"
+
+    assert ( $b.scatterplot_x_legend(0).text == "0"), "correct legend for axe X at pos 0"
+    assert ( $b.scatterplot_x_legend(8).text == "1"), "correct legend for axe X at pos 8 (biggest)"
+    assert ( $b.scatterplot_y_legend(0).text == "0"), "correct legend for axe Y at pos 0"
+    assert ( $b.scatterplot_y_legend(7).text == "0.0000001"),   "correct legend for axe Y at pos 7 (smallest)"
+  end
+\end{verbatim}
 

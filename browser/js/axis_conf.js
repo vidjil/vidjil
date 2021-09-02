@@ -103,7 +103,8 @@ AXIS_DEFAULT = {
         doc:        "length of the consensus sequence",
         fct:        function(clone) {return clone.getSequenceLength()},
         autofill:   true,
-        color:      {   fct: function(t){return d3.interpolatePlasma(t)}}
+        color:      {   fct: function(t){return d3.interpolatePlasma(t)}},
+        isInAligner: true
     },    
     "clone average read length" : {
         name:       "clone average read length",
@@ -117,19 +118,22 @@ AXIS_DEFAULT = {
                         return Math.round(len)
                     },
         autofill:   true,
-        color:      {fct: function(t){return d3.interpolatePlasma(t)}}
+        color:      {fct: function(t){return d3.interpolatePlasma(t)}},
+        isInAligner: true
     },
     "GC content" : {
         name:       "GC content",
         doc:        "%GC content of the consensus sequence of each clone",
         fct:        function(clone) {return clone.getGCContent()},
-        autofill:   true
+        autofill:   true,
+        isInAligner: true
     },
     "N length": {
         name:       "N length",
         doc:        "N length, from the end of the V/5' segment to the start of the J/3' segment (excluded)",
         fct:        function(clone) {return clone.getNlength()},
-        autofill:   true
+        autofill:   true,
+        min_step:   1
     },
     "CDR3 length (nt)": {
         name:       "CDR3 length (nt)",
@@ -145,9 +149,25 @@ AXIS_DEFAULT = {
                         "productive":       {text:"productive"},
                     },
         fct:        function(clone) {return clone.getProductivityName()},
+        pretty:     function(tag) { return icon_pm(tag, "productive", "not productive") },
+        isInAligner: true
+    },
+    "productivity detailed": {
+        name:       "productivity detailed",
+        labels:     {
+                        "productive":       {text:"productive"},
+                        "not-productive":   {text:"not productive"}
+                    },
+        fct:        function(clone) {return clone.getProductivityNameDetailed()},
+        sort :      function(a,b){
+                        var order = ["productive","not-productive","stop-codon","out-of-frame","no-WPGxG-pattern","no CDR3 detected"]
+                        return order.indexOf(a) - order.indexOf(b);
+                    },
+        isInAligner:true,
+        autofill :  true
     },
     "productivity IMGT": {
-        name :      "productivity IMGT",
+        name :      "productivity [IMGT]",
         doc:        "productivity (as computed by IMGT/V-QUEST)",
         labels:     {
             "not productive":   {text:"not productive"},
@@ -155,10 +175,11 @@ AXIS_DEFAULT = {
             "productive":       {text:"productive"},
         },
         fct:        function(clone) { return clone.getProductivityIMGT() },
-        pretty: function(tag) { return icon_pm(tag, "productive", "not productive") }
+        pretty: function(tag) { return icon_pm(tag, "productive", "not productive"); },
+        isInAligner: true
     },
     "VIdentity IMGT": {
-        name:       "VIdentity IMGT",
+        name:       "V identity [IMGT]",
         doc:        "V identity (as computed by IMGT/V-QUEST)",
         fct:        function(clone) { return clone.getVIdentityIMGT() },
         pretty: function(val) {
@@ -175,7 +196,9 @@ AXIS_DEFAULT = {
                 Videntity_info.appendChild(info)
             } else Videntity_info.innerHTML = "&nbsp;";
             return Videntity_info;
+
         },
+        isInAligner: true
     },
     "tag": {
         name:       "tag",
@@ -203,7 +226,7 @@ AXIS_DEFAULT = {
                         min:    0,
                         max:    1
                     },
-                    autofill:   true
+        autofill:   true
     },
     "locus" : {
         doc:        "locus or recombination system",
@@ -217,7 +240,8 @@ AXIS_DEFAULT = {
         fct :       function(clone,t){return clone.getSize(t)},
         scale:      {   mode: "log"},
         autofill:   true,
-        pretty:     function(size) {return createClassedSpan("sizeBox sixChars", (self.m ? self.m : self).getStrAnySize(undefined, size)) }
+        pretty:     function(size) {return createClassedSpan("sizeBox sixChars", (self.m ? self.m : self).getStrAnySize(undefined, size)) },
+        isInAligner:true
     },
     "size (other sample)" : {
         doc:        "ratio of the number of reads of each clone to the total number of reads in the selected locus, on a second sample",
@@ -227,7 +251,8 @@ AXIS_DEFAULT = {
                         mode: "log",
                         reverse: true
                     },
-        autofill:   true
+        autofill:   true,
+        isInAligner:false
     },
     "number of samples" : {
         name:       "number of samples",
@@ -238,11 +263,12 @@ AXIS_DEFAULT = {
                         min: 1,
                         //max : function(){ return self.m.samples.number }
                     },
-        autofill:   true
+        autofill:   true,
+        isInAligner:true
     },
     "primers": {
-        name:       "primers",
-        doc:        "interpolated length, between BIOMED2 primers (inclusive)",
+        name:       "interpolated length between primers",
+        doc:        "interpolated length, between selected primer set (inclusive)",
         fct:        function(clone) {return clone.getSegLengthDoubleFeature('primer5', 'primer3')},
         autofill:   true
     }, 
@@ -266,7 +292,8 @@ AXIS_DEFAULT = {
                         "min": 0
                     },
         fct: function(clone) {return clone.numberInCloneDB()},
-        autofill: true
+        autofill: true,
+        isInAligner: false
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
     "cloneDB patients/runs/sets occurrences": {   
@@ -277,7 +304,8 @@ AXIS_DEFAULT = {
                         "min": 0
                     },
         fct: function(clone) {return clone.numberSampleSetInCloneDB()},
-        autofill: true
+        autofill: true,
+        isInAligner: false
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
 /*  "tsneX": {

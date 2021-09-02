@@ -3,6 +3,7 @@
 
 #define W09_INTERRUPTED                 "W09"   // Program interrupted, output data may be not complete
 #define W20_VERY_FEW_RECOMBINATIONS     "W20"   // Very few V(D)J recombinations found
+#define W21_DOUBTFUL_MULTIPLIER         "W21"   // Doubtful e-value multiplier
 
 #define W50_WINDOW                      "W50"   // Short or shifted window
 #define W51_LOW_COVERAGE                "W51"   // Low coverage

@@ -14,6 +14,7 @@ var SEQ_LENGTH_CLONEDB = 40; // Length of the sequence retrieved for CloneDB
  * */
 function Database(model, address) {
     var self = this;
+    this.uploader = new Uploader()
     
     //check if a default address is available in config.js
     if (typeof config !== 'undefined' && config.use_database !== undefined && config.use_database) {
@@ -37,7 +38,6 @@ function Database(model, address) {
         this.upload = {};
         this.url = []
         this.m = model
-        this.uploader = new Uploader()
         this.build()
         this.m.db = this
         
@@ -291,6 +291,34 @@ Database.prototype = {
         });
     },
 
+    callUrlJson : function(url, args) {
+        var self=this;
+
+        $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: url,
+            data: {'data': JSON.stringify(args)},
+            timeout: DB_TIMEOUT_CALL,
+            xhrFields: {withCredentials: true},
+            success: function (result) {
+                self.display_result(result, url, args)
+                self.connected = true;
+            },
+            error: function (request, status, error) {
+                self.connected = false;
+                if (status === "timeout") {
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                } else {
+                    self.check_cert()
+                }
+                self.warn("callUrlJson: " + status + " - " + url.replace(self.db_address, '') + "?" + self.argsToStr(args))
+            }
+
+        });
+
+    },
+
     callLinkable: function (linkable) {
         var href = linkable.attr('href');
         var type = linkable.data('linkable-type');
@@ -366,26 +394,6 @@ Database.prototype = {
             }
         });
     },
-    
-    
-    pre_process_onChange : function (field) {
-        var $option = $(field).find(":selected");
-        if ($option.attr('required_files') == "1"){
-            $(".file_2").hide();
-            $(".upload_file").val("");
-            $(".upload_field").each(function() {
-                $(this).prop("required", false);
-            });
-        }else{
-            $(".file_2").show();
-            if ($(".is_editing").length == 0) {
-                // Not editing a sample, but creating new ones
-                $(".upload_field").each(function() {
-                    $(this).prop("required", true);
-                });
-            }
-        }
-    },
 
     upload_file_onChange : function (target_id, value) {
         var target = document.getElementById(target_id);
@@ -450,6 +458,7 @@ Database.prototype = {
         //the json result look like a .vidjil file so we load it
         if (res.reads){
             this.m.parseJsonData(result, 100)
+            this.m.file_source = "database";
             this.m.loadGermline()
                 .initClones();
             this.load_analysis(args);
@@ -594,6 +603,12 @@ Database.prototype = {
             $('#upload_form').on('submit', function(e) {
                 e.preventDefault();
 
+                self.update_upload_fields();
+                if (!self.check_upload_fields()) return;
+            
+                $("#submit_samples_btn").addClass("disabledClass");
+                setTimeout(function(){$("#submit_samples_btn").removeClass("disabledClass")}, 3000)
+
                 //clear empty values before submiting data
                 var upload_form = $('#upload_form').serializeObject()
                 if ("file" in upload_form)
@@ -685,54 +700,136 @@ Database.prototype = {
         });
     },
 
-    display_jstree: function(caller_index) {
-        $("#jstree_button").data("index", caller_index);
+    display_jstree: function(file_index, upload_index) {
+        $("#jstree_button").data("file_index", file_index);
+        $("#jstree_button").data("upload_index", upload_index);
         $("#jstree_container").show();
-        $('#file_indicator_' + caller_index).text("");
-        $('#file_filename_' + caller_index).val("");
+        $('#file_indicator_' + file_index + "_" + upload_index).text("");
+        $('#file_filename_' + upload_index).val("");
     },
 
     close_jstree: function() {
         $("#jstree_container").hide();
     },
 
-    select_jstree: function(caller_index) {
-        $('#file_indicator_' + caller_index).text($('#file_indicator').text());
-        $('#file_filename_' + caller_index).val($('#file_filename').val());
+    select_jstree: function(file_index, upload_index)  {
+        $('#file_indicator_' + file_index + "_" + upload_index).text($('#file_indicator').text());
+        $('#file_indicator_' + file_index + "_" + upload_index).prop('title', $('#file_filename').prop("value"));
+        $('#file_filename_' + file_index + "_" + upload_index).val($('#file_filename').val());
         $("#jstree_container").hide();
     },
 
-    toggle_upload_fields: function() {
-        var elem = $('.upload_field');
-        var disable = !elem.prop('disabled');
-        elem.prop('disabled', disable);
-        if (disable) {
-            elem.closest("div").hide();
-            elem.val(undefined);
-            $('.filename').val(undefined);
-        } else {
-            elem.closest("div").show();
+    check_upload_fields: function(){
+        file1 = $("[id^=file_filename_]");
+        file2 = $("[id^=file_filename2_]");
+
+        if ( $("#submitForm_isEditing").prop("checked")){
+            if (this.pprocess_required_file >1)
+                if ((file1[0].value == "" && file2[0].value != "") ||
+                    (file1[0].value != "" && file2[0].value == "")){
+                    console.log({"type": "flash",
+                        "msg" : "missing file: both file fields must be filled if you wish to update current uploaded file.", 
+                        "priority": 2});  
+                    return false;
+                }
+
+        }else{
+            var flag = true;
+            for (var i=0; i<file1.length; i++)
+                if (file1[i].value == "" ) flag = false;
+            
+            if (this.pprocess_required_file >1)
+                for (var j=0; j<file2.length; j++)
+                    if (file2[j].value == "" ) flag = false;
+
+            if (!flag) {
+                console.log({"type": "flash",
+                "msg" : "missing file: please ensure all file fields are filled before submitting.", 
+                "priority": 2});  
+                return false
+            } 
         }
 
-        var pre_process = $('#pre_process');
-        pre_process.prop('disabled', disable);
-        pre_process.closest("div").prop('hidden', disable);
-
-        if (!disable) {
-            this.pre_process_onChange(pre_process);
-        }
+        return true;
     },
 
-    toggle_jstree: function(){
+    update_upload_fields: function() {     
+        //retrieve current radio buttons value
+        var radios = document.getElementsByName("source");
+        for (var i=0; i<radios.length; i++) 
+            if (radios[i].checked)
+                this.upload_source = radios[i].value;
+
+        var option = $("#pre_process").find(":selected");
+        this.pprocess_required_file = parseInt(option.attr('required_files'))
+        
+        // retrieve upload fields
+        var upload_fields = $('.upload_field');
+        var jstree_fields = $('.jstree_field');
+
+        // reset field, display/enable all upload field
+        jstree_fields.closest("div").show();
+        jstree_fields.prop("disabled", false);
+        upload_fields.closest("div").show();
+        upload_fields.prop("disabled", false);
+
+        // hide/disabe unnecessary field for selected upload source
+        if (this.upload_source == "nfs"){
+            upload_fields.closest("div").hide();            
+            upload_fields.prop("disabled", true);
+        }
+        if (this.upload_source == "computer"){
+            jstree_fields.closest("div").hide();            
+            jstree_fields.prop("disabled", true);
+        }
+
+        // hide/disable unnecessary field for selected pre-process
+        if (this.pprocess_required_file == 1){
+            upload_fields.filter('.file_2').closest("div").hide();            
+            upload_fields.filter('.file_2').prop("disabled", true);
+            jstree_fields.closest("div").filter('.file_2').hide();            
+            jstree_fields.filter('.file_2').prop("disabled", true);
+        }
+        
+        this.update_hidden_fields();
+        this.update_jstree();
+    },
+
+    update_hidden_fields:function(){
+        //reset default filename
+        var forms = $('.form_line')
+        for (var i=0; i<forms.length; i++){
+            var filename="";
+            var filename2="";
+            
+                if (this.upload_source == "computer"){
+                    filename = $(forms[i]).find(".upload_field.file_1")[0].value;
+                    var lastIndex = filename.lastIndexOf('\\');
+                    if (lastIndex > 0) filename = filename.substring(lastIndex + 1);
+
+                    filename2 = $(forms[i]).find(".upload_field.file_2")[0].value;
+                    var lastIndex2 = filename2.lastIndexOf('\\');
+                    if (lastIndex2 > 0) filename2 = filename2.substring(lastIndex2 + 1);
+                }   
+    
+                if (this.upload_source == "nfs"){
+                    filename = $(forms[i]).find("[id^=file_indicator_1]").prop('title');
+                    filename2 = $(forms[i]).find("[id^=file_indicator_2]").prop('title');
+                }
+            
+
+            $(forms[i]).find("[id^=file_filename_]")[0].value = filename;
+            $(forms[i]).find("[id^=file_filename2_]")[0].value = filename2;
+        }
+        
+    },
+
+    update_jstree: function(){
         var tree = $('.jstree_field');
-        var enable = tree.prop('hidden');
+        var enable = this.upload_source == "nfs";
         tree.prop('hidden', !enable);
     },
 
-    toggle_file_source: function() {
-        this.toggle_upload_fields();
-        this.toggle_jstree()
-    },
     
     /**
      * reload the current db page
@@ -797,24 +894,30 @@ Database.prototype = {
     },
 
     logout: function() {
-        var self = this;
-        $.ajax({
-            type: "POST",
-            timeout: DB_TIMEOUT_CALL,
-            crossDomain: true,
-            url: self.db_address + 'default/user/logout',
-            xhrField: {withCredentials: true},
-            success: function (result) {
-                db.call("default/home");
-            },
-            error: function (request, status, error) {
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                } else {
-                    self.call("default/home");
-                }
-            }
-        });
+        document.getElementById('login-container').innerHTML = "";
+        var dbc = document.getElementById('db_content');
+        if (dbc) {
+            document.getElementById('db_auth').innerHTML = "";
+            dbc.innerHTML = "";
+        }
+        db.call('default/user/logout');
+    },
+
+    extract_login_info: function() {
+        var login_info = document.getElementById('db_auth_name');
+        if(login_info != null) {
+            var container = document.getElementById('login-container');
+            container.innerHTML = login_info.innerHTML;
+            var logout = document.createElement('a');
+            logout.classList.add('button');
+            logout.text = '(logout)';
+            logout.onclick = function() {db.logout()};
+            container.appendChild(logout);
+        }
+    },
+
+    clear_login_info: function() {
+        document.getElementById('login-container').innerHTML = '';
     },
 
     /*récupére et initialise le browser avec un fichier .data
@@ -907,20 +1010,19 @@ Database.prototype = {
             return
         }
         
-        if (typeof args == 'undefined'){
-            args={}
-            args.custom = this.getListInput("custom_result[]")
-        }
+        if (typeof args == 'undefined') args={};
+        if (typeof args.custom == 'undefined') args.custom = this.getListInput("custom_result[]");
         
         console.log("db : custom data "+list)
         
+
+        var id_vars = ["sample_set_id", "patient_id", "run_id", "config", "custom"];
+        for (var j = 0; j < id_vars.length; j++) {
+            this.m[id_vars[j]] = args[id_vars[j]];
+        }
+
         var arg = this.argsToStr(args)
         this.m.custom = arg;
-
-        var id_vars = ["sample_set_id", "patient_id", "run_id", "config"];
-        for (var j = 0; j < id_vars.length; j++) {
-            this.m[id_vars[j]] = undefined;
-        }
         
         this.m.wait("Comparing samples...")
         $.ajax({
@@ -931,6 +1033,7 @@ Database.prototype = {
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.m.resume()
+                self.m.url_manager.clean();
                 self.display_result(result, "", args);
                 self.connected = true;
             },
@@ -972,6 +1075,12 @@ Database.prototype = {
     
     save_analysis: function () {
         var self = this;
+
+        if (typeof this.m.custom != 'undefined' &&
+            getComputedStyle(document.querySelector('.devel-mode')).display != "block"){
+            console.log({ msg: "'save' has been disabled for custom file. <br/> Use the complete related sample set (patient/run) if you wish to keep your modification.", type: "flash", priority: 2 });
+            return
+        }
         
         if (self.last_file == self.m.db_key){
             
@@ -982,8 +1091,11 @@ Database.prototype = {
             var fd = new FormData();
             fd.append("fileToUpload", blob);
             fd.append("info", self.m.info);
-            fd.append("samples_info", self.m.samples.info);
-            fd.append("samples_id", self.m.samples.id);
+
+            if (self.m.sample != undefined && self.m.samples.info != undefined && self.m.samples.id != undefined){
+                fd.append("samples_info", self.m.samples.info);
+                fd.append("samples_id", self.m.samples.id);
+            }
             
             $.ajax({
                 type: "POST",
@@ -1049,6 +1161,7 @@ Database.prototype = {
         this.div.style.display = "block";
         this.msg.innerHTML = msg;
             
+        this.extract_login_info();
         this.uploader.display()
     },
 
@@ -1226,6 +1339,29 @@ Database.prototype = {
         var $cb=$(cb);
         $('[name^=\"sample_set_ids\"]').prop('checked', $cb.is(':checked'));
         this.updateStatsButton();
+    },
+
+    callGroupStats: function() {
+        var group_ids = [];
+        $('[name^="group_ids"]:checked').each(function() {
+            group_ids.push($(this).val());
+        });
+        this.callUrlJson(DB_ADDRESS + 'my_account/index', {'group_ids': group_ids});
+    },
+
+    callJobStats: function() {
+        var group_ids = [];
+        $('[name^="group_ids"]:checked').each(function() {
+            group_ids.push($(this).val());
+        });
+        this.callUrlJson(DB_ADDRESS + 'my_account/jobs', {'group_ids': group_ids});
+    },
+
+    stopGroupPropagate: function(e) {
+        if(!e) {
+            e = window.event
+        }
+        e.stopPropagation();
     },
 
     // Log functions, to server

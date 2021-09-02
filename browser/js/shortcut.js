@@ -159,6 +159,7 @@ Shortcut.prototype = {
             else
                 m.previousTime();
             break;
+            
         case 39 :   // Right arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
@@ -177,19 +178,27 @@ Shortcut.prototype = {
             if (e.ctrlKey || e.metakey){
                 var d_m = $("#debug_menu")
                 if (d_m.css("display") == "none"){
+                    devel_mode = true;
                     $("#debug_menu").css("display", "");
                     $(".devel-mode").show();
                     $(".beta-mode").show();
                 }else{
+                    devel_mode = false;
                     $("#debug_menu").css("display", "none");
                     $(".devel-mode").hide();
                     $(".beta-mode").hide();
                 }
             }
             break;
+
         case 80 :   //shift+p : open patient
             e.preventDefault()
             if(e.shiftKey || e.metakey) db.reload()
+            break;
+
+        case 76 :   // Ctrl+l
+            e.preventDefault()
+            if (console.toggleLog) console.toggleLog();
             break;
 
         default:

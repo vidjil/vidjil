@@ -1,0 +1,120 @@
+{
+  "germlines": {},
+  "producer": "vidjil fuse",
+  "similarity": [],
+  "timestamp": "2020-09-18 09:37:26",
+  "vidjil_json_version": "2016b",
+  "reads": {
+    "segmented": [
+      550709,
+      149614
+    ],
+    "total": [
+      566483,
+      151007
+    ],
+    "germline": {
+      "unexpected": [
+        0,
+        0
+      ],
+      "TRD+": [
+        317,
+        901
+      ],
+      "TRA": [
+        5,
+        2
+      ],
+      "TRB": [
+        1,
+        0
+      ],
+      "IGH": [
+        64,
+        8
+      ],
+      "TRD": [
+        65,
+        17
+      ],
+      "TRG": [
+        326,
+        141256
+      ],
+      "IGK+": [
+        612,
+        1975
+      ],
+      "TRB+": [
+        0,
+        0
+      ],
+      "IGL": [
+        0,
+        0
+      ],
+      "IGK": [
+        812,
+        2853
+      ],
+      "IGH+": [
+        548489,
+        2592
+      ],
+      "TRA+D": [
+        18,
+        10
+      ]
+    }
+  },
+  "samples": {
+    "log": [
+      "log1",
+      "log2"
+    ],
+    "producer": [
+      "vidjil-algo 2020.06",
+      "vidjil-algo 2020.06"
+    ],
+    "timestamp": [
+      "2020-09-18 09:08:26",
+      "2020-09-18 09:18:37"
+    ],
+    "commandline": [
+      "cmd 1 ",
+      "cmd 2 "
+    ],
+    "number": 2,
+    "original_names": [
+      "file1",
+      "file2"
+    ],
+    "run_timestamp": [
+      "2020-09-17 09:39:41",
+      "2020-09-17 09:59:41"
+    ]
+  },
+  "clones": [
+    {
+      "germline": "IGH+",
+      "id": "TGTGGTATTATGATTACGTTTGGTGTTGAGACTACTGGGGCCAGGGAACC",
+      "reads": [
+        19047,
+        42
+      ],
+      "top": 1,
+      "name": "IGHD3-16*01 18/TGTTGA/8 IGHJ4*02"
+    }
+  ],
+  "clusters": [],
+  "distributions": {
+    "keys": [
+      "clones",
+      "reads"
+    ],
+    "repertoires": {},
+    "categories": {},
+    "filters": {}
+  }
+}
