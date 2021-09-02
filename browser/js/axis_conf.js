@@ -167,7 +167,7 @@ AXIS_DEFAULT = {
         fct:        function(clone) {return clone.getProductivityNameDetailed()},
         sort :      function(a,b){
                         var order = ["productive","not-productive","stop-codon","out-of-frame","no-WPGxG-pattern","no CDR3 detected"]
-                        return order.indexOf(a) - order.indexOf(b);
+                        return sortFromList(a, b, order);
                     },
         isInAligner:true,
         autofill :  true

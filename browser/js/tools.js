@@ -716,6 +716,38 @@ function locus_cmp(valA, valB){
 }
 
 
+
+/**
+ * Compare two labels to sort them against a predefined list of labels.
+ * The list is ordered on a preordered list of labels).
+ * By this way, labels that are not in this list will be added at the end of it.
+ * @param  {String} valA   One label value
+ * @param  {String} valB   Another label value to compare
+ * @param  {Array}  labels List of predefined labels
+ * @return {Number}        A number -1 if A before B, else 1
+ */
+function sortFromList(valA, valB, labels){
+    // Ordered list of all generic label
+    var index_A = labels.indexOf(valA)
+    var index_B = labels.indexOf(valB)
+
+    if (index_A == -1 && index_B == -1){
+        // Neither A or B are present in labels
+        return valA < valB
+    } else if (index_A != -1 && index_B == -1){
+        // Only A is present in labels
+        return -1
+    } else if (index_A == -1 && index_B != -1){
+        // Only B is present in labels
+        return 1
+    } else if (index_A != -1 && index_B != -1){
+        // A & B are present in labels
+        return index_A - index_B
+    }
+    return 0
+}
+
+
 /**
  * Open a new tab and put content in it.
  * This function is use to show fasta export

@@ -199,8 +199,8 @@ QUnit.test("multiple selection", function(assert) {
 
 QUnit.test("axes productivity detailed", function(assert) {
 
-    assert.expect(7);
-    var ready = assert.async(1);
+    assert.expect(16);
+    var ready = assert.async(2);
 
     m = new Model();
     m.parseJsonData(json_data_productivity,100)
@@ -215,14 +215,32 @@ QUnit.test("axes productivity detailed", function(assert) {
 
     var axes_legend = document.getElementById("visu_axis_x_container").childNodes
     setTimeout( function() {
+        assert.equal( axes_legend.length, 12, "Correct number of availabel axis (6*2)" )
         assert.equal( axes_legend[0].__data__.text, "productive", "sp legend productivity; productive")
         assert.equal( axes_legend[1].__data__.text, "not productive",       "sp legend productivity; not productive")
         assert.equal( axes_legend[2].__data__.text, "out-of-frame", "sp legend productivity; out of frame")
         assert.equal( axes_legend[3].__data__.text, "stop-codon",   "sp legend productivity; stop codon")
         assert.equal( axes_legend[4].__data__.text, "no CDR3 detected",   "sp legend productivity; no cdr3 detected")
         assert.equal( axes_legend[5].__data__.text, "no-WPGxG-pattern",   "sp legend productivity; no-WPGxG-pattern")
+        m.clone(0).seg.junction.productive   = false
+        m.clone(0).seg.junction.unproductive = "new_label_of_unproductivity"
+        m.update()
         ready()
     }, 150);
+
+    setTimeout( function() {
+        // New label should be present at the end
+        // Previous label has no occurence and should not be present
+        assert.equal( axes_legend.length, 12, "Correct number of availabel axis (still 6*2)" )
+        assert.equal( axes_legend[0].__data__.text, "productive", "sp legend productivity; productive")
+        assert.equal( axes_legend[1].__data__.text, "not productive",       "sp legend productivity; not productive")
+        assert.equal( axes_legend[2].__data__.text, "new_label_of_unproductivity", "new label present")
+        assert.equal( axes_legend[3].__data__.text, "stop-codon",   "label have new position; stop codon")
+        assert.equal( axes_legend[4].__data__.text, "no CDR3 detected",   "label have new position; no cdr3 detected")
+        assert.equal( axes_legend[5].__data__.text, "no-WPGxG-pattern",   "label have new position; no-WPGxG-pattern")
+        assert.ok(  parseFloat(axes_legend[2].getAttribute("x")) >  parseFloat(axes_legend[5].getAttribute("x")),   "verify position of new label, at the end (by X position)")
+        ready()
+    }, 300);
 })
 
 QUnit.test("Sort axes alphabetical with numeric value", function(assert) {
