@@ -384,6 +384,49 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
 });
 
 
+QUnit.test("getHtmlInfo; feature from script", function(assert) {
+
+    assert.equal(json_clone1.seg.junction.start, 10, "Start junction is 10 in JSON for clone 1");
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    m.initClones()
+
+    m.clones[0].seg_AAA = {
+        "5": {"stop": 99, "name": "IGHV3-11*01", "delRight": 3 },
+        "evalue_right": {"val": "7.79e-111"}
+    }
+    m.clones[0].seg_BBB = {
+        "feature_val": {"val": "7.79e-111"},
+        "feature_str": {"info": "a feature value"},
+        "feature_seq": {"seq": "CARLY" },
+    }
+    
+    html_script = m.clones[0].getHtmlInfo();
+    console.log( html_script)
+    console.log( m.clones[0].sequence)
+
+
+    // Feature_aaa
+    var part_script_aaa_header  = "<tr id='modal_header_Results_of_script_AAA_'><td class='header' colspan='5'>Results of script 'AAA'</td></tr>"
+    assert.includes(html_script, part_script_aaa_header, "Correct row for feature script: header_aaa")
+    var part_script_aaa_content_name = "<tr id='modal_line_5'><td id='modal_line_title_5'>5</td><td colspan='4' id='modal_line_value_5'>IGHV3-11*01</td></tr>"
+    assert.includes(html_script, part_script_aaa_content_name, "Correct row for feature script: aaa/name")
+    var part_script_aaa_content_val = "<tr id='modal_line_evalue_right'><td id='modal_line_title_evalue_right'>evalue_right</td><td colspan='4' id='modal_line_value_evalue_right'>7.79e-111</td></tr>"
+    assert.includes(html_script, part_script_aaa_content_val, "Correct row for feature script: aaa/val")
+
+    // Feature_bbb
+    var part_script_bbb_header  = "<tr id='modal_header_Results_of_script_BBB_'><td class='header' colspan='5'>Results of script 'BBB'</td></tr>"
+    assert.includes(html_script, part_script_bbb_header, "Correct row for feature script: header bbb")
+    var part_script_bbb_content_info = "<tr id='modal_line_feature_val'><td id='modal_line_title_feature_val'>feature_val</td><td colspan='4' id='modal_line_value_feature_val'>7.79e-111</td></tr>"
+    assert.includes(html_script, part_script_bbb_content_info, "Correct row for feature script: bbb/info")
+    var part_script_bbb_content_val = "<tr id='modal_line_feature_str'><td id='modal_line_title_feature_str'>feature_str</td><td colspan='4' id='modal_line_value_feature_str'>a feature value</td></tr>"
+    assert.includes(html_script, part_script_bbb_content_val, "Correct row for feature script: bbb/val")
+    var part_script_bbb_content_seq = "<tr id='modal_line_feature_seq'><td id='modal_line_title_feature_seq'>feature_seq</td><td colspan='4' id='modal_line_value_feature_seq'>CARLY</td></tr>"
+    assert.includes(html_script, part_script_bbb_content_seq, "Correct row for feature script: bbb/seq")
+
+});
+
 QUnit.test('clone: get info from seg', function(assert) {
     var m = new Model();
     m.parseJsonData(json_data)

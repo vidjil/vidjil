@@ -1536,6 +1536,7 @@ Clone.prototype = {
      *
      * */
     getHtmlInfo: function () {
+        var self = this;
         var isCluster = this.getCluster().length
         var time_length = this.m.samples.order.length
         var html = ""
@@ -1559,6 +1560,32 @@ Clone.prototype = {
             }
             div += "</tr>" ;
             return div;
+        }
+
+        var row_cast_content = function(title, content) {
+            if (content == undefined) {
+                return ""
+            } else if (typeof(content) != "object") {
+                return row_1(title, content.toString())
+            } else if (Object.keys(content).indexOf("info") != -1) {
+                // Textual field
+                return row_1(title, content.info)
+            } else if (Object.keys(content).indexOf("name") != -1) {
+                // Textual field
+                return row_1(title, content.name)
+            } else if (Object.keys(content).indexOf("val") != -1) {
+                // Numerical field
+                return row_1(title, content.val)
+            } else if (Object.keys(content).indexOf("seq") != -1) {
+                // Sequence field with pos
+                return row_1(title, content.seq)
+            } else {
+                // Sequence field
+                var nt_seq = self.getSegNtSequence(title);
+                if (nt_seq !== '') {
+                    return row_1(title, self.getSegNtSequence(title))
+                }
+            }
         }
 
         if (isCluster) {
@@ -1749,20 +1776,9 @@ Clone.prototype = {
         // Other seg info
         var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
         for (var s in this.seg) {
-            if (exclude_seg_info.indexOf(s) == -1 && this.seg[s] instanceof Object) {
-		if ("info" in this.seg[s]) {
-		    // Textual field
-		    html += row_1(s, this.seg[s].info)
-		} else if ("val" in this.seg[s]) {
-		    // Numerical field
-		    html += row_1(s, this.seg[s].val)
-		} else {
-		    // Sequence field
-		    var nt_seq = this.getSegNtSequence(s);
-		    if (nt_seq !== '') {
-			html += row_1(s, this.getSegNtSequence(s))
-		    }
-		}
+            if (exclude_seg_info.indexOf(s) == -1 &&
+                this.seg[s] instanceof Object ) {
+                  html += row_cast_content(s, this.seg[s])
             }
         }
         if (typeof this.seg.junction != 'undefined' &&
@@ -1787,19 +1803,35 @@ Clone.prototype = {
             }
         }
         
-        //IMGT info
+        // Result of external tools (inside seg and already defined)
+        // Can't be bypass as already used
         var other_infos = {"imgt": "<a target='_blank' href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a>",
                            "clonedb": "<a target='_blank' href='http://ecngs.vidjil.org/clonedb'>CloneDB</a> "+ (this.numberSampleSetInCloneDB() > 0 ? "<br /> A similar clone exists in "+this.numberSampleSetInCloneDB()+" other patients/runs/sets" : "")};
-        for (var external_tool in other_infos) {
-            if (typeof this.seg[external_tool] != 'undefined' &&
-                this.seg[external_tool] !== null) {
-                html += header("Results of "+other_infos[external_tool])
-                for (var item in this.seg[external_tool]) {
-                    if (! (this.seg[external_tool][item] instanceof Object) &&
-                        ! (this.seg[external_tool][item] instanceof Array)) {
-                        html += row_1(item, this.seg[external_tool][item])
-                    }
-                }
+        for (s in this.seg) {
+            if (this.seg[s] instanceof Object &&
+                other_infos[s] != undefined ) {
+                  html += header("Results of "+other_infos[s])
+                  var keys = Object.keys(this.seg[s]).sort();
+                  for (var key_seg = 0; key_seg < keys.length; key_seg++) {
+                      var sub = keys[key_seg]
+                      html += row_cast_content(sub, this.seg[s][sub])
+                  }
+            }
+        }
+
+        // Result of external scripts (defined as seg_xxx)
+        // TODO: refactor with classic seg field
+        var this_keys = Object.keys(this).sort();
+        for (var thiskey_pos = 0; thiskey_pos < this_keys.length; thiskey_pos++) {
+            var thiskey = this_keys[thiskey_pos]
+            if (this[thiskey] instanceof Object &&
+                thiskey.indexOf("seg_") != -1 && thiskey != "seg_stat") {
+                  html += header("Results of script '"+thiskey.substring(4)+"'")
+                  var keys_seg = Object.keys(this[thiskey]).sort();
+                  for (var key_segthis = 0; key_segthis < keys_seg.length; key_segthis++) {
+                      var subthis = keys_seg[key_segthis]
+                      html += row_cast_content(subthis, this[thiskey][subthis])
+                  }
             }
         }
 

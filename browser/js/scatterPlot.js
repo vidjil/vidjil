@@ -258,7 +258,8 @@ ScatterPlot.prototype = {
                 return (self.m.clone(d.id)
                     .getColor());
             })
-            .attr("class", "circle_hidden")     
+            .attr("class", "circle_hidden")   
+            .on("dblclick",function(d){ self.m.displayInfoBox(d.id) });  
     },
 
     /**
@@ -1030,24 +1031,6 @@ ScatterPlot.prototype = {
         this.system_label_update(this.systemGrid.label);
 
         return this;
-    },
-  
-    /**
-     * retrieve and apply selected splitMethod in the axisX menu selector
-     * */
-    changeXaxis: function() {
-        var elem = this.select_x;
-        this.changeSplitMethod(elem.value, this.splitY, this.mode);
-        this.smartUpdate();
-    },
-
-    /**
-     * retrieve and apply selected splitMethod in the axisY menu selector
-     * */
-    changeYaxis: function() {
-        var elem = this.select_y;
-        this.changeSplitMethod(this.splitX, elem.value, this.mode);
-        this.smartUpdate();
     },
     
     /* Fonction permettant de mettre à jour de l'axe des X

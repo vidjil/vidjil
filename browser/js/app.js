@@ -13,6 +13,7 @@ requirejs.config({
 require(['d3'], function(d3) {window.d3 = d3;});
 require(["jquery",
          "js/lib/jquery.form",
+         "js/lib/jquery-ui",
          "js/lib/file",
          "js/lib/tsne",
          "js/lib/jstree.min",
