@@ -161,6 +161,9 @@ AXIS_DEFAULT = {
         fct:        function(clone) {return clone.getProductivityNameDetailed()},
         sort :      function(a,b){
                         var order = ["productive","not-productive","stop-codon","out-of-frame","no-WPGxG-pattern","no CDR3 detected"]
+                        if (order.indexOf(a) == -1 && order.indexOf(b) == -1) {return a > b}
+                        else if (order.indexOf(a) == -1) {return 1}
+                        else if (order.indexOf(b) == -1) {return 0}
                         return order.indexOf(a) - order.indexOf(b);
                     },
         isInAligner:true,
