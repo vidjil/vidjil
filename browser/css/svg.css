@@ -24,6 +24,7 @@ body {
   display: flex;
   flex-flow: column;
   overflow-x: hidden;
+  background: #333333;
 }
 body,
 svg {
@@ -32,7 +33,6 @@ svg {
   height: 100%;
   margin: 0px;
   color: #777777;
-  background: #333333;
 }
 .cloneName {
   font-family: Arial Bold;
@@ -1099,10 +1099,6 @@ span.warningReads {
   width: 0px;
   height: 0px;
 }
-.sp_menu {
-  border-bottom: solid;
-  border-right: solid;
-}
 .visu2_menu {
   border-top: solid;
   border-left: solid;
@@ -1113,29 +1109,45 @@ span.warningReads {
 }
 .sp_menu,
 .visu2_menu {
-  min-width: 22px;
-  min-height: 18px;
-  border-color: #333333;
+  transition-property: all;
+  transition-delay: 0.25s;
+  transition-duration: 0.25s;
   background: #ffffff;
   display: inline-block;
-  padding: 2px;
+  padding: 2px, 1px;
+  border: solid;
+  border-width: 1px;
 }
 .sp_menu_content,
 .visu2_menu_content {
+  transition-property: all;
+  transition-delay: 0.25s;
+  transition-duration: 0.25s;
   padding: 0px;
   width: 0px;
-  height: 0px;
+  max-height: 0px;
   opacity: 0;
   font-size: 0%;
-  overflow: hidden;
+}
+.sp_menu:hover {
   transition-property: all;
-  transition-duration: 0.2s;
+  transition-delay: 0s;
+  transition-duration: 0s;
+  border: none;
 }
 .sp_menu:hover .sp_menu_content,
 .sp_menu_content:focus {
-  padding: 8px 0px 0px 0px;
-  width: 180px;
-  height: 130px;
+  transition-property: all;
+  transition-delay: 0s;
+  transition-duration: 0s;
+  padding: 8px 8px 8px 8px;
+  width: 250px;
+  height: auto;
+  max-height: 500px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  margin-top: -18px;
+  background-color: white;
 }
 .visu2_menu:hover .visu2_menu_content,
 .visu2_menu_content:focus {
@@ -1153,12 +1165,10 @@ span.warningReads {
   display: flex;
 }
 .sp_menu_icon {
-  width: 40px;
-  padding: 2px 2px 0px 2px;
+  width: 30px;
   border: solid;
   border-width: 2px;
-  border-radius: 5px;
-  margin: 5px auto;
+  margin: 1px auto;
   border-color: #ffffff;
 }
 .sp_menu_icon:hover {
@@ -1166,6 +1176,7 @@ span.warningReads {
 }
 .sp_selected_mode {
   border-color: #777777;
+  background: lightgrey;
 }
 .sp_menu_icon svg {
   fill: #777777;
@@ -1179,6 +1190,29 @@ span.warningReads {
   stroke: #777777;
   fill-opacity: 0.2;
 }
+.sp_slider_box {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+.sp_slider_mid {
+  width: 50%;
+  margin-top: 2px;
+}
+.sp_slider_left {
+  width: 25%;
+  text-align: center;
+  border: solid;
+  border-width: 1px;
+  margin-right: 12px;
+}
+.sp_slider_right {
+  width: 25%;
+  text-align: center;
+  border: solid;
+  border-width: 1px;
+  margin-left: 14px;
+}
 .axis_select {
   display: flex;
   overflow: hidden;
@@ -1188,7 +1222,7 @@ span.warningReads {
   background: #ffffff;
   color: #777777;
   height: 20px;
-  width: 120px;
+  width: 160px;
   -webkit-appearance: none;
   border: solid;
   border-width: 1px;
@@ -1299,16 +1333,7 @@ span.warningReads {
 .db_table .column_50 {
   width: 50px;
 }
-.db_table .column1 {
-  width: 100px;
-}
-.db_table .column2 {
-  width: 150px;
-}
-.db_table .column4 {
-  width: 50px;
-}
-.db_table .column5 {
+.db_table .column_20 {
   width: 20px;
 }
 .db_table .column_sep {

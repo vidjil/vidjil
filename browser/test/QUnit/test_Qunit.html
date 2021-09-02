@@ -189,3 +189,48 @@
         </label>
 </template>
 
+
+
+<template id="scatterplot-menu-content">
+        <div class="sp_menu_content">
+            <div style="text-align: center;">Plot Settings</div>
+            <div class="menu_box">
+            <div class="axis_select axis_select_preset">
+                Preset : 
+                <select class="axis_select_preset_select" name="select_preset[]">
+                    <option value="custom">–</option>
+                </select>
+            </div>
+            <div class="axis_select">
+                Mode :
+                <div class="sp_menu_icon sp_menu_icon_bar"></div>
+                <div class="sp_menu_icon sp_menu_icon_grid"></div>
+            </div>
+            </div>
+    
+            <div class="menu_box menu_box_axis_x">
+            <div class="axis_select axis_select_x">
+                Axis X :
+                <select name="select_x[]"></select>
+            </div>
+            <div class="sp_slider_box slider_box_x">
+                <div class="sp_slider_left  slider_x_value1"></div>
+                <div class="sp_slider_mid   slider_x"></div>
+                <div class="sp_slider_right slider_x_value2"></div>
+            </div>
+            </div>
+    
+            <div class="menu_box menu_box_axis_y">
+            <div class="axis_select axis_select_y">
+                Axis Y :
+                <select name="select_y[]"></select>
+            </div>
+            <div class="sp_slider_box slider_box_y">
+                <div class="sp_slider_left  slider_y_value1"></div>
+                <div class="sp_slider_mid   slider_y"></div>
+                <div class="sp_slider_right slider_y_value2"></div>
+            </div>
+            </div>
+    
+        </div>
+    </template>

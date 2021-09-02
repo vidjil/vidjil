@@ -53,3 +53,5 @@ server/web2py/gluon/packages/dal/
 cypress/reports
 cypress/screenshots
 cypress/videos
+
+docker/volumes/

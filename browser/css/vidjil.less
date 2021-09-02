@@ -47,6 +47,7 @@ body {
   display: flex;
   flex-flow: column;
   overflow-x: hidden;
+  background : @border;
 }
 
 body, svg {
@@ -55,7 +56,6 @@ body, svg {
   height : 100%;
   margin:0px;
   color : @default;
-  background : @border;
 }
 
 .cloneName {
@@ -1270,11 +1270,6 @@ span.warningReads {
 }
 
 
-.sp_menu{
-    border-bottom: solid;
-    border-right: solid;
-}
-
 .visu2_menu {
   border-top: solid;
   border-left: solid;
@@ -1285,30 +1280,47 @@ span.warningReads {
 }
 
 .sp_menu, .visu2_menu {
-    min-width: 22px;
-    min-height: 18px;
-    border-color: @border;
+    transition-property: all;
+    transition-delay:0.25s;
+    transition-duration: 0.25s;
     background: @background;
     display: inline-block;
-    padding: 2px;
+    padding: 2px, 1px;
+    border: solid;
+    border-width: 1px;
 }
 
 .sp_menu_content, .visu2_menu_content {
+    transition-property: all;
+    transition-delay:0.25s;
+    transition-duration: 0.25s;
     padding: 0px;
     width: 0px; 
-    height: 0px; 
+    max-height: 0px; 
     opacity: 0;
     font-size: 0%;
-    overflow: hidden;
-    transition-property: all;
-    transition-duration: 0.2s;
+}
+.sp_menu:hover{
+  transition-property: all;
+  transition-delay:0s;
+  transition-duration: 0s;
+  border:none;
 }
 
 .sp_menu:hover .sp_menu_content,
 .sp_menu_content:focus {
-    padding: 8px 0px 0px 0px;
-    width: 180px; 
-    height: 130px;
+    transition-property: all;
+    transition-delay:0s;
+    transition-duration: 0s;
+    padding: 8px 8px 8px 8px;
+    width: 250px; 
+    height: auto;
+    max-height: 500px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    margin-top: -18px;
+    background-color:white;
+
 }
 
 .visu2_menu:hover .visu2_menu_content,
@@ -1330,12 +1342,10 @@ span.warningReads {
 }
 
 .sp_menu_icon{
-    width: 40px;
-    padding: 2px 2px 0px 2px;
+    width: 30px;
     border: solid;
     border-width: 2px;
-    border-radius: 5px;
-    margin: 5px auto;
+    margin: 1px auto;
     border-color : @background;
 }
 
@@ -1345,6 +1355,7 @@ span.warningReads {
 
 .sp_selected_mode{
     border-color : @default;
+    background:lightgrey;
 }
 
 .sp_menu_icon svg{
@@ -1362,6 +1373,33 @@ span.warningReads {
     fill-opacity: 0.2;
 }
 
+.sp_slider_box{
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.sp_slider_mid{
+  width: 50%;
+  margin-top:2px;
+}
+
+.sp_slider_left{
+  width: 25%;
+  text-align: center;
+  border: solid;
+  border-width: 1px;
+  margin-right: 12px;
+}
+
+.sp_slider_right{
+  width:25%;
+  text-align: center;
+  border: solid;
+  border-width: 1px;
+  margin-left: 14px;
+}
+
 .axis_select {
     display: flex;
     overflow: hidden;
@@ -1372,7 +1410,7 @@ span.warningReads {
     background: @background;
     color: @default;
     height: 20px;
-    width: 120px;
+    width: 160px;
     -webkit-appearance: none;
     border: solid;
     border-width: 1px;

@@ -149,7 +149,8 @@ Axis.prototype = {
             clone = m.clone(cloneID)
 
             if (clone.isInScatterplot() &&
-                !clone.isFiltered &&
+                !clone.isFiltered && 
+                clone.isClusterizable() &&
                 (this.germline == "multi" || this.germline == clone.germline)){
                 value = this.fct(clone)
 
@@ -192,8 +193,6 @@ Axis.prototype = {
                 else if (s.max > 0) s.min_p = s.max/10
                 else                s.min_p = 0.1        //TODO: case of negative log scale
             }
-
-
         }
 
         return this
@@ -224,13 +223,23 @@ Axis.prototype = {
         var max = this.maxLabel - Object.keys(this.labels).length
         if (max < 4) max = 5
 
+
         if (this.scale){
             var labelCount = 0
 
+            //select min/max range before computing labels
+            var smin = this.scale.min;
+            var sminp = this.scale.min_p
+            var smax = this.scale.max;
+            if (this.useCustomScale){
+                smin = this.scale_custom_min;
+                sminp = this.scale_custom_min;
+                smax = this.scale_custom_max;
+            }
+
             if (this.scale.mode == "linear"){
-                var delta = this.scale.max - this.scale.min
                 
-                var nice = nice_min_max_steps(this.scale.min, this.scale.max, max)
+                var nice = nice_min_max_steps(smin, smax, max)
                 if (typeof this.min_step == "undefined") this.min_step = nice.step
                 this.step = Math.max(nice.step, this.min_step)
                 this.precision = nice_number_digits(this.step, 1)
@@ -264,23 +273,33 @@ Axis.prototype = {
             if (this.scale.mode == "log"){
                 this.scale.nice_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(this.scale.max))))
                 this.scale.nice_min = Math.pow(10, Math.floor(Math.log10(Math.abs(this.scale.min_p))))
-                this.scale.nice_min_label = (this.scale.nice_min).toFixed(nice_number_digits(this.scale.nice_min, 1)) + "_l"
-                this.scale.nice_max_label = (this.scale.nice_max).toFixed(nice_number_digits(this.scale.nice_max, 1)) + "_l"
+                this.scale.nice_custom_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(smax))))
+                this.scale.nice_custom_min = Math.pow(10, Math.floor(Math.log10(Math.abs(smin))))
+                
+                var nmax=this.scale.nice_max;
+                var nmin=this.scale.nice_min;
+                if (this.useCustomScale){
+                    nmax = this.scale.nice_custom_max;
+                    nmin = this.scale.nice_custom_min;
+                }
+
+                this.scale.nice_min_label = (nmin).toFixed(nice_number_digits(nmin, 1)) + "_l"
+                this.scale.nice_max_label = (nmax).toFixed(nice_number_digits(nmax, 1)) + "_l"
 
                 //add labels
                 if (this.scale.reverse){
-                    if (this.scale.min == 0 && this.labels[0] == undefined)
+                    if (this.labels[0] == undefined)
                         this.labels[0] = {text: "0", type:"slim", side: "right"}
-                    for (var k = this.scale.nice_max; k >= this.scale.nice_min; k=k/10){
+                    for (var k = nmax; k >= nmin; k=k/10){
                         this.addScaleLabel(k, "logScale")
                         labelCount++
                     } 
                 }else{
-                    for (var z = this.scale.nice_min; z <= this.scale.nice_max; z=z*10){
+                    for (var z = nmin; z <= nmax; z=z*10){
                         this.addScaleLabel(z, "logScale")
                         labelCount++
                     } 
-                    if (this.scale.min == 0 && this.labels[0] == undefined)
+                    if (this.labels[0] == undefined)
                         this.labels[0] = {text: "0", type:"slim", side: "left"}
                 }
             }
@@ -503,6 +522,8 @@ Axis.prototype = {
 
             }else if (this.scale.mode == "log"){
                 this.scale.domain = [this.scale.nice_min, this.scale.nice_max]
+                if (this.useCustomScale) 
+                    this.scale.domain = [this.scale.nice_custom_min, this.scale.nice_custom_max]
                 this.scale.range  = [this.labels[this.scale.nice_min_label].position,
                                      this.labels[this.scale.nice_max_label].position]
 
@@ -630,10 +651,15 @@ Axis.prototype = {
         //discret value
         if (v in this.labels) 
             return this.labels[v].position
+        
+        if (this.useCustomScale && v<this.scale_custom_min && this.labels[0])
+            return this.labels[0].position
 
         //continuous value
         if (this.scale && typeof v == "number" && !isNaN(v))
-            return this.scale.fct(v) 
+            //do not retirn position for clone outside scale domain
+            if (v >= this.scale.domain[0] && v <= this.scale.domain[1])
+                return this.scale.fct(v) 
 
         return undefined
     },
