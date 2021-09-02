@@ -200,7 +200,7 @@ class Window:
     def __add__(self, other):
         """Concat two windows, extending lists such as 'reads'"""
         #data we don't need to duplicate
-        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline"]
+        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd"]
         obj = Window(1)
         
         # 'id' and 'top' will be taken from 'topmost' clone
@@ -212,7 +212,32 @@ class Window:
                                  self.d, len(self.d["reads"]),
                                  other.d, len(other.d["reads"]),
                                  myList)
-                    
+        # MRD data, only if none is empty
+        # TODO: Make this more generic to work with any MRD setup
+        zeroed = {"copy_number": [0],
+                  "R2": [0],
+                  "family": ["None"],
+                   "norm_coeff": [0]}
+        if "mrd" in self.d or "mrd" in other.d:
+            if "mrd" in self.d:
+                first = self.d["mrd"]
+            else:
+                first = zeroed
+                for key in first.keys():
+                    first[key] = first[key] * len(self.d["reads"])
+
+            if "mrd" in other.d:
+                second = other.d["mrd"]
+            else:
+                second = zeroed
+                for key in second.keys():
+                    second[key] = second[key] * len(other.d["reads"])
+
+            obj.d["mrd"] = {}
+            concatenate_with_padding(obj.d["mrd"],
+                                     first, len(self.d["reads"]),
+                                     second, len(other.d["reads"]))
+                        
         # All other data, including 'top'
         # When there are conflicting keys, keep data from the 'topmost' clone
         order = [other, self] if other.d["top"] < self.d["top"] else [self, other]
@@ -222,8 +247,42 @@ class Window:
                 if key not in obj.d:
                     obj.d[key] = source.d[key]
 
+        # !! No name field if fuse with an empty clone
+        if "name" in self.d and "name" in other.d and self.d["name"] != other.d["name"]:
+            if obj.d["name"] == self.d["name"]:
+                name = other.d["name"]
+            else:
+                name = self.d["name"]
+
+            msg = "Merged clone has different V(D)J designations in some samples (pos %s): %s" % (len(self.d["reads"]), name)
+            obj.addWarning(code="W81", msg=msg, level="warn")
+
+        # !! No name field if fuse with an empty clone
+        # !! If imported from airr, junction is present but empty
+        if ("seg" in self.d and "junction" in self.d["seg"]) and ("seg" in other.d and "junction" in other.d["seg"])\
+          and ("productive" in self.d["seg"]["junction"] and "productive" in other.d["seg"]["junction"]) \
+          and self.d["seg"]["junction"]["productive"] != other.d["seg"]["junction"]["productive"]:
+            if obj.d["seg"]["junction"]["productive"] == self.d["seg"]["junction"]["productive"]:
+                junction = other.d["seg"]["junction"]["productive"]
+            else:
+                junction = self.d["seg"]["junction"]["productive"]
+            if junction:
+                junction = "productive"
+            else:
+                junction = "not productive"
+
+            # show number/position of the corresponding sample ?
+            msg = "Merged clone has different productivities in some samples (pos %s): %s" % (len(self.d["reads"]), junction)
+            obj.addWarning(code="W82", msg=msg, level="warn")
         return obj
         
+    def addWarning(self, code, msg, level):
+        # init warn field if not already present
+        if not "warn" in self.d:
+            self.d["warn"] = []
+        self.d["warn"].append( {"code":code, "msg":msg, "level": level})
+        return
+
     def get_nb_reads(self, cid, point=0):
         return self[cid]["reads"][point]
 
@@ -458,6 +517,27 @@ class Samples:
 
     def __str__(self):
         return "<Samples: %s>" % self.d
+        
+class MRD: 
+
+    def __init__(self, number=1):
+        self.d={}
+        self.d["number"] = number
+            
+    def __add__(self, other):
+        obj=MRD()
+
+        concatenate_with_padding(obj.d, 
+                                 self.d, self.d['number'], 
+                                 other.d, other.d['number'],
+                                 ['number'])
+
+        obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
+        
+        return obj
+
+    def __str__(self):
+        return "<MRD: %s>" % self.d
 
 class Diversity: 
 
@@ -767,6 +847,13 @@ class ListWindows(VidjilJson):
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
+        if "mrd" in self.d or "mrd" in other.d:
+            if not "mrd" in self.d:
+                self.d["mrd"] = MRD()
+            if not "mrd" in other.d:
+                other.d["mrd"] = MRD()
+
+            obj.d["mrd"] = self.d["mrd"] + other.d["mrd"]
         
         try:
             ### Verify that same file is not present twice
@@ -1142,7 +1229,10 @@ class ListWindows(VidjilJson):
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity) or isinstance(obj, PreProcesses):
+        if isinstance(obj, ListWindows)  or isinstance(obj, Window)\
+           or isinstance(obj, Samples)   or isinstance(obj, Reads)\
+           or isinstance(obj, Diversity) or isinstance(obj, MRD)\
+           or isinstance(obj, PreProcesses):
             result = {}
 
             for key in obj.d :
@@ -1164,6 +1254,13 @@ class ListWindows(VidjilJson):
         if "samples" in obj_dict:
             obj = ListWindows()
             obj.d=obj_dict
+            return obj
+
+        if "coefficients" in obj_dict:
+            obj = MRD()
+            obj.d=obj_dict
+            # TODO: make this more generic
+            obj.d["number"] = len(obj_dict['prevalent'])
             return obj
 
         if "id" in obj_dict:

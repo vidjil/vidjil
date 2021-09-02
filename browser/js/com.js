@@ -34,18 +34,15 @@ function Com(default_console) {
     var self = this;
     this.default = default_console;
     
-    var wrapper = function(key) {
-        return function() {
-            var args = Array.prototype.slice.call(arguments)[0];
-            return self.default[key](args);
-        }
-    };
-    
     for (var key in default_console){
         if (typeof this.default[key] == 'function') {
-            if (key!='log') this[key] = wrapper(key)
+            //if (key!='log') this[key] = wrapper(key)
+            if (key!='log') 
+                this[key] = default_console[key].bind(window.console);
+            else
+                this.basicLog = default_console[key].bind(window.console);
         }else{
-            this[key] = this.default[key]
+            this[key] = this.default[key];
         }
     }
     
@@ -89,21 +86,16 @@ function Com(default_console) {
             "</br> Please regenerate a newer .vidjil file. " +
             BUTTON_CLOSE_POPUP,
 
-        "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>" +
-            "(c) 2011-2020, the Vidjil team " +
-            (typeof git_sha1 !== "undefined" ? "&ndash; " + git_sha1 : "") + "</br>" +
-            "<br />Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
-            " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" + "</br>" +
-            "</br>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics team</a> (CRIStAL, CNRS, Univ. Lille) and the <a href='http://vidjil.net'>VidjilNet consortium</a> (Inria) " +
-            "in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille, " +
-            "the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)" +
-            " and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group." +
-            "<br/>" +
-            "<br/>Vidjil is hosted by the <a href='http://hpc.univ-lille.fr/'>scientific computing facility</a> at the Lille University." +
-            "<br/>" +
-            "<br>Vidjil is free software, and you are welcome to redistribute it under <a href='http://git.vidjil.org/blob/master/doc/LICENSE'>certain conditions</a>. This software is for research use only and comes with no warranty." +
-            "<br>" +
-            "Please cite <a href='http://dx.doi.org/10.1371/journal.pone.0166126'>(Duez et al., 2016)</a> if you use the Vidjil web application for your research." +
+        "welcome": " <h2>Vidjil <span class='logo'>" + ((typeof config !== 'undefined' && (config.healthcare || false)) ? "(health)" : "(beta)") + "</span></h2>" +
+            "(c) 2011-2021, The Vidjil Team: " +
+            "Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
+            " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" +
+            (typeof git_sha1 !== "undefined" ? " &ndash; " + git_sha1 : "") +
+            "<br/><br/>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics lab</a> at CRIStAL (UMR 9189 CNRS, Univ. Lille) and the <a href='http://www.vidjil.net'>VidjilNet consortium</a> (Inria). " +
+            "We are grateful to the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille, the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille, IFR-114, IRCL) and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group, as well to all members of the <a href='http://www.vidjil.net'>VidjilNet consortium</a>." +
+            "<br/><br/>" + (typeof config !== 'undefined' ? (config.hosting || "") : "") +
+            "<br/><br/>Vidjil is free software, and you are welcome to redistribute it under <a href='http://git.vidjil.org/blob/master/doc/LICENSE'>certain conditions</a>. " +
+            "Please cite <a href='http://dx.doi.org/10.1371/journal.pone.0166126'>(Duez et al., 2016)</a> if you use the Vidjil web application." +
             BUTTON_CLOSE_POPUP,
 
         "browser_error": "The web browser you are using has not been tested with Vidjil." +
@@ -152,7 +144,7 @@ Com.prototype = {
             if (typeof obj.msg != "undefined") text += obj.msg
             switch (obj.type) {
                 case "flash":
-                    this.flash(text, obj.priority)
+                    this.flash(text, obj.priority, obj.call)
                     break;
                 case "popup":
                     this.popupMsg(text)
@@ -178,7 +170,7 @@ Com.prototype = {
         
         this.log_container = document.createElement("div")
         this.log_container.className = "log_container";
-        
+
         this.popup_container = document.createElement("div")
         this.popup_container.className = "popup_container";
         
@@ -198,8 +190,6 @@ Com.prototype = {
         document.body.appendChild(this.log_container);
         document.body.appendChild(this.popup_container);
         
-        
-        
         this.div_dataBox = document.createElement("div");
         this.div_dataBox.className = "modal data-container";
         
@@ -214,6 +204,28 @@ Com.prototype = {
         this.div_dataBox.appendChild(div_data);
         
         document.body.appendChild(this.div_dataBox);
+
+        /*
+        $(".log_container").hover(function () {
+            $(this).stop()
+            .css('overflow-y', 'scroll')
+            .css('overflow-x', '')
+            .animate({
+                width: '400',
+                height: '75%',
+                opacity: 0.85
+            });
+        }, function () {
+            $(this).stop()
+            .css('overflow-y', 'hidden')
+            .css('overflow-x', 'hidden')
+            .animate({
+                width: 10,
+                height: 10,
+                opacity: 0.5
+            });
+        });
+        */
     },
 
     
@@ -223,17 +235,36 @@ Com.prototype = {
      * @param {string} str - message to display
      * @param {integr} priority 
      * */
-    flash: function (str, priority){
+    flash: function (str, priority, call){
         priority = typeof priority !== 'undefined' ? priority : 0;
         
+
         if (priority >= this.min_priority){
             var div = jQuery('<div/>', {
-                'text': str,
+                'html': str,
                 'style': 'display : none',
                 'class': 'flash_'+priority ,
                 'click': function(){$(this).fadeOut(25, function() { $(this).remove();} );}
             }).appendTo(this.flash_container)
             .slideDown(200);
+
+            if (call){
+                var div2 = jQuery('<div/>').appendTo(div);
+
+                jQuery('<div/>', {
+                    'text': "see details",
+                    'class': "button",
+                    'click': function(){ db.call(call.path, call.args); }
+                }).appendTo(div2);
+
+                if (priority >= this.ERROR){
+                    jQuery('<div/>', {
+                        'text': "×",
+                        'class': "button",
+                        'click': function(){$(this).fadeOut(25, function() { $(this).remove();} );}
+                    }).appendTo(div2);
+                }
+            }
             
             if (priority < this.ERROR){
                 setTimeout(function(){
@@ -242,7 +273,7 @@ Com.prototype = {
             }
             
         }
-        
+        this.customLog(str, priority, call);
         this.log(str, priority);
     },
     
@@ -251,7 +282,7 @@ Com.prototype = {
      * @param {string} str - message to print
      * @param {integr} priority 
      * */
-    customLog: function(str, priority){
+    customLog: function(str, priority, call){
         priority = typeof priority !== 'undefined' ? priority : 0;
         var self = this;
         
@@ -262,12 +293,22 @@ Com.prototype = {
             while (strDate.length < 8) strDate += " "
                 
             var div = jQuery('<div/>', {
-                'text': strDate+" | "+str,
+                'html': strDate+" | "+str,
                 'class': 'log_'+priority
             }).appendTo(this.log_container)
             .slideDown(200, function(){
                 self.log_container.scrollTop = self.log_container.scrollHeight;
             });
+
+            if (call){
+                var div2 = jQuery('<div/>').appendTo(div);
+
+                jQuery('<div/>', {
+                    'text': "see details",
+                    'class': "button",
+                    'click': function(){ db.call(call.path, call.args); }
+                }).appendTo(div2);
+            }
             
         }else{
 	  if (priority >= this.min_priority_console)
@@ -287,6 +328,13 @@ Com.prototype = {
      * close the log window 
      * */
     closeLog: function () {
+        $(this.log_container).fadeToggle(200);
+    },
+
+    /**
+     * open/close the log window 
+     * */
+    toggleLog: function () {
         $(this.log_container).fadeToggle(200);
     },
     

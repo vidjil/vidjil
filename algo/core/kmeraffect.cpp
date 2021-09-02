@@ -220,3 +220,125 @@ ostream &operator<<(ostream &os, const KmerAffect &kmer) {
   return os;
 }
 
+//////////////////////////////////////////////////
+
+KmerStringAffect::KmerStringAffect() {
+  label = "";
+  strand = 0;
+  length = 0;
+}
+
+KmerStringAffect::KmerStringAffect(const KmerStringAffect &ksa):
+  label(ksa.label),strand(ksa.strand),length(ksa.length){}
+
+
+KmerStringAffect::KmerStringAffect(const string &label,
+                                   int strand,
+                                   unsigned char length) {
+  this->label = label;
+  this->strand = strand;
+  this->length = length;
+}
+
+KmerStringAffect &KmerStringAffect::operator+=(const KmerStringAffect &kmer) {
+  if (*this != kmer) {
+    if (*this == KSA_UNKNOWN) 
+      // Not defined yet
+      *this = kmer;
+    else if (*this != KSA_AMBIGUOUS) {
+      if (this->label == kmer.label)
+        // Different strand but same label, put ambiguous
+        *this = KSA_AMBIGUOUS;
+      else
+        // Ambiguous: different labels
+        *this = KSA_AMBIGUOUS;
+    } // else we are already ambiguous, stay as is.
+  }
+  return *this;
+}
+
+KmerStringAffect &KmerStringAffect::operator=(const KmerStringAffect &ka) {
+  label = ka.label;
+  strand = ka.strand;
+  length = ka.length;
+  return *this;
+}
+
+KmerStringAffect KmerStringAffect::getAmbiguous() {
+  return KSA_AMBIGUOUS;
+}
+
+int KmerStringAffect::getStrand() const {
+  return (isUnknown() || isAmbiguous()) ? 0 : strand;
+}
+
+string KmerStringAffect::getLabel() const {
+  return label;
+}
+
+unsigned char KmerStringAffect::getLength() const {
+  return length;
+}
+
+KmerStringAffect KmerStringAffect::getUnknown() {
+  return KSA_UNKNOWN;
+}
+
+bool KmerStringAffect::isAmbiguous() const {
+  return *this == KSA_AMBIGUOUS;
+}
+
+bool KmerStringAffect::isUnknown() const {
+  return *this == KSA_UNKNOWN;
+}
+
+bool KmerStringAffect::isNull() const {
+  return isUnknown();
+}
+
+bool KmerStringAffect::isGeneric() const {
+  return !(isUnknown() || isAmbiguous());
+}
+
+string KmerStringAffect::toString() const {
+  if (isUnknown()) {
+    return " _";
+  }
+  
+  switch(strand) {
+  case 1:
+    return "+"+label;
+  case -1:
+    return "-"+label;
+  default:
+    return " ?";
+  }
+}
+
+bool operator==(const KmerStringAffect &k1, const KmerStringAffect &k2) {
+  return k1.strand == k2.strand && k1.label == k2.label;
+}
+bool operator!=(const KmerStringAffect &k1, const KmerStringAffect &k2) {
+  return ! (k1 == k2);
+}
+bool operator<(const KmerStringAffect &k1, const KmerStringAffect &k2) {
+  return k1.label < k2.label || (k1.label == k2.label && k1.strand < k2.strand);
+}
+bool operator>(const KmerStringAffect &k1, const KmerStringAffect &k2) {
+  return k1.label > k2.label || (k1.label == k2.label && k1.strand > k2.strand);
+}
+bool operator<=(const KmerStringAffect &k1, const KmerStringAffect &k2) {
+  return ! (k1 > k2);
+}
+bool operator>=(const KmerStringAffect &k1, const KmerStringAffect &k2) {
+  return ! (k1 < k2);
+}
+
+ostream &operator<<(ostream &os, const KmerStringAffect &kmer) {
+  os << kmer.toString();
+  return os;
+}
+
+bool KmerStringAffect::hasRevcompSymetry() {
+  return false;
+}

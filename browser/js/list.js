@@ -282,6 +282,9 @@ List.prototype = {
         sort.id = "list_sort_select"
         sort.className = "list_sort_select"
         sort.onchange = function() {
+            self.update_is_pending = true
+            self.m.updateIcon()
+
             self.sort_option[this.value]()
             self.sort_option_selected = this.value
             // close the lock
@@ -290,6 +293,8 @@ List.prototype = {
             var div = document.getElementById("div_sortLock")
             div.className  = "icon-lock-1 list_lock_on"
             div.title  = "Release sort as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.m.t, "names")
+            self.update_is_pending = false
+            self.m.updateIcon()
         }
         
         for (var key in this.sort_option) {
@@ -515,7 +520,7 @@ List.prototype = {
                 }
                 self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
             } else {
-                cloneDom.getElement("clusterBox").appendChild(document.createTextNode(' '));
+                cloneDom.getElement("clusterBox").innerHTML = "<text> </text>";
                 if (this.m.clusters[cloneID].length < 2) display = false
                 document.getElementById("cluster"+cloneID).style.display = "none";
             }
@@ -574,6 +579,7 @@ List.prototype = {
 
             var span_info = document.createElement('span')
             span_info.className = "infoBox";
+            span_info.id      = "clone_infoBox_"+id;
             span_info.onclick = function () {
                 self.m.displayInfoBox(id);
             }

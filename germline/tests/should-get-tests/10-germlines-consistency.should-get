@@ -1,0 +1,28 @@
+$ Checking consistency of the germlines and special cases
+
+!OUTPUT_FILE: ../../split-germlines.log
+!NO_LAUNCHER:
+!LAUNCH: echo
+
+$ No position
+33: No position
+
+$ No Phe/Trp-Gly-X-Gly pattern
+32: No Phe.Trp.Gly.X.Gly pattern
+
+$ 118 positions
+12: Custom 118 position
+
+$ Up/down-streams
+3:# Custom up/downstream
+2:# Custom up/downstream .* IGHJ1P
+1:# Custom up/downstream .* IGHD7-27
+
+
+!OUTPUT_FILE: ../../split-germlines.err
+!NO_LAUNCHER:
+!LAUNCH: echo
+
+$ Consistency IMGT/NCBI
+13: Sequences for .* differ between IMGT and NCBI
+11: Length for .* differ between IMGT .* and NCBI  

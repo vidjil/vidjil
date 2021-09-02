@@ -10,16 +10,17 @@
    {{ required_files = 1 }}
     {{ if source_module_active: }}
         <span>file source: </span>
+        <input hidden type=checkbox id="submitForm_isEditing" name="isEditing" {{ if isEditing: }} checked {{ pass }}>
         <label for="source_computer">my computer</label>
-        <input type="radio" id="source_computer" name="source" value="computer" onchange="db.toggle_file_source()" {{ if not network_source: }} checked="checked" {{pass}}/>
+        <input type="radio" id="source_computer" name="source" value="computer" onchange="db.update_upload_fields()" {{ if not network_source: }} checked="checked" {{pass}}/>
         <label for="source_nfs">network</label>
-        <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.toggle_file_source()" {{if network_source:}} checked="checked" {{pass}} />
+        <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.update_upload_fields()" {{if network_source:}} checked="checked" {{pass}} />
         <p></p>
     {{pass}}
-    <div {{if network_source:}} hidden {{pass}}>
+    <div>
         <h3>Pre-process scenario</h3>
         If you have two R1/R2 files per sample, please select an appropriate pre-process :
-        <select id="pre_process" name="pre_process" onChange="db.pre_process_onChange(this)" {{if network_source:}} disabled {{pass}}>
+        <select id="pre_process" name="pre_process" onChange="db.update_upload_fields()">
             <option required_files="1" value="0">no pre-process (1 file per sample)</option>
             {{for row in pre_process_list :}}
                 <option title="{{=row["info"]}}" required_files="{{=row["file"]}}" value="{{=row["id"]}}"
@@ -102,7 +103,7 @@
     <div class="clear"></div>
     &nbsp;
     <div class="clear"></div>
-    <input type="submit" value="Submit samples" class="button2" id="submit_samples_btn" onclick="db.temporarilyDisableClickedLink()">
+    <input type="submit" value="Submit samples" class="button2" id="submit_samples_btn">
 </form>
 
 <div id="jstree_container" class="modal jstree-container">
@@ -121,7 +122,7 @@
         {{pass}}>
         <div id="jstree"></div>
     </div>
-    <span id="jstree_button" class="jstree_button button2" data-index=0 onclick="db.select_jstree($(this).data('index'))">ok</span>
+    <span id="jstree_button" class="jstree_button button2" data-index=0 onclick="db.select_jstree($(this).data('file_index'), $(this).data('upload_index'))">ok</span>
     <span id="jstree_close" class="jstree_button button2" onclick="db.close_jstree()">cancel</span>
 </div>
 

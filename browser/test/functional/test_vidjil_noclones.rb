@@ -9,10 +9,6 @@ class TestClones < BrowserTest
     super
     if not defined? $b
       set_browser("/demo/Demo-X5-no-clone.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
-
       # Make upload menu appear to test the application with this menu too
       $b.execute_script("$('#upload_summary')[0].style.display='block';")
     end

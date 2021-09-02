@@ -68,7 +68,7 @@ Builder.prototype = {
             this.build_clusterSelector()
             this.initTag();
 
-            if (this.m.samples.order.length == 1)
+            if (this.m.samples.stock_order.length == 1)
                 // One sample, two scatterplots
                 setTimeout(function() {
                     switch_visu2('scatterplot');
@@ -503,6 +503,7 @@ Builder.prototype = {
 
             var save_analysis = document.createElement("a");
             save_analysis.className = "buttonSelector"
+            if (typeof this.m.custom != 'undefined') save_analysis.className = "buttonSelector devel-mode"
             save_analysis.appendChild(document.createTextNode("save"));
             save_analysis.onclick = function() {
                 db.save_analysis();

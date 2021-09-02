@@ -5,21 +5,21 @@ This help covers administrative features that are mostly accessible from the web
 and is complementary to the [Docker/Server documentation](server.md).
 Users should consult the [Web Platform User Manual](user.md).
 
-# Analysis configurations
-
-This page shows the configurations list. 
-Config are just parameters for running Vidjil-algo or other V(D)J analysis software.
-
-Each configuration has permissions for 
+# Configuring pre-processes, processes and post-processes
 
 
-# Pre-process configurations
+## Pre-processes (after sample upload)
 
-Custom pre-processing steps can be added before launching an analysis,
-for example to filter out some reads, to demultiplex UMI or to merge paired-end reads.
+Custom pre-processing steps can be added.
+They are called right after the upload of each sample, before launching the main processes.
+They can be used, for example to filter out some reads, to demultiplex UMI or to merge paired-end reads.
 Admins can add new pre-processes, and users can select a pre-process if they are allowed to.
 
-## Adding a pre-process
+Warning:
+Adding an external program may bring additional security or performance issues.
+Make sure you trust scripts you need to add before putting them on a production server.
+
+### Adding a pre-process
 
 Steps may differ if you use a plain-installation or a docker image.
 
@@ -73,6 +73,48 @@ If you need to give permissions to all users of the server, you can simply
 do that by given permission to public group.
 You can also give permissions to some specifics users of the list.
 
+
+## Main process and "fuse" configuration
+
+This page shows the configurations list for the main analysis process.
+Config are just parameters for:
+
+- **running Vidjil-algo or other V(D)J analysis software on each sample**,
+  producing a `.vidjil` file for each sample.
+  The default install sets up some default configs that should work for the majority of applications.
+
+- **``fusing'' (trough fuse.py) these results into a unique `.vidjil` file**.
+  The defaults options are `-t 100`, other options can be seen in the help of `fuse.py`,
+  possibly with additional pre- and post-processes (see below)
+
+Each configuration has permissions for some groups.
+
+
+## Pre- and post-processes (around fuse)
+
+It is possible to run further pre- or post-process scripts around the "fusing" of results
+by giving `--pre` and/or `--post` options to fue.
+These scripts can also be wrappers of other software.
+This can be useful to further process the result files, possibly taking into account several result files
+ as in a MRD setup developed by Joao Medianis (Boldrini center, Brasil).
+
+### Adding such a pre/post-process
+
+  - Your script needs to take as an input a `.vidjil` file with `-i` argument, and export another `.vidjil` file with `-o`,
+    such as in the call `spike-normalization.py -i res-samples.vidjil -o res-samples.vidjil`
+
+  - The script should be available in the path referenced as `PRE_PROCESS_DIR` in `tools/defs.py`.
+    The default path is relative to the `defs.py` file, so `.`  will be interpreted as `tools/` directory.
+
+  - The script should be referenced in the `Fuse command` field of one "config" in the `processes config` page,
+    as for example in `-t 100 --pre spike-normalization.py`.
+    A `--pre` script will be called on each `.vidjil` file, before the actual fusing,
+    whereas a `--post` script will be called on the combined `.vidjil` file after the fusing.
+
+
+When the users select this config, these pre- and post-processes will also be called.
+
+
 # Users, groups, and permissions
 
 ## Users
@@ -110,19 +152,19 @@ relationship to that parent.
 
 ## Creating groups
 
-When creating the groups for an organisation the parent group MUST be the
+When creating the groups for an organization the parent group MUST be the
 first group created. Assigning a parent to a group cannot be done after
 creation. A group cannot change parents.
 Users can be created at any time. They can also be added
 or removed from groups whenever it is convenient
 
-### Example: create organisation Foobar with sub groups/roles
+### Example: create organization with sub groups/roles
 
-  - Create group Foobar (select None for parent group).
-  - Create roles (eg. Technician, Engineer, Doctor). Be sure to select
-    Foobar as the parent group.
+  - Create group, for example `lab_xxx` (select `None` for parent group).
+  - Create sub-group for roles (eg. `Technician`, `Engineer`, `Doctor`). Be sure to select
+    `lab_xxx` as the parent group.
   - From the group's detailed view, 
-    set the permissions for the newly created groups Technician, Engineer and Doctor.
+    set the permissions for the newly created groups `Technician`, `Engineer` and `Doctor`.
     Be sure to
     assign at least the 'view patient' permission or members will not be able
     to see any patients from the parent group.
@@ -132,6 +174,39 @@ Users will now be able, if permissions allow it, to create patients for
 these groups. Any patient created should automatically be assigned to the
 parent group. Any patient created for the parent group will be
 accessible by any member of one of the child groups.
+
+### Example: converting a previous user account into a group account
+
+Sometimes a user has a account, does some analyses, and then want to create accounts
+for other members of her team.
+The following procedure makes that whole data uploaded by the user will be available
+to the whole group.
+
+- Modify the personal group of this user by renaming it to a group account, such as `lab_xxx`
+- Create the new users 
+- Attach them to the first group `lab_xxx`.
+
+If needed, you can also recreate a personal group for the user.
+
+- Create a new group for this user. Reuse the name of the previous personal group.
+  This is simply a new group with a name as `user_xxx`, where `xxx` is the
+  id of this user.
+- Set the permissions for this user into his own group.
+- Attach the user to this new group `user_xxx`
+
+### Adding roles to an organization
+
+You can use various panel of rights depending of the roles that you want create.
+For example, in a hospital,
+you may want that only a subgroup of people, let say `doctors`, 
+are allowed to save an analysis.
+
+Their is no preset of rights defined.
+You can select manualy, inside detailled view of each group and sub-group,
+To do this, there is not any preset of permissions, but
+you rather have to select, inside the detailed view of each group and sub-group,
+the permissions you want to grant for each of these groups.
+
 
 ## Adding an user to a group
 

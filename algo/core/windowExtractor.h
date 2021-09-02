@@ -31,7 +31,7 @@ class WindowExtractor {
 
   ostream *out_segmented;
   ostream *out_unsegmented;
-  ofstream **out_unsegmented_detail;
+  ostream **out_unsegmented_detail;
   bool unsegmented_detail_full;
   ostream *out_affects;
 
@@ -124,7 +124,7 @@ class WindowExtractor {
    * @param outs: The output streams
    * @param unsegmented_detail_full: Whether we should output UNSEG_TOO_FEW_ZERO reads
    */
-  void setUnsegmentedDetailOutput(ofstream **outs, bool unsegmented_detail_full=false);
+  void setUnsegmentedDetailOutput(ostream **outs, bool unsegmented_detail_full=false);
 
   /**
    * Defines the output stream where the detailed affects will be output.

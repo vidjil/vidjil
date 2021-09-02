@@ -1,0 +1,85 @@
+
+.test_cypress_base:
+  image: vidjilci/cypress_with_browsers:latest
+  stage: test_cypress_client
+  script:
+    - echo -e "Run cypress with browser $BROWSER"
+    - echo -e "PWD $PWD; CYPRESS_PATH $CYPRESS_PATH"
+    # Create doc support files for testing
+    - python tools/org-babel-tangle.py --all doc/vidjil-format.md
+    - mv analysis-example1.vidjil  analysis-example2.analysis  analysis-example2.vidjil doc/
+    # Cypress
+    - bash docker/ci/script_preprocess.bash
+    - cd /app
+    - bash script.bash
+  variables:
+    BROWSER: electron
+    CYPRESS_PATH: browser/test/cypress
+    HOST: html
+  artifacts:
+    reports:
+      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+    paths:
+      - $CYPRESS_PATH
+    expire_in: 7 day
+    when: always
+  tags:
+    - cidocker
+  only:
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
+
+
+## cypress client
+#Launch in order Supported --> latest --> legacy
+# For the moment, need to be into separate stage (https://gitlab.com/gitlab-org/gitlab/-/issues/30632)
+
+client_firefox_supported:
+  extends:
+    - .test_cypress_base
+  stage: test_cypress_client_supported
+  variables:
+    BROWSER: browsers/firefox_supported/firefox
+  needs: []
+
+client_firefox_latest:
+  extends:
+    - .test_cypress_base
+  stage: test_cypress_client_latest
+  variables:
+    BROWSER: browsers/firefox_latest/firefox
+  needs: []
+
+client_firefox_legacy:
+  extends:
+    - .test_cypress_base
+  stage: test_cypress_client_legacy
+  variables:
+    BROWSER: browsers/firefox_legacy/firefox
+  needs: []
+
+
+client_chrome_supported:
+  extends:
+    - .test_cypress_base
+  stage: test_cypress_client_supported
+  variables:
+    BROWSER: browsers/chrome_supported/chrome
+  needs: []
+
+client_chrome_latest:
+  extends:
+    - .test_cypress_base
+  stage: test_cypress_client_latest
+  variables:
+    BROWSER: browsers/chrome_latest/chrome
+  needs: []
+
+client_chrome_legacy:
+  extends:
+    - .test_cypress_base
+  stage: test_cypress_client_legacy
+  variables:
+    BROWSER: browsers/chrome_legacy/chrome
+  needs: []
+

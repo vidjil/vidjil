@@ -14,6 +14,7 @@ typedef string junction ;
 #define ERROR_STRING "[error] "
 #define WARNING_STRING "[warning] "
 
+#define GZ_SUFFIX ".gz"
 
 #define NO_LIMIT_VALUE  -1  // Value for 'all' on command-line options
 #define NO_LIMIT_VALUE_STRING  "-1"
@@ -107,9 +108,10 @@ extern bool global_interrupted;
 void sigintHandler(int sig_num);
 
 /* 
-	Extract the gene name from a label. This take the whole part
-	before the star and returns it. If there is no star in the
-	name the whole label is returned.
+  Extract the gene name from a label.
+  If there is a pipe '|', consider only what is after the (first) pipe.
+  If there is a star '*', consider only what is before the start
+  M99686|IGHV5-51*01|Homo sapiens|...   -> IGHV5-51
 	IGHV-01*05	->	IGHV-01
 	IGHV-7500AB	->	IGHV-7500AB
 */
@@ -127,7 +129,7 @@ bool pair_occurrence_sort(pair<T, int> a, pair<T, int> b);
 
 string string_of_int(int number, int pad_to_width=0);
 string fixed_string_of_float(float number, int precision);
-string scientific_string_of_double(double number);
+string scientific_string_of_double(double number, int precision=2);
 string string_of_map(map <string, string> m, const string &before);
 
 /**
@@ -292,10 +294,13 @@ void output_label_average(ostream &out, string label, long long int nb, double a
 
 void json_add_warning(json &clone, string code, string msg, string level=LEVEL_WARN);
 
+/* Returns whether the string matches, at first position, the {WP}GxG pattern */
+bool WPGxG(string aa);
+
 /*
    Opens a ostream, possibly gz-compressed
 */
-std::ostream* new_ofgzstream(const char *f, bool gz);
+std::ostream* new_ofgzstream(string &f, bool gz, string message="");
 
 
 //////////////////////////////////////////////////

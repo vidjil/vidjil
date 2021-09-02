@@ -16,12 +16,15 @@ nav:
         - Libraries and recombinations: locus.md
         - Tutorial "Mastering the Vidjil web application" 🔗: http://www.vidjil.org/doc/tutorial/mastering-vidjil.html
         - Demo access to app.vidjil.org 🔗: http://app.vidjil.org/
+        - Hosting options, healthcare compliance: healthcare.md
+        - Privacy policy: privacy.md
     - Bioinformatician:
         - vidjil-algo, command-line manual: vidjil-algo.md
         - fuse.py, converting and merging immune repertoire data: tools.md
         - Specification of the .vidjil format: vidjil-format.md
         - Specification of the warnings: warnings.md
         - Specification of the .should-vdj.fa tests: should-vdj.md
+        - Post-sequencer workflow: workflow.md
         - Further developer documentation: http://www.vidjil.org/doc/#further-developer-documentation
     - Server administrator:
         - Server administration (web): admin.md
@@ -30,6 +33,7 @@ nav:
     - Quality, roadmap, credits:
         - Software and development quality: quality.md
         - Public datasets supporting Vidjil publications 🔗: http://www.vidjil.org/data
+        - Release cycle: releases.md
         - Roadmap: roadmap.md
         - Credits, references: credits.md
 

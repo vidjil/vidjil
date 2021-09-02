@@ -9,6 +9,11 @@ $ Refer to documentation
 1:see doc/vidjil-algo.md
 
 
+!NO_LAUNCHER:
+!EXIT_CODE: 2
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:FOO $VIDJIL_DATA/Stanford_S22.fasta 2>&1
 
+$ Error, no matching germline
+1:error.* No matching germline
 
 

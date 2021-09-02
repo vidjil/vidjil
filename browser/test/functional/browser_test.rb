@@ -26,7 +26,18 @@ class BrowserTest < MiniTest::Test
     end
   end
 
-  def set_browser(vidjil_file, analysis_file=nil, local_storage=nil)
+  # Skip a test on a given browser version
+  def skip_on_browser(name, version, message)
+    if $b.driver.capabilities.browser_name == name
+      if version == nil or $b.driver.capabilities.version == version
+        nameversion = "(" + $b.driver.capabilities.browser_name + "/" + $b.driver.capabilities.version  + ")"
+        print nameversion
+        skip message + " " + nameversion
+      end
+    end
+  end
+
+  def set_browser(vidjil_file, analysis_file=nil, local_storage=nil, close_tooltip=true)
     folder_path = File.expand_path(File.dirname(__FILE__))
     folder_path.sub! '/browser/test/functional', ''
     index_path = 'file://' + folder_path + '/browser/index.html'
@@ -104,6 +115,11 @@ class BrowserTest < MiniTest::Test
     end
 
     $b.div(:id => 'file_menu').button(:text => 'start').click
+
+    # close tooltip
+    if close_tooltip and $b.div(id: 'tip-container').present?
+      $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
+    end
 
   end
 

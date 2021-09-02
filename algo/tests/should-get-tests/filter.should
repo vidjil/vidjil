@@ -4,6 +4,6 @@
 $ Clone 13 is correctly analyzed
 1:FLN1FA001EP9M2.* IGHV2-26.* 2/GAT.*GCC/8 IGHJ2
 
-$ Statistics on -Z
-1:Statistics on clone analysis
-rb1: IGH 3[0-2][0-9]{2}/ 1[0-2][0-9]{3} 28..%
+$ Statistics on --analysis-filter
+1:Statistics on filtered genes for clone analysis
+rb1: IGH 37[0-9]{2}/ 16[0-9]{3} 22..%

@@ -9,9 +9,6 @@ class TestClones < BrowserTest
     super
     if not defined? $b
       set_browser("/tools/tests/data/fused_multiple.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
 
       # Make upload menu appear to test the application with this menu too
       $b.execute_script("$('#upload_summary')[0].style.display='block';")
@@ -407,6 +404,14 @@ class TestClones < BrowserTest
     assert (stats.text.include? '5+5 clones'), ">> Correct stats, should have '5+5' clones"
     assert (stats.text.include? '200 reads'),  ">> Correct stats, should have 50 reads"
     assert (stats.text.include? '80.00%'),     ">> Correct stats, should be at 80.00%"
+  end
+
+
+  def test_11_download_gethtmlinfo
+    $b.clone_in_list("0").click
+    $b.element(:id => "clone_infoBox_0").click
+    # test presence of clone information content
+    assert ($b.a(:id => "download_info_0_airr").present?), ">> Download button is present in getHTMLinfo returned"
   end
 
 

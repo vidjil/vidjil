@@ -29,7 +29,7 @@
             "follows": "IGH",
             "recombinations": [ {
                 "5": ["IGHD+up.fa"],
-                "3": ["IGHJ+down.fa"]
+                "3": ["IGHJ.fa"]
             } ],
             "parameters": {
                 "seed": "12s"

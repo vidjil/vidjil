@@ -118,6 +118,7 @@ JsonOutputWindowsMatrix::JsonOutputWindowsMatrix(SimilarityMatrix &m, float sim,
 
 ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &outputMatrix) {
   SimilarityMatrix &matrix = outputMatrix.matrix;
+  out << right;
   out << "    | " ;
 
   for (int num = 0; num <  matrix.size(); num++) 

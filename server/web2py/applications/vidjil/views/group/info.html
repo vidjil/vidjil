@@ -10,25 +10,25 @@
     <div class="db_block">
         <div class="db_block_left">
             create patient
-            <input type="checkbox" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'create', {{=group.id}});" {{if auth.has_permission('create', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
+            <input type="checkbox"  id="group_right_create" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'create', {{=group.id}});" {{if auth.has_permission('create', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
 
             view patient
-            <input type="checkbox" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'read', {{=group.id}});" {{if auth.has_permission('read', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
+            <input type="checkbox"  id="group_right_read" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'read', {{=group.id}});" {{if auth.has_permission('read', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
 
             edit patient
-            <input name="sample_set" type="checkbox" onclick="db.group_rights(this.checked, this.name, 'admin', {{=group.id}});" {{if auth.has_permission('admin', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
+            <input  type="checkbox" id="group_right_admin" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'admin', {{=group.id}});" {{if auth.has_permission('admin', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
 
             upload sequence
-            <input type="checkbox" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'upload', {{=group.id}});" {{if auth.has_permission('upload', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
+            <input type="checkbox"  id="group_right_upload" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'upload', {{=group.id}});" {{if auth.has_permission('upload', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
 
             run vidjil
-            <input type="checkbox" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'run', {{=group.id}});" {{if auth.has_permission('run', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
+            <input type="checkbox"  id="group_right_run" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'run', {{=group.id}});" {{if auth.has_permission('run', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
 
             save analysis
-            <input type="checkbox" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'save', {{=group.id}});" {{if auth.has_permission('save', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
+            <input type="checkbox"  id="group_right_save" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'save', {{=group.id}});" {{if auth.has_permission('save', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
 
             real info
-            <input type="checkbox" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'anon', {{=group.id}});" {{if auth.has_permission('anon', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
+            <input type="checkbox"  id="group_right_anon" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'anon', {{=group.id}});" {{if auth.has_permission('anon', 'sample_set', group_id=group.id) :}}{{="checked"}}{{pass}}>
 
             </br>
             <!--create config <input type="checkbox" name="config" onclick="db.test(this.checked, this.name, {{request.vars["id"]}});"></br>-->
@@ -38,13 +38,13 @@
     <div id="db_table_container">
         <table class="db_table" id="table">
             <thead>
-                <tr><td class="column1"> user name </td>
+                <tr><td class="column_100"> user name </td>
                     <td> email </td>
                     <td> last login </td>
-                    <td class="column2"> - </td>
+                    <td class="column_150"> - </td>
                     <td class="column_100"> sets created </td>
                     <td class="column_100"> files </td>
-                    <td class="column5"> </td>
+                    <td class="column_20"> </td>
                 </tr>
             </thead>
             <tbody>

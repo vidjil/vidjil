@@ -124,10 +124,7 @@ void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
   }
 }
 
-
-#define NO_COLOR "\033[0m"
-
-int AlignBox::posInRef(int i) {
+int AlignBox::posInRef(int i) const {
   // Works now only for V/J boxes
 
   if (del_left >= 0) // J
@@ -139,15 +136,15 @@ int AlignBox::posInRef(int i) {
   return -99;
 }
 
-string AlignBox::refToString(int from, int to) {
+string AlignBox::refToString(int from, int to) const {
 
   stringstream s;
 
-  s << ref_label << "  \t" ;
+  s << left << setw(SHOW_NAME_WIDTH) << ref_label << " " ;
 
   int j = posInRef(from);
 
-  s << j << "\t" ;
+  s << right << setw(4) << j << " " ;
 
   if (from > start)
     s << color;
@@ -172,11 +169,37 @@ string AlignBox::refToString(int from, int to) {
   if (to < end)
     s << NO_COLOR;
 
-  s << "\t" << j  ;
+  s << right << setw(4) << j  ;
 
   return s.str();
 }
 
+void show_colored_read(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int start_5, int end_3)
+{
+  out << left << setw(SHOW_NAME_WIDTH) << seq.label.substr(0,SHOW_NAME_WIDTH) << " "
+      << right << setw(4) << start_5 << " " ;
+
+  out << V_COLOR << seq.sequence.substr(start_5, box_V->end - start_5 + 1)
+      << NO_COLOR
+      << seq.sequence.substr(box_V->end+1, (box_J->start - 1) - (box_V->end + 1) +1)
+      << J_COLOR
+      << seq.sequence.substr(box_J->start, end_3 - box_J->start + 1)
+      << NO_COLOR ;
+  
+  out << right << setw(4) << end_3 << endl ;
+}
+
+void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int max_gene_align)
+{
+  int align_V_length = min(max_gene_align, box_V->end - box_V->start + 1);
+  int align_J_length = min(max_gene_align, (int)seq.sequence.size() - box_J->start + 1);
+  int start_V = box_V->end - align_V_length + 1;
+  int end_J = box_J->start + align_J_length - 1;
+
+  show_colored_read(out, seq, box_V, box_J, start_V, end_J);
+  out << box_V->refToString(start_V, end_J) << "   " << *box_V << endl ;
+  out << box_J->refToString(start_V, end_J) << "   " << *box_J << endl ;
+}
 
 
 ostream &operator<<(ostream &out, const AlignBox &box)
@@ -408,13 +431,20 @@ string KmerSegmenter::getInfoLineWithAffects() const
 {
    stringstream ss;
 
-   ss << "# "
+   ss << "= " << right << setw(10) << segmented_germline->code << " "
       << right << setw(3) << score << " "
       << left << setw(30)
-      << getInfoLine() ;
+      << getInfoLine();
 
    if (getSegmentationStatus() != UNSEG_TOO_SHORT)
-     ss << getKmerAffectAnalyser()->toString();
+   {
+     ss << endl;
+     ss << "# " << right << setw(10) << segmented_germline->code << " "
+        << getKmerAffectAnalyser()->toStringValues();
+     ss << endl;
+     ss << "$ " << right << setw(10) << segmented_germline->code << " "
+        << getKmerAffectAnalyser()->toStringSigns();
+   }
 
    return ss.str();
 }
@@ -446,9 +476,9 @@ KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
 
 KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold, double multiplier)
 {
-  box_V = new AlignBox();
+  box_V = new AlignBox("5", V_COLOR);
   box_D = new AlignBox();
-  box_J = new AlignBox();
+  box_J = new AlignBox("3", J_COLOR);
 
   CDR3start = -1;
   CDR3end = -1;
@@ -1311,9 +1341,12 @@ void FineSegmenter::findCDR3(){
     return ;
   }
 
+  // Now a junction is detected. Is it productive?
+  JUNCTIONproductive = false ;
+
   // We require at least one more nucleotide to export a CDR3
   if (JUNCTIONend - JUNCTIONstart + 1 < 7) {
-    JUNCTIONproductive = false ;
+    JUNCTIONunproductive = UNPROD_TOO_SHORT;
     return ;
   }
   
@@ -1326,10 +1359,25 @@ void FineSegmenter::findCDR3(){
   if (CDR3nuc.length() % 3 == 0)
     {
       CDR3aa = nuc_to_aa(CDR3nuc);
+      string sequence_startV_stopJ = subsequence(getSequence().sequence, box_V->start+1, box_J->end+1);
+      int frame = (JUNCTIONstart-1 - box_V->start) % 3;
+
+      if (hasInFrameStopCodon(sequence_startV_stopJ, frame))
+      {
+        // Non-productive CDR3
+        JUNCTIONunproductive = UNPROD_STOP_CODON;
+      }
+      else
+      {
+        // Productive CDR3
+        JUNCTIONproductive = true;
+      }
     }
   else
     {
       // Non-productive CDR3
+      JUNCTIONunproductive = UNPROD_OUT_OF_FRAME;
+
       // We want to output a '#' somewhere around the end of the N, and then restart
       // at the start of the first codon fully included in the germline J
       int CDR3startJfull = JUNCTIONend - ((JUNCTIONend - box_J->start) / 3) * 3 + 1 ;
@@ -1342,11 +1390,19 @@ void FineSegmenter::findCDR3(){
   JUNCTIONaa = nuc_to_aa(subsequence(getSequence().sequence, JUNCTIONstart, CDR3start-1))
     + CDR3aa + nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, JUNCTIONend));
 
-  string sequence_startV_stopJ = subsequence(getSequence().sequence, box_V->start+1, box_J->end+1);
-  int frame = (JUNCTIONstart-1 - box_V->start) % 3;
   // Reminder: JUNCTIONstart is 1-based
 
-  JUNCTIONproductive = (CDR3nuc.length() % 3 == 0) && (!hasInFrameStopCodon(sequence_startV_stopJ, frame));
+  // IGH without a {WP}GxG pattern
+  if (JUNCTIONproductive && (segmented_germline->code.find("IGH") != string::npos))
+  {
+    string FR4aastart = nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, CDR3end+1+11));
+
+    if (!WPGxG(FR4aastart))
+    {
+      JUNCTIONproductive = false;
+      JUNCTIONunproductive = UNPROD_NO_WPGxG;
+    }
+  }
 }
 
 void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
@@ -1356,7 +1412,7 @@ void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
       // Non-recombined D7-27/J1 sequence
       if ((box_V->ref_label.find("IGHD7-27") != string::npos)
           && (box_J->ref_label.find("IGHJ1") != string::npos)
-          && ((getMidLength() >= 90) || (getMidLength() <= 94)))
+          && ((getMidLength() >= 90) && (getMidLength() <= 94)))
         {
           clone->add_warning(W61_NON_RECOMBINED_D7_27_J1, "Non-recombined D7-27/J1 sequence", LEVEL_ERROR, phony);
         }
@@ -1376,7 +1432,11 @@ void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
     }
 }
 
-void FineSegmenter::toOutput(CloneOutput *clone){
+void FineSegmenter::showAlignments(ostream &out){
+  show_colored_read_germlines(out, getSequence(), box_V, box_J, SHOW_MAX_GENE_ALIGNMENT);
+}
+
+void FineSegmenter::toOutput(CloneOutput *clone, bool details){
   json seg;
 
   for (AlignBox *box: boxes)
@@ -1412,6 +1472,10 @@ void FineSegmenter::toOutput(CloneOutput *clone){
             {"aa", JUNCTIONaa},
             {"productive", JUNCTIONproductive}
         });
+        if (JUNCTIONunproductive.length())
+        {
+          clone->set(KEY_SEG, "junction", "unproductive", JUNCTIONunproductive);
+        }
     }
   }
 }
@@ -1420,12 +1484,16 @@ json toJsonSegVal(string s) {
   return {{"val", s}};
 }
 
-void KmerSegmenter::toOutput(CloneOutput *clone) {
+void KmerSegmenter::toOutput(CloneOutput *clone, bool details) {
     json seg;
     int sequenceSize = sequence.size();
 
     if (evalue > NO_LIMIT_VALUE)
       clone->setSeg("evalue", toJsonSegVal(scientific_string_of_double(evalue)));
+
+    if (!details)
+      return ;
+
     if (evalue_left > NO_LIMIT_VALUE)
       clone->setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(evalue_left)));
     if (evalue_right > NO_LIMIT_VALUE)

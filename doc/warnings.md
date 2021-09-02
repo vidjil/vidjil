@@ -23,6 +23,7 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 
 ## Output of an analysis, global warnings
 - [x] W20 Very few V(D)J recombinations found (0.7%)
+- [x] W21 Doubtful e-value multiplier
 - [ ] W2x Sequences with known adapters #1669
 - [ ] W2x CDR3 detection without gapped germlines   #2187   (ou bien par clone ?)
 
@@ -58,4 +59,6 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 ## Comparisons between several samples or patients (such as with clonedb)
 - [ ] W8x Potential contamination or public clone #1744 
 - [ ]     Known public clone 
+- [x] W81 Merged clone has different V(D)J designation in some samples #4566
+- [x] W82 Merged clone has different productivities in some samples #4578
 

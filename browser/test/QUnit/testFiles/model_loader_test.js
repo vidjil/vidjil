@@ -50,3 +50,17 @@ QUnit.test("loadCluster", function(assert) {
     assert.deepEqual(m.clusters[2],         [], "another top order; Correct cluster for clone 2" )
 
 });
+
+
+QUnit.test("copySampleFields", function(assert) {
+    model_loader = new Model_loader()
+
+    var samples  = {"original_names": ["f0", "f1", "f3", "f4", "f5", "f7"], "order": [0,1,2,3,4,5] , "stock_order": [0,1,2,3,4,5] }
+    var analysis = {"id": ["f0", "f1", "f2", "f3", "f4", "f5", "f6", "f7"], "order": [0,2,6,4], "stock_order": [0,1,2,3,7,6,5,4] }
+    
+    var loaded = model_loader.copySampleFields(samples, analysis)
+    console.log(loaded)
+    assert.deepEqual(loaded.original_names,  ["f0", "f1", "f3", "f4", "f5", "f7"], "original_names" )
+    assert.deepEqual(loaded.order,           [0,3], "order" )
+    assert.deepEqual(loaded.stock_order,     [0,1,2,5,4,3], "stock_order" )
+});

@@ -18,6 +18,9 @@ unit: clean_unit_tests
 functional:
 	$(MAKE) -C web2py/applications/vidjil/tests functional
 
+tutorial:
+	$(MAKE) -C web2py/applications/vidjil/tests tutorial
+
 headless:
 	HEADLESS=1 $(MAKE) -C web2py/applications/vidjil/tests functional
 

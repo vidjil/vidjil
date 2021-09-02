@@ -59,7 +59,7 @@ QUnit.test("grid", function(assert) {
         sp.update()
 
         assert.equal(   sp.select_x.selectedIndex,      9,                      'select_x index')
-        assert.equal(   sp.select_y.selectedIndex,      17,                     'select_y index')
+        assert.equal(   sp.select_y.selectedIndex,      18,                     'select_y index')
         assert.approx(  sp.nodes[1].bar_h/sp.resizeH,   0.40, 0.05,             "node 1, bar h position " + m.clone(1).getSize())
         assert.equal(   sp.axisX.getPos(m.clone(1)),    sp.axisX.getValuePos(9),"node 1, bar x position " + m.clone(1).getNlength())
         assert.approx(  sp.nodes[1].bar_y/sp.resizeW,   0.40, 0.05,             "node 1, bar y position")
@@ -177,7 +177,7 @@ QUnit.test("multiple selection", function(assert) {
         sp.stopSelectorAt([sp_width*0.8, sp_height]);
 
         assert.equal(m.getSelected().length, 1, "only one clone is selected");
-        assert.equal(m.clone(m.getSelected()[0]).name, "unseg sequence", "the selected clone is 'unseg sequence' (test5)");
+        assert.equal(m.clone(m.getSelected()[0]).name, "test5; unseg sequence", "the selected clone is 'unseg sequence' (test5)");
     }
 
     function test2() {
@@ -195,4 +195,168 @@ QUnit.test("multiple selection", function(assert) {
 
         assert.deepEqual(m.getSelected().sort(), expected_cloneIDs.sort(), "the selected clones are test{1,2,4}");
     }
+})
+
+QUnit.test("axes productivity detailed", function(assert) {
+
+    assert.expect(7);
+    var ready = assert.async(1);
+
+    m = new Model();
+    m.parseJsonData(json_data_productivity,100)
+    m.loadGermline()
+    m.initClones()
+
+    var sp = new ScatterPlot("visu",m);
+    sp.init();
+
+    assert.equal(sp.returnActiveclones(), 6, "returnActiveClones -> 6");
+    sp.changeSplitMethod("productivity detailed", "productivity detailed", "grid");
+
+    var axes_legend = document.getElementById("visu_axis_x_container").childNodes
+    setTimeout( function() {
+        assert.equal( axes_legend[0].__data__.text, "productive", "sp legend productivity; productive")
+        assert.equal( axes_legend[1].__data__.text, "not productive",       "sp legend productivity; not productive")
+        assert.equal( axes_legend[2].__data__.text, "out-of-frame", "sp legend productivity; out of frame")
+        assert.equal( axes_legend[3].__data__.text, "stop-codon",   "sp legend productivity; stop codon")
+        assert.equal( axes_legend[4].__data__.text, "no CDR3 detected",   "sp legend productivity; no cdr3 detected")
+        assert.equal( axes_legend[5].__data__.text, "no-WPGxG-pattern",   "sp legend productivity; no-WPGxG-pattern")
+        ready()
+    }, 150);
+})
+
+
+QUnit.test("Axis scale", function(assert) {
+
+    var ready = assert.async(1);
+
+    m = new Model();
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+
+    var sp = new ScatterPlot("visu",m);
+    sp.init();
+    sp.setPreset(4);
+    
+
+    var delay = 0;
+    var step = 200;
+    setTimeout( function() {
+        assert.equal( sp.axisX.scale.nice_min, 0,  "min value of axisX")
+        assert.equal( sp.axisX.scale.nice_max, 260, "max value of axisX")
+        assert.equal( sp.axisX.fct(m.clone(3)), 241, "axis value of clone 3")
+
+        var minPos = sp.axisX.getValuePos(0);
+        var maxPos = sp.axisX.getValuePos(260);
+        var delta = maxPos-minPos;
+        var clonePos = sp.axisX.getPos(m.clone(3));
+        assert.equal( clonePos.toPrecision(3), (minPos+delta*(241/260)).toPrecision(3), "axis position of clone 3")
+        
+        sp.updateScaleX([100,300]);
+    }, delay+=step);
+
+    setTimeout( function() {
+        assert.equal( sp.axisX.scale.nice_min, 100,  "min value of axisX after rescale")
+        assert.equal( sp.axisX.scale.nice_max, 300, "max value of axisX after rescale")
+        assert.equal( sp.axisX.fct(m.clone(3)), 241, "axis value of clone 3")
+
+        var minPos = sp.axisX.getValuePos(100);
+        var maxPos = sp.axisX.getValuePos(300);
+        var delta = maxPos-minPos;
+        var clonePos = sp.axisX.getPos(m.clone(3));
+        assert.equal( clonePos.toPrecision(3), (minPos+delta*(141/200)).toPrecision(3), "position of clone 1 after rescale")
+    
+        ready()
+    }, delay+=step);
+
+})
+
+QUnit.test("Axis scale Log", function(assert) {
+
+    var ready = assert.async(1);
+
+    m = new Model();
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+
+    var sp = new ScatterPlot("visu",m);
+    sp.init();
+    sp.changeSplitMethod("size", "size", "grid");
+    
+
+    var delay = 0;
+    var step = 200;
+    setTimeout( function() {
+        assert.equal( sp.axisX.scale.nice_min,  0.01,   "min value of axisX")
+        assert.equal( sp.axisX.scale.nice_max,  1,      "max value of axisX")
+        assert.equal( sp.axisX.fct(m.clone(3)), 0.025,  "axis value of clone 3")
+
+        assert.equal( sp.convertLoopToLog(sp.axisX, 3),     1,      "convert slider value to log")
+        assert.equal( sp.convertLoopToLog(sp.axisX, 2),     0.1,    "convert slider value to log")
+        assert.equal( sp.convertLoopToLog(sp.axisX, 1),     0.01,   "convert slider value to log")
+
+        assert.equal( sp.convertLogToLoop(sp.axisX, 0.01),  1,      "convert log to slider value")
+        assert.equal( sp.convertLogToLoop(sp.axisX, 0.0999),2,      "convert log to slider value")
+        assert.equal( sp.convertLogToLoop(sp.axisX, 0.1),   2,      "convert log to slider value")
+        assert.equal( sp.convertLogToLoop(sp.axisX, 0.1001),3,      "convert log to slider value")
+        assert.equal( sp.convertLogToLoop(sp.axisX, 1),     3,      "convert log to slider value")
+
+        sp.updateScaleX([2, 3])
+        
+    }, delay+=step);
+
+    setTimeout( function() {
+        assert.equal( sp.axisX.scale.nice_custom_min, 0.1,  "updated min value of axisX ")
+        assert.equal( sp.axisX.scale.nice_custom_max, 1,    "unchanged max value of axisX")
+
+        ready()
+    }, delay+=step);
+
+})
+
+QUnit.test("Axis scale Float", function(assert) {
+
+    var ready = assert.async(1);
+
+    m = new Model();
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+
+    var sp = new ScatterPlot("visu",m);
+    sp.init();
+    sp.changeSplitMethod("size", "GC content", "grid");
+    
+
+    var delay = 0;
+    var step = 200;
+    setTimeout( function() {
+        assert.equal( sp.axisY.scale.nice_min,  0,  "min value of axisX")
+        assert.equal( sp.axisY.scale.nice_max,  1,  "max value of axisX")
+        assert.equal( sp.axisY.fct(m.clone(3)).toPrecision(2), 0.48,  "axis value of clone 3")
+
+        //nice step == 0.1  , so we expect each slider notch to increase the value by 0.1
+        assert.equal( sp.convertLoopToFloat(sp.axisY, 1).toPrecision(2),     0.1.toPrecision(2),      "convert slider value to Float")
+        assert.equal( sp.convertLoopToFloat(sp.axisY, 3).toPrecision(2),     0.3.toPrecision(2),      "convert slider value to Float")
+        assert.equal( sp.convertLoopToFloat(sp.axisY, 6).toPrecision(2),     0.6.toPrecision(2),      "convert slider value to Float")
+
+        assert.equal( sp.convertFloatToLoop(sp.axisY, 0.2),     2,      "convert log to slider value")
+        assert.equal( sp.convertFloatToLoop(sp.axisY, 0.4999),  5,      "convert log to slider value")
+        assert.equal( sp.convertFloatToLoop(sp.axisY, 0.5),     5,      "convert log to slider value")
+        assert.equal( sp.convertFloatToLoop(sp.axisY, 0.5001),  5,      "convert log to slider value")
+        assert.equal( sp.convertFloatToLoop(sp.axisY, 0.7),     7,      "convert log to slider value")
+
+        sp.updateScaleY([0, 9])
+        
+    }, delay+=step);
+
+    setTimeout( function() {
+        assert.equal( sp.axisY.scale.nice_min, 0,   "unchanged min value of axisY")
+        assert.equal( sp.axisY.scale.nice_max, 0.9, "updated max value of axisY")
+
+        ready()
+    }, delay+=step);
+
 })

@@ -68,6 +68,7 @@ class FileController(unittest.TestCase):
 
         data = {}
         data['set_ids'] = ":p plapipou ("+str(fake_patient_id)+")"
+        data['source'] = "computer"
 
         myfile= {
             "id": "",
@@ -77,6 +78,7 @@ class FileController(unittest.TestCase):
             "sequencer": "plop",
             "producer": "plop",
             "filename": "plopapi",
+            "filename2": "",
             "set_ids": ""
         }
         data['file'] = [myfile]
@@ -84,8 +86,53 @@ class FileController(unittest.TestCase):
         request.vars['data'] = json.dumps(data)
 
         resp = submit()
-        self.assertNotEqual(resp.find('"redirect":"sample_set/index"'), -1, "add_form() failed")
-    
+        self.assertGreater(resp.find('"message":"successfully added/edited file(s)"'), 0, "edit_form() failed"+resp)
+
+        # nfs test
+        defs.FILE_SOURCE = os.path.join(os.path.dirname(__file__), '../../../../../demo/')
+        data['source'] = "nfs"
+
+        myfile['filename'] = "//Demo-X5.fa"
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertGreater(resp.find('"message":"successfully added/edited file(s)"'), 0, "edit_form() failed"+resp)
+
+        # invalid form 1
+        defs.FILE_SOURCE = os.path.join(os.path.dirname(__file__), '../../../../../demo/')
+        data['source'] = "nfs"
+
+        myfile['filename'] = ""
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertGreater(resp.find('"message":"add_form() failed"'), 0, "edit_form() was expected to fail but succeed"+resp)
+
+        # nfs + pre-process
+        data['source'] = "nfs"
+        data['pre_process'] = str(fake_pre_process_id)
+
+        myfile['filename'] = "//Demo-X5.fa"
+        myfile['filename2'] = "//Demo-X5.fa"
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertGreater(resp.find('"message":"successfully added/edited file(s)"'), 0, "edit_form() failed"+resp)
+
+        # invalid form 2
+        data['source'] = "nfs"
+        data['pre_process'] = str(fake_pre_process_id)
+
+        myfile['filename'] = "//Demo-X5.fa"
+        myfile['filename2'] = ""
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertGreater(resp.find('"message":"add_form() failed"'), 0, "edit_form() was expected to fail but succeed"+resp)
     
     def testEdit(self):
         request.vars['sample_set_id'] = fake_sample_set_id
@@ -99,10 +146,12 @@ class FileController(unittest.TestCase):
         data = {}
         data['set_ids']=":p plapipou ("+str(fake_patient_id)+")"
         data["sample_type"] = defs.SET_TYPE_PATIENT
+        data['source'] = "computer"
 
         myfile = {
             "id" : fake_file_id,
             "filename" : "plopapi",
+            "filename2": "",
             "sampling_date" : "1992-02-02",
             "info" : "plop",
             "pcr" : "plop",
@@ -113,11 +162,56 @@ class FileController(unittest.TestCase):
         data['file'] = [myfile]
 
         request.vars['data'] = json.dumps(data)
-        
-        
+
         resp = submit()
-        self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
-       
+        self.assertGreater(resp.find('"message":"successfully added/edited file(s)"'), 0, "edit_form() failed"+resp)
+
+        # nfs test
+        defs.FILE_SOURCE = os.path.join(os.path.dirname(__file__), '../../../../../demo/')
+        data['source'] = "nfs"
+
+        myfile['filename'] = "//Demo-X5.fa"
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertGreater(resp.find('"message":"successfully added/edited file(s)"'), 0, "edit_form() failed"+resp)
+
+        # nfs + pre-process
+        data['source'] = "nfs"
+        data['pre_process'] = str(fake_pre_process_id)
+
+        myfile['filename'] = "//Demo-X5.fa"
+        myfile['filename2'] = "//Demo-X5.fa"
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertGreater(resp.find('"message":"successfully added/edited file(s)"'), 0, "edit_form() failed"+resp)
+
+         # invalid form
+        data['source'] = "nfs"
+        data['pre_process'] = str(fake_pre_process_id)
+
+        myfile['filename'] = ""
+        myfile['filename2'] = "//Demo-X5.fa"
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertGreater(resp.find('"message":"add_form() failed"'), 0, "edit_form() was expected to fail but succeed"+resp)
+
+        # edit back to defaultsource computer
+        data['source'] = "computer"
+        data['pre_process'] = "0"
+
+        myfile['filename'] = "plopapi"
+        myfile['filename2'] = ""
+        data['file'] = [myfile]
+        request.vars['data'] = json.dumps(data)
+
+        resp = submit()
+        self.assertGreater(resp.find('"message":"successfully added/edited file(s)"'), 0, "edit_form() failed"+resp)
        
     def testUpload(self):
         class emptyClass( object ):

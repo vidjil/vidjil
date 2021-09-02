@@ -8,9 +8,6 @@ class TestLoadingAnalysis < BrowserTest
     if not defined? $b
       set_browser("/doc/analysis-example2.vidjil", "/doc/analysis-example2.analysis")
       $b.clone_in_scatterplot('0').wait_until(&:present?)
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
     end
   end
 
@@ -190,13 +187,15 @@ end
     $b.clone_in_scatterplot('3').click
     sleep 1
     # If cdr3 checked, the sequence will be split in mutiple dom element with highlight or not
-    check = $b.checkbox(:id => "vdj_input_check")
+    $b.div(:id => 'align-segment-info').hover
+    
+    check = $b.checkbox(:id => "aligner_checkbox_CDR3")
     if check.set? # by default, in chromium based browser, the checkbox is set to true
       check.click
     end
     assert ( not check.set? ), "CDR3 checkbox is not checked"
     assert ( $b.clone_in_segmenter('3').exists? ), ">> clone 3 is correctly present in the segmenter, without infinite loop"
-    assert ( $b.span(:id => 'sequence-clone-3').text.include? 'GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT'), "sequence of analysis loaded replace sequence of vidjil file"
+    assert ( $b.li(:id => 'seq3').text.include? 'GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT'), "sequence of analysis loaded replace sequence of vidjil file"
   end
 
   def test_zz_close

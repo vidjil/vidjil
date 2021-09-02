@@ -9,12 +9,8 @@ class TestSample < ServerTest
       set_browser("http://localhost/browser")
       $num_additional_files = 2
     end
-    login_form = $b.form(:id => 'login_form')
-    if login_form.present?
-      login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
-      login_form.text_field(:id => "auth_user_password").set('foobartest')
-      login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
-    end
+
+    $b.login('plop@plop.com', 'foobartest')
   end
 
   def go_to_first_set
@@ -72,7 +68,7 @@ class TestSample < ServerTest
 
     jstree = $b.div(:id => "jstree")
     for i in 0..$num_additional_files
-      $b.div(:id => "jstree_field_%d" % i).span(:text => "browse").click
+      $b.div(:id => "jstree_field_1_%d" % i).span(:text => "browse").click
       assert(jstree.present?)
       jstree_file = jstree.a(:id => "//Demo-X5.fa_anchor")
       unless jstree_file.present? and jstree_file.present?
@@ -89,13 +85,10 @@ class TestSample < ServerTest
       # TODO test other sets
     end
 
-    form_class = form.input(:type => "submit").class_name
-    assert( !(form_class.include? "disabledClass") ) # Submit button is not disabled before click
+    assert( !form.input(:type => "submit").obscured? ) # Submit button is not disabled before click
 
     form.input(:type => "submit").click
-    
-    form_class = form.input(:type => "submit").class_name
-    assert( (form_class.include? "disabledClass") ) # Submit button should be disabled after click
+    assert( form.input(:type => "submit").obscured?  ) # Submit button should be disabled after click
 
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
@@ -254,7 +247,7 @@ class TestSample < ServerTest
     $b.input(:id => "source_nfs").click
 
     jstree = $b.div(:id => "jstree")
-    $b.div(:id => "jstree_field_0").span(:text => "browse").click
+    $b.div(:id => "jstree_field_1_0").span(:text => "browse").click
     assert(jstree.present?)
     jstree_file = jstree.a(:id => "//Demo-X5.fa_anchor")
     unless jstree_file.present? and jstree_file.present?
@@ -360,7 +353,7 @@ class TestSample < ServerTest
     table = go_to_set_by_tag "#set_assoc_0"
 
     config_list = $b.select_list(:id => "choose_config")
-    assert ( config_list.optgroup(:label => "Vidjil-algo").exist? ), "optgroup is present in configlist"
+    assert ( config_list.optgroup(:label => "Human V(D)J recombinations").exist? ), "optgroup is present in configlist"
 
     config_list.select("2")
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
