@@ -230,7 +230,12 @@ QUnit.test("Sort axes alphabetical with numeric value", function(assert) {
     // See https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare for more information
 
     assert.expect(11);
+    var ready = assert.async(1);
 
+    m = new Model();
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
     // Update clone segment for testing
     // Vgene
     m.clones[0].seg["5"].name = "TRGV4*01"
