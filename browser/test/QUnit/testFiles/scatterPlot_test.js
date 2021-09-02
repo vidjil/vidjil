@@ -225,11 +225,64 @@ QUnit.test("axes productivity detailed", function(assert) {
     }, 150);
 })
 
+QUnit.test("Sort axes alphabetical with numeric value", function(assert) {
+    // Use localeCompare to sort values
+    // See https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare for more information
+
+    assert.expect(11);
+    var ready = assert.async(1);
+
+    m = new Model();
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+    // Update clone segment for testing
+    // Vgene
+    m.clones[0].seg["5"].name = "TRGV4*01"
+    m.clones[1].seg["5"].name = "TRGV10*01"
+    m.clones[2].germline = "TRG"
+    m.clones[2].seg["5"].name = "TRGV5-2*01"
+    m.clones[3].seg["5"].name = "TRGV5-11*01"
+    // Jgene
+    m.clones[0].seg["3"].name = "TRGJ1*02"
+    m.clones[1].seg["3"].name = "TRGJ1*01"
+    m.clones[2].seg["3"].name = "TRGJ1*11"
+    m.changeGermline("TRG", false)
+
+
+    var sp = new ScatterPlot("visu",m);
+    sp.init();
+
+    assert.equal(sp.returnActiveclones(), 5, "returnActiveClones -> 6");
+    sp.changeSplitMethod("V/5' gene", "J/3 allele", "grid");
+
+    var axes_legend_x = document.getElementById("visu_axis_x_container").childNodes
+    var axes_legend_y = document.getElementById("visu_axis_y_container").childNodes
+
+    setTimeout( function() {
+        // V gene; "TRGV4*01" "TRGV5-2*01" "TRGV5-11*01" "TRGV10*01" undefinedV
+        assert.equal( axes_legend_x[0].__data__.text, "TRGV4",    "sp legend V/5' gene sort; pos 0")
+        assert.equal( axes_legend_x[1].__data__.text, "TRGV5-2",  "sp legend V/5' gene sort; pos 1")
+        assert.equal( axes_legend_x[2].__data__.text, "TRGV5-11", "sp legend V/5' gene sort; pos 2")
+        assert.equal( axes_legend_x[3].__data__.text, "TRGV10",   "sp legend V/5' gene sort; pos 3")
+        assert.equal( axes_legend_x[4].__data__.text, "undefined V", "sp legend V/5' gene sort; undefined")
+        // J allele; "TRGJ1*01" "TRGJ1*02" "TRGJ1*11"
+        //     first level (without allele)
+        assert.equal( axes_legend_y[0].__data__.text, "TRGJ1",      "sp legend J/3 allele sort; first level (without allele) 0")
+        assert.equal( axes_legend_y[1].__data__.text, "undefined J", "sp legend J/3 allele sort; first level (without allele) 1")
+        //     second level (only allele)
+        assert.equal( axes_legend_y[2].__data__.text, "01", "sp legend J/3 allele sort; second level (only allele) 0")
+        assert.equal( axes_legend_y[3].__data__.text, "02", "sp legend J/3 allele sort; second level (only allele) 1")
+        assert.equal( axes_legend_y[4].__data__.text, "11", "sp legend J/3 allele sort; second level (only allele) 2")
+        ready()
+    }, 150);
+})
+
 
 QUnit.test("Axis scale", function(assert) {
 
     var ready = assert.async(1);
-
+    
     m = new Model();
     m.parseJsonData(json_data,100)
     m.loadGermline()
@@ -358,5 +411,4 @@ QUnit.test("Axis scale Float", function(assert) {
 
         ready()
     }, delay+=step);
-
 })

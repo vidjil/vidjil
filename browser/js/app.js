@@ -54,8 +54,7 @@ function loadAfterConf() {
                 function() {
                     require(["js/closeable"],
                             function() {
-                                require(["js/compare",
-                                         "js/menu",
+                                require(["js/menu",
                                          "js/dbscan",
                                          "js/germline_builder",
                                          "js/aligner",

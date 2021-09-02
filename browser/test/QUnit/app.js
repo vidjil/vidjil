@@ -18,7 +18,6 @@ var lib_plugin = [  "js/lib/jquery.form",
 
 var lib_vidjil = [  //"js/conf",
                     "js/view",
-                    "js/compare",
                     "js/menu",
                     "js/dbscan",
                     "js/germline",
@@ -72,7 +71,6 @@ var test_files = [  "testFiles/form_test",
                     "testFiles/shortcut_test",
                     "testFiles/speed_test",
                     "testFiles/tokeniser_test",
-                    "testFiles/compare_test",
                     "testFiles/lib/bioseq_test"
                 ];
 

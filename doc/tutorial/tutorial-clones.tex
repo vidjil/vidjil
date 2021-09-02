@@ -537,7 +537,7 @@ By default in the bottom plot (the \textit{grid}), the clones
     $b.clone_in_list("0").click
     $b.send_keys 0
 
-    $b.scatterplot_x_legend(6).click # clonotype with IGHV3-13
+    $b.scatterplot_x_legend(8).click # clonotype with IGHV3-13
 
     ## control that these clonotype is selected and visible in semgenter
     assert ( not $b.clone_in_segmenter('0').present? ), "clone 0 chould not be present";
@@ -1010,7 +1010,7 @@ clicked on.
 
     $b.send_keys "g"
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_legend(0).text == "TRGV10"), "scatterplot_legend X  after shortcut G; TRGV10"
+    assert ( $b.scatterplot_x_legend(0).text == "TRGV2"), "scatterplot_legend X  after shortcut G; TRGV2"
     assert ( $b.scatterplot_y_legend(0).text == "TRGJ1"), "scatterplot_legend Y  after shortcut G; TRGJ1"
     
 
@@ -1025,6 +1025,9 @@ You can also change the current locus by clicking on the locus name in the
 right part of the grid.
 \begin{verbatim}
   def test_B_clones_38_switch_locus_by_scatterplot_click
+    $b.send_keys "h"
+    $b.update_icon.wait_while(&:present?)
+    
     $b.send_keys 0 # return to a grap with locus 
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X at init; IGHV1-2"
@@ -1032,7 +1035,7 @@ right part of the grid.
 
     $b.scatterplot_locus("TRG").click
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_legend(0).text == "TRGV10"), "scatterplot_legend X  after shortcut G; TRGV10"
+    assert ( $b.scatterplot_x_legend(0).text == "TRGV2"), "scatterplot_legend X  after shortcut G; TRGV2"
     assert ( $b.scatterplot_y_legend(0).text == "TRGJ1"), "scatterplot_legend Y  after shortcut G; TRGJ1"  
   end
 \end{verbatim}
