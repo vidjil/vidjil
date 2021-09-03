@@ -1,4 +1,4 @@
-/** Model_loader constructor <br>
+/** Model_Color constructor <br>
  * extend the object "model" with color related functions
  * */
 function Model_color() {
@@ -65,6 +65,29 @@ Model_color.prototype = {
     // operator "=" / ">" / "<"
     addFilter: function(axis_name, operator ,value){
         this.initFilter()
+
+        // new search filter always replace previous one
+        if (operator == "search"){
+            filterID = this.checkFilter(axis_name, operator ,value)
+            if (filterID != -1){
+                this.removeFilterById(filterID)
+                this.addFilter(axis_name, operator ,value);
+                return
+            }
+        }
+
+        // focus and hide filter are combined with existing one
+        if (operator == "focus" || operator == "hide" ){
+            filterID = this.checkFilter(axis_name, operator ,value)
+            if (filterID != -1){
+                var v2 = this.filters[filterID].value.concat(value)
+                this.removeFilterById(filterID)
+                this.addFilter(axis_name, operator ,v2);
+                return
+            }
+        }
+
+
         this.filters.push({ axis:       axis_name,
                             operator:   operator,
                             value:      value});
@@ -93,19 +116,22 @@ Model_color.prototype = {
 
     toggleFilter: function(axis_name, operator ,value){
         var index = this.checkFilter(axis_name, operator ,value)
-        if (index >=0)
-            this.removeFilter(index)
+        if (index >= 0)
+            this.removeFilterById(index)
         else
             this.addFilter(axis_name, operator ,value)
     },
 
-    //return index of filter id if exist, return 
+    //return index of filter id if exist, return -1 otherwise
     checkFilter: function(axis_name, operator ,value){
         this.initFilter()
         for(var i=0; i<this.filters.length; i++)
             if (this.filters[i].axis == axis_name && 
-                this.filters[i].operator == operator && 
-                this.filters[i].value == value)
+                this.filters[i].operator == operator &&
+                (   this.filters[i].operator == "focus" ||
+                    this.filters[i].operator == "hide"  ||
+                    this.filters[i].operator == "search"  ||
+                    this.filters[i].value == value))
                 return i
         
         return -1
@@ -135,9 +161,21 @@ Model_color.prototype = {
                             if (!c.active) break;
                             if (a.fct(c) > f.value) c.disable()
                             break;
-                        case "=":
+                        case "<":
                             if (!c.active) break;
                             if (a.fct(c) < f.value) c.disable()
+                            break;
+                        case "focus":
+                            if (!c.active) break;
+                            if (f.value.indexOf(a.fct(c)) == -1) c.disable()
+                            break;
+                        case "hide":
+                            if (!c.active) break;
+                            if (f.value.indexOf(a.fct(c)) != -1) c.disable()
+                            break;
+                        case "search":
+                            if (!c.active) break;
+                            if (!m.clone(a.fct(c)).search(f.value)) c.disable()
                             break;
                         default:
                             break;
