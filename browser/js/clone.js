@@ -1887,7 +1887,7 @@ Clone.prototype = {
     },
 
     enable: function (top) {
-        if (this.top > top || this.hasSizeOther()) return; 
+        if (this.hasSizeOther()) return; 
 
         this.active = true;
     },

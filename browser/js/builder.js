@@ -380,22 +380,6 @@ Builder.prototype = {
             this.buildListTab(i);
         }
 
-        //init slider
-        var max_top = 0;
-        for (var j = 0; j < this.m.clones.length; j++) {
-            if (this.m.clone(j).top > max_top)
-                max_top = this.m.clone(j).top
-        }
-        max_top = (Math.ceil(max_top / 5)) * 5
-        document.getElementById("top_slider")
-            .max = max_top;
-            
-
-        // init switch onlyOneSample
-        var onlyOneSample = document.getElementById("filter_switch_sample_check")
-        onlyOneSample.checked = (this.m.filter.check("Size", "=", 0) == -1)
-
-
         //init notation
         if (this.m.notation_type == "scientific") {
             document.getElementById("notation").checked = true

@@ -385,7 +385,7 @@ Model.prototype = {
                 $("#external_normalization").show();
             }
         }
-        this.displayTop(50) // reset value
+        this.update()
     }, //end initClones
 
 changeCloneNotation: function(cloneNotationType, update, save) {
@@ -1224,13 +1224,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                             this.unselect(seq);
                         }
                     }
-                    this.clone(i).enable(this.top)
+                    this.clone(i).enable()
                 } else {
                     var main_clone = this.clone(i);
                     for (var k = 0; k < this.clusters[i].length; k++) {
                         seq = this.clusters[i][k]
                         clone = this.clone(seq);
-                        clone.enable(this.top)
+                        clone.enable()
                         if (clone.isSelected() != main_clone.isSelected())
                             this.select(seq, main_clone.select);
                     }
@@ -1283,6 +1283,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * */
     update: function () {
         this.color.update();
+        this.filter.update();
         this.update_normalization();
         this.update_precision();
         this.updateModel();
@@ -1403,47 +1404,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.url_manager.applyURL();
         }
 
-        this.displayTop();
+        this.update()
     },
 
-
-    /**
-     * define a minimum top rank required for a clone to be displayed
-     * @param {integer} top - minimum rank required to display
-     * */
-    displayTop: function (top) {
-        top = typeof top !== 'undefined' ? top : this.top;
-
-
-        if (top < 0)
-            top = 0
-        // Remember the top setted
-        // Allow to keep this values between various samples
-        this.top = top;
-
-        // top show cannot be greater than the number of clones
-        var max_clones = this.countRealClones();
-        if (top > max_clones)
-            top = max_clones;
-        this.current_top = top
-
-        var html_slider = document.getElementById('top_slider');
-        if (html_slider !== null) {
-            html_slider.value = top;
-        }
-        
-        var html_label = document.getElementById('top_label');
-        if (html_label !== null) {
-            var count = 0;
-            for (var i=0; i<this.clones.length; i++){
-                if (this.clone(i).top <= top && this.clone(i).hasSizeConstant() ) count++;
-                //todo: test ?
-            }
-            html_label.innerHTML = count + ' clones (top ' + top + ')' ;
-        }
-        
-        this.update();
-    },
 
     /**
      * @return {integer} the number of real clones (excluded the fake clones internally

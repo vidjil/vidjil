@@ -112,6 +112,10 @@ AXIS_COLOR = [
 
 // Axis properties
 AXIS_DEFAULT = {
+    "Top": {
+        doc:        "",
+        fct:        function(clone) {return clone.top},
+    },
     "Clone": {
         doc:        "",
         labels:     function(){

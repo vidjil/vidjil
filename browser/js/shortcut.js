@@ -155,7 +155,7 @@ Shortcut.prototype = {
         case 37 :   // Left arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
-                m.displayTop(this.m.top - NB_CLONES_CHANGE)
+                m.filter.decrease("Top", ">", NB_CLONES_CHANGE)
             else
                 m.previousTime();
             break;
@@ -163,7 +163,7 @@ Shortcut.prototype = {
         case 39 :   // Right arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
-                m.displayTop(m.top + NB_CLONES_CHANGE)
+                m.filter.increase("Top", ">", NB_CLONES_CHANGE)
             else
                 m.nextTime();
             break;

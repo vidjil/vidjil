@@ -224,7 +224,7 @@
                         <div class="menu_box">
                             <span id="top_label"></span></br>
                             <input id="top_slider" type="range" min="5" max="100" step="5" value="10"
-                                onchange="m.displayTop(this.value)" />
+                                onchange="m.filter.add('Top', '>', parseInt(this.value))" />
                         </div>
                         <div class="menu_box">
                             <div id="filter_switch_sample"

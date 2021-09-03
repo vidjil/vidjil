@@ -6,8 +6,49 @@ function Filter(model) {
 Filter.prototype = {
 
     init: function(){
-        if (!this.filters) this.filters = []
+        if (!this.filters) this.filters = [{ axis:      "Top",
+                                            operator:   ">",
+                                            value:      50}]
         if (!this.stamp) this.stamp=0; 
+
+        //init slider
+        var max_top = 0;
+        for (var j = 0; j < this.m.clones.length; j++) {
+            if (this.m.clone(j).top > max_top)
+                max_top = this.m.clone(j).top
+        }
+        max_top = (Math.ceil(max_top / 5)) * 5
+        document.getElementById("top_slider")
+            .max = max_top;
+            
+
+        // init switch onlyOneSample
+        var onlyOneSample = document.getElementById("filter_switch_sample_check")
+        onlyOneSample.checked = (this.m.filter.check("Size", "=", 0) == -1)
+
+    },
+
+    update: function(){
+
+        var topFilterId = this.check("Top", ">", undefined)
+        if (topFilterId >= 0){
+
+            var top = this.filters[topFilterId].value
+
+            var html_slider = document.getElementById('top_slider');
+            if (html_slider !== null) {
+                html_slider.value = top;
+            }
+            
+            var html_label = document.getElementById('top_label');
+            if (html_label !== null) {
+                var count = 0;
+                for (var i=0; i<this.m.clones.length; i++){
+                    if (this.m.clone(i).top <= top && this.m.clone(i).hasSizeConstant() ) count++;
+                }
+                html_label.innerHTML = count + ' clones (top ' + top + ')' ;
+            }
+        }
     },
 
 
@@ -16,9 +57,9 @@ Filter.prototype = {
     // operator "=" / ">" / "<"
     add: function(axis_name, operator ,value){
 
-        // new "search" filter always replace previous one
-        if (operator == "search"){
-            filterID = this.check(axis_name, operator ,value)
+        // new "search" / "<" / ">" filter always replace previous one
+        if (operator == "search" || operator == ">"  || operator == "<" ){
+            filterID = this.check(axis_name, operator ,undefined)
             if (filterID != -1){
                 this.removeById(filterID)
                 this.add(axis_name, operator ,value);
@@ -26,9 +67,9 @@ Filter.prototype = {
             }
         }
 
-        // "focus" and "hide" filter are combined with existing one
+        // new "focus" and "hide" filter are combined with existing one
         if (operator == "focus" || operator == "hide" ){
-            filterID = this.check(axis_name, operator ,value)
+            filterID = this.check(axis_name, operator ,undefined)
             if (filterID != -1){
                 var v2 = this.filters[filterID].value.concat(value)
                 this.removeById(filterID)
@@ -36,7 +77,6 @@ Filter.prototype = {
                 return
             }
         }
-
 
         this.filters.push({ axis:       axis_name,
                             operator:   operator,
@@ -52,7 +92,7 @@ Filter.prototype = {
     },
 
     removeById: function (index){
-        if (index > -1 & index < this.filters.length) 
+        if (index > -1) 
             this.filters.splice(index, 1)
         this.stamp++
         this.m.update()
@@ -66,6 +106,22 @@ Filter.prototype = {
             this.add(axis_name, operator ,value)
     },
 
+    increase: function(axis_name, operator ,inc){
+        var index = this.check(axis_name, operator , undefined)
+        if (index < 0) return
+        this.filters[index].value += inc
+        this.stamp++
+        this.m.update()
+    },
+
+    decrease: function(axis_name, operator ,dec){
+        var index = this.check(axis_name, operator ,undefined)
+        if (index < 0) return
+        this.filters[index].value -= dec
+        this.stamp++
+        this.m.update()
+    },
+
     //return index of filter id if exist, return -1 otherwise
     check: function(axis_name, operator ,value){
         for(var i=0; i<this.filters.length; i++)
@@ -74,14 +130,16 @@ Filter.prototype = {
                 (   this.filters[i].operator == "focus" ||
                     this.filters[i].operator == "hide"  ||
                     this.filters[i].operator == "search"  ||
-                    this.filters[i].value == value))
+                    this.filters[i].value == value ||
+                    typeof value == "undefined"))
                 return i
         
         return -1
     },
 
     reset: function(){
-        this.filters = []
+        var f0 = this.filters[0]
+        this.filters = [f0]
         this.stamp++
         this.m.update()
     },
