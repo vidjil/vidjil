@@ -528,7 +528,7 @@ Info.prototype = {
                     spantag.title = l.text;
                     spantag.value = keys[i];
 
-                    if (this.m.checkFilter(this.m.axisColor.name, "=", keys[i]) >=0)
+                    if (this.m.filter.check(this.m.axisColor.name, "=", keys[i]) >=0)
                         spantag.className += " inactiveTag"
 
                     if (labelCount >20){
@@ -547,7 +547,7 @@ Info.prototype = {
                             m.multiSelect(c)
                             return
                         }
-                        m.toggleFilter(a.name, "=", v)
+                        m.filter.toggle(a.name, "=", v)
                     };
 
                     if (l.side && l.side == "left"){

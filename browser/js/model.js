@@ -61,6 +61,7 @@ function Model() {
     this.setAll();
     this.checkBrowser();
     this.germlineList = new GermlineList()
+    this.filter = new Filter(this)
     this.build();
     //window.onresize = function () { self.resize(); };
 
@@ -1249,7 +1250,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         }
 
-        this.applyFilter()
+        this.filter.apply()
         
         this.computeOtherSize();
 

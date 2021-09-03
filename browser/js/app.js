@@ -62,6 +62,7 @@ function loadAfterConf() {
                                          "js/aligner_sequence",
                                          "js/model_loader",
                                          "js/model_color",
+                                         "js/filter",
                                          "js/model",
                                          "js/clone",
                                          "js/dynprog",
