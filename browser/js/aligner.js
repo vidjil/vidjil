@@ -222,8 +222,8 @@ Aligner.prototype = {
             });
 
         // Focus/hide/label
-        document.getElementById("focus_selected").onclick = function () { self.m.focusSelected(); };
-        document.getElementById("hide_selected").onclick = function () { self.m.hideSelected(); };
+        document.getElementById("focus_selected").onclick = function () { self.m.addFilter("Clone", "focus", self.m.getSelected()); };
+        document.getElementById("hide_selected").onclick = function () { self.m.addFilter("Clone", "hide", self.m.getSelected()); };
         document.getElementById("star_selected").onclick = function (e) {
             if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
         document.getElementById("fixsegmenter").onclick = function () { self.switchFixed(); };
