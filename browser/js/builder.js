@@ -393,8 +393,7 @@ Builder.prototype = {
 
         // init switch onlyOneSample
         var onlyOneSample = document.getElementById("filter_switch_sample_check")
-        onlyOneSample.checked = this.m.show_only_one_sample
-
+        onlyOneSample.checked = (this.m.filter.check("Size", "=", 0) == -1)
 
 
         //init notation
