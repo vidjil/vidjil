@@ -222,22 +222,23 @@ Shortcut.prototype = {
             e.preventDefault()
             if (m.getSelected().length === 0) {
                 // z, no clone selected: reset filters
-                m.reset_filter(false)
+                m.removeFilter("Clone", "focus", undefined)
+                m.removeFilter("Clone", "hide", undefined)
                 m.update()
             } else {
                 if (!e.shiftKey)
                     // z, some clone selected: focus (zoom) on these clones
-                    self.m.addFilter("Clone", "focus", self.m.getSelected())
+                    m.addFilter("Clone", "focus", self.m.getSelected())
                 else
                     // shift+z, some clone selected: hide these clones
-                    self.m.addFilter("Clone", "hide", self.m.getSelected())
+                    m.addFilter("Clone", "hide", self.m.getSelected())
             }
             break;
             
             // Scatterplot
         case '#':   // switch grid/bar mode
             e.preventDefault()
-            this.m.sp.switchMode()
+            m.sp.switchMode()
             break;
         }
     }

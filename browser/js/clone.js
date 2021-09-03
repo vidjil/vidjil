@@ -972,14 +972,14 @@ Clone.prototype = {
                     var cluster = this.m.clusters[c_index]
                     if (clone.hasSizeConstant()) {
                         if (cluster.length){
-                            if (clone.active || clone.isFiltered) { // cluster ?
+                            if (clone.isActive()) { // cluster ?
                                 this.current_reads[timepoint]  -= clone.reads[timepoint]
                                 this.current_clones[timepoint] -= 1
                             }
                         } else if (cluster.length == 0) {
                             // Look for cluster that include this clone
                             var cluster_clone    = this.m.clone(clone.mergedId)
-                            if (cluster_clone.active || cluster_clone.isFiltered) { // cluster ?
+                            if (cluster_clone.isActive()) { // cluster ?
                                 this.current_reads[timepoint]  -= clone.reads[timepoint]
                                 this.current_clones[timepoint] -= 1
                             }

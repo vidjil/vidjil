@@ -92,7 +92,7 @@ Model_color.prototype = {
                             operator:   operator,
                             value:      value});
         this.filterStamp++
-        this.updateStyle()
+        this.update()
     },
 
     initFilter: function(){
@@ -111,7 +111,7 @@ Model_color.prototype = {
         if (index > -1 & index < this.filters.length) 
             this.filters.splice(index, 1)
         this.filterStamp++
-        this.updateStyle()
+        this.update()
     },
 
     toggleFilter: function(axis_name, operator ,value){
@@ -140,7 +140,7 @@ Model_color.prototype = {
     resetFilter: function(){
         this.filters = []
         this.filterStamp++
-        this.updateStyle()
+        this.update()
     },
 
     applyFilter : function(){

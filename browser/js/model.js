@@ -1248,13 +1248,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 }
             }
         }
-        
-        //unactive filtered clone
-        for (var m = 0; m < this.clones.length; m++) {
-            if (this.clone(m).isFiltered) {
-                this.clone(m).disable();
-            }
-        }
 
         this.applyFilter()
         
@@ -2795,48 +2788,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
     
     
-    
-    /* --------------------- */
-    /* Filters / .isFiltered */
-
-    /**
-     * apply a boolean isFiltered too all Clones<br>
-     * filtered clone will be hidden in all views
-     * @param {boolean} bool - isFiltered value given to all clones
-     * */
-    reset_filter: function (bool) {
-        if (!bool)
-            this.filter_string = undefined;
-            
-        for (var i=0; i<this.clones.length; i++){
-            var c = this.clone(i)
-            c.isFiltered=bool
-        }
-    },
-    
-    /**
-     * apply a filter to all clones <br>
-     * a clone need to contain a given string to pass the filter (search through name/nt sequence/sequenceName) (case insensitive)<br>
-     * filtered clone will be hidden in all views
-     * @param {string} str - required string to pass the filter
-     * */
-    filter: function (str) {
-        this.filter_string = str;
-        this.reset_filter(true)
-        for (var i=0; i<this.clones.length; i++)
-            if (this.clone(i).search(str)) 
-                this.clone(i).isFiltered = false
-        
-        this.update()
-    },
-    
-
-   
-
-
     /* --------------------- */
 
-    
     
    /*For DBSCAN*/
     loadRandomTab: function() {

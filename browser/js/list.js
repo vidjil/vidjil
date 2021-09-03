@@ -261,7 +261,7 @@ List.prototype = {
         filter_input.type = 'text'
         filter_input.setAttribute('placeholder', 'search');
         filter_input.onchange = function () {
-            self.m.filter(this.value)
+            self.m.addFilter("Clone", "search", this.value)
         }
         
         var filter_reset = document.createElement('span')
@@ -270,7 +270,7 @@ List.prototype = {
         filter_reset.className = "button"
         filter_reset.onclick = function () {
             document.getElementById('filter_input').value = ''
-            self.m.reset_filter(false)
+            self.m.removeFilter("Clone", "search", undefined)
             self.m.update()
         }
         
@@ -486,7 +486,7 @@ List.prototype = {
             
             if (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
                 (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  )||
-                (clone.isFiltered) || 
+                (!clone.isActive()) || 
                 (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]))){ // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
                 
                 cloneDom.display("main", "none");
@@ -712,7 +712,7 @@ List.prototype = {
                 if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
                     // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
                     cloneDom.display("main", "none");
-                } else if (clone.isFiltered){
+                } else if (!clone.isActive()){
                     cloneDom.display("main", "none");
                 } else {               
                     cloneDom.display("main", "block");
