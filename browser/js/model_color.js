@@ -77,7 +77,13 @@ Model_color.prototype = {
         if (!this.filterStamp) this.filterStamp=0; 
     },
 
-    removeFilter: function (index){
+    removeFilter: function (axis_name, operator ,value){
+        var index = this.checkFilter(axis_name, operator ,value)
+        if (index > -1) 
+            this.removeFilterById(index)
+    },
+
+    removeFilterById: function (index){
         this.initFilter()
         if (index > -1 & index < this.filters.length) 
             this.filters.splice(index, 1)
