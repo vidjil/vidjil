@@ -227,10 +227,10 @@ Shortcut.prototype = {
             } else {
                 if (!e.shiftKey)
                     // z, some clone selected: focus (zoom) on these clones
-                    m.focusSelected()
+                    self.m.addFilter("Clone", "focus", self.m.getSelected())
                 else
                     // shift+z, some clone selected: hide these clones
-                    m.hideSelected()
+                    self.m.addFilter("Clone", "hide", self.m.getSelected())
             }
             break;
             
