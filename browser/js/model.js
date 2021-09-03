@@ -51,17 +51,16 @@ function Model() {
         this[f] = Model_loader.prototype[f]
     }
 
-    Model_color.call(this)
-
     this.germline = {};
     this.create_germline_obj();
     this.view = [];
     this.checkLocalStorage();
     this.reset();
+    this.filter = new Filter(this)
+    this.color = new Color(this)
     this.setAll();
     this.checkBrowser();
     this.germlineList = new GermlineList()
-    this.filter = new Filter(this)
     this.build();
     //window.onresize = function () { self.resize(); };
 
@@ -186,7 +185,7 @@ Model.prototype = {
 
         try {
             if (this.localStorage){
-                if (localStorage.getItem('colorAxis'))      this.colorAxis = new Axis(localStorage.getItem('colorAxis')).compute(100)
+                if (localStorage.getItem('colorAxis'))      this.axis_color = localStorage.getItem('colorAxis')
                 if (localStorage.getItem('timeFormat'))     this.time_type = localStorage.getItem('timeFormat')
                 if (localStorage.getItem('notation'))       this.notation_type  = localStorage.getItem('notation')
                 if (localStorage.getItem('alleleNotation')) this.alleleNotation = localStorage.getItem('alleleNotation')
@@ -197,7 +196,7 @@ Model.prototype = {
             console.log("invalid data stored in localStorage")
         }
 
-        this.changeColorAxis(this.colorAxis.name,    false)
+        this.color.set(this.axis_color,    false)
         this.changeNotation(this.notation_type,     false)
         this.changeTimeFormat(this.time_type,       false)
         this.changeAlleleNotation(this.alleleNotation, false)
@@ -287,7 +286,7 @@ Model.prototype = {
         this.default_tag=8;
         this.distrib_tag=9;
 
-        this.colorAxis = new Axis("Tag").compute(100)
+        this.axis_color = "Tag"
         this.notation_type = "percent"
         this.time_type = "name"
 
@@ -1285,7 +1284,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * this function must be call for major change in the model
      * */
     update: function () {
-        this.axisColor.reload().compute(100);
+        this.color.update();
         this.update_normalization();
         this.update_precision();
         this.updateModel();
@@ -1389,7 +1388,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * */
     init: function () {
 
-        this.initColorSelector();
+        this.color.init();
 
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].init();
@@ -2564,7 +2563,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
     resetSettings: function () {
         localStorage.clear()
-        this.changeColorAxis("Tag",         false)
+        this.color.set("Tag",         false)
         this.changeNotation("percent",      false)
         this.changeTimeFormat("name",       false)
         this.changeAlleleNotation("when_not_01", false)
@@ -3646,6 +3645,3 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
 
 }; //end prototype Model
-
-
-Model.prototype = $.extend(Object.create(Model_color.prototype), Model.prototype)

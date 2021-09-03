@@ -288,9 +288,9 @@ Info.prototype = {
      * @param {integer[]} - list - array of clone index
      * */
     updateElemStyle: function (list) {
-        if (this.m.axisColor.name != this.axisColorName ||
+        if (this.m.color.axis.name != this.axisColorName ||
             this.m.filterStamp != this.filterStamp){
-            this.axisColorName = this.m.axisColor.name
+            this.axisColorName = this.m.color.axis.name
             this.filterStamp = this.m.filterStamp
             this.update()
         }
@@ -484,9 +484,9 @@ Info.prototype = {
         var span2 = document.createElement('span');
         var span3 = document.createElement('span');
 
-        if (m.axisColor){
-            this.axisColorName = this.m.axisColor.name
-            var a = m.axisColor;
+        if (m.color.axis){
+            this.axisColorName = this.m.color.axis.name
+            var a = m.color.axis;
 
             var useScale = false;
             if (typeof a.scale != "undefined"){
@@ -496,13 +496,13 @@ Info.prototype = {
                 spanG.style.backgroundImage = a.getCSSColorGradient()
                 $(spanG).mousemove(function(event){            
                     var relX = event.pageX - $(this).offset().left;
-                    $(this).prop("title",m.axisColor.invert(relX/180).innerText);
+                    $(this).prop("title",a.invert(relX/180).innerText);
                 });
 
-                if (m.axisColor.scale.mode == "linear")
-                    span2.appendChild(m.axisColor.invert(0))
+                if (a.scale.mode == "linear")
+                    span2.appendChild(a.invert(0))
                 span2.appendChild(spanG)
-                span2.appendChild(m.axisColor.invert(1))
+                span2.appendChild(a.invert(1))
             }
 
             if (a.labels){
@@ -528,7 +528,7 @@ Info.prototype = {
                     spantag.title = l.text;
                     spantag.value = keys[i];
 
-                    if (this.m.filter.check(this.m.axisColor.name, "=", keys[i]) >=0)
+                    if (this.m.filter.check(a.name, "=", keys[i]) >=0)
                         spantag.className += " inactiveTag"
 
                     if (labelCount >20){
@@ -541,7 +541,7 @@ Info.prototype = {
 
                     spantag.onclick = function(){
                         var v = this.value
-                        var a = m.axisColor
+                        var a = m.color.axis
                         if (window.event.ctrlKey) {
                             var c = a.getLabelInfo(v).clones
                             m.multiSelect(c)

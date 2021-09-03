@@ -1,13 +1,12 @@
-/** Model_Color constructor <br>
- * extend the object "model" with color related functions
- * */
-function Model_color() {
-
+function Color(model) {
+    this.m = model
+    this.axis = new Axis("Tag").compute(100)
+    this.init()
 }
     
-Model_color.prototype = {
+Color.prototype = {
 
-    initColorSelector: function(){
+    init: function(){
         var self = this;
 
         //reset color menu content
@@ -28,7 +27,7 @@ Model_color.prototype = {
                 element = document.createElement("option");
                 element.setAttribute('value', axisP.name);
                 element.appendChild(document.createTextNode( axisP.name));
-                if (m.axisColor.name == axisP.name) element.selected = true;
+                if (this.axis.name == axisP.name) element.selected = true;
 
                 this.select_color.appendChild(element);
             }
@@ -36,27 +35,24 @@ Model_color.prototype = {
 
         this.select_color.onchange = function() {
             var elem = self.select_color;
-            self.changeColorAxis(elem.value, true, true);
+            self.set(elem.value, true, true);
         }
     },
 
-    changeColorAxis: function(axis_name, update, save) {
+    update: function(){
+        this.axis.reload().compute(100);
+    },
+
+    set: function(axis_name, update, save) {
         update = (update==undefined) ? true : update;
 
         if (this.localStorage && save) localStorage.setItem('colorAxis', axis_name)
-        
-        if (this.selectAxis) this.selectAxis.value = axis_name
 
-        if (typeof this.axisColor == "undefined" || this.axisColor.name != axis_name)
-            this.axisColor = new Axis(axis_name).compute(100);
+        if (typeof this.axis == "undefined" || this.axis.name != axis_name)
+            this.axis = new Axis(axis_name).compute(100);
 
         if (!update) return 
 
-        var list = []
-        for (var i = 0; i<this.clones.length; i++) list.push(i)
-        this.updateElemStyle(list)
-
-        console.log("!!!! changeColorAxis !!!!!")
-
+        this.m.updateStyle()
     }
 }

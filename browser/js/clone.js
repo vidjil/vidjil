@@ -1329,7 +1329,7 @@ Clone.prototype = {
             return
         }
 
-        var a = this.m.axisColor;
+        var a = this.m.color.axis;
 
         this.color = a.getColor(undefined, this);
         this.true_color = this.color
