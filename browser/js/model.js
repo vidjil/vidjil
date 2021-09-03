@@ -2823,79 +2823,15 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     filter: function (str) {
         this.filter_string = str;
         this.reset_filter(true)
-        str = str.toUpperCase()
-        for (var i=0; i<this.clones.length; i++){
-            var c = this.clone(i)
-            if (c.getName().toUpperCase().indexOf(str)               !=-1 ){
-                c.isFiltered = false; continue;
-            }
-            if (c.getSegAASequence('cdr3').toUpperCase().indexOf(str)!=-1 ){
-                c.isFiltered = false; continue;
-            }
-            if (c.getSequenceName().toUpperCase().indexOf(str)       !=-1 ){
-                c.isFiltered = false; continue;
-            }
-
-            var sequence = c.getSequence()
-            var revseq   = c.getRevCompSequence(sequence)
-            var searched_sequence = c.searchSequence(sequence, str)
-            if (searched_sequence != undefined && searched_sequence.ratio >= this.search_ratio_limit){
-                c.isFiltered = false; continue;
-            }
-            var searched_revcomp  = c.searchSequence(revseq, str)
-            if (searched_revcomp != undefined && searched_revcomp.ratio >= this.search_ratio_limit){
-                c.isFiltered = false; continue;
-            }
-    	}
+        for (var i=0; i<this.clones.length; i++)
+            if (this.clone(i).search(str)) 
+                this.clone(i).isFiltered = false
+        
         this.update()
     },
     
 
-    //filter with d error
-    /*filter: function(str){
-      this.reset_filter(true)
-      for (var i=0; i<this.clones.length; i++){
-      var c = this.clone(i)
-      if (distanceLevenshtein(c.getName().toUpperCase(), str.toUpperCase()) <= d)
-      c.isFiltered = false
-      if (distanceLevenshtein(c.getSequence().toUpperCase(), str.toUpperCase() <= d)
-      c.isFiltered = false
-      if (distanceLevenshtein(c.getRevCompSequence().toUpperCase(), str.toUpperCase()) <= d )
-      c.isFiltered = false
-      if (distanceLevenshtein(c.getSequenceName().toUpperCase(), str.toUpperCase()) <= d )
-      c.isFiltered = false
-      }
-      this.update()
-      },
-
-    */
-
-    /**
-     * filter, keep only currently selected clones
-     * */
-    focusSelected: function () {
-        for (var i=0; i<this.clones.length; i++){
-            var c = this.clone(i)
-            c.isFiltered = c.isFiltered || ( !c.isSelected() && c.isActive() )
-        }
-        $("#filter_input").val("(focus on some clones)")
-        this.update()
-    },
-
-    /**
-     * hide selected clones
-     * */
-    hideSelected: function () {
-        for (var i=0; i<this.clones.length; i++){
-            var c = this.clone(i)
-            if (c.isSelected()){
-                c.isFiltered = true
-            }
-        }
-        this.unselectAll();
-        $("#filter_input").val("(focus on some clones)")
-        this.update()
-    },
+   
 
 
     /* --------------------- */
