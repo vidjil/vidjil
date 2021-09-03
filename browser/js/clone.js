@@ -370,6 +370,26 @@ Clone.prototype = {
 
     },
 
+    /**search for a specific string in clone infos/sequences */
+    search: function(str){
+        str = str.toUpperCase()
+
+        if (this.getName().toUpperCase().indexOf(str)               != -1 || 
+            this.getSegAASequence('cdr3').toUpperCase().indexOf(str)!= -1 || 
+            this.getSequenceName().toUpperCase().indexOf(str)       != -1 )  
+            return true
+        
+        var searched_sequence = this.searchSequence(this.getSequence(), str)
+        if (searched_sequence != undefined && searched_sequence.ratio >= this.m.search_ratio_limit)
+            return true
+        
+        var searched_revcomp  = this.searchSequence(this.getRevCompSequence(), str)
+        if (searched_revcomp != undefined && searched_revcomp.ratio >= this.m.search_ratio_limit)
+            return true
+        
+        return false
+    },
+
 
     /**
      * Return the best matching sequence from a list of sequence
