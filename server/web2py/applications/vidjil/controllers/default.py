@@ -99,18 +99,14 @@ def init_from_csv():
         res = {"success" : "true", "message" : "coucou"}
         log.info(res)
 
+        
 #########################################################################
 ## add a scheduller task to run vidjil on a specific sequence file
 # need sequence_file_id, config_id
 # need patient admin permission
 def run_request():
     error = ""
-    enough_space = vidjil_utils.check_enough_space(defs.DIR_RESULTS)
-    if not enough_space:
-        mail.send(to=defs.ADMIN_EMAILS,
-            subject=defs.EMAIL_SUBJECT_START+" Server space",
-            message="The space in directory %s has passed below %d%%." % (defs.DIR_RESULTS, defs.FS_LOCK_THRESHHOLD))
-        return error_message("Runs are temporarily disabled. System admins have been made aware of the situation.")
+    check_space(defs.DIR_RESULTS, "Runs")
 
     ##TODO check
     if not "sequence_file_id" in request.vars :
@@ -157,13 +153,8 @@ def run_request():
 
 def run_all_request():
     error = ""
-    enough_space = vidjil_utils.check_enough_space(defs.DIR_RESULTS)
     extra_info = ''
-    if not enough_space:
-        mail.send(to=defs.ADMIN_EMAILS,
-            subject="[Vidjil] Server space",
-            message="The space in directory %s has passed below %d%%." % (defs.DIR_RESULTS, defs.FS_LOCK_THRESHHOLD))
-        return error_message("Runs are temporarily disabled. System admins have been made aware of the situation.")
+    check_space(defs.DIR_RESULTS, "Runs")
 
     if not "sequence_file_ids" in request.vars:
         error += "sequence file ids required "
