@@ -37,49 +37,44 @@
 client_firefox_supported:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_supported
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/firefox_supported/firefox
-  needs: []
+  needs: [test_tools, test_browser_unit, code_quality_custom]
 
 client_firefox_latest:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_latest
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/firefox_latest/firefox
-  needs: []
 
 client_firefox_legacy:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_legacy
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/firefox_legacy/firefox
-  needs: []
 
 
 client_chrome_supported:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_supported
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/chrome_supported/chrome
-  needs: []
 
 client_chrome_latest:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_latest
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/chrome_latest/chrome
-  needs: []
 
 client_chrome_legacy:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_legacy
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/chrome_legacy/chrome
-  needs: []
 

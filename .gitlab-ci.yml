@@ -1,3 +1,10 @@
+# Step 0, quicker: deploy_review, deploy_review_server
+# Step 1, moderate: test_tools, test_browser_unit, code_quality_custom, test_server_unit
+# Step 2, late and longuer:
+#   client: client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial
+#   server: server_firefox_supported, server_tutorial_server
+# Step 3: ff45-browser-functional-external
+
 
 before_script:
   - make demo
@@ -13,12 +20,8 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
-  - test_cypress_client_supported
-  - test_cypress_client_latest
-  - test_cypress_client_legacy
-  - test_cypress_server_supported
-  - test_cypress_server_latest
-  - test_cypress_server_legacy
+  - test_cypress_client
+  - test_cypress_server
   - test_tutorial
   - test_tutorial_server
   - test_shouldvdj
@@ -44,6 +47,7 @@ stages:
 test_tools:
   stage: test_tools
   script: make -C tools/tests
+  needs: []
 
 
 # Germlines
@@ -200,6 +204,7 @@ test_browser_unit:
     - schedules
   tags:
     - web
+  needs: []
 
 .browser-functional:
   stage: test_functional
@@ -264,6 +269,7 @@ ff45-browser-functional:
   extends: .browser-functional
   variables:
     FIREFOX_VERSION: 45
+  needs: [test_tools, test_browser_unit, code_quality_custom]
 
 chrome-browser-functional:
   extends: .browser-functional-chrome
@@ -282,6 +288,7 @@ ff45-browser-functional-external:
   extends: .browser-functional-external
   variables:
     FIREFOX_VERSION: 45
+  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial]
 
 chrome-browser-functional-external:
   extends: .browser-functional-external-chrome
@@ -330,6 +337,7 @@ ff45-browser-tutorial:
   extends: .browser-tutorial
   variables:
     FIREFOX_VERSION: 45
+  needs: [test_tools, test_browser_unit, code_quality_custom, test_server_unit]
 
 chrome-browser-tutorial:
   extends: .browser-tutorial-chrome
@@ -367,6 +375,7 @@ server_tutorial_server:
     - web-pandoc
   variables:
     FIREFOX_VERSION: 45
+  needs: [test_tools, test_browser_unit, code_quality_custom, test_server_unit]
 
 
 # Code quality
@@ -387,6 +396,7 @@ code_quality_custom:
     - schedules
   tags:
     - web
+  needs: []
 
 # Server
 
@@ -412,6 +422,7 @@ test_server_unit:
       - schedules
     tags:
       - web
+    needs: []
 
 .test_server_base:
   stage: test_functional
@@ -475,6 +486,7 @@ ff45-server-functional:
   extends: .test_server_functional
   variables:
     FIREFOX_VERSION: 45
+  needs: [test_tools, test_browser_unit, code_quality_custom, test_server_unit]
 
 
 
@@ -525,6 +537,7 @@ deploy_review:
     - /^hotfix-.*c.*\/.*$/
   tags:
     - web
+  needs: []
 
 deploy_review_server:
   stage: deploy_review
@@ -557,6 +570,7 @@ deploy_review_server:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
+  needs: []  
 
 deploy_docker:
   stage: deploy_prod
