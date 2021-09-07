@@ -11,50 +11,50 @@ Filter.prototype = {
                                             value:      50}]
         if (!this.stamp) this.stamp=0; 
 
-        //init slider
-        var max_top = 0;
-        for (var j = 0; j < this.m.clones.length; j++) {
-            if (this.m.clone(j).top > max_top)
-                max_top = this.m.clone(j).top
-        }
-        max_top = (Math.ceil(max_top / 5)) * 5
-        document.getElementById("top_slider")
-            .max = max_top;
-            
-
-        // init switch onlyOneSample
-        var onlyOneSample = document.getElementById("filter_switch_sample_check")
-        onlyOneSample.checked = (this.m.filter.check("Size", "=", 0) == -1)
-
     },
 
+    // build or rebuild html component found in dom related to filter
     update: function(){
-
+         
+        // compute min/max slider values
+        var max_top = 0;
+        for (var j = 0; j < this.m.clones.length; j++) 
+            if (this.m.clone(j).top > max_top)
+                max_top = this.m.clone(j).top
+        max_top = (Math.ceil(max_top / 5)) * 5
+        
+        // init slider
+        var top_slider = document.getElementById("top_slider")
+        if (top_slider) 
+            top_slider.max = ""+max_top;
+        
+        // update slider
         var topFilterId = this.check("Top", ">", undefined)
         if (topFilterId >= 0){
-
+    
             var top = this.filters[topFilterId].value
+            if (top_slider) 
+                top_slider.value = top;
 
-            var html_slider = document.getElementById('top_slider');
-            if (html_slider !== null) {
-                html_slider.value = top;
-            }
-            
             var html_label = document.getElementById('top_label');
             if (html_label !== null) {
                 var count = 0;
-                for (var i=0; i<this.m.clones.length; i++){
-                    if (this.m.clone(i).top <= top && this.m.clone(i).hasSizeConstant() ) count++;
-                }
+                for (var i=0; i<this.m.clones.length; i++)
+                    if (this.m.clone(i).top <= top && this.m.clone(i).hasSizeConstant()) 
+                        count++;
                 html_label.innerHTML = count + ' clones (top ' + top + ')' ;
             }
         }
+            
+        // update switch onlyOneSample
+        var onlyOneSample = document.getElementById("filter_switch_sample_check")
+        if (onlyOneSample)
+            onlyOneSample.checked = (this.check("Size", "=", 0) == -1)
     },
 
-
- // generic method to filter out specific clone
+    // generic method to filter out specific clone
     // axis_name : see axis_conf for available axis
-    // operator "=" / ">" / "<"
+    // operator "=" / ">" / "<" / "focus" / "hide" / "search"
     add: function(axis_name, operator ,value){
 
         // new "search" / "<" / ">" filter always replace previous one
@@ -127,19 +127,17 @@ Filter.prototype = {
         for(var i=0; i<this.filters.length; i++)
             if (this.filters[i].axis == axis_name && 
                 this.filters[i].operator == operator &&
-                (   this.filters[i].operator == "focus" ||
-                    this.filters[i].operator == "hide"  ||
-                    this.filters[i].operator == "search"  ||
-                    this.filters[i].value == value ||
-                    typeof value == "undefined"))
+                (   typeof value == "undefined" ||
+                    this.filters[i].value == value ))
                 return i
         
         return -1
     },
 
     reset: function(){
-        var f0 = this.filters[0]
-        this.filters = [f0]
+        this.filters = [{   axis:      "Top",
+                            operator:   ">",
+                            value:      50}]
         this.stamp++
         this.m.update()
     },
