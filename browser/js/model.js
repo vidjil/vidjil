@@ -1407,22 +1407,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.update()
     },
 
-
-    /**
-     * @return {integer} the number of real clones (excluded the fake clones internally
-     * added)
-     * */
-    countRealClones: function() {
-        var sum = 0;
-        for (var i = 0; i < this.clones.length; i++) {
-            var clone = this.clones[i]
-            if (clone.hasSizeConstant()){
-                sum += 1
-            }
-        }
-        return sum
-    },
-
     /**
      * sum all the unsegmented/undisplayed clones reads and put them in the 'other' clone
      * */
