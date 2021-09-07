@@ -1887,7 +1887,10 @@ Clone.prototype = {
     },
 
     enable: function (top) {
-        if (this.hasSizeOther()) return; 
+        if (this.hasSizeOther()){
+             this.active = false; 
+             return
+        }
 
         this.active = true;
     },
