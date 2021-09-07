@@ -142,42 +142,6 @@ QUnit.test("time control", function(assert) {
     
 });
 
-QUnit.test("top clones", function(assert) {
-    
-    function count_active() {
-        var nb_active = 0
-        for (i = 0; i < m.clones.length; i++)
-            if (m.clones[i].isActive())
-                nb_active += 1
-        return nb_active
-    }
-    
-    var m = new Model();
-    m.parseJsonData(json_data,100)
-    m.initClones()
-
-    assert.equal(m.countRealClones(), 5, "Real clones, expected 5")
-    m.displayTop(-10)
-    assert.equal(m.top, 0, "Top cannot be negative")
-    m.displayTop(m.countRealClones() * 2 + 10)
-    
-    assert.equal(m.top, m.countRealClones() * 2 + 10, "Model top can be greater than the number of real clones")
-    assert.equal(m.current_top, m.countRealClones(), "Current Top cannot be greater than the number of real clones")
-
-    c = m
-    assert.equal(m.clones.length, 7, "m.clones.length")
-    assert.equal(count_active(), 5, "Without top modification, there should be one active clone")
-
-    // 0-4; clone reel; 5-6, clone virtuel    
-    m.displayTop(1)
-
-    assert.equal(count_active(), 1, "With top 1, there should be one active clone")
-    m.changeTime(2)
-    assert.equal(count_active(), 1, "With top 1, there should be one active clone")
-    m.displayTop(2)
-    assert.equal(count_active(), 2, "With top 2, there should be two active clones")
-    
-});
 
 QUnit.test("select/focus", function(assert) {
     var m = new Model();
@@ -224,36 +188,6 @@ QUnit.test("correlate", function(assert) {
     assert.deepEqual(m.getSelected(), [0, 1], "Clone 1 strongly (negatively) correlated to clone 0");
 })
 
-
-QUnit.test("focus/hide/reset_filter", function(assert) {
-
-    var m = new Model();
-    m.parseJsonData(json_data,100)
-    
-    m.multiSelect([0,2,3])
-    assert.equal(m.someClonesFiltered, false, "no clones are filtered")
-
-    m.focusSelected()
-    assert.equal(m.someClonesFiltered, true, "some clones are filtered")
-    assert.equal(m.clone(0).isFiltered, false, "clone 0 is not filtered")
-    assert.equal(m.clone(1).isFiltered, true, "clone 1 is filtered")
-
-    m.unselectAll()
-    m.select(2)
-    assert.equal(m.clone(2).isFiltered, false, "clone 2 is not filtered")
-
-    m.hideSelected()
-    assert.equal(m.clone(2).isFiltered, true, "clone 2 is filtered")
-
-    assert.equal(m.clone(0).isFiltered, false, "clone 0 is not filtered")
-    assert.equal(m.clone(1).isFiltered, true, "clone 1 is filtered")
-
-    m.reset_filter(false)
-    assert.equal(m.clone(2).isFiltered, false, "clone 2 is not filtered")
-    m.update()
-    assert.equal(m.someClonesFiltered, false, "no clones are filtered")
-
-});
 
 QUnit.test("cluster", function(assert) {
     var m = new Model();
@@ -564,17 +498,26 @@ QUnit.test("tag / color", function(assert) {
 
 QUnit.test("distribution_load", function(assert) {
 
+    countRealClones = function(m) {
+        var sum = 0;
+        for (var i = 0; i < m.clones.length; i++)
+            if (m.clones[i].hasSizeConstant())
+                sum++
+            
+        return sum
+    }
+
     var m1 = new Model();
     m1.parseJsonData(json_data, 100)
     m1.initClones()
 
     assert.equal(m1.clones.length, 7, 'Correct number of clones WITHOUT distributions clones')
-    assert.equal(m1.countRealClones(), 5, 'Correct number of real clones WITHOUT distributions clones')
+    assert.equal(countRealClones(m1), 5, 'Correct number of real clones WITHOUT distributions clones')
 
     m1.distributions = data_distributions
     m1.loadAllDistribClones()
     assert.equal(m1.clones.length, 12, 'Correct number of clones WITH distributions clones')
-    assert.equal(m1.countRealClones(), 5, 'Correct number of real clones WITH distributions clones')
+    assert.equal(countRealClones(m1), 5, 'Correct number of real clones WITH distributions clones')
    
     // Add distrib values directly into json data
     var json_data_bis = JSON.parse(JSON.stringify(json_data)) // hard copy
@@ -584,7 +527,7 @@ QUnit.test("distribution_load", function(assert) {
     m2.parseJsonData(json_data_bis, 100)
 
     assert.equal(m2.clones.length, 12, 'Correct number of clones WITH distributions clones (directly from json_data)')
-    assert.equal(m2.countRealClones(), 5, 'Correct number of real clones WITH distributions clones (directly from json_data)')
+    assert.equal(countRealClones(m2), 5, 'Correct number of real clones WITH distributions clones (directly from json_data)')
    
 });
 

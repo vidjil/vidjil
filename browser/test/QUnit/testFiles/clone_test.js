@@ -536,46 +536,6 @@ QUnit.test("system", function(assert) {
     
 });
 
-QUnit.test("tag / color", function(assert) {
-    
-    var m = new Model();
-    m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0, c_attributes)
-    m.initClones()
-
-    assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");
-    c1.updateColor()
-    assert.equal(c1.getColor(), "", "getColor() >> default tag color : ");
-    
-    c1.changeTag(5)
-    c1.updateColor()
-    assert.equal(c1.getTag(), 5, "changeTag() >> tag : 5");
-    assert.equal(c1.getColor(), "#2aa198", "getColor() >> default tag color : ");
-    
-    m.changeColorAxis("Size")
-    c1.updateColor()
-    assert.equal(c1.getColor(), "rgb(202, 157, 0)", "getColor() >> abundance color : ");
-    
-});
-
-QUnit.test("color by CDR3", function(assert) {
-    var m = new Model();
-    m.parseJsonData(json_data);
-    var c1 = new Clone(json_clone1, m, 0, c_attributes);
-    var c2 = new Clone(json_clone2, m, 0, c_attributes);
-    m.initClones();
-    m.changeColorAxis("CDR3");
-    var color = c1.getColor()
-    c1.seg.junction.aa = "AZERTY";
-    c1.updateColor()
-    var color2 = c1.getColor()
-
-    // Actually it could happen that some different CDR3s have the same colours
-    assert.equal(color != color2, true, "two CDR3 should have different"
-                 + " colors" + color + " " + color2);
-
-    assert.equal(c2.getColor(), '');
-});
 
 QUnit.test("export", function(assert) {
     
