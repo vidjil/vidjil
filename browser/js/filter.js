@@ -182,5 +182,58 @@ Filter.prototype = {
                 } catch (e) {}
             }
         }
+    },
+
+    // return the list of clones currently filtered
+    filtered: function (){
+        var list = [];
+        for (var j=0; j<this.m.clones.length; j++)
+            if (!this.m.clone(j).isActive()) list.push(this.m.clone(j).index) 
+        
+        return list
+    },
+
+    // return the list of clones currently visible
+    visible: function (){
+        var list = [];
+        for (var j=0; j<this.m.clones.length; j++)
+            if (this.m.clone(j).isActive()) list.push(this.m.clone(j).index) 
+        
+        return list
+    },
+
+    // return the list of clones that will be impacted by a given filter
+    filteredBy: function (axis_name, operator ,value){
+        var a = Axis.prototype.getAxisProperties(axis_name)
+        var list = [];
+        for (var j=0; j<this.m.clones.length; j++){
+            try {
+                var c = this.m.clone(j);
+                switch (operator) {
+                    case "=":
+                        if (a.fct(c) == value) list.push(c.index)
+                        break;
+                    case ">":
+                        if (a.fct(c) > value) list.push(c.index)
+                        break;
+                    case "<":
+                        if (a.fct(c) < value) list.push(c.index)
+                        break;
+                    case "focus":
+                        if (value.indexOf(a.fct(c)) == -1) list.push(c.index)
+                        break;
+                    case "hide":
+                        if (value.indexOf(a.fct(c)) != -1) list.push(c.index)
+                        break;
+                    case "search":
+                        if (!c.search(value)) list.push(c.index)
+                        break;
+                    default:
+                        break;
+                }
+            } catch (e) {}
+        }
+        return list
     }
+    
 }
