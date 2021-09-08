@@ -301,7 +301,7 @@ def submit():
             if 'data_file' in file_data and file_data['data_file'] is not None:
                 os.symlink(filepath, defs.DIR_SEQUENCES + file_data['data_file'])
                 file_data['size_file'] = os.path.getsize(filepath)
-                file_data['network'] = True
+                file_data['network']   = True
                 file_data['data_file'] = str(file_data['data_file'])
 
             if data["source"] == "nfs" :

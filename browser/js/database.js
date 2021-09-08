@@ -241,7 +241,7 @@ Database.prototype = {
      * */
     call: function (page, args) {
         var self = this;
-	this.temporarilyDisableClickedLink()
+        this.temporarilyDisableClickedLink()
         
         var url = self.db_address + page
         if (page.substr(0,4).toLowerCase() == "http") {

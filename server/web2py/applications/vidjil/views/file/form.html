@@ -16,6 +16,8 @@
         <label for="source_nfs">network</label>
         <input type="radio" id="source_nfs" name="source" value="nfs" onchange="db.update_upload_fields()" {{if network_source:}} checked="checked" {{pass}} />
         <p></p>
+    {{ else: }}
+        <input type="radio" id="source_computer" name="source" value="computer" checked="checked" hidden/>
     {{pass}}
     <div>
         <h3>Pre-process scenario</h3>
