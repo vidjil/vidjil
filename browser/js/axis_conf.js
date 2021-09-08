@@ -236,6 +236,7 @@ AXIS_DEFAULT = {
         fct:        function(clone) {return clone.getProductivityName()},
         sort :      function(a,b){
             var order = ["productive","not-productive","no CDR3"]
+            if (order.indexOf(a) == -1 || order.indexOf(b) == -1) return b.localeCompare(a)
             return order.indexOf(a) - order.indexOf(b);
         },
         pretty:     function(tag) { return icon_pm(tag, "productive", "not productive") },
@@ -249,6 +250,7 @@ AXIS_DEFAULT = {
         fct:        function(clone) {return clone.getProductivityNameDetailed()},
         sort :      function(a,b){
                         var order = ["productive","not-productive","stop-codon","out-of-frame","no-WPGxG-pattern","no CDR3"]
+                        if (order.indexOf(a) == -1 || order.indexOf(b) == -1) return b.localeCompare(a)
                         return order.indexOf(a) - order.indexOf(b);
                     },
         autofill :  true
