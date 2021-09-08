@@ -572,15 +572,16 @@ Sequence.prototype = {
     },   
 
     searchString: function(){
-        if (typeof this.m.filter_string == 'undefined') return "";
+        if (this.m.filter.check("Clone", "search") == -1) return "";
 
+        var f = this.m.filter.filters[this.m.filter.check("Clone", "search")]
         var seq = this.seq;  
 
         var str = seq.filter(function(e){return e != SYMBOL_VOID;}).join('').toUpperCase();
 
         var search = [];
-        search.push(this.m.filter_string.toUpperCase());    //sequence
-        search.push(this.m.filter_string.toUpperCase().split("").reverse().join("")); //reverse sequence
+        search.push(f.value.toUpperCase());    //sequence
+        search.push(f.value.toUpperCase().split("").reverse().join("")); //reverse sequence
 
         var hitmap = [];
         for (var i in seq) hitmap.push(false);
