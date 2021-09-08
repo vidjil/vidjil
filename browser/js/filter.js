@@ -15,6 +15,7 @@ Filter.prototype = {
 
     // build or rebuild html component found in dom related to filter
     update: function(){
+        var self = this
          
         // compute min/max slider values
         var max_top = 0;
@@ -45,11 +46,64 @@ Filter.prototype = {
                 html_label.innerHTML = count + ' clones (top ' + top + ')' ;
             }
         }
+
+        //filter list
+        var filter_list = document.getElementById("filter_list")
+        if (filter_list){
+            filter_list.innerHTML="";
+
+            for (var i=0; i<this.filters.length; i++){
+                if (i == this.check("Size", "=", 0)) continue
+                if (i == this.check("Top", ">")) continue
+                var f = this.filters[i]
+
+                var text = ""
+                var title = ""
+                switch (f.operator) {
+                    case "=":
+                    case ">":
+                    case "<":
+                        text += f.axis + " " + f.operator + " "+ f.value
+                        title += "pouet!"
+                        break;
+                    case "focus":
+                        text += "Focus on "+f.value.length+" Clones"
+                        title += "Remove all Clones not in this list of user's selected clones (" +f.value.join() + ")"
+                        break;
+                    case "hide":
+                        text += "Hide "+f.value.length+" Clones"
+                        title += "Clones have been selected by user to be hidden (" +f.value.join() + ")"
+                        break;
+                    case "search":
+                        text += "Search for '"+f.value+"'"
+                        title += "This filter will search for clones containing '"+f.value+"'in it's sequence, reverse sequence or common properties ()"
+                        break;
+                    default:
+                        break;
+                }
+
+
+                var div = document.createElement('div')
+                var spanText = document.createElement('span')
+                var spanButton = document.createElement('span')
+                spanText.appendChild(document.createTextNode(text))
+                spanText.title = title
+                spanButton.appendChild(document.createTextNode("X"))
+                spanButton.onclick = function () {
+                    self.remove(f.axis, f.operator)
+                };
+                div.appendChild(spanText)
+                div.appendChild(spanButton)
+
+                filter_list.appendChild(div)
+            }
+
+        }
             
         // update switch onlyOneSample
         var onlyOneSample = document.getElementById("filter_switch_sample_check")
         if (onlyOneSample)
-            onlyOneSample.checked = (this.check("Size", "=", 0) == -1)
+            onlyOneSample.checked = (this.check("Size", "=", 0) != -1)
     },
 
     // generic method to filter out specific clone
