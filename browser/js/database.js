@@ -599,8 +599,8 @@ Database.prototype = {
 
         
         //submit formulaire avec fichier
-        if ( document.getElementById('upload_form') ){
-            $('#upload_form').on('submit', function(e) {
+        if ( document.getElementById('upload_sample_form') ){
+            $('#upload_sample_form').on('submit', function(e) {
                 e.preventDefault();
 
                 self.update_upload_fields();
@@ -610,12 +610,12 @@ Database.prototype = {
                 setTimeout(function(){$("#submit_samples_btn").removeClass("disabledClass")}, 3000)
 
                 //clear empty values before submiting data
-                var upload_form = $('#upload_form').serializeObject()
-                if ("file" in upload_form)
-                    upload_form.file = upload_form.file.filter(function(el) {
+                var upload_sample_form = $('#upload_sample_form').serializeObject()
+                if ("file" in upload_sample_form)
+                    upload_sample_form.file = upload_sample_form.file.filter(function(el) {
                         return typeof el != "object" || Array.isArray(el) || Object.keys(el).length > 0;
                     });
-                var data = JSON.stringify(upload_form)
+                var data = JSON.stringify(upload_sample_form)
 
                 $.ajax({
                     type     : "POST",
