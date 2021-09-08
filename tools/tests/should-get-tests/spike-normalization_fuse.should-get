@@ -48,5 +48,5 @@ j: mrd.ampl_coeff[0]: 0
 j: mrd.ampl_coeff[1]: 16.69631843174755
 
 $ prevalent values for mixed fused files
-j: mrd.prevalent[0]: 0
+# j: mrd.prevalent[0]: '' # Don't work  with the current version of should
 j: mrd.prevalent[1]: IGH
