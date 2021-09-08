@@ -1,9 +1,9 @@
-# Step 0, quicker: deploy_review, deploy_review_server
-# Step 1, moderate: test_tools, test_browser_unit, code_quality_custom, test_server_unit
-# Step 2, late and longuer:
+# Step 0, independant: deploy_review, deploy_review_server
+# Step 1, quicker: test_tools, test_browser_unit, code_quality_custom, test_server_unit
+# Step 2, moderate:
 #   client: client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial
 #   server: server_firefox_supported, server_tutorial_server
-# Step 3: ff45-browser-functional-external
+# Step 3, late, longuer or tricky: ff45-browser-functional-external
 
 
 before_script:
