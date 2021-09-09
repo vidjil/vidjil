@@ -160,12 +160,7 @@ def form():
             return error_message("you don't have right to upload files")
 
         sample_type = sample_set.sample_type
-        enough_space = vidjil_utils.check_enough_space(defs.DIR_SEQUENCES)
-        if not enough_space:
-            mail.send(to=defs.ADMIN_EMAILS,
-                subject=defs.EMAIL_SUBJECT_START+" Server space",
-                message="The space in directory %s has passed below %d%%." % (defs.DIR_SEQUENCES, defs.FS_LOCK_THRESHHOLD))
-            return error_message("Uploads are temporarily disabled. System admins have been made aware of the situation.")
+        check_space(defs.DIR_SEQUENCES, "Uploads")
 
         row = db(db[sample_set.sample_type].sample_set_id == request.vars["sample_set_id"]).select().first()
         stype = sample_set.sample_type

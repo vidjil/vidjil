@@ -99,18 +99,14 @@ def init_from_csv():
         res = {"success" : "true", "message" : "coucou"}
         log.info(res)
 
+        
 #########################################################################
 ## add a scheduller task to run vidjil on a specific sequence file
 # need sequence_file_id, config_id
 # need patient admin permission
 def run_request():
     error = ""
-    enough_space = vidjil_utils.check_enough_space(defs.DIR_RESULTS)
-    if not enough_space:
-        mail.send(to=defs.ADMIN_EMAILS,
-            subject=defs.EMAIL_SUBJECT_START+" Server space",
-            message="The space in directory %s has passed below %d%%." % (defs.DIR_RESULTS, defs.FS_LOCK_THRESHHOLD))
-        return error_message("Runs are temporarily disabled. System admins have been made aware of the situation.")
+    check_space(defs.DIR_RESULTS, "Runs")
 
     ##TODO check
     if not "sequence_file_id" in request.vars :
@@ -155,6 +151,47 @@ def run_request():
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+def run_all_request():
+    error = ""
+    extra_info = ''
+    check_space(defs.DIR_RESULTS, "Runs")
+
+    if not "sequence_file_ids" in request.vars:
+        error += "sequence file ids required "
+    if not 'sample_set_id' in request.vars:
+        error += "sample set ID required "
+    elif not auth.can_process_sample_set(request.vars['sample_set_id']):
+        error += "you do not have permission to launch process for this sample_set ("+str(id_sample_set)+"), "
+
+    if not "config_id" in request.vars:
+        error += "id config needed, "
+    else:
+        extra_info += 'with config '+db.config[request.vars["config_id"]].name
+        if not auth.can_use_config(request.vars["config_id"]) :
+            error += "you do not have permission to launch process for this config ("+str(request.vars["config_id"])+"), "
+
+    if error != "":
+        res = {"success" : "false",
+               "message" : "default/run_all_request "+extra_info+" : " + error}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        
+    id_sample_set = request.vars["sample_set_id"]
+    ids_sequence_file = request.vars["sequence_file_ids"]
+    if type(ids_sequence_file) is int or type(ids_sequence_file) is int:
+        ids_sequence_file =  [ids_sequence_file]
+    ids_sequence_file = [int(i) for i in ids_sequence_file]
+    id_config = request.vars["config_id"]
+
+    # Filter the sequence_file IDS: we only keep sequence file IDs that do belong to the sample set (as we only checked the permission for this sample set)
+    sequence_file_ids = [i.id for i in db((db.sample_set.id == id_sample_set) & (db.sequence_file.id.belongs(ids_sequence_file))).select(db.sequence_file.id, join=[db.sample_set_membership.on(db.sample_set_membership.sample_set_id == db.sample_set.id), db.sequence_file.on(db.sequence_file.id == db.sample_set_membership.sequence_file_id)])]
+
+    log.info("run_all requested for {} files ".format(len(sequence_file_ids))+extra_info, extra={'user_id': auth.user.id, 'sample_set_id': id_sample_set})
+    for s_id in sequence_file_ids:
+        schedule_run(s_id, id_config)
+    return gluon.contrib.simplejson.dumps({'success': 'true', 'redirect': 'reload'}, separators=(',',':'))
+
+    
 def run_contamination():
     task = scheduler.queue_task('compute_contamination', pvars=dict(sequence_file_id=request.vars["sequence_file_id"],
                                                                     results_file_id=request.vars["results_file_id"],

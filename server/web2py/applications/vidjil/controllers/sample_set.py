@@ -141,6 +141,7 @@ def index():
                 )
             )
 
+
     all_sequence_files = [r.sample_set_membership.sequence_file_id for r in query]
 
     (shared_sets, sample_sets) = get_associated_sample_sets(all_sequence_files, [sample_set_id])
@@ -148,6 +149,8 @@ def index():
     samplesets = SampleSets(sample_sets.keys())
     sets_names = samplesets.get_names()
 
+    scheduler_ids = {}
+    
     ## assign set to each rows
     for row in query:
         row.list_share_set = []
@@ -156,6 +159,14 @@ def index():
                 values = {"title": sets_names[elt],
                           "sample_type": sample_sets[elt].sample_type, "id":elt}
                 row.list_share_set.append(values)
+        if row.results_file.scheduler_task_id:
+            scheduler_ids[row.results_file.scheduler_task_id] = row.results_file
+        row.results_file.status = ''
+
+    schedulers = db(db.scheduler_task.id.belongs(scheduler_ids.keys())).select()
+    for s in schedulers:
+        scheduler_ids[s.id].status = s.status
+    
 
     tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()

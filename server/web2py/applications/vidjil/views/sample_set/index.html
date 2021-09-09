@@ -71,16 +71,64 @@
 
             </tr>
         </thead>
-        
+        <tfoot class="db_fixed_footer">
+            <tr><td class="column_200" id="footer_number_samples">{{ =str(len(query)) }} sample(s) </td>
+                <td class="column_100"> </td>
+                <td>  </td>
+                <td>  </td>
+                {{if has_shared_sets: }}<td> </td>{{pass}}
+                <td> </td>
+                {{if auth.is_admin():}} <td>  </td> {{pass}}
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+
+                <td class="column_sep"></td>
+
+                <td class="column2"></td>
+                <td class="column_100" style="padding: 2px 5px">
+                    {{ launch_sequence_files = [int(row.sequence_file.id) for row in query if row.results_file.status in ["FAILED",'']] }}
+                    {{ if len(launch_sequence_files) > 0 and (config_id > 0 and auth.can_use_config(config_id)): }}
+                         Run all
+                    {{pass}}
+                </td>
+                <td class="column5"></td>
+                <td class="column5"></td>
+                <td class="column5" id="footer_run_icon_all">
+                       {{if config_id > 0 and auth.can_use_config(config_id) :}}
+                       {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
+                              {{ launch_sequence_files = [ int(row.sequence_file.id) for row in query ] }}
+                              <span class="pointer devel-mode" 
+                               onclick="db.call('default/run_all_request', {'sequence_file_ids' : {{=launch_sequence_files}}, 'sample_set_id': {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } ) "
+                              ><i class="icon-cog-2" title="Run the selected configuration for all samples">
+                               </i></span>
+                           {{pass}}
+                      {{pass}}
+                </td>
+                <td class="column5" id="footer_run_icon">
+                       {{if config_id > 0 and auth.can_use_config(config_id) :}}
+                          {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
+
+                              {{ launch_sequence_files = [int(row.sequence_file.id) for row in query if row.results_file.status in ["FAILED",'']] }}
+                           {{pass}}
+                              {{ if len(launch_sequence_files) > 0: }}
+                               <span class="pointer" 
+                                     onclick="db.call('default/run_all_request', { 'sequence_file_ids' : {{=launch_sequence_files}}, 'sample_set_id': {{=request.vars["id"]}}, 'config_id' : {{=config_id}}} )">
+                                 <i class="icon-cog-2" title="Run the selected configuration for all samples not already analysed or failed">
+                                 </i>
+                                 </span>
+                                {{pass}}
+                          {{pass}}
+                      {{pass}}
+                </td>
+                <td class="column_20"></td>
+
+            </tr>
+        </tfoot>
         
         <tbody>
             {{for row in query :}}
-                {{task = db.scheduler_task[row.results_file.scheduler_task_id ]}}
-                {{if row.results_file.scheduler_task_id is None or task is None:}}
-                    {{status = '' }}
-                {{else:}}
-                    {{status = task.status }}
-                {{pass}}
+                {{status = row.results_file.status }}
 
                  <tr>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
@@ -178,8 +226,11 @@
             {{pass}}
 
         </tbody>
+
+        
     </table>
     <table class="db_table" id="db_fixed_header"></table>
+    <table class="db_table" id="db_fixed_footer"></table>
 
     
     

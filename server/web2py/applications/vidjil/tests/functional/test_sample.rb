@@ -371,5 +371,24 @@ class TestSample < ServerTest
     lines[0].wait_until(&:present?)
     l = lines[0]
     assert(l.td(:text => "QUEUED").present? || l.td(:text => "ASSIGNED").present? || l.td(:text => "COMPLETED").present?)
+
+    footer = table.tfoot.rows
+    assert ( footer.length == 1 ), 'footer have correct number of lines'
+
+    f = footer[0]
+    number_sample = f.td(:id => "footer_number_samples")
+    print "'"+number_sample.text+"'"
+    # exact number depend of the test execution order
+    assert ( number_sample.text == "1 sample(s)" || number_sample.text == "2 sample(s)" ), 'footer have correct number of sample show'
+
+    assert ( f.td(:id => "footer_run_icon").exist?  ), 'footer have a run icon'
+    $b.send_keys [:control, 'a'] # enter in devel-mode
+    assert ( f.td(:id => "footer_run_icon_all").exist?  ), 'footer have a run icon for all sample in devel-mode'
+    $b.send_keys [:control, 'a'] # exit of devel-mode
+
+    # change config to "---"
+    $b.select_list(:id => "choose_config").select("-1") # use value and not position
+    # footer don't have a run icon if no config selected ("---")
+    f.td(:id => "footer_run_icon").wait_while(&:present?)
   end
 end
