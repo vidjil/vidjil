@@ -522,33 +522,7 @@ Info.prototype = {
                     if (labelCount>100) continue;
                     if (labelCount>50 && useScale) continue;
 
-                    var spantag = document.createElement('span');
-                    spantag.className = "tagColorBox";
-                    spantag.style.backgroundColor = l.color;
-                    spantag.title = l.text;
-                    spantag.value = keys[i];
-
-                    if (this.m.filter.check(a.name, "=", keys[i]) >=0)
-                        spantag.className += " inactiveTag"
-
-                    if (labelCount >20){
-                        spantag.style.width = boxWidth
-                        spantag.style.margin = "1px"
-                    }else if (labelCount > 10 && useScale){
-                        spantag.style.width = boxWidth
-                        spantag.style.margin = "1px"
-                    }
-
-                    spantag.onclick = function(){
-                        var v = this.value
-                        var a = m.color.axis
-                        if (window.event.ctrlKey) {
-                            var c = a.getLabelInfo(v).clones
-                            m.multiSelect(c)
-                            return
-                        }
-                        m.filter.toggle(a.name, "=", v)
-                    };
+                    var spantag = this.build_color_label(a, keys[i])
 
                     if (l.side && l.side == "left"){
                         if (labelCount<=3 && !useScale)
@@ -575,6 +549,39 @@ Info.prototype = {
         div.appendChild(span2);
         div.appendChild(span3);
         return div;
+    },
+
+    build_color_label:function(axis, key, count){
+        var spantag = document.createElement('span');
+        var l = axis.labels[key]
+        spantag.className = "tagColorBox";
+        spantag.style.backgroundColor = l.color;
+        spantag.title = l.text;
+        spantag.value = key;
+
+        if (this.m.filter.check(axis.name, "=", keys[i]) >=0)
+            spantag.className += " inactiveTag"
+
+        if (count >20){
+            spantag.style.width = boxWidth
+            spantag.style.margin = "1px"
+        }else if (count > 10 && useScale){
+            spantag.style.width = boxWidth
+            spantag.style.margin = "1px"
+        }
+
+        spantag.onclick = function(){
+            var v = this.value
+            var a = m.color.axis
+            if (window.event.ctrlKey) {
+                var c = a.getLabelInfo(v).clones
+                m.multiSelect(c)
+                return
+            }
+            m.filter.toggle(a.name, "=", v)
+        };
+
+        return spantag
     },
 
     createClickableElem: function(type, children, id, className, onclick) {
