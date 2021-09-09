@@ -100,7 +100,8 @@ Filter.prototype = {
         var spanButton = document.createElement('span')
         spanText.appendChild(document.createTextNode(text))
         spanText.title = title
-        spanButton.appendChild(document.createTextNode("X"))
+        spanButton.appendChild(icon('icon-cancel', ''));
+        spanButton.className = "button"
         spanButton.onclick = function () {
             m.filter.remove(f.axis, f.operator)
         };
