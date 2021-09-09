@@ -559,7 +559,7 @@ Info.prototype = {
         spantag.title = l.text;
         spantag.value = key;
 
-        if (this.m.filter.check(axis.name, "=", keys[i]) >=0)
+        if (this.m.filter.check(axis.name, "=", key) >=0)
             spantag.className += " inactiveTag"
 
         if (count >20){
