@@ -1239,6 +1239,108 @@
       "css": "spin4",
       "code": 59597,
       "src": "fontelico"
+    },
+{
+      "uid": "c5fd349cbd3d23e4ade333789c29c729",
+      "css": "eye",
+      "code": 59392,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "7fd683b2c518ceb9e5fa6757f2276faa",
+      "css": "eye-off",
+      "code": 59393,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "c76b7947c957c9b78b11741173c8349b",
+      "css": "attention",
+      "code": 59394,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "b035c28eba2b35c6ffe92aee8b0df507",
+      "css": "attention-circled",
+      "code": 59395,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "68eb56470b836f19335231578515153e",
+      "css": "address-card-o",
+      "code": 62140,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "79d27b578931fd441a6dc885c9dd88a6",
+      "css": "address-card",
+      "code": 62139,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "818981e2ad316f18ae61cfa805d41309",
+      "css": "user-circle",
+      "code": 62141,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "3fce1eca43f917c8f23e532749abae5d",
+      "css": "user-circle-o",
+      "code": 62142,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "ccddff8e8670dcd130e3cb55fdfc2fd0",
+      "css": "down-open",
+      "code": 59397,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "d870630ff8f81e6de3958ecaeac532f2",
+      "css": "left-open",
+      "code": 59398,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "399ef63b1e23ab1b761dfbb5591fa4da",
+      "css": "right-open",
+      "code": 59396,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "fe6697b391355dec12f3d86d6d490397",
+      "css": "up-open",
+      "code": 59399,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "d17030afaecc1e1c22349b99f3c4992a",
+      "css": "star-empty",
+      "code": 59400,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "474656633f79ea2f1dad59ff63f6bf07",
+      "css": "star",
+      "code": 59401,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "1a5cfa186647e8c929c2b17b9fc4dac1",
+      "css": "plus-squared",
+      "code": 61694,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "2d3be3e856fc1e4ac067590d2ded1b07",
+      "css": "plus-squared-alt",
+      "code": 61846,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "266d5d9adf15a61800477a5acf9a4462",
+      "css": "chart-bar",
+      "code": 59402,
+      "src": "fontawesome"
     }
   ],
   "ascent": 850,
