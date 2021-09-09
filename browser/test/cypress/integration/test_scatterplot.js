@@ -6,7 +6,7 @@ var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
 console.log( url )
 
 
-describe('Actions v1', function () {
+describe('Scatterplot', function () {
     beforeEach(function () {
         cy.setBrowser(url)
     })
@@ -69,10 +69,10 @@ describe('Actions v1', function () {
     cy.get('#visu_axis_container').should('contain', "J/3 allele")
 
     //using axis_x selector
-    cy.get('#visu').find('select[name*="select_x[]"]').select('clone consensus length',{ force: true })
+    cy.get('#visu').find('select[name*="select_x[]"]').select('Sequence length',{ force: true })
 
     cy.get('#visu_axis_x_container').children('line').should('have.length', 7)
-    cy.get('#visu_axis_container').should('contain', "clone consensus length")
+    cy.get('#visu_axis_container').should('contain', "Sequence length")
 
     //using axis_y selctor
     cy.get('#visu').find('select[name*="select_y[]"]').select('CDR3 length (nt)',{ force: true })
@@ -87,7 +87,7 @@ describe('Actions v1', function () {
   it('custom Axis range',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
-    cy.get('#visu').find('select[name*="select_x[]"]').select('clone consensus length',{ force: true })
+    cy.get('#visu').find('select[name*="select_x[]"]').select('Sequence length',{ force: true })
     cy.get('#visu_axis_x_container').children('line').should('have.length', 7) // 0/20/40/60/80/100/120
 
     cy.window().then((win) => {win.sp.updateScaleX([40,120]);});

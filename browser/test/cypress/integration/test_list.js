@@ -6,7 +6,7 @@ var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
 console.log( url )
 
 
-describe('Actions v1', function () {
+describe('List', function () {
     beforeEach(function () {
         cy.setBrowser(url)
     })
