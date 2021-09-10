@@ -75,10 +75,10 @@ describe('Scatterplot', function () {
     cy.get('#visu_axis_container').should('contain', "Sequence length")
 
     //using axis_y selctor
-    cy.get('#visu').find('select[name*="select_y[]"]').select('CDR3 length (nt)',{ force: true })
+    cy.get('#visu').find('select[name*="select_y[]"]').select('CDR3 length',{ force: true })
 
     cy.get('#visu_axis_y_container').children('line').should('have.length', 3)
-    cy.get('#visu_axis_container').should('contain', "CDR3 length (nt)")
+    cy.get('#visu_axis_container').should('contain', "CDR3 length")
 
     return
   })
