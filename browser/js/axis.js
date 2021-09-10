@@ -406,7 +406,7 @@ Axis.prototype = {
                         // TODO: Change line when old version of browser will be replaced
                         // if (a == undefined || a.includes("undefined") || a.includes("?") ){
                         if (a == undefined || a.search("undefined") != -1 ){
-                            return -1
+                            return 1
                         }
                         return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'})
                     })

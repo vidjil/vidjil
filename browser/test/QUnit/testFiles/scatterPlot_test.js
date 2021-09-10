@@ -132,10 +132,12 @@ QUnit.test("multiple selection", function(assert) {
 
     m = new Model()
     m.parseJsonData(json_data, 100);
-    m.loadGermline();
+    m.loadGermline("IGH");
     m.initClones();
 
     var sp = new ScatterPlot("visu", m);
+    sp.changeSplitMethod("V/5' gene","J/3' gene", "grid")
+
     sp.shouldRefresh();
 
     /* Expected clones distribution in the scatterplot (numbers are ratios for width en height) :
@@ -177,7 +179,7 @@ QUnit.test("multiple selection", function(assert) {
         sp.stopSelectorAt([sp_width*0.8, sp_height]);
 
         assert.equal(m.getSelected().length, 1, "only one clone is selected");
-        assert.equal(m.clone(m.getSelected()[0]).name, "test3", "the selected clone is test3");
+        assert.equal(m.clone(m.getSelected()[0]).name, "test5; unseg sequence", "the selected clone is test5");
     }
 
     function test2() {
