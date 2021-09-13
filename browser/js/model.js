@@ -1088,7 +1088,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             for (var key in desc) {
                 select = (select && (clone.get(key) == desc[key]))
             }
-            clone.select = select;
+            if (clone.isInteractable())
+                clone.select = select;
         }
         this.updateStyle();
     },
@@ -1109,7 +1110,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         for (var i=0; i<this.clones.length; i++){
             var clone = this.clone(i);
             var coeff = pearsonCoeff(refReads, clone.getReadsAllSamples(logadd1))
-            clone.select = (Math.abs(coeff) > threshold)
+            if (clone.isInteractable())
+                clone.select = (Math.abs(coeff) > threshold)
         }
         this.updateStyle();
     },
@@ -1136,7 +1138,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         })
 
         for (var j = 0; j < tmp.length; j++) {
-            this.clone(tmp[j].id).select = true;
+            if (this.clone(tmp[j].id).isInteractable())
+                this.clone(tmp[j].id).select = true;
             this.orderedSelectedClones.push(tmp[j].id);
             list[j] = tmp[j].id
         }
@@ -1149,7 +1152,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * */
     selectAll: function () {
         for (var i=0; i<this.clones.length; i++){
-            this.clone(i).select = true;
+            if (this.clone(i).isInteractable())
+                this.clone(i).select = true;
         }
         this.updateStyle();
     },
