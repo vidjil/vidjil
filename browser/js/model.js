@@ -1444,7 +1444,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             var c = self.clone(pos);
             c.reads = newOthers[c.germline];
             c.name = c.germline + " smaller clones";
-            if (this.filters && this.filters.length >0)
+            if (this.filter && this.filter.check("Clone", "hide") != -1)
                 c.name += " + filtered clones";
         })
     },
@@ -2126,6 +2126,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 }
                 break;
         }
+
+        if (this.filter.check("Size", "=", 0) != -1 && timeID == this.getTime() ) result += " *"
         return result
     },
 

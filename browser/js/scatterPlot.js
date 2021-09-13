@@ -981,7 +981,7 @@ ScatterPlot.prototype = {
                 .attr("class", function(p) {
                     var c = self.m.clone(p.id)
                     
-                    if (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || !p.includeBar)
+                    if (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || !p.includeBar || c.hasSizeOther())
                         return "circle_hidden"
                     if (c.isSelected() && c.isFocus())
                         return "circle_focus circle_select"
@@ -1001,7 +1001,7 @@ ScatterPlot.prototype = {
                 .attr("class", function(p) {
                     var c = self.m.clone(p.id)
 
-                    if (!(p.hasValidAxisPosition || p.use_system_grid) || !c.isActive()) 
+                    if (!(p.hasValidAxisPosition || p.use_system_grid) || !c.isActive() || c.hasSizeOther()) 
                         return "circle_hidden";
                     if (c.isSelected() && c.isFocus())
                         return "circle_focus circle_select"

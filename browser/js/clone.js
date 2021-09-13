@@ -970,16 +970,16 @@ Clone.prototype = {
                     var c_index = this.lst_compatible_clones[timepoint][pos]
                     var clone   = this.m.clones[c_index]
                     var cluster = this.m.clusters[c_index]
-                    if (clone.hasSizeConstant()) {
+                    if (clone.hasSizeConstant() ) {
                         if (cluster.length){
-                            if (clone.isActive()) { // cluster ?
+                            if (clone.isActive() || clone.hidden) { // cluster ?
                                 this.current_reads[timepoint]  -= clone.reads[timepoint]
                                 this.current_clones[timepoint] -= 1
                             }
                         } else if (cluster.length == 0) {
                             // Look for cluster that include this clone
                             var cluster_clone    = this.m.clone(clone.mergedId)
-                            if (cluster_clone.isActive()) { // cluster ?
+                            if (cluster_clone.isActive() || clone.hidden) { // cluster ?
                                 this.current_reads[timepoint]  -= clone.reads[timepoint]
                                 this.current_clones[timepoint] -= 1
                             }
@@ -1887,18 +1887,24 @@ Clone.prototype = {
     },
 
     enable: function (top) {
-        if (this.hasSizeOther()){
-             this.active = false; 
-             return
-        }
-
         this.active = true;
+        this.hidden = false
     },
 
     disable: function () {
         if (!this.hasSizeConstant() && !this.hasSizeDistrib()) return
         if (this.hasSizeDistrib() && this.m.tag[this.getTag()].display) return
         this.active = false;
+    },
+
+    hide: function () {
+        this.active = false
+        this.hidden = true
+        var c = this.m.clusters[this.index]
+        for (var i=0; i<c.length; i++){
+            this.m.clone(c[i]).hidden = true;
+            this.m.clone(c[i]).active = false;
+        }
     },
 
     unselect: function () {

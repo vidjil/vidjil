@@ -225,15 +225,24 @@ Filter.prototype = {
                             break;
                         case "focus":
                             if (!c.active) break;
-                            if (f.value.indexOf(a.fct(c)) == -1) c.disable()
+                            if (f.value.indexOf(a.fct(c)) == -1){ 
+                                c.disable()
+                                c.hide()
+                            }
                             break;
                         case "hide":
                             if (!c.active) break;
-                            if (f.value.indexOf(a.fct(c)) != -1) c.disable()
+                            if (f.value.indexOf(a.fct(c)) != -1) {
+                                c.disable()
+                                c.hide()
+                            }
                             break;
                         case "search":
                             if (!c.active) break;
-                            if (!c.search(f.value)) c.disable()
+                            if (!c.search(f.value))  {
+                                c.disable()
+                                c.hide()
+                            }
                             break;
                         default:
                             break;
