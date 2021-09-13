@@ -62,7 +62,7 @@
                 <td class="column_sep"></td>
 
                 <td class="column_150">last processing</td>
-                <td class="column_100">status</td>
+                <td class="column_150">status</td>
                 <td class="column_20"></td>
                 <td class="column_20"></td>
                 <td class="column_20"></td>
@@ -181,12 +181,19 @@
 
                     <td class="column_sep"></td>
 
+                    {{if row.results_file.run_date :}}
+                        <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
+                    {{else:}}
+                        <td></td>
+                    {{pass}}
 
-                   {{if row.results_file.run_date :}}
-                       <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
-                   {{else:}}<td></td>{{pass}}
-                   {{if row.results_file.id:}}
-                     <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=status}} </td>
+                    {{if row.results_file.id:}}
+                        {{if row.sequence_file.pre_process_flag in ["RUN", "WAIT"] :}}
+                            <td> PREPROCESSING </td>
+                        {{ else:}}
+                            <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=status}} </td>
+                        {{ pass}}
+
                      <td>
                         {{if row.results_file.data_file:}}
                             <a href={{=URL('default', 'download', scheme='https', args=row.results_file.data_file, vars=dict(filename='result-%s-%s.txt' % (request.vars['id'], row.results_file.id)))}}
