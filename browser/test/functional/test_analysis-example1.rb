@@ -45,7 +45,7 @@ class TestSimple < BrowserTest
   end
 
   def test_03_color_V
-    $b.color_by('V/5\'')
+    $b.color_by('V/5\' gene')
 
     color_sp_legend = $b.scatterplot_x_legend(0).style('color')
     color_clone_sp = $b.clone_in_scatterplot('0').style('color')
@@ -56,7 +56,7 @@ class TestSimple < BrowserTest
   end
 
   def test_03_color_J
-    $b.color_by('J/3\'')
+    $b.color_by('J/3\' gene')
 
     color_sp_legend = $b.scatterplot_y_legend(0).style('color')
     color_clone_sp = $b.clone_in_scatterplot('0').style('color')
