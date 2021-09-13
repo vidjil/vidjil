@@ -1,8 +1,5 @@
 require(['./js/aligner_amino.js']);
 
-CHAR_WIDTH = 12;
-
-
 function genSeq(id, locus, model, segmenter) {
     this.id = id; //clone ID     
     this.m = model; //Model utilisé     
