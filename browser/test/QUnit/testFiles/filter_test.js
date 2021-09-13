@@ -51,22 +51,22 @@ QUnit.test("= / > / <", function(assert) {
     m.initClones()
     assert.equal(m.filter.filters.length, 1, "filter list must contain a single filter, found "+ m.filter.filters.length)
     
-    assert.deepEqual(m.filter.visible(), [0,1,2,3,4],   "default top>50, expect clones 0,1,2,3,4 to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [0,1,2,3,4,5,6],   "default top>50, expect clones 0,1,2,3,4, 5,6 to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", ">", 0)
-    assert.deepEqual(m.filter.visible(), [],            "Top>0, expect no clones to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [5,6],            "Top>0, expect clones 5,6(other) to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", ">", 1)
-    assert.deepEqual(m.filter.visible(), [0],           "Top>1, expect clone 0 to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [0,5,6],           "Top>1, expect clones 0, 5,6 to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", ">", 4)
-    assert.deepEqual(m.filter.visible(), [0,1,2,3],     "Top>4 ,expect clone 0,1,2,3 to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [0,1,2,3,5,6],     "Top>4 ,expect clone 0,1,2,3, 5,6 to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", "<", 2)
-    assert.deepEqual(m.filter.visible(), [1,2,3],       "Top>4 && Top<2 ,expect clone 1,2,3 to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [1,2,3,5,6],       "Top>4 && Top<2 ,expect clone 1,2,3, 5,6 to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", "=", 3)
-    assert.deepEqual(m.filter.visible(), [1,3],         "Top>4 && Top<2 && top=3 ,expect clone 1,3 to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [1,3,5,6],         "Top>4 && Top<2 && top=3 ,expect clone 1,3, 5,6 to be visible, found " + m.filter.visible())
 
     assert.equal(m.filter.filters.length, 3, "filter list must contain 3 filters, found "+ m.filter.filters.length)
 
@@ -91,7 +91,7 @@ QUnit.test("focus/hide", function(assert) {
     // reset filter
     m.filter.remove("Clone", "focus", undefined)
     m.filter.remove("Clone", "hide", undefined)
-    assert.deepEqual(m.filter.filtered(), [5,6],        "reset, expect clone 5,6(distrib) to be filtered out, found " + m.filter.filtered())
+    assert.deepEqual(m.filter.filtered(), [],        "reset, expect no clone to be filtered out, found " + m.filter.filtered())
 
     // check filter list content
     assert.equal(m.filter.filters.length, 1, "filter list must contain a single filter, found "+ m.filter.filters.length)
@@ -123,7 +123,7 @@ QUnit.test("search", function(assert) {
     
     //reset
     m.filter.remove("Clone", "search", undefined) 
-    assert.deepEqual(m.filter.filtered(), [5,6], "expect clones 5,6(distrib) to be filtered out , found " + m.filter.filtered())
+    assert.deepEqual(m.filter.filtered(), [], "expect no clone to be filtered out , found " + m.filter.filtered())
     assert.equal(m.filter.filters.length, 1, "filter list must contain 1 filters, found "+ m.filter.filters.length)
 
 });

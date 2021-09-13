@@ -13,7 +13,7 @@ QUnit.test("grid", function(assert) {
     var sp = new ScatterPlot("visu",m);
     sp.init();
     
-    assert.equal(sp.returnActiveclones(), 5, "returnActiveClones -> 5");
+    assert.equal(sp.returnActiveclones(), 7, "returnActiveClones -> 7");
     
     sp.buildSystemGrid()
     assert.deepEqual(sp.systemGrid, {   
@@ -212,7 +212,7 @@ QUnit.test("axes productivity detailed", function(assert) {
     var sp = new ScatterPlot("visu",m);
     sp.init();
 
-    assert.equal(sp.returnActiveclones(), 6, "returnActiveClones -> 6");
+    assert.equal(sp.returnActiveclones(), 7, "returnActiveClones -> 7");
     sp.changeSplitMethod("Productivity+", "Productivity+", "grid");
 
     var axes_legend = document.getElementById("visu_axis_x_container").childNodes
@@ -273,7 +273,7 @@ QUnit.test("Sort axes alphabetical with numeric value", function(assert) {
     var sp = new ScatterPlot("visu",m);
     sp.init();
 
-    assert.equal(sp.returnActiveclones(), 5, "returnActiveClones -> 6");
+    assert.equal(sp.returnActiveclones(), 7, "returnActiveClones -> 7");
     sp.changeSplitMethod("V/5' gene", "J/3 allele", "grid");
 
     var axes_legend_x = document.getElementById("visu_axis_x_container").childNodes
