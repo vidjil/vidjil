@@ -193,6 +193,7 @@ AXIS_DEFAULT = {
         doc:        "length of the clone consensus sequence or representative sequence provided by the analysis software",
         fct:        function(clone) {return clone.getSequenceLength()},
         autofill:   true,
+        min_step:   1,
         color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
     },    
     "Read length" : {
@@ -206,6 +207,7 @@ AXIS_DEFAULT = {
                         return Math.round(len)
                     },
         autofill:   true,
+        min_step:   1,
         color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
     },
     "GC content" : {
@@ -224,7 +226,8 @@ AXIS_DEFAULT = {
         doc:        "CDR3 length, in nucleotides, from Cys104 and Phe118/Trp118 (excluded)",
         fct:        function(clone) {return clone.getSegLength('cdr3')},
         color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
-        autofill:   true
+        autofill:   true,
+        min_step:   1
     },
     "Productivity": {
         doc:        "clone productivity",
