@@ -149,7 +149,6 @@ Axis.prototype = {
 
             if (clone.isInScatterplot() &&
                 clone.isActive() && 
-                clone.isClusterizable() &&
                 (this.germline == "multi" || this.germline == clone.germline)){
                 value = this.fct(clone)
 

@@ -311,7 +311,7 @@ ScatterPlot.prototype = {
         } else {
             showVirtual = true        
         }
-        var include = (system_grid && (clone.isActive()|| clone.hasSizeDistrib()) && showVirtual)
+        var include = (system_grid && clone.isActive() && showVirtual)
         return include
     },
     
@@ -899,7 +899,7 @@ ScatterPlot.prototype = {
         var clone = this.m.clone(cloneID)      
         var node = this.nodes[cloneID]
 
-        if (clone && clone.isActive()) {
+        if (clone && clone.isActive() && !clone.hasSizeOther()) {
 
             var seqID, size;
             if (clone.hasSizeDistrib()){

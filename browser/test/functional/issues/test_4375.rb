@@ -38,7 +38,7 @@ class TestGraph < BrowserTest
     assert ( $b.clone_in_list('18').style == "display: none;"),  ">> lenSeqAverage distrib clone DON'T show in list"
 
     ## hide distrib clone by tag switch
-    $b.info_colorBy.span(:id => "fastTag9").click
+    $b.info_colorBy.span(title: 'smaller clones').click
     $b.update_icon.wait_while(&:present?)
 
     assert ( $b.clone_in_list('0').exists?),   ">> real clone still presnet in list"
@@ -53,7 +53,7 @@ class TestGraph < BrowserTest
     
     ## Remove filter
     $b.send_keys 0
-    $b.info_colorBy.span(:id => "fastTag9").click
+    $b.info_colorBy.span(title: 'smaller clones').click
     $b.update_icon.wait_while(&:present?)
 
     assert ( $b.clone_in_list('29').style == "display: block;"),  ">> seg5/seg3 distrib clone is present in list"

@@ -1887,8 +1887,11 @@ Clone.prototype = {
     },
 
     enable: function (top) {
-        this.active = true;
+        this.active = true
         this.hidden = false
+
+        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller clones") != -1)
+            this.active = false
     },
 
     disable: function () {

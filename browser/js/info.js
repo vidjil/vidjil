@@ -552,12 +552,13 @@ Info.prototype = {
     },
 
     build_color_label:function(axis, key, count){
+        var self = this;
         var spantag = document.createElement('span');
         var l = axis.labels[key]
         spantag.className = "tagColorBox";
         spantag.style.backgroundColor = l.color;
         spantag.title = l.text;
-        spantag.value = key;
+        spantag.setAttribute('value', key);
 
         if (this.m.filter.check(axis.name, "=", key) >=0)
             spantag.className += " inactiveTag"
@@ -571,14 +572,14 @@ Info.prototype = {
         }
 
         spantag.onclick = function(){
-            var v = this.value
+            var v = this.getAttribute('value')
             var a = m.color.axis
-            if (window.event.ctrlKey) {
+            if (window.event && window.event.ctrlKey) {
                 var c = a.getLabelInfo(v).clones
-                m.multiSelect(c)
+                self.m.multiSelect(c)
                 return
             }
-            m.filter.toggle(a.name, "=", v)
+            self.m.filter.toggle(a.name, "=", v)
         };
 
         return spantag

@@ -51,9 +51,13 @@ function loadAfterConf() {
     require(["js/view"], function() {
 
         require(["js/germline",
-                 "js/vidjil-style"],
+                 "js/vidjil-style",
+                 "js/aligner_layer"],
                 function() {
-                    require(["js/closeable"],
+                    require(["js/closeable",
+                              "js/scatterPlot_menu",
+                              "js/scatterPlot_selector",
+                              "js/aligner_menu"],
                             function() {
                                 require(["js/menu",
                                          "js/dbscan",
@@ -70,8 +74,6 @@ function loadAfterConf() {
                                          "js/axis_conf",
                                          "js/axis",
                                          "js/graph",
-                                         "js/scatterPlot_menu",
-                                         "js/scatterPlot_selector",
                                          "js/scatterPlot",
                                          "js/builder",
                                          "js/info",

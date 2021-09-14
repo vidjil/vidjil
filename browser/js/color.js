@@ -46,7 +46,7 @@ Color.prototype = {
     set: function(axis_name, update, save) {
         update = (update==undefined) ? true : update;
 
-        if (this.localStorage && save) localStorage.setItem('colorAxis', axis_name)
+        if (this.m.localStorage && save) localStorage.setItem('colorAxis', axis_name)
 
         if (typeof this.axis == "undefined" || this.axis.name != axis_name)
             this.axis = new Axis(axis_name).compute(100);

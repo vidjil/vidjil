@@ -34,6 +34,10 @@ Filter.prototype = {
         if (topFilterId >= 0){
     
             var top = this.filters[topFilterId].value
+            if (top > max_top) {
+                top = max_top
+                this.filters[topFilterId].value = max_top;
+            }
             if (top_slider) 
                 top_slider.value = top;
 
