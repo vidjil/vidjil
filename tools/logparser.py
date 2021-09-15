@@ -11,7 +11,7 @@ class LogParser:
     def __init__(self, log_file):
         self.log_file = log_file
 
-    def export(self, preprocessArgs, path_output):
+    def export(self, preprocessArgs, output_file):
         parsed_log = self.parse()
         parsed_log['pre_process']['commandline'] = [preprocessArgs]
         parsed_log['number'] = 1
@@ -23,7 +23,7 @@ class LogParser:
         parsed_log['reads']['merged'] = parsed_log['pre_process']['stats']['combined_pairs']
         parsed_log['reads']['total'] = parsed_log['pre_process']['stats']['total_pairs']
 
-        with open(path_output, 'w') as vidjil_file:
+        with open(output_file, 'w') as vidjil_file:
             vidjil_file.write(json.dumps(parsed_log))
 
 
@@ -35,7 +35,7 @@ class FlashLogParser(LogParser):
         while log_line:
             log_line = log_line.strip()
             if(log_line.startswith('WARNING')):
-                continue
+                pass
 
             if(log_line.startswith('Starting FLASH')):
                 parsed_log['producer'] = [' '.join(log_line.split()[1:])]

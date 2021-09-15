@@ -81,11 +81,10 @@ try :
         logfile.write(stdoutdata)
         logfile.seek(0)
 
-        log_parser = FlashLogParser(logfile)
-        parsed_log = log_parser.parse()
 
         output_file = '%s/pre_process.vidjil' % path_head
-        log_parser.export(output_file, sys.argv)
+        log_parser  = FlashLogParser(logfile)
+        log_parser.export(sys.argv, output_file)
 
     print(stdoutdata)
 except IOError :
