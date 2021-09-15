@@ -32,6 +32,9 @@ def concatenate_with_padding(d,
     [11, 22, 0, 0, 0, 0, 0]
     >>> d['c']
     [0, 0, 333, 444, 555]
+    >>> d = {}
+    >>> d1 = { 'a': [1, 2], 'b': [11, 22], 'z':17 }
+    >>> d2 = { 'a': [3, 4, 5], 'c': [333, 444, 555] } 
     >>> concatenate_with_padding(d, d1, 2, d2, 5, ['z'], none_init=True)
     >>> d['a']
     [1, 2, 3, 4, 5]
@@ -70,7 +73,6 @@ def concatenate_with_padding(d,
                     if not none_init:
                         d[key] += [type(d1[key][0])()]*d2_size # here
                     else:
-                        print( "NONE INIT key 2")
                         d[key] += [None]*d2_size # here
                 else:
                     d[key] += t2
@@ -90,7 +92,6 @@ def concatenate_with_padding(d,
                     if not none_init:
                         d[key] = ([type(d2[key][0])()]*d1_size) + d2[key]
                     else:
-                        print( "NONE INIT key 1")
                         d[key] = ([None]*d1_size) + d2[key]
                 else:
                     d[key] = t1 + d2[key]
