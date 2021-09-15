@@ -1,0 +1,23 @@
+
+
+!OUTPUT_FILE: logparser_flash2.vidjil
+!LAUNCH: touch tt.log; python ../../logparser.py -i ../data/flash2.log -o logparser_flash2.vidjil ;
+
+$ MRD key is NOT present
+j: reads.merged: [285000]
+j: reads.total: [300000]
+
+
+j: pre_process.commandline: ["args from preprocess"]
+
+
+$ Test output of files; input
+j: pre_process.input: [["data_R1.fastq.gz", "data_R2.fastq.gz"]]
+$ Test output of files; ouput
+j: pre_process.output: [["./out.extendedFrags.fastq", "./out.notCombined_1.fastq", "./out.notCombined_2.fastq", "./out.hist", "./out.histogram"]]
+
+$ Test some numerical values from log
+j: pre_process.stats.combined_pairs: [285000]
+j: pre_process.stats.discarded_pairs: [15000]
+j: pre_process.stats.innie_pairs: [142000]
+j: pre_process.stats.outie_pairs: [142000]

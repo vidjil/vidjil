@@ -83,18 +83,10 @@ try :
 
         log_parser = FlashLogParser(logfile)
         parsed_log = log_parser.parse()
-        parsed_log['pre_process']['commandline'] = [sys.argv]
-        parsed_log['number'] = 1
-        #parsed_log['pre_process']['original_names'] = [path_file]
-        timestamp = [datetime.now().strftime('%Y-%m-%d %H:%M:%S')]
-        parsed_log['pre_process']['run_timestamp'] = timestamp
-        parsed_log['vidjil_json_version'] = 'TODO'
-        parsed_log['reads'] = {}
-        parsed_log['reads']['merged'] = parsed_log['pre_process']['stats']['combined_pairs']
-        parsed_log['reads']['total'] = parsed_log['pre_process']['stats']['total_pairs']
 
-        with open('%s/pre_process.vidjil' % path_head, 'w') as vidjil_file:
-            vidjil_file.write(json.dumps(parsed_log))
+        output_file = '%s/pre_process.vidjil' % path_head
+        log_parser.export(output_file, sys.argv)
+
     print(stdoutdata)
 except IOError :
     os.remove(f_out)
