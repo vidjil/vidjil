@@ -42,18 +42,20 @@ Builder.prototype = {
     init: function () {
         var self = this;
         try {
-            d3.select("#visu-separator")
-                .on("mousedown", function () {
-                    self.dragSeparator();
-                });
-            d3.select("#visu-container")
-                .on("mouseup", function () {
-                    self.dropSeparator()
-                })
-            d3.select("#visu-container")
-                .on("mousemove", function () {
-                    self.updateSeparator()
-                })
+            if (document.getElementsByClassName("visu-separator").length == 1){
+                d3.select(".visu-separator")
+                    .on("mousedown", function () {
+                        self.dragSeparator();
+                    });
+                d3.select("#visu-container")
+                    .on("mouseup", function () {
+                        self.dropSeparator()
+                    })
+                d3.select("#visu-container")
+                    .on("mousemove", function () {
+                        self.updateSeparator()
+                    })
+            }
             d3.select("#vertical-separator")
                 .on("click", function () {
                     self.toggle_left_container()
@@ -112,19 +114,24 @@ Builder.prototype = {
             var total_height = document.getElementById("visu-container")
                 .offsetHeight;
 
+            console.log("off :"+total_height)
+            console.log("pos :"+position)
             if (position < 2 || total_height - position < 2) this.dropSeparator()
 
             var height = position / total_height * 100
             if (height > 90) height = 100;
             if (height < 10) height = 0;
-            
+            console.log("hei :"+height)
             this.resizeGraph(height)
         }
     },
     
     resizeGraph : function (graphSize) {
+        graphSize = Math.round(graphSize)
         var graph = document.getElementById('visu2');
         graph.style.height = graphSize + "%"
+        var sp = document.getElementById('visu');
+        sp.style.height = (100-graphSize) + "%"
     },
 
     dropSeparator: function () {
