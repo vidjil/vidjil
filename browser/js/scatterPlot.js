@@ -281,7 +281,7 @@ ScatterPlot.prototype = {
             .computeBar(cloneList)
         var max = this.axisX.barMax
         this.axisY = new Axis().load({
-                                        name:       "size",
+                                        name:       "Size",
                                         scale:      {
                                                         mode:   "linear",
                                                         min:    0,
