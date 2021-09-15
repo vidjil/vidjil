@@ -1,26 +1,54 @@
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
+################################
+### Fuse without any preprocess
+!OUTPUT_FILE: fuse_pre-process_empty.vidjil
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fuse_pre-process_empty.vidjil;
 
 $ Fuse with no pre-process file
-0: "pre_process"
+j0: samples.pre_process
+j: samples.key_present_only_here: ["a value", ""]
 
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil,../../../algo/tests/data/pre_process.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
 
-$ Fuse with one pre-process file
-lr: "combined_pairs":\s*\[\s*3000,\s*0
-1: "FLASH v2.2.00"
-1: "pre_process commandline"
+####################################
+### Fuse with one preprocess (first)
+!OUTPUT_FILE: fuse_pre-process_first.vidjil
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil,..//data/pre_process.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fuse_pre-process_first.vidjil;
 
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil,../../../algo/tests/data/pre_process.vidjil -o pre-process.vidjil; cat pre-process.vidjil
+$ Fuse with one pre-process file; pre_process key
+j: samples.pre_process
+$ Fuse with one pre-process file; producer
+j: samples.pre_process.producer: ["FLASH v2.2.00", null]
+$ Fuse with one pre-process file; commandline
+j: samples.pre_process.commandline: ["pre_process commandline", null]
+$ Fuse with one pre-process file; combined_pairs
+j: samples.pre_process.stats.combined_pairs: [3000, null]
 
-$ Idem but reverse order
-lr: "combined_pairs":\s*\[\s*0,\s*3000
-1: "FLASH v2.2.00"
-1: "pre_process commandline"
 
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil,../../../algo/tests/data/pre_process.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil,../../../algo/tests/data/pre_process_2.vidjil -o pre-process.vidjil; cat pre-process.vidjil
+####################################
+### Fuse with one preprocess (second)
+!OUTPUT_FILE: fuse_pre-process_second.vidjil
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil,..//data/pre_process.vidjil -o fuse_pre-process_second.vidjil;
 
-$ Fuse with two pre-process files
-lr: "combined_pairs":\s*\[\s*3000,\s*3000
-2: "FLASH v2.2.00"
-1: "pre_process commandline"
-1: "second pre_process commandline"
+$ Fuse with one pre-process file(second); pre_process key
+j: samples.pre_process
+$ Fuse with one pre-process file(second); producer
+j: samples.pre_process.producer: [null, FLASH v2.2.00"]
+$ Fuse with one pre-process file(second); commandline
+j: samples.pre_process.commandline: [null, pre_process commandline"]
+$ Fuse with one pre-process file(second); combined_pairs
+j: samples.pre_process.stats.combined_pairs: [null, 3000]
+
+
+####################################
+### Fuse with both preprocess
+!OUTPUT_FILE: fuse_pre-process_both.vidjil
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../../../algo/tests/data/results-two-clones-1-3.vidjil,..//data/pre_process.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil,..//data/pre_process_2.vidjil -o fuse_pre-process_both.vidjil;
+
+$ Fuse with one pre-process file (both); pre_process key
+j: samples.pre_process
+$ Fuse with one pre-process file (both); producer
+j: samples.pre_process.producer: ["FLASH v2.2.00", "FLASH v2.2.00"]
+$ Fuse with one pre-process file (both); commandline
+j: samples.pre_process.commandline: ["pre_process commandline", "second pre_process commandline"]
+$ Fuse with one pre-process file (both); combined_pairs
+j: samples.pre_process.stats.combined_pairs: [3000, 3000]
+

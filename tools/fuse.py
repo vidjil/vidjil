@@ -508,8 +508,20 @@ class Samples:
         concatenate_with_padding(obj.d, 
                                  self.d, self.d['number'], 
                                  other.d, other.d['number'],
-                                 ['number'],
+                                 ['number', 'pre_process'],
                                  recursive=True)
+        if "pre_process" in self.d.keys() or "pre_process" in other.d.keys():
+            # init if needed
+            if "pre_process" not in self.d.keys():
+                self.d["pre_process"] = {}
+            if "pre_process" not in other.d.keys():
+                other.d["pre_process"] = {}
+            obj.d["pre_process"] = {}
+            concatenate_with_padding(obj.d["pre_process"], 
+                                     self.d["pre_process"], self.d['number'], 
+                                     other.d["pre_process"], other.d['number'],
+                                     [], recursive=True,
+                                     none_init=True)
 
         obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
         
