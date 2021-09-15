@@ -180,23 +180,21 @@ It is also possible to switch on/off the status of a sample by clicking on the c
 You may also want to compare two samples, either to check a replicate, to check for possible contaminations, or to
 compare different research or medical situations.
 
-\question{In the \com{color by} menu, choose \com{by abundance}. Select a different
+\question{In the \com{color by} menu, choose \com{by size}. Select a different
   sample. What happens ? Are there some clones with a significant different concentration in both samples ?
 Revert the color by choosing \com{by tag}.}
 \begin{verbatim}
   def test_C_samples_08_compare_sample
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
-    
     select_color = $b.select_list(:id => "color_menu_select")
-    select_color.select("abundance")
+    select_color.select("Size")
     $b.update_icon.wait_while(&:present?)
 
     assert ( $b.info_colorBy.span(:class => "gradient").exist? ), "color gradient is present"
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(133, 183, 36, 1)' )
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(174, 184, 0, 1)' )
 
     $b.graph_x_legend("4").click ## set current sample
     $b.update_icon.wait_while(&:present?)
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(183, 62, 36, 1)' )
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(246, 73, 0, 1)' )
   end
 \end{verbatim}
 
@@ -212,8 +210,8 @@ Another option is to directly plot a log-log curve comparing two samples.
     $b.send_keys 9
     $b.update_icon.wait_while(&:present?)
 
-    assert ( $b.scatterplot_x_label.text == "size" ), "Correct legend for axe X"
-    assert ( $b.scatterplot_y_label.text == "size (other sample)" ), "Correct legend for axe Y"
+    assert ( $b.scatterplot_x_label.text == "Size" ), "Correct legend for axe X"
+    assert ( $b.scatterplot_y_label.text == "Size (other)" ), "Correct legend for axe Y"
 
     assert ( $b.scatterplot_x_legend(0).text == "0"), "correct legend for axe X at pos 0"
     assert ( $b.scatterplot_x_legend(8).text == "1"), "correct legend for axe X at pos 8 (biggest)"

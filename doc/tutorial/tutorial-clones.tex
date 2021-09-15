@@ -194,11 +194,11 @@ Later you may want to filter clones depending on the tags you have chosen.
     assert ($b.clone_in_list("1").present?), "clone 0 is present at starting test"
 
     # Click on tag switch; clone 1 will be hidden
-    $b.info_colorBy.span(:id => "fastTag0").click
+    $b.info_colorBy.span(title: 'clone 1').click
     $b.update_icon.wait_while(&:present?)
     assert (not $b.clone_in_list("1").present?), "clone 0 is hidden"
 
-    $b.info_colorBy.span(:id => "fastTag0").click
+    $b.info_colorBy.span(title: 'clone 1').click
     $b.update_icon.wait_while(&:present?)
     assert ($b.clone_in_list("1").present?), "clone 0 is present at the end of the test"
   end
@@ -217,11 +217,11 @@ their gene names or by their DNA sequences.
     assert ($b.clone_in_list("1").present?), "clone 0 is present at starting test"
 
     # Click on tag switch; clone 1 will be hidden
-    $b.info_colorBy.span(:id => "fastTag0").click
+    $b.info_colorBy.span(title: 'clone 1').click
     $b.update_icon.wait_while(&:present?)
     assert (not $b.clone_in_list("1").present?), "clone 0 is hidden"
 
-    $b.info_colorBy.span(:id => "fastTag0").click
+    $b.info_colorBy.span(title: 'clone 1').click
     $b.update_icon.wait_while(&:present?)
     assert ($b.clone_in_list("1").present?), "clone 0 is present at the end of the test"
   end
@@ -365,7 +365,7 @@ After this rename, you can see that the clone is still selected.
     $b.clone_in_list("11").click(:control)
     $b.clone_in_list("13").click(:control)
     $b.update_icon.wait_while(&:present?)
-    $b.a(:id => "focus_selected").click
+    $b.span(:id => "focus_selected").click
     $b.update_icon.wait_while(&:present?)
 
     ## test that clone are hidden after focus
@@ -381,7 +381,7 @@ After this rename, you can see that the clone is still selected.
 \begin{verbatim}
   def test_B_clones_13_remove_filter
     ## test that clone are present after resetting filtering
-    $b.clear_filter.click
+    $b.span(:id => "reset_focus").click
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_in_list('1').present?), ">> clone 1 is present again"
     assert ( $b.clone_in_list('7').present?), ">> clone 7 is still present"
@@ -413,7 +413,7 @@ Sometimes, one wants to hide noisy or unrelated clones.
     $b.clone_in_list("11").click(:control)
     $b.clone_in_list("13").click(:control)
     $b.update_icon.wait_while(&:present?)
-    $b.a(:id => "hide_selected").click
+    $b.span(:id => "hide_selected").click
     $b.update_icon.wait_while(&:present?)
 
     ## test that clone are hidden after focus
@@ -423,7 +423,7 @@ Sometimes, one wants to hide noisy or unrelated clones.
     assert (     $b.clone_in_list('5').present?), ">> clone 5 is present"
 
     ## test that clone are present after resetting filtering
-    $b.clear_filter.click
+    $b.span(:id => "reset_focus").click
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_in_list('1').present?), ">> clone 1 is present again"
     assert ( $b.clone_in_list('7').present?), ">> clone 7 is still present"
@@ -669,24 +669,24 @@ insertions.
     assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset V/N length"
     assert ( $b.scatterplot_y_label.text == "N length" ), "Correct legend for axe Y for preset V/N length"
     assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X for this preset is 'IGHV1-2'"
-    assert ( $b.scatterplot_y_legend(0).text == "0"), "scatterplot_legend Y for this preset is '0'"
+    assert ( $b.scatterplot_y_legend(0).text == "?"), "scatterplot_legend Y for this preset is '0'"
   end
 \end{verbatim}
 
 Then you can continue aligning and clustering clones if necessary.
 
-\question{You can also try the preset \com{clone average read length/GC content}
+\question{You can also try the preset \com{read length/GC content}
   which tends to separate quite nicely the distinct clones.}
 \begin{verbatim}
   def test_B_clones_27_change_preset_2
-    $b.scatterplot_select_preset "clone average read length / GC content"
+    $b.scatterplot_select_preset "read length / GC content"
     $b.update_icon.wait_while(&:present?)
 
-    assert ( $b.scatterplot_x_label.text == "clone average read length" ), "Correct legend for axe X for preset 0"
+    assert ( $b.scatterplot_x_label.text == "Read length" ), "Correct legend for axe X for preset 0"
     assert ( $b.scatterplot_y_label.text == "GC content" ), "Correct legend for axe Y for preset 0"
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_legend(0).text == "?"), "scatterplot_legend X pos 0 for this preset is '?'"
-    assert ( $b.scatterplot_x_legend(1).text == "80"), "scatterplot_legend X pos 1 for this preset is '80'"
+    assert ( $b.scatterplot_x_legend(1).text == "0"), "scatterplot_legend X pos 1 for this preset is '0'"
     assert ( $b.scatterplot_y_legend(0).text == "0.40"), "scatterplot_legend Y for this preset is '0.40'"
   end
 \end{verbatim}
@@ -836,13 +836,13 @@ with the \com{color by} menu.
     assert ( not $b.info_colorBy.span(:class => "gradient").exist? ), "at init, color are not gradient"
 
     select_color = $b.select_list(:id => "color_menu_select")
-    select_color.select("N")
+    select_color.select("N length")
     $b.update_icon.wait_while(&:present?)
     
     ## control
     $b.clone_in_list("0").click
-    assert ($b.clone_info('1')[:name].style('color') ==  'rgba(36, 75, 183, 1)' ), "Good color for clone 1 with color method N"
-    assert ($b.clone_info('4')[:name].style('color') ==  'rgba(61, 36, 183, 1)' ), "Good color for clone 4 with color method N"
+    assert ($b.clone_info('1')[:name].style('color') ==  'rgba(0, 189, 225, 1)' ), "Good color for clone 1 with color method N"
+    assert ($b.clone_info('4')[:name].style('color') ==  'rgba(0, 173, 251, 1)' ), "Good color for clone 4 with color method N"
     ## test label
     assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"),  "scatter plot legend X is correct after preset change"
     assert ( $b.scatterplot_y_legend(0).text == "IGHJ1"), "scatter plot legend Y is correct after preset change"
@@ -853,18 +853,20 @@ with the \com{color by} menu.
 be similar.
 
 \question{Choose now the preset \com{CDR3 length distribution} and
-  then color by \com{productivity}.
+  then color by \com{size}.
   See that the color tiles in the info part (upper right) change to show the color key.}
 \begin{verbatim}
   def test_B_clones_31_color_gradient
     $b.scatterplot_select_preset "CDR3 length distribution"
+    select_color = $b.select_list(:id => "color_menu_select")
+    select_color.select("Size")
     $b.update_icon.wait_while(&:present?)
 
     assert ( $b.info_colorBy.span(:class => "gradient").exist? ), "color gradient is present"
   end
 \end{verbatim}
 
-\question{ Instead of coloring by productivity, you could also color by
+\question{ Instead of coloring by clone's size, you could also color by
   \com{clone}. When coloring by \com{clone}, each clone has a random color. Thus in
   a bar plot, it is a convenient color mode to see the peaks that are due to a
   single clone or to several clones.
@@ -875,7 +877,7 @@ be similar.
 \begin{verbatim}
   def test_B_clones_32_color_by_clone
     select_color = $b.select_list(:id => "color_menu_select")
-    select_color.select("clone")
+    select_color.select("Clone")
     $b.update_icon.wait_while(&:present?)
 
     $b.clone_in_list("0").click

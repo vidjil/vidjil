@@ -99,6 +99,7 @@ AXIS_COLOR = [
                     "Clone",
                     "CDR3",
                     "Locus",
+                    "N length",
                     "V/5' gene",
                     "D/4' gene",
                     "J/3' gene",
