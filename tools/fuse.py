@@ -7,7 +7,7 @@
 #  High-throughput Analysis of V(D)J Immune Repertoire.
 #  Copyright (C) 2011-2017 by Bonsai bioinformatics
 #  at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
-#  Contributors: 
+#  Contributors:
 #      Marc Duez <marc.duez@vidjil.org>
 #      Mathieu Giraud <mathieu.giraud@vidjil.org>
 #      The Vidjil Team <contact@vidjil.org>
@@ -50,7 +50,7 @@ FUSE_VERSION = "vidjil fuse"
 TOOL_SIMILARITY = "../algo/tools/similarity"
 SIMILARITY_LIMIT = 100
 
-GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
+GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL']
 
 AVAILABLE_AXES = [
     "top", "germline", "name",
@@ -88,28 +88,28 @@ class Window:
     # Should be renamed "Clone"
     '''storage class for sequence informations
     with some function to group sequence informations
-    
+
     >>> str(w1)
     '<window : [5] 3 aaa>'
-    
+
     >>> str(w3)
     '<window : [8] 4 aaa>'
-    
+
     >>> str(w1 + w3)
     '<window : [5, 8] 3 aaa>'
-    
-    
+
+
     check if other information are conserved
-    
+
     >>> (w2 + w4).d["test"]
     [0, 'plop']
-    
+
     >>> w1.get_values("name")
     '?'
-    
+
     >>> w1.get_values("top")
     3
-  
+
     >>> w7   = Window(1)
     >>> w7.d = seg_w7
     >>> w7.d["seg"]["5"]["name"]
@@ -185,9 +185,9 @@ class Window:
         self.d["reads"] = []
         for i in range(size):
             self.d["reads"].append(0)
-        
-        
-    ### 
+
+
+    ###
     def __iadd__(self, other):
         ### Not used now
         """Add other.reads to self.reads in-place, without extending lists"""
@@ -196,13 +196,13 @@ class Window:
         self.d['reads'] = [my + her for (my, her) in zip(self.d['reads'], other.d['reads'])]
 
         return self
-        
+
     def __add__(self, other):
         """Concat two windows, extending lists such as 'reads'"""
         #data we don't need to duplicate
         myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd"]
         obj = Window(1)
-        
+
         # 'id' and 'top' will be taken from 'topmost' clone
         del obj.d["id"]
         del obj.d["top"]
@@ -237,7 +237,7 @@ class Window:
             concatenate_with_padding(obj.d["mrd"],
                                      first, len(self.d["reads"]),
                                      second, len(other.d["reads"]))
-                        
+
         # All other data, including 'top'
         # When there are conflicting keys, keep data from the 'topmost' clone
         order = [other, self] if other.d["top"] < self.d["top"] else [self, other]
@@ -275,7 +275,7 @@ class Window:
             msg = "Merged clone has different productivities in some samples (pos %s): %s" % (len(self.d["reads"]), junction)
             obj.addWarning(code="W82", msg=msg, level="warn")
         return obj
-        
+
     def addWarning(self, code, msg, level):
         # init warn field if not already present
         if not "warn" in self.d:
@@ -423,7 +423,7 @@ class Window:
 
         airr_computed =  ["ratio_segmented", "ratio_locus", "filename", "warnings"]
 
-        for col in cols:    
+        for col in cols:
 
             if col in airr_computed:
                 if col == "ratio_locus":
@@ -470,8 +470,8 @@ class Window:
     ### print essential info about Window
     def __str__(self):
         return "<window : %s %s %s>" % ( self.d["reads"], '*' if self.d["top"] == sys.maxsize else self.d["top"], self.d["id"])
-        
-class Samples: 
+
+class Samples:
 
     def __init__(self):
         self.d={}
@@ -481,40 +481,53 @@ class Samples:
     def __add__(self, other):
         obj=Samples()
 
-        concatenate_with_padding(obj.d, 
-                                 self.d, self.d['number'], 
+        concatenate_with_padding(obj.d,
+                                 self.d, self.d['number'],
                                  other.d, other.d['number'],
-                                 ['number'])
+                                 ['number', 'pre_process'],
+                                 recursive=True)
+        if "pre_process" in self.d.keys() or "pre_process" in other.d.keys():
+            # init if needed
+            if "pre_process" not in self.d.keys():
+                self.d["pre_process"] = {}
+            if "pre_process" not in other.d.keys():
+                other.d["pre_process"] = {}
+            obj.d["pre_process"] = {}
+            concatenate_with_padding(obj.d["pre_process"],
+                                     self.d["pre_process"], self.d['number'],
+                                     other.d["pre_process"], other.d['number'],
+                                     [], recursive=True,
+                                     none_init=True)
 
         obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
-        
+
         return obj
 
     def __str__(self):
         return "<Samples: %s>" % self.d
-        
-class MRD: 
+
+class MRD:
 
     def __init__(self, number=1):
         self.d={}
         self.d["number"] = number
-            
+
     def __add__(self, other):
         obj=MRD()
 
-        concatenate_with_padding(obj.d, 
-                                 self.d, self.d['number'], 
+        concatenate_with_padding(obj.d,
+                                 self.d, self.d['number'],
                                  other.d, other.d['number'],
                                  ['number'])
 
         obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
-        
+
         return obj
 
     def __str__(self):
         return "<MRD: %s>" % self.d
 
-class Diversity: 
+class Diversity:
 
     keys = ["index_H_entropy", "index_E_equitability", "index_Ds_diversity"]
 
@@ -534,8 +547,8 @@ class Diversity:
 
     def __str__(self):
         return "<Diversity: %s>" % self.d
-        
-class Reads: 
+
+class Reads:
 
     def __init__(self):
         self.d={}
@@ -547,7 +560,7 @@ class Reads:
     def __add__(self, other):
         obj=Reads()
 
-        concatenate_with_padding(obj.d['germline'], 
+        concatenate_with_padding(obj.d['germline'],
                                  self.d['germline'], len(self.d['total']),
                                  other.d['germline'], len(other.d['total']),
                                  ['total'])
@@ -555,14 +568,14 @@ class Reads:
                                  self.d['distribution'], len(self.d['total']),
                                  other.d['distribution'], len(other.d['total']),
                                  ['total'])
-                
+
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
         return obj
 
     def addAIRRClone(self, clone):
         """
-        Allow to add a clone create by AIRR import. 
+        Allow to add a clone create by AIRR import.
         Add reads values to germline, segmented and total section
         """
         if clone.d["germline"] not in self.d["germline"].keys():
@@ -574,9 +587,9 @@ class Reads:
 
     def __str__(self):
         return "<Reads: %s>" % self.d
-        
+
 class OtherWindows:
-    
+
     """Aggregate counts of windows that are discarded (due to too small 'top') for each point into several 'others-' windows."""
 
     def __init__(self, length, ranges = None):
@@ -597,7 +610,7 @@ class OtherWindows:
                      break
             self.sizes[r][i] += s
             ## TODO: add seg_stat
-            
+
         # print window, '-->', self.sizes
         return self
 
@@ -612,20 +625,20 @@ class OtherWindows:
 
             print('  --[others]-->', w)
             yield w
-        
+
 class ListWindows(VidjilJson):
-    '''storage class for sequences informations 
-    
+    '''storage class for sequences informations
+
     >>> lw1.info()
     <ListWindows: [25] 2>
     <window : [5] 3 aaa>
     <window : [12] 2 bbb>
-    
+
     >>> lw2.info()
     <ListWindows: [34] 2>
     <window : [8] 4 aaa>
     <window : [2] 8 ccc>
-    
+
     >>> lw3 = lw1 + lw2
     >>> lw3.info()
     <ListWindows: [25, 34] 3>
@@ -643,7 +656,7 @@ class ListWindows(VidjilJson):
     [0, 0]
 
     '''
-    
+
     def __init__(self):
         '''init ListWindows with the minimum data required'''
         self.d={}
@@ -652,11 +665,11 @@ class ListWindows(VidjilJson):
         self.d["clones"] = []
         self.d["clusters"] = []
         self.d["germlines"] = {}
-        
+
         self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
         self.d["producer"] = FUSE_VERSION
         self.d["timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
+
     def __str__(self):
         return "<ListWindows: %s %d>" % ( self.d["reads"].d["segmented"], len(self) )
 
@@ -673,12 +686,12 @@ class ListWindows(VidjilJson):
     def __len__(self):
         return len(self.d["clones"])
 
-    ### print info about each Windows stored 
+    ### print info about each Windows stored
     def info(self):
         print(self)
         for clone in self:
             print(clone)
-        
+
     ### compute statistics about clones
     def build_stat(self):
         ranges = [.1, .01, .001, .0001, .00001, .000001, .0000001]
@@ -695,13 +708,13 @@ class ListWindows(VidjilJson):
         for r in range(len(ranges)):
             ratio_in_string = '{0:.10f}'.format(ranges[r]).rstrip('0')
             self.d['reads'].d['distribution'][ratio_in_string] = result[r]
-            
-        #TODO V/D/J distrib and more 
-        
-        
+
+        #TODO V/D/J distrib and more
+
+
     ### save / load to .json
     def save_json(self, output):
-        '''save ListWindows in .json format''' 
+        '''save ListWindows in .json format'''
         print("==>", output)
         with open(output, "w") as f:
             json.dump(self, f, indent=2, default=self.toJson)
@@ -727,7 +740,7 @@ class ListWindows(VidjilJson):
             self.d["diversity"] = Diversity(self.d["diversity"])
         else:
             self.d["diversity"] = Diversity()
-        
+
         if 'distribution' not in self.d['reads'].d:
             self.d['reads'].d['distribution'] = {}
 
@@ -751,7 +764,7 @@ class ListWindows(VidjilJson):
             self.init_data(json.load(f, object_hook=self.toPython))
             self.check_version(file_path)
 
-        if pipeline: 
+        if pipeline:
             # renaming, private pipeline
             f = '/'.join(file_path.split('/')[2:-1])
             if verbose:
@@ -771,40 +784,40 @@ class ListWindows(VidjilJson):
 
     def getTop(self, top):
         result = []
-        
+
         for clone in self:
             if clone.d["top"] <= top :
                 result.append(clone.d["id"])
         return result
-        
+
     def filter(self, f):
         r = []
-        
+
         reverseList = {}
         for i,w in enumerate(self.d["clones"]) :
             reverseList[w.d["id"]] = i
-        
+
         #filteredList = { k: reverseList[k] for k in f }
         filteredList = dict(filter(lambda t: t[0] in f, reverseList.items()))
-        
+
         for i in filteredList:
             r.append(self.d["clones"][filteredList[i]])
-        
+
         self.d["clones"] = r
-        
-    ### 
-    def __add__(self, other): 
+
+    ###
+    def __add__(self, other):
         '''Combine two ListWindows into a unique ListWindows'''
         obj = ListWindows()
         l1 = len(self.d["reads"].d['segmented'])
         l2 = len(other.d["reads"].d['segmented'])
 
-        concatenate_with_padding(obj.d, 
+        concatenate_with_padding(obj.d,
                                  self.d, l1,
                                  other.d, l2,
                                  ["clones", "links", "germlines",
                                   "vidjil_json_version"])
-        
+
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
@@ -816,7 +829,7 @@ class ListWindows(VidjilJson):
                 other.d["mrd"] = MRD()
 
             obj.d["mrd"] = self.d["mrd"] + other.d["mrd"]
-        
+
         try:
             ### Verify that same file is not present twice
             filename_jlist1 = list(self.d["distributions"]["repertoires"].keys())
@@ -839,21 +852,21 @@ class ListWindows(VidjilJson):
             pass
 
         return obj
-        
+
     ###
     def __mul__(self, other):
-        
+
         for i in range(len(self.d["reads_segmented"])):
-            self.d["reads_segmented"][i] += other.d["reads_segmented"][i] 
-        
+            self.d["reads_segmented"][i] += other.d["reads_segmented"][i]
+
         self.d["clones"] += other.d["clones"]
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
-        
+
         self.d["system_segmented"].update(other.d["system_segmented"])
-        
+
         return self
-        
-    ### 
+
+    ###
     def fuseWindows(self, w1, w2, l1, l2) :
         #store data in dict with "id" as key
         dico1 = {}
@@ -878,22 +891,22 @@ class ListWindows(VidjilJson):
             if key not in dico1 :
                 w=Window(l1)
                 dico3[key] = w + dico2[key]
-        
-        
+
+
         #sort by top
         tab = []
         for key in dico3 :
             tab.append((dico3[key], dico3[key].d["top"]))
         tab = sorted(tab, key=itemgetter(1))
-        
+
         #store back in a List
         result=[]
         for i in range(len(tab)) :
             result.append(tab[i][0])
-        
+
         return result
-        
-    
+
+
     def cut(self, limit, nb_points):
         '''Remove information from sequence/windows who never enter in the most represented sequences. Put this information in 'other' windows.'''
 
@@ -907,22 +920,22 @@ class ListWindows(VidjilJson):
             #else:
                 #others += clone
 
-        self.d["clones"] = w #+ list(others) 
+        self.d["clones"] = w #+ list(others)
 
         print("### Cut merged file, keeping window in the top %d for at least one point" % limit)
         return self
-        
+
     def load_clntab(self, file_path, *args, **kwargs):
         '''Parser for .clntab file'''
 
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
         self.d["samples"].d["original_names"] = [file_path]
         self.d["samples"].d["producer"] = ["EC-NGS central pipeline"]
-        
+
         listw = []
         listc = []
         total_size = 0
-        
+
         fichier = open(file_path,"r")
         for ligne in fichier:
             if "clonotype" in ligne:
@@ -931,10 +944,10 @@ class ListWindows(VidjilJson):
                 tab = AccessedDict()
                 for index, data in enumerate(ligne.split('\t')):
                     tab[header_map[index]] = data
-                        
+
                 w=Window(1)
                 w.d["seg"] = {}
-                
+
                 #w.window=tab["sequence.seq id"] #use sequence id as window for .clntab data
                 w.d["id"]=tab["sequence.raw nt seq"] #use sequence as window for .clntab data
                 s = int(tab["sequence.size"])
@@ -942,7 +955,7 @@ class ListWindows(VidjilJson):
                 w.d["reads"] = [ s ]
 
                 w.d["germline"] = tab["sequence.V-GENE and allele"][:3] #system ...
-                
+
                 w.d["sequence"] = tab["sequence.raw nt seq"]
                 w.d["seg"]["5"]=tab["sequence.V-GENE and allele"].split('=')[0]
                 if (tab["sequence.D-GENE and allele"] != "") :
@@ -952,10 +965,10 @@ class ListWindows(VidjilJson):
                 # use sequence.JUNCTION to colorize output (this is not exactly V/J !)
                 junction = tab.get("sequence.JUNCTION.raw nt seq")
                 position = w.d["sequence"].find(junction)
-                
+
                 if position >= 0:
                     w.d["seg"]["3start"] = position + len(junction)
-                    w.d["seg"]["5end"] = position 
+                    w.d["seg"]["5end"] = position
                 else:
                     w.d["seg"]["3start"] = 0
                     w.d["seg"]["5end"] = len(w.d["sequence"])
@@ -964,7 +977,7 @@ class ListWindows(VidjilJson):
                 w.d["seg"]["4end"]=0
                 w.d["seg"]["4start"]=0
                 w.d["seg"]["cdr3"] = tab["sequence.JUNCTION.raw nt seq"][3:-3]
-                    
+
                 listw.append((w , w.d["reads"][0]))
 
                 raw_clonotype = tab.get("clonotype")
@@ -973,7 +986,7 @@ class ListWindows(VidjilJson):
                 clonotype = raw_clonotype.split(' ')
                 if (len(clonotype) > 1) :
                     listc.append((w, raw_clonotype))
-                
+
                 #keep data that has not already been stored
                 for header in tab.not_accessed_keys():
                     w.d["_"+header] = [tab[header]]
@@ -982,15 +995,15 @@ class ListWindows(VidjilJson):
         listw = sorted(listw, key=itemgetter(1), reverse=True)
         #sort by clonotype
         listc = sorted(listc, key=itemgetter(1))
-        
+
         #generate data "top"
         for index in range(len(listw)):
             listw[index][0].d["top"]=index+1
             self.d["clones"].append(listw[index][0])
-        
+
         self.d["reads"].d["segmented"] = [total_size]
         self.d["reads"].d["total"] = [total_size]
-        
+
     def load_airr(self, file_path, pipeline, verbose=True):
         '''
         Parser for AIRR files
@@ -1028,7 +1041,7 @@ class ListWindows(VidjilJson):
 
             w=Window(1)
             w.d["seg"] = { "junction":{}, "cdr3":{} }
-            
+
             w.d["id"] = row["sequence_id"]
             # controle that no other clone is presetn with this id
             p = 1
@@ -1036,8 +1049,8 @@ class ListWindows(VidjilJson):
                 w.d["id"] = row["sequence_id"] + "_%s" % p
                 p += 1
             clone_ids[w.d["id"]] = True
-            
-            
+
+
             w.d["sequence"] = row["sequence"]
             if "duplicate_count" not in row.keys() or row["duplicate_count"] == "":
                 w.d["reads"] = [1]
@@ -1066,7 +1079,7 @@ class ListWindows(VidjilJson):
                     "5prime_trimmed_n_nb": ["seg","5","delLeft"],
                     "3prime_trimmed_n_nb": ["seg","3","delLeft"],
                     "warnings":            ["warn"]}
-            
+
 
             ## Fill .vidjil values with a recursive call
             for axe in axes.keys():
@@ -1081,7 +1094,7 @@ class ListWindows(VidjilJson):
                         if cat not in value.keys():
                             value[cat] = {}
                         depth += 1
-                        
+
                         if depth != len(path):
                             value  = value[cat]
 
@@ -1109,17 +1122,17 @@ class ListWindows(VidjilJson):
             if not 'germline' in w.d.keys():
                 w.d["germline"] = "undetermined"
             self.d["reads"].addAIRRClone( w )
-            
+
 
             ### Average/coverage
             average_read_length = float(len(row["sequence"]))
             w.d["_average_read_length"] = [average_read_length]
             w.d["_coverage"] = [1.0]
             w.d["_coverage_info"] = ["%.1f bp (100%% of %.1f bp)" % (average_read_length, average_read_length )]
-            
+
 
             ### Warning
-            # Il faut avoir une table pour faire la conversion ? 
+            # Il faut avoir une table pour faire la conversion ?
             # TODO: undefined for the moment
 
 
@@ -1127,7 +1140,7 @@ class ListWindows(VidjilJson):
         listw = sorted(listw, key=itemgetter(1), reverse=True)
         #sort by clonotype
         listc = sorted(listc, key=itemgetter(1))
-        
+
         #generate data "top"
         for index in range(len(listw)):
             listw[index][0].d["top"]=index+1
@@ -1138,7 +1151,7 @@ class ListWindows(VidjilJson):
         '''Rename columns to homogeneize AIRR data from different software'''
         couples = [
             ## MiXCR
-            ("bestVHit", "v_call"), ("bestDHit", "d_call"), ("bestJHit", "j_call"), 
+            ("bestVHit", "v_call"), ("bestDHit", "d_call"), ("bestJHit", "j_call"),
             ("cloneId", "sequence_id"), ("targetSequences", "sequence"),
             ("cloneCount", "duplicate_count"), ("chains", "locus")
         ]
@@ -1185,27 +1198,27 @@ class ListWindows(VidjilJson):
         ## Convert numeric field is given in string format
         if category in cat_numeric:
             value = int(value)
-        
+
         return value
 
-        
+
     def toJson(self, obj):
         '''Serializer for json module'''
         if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity) or isinstance(obj, MRD):
             result = {}
             for key in obj.d :
                 result[key]= obj.d[key]
-                
+
             return result
-            raise TypeError(repr(obj) + " fail !") 
-        
+            raise TypeError(repr(obj) + " fail !")
+
         else:
             result = {}
             for key in obj :
                 result[key]= obj[key]
-            
+
             return result
-            raise TypeError(repr(obj) + " fail !") 
+            raise TypeError(repr(obj) + " fail !")
 
     def toPython(self, obj_dict):
         '''Reverse serializer for json module'''
@@ -1225,19 +1238,19 @@ class ListWindows(VidjilJson):
             obj = Window(1)
             obj.d=obj_dict
             return obj
-        
+
         if "total" in obj_dict:
             obj = Reads()
             obj.d=obj_dict
             return obj
-            
+
         if "original_names" in obj_dict:
             obj = Samples()
             obj.d=obj_dict
             return obj
-            
+
         return obj_dict
-        
+
     def save_airr(self, output):
         """
         Create an export of content into AIRR file
@@ -1352,7 +1365,7 @@ class ListWindows(VidjilJson):
                 jaccard.append(  self.computeOverlapJaccard(pos_0, pos_1)  )
             self.d["overlaps"]["morisita"].append( morisita)
             self.d["overlaps"]["jaccard"].append(  jaccard )
-            
+
         return
 
 
@@ -1390,7 +1403,7 @@ class ListWindows(VidjilJson):
         if m == 0: #if really no shared clones
             res =  0
         else:
-            res = round( (m/d), 3) 
+            res = round( (m/d), 3)
 
         return res
 
@@ -1557,8 +1570,8 @@ def exec_command(command, directory, input_file):
     Execute the command `command` from the directory
     `directory`. The executable must exist in
     this directory. No path changes are allowed in `command`.
-    
-    Returns the output filename (a .vidjil). 
+
+    Returns the output filename (a .vidjil).
     '''
     # split command
     soft = command.split()[0]
@@ -1576,12 +1589,12 @@ def exec_command(command, directory, input_file):
     return ff.name
 
 
- 
+
 def main():
     print("#", ' '.join(sys.argv))
 
     DESCRIPTION = 'Vidjil utility to parse and regroup list of clones of different timepoints or origins'
-    
+
     #### Argument parser (argparse)
 
     parser = argparse.ArgumentParser(description= DESCRIPTION,
@@ -1594,7 +1607,7 @@ def main():
 
     group_options.add_argument('--test', action='store_true', help='run self-tests')
     group_options.add_argument('--multi', action='store_true', help='merge different systems from a same timepoint (deprecated, do not use)')
-    
+
     group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
     group_options.add_argument('--ijson', action='store_true', help='use the ijson vidjilparser')
@@ -1676,7 +1689,7 @@ def main():
             f += jlist.getTop(args.top)
 
     f = sorted(set(f))
-    
+
     if args.ijson:
         vparser.reset()
         vparser.addPrefix('')
@@ -1691,17 +1704,17 @@ def main():
             else:
                 jlist.load(path_name, args.pipeline)
                 jlist.build_stat()
-            
+
             print("\t", jlist, end=' ')
 
             if jlist_fused is None:
                 jlist_fused = jlist
             else:
                 jlist_fused = jlist_fused * jlist
-                
+
             print('\t==> merge to', jlist_fused)
         jlist_fused.d["system_segmented"] = ordered(jlist_fused.d["system_segmented"], key=lambda sys: ((GERMLINES_ORDER + [sys]).index(sys), sys))
-        
+
     else:
         print("### Read and merge input files")
         for path_name in files:
@@ -1717,14 +1730,14 @@ def main():
                     jlist.compute_distribution(LIST_DISTRIBUTIONS)
                 jlist.filter(f)
 
-            
+
             print("\t", jlist, end=' ')
             # Merge lists
             if jlist_fused is None:
                 jlist_fused = jlist
             else:
                 jlist_fused = jlist_fused + jlist
-            
+
             print('\t==> merge to', jlist_fused)
 
     if args.compress:
@@ -1735,11 +1748,11 @@ def main():
         print("  <==", l)
         print("  ==>", ll)
         jlist_fused.d["samples"].d["names"] = ll
-    
+
     print()
     if not args.multi:
         jlist_fused.cut(args.top, jlist_fused.d["samples"].d["number"])
-    print("\t", jlist_fused) 
+    print("\t", jlist_fused)
     print()
 
     #compute similarity matrix
@@ -1757,14 +1770,14 @@ def main():
             print("! failed: %s" % TOOL_SIMILARITY)
         finally:
             os.unlink(fasta_file.name)
-    else : 
+    else :
         jlist_fused.d["similarity"] = [];
-        
+
 
     if args.overlaps:
         print("### Overlaps index")
         jlist_fused.computeOverlaps()
-    
+
     if args.no_clones:
         # TODO: do not generate the list of clones in this case
         del jlist_fused.d["clones"]
@@ -1775,8 +1788,8 @@ def main():
         jlist_fused.save_airr(output)
     else:
         jlist_fused.save_json(args.output)
-    
-    
-    
+
+
+
 if  __name__ =='__main__':
     main()
