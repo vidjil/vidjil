@@ -712,14 +712,12 @@ int main (int argc, char **argv)
   list <string> f_reps_D(v_reps_D.begin(), v_reps_D.end());
   list <string> f_reps_J(v_reps_J.begin(), v_reps_J.end());
 
-
   list <pair <string, string>> multi_germline_paths_and_files ;
   bool multi_germline = false;
 
   for (string arg: multi_germlines)
     {
       multi_germline = true;
-
       struct stat buffer;
       if (stat(arg.c_str(), &buffer) == 0)
         {
@@ -736,10 +734,6 @@ int main (int argc, char **argv)
     }
 
 
-  if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
-    {
-      return app.exit(CLI::ConstructionError("At least one germline must be given with -g or -V/(-D)/-J.", 1));
-    }
 
   if (options_s_k > 1)
     {
@@ -920,42 +914,92 @@ int main (int argc, char **argv)
   std::map<std::string, bool> do_filter_automata = {{"5", (kmer_threshold != NO_LIMIT_VALUE)}};
   MultiGermline<char, KmerAffect> *multigermline = new MultiGermline<char, KmerAffect>();
 
-    {
-      cout << "Load germlines and build Kmer indexes" << endl ;
+  json json_germlines;
+  string system_filter;
 
-      if (multi_germline)
-	{
-          for (pair <string, string> path_file: multi_germline_paths_and_files)
-            {
-              try {
-                multigermline->buildFromJson(path_file.first, path_file.second, GERMLINES_REGULAR,
-                                               FIRST_IF_UNCHANGED("", seed, seed_changed),
-                                             FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), do_filter_automata);
-              } catch (std::exception& e) {
-                cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
-                delete multigermline;
-                return 1;
+  // -g: .g files
+  cout << "Load germlines and build Kmer indexes" << endl ;
+  for (pair <string, string> path_file: multi_germline_paths_and_files) {
+      if (multi_germline) {
+          try {
+              json j = parse_json_g(path_file.first, path_file.second, system_filter);
+              if (json_germlines.empty())
+              {
+                  // First .g, take everything
+                  json_germlines = j;
               }
-            }
-	}
-      else
-	{
-	  // Custom germline
-	  Germline<char, KmerAffect> *germline;
+              else
+              {
+                  cout << "======" << endl;
+                  // Other .g, take only the recombinations
+                  for (auto system: j["systems"].items()) {
+                      json_germlines["systems"][system.key()] = system.value();
+                  }
+              }
+              multigermline->buildFromJson(j, system_filter,
+                                           FIRST_IF_UNCHANGED("", seed, seed_changed),
+                                           FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), do_filter_automata);
+          } catch (std::exception& e) {
+              cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
+              delete multigermline;
+              return 1;
+          }
+      } else {
+          // Custom germline
+          Germline<char, KmerAffect> *germline;
           json jsonConfig = json({{"order", {"5", "4", "3"}},
-                                                     {"segments", {{"5", {{"seed", seed}, {"code", "V"}, {"build", kmer_threshold != NO_LIMIT_VALUE}, {"index", "1"}}},
-                                                                   {"4", {{"seed", seed}, {"code", "D"}, {"build", "0"}, {"index", "0"}}},
-                                                                   {"3", {{"seed", seed}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}});
-	  germline = new Germline<char, KmerAffect>("custom", 'X', "",
-                                              json::array({{{"5", f_reps_V}, {"4", f_reps_D}, {"3", f_reps_J}}}),
+                                  {"segments", {{"5", {{"seed", seed}, {"code", "V"}, {"build", kmer_threshold != NO_LIMIT_VALUE}, {"index", "1"}}},
+                                                {"4", {{"seed", seed}, {"code", "D"}, {"build", "0"}, {"index", "0"}}},
+                                                {"3", {{"seed", seed}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}});
+          germline = new Germline<char, KmerAffect>("custom", 'X', "",
+                                                    json::array({{{"5", f_reps_V}, {"4", f_reps_D}, {"3", f_reps_J}}}),
                                                     jsonConfig,
-                                  nullptr,
-                                  trim_sequences);
-	  multigermline->addGermline(germline);
-    multigermline->setRepository(germline->getRepository());
-	}
+                                                    nullptr,
+                                                    trim_sequences);
+          multigermline->addGermline(germline);
+          multigermline->setRepository(germline->getRepository());
+      }
     }
 
+  if (json_germlines.empty())
+  {
+    json_germlines = {
+      {"ref", "custom germlines"},
+      {"species", "custom germlines"},
+      {"species_taxon_id", 0},
+      {"path", "."}
+    };
+  }
+
+  // Custom -V/(-D)/-J germline
+  if (f_reps_V.size())
+	{
+    // multi_germline_one_unique_index = true;
+
+    json_germlines["systems"]["custom"] = {
+            {"shortcut", "X"},
+            {"recombinations", {{
+              {"5", f_reps_V},
+              {"4", f_reps_D},
+              {"3", f_reps_J}
+            }}}
+    };
+  }
+
+  if (!json_germlines["systems"].size())
+    {
+      return app.exit(CLI::ConstructionError("At least one germline must be given with -g or -V/(-D)/-J", 1));
+    }
+
+  //////////////////////////////////
+  //$$ Load germlines and build indexes
+
+  cout << "Load germlines and build Kmer indexes" << endl ;
+  MultiGermline *multigermline = new MultiGermline(indexType, !multi_germline_one_unique_index);
+
+  multigermline->build_from_json(json_germlines, system_filter, GERMLINES_REGULAR,
+                                 FIRST_IF_UNCHANGED("", seed, seed_changed),
+                                 FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), (kmer_threshold != NO_LIMIT_VALUE));
     cout << endl ;
 
     // TODO : make it work?
@@ -978,6 +1022,7 @@ int main (int argc, char **argv)
     {
       for (pair <string, string> path_file: multi_germline_paths_and_files)
         multigermline->buildFromJson(path_file.first, path_file.second, GERMLINES_INCOMPLETE,
+
                                        FIRST_IF_UNCHANGED("", seed, seed_changed),
                                      FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), do_filter_automata);
     }
@@ -1706,26 +1751,6 @@ int main (int argc, char **argv)
     //$$ .json output
     cout << endl ;
 
-    //json custom germline
-    json json_germlines;
-    json_germlines = {
-        {"custom", {
-            {"shortcut", "X"},
-            {"3", json::array()},
-            {"4", json::array()},
-            {"5", json::array()}
-        }}
-    };
-
-    for (list<string>::iterator it = f_reps_V.begin(); it != f_reps_V.end(); it++){
-        json_germlines["custom"]["3"].push_back(*it);
-    }
-    for (list<string>::iterator it = f_reps_D.begin(); it != f_reps_D.end(); it++){
-        json_germlines["custom"]["4"].push_back(*it);
-    }
-    for (list<string>::iterator it = f_reps_J.begin(); it != f_reps_J.end(); it++){
-        json_germlines["custom"]["5"].push_back(*it);
-    }
 
     //Added edges in the json output file
     //json->add("links", jsonLevenshtein);
@@ -1749,7 +1774,7 @@ int main (int argc, char **argv)
             {"segmented", {nb_segmented}},
             {"germline", reads_germline}
     });
-    output.set("germlines", json_germlines);
+    output.set("germlines", json_germlines["systems"]["recombinations"]);
     output.set("germlines", "ref", multigermline->getReference());
     output.set("germlines", "species", multigermline->getSpecies()) ;
     output.set("germlines", "species_taxon_id", multigermline->getTaxonId()) ;
