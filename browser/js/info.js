@@ -190,7 +190,6 @@ Info.prototype = {
             parent.appendChild(div_sequence_info);
 
             this.builder.initTag();
-            this.colorMethod = this.m.colorMethod
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -289,9 +288,12 @@ Info.prototype = {
      * @param {integer[]} - list - array of clone index
      * */
     updateElemStyle: function (list) {
-        if (this.m.colorMethod != this.colorMethod)
+        if (this.m.color.axis.name != this.axisColorName ||
+            this.m.filterStamp != this.filterStamp){
+            this.axisColorName = this.m.color.axis.name
+            this.filterStamp = this.m.filterStamp
             this.update()
-        this.colorMethod = this.m.colorMethod
+        }
     },
 
     create_sample_info_container: function(info, className, id, placeholder, target) {
@@ -482,61 +484,64 @@ Info.prototype = {
         var span2 = document.createElement('span');
         var span3 = document.createElement('span');
 
-        switch (this.m.colorMethod) {
-        case "N":
-            span0.appendChild(document.createTextNode("N length"));
+        if (m.color.axis){
+            this.axisColorName = this.m.color.axis.name
+            var a = m.color.axis;
 
-            span1.appendChild(document.createTextNode(" 0 "));
+            var useScale = false;
+            if (typeof a.scale != "undefined"){
+                useScale = true;
+                var spanG = document.createElement('span');
+                spanG.className = "gradient";
+                spanG.style.backgroundImage = a.getCSSColorGradient()
+                $(spanG).mousemove(function(event){            
+                    var relX = event.pageX - $(this).offset().left;
+                    $(this).prop("title",a.invert(relX/180).innerText);
+                });
 
-            span2.className = "gradient";
-
-            span3.appendChild(document.createTextNode(" " + this.m.n_max + " "));
-
-            break;
-        case "Tag":
-
-            var span_onclick = function () {
-                self.builder.nextDisplayTag(this);
+                if (a.scale.mode == "linear")
+                    span2.appendChild(a.invert(0))
+                span2.appendChild(spanG)
+                span2.appendChild(a.invert(1))
             }
 
-            for (var i = 0; i < this.m.tag.length; i++) {
-                var spantag = document.createElement('span');
-                spantag.className = "tagColorBox tagColor" + i;
-                spantag.id = "fastTag" + i;
-                spantag.onclick = span_onclick;
-                span2.appendChild(spantag);
+            if (a.labels){
+                var keys = Object.keys(a.labels);
+
+                var labelCount = 0;
+                for (var j = 0; j < keys.length; j++) 
+                    if (typeof a.labels[keys[j]].color != "undefined") labelCount++;
+
+                var boxWidth
+                if (labelCount > 20) boxWidth = Math.ceil(250/labelCount)-1+"px";
+                if (labelCount > 10 && useScale) boxWidth = Math.ceil(125/labelCount)-1+"px";
+
+                for (var i = 0; i < keys.length; i++) {
+                    var l = a.labels[keys[i]]
+                    if (typeof l.color == "undefined") continue
+                    if (labelCount>100) continue;
+                    if (labelCount>50 && useScale) continue;
+
+                    var spantag = this.build_color_label(a, keys[i])
+
+                    if (l.side && l.side == "left"){
+                        if (labelCount<=3 && !useScale)
+                            span0.appendChild(document.createTextNode(l.text))
+                        span0.appendChild(spantag);
+                    }
+                    if (typeof l.side == "undefined"){
+                        if (labelCount<=3 && !useScale)
+                            span1.appendChild(document.createTextNode(l.text))
+                        span1.appendChild(spantag);
+                    }
+
+                    if (l.side && l.side == "right"){
+                        span3.appendChild(spantag);
+                        if (labelCount<=3 && !useScale)
+                            span3.appendChild(document.createTextNode(l.text))
+                    }
+                }
             }
-
-            break;
-        case 'productive':
-            span0.appendChild(document.createTextNode('not productive '));
-            var spanNotProductive = document.createElement('span');
-            spanNotProductive.style.backgroundColor = colorProductivity('false');
-            spanNotProductive.className = 'tagColorBox';
-            var spanProductive = document.createElement('span');
-            spanProductive.style.backgroundColor = colorProductivity('true');
-            spanProductive.className = 'tagColorBox';
-            span1.appendChild(spanNotProductive);
-            span1.appendChild(spanProductive);
-            span2.appendChild(document.createTextNode('productive'));
-
-            var spanNoCDR3 = document.createElement('span');
-            spanNoCDR3.className = 'tagColorBox tagColor8';
-            span3.style.marginLeft = '20px';
-            span3.appendChild(document.createTextNode(' no CDR3 '));
-            span3.appendChild(spanNoCDR3);
-
-            break;
-        case "abundance":
-            span0.appendChild(document.createTextNode("abundance"));
-
-            span1.appendChild(document.createTextNode(" 0% "));
-
-            span2.className = "gradient";
-
-            span3.appendChild(document.createTextNode(" 100%"));
-
-            break;
         }
 
         div.appendChild(span0);
@@ -544,6 +549,40 @@ Info.prototype = {
         div.appendChild(span2);
         div.appendChild(span3);
         return div;
+    },
+
+    build_color_label:function(axis, key, count){
+        var self = this;
+        var spantag = document.createElement('span');
+        var l = axis.labels[key]
+        spantag.className = "tagColorBox";
+        spantag.style.backgroundColor = l.color;
+        spantag.title = l.text;
+        spantag.setAttribute('value', key);
+
+        if (this.m.filter.check(axis.name, "=", key) >=0)
+            spantag.className += " inactiveTag"
+
+        if (count >20){
+            spantag.style.width = boxWidth
+            spantag.style.margin = "1px"
+        }else if (count > 10 && useScale){
+            spantag.style.width = boxWidth
+            spantag.style.margin = "1px"
+        }
+
+        spantag.onclick = function(){
+            var v = this.getAttribute('value')
+            var a = m.color.axis
+            if (window.event && window.event.ctrlKey) {
+                var c = a.getLabelInfo(v).clones
+                self.m.multiSelect(c)
+                return
+            }
+            self.m.filter.toggle(a.name, "=", v)
+        };
+
+        return spantag
     },
 
     createClickableElem: function(type, children, id, className, onclick) {

@@ -65,7 +65,7 @@ class ExternalTest < BrowserTest
       clone_segmenter.span(:class => 'seq_layer_IMGT_CDR3').wait_while(&:present?) 
 
       clone_info = $b.clone_info_segmenter('25')
-      productive_title = clone_info[:axis].element(:class => 'productivity').title
+      productive_title = clone_info[:axis].element(:class => 'Productivity').title
       assert (productive_title.include? 'productivity'), "IMGT should tell us the productivity of the sequence"
 
       $b.div(:id => "align-imgt" ).hover

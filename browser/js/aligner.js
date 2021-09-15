@@ -86,27 +86,27 @@ Aligner.prototype = {
     build_axis_menu: function(){
         var self = this;
 
-        var available_axis = Axis.prototype.available();
+        var available_axis = AXIS_ALIGNER;
 
         var menu = document.getElementById("segmenter_axis_select");
         for (var i in available_axis) {
             var axis_p = Axis.prototype.getAxisProperties(available_axis[i]);
-            if (!axis_p.isInAligner) continue;
 
             var axis_label = document.createElement('label');
             axis_label.setAttribute('for', "sai"+i);
             axis_label.className = "aligner-checkbox-label";
+            axis_label.title = axis_p.doc;
 
             var axis_option = document.createElement('span');
-            var axis_text = document.createTextNode(available_axis[i]);
+            var axis_text = document.createTextNode(axis_p.name);
             var axis_input = document.createElement('input');
             axis_input.setAttribute('type', "checkbox");
-            axis_input.setAttribute('value', available_axis[i]);
+            axis_input.setAttribute('value', axis_p.name);
             axis_input.setAttribute('id', "sai"+i); // segmenter axis input
             axis_input.className = "aligner-checkbox-input";
-            if (available_axis[i] == "size" ||
-                available_axis[i] == "productivity IMGT" ||
-                available_axis[i] == "VIdentity IMGT" ) axis_input.setAttribute('checked', "");
+            if (axis_p.name == "Size" ||
+                axis_p.name == "[IMGT] Productivity" ||
+                axis_p.name == "[IMGT] VIdentity" ) axis_input.setAttribute('checked', "");
 
             axis_label.appendChild(axis_input);
             axis_label.appendChild(axis_text);
@@ -117,9 +117,9 @@ Aligner.prototype = {
             self.connect_axisbox(axis_input);
         }
 
-        this.selectedAxis = [Axis.prototype.getAxisProperties("productivity IMGT"),
-                            Axis.prototype.getAxisProperties("VIdentity IMGT"),
-                            Axis.prototype.getAxisProperties("size")];
+        this.selectedAxis = [Axis.prototype.getAxisProperties("[IMGT] Productivity"),
+                            Axis.prototype.getAxisProperties("[IMGT] VIdentity"),
+                            Axis.prototype.getAxisProperties("Size")];
     },
 
     //check axis selected in menu to update and update axisBox dom elements accordingly
@@ -222,8 +222,10 @@ Aligner.prototype = {
             });
 
         // Focus/hide/label
-        document.getElementById("focus_selected").onclick = function () { self.m.focusSelected(); };
-        document.getElementById("hide_selected").onclick = function () { self.m.hideSelected(); };
+        document.getElementById("focus_selected").onclick = function () { self.m.filter.add("Clone", "focus", self.m.getSelected()); };
+        document.getElementById("hide_selected").onclick = function () { self.m.filter.add("Clone", "hide", self.m.getSelected()); };
+        document.getElementById("reset_focus").onclick = function () {  self.m.filter.remove("Clone", "focus")
+                                                                        self.m.filter.remove("Clone", "hide") };
         document.getElementById("star_selected").onclick = function (e) {
             if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
         document.getElementById("fixsegmenter").onclick = function () { self.switchFixed(); };
@@ -505,7 +507,6 @@ Aligner.prototype = {
 
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
-        var available_axis = Axis.prototype.available();
         
         for (var i in this.selectedAxis) {
             var span = document.createElement('span');
@@ -909,10 +910,6 @@ Aligner.prototype = {
                 extra_info_system = "";
             }
             t += " ";
-            $(".focus_selected").css("display", "");
-        }
-        else {
-            $(".focus_selected").css("display", "none");
         }
             
         $(".stats_content").text(t);
@@ -930,10 +927,20 @@ Aligner.prototype = {
         }
 
         if (this.m.getSelected().length > 0){  
-            $("#tag_icon__multiple").css("display", "");
+            $("#star_selected").css("display", "")
+            $("#focus_selected").css("display", "")
+            $("#hide_selected").css("display", "")
         } else {
-            $("#tag_icon__multiple").css("display", "none");
+            $("#star_selected").css("display", "none")
+            $("#focus_selected").css("display", "none")
+            $("#hide_selected").css("display", "none")
         }
+
+        if (this.m.filter.check("Clone", "focus") != -1 ||
+            this.m.filter.check("Clone", "hide") != -1)
+                $("#reset_focus").css("display", "")
+            else
+                $("#reset_focus").css("display", "none")
     },
 
     /**

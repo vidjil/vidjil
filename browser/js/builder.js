@@ -29,7 +29,6 @@ function Builder(model, database) {
     if(typeof database != 'undefined') {
         this.db = database;
     }
-    this.colorMethod = "";
     this.width_left_container = $("#left-container")
         .css("width")
 
@@ -380,23 +379,6 @@ Builder.prototype = {
         for (var i = 0; i < this.m.tag.length; i++) {
             this.buildListTab(i);
         }
-
-        //init slider
-        var max_top = 0;
-        for (var j = 0; j < this.m.clones.length; j++) {
-            if (this.m.clone(j).top > max_top)
-                max_top = this.m.clone(j).top
-        }
-        max_top = (Math.ceil(max_top / 5)) * 5
-        document.getElementById("top_slider")
-            .max = max_top;
-            
-
-        // init switch onlyOneSample
-        var onlyOneSample = document.getElementById("filter_switch_sample_check")
-        onlyOneSample.checked = this.m.show_only_one_sample
-
-
 
         //init notation
         if (this.m.notation_type == "scientific") {

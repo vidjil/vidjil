@@ -50,9 +50,14 @@ function loadAfterConf() {
     // some files are loaded before the views)
     require(["js/view"], function() {
 
-        require(["js/germline"],
+        require(["js/germline",
+                 "js/vidjil-style",
+                 "js/aligner_layer"],
                 function() {
-                    require(["js/closeable"],
+                    require(["js/closeable",
+                              "js/scatterPlot_menu",
+                              "js/scatterPlot_selector",
+                              "js/aligner_menu"],
                             function() {
                                 require(["js/menu",
                                          "js/dbscan",
@@ -60,6 +65,8 @@ function loadAfterConf() {
                                          "js/aligner",
                                          "js/aligner_sequence",
                                          "js/model_loader",
+                                         "js/color",
+                                         "js/filter",
                                          "js/model",
                                          "js/clone",
                                          "js/dynprog",
@@ -67,13 +74,10 @@ function loadAfterConf() {
                                          "js/axis_conf",
                                          "js/axis",
                                          "js/graph",
-                                         "js/scatterPlot_menu",
-                                         "js/scatterPlot_selector",
                                          "js/scatterPlot",
                                          "js/builder",
                                          "js/info",
                                          "js/com",
-                                         "js/vidjil-style",
                                          "js/crossDomain",
                                          "js/database",
                                          "js/shortcut",

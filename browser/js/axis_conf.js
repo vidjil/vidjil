@@ -51,10 +51,101 @@ AXIS_LABEL = {
     }
 }
 
+// list of Axis available for scatterplot
+AXIS_SCATTERPLOT = ["V/5' gene", 
+                    "V/5 allele",
+                    "D/4' gene",
+                    "D/4 allele",
+                    "J/3' gene",
+                    "J/3 allele",
+                    "Size",
+                    "Sequence length",
+                    "Read length",
+                    "N length",
+                    "CDR3 length",
+                    "GC content",
+                    "Productivity",
+                    "Productivity+",
+                    "Tag",
+                    "Coverage",
+                    "[IMGT] Productivity",
+                    "[IMGT] VIdentity",    
+                    "Locus",
+                    "Size (other)",
+                    "Number of samples",
+                    "Primers gap",
+                    "V/5' del'",
+                    "J/3' del'",
+                    "[cloneDB] Hits (sample)",
+                    "[cloneDB] Hits (set)"
+                ]
 
+// list of Axis available for aligner
+AXIS_ALIGNER = [    
+                    "Size",
+                    "Sequence length",
+                    "Read length",
+                    "GC content",
+                    "Productivity",
+                    "Number of samples",
+                    "[IMGT] Productivity",
+                    "[IMGT] VIdentity",
+                ]
+
+// list of Axis available as color
+AXIS_COLOR = [    
+                    "Size",
+                    "Tag",
+                    "Clone",
+                    "CDR3",
+                    "Locus",
+                    "N length",
+                    "V/5' gene",
+                    "D/4' gene",
+                    "J/3' gene",
+                    "GC content",
+                    "Productivity",
+                    "[IMGT] Productivity",
+                    "[IMGT] VIdentity",
+                    "Number of samples"
+                ]
+
+
+// Axis properties
 AXIS_DEFAULT = {
+    "Top": {
+        doc:        "",
+        fct:        function(clone) {return clone.top},
+    },
+    "Clone": {
+        doc:        "",
+        labels:     function(){
+                        var l = {}
+                        for (var i=0; i<m.clones.length; i++){
+                            var index = m.clone(i).index
+                            l[m.clone(i).index] =  { text:   index,   
+                                                     color:  colorGeneratorIndex(index)}
+                        }
+                        return l
+                    },
+        fct:        function(clone) {return clone.index},
+    },
+    "CDR3": {
+        doc:        "",
+        labels:     function(){
+                        var l = {}
+                        for (var i=0; i<m.clones.length; i++){
+                            var junction = m.clone(i).getSegAASequence('junction');
+                            l[junction] =  { text:   junction,   
+                                                     color:  colorGeneratorString(junction)}
+                        }
+                        return l
+                    },
+        color:      function(t,c) {return colorGeneratorString(c.getSegAASequence('junction'))},
+        fct:        function(clone) {return clone.getSegAASequence('junction')},
+        autofill:   false
+    },
     "V/5' gene": {
-        name:       "V/5' gene",
         doc:        "V gene (or 5' segment), gathering all alleles",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineV.labels))},
         fct:        function(clone) {return clone.getGene("5", false)},
@@ -62,7 +153,6 @@ AXIS_DEFAULT = {
         sort :      "alphanumerical"
     },
     "V/5 allele": {
-        name:       "V/5 allele",
         doc:        "V gene (or 5' segment), with allele",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineV.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("5", true)},
@@ -71,7 +161,6 @@ AXIS_DEFAULT = {
         autofill:   false
     },
     "D/4' gene": {
-        name:       "D/4' gene",
         doc:        "D gene (or 4' segment), gathering all alleles",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineD.labels))},
         fct:        function(clone) {return clone.getGene("4", false)},
@@ -79,7 +168,6 @@ AXIS_DEFAULT = {
         sort :      "alphanumerical",
     },
     "D/4 allele": {
-        name:       "D/4 allele",
         doc:        "D gene (or 4' segment), with allele",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineD.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("4", true)},
@@ -88,7 +176,6 @@ AXIS_DEFAULT = {
         autofill:   false
     },
     "J/3' gene": {
-        name:       "J/3' gene",
         doc:        "J gene (or 3' segment), gathering all alleles",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineJ.labels))},
         fct:        function(clone) {return clone.getGene("3", false)},
@@ -96,7 +183,6 @@ AXIS_DEFAULT = {
         sort :      "alphanumerical",
     },
     "J/3 allele": {
-        name:       "J/3 allele",
         doc:        "J gene (or 3' segment), with allele",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineJ.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("3", true)},
@@ -104,16 +190,14 @@ AXIS_DEFAULT = {
         sort :      "alphanumerical",
         autofill:   false
     },
-    "clone consensus length" : {
-        name:       "clone consensus length",
-        doc:        "length of the consensus sequence",
+    "Sequence length" : {
+        doc:        "length of the clone consensus sequence or representative sequence provided by the analysis software",
         fct:        function(clone) {return clone.getSequenceLength()},
         autofill:   true,
-        color:      {   fct: function(t){return d3.interpolatePlasma(t)}},
-        isInAligner: true
+        min_step:   1,
+        color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
     },    
-    "clone average read length" : {
-        name:       "clone average read length",
+    "Read length" : {
         doc:        "average length of the reads belonging to each clone",
         labels:     {   
                         "?":   {text:"?",   side: "right"}
@@ -124,56 +208,58 @@ AXIS_DEFAULT = {
                         return Math.round(len)
                     },
         autofill:   true,
-        color:      {fct: function(t){return d3.interpolatePlasma(t)}},
-        isInAligner: true
+        min_step:   1,
+        color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
     },
     "GC content" : {
-        name:       "GC content",
         doc:        "%GC content of the consensus sequence of each clone",
         fct:        function(clone) {return clone.getGCContent()},
         autofill:   true,
-        isInAligner: true
     },
     "N length": {
-        name:       "N length",
         doc:        "N length, from the end of the V/5' segment to the start of the J/3' segment (excluded)",
         fct:        function(clone) {return clone.getNlength()},
+        color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
         autofill:   true,
         min_step:   1
     },
-    "CDR3 length (nt)": {
-        name:       "CDR3 length (nt)",
+    "CDR3 length": {
         doc:        "CDR3 length, in nucleotides, from Cys104 and Phe118/Trp118 (excluded)",
-        fct: function(clone) {return clone.getSegLength('cdr3')},
-        autofill:   true
+        fct:        function(clone) {return clone.getSegLength('cdr3')},
+        color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
+        autofill:   true,
+        min_step:   1
     },
-    "productivity": {
-        name:       "productivity",
+    "Productivity": {
+        doc:        "clone productivity",
         labels:     {
-                        "not productive":   {text:"not productive"},
-                        "no CDR3 detected": {text:"no CDR3 detected"},
-                        "productive":       {text:"productive"},
+                        "not productive":   {text:"not productive", color: colorGeneratorBool('false'),side: "right"},
+                        "no CDR3":          {text:"no CDR3", color: "", side: "right" },
+                        "productive":       {text:"productive", color: colorGeneratorBool('true'),side: "left" },
                     },
         fct:        function(clone) {return clone.getProductivityName()},
+        sort :      function(a,b){
+            var order = ["productive","not-productive","no CDR3"]
+            if (order.indexOf(a) == -1 || order.indexOf(b) == -1) return b.localeCompare(a)
+            return order.indexOf(a) - order.indexOf(b);
+        },
         pretty:     function(tag) { return icon_pm(tag, "productive", "not productive") },
-        isInAligner: true
     },
-    "productivity detailed": {
-        name:       "productivity detailed",
+    "Productivity+": {
+        doc:        "clone productivity and details when available for lack of productivity",
         labels:     {
                         "productive":       {text:"productive"},
                         "not-productive":   {text:"not productive"}
                     },
         fct:        function(clone) {return clone.getProductivityNameDetailed()},
         sort :      function(a,b){
-                        var order = ["productive","not-productive","stop-codon","out-of-frame","no-WPGxG-pattern","no CDR3 detected"]
-                        return sortFromList(a, b, order);
+                        var order = ["productive","not-productive","stop-codon","out-of-frame","no-WPGxG-pattern","no CDR3"]
+                        if (order.indexOf(a) == -1 || order.indexOf(b) == -1) return b.localeCompare(a)
+                        return order.indexOf(a) - order.indexOf(b);
                     },
-        isInAligner:true,
         autofill :  true
     },
-    "productivity IMGT": {
-        name :      "productivity [IMGT]",
+    "[IMGT] Productivity": {
         doc:        "productivity (as computed by IMGT/V-QUEST)",
         labels:     {
             "not productive":   {text:"not productive"},
@@ -182,10 +268,8 @@ AXIS_DEFAULT = {
         },
         fct:        function(clone) { return clone.getProductivityIMGT() },
         pretty: function(tag) { return icon_pm(tag, "productive", "not productive"); },
-        isInAligner: true
     },
-    "VIdentity IMGT": {
-        name:       "V identity [IMGT]",
+    "[IMGT] VIdentity": {
         doc:        "V identity (as computed by IMGT/V-QUEST)",
         fct:        function(clone) { return clone.getVIdentityIMGT() },
         pretty: function(val) {
@@ -204,10 +288,8 @@ AXIS_DEFAULT = {
             return Videntity_info;
 
         },
-        isInAligner: true
     },
-    "tag": {
-        name:       "tag",
+    "Tag": {
         doc:        "tag, as defined by the user",   
         labels:     function(){
                         var l = {}
@@ -222,8 +304,7 @@ AXIS_DEFAULT = {
         sort :      false,
         autofill :  false
     },
-    "clone consensus coverage": {
-        name:       "clone consensus coverage",
+    "Coverage": {
         doc:        "ratio of the length of the clone consensus sequence to the median read length of the clone",
         // "Coverage between .85 and 1.0 (or more) are good values",
         fct:        function(clone){return clone.coverage},
@@ -234,34 +315,30 @@ AXIS_DEFAULT = {
                     },
         autofill:   true
     },
-    "locus" : {
+    "Locus" : {
         doc:        "locus or recombination system",
-        name:       "locus",
         fct:        function(clone){return clone.germline},
+        color:      function(t,c) {return m.germlineList.list[c.germline].color},
         autofill:   true
     },
-    "size" : {
+    "Size" : {
         doc:        "ratio of the number of reads of each clone to the total number of reads in the selected locus",
-        name:       "size",
         fct :       function(clone,t){return clone.getSize(t)},
         scale:      {   mode: "log"},
+        color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
         autofill:   true,
         pretty:     function(size) {return createClassedSpan("sizeBox sixChars", (self.m ? self.m : self).getStrAnySize(undefined, size)) },
-        isInAligner:true
     },
-    "size (other sample)" : {
-        doc:        "ratio of the number of reads of each clone to the total number of reads in the selected locus, on a second sample",
-        name:       "size (other sample)",
+    "Size (other)" : {
+        doc:        "ratio of the number of reads of each clone to the total number of reads in the selected locus, on the previously selected sample",
         fct :       function(clone){return clone.getSize(m.tOther)},
         scale:      {
                         mode: "log",
                         reverse: true
                     },
         autofill:   true,
-        isInAligner:false
     },
-    "number of samples" : {
-        name:       "number of samples",
+    "Number of samples" : {
         label:      "number of samples sharing each clone",
         fct :       function(clone){return clone.getNumberNonZeroSamples()},
         scale:      {   
@@ -270,41 +347,34 @@ AXIS_DEFAULT = {
                         //max : function(){ return self.m.samples.number }
                     },
         autofill:   true,
-        isInAligner:true
     },
-    "primers": {
-        name:       "interpolated length between primers",
+    "Primers gap": {
         doc:        "interpolated length, between selected primer set (inclusive)",
         fct:        function(clone) {return clone.getSegLengthDoubleFeature('primer5', 'primer3')},
         autofill:   true
     }, 
-    "V/5' deletions in 3'": {
+    "V/5' del'": {
         doc:        "number of deleted nucleotides at the 3' side of the V/5' segment",
-        name:       "V/5' deletions in 3'",
         fct:        function(clone) { return clone.getDeletion('5', 'delRight') },
         autofill:   true
     },
-    "J/3' deletions in 5'": {
+    "J/3' del'": {
         doc:        "number of deleted nucleotides at the 5' side of the J/3' segment",
-        name:       "J/3' deletions in 5'",
         fct:        function(clone) {return clone.getDeletion('3', 'delLeft')},
         autofill:   true
     },
-    "cloneDB occurrences": {
-        doc:        "number of occurrences in cloneDB",
-        name:       "cloneDB occurrences",
+    "[cloneDB] Hits (sample)": {
+        doc:        "number of sample sharing clones in cloneDB",
         scale:      {
                         "mode": "linear",
                         "min": 0
                     },
         fct: function(clone) {return clone.numberInCloneDB()},
         autofill: true,
-        isInAligner: false
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
-    "cloneDB patients/runs/sets occurrences": {   
+    "[cloneDB] Hits (set)": {   
         doc:        "number of patients/runs/sets sharing clones in cloneDB",
-        name:       "cloneDB occurrences",
         scale:      {
                         "mode": "linear",
                         "min": 0

@@ -212,16 +212,8 @@
             </div>
 
                 <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
-                    <div class="div-menu-selector"><select id="color_menu_select" class="menu-selector" onchange="m.changeColorMethod(this.value, true, true)">
-                        <option value="Tag">tag</option>
-                        <option value="clone">clone</option>
-                        <option value="cdr3">CDR3</option>
-                        <option value="V">V/5'</option>
-                        <option value="J">J/3'</option>
-                        <option value="N">N</option>
-                        <option value="system" id="color_system_button">locus/germline</option>
-                        <option value="abundance">abundance</option>
-                        <option value="productive">productivity</option>
+                    <div class="div-menu-selector"><select id="color_menu_select" class="menu-selector">
+
                     </select></div>
             </div>
 
@@ -232,7 +224,12 @@
                         <div class="menu_box">
                             <span id="top_label"></span></br>
                             <input id="top_slider" type="range" min="5" max="100" step="5" value="10"
-                                onchange="m.displayTop(this.value)" />
+                                onchange="m.filter.add('Top', '>', parseInt(this.value))" />
+                        </div>
+                        <div class="menu_box">
+                            <div id="filter_list">
+
+                            </div>
                         </div>
                         <div class="menu_box">
                             <div id="filter_switch_sample"
@@ -614,12 +611,16 @@
 
                     <div id="aligner-stats" class="stats"><span  title="">
                             <span class="stats_content"></span>
-                            <a class="focus_selected" id="focus_selected">(focus)</a> 
-                            <a class="focus_selected" id="hide_selected">(hide)</a>
-                            <span class="button" id="star_selected" title="Tag selected clones">
-                                    <i id="tag_icon__multiple" class="icon-star-2"></i></span>
-                            <span id="fixsegmenter" class="button">
-                                    <i title="fix the segmenter in his position" class="icon-pin-outline"></i></span>
+                            <span id="focus_selected" class="button"    title="Focus on selected Clones (ctrl+z)" >
+                                <i class="icon-eye"></i></span>
+                            <span id="hide_selected" class="button"     title="Hide selected Clones (shift+z)">
+                                <i  class="icon-eye-off"></i></span>
+                            <span class="button" id="reset_focus"       title="Reset Focus/Hide filters (z)">
+                                <i  class="icon-cancel-circled-outline"></i></span>
+                            <span class="button" id="star_selected"     title="Tag selected clones">
+                                <i id="tag_icon__multiple" class="icon-star-2"></i></span>
+                            <span id="fixsegmenter" class="button"      title="fix the segmenter in his position">
+                                <i  class="icon-pin-outline"></i></span>
                     </div>
             </div>
 

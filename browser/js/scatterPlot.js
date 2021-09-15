@@ -35,11 +35,10 @@
 function ScatterPlot(id, model, database, default_preset) {
     var self = this
 
-    for (var i in ScatterPlot_menu.prototype) ScatterPlot.prototype[i] = ScatterPlot_menu.prototype[i]
-    for (var j in ScatterPlot_selector.prototype) ScatterPlot.prototype[j] = ScatterPlot_selector.prototype[j]
     ScatterPlot_menu.call(this, default_preset)
     ScatterPlot_selector.call(this)
     View.call(this, model, id)
+
     this.db = database
     this.id = id
 
@@ -72,7 +71,7 @@ function ScatterPlot(id, model, database, default_preset) {
     this.otherVisibility = false
 
     // Plot axis
-    this.available_axis = Axis.prototype.available();
+    this.available_axis = AXIS_SCATTERPLOT;
 
     if (typeof this.m.sp == "undefined")
         this.m.sp = this
@@ -282,7 +281,7 @@ ScatterPlot.prototype = {
             .computeBar(cloneList)
         var max = this.axisX.barMax
         this.axisY = new Axis().load({
-                                        name:       "size",
+                                        name:       "Size",
                                         scale:      {
                                                         mode:   "linear",
                                                         min:    0,
@@ -312,7 +311,7 @@ ScatterPlot.prototype = {
         } else {
             showVirtual = true        
         }
-        var include = (system_grid && (clone.isActive()|| clone.hasSizeDistrib()) && showVirtual)
+        var include = (system_grid && clone.isActive() && showVirtual)
         return include
     },
     
@@ -381,7 +380,7 @@ ScatterPlot.prototype = {
                 var c = self.m.clone(p.id)
 
                 if ((!p.terminate) &&
-                    (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || c.isFiltered || !p.includeBar) )
+                    (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || !p.includeBar) )
                     return "circle_hidden"
                 if (c.isSelected() && c.isFocus())
                     return "circle_focus circle_select"
@@ -900,7 +899,7 @@ ScatterPlot.prototype = {
         var clone = this.m.clone(cloneID)      
         var node = this.nodes[cloneID]
 
-        if (clone && clone.isActive()) {
+        if (clone && clone.isActive() && !clone.hasSizeOther()) {
 
             var seqID, size;
             if (clone.hasSizeDistrib()){
@@ -982,7 +981,7 @@ ScatterPlot.prototype = {
                 .attr("class", function(p) {
                     var c = self.m.clone(p.id)
                     
-                    if (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || c.isFiltered || !p.includeBar)
+                    if (!p.hasValidAxisPosition || p.use_system_grid || !c.isActive() || !p.includeBar || c.hasSizeOther())
                         return "circle_hidden"
                     if (c.isSelected() && c.isFocus())
                         return "circle_focus circle_select"
@@ -1002,7 +1001,7 @@ ScatterPlot.prototype = {
                 .attr("class", function(p) {
                     var c = self.m.clone(p.id)
 
-                    if (!(p.hasValidAxisPosition || p.use_system_grid) || !c.isActive() || c.isFiltered) 
+                    if (!(p.hasValidAxisPosition || p.use_system_grid) || !c.isActive() || c.hasSizeOther()) 
                         return "circle_hidden";
                     if (c.isSelected() && c.isFocus())
                         return "circle_focus circle_select"
@@ -1345,7 +1344,7 @@ ScatterPlot.prototype = {
         }
 
         oldOtherVisibility = this.otherVisibility
-        this.otherVisibility = this.splitX == "size (other sample)" || this.splitY == "size (other sample)" 
+        this.otherVisibility = this.splitX == "Size (other)" || this.splitY == "Size (other)" 
         if (this.otherVisibility != oldOtherVisibility)
             this.updateClones()
 
@@ -1427,4 +1426,6 @@ ScatterPlot.prototype = {
     }
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype)
+ScatterPlot.prototype = $.extend(Object.create(ScatterPlot_menu.prototype), ScatterPlot.prototype)
+ScatterPlot.prototype = $.extend(Object.create(ScatterPlot_selector.prototype), ScatterPlot.prototype)
 

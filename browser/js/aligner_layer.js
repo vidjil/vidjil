@@ -1,3 +1,5 @@
+CHAR_WIDTH = 12;
+
 LAYERS = {
     'nuc':
     {

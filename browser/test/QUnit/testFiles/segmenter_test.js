@@ -189,7 +189,7 @@ QUnit.test("sequence", function(assert) {
     var aminoSplit4 = seq4.aminoSplitString().replace(/(?=\s)[^\r\n\t]/g, '_');
     assert.equal(aminoSplit4, "___|_|__|__|__|__|__|__|_|", aminoSplit4 + " aminoSplit sequence ");
 
-    m.filter("cat")
+    m.filter.add("Clone","search", "cat")
     var search4 = seq4.searchString().replace(/(?=\s)[^\r\n\t]/g, '_');
     assert.equal(search4,     "catcatcat_____tac_____tac", search4 + " search 'cat' in sequence");
 

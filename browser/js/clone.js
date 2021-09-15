@@ -370,6 +370,26 @@ Clone.prototype = {
 
     },
 
+    /**search for a specific string in clone infos/sequences */
+    search: function(str){
+        str = str.toUpperCase()
+
+        if (this.getName().toUpperCase().indexOf(str)               != -1 || 
+            this.getSegAASequence('cdr3').toUpperCase().indexOf(str)!= -1 || 
+            this.getSequenceName().toUpperCase().indexOf(str)       != -1 )  
+            return true
+        
+        var searched_sequence = this.searchSequence(this.getSequence(), str)
+        if (searched_sequence != undefined && searched_sequence.ratio >= this.m.search_ratio_limit)
+            return true
+        
+        var searched_revcomp  = this.searchSequence(this.getRevCompSequence(), str)
+        if (searched_revcomp != undefined && searched_revcomp.ratio >= this.m.search_ratio_limit)
+            return true
+        
+        return false
+    },
+
 
     /**
      * Return the best matching sequence from a list of sequence
@@ -950,16 +970,16 @@ Clone.prototype = {
                     var c_index = this.lst_compatible_clones[timepoint][pos]
                     var clone   = this.m.clones[c_index]
                     var cluster = this.m.clusters[c_index]
-                    if (clone.hasSizeConstant()) {
+                    if (clone.hasSizeConstant() ) {
                         if (cluster.length){
-                            if (clone.active || clone.isFiltered) { // cluster ?
+                            if (clone.isActive() || clone.hidden) { // cluster ?
                                 this.current_reads[timepoint]  -= clone.reads[timepoint]
                                 this.current_clones[timepoint] -= 1
                             }
                         } else if (cluster.length == 0) {
                             // Look for cluster that include this clone
                             var cluster_clone    = this.m.clone(clone.mergedId)
-                            if (cluster_clone.active || cluster_clone.isFiltered) { // cluster ?
+                            if (cluster_clone.isActive() || clone.hidden) { // cluster ?
                                 this.current_reads[timepoint]  -= clone.reads[timepoint]
                                 this.current_clones[timepoint] -= 1
                             }
@@ -1231,13 +1251,13 @@ Clone.prototype = {
     
     getProductivityName: function () {
         if (typeof this.seg.junction == "undefined")
-            return "no CDR3 detected"
+            return "no CDR3"
 
         return (this.seg.junction.productive ? "productive" : "not productive")
     },
     getProductivityNameDetailed: function () {
         if (typeof this.seg.junction == "undefined"){
-            return "no CDR3 detected"
+            return "no CDR3"
         } else if (this.isProductive() == true) {
             return "productive"
         } else {
@@ -1304,87 +1324,16 @@ Clone.prototype = {
      * */
     updateColor: function () {
 
-        var allele;
         if (!this.hasSizeConstant()){
             this.color = "rgba(150, 150, 150, 0.65)"
             return
         }
 
-        switch (this.m.colorMethod){
-            
-            case "abundance":
-                var size = this.getSize()
-                if (this.getCluster().length===0)
-                    size = this.getSequenceSize()
-                if (size === 0)
-                    this.color = ""
-                else
-                    this.color = colorGenerator(this.m.scale_color(size * this.m.precision))
+        var a = this.m.color.axis;
 
-                break;
-        
-            case "clone":
-                this.color = colorGeneratorIndex(this.index)
-                break;
-        
-            case "cdr3":
-                this.color = this.getCDR3Color()
-                break;
-        
-            case "Tag":
-                this.color =  this.m.tag[this.getTag()].color
-                if (this.color == "default") this.color = ""
-                break;
-
-            case "dbscan":
-                this.color =  this.colorDBSCAN
-                break;
-
-            case "system":
-                this.color = this.m.germlineList.getColor(this.germline)
-                break;
-
-            case "productive":
-                this.color = ""
-                if (this.hasSeg('junction') &&
-                    typeof this.seg.junction.productive != 'undefined') 
-                    this.color = colorProductivity(this.seg.junction.productive)
-                break;
-
-            case "N":
-                this.color =  this.colorN
-                break;
-
-            case "V":
-                this.color = ""
-                if (this.getGene("5") != "undefined V"){
-                    var alleleV = this.m.germlineV.allele[this.getGene("5")]
-                    if (typeof alleleV != 'undefined' ) this.color = alleleV.color
-                }
-                break;
-
-            case "D":
-                this.color = ""
-                if (this.getGene("4") != "undefined D"){
-                    var alleleD = this.m.germlineD.allele[this.getGene("4")]
-                    if (typeof alleleD != 'undefined' ) this.color = alleleD.color
-                }
-                break;
-
-            case "J":
-                this.color = ""
-                if (this.getGene("3") != "undefined J"){
-                    var alleleJ = this.m.germlineJ.allele[this.getGene("3")]
-                    if (typeof alleleJ != 'undefined' ) this.color = alleleJ.color
-                }
-                break;
-        
-            default:
-                this.color = ""
-        }
-
+        this.color = a.getColor(undefined, this);
         this.true_color = this.color
-
+    
         if (this.m.focus == this.index)
             this.color = ""
     },
@@ -1838,16 +1787,7 @@ Clone.prototype = {
         html += "</table></div>"
         return html
     },
-/*
-    axisOptions: function() {
-        return [
-            "clone consensus length", "clone average read length", "GC content", "N length",
-            "CDR3 length (nt)", "productivity", "productivity-IMGT",
-            "VIdentity-IMGT", "clone consensus coverage",
-            "tag", "coverage", "size", "number of samples", "primers"
-        ];
-    },
-*/
+
     /**
       * start to fill a node with clone informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete
@@ -1947,22 +1887,27 @@ Clone.prototype = {
     },
 
     enable: function (top) {
-        if (this.top > top || this.hasSizeOther()){
-            return; 
-        }
+        this.active = true
+        this.hidden = false
 
-        if (this.m.tag[this.getTag()].display){
-            this.active = true;
-        }
-        else {
-            this.m.someClonesFiltered = true
-        }
+        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller clones") != -1)
+            this.active = false
     },
 
     disable: function () {
         if (!this.hasSizeConstant() && !this.hasSizeDistrib()) return
         if (this.hasSizeDistrib() && this.m.tag[this.getTag()].display) return
         this.active = false;
+    },
+
+    hide: function () {
+        this.active = false
+        this.hidden = true
+        var c = this.m.clusters[this.index]
+        for (var i=0; i<c.length; i++){
+            this.m.clone(c[i]).hidden = true;
+            this.m.clone(c[i]).active = false;
+        }
     },
 
     unselect: function () {
@@ -2007,22 +1952,6 @@ Clone.prototype = {
             time = this.m.getTime(time)
             return field[time]
         }
-    },
-
-    /**
-     * Deterministically return a color associated with the CDR3 (if any)
-     */
-    getCDR3Color: function() {
-        var junction = this.getSegAASequence('junction');
-        if (junction.length == 0)
-            return '';
-        // Convert CDR3 to int
-        var intcdr3 = 0;
-        junction = junction.toUpperCase();
-        for (var i = 0; i < junction.length; i++) {
-            intcdr3 += (junction.charCodeAt(i)-65) * (Math.pow(26, i));
-        }
-        return colorGeneratorIndex(intcdr3);
     },
 
     /**
