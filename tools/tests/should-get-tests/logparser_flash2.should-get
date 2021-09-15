@@ -21,3 +21,7 @@ j: pre_process.stats.combined_pairs: [285000]
 j: pre_process.stats.discarded_pairs: [15000]
 j: pre_process.stats.innie_pairs: [142000]
 j: pre_process.stats.outie_pairs: [142000]
+
+
+$ Test export of warnings from log
+j: pre_process.warnings[0]: ['An unexpectedly high proportion of combined pairs (99.99%)']

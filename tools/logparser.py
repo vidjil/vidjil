@@ -35,6 +35,11 @@ class FlashLogParser(LogParser):
         while log_line:
             log_line = log_line.strip()
             if(log_line.startswith('WARNING')):
+                if not "warning" in parsed_log.keys():
+                    parsed_log['warnings'] = [[]]
+                key, value = self.getkeyvalue(log_line)
+                parsed_log['warnings'][0].append(value)
+
                 pass
 
             if(log_line.startswith('Starting FLASH')):
