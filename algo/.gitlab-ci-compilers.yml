@@ -135,6 +135,17 @@ test_gcc10_release:
   extends:
     - .testing-gcc
     - .testing_various_compilers_release
+test_gcc11_manual:
+  image: gcc:11
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_manual
+test_gcc11_release:
+  image: gcc:11
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_release
+
 test_clang34_manual:
   image: debian:8-slim
   variables:
@@ -205,4 +216,17 @@ test_clang11_release:
   extends:
     - .testing-clang
     - .testing_various_compilers_release
-    
+test_clang12_manual:
+  image: debian:sid-slim
+  variables:
+    CLANG_VERSION: "12"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_manual
+test_clang12_release:
+  image: debian:sid-slim
+  variables:
+    CLANG_VERSION: "12"
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_release
