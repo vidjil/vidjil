@@ -1,0 +1,21 @@
+
+>TRG-V1-J1
+tcttccaacttggaagggagaacgaagtcagtcaccaggctgNNNN
+actgggtcatctgctgaaatcacctgtgatcttcctggagcaNNNN
+agtaccttatacatccactggtacctgcaccaggaggggaagNNNN
+gccccacagtgtcttctgtactatgaaccctac
+NNNN
+gaattattataagaaacNNNN
+tctttggcagtggaacaNNNN
+acactggttgtcacag
+
+# Same number of kmers, but mixed sequence
+>TRG-mixedV1-mixedJ1
+agtaccttatacatccactggtacctgcaccaggaggggaagNNNN
+actgggtcatctgctgaaatcacctgtgatcttcctggagcaNNNN
+tcttccaacttggaagggagaacgaagtcagtcaccaggctgNNNN
+gccccacagtgtcttctgtactatgaaccctac
+NNNN
+tctttggcagtggaacaNNNN
+gaattattataagaaacNNNN
+acactggttgtcacag
