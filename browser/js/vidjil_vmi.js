@@ -171,7 +171,11 @@ VidjilVMI.prototype = {
 
 function create_separator() {
     var separator = document.createElement('div');
+    var icon = document.createElement('i');
+    icon.classList.add('visu-separator-icon');
+    icon.classList.add('icon-minus');
     separator.classList.add('visu-separator');
+    separator.appendChild(icon);
     return separator;
 }
 
