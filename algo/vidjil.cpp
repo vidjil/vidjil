@@ -1874,7 +1874,7 @@ int main (int argc, char **argv)
               }
         else
           {
-            g = NULL ;
+            g = Germline<char, KmerAffect>::getUnseg();
           }
 
         s.toOutput(clone);
@@ -1897,6 +1897,9 @@ int main (int argc, char **argv)
     // Finish output preparation
     output.set("reads", "segmented", { nb_segmented }) ;
     output.set("reads", "total", { nb }) ;
+
+    // TODO keep this line or not?
+    multigermline->addGermline(Germline<char, KmerAffect>::getUnseg());
 
     for (auto &germline : multigermline->getGermlines()){
       if (nb_segmented_by_germline[germline->getCode()])
