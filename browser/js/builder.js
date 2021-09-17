@@ -453,15 +453,25 @@ Builder.prototype = {
             val = 'flex';
         }
         $container.css('display', val);
+        return (val == 'flex') 
         //this.m.resize();
     },
 
     toggle_left_container: function () {
-        this.toggle_container('left-container');
+        open = this.toggle_container('left-container');
+        var icon = $('#vertical-separator').find('.vertical-separator-icon')
+
+        if(open){
+            icon.removeClass("icon-right-open")
+            icon.addClass("icon-left-open")
+        }else{
+            icon.removeClass("icon-left-open")
+            icon.addClass("icon-right-open")
+        }
     },
 
     toggle_right_container: function() {
-        this.toggle_container('right-container');
+        return this.toggle_container('right-container');
     },
 
     build_top_container: function () {
