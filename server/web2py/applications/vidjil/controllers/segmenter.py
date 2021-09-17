@@ -4,6 +4,7 @@ import tempfile
 import shutil
 import defs
 import gluon
+import gluon.contrib.simplejson
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin

@@ -33,10 +33,10 @@ copy ./conf/base.py /usr/share/vidjil/server/web2py/gluon/packages/dal/pydal/bas
 arg build_env='PRODUCTION'
 env BUILD_ENV $build_env
 
-copy ./conf/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
 run mkdir /etc/vidjil
 copy ./conf/wsgihandler.py /etc/vidjil/wsgihandler.py
 run chmod +x /opt/install_scripts/install.sh; sync && /opt/install_scripts/install.sh
+run mkdir -p /etc/uwsgi/apps-enabled && ln -s /etc/vidjil/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
 run ln -s /etc/vidjil/defs.py /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
 run ln -s /etc/vidjil/wsgihandler.py /usr/share/vidjil/server/web2py/wsgihandler.py
 
