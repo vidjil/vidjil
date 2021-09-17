@@ -1861,7 +1861,6 @@ int main (int argc, char **argv)
         CloneOutput *clone = new CloneOutput();
         output.addClone(id, clone);
         clone->set("id", id);
-        clone->set("name", seq.label);
         clone->set("sequence", seq.sequence);
         clone->set("reads", { 1 });
         clone->set("top", 0);
@@ -1880,6 +1879,8 @@ int main (int argc, char **argv)
               }
         else
           {
+           // Not designated, will output label as 'name' in .vidjil
+            s.code = seq.label;
             g = Germline<char, KmerAffect>::getUnseg();
           }
 
