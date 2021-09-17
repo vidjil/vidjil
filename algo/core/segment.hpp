@@ -1196,7 +1196,8 @@ FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, 
   if (this->because != NOT_PROCESSED)
     {
       this->segmented = false;
-      this->info = " @" + string_of_int (this->box_V->end + FIRST_POS) + "  @" + string_of_int(this->box_J->start + FIRST_POS) ;
+      this->segmented_germline = Germline<Shortcut, Affect>::getUnseg();
+      this->info = this->code + " @" + string_of_int (this->box_V->end + FIRST_POS) + "  @" + string_of_int(this->box_J->start + FIRST_POS) ;
       return ;
     }
 
@@ -1498,10 +1499,9 @@ void FineSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone, bool details)
       box->addToOutput(clone, this->alternative_genes);
     }
 
+  clone->set("name", this->code);
+
   if (this->isSegmented()) {
-
-    clone->set("name", this->code);
-
     if (this->isDSegmented()) {
       clone->setSeg("N1", this->seg_N1.size());
       clone->setSeg("N2", this->seg_N2.size());
