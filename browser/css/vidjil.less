@@ -5,6 +5,7 @@
 @infoContainerHeight : 32px;
 @locusSpacingMargin : 12px;
 @segmenterHeight : 155px;
+@segmenterWidth : 760px;
 
 /* default tag color */
 @tagColor0 : #DC322F;
@@ -98,6 +99,7 @@ ul{
   width: 100%;
   overflow : hidden;
   background : @background;
+  margin: -1px 0px;
 }
 
 #top-container {
@@ -209,6 +211,7 @@ position : fixed;
   -moz-user-select: auto;
   -ms-user-select: auto;
   user-select: auto;
+  margin-right: 5px;
 }
 
 #visu, #visu2 {
@@ -1093,10 +1096,15 @@ span.logo
 }
 
 .focus {
-  width: calc(~"100%" - 760px);
+  max-width: calc(~"100%" - @segmenterWidth);
   overflow: hidden;
   height: 13px;
   display: inline-block;
+  position: absolute;
+  left: 380px;
+  top: 3px;
+  background:@background;
+  
 }
 
 .selector{
@@ -1110,10 +1118,11 @@ span.logo
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: calc(@top_container_height - 24px);
+  margin-top: calc(@top_container_height - 25px);
   z-index:5;
   overflow: hidden;
   border-width: 1px;
+  background-color: @background
 }
 
 #bot-placeholder {
@@ -1124,6 +1133,7 @@ span.logo
   position: fixed;
   bottom: 0;
   min-height: @segmenterHeight;
+  min-width: @segmenterWidth;
 }
 
 .tn{
@@ -1428,13 +1438,22 @@ span.warningReads {
 .visu-separator {
   position: relative;
   border-bottom-style: solid;
+  border-top-style: solid;
   border-width: 1px;
-  height: 8px;
+  height: 6px;
 }
 
 .visu-separator:hover {
-  border-width: 4px;
-  height: 5px;
+  background-color: @highlight;
+  cursor: grab;
+}
+
+.visu-separator-icon {
+  position: relative;
+  max-height: 6px;
+  left: 50%;
+  top: -6px;
+  font-size: 10px;
   cursor: grab;
 }
 
@@ -1452,14 +1471,24 @@ span.warningReads {
   float: left;
   cursor: pointer;
   border-right-style: solid;
+  border-left-style: solid;
   border-width: 1px;
-  min-width: 8px;
+  min-width: 6px;
+  width: 6px;
 }
 
 #vertical-separator:hover {
   cursor: pointer;
-  border-width: 4px;
-  min-width: 5px;
+  background-color: @highlight;
+}
+
+.vertical-separator-icon {
+  font-size: 8px;
+  display: block;
+  position: relative;
+  top: 50%;
+  left: -2.5px;
+  z-index: 2;
 }
 
 #vertical-separator-right {

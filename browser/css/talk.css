@@ -69,6 +69,7 @@ ul {
   width: 100%;
   overflow: hidden;
   background: #ffffff;
+  margin: -1px 0px;
 }
 #top-container {
   flex: 0 1 auto;
@@ -164,6 +165,7 @@ ul {
   -moz-user-select: auto;
   -ms-user-select: auto;
   user-select: auto;
+  margin-right: 5px;
 }
 #visu,
 #visu2 {
@@ -911,10 +913,14 @@ span.logo {
   display: none;
 }
 .focus {
-  width: calc(100% - 760px);
+  max-width: calc(100% - 760px);
   overflow: hidden;
   height: 13px;
   display: inline-block;
+  position: absolute;
+  left: 380px;
+  top: 3px;
+  background: #ffffff;
 }
 .selector {
   display: none;
@@ -927,10 +933,11 @@ span.logo {
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: calc(8px);
+  margin-top: calc(7px);
   z-index: 5;
   overflow: hidden;
   border-width: 1px;
+  background-color: #ffffff;
 }
 #bot-placeholder {
   flex: 0 0 155px;
@@ -939,6 +946,7 @@ span.logo {
   position: fixed;
   bottom: 0;
   min-height: 155px;
+  min-width: 760px;
 }
 .tn {
   width: 120px;
@@ -1234,12 +1242,20 @@ span.warningReads {
 .visu-separator {
   position: relative;
   border-bottom-style: solid;
+  border-top-style: solid;
   border-width: 1px;
-  height: 8px;
+  height: 6px;
 }
 .visu-separator:hover {
-  border-width: 4px;
-  height: 5px;
+  background-color: #fdf6e3;
+  cursor: grab;
+}
+.visu-separator-icon {
+  position: relative;
+  max-height: 6px;
+  left: 50%;
+  top: -6px;
+  font-size: 10px;
   cursor: grab;
 }
 #bot-separator {
@@ -1255,13 +1271,22 @@ span.warningReads {
   float: left;
   cursor: pointer;
   border-right-style: solid;
+  border-left-style: solid;
   border-width: 1px;
-  min-width: 8px;
+  min-width: 6px;
+  width: 6px;
 }
 #vertical-separator:hover {
   cursor: pointer;
-  border-width: 4px;
-  min-width: 5px;
+  background-color: #fdf6e3;
+}
+.vertical-separator-icon {
+  font-size: 8px;
+  display: block;
+  position: relative;
+  top: 50%;
+  left: -2.5px;
+  z-index: 2;
 }
 #vertical-separator-right {
   position: relative;
@@ -2246,13 +2271,15 @@ div.tooltip {
   border-width: 1px;
 }
 .stats {
-  position: relative;
+  position: absolute;
   text-align: right;
   float: right;
-  width: 347px;
+  max-width: 347px;
   padding: 2px 5px;
   overflow: hidden;
   height: 16px;
+  right: 0px;
+  top: 0px;
 }
 .list_select {
   display: block;
@@ -2363,7 +2390,6 @@ span .silent {
 span .end-codon {
   box-shadow: 1px 0 0 #657b83;
 }
-#segmenter_axis_menu,
 .seq-fixed {
   background: #ffffff;
 }
@@ -2419,10 +2445,11 @@ span .end-codon {
 .menu-content {
   display: none;
   position: absolute;
-  bottom: 154px;
+  bottom: 20px;
   background-color: white;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
+  margin-left: -10px;
 }
 .menu-content a {
   padding: 8px 12px;
@@ -2530,21 +2557,24 @@ span .end-codon {
   opacity: 1;
 }
 #aligner-open-button {
+  display: block;
   position: absolute;
-  width: 40px;
+  width: 100%;
   height: 12px;
   background: white;
-  left: 50%;
   right: auto;
-  border: solid;
-  border-width: 1px;
-  top: -7px;
   text-align: center;
   line-height: 0px;
-  display: none;
+  height: 16px;
+  padding-top: 4px;
+  padding-left: 100px;
 }
-.aligner:hover #aligner-open-button {
-  display: block;
+#aligner-open-button:hover {
+  background: #fdf6e3;
+}
+#aligner-left {
+  position: relative;
+  width: 420px;
 }
 #mid-container {
   font-size: 125%;
