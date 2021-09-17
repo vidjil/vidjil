@@ -469,7 +469,9 @@
                 </div>
                 <!-- fin left-container -->
 
-                <div id="vertical-separator"></div>
+                <div id="vertical-separator">
+                    <i class="vertical-separator-icon icon-left-open"></i>
+                </div>
 
                 <!-- VISU-CONTAINER  -->
                 <div id="visu-container">
@@ -543,6 +545,9 @@
 <template id='aligner'>
     <div class="aligner">
             <div class="bot-bar">
+                <div id="aligner-open-button"><i class="icon-up-open"></i></div>
+
+                <div id="aligner-left">
                     <div id="cluster" class="aligner-menu" title="Merge the selected clones into a unique cluster"
                             onclick="javascript:self.m.merge()"> Cluster </div>
 
@@ -605,8 +610,10 @@
 
                        </div>
                     </div>
-                    <div class="focus cloneName"></div>
+                    
+                    </div>
 
+                    <div class="focus cloneName"></div>
                             
 
                     <div id="aligner-stats" class="stats"><span  title="">
@@ -619,8 +626,6 @@
                                 <i  class="icon-cancel-circled-outline"></i></span>
                             <span class="button" id="star_selected"     title="Tag selected clones">
                                 <i id="tag_icon__multiple" class="icon-star-2"></i></span>
-                            <span id="fixsegmenter" class="button"      title="fix the segmenter in his position">
-                                <i  class="icon-pin-outline"></i></span>
                     </div>
             </div>
 
