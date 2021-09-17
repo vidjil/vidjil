@@ -1536,6 +1536,7 @@ int main (int argc, char **argv)
         output.addClone(it->first, clone);
 
         // Basic information that will always be output
+        clone->set("germline", segmented_germline->code);
         clone->set("_average_read_length", { fixed_string_of_float(windowsStorage->getAverageLength(it->first), 2) });
         clone->set("sequence", kseg->getSequence().sequence);
         clone->set("_coverage", { repComp.getCoverage() });
