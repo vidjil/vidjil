@@ -50,6 +50,7 @@ function ScatterPlot_menu(default_preset) {
         "number of deletions for the segment V/5 in 3" :{ "x": "V/5' del'"},
         "number of deletions for the segment J/3 in 5" :{ "x": "J/3' del'"},
         "Primers" :                 { "x": "Primers"},
+        "TSNE"    :                 { "x" : "TSNEX",                    "y": "TSNEY",   mode : "grid"}
     };
 
     this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset 

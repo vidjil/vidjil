@@ -398,10 +398,35 @@ AXIS_DEFAULT = {
                         "min": 0
                     },
         fct: function(clone) {return clone.numberSampleSetInCloneDB()},
-        autofill: true,
-        isInAligner: false
+        autofill: true
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
+    "TSNEX": {   
+        doc:        "",
+        fct:        function(clone) {
+                        if (clone.tsne )return clone.tsne[0]
+                        return undefined
+                    },
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
+                    }
+    },
+    "TSNEY": {   
+        doc:        "",
+        fct:        function(clone) {            
+                        if (clone.tsne )return clone.tsne[1]
+                        return undefined
+                    },
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
+                    }
+    },
+
+
 /*  "tsneX": {
         label: "distance (X)",
         axis: new FloatAxis(this.m),

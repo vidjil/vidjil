@@ -566,9 +566,8 @@ ScatterPlot.prototype = {
 
         this.update()
         
-        if (this.splitX == "tsneX_system" || this.splitX == "tsneX"){
+        if (this.mode == "TSNE")
             this.changeSplitMethod(this.splitX, this.splitY, this.mode)
-        }
     },
     
     /**
@@ -1307,20 +1306,18 @@ ScatterPlot.prototype = {
             endbar = true;
         }
 
-        if (splitX == "tsneX" || splitX == "tsneX_system"){
-            this.margin = this.graph_margin;
+        if (splitX == "TSNEX" || splitX == "tsneX_system"){
             if (!this.tsne_ready){
                 this.tsne_ready=true;
                 this.m.similarity_builder.init(function(){self.changeSplitMethod(splitX, splitY, mode)});
                 return 0;
             }
-        }else{
-            this.margin = this.default_margin;
         }
+ 
 
-        if (this.available_axis.indexOf(splitX) != -1)        
+        if (this.available_axis.indexOf(splitX) != -1 || splitX == "TSNEX")        
             this.splitX = splitX
-        if (this.available_axis.indexOf(splitY) != -1)
+        if (this.available_axis.indexOf(splitY) != -1 || splitY == "TSNEY")
             this.splitY = splitY
         this.compute_size()
 
