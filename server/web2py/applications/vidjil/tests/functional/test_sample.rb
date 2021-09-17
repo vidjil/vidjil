@@ -56,7 +56,7 @@ class TestSample < ServerTest
     add_button = $b.span(:text => "+ add samples")
     add_button.wait_until(&:present?)
     add_button.click
-    form = $b.form(:id => "upload_form")
+    form = $b.form(:id => "upload_sample_form")
     form.wait_until(&:present?)
 
     $b.input(:id => "source_nfs").click
@@ -127,13 +127,13 @@ class TestSample < ServerTest
     add_button.wait_until(&:present?)
     add_button.click
 
-    form = $b.form(:id => "upload_form")
+    form = $b.form(:id => "upload_sample_form")
     form.wait_until(&:present?)
 
     $b.input(:id => "source_computer").click
     $b.select(:id => "pre_process").select(/test pre-process 0/)
 
-    form = $b.form(:id => "upload_form")
+    form = $b.form(:id => "upload_sample_form")
     form.wait_until(&:present?)
 
     # Adding another sample
@@ -144,16 +144,16 @@ class TestSample < ServerTest
 
     form.input(:type => "submit").click
     # Form should not be submitted because we didn't fill all fields
-    assert ($b.form(:id => "upload_form").present?)
+    assert ($b.form(:id => "upload_sample_form").present?)
 
     form.file_field(:id => 'file_upload_2_0').set(File.expand_path(__FILE__))
 
     form.input(:type => "submit").click
     # Form should not be submitted because we didn't fill all fields
-    assert ($b.form(:id => "upload_form").present?)
+    assert ($b.form(:id => "upload_sample_form").present?)
 
     form.file_field(:id => 'file_upload_2_1').set(File.expand_path(__FILE__))
-    $b.form(:id => "upload_form").input(:css => "[type=submit]:not(.disabledClass)").click
+    $b.form(:id => "upload_sample_form").input(:css => "[type=submit]:not(.disabledClass)").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     
     table = $b.table(:id => "table")
@@ -170,7 +170,7 @@ class TestSample < ServerTest
     lines[0].wait_until(&:present?)
     cell = lines[0].td(:class => "pointer")
     cell.i(:class => "icon-pencil-2").click
-    form = $b.form(:id => "upload_form")
+    form = $b.form(:id => "upload_sample_form")
     form.wait_until(&:present?)
     form.text_field(:id => "file_info_0").set("#edited")
     form.input(:type => "submit").click
@@ -191,7 +191,7 @@ class TestSample < ServerTest
     samples_table.a(:text => "#set_assoc_1").parent.parent.i(:class => "icon-pencil-2").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
-    form = $b.form(:id => "upload_form")
+    form = $b.form(:id => "upload_sample_form")
     form.wait_until(&:present?)
 
     assert(form.div(:id => 'set_div').spans.length == 3)
@@ -203,7 +203,7 @@ class TestSample < ServerTest
 
     samples_table.a(:text => "#set_assoc_1").parent.parent.i(:class => "icon-pencil-2").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    form = $b.form(:id => "upload_form")
+    form = $b.form(:id => "upload_sample_form")
     form.wait_until(&:present?)
 
     assert(form.div(:id => 'set_div').spans.length == 3)
@@ -241,7 +241,7 @@ class TestSample < ServerTest
     $b.span(:class => "button2", :text => "+ add samples").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
-    form = $b.form(:id => "upload_form")
+    form = $b.form(:id => "upload_sample_form")
     form.wait_until(&:present?)
 
     $b.input(:id => "source_nfs").click
@@ -288,7 +288,7 @@ class TestSample < ServerTest
     # Checking in the edit form that the three sets appear
     samples_table.a(:text => "#set_assoc_0").parent.parent.i(:class => "icon-pencil-2").click
 
-    form = $b.form(:id => "upload_form")
+    form = $b.form(:id => "upload_sample_form")
     form.wait_until(&:present?)
     set_div = form.div(:id => 'set_div')
     assert(set_div.spans.length == 3)
@@ -299,7 +299,7 @@ class TestSample < ServerTest
     samples_table.a(:text => "#set_assoc_2").parent.parent.i(:class => "icon-pencil-2").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
-    form = $b.form(:id => "upload_form")
+    form = $b.form(:id => "upload_sample_form")
     form.wait_until(&:present?)
 
     set_div = form.div(:id => 'set_div')
@@ -314,7 +314,7 @@ class TestSample < ServerTest
     samples_table.a(:text => "#set_assoc_2").parent.parent.i(:class => "icon-pencil-2").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
 
-    form = $b.form(:id => "upload_form")
+    form = $b.form(:id => "upload_sample_form")
     form.wait_until(&:present?)
     set_div = form.div(:id => 'set_div')
     assert(set_div.spans.length == 2)
