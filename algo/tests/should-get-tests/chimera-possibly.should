@@ -11,8 +11,9 @@ $ However, after FineSegmenter, only one is still in TRG, the other one is not d
 $ The first read is designated as V1-J1
 1:TRGV1.*/NNNN/.*TRGJ1
 
-$ The other read can not be safely designated, it is identified as 'possibly TRG'
+$ The other read can not be safely designated, it is identified as 'possibly TRG' and a warning is raised
 1:Possibly TRG
+1:W68
 
 $ The .vidjil file also reports the 'not designated' sequence
 1: "germline": "TRG"
