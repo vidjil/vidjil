@@ -1431,6 +1431,10 @@ void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
         }
       }
     }
+  else
+    {
+       clone->set("germline", PSEUDO_NOT_ANALYZED);
+    }
 }
 
 void FineSegmenter::showAlignments(ostream &out){
