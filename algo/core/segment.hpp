@@ -1483,6 +1483,10 @@ void FineSegmenter<Shortcut, Affect>::checkWarnings(CloneOutput *clone, bool pho
         }
       }
     }
+  else
+    {
+       clone->set("germline", PSEUDO_NOT_ANALYZED);
+    }
 }
 
 template <typename Shortcut, typename Affect>
