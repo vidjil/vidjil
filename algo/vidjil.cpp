@@ -1600,19 +1600,6 @@ int main (int argc, char **argv)
         seg.findCDR3();
 
           
-	// Output representative, possibly segmented... 
-	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
-  if (clone_on_stdout)
-    cout << seg << endl ;
-
-  if (output_clone_files)
-    *out_clone << seg << endl ;
-
-  if (output_vdjfa)
-    *out_clones << seg << endl ;
-    
-        seg.toOutput(clone);
-
         if (seg.isSegmented())
 	  {
 	      // Check for identical code, outputs to out_edge
@@ -1656,7 +1643,19 @@ int main (int argc, char **argv)
 	   } // end if (seg.isSegmented())
 
         seg.checkWarnings(clone, clone_on_stdout);
-        
+	// Output representative, possibly segmented...
+	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
+  if (clone_on_stdout)
+    cout << seg << endl ;
+
+  if (output_clone_files)
+    *out_clone << seg << endl ;
+
+  if (output_vdjfa)
+    *out_clones << seg << endl ;
+
+  seg.toOutput(clone);
+
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
 	    list<Sequence> sequences = windowsStorage->getReads(it->first);
