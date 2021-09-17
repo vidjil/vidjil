@@ -458,7 +458,7 @@ Builder.prototype = {
     },
 
     toggle_left_container: function () {
-        open = this.toggle_container('left-container');
+        var open = this.toggle_container('left-container');
         var icon = $('#vertical-separator').find('.vertical-separator-icon')
 
         if(open){
