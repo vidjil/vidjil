@@ -1647,6 +1647,12 @@ int main (int argc, char **argv)
                 *out_clone << ">" << seg.box_J->ref_label << endl << seg.box_J->ref << endl ;
               *out_clone << endl;
         }
+     }
+     else
+     {
+        // We remember that the KmerSegmenter detected that sequence
+        seg.code = "Possibly " + segmented_germline->code;
+        seg.info = seg.code + seg.info;
 	   } // end if (seg.isSegmented())
 
         seg.checkWarnings(clone, clone_on_stdout);
