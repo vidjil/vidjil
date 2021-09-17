@@ -62,6 +62,7 @@ using namespace std;
 // Common seeds
 #define DEFAULT_SEED "10s"
 extern map<string, string> seedMap;
+string string_of_map(map <string, string> m, const string &before);
 string expand_seed(const string &seed);
 
 string seed_contiguous(int k);
