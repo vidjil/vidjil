@@ -2275,11 +2275,11 @@ div.tooltip {
   text-align: right;
   float: right;
   max-width: 347px;
-  padding: 2px 5px;
+  padding: 2px 0px;
   overflow: hidden;
   height: 16px;
   right: 0px;
-  top: 0px;
+  top: 1px;
 }
 .list_select {
   display: block;
