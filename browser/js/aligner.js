@@ -174,6 +174,8 @@ Aligner.prototype = {
             $(self.div_segmenter).height('auto');
         });
 
+        $("#"+this.id).css('box-shadow', '0px -4px 8px 0px rgba(0, 0, 0, 0.2)')
+
         var icon = $("#aligner-open-button").find(".icon-up-open")
         icon.removeClass("icon-up-open")
         icon.addClass("icon-down-open")
@@ -185,6 +187,8 @@ Aligner.prototype = {
         this.min_H = 130;
 
         $(this.div_segmenter).stop().animate({ height: this.min_H }, 250);
+
+        $("#"+this.id).css('box-shadow', '')
 
         var icon = $("#aligner-open-button").find(".icon-down-open")
         icon.removeClass("icon-down-open")
@@ -467,8 +471,8 @@ Aligner.prototype = {
                 cluster.className = "aligner-menu button";
             }
             else {
-                align.className = "button inactive";
-                cluster.className = "button inactive";
+                align.className = "aligner-menu button inactive";
+                cluster.className = "aligner-menu button inactive";
             }
         }
     },
