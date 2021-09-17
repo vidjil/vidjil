@@ -159,6 +159,47 @@ Aligner.prototype = {
         });
     },
 
+    open : function(){
+        var self = this;
+        this.min_H = 130;
+        this.max_H = 500;
+
+        var seg = $(this.div_segmenter);
+
+        var cur_H = seg.height()
+        var auto_H = seg.css('height', 'auto').height();
+        if (auto_H > self.max_H) auto_H = this.max_H;
+        if (cur_H  < self.min_H) cur_H  = this.min_H;
+        seg.stop().height(cur_H).animate({ height: auto_H }, 250, function(){
+            $(self.div_segmenter).height('auto');
+        });
+
+        var icon = $("#aligner-open-button").find(".icon-up-open")
+        icon.removeClass("icon-up-open")
+        icon.addClass("icon-down-open")
+
+        this.is_open = true;
+    },
+
+    close : function(){
+        this.min_H = 130;
+
+        $(this.div_segmenter).stop().animate({ height: this.min_H }, 250);
+
+        var icon = $("#aligner-open-button").find(".icon-down-open")
+        icon.removeClass("icon-down-open")
+        icon.addClass("icon-up-open")
+
+        this.is_open = false;
+    },
+
+    toggle : function(){
+        if (this.is_open)
+            this.close();
+        else
+            this.open()
+    },
+
     build_segmenter: function () {
         var self = this;
 
@@ -176,50 +217,12 @@ Aligner.prototype = {
         this.div_segmenter = clone.getElementsByClassName("segmenter")[0];
         self.min_H = 130;
         self.max_H = 500;
-        $(".menu-content").css("bottom", (self.min_H+22)+"px");
         $(this.div_segmenter)
             .scroll(function () {
                 var leftScroll = $(self.div_segmenter).scrollLeft();
                 $('.seq-fixed').css({ 'left': +leftScroll });
             })
-            .mouseenter(function () {
-                if (!self.fixed && !self.is_open) {
-                    var seg = $(self.div_segmenter);
-                    var cur_H = seg.height();
-                    var auto_H = seg.css('height', 'auto').height();
-
-                    if (auto_H >= self.min_H+20) {
-                        if (auto_H > self.max_H) auto_H = self.max_H;
-                        if (cur_H  < self.min_H) cur_H  = self.min_H;
-                        $(".menu-content").css("bottom", (auto_H+22)+"px");
-                        seg.stop().height(cur_H).animate({ height: auto_H }, 250);
-                    } else {
-                        $(".menu-content").css("bottom", (self.min_H+22)+"px");
-                        seg.stop().height(self.min_H);
-                    }
-                    self.is_open = true;
-                }
-            });
-
-        $('#' + this.id)
-            .mouseleave(function (e) {
-                if (e.relatedTarget !== null && self.is_open) {
-                    setTimeout(function () {
-                        if ($(".tagSelector").hasClass("hovered")) return;
-
-                        var seg = $(self.div_segmenter);
-
-                        if (!self.fixed  && seg.height() > self.min_H) 
-                            seg.stop().animate({ height: self.min_H }, 250);
-                        else 
-                            seg.stop();
-                        
-                        $(".menu-content").css("bottom", (self.min_H+22)+"px");
-                        self.is_open = false;
-                        
-                    }, 200);
-                }
-            });
+  
 
         // Focus/hide/label
         document.getElementById("focus_selected").onclick = function () { self.m.filter.add("Clone", "focus", self.m.getSelected()); };
@@ -228,10 +231,9 @@ Aligner.prototype = {
                                                                         self.m.filter.remove("Clone", "hide") };
         document.getElementById("star_selected").onclick = function (e) {
             if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
-        document.getElementById("fixsegmenter").onclick = function () { self.switchFixed(); };
         document.getElementById("cluster").onclick = function () { self.m.merge(); };
         document.getElementById("align").onclick = function () { self.toggleAlign(); };
-        this.setFixed(false);
+        document.getElementById("aligner-open-button").onclick = function () { self.toggle(); };
 
     },
 
@@ -251,35 +253,6 @@ Aligner.prototype = {
 
         this.index[cloneID] = new IndexedDom(clone);
 
-    },
-
-    /**
-     * Switch the fixed status of the segmenter.
-     * @post old this.fixed == ! this.fixed
-     */
-    switchFixed: function() {
-        this.setFixed(!this.fixed);
-    },
-
-    /**
-     * Set the fixed status of the segmenter.
-     * Should be used rather than directly modifying the fixe property
-     */
-    setFixed: function(fixed) {
-        this.fixed = fixed;
-        this.updateFixedPicture();
-    },
-
-    updateFixedPicture: function() {
-        fix_icons = $('#fixsegmenter i');
-        if (fix_icons.length > 0) {
-            fix_icons = fix_icons[0];
-            if (this.fixed) {
-                fix_icons.className = 'icon-pin';
-            } else {
-                fix_icons.className = 'icon-pin-outline';
-            }
-        }
     },
 
    build_align_settings_menu: function(){
