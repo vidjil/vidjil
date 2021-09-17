@@ -292,7 +292,7 @@ void WindowsStorage<Tshortcut, Affect>::sortedWindowsToOutput(SampleOutput *outp
 
   for (auto it = sort_all_windows.begin(); it != sort_all_windows.end();) {
 
-    CloneOutput *clone = output->getClone(it->first);
+    CloneOutput *clone = output->getClone(it->first, germline_by_window[it->first]->code);
 
     if (status_by_window[it->first][SEG_CHANGED_WINDOW])
       clone->add_warning(W50_WINDOW, "Short or shifted window", LEVEL_WARN, false);
@@ -300,7 +300,6 @@ void WindowsStorage<Tshortcut, Affect>::sortedWindowsToOutput(SampleOutput *outp
     clone->set("id", it->first);
     clone->set("reads", { it->second });
     clone->set("top", top++);
-    clone->set("germline", germline_by_window[it->first]->getCode());
 
     if (delete_all) {
       germline_by_window.erase(it->first);
