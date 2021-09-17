@@ -1441,11 +1441,11 @@ span.warningReads {
   border-top-style: solid;
   border-width: 1px;
   height: 6px;
+  cursor:row-resize;
 }
 
 .visu-separator:hover {
   background-color: @highlight;
-  cursor: grab;
 }
 
 .visu-separator-icon {
@@ -2171,6 +2171,10 @@ label.highlight_label {
 
 i[class*="icon-"] {
   cursor:pointer;
+}
+
+.visu-separator i{
+  cursor:row-resize;
 }
 
 .disabledClass {

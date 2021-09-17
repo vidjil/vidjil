@@ -1244,10 +1244,10 @@ span.warningReads {
   border-top-style: solid;
   border-width: 1px;
   height: 6px;
+  cursor: row-resize;
 }
 .visu-separator:hover {
   background-color: #777777;
-  cursor: grab;
 }
 .visu-separator-icon {
   position: relative;
@@ -1897,6 +1897,9 @@ label.highlight_label {
 }
 i[class*="icon-"] {
   cursor: pointer;
+}
+.visu-separator i {
+  cursor: row-resize;
 }
 .disabledClass {
   pointer-events: none;

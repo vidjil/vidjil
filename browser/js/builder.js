@@ -114,14 +114,11 @@ Builder.prototype = {
             var total_height = document.getElementById("visu-container")
                 .offsetHeight;
 
-            console.log("off :"+total_height)
-            console.log("pos :"+position)
             if (position < 2 || total_height - position < 2) this.dropSeparator()
 
             var height = position / total_height * 100
             if (height > 90) height = 100;
             if (height < 10) height = 0;
-            console.log("hei :"+height)
             this.resizeGraph(height)
         }
     },
