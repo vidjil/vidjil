@@ -1790,7 +1790,7 @@ int main (int argc, char **argv)
     int nb_segmented = 0 ;
     map <string, int> nb_segmented_by_germline ;
 
-    Germline *not_segmented = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
+
 
     // Multiplier is 1.0, we expect that the sequences are actual recombinations. See #3594.
     double fine_evalue_multiplier = 1.0 ;
@@ -1830,7 +1830,7 @@ int main (int argc, char **argv)
               }
         else
           {
-            g = not_segmented ;
+            g = GERMLINE_NOT_DESIGNATED ;
           }
 
         s.toOutput(clone);
@@ -1850,7 +1850,7 @@ int main (int argc, char **argv)
     output.set("reads", "segmented", { nb_segmented }) ;
     output.set("reads", "total", { nb }) ;
 
-    multigermline->insert(not_segmented);
+    multigermline->insert(GERMLINE_NOT_DESIGNATED);
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       Germline *germline = *it ;
       if (nb_segmented_by_germline[germline->code])

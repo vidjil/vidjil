@@ -188,4 +188,6 @@ class MultiGermline {
 
 ostream &operator<<(ostream &out, const MultiGermline &multigermline);
 
+extern Germline* GERMLINE_NOT_DESIGNATED;
+
 #endif

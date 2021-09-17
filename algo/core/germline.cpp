@@ -520,3 +520,5 @@ ostream &operator<<(ostream &out, const MultiGermline &multigermline)
 
   return out;
 }
+
+Germline *GERMLINE_NOT_DESIGNATED = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
