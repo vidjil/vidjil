@@ -278,7 +278,7 @@ void WindowsStorage::sortedWindowsToOutput(SampleOutput *output, int max_output,
        it != sort_all_windows.end(); )
     {
        
-      CloneOutput *clone = output->getClone(it->first);
+      CloneOutput *clone = output->getClone(it->first, germline_by_window[it->first]->code);
 
       if (status_by_window[it->first][SEG_CHANGED_WINDOW])
         clone->add_warning(W50_WINDOW, "Short or shifted window", LEVEL_WARN, false);
@@ -286,7 +286,6 @@ void WindowsStorage::sortedWindowsToOutput(SampleOutput *output, int max_output,
       clone->set("id", it->first);
       clone->set("reads", {it->second});
       clone->set("top", top++);
-      clone->set("germline", germline_by_window[it->first]->code);
       
       if (delete_all) {
         germline_by_window.erase(it->first);
