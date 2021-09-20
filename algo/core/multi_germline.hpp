@@ -7,6 +7,10 @@ enum GERMLINES_FILTER { GERMLINES_ALL,
                         GERMLINES_REGULAR,
                         GERMLINES_INCOMPLETE } ;
 
+/**
+ * @return a JSON object made of the germlines in the filter string
+ */
+json parse_json_g(string path, string json_filename_and_filter, string &systems_filter);
 
 template <typename Tshortcut, typename Affect>
 class MultiGermline {
@@ -73,13 +77,13 @@ public:
   
   /**
    * Build from a json .g germline file
-   *   path: path, such as 'germline/'
-   *   json_filename_and_filter: filename, optionally embedding a filter, such as 'homo-sapiens.g:IGH,TRG'
+   *   germlines: json object describing the germlines to be loaded (as in the .g)
+   *   system_filter: A filter for loci to be taken into account, such as "IGH,TRG"
    *   filter: see GERMLINES_FILTER
    *   max_indexing: see constructor of Germline
    *   build_automaton: tell for each segment whether an automaton should be built.
    */
-  void buildFromJson(string path, string json_filename_and_filter, int filter,
+  void buildFromJson(json germlines, std::string system_filter,
                        string default_seed="", int default_max_indexing=0, const std::map<std::string, bool> &build_automaton=std::map<std::string, bool>());
 
   /**
@@ -178,18 +182,11 @@ int MultiGermline<Tshortcut, Affect>::getTaxonId() const {
   return species_taxon_id;
 }
 
-template <typename Tshortcut, typename Affect>
-void MultiGermline<Tshortcut, Affect>::buildFromJson(std::string path, std::string json_filename_and_filter, int filter,
-                                                       std::string default_seed, int default_max_indexing,
-                                                       const std::map<std::string, bool> &build_automaton) {
-  if (repository == nullptr) {
-    repository = new GermlineElementRepository<Tshortcut, Affect>();
-    repository_allocated = true;
-  }
+json parse_json_g(string path, string json_filename_and_filter, string &systems_filter)
+{
 
   //extract json_filename and systems_filter
   string json_filename = json_filename_and_filter;
-  string systems_filter = "";
 
   size_t pos_lastcolon = json_filename_and_filter.find_last_of(':');
   if (pos_lastcolon != std::string::npos) {
@@ -214,7 +211,20 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(std::string path, std::stri
     exit(1);
   }
 
-  path += "/" + germlines["path"].get<std::string>();
+  // Prepend actual path
+  germlines["path"] = path + '/' + germlines["path"].get<std::string>();
+
+  return germlines;
+}
+
+template <typename Tshortcut, typename Affect>
+void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines, std::string systems_filter,
+                                                     std::string default_seed, int default_max_indexing,
+                                                     const std::map<std::string, bool> &build_automaton) {
+  if (repository == nullptr) {
+    repository = new GermlineElementRepository<Tshortcut, Affect>();
+    repository_allocated = true;
+  }
 
   json j = germlines["systems"];
 
