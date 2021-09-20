@@ -2,7 +2,7 @@
   before_script:
     - apt-get update
     - apt-get install -y time valgrind python2.7 python3 wget tar
-    - ln -sf /usr/bin/python2 /usr/bin/python
+    - ln -sf /usr/bin/python2.7 /usr/bin/python
 
 .testing-compilers:
   extends: .install-algo-dependencies
