@@ -131,6 +131,8 @@ class Germline {
 ostream &operator<<(ostream &out, const Germline &germline);
 
 
+json parse_json_g(string path, string json_filename_and_filter, string &systems_filter);
+
 
 enum GERMLINES_FILTER { GERMLINES_ALL,
                         GERMLINES_REGULAR,
@@ -158,13 +160,12 @@ class MultiGermline {
 
   /**
    * Build from a json .g germline file
-   *   path: path, such as 'germline/'
-   *   json_filename_and_filter: filename, optionally embedding a filter, such as 'homo-sapiens.g:IGH,TRG'
+   *   germlines: .g, possibly modified/updated with CLI options
    *   filter: see GERMLINES_FILTER
    *   max_indexing:
    */
-  void build_from_json(string path, string json_filename_and_filter, int filter,
-                       string default_seed="", int default_max_indexing=0, bool build_automaton=false);
+  void build_from_json(json germlines, string system_filter, int filter,
+                      string default_seed, int default_max_indexing, bool build_automaton);
 
   /**
    * Finishes the construction of the multi germline so that it can be used

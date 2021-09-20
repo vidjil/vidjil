@@ -295,13 +295,11 @@ void MultiGermline::add_germline(Germline *germline)
   germlines.push_back(germline);
 }
 
-void MultiGermline::build_from_json(string path, string json_filename_and_filter, int filter,
-                                    string default_seed, int default_max_indexing, bool build_automaton)
+json parse_json_g(string path, string json_filename_and_filter, string &systems_filter)
 {
 
   //extract json_filename and systems_filter
   string json_filename = json_filename_and_filter;
-  string systems_filter = "";
 
   size_t pos_lastcolon = json_filename_and_filter.find_last_of(':');
   if (pos_lastcolon != std::string::npos) {
@@ -326,11 +324,20 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     exit(1);
   }
 
+  // Prepend actual path
+  germlines["path"] = path + '/' + germlines["path"].get<std::string>();
+
+  return germlines;
+}
+
+void MultiGermline::build_from_json(json germlines, string systems_filter, int filter,
+                                    string default_seed, int default_max_indexing, bool build_automaton)
+{
   ref = germlines["ref"].get<std::string>();
   species = germlines["species"].get<std::string>();
   species_taxon_id = germlines["species_taxon_id"];
 
-  path += "/" + germlines["path"].get<std::string>();
+  string path = germlines["path"].get<std::string>();
 
   json j = germlines["systems"];
   
