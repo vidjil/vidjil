@@ -216,17 +216,3 @@ test_clang11_release:
   extends:
     - .testing-clang
     - .testing_various_compilers_release
-test_clang12_manual:
-  image: debian:sid-slim
-  variables:
-    CLANG_VERSION: "12"
-  extends:
-    - .testing-clang
-    - .testing_various_compilers_manual
-test_clang12_release:
-  image: debian:sid-slim
-  variables:
-    CLANG_VERSION: "12"
-  extends:
-    - .testing-clang
-    - .testing_various_compilers_release
