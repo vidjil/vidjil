@@ -306,6 +306,42 @@ Clone.prototype = {
     },
 
     /**
+     * Allow to give a feature name in 5' and/or 3' and to get the trimmed sequence
+     * If feature don't exist, don't trim this part
+     * @param  {String} field_name5 The feature in 5' to use for trimming
+     * @param  {String} field_name3 The feature in 3' to use for trimming
+     * @param  {Bool}   include     Trim or not the feature into the returned sequence
+     * @return {String}             The clone sequence trimmed
+     */
+    trimmingFeature: function(field_name5, field_name3, include=false){
+        var positions5 = this.getSegStartStop(field_name5)
+        var positions3 = this.getSegStartStop(field_name3)
+
+        if (field_name5 != undefined && positions5 !== null) {
+            if (include){
+                pos5 = positions5.start
+            } else {
+                pos5 = positions5.stop
+            }
+        } else {
+            pos5 = 0
+        }
+
+        if (field_name3 != undefined && positions3 !== null) {
+            if (include){
+                pos3 = positions3.stop
+            } else {
+                pos3 = positions3.start
+            }
+        } else {
+           pos3 = this.sequence.length
+        }
+        return this.sequence.substring(pos5, pos3)
+    },
+
+
+
+    /**
      * Get extended sequence of clone
      * @param  {Number} gene_way Germline sequence to get (available option are 5, 4 or 3)
      * @return {string}          If found, the clean germline sequence

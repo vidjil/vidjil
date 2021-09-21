@@ -1011,3 +1011,66 @@ QUnit.test("export_json", function(assert) {
     assert.deepEqual(json_c7_getted.sample, m.samples.original_names,  "correct json values getted; sample original_names" )
 
 });
+
+
+QUnit.test("deletion_feature", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
+    var c4 = new Clone(json_clone4, m, 3, c_attributes)
+    m.initClones()
+
+
+    // Give feature name 5/3, without inclusion
+    // "primer5": {"start": 2, "stop": 10 }, // 1based state
+    // "primer3": {"start": 26, "stop": 34 }
+    //                   primer5                 primer3 
+    var c4_init_seq = "ATgggtccaGTCGTGAACTGTGCATgccgatagaCGAGTACGATGCCAGGTATTACC"
+    var c4_expected_trim53 = "GTCGTGAACTGTGCAT"
+    var c4_expected_trim5  = "GTCGTGAACTGTGCATgccgatagaCGAGTACGATGCCAGGTATTACC".toUpperCase()
+    var c4_expected_trim3  = "ATgggtccaGTCGTGAACTGTGCAT".toUpperCase()
+
+    var trimmed_seq_c2 = c2.trimmingFeature("primer5", "primer3")
+    assert.equal(trimmed_seq_c2, c2.sequence, "correct sequence after trimming (c2; no primer feature; return raw sequence)")
+
+    var trimmed_seq_c4_trim53 = c4.trimmingFeature("primer5", "primer3")
+    var trimmed_seq_c4_trim5  = c4.trimmingFeature("primer5", undefined)
+    var trimmed_seq_c4_trim3  = c4.trimmingFeature(undefined, "primer3")
+    assert.equal(trimmed_seq_c4_trim53, c4_expected_trim53, "correct sequence after trimming (c4; primers 5 & 3)")
+    assert.equal(trimmed_seq_c4_trim5,  c4_expected_trim5,  "correct sequence after trimming (c4; primers 5 only)")
+    assert.equal(trimmed_seq_c4_trim3,  c4_expected_trim3,  "correct sequence after trimming (c4; primers 3 only)")
+
+
+    // with include of features
+    var c4_expected_trim53_include = "tgggtccaGTCGTGAACTGTGCATgccgatag".toUpperCase()
+    var c4_expected_trim5_include  = "tgggtccaGTCGTGAACTGTGCATgccgatagACGAGTACGATGCCAGGTATTACC".toUpperCase()
+    var c4_expected_trim3_include  = "ATgggtccaGTCGTGAACTGTGCATgccgatag".toUpperCase()
+
+
+    var trimmed_seq_c4_trim53_include = c4.trimmingFeature("primer5", "primer3", include=true)
+    var trimmed_seq_c4_trim5_include  = c4.trimmingFeature("primer5", undefined, include=true)
+    var trimmed_seq_c4_trim3_include  = c4.trimmingFeature(undefined, "primer3", include=true)
+    assert.equal(trimmed_seq_c4_trim53_include, c4_expected_trim53_include, "correct sequence after trimming (c4; primers 5 & 3, include feature)")
+    assert.equal(trimmed_seq_c4_trim5_include,  c4_expected_trim5_include,  "correct sequence after trimming (c4; primers 5 only, include feature)")
+    assert.equal(trimmed_seq_c4_trim3_include,  c4_expected_trim3_include,  "correct sequence after trimming (c4; primers 3 only, include feature)")
+
+
+    // with feature outside or partially present in sequence
+    c4.seg.primer5 = {"start": -20, "stop": -10 } // outside of sequence
+    c4.seg.primer3 = {"start": 50, "stop": 66 } // partially on the sequence
+    //                          primer5                                                     primer3 
+    var c4_modprimer_init_seq =          "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGtattacc" // length 57
+    var c4_modprimer_expected_trim53 =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGG"
+    var c4_modprimer_expected_trim5  =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGtattacc".toUpperCase()
+    var c4_modprimer_expected_trim3  =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGG".toUpperCase()
+    
+    var trimmed_seq_c4_modprimer_trim53 = c4.trimmingFeature("primer5", "primer3")
+    var trimmed_seq_c4_modprimer_trim5  = c4.trimmingFeature("primer5", undefined)
+    var trimmed_seq_c4_modprimer_trim3  = c4.trimmingFeature(undefined, "primer3")
+    assert.equal(trimmed_seq_c4_modprimer_trim53, c4_modprimer_expected_trim53, "correct sequence after trimming (c4 outside/partially primer; primers 5 & 3)")
+    assert.equal(trimmed_seq_c4_modprimer_trim5,  c4_modprimer_expected_trim5,  "correct sequence after trimming (c4 outside/partially primer; primers 5 only)")
+    assert.equal(trimmed_seq_c4_modprimer_trim3,  c4_modprimer_expected_trim3,  "correct sequence after trimming (c4 outside/partially primer; primers 3 only)")
+    
+}); 
