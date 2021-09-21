@@ -17,6 +17,14 @@
     - make -C algo CXX=$CXX CC=$CC should
     - make -C algo CXX=$CXX CC=$CC valgrind_unit
 
+.installing-compiler:
+  before_script:
+    - apt-get update
+    - apt-get install -y time valgrind python3 $COMPILER_PKG-$VERSION zlib1g-dev make wget tar python2.7
+    - ln -sf /usr/bin/python2.7 /usr/bin/python
+    - export CXX=${COMPILER_CPP}-$VERSION
+    - export CC=${COMPILER_C}-$VERSION
+
 .testing-gcc:
   extends: .testing-compilers
   variables:
@@ -37,6 +45,7 @@
     VERSION: $GCC_VERSION
   extends:
     - .testing-compilers
+    - .installing-compiler
     
     
 .testing_various_compilers_manual:
@@ -181,6 +190,16 @@ test_clang11_manual:
     - .testing_various_compilers_manual
 test_clang11_release:
   image: silkeh/clang:11
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_release
+test_clang12_manual:
+  image: silkeh/clang:12
+  extends:
+    - .testing-clang
+    - .testing_various_compilers_manual
+test_clang12_release:
+  image: silkeh/clang:12
   extends:
     - .testing-clang
     - .testing_various_compilers_release
