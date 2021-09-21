@@ -131,8 +131,15 @@ class Germline {
 ostream &operator<<(ostream &out, const Germline &germline);
 
 
-json parse_json_g(string path, string json_filename_and_filter);
+/* Get a json .g from a path and filename */
+json parse_json_g(string path, string json_filename);
 
+/* Load a json .g
+   - into an existing json_germlins
+   - from a path and filename
+   - possibly filtering some systems
+ */
+void load_json_g(json &json_germlines, string path, string json_filename, string systems_filter);
 
 enum GERMLINES_FILTER { GERMLINES_ALL,
                         GERMLINES_REGULAR,

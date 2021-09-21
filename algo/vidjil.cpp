@@ -918,7 +918,6 @@ int main (int argc, char **argv)
     {
       // extract json_filename and systems_filter
       string systems_filter;
-      bool some_system = false;
       string json_filename = path_file.second;
       size_t pos_lastcolon = path_file.second.find_last_of(':');
       if (pos_lastcolon != std::string::npos) {
@@ -926,44 +925,7 @@ int main (int argc, char **argv)
         systems_filter = "," + path_file.second.substr(pos_lastcolon+1) + "," ;
       }
 
-      try {
-          json j = parse_json_g(path_file.first, json_filename);
-          if (json_germlines.empty())
-          {
-            // First .g, take everything
-              for (auto kv: j.items()) {
-                if (kv.key() != "systems")
-                  json_germlines[kv.key()] = kv.value();
-            }
-             // TODO: systems_filter/species/... when several .g
-          }
-          // Copy the recombinations
-          for (auto system: j["systems"].items()) {
-            if (systems_filter.size())
-              {
-                 // match 'TRG' inside 'IGH,TRG'
-                 // TODO: code a more flexible match, regex ?
-                if (systems_filter.find("," + system.key() + ",") == string::npos)
-                  continue;
-              }
-
-              some_system = true;
-              json_germlines["systems"][system.key()] = system.value();
-
-              // Store the path inside each system
-              json_germlines["systems"][system.key()]["parameters"]["path"] = j["path"].get<std::string>();
-          }
-          json_germlines["path"] = ".";
-      } catch (std::exception& e) {
-      cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
-      return 1;
-     }
-
-    if (!some_system)
-    {
-      cerr << ERROR_STRING << "No matching germlines" << endl;
-      exit(2);
-    }
+      load_json_g(json_germlines, path_file.first, json_filename, systems_filter);
   }
 
   if (json_germlines.empty())
