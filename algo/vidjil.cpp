@@ -953,7 +953,8 @@ int main (int argc, char **argv)
                   }
               }
 
-              json_germlines["systems"][system.key()] = system.value();
+              // Store the path inside each system
+              json_germlines["systems"][system.key()]["parameters"]["path"] = j["path"].get<std::string>();
               multigermline->buildFromJson(j, GERMLINES_REGULAR,
                                            FIRST_IF_UNCHANGED("", seed, seed_changed),
                                            FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), do_filter_automata);

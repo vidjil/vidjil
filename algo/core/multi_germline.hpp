@@ -206,7 +206,7 @@ json parse_json_g(string path, string json_filename_and_filter, string &systems_
 }
 
 template <typename Tshortcut, typename Affect>
-void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines,
+void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines, int filter,
                                                      std::string default_seed, int default_max_indexing,
                                                      const std::map<std::string, bool> &build_automaton) {
   if (repository == nullptr) {
@@ -214,6 +214,7 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines,
     repository_allocated = true;
   }
 
+  string path = germlines["path"].get<std::string>();
   json j = germlines["systems"];
 
   ref = germlines["ref"].get<std::string>();
@@ -233,6 +234,10 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines,
     json json_parameters = json_value["parameters"];
     std::map<std::string, std::map<std::string, std::string>> config;
     std::vector<std::string> order;
+
+    string s_path = path;
+    if (json_parameters.contains("path"))
+      s_path += "/" + json_parameters["path"].get<std::string>();
 
     for (auto item=recombinations[0].begin(); item!=recombinations[0].end(); item++) {
       if (json_parameters.find("seed_"+item.key()) != json_parameters.end()) {
