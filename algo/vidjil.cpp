@@ -918,6 +918,7 @@ int main (int argc, char **argv)
     {
       // extract json_filename and systems_filter
       string systems_filter;
+      bool some_system = false;
       string json_filename = path_file.second;
       size_t pos_lastcolon = path_file.second.find_last_of(':');
       if (pos_lastcolon != std::string::npos) {
@@ -946,6 +947,7 @@ int main (int argc, char **argv)
                   continue;
               }
 
+              some_system = true;
               json_germlines["systems"][system.key()] = system.value();
 
               // Store the path inside each system
@@ -956,7 +958,13 @@ int main (int argc, char **argv)
       cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
       return 1;
      }
+
+    if (!some_system)
+    {
+      cerr << ERROR_STRING << "No matching germlines" << endl;
+      exit(2);
     }
+  }
 
   if (json_germlines.empty())
   {
