@@ -7,10 +7,16 @@ enum GERMLINES_FILTER { GERMLINES_ALL,
                         GERMLINES_REGULAR,
                         GERMLINES_INCOMPLETE } ;
 
-/**
- * @return a JSON object made of the germlines in the filter string
- */
+
+/* Get a json .g from a path and filename */
 json parse_json_g(string path, string json_filename);
+
+/* Load a json .g
+   - into an existing json_germlins
+   - from a path and filename
+   - possibly filtering some systems
+ */
+void load_json_g(json &json_germlines, string path, string json_filename, string systems_filter);
 
 template <typename Tshortcut, typename Affect>
 class MultiGermline {
@@ -181,7 +187,7 @@ int MultiGermline<Tshortcut, Affect>::getTaxonId() const {
   return species_taxon_id;
 }
 
-json parse_json_g(string path, string json_filename_and_filter, string &systems_filter)
+json parse_json_g(string path, string json_filename)
 {
   //open and parse .g file
   json germlines ;
@@ -203,6 +209,52 @@ json parse_json_g(string path, string json_filename_and_filter, string &systems_
   germlines["path"] = path + '/' + germlines["path"].get<std::string>();
 
   return germlines;
+}
+
+void load_json_g(json &json_germlines, string path, string json_filename, string systems_filter)
+{
+  bool some_system = false;
+
+  try {
+    json j = parse_json_g(path, json_filename);
+
+    if (json_germlines.empty())
+    {
+      // First .g, take everything
+      for (auto kv: j.items()) {
+        if (kv.key() != "systems")
+         json_germlines[kv.key()] = kv.value();
+      }
+      // TODO: species/... when several .g
+    }
+
+    // Copy the recombinations
+    for (auto system: j["systems"].items()) {
+      if (systems_filter.size())
+        {
+          // match 'TRG' inside 'IGH,TRG'
+          // TODO: code a more flexible match, regex ?
+          if (systems_filter.find("," + system.key() + ",") == string::npos)
+            continue;
+        }
+        some_system = true;
+        json_germlines["systems"][system.key()] = system.value();
+
+        // Store the path inside each system
+        json_germlines["systems"][system.key()]["parameters"]["path"] = j["path"].get<std::string>();
+      }
+
+    json_germlines["path"] = ".";
+  } catch (std::exception& e) {
+    cerr << ERROR_STRING << "cannot properly read " << path << "/" << json_filename << ": " << e.what() << endl;
+    exit(1);
+  }
+
+if (!some_system)
+  {
+    cerr << ERROR_STRING << "No matching germlines" << endl;
+    exit(2);
+  }
 }
 
 template <typename Tshortcut, typename Affect>

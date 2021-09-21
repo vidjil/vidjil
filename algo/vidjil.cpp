@@ -920,7 +920,6 @@ int main (int argc, char **argv)
   cout << "Load germlines and build Kmer indexes" << endl ;
   for (pair <string, string> path_file: multi_germline_paths_and_files) {
       string systems_filter;
-      bool some_system = false;
       string json_filename = path_file.second;
       size_t pos_lastcolon = path_file.second.find_last_of(':');
       if (pos_lastcolon != std::string::npos) {
@@ -928,38 +927,11 @@ int main (int argc, char **argv)
         systems_filter = "," + path_file.second.substr(pos_lastcolon+1) + "," ;
       }
 
+      load_json_g(json_germlines, path_file.first, json_filename, systems_filter);
+
       if (multi_germline) {
           try {
-              json j = parse_json_g(path_file.first, json_filename/);
-              if (json_germlines.empty())
-              {
-                  // First .g, take everything
-                  for (auto kv: j.items()) {
-                      if (kv.key() != "systems")
-                          json_germlines[kv.key()] = kv.value();
-                  }
-                  // TODO: systems_filter/species/... when several .g
-              }
-              else
-              {
-                  cout << "======" << endl;
-                  // Other .g, take only the recombinations
-                  for (auto system: j["systems"].items()) {
-                      if (systems_filter.size()) {
-                          // match 'TRG' inside 'IGH,TRG'
-                          // TODO: code a more flexible match, regex ?
-                          if (systems_filter.find("," + system.key() + ",") == string::npos)
-                              continue;
-                      }
-                  }
-              }
-
-              some_system = true;
-              json_germlines["systems"][system.key()] = system.value();
-
-              // Store the path inside each system
-              json_germlines["systems"][system.key()]["parameters"]["path"] = j["path"].get<std::string>();
-              multigermline->buildFromJson(j, GERMLINES_REGULAR,
+              multigermline->buildFromJson(json_germlines, GERMLINES_REGULAR,
                                            FIRST_IF_UNCHANGED("", seed, seed_changed),
                                            FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), do_filter_automata);
           } catch (std::exception& e) {
