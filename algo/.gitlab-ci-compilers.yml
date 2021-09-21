@@ -1,8 +1,8 @@
 .install-algo-dependencies:
   before_script:
     - apt-get update
-    - apt-get install -y time valgrind python3 wget tar
-    
+    - apt-get install -y time valgrind python2.7 python3 wget tar
+    - ln -sf /usr/bin/python2.7 /usr/bin/python
 
 .testing-compilers:
   extends: .install-algo-dependencies
@@ -135,6 +135,17 @@ test_gcc10_release:
   extends:
     - .testing-gcc
     - .testing_various_compilers_release
+test_gcc11_manual:
+  image: gcc:11
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_manual
+test_gcc11_release:
+  image: gcc:11
+  extends:
+    - .testing-gcc
+    - .testing_various_compilers_release
+
 test_clang34_manual:
   image: debian:8-slim
   variables:
@@ -205,4 +216,3 @@ test_clang11_release:
   extends:
     - .testing-clang
     - .testing_various_compilers_release
-    
