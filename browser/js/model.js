@@ -72,6 +72,9 @@ function Model() {
 
     this.search_ratio_limit     = 0.80
     setInterval(function(){return self.updateIcon()}, 100); 
+
+    this.trimming_before_external = false
+    this.trimming_include = false
 }
 
 
@@ -137,6 +140,25 @@ Model.prototype = {
             self.filter.toggle("Size", "=", 0)
             var check = document.getElementById("filter_switch_sample_check")
             check.checked = (self.filter.check("Size", "=", 0) != -1)
+        })
+
+        $("#remove_primer_external").click(function(){
+            // bloquer si pas de primerset 
+            var check = document.getElementById("remove_primer_external_check")
+            if (self.primersSetData == undefined){
+                console.log({ msg: "Please set a primerset before (settings menu)", type: "flash", priority: 1 });
+                check.checked = self.trimming_before_external
+                return
+            } else {
+                self.trimming_before_external = !self.trimming_before_external
+                check.checked = self.trimming_before_external
+                console.default.log( self.trimming_before_external )
+            }
+        })
+        $("#remove_primer_include").click(function(){
+            var check = document.getElementById("remove_primer_include_check")
+            self.trimming_include = !self.trimming_include
+            check.checked = self.trimming_include
         })
 
         
