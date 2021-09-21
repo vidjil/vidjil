@@ -1,7 +1,7 @@
 .install-algo-dependencies:
   before_script:
     - apt-get update
-    - apt-get install -y time valgrind python2.7 python3 wget tar
+    - apt-get install -y time valgrind python2.7 python3 wget tar make zlib1g-dev
     - ln -sf /usr/bin/python2.7 /usr/bin/python
 
 .testing-compilers:
@@ -17,14 +17,6 @@
     - make -C algo CXX=$CXX CC=$CC should
     - make -C algo CXX=$CXX CC=$CC valgrind_unit
 
-.installing-compiler:
-  before_script:
-    - apt-get update
-    - apt-get install -y time valgrind python3 $COMPILER_PKG-$VERSION zlib1g-dev make wget tar python2.7
-    - ln -sf /usr/bin/python2.7 /usr/bin/python
-    - export CXX=${COMPILER_CPP}-$VERSION
-    - export CC=${COMPILER_C}-$VERSION
-
 .testing-gcc:
   extends: .testing-compilers
   variables:
@@ -32,13 +24,10 @@
     CC: gcc
 .testing-clang:
   variables:
-    COMPILER_PKG: "clang"
-    COMPILER_CPP: "clang++"
-    COMPILER_C: "clang"
-    VERSION: $CLANG_VERSION
+    CXX: clang++
+    CC: clang
   extends:
     - .testing-compilers
-    - .installing-compiler      # Overrides the before_script to install the compiler
 
 .installing-testing-gcc:
   variables:
@@ -48,7 +37,6 @@
     VERSION: $GCC_VERSION
   extends:
     - .testing-compilers
-    - .installing-compiler
     
     
 .testing_various_compilers_manual:
@@ -147,72 +135,52 @@ test_gcc11_release:
     - .testing_various_compilers_release
 
 test_clang34_manual:
-  image: debian:8-slim
-  variables:
-    CLANG_VERSION: "3.4"
+  image: silkeh/clang:3.4
   extends:
     - .testing-clang
     - .testing_various_compilers_manual
 test_clang34_release:
-  image: debian:8-slim
-  variables:
-    CLANG_VERSION: "3.4"
+  image: silkeh/clang:3.4
   extends:
     - .testing-clang
     - .testing_various_compilers_release
 test_clang4_manual:
-  image: debian:8-slim
-  variables:
-    CLANG_VERSION: "4.0"
+  image: silkeh/clang:4
   extends:
     - .testing-clang
     - .testing_various_compilers_manual
 test_clang4_release:
-  image: debian:8-slim
-  variables:
-    CLANG_VERSION: "4.0"
+  image: silkeh/clang:4
   extends:
     - .testing-clang
     - .testing_various_compilers_release
 test_clang6_manual:
-  image: debian:8-slim
-  variables:
-    CLANG_VERSION: "6.0"
+  image: silkeh/clang:6
   extends:
     - .testing-clang
     - .testing_various_compilers_manual
 test_clang6_release:
-  image: debian:8-slim
-  variables:
-    CLANG_VERSION: "6.0"
+  image: silkeh/clang:6
   extends:
     - .testing-clang
     - .testing_various_compilers_release
 test_clang7_manual:
-  image: debian:10-slim
-  variables:
-    CLANG_VERSION: "7"
+  image: silkeh/clang:7
   extends:
     - .testing-clang
     - .testing_various_compilers_manual
 test_clang7_release:
-  image: debian:10-slim
-  variables:
-    CLANG_VERSION: "7"
+  image: silkeh/clang:7
   extends:
     - .testing-clang
     - .testing_various_compilers_release
 test_clang11_manual:
-  image: debian:bullseye-slim
-  variables:
-    CLANG_VERSION: "11"
+  image: silkeh/clang:11
   extends:
     - .testing-clang
     - .testing_various_compilers_manual
 test_clang11_release:
-  image: debian:bullseye-slim
-  variables:
-    CLANG_VERSION: "11"
+  image: silkeh/clang:11
   extends:
     - .testing-clang
     - .testing_various_compilers_release
