@@ -74,7 +74,6 @@ function Model() {
     setInterval(function(){return self.updateIcon()}, 100); 
 
     this.trimming_before_external = false
-    this.trimming_include = false
 }
 
 
@@ -154,11 +153,6 @@ Model.prototype = {
                 check.checked = self.trimming_before_external
                 console.default.log( self.trimming_before_external )
             }
-        })
-        $("#remove_primer_include").click(function(){
-            var check = document.getElementById("remove_primer_include_check")
-            self.trimming_include = !self.trimming_include
-            check.checked = self.trimming_include
         })
 
         

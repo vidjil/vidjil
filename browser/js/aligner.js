@@ -655,7 +655,6 @@ Aligner.prototype = {
                 
                 if (c.seg.imgt && address == 'IMGTSeg'){
                     if (c.seg.imgt.trimming_before  == this.m.trimming_before_external &&
-                        c.seg.imgt.trimming_include == this.m.trimming_include &&
                         c.seg.imgt.trimming_primer  == this.m.primerSetCurrent){
                       continue;
                     }         
@@ -663,7 +662,7 @@ Aligner.prototype = {
 
                 if (typeof (c.getSequence()) !== 0){
                     if (this.m.trimming_before_external && this.m.primerSetCurrent != undefined) {
-                        request += ">" + c.index + "#" + c.getName() + "\n" + c.trimmingFeature("primer5", "primer3", this.m.trimming_include) + "\n";
+                        request += ">" + c.index + "#" + c.getName() + "\n" + c.trimmingFeature("primer5", "primer3", false) + "\n";
                     } else {
                         request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
                     }

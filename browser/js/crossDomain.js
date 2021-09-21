@@ -206,7 +206,6 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
                 modelRef.clones[cloneIdx].segEdited = true;
             }
             modelRef.clones[cloneIdx].seg.imgt.trimming_before   = modelRef.trimming_before_external
-            modelRef.clones[cloneIdx].seg.imgt.trimming_include  = modelRef.trimming_include
             modelRef.clones[cloneIdx].seg.imgt.trimming_primer   = modelRef.primerSetCurrent
             modelRef.updateElemStyle(modelRef.getSelected());
 
