@@ -10,7 +10,7 @@ enum GERMLINES_FILTER { GERMLINES_ALL,
 /**
  * @return a JSON object made of the germlines in the filter string
  */
-json parse_json_g(string path, string json_filename_and_filter, string &systems_filter);
+json parse_json_g(string path, string json_filename);
 
 template <typename Tshortcut, typename Affect>
 class MultiGermline {
@@ -78,12 +78,11 @@ public:
   /**
    * Build from a json .g germline file
    *   germlines: json object describing the germlines to be loaded (as in the .g)
-   *   system_filter: A filter for loci to be taken into account, such as "IGH,TRG"
    *   filter: see GERMLINES_FILTER
    *   max_indexing: see constructor of Germline
    *   build_automaton: tell for each segment whether an automaton should be built.
    */
-  void buildFromJson(json germlines, std::string system_filter,
+  void buildFromJson(json germlines, int filter,
                        string default_seed="", int default_max_indexing=0, const std::map<std::string, bool> &build_automaton=std::map<std::string, bool>());
 
   /**
@@ -184,17 +183,6 @@ int MultiGermline<Tshortcut, Affect>::getTaxonId() const {
 
 json parse_json_g(string path, string json_filename_and_filter, string &systems_filter)
 {
-
-  //extract json_filename and systems_filter
-  string json_filename = json_filename_and_filter;
-
-  size_t pos_lastcolon = json_filename_and_filter.find_last_of(':');
-  if (pos_lastcolon != std::string::npos) {
-    json_filename = json_filename_and_filter.substr(0, pos_lastcolon);
-    systems_filter = "," + json_filename_and_filter.substr(pos_lastcolon+1) + "," ;
-  }
-
-
   //open and parse .g file
   json germlines ;
 
@@ -218,7 +206,7 @@ json parse_json_g(string path, string json_filename_and_filter, string &systems_
 }
 
 template <typename Tshortcut, typename Affect>
-void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines, std::string systems_filter,
+void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines,
                                                      std::string default_seed, int default_max_indexing,
                                                      const std::map<std::string, bool> &build_automaton) {
   if (repository == nullptr) {
@@ -277,14 +265,6 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines, std::string
       for (auto &i: config)
         order.push_back(i.first);
     }
-
-    if (systems_filter.size())
-      {
-        // match 'TRG' inside 'IGH,TRG'
-        // TODO: code a more flexible match, regex ?
-        if (systems_filter.find("," + code + ",") == string::npos)
-          continue ;
-      }
 
     switch (filter) {
     case GERMLINES_REGULAR:
