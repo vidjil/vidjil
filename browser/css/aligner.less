@@ -17,13 +17,15 @@
   }
 
   .stats {
-    position: relative;
+    position: absolute;
     text-align: right;
     float: right;
-    width: @width_stats - 3px;
-    padding: 2px 5px;
+    max-width: 347px;
+    padding: 2px 0px;
     overflow: hidden;
     height: 16px;
+    right: 0px;
+    top: 1px;
   }
 
 .list_select{
@@ -136,7 +138,7 @@
     box-shadow: 1px 0 0 @default;
   }
   
-  #segmenter_axis_menu, .seq-fixed{
+  .seq-fixed{
     background : @background;
   }
 
@@ -203,10 +205,11 @@
 .menu-content{
   display: none;
   position: absolute;
-  bottom: 154px;
+  bottom: 20px;
   background-color: white;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
+  margin-left: -10px;
 }
 
 .menu-content a{
@@ -322,4 +325,27 @@
 .seq_layer_underline:hover{
   height: 5px;
   opacity : 1;
+}
+
+#aligner-open-button{
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 12px;
+  background: white;
+  right: auto;
+  text-align: center;
+  line-height: 0px;
+  height: 16px;
+  padding-top: 4px;
+  padding-left: 100px;
+}
+
+#aligner-open-button:hover{
+  background: @highlight;
+}
+
+#aligner-left{
+  position: relative;
+  width: 420px;
 }

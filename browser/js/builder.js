@@ -42,18 +42,20 @@ Builder.prototype = {
     init: function () {
         var self = this;
         try {
-            d3.select("#visu-separator")
-                .on("mousedown", function () {
-                    self.dragSeparator();
-                });
-            d3.select("#visu-container")
-                .on("mouseup", function () {
-                    self.dropSeparator()
-                })
-            d3.select("#visu-container")
-                .on("mousemove", function () {
-                    self.updateSeparator()
-                })
+            if (document.getElementsByClassName("visu-separator").length == 1){
+                d3.select(".visu-separator")
+                    .on("mousedown", function () {
+                        self.dragSeparator();
+                    });
+                d3.select("#visu-container")
+                    .on("mouseup", function () {
+                        self.dropSeparator()
+                    })
+                d3.select("#visu-container")
+                    .on("mousemove", function () {
+                        self.updateSeparator()
+                    })
+            }
             d3.select("#vertical-separator")
                 .on("click", function () {
                     self.toggle_left_container()
@@ -117,14 +119,16 @@ Builder.prototype = {
             var height = position / total_height * 100
             if (height > 90) height = 100;
             if (height < 10) height = 0;
-            
             this.resizeGraph(height)
         }
     },
     
     resizeGraph : function (graphSize) {
+        graphSize = Math.round(graphSize)
         var graph = document.getElementById('visu2');
         graph.style.height = graphSize + "%"
+        var sp = document.getElementById('visu');
+        sp.style.height = (100-graphSize) + "%"
     },
 
     dropSeparator: function () {
@@ -446,15 +450,25 @@ Builder.prototype = {
             val = 'flex';
         }
         $container.css('display', val);
+        return (val == 'flex') 
         //this.m.resize();
     },
 
     toggle_left_container: function () {
-        this.toggle_container('left-container');
+        var open = this.toggle_container('left-container');
+        var icon = $('#vertical-separator').find('.vertical-separator-icon')
+
+        if(open){
+            icon.removeClass("icon-right-open")
+            icon.addClass("icon-left-open")
+        }else{
+            icon.removeClass("icon-left-open")
+            icon.addClass("icon-right-open")
+        }
     },
 
     toggle_right_container: function() {
-        this.toggle_container('right-container');
+        return this.toggle_container('right-container');
     },
 
     build_top_container: function () {

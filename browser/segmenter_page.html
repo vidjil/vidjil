@@ -74,6 +74,9 @@
 <template id='aligner'>
     <div class="aligner">
             <div class="bot-bar">
+                <div id="aligner-open-button"><i class="icon-up-open"></i></div>
+
+                <div id="aligner-left">
                     <div id="cluster" class="aligner-menu" title="Merge the selected clones into a unique cluster"
                             onclick="javascript:self.m.merge()"> Cluster </div>
 
@@ -136,22 +139,22 @@
 
                        </div>
                     </div>
-                    <div class="focus cloneName"></div>
+                    
+                    </div>
 
+                    <div class="focus cloneName"></div>
                             
 
                     <div id="aligner-stats" class="stats"><span  title="">
-                        <span class="stats_content"></span>
-                        <span id="focus_selected" class="button"    title="Focus on selected Clones (ctrl+z)" >
-                            <i class="icon-eye"></i></span>
-                        <span id="hide_selected" class="button"     title="Hide selected Clones (shift+z)">
-                            <i  class="icon-eye-off"></i></span>
-                        <span class="button" id="reset_focus"       title="Reset Focus/Hide filters (z)">
-                            <i  class="icon-cancel-circled-outline"></i></span>
-                        <span class="button" id="star_selected"     title="Tag selected clones">
-                            <i id="tag_icon__multiple" class="icon-star-2"></i></span>
-                        <span id="fixsegmenter" class="button"      title="fix the segmenter in his position">
-                            <i  class="icon-pin-outline"></i></span>
+                            <span class="stats_content"></span>
+                            <span id="focus_selected" class="button"    title="Focus on selected Clones (ctrl+z)" >
+                                <i class="icon-eye"></i></span>
+                            <span id="hide_selected" class="button"     title="Hide selected Clones (shift+z)">
+                                <i  class="icon-eye-off"></i></span>
+                            <span class="button" id="reset_focus"       title="Reset Focus/Hide filters (z)">
+                                <i  class="icon-cancel-circled-outline"></i></span>
+                            <span class="button" id="star_selected"     title="Tag selected clones">
+                                <i id="tag_icon__multiple" class="icon-star-2"></i></span>
                     </div>
             </div>
 
