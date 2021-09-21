@@ -947,7 +947,11 @@ int main (int argc, char **argv)
               }
 
               json_germlines["systems"][system.key()] = system.value();
+
+              // Store the path inside each system
+              json_germlines["systems"][system.key()]["parameters"]["path"] = j["path"].get<std::string>();
           }
+          json_germlines["path"] = ".";
       } catch (std::exception& e) {
       cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
       return 1;

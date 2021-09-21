@@ -342,6 +342,10 @@ void MultiGermline::build_from_json(json germlines, int filter,
     string seed;
     string seed_5, seed_4, seed_3;
 
+    string s_path = path;
+    if (json_parameters.contains("path"))
+      s_path += "/" + json_parameters["path"].get<std::string>();
+
     if (json_parameters.find("seed") != json_parameters.end()) {
       seed = json_parameters["seed"];
     }
@@ -380,7 +384,7 @@ void MultiGermline::build_from_json(json germlines, int filter,
 
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
-      add_germline(new Germline(code, shortcut, path + "/", *it2,
+      add_germline(new Germline(code, shortcut, s_path + "/", *it2,
                                 seed_5, seed_4, seed_3, max_indexing, build_automaton));
     }
   }
