@@ -285,7 +285,7 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines, int filter,
     }
 
     json configJson = {{"order", order}, {"segments", config}};
-    addGermline(new Germline<Tshortcut, Affect>(code, shortcut, path + "/", recombinations,
+    addGermline(new Germline<Tshortcut, Affect>(code, shortcut, s_path + "/", recombinations,
                                                 configJson, repository, max_indexing));
   }
 
@@ -295,11 +295,6 @@ template <typename Tshortcut, typename Affect>
 void MultiGermline<Tshortcut, Affect>::addToIndex(IKmerStore<Tshortcut, Affect> *index) {
   for (const auto& germline : germlines) {
     germline->finish(index);
-  }
-  if (germlines.empty())
-  {
-    cerr << ERROR_STRING << "No matching germlines" << endl;
-    exit(2);
   }
   index->finish_building();
   this->index = index;

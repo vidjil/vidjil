@@ -920,6 +920,7 @@ int main (int argc, char **argv)
   cout << "Load germlines and build Kmer indexes" << endl ;
   for (pair <string, string> path_file: multi_germline_paths_and_files) {
       string systems_filter;
+      bool some_system = false;
       string json_filename = path_file.second;
       size_t pos_lastcolon = path_file.second.find_last_of(':');
       if (pos_lastcolon != std::string::npos) {
@@ -953,6 +954,9 @@ int main (int argc, char **argv)
                   }
               }
 
+              some_system = true;
+              json_germlines["systems"][system.key()] = system.value();
+
               // Store the path inside each system
               json_germlines["systems"][system.key()]["parameters"]["path"] = j["path"].get<std::string>();
               multigermline->buildFromJson(j, GERMLINES_REGULAR,
@@ -977,6 +981,12 @@ int main (int argc, char **argv)
                                                     trim_sequences);
           multigermline->addGermline(germline);
           multigermline->setRepository(germline->getRepository());
+      }
+
+      if (!some_system)
+      {
+          cerr << ERROR_STRING << "No matching germlines" << endl;
+          exit(2);
       }
   }
 
