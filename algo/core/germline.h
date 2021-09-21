@@ -131,7 +131,7 @@ class Germline {
 ostream &operator<<(ostream &out, const Germline &germline);
 
 
-json parse_json_g(string path, string json_filename_and_filter, string &systems_filter);
+json parse_json_g(string path, string json_filename_and_filter);
 
 
 enum GERMLINES_FILTER { GERMLINES_ALL,
@@ -164,7 +164,7 @@ class MultiGermline {
    *   filter: see GERMLINES_FILTER
    *   max_indexing:
    */
-  void build_from_json(json germlines, string system_filter, int filter,
+  void build_from_json(json germlines, int filter,
                       string default_seed, int default_max_indexing, bool build_automaton);
 
   /**

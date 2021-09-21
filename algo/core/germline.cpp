@@ -295,19 +295,8 @@ void MultiGermline::add_germline(Germline *germline)
   germlines.push_back(germline);
 }
 
-json parse_json_g(string path, string json_filename_and_filter, string &systems_filter)
+json parse_json_g(string path, string json_filename)
 {
-
-  //extract json_filename and systems_filter
-  string json_filename = json_filename_and_filter;
-
-  size_t pos_lastcolon = json_filename_and_filter.find_last_of(':');
-  if (pos_lastcolon != std::string::npos) {
-    json_filename = json_filename_and_filter.substr(0, pos_lastcolon);
-    systems_filter = "," + json_filename_and_filter.substr(pos_lastcolon+1) + "," ;
-  }
-
-
   //open and parse .g file
   json germlines ;
 
@@ -330,7 +319,7 @@ json parse_json_g(string path, string json_filename_and_filter, string &systems_
   return germlines;
 }
 
-void MultiGermline::build_from_json(json germlines, string systems_filter, int filter,
+void MultiGermline::build_from_json(json germlines, int filter,
                                     string default_seed, int default_max_indexing, bool build_automaton)
 {
   ref = germlines["ref"].get<std::string>();
@@ -375,14 +364,6 @@ void MultiGermline::build_from_json(json germlines, string systems_filter, int f
         max_indexing = json_parameters["trim_sequences"];
       }
     }
-
-    if (systems_filter.size())
-      {
-        // match 'TRG' inside 'IGH,TRG'
-        // TODO: code a more flexible match, regex ?
-        if (systems_filter.find("," + code + ",") == string::npos)
-          continue ;
-      }
 
     switch (filter) {
     case GERMLINES_REGULAR:
