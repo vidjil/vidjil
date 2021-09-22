@@ -76,6 +76,8 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "Primers gap",
                     "V/5' del'",
                     "J/3' del'",
+                    "V/5' length",
+                    "J/3' length",
                     "[cloneDB] Hits (sample)",
                     "[cloneDB] Hits (set)"
                 ]
@@ -361,6 +363,22 @@ AXIS_DEFAULT = {
     "J/3' del'": {
         doc:        "number of deleted nucleotides at the 5' side of the J/3' segment",
         fct:        function(clone) {return clone.getDeletion('3', 'delLeft')},
+        autofill:   true
+    },
+    "V/5' length": {
+        doc:        "Length of sequence of the gene V/5' as present in the consensus sequence",
+        fct:        function(clone) {
+                        var feature = clone.getSegFeature('5')
+                        return feature.stop - (feature.start ? feature.start : 0)
+                    },
+        autofill:   true
+    },
+    "J/3' length": {
+        doc:        "Length of sequence of the gene J/3' as present in the consensus sequence",
+        fct:        function(clone) {
+                        var feature = clone.getSegFeature('3')
+                        return (feature.stop ? feature.stop : clone.sequence.length) - feature.start
+                    },
         autofill:   true
     },
     "[cloneDB] Hits (sample)": {
