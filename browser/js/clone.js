@@ -603,7 +603,7 @@ Clone.prototype = {
             var t = this.m.t
             //if (this.current_clones == undefined) return "bob"
             var n = this.current_clones[t]
-            var name = this.getDistributionsValues().toString() + " (" + n + " clone" + (n>1 ? "s" : "") + ")"
+            var name = this.getDistributionsValues().toString() + " (" + n + " clonotype" + (n>1 ? "s" : "") + ")"
             return name
         }
         if (this.getCluster().name){
@@ -1889,7 +1889,7 @@ Clone.prototype = {
         this.active = true
         this.hidden = false
 
-        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller clones") != -1)
+        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller clonotypes") != -1)
             this.active = false
     },
 
