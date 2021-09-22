@@ -690,7 +690,11 @@ In this directory you can find scripts of `support` (shared functions), `fixture
 3. Interactive mode
 
 For interactive mode, Cypress should be installed on local computer and some symbolic links should be created.
-More informations will be provided next.
+All actions for linking are made by the rule `functional_browser_cypress_open` of the makefile.
+To open the GUI and select tests to launch, command will be:
+```bash
+make functional_browser_cypress_open
+```
 
 4. Troubleshooting
 
