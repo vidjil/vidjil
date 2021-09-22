@@ -2419,7 +2419,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         
         var string;
         if (clonesIDs.length > 1){
-            string = "Tag for " + clonesIDs.length +  " clones"
+            string = "Tag for " + clonesIDs.length +  " clonotypes"
         } else {
             if (clonesIDs[0][0] == "s") cloneID = clonesIDs[0].substr(3);
             string = "Tag for "+this.clone(clonesIDs[0]).getName()

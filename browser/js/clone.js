@@ -1545,7 +1545,7 @@ Clone.prototype = {
 
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.90); m.closeInfoBox();'>correlated</a> clones</p>"
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
-        html += "<p>Download clone information as "
+        html += "<p>Download clonotype information as "
         html += "<a class='button' id='download_info_"+ this.index +"_airr' onclick='m.exportCloneAs(\"airr\", [" + this.index + "])'>AIRR</a>"
         html += "<a class='button devel-mode' id='download_info_"+ this.index +"_json' onclick='m.exportCloneAs(\"json\", [" + this.index + "])'>JSON</a>"
         html += "</p>"
@@ -1582,13 +1582,13 @@ Clone.prototype = {
 
         //cluster info
         if (isCluster) {
-            html += header("clone")
-            html += row_1("clone name", this.getName())
+            html += header("clonotype")
+            html += row_1("clonotype name", this.getName())
             if (this.hasSizeConstant()){
-                html += row_1("clone short name", this.getShortName())
-                html += "<tr><td>clone size (n-reads (total reads))"
+                html += row_1("clonotype short name", this.getShortName())
+                html += "<tr><td>clonotype size (n-reads (total reads))"
             } else if (this.hasSizeDistrib()) {
-                html += "<tr><td title='Current size; depending of the number of clones curently not filtered'>current clone size<br/>(n-reads (total reads))"
+                html += "<tr><td title='Current size; depending of the number of clonotypes curently not filtered'>current clonotype size<br/>(n-reads (total reads))"
             }
             if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
                 html += "<br />[normalized]"
@@ -1755,7 +1755,7 @@ Clone.prototype = {
         // Result of external tools (inside seg and already defined)
         // Can't be bypass as already used
         var other_infos = {"imgt": "<a target='_blank' href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a>",
-                           "clonedb": "<a target='_blank' href='http://ecngs.vidjil.org/clonedb'>CloneDB</a> "+ (this.numberSampleSetInCloneDB() > 0 ? "<br /> A similar clone exists in "+this.numberSampleSetInCloneDB()+" other patients/runs/sets" : "")};
+                           "clonedb": "<a target='_blank' href='http://ecngs.vidjil.org/clonedb'>CloneDB</a> "+ (this.numberSampleSetInCloneDB() > 0 ? "<br /> A similar clonotype exists in "+this.numberSampleSetInCloneDB()+" other patients/runs/sets" : "")};
         for (s in this.seg) {
             if (this.seg[s] instanceof Object &&
                 other_infos[s] != undefined ) {
@@ -1840,7 +1840,7 @@ Clone.prototype = {
                 span_info.className += " " + this.isWarned() ;
                 span_info.appendChild(icon('icon-warning-1', this.warnText()));
             } else {
-                span_info.appendChild(icon('icon-info', 'clone information'));
+                span_info.appendChild(icon('icon-info', 'clonotype information'));
             }
         }
 

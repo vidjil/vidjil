@@ -216,7 +216,7 @@ List.prototype = {
             star.className = "starBox";
             star_onclick(key, star);
 
-            star.appendChild(icon('icon-star-2', 'clone tag'))
+            star.appendChild(icon('icon-star-2', 'clonotype tag'))
             div.appendChild(star)
             
             this.index_data[key] = value;
@@ -239,7 +239,7 @@ List.prototype = {
 
         var a_split = document.createElement('a')
         a_split.className = "button"
-        a_split.appendChild(icon('icon-plus', 'Show all subclones'))
+        a_split.appendChild(icon('icon-plus', 'Show all sub-clonotypes'))
         a_split.id = "list_split_all"
         a_split.onclick = function () {
             self.m.split_all(true)
@@ -247,14 +247,14 @@ List.prototype = {
         
         var a_unsplit = document.createElement('a')
         a_unsplit.className = "button"
-        a_unsplit.appendChild(icon('icon-minus', 'Hide all subclones'))
+        a_unsplit.appendChild(icon('icon-minus', 'Hide all sub-clonotypes'))
         a_unsplit.id = "list_unsplit_all"
         a_unsplit.onclick = function () {
             self.m.split_all(false)
         }
 
         var filter_label = document.createElement('span')
-        filter_label.appendChild(icon('icon-search-1', 'Search a clone by name, sequence, or V/D/J gene'))
+        filter_label.appendChild(icon('icon-search-1', 'Search a clonotype by name, sequence, or V/D/J gene'))
         
         var filter_input = document.createElement('input')
         filter_input.id = 'filter_input'

@@ -348,7 +348,7 @@ function processCloneDBContents(results,model) {
         final_results['Non viewable samples'] = count_non_viewable;
 
     if (Object.keys(final_results).length === 0)
-        final_results['–'] = "No occurrence of this clone in CloneDB"
+        final_results['–'] = "No occurrence of this clonotype in CloneDB"
 
     final_results.original = results;
     final_results.clones_names = clones_results;
