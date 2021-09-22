@@ -339,7 +339,7 @@ AXIS_DEFAULT = {
         autofill:   true,
     },
     "Number of samples" : {
-        label:      "number of samples sharing each clone",
+        label:      "number of samples sharing each clonotype",
         fct :       function(clone){return clone.getNumberNonZeroSamples()},
         scale:      {   
                         mode: "linear",
@@ -500,8 +500,8 @@ AXIS_DEFAULT = {
         germline:   "multi",
         autofill:   true
     },    
-    "clone consensus length2" : {
-        name:       "clone consensus length",
+    "clonotype consensus length2" : {
+        name:       "clonotype consensus length",
         doc:        "length of the consensus sequence",
         labels:     {
                         "< 50":   {text:"< 50",  side: "left",  type: "bold"},
