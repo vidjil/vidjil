@@ -23,6 +23,13 @@ ALIGNER_MENU = {
             'title': 'Quality score of representative sequence',
             'enabled': false
             
+        },
+        {
+            'id': 'Primers',
+            'text': 'Primers',
+            'layers': ["primer5", "primer3"],
+            'title': 'Primers computed on the sequence',
+            'enabled': false
         }]
     },
 

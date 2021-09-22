@@ -86,6 +86,24 @@ LAYERS = {
         'style': { 'borderColor': "#444" },
         'enabled': false
     },
+    'primer5':
+    {
+        'title': function (s,c) { return c.seg["primer5"].name;},
+        'start': function (s,c) { return c.getSegStart("primer5"); },
+        'stop': function (s,c) { return c.getSegStop("primer5"); },
+        'className': "seq_layer_underline",
+        'style': { 'background': "#4c4" },
+        'enabled': false
+    },
+    'primer3':
+    {
+        'title': function (s,c) { return c.seg["primer3"].name;},
+        'start': function (s,c) { return c.getSegStart("primer3"); },
+        'stop': function (s,c) { return c.getSegStop("primer3"); },
+        'className': "seq_layer_underline",
+        'style': { 'background': "#cc0" },
+        'enabled': false
+    },
 
     'substitution':
     {
