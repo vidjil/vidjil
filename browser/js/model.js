@@ -269,16 +269,16 @@ Model.prototype = {
         ];
 
         this.tag = [
-            {"color" : "#dc322f", "name" : "clone 1", "display" : true},
-            {"color" : "#cb4b16", "name" : "clone 2", "display" : true},
-            {"color" : "#b58900", "name" : "clone 3", "display" : true},
+            {"color" : "#dc322f", "name" : "clonotype 1", "display" : true},
+            {"color" : "#cb4b16", "name" : "clonotype 2", "display" : true},
+            {"color" : "#b58900", "name" : "clonotype 3", "display" : true},
             {"color" : "#268bd2", "name" : "standard", "display" : true},
             {"color" : "#6c71c4", "name" : "standard (noise)", "display" : true},
             {"color" : "#2aa198", "name" : "custom 1", "display" : true},
             {"color" : "#d33682", "name" : "custom 2", "display" : true},
             {"color" : "#859900", "name" : "custom 3", "display" : true},
             {"color" : "",        "name" : "-/-", "display" : true},
-            {"color" : "#bdbdbd", "name" : "smaller clones", "display" : true}
+            {"color" : "#bdbdbd", "name" : "smaller clonotypes", "display" : true}
         ]
 
         this.default_tag=8;

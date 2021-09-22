@@ -45,7 +45,7 @@ function ScatterPlot_menu(default_preset) {
       //"plot by similarity and by locus" :             { "x" : "tsneX_system", "y": "tsneY_system"},
         "read length / GC content" :{ "x": "Read length",               "y" : "GC content"},
         "coverage / GC content" :   { "x": "Sequence length",           "y" : "GC content"},
-        "number of samples sharing each clone" :        { "x": "number of samples",           "y" : "Locus"},
+        "number of samples sharing each clonotype" :        { "x": "number of samples",           "y" : "Locus"},
       //"interpolated length between BIOMED2 primers (inclusive)" : { "x": "primers", "y" : "size"},
         "number of deletions for the segment V/5 in 3" :{ "x": "V/5' del'"},
         "number of deletions for the segment J/3 in 5" :{ "x": "J/3' del'"},
