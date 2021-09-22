@@ -3146,7 +3146,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
                         self.shouldRefresh();
                         self.update();
-                        console.log({ msg: "Clone(s) added!", type: "flash", priority: 1 })
+                        console.log({ msg: "Clonotype(s) added!", type: "flash", priority: 1 })
                     },
                     error: function (xhr, textStatus, errorThrown) {
                         displayAjax(false);

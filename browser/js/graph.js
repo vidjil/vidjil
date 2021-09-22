@@ -330,7 +330,7 @@ Graph.prototype = {
         line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_hideNotShare"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "focus on selected clones"
+        line_content.textContent = "focus on selected clonotypes"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)

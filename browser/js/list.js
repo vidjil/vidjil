@@ -512,10 +512,10 @@ List.prototype = {
             //update cluster icon
             if (this.m.clusters[cloneID].length > 1) {
                 if (clone.split) {
-                    cloneDom.content("clusterBox", icon('icon-minus', 'Hide the subclones').outerHTML)
+                    cloneDom.content("clusterBox", icon('icon-minus', 'Hide the sub-clonotypes').outerHTML)
                     this.showClusterContent(cloneID, false)
                 } else {
-                    cloneDom.content("clusterBox", icon('icon-plus', 'Show the subclones').outerHTML)
+                    cloneDom.content("clusterBox", icon('icon-plus', 'Show the sub-clonotypes').outerHTML)
                     this.hideClusterContent(cloneID, false)
                 }
                 self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
@@ -583,7 +583,7 @@ List.prototype = {
             span_info.onclick = function () {
                 self.m.displayInfoBox(id);
             }
-            span_info.appendChild(icon('icon-info', 'clone information'));
+            span_info.appendChild(icon('icon-info', 'clonotype information'));
 
             var img = document.createElement('span');
             img.onclick = function () {

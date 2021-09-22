@@ -667,7 +667,7 @@ Clone.prototype = {
      * @param {string} name
      * */
     changeName: function (newName) {
-        console.log("changeName() (clone " + this.index + " <<" + newName + ")");
+        console.log("changeName() (clonotype " + this.index + " <<" + newName + ")");
         this.c_name = newName;
         this.m.updateElem([this.index]);
         this.m.analysisHasChanged = true
@@ -692,7 +692,7 @@ Clone.prototype = {
             var loci = [this.getGene("5").substring(0,3), this.getGene("3").substring(0,3) ]
             locus = loci[0]
             if (loci[0] != loci[1]) {
-                console.log("Clone " + this.getName() + "recombines sequences from two separate loci. Using: " + locus)
+                console.log("Clonotype " + this.getName() + "recombines sequences from two separate loci. Using: " + locus)
             }
         }
 
@@ -1221,7 +1221,7 @@ Clone.prototype = {
     changeTag: function (newTag) {
         newTag = "" + newTag
         newTag = newTag.replace("tag", "");
-        console.log("changeTag() (clone " + this.index + " <<" + newTag + ")");
+        console.log("changeTag() (clonotype " + this.index + " <<" + newTag + ")");
         this.tag = newTag;
         this.m.updateElem([this.index]);
         this.m.analysisHasChanged = true;
@@ -1608,7 +1608,7 @@ Clone.prototype = {
                 }
                 html += "</td>"
             }
-            html += "</tr><tr><td>clone size (%)</td>"
+            html += "</tr><tr><td>clonotype size (%)</td>"
             for (var k = 0; k < time_length; k++) {
                 html += "<td>" + this.getStrSize(this.m.samples.order[k]) + "</td>"
             }
@@ -1656,7 +1656,7 @@ Clone.prototype = {
         if (this.hasSizeConstant()) {
             html += "<tr><td>size (n-reads (total reads))</td>"
         } else {
-            html += "<tr><td>total clones size<br/>(n-reads (total reads))</td>"
+            html += "<tr><td>total clonotypes size<br/>(n-reads (total reads))</td>"
         }
         for (var l = 0; l < time_length; l++) {
             html += "<td>" + this.get('reads',this.m.samples.order[l]) + 
@@ -1787,9 +1787,8 @@ Clone.prototype = {
         html += "</table></div>"
         return html
     },
-
     /**
-      * start to fill a node with clone informations common between segmenter and list
+      * start to fill a node with clonotype informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete
       * */
     div_elem: function (div_elem, clear) {
@@ -1911,7 +1910,7 @@ Clone.prototype = {
     },
 
     unselect: function () {
-        console.log("unselect() (clone " + this.index + ")")
+        console.log("unselect() (clonotype " + this.index + ")")
         if (this.select) {
             this.select = false;
             this.m.removeFromOrderedSelectedClones(this.index);
