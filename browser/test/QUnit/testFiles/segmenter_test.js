@@ -208,6 +208,34 @@ QUnit.test("sequence", function(assert) {
     assert.equal(seq3_cdr3.style.width, ((char_stop-char_start-1)*CHAR_WIDTH)+6+"px" );
     assert.equal(seq3_cdr3.style.left,  ( char_start*CHAR_WIDTH)-2.5+"px" );
 
+    //////////////
+    // Check primers
+
+    // no primer values in clone
+    char_start_p5 = seq3.segment_start(LAYERS['primer5'].start);
+    char_stop_p5  = seq3.segment_stop( LAYERS['primer5'].stop);
+    assert.equal(char_start_p5, undefined, "aligner; correct for primer5 start if no primer set");
+    assert.equal(char_stop_p5,  undefined, "aligner; correct for primer5 stop if no primer set");
+
+    // Set a values for primers of clone
+    m.clones[3].seg.primer5 = { seq: "CAGGAGGTGGAGCTGGATATT", start: 17, stop: 37 }
+    m.clones[3].seg.primer3 = { seq: "TATTTGCTGAAGGGACTAAGCTC", start: 112, stop: 134 }
+
+    var seq3_primer5 = seq3.updateLayerDiv('primer5', true);
+    var seq3_primer3 = seq3.updateLayerDiv('primer3', true);
+
+    //use layer functions to retrieve start/stop position
+    char_start_p5 = seq3.segment_start(LAYERS['primer5'].start);
+    char_stop_p5  = seq3.segment_stop( LAYERS['primer5'].stop);
+    char_start_p3 = seq3.segment_start(LAYERS['primer3'].start);
+    char_stop_p3  = seq3.segment_stop( LAYERS['primer3'].stop);
+
+    assert.equal(char_start_p5, 17, "aligner; correct position of primer5 start");
+    assert.equal(char_stop_p5,  38, "aligner; correct position of primer5 stop");
+    assert.equal(char_start_p3, 112, "aligner; correct position of primer3 start");
+    assert.equal(char_stop_p3,  135, "aligner; correct position of primer3 stop");
+
+
     //toFasta
     var done = assert.async(1);
     var delay = 0;
