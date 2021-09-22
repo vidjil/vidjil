@@ -672,13 +672,15 @@ See the makefile rule `functional_browser_cypress`.
 This rule launch the next command:
   ```bash
   docker run \
-      -v $(PWD)/browser/test/cypress:/app/cypress \
-      -v $(PWD)/browser/test/data/:/app/cypress/fixtures/data/  \
-      -v $(PWD)/doc/:/app/cypress/fixtures/doc/  \
-      -v $(PWD):/app/vidjil \
-      -v "$(PWD)/docker/ci/cypress_script.bash":"/app/script.bash" \
-      -v "$(PWD)/docker/ci/cypress.json":"/app/cypress.json" \
-      --env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash
+      -v `pwd`/browser/test/cypress:/app/cypress \
+      -v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
+      -v `pwd`/doc/:/app/cypress/fixtures/doc/  \
+      -v `pwd`/demo/:/app/cypress/fixtures/demo/  \
+      -v `pwd`:/app/vidjil \
+      -v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
+      -v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
+      -v "`pwd`/docker/ci/cypress.json":"/app/cypress.json" \
+      --env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:latest" bash script.bash
   ```
 
 Various local volumes are mounted for these tests.
