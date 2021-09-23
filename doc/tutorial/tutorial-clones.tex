@@ -213,17 +213,8 @@ their gene names or by their DNA sequences.
 
 
 \begin{verbatim}
-  def test_B_clones_06_filter_by_tag
-    assert ($b.clone_in_list("1").present?), "clone 0 is present at starting test"
-
-    # Click on tag switch; clone 1 will be hidden
-    $b.info_colorBy.span(title: 'clone 1').click
-    $b.update_icon.wait_while(&:present?)
-    assert (not $b.clone_in_list("1").present?), "clone 0 is hidden"
-
-    $b.info_colorBy.span(title: 'clone 1').click
-    $b.update_icon.wait_while(&:present?)
-    assert ($b.clone_in_list("1").present?), "clone 0 is present at the end of the test"
+  def test_B_clones_06b_filter_by_tag
+    # TODO
   end
 \end{verbatim}
 
