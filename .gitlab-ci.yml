@@ -337,7 +337,7 @@ ff45-browser-tutorial:
   extends: .browser-tutorial
   variables:
     FIREFOX_VERSION: 45
-  needs: [test_tools, test_browser_unit, code_quality_custom, test_server_unit]
+  needs: [test_tools, test_browser_unit, code_quality_custom]
 
 chrome-browser-tutorial:
   extends: .browser-tutorial-chrome
