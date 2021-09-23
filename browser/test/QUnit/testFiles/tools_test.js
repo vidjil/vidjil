@@ -226,7 +226,7 @@ QUnit.test("processCloneDBContents", function(assert) {
 
     assert.deepEqual(processCloneDBContents(emptyResult, m), {'original': [],
                                                            'clones_names': {},
-                                                           '–': 'No occurrence of this clone in CloneDB'},
+                                                           '–': 'No occurrence of this clonotype in CloneDB'},
                      "processing empty result");
     
     var singleResult = [{'tags': {'sample_set_viewable': [true, true],

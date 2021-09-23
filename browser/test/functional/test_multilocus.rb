@@ -292,11 +292,11 @@ class TestMultilocus < BrowserTest
     for i in 0..3
       smaller = $b.list.li(:index => i)
 
-      assert (smaller.text.include?("smaller clones")), "We should have smaller clones at index %d of the list, instead we have %s " % [i, smaller.text]
+      assert (smaller.text.include?("smaller clonotypes")), "We should have smaller clonotypes at index %d of the list, instead we have %s " % [i, smaller.text]
 
-      assert (smaller.present?), "Smaller clones #%d should be visible, it is not" % [i]
+      assert (smaller.present?), "Smaller clonotypes #%d should be visible, it is not" % [i]
       smaller.hover
-      assert (smaller.present?), "Smaller clones #%d should still be visible after hovering it" % [i]
+      assert (smaller.present?), "Smaller clonotypes #%d should still be visible after hovering it" % [i]
 
       assert (not $b.clone_in_scatterplot(smaller.id).present?), "Smaller clone %d should not be visible in scatterplot" % [i]
     end
