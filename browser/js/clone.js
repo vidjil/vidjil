@@ -313,7 +313,8 @@ Clone.prototype = {
      * @param  {Bool}   include     Trim or not the feature into the returned sequence
      * @return {String}             The clone sequence trimmed
      */
-    trimmingFeature: function(field_name5, field_name3, include=false){
+    trimmingFeature: function(field_name5, field_name3, include){
+
         var positions5 = this.getSegStartStop(field_name5)
         var positions3 = this.getSegStartStop(field_name3)
 
