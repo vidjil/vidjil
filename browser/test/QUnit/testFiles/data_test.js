@@ -6,7 +6,13 @@ json_data_raw = {
     "germline": {
       "TRG": [100,50,100,50],
       "IGH": [100,50,100,50]
-    }
+    },
+    "merged": [
+      3000,
+      0,
+      3000,
+      3000
+    ],
   },
   "samples": {
     "timestamp": ["2014-10-20 13:59:02", "2014-10-25 14:00:32", "2014-11-20 14:03:13", "2014-12-20 14:04:48"],
@@ -30,7 +36,173 @@ json_data_raw = {
       "  ==> segmented 448435 reads (48.2%)\n  ==> found 43444 40-windows in 418595 segments (45%) inside 929901 sequences\n "
     ],
     "producer": ["ha","hi","ho","hu"],
-    "run_timestamp": ["2015-10-20 13:59:02", "2015-10-25 14:00:32", "2015-11-20 14:03:13", "2015-12-20 14:04:48"]
+    "run_timestamp": ["2015-10-20 13:59:02", "2015-10-25 14:00:32", "2015-11-20 14:03:13", "2015-12-20 14:04:48"],
+    "pre_process": {
+      "stats": {
+        "combined_pairs": [
+          3000,
+          null,
+          3000,
+          3000
+        ],
+        "outie_pairs": [
+          1000,
+          null,
+          1000,
+          1000
+        ],
+        "percent_combined": [
+          "75%",
+          null,
+          "75%",
+          "75%"
+        ],
+        "innie_pairs": [
+          2000,
+          null,
+          2000,
+          2000
+        ],
+        "total_pairs": [
+          4000,
+          null,
+          4000,
+          4000
+        ],
+        "uncombined_pairs": [
+          1000,
+          null,
+          1000,
+          1000
+        ],
+        "discarded_pairs": [
+          0,
+          null,
+          0,
+          0
+        ],
+        "percent_discarded": [
+          "0.00%",
+          null,
+          "0.00%",
+          "0.00%"
+        ]
+      },
+      "parameters": {
+        "allow_outie_pairs": [
+          "true", 
+          null,
+          "true", 
+          "true"
+        ], 
+        "input_format": [
+          "FASTQ, phred_offset=33", 
+          null,
+          "FASTQ, phred_offset=33", 
+          "FASTQ, phred_offset=33"
+        ], 
+        "min_overlap": [
+          10, 
+          null,
+          10, 
+          10
+        ], 
+        "max_overlap": [
+          65, 
+          null,
+          65, 
+          65
+        ], 
+        "output_format": [
+          "FASTQ, phred_offset=33", 
+          null,
+          "FASTQ, phred_offset=33", 
+          "FASTQ, phred_offset=33"
+        ], 
+        "combiner_threads": [
+          1, 
+          null,
+          1, 
+          1
+        ], 
+        "cap_mismatch_quals": [
+          "false", 
+          null,
+          "false", 
+          "false"
+        ], 
+        "min_overlap_outie": [
+          35, 
+          null,
+          35, 
+          35
+        ], 
+        "max_mismatch_density": [
+          0.25, 
+          null,
+          0.25, 
+          0.25
+        ]
+      }, 
+      "producer": [
+        "FLASH v2.2.00", 
+        null,
+        "FLASH v2.2.00", 
+        "FLASH v2.2.00"
+      ], 
+      "commandline": [
+        "pre_process commandline sample 1", 
+        null,
+        "pre_process commandline sample 3",
+        "pre_process commandline sample 4"
+
+      ], 
+      "output": [
+        [
+          "r-reads_sample_1.gz.extendedFrags.fastq", 
+          "r-reads_sample_1.gz.notCombined_1.fastq", 
+          "r-reads_sample_1.gz.notCombined_2.fastq", 
+          "r-reads_sample_1.gz.hist", 
+          "r-reads_sample_1.gz.histogram"
+        ],
+        null,
+        [
+          "r-reads_sample_3.gz.extendedFrags.fastq", 
+          "r-reads_sample_3.gz.notCombined_1.fastq", 
+          "r-reads_sample_3.gz.notCombined_2.fastq", 
+          "r-reads_sample_3.gz.hist", 
+          "r-reads_sample_3.gz.histogram"
+        ], 
+        [
+          "r-reads_sample_4.gz.extendedFrags.fastq", 
+          "r-reads_sample_4.gz.notCombined_1.fastq", 
+          "r-reads_sample_4.gz.notCombined_2.fastq", 
+          "r-reads_sample_4.gz.hist", 
+          "r-reads_sample_4.gz.histogram"
+        ]
+      ], 
+      "input": [
+        [
+          "/some/sequence_sample_1_1", 
+          "/some/sequence_sample_1_2"
+        ], 
+        null,
+        [
+          "/some/sequence_sample_3_1", 
+          "/some/sequence_sample_3_2"
+        ], 
+        [
+          "/some/sequence_sample_4_1", 
+          "/some/sequence_sample_4_2"
+        ]
+      ], 
+      "run_timestamp": [
+        "2020-05-22 10:50:53", 
+        null,
+        "2020-05-22 10:50:53", 
+        "2020-05-22 10:50:53"
+      ]
+    }, 
   },
   "data": {
     "dataTest1" : [45,60,52,60],
