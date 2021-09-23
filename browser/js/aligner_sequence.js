@@ -569,9 +569,9 @@ Sequence.prototype = {
     },   
 
     searchString: function(){
-        if (this.m.filter.check("Clone", "search") == -1) return "";
+        if (this.m.filter.check("Clonotype", "search") == -1) return "";
 
-        var f = this.m.filter.filters[this.m.filter.check("Clone", "search")]
+        var f = this.m.filter.filters[this.m.filter.check("Clonotype", "search")]
         var seq = this.seq;  
 
         var str = seq.filter(function(e){return e != SYMBOL_VOID;}).join('').toUpperCase();

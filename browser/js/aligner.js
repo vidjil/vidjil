@@ -229,10 +229,10 @@ Aligner.prototype = {
   
 
         // Focus/hide/label
-        document.getElementById("focus_selected").onclick = function () { self.m.filter.add("Clone", "focus", self.m.getSelected()); };
-        document.getElementById("hide_selected").onclick = function () { self.m.filter.add("Clone", "hide", self.m.getSelected()); };
-        document.getElementById("reset_focus").onclick = function () {  self.m.filter.remove("Clone", "focus")
-                                                                        self.m.filter.remove("Clone", "hide") };
+        document.getElementById("focus_selected").onclick = function () { self.m.filter.add("Clonotype", "focus", self.m.getSelected()); };
+        document.getElementById("hide_selected").onclick = function () { self.m.filter.add("Clonotype", "hide", self.m.getSelected()); };
+        document.getElementById("reset_focus").onclick = function () {  self.m.filter.remove("Clonotype", "focus")
+                                                                        self.m.filter.remove("Clonotype", "hide") };
         document.getElementById("star_selected").onclick = function (e) {
             if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
         document.getElementById("cluster").onclick = function () { self.m.merge(); };
@@ -913,8 +913,8 @@ Aligner.prototype = {
             $("#hide_selected").css("display", "none")
         }
 
-        if (this.m.filter.check("Clone", "focus") != -1 ||
-            this.m.filter.check("Clone", "hide") != -1)
+        if (this.m.filter.check("Clonotype", "focus") != -1 ||
+            this.m.filter.check("Clonotype", "hide") != -1)
                 $("#reset_focus").css("display", "")
             else
                 $("#reset_focus").css("display", "none")

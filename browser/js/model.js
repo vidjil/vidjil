@@ -1447,9 +1447,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         other_quantifiable_clones.forEach(function(pos) {
             var c = self.clone(pos);
             c.reads = newOthers[c.germline];
-            c.name = c.germline + " smaller clones";
-            if (this.filter && this.filter.check("Clone", "hide") != -1)
-                c.name += " + filtered clones";
+            c.name = c.germline + " smaller clonotypes";
+            if (this.filter && this.filter.check("Clonotype", "hide") != -1)
+                c.name += " + filtered clonotypes";
         })
     },
     

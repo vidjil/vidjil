@@ -96,7 +96,7 @@ AXIS_ALIGNER = [
 AXIS_COLOR = [    
                     "Size",
                     "Tag",
-                    "Clone",
+                    "Clonotype",
                     "CDR3",
                     "Locus",
                     "N length",
@@ -117,7 +117,7 @@ AXIS_DEFAULT = {
         doc:        "",
         fct:        function(clone) {return clone.top},
     },
-    "Clone": {
+    "Clonotype": {
         doc:        "",
         labels:     function(){
                         var l = {}
