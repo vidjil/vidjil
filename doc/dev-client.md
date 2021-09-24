@@ -672,6 +672,7 @@ See the makefile rule `functional_browser_cypress`.
 This rule launch the next command:
   ```bash
   docker run \
+      --user $(id -u):$(id -g) \
       -v `pwd`/browser/test/cypress:/app/cypress \
       -v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
       -v `pwd`/doc/:/app/cypress/fixtures/doc/  \
