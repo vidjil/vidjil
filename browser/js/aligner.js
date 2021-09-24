@@ -871,7 +871,7 @@ Aligner.prototype = {
 
             if (length) t += length ;
             if (nb_clones_not_constant) t += '+' + nb_clones_not_constant;
-            t += " clone" + (length+nb_clones_not_constant>1 ? "s" : "") + ", ";
+            t += " clonotype" + (length+nb_clones_not_constant>1 ? "s" : "") + ", ";
 
             t += this.m.toStringThousands(sumRawReads) + " read" + (sumRawReads>1 ? "s" : "");
 
