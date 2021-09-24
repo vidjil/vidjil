@@ -366,7 +366,7 @@ AXIS_DEFAULT = {
         autofill:   true
     },
     "V/5' length": {
-        doc:        "Length of sequence of the gene V/5' as present in the consensus sequence",
+        doc:        "length of the V/5' gene in the consensus sequence",
         fct:        function(clone) {
                         var feature = clone.getSegFeature('5')
                         return feature.stop - (feature.start ? feature.start : 0)
@@ -374,7 +374,7 @@ AXIS_DEFAULT = {
         autofill:   true
     },
     "J/3' length": {
-        doc:        "Length of sequence of the gene J/3' as present in the consensus sequence",
+        doc:        "length of the J/3' gene in the consensus sequence",
         fct:        function(clone) {
                         var feature = clone.getSegFeature('3')
                         return (feature.stop ? feature.stop : clone.sequence.length) - feature.start
