@@ -1473,8 +1473,24 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
         html += "<tr><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
 
-
+        // 
         var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
+
+        // Sub-table diversity
+        if ( typeof this.diversity != 'undefined') {
+            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
+            for (var key_diversity in this.diversity) {
+                html += "<tr><td> " + key_diversity.replace('index_', '') + "</td><td>" + this.getDiversity(key_diversity, timeID) + '</td></tr>'
+            }
+        }
+        if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
+            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
+            for (var k in this.samples.diversity[timeID]) {
+                html += "<tr><td> " + k.replace('index_', '') + "</td><td>" + this.samples.diversity[timeID][k].toFixed(3) + '</td></tr>'
+            }
+        }
+
+        // Sub-table preprocess
         if ( typeof this.samples.pre_process != 'undefined') {
 
             html_preprocess = "<tr><td class='header' "+colspan_header+"> Preprocess </td></tr>"
@@ -1508,21 +1524,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
             if (html_preprocess != "<tr><td class='header' "+colspan_header+"> Preprocess </td></tr>"){
                 html += html_preprocess
-            }
-        }
-
-
-        if ( typeof this.diversity != 'undefined') {
-            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
-            for (var key_diversity in this.diversity) {
-                html += "<tr><td> " + key_diversity.replace('index_', '') + "</td><td>" + this.getDiversity(key_diversity, timeID) + '</td></tr>'
-            }
-        }
-
-        if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
-            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
-            for (var k in this.samples.diversity[timeID]) {
-                html += "<tr><td> " + k.replace('index_', '') + "</td><td>" + this.samples.diversity[timeID][k].toFixed(3) + '</td></tr>'
             }
         }
 
