@@ -1486,20 +1486,20 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             var sorted_preprocess = Object.keys(this.samples.pre_process).sort(sort_preprocess)
             for (var key_preprocess in sorted_preprocess) {
                 var key   = sorted_preprocess[key_preprocess]
-                var value = this.samples.pre_process[key]
-                if (value == null){
+                var value_pre = this.samples.pre_process[key]
+                if (value_pre == null){
                     continue
-                } else if (Array.isArray(value)){
-                    if (value[timeID] == null){ continue }
-                    html_preprocess += row_1(key, value[timeID], undefined, 1)
-                } else if (typeof(value) == "object"){
-                    if (value == null){
+                } else if (Array.isArray(value_pre)){
+                    if (value_pre[timeID] == null){ continue }
+                    html_preprocess += row_1(key, value_pre[timeID], undefined, 1)
+                } else if (typeof(value_pre) == "object"){
+                    if (value_pre == null){
                         continue
                     } else {
-                        var value_keys = Object.keys(value)
+                        var value_keys = Object.keys(value_pre)
                         for (var i = 0; i < value_keys.length; i++) {
                             var subkey = value_keys[i]
-                            var subval = value[subkey]
+                            var subval = value_pre[subkey]
                             if (subval[timeID] == null){ continue }
                             html_preprocess += row_1(key+" - "+subkey, subval[timeID], undefined, time_length)
                         }
@@ -1556,10 +1556,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                     }
                     html += "<td class='header'>"+this.getSampleName(posSample)+"</td>"
                     values = overlap[posSample]
-                    for (var i = 0; i < (overlap[posSample].length); i++) {
-                        value = overlap[posSample][i]
+                    for (var j = 0; j < (overlap[posSample].length); j++) {
+                        value = overlap[posSample][j]
 
-                        if (i == posSample){
+                        if (j == posSample){
                             html += "<td class=''>" + "--" + '</td>'
                         } else {
                             html += "<td>" + value + '</td>'
