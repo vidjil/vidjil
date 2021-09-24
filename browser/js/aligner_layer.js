@@ -92,7 +92,7 @@ LAYERS = {
         'start': function (s,c) { return c.getSegStart("primer5"); },
         'stop': function (s,c) { return c.getSegStop("primer5"); },
         'className': "seq_layer_underline",
-        'style': { 'background': "#4c4" },
+        'style': { "background-color": "rgb(32, 30, 30)" },
         'enabled': false
     },
     'primer3':
@@ -101,7 +101,7 @@ LAYERS = {
         'start': function (s,c) { return c.getSegStart("primer3"); },
         'stop': function (s,c) { return c.getSegStop("primer3"); },
         'className': "seq_layer_underline",
-        'style': { 'background': "#cc0" },
+        'style': { "background-color": "rgb(32, 30, 30)" },
         'enabled': false
     },
 
