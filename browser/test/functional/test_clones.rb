@@ -377,14 +377,14 @@ class TestClones < BrowserTest
     $b.clone_in_list("22").click(:control)
     $b.update_icon.wait_while(&:present?)
     stats = $b.statsline
-    assert (stats.text.include? '+5 clones'), ">> Correct stats, should have '+5' clones"
+    assert (stats.text.include? '+5 clonotypes'), ">> Correct stats, should have '+5' clones"
     assert (stats.text.include? '50 reads'),  ">> Correct stats, should have 50 reads"
     assert (stats.text.include? '20.00%'),    ">> Correct stats, should be at 20.00%"
     # add a real clone
     $b.clone_in_list("0").click(:control)
     $b.update_icon.wait_while(&:present?)
     stats = $b.statsline
-    assert (stats.text.include? '1+5 clones'), ">> Correct stats, should have '4+5' clones"
+    assert (stats.text.include? '1+5 clonotypes'), ">> Correct stats, should have '4+5' clones"
     assert (stats.text.include? '100 reads'),  ">> Correct stats, should have 100 reads"
     assert (stats.text.include? '40.00%'),     ">> Correct stats, should be at 40.00%"
   
@@ -399,7 +399,7 @@ class TestClones < BrowserTest
     $b.clone_in_list("19").click(:control)
     stats = $b.statsline
     $b.update_icon.wait_while(&:present?)
-    assert (stats.text.include? '5+5 clones'), ">> Correct stats, should have '5+5' clones"
+    assert (stats.text.include? '5+5 clonotypes'), ">> Correct stats, should have '5+5' clones"
     assert (stats.text.include? '200 reads'),  ">> Correct stats, should have 50 reads"
     assert (stats.text.include? '80.00%'),     ">> Correct stats, should be at 80.00%"
   end

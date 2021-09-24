@@ -140,7 +140,7 @@ class TestMultilocus < BrowserTest
     assert ( $b.clone_in_segmenter('25').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
 
     stats = $b.statsline
-    assert (stats.text.include? '1 clone'), ">> Incorrect stats, should have one clone"
+    assert (stats.text.include? '1 clonotype'), ">> Incorrect stats, should have one clone"
     assert (stats.text.include? '962 reads'), ">> Incorrect stats, should have 962 reads"
     assert (stats.text.include? '0.129%'), ">> Incorrect stats, should be at 0.129%"
   end
@@ -283,7 +283,7 @@ class TestMultilocus < BrowserTest
 
     $b.window(:title => "analysis-example.vidjil").use do
       assert ($b.element(:class => 'clone_name').text.include? "TRBV13-1*02"), "Selected clone should be present"
-      assert (not $b.text.include? "smaller clone"), "Smaller clone should not be present"
+      assert (not $b.text.include? "smaller clonotype"), "Smaller clonotype should not be present"
     end
 
   end
