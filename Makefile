@@ -64,8 +64,7 @@ build_cypress_image:
 functional_browser_cypress_open:
 	# Need to create a symbolic link; but allow to directly see result
 	# Usefull for fast debugging; allow to launch script one by one
-	rm -r cypress
-	ln -s browser/test/cypress
+	ln -sf browser/test/cypress
 	cypress open --env workdir=../,host=localhost
 
 functional_browser_cypress:
