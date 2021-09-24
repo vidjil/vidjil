@@ -697,6 +697,8 @@ To open the GUI and select tests to launch, command will be:
 make functional_browser_cypress_open
 ```
 
+A test_sandbox is avalaible to quicly test some modification made in the browser. See file `test_sandbox.js` and other script file for fast developpment.
+
 4. Troubleshooting
 
   1. Xvfb error
