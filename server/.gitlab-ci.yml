@@ -1,8 +1,8 @@
 
 .test_cypress_server:
   stage: test_cypress_server
-  extends:
-    - .need_for_staged_test
+  # extends:
+  #   - .need_for_staged_test
   script:
     - docker pull "vidjilci/cypress_with_browsers:latest"
     - >
@@ -38,7 +38,7 @@ server_firefox_supported:
     - .test_server_base
     - .test_cypress_base
     - .test_cypress_server
-    - .need_for_moderate_test
+    - .need_for_moderate_server
   stage: test_cypress_server
   variables:
     BROWSER: browsers/firefox_supported/firefox

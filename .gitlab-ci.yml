@@ -75,20 +75,27 @@ include:
 ###########################
 ###  Needs declaration  ###
 ###########################
-.need_for_independant_test: &need_for_independant
+.need_for_independant_test:
   needs: []
 
-.need_for_quick_test: &need_for_quick
+.need_for_quick_test:
   needs: []
 
-.need_for_moderate_test: &need_for_moderate
-  needs: [test_tools, test_browser_unit, code_quality_custom, test_server_unit]
+### Client part should not containt server stage
+.need_for_moderate_client:
+  needs: [test_tools, test_browser_unit, code_quality_custom]
+.need_for_late_client:
+  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial]
+.need_for_staged_client:
+  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial]
 
-.need_for_late_test: &need_for_late
-  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial, server_firefox_supported, server_tutorial_server]
-
-.need_for_staged_test: &need_for_staged
-  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial, server_firefox_supported, server_tutorial_server]
+### Server part should not containt client stage
+.need_for_moderate_server:
+  needs: [test_tools, code_quality_custom, test_server_unit]
+.need_for_late_server:
+  needs: [server_firefox_supported, server_tutorial_server]
+.need_for_staged_server:
+  needs: [server_firefox_supported, server_tutorial_server]
 
 
 
@@ -276,8 +283,8 @@ test_browser_unit:
     - schedules
   tags:
     - web
-  extends:
-    - .need_for_staged_test
+  # extends:
+  #   - .need_for_staged_client
 
 .browser-functional-external-chrome:
   extends: .browser-functional-external
@@ -292,7 +299,7 @@ ff32-browser-functional:
 ff45-browser-functional:
   extends:
     - .browser-functional
-    - .need_for_moderate_test
+    - .need_for_moderate_client
   variables:
     FIREFOX_VERSION: 45
 
@@ -312,7 +319,7 @@ ff32-browser-functional-external:
 ff45-browser-functional-external:
   extends:
     - .browser-functional-external
-    - .need_for_moderate_test
+    - .need_for_moderate_client
   variables:
     FIREFOX_VERSION: 45
 
@@ -362,7 +369,7 @@ ff32-browser-tutorial:
 ff45-browser-tutorial:
   extends:
     - .browser-tutorial
-    - .need_for_late_test
+    - .need_for_moderate_client
   variables:
     FIREFOX_VERSION: 45
 
@@ -380,7 +387,7 @@ server_tutorial_server:
   stage: test_tutorial_server
   extends:
     - .test_server_base
-    - .need_for_moderate_test
+    - .need_for_moderate_server
   retry: 1
   script:
     - source /etc/profile.d/rvm.sh
@@ -515,7 +522,7 @@ ff32-server-functional:
 ff45-server-functional:
   extends:
     - .test_server_functional
-    - .need_for_moderate_test
+    - .need_for_moderate_server
   variables:
     FIREFOX_VERSION: 45
 
