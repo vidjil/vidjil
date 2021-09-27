@@ -91,7 +91,7 @@ include:
 
 ### Server part should not containt client stage
 .need_for_moderate_server:
-  needs: [test_tools, code_quality_custom, test_server_unit]
+  needs: [test_tools, test_server_unit]
 .need_for_late_server:
   needs: [server_firefox_supported, server_tutorial_server]
 .need_for_staged_server:
