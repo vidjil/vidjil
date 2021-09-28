@@ -411,7 +411,9 @@ AXIS_DEFAULT = {
                         "mode": "linear",
                         "min": 0,
                         "max": 1
-                    }
+                    },
+        min_step:   0.1,
+        max_step:   0.1
     },
     "TSNEY": {   
         doc:        "",
@@ -423,141 +425,40 @@ AXIS_DEFAULT = {
                         "mode": "linear",
                         "min": 0,
                         "max": 1
-                    }
-    },
-
-
-/*  "tsneX": {
-        label: "distance (X)",
-        axis: new FloatAxis(this.m),
-        fct: function(clone){
-            var r = self.gridSizeH/self.gridSizeW;
-            var k=1;
-            var yMax = self.m.similarity_builder.yMax
-            if (yMax > r) k = r/yMax
-            return k*clone.tsne[0] + (1-k)/2
-        },
-        log: false,
-        min: 0,
-        max: 1,
-        hide : true,
-        display_label : false
-    },
-    "tsneY": {
-        label: "distance (Y)",
-        axis: new FloatAxis(this.m),
-        fct: function(clone){
-            var r = self.gridSizeH/self.gridSizeW;
-            var k=1;
-            var yMax = self.m.similarity_builder.yMax
-            if (yMax > r) k = r/yMax
-            return k*clone.tsne[1]
-        },
-        log: false,
-        min: 0,
-        max: function(){return self.gridSizeH/self.gridSizeW},
-        hide : true,
-        display_label : false
-    },
-    "tsneX_system": {
-        label: "distance (X), by locus",
-        axis: new FloatAxis(this.m),
-        fct: function(clone){
-            var r = self.gridSizeH/self.gridSizeW;
-            var k=1;
-            var yMax = self.m.similarity_builder.system_yMax[clone.get("germline")]
-            if (yMax > r) k = r/yMax
-            return k*clone.tsne_system[0] + (1-k)/2
-        },
-        log: false,
-        min: 0,
-        max: 1,
-        hide : true,
-        display_label : false
-    },
-    "tsneY_system": {
-        label: "distance (Y), by locus",
-        axis: new FloatAxis(this.m),
-        fct: function(clone){
-            var r = self.gridSizeH/self.gridSizeW;
-            var k=1;
-            var yMax = self.m.similarity_builder.system_yMax[clone.get("germline")]
-            if (yMax > r) k = r/yMax
-            return k*clone.tsne_system[1]
-        },
-        log: false,
-        min: 0,
-        max: function(){return self.gridSizeH/self.gridSizeW},
-        hide : true,
-        display_label : false
-    },
-    "test1": {
-        name:       "test1",
-        labels:     {
-                        "not productive":   {text:"not productive",   side: "left"},
-                        "no CDR3 detected": {text:"no CDR3 detected", side: "left"},
-                        "productive":       {text:"productive",       side: "right", type: "bold"},
                     },
+        min_step:   0.1,
+        max_step:   0.1
+    },
+    "TSNEX_LOCUS": {   
+        doc:        "",
+        germline:   function(){return m.germlineV.system},
         fct:        function(clone) {
-                        if (clone.germline == m.germlineV.system) return clone.getGene("5", false)
-                        return clone.getProductivityName();
+                        if (clone.tsne_system )return clone.tsne_system[0]
+                        return undefined
                     },
-        germline:   "multi",
-        autofill:   true,
-        color: {
-            fct : function(t){return d3.interpolateRainbow(t)},
-            offset: 0.5
-        }
-    },
-    "test2": {
-        name:       "test2",
-        labels:     {
-                        "a":  {text:"pok", side: "right", sub :{
-                            "0":    {text:"pim"},
-                            "1":    {text:"pam"},
-                            "2":    {text:"poum"},
-                        }},
-                        "b":  {text:"pik", side: "left", sub :{
-                            "3":    {text:"z"},
-                            "4":    {text:"x"},
-                        }},
-                        "5":  {text:"pok!", side: "right"},
-                    },
-        fct:        function(clone) {
-                        return Math.floor(Math.random() * 5); 
-                    },
-        germline:   "multi"
-    },
-    "test3": {
-        name:       "test3",
-        labels:     {
-            "0":   {text:"0",   side: "left",  type:"slim"}
-        },
         scale:      {
-                        "mode":"log"
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
                     },
-        fct:        function(clone) {
-                        if (clone.getSizeZero()<0.0001) return 0
-                        return Math.floor(Math.pow(10, 1+Math.random()*8)); 
+        min_step:   0.1,
+        max_step:   0.1
+    },
+    "TSNEY_LOCUS": {   
+        doc:        "",
+        germline:   function(){return m.germlineV.system},
+        fct:        function(clone) {            
+                        if (clone.tsne_system )return clone.tsne_system[1]
+                        return undefined
                     },
-        germline:   "multi",
-        autofill:   true
-    },    
-    "clonotype consensus length2" : {
-        name:       "clonotype consensus length",
-        doc:        "length of the consensus sequence",
-        labels:     {
-                        "< 50":   {text:"< 50",  side: "left",  type: "bold"},
-                        "> 250" : {text:"> 250", side: "right", type: "bold"},
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
                     },
-        fct:        function(clone) {
-                        var length = clone.getSequenceLength();
-                        if (length < 50)  return "< 50"
-                        if (length > 250) return "> 250" 
-                        return length
-                    },
-        autofill:   true
-    },*/
+        min_step:   0.1,
+        max_step:   0.1
+    }
 }
 
 
