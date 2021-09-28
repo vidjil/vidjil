@@ -30,25 +30,25 @@ function ScatterPlot_menu(default_preset) {
 
     // Plot Presets
     this.preset = {
-        "V/J (genes)" :             { "x" : "V/5' gene",                "y": "J/3' gene", mode:"grid"},
-        "V/J (alleles)" :           { "x" : "V/5 allele",               "y": "J/3 allele"},
-        "V/N length" :              { "x" : "V/5' gene",                "y": "N length"},
-        "read length / locus" :     { "x" : "Read length",              "y": "Locus"},
-        "read length distribution" :{ "x" : "Read length"},
-        "V distribution" :          { "x" : "V/5' gene"},
-        "N length distribution" :   { "x" : "N length"},
-        "CDR3 length distribution" :{ "x" : "CDR3 length"},
-        "J distribution" :          { "x" : "J/3' gene"},
-        "compare two samples" :     { "x" : "Size",                     "y": "Size (other)"},
-        "read length / GC content" :{ "x": "Read length",               "y" : "GC content"},
-        "coverage / GC content" :   { "x": "Sequence length",           "y" : "GC content"},
-        "number of samples sharing each clonotype" :        { "x": "number of samples",           "y" : "Locus"},
-      //"interpolated length between BIOMED2 primers (inclusive)" : { "x": "primers", "y" : "size"},
-        "number of deletions for the segment V/5 in 3" :{ "x": "V/5' del'"},
-        "number of deletions for the segment J/3 in 5" :{ "x": "J/3' del'"},
-        "Primers" :                 { "x": "Primers"},
-        "Similarity"    :           { "x" : "TSNEX",                    "y": "TSNEY",       mode : "tsne"},
-        "Similarity (locus)":       { "x" : "TSNEX_LOCUS",              "y": "TSNEY_LOCUS", mode : "tsne"}
+        "V/J (genes)" :             { "x": "V/5' gene",         "y": "J/3' gene",       mode: "grid"},
+        "V/J (alleles)" :           { "x": "V/5 allele",        "y": "J/3 allele" ,     mode: "grid"},
+        "V/N length" :              { "x": "V/5' gene",         "y": "N length",        mode: "grid"},
+        "read length / locus" :     { "x": "Read length",       "y": "Locus",           mode: "grid"},
+        "read length distribution" :{ "x": "Read length",                               mode: "bar"},
+        "V distribution" :          { "x": "V/5' gene",                                 mode: "bar"},
+        "N length distribution" :   { "x": "N length",                                  mode: "bar"},
+        "CDR3 length distribution" :{ "x": "CDR3 length",                               mode: "bar"},
+        "J distribution" :          { "x": "J/3' gene",                                 mode: "bar"},
+        "compare two samples" :     { "x": "Size",              "y": "Size (other)",    mode: "grid"},
+        "read length / GC content" :{ "x": "Read length",       "y": "GC content",      mode: "grid"},
+        "coverage / GC content" :   { "x": "Sequence length",   "y": "GC content",      mode: "grid"},
+        "number of samples sharing each clonotype" :    { "x": "number of samples", 
+                                                                "y" : "Locus",          mode: "grid"},
+        "number of deletions for the segment V/5 in 3" :{ "x": "V/5' del'",             mode: "bar"},
+        "number of deletions for the segment J/3 in 5" :{ "x": "J/3' del'",             mode: "bar"},
+        "Primers" :                 { "x": "Primers",                                   mode: "bar"},
+        "Similarity"    :           { "x" : "TSNEX",            "y": "TSNEY",           mode: "tsne"},
+        "Similarity (locus)":       { "x" : "TSNEX_LOCUS",      "y": "TSNEY_LOCUS",     mode: "tsne"}
     };
 
     this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset 
