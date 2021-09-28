@@ -98,7 +98,7 @@ AXIS_ALIGNER = [
 AXIS_COLOR = [    
                     "Size",
                     "Tag",
-                    "Clone",
+                    "Clonotype",
                     "CDR3",
                     "Locus",
                     "N length",
@@ -119,7 +119,7 @@ AXIS_DEFAULT = {
         doc:        "",
         fct:        function(clone) {return clone.top},
     },
-    "Clone": {
+    "Clonotype": {
         doc:        "",
         labels:     function(){
                         var l = {}
@@ -193,14 +193,14 @@ AXIS_DEFAULT = {
         autofill:   false
     },
     "Sequence length" : {
-        doc:        "length of the clone consensus sequence or representative sequence provided by the analysis software",
+        doc:        "length of the consensus sequence of the clonotype",
         fct:        function(clone) {return clone.getSequenceLength()},
         autofill:   true,
         min_step:   1,
         color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
     },    
     "Read length" : {
-        doc:        "average length of the reads belonging to each clone",
+        doc:        "average length of the reads belonging to each clonotype",
         labels:     {   
                         "?":   {text:"?",   side: "right"}
                     },
@@ -214,7 +214,7 @@ AXIS_DEFAULT = {
         color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
     },
     "GC content" : {
-        doc:        "%GC content of the consensus sequence of each clone",
+        doc:        "%GC content of the consensus sequence of each clonotype",
         fct:        function(clone) {return clone.getGCContent()},
         autofill:   true,
     },
@@ -307,7 +307,7 @@ AXIS_DEFAULT = {
         autofill :  false
     },
     "Coverage": {
-        doc:        "ratio of the length of the clone consensus sequence to the median read length of the clone",
+        doc:        "ratio of the length of the clonotype consensus sequence to the median read length of the clonotype",
         // "Coverage between .85 and 1.0 (or more) are good values",
         fct:        function(clone){return clone.coverage},
         scale:      {
@@ -324,7 +324,7 @@ AXIS_DEFAULT = {
         autofill:   true
     },
     "Size" : {
-        doc:        "ratio of the number of reads of each clone to the total number of reads in the selected locus",
+        doc:        "ratio of the number of reads of each clonotype to the total number of reads in the selected locus",
         fct :       function(clone,t){return clone.getSize(t)},
         scale:      {   mode: "log"},
         color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
@@ -332,7 +332,7 @@ AXIS_DEFAULT = {
         pretty:     function(size) {return createClassedSpan("sizeBox sixChars", (self.m ? self.m : self).getStrAnySize(undefined, size)) },
     },
     "Size (other)" : {
-        doc:        "ratio of the number of reads of each clone to the total number of reads in the selected locus, on the previously selected sample",
+        doc:        "ratio of the number of reads of each clonotype to the total number of reads in the selected locus, on the previously selected sample",
         fct :       function(clone){return clone.getSize(m.tOther)},
         scale:      {
                         mode: "log",
@@ -341,7 +341,7 @@ AXIS_DEFAULT = {
         autofill:   true,
     },
     "Number of samples" : {
-        label:      "number of samples sharing each clone",
+        label:      "number of samples sharing each clonotype",
         fct :       function(clone){return clone.getNumberNonZeroSamples()},
         scale:      {   
                         mode: "linear",
@@ -392,7 +392,7 @@ AXIS_DEFAULT = {
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
     "[cloneDB] Hits (set)": {   
-        doc:        "number of patients/runs/sets sharing clones in cloneDB",
+        doc:        "number of patients/runs/sets sharing clonotypes in cloneDB",
         scale:      {
                         "mode": "linear",
                         "min": 0
@@ -518,8 +518,8 @@ AXIS_DEFAULT = {
         germline:   "multi",
         autofill:   true
     },    
-    "clone consensus length2" : {
-        name:       "clone consensus length",
+    "clonotype consensus length2" : {
+        name:       "clonotype consensus length",
         doc:        "length of the consensus sequence",
         labels:     {
                         "< 50":   {text:"< 50",  side: "left",  type: "bold"},

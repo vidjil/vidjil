@@ -45,7 +45,7 @@ describe('Filters', function () {
     cy.get('#filter_input').type("cluster{enter}")
     cy.get('#list_clones').children('li').filter(':visible').should('have.length', 2)
 
-    cy.get('#filter_input').clear().type("clone{enter}")
+    cy.get('#filter_input').clear().type("clon{enter}") // Match both 'clone' and 'clonotype'
     cy.get('#list_clones').children('li').filter(':visible').should('have.length', 7)
 
     cy.get('#filter_input').clear().type("AAT{enter}")

@@ -1,7 +1,7 @@
 # Encoding clones with V(D)J recombinations with `.vidjil` files
 
 The following [.json](http://en.wikipedia.org/wiki/JSON) format (2016b) allows to
-encode a set of clones with V(D)J immune recombinations,
+encode a set of clones (formally, clonotypes) with V(D)J immune recombinations,
 possibly with user annotations.
 
 In Vidjil, this format is used by both the `.analysis` and the `.vidjil` files.
@@ -20,8 +20,8 @@ present in the `.vidjil` file.
 There are several definitions of what may be a clonotype,
 depending on different RepSeq software or studies.
 This format accept any kind of definition:
-Clones are identified by a `id` string that may be an arbitrary identifier such as `clone-072a`.
-Software computing clones may choose some relevant identifiers:
+Clonotypes are identified by a `id` string that may be an arbitrary identifier such as `clone-072a`.
+Software computing clonotypes may choose some relevant identifiers:
 
   - `CGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTAC`, Vidjil algorithm, 50 nt window centered on the CDR3
   - `CARPRDWNTYYYYGMDVW`, a CDR3 AA sequence

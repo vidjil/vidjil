@@ -158,17 +158,17 @@ class TestClones < BrowserTest
     
     # controle name
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (2 clones)" ), ">>name of distrib clone for time 0 expected 162 (2 clones), was %s" % clone_name.text
+    assert ( clone_name.text == "162 (2 clonotypes)" ), ">>name of distrib clone for time 0 expected 162 (2 clonotypes), was %s" % clone_name.text
     
     $b.send_keys :arrow_right
     $b.update_icon.wait_while(&:present?)
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (0 clone)" ), ">>name of distrib clone for time 1 expected 162 (0 clone), was %s" % clone_name.text
+    assert ( clone_name.text == "162 (0 clonotype)" ), ">>name of distrib clone for time 1 expected 162 (0 clonotype), was %s" % clone_name.text
     
     $b.send_keys :arrow_right
     $b.update_icon.wait_while(&:present?)
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (7 clones)" ), ">>name of distrib clone for time 2 expected 162 (7 clones), was %s" % clone_name.text
+    assert ( clone_name.text == "162 (7 clonotypes)" ), ">>name of distrib clone for time 2 expected 162 (7 clonotypes), was %s" % clone_name.text
     
     ### Tests on size after top change
     # return to time 0
@@ -182,11 +182,11 @@ class TestClones < BrowserTest
 
     # controle name
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (0 clone)" ), ">>name of distrib clone for time 0, top max"
+    assert ( clone_name.text == "162 (0 clonotype)" ), ">>name of distrib clonotype for time 0, top max"
     
     $b.clone_in_list("1").click
     $b.span(:id => "hide_selected").click
-    assert ( clone_name.text == "162 (0 clone)" ), ">>name of distrib clone for time 0, top max, clone 1 hidden"
+    assert ( clone_name.text == "162 (0 clonotype)" ), ">>name of distrib clonotype for time 0, top max, clone 1 hidden"
     $b.span(:id => "reset_focus").click
   end
 
@@ -377,14 +377,14 @@ class TestClones < BrowserTest
     $b.clone_in_list("22").click(:control)
     $b.update_icon.wait_while(&:present?)
     stats = $b.statsline
-    assert (stats.text.include? '+5 clones'), ">> Correct stats, should have '+5' clones"
+    assert (stats.text.include? '+5 clonotypes'), ">> Correct stats, should have '+5' clones"
     assert (stats.text.include? '50 reads'),  ">> Correct stats, should have 50 reads"
     assert (stats.text.include? '20.00%'),    ">> Correct stats, should be at 20.00%"
     # add a real clone
     $b.clone_in_list("0").click(:control)
     $b.update_icon.wait_while(&:present?)
     stats = $b.statsline
-    assert (stats.text.include? '1+5 clones'), ">> Correct stats, should have '4+5' clones"
+    assert (stats.text.include? '1+5 clonotypes'), ">> Correct stats, should have '4+5' clones"
     assert (stats.text.include? '100 reads'),  ">> Correct stats, should have 100 reads"
     assert (stats.text.include? '40.00%'),     ">> Correct stats, should be at 40.00%"
   
@@ -399,7 +399,7 @@ class TestClones < BrowserTest
     $b.clone_in_list("19").click(:control)
     stats = $b.statsline
     $b.update_icon.wait_while(&:present?)
-    assert (stats.text.include? '5+5 clones'), ">> Correct stats, should have '5+5' clones"
+    assert (stats.text.include? '5+5 clonotypes'), ">> Correct stats, should have '5+5' clones"
     assert (stats.text.include? '200 reads'),  ">> Correct stats, should have 50 reads"
     assert (stats.text.include? '80.00%'),     ">> Correct stats, should be at 80.00%"
   end

@@ -603,7 +603,7 @@ Clone.prototype = {
             var t = this.m.t
             //if (this.current_clones == undefined) return "bob"
             var n = this.current_clones[t]
-            var name = this.getDistributionsValues().toString() + " (" + n + " clone" + (n>1 ? "s" : "") + ")"
+            var name = this.getDistributionsValues().toString() + " (" + n + " clonotype" + (n>1 ? "s" : "") + ")"
             return name
         }
         if (this.getCluster().name){
@@ -667,7 +667,7 @@ Clone.prototype = {
      * @param {string} name
      * */
     changeName: function (newName) {
-        console.log("changeName() (clone " + this.index + " <<" + newName + ")");
+        console.log("changeName() (clonotype " + this.index + " <<" + newName + ")");
         this.c_name = newName;
         this.m.updateElem([this.index]);
         this.m.analysisHasChanged = true
@@ -692,7 +692,7 @@ Clone.prototype = {
             var loci = [this.getGene("5").substring(0,3), this.getGene("3").substring(0,3) ]
             locus = loci[0]
             if (loci[0] != loci[1]) {
-                console.log("Clone " + this.getName() + "recombines sequences from two separate loci. Using: " + locus)
+                console.log("Clonotype " + this.getName() + "recombines sequences from two separate loci. Using: " + locus)
             }
         }
 
@@ -1221,7 +1221,7 @@ Clone.prototype = {
     changeTag: function (newTag) {
         newTag = "" + newTag
         newTag = newTag.replace("tag", "");
-        console.log("changeTag() (clone " + this.index + " <<" + newTag + ")");
+        console.log("changeTag() (clonotype " + this.index + " <<" + newTag + ")");
         this.tag = newTag;
         this.m.updateElem([this.index]);
         this.m.analysisHasChanged = true;
@@ -1545,7 +1545,7 @@ Clone.prototype = {
 
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.90); m.closeInfoBox();'>correlated</a> clones</p>"
         html += "<p>select <a class='button' onclick='m.selectCorrelated(" + this.index + ", 0.99); m.closeInfoBox();'>strongly correlated</a> clones</p>"
-        html += "<p>Download clone information as "
+        html += "<p>Download clonotype information as "
         html += "<a class='button' id='download_info_"+ this.index +"_airr' onclick='m.exportCloneAs(\"airr\", [" + this.index + "])'>AIRR</a>"
         html += "<a class='button devel-mode' id='download_info_"+ this.index +"_json' onclick='m.exportCloneAs(\"json\", [" + this.index + "])'>JSON</a>"
         html += "</p>"
@@ -1582,13 +1582,13 @@ Clone.prototype = {
 
         //cluster info
         if (isCluster) {
-            html += header("clone")
-            html += row_1("clone name", this.getName())
+            html += header("clonotype")
+            html += row_1("clonotype name", this.getName())
             if (this.hasSizeConstant()){
-                html += row_1("clone short name", this.getShortName())
-                html += "<tr><td>clone size (n-reads (total reads))"
+                html += row_1("clonotype short name", this.getShortName())
+                html += "<tr><td>clonotype size (n-reads (total reads))"
             } else if (this.hasSizeDistrib()) {
-                html += "<tr><td title='Current size; depending of the number of clones curently not filtered'>current clone size<br/>(n-reads (total reads))"
+                html += "<tr><td title='Current size; depending of the number of clonotypes curently not filtered'>current clonotype size<br/>(n-reads (total reads))"
             }
             if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
                 html += "<br />[normalized]"
@@ -1608,7 +1608,7 @@ Clone.prototype = {
                 }
                 html += "</td>"
             }
-            html += "</tr><tr><td>clone size (%)</td>"
+            html += "</tr><tr><td>clonotype size (%)</td>"
             for (var k = 0; k < time_length; k++) {
                 html += "<td>" + this.getStrSize(this.m.samples.order[k]) + "</td>"
             }
@@ -1656,7 +1656,7 @@ Clone.prototype = {
         if (this.hasSizeConstant()) {
             html += "<tr><td>size (n-reads (total reads))</td>"
         } else {
-            html += "<tr><td>total clones size<br/>(n-reads (total reads))</td>"
+            html += "<tr><td>total clonotypes size<br/>(n-reads (total reads))</td>"
         }
         for (var l = 0; l < time_length; l++) {
             html += "<td>" + this.get('reads',this.m.samples.order[l]) + 
@@ -1755,7 +1755,7 @@ Clone.prototype = {
         // Result of external tools (inside seg and already defined)
         // Can't be bypass as already used
         var other_infos = {"imgt": "<a target='_blank' href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a>",
-                           "clonedb": "<a target='_blank' href='http://ecngs.vidjil.org/clonedb'>CloneDB</a> "+ (this.numberSampleSetInCloneDB() > 0 ? "<br /> A similar clone exists in "+this.numberSampleSetInCloneDB()+" other patients/runs/sets" : "")};
+                           "clonedb": "<a target='_blank' href='http://ecngs.vidjil.org/clonedb'>CloneDB</a> "+ (this.numberSampleSetInCloneDB() > 0 ? "<br /> A similar clonotype exists in "+this.numberSampleSetInCloneDB()+" other patients/runs/sets" : "")};
         for (s in this.seg) {
             if (this.seg[s] instanceof Object &&
                 other_infos[s] != undefined ) {
@@ -1787,9 +1787,8 @@ Clone.prototype = {
         html += "</table></div>"
         return html
     },
-
     /**
-      * start to fill a node with clone informations common between segmenter and list
+      * start to fill a node with clonotype informations common between segmenter and list
       * @param {dom_object} div_elem - html element to complete
       * */
     div_elem: function (div_elem, clear) {
@@ -1841,7 +1840,7 @@ Clone.prototype = {
                 span_info.className += " " + this.isWarned() ;
                 span_info.appendChild(icon('icon-warning-1', this.warnText()));
             } else {
-                span_info.appendChild(icon('icon-info', 'clone information'));
+                span_info.appendChild(icon('icon-info', 'clonotype information'));
             }
         }
 
@@ -1890,7 +1889,7 @@ Clone.prototype = {
         this.active = true
         this.hidden = false
 
-        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller clones") != -1)
+        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller clonotypes") != -1)
             this.active = false
     },
 
@@ -1911,7 +1910,7 @@ Clone.prototype = {
     },
 
     unselect: function () {
-        console.log("unselect() (clone " + this.index + ")")
+        console.log("unselect() (clonotype " + this.index + ")")
         if (this.select) {
             this.select = false;
             this.m.removeFromOrderedSelectedClones(this.index);
