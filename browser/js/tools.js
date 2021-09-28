@@ -900,3 +900,54 @@ function download_csv(csv, filename) {
     // Lanzamos
     downloadLink.click();
 }
+
+
+///////////////////////////
+/// Fct to fill info table
+///////////////////
+var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
+        
+var header = function(content, title) { 
+    title = (title == undefined) ? clean_title(content) : clean_title(title)
+    return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
+}
+var row_1  = function(item, content, title, time_length) { 
+    title = (title == undefined) ? clean_title(item) : clean_title(title)
+    return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
+}
+var row_from_list  = function(item, content, title, time_length) { 
+    title = (title == undefined) ?clean_title(item) : clean_title(title)
+    var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+    for (var i = 0; i < content.length; i++) {
+        col  = content[i]
+        div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+    }
+    div += "</tr>" ;
+    return div;
+}
+
+var row_cast_content = function(title, content, time_length) {
+    if (content == undefined) {
+        return ""
+    } else if (typeof(content) != "object") {
+        return row_1(title, content.toString(), undefined, time_length)
+    } else if (Object.keys(content).indexOf("info") != -1) {
+        // Textual field
+        return row_1(title, content.info, undefined, time_length)
+    } else if (Object.keys(content).indexOf("name") != -1) {
+        // Textual field
+        return row_1(title, content.name, undefined, time_length)
+    } else if (Object.keys(content).indexOf("val") != -1) {
+        // Numerical field
+        return row_1(title, content.val, undefined, time_length)
+    } else if (Object.keys(content).indexOf("seq") != -1) {
+        // Sequence field with pos
+        return row_1(title, content.seq, undefined, time_length)
+    } else {
+        // Sequence field
+        var nt_seq = self.getSegNtSequence(title);
+        if (nt_seq !== '') {
+            return row_1(title, self.getSegNtSequence(title), undefined, time_length)
+        }
+    }
+}
