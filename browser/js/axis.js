@@ -242,6 +242,7 @@ Axis.prototype = {
                 this.step = Math.max(nice.step, this.min_step)
                 this.precision = nice_number_digits(this.step, 1)
 
+
                 this.scale.nice_min = nice.min
                 var l = nice.min.toFixed(this.precision)
                 if (l == 0) l = "0"
@@ -255,13 +256,15 @@ Axis.prototype = {
                 //add labels for each steps between min and max
                 if (this.scale.reverse){
                     for (var i = this.scale.nice_max; 
-                         this.scale.nice_min.toFixed(this.precision) <= (i+this.step/2).toFixed(this.precision); 
+                         parseFloat(this.scale.nice_min.toFixed(this.precision)) <= parseFloat((i+this.step/2).toFixed(this.precision)); 
                          i=i-this.step){
                         this.addScaleLabel(i, "linearScale")
                         labelCount++
                     }
                 }else{
-                    for (var j = this.scale.nice_min; j < this.scale.nice_max+this.step; j+= this.step){
+                    for (var j = this.scale.nice_min; 
+                         parseFloat(j.toFixed(this.precision)) <= parseFloat(this.scale.nice_max.toFixed(this.precision)); 
+                         j+= this.step){
                         this.addScaleLabel(j, "linearScale")
                         labelCount++
                     }
