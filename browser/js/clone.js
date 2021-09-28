@@ -1515,7 +1515,7 @@ Clone.prototype = {
 
         //warnings
         if (this.isWarned()) {
-            html += header("warnings", time_length)
+            html += header("warnings", undefined, time_length)
             var warnings = {}
             // Create a dict of all warning present, and add each sample with it
             // One warning msg by entrie, without duplication.
@@ -1537,7 +1537,7 @@ Clone.prototype = {
 
         //cluster info
         if (isCluster) {
-            html += header("clonotype", time_length)
+            html += header("clonotype", undefined, time_length)
             html += row_1("clonotype name", this.getName(), undefined, time_length)
             if (this.hasSizeConstant()){
                 html += row_1("clonotype short name", this.getShortName(), undefined, time_length)
@@ -1576,9 +1576,9 @@ Clone.prototype = {
                 }
             }
 
-            html += header("representative sequence", time_length)
+            html += header("representative sequence", undefined, time_length)
         }else{
-            html += header("sequence", time_length)
+            html += header("sequence", undefined, time_length)
         }
 
         
@@ -1631,11 +1631,11 @@ Clone.prototype = {
         
         //segmentation info
         if (this.hasSizeConstant()) {
-            html += header("segmentation" , time_length+
-                " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" + //Use to hide/display lists 
-                this.getHTMLModifState(), "segmentation") // icon if manual changement
+            html += header("segmentation" + 
+                           " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" + //Use to hide/display lists 
+                           this.getHTMLModifState(), "segmentation", time_length) // icon if manual changement
         } else {
-            html += header("segmentation", time_length)
+            html += header("segmentation", undefined, time_length)
         }
 
         if (typeof this.stats != 'undefined'){
@@ -1682,7 +1682,7 @@ Clone.prototype = {
         for (var s in this.seg) {
             if (exclude_seg_info.indexOf(s) == -1 &&
                 this.seg[s] instanceof Object ) {
-                  html += row_cast_content(s, this.seg[s], time_length)
+                  html += row_cast_content(s, this.seg[s], time_length, self)
             }
         }
         if (typeof this.seg.junction != 'undefined' &&
@@ -1692,7 +1692,7 @@ Clone.prototype = {
 
         
         //other info (clntab)
-        html += header("&nbsp", time_length)
+        html += header("&nbsp", undefined, time_length)
         for (var t in this) {
             if (t[0] == "_") {
                 html += "<tr><td>" + t + "</td>"
@@ -1714,7 +1714,7 @@ Clone.prototype = {
         for (s in this.seg) {
             if (this.seg[s] instanceof Object &&
                 other_infos[s] != undefined ) {
-                  html += header("Results of "+other_infos[s], time_length)
+                  html += header("Results of "+other_infos[s], undefined, time_length)
                   var keys = Object.keys(this.seg[s]).sort();
                   for (var key_seg = 0; key_seg < keys.length; key_seg++) {
                       var sub = keys[key_seg]
@@ -1730,7 +1730,7 @@ Clone.prototype = {
             var thiskey = this_keys[thiskey_pos]
             if (this[thiskey] instanceof Object &&
                 thiskey.indexOf("seg_") != -1 && thiskey != "seg_stat") {
-                  html += header("Results of script '"+thiskey.substring(4)+"'", time_length)
+                  html += header("Results of script '"+thiskey.substring(4)+"'", undefined, time_length)
                   var keys_seg = Object.keys(this[thiskey]).sort();
                   for (var key_segthis = 0; key_segthis < keys_seg.length; key_segthis++) {
                       var subthis = keys_seg[key_segthis]

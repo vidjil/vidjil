@@ -907,7 +907,7 @@ function download_csv(csv, filename) {
 ///////////////////
 var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
         
-var header = function(content, title) { 
+var header = function(content, title, time_length) {
     title = (title == undefined) ? clean_title(content) : clean_title(title)
     return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
 }
@@ -926,7 +926,7 @@ var row_from_list  = function(item, content, title, time_length) {
     return div;
 }
 
-var row_cast_content = function(title, content, time_length) {
+var row_cast_content = function(title, content, time_length, clone) {
     if (content == undefined) {
         return ""
     } else if (typeof(content) != "object") {
@@ -945,9 +945,9 @@ var row_cast_content = function(title, content, time_length) {
         return row_1(title, content.seq, undefined, time_length)
     } else {
         // Sequence field
-        var nt_seq = self.getSegNtSequence(title);
+        var nt_seq = clone.getSegNtSequence(title);
         if (nt_seq !== '') {
-            return row_1(title, self.getSegNtSequence(title), undefined, time_length)
+            return row_1(title, clone.getSegNtSequence(title), undefined, time_length)
         }
     }
 }
