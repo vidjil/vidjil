@@ -303,14 +303,11 @@ ScatterPlot.prototype = {
         var showVirtual;
 
         // Set if the clone should be show on is virtual/distrib status
-        if (clone.isInScatterplot() && clone.axes != undefined){
-            var axes = [this.splitX, this.splitY]
+        if (clone.isInScatterplot() && clone.axes != undefined)
             showVirtual = clone.sameAxesAsScatter(this)
-        } else if (!clone.isInScatterplot()) {
-            showVirtual = false
-        } else {
-            showVirtual = true        
-        }
+        else 
+            showVirtual = clone.isInScatterplot()
+
         var include = (system_grid && clone.isActive() && showVirtual)
         return include
     },
@@ -319,8 +316,12 @@ ScatterPlot.prototype = {
      * compute the position of each rectangles / labels and start the display
      * */
     computeBarTab : function () {        
-        var bars = this.axisX.getBar()
+        //reset bar visibility for all clone's bar
+        for (var i=0; i<this.nodes.length; i++)
+            this.nodes[i].includeBar = false
 
+        //compute position/visibility only for bar in axisX
+        var bars = this.axisX.getBar()
         for (var b in bars) {
             var bar = bars[b]
             var x_pos = this.axisX.getValuePos(bar.value)
@@ -350,10 +351,7 @@ ScatterPlot.prototype = {
                     node.bar_h = this.gridSizeH * height_for_display
                     node.bar_w = this.gridSizeW * bar.width
                     node.includeBar = true
-                }else{
-                    node.includeBar = false
                 }
-
             }
         }
         this.initGrid();
@@ -997,7 +995,8 @@ ScatterPlot.prototype = {
                 .attr("class", function(p) {
                     var c = self.m.clone(p.id)
 
-                    if (!(p.hasValidAxisPosition || p.use_system_grid) || !c.isActive() || c.hasSizeOther()) 
+                    if ( !(p.hasValidAxisPosition || p.use_system_grid) ||
+                         !c.isActive() || c.hasSizeOther() || p.r1 == 0) 
                         return "circle_hidden";
                     if (c.isSelected() && c.isFocus())
                         return "circle_focus circle_select"
