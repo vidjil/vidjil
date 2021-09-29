@@ -747,6 +747,42 @@ function sortFromList(valA, valB, labels){
     return 0
 }
 
+function getAllIndexes(arr, val) {
+    var indexes = [], i = -1;
+    while ((i = arr.indexOf(val, i+1)) != -1){
+        indexes.push(i);
+    }
+    return indexes;
+}
+
+
+/**
+ * Fix error when a same file is analysed multiple time
+ * In this case, order will fail or graph will not be clear, so rename original_names
+ * @param  {[type]} clone [description]
+ * @return {[type]}       [description]
+ */
+function fixDuplicateNames(names){
+    var copy = JSON.parse(JSON.stringify(names))
+    copy = removeDuplicate(names)
+    if (copy.length != names.length){
+        for (var i = 0; i < names.length; i++) {
+            var name = names[i]
+            var idx  = getAllIndexes(names, name)
+            var start = 1
+            for (var j = 1; j < idx.length; j++) {
+                var new_name = name + "("+start+")"
+                while ( (names.indexOf(new_name, idx[j]) != -1) || start > names.length ){
+                    start += 1
+                }
+                names[idx[j]] = new_name
+                start += 1
+            }
+        }
+    }
+    return names
+} 
+
 
 /**
  * Open a new tab and put content in it.
