@@ -36,8 +36,7 @@ class SampleSetList():
 
         dedicated_fields = helper.get_dedicated_fields()
 
-        groupby = [s_table.id, s_table.sample_set_id, s_table.info, db.auth_user.last_name]
-        groupby += helper.get_dedicated_group()
+        groupby = [s_table.id, s_table.sample_set_id]
 
         join = [s_table.on(s_table.sample_set_id == db.sample_set.id)]
 
