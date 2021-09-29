@@ -468,3 +468,12 @@ QUnit.test("localCompare behavior", function(assert) {
     assert.deepEqual(list3, sorted_list3, "localCompare, test on list3, introns")
     assert.deepEqual(list4, sorted_list4, "localCompare, test on list4, other genes")
 });
+
+
+QUnit.test("fixDuplicateNames", function(assert) {
+    var source   = ["test", "test",    "test",    "testing", "test",    "testing",    "test"    ]
+    var expected = ["test", "test(1)", "test(2)", "testing", "test(3)", "testing(1)", "test(4)" ]
+    fixDuplicateNames(source)
+
+    assert.deepEqual(source, expected)
+});
