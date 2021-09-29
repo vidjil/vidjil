@@ -28,7 +28,7 @@ ALIGNER_MENU = {
             'id': 'Primers',
             'text': 'Primers',
             'layers': ["primer5", "primer3"],
-            'title': 'Primers computed on the sequence',
+            'title': 'Primers (estimated with settings > primers)',
             'enabled': false
         }]
     },
