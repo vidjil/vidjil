@@ -500,9 +500,9 @@ Info.prototype = {
                 });
 
                 if (a.scale.mode == "linear")
-                    span2.appendChild(a.invert(0))
+                    span2.appendChild(a.invert(a.scale.range[0]))
                 span2.appendChild(spanG)
-                span2.appendChild(a.invert(1))
+                span2.appendChild(a.invert(a.scale.range[1]))
             }
 
             if (a.labels){

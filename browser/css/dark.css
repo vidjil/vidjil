@@ -2416,6 +2416,7 @@ span .end-codon {
   overflow-y: auto;
   min-height: 130px;
   margin-top: 1px;
+  max-height: 500px;
 }
 #segmenter {
   display: flex;

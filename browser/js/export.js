@@ -673,7 +673,7 @@ Report.prototype = {
     
     cloneList : function(time) {
         if (typeof time == "undefined") time = -1
-        var container = this.container('Selected clones')
+        var container = this.container('Selected clonotypes')
         
         for (var i=0; i<this.list.length; i++){
             var cloneID = this.list[i]

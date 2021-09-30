@@ -57,7 +57,7 @@ describe('List', function () {
       cy.get('#list_clones').children().eq(0)
         .should("contain", "Main ALL clone")
       cy.get('#list_clones').children().eq(1)
-        .should("contain", "TRG smaller clone")
+        .should("contain", "TRG smaller clonotype")
 
       // change order by 'size'
       cy.get('#list_sort_select')
@@ -73,7 +73,7 @@ describe('List', function () {
         .and('have.attr', 'title')
         .and('include', "Release sort as 'size' on sample fu1")
       cy.get('#list_clones').children().eq(0)
-        .should("contain", "TRG smaller clone")
+        .should("contain", "TRG smaller clonotype")
       cy.get('#list_clones').children().eq(1)
         .should("contain", "Main ALL clone")
 
@@ -83,7 +83,7 @@ describe('List', function () {
       cy.update_icon()
 
       cy.get('#list_clones').children().eq(0)
-        .should("contain", "TRG smaller clone")
+        .should("contain", "TRG smaller clonotype")
 
       cy.get('#div_sortLock').should('have.class', "icon-lock-1 list_lock_on")
         .and('have.attr', 'title')

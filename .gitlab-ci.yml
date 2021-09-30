@@ -373,6 +373,7 @@ ff45-browser-tutorial:
   variables:
     FIREFOX_VERSION: 45
 
+
 chrome-browser-tutorial:
   extends: .browser-tutorial-chrome
         
@@ -411,6 +412,7 @@ server_tutorial_server:
     - web-pandoc
   variables:
     FIREFOX_VERSION: 45
+
 
 
 # Code quality
@@ -525,6 +527,7 @@ ff45-server-functional:
     - .need_for_moderate_server
   variables:
     FIREFOX_VERSION: 45
+
 
 
 
