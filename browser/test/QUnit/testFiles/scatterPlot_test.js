@@ -274,7 +274,7 @@ QUnit.test("Sort axes alphabetical with numeric value", function(assert) {
     sp.init();
 
     assert.equal(sp.returnActiveclones(), 7, "returnActiveClones -> 7");
-    sp.changeSplitMethod("V/5' gene", "J/3 allele", "grid");
+    sp.changeSplitMethod("V/5' gene", "J/3' allele", "grid");
 
     var axes_legend_x = document.getElementById("visu_axis_x_container").childNodes
     var axes_legend_y = document.getElementById("visu_axis_y_container").childNodes
