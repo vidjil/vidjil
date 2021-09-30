@@ -86,7 +86,7 @@
 
         Data file (.vidjil):<br />
         <input id="upload_json" type="file" name="json" /></br>
-        <p class='help'>The .vidjil file stores a set of clones on several points.</p>
+        <p class='help'>The .vidjil file stores a set of clonotypes on several points.</p>
 
         Analysis file (.analysis, optional):<br />
         <input id="upload_pref" type="file" name="pref" /></br>
@@ -109,7 +109,7 @@
 
     <div id="add_clone_menu">
         <span class="closeButton" onclick="cancel();">X</span>
-        <h2>Add clones from sequences</h2>
+        <h2>Add clonotypes from sequences</h2>
 
         <textarea id="addclone_input" placeholder="Sequence(s) (Fasta)"></textarea>
 
@@ -159,7 +159,7 @@
                         </div>
                         <div class="menu_box devel-mode">
                             <a class="buttonSelector" id="add_clones" onclick="javascript:showAddManualCloneMenu()">add
-                                clones from sequences</a>
+                                clonotypes from sequences</a>
                         </div>
                         <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                         <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
@@ -173,11 +173,11 @@
                             <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>
                             <a class="buttonSelector" id="export_svg1" onclick="javascript:m.exportViewToPNG(document.querySelector('#visu2_svg'))">export top graph (PNG)</a>
                             <a class="buttonSelector" id="export_svg2" onclick="javascript:m.exportViewToPNG(document.querySelector('#visu_svg'))">export bottom graph (PNG)</a>
-                            <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
-                            <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export fasta (selected clones)</a>
-                            <a class="buttonSelector" id="export_airr" onclick="javascript:m.exportCloneAs('airr')">export AIRR (selected clones)</a>
-                            <a class="buttonSelector devel-mode" id="export_json" onclick="javascript:m.exportCloneAs('json')">export JSON (selected clones)</a>
-                            <a class="buttonSelector disabledClass" id="export_fasta_align" onclick="javascript:segment.exportAlignFasta()">export aligned fasta (selected clones)</a>
+                            <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv (visible clonotypes)</a>
+                            <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export fasta (selected clonotypes)</a>
+                            <a class="buttonSelector" id="export_airr" onclick="javascript:m.exportCloneAs('airr')">export AIRR (selected clonotypes)</a>
+                            <a class="buttonSelector devel-mode" id="export_json" onclick="javascript:m.exportCloneAs('json')">export JSON (selected clonotypes)</a>
+                            <a class="buttonSelector disabledClass" id="export_fasta_align" onclick="javascript:segment.exportAlignFasta()">export aligned fasta (selected clonotypes)</a>
 
                         </div>
                         <div class="menu_box devel-mode">
@@ -194,7 +194,7 @@
                             <a class="buttonSelector" onclick="m.restoreClusters();">revert to previous clusters</a>
                         </div>
                         <div class="menu_box">
-                          <a id="clusterBy_selected"   class="buttonSelector" onclick="m.merge();">cluster selected clones</a>
+                          <a id="clusterBy_selected"   class="buttonSelector" onclick="m.merge();">cluster selected clonotypes</a>
                           <a id="clusterBy_5"          class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V/5' </a>
                           <a id="clusterBy_3"          class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J/3' </a>
                           <a id="clusterBy_cdr3"       class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getSegAASequence('junction')});">cluster by CDR3 </a>
@@ -233,8 +233,8 @@
                         </div>
                         <div class="menu_box">
                             <div id="filter_switch_sample"
-                                title="Hide clones that are not present in the current sample">
-                                <input id="filter_switch_sample_check" type="checkbox"></input> Focus on clones of one
+                                title="Hide clonotypes that are not present in the current sample">
+                                <input id="filter_switch_sample_check" type="checkbox"></input> Focus on clonotypes of one
                                 sample
                             </div>
                         </div>
@@ -288,7 +288,7 @@
                             </label>
                         </div>
                         <div class="menu_box">
-                            N regions in clone names</br>
+                            N regions in clonotype names</br>
                             <label for="menuCloneNot_nucleotide_number" class="buttonSelector"
                                 onclick="m.changeCloneNotation('nucleotide_number', true, true)">
                                 <input id="menuCloneNot_nucleotide_number" type="radio" name="show_name"
@@ -618,13 +618,13 @@
 
                     <div id="aligner-stats" class="stats"><span  title="">
                             <span class="stats_content"></span>
-                            <span id="focus_selected" class="button"    title="Focus on selected Clones (ctrl+z)" >
+                            <span id="focus_selected" class="button"    title="Focus on selected clonotypes (ctrl+z)" >
                                 <i class="icon-eye"></i></span>
-                            <span id="hide_selected" class="button"     title="Hide selected Clones (shift+z)">
+                            <span id="hide_selected" class="button"     title="Hide selected clonotypes (shift+z)">
                                 <i  class="icon-eye-off"></i></span>
-                            <span class="button" id="reset_focus"       title="Reset Focus/Hide filters (z)">
+                            <span class="button" id="reset_focus"       title="Reset focus / Hide filters (z)">
                                 <i  class="icon-cancel-circled-outline"></i></span>
-                            <span class="button" id="star_selected"     title="Tag selected clones">
+                            <span class="button" id="star_selected"     title="Tag selected clonotypes">
                                 <i id="tag_icon__multiple" class="icon-star-2"></i></span>
                     </div>
             </div>
@@ -647,13 +647,13 @@
 
 <template id="aligner-F">
     <div class="seq-fixed cloneName">
-            <span class="nameBox" title="clone name">
-                    <span class="delBox"><i class="icon-cancel" title="Unselect this clone"></i></span>
+            <span class="nameBox" title="clonotype name">
+                    <span class="delBox"><i class="icon-cancel" title="Unselect this clonotype"></i></span>
                     <span class="nameBox2"></span>
             </span>
             <span class="axisBox"></span>
             <span class="starBox" id="color60"><i id="tag_icon_60" title="clone_tag" class="icon-star-2"></i></span>
-            <span class="infoBox"><i class="icon-info" title="clone information"></i></span>
+            <span class="infoBox"><i class="icon-info" title="clonotype information"></i></span>
     </div>
 </template>
 

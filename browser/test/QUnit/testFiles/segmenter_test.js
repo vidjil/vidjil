@@ -33,14 +33,14 @@ QUnit.test("segmenter", function(assert) {
     setTimeout( function() {
         var div1 = document.getElementById("seq1").getElementsByClassName("seq-fixed")[0];;
         assert.notEqual(div1.innerHTML.indexOf("test2"), -1, "select : Ok")
-        assert.equal(segment.sequence_order[0], 0, "segment.first_clone still set to 0 if clones 0 and 1 are selected")
+        assert.equal(segment.sequence_order[0], 0, "segment.first_clone still set to 0 if clonotypes 0 and 1 are selected")
         
         m.unselect(0)
         done()
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(segment.sequence_order[0], 1, "segment.first_clone is set to 1 if clones 0 is unselected")
+        assert.equal(segment.sequence_order[0], 1, "segment.first_clone is set to 1 if clonotypes 0 is unselected")
         
         m.select(2)
         done()
@@ -109,14 +109,14 @@ QUnit.test("segmenter", function(assert) {
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 10 reads (5.000%) ", "stats (1 clone) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clonotype, 10 reads (5.000%) ", "stats (1 clone) : Ok")
 
         m.multiSelect([0,1])
         done()
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clones, 30 reads (15.00%) ", "stats (several clones) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clonotypes, 30 reads (15.00%) ", "stats (several clones) : Ok")
 
         // Select multiple clones and check they are ordered.
         m.unselectAll()
@@ -143,7 +143,7 @@ QUnit.test("segmenter", function(assert) {
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 3 reads ", "stats (1 clone with few reads) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clonotype, 3 reads ", "stats (1 clone with few reads) : Ok")
         
         m.unselectAll()
         m.select(2)

@@ -79,18 +79,18 @@ QUnit.test("focus/hide", function(assert) {
     
     // test focus filter 
     m.multiSelect([0,2,3])
-    m.filter.add("Clone", "focus", m.getSelected())
+    m.filter.add("Clonotype", "focus", m.getSelected())
     assert.deepEqual(m.filter.filtered(), [1,4,5,6],    "focus, expect clone 1,4,5,6 to be filtered out, found " + m.filter.filtered())
 
     // test hide filter
     m.unselectAll()
     m.select(2)
-    m.filter.add("Clone", "hide", m.getSelected())
+    m.filter.add("Clonotype", "hide", m.getSelected())
     assert.deepEqual(m.filter.filtered(), [1,2,4,5,6],  "hide, expect clone 1,2,4,5,6 to be filtered out, found " + m.filter.filtered())
 
     // reset filter
-    m.filter.remove("Clone", "focus", undefined)
-    m.filter.remove("Clone", "hide", undefined)
+    m.filter.remove("Clonotype", "focus", undefined)
+    m.filter.remove("Clonotype", "hide", undefined)
     assert.deepEqual(m.filter.filtered(), [],        "reset, expect no clone to be filtered out, found " + m.filter.filtered())
 
     // check filter list content
@@ -105,24 +105,24 @@ QUnit.test("search", function(assert) {
     m.loadGermline()
 
     // search for "test1" should filter all clone except 0
-    m.filter.add("Clone","search","test1")
+    m.filter.add("Clonotype","search","test1")
     assert.deepEqual(m.filter.visible(), [0],    "expect clone 0 to be visible, found " + m.filter.visible())
 
     // search for "TGGGGGGg" should filter all clone except 1 and 2
-    m.filter.add("Clone","search","TGGGGGGg")
+    m.filter.add("Clonotype","search","TGGGGGGg")
     assert.deepEqual(m.filter.visible(), [1,2],  "expect clones 1,2 to be visible, found " + m.filter.visible())
 
     // search for "aAaaaAAA" should filter all clone except 0
-    m.filter.add("Clone","search","aAaaaAAA")
+    m.filter.add("Clonotype","search","aAaaaAAA")
     assert.deepEqual(m.filter.visible(), [0],    "expect clone 0 to be visible, found " + m.filter.visible())
 
     // search for "CCCCa" should filter all clone except 1,2,3
-    m.filter.add("Clone","search","CCCCa")
+    m.filter.add("Clonotype","search","CCCCa")
     assert.deepEqual(m.filter.visible(), [1,2,3],"expect clones 1,2,3 to be visible, found " + m.filter.visible())
     assert.equal(m.filter.filters.length, 2, "filter list must still contain 2 filters, found "+ m.filter.filters.length)
     
     //reset
-    m.filter.remove("Clone", "search", undefined) 
+    m.filter.remove("Clonotype", "search", undefined)
     assert.deepEqual(m.filter.filtered(), [], "expect no clone to be filtered out , found " + m.filter.filtered())
     assert.equal(m.filter.filters.length, 1, "filter list must contain 1 filters, found "+ m.filter.filters.length)
 
@@ -140,25 +140,25 @@ QUnit.test("search degenerated", function(assert) {
     var degen    = "catcwwcatgatgctacg"
     var ext5     = "gaagtcagtcatcaggca" // TRGV4; clone test1
 
-    m.filter.add("Clone","search",subseq)
+    m.filter.add("Clonotype","search",subseq)
     assert.deepEqual(m.filter.visible(), [4], "subseq, expect clone 4 to be visible, found " + m.filter.visible())
 
-    m.filter.add("Clone","search",degen)
+    m.filter.add("Clonotype","search",degen)
     assert.deepEqual(m.filter.visible(), [4], "degen, expect clone 4 to be visible, found " + m.filter.visible())
 
     m.search_extend = true
     m.search_ratio_limit = 0.7
-    m.filter.add("Clone","search",mismatch)
+    m.filter.add("Clonotype","search",mismatch)
     assert.deepEqual(m.filter.visible(), [4], "mismatch0.7, expect clone 4 to be visible, found " + m.filter.visible())
 
     m.search_ratio_limit = 1
     m.update()
     assert.deepEqual(m.filter.visible(), [], "mismatch1.0, expect no clones to be visible, found " + m.filter.visible())
 
-    m.filter.add("Clone","search",revcomp)
+    m.filter.add("Clonotype","search",revcomp)
     assert.deepEqual(m.filter.visible(), [4], "revcomp, expect clone 4 to be visible, found " + m.filter.visible())
 
-    m.filter.add("Clone","search",ext5)
+    m.filter.add("Clonotype","search",ext5)
     assert.deepEqual(m.filter.visible(), [], "ext5, expect no clones to be visible, found " + m.filter.visible())
 
 });

@@ -240,10 +240,10 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.includes(html, "<table id='clone_info_table_0'><tr><th>Samples names</th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
-    assert.includes(html, "tr id='modal_line_clone_name'><td id='modal_line_title_clone_name'>clone name</td><td colspan='4' id='modal_line_value_clone_name'>hello</td></tr>",
+    assert.includes(html, "tr id='modal_line_clonotype_name'><td id='modal_line_title_clonotype_name'>clonotype name</td><td colspan='4' id='modal_line_value_clonotype_name'>hello</td></tr>",
              "getHtmlInfo: clone names")
 
-    assert.includes(html, "<tr><td>clone size (n-reads (total reads))</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td>clone size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
+    assert.includes(html, "<tr><td>clonotype size (n-reads (total reads))</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td>clonotype size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
              "getHtmlInfo: clone information");
     
     assert.includes(html, "<tr id='modal_line_sequence_name'><td id='modal_line_title_sequence_name'>sequence name</td><td colspan='4' id='modal_line_value_sequence_name'>hello</td></tr><tr id='modal_line_code'><td id='modal_line_title_code'>code</td><td colspan='4' id='modal_line_value_code'>hello</td></tr><tr id='modal_line_length'><td id='modal_line_title_length'>length</td><td colspan='4' id='modal_line_value_length'>19</td></tr><tr id='modal_line_e-value'><td id='modal_line_title_e-value'>e-value</td><td colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
@@ -371,11 +371,11 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     var include = html.includes("<td class='header' colspan='2'>representative sequence</td>")
     assert.ok(include, "getHtmlInfo: if clone distrib, keep field 'representative sequence'");
     // Representative
-    include = html.includes("total clones size")
-    assert.ok(include, "getHtmlInfo: if clone distrib, other line name; 'clone size'");
+    include = html.includes("total clonotypes size")
+    assert.ok(include, "getHtmlInfo: if clone distrib, other line name; 'clonotype size'");
     // Representative
-    include = html.includes("current clone size")
-    assert.ok(include, "getHtmlInfo: if no sequence, field 'current clone size'");
+    include = html.includes("current clonotype size")
+    assert.ok(include, "getHtmlInfo: if no sequence, field 'current clonotype size'");
     // gene V
     assert.includes(html, "<tr id='modal_line_V_gene_or_5_'><td id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td>",
         "getHtmlInfo: distrib clone with seg5 have field segment V");

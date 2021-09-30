@@ -348,7 +348,7 @@ function processCloneDBContents(results,model) {
         final_results['Non viewable samples'] = count_non_viewable;
 
     if (Object.keys(final_results).length === 0)
-        final_results['–'] = "No occurrence of this clone in CloneDB"
+        final_results['–'] = "No occurrence of this clonotype in CloneDB"
 
     final_results.original = results;
     final_results.clones_names = clones_results;
@@ -747,6 +747,42 @@ function sortFromList(valA, valB, labels){
     return 0
 }
 
+function getAllIndexes(arr, val) {
+    var indexes = [], i = -1;
+    while ((i = arr.indexOf(val, i+1)) != -1){
+        indexes.push(i);
+    }
+    return indexes;
+}
+
+
+/**
+ * Fix error when a same file is analysed multiple time
+ * In this case, order will fail or graph will not be clear, so rename original_names
+ * @param  {[type]} clone [description]
+ * @return {[type]}       [description]
+ */
+function fixDuplicateNames(names){
+    var copy = JSON.parse(JSON.stringify(names))
+    copy = removeDuplicate(names)
+    if (copy.length != names.length){
+        for (var i = 0; i < names.length; i++) {
+            var name = names[i]
+            var idx  = getAllIndexes(names, name)
+            var start = 1
+            for (var j = 1; j < idx.length; j++) {
+                var new_name = name + "("+start+")"
+                while ( (names.indexOf(new_name, idx[j]) != -1) || start > names.length ){
+                    start += 1
+                }
+                names[idx[j]] = new_name
+                start += 1
+            }
+        }
+    }
+    return names
+} 
+
 
 /**
  * Open a new tab and put content in it.
@@ -899,4 +935,55 @@ function download_csv(csv, filename) {
 
     // Lanzamos
     downloadLink.click();
+}
+
+
+///////////////////////////
+/// Fct to fill info table
+///////////////////
+var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
+        
+var header = function(content, title, time_length) {
+    title = (title == undefined) ? clean_title(content) : clean_title(title)
+    return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
+}
+var row_1  = function(item, content, title, time_length) { 
+    title = (title == undefined) ? clean_title(item) : clean_title(title)
+    return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
+}
+var row_from_list  = function(item, content, title, time_length) { 
+    title = (title == undefined) ?clean_title(item) : clean_title(title)
+    var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+    for (var i = 0; i < content.length; i++) {
+        col  = content[i]
+        div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+    }
+    div += "</tr>" ;
+    return div;
+}
+
+var row_cast_content = function(title, content, time_length, clone) {
+    if (content == undefined) {
+        return ""
+    } else if (typeof(content) != "object") {
+        return row_1(title, content.toString(), undefined, time_length)
+    } else if (Object.keys(content).indexOf("info") != -1) {
+        // Textual field
+        return row_1(title, content.info, undefined, time_length)
+    } else if (Object.keys(content).indexOf("name") != -1) {
+        // Textual field
+        return row_1(title, content.name, undefined, time_length)
+    } else if (Object.keys(content).indexOf("val") != -1) {
+        // Numerical field
+        return row_1(title, content.val, undefined, time_length)
+    } else if (Object.keys(content).indexOf("seq") != -1) {
+        // Sequence field with pos
+        return row_1(title, content.seq, undefined, time_length)
+    } else {
+        // Sequence field
+        var nt_seq = clone.getSegNtSequence(title);
+        if (nt_seq !== '') {
+            return row_1(title, clone.getSegNtSequence(title), undefined, time_length)
+        }
+    }
 }

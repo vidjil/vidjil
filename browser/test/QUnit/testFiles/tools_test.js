@@ -226,7 +226,7 @@ QUnit.test("processCloneDBContents", function(assert) {
 
     assert.deepEqual(processCloneDBContents(emptyResult, m), {'original': [],
                                                            'clones_names': {},
-                                                           '–': 'No occurrence of this clone in CloneDB'},
+                                                           '–': 'No occurrence of this clonotype in CloneDB'},
                      "processing empty result");
     
     var singleResult = [{'tags': {'sample_set_viewable': [true, true],
@@ -467,4 +467,13 @@ QUnit.test("localCompare behavior", function(assert) {
     assert.deepEqual(list2, sorted_list2, "localCompare, test on list2, genes and alleles")
     assert.deepEqual(list3, sorted_list3, "localCompare, test on list3, introns")
     assert.deepEqual(list4, sorted_list4, "localCompare, test on list4, other genes")
+});
+
+
+QUnit.test("fixDuplicateNames", function(assert) {
+    var source   = ["test", "test",    "test",    "testing", "test",    "testing",    "test"    ]
+    var expected = ["test", "test(1)", "test(2)", "testing", "test(3)", "testing(1)", "test(4)" ]
+    fixDuplicateNames(source)
+
+    assert.deepEqual(source, expected)
 });

@@ -47,7 +47,8 @@ stages:
 test_tools:
   stage: test_tools
   script: make -C tools/tests
-  needs: []
+  extends:
+    - .need_for_quick_test
 
 
 # Germlines
@@ -70,6 +71,33 @@ include:
   - local: 'browser/.gitlab-ci.yml' # Client pipelines
   - local: 'server/.gitlab-ci.yml' # Server pipelines
   - template: Code-Quality.gitlab-ci.yml # Code quality
+
+###########################
+###  Needs declaration  ###
+###########################
+.need_for_independant_test:
+  needs: []
+
+.need_for_quick_test:
+  needs: []
+
+### Client part should not containt server stage
+.need_for_moderate_client:
+  needs: [test_tools, test_browser_unit, code_quality_custom]
+.need_for_late_client:
+  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial]
+.need_for_staged_client:
+  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial]
+
+### Server part should not containt client stage
+.need_for_moderate_server:
+  needs: [test_tools, test_server_unit]
+.need_for_late_server:
+  needs: [server_firefox_supported, server_tutorial_server]
+.need_for_staged_server:
+  needs: [server_firefox_supported, server_tutorial_server]
+
+
 
 # Algorithm
 
@@ -204,7 +232,8 @@ test_browser_unit:
     - schedules
   tags:
     - web
-  needs: []
+  extends:
+    - .need_for_quick_test
 
 .browser-functional:
   stage: test_functional
@@ -254,6 +283,8 @@ test_browser_unit:
     - schedules
   tags:
     - web
+  # extends:
+  #   - .need_for_staged_client
 
 .browser-functional-external-chrome:
   extends: .browser-functional-external
@@ -266,10 +297,11 @@ ff32-browser-functional:
     FIREFOX_VERSION: 32
 
 ff45-browser-functional:
-  extends: .browser-functional
+  extends:
+    - .browser-functional
+    - .need_for_moderate_client
   variables:
     FIREFOX_VERSION: 45
-  needs: [test_tools, test_browser_unit, code_quality_custom]
 
 chrome-browser-functional:
   extends: .browser-functional-chrome
@@ -285,10 +317,11 @@ ff32-browser-functional-external:
     FIREFOX_VERSION: 32
 
 ff45-browser-functional-external:
-  extends: .browser-functional-external
+  extends:
+    - .browser-functional-external
+    - .need_for_moderate_client
   variables:
     FIREFOX_VERSION: 45
-  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial]
 
 chrome-browser-functional-external:
   extends: .browser-functional-external-chrome
@@ -334,10 +367,12 @@ ff32-browser-tutorial:
     FIREFOX_VERSION: 32
 
 ff45-browser-tutorial:
-  extends: .browser-tutorial
+  extends:
+    - .browser-tutorial
+    - .need_for_moderate_client
   variables:
     FIREFOX_VERSION: 45
-  needs: [test_tools, test_browser_unit, code_quality_custom, test_server_unit]
+
 
 chrome-browser-tutorial:
   extends: .browser-tutorial-chrome
@@ -351,7 +386,9 @@ old-chrome-browser-tutorial:
 
 server_tutorial_server:
   stage: test_tutorial_server
-  extends: .test_server_base
+  extends:
+    - .test_server_base
+    - .need_for_moderate_server
   retry: 1
   script:
     - source /etc/profile.d/rvm.sh
@@ -375,7 +412,7 @@ server_tutorial_server:
     - web-pandoc
   variables:
     FIREFOX_VERSION: 45
-  needs: [test_tools, test_browser_unit, code_quality_custom, test_server_unit]
+
 
 
 # Code quality
@@ -396,7 +433,8 @@ code_quality_custom:
     - schedules
   tags:
     - web
-  needs: []
+  extends:
+    - .need_for_quick_test
 
 # Server
 
@@ -422,7 +460,8 @@ test_server_unit:
       - schedules
     tags:
       - web
-    needs: []
+    extends:
+      - .need_for_quick_test
 
 .test_server_base:
   stage: test_functional
@@ -483,10 +522,12 @@ ff32-server-functional:
     FIREFOX_VERSION: 32
 
 ff45-server-functional:
-  extends: .test_server_functional
+  extends:
+    - .test_server_functional
+    - .need_for_moderate_server
   variables:
     FIREFOX_VERSION: 45
-  needs: [test_tools, test_browser_unit, code_quality_custom, test_server_unit]
+
 
 
 
@@ -537,7 +578,8 @@ deploy_review:
     - /^hotfix-.*c.*\/.*$/
   tags:
     - web
-  needs: []
+  extends:
+    - .need_for_independant_test
 
 deploy_review_server:
   stage: deploy_review
@@ -570,7 +612,8 @@ deploy_review_server:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
-  needs: []  
+  extends:
+    - .need_for_independant_test
 
 deploy_docker:
   stage: deploy_prod
