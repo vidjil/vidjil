@@ -54,8 +54,8 @@ AXIS_LABEL = {
 // list of Axis available for scatterplot
 AXIS_SCATTERPLOT = ["V/5' gene", 
                     "V/5 allele",
-                    "D/4' gene",
-                    "D/4 allele",
+                    "D gene",
+                    "D allele",
                     "J/3' gene",
                     "J/3 allele",
                     "Size",
@@ -103,7 +103,7 @@ AXIS_COLOR = [
                     "Locus",
                     "N length",
                     "V/5' gene",
-                    "D/4' gene",
+                    "D gene",
                     "J/3' gene",
                     "GC content",
                     "Productivity",
@@ -162,14 +162,14 @@ AXIS_DEFAULT = {
         sort :      "alphanumerical",
         autofill:   false
     },
-    "D/4' gene": {
+    "D gene": {
         doc:        "D gene (or 4' segment), gathering all alleles",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineD.labels))},
         fct:        function(clone) {return clone.getGene("4", false)},
         germline:   function(){return m.germlineD.system},
         sort :      "alphanumerical",
     },
-    "D/4 allele": {
+    "D allele": {
         doc:        "D gene (or 4' segment), with allele",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineD.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("4", true)},
