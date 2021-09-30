@@ -53,14 +53,14 @@ AXIS_LABEL = {
 
 // list of Axis available for scatterplot
 AXIS_SCATTERPLOT = ["V/5' gene", 
-                    "V/5 allele",
+                    "V/5' allele",
                     "D gene",
                     "D allele",
                     "J/3' gene",
-                    "J/3 allele",
+                    "J/3' allele",
                     "Size",
                     "Sequence length",
-                    "Read length",
+                    "Reads length",
                     "N length",
                     "CDR3 length",
                     "GC content",
@@ -86,7 +86,7 @@ AXIS_SCATTERPLOT = ["V/5' gene",
 AXIS_ALIGNER = [    
                     "Size",
                     "Sequence length",
-                    "Read length",
+                    "Reads length",
                     "GC content",
                     "Productivity",
                     "Number of samples",
@@ -154,7 +154,7 @@ AXIS_DEFAULT = {
         germline:   function(){return m.germlineV.system},
         sort :      "alphanumerical"
     },
-    "V/5 allele": {
+    "V/5' allele": {
         doc:        "V gene (or 5' segment), with allele",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineV.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("5", true)},
@@ -184,7 +184,7 @@ AXIS_DEFAULT = {
         germline:   function(){return m.germlineJ.system},
         sort :      "alphanumerical",
     },
-    "J/3 allele": {
+    "J/3' allele": {
         doc:        "J gene (or 3' segment), with allele",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineJ.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("3", true)},
@@ -199,7 +199,7 @@ AXIS_DEFAULT = {
         min_step:   1,
         color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
     },    
-    "Read length" : {
+    "Reads length" : {
         doc:        "average length of the reads belonging to each clonotype",
         labels:     {   
                         "?":   {text:"?",   side: "right"}
