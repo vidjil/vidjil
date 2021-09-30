@@ -163,14 +163,14 @@ AXIS_DEFAULT = {
         autofill:   false
     },
     "D gene": {
-        doc:        "D gene (or 4' segment), gathering all alleles",
+        doc:        "D gene (or middle segment), gathering all alleles",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineD.labels))},
         fct:        function(clone) {return clone.getGene("4", false)},
         germline:   function(){return m.germlineD.system},
         sort :      "alphanumerical",
     },
     "D allele": {
-        doc:        "D gene (or 4' segment), with allele",
+        doc:        "D gene (or middle segment), with allele",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineD.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("4", true)},
         germline:   function(){return m.germlineD.system},
