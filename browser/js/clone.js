@@ -1555,7 +1555,9 @@ Clone.prototype = {
                 if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
                   html += "<br />[" + this.getReads(this.m.samples.order[j]).toFixed(2) + "]"
                 }
-                if (typeof this.m.db_key.config != 'undefined' && this.hasSizeConstant()) {
+                if (typeof this.m.db_key.config != 'undefined' &&
+                    this.m.samples.sequence_file_id != undefined &&
+                    this.hasSizeConstant() ) {
                     html += "&emsp;"
                     var sample_set_id = this.m.samples.sequence_file_id[this.m.samples.order[j]];
                     call_reads = "db.get_read('" + this.id + "', "+ this.index +", " + sample_set_id + ')';

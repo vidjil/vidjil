@@ -98,6 +98,12 @@ function startQunit(){
     
         this.push(res, result, "{includes} " + pattern, message);
     };
+    QUnit.assert.notIncludes = function(result, pattern, message ) {
+        // Checks that the result don't includes the pattern
+        // TODO: see and use qunit-regexp !
+        var res = result.indexOf(pattern) == -1;
+        this.push(res, result, "{notIncludes} " + pattern, message);
+    };
     
     QUnit.assert.approx = function(result, expected, margin, message ) {
         // Checks that two floats are about the same

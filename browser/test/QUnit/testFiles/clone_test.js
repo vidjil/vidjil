@@ -263,6 +263,20 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
         "getHtmlInfo: segmentation information + modification button; header");
     assert.includes(html, "<tr id='modal_line_sequence'><td id='modal_line_title_sequence'>sequence</td><td colspan='4' id='modal_line_value_sequence'>aaaaaaaaaattttttttt</td></tr>",
         "getHtmlInfo: segmentation information + modification button; content");
+
+    // Test on download reads button
+    // m.samples.sequence_file_id and m.db_key are undefined, so no getReads should be present
+    assert.notIncludes(html, "icon-down", "getReads; icon NOT present if no sequence file given")
+    assert.notIncludes(html, "db.get_read", "getReads; db call NOT present if no sequence file given")
+    m.samples.sequence_file_id = []
+
+    // Test on download reads button; if correct model values are setted
+    // m.samples.sequence_file_id = [1, 2, 3, 4]
+    m.db_key = { sample_set_id: "7", config: 2 }
+    html_getReads = m.clones[0].getHtmlInfo();
+    assert.includes(html_getReads, "icon-down", "getReads; icon PRESENT if sequence_file given")
+    assert.includes(html_getReads, "db.get_read", "getReads; db call PRESENT if sequence_file given")
+
     // Test icon 
     m.clones[0].segEdited = true;
     html = m.clones[0].getHtmlInfo();

@@ -459,6 +459,7 @@ def get_custom_data():
         data["samples"]["timestamp"] = []
         data["samples"]["info"] = []
         data["samples"]["commandline"] = []
+        data["samples"]["sequence_file_id"] = []
         
         for id in samples:
             sequence_file_id = db.results_file[id].sequence_file_id
@@ -476,6 +477,8 @@ def get_custom_data():
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
             data["samples"]["commandline"].append(db.config[config_id].command)
+            data["samples"]["sequence_file_id"].append(sequence_file_id)
+
 
         log.info("load custom data #TODO log db")
 
