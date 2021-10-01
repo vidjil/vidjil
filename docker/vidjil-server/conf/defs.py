@@ -88,7 +88,7 @@ REQUIRE_HTTPS = True
 BROWSER_PATH = 'browser/index.html'
 
 # LDAP authentification
-LDAP = True
+LDAP = False
 # online test server available for test purposes
 # account:  euler@ldap.forumsys.com
 # password: password
