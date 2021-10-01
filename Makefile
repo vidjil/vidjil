@@ -93,6 +93,7 @@ functional_server_cypress:
 	# Need to have a local server deploy with the ci data integrated
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
+		-v `pwd`/server/web2py/applications/vidjil/tests/cypress/integration:/app/cypress/integration \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
