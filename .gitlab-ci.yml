@@ -443,7 +443,7 @@ test_server_unit:
     script:
       - virtualenv $CI_COMMIT_SHORT_SHA
       - source $CI_COMMIT_SHORT_SHA/bin/activate
-      - apt-get update && apt-get install -y --no-install-recommends gcc libsasl2-dev python-dev python-setuptools libldap2-dev libssl-dev libsasl2-dev
+      - sudo apt-get update && apt-get install -y --no-install-recommends gcc libsasl2-dev python-dev python-setuptools libldap2-dev libssl-dev libsasl2-dev
       - pip install -r requirements.txt
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
