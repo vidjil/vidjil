@@ -3124,11 +3124,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             console.log("Primer set unknow")
             return 1
         } else {
+            document.body.style.cursor = 'wait';
             this.primerSetCurrent = primersSet;
             console.log("Current primer set : "+ this.primerSetCurrent)
             this.switchPrimers();
             console.log("Switch primers values : "+ this.primerSetCurrent)
             this.update();
+            document.body.style.cursor = 'default';
             return 0
         }
     },
