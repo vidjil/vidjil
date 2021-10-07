@@ -1,0 +1,64 @@
+/// <reference types="cypress" />
+
+
+describe('Manipulate patient, sample and launch analysis', function () {
+    before(function () {
+        cy.login(Cypress.env('host'))
+        cy.fixture('l3.json').then(function (l3data) {
+            this.l3data = l3data
+        })
+        cy.close_tips()
+    })
+    beforeEach(function () {
+    })
+    afterEach(function () {
+    })
+    after(function () {
+        cy.clearCookies()
+    })
+
+
+
+    it('00-Launch analysis',  function() {
+        var id          = ""
+        var firstname   = "first name"
+        var lastname    = "last name"
+        var birthday    = "2000-01-01"
+        var informations= "a patient created by cypress"
+        cy.createPatient(id, firstname, lastname, birthday, informations)
+
+        cy.get('.uid').then(($span) => {
+          const uid = parseFloat($span.text())
+          cy.log( `uid = ${uid}`)
+        })
+
+        var preprocess   = undefined
+        var filename1    = "Demo-X5.fa"
+        var filename2    = undefined
+        var samplingdate = "2021-01-01"
+        var informations = "un set d'information"
+        cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations)
+
+        var uid = 1; // TODO; reuse previous uid // async
+        cy.goToPatientPage()
+        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
+          .click({force: true})
+        cy.update_icon()
+
+        cy.launchProcess("2", 1)
+        cy.waitAnalysisCompleted("2", 1)
+
+        return
+    })
+
+    it('01-Delete analysis',  function() {
+        cy.goToPatientPage()
+        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\'1\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
+          .click({force: true})
+        cy.update_icon()
+
+        cy.deleteProcess("2", 1)
+    })
+
+
+})

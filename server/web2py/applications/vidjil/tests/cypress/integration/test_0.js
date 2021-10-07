@@ -16,4 +16,24 @@ describe('Before all step', function () {
 
     })
 
+    it('01-Remove anon for public grp',  function() {
+        cy.login(Cypress.env('host'))
+        cy.close_tips()
+
+        cy.goToGroupsPage()
+        var grp_public = 3
+
+        cy.get('#row_group_'+grp_public+' > #col_access')
+          .should("contain", " //")
+
+        cy.get('#row_group_'+grp_public)
+          .click()
+
+        cy.setGroupRight("anon", true)
+
+        cy.goToGroupsPage()
+        cy.get('#row_group_'+grp_public+' > #col_access')
+          .should("contain", "a //")
+
+    })
 })

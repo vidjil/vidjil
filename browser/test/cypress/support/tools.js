@@ -22,3 +22,11 @@ Cypress.Commands.add("uploadFile",
   }
 );
 
+
+Cypress.Commands.add("text", { prevSubject: true }, (subject, options) => {
+  return subject.text();
+});
+
+Cypress.Commands.add("getTableLength", (datatable) => {
+  return cy.get(datatable).find('tr').then(elm => elm.length)
+});
