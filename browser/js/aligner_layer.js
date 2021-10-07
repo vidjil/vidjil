@@ -1,3 +1,5 @@
+CHAR_WIDTH = 12;
+
 LAYERS = {
     'nuc':
     {
@@ -82,6 +84,24 @@ LAYERS = {
         'stop': function (s,c) { return c.getSegStop("cdr3"); },
         'className': "seq_layer_bracket_top",
         'style': { 'borderColor': "#444" },
+        'enabled': false
+    },
+    'primer5':
+    {
+        'title': function (s,c) { return c.seg.primer5.name;},
+        'start': function (s,c) { return c.getSegStart("primer5"); },
+        'stop': function (s,c) { return c.getSegStop("primer5"); },
+        'className': "seq_layer_underline",
+        'style': { "background-color": "rgb(32, 30, 30)" },
+        'enabled': false
+    },
+    'primer3':
+    {
+        'title': function (s,c) { return c.seg.primer3.name;},
+        'start': function (s,c) { return c.getSegStart("primer3"); },
+        'stop': function (s,c) { return c.getSegStop("primer3"); },
+        'className': "seq_layer_underline",
+        'style': { "background-color": "rgb(32, 30, 30)" },
         'enabled': false
     },
 

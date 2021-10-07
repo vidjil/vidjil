@@ -629,3 +629,39 @@ echo "Uninstall certificates for $BRANCH"
 rm -f $DIR/$BRANCH/docker_$BRANCH/vidjil-client/ssl/web2py.{ctr,info,key}
 rm -f  ~/nginx/certs/$BRANCH.ci.vidjil.org.crt ~/nginx/certs/$BRANCH.ci.vidjil.org.info ~/nginx/certs/$BRANCH.ci.vidjil.org.key
 ```
+
+
+
+### Functional with cypress (release candidate)
+
+To avoid `Watir` limitation on latest versions of browsers, we adopt [Cypress](https://docs.cypress.io/guides/overview/why-cypress#In-a-nutshell).
+The testing pipeline is build on a docker image which include chrome and firefox browser in differents version;
+It is now used to launch pipeline for client and for server aspect.
+See [dev_client.md] for more informations on cypress pipeline.
+
+To launch these pipeline, a vidjil server should be available at localhost.
+Adress should be updated if you use https or http (see troubleshooting section).
+
+1. Usage in cli
+
+```bash
+make functional_server_cypress
+```
+
+2. Interactive mode
+
+For interactive mode, Cypress should be installed on local computer and some symbolic links should be created.
+All actions for linking are made by the rule `functional_server_cypress_open` of the makefile.
+To open the GUI and select tests to launch, command will be:
+
+```bash
+make functional_server_cypress_open
+```
+
+3. Troubleshooting
+
+  1. visit error
+
+  By default, test on CI are launch on a http adress. 
+  Cypress take into account this and try to visit localhost as a http.
+  If an error occur, you should modify the url in `browser/test/cypress/support/login.js` to change `http` to `https`.

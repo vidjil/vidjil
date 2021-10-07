@@ -457,6 +457,9 @@ Model_loader.prototype = {
     copySampleFields: function(samples, analysis) {
         var clone = $.extend({}, samples);
 
+        // Fix error when filename is present multiple times
+        clone.original_names = fixDuplicateNames(clone.original_names)
+
         if ('id' in analysis) {
             //replace names, timestamps, order...
             dict = this.buildDict(analysis.id, clone.original_names);

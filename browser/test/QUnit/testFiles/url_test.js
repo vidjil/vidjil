@@ -87,13 +87,14 @@ QUnit.test("clone : modifyURL", function(assert) { with (windowMock) {
         assert.equal(window.location.search.toString(),"", "reboot url");
 
         sp.init()
-        sp.changeSplitMethod("N length", "size", "bar");
+        sp.changeSplitMethod("N length", "Size", "bar");
         m.update()
+        url.update()
         done()
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(window.location.search.toString(),"?plot=N length,size,bar", "test if plot is in url");
+        assert.equal(window.location.search.toString(),"?plot=N length,Size,bar", "test if plot is in url");
         done()
     }, delay+=step);
     
@@ -117,7 +118,7 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
     url.init();
 
     setTimeout( function() {
-        sp.changeSplitMethod("N length", "size", "grid");
+        sp.changeSplitMethod("N length", "Size", "grid");
         m.update()
 
         done()
@@ -125,9 +126,9 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
 
     setTimeout( function() {
         assert.deepEqual(url.url_dict,{
-            "plot": "N length,size,grid"
+            "plot": "N length,Size,grid"
             }, "test plot url_dict")
-        assert.equal(window.location.search.toString(),"?plot=N length,size,grid", "test if plot is in url");
+        assert.equal(window.location.search.toString(),"?plot=N length,Size,grid", "test if plot is in url");
 
         done()
     }, delay+=step);

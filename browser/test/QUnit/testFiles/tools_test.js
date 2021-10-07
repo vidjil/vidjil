@@ -226,7 +226,7 @@ QUnit.test("processCloneDBContents", function(assert) {
 
     assert.deepEqual(processCloneDBContents(emptyResult, m), {'original': [],
                                                            'clones_names': {},
-                                                           '–': 'No occurrence of this clone in CloneDB'},
+                                                           '–': 'No occurrence of this clonotype in CloneDB'},
                      "processing empty result");
     
     var singleResult = [{'tags': {'sample_set_viewable': [true, true],
@@ -442,4 +442,38 @@ QUnit.test("remove elt in decrease", function(assert) {
 
   var listel = [0,1,2,4,5,7,8]
   assert.deepEqual(removeEltAndDecrease(listel, 3), [0,1,2,3,4,6,7], "correct array after removeEltAndDecrease (3)")
+});
+
+
+QUnit.test("localCompare behavior", function(assert) {
+
+    var list1 = ["TRGV1", "TRGV2", "TRGV10"]
+    var list2 = ["TRGV1*01", "TRGV2*02","TRGV1*02", "TRGV2*11", "TRGV10"]
+    var list3 = ["intron-42*42", "intron-312*42", "intron-42*40", "intron-16*42"]
+    var list4 = ["24Bla2", "24Bla1", "154Bla"]
+
+    var sorted_list1 = ["TRGV1", "TRGV2", "TRGV10"]
+    var sorted_list2 = ["TRGV1*01","TRGV1*02", "TRGV2*02", "TRGV2*11", "TRGV10"]
+    var sorted_list3 = ["intron-16*42", "intron-42*40", "intron-42*42", "intron-312*42"]
+    var sorted_list4 = ["24Bla1", "24Bla2", "154Bla"]
+
+    var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+    list1.sort(collator.compare)
+    list2.sort(collator.compare)
+    list3.sort(collator.compare)
+    list4.sort(collator.compare)
+
+    assert.deepEqual(list1, sorted_list1, "localCompare, test on list1, simple genes")
+    assert.deepEqual(list2, sorted_list2, "localCompare, test on list2, genes and alleles")
+    assert.deepEqual(list3, sorted_list3, "localCompare, test on list3, introns")
+    assert.deepEqual(list4, sorted_list4, "localCompare, test on list4, other genes")
+});
+
+
+QUnit.test("fixDuplicateNames", function(assert) {
+    var source   = ["test", "test",    "test",    "testing", "test",    "testing",    "test"    ]
+    var expected = ["test", "test(1)", "test(2)", "testing", "test(3)", "testing(1)", "test(4)" ]
+    fixDuplicateNames(source)
+
+    assert.deepEqual(source, expected)
 });

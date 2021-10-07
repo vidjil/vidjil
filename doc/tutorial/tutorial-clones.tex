@@ -30,14 +30,14 @@ is \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
     assert ( cinfo[:name].text == "IGHV3-9 7/CCCGGA/17 J6*02"), "correct name for first clone"
 
     stats = $b.statsline
-    assert (stats.text.include? '1 clone, 189 991 reads (9.665%)'),  "Correct stats, number of reads and percentage"
+    assert (stats.text.include? '1 clonotype, 189 991 reads (9.665%)'),  "Correct stats, number of reads and percentage: " + stats.text
   end
 \end{verbatim}
 
 
 There are several options to display the V(D)J designation.
 
-\question{In the  \com{settings} menu, under \com{N regions in clone names} select \com{length} to show N zones by their length. Revert to the
+\question{In the  \com{settings} menu, under \com{N regions in clonotype names} select \com{length} to show N zones by their length. Revert to the
   default \com{sequence (when short)} setting to show the full N on short sequences.}
 
 \begin{verbatim}
@@ -73,7 +73,7 @@ There are several options to display the V(D)J designation.
   end
 \end{verbatim}
 
-\question{Try also the options  \com{alleles in clone names} : by selecting \com{always}, the clone
+\question{Try also the options  \com{alleles in clonotype names} : by selecting \com{always}, the clone
   V gene is displayed as \com{IGHV3-9*01}. Revert to the default \com{when not
     *01}. This setting, which is the default, allows to have a more condensed
   V(D)J designation that doesn't make the \com{*01} appear (it is implicit).}
@@ -85,7 +85,7 @@ There are several options to display the V(D)J designation.
     $b.input(:id => "menuAlleleNot_never").click
     $b.update_icon.wait_while(&:present?) # wait update
     cinfo = $b.clone_info("1")
-    assert ( cinfo[:name].text == "IGHV3-9 7/6/17 J6"), "correct name for first clone (menuAlleleNot_never)"
+    assert ( cinfo[:name].text == "IGHV3-9 7/6/17 J6"), "correct name for first clone (menuAlleleNot_never): " + cinfo[:name].text
 
     $b.menu_settings.click
     $b.input(:id => "menuAlleleNot_when_not_01").click
@@ -110,11 +110,11 @@ depending if the top 50 are always the same or always different or, more
 realistically, in-between.
 This number can be increased to a maximum of 100 clones by going to the \com{filter} menu and by putting the
 slider to its right end.
-\question{Notice how the IGH smaller clones percentage (second clone displayed in the list) changes. What was its
+\question{Notice how the IGH smaller clonotypes percentage (second clone displayed in the list) changes. What was its
   initial value? What is it now?}
 
-\reponse{filter set to 50 \fl IGH smaller clones 10.11\,\%\\*
- filter set to 100 \fl IGH smaller clones 8.92\,\%\\*}
+\reponse{filter set to 50 \fl IGH smaller clonotypes 10.11\,\%\\*
+ filter set to 100 \fl IGH smaller clonotypes 8.92\,\%\\*}
 \begin{verbatim}
   def test_B_clones_04_filter_slider
     if not ENV['HEADLESS']
@@ -153,7 +153,7 @@ slider to its right end.
   end
 \end{verbatim}
 
-The \textit{smaller clones} correspond to clones that are not displayed
+The \textit{smaller clonotypes} correspond to clones that are not displayed
 because they are never among the most abundant ones.
 
 
@@ -161,7 +161,7 @@ because they are never among the most abundant ones.
 
 Consider the most abundant clones in the list:  \texttt{IGHV3-9 7/CCCGGA/17 J6*02} and  \texttt{TRGV10 13//5 JP1}.
 Usually we may want to tag them in order to remember them later on.
-\question{Click on the star and choose colored tags for these two clones, such as \texttt{clone 1} or \texttt{clone 2}.
+\question{Click on the star and choose colored tags for these two clones, such as \texttt{clonotype 1} or \texttt{clonotype 2}.
   Notice how the color applies throughout all the views.}
 
 \begin{verbatim}
@@ -194,11 +194,11 @@ Later you may want to filter clones depending on the tags you have chosen.
     assert ($b.clone_in_list("1").present?), "clone 0 is present at starting test"
 
     # Click on tag switch; clone 1 will be hidden
-    $b.info_colorBy.span(:id => "fastTag0").click
+    $b.info_colorBy.span(title: 'clonotype 1').click
     $b.update_icon.wait_while(&:present?)
     assert (not $b.clone_in_list("1").present?), "clone 0 is hidden"
 
-    $b.info_colorBy.span(:id => "fastTag0").click
+    $b.info_colorBy.span(title: 'clonotype 1').click
     $b.update_icon.wait_while(&:present?)
     assert ($b.clone_in_list("1").present?), "clone 0 is present at the end of the test"
   end
@@ -213,17 +213,8 @@ their gene names or by their DNA sequences.
 
 
 \begin{verbatim}
-  def test_B_clones_06_filter_by_tag
-    assert ($b.clone_in_list("1").present?), "clone 0 is present at starting test"
-
-    # Click on tag switch; clone 1 will be hidden
-    $b.info_colorBy.span(:id => "fastTag0").click
-    $b.update_icon.wait_while(&:present?)
-    assert (not $b.clone_in_list("1").present?), "clone 0 is hidden"
-
-    $b.info_colorBy.span(:id => "fastTag0").click
-    $b.update_icon.wait_while(&:present?)
-    assert ($b.clone_in_list("1").present?), "clone 0 is present at the end of the test"
+  def test_B_clones_06b_filter_by_tag
+    # TODO
   end
 \end{verbatim}
 
@@ -324,7 +315,7 @@ After this rename, you can see that the clone is still selected.
     $b.update_icon.wait_while(&:present?)
 
     stats = $b.statsline
-    assert (stats.text.include? '2 clones, 364 027 reads (18.51%)'),  "Correct stats, number of reads and percentage"
+    assert (stats.text.include? '2 clonotypes, 364 027 reads (18.51%)'),  "Correct stats, number of reads and percentage"
   end
 \end{verbatim}
 
@@ -365,7 +356,7 @@ After this rename, you can see that the clone is still selected.
     $b.clone_in_list("11").click(:control)
     $b.clone_in_list("13").click(:control)
     $b.update_icon.wait_while(&:present?)
-    $b.a(:id => "focus_selected").click
+    $b.span(:id => "focus_selected").click
     $b.update_icon.wait_while(&:present?)
 
     ## test that clone are hidden after focus
@@ -381,7 +372,7 @@ After this rename, you can see that the clone is still selected.
 \begin{verbatim}
   def test_B_clones_13_remove_filter
     ## test that clone are present after resetting filtering
-    $b.clear_filter.click
+    $b.span(:id => "reset_focus").click
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_in_list('1').present?), ">> clone 1 is present again"
     assert ( $b.clone_in_list('7').present?), ">> clone 7 is still present"
@@ -413,7 +404,7 @@ Sometimes, one wants to hide noisy or unrelated clones.
     $b.clone_in_list("11").click(:control)
     $b.clone_in_list("13").click(:control)
     $b.update_icon.wait_while(&:present?)
-    $b.a(:id => "hide_selected").click
+    $b.span(:id => "hide_selected").click
     $b.update_icon.wait_while(&:present?)
 
     ## test that clone are hidden after focus
@@ -423,7 +414,7 @@ Sometimes, one wants to hide noisy or unrelated clones.
     assert (     $b.clone_in_list('5').present?), ">> clone 5 is present"
 
     ## test that clone are present after resetting filtering
-    $b.clear_filter.click
+    $b.span(:id => "reset_focus").click
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_in_list('1').present?), ">> clone 1 is present again"
     assert ( $b.clone_in_list('7').present?), ">> clone 7 is still present"
@@ -537,7 +528,7 @@ By default in the bottom plot (the \textit{grid}), the clones
     $b.clone_in_list("0").click
     $b.send_keys 0
 
-    $b.scatterplot_x_legend(6).click # clonotype with IGHV3-13
+    $b.scatterplot_x_legend(8).click # clonotype with IGHV3-13
 
     ## control that these clonotype is selected and visible in semgenter
     assert ( not $b.clone_in_segmenter('0').present? ), "clone 0 chould not be present";
@@ -669,25 +660,23 @@ insertions.
     assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset V/N length"
     assert ( $b.scatterplot_y_label.text == "N length" ), "Correct legend for axe Y for preset V/N length"
     assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X for this preset is 'IGHV1-2'"
-    assert ( $b.scatterplot_y_legend(0).text == "0"), "scatterplot_legend Y for this preset is '0'"
+    assert ( $b.scatterplot_y_legend(0).text == "?"), "scatterplot_legend Y for this preset is '0'"
   end
 \end{verbatim}
 
 Then you can continue aligning and clustering clones if necessary.
 
-\question{You can also try the preset \com{clone average read length/GC content}
+\question{You can also try the preset \com{read length/GC content}
   which tends to separate quite nicely the distinct clones.}
 \begin{verbatim}
   def test_B_clones_27_change_preset_2
-    $b.scatterplot_select_preset "clone average read length / GC content"
+    $b.scatterplot_select_preset "read length / GC content"
     $b.update_icon.wait_while(&:present?)
 
-    assert ( $b.scatterplot_x_label.text == "clone average read length" ), "Correct legend for axe X for preset 0"
+    assert ( $b.scatterplot_x_label.text == "Read length" ), "Correct legend for axe X for preset 0"
     assert ( $b.scatterplot_y_label.text == "GC content" ), "Correct legend for axe Y for preset 0"
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_legend(0).text == "?"), "scatterplot_legend X pos 0 for this preset is '?'"
-    assert ( $b.scatterplot_x_legend(1).text == "80"), "scatterplot_legend X pos 1 for this preset is '80'"
-    assert ( $b.scatterplot_y_legend(0).text == "0.40"), "scatterplot_legend Y for this preset is '0.40'"
   end
 \end{verbatim}
 
@@ -714,7 +703,7 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
     $b.div(:id => "visu_bar").click
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X after switch in bar mode"
-    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y after switch in bar mode"
+    assert ( $b.scatterplot_y_label.text == "Size" ), "Correct legend for axe Y after switch in bar mode"
 
     $b.element(:id => "visu_sp_menu").hover
     $b.div(:id => "visu_plot").click
@@ -765,50 +754,50 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 
     $b.send_keys 3
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_label.text == "clone average read length" ), "Correct legend for axe X for preset 3"
-    assert ( $b.scatterplot_y_label.text == "locus" ), "Correct legend for axe Y for preset 3"
+    assert ( $b.scatterplot_x_label.text == "Read length" ), "Correct legend for axe X for preset 3"
+    assert ( $b.scatterplot_y_label.text == "Locus" ), "Correct legend for axe Y for preset 3"
     #assert ( $b.scatterplot_x_legend(0).text == "20"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
     #assert ( $b.scatterplot_y_legend(0).text == "IGH"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
     $b.send_keys 4
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_label.text == "clone average read length" ), "Correct legend for axe X for preset 4"
-    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y for preset 4"
+    assert ( $b.scatterplot_x_label.text == "Read length" ), "Correct legend for axe X for preset 4"
+    assert ( $b.scatterplot_y_label.text == "Size" ), "Correct legend for axe Y for preset 4"
     #assert ( $b.scatterplot_x_legend(0).text == "20"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
     #assert ( $b.scatterplot_y_legend(0).text == "20%"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
     $b.send_keys 5
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_label.text == "V/5' gene" ), "Correct legend for axe X for preset 5"
-    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y for preset 5"
+    assert ( $b.scatterplot_y_label.text == "Size" ), "Correct legend for axe Y for preset 5"
     #assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
     #assert ( $b.scatterplot_y_legend(0).text == "16%"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
     $b.send_keys 6
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_label.text == "N length" ), "Correct legend for axe X for preset 6"
-    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y for preset 6"
+    assert ( $b.scatterplot_y_label.text == "Size" ), "Correct legend for axe Y for preset 6"
     #assert ( $b.scatterplot_x_legend(0).text == "?"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
     #assert ( $b.scatterplot_y_legend(0).text == "55%"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
     $b.send_keys 7
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_label.text == "CDR3 length (nt)" ), "Correct legend for axe X for preset 7"
-    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y for preset 7"
+    assert ( $b.scatterplot_x_label.text == "CDR3 length" ), "Correct legend for axe X for preset 7"
+    assert ( $b.scatterplot_y_label.text == "Size" ), "Correct legend for axe Y for preset 7"
     #assert ( $b.scatterplot_x_legend(0).text == ""), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
     #assert ( $b.scatterplot_y_legend(0).text == ""), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
     $b.send_keys 8
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_label.text == "J/3' gene" ), "Correct legend for axe X for preset 8"
-    assert ( $b.scatterplot_y_label.text == "size" ), "Correct legend for axe Y for preset 8"
+    assert ( $b.scatterplot_y_label.text == "Size" ), "Correct legend for axe Y for preset 8"
     #assert ( $b.scatterplot_x_legend(0).text == ""), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
     #assert ( $b.scatterplot_y_legend(0).text == ""), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
     $b.send_keys 9
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_label.text == "size" ), "Correct legend for axe X for preset 9"
-    assert ( $b.scatterplot_y_label.text == "size (other sample)" ), "Correct legend for axe Y for preset 9"
+    assert ( $b.scatterplot_x_label.text == "Size" ), "Correct legend for axe X for preset 9"
+    assert ( $b.scatterplot_y_label.text == "Size (other)" ), "Correct legend for axe Y for preset 9"
     #assert ( $b.scatterplot_x_legend(0).text == ""), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
     #assert ( $b.scatterplot_y_legend(0).text == ""), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
@@ -836,13 +825,13 @@ with the \com{color by} menu.
     assert ( not $b.info_colorBy.span(:class => "gradient").exist? ), "at init, color are not gradient"
 
     select_color = $b.select_list(:id => "color_menu_select")
-    select_color.select("N")
+    select_color.select("N length")
     $b.update_icon.wait_while(&:present?)
     
     ## control
     $b.clone_in_list("0").click
-    assert ($b.clone_info('1')[:name].style('color') ==  'rgba(36, 75, 183, 1)' ), "Good color for clone 1 with color method N"
-    assert ($b.clone_info('4')[:name].style('color') ==  'rgba(61, 36, 183, 1)' ), "Good color for clone 4 with color method N"
+    assert ($b.clone_info('1')[:name].style('color') ==  'rgba(0, 189, 225, 1)' ), "Good color for clone 1 with color method N"
+    assert ($b.clone_info('4')[:name].style('color') ==  'rgba(0, 173, 251, 1)' ), "Good color for clone 4 with color method N"
     ## test label
     assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"),  "scatter plot legend X is correct after preset change"
     assert ( $b.scatterplot_y_legend(0).text == "IGHJ1"), "scatter plot legend Y is correct after preset change"
@@ -853,19 +842,21 @@ with the \com{color by} menu.
 be similar.
 
 \question{Choose now the preset \com{CDR3 length distribution} and
-  then color by \com{productivity}.
+  then color by \com{size}.
   See that the color tiles in the info part (upper right) change to show the color key.}
 \begin{verbatim}
   def test_B_clones_31_color_gradient
     $b.scatterplot_select_preset "CDR3 length distribution"
+    select_color = $b.select_list(:id => "color_menu_select")
+    select_color.select("Size")
     $b.update_icon.wait_while(&:present?)
 
     assert ( $b.info_colorBy.span(:class => "gradient").exist? ), "color gradient is present"
   end
 \end{verbatim}
 
-\question{ Instead of coloring by productivity, you could also color by
-  \com{clone}. When coloring by \com{clone}, each clone has a random color. Thus in
+\question{ Instead of coloring by clone size, you could also color by
+  \com{clonotype}. When coloring by \com{clonotype}, each clone has a random color. Thus in
   a bar plot, it is a convenient color mode to see the peaks that are due to a
   single clone or to several clones.
   However clones may be very similar. Another option is to color by
@@ -875,7 +866,7 @@ be similar.
 \begin{verbatim}
   def test_B_clones_32_color_by_clone
     select_color = $b.select_list(:id => "color_menu_select")
-    select_color.select("clone")
+    select_color.select("Clonotype")
     $b.update_icon.wait_while(&:present?)
 
     $b.clone_in_list("0").click
@@ -1010,7 +1001,7 @@ clicked on.
 
     $b.send_keys "g"
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_legend(0).text == "TRGV10"), "scatterplot_legend X  after shortcut G; TRGV10"
+    assert ( $b.scatterplot_x_legend(0).text == "TRGV2"), "scatterplot_legend X  after shortcut G; TRGV2"
     assert ( $b.scatterplot_y_legend(0).text == "TRGJ1"), "scatterplot_legend Y  after shortcut G; TRGJ1"
     
 
@@ -1025,6 +1016,9 @@ You can also change the current locus by clicking on the locus name in the
 right part of the grid.
 \begin{verbatim}
   def test_B_clones_38_switch_locus_by_scatterplot_click
+    $b.send_keys "h"
+    $b.update_icon.wait_while(&:present?)
+    
     $b.send_keys 0 # return to a grap with locus 
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2"), "scatterplot_legend X at init; IGHV1-2"
@@ -1032,7 +1026,7 @@ right part of the grid.
 
     $b.scatterplot_locus("TRG").click
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_legend(0).text == "TRGV10"), "scatterplot_legend X  after shortcut G; TRGV10"
+    assert ( $b.scatterplot_x_legend(0).text == "TRGV2"), "scatterplot_legend X  after shortcut G; TRGV2"
     assert ( $b.scatterplot_y_legend(0).text == "TRGJ1"), "scatterplot_legend Y  after shortcut G; TRGJ1"  
   end
 \end{verbatim}

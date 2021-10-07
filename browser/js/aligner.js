@@ -86,27 +86,27 @@ Aligner.prototype = {
     build_axis_menu: function(){
         var self = this;
 
-        var available_axis = Axis.prototype.available();
+        var available_axis = AXIS_ALIGNER;
 
         var menu = document.getElementById("segmenter_axis_select");
         for (var i in available_axis) {
             var axis_p = Axis.prototype.getAxisProperties(available_axis[i]);
-            if (!axis_p.isInAligner) continue;
 
             var axis_label = document.createElement('label');
             axis_label.setAttribute('for', "sai"+i);
             axis_label.className = "aligner-checkbox-label";
+            axis_label.title = axis_p.doc;
 
             var axis_option = document.createElement('span');
-            var axis_text = document.createTextNode(available_axis[i]);
+            var axis_text = document.createTextNode(axis_p.name);
             var axis_input = document.createElement('input');
             axis_input.setAttribute('type', "checkbox");
-            axis_input.setAttribute('value', available_axis[i]);
+            axis_input.setAttribute('value', axis_p.name);
             axis_input.setAttribute('id', "sai"+i); // segmenter axis input
             axis_input.className = "aligner-checkbox-input";
-            if (available_axis[i] == "size" ||
-                available_axis[i] == "productivity IMGT" ||
-                available_axis[i] == "VIdentity IMGT" ) axis_input.setAttribute('checked', "");
+            if (axis_p.name == "Size" ||
+                axis_p.name == "[IMGT] Productivity" ||
+                axis_p.name == "[IMGT] VIdentity" ) axis_input.setAttribute('checked', "");
 
             axis_label.appendChild(axis_input);
             axis_label.appendChild(axis_text);
@@ -117,9 +117,9 @@ Aligner.prototype = {
             self.connect_axisbox(axis_input);
         }
 
-        this.selectedAxis = [Axis.prototype.getAxisProperties("productivity IMGT"),
-                            Axis.prototype.getAxisProperties("VIdentity IMGT"),
-                            Axis.prototype.getAxisProperties("size")];
+        this.selectedAxis = [Axis.prototype.getAxisProperties("[IMGT] Productivity"),
+                            Axis.prototype.getAxisProperties("[IMGT] VIdentity"),
+                            Axis.prototype.getAxisProperties("Size")];
     },
 
     //check axis selected in menu to update and update axisBox dom elements accordingly
@@ -159,6 +159,51 @@ Aligner.prototype = {
         });
     },
 
+    open : function(){
+        var self = this;
+        this.min_H = 130;
+        this.max_H = 500;
+
+        var seg = $(this.div_segmenter);
+
+        var cur_H = seg.height()
+        var auto_H = seg.css('height', 'auto').height();
+        if (auto_H > self.max_H) auto_H = this.max_H;
+        if (cur_H  < self.min_H) cur_H  = this.min_H;
+        seg.stop().height(cur_H).animate({ height: auto_H }, 250, function(){
+            $(self.div_segmenter).height('auto');
+        });
+
+        $("#"+this.id).css('box-shadow', '0px -4px 8px 0px rgba(0, 0, 0, 0.2)')
+
+        var icon = $("#aligner-open-button").find(".icon-up-open")
+        icon.removeClass("icon-up-open")
+        icon.addClass("icon-down-open")
+
+        this.is_open = true;
+    },
+
+    close : function(){
+        this.min_H = 130;
+
+        $(this.div_segmenter).stop().animate({ height: this.min_H }, 250);
+
+        $("#"+this.id).css('box-shadow', '')
+
+        var icon = $("#aligner-open-button").find(".icon-down-open")
+        icon.removeClass("icon-down-open")
+        icon.addClass("icon-up-open")
+
+        this.is_open = false;
+    },
+
+    toggle : function(){
+        if (this.is_open)
+            this.close();
+        else
+            this.open()
+    },
+
     build_segmenter: function () {
         var self = this;
 
@@ -176,60 +221,23 @@ Aligner.prototype = {
         this.div_segmenter = clone.getElementsByClassName("segmenter")[0];
         self.min_H = 130;
         self.max_H = 500;
-        $(".menu-content").css("bottom", (self.min_H+22)+"px");
         $(this.div_segmenter)
             .scroll(function () {
                 var leftScroll = $(self.div_segmenter).scrollLeft();
                 $('.seq-fixed').css({ 'left': +leftScroll });
             })
-            .mouseenter(function () {
-                if (!self.fixed && !self.is_open) {
-                    var seg = $(self.div_segmenter);
-                    var cur_H = seg.height();
-                    var auto_H = seg.css('height', 'auto').height();
-
-                    if (auto_H >= self.min_H+20) {
-                        if (auto_H > self.max_H) auto_H = self.max_H;
-                        if (cur_H  < self.min_H) cur_H  = self.min_H;
-                        $(".menu-content").css("bottom", (auto_H+22)+"px");
-                        seg.stop().height(cur_H).animate({ height: auto_H }, 250);
-                    } else {
-                        $(".menu-content").css("bottom", (self.min_H+22)+"px");
-                        seg.stop().height(self.min_H);
-                    }
-                    self.is_open = true;
-                }
-            });
-
-        $('#' + this.id)
-            .mouseleave(function (e) {
-                if (e.relatedTarget !== null && self.is_open) {
-                    setTimeout(function () {
-                        if ($(".tagSelector").hasClass("hovered")) return;
-
-                        var seg = $(self.div_segmenter);
-
-                        if (!self.fixed  && seg.height() > self.min_H) 
-                            seg.stop().animate({ height: self.min_H }, 250);
-                        else 
-                            seg.stop();
-                        
-                        $(".menu-content").css("bottom", (self.min_H+22)+"px");
-                        self.is_open = false;
-                        
-                    }, 200);
-                }
-            });
+  
 
         // Focus/hide/label
-        document.getElementById("focus_selected").onclick = function () { self.m.focusSelected(); };
-        document.getElementById("hide_selected").onclick = function () { self.m.hideSelected(); };
+        document.getElementById("focus_selected").onclick = function () { self.m.filter.add("Clonotype", "focus", self.m.getSelected()); };
+        document.getElementById("hide_selected").onclick = function () { self.m.filter.add("Clonotype", "hide", self.m.getSelected()); };
+        document.getElementById("reset_focus").onclick = function () {  self.m.filter.remove("Clonotype", "focus")
+                                                                        self.m.filter.remove("Clonotype", "hide") };
         document.getElementById("star_selected").onclick = function (e) {
             if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
-        document.getElementById("fixsegmenter").onclick = function () { self.switchFixed(); };
         document.getElementById("cluster").onclick = function () { self.m.merge(); };
         document.getElementById("align").onclick = function () { self.toggleAlign(); };
-        this.setFixed(false);
+        document.getElementById("aligner-open-button").onclick = function () { self.toggle(); };
 
     },
 
@@ -249,35 +257,6 @@ Aligner.prototype = {
 
         this.index[cloneID] = new IndexedDom(clone);
 
-    },
-
-    /**
-     * Switch the fixed status of the segmenter.
-     * @post old this.fixed == ! this.fixed
-     */
-    switchFixed: function() {
-        this.setFixed(!this.fixed);
-    },
-
-    /**
-     * Set the fixed status of the segmenter.
-     * Should be used rather than directly modifying the fixe property
-     */
-    setFixed: function(fixed) {
-        this.fixed = fixed;
-        this.updateFixedPicture();
-    },
-
-    updateFixedPicture: function() {
-        fix_icons = $('#fixsegmenter i');
-        if (fix_icons.length > 0) {
-            fix_icons = fix_icons[0];
-            if (this.fixed) {
-                fix_icons.className = 'icon-pin';
-            } else {
-                fix_icons.className = 'icon-pin-outline';
-            }
-        }
     },
 
    build_align_settings_menu: function(){
@@ -492,8 +471,8 @@ Aligner.prototype = {
                 cluster.className = "aligner-menu button";
             }
             else {
-                align.className = "button inactive";
-                cluster.className = "button inactive";
+                align.className = "aligner-menu button inactive";
+                cluster.className = "aligner-menu button inactive";
             }
         }
     },
@@ -505,7 +484,6 @@ Aligner.prototype = {
 
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
-        var available_axis = Axis.prototype.available();
         
         for (var i in this.selectedAxis) {
             var span = document.createElement('span');
@@ -652,9 +630,19 @@ Aligner.prototype = {
             if (this.isClone(list[i])) {
                 var c = this.m.clone(list[i]);
                 
-                if (c.seg.imgt && address == 'IMGTSeg') continue;
+                if (c.seg.imgt && address == 'IMGTSeg'){
+                    if (c.seg.imgt.trimming_before  == this.m.trimming_before_external &&
+                        c.seg.imgt.trimming_primer  == this.m.primerSetCurrent){
+                      continue;
+                    }         
+                } // else, modified option, relunch request
+
                 if (typeof (c.getSequence()) !== 0){
-                    request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
+                    if (this.m.trimming_before_external && this.m.primerSetCurrent != undefined) {
+                        request += ">" + c.index + "#" + c.getName() + "\n" + c.trimmingFeature("primer5", "primer3", false) + "\n";
+                    } else {
+                        request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
+                    }
                 } else {
                     request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
                 }
@@ -667,6 +655,7 @@ Aligner.prototype = {
                 request += ">" +list[i] + "\n" +this.m.germline[this.sequence[list[i]].locus][list[i]] + "\n";
             }
         }
+
         if (request != ""){
             if (address == 'IMGTSeg') {
                 imgtPostForSegmenter(this.m.species, request, system, this);
@@ -893,7 +882,7 @@ Aligner.prototype = {
 
             if (length) t += length ;
             if (nb_clones_not_constant) t += '+' + nb_clones_not_constant;
-            t += " clone" + (length+nb_clones_not_constant>1 ? "s" : "") + ", ";
+            t += " clonotype" + (length+nb_clones_not_constant>1 ? "s" : "") + ", ";
 
             t += this.m.toStringThousands(sumRawReads) + " read" + (sumRawReads>1 ? "s" : "");
 
@@ -909,10 +898,6 @@ Aligner.prototype = {
                 extra_info_system = "";
             }
             t += " ";
-            $(".focus_selected").css("display", "");
-        }
-        else {
-            $(".focus_selected").css("display", "none");
         }
             
         $(".stats_content").text(t);
@@ -930,10 +915,20 @@ Aligner.prototype = {
         }
 
         if (this.m.getSelected().length > 0){  
-            $("#tag_icon__multiple").css("display", "");
+            $("#star_selected").css("display", "")
+            $("#focus_selected").css("display", "")
+            $("#hide_selected").css("display", "")
         } else {
-            $("#tag_icon__multiple").css("display", "none");
+            $("#star_selected").css("display", "none")
+            $("#focus_selected").css("display", "none")
+            $("#hide_selected").css("display", "none")
         }
+
+        if (this.m.filter.check("Clonotype", "focus") != -1 ||
+            this.m.filter.check("Clonotype", "hide") != -1)
+                $("#reset_focus").css("display", "")
+            else
+                $("#reset_focus").css("display", "none")
     },
 
     /**

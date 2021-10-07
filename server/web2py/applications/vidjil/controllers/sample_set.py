@@ -141,6 +141,7 @@ def index():
                 )
             )
 
+
     all_sequence_files = [r.sample_set_membership.sequence_file_id for r in query]
 
     (shared_sets, sample_sets) = get_associated_sample_sets(all_sequence_files, [sample_set_id])
@@ -148,6 +149,8 @@ def index():
     samplesets = SampleSets(sample_sets.keys())
     sets_names = samplesets.get_names()
 
+    scheduler_ids = {}
+    
     ## assign set to each rows
     for row in query:
         row.list_share_set = []
@@ -156,6 +159,14 @@ def index():
                 values = {"title": sets_names[elt],
                           "sample_type": sample_sets[elt].sample_type, "id":elt}
                 row.list_share_set.append(values)
+        if row.results_file.scheduler_task_id:
+            scheduler_ids[row.results_file.scheduler_task_id] = row.results_file
+        row.results_file.status = ''
+
+    schedulers = db(db.scheduler_task.id.belongs(scheduler_ids.keys())).select()
+    for s in schedulers:
+        scheduler_ids[s.id].status = s.status
+    
 
     tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()
@@ -783,6 +794,7 @@ def getStatHeaders():
     return [('sets', 'db', s),
             #('reads', 'parser', m),
             ('mapped reads', 'parser', m),
+            ('merged reads', 'parser', m),
             #('mapped_percent', 'parser', p),
             ('read lengths', 'parser', g),
             #('bool', 'parser', b),
@@ -790,7 +802,8 @@ def getStatHeaders():
             ('loci', 'parser', l),
             #('distribution', 'parser', lbc),
             #('clones_five_percent', 'parser', m),
-            ('main clone', 'parser', m)
+            ('main clone', 'parser', m),
+            ('pre process', 'parser', m)
             #('abundance', 'parser', lbc)
         ]
 
@@ -829,6 +842,10 @@ def getFusedStats(fuse):
             dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
             dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
             dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
+            if 'merged' in data['reads']:
+                dest['merged reads'] = data['reads']['merged'][result_index]
+            else:
+                dest['merged reads'] = None
 
             tmp = {}
             for c in data['clones']:
@@ -864,6 +881,8 @@ def getFusedStats(fuse):
             #dest['bool_true'] = True
             dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
             dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
+            if 'pre_process' in data['samples']:
+                dest['pre process'] = data['samples']['pre_process']['producer'][result_index]
             d[results_file_id] = dest
     return d
 

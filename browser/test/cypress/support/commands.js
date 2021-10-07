@@ -66,7 +66,9 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis) => {
 Cypress.Commands.add("update_icon", (delay) => {
   if (delay == undefined){ delay = 0 }
   cy.wait(delay)
-  cy.get('#updateIcon').should("not.visible")
+  
+  cy.get('#updateIcon', { timeout: 6000 })
+    .should("not.visible")
 
 })
 

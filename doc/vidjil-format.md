@@ -1,7 +1,7 @@
 # Encoding clones with V(D)J recombinations with `.vidjil` files
 
 The following [.json](http://en.wikipedia.org/wiki/JSON) format (2016b) allows to
-encode a set of clones with V(D)J immune recombinations,
+encode a set of clones (formally, clonotypes) with V(D)J immune recombinations,
 possibly with user annotations.
 
 In Vidjil, this format is used by both the `.analysis` and the `.vidjil` files.
@@ -20,8 +20,8 @@ present in the `.vidjil` file.
 There are several definitions of what may be a clonotype,
 depending on different RepSeq software or studies.
 This format accept any kind of definition:
-Clones are identified by a `id` string that may be an arbitrary identifier such as `clone-072a`.
-Software computing clones may choose some relevant identifiers:
+Clonotypes are identified by a `id` string that may be an arbitrary identifier such as `clone-072a`.
+Software computing clonotypes may choose some relevant identifiers:
 
   - `CGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTAC`, Vidjil algorithm, 50 nt window centered on the CDR3
   - `CARPRDWNTYYYYGMDVW`, a CDR3 AA sequence
@@ -193,6 +193,59 @@ do a correct gathering.
 }
 ```
 
+### `.vidjil` file - pre process data
+
+If a pre process has been used to produce a file in the pipeline its data can be fused into the .vidjil file.
+
+``` javascript
+{
+    "producer": "program xyz version xyz",
+    "timestamp": "2014-10-01 12:00:11",
+    "vidjil_json_version": "2016b",
+
+    "samples": {
+         "number": 1,
+         "original_names": ["T8045-BC081-Diag.fastq"],
+         "pre_process": {
+             "stats": {
+                 ...
+             },
+             "parameters": {
+                 ...
+             }
+         }
+    },
+
+    "reads" : {
+        "total" :           [ 437164 ] ,
+        "segmented" :       [ 335662 ] ,
+        "germline" : {
+            "TRG" :         [ 250000 ] ,
+            "IGH" :         [ 85662  ]
+        },
+        "merged" :          [ 437164 ]
+    },
+
+    "clones": [
+        {
+            "id": "clone-001",
+            "name": "TRGV5*01 5/CC/0 TRGJ1*02",
+            "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
+    "reads" : [ 243241 ],
+            "_average_read_length": [ 119.3 ],
+            "germline": "TRG",
+            "top": 1,
+            "seg":
+            {
+        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 87, "delRight":5},
+        "3": {"name": "TRGJ1*02",  "start": 89,  "stop": 118,   "delLeft":0},
+                "cdr3": { "start": 78, "stop": 105, "seq": "gccacctgggccttattataagaaactc" }
+    }
+
+        }
+    ]
+}
+```
 
 ## `.analysis` file
 

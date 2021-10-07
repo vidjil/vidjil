@@ -30,26 +30,25 @@ function ScatterPlot_menu(default_preset) {
 
     // Plot Presets
     this.preset = {
-        "V/J (genes)" :             { "x" : "V/5' gene",                "y": "J/3' gene", mode:"grid"},
-        "V/J (alleles)" :           { "x" : "V/5 allele",               "y": "J/3 allele"},
-        "V/N length" :              { "x" : "V/5' gene",                "y": "N length"},
-        "read length / locus" :     { "x" : "clone average read length","y": "locus"},
-      //"V/abundance" :             { "x" : "V/5' gene", "y": "size"},
-        "read length distribution" :{ "x" : "clone average read length"},
-        "V distribution" :          { "x" : "V/5' gene"},
-        "N length distribution" :   { "x" : "N length"},
-        "CDR3 length distribution" :{ "x" : "CDR3 length (nt)"},
-        "J distribution" :          { "x" : "J/3' gene"},
-        "compare two samples" :     { "x" : "size",                     "y": "size (other sample)"},
-      //"plot by similarity" :      { "x" : "tsneX",                    "y": "tsneY"},
-      //"plot by similarity and by locus" :             { "x" : "tsneX_system", "y": "tsneY_system"},
-        "clone average read length / GC content" :     { "x":"clone average read length",    "y" : "GC content"},
-        "clone consensus coverage / GC content" :      { "x": "clone consensus length",      "y" : "GC content"},
-        "number of samples sharing each clone" :        { "x": "number of samples",           "y" : "locus"},
-      //"interpolated length between BIOMED2 primers (inclusive)" : { "x": "primers", "y" : "size"},
-        "number of deletions for the segment V/5 in 3" :{ "x": "V/5' deletions in 3'"},
-        "number of deletions for the segment J/3 in 5" :{ "x": "J/3' deletions in 5'"},
-        "Primers" :{ "x": "primers"},
+        "V/J (genes)" :             { "x": "V/5' gene",         "y": "J/3' gene",       mode: "grid"},
+        "V/J (alleles)" :           { "x": "V/5 allele",        "y": "J/3 allele" ,     mode: "grid"},
+        "V/N length" :              { "x": "V/5' gene",         "y": "N length",        mode: "grid"},
+        "read length / locus" :     { "x": "Read length",       "y": "Locus",           mode: "grid"},
+        "read length distribution" :{ "x": "Read length",                               mode: "bar"},
+        "V distribution" :          { "x": "V/5' gene",                                 mode: "bar"},
+        "N length distribution" :   { "x": "N length",                                  mode: "bar"},
+        "CDR3 length distribution" :{ "x": "CDR3 length",                               mode: "bar"},
+        "J distribution" :          { "x": "J/3' gene",                                 mode: "bar"},
+        "compare two samples" :     { "x": "Size",              "y": "Size (other)",    mode: "grid"},
+        "read length / GC content" :{ "x": "Read length",       "y": "GC content",      mode: "grid"},
+        "coverage / GC content" :   { "x": "Sequence length",   "y": "GC content",      mode: "grid"},
+        "number of samples sharing each clonotype" :    { "x": "number of samples", 
+                                                                "y" : "Locus",          mode: "grid"},
+        "number of deletions for the segment V/5 in 3" :{ "x": "V/5' del'",             mode: "bar"},
+        "number of deletions for the segment J/3 in 5" :{ "x": "J/3' del'",             mode: "bar"},
+        "Primers" :                 { "x": "Primers",                                   mode: "bar"},
+        "Similarity"    :           { "x" : "TSNEX",            "y": "TSNEY",           mode: "tsne"},
+        "Similarity (locus)":       { "x" : "TSNEX_LOCUS",      "y": "TSNEY_LOCUS",     mode: "tsne"}
     };
 
     this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset 
@@ -117,6 +116,7 @@ ScatterPlot_menu.prototype = {
 
         if (this.mode=="bar")  $(this.span_icon_bar ).addClass("sp_selected_mode")
         if (this.mode=="grid") $(this.span_icon_grid).addClass("sp_selected_mode")
+        if (this.mode=="tsne") $(this.span_icon_grid).addClass("sp_selected_mode")
     },
 
     initSelect: function() {
@@ -201,6 +201,20 @@ ScatterPlot_menu.prototype = {
             }
         });
 
+
+        this.slider_y = $(this.menu).find(".slider_y")[0];
+        this.slider_box_y = $(this.menu).find(".slider_box_y")[0];
+
+        $( this.slider_y ).slider({
+            range: true,
+            slide: function( event, ui ) {
+                self.updateDisplayY(ui.values);
+            },
+            stop: function( event, ui ) {
+                self.updateScaleY();
+            }
+        });
+
     },
 
     //used to convert integer value of handle position into a log 
@@ -256,11 +270,20 @@ ScatterPlot_menu.prototype = {
         $(this.menu).find(".sp_menu_icon").removeClass("sp_selected_mode");
         $(this.menu).find(".sp_menu_icon_"+this.mode).addClass("sp_selected_mode");
 
-        //hide axis_y for bar mode(y axis is fixed to size in bar mode)
-        if (this.mode == "bar")
-            $(this.menu).find(".menu_box_axis_y").hide();
-        else
-            $(this.menu).find(".menu_box_axis_y").show();
+        switch (this.mode) {
+            case "bar":
+                $(this.menu).find(".menu_box_axis_x").show();
+                $(this.menu).find(".menu_box_axis_y").hide();
+                break;
+            case "tsne":
+                $(this.menu).find(".menu_box_axis_x").hide();
+                $(this.menu).find(".menu_box_axis_y").hide();
+                break;
+            default:
+                $(this.menu).find(".menu_box_axis_x").show();
+                $(this.menu).find(".menu_box_axis_y").show();
+                break;
+        }
 
         this.updateSlider(this.slider_box_x,this.slider_x,this.axisX)
         this.updateSlider(this.slider_box_y,this.slider_y,this.axisY)
@@ -417,7 +440,7 @@ ScatterPlot_menu.prototype = {
     changePreset: function(){
         this.resetCustomScale();
         var elem = this.select_preset;
-        this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y);
+        this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y, this.preset[elem.value].mode);
         this.m.update();
         if (typeof db !== 'undefined')
         {

@@ -1,6 +1,8 @@
 
 .test_cypress_server:
   stage: test_cypress_server
+  # extends:
+  #   - .need_for_staged_test
   script:
     - docker pull "vidjilci/cypress_with_browsers:latest"
     - >
@@ -26,7 +28,6 @@
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
-  needs: []
   tags:
     - x86_64
     - docker
@@ -38,30 +39,28 @@ server_firefox_supported:
     - .test_server_base
     - .test_cypress_base
     - .test_cypress_server
-  stage: test_cypress_server_supported
+    - .need_for_moderate_server
+  stage: test_cypress_server
   variables:
     BROWSER: browsers/firefox_supported/firefox
-  needs: []
 
 server_firefox_latest:
   extends:
     - .test_server_base
     - .test_cypress_base
     - .test_cypress_server
-  stage: test_cypress_server_latest
+  stage: test_cypress_server
   variables:
     BROWSER: browsers/firefox_latest/firefox
-  needs: [server_chrome_supported, server_firefox_supported]
 
 server_firefox_legacy:
   extends:
     - .test_server_base
     - .test_cypress_base
     - .test_cypress_server
-  stage: test_cypress_server_legacy
+  stage: test_cypress_server
   variables:
     BROWSER: browsers/firefox_legacy/firefox
-  needs: [server_chrome_latest, server_firefox_latest]
 
 
 server_chrome_supported:
@@ -69,28 +68,25 @@ server_chrome_supported:
     - .test_server_base
     - .test_cypress_base
     - .test_cypress_server
-  stage: test_cypress_server_supported
+  stage: test_cypress_server
   variables:
     BROWSER: browsers/chrome_supported/chrome
-  needs: []
 
 server_chrome_latest:
   extends:
     - .test_server_base
     - .test_cypress_base
     - .test_cypress_server
-  stage: test_cypress_server_latest
+  stage: test_cypress_server
   variables:
     BROWSER: browsers/chrome_latest/chrome
-  needs: [server_chrome_supported, server_firefox_supported]
 
 server_chrome_legacy:
   extends:
     - .test_server_base
     - .test_cypress_base
     - .test_cypress_server
-  stage: test_cypress_server_legacy
+  stage: test_cypress_server
   variables:
     BROWSER: browsers/chrome_legacy/chrome
-  needs: [server_chrome_latest, server_firefox_latest]
 
