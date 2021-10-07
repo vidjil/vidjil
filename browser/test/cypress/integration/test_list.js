@@ -13,7 +13,7 @@ describe('Actions v1', function () {
 
 
 
-  it('Open a simple vidjil file',  function() {
+  it('00-Open a simple vidjil file',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
     cy.get('#list_clones').children().should('have.length', 8)
     cy.get('#listElem_5 > .nameBox').should('have.text', "clone_cluster1")
@@ -24,7 +24,7 @@ describe('Actions v1', function () {
 
 
 
-  it('Open a vidjil file + analysis',  function() {
+  it('01-Open a vidjil file + analysis',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis")
 
     cy.get('#listElem_5 > .nameBox').should('have.text', "clone_cluster1")
@@ -38,7 +38,7 @@ describe('Actions v1', function () {
 
 
 
-  it('test_00_list_clones',  function() {
+  it('02-test_00_list_clones',  function() {
       cy.openAnalysis("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis")
       //   # change current sample to start on sample 0 (second in loaded order)
       // cy.get("body").type("{rightarrow}")
@@ -95,7 +95,7 @@ describe('Actions v1', function () {
 
 
 
-  it('Handle a cluster in list',  function() {
+  it('03-Handle a cluster in list',  function() {
     // link to issue #4806
     cy.openAnalysis("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis")
 

@@ -7,7 +7,7 @@ describe('Before all step', function () {
         cy.screenshot('screenshot_after_all')
     })
 
-    it('Before all launching',  function() {
+    it('00-Before all launching',  function() {
         // Cypress can't navigate between multiple superdomain (even http/https)
         // This test allow to launch the before all test, with init database (only available at http)
         // See https://docs.cypress.io/guides/guides/web-security#Same-superdomain-per-test

@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 
-describe('Manipulate db page', function () {
+describe('Manipulate db page (for cypress pipeline)', function () {
     before(function () {
         cy.login(Cypress.env('host'))
         cy.fixture('l3.json').then(function (l3data) {
@@ -18,7 +18,7 @@ describe('Manipulate db page', function () {
     })
 
 
-    it('Open db1; classic',  function() {
+    it('00-Open db1; classic',  function() {
         cy.isDbPageVisible().then((val) => {
             console.log( val ) 
             cy.wrap(val).should('equal', true) 
@@ -33,7 +33,7 @@ describe('Manipulate db page', function () {
     })
 
 
-    it('Open db2; session still active',  function() {
+    it('01-Open db2; session still active',  function() {
 
         cy.isDbPageVisible().should('equal', true)
 
@@ -54,7 +54,7 @@ describe('Manipulate db page', function () {
     })
 
 
-    it('Open db3; start from correct point from previous',  function() {
+    it('02-Open db3; start from correct point from previous',  function() {
         cy.isDbPageVisible().should('equal', false)
 
         // These function get their own should inside to verify that correct db element is present and visible
@@ -66,7 +66,7 @@ describe('Manipulate db page', function () {
     })
 
 
-    it('Open db 4',  function() {
+    it('03-Open db 4',  function() {
         // Call multiple times patient page to verify that cypress handle correctly intercept
 
         cy.openDBPage()
