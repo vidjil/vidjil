@@ -185,7 +185,7 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
     cy.update_icon()
 
 
-    cy.get('#upload_form > :nth-child(1)')
+    cy.get('#upload_sample_form > :nth-child(1)')
       .should('contain', 'Add samples')
       .click()
 
