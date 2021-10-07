@@ -1,6 +1,12 @@
 echo "$ change chmod of cypress directory"
 chmod 777 cypress -R 
 
+make -C /app/cypress/fixtures/demo
+echo "==> ls /app/cypress/fixtures/demo"
+ls /app/cypress/fixtures/demo
+
+echo "==> PWD: `pwd`"
+
 
 echo -e "$ ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless  --env workdir=vidjil,host=$HOST,initiated_database=false"
 ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless  --env workdir=vidjil,host=$HOST,initiated_database=false

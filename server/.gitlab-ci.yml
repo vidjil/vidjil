@@ -8,6 +8,7 @@
       -v $PWD/$CYPRESS_PATH:/app/cypress
       -v $PWD/browser/test/data:/app/cypress/fixtures/data
       -v $PWD/doc:/app/cypress/fixtures/doc
+      -v $PWD/demo:/app/cypress/fixtures/demo
       -v $PWD:/app/vidjil
       -v "$PWD/docker/ci/cypress.json":"/app/cypress.json"
       -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash"
