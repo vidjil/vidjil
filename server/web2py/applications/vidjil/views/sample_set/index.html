@@ -82,7 +82,7 @@
                     {{status = task.status }}
                 {{pass}}
 
-                 <tr>
+                 <tr id="row_sequence_file_{{=row.sequence_file.id}}" >
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
                        {{if row.sequence_file.network:}}<i class="icon-upload-cloud-outline" title="This file is stored on your lab's network"></i>{{pass}}
 		       {{if auth.is_admin():}}({{=row.sequence_file.id}}){{pass}}
@@ -147,7 +147,7 @@
                      </td>
                      <td {{if status in ["COMPLETED", "FAILED"]:}} class="pointer" onclick="db.call('results_file/output', { 'results_file_id' : '{{=row.results_file.id}}' }) " {{else:}} class="inactive" {{pass}}><i class="icon-docs" title="See the output files"></i></td>
                     {{if can_modify and auth.can_process_sample_set(request.vars['id']):}}
-                     <td class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}', 'sample_set_id': '{{=request.vars["id"]}}'})" >  <i class="icon-erase" title="delete process"></i> </td>
+                     <td id="delete_process_{{=row.sequence_file.id}}" class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}', 'sample_set_id': '{{=request.vars["id"]}}'})" >  <i class="icon-erase" title="delete process"></i> </td>
                     {{else:}}
                      <td></td>
                     {{pass}}
@@ -220,7 +220,7 @@
 
     <div class="db_block_left">
         {{if can_upload: }}
-        <span class="button2" onclick="db.call('file/form', { 'sample_set_id' : '{{=request.vars["id"]}}' } )"> + add samples </span>
+        <span id="add_sample_button" class="button2" onclick="db.call('file/form', { 'sample_set_id' : '{{=request.vars["id"]}}' } )"> + add samples </span>
 
         {{pass}}
         <span class="button2" onclick="db.call('sample_set/custom', {'id': '{{=request.vars['id']}}', 'filter': ''} )">compare some of these samples</span>
