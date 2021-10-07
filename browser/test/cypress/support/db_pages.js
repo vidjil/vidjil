@@ -25,7 +25,7 @@ Cypress.Commands.add('initDatabase', (host) => {
             .type('foobartest')
           cy.get('#data_form')
             .contains('save').click()
-          cy.waitForUpdates()
+          cy.update_icon()
           cy.get('#auth_user_email', { timeout: 10000 })
             .should('exist')
             .should('be.visible')
@@ -92,7 +92,7 @@ Cypress.Commands.add('goToTokenPage', (token) => {
   cy.openDBPage().then(() => {
     cy.intercept({
         method: 'GET', // Route all GET requests
-        url: 'get_active_notifications*', // that have a URL that matches '/users/*'
+        url: 'get_active_notifications*',
       }).as('getActivities')
 
     cy.get('#db_menu > .'+token+'_token')
@@ -101,7 +101,7 @@ Cypress.Commands.add('goToTokenPage', (token) => {
       .click()
 
     cy.wait(['@getActivities'])
-    cy.waitForUpdates()
+    cy.update_icon(100)
 
     cy.get('.db_div')
       .should('contain', ' + new '+token+'s ')

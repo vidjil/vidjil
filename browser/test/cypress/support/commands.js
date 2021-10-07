@@ -13,11 +13,16 @@ Cypress.Commands.add('close_disclamer', () => {
 })
 
 Cypress.Commands.add('close_tips', () => { 
-  cy.get('.tip_1')
-    .should('be.visible')
-    .and('contain', 'Tip:')
-    .get('.tip_1 > .icon-cancel')
-    .click()
+  cy.document().then(($document) => {
+    const documentResult = $document.querySelectorAll('.tip_1')
+    if (documentResult.length) {
+      cy.get('.tip_1')
+        .should('be.visible')
+        .and('contain', 'Tip:')
+        .get('.tip_1 > .icon-cancel')
+        .click()
+    }
+  })
 })
 
 Cypress.Commands.add('setBrowser', (url) => {
@@ -58,7 +63,9 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis) => {
 /**
  * Allow to wait for update icon to be not visible
  */
-Cypress.Commands.add("update_icon", () => {
+Cypress.Commands.add("update_icon", (delay) => {
+  if (delay == undefined){ delay = 0 }
+  cy.wait(delay)
   cy.get('#updateIcon').should("not.visible")
 
 })
