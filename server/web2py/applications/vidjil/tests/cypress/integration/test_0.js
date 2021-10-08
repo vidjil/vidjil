@@ -26,10 +26,7 @@ describe('Before all step', function () {
         cy.get('#row_group_'+grp_public+' > #col_access')
           .should("contain", " //")
 
-        cy.get('#row_group_'+grp_public)
-          .click()
-
-        cy.setGroupRight("anon", true)
+        cy.setGroupRight(grp_public, ["anon"], true)
 
         cy.goToGroupsPage()
         cy.get('#row_group_'+grp_public+' > #col_access')

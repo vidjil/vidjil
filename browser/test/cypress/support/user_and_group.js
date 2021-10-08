@@ -106,20 +106,43 @@ Cypress.Commands.add('fillUser', (first_name, last_name, email, password) => {
 })
 
 
-Cypress.Commands.add('setGroupRight', (right, value) => {
-
-    var rights = ["create", "read", "admin", "upload", "run", "save", "anon"]
-    if (rights.indexOf(right) == -1 || typeof value != "boolean") {
-      throw new Error('setGroupRight, error')
+Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
+    // Control given values
+    if (typeof value != "boolean") {
+      throw new Error(`setGroupRight, error; '${value}' is not a boolean value`)
     }
-    var check = cy.get('#group_right_'+right)
+    if (!Array.isArray(rights)) {
+      throw new Error(`setGroupRight, error; '${rights}' is not an array of rights`)
+    }
 
-    if (value == true){
-      check.check()
-           .should('be.checked')
-    } else if (value == false){
-      check.uncheck()
-           .should('not.be.checked')
+    cy.intercept({
+        method: 'GET', // Route all GET requests
+        url: 'get_active_notifications*',
+      }).as('getActivities')
+
+    cy.goToGroupsPage()
+    cy.get('#row_group_'+grp_public)
+      .click()
+
+    cy.wait(['@getActivities'])
+    cy.update_icon(0)
+
+    var rights_list = ["create", "read", "admin", "upload", "run", "save", "anon"]
+    for (var i = rights.length - 1; i >= 0; i--) {
+      var right = rights[i]
+
+      if (rights_list.indexOf(right) == -1) {
+        throw new Error(`setGroupRight, error; right "${right}" don't exist`)
+      }
+      var check = cy.get('#group_right_'+right)
+
+      if (value == true){
+        check.check()
+             .should('be.checked')
+      } else if (value == false){
+        check.uncheck()
+             .should('not.be.checked')
+      }
     }
 
 })
