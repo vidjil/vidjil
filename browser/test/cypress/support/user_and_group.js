@@ -121,7 +121,7 @@ Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
       }).as('getActivities')
 
     cy.goToGroupsPage()
-    cy.get('#row_group_'+grp_public)
+    cy.get('#row_group_'+grp_id)
       .click()
 
     cy.wait(['@getActivities'])
