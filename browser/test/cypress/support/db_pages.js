@@ -358,10 +358,17 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, nb_retr
   var i = 0
 
   for(let i = 0; i<nb_retry && !completed;i++){
-      var status = cy.sampleStatusValue(sequence_file_id)
-      cy.get('#db_reload').trigger("click")
-      cy.wait(1000)
+      cy.intercept({
+        method: 'GET', // Route all GET requests
+        url: 'get_active_notifications*',
+      }).as('getActivities')
 
+      cy.get('#db_reload').trigger("click")
+      cy.wait(['@getActivities'])
+      cy.update_icon(100)
+      cy.wait(900)
+
+      var status = cy.sampleStatusValue(sequence_file_id)
       if (status == " COMPLETED "){
         completed = true
         return;
