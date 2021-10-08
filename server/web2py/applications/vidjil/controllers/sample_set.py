@@ -243,8 +243,8 @@ def all():
     mid = time.time()
 
     set_ids = set([s.sample_set_id for s in slist.result])
-    admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set)).select(db.sample_set.id)]
-    admin_permissions = list(set(admin_permissions) & set_ids)
+    admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set) &  (db.sample_set.id.belongs(set_ids))).select(db.sample_set.id)]
+    admin_permissions = list(set(admin_permissions))
 
     log.debug("permission load (%.3fs)" % (time.time() - mid))
 
