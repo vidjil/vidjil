@@ -43,15 +43,18 @@ def index():
     if auth.is_admin():
         query = (user_log.id > 0)
     else:
-	user_groups = auth.get_user_groups()
-	parent_groups = auth.get_user_group_parents()
-	group_list = [g.id for g in user_groups]
-	parent_list = [g.id for g in parent_groups]
-	groups = list(set(group_list + parent_list))
+        user_groups = auth.get_user_groups()
+        parent_groups = auth.get_user_group_parents()
+        group_list = [g.id for g in user_groups]
+        if 3 in group_list: # Remove logs on  public group
+            group_list.remove(3)
+        parent_list = [g.id for g in parent_groups]
+
+        groups = list(set(group_list + parent_list))
         query = ((user_log.table_name == db.auth_permission.table_name) &
             (user_log.record_id == db.auth_permission.record_id) &
-	    (db.auth_permission.name == PermissionEnum.access.value) &
-	    (db.auth_permission.group_id.belongs(groups)))
+            (db.auth_permission.name == PermissionEnum.access.value) &
+            (db.auth_permission.group_id.belongs(groups)))
 
     if 'table' in request.vars and request.vars['table'] != 'all':
         table_name = request.vars['table']
