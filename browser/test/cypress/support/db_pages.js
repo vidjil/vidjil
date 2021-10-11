@@ -347,40 +347,49 @@ Cypress.Commands.add('deleteProcess', (config, sequence_file_id) => {
 
 /**
  * Wait for an analysis to be completed.
- * Don't work as waited. Don"t able to stop for loop for the moment (probably due to async call of cypress)
+ * Make a recursive call from himself while status is not 'COMPLETED', in limit of given number of retry
+ * Unfortunatly, last control will be called X times at the end, X as the depth of the recusive iteration
  */
-Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, nb_retry=90) => {
-  cy.log( `waitAnalysisCompleted(${config}, ${sequence_file_id})`)
-
-  cy.selectConfig(config)
-
-  var completed = false
-  var i = 0
-
-  for(let i = 0; i<nb_retry && !completed;i++){
-      cy.intercept({
-        method: 'GET', // Route all GET requests
-        url: 'get_active_notifications*',
-      }).as('getActivities')
-
-      cy.get('#db_reload').trigger("click")
-      cy.wait(['@getActivities'])
-      cy.update_icon(100)
-      cy.wait(900)
-
-      var status = cy.sampleStatusValue(sequence_file_id)
-      if (status == " COMPLETED "){
-        completed = true
-        return;
-      }
-      cy.log( "ITERATION "+i)
-      if ( i > nb_retry ){
-        completed = true
-      }
+Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, nb_retry=60, iter=0) => {
+  if (start == undefined){
+    var start = new Date().getTime();
   }
 
-  cy.log( "COMPLETED after " +i+" iteration")
+  cy.log( `waitAnalysisCompleted: ${iter}`)
+  cy.intercept({
+    method: 'GET', // Route all GET requests
+    url: 'get_active_notifications*',
+  }).as('getActivities')
+
+  cy.get('#db_reload')
+    .trigger("click")
+
+  cy.wait(['@getActivities'])
+  cy.update_icon(100)
+
+  // Check status
+  cy.sampleStatusValue(sequence_file_id)
+    .then($status => {
+      var now = new Date().getTime()
+
+      // Add a wait if needed between recursive call
+      if ( (now - start) < (iter*1000) ){
+        cy.log( ` wait ... ${(iter*1000) - (now - start)} `)
+        cy.wait( (iter*1000) - (now - start) )
+      }
+
+
+      if ($status == " COMPLETED ") {
+        return true
+      } else if ( (now - start)/1000 > 60){
+          return false
+      } else if ( iter > nb_retry){
+          return false
+      }
+      cy.waitAnalysisCompleted(config, sequence_file_id, start, nb_retry=60, iter=iter+1)
+    })
+
   cy.sampleStatus(sequence_file_id)
     .should('have.text', ' COMPLETED ')
-  return
+
 })
