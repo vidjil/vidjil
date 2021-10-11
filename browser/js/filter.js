@@ -83,16 +83,16 @@ Filter.prototype = {
                 title += "pouet!"
                 break;
             case "focus":
-                text += "Focus on "+f.value.length+" Clones"
-                title += "Remove all Clones not in this list of user's selected clones (" +f.value.join() + ")"
+                text += "Focus on "+f.value.length+" Clonotypes"
+                title += "Remove all clonotypes not in this list of user's selected clonotypes (" +f.value.join() + ")"
                 break;
             case "hide":
-                text += "Hide "+f.value.length+" Clones"
-                title += "Clones have been selected by user to be hidden (" +f.value.join() + ")"
+                text += "Hide "+f.value.length+" Clonotypes"
+                title += "Clonotypes have been selected by user to be hidden (" +f.value.join() + ")"
                 break;
             case "search":
                 text += "Search for '"+f.value+"'"
-                title += "This filter will search for clones containing '"+f.value+"'in it's sequence, reverse sequence or common properties ()"
+                title += "This filter will search for clonotypes containing '"+f.value+"'in it's sequence, reverse sequence or common properties ()"
                 break;
             default:
                 break;

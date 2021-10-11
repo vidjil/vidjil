@@ -269,16 +269,16 @@ Model.prototype = {
         ];
 
         this.tag = [
-            {"color" : "#dc322f", "name" : "clone 1", "display" : true},
-            {"color" : "#cb4b16", "name" : "clone 2", "display" : true},
-            {"color" : "#b58900", "name" : "clone 3", "display" : true},
+            {"color" : "#dc322f", "name" : "clonotype 1", "display" : true},
+            {"color" : "#cb4b16", "name" : "clonotype 2", "display" : true},
+            {"color" : "#b58900", "name" : "clonotype 3", "display" : true},
             {"color" : "#268bd2", "name" : "standard", "display" : true},
             {"color" : "#6c71c4", "name" : "standard (noise)", "display" : true},
             {"color" : "#2aa198", "name" : "custom 1", "display" : true},
             {"color" : "#d33682", "name" : "custom 2", "display" : true},
             {"color" : "#859900", "name" : "custom 3", "display" : true},
             {"color" : "",        "name" : "-/-", "display" : true},
-            {"color" : "#bdbdbd", "name" : "smaller clones", "display" : true}
+            {"color" : "#bdbdbd", "name" : "smaller clonotypes", "display" : true}
         ]
 
         this.default_tag=8;
@@ -1447,9 +1447,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         other_quantifiable_clones.forEach(function(pos) {
             var c = self.clone(pos);
             c.reads = newOthers[c.germline];
-            c.name = c.germline + " smaller clones";
-            if (this.filter && this.filter.check("Clone", "hide") != -1)
-                c.name += " + filtered clones";
+            c.name = c.germline + " smaller clonotypes";
+            if (this.filter && this.filter.check("Clonotype", "hide") != -1)
+                c.name += " + filtered clonotypes";
         })
     },
     
@@ -2419,7 +2419,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         
         var string;
         if (clonesIDs.length > 1){
-            string = "Tag for " + clonesIDs.length +  " clones"
+            string = "Tag for " + clonesIDs.length +  " clonotypes"
         } else {
             if (clonesIDs[0][0] == "s") cloneID = clonesIDs[0].substr(3);
             string = "Tag for "+this.clone(clonesIDs[0]).getName()
@@ -3146,7 +3146,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
                         self.shouldRefresh();
                         self.update();
-                        console.log({ msg: "Clone(s) added!", type: "flash", priority: 1 })
+                        console.log({ msg: "Clonotype(s) added!", type: "flash", priority: 1 })
                     },
                     error: function (xhr, textStatus, errorThrown) {
                         displayAjax(false);
