@@ -64,9 +64,9 @@ describe('Scatterplot', function () {
     cy.get('body').trigger('keyup', { keyCode: 49});
 
     cy.get('#visu_axis_x_container').children('line').should('have.length', 3)
-    cy.get('#visu_axis_container').should('contain', "V/5 allele")
+    cy.get('#visu_axis_container').should('contain', "V/5' allele")
     cy.get('#visu_axis_y_container').children('line').should('have.length', 3)
-    cy.get('#visu_axis_container').should('contain', "J/3 allele")
+    cy.get('#visu_axis_container').should('contain', "J/3' allele")
 
     //using axis_x selector
     cy.get('#visu').find('select[name*="select_x[]"]').select('Sequence length',{ force: true })

@@ -240,7 +240,7 @@ QUnit.test("axes productivity detailed", function(assert) {
         assert.equal( axes_legend[3].__data__.text, "stop-codon",   "label have new position; stop codon")
         assert.equal( axes_legend[4].__data__.text, "no CDR3",   "label have new position; no cdr3")
         assert.equal( axes_legend[5].__data__.text, "no-WPGxG-pattern",   "label have new position; no-WPGxG-pattern")
-        assert.ok(  parseFloat(axes_legend[2].getAttribute("x")) >  parseFloat(axes_legend[5].getAttribute("x")),   "verify position of new label, at the end (by X position)")
+        assert.ok(  parseFloat(axes_legend[2].getAttribute("x1")) >  parseFloat(axes_legend[5].getAttribute("x1")),   "verify position of new label, at the end (by X position)")
         ready()
     }, 300);
 })
@@ -274,7 +274,7 @@ QUnit.test("Sort axes alphabetical with numeric value", function(assert) {
     sp.init();
 
     assert.equal(sp.returnActiveclones(), 7, "returnActiveClones -> 7");
-    sp.changeSplitMethod("V/5' gene", "J/3 allele", "grid");
+    sp.changeSplitMethod("V/5' gene", "J/3' allele", "grid");
 
     var axes_legend_x = document.getElementById("visu_axis_x_container").childNodes
     var axes_legend_y = document.getElementById("visu_axis_y_container").childNodes

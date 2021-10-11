@@ -59,7 +59,7 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis) => {
  * Allow to wait for update icon to be not visible
  */
 Cypress.Commands.add("update_icon", () => {
-  cy.get('#updateIcon').should("not.visible")
+  cy.get('#updateIcon', { timeout: 6000 }).should("not.visible")
 
 })
 

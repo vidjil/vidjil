@@ -52,7 +52,7 @@ function ScatterPlot(id, model, database, default_preset) {
 
     //Margins (css style : top/right/bottom/left)
     this.default_margin = [70,10,15,100];
-    this.graph_margin = [25,25,25,25];
+    this.tsne_margin = [25,25,25,25];
     this.margin = this.default_margin;
 
     this.CLONE_MIN_SIZE = 0.001
@@ -303,14 +303,11 @@ ScatterPlot.prototype = {
         var showVirtual;
 
         // Set if the clone should be show on is virtual/distrib status
-        if (clone.isInScatterplot() && clone.axes != undefined){
-            var axes = [this.splitX, this.splitY]
+        if (clone.isInScatterplot() && clone.axes != undefined)
             showVirtual = clone.sameAxesAsScatter(this)
-        } else if (!clone.isInScatterplot()) {
-            showVirtual = false
-        } else {
-            showVirtual = true        
-        }
+        else 
+            showVirtual = clone.isInScatterplot()
+
         var include = (system_grid && clone.isActive() && showVirtual)
         return include
     },
@@ -319,8 +316,12 @@ ScatterPlot.prototype = {
      * compute the position of each rectangles / labels and start the display
      * */
     computeBarTab : function () {        
-        var bars = this.axisX.getBar()
+        //reset bar visibility for all clone's bar
+        for (var i=0; i<this.nodes.length; i++)
+            this.nodes[i].includeBar = false
 
+        //compute position/visibility only for bar in axisX
+        var bars = this.axisX.getBar()
         for (var b in bars) {
             var bar = bars[b]
             var x_pos = this.axisX.getValuePos(bar.value)
@@ -350,10 +351,7 @@ ScatterPlot.prototype = {
                     node.bar_h = this.gridSizeH * height_for_display
                     node.bar_w = this.gridSizeW * bar.width
                     node.includeBar = true
-                }else{
-                    node.includeBar = false
                 }
-
             }
         }
         this.initGrid();
@@ -555,7 +553,7 @@ ScatterPlot.prototype = {
             div_width = div.offsetWidth
             print = false
         }
-        this.compute_size(div_width, div_height, print)
+        this.computeSize(div_width, div_height, print)
             //Attributions
         this.vis = d3.select("#" + this.id + "_svg")
             .attr("width", div_width)
@@ -565,10 +563,6 @@ ScatterPlot.prototype = {
             .attr("height", div_height);
 
         this.update()
-        
-        if (this.splitX == "tsneX_system" || this.splitX == "tsneX"){
-            this.changeSplitMethod(this.splitX, this.splitY, this.mode)
-        }
     },
     
     /**
@@ -576,7 +570,7 @@ ScatterPlot.prototype = {
      * @param {float} [div_height]
      * @param {float} [print]
      * */
-    compute_size: function(div_width, div_height, print) {
+    computeSize: function(div_width, div_height, print) {
         if (typeof div_height != 'undefined') {
             //recompute resizeW/H only if a custom div_Width/hieght is provided
             this.resizeW = div_width - this.margin[3] - this.margin[1];
@@ -595,7 +589,7 @@ ScatterPlot.prototype = {
             this.gridSizeW = 0.8 * this.resizeW;
             this.gridSizeH = 1 * this.resizeH;
         } else {
-            this.gridSizeW = 0.95 * this.resizeW;
+            this.gridSizeW = this.resizeW;
             this.gridSizeH = this.resizeH;
         }
 
@@ -786,7 +780,7 @@ ScatterPlot.prototype = {
                         .compute(Math.round(this.resizeH/25))
             }
 
-            this.compute_size()
+            this.computeSize()
                 .initGrid()
                 .updateClones()
                 .updateMenu();    
@@ -1001,7 +995,8 @@ ScatterPlot.prototype = {
                 .attr("class", function(p) {
                     var c = self.m.clone(p.id)
 
-                    if (!(p.hasValidAxisPosition || p.use_system_grid) || !c.isActive() || c.hasSizeOther()) 
+                    if ( !(p.hasValidAxisPosition || p.use_system_grid) ||
+                         !c.isActive() || c.hasSizeOther() || p.r1 == 0) 
                         return "circle_hidden";
                     if (c.isSelected() && c.isFocus())
                         return "circle_focus circle_select"
@@ -1079,37 +1074,6 @@ ScatterPlot.prototype = {
             this.sub_text_position_x = 60;
         }
 
-
-        //LEGENDE
-        leg = this.axis_x_container.selectAll("text")
-            .remove()
-            .exit()   
-            .data(data)
-            .enter()
-            .append("text")
-            .on("click", function(d){
-                self.m.unselectAllUnlessKey(d3.event)
-                self.m.multiSelect(self.axisX.getLabelInfo(d.id).clones)
-            })
-            .attr("x", function(d) {
-                return self.gridSizeW * d.position + self.margin[3];
-            })
-            .attr("y", function(d) {
-                if (d.type == "subline") return self.sub_text_position_x
-                else return self.text_position_x
-            })
-            .text(function(d) {
-                return d.text;
-            })
-            .attr("class", function(d) {
-                return className;
-            })
-            .attr("transform", function(d) {
-                var y = self.text_position_x
-                if (d.type == "subline") y = self.sub_text_position_x
-                return "rotate(" + self.rotation_x + " " + (self.gridSizeW * d.position + self.margin[3]) + " " + y + ")"
-            });
-
         //this.AXIS
         lines = this.axis_x_container.selectAll("line")
             .remove()
@@ -1138,6 +1102,40 @@ ScatterPlot.prototype = {
                 }
                 return "sp_line";
             });
+
+        //LEGENDE
+        leg = this.axis_x_container.selectAll("text")
+            .remove()
+            .exit()   
+        
+        if (this.mode == "tsne") return;
+
+        leg.data(data)
+            .enter()
+            .append("text")
+            .on("click", function(d){
+                self.m.unselectAllUnlessKey(d3.event)
+                self.m.multiSelect(self.axisX.getLabelInfo(d.id).clones)
+            })
+            .attr("x", function(d) {
+                return self.gridSizeW * d.position + self.margin[3];
+            })
+            .attr("y", function(d) {
+                if (d.type == "subline") return self.sub_text_position_x
+                else return self.text_position_x
+            })
+            .text(function(d) {
+                return d.text;
+            })
+            .attr("class", function(d) {
+                return className;
+            })
+            .attr("transform", function(d) {
+                var y = self.text_position_x
+                if (d.type == "subline") y = self.sub_text_position_x
+                return "rotate(" + self.rotation_x + " " + (self.gridSizeW * d.position + self.margin[3]) + " " + y + ")"
+            });
+        
     },
 
     /* Fonction permettant de mettre à jour de l'axe des Y
@@ -1156,39 +1154,6 @@ ScatterPlot.prototype = {
         }
 
         this.label_update();
-        
-        //LEGENDE
-        leg = this.axis_y_container.selectAll("text")
-            .remove()
-            .exit()
-            .data(data)
-            .enter()
-            .append("text")
-            .on("click", function(d){
-                if (self.mode !="bar"){
-                    self.m.unselectAllUnlessKey(d3.event)
-                    self.m.multiSelect(self.axisY.getLabelInfo(d.id).clones);
-                }
-            })
-            .attr("x", function(d) {
-                if (d.type == "subline") return self.sub_text_position_y;
-                else return self.text_position_y;
-            })
-            .attr("y", function(d) {
-                return (self.resizeH * d.position + self.margin[0]);
-            })
-            .text(function(d) {
-                return d.text;
-            })
-            .attr("class", "sp_legend")
-            /*
-            .attr("transform", function(d) {
-                var x = self.text_position_y
-                if (d.type == "subline") x = self.sub_text_position_y
-                return "rotate(" + self.rotation_y + " " + x + " " + (self.resizeH * d.position + self.margin[0]) + ")"
-            })
-            */
-            
         //this.AXIS
         lines = this.axis_y_container.selectAll("line")
             .remove()
@@ -1217,6 +1182,45 @@ ScatterPlot.prototype = {
                 }
                 return "sp_line";
             })
+
+
+        //LEGENDE
+        leg = this.axis_y_container.selectAll("text")
+        .remove()
+        .exit()   
+    
+        if (this.mode == "tsne") return;
+
+        //LEGENDE
+        leg.data(data)
+            .enter()
+            .append("text")
+            .on("click", function(d){
+                if (self.mode !="bar"){
+                    self.m.unselectAllUnlessKey(d3.event)
+                    self.m.multiSelect(self.axisY.getLabelInfo(d.id).clones);
+                }
+            })
+            .attr("x", function(d) {
+                if (d.type == "subline") return self.sub_text_position_y;
+                else return self.text_position_y;
+            })
+            .attr("y", function(d) {
+                return (self.resizeH * d.position + self.margin[0]);
+            })
+            .text(function(d) {
+                return d.text;
+            })
+            .attr("class", "sp_legend")
+            /*
+            .attr("transform", function(d) {
+                var x = self.text_position_y
+                if (d.type == "subline") x = self.sub_text_position_y
+                return "rotate(" + self.rotation_y + " " + x + " " + (self.resizeH * d.position + self.margin[0]) + ")"
+            })
+            */
+            
+        
     },
 
     label_update : function () {
@@ -1289,6 +1293,20 @@ ScatterPlot.prototype = {
     changeSplitMethod: function(splitX, splitY, mode) {
         var self = this;
 
+
+        if (this.mode == "tsne"){
+            if (JSON.stringify(this.margin) != JSON.stringify(this.tsne_margin)){
+                this.margin = this.tsne_margin;
+                this.resize();
+            }
+        } else {
+            if (JSON.stringify(this.margin) != JSON.stringify(this.default_margin)){
+                this.margin = this.default_margin;
+                this.resize();
+            }
+        }
+        
+
         this.inProgress++
         setTimeout(function(){
             self.inProgress--
@@ -1296,33 +1314,33 @@ ScatterPlot.prototype = {
 
         if (!mode && !splitY) mode = "bar"
 
+        if (!mode) mode = this.mode
+
         if (mode == "bar" && mode != this.mode) {
             this.mode = "bar"
             this.endPlot();
         }
 
         var endbar = false;
-        if (mode != "bar" && this.mode == "bar") {
-            this.mode = mode
+        if (mode != "bar" && this.mode == "bar") 
             endbar = true;
-        }
 
-        if (splitX == "tsneX" || splitX == "tsneX_system"){
-            this.margin = this.graph_margin;
+        this.mode = mode;
+
+        if (this.mode == "tsne"){
             if (!this.tsne_ready){
                 this.tsne_ready=true;
                 this.m.similarity_builder.init(function(){self.changeSplitMethod(splitX, splitY, mode)});
                 return 0;
             }
-        }else{
-            this.margin = this.default_margin;
         }
+ 
 
-        if (this.available_axis.indexOf(splitX) != -1)        
+        if (this.available_axis.indexOf(splitX) != -1 || splitX == "TSNEX" || splitX == "TSNEX_LOCUS")        
             this.splitX = splitX
-        if (this.available_axis.indexOf(splitY) != -1)
+        if (this.available_axis.indexOf(splitY) != -1 || splitY == "TSNEY" || splitY == "TSNEY_LOCUS")
             this.splitY = splitY
-        this.compute_size()
+        this.computeSize()
 
         if (this.splitX)
             this.axisX = new Axis(this.splitX)

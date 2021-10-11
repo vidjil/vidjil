@@ -53,14 +53,14 @@ AXIS_LABEL = {
 
 // list of Axis available for scatterplot
 AXIS_SCATTERPLOT = ["V/5' gene", 
-                    "V/5 allele",
-                    "D/4' gene",
-                    "D/4 allele",
+                    "V/5' allele",
+                    "D gene",
+                    "D allele",
                     "J/3' gene",
-                    "J/3 allele",
+                    "J/3' allele",
                     "Size",
                     "Sequence length",
-                    "Read length",
+                    "Reads length",
                     "N length",
                     "CDR3 length",
                     "GC content",
@@ -86,7 +86,7 @@ AXIS_SCATTERPLOT = ["V/5' gene",
 AXIS_ALIGNER = [    
                     "Size",
                     "Sequence length",
-                    "Read length",
+                    "Reads length",
                     "GC content",
                     "Productivity",
                     "Number of samples",
@@ -103,7 +103,7 @@ AXIS_COLOR = [
                     "Locus",
                     "N length",
                     "V/5' gene",
-                    "D/4' gene",
+                    "D gene",
                     "J/3' gene",
                     "GC content",
                     "Productivity",
@@ -154,7 +154,7 @@ AXIS_DEFAULT = {
         germline:   function(){return m.germlineV.system},
         sort :      "alphanumerical"
     },
-    "V/5 allele": {
+    "V/5' allele": {
         doc:        "V gene (or 5' segment), with allele",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineV.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("5", true)},
@@ -162,15 +162,15 @@ AXIS_DEFAULT = {
         sort :      "alphanumerical",
         autofill:   false
     },
-    "D/4' gene": {
-        doc:        "D gene (or 4' segment), gathering all alleles",
+    "D gene": {
+        doc:        "D gene (or middle segment), gathering all alleles",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineD.labels))},
         fct:        function(clone) {return clone.getGene("4", false)},
         germline:   function(){return m.germlineD.system},
         sort :      "alphanumerical",
     },
-    "D/4 allele": {
-        doc:        "D gene (or 4' segment), with allele",
+    "D allele": {
+        doc:        "D gene (or middle segment), with allele",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineD.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("4", true)},
         germline:   function(){return m.germlineD.system},
@@ -184,7 +184,7 @@ AXIS_DEFAULT = {
         germline:   function(){return m.germlineJ.system},
         sort :      "alphanumerical",
     },
-    "J/3 allele": {
+    "J/3' allele": {
         doc:        "J gene (or 3' segment), with allele",
         labels:     function(){return JSON.parse(JSON.stringify(m.germlineJ.labelsWithAlleles))},
         fct:        function(clone) {return clone.getGene("3", true)},
@@ -199,7 +199,7 @@ AXIS_DEFAULT = {
         min_step:   1,
         color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
     },    
-    "Read length" : {
+    "Reads length" : {
         doc:        "average length of the reads belonging to each clonotype",
         labels:     {   
                         "?":   {text:"?",   side: "right"}
@@ -398,141 +398,67 @@ AXIS_DEFAULT = {
                         "min": 0
                     },
         fct: function(clone) {return clone.numberSampleSetInCloneDB()},
-        autofill: true,
-        isInAligner: false
+        autofill: true
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
-/*  "tsneX": {
-        label: "distance (X)",
-        axis: new FloatAxis(this.m),
-        fct: function(clone){
-            var r = self.gridSizeH/self.gridSizeW;
-            var k=1;
-            var yMax = self.m.similarity_builder.yMax
-            if (yMax > r) k = r/yMax
-            return k*clone.tsne[0] + (1-k)/2
-        },
-        log: false,
-        min: 0,
-        max: 1,
-        hide : true,
-        display_label : false
-    },
-    "tsneY": {
-        label: "distance (Y)",
-        axis: new FloatAxis(this.m),
-        fct: function(clone){
-            var r = self.gridSizeH/self.gridSizeW;
-            var k=1;
-            var yMax = self.m.similarity_builder.yMax
-            if (yMax > r) k = r/yMax
-            return k*clone.tsne[1]
-        },
-        log: false,
-        min: 0,
-        max: function(){return self.gridSizeH/self.gridSizeW},
-        hide : true,
-        display_label : false
-    },
-    "tsneX_system": {
-        label: "distance (X), by locus",
-        axis: new FloatAxis(this.m),
-        fct: function(clone){
-            var r = self.gridSizeH/self.gridSizeW;
-            var k=1;
-            var yMax = self.m.similarity_builder.system_yMax[clone.get("germline")]
-            if (yMax > r) k = r/yMax
-            return k*clone.tsne_system[0] + (1-k)/2
-        },
-        log: false,
-        min: 0,
-        max: 1,
-        hide : true,
-        display_label : false
-    },
-    "tsneY_system": {
-        label: "distance (Y), by locus",
-        axis: new FloatAxis(this.m),
-        fct: function(clone){
-            var r = self.gridSizeH/self.gridSizeW;
-            var k=1;
-            var yMax = self.m.similarity_builder.system_yMax[clone.get("germline")]
-            if (yMax > r) k = r/yMax
-            return k*clone.tsne_system[1]
-        },
-        log: false,
-        min: 0,
-        max: function(){return self.gridSizeH/self.gridSizeW},
-        hide : true,
-        display_label : false
-    },
-    "test1": {
-        name:       "test1",
-        labels:     {
-                        "not productive":   {text:"not productive",   side: "left"},
-                        "no CDR3 detected": {text:"no CDR3 detected", side: "left"},
-                        "productive":       {text:"productive",       side: "right", type: "bold"},
-                    },
+    "TSNEX": {   
+        doc:        "",
         fct:        function(clone) {
-                        if (clone.germline == m.germlineV.system) return clone.getGene("5", false)
-                        return clone.getProductivityName();
+                        if (clone.tsne )return clone.tsne[0]
+                        return undefined
                     },
-        germline:   "multi",
-        autofill:   true,
-        color: {
-            fct : function(t){return d3.interpolateRainbow(t)},
-            offset: 0.5
-        }
-    },
-    "test2": {
-        name:       "test2",
-        labels:     {
-                        "a":  {text:"pok", side: "right", sub :{
-                            "0":    {text:"pim"},
-                            "1":    {text:"pam"},
-                            "2":    {text:"poum"},
-                        }},
-                        "b":  {text:"pik", side: "left", sub :{
-                            "3":    {text:"z"},
-                            "4":    {text:"x"},
-                        }},
-                        "5":  {text:"pok!", side: "right"},
-                    },
-        fct:        function(clone) {
-                        return Math.floor(Math.random() * 5); 
-                    },
-        germline:   "multi"
-    },
-    "test3": {
-        name:       "test3",
-        labels:     {
-            "0":   {text:"0",   side: "left",  type:"slim"}
-        },
         scale:      {
-                        "mode":"log"
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
                     },
+        min_step:   0.1,
+        max_step:   0.1
+    },
+    "TSNEY": {   
+        doc:        "",
+        fct:        function(clone) {            
+                        if (clone.tsne )return clone.tsne[1]
+                        return undefined
+                    },
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
+                    },
+        min_step:   0.1,
+        max_step:   0.1
+    },
+    "TSNEX_LOCUS": {   
+        doc:        "",
+        germline:   function(){return m.germlineV.system},
         fct:        function(clone) {
-                        if (clone.getSizeZero()<0.0001) return 0
-                        return Math.floor(Math.pow(10, 1+Math.random()*8)); 
+                        if (clone.tsne_system )return clone.tsne_system[0]
+                        return undefined
                     },
-        germline:   "multi",
-        autofill:   true
-    },    
-    "clonotype consensus length2" : {
-        name:       "clonotype consensus length",
-        doc:        "length of the consensus sequence",
-        labels:     {
-                        "< 50":   {text:"< 50",  side: "left",  type: "bold"},
-                        "> 250" : {text:"> 250", side: "right", type: "bold"},
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
                     },
-        fct:        function(clone) {
-                        var length = clone.getSequenceLength();
-                        if (length < 50)  return "< 50"
-                        if (length > 250) return "> 250" 
-                        return length
+        min_step:   0.1,
+        max_step:   0.1
+    },
+    "TSNEY_LOCUS": {   
+        doc:        "",
+        germline:   function(){return m.germlineV.system},
+        fct:        function(clone) {            
+                        if (clone.tsne_system )return clone.tsne_system[1]
+                        return undefined
                     },
-        autofill:   true
-    },*/
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
+                    },
+        min_step:   0.1,
+        max_step:   0.1
+    }
 }
 
 

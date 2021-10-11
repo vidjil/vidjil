@@ -72,6 +72,8 @@ function Model() {
 
     this.search_ratio_limit     = 0.80
     setInterval(function(){return self.updateIcon()}, 100); 
+
+    this.trimming_before_external = false
 }
 
 
@@ -139,12 +141,26 @@ Model.prototype = {
             check.checked = (self.filter.check("Size", "=", 0) != -1)
         })
 
+        $("#remove_primer_external").click(function(){
+            // bloquer si pas de primerset 
+            var check = document.getElementById("remove_primer_external_check")
+            if (self.primersSetData == undefined){
+                console.log({ msg: "Please set a primerset before (settings menu)", type: "flash", priority: 1 });
+                check.checked = self.trimming_before_external
+                return
+            } else {
+                self.trimming_before_external = !self.trimming_before_external
+                check.checked = self.trimming_before_external
+                console.default.log( self.trimming_before_external )
+            }
+        })
+
         
         // Table of conversion between axes name and distribution names
         this.distrib_convertion = {
             // Axes --> Fuse
             "V/5' gene":        "seg5",
-            "D/4' gene":        "seg4",
+            "D gene":           "seg4",
             "J/3' gene":        "seg3",
             "CDR3 length":      "lenCDR3",
             "Locus" :           "germline",
@@ -152,15 +168,15 @@ Model.prototype = {
             "Size":             "size",
             // Should be in Array format
             "Sequence length" : "lenSeqConsensus",
-            "Read length" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
+            "Reads length" :    "lenSeqAverage", // make a round on it (into fuse.py) ?
             /////////////////////
             // Fuse --> Axes
             "seg5":             "V/5' gene",
-            "seg4":             "D/4' gene",
+            "seg4":             "D gene",
             "seg3":             "J/3' gene",
             "lenCDR3":          "CDR3 length",
             "lenSeqConsensus":  "Sequence length",
-            "lenSeqAverage":    "Read length",
+            "lenSeqAverage":    "Reads length",
         }
         // List of axe that must be in an array format
         this.distrib_axe_is_timmed = {
@@ -1459,6 +1475,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @return {string} html 
      * */
     getPointHtmlInfo: function (timeID) {
+        var time_length = this.samples.order.length
         var html = ""
 
         html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+")</h2>"
@@ -1472,18 +1489,57 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
         html += "<tr><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
 
+        // 
         var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
+
+        // Sub-table diversity
         if ( typeof this.diversity != 'undefined') {
             html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
             for (var key_diversity in this.diversity) {
                 html += "<tr><td> " + key_diversity.replace('index_', '') + "</td><td>" + this.getDiversity(key_diversity, timeID) + '</td></tr>'
             }
         }
-
         if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
             html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
             for (var k in this.samples.diversity[timeID]) {
                 html += "<tr><td> " + k.replace('index_', '') + "</td><td>" + this.samples.diversity[timeID][k].toFixed(3) + '</td></tr>'
+            }
+        }
+
+        // Sub-table preprocess
+        if ( typeof this.samples.pre_process != 'undefined') {
+
+            html_preprocess = "<tr><td class='header' "+colspan_header+"> Preprocess </td></tr>"
+            // order fct for preprocess
+            sort_preprocess = function(a,b){
+                var order = ["producer", "run_timestamp", "commandline", "parameters", "input", "output", "stats"]
+                return sortFromList(a, b, order)
+            }
+            var sorted_preprocess = Object.keys(this.samples.pre_process).sort(sort_preprocess)
+            for (var key_preprocess in sorted_preprocess) {
+                var key   = sorted_preprocess[key_preprocess]
+                var value_pre = this.samples.pre_process[key]
+                if (value_pre == null){
+                    continue
+                } else if (Array.isArray(value_pre)){
+                    if (value_pre[timeID] == null){ continue }
+                    html_preprocess += row_1(key, value_pre[timeID], undefined, 1)
+                } else if (typeof(value_pre) == "object"){
+                    if (value_pre == null){
+                        continue
+                    } else {
+                        var value_keys = Object.keys(value_pre)
+                        for (var i = 0; i < value_keys.length; i++) {
+                            var subkey = value_keys[i]
+                            var subval = value_pre[subkey]
+                            if (subval[timeID] == null){ continue }
+                            html_preprocess += row_1(key+" - "+subkey, subval[timeID], undefined, time_length)
+                        }
+                    }
+                }
+            }
+            if (html_preprocess != "<tr><td class='header' "+colspan_header+"> Preprocess </td></tr>"){
+                html += html_preprocess
             }
         }
 
@@ -1517,10 +1573,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                     }
                     html += "<td class='header'>"+this.getSampleName(posSample)+"</td>"
                     values = overlap[posSample]
-                    for (var i = 0; i < (overlap[posSample].length); i++) {
-                        value = overlap[posSample][i]
+                    for (var j = 0; j < (overlap[posSample].length); j++) {
+                        value = overlap[posSample][j]
 
-                        if (i == posSample){
+                        if (j == posSample){
                             html += "<td class=''>" + "--" + '</td>'
                         } else {
                             html += "<td>" + value + '</td>'
@@ -3068,11 +3124,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             console.log("Primer set unknow")
             return 1
         } else {
+            document.body.style.cursor = 'wait';
             this.primerSetCurrent = primersSet;
             console.log("Current primer set : "+ this.primerSetCurrent)
             this.switchPrimers();
             console.log("Switch primers values : "+ this.primerSetCurrent)
             this.update();
+            document.body.style.cursor = 'default';
             return 0
         }
     },

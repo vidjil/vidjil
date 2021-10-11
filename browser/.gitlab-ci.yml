@@ -2,6 +2,8 @@
 .test_cypress_base:
   image: vidjilci/cypress_with_browsers:latest
   stage: test_cypress_client
+  # extends:
+  #   - .need_for_staged_test
   script:
     - echo -e "Run cypress with browser $BROWSER"
     - echo -e "PWD $PWD; CYPRESS_PATH $CYPRESS_PATH"
@@ -37,10 +39,10 @@
 client_firefox_supported:
   extends:
     - .test_cypress_base
+    - .need_for_moderate_client
   stage: test_cypress_client
   variables:
     BROWSER: browsers/firefox_supported/firefox
-  needs: [test_tools, test_browser_unit, code_quality_custom]
 
 client_firefox_latest:
   extends:

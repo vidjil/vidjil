@@ -306,6 +306,43 @@ Clone.prototype = {
     },
 
     /**
+     * Allow to give a feature name in 5' and/or 3' and to get the trimmed sequence
+     * If feature don't exist, don't trim this part
+     * @param  {String} field_name5 The feature in 5' to use for trimming
+     * @param  {String} field_name3 The feature in 3' to use for trimming
+     * @param  {Bool}   include     Trim or not the feature into the returned sequence
+     * @return {String}             The clone sequence trimmed
+     */
+    trimmingFeature: function(field_name5, field_name3, include){
+
+        var positions5 = this.getSegStartStop(field_name5)
+        var positions3 = this.getSegStartStop(field_name3)
+
+        if (field_name5 != undefined && positions5 !== null) {
+            if (include){
+                pos5 = positions5.start
+            } else {
+                pos5 = positions5.stop
+            }
+        } else {
+            pos5 = 0
+        }
+
+        if (field_name3 != undefined && positions3 !== null) {
+            if (include){
+                pos3 = positions3.stop
+            } else {
+                pos3 = positions3.start
+            }
+        } else {
+           pos3 = this.sequence.length
+        }
+        return this.sequence.substring(pos5, pos3)
+    },
+
+
+
+    /**
      * Get extended sequence of clone
      * @param  {Number} gene_way Germline sequence to get (available option are 5, 4 or 3)
      * @return {string}          If found, the clean germline sequence
@@ -1490,52 +1527,7 @@ Clone.prototype = {
         var time_length = this.m.samples.order.length
         var html = ""
 
-        // Functions to format html row
-        var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
-        var header = function(content, title) { 
-            title = (title == undefined) ? clean_title(content) : clean_title(title)
-            return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
-        }
-        var row_1  = function(item, content, title) { 
-            title = (title == undefined) ? clean_title(item) : clean_title(title)
-            return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
-        }
-        var row_from_list  = function(item, content, title) { 
-            title = (title == undefined) ?clean_title(item) : clean_title(title)
-            var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
-            for (var i = 0; i < content.length; i++) {
-                col  = content[i]
-                div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
-            }
-            div += "</tr>" ;
-            return div;
-        }
-
-        var row_cast_content = function(title, content) {
-            if (content == undefined) {
-                return ""
-            } else if (typeof(content) != "object") {
-                return row_1(title, content.toString())
-            } else if (Object.keys(content).indexOf("info") != -1) {
-                // Textual field
-                return row_1(title, content.info)
-            } else if (Object.keys(content).indexOf("name") != -1) {
-                // Textual field
-                return row_1(title, content.name)
-            } else if (Object.keys(content).indexOf("val") != -1) {
-                // Numerical field
-                return row_1(title, content.val)
-            } else if (Object.keys(content).indexOf("seq") != -1) {
-                // Sequence field with pos
-                return row_1(title, content.seq)
-            } else {
-                // Sequence field
-                var nt_seq = self.getSegNtSequence(title);
-                if (nt_seq !== '') {
-                    return row_1(title, self.getSegNtSequence(title))
-                }
-            }
-        }
+        
 
         if (isCluster) {
             html = "<h2>Cluster info : " + this.getName() + "</h2>"
@@ -1560,7 +1552,7 @@ Clone.prototype = {
 
         //warnings
         if (this.isWarned()) {
-            html += header("warnings")
+            html += header("warnings", undefined, time_length)
             var warnings = {}
             // Create a dict of all warning present, and add each sample with it
             // One warning msg by entrie, without duplication.
@@ -1576,16 +1568,16 @@ Clone.prototype = {
             // put warning html content, with list of concerned sample, without duplication
             for (var warn in warnings) {
                 var pluriel = warnings[warn].samples.length > 1 ? "s" : ""
-                html += row_1(warnings[warn].code, warnings[warn].msg);
+                html += row_1(warnings[warn].code, warnings[warn].msg, undefined, time_length);
             }
         }
 
         //cluster info
         if (isCluster) {
-            html += header("clonotype")
-            html += row_1("clonotype name", this.getName())
+            html += header("clonotype", undefined, time_length)
+            html += row_1("clonotype name", this.getName(), undefined, time_length)
             if (this.hasSizeConstant()){
-                html += row_1("clonotype short name", this.getShortName())
+                html += row_1("clonotype short name", this.getShortName(), undefined, time_length)
                 html += "<tr><td>clonotype size (n-reads (total reads))"
             } else if (this.hasSizeDistrib()) {
                 html += "<tr><td title='Current size; depending of the number of clonotypes curently not filtered'>current clonotype size<br/>(n-reads (total reads))"
@@ -1600,7 +1592,9 @@ Clone.prototype = {
                 if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
                   html += "<br />[" + this.getReads(this.m.samples.order[j]).toFixed(2) + "]"
                 }
-                if (typeof this.m.db_key.config != 'undefined' && this.hasSizeConstant()) {
+                if (typeof this.m.db_key.config != 'undefined' &&
+                    this.m.samples.sequence_file_id != undefined &&
+                    this.hasSizeConstant() ) {
                     html += "&emsp;"
                     var sample_set_id = this.m.samples.sequence_file_id[this.m.samples.order[j]];
                     call_reads = "db.get_read('" + this.id + "', "+ this.index +", " + sample_set_id + ')';
@@ -1621,17 +1615,17 @@ Clone.prototype = {
                 }
             }
 
-            html += header("representative sequence")
+            html += header("representative sequence", undefined, time_length)
         }else{
-            html += header("sequence")
+            html += header("sequence", undefined, time_length)
         }
 
         
         //sequence info (or cluster main sequence info)
         if (this.hasSequence()){
-            html += row_1("sequence name", this.getSequenceName())
-            html += row_1("code", this.getCode())
-            html += row_1("length", this.getSequenceLength())
+            html += row_1("sequence name", this.getSequenceName(), undefined, time_length)
+            html += row_1("code", this.getCode(), undefined, time_length)
+            html += row_1("length", this.getSequenceLength(), undefined, time_length)
         }
 
         //coverage info
@@ -1640,7 +1634,7 @@ Clone.prototype = {
                           "<span " +
                           (this.coverage < this.COVERAGE_WARN ? "class='warning'" : "") +
                           ">" +
-                          this.coverage.toFixed(3) + "</span>")
+                          this.coverage.toFixed(3) + "</span>", undefined, time_length)
         }
 
         // e-value
@@ -1649,7 +1643,7 @@ Clone.prototype = {
                           "<span " +
                           (this.eValue > this.EVALUE_WARN ? "class='warning'" : "") +
                           ">" +
-                          this.eValue + "</span>")
+                          this.eValue + "</span>", undefined, time_length)
         }
 
         // abundance info
@@ -1676,11 +1670,11 @@ Clone.prototype = {
         
         //segmentation info
         if (this.hasSizeConstant()) {
-            html += header("segmentation" +
-                " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" + //Use to hide/display lists 
-                this.getHTMLModifState(), "segmentation") // icon if manual changement
+            html += header("segmentation" + 
+                           " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>edit</button>" + //Use to hide/display lists 
+                           this.getHTMLModifState(), "segmentation", time_length) // icon if manual changement
         } else {
-            html += header("segmentation")
+            html += header("segmentation", undefined, time_length)
         }
 
         if (typeof this.stats != 'undefined'){
@@ -1700,26 +1694,26 @@ Clone.prototype = {
         }
         
         if (this.hasSequence()){
-            html += row_1("sequence", this.sequence)
+            html += row_1("sequence", this.sequence, undefined, time_length)
         }
         if (this.id != undefined){
-            html += row_1("id", this.id)
+            html += row_1("id", this.id, undefined, time_length)
         }
         if (this.id != undefined){
             html += row_1("locus", this.m.systemBox(this.germline).outerHTML + this.germline +
-                "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>")
+                "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>", undefined, time_length)
         }
         if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("5") != "undefined V")){
             html += row_1("V gene (or 5')", this.getGene("5") +
-                "<div class='div-menu-selector' id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div>")
+                "<div class='div-menu-selector' id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div>", undefined, time_length)
         }
         if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("4") != "undefined D")){
             html += row_1("(D gene)", this.getGene("4") +
-                "<div class='div-menu-selector' id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div>")
+                "<div class='div-menu-selector' id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div>", undefined, time_length)
         }
         if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("3") != "undefined J")){
             html += row_1("J gene (or 3')", this.getGene("3") +
-                "<div class='div-menu-selector' id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div>")
+                "<div class='div-menu-selector' id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div>", undefined, time_length)
         }
 
         // Other seg info
@@ -1727,17 +1721,17 @@ Clone.prototype = {
         for (var s in this.seg) {
             if (exclude_seg_info.indexOf(s) == -1 &&
                 this.seg[s] instanceof Object ) {
-                  html += row_cast_content(s, this.seg[s])
+                  html += row_cast_content(s, this.seg[s], time_length, self)
             }
         }
         if (typeof this.seg.junction != 'undefined' &&
             typeof this.seg.junction.aa != "undefined") {
-            html += row_1("junction (AA seq)", this.getSegAASequence('junction'))
+            html += row_1("junction (AA seq)", this.getSegAASequence('junction'), undefined, time_length)
         }
 
         
         //other info (clntab)
-        html += header("&nbsp")
+        html += header("&nbsp", undefined, time_length)
         for (var t in this) {
             if (t[0] == "_") {
                 html += "<tr><td>" + t + "</td>"
@@ -1759,11 +1753,11 @@ Clone.prototype = {
         for (s in this.seg) {
             if (this.seg[s] instanceof Object &&
                 other_infos[s] != undefined ) {
-                  html += header("Results of "+other_infos[s])
+                  html += header("Results of "+other_infos[s], undefined, time_length)
                   var keys = Object.keys(this.seg[s]).sort();
                   for (var key_seg = 0; key_seg < keys.length; key_seg++) {
                       var sub = keys[key_seg]
-                      html += row_cast_content(sub, this.seg[s][sub])
+                      html += row_cast_content(sub, this.seg[s][sub], time_length)
                   }
             }
         }
@@ -1775,11 +1769,11 @@ Clone.prototype = {
             var thiskey = this_keys[thiskey_pos]
             if (this[thiskey] instanceof Object &&
                 thiskey.indexOf("seg_") != -1 && thiskey != "seg_stat") {
-                  html += header("Results of script '"+thiskey.substring(4)+"'")
+                  html += header("Results of script '"+thiskey.substring(4)+"'", undefined, time_length)
                   var keys_seg = Object.keys(this[thiskey]).sort();
                   for (var key_segthis = 0; key_segthis < keys_seg.length; key_segthis++) {
                       var subthis = keys_seg[key_segthis]
-                      html += row_cast_content(subthis, this[thiskey][subthis])
+                      html += row_cast_content(subthis, this[thiskey][subthis], time_length)
                   }
             }
         }
@@ -1850,7 +1844,7 @@ Clone.prototype = {
         div_elem.appendChild(span_info);
     },
 
-    toCSVheader: function (m) {
+    toCSVheader: function (m){
         var csv = [
             "cluster", "name", "id",
             "system", "tag",
