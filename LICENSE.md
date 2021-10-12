@@ -1,5 +1,5 @@
 
-Vidjil is open-source, released under GNU GPLv3 license.
+Vidjil is open-source, released under GNU GPLv3+ license.
 You are welcome to redistribute it under [certain conditions](http://git.vidjil.org/blob/master/doc/LICENSE).
 This software is for research use only and comes with no warranty.
 
