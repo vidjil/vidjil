@@ -636,23 +636,23 @@ webpage.
     you may be interested to use the [redirection over SSH](https://en.wikipedia.org/wiki/Xvfb#Remote_control_over_SSH).
 
 
-### Functional with cypress (release candidate)
+### Functional tests with cypress
 
-To avoid `Watir` limitation on latest versions of browsers, we adopt [Cypress](https://docs.cypress.io/guides/overview/why-cypress#In-a-nutshell).
-The testing pipeline is build on a docker image which include chrome and firefox browser in differents version;
+The [Cypress](https://docs.cypress.io/guides/overview/why-cypress#In-a-nutshell)
+testing pipeline is build on a Docker image which include the following Chrome and Firefox browsers:
 
-|                              | firefox | Chromium    |
+|                              | Firefox | Chromium    |
 |:-----------------------------|:--------|:------------|
 |Legacy (until september 2021) | 62.0    | 75.0.3770.0 |
 |Supported                     | 78.0    | 79.0.3945.0 |
 |Latest (as at june 2021)      | 89.0    | 93.0.4524.0 |
 
-We will progressivly convert Watir tests on Cypress.
+We will progressivly convert historic Watir tests toward Cypress.
 
-1.  Instalation
+1. Installation
 
-The docker image to used can be build from local repository, or downloaded from dockerhub repository.
-Docker should be installed for these tests.
+Install Docker, then either build locally the Docker image,
+or download it from dockerhub
 
   1. Local build
 
@@ -667,11 +667,12 @@ Docker should be installed for these tests.
 
 2. Usage
 
-The default usage of cypress pipeline use docker image and is launch in headless mode. 
-See the makefile rule `functional_browser_cypress`.
-This rule launch the next command:
+By default, the cypress pipeline is launched in headless mode.
+The makefile rule `make functional_browser_cypress` launches the following command:
+
   ```bash
   docker run \
+      --user $(id -u):$(id -g) \
       -v `pwd`/browser/test/cypress:/app/cypress \
       -v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
       -v `pwd`/doc/:/app/cypress/fixtures/doc/  \
@@ -683,32 +684,38 @@ This rule launch the next command:
       --env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:latest" bash script.bash
   ```
 
-Various local volumes are mounted for these tests.
-Tests scripts are located in `browser/test/cypress`. 
-In this directory you can find scripts of `support` (shared functions), `fixtures` (datas used during tests) and finally `integration` (testing scripts).
+Local volumes are mounted for these tests.
+Tests scripts are located in `browser/test/cypress`:
+ - `support` (shared functions)
+ - `fixtures` (data used during tests)
+ - `integration` (testing scripts)
 
 3. Interactive mode
 
-For interactive mode, Cypress should be installed on local computer and some symbolic links should be created.
-All actions for linking are made by the rule `functional_browser_cypress_open` of the makefile.
-To open the GUI and select tests to launch, command will be:
+The interactive mode allows to select tests to be launched.
+Cypress has to be installed on local computer.
+The following command creates some links and open the GUI:
 ```bash
 make functional_browser_cypress_open
 ```
+
+A `test_sandbox` is available to quickly test some modification made in the browser. See file `test_sandbox.js` and other script file for fast developpment.
 
 4. Troubleshooting
 
   1. Xvfb error
 
-  Sometime during developpement, the cypress pipeline can failed. In some case, the XVDB server can still open after test ending and the docker image still open.
+  The cypress pipeline may fail in some cases, when, after the end of the tests,
+  the Xvfb server and the docker container are still running.
   In this case, stop the docker container.
   ```bash
   docker ps
   docker stop $container_id
   ```
 
-  2. Right error on produced files (report and screenshot)
-  Files produced by cypress docker are made with root right. These files should be deleted with root privilege.
+  2. Permission errors on report and screenshot files
+  Files produced by cypress docker belong to the root user.
+  These files should be deleted with root privilege.
   ```bash
   sudo rm -r browser/test/cypress/report browser/test/cypress/screenshots
   ```
