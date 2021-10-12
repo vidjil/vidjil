@@ -381,12 +381,12 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
 
       if ($status == " COMPLETED ") {
         return true
-      } else if ( (now - start)/1000 > 60){
+      } else if ( (now - start)/1000 > nb_retry){
           return false
       } else if ( iter > nb_retry){
           return false
       }
-      cy.waitAnalysisCompleted(config, sequence_file_id, start, nb_retry=60, iter=iter+1)
+      cy.waitAnalysisCompleted(config, sequence_file_id, start, nb_retry, iter=iter+1)
     })
 
   cy.sampleStatus(sequence_file_id)
