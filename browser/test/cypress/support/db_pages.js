@@ -239,6 +239,17 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
     cy.get('#db_table_container')
       .should("contain", filename1)
 
+    // Work only if one file given (else filename will be changed)
+    // Allow to get curent number if case of upload position modification
+    if (filename2 == undefined){
+      cy.get('td')
+        .contains(filename1)
+        .invoke('text')
+        .then( (filename) => {
+          cy.log( `sample added number: ${filename.split("(")[1].split(")")[0]}` )
+        })
+    }
+
 })
 
 
