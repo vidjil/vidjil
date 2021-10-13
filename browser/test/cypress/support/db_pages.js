@@ -313,6 +313,9 @@ Cypress.Commands.add('launchProcess', (config, sequence_file_id) => {
   cy.log( `launchProcess(${config}, ${sequence_file_id})`)
       cy.selectConfig(config)
 
+      cy.get('#sequence_file_'+sequence_file_id)
+        .should('exist')
+
       cy.get('.icon-cog-2')
         .should('be.visible')
 
@@ -366,7 +369,7 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
     var start = new Date().getTime();
   }
 
-  cy.log( `waitAnalysisCompleted: ${iter}`)
+  cy.log( `waitAnalysisCompleted: step ${iter}`)
   cy.intercept({
     method: 'GET', // Route all GET requests
     url: 'get_active_notifications*',
@@ -402,7 +405,9 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
       cy.waitAnalysisCompleted(config, sequence_file_id, start, nb_retry, iter=iter+1)
     })
 
-  cy.sampleStatus(sequence_file_id)
-    .should('have.text', ' COMPLETED ')
+  if (!iter){
+    cy.sampleStatus(sequence_file_id)
+      .should('have.text', ' COMPLETED ')
+  }
 
 })
