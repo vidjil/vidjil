@@ -422,9 +422,11 @@ QUnit.test("toggle", function (assert) {
     m.multiSelect(Object.keys(m.clones))
 
     var h1;
-    var done = assert.async(2);
+    var done = assert.async(3);
     var delay = 0;
     var step = 1000;
+    segment.open()
+    segment.close()
     
     setTimeout( function() {
         h1 = $("#segment").height()
