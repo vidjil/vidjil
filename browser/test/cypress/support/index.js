@@ -18,6 +18,7 @@ import './tools'
 import './login'
 import './commands'
 import './db_pages'
+import './user_and_group'
 
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/

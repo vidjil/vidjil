@@ -13,11 +13,16 @@ Cypress.Commands.add('close_disclamer', () => {
 })
 
 Cypress.Commands.add('close_tips', () => { 
-  cy.get('.tip_1')
-    .should('be.visible')
-    .and('contain', 'Tip:')
-    .get('.tip_1 > .icon-cancel')
-    .click()
+  cy.document().then(($document) => {
+    const documentResult = $document.querySelectorAll('.tip_1')
+    if (documentResult.length) {
+      cy.get('.tip_1')
+        .should('be.visible')
+        .and('contain', 'Tip:')
+        .get('.tip_1 > .icon-cancel')
+        .click()
+    }
+  })
 })
 
 Cypress.Commands.add('setBrowser', (url) => {
@@ -58,8 +63,19 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis) => {
 /**
  * Allow to wait for update icon to be not visible
  */
-Cypress.Commands.add("update_icon", () => {
-  cy.get('#updateIcon', { timeout: 6000 }).should("not.visible")
+Cypress.Commands.add("update_icon", (delay) => {
+  let visible_icon = false;
+  cy.get('#updateIcon')
+    .then( ($icon) => {
+      cy.log( "wait icon already visible")
+      visible_icon = $icon.is(":visible")
+    }
+  )
+  if (delay == undefined || visible_icon){ delay = 0 } // Don't wait if icon already visible
+  cy.wait(delay)
+  
+  cy.get('#updateIcon', { timeout: 6000 })
+    .should("not.visible")
 
 })
 

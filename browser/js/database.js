@@ -264,7 +264,10 @@ Database.prototype = {
      * */
     callUrl : function (url, args){
         var self=this;
-        
+
+        this.m.loading_is_pending = true
+        this.m.updateIcon()
+
         $.ajax({
             type: "POST",
             crossDomain: true,
@@ -276,6 +279,8 @@ Database.prototype = {
             success: function (result) {
                 self.display_result(result, url, args)
                 self.connected = true;
+                self.m.loading_is_pending = false
+                self.m.updateIcon()
             }, 
             error: function (request, status, error) {
                 self.connected = false;
@@ -284,6 +289,8 @@ Database.prototype = {
                 } else {
                     self.check_cert()
                 }
+                self.m.loading_is_pending = false
+                self.m.updateIcon()
 
 		self.warn("callUrl: " + status + " - " + url.replace(self.db_address, '') + "?" + this.argsToStr(args))
             }

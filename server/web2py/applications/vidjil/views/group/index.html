@@ -3,7 +3,7 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
-    <h3>{{=message}}</h3>
+    <h3 id="page_group">{{=message}}</h3>
     
     <div id="db_table_container">
         <table class="db_table" id="table">
@@ -24,19 +24,19 @@
                 </tr>
             </thead>
            {{for row in query :}}
-               <tr onclick="db.call('group/info', {'id' :'{{=row.id}}'} )">
+               <tr id="row_group_{{=row.id}}" onclick="db.call('group/info', {'id' :'{{=row.id}}'} )">
                    <td>
                        <input type="checkbox" name="group_ids[]" value="{{=row.id}}"
                          onclick="db.stopGroupPropagate(event)" />
                    </td>
-                    <td> {{=row.role}} </td>
-                    <td> {{=row.count}}  </td>
-                    <td> {{=row.access}} // {{=row.description }} </td>
-                    <td> {{=row.parents}} </td>
-                    <td onclick="db.call('my_account', {'group_ids' :'{{=row.id}}'} )" > <i class="icon-chart-pie" title="view group statistics"></i> </td>
-                    <td onclick="db.call('group/permission', {'id' :'{{=row.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td>
-                    <td onclick="db.call('group/edit', {'id' :'{{=row.id}}'} )" > <i class="icon-pencil-2" title="edit group"></i> </td>
-                    <td onclick="db.call('group/confirm', {'id' :'{{=row.id}}'} )" > <i class="icon-erase" title="delete group"></i> </td>
+                    <td id="col_role"> {{=row.role}} </td>
+                    <td id="col_count"> {{=row.count}}  </td>
+                    <td id="col_access"> {{=row.access}} // {{=row.description }} </td>
+                    <td id="col_parent"> {{=row.parents}} </td>
+                    <td id="col_stats" onclick="db.call('my_account', {'group_ids' :'{{=row.id}}'} )" > <i class="icon-chart-pie" title="view group statistics"></i> </td>
+                    <td id="col_permission" onclick="db.call('group/permission', {'id' :'{{=row.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td>
+                    <td id="col_edit" onclick="db.call('group/edit', {'id' :'{{=row.id}}'} )" > <i class="icon-pencil-2" title="edit group"></i> </td>
+                    <td id="col_delete" onclick="db.call('group/confirm', {'id' :'{{=row.id}}'} )" > <i class="icon-erase" title="delete group"></i> </td>
                 </tr>
            {{pass}}
         </table>
