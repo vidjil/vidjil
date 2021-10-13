@@ -19,6 +19,7 @@ import './login'
 import './commands'
 import './db_pages'
 import './user_and_group'
+import './configs_and_process'
 
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
