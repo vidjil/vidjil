@@ -2,6 +2,8 @@
 .test_cypress_base:
   image: vidjilci/cypress_with_browsers:latest
   stage: test_cypress_client
+  # extends:
+  #   - .need_for_staged_test
   script:
     - echo -e "Run cypress with browser $BROWSER"
     - echo -e "PWD $PWD; CYPRESS_PATH $CYPRESS_PATH"
@@ -37,49 +39,44 @@
 client_firefox_supported:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_supported
+    - .need_for_moderate_client
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/firefox_supported/firefox
-  needs: []
 
 client_firefox_latest:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_latest
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/firefox_latest/firefox
-  needs: []
 
 client_firefox_legacy:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_legacy
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/firefox_legacy/firefox
-  needs: []
 
 
 client_chrome_supported:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_supported
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/chrome_supported/chrome
-  needs: []
 
 client_chrome_latest:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_latest
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/chrome_latest/chrome
-  needs: []
 
 client_chrome_legacy:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client_legacy
+  stage: test_cypress_client
   variables:
     BROWSER: browsers/chrome_legacy/chrome
-  needs: []
 

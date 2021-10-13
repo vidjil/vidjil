@@ -72,7 +72,7 @@ GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACAT
     $b.scatterplot_select_preset(/CDR3 length/)
     $b.update_icon.wait_while(&:present?)   
     text = $b.scatterplot_x_label.text
-    assert (text == "CDR3 length (nt)"), "X scatterplot label should now be CDR3 length (nt) (was %s)" % text
+    assert (text == "CDR3 length"), "X scatterplot label should now be CDR3 length (was %s)" % text
     assert ($b.clone_in_scatterplot('1').tag_name == 'rect'), "Clone should be a rectangle now (was %s)" % $b.clone_in_scatterplot('1').tag_name
   end
 

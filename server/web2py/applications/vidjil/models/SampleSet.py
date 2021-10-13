@@ -54,7 +54,7 @@ class SampleSet(object):
         for conf in conf_list:
             c = conf.split(';')
             filename =  "(%s %s)" % (self.get_name(data), c[1])
-            if c[2] is not None :
+            if len(c) > 2 and c[2] is not None :
                 configs.append(
                     str(A(c[1],
                         _href="index.html?sample_set_id=%d&config=%s" % (data['sample_set_id'], c[0]), _type="text/html",

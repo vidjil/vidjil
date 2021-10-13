@@ -17,12 +17,14 @@ var lib_plugin = [  "js/lib/jquery.form",
                  ];
 
 var lib_vidjil = [  //"js/conf",
+                    "js/vidjil-style",
                     "js/view",
-                    "js/compare",
                     "js/menu",
                     "js/dbscan",
                     "js/germline",
                     "js/germline_builder",
+                    "js/color",
+                    "js/filter",
                     "js/model_loader",
                     "js/model",
                     "js/clone",
@@ -36,7 +38,6 @@ var lib_vidjil = [  //"js/conf",
                     "js/scatterPlot",
                     "js/builder",
                     "js/com",
-                    "js/vidjil-style",
                     "js/crossDomain",
                     //"js/pdf",
                     "js/database",
@@ -57,9 +58,11 @@ var test_files = [  "testFiles/form_test",
                     "testFiles/dbscan_test",
                     "testFiles/model_test",
                     "testFiles/model_loader_test",
+                    "testFiles/filter_test",
+                    "testFiles/color_test",
                     "testFiles/clone_test",
                     "testFiles/scatterPlot_test",
-                    //"testFiles/axis_test",
+                    "testFiles/axis_test",
                     "testFiles/graph_test",
                     "testFiles/com_test",
                     "testFiles/info_test",
@@ -72,7 +75,6 @@ var test_files = [  "testFiles/form_test",
                     "testFiles/shortcut_test",
                     "testFiles/speed_test",
                     "testFiles/tokeniser_test",
-                    "testFiles/compare_test",
                     "testFiles/lib/bioseq_test"
                 ];
 
@@ -95,6 +97,12 @@ function startQunit(){
         var res = result.indexOf(pattern) > -1;
     
         this.push(res, result, "{includes} " + pattern, message);
+    };
+    QUnit.assert.notIncludes = function(result, pattern, message ) {
+        // Checks that the result don't includes the pattern
+        // TODO: see and use qunit-regexp !
+        var res = result.indexOf(pattern) == -1;
+        this.push(res, result, "{notIncludes} " + pattern, message);
     };
     
     QUnit.assert.approx = function(result, expected, margin, message ) {

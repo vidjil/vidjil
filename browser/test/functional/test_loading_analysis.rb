@@ -28,19 +28,6 @@ class TestLoadingAnalysis < BrowserTest
     assert ($b.graph_x_legend('0').attribute_value('x') > $b.graph_x_legend('1').attribute_value('x'))
   end
 
-  def test_003_custom_clone
-    assert ($b.clone_info('0')[:name].text == 'Main ALL clone')
-
-    $b.select_tag('0').click
-    $b.update_icon.wait_while(&:present?)
-
-    assert (not $b.clone_in_list('0').present?)
-    assert (not $b.clone_in_scatterplot('0').present?)
-    assert (not $b.clone_in_graph('0').present?)
-
-    $b.select_tag('0').click
-    $b.update_icon.wait_while(&:present?)
-  end
 
   def test_01_data_loaded
     qpcr = $b.external_data('qPCR')
@@ -48,48 +35,6 @@ class TestLoadingAnalysis < BrowserTest
 
     spike = $b.external_data('spikeZ')
     assert (spike[:name] == 'spikeZ' and spike[:value] == 0.01), "spikeZ external data not as expected"
-  end
-
-  def test_02_tag_names
-    # Open tag selector
-    $b.clone_info('1')[:star].click
-
-    assert($b.tag_item('0')[:name].text == 'main clone')
-    assert($b.tag_item('3')[:name].text == 'spike')
-    assert($b.tag_item('5')[:name].text == 'custom tag')
-  end
-
-  def test_03_hidden_tags
-    # Test that the two tags are hidden
-    assert ($b.select_tag('4', :class => 'inactiveTag').exists?)
-    assert ($b.select_tag('5', :class => 'inactiveTag').exists?)
-  end
-
-  def test_04_hide_clone
-    assert ($b.clone_in_list('0').present?)
-    assert ($b.clone_in_scatterplot('0').present?)
-    assert ($b.clone_in_graph('0').present?)
-
-    # Hide the clone by affecting it to a hidden tag
-    $b.clone_info('0')[:star].click
-    $b.tag_item('4')[:name].click
-    $b.execute_script('m.update()'); # Update should be done correctly but the issue is unrelated to this branch (see #4231)
-    $b.update_icon.wait_while(&:present?)
-
-    $b.clone_in_list('0').wait_while(&:present?)
-    assert (not $b.clone_in_list('0').present?)
-    $b.clone_in_scatterplot('0').wait_while(&:present?)
-    assert (not $b.clone_in_scatterplot('0').present?)
-    $b.clone_in_graph('0').wait_while(&:present?)
-    assert (not $b.clone_in_graph('0').present?)
-
-    # Unhide clone
-    $b.element(:id => 'fastTag4', :class => 'inactiveTag').click
-    $b.update_icon.wait_while(&:present?)
-    assert (not $b.element(:id => 'fastTag4', :class => 'inactiveTag').exists?)
-    assert ($b.clone_in_list('0').present?)
-    assert ($b.clone_in_scatterplot('0').present?)
-    assert ($b.clone_in_graph('0').present?)
   end
 
   def test_05_check_cluster

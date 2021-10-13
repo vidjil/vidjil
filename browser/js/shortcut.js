@@ -155,7 +155,7 @@ Shortcut.prototype = {
         case 37 :   // Left arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
-                m.displayTop(this.m.top - NB_CLONES_CHANGE)
+                m.filter.decrease("Top", ">", NB_CLONES_CHANGE)
             else
                 m.previousTime();
             break;
@@ -163,7 +163,7 @@ Shortcut.prototype = {
         case 39 :   // Right arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
-                m.displayTop(m.top + NB_CLONES_CHANGE)
+                m.filter.increase("Top", ">", NB_CLONES_CHANGE)
             else
                 m.nextTime();
             break;
@@ -222,22 +222,23 @@ Shortcut.prototype = {
             e.preventDefault()
             if (m.getSelected().length === 0) {
                 // z, no clone selected: reset filters
-                m.reset_filter(false)
+                m.filter.remove("Clonotype", "focus", undefined)
+                m.filter.remove("Clonotype", "hide", undefined)
                 m.update()
             } else {
                 if (!e.shiftKey)
                     // z, some clone selected: focus (zoom) on these clones
-                    m.focusSelected()
+                    m.filter.add("Clonotype", "focus", self.m.getSelected())
                 else
                     // shift+z, some clone selected: hide these clones
-                    m.hideSelected()
+                    m.filter.add("Clonotype", "hide", self.m.getSelected())
             }
             break;
             
             // Scatterplot
         case '#':   // switch grid/bar mode
             e.preventDefault()
-            this.m.sp.switchMode()
+            m.sp.switchMode()
             break;
         }
     }

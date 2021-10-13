@@ -36,6 +36,7 @@ nav:
         - Release cycle: releases.md
         - Roadmap: roadmap.md
         - Credits, references: credits.md
+        - Open-source and licensing: license.md
 
 extra_css:
     - mkdocs-extra.css

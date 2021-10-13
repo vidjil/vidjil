@@ -165,3 +165,16 @@ def get_sequence_file_config_ids(sequence_file_id):
     for row in query:
         config_ids.append(row.config_id)
     return config_ids
+
+def check_space(directory, what):
+    '''
+    Check that we have enough disk space
+    '''
+    enough_space = vidjil_utils.check_enough_space(directory)
+    extra_info = ''
+    if not enough_space:
+        mail.send(to=defs.ADMIN_EMAILS,
+            subject=defs.EMAIL_SUBJECT_START+" Server space",
+            message="The space in directory %s has passed below %d%%." % (defs.DIR_RESULTS, defs.FS_LOCK_THRESHHOLD))
+        return error_message("{} are temporarily disabled. System admins have been made aware of the situation.".format(what))
+    

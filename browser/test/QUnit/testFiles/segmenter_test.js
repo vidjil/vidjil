@@ -33,14 +33,14 @@ QUnit.test("segmenter", function(assert) {
     setTimeout( function() {
         var div1 = document.getElementById("seq1").getElementsByClassName("seq-fixed")[0];;
         assert.notEqual(div1.innerHTML.indexOf("test2"), -1, "select : Ok")
-        assert.equal(segment.sequence_order[0], 0, "segment.first_clone still set to 0 if clones 0 and 1 are selected")
+        assert.equal(segment.sequence_order[0], 0, "segment.first_clone still set to 0 if clonotypes 0 and 1 are selected")
         
         m.unselect(0)
         done()
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(segment.sequence_order[0], 1, "segment.first_clone is set to 1 if clones 0 is unselected")
+        assert.equal(segment.sequence_order[0], 1, "segment.first_clone is set to 1 if clonotypes 0 is unselected")
         
         m.select(2)
         done()
@@ -109,14 +109,14 @@ QUnit.test("segmenter", function(assert) {
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 10 reads (5.000%) ", "stats (1 clone) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clonotype, 10 reads (5.000%) ", "stats (1 clone) : Ok")
 
         m.multiSelect([0,1])
         done()
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clones, 30 reads (15.00%) ", "stats (several clones) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clonotypes, 30 reads (15.00%) ", "stats (several clones) : Ok")
 
         // Select multiple clones and check they are ordered.
         m.unselectAll()
@@ -143,7 +143,7 @@ QUnit.test("segmenter", function(assert) {
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 3 reads ", "stats (1 clone with few reads) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clonotype, 3 reads ", "stats (1 clone with few reads) : Ok")
         
         m.unselectAll()
         m.select(2)
@@ -189,7 +189,7 @@ QUnit.test("sequence", function(assert) {
     var aminoSplit4 = seq4.aminoSplitString().replace(/(?=\s)[^\r\n\t]/g, '_');
     assert.equal(aminoSplit4, "___|_|__|__|__|__|__|__|_|", aminoSplit4 + " aminoSplit sequence ");
 
-    m.filter("cat")
+    m.filter.add("Clone","search", "cat")
     var search4 = seq4.searchString().replace(/(?=\s)[^\r\n\t]/g, '_');
     assert.equal(search4,     "catcatcat_____tac_____tac", search4 + " search 'cat' in sequence");
 
@@ -207,6 +207,34 @@ QUnit.test("sequence", function(assert) {
     //check layer div position match start/stop position % CHAR_WIDTH
     assert.equal(seq3_cdr3.style.width, ((char_stop-char_start-1)*CHAR_WIDTH)+6+"px" );
     assert.equal(seq3_cdr3.style.left,  ( char_start*CHAR_WIDTH)-2.5+"px" );
+
+    //////////////
+    // Check primers
+
+    // no primer values in clone
+    char_start_p5 = seq3.segment_start(LAYERS['primer5'].start);
+    char_stop_p5  = seq3.segment_stop( LAYERS['primer5'].stop);
+    assert.equal(char_start_p5, undefined, "aligner; correct for primer5 start if no primer set");
+    assert.equal(char_stop_p5,  undefined, "aligner; correct for primer5 stop if no primer set");
+
+    // Set a values for primers of clone
+    m.clones[3].seg.primer5 = { seq: "CAGGAGGTGGAGCTGGATATT", start: 17, stop: 37 }
+    m.clones[3].seg.primer3 = { seq: "TATTTGCTGAAGGGACTAAGCTC", start: 112, stop: 134 }
+
+    var seq3_primer5 = seq3.updateLayerDiv('primer5', true);
+    var seq3_primer3 = seq3.updateLayerDiv('primer3', true);
+
+    //use layer functions to retrieve start/stop position
+    char_start_p5 = seq3.segment_start(LAYERS['primer5'].start);
+    char_stop_p5  = seq3.segment_stop( LAYERS['primer5'].stop);
+    char_start_p3 = seq3.segment_start(LAYERS['primer3'].start);
+    char_stop_p3  = seq3.segment_stop( LAYERS['primer3'].stop);
+
+    assert.equal(char_start_p5, 17, "aligner; correct position of primer5 start");
+    assert.equal(char_stop_p5,  38, "aligner; correct position of primer5 stop");
+    assert.equal(char_start_p3, 112, "aligner; correct position of primer3 start");
+    assert.equal(char_stop_p3,  135, "aligner; correct position of primer3 stop");
+
 
     //toFasta
     var done = assert.async(1);

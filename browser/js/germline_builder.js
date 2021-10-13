@@ -164,7 +164,10 @@ Germline.prototype = {
         //On trie tous les élèment dans germline, via le nom des objets
         var tmp1 = [];
         tmp1 = Object.keys(this.allele).slice();
-        mySortedArray(tmp1);
+
+        var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+        tmp1.sort(collator.compare)
+
         var list1 = {};
         //Pour chaque objet, on fait un push sur this.allele
         for (var k = 0; k<tmp1.length; k++) {

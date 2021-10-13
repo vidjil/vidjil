@@ -240,10 +240,10 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.includes(html, "<table id='clone_info_table_0'><tr><th>Samples names</th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
-    assert.includes(html, "tr id='modal_line_clone_name'><td id='modal_line_title_clone_name'>clone name</td><td colspan='4' id='modal_line_value_clone_name'>hello</td></tr>",
+    assert.includes(html, "tr id='modal_line_clonotype_name'><td id='modal_line_title_clonotype_name'>clonotype name</td><td colspan='4' id='modal_line_value_clonotype_name'>hello</td></tr>",
              "getHtmlInfo: clone names")
 
-    assert.includes(html, "<tr><td>clone size (n-reads (total reads))</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td>clone size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
+    assert.includes(html, "<tr><td>clonotype size (n-reads (total reads))</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td>clonotype size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
              "getHtmlInfo: clone information");
     
     assert.includes(html, "<tr id='modal_line_sequence_name'><td id='modal_line_title_sequence_name'>sequence name</td><td colspan='4' id='modal_line_value_sequence_name'>hello</td></tr><tr id='modal_line_code'><td id='modal_line_title_code'>code</td><td colspan='4' id='modal_line_value_code'>hello</td></tr><tr id='modal_line_length'><td id='modal_line_title_length'>length</td><td colspan='4' id='modal_line_value_length'>19</td></tr><tr id='modal_line_e-value'><td id='modal_line_title_e-value'>e-value</td><td colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
@@ -263,6 +263,20 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
         "getHtmlInfo: segmentation information + modification button; header");
     assert.includes(html, "<tr id='modal_line_sequence'><td id='modal_line_title_sequence'>sequence</td><td colspan='4' id='modal_line_value_sequence'>aaaaaaaaaattttttttt</td></tr>",
         "getHtmlInfo: segmentation information + modification button; content");
+
+    // Test on download reads button
+    // m.samples.sequence_file_id and m.db_key are undefined, so no getReads should be present
+    assert.notIncludes(html, "icon-down", "getReads; icon NOT present if no sequence file given")
+    assert.notIncludes(html, "db.get_read", "getReads; db call NOT present if no sequence file given")
+    m.samples.sequence_file_id = []
+
+    // Test on download reads button; if correct model values are setted
+    // m.samples.sequence_file_id = [1, 2, 3, 4]
+    m.db_key = { sample_set_id: "7", config: 2 }
+    html_getReads = m.clones[0].getHtmlInfo();
+    assert.includes(html_getReads, "icon-down", "getReads; icon PRESENT if sequence_file given")
+    assert.includes(html_getReads, "db.get_read", "getReads; db call PRESENT if sequence_file given")
+
     // Test icon 
     m.clones[0].segEdited = true;
     html = m.clones[0].getHtmlInfo();
@@ -357,11 +371,11 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     var include = html.includes("<td class='header' colspan='2'>representative sequence</td>")
     assert.ok(include, "getHtmlInfo: if clone distrib, keep field 'representative sequence'");
     // Representative
-    include = html.includes("total clones size")
-    assert.ok(include, "getHtmlInfo: if clone distrib, other line name; 'clone size'");
+    include = html.includes("total clonotypes size")
+    assert.ok(include, "getHtmlInfo: if clone distrib, other line name; 'clonotype size'");
     // Representative
-    include = html.includes("current clone size")
-    assert.ok(include, "getHtmlInfo: if no sequence, field 'current clone size'");
+    include = html.includes("current clonotype size")
+    assert.ok(include, "getHtmlInfo: if no sequence, field 'current clonotype size'");
     // gene V
     assert.includes(html, "<tr id='modal_line_V_gene_or_5_'><td id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td>",
         "getHtmlInfo: distrib clone with seg5 have field segment V");
@@ -536,44 +550,6 @@ QUnit.test("system", function(assert) {
     
 });
 
-QUnit.test("tag / color", function(assert) {
-    
-    var m = new Model();
-    m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0, c_attributes)
-    m.initClones()
-
-    assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");
-    c1.updateColor()
-    assert.equal(c1.getColor(), "", "getColor() >> default tag color : ");
-    
-    c1.changeTag(5)
-    c1.updateColor()
-    assert.equal(c1.getTag(), 5, "changeTag() >> tag : 5");
-    assert.equal(c1.getColor(), "#2aa198", "getColor() >> default tag color : ");
-    
-    m.changeColorMethod("abundance")
-    c1.updateColor()
-    assert.equal(c1.getColor(), "rgb(36,183,88)", "getColor() >> abundance color : ");
-    
-});
-
-QUnit.test("color by CDR3", function(assert) {
-    var m = new Model();
-    m.parseJsonData(json_data);
-    var c1 = new Clone(json_clone1, m, 0, c_attributes);
-    var c2 = new Clone(json_clone2, m, 0, c_attributes);
-    m.initClones();
-    var color = c1.getCDR3Color();
-    c1.seg.junction.aa = "AZERTY";
-    var color2 = c1.getCDR3Color();
-
-    // Actually it could happen that some different CDR3s have the same colours
-    assert.equal(color != color2, true, "two CDR3 should have different"
-                 + " colors");
-
-    assert.equal(c2.getCDR3Color(), '');
-});
 
 QUnit.test("export", function(assert) {
     
@@ -607,7 +583,7 @@ QUnit.test("export", function(assert) {
         "1", "custom name", "id4",
         "TRG", "-/-",
         "undefined V", "IGHD2*03", "IGHV4*01",
-        "no CDR3 detected",
+        "no CDR3",
         "",
         "",
         "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGTATTACC",
@@ -730,7 +706,7 @@ QUnit.test("productivity", function(assert) {
     c1.seg.junction.start = 6;
     assert.equal(c1.getPhase(), 0, "Phase of modified clone 1 should be 0");
 
-    assert.equal(c2.getProductivityName(), "no CDR3 detected", "clone 2 doesn't have information about productivity");
+    assert.equal(c2.getProductivityName(), "no CDR3", "clone 2 doesn't have information about productivity");
     assert.equal(c2.isProductive(), false, "clone 2 doesn't have information about productivity");
     assert.equal(c2.getPhase(), 'undefined', "No phase for clone 2");
 
@@ -796,7 +772,7 @@ QUnit.test("productivity detailed", function(assert) {
     assert.equal(c1.getProductivityNameDetailed(), "out-of-frame",     "detailed productivity; out-of-frame");
     assert.equal(c2.getProductivityNameDetailed(), "stop-codon",       "detailed productivity; stop-codon");
     assert.equal(c3.getProductivityNameDetailed(), "not-productive",   "detailed productivity; unproductive simple");
-    assert.equal(c4.getProductivityNameDetailed(), "no CDR3 detected", "detailed productivity; without junction");
+    assert.equal(c4.getProductivityNameDetailed(), "no CDR3", "detailed productivity; without junction");
     assert.equal(c5.getProductivityNameDetailed(), "productive",       "detailed productivity; productive");
     assert.equal(c6.getProductivityNameDetailed(), "no-WPGxG-pattern", "detailed productivity; no-WPGxG-pattern");
 });
@@ -1049,3 +1025,66 @@ QUnit.test("export_json", function(assert) {
     assert.deepEqual(json_c7_getted.sample, m.samples.original_names,  "correct json values getted; sample original_names" )
 
 });
+
+
+QUnit.test("deletion_feature", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
+    var c4 = new Clone(json_clone4, m, 3, c_attributes)
+    m.initClones()
+
+
+    // Give feature name 5/3, without inclusion
+    // "primer5": {"start": 2, "stop": 10 }, // 1based state
+    // "primer3": {"start": 26, "stop": 34 }
+    //                   primer5                 primer3 
+    var c4_init_seq = "ATgggtccaGTCGTGAACTGTGCATgccgatagaCGAGTACGATGCCAGGTATTACC"
+    var c4_expected_trim53 = "GTCGTGAACTGTGCAT"
+    var c4_expected_trim5  = "GTCGTGAACTGTGCATgccgatagaCGAGTACGATGCCAGGTATTACC".toUpperCase()
+    var c4_expected_trim3  = "ATgggtccaGTCGTGAACTGTGCAT".toUpperCase()
+
+    var trimmed_seq_c2 = c2.trimmingFeature("primer5", "primer3", include=false)
+    assert.equal(trimmed_seq_c2, c2.sequence, "correct sequence after trimming (c2; no primer feature; return raw sequence)")
+
+    var trimmed_seq_c4_trim53 = c4.trimmingFeature("primer5", "primer3", include=false)
+    var trimmed_seq_c4_trim5  = c4.trimmingFeature("primer5", undefined, include=false)
+    var trimmed_seq_c4_trim3  = c4.trimmingFeature(undefined, "primer3", include=false)
+    assert.equal(trimmed_seq_c4_trim53, c4_expected_trim53, "correct sequence after trimming (c4; primers 5 & 3)")
+    assert.equal(trimmed_seq_c4_trim5,  c4_expected_trim5,  "correct sequence after trimming (c4; primers 5 only)")
+    assert.equal(trimmed_seq_c4_trim3,  c4_expected_trim3,  "correct sequence after trimming (c4; primers 3 only)")
+
+
+    // with include of features
+    var c4_expected_trim53_include = "tgggtccaGTCGTGAACTGTGCATgccgatag".toUpperCase()
+    var c4_expected_trim5_include  = "tgggtccaGTCGTGAACTGTGCATgccgatagACGAGTACGATGCCAGGTATTACC".toUpperCase()
+    var c4_expected_trim3_include  = "ATgggtccaGTCGTGAACTGTGCATgccgatag".toUpperCase()
+
+
+    var trimmed_seq_c4_trim53_include = c4.trimmingFeature("primer5", "primer3", include=true)
+    var trimmed_seq_c4_trim5_include  = c4.trimmingFeature("primer5", undefined, include=true)
+    var trimmed_seq_c4_trim3_include  = c4.trimmingFeature(undefined, "primer3", include=true)
+    assert.equal(trimmed_seq_c4_trim53_include, c4_expected_trim53_include, "correct sequence after trimming (c4; primers 5 & 3, include feature)")
+    assert.equal(trimmed_seq_c4_trim5_include,  c4_expected_trim5_include,  "correct sequence after trimming (c4; primers 5 only, include feature)")
+    assert.equal(trimmed_seq_c4_trim3_include,  c4_expected_trim3_include,  "correct sequence after trimming (c4; primers 3 only, include feature)")
+
+
+    // with feature outside or partially present in sequence
+    c4.seg.primer5 = {"start": -20, "stop": -10 } // outside of sequence
+    c4.seg.primer3 = {"start": 50, "stop": 66 } // partially on the sequence
+    //                          primer5                                                     primer3 
+    var c4_modprimer_init_seq =          "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGtattacc" // length 57
+    var c4_modprimer_expected_trim53 =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGG"
+    var c4_modprimer_expected_trim5  =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGtattacc".toUpperCase()
+    var c4_modprimer_expected_trim3  =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGG".toUpperCase()
+    
+    var trimmed_seq_c4_modprimer_trim53 = c4.trimmingFeature("primer5", "primer3", include=false)
+    var trimmed_seq_c4_modprimer_trim5  = c4.trimmingFeature("primer5", undefined, include=false)
+    var trimmed_seq_c4_modprimer_trim3  = c4.trimmingFeature(undefined, "primer3", include=false)
+    assert.equal(trimmed_seq_c4_modprimer_trim53, c4_modprimer_expected_trim53, "correct sequence after trimming (c4 outside/partially primer; primers 5 & 3)")
+    assert.equal(trimmed_seq_c4_modprimer_trim5,  c4_modprimer_expected_trim5,  "correct sequence after trimming (c4 outside/partially primer; primers 5 only)")
+    assert.equal(trimmed_seq_c4_modprimer_trim3,  c4_modprimer_expected_trim3,  "correct sequence after trimming (c4 outside/partially primer; primers 3 only)")
+    
+}); 

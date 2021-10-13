@@ -1,3 +1,10 @@
+# Step 0, independant: deploy_review, deploy_review_server
+# Step 1, quicker: test_tools, test_browser_unit, code_quality_custom, test_server_unit
+# Step 2, moderate:
+#   client: client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial
+#   server: server_firefox_supported, server_tutorial_server
+# Step 3, late, longuer or tricky: ff45-browser-functional-external
+
 
 before_script:
   - make demo
@@ -13,12 +20,8 @@ stages:
   - deploy_review
   - test_germlines
   - test_functional
-  - test_cypress_client_supported
-  - test_cypress_client_latest
-  - test_cypress_client_legacy
-  - test_cypress_server_supported
-  - test_cypress_server_latest
-  - test_cypress_server_legacy
+  - test_cypress_client
+  - test_cypress_server
   - test_tutorial
   - test_tutorial_server
   - test_shouldvdj
@@ -44,6 +47,8 @@ stages:
 test_tools:
   stage: test_tools
   script: make -C tools/tests
+  extends:
+    - .need_for_quick_test
 
 
 # Germlines
@@ -66,6 +71,33 @@ include:
   - local: 'browser/.gitlab-ci.yml' # Client pipelines
   - local: 'server/.gitlab-ci.yml' # Server pipelines
   - template: Code-Quality.gitlab-ci.yml # Code quality
+
+###########################
+###  Needs declaration  ###
+###########################
+.need_for_independant_test:
+  needs: []
+
+.need_for_quick_test:
+  needs: []
+
+### Client part should not containt server stage
+.need_for_moderate_client:
+  needs: [test_tools, test_browser_unit, code_quality_custom]
+.need_for_late_client:
+  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial]
+.need_for_staged_client:
+  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial]
+
+### Server part should not containt client stage
+.need_for_moderate_server:
+  needs: [test_tools, test_server_unit]
+.need_for_late_server:
+  needs: [server_firefox_supported, server_tutorial_server]
+.need_for_staged_server:
+  needs: [server_firefox_supported, server_tutorial_server]
+
+
 
 # Algorithm
 
@@ -200,6 +232,8 @@ test_browser_unit:
     - schedules
   tags:
     - web
+  extends:
+    - .need_for_quick_test
 
 .browser-functional:
   stage: test_functional
@@ -249,6 +283,8 @@ test_browser_unit:
     - schedules
   tags:
     - web
+  # extends:
+  #   - .need_for_staged_client
 
 .browser-functional-external-chrome:
   extends: .browser-functional-external
@@ -261,7 +297,9 @@ ff32-browser-functional:
     FIREFOX_VERSION: 32
 
 ff45-browser-functional:
-  extends: .browser-functional
+  extends:
+    - .browser-functional
+    - .need_for_moderate_client
   variables:
     FIREFOX_VERSION: 45
 
@@ -279,7 +317,9 @@ ff32-browser-functional-external:
     FIREFOX_VERSION: 32
 
 ff45-browser-functional-external:
-  extends: .browser-functional-external
+  extends:
+    - .browser-functional-external
+    - .need_for_moderate_client
   variables:
     FIREFOX_VERSION: 45
 
@@ -327,9 +367,12 @@ ff32-browser-tutorial:
     FIREFOX_VERSION: 32
 
 ff45-browser-tutorial:
-  extends: .browser-tutorial
+  extends:
+    - .browser-tutorial
+    - .need_for_moderate_client
   variables:
     FIREFOX_VERSION: 45
+
 
 chrome-browser-tutorial:
   extends: .browser-tutorial-chrome
@@ -343,7 +386,9 @@ old-chrome-browser-tutorial:
 
 server_tutorial_server:
   stage: test_tutorial_server
-  extends: .test_server_base
+  extends:
+    - .test_server_base
+    - .need_for_moderate_server
   retry: 1
   script:
     - source /etc/profile.d/rvm.sh
@@ -369,6 +414,7 @@ server_tutorial_server:
     FIREFOX_VERSION: 45
 
 
+
 # Code quality
 
 code_quality:
@@ -387,6 +433,8 @@ code_quality_custom:
     - schedules
   tags:
     - web
+  extends:
+    - .need_for_quick_test
 
 # Server
 
@@ -412,6 +460,8 @@ test_server_unit:
       - schedules
     tags:
       - web
+    extends:
+      - .need_for_quick_test
 
 .test_server_base:
   stage: test_functional
@@ -472,9 +522,12 @@ ff32-server-functional:
     FIREFOX_VERSION: 32
 
 ff45-server-functional:
-  extends: .test_server_functional
+  extends:
+    - .test_server_functional
+    - .need_for_moderate_server
   variables:
     FIREFOX_VERSION: 45
+
 
 
 
@@ -525,6 +578,8 @@ deploy_review:
     - /^hotfix-.*c.*\/.*$/
   tags:
     - web
+  extends:
+    - .need_for_independant_test
 
 deploy_review_server:
   stage: deploy_review
@@ -557,6 +612,8 @@ deploy_review_server:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
+  extends:
+    - .need_for_independant_test
 
 deploy_docker:
   stage: deploy_prod

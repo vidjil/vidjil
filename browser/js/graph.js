@@ -330,7 +330,7 @@ Graph.prototype = {
         line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_hideNotShare"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "focus on selected clones"
+        line_content.textContent = "focus on selected clonotypes"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)
@@ -816,13 +816,8 @@ Graph.prototype = {
         var value_selected_point = this.m.clone(id).getSize(selected_point)
 
         for (var i = 0; i < this.graph_col.length; i++) {
-            // bypass clone size if it is not present in the current timepoint; TODO, add a switch on this behavior
-            if (this.m.show_only_one_sample && value_selected_point == 0) {
-                size[i] = 0
-            } else {
-                if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
-                else          size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
-            }
+            if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
+            else          size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
         }
 
         var x = this.graph_col[0];
@@ -1147,8 +1142,6 @@ Graph.prototype = {
             time_name = this.m.getStrTime(l);
             if (time_name.length > maxchar+3) time_name = time_name.substring(0,maxchar)+" ..."
             if (l == this.m.t) time_name = this.m.getStrTime(l);
-            // If focus on this sample only (todo: #4221; add an search icon, hard with d3js)
-            if (this.m.show_only_one_sample && l == this.m.t) time_name += " *"
 
             d.type = "axis_v";
             d.text = time_name;

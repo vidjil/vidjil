@@ -42,6 +42,7 @@ sequencing methods and software, called either Rep-Seq or AIRR-Seq.
   - Bioinformatics, technical, and administrative [Roadmap](roadmap.md)
   - [Public datasets](http://www.vidjil.org/data/) 🔗 supporting Vidjil publications
   - [Credits, references](credits.md)
+  - [Open-source and licensing](license.md)
 
 ### Further developer documentation
 

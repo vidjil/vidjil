@@ -102,7 +102,7 @@ class Window:
     check if other information are conserved
     
     >>> (w2 + w4).d["test"]
-    [0, 'plop']
+    ['', 'plop']
     
     >>> w1.get_values("name")
     '?'
@@ -470,6 +470,30 @@ class Window:
     ### print essential info about Window
     def __str__(self):
         return "<window : %s %s %s>" % ( self.d["reads"], '*' if self.d["top"] == sys.maxsize else self.d["top"], self.d["id"])
+
+class PreProcesses:
+
+    def __init__(self):
+        self.d={}
+
+    def __add__(self, other):
+        obj = PreProcesses()
+
+        length_self = len(self.d['run_timestamp'])
+        length_other = len(other.d['run_timestamp'])
+        concatenate_with_padding(obj.d,
+                                 self.d, length_self,
+                                 other.d, length_other)
+        return obj
+
+    def __iter__(self):
+        return self.d.__iter__()
+
+    def __getitem__(self, item):
+        return self.d.__getitem__(item)
+
+    def __setitem__(self, item, value):
+        return self.d.__setitem__(item, value)
         
 class Samples: 
 
@@ -484,7 +508,20 @@ class Samples:
         concatenate_with_padding(obj.d, 
                                  self.d, self.d['number'], 
                                  other.d, other.d['number'],
-                                 ['number'])
+                                 ['number', 'pre_process'],
+                                 recursive=True)
+        if "pre_process" in self.d.keys() or "pre_process" in other.d.keys():
+            # init if needed
+            if "pre_process" not in self.d.keys():
+                self.d["pre_process"] = {}
+            if "pre_process" not in other.d.keys():
+                other.d["pre_process"] = {}
+            obj.d["pre_process"] = {}
+            concatenate_with_padding(obj.d["pre_process"], 
+                                     self.d["pre_process"], self.d['number'], 
+                                     other.d["pre_process"], other.d['number'],
+                                     [], recursive=True,
+                                     none_init=True)
 
         obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
         
@@ -555,7 +592,12 @@ class Reads:
                                  self.d['distribution'], len(self.d['total']),
                                  other.d['distribution'], len(other.d['total']),
                                  ['total'])
-                
+        if 'merged' in self.d or 'merged' in other.d:
+            for mydict in [obj.d, self.d, other.d]:
+                if 'merged' not in mydict:
+                    mydict['merged'] = [0] * len(mydict['total'])
+            obj.d['merged'] = self.d['merged'] + other.d['merged']
+
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
         return obj
@@ -768,6 +810,14 @@ class ListWindows(VidjilJson):
     def loads_vidjil(self, string, pipeline, verbose=True):
         '''init listWindows with a json string'''
         self.init_data(json.loads(string, object_hook=self.toPython))
+
+    def load_pre_process(self, file_path, verbose = True):
+        '''init listWindows with the pre_process data file'''
+        with generic_open(file_path, 'r', verbose) as f:
+            json_data = json.load(f, object_hook=self.toPython)
+
+            self.d['samples'].d['pre_process'] = json_data['pre_process']
+            self.d['reads'].d['merged'] = json_data['reads'].d['merged']
 
     def getTop(self, top):
         result = []
@@ -1191,8 +1241,12 @@ class ListWindows(VidjilJson):
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity) or isinstance(obj, MRD):
+        if isinstance(obj, ListWindows)  or isinstance(obj, Window)\
+           or isinstance(obj, Samples)   or isinstance(obj, Reads)\
+           or isinstance(obj, Diversity) or isinstance(obj, MRD)\
+           or isinstance(obj, PreProcesses):
             result = {}
+
             for key in obj.d :
                 result[key]= obj.d[key]
                 
@@ -1233,6 +1287,12 @@ class ListWindows(VidjilJson):
             
         if "original_names" in obj_dict:
             obj = Samples()
+            obj.d=obj_dict
+            return obj
+
+        # TODO use a better identifier
+        if "parameters" in obj_dict:
+            obj = PreProcesses()
             obj.d=obj_dict
             return obj
             
@@ -1506,7 +1566,7 @@ seg_w7 = {
 
 lw1 = ListWindows()
 lw1.d["timestamp"] = 'ts'
-lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
+lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, "distribution": {}, "merged": [null]}', object_hook=lw1.toPython)
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
 lw1.d["diversity"] = Diversity()
@@ -1519,7 +1579,7 @@ w8.d ={"id" : "ccc", "reads" : [2], "top" : 8, "test" : ["plop"] }
 
 lw2 = ListWindows()
 lw2.d["timestamp"] = 'ts'
-lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
+lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {}, "distribution": {}, "merged": [null]}', object_hook=lw1.toPython)
 lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
 lw2.d["diversity"] = Diversity()
@@ -1665,6 +1725,14 @@ def main():
         vparser.addPrefix('clones.item', 'clones.item.top', le, args.top)
 
     for path_name in files:
+        split_path = path_name.split(',')
+        pre_path = None
+        if len(split_path) > 1:
+            path_name = split_path[0]
+            pre_path = split_path[1]
+        else:
+            path_name = split_path[0]
+
         if args.ijson:
             json_clones = vparser.extract(path_name)
             clones = json.loads(json_clones)
@@ -1673,6 +1741,8 @@ def main():
         else:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
+            if pre_path is not None:
+                jlist.load_pre_process(pre_path)
             f += jlist.getTop(args.top)
 
     f = sorted(set(f))
@@ -1705,12 +1775,22 @@ def main():
     else:
         print("### Read and merge input files")
         for path_name in files:
+            split_path = path_name.split(',')
+            pre_path = None
+            if len(split_path) > 1:
+                path_name = split_path[0]
+                pre_path = split_path[1]
+            else:
+                path_name = split_path[0]
+
             jlist = ListWindows()
             if args.ijson:
                 json_reads = vparser.extract(path_name)
                 jlist.loads(json_reads, args.pipeline)
             else:
                 jlist.load(path_name, args.pipeline)
+                if pre_path is not None:
+                    jlist.load_pre_process(pre_path)
                 jlist.build_stat()
                 if len(LIST_DISTRIBUTIONS):
                     jlist.init_distrib(LIST_DISTRIBUTIONS)

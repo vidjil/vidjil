@@ -216,7 +216,7 @@ List.prototype = {
             star.className = "starBox";
             star_onclick(key, star);
 
-            star.appendChild(icon('icon-star-2', 'clone tag'))
+            star.appendChild(icon('icon-star-2', 'clonotype tag'))
             div.appendChild(star)
             
             this.index_data[key] = value;
@@ -239,7 +239,7 @@ List.prototype = {
 
         var a_split = document.createElement('a')
         a_split.className = "button"
-        a_split.appendChild(icon('icon-plus', 'Show all subclones'))
+        a_split.appendChild(icon('icon-plus', 'Show all sub-clonotypes'))
         a_split.id = "list_split_all"
         a_split.onclick = function () {
             self.m.split_all(true)
@@ -247,21 +247,21 @@ List.prototype = {
         
         var a_unsplit = document.createElement('a')
         a_unsplit.className = "button"
-        a_unsplit.appendChild(icon('icon-minus', 'Hide all subclones'))
+        a_unsplit.appendChild(icon('icon-minus', 'Hide all sub-clonotypes'))
         a_unsplit.id = "list_unsplit_all"
         a_unsplit.onclick = function () {
             self.m.split_all(false)
         }
 
         var filter_label = document.createElement('span')
-        filter_label.appendChild(icon('icon-search-1', 'Search a clone by name, sequence, or V/D/J gene'))
+        filter_label.appendChild(icon('icon-search-1', 'Search a clonotype by name, sequence, or V/D/J gene'))
         
         var filter_input = document.createElement('input')
         filter_input.id = 'filter_input'
         filter_input.type = 'text'
         filter_input.setAttribute('placeholder', 'search');
         filter_input.onchange = function () {
-            self.m.filter(this.value)
+            self.m.filter.add("Clonotype", "search", this.value)
         }
         
         var filter_reset = document.createElement('span')
@@ -270,7 +270,7 @@ List.prototype = {
         filter_reset.className = "button"
         filter_reset.onclick = function () {
             document.getElementById('filter_input').value = ''
-            self.m.reset_filter(false)
+            self.m.filter.remove("Clonotype", "search", undefined)
             self.m.update()
         }
         
@@ -347,7 +347,7 @@ List.prototype = {
             axis.appendChild(axis_option)
         }
         axis.value = "size"
-        this.selectedAxis = Axis.prototype.getAxisProperties("size")
+        this.selectedAxis = Axis.prototype.getAxisProperties("Size")
         axis.onchange = function() {
             self.selectedAxis = Axis.prototype.getAxisProperties(axis.value)
             self.update()
@@ -486,7 +486,7 @@ List.prototype = {
             
             if (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
                 (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  )||
-                (clone.isFiltered) || 
+                (!clone.isActive()) || 
                 (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]))){ // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
                 
                 cloneDom.display("main", "none");
@@ -512,10 +512,10 @@ List.prototype = {
             //update cluster icon
             if (this.m.clusters[cloneID].length > 1) {
                 if (clone.split) {
-                    cloneDom.content("clusterBox", icon('icon-minus', 'Hide the subclones').outerHTML)
+                    cloneDom.content("clusterBox", icon('icon-minus', 'Hide the sub-clonotypes').outerHTML)
                     this.showClusterContent(cloneID, false)
                 } else {
-                    cloneDom.content("clusterBox", icon('icon-plus', 'Show the subclones').outerHTML)
+                    cloneDom.content("clusterBox", icon('icon-plus', 'Show the sub-clonotypes').outerHTML)
                     this.hideClusterContent(cloneID, false)
                 }
                 self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
@@ -583,7 +583,7 @@ List.prototype = {
             span_info.onclick = function () {
                 self.m.displayInfoBox(id);
             }
-            span_info.appendChild(icon('icon-info', 'clone information'));
+            span_info.appendChild(icon('icon-info', 'clonotype information'));
 
             var img = document.createElement('span');
             img.onclick = function () {
@@ -712,7 +712,7 @@ List.prototype = {
                 if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
                     // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
                     cloneDom.display("main", "none");
-                } else if (clone.isFiltered){
+                } else if (!clone.isActive()){
                     cloneDom.display("main", "none");
                 } else {               
                     cloneDom.display("main", "block");

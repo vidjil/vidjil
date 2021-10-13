@@ -37,15 +37,15 @@ Similarity.prototype = {
         var self = this
         var request = "";
 
-        for (var i = 0; i < this.m.clones.length; i++) {
-            if (m.clone(i).sequence!==0) request += ">" + i + "\n" + this.m.clone(i).id + "\n";
-        }
+        for (var i = 0; i < this.m.clones.length; i++) 
+            if (m.clone(i).hasSizeConstant())
+                if (m.clone(i).sequence!==0) request += ">" + i + "\n" + this.m.clone(i).id + "\n";
 
         $.ajax({
             type: "POST",
             timeout: 120000,
             data: request,
-            url: segment.cgi_address + "similarity.cgi",
+            url: config.cgi_address + "similarity.cgi",
             beforeSend: function () {
                 self.m.wait("Computing similarities between clones...");
             },
