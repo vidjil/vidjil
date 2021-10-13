@@ -928,6 +928,7 @@ Database.prototype = {
         var self = this;
         
         var list = document.getElementById("last_loaded_file")
+        if (list == null) return;
         var children = list.children
         
         var flag = false
