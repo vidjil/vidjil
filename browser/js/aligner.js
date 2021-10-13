@@ -296,7 +296,7 @@ Aligner.prototype = {
         if (this.isGermline(sequenceID)){
             cloneT.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(sequenceID));
             cloneT.getElementsByClassName("delBox")[0].onclick = function () {
-                delete self.removeSequence(sequenceID);
+                self.removeSequence(sequenceID);
             };
             return cloneT;
         }
