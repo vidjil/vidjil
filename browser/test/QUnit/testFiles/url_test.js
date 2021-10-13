@@ -43,6 +43,7 @@ QUnit.test("clone : modifyURL", function(assert) { with (windowMock) {
 
     m = new Model();
     var db = new Database(m)
+    m.db = db
     var notification = new Notification(m)
     m.parseJsonData(json_data,100)
     m.file_source = "database";         //overwrite file_source to force url rewrite (url rewrite is disabled for local files)
@@ -109,6 +110,7 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
 
     var m = new Model();
     var db = new Database(m)
+    m.db = db
     var notification = new Notification(m)
     m.parseJsonData(json_data,100)
     m.file_source = "database";
@@ -140,6 +142,8 @@ QUnit.test("plot : modifyURL",function (assert) { with (windowMock) {
 QUnit.test("url: parse", function(assert) { with (windowMock) {
     windowMock.history.pushState('plop', 'plop', 'mock://foo.bar?param1=foo&param2=bar');
     var m = new Model();
+    var db = new Database(m)
+    m.db = db
     m.file_source = "database";
     var url = new Url(m, windowMock);
 
@@ -161,6 +165,8 @@ QUnit.test("url: select clones", function(assert) { with (windowMock) {
     windowMock.history.pushState('plop', 'plop', 'mock://foo.bar?clone=1,2');
     // create model
     var m = new Model();
+    var db = new Database(m)
+    m.db = db
     m.parseJsonData(json_data,100)
     m.file_source = "database";
     m.loadGermline()
@@ -195,6 +201,8 @@ QUnit.test("url: generate", function(assert) { with (windowMock) {
     };
 
     var m = new Model();
+    var db = new Database(m)
+    m.db = db
     m.file_source = "database";
     var url = new Url(m, windowMock);
     var param_string = url.generateParamsString(params);
@@ -204,6 +212,8 @@ QUnit.test("url: generate", function(assert) { with (windowMock) {
 QUnit.test("url: positional parse", function(assert) { with (windowMock) {
     var m = new Model();
     m.file_source = "database";
+    var db = new Database(m)
+    m.db = db
     windowMock.history.pushState('plop', 'plop', 'mock://foo.bar/1-3?param3=third');
     var url = new Url(m, windowMock);
 
@@ -224,6 +234,8 @@ QUnit.test("url: positional generate", function(assert) { with (windowMock) {
     };
 
     var m = new Model();
+    var db = new Database(m)
+    m.db = db
     m.file_source = "database";
     var url = new Url(m, windowMock);
     var param_string = url.generateParamsString(params);

@@ -242,7 +242,7 @@ Aligner.prototype = {
     },
 
     build_sequence: function(cloneID){
-        if ( !this.m.clone(cloneID).hasSequence() ){
+        if (this.m.clone(cloneID) && !this.m.clone(cloneID).hasSequence() ){
             // This clone should not be added to the segmenter
             return;
         }
@@ -283,17 +283,28 @@ Aligner.prototype = {
     
     /**
      * complete a node with a clone information
-     * @param {integer} cloneID - clone index 
+     * @param {integer} sequenceID - sequence index 
      * */
-    build_spanF: function (cloneID) {
-
+    build_spanF: function (sequenceID) {
         var self = this;
-        var clone = this.m.clone(cloneID);
-        
+
         //copy template
         var template = document.getElementById("aligner-F");
         var cloneT = template.content.firstElementChild.cloneNode(true);
 
+        //this is a custom sequence
+        if (this.isGermline(sequenceID)){
+            cloneT.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(sequenceID));
+            cloneT.getElementsByClassName("delBox")[0].onclick = function () {
+                self.removeSequence(sequenceID);
+            };
+            return cloneT;
+        }
+
+        //this is a clone sequence
+        var cloneID = sequenceID;
+        var clone = this.m.clone(cloneID);
+        
         //???
         clone.div_elem(cloneT, false);
 
@@ -303,8 +314,7 @@ Aligner.prototype = {
         cloneT.getElementsByClassName("nameBox")[0].style.color = clone.color;
         cloneT.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(clone.getShortName()));
         cloneT.getElementsByClassName("delBox")[0].onclick = function () {
-            clone.unselect();
-            self.aligned = false;
+            self.removeSequence(cloneID);
         };
         if (this.m.clone_info == cloneID) 
         cloneT.getElementsByClassName("infoBox")[0].className += " infoBox-open";
@@ -352,11 +362,26 @@ Aligner.prototype = {
             document.getElementById("listSeq").innerHTML = "";
     },
 
-    removeGermline:function(id){
-        elem = document.getElementById("seq"+id);
-        elem.parentNode.removeChild(elem);
+    removeSequence:function(id, update){
+        if (typeof update == "undefined") update=true 
+
         delete this.sequence[id];
         this.sequence_order.splice( this.sequence_order.indexOf(id), 1 );
+        if (this.isClone(id)) this.m.clone(id).unselect();
+        
+        if (update) this.updateDom()
+                        .show()
+    },
+
+    removeAllSequence: function(update){
+        if (typeof update == "undefined") update=true 
+
+        var keys = Object.keys(this.sequence)
+        for (var i =0; i<keys.length; i++)
+            this.removeSequence(keys[i], false)
+
+        if (update) this.updateDom()
+                        .show()
     },
 
     /**
@@ -380,64 +405,64 @@ Aligner.prototype = {
      * @param {integer[]} list - array of clone index
      * */
     updateElem: function (list) {
+
+        //nothing selected => remove all sequence including germline
+        if (this.m.getSelected().length == 0) {
+            this.removeAllSequence()
+            return
+        }
+
         var self = this;
         list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
-        var sliderNeedUpdate = (Object.keys(this.sequence).length==0);//slider move only if we add sequence to an empty segmenter
-        var cloneID, liDom;
+        var cloneID;
 
-        // remove unselected sequences
+        // remove unselected clones
         for (var i = 0; i < list.length; i++) {     
-            cloneID = list[i];
-            liDom = this.index[cloneID];
-            
-            if (!this.m.clone(cloneID).isSelected()) {            
-                if (this.sequence[cloneID]){                         
-                    delete this.sequence[cloneID];       
-                    this.sequence_order.splice( this.sequence_order.indexOf(cloneID), 1 );
-                }
-
-                if (liDom != null) 
-                    liDom.display("main", "none");
-            }
+            cloneID = list[i];   
+            if (!this.m.clone(cloneID).isSelected()) 
+                if (this.sequence[cloneID])                    
+                    this.removeSequence(cloneID, false);
         }
 
-        // update sequences already in segmenter
+        // update clones already in segmenter
         for (var k = 0; k < this.sequence_order.length; k++) {   
             cloneID = this.sequence_order[k];
-            liDom = this.index[cloneID];
-
             if(list.indexOf(cloneID) != -1){
                 list.splice( list.indexOf(cloneID), 1 );
-                this.addToSegmenter(cloneID);
-                if (liDom != null) {
-                    liDom.display("main", "block");
-                    liDom.replace("seq-fixed", this.build_spanF(cloneID));
-                    liDom.content("seq-mobil", this.sequence[cloneID].toString());        
-                }
+                this.addCloneToSegmenter(cloneID);
             }
         }
 
-        // add newly selected sequences
+        // add newly selected clones
         for (var j = 0; j < list.length; j++) {     
             cloneID = list[j];
-            liDom = this.index[cloneID];
-            
-            if (this.m.clone(cloneID).isSelected()) {
-                this.addToSegmenter(cloneID);
-                if (liDom != null) {
-                    liDom.display("main", "block");
-                    liDom.replace("seq-fixed", this.build_spanF(cloneID));
-                    liDom.content("seq-mobil", this.sequence[cloneID].toString());        
-                }
-            } 
+            if (this.m.clone(cloneID).isSelected()) 
+                this.addCloneToSegmenter(cloneID);
         }
 
-        // update 
-        if (sliderNeedUpdate) this.show();
-        this.updateAlignmentButton();
-        this.updateStats();  
-        var leftScroll = $(this.div_segmenter).scrollLeft();
-        $('.seq-fixed').css({'left':+leftScroll});
+        this.updateDom()
+    },
+
+    updateDom:function(){
+        //hide all sequence dom object
+        var keys = Object.keys(this.index)
+        for (var i=0; i<keys.length; i++)
+            if (this.index[keys[i]] != null) 
+                this.index[keys[i]].display("main", "none");
+
+        //update dom object of sequence in aligner
+        var keys2 = Object.keys(this.sequence)
+        for (var j=0; j<keys2.length; j++)  
+            if (this.sequence[keys2[j]] != null){
+                var dom = this.index[keys2[j]]
+                dom.display("main", "block");
+                dom.replace("seq-fixed", this.build_spanF(keys2[j]));
+                dom.content("seq-mobil", this.sequence[keys2[j]].toString());        
+            }
+
+        this.updateStats();
+
+        return this;
     },
 
     /**
@@ -451,36 +476,16 @@ Aligner.prototype = {
     },
 
     isClone: function (id) {
-        return ((typeof this.m.clone(id) != "undefined") && this.m.clone(id).isSelected());
+        return !isNaN(id);
     },
     
     isGermline: function (id) {
-        return (typeof this.m.germline[this.sequence[id].locus] != "undefined");
-    },
-
-    /**
-     * enable/disable align button if their is currently enough sequences selected
-     * */
-    updateAlignmentButton: function() {
-        var align = document.getElementById("align");
-        var cluster = document.getElementById("cluster");
-        list = this.sequenceListInSegmenter();
-        if (align !== null) {
-            if (list.length > 1) {
-                align.className = "aligner-menu button";
-                cluster.className = "aligner-menu button";
-            }
-            else {
-                align.className = "aligner-menu button inactive";
-                cluster.className = "aligner-menu button inactive";
-            }
-        }
+        return isNaN(id);
     },
 
     sequenceListInSegmenter: function() {
         return Object.keys(this.sequence);
     },
-
 
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
@@ -501,8 +506,11 @@ Aligner.prototype = {
      * build a div with clone information and sequence
      * @param {intger} cloneID - clone index 
      * */
-    addToSegmenter: function (cloneID) {
+    addCloneToSegmenter: function (cloneID, update) {
         var self = this;
+
+        if (typeof update == "undefined") update = false
+
         if ( !this.m.clone(cloneID).hasSequence() ){
             // This clone should not be added to the segmenter
             return;
@@ -519,57 +527,8 @@ Aligner.prototype = {
         this.sequence[cloneID].load();
         this.sequence_order.push(cloneID);
         
-        if (document.getElementById("seq" + cloneID) != null ){                 //div already exist
-            document.getElementById("seq" + cloneID).style.display = "block";
-            var divParent = document.getElementById("listSeq");
-            divParent.appendChild(document.getElementById("seq" + cloneID));
-            return;
-        }
-        else{                                                                   //create div
-            this.build_sequence(cloneID);
-        }
-
-    },
-
-    /**
-    * select all the germline of a clone .
-    * add them to the segmenter
-    **/
-    add_all_germline_to_segmenter : function() {
-       for (var id in this.sequence) {
-           if (this.isClone(id)) {
-                var c = this.m.clone(id);
-                this.addGermlineToSegmenter(c.getGene("3"),c.germline);
-                this.addGermlineToSegmenter(c.getGene("4"),c.germline);
-                this.addGermlineToSegmenter(c.getGene("5"),c.germline);
-            }
-        }
-        this.show();
-    },
-
-    /**
-    * return a spanF completed with germline gene info
-    * @param {str} geneID - gene id 
-    **/
-    spanF_germline:function(geneID) {
-        var self = this; 
-
-        //copy template
-        var template = document.getElementById("aligner-F");
-        var clone = template.content.firstElementChild.cloneNode(true);
-
-        //edit
-        if (this.m.focus == geneID) $(clone).addClass("list_focus");
-        clone.getElementsByClassName("nameBox")[0].title = geneID;
-        clone.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(geneID));
-        clone.getElementsByClassName("delBox")[0].onclick = function () {
-            delete self.sequence[geneID];
-            self.sequence_order.splice( self.sequence_order.indexOf(geneID), 1 );
-            self.aligned = false;
-            self.removeGermline(geneID);
-        };
-        
-        return clone;
+        document.getElementById("listSeq").appendChild(document.getElementById("seq" + cloneID))
+        if (update) this.updateDom();
     },
 
     /**
@@ -578,40 +537,49 @@ Aligner.prototype = {
     * @param {str} id sequence id
     * @param {str} sequence
     **/
-    addSequenceTosegmenter : function(id, locus, str){
-        this.aligned = false ;
-        this.resetAlign();
-        if ( typeof this.sequence[id]=="undefined"){
-            this.sequence[id] = new genSeq(id, locus, this.m, this);
-            this.sequence[id].load("str");
-            var divParent = document.getElementById("listSeq");
+        addSequenceToSegmenter : function(id, str, update){
+        if (typeof update == "undefined") update = true
+        this.aligned = false
+        this.resetAlign()
+        str = str.split(".").join("")
+        if (typeof this.sequence[id]=="undefined"){
+            this.sequence[id] = new Sequence(id, this.m, this);
+            this.sequence[id].load(str);
             this.sequence_order.push(id);
-
-            var li = document.createElement('li');
-            li.id = "seq" + id;
-            li.className = "sequence-line";
-            var spanF = this.spanF_germline(id);
-            var spanM = document.createElement('span');
-
-            spanM.className = "seq-mobil";
-            spanM.innerHTML = this.sequence[id].load(str).toString(this);
-            li.appendChild(spanF);
-            li.appendChild(spanM);
-            divParent.appendChild(li);
         }
+        document.getElementById("listSeq").appendChild(document.getElementById("seq" + id));
+        if (update) this.updateDom();
+    },
+
+    /**
+    * select all the germline of a clone .
+    * add them to the segmenter
+    **/
+    add_all_germline_to_segmenter : function(update) {
+        if (typeof update == "undefined") update = true
+        for (var id in this.sequence) {
+           if (this.isClone(id)) {
+                var c = this.m.clone(id);
+                this.addGermlineToSegmenter(c.getGene("3"), false);
+                this.addGermlineToSegmenter(c.getGene("4"), false);
+                this.addGermlineToSegmenter(c.getGene("5"), false);
+            }
+        }
+        if (update) this.updateDom();
+        this.show();
     },
 
     /**
     * get the germline from the germline object
     * and use add germline to the segmenter
-    * @param {str} id sequence id
+    * @param {str} geneId sequence id
     **/
-    addGermlineToSegmenter: function(id, locus) {
-        if (typeof this.m.germline[locus][id]==="undefined"){
-            console.log("addGermlineToSegmenter: no germline, " + locus + ", " + id);
-        }else{
-            this.addSequenceTosegmenter(id , locus, this.m.germline[locus][id]);
-        }
+    addGermlineToSegmenter: function(geneId, update) {
+        if (typeof update == "undefined") update = true
+        var keys = Object.keys(this.m.germline)
+        for (var i = 0; i < keys.length; i++)
+        if (typeof this.m.germline[keys[i]][geneId] != "undefined")
+            this.addSequenceToSegmenter(geneId, this.m.germline[keys[i]][geneId], update); 
     },
 
     /**
@@ -696,6 +664,7 @@ Aligner.prototype = {
                     scrollLeft: mid
                 }, 0);
         }
+        return this
     },
 
     /**
@@ -720,19 +689,10 @@ Aligner.prototype = {
         if (list.length === 0) return;
 
         for (var i = 0; i < list.length; i++) {
-            if (this.isClone(list[i]) && !(this.m.clone(list[i]).sequence).match("undefined") && this.m.clone(list[i]).sequence !== 0) { /// why '.match' ? why 0 ?
-                request += ">" + list[i] + "\n" + this.m.clone(list[i]).sequence + "\n";
-
-               }
-                else if(typeof this.m.germline[this.sequence[list[i]].locus]!="undefined"){
-                    request += ">" + list[i] + "\n" + this.m.germline[this.sequence[list[i]].locus][list[i]] + "\n";
-
-               }
-            else{
-                request += ">" + list[i] + "\n" + this.m.clone(list[i]).id + "\n";
-            }
+            var seq = this.sequence[list[i]].seq.join("")
+            if (seq == "") seq = "---"
+            request += ">" + list[i] + "\n" + seq + "\n";
         }
-
 
         $.ajax({
             type: "POST",
@@ -775,8 +735,7 @@ Aligner.prototype = {
         for (var i = 0; i < selected.length; i++) {
             if (typeof this.sequence[selected[i]] !== "undefined" &&
                 typeof this.sequence[selected[i]].seq !== "undefined") {
-                var seq = this.sequence[selected[i]];
-                if (seq.is_clone) {
+                if (this.isClone(selected[i])) {
                     result += "> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
                 } else {
                     result += "> " + selected[i];
@@ -1000,24 +959,6 @@ Aligner.prototype = {
             return false;
         }else if (typeof obj.start != 'undefined' && typeof obj.stop != 'undefined') {
             return true;
-        }else{
-            return false;
-        }
-    },
-
-    /**
-     * determine if a string is an amino acid sequence or not
-     * @param {string}
-     * @return {bool}
-     * */
-    isAA : function (string) {
-        if (typeof string === 'undefined' || string === null) {
-            return false;
-        }else if (string.constructor === String) {
-            var reg = new RegExp("^[ACDEFGHIKLMNOPQRSTUVWY]+$");
-            return reg.test(string);
-        }else if (string.constructor === Array & string.length>0) {
-            return this.isAA(string[0]);
         }else{
             return false;
         }
