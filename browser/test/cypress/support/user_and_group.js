@@ -125,7 +125,7 @@ Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
       .click()
 
     cy.wait(['@getActivities'])
-    cy.update_icon(0)
+    cy.update_icon(100)
 
     var rights_list = ["create", "read", "admin", "upload", "run", "save", "anon"]
     for (var i = rights.length - 1; i >= 0; i--) {
