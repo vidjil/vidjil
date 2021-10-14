@@ -65,6 +65,7 @@ test_germlines:
 # Includes
 
 include:
+  - local: '.gitlab-test-reproducibility.yml' # launch tests many times
   - local: '/doc/.gitlab-ci.yml' # Doc
   - local: 'algo/.gitlab-ci-compilers.yml' # Stage multiple_tests
   - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
