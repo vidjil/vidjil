@@ -3,7 +3,9 @@ Returns messages previouly logged within the 'user_log' table.
 See UserLogHandler() in models/db.py.
 '''
 
-import gluon.contrib.simplejson
+import gluon.contrib.simplejson, datetime
+from vidjil_utils import *
+
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -46,8 +48,9 @@ def index():
         user_groups = auth.get_user_groups()
         parent_groups = auth.get_user_group_parents()
         group_list = [g.id for g in user_groups]
-        if 3 in group_list: # Remove logs on  public group
-            group_list.remove(3)
+        public_id = getPublicGroupId(db)
+        if publicGroupIsInList(db, group_list): # Remove logs on  public group
+            group_list.remove(public_id)
         parent_list = [g.id for g in parent_groups]
 
         groups = list(set(group_list + parent_list))

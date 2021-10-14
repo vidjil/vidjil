@@ -776,3 +776,20 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         for tag in tags:
             tid  = db.tag.insert(name=tag)
             db.group_tag.insert(group_id=id_public_group, tag_id=tid)
+
+
+def publicGroupIsInList(db, group_ids):
+    """ Return True if the first public group is in list """
+    public_group = getPublicGroupId(db)
+    if public_group and public_group not in group_ids:
+        return False
+    return True
+
+
+def getPublicGroupId(db):
+    """ Get public group id; Return only the first id of public groups"""
+    public_group_name = defs.PUBLIC_GROUP_NAME if hasattr(defs, 'PUBLIC_GROUP_NAME') else 'public'
+    public_group = db(db.auth_group.role == public_group_name).select()
+    if len(public_group):
+        return public_group[0].id
+    return False
