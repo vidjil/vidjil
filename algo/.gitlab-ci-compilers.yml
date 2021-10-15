@@ -16,6 +16,13 @@
     - make -C algo CXX=$CXX CC=$CC unit
     - make -C algo CXX=$CXX CC=$CC should
     - make -C algo CXX=$CXX CC=$CC valgrind_unit
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never               # To prevent detached pipelines
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*a.*\/release$/'
+      when: always
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*a/'
+      when: manual
 
 .installing-compiler:
   before_script:
@@ -47,159 +54,62 @@
     - .testing-compilers
     - .installing-compiler
     
-    
-.testing_various_compilers_manual:
-  when: manual
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
-    
-.testing_various_compilers_release:
-  only:
-    - /^feature-.*a.*\/release$/
-
-test_gcc48_manual:
+test_gcc48:
   image: debian:8-slim
   variables:
     GCC_VERSION: "4.8"
   extends:
     - .installing-testing-gcc
-    - .testing_various_compilers_manual
-test_gcc48_release:
-  image: debian:8-slim
-  variables:
-    GCC_VERSION: "4.8"
-  extends:
-    - .installing-testing-gcc
-    - .testing_various_compilers_release
-test_gcc5_manual:
+test_gcc5:
   image: gcc:5.3
   extends:
     - .testing-gcc
-    - .testing_various_compilers_manual
-test_gcc5_release:
-  image: gcc:5.3
-  extends:
-    - .testing-gcc
-    - .testing_various_compilers_release
-test_gcc6_manual:
+test_gcc6:
   image: gcc:6.3
   extends:
     - .testing-gcc
-    - .testing_various_compilers_manual
-test_gcc6_release:
-  image: gcc:6.3
-  extends:
-    - .testing-gcc
-    - .testing_various_compilers_release
-test_gcc7_manual:
+test_gcc7:
   image: gcc:7.3
   extends:
     - .testing-gcc
-    - .testing_various_compilers_manual
-test_gcc7_release:
-  image: gcc:7.3
-  extends:
-    - .testing-gcc
-    - .testing_various_compilers_release
-test_gcc8_manual:
+test_gcc8:
   image: gcc:8
   extends:
     - .testing-gcc
-    - .testing_various_compilers_manual
-test_gcc8_release:
-  image: gcc:8
-  extends:
-    - .testing-gcc
-    - .testing_various_compilers_release
-test_gcc9_manual:
+test_gcc9:
   image: gcc:9
   extends:
     - .testing-gcc
-    - .testing_various_compilers_manual
-test_gcc9_release:
-  image: gcc:9
-  extends:
-    - .testing-gcc
-    - .testing_various_compilers_release
-test_gcc10_manual:
+test_gcc10:
   image: gcc:10
   extends:
     - .testing-gcc
-    - .testing_various_compilers_manual
-test_gcc10_release:
-  image: gcc:10
-  extends:
-    - .testing-gcc
-    - .testing_various_compilers_release
-test_gcc11_manual:
+test_gcc11:
   image: gcc:11
   extends:
     - .testing-gcc
-    - .testing_various_compilers_manual
-test_gcc11_release:
-  image: gcc:11
-  extends:
-    - .testing-gcc
-    - .testing_various_compilers_release
 
-test_clang34_manual:
+test_clang34:
   image: silkeh/clang:3.4
   extends:
     - .testing-clang
-    - .testing_various_compilers_manual
-test_clang34_release:
-  image: silkeh/clang:3.4
-  extends:
-    - .testing-clang
-    - .testing_various_compilers_release
-test_clang4_manual:
+test_clang4:
   image: silkeh/clang:4
   extends:
     - .testing-clang
-    - .testing_various_compilers_manual
-test_clang4_release:
-  image: silkeh/clang:4
-  extends:
-    - .testing-clang
-    - .testing_various_compilers_release
-test_clang6_manual:
+test_clang6:
   image: silkeh/clang:6
   extends:
     - .testing-clang
-    - .testing_various_compilers_manual
-test_clang6_release:
-  image: silkeh/clang:6
-  extends:
-    - .testing-clang
-    - .testing_various_compilers_release
-test_clang7_manual:
+test_clang7:
   image: silkeh/clang:7
   extends:
     - .testing-clang
-    - .testing_various_compilers_manual
-test_clang7_release:
-  image: silkeh/clang:7
-  extends:
-    - .testing-clang
-    - .testing_various_compilers_release
-test_clang11_manual:
+test_clang11:
   image: silkeh/clang:11
   extends:
     - .testing-clang
-    - .testing_various_compilers_manual
-test_clang11_release:
-  image: silkeh/clang:11
-  extends:
-    - .testing-clang
-    - .testing_various_compilers_release
-test_clang12_manual:
+test_clang12:
   image: silkeh/clang:12
   extends:
     - .testing-clang
-    - .testing_various_compilers_manual
-test_clang12_release:
-  image: silkeh/clang:12
-  extends:
-    - .testing-clang
-    - .testing_various_compilers_release
