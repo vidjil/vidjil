@@ -1149,7 +1149,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
   if (because != NOT_PROCESSED)
     {
       segmented = false;
-      segmented_germline = GERMLINE_NOT_DESIGNATED;
       info = code + " @" + string_of_int (box_V->end + FIRST_POS) + "  @" + string_of_int(box_J->start + FIRST_POS) ;
       return ;
     }
@@ -1430,10 +1429,6 @@ void FineSegmenter::checkWarnings(CloneOutput *clone, bool phony)
           clone->add_warning("W69", "Several genes with equal probability:" + genes, LEVEL_WARN, phony);
         }
       }
-    }
-  else
-    {
-       clone->set("germline", PSEUDO_NOT_ANALYZED);
     }
 }
 
