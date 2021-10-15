@@ -23,13 +23,13 @@ describe('Before all step', function () {
         cy.goToGroupsPage()
         var grp_public = 3
 
-        cy.get('#row_group_'+grp_public+' > #col_access')
+        cy.get('#row_group_'+grp_public+' > #col_access_'+grp_public)
           .should("contain", " //")
 
         cy.setGroupRight(grp_public, ["anon"], true)
 
         cy.goToGroupsPage()
-        cy.get('#row_group_'+grp_public+' > #col_access')
+        cy.get('#row_group_'+grp_public+' > #col_access_'+grp_public)
           .should("contain", "a //")
 
     })
