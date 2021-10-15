@@ -4,9 +4,9 @@ $ The two reads are detected by the KmerSegmenter as TRG
 1: found 2 windows in 2 reads
 1: TRG .* -> .* 2 .* 2
 
-$ However, after FineSegmenter, only one is still in TRG, the other one is not designated
+$ However, after FineSegmenter, one of the reads is not designated
 1: >clone.* TRG SEG
-1: >clone.* not analyzed UNSEG
+1: >clone.* Possibly TRG .* UNSEG
 
 $ The first read is designated as V1-J1
 1:TRGV1.*/NNNN/.*TRGJ1
@@ -16,5 +16,4 @@ $ The other read can not be safely designated, it is identified as 'possibly TRG
 1:W68
 
 $ The .vidjil file also reports the 'not designated' sequence
-1: "germline": "TRG"
-1: "germline": "not analyzed"
+2: "germline": "TRG"
