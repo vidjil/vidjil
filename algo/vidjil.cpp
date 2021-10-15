@@ -306,7 +306,7 @@ int main (int argc, char **argv)
     -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   // ----------------------------------------------------------------------------------------------------------------------
-  group = "Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)";
+  group = "Germline/recombination selection (at least one -g, -V/(-D)/-J, or --find option must be given)";
 
   vector <string> multi_germlines ;
   app.add_option("--germline,-g", multi_germlines, R"Z(
@@ -335,6 +335,11 @@ int main (int argc, char **argv)
   app.add_option("-J", v_reps_J,
                  "custom V germline multi-fasta file(s)")
     -> group(group) -> type_name("FILE");
+
+  vector <string> v_reps_align ;
+  app.add_option("--find", v_reps_align,
+                 "custom multi-fasta file(s) for non-recombined alignments")
+    -> group(group) -> type_name("FILE") -> level();
 
   bool multi_germline_unexpected_recombinations_12 = false;
   app.add_flag("-2", multi_germline_unexpected_recombinations_12, "try to detect unexpected recombinations") -> group(group);
@@ -711,6 +716,8 @@ int main (int argc, char **argv)
   list <string> f_reps_D(v_reps_D.begin(), v_reps_D.end());
   list <string> f_reps_J(v_reps_J.begin(), v_reps_J.end());
 
+  list <string> f_reps_align(v_reps_align.begin(), v_reps_align.end());
+
   list <pair <string, string>> multi_germline_paths_and_files ;
 
   for (string arg: multi_germlines)
@@ -953,9 +960,20 @@ int main (int argc, char **argv)
     };
   }
 
+  // Custom --find germline
+  if (f_reps_align.size())
+	{
+    json_germlines["systems"]["align"] = {
+            {"shortcut", "Y"},
+            {"recombinations", {{
+              {"1", f_reps_align}
+            }}}
+    };
+	}
+
   if (!json_germlines["systems"].size())
     {
-      return app.exit(CLI::ConstructionError("At least one germline must be given with -g or -V/(-D)/-J", 1));
+      return app.exit(CLI::ConstructionError("At least one germline must be given with -g, -V/(-D)/-J, or --find", 1));
     }
 
   //////////////////////////////////
