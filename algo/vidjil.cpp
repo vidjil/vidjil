@@ -1640,7 +1640,7 @@ int main (int argc, char **argv)
         // We remember that the KmerSegmenter detected that sequence and raise W68
         seg.code = "Possibly " + segmented_germline->code;
         seg.info = seg.code + seg.info;
-        clone->add_warning("W68", "V(D)J designation failed, likely complex sequence", LEVEL_WARN, clone_on_stdout);
+        clone->add_warning("W68", "V(D)J designation failed, possibly complex or not recombined sequence", LEVEL_WARN, clone_on_stdout);
 	   } // end if (seg.isSegmented())
 
         seg.checkWarnings(clone, clone_on_stdout);
