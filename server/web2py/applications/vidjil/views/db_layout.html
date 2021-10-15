@@ -1,13 +1,14 @@
 <div id="db_header">
     
     <div id="db_menu">
-	<a id="db_page_patient" class="button button_token patient_token" onclick="db.call('sample_set/all', {'type': 'patient', 'page': 0});">patients</a>
-	<a id="db_page_run" class="button button_token run_token" onclick="db.call('sample_set/all', {'type': 'run', 'page': 0});">runs</a>
-	<a id="db_page_set" class="button button_token generic_token" onclick="db.call('sample_set/all', {'type': 'generic', 'page': 0} );">sets</a>
+        <a id="db_page_patient" class="button button_token patient_token" onclick="db.call('sample_set/all', {'type': 'patient', 'page': 0});">patients</a>
+        <a id="db_page_run" class="button button_token run_token" onclick="db.call('sample_set/all', {'type': 'run', 'page': 0});">runs</a>
+        <a id="db_page_set" class="button button_token generic_token" onclick="db.call('sample_set/all', {'type': 'generic', 'page': 0} );">sets</a>
         <a id="db_page_usage" class="button" onclick="db.call('my_account/index');">usage</a>
         <a id="db_page_processes" class="button" onclick="db.call('my_account/jobs');">processes</a>
         <a id="db_page_news" class="button" onclick="db.call('notification/index');">news</a>
-        <!-- <a class="button" onclick="db.call('log/index');">log</a> -->
+        <a class="button" onclick="db.call('log/index');">log</a>
+
         {{if auth.is_admin():}}
         - - -
         <a id="db_page_preprocess" class="button" onclick="db.call('pre_process/index');">pre-process configs</a>

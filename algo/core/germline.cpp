@@ -295,21 +295,8 @@ void MultiGermline::add_germline(Germline *germline)
   germlines.push_back(germline);
 }
 
-void MultiGermline::build_from_json(string path, string json_filename_and_filter, int filter,
-                                    string default_seed, int default_max_indexing, bool build_automaton)
+json parse_json_g(string path, string json_filename)
 {
-
-  //extract json_filename and systems_filter
-  string json_filename = json_filename_and_filter;
-  string systems_filter = "";
-
-  size_t pos_lastcolon = json_filename_and_filter.find_last_of(':');
-  if (pos_lastcolon != std::string::npos) {
-    json_filename = json_filename_and_filter.substr(0, pos_lastcolon);
-    systems_filter = "," + json_filename_and_filter.substr(pos_lastcolon+1) + "," ;
-  }
-
-
   //open and parse .g file
   json germlines ;
 
@@ -326,11 +313,66 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     exit(1);
   }
 
+  // Prepend actual path
+  germlines["path"] = path + '/' + germlines["path"].get<std::string>();
+
+  return germlines;
+}
+
+void load_json_g(json &json_germlines, string path, string json_filename, string systems_filter)
+{
+  bool some_system = false;
+
+  try {
+    json j = parse_json_g(path, json_filename);
+
+    if (json_germlines.empty())
+    {
+      // First .g, take everything
+      for (auto kv: j.items()) {
+        if (kv.key() != "systems")
+         json_germlines[kv.key()] = kv.value();
+      }
+      // TODO: species/... when several .g
+    }
+
+    // Copy the recombinations
+    for (auto system: j["systems"].items()) {
+      if (systems_filter.size())
+        {
+          // match 'TRG' inside 'IGH,TRG'
+          // TODO: code a more flexible match, regex ?
+          if (systems_filter.find("," + system.key() + ",") == string::npos)
+            continue;
+        }
+        some_system = true;
+        json_germlines["systems"][system.key()] = system.value();
+
+        // Store the path inside each system
+        json_germlines["systems"][system.key()]["parameters"]["path"] = j["path"].get<std::string>();
+      }
+
+    json_germlines["path"] = ".";
+  } catch (std::exception& e) {
+    cerr << ERROR_STRING << "cannot properly read " << path << "/" << json_filename << ": " << e.what() << endl;
+    exit(1);
+  }
+
+if (!some_system)
+  {
+    cerr << ERROR_STRING << "No matching germlines" << endl;
+    exit(2);
+  }
+}
+
+void MultiGermline::build_from_json(json germlines, int filter,
+                                    string default_seed, int default_max_indexing, bool build_automaton)
+{
   ref = germlines["ref"].get<std::string>();
   species = germlines["species"].get<std::string>();
   species_taxon_id = germlines["species_taxon_id"];
 
-  path += "/" + germlines["path"].get<std::string>();
+  string path = germlines["path"].get<std::string>();
 
   json j = germlines["systems"];
   
@@ -345,6 +387,10 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
     json json_parameters = json_value["parameters"];
     string seed;
     string seed_5, seed_4, seed_3;
+
+    string s_path = path;
+    if (json_parameters.contains("path"))
+      s_path += "/" + json_parameters["path"].get<std::string>();
 
     if (json_parameters.find("seed") != json_parameters.end()) {
       seed = json_parameters["seed"];
@@ -369,14 +415,6 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
       }
     }
 
-    if (systems_filter.size())
-      {
-        // match 'TRG' inside 'IGH,TRG'
-        // TODO: code a more flexible match, regex ?
-        if (systems_filter.find("," + code + ",") == string::npos)
-          continue ;
-      }
-
     switch (filter) {
     case GERMLINES_REGULAR:
       if (code.find("+") != string::npos) continue ;
@@ -392,7 +430,7 @@ void MultiGermline::build_from_json(string path, string json_filename_and_filter
 
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
-      add_germline(new Germline(code, shortcut, path + "/", *it2,
+      add_germline(new Germline(code, shortcut, s_path + "/", *it2,
                                 seed_5, seed_4, seed_3, max_indexing, build_automaton));
     }
   }
@@ -431,12 +469,6 @@ void MultiGermline::finish() {
   }
   for (auto germline: germlines) {
     germline->finish();
-  }
-
-  if (germlines.empty())
-  {
-    cerr << ERROR_STRING << "No matching germlines" << endl;
-    exit(2);
   }
 }
 

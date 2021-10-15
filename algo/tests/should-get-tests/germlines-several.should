@@ -23,3 +23,14 @@ $ Both germlines are in .vidjil
 $ Check that some options are correctly reported
 1: "max-consensus": "100"
 1: "plain-index": false
+
+
+# Mix -g and -V/-J options
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens-isotypes.g -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa $VIDJIL_DATA/isotypes.fa
+
+$ Detect two reads on IgVC/IgJC (-g)
+1: IgVC .* -> .* 1
+1: IgJC .* -> .* 1
+
+$ Detect one read on IGH (-V/-J, named as 'custom')
+1: custom .* -> .* 1

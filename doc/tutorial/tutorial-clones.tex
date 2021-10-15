@@ -673,7 +673,7 @@ Then you can continue aligning and clustering clones if necessary.
     $b.scatterplot_select_preset "read length / GC content"
     $b.update_icon.wait_while(&:present?)
 
-    assert ( $b.scatterplot_x_label.text == "Read length" ), "Correct legend for axe X for preset 0"
+    assert ( $b.scatterplot_x_label.text == "Reads length" ), "Correct legend for axe X for preset 0"
     assert ( $b.scatterplot_y_label.text == "GC content" ), "Correct legend for axe Y for preset 0"
     $b.update_icon.wait_while(&:present?)
     assert ( $b.scatterplot_x_legend(0).text == "?"), "scatterplot_legend X pos 0 for this preset is '?'"
@@ -739,8 +739,8 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 
     $b.send_keys 1
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_label.text == "V/5 allele" ), "Correct legend for axe X for preset 1"
-    assert ( $b.scatterplot_y_label.text == "J/3 allele" ), "Correct legend for axe Y for preset 1"
+    assert ( $b.scatterplot_x_label.text == "V/5' allele" ), "Correct legend for axe X for preset 1"
+    assert ( $b.scatterplot_y_label.text == "J/3' allele" ), "Correct legend for axe Y for preset 1"
     #assert ( $b.scatterplot_x_legend(0).text == "IGHV1-2*04"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
     #assert ( $b.scatterplot_y_legend(0).text == "IGHJ1"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
@@ -754,14 +754,14 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 
     $b.send_keys 3
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_label.text == "Read length" ), "Correct legend for axe X for preset 3"
+    assert ( $b.scatterplot_x_label.text == "Reads length" ), "Correct legend for axe X for preset 3"
     assert ( $b.scatterplot_y_label.text == "Locus" ), "Correct legend for axe Y for preset 3"
     #assert ( $b.scatterplot_x_legend(0).text == "20"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
     #assert ( $b.scatterplot_y_legend(0).text == "IGH"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
 
     $b.send_keys 4
     $b.update_icon.wait_while(&:present?)
-    assert ( $b.scatterplot_x_label.text == "Read length" ), "Correct legend for axe X for preset 4"
+    assert ( $b.scatterplot_x_label.text == "Reads length" ), "Correct legend for axe X for preset 4"
     assert ( $b.scatterplot_y_label.text == "Size" ), "Correct legend for axe Y for preset 4"
     #assert ( $b.scatterplot_x_legend(0).text == "20"), "scatterplot_legend X with shortcut/preset XXX is: IGHV1-2"
     #assert ( $b.scatterplot_y_legend(0).text == "20%"), "scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1"
@@ -893,12 +893,11 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
     assert ( not $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is NOT present in the segmenter"
     $b.clone_in_list("1").click
 
-    # menu entry is currently disabled TODO : revert
-    # $b.menu_import_export.hover
-    # $b.menu_item_export_add_germline.click
-    # $b.update_icon.wait_while(&:present?)
+    $b.menu_import_export.hover
+    $b.menu_item_export_add_germline.click
+    $b.update_icon.wait_while(&:present?)
 
-    # assert ( $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is present in the segmenter"
+    assert ( $b.clone_in_segmenter("IGHJ6*02").exist? ), "sequence germline is present in the segmenter"
 
     # todo, align; mutation; not available without server side
   end

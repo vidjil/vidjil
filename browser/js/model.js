@@ -160,7 +160,7 @@ Model.prototype = {
         this.distrib_convertion = {
             // Axes --> Fuse
             "V/5' gene":        "seg5",
-            "D/4' gene":        "seg4",
+            "D gene":           "seg4",
             "J/3' gene":        "seg3",
             "CDR3 length":      "lenCDR3",
             "Locus" :           "germline",
@@ -168,15 +168,15 @@ Model.prototype = {
             "Size":             "size",
             // Should be in Array format
             "Sequence length" : "lenSeqConsensus",
-            "Read length" :   "lenSeqAverage", // make a round on it (into fuse.py) ?
+            "Reads length" :    "lenSeqAverage", // make a round on it (into fuse.py) ?
             /////////////////////
             // Fuse --> Axes
             "seg5":             "V/5' gene",
-            "seg4":             "D/4' gene",
+            "seg4":             "D gene",
             "seg3":             "J/3' gene",
             "lenCDR3":          "CDR3 length",
             "lenSeqConsensus":  "Sequence length",
-            "lenSeqAverage":    "Read length",
+            "lenSeqAverage":    "Reads length",
         }
         // List of axe that must be in an array format
         this.distrib_axe_is_timmed = {
