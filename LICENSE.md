@@ -12,6 +12,33 @@ Bug reports, issues and patches are welcome.
 
 Vidjil provide ready to use docker containers for server install that contains third party software/libraries under open-source licenses.
 
+## vidjil-algo
+
+### Software and libraries included in Vidjil repository
+
+CLI11               : Command line parser for C++11
+* @version          1.7.1
+* @author           Henry Schreiner, Philip Top, and collaborators
+* @link             <https://github.com/CLIUtils/CLI11>
+* @license          BSD
+
+gzstream            : iostream classes wrapping the zlib compression library
+* @version          1.7
+* @author           Deepak Bandyopadhyay, Lutz Kettner
+* @link             <http://www.cs.unc.edu/Research/compgeom/gzstream/>
+* @license          LGPL
+
+json                : JSON for Modern C++
+* @version          3.9.1
+* @author           Niels Lohmann
+* @link             <https://github.com/nlohmann/json>
+* @license          MIT
+
+unbam (htslib)      : Extract of htslib to only read BAM files
+* @version          ??
+* @link             <http://www.htslib.org/>
+* @license          Modified BSD
+
 ## vidjil-client
 
 ### Software and libraries included in Vidjil repository
