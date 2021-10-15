@@ -1196,7 +1196,6 @@ FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, 
   if (this->because != NOT_PROCESSED)
     {
       this->segmented = false;
-      this->segmented_germline = Germline<Shortcut, Affect>::getUnseg();
       this->info = this->code + " @" + string_of_int (this->box_V->end + FIRST_POS) + "  @" + string_of_int(this->box_J->start + FIRST_POS) ;
       return ;
     }
@@ -1482,10 +1481,6 @@ void FineSegmenter<Shortcut, Affect>::checkWarnings(CloneOutput *clone, bool pho
           clone->add_warning("W69", "Several genes with equal probability:" + genes, LEVEL_WARN, phony);
         }
       }
-    }
-  else
-    {
-       clone->set("germline", PSEUDO_NOT_ANALYZED);
     }
 }
 
