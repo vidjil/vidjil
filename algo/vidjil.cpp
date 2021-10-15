@@ -306,7 +306,7 @@ int main (int argc, char **argv)
     -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   // ----------------------------------------------------------------------------------------------------------------------
-  group = "Germline/recombination selection (at least one -g, -V/(-D)/-J, or --align option must be given)";
+  group = "Germline/recombination selection (at least one -g, -V/(-D)/-J, or --find option must be given)";
 
   vector <string> multi_germlines ;
   app.add_option("--germline,-g", multi_germlines, R"Z(
@@ -337,7 +337,7 @@ int main (int argc, char **argv)
     -> group(group) -> type_name("FILE");
 
   vector <string> v_reps_align ;
-  app.add_option("--align", v_reps_align,
+  app.add_option("--find", v_reps_align,
                  "custom multi-fasta file(s) for non-recombined alignments")
     -> group(group) -> type_name("FILE") -> level();
 
@@ -960,7 +960,7 @@ int main (int argc, char **argv)
     };
   }
 
-  // Custom --align germline
+  // Custom --find germline
   if (f_reps_align.size())
 	{
     json_germlines["systems"]["align"] = {
@@ -973,7 +973,7 @@ int main (int argc, char **argv)
 
   if (!json_germlines["systems"].size())
     {
-      return app.exit(CLI::ConstructionError("At least one germline must be given with -g, -V/(-D)/-J, or --align", 1));
+      return app.exit(CLI::ConstructionError("At least one germline must be given with -g, -V/(-D)/-J, or --find", 1));
     }
 
   //////////////////////////////////

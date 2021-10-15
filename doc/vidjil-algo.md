@@ -328,7 +328,7 @@ as in `germline/homo-sapiens-cd.g`:
      "recombinations": [ { "1": ["CD-sorting.fa"] } ]
 ```
 
-This mode can also be called from the command line with arguments such as  `--align CD-sorting.fa`.
+This mode can also be called from the command line with arguments such as  `--find CD-sorting.fa`.
 This can be used to detect non-recombined known sequences,
 as shown here with usual CD sequences in RNA-seq data.
 However, putting too many sequences here may generate many hits
