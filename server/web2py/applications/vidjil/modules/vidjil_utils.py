@@ -781,7 +781,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
 def publicGroupIsInList(db, group_ids):
     """ Return True if the first public group is in list """
     public_group = getPublicGroupId(db)
-    if public_group and public_group not in group_ids:
+    if public_group != None and public_group not in group_ids:
         return False
     return True
 
@@ -792,4 +792,4 @@ def getPublicGroupId(db):
     public_group = db(db.auth_group.role == public_group_name).select()
     if len(public_group):
         return public_group[0].id
-    return False
+    return None

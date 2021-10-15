@@ -96,7 +96,7 @@ def register_tags(db, table, record_id, text, group_id, reset=False):
 
 def get_tags(db, group_ids):
     pgid = getPublicGroupId(db)
-    if pgid:
+    if pgid != None :
         group_ids.append(pgid)
 
     return db((db.tag.id == db.group_tag.tag_id) &
@@ -117,7 +117,7 @@ def tags_to_json(tags, group_ids):
 
     # Public group hackiness. Mainly to clean up some other hackier hackiness
     pgid = getPublicGroupId(db)
-    if pgid and pgid in tag_map:
+    if pgid  != None and pgid in tag_map:
         for group_id in tag_map:
             for tag in tag_map[pgid]:
                 if tag not in tag_map[group_id]:
