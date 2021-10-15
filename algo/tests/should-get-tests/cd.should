@@ -18,8 +18,8 @@ $ FineSegmenter, find 3 clones with CD4 and 3 with CD19
 3:clone-00.* CD19 .* SEG
 
 
-# Same analysis, but with '--align'
-!LAUNCH: $VIDJIL_DIR/$EXEC --seed 13s --align $VIDJIL_DIR/germline/homo-sapiens/CD-sorting.fa --all $VIDJIL_DATA/cd-4-19.fa
+# Same analysis, but with '--find'
+!LAUNCH: $VIDJIL_DIR/$EXEC --seed 13s --find $VIDJIL_DIR/germline/homo-sapiens/CD-sorting.fa --all $VIDJIL_DATA/cd-4-19.fa
 
 $ Load CD-sorting.fa
 1:homo-sapiens/CD-sorting.fa .* 28 sequences
