@@ -396,9 +396,11 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
       if ($status == " COMPLETED ") {
         return true
       } else if ( (now - start)/1000 > nb_retry){
+          cy.log("waitAnalysisCompleted; Timeout without COMPLETED status")
           throw new Error("waitAnalysisCompleted; Timeout without COMPLETED status")
           return false
       } else if ( iter > nb_retry){
+          cy.log("waitAnalysisCompleted; Number of retry reached")
           throw new Error("waitAnalysisCompleted; Number of retry reached")
           return false
       }
