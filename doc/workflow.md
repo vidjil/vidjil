@@ -69,3 +69,16 @@ or re-analyzed with `vidjil-algo` or with other software.
 
 Once the filtering has begun, interrupting `vidjil-algo` with `Ctrl-C` (`SIGINT`) gracefully stops execution while still producing (partial) files.
 It can be used to check how the filtering works before a full run.
+
+
+## Local trimming of sequencing indexes
+
+Some additional steps can also be usefull:
+
+1. Trimming of reads based on quality: Some reads can be of poor quality or have poor quality on extremities.
+   It can be interessting to clean these reads to remove some artifact mutations.
+2. You should also remove the sequencing indexes used.
+   These indexes could changed some observation on your clonotye (hypermutations) and impact your analysis.
+
+NB: Note that on server side, an option exist to automatically detect primers sequence from common primers sets (experimental)
+ and remove them before sending sequence to external tools.
