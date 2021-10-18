@@ -34,10 +34,12 @@
 
 .testing-gcc:
   extends: .testing-compilers
+  image: gcc:$GCC_VERSION
   variables:
     CXX: g++
     CC: gcc
 .testing-clang:
+  image: silkeh/clang:$CLANG_VERSION
   variables:
     CXX: clang++
     CC: clang
@@ -60,56 +62,17 @@ test_gcc48:
     GCC_VERSION: "4.8"
   extends:
     - .installing-testing-gcc
-test_gcc5:
-  image: gcc:5.3
-  extends:
-    - .testing-gcc
-test_gcc6:
-  image: gcc:6.3
-  extends:
-    - .testing-gcc
-test_gcc7:
-  image: gcc:7.3
-  extends:
-    - .testing-gcc
-test_gcc8:
-  image: gcc:8
-  extends:
-    - .testing-gcc
-test_gcc9:
-  image: gcc:9
-  extends:
-    - .testing-gcc
-test_gcc10:
-  image: gcc:10
-  extends:
-    - .testing-gcc
-test_gcc11:
-  image: gcc:11
-  extends:
-    - .testing-gcc
 
-test_clang34:
-  image: silkeh/clang:3.4
+test_gcc:
+  extends:
+    - .testing-gcc
+  parallel:
+    matrix:
+      - GCC_VERSION: ["5.3", "6.3", "7.3", "8", "9", "10", "11"]
+
+test_clang:
   extends:
     - .testing-clang
-test_clang4:
-  image: silkeh/clang:4
-  extends:
-    - .testing-clang
-test_clang6:
-  image: silkeh/clang:6
-  extends:
-    - .testing-clang
-test_clang7:
-  image: silkeh/clang:7
-  extends:
-    - .testing-clang
-test_clang11:
-  image: silkeh/clang:11
-  extends:
-    - .testing-clang
-test_clang12:
-  image: silkeh/clang:12
-  extends:
-    - .testing-clang
+  parallel:
+    matrix:
+      - CLANG_VERSION: ["4", "6", "7", "11", "12"]
