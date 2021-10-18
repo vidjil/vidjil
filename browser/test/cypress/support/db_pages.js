@@ -350,7 +350,7 @@ Cypress.Commands.add('deleteProcess', (config, sequence_file_id) => {
  * Make a recursive call from himself while status is not 'COMPLETED', in limit of given number of retry
  * Unfortunatly, last control will be called X times at the end, X as the depth of the recusive iteration
  */
-Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, nb_retry=90, iter=0) => {
+Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, nb_retry=120, iter=0) => {
   if (start == undefined){
     var start = new Date().getTime();
   }
