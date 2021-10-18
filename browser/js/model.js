@@ -32,6 +32,19 @@
  * */
 
 VIDJIL_JSON_VERSION = '2014.09';
+BROWSER_COMPATIBILITY = {
+    "Firefox": {
+        "legacy": 62,
+        "supported": 78,
+        "latest": 89
+    }, 
+    "Chrome": {
+        "legacy": 75,
+        "supported":  79,
+        "latest": 93
+    }
+}
+
 
 SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
 
@@ -84,6 +97,9 @@ Model.prototype = {
     build: function () {
         var self =this;
         
+        // BROWSER_COMPATIBILITY
+        this.checkBrowserVersion()
+
         this.waiting_screen_is_on = false;
         this.waiting_screen = document.createElement("div");
         this.waiting_screen.className = "waiting_screen";
@@ -189,6 +205,39 @@ Model.prototype = {
         this.distrib_axe_as_number = {
         }
     },
+
+    checkBrowserVersion: function(){
+        var browserAgent = navigator.userAgent;
+        var browserName = navigator.appName;
+
+        // For Chrome
+        if ((OffsetVersion = browserAgent.indexOf("Chrome")) != -1) {
+            browserName = "Chrome";
+            browsersVersion = browserAgent.split("Chrome/")[browserAgent.split("Chrome/").length-1]
+            browserVersion  = parseInt(browsersVersion.split(" ")[0].split(".")[0])
+        }
+        // For Firefox
+        else if ((OffsetVersion = browserAgent.indexOf("Firefox")) != -1) {
+            browserName = "Firefox";
+            browserVersion = parseInt(browserAgent.split("/")[browserAgent.split("/").length-1])
+            console.default.log('Full version firefox = ' + browserVersion)
+        }
+
+
+        if (["Firefox", "Chrome"].indexOf(browserName) != -1){
+            console.default.log("Detected browser: "+browserName+", major version "+browserVersion)
+            if (BROWSER_COMPATIBILITY[browserName].legacy < browserVersion){
+                console.default.log('correct version of ' + browserName)
+            } else {
+                console.default.log('bad version of ' + browserName)
+                console.log({ msg: "Version of browser is under legacy version.\nSee requirements browser in user documentation.", type: "flash", priority: 2 });
+            }
+        } else {
+            console.default.log("Not supported browser: "+browserName)
+        }
+
+    },
+
 
     /**
      * Set all the properties. Called in the constructor.
