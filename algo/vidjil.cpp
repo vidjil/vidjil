@@ -1554,6 +1554,7 @@ int main (int argc, char **argv)
         output.addClone(it->first, clone);
 
         // Basic information that will always be output
+        clone->set("germline", segmented_germline->code);
         clone->set("_average_read_length", { fixed_string_of_float(windowsStorage->getAverageLength(it->first), 2) });
         clone->set("sequence", kseg->getSequence().sequence);
         clone->set("_coverage", { repComp.getCoverage() });
@@ -1617,19 +1618,6 @@ int main (int argc, char **argv)
         seg.findCDR3();
 
           
-	// Output representative, possibly segmented... 
-	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
-  if (clone_on_stdout)
-    cout << seg << endl ;
-
-  if (output_clone_files)
-    *out_clone << seg << endl ;
-
-  if (output_vdjfa)
-    *out_clones << seg << endl ;
-    
-        seg.toOutput(clone);
-
         if (seg.isSegmented())
 	  {
 	      // Check for identical code, outputs to out_edge
@@ -1664,10 +1652,29 @@ int main (int argc, char **argv)
                 *out_clone << ">" << seg.box_J->ref_label << endl << seg.box_J->ref << endl ;
               *out_clone << endl;
         }
+     }
+     else
+     {
+        // We remember that the KmerSegmenter detected that sequence and raise W68
+        seg.code = "Possibly " + segmented_germline->code;
+        seg.info = seg.code + seg.info;
+        clone->add_warning("W68", "V(D)J designation failed, possibly complex or not recombined sequence", LEVEL_WARN, clone_on_stdout);
 	   } // end if (seg.isSegmented())
 
         seg.checkWarnings(clone, clone_on_stdout);
-        
+	// Output representative, possibly segmented...
+	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
+  if (clone_on_stdout)
+    cout << seg << endl ;
+
+  if (output_clone_files)
+    *out_clone << seg << endl ;
+
+  if (output_vdjfa)
+    *out_clones << seg << endl ;
+
+  seg.toOutput(clone);
+
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
 	    list<Sequence> sequences = windowsStorage->getReads(it->first);
@@ -1807,7 +1814,7 @@ int main (int argc, char **argv)
     int nb_segmented = 0 ;
     map <string, int> nb_segmented_by_germline ;
 
-    Germline *not_segmented = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
+
 
     // Multiplier is 1.0, we expect that the sequences are actual recombinations. See #3594.
     double fine_evalue_multiplier = 1.0 ;
@@ -1828,7 +1835,6 @@ int main (int argc, char **argv)
         CloneOutput *clone = new CloneOutput();
         output.addClone(id, clone);
         clone->set("id", id);
-        clone->set("name", seq.label);
         clone->set("sequence", seq.sequence);
         clone->set("reads", { 1 });
         clone->set("top", 0);
@@ -1847,7 +1853,9 @@ int main (int argc, char **argv)
               }
         else
           {
-            g = not_segmented ;
+            // Not designated, will output label as 'name' in .vidjil
+            s.code = seq.label;
+            g = GERMLINE_NOT_DESIGNATED ;
           }
 
         s.toOutput(clone);
@@ -1867,7 +1875,7 @@ int main (int argc, char **argv)
     output.set("reads", "segmented", { nb_segmented }) ;
     output.set("reads", "total", { nb }) ;
 
-    multigermline->insert(not_segmented);
+    multigermline->insert(GERMLINE_NOT_DESIGNATED);
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       Germline *germline = *it ;
       if (nb_segmented_by_germline[germline->code])

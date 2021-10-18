@@ -47,7 +47,7 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 - [ ]     Very large deletion (xxx bp) #2909
 - [ ]     Unexpected recombination
 - [ ]     High probability clone ?
-- [ ] W6z Unexpected error in V(D)J analysis (FineSegmenter failed)
+- [x] W68 V(D)J designation failed, possibly complex or not recombined sequence #4818
 - [x] W69 Several V/J candidate genes with equal probability #3575
 
 ### Strange recombination (FineSegmenter in vidjil-algo), D gene, N regions*

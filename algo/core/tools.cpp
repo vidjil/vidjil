@@ -20,16 +20,6 @@ int seed_weight(const string &seed)
   return count(seed.begin(), seed.end(), SEED_YES);
 }
 
-map<string, string> seedMap = {
-  {"7c", "#######"},
-  {"8c", "########"},
-  {"9c", "#########"},
-  {"8s", "####-####"},
-  {"10s", "#####-#####"},
-  {"12s", "######-######"},
-  {"13s", "#######-######"}
-};
-
 string expand_seed(const string &seed)
 {
   if (seed.size() == 0)
