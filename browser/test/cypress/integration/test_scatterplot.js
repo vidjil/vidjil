@@ -30,7 +30,7 @@ describe('Scatterplot', function () {
     return
   })
   
-  it('Bar mode',  function() {
+  it('00-Bar mode',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     cy.get('#visu').find('.sp_menu_icon_bar').click({ force: true })
@@ -47,7 +47,7 @@ describe('Scatterplot', function () {
     return
   })
 
-  it('Switch Axis',  function() {
+  it('01-Switch Axis',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     //using preset selector
@@ -84,7 +84,7 @@ describe('Scatterplot', function () {
   })
 
 
-  it('custom Axis range',  function() {
+  it('02-custom Axis range',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     cy.get('#visu').find('select[name*="select_x[]"]').select('Sequence length',{ force: true })
@@ -100,7 +100,7 @@ describe('Scatterplot', function () {
   })
 
 
-  it('select/focus',  function() {
+  it('03-select/focus',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     //plot
