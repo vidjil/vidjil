@@ -15,7 +15,7 @@ and even `.bam` files (but the added information of `.bam` files is not taken in
 so uploading such files is not optimal).
 
 
-## Local pre-filtering of large datasets
+## Pre-filtering of large datasets
 
 On large capture or RNA-seq datasets, very few reads, are expected to have V(D)J recombinations, typically as few as 0.01%, 0.001%, or even 0.0001%. Vidjil-algo was designed to efficiently find such a few needles in a stack of needles.
 
@@ -71,14 +71,16 @@ Once the filtering has begun, interrupting `vidjil-algo` with `Ctrl-C` (`SIGINT`
 It can be used to check how the filtering works before a full run.
 
 
-## Local trimming of sequencing indexes
+## Read trimming, sequencing indexes, primers
 
-Some additional steps can also be usefull:
+1. It is esssential to upload to Vidjil reads *without any sequencing index*.
+   When they are not removed, these indexes may impact the analysis,
+   yielding spurious hypermutations or wrong V(D)J designations.
+   The sequencer workflows usually provide tools to output files without these indexes.
 
-1. Trimming of reads based on quality: Some reads can be of poor quality or have poor quality on extremities.
-   It can be interessting to clean these reads to remove some artifact mutations.
-2. You should also remove the sequencing indexes used.
-   These indexes could changed some observation on your clonotye (hypermutations) and impact your analysis.
+2. You can further *trim* reads based on quality.
+   Some reads can be of poor quality, or have poor quality on extremities.
+   Trimming these reads may remove some artifact mutations.
 
-NB: Note that on server side, an option exist to automatically detect primers sequence from common primers sets (experimental)
- and remove them before sending sequence to external tools.
+See also [Working with primers](xxx).
+
