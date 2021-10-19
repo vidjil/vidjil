@@ -1,0 +1,44 @@
+generate_server_reproducibility_yml:
+  stage: test_tools
+  variables:
+    REPEAT: 30
+  script:
+    - tools/repeat-ci.sh server/.gitlab-ci.yml $REPEAT .gitlab-ci.yml .test_server_base .test_cypress_base -- .gitlab-ci.yml browser/.gitlab-ci.yml | grep -v .need > server-repro.yml
+  needs: []
+  artifacts:
+    paths:
+      - server-repro.yml
+
+generate_client_reproducibility_yml:
+  stage: test_tools
+  variables:
+    REPEAT: 30
+  script:
+    - tools/repeat-ci.sh browser/.gitlab-ci.yml $REPEAT .gitlab-ci.yml | grep -v .need > client-repro.yml
+  needs: []
+  artifacts:
+    paths:
+      - client-repro.yml
+      
+server_reproducibility:
+  stage: test_cypress_server
+  needs: [generate_server_reproducibility_yml]
+  trigger:
+    include:
+      - artifact: server-repro.yml
+        job: generate_server_reproducibility_yml
+    strategy: depend
+  when: manual
+  allow_failure: true
+
+client_reproducibility:
+  stage: test_cypress_client
+  needs: [generate_client_reproducibility_yml]
+  trigger:
+    include:
+      - artifact: client-repro.yml
+        job: generate_client_reproducibility_yml
+    strategy: depend
+  when: manual
+  allow_failure: true
+  
