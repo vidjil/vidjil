@@ -31,7 +31,7 @@ server_reproducibility:
   when: manual
   allow_failure: true
 
-browser_reproducibility:
+client_reproducibility:
   stage: test_cypress_client
   needs: [generate_client_reproducibility_yml]
   trigger:
