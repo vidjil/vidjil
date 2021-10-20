@@ -44,7 +44,7 @@ BROWSER_COMPATIBILITY = {
         "latest": 93
     }
 }
-
+BROWSER_SUPPORTED_UNTIL = "June 2023"
 
 SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
 
@@ -214,6 +214,7 @@ Model.prototype = {
     checkBrowserVersion: function(){
         var browserAgent = navigator.userAgent;
         var browserName = navigator.appName;
+        var browserVersion = "";
 
         // For Chrome
         if ((OffsetVersion = browserAgent.indexOf("Chrome")) != -1) {
@@ -227,18 +228,26 @@ Model.prototype = {
             browserVersion = parseInt(browserAgent.split("/")[browserAgent.split("/").length-1])
         }
 
-        var msg, priority;
+        var msg = browserName + " " + browserVersion;
+        var priority = 0;
         if (BROWSER_COMPATIBILITY[browserName] != undefined){
-            console.log("Detected browser: "+browserName+", major version "+browserVersion)
+            console.log("Detected browser: " + msg)
             if (BROWSER_COMPATIBILITY[browserName].legacy > browserVersion){
-                msg = "Version of browser is under legacy version ("+browserVersion+" vs "+BROWSER_COMPATIBILITY[browserName].legacy+")."
+                msg += " is not supported."
                 priority = 3
             } else if (BROWSER_COMPATIBILITY[browserName].supported > browserVersion){
-                msg = "Version of browser is under supported version ("+browserVersion+" vs "+BROWSER_COMPATIBILITY[browserName].supported+")."
+                msg += ", as a legacy browser, is only partially supported."
+                msg += "\n<br />Some features will not be available and the support will be dropped in a few months."
                 priority = 2
             }
-            msg += "\nSee requirements browser in <a target='_blank' href='http://www.vidjil.org/doc/user/#supported-browsers'>[user documentation]</a>."
-            console.log({ msg: msg, type: "flash", priority: priority });
+
+            if (priority >= 2)
+            {
+                msg += "\n<br />We recommend using " + browserName + " " + BROWSER_COMPATIBILITY[browserName].supported + " or later, or other modern browsers, "
+                msg += "that will be supported until at least " + BROWSER_SUPPORTED_UNTIL + "."
+                msg += "\n<br />See our documentation on <a target='_blank' href='http://www.vidjil.org/doc/user/#supported-browsers'>supported browsers</a>."
+                console.log({ msg: msg, type: "flash", priority: priority });
+            }
         } else {
             console.log("Not supported browser: "+browserName)
         }
