@@ -34,12 +34,12 @@
 VIDJIL_JSON_VERSION = '2014.09';
 BROWSER_COMPATIBILITY = {
     "Firefox": {
-        "legacy": 62,
+        "legacy": 32,
         "supported": 78,
         "latest": 89
     }, 
     "Chrome": {
-        "legacy": 75,
+        "legacy": 49,
         "supported":  79,
         "latest": 93
     }
