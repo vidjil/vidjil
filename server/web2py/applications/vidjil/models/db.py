@@ -74,10 +74,10 @@ response.generic_patterns = ['*'] if request.is_local else []
 #########################################################################
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
-from gluon.contrib.login_methods.ldap_auth import ldap_auth
-auth = VidjilAuth(db)
 
+auth = VidjilAuth(db)
 if defs.LDAP :
+    from gluon.contrib.login_methods.ldap_auth import ldap_auth
     auth.settings.login_methods.append(ldap_auth(**defs.LDAP_CONF))
 
 crud, service, plugins = Crud(db), Service(), PluginManager()
