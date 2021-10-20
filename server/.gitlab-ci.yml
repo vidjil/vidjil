@@ -1,8 +1,10 @@
 
 .test_cypress_server:
   stage: test_cypress_server
-  # extends:
-  #   - .need_for_staged_test
+  extends:
+    - .test_server_base
+    - .test_cypress_base
+    # - .need_for_staged_server
   script:
     - docker pull "vidjilci/cypress_with_browsers:latest"
     - >
@@ -34,59 +36,23 @@
 
 
 ## Cypress with server
-server_firefox_supported:
+server_early:
   extends:
-    - .test_server_base
-    - .test_cypress_base
     - .test_cypress_server
     - .need_for_moderate_server
-  stage: test_cypress_server
   variables:
     BROWSER: browsers/firefox_supported/firefox
 
-server_firefox_latest:
+## Cypress with server
+server_late:
   extends:
-    - .test_server_base
-    - .test_cypress_base
     - .test_cypress_server
-  stage: test_cypress_server
-  variables:
-    BROWSER: browsers/firefox_latest/firefox
-
-server_firefox_legacy:
-  extends:
-    - .test_server_base
-    - .test_cypress_base
-    - .test_cypress_server
-  stage: test_cypress_server
-  variables:
-    BROWSER: browsers/firefox_legacy/firefox
-
-
-server_chrome_supported:
-  extends:
-    - .test_server_base
-    - .test_cypress_base
-    - .test_cypress_server
-  stage: test_cypress_server
-  variables:
-    BROWSER: browsers/chrome_supported/chrome
-
-server_chrome_latest:
-  extends:
-    - .test_server_base
-    - .test_cypress_base
-    - .test_cypress_server
-  stage: test_cypress_server
-  variables:
-    BROWSER: browsers/chrome_latest/chrome
-
-server_chrome_legacy:
-  extends:
-    - .test_server_base
-    - .test_cypress_base
-    - .test_cypress_server
-  stage: test_cypress_server
-  variables:
-    BROWSER: browsers/chrome_legacy/chrome
-
+  parallel:
+    matrix:
+      - BROWSER: [
+          browsers/firefox_latest/firefox,
+          browsers/firefox_legacy/firefox,
+          browsers/chrome_supported/chrome,
+          browsers/chrome_latest/chrome,
+          browsers/chrome_legacy/chrome
+        ]

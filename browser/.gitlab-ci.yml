@@ -3,7 +3,7 @@
   image: vidjilci/cypress_with_browsers:latest
   stage: test_cypress_client
   # extends:
-  #   - .need_for_staged_test
+    # - .need_for_staged_client
   script:
     - echo -e "Run cypress with browser $BROWSER"
     - echo -e "PWD $PWD; CYPRESS_PATH $CYPRESS_PATH"
@@ -33,50 +33,23 @@
 
 
 ## cypress client
-#Launch in order Supported --> latest --> legacy
 # For the moment, need to be into separate stage (https://gitlab.com/gitlab-org/gitlab/-/issues/30632)
-
-client_firefox_supported:
+client_early:
   extends:
     - .test_cypress_base
     - .need_for_moderate_client
-  stage: test_cypress_client
   variables:
     BROWSER: browsers/firefox_supported/firefox
 
-client_firefox_latest:
+client_late:
   extends:
     - .test_cypress_base
-  stage: test_cypress_client
-  variables:
-    BROWSER: browsers/firefox_latest/firefox
-
-client_firefox_legacy:
-  extends:
-    - .test_cypress_base
-  stage: test_cypress_client
-  variables:
-    BROWSER: browsers/firefox_legacy/firefox
-
-
-client_chrome_supported:
-  extends:
-    - .test_cypress_base
-  stage: test_cypress_client
-  variables:
-    BROWSER: browsers/chrome_supported/chrome
-
-client_chrome_latest:
-  extends:
-    - .test_cypress_base
-  stage: test_cypress_client
-  variables:
-    BROWSER: browsers/chrome_latest/chrome
-
-client_chrome_legacy:
-  extends:
-    - .test_cypress_base
-  stage: test_cypress_client
-  variables:
-    BROWSER: browsers/chrome_legacy/chrome
-
+  parallel:
+    matrix:
+      - BROWSER: [
+          browsers/firefox_latest/firefox,
+          browsers/firefox_legacy/firefox,
+          browsers/chrome_supported/chrome,
+          browsers/chrome_latest/chrome,
+          browsers/chrome_legacy/chrome
+        ]
