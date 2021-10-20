@@ -206,6 +206,11 @@ Model.prototype = {
         }
     },
 
+    /**
+     * Check the browser version and return a warning if version is older than supported
+     * Only available for firefox and chrome client.
+     * Don't know how it will work on unsupported browsers
+     */
     checkBrowserVersion: function(){
         var browserAgent = navigator.userAgent;
         var browserName = navigator.appName;
@@ -220,20 +225,22 @@ Model.prototype = {
         else if ((OffsetVersion = browserAgent.indexOf("Firefox")) != -1) {
             browserName = "Firefox";
             browserVersion = parseInt(browserAgent.split("/")[browserAgent.split("/").length-1])
-            console.default.log('Full version firefox = ' + browserVersion)
         }
 
-
-        if (["Firefox", "Chrome"].indexOf(browserName) != -1){
-            console.default.log("Detected browser: "+browserName+", major version "+browserVersion)
-            if (BROWSER_COMPATIBILITY[browserName].legacy < browserVersion){
-                console.default.log('correct version of ' + browserName)
-            } else {
-                console.default.log('bad version of ' + browserName)
-                console.log({ msg: "Version of browser is under legacy version.\nSee requirements browser in user documentation.", type: "flash", priority: 2 });
+        var msg, priority;
+        if (BROWSER_COMPATIBILITY[browserName] != undefined){
+            console.log("Detected browser: "+browserName+", major version "+browserVersion)
+            if (BROWSER_COMPATIBILITY[browserName].legacy > browserVersion){
+                msg = "Version of browser is under legacy version ("+browserVersion+" vs "+BROWSER_COMPATIBILITY[browserName].legacy+")."
+                priority = 3
+            } else if (BROWSER_COMPATIBILITY[browserName].supported > browserVersion){
+                msg = "Version of browser is under supported version ("+browserVersion+" vs "+BROWSER_COMPATIBILITY[browserName].supported+")."
+                priority = 2
             }
+            msg += "\nSee requirements browser in <a target='_blank' href='http://www.vidjil.org/doc/user/#supported-browsers'>[user documentation]</a>."
+            console.log({ msg: msg, type: "flash", priority: priority });
         } else {
-            console.default.log("Not supported browser: "+browserName)
+            console.log("Not supported browser: "+browserName)
         }
 
     },
