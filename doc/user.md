@@ -375,6 +375,7 @@ The sequence feature `☰` menu usually contains at least the following genes/re
 
   - V/D/J genes
   - CDR3 position
+  - Primers as computed after selection of a primer set
 
 ### IMGT Sequence Features
 
@@ -926,6 +927,43 @@ detection is.
 
 Whenever the e-value is too large, a warning sign will be shown next to the
 clonotype, instead of the info icon.
+
+# How to work with primers ?
+
+On the client, we offer the possibilty to select a predefined set of primers 
+and to estimate their position on the read.
+
+To compute these positions, you should click on menu ``settings -> primer set for interpolated length`` and select the expected primers set.
+The computation of these position is done on your computer, is heavy and can take some times if a large amount of clonotype/samples is opened.
+This function is resilent to degenerated sequence of primers.
+
+This is compatible even if the primer is not included on the clonotype sequence 
+and allow to make some observation as a classical genescan like view.
+To do that, we estimate the position based on the germline sequence. 
+
+## How to know which primer is founded on the sequence ?
+
+To know which primer is founded, open the clone information panel.
+If primers is founded on 5'/3' position, a specific line will be present.
+This line don't indicate if the primer is present or estimated on the sequence.
+
+## How to find primers sequences on clonotype ?
+
+To do this, go to `sequences features` menu and select `Primers` entrie. 
+
+If computed primer is present in the sequence, it will be added as an underlighted sequence.
+
+
+## How to remove them to don't impact analysis ?
+
+As said previously, presence of primers sequence can modify some observation, as the hypermutation rate.
+If primers sequence are present on the read, we offer the possibilty to trim them before sending them to external tools. 
+
+To do this, you should have previously select a primer set, 
+open the settings menu and change the `Trimming primers for external tools` checkbox state.
+
+From that point, if you make an analysis by an external tool, the sequence shared will be trimmed at primers positions,
+ even if only one primer is found.
 
 
 # How can I have further support or help on a specific sample or on some sequences?

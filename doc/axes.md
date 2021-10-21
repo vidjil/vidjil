@@ -23,7 +23,7 @@ and used by the *color by* menu.
 * **GC content**: %GC content of the consensus sequence
 
 * **number of samples**: Number of samples sharing the clone
-* **tag**: Tag, as defined by the user with the `★` button in the [list of clones](user.md#the-list-of-clones-left-panel)
+* **tag**: Tag, as defined by the user with the `★` button in the [list of clones](user.md#the-list-of-clonotypes-left-panel)
 
 * **VIdentity IMGT**: V identity (as computed by IMGT/V-QUEST, availabe when the clonotypes have been submited there)
 
@@ -47,7 +47,7 @@ Some of these values requires to have some setup on some instances of the server
 
 * **cloneDB occurrences**: number of occurrences in cloneDB
 * **cloneDB patients/runs/sets occurrences**:  "number of patients/runs/sets sharing clones in cloneDB
-* **primers**: interpolated length, between primers (inclusive)
+* **primers**: interpolated length, between primers (inclusive, see [user manual](user.md#how-to-work-with-primers))
 
 
 
@@ -76,9 +76,11 @@ Some of these values requires to have some setup on some instances of the server
 | size                     |    x         |      x     |          |
 | size (other sample)      |    x         |            |          |
 | number of samples        |    x         |      x     |          |
-| primers                  |    x         |            |          |
+| primers                  |    x         |      x     |          |
 | V/5' deletions in 3'     |    x         |            |          |
 | J/3' deletions in 5'     |    x         |            |          |
+| V/5' length              |    x         |            |          |
+| J/3' length              |    x         |            |          |
 | cloneDB occurrences      |    x         |            |          |
 | cloneDB patients/runs/sets occurrences| |            |          |
 
