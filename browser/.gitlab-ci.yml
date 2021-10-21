@@ -13,9 +13,10 @@
     # Cypress
     - bash docker/ci/script_preprocess.bash
     - cd /app
+    - export BROWSER=browsers/$BROWSER
     - bash script.bash
   variables:
-    BROWSER: electron
+    BROWSER: ../electron
     CYPRESS_PATH: browser/test/cypress
     HOST: html
   artifacts:
@@ -34,22 +35,22 @@
 
 ## cypress client
 # For the moment, need to be into separate stage (https://gitlab.com/gitlab-org/gitlab/-/issues/30632)
-client_early:
+client1:
   extends:
     - .test_cypress_base
     - .need_for_moderate_client
   variables:
-    BROWSER: browsers/firefox_supported/firefox
+    BROWSER: firefox_supported/firefox
 
-client_late:
+c2:
   extends:
     - .test_cypress_base
   parallel:
     matrix:
       - BROWSER: [
-          browsers/firefox_latest/firefox,
-          browsers/firefox_legacy/firefox,
-          browsers/chrome_supported/chrome,
-          browsers/chrome_latest/chrome,
-          browsers/chrome_legacy/chrome
+          firefox_latest/firefox,
+          firefox_legacy/firefox,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
+          chrome_legacy/chrome
         ]
