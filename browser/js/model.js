@@ -246,7 +246,7 @@ Model.prototype = {
                 msg += "\n<br />We recommend using " + browserName + " " + BROWSER_COMPATIBILITY[browserName].supported + " or later, or other modern browsers, "
                 msg += "that will be supported until at least " + BROWSER_SUPPORTED_UNTIL + "."
                 msg += "\n<br />See our documentation on <a target='_blank' href='http://www.vidjil.org/doc/user/#supported-browsers'>supported browsers</a>."
-                console.log({ msg: msg, type: "flash", priority: priority });
+                console.log({ msg: msg, type: "flash", priority: priority, timeout:15000 });
             }
         } else {
             console.log("Not supported browser: "+browserName)
