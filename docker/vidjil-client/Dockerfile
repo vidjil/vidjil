@@ -1,4 +1,4 @@
-from nginx:1.15.0
+from nginx:1.21
 
 label version="1.1"
 label description="An NGINX based docker image which comes \
