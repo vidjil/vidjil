@@ -25,7 +25,7 @@ As of September 2020, we recommend using Firefox or Chrome/Chromium :
   - Firefox, *version \>= 78 ESR*
   - Chrome, *version \>= 79*
 
-These platforms will be supported to at least *June 2023*.
+These platforms will be supported to at least *April 2024*.
 Chrome 79, and possibly other recent versions, are tested through our continuous integration pipelines.
 
 ## Legacy browsers

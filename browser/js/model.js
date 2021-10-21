@@ -44,7 +44,7 @@ BROWSER_COMPATIBILITY = {
         "latest": 93
     }
 }
-BROWSER_SUPPORTED_UNTIL = "June 2023"
+BROWSER_SUPPORTED_UNTIL = "April 2024"
 
 SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
 
