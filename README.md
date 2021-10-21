@@ -40,8 +40,9 @@ can manage, upload, analyze and annotate their runs directly on the web applicai
 
 ## The web application
 
-  - Access at <https://app.vidjil.org/> (demo login: demo@vidjil.org, password: vidjil)
+  - Public test server at <https://app.vidjil.org/> (demo login: `demo@vidjil.org`, password: `vidjil`)
   - Please contact us if you would like to test your data and have a full account on the web server
+  - We offer hosting solutions for [healthcare compliance](http://www.vidjil.org/doc/healthcare/)
   - Development code is under *browser/* and *server/* (a `make` in those directories
     will get the necessary files)
   - Documentation is in *doc/*, it is also available from <http://www.vidjil.org/doc>
@@ -62,17 +63,12 @@ Thank you for your support \!
 
 # The Vidjil team
 
-Vidjil is developed by Aurélien Béliard, [Mathieu Giraud](http://cristal.univ-lille.fr/~giraud), Ryan Herbert, Tatiana Rocher and [Mikaël Salson](http://cristal.univ-lille.fr/~salson)
-from the [Bonsai bioinformatics team](http://cristal.univ-lille.fr/bonsai) (CRIStAL, CNRS, U. Lille, Inria Lille).
-Vidjil is also developed by external colleagues:
-Marc Duez located in Bristol (School of Social and Community Medicine, University of Bristol)
-and Florian Thonier located in Rennes (department of hematology)
-Vidjil is developed in collaboration with
-the [department of Hematology](http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html) of CHRU Lille,
-the [Functional and Structural Genomic Platform](http://www.ircl.org/plate-forme-genomique.html) (U. Lille 2, IFR-114, IRCL),
-and the [EuroClonality-NGS](http://www.euroclonality.org/) working group.
-The research is supported by SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), by Région Nord-Pas-de-Calais/Hauts-de-France (ABILES),
-by Inria and by InCA.
+Vidjil is developed and maintained by
+the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille)
+and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
+See [doc/credits.md](doc/credits.md) for the full list of contributors, collaborators, and funders.
+
+Contact: Marc Duez, Florian Thonier, [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org).
 
 # References
 
@@ -88,10 +84,4 @@ Mathieu Giraud, Mikaël Salson, et al.,
 BMC Genomics 2014, 15:409
 <http://dx.doi.org/10.1186/1471-2164-15-409>
 
-You may also be interested in the following publication for the diagnosis of
-acute lymphoblastic leukemia with high-throughput sequencing:
-
-Yann Ferret, Aurélie Caillault, et al., “Multi-loci diagnosis of acute
-lymphoblastic leukaemia with high-throughput sequencing and bioinformatics
-analysis”, British Journal of Haematology 2016
-<http://dx.doi.org/10.1111/bjh.13981>
+The Vidjil platform has been utilised in [35+ publications](doc/credits.md#some-publications-using-vidjil) in oncology, hematology, and immunology.
