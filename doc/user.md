@@ -541,7 +541,7 @@ There are also processes for other species and for other RepSeq algorithms, such
 The server mainteners can add new process configurations tailored to specific needs, contact us if you have other needs.
 
 The « reload » button (bottom left) updates the view. It is useful to see if the status of the task changed.
-It should do `QUEUED` → `ASSIGNED` → `RUNNING` → `COMPLETED`.
+It should do `PREPROCESSING (optional)` → `QUEUED` → `ASSIGNED` → `RUNNING` → `COMPLETED`.
 It is possible to launch several processes at the same time (some will wait in the `QUEUED` / `ASSIGNED` states), and also to launch processes while you
 are uploading data. Finally, you can safely close the window with the sample database (and even your web browser) when some process are queued/launched.
 The only thing you should not do is to close completely your web browser (or the webpage) while sequences are uploading.
