@@ -144,7 +144,7 @@ Com.prototype = {
             if (typeof obj.msg != "undefined") text += obj.msg
             switch (obj.type) {
                 case "flash":
-                    this.flash(text, obj.priority, obj.call)
+                    this.flash(text, obj.priority, obj.call, obj.timeout)
                     break;
                 case "popup":
                     this.popupMsg(text)
@@ -235,9 +235,9 @@ Com.prototype = {
      * @param {string} str - message to display
      * @param {integr} priority 
      * */
-    flash: function (str, priority, call){
+    flash: function (str, priority, call, timeout){
         priority = typeof priority !== 'undefined' ? priority : 0;
-        
+        timeout = timeout == undefined ? 8000: timeout
 
         if (priority >= this.min_priority){
             var div = jQuery('<div/>', {
@@ -269,7 +269,7 @@ Com.prototype = {
             if (priority < this.ERROR){
                 setTimeout(function(){
                     div.fadeOut('slow', function() { div.remove();});
-                }, 8000);
+                }, timeout);
             }
             
         }

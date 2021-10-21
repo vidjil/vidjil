@@ -37,7 +37,8 @@ We also provide an extended support on
 
 Some of these legacy platforms are also tested through our continuous integration pipelines.
 However, old platforms have security flaws and are not recommended for routine usage involving clinical data.
-They may not get the new features, and *this extended support may be dropped in September 2021*.
+They may not get the new features, and *this extended support may be dropped in September 2021*,
+or at latest in *May 2022*.
 
 ## Other browsers
 

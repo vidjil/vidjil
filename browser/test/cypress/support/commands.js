@@ -25,12 +25,23 @@ Cypress.Commands.add('close_tips', () => {
   })
 })
 
+Cypress.Commands.add('closeFlash', (flash_class) => {
+  cy.document().then(($document) => {
+    const documentResult = $document.querySelectorAll(flash_class)
+    cy.log( "Close flash; "+ flash_class+"; length " + documentResult.length )
+    documentResult.forEach( (elt) => elt.click() )
+  })
+})
+
 Cypress.Commands.add('setBrowser', (url) => {
   cy.visit(url)
   // close disclamer only for direct opening of the index.html file
   if (url.indexOf("index.html") != -1){
     cy.close_disclamer()
     cy.close_tips()
+    cy.closeFlash('.flash_1')
+    cy.closeFlash('.flash_2')
+    cy.closeFlash('.flash_3')
   }
 })
 

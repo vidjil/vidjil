@@ -32,6 +32,19 @@
  * */
 
 VIDJIL_JSON_VERSION = '2014.09';
+BROWSER_COMPATIBILITY = {
+    "Firefox": {
+        "legacy": 32,
+        "supported": 78,
+        "latest": 89
+    }, 
+    "Chrome": {
+        "legacy": 49,
+        "supported":  79,
+        "latest": 93
+    }
+}
+BROWSER_SUPPORTED_UNTIL = "June 2023"
 
 SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
 
@@ -84,6 +97,9 @@ Model.prototype = {
     build: function () {
         var self =this;
         
+        // BROWSER_COMPATIBILITY
+        this.checkBrowserVersion()
+
         this.waiting_screen_is_on = false;
         this.waiting_screen = document.createElement("div");
         this.waiting_screen.className = "waiting_screen";
@@ -189,6 +205,55 @@ Model.prototype = {
         this.distrib_axe_as_number = {
         }
     },
+
+    /**
+     * Check the browser version and return a warning if version is older than supported
+     * Only available for firefox and chrome client.
+     * Don't know how it will work on unsupported browsers
+     */
+    checkBrowserVersion: function(){
+        var browserAgent = navigator.userAgent;
+        var browserName = navigator.appName;
+        var browserVersion = "";
+
+        // For Chrome
+        if ((OffsetVersion = browserAgent.indexOf("Chrome")) != -1) {
+            browserName = "Chrome";
+            browsersVersion = browserAgent.split("Chrome/")[browserAgent.split("Chrome/").length-1]
+            browserVersion  = parseInt(browsersVersion.split(" ")[0].split(".")[0])
+        }
+        // For Firefox
+        else if ((OffsetVersion = browserAgent.indexOf("Firefox")) != -1) {
+            browserName = "Firefox";
+            browserVersion = parseInt(browserAgent.split("/")[browserAgent.split("/").length-1])
+        }
+
+        var msg = browserName + " " + browserVersion;
+        var priority = 0;
+        if (BROWSER_COMPATIBILITY[browserName] != undefined){
+            console.log("Detected browser: " + msg)
+            if (BROWSER_COMPATIBILITY[browserName].legacy > browserVersion){
+                msg += " is not supported."
+                priority = 3
+            } else if (BROWSER_COMPATIBILITY[browserName].supported > browserVersion){
+                msg += ", as a legacy browser, is only partially supported."
+                msg += "\n<br />Some features will not be available and the support will be dropped in a few months."
+                priority = 2
+            }
+
+            if (priority >= 2)
+            {
+                msg += "\n<br />We recommend using " + browserName + " " + BROWSER_COMPATIBILITY[browserName].supported + " or later, or other modern browsers, "
+                msg += "that will be supported until at least " + BROWSER_SUPPORTED_UNTIL + "."
+                msg += "\n<br />See our documentation on <a target='_blank' href='http://www.vidjil.org/doc/user/#supported-browsers'>supported browsers</a>."
+                console.log({ msg: msg, type: "flash", priority: priority, timeout:15000 });
+            }
+        } else {
+            console.log("Not supported browser: "+browserName)
+        }
+
+    },
+
 
     /**
      * Set all the properties. Called in the constructor.
