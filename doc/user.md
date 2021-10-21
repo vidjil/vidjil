@@ -949,7 +949,7 @@ This line don't indicate if the primer is present or estimated on the sequence.
 
 ## How to find primers sequences on clonotype ?
 
-To do this, go to `sequences features` menu and select `Primers` entrie. 
+To do this, go to `☰ sequences features` menu and select `Primers` entrie.
 
 If computed primer is present in the sequence, it will be added as an underlighted sequence.
 
