@@ -56,21 +56,21 @@
     - .testing-compilers
     - .installing-compiler
     
-test_gcc48:
+gcc48:
   image: debian:8-slim
   variables:
     GCC_VERSION: "4.8"
   extends:
     - .installing-testing-gcc
 
-test_gcc:
+gcc:
   extends:
     - .testing-gcc
   parallel:
     matrix:
       - GCC_VERSION: ["5.3", "6.3", "7.3", "8", "9", "10", "11"]
 
-test_clang:
+clang:
   extends:
     - .testing-clang
   parallel:
