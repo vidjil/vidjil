@@ -83,3 +83,17 @@ SET_TYPE_GENERIC = 'generic'
 
 REQUIRE_HTTPS = False
 BROWSER_PATH = 'browser/index.html'
+
+# LDAP authentification
+LDAP = False
+# online test server available for test purposes
+# account:  euler@ldap.forumsys.com
+# password: password
+LDAP_CONF = {
+    "mode" :            'custom',
+    "server":           'ldap.forumsys.com',    
+    "base_dn":          'dc=example,dc=com',   
+    "logging_level":    'debug',
+    "username_attrib":  'mail',
+    "custom_scope":     'subtree'
+}
