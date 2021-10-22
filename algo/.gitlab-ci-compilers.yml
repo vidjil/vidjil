@@ -19,9 +19,9 @@
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: never               # To prevent detached pipelines
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*a.*\/release$/'
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-[b-z]*a[b-z]*\/release$/'
       when: always
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*a/'
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-[a-z]*a/'
       when: manual
 
 .installing-compiler:
