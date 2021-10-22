@@ -934,13 +934,13 @@ clonotype, instead of the info icon.
 
 Library preparatio may involve some [usual sets of primers](locus.md).
 To display the primers,
-select such a primer set with ``settings -> primer set for interpolated length``.
+select such a primer set with ``settings -> primer set``.
 This aligns the clonotype sequences against the selected primer set.
-Retrieving the positions may take a few seconds when many clonotypes and/or samples are opened.
-It works even with degenerated sequences.
+It works even with approximate matches and/or degenerate primers.
+Note that retrieving the positions may take a few seconds to about one minute when many clonotypes and/or samples are opened.
 
 Primers are then displayed
-- on the clone information panel (line 'XXX', not indicating if the primer is present or estimated on the sequence)
+- on the clone information panel (line 'XXX')
 - on the sequence aligner (`☰ Sequences features` > `Primers`)
 
 Moreover, when one or both primers are not found in the clonotype sequence,
