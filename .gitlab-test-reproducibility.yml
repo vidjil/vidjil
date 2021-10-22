@@ -5,6 +5,8 @@ generate_server_reproducibility_yml:
   script:
     - tools/repeat-ci.sh server/.gitlab-ci.yml $REPEAT .gitlab-ci.yml .test_server_base .test_cypress_base -- .gitlab-ci.yml browser/.gitlab-ci.yml | grep -v .need > server-repro.yml
   needs: []
+  only:
+    - /^feature-.*s.*\/.*$/
   artifacts:
     paths:
       - server-repro.yml
@@ -16,6 +18,8 @@ generate_client_reproducibility_yml:
   script:
     - tools/repeat-ci.sh browser/.gitlab-ci.yml $REPEAT .gitlab-ci.yml | grep -v .need > client-repro.yml
   needs: []
+  only:
+    - /^feature-.*c.*\/.*$/
   artifacts:
     paths:
       - client-repro.yml
@@ -29,6 +33,8 @@ server_reproducibility:
         job: generate_server_reproducibility_yml
     strategy: depend
   when: manual
+  only:
+    - /^feature-.*s.*\/.*$/
   allow_failure: true
 
 client_reproducibility:
@@ -40,5 +46,7 @@ client_reproducibility:
         job: generate_client_reproducibility_yml
     strategy: depend
   when: manual
+  only:
+    - /^feature-.*c.*\/.*$/
   allow_failure: true
   
