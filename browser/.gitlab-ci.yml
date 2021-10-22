@@ -35,7 +35,7 @@
 
 ## cypress client
 # For the moment, need to be into separate stage (https://gitlab.com/gitlab-org/gitlab/-/issues/30632)
-client1:
+client1-ff-supported:
   extends:
     - .test_cypress_base
     - .need_for_moderate_client

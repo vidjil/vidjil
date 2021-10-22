@@ -86,17 +86,17 @@ include:
 .need_for_moderate_client:
   needs: [test_tools, test_browser_unit, code_quality_custom]
 .need_for_late_client:
-  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial]
+  needs: [client1-ff-supported, ff45-browser-functional, ff45-browser-tutorial]
 .need_for_staged_client:
-  needs: [client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial]
+  needs: [client1-ff-supported, ff45-browser-functional, ff45-browser-tutorial]
 
 ### Server part should not containt client stage
 .need_for_moderate_server:
   needs: [test_tools, test_server_unit]
 .need_for_late_server:
-  needs: [server_firefox_supported, server_tutorial_server]
+  needs: [server1-ff-supported, server_tutorial_server]
 .need_for_staged_server:
-  needs: [server_firefox_supported, server_tutorial_server]
+  needs: [server1-ff-supported, server_tutorial_server]
 
 
 
