@@ -19,6 +19,8 @@ and used by the *color by* menu.
 
 * **clone consensus length**: Length of the consensus sequence
 * **clone average read length**: Average length of the reads belonging to each clone
+* **primers**: Length of the consensus sequence between primers (inclusive), possibly interpolated, see [Working with primers](user.md#how-to-work-with-primers))
+
 * **clone consensus coverage**: Ratio of the length of the clone consensus sequence to the median read length of the clone. Coverage between .85 and 1.0 (or more) are good values. See [clone coverage](user.md#clone-coverage)
 * **GC content**: %GC content of the consensus sequence
 
@@ -43,11 +45,10 @@ following ERIC guidelines ([Rosenquist et al., 2017](https://www.ncbi.nlm.nih.go
 
 ## Other axes
 
-Some of these values requires to have some setup on some instances of the server.
+These values require to have some setup on some instances of the server.
 
 * **cloneDB occurrences**: number of occurrences in cloneDB
 * **cloneDB patients/runs/sets occurrences**:  "number of patients/runs/sets sharing clones in cloneDB
-* **primers**: interpolated length, between primers (inclusive, see [user manual](user.md#how-to-work-with-primers))
 
 
 
