@@ -78,7 +78,7 @@ SCHEDULER_HEARTBEAT = 5
 
 # Directory to search for files
 FILE_SOURCE = '/mnt/data/src'
-FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa']
+FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa', 'tsv', 'airr', 'AIRR']
 
 SET_TYPE_PATIENT = 'patient'
 SET_TYPE_RUN= 'run'

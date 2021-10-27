@@ -74,16 +74,19 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis) => {
 /**
  * Allow to wait for update icon to be not visible
  */
-Cypress.Commands.add("update_icon", (delay) => {
+Cypress.Commands.add("update_icon", (delay=0) => {
   let visible_icon = false;
   cy.get('#updateIcon')
     .then( ($icon) => {
-      cy.log( "wait icon already visible")
-      visible_icon = $icon.is(":visible")
+      if ($icon.is(":visible")) { 
+        // cy.log( "wait icon already visible")
+        delay = 0 // Don't use delay if icon already visible
+      }
+      if (delay){
+        cy.wait(delay)
+      }
     }
   )
-  if (delay == undefined || visible_icon){ delay = 0 } // Don't wait if icon already visible
-  cy.wait(delay)
   
   cy.get('#updateIcon', { timeout: 6000 })
     .should("not.visible")

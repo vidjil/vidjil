@@ -239,6 +239,17 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
     cy.get('#db_table_container')
       .should("contain", filename1)
 
+    // Work only if one file given (else filename will be changed)
+    // Allow to get curent number if case of upload position modification
+    if (filename2 == undefined){
+      cy.get('td')
+        .contains(filename1)
+        .invoke('text')
+        .then( (filename) => {
+          cy.log( `sample added number: ${filename.split("(")[1].split(")")[0]}` )
+        })
+    }
+
 })
 
 
@@ -302,6 +313,9 @@ Cypress.Commands.add('launchProcess', (config, sequence_file_id) => {
   cy.log( `launchProcess(${config}, ${sequence_file_id})`)
       cy.selectConfig(config)
 
+      cy.get('#sequence_file_'+sequence_file_id)
+        .should('exist')
+
       cy.get('.icon-cog-2')
         .should('be.visible')
 
@@ -355,7 +369,7 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
     var start = new Date().getTime();
   }
 
-  cy.log( `waitAnalysisCompleted: ${iter}`)
+  cy.log( `waitAnalysisCompleted: step ${iter}`)
   cy.intercept({
     method: 'GET', // Route all GET requests
     url: 'get_active_notifications*',
@@ -393,7 +407,9 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
       cy.waitAnalysisCompleted(config, sequence_file_id, start, nb_retry, iter=iter+1)
     })
 
-  cy.sampleStatus(sequence_file_id)
-    .should('have.text', ' COMPLETED ')
+  if (!iter){
+    cy.sampleStatus(sequence_file_id)
+      .should('have.text', ' COMPLETED ')
+  }
 
 })
