@@ -42,11 +42,11 @@ function ScatterPlot_menu(default_preset) {
         "compare two samples" :     { "x": "Size",              "y": "Size (other)",    mode: "grid"},
         "read length / GC content" :{ "x": "Reads length",      "y": "GC content",      mode: "grid"},
         "coverage / GC content" :   { "x": "Sequence length",   "y": "GC content",      mode: "grid"},
-        "number of samples sharing each clonotype" :    { "x": "number of samples", 
+        "number of samples sharing each clonotype" :    { "x": "Number of samples",
                                                                 "y" : "Locus",          mode: "grid"},
         "number of deletions for the segment V/5 in 3" :{ "x": "V/5' del'",             mode: "bar"},
         "number of deletions for the segment J/3 in 5" :{ "x": "J/3' del'",             mode: "bar"},
-        "Primers" :                 { "x": "Primers",                                   mode: "bar"},
+        "Primers gap" :             { "x": "Primers gap",                               mode: "bar"},
         "Similarity"    :           { "x" : "TSNEX",            "y": "TSNEY",           mode: "tsne"},
         "Similarity (locus)":       { "x" : "TSNEX_LOCUS",      "y": "TSNEY_LOCUS",     mode: "tsne"}
     };

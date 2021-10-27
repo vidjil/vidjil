@@ -431,4 +431,55 @@ QUnit.test("Axis scale Float", function(assert) {
 
         ready()
     }, delay+=step);
+
+
+})
+
+QUnit.test("Axes exist for AXIS_SCATTERPLOT", function(assert) {
+    /* As preset use axis name, control if they exist in list */
+    var list_axis = AXIS_SCATTERPLOT
+    var axes      = Object.keys(AXIS_DEFAULT)
+
+    for (var i = list_axis.length - 1; i >= 0; i--) {
+        var axis = list_axis[i]
+        assert.ok(axis.indexOf(axis) != -1, "AXIS_SCATTERPLOT; axis '"+ axis+"' exist")
+    }
+})
+
+QUnit.test("Axes exist for AXIS_ALIGNER", function(assert) {
+    /* As preset use axis name, control if they exist in list */
+    var list_axis = AXIS_ALIGNER
+    var axes      = Object.keys(AXIS_DEFAULT)
+
+    for (var i = list_axis.length - 1; i >= 0; i--) {
+        var axis = list_axis[i]
+        assert.ok(axis.indexOf(axis) != -1, "AXIS_ALIGNER; axis '"+ axis+"' exist")
+    }
+})
+
+QUnit.test("Axes exist for AXIS_COLOR", function(assert) {
+    /* As preset use axis name, control if they exist in list */
+    var list_axis = AXIS_COLOR
+    var axes      = Object.keys(AXIS_DEFAULT)
+
+    for (var i = list_axis.length - 1; i >= 0; i--) {
+        var axis = list_axis[i]
+        assert.ok(axis.indexOf(axis) != -1, "AXIS_COLOR; axis '"+ axis+"' exist")
+    }
+})
+
+QUnit.test("Preset axes exist", function(assert) {
+    /* As preset use axis name, control if they exist in list */
+    var sp_m    = new ScatterPlot_menu()
+    var presets = Object.keys(sp_m.preset)
+    var axis    = Object.keys(AXIS_DEFAULT)
+
+    for (var i = presets.length - 1; i >= 0; i--) {
+        var preset = sp_m.preset[presets[i]]
+
+        assert.ok(axis.indexOf(preset.x) != -1, "Axis X for preset '"+ presets[i]+"': " + preset.x)
+        if (preset.mode == "grid"){
+            assert.ok(axis.indexOf(preset.y) != -1, "Axis Y for preset '"+ presets[i]+"': " + preset.y)
+        }
+    }
 })
