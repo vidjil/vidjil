@@ -8,9 +8,14 @@ This software is for research use only and comes with no warranty.
 The development code is available on <http://gitlab.vidjil.org/>.
 Bug reports, issues and patches are welcome.
 
-# Third-party software and licenses
+# Licenses for third-party software and databases
 
-Vidjil provide ready to use docker containers for server install that contains third party software/libraries under open-source licenses.
+Vidjil provide ready-to-use docker containers for a full client/server web application.
+See instructions on <http://www.vidjil.org/doc/server/#docker-installation>.
+The containers include third-party software and libraries under open-source licenses.
+
+Moreover, they allow to download and use germline sequences and other sequences originating from both NCBI and IMGT/GENE-DB.
+For this, you should in particular comply to IMGT conditions (free for academic and non-profit usage).
 
 ## vidjil-algo
 
@@ -233,3 +238,18 @@ apt-utils
 pyuwsgi
 * @license  GPLv2
 * @link     <https://pypi.org/project/pyuwsgi/>
+
+
+## Germline/sequence databases
+
+Both vidjil-algo and vidjil-client may use sequences from any germline database.
+We provide tools to download these sequences in the `germline/` directory.
+You should ensure that you comply with the provisions of the databases you download and use.
+
+NCBI
+* @license  NCBI itself places no restrictions on the use or distribution of the data contained therein. However NCBI cannot provide comment or unrestricted permission concerning the use, copying, or distribution of the information contained in the molecular databases.
+* @link     <https://www.ncbi.nlm.nih.gov/home/about/policies/>
+
+IMGT/GENE-DB
+* @license  CC BY-NC-ND 4.0 for academic users and not-profit organizations
+* @link     <http://www.imgt.org/about/termsofuse.php#conditions>
