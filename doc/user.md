@@ -932,7 +932,7 @@ clonotype, instead of the info icon.
 
 ## Displaying primers
 
-Library preparatio may involve some [usual sets of primers](locus.md).
+Library preparation may involve some [usual sets of primers](locus.md).
 To display the primers,
 select such a primer set with ``settings -> primer set``.
 This aligns the clonotype sequences against the selected primer set.
@@ -940,21 +940,21 @@ It works even with approximate matches and/or degenerate primers.
 Note that retrieving the positions may take a few seconds to about one minute when many clonotypes and/or samples are opened.
 
 Primers are then displayed
-- on the clone information panel (line 'XXX')
+- on the clone information panel (line `Primer 5` or `Primer 3`)
 - on the sequence aligner (`☰ Sequences features` > `Primers`)
 
 Moreover, when one or both primers are not found in the clonotype sequence,
 their position will nevertheless be estimed "outside" of the read, based on the germline sequence
 (but this is not displayed).
 This will allow to estimate an `interpolated length` for such clonotypes,
-that is plot in a Genescan-like view (preset XXX).
+that is plot in a Genescan-like view (preset `Primer gap`).
 
 ## Removing primers before external analysis
 
 As they are (mostly) conserved across reads, primers can bias some analyses such as the hypermutation rate.
 They can be removed before sending the sequence to external tools (IMGT/V-Quest, IgBlast, Blast, or AssignSubset).
 You should have previously select a primer set,
-open the settings menu, select `Trimming primers for external tools`.
+open the settings menu, select `trim primers for external tools`.
 The sequences sent for external analysis will then be trimmed at primers positions, even if only one primer was found.
 
 
