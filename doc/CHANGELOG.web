@@ -2,6 +2,26 @@
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
+## 2021-11-03
+
+Improve analysis
+* Merge preprocessing will create log accessible in sample information
+* AIRR external analysis can be uploaded
+* Primers can be shown on aligner sequence's.
+* Primers can be removed before sending sequence to external tools as IMGT or IgBlast
+
+Improve ergonomy
+* Add button to launch analysis on all files of a set
+* Logs since 2019 are available again. 
+* Aligner have been rewriten to handle more informations about clonotypes
+* Access to database patient and run list is faster
+* Some axis have now slider to recenter observation
+
+Other points
+* Add new server option to use an LDAP server
+* Warning on browser version that is not supported
+* Fix error in opening clone information after opening single analysis
+
 ## 2021-05-05
 
 Improve analysis
