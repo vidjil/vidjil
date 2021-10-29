@@ -254,37 +254,32 @@
                         </div>
                         <div class="menu_box">
                             size display</br>
-                            <label for="menuNotation_scientific" class="buttonSelector"
-                                onclick="m.changeNotation('scientific', true, true)">
+                            <label for="menuNotation_scientific" class="buttonSelector">
                                 <input id="menuNotation_scientific" type="radio" name="notation"
-                                    value="scientific" />scientific notation
+                                    onclick="m.changeNotation('scientific', true, true)" value="scientific" />scientific notation
                             </label>
-                            <label for="menuNotation_percent" class="buttonSelector"
-                                onclick="m.changeNotation('percent', true, true)">
+                            <label for="menuNotation_percent" class="buttonSelector">
                                 <input id="menuNotation_percent" type="radio" name="notation" value="percent"
-                                    checked />percent
+                                    onclick="m.changeNotation('percent', true, true)" checked />percent
                             </label>
                         </div>
                         <div class="menu_box">
                             sample key</br>
-                            <label for="menuTimeForm_name" class="buttonSelector"
-                                onclick="m.changeTimeFormat('name', true, true)">
-                                <input id="menuTimeForm_name" type="radio" name="time" value="name" checked />name
+                            <label for="menuTimeForm_name" class="buttonSelector">
+                                <input id="menuTimeForm_name" type="radio" name="time" value="name" checked
+                                       onclick="m.changeTimeFormat('name', true, true)"/>name
                             </label>
-                            <label for="menuTimeForm_short_name" class="buttonSelector"
-                                onclick="m.changeTimeFormat('short_name', true, true)">
-                                <input id="menuTimeForm_short_name" type="radio" name="time" value="short_name" />name
-                                (short)
+                            <label for="menuTimeForm_short_name" class="buttonSelector">
+                                <input id="menuTimeForm_short_name" type="radio" name="time" value="short_name"
+                                       onclick="m.changeTimeFormat('short_name', true, true)"/> name (short)
                             </label>
-                            <label for="menuTimeForm_sampling_date" class="buttonSelector"
-                                onclick="m.changeTimeFormat('sampling_date', true, true)">
+                            <label for="menuTimeForm_sampling_date" class="buttonSelector">
                                 <input id="menuTimeForm_sampling_date" type="radio" name="time"
-                                    value="sampling_date" />sampling date
+                                       onclick="m.changeTimeFormat('sampling_date', true, true)" value="sampling_date" />sampling date
                             </label>
-                            <label for="menuTimeForm_delta_date" class="buttonSelector"
-                                onclick="m.changeTimeFormat('delta_date', true, true)">
-                                <input id="menuTimeForm_delta_date" type="radio" name="time" value="delta_date" />day
-                                after first sample
+                            <label for="menuTimeForm_delta_date" class="buttonSelector">
+                                <input id="menuTimeForm_delta_date" type="radio" name="time" value="delta_date"
+                                       onclick="m.changeTimeFormat('delta_date', true, true)" />day after first sample
                             </label>
                         </div>
                         <div class="menu_box">
@@ -307,18 +302,15 @@
                         </div>
                         <div class="menu_box">
                             alleles in clone names</br>
-                            <label for="menuAlleleNot_never" class="buttonSelector"
-                                onclick="m.changeAlleleNotation('never', true, true)">
-                                <input id="menuAlleleNot_never" type="radio" name="menu_allele" value="never" />never
+                            <label for="menuAlleleNot_never" class="buttonSelector">
+                                <input id="menuAlleleNot_never" type="radio" name="menu_allele" value="never" onclick="m.changeAlleleNotation('never', true, true)" />never
                             </label>
-                            <label for="menuAlleleNot_when_not_01" class="buttonSelector"
-                                onclick="m.changeAlleleNotation('when_not_01', true, true)">
-                                <input id="menuAlleleNot_when_not_01" type="radio" name="menu_allele"
+                            <label for="menuAlleleNot_when_not_01" class="buttonSelector">
+                                <input id="menuAlleleNot_when_not_01" type="radio" name="menu_allele" onclick="m.changeAlleleNotation('when_not_01', true, true)"
                                     value="when_not_01" checked />when not *01
                             </label>
-                            <label for="menuAlleleNot_always" class="buttonSelector"
-                                onclick="m.changeAlleleNotation('always', true, true)">
-                                <input id="menuAlleleNot_always" type="radio" name="menu_allele" value="always" />always
+                            <label for="menuAlleleNot_always" class="buttonSelector">
+                                <input id="menuAlleleNot_always" type="radio" name="menu_allele" value="always" onclick="m.changeAlleleNotation('always', true, true)" />always
                             </label>
                         </div>
                         <div class="menu_box">
@@ -328,9 +320,17 @@
 
                         <div class="menu_box">
                             primer set for interpolated length<br/>(experimental)
-                            <label for="primerBiomed2" class="buttonSelector" onclick="m.switchPrimersSet('biomed2')"><input type="radio" id="primerBiomed2" name="primers" value="biomed2" />EuroClonality/BIOMED-2</label>
-                            <label for="primerEcngs" class="buttonSelector" onclick="m.switchPrimersSet('ecngs')"><input type="radio" id="primerEcngs" name="primers" value="ecngs" />EuroClonality-NGS</label>
-                            <label for="primerEcngsFR1" class="buttonSelector" onclick="m.switchPrimersSet('ecngs_FR1')"><input type="radio" id="primerEcngsFR1" name="primers" value="ecngs_FR1" />EuroClonality-NGS FR1</label>
+                            <label for="primerBiomed2" class="buttonSelector" >
+                                <input type="radio" id="primerBiomed2" name="primers" value="biomed2" onclick="m.switchPrimersSet('biomed2')"/>EuroClonality/BIOMED-2
+                            </label>
+
+                            <label for="primerEcngs" class="buttonSelector">
+                                <input type="radio" id="primerEcngs" name="primers" value="ecngs" onclick="m.switchPrimersSet('ecngs')"/>EuroClonality-NGS
+                            </label>
+
+                            <label for="primerEcngsFR1" class="buttonSelector">
+                                <input type="radio" id="primerEcngsFR1" name="primers" value="ecngs_FR1" onclick="m.switchPrimersSet('ecngs_FR1')"/>EuroClonality-NGS FR1
+                            </label>
 			                <!-- TODO : construire liste à partir des data disponibles/chargées dans le model.
                               TODO : passer ça en liste deroulante ? -->
                         </div>
