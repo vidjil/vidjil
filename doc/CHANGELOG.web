@@ -2,6 +2,33 @@
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
+## 2021-11-03
+
+Improve analysis
+* Primers can be shown on the sequences and be removed before sending sequences to external tools such as IMGT or IgBlast
+* AIRR external analysis can be uploaded  ("AIRR/.vidjil/.clntab import")
+
+Improve ergonomy
+* Add button to launch analysis on all files of a patient/run/set
+* Renamed some analysis axes
+* Some axes have now sliders
+
+Improve internal database usage
+* Faster access to databases (patient/set/run lists)
+
+Improve traceability
+* New logs on pre-process steps, such as for merging ("i" on samples)
+* Access logs are available again (on the public server, since mid-2019)
+
+Improve software quality
+* New tests and improved test pipelines (cypress), improved Docker containers
+
+Other points
+* New server option to use an LDAP server
+* Warning for legacy or non supported browsers (see <http://www.vidjil.org/doc/user/#supported-browsers>)
+* Fix error in opening clone information after opening single analysis
+* Many other bug fixes
+
 ## 2021-05-05
 
 Improve analysis
