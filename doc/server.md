@@ -83,8 +83,10 @@ See `FILE_SOURCE` below.
 
 ## Authentication
 
-The accounts are now local to the Vidjil server.
-We intend to implement some LDAP access at some point of 2020.
+By default, accounts are local to the Vidjil server.
+
+An experimental integration to LDAP servers is now available (`LDAP` variable in defs.py).
+Contact us if you need help in setting such an authentication.
 
 ## Network
 
