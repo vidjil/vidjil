@@ -150,7 +150,9 @@ Clone.prototype = {
         var items = []
 
         for (var i = 0; i < this.warn.length; i++) {
-            items.push(this.warn[i].code + ': ' + this.warn[i].msg)
+            if (this.warn[i].code != undefined){
+                items.push(this.warn[i].code + ': ' + this.warn[i].msg)
+            }
         }
 
         return items.join('\n')
