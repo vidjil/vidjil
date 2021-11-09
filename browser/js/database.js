@@ -686,7 +686,7 @@ Database.prototype = {
 
     set_jstree: function(elem) {
         elem.jstree({
-            "plugins" : ["sort"],
+            "plugins" : ["sort", "search"],
             'core' : {
                 'multiple': false,
                 'data' : {
@@ -711,6 +711,11 @@ Database.prototype = {
             var split_file = data.selected.toString().split('/');
             var file = split_file[split_file.length - 1];
             $('#file_indicator').text(file);
+        });
+        // Search action
+        $("#jstree_search_form").submit(function(e) {
+          e.preventDefault();
+          elem.jstree(true).search($("#jstree_search_input").val());
         });
     },
 
