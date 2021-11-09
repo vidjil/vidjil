@@ -398,6 +398,28 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
 });
 
 
+QUnit.test("warnText and getHTMLwarning", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+
+    c1.warn = [
+        {"code": "Wxx", "msg": "a warning that is only an information", "level": "info"},
+        {"code": undefined, "msg": undefined, "level": "info"},
+        {"code": "W69", "msg": "Several genes with equal probability: IGKV1-39*01 IGKV1D-39*01", "level": "warn"}
+    ]
+
+    var text = c1.warnText()
+    var expected_text = "Wxx: a warning that is only an information\nW69: Several genes with equal probability: IGKV1-39*01 IGKV1D-39*01"
+    assert.includes(text, expected_text, "warnText don't include 'undefined' warning")
+
+
+    html = c1.getHtmlInfo()
+    var expected = "<tr id='modal_line_Wxx'><td id='modal_line_title_Wxx'>Wxx</td><td colspan='4' id='modal_line_value_Wxx'>a warning that is only an information</td></tr><tr id='modal_line_W69'><td id='modal_line_title_W69'>W69</td><td colspan='4' id='modal_line_value_W69'>Several genes with equal probability: IGKV1-39*01 IGKV1D-39*01</td></tr><tr id='modal_header_clonotype'><td class='header' colspan='5'>clonotype</td>"
+    assert.includes(html, expected, "gethmlinfo don't include 'undefined' warning")
+});
+
+
 QUnit.test("getHtmlInfo; feature from script", function(assert) {
 
     assert.equal(json_clone1.seg.junction.start, 10, "Start junction is 10 in JSON for clone 1");
