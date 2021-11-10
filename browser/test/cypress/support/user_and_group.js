@@ -115,12 +115,12 @@ Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
       throw new Error(`setGroupRight, error; '${rights}' is not an array of rights`)
     }
 
+    cy.goToGroupsPage()
     cy.intercept({
         method: 'GET', // Route all GET requests
         url: 'get_active_notifications*',
       }).as('getActivities')
 
-    cy.goToGroupsPage()
     cy.get('#row_group_'+grp_id)
       .click()
 
@@ -134,14 +134,15 @@ Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
       if (rights_list.indexOf(right) == -1) {
         throw new Error(`setGroupRight, error; right "${right}" don't exist`)
       }
-      var check = cy.get('#group_right_'+right)
 
       if (value == true){
-        check.check()
-             .should('be.checked')
+        cy.get('#group_right_'+right)
+          .check()
+          .should('be.checked')
       } else if (value == false){
-        check.uncheck()
-             .should('not.be.checked')
+        cy.get('#group_right_'+right)
+          .uncheck()
+          .should('not.be.checked')
       }
     }
 
