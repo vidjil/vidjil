@@ -95,6 +95,17 @@ class BrowserTest < MiniTest::Test
       assert (not $b.div(:class => 'popup_msg').present?), "Popup message still present after trying to close it"
     end
 
+    # Close flash warning of browser version
+    print( "close flash")
+    if $b.div(:class => 'flash_2').present?
+      $b.div(:class => 'flash_2').click
+    end
+    if $b.div(:class => 'flash_3').present?
+      $b.div(:class => 'flash_3').click
+    end
+    print( "close flash done")
+
+
     print "Import data.\n"
     
     # check the 'import data' menu element, and click on it
