@@ -4,9 +4,6 @@
 describe('Manipulate patient, sample and launch analysis', function () {
     before(function () {
         cy.login(Cypress.env('host'))
-        cy.fixture('l3.json').then(function (l3data) {
-            this.l3data = l3data
-        })
         cy.close_tips()
     })
     beforeEach(function () {
@@ -27,10 +24,6 @@ describe('Manipulate patient, sample and launch analysis', function () {
         var informations= "a patient created by cypress"
         cy.createPatient(id, firstname, lastname, birthday, informations)
 
-        cy.get('.uid').then(($span) => {
-          const uid = parseFloat($span.text())
-          cy.log( `uid = ${uid}`)
-        })
 
         var preprocess   = undefined
         var filename1    = "Demo-X5.fa"
@@ -39,11 +32,6 @@ describe('Manipulate patient, sample and launch analysis', function () {
         var informations = "un set d'information"
         cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations)
 
-        var uid = 2; // TODO; reuse previous uid // async
-        cy.goToPatientPage()
-        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
-          .click({force: true})
-        cy.update_icon()
 
         var sample_id = 2
         cy.launchProcess("2", sample_id)
