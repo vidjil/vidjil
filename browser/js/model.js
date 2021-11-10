@@ -195,6 +195,7 @@ Model.prototype = {
             "lenCDR3":          "CDR3 length",
             "lenSeqConsensus":  "Sequence length",
             "lenSeqAverage":    "Reads length",
+            "germline" :        "Locus",
         }
         // List of axe that must be in an array format
         this.distrib_axe_is_timmed = {

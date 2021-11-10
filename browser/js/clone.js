@@ -1011,7 +1011,9 @@ Clone.prototype = {
                     var cluster = this.m.clusters[c_index]
                     if (clone.hasSizeConstant() ) {
                         if (cluster.length){
-                            if (clone.isActive() || clone.hidden) { // cluster ?
+                            if (clone.isActive() || clone.hidden || 
+                                 (this.axes.indexOf("germline") != -1  && this.m.system_selected.indexOf(this.germline) == -1) ||
+                                 (this.m.filter.filters.filter(f => f.axis == "Tag").map(item => item.value).indexOf(clone.getTagName()) != -1 )) {
                                 this.current_reads[timepoint]  -= clone.reads[timepoint]
                                 this.current_clones[timepoint] -= 1
                             }
@@ -2166,6 +2168,7 @@ Clone.prototype = {
             else if (axe == "seg3")             { this.seg[3] =       { name: value}}
             else if (axe == "lenCDR3")          { this.seg.cdr3 =     { start: 0, 
                                                                         stop: value}} 
+            else if (axe == "germline")         { this.germline = value }
     },
 
     sameAxesAsScatter: function(scatterplot){

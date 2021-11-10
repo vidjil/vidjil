@@ -487,7 +487,10 @@ List.prototype = {
             if (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
                 (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  )||
                 (!clone.isActive()) || 
-                (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]))){ // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
+                 (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]) 
+                  // || (clone.axes != undefined && clone.axes.indexOf("germline") != -1 && this.system_selected.indexOf(clone.germline) != -1 )
+                 )){
+                  // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
                 
                 cloneDom.display("main", "none");
                 continue;
@@ -710,12 +713,15 @@ List.prototype = {
             var clusterDom = this.index_cluster[list[i]];
             var clone = this.m.clone(list[i])
 
-            if (!((clone.isActive() && this.m.clusters[list[i]].length !== 0) ||
-                  (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) != -1))){
+            if (!(clone.isActive() && this.m.clusters[list[i]].length !== 0)){
+                cloneDom.display("main", "none");
+            } else if (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) == -1){
                 cloneDom.display("main", "none");
             }else{
                 if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
                     // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
+                    cloneDom.display("main", "none");
+                } else if (clone.hasSizeDistrib() && clone.germline != undefined && this.m.system_selected.indexOf(clone.germline) == -1){
                     cloneDom.display("main", "none");
                 } else if (!clone.isActive()){
                     cloneDom.display("main", "none");

@@ -412,7 +412,43 @@ class TestClones < BrowserTest
     assert ($b.a(:id => "download_info_0_airr").present?), ">> Download button is present in getHTMLinfo returned"
   end
 
+  def test_12_distrib_splitted_by_locus
+    set_browser("/tools/tests/data/fused_multiple_distrib_locus.vidjil")
 
+    ### Tests on size after top change
+    slider = $b.menu_item("top_slider")
+    slider.click
+    $b.menu_filter.hover
+    slider.send_keys :arrow_left
+    slider.send_keys :arrow_left
+    slider.send_keys :arrow_left
+    $b.clone_in_list("0").click # sortir pour m.update() ?*
+
+    $b.send_keys 4;
+    $b.update_icon.wait_while(&:present?)
+    assert (     $b.clone_in_scatterplot('0').present?), ">> 'real' clone exist in sp"
+    assert (     $b.clone_in_scatterplot('17').present?), ">> 'corresponding distrib' clone (IGH, len=160) exist in sp"
+    assert (     $b.clone_in_scatterplot('22').present?), ">> 'corresponding distrib' clone (TRD, len=173) exist in sp"
+    assert ( not $b.clone_in_scatterplot('29').present?), ">> 'NOT correpsonding distrib' clone DON'T exist in sp"
+    assert (     $b.clone_in_list('17').present?), ">> 'corresponding distrib' clone (IGH, len=160) exist in list"
+    assert (     $b.clone_in_list('22').present?), ">> 'corresponding distrib' clone (TRD, len=173) exist in list"
+    
+    # Verify that data don't reappear at m.update()
+    $b.scatterplot.click 
+    assert ( not $b.clone_in_scatterplot('29').present?), ">> 'other' clone DON'T exist in graph"
+
+
+    ## Hide TRD locus and verify that it is now hidden
+    $b.locus_topleft('TRD').click
+    $b.update_icon.wait_while(&:present?)
+    # visibility in scatterplot
+    assert (     $b.clone_in_scatterplot('17').present?), ">> 'corresponding distrib' clone (IGH, len=160) exist in sp"
+    assert ( not $b.clone_in_scatterplot('22').present?), ">> 'corresponding distrib' clone (TRD, len=173) is hidden"
+    # visibility in list
+    assert (     $b.clone_in_list('17').present?), ">> 'corresponding distrib' clone (IGH, len=160) exist in clone list"
+    assert ( not $b.clone_in_list('22').present?), ">> 'corresponding distrib' clone (TRD, len=173) is hidden in clone list"
+    
+  end
   # Not really a test
   def test_zz_close
     close_everything
