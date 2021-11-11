@@ -158,15 +158,20 @@ Natalia Izotova et al.,
 Nature Communications, 2021,
 <https://doi.org/10.1038/s41467-021-21834-9>
 
+Vincent Jauvague et al.,
+*RNA-based immunoglobulin repertoire sequencing is a new tool for the management of monoclonal gammopathy of renal (kidney) significance.*
+Kidney International, 2021,
+<https://doi.org/10.1016/j.kint.2021.10.017>
+
 Takashi Kanamori et al.,
 *Genomic analysis of multiple myeloma using targeted capture sequencing in the Japanese cohort*,
 British Journal of Haematology, 2020,
 <https://doi.org/10.1111/bjh.16720>
 
 Kenji Kimura et al.,
-*Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next Generation Sequencing*,
-ASH 2019, Blood, 134(S1):1748,
-<https://doi.org/10.1182/blood-2019-125028>
+*Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next-Generation Sequencing*,
+Experimental Hematology, 2021, 101:34-41.e4
+<https://doi.org/10.1016/j.exphem.2021.08.001>
 
 Michaela Kotrova et al.,
 *The predictive strength of next-generation sequencing MRD detection for relapse compared with current methods in childhood ALL*,
