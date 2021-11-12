@@ -6,13 +6,20 @@
 # Step 3, late, longuer or tricky: ff45-browser-functional-external
 
 
-before_script:
+.before_script_global: &before_script_global
   - make demo
   - make data
   - make germline
   - make -C browser sha1
   - cp -p doc/analysis-example.vidjil browser/
 
+.before_script_global_docker: &before_script_global_docker
+  - apt update && apt install -y make unzip wget
+  - *before_script_global
+
+before_script:
+  - *before_script_global
+  
 stages:
   - test_tools
   - test_quality
@@ -442,8 +449,10 @@ code_quality_custom:
 test_server_unit:
     image: python:2.7-slim
     stage: test_unit
+    before_script:
+      - *before_script_global_docker
     script:
-      - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends gcc libldap2-dev libssl-dev libsasl2-dev python-ijson libyajl2 python-cffi wget unzip procps make
+      - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends gcc libldap2-dev libssl-dev libsasl2-dev python-ijson libyajl2 python-cffi wget unzip procps
       - pip install -r requirements.txt
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
