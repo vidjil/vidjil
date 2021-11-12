@@ -440,17 +440,14 @@ code_quality_custom:
 # Server
 
 test_server_unit:
+    image: python:2.7-slim
     stage: test_unit
     script:
-      - virtualenv $CI_COMMIT_SHORT_SHA
-      - source $CI_COMMIT_SHORT_SHA/bin/activate
-      - sudo apt-get update && apt-get install -y --no-install-recommends gcc libsasl2-dev python-dev python-setuptools libldap2-dev libssl-dev libsasl2-dev
+      - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends gcc libldap2-dev libssl-dev libsasl2-dev python-ijson libyajl2 python-cffi wget unzip procps make
       - pip install -r requirements.txt
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
-      - make unit_server || (make -C server kill_fuse_server; deactivate; false)
-      - make -C server kill_fuse_server
-      - deactivate
+      - make unit_server
     artifacts:
       reports:
         junit: server/web2py/test-reports/TEST*xml
@@ -461,7 +458,7 @@ test_server_unit:
       - dev
       - schedules
     tags:
-      - web
+      - cidocker
     extends:
       - .need_for_quick_test
 
