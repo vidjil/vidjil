@@ -15,7 +15,7 @@
 
 .before_script_global_docker: &before_script_global_docker
   before_script:
-    - apt update && apt install -y make unzip wget
+    - apt update && apt upgrade -y && apt install -y make unzip wget
     - *before_script_global
 
 before_script:
