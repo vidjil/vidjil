@@ -135,15 +135,10 @@ Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
         throw new Error(`setGroupRight, error; right "${right}" don't exist`)
       }
 
-      cy.wait(1000)
       if (value == true){
-        cy.get('#group_right_'+right)
-          .check()
-          .should('be.checked')
+        cy.request('POST','/vidjil/group/rights?value=true&name=sample_set&right='+right+'&id='+grp_id+'&=')
       } else if (value == false){
-        cy.get('#group_right_'+right)
-          .uncheck()
-          .should('not.be.checked')
+        cy.request('POST','/vidjil/group/rights?value=false&name=sample_set&right='+right+'&id='+grp_id+'4&=')
       }
     }
 
