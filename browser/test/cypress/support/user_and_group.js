@@ -135,6 +135,7 @@ Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
         throw new Error(`setGroupRight, error; right "${right}" don't exist`)
       }
 
+      cy.wait(1000)
       if (value == true){
         cy.get('#group_right_'+right)
           .check()
