@@ -452,14 +452,21 @@ Aligner.prototype = {
 
         //update dom object of sequence in aligner
         var keys2 = Object.keys(this.sequence)
+        var l_spacing;        
         for (var j=0; j<keys2.length; j++)  
             if (this.sequence[keys2[j]] != null){
                 var dom = this.index[keys2[j]]
                 dom.display("main", "block");
                 dom.replace("seq-fixed", this.build_spanF(keys2[j]));
+                if (l_spacing == undefined)
+                    l_spacing = this.sequence[keys2[j]].updateLetterSpacing();
+                else
+                    this.sequence[keys2[j]].updateLetterSpacing(l_spacing);
                 dom.content("seq-mobil", this.sequence[keys2[j]].toString());        
             }
 
+        var div_segmenter = document.getElementsByClassName("segmenter")[0];
+        $('.seq-fixed').css({ 'left': + $(div_segmenter).scrollLeft() });
         this.updateStats();
 
         return this;
