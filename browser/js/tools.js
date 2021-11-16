@@ -948,7 +948,7 @@ var header = function(content, title, time_length) {
     return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
 }
 var row_1  = function(item, content, title, time_length) { 
-    title = (title == undefined) ? clean_title(item) : clean_title(title)
+    title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
     return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
 }
 var row_from_list  = function(item, content, title, time_length) { 

@@ -150,7 +150,9 @@ Clone.prototype = {
         var items = []
 
         for (var i = 0; i < this.warn.length; i++) {
-            items.push(this.warn[i].code + ': ' + this.warn[i].msg)
+            if (this.warn[i].code != undefined){
+                items.push(this.warn[i].code + ': ' + this.warn[i].msg)
+            }
         }
 
         return items.join('\n')
@@ -1568,7 +1570,9 @@ Clone.prototype = {
             // put warning html content, with list of concerned sample, without duplication
             for (var warn in warnings) {
                 var pluriel = warnings[warn].samples.length > 1 ? "s" : ""
-                html += row_1(warnings[warn].code, warnings[warn].msg, undefined, time_length);
+                if (warnings[warn].code != undefined){
+                    html += row_1(warnings[warn].code, warnings[warn].msg, undefined, time_length);
+                }
             }
         }
 
