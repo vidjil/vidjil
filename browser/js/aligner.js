@@ -413,34 +413,32 @@ Aligner.prototype = {
         }
 
         var self = this;
-        list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
+        var needDomUpdate = false;
         var cloneID;
+
+        list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
 
         // remove unselected clones
         for (var i = 0; i < list.length; i++) {     
             cloneID = list[i];   
             if (!this.m.clone(cloneID).isSelected()) 
-                if (this.sequence[cloneID])                    
+                if (this.sequence[cloneID]){                 
                     this.removeSequence(cloneID, false);
-        }
-
-        // update clones already in segmenter
-        for (var k = 0; k < this.sequence_order.length; k++) {   
-            cloneID = this.sequence_order[k];
-            if(list.indexOf(cloneID) != -1){
-                list.splice( list.indexOf(cloneID), 1 );
-                this.addCloneToSegmenter(cloneID);
-            }
+                    needDomUpdate=true;
+                }
         }
 
         // add newly selected clones
         for (var j = 0; j < list.length; j++) {     
             cloneID = list[j];
-            if (this.m.clone(cloneID).isSelected()) 
+            if (this.m.clone(cloneID).isSelected() && 
+                Object.keys(this.sequence).indexOf(cloneID) == -1 ){ 
                 this.addCloneToSegmenter(cloneID);
+                needDomUpdate=true;
+            }
         }
 
-        this.updateDom()
+        if (needDomUpdate) this.updateDom()
     },
 
     updateDom:function(){
