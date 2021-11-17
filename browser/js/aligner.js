@@ -413,53 +413,56 @@ Aligner.prototype = {
         }
 
         var self = this;
-        list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
         var cloneID;
+        
+        list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
 
         // remove unselected clones
         for (var i = 0; i < list.length; i++) {     
             cloneID = list[i];   
             if (!this.m.clone(cloneID).isSelected()) 
-                if (this.sequence[cloneID])                    
+                if (this.sequence[cloneID])             
                     this.removeSequence(cloneID, false);
-        }
-
-        // update clones already in segmenter
-        for (var k = 0; k < this.sequence_order.length; k++) {   
-            cloneID = this.sequence_order[k];
-            if(list.indexOf(cloneID) != -1){
-                list.splice( list.indexOf(cloneID), 1 );
-                this.addCloneToSegmenter(cloneID);
-            }
         }
 
         // add newly selected clones
         for (var j = 0; j < list.length; j++) {     
             cloneID = list[j];
-            if (this.m.clone(cloneID).isSelected()) 
+            if (this.m.clone(cloneID).isSelected() && 
+                Object.keys(this.sequence).indexOf(cloneID) == -1 ){ 
                 this.addCloneToSegmenter(cloneID);
+            }
         }
 
-        this.updateDom()
+        this.updateDom(list)
     },
 
-    updateDom:function(){
-        //hide all sequence dom object
+    updateDom:function(list){
         var keys = Object.keys(this.index)
-        for (var i=0; i<keys.length; i++)
-            if (this.index[keys[i]] != null) 
-                this.index[keys[i]].display("main", "none");
+        var keys2 = Object.keys(this.sequence)
+        if (typeof list == "undefined") list = Object.keys(this.sequence)
 
         //update dom object of sequence in aligner
-        var keys2 = Object.keys(this.sequence)
-        for (var j=0; j<keys2.length; j++)  
-            if (this.sequence[keys2[j]] != null){
-                var dom = this.index[keys2[j]]
+        var l_spacing;        
+        for (var j=0; j<list.length; j++)  
+            if (this.sequence[list[j]] != null){
+                var dom = this.index[list[j]]
                 dom.display("main", "block");
-                dom.replace("seq-fixed", this.build_spanF(keys2[j]));
-                dom.content("seq-mobil", this.sequence[keys2[j]].toString());        
+                dom.replace("seq-fixed", this.build_spanF(list[j]));
+                if (l_spacing == undefined)
+                    l_spacing = this.sequence[list[j]].updateLetterSpacing();
+                else
+                    this.sequence[list[j]].updateLetterSpacing(l_spacing);
+                dom.content("seq-mobil", this.sequence[list[j]].toString());        
             }
 
+        //hide unused sequence dom object
+        for (var i=0; i<keys.length; i++)
+            if (this.index[keys[i]] != null && keys2.indexOf(keys[i])==-1) 
+                this.index[keys[i]].display("main", "none");
+
+        var div_segmenter = document.getElementsByClassName("segmenter")[0];
+        $('.seq-fixed').css({ 'left': + $(div_segmenter).scrollLeft() });
         this.updateStats();
 
         return this;

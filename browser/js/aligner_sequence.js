@@ -255,7 +255,6 @@ Sequence.prototype = {
 
     toString: function(div) {
         if (typeof this.div == "undefined") this.div = div;
-        this.updateLetterSpacing();
         this.updateLayers();
     },
 
@@ -582,21 +581,31 @@ Sequence.prototype = {
         }
     },
 
-    updateLetterSpacing: function(){
+    updateLetterSpacing: function(l_spacing){
         var div_nuc = this.div.getElementsByClassName("seq_layer_test")[0];
-        div_nuc.style.letterSpacing = "0px";
+        
+        if (typeof l_spacing == "undefined"){
 
-        var size = 1000;
-        var text = "";
-        for (var i = 0; i < size; i++) text+="A";
-        var div = document.createElement("div");
-        div.style.display = "block";
-        div.textContent = text;
-        div_nuc.appendChild(div);
-        this.c_size = div.offsetWidth/size;
-        div_nuc.removeChild(div);
-        this.l_spacing = CHAR_WIDTH - this.c_size;
+            div_nuc.style.letterSpacing = "0px";
 
-        div_nuc.style.letterSpacing = this.l_spacing+"px";
+            var size = 1000;
+            var text = "";
+            for (var i = 0; i < size; i++) text+="A";
+            var div = document.createElement("div");
+            div.style.display = "block";
+            div.textContent = text;
+            div_nuc.appendChild(div);
+            this.c_size = div.offsetWidth/size;
+            div_nuc.removeChild(div);
+            this.l_spacing = CHAR_WIDTH - this.c_size;
+
+            div_nuc.style.letterSpacing = this.l_spacing+"px";
+        }
+        else{
+            if (l_spacing == this.l_spacing) return this.l_spacing;
+            this.l_spacing = l_spacing;
+            div_nuc.style.letterSpacing = this.l_spacing+"px";
+        }
+        return this.l_spacing;
     },
 };
