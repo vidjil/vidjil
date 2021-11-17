@@ -17,6 +17,7 @@ Cypress.Commands.add('clone_rename', (id, new_name) => {
 
 })
 
+
 Cypress.Commands.add('getCloneInList', (id) => {
 
   cy.get('#listElem_'+id+' > .nameBox')
@@ -36,4 +37,21 @@ Cypress.Commands.add('getCloneInScatterplot', (id) => {
 Cypress.Commands.add('getClusterInList', (id) => {
   cy.get('#cluster1')
     .should("exist")
+})
+
+
+Cypress.Commands.add('selectClone', (id, ctrl_pressed) => {
+    cy.get('#listElem_'+id+' > .nameBox')
+      .click({ctrlKey: ctrl_pressed})
+})
+
+Cypress.Commands.add('openClusterClone', (id) => {
+    cy.get('#clusterBox_'+id+' > .icon-plus')
+      .click()
+    cy.update_icon()
+})
+Cypress.Commands.add('closeClusterClone', (id) => {
+    cy.get('#clusterBox_'+id+' > .icon-minus')
+      .click()
+    cy.update_icon()
 })
