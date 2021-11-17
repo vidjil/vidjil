@@ -28,7 +28,7 @@ describe('Test sandbox', function () {
 
         // it('02-cluster_show',  function() {
 
-        cy.get('#clusterBox_1 > .icon-plus').click()
+        cy.openClusterClone('1')
 
         cy.get('#cluster1')
           .should('be.visible');
@@ -36,7 +36,7 @@ describe('Test sandbox', function () {
 
         // it('03-cluster_hide',  function() {
 
-        cy.get('#clusterBox_1 > .icon-minus').click()
+        cy.closeClusterClone('1')
 
         cy.get('#cluster1')
           .should('not.be.visible');
@@ -84,7 +84,7 @@ describe('Test sandbox', function () {
 
         // switch the filter OFF
         cy.get('#filter_switch_sample').click({force: true})
-        cy.get('#listElem_0 > .nameBox').click() // close filter menu
+        cy.selectClone('0').click() // close filter menu
         cy.get('#time0').should("have.text", "2019-12-17")
         cy.get('#time1').should("have.text", "+10")
 
