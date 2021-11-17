@@ -21,7 +21,8 @@ require(["jquery",
          "js/lib/jquery.atwho",
          "js/lib/vmi",
          "js/lib/svgExport",
-         "js/lib/bioseq"], function() {
+         "js/lib/bioseq",
+         "js/lib/select2.min"], function() {
              // Then config file (needed by Vidjil)
              require(['js/conf'], function() {
                  loadAfterConf()

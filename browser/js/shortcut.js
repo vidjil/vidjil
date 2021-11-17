@@ -87,6 +87,11 @@ Shortcut.prototype = {
     checkKey : function (e) {
         var self = this
 
+        if (document.getElementsByClassName("select2-dropdown").length) {
+            // select filter opened; bypass action
+            return
+        }
+
         this.inProgress++
         setTimeout(function(){
             self.inProgress--

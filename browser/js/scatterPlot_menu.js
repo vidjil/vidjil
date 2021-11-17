@@ -148,6 +148,10 @@ ScatterPlot_menu.prototype = {
             self.changeYaxis();
             self.cancelPreset();
         }
+
+        $(".axis_select_preset_select").select2();
+        $("[name='select_x[]']").select2();
+        $("[name='select_y[]']").select2();
     },
 
     initPreset: function(){
