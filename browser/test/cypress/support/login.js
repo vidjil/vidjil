@@ -17,7 +17,6 @@ Cypress.Commands.add('login', (host) => {
 })
 
 
-
 Cypress.Commands.add('fillLogin', (user, password) => { 
     cy.get('#auth_user_email', { timeout: 10000 })
       .should('exist').should('be.visible')
@@ -34,4 +33,30 @@ Cypress.Commands.add('fillLogin', (user, password) => {
 Cypress.Commands.add('verifyLogin', (host) => { 
   cy.get('body').should('not.contain', 'You can request an account')
   cy.get('body').should('contain', 'logout')
+})
+
+
+// LOGOUT
+Cypress.Commands.add('logout', (host) => {
+  cy.get('#login-container')
+    .should('exist')
+  cy.intercept({
+        method: 'GET', // Route all GET requests
+        url: 'get_active_notifications*',
+      }).as('getActivities')
+  cy.get('#login-container > .button')
+    .click()
+  cy.wait(['@getActivities'])
+
+  cy.closeDBPage()
+  cy.openDBPage()
+  cy.verifyLogout()
+})
+
+
+Cypress.Commands.add('verifyLogout', (host) => {
+  cy.get('#auth_user_email', { timeout: 10000 })
+      .should('exist')
+      .should('be.visible')
+  cy.get('body').should('contain', 'You can request an account')
 })
