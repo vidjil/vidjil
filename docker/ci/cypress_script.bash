@@ -2,6 +2,7 @@ echo "$ change chmod of cypress directory"
 chmod 777 cypress -R 
 
 make -C /app/cypress/fixtures/demo
+mkdir -p /app/cypress/fixtures/demo/empty_directory
 echo "==> ls /app/cypress/fixtures/demo"
 ls /app/cypress/fixtures/demo
 
