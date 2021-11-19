@@ -42,13 +42,7 @@ stages:
   - benchmark
   - publish_release
   - deploy_prod
-# Anchors
 
-.coverage_dependency:
-  artifacts: &lcov_artifact
-    paths:
-      - algo/lcov_test_*.filtered
-    expire_in: 1 week
 
 # Tools
 
