@@ -349,6 +349,8 @@ class MsgUserAdapter(logging.LoggerAdapter):
         return new_msg, kwargs
     
     def admin(self, msg, extra=None):
+        if extra is None:
+            extra = {'user_id': auth.user.id, 'record_id': 0, 'table_name': 'ADMIN'}
         self.log(logging.ADMIN, msg, extra)
 #
 class UserLogHandler(logging.Handler):
