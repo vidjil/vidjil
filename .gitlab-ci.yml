@@ -28,11 +28,6 @@ stages:
 
 # Anchors
 
-.coverage_dependency:
-  artifacts: &lcov_artifact
-    paths:
-      - algo/lcov_test_*.filtered
-    expire_in: 1 week
 
 # Tools
 
@@ -167,7 +162,7 @@ test_browser_unit:
     - HEADLESS=1 make -C browser/test functional
   artifacts:
     paths:
-    - browser/ 
+    - browser/
     when: always
     reports:
       junit: browser/test/test/TEST-*.xml
@@ -210,7 +205,7 @@ test_browser_unit:
   extends: .browser-functional-external
   variables:
     WATIR_CHROME: "1"
-    
+
 ff32-browser-functional:
   extends: .browser-functional
   variables:
@@ -223,7 +218,7 @@ ff45-browser-functional:
 
 chrome-browser-functional:
   extends: .browser-functional-chrome
-        
+
 old-chrome-browser-functional:
   extends: .browser-functional-chrome
   tags:
@@ -241,7 +236,7 @@ ff45-browser-functional-external:
 
 chrome-browser-functional-external:
   extends: .browser-functional-external-chrome
-    
+
 old-chrome-browser-functional-external-chrome:
   extends: .browser-functional-external-chrome
   tags:
@@ -289,7 +284,7 @@ ff45-browser-tutorial:
 
 chrome-browser-tutorial:
   extends: .browser-tutorial-chrome
-        
+
 old-chrome-browser-tutorial:
   extends: .browser-tutorial-chrome
   tags:
@@ -499,7 +494,7 @@ deploy_germlines:
   only:
     - manual
     - /^feature-.*g.*\/.*$/
-    
+
 
 
 stop_deploy_review:

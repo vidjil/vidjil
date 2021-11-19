@@ -5,6 +5,12 @@
   tags:
     - cidocker
 
+.coverage_dependency:
+  artifacts: &lcov_artifact
+    paths:
+      - algo/lcov_test_*.filtered
+    expire_in: 1 week
+
 ## vidjil-algo, regular tests
 
 algo_unit:
