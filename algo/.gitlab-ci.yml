@@ -1,7 +1,14 @@
 
+.vidjil-algo_template: &vidjil-algo
+  image: gcc:8
+  needs: []
+  tags:
+    - cidocker
+
 ## vidjil-algo, regular tests
 
 algo_unit:
+  <<: *vidjil-algo
   stage: test_unit
   script: make -C algo unit_coverage
   artifacts:
@@ -11,6 +18,7 @@ algo_unit:
     - schedules
 
 algo_should:
+  <<: *vidjil-algo
   stage: test_functional
   script: make -C algo should_coverage
   artifacts:
@@ -22,6 +30,7 @@ algo_should:
     - schedules
 
 algo_shouldvdj:
+  <<: *vidjil-algo
   stage: test_shouldvdj
   script: make -C algo shouldvdj_coverage
   artifacts:
@@ -31,6 +40,7 @@ algo_shouldvdj:
     - schedules
 
 algo_coverage:
+  <<: *vidjil-algo
   stage: coverage
   coverage: /^\s*lines\.*:\s+([0-9.]+\%)/
   script:
