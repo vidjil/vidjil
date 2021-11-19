@@ -33,6 +33,8 @@
                                     {{=row.id}} &ndash; {{=row.first_name}} {{=row.last_name}}
                                 </option> {{pass}}
                         </select>
+                        <icon class="icon-cancel-squared" id="desimpersonate_btn" type="button" class="btn btn-navbar"
+                         onclick="db.call('default/impersonate', {'id' : '0', 'next': '{{=request.url}}'});"/>
                     </span>{{pass}}
         
         

@@ -18,7 +18,7 @@ describe('Creation of users and groups', function () {
     })
 
 
-    it('Open db; access to various page of the bd',  function() {
+    it('01-Open db; access to various page of the bd',  function() {
         cy.isDbPageVisible().should('equal', true)
 
         // These function get their own should inside to verify that correct db element is present and visible
@@ -39,7 +39,7 @@ describe('Creation of users and groups', function () {
     })
 
 
-    it('Open db; Users',  function() {
+    it('02-Open db; Users',  function() {
         cy.openDBPage()
         cy.goToUsersPage()
 
@@ -57,5 +57,36 @@ describe('Creation of users and groups', function () {
     })
 
 
+    it('03-impersonate',  function() {
+
+        cy.get('#db_auth_name')
+          .contains("System Administrator")
+
+        cy.get('#desimpersonate_btn')
+          .should('not.exist')
+
+        cy.intercept({
+            method: 'GET', // Route all GET requests
+            url: 'get_active_notifications*',
+          }).as('getActivities')
+
+        cy.get('#choose_user')
+          .select("2")
+
+        cy.wait(['@getActivities'])
+        cy.update_icon(100)
+
+        cy.get('#db_auth_name')
+          .should('not.exist')
+        cy.get('#desimpersonate_btn')
+          .should('exist')
+          .click()
+        cy.wait(['@getActivities'])
+
+        cy.get('#db_auth_name')
+          .contains("System Administrator")
+
+
+    })
 
 })
