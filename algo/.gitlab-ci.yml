@@ -1,6 +1,10 @@
 
 .vidjil-algo_template: &vidjil-algo
   image: gcc:8
+  before_script:
+    - apt-get update
+    - apt-get install -y lcov time
+    - !reference [.before_script_global]
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
