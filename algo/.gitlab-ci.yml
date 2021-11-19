@@ -1,6 +1,9 @@
 
 .vidjil-algo_template: &vidjil-algo
   image: gcc:8
+  only:
+    - /^feature-.*a.*\/.*$/
+    - schedules
   needs: []
   tags:
     - cidocker
@@ -19,9 +22,6 @@ algo_unit:
   script: make -C algo unit_coverage
   artifacts:
     <<: *lcov_artifact
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
 
 algo_should:
   <<: *vidjil-algo
@@ -31,9 +31,6 @@ algo_should:
     <<: *lcov_artifact
     reports:
       junit: algo/tests/should.xml
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
 
 algo_shouldvdj:
   <<: *vidjil-algo
@@ -41,9 +38,6 @@ algo_shouldvdj:
   script: make -C algo shouldvdj_coverage
   artifacts:
     <<: *lcov_artifact
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
 
 algo_coverage:
   <<: *vidjil-algo
@@ -56,9 +50,6 @@ algo_coverage:
     paths:
       - coverage/
     expire_in: 1 week
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
 
 
 ## vidjil-algo, other tests
