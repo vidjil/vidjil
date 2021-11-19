@@ -1013,7 +1013,7 @@ Clone.prototype = {
                         if (cluster.length){
                             if (clone.isActive() || clone.hidden || 
                                  (this.axes.indexOf("germline") != -1  && this.m.system_selected.indexOf(this.germline) == -1) ||
-                                 (this.m.filter.filters.filter(f => f.axis == "Tag").map(item => item.value).indexOf(clone.getTagName()) != -1 )) {
+                                 (this.m.filter.getValuesByAxis("Tag").indexOf(clone.getTagName()) != -1 )) {
                                 this.current_reads[timepoint]  -= clone.reads[timepoint]
                                 this.current_clones[timepoint] -= 1
                             }

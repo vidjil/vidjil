@@ -265,6 +265,20 @@ Filter.prototype = {
         return list
     },
 
+    getValuesByAxis: function(axis){
+        return this.filters.filter(function(f) { return f.axis == "Tag" })
+
+    },
+
+    /**
+     * Return each values of filters of a specified axis
+     * @param  {String} axis Name of an axis to use for filter
+     * @return {[type]}      [description]
+     */
+    getValuesForAxis: function(axis){
+        this.getValuesByAxis().map(function(item) { return item.value})
+    },
+
     // return the list of clones currently visible
     visible: function (){
         var list = [];
