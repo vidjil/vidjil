@@ -561,12 +561,15 @@ class Diversity:
         for k in self.keys:
             if data == None or not (k in data):
                 self.d[k] = ["na"]
+            elif isinstance(data[k], list):
+                self.d[k]= data[k]
             else:
                 self.d[k]= [data[k]]
 
     def __add__(self, other):
         for k in self.keys:
             self.d[k].append(other.d[k][0])
+
         return self
 
     def __str__(self):
@@ -805,7 +808,7 @@ class ListWindows(VidjilJson):
                 print()
 
         time = os.path.getmtime(file_path)
-        self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
+        self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]*self.d["samples"].d["number"]
 
     def loads_vidjil(self, string, pipeline, verbose=True):
         '''init listWindows with a json string'''
@@ -1630,7 +1633,7 @@ def exec_command(command, directory, input_file):
     basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
     command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
     com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
-    print("Preprocess command: \n%s" % com)
+    print("Pre/Post process command: \n%s" % com)
     os.system(com)
     print()
     return ff.name
@@ -1665,6 +1668,8 @@ def main():
     group_options.add_argument('--first', '-f', type=int, default=0, help='take only into account the first FIRST files (0 for all) (%(default)s)')
 
     group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR). \
+                                             Program should take arguments -i/-o for input of vidjil file and output of temporary modified vidjil file.')
+    group_options.add_argument('--post', type=str,help='post-process program (launched on fused .vidjil file) (needs defs.PRE_PROCESS_DIR). \
                                              Program should take arguments -i/-o for input of vidjil file and output of temporary modified vidjil file.')
 
     group_options.add_argument("--distribution", "-d", action='append', type=str, help='compute the given distribution; callable multiple times')
@@ -1850,10 +1855,22 @@ def main():
         del jlist_fused.d["clones"]
 
     print("### Save merged file")
+
+
+    if args.post:
+        print("Post-processing files...")
+        jlist_fused.save_json(args.output)
+        post_out_name = exec_command(args.post, PRE_PROCESS_DIR, args.output)
+        # reload post processed file
+        jlist_fused = ListWindows()
+        jlist_fused.load(post_out_name, args.pipeline)
+        jlist_fused.build_stat()
+
     if args.export_airr:
-        output= args.output.replace(".vidjil", ".airr")
+        output = args.output.replace(".vidjil", ".airr")
         jlist_fused.save_airr(output)
     else:
+        output =  args.output
         jlist_fused.save_json(args.output)
     
     
