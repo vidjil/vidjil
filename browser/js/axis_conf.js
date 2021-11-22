@@ -330,6 +330,7 @@ AXIS_DEFAULT = {
         color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
         autofill:   true,
         pretty:     function(size) {return createClassedSpan("sizeBox sixChars", (self.m ? self.m : self).getStrAnySize(undefined, size)) },
+        hover:      function(clone, t){ return ""+ clone.getPrintableSize(t) + " reads"}
     },
     "Size (other)" : {
         doc:        "ratio of the number of reads of each clonotype to the total number of reads in the selected locus, on the previously selected sample",
