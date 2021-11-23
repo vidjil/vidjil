@@ -1191,7 +1191,7 @@ span.warningReads {
   fill: #fdf6e3;
   stroke-width: 2px;
   stroke: #fdf6e3;
-  fill-opacity: 0.2;
+  fill-opacity: 0.15;
 }
 .sp_slider_box {
   height: 100%;
@@ -2507,7 +2507,7 @@ span .end-codon {
 .seq_layer_highlight {
   border-left: solid black 1px;
   border-right: solid black 1px;
-  opacity: 0.1;
+  opacity: 0.15;
   height: 15px;
   top: 5px;
   margin-left: -2px;
