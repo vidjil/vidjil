@@ -319,7 +319,7 @@
 
 
                         <div class="menu_box">
-                            primer set for interpolated length<br/>(experimental)
+                            primer set<br/>
                             <label for="primerBiomed2" class="buttonSelector" >
                                 <input type="radio" id="primerBiomed2" name="primers" value="biomed2" onclick="m.switchPrimersSet('biomed2')"/>EuroClonality/BIOMED-2
                             </label>
@@ -333,13 +333,10 @@
                             </label>
 			                <!-- TODO : construire liste à partir des data disponibles/chargées dans le model.
                               TODO : passer ça en liste deroulante ? -->
-                        </div>
 
-
-                        <div class="menu_box">
                             <div id="remove_primer_external"
                                 title="Primers will be trimmed before sending them to an external tool (such as IMGT/V-QUEST, IgBlast, Blast, …)">
-                                <input id="remove_primer_external_check" type="checkbox">                             Trimming primers for external tools</input>
+                                <input id="remove_primer_external_check" type="checkbox">trim primers before external analyses</input>
                             </div>
                         </div>
 
