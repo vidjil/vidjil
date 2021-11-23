@@ -22,6 +22,15 @@ Cypress.Commands.add('selectClone', (id, ctrl_pressed) => {
       .click({ctrlKey: ctrl_pressed})
 })
 
+Cypress.Commands.add('selectCloneMulti', (ids) => {
+  for (var i = 0; i < ids.length; i++) {
+    var id = ids[i]
+    cy.get('#listElem_'+id+' > .nameBox')
+      .click({ctrlKey: (i==0 ? false: true), force: true})
+  }
+  cy.update_icon()
+})
+
 Cypress.Commands.add('openClusterClone', (id) => {
     cy.get('#clusterBox_'+id+' > .icon-plus')
       .click()
