@@ -149,9 +149,10 @@ ScatterPlot_menu.prototype = {
             self.cancelPreset();
         }
 
-        $(".axis_select_preset_select").select2();
-        $("[name='select_x[]']").select2();
-        $("[name='select_y[]']").select2();
+        // Comment while CSS error with opened select2 menu
+        // $(".axis_select_preset_select").select2();
+        // $("[name='select_x[]']").select2();
+        // $("[name='select_y[]']").select2();
     },
 
     initPreset: function(){
