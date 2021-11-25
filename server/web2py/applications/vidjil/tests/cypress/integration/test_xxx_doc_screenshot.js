@@ -16,7 +16,7 @@ describe('Creation of users and groups', function () {
 
         cy.closeDBPage()
         
-        cy.openAnalysis("doc/demo_lil_l3_tutorial.vidjil", "doc/demo_lil_l3_tutorial.analysis")
+        cy.openAnalysis("doc/demo_lil_l3_tutorial.vidjil", "doc/demo_lil_l3_tutorial.analysis", 25000)
 
         cy.screenshot('starting_state')
 

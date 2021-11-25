@@ -51,7 +51,7 @@ Cypress.Commands.add('open_menu_import', () => {
 
 
 
-Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis) => {
+Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis, timeout) => {
   cy.open_menu_import()
   cy.get('#import_data_anchor').click()
   cy.log(`file_vidjil: ${file_vidjil}`)
@@ -68,13 +68,13 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis) => {
   cy.get("button[id=start_import_json]")
     .click();
   // Wait the end of the loading (async)
-  cy.update_icon()
+  cy.update_icon(timeout)
 })
 
 /**
  * Allow to wait for update icon to be not visible
  */
-Cypress.Commands.add("update_icon", (delay=0) => {
+Cypress.Commands.add("update_icon", (delay=0, timeout=undefined) => {
   let visible_icon = false;
   cy.get('#updateIcon')
     .then( ($icon) => {
@@ -87,8 +87,8 @@ Cypress.Commands.add("update_icon", (delay=0) => {
       }
     }
   )
-  
-  cy.get('#updateIcon', { timeout: 6000 })
+  timeout = (timeout!=undefined) ? timeout : 6000
+  cy.get('#updateIcon', { timeout: timeout })
     .should("not.visible")
 
 })
