@@ -63,6 +63,8 @@ describe('Creation of users and groups', function () {
 
     it('03-impersonate',  function() {
 
+        cy.goToPatientPage()
+
         cy.get('#db_auth_name')
           .contains("System Administrator")
 
