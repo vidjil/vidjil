@@ -501,7 +501,7 @@ List.prototype = {
             if (cloneDom.getElement(divClass) == null) return false
 
             cloneDom.color(  divClass, clone.getColor());
-            cloneDom.content(divClass, clone.getShortName());
+            cloneDom.content(divClass, clone.getShortName().replace('<', '&lt;'));
             cloneDom.title(  divClass, clone.getNameAndCode());
             
             //update clone axis
