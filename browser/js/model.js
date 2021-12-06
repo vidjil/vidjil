@@ -2199,7 +2199,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     /**
      * return sample/time name in a specified format
      * @param {integer} timeID - sample/time index
-     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 
+     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 'order'
      * @return {string} sample name
      * */
     getStrTime: function (timeID, format){
@@ -2207,6 +2207,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var result = "-/-"
 
         switch (format) {
+            case "order":
+                result = m.samples.order.indexOf(timeID);
+                if (result == -1) result = "-/-";
+                break;
+            case "original_name":
+                result = this.samples.original_names[timeID]
+                break;
             case "name":
             case "names":
                 //TODO resolve thid hack
