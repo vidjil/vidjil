@@ -1061,12 +1061,12 @@ QUnit.test("deletion_feature", function(assert) {
 
     // Give feature name 5/3, without inclusion
     // "primer5": {"start": 2, "stop": 10 }, // 1based state
-    // "primer3": {"start": 26, "stop": 34 }
+    // "primer3": {"start": 26, "stop": 34 } // last nt of the real sequence
     //                   primer5                 primer3 
-    var c4_init_seq = "ATgggtccaGTCGTGAACTGTGCATgccgatagaCGAGTACGATGCCAGGTATTACC"
-    var c4_expected_trim53 = "GTCGTGAACTGTGCAT"
-    var c4_expected_trim5  = "GTCGTGAACTGTGCATgccgatagaCGAGTACGATGCCAGGTATTACC".toUpperCase()
-    var c4_expected_trim3  = "ATgggtccaGTCGTGAACTGTGCAT".toUpperCase()
+    var c4_init_seq = "ATgggtccagTCGTGAACTGTGCATGccgatagaCGAGTACGATGCCAGGTATTACC"
+    var c4_expected_trim53 = "TCGTGAACTGTGCATG"
+    var c4_expected_trim5  = "TCGTGAACTGTGCATgccgatagaCGAGTACGATGCCAGGTATTACC".toUpperCase()
+    var c4_expected_trim3  = "ATgggtccaGTCGTGAACTGTGCATG".toUpperCase()
 
     var trimmed_seq_c2 = c2.trimmingFeature("primer5", "primer3", include=false)
     assert.equal(trimmed_seq_c2, c2.sequence, "correct sequence after trimming (c2; no primer feature; return raw sequence)")
@@ -1080,9 +1080,9 @@ QUnit.test("deletion_feature", function(assert) {
 
 
     // with include of features
-    var c4_expected_trim53_include = "tgggtccaGTCGTGAACTGTGCATgccgatag".toUpperCase()
-    var c4_expected_trim5_include  = "tgggtccaGTCGTGAACTGTGCATgccgatagACGAGTACGATGCCAGGTATTACC".toUpperCase()
-    var c4_expected_trim3_include  = "ATgggtccaGTCGTGAACTGTGCATgccgatag".toUpperCase()
+    var c4_expected_trim53_include = "gggtccagTCGTGAACTGTGCATgccgataga".toUpperCase()
+    var c4_expected_trim5_include  = "gggtccagTCGTGAACTGTGCATgccgatagACGAGTACGATGCCAGGTATTACC".toUpperCase()
+    var c4_expected_trim3_include  = "ATgggtccaGTCGTGAACTGTGCATgccgataga".toUpperCase()
 
 
     var trimmed_seq_c4_trim53_include = c4.trimmingFeature("primer5", "primer3", include=true)
@@ -1097,10 +1097,10 @@ QUnit.test("deletion_feature", function(assert) {
     c4.seg.primer5 = {"start": -20, "stop": -10 } // outside of sequence
     c4.seg.primer3 = {"start": 50, "stop": 66 } // partially on the sequence
     //                          primer5                                                     primer3 
-    var c4_modprimer_init_seq =          "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGtattacc" // length 57
-    var c4_modprimer_expected_trim53 =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGG"
-    var c4_modprimer_expected_trim5  =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGtattacc".toUpperCase()
-    var c4_modprimer_expected_trim3  =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGG".toUpperCase()
+    var c4_modprimer_init_seq =          "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGTattacc" // length 57
+    var c4_modprimer_expected_trim53 =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGT"
+    var c4_modprimer_expected_trim5  =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGTattacc".toUpperCase()
+    var c4_modprimer_expected_trim3  =   "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGT".toUpperCase()
     
     var trimmed_seq_c4_modprimer_trim53 = c4.trimmingFeature("primer5", "primer3", include=false)
     var trimmed_seq_c4_modprimer_trim5  = c4.trimmingFeature("primer5", undefined, include=false)
