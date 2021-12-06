@@ -190,6 +190,7 @@ Com.prototype = {
         document.body.appendChild(this.log_container);
         document.body.appendChild(this.popup_container);
         
+        //
         this.div_dataBox = document.createElement("div");
         this.div_dataBox.className = "modal data-container";
         
@@ -205,6 +206,37 @@ Com.prototype = {
         
         document.body.appendChild(this.div_dataBox);
 
+        //
+        this.confirm = {};
+
+        this.confirm.box =  $('<div/>',     {   class: "popup_container",
+                                                style: "min-width:300px"
+                                            }).appendTo(document.body);
+
+        this.confirm.content = $('<div/>',  {   class: "info-msg",
+                                                style: "margin-bottom: 10px;"  
+                                            }).appendTo(this.confirm.box);
+
+        this.confirm.inputdiv = $('<div/>', {   style: "text-align:center; margin: 10px;" 
+                                            }).appendTo(this.confirm.box);
+                                            
+        this.confirm.input =   $('<input/>',{   id: 'console_text_input',
+                                                type: 'text',
+                                                maxlength: 25,
+                                            }).appendTo(this.confirm.inputdiv);
+                                            
+        this.confirm.buttondiv = $('<div/>',{   style :"display: flex; justify-content: space-around;"
+                                            }).appendTo(this.confirm.box);
+
+        this.confirm.cancel = $('<button/>',{   class: 'container_button',
+                                                text : 'cancel',
+                                            }).click(function() {self.closeConfirmBox()})
+                                              .appendTo(this.confirm.buttondiv);
+
+        this.confirm.continue = $('<button/>',{ class: 'container_button',
+                                                text : 'continue',
+                                            }).appendTo(this.confirm.buttondiv);
+        
         /*
         $(".log_container").hover(function () {
             $(this).stop()
@@ -386,6 +418,32 @@ Com.prototype = {
     closeDataBox: function() {
         this.div_dataBox.style.display = "none";
         this.div_dataBox.lastElementChild.removeAllChildren();
+    },
+
+    // ask user to confirm action before executing fallback
+    // if input is defined box will ask for a value to use in callback
+    confirmBox: function (text, callback, input){
+        var self = this
+        this.confirm.box.show();
+        this.confirm.input.val("");
+        this.confirm.inputdiv.hide();
+        this.confirm.content.html(text);
+        this.confirm.continue.unbind("click");
+        this.confirm.continue.click(function(){self.closeConfirmBox()});
+
+        if (typeof input != "undefined")
+            this.confirm.inputdiv.show();
+
+        if (typeof input == "string")
+            this.confirm.input.val(input);
+
+        this.confirm.continue.click(callback);
+
+    },
+
+    closeConfirmBox: function() {
+        this.confirm.box.hide();
+        this.confirm.inputdiv.hide();
     }
     
 }
