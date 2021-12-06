@@ -730,5 +730,65 @@
         </div>
         </div>
 
+        <div class="menu_box">
+        <div onclick="report.addScatterplot(m.sp)">
+            <i class="icon-newspaper"></i> Add to next report
+        </div>
+        </div>
+
+    </div>
+</template>
+
+<template id="report-settings">
+    <div class="">
+        <div style="text-align: center;">Report Settings</div>
+
+        <div id="report-settings-save" style="text-align: center;">
+
+        </div>
+
+        <div class="menu_box" id="report-settings-type-select">
+            <div class="">
+                Report Type
+            </div>
+        </div>
+
+        <div class="menu_box" id="report-settings-sample-select">
+            <div class="">
+                Sample
+            </div>
+        </div>
+
+        <div class="menu_box" id="report-settings-multi_sample-select">
+            <div class="">
+                Sample(s)
+            </div>
+        </div>
+
+        <div class="menu_box" id="report-settings-locus-select">
+            <div class="">
+                Locus
+            </div>
+        </div>
+
+        <div class="menu_box" id="report-settings-clones">
+            <div class="">
+                Clonotypes
+            </div>
+        </div>
+
+        <div class="menu_box"  id="report-settings-block">
+            <div class="">
+                Blocks
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button type="button" onclick="report.print();">Print</button>
+        </div>
+        <div style="float: right;">
+            <button id="rs-save-button" type="button" onclick="report.save(undefined,true);">Save</button>
+            <button id="rs-saveas-button" type="button" onclick="report.saveas();">Save As</button>
+        </div>
     </div>
 </template>
