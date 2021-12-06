@@ -566,13 +566,14 @@ line {
   color: rgba(255, 255, 255, 0.7);
   font-size: 70%;
   background: #333333;
+  float: left;
 }
 .systemBox {
   float: left;
 }
 .systemBoxNameMenu {
   display: inline-block;
-  min-width: 60px;
+  min-width: 50px;
   padding: 2px 2px 1px 2px;
   cursor: pointer;
   user-select: none;
@@ -1435,7 +1436,7 @@ h3 .uid {
 #db_table_container {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(100% - 30px);
+  height: calc(70%);
   position: relative;
 }
 #db_fixed_header {
@@ -2267,6 +2268,72 @@ div.tooltip {
   opacity: 1;
   font-weight: bold;
   font-size: 16px;
+}
+.rs-flex-parent-v {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  max-height: 100px;
+  overflow: auto;
+  border: solid;
+  border-width: 0px 1px;
+  border-color: #cccccc;
+  padding: 1px;
+}
+.rs-flex-parent-h {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: stretch;
+  justify-content: center;
+  padding: 1px;
+}
+.rs-sample {
+  flex: 1 1 0px;
+  white-space: nowrap;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  padding: 2px 2px 2px 2px;
+  margin: 1px 10px;
+}
+.rs-locus {
+  flex: 1 1 0px;
+  white-space: nowrap;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  padding: 1px 1px 0px 1px;
+  margin: 1px;
+  width: 60px;
+}
+.rs-selected {
+  opacity: 1;
+  box-shadow: 1px 2px 2px 0px rgba(0, 0, 0, 0.2);
+  margin: 1px 5px 3px 2px;
+  background: #fafafa;
+}
+.rs-unselected {
+  opacity: 0.5;
+  filter: grayscale(1);
+  background: lightgray;
+  margin: 3px 2px 1px 5px;
+}
+.rs-unselected:hover {
+  opacity: 0.75;
+  box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.1);
+}
+.rs-selected:hover {
+  background: lightgray;
 }
 .segmenter .axisBox > span {
   margin: 0 3px;
