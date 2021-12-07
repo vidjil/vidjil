@@ -322,9 +322,9 @@ Clone.prototype = {
 
         if (field_name5 != undefined && positions5 !== null) {
             if (include){
-                pos5 = positions5.start
+                pos5 = positions5.start+1
             } else {
-                pos5 = positions5.stop
+                pos5 = positions5.stop+1
             }
         } else {
             pos5 = 0
@@ -332,9 +332,9 @@ Clone.prototype = {
 
         if (field_name3 != undefined && positions3 !== null) {
             if (include){
-                pos3 = positions3.stop
+                pos3 = positions3.stop+1
             } else {
-                pos3 = positions3.start
+                pos3 = positions3.start+1
             }
         } else {
            pos3 = this.sequence.length
