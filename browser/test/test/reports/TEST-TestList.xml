@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite time='8.893407' skipped='0' failures='0' errors='0' name="TestList" assertions='14' tests='3' timestamp="2021-10-11T14:09:34+02:00">
+  <testcase time='4.795287' file="functional/tutorial-test.rb" name="test_A_quality_01_number_reads" assertions='5'>
+  </testcase>
+  <testcase time='2.615558' file="functional/tutorial-test.rb" name="test_A_quality_02_sample_log" assertions='7'>
+  </testcase>
+  <testcase time='1.482562' file="functional/tutorial-test.rb" name="test_B_clones_01_major" assertions='2'>
+  </testcase>
+</testsuite>

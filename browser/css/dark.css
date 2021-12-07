@@ -561,7 +561,7 @@ line {
   text-align: center;
   border-radius: 3px;
   border-width: 1px;
-  margin: 2px 4px 4px 2px;
+  margin: 2px 2px 2px 2px;
   color: #fff;
   color: rgba(255, 255, 255, 0.7);
   font-size: 70%;
@@ -1192,7 +1192,7 @@ span.warningReads {
   fill: #fdf6e3;
   stroke-width: 2px;
   stroke: #fdf6e3;
-  fill-opacity: 0.15;
+  fill-opacity: 0.2;
 }
 .sp_slider_box {
   height: 100%;
@@ -1932,7 +1932,7 @@ i[class*="icon-"] {
   margin-top: -15px;
 }
 #jstree_search_input {
-  width: 350px;
+  width: 80%;
 }
 .threeDigits {
   min-width: 21px;
@@ -2313,8 +2313,7 @@ div.tooltip {
   user-select: none;
   cursor: pointer;
   padding: 1px 1px 0px 1px;
-  margin: 1px;
-  width: 60px;
+  width: 65px;
 }
 .rs-selected {
   opacity: 1;

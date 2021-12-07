@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite time='12.700365' skipped='0' failures='0' errors='0' name="TestSegmenterPage" assertions='23' tests='8' timestamp="2021-11-16T15:15:06+01:00">
+  <testcase time='8.983999' file="external_test_segmenter-page.rb" name="test_00_launch_query" assertions='4'>
+  </testcase>
+  <testcase time='0.025679' file="external_test_segmenter-page.rb" name="test_01_segmenter" assertions='3'>
+  </testcase>
+  <testcase time='0.047456' file="external_test_segmenter-page.rb" name="test_02_scatterplot" assertions='3'>
+  </testcase>
+  <testcase time='0.378333' file="external_test_segmenter-page.rb" name="test_03_change_color" assertions='3'>
+  </testcase>
+  <testcase time='0.072780' file="external_test_segmenter-page.rb" name="test_04_segmenter_highlights" assertions='4'>
+  </testcase>
+  <testcase time='2.829325' file="external_test_segmenter-page.rb" name="test_06_scatterplot_change_preset" assertions='2'>
+  </testcase>
+  <testcase time='0.362770' file="external_test_segmenter-page.rb" name="test_07_export_fasta" assertions='4'>
+  </testcase>
+  <testcase time='0.000022' file="external_test_segmenter-page.rb" name="test_zz_close" assertions='0'>
+  </testcase>
+</testsuite>

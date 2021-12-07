@@ -2545,9 +2545,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         div.appendChild(this.norm_button)
 
         // add to report button
-        $('<div/>', {}).html("<hr>").appendTo(div)
+        var div2 = $('<div/>', {}).html("<hr>").appendTo($(this.tagSelectorList))
         var report_button = $('<div/>', { text: 'add clone(s) to next report'
-                                        }).appendTo(div)
+                                        }).appendTo(div2)
                                           .click(function (){
                                               report.addClones(clonesIDs);
                                               $(self.tagSelector).hide('fast')

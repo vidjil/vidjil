@@ -15,7 +15,7 @@ function Report(model, settings) {
     this.default_settings = {
         "New Report" : {
             name : "New Report",
-            type : "multi",
+            //type : "multi",
             sample : undefined,
             samples : undefined,
             locus : undefined,
@@ -24,7 +24,7 @@ function Report(model, settings) {
         },
         "New Monitor Report" : {
             name : "New Monitor Report",
-            type : "multi",
+            //type : "multi",
             sample : undefined,
             samples : undefined,
             locus : undefined,
@@ -33,7 +33,7 @@ function Report(model, settings) {
         },
         "New Sample Report" : {
             name : "New Sample Report",
-            type : "single",
+            //type : "single",
             sample : undefined,
             samples : undefined,
             locus : undefined,
@@ -132,13 +132,9 @@ Report.prototype = {
         var clone = template.content.firstElementChild.cloneNode(true);   
         console.popupHTML(clone)
 
-        $("#report-settings-multi_sample-select").hide()
-        $("#report-settings-sample-select").hide()
-
         this.initSave()
-        this.initType()
-        this.initSample()
-        this.initMultiSample()
+        //this.initType()
+        this.initSamples()
         this.initLocus()
         this.initClones()
         this.initBlocks()
@@ -186,7 +182,7 @@ Report.prototype = {
         else
             $("#rs-save-button").remove("disabledClass")
     },
-
+/*
     initType: function(){
         var self = this;
         var max_width=0;
@@ -222,10 +218,11 @@ Report.prototype = {
         for(var j=0;j<checkBoxes.length;j++) 
             checkBoxes[j].css({"min-width": ""+(max_width+30)+"px"})
     },
+    */
 
-    initMultiSample: function(){
+    initSamples: function(){
         var self = this;
-        var sample_select = $("#report-settings-multi_sample-select")
+        var sample_select = $("#report-settings-sample-select")
         var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(sample_select);
         var i;
 
@@ -243,6 +240,14 @@ Report.prototype = {
             else
                 self.settings.samples.push($(this).attr("value"))
                 
+            var count = 0
+            for (var j=0; j < self.m.samples.order.length; j++){
+                var timeId = self.m.samples.order[j]
+                if (self.settings.samples.indexOf(self.m.getStrTime(timeId, "original_name")) != -1)
+                    count++;
+            }
+            $("#rs-selected-sample-count").html("["+count+" selected]")
+
             $(this).toggleClass("rs-selected");
             $(this).toggleClass("rs-unselected");
         }
@@ -257,10 +262,8 @@ Report.prototype = {
                                         value: this.m.getStrTime(timeId, "original_name"),
                                         text: this.m.getStrTime(timeId, "name")}).appendTo(parent).click(handle)
         }
-
-        if (this.settings.type=="multi") sample_select.show();
     },
-
+/*
     initSample: function(){
         var self = this;
 
@@ -289,6 +292,7 @@ Report.prototype = {
 
         if (this.settings.type=="single") sample_select.show();
     },
+    */
 
     initLocus: function(){
         var self = this;
@@ -352,6 +356,7 @@ Report.prototype = {
 
             if (text != undefined){
                 var div = $('<div/>',   {id:  'rs-clone-'+cloneID, 
+                                        class: 'rs-selected',
                                         value: cloneID,
                                         text: text}).appendTo(parent)
                           $('<button/>',{value: cloneID , 
@@ -377,7 +382,7 @@ Report.prototype = {
 
             switch (conf.blockType) {
                 case "scatterplot":
-                    text = "Scatterplot: "+ conf.axisX +"/"+ conf.axisY +" ("+ conf.locus +")"
+                    text = "Scatterplot: ["+ conf.axisX +" | "+ conf.axisY +"] ["+ conf.locus +"]"
                     break;
                 case "comments":
                     text = "User comment: "
@@ -386,7 +391,7 @@ Report.prototype = {
                     break;
             }
 
-            var div   = $('<div/>',   { class: "rs-block",
+            var div   = $('<div/>',   { class: "rs-block rs-selected",
                                         text: text}).appendTo(parent);
                         $('<button/>',{ value:  i , 
                                         text: "remove", 
