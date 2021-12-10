@@ -74,9 +74,14 @@ with software engineering.
 
  - Estimate clone lengths according to different primer sets #2043
     + **Available since Q2 2021**, ✅
+    
+ - Improve alignment of D genes #2002
+ 
+ - Get longer consensus sequence #4686
+    + **Available since Q4 2021**, ✅
 
 ## Server: statistics, including quality control, on a set of samples
-## Better tools of massification of analyses
+## Better tools for massification of analyses
 
 Routine, and sometimes even 100+ samples.
 
@@ -89,6 +94,8 @@ Routine, and sometimes even 100+ samples.
  - Provide a quality control, for example on a run #2175
     + **Development ongoing** 🚧 @mikael-s @duez
     + Beta: Q2 2022
+    
+ - Provide contamination information #1744
 
  - Develop new view(s) to browse large sets of immune repertoires #1975 (see also app-stats)
 
@@ -125,7 +132,7 @@ These point
     + **Development: Q2-Q4 2021**
 
  - Improve packaging: improve Docker containers, toward 100% dockerisation #4320
-    + **Development: QQ4 2021**
+    + **Development: Q4 2021**
 
  - Migrate the web2py server and task scheduler #3691 #4832
     + Evaluation: Q1 2022 ⏳
@@ -142,6 +149,9 @@ These point
     + **Availability: Q4 2020** ✅
  
  - Create presets for specific studies or diseases #2836
+ 
+ - Allow more colors for clonotypes #1547
+    + Development: 2022 ⏳ @duez
 
 ## Improved data import/export and interoperability
 
