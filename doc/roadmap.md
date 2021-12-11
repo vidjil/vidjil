@@ -63,7 +63,7 @@ with software engineering.
     + Beta: 2021
  - Provide specific tools to analyze single cell data and/or paired chains data #2344
  
-## Better sequence analysis
+## Better sequence and recombination analysis
 
  - Show more sequence features (such as FR1...) in the sequence aligner #2135
     + **Available since Q2 2021**, ✅
@@ -82,28 +82,24 @@ with software engineering.
 
 ### Improved and extended analysis of some recombinations
 
-These points are not in the roadmap with fixed dates.
+Moreover, we always try to improve and extend the analysis of some recombinations:
 
  - Extend set of recombinations
  - Find generalized recombinations, even unexpected #1400 #2818
  - Work on clone phylogenies
  - Work on noisy data, such as third-generation sequencers
 
-Perspectives depends on collaboration.
-These points are *ongoing research* 🚧 in the Bonsai team with selected collaborators.
+These points are *ongoing research* 🚧 in the Bonsai team with selected collaborators and are not in the roadmap with fixed dates.
 For some of these points, we are open to new partners.
 They often imply core algorithmic work on Vidjil-algo, often combined with updates on the web application.
-Contact us if you are interested and/or if you have/plan to have such data.
+Contact us if you are interested and/or if you have/plan to have
+such analysis needs.
 
 
-## Better tools for massification of analyses
+## Better tools for quality assesment and massification of analyses
 
 Routine, and sometimes even 100+ samples.
 
- - Improve batch creation/upload of data and metadata
-     + **Availibility : 2020** ✅  (creation with `.csv`)
-     + Batch upload
- 
  - Provide statistics given a set on samples #3171
 
  - Provide a quality control, for example on a run #2175
@@ -113,6 +109,10 @@ Routine, and sometimes even 100+ samples.
  - Provide contamination information #1744
 
  - Develop new view(s) to browse large sets of immune repertoires #1975 (see also app-stats)
+
+ - Improve batch creation/upload of data and metadata
+     + **Availibility : 2020** ✅  (creation with `.csv`)
+     + Batch upload
 
  - Provide batch generation of reports
 
