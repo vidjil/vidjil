@@ -80,7 +80,6 @@ with software engineering.
  - Get longer consensus sequence #4686
     + **Available since Q4 2021**, ✅
 
-## Server: statistics, including quality control, on a set of samples
 ## Better tools for massification of analyses
 
 Routine, and sometimes even 100+ samples.
@@ -99,7 +98,7 @@ Routine, and sometimes even 100+ samples.
 
  - Develop new view(s) to browse large sets of immune repertoires #1975 (see also app-stats)
 
- - Batch generation of reports
+ - Provide batch generation of reports
 
 
 ## Improved and extended analysis of some recombinations
