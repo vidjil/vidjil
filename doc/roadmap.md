@@ -80,6 +80,22 @@ with software engineering.
  - Get longer consensus sequence #4686
     + **Available since Q4 2021**, ✅
 
+### Improved and extended analysis of some recombinations
+
+These points are not in the roadmap with fixed dates.
+
+ - Extend set of recombinations
+ - Find generalized recombinations, even unexpected #1400 #2818
+ - Work on clone phylogenies
+ - Work on noisy data, such as third-generation sequencers
+
+Perspectives depends on collaboration.
+These points are *ongoing research* 🚧 in the Bonsai team with selected collaborators.
+For some of these points, we are open to new partners.
+They often imply core algorithmic work on Vidjil-algo, often combined with updates on the web application.
+Contact us if you are interested and/or if you have/plan to have such data.
+
+
 ## Better tools for massification of analyses
 
 Routine, and sometimes even 100+ samples.
@@ -100,21 +116,6 @@ Routine, and sometimes even 100+ samples.
 
  - Provide batch generation of reports
 
-
-## Improved and extended analysis of some recombinations
-
-These points are not in the roadmap with fixed dates.
-
- - Extend set of recombinations
- - Find generalized recombinations, even unexpected #1400 #2818
- - Work on clone phylogenies
- - Work on noisy data, such as third-generation sequencers
-
-Perspectives depends on collaboration.
-These points are *ongoing research* 🚧 in the Bonsai team with selected collaborators.
-For some of these points, we are open to new partners.
-They often imply core algorithmic work on Vidjil-algo, often combined with updates on the web application.
-Contact us if you are interested and/or if you have/plan to have such data.
 
  
 # Technical roadmap
