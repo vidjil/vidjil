@@ -80,8 +80,6 @@ with software engineering.
  - Get longer consensus sequence #4686
     + **Available since Q4 2021**, ✅
 
-### Improved and extended analysis of some recombinations
-
 Moreover, we always try to improve and extend the analysis of some recombinations:
 
  - Extend set of recombinations
