@@ -261,16 +261,19 @@ Report.prototype = {
             $(this).toggleClass("rs-unselected");
         }
 
+        var count = 0;
         for (i=0; i < this.m.samples.order.length; i++){
             var timeId = this.m.samples.order[i]
 
             var selected = (self.settings.samples.indexOf(this.m.getStrTime(timeId, "original_name")) != -1)
+            if (selected) count++
             var div = $('<div/>',   { id:  'rs-sample-select'+i, 
                                         type: 'checkbox', 
                                         class: (selected) ? "rs-sample rs-selected" : "rs-sample rs-unselected",
                                         value: this.m.getStrTime(timeId, "original_name"),
                                         text: this.m.getStrTime(timeId, "name")}).appendTo(parent).click(handle)
         }
+        $("#rs-selected-sample-count").html("["+count+" selected]")
     },
 /*
     initSample: function(){
@@ -403,6 +406,7 @@ Report.prototype = {
             $(this).parent().remove()
         }
 
+        var count =0;
         for (var i=0; i<this.settings.clones.length; i++){
             var cloneID = this.settings.clones[i]
             
@@ -413,6 +417,7 @@ Report.prototype = {
             }
 
             if (text != undefined){
+                count++
                 var div = $('<div/>',   {id:  'rs-clone-'+cloneID, 
                                         class: 'rs-selected',
                                         value: cloneID,
@@ -422,6 +427,7 @@ Report.prototype = {
                                         style: "float:right;"}).click(handle).appendTo(div)
             }
         }
+        $("#rs-selected-clones-count").html("["+count+" selected]")
     },
 
     initBlocks: function(){
