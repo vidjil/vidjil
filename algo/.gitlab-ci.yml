@@ -1,3 +1,63 @@
+
+.vidjil-algo_template: &vidjil-algo
+  image: gcc:8
+  before_script:
+    - apt-get update
+    - apt-get install -y lcov time
+    - !reference [.before_script_global]
+  only:
+    - /^feature-.*a.*\/.*$/
+    - schedules
+  needs: []
+  tags:
+    - cidocker
+
+.coverage_dependency:
+  artifacts: &lcov_artifact
+    paths:
+      - algo/lcov_test_*.filtered
+    expire_in: 1 week
+
+## vidjil-algo, regular tests
+
+algo_unit:
+  <<: *vidjil-algo
+  stage: test_unit
+  script: make -C algo unit_coverage
+  artifacts:
+    <<: *lcov_artifact
+
+algo_should:
+  <<: *vidjil-algo
+  stage: test_functional
+  script: make -C algo should_coverage
+  artifacts:
+    <<: *lcov_artifact
+    reports:
+      junit: algo/tests/should.xml
+
+algo_shouldvdj:
+  <<: *vidjil-algo
+  stage: test_shouldvdj
+  script: make -C algo shouldvdj_coverage
+  artifacts:
+    <<: *lcov_artifact
+
+algo_coverage:
+  <<: *vidjil-algo
+  stage: coverage
+  coverage: /^\s*lines\.*:\s+([0-9.]+\%)/
+  script:
+    - make -C algo lcov_reports
+    - mv algo/reports/ coverage
+  artifacts:
+    paths:
+      - coverage/
+    expire_in: 1 week
+
+
+## vidjil-algo, other tests
+
 profiling_algo:
   stage: benchmark
   image: gcc:9
