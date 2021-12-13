@@ -513,7 +513,10 @@ Report.prototype = {
         //this.settings.samples = array;
         
         this.m.wait("Generating report...")
-        this.switchstate(this.settings.locus, array_sample_ids);
+        var color; 
+        if (this.settings.default_color != "default") 
+            color = this.settings.default_color
+        this.switchstate(this.settings.locus, array_sample_ids, color);
 
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
@@ -558,25 +561,28 @@ Report.prototype = {
     },
     
     savestate: function(){
-        this.save_system = [];
-        for (var i in this.m.system_selected) this.save_system.push(this.m.system_selected[i]);
-        
-        this.save_sample = [];
-        for (var j in this.m.samples.order) this.save_sample.push(this.m.samples.order[j]);
+        this.save_state = {};
+
+        this.save_state.system_selected = this.m.system_selected.splice(0)
+        this.save_state.samples_order = this.m.samples.order.splice(0)
+        this.save_state.axis_color = this.m.color.axis.name
         
         return this;
     },
     
-    switchstate: function(system_list, sample_list){
+    switchstate: function(system_list, sample_list, color){
         this.savestate();
         this.m.system_selected = system_list;
+        if (typeof color != "undefined")
+            this.m.color.set(color)
         this.m.changeTimeOrder( sample_list );
         return this;
     },
     
     restorestate: function(){
-        this.m.system_selected = this.save_system;
-        this.m.changeTimeOrder( this.save_sample );
+        this.m.system_selected = this.save_state.system_selected.splice(0)
+        this.m.color.set(this.save_state.axis_color)
+        this.m.changeTimeOrder(this.save_state.samples_order)
         return this;
     },
     
