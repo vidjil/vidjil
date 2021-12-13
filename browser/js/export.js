@@ -34,6 +34,7 @@ function Report(model, settings) {
             sample : undefined,
             samples : undefined,
             locus : undefined,
+            selected_color: "unique",
             clones : [],
             blocks: []
         },
@@ -43,6 +44,7 @@ function Report(model, settings) {
             sample : undefined,
             samples : undefined,
             locus : undefined,
+            selected_color: "unique",
             clones : [],
             blocks: []
         }
@@ -142,6 +144,7 @@ Report.prototype = {
         //this.initType()
         this.initSamples()
         this.initLocus()
+        this.initColor()
         this.initClones()
         this.initBlocks()
     },
@@ -338,6 +341,55 @@ Report.prototype = {
 
             checkBoxes.push(div)
         }
+    },  
+
+    initColor: function(){
+        var self = this;
+
+        var handle1 = function(){
+            self.settings.default_color = this.value;
+        }
+        var color_select1 = $("#rs-default-color")
+
+        color_select1.change(handle1);
+
+        $('<option/>',  {   text: "-- keep current color --",
+                            selected: (self.settings.default_color == "default"),
+                            value: "default"}).appendTo(color_select1);
+
+        var available_axis = AXIS_COLOR
+        for (var key in available_axis) {
+            var axisP = Axis.prototype.getAxisProperties(available_axis[key])
+            if (typeof axisP.hide == "undefined" || !axisP.hide){
+                $('<option/>',  {   text:  axisP.name,
+                                    selected: (self.settings.default_color == axisP.name),
+                                    value: axisP.name}).appendTo(color_select1);
+            }
+        }
+        /*
+        var keys = Object.keys(this.default_settings);
+        for (var i = 0; i < keys.length; i++){
+            var name = keys[i];
+            $('<option/>',  { text: name,
+                            selected: (self.settings.name == name),
+                            value: name}).appendTo(color_select1);
+        }
+        */
+        var handle2 = function(){
+            self.settings.selected_color = this.value;
+        }
+        var color_select2 = $("#rs-selected-color")
+
+        color_select2.change(handle2);
+
+        $('<option/>',  {   text: "use default color", 
+                            selected: (self.settings.selected_color == "default"),
+                            value : "default"}).appendTo(color_select2);
+        $('<option/>',  {   text: "use unique color" , 
+                            selected: (self.settings.selected_color == "unique"),
+                            value : "unique"}).appendTo(color_select2);
+
+
     },  
 
     initClones: function(){
@@ -1440,22 +1492,17 @@ Report.prototype = {
     },
 
     getCloneExportColor : function(cloneID){
-        var color;
-        switch (this.colorMode) {
-            case "tag":
-                rcolor = this.m.tag[this.m.clone(cloneID).getTag()].color;
-                break;
-            case "colorBy":
-                color = this.m.clone(cloneID).getColor();
+        var color = this.m.clone(cloneID).getColor();
+        switch (this.settings.selected_color) {
+            case "unique":
+                var index = this.settings.clones.indexOf(this.m.clone(cloneID).id)
+                if (index != -1 && index <8) color = m.tag[index].color 
                 break;
             default:
                 color = this.m.clone(cloneID).getColor();
                 break;
         }
         
-        var index = this.settings.clones.indexOf(this.m.clone(cloneID).id)
-        if (index != -1 && index <8) color = m.tag[index].color 
-
         return color;
     }
     
