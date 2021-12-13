@@ -35,10 +35,15 @@
                                                                   'custom_list' : db.getListInput('custom_result[]'),
                                                                   'id' : '{{='' if request.vars["id"] is None else request.vars["id"]}}' })">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
-                    {{for row in db((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.accessible_query(PermissionEnum.admin_config.value, db.config) ) ).select(orderby=~db.config.name) :}}
-                        <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} >
-                            {{=row.name}}
-                        </option>
+                    {{ for class_name in classification.keys(): }}
+                      {{ class_elt = classification[class_name] }}
+                      <optgroup label="{{ =class_elt['name'] }}"  title="{{ =class_elt['info'] }}">
+                        {{ for row in class_elt['configs']: }}
+                            <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
+                              {{=row.name}}
+                            </option>
+                        {{pass}}
+                      </optgroup>
                     {{pass}}
                 </select>
             </span>
@@ -51,7 +56,7 @@
 <div id="db_table_container">
     <table class="db_table table_compare" id="table">
         <thead>
-            <tr><td class="column5"> </td>
+            <tr><td class="column_20"> </td>
                 <td class="column_200"> {{=helper.get_type_display() if helper is not None else "name"}} </td>
                 <td class="column_200"> file name </td>
                 <td class="column_100"> sampling date </td>
@@ -62,7 +67,7 @@
 		<td class="column_100"> config </td>
                 <td class="column_sep"></td>
 
-                <td class="column2">last processing</td>
+                <td class="column_150">last processing</td>
             </tr>
         </thead>
         <tbody>
@@ -103,7 +108,13 @@
 
     <div class="db_block_right">
         <span class="devel-mode button2" onclick="db.call('sample_set/multi_sample_stats', {'custom_result': db.getListInput('custom_result[]') })" >preview / quality control</span>
-        <span class="button2" onclick="myUrl.loadCustomUrl(db)" > see results </span>
+        <span class="button2" 
+          {{if request.vars["id"] != None: }}
+            onclick="myUrl.loadCustomUrl(db, {'sample_set_id':{{=request.vars["id"]}} })" 
+          {{else:}}
+            onclick="myUrl.loadCustomUrl(db, undefined)" 
+          {{pass}}
+          > see results </span>
     </div>
 
 </div>

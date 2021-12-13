@@ -31,7 +31,7 @@ diff-from-saved:
 	diff -r -u -x "*[.][^f][^a]" -x "germline*" -x "get*" -x "Makefile" -x "saved-*" saved-germline/ .
 
 tests:
-	python split-from-imgt.py --test
+	python split-germlines.py --test
 	make -C tests
 
 

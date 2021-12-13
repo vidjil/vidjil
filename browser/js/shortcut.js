@@ -29,8 +29,10 @@
  * */
 function Shortcut (model) {
     this.m = model
+    View.call(this, model)
     this.init()
     this.on = true
+    this.inProgress = 0
 }
 
 var NB_CLONES_CHANGE = 10;
@@ -45,18 +47,37 @@ Shortcut.prototype = {
         
         this.system_shortcuts = {}
         for (var system in germline_data.systems){
-            var keycode = germline_data.systems[system].shortcut.toUpperCase().charCodeAt(0)
 
-            if (typeof this.system_shortcuts[keycode] == "undefined")
-                this.system_shortcuts[keycode] = []
-            
-            this.system_shortcuts[keycode].push(system)
+            if (germline_data.systems[system].shortcut != undefined){ // at init/load, some data are not present
+                var keycode = germline_data.systems[system].shortcut.toUpperCase().charCodeAt(0)
+
+                if (typeof this.system_shortcuts[keycode] == "undefined")
+                    this.system_shortcuts[keycode] = []
+
+                this.system_shortcuts[keycode].push(system)
+            } else {
+                console.default.log("Shortcuts; system undefined: " + system)
+            }
         }
         
         document.onkeydown = function (e) { self.checkKey(e); }
         document.onkeyup = function (e) { self.m.sp.active_move = false; }
+        document.onmousedown = function (e) { self.checkMouse(e); }
     },
-    
+
+    updateInProgress: function() {
+        if (this.inProgress>0) return true
+        return false
+    },
+
+    checkMouse : function (e) {
+        var self = this
+
+        this.inProgress++
+        setTimeout(function(){
+            self.inProgress--
+        }, 500)
+    },
     
     /**
      * called each time a key is pressed <br>
@@ -64,6 +85,13 @@ Shortcut.prototype = {
      * @param {event} e - onkeydown event
      * */
     checkKey : function (e) {
+        var self = this
+
+        this.inProgress++
+        setTimeout(function(){
+            self.inProgress--
+        }, 500)
+
         if (!this.on)
             return ;
 
@@ -98,7 +126,6 @@ Shortcut.prototype = {
         if (! e.ctrlKey && ! e.metaKey &&
             typeof this.system_shortcuts[key] != "undefined") {
 
-            var self = this
             var germlines = this.system_shortcuts[key].filter(function(g) {return self.m.system_available.indexOf(g) != -1})
             if (germlines.length === 0)
                 return
@@ -128,14 +155,15 @@ Shortcut.prototype = {
         case 37 :   // Left arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
-                m.displayTop(this.m.top - NB_CLONES_CHANGE)
+                m.filter.decrease("Top", ">", NB_CLONES_CHANGE)
             else
                 m.previousTime();
             break;
+            
         case 39 :   // Right arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
-                m.displayTop(m.top + NB_CLONES_CHANGE)
+                m.filter.increase("Top", ">", NB_CLONES_CHANGE)
             else
                 m.nextTime();
             break;
@@ -150,19 +178,27 @@ Shortcut.prototype = {
             if (e.ctrlKey || e.metakey){
                 var d_m = $("#debug_menu")
                 if (d_m.css("display") == "none"){
+                    devel_mode = true;
                     $("#debug_menu").css("display", "");
                     $(".devel-mode").show();
                     $(".beta-mode").show();
                 }else{
+                    devel_mode = false;
                     $("#debug_menu").css("display", "none");
                     $(".devel-mode").hide();
                     $(".beta-mode").hide();
                 }
             }
             break;
+
         case 80 :   //shift+p : open patient
             e.preventDefault()
             if(e.shiftKey || e.metakey) db.reload()
+            break;
+
+        case 76 :   // Ctrl+l
+            e.preventDefault()
+            if (console.toggleLog) console.toggleLog();
             break;
 
         default:
@@ -186,23 +222,25 @@ Shortcut.prototype = {
             e.preventDefault()
             if (m.getSelected().length === 0) {
                 // z, no clone selected: reset filters
-                m.reset_filter(false)
+                m.filter.remove("Clonotype", "focus", undefined)
+                m.filter.remove("Clonotype", "hide", undefined)
                 m.update()
             } else {
                 if (!e.shiftKey)
                     // z, some clone selected: focus (zoom) on these clones
-                    m.focusSelected()
+                    m.filter.add("Clonotype", "focus", self.m.getSelected())
                 else
                     // shift+z, some clone selected: hide these clones
-                    m.hideSelected()
+                    m.filter.add("Clonotype", "hide", self.m.getSelected())
             }
             break;
             
             // Scatterplot
         case '#':   // switch grid/bar mode
             e.preventDefault()
-            this.m.sp.switchMode()
+            m.sp.switchMode()
             break;
         }
     }
 }
+Shortcut.prototype = $.extend(Object.create(View.prototype), Shortcut.prototype)

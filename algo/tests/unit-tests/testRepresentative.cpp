@@ -57,6 +57,7 @@ void testRepresentative() {
 void testRevcompRepresentative() {
   list<Sequence> reads = BioReader("data/representative_revcomp.fq").getAll();
 
+  srand(1);
   KmerRepresentativeComputer krc(reads, "##############");
   krc.setOptions(false, 3, 0.5);
   krc.setCoverageReferenceLength(50);
@@ -69,6 +70,7 @@ void testRevcompRepresentative() {
     it->sequence = revcomp(it->sequence);
   }
 
+  srand(1);
   KmerRepresentativeComputer krc2(reads, "##############");
   krc2.setOptions(false, 3, 0.5);
   krc2.setCoverageReferenceLength(50);
@@ -81,7 +83,7 @@ void testRevcompRepresentative() {
   size_t pos1 = representative.label.find_first_of('[');
   size_t pos2 = representative2.label.find_first_of('[');
 
-  TAP_TEST(representative.label.substr(0, pos1) == representative2.label.substr(0, pos2), TEST_KMER_REPRESENTATIVE_REVCOMP,
+  TAP_TEST_EQUAL(representative.label.substr(0, pos1), representative2.label.substr(0, pos2), TEST_KMER_REPRESENTATIVE_REVCOMP,
            "The two representatives should have the same label");
 
   TAP_TEST(revcomp(representative.sequence) == representative2.sequence, TEST_KMER_REPRESENTATIVE_REVCOMP,

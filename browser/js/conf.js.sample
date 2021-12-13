@@ -6,10 +6,33 @@
 var config = {
 
     /****************
+    * Client identification
+    */
+
+    /* Mail for the 'get support' link. You can leave it to support@vidjil.org even with your own instances. */
+    "support": "support@vidjil.org",
+
+    /* Hosting information and healthcare compliance */
+    "hosting": "⚠️ Research Use Only. This instance of Vidjil is hosted by Xxxxxxxx Xxxxxxxxx. This instance is not compliant for clinical use and comes with no warranty. See options for using Vidjil while <a href='http://www.vidjil.org/doc/healthcare'>hosting healthcare data</a>.",
+
+    /* Please see <http://www.vidjil.org/doc/server#healthcare> */
+    "healthcare": false,
+
+    /****************
     * Static alerts
     */
+
+    /* Diplay an alert in the header */
     // "alert": "Rescue server",
 
+    /* With more details available in a notification window */
+    /*
+    "alert": {
+        title: "Server Down", 
+        msg :"Server is under maintenance until xx:xx (UTC+1)" +
+             "<br> A rescue server for urgent works is available at <a href='https://www.rescue.vidjil.org'>www.rescue.vidjil.org</a>"
+    },
+    */
 
     /****************
      * External services
@@ -69,6 +92,8 @@ var config = {
      */
     /* "addons" : ["js/lib/important-lib.js", "js/myscript.js"], */
 
+    //rewrite url to include sample/display infos (default : true)
+    //"url_rewriting" : false
 
     /****************
      * Tips of the day

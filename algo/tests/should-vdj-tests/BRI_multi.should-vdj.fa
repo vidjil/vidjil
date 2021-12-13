@@ -28,7 +28,7 @@ cggtatggacgtctggggccaagggaccacggtcaccgtctcctcagg
 
 
 # target 1297RC
->TRGV5*01 6/CCCCCGGG/0 TRGJ1*02 [TRG]
+>TRGV5*01 6/CCCCCGGG/3 TRGJ1 [TRG]
 tgccttctacatccactggtacctacaccaggaggggaaggccccacagcgtcttctgtactatgacgtctc
 caactcaaaggatgtgttggaatcaggactcagtccaggaaagtattatactcatacacc
 caggaggtggagctggatattgatactacgaaatctaattgaaaatgattctggggtctattactgtgccac
@@ -109,7 +109,7 @@ TGTAGTAGTACCAGCTGCTATCGGACACTGGTTCGACCCCTGGGGCCAGGGAACCCTGGTCAC
 
 
 # target 0933KC
->IGHV4-4 3/TTC/4 IGHD1-26*01 2/CCTCGGATTTTAAGA/9 IGHJ3*02 [IGH] BUG
+>(IGHV4-4*02 3/TTC/4, IGHV4-4*03 2/TTC/4) IGHD1-26*01 2/CCTCGGATTTTAAGA/9 IGHJ3*02 [IGH] BUG
 CTCTGTGACCGCCGCGGACACGGCCGTGTATTACTGTGCGAGTTCTAGTGGGAGCTACTCCTCGGATTTTAA
 GAATATCTGGGGCCAAGGGACAATGGTCACCGTCTCCTCAAGTAAT
 

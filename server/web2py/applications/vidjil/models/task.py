@@ -252,8 +252,8 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         cmd = defs.DIR_VIDJIL + '/vidjil-algo '
 
     if grep_reads:
-        # TODO: security, assert grep_reads XXXX
-        vidjil_cmd += ' --grep-reads "%s" ' % grep_reads
+        if re.match(r"^[acgtnACGTN]+$", grep_reads):
+            vidjil_cmd += ' --out-clone-files --grep-reads "%s" ' % grep_reads
     
     os.makedirs(out_folder)
     out_log = out_folder+'/'+output_filename+'.vidjil.log'
@@ -352,6 +352,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
             compute_extra(id_file, id_config, 5)
             run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
+    os.remove(results_filepath)
     return "SUCCESS"
 
 def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False):
@@ -557,6 +558,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
         print(row.sample_set_id)
         run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
+    os.remove(results_filepath)
 
     return "SUCCESS"
 
@@ -663,7 +665,13 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
             
     for row in query :
         if row.results_file.data_file is not None :
-            files += defs.DIR_RESULTS + row.results_file.data_file + " "
+            res_file = defs.DIR_RESULTS + row.results_file.data_file
+            if row.sequence_file.pre_process_file:
+                pre_file = "%s/%s" % (defs.DIR_RESULTS, row.sequence_file.pre_process_file)
+                files += "%s,%s" % (res_file, pre_file)
+            else:
+                files += res_file
+            files += " "
             sequence_file_list += str(row.results_file.sequence_file_id) + "_"
             
     if files == "":
@@ -754,7 +762,11 @@ def custom_fuse(file_list):
     files = ""
     for id in file_list :
         if db.results_file[id].data_file is not None :
-            files += os.path.abspath(defs.DIR_RESULTS + db.results_file[id].data_file) + " "
+            files += os.path.abspath(defs.DIR_RESULTS + db.results_file[id].data_file)
+            seq_file = db.sequence_file[db.results_file[id].sequence_file_id]
+            if seq_file.pre_process_file is not None:
+                files += ",%s" % os.path.abspath(defs.DIR_RESULTS + seq_file.pre_process_file)
+            files += " "
     
     try:
         cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
@@ -904,13 +916,18 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         db.commit()
         raise
 
-        
+    pre_process_filepath = '%s/pre_process.vidjil' % out_folder
+    try:
+        pre_process_output = open(pre_process_filepath, 'rb')
+    except FileNotFoundError:
+        pre_process_output = None
 
     # Now we update the sequence file with the result of the pre-process
     # We forget the initial data_file (and possibly data_file2)
     db.sequence_file[sequence_file_id] = dict(data_file = stream,
                                               data_file2 = None,
-                                              pre_process_flag = "COMPLETED")
+                                              pre_process_flag = "COMPLETED",
+                                              pre_process_file = pre_process_output)
     db.commit()
     #resume STOPPED task for this sequence file
     stopped_task = db(
@@ -932,6 +949,10 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 
     # Remove data file from disk to save space (it is now saved elsewhere)
     os.remove(filepath)
+    try:
+        os.remove(pre_process_filepath)
+    except:
+        pass
     
     if clean_after:
         clean_cmd = "rm -rf " + out_folder 

@@ -1,18 +1,21 @@
 <div id="db_header">
     
     <div id="db_menu">
-	<a class="button button_token patient_token" onclick="db.call('sample_set/all', {'type': 'patient', 'page': 0});">patients</a>
-	<a class="button button_token run_token" onclick="db.call('sample_set/all', {'type': 'run', 'page': 0});">runs</a>
-	<a class="button button_token generic_token" onclick="db.call('sample_set/all', {'type': 'generic', 'page': 0} );">sets</a>
-        <a class="button" onclick="db.call('notification/index');">news</a>
-        <!-- <a class="button" onclick="db.call('log/index');">log</a> -->
+        <a id="db_page_patient" class="button button_token patient_token" onclick="db.call('sample_set/all', {'type': 'patient', 'page': 0});">patients</a>
+        <a id="db_page_run" class="button button_token run_token" onclick="db.call('sample_set/all', {'type': 'run', 'page': 0});">runs</a>
+        <a id="db_page_set" class="button button_token generic_token" onclick="db.call('sample_set/all', {'type': 'generic', 'page': 0} );">sets</a>
+        <a id="db_page_usage" class="button" onclick="db.call('my_account/index');">usage</a>
+        <a id="db_page_processes" class="button" onclick="db.call('my_account/jobs');">processes</a>
+        <a id="db_page_news" class="button" onclick="db.call('notification/index');">news</a>
+        <a class="button" onclick="db.call('log/index');">log</a>
+
         {{if auth.is_admin():}}
         - - -
-        <a class="button" onclick="db.call('pre_process/index');">pre-process</a>
-        <a class="button" onclick="db.call('config/index');">analysis configs</a>
-        <a class="button" onclick="db.call('group/index');">groups</a>
-        <a class="button" onclick="db.call('user/index');">users</a>
-        <a class="button" onclick="db.call('admin/index');">admin</a>
+        <a id="db_page_preprocess" class="button" onclick="db.call('pre_process/index');">pre-process configs</a>
+        <a id="db_page_configs" class="button" onclick="db.call('config/index');">process configs</a>
+        <a id="db_page_groups"  class="button" onclick="db.call('group/index');">groups</a>
+        <a id="db_page_users"   class="button" onclick="db.call('user/index');">users</a>
+        <a id="db_page_admin"   class="button" onclick="db.call('admin/index');">admin</a>
         - - -
         {{pass}}
     </div>
@@ -30,6 +33,8 @@
                                     {{=row.id}} &ndash; {{=row.first_name}} {{=row.last_name}}
                                 </option> {{pass}}
                         </select>
+                        <icon class="icon-cancel-squared" id="desimpersonate_btn" type="button" class="btn btn-navbar"
+                         onclick="db.call('default/impersonate', {'id' : '0', 'next': '{{=request.url}}'});"/>
                     </span>{{pass}}
         
         
@@ -49,13 +54,16 @@
                 
         
                 {{if not auth.is_impersonating() :}}                     
-                    {{=auth.user.first_name}} {{=auth.user.last_name}} <a href="#" onclick="db.call('user/edit', {'id': '{{=auth.user_id}}'})"><i class="icon-pencil-2" title="Edit my personal informations"></i></a>
+                    <span id="db_auth_name">
+                        {{=auth.user.first_name}} {{=auth.user.last_name}}
+                    </span>
+                    <a href="#" onclick="db.call('user/edit', {'id': '{{=auth.user_id}}'})"><i class="icon-pencil-2" title="Edit my personal informations"></i></a>
                 {{pass}}
         
         
         
         
-                <a class="button" onclick="db.logout();">(logout)</a>
+                <a id="logout_button" class="button" onclick="db.logout();">(logout)</a>
             {{pass}}
     </div>
     

@@ -4,10 +4,15 @@
 ###
 
 ### Email notifications for server errors
-SMTP_SERVER = 'localhost'
+SMTP_SERVER = 'postfix'
+SMTP_CREDENTIALS = 'vidjil:smtp_pass' # set to None if no auth required
 # SMTP_SERVER = 'logging' # no mail
 FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
+
+### Server healthcare compliance
+### Please see <http://www.vidjil.org/doc/server#healthcare>
+HEALTHCARE_COMPLIANCE = False
 
 ### address for the sql database
 ###
@@ -70,10 +75,25 @@ SCHEDULER_HEARTBEAT = 5
 
 # Directory to search for files
 FILE_SOURCE = '/mnt/data/src'
-FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa']
+FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa', 'tsv', 'airr', 'AIRR']
 
 SET_TYPE_PATIENT = 'patient'
 SET_TYPE_RUN= 'run'
 SET_TYPE_GENERIC = 'generic'
 
 REQUIRE_HTTPS = False
+BROWSER_PATH = 'browser/index.html'
+
+# LDAP authentification
+LDAP = False
+# online test server available for test purposes
+# account:  euler@ldap.forumsys.com
+# password: password
+LDAP_CONF = {
+    "mode" :            'custom',
+    "server":           'ldap.forumsys.com',    
+    "base_dn":          'dc=example,dc=com',   
+    "logging_level":    'debug',
+    "username_attrib":  'mail',
+    "custom_scope":     'subtree'
+}

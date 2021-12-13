@@ -61,3 +61,18 @@ class Run(SampleSet):
             error.append("illegal character '|' in name")
 
         return error
+
+    def get_dedicated_fields(self):
+        table = db[self.type]
+        return [
+            table.name.with_alias('name'),
+            table.run_date.with_alias('run_date'),
+        ]
+
+    def get_dedicated_group(self):
+        table = db[self.type]
+        return [table.name]
+
+    def get_filtered_fields(self, search):
+        table = db[self.type]
+        return table.name.contains(search)

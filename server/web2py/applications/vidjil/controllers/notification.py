@@ -21,11 +21,12 @@ def index():
         log.debug('read notification %s' % request.vars["id"])
     else:
         log.debug('notification list')
-    if auth.user:
+
+    if auth.user and not 'redirected' in request.vars:
         rows = db((db.user_preference.user_id==auth.user.id)
             &(db.user_preference.preference=='mail')
             &(db.user_preference.val==request.vars['id'])).select()
-        if len(rows) == 0:
+        if len(rows) == 0 :
             db.user_preference.insert(
                 user_id=auth.user.id,
                 preference='mail',
@@ -83,7 +84,8 @@ def add_form():
                             creation_datetime=datetime.now())
 
         res = {"redirect": "notification/index",
-               "args" : { "id" : id },
+               "args" : { "id" : id,
+                          "redirected" : True },
                "message": "notification added"}
         log.info(res, extra={'user_id': auth.user.id,
                 'record_id': id,
@@ -141,7 +143,8 @@ def edit_form():
             &(db.user_preference.preference=='mail')).delete()
 
         res = {"redirect": "notification/index",
-               "args" : { "id" : request.vars['id'] },
+               "args" : { "id" : request.vars['id'],
+                          "redirected" : True },
                "message": "notification updated"}
         log.info(res, extra={'user_id': auth.user.id,
                 'record_id': request.vars["id"],

@@ -1,0 +1,41 @@
+##### Test on file 1; no "normalized_reads"
+!LAUNCH: python ../../spike-normalization.py --input ../data/input-spike-norm-1.vidjil --output spike_out1.vidjil && cat spike_out1.vidjil
+
+$ clones in the output, as in the input
+9: "id"
+
+$ mrd field; not present
+0: "mrd"
+
+$ no "normalized_reads": diagnostic sample
+0: "normalized_reads"
+
+##### Test on file 2; 6/8 normalization
+!LAUNCH: python ../../spike-normalization.py --input ../data/input-spike-norm-2.vidjil --output spike_out2.vidjil && cat spike_out2.vidjil
+
+$ clones in the output, same as in the input
+8: "id"
+
+$ "normalized_reads" expected in this sample
+6: "normalized_reads"
+
+$ mrd field; 6 for clones, 1 for sample
+7: "mrd"
+
+$ Good value for the first clone
+: 0.3739975328
+
+##### Test on file 3; 2/7 normalization
+!LAUNCH: python ../../spike-normalization.py --input ../data/input-spike-norm-3.vidjil --output spike_out3.vidjil && cat spike_out3.vidjil
+
+$ clones in the output, same as in the input
+7: "id"
+
+$ "normalized_reads" expected in this sample
+2: "normalized_reads"
+
+$ mrd field; 2 for clones, 1 for sample
+3: "mrd"
+
+$ Good value for the first clone
+: 195.5076337269

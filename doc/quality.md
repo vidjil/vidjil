@@ -28,11 +28,11 @@ The original algorithm was published in [BMC Genomics 2014], and extension to se
 
 Each new feature or release is carefully tested and goes through the following tests:
 
- - *Unit tests.* 150+ tests on the behaviour of minimal algorithmic bricks
- - *Functional tests.* 850+ tests in 100+ tests sets. We check that the command-line vidjil-algo has the expected behaviour in various conditions and options.
- - *Functional tests on curated sequences.* 500+ sequences with curated V(D)J designations. We check that the algorithm gives an expected result. Specific complex sequences that are known to fail are tagged in the dataset.
+ - *Unit tests.* [150+ tests](http://gitlab.vidjil.org/-/tree/dev/algo/tests/unit-tests) on the behaviour of minimal algorithmic bricks.
+ - *Functional tests.* 850+ tests in [100+ tests sets](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-get-tests). We check that the command-line vidjil-algo has the expected behaviour in various conditions and options.
+ - *Functional tests on curated sequences.* [500+ sequences](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-vdj-tests) with curated V(D)J designations. We check that the algorithm gives an expected result. Specific complex sequences that are known to fail are tagged in the dataset.
  - *Functional tests on full datasets.*
-        We run tests on datasets we distribute on <www.vidjil.org/data> (LIL-L3, LIL-L4, T-ALL diagnosis and relapse) 
+        We run tests on datasets we distribute on <http://www.vidjil.org/data> (LIL-L3, LIL-L4, T-ALL diagnosis and relapse) 
         as well as on other public datasets (Stanford S22).
         Some of these last tests are currently manual. There will be always some human control on these tests,
         but we will nevertheless soon add a part of automation to check more things.
@@ -50,10 +50,10 @@ A sample database links the web application and the algorithmic part, allowing u
 
 ## Tests
 
- - *Web client unit tests.*. 700+ tests on atomic functions of the web application 
- - *Web client functional tests.*  350+ tests web automation with Watir. We test several versions of Firefox and Chrome. They are automatically launched on the web application, loading data and testing common features (clustering, renaming, tagging, sending to other sites, generating reports, etc.).
- - *Web server unit tests* 80+ tests on atomic functions of the web server
- - *Web server functional tests* 140+ tests simulating actual data exchange and queries to the web server throughout its API
+ - *Web client unit tests.*. [700+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/QUnit/testFiles) on atomic functions of the web application
+ - *Web client functional tests.* [350+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/functional) web automation with Watir. We test several versions of Firefox and Chrome. They are automatically launched on the web application, loading data and testing common features (clustering, renaming, tagging, sending to other sites, generating reports, etc.).
+ - *Web server unit tests* [80+ tests](http://gitlab.vidjil.org/-/tree/dev/server/web2py/applications/vidjil/tests/unit) on atomic functions of the web server
+ - *Web server functional tests* [140+ tests](http://gitlab.vidjil.org/-/tree/dev/server/web2py/applications/vidjil/tests/functional) simulating actual data exchange and queries to the web server throughout its API
  - *Hosting monitoring.*  We monitor our public server as well as remote maintened servers.
  
 

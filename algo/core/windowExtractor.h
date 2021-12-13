@@ -12,6 +12,7 @@
 #include "read_storage.h"
 #include "bioreader.hpp"
 #include "read_score.h"
+#include "output.h"
 
 #define NB_BINS_CLONES 10
 #define MAX_VALUE_BINS_CLONES 1000
@@ -30,7 +31,7 @@ class WindowExtractor {
 
   ostream *out_segmented;
   ostream *out_unsegmented;
-  ofstream **out_unsegmented_detail;
+  ostream **out_unsegmented_detail;
   bool unsegmented_detail_full;
   ostream *out_affects;
 
@@ -53,6 +54,7 @@ class WindowExtractor {
    * @param nb_expected: maximal e-value of the segmentation
    * @param nb_reads_for_evalue: number of reads, used for e-value computation. Can be approximate or faked.
    * @param scorer: how reads are scored (only the best ones are keeped for large clones)
+   * @param output: global output, used here for warnings
    * @return a pointer to a WindowsStorage that will contain all the windows.
    *         It is a pointer so that the WindowsStorage is not duplicated.
    * @post Statistics on segmentation will be provided through the getSegmentationStats() methods
@@ -63,7 +65,8 @@ class WindowExtractor {
                           map<string, string> &windows_labels, bool only_labeled_windows=false,
                           bool keep_unsegmented_as_clone=false,
                           double nb_expected = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1,
-                          VirtualReadScore *scorer = &DEFAULT_READ_SCORE);
+                          VirtualReadScore *scorer = &DEFAULT_READ_SCORE,
+                          SampleOutput *output = NULL);
 
   /**
    * @return the average length of sequences whose segmentation has been classified as seg
@@ -121,7 +124,7 @@ class WindowExtractor {
    * @param outs: The output streams
    * @param unsegmented_detail_full: Whether we should output UNSEG_TOO_FEW_ZERO reads
    */
-  void setUnsegmentedDetailOutput(ofstream **outs, bool unsegmented_detail_full=false);
+  void setUnsegmentedDetailOutput(ostream **outs, bool unsegmented_detail_full=false);
 
   /**
    * Defines the output stream where the detailed affects will be output.

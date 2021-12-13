@@ -1,11 +1,20 @@
 !REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
-!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -z 0 -w 60 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; python $VIDJIL_DIR/tools/fuse.py out/Stanford_S22.vidjil out/Stanford_S22.vidjil -o out/fused.data ; cat out/fused.data | python $VIDJIL_DIR/tools/format_json.py -1
+
+!OUTPUT_FILE: out/algo-then-fuse.vidjil
+!OPTIONS: --mod jR
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -z 0 -w 60 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; python $VIDJIL_DIR/tools/fuse.py out/Stanford_S22.vidjil out/Stanford_S22.vidjil -o out/algo-then-fuse.vidjil
 
 $ Points list
-1:"original_names": \[".*data//Stanford_S22.fasta", ".*data//Stanford_S22.fasta"\]
+2:samples.original_names
+:samples.original_names[0]: data//Stanford_S22.fasta
+:samples.original_names[1]: data//Stanford_S22.fasta
 
-$ Most abundant window, twice, fused 
-1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \[8, 8\].*"top": 2
+$ Most abundant window, twice, fused
+:clones[0].id: CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC
+:clones[0].reads: [8, 8]
+:clones[0].top: 1
 
 $ Windows that are not in the bottom of the distribution
-1: "distribution": \{[^}]+ "0.00001": \[9062, 9062\]
+#  :reads.distribution.0.00001:  should#59
+:reads.distribution: [9062, 9062]

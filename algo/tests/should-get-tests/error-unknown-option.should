@@ -1,5 +1,6 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC --hello reads 2>&1
 !EXIT_CODE: 109
+!LAUNCH: $VIDJIL_DIR/$EXEC --hello reads 2>&1
+
 
 $ Unknown option
 1:error.* --hello

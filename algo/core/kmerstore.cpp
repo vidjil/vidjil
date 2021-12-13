@@ -46,6 +46,10 @@ string Kmer::getLabel() const{
 	return "";
 }
 
+int Kmer::getStrand() const{
+	return 1;
+}
+
 size_t Kmer::getLength() const{
   return 10;
 }
@@ -59,6 +63,9 @@ bool Kmer::isNull() const{
 }
 
 bool Kmer::isUnknown() const{
+  return false;
+}
+bool Kmer::isAmbiguous() const{
   return false;
 }
 

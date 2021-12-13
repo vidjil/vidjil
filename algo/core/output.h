@@ -26,7 +26,7 @@ public:
   void set(string key, string subkey, json val);
   void set(string key, string subkey, string subsubkey, json val);
 
-  void add_warning(string code, string msg, string level);
+  void add_warning(string code, string msg, string level, bool phony=true);
 
 };
 
@@ -57,7 +57,7 @@ public:
   void addClone(junction junction, CloneOutput *clone);
 
   // get a clone, or create a new one if needed
-  CloneOutput* getClone(junction junction);
+  CloneOutput* getClone(junction junction, string default_germline);
 
   json toJson();
   void out(ostream &s);

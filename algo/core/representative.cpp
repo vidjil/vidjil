@@ -122,6 +122,7 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
   size_t length_longest_run = 0;
   size_t seq_index_longest_run = 1;
   size_t length_longest_cover = 0;
+  size_t pos_required_longest = 0;
   Sequence sequence_longest_run;
   bool *cover_longest_run = NULL;
   int sequence_used_for_quality = 0;
@@ -203,6 +204,7 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
       sequence_longest_run = sequence;
       length_longest_cover = length_cover;
       seq_index_longest_run = seq;
+      pos_required_longest = pos_required;
       if (cover_longest_run)
         delete [] cover_longest_run;
       cover_longest_run = new bool[sequence.sequence.size()];
@@ -239,7 +241,8 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
       }
       // Update length_longest_run with its actual value
       length_longest_run = last_pos_covered - pos_longest_run + 1;
-      trimSequence(representative.sequence, pos_longest_run, length_longest_run);
+      trimSequence(representative.sequence, pos_longest_run, length_longest_run,
+                   pos_required_longest, required.length());
     }
     delete [] cover_longest_run;
     representative.sequence = representative.sequence.substr(pos_longest_run, length_longest_run);

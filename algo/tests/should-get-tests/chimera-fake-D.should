@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC --all -g $VIDJIL_DIR/germline -2 $VIDJIL_DATA/chimera-fake-D.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -e 5 -g $VIDJIL_DIR/germline -2 $VIDJIL_DATA/chimera-fake-D.fa
 
 $ The KmerSegmenter segments the chimera reads on PSEUDO_MAX12 germline (-2)
 f1:unexpected .* -> .* 2

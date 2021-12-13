@@ -17,9 +17,7 @@ class TestExport < BrowserTest
       # If only one sample, the button report monitor should be disable
       set_browser("/doc/analysis-example1.vidjil")
 
-      if $b.driver.capabilities.browser_name == 'chrome'
-        skip "Issue #3699 must be solved first"
-      end
+      skip_on_browser('chrome', nil, 'Issue #3699 must be solved first')
 
       $b.menu_item_export('export_sample_report')
       assert ( $b.a(:id => "export_monitor_report", :class => 'disabledClass').exists?), ">> export monitor is disable if only one samples is open"
@@ -30,9 +28,7 @@ class TestExport < BrowserTest
       # If only one sample, the button report monitor should be enable
       set_browser("/doc/analysis-example.vidjil")
 
-      if $b.driver.capabilities.browser_name == 'chrome'
-        skip "Issue #3699 must be solved first"
-      end
+      skip_on_browser('chrome', nil, 'Issue #3699 must be solved first')
 
       $b.menu_item_export('export_sample_report')
       assert (not $b.a(:id => "export_monitor_report", :class => 'disabledClass').exists?), ">> export monitor available if 2 samples are present"

@@ -63,6 +63,23 @@ class Patient(SampleSet):
             error.append("illegal character '|' in name")
         return error
 
+    def get_dedicated_fields(self):
+        table = db[self.type]
+        return [
+            table.first_name.with_alias('first_name'),
+            table.last_name.with_alias('last_name'),
+            table.birth.with_alias('birth'),
+        ]
+
+    def get_dedicated_group(self):
+        table = db[self.type]
+        return [table.first_name, table.last_name, table.birth]
+
+    def get_filtered_fields(self, search):
+        table = db[self.type]
+        return (table.first_name.contains(search) |
+                table.last_name.contains(search))
+
     def get_name_filter_query(self, query):
         if query is None or query == '':
             return (db[self.type].id > 0)

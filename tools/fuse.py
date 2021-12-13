@@ -26,6 +26,7 @@
 #  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 
 from __future__ import print_function
+from __future__ import division
 
 import check_python_version
 import sys
@@ -37,6 +38,7 @@ import datetime
 import subprocess
 import tempfile
 import math
+import gzip
 from operator import itemgetter, le
 from utils import *
 from defs import *
@@ -60,7 +62,27 @@ AVAILABLE_AXES = [
     "insert_53", "insert_54", "insert_43",
     "evalue", "evalue_left", "evalue_right",
 ]
+GET_UNKNOW_AXIS = "unknow_axis"
+UNKNOWN_VALUE   = ""
 
+def generic_open(path, mode='r', verbose=False):
+    '''
+    Open a file.
+    If 'r', possibly open .gz compressed files.
+    '''
+    if verbose:
+        print(" <==", path, "\t", end=' ')
+
+    if 'r' in mode:
+        try:
+            f = gzip.open(path, mode)
+            f.read(1)
+            f.seek(0)
+            return f
+        except IOError:
+            pass
+
+    return open(path, mode)
 
 class Window:
     # Should be renamed "Clone"
@@ -80,7 +102,7 @@ class Window:
     check if other information are conserved
     
     >>> (w2 + w4).d["test"]
-    [0, 'plop']
+    ['', 'plop']
     
     >>> w1.get_values("name")
     '?'
@@ -178,7 +200,7 @@ class Window:
     def __add__(self, other):
         """Concat two windows, extending lists such as 'reads'"""
         #data we don't need to duplicate
-        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline"]
+        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd"]
         obj = Window(1)
         
         # 'id' and 'top' will be taken from 'topmost' clone
@@ -190,7 +212,32 @@ class Window:
                                  self.d, len(self.d["reads"]),
                                  other.d, len(other.d["reads"]),
                                  myList)
-                    
+        # MRD data, only if none is empty
+        # TODO: Make this more generic to work with any MRD setup
+        zeroed = {"copy_number": [0],
+                  "R2": [0],
+                  "family": ["None"],
+                   "norm_coeff": [0]}
+        if "mrd" in self.d or "mrd" in other.d:
+            if "mrd" in self.d:
+                first = self.d["mrd"]
+            else:
+                first = zeroed
+                for key in first.keys():
+                    first[key] = first[key] * len(self.d["reads"])
+
+            if "mrd" in other.d:
+                second = other.d["mrd"]
+            else:
+                second = zeroed
+                for key in second.keys():
+                    second[key] = second[key] * len(other.d["reads"])
+
+            obj.d["mrd"] = {}
+            concatenate_with_padding(obj.d["mrd"],
+                                     first, len(self.d["reads"]),
+                                     second, len(other.d["reads"]))
+                        
         # All other data, including 'top'
         # When there are conflicting keys, keep data from the 'topmost' clone
         order = [other, self] if other.d["top"] < self.d["top"] else [self, other]
@@ -200,8 +247,42 @@ class Window:
                 if key not in obj.d:
                     obj.d[key] = source.d[key]
 
+        # !! No name field if fuse with an empty clone
+        if "name" in self.d and "name" in other.d and self.d["name"] != other.d["name"]:
+            if obj.d["name"] == self.d["name"]:
+                name = other.d["name"]
+            else:
+                name = self.d["name"]
+
+            msg = "Merged clone has different V(D)J designations in some samples (pos %s): %s" % (len(self.d["reads"]), name)
+            obj.addWarning(code="W81", msg=msg, level="warn")
+
+        # !! No name field if fuse with an empty clone
+        # !! If imported from airr, junction is present but empty
+        if ("seg" in self.d and "junction" in self.d["seg"]) and ("seg" in other.d and "junction" in other.d["seg"])\
+          and ("productive" in self.d["seg"]["junction"] and "productive" in other.d["seg"]["junction"]) \
+          and self.d["seg"]["junction"]["productive"] != other.d["seg"]["junction"]["productive"]:
+            if obj.d["seg"]["junction"]["productive"] == self.d["seg"]["junction"]["productive"]:
+                junction = other.d["seg"]["junction"]["productive"]
+            else:
+                junction = self.d["seg"]["junction"]["productive"]
+            if junction:
+                junction = "productive"
+            else:
+                junction = "not productive"
+
+            # show number/position of the corresponding sample ?
+            msg = "Merged clone has different productivities in some samples (pos %s): %s" % (len(self.d["reads"]), junction)
+            obj.addWarning(code="W82", msg=msg, level="warn")
         return obj
         
+    def addWarning(self, code, msg, level):
+        # init warn field if not already present
+        if not "warn" in self.d:
+            self.d["warn"] = []
+        self.d["warn"].append( {"code":code, "msg":msg, "level": level})
+        return
+
     def get_nb_reads(self, cid, point=0):
         return self[cid]["reads"][point]
 
@@ -229,6 +310,7 @@ class Window:
         """Return the value of an axis for this clone at a given timepoint"""
 
         axes = {
+            "id":       ["id"],
             "top":      ["top"],
             "germline": ["germline"],
             "name":     ["name"],
@@ -255,7 +337,9 @@ class Window:
             "junction_stop":  ["seg","junction","stop"],
             "junction_start": ["seg","junction","start"],
             "productive":     ["seg","junction","productive"],
-            "lenSeqAverage" : ["_average_read_length"]
+            "lenSeqAverage" : ["_average_read_length"],
+            "warnings": ["warn"],
+            "sequence": ["sequence"]
         }
 
         ### length
@@ -292,7 +376,7 @@ class Window:
 
                 return value
 
-            return "unknow_axis"
+            return GET_UNKNOW_AXIS
         except:
             return "?"
 
@@ -304,6 +388,75 @@ class Window:
             value = round(float(value) / round_set) * round_set
         return value
 
+
+    def toCSV(self, cols= [], time=0, jlist = False):
+        """ Return a list of values of the clone added from a list of waited columns """
+        list_values = []
+
+
+        airr_to_axes = {
+            "locus":               "germline",
+            "v_call":              "seg5",
+            "d_call":              "seg4",
+            "j_call":              "seg3",
+            "v_alignment_end":     "seg5_stop",
+            "d_alignment_start":   "seg4_start",
+            "d_alignment_end":     "seg4_stop",
+            "j_alignment_start":   "seg3_start",
+            "productive":          "productive",
+            "cdr3_start":          "cdr3_start",
+            "cdr3_end":            "cdr3_stop",
+            "sequence_id":         "id",
+            "sequence":            "sequence",
+            ## Not implemented in get_values
+            # For x_cigar, datananot available in clone
+            "junction":  "?",
+            "cdr3_aa":   "?",
+            "rev_comp":  "?",
+            "v_cigar":   "?",
+            "d_cigar":   "?",
+            "j_cigar":   "?",
+            "sequence_alignment": "?",
+            "germline_alignment": "?",
+            "duplicate_count":    "reads"
+        }
+
+        airr_computed =  ["ratio_segmented", "ratio_locus", "filename", "warnings"]
+
+        for col in cols:    
+
+            if col in airr_computed:
+                if col == "ratio_locus":
+                    germline = self.get_values("germline")
+                    value = float(self.get_values("reads", timepoint=time) ) / jlist.d["reads"].d["germline"][germline][time]
+                elif col == "ratio_segmented":
+                    value = float(self.get_values("reads", timepoint=time) ) / jlist.d["reads"].d["segmented"][time]
+                elif col == "filename":
+                    value = jlist.d["samples"].d["original_names"][time]
+                elif col == "warnings":
+                    if "warn" not in self.d.keys():
+                        value = ""
+                    else:
+                        warns = self.d["warn"]
+                        values = []
+                        for warn in warns:
+                            values.append( warn["code"] )
+                        value = ",".join(values)
+
+                else:
+                    value = GET_UNKNOW_AXIS
+
+            elif col in airr_to_axes.keys():
+                value = self.get_values(airr_to_axes[col], timepoint=time)
+            else:
+                value = GET_UNKNOW_AXIS
+
+            if value == "?" or value == GET_UNKNOW_AXIS:
+                # for some axis, there is no computable data; for the moment don't show anything
+                value = UNKNOWN_VALUE
+            list_values.append( str(value) )
+
+        return list_values
 
 
     def latex(self, point=0, base_germline=10000, base=10000, tag=''):
@@ -317,6 +470,30 @@ class Window:
     ### print essential info about Window
     def __str__(self):
         return "<window : %s %s %s>" % ( self.d["reads"], '*' if self.d["top"] == sys.maxsize else self.d["top"], self.d["id"])
+
+class PreProcesses:
+
+    def __init__(self):
+        self.d={}
+
+    def __add__(self, other):
+        obj = PreProcesses()
+
+        length_self = len(self.d['run_timestamp'])
+        length_other = len(other.d['run_timestamp'])
+        concatenate_with_padding(obj.d,
+                                 self.d, length_self,
+                                 other.d, length_other)
+        return obj
+
+    def __iter__(self):
+        return self.d.__iter__()
+
+    def __getitem__(self, item):
+        return self.d.__getitem__(item)
+
+    def __setitem__(self, item, value):
+        return self.d.__setitem__(item, value)
         
 class Samples: 
 
@@ -331,7 +508,20 @@ class Samples:
         concatenate_with_padding(obj.d, 
                                  self.d, self.d['number'], 
                                  other.d, other.d['number'],
-                                 ['number'])
+                                 ['number', 'pre_process'],
+                                 recursive=True)
+        if "pre_process" in self.d.keys() or "pre_process" in other.d.keys():
+            # init if needed
+            if "pre_process" not in self.d.keys():
+                self.d["pre_process"] = {}
+            if "pre_process" not in other.d.keys():
+                other.d["pre_process"] = {}
+            obj.d["pre_process"] = {}
+            concatenate_with_padding(obj.d["pre_process"], 
+                                     self.d["pre_process"], self.d['number'], 
+                                     other.d["pre_process"], other.d['number'],
+                                     [], recursive=True,
+                                     none_init=True)
 
         obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
         
@@ -339,6 +529,27 @@ class Samples:
 
     def __str__(self):
         return "<Samples: %s>" % self.d
+        
+class MRD: 
+
+    def __init__(self, number=1):
+        self.d={}
+        self.d["number"] = number
+            
+    def __add__(self, other):
+        obj=MRD()
+
+        concatenate_with_padding(obj.d, 
+                                 self.d, self.d['number'], 
+                                 other.d, other.d['number'],
+                                 ['number'])
+
+        obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
+        
+        return obj
+
+    def __str__(self):
+        return "<MRD: %s>" % self.d
 
 class Diversity: 
 
@@ -350,12 +561,15 @@ class Diversity:
         for k in self.keys:
             if data == None or not (k in data):
                 self.d[k] = ["na"]
+            elif isinstance(data[k], list):
+                self.d[k]= data[k]
             else:
                 self.d[k]= [data[k]]
 
     def __add__(self, other):
         for k in self.keys:
             self.d[k].append(other.d[k][0])
+
         return self
 
     def __str__(self):
@@ -381,7 +595,12 @@ class Reads:
                                  self.d['distribution'], len(self.d['total']),
                                  other.d['distribution'], len(other.d['total']),
                                  ['total'])
-                
+        if 'merged' in self.d or 'merged' in other.d:
+            for mydict in [obj.d, self.d, other.d]:
+                if 'merged' not in mydict:
+                    mydict['merged'] = [0] * len(mydict['total'])
+            obj.d['merged'] = self.d['merged'] + other.d['merged']
+
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
         return obj
@@ -573,10 +792,7 @@ class ListWindows(VidjilJson):
         Detects and selects the parser according to the file extension.'''
         extension = file_path.split('.')[-1]
 
-        if verbose:
-            print("<==", file_path, "\t", end=' ')
-
-        with open(file_path, "r") as f:
+        with generic_open(file_path, "r", verbose) as f:
             self.init_data(json.load(f, object_hook=self.toPython))
             self.check_version(file_path)
 
@@ -592,11 +808,19 @@ class ListWindows(VidjilJson):
                 print()
 
         time = os.path.getmtime(file_path)
-        self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
+        self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]*self.d["samples"].d["number"]
 
     def loads_vidjil(self, string, pipeline, verbose=True):
         '''init listWindows with a json string'''
         self.init_data(json.loads(string, object_hook=self.toPython))
+
+    def load_pre_process(self, file_path, verbose = True):
+        '''init listWindows with the pre_process data file'''
+        with generic_open(file_path, 'r', verbose) as f:
+            json_data = json.load(f, object_hook=self.toPython)
+
+            self.d['samples'].d['pre_process'] = json_data['pre_process']
+            self.d['reads'].d['merged'] = json_data['reads'].d['merged']
 
     def getTop(self, top):
         result = []
@@ -638,6 +862,13 @@ class ListWindows(VidjilJson):
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["diversity"] = self.d["diversity"] + other.d["diversity"]
+        if "mrd" in self.d or "mrd" in other.d:
+            if not "mrd" in self.d:
+                self.d["mrd"] = MRD()
+            if not "mrd" in other.d:
+                other.d["mrd"] = MRD()
+
+            obj.d["mrd"] = self.d["mrd"] + other.d["mrd"]
         
         try:
             ### Verify that same file is not present twice
@@ -724,7 +955,7 @@ class ListWindows(VidjilJson):
         others = OtherWindows(nb_points)
 
         for clone in self:
-            if (int(clone.d["top"]) < limit or limit == 0) :
+            if (int(clone.d["top"]) <= limit or limit == 0) :
                 w.append(clone)
             #else:
                 #others += clone
@@ -813,7 +1044,7 @@ class ListWindows(VidjilJson):
         self.d["reads"].d["segmented"] = [total_size]
         self.d["reads"].d["total"] = [total_size]
         
-    def load_airr(self, file_path, *args, **kwargs):
+    def load_airr(self, file_path, pipeline, verbose=True):
         '''
         Parser for AIRR files
         format: https://buildmedia.readthedocs.org/media/pdf/airr-standards/stable/airr-standards.pdf
@@ -834,7 +1065,7 @@ class ListWindows(VidjilJson):
         total_size = 0
         i= 0
         import csv
-        with open(file_path) as tsvfile:
+        with generic_open(file_path, 'r', verbose) as tsvfile:
           reader = csv.DictReader(tsvfile, dialect='excel-tab')
 
           for row in reader:
@@ -1013,8 +1244,12 @@ class ListWindows(VidjilJson):
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows) or isinstance(obj, Window) or isinstance(obj, Samples) or isinstance(obj, Reads) or isinstance(obj, Diversity):
+        if isinstance(obj, ListWindows)  or isinstance(obj, Window)\
+           or isinstance(obj, Samples)   or isinstance(obj, Reads)\
+           or isinstance(obj, Diversity) or isinstance(obj, MRD)\
+           or isinstance(obj, PreProcesses):
             result = {}
+
             for key in obj.d :
                 result[key]= obj.d[key]
                 
@@ -1036,6 +1271,13 @@ class ListWindows(VidjilJson):
             obj.d=obj_dict
             return obj
 
+        if "coefficients" in obj_dict:
+            obj = MRD()
+            obj.d=obj_dict
+            # TODO: make this more generic
+            obj.d["number"] = len(obj_dict['prevalent'])
+            return obj
+
         if "id" in obj_dict:
             obj = Window(1)
             obj.d=obj_dict
@@ -1050,9 +1292,39 @@ class ListWindows(VidjilJson):
             obj = Samples()
             obj.d=obj_dict
             return obj
+
+        # TODO use a better identifier
+        if "parameters" in obj_dict:
+            obj = PreProcesses()
+            obj.d=obj_dict
+            return obj
             
         return obj_dict
         
+    def save_airr(self, output):
+        """
+        Create an export of content into AIRR file
+        Columns is hardcoded for the moment.
+        TODO: add some options to give more flexibility to cols
+        """
+        ## Constant header
+        list_header  = ["filename", "locus", "duplicate_count", "v_call", "d_call", "j_call", "sequence_id", "sequence", "productive"]
+        ## not available in this script; but present in AIRR format
+        list_header += ["junction_aa", "junction", "cdr3_aa", "warnings", "rev_comp", "sequence_alignment", "germline_alignment", "v_cigar", "d_cigar", "j_cigar"]
+        # ## Specificly asked. Need to be added by server side action on vidjil files
+        list_header += ["ratio_segmented", "ratio_locus"] #"first_name", "last_name", "birthday", "infos", "sampling_date", "frame"]
+
+        fo = open(output, 'w')
+        fo.write( "\t".join(list_header)+"\n")
+        for clone in self.d["clones"]:
+            reads = clone.d["reads"]
+            for time in range(0, len(reads)):
+                if reads[time]:
+                    fo.write( "\t".join( clone.toCSV(cols=list_header, time=time, jlist=self) )+"\n")
+        fo.close()
+        return
+
+
     def get_filename_pos(self, filename):
         """ filename is the key of distributions repertoires """
         return self.d["samples"].d["original_names"].index(filename)
@@ -1120,6 +1392,107 @@ class ListWindows(VidjilJson):
             obj[values[0]][0] += 1
             obj[values[0]][1] += nb_reads
         return obj
+
+
+    ##########################
+    ###  Morisita's index  ###
+    ##########################
+    def computeOverlaps(self):
+        '''
+        Compute, for each combinaison of sample, various overlap indexs
+        '''
+        nb_sample = self.d["samples"].d["number"]
+        self.d["overlaps"] = {}
+        self.d["overlaps"]["morisita"] = []
+        self.d["overlaps"]["jaccard"]  = []
+
+        for pos_0 in range(0, nb_sample):
+            morisita = []
+            jaccard  = []
+            for pos_1 in range(0, nb_sample):
+                print( "Overlap: %s vs %s" % (pos_0, pos_1) )
+                morisita.append( self.computeOverlapMorisita(pos_0, pos_1) )
+                jaccard.append(  self.computeOverlapJaccard(pos_0, pos_1)  )
+            self.d["overlaps"]["morisita"].append( morisita)
+            self.d["overlaps"]["jaccard"].append(  jaccard )
+            
+        return
+
+
+    def computeOverlapMorisita(self, pos_0, pos_1):
+        """
+        Morisita-Horn similarity index
+        This index apply to quantitative data.
+        Allow to evaluate the similarity between different groups, and is not sensible by richness of sampling
+        Formula:  CMH = 2 ∑▒((ai x bi))/((da+db)x(Na x Nb))
+        da = ∑ai2/Na2
+        db = ∑bi2/Nb2
+        Na = Total number of species at site A
+        Nb = Total number of species at site B
+        ai = Number of species i at site A
+        bi = Number of species i at site B
+        # Values between 0 (completly different communityes) and 1 (maximal similarity).
+        # 2 groups are similare (poor diversity) if CMH value is superior to 0.5
+        # and dissemblables if value is under 0,5 (high diversity).
+        !!! Computed only on present clones (so should be run with `-Y all`)
+        """
+        clones    = self.d["clones"]
+
+        m  = 0
+        da = 0
+        db = 0
+
+        for clone in clones:
+            ai = clone.d["reads"][pos_0]
+            bi = clone.d["reads"][pos_1]
+            m  += (ai * bi)
+            da += (ai*ai)
+            db += (bi*bi)
+
+        d = (da+db)/2
+        if m == 0: #if really no shared clones
+            res =  0
+        else:
+            res = round( (m/d), 3) 
+
+        return res
+
+
+    def computeOverlapJaccard(self, pos_0, pos_1):
+        """
+        Jaccard similarity index
+        Formula :
+            I = Nc / (N1 + N2 - Nc)
+        Nc : number of shared taxons between stations
+        N1 et N2 : number of taxons present only in stations 1 or 2
+        This index is from 0 to 1 and take into account only positive relations.
+        If index increase, an important number of species is present in only one location,
+        with a poor inter-location biodiversity.
+        """
+        clones    = self.d["clones"]
+        reads     = self.d["reads"].d["segmented"]
+        N1 = self.get_nb_species_of_sample(pos_0)
+        N2 = self.get_nb_species_of_sample(pos_1)
+
+        Nc = 0
+        for clone in clones:
+            ai = clone.d["reads"][pos_0]
+            bi = clone.d["reads"][pos_1]
+            Nc  += bool(ai * bi)
+        # print( "Nc: %s" % Nc)
+        if Nc == 0: # if really no shared clones
+            return 0
+
+        I = round( (Nc / (N1 + N2 - Nc)), 3)
+        return I
+
+
+    def get_nb_species_of_sample(self, pos):
+        X = 0
+        for clone in self.d["clones"]:
+            if clone.d["reads"][pos]:
+                X += 1
+        return X
 
 
 
@@ -1196,7 +1569,7 @@ seg_w7 = {
 
 lw1 = ListWindows()
 lw1.d["timestamp"] = 'ts'
-lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
+lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, "distribution": {}, "merged": [null]}', object_hook=lw1.toPython)
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
 lw1.d["diversity"] = Diversity()
@@ -1209,7 +1582,7 @@ w8.d ={"id" : "ccc", "reads" : [2], "top" : 8, "test" : ["plop"] }
 
 lw2 = ListWindows()
 lw2.d["timestamp"] = 'ts'
-lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
+lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {}, "distribution": {}, "merged": [null]}', object_hook=lw1.toPython)
 lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
 lw2.d["diversity"] = Diversity()
@@ -1250,13 +1623,17 @@ def exec_command(command, directory, input_file):
     
     Returns the output filename (a .vidjil). 
     '''
+    # split command
+    soft = command.split()[0]
+    args = command[len(soft):]
+
     assert (not os.path.sep in command), "No {} allowed in the command name".format(os.path.sep)
     ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
 
     basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    command_fullpath = basedir+os.path.sep+directory+os.path.sep+command
-    com = '%s %s %s' % (quote(command_fullpath), quote(os.path.abspath(input_file)), ff.name)
-    print(com)
+    command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
+    com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
+    print("Pre/Post process command: \n%s" % com)
     os.system(com)
     print()
     return ff.name
@@ -1290,12 +1667,18 @@ def main():
 
     group_options.add_argument('--first', '-f', type=int, default=0, help='take only into account the first FIRST files (0 for all) (%(default)s)')
 
-    group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR)')
+    group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR). \
+                                             Program should take arguments -i/-o for input of vidjil file and output of temporary modified vidjil file.')
+    group_options.add_argument('--post', type=str,help='post-process program (launched on fused .vidjil file) (needs defs.PRE_PROCESS_DIR). \
+                                             Program should take arguments -i/-o for input of vidjil file and output of temporary modified vidjil file.')
 
     group_options.add_argument("--distribution", "-d", action='append', type=str, help='compute the given distribution; callable multiple times')
     group_options.add_argument('--distributions-all', '-D', action='store_true', default=False, help='compute a preset of distributions')
     group_options.add_argument('--distributions-list', '-l', action='store_true', default=False, help='list the available axes for distributions')
     group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
+
+    group_options.add_argument('--export-airr', action='store_true', default=False, help='export data in AIRR format.')
+    group_options.add_argument('--overlaps', action='store_true', default=False, help='Compute overlaps index of repertoires.')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
 
@@ -1347,6 +1730,14 @@ def main():
         vparser.addPrefix('clones.item', 'clones.item.top', le, args.top)
 
     for path_name in files:
+        split_path = path_name.split(',')
+        pre_path = None
+        if len(split_path) > 1:
+            path_name = split_path[0]
+            pre_path = split_path[1]
+        else:
+            path_name = split_path[0]
+
         if args.ijson:
             json_clones = vparser.extract(path_name)
             clones = json.loads(json_clones)
@@ -1355,6 +1746,8 @@ def main():
         else:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
+            if pre_path is not None:
+                jlist.load_pre_process(pre_path)
             f += jlist.getTop(args.top)
 
     f = sorted(set(f))
@@ -1387,12 +1780,22 @@ def main():
     else:
         print("### Read and merge input files")
         for path_name in files:
+            split_path = path_name.split(',')
+            pre_path = None
+            if len(split_path) > 1:
+                path_name = split_path[0]
+                pre_path = split_path[1]
+            else:
+                path_name = split_path[0]
+
             jlist = ListWindows()
             if args.ijson:
                 json_reads = vparser.extract(path_name)
                 jlist.loads(json_reads, args.pipeline)
             else:
                 jlist.load(path_name, args.pipeline)
+                if pre_path is not None:
+                    jlist.load_pre_process(pre_path)
                 jlist.build_stat()
                 if len(LIST_DISTRIBUTIONS):
                     jlist.init_distrib(LIST_DISTRIBUTIONS)
@@ -1441,13 +1844,34 @@ def main():
             os.unlink(fasta_file.name)
     else : 
         jlist_fused.d["similarity"] = [];
+        
+
+    if args.overlaps:
+        print("### Overlaps index")
+        jlist_fused.computeOverlaps()
     
     if args.no_clones:
         # TODO: do not generate the list of clones in this case
         del jlist_fused.d["clones"]
 
     print("### Save merged file")
-    jlist_fused.save_json(args.output)
+
+
+    if args.post:
+        print("Post-processing files...")
+        jlist_fused.save_json(args.output)
+        post_out_name = exec_command(args.post, PRE_PROCESS_DIR, args.output)
+        # reload post processed file
+        jlist_fused = ListWindows()
+        jlist_fused.load(post_out_name, args.pipeline)
+        jlist_fused.build_stat()
+
+    if args.export_airr:
+        output = args.output.replace(".vidjil", ".airr")
+        jlist_fused.save_airr(output)
+    else:
+        output =  args.output
+        jlist_fused.save_json(args.output)
     
     
     

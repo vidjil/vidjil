@@ -18,6 +18,16 @@ test_tools_if_python:
 test_tools:
 	$(MAKE) -C tools/tests
 
+test_tutorial:
+	$(MAKE) -C doc/tutorial tutorial-test.rb
+	$(MAKE) -C browser/test tutorial 
+
+test_tutorial_server:
+	$(MAKE) -C doc/tutorial tutorial-server.rb
+	wget http://vidjil.org/seqs/tutorial_dataset.zip
+	unzip -o tutorial_dataset.zip
+	$(MAKE) -C server tutorial
+
 shouldvdj_generate:
 	@echo
 	rm -rf data/gen
@@ -45,6 +55,60 @@ functional_server:
 headless_server:
 	$(MAKE) -C server headless
 
+
+###############################
+### Browser tests WITH CYPRESS
+build_cypress_image:
+	docker build ./docker/ci  -t "vidjilci/cypress_with_browsers:latest"
+
+functional_browser_cypress_open:
+	# Need to create a symbolic link; but allow to directly see result
+	# Usefull for fast debugging; allow to launch script one by one
+	ln -sf browser/test/cypress
+	cypress open --env workdir=../,host=localhost
+
+functional_browser_cypress:
+	docker run \
+		-v `pwd`/browser/test/cypress:/app/cypress \
+		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
+		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
+		-v `pwd`:/app/vidjil \
+		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
+		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
+		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.json" \
+		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:latest" bash script.bash
+
+
+
+functional_server_cypress_open:
+	ln -sf server/web2py/applications/vidjil/tests/cypress/ .
+	rm -r cypress/fixtures  cypress/plugins  cypress/support || true
+	ln -sf ../../../../../../browser/test/cypress/fixtures cypress/fixtures
+	ln -sf ../../../../../../browser/test/cypress/plugins  cypress/plugins
+	ln -sf ../../../../../../browser/test/cypress/support  cypress/support
+	cypress open --env workdir=../,host=local
+
+functional_server_cypress:
+	# Need to have a local server deploy with the ci data integrated
+	docker run \
+		-v `pwd`/browser/test/cypress:/app/cypress \
+		-v `pwd`/server/web2py/applications/vidjil/tests/cypress/integration:/app/cypress/integration \
+		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
+		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
+		-v `pwd`:/app/vidjil \
+		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
+		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
+		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.json" \
+		--network="host" \
+		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash
+
+###############################
+
+
+tutorial-test.rb:
+	$(MAKE) -C doc/tutorial tutorial-test.rb
 ###
 
 data:

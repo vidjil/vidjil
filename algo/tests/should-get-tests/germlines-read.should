@@ -1,17 +1,62 @@
-!LAUNCH: ($LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA -c germlines -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL --trim 100 -s '######-######' $VIDJIL_DATA/Stanford_S22.fasta)
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -c germlines -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/Stanford_S22.fasta
 
 $ number of reads and kmers
-1:13153 reads, 3020179 kmers
+1:13153 reads, 304.... kmers
 
 $ k-mers, IGHV
-1:13116 .* 1219953 .*IGHV
+1:13150 .* 1570847 .*IGHV
 
-$ k-mers, IGHJ
-1:37 .* 435550 .*IGHJ
+$ k-mers, IGHJ+down
+1:3 .* 316782 .*IGHJ.down
 
+# Other loci have an influence on ambiguous/unknown k-mers. We check here their approximate number
 $ k-mers, ambiguous
-1:53416   .*\\?
+1:466...   .*\\?
 
 $ k-mers, unknown
-1:1406774 .*_
+1:728... .*_
 
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -c germlines -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/Demo-X5.should-vdj.fa
+
+$ number of reads and kmers
+1:14 reads, 3276 kmers
+
+$ k-mers, IGH
+1:  1 .* 217  .*IGHV
+1:  0 .*   8  .*IGHD
+1:  1 .*  47  .*IGHJ.down
+
+$ k-mers, IGK
+1:  2 .* 321  .*IGKV
+1:  0 .*  15  .*IGKJ.down
+
+$ k-mers, IGL
+1:  2 .* 284  .*IGLV
+1:  0 .*   9  .*IGLJ.down
+
+$ k-mers, TRA
+1:  1 .*  77  .*TRAV
+1:  0 .* 123  .*TRAJ.down
+
+$ k-mers, TRB
+1:  1 .* 100  .*TRBV
+1:  0 .*   0  .*TRBD
+1:  1 .*  48  .*TRBJ.down
+
+$ k-mers, TRG
+1:  1 .*  46  .*TRGV
+1:  0 .*  35  .*TRGJ.down
+
+$ k-mers, TRD
+1:  4 .* 251  .*TRDV
+1:  0 .*   3  .*TRDD
+1:  0 .*  29  .*TRDJ.down
+
+
+$ k-mers, ambiguous
+1:  371  .*\\?
+
+$ k-mers, unknown
+1: 1432  .*_

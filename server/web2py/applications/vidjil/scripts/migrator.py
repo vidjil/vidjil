@@ -30,6 +30,13 @@ class MigrateLogger():
     def getLogger(self):
         return self.log
 
+    def infoConfig(self, tables):
+        config_id = []
+        for res in tables['results_file']:
+            config_id.append(tables['results_file'][res]['config_id'])
+        config_id = list(dict.fromkeys(config_id))
+        self.info("IDs of detected config %s" % str(config_id))
+
 def get_dict_from_row(row):
     '''
     Create a dict element from a Row element
@@ -71,6 +78,8 @@ class IdMapper():
         self.mapping = {}
 
     def getMatchingId(self, oid):
+        if oid is None:
+            return oid
         if oid not in self.mapping:
             self.log.debug('id %d not in mapping, returning it' % oid)
             self.log.debug("mapping: " + str(self.mapping.keys()))
@@ -93,7 +102,9 @@ class ConfigMapper(IdMapper):
         with open(cfile, 'r') as cfg:
             config_map = json.load(cfg, encoding='utf-8')
             for key in config_map:
-                self.mapping[long(key)] = config_map[key]
+                if config_map[key]["link_local"]:
+                    self.mapping[long(key)] = config_map[key]["link_local"]
+
             self.log.info("mapping loaded")
             self.log.debug("mapping: " + str(self.mapping.keys()))
 
@@ -109,6 +120,7 @@ class Extractor():
         sets = {}
         sample_set_ids = []
         for row in rows:
+            row.creator = 1
             self.log.debug("populating : %d, sample_set: %d" % (row.id, row.sample_set_id))
             sets[row.id] = get_dict_from_row(row)
             sample_set_ids.append(row.sample_set_id)
@@ -126,6 +138,8 @@ class Extractor():
         memberships = {}
         sequence_files = {}
         for row in rows:
+            row.sequence_file.provider = 1
+            row.sequence_file.patient_id = None
             ssm_id = row.sample_set_membership.id
             sf_id = row.sequence_file.id
             self.log.debug("populating sequence file: %d, membership: %d" % (sf_id, ssm_id))
@@ -152,12 +166,14 @@ class GroupExtractor(Extractor):
     def __init__(self, db, log):
         Extractor.__init__(self, db, log)
 
-    def getAccessible(self, table, groupid):
+    def getAccessible(self, table, groupids):
         db = self.db
-        rows = db((db[table].id == db.auth_permission.record_id)
-                & (db.auth_permission.table_name == table)
+
+        rows = db((db.sample_set.id == db.auth_permission.record_id)
+                & (db.sample_set.id == db[table].sample_set_id)
+                & (db.auth_permission.table_name == "sample_set")
                 & (db.auth_permission.name == PermissionEnum.access.value)
-                & (db.auth_permission.group_id == groupid)
+                & (db.auth_permission.group_id.belongs(groupids))
                ).select(db[table].ALL)
         return rows
 
@@ -173,12 +189,13 @@ class SampleSetExtractor(Extractor):
 
 class Importer():
 
-    def __init__(self, groupid, db, log, config_mapper):
+    def __init__(self, groupid, db, log, config_mapper, pprocess_mapper):
         self.log = log
         self.log.info("initialising importer")
         self.groupid = groupid
         self.db = db
-        self.mappings = {'config': config_mapper}
+        self.mappings = {'config': config_mapper,
+                        'pre_process': pprocess_mapper}
         self.mappings['sample_set'] = IdMapper(self.log)
 
     def importSampleSets(self, stype, sets):
@@ -197,6 +214,10 @@ class Importer():
                                       name=PermissionEnum.access.value,
                                       table_name=stype,
                                       record_id=nid)
+            db.auth_permission.insert(group_id=self.groupid,
+                                      name=PermissionEnum.access.value,
+                                      table_name="sample_set",
+                                      record_id=ssid)
             self.log.debug("associated set %d to group %d" % (nid, self.groupid))
 
     def importTable(self, table, values, ref_fields={}, map_val=False):
@@ -208,7 +229,7 @@ class Importer():
             for key in ref_fields:
                 ref_key = ref_fields[key]
                 matching_id = self.mappings[key].getMatchingId(val[ref_key])
-                self.log.debug("%s replacing %s: %d with %d" % (table, ref_key, val[ref_key], matching_id))
+                #self.log.debug("%s replacing %s: %d with %d" % (table, ref_key, val[ref_key], matching_id))
                 val[ref_key] = matching_id
             oid = db[table].insert(**val)
             self.log.debug("new %s: %d" % (table, oid))
@@ -228,8 +249,11 @@ def copy_files(data, src, dest, log=MigrateLogger()):
     for t in file_fields:
         for entry in data[t]:
             if (data[t][entry][file_fields[t]] is not None):
-                log.debug("Copying %s" % data[t][entry][file_fields[t]])
-                copy(src + '/' + data[t][entry][file_fields[t]], dest + '/' + data[t][entry][file_fields[t]])
+                try:
+                    copy(src + '/' + data[t][entry][file_fields[t]], dest + '/' + data[t][entry][file_fields[t]])
+                    log.debug("Copying %s" % data[t][entry][file_fields[t]])
+                except:
+                    log.error("failed to copy file %s" % data[t][entry][file_fields[t]])
 
 def export_peripheral_data(extractor, data_dict, sample_set_ids, log=MigrateLogger()):
     sequence_rows = extractor.getSequenceFiles(sample_set_ids)
@@ -253,24 +277,26 @@ def export_peripheral_data(extractor, data_dict, sample_set_ids, log=MigrateLogg
 
     return data_dict
 
-def export_group_data(filesrc, filepath, groupid, log=MigrateLogger()):
+def export_group_data(filesrc, filepath, groupids, log=MigrateLogger()):
     log.info("exporting group data")
     ext = GroupExtractor(db, log)
 
     tables = {}
 
-    patient_rows = ext.getAccessible('patient', groupid)
+    patient_rows = ext.getAccessible('patient', groupids)
     tables['patient'], patient_ssids = ext.populateSets(patient_rows)
 
-    run_rows = ext.getAccessible('run', groupid)
+    run_rows = ext.getAccessible('run', groupids)
     tables['run'], run_ssids = ext.populateSets(run_rows)
 
-    generic_rows = ext.getAccessible('generic', groupid)
+    generic_rows = ext.getAccessible('generic', groupids)
     tables['generic'], generic_ssids = ext.populateSets(generic_rows)
     
     sample_set_ids = patient_ssids + run_ssids + generic_ssids
 
     tables = export_peripheral_data(ext, tables, sample_set_ids, log=log)
+
+    log.infoConfig(tables)
 
     if not os.path.exists(filepath):
         os.makedirs(filepath)
@@ -293,6 +319,8 @@ def export_sample_set_data(filesrc, filepath, sample_type, sample_ids, log=Migra
 
     tables = export_peripheral_data(ext, tables, sample_set_ids, log=log)
 
+    log.infoConfig(tables)
+
     if not os.path.exists(filepath):
         os.makedirs(filepath)
 
@@ -304,7 +332,7 @@ def export_sample_set_data(filesrc, filepath, sample_type, sample_ids, log=Migra
 
     log.info("done")
 
-def import_data(filesrc, filedest, groupid, config=None, dry_run=False, log=MigrateLogger()):
+def import_data(filesrc, filedest, groupid, config=None, pprocess=None, dry_run=False, log=MigrateLogger()):
     log.info("importing data")
     data = {}
     with open(filesrc + '/export.json', 'r') as infile:
@@ -314,7 +342,12 @@ def import_data(filesrc, filedest, groupid, config=None, dry_run=False, log=Migr
     config_mapper = ConfigMapper(log)
     if config:
         config_mapper.load(config)
-    imp = Importer(groupid, db, log, config_mapper)
+
+    pprocess_mapper = ConfigMapper(log)
+    if pprocess_mapper:
+        pprocess_mapper.load(pprocess)
+
+    imp = Importer(groupid, db, log, config_mapper, pprocess_mapper)
 
     try:
         set_types = ['patient', 'run', 'generic']
@@ -322,7 +355,14 @@ def import_data(filesrc, filedest, groupid, config=None, dry_run=False, log=Migr
             if stype in data:
                 imp.importSampleSets(stype, data[stype])
 
-        imp.importTable('sequence_file', data['sequence_file'], map_val=True)
+        for row in data['analysis_file']:
+            data['analysis_file'][row]['patient_id'] = None
+            data['analysis_file'][row]['config_id'] = None
+
+        for row in data['fused_file']:
+            data['fused_file'][row]['patient_id'] = None
+
+        imp.importTable('sequence_file', data['sequence_file'], {'pre_process': 'pre_process_id'}, map_val=True)
         imp.importTable('sample_set_membership', data['membership'], {'sample_set': 'sample_set_id', 'sequence_file': 'sequence_file_id'})
         imp.importTable('scheduler_task', data['scheduler_task'], map_val=True)
         imp.importTable('scheduler_run', data['scheduler_run'], {'scheduler_task': 'task_id'})
@@ -334,9 +374,9 @@ def import_data(filesrc, filedest, groupid, config=None, dry_run=False, log=Migr
             db.rollback()
             log.info("dry run successful, no data saved")
         else:
-            db.commit()
             log.info("copying files from %s to %s" % (filesrc, filedest))
             copy_files(data, filesrc + '/files', filedest, log=log)
+            db.commit()
             log.info("done")
     except:
         log.error("something went wrong, rolling back")
@@ -356,12 +396,13 @@ def main():
     ss_parser.add_argument('ssids', metavar='ID', type=long, nargs='+', help='Ids of sample sets to be extracted')
 
     group_parser = exp_subparser.add_parser('group', help='Extract data by groupid')
-    group_parser.add_argument('groupid', type=long, help='The long ID of the group')
+    group_parser.add_argument('groupids', metavar='GID', type=long, nargs='+', help='The long IDs of the exported groups')
 
     import_parser = subparsers.add_parser('import', help='Import data from JSON into the DB')
     import_parser.add_argument('--dry-run', dest='dry', action='store_true', help='With a dry run, the data will not be saved to the database')
     import_parser.add_argument('--config', type=str, dest='config', help='Select the config mapping file')
-    import_parser.add_argument('groupid', type=long, help='The long ID of the group')
+    import_parser.add_argument('--pre-process', type=str, dest='pprocess', help='Select the pre-process mapping file')
+    import_parser.add_argument('groupid', type=long, help='The long ID of the receiver group')
 
     parser.add_argument('-p', type=str, dest='filepath', default='./', help='Select the file destination')
     parser.add_argument('-s', type=str, dest='filesrc', default='./', help='Select the file source')
@@ -375,13 +416,13 @@ def main():
 
     if args.command == 'export':
         if args.mode == 'group':
-            export_group_data(args.filesrc, args.filepath, args.groupid, log)
+            export_group_data(args.filesrc, args.filepath, args.groupids, log)
         elif args.mode == 'sample_set':
             export_sample_set_data(args.filesrc, args.filepath, args.sample_type, args.ssids, log)
     elif args.command == 'import':
         if args.dry:
             log.log.setLevel(logging.DEBUG)
-        import_data(args.filesrc, args.filepath, args.groupid, args.config, args.dry, log)
+        import_data(args.filesrc, args.filepath, args.groupid, args.config, args.pprocess, args.dry, log)
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,94 @@
+{
+  "overlaps": {
+    "morisita": [
+      [
+        1.0, 
+        0.166, 
+        0.48
+      ], 
+      [
+        0.166, 
+        1.0, 
+        0.12
+      ], 
+      [
+        0.48, 
+        0.12, 
+        1.0
+      ]
+    ], 
+    "jaccard": [
+      [
+        1.0, 
+        0.167, 
+        0.152
+      ], 
+      [
+        0.167, 
+        1.0, 
+        0.234
+      ], 
+      [
+        0.152, 
+        0.234, 
+        1.0
+      ]
+    ]
+  }, 
+  "germlines": {}, 
+  "producer": "vidjil fuse", 
+  "similarity": [], 
+  "timestamp": "2020-09-04 11:11:47", 
+  "vidjil_json_version": "2016b", 
+  "warn": [
+  ], 
+  "reads": {
+    "segmented": [
+      7260, 
+      4149, 
+      9239
+    ],
+    "total": [
+      25000, 
+      25000, 
+      25000
+    ], 
+    "germline": {
+      
+    }
+  }, 
+  "samples": {
+    "log": [
+      "log0", "log1", "log2"
+    ], 
+    "producer": [
+      "vidjil-algo", 
+      "vidjil-algo", 
+      "vidjil-algo"
+    ], 
+    "timestamp": [
+      "2020-08-06 12:26:02", 
+      "2020-08-06 12:25:50", 
+      "2020-08-06 12:25:40"
+    ], 
+    "commandline": [
+      "cmd0","cmd1","cmd2"
+    ], 
+    "number": 3, 
+    "original_names": [
+      "LIL-L3-0", 
+      "LIL-L3-1", 
+      "LIL-L3-2"
+    ], 
+    "run_timestamp": [
+      "2020-04-30 17:24:15", 
+      "2020-04-30 17:24:15", 
+      "2020-04-30 17:24:15"
+    ]
+  }, 
+  "clones": [
+  ], 
+  "clusters": [
+    0
+  ]
+}

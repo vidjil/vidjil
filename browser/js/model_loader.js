@@ -45,6 +45,9 @@ Model_loader.prototype = {
         if (typeof config != 'undefined' && typeof config.autoload_analysis != 'undefined')
             params.analysis = config.autoload_analysis
 
+        if (typeof config != 'undefined' && typeof config.server_id != 'undefined')
+            document.getElementById('server-id').innerText = config.server_id
+
         /** load the default vidjil file, open the database or display the welcome popup depending on the case*/
         if (typeof params.data !== "undefined") {
             if (typeof params.analysis !== "undefined"){
@@ -55,29 +58,35 @@ Model_loader.prototype = {
             }
         }
             
+        else if (typeof params.custom !== "undefined" && params.custom.length>0){
+            //wait 1sec to check ssl
+            if (typeof params.sample_set_id !== "undefined" && typeof params.config !== "undefined"){
+                //wait 1sec to check ssl
+                setTimeout(function () { self.db.load_custom_data( {"custom" : params.custom, "sample_set_id" : params.sample_set_id, "config": params.config })  }, 1000);
+                return
+            }
+            setTimeout(function () { self.db.load_custom_data( {"custom" : params.custom })  }, 1000);
+            return
+        }
+
         else if (typeof params.sample_set_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"sample_set_id" : params.sample_set_id , "config" : params.config } , "") }, 1000);
+            setTimeout(function () { self.db.load_data( {"sample_set_id" : params.sample_set_id , "config" : params.config } , "") }, 1000);
         }
         
         else if (typeof params.patient_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"patient" : params.patient_id , "config" : params.config } , "")  }, 1000);
+            setTimeout(function () { self.db.load_data( {"patient" : params.patient_id , "config" : params.config } , "")  }, 1000);
         }
         
         else if (typeof params.run_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"run" : params.run_id , "config" : params.config } , "")  }, 1000);
-        }
-            
-        else if (typeof params.custom !== "undefined" && params.custom.length>0){
-            //wait 1sec to check ssl
-            setTimeout(function () { db.load_custom_data( {"custom" : params.custom })  }, 1000);
+            setTimeout(function () { self.db.load_data( {"run" : params.run_id , "config" : params.config } , "")  }, 1000);
         }
                 
         else if (typeof config != 'undefined' && config.use_database){
             //wait 1sec to check ssl
-            setTimeout(function () { db.call("default/home.html")}, 1000);
+            setTimeout(function () { self.db.call("default/home.html")}, 1000);
         }else{
             console.log({"type":"popup", "default":"welcome" })
         }
@@ -94,7 +103,7 @@ Model_loader.prototype = {
         var self = this;
 
         console.log("load()");
-
+        this.loading_is_pending = true
         if (document.getElementById(id)
             .files.length === 0) {
             return;
@@ -107,6 +116,7 @@ Model_loader.prototype = {
         oFReader.readAsText(oFile);
         oFReader.onload = function (oFREvent) {
             self.reset();
+            self.setAll()
             self.parseJsonData(oFREvent.target.result, limit);
             self.loadGermline()
                 .initClones()
@@ -115,8 +125,9 @@ Model_loader.prototype = {
             self.dataFileName = document.getElementById(id)
                 .files[0].name;
             self.check_export_monitor()
-
+            self.file_source = "local";
         }
+        this.loading_is_pending = false
 
     }, 
 
@@ -193,12 +204,14 @@ Model_loader.prototype = {
             url: url,
             success: function (result) {
                 self.reset();
+                self.setAll();
                 self.parseJsonData(result, 100)
                     .loadGermline()
                     .initClones()
                 self.update_selected_system()
                 self.dataFileName = url_split[url_split.length-1]
                 self.check_export_monitor()
+                self.file_source = "database";
 
                 // self.applyUrlParams(paramsDict);
                 callback()
@@ -248,6 +261,7 @@ Model_loader.prototype = {
      * */
     parseJsonData: function (data, limit) {
         self = this;
+        this.is_ready = false
         
         //convert data to json if necessary
         if (typeof data == "string") {
@@ -268,6 +282,7 @@ Model_loader.prototype = {
             return 0;
         }
         self.reset();
+        self.setAll()
         
         //copy .vidjil file in model
         var store_config = this.config;
@@ -307,6 +322,10 @@ Model_loader.prototype = {
         if (typeof self.samples.order == 'undefined'){
             self.samples.order = []
             for (var j = 0; j < self.samples.number; j++) self.samples.order.push(j);
+        }
+        if (typeof self.samples.stock_order == 'undefined'){
+            self.samples.stock_order = []
+            for (var s = 0; s < self.samples.number; s++) self.samples.stock_order.push(s);
         }
         if (self.samples.order.length >= 2) {
             self.tOther = 1
@@ -391,6 +410,7 @@ Model_loader.prototype = {
             this.distributions = data.distributions
             this.loadAllDistribClones()
         }
+        this.is_ready = true
         return this
 
     }
@@ -410,26 +430,6 @@ Model_loader.prototype = {
                 fields.push(key);
             }
         return fields;
-    },
-
-    calculateOrder: function(arr) {
-        tmp = arr.slice();
-        res = arr.slice();
-        previous = -1;
-        while(tmp.length > 0) {
-            min = tmp[0];
-            min_idx = 0;
-            for(var i = 0; i < tmp.length; i++) {
-                if (tmp[i] < min) {
-                    min = tmp[i];
-                    min_idx = i;
-                }
-            }
-            idx = arr.indexOf(min);
-            tmp.splice(min_idx, 1);
-            res[idx] = ++previous;
-        }
-        return res;
     },
 
     buildDict: function(first, second) {
@@ -456,6 +456,10 @@ Model_loader.prototype = {
 
     copySampleFields: function(samples, analysis) {
         var clone = $.extend({}, samples);
+
+        // Fix error when filename is present multiple times
+        clone.original_names = fixDuplicateNames(clone.original_names)
+
         if ('id' in analysis) {
             //replace names, timestamps, order...
             dict = this.buildDict(analysis.id, clone.original_names);
@@ -469,14 +473,104 @@ Model_loader.prototype = {
                     for (var key in dict[id]) {
                         clone[key][idx] = dict[id][key];
                     }
+            }
+            if (!("order" in analysis)){
+                // Possible case for first analysis. In this case, don't hide previous samples
+                analysis.order = []
+                for (var j = 0; j < analysis.id.length; j++) {
+                    analysis.order.push( j )
+                }
+            }
+        } else {
+            analysis.id = []
+            analysis.order = []
+            analysis.stock_order = []
+        }
 
+        // Fix case of error where same timepoint is present multiple time in order
+        if (clone.order != undefined){
+            clone.order = removeDuplicate(clone.order)
+        }
+        if (analysis.order != undefined){
+            analysis.order = removeDuplicate(analysis.order)
+        }
+        if (analysis.stock_order != undefined){
+            analysis.stock_order = removeDuplicate(analysis.stock_order)
+        } else {
+            // Create new values of stock_order for old analysis files
+            if (analysis.order != undefined) {
+                analysis.stock_order = JSON.parse(JSON.stringify(analysis.order));
+            } else {
+                analysis.order = []
+                analysis.stock_order = []
+            }
+            for (var i = 0; i < analysis.id.length; i++) {
+              if (analysis.order.indexOf(i) == -1){
+                analysis.stock_order.push(i)
+              }
             }
         }
-        if ('order' in analysis) {
-            clone.order = this.calculateOrder(clone.order);
-        }
+
+        this.delRemovedSample(analysis, samples)
+
+        clone.order = analysis.order
+        clone.stock_order = analysis.stock_order
         return clone;
     },
+
+
+    /**
+     * Make housekeeping of order_stock_order field of analysis
+     * Allow to remove deleted samples and add new one and keep a consistant order
+     * @param {string} analysis - json_text / content of .analysis file
+     * @param {string} samples  - json_text / content of .vidjil file
+     * */ 
+    delRemovedSample: function (analysis, samples) {
+        var self = this
+
+        var current_names  = samples.original_names
+        var analysis_names = analysis.id
+        var order = analysis.order
+        var stock = analysis.stock_order
+
+        // Convert value into filename and delete delted samples from arrays
+        // ... for order field
+        for (var i = 0; i < order.length; i++) {
+            order[i] = analysis_names[order[i]]
+        }
+        for (var k = order.length - 1; k >= 0; k--) {
+            if (current_names.indexOf(order[k]) == -1){
+                order.splice(k, 1)
+            }
+        }
+
+        // ... for stock_order field
+        for (var j = 0; j < stock.length; j++) {
+            stock[j] = analysis_names[stock[j]]
+        }
+        for (var l = stock.length - 1; l >= 0; l--) {
+            if (current_names.indexOf(stock[l]) == -1){
+                stock.splice(l, 1)
+            }
+        }
+
+        // Add new samples
+        for (var m = 0; m < current_names.length; m++) {
+            if (stock.indexOf(current_names[m]) == -1){
+                order.push(current_names[m])
+                stock.push(current_names[m])
+            }
+        }
+
+        // retro convert filename into position in the loaded analysis
+        for (var p = 0; p < order.length; p++) {
+            order[p] = current_names.indexOf(order[p])
+        }
+        for (var q = 0; q < stock.length; q++) {
+            stock[q] = current_names.indexOf(stock[q])
+        }
+    },
+
 
     /**
      * parse a json or a json_text and complete the model with it's content
@@ -484,7 +578,7 @@ Model_loader.prototype = {
      * */ 
     parseJsonAnalysis: function (analysis) {
         var self = this
-        
+        this.is_ready = false
         
         if (typeof analysis == "string") {
             try {
@@ -585,10 +679,13 @@ Model_loader.prototype = {
                 }
             }
             this.toggle_all_systems(true);
+            this.t = this.samples.order[0]
             
         }else{
             console.log({"type": "flash", "msg": "invalid version for this .analysis file" , "priority": 1});
         }
+
+        this.is_ready = true
     },
     
     /**
@@ -641,6 +738,7 @@ Model_loader.prototype = {
                 id: this.samples.original_names,
                 info: this.samples.info,
                 order: this.samples.order,
+                stock_order: this.samples.stock_order,
                 names: this.samples.names},
             clones : this.analysis_clones,
             clusters : this.analysis_clusters,
@@ -838,5 +936,11 @@ Model_loader.prototype = {
         }
         this.average_quality = this.average_quality/count; 
     },
+
+    // return True if the model is loaded
+    // return False if the model is empty or currently loading
+    isReady: function() {
+        return this.is_ready 
+    }
 
 };

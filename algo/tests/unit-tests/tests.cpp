@@ -4,6 +4,7 @@
 #include "testTools.cpp"
 #include "testFilter.cpp"
 #include "testKmerAffect.cpp"
+#include "testGermline.cpp"
 #include "testStorage.cpp"
 #include "testAffectAnalyser.cpp"
 #include "testBugs.cpp"
@@ -17,12 +18,14 @@
 #include "testReadStorage.cpp"
 #include "testAutomaton.cpp"
 #include "testMath.cpp"
+#include "testProbability.cpp"
 
 int main(void) {
   TAP_START(NB_TESTS);
   declare_tests();
   testTools();
   testFilter();
+  testGermline();
   testStorage();
   testKmerAffect();
   testAffectAnalyser();
@@ -38,6 +41,6 @@ int main(void) {
   testReadStorage();
   testAutomaton();
   testMath();
-
+  testProba();
   TAP_END_TEST_EXIT
 }

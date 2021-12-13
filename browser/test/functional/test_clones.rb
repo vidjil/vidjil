@@ -9,9 +9,6 @@ class TestClones < BrowserTest
     super
     if not defined? $b
       set_browser("/tools/tests/data/fused_multiple.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
 
       # Make upload menu appear to test the application with this menu too
       $b.execute_script("$('#upload_summary')[0].style.display='block';")
@@ -53,18 +50,16 @@ class TestClones < BrowserTest
     ### exist in scatterplot
     $b.clone_in_scatterplot('0').wait_until(&:present?) # ">> 'real' clone exist in graph"
     assert (     $b.clone_in_scatterplot('29').present?), ">> 'corresponding distrib' clone (seg5/seg3) exist in correpsonding scatterplot"
-    assert ( not $b.clone_in_scatterplot('15').present?), ">> 'other' clone DON'T exist in graph"
-    assert ( not $b.clone_in_scatterplot('18').present?), ">> 'other' clone DON'T exist in graph"
   end
 
   def test_002_clone_present_in_scatterplot_lenSeqAverage
     ### change graphical
     $b.clone_in_scatterplot("0").click
     $b.send_keys 4;
-    sleep(3)
-    assert (     $b.clone_in_scatterplot('0').present?), ">> 'real' clone exist in graph"
-    assert (     $b.clone_in_scatterplot('18').present?), ">> 'corresponding distrib' clone (len=162) exist in graph"
-    assert ( not $b.clone_in_scatterplot('29').present?), ">> 'NOT correpsonding distrib' clone DON'T exist in graph"
+    $b.update_icon.wait_while(&:present?)
+    assert (     $b.clone_in_scatterplot('0').present?), ">> 'real' clone exist in sp"
+    assert (     $b.clone_in_scatterplot('18').present?), ">> 'corresponding distrib' clone (len=162) exist in sp"
+    assert ( not $b.clone_in_scatterplot('29').present?), ">> 'NOT correpsonding distrib' clone DON'T exist in sp"
     
     # Verify that data don't reappear at m.update()
     $b.scatterplot.click 
@@ -99,7 +94,7 @@ class TestClones < BrowserTest
 
     ### Tests hide clone 0 to increase clone 18
     $b.clone_in_list("0").click
-    $b.a(:id => "hide_selected").click
+    $b.span(:id => "hide_selected").click
     $b.update_icon.wait_while(&:present?)
 
     clone_size = $b.clone_info("18")[:size].text
@@ -119,16 +114,15 @@ class TestClones < BrowserTest
     $b.send_keys 4
     $b.clone_in_list("18").click
     $b.update_icon.wait_while(&:present?)
+    $b.clone_in_scatterplot('18').wait_until(&:present?) 
     assert ( $b.clone_in_scatterplot('18').present?),     ">> distrib clone should be in scatterplot"
     assert ( not $b.clone_in_segmenter("18").present? ),  ">> not present in segmenter"
-    $b.a(:id => "hide_selected").click
+    $b.span(:id => "hide_selected").click
     $b.update_icon.wait_while(&:present?)
-    sleep(1)
     assert ( not $b.clone_in_scatterplot('18').present?), ">>distrib clone should be hiden"
 
-    $b.clear_filter.click
+    $b.span(:id => "reset_focus").click
     $b.update_icon.wait_while(&:present?)
-    sleep(1)# Wait for filtered elements to reach their positions 
   end
 
   def test_03_focus
@@ -136,9 +130,8 @@ class TestClones < BrowserTest
     $b.clone_in_scatterplot("18").click(:control)
     $b.clone_in_scatterplot("19").click(:control)
     $b.update_icon.wait_while(&:present?)
-    $b.a(:id => "focus_selected").click
+    $b.span(:id => "focus_selected").click
     $b.update_icon.wait_while(&:present?)
-    sleep(1)
     # should be hidden
     assert ( not $b.clone_in_scatterplot('17').present?), ">>distrib not focused clone should be hiden"
     assert ( not $b.clone_in_scatterplot('0').present?),  ">>real not focused clone should be hiden"
@@ -147,7 +140,7 @@ class TestClones < BrowserTest
     # assert ( $b.clone_in_scatterplot('18').present?), ">>distrib focused clone should be present"
     # assert ( $b.clone_in_scatterplot('19').present?), ">>distrib focused clone should be present"
 
-    $b.clear_filter.click
+    $b.span(:id => "reset_focus").click
   end
 
   def test_04_clone_name_in_list
@@ -165,17 +158,17 @@ class TestClones < BrowserTest
     
     # controle name
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (2 clones)" ), ">>name of distrib clone for time 0"
+    assert ( clone_name.text == "162 (2 clonotypes)" ), ">>name of distrib clone for time 0 expected 162 (2 clonotypes), was %s" % clone_name.text
     
     $b.send_keys :arrow_right
     $b.update_icon.wait_while(&:present?)
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (0 clone)" ), ">>name of distrib clone for time 1"
+    assert ( clone_name.text == "162 (0 clonotype)" ), ">>name of distrib clone for time 1 expected 162 (0 clonotype), was %s" % clone_name.text
     
     $b.send_keys :arrow_right
     $b.update_icon.wait_while(&:present?)
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (7 clones)" ), ">>name of distrib clone for time 2"
+    assert ( clone_name.text == "162 (7 clonotypes)" ), ">>name of distrib clone for time 2 expected 162 (7 clonotypes), was %s" % clone_name.text
     
     ### Tests on size after top change
     # return to time 0
@@ -189,12 +182,12 @@ class TestClones < BrowserTest
 
     # controle name
     clone_name = $b.clone_info('18')[:name]
-    assert ( clone_name.text == "162 (0 clone)" ), ">>name of distrib clone for time 0, top max"
+    assert ( clone_name.text == "162 (0 clonotype)" ), ">>name of distrib clonotype for time 0, top max"
     
     $b.clone_in_list("1").click
-    $b.a(:id => "hide_selected").click
-    assert ( clone_name.text == "162 (0 clone)" ), ">>name of distrib clone for time 0, top max, clone 1 hidden"
-    $b.clear_filter.click
+    $b.span(:id => "hide_selected").click
+    assert ( clone_name.text == "162 (0 clonotype)" ), ">>name of distrib clonotype for time 0, top max, clone 1 hidden"
+    $b.span(:id => "reset_focus").click
   end
 
   def test_05_hide_distrib_clone
@@ -209,17 +202,18 @@ class TestClones < BrowserTest
     
     # todo test on real and distrib clone
     $b.clone_in_list("1").click
-    $b.a(:id => "hide_selected").click
+    $b.span(:id => "hide_selected").click
     assert (     $b.clone_in_list('0').present?),        ">> Not hidded real clone exist in list"
     assert (     $b.clone_in_scatterplot('0').present?), ">> Not hidded real clone exist in scatterplot"
     assert ( not $b.clone_in_list('1').present?),        ">> Hidded real clone DON'T exist in list"
     assert ( not $b.clone_in_scatterplot('1').present?), ">> Hidded real clone DON'T exist in scatterplot"
 
     $b.clone_in_list("20").click
-    $b.a(:id => "hide_selected").click
+    $b.span(:id => "hide_selected").click
+    $b.update_icon.wait_while(&:present?)
     assert ( not $b.clone_in_list('20').present?),        ">> Hidded distrib clone DON'T exist in list"
     $b.clone_in_scatterplot('20').wait_while(&:present?) # ">> Hidded distrib clone DON'T exist in scatterplot"
-    $b.clear_filter.click
+    $b.span(:id => "reset_focus").click
   end
 
 
@@ -233,7 +227,7 @@ class TestClones < BrowserTest
     $b.send_keys :arrow_left
     $b.clone_in_list("0").click # validate
     $b.send_keys 4
-    sleep 1
+    $b.update_icon.wait_while(&:present?)
 
     # test size before focus
     assert ( $b.clone_info("0")[:size].text  == "20.00%"), ">> before focus; clone 0;correct starting size"
@@ -252,7 +246,7 @@ class TestClones < BrowserTest
     $b.clone_in_scatterplot("18").click(:control) # len 162, distrib
     $b.clone_in_scatterplot("19").click(:control) # len 164, distrib
     $b.update_icon.wait_while(&:present?)
-    $b.a(:id => "focus_selected").click
+    $b.span(:id => "focus_selected").click
     $b.update_icon.wait_while(&:present?)
 
     # test size before focus
@@ -266,12 +260,12 @@ class TestClones < BrowserTest
     assert ( not $b.clone_in_list('3').present?),          ">> after focus; real clone not selected is NOT present"
     
     # Re-click: no modification waited
-    $b.a(:id => "focus_selected").click
+    $b.span(:id => "focus_selected").click
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_info("0")[:size].text  == "20.00%"), ">> after focus; clone 0;correct finishing size"
     assert ( $b.clone_info("17")[:size].text == "8.000%"), ">> after focus; clone 17;correct finishing size"
     assert ( not $b.clone_in_list('3').present?),          ">> after focus; real clone not selected still NOT present"
-    $b.clear_filter.click
+    $b.span(:id => "reset_focus").click
   end
 
 
@@ -322,11 +316,11 @@ class TestClones < BrowserTest
     # hide clone 1
     $b.clone_in_list("1").click
     $b.update_icon.wait_while(&:present?)
-    $b.a(:id => "hide_selected").click
+    $b.span(:id => "hide_selected").click
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_info("18")[:size].text == "8.000%"), ">> Size of distrib clone (len 162) after hiding of merged clone"
     assert ( $b.clone_info("19")[:size].text == "6.000%"), ">> Size of distrib clone (len 164) after hiding of merged clone"
-    $b.clear_filter.click
+    $b.span(:id => "reset_focus").click
 
     $b.a(:id => 'list_split_all').click
     $b.span(:id => "delBox_list_2").click
@@ -336,7 +330,7 @@ class TestClones < BrowserTest
   # def test_07_sendto_dsitrbib
   #    $b.clone_in_scatterplot("18").click
   #   $b.clone_in_scatterplot("156").click
-  #   $b.a(:id => "focus_selected").click
+  #   $b.span(:id => "focus_selected").click
   #   sleep(3)
   #   # use sentTo with only distrib clones
   # end
@@ -352,6 +346,7 @@ class TestClones < BrowserTest
     # other ???
     # update ???
     $b.clear_filter.click
+    $b.clone_in_scatterplot('1').hover
   end
 
   
@@ -362,11 +357,11 @@ class TestClones < BrowserTest
     assert ( $b.clone_info('18')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "distrib clone haven't changed color"
 
     # change color method and observe variation or not
-    $b.select(:id => 'color_menu_select').click
-    $b.send_keys :arrow_down
-    $b.send_keys :arrow_down
-    $b.send_keys :arrow_down
-    $b.send_keys :enter
+    color_select = $b.select(:id => 'color_menu_select')
+    color_select.click
+    color_v_option = color_select.option(value: "V/5' gene")
+    color_v_option.click
+    $b.clone_in_list('22').hover
     $b.update_icon.wait_while(&:present?)
     assert ( $b.clone_info('0')[:name].style('color')  !=  'rgba(101, 123, 131, 1)' ) ,    "real clone should have changed color (diff from grey)"
     assert ( $b.clone_info('16')[:name].style('color').start_with?('rgba(150, 150, 150, 0.65') ) , "other clone shouldn't have changed color"
@@ -382,14 +377,14 @@ class TestClones < BrowserTest
     $b.clone_in_list("22").click(:control)
     $b.update_icon.wait_while(&:present?)
     stats = $b.statsline
-    assert (stats.text.include? '+5 clones'), ">> Correct stats, should have '+5' clones"
+    assert (stats.text.include? '+5 clonotypes'), ">> Correct stats, should have '+5' clones"
     assert (stats.text.include? '50 reads'),  ">> Correct stats, should have 50 reads"
     assert (stats.text.include? '20.00%'),    ">> Correct stats, should be at 20.00%"
     # add a real clone
     $b.clone_in_list("0").click(:control)
     $b.update_icon.wait_while(&:present?)
     stats = $b.statsline
-    assert (stats.text.include? '1+5 clones'), ">> Correct stats, should have '4+5' clones"
+    assert (stats.text.include? '1+5 clonotypes'), ">> Correct stats, should have '4+5' clones"
     assert (stats.text.include? '100 reads'),  ">> Correct stats, should have 100 reads"
     assert (stats.text.include? '40.00%'),     ">> Correct stats, should be at 40.00%"
   
@@ -404,9 +399,17 @@ class TestClones < BrowserTest
     $b.clone_in_list("19").click(:control)
     stats = $b.statsline
     $b.update_icon.wait_while(&:present?)
-    assert (stats.text.include? '5+5 clones'), ">> Correct stats, should have '5+5' clones"
+    assert (stats.text.include? '5+5 clonotypes'), ">> Correct stats, should have '5+5' clones"
     assert (stats.text.include? '200 reads'),  ">> Correct stats, should have 50 reads"
     assert (stats.text.include? '80.00%'),     ">> Correct stats, should be at 80.00%"
+  end
+
+
+  def test_11_download_gethtmlinfo
+    $b.clone_in_list("0").click
+    $b.element(:id => "clone_infoBox_0").click
+    # test presence of clone information content
+    assert ($b.a(:id => "download_info_0_airr").present?), ">> Download button is present in getHTMLinfo returned"
   end
 
 

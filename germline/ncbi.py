@@ -19,7 +19,7 @@ from xml.dom import minidom, Node
 
 
 
-# The two following functions should be refactored as one (used in split-from-imgt and get-CD)
+# The two following functions should be refactored as one (used in split-germlines and get-CD)
 
 def get_gene_sequence(gene, other_gene_name, start, end, additional_length):
     '''
@@ -63,27 +63,34 @@ def get_updownstream_sequences(gene, start, end, additional_length):
                        recover. When additional_length > 0 we get the downstream
                        region, and conversely when additional_length < 0.
     :return: A tuple whose first element is the upstream region (or empty)
-             and where the second element is the downstream region (or empty
+             and where the second element is the downstream region (or empty),
+             then a string carrying information
     '''
 
+    info = '(%d..%d)' % (start, end)
     if additional_length == 0:
-        return ('', '')
+        return (('', ''), info)
     reversed = -1 if (end < start) else 1
     if additional_length > 0:
         start = end + 1 * reversed
         end = end + additional_length * reversed
+        info = info + '..%d' % end
+
     elif additional_length < 0:
         end = start - 1 * reversed
         start = max(1, start + additional_length * reversed)
+        info = '%d..' % start + info
 
     updown_fasta = get_gene_sequence(gene, '', start, end, 0)
 
     updown_raw = '\n'.join(updown_fasta.split('\n')[1:]).strip()
 
+    gene_info = "%s|%s" % (gene, info)
+
     if additional_length > 0:
-        return ('', updown_raw)
+        return (('', updown_raw), gene_info)
     else:
-        return (updown_raw, '')
+        return ((updown_raw, ''), gene_info)
 
 
 # Parse output from API_GENE_ID_XML to get genomic positions of a gene

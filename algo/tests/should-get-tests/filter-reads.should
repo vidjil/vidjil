@@ -1,0 +1,19 @@
+
+!NO_LAUNCHER:
+!LAUNCH: cat $VIDJIL_DATA/random.fa $VIDJIL_DATA/segment_S22.fa > $VIDJIL_DATA/random+S22.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/random+S22.fa
+
+$ Correct information
+1: Detecting V.D.J recombinations
+
+$ Correct filtering
+1: junction detected in 3 reads .23..%.
+1: IGH .* 3
+
+$ Output
+1: ==> .*/random.S22.detected.vdj.fa
+
+$ No spurious output (implied -c detect)
+3:windows
+0:Diversity measures
+0:AIRR output

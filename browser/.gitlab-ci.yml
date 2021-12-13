@@ -1,0 +1,56 @@
+
+.test_cypress_base:
+  image: vidjilci/cypress_with_browsers:latest
+  stage: test_cypress_client
+  # extends:
+    # - .need_for_staged_client
+  script:
+    - echo -e "Run cypress with browser $BROWSER"
+    - echo -e "PWD $PWD; CYPRESS_PATH $CYPRESS_PATH"
+    # Create doc support files for testing
+    - python tools/org-babel-tangle.py --all doc/vidjil-format.md
+    - mv analysis-example1.vidjil  analysis-example2.analysis  analysis-example2.vidjil doc/
+    # Cypress
+    - bash docker/ci/script_preprocess.bash
+    - cd /app
+    - export BROWSER=browsers/$BROWSER
+    - bash script.bash
+  variables:
+    BROWSER: ../electron
+    CYPRESS_PATH: browser/test/cypress
+    HOST: html
+  artifacts:
+    reports:
+      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+    paths:
+      - $CYPRESS_PATH
+    expire_in: 7 day
+    when: always
+  tags:
+    - cidocker
+  only:
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
+
+
+## cypress client
+# For the moment, need to be into separate stage (https://gitlab.com/gitlab-org/gitlab/-/issues/30632)
+client1-ff-supported:
+  extends:
+    - .test_cypress_base
+    - .need_for_moderate_client
+  variables:
+    BROWSER: firefox_supported/firefox
+
+c2:
+  extends:
+    - .test_cypress_base
+  parallel:
+    matrix:
+      - BROWSER: [
+          firefox_latest/firefox,
+          firefox_legacy/firefox,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
+          chrome_legacy/chrome
+        ]

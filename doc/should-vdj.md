@@ -11,9 +11,9 @@ of any software doing immune repertoire sequencing (RepSeq) analysis.
 
 ## Contributing to the tests
 
-Users and developers of RepSeq software are encouraged to [send us](contact@vidjil.org)
+Users and developers of RepSeq software are encouraged to [send us](mailto:contact@vidjil.org)
 their manually curated sequences, ideally in the format described below, or by
-directly proposing pull requests on Gitlab with new tests in the [`algo/tests/should-vdj`](https://gitlab.com/vidjil/vidjil/tree/master/algo/tests/should-vdj-tests) directory.
+directly proposing pull requests on Gitlab with new tests in the [`algo/tests/should-vdj`](https://gitlab.inria.fr/vidjil/vidjil/tree/master/algo/tests/should-vdj-tests) directory.
 We can also help to encode sequences in this format.
 The current tests were contributed by:
 

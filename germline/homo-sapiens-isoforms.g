@@ -11,7 +11,7 @@
         "IKZF1": {
             "shortcut": "I",
             "color" : "#d63a19",
-            "description": "IKAROS Trsl locus",
+            "description": "IKAROS mediated recombinations",
             "recombinations": [ {
                 "5": ["IKZF1-as-V.fa"],
                 "3": ["IKZF1-as-J.fa"]
@@ -24,7 +24,7 @@
         "ERG": {
             "shortcut": "E",
             "color" : "#d63a19",
-            "description": "ERG mediated recombinaions",
+            "description": "ERG mediated recombinations",
             "recombinations": [ {
                 "5": ["ERG-as-V.fa"],
                 "3": ["ERG-as-J.fa"]

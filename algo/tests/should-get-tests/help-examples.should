@@ -1,21 +1,24 @@
 !NO_LAUNCHER:
 
-cd $VIDJIL_DIR
-./$EXEC -h | grep '$EXEC -c' | sed 's/X 50/X 5/' | sed 's/demo.LIL-L4/-X 1000 demo\/LIL-L4/' | sh
+cd $VIDJIL_DIR ; ./$EXEC -h | grep '$EXEC.*\#' | sed 's/X 50/X 5/' | sed 's/demo.LIL-L4/-X 1000 demo\/LIL-L4/' > help-examples.sh
+cd $VIDJIL_DIR ; sh help-examples.sh
 
 # Test examples embedded in './vidjil-algo -h'
 
-# Run 6 times (-h + 5 examples)
-6:vidjil-algo -- V.D.J recombinations analysis
+# Run 7 times (-h + 6 examples)
+7:vidjil-algo -- V.D.J recombinations analysis
 
-# '-c clone', three times
+# '-c clones', three times
 3: end of clones
 
-# '-c windows'
-1:Extracting windows
+# '--filter-reads'
+1:Detecting V.D.J recombinations$
+
+# '-c clones' / '-c windows'
+4:Detecting V.D.J recombinations and
 
 # '-c designations'
-1:Segmenting V.D.J
+1:Designating V.D.J recombinations
 
 # '-c germlines'
 1:Discovering germlines
@@ -23,4 +26,4 @@ cd $VIDJIL_DIR
 
 # LIL-L4, detects first clone
 1:Clone .001 .* 30..\%
-1:clone-001--TRG.* TRGV9.01 0/AC/1 TRGJ1.02
+1:clone-001--TRG.* TRGV9.01 0/AC/4 TRGJ1.01

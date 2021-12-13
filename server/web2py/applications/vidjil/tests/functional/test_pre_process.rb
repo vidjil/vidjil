@@ -8,17 +8,11 @@ class TestPreProcess < ServerTest
     if not defined? $b
       set_browser("http://localhost/browser")
     end
-    login_form = $b.form(:id => 'login_form')
-    if login_form.present?
-      login_form.text_field(:id => "auth_user_email").set('plop@plop.com')
-      login_form.text_field(:id => "auth_user_password").set('foobartest')
-      login_form.tr(:id => 'submit_record__row').input(:type => 'submit').click
-      Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    end
+    $b.login('plop@plop.com', 'foobartest')
   end
 
   def go_to_list
-    $b.a(:class => "button", :text => "pre-process").click
+    $b.a(:class => "button", :text => "pre-process configs").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until(&:present?)

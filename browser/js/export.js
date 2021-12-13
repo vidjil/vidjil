@@ -1,6 +1,7 @@
 
 function Report(model) {
-    this.m = model
+    this.m = model;
+    this.colorMode = "colorBy";     // "colorBy" / "tag" / TODO...
 }
 
 Report.prototype = {
@@ -133,14 +134,13 @@ Report.prototype = {
     switchstate: function(system_list, sample_list){
         this.savestate();
         this.m.system_selected = system_list;
-        this.m.samples.order = sample_list;
+        this.m.changeTimeOrder( sample_list );
         return this;
     },
     
     restorestate: function(){
         this.m.system_selected = this.save_system;
-        this.m.samples.order = this.save_sample;
-        this.m.update();
+        this.m.changeTimeOrder( this.save_sample );
         return this;
     },
     
@@ -433,7 +433,7 @@ Report.prototype = {
         for (var i = 0; i < this.m.clones.length; i++) {
             var polyline = svg_graph.querySelectorAll('[id="polyline'+i+'"]')[0]
             var tag = this.m.clone(i).getTag()
-            var color = this.m.tag[tag].color
+            var color = this.getCloneExportColor(i);
 
             if (typeof polyline == 'undefined')
                 continue;
@@ -523,7 +523,7 @@ Report.prototype = {
         
         for (var i = 0; i < this.m.clones.length; i++) {
             var circle = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_circle'+i+'"]')[0]
-            var color = this.m.tag[this.m.clone(i).getTag()].color
+            var color = this.getCloneExportColor(i);
             circle.setAttribute("stroke", color);
             
             //remove virtual and disabled clones
@@ -673,7 +673,7 @@ Report.prototype = {
     
     cloneList : function(time) {
         if (typeof time == "undefined") time = -1
-        var container = this.container('Selected clones')
+        var container = this.container('Selected clonotypes')
         
         for (var i=0; i<this.list.length; i++){
             var cloneID = this.list[i]
@@ -686,7 +686,7 @@ Report.prototype = {
     
     clone : function(cloneID, time) {
         if (typeof time == "undefined") time = -1
-        var color = this.m.tag[this.m.clone(cloneID).getTag()].color
+        var color = this.getCloneExportColor(cloneID);
         var system = this.m.clone(cloneID).germline
         var clone = $('<div/>', {'class': 'clone'})
         
@@ -809,14 +809,29 @@ Report.prototype = {
             }
         }/**/
 
-
-        var link = "mailto:support@vidjil.org" +
+        var link = "mailto:" + (typeof config !== 'undefined' ? (config.support || "support@vidjil.org") : "support@vidjil.org") +
             "?subject=" + escape("[Vidjil] Question") +
             "&body=" + escape("Dear Vidjil team," +
                               "\n\nI have a question on the results I obtain on the following sample: " + window.location.href +
                               "\n\n" + clones)
         ;
         window.location.href = link;
+    },
+
+    getCloneExportColor : function(cloneID){
+        var color;
+        switch (this.colorMode) {
+            case "tag":
+                rcolor = this.m.tag[this.m.clone(cloneID).getTag()].color;
+                break;
+            case "colorBy":
+                color = this.m.clone(cloneID).getColor();
+                break;
+            default:
+                color = this.m.clone(cloneID).getColor();
+                break;
+        }
+        return color;
     }
     
 }

@@ -1,0 +1,402 @@
+{
+  "clones": [
+    {
+      "germline": "IGK",
+      "id": "AACAGTATAATAGTTCGCTCAGGGGGCGAGGGAATGAATTCACTTTCGGC",
+      "normalized_reads": [
+        195.50763372699805
+      ],
+      "reads": [
+        269
+      ],
+      "seg_stat": {
+        "3": 269
+      },
+      "sequence": 0,
+      "top": 231,
+      "mrd": {
+        "R2": [
+          0.95
+        ],
+        "copy_number": [41.37324910738808],
+        "family": [
+          "UNI"
+        ]
+      }
+    },
+    {
+      "_average_read_length": [
+        150.88140869140625
+      ],
+      "_coverage": [
+        0.987530529499054
+      ],
+      "_coverage_info": [
+        "149 bp (98% of 150.9 bp)"
+      ],
+      "germline": "IGK",
+      "id": "CTGTCAACAGAGTTACAGTACCCCTCGGACGTTCGGCCAAGGGACCAAGG",
+      "name": "IGKV1D-39*01 1//2 IGKJ1*01",
+      "normalized_reads": [
+        766.0410630046689
+      ],
+      "reads": [
+        1054
+      ],
+      "seg": {},
+      "seg_stat": {
+        "3": 1054
+      },
+      "sequence": "CAAGGTTCAGCGGCAGTGGATCTGGGACAGATTTCACTCTCACCATCAGCAGTCTGCAACCTGAAGATTTTGCAACTTACTACTGTCAACAGAGTTACAGTACCCCTCGGACGTTCGGCCAAGGGACCAAGGTGGAGATCAAACGTAAG",
+      "top": 10,
+      "mrd": {
+        "R2": [
+          0.96
+        ],
+        "copy_number": [162.10931062894807],
+        "family": [
+          "UNI"
+        ]
+      }
+    },
+    {
+      "_average_read_length": [
+        150.7296142578125
+      ],
+      "_coverage": [
+        0.9951594471931458
+      ],
+      "_coverage_info": [
+        "150 bp (99% of 150.7 bp)"
+      ],
+      "germline": "IGH",
+      "id": "GCCTCGGACACCGCCATGCCAAAACGGGGATAGCTACTGGTACTTCGATC",
+      "label": "Boldrini-VH5-C",
+      "name": "Boldrini-VH5-C IGHV5-51*05 0/CCAAAACGGGGATAG/0 IGHJ2*01",
+      "reads": [
+        7282
+      ],
+      "seg": {},
+      "seg_stat": {
+        "3": 7282
+      },
+      "sequence": "TCACCATCTCAGCCGACAAGTCCATCAGCACCGCCTACCTGCAGTGGAGCAGCCTGAAGGCCTCGGACACCGCCATGCCAAAACGGGGATAGCTACTGGTACTTCGATCTCTGGGGCCGTGGCACCCGGGTCACCGTCTCCTCAGGTAAG",
+      "top": 1
+    },
+    {
+      "germline": "unexpected",
+      "id": "GCGAAACAAGGGCCCCGAGTGGGGGAGGATGCTTTTGATATGTGGGACCA",
+      "reads": [
+        1
+      ],
+      "seg_stat": {
+        "3": 1
+      },
+      "sequence": 0,
+      "top": 38430
+    },
+    {
+      "germline": "IGH",
+      "id": "TTTTTTTTTTTTCAAGCAGAAGACGGCATACGAGATCAGCCTCGGTCTCG",
+      "reads": [
+        1
+      ],
+      "seg_stat": {
+        "3": 1
+      },
+      "sequence": 0,
+      "top": 15
+    }
+  ],
+  "config": {
+    "all": false,
+    "alternative-genes": "0",
+    "analysis-e-value-D": "0.05",
+    "analysis-filter": "1",
+    "cdr3": true,
+    "clean-memory": false,
+    "cluster-N": "10",
+    "cluster-epsilon": "0",
+    "cluster-load-matrix": false,
+    "cluster-save-matrix": false,
+    "consensus-on-longest-sequences": false,
+    "dir": "./out/",
+    "e-value": "1",
+    "germline": "germline/homo-sapiens.g",
+    "help-advanced": false,
+    "label-filter": false,
+    "label-json": "docker/vidjil-server/conf/boldrini/Boldrini-spikes.json",
+    "labels": [
+      {
+        "copies": "10",
+        "family": "VH1",
+        "name": "Boldrini-VH1-A",
+        "reads": 0,
+        "sequence": "TTTTGAAGGATGGTAG",
+        "vfam": "VH1"
+      },
+      {
+        "copies": "40",
+        "family": "VH1",
+        "name": "Boldrini-VH1-B",
+        "reads": 0,
+        "sequence": "TGCGAGACATTCTTTTGACTACT",
+        "vfam": "VH1"
+      },
+      {
+        "copies": "160",
+        "family": "VH1",
+        "name": "Boldrini-VH1-C",
+        "reads": 0,
+        "sequence": "AGATCGGGGGGGAGGGTTCGGGGAGTTTTCCCCCGCCCATT",
+        "vfam": "VH1"
+      },
+      {
+        "copies": "10",
+        "family": "VH2",
+        "name": "Boldrini-VH2-A",
+        "reads": 0,
+        "sequence": "CCCCAACCCAGACCCCGTCTTTTCCTGGTCCGTTCGTATT",
+        "vfam": "VH2"
+      },
+      {
+        "copies": "40",
+        "family": "VH2",
+        "name": "Boldrini-VH2-B",
+        "reads": 0,
+        "sequence": "ACACAGCCACGTATTACTGCCCCTTGGCCTCCTCAATTACGATATTTTGACTGGTTATCCTACTGGGGCCAGGGAACCCT",
+        "vfam": "VH2"
+      },
+      {
+        "copies": "160",
+        "family": "VH2",
+        "name": "Boldrini-VH2-C",
+        "reads": 0,
+        "sequence": "GGACACAGCCACATATTACTGTGCACGGAAGGGACCTTTACGATTTTTGGAGTGGTTATTAGGCCCTCTTACTACGGTATGGACGTCTGGGG",
+        "vfam": "VH2"
+      },
+      {
+        "copies": "10",
+        "family": "VH3",
+        "name": "Boldrini-VH3-A",
+        "reads": 0,
+        "sequence": "ATAGCAGCTCGCTCACAGA",
+        "vfam": "VH3"
+      },
+      {
+        "copies": "40",
+        "family": "VH3",
+        "name": "Boldrini-VH3-B",
+        "reads": 0,
+        "sequence": "AGGTGAGATCGGGG",
+        "vfam": "VH3"
+      },
+      {
+        "copies": "160",
+        "family": "VH3",
+        "name": "Boldrini-VH3-C",
+        "reads": 0,
+        "sequence": "TTACTGTCCTCCCGAACGAACCCCTCCGAACCCCCTATAGCAGCTCGGAGTATGGGTGTCAAACTACTACGGTAT",
+        "vfam": "VH3"
+      },
+      {
+        "copies": "40",
+        "family": "VH4",
+        "name": "Boldrini-VH4-B",
+        "reads": 0,
+        "sequence": "GGGGATGGTCAGTGG",
+        "vfam": "VH4"
+      },
+      {
+        "copies": "160",
+        "family": "VH4",
+        "name": "Boldrini-VH4-C",
+        "reads": 0,
+        "sequence": "TGTATTACTGTGCGAGAAGGGGTATAGCAGCAGCTGGTGCCTACTTTGACTACTGGGGCCAGGGAACCCT",
+        "vfam": "VH4"
+      },
+      {
+        "copies": "10",
+        "family": "VH5",
+        "name": "Boldrini-VH5-A",
+        "reads": 0,
+        "sequence": "GCGAGACGGG",
+        "vfam": "VH5"
+      },
+      {
+        "copies": "40",
+        "family": "VH5",
+        "name": "Boldrini-VH5-B",
+        "reads": 0,
+        "sequence": "CCCTCCGCCACCCTGAGAGCCCACCTGGGGGAGGTTTGA",
+        "vfam": "VH5"
+      },
+      {
+        "copies": "160",
+        "family": "VH5",
+        "name": "Boldrini-VH5-C",
+        "reads": 7282.0,
+        "sequence": "ATGCCAAAACGGGGA",
+        "vfam": "IGHV5"
+      },
+      {
+        "copies": "10",
+        "family": "VH6",
+        "name": "Boldrini-VH6-A",
+        "reads": 0,
+        "sequence": "CTCCCGAGGACACGGCTGTGTATGGGTAGGTATAGCAGCAGGTCCGCGCGTCTTGGACTTGACTACTGGGGCCA",
+        "vfam": "VH6"
+      },
+      {
+        "copies": "40",
+        "family": "VH6",
+        "name": "Boldrini-VH6-B",
+        "reads": 0,
+        "sequence": "AAGAGGTCTGGAACATTATTAC",
+        "vfam": "VH6"
+      },
+      {
+        "copies": "160",
+        "family": "VH6",
+        "name": "Boldrini-VH6-C",
+        "reads": 0,
+        "sequence": "CTGTGTATTACTGTGCAAGTCCCAGGCCCCAACGTATTACGATTTTTGGAGTGGCCCCCAAGAGCGTTCGACCCCTG",
+        "vfam": "VH6"
+      },
+      {
+        "copies": "40",
+        "family": "VH7",
+        "name": "Boldrini-VH7-B",
+        "reads": 0,
+        "sequence": "TCCCCTCGAGGGGTCT",
+        "vfam": "VH7"
+      },
+      {
+        "copies": "160",
+        "family": "VH7",
+        "name": "Boldrini-VH7-C",
+        "reads": 0,
+        "sequence": "CCCCCCTGGCGGGCGTCCA",
+        "vfam": "VH7"
+      }
+    ],
+    "max-consensus": "100",
+    "min-ratio": "0",
+    "min-reads": "1",
+    "not-analyzed-as-clones": false,
+    "out-affects": false,
+    "out-analyzed": false,
+    "out-reads": false,
+    "out-unanalyzed": false,
+    "plain-index": false,
+    "several-D": true,
+    "verbose": false,
+    "window": "50"
+  },
+  "diversity": {
+    "index_Ds_diversity": 0.9994170665740967,
+    "index_E_equitability": 0.6688582897186279,
+    "index_H_entropy": 8.835769144927326
+  },
+  "germlines": {
+    "custom": {
+      "3": [],
+      "4": [],
+      "5": [],
+      "shortcut": "X"
+    },
+    "ref": "http://www.vidjil.org/germlines/germline-59.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "germline": {
+      "IGH": [
+        68536
+      ],
+      "IGH+": [
+        508
+      ],
+      "IGK": [
+        472546
+      ],
+      "IGK+": [
+        0
+      ],
+      "IGL": [
+        0
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        0
+      ],
+      "TRB+": [
+        0
+      ],
+      "TRD": [
+        109
+      ],
+      "TRD+": [
+        134
+      ],
+      "TRG": [
+        85
+      ],
+      "unexpected": [
+        4001
+      ]
+    },
+    "segmented": [
+      545919
+    ],
+    "total": [
+      633127
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "./vidjil-algo Boldrini-spikes.json "
+    ],
+    "log": [
+      "log"
+    ],
+    "number": 1,
+    "original_names": [
+      "/home/joao_meidanis/boldrini/vidjil/docker/button-patients/IGK-2530-1A-K_S20_L001_R1_001.fastq.gz"
+    ],
+    "producer": [
+      "vidjil-algo dev ff39f8efe (2020-01-09)"
+    ],
+    "run_timestamp": [
+      "2020-01-13 13:28:12"
+    ]
+  },
+  "mrd": {
+   "UNI_R2": [
+      0.964285714285714
+    ],
+    "ampl_coeff": [
+      64.89233726998077
+    ],
+    "prevalent": [
+      "IGK"
+    ],
+    "coefficients": [{
+      "IGHV5": 0.15380390002746497,
+      "UNI": 0.15380390002746497,
+      "VH1": 0.15380390002746497,
+      "VH2": 0.15380390002746497,
+      "VH3": 0.15380390002746497,
+      "VH4": 0.15380390002746497,
+      "VH5": 0.15380390002746497,
+      "VH6": 0.15380390002746497,
+      "VH7": 0.15380390002746497
+    }]
+  },
+  "vidjil_json_version": "2016b"
+}

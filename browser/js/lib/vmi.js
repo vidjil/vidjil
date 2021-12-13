@@ -21,20 +21,28 @@ MenuDecorator.prototype = {
  * @param {string} parentId - id of the default parent node/panel of the view
  * @param {string} classes - class(es) to add to the view node
  **/
-function VMIView(id, parentId, classes, restricted) {
+function VMIView(id, parentId, classes, restricted, prefill, callback) {
     this.parentId = parentId;
     this.id = id;
+    this.mutable = true;
     if (restricted == undefined) {
         restricted = []
     }
+    if (prefill == undefined) {
+        prefill = false
+    }
     this.restricted = restricted
+
+    this.callback = callback;
 
     var parent = document.getElementById(parentId);
 
     var node = document.createElement('div');
     node.className = "view " + classes;
     node.id = id;
-    node.textContent = id;
+    if (prefill){
+        node.textContent = "View "+id;
+    }
     // node.onclick = function() {
     //     this.parentNode.removeChild(this);
     // }
@@ -44,15 +52,119 @@ function VMIView(id, parentId, classes, restricted) {
     parent.appendChild(node);
 }
 
+VMIView.prototype = {
+    setMutable : function(bool) {
+        if(typeof bool === 'undefined') {
+            return;
+        }
+        this.mutable = bool;
+    }
+}
 
-function VMI() {
+/**
+ * Constructor for vmi Panels
+ * @param {string} id - id for the panel and the DOM node
+ * @param {string} parent_id - id of the DOM node to insert to panel
+ * @param {function} callback - function to be executed when adding and removing views from the panel
+ **/
+function Panel(id, parent_id, callback) {
+    this.id = id;
+    this.parentId = parent_id;
+    this.callback = callback;
+    this.node = this.createInDOM();
+    this.views = {};
+    this.view_ids = [];
+}
+
+Panel.prototype = {
+    /**
+     * Add a VMI view to the panel and trigger callbacks
+     * @param {VMIView} view
+     **/
+    addView: function(view) {
+        view.parentId = this.id;
+        var parent = this.node;
+
+        if (parent === null) {
+            console.error('Error, panel not in DOM: ' + this.id);
+            return;
+        }
+        parent.insertBefore(view.node, parent.firstChild);
+        this.views[view.id] = view;
+        this.view_ids.unshift(view.id);
+        if(typeof view.callback !== 'undefined') {
+            view.callback();
+        }
+
+        if(typeof this.callback !== 'undefined') {
+            this.callback(view);
+        }
+    },
+
+    removeView: function(view) {
+        delete this.views[view.id];
+        var index = this.view_ids.indexOf(view.id);
+        if(index > -1)
+            this.view_ids.splice(index, 1);
+    },
+
+    /**
+     * Insert the panel into the DOM based on parentId
+     **/
+    insertInDOM: function(div) {
+        parent = document.getElementById(this.parentId);
+
+        if (this.parentId == "vmi-panels"){
+            div.className = "vmi-panel_parent";
+        } else {
+            //div.className = "vmi-panel";
+        }
+
+        if(parent === null) {
+            document.body.appendChild(div);
+        } else {
+            parent.appendChild(div);
+        }
+    },
+
+    createInDOM: function() {
+        var existing = document.getElementById(this.id);
+        if(existing !== null) {
+            console.log('panel already in DOM: ' + this.id);
+            return existing;
+        }
+        var div = document.createElement('div');
+        div.id = this.id;
+        this.insertInDOM(div);
+        return div;
+    },
+
+    updateInDOM: function() {
+        if(typeof this.node === 'undefined') {
+            console.log('panel not in DOM: ' + this.id);
+            return;
+        } else if((typeof this.node.parentNode !== 'undefined') && (div.parentNode.id === this.parentId)) {
+            // panel is already in the right place
+            return;
+        }
+        this.insertInDOM(this.node);
+    }
+}
+
+function VMI(default_parent) {
     // var vmi = {};
 
-    this.views = []; // Array referencing each View built with vmi
+    this.views = {}; // Object referencing each View built with vmi
     this.selectedView; // Stores focused View for menu interactions and edit mode
+    this.panels = {};
     this.available_panels = []
     this.default_decorator = new MenuDecorator()
     this.drawer;
+    if(typeof default_parent === 'undefined') {
+        this.default_parent = 'vmi-panels';
+    } else {
+        this.default_parent = default_parent;
+    }
 }
 
 VMI.prototype = {
@@ -64,9 +176,12 @@ VMI.prototype = {
      * @param {string} classes
      * @param {string} restricted
      **/
-    addView : function(id, parentId, classes, restricted) {
-        var view = new VMIView(id, parentId, classes, restricted)
-        this.views.push(view);
+    addView : function(id, parentId, classes, restricted, callback) {
+        var view = new VMIView(id, parentId, classes, restricted, false, callback)
+        this.views[id] = view;
+        var panel = this.panels[parentId];
+        panel.addView(view);
+        return view;
     },
 
     /**
@@ -74,10 +189,21 @@ VMI.prototype = {
      * @param {View} view
      * @param {string} panel - panel id ; if none is given the view is set to its last parent
      **/
-    setView : function(view, panel) {
-        if (panel) view.parentId = panel;
-        var parent = document.getElementById(view.parentId)
-        parent.insertBefore(view.node, parent.firstChild);
+    setView : function(view, panel_id) {
+        if (typeof panel_id === 'undefined') {
+            panel_id = view.parentId
+        }
+        // remove view from old panel's list
+        var old_panel = this.panels[view.parentId];
+        old_panel.removeView(view);
+
+        var parent = this.panels[view.parentId];
+        var panel = this.panels[panel_id];
+        panel.addView(view);
+
+        if(typeof parent.callback !== 'undefined') {
+            parent.callback(view);
+        }
     },
 
     /**
@@ -86,9 +212,42 @@ VMI.prototype = {
      **/
     hideView : function(view) {
         this.drawer.appendChild(view.node);
+        if (typeof view.parentId !== 'undefined') {
+            var parent = this.panels[view.parentId];
+            parent.removeView(view);
+            if (typeof parent.callback !== 'undefined') {
+                parent.callback(view);
+            }
+        }
     },
 
+    hideAllViews : function() {
+        var self = this;
+        var views = Object.keys(self.views).map(function(key) {
+            return self.views[key];
+        });
+        for(i in views) {
+            this.hideView(views[i]);
+        }
+    },
 
+    hidePanel : function(panel) {
+        // TODO use this or another drawer ?
+        if(panel.node.parentNode === null) {
+            return;
+        }
+        panel.node.parentNode.removeChild(panel.node);
+    },
+
+    hideAllPanels : function() {
+        var self = this;
+        var panels = Object.keys(self.panels).map(function(key) {
+            return self.panels[key];
+        });
+        for(i in panels) {
+            this.hidePanel(panels[i]);
+        }
+    },
 
     viewSelector : function(view) {
         var self = this;
@@ -129,6 +288,19 @@ VMI.prototype = {
     },
 
     /**
+     * Generates a function to hide a view
+    * @param {View} view
+     **/
+    viewHider: function(view) {
+        var self = this;
+        var func = function(e) {
+            self.hideView(view);
+            e.stopPropagation();
+        }
+        return func;
+    },
+
+    /**
      * Builds menu buttons and interactions, especially depending on the views registered in this.views
      **/
     setMenuOptions : function(decorator) {
@@ -141,9 +313,15 @@ VMI.prototype = {
         menu.id = "vmi-menu";
         var div;
         var view;
+        var cross, crossspan;
 
-        for (var i in this.views) {
-            view = this.views[i]
+        var views = Object.keys(self.views).map(function(key) {
+            return self.views[key];
+        });
+        for (var i in views) {
+            view = views[i]
+            if(!view.mutable)
+                continue;
             
             div = decorator.decorate(view);
             div.onclick = this.viewSetter(view);
@@ -157,6 +335,14 @@ VMI.prototype = {
                 var div     = document.getElementById(view_id)
                 div.classList.remove("vmi-highlight");
             }
+            crossspan = document.createElement('span');
+            crossspan.classList.add("cancel-container");
+            cross = document.createElement('i');
+            cross.onclick = this.viewHider(view);
+            cross.classList.add("cancel-button");
+            cross.classList.add("icon-cancel-circled");
+            crossspan.appendChild(cross);
+            div.insertBefore(crossspan, div.childNodes[0]);
             // div.ondblclick = viewSelector(views[i]);
             // div.addEventListener('dblclick', focus);
             menu.appendChild(div);
@@ -227,44 +413,47 @@ VMI.prototype = {
      * Build a div with the default panel id
      **/
     setupPanel : function() {
-        var panels = document.createElement('div');
-        panels.id = "vmi-panels";
-
-        document.body.appendChild(panels)
+        var panel = new Panel('vmi-panels');
+        this.panels[panel.id] = panel;
     },
 
+    add_panel: function(panel, add_to_available) {
+        this.panels[panel.id] = panel;
 
-    create_panel : function(child_id, parent_div_id, add_to_available) {
         if (typeof(add_to_available) === 'undefined') {
             add_to_available = false;
         }
+
+        if( add_to_available){
+            this.available_panels.push(panel.id)
+        }
+    },
+
+    create_or_update_panel : function(child_id, parent_div_id, add_to_available) {
         var parent_div = document.getElementById(parent_div_id)
         // verify parent_div 
         if (parent_div == null){
             console.error(" create_panel: Parent div doesn't exist: " + parent_div_id)
-            parent_div_id = "vmi-panels"
-            parent_div = document.getElementById(parent_div_id)
+            parent_div_id = this.default_parent;
         }
         // verify if child not already exist
-        var elt = document.getElementById(child_id) 
+        var elt = this.panels[child_id];
         if (elt != null){
             console.log("panel already exist: " + child_id)
+            elt.parentId = parent_div_id;
+            elt.updateInDOM();
             if(this.available_panels.indexOf(child_id) == -1 && add_to_available){
                 this.available_panels.push(child_id)
             }
-            return
-        }
-        var child_div  = document.createElement('div');
-        child_div.id = child_id;
-        if (parent_div_id == "vmi-panels"){
-            child_div.className = "vmi-panel_parent";
         } else {
-            child_div.className = "vmi-panel";
+            var panel = new Panel(child_id, parent_div_id);
+            this.add_panel(panel, add_to_available);
         }
-
-        parent_div.appendChild(child_div)
-        if( add_to_available){
-            this.available_panels.push(child_id)
+        var parent = this.panels[parent_div_id]
+        if(typeof parent !== 'undefined') {
+            if(typeof parent.callback !== 'undefined') {
+                parent.callback();
+            }
         }
         return;
     },
@@ -274,7 +463,7 @@ VMI.prototype = {
      */
     setupPanels : function(instructions, parent_div){
         if (typeof(parent_div) === 'undefined') {
-            parent_div = "vmi-panels";
+            parent_div = this.default_parent;
         }
 
         // determiner si instruction est une liste ou un dico
@@ -289,14 +478,14 @@ VMI.prototype = {
             var keys = Object.keys(instructions)
             for (var super_panel_pos in keys){
                 var super_panel = keys[super_panel_pos]
-                this.create_panel(super_panel, parent_div, false)
+                this.create_or_update_panel(super_panel, parent_div, false)
 
                 // create childs div
                 var child_instructions = instructions[super_panel]
                 this.setupPanels(child_instructions, super_panel)
             }
         } else {
-            this.create_panel(instructions, parent_div, true)
+            this.create_or_update_panel(instructions, parent_div, true)
         }
     },
 
@@ -323,13 +512,7 @@ VMI.prototype = {
      * @return {this.View}         The view getted (if found)
      */
     getView : function(view_id){
-        for (var pos in this.views){
-            var view = this.views[pos]
-            if (view.id == view_id) {
-                return view
-            }
-        }
-        return
+        return this.views[view_id];
     },
 
 

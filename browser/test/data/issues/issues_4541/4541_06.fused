@@ -1,0 +1,50 @@
+{
+  "germlines": {},  
+  "producer": "vidjil fuse", 
+  "similarity": [], 
+  "timestamp": "2019-11-07 10:36:42", 
+  "vidjil_json_version": "2016b", 
+  "reads": {
+    "segmented": [
+      1967259, 1892061, 1950799, 1612765, 1819609
+    ], 
+     
+    "total": [
+      2390273, 2451185, 2419756, 2037793, 2251642
+    ], 
+    "germline": {
+    }
+  }, 
+  "samples": {
+    "log": [
+      "log_0", "log_1", "log_2", "log_3", "log_4"
+    ], 
+    "producer": [
+      "algo", "algo", "algo", "algo", "algo"
+    ], 
+    "timestamp": [
+      "2019-11-06", "2019-11-06", "2019-11-06", "2019-11-06", "2019-11-06"
+    ], 
+    "commandline": [
+      "cmd line 0", "cmd line 1", "cmd line 2", "cmd line 3", "cmd line 4"
+    ], 
+    "number": 5, 
+    "original_names": [
+      "file_diag_1",
+      "file_fu_1",
+      "file_fu_2",
+      "file_fu_3",
+      "file_rechute"
+    ], 
+    "run_timestamp": [
+      "2019-11-06", "2019-11-06", "2019-11-06", "2019-11-06", "2019-11-06"
+    ]
+  }, 
+  "clones": [
+  ], 
+  "clusters": [
+    0, 
+    0, 
+    0
+  ]
+}

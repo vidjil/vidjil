@@ -5,3 +5,16 @@ $ Fuse the two examples (three samples, two identical)
 
 $ IGH and TRG germlines
 :"germline": {"TRG": \[250000, 250000, 300000\], "IGH": \[85662, 85662, 10124\]}
+
+
+### Test the number of clones getted
+!LAUNCH: python ../../fuse.py ../../../doc/analysis-example2.vidjil ; cat fused.vidjil
+
+# !! If doc change, number should sometimes be updated
+$ Default top threshold is set to 50, so each clone should be present
+7:"sequence"
+
+!LAUNCH: python ../../fuse.py --top 3 ../../../doc/analysis-example2.vidjil ; cat fused.vidjil
+$ Change top to 3 (for 4 clones present)
+3:"sequence"
+

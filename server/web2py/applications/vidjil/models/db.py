@@ -74,8 +74,11 @@ response.generic_patterns = ['*'] if request.is_local else []
 #########################################################################
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
+
 auth = VidjilAuth(db)
-auth.settings.two_factor_authentication_group = "auth2step"
+if defs.LDAP :
+    from gluon.contrib.login_methods.ldap_auth import ldap_auth
+    auth.settings.login_methods.append(ldap_auth(**defs.LDAP_CONF))
 
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
@@ -88,7 +91,7 @@ auth.define_tables(username=False, signature=False)
 mail = auth.settings.mailer
 mail.settings.server = defs.SMTP_SERVER
 mail.settings.sender = defs.FROM_EMAIL
-mail.settings.login = None
+mail.settings.login = defs.SMTP_CREDENTIALS
 
 ## configure auth policy
 auth.settings.registration_requires_verification = False
@@ -108,6 +111,10 @@ auth.messages.group_description = 'Group of user %(id)04d - %(first_name)s %(las
 ## register with janrain.com, write your domain:api_key in private/janrain.key
 from gluon.contrib.login_methods.rpx_account import use_janrain
 use_janrain(auth, filename='private/janrain.key')
+
+# TODO: create a custom adapter ?
+if defs.DB_ADDRESS.split(':')[0] == 'mysql':
+    db.executesql("SET sql_mode='PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';")
 
 #########################################################################
 ## Define your tables below for example
@@ -192,10 +199,17 @@ db.define_table('sequence_file',
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE),
                 Field('data_file2', 'upload', 
                       uploadfolder=defs.DIR_SEQUENCES,
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE),
+                Field('pre_process_file', 'upload',
+                      uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 
 
+
+db.define_table('classification',
+                Field('name', 'string'),
+                Field('info','text'))
 
 
 db.define_table('config',
@@ -203,7 +217,8 @@ db.define_table('config',
                 Field('program', 'string'),
                 Field('command', 'string'),
                 Field('fuse_command', 'string'),
-                Field('info','text'))
+                Field('info','text'),
+                Field('classification', 'reference classification', ondelete='SET NULL'))
 
 
 db.define_table('results_file',
@@ -280,6 +295,15 @@ db.define_table('tag_ref',
                 Field('table_name', 'string'),
                 Field('record_id', 'integer'))
 
+# try to create an index on these un-indexed columns, if it fails, we assume they already exist
+try:
+    db.executesql('CREATE INDEX table_name_index ON tag_ref (table_name);')
+    db.executesql('CREATE INDEX record_id_index ON tag_ref (record_id);')
+    db.executesql('CREATE INDEX name_index ON auth_permission (name);')
+    db.executesql('CREATE INDEX record_id_index ON auth_permission (record_id);')
+except:
+        pass
+
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)
 
@@ -325,6 +349,8 @@ class MsgUserAdapter(logging.LoggerAdapter):
         return new_msg, kwargs
     
     def admin(self, msg, extra=None):
+        if extra is None:
+            extra = {'user_id': auth.user.id, 'record_id': 0, 'table_name': 'ADMIN'}
         self.log(logging.ADMIN, msg, extra)
 #
 class UserLogHandler(logging.Handler):

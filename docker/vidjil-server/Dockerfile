@@ -6,12 +6,16 @@ with a full installation of the Vidjil algoright and browser/server."
 
 env GOSU_VERSION 1.10
 run set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates wget cron unzip make python ipython python-enum34 python-requests git python-ijson libyajl2 python-cffi gnupg2 && rm -rf /var/lib/apt/lists/* \
+	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates wget cron unzip make python ipython python-enum34 python-requests git python-ijson libyajl2 python-cffi python-pip gnupg2 gcc libsasl2-dev python-dev python-setuptools libldap2-dev libssl-dev libsasl2-dev && rm -rf /var/lib/apt/lists/* \
+	&& pip install python-ldap \
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
 	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+	&& for i in $(seq 1 3); do \
+              gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+              && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+              && break || sleep 5; \
+           done\
 	&& rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
 	&& chmod +x /usr/local/bin/gosu
 
@@ -30,10 +34,10 @@ copy ./conf/base.py /usr/share/vidjil/server/web2py/gluon/packages/dal/pydal/bas
 arg build_env='PRODUCTION'
 env BUILD_ENV $build_env
 
-copy ./conf/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
 run mkdir /etc/vidjil
 copy ./conf/wsgihandler.py /etc/vidjil/wsgihandler.py
 run chmod +x /opt/install_scripts/install.sh; sync && /opt/install_scripts/install.sh
+run mkdir -p /etc/uwsgi/apps-enabled && ln -s /etc/vidjil/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
 run ln -s /etc/vidjil/defs.py /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
 run ln -s /etc/vidjil/wsgihandler.py /usr/share/vidjil/server/web2py/wsgihandler.py
 

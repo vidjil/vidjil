@@ -1,0 +1,74 @@
+############################
+## Morisita result for the same sample should be 1, if no clone are shared, result should be 0
+############################
+## Overlap between sample_1 against himself
+!OUTPUT_FILE: overlap_1vs1.vidjil
+!LAUNCH: python ../../fuse.py ../data/overlaps/sample_1.vidjil ../data/overlaps/sample_1.vidjil -o overlap_1vs1.vidjil --overlaps;
+
+$ 1vs1; Various index have been computed: morisita
+j:overlaps.morisita
+$ 1vs1; Various index have been computed: jaccard
+j:overlaps.jaccard
+
+$ 1vs1; values should be to 1.0: morisita
+j: overlaps.morisita[0][0]: 1.0
+j: overlaps.morisita[0][1]: 1.0
+$ 1vs1; values should be to 1.0: jaccard
+j: overlaps.jaccard[0][0]: 1.0
+j: overlaps.jaccard[0][1]: 1.0
+
+############################
+## Overlap between sample_1 against sample_3; with various top
+#!OUTPUT_FILE: overlap_1vs3_top4.vidjil
+#!LAUNCH: python ../../fuse.py ../data/overlaps/sample_1.vidjil ../data/overlaps/sample_3.vidjil -o overlap_1vs3_top4.vidjil -t 4 -T 5 --overlaps;
+
+## !!! Not available for the moment as not all clones are loaded in the same time (see #4445)
+# $ 1vs3_top4; Morisita should not be 1.0 as all clones are considered for overlap
+# j: overlaps.morisita[0][1]: 0.8
+# $ 1vs3_top4; Jaccard should not be 1.0 as all clones are considered for overlap
+# j: overlaps.jaccard[0]: [1.0, 0.8]
+
+
+
+############################
+## Overlap between sample_1 against sample_2
+!OUTPUT_FILE: overlap_1vs2.vidjil
+!LAUNCH: python ../../fuse.py ../data/overlaps/sample_1.vidjil ../data/overlaps/sample_2.vidjil -o overlap_1vs2.vidjil --overlaps;
+# Sample2 have exactly half the number of reads than sample1
+
+$ 1vs2; morisita value should be less than 1 
+j: overlaps.morisita[0][0]: 1.0
+j: overlaps.morisita[0][1]: 0.8
+$ 1vs2; As Jaccard only use boolean value, value should stil be 1.0
+j: overlaps.jaccard[0][0]: 1.0
+j: overlaps.jaccard[0][1]: 1.0
+
+
+############################
+## Overlap between sample_3 against sample_4
+!OUTPUT_FILE: overlap_3vs4.vidjil
+!LAUNCH: python ../../fuse.py ../data/overlaps/sample_3.vidjil ../data/overlaps/sample_4.vidjil -o overlap_3vs4.vidjil --overlaps;
+# sample 3 have clone from 1 to 4
+# sample 4 have clone from 5 to 8
+# Value should be to 0
+
+$ 3vs4; value should be 0.0: morisita 
+j: overlaps.morisita[0][0]: 1.0
+j: overlaps.morisita[0][1]: 0
+$ 3vs4; value should be 0.0: jaccard 
+j: overlaps.jaccard[0][0]: 1.0
+j: overlaps.jaccard[0][1]: 0
+
+############################
+## Overlap between gradient_increase against gradient_decrease
+!OUTPUT_FILE: overlap_increase_vs_decrease.vidjil
+!LAUNCH: python ../../fuse.py ../data/overlaps/sample_gradient_increase.vidjil ../data/overlaps/sample_gradient_decrease.vidjil -o overlap_increase_vs_decrease.vidjil --overlaps;
+# sample increase have clone from 100 to 1000, by step of 100
+# sample decrease have clone from 1000 to 100, by step of 100
+
+$ increase_vs_decrease; value should be 0.0: morisita 
+j: overlaps.morisita[0][0]: 1.0
+j: overlaps.morisita[0][1]: 0.571
+$ increase_vs_decrease; value should be 0.0: jaccard 
+j: overlaps.jaccard[0][0]: 1.0
+j: overlaps.jaccard[0][1]: 1.0

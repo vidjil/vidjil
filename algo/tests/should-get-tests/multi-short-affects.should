@@ -1,4 +1,5 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -r 5 -K -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL $VIDJIL_DATA/multi-short.fa ; head -n 17 out/multi-short.affects
+!OUTPUT_FILE: out/multi-short.affects
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 5 -K --first-reads 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRB,TRD,TRG,IGH,IGK,IGL $VIDJIL_DATA/multi-short.fa
 # Testing .affects output (-K)
 
 $ First sequence (TRA), display sequence
@@ -7,8 +8,8 @@ $ First sequence (TRA), display sequence
 $ First sequence (TRA), count of k-mers
 1:129 .* TRA
 
-$ First sequence (TRA), segmentation
-1:>TRA--V1-1.01--J1.01 .* seed TRA SEG_+
+$ First sequence (TRA), detection
+1:==> TRA--V1-1.01--J1.01 .* seed TRA SEG_+
 
 
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import vidjil_utils
+from datetime import datetime
 
 class DBInitialiser(object):
 
@@ -43,8 +44,8 @@ class DBInitialiser(object):
 
     def get_set_dict(self, set_type, sample_set_id, i):
         if set_type == defs.SET_TYPE_PATIENT:
-            return dict(id_label="", first_name="patient", last_name=i, birth="2010-10-10", info="test patient %d #test%d" % (i, i), sample_set_id=sample_set_id)
-        d = dict(name="%s %d" % (set_type, i), info="test %s %d #test%d" % (set_type, i, i), sample_set_id=sample_set_id)
+            return dict(id_label="", first_name="patient", last_name=i, birth="2010-10-10", info="test patient %d #test%d" % (i, i), sample_set_id=sample_set_id, creator=1)
+        d = dict(name="%s %d" % (set_type, i), info="test %s %d #test%d" % (set_type, i, i), sample_set_id=sample_set_id, creator=1)
         if set_type == defs.SET_TYPE_RUN:
             d['id_label'] = ""
         return d
@@ -101,7 +102,8 @@ class DBInitialiser(object):
             membership = db(db.sample_set_membership.sequence_file_id == sf.id).select(limitby=(0,1)).first()
             stid = db.scheduler_task.insert(
                 application_name="vidjil",
-                status="COMPLETED"
+                status="COMPLETED",
+                start_time=datetime.now()
             )
             db.results_file.insert(
                 sequence_file_id=sf.id,

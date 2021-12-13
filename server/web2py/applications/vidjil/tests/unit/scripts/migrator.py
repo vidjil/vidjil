@@ -17,7 +17,8 @@ class MigratorScript(unittest.TestCase):
         test_group = db.auth_group.insert(role='testy')
         exp = Extractor(db, log)
         config_mapper = ConfigMapper(log)
-        imp = Importer(test_group, db, log, config_mapper)
+        pprocess_mapper = ConfigMapper(log)
+        imp = Importer(test_group, db, log, config_mapper, pprocess_mapper)
 
         test_patient_ids = []
         test_sample_set_ids = []

@@ -13,8 +13,10 @@ class DefaultController(unittest.TestCase)
 BEWARE that the name is NOT in plural (controllers->Controller)
 
 require: 
+apt-get install python-pip
 pip install unittest2
 pip install unittest-xml-reporting
+pip install mock
 
 Execute with:
 >   python web2py.py -S vidjil -M -R testRunner.py
@@ -148,16 +150,17 @@ db.auth_permission.insert(group_id = fake_group_id,
                         )
 
 # for permission testing
+permission_group_id = db.auth_group.insert(role="test_group_perm", description="test group perm")
 permission_sample_set = db.sample_set.insert(sample_type="patient")
 permission_patient = db.patient.insert(first_name="foo",
                                       last_name="bar",
                                       info="permission",
                                       sample_set_id=permission_sample_set)
 
-db.auth_permission.insert(group_id = fake_group_id,
+db.auth_permission.insert(group_id = permission_group_id,
                           name = PermissionEnum.access.value,
-                          table_name = "patient",
-                          record_id = permission_patient
+                          table_name = "sample_set",
+                          record_id = permission_sample_set
                           )
 
 fake_run_id = db.run.insert(name="foobar",
@@ -169,8 +172,8 @@ fake_run_id = db.run.insert(name="foobar",
 
 db.auth_permission.insert(group_id = fake_group_id,
                         name = PermissionEnum.access.value,
-                        table_name = 'run',
-                        record_id = fake_run_id)
+                        table_name = 'sample_set',
+                        record_id = fake_sample_set_id)
 
 # and a fake file for this patient
 fake_file_id = db.sequence_file.insert(sampling_date="1903-02-02",

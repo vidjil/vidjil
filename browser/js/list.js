@@ -43,16 +43,18 @@ function List(id_list, id_data, model, database) {
     this.index = [];
     this.index_cluster = [];
     this.index_data = {};
+    this.sort_lock = true; // By default, lock the list in the current state
 
     this.build();
     
     this.sort_option = {
-        "-" : function () {},
+        "-"    : function () {},
         "size" : function(){self.sortListBy(function(id){return self.m.clone(id).getSize();})},
         "V/5'" : function(){self.sortListByV()},
         "J/3'" : function(){self.sortListByJ()}
     }
 
+    this.sort_option_selected = "-"; // Store the selected sort method
     this.selectedAxis = {};
 }
 
@@ -214,7 +216,7 @@ List.prototype = {
             star.className = "starBox";
             star_onclick(key, star);
 
-            star.appendChild(icon('icon-star-2', 'clone tag'))
+            star.appendChild(icon('icon-star-2', 'clonotype tag'))
             div.appendChild(star)
             
             this.index_data[key] = value;
@@ -237,7 +239,7 @@ List.prototype = {
 
         var a_split = document.createElement('a')
         a_split.className = "button"
-        a_split.appendChild(icon('icon-plus', 'Show all subclones'))
+        a_split.appendChild(icon('icon-plus', 'Show all sub-clonotypes'))
         a_split.id = "list_split_all"
         a_split.onclick = function () {
             self.m.split_all(true)
@@ -245,21 +247,21 @@ List.prototype = {
         
         var a_unsplit = document.createElement('a')
         a_unsplit.className = "button"
-        a_unsplit.appendChild(icon('icon-minus', 'Hide all subclones'))
+        a_unsplit.appendChild(icon('icon-minus', 'Hide all sub-clonotypes'))
         a_unsplit.id = "list_unsplit_all"
         a_unsplit.onclick = function () {
             self.m.split_all(false)
         }
 
         var filter_label = document.createElement('span')
-        filter_label.appendChild(icon('icon-search-1', 'Search a clone by name, sequence, or V/D/J gene'))
+        filter_label.appendChild(icon('icon-search-1', 'Search a clonotype by name, sequence, or V/D/J gene'))
         
         var filter_input = document.createElement('input')
         filter_input.id = 'filter_input'
         filter_input.type = 'text'
         filter_input.setAttribute('placeholder', 'search');
         filter_input.onchange = function () {
-            self.m.filter(this.value)
+            self.m.filter.add("Clonotype", "search", this.value)
         }
         
         var filter_reset = document.createElement('span')
@@ -268,7 +270,7 @@ List.prototype = {
         filter_reset.className = "button"
         filter_reset.onclick = function () {
             document.getElementById('filter_input').value = ''
-            self.m.reset_filter(false)
+            self.m.filter.remove("Clonotype", "search", undefined)
             self.m.update()
         }
         
@@ -280,7 +282,19 @@ List.prototype = {
         sort.id = "list_sort_select"
         sort.className = "list_sort_select"
         sort.onchange = function() {
+            self.update_is_pending = true
+            self.m.updateIcon()
+
             self.sort_option[this.value]()
+            self.sort_option_selected = this.value
+            // close the lock
+            self.sort_lock = true
+            self.current_sample = self.m.t
+            var div = document.getElementById("div_sortLock")
+            div.className  = "icon-lock-1 list_lock_on"
+            div.title  = "Release sort as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.m.t, "names")
+            self.update_is_pending = false
+            self.m.updateIcon()
         }
         
         for (var key in this.sort_option) {
@@ -293,6 +307,30 @@ List.prototype = {
         sort_span.appendChild(document.createTextNode("sort by "));
         sort_span.appendChild(sort);
 
+        this.current_sample = this.m.t
+        var lock_div = document.createElement("icon")
+        lock_div.id = "div_sortLock"
+        lock_div.className = "icon-lock-1 list_lock_on"
+        lock_div.title  = "Release sort as '" + this.sort_option_selected +"' on sample " + this.m.getStrTime(this.m.t, "names")
+        lock_div.onclick = function(){
+            var div = document.getElementById("div_sortLock")
+            if (self.sort_lock == true){
+                self.sort_lock = false
+                div.className  = "icon-lock-open list_lock_off"
+                self.current_sample = self.m.t
+                div.title  = "Freeze list as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.current_sample, "names")
+                // Apply sort method at unlock
+                self.sort_option[self.sort_option_selected]()
+            } else {
+                self.sort_lock = true
+                div.className  = "icon-lock-1 list_lock_on"
+                self.current_sample = self.m.t
+                div.title  = "Release sort as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.current_sample, "names")
+            }
+        }
+
+        sort_span.appendChild( lock_div )
+
         var axis_span = document.createElement('span');
         axis_span.className = "list_axis devel-mode";
 
@@ -300,18 +338,18 @@ List.prototype = {
         axis.setAttribute('name', 'axis_list[]');
         axis.id = "list_axis_select";
 
-        var axOpts = Clone.prototype.axisOptions();
-        var available_axis = (new Axes(this.m)).available();
-        for (var i in axOpts) {
-            var axis_option = document.createElement("option");
-            axis_option.setAttribute('value', axOpts[i]);
-            axis_option.appendChild(document.createTextNode(available_axis[axOpts[i]].label));
-            axis.appendChild(axis_option);
+        //var axOpts = Clone.prototype.axisOptions()
+        var available_axis = Axis.prototype.available()
+        for (var i in available_axis) {
+            var axis_option = document.createElement("option")
+            axis_option.setAttribute('value', available_axis[i])
+            axis_option.appendChild(document.createTextNode(available_axis[i]))
+            axis.appendChild(axis_option)
         }
-        axis.value = "size";
-        this.selectedAxis = available_axis.size;
+        axis.value = "size"
+        this.selectedAxis = Axis.prototype.getAxisProperties("Size")
         axis.onchange = function() {
-            self.selectedAxis = available_axis[axis.value];
+            self.selectedAxis = Axis.prototype.getAxisProperties(axis.value)
             self.update()
         }
 
@@ -344,8 +382,18 @@ List.prototype = {
         this.updateElem(list);
         this.update_data_list()
         
-        //TODO check order 
-        document.getElementById("list_sort_select").selectedIndex = 0;
+        // Apply selected sort function if no sort lock
+        if (this.sort_lock == false){
+            this.sort_option[this.sort_option_selected]()
+            this.current_sample = this.m.t
+            var div = document.getElementById("div_sortLock")
+            div.title  = "Freeze list as '" + this.sort_option_selected +"' on sample " + self.m.getStrTime(this.current_sample, "names")
+        } else {
+            if (this.current_sample != this.m.t) {
+                document.getElementById("list_sort_select").selectedIndex = 0;
+                this.sort_option_selected = "-"
+            }
+        }
     },
 
     /**
@@ -389,7 +437,6 @@ List.prototype = {
         }
         div_elem.className = "listElem";
         div_elem.id        = "listElem_"+cloneID
-        div_elem.style.display = "block";
 
         var span_name = document.createElement('span');
         span_name.className = "nameBox";
@@ -439,7 +486,7 @@ List.prototype = {
             
             if (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
                 (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  )||
-                (clone.isFiltered) || 
+                (!clone.isActive()) || 
                 (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]))){ // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
                 
                 cloneDom.display("main", "none");
@@ -454,26 +501,26 @@ List.prototype = {
             if (cloneDom.getElement(divClass) == null) return false
 
             cloneDom.color(  divClass, clone.getColor());
-            cloneDom.content(divClass, clone.getShortName());
+            cloneDom.content(divClass, clone.getShortName().replace('<', '&lt;'));
             cloneDom.title(  divClass, clone.getNameAndCode());
             
             //update clone axis
             var axis = this.selectedAxis;
             cloneDom.color("axisBox", clone.getColor());
-            cloneDom.content("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : document.createTextNode(axis.fct(clone)).outerHTML)
+            cloneDom.content("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : axis.fct(clone))
 
             //update cluster icon
             if (this.m.clusters[cloneID].length > 1) {
                 if (clone.split) {
-                    cloneDom.content("clusterBox", icon('icon-minus', 'Hide the subclones').outerHTML)
+                    cloneDom.content("clusterBox", icon('icon-minus', 'Hide the sub-clonotypes').outerHTML)
                     this.showClusterContent(cloneID, false)
                 } else {
-                    cloneDom.content("clusterBox", icon('icon-plus', 'Show the subclones').outerHTML)
+                    cloneDom.content("clusterBox", icon('icon-plus', 'Show the sub-clonotypes').outerHTML)
                     this.hideClusterContent(cloneID, false)
                 }
                 self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
             } else {
-                cloneDom.getElement("clusterBox").appendChild(document.createTextNode(' '));
+                cloneDom.getElement("clusterBox").innerHTML = "<text> </text>";
                 if (this.m.clusters[cloneID].length < 2) display = false
                 document.getElementById("cluster"+cloneID).style.display = "none";
             }
@@ -532,10 +579,11 @@ List.prototype = {
 
             var span_info = document.createElement('span')
             span_info.className = "infoBox";
+            span_info.id      = "clone_infoBox_"+id;
             span_info.onclick = function () {
                 self.m.displayInfoBox(id);
             }
-            span_info.appendChild(icon('icon-info', 'clone information'));
+            span_info.appendChild(icon('icon-info', 'clonotype information'));
 
             var img = document.createElement('span');
             img.onclick = function () {
@@ -558,9 +606,9 @@ List.prototype = {
             }
 
             div_clone.appendChild(img);
-            div_clone.appendChild(span_info);
             div_clone.appendChild(span_name);
             div_clone.appendChild(span_stat);
+            div_clone.appendChild(span_info);
             div_cluster.appendChild(div_clone);
         }
 
@@ -664,7 +712,7 @@ List.prototype = {
                 if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
                     // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
                     cloneDom.display("main", "none");
-                } else if (clone.isFiltered){
+                } else if (!clone.isActive()){
                     cloneDom.display("main", "none");
                 } else {               
                     cloneDom.display("main", "block");

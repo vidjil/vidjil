@@ -17,14 +17,19 @@
         <div class="db_block_left"> {{=info["label"]}} </div>
         
         <div class="db_block_right"> {{if auth.can_process_sample_set(request.vars['id']) :}}
-            config
+            process config
             <span>
                 <select id="choose_config" name="config" onchange="db.call('sample_set/index', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
-                    {{for row in db((auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=~db.config.name) :}}
-                        <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
-                            {{=row.name}}
-                        </option>
+                    {{ for class_name in sorted(classification.keys()): }}
+                      {{ class_elt = classification[class_name] }}
+                      <optgroup label="{{ =class_elt['name'] }}"  title="{{ =class_elt['info'] }}">
+                        {{ for row in class_elt['configs']: }}
+                            <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
+                                {{=row.name}}
+                            </option>
+                        {{pass}}
+                      </optgroup>
                     {{pass}}
                 </select>
             </span>
@@ -34,10 +39,7 @@
 
 </div>
 
-    
-    
-    
-    
+
     
     
     
@@ -48,34 +50,87 @@
                 <td class="column_100"> sampling date </td>
                 <td> info </td>
                 <td> size </td>
+                {{if has_shared_sets: }}
+                <td> associated sets </td>
+                {{pass}}
                 <td> pre-process </td>
 		{{if auth.is_admin():}} <td> uploader </td> {{pass}}
+                <td class="column_20"> </td>
+                <td class="column_20"> </td>
+                <td class="column_20"> </td>
+
+                <td class="column_sep"></td>
+
+                <td class="column_150">last processing</td>
+                <td class="column_100">status</td>
+                <td class="column_20"></td>
+                <td class="column_20"></td>
+                <td class="column_20"></td>
+                <td class="column_20"></td>
+                <td class="column_20"></td>
+
+            </tr>
+        </thead>
+        <tfoot class="db_fixed_footer">
+            <tr><td class="column_200" id="footer_number_samples">{{ =str(len(query)) }} sample(s) </td>
+                <td class="column_100"> </td>
+                <td>  </td>
+                <td>  </td>
+                {{if has_shared_sets: }}<td> </td>{{pass}}
+                <td> </td>
+                {{if auth.is_admin():}} <td>  </td> {{pass}}
                 <td class="column5"> </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
 
                 <td class="column_sep"></td>
 
-                <td class="column2">last processing</td>
-                <td class="column_100">status</td>
+                <td class="column2"></td>
+                <td class="column_100" style="padding: 2px 5px">
+                    {{ launch_sequence_files = [int(row.sequence_file.id) for row in query if row.results_file.status in ["FAILED",'']] }}
+                    {{ if len(launch_sequence_files) > 0 and (config_id > 0 and auth.can_use_config(config_id)): }}
+                         Run all
+                    {{pass}}
+                </td>
                 <td class="column5"></td>
                 <td class="column5"></td>
-                <td class="column5"></td>
-                <td class="column5"></td>
+                <td class="column5" id="footer_run_icon_all">
+                       {{if config_id > 0 and auth.can_use_config(config_id) :}}
+                       {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
+                              {{ launch_sequence_files = [ int(row.sequence_file.id) for row in query ] }}
+                              <span class="pointer devel-mode" 
+                               onclick="db.call('default/run_all_request', {'sequence_file_ids' : {{=launch_sequence_files}}, 'sample_set_id': {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } ) "
+                              ><i class="icon-cog-2" title="Run the selected configuration for all samples">
+                               </i></span>
+                           {{pass}}
+                      {{pass}}
+                </td>
+                <td class="column5" id="footer_run_icon">
+                       {{if config_id > 0 and auth.can_use_config(config_id) :}}
+                          {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
+
+                              {{ launch_sequence_files = [int(row.sequence_file.id) for row in query if row.results_file.status in ["FAILED",'']] }}
+                           {{pass}}
+                              {{ if len(launch_sequence_files) > 0: }}
+                               <span class="pointer" 
+                                     onclick="db.call('default/run_all_request', { 'sequence_file_ids' : {{=launch_sequence_files}}, 'sample_set_id': {{=request.vars["id"]}}, 'config_id' : {{=config_id}}} )">
+                                 <i class="icon-cog-2" title="Run the selected configuration for all samples not already analysed or failed">
+                                 </i>
+                                 </span>
+                                {{pass}}
+                          {{pass}}
+                      {{pass}}
+                </td>
+                <td class="column_20"></td>
 
             </tr>
-        </thead>
-        
+        </tfoot>
         
         <tbody>
             {{for row in query :}}
-                {{if row.results_file.scheduler_task_id is None or db.scheduler_task[row.results_file.scheduler_task_id ] is None:}}
-                    {{status = '' }}
-                {{else:}}
-                    {{status = db.scheduler_task[row.results_file.scheduler_task_id ].status }}
-                {{pass}}
+                {{status = row.results_file.status }}
 
-                 <tr>
+                 <tr id="row_sequence_file_{{=row.sequence_file.id}}" >
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
                        {{if row.sequence_file.network:}}<i class="icon-upload-cloud-outline" title="This file is stored on your lab's network"></i>{{pass}}
 		       {{if auth.is_admin():}}({{=row.sequence_file.id}}){{pass}}
@@ -86,6 +141,17 @@
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
                     {{ has_pre_process = row.sequence_file.pre_process_id != None}}
+                    {{if has_shared_sets:}}
+                    <td>
+                      <!-- Select set with this sample -->
+                      {{ for sample_set in row.list_share_set:}}
+                          <!-- Show values -->
+                          <span class="{{ =sample_set['sample_type'] }}_token set_token" title="{{ =sample_set['title'] }}" onclick="db.call('sample_set/index', {'id': '{{ =int(sample_set['id']) }}', 'config_id': -1 })" >
+                            {{ =sample_set['title'] }}
+                          </span>
+                      {{ pass }}
+                    </td>
+                    {{pass}}
                     <td {{if has_pre_process:}} class="pointer"
                         title="View more information on the pre-process {{=pre_process_list[row.sequence_file.pre_process_id]}}"{{pass}}
                         {{if has_pre_process:}} onclick="db.call('pre_process/info', {'sequence_file_id' :'{{=row.sequence_file.id }}', 'sample_set_id' : '{{=request.vars["id"]}}'} )" {{pass}}
@@ -94,6 +160,7 @@
     display: inline-block;" title="running pre_processs"></i>{{pass}} 
                         {{if row.sequence_file.pre_process_flag == "WAIT" :}}[queued]{{pass}} 
                         {{if row.sequence_file.pre_process_flag == "FAILED" :}}[failed] <span class="button" onclick="db.call('file/restart_pre_process', {sequence_file_id: {{=row.sequence_file.id}}})">try again</span>{{pass}}
+                        {{ if has_pre_process and row.sequence_file.pre_process_flag is None and row.sequence_file.data_file2 is None: }}<span title="All the files have not been properly received yet. It this persists, please edit the sample to reupload them.">[waiting file]</span>{{pass}}
                         {{if row.sequence_file.pre_process_id != None :}} {{=pre_process_list[row.sequence_file.pre_process_id]}} {{pass}}
                      </td>
 		    {{if auth.is_admin():}}
@@ -114,12 +181,19 @@
 
                     <td class="column_sep"></td>
 
+                    {{if row.results_file.run_date :}}
+                        <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
+                    {{else:}}
+                        <td></td>
+                    {{pass}}
 
-                   {{if row.results_file.run_date :}}
-                       <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
-                   {{else:}}<td></td>{{pass}}
-                   {{if row.results_file.id:}}
-                     <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=status}} </td>
+                    {{if row.results_file.id:}}
+                        {{if row.sequence_file.pre_process_flag in ["RUN", "WAIT"] :}}
+                            <td> PREPROCESSING </td>
+                        {{ else:}}
+                            <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=status}} </td>
+                        {{ pass}}
+
                      <td>
                         {{if row.results_file.data_file:}}
                             <a href={{=URL('default', 'download', scheme='https', args=row.results_file.data_file, vars=dict(filename='result-%s-%s.txt' % (request.vars['id'], row.results_file.id)))}}
@@ -128,7 +202,7 @@
                      </td>
                      <td {{if status in ["COMPLETED", "FAILED"]:}} class="pointer" onclick="db.call('results_file/output', { 'results_file_id' : '{{=row.results_file.id}}' }) " {{else:}} class="inactive" {{pass}}><i class="icon-docs" title="See the output files"></i></td>
                     {{if can_modify and auth.can_process_sample_set(request.vars['id']):}}
-                     <td class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}', 'sample_set_id': '{{=request.vars["id"]}}'})" >  <i class="icon-erase" title="delete process"></i> </td>
+                     <td id="delete_process_{{=row.sequence_file.id}}" class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}', 'sample_set_id': '{{=request.vars["id"]}}'})" >  <i class="icon-erase" title="delete process"></i> </td>
                     {{else:}}
                      <td></td>
                     {{pass}}
@@ -136,18 +210,34 @@
                      <td></td><td></td><td></td><td></td>
                    {{pass}}
                    <td>
-                   {{if row.sequence_file.data_file != None and ( row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED") ):}}
+                   {{if row.sequence_file.data_file != None and ( row.results_file.id != None or ( status not in ["RUNNING", "QUEUED", "ASSIGNED"]) ) and (not has_pre_process or (row.sequence_file.pre_process_flag != None and row.sequence_file.pre_process_flag != "FAILED")) :}}
                        {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
-                           <span class="pointer" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"><i class="icon-cog-2" title="Run the selected configuration for this file"></i></span>
+                           <span class="pointer" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"><i class="icon-cog-2" title="Run a process with the selected configuration for this file"></i></span>
                        {{pass}}
                    {{pass}}
                    </td>
+                   
+                    {{if row.results_file.id and row.results_file.data_file:}}
+                    <td><a class="button" href="{{=http_origin}}?custom={{=row.results_file.id}}&sample_set_id={{=request.vars["id"]}}&config={{=config_id}}" type="text/html"
+                                onclick= "event.preventDefault();
+                                        if( event.which == 2 ) { window.open(this.href); }
+                                        else { myUrl.loadCustomUrl(db, {'custom': '{{=row.results_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config' : {{=config_id}}  } ); } " >
+                            <i class="icon-forward" title="open this sample results in client"></i>
+                        
+                    </a></td>
+                    {{else:}}
+                    <td></td>
+                    {{pass}}
+                   
                 </tr>
             {{pass}}
 
         </tbody>
+
+        
     </table>
     <table class="db_table" id="db_fixed_header"></table>
+    <table class="db_table" id="db_fixed_footer"></table>
 
     
     
@@ -188,7 +278,7 @@
 
     <div class="db_block_left">
         {{if can_upload: }}
-        <span class="button2" onclick="db.call('file/form', { 'sample_set_id' : '{{=request.vars["id"]}}' } )"> + add samples </span>
+        <span id="add_sample_button" class="button2" onclick="db.call('file/form', { 'sample_set_id' : '{{=request.vars["id"]}}' } )"> + add samples </span>
 
         {{pass}}
         <span class="button2" onclick="db.call('sample_set/custom', {'id': '{{=request.vars['id']}}', 'filter': ''} )">compare some of these samples</span>
@@ -200,14 +290,13 @@
         {{for row in db( (db.fused_file.sample_set_id == request.vars["id"]) & 
                          (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) &
                          (db.config.id ==db.fused_file.config_id)
-                       ).select() :}}
+                       ).select(db.config.name, db.config.id, db.fused_file.sample_set_id, distinct=True) :}}
         
-            {{if row.fused_file.fused_file is not None :}}
-                <a class="button2" href="index.html?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
+              
+                <a class="button2" href="{{=http_origin}}?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >
-            {{pass}}
                 {{=row.config.name}} </a>
         {{pass}}
         {{ if fused_count > 0: }}

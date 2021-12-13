@@ -3,19 +3,19 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
-<h3>{{=message}}</h3>
+<h3 id="page_preprocess">{{=message}}</h3>
 
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
             <tr><td class="column_50"></td>
-                <td class="column2"> name </td>
+                <td class="column_150"> name </td>
                 <td> command </td>
                 <td> info </td>
 
-                <td class="column5"> </td>
-                <td class="column5"> </td>
-                <td class="column5"> </td>
+                <td class="column_20"> </td>
+                <td class="column_20"> </td>
+                <td class="column_20"> </td>
             </tr>
         </thead>
        {{ for row in query :}}

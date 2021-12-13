@@ -8,7 +8,7 @@ void testWSAdd() {
   map<string, string> labels;
   WindowsStorage ws(labels);
   Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", 0};
-  Germline germline("Test", 't', "data/small_V.fa", "", "data/small_J.fa", "");
+  Germline germline("Test", 't', "data/small_V.fa", "", "data/small_J.fa", "", "", "");
   
   TAP_TEST_EQUAL(ws.size(), 0, TEST_WS_SIZE_NONE, "");
 
@@ -50,7 +50,7 @@ void testWSAdd() {
   TAP_TEST_EQUAL(it->label_full, "other", TEST_WS_GET_READS, "");
   TAP_TEST_EQUAL(it->sequence, "TAAGATTAGCCACGGACT", TEST_WS_GET_READS, "");
 
-  Germline germline2("Other test", 'o', "data/small_V.fa", "", "data/small_J.fa", "");
+  Germline germline2("Other test", 'o', "data/small_V.fa", "", "data/small_J.fa", "", "", "");
   // Insert a sequence from another germline 2 times
   for (int i = 0; i < 2; i++) {
     ws.add("CATT", seq, SEG_MINUS, &germline2);
@@ -60,7 +60,7 @@ void testWSAdd() {
   TAP_TEST(ws.getGermline("ATTAG") == &germline,TEST_WS_GET_GERMLINE, "");
   TAP_TEST(ws.getGermline("CATT") == &germline2,TEST_WS_GET_GERMLINE, "");
 
-  Germline germline3("Another test", 'a', "data/small_V.fa", "", "data/small_J.fa", "");
+  Germline germline3("Another test", 'a', "data/small_V.fa", "", "data/small_J.fa", "", "", "");
   // Insert a sequence from another germline 6 times
   for (int i = 0; i < 6; i++) {
     ws.add("ATAGCAT", seq, SEG_MINUS, &germline3);
@@ -117,7 +117,7 @@ void testWSAddWithLimit() {
   ws.setBinParameters(1, 20);
   Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", 0};
   Sequence seq_long = {"label", "l", "GATACATTAGACAGCTTATATATATATTTATAT", "", 0};
-  Germline germline("Test", 't', "data/small_V.fa", "", "data/small_J.fa", "");
+  Germline germline("Test", 't', "data/small_V.fa", "", "data/small_J.fa", "", "", "");
 
   ws.add("ATTAG", seq, SEG_PLUS, &germline);
   ws.add("ATTAG", seq, SEG_PLUS, &germline);

@@ -4,6 +4,7 @@ import tempfile
 import shutil
 import defs
 import gluon
+import gluon.contrib.simplejson
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin
@@ -55,7 +56,7 @@ def segment_sequences(sequences):
             germline_folder = defs.DIR_VIDJIL + '/germline/'
 
             ## config de vidjil
-            config = '-c designations -2 -3 -g germline'
+            config = '-c designations -3 -g germline'
             config = config.replace( ' germline' ,germline_folder)
 
             ## commande complete

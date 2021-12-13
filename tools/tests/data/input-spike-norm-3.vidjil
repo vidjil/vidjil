@@ -1,0 +1,875 @@
+{
+  "clones": [
+    {
+      "germline": "IGK",
+      "id": "AACAGTATAATAGTTCGCTCAGGGGGCGAGGGAATGAATTCACTTTCGGC",
+      "reads": [
+        269
+      ],
+      "seg_stat": {
+        "3": 269
+      },
+      "sequence": 0,
+      "top": 3
+    },
+    {
+      "germline": "IGH",
+      "id": "AAGAAGCGAATAGTGCGGTGGTCGGCGTTGGGGATTACTACTCTGACCAC",
+      "reads": [
+        7
+      ],
+      "seg_stat": {
+        "3": 7
+      },
+      "sequence": 0,
+      "top": 4
+    },
+    {
+      "germline": "TRG",
+      "id": "CCTTGTGGGAGGTTGGTTGGGTTCCACCCGAGTTGGGATATAGTAGTGAT",
+      "reads": [
+        1
+      ],
+      "seg_stat": {
+        "3": 1
+      },
+      "sequence": 0,
+      "top": 7
+    },
+    {
+      "_average_read_length": [
+        150.88140869140625
+      ],
+      "_coverage": [
+        0.987530529499054
+      ],
+      "_coverage_info": [
+        "149 bp (98% of 150.9 bp)"
+      ],
+      "germline": "IGK",
+      "id": "CTGTCAACAGAGTTACAGTACCCCTCGGACGTTCGGCCAAGGGACCAAGG",
+      "name": "IGKV1D-39*01 1//2 IGKJ1*01",
+      "reads": [
+        1054
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 2,
+          "name": "IGKJ1*01",
+          "start": 109
+        },
+        "5": {
+          "delRight": 1,
+          "name": "IGKV1D-39*01",
+          "stop": 108
+        },
+        "N": 0,
+        "affectSigns": {
+          "seq": "-------------------------------          --------------------------------------------------------------------------------------------------          ",
+          "start": 1,
+          "stop": 149
+        },
+        "affectValues": {
+          "seq": "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk__________KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK__________",
+          "start": 1,
+          "stop": 149
+        },
+        "cdr3": {
+          "aa": "QQSYSTPRT",
+          "seq": "CAACAGAGTTACAGTACCCCTCGGACG",
+          "start": 87,
+          "stop": 113
+        },
+        "evalue": {
+          "val": "2.949149e-103"
+        },
+        "evalue_left": {
+          "val": "2.949149e-103"
+        },
+        "evalue_right": {
+          "val": "4.127590e-219"
+        },
+        "junction": {
+          "aa": "CQQSYSTPRTF",
+          "productive": true,
+          "start": 84,
+          "stop": 116
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FFFFFFFFFFEFFFFFFGFFFFFFEFFFFFFFFFFEFFFFFFFFFFEFFF!!!!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 149
+        }
+      },
+      "seg_stat": {
+        "3": 1054
+      },
+      "sequence": "CAAGGTTCAGCGGCAGTGGATCTGGGACAGATTTCACTCTCACCATCAGCAGTCTGCAACCTGAAGATTTTGCAACTTACTACTGTCAACAGAGTTACAGTACCCCTCGGACGTTCGGCCAAGGGACCAAGGTGGAGATCAAACGTAAG",
+      "top": 2,
+      "warn": [
+        {
+          "code": "W69",
+          "level": "warn",
+          "msg": "Several genes with equal probability: IGKV1D-39*01 IGKV1-39*01"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        150.7296142578125
+      ],
+      "_coverage": [
+        0.9951594471931458
+      ],
+      "_coverage_info": [
+        "150 bp (99% of 150.7 bp)"
+      ],
+      "germline": "IGH",
+      "id": "GCCTCGGACACCGCCATGCCAAAACGGGGATAGCTACTGGTACTTCGATC",
+      "label": "Boldrini-VH5-C",
+      "name": "IGHV5-51*05 0/CCAAAACGGGGATAG/0 IGHJ2*01",
+      "reads": [
+        7282
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 0,
+          "name": "IGHJ2*01",
+          "start": 93
+        },
+        "5": {
+          "delRight": 0,
+          "name": "IGHV5-51*05",
+          "stop": 77
+        },
+        "N": 15,
+        "affectSigns": {
+          "seq": "    ------      -      -----------------------                           -----------------------------------------------------------------            ",
+          "start": 1,
+          "stop": 150
+        },
+        "affectValues": {
+          "seq": "____hhhhhh______h______hhhhhhhhhhhhhhhhhhhhhhh___________________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH____________",
+          "start": 1,
+          "stop": 150
+        },
+        "evalue": {
+          "val": "9.193586e-113"
+        },
+        "evalue_left": {
+          "val": "9.193586e-113"
+        },
+        "evalue_right": {
+          "val": "8.555496e-181"
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FEEEFFFFFEEEFFFFFFEFFFFFFEFFFFFEFFFFFFFFFFFFEFFEFF!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 150
+        }
+      },
+      "seg_stat": {
+        "3": 7282
+      },
+      "sequence": "TCACCATCTCAGCCGACAAGTCCATCAGCACCGCCTACCTGCAGTGGAGCAGCCTGAAGGCCTCGGACACCGCCATGCCAAAACGGGGATAGCTACTGGTACTTCGATCTCTGGGGCCGTGGCACCCGGGTCACCGTCTCCTCAGGTAAG",
+      "top": 1
+    },
+    {
+      "germline": "unexpected",
+      "id": "GCGAAACAAGGGCCCCGAGTGGGGGAGGATGCTTTTGATATGTGGGACCA",
+      "reads": [
+        1
+      ],
+      "seg_stat": {
+        "3": 1
+      },
+      "sequence": 0,
+      "top": 6
+    },
+    {
+      "germline": "IGH",
+      "id": "TTTTTTTTTTTTCAAGCAGAAGACGGCATACGAGATCAGCCTCGGTCTCG",
+      "reads": [
+        1
+      ],
+      "seg_stat": {
+        "3": 1
+      },
+      "sequence": 0,
+      "top": 5
+    }
+  ],
+  "config": {
+    "all": false,
+    "alternative-genes": "0",
+    "analysis-e-value-D": "0.05",
+    "analysis-filter": "1",
+    "cdr3": true,
+    "clean-memory": false,
+    "cluster-N": "10",
+    "cluster-epsilon": "0",
+    "cluster-load-matrix": false,
+    "cluster-save-matrix": false,
+    "consensus-on-longest-sequences": false,
+    "dir": "./out/",
+    "e-value": "1",
+    "germline": "germline/homo-sapiens.g",
+    "help-advanced": false,
+    "label-filter": false,
+    "label-json": "docker/vidjil-server/conf/boldrini/Boldrini-spikes.json",
+    "labels": [
+      {
+        "copies": "10",
+        "family": "VH1",
+        "name": "Boldrini-VH1-A",
+        "sequence": "TTTTGAAGGATGGTAG"
+      },
+      {
+        "copies": "40",
+        "family": "VH1",
+        "name": "Boldrini-VH1-B",
+        "sequence": "TGCGAGACATTCTTTTGACTACT"
+      },
+      {
+        "copies": "160",
+        "family": "VH1",
+        "name": "Boldrini-VH1-C",
+        "sequence": "AGATCGGGGGGGAGGGTTCGGGGAGTTTTCCCCCGCCCATT"
+      },
+      {
+        "copies": "10",
+        "family": "VH2",
+        "name": "Boldrini-VH2-A",
+        "sequence": "CCCCAACCCAGACCCCGTCTTTTCCTGGTCCGTTCGTATT"
+      },
+      {
+        "copies": "40",
+        "family": "VH2",
+        "name": "Boldrini-VH2-B",
+        "sequence": "ACACAGCCACGTATTACTGCCCCTTGGCCTCCTCAATTACGATATTTTGACTGGTTATCCTACTGGGGCCAGGGAACCCT"
+      },
+      {
+        "copies": "160",
+        "family": "VH2",
+        "name": "Boldrini-VH2-C",
+        "sequence": "GGACACAGCCACATATTACTGTGCACGGAAGGGACCTTTACGATTTTTGGAGTGGTTATTAGGCCCTCTTACTACGGTATGGACGTCTGGGG"
+      },
+      {
+        "copies": "10",
+        "family": "VH3",
+        "name": "Boldrini-VH3-A",
+        "sequence": "ATAGCAGCTCGCTCACAGA"
+      },
+      {
+        "copies": "40",
+        "family": "VH3",
+        "name": "Boldrini-VH3-B",
+        "sequence": "AGGTGAGATCGGGG"
+      },
+      {
+        "copies": "160",
+        "family": "VH3",
+        "name": "Boldrini-VH3-C",
+        "sequence": "TTACTGTCCTCCCGAACGAACCCCTCCGAACCCCCTATAGCAGCTCGGAGTATGGGTGTCAAACTACTACGGTAT"
+      },
+      {
+        "copies": "40",
+        "family": "VH4",
+        "name": "Boldrini-VH4-B",
+        "sequence": "GGGGATGGTCAGTGG"
+      },
+      {
+        "copies": "160",
+        "family": "VH4",
+        "name": "Boldrini-VH4-C",
+        "sequence": "TGTATTACTGTGCGAGAAGGGGTATAGCAGCAGCTGGTGCCTACTTTGACTACTGGGGCCAGGGAACCCT"
+      },
+      {
+        "copies": "10",
+        "family": "VH5",
+        "name": "Boldrini-VH5-A",
+        "sequence": "GCGAGACGGG"
+      },
+      {
+        "copies": "40",
+        "family": "VH5",
+        "name": "Boldrini-VH5-B",
+        "sequence": "CCCTCCGCCACCCTGAGAGCCCACCTGGGGGAGGTTTGA"
+      },
+      {
+        "copies": "160",
+        "family": "VH5",
+        "name": "Boldrini-VH5-C",
+        "sequence": "ATGCCAAAACGGGGA"
+      },
+      {
+        "copies": "10",
+        "family": "VH6",
+        "name": "Boldrini-VH6-A",
+        "sequence": "CTCCCGAGGACACGGCTGTGTATGGGTAGGTATAGCAGCAGGTCCGCGCGTCTTGGACTTGACTACTGGGGCCA"
+      },
+      {
+        "copies": "40",
+        "family": "VH6",
+        "name": "Boldrini-VH6-B",
+        "sequence": "AAGAGGTCTGGAACATTATTAC"
+      },
+      {
+        "copies": "160",
+        "family": "VH6",
+        "name": "Boldrini-VH6-C",
+        "sequence": "CTGTGTATTACTGTGCAAGTCCCAGGCCCCAACGTATTACGATTTTTGGAGTGGCCCCCAAGAGCGTTCGACCCCTG"
+      },
+      {
+        "copies": "40",
+        "family": "VH7",
+        "name": "Boldrini-VH7-B",
+        "sequence": "TCCCCTCGAGGGGTCT"
+      },
+      {
+        "copies": "160",
+        "family": "VH7",
+        "name": "Boldrini-VH7-C",
+        "sequence": "CCCCCCTGGCGGGCGTCCA"
+      }
+    ],
+    "max-consensus": "100",
+    "min-ratio": "0",
+    "min-reads": "1",
+    "not-analyzed-as-clones": false,
+    "out-affects": false,
+    "out-analyzed": false,
+    "out-reads": false,
+    "out-unanalyzed": false,
+    "plain-index": false,
+    "several-D": true,
+    "verbose": false,
+    "window": "50"
+  },
+  "diversity": {
+    "index_Ds_diversity": 0.9994170665740967,
+    "index_E_equitability": 0.6688582897186279,
+    "index_H_entropy": 8.835769144927326
+  },
+  "germlines": {
+    "custom": {
+      "3": [],
+      "4": [],
+      "5": [],
+      "shortcut": "X"
+    },
+    "ref": "http://www.vidjil.org/germlines/germline-59.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "germline": {
+      "IGH": [
+        68536
+      ],
+      "IGH+": [
+        508
+      ],
+      "IGK": [
+        472546
+      ],
+      "IGK+": [
+        0
+      ],
+      "IGL": [
+        0
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        0
+      ],
+      "TRB+": [
+        0
+      ],
+      "TRD": [
+        109
+      ],
+      "TRD+": [
+        134
+      ],
+      "TRG": [
+        85
+      ],
+      "unexpected": [
+        4001
+      ]
+    },
+    "segmented": [
+      545919
+    ],
+    "total": [
+      633127
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "./vidjil-algo /home/joao_meidanis/boldrini/vidjil/docker/button-patients/IGK-2530-1A-K_S20_L001_R1_001.fastq.gz -c clones -3 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 --label-json docker/vidjil-server/conf/boldrini/Boldrini-spikes.json "
+    ],
+    "log": [
+      "  ==> junction detected in 545919 reads (86.2%)\n  ==> found 61058 windows in 545919 reads (86.2% of 633127 reads)\n                          reads av. len     clones clo/rds\n  IGH               ->    68536   150.4       8144   0.119\n  IGH+              ->      508   149.8         88   0.173\n  IGK               ->   472546   149.5      51954   0.110\n  IGK+              ->        0       -          0       -\n  IGL               ->        0       -          0       -\n  TRA               ->        0       -          0       -\n  TRA+D             ->        0       -          0       -\n  TRB               ->        0       -          0       -\n  TRB+              ->        0       -          0       -\n  TRD               ->      109   150.4        102   0.936\n  TRD+              ->      134   148.5        129   0.963\n  TRG               ->       85   149.9         72   0.847\n  unexpected        ->     4001   113.0        569   0.142\n\n  SEG               ->   545919   149.4\n  SEG_+             ->        5   136.6\n  SEG_-             ->   545914   149.4\n  SEG changed w     ->      119    93.5\n\n  UNSEG too short   ->        0       -\n  UNSEG strand      ->       11   150.5\n  UNSEG too few V/J ->    39718   102.0\n  UNSEG only V/5'   ->      656   130.0\n  UNSEG only J/3'   ->    46812   149.3\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->       11   150.6\n  UNSEG too short w ->        0       -\n"
+    ],
+    "number": 1,
+    "original_names": [
+      "/home/joao_meidanis/boldrini/vidjil/docker/button-patients/IGK-2530-1A-K_S20_L001_R1_001.fastq.gz"
+    ],
+    "producer": [
+      "vidjil-algo dev ff39f8efe (2020-01-09)"
+    ],
+    "run_timestamp": [
+      "2020-01-13 13:28:12"
+    ]
+  },
+  "similarity": [
+    [
+      0.0,
+      28.0,
+      28.0,
+      32.0,
+      33.0,
+      33.0,
+      27.0,
+      31.0,
+      24.0,
+      30.0,
+      31.0,
+      31.0,
+      33.0,
+      32.0,
+      31.0,
+      32.0,
+      32.0,
+      33.0,
+      27.0,
+      31.0
+    ],
+    [
+      28.0,
+      0.0,
+      31.0,
+      30.0,
+      33.0,
+      33.0,
+      27.0,
+      29.0,
+      31.0,
+      30.0,
+      29.0,
+      31.0,
+      34.0,
+      29.0,
+      31.0,
+      29.0,
+      29.0,
+      33.0,
+      34.0,
+      32.0
+    ],
+    [
+      28.0,
+      31.0,
+      0.0,
+      28.0,
+      29.0,
+      31.0,
+      30.0,
+      30.0,
+      31.0,
+      26.0,
+      30.0,
+      29.0,
+      30.0,
+      28.0,
+      28.0,
+      28.0,
+      27.0,
+      31.0,
+      26.0,
+      28.0
+    ],
+    [
+      32.0,
+      30.0,
+      28.0,
+      0.0,
+      5.0,
+      7.0,
+      29.0,
+      22.0,
+      27.0,
+      12.0,
+      23.0,
+      15.0,
+      13.0,
+      6.0,
+      11.0,
+      20.0,
+      15.0,
+      17.0,
+      30.0,
+      12.0
+    ],
+    [
+      33.0,
+      33.0,
+      29.0,
+      5.0,
+      0.0,
+      3.0,
+      31.0,
+      18.0,
+      29.0,
+      7.0,
+      19.0,
+      10.0,
+      11.0,
+      11.0,
+      9.0,
+      18.0,
+      10.0,
+      13.0,
+      30.0,
+      11.0
+    ],
+    [
+      33.0,
+      33.0,
+      31.0,
+      7.0,
+      3.0,
+      0.0,
+      31.0,
+      15.0,
+      29.0,
+      10.0,
+      16.0,
+      13.0,
+      10.0,
+      13.0,
+      11.0,
+      15.0,
+      13.0,
+      10.0,
+      31.0,
+      12.0
+    ],
+    [
+      27.0,
+      27.0,
+      30.0,
+      29.0,
+      31.0,
+      31.0,
+      0.0,
+      29.0,
+      30.0,
+      33.0,
+      28.0,
+      27.0,
+      29.0,
+      29.0,
+      29.0,
+      27.0,
+      31.0,
+      29.0,
+      26.0,
+      30.0
+    ],
+    [
+      31.0,
+      29.0,
+      30.0,
+      22.0,
+      18.0,
+      15.0,
+      29.0,
+      0.0,
+      32.0,
+      14.0,
+      3.0,
+      14.0,
+      13.0,
+      20.0,
+      22.0,
+      6.0,
+      9.0,
+      12.0,
+      32.0,
+      22.0
+    ],
+    [
+      24.0,
+      31.0,
+      31.0,
+      27.0,
+      29.0,
+      29.0,
+      30.0,
+      32.0,
+      0.0,
+      30.0,
+      31.0,
+      29.0,
+      29.0,
+      28.0,
+      26.0,
+      31.0,
+      28.0,
+      28.0,
+      26.0,
+      29.0
+    ],
+    [
+      30.0,
+      30.0,
+      26.0,
+      12.0,
+      7.0,
+      10.0,
+      33.0,
+      14.0,
+      30.0,
+      0.0,
+      15.0,
+      11.0,
+      15.0,
+      15.0,
+      16.0,
+      14.0,
+      6.0,
+      17.0,
+      31.0,
+      18.0
+    ],
+    [
+      31.0,
+      29.0,
+      30.0,
+      23.0,
+      19.0,
+      16.0,
+      28.0,
+      3.0,
+      31.0,
+      15.0,
+      0.0,
+      15.0,
+      14.0,
+      21.0,
+      24.0,
+      6.0,
+      10.0,
+      11.0,
+      31.0,
+      23.0
+    ],
+    [
+      31.0,
+      31.0,
+      29.0,
+      15.0,
+      10.0,
+      13.0,
+      27.0,
+      14.0,
+      29.0,
+      11.0,
+      15.0,
+      0.0,
+      11.0,
+      13.0,
+      19.0,
+      19.0,
+      5.0,
+      15.0,
+      31.0,
+      21.0
+    ],
+    [
+      33.0,
+      34.0,
+      30.0,
+      13.0,
+      11.0,
+      10.0,
+      29.0,
+      13.0,
+      29.0,
+      15.0,
+      14.0,
+      11.0,
+      0.0,
+      9.0,
+      17.0,
+      17.0,
+      11.0,
+      8.0,
+      30.0,
+      17.0
+    ],
+    [
+      32.0,
+      29.0,
+      28.0,
+      6.0,
+      11.0,
+      13.0,
+      29.0,
+      20.0,
+      28.0,
+      15.0,
+      21.0,
+      13.0,
+      9.0,
+      0.0,
+      17.0,
+      23.0,
+      13.0,
+      11.0,
+      29.0,
+      18.0
+    ],
+    [
+      31.0,
+      31.0,
+      28.0,
+      11.0,
+      9.0,
+      11.0,
+      29.0,
+      22.0,
+      26.0,
+      16.0,
+      24.0,
+      19.0,
+      17.0,
+      17.0,
+      0.0,
+      20.0,
+      19.0,
+      19.0,
+      29.0,
+      5.0
+    ],
+    [
+      32.0,
+      29.0,
+      28.0,
+      20.0,
+      18.0,
+      15.0,
+      27.0,
+      6.0,
+      31.0,
+      14.0,
+      6.0,
+      19.0,
+      17.0,
+      23.0,
+      20.0,
+      0.0,
+      14.0,
+      16.0,
+      32.0,
+      20.0
+    ],
+    [
+      32.0,
+      29.0,
+      27.0,
+      15.0,
+      10.0,
+      13.0,
+      31.0,
+      9.0,
+      28.0,
+      6.0,
+      10.0,
+      5.0,
+      11.0,
+      13.0,
+      19.0,
+      14.0,
+      0.0,
+      15.0,
+      31.0,
+      21.0
+    ],
+    [
+      33.0,
+      33.0,
+      31.0,
+      17.0,
+      13.0,
+      10.0,
+      29.0,
+      12.0,
+      28.0,
+      17.0,
+      11.0,
+      15.0,
+      8.0,
+      11.0,
+      19.0,
+      16.0,
+      15.0,
+      0.0,
+      30.0,
+      20.0
+    ],
+    [
+      27.0,
+      34.0,
+      26.0,
+      30.0,
+      30.0,
+      31.0,
+      26.0,
+      32.0,
+      26.0,
+      31.0,
+      31.0,
+      31.0,
+      30.0,
+      29.0,
+      29.0,
+      32.0,
+      31.0,
+      30.0,
+      0.0,
+      28.0
+    ],
+    [
+      31.0,
+      32.0,
+      28.0,
+      12.0,
+      11.0,
+      12.0,
+      30.0,
+      22.0,
+      29.0,
+      18.0,
+      23.0,
+      21.0,
+      17.0,
+      18.0,
+      5.0,
+      20.0,
+      21.0,
+      20.0,
+      28.0,
+      0.0
+    ]
+  ],
+  "vidjil_json_version": "2016b"
+}

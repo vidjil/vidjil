@@ -10,11 +10,12 @@ def ordered(d, key=None):
     '''sorts a dictionary into an OrderedDict'''
     return collections.OrderedDict([(k, d[k]) for k in sorted(d, key=key)])
 
-
 def concatenate_with_padding(d, 
                              d1, d1_size, 
                              d2, d2_size,
-                             ignore_keys=None):
+                             ignore_keys=None,
+                             recursive=False,
+                             none_init=False):
     '''Concatenate two dictionaries d1 and d2 into d
     The dictionaries d1 and d2 store several values that are lists with d1_size and d2_size elements,
     and the resulting dictionary will store values that are lists with size d1_size + d2_size elements.
@@ -31,10 +32,21 @@ def concatenate_with_padding(d,
     [11, 22, 0, 0, 0, 0, 0]
     >>> d['c']
     [0, 0, 333, 444, 555]
+    >>> d = {}
+    >>> d1 = { 'a': [1, 2], 'b': [11, 22], 'z':17 }
+    >>> d2 = { 'a': [3, 4, 5], 'c': [333, 444, 555] } 
+    >>> concatenate_with_padding(d, d1, 2, d2, 5, ['z'], none_init=True)
+    >>> d['a']
+    [1, 2, 3, 4, 5]
+    >>> d['b']
+    [11, 22, None, None, None, None, None]
+    >>> d['c']
+    [None, None, 333, 444, 555]
     '''
 
     t1=[]
     t2=[]
+    dict_keys = []
 
     if ignore_keys == None:
         ignore_keys = []
@@ -49,6 +61,7 @@ def concatenate_with_padding(d,
         if key in ignore_keys:
             continue
         if type(d1[key]) is not list:
+            dict_keys.append(key)
             continue
 
         d[key] = d1[key]
@@ -56,7 +69,13 @@ def concatenate_with_padding(d,
         # Create a specific loop for it
         if key not in d2:
             if key != "normalized_reads":
-                d[key] += t2
+                if ((len(d1[key]) > 0)):
+                    if not none_init:
+                        d[key] += [type(d1[key][0])()]*d2_size # here
+                    else:
+                        d[key] += [None]*d2_size # here
+                else:
+                    d[key] += t2
             elif key == "normalized_reads":
                 d[key] += [None]*len(d2["reads"])
 
@@ -64,15 +83,38 @@ def concatenate_with_padding(d,
         if key in ignore_keys:
             continue
         if type(d2[key]) is not list:
+            dict_keys.append(key)
             continue
 
         if key not in d:
             if key != "normalized_reads":
-                d[key] = t1 + d2[key]
+                if (len(d2[key]) > 0):
+                    if not none_init:
+                        d[key] = ([type(d2[key][0])()]*d1_size) + d2[key]
+                    else:
+                        d[key] = ([None]*d1_size) + d2[key]
+                else:
+                    d[key] = t1 + d2[key]
             elif key == "normalized_reads":
                 d[key] = [None]*len(d1["reads"]) + d2[key]
         else :
             d[key] = d[key] + d2[key]
+
+    if recursive:
+        keys = set(dict_keys)
+        for k in keys:
+            if k not in d:
+                d[k] = {}
+            if k not in d1:
+                d1[k] = {}
+            if k not in d2:
+                d2[k] = {}
+            concatenate_with_padding(d[k],
+                                     d1[k], d1_size,
+                                     d2[k], d2_size,
+                                     ignore_keys=ignore_keys,
+                                     recursive=True,
+                                     none_init=none_init)
 
                 
 class AccessedDict(dict):

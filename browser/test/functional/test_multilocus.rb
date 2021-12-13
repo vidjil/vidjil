@@ -9,9 +9,6 @@ class TestMultilocus < BrowserTest
     super
     if not defined? $b
       set_browser("/doc/analysis-example.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
 
       # Make upload menu appear to test the application with this menu too
       $b.execute_script("$('#upload_summary')[0].style.display='block';")
@@ -40,10 +37,10 @@ class TestMultilocus < BrowserTest
   end
 
   def test_00_legend_scatterplot
-    assert ($b.scatterplot_x_legend(0).text == 'TRBV1'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_x_legend(4).text == '?'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_y_legend(0).text == 'TRBJ1-1'), "Bad legend for scatterplot"
-    assert ($b.scatterplot_y_legend(9).text == '?'), "Bad legend for scatterplot"
+    assert ($b.scatterplot_x_legend(0).text == 'TRBV1'), "Bad legend for scatterplot " + $b.scatterplot_x_legend(0).text 
+    assert ($b.scatterplot_x_legend(4).text == 'undefined V'), "Bad legend for scatterplot " + $b.scatterplot_x_legend(4).text
+    assert ($b.scatterplot_y_legend(0).text == 'TRBJ1-1'), "Bad legend for scatterplot " + $b.scatterplot_y_legend(0).text
+    assert ($b.scatterplot_y_legend(9).text == 'undefined J'), "Bad legend for scatterplot " + $b.scatterplot_y_legend(9).text
   end
 
   def test_00_info_point
@@ -143,7 +140,7 @@ class TestMultilocus < BrowserTest
     assert ( $b.clone_in_segmenter('25').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
 
     stats = $b.statsline
-    assert (stats.text.include? '1 clone'), ">> Incorrect stats, should have one clone"
+    assert (stats.text.include? '1 clonotype'), ">> Incorrect stats, should have one clone"
     assert (stats.text.include? '962 reads'), ">> Incorrect stats, should have 962 reads"
     assert (stats.text.include? '0.129%'), ">> Incorrect stats, should be at 0.129%"
   end
@@ -156,6 +153,7 @@ class TestMultilocus < BrowserTest
     check_when_list_or_scatterplot_clicked
 
     $b.unselect
+    $b.update_icon.wait_while(&:present?)
     assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
   end
 
@@ -166,6 +164,7 @@ class TestMultilocus < BrowserTest
     check_when_list_or_scatterplot_clicked
 
     $b.unselect
+    $b.update_icon.wait_while(&:present?)
     assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
   end
 
@@ -212,10 +211,11 @@ class TestMultilocus < BrowserTest
   end
 
   def test_13_export_fasta
-    $b.clone_in_scatterplot('77').click
-    $b.clone_in_scatterplot('25').click(:control)
-    $b.clone_in_scatterplot('88').click(:control)
-    $b.clone_in_scatterplot('90').click(:control)
+    $b.unselect
+    $b.clone_in_list('77').click
+    $b.clone_in_list('25').click(:control)
+    $b.clone_in_list('88').click(:control)
+    $b.clone_in_list('90').click(:control)
 
     $b.menu_item_export_fasta.click
     assert ( $b.window(:url => /about:blank/ )) , ">> fail opening fasta export "
@@ -229,9 +229,7 @@ class TestMultilocus < BrowserTest
 
   def test_14_export_sample_report
 
-    if $b.driver.capabilities.browser_name == 'chrome'
-      skip "Issue #3699 must be solved first"
-    end
+    skip_on_browser('chrome', nil, 'Issue #3699 must be solved first')
 
     assert ($b.scatterplot_x_legend(0).text.include? 'TRB'), "Current system should be TRB"
 
@@ -274,9 +272,7 @@ class TestMultilocus < BrowserTest
 
   def test_14b_export_sample_report
 
-    if $b.driver.capabilities.browser_name == 'chrome'
-      skip "Issue #3699 must be solved first"
-    end
+    skip_on_browser('chrome', nil, 'Issue #3699 must be solved first')
 
     # Select a clone
     $b.clone_in_scatterplot('43').click
@@ -287,7 +283,7 @@ class TestMultilocus < BrowserTest
 
     $b.window(:title => "analysis-example.vidjil").use do
       assert ($b.element(:class => 'clone_name').text.include? "TRBV13-1*02"), "Selected clone should be present"
-      assert (not $b.text.include? "smaller clone"), "Smaller clone should not be present"
+      assert (not $b.text.include? "smaller clonotype"), "Smaller clonotype should not be present"
     end
 
   end
@@ -296,11 +292,11 @@ class TestMultilocus < BrowserTest
     for i in 0..3
       smaller = $b.list.li(:index => i)
 
-      assert (smaller.text.include?("smaller clones")), "We should have smaller clones at index %d of the list, instead we have %s " % [i, smaller.text]
+      assert (smaller.text.include?("smaller clonotypes")), "We should have smaller clonotypes at index %d of the list, instead we have %s " % [i, smaller.text]
 
-      assert (smaller.present?), "Smaller clones #%d should be visible, it is not" % [i]
+      assert (smaller.present?), "Smaller clonotypes #%d should be visible, it is not" % [i]
       smaller.hover
-      assert (smaller.present?), "Smaller clones #%d should still be visible after hovering it" % [i]
+      assert (smaller.present?), "Smaller clonotypes #%d should still be visible after hovering it" % [i]
 
       assert (not $b.clone_in_scatterplot(smaller.id).present?), "Smaller clone %d should not be visible in scatterplot" % [i]
     end

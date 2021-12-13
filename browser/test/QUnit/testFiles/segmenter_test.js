@@ -10,7 +10,7 @@ QUnit.test("segmenter", function(assert) {
     m.loadGermline()
     m.initClones()
     
-    var segment = new Segment("segment", m);
+    var segment = new Aligner("segment", m);
     assert.equal(segment.sequence_order.length, 0, "no clones in segmenter at init")
     segment.init() 
     segment.update()
@@ -33,14 +33,14 @@ QUnit.test("segmenter", function(assert) {
     setTimeout( function() {
         var div1 = document.getElementById("seq1").getElementsByClassName("seq-fixed")[0];;
         assert.notEqual(div1.innerHTML.indexOf("test2"), -1, "select : Ok")
-        assert.equal(segment.sequence_order[0], 0, "segment.first_clone still set to 0 if clones 0 and 1 are selected")
+        assert.equal(segment.sequence_order[0], 0, "segment.first_clone still set to 0 if clonotypes 0 and 1 are selected")
         
         m.unselect(0)
         done()
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(segment.sequence_order[0], 1, "segment.first_clone is set to 1 if clones 0 is unselected")
+        assert.equal(segment.sequence_order[0], 1, "segment.first_clone is set to 1 if clonotypes 0 is unselected")
         
         m.select(2)
         done()
@@ -83,7 +83,6 @@ QUnit.test("segmenter", function(assert) {
         m.updateElem([0])
         done()
     }, delay+=step);
-    // assert.deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
     
     setTimeout( function() {
         assert.equal(document.getElementById("seq0").getElementsByClassName("seq-fixed")[0].className.includes("list_focus"), true, "focus : Ok")
@@ -109,14 +108,14 @@ QUnit.test("segmenter", function(assert) {
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 10 reads (5.000%) ", "stats (1 clone) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clonotype, 10 reads (5.000%) ", "stats (1 clone) : Ok")
 
         m.multiSelect([0,1])
         done()
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clones, 30 reads (15.00%) ", "stats (several clones) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clonotypes, 30 reads (15.00%) ", "stats (several clones) : Ok")
 
         // Select multiple clones and check they are ordered.
         m.unselectAll()
@@ -143,7 +142,7 @@ QUnit.test("segmenter", function(assert) {
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 3 reads ", "stats (1 clone with few reads) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clonotype, 3 reads ", "stats (1 clone with few reads) : Ok")
         
         m.unselectAll()
         m.select(2)
@@ -161,133 +160,139 @@ QUnit.test("segmenter", function(assert) {
 QUnit.test("sequence", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data,100)
+    m.loadGermline()
     m.initClones()
-    var segment = new Segment("segment", m);
+
+    var segment = new Aligner("segment", m);
     segment.init()
     segment.update()
 
-    segment.addToSegmenter(4)
-    seq1 = new Sequence(4, m, segment)
-    seq1.load()
-    assert.notEqual(seq1.toString().indexOf("catcatcatgatgctacgatcttac"),-1, "unsegmented sequence")
+    segment.addCloneToSegmenter(1);
+    segment.addCloneToSegmenter(2);
+    segment.addCloneToSegmenter(3);
+    segment.addCloneToSegmenter(4);
 
-    h = seq1.get_positionned_highlight('f1', '')
-    assert.equal(h.start, 3, '"f1" feature, start')
-    assert.equal(h.stop, 6, '"f1" feature, stop')
+    var seq1 = segment.sequence[1];
+    var seq2 = segment.sequence[2];
+    var seq3 = segment.sequence[3];
+    var seq4 = segment.sequence[4];
 
-    h = seq1.get_positionned_highlight('f2', '')
-    assert.equal(h.start, 14, '"f2" feature, start')
-    assert.equal(h.stop, 19, '"f2" feature, stop')
 
-    segment.updateElemStyle([4]) /* Will remove sequence 4 from the segmenter
-                                  * as it is not really selected
-                                  */
-    segment.addToSegmenter(1)
-    seq1 = new Sequence(1, m, segment)
-    seq1.load()
-    seq1_string = seq1.toString()
-    assert.notEqual(seq1.toString().indexOf("cccccg"), -1, "v part of segmented sequence")
-    assert.notEqual(seq1_string.indexOf("tccccccca"), -1, "n part of segmented sequence")
-    assert.notEqual(seq1_string.indexOf("tca"), -1, "j part of segmented sequence")
-});
+    //test string functions that can be used by layers
+    var nucleic4 = seq4.nucleoString();
+    assert.equal(nucleic4,    "catcatcatgatgctacgatcttac",  nucleic4.toUpperCase() + " nucleic sequence");
 
-QUnit.test("segt", function (assert) {
-    var m = new Model();
-    m.parseJsonData(json_data, 100);
-    m.initClones();
+    var amino4 = seq4.aminoString().replace(/(?=\s)[^\r\n\t]/g, '_');
+    assert.equal(amino4,      "__I_##_H__D__A__T__I__L__?", amino4 + " amino sequence");
 
-    var segment = new Segment("segment",m)
-    segment.init();
-    segment.update()
+    var aminoSplit4 = seq4.aminoSplitString().replace(/(?=\s)[^\r\n\t]/g, '_');
+    assert.equal(aminoSplit4, "___|_|__|__|__|__|__|__|_|", aminoSplit4 + " aminoSplit sequence ");
 
-    var done = assert.async(3);
+    m.filter.add("Clone","search", "cat")
+    var search4 = seq4.searchString().replace(/(?=\s)[^\r\n\t]/g, '_');
+    assert.equal(search4,     "catcatcat_____tac_____tac", search4 + " search 'cat' in sequence");
+
+    //check highlight box position for one default layer
+    seq3.updateLetterSpacing();
+    var seq3_cdr3 = seq3.updateLayerDiv('IMGT_CDR3', true);
+
+    //use layer functions to retrieve start/stop position 
+    char_start = seq3.segment_start(LAYERS['IMGT_CDR3'].start);
+    char_stop  = seq3.segment_stop( LAYERS['IMGT_CDR3'].stop);
+
+    assert.equal(char_start, 111);
+    assert.equal(char_stop, 125);
+
+    //check layer div position match start/stop position % CHAR_WIDTH
+    assert.equal(seq3_cdr3.style.width, ((char_stop-char_start-1)*CHAR_WIDTH)+6+"px" );
+    assert.equal(seq3_cdr3.style.left,  ( char_start*CHAR_WIDTH)-3+"px" );
+
+    //////////////
+    // Check primers
+
+    // no primer values in clone
+    char_start_p5 = seq3.segment_start(LAYERS['primer5'].start);
+    char_stop_p5  = seq3.segment_stop( LAYERS['primer5'].stop);
+    assert.equal(char_start_p5, undefined, "aligner; correct for primer5 start if no primer set");
+    assert.equal(char_stop_p5,  undefined, "aligner; correct for primer5 stop if no primer set");
+
+    // Set a values for primers of clone
+    m.clones[3].seg.primer5 = { seq: "CAGGAGGTGGAGCTGGATATT", start: 17, stop: 37 }
+    m.clones[3].seg.primer3 = { seq: "TATTTGCTGAAGGGACTAAGCTC", start: 112, stop: 134 }
+
+    var seq3_primer5 = seq3.updateLayerDiv('primer5', true);
+    var seq3_primer3 = seq3.updateLayerDiv('primer3', true);
+
+    //use layer functions to retrieve start/stop position
+    char_start_p5 = seq3.segment_start(LAYERS['primer5'].start);
+    char_stop_p5  = seq3.segment_stop( LAYERS['primer5'].stop);
+    char_start_p3 = seq3.segment_start(LAYERS['primer3'].start);
+    char_stop_p3  = seq3.segment_stop( LAYERS['primer3'].stop);
+
+    assert.equal(char_start_p5, 17, "aligner; correct position of primer5 start");
+    assert.equal(char_stop_p5,  38, "aligner; correct position of primer5 stop");
+    assert.equal(char_start_p3, 112, "aligner; correct position of primer3 start");
+    assert.equal(char_stop_p3,  135, "aligner; correct position of primer3 stop");
+
+
+    //toFasta
+    var done = assert.async(1);
     var delay = 0;
     var step = 200;
 
+    assert.equal(segment.toFasta(), "");
     m.select(3);
-    m.select(1);
-    setTimeout( function() {
-        assert.equal(m.clone(3).getSequenceName(), "test4", "clone");
-        assert.equal(m.clone(3).getSequence(),"GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA","sequence")
-        m.clone(3).addSegFeatureFromSeq('test_feature','CACCCAGGAGGTGGAGCTGGATATTGAGACT');
-        f1 = segment.sequence[3].get_positionned_highlight('test_feature','');
-        assert.equal(f1.start, 93 , "feature start");
-        assert.equal(f1.stop, 123, "feature stop");
-        assert.equal(f1.seq,'CACCCAGGAGGTGGAGCTGGATATTGAGACT', "feature sequence");
-        assert.equal(m.clone(3).getSegNtSequence("test_feature"), "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "feature sequence 3");
-        assert.deepEqual(m.clone(3).getSegFeature("test_feature"),{"seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 93, "stop": 123}, "feature sequence 4");
-        // segment.sequence[3].computeAAseq()
-        // assert.equal(m.clone(3).getSegAASequence("cdr3"),"AKDILKSLKQQLATPNWFDP","feature sequence 2")
-        // assert.deepEqual(m.clone(3).getSegFeature("cdr3"),{"seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 94, "stop": 124}, "feature sequence 4")
-        assert.notEqual(segment.sequence[3].toString(),"ATCCT", "unsegmented sequence");
-        assert.equal(segment.sequence[3].toString().indexOf(">cattcta<"),-1, "part of segmented seq");
-        assert.equal(segment.sequence[3].is_clone, true);
-        assert.equal(segment.sequence[1].is_clone, true);
-        var clone3 = m.clone(3);
-        assert.deepEqual(segment.sequence[3].getVdjStartEnd(clone3), {"3": {"start": 183,"stop": 241}, "4": {}, "4a": {}, "4b": {}, "5": {"start": 0, "stop": 179}}, "vdj start end");
-        var h = segment.sequence[3].get_positionned_highlight('f1','');
-        assert.equal(h.start,-1, " start feature value");
-        assert.equal(h.stop, -1, "stop feature value");
-        assert.deepEqual(segment.sequence[3].get_positionned_highlight("test_feature",""),{"color": "", "css": "highlight_seq", "seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 93, "stop": 123, "tooltip": ""}, "test feature value")
-        assert.equal(m.clone(3).getSegLength('test_feature'),31, "feature length");
-
-        m.unselectAll();
-        done()
-    }, delay+=step);
-    
 
     setTimeout( function() {
-        assert.equal(segment.toFasta(), "");
-
-        m.select(3);
-        done()
-    }, delay+=step);
-    
-    setTimeout( function() {
-        var h = segment.sequence[3].get_positionned_highlight('f1','');
         assert.equal(segment.toFasta(), "> test4 // 2.500%\nGGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCTGAAGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA\n", "fasta seq ")
-        assert.ok(segment.isDNA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test dna")
-        assert.ok(segment.isAA('CACCCAGGAGGTGGAGCTGGATATTGAGACT'), "test AA")
-        assert.ok(segment.isPos(h), "test if an object contain pos")
-        assert.deepEqual(segment.findPotentialField(),["", "cdr3", "fr1", "5", "test_feature", "f1", "V-REGION", "J-REGION",  "D-REGION", "CDR3-IMGT"], "find field to highlight")
-    
         done()
     }, delay+=step);
-})
 
-QUnit.test("segt", function (assert) {
+});
+
+QUnit.test("germline", function (assert) {
        var m = new Model();
     m.parseJsonData(json_data, 100);
     m.initClones();
-    var segment = new Segment("segment",m);
+    var segment = new Aligner("segment",m);
     segment.init();
     segment.update();
     m.select(2)
-    segment.addGermlineToSegmenter("IGHD1-1*01","IGH");
-    assert.equal(segment.sequence["IGHD1-1*01"].seq.join("").toUpperCase(), "GGGCGCCGGGGCAGATTCTGAACAGCCCCGAGTCACGGTGGGTACAACTGGAACGAC")
-    assert.equal(segment.sequence["IGHD1-1*01"].is_clone, false);
-    segment.addToSegmenter(2);
+    segment.addGermlineToSegmenter("IGHD1-1*01");
+    assert.equal(segment.sequence["IGHD1-1*01"].seq.join("").toUpperCase(), "CCAGGAGGCCCCAGAGCTCAGGGCGCCGGGGCAGATTCTGAACAGCCCCGAGTCACGGTGGGTACAACTGGAACGAC", "seq.join IGHD1-1*01")
+    assert.equal(segment.isClone("IGHD1-1*01"), false, "segment sequence is_clone");
+    segment.addCloneToSegmenter(2);
     segment.add_all_germline_to_segmenter();
     // segment.updateElem()
     assert.equal(segment.sequence[2].seq.join(" "),"c c c c c c c c c c c c c c c c c c c c", "clone 3 sequence")
-    assert.equal(segment.sequence["IGHV1-2*01"].seq.join("").toLowerCase(),"caggtgcagctggtgcagtctggggctgaggtgaagaagcctggggcctcagtgaaggtctcctgcaaggcttctggatacaccttcaccggctactatatgcactgggtgcgacaggcccctggacaagggcttgagtggatgggacggatcaaccctaacagtggtggcacaaactatgcacagaagtttcagggcagggtcaccagtaccagggacacgtccatcagcacagcctacatggagctgagcaggctgagatctgacgacacggtcgtgtattactgtgcgagaga","5 germline")
-    assert.equal(segment.sequence["IGHD2-2*02"].seq.join("").toUpperCase(),"GCGGGGACAGGAGGATTTTGTGGGGGCTCGTGTCACTGTGAGGATATTGTAGTAGTACCAGCTGCTATACC","4 germline")
-    assert.equal(segment.sequence["IGHJ6*01"].seq.join("").toLowerCase(),"attactactactactacggtatggacgtctgggggcaagggaccacggtcaccgtctcctcagaagaatggccactctagggcctttgttttctgctactgcc","3 germline")
+    assert.equal(segment.sequence["IGHV1-2*01"].seq.join("").toLowerCase(),"caggtgcagctggtgcagtctggggctgaggtgaagaagcctggggcctcagtgaaggtctcctgcaaggcttctggatacaccttcaccggctactatatgcactgggtgcgacaggcccctggacaagggcttgagtggatgggacggatcaaccctaacagtggtggcacaaactatgcacagaagtttcagggcagggtcaccagtaccagggacacgtccatcagcacagcctacatggagctgagcaggctgagatctgacgacacggtcgtgtattactgtgcgagaga","5 germline (IGHV1-2*01)")
+    assert.equal(segment.sequence["IGHD2-2*02"].seq.join("").toUpperCase(),"GAGGGGACTCAGTGACTCCCGCGGGGACAGGAGGATTTTGTGGGGGCTCGTGTCACTGTGAGGATATTGTAGTAGTACCAGCTGCTATACC","4 germline (IGHD2-2*02)")
+    assert.equal(segment.sequence["IGHJ6*01"].seq.join("").toLowerCase(),"attactactactactacggtatggacgtctgggggcaagggaccacggtcaccgtctcctcagaagaatggccactctagggcctttgttttctgctactgcctgtggggtttcctgagcatt","3 germline (IGHJ6*01)")
 
-    segment.addSequenceTosegmenter("test","igh", "accccccgtgtagtagtcc")
+    segment.addSequenceToSegmenter("test", "accccccgtgtagtagtcc")
     assert.equal(segment.sequence["test"].seq.join("").toLowerCase(),"accccccgtgtagtagtcc"," test sequence ")
-    assert.equal(segment.sequence["test"].is_clone, false);
+    assert.equal(segment.isClone("test"), false);
+
+    m.clone(3).addSegFeatureFromSeq('test_feature','CACCCAGGAGGTGGAGCTGGATATTGAGACT');
+    f1 = m.clone(3).getSegFeature("test_feature");
+    assert.equal(f1.start, 93 , "feature start");
+    assert.equal(f1.stop, 123, "feature stop");
+    assert.equal(f1.seq,'CACCCAGGAGGTGGAGCTGGATATTGAGACT', "feature sequence");
+    assert.equal(m.clone(3).getSegNtSequence("test_feature"), "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "feature sequence 3");
+    assert.deepEqual(f1,{"seq": "CACCCAGGAGGTGGAGCTGGATATTGAGACT", "start": 93, "stop": 123}, "feature sequence 4");
+       
   })
 
 QUnit.test("align", function (assert) {
     var m = new Model();
     m.parseJsonData(json_data_align, 100);
     m.initClones();
-    var segment = new Segment("segment",m);
+    var segment = new Aligner("segment",m);
     segment.init();
     segment.update();
 
-    if (segment.cgi_address == "") segment.cgi_address = "https://db.vidjil.org/cgi/"
+    if (typeof config == 'undefined') config = {}; 
+    if (segment.getCGIAddress() == "") config.cgi_address = "https://db.vidjil.org/cgi/"
     
     //select 2 clones
     m.select(0)
@@ -297,6 +302,10 @@ QUnit.test("align", function (assert) {
     var delay = 0;
     var step = 500;
 
+    //init quality
+    m.clone(0).seg.quality = { seq :[] };
+    for (var i =0; i<75; i++) m.clone(0).seg.quality.seq.push(String.fromCharCode(40+ (i%25)))
+
     setTimeout( function() {
         segment.align()
         done()
@@ -304,11 +313,49 @@ QUnit.test("align", function (assert) {
 
     //test align
     setTimeout( function() {
-        var aligned_sequence1 = segment.index[0].getElement("seq-mobil").innerText
-        assert.ok(aligned_sequence1.includes("-"), "aligned sequence should contains '-' " + aligned_sequence1 )
+        var seq1 = segment.sequence[0];
+        var seq2 = segment.sequence[1];
+        var aligned_sequence1 = seq1.nucleoString();
+        assert.ok(aligned_sequence1.includes("–"), "aligned sequence should contains '–' " + aligned_sequence1 )
 
-        var aligned_sequence2 = segment.index[1].getElement("seq-mobil").innerText
-        assert.ok(aligned_sequence2.includes("-"), "aligned sequence should contains '-'" + aligned_sequence2 )
+        var aligned_sequence2 = seq2.nucleoString()
+        assert.ok(aligned_sequence2.includes("–"), "aligned sequence should contains '–'" + aligned_sequence2 )
+
+        var nucleo2 = seq2.nucleoString();
+        assert.equal( nucleo2, "ATTCATGCATGCATGCCCCCCCCCCCCCCCCCCAAA–––––––––––TTTTTTTTGATCGAT–CGATCGATCGAT",
+                      nucleo2.toUpperCase() + " reference sequence spaced");
+
+        var nucleo1 = seq1.nucleoString();
+        assert.equal( nucleo1, "ATCCATGTATGCATG–––––CCCCCCCCCCCCCAAATTTTTTTTTTTTTTTTTTTGATCGATCCGATCGAT–GAT",
+                      nucleo1.toUpperCase() + " aligned sequence");
+
+        var delet1 = seq1.deletionString();
+        assert.equal( delet1.replace(/(?=\s)[^\r\n\t]/g, ' '), "               –––––                                                   –   ",
+                      delet1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " deleted nuclotide");
+
+        var sub1 = seq1.substitutionString();
+        assert.equal( sub1.replace(/(?=\s)[^\r\n\t]/g, ' '), "  C    T                                                                   ",
+                      sub1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " substituted nucleotide");
+
+        var insert1 = seq1.insertionString();
+        assert.equal( insert1.replace(/(?=\s)[^\r\n\t]/g, ' '),  "                                    TTTTTTTTTTT               C            ", 
+                      insert1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " inserted nucleotide");
+
+        var amino1 = seq1.aminoString();
+        assert.equal( amino1.replace(/(?=\s)[^\r\n\t]/g, ' '),  " I ## C  M  H  –––––A  P  P  P  P  N  F  F  F  F  F  F  D  A  S  D  A  –*  ?", 
+                      amino1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " Amino seq");
+
+        var aminosplit1 = seq1.aminoSplitString();
+        assert.equal( aminosplit1 .replace(/(?=\s)[^\r\n\t]/g, ' '),  "  | |  |  |  |       |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   | |", 
+                      aminosplit1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " Amino split seq");
+        
+        var mute1 = seq1.muteSubstitutionString();
+        assert.equal( mute1.replace(/(?=\s)[^\r\n\t]/g, ' '),  "  _    _                                                                   ", 
+                      mute1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " mute substitution");
+
+        var quality1 = seq1.qualityString(true)
+        assert.equal( quality1.replace(/(?=\s)[^\r\n\t]/g, ' '),  "()*+,-./0123456-1-1-1-1-1789:;<=>?@()*+,-./0123456789:;<=>?@()*+,-./01234567-189:;", 
+                      quality1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " Quality");
 
         segment.resetAlign()
         done()
@@ -317,10 +364,10 @@ QUnit.test("align", function (assert) {
     //test resetAlign
     setTimeout( function() {
         aligned_sequence1 = segment.index[0].getElement("seq-mobil").innerText
-        assert.ok(!aligned_sequence1.includes("-"), "sequence should not contains '-' " + aligned_sequence1 )
+        assert.ok(!aligned_sequence1.includes("–"), "sequence should not contains '–' " + aligned_sequence1 )
     
         aligned_sequence2 = segment.index[1].getElement("seq-mobil").innerText
-        assert.ok(!aligned_sequence2.includes("-"), "sequence should not contains '-' " + aligned_sequence2 )
+        assert.ok(!aligned_sequence2.includes("–"), "sequence should not contains '–' " + aligned_sequence2 )
         done()
     }, delay+=step)
 })
@@ -330,7 +377,7 @@ QUnit.test("reset", function (assert) {
     m.parseJsonData(json_data, 100);
     m.initClones();
 
-    var segment = new Segment("segment",m);
+    var segment = new Aligner("segment",m);
     segment.init();
 
     m.select(0)
@@ -359,6 +406,42 @@ QUnit.test("reset", function (assert) {
 
     setTimeout( function() {
         assert.ok((segment.index[0].getElement("seq-mobil").innerText != ""), "sequence 0 is back in segmenter ")
+        done()
+    }, delay+=step)
+ 
+})
+
+
+QUnit.test("toggle", function (assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.initClones();
+
+    var segment = new Aligner("segment",m);
+    segment.init();
+    m.multiSelect(Object.keys(m.clones))
+
+    var h1;
+    var done = assert.async(3);
+    var delay = 0;
+    var step = 1000;
+    segment.open()
+    segment.close()
+    
+    setTimeout( function() {
+        h1 = $("#segment").height()
+        segment.toggle()
+        done()
+    }, delay+=step)
+
+    setTimeout( function() {
+        assert.ok(($("#segment").height() > h1), "segmenter height should increased" + $("#segment").height())
+        segment.toggle()
+        done()
+    }, delay+=step)
+
+    setTimeout( function() {
+        assert.ok(($("#segment").height() == h1), "segmenter height be back to normal" + h1)
         done()
     }, delay+=step)
  

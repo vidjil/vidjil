@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -x 10 -y all -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -x 10 -y all -z 1 --out-vdjfa -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; cat out/Stanford_S22.vdj.fa
 
 # Testing -x/-y/-z options
 

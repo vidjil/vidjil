@@ -33,7 +33,6 @@ enum SEGMENTATION_METHODS {
 #define PSEUDO_NOT_ANALYZED       "not analyzed"
 #define PSEUDO_NOT_ANALYZED_CODE  'z'
 
-
 using namespace std;
 using json = nlohmann::json;
 
@@ -44,7 +43,7 @@ class Germline {
   int max_indexing;
 
   void init(string _code, char _shortcut,
-            string seed, int max_indexing, bool build_automaton=false);
+            string seed_5, string seed_4, string seed_3, int max_indexing, bool build_automaton=false);
 
  public:
   /*
@@ -53,21 +52,26 @@ class Germline {
 
   Germline(string _code, char _shortcut,
            list <string> f_rep_5, list <string> f_rep_4, list <string> f_rep_3,
-           string seed="", int max_indexing=0, bool build_automaton=false);
+           string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
+           bool build_automaton=false);
 
   Germline(string _code, char _shortcut,
   	   string f_rep_5, string f_rep_4, string f_rep_3,
-	   string seed="", int max_indexing=0, bool build_automaton=false);
+	   string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
+           bool build_automaton=false);
 
   Germline(string _code, char _shortcut,
       BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
-	   string seed="", int max_indexing=0, bool build_automaton=false);
+	   string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
+           bool build_automaton=false);
 
   Germline(string _code, char _shortcut,
-	   string seed="", int max_indexing=0, bool build_automaton=false);
+	   string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
+           bool build_automaton=false);
 
   Germline(string _code, char shortcut, string path, json json_recom,
-           string seed="", int max_indexing=0, bool build_automaton=false);
+           string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
+           bool build_automaton=false);
 
   ~Germline();
 
@@ -79,7 +83,9 @@ class Germline {
   /**
    * The string used for indexing the germline.
    */
-  string seed;
+  string seed_5;
+  string seed_4;
+  string seed_3;
 
   /**
    * Finishes the construction of the germline so that it can be used
@@ -125,6 +131,15 @@ class Germline {
 ostream &operator<<(ostream &out, const Germline &germline);
 
 
+/* Get a json .g from a path and filename */
+json parse_json_g(string path, string json_filename);
+
+/* Load a json .g
+   - into an existing json_germlins
+   - from a path and filename
+   - possibly filtering some systems
+ */
+void load_json_g(json &json_germlines, string path, string json_filename, string systems_filter);
 
 enum GERMLINES_FILTER { GERMLINES_ALL,
                         GERMLINES_REGULAR,
@@ -152,13 +167,12 @@ class MultiGermline {
 
   /**
    * Build from a json .g germline file
-   *   path: path, such as 'germline/'
-   *   json_filename_and_filter: filename, optionally embedding a filter, such as 'homo-sapiens.g:IGH,TRG'
+   *   germlines: .g, possibly modified/updated with CLI options
    *   filter: see GERMLINES_FILTER
    *   max_indexing:
    */
-  void build_from_json(string path, string json_filename_and_filter, int filter,
-                       string default_seed="", int default_max_indexing=0, bool build_automaton=false);
+  void build_from_json(json germlines, int filter,
+                      string default_seed, int default_max_indexing, bool build_automaton);
 
   /**
    * Finishes the construction of the multi germline so that it can be used
@@ -173,5 +187,7 @@ class MultiGermline {
 };
 
 ostream &operator<<(ostream &out, const MultiGermline &multigermline);
+
+extern Germline* GERMLINE_NOT_DESIGNATED;
 
 #endif

@@ -17,14 +17,19 @@
     </div>
 </div>
 <div class="db_block_right">
-    config
+    process config
     <span>
         <select id="choose_config" name="config" onchange="db.updateStatsButton()">
             <option value="-1" selected> --- </option>
-            {{for row in db((auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=~db.config.name) :}}
-                <option value="{{=row.id }}" title="{{=row.info}}" >
-                    {{=row.name}}
-                </option>
+            {{ for class_name in classification.keys(): }}
+              {{ class_elt = classification[class_name] }}
+              <optgroup label="{{ =class_elt['name'] }}"  title="{{ =class_elt['info'] }}">
+                {{ for row in class_elt['configs']: }}
+                    <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
+                      {{=row.name}}
+                    </option>
+                {{pass}}
+              </optgroup>
             {{pass}}
         </select>
     </span>
@@ -38,7 +43,7 @@
     <table class="db_table" id="table" border="1">
         <thead>
             <tr>
-                <td class="column4"> </td>
+                <td class="column_50"> </td>
             {{ for header in fields: }}
 	        {{if isAdmin or header['public']:}}
 	            <td class="{{if header['width']:}}column_{{=header['width']}}{{pass}} pointer"
@@ -53,7 +58,7 @@
         <tbody>
         {{for row in query :}}
             <tr>
-                <td class="column4">
+                <td class="column_50">
                     <input type="checkbox"
                         name="sample_set_ids[]"
                         value="{{=row['sample_set_id']}}"

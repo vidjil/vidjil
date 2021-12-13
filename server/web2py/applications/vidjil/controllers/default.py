@@ -104,18 +104,14 @@ def init_from_csv():
         res = {"success" : "true", "message" : "coucou"}
         log.info(res)
 
+        
 #########################################################################
 ## add a scheduller task to run vidjil on a specific sequence file
 # need sequence_file_id, config_id
 # need patient admin permission
 def run_request():
     error = ""
-    enough_space = vidjil_utils.check_enough_space(defs.DIR_RESULTS)
-    if not enough_space:
-        mail.send(to=defs.ADMIN_EMAILS,
-            subject="[Vidjil] Server space",
-            message="The space in directory %s has passed below %d%%." % (defs.DIR_RESULTS, defs.FS_LOCK_THRESHHOLD))
-        return error_message("Runs are temporarily disabled. System admins have been made aware of the situation.")
+    check_space(defs.DIR_RESULTS, "Runs")
 
     ##TODO check
     if not "sequence_file_id" in request.vars :
@@ -160,6 +156,47 @@ def run_request():
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+def run_all_request():
+    error = ""
+    extra_info = ''
+    check_space(defs.DIR_RESULTS, "Runs")
+
+    if not "sequence_file_ids" in request.vars:
+        error += "sequence file ids required "
+    if not 'sample_set_id' in request.vars:
+        error += "sample set ID required "
+    elif not auth.can_process_sample_set(request.vars['sample_set_id']):
+        error += "you do not have permission to launch process for this sample_set ("+str(id_sample_set)+"), "
+
+    if not "config_id" in request.vars:
+        error += "id config needed, "
+    else:
+        extra_info += 'with config '+db.config[request.vars["config_id"]].name
+        if not auth.can_use_config(request.vars["config_id"]) :
+            error += "you do not have permission to launch process for this config ("+str(request.vars["config_id"])+"), "
+
+    if error != "":
+        res = {"success" : "false",
+               "message" : "default/run_all_request "+extra_info+" : " + error}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        
+    id_sample_set = request.vars["sample_set_id"]
+    ids_sequence_file = request.vars["sequence_file_ids"]
+    if type(ids_sequence_file) is int or type(ids_sequence_file) is int:
+        ids_sequence_file =  [ids_sequence_file]
+    ids_sequence_file = [int(i) for i in ids_sequence_file]
+    id_config = request.vars["config_id"]
+
+    # Filter the sequence_file IDS: we only keep sequence file IDs that do belong to the sample set (as we only checked the permission for this sample set)
+    sequence_file_ids = [i.id for i in db((db.sample_set.id == id_sample_set) & (db.sequence_file.id.belongs(ids_sequence_file))).select(db.sequence_file.id, join=[db.sample_set_membership.on(db.sample_set_membership.sample_set_id == db.sample_set.id), db.sequence_file.on(db.sequence_file.id == db.sample_set_membership.sequence_file_id)])]
+
+    log.info("run_all requested for {} files ".format(len(sequence_file_ids))+extra_info, extra={'user_id': auth.user.id, 'sample_set_id': id_sample_set})
+    for s_id in sequence_file_ids:
+        schedule_run(s_id, id_config)
+    return gluon.contrib.simplejson.dumps({'success': 'true', 'redirect': 'reload'}, separators=(',',':'))
+
+    
 def run_contamination():
     task = scheduler.queue_task('compute_contamination', pvars=dict(sequence_file_id=request.vars["sequence_file_id"],
                                                                     results_file_id=request.vars["results_file_id"],
@@ -254,7 +291,7 @@ def get_data():
     
     query = db( ( db.fused_file.sample_set_id == request.vars["sample_set_id"])
                & ( db.fused_file.config_id == request.vars["config"] )
-               ).select(db.fused_file.ALL).first()
+               ).select(db.fused_file.ALL, orderby=db.fused_file.fuse_date).last()
     if query is not None:
         fused_file = defs.DIR_RESULTS+'/'+query.fused_file
         sequence_file_list = query.sequence_file_list
@@ -323,11 +360,10 @@ def get_data():
                    ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
 
         query2 = {}
-        sequence_file_id = 0
+        # convert query results as a dict with file name as key
         for row in query : 
-            if row.sequence_file.id != sequence_file_id :
-                query2[row.sequence_file.data_file]=row
-                sequence_file_id = row.sequence_file.id
+            query2[row.sequence_file.data_file]=row
+
         
         data["sample_set_id"] = sample_set.id
 
@@ -343,6 +379,8 @@ def get_data():
         data["samples"]["patient_id"] = []
         data["samples"]["sample_name"] = []
         data["samples"]["run_id"] = []
+        data["samples"]["commandline"] = []
+
         for i in range(len(data["samples"]["original_names"])) :
             o_n = data["samples"]["original_names"][i].split('/')[-1]
             
@@ -353,16 +391,41 @@ def get_data():
             data["samples"]["config_id"].append(request.vars['config'])
             data["samples"]["db_key"].append('')
             data["samples"]["commandline"].append(command)
+            
+            found_sequence_file = False
+            found_result_file   = False # For AIRR files
+            found_filename      = False # for Vidjil files
             if o_n in query2:
-                row = query2[o_n]
+                found_sequence_file = True
+            else:
+                # Sometimes, result_file is the key to use, and not sequence_file (AIRR/clntab import)
+                for seqfile in query2:
+                    # AIRR case
+                    if o_n == query2[seqfile].results_file.data_file:
+                        found_result_file = seqfile
+                        break
+                    # Vidjil file case
+                    elif os.path.splitext(o_n)[0] == os.path.splitext(query2[seqfile].sequence_file.filename)[0]: # ne marche pas a cause de l'extension
+                        found_filename = seqfile
+                        break
+
+            if found_sequence_file or found_result_file or found_filename:
+                if found_sequence_file: # standard case
+                    row = query2[o_n]
+                elif found_filename: # case import vidjil file
+                    row = query2[found_filename]
+                else: # case AIRR/clntab data
+                    row = query2[found_result_file]
+
+                # Use row to fill fields
+                data["samples"]["names"].append(row.sequence_file.filename.split('.')[0])
+                data["samples"]["sample_name"].append(row.sequence_file.id)
+                data["samples"]["results_file_id"].append(row.results_file.id)
                 data["samples"]["info"].append(row.sequence_file.info)
                 data["samples"]["timestamp"].append(str(row.sequence_file.sampling_date))
                 data["samples"]["sequence_file_id"].append(row.sequence_file.id)
-                data["samples"]["results_file_id"].append(row.results_file.id)
-                data["samples"]["names"].append(row.sequence_file.filename.split('.')[0])
                 data["samples"]["id"].append(row.sequence_file.id)
                 data["samples"]["patient_id"].append(get_patient_id(row.sequence_file.id))
-                data["samples"]["sample_name"].append(row.sequence_file.id)
                 data["samples"]["run_id"].append(row.sequence_file.id)
             else :
                 data["samples"]["info"].append("this file has been deleted from the database, info relative to this sample are no longer available")
@@ -427,6 +490,7 @@ def get_custom_data():
         data["samples"]["timestamp"] = []
         data["samples"]["info"] = []
         data["samples"]["commandline"] = []
+        data["samples"]["sequence_file_id"] = []
         
         for id in samples:
             sequence_file_id = db.results_file[id].sequence_file_id
@@ -440,10 +504,12 @@ def get_custom_data():
             config_id = db.results_file[id].config_id
             name = vidjil_utils.anon_ids([patient_run.id])[0] if sample_set.sample_type == defs.SET_TYPE_PATIENT else patient_run.name
             filename = db.sequence_file[sequence_file_id].filename
-            data["samples"]["original_names"].append(name + "_" + filename)
+            data["samples"]["original_names"].append(name + "_" + filename+ " ("+id+")")
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
             data["samples"]["commandline"].append(db.config[config_id].command)
+            data["samples"]["sequence_file_id"].append(sequence_file_id)
+
 
         log.info("load custom data #TODO log db")
 
@@ -462,7 +528,7 @@ def get_custom_data():
 def get_analysis():
     error = ""
 
-    if "custom" in request.vars :
+    if "custom" in request.vars and "sample_set_id" not in request.vars :
         res = {"success" : "true"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -480,9 +546,6 @@ def get_analysis():
         error += "id sample_set file needed, "
     if not auth.can_view_sample_set(request.vars["sample_set_id"]):
         error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
-
-    if "custom" in request.vars :
-        return gluon.contrib.simplejson.dumps(get_default_analysis(), separators=(',',':'))
     
     if error == "" :
         
@@ -518,9 +581,7 @@ def save_analysis():
     if "run" in request.vars :
         request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
 
-    if not "sample_set_id" in request.vars :
-        error += "It is currently not possible to save an analysis on a comparison of samples, "
-    elif not auth.can_save_sample_set(request.vars['sample_set_id']) :
+    if not auth.can_save_sample_set(request.vars['sample_set_id']) :
         error += "you do not have permission to save changes on this sample set"
 
     if error == "" :
@@ -591,7 +652,7 @@ def error():
     user_str = user_str.replace('<','').replace('>','').strip()
 
     mail.send(to=defs.ADMIN_EMAILS,
-              subject="[Vidjil] Server error - %s" % user_str,
+              subject=defs.EMAIL_SUBJECT_START+" Server error - %s" % user_str,
               message="<html>Ticket: %s<br/>At: %s<br />User: %s</html>" % (ticket_url, requested_uri, user_str))
 
     return "Server error"
@@ -628,7 +689,7 @@ def user():
             # Set up a new user, after register
 
             # Default permissions
-            add_default_group_permissions(auth, auth.user_group())
+            add_default_group_permissions(auth, auth.user_group(), anon=True)
 
             # Appartenance to the public group
             group_id = db(db.auth_group.role == 'public').select()[0].id

@@ -1,6 +1,6 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -k 4 -w 20 -z 0 -c clones -V $VIDJIL_DATA/toy_V.fa -J $VIDJIL_DATA/toy_J.fa $VIDJIL_DATA/ambiguous_representative.fa
 
-$ Short reads properly segmented
+$ Short reads properly detected
 1:SEG_+.* -> .* 4
 
 $ Window found

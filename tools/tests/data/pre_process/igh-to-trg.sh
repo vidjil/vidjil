@@ -1,7 +1,16 @@
 #!/bin/bash
 
-INPUT=$1
-OUTPUT=$2
 
-sed 's/IGH/TRG/g' < "$INPUT" > "$OUTPUT"
+LOCUS=TRG
 
+while getopts ":i:o:l:" arg; do
+  case $arg in
+    i) INPUT=$OPTARG;;
+    o) OUTPUT=$OPTARG;;
+    l) LOCUS=$OPTARG;;
+  esac
+done
+
+# echo  "s/IGH/$LOCUS/g < $INPUT > $OUTPUT"
+sed "s/IGH/$LOCUS/g" < "$INPUT" > "$OUTPUT"
+exit 0;

@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -3 -c designations -g $VIDJIL_DIR/germline/mus-musculus.g $VIDJIL_DATA/example_mouse.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline/mus-musculus.g $VIDJIL_DATA/example_mouse.fa
 
 $ Segment sequence on IGK
 1:segIGK.*IGKV.*IGKJ

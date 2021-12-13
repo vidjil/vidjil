@@ -4,6 +4,7 @@
 #include "automaton.h"
 #include <stack>
 #include <set>
+#include <list>
 //////////////////// IMPLEMENTATIONS ////////////////////
 
 template <class Info>
@@ -135,8 +136,19 @@ void PointerACAutomaton<Info>::build_failure_functions() {
     q.pop();
     current_state = couple.first;
     pointer_state<Info> *failed_state = couple.second;
-    if (failed_state->is_final)
+    if (failed_state->is_final) {
       current_state->is_final = true;
+      if (! current_state->informations.front().isNull()) {
+        if (! this->multiple_info)
+          current_state->informations.front() += failed_state->informations.front();
+        else
+          current_state->informations.insert(current_state->informations.end(),
+                                             failed_state->informations.begin(),
+                                             failed_state->informations.end());
+      } else {
+        current_state->informations = failed_state->informations;
+      }
+    }
     for (size_t i = 0; i < NB_TRANSITIONS; i++) {
       if (current_state->transitions[i] != NULL) {
         q.push(pair<pointer_state<Info>*, pointer_state<Info>*>(current_state->transitions[i],
@@ -149,7 +161,7 @@ void PointerACAutomaton<Info>::build_failure_functions() {
 }
 
 template <class Info>
-list<Info> &PointerACAutomaton<Info>::getInfo(void *state) {
+vector<Info> &PointerACAutomaton<Info>::getInfo(void *state) {
   return ((pointer_state<Info> *)state)->informations;
 }
 
@@ -266,10 +278,24 @@ vector<Info> PointerACAutomaton<Info>::getResults(const seqtype &seq, bool no_re
   size_t seq_len = seq.length();
   vector<Info> result(seq.length());
 
+  unsigned char previous_length = 0;
+  
   for (size_t i = 0; i < seq_len; i++) {
     current_state = (pointer_state<Info> *)next(current_state, seq[i]);
     Info info = current_state->informations.front();
-    result[i - info.getLength()+1] = info;
+    if (! info.isNull()) {
+      if (info.isAmbiguous() && ! result[i - info.getLength() + 1].isNull()
+          && previous_length > 0)
+        // We try to maintain a consistency as the length for an ambiguous
+        // affect is a bit tricky to guess. So if we see that we gonna
+        // overwrite a result, we try to prevent that
+        result[i - previous_length + 1] = info;
+      else {
+        result[i - info.getLength()+1] = info;
+        if (! info.isAmbiguous())
+          previous_length = info.getLength();
+      }
+    }
   }
 
   return result;

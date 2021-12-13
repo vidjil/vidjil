@@ -15,9 +15,10 @@ def index():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 
-    query = db((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) ).select(orderby=~db.config.name)
+    query = db((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) ).select(orderby=db.config.classification|db.config.name)
     used_query = db(db.results_file.config_id > 0).select(db.results_file.config_id, distinct=True)
     used_configs = [row.config_id for row in used_query]
+    classification = db( (db.classification) ).select()
 
     mes = u"Access config list"
     log.info(mes, extra={'user_id': auth.user.id, 'record_id': -1, 'table_name': 'config'})
@@ -25,12 +26,14 @@ def index():
     return dict(message=T('Configs'),
                query=query,
                used_configs=used_configs,
+               classification=classification,
                isAdmin = auth.is_admin())
 
 
 def add():
     if (auth.can_create_config()):
-        return dict(message=T('Add config'))
+        classification = db( (db.classification) ).select()
+        return dict(message=T('Add config'), classification=classification)
     return error_message(ACCESS_DENIED)
 
 
@@ -45,13 +48,22 @@ def add_form():
         if request.vars[field] == "" :
             error += field+" needed, "
 
+    ## test if classification id exist
+    if  request.vars["config_classification"] != "-1":
+        classification = db(db.classification.id ==  request.vars["config_classification"]).count()
+        if classification == 0:
+            error += "classification id don't exist, "
+    else :
+        request.vars["config_classification"] = None
+
     if error=="" :
         
         config_id = db.config.insert(name=request.vars['config_name'],
                         info=request.vars['config_info'],
                         command=request.vars['config_command'],
                         fuse_command=request.vars['config_fuse_command'],
-                        program=request.vars['config_program']
+                        program=request.vars['config_program'],
+                        classification=request.vars['config_classification']
                         )
 
         user_group = None
@@ -83,8 +95,9 @@ def add_form():
 def edit():
     if (auth.can_modify_config(request.vars['id'])):
         mes = u"Load config edit form"
+        classification = db( (db.classification) ).select()
         log.info(mes, extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'config'})
-        return dict(message=T('edit config'))
+        return dict(message=T('edit config'), classification=classification)
     return error_message(ACCESS_DENIED)
 
 
@@ -98,6 +111,15 @@ def edit_form():
     for field in required_fields:
         if request.vars[field] == "" :
             error += field+" needed, "
+    
+    ## test if classification id exist
+    if  request.vars["config_classification"] != "-1":
+        classification = db(db.classification.id ==  request.vars["config_classification"]).count()
+        if classification == 0:
+            error += "classification id don't exist, "
+    else :
+        request.vars["config_classification"] = None
+
 
     if error=="" :
 
@@ -105,7 +127,8 @@ def edit_form():
                                              info=request.vars['config_info'],
                                              command=request.vars['config_command'],
                                              fuse_command=request.vars['config_fuse_command'],
-                                             program=request.vars['config_program']
+                                             program=request.vars['config_program'],
+                                             classification=request.vars['config_classification']
                                              )
 
         res = {"redirect": "config/index",

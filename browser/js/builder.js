@@ -29,7 +29,6 @@ function Builder(model, database) {
     if(typeof database != 'undefined') {
         this.db = database;
     }
-    this.colorMethod = "";
     this.width_left_container = $("#left-container")
         .css("width")
 
@@ -43,28 +42,34 @@ Builder.prototype = {
     init: function () {
         var self = this;
         try {
-            d3.select("#visu-separator")
-                .on("mousedown", function () {
-                    self.dragSeparator();
-                });
-            d3.select("#visu-container")
-                .on("mouseup", function () {
-                    self.dropSeparator()
-                })
-            d3.select("#visu-container")
-                .on("mousemove", function () {
-                    self.updateSeparator()
-                })
+            if (document.getElementsByClassName("visu-separator").length == 1){
+                d3.select(".visu-separator")
+                    .on("mousedown", function () {
+                        self.dragSeparator();
+                    });
+                d3.select("#visu-container")
+                    .on("mouseup", function () {
+                        self.dropSeparator()
+                    })
+                d3.select("#visu-container")
+                    .on("mousemove", function () {
+                        self.updateSeparator()
+                    })
+            }
             d3.select("#vertical-separator")
                 .on("click", function () {
                     self.toggle_left_container()
+                });
+            d3.select("#vertical-separator-right")
+                .on("click", function () {
+                    self.toggle_right_container()
                 });
 
             this.build_top_container()
             this.build_clusterSelector()
             this.initTag();
 
-            if (this.m.samples.order.length == 1)
+            if (this.m.samples.stock_order.length == 1)
                 // One sample, two scatterplots
                 setTimeout(function() {
                     switch_visu2('scatterplot');
@@ -114,18 +119,16 @@ Builder.prototype = {
             var height = position / total_height * 100
             if (height > 90) height = 100;
             if (height < 10) height = 0;
-            
             this.resizeGraph(height)
         }
     },
     
     resizeGraph : function (graphSize) {
-        var spSize = 100 - graphSize
-
-        document.getElementById("visu")
-            .style.height = spSize + "%"
-        document.getElementById("visu2")
-            .style.height = graphSize + "%"
+        graphSize = Math.round(graphSize)
+        var graph = document.getElementById('visu2');
+        graph.style.height = graphSize + "%"
+        var sp = document.getElementById('visu');
+        sp.style.height = (100-graphSize) + "%"
     },
 
     dropSeparator: function () {
@@ -381,16 +384,6 @@ Builder.prototype = {
             this.buildListTab(i);
         }
 
-        //init slider
-        var max_top = 0;
-        for (var j = 0; j < this.m.clones.length; j++) {
-            if (this.m.clone(j).top > max_top)
-                max_top = this.m.clone(j).top
-        }
-        max_top = (Math.ceil(max_top / 5)) * 5
-        document.getElementById("top_slider")
-            .max = max_top;
-            
         //init notation
         if (this.m.notation_type == "scientific") {
             document.getElementById("notation").checked = true
@@ -450,14 +443,32 @@ Builder.prototype = {
     */
     },
 
-    toggle_left_container: function () {
-        var $left = $("#left-container")
+    toggle_container: function(container_id) {
+        var $container = $("#"+container_id)
         var val = 'none';
-        if ($left.css('display') === "none") {
+        if ($container.css('display') === "none") {
             val = 'flex';
         }
-        $left.css('display', val);
+        $container.css('display', val);
+        return (val == 'flex') 
         //this.m.resize();
+    },
+
+    toggle_left_container: function () {
+        var open = this.toggle_container('left-container');
+        var icon = $('#vertical-separator').find('.vertical-separator-icon')
+
+        if(open){
+            icon.removeClass("icon-right-open")
+            icon.addClass("icon-left-open")
+        }else{
+            icon.removeClass("icon-left-open")
+            icon.addClass("icon-right-open")
+        }
+    },
+
+    toggle_right_container: function() {
+        return this.toggle_container('right-container');
     },
 
     build_top_container: function () {
@@ -488,6 +499,7 @@ Builder.prototype = {
 
             var save_analysis = document.createElement("a");
             save_analysis.className = "buttonSelector"
+            if (typeof this.m.custom != 'undefined') save_analysis.className = "buttonSelector devel-mode"
             save_analysis.appendChild(document.createTextNode("save"));
             save_analysis.onclick = function() {
                 db.save_analysis();

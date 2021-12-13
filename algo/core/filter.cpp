@@ -1,10 +1,10 @@
 #include "filter.h"
 #include "math.hpp"
 
-FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed) : originalBioReader(origin){
+FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed, float keys_compress) : originalBioReader(origin){
   this->filtered_sequences_nb = 0;
   this->filtered_sequences_calls = 0;
-  buildACAutomatonToFilterBioReader(seed);
+  buildACAutomatonToFilterBioReader(seed, keys_compress);
 }
 
 FilterWithACAutomaton::~FilterWithACAutomaton(){
@@ -16,9 +16,8 @@ FilterWithACAutomaton::~FilterWithACAutomaton(){
     }
 }
 
-void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed){
-  char asciiChar;
-  int asciiNumber;
+void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed, float keys_compress){
+  unsigned int asciiNumber;
   string currentLabel;
   string previousLabel;
 
@@ -27,26 +26,29 @@ void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed){
     indexes = nullptr;
     return;
   }
-  automaton = new PointerACAutomaton<KmerAffect>(seed, false, true);
+  automaton = new PointerACAutomaton<KmerStringAffect>(seed, false, true);
   indexes = new vector<int>();
   asciiNumber = SPECIFIC_KMERS_NUMBER;
-  automaton->insert(originalBioReader.sequence(0),std::string("") + char(asciiNumber), true, 0, seed);
+  automaton->insert(originalBioReader.sequence(0), std::to_string(asciiNumber), true, 0, seed);
   indexes->push_back(0);
+
+  unsigned int previousAsciiNumber = asciiNumber;
+  int rawNumber = 0;
+
   previousLabel = extractGeneName(originalBioReader.label(0));
   for(int i = 1;i < originalBioReader.size(); ++i){
     currentLabel = extractGeneName(originalBioReader.label(i));
     if(currentLabel != previousLabel){
+      asciiNumber = SPECIFIC_KMERS_NUMBER + 1 + (int) rawNumber / keys_compress;
+      rawNumber++;
+    }
+
+    if (asciiNumber > previousAsciiNumber)
+    {
       indexes->push_back(i);
-      asciiNumber++;
+      previousAsciiNumber = asciiNumber;
     }
-    if(asciiNumber > 127){
-      delete automaton; delete indexes;
-      automaton = nullptr;
-      indexes = nullptr;
-      return;
-    }
-    asciiChar = char(asciiNumber);
-    automaton->insert(originalBioReader.sequence(i),std::string("") + asciiChar, true, 0, seed);
+    automaton->insert(originalBioReader.sequence(i),std::to_string(asciiNumber), true, 0, seed);
     previousLabel = currentLabel;
   }
   indexes->push_back(originalBioReader.size());
@@ -61,7 +63,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     seqtype &seq, int kmer_threshold, int pvalue){
 
   BioReader result;
-  map<KmerAffect, int> mapAho;
+  map<KmerStringAffect, int> mapAho;
   this->filtered_sequences_calls += 1;
   if(!automaton || !indexes || kmer_threshold < 0){
     this->filtered_sequences_nb += originalBioReader.size();
@@ -99,17 +101,17 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     sorted map */
   }else{
     /* sort map */
-    using Comparator = bool (*) (pair<KmerAffect, int>, pair<KmerAffect, int>);
-    Comparator compFunctor = [](pair<KmerAffect, int> elem1 ,pair<KmerAffect, int> elem2){
+    using Comparator = bool (*) (pair<KmerStringAffect, int>, pair<KmerStringAffect, int>);
+    Comparator compFunctor = [](pair<KmerStringAffect, int> elem1 ,pair<KmerStringAffect, int> elem2){
       return (elem1.second == elem2.second) ? elem1.first > elem2.first : elem1.second > elem2.second;
     };
     // Use a set to use the comparator and sort function
-    set<pair<KmerAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
+    set<pair<KmerStringAffect, int>, Comparator> setOfWords(mapAho.begin(), mapAho.end(), compFunctor);
     // Iterate over the pair and not the map
     int nbKmers = 0;
     int nb_kmers_limit = -1;    // Limit number of kmers, defined when the last gene of interest is reached
     
-    for(pair<KmerAffect, int> element : setOfWords){
+    for(pair<KmerStringAffect, int> element : setOfWords){
       // Add corresponding sequences to the BioReader
         if(!element.first.isGeneric()){
           continue;
@@ -138,9 +140,8 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
   return (result.size() == 0) ? originalBioReader : result;
 }
 
-void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, BioReader &dst, KmerAffect k) const{
-  char asciiChar = k.getLabel().at(0);
-  unsigned int asciiNum = int(asciiChar);
+void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, BioReader &dst, KmerStringAffect k) const{
+  unsigned int asciiNum = stoi(k.getLabel());
 
   if(asciiNum > indexes->size() || !k.isGeneric()){
     throw invalid_argument("Incorrect K-mer transmitted.");
@@ -150,9 +151,8 @@ void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, Bio
   }
 }
 
-int FilterWithACAutomaton::getSizeLongestTransferredSequence(const BioReader &reader, KmerAffect k) const{
-  char asciiChar = k.getLabel().at(0);
-  unsigned int asciiNum = int(asciiChar);
+int FilterWithACAutomaton::getSizeLongestTransferredSequence(const BioReader &reader, KmerStringAffect k) const{
+  unsigned int asciiNum = stoi(k.getLabel());
 
   if(asciiNum > indexes->size() || !k.isGeneric()){
     throw invalid_argument("Incorrect K-mer transmitted.");
@@ -170,7 +170,7 @@ vector<int>* FilterWithACAutomaton::getIndexes() const{
   return this->indexes;
 }
 
-AbstractACAutomaton<KmerAffect>* FilterWithACAutomaton::getAutomaton() const{
+AbstractACAutomaton<KmerStringAffect>* FilterWithACAutomaton::getAutomaton() const{
   return this->automaton;
 }
 
@@ -181,7 +181,8 @@ ostream &operator<<(ostream &out, const FilterWithACAutomaton& obj){
   int total_sequences_origin = total_filtered_calls * origin_bioreader_size;
   float aligned_rate = ((float)total_sequences_filtered/(float)total_sequences_origin) * 100;
 
-  out << fixed << setw(8) << total_sequences_filtered << "/"
+  out << right
+      << fixed << setw(8) << total_sequences_filtered << "/"
       << fixed << setw(8) << total_sequences_origin << "    "
       << fixed << setprecision(1) << setw(6) << aligned_rate << "%"
       << endl ;

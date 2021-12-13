@@ -1,5 +1,6 @@
 #ifndef FILTER_H
 #define FILTER_H
+#include <iostream>
 #include "bioreader.hpp"
 #include "automaton.hpp"
 
@@ -7,7 +8,7 @@ class FilterWithACAutomaton {
 
   private:
     vector<int>* indexes;
-    AbstractACAutomaton<KmerAffect>* automaton;
+    AbstractACAutomaton<KmerStringAffect>* automaton;
 
   public:
     BioReader &originalBioReader;
@@ -18,16 +19,16 @@ class FilterWithACAutomaton {
     /* The size of the BioReader returned after filtering.*/
 
     int filtered_sequences_nb;
-    FilterWithACAutomaton(BioReader &origin, string seed);
+    FilterWithACAutomaton(BioReader &origin, string seed, float keys_compress=1.0);
 
     ~FilterWithACAutomaton();
 
     /**
     This function will filter a BioReader
     @param idxAho:  A pointer to a pair containing an int vector pointer and
-                    an AbstractACAutomaton pointer parametrized by KmerAffect.
+                    an AbstractACAutomaton pointer parametrized by KmerStringAffect.
                     The int vector represents indexes of a BioReader and the
-                    automaton is build with single char labels put in KmerAffect.
+                    automaton is build with single char labels put in KmerStringAffect.
                     To know more about them, read doc of
                     buildACAutomatonToFilterBioReader function.
 
@@ -92,7 +93,7 @@ class FilterWithACAutomaton {
     The param "seed" is used while inserting sequences in the automaton. By default
     the seed has a size of 10.
   */
-  void buildACAutomatonToFilterBioReader(string seed);
+  void buildACAutomatonToFilterBioReader(string seed, float keys_compress);
 
   /**
   * Return the vector of indexes used while building the automaton.
@@ -102,7 +103,7 @@ class FilterWithACAutomaton {
   /**
   * Return the automaton stored.
   */
-  AbstractACAutomaton<KmerAffect>* getAutomaton() const;
+  AbstractACAutomaton<KmerStringAffect>* getAutomaton() const;
 
 
   /**
@@ -113,7 +114,7 @@ class FilterWithACAutomaton {
   * The label stored in the K-mer is used to select sequences. For more informations
   * about how the label is used, see buildACAutomatonToFilterBioReader's doc.
   */
-  void transferBioReaderSequences(const BioReader &src, BioReader &dst, const KmerAffect k) const;
+  void transferBioReaderSequences(const BioReader &src, BioReader &dst, const KmerStringAffect k) const;
 
   friend ostream &operator<<(ostream&, const FilterWithACAutomaton&);
 
@@ -122,6 +123,6 @@ class FilterWithACAutomaton {
    * Get the size of the longest sequence among the sequences that were just
    * transferred to the BioReader reader.
    */
-  int getSizeLongestTransferredSequence(const BioReader &reader, KmerAffect k) const;
+  int getSizeLongestTransferredSequence(const BioReader &reader, KmerStringAffect k) const;
 };
 #endif

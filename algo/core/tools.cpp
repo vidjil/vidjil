@@ -20,13 +20,6 @@ int seed_weight(const string &seed)
   return count(seed.begin(), seed.end(), SEED_YES);
 }
 
-map<string, string> seedMap = {
-  {"9c", "#########"},
-  {"10s", "#####-#####"},
-  {"12s", "######-######"},
-  {"13s", "#######-######"}
-};
-
 string expand_seed(const string &seed)
 {
   if (seed.size() == 0)
@@ -85,10 +78,10 @@ string fixed_string_of_float(float number, int precision)
    return ss.str();
 }
 
-string scientific_string_of_double(double number)
+string scientific_string_of_double(double number, int precision)
 {
    stringstream ss;
-   ss << scientific << number ;
+   ss << scientific << setprecision(precision) << number ;
    return ss.str();
 }
 
@@ -369,7 +362,8 @@ double nChoosek(unsigned n, unsigned k)
     return nChoosek_stored[n][k];
 }
 
-void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
+void trimSequence(string &sequence, size_t &start_pos, size_t &length,
+                  size_t required_start, size_t required_length) {
   float prefix_score = 0;
   float suffix_score = 0;
   size_t start_bad_suffix = 0;
@@ -422,8 +416,10 @@ void trimSequence(string &sequence, size_t &start_pos, size_t &length) {
     }
   }
 
-  start_pos = max_start_factor;
+  start_pos = min(required_start, max_start_factor);
   length = max_factor_length;
+  if (required_start != string::npos && start_pos + length < required_start + required_length)
+    length = required_start + required_length - start_pos;
 }
 
 
@@ -451,15 +447,36 @@ void json_add_warning(json &clone, string code, string msg, string level)
   clone["warn"] += { {"code", code}, {"level", level}, {"msg", msg} } ;
 }
 
-/* 
-	 Return the part of label before the star
-	 For example:
-	 IGHV5-51*01 -> IGHV5-51
-	 If there is no star in the name, the whole label is returned.
-	 IGHV10-40 -> IGHV10-40
-*/
+
+bool WPGxG(string aa)
+{
+  if (aa[0] != 'W' && aa[0] != 'P') return false ;
+  if (aa[1] != 'G') return false ;
+  if (aa[3] != 'G') return false ;
+  return true ;
+}
+
+// Signal handling
+
+bool global_interrupted;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+void sigintHandler(int sig_num)
+{
+  signal(SIGINT, sigintHandler);
+  global_interrupted = true;
+}
+#pragma GCC diagnostic pop
+
 string extractGeneName(string label){
 	string result;
+
+  size_t pipe_pos = label.find("|");
+  if (pipe_pos != string::npos) {
+    label = label.substr(pipe_pos+1);
+  }
+
 	size_t star_pos;
 	star_pos = label.rfind("*");
 	if(star_pos != string::npos){
@@ -468,4 +485,26 @@ string extractGeneName(string label){
 		result = label;
 	}
 	return result;
+}
+
+
+/*
+   Opens a ostream, possibly gz-compressed
+*/
+std::ostream* new_ofgzstream(string &f, bool gz, string message)
+{
+  
+  if (gz)
+  {
+    f += GZ_SUFFIX;
+  }
+  cout << "  ==> " << f <<  message << endl ;
+
+  if (gz) {
+    return new ogzstream(f.c_str());
+  }
+  else
+  {
+    return new ofstream(f.c_str());
+  }
 }

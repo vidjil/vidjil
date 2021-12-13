@@ -6,7 +6,7 @@ $ Analyze 10 reads (--first-reads)
 $ Report a clone with one read (--min-reads)
 1: Clone #001 .* 1 read
 
-$ Compute a CDR3 (--cdr3)
+$ Compute a CDR3
 1:CARVGSSWS#MLLIIW
 
 $ Report only one clone (--max-consensus)

@@ -2,7 +2,7 @@
 import gluon.contrib.simplejson, re
 import os.path, subprocess
 import vidjil_utils
-
+from gluon.scheduler import RUNNING, QUEUED, ASSIGNED
 MAX_LOG_LINES = 500
 ACCESS_DENIED = "access denied"
 
@@ -49,9 +49,9 @@ def monitor():
 
 
     return dict (worker = len(db().select(db.scheduler_worker.ALL)),
-                 queued = len(db(db.scheduler_task.status=='QUEUED').select()),
-                 assigned = len(db(db.scheduler_task.status=='ASSIGNED').select()),
-                 running = len(db(db.scheduler_task.status=='RUNNING').select()),
+                 queued = len(db(db.scheduler_task.status==QUEUED).select()),
+                 assigned = len(db(db.scheduler_task.status==ASSIGNED).select()),
+                 running = len(db(db.scheduler_task.status==RUNNING).select()),
                  last_results = last_results)
     
     
@@ -194,4 +194,15 @@ def repair():
         log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-
+def reset_workers():
+    if auth.is_admin():
+        running_jobs = db((db.scheduler_task.status == RUNNING) | (db.scheduler_task.status == ASSIGNED)).count()
+        if running_jobs == 0:
+            db(db.scheduler_worker.id > 0).delete()
+            scheduler.die()
+            db.commit()
+            res = {"success" : "true", "message" : "Workers have been reset "}
+        else:
+            res = {"success" : "false", "message" : "Jobs are currently running or assigned. I don't want to restart workers"}
+        log.admin(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))

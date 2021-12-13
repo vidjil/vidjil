@@ -43,7 +43,7 @@ function initMenu () {
                 url: prepend_path_if_not_web(config.file_menu.file[0], config.file_menu.path),
                 success: function (result) {
                     $('#static_file_menu').css("display", "")
-                    var demo_file = document.getElementById("fileSelector").firstChild
+                    var demo_file = document.getElementById("fileSelector").firstElementChild
 
                     var buildConfigLink = function (i) {
 

@@ -1,5 +1,5 @@
 {
-    "ref": "http://www.vidjil.org/germlines/germline-59.tar.gz",
+    "ref": "http://www.vidjil.org/germlines/germline-2021-01-21.tar.gz",
 
     "species": "Homo sapiens",
     "species_taxon_id": 9606,

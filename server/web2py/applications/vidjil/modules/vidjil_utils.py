@@ -619,49 +619,99 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
         db.auth_membership.insert(user_id=id_first_user, group_id=id_public_group)
 
+
+        ### Base config classification
+        db.classification.insert(
+            name = 'Human V(D)J recombinations',
+            info = 'Analysis with vidjil-algo of human TR/IG recombinations'
+        )
+        db.classification.insert(
+            name = 'Other recombinations',
+            info = 'Analysis with vidjil-algo of human non-V(D)J recombinations'
+        )
+        db.classification.insert(
+            name = 'Analysis with/for other software',
+            info = 'Analysis that use other repertoire software or generate with vidjil-algo compatible output formats'
+        )
+        db.classification.insert(
+            name = 'Other species',
+            info = 'Analysis with vidjil-algo of V(D)J recombinations for other species. Contact us at support@vidjil.org should you need other species.'
+        )
+        db.classification.insert(
+            name = 'Experimental configs',
+            info = '"Experimental analyses, under development,may evolve without notice.'
+        )
+        db.classification.insert(
+            name = 'Old configs, do not use',
+            info = '"Old configurations. We do not recommend to use them. Should you need something, contact us at  support@vidijl.org'
+        )
+
+
         ## base Vidjil configs
 
         db.config.insert(
             name = 'default + extract reads',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -U ',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -U ',
             fuse_command = '-t 100',
-            info = 'Same as the default "multi+inc+xxx" (multi-locus, with some incomplete/unusual/unexpected recombinations), and extract analyzed reads in the "out" temporary directory.'
+            info = 'Same as the default "multi+inc+xxx" (multi-locus, with some incomplete/unusual/unexpected recombinations), and extract analyzed reads in the "out" temporary directory.',
+            classification = 1
         )
         db.config.insert(
             name = 'multi+inc+xxx',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ',
             fuse_command = '-t 100',
-            info = 'multi-locus, with some incomplete/unusual/unexpected recombinations'
+            info = 'multi-locus, with some incomplete/unusual/unexpected recombinations',
+            classification = 1
         )
         db.config.insert(
             name = 'multi+inc',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -w 50 ',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -w 50 ',
             fuse_command = '-t 100',
-            info = 'multi-locus, with some incomplete/unusual recombinations'
+            info = 'multi-locus, with some incomplete/unusual recombinations',
+            classification = 1
         )
         db.config.insert(
             name = 'multi',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -d -w 50 ',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -d -w 50 ',
             fuse_command = '-t 100',
-            info = 'multi-locus, only complete recombinations'
+            info = 'multi-locus, only complete recombinations',
+            classification = 2
         )
         db.config.insert(
             name = 'TRG',
             program = 'vidjil',
-            command = '-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:TRG ',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g:TRG ',
             fuse_command = '-t 100',
-            info = 'TRG, VgJg'
+            info = 'TRG, VgJg',
+            classification = 2
         )
         db.config.insert(
             name = 'IGH',
             program = 'vidjil',
-            command = '-c clones -w 60 -d -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH ',
+            command = '-c clones -w 60 -d -z 100 -r 1 -g germline/homo-sapiens.g:IGH ',
             fuse_command = '-t 100',
-            info = 'IGH, Vh(Dh)Jh'
+            info = 'IGH, Vh(Dh)Jh',
+            classification = 2
+        )
+        db.config.insert(
+            name = 'Clonality',
+            program = 'vidjil',
+            command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -w 90 -y all --no-airr',
+            fuse_command = '-t 100 -d lenSeqAverage --overlaps',
+            info = 'incomplete germlines + larger window (90bp), thus 20bp more on each side. This configuration is advised for studies on IGH clonality',
+            classification = 1
+        )
+        db.config.insert(
+            name = 'Export all clones (AIRR)',
+            program = 'vidjil',
+            command = '-c clones -y all -z all -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -r 5 --no-vidjil',
+            fuse_command = '-t 100',
+            info = 'Export all clones in the tabular AIRR format. The results can not be browsed online. See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output',
+            classification = 3
         )
 
         ## permission
@@ -726,3 +776,20 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         for tag in tags:
             tid  = db.tag.insert(name=tag)
             db.group_tag.insert(group_id=id_public_group, tag_id=tid)
+
+
+def publicGroupIsInList(db, group_ids):
+    """ Return True if the first public group is in list """
+    public_group = getPublicGroupId(db)
+    if public_group != None and public_group not in group_ids:
+        return False
+    return True
+
+
+def getPublicGroupId(db):
+    """ Get public group id; Return only the first id of public groups"""
+    public_group_name = defs.PUBLIC_GROUP_NAME if hasattr(defs, 'PUBLIC_GROUP_NAME') else 'public'
+    public_group = db(db.auth_group.role == public_group_name).select()
+    if len(public_group):
+        return public_group[0].id
+    return None

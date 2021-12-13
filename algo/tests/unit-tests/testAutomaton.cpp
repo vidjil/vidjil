@@ -62,6 +62,7 @@ void testGetMultiResults(){
   char c = 'a';
   for(int i = 0; i < 10; ++i){
     affect[i].c = c;
+    affect[i].length = 0;
     c++;
   }
   seqs[0] = "AGCTCT";

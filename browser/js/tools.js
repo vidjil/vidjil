@@ -1,3 +1,6 @@
+var SYMBOL_VOID = "–";
+var SYMBOL_MATCH = "·";
+
 var SILENT="silent";
 var SUBST="substitution";
 var INS="insertion";
@@ -5,6 +8,9 @@ var DEL="deletion";
 var END_CODON = "end-codon ";
 var END_CODON_NOT_FIRST = "end-codon-not-first ";
 var LOCUS_ORDER = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "TRA+D", "TRD+", "IGH", "IGH+", "IGK", "IGK+", "IGL"]
+
+var BIOSEQ_MATRIX = [ 2, -2]
+var BIOSEQ_GAPS   = [-2, -2]
 /**
  * Get codons from two aligned sequences
  * @pre both sequences are aligned together ref.length == seq.length
@@ -33,7 +39,7 @@ function get_codons(ref, seq, frame) {
 
     // Search first nucleotide pos
     for (pos; pos < ref.length; pos++) {
-        if (ref[pos] != '-') {
+        if (ref[pos] != SYMBOL_VOID) {
             if (frame == 0)
                 break;
             frame--;
@@ -52,7 +58,7 @@ function get_codons(ref, seq, frame) {
     var nb_nuc = 0;
     for (; pos < ref.length; pos++) {
         if (nb_nuc == 3 ||
-            (ref[pos] != '-' && current_codon_seq.length > 0 &&
+            (ref[pos] != SYMBOL_VOID && current_codon_seq.length > 0 &&
              nb_nuc == 0)) {
             codons_ref.push(current_codon_ref);
             codons_seq.push(current_codon_seq);
@@ -61,9 +67,9 @@ function get_codons(ref, seq, frame) {
             nb_nuc = 0;
         }
 
-        if (ref[pos] == '-') {
+        if (ref[pos] == SYMBOL_VOID) {
             current_codon_seq += seq[pos];
-            current_codon_ref += '-';
+            current_codon_ref += SYMBOL_VOID;
         } else {
             current_codon_ref += ref[pos];
             current_codon_seq += seq[pos];
@@ -95,9 +101,9 @@ function get_mutations(ref, seq, frame, with_end_codon) {
     for (var i = 0; i < codons.ref.length ; i++) {
         for (var p = 0; p < codons.ref[i].length; p++) {
             if (codons.ref[i][p] != codons.seq[i][p]) {
-                if (codons.ref[i][p] == '-') {
+                if (codons.ref[i][p] == SYMBOL_VOID) {
                     mutations[nb_pos] = INS;
-                } else if (codons.seq[i][p] == '-') {
+                } else if (codons.seq[i][p] == SYMBOL_VOID) {
                     mutations[nb_pos] = DEL;
                 } else {
                     var codon1 = codons.ref[i];
@@ -109,7 +115,7 @@ function get_mutations(ref, seq, frame, with_end_codon) {
                         // other sequences) that need to be ignored
                         for (var j = 0; j < codons.ref[i].length; j++) {
                             if (codons.ref[i][j] != codons.seq[i][j] ||
-                                codons.ref[i][j] != '-') {
+                                codons.ref[i][j] != SYMBOL_VOID) {
                                 codon1 += codons.ref[i][j];
                                 codon2 += codons.seq[i][j];
                             }
@@ -342,7 +348,7 @@ function processCloneDBContents(results,model) {
         final_results['Non viewable samples'] = count_non_viewable;
 
     if (Object.keys(final_results).length === 0)
-        final_results['–'] = "No occurrence of this clone in CloneDB"
+        final_results['–'] = "No occurrence of this clonotype in CloneDB"
 
     final_results.original = results;
     final_results.clones_names = clones_results;
@@ -455,19 +461,20 @@ function floor_pow10(x)
 
 /**
  * Give a nice decimal number above the given number
- * nice_ceil(0.14) -> 0.15
+ * nice_ceil(0.14) -> 0.2
+ * nice_ceil(0.14, 0.05) -> 0.15
  * nice_ceil(23.4) -> 30
  **/
 
 function nice_ceil(x, force_pow10)
 {
-    if (x <= 0) return x
+    if (x == 0) return 0
+    if (x <  0) return -nice_floor(-x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
-
-        var xx = x / floor_power10
-        return (xx == 1 ? 1 : xx <= 1.5 ? 1.5 : Math.ceil(xx)) * floor_power10
+ 
+        return Math.ceil(x / floor_power10) * floor_power10
     }
     catch(e) {
         // Always return something
@@ -507,7 +514,8 @@ function nice_1_2_5_ceil(x)
 
 function nice_floor(x, force_pow10)
 {
-    if (x <= 0) return x
+    if (x == 0) return 0
+    if (x <  0) return -nice_ceil(-x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
@@ -708,6 +716,74 @@ function locus_cmp(valA, valB){
 }
 
 
+
+/**
+ * Compare two labels to sort them against a predefined list of labels.
+ * The list is ordered on a preordered list of labels).
+ * By this way, labels that are not in this list will be added at the end of it.
+ * @param  {String} valA   One label value
+ * @param  {String} valB   Another label value to compare
+ * @param  {Array}  labels List of predefined labels
+ * @return {Number}        A number -1 if A before B, else 1
+ */
+function sortFromList(valA, valB, labels){
+    // Ordered list of all generic label
+    var index_A = labels.indexOf(valA)
+    var index_B = labels.indexOf(valB)
+
+    if (index_A == -1 && index_B == -1){
+        // Neither A or B are present in labels
+        return valA < valB
+    } else if (index_A != -1 && index_B == -1){
+        // Only A is present in labels
+        return -1
+    } else if (index_A == -1 && index_B != -1){
+        // Only B is present in labels
+        return 1
+    } else if (index_A != -1 && index_B != -1){
+        // A & B are present in labels
+        return index_A - index_B
+    }
+    return 0
+}
+
+function getAllIndexes(arr, val) {
+    var indexes = [], i = -1;
+    while ((i = arr.indexOf(val, i+1)) != -1){
+        indexes.push(i);
+    }
+    return indexes;
+}
+
+
+/**
+ * Fix error when a same file is analysed multiple time
+ * In this case, order will fail or graph will not be clear, so rename original_names
+ * @param  {[type]} clone [description]
+ * @return {[type]}       [description]
+ */
+function fixDuplicateNames(names){
+    var copy = JSON.parse(JSON.stringify(names))
+    copy = removeDuplicate(names)
+    if (copy.length != names.length){
+        for (var i = 0; i < names.length; i++) {
+            var name = names[i]
+            var idx  = getAllIndexes(names, name)
+            var start = 1
+            for (var j = 1; j < idx.length; j++) {
+                var new_name = name + "("+start+")"
+                while ( (names.indexOf(new_name, idx[j]) != -1) || start > names.length ){
+                    start += 1
+                }
+                names[idx[j]] = new_name
+                start += 1
+            }
+        }
+    }
+    return names
+} 
+
+
 /**
  * Open a new tab and put content in it.
  * This function is use to show fasta export
@@ -788,4 +864,126 @@ function getProxy() {
         "priority": 2
     });
     throw "No proxy";
+}
+
+/**
+ * @return an array without duplication
+ */
+function removeDuplicate(array) {
+    clean_array = array.filter(function(item, pos) {
+        return array.indexOf(item) == pos;
+    })
+    return clean_array
+}
+
+/**
+ * Filter value given of an array and decrease greater values
+ */
+function removeEltAndDecrease(array, value) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] > value) {
+            array[i] = array[i] - 1 
+        } else if (array[i] == value) {
+            array.splice(i, 1)
+            i = i-1
+        }
+    }
+    return array
+}
+
+
+
+/**
+ * Return the number of match from an alignment cigar
+ * Cigar is given by function bsa_align of bioseq library
+ */
+function bsa_cigar2match(cigar)
+{
+    var sum = 0
+
+    for (var k = 0; k < cigar.length; ++k){
+        var match = (cigar[k]>>4 )
+        var type  = (cigar[k]&0xf)
+        if (type == 0){
+            sum += match
+        }
+    }
+    return sum
+}
+
+function download_csv(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    // CSV FILE
+    csvFile = new Blob([csv], {type: "text/csv"});
+
+    // Download link
+    downloadLink = document.createElement("a");
+
+    // File name
+    downloadLink.download = filename;
+
+    // We have to create a link to the file
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    // Make sure that the link is not displayed
+    downloadLink.style.display = "none";
+
+    // Add the link to your DOM
+    document.body.appendChild(downloadLink);
+
+    // Lanzamos
+    downloadLink.click();
+}
+
+
+///////////////////////////
+/// Fct to fill info table
+///////////////////
+var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
+        
+var header = function(content, title, time_length) {
+    title = (title == undefined) ? clean_title(content) : clean_title(title)
+    return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
+}
+var row_1  = function(item, content, title, time_length) { 
+    title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
+    return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
+}
+var row_from_list  = function(item, content, title, time_length) { 
+    title = (title == undefined) ?clean_title(item) : clean_title(title)
+    var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+    for (var i = 0; i < content.length; i++) {
+        col  = content[i]
+        div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+    }
+    div += "</tr>" ;
+    return div;
+}
+
+var row_cast_content = function(title, content, time_length, clone) {
+    if (content == undefined) {
+        return ""
+    } else if (typeof(content) != "object") {
+        return row_1(title, content.toString(), undefined, time_length)
+    } else if (Object.keys(content).indexOf("info") != -1) {
+        // Textual field
+        return row_1(title, content.info, undefined, time_length)
+    } else if (Object.keys(content).indexOf("name") != -1) {
+        // Textual field
+        return row_1(title, content.name, undefined, time_length)
+    } else if (Object.keys(content).indexOf("val") != -1) {
+        // Numerical field
+        return row_1(title, content.val, undefined, time_length)
+    } else if (Object.keys(content).indexOf("seq") != -1) {
+        // Sequence field with pos
+        return row_1(title, content.seq, undefined, time_length)
+    } else {
+        // Sequence field
+        var nt_seq = clone.getSegNtSequence(title);
+        if (nt_seq !== '') {
+            return row_1(title, clone.getSegNtSequence(title), undefined, time_length)
+        }
+    }
 }

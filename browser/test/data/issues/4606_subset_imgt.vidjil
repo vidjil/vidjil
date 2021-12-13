@@ -1,0 +1,112 @@
+{
+  "clones": [
+    {
+      "germline": "IGH",
+      "id": "GCAGCCTAAAGGCTGAGGACACCCGACAGGGTATGGACGTCTGGGGCCAA",
+      "name": "not subset seq; IGHV3-21/IGHJ6*02",
+      "reads": [
+        1
+      ],
+      "sequence": "GGAGTCGGGGCCTGAGGTGAAGAAGCCTGGAGCCTCATTGAAGGTTTCCTGCAAGGCTTCTGGATACACCTTCACAAGCTATGCTATCAGCTGGGTATGACAGGCCCATGGACAAGGGCTTGAGGAAATGGGATGGATCAACACCAACACTGGGAACCTAACGTATGCCCAGGGCTTCACAGGACGGTTTGTCTTCTCCATGGACACCTCCGTCAGCATGGCATATCTTCATATCAGCAGCCTAAAGGCTGAGGACACCCGACAGGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT",
+      "top": 0
+    },
+    {
+      "germline": "IGH",
+      "id": "subset_2_chimeric",
+      "name": "Subset2; IGHV3-21/IGHJ6*02",
+      "reads": [
+        1
+      ],
+      "sequence": "GGGGGAGGCCTGGTCAAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTATAGCATGAACTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTCTCATCCATTAGTAGTAGTAGTAGTTACATATACTACGCAGACTCAGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCACTGTATCTGCAAATGAACAGCCTGAGAGCCGAGGACACGGCTGTGTATTACTGTGCGAGAgatTACaatggaatggatgtgTGGGGCCAAGGGACCACGGTCACCGTCTCCTCAGGTAAG",
+      "top": 2
+    },
+    {
+      
+      "germline": "IGH",
+      "id": "GTGCACGACGAACTGGATACAGTAGTAGTTGGTACGGAGGAGCAAACTGG",
+      "name": "subset#8 IGHV4-39*01/IGHJ5*01; unmutated",
+      "reads": [
+        1
+      ],
+      "sequence": "CAGTAGTAGTTACTACTGGGGCTGGATCCGCCAGCCCCCAGGGAAGGGGCTGGAGTGGATTGGGAGTATCTATTATAGTGGGAGCACCTACTACAACCCGTCCCTCAAGAGTCGAGTCACCATATCCGTAGACACGTCCAAGAACCAGTTCTCCCTGAAGCTGAGCTCTGTGACCGCCGCAGACACGGCTGTGTATTACTGTGCACGACGAACTGGATACAGTAGTAGTTGGTACGGAGGAGCAAACTGGTTCGACCCATGGGGCCAAGGAACCCTGGTCACCGTCTCCTCAG",
+      "top": 8
+    }
+  ],
+  
+  "germlines": {
+    "custom": {
+      "3": [],
+      "4": [],
+      "5": [],
+      "shortcut": "X"
+    },
+    "ref": "http://www.vidjil.org/germlines/germline-59.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "germline": {
+      "IGH": [
+        6
+      ],
+      "IGH+": [
+        0
+      ],
+      "IGK": [
+        0
+      ],
+      "IGK+": [
+        0
+      ],
+      "IGL": [
+        0
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        0
+      ],
+      "TRB+": [
+        0
+      ],
+      "TRD": [
+        0
+      ],
+      "TRD+": [
+        0
+      ],
+      "TRG": [
+        0
+      ]
+    },
+    "segmented": [
+      6
+    ],
+    "total": [
+      6
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "cmd line"
+    ],
+    "log": [
+      "log"
+    ],
+    "number": 1,
+    "original_names": [
+      "test_subset.fasta"
+    ],
+    "producer": [
+      "vidjil-algo dev a79706ac2 (2021-02-15)"
+    ],
+    "run_timestamp": [
+      "2021-02-16 20:50:19"
+    ]
+  },
+  "vidjil_json_version": "2016b"
+}

@@ -1,0 +1,1 @@
+/usr/share/vidjil/doc/analysis-example.vidjil
