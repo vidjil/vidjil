@@ -19,8 +19,14 @@ function Report(model, settings) {
             sample : undefined,
             samples : undefined,
             locus : undefined,
+            selected_color: "unique",
             clones : [],
-            blocks: []
+            blocks: [
+                    {blockType: "file_info"},
+                    {blockType: "reads_stats"},
+                    {blockType: "monitor"},
+                    {blockType: "clones"}
+                    ]
         },
         "New Monitor Report" : {
             name : "New Monitor Report",
@@ -381,6 +387,24 @@ Report.prototype = {
             var text = ""
 
             switch (conf.blockType) {
+                case "file_info":
+                    text = "File info"
+                    break;
+                case "reads_stats":
+                    text = "reads stats per locus"
+                    break;
+                case "sample_info":
+                    text = "Sample info :"
+                    break;
+                case "clones":
+                    text = "Clones :"
+                    break;
+                case "monitor":
+                    text = "monitor :"
+                    break;
+                case "log_db":
+                    text = "database log :"
+                    break;
                 case "scatterplot":
                     text = "Scatterplot: ["+ conf.axisX +" | "+ conf.axisY +"] ["+ conf.locus +"]"
                     break;
@@ -397,6 +421,28 @@ Report.prototype = {
                                         text: "remove", 
                                         style: "float:right;"}).click(handle).appendTo(div)
         }
+
+
+        var handle2 = function(){
+            var block = {blockType : this.value }
+            self.addBlock(block);
+            self.menu();
+        }
+
+        var div_select = $('<div/>',   {}).appendTo(block_list);
+
+        var select = $('<select/>', { name: 'rs-new-block-select',
+                                      id:   'rs-new-block-select' }).appendTo(div_select).change(handle2);
+
+        $('<option/>',  { text: "add block"}).appendTo(select);
+
+        var keys = ["file_info","reads_stats","sample_info", "monitor", "log_db", "clones"]
+        for (var j = 0; j < keys.length; j++){
+            var name = keys[j];
+            $('<option/>',  { text: name,
+                            value: name}).appendTo(select);
+        }
+
     },  
 
     print: function(){ 
@@ -444,11 +490,6 @@ Report.prototype = {
             self.w.document.title = text
             self.w.document.getElementById("header-title").innerHTML = text
             
-            self.info()
-                //.normalizeInfo()
-                .readsStat3()
-                .addGraph()
-
             if (self.settings.blocks)
                 self.settings.blocks.forEach(function(block){
                     self.block(block);
@@ -456,10 +497,8 @@ Report.prototype = {
             
             self.cloneList()
                 .contamination()
-                .sampleLog()
-                .comments({})
-                .restorestate()
-                
+
+            self.restorestate()    
             self.m.resize()
             self.m.resume()
         }
@@ -756,8 +795,8 @@ Report.prototype = {
         }   
     },
 
-    info : function() {
-        var info = this.container("Report information")
+    info : function(block) {
+        var info = this.container("Report information", block)
         var left = $('<div/>', {'class': 'flex'}).appendTo(info);
         
         var date = new Date();
@@ -872,13 +911,13 @@ Report.prototype = {
         return svg_graph
     },
     
-    addGraph : function() {
+    addGraph : function(block) {
         
         //resize 791px ~> 21cm
-        graph.resize(791,300)
+        graph.resize(791,250)
         graph.draw(0)
         
-        var w_graph = this.container("Monitoring")
+        var w_graph = this.container("Monitoring", block)
         w_graph.addClass("graph");
         
         var svg_graph = this.svg_graph()
@@ -889,9 +928,9 @@ Report.prototype = {
         return this;
     },
     
-    normalizeInfo: function () {
+    normalizeInfo: function (block) {
         if (this.m.normalization_mode != this.NORM_FALSE){
-            var container = this.container("Normalization")
+            var container = this.container("Normalization", block)
             var norm_id = this.m.normalization.id
             var norm_value = this.m.normalization.B
             
@@ -919,23 +958,39 @@ Report.prototype = {
 
     // add current scatterplot to report settings
     addScatterplot : function(sp) {
-        var conf = {
+        var block = {
             'blockType' : "scatterplot",
-            'locus' : sp.m.germlineV.system,
-            'time'  : sp.m.t,
-            'axisX' : sp.axisX.name,
-            'axisY' : sp.axisY.name,
-            'mode'  : sp.mode
+            'locus' :   sp.m.germlineV.system,
+            'time'  :   sp.m.t,
+            'axisX' :   sp.axisX.name,
+            'axisY' :   sp.axisY.name,
+            'mode'  :   sp.mode
         }
 
-        if (this.indexOfBlock(conf) == -1){
-            this.settings.blocks.push(conf)
+        if (sp.axisX.scale && sp.axisX.useCustomScale)
+            block['domainX'] = sp.axisX.scale.domain.slice(0)
+        if (sp.axisY.scale && sp.axisY.useCustomScale)
+            block['domainY'] = sp.axisY.scale.domain.slice(0)
+        
+
+        if (this.indexOfBlock(block) == -1){
+            this.settings.blocks.push(block)
             console.log({ msg: "scatterplot has been added to current report", type: "flash", priority: 1 });
         }
         else{
             console.log({ msg: "This scatterplot is already present in report", type: "flash", priority: 2 });
         }
 
+    },
+
+    addBlock : function(block) {
+        if (this.indexOfBlock(block) == -1){
+            this.settings.blocks.push(block)
+            console.log({ msg: "new block has been added to current report", type: "flash", priority: 1 });
+        }
+        else{
+            console.log({ msg: "a similar block is already present in report", type: "flash", priority: 2 });
+        }
     },
 
     indexOfBlock: function(block){
@@ -968,7 +1023,7 @@ Report.prototype = {
     },
 
     // print a block in the report using given conf
-    block : function(conf){
+    block: function(conf){
         // no conf => nothing to do
         if (typeof conf == "undefined") return;
 
@@ -983,6 +1038,21 @@ Report.prototype = {
             case "comments":
                 this.comments(conf)
                 break;
+            case "file_info":
+                this.info(conf)
+                break;
+            case "sample_info":
+                this.sampleInfo(conf)
+                break;
+            case "reads_stats":
+                this.readsStat3(conf)
+                break;
+            case "monitor":
+                this.addGraph(conf)
+                break;
+            case "log_db":
+                this.sampleLog(conf)
+                break;
             default:
                 break;
         }
@@ -993,26 +1063,32 @@ Report.prototype = {
         this.settings.blocks.splice(index, 1)
     },
 
-    scatterplot : function(conf) {
+    scatterplot : function(block) {
 
-        if (typeof conf == "undefined")       conf = {}
-        if (typeof conf.locus == "undefined") conf.locus = this.m.germlineV.system
-        if (typeof conf.time == "undefined")  conf.time  = this.m.t
-        if (typeof conf.axisX == "undefined") conf.axisX = this.m.sp.axisX.name
-        if (typeof conf.axisY == "undefined") conf.axisY = this.m.sp.axisY.name
-        if (typeof conf.mode == "undefined")  conf.mode  = this.m.sp.mode
+        if (typeof block == "undefined")       block = {}
+        if (typeof block.locus == "undefined") block.locus = this.m.germlineV.system
+        if (typeof block.time == "undefined")  block.time  = this.m.t
+        if (typeof block.axisX == "undefined") block.axisX = this.m.sp.axisX.name
+        if (typeof block.axisY == "undefined") block.axisY = this.m.sp.axisY.name
+        if (typeof block.mode == "undefined")  block.mode  = this.m.sp.mode
 
-        this.m.changeTime(conf.time)
-        this.m.changeGermline(conf.locus, false)
+        this.m.changeTime(block.time)
+        this.m.changeGermline(block.locus, false)
 
-        this.m.sp.changeSplitMethod(conf.axisX, conf.axisY, conf.mode)
+        this.m.sp.changeSplitMethod(block.axisX, block.axisY, block.mode, true)
+        if (typeof block.domainX != "undefined")
+            this.m.sp.updateScaleX(block.domainX)
+        if (typeof block.domainY != "undefined")
+            this.m.sp.updateScaleY(block.domainY)  
         
         //resize 791px ~> 21cm
-        this.m.sp.resize(791,250)
+        this.m.sp.resize(771,250)
         this.m.sp.fastForward()
         
-        var container_name  = this.m.getStrTime(conf.time, "short_name") + ' – ' + conf.locus;
-        var w_sp = this.container(container_name, conf)
+        var container_name  =   this.m.sp.toString() +"  ["+ 
+                                this.m.getStrTime(block.time, "order")+"]."+
+                                this.m.getStrTime(block.time, "short_name");
+        var w_sp = this.container(container_name, block)
         w_sp.addClass("scatterplot");
         
         var svg_sp = document.getElementById(this.m.sp.id+"_svg").cloneNode(true);
@@ -1026,24 +1102,31 @@ Report.prototype = {
             $(circle).css({"fill": color});
             
             //remove virtual and disabled clones
-            if (this.m.clone(i).germline != conf.locus || !this.m.clone(i).isInScatterplot() || !this.m.clone(i).isActive()) {
+            if (this.m.clone(i).germline != block.locus || !this.m.clone(i).isInScatterplot() || !this.m.clone(i).isActive()) {
                 circle.parentNode.removeChild(circle);
             }
         }
         
-        var bar_container = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_bar_container"]')[0]
-        bar_container.parentNode.removeChild(bar_container);
-        
+        if (block.mode != "bar"){
+            var bar_container = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_bar_container"]')[0]
+            bar_container.parentNode.removeChild(bar_container);
+        }
+
+        if (block.mode != "grid" && block.mode != "tsne"){
+            var plot_container = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_plot_container"]')[0]
+            plot_container.parentNode.removeChild(plot_container);
+        }
+
         w_sp.append(svg_sp)
         this.m.sp.resize();
 
         return this
     },
     
-    readsStat3: function(time_list, locus_list) {
+    readsStat3: function(block, time_list, locus_list) {
         if (typeof time_list == "undefined")  time_list  = this.m.samples.order;
         if (typeof locus_list == "undefined") locus_list = this.m.system_selected;
-        var container = this.container('Reads distribution')
+        var container = this.container('Reads distribution', block)
                 
         var reads_stats = $('<table/>', {'class': "report_table"}).appendTo(container);
 
@@ -1309,11 +1392,11 @@ Report.prototype = {
         return clone
     },
 
-    sampleLog: function() {
+    sampleLog: function(block) {
         if (typeof this.m.logs == 'undefined')
             return this
 
-        var log = this.container("Log")
+        var log = this.container("Log", block)
 
         var table = $('<table/>', {'class': 'log-table flex'}).appendTo(log);
         for (var i=0; i < this.m.logs.length; i++ ){
