@@ -270,16 +270,15 @@ def all():
         'table_name': "sample_set"})
     log.debug("sample_set list (%.3fs)" % (time.time()-start))
 
-
-    return dict(query = result,
-                fields = fields,
-                helper = helper,
-                group_ids = group_ids,
-                admin_permissions = admin_permissions,
-                isAdmin = isAdmin,
-                reverse = reverse,
-                step = step,
-                page = page)
+    return returnWraper( { "query": result,
+                "fields": fields,
+                "helper" : helper,
+                "group_ids" : group_ids,
+                "admin_permissions" : admin_permissions,
+                "isAdmin" : isAdmin,
+                "reverse" : reverse,
+                "step" : step,
+                "page" : page}, request, response)
 
 
 def samples():

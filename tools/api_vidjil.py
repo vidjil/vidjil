@@ -27,7 +27,7 @@ class Vidjil:
         self.session.cookies = cookie
 
     def login(self, email, password):
-        response = self.session.get(self.url + '/default/user/login', verify=False)
+        response = self.session.get(self.url + '/default/user/login', verify=self.ssl)
         data = { "email":email, "password":password, 'remember_me':"on" }
         BS = BeautifulSoup(response.text, 'html.parser')
         for i, e in enumerate(BS.select('input[name]')):
@@ -37,7 +37,7 @@ class Vidjil:
         m = MultipartEncoder(fields=data)
         headers = {'Content-Type': m.content_type }
         # print(headers)
-        response = self.session.post(url + '/default/user/login', data = m, headers = headers, verify=False)
+        response = self.session.post(url + '/default/user/login', data = m, headers = headers, verify=self.ssl)
 
         if response.status_code != 200:
             self.logged = False
@@ -52,7 +52,7 @@ class Vidjil:
         if not self.logged:
             print( "Should be logged")
             return -1
-        response = self.session.get(self.url+"/sample_set/all?page=0&type=patient&format=json&", verify=False)
+        response = self.session.get(self.url+"/sample_set/all?page=0&type=patient&format=json&", verify=self.ssl)
         print( " ====  site  =====" )
         print(response.url)
         content = json.loads(response.content)
@@ -61,7 +61,7 @@ class Vidjil:
 
     def whoami(self):
         new_url = "https://localhost/vidjil//default/whoami"
-        response = self.session.get(new_url, verify=False)
+        response = self.session.get(new_url, verify=self.ssl)
         print( response.content )
 
     def getSampleOfSet(self, set_id):
