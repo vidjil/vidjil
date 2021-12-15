@@ -45,6 +45,11 @@ Cypress.Commands.add('selectClone', (id, ctrl_pressed) => {
       .click({ctrlKey: ctrl_pressed})
 })
 
+Cypress.Commands.add('unselectClone', () => {
+    cy.get('#list_clones')
+      .click()
+})
+
 Cypress.Commands.add('openClusterClone', (id) => {
     cy.get('#clusterBox_'+id+' > .icon-plus')
       .click()
