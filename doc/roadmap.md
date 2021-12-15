@@ -12,7 +12,7 @@ in particular at each Vidjil Workshop.
 
 Items generally go through the following stages:
 
- - **Research**, **Planning**: discussion on the issues and on the strategy.
+ - **Research**, **Evaluation**: discussion on the issues and on the strategy.
     Take days, months... or years.
     This is the default stage for all items that are not currently developed or scheduled for development.
  - **Development**: software, test and documentation engineering.
@@ -63,7 +63,7 @@ with software engineering.
     + Beta: 2021
  - Provide specific tools to analyze single cell data and/or paired chains data #2344
  
-## Better sequence analysis
+## Better sequence and recombination analysis
 
  - Show more sequence features (such as FR1...) in the sequence aligner #2135
     + **Available since Q2 2021**, ✅
@@ -74,30 +74,46 @@ with software engineering.
 
  - Estimate clone lengths according to different primer sets #2043
     + **Available since Q2 2021**, ✅
+    
+ - Improve alignment of D genes #2002
+ 
+ - Get longer consensus sequence #4686
+    + **Available since Q4 2021**, ✅
 
-## Server: statistics, including quality control, on a set of samples
-
- - Provide statistics given a set on samples #3171
-
- - Provide a quality control, for example on a run #2175
-    + **Development ongoing** 🚧 @mikael-s @duez
-    + Beta: Q2 2022
-
-
-## Improved and extended analysis of some recombinations
-
-These points are not in the roadmap with fixed dates.
+Moreover, we always try to improve and extend the analysis of some recombinations:
 
  - Extend set of recombinations
  - Find generalized recombinations, even unexpected #1400 #2818
  - Work on clone phylogenies
  - Work on noisy data, such as third-generation sequencers
 
-Perspectives depends on collaboration.
-These points are *ongoing research* 🚧 in the Bonsai team with selected collaborators.
+These points are *ongoing research* 🚧 in the Bonsai team with selected collaborators and are not in the roadmap with fixed dates.
 For some of these points, we are open to new partners.
 They often imply core algorithmic work on Vidjil-algo, often combined with updates on the web application.
-Contact us if you are interested and/or if you have/plan to have such data.
+Contact us if you are interested and/or if you have/plan to have
+such analysis needs.
+
+
+## Better tools for quality assesment and massification of analyses
+
+Routine, and sometimes even 100+ samples.
+
+ - Provide statistics given a set on samples #3171
+
+ - Provide a quality control, for example on a run #2175
+    + **Development ongoing** 🚧 @mikael-s @duez
+    + Beta: Q2 2022
+    
+ - Provide contamination information #1744
+
+ - Develop new view(s) to browse large sets of immune repertoires #1975 (see also app-stats)
+
+ - Improve batch creation/upload of data and metadata
+     + **Availibility : 2020** ✅  (creation with `.csv`)
+     + Batch upload
+
+ - Provide batch generation of reports
+
 
  
 # Technical roadmap
@@ -105,6 +121,23 @@ Contact us if you are interested and/or if you have/plan to have such data.
 These software engineering tasks may of course influence biological studies.
 They often require development or refactor work.
  
+## Improved technical foundations
+
+State-of-the-art technical foundations help agile development
+These point 
+
+ - Improve test framework (new Cypress framework #xxxx, drop Watir framework #4908, improve reproducibility)
+    + **Development: Q2-Q4 2021**
+
+ - Improve packaging: improve Docker containers, toward 100% dockerisation #4320
+    + **Development: Q4 2021**
+
+ - Migrate the web2py server and task scheduler #3691 #4832
+    + Evaluation: Q1 2022 ⏳
+
+ - Use a Javascript framework  #4511 #4883
+    + Evaluation: Q1 2022 ⏳
+
 ## User preferences and presets
 
  - Allow the user to store preferences #878
@@ -114,6 +147,9 @@ They often require development or refactor work.
     + **Availability: Q4 2020** ✅
  
  - Create presets for specific studies or diseases #2836
+ 
+ - Allow more colors for clonotypes #1547
+    + Development: 2022 ⏳ @duez
 
 ## Improved data import/export and interoperability
 
@@ -156,8 +192,6 @@ We often work on backend changes that eventually improve the efficiency on the p
  - Make the web client be fully responsive (works on tablet, and better work on various resolutions) #1740
     + Development: since 2020 🚧 @magiraud
 
- - Develop new view(s) to browse large immune repertoires #1975
-
  - Comparing 10+ samples
     + Improve ergonomy with the current view #4105: Q2 2020  ✅
     + New view(s) for comparing many samples #3895
@@ -178,7 +212,7 @@ We often work on backend changes that eventually improve the efficiency on the p
 # Human and administrative roadmap
 
  - Make the [VidjilNet Consortium](http://www.vidjil.net) grow
-    + Expand the community, make more members join
+    + Expand the community, make more members join (first General Assembly in December 2021 ⏳)
     + Setup [healthcare data hosting](http://www.vidjil.org/healthcare) (HDS, RGPD): Q3 2020 ✅
     + Regularly take into account user requests
 
