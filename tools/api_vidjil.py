@@ -125,6 +125,15 @@ class Vidjil:
             string+= "%s=%s&" % (key, data[key])
         return string
 
+    def download(self, filepath, filename):
+        url = "%s/default/download/%s?filename=%s" % (self.url, filepath, filename)
+        reponse = self.session.get(url, verify=False)
+        open(filename, 'wb').write(reponse.content)
+        # TODO: add verification step if same filename is already present
+        print( "File created: %s" % filename)
+        return
+
+
 if  __name__ =='__main__':
 
     vidjil = Vidjil(url, False)
