@@ -87,8 +87,8 @@ class Vidjil:
         response = self.session.get(new_url, verify=self.ssl)
         print( response.content )
 
-    def getSampleOfSet(self, set_id):
-        new_url = "https://localhost/vidjil/sample_set/index?id=%s&format=json&config_id=9" % set_id
+    def getSampleOfSet(self, set_id, config_id=-1):
+        new_url = self.url+"/sample_set/index?id=%s&format=json&config_id=%s" % (set_id, config_id)
         # print( new_url )
         response = self.session.get(new_url, verify=False)
         print( " ====  site  =====" )
@@ -104,7 +104,7 @@ class Vidjil:
             print( "sample set %s: %s samples" % (set_id, len(content)))
             for sample in content:
                 print( sample )
-        return
+        return content
 
     def launchAnalisysSample(self, sample_id, config_id, force):
         # get sample status
