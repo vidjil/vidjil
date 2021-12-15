@@ -71,16 +71,21 @@ class Vidjil:
             self.whoami()
             # todo; print admin status; groups ?
 
-    def getAllSamples(self):
+    def getAllSamples(self, filter_val=None):
         if not self.logged:
             print( "Should be logged")
             return -1
-        response = self.session.get(self.url+"/sample_set/all?page=0&type=patient&format=json&", verify=self.ssl)
+        if filter_val == None:
+            filter_val == ""
+        else:
+            filter_val = "filter=" + prettyUrl(filter_val)
+        new_url = self.url+"/sample_set/all?&type=patient&format=json&%s" % filter_val
+        response = self.session.get(new_url, verify=self.ssl)
         print( " ====  site  =====" )
         print(response.url)
         content = json.loads(response.content)
-        print( content[0] )
-        print( content[0]["sample_set_id"] )
+        return content
+
 
     def whoami(self):
         new_url = "https://localhost/vidjil//default/whoami"
