@@ -47,6 +47,7 @@ class Vidjil:
             self.logged = True
             print( "Successfull login")
             self.whoami()
+            # todo; print admin status; groups ?
 
     def getAllSamples(self):
         if not self.logged:
@@ -65,19 +66,45 @@ class Vidjil:
         print( response.content )
 
     def getSampleOfSet(self, set_id):
-        # new_url = "https://localhost/vidjil/sample_set/index?id="+str(content[0]["sample_set_id"])+"&format=json&"
+        new_url = "https://localhost/vidjil/sample_set/index?id=%s&format=json&config_id=9" % set_id
         # print( new_url )
-        # response = session.get(new_url, verify=False)
-        # print( " ====  site  =====" )
+        response = self.session.get(new_url, verify=False)
+        print( " ====  site  =====" )
         # print(response.url)
         # print( response.content )
-        # content = json.loads(response.content)
-        # print( content )
+        content = json.loads(response.content)
+        if len(content) == 0:
+            print( "Empty sample set %s" % set_id)
+        if isinstance(content, dict): #len(content) == 1 and content[0] == "message":
+            print( "Sample set %s out of your right" % set_id)
+            print( content["message"])
+        else:
+            print( "sample set %s: %s samples" % (set_id, len(content)))
+            for sample in content:
+                print( sample )
         return
 
+    def launchAnalisysSample(self, sample_id, config_id, force):
+        # get sample status
+        #
+        return
 
 if  __name__ =='__main__':
 
     vidjil = Vidjil(url, False)
-    vidjil.login("plop@plop.com", "foobartest")
+    # vidjil.login("plop@plop.com", "foobartest")
+    vidjil.login("distinct@user.org", "foobartest")
     vidjil.getAllSamples()
+    print( "vidjil.getSampleOfSet(1)" )
+    vidjil.getSampleOfSet(1)
+    print( "vidjil.getSampleOfSet(2)" )
+    vidjil.getSampleOfSet(2)
+    print( "vidjil.getSampleOfSet(3)" )
+    vidjil.getSampleOfSet(3)
+
+
+    vidjil = Vidjil(url, False)
+    vidjil.login("plop@plop.com", "foobartest")
+    print( "vidjil.getSampleOfSet(3)" )
+    vidjil.getSampleOfSet(3)
+
