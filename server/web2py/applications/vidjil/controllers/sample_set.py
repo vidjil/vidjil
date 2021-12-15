@@ -84,6 +84,7 @@ def index():
 
     if config :
         config_name = db.config[config_id].name
+        print( "===  config_name: %s" % config_name)
 
         fused = db(
             (db.fused_file.sample_set_id == sample_set_id)
@@ -184,7 +185,7 @@ def index():
         'record_id': request.vars["id"],
         'table_name': "sample_set"})
     #if (auth.can_view_patient(request.vars["id"]) ):
-    return dict(query=query,
+    return returnWraper( dict(query=query,
                 has_shared_sets = len(shared_sets) > 0,
                 pre_process_list=pre_process_list,
                 config_id=config_id,
@@ -201,7 +202,7 @@ def index():
                 config=config,
                 classification=classification,
                 tag_decorator=tag_decorator,
-                http_origin=http_origin)
+                http_origin=http_origin), request, response)
 
 ## return a list of generic sample_sets
 def all():

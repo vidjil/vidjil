@@ -1672,7 +1672,7 @@ def main():
     group_options.add_argument('--post', type=str,help='post-process program (launched on fused .vidjil file) (needs defs.PRE_PROCESS_DIR). \
                                              Program should take arguments -i/-o for input of vidjil file and output of temporary modified vidjil file.')
 
-    group_options.add_argument("--distribution", "-d", action='append', type=str, help='compute the given distribution; callable multiple times')
+    group_options.add_argument("--distribution", "-d", nargs='+', type=str, help='compute the given distribution; callable multiple times')
     group_options.add_argument('--distributions-all', '-D', action='store_true', default=False, help='compute a preset of distributions')
     group_options.add_argument('--distributions-list', '-l', action='store_true', default=False, help='list the available axes for distributions')
     group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
