@@ -116,6 +116,12 @@ class Vidjil:
         #
         return
 
+    def convertDataAsUrl(self, data):
+        string = ""
+        for key in data.keys():
+            string+= "%s=%s&" % (key, data[key])
+        return string
+
 if  __name__ =='__main__':
 
     vidjil = Vidjil(url, False)
