@@ -6,7 +6,7 @@
  */
 Cypress.Commands.add('clone_rename', (id, new_name) => { 
 
-    cy.get('#listElem_'+id+' > .nameBox')
+    cy.getCloneInList(id)
       .dblclick()
     cy.get('#new_name')
       .type(new_name)
@@ -15,4 +15,16 @@ Cypress.Commands.add('clone_rename', (id, new_name) => {
     cy.get('#listElem_'+id+' > .nameBox')
       .should("contain", new_name)
 
+})
+
+Cypress.Commands.add('getCloneInList', (id) => {
+
+  cy.get('#listElem_'+id+' > .nameBox')
+    .should("exist")
+})
+
+Cypress.Commands.add('getCloneInSegmenter', (id) => {
+
+  cy.get('#seq'+id)
+    .should("exist")
 })
