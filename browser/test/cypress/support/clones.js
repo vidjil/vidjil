@@ -28,3 +28,12 @@ Cypress.Commands.add('getCloneInSegmenter', (id) => {
   cy.get('#seq'+id)
     .should("exist")
 })
+
+Cypress.Commands.add('getCloneInScatterplot', (id) => {
+  cy.get('#visu_circle'+id)
+})
+
+Cypress.Commands.add('getClusterInList', (id) => {
+  cy.get('#cluster1')
+    .should("exist")
+})
