@@ -111,9 +111,12 @@ class Vidjil:
                 print( sample )
         return content
 
-    def launchAnalisysSample(self, sample_id, config_id, force):
+    def launchAnalisysSample(self, sample_id, sequence_file_id, config_id, force=False):
         # get sample status
-        #
+        data     = { 'sequence_file_id' : sequence_file_id, 'sample_set_id' : sample_id, 'config_id' : config_id }
+        url_data = self.convertDataAsUrl(data)
+        new_url  = self.url + "default/run_request?" + url_data
+        response = self.session.get(new_url, verify=False)
         return
 
     def convertDataAsUrl(self, data):
