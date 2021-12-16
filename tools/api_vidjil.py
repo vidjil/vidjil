@@ -71,7 +71,8 @@ class Vidjil:
             self.whoami()
             # todo; print admin status; groups ?
 
-    def getAllSamples(self, filter_val=None):
+    def getAllSamples(self, set_type=None, filter_val=None):
+        """ get all sample set """
         if not self.logged:
             print( "Should be logged")
             return -1
@@ -79,7 +80,7 @@ class Vidjil:
             filter_val == ""
         else:
             filter_val = "filter=" + prettyUrl(filter_val)
-        new_url = self.url+"/sample_set/all?&type=patient&format=json&%s" % filter_val
+        new_url = self.url+"/sample_set/all?&type=%s&format=json&%s" % (set_type, filter_val)
         response = self.session.get(new_url, verify=self.ssl)
         print( " ====  site  =====" )
         print(response.url)
