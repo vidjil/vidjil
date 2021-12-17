@@ -87,6 +87,14 @@ class Vidjil:
         content = json.loads(response.content)
         return content
 
+    def getSamplesetById(self, set_id=None, set_type=None):
+        """ get a sample set by type and id """
+        set_type = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
+        new_url  = self.url+"/sample_set/samplesetById?&id=%s&%s" % (set_id, set_type)
+        response = self.session.get(new_url, verify=self.ssl)
+        content  = json.loads(response.content)
+        return content
+
 
     def whoami(self):
         new_url = "https://localhost/vidjil//default/whoami"
