@@ -293,6 +293,20 @@ def samples():
                   page = res['page'])
     return response.json(export)
 
+def samplesetById():
+    '''
+    API: Get a specific sample based on the set id
+    Take two paramaters: set id and set type
+    '''
+    type    = (request.vars['type'] if ("type" in request.vars.keys()) else defs.SET_TYPE_GENERIC )
+    set_id  =  request.vars['id']
+
+    factory = ModelFactory()
+    helper  = factory.get_instance(type=type)
+    slist   = SampleSetList(helper, setid=set_id)
+
+    return response.json(slist.result)
+
 
 def stats():
     start = time.time()
