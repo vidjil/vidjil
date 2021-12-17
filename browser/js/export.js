@@ -423,7 +423,8 @@ Report.prototype = {
                                         value: cloneID,
                                         text: text}).appendTo(parent)
                           $('<button/>',{value: cloneID , 
-                                        text: "remove", 
+                                        title: "remove clone from report",
+                                        class: "icon-cancel", 
                                         style: "float:right;"}).click(handle).appendTo(div)
             }
         }
@@ -435,6 +436,16 @@ Report.prototype = {
 
         var handle = function(){
             self.removeBlock(parseInt($(this).attr("value")));
+            self.menu();
+        }
+
+        var handle_up = function(){
+            self.upBlock(parseInt($(this).attr("value")));
+            self.menu();
+        }
+
+        var handle_down = function(){
+            self.downBlock(parseInt($(this).attr("value")));
             self.menu();
         }
 
@@ -473,11 +484,21 @@ Report.prototype = {
                     break;
             }
 
+
             var div   = $('<div/>',   { class: "rs-block rs-selected",
                                         text: text}).appendTo(parent);
                         $('<button/>',{ value:  i , 
-                                        text: "remove", 
+                                        class: "icon-cancel", 
+                                        title: "remove block",
                                         style: "float:right;"}).click(handle).appendTo(div)
+                        $('<button/>',{ value:  i , 
+                                        class: "icon-down-open",
+                                        title: "move block up in the list",
+                                        style: "float:right;"}).click(handle_down).appendTo(div)
+                        $('<button/>',{ value:  i , 
+                                        class: "icon-up-open", 
+                                        title: "move block down in the list",
+                                        style: "float:right;"}).click(handle_up).appendTo(div)
         }
 
 
@@ -742,8 +763,10 @@ Report.prototype = {
             'class': 'container'
         })
 
+        var div_containers = self.w.document.getElementById("containers")
+
         if (typeof sibling == "undefined")
-            container.appendTo(this.w.document.body);
+            container.appendTo(div_containers);
         else
             container.insertAfter(sibling);
         
@@ -758,7 +781,21 @@ Report.prototype = {
                 'class': 'container_button',
                 'text' : 'remove container',
                 'title': 'click to remove highligthed container' 
-            }).click(function(){self.deleteBlock(container)})
+            }).click(function(){self.removeContainer(container)})
+              .appendTo(float);
+
+            var upButton = $('<button/>', {
+                'class': 'container_button icon-up-open',
+                'text' : 'up',
+                'title': 'click to move up' 
+            }).click(function(){self.upContainer(container)})
+              .appendTo(float);
+
+            var downButton = $('<button/>', {
+                'class': 'container_button icon-down-open',
+                'text' : 'down',
+                'title': 'click to remove highligthed container' 
+            }).click(function(){self.downContainer(container)})
               .appendTo(float);
 
             var logButton = $('<button/>', {
@@ -849,14 +886,25 @@ Report.prototype = {
 
     // delete block of a given container
     //
-    deleteBlock: function(container){
-        var parent_block = this.container_map.get(container)
+    removeContainer: function(container){
+        var block = this.container_map.get(container)
 
-        var index = this.settings.blocks.indexOf(parent_block)
-        if ( index != -1 ){
-            this.settings.blocks.splice(index, 1);
-            $(container).remove()
-        }   
+        this.removeBlock(block)
+        $(container).remove()
+    },
+
+    upContainer: function(container){
+        var block = this.container_map.get(container)
+
+        this.upBlock(block)
+        $(container).insertBefore($(container).prev());
+    },
+
+    downContainer: function(container){
+        var block = this.container_map.get(container)
+
+        this.downBlock(block)
+        $(container).insertAfter($(container).next());
     },
 
     info : function(block) {
