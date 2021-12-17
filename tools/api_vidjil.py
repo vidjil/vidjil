@@ -91,6 +91,54 @@ class Vidjil:
         content  = json.loads(response.content)
         return content
 
+    def createPatient(self, first_name='patient_api', last_name='API', sample_set_id=None, id=None, id_label=None, birth_date=None, info=None):
+        data = {"group":"1","patient":[{
+                    'id': id if id else "",
+                    'sample_set_id': sample_set_id if sample_set_id else "",
+                    'id_label': id_label if id_label else "",
+                    'first_name': first_name, # mandatory
+                    'last_name':last_name,
+                    'birth': birth_date if birth_date else "",
+                    'info': prettyUrl(info if info else "") # to modifiy specials caracters
+                    }
+                ]}
+        url_data = json.dumps(data).replace(" ", "")
+        new_url  = self.url + "/sample_set/submit?data=%s" % url_data
+        response = self.session.post(new_url, verify=self.ssl)
+        print( response.content )
+        return
+
+    def createRun(self, name='run_api', sample_set_id=None, id=None, id_label=None, run_date=None, info=None, sequencer=None, pcr=None):
+        data = {"group":"1","run":[{
+                    'id': id if id else "",
+                    'sample_set_id': sample_set_id if sample_set_id else "",
+                    'id_label': id_label if id_label else "",
+                    'name': name, # mandatory
+                    'run_date': run_date if run_date else "",
+                    'info': prettyUrl(info if info else ""), # to modifiy specials caracters
+                    'sequencer': sequencer if sequencer else "",
+                    'pcr': pcr if pcr else ""
+                    }
+                ]}
+        url_data = json.dumps(data).replace(" ", "")
+        new_url  = self.url + "/sample_set/submit?data=%s" % url_data
+        response = self.session.post(new_url, verify=self.ssl)
+        print( response.content )
+        return
+
+    def createSet(self, name='set_api', sample_set_id=None, id=None, info=None):
+        data = {"group":"1","generic":[{
+                    'id': id if id else "",
+                    'sample_set_id': sample_set_id if sample_set_id else "",
+                    'name': name, # mandatory
+                    'info': prettyUrl(info if info else "")
+                    }
+                ]}
+        url_data = json.dumps(data).replace(" ", "")
+        new_url  = self.url + "/sample_set/submit?data=%s" % url_data
+        response = self.session.post(new_url, verify=self.ssl)
+        print( response.content )
+        return
 
     def whoami(self):
         new_url = "https://localhost/vidjil//default/whoami"
