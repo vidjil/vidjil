@@ -1122,9 +1122,45 @@ Report.prototype = {
         }
     },
 
-    // remove a block by index
-    removeBlock : function(index) {
-        this.settings.blocks.splice(index, 1)
+    // remove a block (can use either block object or index in settings.blocks array)
+    removeBlock : function(block) {
+        var index;
+        if (typeof block == "number")
+            index = block;
+        
+        if (typeof block == "object")
+            index = this.indexOfBlock(block);
+
+        if (index > -1 && index < this.settings.blocks.length)
+            this.settings.blocks.splice(index, 1)
+    },
+
+    upBlock : function(block) {
+        var index;
+        if (typeof block == "number")
+            index = block;
+        
+        if (typeof block == "object")
+            index = this.indexOfBlock(block);
+
+        if (index > 0 && index < this.settings.blocks.length){
+            block = this.settings.blocks.splice(index, 1)[0];
+            this.settings.blocks.splice(index-1, 0, block);
+        }
+    },
+
+    downBlock: function(block){
+        var index;
+        if (typeof block == "number")
+            index = block;
+        
+        if (typeof block == "object")
+            index = this.indexOfBlock(block);
+
+        if (index > -1 && index < this.settings.blocks.length-1){
+            block = this.settings.blocks.splice(index, 1)[0];
+            this.settings.blocks.splice(index+1, 0, block);
+        }
     },
 
     scatterplot : function(block) {
