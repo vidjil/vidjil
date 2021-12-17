@@ -179,8 +179,8 @@ Report.prototype = {
         $('<option/>',  { text: "--- User Report ---"}).appendTo(select);
 
         keys = Object.keys(this.m.report_save);
-        for (var i = 0; i < keys.length; i++){
-            var savename = keys[i];
+        for (var j = 0; j < keys.length; j++){
+            var savename = keys[j];
             $('<option/>',  { text: savename,
                               selected: (self.settings.name == savename),
                               value: savename}).appendTo(select);
@@ -330,8 +330,8 @@ Report.prototype = {
         var checkBoxes = []
         var locus_select = $("#report-settings-locus-select")
         var parent = $('<div/>', { class: "rs-flex-parent-h"}).appendTo(locus_select);
-        for (var i = 0; i < this.m.system_available.length; i++){
-            var locus = this.m.system_available[i]
+        for (var j = 0; j < this.m.system_available.length; j++){
+            var locus = this.m.system_available[j]
             var selected = this.settings.locus.indexOf(locus) != -1
 
             var div   = $('<div/>',   { class: "rs-locus"}).appendTo(parent);
@@ -569,8 +569,8 @@ Report.prototype = {
     savestate: function(){
         this.save_state = {};
 
-        this.save_state.system_selected = this.m.system_selected.splice(0)
-        this.save_state.samples_order = this.m.samples.order.splice(0)
+        this.save_state.system_selected = this.m.system_selected.slice()
+        this.save_state.samples_order = this.m.samples.order.slice()
         this.save_state.axis_color = this.m.color.axis.name
         
         return this;
@@ -586,9 +586,9 @@ Report.prototype = {
     },
     
     restorestate: function(){
-        this.m.system_selected = this.save_state.system_selected.splice(0)
-        this.m.color.set(this.save_state.axis_color)
+        this.m.system_selected = this.save_state.system_selected.slice()
         this.m.changeTimeOrder(this.save_state.samples_order)
+        this.m.color.set(this.save_state.axis_color)
         return this;
     },
     
@@ -1032,9 +1032,9 @@ Report.prototype = {
         }
 
         if (sp.axisX.scale && sp.axisX.useCustomScale)
-            block['domainX'] = sp.axisX.scale.domain.slice(0)
+            block.domainX = sp.axisX.scale.domain.slice(0)
         if (sp.axisY.scale && sp.axisY.useCustomScale)
-            block['domainY'] = sp.axisY.scale.domain.slice(0)
+            block.domainY = sp.axisY.scale.domain.slice(0)
         
 
         if (this.indexOfBlock(block) == -1){
