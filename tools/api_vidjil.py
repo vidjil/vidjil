@@ -178,11 +178,24 @@ class Vidjil:
             string+= "%s=%s&" % (key, data[key])
         return string
 
-    def download(self, filepath, filename):
+    def download(self, filepath, filename, server_name=None, original_names=None):
+        """
+        filepath is the name of the file as present in the server storage
+        filename is the output filename to set to locally store
+        """
         url = "%s/default/download/%s?filename=%s" % (self.url, filepath, filename)
         reponse = self.session.get(url, verify=False)
-        open(filename, 'wb').write(reponse.content)
         # TODO: add verification step if same filename is already present
+        open(filename, 'wb').write(reponse.content)
+
+        # Clean file names
+        if server_name and original_names:
+            cmd = "sed -i 's/%s/%s/g' %s" % (server_name, original_names, filename)
+            os.system( cmd )
+        os.system( "sed -i 's/\\/mnt\\/upload\\/uploads\\///g' %s" % (filename) )
+        for pattern in ["\\.fastq.gz", "\\.fq.gz", "\\.fasta", "\\.fastq", "\\.fa"]:
+            os.system( "sed -i 's/%s//g' %s" % (pattern, filename) )
+
         print( "File created: %s" % filename)
         return
 
