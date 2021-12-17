@@ -12,8 +12,9 @@ from requests_toolbelt import MultipartEncoder
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
-url = "https://localhost/vidjil/"
+TAGS = []
+TAGS_UNDEFINED = []
+url  = "https://localhost/vidjil/"
 def prettyUrl(string):
 
     specChars = {
@@ -199,6 +200,22 @@ class Vidjil:
         print( "File created: %s" % filename)
         return
 
+
+#########################
+### Some utils functions
+#########################
+def extractTags(string):
+    '''
+    Extract tags from information field of set/sample
+    Data if also added to a global tags list
+    '''
+    tags = []
+    for sub in string.split(" "):
+        if sub != "" and sub.startswith("#"):
+            tags.append( sub[1:])
+    global TAGS
+    TAGS += tags
+    return tags
 
 if  __name__ =='__main__':
 
