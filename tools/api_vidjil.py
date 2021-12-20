@@ -6,6 +6,9 @@ import requests
 
 import os
 import random, string
+import argparse
+import getpass
+import sys
 from bs4 import BeautifulSoup
 from requests_toolbelt import MultipartEncoder
 # REmove warning if no SSL vérification
@@ -222,20 +225,46 @@ def extractTags(string):
 
 if  __name__ =='__main__':
 
-    vidjil = Vidjil(url, False)
-    # vidjil.login("plop@plop.com", "foobartest")
-    vidjil.login("distinct@user.org", "foobartest")
-    vidjil.getAllSamples()
-    print( "vidjil.getSampleOfSet(1)" )
-    vidjil.getSampleOfSet(1)
-    print( "vidjil.getSampleOfSet(2)" )
-    vidjil.getSampleOfSet(2)
-    print( "vidjil.getSampleOfSet(3)" )
-    vidjil.getSampleOfSet(3)
+    print("#", ' '.join(sys.argv))
+
+    DESCRIPTION = 'Vidjil utility to access server by API script'
+    
+    #### Argument parser (argparse)
+
+    parser = argparse.ArgumentParser(description= DESCRIPTION,
+                                    epilog='''Example:
+  python3 %(prog)s --user USER --url-server URL_SERVER --certificat CERTIFICAT.CHAIN.PEM''',
+                                    formatter_class=argparse.RawTextHelpFormatter)
+
+    group_options = parser.add_argument_group() # title='Options and parameters')
+    group_options.add_argument('--user',       '-u', type=str, default=None, help='User to log in')
+    group_options.add_argument('--url-server', '-s', type=str, default="https://localhost/vidjil/", help='URL of the server to access (%(default)s)')
+    group_options.add_argument('--url-client',       type=str, default=None, help='URL of the client (optional)')
+    group_options.add_argument('--certificat', '-c', type=str, default=None, help='path to certificat to use. Mandatory to access to a server and crypt sended/received data (password, patient name, ...)')
+    group_options.add_argument('--test', action='store_true', help='run self-tests')
+    args = parser.parse_args()
+
+    if args.test:
+        import doctest
+        doctest.testmod(verbose = True)
+        sys.exit(0)
+    if args.user == None or args.certificat == None:
+        print( "User and certificat file should be specified")
+        sys.exit(0)
+
+    user = args.user
+    url_server = args.url_server
+    url_client = args.url_client if (args.url_client != None) else args.url_server
+    certificat = args.certificat
 
 
-    vidjil = Vidjil(url, False)
-    vidjil.login("plop@plop.com", "foobartest")
-    print( "vidjil.getSampleOfSet(3)" )
-    vidjil.getSampleOfSet(3)
+    try:
+        password = getpass.getpass()
+    except Exception as error:
+        print('ERROR', error)
+    else:
+        print('Password entered:', password)
 
+    vidjil = Vidjil(url_server, url_client=url_client, ssl=certificat)
+    vidjil.login(user, password)
+    vidjil.getSamplesetById(1,  "patient")
