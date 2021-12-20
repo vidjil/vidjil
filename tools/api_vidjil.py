@@ -38,11 +38,15 @@ def prettyUrl(string):
             new_string += cara
     return new_string
 
+
+
 class Vidjil:
 
-    def __init__(self, url, ssl=True):
-        self.url = url
+    def __init__(self, url_server, url_client=None, ssl=True):
+        self.url_server = url_server
+        self.url_client = url_client if url_client != None else url_server
         self.ssl = ssl
+        print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
         self.session = requests.Session()
         cookie = requests.cookies.RequestsCookieJar()
         if os.path.exists('cookies'):
@@ -50,7 +54,7 @@ class Vidjil:
         self.session.cookies = cookie
 
     def login(self, email, password):
-        response = self.session.get(self.url + '/default/user/login', verify=self.ssl)
+        response = self.session.get(self.url_server + '/default/user/login', verify=self.ssl)
         data = { "email":email, "password":password, 'remember_me':"on" }
         BS = BeautifulSoup(response.text, 'html.parser')
         for i, e in enumerate(BS.select('input[name]')):
@@ -59,8 +63,7 @@ class Vidjil:
                 data[e['name']] = e['value']
         m = MultipartEncoder(fields=data)
         headers = {'Content-Type': m.content_type }
-        # print(headers)
-        response = self.session.post(url + '/default/user/login', data = m, headers = headers, verify=self.ssl)
+        response = self.session.post(self.url_server + '/default/user/login', data = m, headers = headers, verify=self.ssl)
 
         if response.status_code != 200:
             self.logged = False
@@ -79,7 +82,7 @@ class Vidjil:
             return -1
         set_type   = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
         filter_val = "" if filter_val == None else "filter="+prettyUrl(filter_val)+"&"
-        new_url  = self.url+"/sample_set/all?&%s%sformat=json&" % (set_type, filter_val)
+        new_url  = self.url_server+"/sample_set/all?&%s%sformat=json&" % (set_type, filter_val)
         response = self.session.get(new_url, verify=self.ssl)
         content  = json.loads(response.content)
         return content
@@ -87,7 +90,7 @@ class Vidjil:
     def getSamplesetById(self, set_id=None, set_type=None):
         """ get a sample set by type and id """
         set_type = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
-        new_url  = self.url+"/sample_set/samplesetById?&id=%s&%s" % (set_id, set_type)
+        new_url  = self.url_server+"/sample_set/samplesetById?&id=%s&%s" % (set_id, set_type)
         response = self.session.get(new_url, verify=self.ssl)
         content  = json.loads(response.content)
         return content
@@ -104,7 +107,7 @@ class Vidjil:
                     }
                 ]}
         url_data = json.dumps(data).replace(" ", "")
-        new_url  = self.url + "/sample_set/submit?data=%s" % url_data
+        new_url  = self.url_server + "/sample_set/submit?data=%s" % url_data
         response = self.session.post(new_url, verify=self.ssl)
         print( response.content )
         return
@@ -122,7 +125,7 @@ class Vidjil:
                     }
                 ]}
         url_data = json.dumps(data).replace(" ", "")
-        new_url  = self.url + "/sample_set/submit?data=%s" % url_data
+        new_url  = self.url_server + "/sample_set/submit?data=%s" % url_data
         response = self.session.post(new_url, verify=self.ssl)
         print( response.content )
         return
@@ -136,18 +139,18 @@ class Vidjil:
                     }
                 ]}
         url_data = json.dumps(data).replace(" ", "")
-        new_url  = self.url + "/sample_set/submit?data=%s" % url_data
+        new_url  = self.url_server + "/sample_set/submit?data=%s" % url_data
         response = self.session.post(new_url, verify=self.ssl)
         print( response.content )
         return
 
     def whoami(self):
-        new_url = "https://localhost/vidjil//default/whoami"
+        new_url = self.url_server + "/default/whoami"
         response = self.session.get(new_url, verify=self.ssl)
         print( response.content )
 
     def getSampleOfSet(self, set_id, config_id=-1):
-        new_url = self.url+"/sample_set/index?id=%s&format=json&config_id=%s" % (set_id, config_id)
+        new_url = self.url_server+"/sample_set/index?id=%s&format=json&config_id=%s" % (set_id, config_id)
         # print( new_url )
         response = self.session.get(new_url, verify=False)
         print( " ====  site  =====" )
@@ -169,7 +172,7 @@ class Vidjil:
         # get sample status
         data     = { 'sequence_file_id' : sequence_file_id, 'sample_set_id' : sample_id, 'config_id' : config_id }
         url_data = self.convertDataAsUrl(data)
-        new_url  = self.url + "default/run_request?" + url_data
+        new_url  = self.url_server + "default/run_request?" + url_data
         response = self.session.get(new_url, verify=False)
         return
 
@@ -184,7 +187,7 @@ class Vidjil:
         filepath is the name of the file as present in the server storage
         filename is the output filename to set to locally store
         """
-        url = "%s/default/download/%s?filename=%s" % (self.url, filepath, filename)
+        url = "%s/default/download/%s?filename=%s" % (self.url_server, filepath, filename)
         reponse = self.session.get(url, verify=False)
         # TODO: add verification step if same filename is already present
         open(filename, 'wb').write(reponse.content)
