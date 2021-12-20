@@ -2,8 +2,7 @@
 .test_cypress_server:
   stage: test_cypress_server
   extends:
-    - .test_server_base
-    - .test_cypress_base
+    - .test_server_base_dind
     # - .need_for_staged_server
   script: &test_cypress_server_script
     - docker pull "vidjilci/cypress_with_browsers:latest"
@@ -28,14 +27,16 @@
     CYPRESS_PATH: server/web2py/applications/vidjil/tests/cypress
     HOST: local
     TEST_FILES: "/app/cypress/integration/test_*.js"
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375    
   only: &onlyServerBranches
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
     - /^prod-server/
     - dev
   tags:
-    - x86_64
-    - docker
+    - cidocker
 
 
 ## Cypress with server
@@ -45,6 +46,9 @@ server1-ff-supported:
     - .need_for_moderate_server
   variables:
     BROWSER: firefox_supported/firefox
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375    
 
 ## Cypress with server
 s2:
