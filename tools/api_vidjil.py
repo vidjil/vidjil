@@ -85,7 +85,7 @@ class Vidjil:
             return -1
         set_type   = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
         filter_val = "" if filter_val == None else "filter="+prettyUrl(filter_val)+"&"
-        new_url  = self.url_server+"/sample_set/all?&%s%sformat=json&" % (set_type, filter_val)
+        new_url  = self.url_server+"/sample_set/all.json?&%s%s&" % (set_type, filter_val)
         response = self.session.get(new_url, verify=self.ssl)
         content  = json.loads(response.content)
         return content
@@ -153,22 +153,9 @@ class Vidjil:
         print( response.content )
 
     def getSampleOfSet(self, set_id, config_id=-1):
-        new_url = self.url_server+"/sample_set/index?id=%s&format=json&config_id=%s" % (set_id, config_id)
-        # print( new_url )
+        new_url  = self.url_server+"/sample_set/index.json?id=%s&format=json&config_id=%s" % (set_id, config_id)
         response = self.session.get(new_url, verify=False)
-        print( " ====  site  =====" )
-        # print(response.url)
-        # print( response.content )
-        content = json.loads(response.content)
-        if len(content) == 0:
-            print( "Empty sample set %s" % set_id)
-        if isinstance(content, dict): #len(content) == 1 and content[0] == "message":
-            print( "Sample set %s out of your right" % set_id)
-            print( content["message"])
-        else:
-            print( "sample set %s: %s samples" % (set_id, len(content)))
-            for sample in content:
-                print( sample )
+        content  = json.loads(response.content)
         return content
 
     def launchAnalisysSample(self, sample_id, sequence_file_id, config_id, force=False):
@@ -324,4 +311,5 @@ if  __name__ =='__main__':
 
     vidjil = Vidjil(url_server, url_client=url_client, ssl=certificat)
     vidjil.login(user, password)
-    vidjil.getSamplesetById(1,  "patient")
+    _set = vidjil.getSamplesetById(1,  "patient")
+    print( _set )
