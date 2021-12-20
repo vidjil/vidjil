@@ -185,7 +185,7 @@ def index():
         'record_id': request.vars["id"],
         'table_name': "sample_set"})
     #if (auth.can_view_patient(request.vars["id"]) ):
-    return returnWraper( dict(query=query,
+    return dict(query=query,
                 has_shared_sets = len(shared_sets) > 0,
                 pre_process_list=pre_process_list,
                 config_id=config_id,
@@ -202,7 +202,7 @@ def index():
                 config=config,
                 classification=classification,
                 tag_decorator=tag_decorator,
-                http_origin=http_origin), request, response)
+                http_origin=http_origin)
 
 ## return a list of generic sample_sets
 def all():
@@ -271,15 +271,15 @@ def all():
         'table_name': "sample_set"})
     log.debug("sample_set list (%.3fs)" % (time.time()-start))
 
-    return returnWraper( { "query": result,
-                "fields": fields,
-                "helper" : helper,
-                "group_ids" : group_ids,
-                "admin_permissions" : admin_permissions,
-                "isAdmin" : isAdmin,
-                "reverse" : reverse,
-                "step" : step,
-                "page" : page}, request, response)
+    return dict(query= result,
+                fields= fields,
+                helper = helper,
+                group_ids = group_ids,
+                admin_permissions = admin_permissions,
+                isAdmin = isAdmin,
+                reverse = reverse,
+                step = step,
+                page= page)
 
 
 def samples():
