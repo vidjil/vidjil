@@ -311,5 +311,18 @@ if  __name__ =='__main__':
 
     vidjil = Vidjil(url_server, url_client=url_client, ssl=certificat)
     vidjil.login(user, password)
+
+    # Some request return direct json data
     _set = vidjil.getSamplesetById(1,  "patient")
     print( _set )
+
+    # some other return a batch of informations
+    print( "=== Json data get by some mix html/json request ===")
+    samples = vidjil.getSampleOfSet(1)
+    print( "\n\nLength of samples: %s" % len(samples["query"]) )
+    print( "Keys of samples: %s\n\n" % samples.keys() )
+
+    # Specific data usually are stored under 'query' key
+    print( "=== Items of samples in the set ===")
+    for sample in samples["query"]:
+        print( sample )
