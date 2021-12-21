@@ -7,11 +7,6 @@ import datetime
 from gluon import current
 from datetime import date
 
-def returnWraper(values, request, response):
-    if request.vars["format"] and request.vars["format"] == "json":
-        return response.json(values["query"])
-    else:
-        return values
 
 def format_size(n, unit='B'):
     '''
