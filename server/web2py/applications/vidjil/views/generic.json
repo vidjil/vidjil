@@ -4,8 +4,8 @@
     response.headers['Content-Type'] = 'application/json'
     data = dict(ignored_fileds=[])
     for key in response._vars.keys():
+        # Some object are not serializable; extract them before rendering json
         try:
-            print( "key => %s" % key)
             json(response._vars[key])
             data[key] = response._vars[key]
         except:
