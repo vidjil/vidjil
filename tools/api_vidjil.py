@@ -193,6 +193,52 @@ class Vidjil:
         print( "File created: %s" % filename)
         return
 
+    def createSample(self, set_ids, sample_set_id, sample_type, file_filename, file_filename2, file_id, file_sampling_date, file_info, file_set_ids, source="computer", pre_process="0"):
+        head_f1, tail_f1 = os.path.split(file_filename)
+        head_f2, tail_f2 = os.path.split(file_filename2)
+
+        data = {
+            "source":source,
+            "pre_process":pre_process,
+            "set_ids":prettyUrl(set_ids if set_ids else ""),                   # ex: ":r+run_api+(67)",
+            "file":[
+                {
+                    "filename":tail_f1,
+                    "filename2":tail_f2,
+                    "id":file_id,
+                    "sampling_date":file_sampling_date,
+                    "info": prettyUrl(file_info if file_info else ""),         # ex: "test+#age=25+#cat=val",
+                    "set_ids": prettyUrl(file_set_ids if file_set_ids else "") # ex: ":p+tes+(2)"
+                }
+            ],
+            "sample_set_id":sample_set_id,
+            "sample_type":sample_type
+        }
+        url_data = json.dumps(data).replace(" ", "")
+        new_url  = self.url_server + "/file/submit.json?data=%s" % url_data
+        response = self.session.post(new_url, verify=self.ssl)
+
+        if response.status_code != 200:
+            raise Exception('createSample', "Error in creation of sample in set %s" % sample_set_id)
+        content  = json.loads(response.content)
+        file_ids = content["file_ids"][0]
+
+        ## Upload files
+        self.uploadSample(sample_id=file_ids, filepath=head_f1, filename=tail_f1,  pre_process=pre_process, file_number='1')
+        if file_filename2 != None and file_filename2 != "":
+            self.uploadSample(sample_id=file_ids, filepath=head_f2, filename=tail_f2, pre_process=pre_process, file_number='2')
+        print("Upload completed: '%s' and '%s'" % (tail_f1, tail_f2))
+        return content
+
+    def uploadSample(self, sample_id, filepath, filename, pre_process, file_number):
+        data     = {'pre_process': pre_process, 'id': sample_id, 'file_number': file_number}
+        new_url  = self.url_server + "/file/upload.json"
+        response = self.session.post(new_url, data = data, files={'file':(filename, open(filepath+"/"+filename,'rb'))}, verify=self.ssl)
+        if response.status_code != 200:
+            raise Exception('uploadSample', "Error in upload of sample")
+        return
+
+
 
 #########################
 ### Some utils functions
