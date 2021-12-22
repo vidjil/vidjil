@@ -112,8 +112,8 @@ class Vidjil:
         url_data = json.dumps(data).replace(" ", "")
         new_url  = self.url_server + "/sample_set/submit?data=%s" % url_data
         response = self.session.post(new_url, verify=self.ssl)
-        print( response.content )
-        return
+        content  = json.loads(response.content)
+        return content
 
     def createRun(self, name='run_api', sample_set_id=None, id=None, id_label=None, run_date=None, info=None, sequencer=None, pcr=None):
         data = {"group":"1","run":[{
@@ -130,8 +130,8 @@ class Vidjil:
         url_data = json.dumps(data).replace(" ", "")
         new_url  = self.url_server + "/sample_set/submit?data=%s" % url_data
         response = self.session.post(new_url, verify=self.ssl)
-        print( response.content )
-        return
+        content  = json.loads(response.content)
+        return content
 
     def createSet(self, name='set_api', sample_set_id=None, id=None, info=None):
         data = {"group":"1","generic":[{
@@ -144,8 +144,8 @@ class Vidjil:
         url_data = json.dumps(data).replace(" ", "")
         new_url  = self.url_server + "/sample_set/submit?data=%s" % url_data
         response = self.session.post(new_url, verify=self.ssl)
-        print( response.content )
-        return
+        content  = json.loads(response.content)
+        return content
 
     def whoami(self):
         new_url = self.url_server + "/default/whoami"
@@ -164,7 +164,8 @@ class Vidjil:
         url_data = self.convertDataAsUrl(data)
         new_url  = self.url_server + "default/run_request?" + url_data
         response = self.session.get(new_url, verify=False)
-        return
+        content  = json.loads(response.content)
+        return content
 
     def convertDataAsUrl(self, data):
         string = ""
@@ -222,12 +223,13 @@ class Vidjil:
             raise Exception('createSample', "Error in creation of sample in set %s" % sample_set_id)
         content  = json.loads(response.content)
         file_ids = content["file_ids"][0]
-
+        print("Samples created (%s): launch upload" % (file_ids))
+        
         ## Upload files
         self.uploadSample(sample_id=file_ids, filepath=head_f1, filename=tail_f1,  pre_process=pre_process, file_number='1')
         if file_filename2 != None and file_filename2 != "":
             self.uploadSample(sample_id=file_ids, filepath=head_f2, filename=tail_f2, pre_process=pre_process, file_number='2')
-        print("Upload completed: '%s' and '%s'" % (tail_f1, tail_f2))
+        print("Samples created (%s): upload completed ('%s' and '%s')" % (file_ids, tail_f1, tail_f2))
         return content
 
     def uploadSample(self, sample_id, filepath, filename, pre_process, file_number):
