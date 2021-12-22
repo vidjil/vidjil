@@ -360,15 +360,60 @@ if  __name__ =='__main__':
     vidjil = Vidjil(url_server, url_client=url_client, ssl=certificat)
     vidjil.login(user, password)
 
+    ### Create some other sets
+    patient_data  = vidjil.createPatient()
+    set_data      = vidjil.createSet()
+    run_data      = vidjil.createRun()
+    ### get IDs from content
+    setid_patient = patient_data["args"]["id"]
+    setid_set     = set_data["args"]["id"]
+    setid_run     = run_data["args"]["id"]
+    print( "IDs set (%s); patient (%s); run (%s)" % (setid_set, setid_patient, setid_run))
+
+    ### Create a sample inside these sets
+    if "successfully" in set_data["message"] and "successfully" in patient_data["message"] and "successfully" in run_data["message"]:
+        ### Create sample in recently created patient, set and run
+        sample = vidjil.createSample(source="computer",
+                    pre_process="0",
+                    set_ids=":s+set_api+(%s)"%setid_set ,
+                    file_filename='../demo/Demo-X5.fa',
+                    file_filename2="",
+                    file_id="",
+                    file_sampling_date="2000-01-01",
+                    file_info="Some information and #TAG as #demo",
+                    file_set_ids=":p+(%s)|:r+(%s)" % (setid_patient, setid_run),
+                    sample_set_id=setid_set,
+                    sample_type="set")
+        file_id  = sample["file_ids"][0]
+        analysis = vidjil.launchAnalisysSample(setid_patient, file_id, "2")
+        print( "analysis launched on sequence file %s, processId: %s" % (file_id, analysis["processId"] ))
+
+        ### Upload a second sample in patient and set only
+        vidjil.createSample(source="computer",
+                pre_process="0",
+                set_ids=":p+(%s)"%setid_patient ,
+                file_filename='../demo/Stanford_S22.fasta',
+                file_filename2="",
+                file_id="",
+                file_sampling_date="2000-01-01",
+                file_info="Some information and #TAG",
+                file_set_ids=":s+(%s)" % (setid_set),
+                sample_set_id=setid_patient,
+                sample_type="patient")
+
+
+    ### Look inside samples set
+
     # Some request return direct json data
-    _set = vidjil.getSamplesetById(1,  "patient")
+    _set = vidjil.getSamplesetById(setid_patient,  "patient")
+    print( "=== Set content information ===")
     print( _set )
 
     # some other return a batch of informations
     print( "=== Json data get by some mix html/json request ===")
-    samples = vidjil.getSampleOfSet(1)
-    print( "\n\nLength of samples: %s" % len(samples["query"]) )
-    print( "Keys of samples: %s\n\n" % samples.keys() )
+    samples = vidjil.getSampleOfSet(setid_patient)
+    print( "Keys of data getted: %s" % samples.keys() )
+    print( "Length of samples (under query key): %s" % len(samples["query"]) )
 
     # Specific data usually are stored under 'query' key
     print( "=== Items of samples in the set ===")
