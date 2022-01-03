@@ -713,7 +713,8 @@ Report.prototype = {
                 self.scatterplot({'locus' : system, 'time': self.m.t})
             }
 
-            self.sampleLog()
+            self.cloneList()
+                .sampleLog()
                 .softwareInfo(self.m.t)
                 .comments({})
                 .restorestate()
