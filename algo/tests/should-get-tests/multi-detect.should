@@ -26,8 +26,8 @@ $ Detect one read on IGL
 
 $ Compute the diversity. All windows have only one read, full diversity.
 7: 1   1.000
-1:  E = 1.000
-1: Ds = 1.000
+1:  E.* 1.000
+1: Ds.* 1.000
 
 ### Focusing on Ig recombinations with -g:IGH,IGK,IGL
 !LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH,IGK,IGL $VIDJIL_DATA/multi-complete.fa
