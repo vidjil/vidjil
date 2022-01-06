@@ -235,34 +235,42 @@ ostream &WindowsStorage::printSortedWindows(ostream &os) {
 
 json WindowsStorage::computeDiversity(int nb_segmented) {
 
-  double index_H_entropy = 0.0 ;
-  double index_1_minus_Ds_diversity = 0.0 ;
+  map <string, double> index_H_entropy;
+  map <string, double> index_1_minus_Ds_diversity;
 
-
-  for (auto it = seqs_by_window.begin(); it != seqs_by_window.end(); ++it) {
+  for (auto it = seqs_by_window.begin(); it != seqs_by_window.end(); ++it)
+  {
     size_t clone_nb_reads = it->second.getNbInserted();
+    string code = getGermline(it->first)->code;
 
     float ratio = (float) clone_nb_reads / nb_segmented ;
-    index_H_entropy -= ratio * log(ratio) ;
+    float ratio_logratio = ratio * log(ratio) ;
 
-    index_1_minus_Ds_diversity += ((double) clone_nb_reads * ((double) clone_nb_reads - 1));
+    index_H_entropy[ALL_LOCI] -= ratio_logratio;
+    index_H_entropy[code] -= ratio_logratio;
+
+    double inc_diversity = ((double) clone_nb_reads * ((double) clone_nb_reads - 1));
+    index_1_minus_Ds_diversity[ALL_LOCI] += inc_diversity;
+    index_1_minus_Ds_diversity[code] += inc_diversity;
   }
 
-  double nb_seg_nb_seg_m1 = (double) nb_segmented * ((double) nb_segmented - 1);
-  float index_Ds_diversity = 1 - index_1_minus_Ds_diversity / nb_seg_nb_seg_m1 ;
+  json jsonDiversity;
 
-  float index_E_equitability  = index_H_entropy / log(nb_segmented) ;
+  for (const auto& kv: index_H_entropy)
+  {
+    string code = kv.first ;
+    jsonDiversity["index_H_entropy"][code] = kv.second;
+
+    double nb_seg_nb_seg_m1 = (double) nb_segmented * ((double) nb_segmented - 1);
+    jsonDiversity["index_Ds_diversity"][code] = 1 - index_1_minus_Ds_diversity[code] / nb_seg_nb_seg_m1 ;
+    jsonDiversity["index_E_equitability"][code] = index_H_entropy[code] / log(nb_segmented) ;
+  }
 
   cout << "Diversity measures" << endl
-       << "  H = " << index_H_entropy << endl        // Shannon's diversity
-       << "  E = " << index_E_equitability  << endl  // Shannon's equitability
-       << " Ds = " << index_Ds_diversity << endl     // Simpson's diversity
+       << "  H = " << jsonDiversity["index_H_entropy"] << endl        // Shannon's diversity
+       << "  E = " << jsonDiversity["index_E_equitability"]  << endl  // Shannon's equitability
+       << " Ds = " << jsonDiversity["index_Ds_diversity"] << endl     // Simpson's diversity
        << endl;
-
-  json jsonDiversity;
-  jsonDiversity["index_H_entropy"] = index_H_entropy ;
-  jsonDiversity["index_E_equitability"] = index_E_equitability ;
-  jsonDiversity["index_Ds_diversity"] = index_Ds_diversity ;
 
   return jsonDiversity;
 }
