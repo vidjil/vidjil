@@ -1319,7 +1319,17 @@ int main (int argc, char **argv)
   cout << endl;
 
     //$$ compute, display and store diversity measures
-    json jsonDiversity = windowsStorage->computeDiversity(nb_segmented);
+    json reads_germline;
+    map <string, size_t> nb_segmented_by_germline;
+    for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
+        Germline *germline = *it ;
+        size_t nb = we.getNbReadsGermline(germline->code);
+        nb_segmented_by_germline[germline->code] = nb;
+        reads_germline[germline->code] = {nb};
+    }
+
+    nb_segmented_by_germline[ALL_LOCI] = nb_segmented;
+    json jsonDiversity = windowsStorage->computeDiversity(nb_segmented_by_germline);
 
     //////////////////////////////////
     //$$ min_reads_clone (ou label)
@@ -1790,12 +1800,6 @@ int main (int argc, char **argv)
 
     windowsStorage->clearSequences();
     windowsStorage->sortedWindowsToOutput(&output, max_clones_id);
-
-    json reads_germline;
-    for (auto &germline:  multigermline->getGermlines()){
-      reads_germline[germline->getCode()] = {we.getNbReadsGermline(germline->getCode())};
-    }
-
 
     // Complete main output
     output.set("config", j_config);
