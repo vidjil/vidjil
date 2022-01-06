@@ -233,7 +233,7 @@ ostream &WindowsStorage::printSortedWindows(ostream &os) {
 
 
 
-json WindowsStorage::computeDiversity(int nb_segmented) {
+json WindowsStorage::computeDiversity(map <string, size_t> nb_segmented) {
 
   map <string, double> index_H_entropy;
   map <string, double> index_1_minus_Ds_diversity;
@@ -243,11 +243,10 @@ json WindowsStorage::computeDiversity(int nb_segmented) {
     size_t clone_nb_reads = it->second.getNbInserted();
     string code = getGermline(it->first)->code;
 
-    float ratio = (float) clone_nb_reads / nb_segmented ;
-    float ratio_logratio = ratio * log(ratio) ;
-
-    index_H_entropy[ALL_LOCI] -= ratio_logratio;
-    index_H_entropy[code] -= ratio_logratio;
+    float ratio_all  = (float) clone_nb_reads / nb_segmented[ALL_LOCI] ;
+    float ratio_code = (float) clone_nb_reads / nb_segmented[code] ;
+    index_H_entropy[ALL_LOCI] -= ratio_all * log(ratio_all) ;
+    index_H_entropy[code] -= ratio_code * log(ratio_code) ;
 
     double inc_diversity = ((double) clone_nb_reads * ((double) clone_nb_reads - 1));
     index_1_minus_Ds_diversity[ALL_LOCI] += inc_diversity;
@@ -259,11 +258,15 @@ json WindowsStorage::computeDiversity(int nb_segmented) {
   for (const auto& kv: index_H_entropy)
   {
     string code = kv.first ;
+    // Shannon's diversity
     jsonDiversity["index_H_entropy"][code] = kv.second;
 
-    double nb_seg_nb_seg_m1 = (double) nb_segmented * ((double) nb_segmented - 1);
+    // Shannon's equitability
+    double nb_seg_nb_seg_m1 = nb_segmented[code] * (nb_segmented[code] - 1);
+    jsonDiversity["index_E_equitability"][code] = index_H_entropy[code] / log(nb_segmented[code]) ;
+
+    // Simpson's diversity
     jsonDiversity["index_Ds_diversity"][code] = 1 - index_1_minus_Ds_diversity[code] / nb_seg_nb_seg_m1 ;
-    jsonDiversity["index_E_equitability"][code] = index_H_entropy[code] / log(nb_segmented) ;
   }
 
   cout << "Diversity measures" << endl
