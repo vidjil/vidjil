@@ -269,11 +269,19 @@ json WindowsStorage::computeDiversity(map <string, size_t> nb_segmented) {
     jsonDiversity["index_Ds_diversity"][code] = 1 - index_1_minus_Ds_diversity[code] / nb_seg_nb_seg_m1 ;
   }
 
-  cout << "Diversity measures" << endl
-       << "  H = " << jsonDiversity["index_H_entropy"] << endl        // Shannon's diversity
-       << "  E = " << jsonDiversity["index_E_equitability"]  << endl  // Shannon's equitability
-       << " Ds = " << jsonDiversity["index_Ds_diversity"] << endl     // Simpson's diversity
-       << endl;
+  // Pretty-print
+  cout << setw(24) << "Diversity measures" ;
+  for (const auto& kv: index_H_entropy)
+    cout << setw(6) << kv.first ;
+  cout << endl;
+
+  for (const string index: {"index_H_entropy", "index_E_equitability", "index_Ds_diversity"})
+  {
+    cout << "  " << setw(22) << index ;
+    for (const auto& kv: index_H_entropy)
+      cout << fixed << setprecision(3) << setw(6) << (float) jsonDiversity[index][kv.first] ;
+    cout << endl;
+  }
 
   return jsonDiversity;
 }
