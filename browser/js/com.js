@@ -209,15 +209,13 @@ Com.prototype = {
         //
         this.confirm = {};
 
-        this.confirm.box =  $('<div/>',     {   class: "popup_container",
-                                                style: "min-width:300px"
+        this.confirm.box =  $('<div/>',     {   class: "popup_container"
                                             }).appendTo(document.body);
 
         this.confirm.content = $('<div/>',  {   class: "info-msg",
-                                                style: "margin-bottom: 10px;"  
                                             }).appendTo(this.confirm.box);
 
-        this.confirm.inputdiv = $('<div/>', {   style: "text-align:center; margin: 10px;" 
+        this.confirm.inputdiv = $('<div/>', {   class: "popup_input" 
                                             }).appendTo(this.confirm.box);
                                             
         this.confirm.input =   $('<input/>',{   id: 'console_text_input',
@@ -225,7 +223,7 @@ Com.prototype = {
                                                 maxlength: 25,
                                             }).appendTo(this.confirm.inputdiv);
                                             
-        this.confirm.buttondiv = $('<div/>',{   style :"display: flex; justify-content: space-around;"
+        this.confirm.buttondiv = $('<div/>',{   class :"popup_button"
                                             }).appendTo(this.confirm.box);
 
         this.confirm.cancel = $('<button/>',{   class: 'container_button',

@@ -766,7 +766,7 @@ line {
 /*	//////////////////////////////////////////////////////////////	*/
 .popup_container {
   z-index: 20;
-  min-width: 500px;
+  min-width: 300px;
   max-width: 80%;
   font-size: 13px;
   padding: 20px;
@@ -783,6 +783,14 @@ line {
   border-width: 1px;
   border-color: #657b83;
   box-shadow: 2px 2px 5px #657b83;
+}
+.popup_input {
+  text-align: center;
+  margin: 10px;
+}
+.popup_button {
+  display: flex;
+  justify-content: space-around;
 }
 /* Main style for <a> Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
 a {
@@ -829,6 +837,7 @@ a.tag-link {
   overflow-x: auto;
   height: 100%;
   width: 100%;
+  margin-bottom: 10px;
 }
 #file_menu,
 #menu,

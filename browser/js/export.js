@@ -424,8 +424,8 @@ Report.prototype = {
                                         text: text}).appendTo(parent)
                           $('<button/>',{value: cloneID , 
                                         title: "remove clone from report",
-                                        class: "icon-cancel", 
-                                        style: "float:right;"}).click(handle).appendTo(div)
+                                        class: "icon-cancel button_right", 
+                                        }).click(handle).appendTo(div)
             }
         }
         $("#rs-selected-clones-count").html("["+count+" selected]")
@@ -488,17 +488,17 @@ Report.prototype = {
             var div   = $('<div/>',   { class: "rs-block rs-selected",
                                         text: text}).appendTo(parent);
                         $('<button/>',{ value:  i , 
-                                        class: "icon-cancel", 
-                                        title: "remove block",
-                                        style: "float:right;"}).click(handle).appendTo(div)
+                                        class: "icon-cancel button_right", 
+                                        title: "remove block"
+                                        }).click(handle).appendTo(div)
                         $('<button/>',{ value:  i , 
-                                        class: "icon-down-open",
-                                        title: "move block up in the list",
-                                        style: "float:right;"}).click(handle_down).appendTo(div)
+                                        class: "icon-down-open button_right",
+                                        title: "move block up in the list"
+                                        }).click(handle_down).appendTo(div)
                         $('<button/>',{ value:  i , 
-                                        class: "icon-up-open", 
-                                        title: "move block down in the list",
-                                        style: "float:right;"}).click(handle_up).appendTo(div)
+                                        class: "icon-up-open button_right", 
+                                        title: "move block down in the list"
+                                        }).click(handle_up).appendTo(div)
         }
 
 
