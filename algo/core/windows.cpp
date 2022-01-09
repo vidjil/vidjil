@@ -258,6 +258,11 @@ json WindowsStorage::computeDiversity(map <string, size_t> nb_segmented) {
   for (const auto& kv: index_H_entropy)
   {
     string code = kv.first ;
+
+    // Only one read
+    if (nb_segmented[code] <= 1)
+      continue ;
+
     // Shannon's diversity
     jsonDiversity["index_H_entropy"][code] = kv.second;
 
@@ -279,7 +284,13 @@ json WindowsStorage::computeDiversity(map <string, size_t> nb_segmented) {
   {
     cout << "  " << setw(22) << index ;
     for (const auto& kv: index_H_entropy)
-      cout << fixed << setprecision(3) << setw(6) << (float) jsonDiversity[index][kv.first] ;
+    {
+      cout << setw(6) ;
+      if (jsonDiversity[index].contains(kv.first))
+        cout << fixed << setprecision(3) << (float) jsonDiversity[index][kv.first];
+      else
+        cout << "-" ;
+    }
     cout << endl;
   }
 
