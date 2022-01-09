@@ -1,0 +1,51 @@
+
+# TRA: no diversity, 3 reads / 1 clone
+
+# 1 - Ds = 1
+# H = 0
+# E = 0
+
+>TRA--V1-1*01--J1*01--1
+cctccttctacaggagctccagatgaaagactctgcctcttacttctgcgctgtgagaga
+gtatgaaagtattacctcccagttgcaatttggcaaaggaaccagagtttccacttctcc
+>TRA--V1-1*01--J1*01--2
+cctccttctacaggagctccagatgaaagactctgcctcttacttctgcgctgtgagaga
+gtatgaaagtattacctcccagttgcaatttggcaaaggaaccagagtttccacttctcc
+>TRA--V1-1*01--J1*01--3
+cctccttctacaggagctccagatgaaagactctgcctcttacttctgcgctgtgagaga
+gtatgaaagtattacctcccagttgcaatttggcaaaggaaccagagtttccacttctcc
+
+# TRG: full diversity, 3 reads / 3 clones
+
+# 1 - Ds = 0
+# H = 3 * (- 1/3 ln 1/3) = ln 3 = 1.09861...
+# E = H / ln 3 = 1
+
+>TRG--V1*01--J1*01--1
+agactgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacagg
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+>TRG--V1*01--ACT--J1*01--2
+agactgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacagg
+ACT
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+>TRG--V1*01--GG--J1*01--3
+agactgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacagg
+GG
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+# IGK: 1 clone with 2 reads, 1 clone with 1 read
+
+# 1 - Ds = (2*1 + 1*0) / (3*2) = 1/3
+# H = - 2/3 ln 2/3 - 1/3 ln 1/3 = 0.63651...
+# E = H / ln 3 = 0.57938...
+
+>IGK--V1-12*01--J1*01--1
+cagcctgcagcctgaagattttgcaacttactattgtcaacaggctaacagtttccctcc
+gtggacgttcggccaagggaccaaggtggaaatcaaac
+>IGK--V1-12*01--J1*01--2
+cagcctgcagcctgaagattttgcaacttactattgtcaacaggctaacagtttccctcc
+gtggacgttcggccaagggaccaaggtggaaatcaaac
+>IGK--V1-12*01--CCG--J1*01--3
+cagcctgcagcctgaagattttgcaacttactattgtcaacaggctaacagtttccctcc
+CCG
+gtggacgttcggccaagggaccaaggtggaaatcaaac
