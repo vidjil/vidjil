@@ -272,6 +272,11 @@ json WindowsStorage<Tshortcut, Affect>::computeDiversity(map <string, size_t> nb
   for (const auto& kv: index_H_entropy)
   {
     string code = kv.first ;
+
+    // Only one read
+    if (nb_segmented[code] <= 1)
+      continue ;
+
     // Shannon's diversity
     jsonDiversity["index_H_entropy"][code] = kv.second;
 
@@ -292,8 +297,13 @@ json WindowsStorage<Tshortcut, Affect>::computeDiversity(map <string, size_t> nb
   for (const string index: {"index_H_entropy", "index_E_equitability", "index_Ds_diversity"})
   {
     cout << "  " << setw(22) << index ;
-    for (const auto& kv: index_H_entropy)
-      cout << fixed << setprecision(3) << setw(6) << (float) jsonDiversity[index][kv.first] ;
+    for (const auto& kv: index_H_entropy) {
+      cout << setw(6) ;
+      if (jsonDiversity[index].contains(kv.first))
+        cout << fixed << setprecision(3) << (float) jsonDiversity[index][kv.first];
+      else
+        cout << "-" ;
+    }
     cout << endl;
   }
 
