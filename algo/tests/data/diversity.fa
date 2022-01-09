@@ -49,3 +49,13 @@ gtggacgttcggccaagggaccaaggtggaaatcaaac
 cagcctgcagcctgaagattttgcaacttactattgtcaacaggctaacagtttccctcc
 CCG
 gtggacgttcggccaagggaccaaggtggaaatcaaac
+
+# IGL: only 1 read, some indices are not defined
+
+# 1 - Ds = 0
+# H and E not defined
+
+>IGLV2-14*01 12/4/0 IGLJ3*02
+TAATCGCTTCTCTGGCTCCAAGTCTGGCAACACGGCCTCCCTGACCATCTCTGG
+GCTCCAGGCGAGGACGAGGCTGATTATTACTGCAGCTCATATACAAGCTTTCTT
+GGGTGTTCGGCGGAGGGACCAAGCTG
