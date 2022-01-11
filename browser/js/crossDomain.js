@@ -92,7 +92,7 @@ function imgtPost(species, data, system) {
     var form = document.getElementById("form");
     form.removeAllChildren();
     form.target = "_blank";
-    form.action = "http://www.imgt.org/IMGT_vquest/analysis";
+    form.action = "https://www.imgt.org/IMGT_vquest/analysis";
     form.method = "POST";
 
     for (var k in imgtInput) {
