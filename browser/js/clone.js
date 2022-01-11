@@ -1707,6 +1707,9 @@ Clone.prototype = {
             html += row_1("locus", this.m.systemBox(this.germline).outerHTML + this.germline +
                 "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>", undefined, time_length)
         }
+        if (this.seg != undefined && this.seg.junction != undefined){
+            html += row_1("Productivity", this.getProductivityNameDetailed() + "</div>", undefined, time_length)
+        }
         if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("5") != "undefined V")){
             html += row_1("V gene (or 5')", this.getGene("5") +
                 "<div class='div-menu-selector' id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div>", undefined, time_length)
