@@ -39,7 +39,6 @@ function loadAfterConf() {
         config = {};
         config.db_address = DEFAULT_DB_ADDRESS;
         config.use_database = false;
-        config.proxy = "https://localhost/vidjil/proxy/imgt"
     }
 
     require(['doctips/tips'],

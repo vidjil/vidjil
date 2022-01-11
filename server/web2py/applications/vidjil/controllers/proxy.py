@@ -24,7 +24,7 @@ def proxy_request(url, headers={}):
     return gluon.contrib.simplejson.dumps("improper method")
 
 def imgt():
-    return proxy_request("https://www.imgt.org/IMGT_vquest/analysis")
+    return proxy_request("http://www.imgt.org/IMGT_vquest/analysis")
 
 def assign_subsets():
     return proxy_request("http://tools.bat.infspire.org/cgi-bin/arrest/assignsubsets_html.pl",
