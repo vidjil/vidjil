@@ -133,6 +133,11 @@ Frédéric Davi et al., on behalf of ERIC, the European Research Initiative on C
 Leukemia, 2020,
 <https://doi.org/10.1038/s41375-020-0923-9>
 
+Rachel Dobson et al.,
+*Widespread in situ follicular neoplasia in patients who subsequently developed follicular lymphoma*,
+The Journal of Pathology, 2021,
+<https://doi.org/10.1002/path.5861>
+
 Yann Ferret et al.,
 *Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
 British Journal of Haematology, 2016, 173, 413–420,
@@ -158,15 +163,20 @@ Natalia Izotova et al.,
 Nature Communications, 2021,
 <https://doi.org/10.1038/s41467-021-21834-9>
 
+Vincent Jauvague et al.,
+*RNA-based immunoglobulin repertoire sequencing is a new tool for the management of monoclonal gammopathy of renal (kidney) significance.*
+Kidney International, 2021,
+<https://doi.org/10.1016/j.kint.2021.10.017>
+
 Takashi Kanamori et al.,
 *Genomic analysis of multiple myeloma using targeted capture sequencing in the Japanese cohort*,
 British Journal of Haematology, 2020,
 <https://doi.org/10.1111/bjh.16720>
 
 Kenji Kimura et al.,
-*Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next Generation Sequencing*,
-ASH 2019, Blood, 134(S1):1748,
-<https://doi.org/10.1182/blood-2019-125028>
+*Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next-Generation Sequencing*,
+Experimental Hematology, 2021, 101:34-41.e4
+<https://doi.org/10.1016/j.exphem.2021.08.001>
 
 Michaela Kotrova et al.,
 *The predictive strength of next-generation sequencing MRD detection for relapse compared with current methods in childhood ALL*,
@@ -182,6 +192,11 @@ Anton W. Langerak,
 *High-Throughput Immunogenetics for Clinical and Research Applications in Immunohematology: Potential and Challenges*,
 Journal of Immunology, 2017, 198(10):3765-3774,
 <https://dx.doi.org/10.4049/jimmunol.1602050>
+
+Yannick Le Bris et al.,
+*Single Capture High Throughput Sequencing Assay for Combined V(D)J Clonality Analysis and Oncogene Mutations in the Diagnosis of T and B Lymphoid Malignancies*,
+ASH 2021, Blood, 138(S1):2404,
+<https://doi.org/10.1182/blood-2021-151083>
 
 Zhenhua Li et al.,
 *Identifying IGH disease clones for MRD monitoring in childhood B-cell acute lymphoblastic leukemia using RNA-Seq*,
@@ -212,6 +227,11 @@ Edit Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
 Blood, 2018,
 <https://dx.doi.org/10.1182/blood-2017-10-810739>
+
+Natalia Izotova et al.,
+*Long-term lymphoid progenitors independently sustain naïve T and NK cell production in humans*,
+Nature Communications, 2021, 12:1622,
+<https://doi.org/10.1038/s41467-021-21834-9>
 
 Rathana Kim et al.,
 *Adult T-cell acute lymphoblastic leukemias with IL7R pathway mutations are slow-responders who do not benefit from allogeneic stem-cell transplantation*,
