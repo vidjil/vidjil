@@ -86,7 +86,7 @@ function Graph(id, model, database) {
 
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
     this.marge2 = 0.05; //marge gauche derniere colonne/bord du graph
-    this.marge3 = 70; //marge droite (non influencé par le resize)
+    this.marge3 = 30; //marge droite (non influencé par le resize)
     this.marge4 = 70; //marge gauche (non influencé par le resize)
     this.marge5 = 40; //marge top (non influencé par le resize)
 
