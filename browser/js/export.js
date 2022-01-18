@@ -457,28 +457,28 @@ Report.prototype = {
 
             switch (conf.blockType) {
                 case "file_info":
-                    text = "File info"
+                    text = "Report information"
                     break;
                 case "reads_stats":
-                    text = "reads stats per locus"
+                    text = "Reads stats per locus"
                     break;
                 case "sample_info":
-                    text = "Sample info :"
+                    text = "Sample information"
                     break;
                 case "clones":
-                    text = "Clones :"
+                    text = "Clones"
                     break;
                 case "monitor":
-                    text = "monitor :"
+                    text = "Monitor"
                     break;
                 case "log_db":
-                    text = "database log :"
+                    text = "Database log"
                     break;
                 case "scatterplot":
-                    text = "Scatterplot: ["+ conf.axisX +" | "+ conf.axisY +"] ["+ conf.locus +"]"
+                    text = "Plot: ["+ conf.axisX +" | "+ conf.axisY +"] ["+ conf.locus +"]"
                     break;
                 case "comments":
-                    text = "User comment: "
+                    text = "Comment"
                     break;
                 default:
                     break;
@@ -489,15 +489,15 @@ Report.prototype = {
                                         text: text}).appendTo(parent);
                         $('<button/>',{ value:  i , 
                                         class: "icon-cancel button_right", 
-                                        title: "remove block"
+                                        title: "remove this section"
                                         }).click(handle).appendTo(div)
                         $('<button/>',{ value:  i , 
                                         class: "icon-down-open button_right",
-                                        title: "move block up in the list"
+                                        title: "move this section up"
                                         }).click(handle_down).appendTo(div)
                         $('<button/>',{ value:  i , 
                                         class: "icon-up-open button_right", 
-                                        title: "move block down in the list"
+                                        title: "move this section down"
                                         }).click(handle_up).appendTo(div)
         }
 
@@ -513,7 +513,7 @@ Report.prototype = {
         var select = $('<select/>', { name: 'rs-new-block-select',
                                       id:   'rs-new-block-select' }).appendTo(div_select).change(handle2);
 
-        $('<option/>',  { text: "add block"}).appendTo(select);
+        $('<option/>',  { text: "add section"}).appendTo(select);
 
         var keys = ["file_info","reads_stats","sample_info", "monitor", "log_db", "clones"]
         for (var j = 0; j < keys.length; j++){
@@ -779,30 +779,34 @@ Report.prototype = {
             }).appendTo(container);
 
             var closeButton = $('<button/>', {
-                'class': 'container_button',
-                'text' : 'remove container',
-                'title': 'click to remove highligthed container' 
+                'value': 'i',
+                'class': 'container_button icon-cancel',
+                'text' : 'remove',
+                'title': 'remove this section'
             }).click(function(){self.removeContainer(container)})
               .appendTo(float);
 
             var upButton = $('<button/>', {
+                'value': 'i',
                 'class': 'container_button icon-up-open',
                 'text' : 'up',
-                'title': 'click to move up' 
+                'title': 'move this section up'
             }).click(function(){self.upContainer(container)})
               .appendTo(float);
 
             var downButton = $('<button/>', {
+                'value': 'i',
                 'class': 'container_button icon-down-open',
-                'text' : 'down',
-                'title': 'click to remove highligthed container' 
+                // 'text' : 'down',
+                'title': 'move this section down'
             }).click(function(){self.downContainer(container)})
               .appendTo(float);
 
             var logButton = $('<button/>', {
-                'class': 'container_button',
-                'text' : 'insert comment',
-                'title': 'click to insert comment' 
+                'value': 'i',
+                'class': 'container_button icon-dot-3',
+                // 'text' : 'comment',
+                'title': 'insert comments below this section'
             }).click(function(){self.insertComments(container) })
             .appendTo(float);
         }
@@ -1088,10 +1092,10 @@ Report.prototype = {
 
         if (this.indexOfBlock(block) == -1){
             this.settings.blocks.push(block)
-            console.log({ msg: "scatterplot has been added to current report", type: "flash", priority: 1 });
+            console.log({ msg: "Plot has been added to current report", type: "flash", priority: 1 });
         }
         else{
-            console.log({ msg: "This scatterplot is already present in report", type: "flash", priority: 2 });
+            console.log({ msg: "This plot is already present", type: "flash", priority: 2 });
         }
 
     },
@@ -1099,10 +1103,10 @@ Report.prototype = {
     addBlock : function(block) {
         if (this.indexOfBlock(block) == -1){
             this.settings.blocks.push(block)
-            console.log({ msg: "new block has been added to current report", type: "flash", priority: 1 });
+            console.log({ msg: "Section added to the report", type: "flash", priority: 1 });
         }
         else{
-            console.log({ msg: "a similar block is already present in report", type: "flash", priority: 2 });
+            console.log({ msg: "This section is already present", type: "flash", priority: 2 });
         }
     },
 

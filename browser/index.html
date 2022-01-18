@@ -171,7 +171,7 @@
                             <a class="buttonSelector" id="export_monitor_report"
                                 onclick="javascript:report.reportHTML()">export report (monitor)</a>
                             <a class="buttonSelector" id="export_report_menu"
-                                onclick="javascript:report.menu()">report settings</a>
+                                onclick="javascript:report.menu()">export report</a>
                         </div>
                         <div class="menu_box">
                             <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>
@@ -749,9 +749,9 @@
 
 <template id="report-settings">
     <div class="">
-        <div style="text-align: center;">Report Settings</div>
+        <div style="text-align: center;"><b>Export report</b></div>
 
-        <div id="report-settings-save" style="text-align: center;">
+        Preset: <div id="report-settings-save">
 
         </div>
 
@@ -773,10 +773,10 @@
             </div>
             <table class="rs-flex-parent-v">
                 <tr class="">
-                    <td>Default Clonotype Color :</td> <td><select name="rs-default-color" id="rs-default-color" class=""></select></td>
+                    <td>Default clonotype color :</td> <td><select name="rs-default-color" id="rs-default-color" class=""></select></td>
                 </tr>
                 <tr class="">
-                    <td>Selected Clonotype Color :</td> <td><select name="rs-selected-color" id="rs-selected-color" class=""></select></td>
+                    <td>Selected clonotype color :</td> <td><select name="rs-selected-color" id="rs-selected-color" class=""></select></td>
                 </tr>
             </table>
 
@@ -791,16 +791,16 @@
 
         <div class="menu_box"  id="report-settings-block">
             <div class="">
-                Blocks
+                Report sections
             </div>
         </div>
 
         <div style="text-align: center;">
-            <button type="button" onclick="report.print();">Print</button>
+            <button type="button" onclick="report.print();">Show report</button>
         </div>
         <div style="float: right;">
-            <button id="rs-save-button" type="button" onclick="report.save(undefined,true);">Save</button>
-            <button id="rs-saveas-button" type="button" onclick="report.saveas();">Save As</button>
+            <button id="rs-saveas-button" type="button" onclick="report.saveas();">Save as new report settings</button>
+            <button id="rs-save-button" type="button" onclick="report.save(undefined,true);">Save report settings</button>
         </div>
     </div>
 </template>
