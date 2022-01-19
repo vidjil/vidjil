@@ -688,4 +688,59 @@ QUnit.test("export clone informations", function(assert) {
     // ** Don't call, open a download file popup ** //
     // var airr_without_list = m.exportCloneAs("airr")
     // assert.deepEqual(airr, airr_without_list, "Get export informations by model exportCloneAs function")
+
+});
+
+
+QUnit.test("getPointHtmlInfo", function(assert) {
+
+    // Create and populate model
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    m.diversity = {
+        "index_H_entropy": [
+          5.688690639121887,
+          {
+            "all": 5.685521833966959,
+            "TRG": 5.251430198730304,
+            "IGH": 4.6659245018527145
+          }
+        ],
+        "index_E_equitability": [
+          0.39255398511886597,
+          {
+            "all": 0.39234431286307087,
+            "TRG": 0.3710257284862601,
+            "IGH": 0.3524275802230387
+          }
+        ],
+        "index_Ds_diversity": [
+          0.9644120931625366,
+          {
+            "all": 0.9643881817723228,
+            "TRG": 0.9505217377100443,
+            "IGH": 0.8727130704274034
+          }
+        ]
+      }
+
+    // first sample has old fashion diversity
+    var html_info = m.getPointHtmlInfo(0)
+    assert.includes(html_info, "Diversity indices", "htmlInfo get diversity header")
+    assert.includes(html_info, "<tr><td> Simpson's diversity</td><td>5.689</td></tr>", "An index is correctly present and formated")
+    assert.notIncludes(html_info, '<tr><td colspan=\'5\'>Simpson\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>', "")
+
+
+    // second sample has diversity by locus
+    html_info = m.getPointHtmlInfo(1)
+    // each diversity indices has header
+    assert.includes(html_info, "<tr><td colspan='5'>Simpson's diversity</td></tr>")
+    assert.includes(html_info, "<tr><td colspan='5'>Shannon's equitability</td></tr>")
+    assert.includes(html_info, "<tr><td colspan='5'>Shannon's diversity</td></tr>")
+    // each present locus id visible
+    assert.includes(html_info, '<tr><td colspan=\'5\'>Simpson\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>')
+    assert.includes(html_info, '<tr><td> <span class="systemBoxMenu" title="TRG" style="background: rgb(220, 50, 47);">G</span> TRG</td><td>5.251</td></tr>')
+    assert.includes(html_info, '<tr><td> <span class="systemBoxMenu" title="IGH" style="background: rgb(108, 113, 196);">H</span> IGH</td><td>4.666</td></tr>')
 });
