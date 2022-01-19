@@ -499,6 +499,9 @@ Aligner.prototype = {
             span.removeAllChildren();
             span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
             span.setAttribute('title', this.selectedAxis[i].doc);
+            if (axis.hover != undefined){
+                span.setAttribute('title', axis.hover(clone, this.m.getTime()) )
+            }
             span.className = axis.name;
             axisBox.appendChild(span);
         }
