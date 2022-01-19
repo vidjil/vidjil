@@ -103,3 +103,20 @@ demo/*.fasta
 
 # build of gitlab-runner
 builds/
+server/py4web/apps/.service/
+
+server/py4web/apps/_dashboard/
+
+server/py4web/apps/_default/
+
+server/py4web/apps/_documentation/
+
+server/py4web/apps/_minimal/
+
+server/py4web/apps/_scaffold/
+
+server/py4web/apps/examples/
+
+server/py4web/apps/vidjil/databases/
+
+server/py4web/password.txt
