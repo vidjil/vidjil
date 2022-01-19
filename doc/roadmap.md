@@ -65,6 +65,8 @@ with software engineering.
  
 ## Better sequence and recombination analysis
 
+ - Detect primer dimers #2820
+
  - Show more sequence features (such as FR1...) in the sequence aligner #2135
     + **Available since Q2 2021**, ✅
 
@@ -84,7 +86,7 @@ Moreover, we always try to improve and extend the analysis of some recombination
 
  - Extend set of recombinations
  - Find generalized recombinations, even unexpected #1400 #2818
- - Work on clone phylogenies
+ - Work on clonal evolution #1726, on clone phylogenies
  - Work on noisy data, such as third-generation sequencers
 
 These points are *ongoing research* 🚧 in the Bonsai team with selected collaborators and are not in the roadmap with fixed dates.
