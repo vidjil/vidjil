@@ -1580,8 +1580,11 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                     html += "<tr><td> " + translate_key_diversity(key_diversity) + "</td><td>" + diversity + '</td></tr>'
                 } else if (typeof diversity == "object"){
                     html += "<tr><td "+colspan_header+">"+translate_key_diversity(key_diversity)+"</td></tr>"
+                    var present_locus = this.getLocusPresentInTop(timeID)
                     for (var locus in diversity) {
-                        html += "<tr><td> " + this.systemBox(locus).outerHTML + " "+locus+"</td><td>" + diversity[locus] + '</td></tr>'
+                        if( present_locus.indexOf(locus) != -1 || locus == "all"){
+                            html += "<tr><td> " + this.systemBox(locus).outerHTML + " "+locus+"</td><td>" + diversity[locus] + '</td></tr>'
+                        }
                     }
                 }
             }
@@ -1675,6 +1678,23 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         }
         return html
+    },
+
+    /**
+     * Allow to know if a locus is present in clonotype of a sample
+     * If a clone is share between sample, it will be present even in not in top limit of the sample
+     */
+    getLocusPresentInTop: function(time){
+        var locus = []
+        for (var i = this.clones.length - 1; i >= 0; i--) {
+            var clone = this.clones[i]
+            if (clone.reads[time] == Math.max(...clone.reads)){
+                if (locus.indexOf(clone.germline) == -1){
+                    locus.push(clone.germline)
+                }
+            }
+        }
+        return Array.from( new Set(locus) )
     },
 
 
