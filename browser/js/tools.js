@@ -938,6 +938,16 @@ function download_csv(csv, filename) {
 }
 
 
+function translate_key_diversity(key_diversity){
+    var table = {
+        "index_H_entropy" :      "Simpson's diversity",
+        "index_E_equitability" : "Shannon's equitability",
+        "index_Ds_diversity" :   "Shannon's diversity"
+    }
+    return table[key_diversity]
+}
+
+
 ///////////////////////////
 /// Fct to fill info table
 ///////////////////
