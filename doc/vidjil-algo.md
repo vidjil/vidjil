@@ -14,11 +14,11 @@
 This is the help of vidjil-algo, for command-line usage.
 This manual can be browsed online:
 
- - <http://www.vidjil.org/doc/vidjil-algo>                (last stable release)
+ - <https://www.vidjil.org/doc/vidjil-algo>                (last stable release)
  - <http://gitlab.vidjil.org/blob/dev/doc/vidjil-algo.md> (development version)
 
 Other documentations for life scientists, bioinformaticians, server administrators, and developers
-can be found ats <http://www.vidjil.org/doc/>.
+can be found at <https://www.vidjil.org/doc/>.
 
 
 ## About
@@ -27,7 +27,7 @@ can be found ats <http://www.vidjil.org/doc/>.
 diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
-With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
+With adapted [library preparation and sequencing](https://www.vidjil.org/doc/locus),
 high-throughput sequencing (NGS/HTS) now
 enables the deep sequencing of a lymphoid population with dedicated
 sequencing methods and software, called either Rep-Seq or AIRR-Seq.
@@ -92,10 +92,10 @@ To compile Vidjil-algo, make sure:
 
 ### Download
 
-These instructions target *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>.
+These instructions target *stable releases* of vidjil-algo, as downloaded from <https://www.vidjil.org/releases>.
 
 ``` sh
-curl -O http://www.vidjil.org/releases/vidjil-algo-latest.tar.gz
+curl -O https://www.vidjil.org/releases/vidjil-algo-latest.tar.gz
 tar xvfz vidjil-algo-latest.tar.gz
 cd vidjil-algo-*
 ```
@@ -121,7 +121,7 @@ make germline
 
 
 make -C src              # build vijil-algo from the sources (see the requirements,
-                         # another option is: wget http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
+                         # another option is: wget https://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
                          # to download a static binary (built for x86_64 architectures)
 
 make demo                # download demo files (S22 and L4, see demo/get-sequences)
@@ -156,7 +156,7 @@ make -C src test                # run self-tests (can take 5 to 60 minutes)
 Run the following commands:
 
 ``` sh
-curl http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -o vidjil-algo
+curl https://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -o vidjil-algo
 chmod 755 vidjil-algo
 curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/doc/vidjil-algo.md
 
@@ -594,7 +594,7 @@ The default output of Vidjil-algo (with the default `-c clones` command) are the
     The web application takes this `.vidjil` file ([possibly merged with `fuse.py`](#following-clones-in-several-samples)) for the *visualization and analysis* of clones and their
     tracking along different samples (for example time points in a MRD
     setup or in a immunological study).
-    Please see the [web application user manual](http://www.vidjil.org/doc/user) for more information.
+    Please see the [web application user manual](https://www.vidjil.org/doc/user) for more information.
 
   - The `.tsv` file is the AIRR output, for compatibility with other software
     using the same format. See [below](#airr-tsv-output) for details.
@@ -752,7 +752,7 @@ When processing large datasets, such as RNA-Seq or capture, one may want to pre-
 In such a case, the recommanded option is to use the `--filter-reads` preset, that launches Vidjil-algo without clone clustering and analysis,
 while outputing a `out/basename.detected.vdj.fa` file. This file contains reads /that may have V(D)J recombinations/, evaluated with a very permissive threshold.
 The resulting file is usually much smaller on such datasets and can then be transferred or analysed in-depth more easily.
-This filtering can also be part of a [post-sequencer workflow](http://www.vidjil.org/doc/workflow/).
+This filtering can also be part of a [post-sequencer workflow](https://www.vidjil.org/doc/workflow/).
 
 ## AIRR .tsv output
 
