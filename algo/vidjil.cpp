@@ -285,7 +285,7 @@ int main (int argc, char **argv)
     -> group(group) -> level();
 
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
-  app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file", false)
+  app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file")
     -> group(group) -> level() -> type_name("CHAR='" DEFAULT_READ_HEADER_SEPARATOR "'");
 
   int max_reads_processed = NO_LIMIT_VALUE;
@@ -382,8 +382,8 @@ int main (int argc, char **argv)
 
   double expected_value_kmer = NO_LIMIT_VALUE;
   app.add_option("--e-value-kmer", expected_value_kmer,
-                 "maximal e-value for the k-mer heuristics ('" NO_LIMIT "': use same value than '-e')", true)
-    -> group(group) -> level() -> transform(string_NO_LIMIT);
+                 "maximal e-value for the k-mer heuristics ('" NO_LIMIT "': use same value than '-e')")
+    -> capture_default_str() -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   int trim_sequences = DEFAULT_TRIM;
   bool trim_sequences_changed = false;
@@ -457,16 +457,19 @@ int main (int argc, char **argv)
   int min_reads_clone = DEFAULT_MIN_READS_CLONE ;
   float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
 
-  app.add_option("--min-reads,-r", min_reads_clone, "minimal number of reads supporting a clone", true) -> group(group);
-  app.add_option("--min-ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone", true) -> group(group);
-  app.add_option("--max-clones", max_clones_id, "maximal number of output clones ('" NO_LIMIT "': no maximum, default)", false) -> group(group);
+  app.add_option("--min-reads,-r", min_reads_clone, "minimal number of reads supporting a clone")
+      -> capture_default_str() -> group(group);
+  app.add_option("--min-ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone")
+      -> capture_default_str() -> group(group);
+  app.add_option("--max-clones", max_clones_id, "maximal number of output clones ('" NO_LIMIT "': no maximum, default)")
+      -> group(group);
 
   int max_clones = DEFAULT_MAX_CLONES ;
   int max_representatives = DEFAULT_MAX_REPRESENTATIVES ;
 
   app.add_option("--max-consensus,-y", max_representatives,
-                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true)
-    -> group(group) -> transform(string_NO_LIMIT);
+                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)")
+    -> capture_default_str() -> group(group) -> transform(string_NO_LIMIT);
 
   app.add_option("--max-designations,-z",
                  [&max_clones, &max_representatives](CLI::results_t res) {
@@ -505,8 +508,8 @@ int main (int argc, char **argv)
 
   double expected_value = THRESHOLD_NB_EXPECTED;
   app.add_option("--e-value,-e", expected_value,
-                 "maximal e-value for trusting the detection of a V-J recombination", true)
-    -> group(group) -> transform(string_NO_LIMIT);
+                 "maximal e-value for trusting the detection of a V-J recombination")
+    -> capture_default_str() -> group(group) -> transform(string_NO_LIMIT);
 
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
   app.add_option("--analysis-cost",
@@ -519,27 +522,29 @@ int main (int argc, char **argv)
 
   double expected_value_D = THRESHOLD_NB_EXPECTED_D;
   app.add_option("--analysis-e-value-D,-E", expected_value_D,
-                 "maximal e-value for trusting the detection of a D segment", true)
-    -> group(group) -> level();
+                 "maximal e-value for trusting the detection of a D segment")
+    -> capture_default_str() -> group(group) -> level();
 
   int kmer_threshold = DEFAULT_KMER_THRESHOLD;
   app.add_option("--analysis-filter", kmer_threshold,
-                 "typical number of V genes, filtered by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes)", true)
-    -> group(group) -> transform(string_NO_LIMIT) -> level();
+                 "typical number of V genes, filtered by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes)")
+    -> capture_default_str() -> group(group) -> transform(string_NO_LIMIT) -> level();
 
   bool several_D = false;
   app.add_flag("-d,--several-D", several_D, "try to detect several D (experimental)") -> group(group);
 
   int alternative_genes = 0;
-  app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one", true)
-    -> group(group) -> level();
+  app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one")
+    -> capture_default_str() -> group(group) -> level();
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Additional clustering (third pass, experimental)" ;
 
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
-  app.add_option("--cluster-epsilon", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) -> group(group) -> level();
-  app.add_option("--cluster-N", minPts, "minimum required neighbors for automatic clustering", true) -> group(group) -> level();
+  app.add_option("--cluster-epsilon", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.")
+    -> capture_default_str() -> group(group) -> level();
+  app.add_option("--cluster-N", minPts, "minimum required neighbors for automatic clustering")
+    -> capture_default_str() -> group(group) -> level();
 
   bool save_comp = false;
   bool load_comp = false;
@@ -596,7 +601,8 @@ int main (int argc, char **argv)
   string out_dir = DEFAULT_OUT_DIR;
   string f_basename = "";
 
-  app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> type_name("PATH");
+  app.add_option("--dir,-o", out_dir, "output directory")
+    -> capture_default_str() -> group(group) -> type_name("PATH");
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
   bool out_gz = false;
