@@ -2,7 +2,7 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --out-details -w 60 -r 5 -e 10 -b data  $VIDJIL_DATA/Stanford_S22.fasta > /dev/null ; cat out/data.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ From homo-sapiens.g
-1:"ref": "http://www.vidjil.org/germlines/germline-.*.tar.gz"
+1:"ref": "https://www.vidjil.org/germlines/germline-.*.tar.gz"
 1:"species": "Homo sapiens"
 1:"species_taxon_id": 9606
 

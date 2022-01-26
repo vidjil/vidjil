@@ -1,6 +1,6 @@
 !NO_LAUNCHER:
-!LAUNCH: grep vidjil.org $VIDJIL_DIR/germline/get-saved-germline | sed "s/..germline_id./`cat $VIDJIL_DIR/germline/germline_id`/" | sed 's/.*http:..//' > url-1 \
-&& grep vidjil.org $VIDJIL_DIR/germline/homo-sapiens.g | sed 's/.*http:..\(.*\)\".*/\1/' > url-2 \
+!LAUNCH: grep vidjil.org $VIDJIL_DIR/germline/get-saved-germline | sed "s/..germline_id./`cat $VIDJIL_DIR/germline/germline_id`/" | sed 's/.*https:..//' > url-1 \
+&& grep vidjil.org $VIDJIL_DIR/germline/homo-sapiens.g | sed 's/.*https:..\(.*\)\".*/\1/' > url-2 \
 && diff url-1 url-2 ; echo 'Diff: '$? \
 && wc -c url-1
 
