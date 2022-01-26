@@ -49,10 +49,12 @@ int main(int argc, char** argv)
   // Sequence selection
   int i = 0;
   int j = 0;
-  app.add_option("-i", i, "Sequence number in file1", true)
+  app.add_option("-i", i, "Sequence number in file1")
+    ->capture_default_str()
     ->group("Sequence selection");
 
-  app.add_option("-j", j, "Sequence number in file2", true)
+  app.add_option("-j", j, "Sequence number in file2")
+    ->capture_default_str()
     ->group("Sequence selection");
 
   bool rev_i = false;
@@ -80,7 +82,8 @@ int main(int argc, char** argv)
     3       SemiGlobalTrans
     4       SemiGlobal
     5       GlobalButMostlyLocal
-    6       Global)", true);
+    6       Global)")
+    ->capture_default_str();
 
   // Cost
   int cost = 0;
@@ -91,7 +94,8 @@ int main(int argc, char** argv)
     5       IdentityDirty
     6       Hammong
     7       Levenshtein
-    8       Cluster)", true);
+    8       Cluster)")
+    ->capture_default_str();
 
   // Matrix
   bool matrix = false;
