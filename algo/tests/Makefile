@@ -73,7 +73,9 @@ snapshot_diff_current:
 	-diff -u -I ".*20..-..-...*" snapshot-last $(SNAPSHOT_CURRENT)
 
 
-should: vidjil
+should: vidjil shouldtest
+
+shouldtest:
 	time python3 should.py --timeout $(SHOULD_TIMEOUT) --xml $(SHOULD)
 
 shouldvdj_if_python:
