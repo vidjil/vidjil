@@ -358,7 +358,7 @@ inline bool valid_name_string(const std::string &str) {
 
 /// Verify an app name
 inline bool valid_alias_name_string(const std::string &str) {
-    static const std::string badChars(std::string("\n") + '\0');
+    static const std::string badChars(std::string("") + '\0');
     return (str.find_first_of(badChars) == std::string::npos);
 }
 
