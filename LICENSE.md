@@ -28,7 +28,7 @@ CLI11               : Command line parser for C++11
 * @license          BSD
 
 gzstream            : iostream classes wrapping the zlib compression library
-* @version          1.7
+* @version          1.7 (2003, last available version as of 2022)
 * @author           Deepak Bandyopadhyay, Lutz Kettner
 * @link             <http://www.cs.unc.edu/Research/compgeom/gzstream/>
 * @license          LGPL
@@ -40,7 +40,7 @@ json                : JSON for Modern C++
 * @license          MIT
 
 unbam (htslib)      : Extract of htslib to only read BAM files
-* @version          ??
+* @version          ?? (<⁼ 2017)
 * @link             <http://www.htslib.org/>
 * @license          Modified BSD
 
