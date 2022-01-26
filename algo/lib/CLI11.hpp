@@ -4287,6 +4287,9 @@ class Option : public OptionBase<Option> {
     /// True if the option was not passed
     bool empty() const { return results_.empty(); }
 
+    /// True if like a flag
+    bool get_flag_like() const { return flag_like_ ; }
+
     /// This bool operator returns true if any arguments were passed or the option callback is forced
     explicit operator bool() const { return !empty() || force_callback_; }
 

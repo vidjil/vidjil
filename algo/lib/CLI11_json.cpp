@@ -20,7 +20,7 @@ class ConfigJSON : public CLI::Config {
                 std::string name = opt->get_lnames()[0];
 
                 // Non-flags
-                if(opt->get_type_size() != 0) {
+                if(!opt->get_flag_like()) {
 
                     // If the option was found on command line
                     if(opt->count() == 1)
