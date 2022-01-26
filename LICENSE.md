@@ -22,7 +22,7 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 ### Software and libraries included in Vidjil repository
 
 CLI11               : Command line parser for C++11
-* @version          1.7.1
+* @version          2.1.2 (2021-10-18)
 * @author           Henry Schreiner, Philip Top, and collaborators
 * @link             <https://github.com/CLIUtils/CLI11>
 * @license          BSD
