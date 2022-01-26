@@ -1,9 +1,9 @@
-!REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
+!REQUIRES: python3 $VIDJIL_DIR/tools/check_python3_version.py
 
 !OUTPUT_FILE: out/algo-then-fuse.vidjil
 !OPTIONS: --mod jR
 
-!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -z 0 -w 60 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; python $VIDJIL_DIR/tools/fuse.py out/Stanford_S22.vidjil out/Stanford_S22.vidjil -o out/algo-then-fuse.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -z 0 -w 60 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta ; python3 $VIDJIL_DIR/tools/fuse.py out/Stanford_S22.vidjil out/Stanford_S22.vidjil -o out/algo-then-fuse.vidjil
 
 $ Points list
 2:samples.original_names
