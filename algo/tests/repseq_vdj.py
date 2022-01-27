@@ -301,8 +301,8 @@ def header_igblast_results(ff_fasta, ff_igblast):
 ### Vidjil
 
 
-VIDJIL_FINE = '{directory}/vidjil-algo -E 10 --header-sep "#" -c designations -2 -3 -d -g {directory}/germline/homo-sapiens.g %s >> %s'
-VIDJIL_KMER = '{directory}/vidjil-algo -w 20 --header-sep "#" -b out -c windows -uuuU -2 -g {directory}/germline/homo-sapiens.g %s > /dev/null ; cat out/out.detected.vdj.fa out/out.undetected.vdj.fa >> %s'
+VIDJIL_FINE = '{directory}/vidjil-algo -e {e_value} --header-sep "#" -c designations -2 -3 -d -g {directory}/germline/homo-sapiens.g %s >> %s'
+VIDJIL_KMER = '{directory}/vidjil-algo -e {e_value} -w 20 --header-sep "#" -b out -c windows -uuuU -2 -g {directory}/germline/homo-sapiens.g %s > /dev/null ; cat out/out.detected.vdj.fa out/out.undetected.vdj.fa >> %s'
 
 def should_results_from_vidjil_output(f_log):
     '''
