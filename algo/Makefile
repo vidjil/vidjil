@@ -192,6 +192,10 @@ shouldvdj:
 	$(MAKE) CXXFLAGS="$(filter-out -DNDEBUG, $(CXXFLAGS))" all
 	$(MAKE) -C tests shouldvdj_if_python
 
+shouldlocus:
+	@echo
+	$(MAKE) CXXFLAGS="$(filter-out -DNDEBUG, $(CXXFLAGS))" all
+	$(MAKE) -C tests shouldlocus_if_python
 
 valgrind_unit:
 	$(MAKE) -C tests valgrind_tests

@@ -78,33 +78,36 @@ should: vidjil shouldtest
 shouldtest:
 	time python3 should.py --timeout $(SHOULD_TIMEOUT) --xml $(SHOULD)
 
-shouldvdj_if_python:
+# .should-vdj tests
+
+shouldvdj_if_python: vidjil
 	if python ../../tools/check_python_version.py ; \
-	then $(MAKE) shouldlocus_and_vdj ; \
+	then $(MAKE) shouldvdj_with_rc_merged ; \
 	else echo "!!! Bad python version, we skip .should-vdj.fa tests..." ; \
 	fi
 
-should-vdj-tests/locus-merged.should-vdj.fa: $(SHOULD_VDJ) $(SHOULD_LOCUS)
+shouldlocus_if_python: vidjil
+	if python ../../tools/check_python_version.py ; \
+	then $(MAKE) shouldlocus ; \
+	else echo "!!! Bad python version, we skip .should-vdj.fa tests..." ; \
+	fi
+
+should-locus-merged.should-vdj.fa: $(SHOULD_VDJ) $(SHOULD_LOCUS)
 	awk '$$0 ~ /^>/ {gsub("_","-",FILENAME); $$0=$$0" @"FILENAME} {print}'  $^ > $@
 
-should-vdj-tests/vdj-merged.should-vdj.fa: $(SHOULD_VDJ)
+should-vdj-merged.should-vdj.fa: $(SHOULD_VDJ)
 	awk '$$0 ~ /^>/ {gsub("_","-",FILENAME); $$0=$$0" @"FILENAME} {print}'  $^ > $@
 
-
-shouldlocus: vidjil
+shouldlocus:
 	$(SHOULD_VDJ_TO_TAP) -2q -r $(SHOULD_VDJ) $(SHOULD_LOCUS)
 
-shouldlocus_merged: should-vdj-tests/locus-merged.should-vdj.fa vidjil
-	$(SHOULD_VDJ_TO_TAP) -2q -r $<
+shouldlocus_merged: should-locus-merged.should-vdj.fa 
+	$(SHOULD_VDJ_TO_TAP) --e-value 1500 -2q -r $<
 
-shouldlocus_and_vdj: vidjil
-	@echo "*** Launching .should-vdj-fa tests..."
-	$(MAKE) shouldlocus_merged
-	$(MAKE) shouldvdj_with_rc_merged
-	@echo "*** All .should-vdj.fa tests passed"
-
-shouldvdj_no_relaunch:
-	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ_VDJ)
+shouldvdj_with_rc_merged: should-vdj-merged.should-vdj.fa
+	@echo "*** Launching .should-vdj-fa tests (merged)..."
+	$(SHOULD_VDJ_TO_TAP) --e-value 1500 -r should-vdj-merged.should-vdj.fa
+	@echo "*** All .should-vdj.fa tests (merged) passed"
 
 shouldvdj:
 	$(SHOULD_VDJ_TO_TAP) $(SHOULD_VDJ)
@@ -112,8 +115,6 @@ shouldvdj:
 shouldvdj_with_rc:
 	$(SHOULD_VDJ_TO_TAP) -r $(SHOULD_VDJ)
 
-shouldvdj_with_rc_merged: should-vdj-tests/vdj-merged.should-locus.fa
-	$(SHOULD_VDJ_TO_TAP) -r should-vdj-tests/should-vdj.merged.fa
 
 # When the global test suite is passing, individual failed tests (tagged with BUG or BUG-LOCUS in the *.should-vdj.fa files)
 # can be marked as 'TODO' to make continuous integration happy
