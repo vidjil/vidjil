@@ -16,7 +16,7 @@ SHOULD_LOG=$(SHOULD:.should=.tap)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 SHOULD_VDJ_VDJ=$(SHOULD_VDJ:.should-vdj.fa=.1.vdj)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
-SHOULD_VDJ_TO_TAP=time python -u should-vdj-to-tap.py
+SHOULD_VDJ_TO_TAP=time python2 -u should-vdj-to-tap.py
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind
 VALGRIND_TOOLS= --tool=memcheck --leak-check=full --show-reachable=yes --trace-children=yes
