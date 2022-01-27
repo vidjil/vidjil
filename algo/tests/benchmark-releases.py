@@ -1,5 +1,5 @@
 
-ARCHIVE = 'http://www.vidjil.org/releases/'
+ARCHIVE = 'https://www.vidjil.org/releases/'
 DEST = 'bench/'
 SRC = DEST + 'src/'
 BIN = DEST + 'bin/'
@@ -205,7 +205,7 @@ def install(release, tgz):
 
     go('wget %s/%s -O %s/src.tgz' % (ARCHIVE, tgz, dir), log)
     go('cd %s ; tar xfz src.tgz' % dir, log)
-    go('cd %s/*%s* ; make vidjil-algo germline || make CXX=g++-6 vidjil-algo germline' % (dir, release), log)
+    go('cd %s/*%s* ; make germline ; cd algo ; make || make CXX=g++-11' % (dir, release), log)
     res = go('cp %s/*%s*/vidjil* %s/%s ' % (dir, release, BIN, release), log)
     go('cp -pr %s/*%s*/germline %s/%s ' % (dir, release, GERM, release), log)
 
