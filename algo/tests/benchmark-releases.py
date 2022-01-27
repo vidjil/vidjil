@@ -35,18 +35,18 @@ DESIGNATIONS = '-c designations '
 from collections import OrderedDict
 
 BENCHS = OrderedDict([
-  ('init', '-x 1 ' + MULTI + L4 + CONSENSUS_NO),
-  ('germ', LIMIT1e5 + MULTI + L4 + '-c germlines '),
+  ('init', '-x 1 ' + MULTI + CONSENSUS_NO + L4),
+  ('germ', LIMIT1e5 + MULTI + '-c germlines ' + L4),
 
   ('filter', LIMIT2e5 + FILTER + MULTI + L4),
 
-  ('igh-0', LIMIT1e5 + IGH + L4 + CONSENSUS_NO),
-  ('multi-0', LIMIT1e5 + MULTI + L4 + CONSENSUS_NO),
-  ('multi-y', LIMIT1e5 + MULTI + L4 + CONSENSUS_ALL),
-  ('multi-a', LIMIT1e3 + MULTI + L4 + DESIGNATIONS + '-z 1000'),
+  ('igh-0', LIMIT1e5 + IGH + CONSENSUS_NO + L4),
+  ('multi-0', LIMIT1e5 + MULTI + CONSENSUS_NO + L4),
+  ('multi-y', LIMIT1e5 + MULTI + CONSENSUS_ALL + L4),
+  ('multi-a', LIMIT1e3 + MULTI + DESIGNATIONS + '-z 1000 ' + L4),
 
-  ('S22-y', LIMIT1e3 + IGH + S22 + CONSENSUS_ALL),
-  ('S22-a', LIMIT1e3 + IGH + S22 + DESIGNATIONS),
+  ('S22-y', LIMIT1e3 + IGH + CONSENSUS_ALL + S22),
+  ('S22-a', LIMIT1e3 + IGH + DESIGNATIONS + S22),
 ])
 
 COMPATIBILITY = [
