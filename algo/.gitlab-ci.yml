@@ -79,7 +79,7 @@ algo_coverage:
 benchmark-algo:
   extends: .benchmark-algo
   script:
-    - cd algo/tests ; python3 benchmark-releases.py -r 3 -b -c -i 2018.10 -i 2019.03 -i 2020.04 -i 2021.02.2 -i alpha-2102
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -b -c -i 2018.10 -i 2019.03 -i 2020.04 -i 2021.04 -i alpha-2102
 
 benchmark-algo-full:
   extends: .benchmark-algo
