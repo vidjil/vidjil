@@ -62,15 +62,16 @@ Vidjil-algo is open-source, released under GNU GPLv3+ license.
 
 Vidjil-algo is systematically tested with the following compilers :
 
-  - gcc/g++ 4.8, 5.3, 6.3, 7.3, 8.4, 9.3, 10.1
-  - clang 3.4, 4.0, 6.0, 7.0, 11.0
+  - gcc/g++ 7.5, 8.4, 9.3, 10.1, 11
+  - clang 6.0, 7.0, 11.0, 12.0
 
+We support all gcc/clang versions released in the last 3 years.
 These compilers are available on recent OS X and on the following Linux distributions:
 
-  - CentOS 7, 8
-  - Debian Jessie 8.0, Stretch 9.0, Buster 10.0, Bullseye 11
-  - FreeBSD 9.2, 10, 11, 12
-  - Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS
+  - CentOS 8, CentOS Stream (installation possible on CentOS 7)
+  - Debian Stretch 9.0, Buster 10.0, Bullseye 11
+  - FreeBSD 12.2, 12.3, 13.0
+  - Ubuntu 18.04 LTS, 20.04 LTS
 
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
 The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) for that,
@@ -84,7 +85,7 @@ and the tested compilers are run through Docker containers described in `.gitlab
 To compile Vidjil-algo, make sure:
 
   - to be on a POSIX system ;
-  - to have a C++11 compiler (as `g++` 4.8 or above, or `clang` 3.4 or above).
+  - to have a C++11 compiler (as `g++` 7.5 or above, or `clang` 6.0 or above).
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
   - to have GNU make (`gmake` under FreeBSD).
