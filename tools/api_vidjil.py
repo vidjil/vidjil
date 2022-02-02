@@ -151,9 +151,12 @@ class Vidjil:
         new_url = self.url_server + "/default/whoami"
         response = self.session.get(new_url, verify=self.ssl)
         print( response.content )
+        if response.status_code != 200:
+            print( "Error of login; WHOAMI function present on server ?")
+
 
     def getSampleOfSet(self, set_id, config_id=-1):
-        new_url  = self.url_server+"/sample_set/index.json?id=%s&format=json&config_id=%s" % (set_id, config_id)
+        new_url  = self.url_server+"/sample_set/index.json?id=%s&config_id=%s" % (set_id, config_id)
         response = self.session.get(new_url, verify=self.ssl)
         content  = json.loads(response.content)
         return content
