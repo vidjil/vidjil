@@ -245,7 +245,6 @@ input[type='checkbox'], input[type='radio'] {
 
 body > center > * {
   text-align: initial;
-  max-width: 900px;
   margin-left: auto;
   margin-right: auto;
 }

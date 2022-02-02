@@ -23,10 +23,6 @@ publisher = Publisher(db, policy=ALLOW_ALL_POLICY)
 
 
 ####
-@action("patient")
-@action.uses("ajax_grid.html")
-def patient_list():
-    return dict(grid=publisher.grid(db.patient))
 
 @action("user")
 @action.uses("ajax_grid.html")

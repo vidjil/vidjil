@@ -12,6 +12,8 @@ from py4web.utils.downloader import downloader
 from pydal.tools.tags import Tags
 from py4web.utils.factories import ActionFactory
 from . import settings
+from .VidjilAuth import VidjilAuth
+
 
 # #######################################################
 # implement custom loggers form settings.LOGGERS
@@ -88,7 +90,7 @@ elif settings.SESSION_TYPE == "database":
 # #######################################################
 # Instantiate the object and actions that handle auth
 # #######################################################
-auth = Auth(session, db, define_tables=False)
+auth = VidjilAuth(session, db, define_tables=False)
 auth.use_username = True
 auth.param.registration_requires_confirmation = settings.VERIFY_EMAIL
 auth.param.registration_requires_approval = settings.REQUIRES_APPROVAL

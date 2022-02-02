@@ -7,6 +7,8 @@ import datetime
 from .common import db, Field, T, auth
 from pydal.validators import *
 from py4web.utils.populate import populate
+from py4web.utils.auth import Auth
+from .VidjilAuth import VidjilAuth
 
 # simple table example
 db.define_table(

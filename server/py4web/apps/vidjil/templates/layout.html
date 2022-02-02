@@ -15,13 +15,23 @@
       <nav class="black">
         <!-- Logo -->
         <a href="[[=URL('index')]]">
-          <b>py4web <script>document.write(window.location.href.split('/')[3]);</script></b>
+          <b>Vidjil DB</b>
         </a>
         <!-- Do not touch this -->
         <label for="hamburger">☰</label>
         <input type="checkbox" id="hamburger">
         <!-- Left menu ul/li -->
-        [[block page_left_menu]][[end]]
+        [[block page_left_menu]]
+        <ul>
+          [[if globals().get('user'):]]
+          <li><a href="[[=URL('patient')]]">Patients</a></li>
+          <li><a href="[[=URL('run')]]">Runs</a></li>
+          <li><a href="[[=URL('set')]]">Sets</a></li>
+          [[else:]]
+
+          [[pass]]
+        </ul>
+        [[end]]
         <!-- Right menu ul/li -->
         <ul>
           [[if globals().get('user'):]]
@@ -59,7 +69,7 @@
     <!-- end of HTML inserted by extending template -->
     <footer class="black padded">
       <p>
-        Made with py4web
+        Vidjil Copyright - contact - info - popipo
       </p>
     </footer>
   </body>
