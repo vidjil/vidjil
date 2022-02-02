@@ -154,7 +154,7 @@ class Vidjil:
 
     def getSampleOfSet(self, set_id, config_id=-1):
         new_url  = self.url_server+"/sample_set/index.json?id=%s&format=json&config_id=%s" % (set_id, config_id)
-        response = self.session.get(new_url, verify=False)
+        response = self.session.get(new_url, verify=self.ssl)
         content  = json.loads(response.content)
         return content
 
@@ -163,7 +163,7 @@ class Vidjil:
         data     = { 'sequence_file_id' : sequence_file_id, 'sample_set_id' : sample_id, 'config_id' : config_id }
         url_data = self.convertDataAsUrl(data)
         new_url  = self.url_server + "default/run_request?" + url_data
-        response = self.session.get(new_url, verify=False)
+        response = self.session.get(new_url, verify=self.ssl)
         content  = json.loads(response.content)
         return content
 
@@ -179,7 +179,7 @@ class Vidjil:
         filename is the output filename to set to locally store
         """
         url = "%s/default/download/%s?filename=%s" % (self.url_server, filepath, filename)
-        reponse = self.session.get(url, verify=False)
+        reponse = self.session.get(url, verify=self.ssl)
         # TODO: add verification step if same filename is already present
         open(filename, 'wb').write(reponse.content)
 
