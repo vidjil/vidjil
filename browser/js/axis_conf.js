@@ -268,32 +268,36 @@ AXIS_DEFAULT = {
     "[IMGT] Productivity": {
         doc:        "productivity (as computed by IMGT/V-QUEST)",
         labels:     {
-            "not productive":   {text:"not productive"},
-            "no CDR3 detected": {text:"no CDR3 detected"},
-            "productive":       {text:"productive"},
-        },
+                        "not productive":   {text:"not productive"},
+                        "no CDR3 detected": {text:"no CDR3 detected"},
+                        "productive":       {text:"productive"},
+                    },
         fct:        function(clone) { return clone.getProductivityIMGT() },
         pretty: function(tag) { return icon_pm(tag, "productive", "not productive"); },
     },
     "[IMGT] VIdentity": {
         doc:        "V identity (as computed by IMGT/V-QUEST)",
-        fct:        function(clone) { return clone.getVIdentityIMGT() },
+        fct:        function(clone) { 
+                        var vIdentity = parseFloat(clone.getVIdentityIMGT()) 
+                        if (isNaN(vIdentity)) return clone.getVIdentityIMGT()
+                        return vIdentity
+                    },
         pretty: function(val) {
-            var Videntity_info = document.createElement('span');
-            Videntity_info.className = "identityBox widestBox";
+                    var Videntity_info = document.createElement('span');
+                    Videntity_info.className = "identityBox widestBox";
 
-            var identityRate = parseFloat(val)
-            if (!isNaN(identityRate)) {
-                var info = document.createElement('span');
-                if (V_IDENTITY_THRESHOLD)
-                    info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
-                info.appendChild(document.createTextNode(floatToFixed(identityRate,5) + "%"))
-                info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
-                Videntity_info.appendChild(info)
-            } else Videntity_info.innerHTML = "&nbsp;";
-            return Videntity_info;
-
-        },
+                    var identityRate = parseFloat(val)
+                    if (!isNaN(identityRate)) {
+                        var info = document.createElement('span');
+                        if (V_IDENTITY_THRESHOLD)
+                            info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
+                        info.appendChild(document.createTextNode(floatToFixed(identityRate,5) + "%"))
+                        info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
+                        Videntity_info.appendChild(info)
+                    } else Videntity_info.innerHTML = "&nbsp;";
+                    return Videntity_info;
+                },
+        autofill :  true
     },
     "Tag": {
         doc:        "tag, as defined by the user",   
