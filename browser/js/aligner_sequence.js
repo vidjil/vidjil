@@ -540,7 +540,7 @@ Sequence.prototype = {
                 try{
                     text = l.text(this, this.m.clone(this.id));
                     if (typeof text == "string") { 
-                        div_layer.innerHTML = l.text(this, this.m.clone(this.id));
+                        div_layer.innerHTML = text.replace('\t','-');
                     }else {
                         div_layer.innerHTML = "";
                         div_layer.append(text);
