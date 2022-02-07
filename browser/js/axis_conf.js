@@ -390,8 +390,18 @@ AXIS_DEFAULT = {
                         "mode": "linear",
                         "min": 0
                     },
-        fct: function(clone) {return clone.numberInCloneDB()},
-        autofill: true,
+        class:      "devel-mode",
+        fct:        function(clone) {
+                        var n = clone.numberInCloneDB()
+                        if (typeof n == "undefined") return "-/-"
+                        return n
+                    },
+        pretty:     function(n) {
+                        var span = createClassedSpan("sizeBox sixChars", n)
+                        if (n == "-/-") span.title = "missing data, use 'send to cloneDB' tool in aligner to update value"
+                        return span
+                    },
+        autofill:   true,
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
     "[cloneDB] Hits (set)": {   
@@ -400,8 +410,18 @@ AXIS_DEFAULT = {
                         "mode": "linear",
                         "min": 0
                     },
-        fct: function(clone) {return clone.numberSampleSetInCloneDB()},
-        autofill: true
+        class:      "devel-mode",
+        fct:        function(clone) {
+                        var n = clone.numberSampleSetInCloneDB()
+                        if (typeof n == "undefined") return "-/-"
+                        return n
+                    },
+        pretty:     function(n) {
+                        var span = createClassedSpan("sizeBox sixChars", n)
+                        if (n == "-/-") span.title = "missing data, use 'send to cloneDB' tool in aligner to update value"
+                        return span
+                    },
+        autofill:    true,
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
     "TSNEX": {   

@@ -95,6 +95,7 @@ Aligner.prototype = {
             var axis_label = document.createElement('label');
             axis_label.setAttribute('for', "sai"+i);
             axis_label.className = "aligner-checkbox-label";
+            if (typeof axis_p.class == "string") axis_label.className += " "+axis_p.class
             axis_label.title = axis_p.doc;
 
             var axis_option = document.createElement('span');

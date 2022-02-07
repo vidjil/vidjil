@@ -131,6 +131,7 @@ ScatterPlot_menu.prototype = {
             if (typeof axisP.hide == "undefined" || !axisP.hide){
 
                 element = document.createElement("option");
+                if (typeof axisP.class == "string") element.className = axisP.class
                 element.setAttribute('value', axisP.name);
                 element.appendChild(document.createTextNode( axisP.name));
 

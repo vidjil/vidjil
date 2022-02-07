@@ -353,8 +353,8 @@ Database.prototype = {
 
         console.log("Send to cloneDB: " + clones)
         var windows = [];
-	var self = this;
-	var kept_clones = [];
+        var self = this;
+        var kept_clones = [];
         for (var i = 0; i < clones.length; i++) {
             var clone = this.m.clones[clones[i]];
             if (clone.hasSeg('5', '3')) {
@@ -386,7 +386,6 @@ Database.prototype = {
 	            for (var i = 0; i < kept_clones.length; i++) {
 			self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i], self.m);
 	            }
-                    m.shouldRefresh()
                     m.update()
 		}
 		
