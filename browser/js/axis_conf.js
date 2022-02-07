@@ -93,6 +93,8 @@ AXIS_ALIGNER = [
                     "Number of samples",
                     "[IMGT] Productivity",
                     "[IMGT] VIdentity",
+                    "[cloneDB] Hits (sample)",
+                    "[cloneDB] Hits (set)"
                 ]
 
 // list of Axis available as color
