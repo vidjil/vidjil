@@ -447,7 +447,7 @@ Database.prototype = {
             // Hax !
             $('.jstree').trigger('load');
 
-            var list_select = ["choose_user", "choose_config", "select_user"]
+            var list_select = ["choose_user", "select_user"]
             for (var i = list_select.length - 1; i >= 0; i--) {
                 $('#'+list_select[i]).select2();
             }
