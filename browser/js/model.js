@@ -1682,13 +1682,14 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
     /**
      * Allow to know if a locus is present in clonotype of a sample
-     * If a clone is share between sample, it will be present even in not in top limit of the sample
+     * include each clonotype of each clone inside the top limit and present with a least one read
+     * If a clone is share between sample, it will be present even in not in top limit of the sample (see fuse of top field)
      */
     getLocusPresentInTop: function(time){
         var locus = []
         for (var i = this.clones.length - 1; i >= 0; i--) {
             var clone = this.clones[i]
-            if (clone.reads[time] == Math.max(...clone.reads)){
+            if (clone.reads[time] && clone.top <= m.top){
                 if (locus.indexOf(clone.germline) == -1){
                     locus.push(clone.germline)
                 }
