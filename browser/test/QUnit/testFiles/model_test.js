@@ -692,6 +692,21 @@ QUnit.test("export clone informations", function(assert) {
 });
 
 
+QUnit.test("getLocusPresentInTop", function(assert) {
+    // Create and populate model
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+
+    var locus = m.getLocusPresentInTop(0)
+    assert.deepEqual( locus, ["IGH", "TRG"] )
+
+    locus = m.getLocusPresentInTop(1)
+    assert.deepEqual( locus, ["IGH", "TRG"] )
+});
+
+
 QUnit.test("getPointHtmlInfo", function(assert) {
 
     // Create and populate model
@@ -741,6 +756,6 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     assert.includes(html_info, "<tr><td colspan='5'>Shannon's diversity</td></tr>")
     // each present locus id visible
     assert.includes(html_info, '<tr><td colspan=\'5\'>Simpson\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>')
-    assert.includes(html_info, '<tr><td> <span class="systemBoxMenu" title="TRG" style="background: rgb(220, 50, 47);">G</span> TRG</td><td>5.251</td></tr>')
-    assert.includes(html_info, '<tr><td> <span class="systemBoxMenu" title="IGH" style="background: rgb(108, 113, 196);">H</span> IGH</td><td>4.666</td></tr>')
+    assert.includes(html_info, '<tr><td> <span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> TRG</td><td>5.251</td></tr>')
+    assert.includes(html_info, '<tr><td> <span class=\"systemBoxMenu\" title=\"IGH\" style=\"background: rgb(108, 113, 196);\">H</span> IGH</td><td>4.666</td></tr>')
 });
