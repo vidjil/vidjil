@@ -78,6 +78,37 @@ class Vidjil:
             self.whoami()
             # todo; print admin status; groups ?
 
+    def request(self, url, method, error_msg=False, bypass_error=False):
+        if method == "get":
+            response = self.session.get(url, verify=self.ssl)
+        elif method == "post":
+            response = self.session.post(url, verify=self.ssl)
+        else:
+            raise("Error. request function don't get correct method argument")
+
+        try:
+            content  = json.loads(response.content)
+        except Exception as e:
+            print( url )
+            print( response.con)
+            print(e)
+            exit()
+
+        message  = False
+        if response.status_code != 200:
+            message = 'Server return an error code (%s) with message:\n%s' % (response.status_code, response.content if not error_msg else error_msg)
+
+        elif content == {'message': 'access denied'}:
+            message = 'Server return an access denied response.'
+
+        if message:
+            if bypass_error:
+                print(message)
+            else:
+                raise ValueError(message)
+        return content
+
+
     def getAllSampleset(self, set_type=None, filter_val=None):
         """ get all sample set """
         if not self.logged:
@@ -86,17 +117,14 @@ class Vidjil:
         set_type   = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
         filter_val = "" if filter_val == None else "filter="+prettyUrl(filter_val)+"&"
         new_url  = self.url_server+"/sample_set/all.json?&%s%s&" % (set_type, filter_val)
-        response = self.session.get(new_url, verify=self.ssl)
-        content  = json.loads(response.content)
-        return content
+        return self.requests(new_url, "get")
 
     def getSamplesetById(self, set_id=None, set_type=None):
         """ get a sample set by type and id """
         set_type = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
         new_url  = self.url_server+"/sample_set/samplesetById?&id=%s&%s" % (set_id, set_type)
-        response = self.session.get(new_url, verify=self.ssl)
-        content  = json.loads(response.content)
-        return content
+        # warning, don't present on prod server for the moment !!!
+        return self.request(new_url, "get")
 
     def createPatient(self, first_name='patient_api', last_name='API', sample_set_id=None, id=None, id_label=None, birth_date=None, info=None):
         data = {"group":"1","patient":[{
@@ -109,11 +137,8 @@ class Vidjil:
                     'info': prettyUrl(info if info else "") # to modifiy specials caracters
                     }
                 ]}
-        url_data = json.dumps(data).replace(" ", "")
-        new_url  = self.url_server + "/sample_set/submit?data=%s" % url_data
-        response = self.session.post(new_url, verify=self.ssl)
-        content  = json.loads(response.content)
-        return content
+        new_url  = self.url_server + "/sample_set/submit?data=%s" % json.dumps(data).replace(" ", "")
+        return self.request(new_url, "post")
 
     def createRun(self, name='run_api', sample_set_id=None, id=None, id_label=None, run_date=None, info=None, sequencer=None, pcr=None):
         data = {"group":"1","run":[{
@@ -127,11 +152,8 @@ class Vidjil:
                     'pcr': pcr if pcr else ""
                     }
                 ]}
-        url_data = json.dumps(data).replace(" ", "")
-        new_url  = self.url_server + "/sample_set/submit?data=%s" % url_data
-        response = self.session.post(new_url, verify=self.ssl)
-        content  = json.loads(response.content)
-        return content
+        new_url  = self.url_server + "/sample_set/submit?data=%s" % json.dumps(data).replace(" ", "")
+        return self.request(new_url, "post")
 
     def createSet(self, name='set_api', sample_set_id=None, id=None, info=None):
         data = {"group":"1","generic":[{
@@ -141,34 +163,27 @@ class Vidjil:
                     'info': prettyUrl(info if info else "")
                     }
                 ]}
-        url_data = json.dumps(data).replace(" ", "")
-        new_url  = self.url_server + "/sample_set/submit?data=%s" % url_data
-        response = self.session.post(new_url, verify=self.ssl)
-        content  = json.loads(response.content)
-        return content
+        new_url  = self.url_server + "/sample_set/submit?data=%s" % json.dumps(data).replace(" ", "")
+        return self.request(new_url, "post")
+
 
     def whoami(self):
         new_url = self.url_server + "/default/whoami"
-        response = self.session.get(new_url, verify=self.ssl)
-        print( response.content )
-        if response.status_code != 200:
-            print( "Error of login; WHOAMI function present on server ?")
-
+        error_msg = "Error of login; WHOAMI function present on server ?"
+        self.request(new_url, "get", error_msg=error_msg, bypass_error=True)
+        return
 
     def getSampleOfSet(self, set_id, config_id=-1):
         new_url  = self.url_server+"/sample_set/index.json?id=%s&config_id=%s" % (set_id, config_id)
-        response = self.session.get(new_url, verify=self.ssl)
-        content  = json.loads(response.content)
-        return content
+        return self.request(new_url, "get")
+
 
     def launchAnalisysSample(self, sample_id, sequence_file_id, config_id, force=False):
         # get sample status
         data     = { 'sequence_file_id' : sequence_file_id, 'sample_set_id' : sample_id, 'config_id' : config_id }
-        url_data = self.convertDataAsUrl(data)
-        new_url  = self.url_server + "default/run_request?" + url_data
-        response = self.session.get(new_url, verify=self.ssl)
-        content  = json.loads(response.content)
-        return content
+        new_url  = self.url_server + "default/run_request?" + self.convertDataAsUrl(data)
+        return self.request(new_url, "get")
+
 
     def convertDataAsUrl(self, data):
         string = ""
@@ -220,12 +235,9 @@ class Vidjil:
         }
         url_data = json.dumps(data).replace(" ", "")
         new_url  = self.url_server + "/file/submit.json?data=%s" % url_data
-        response = self.session.post(new_url, verify=self.ssl)
-
-        if response.status_code != 200:
-            raise Exception('createSample', "Error in creation of sample in set %s" % sample_set_id)
-        content  = json.loads(response.content)
-        file_ids = content["file_ids"][0]
+        error_msg = "Error in creation of sample in set %s" % sample_set_id
+        content   = self.request(new_url, "post", error_msg=error_msg, bypass_error=False)
+        file_ids  = content["file_ids"][0]
         print("Samples created (%s): launch upload" % (file_ids))
         
         ## Upload files
