@@ -59,6 +59,9 @@ class Vidjil:
 
     def login(self, email, password):
         response = self.session.get(self.url_server + '/default/user/login', verify=self.ssl)
+        if not "auth_user_email__row" in str(response.content):
+            raise Exception( "Login; server don't return a correct login form.\nPlease verify your url and certificate parameters.")
+
         data = { "email":email, "password":password, 'remember_me':"on" }
         BS = BeautifulSoup(response.text, 'html.parser')
         for i, e in enumerate(BS.select('input[name]')):
@@ -69,10 +72,9 @@ class Vidjil:
         headers = {'Content-Type': m.content_type }
         response = self.session.post(self.url_server + '/default/user/login', data = m, headers = headers, verify=self.ssl)
 
-        if response.status_code != 200:
+        if response.status_code != 200 or "auth_user_email__row" in str(response.content):
             self.logged = False
-            print( "Error at loggin")
-            return -1
+            raise Exception( "Login; error at login step.\nVerify your user name and password.")
         else:
             self.logged = True
             print( "Successfull login")
