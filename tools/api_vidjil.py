@@ -261,62 +261,6 @@ def extractTags(string):
     TAGS += tags
     return tags
 
-################################
-### More functions for stats use
-################################
-def generateCatFromData(data, fileout, name_to_use="sequence_name"):
-    '''
-    Take extraction data to generate clean cateories file from tags
-    Data save under file for stats usage
-    '''
-    formated = {}
-    for sampleset in data:
-        dico = {"birth" : sampleset["birth"] if not 'None' else ""}
-        dico = addCatsFromTags(dico, sampleset["tags"])
-        for sample in sampleset["samples"]:
-            new_dico = {}
-            for key in dico.keys():
-                new_dico[key] = dico[key]
-            new_dico = addCatsFromTags(new_dico, sample["tags"])
-            name = sample[name_to_use]
-            for pattern in [".fasta", ".fastq.gz", ".fastq"]:
-                name = name.replace(pattern, "")
-            formated[name] = new_dico
-    print( formated )
-    open(fileout, 'w').write(json.dumps(formated))
-    return formated
-
-
-def defineTag(tag):
-    '''
-    Give a categories for some already known tag value (disease, primerset, ...)
-    '''
-    if tag in ["diag", "follow-up", "followup", "relapse"]:
-        return "analyse"
-    elif tag in ["LAL", "LAL-T", "LAL-B", "Waldenstrom", "LAL", "health"]:
-        return "disease"
-    elif tag in ["illumina", "iontorrent", "pyro"]:
-        return "sequencer"
-    elif tag in ["biomed2", "ecngs", "inhouse"]:
-        return "primers"
-    else:
-        return False
-
-def addCatsFromTags(dico, tags):
-    '''
-    Add tags in dict; define cat and value before adding
-    '''
-    for tag in tags:
-        if "=" in tag:
-            cat, val = tag.split("=")
-            print( "cat: %s, val: %s" % (cat, val))
-            dico[cat] = val
-        else:
-            if defineTag(tag):
-                dico[defineTag(tag)] = tag
-            else:
-                TAGS_UNDEFINED.append(tag)
-    return dico
 
 if  __name__ =='__main__':
 
