@@ -11,6 +11,7 @@ import getpass
 import sys
 from bs4 import BeautifulSoup
 from requests_toolbelt import MultipartEncoder
+from collections import defaultdict
 # REmove warning if no SSL vérification
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -177,9 +178,67 @@ class Vidjil:
         new_url  = self.url_server+"/sample_set/index.json?id=%s&config_id=%s" % (set_id, config_id)
         return self.request(new_url, "get")
 
+    def launchAnalysisBunchesSet(self, list_sets, config_id, force=False, retry=False, verbose=False):
+        """ This function allow to take a list of sets and to launch a specified configuration on each sequence file inside them.
+        Sequence file with a previous result for this configuration will be bypass.
+        retry: Allow to make a new launch of analysis if the current status is FAILED
+        force: Allow to launch an analysis with no consideration of current result statut
+        verbose: Allow to print some information on each seuqence file status and some stats on sets
+        """
+        status  = defaultdict(lambda: dict())
+        stats   = defaultdict(lambda: 0 )
+        for sample_set_id in list_sets:
+            sub = self.launchAnalysisOnSet(sample_set_id, config_id, force=force, verbose=verbose)
+            for key, value in sub.items():
+                for subkey, subvalue in value.items():
+                    status[key][subkey] = subvalue
+                    stats["total"]    += 1
+                    stats[subvalue] += 1
+        if verbose:
+            print(status)
+            print( "Recap launchAnalysisBunchesSet:\nTotal: %s" % stats["total"] )
+            for key, value in stats.items():
+                if key != "total":
+                    print("%s: %s/%s (%s %%)" %  (key, stats[key], stats["total"], round(100*(stats[key]/stats["total"]), 2)) )
+        return status
 
-    def launchAnalisysSample(self, sample_id, sequence_file_id, config_id, force=False):
-        # get sample status
+
+    def launchAnalysisOnSet(self, sample_set_id, config_id, force=False, retry=False, verbose=False):
+        """ This function allow to take a set and to launch a specified configuration on each sequence file inside it.
+        Sequence file with a previous result for this configuration will be bypass.
+        retry: Allow to make a new launch of analysis if the current status is FAILED
+        force: Allow to launch an analysis with no consideration of current result statut
+        verbose: Allow to print some information on each seuqence file status and some stats on sets
+        """
+        status  = defaultdict(lambda: dict())
+        samples = self.getSampleOfSet(sample_set_id, config_id)
+        for sample in samples["query"]:
+            sequence_file_id = sample["sequence_file"]["id"]
+            result  = sample["results_file"]
+            pre_str = "sample_set_id: %s; config %s; sequence_file_id = %s" % (sample_set_id, config_id, sequence_file_id)
+            if result["status"] == "" or (result["status"] == "FAILED" and retry==True) or force==True:
+                string = "%s\n\tanalysis will be launch" % (pre_str)
+                if sample["sequence_file"]["data_file"] != None:
+                    self.launchAnalysisOnSample(sample_set_id, sequence_file_id, config_id, force=force)
+                    if result["status"] == "FAILED":
+                        result["status"] = "launched (after failed)"
+                    else:
+                        result["status"] = "launched"
+                else:
+                    result["status"] = "no file"
+
+            string = "%s\n\tResult state: %s" % (pre_str, result["status"])
+            status["set_%s" % sample_set_id]["sample_%s" % sequence_file_id] = result["status"]
+            if verbose:
+                print( string )
+
+        return status
+
+    def launchAnalysisOnSample(self, sample_id, sequence_file_id, config_id):
+        """ Launch analysis on a sequence file, from a sample with specified config id
+        Will force the analysis if a previous result if present or already running.
+        Control on previous analysis should be done before calling
+        """
         data     = { 'sequence_file_id' : sequence_file_id, 'sample_set_id' : sample_id, 'config_id' : config_id }
         new_url  = self.url_server + "default/run_request?" + self.convertDataAsUrl(data)
         return self.request(new_url, "get")
@@ -344,7 +403,7 @@ if  __name__ =='__main__':
                     sample_set_id=setid_set,
                     sample_type="set")
         file_id  = sample["file_ids"][0]
-        analysis = vidjil.launchAnalisysSample(setid_patient, file_id, "2")
+        analysis = vidjil.launchAnalysisOnSample(setid_patient, file_id, "2")
         print( "analysis launched on sequence file %s, processId: %s" % (file_id, analysis["processId"] ))
 
         ### Upload a second sample in patient and set only
