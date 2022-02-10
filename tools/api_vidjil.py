@@ -173,9 +173,10 @@ class Vidjil:
 
 
     def whoami(self):
-        new_url = self.url_server + "/default/whoami"
+        new_url = self.url_server + "/default/whoami.json"
         error_msg = "Error of login; WHOAMI function present on server ?"
-        self.request(new_url, "get", error_msg=error_msg, bypass_error=True)
+        user = self.request(new_url, "get", error_msg=error_msg, bypass_error=True)
+        print( "whoami: %s" % user)
         return
 
     def getSampleOfSet(self, set_id, config_id=-1):

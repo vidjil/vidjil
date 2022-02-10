@@ -43,8 +43,8 @@ def home():
 
 def whoami():
     if auth.user:
-        return "User %s (%s)" % (auth.user.id, auth.user.email)
-    return "No user"
+        return dict(auth.user)
+    return {}
 
 def logger():
     '''Log to the server'''
