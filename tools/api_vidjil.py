@@ -74,7 +74,9 @@ class Vidjil:
 
         if response.status_code != 200 or "auth_user_email__row" in str(response.content):
             self.logged = False
-            raise Exception( "Login; error at login step.\nVerify your user name and password.")
+            if "auth_user_email__row" in str(response.content):
+                raise Exception( "Login; error at login step.\nVerify your user name and password.")
+            raise Exception( "Login; error at login step.\nStatus code is %s and content is '%s'."  % (response.status_code, response.content))
         else:
             self.logged = True
             print( "Successfull login")
@@ -93,7 +95,7 @@ class Vidjil:
             content  = json.loads(response.content)
         except Exception as e:
             print( url )
-            print( response.con)
+            print( response.content)
             print(e)
             exit()
 
