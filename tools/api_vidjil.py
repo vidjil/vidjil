@@ -131,7 +131,7 @@ class Vidjil:
         # warning, don't present on prod server for the moment !!!
         return self.request(new_url, "get")
 
-    def createPatient(self, first_name='patient_api', last_name='API', sample_set_id=None, id=None, id_label=None, birth_date=None, info=None):
+    def createPatient(self, first_name, last_name, sample_set_id=None, id=None, id_label=None, birth_date=None, info=None):
         data = {"group":"1","patient":[{
                     'id': id if id else "",
                     'sample_set_id': sample_set_id if sample_set_id else "",
@@ -145,7 +145,7 @@ class Vidjil:
         new_url  = self.url_server + "/sample_set/submit?data=%s" % json.dumps(data).replace(" ", "")
         return self.request(new_url, "post")
 
-    def createRun(self, name='run_api', sample_set_id=None, id=None, id_label=None, run_date=None, info=None, sequencer=None, pcr=None):
+    def createRun(self, name, sample_set_id=None, id=None, id_label=None, run_date=None, info=None, sequencer=None, pcr=None):
         data = {"group":"1","run":[{
                     'id': id if id else "",
                     'sample_set_id': sample_set_id if sample_set_id else "",
@@ -160,7 +160,7 @@ class Vidjil:
         new_url  = self.url_server + "/sample_set/submit?data=%s" % json.dumps(data).replace(" ", "")
         return self.request(new_url, "post")
 
-    def createSet(self, name='set_api', sample_set_id=None, id=None, info=None):
+    def createSet(self, name, sample_set_id=None, id=None, info=None):
         data = {"group":"1","generic":[{
                     'id': id if id else "",
                     'sample_set_id': sample_set_id if sample_set_id else "",
