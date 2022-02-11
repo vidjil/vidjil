@@ -1576,7 +1576,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             html += "<tr><td class='header' "+colspan_header+"> Diversity indices </td></tr>"
             for (var key_diversity in this.diversity) {
                 var diversity = this.getDiversity(key_diversity, timeID)
-                if (typeof diversity == "string"){
+                if (typeof diversity == "string" || diversity == null){
                     html += "<tr><td> " + translate_key_diversity(key_diversity) + "</td><td>" + diversity + '</td></tr>'
                 } else if (typeof diversity == "object"){
                     html += "<tr><td "+colspan_header+">"+translate_key_diversity(key_diversity)+"</td></tr>"
