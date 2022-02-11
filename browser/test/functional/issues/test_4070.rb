@@ -16,7 +16,7 @@ class TestNullDiversityIssue < BrowserTest
     $b.info_point.i.click
     info_timepoint = $b.div(id: "info_timepoint")
     # timepoint information panel is open and show correct informations
-    assert( info_timepoint.text.include? "Ds_diversity")    
+    assert( info_timepoint.text.include? "Shannon's diversity")
     assert( info_timepoint.text.include? "null")    
   end
   
