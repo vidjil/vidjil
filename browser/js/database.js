@@ -375,13 +375,20 @@ Database.prototype = {
 		    result = res;
 		} catch (err) {}
                 self.connected = true;
-		if (typeof result.success !== 'undefined' && result.success == 'false') {
-                    console.log({
-			"type": "flash",
-			"msg": result.message,
-			"priority": 2
-                    });
-                    self.connected = false;
+        if (typeof result.error == 'string' ) {
+            console.log({
+                "type": "flash",
+                "msg": "CloneDB: " +result.error,
+                "priority": 2
+            });
+            self.connected = false;
+        } else if (typeof result.success !== 'undefined' && result.success == 'false') {
+            console.log({
+                "type": "flash",
+                "msg": "CloneDB: " +result.message,
+                "priority": 2
+            });
+            self.connected = false;
 		} else { 
 	            for (var i = 0; i < kept_clones.length; i++) {
 			self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i], self.m);
