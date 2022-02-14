@@ -273,7 +273,8 @@ AXIS_DEFAULT = {
                         "productive":       {text:"productive"},
                     },
         fct:        function(clone) { return clone.getProductivityIMGT() },
-        pretty: function(tag) { return icon_pm(tag, "productive", "not productive"); },
+        pretty:     function(tag) { return icon_pm(tag, "productive", "not productive"); },
+        refresh:    function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"}
     },
     "[IMGT] VIdentity": {
         doc:        "V identity (as computed by IMGT/V-QUEST)",
@@ -283,20 +284,21 @@ AXIS_DEFAULT = {
                         return vIdentity
                     },
         pretty: function(val) {
-                    var Videntity_info = document.createElement('span');
-                    Videntity_info.className = "identityBox widestBox";
+                        var Videntity_info = document.createElement('span');
+                        Videntity_info.className = "identityBox widestBox";
 
-                    var identityRate = parseFloat(val)
-                    if (!isNaN(identityRate)) {
-                        var info = document.createElement('span');
-                        if (V_IDENTITY_THRESHOLD)
-                            info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
-                        info.appendChild(document.createTextNode(floatToFixed(identityRate,5) + "%"))
-                        info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
-                        Videntity_info.appendChild(info)
-                    } else Videntity_info.innerHTML = "&nbsp;";
-                    return Videntity_info;
-                },
+                        var identityRate = parseFloat(val)
+                        if (!isNaN(identityRate)) {
+                            var info = document.createElement('span');
+                            if (V_IDENTITY_THRESHOLD)
+                                info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
+                            info.appendChild(document.createTextNode(floatToFixed(identityRate,5) + "%"))
+                            info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
+                            Videntity_info.appendChild(info)
+                        } else Videntity_info.innerHTML = "&nbsp;";
+                        return Videntity_info;
+                    },
+        refresh:    function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"},
         autofill :  true
     },
     "Tag": {
@@ -408,6 +410,7 @@ AXIS_DEFAULT = {
                         return span
                     },
         autofill:   true,
+        refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
     "[cloneDB] Hits (set)": {   
@@ -427,7 +430,8 @@ AXIS_DEFAULT = {
                         if (n == "-/-") span.title = "missing data, use 'send to cloneDB' tool in aligner to update value"
                         return span
                     },
-        autofill:    true,
+        autofill:   true,
+        refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
         //hide : (typeof config === 'undefined' || ! config.clonedb),
     },
     "TSNEX": {   
