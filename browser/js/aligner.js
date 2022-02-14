@@ -123,6 +123,49 @@ Aligner.prototype = {
                             Axis.prototype.getAxisProperties("Size")];
     },
 
+    // return list of external data that need to be refreshed to display enabled layers
+    needRefresh: function(){
+        var refreshList = []
+        for (var s in this.sequence){
+            var r = this.sequence[s].needRefresh()
+            for (var s in r ) 
+                if (refreshList.indexOf(r[s]) == -1)
+                    refreshList.push(r[s])
+        }
+        return refreshList
+    },
+
+    // check if some enabled layers in segmenter need external data from IMGT/cloneDB to be displayed and update buttons accordingly
+    updateButton: function(){
+
+        var refreshList = this.needRefresh()
+
+        if (refreshList.length == 0)
+            $("#align-refresh-button").hide()
+        else
+            $("#align-refresh-button").show()
+
+        return this        
+    },
+
+    retrieveExternalData: function(){
+        var refreshList = this.needRefresh()
+        for (var i in refreshList){
+            serviceName = refreshList[i]
+
+            switch (serviceName) {
+                case "IMGT":
+                    this.sendTo('IMGTSeg')
+                    break;
+                case "cloneDB":
+                    db.callCloneDB(m.getSelected())
+                    break;
+                default:
+                    break;
+            }
+        }
+    },
+
     //check axis selected in menu to update and update axisBox dom elements accordingly
     connect_axisbox:function (elem){
         var self = this;
@@ -337,6 +380,8 @@ Aligner.prototype = {
         if (update)
             for (var s in this.sequence)
                 this.sequence[s].updateLayers(layers);
+        
+        this.updateButton()
     },
 
 
@@ -382,6 +427,7 @@ Aligner.prototype = {
             this.removeSequence(keys[i], false)
 
         if (update) this.updateDom()
+                        .updateButton()
                         .show()
     },
 
@@ -415,6 +461,7 @@ Aligner.prototype = {
 
         var self = this;
         var cloneID;
+        var updateNeeded = false
         
         list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
 
@@ -422,8 +469,10 @@ Aligner.prototype = {
         for (var i = 0; i < list.length; i++) {     
             cloneID = list[i];   
             if (!this.m.clone(cloneID).isSelected()) 
-                if (this.sequence[cloneID])             
+                if (this.sequence[cloneID]){             
                     this.removeSequence(cloneID, false);
+                    updateNeeded = true;
+                }
         }
 
         // add newly selected clones
@@ -432,10 +481,14 @@ Aligner.prototype = {
             if (this.m.clone(cloneID).isSelected() && 
                 Object.keys(this.sequence).indexOf(cloneID) == -1 ){ 
                 this.addCloneToSegmenter(cloneID);
+                updateNeeded = true;
             }
         }
 
-        this.updateDom(list)
+        if (updateNeeded){
+            this.updateDom(list)
+                .updateButton()
+        }
     },
 
     updateDom:function(list){
