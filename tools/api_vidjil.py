@@ -9,6 +9,7 @@ import random, string
 import argparse
 import getpass
 import sys
+import errno
 from bs4 import BeautifulSoup
 from requests_toolbelt import MultipartEncoder
 from collections import defaultdict
@@ -263,6 +264,8 @@ class Vidjil:
         url = "%s/default/download/%s?filename=%s" % (self.url_server, filepath, filename)
         reponse = self.session.get(url, verify=self.ssl)
         # TODO: add verification step if same filename is already present
+        if os.path.isfile(filepath+"/"+filename):
+            raise Exception('download', "A file with same name already exist")
         open(filename, 'wb').write(reponse.content)
 
         # Clean file names
@@ -312,6 +315,9 @@ class Vidjil:
         return content
 
     def uploadSample(self, sample_id, filepath, filename, pre_process, file_number):
+        if not os.path.isfile(filepath+"/"+filename):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), filepath+"/"+filename)
+
         data     = {'pre_process': pre_process, 'id': sample_id, 'file_number': file_number}
         new_url  = self.url_server + "/file/upload.json"
         response = self.session.post(new_url, data = data, files={'file':(filename, open(filepath+"/"+filename,'rb'))}, verify=self.ssl)
