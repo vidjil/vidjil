@@ -632,16 +632,16 @@ Sequence.prototype = {
         // check select axis info
         for (var j in this.segmenter.selectedAxis){
             var a = this.segmenter.selectedAxis[j];
-            var r = false
+            var r2 = false
             if (a.refresh != 'undefined')
                 try{
-                    r = a.refresh(this.m.clone(this.id));
+                    r2 = a.refresh(this.m.clone(this.id));
                 }catch(e){
-                    r = false;
+                    r2 = false;
                 }
             
-            if (typeof r == 'string' && refreshList.indexOf(r) ==-1) 
-                refreshList.push(r)
+            if (typeof r2 == 'string' && refreshList.indexOf(r2) ==-1) 
+                refreshList.push(r2)
         
         }
         return refreshList

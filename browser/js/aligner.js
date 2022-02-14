@@ -128,9 +128,9 @@ Aligner.prototype = {
         var refreshList = []
         for (var s in this.sequence){
             var r = this.sequence[s].needRefresh()
-            for (var s in r ) 
-                if (refreshList.indexOf(r[s]) == -1)
-                    refreshList.push(r[s])
+            for (var s2 in r ) 
+                if (refreshList.indexOf(r[s2]) == -1)
+                    refreshList.push(r[s2])
         }
         return refreshList
     },
