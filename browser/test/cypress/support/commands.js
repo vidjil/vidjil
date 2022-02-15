@@ -68,7 +68,7 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis, timeout) => {
   cy.get("button[id=start_import_json]")
     .click();
   // Wait the end of the loading (async)
-  cy.update_icon(timeout)
+  cy.update_icon(0, timeout)
 })
 
 /**
