@@ -623,6 +623,11 @@ Model_loader.prototype = {
                 for (var key in this.analysis.data)
                     this.data[key] = this.analysis.data[key]
             }
+
+            if (this.analysis.report_save) {
+                m.report_save = this.analysis.report_save
+            }
+
             this.initClones();
             this.initData();
             
@@ -742,7 +747,8 @@ Model_loader.prototype = {
                 names: this.samples.names},
             clones : this.analysis_clones,
             clusters : this.analysis_clusters,
-            tags : {}
+            tags : {},
+            report_save :this.report_save
         }
 
         var elem;

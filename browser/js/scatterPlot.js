@@ -79,7 +79,7 @@ function ScatterPlot(id, model, database, default_preset) {
     this.axisX = new Axis("V/5' gene")
     this.axisY = new Axis("J/3' gene")
     this.mode = "grid"
-    this.use_system_grid = false
+    this.print = false
 
     //flag used to count the number of transition (multiple transition can run at the same time)
     //increase every time a transition is started
@@ -267,8 +267,6 @@ ScatterPlot.prototype = {
     updateBar: function() {
         if (!this.axisX.json) return
 
-        this.use_system_grid = (this.axisX.germline != "multi")
-
         var cloneList = []
         for (var cloneID in this.m.clones){
             var clone = m.clone(cloneID)
@@ -299,7 +297,7 @@ ScatterPlot.prototype = {
     },
 
     includeBar: function(clone, log) {
-        var system_grid = (!this.use_system_grid || (this.use_system_grid && this.m.getCurrentSystem() == clone.get('germline') )) 
+        var system_grid = (!this.useSystemGrid() || ( this.m.getCurrentSystem() == clone.get('germline') )) 
         var showVirtual;
 
         // Set if the clone should be show on is virtual/distrib status
@@ -484,6 +482,34 @@ ScatterPlot.prototype = {
     switchMode: function () {
         this.changeMode(this.mode === "grid" ? "bar" : "grid")
     },
+
+    /**
+     * 
+     */
+    toString: function(){
+        var string = ""
+        if (this.mode == "grid"){
+            string += "scatterplot ["+this.axisX.name+" | "+ this.axisY.name+"]"
+            if (this.axisX.germline != "multi" && this.axisY.germline != "multi")
+                string += " - "+this.m.getCurrentSystem()+" - "
+        }
+
+        return string
+    },
+
+    /**
+     * return true if scatterplot should display a system grid
+     */
+    useSystemGrid: function() {
+        if (this.print) return false
+
+        if ((this.axisX && this.axisX.germline != "multi"  ||
+             this.axisY && this.axisY.germline != "multi") &&
+             this.m.system == "multi")
+            return true
+
+        return false
+    },
     
     /**
      * build a system labels descriptor
@@ -546,14 +572,12 @@ ScatterPlot.prototype = {
     resize: function(div_width, div_height) {
         if(!this.m.isReady()) return      //don't resize if model is not ready
 
-        var print = true
         if (typeof div_height == 'undefined') {
             var div = document.getElementById(this.id)
             div_height = div.offsetHeight
             div_width = div.offsetWidth
-            print = false
         }
-        this.computeSize(div_width, div_height, print)
+        this.computeSize(div_width, div_height)
             //Attributions
         this.vis = d3.select("#" + this.id + "_svg")
             .attr("width", div_width)
@@ -568,24 +592,21 @@ ScatterPlot.prototype = {
     /**
      * @param {float} [div_width]
      * @param {float} [div_height]
-     * @param {float} [print]
      * */
-    computeSize: function(div_width, div_height, print) {
+    computeSize: function(div_width, div_height) {
         if (typeof div_height != 'undefined') {
             //recompute resizeW/H only if a custom div_Width/hieght is provided
             this.resizeW = div_width - this.margin[3] - this.margin[1];
             this.resizeH = div_height - this.margin[0] - this.margin[2];
         }
 
-        if (this.axisX && this.axisX.germline != "multi" || this.axisY.germline != "multi"){
-            this.use_system_grid = true;
+        if (this.useSystemGrid())
             this.buildSystemGrid()
-        } else {
-            this.use_system_grid = false
+        else
             this.systemGrid = {}
-        }
+        
 
-        if (!print && this.use_system_grid && this.m.system_available.length > 1) {
+        if (this.useSystemGrid()) {
             this.gridSizeW = 0.8 * this.resizeW;
             this.gridSizeH = 1 * this.resizeH;
         } else {
@@ -604,11 +625,16 @@ ScatterPlot.prototype = {
      * (used for export a scatterplot screenshot without waiting for the clones have found a balance)
      * */
     fastForward: function() {
-        this.simulation.stop()
-        for (var i = 0; i < 200; i++) {
-            this.computeFrame() 
-            this.simulation.tick()
-            this.drawFrame()
+        if (this.mode == "bar"){
+            this.drawBarTab(0);
+        }
+        else{
+            this.simulation.stop()
+            for (var i = 0; i < 200; i++) {
+                this.computeFrame() 
+                this.simulation.tick()
+                this.drawFrame()
+            }
         }
     },
 
@@ -952,7 +978,7 @@ ScatterPlot.prototype = {
         if (xpos  === undefined) node.hasValidAxisPosition = false
         if (ypos  === undefined) node.hasValidAxisPosition = false
 
-        if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.getCurrentSystem()) {
+        if (this.useSystemGrid() && typeof sys != 'undefined' && sys != this.m.getCurrentSystem()) {
             node.use_system_grid = true
             node.x2 = Math.random()*0.01 + this.systemGrid[sys].x * this.resizeW;
             node.y2 = Math.random()*0.01 + this.systemGrid[sys].y * this.resizeH;
@@ -1286,13 +1312,18 @@ ScatterPlot.prototype = {
     /**
      * compute both axis with a new splitmethod (list of splitmethod in this.available_axis) <br>
      * and a mode ( 'bar' or 'scatterplot' )
-     * @param {string} splitX - splitMethod
-     * @param {string} splitY - splitMethod
-     * @param {string} mode
+     * @param {string} splitX - axis
+     * @param {string} splitY - axis
+     * @param {string} mode - "bar" "graph" "tsne"
+     * @param {boolean} print - 
      * */
-    changeSplitMethod: function(splitX, splitY, mode) {
+    changeSplitMethod: function(splitX, splitY, mode, print) {
         var self = this;
 
+        if (typeof print == "undefined") 
+            this.print = false
+        else
+            this.print = print
 
         if (this.mode == "tsne"){
             if (JSON.stringify(this.margin) != JSON.stringify(this.tsne_margin)){

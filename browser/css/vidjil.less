@@ -698,11 +698,12 @@ line {
     text-align: center;
     border-radius: 3px;
     border-width: 1px;
-    margin: 2px 4px 4px 2px;
+    margin: 2px 2px 2px 2px;
     color: #fff;
     color: rgba(255, 255, 255, 0.7);
     font-size: 70%;
     background: @border;
+    float: left;
 }
 
 .systemBox {
@@ -711,7 +712,7 @@ line {
 
 .systemBoxNameMenu {
     display: inline-block;
-    min-width: 60px;
+    min-width: 50px;
     padding: 2px 2px 1px 2px;
     cursor : pointer;
     user-select: none;
@@ -932,7 +933,7 @@ line {
 
 .popup_container{
   z-index:20;
-  min-width:500px;
+  min-width:300px;
   max-width:80%;
   font-size: 13px; 
   padding: 20px;
@@ -949,6 +950,17 @@ line {
   border-width:1px;
   border-color: @default;
   box-shadow: 2px 2px 5px @default;
+}
+
+.popup_input{
+  text-align:center; 
+  margin: 10px;
+}
+
+.popup_button{
+  display: flex; 
+  justify-content: space-around;
+
 }
 
 /* Main style for <a> Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
@@ -1002,6 +1014,7 @@ span.sample-tag, a.tag-link {
   overflow-x: auto;
   height : 100%;
   width : 100%;
+  margin-bottom: 10px;
 }
 
 #file_menu, #menu, #list_clones, #tagSelector, #display-menu, #bot-container{
@@ -2633,3 +2646,76 @@ div.tooltip {
   font-weight: bold;
   font-size: 16px;
 }
+
+.rs-flex-parent-v {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  max-height: 100px;
+  overflow: auto;
+  border: solid;
+  border-width: 0px 1px;
+  border-color: #cccccc;
+  padding:1px;
+}
+
+.rs-flex-parent-h {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: stretch;
+  justify-content: center;
+  padding:1px;
+}
+.rs-sample {
+  flex: 1 1 0px;
+  white-space: nowrap;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none; 
+   -khtml-user-select: none; 
+     -moz-user-select: none;
+      -ms-user-select: none; 
+          user-select: none;
+  cursor: pointer;
+  padding: 2px 2px 2px 2px;
+  margin: 1px 10px;
+}
+
+.rs-locus {
+  flex: 1 1 0px;
+  white-space: nowrap;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none; 
+   -khtml-user-select: none; 
+     -moz-user-select: none;
+      -ms-user-select: none; 
+          user-select: none;
+  cursor: pointer;
+  padding: 1px 1px 0px 1px;
+  width: 65px;
+}
+
+.rs-selected {
+  opacity: 1;
+  box-shadow: 1px 2px 2px 0px rgba(0, 0, 0, 0.2);
+  margin: 1px 5px 3px 2px;
+  background: #fafafa;
+}
+
+.rs-unselected {
+  opacity: 0.5;
+  filter: grayscale(1);
+  background: lightgray;
+  margin: 3px 2px 1px 5px;
+}
+
+.rs-unselected:hover{
+  opacity:0.75;
+  box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
+.rs-selected:hover{
+  background: lightgray;
+}
+

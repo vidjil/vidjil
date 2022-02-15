@@ -32,6 +32,8 @@
  * */
 
 VIDJIL_JSON_VERSION = '2014.09';
+
+// See also docker/ci/Dockerfile
 BROWSER_COMPATIBILITY = {
     "Firefox": {
         "legacy": 32,
@@ -2197,7 +2199,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     /**
      * return sample/time name in a specified format
      * @param {integer} timeID - sample/time index
-     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 
+     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 'order'
      * @return {string} sample name
      * */
     getStrTime: function (timeID, format){
@@ -2205,6 +2207,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var result = "-/-"
 
         switch (format) {
+            case "order":
+                result = m.samples.order.indexOf(timeID);
+                if (result == -1) result = "-/-";
+                break;
+            case "original_name":
+                result = this.samples.original_names[timeID]
+                break;
             case "name":
             case "names":
                 //TODO resolve thid hack
@@ -2534,6 +2543,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         div.appendChild(span1)
         div.appendChild(span2)
         div.appendChild(this.norm_button)
+
+        // add to report button
+        var div2 = $('<div/>', {}).html("<hr>").appendTo($(this.tagSelectorList))
+        var report_button = $('<div/>', { text: 'add clone(s) to next report'
+                                        }).appendTo(div2)
+                                          .click(function (){
+                                              report.addClones(clonesIDs);
+                                              $(self.tagSelector).hide('fast')
+                                        });
+        $('<button/>', { class: "icon-newspaper"}).appendTo(report_button)
 
         var li = document.createElement('li');
         li.appendChild(div)

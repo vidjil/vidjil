@@ -788,6 +788,12 @@ In such a (rare) case, it may be useful to restart the workers by clicking on
 the *reset workers* link in the Vidjil administration interface. Restarting
 workers won't be performed if jobs are currently running or assigned.
 
+A cron job is executed by UWSGI that periodically checks whether jobs remain
+queued for too long. By default the cron task is run every 20 min and restart
+the workers as soon as jobs are queued for at least 1 hour. Those values can
+be modified in the `docker/vidjil-server/conf/uwsgi.ini` (changing it requires
+to restart the UWSGI container).
+
 
 ## Debugging Web2py workers
 
