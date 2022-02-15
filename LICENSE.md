@@ -119,6 +119,12 @@ tsne.js             : Implementation of TSNE algorithm
 * @link             <https://github.com/karpathy/tsnejs>
 * @license          MIT
 
+select2.js          : Select2 is a jQuery-based replacement for select boxes
+* @version          5c38f18 (2021-11-16)
+* @author           Kevin Brown, Igor Vaynberg, and Select2 contributors
+* @link             <https://github.com/select2/select2>
+* @license          MIT
+
 ### Base docker image
 
 nginx:1.15.0        : docker image used as base for vidjil-client docker image
