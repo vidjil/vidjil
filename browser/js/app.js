@@ -1,4 +1,4 @@
-var DEFAULT_DB_ADDRESS="https://db.vidjil.org/vidjil/";
+var DEFAULT_DB_ADDRESS="https://db.vidjil.org/";
 
 requirejs.config({
     baseUrl: '',
@@ -37,7 +37,8 @@ require(["js/git-sha1"], function () { console.log("Vidjil client " + git_sha1) 
 function loadAfterConf() {
     if (typeof config === "undefined") {
         config = {};
-        config.db_address = DEFAULT_DB_ADDRESS;
+        config.db_address   = DEFAULT_DB_ADDRESS+"vidjil/";
+        config.cgi_address  = DEFAULT_DB_ADDRESS+"cgi/";
         config.use_database = false;
     }
 
