@@ -485,10 +485,11 @@ Aligner.prototype = {
             }
         }
 
-        if (updateNeeded){
-            this.updateDom(list)
-                .updateButton()
-        }
+        this.updateDom(list)
+        
+        if (updateNeeded)
+            this.updateButton()
+        
     },
 
     updateDom:function(list){
