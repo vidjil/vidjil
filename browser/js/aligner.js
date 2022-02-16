@@ -92,6 +92,8 @@ Aligner.prototype = {
         for (var i in available_axis) {
             var axis_p = Axis.prototype.getAxisProperties(available_axis[i]);
 
+            if (typeof axis_p.hide != 'undefined' && axis_p.hide) continue;
+
             var axis_label = document.createElement('label');
             axis_label.setAttribute('for', "sai"+i);
             axis_label.className = "aligner-checkbox-label";
@@ -139,26 +141,48 @@ Aligner.prototype = {
     updateButton: function(){
 
         var refreshList = this.needRefresh()
+        var button = $("#align-refresh-button")
+        var icon = button.find('i')
+
+        if (typeof this.pendingAnalysis != 'undefined' && 
+            this.pendingAnalysis > 0){
+            icon.addClass('animate-spin')
+            button.addClass('disabledClass')
+        }else{
+            button.removeClass('disabledClass')
+            icon.removeClass('animate-spin')
+        }
 
         if (refreshList.length == 0)
-            $("#align-refresh-button").hide()
+            button.hide()
         else
-            $("#align-refresh-button").show()
+            button.show()
 
         return this        
     },
 
     retrieveExternalData: function(){
+        var self = this
         var refreshList = this.needRefresh()
         for (var i in refreshList){
             serviceName = refreshList[i]
 
+            this.pendingAnalysis = 0;
+
             switch (serviceName) {
                 case "IMGT":
-                    this.sendTo('IMGTSeg')
+                    this.pendingAnalysis++
+                    this.sendTo('IMGTSeg', function(){
+                                                self.pendingAnalysis--
+                                                self.updateButton()    
+                                            })
                     break;
                 case "cloneDB":
-                    db.callCloneDB(m.getSelected())
+                    this.pendingAnalysis++
+                    db.callCloneDB(m.getSelected(), function(){                                                
+                                                        self.pendingAnalysis--
+                                                        self.updateButton()
+                                                    })
                     break;
                 default:
                     break;
@@ -461,7 +485,6 @@ Aligner.prototype = {
 
         var self = this;
         var cloneID;
-        var updateNeeded = false
         
         list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
 
@@ -469,26 +492,21 @@ Aligner.prototype = {
         for (var i = 0; i < list.length; i++) {     
             cloneID = list[i];   
             if (!this.m.clone(cloneID).isSelected()) 
-                if (this.sequence[cloneID]){             
+                if (this.sequence[cloneID])         
                     this.removeSequence(cloneID, false);
-                    updateNeeded = true;
-                }
         }
 
         // add newly selected clones
         for (var j = 0; j < list.length; j++) {     
             cloneID = list[j];
             if (this.m.clone(cloneID).isSelected() && 
-                Object.keys(this.sequence).indexOf(cloneID) == -1 ){ 
-                this.addCloneToSegmenter(cloneID);
-                updateNeeded = true;
-            }
+                Object.keys(this.sequence).indexOf(cloneID) == -1 )
+                this.addCloneToSegmenter(cloneID)
+            
         }
 
         this.updateDom(list)
-        
-        if (updateNeeded)
-            this.updateButton()
+            .updateButton()
         
     },
 
@@ -648,7 +666,7 @@ Aligner.prototype = {
      * (see crossDomain.js)
      * @param {string} address - 'imgt', 'arrest', 'igBlast' or 'blast'
      * */
-    sendTo: function (address) {
+    sendTo: function (address, callback) {
 
         var list = this.sequenceListInSegmenter();
         var request = "";
@@ -694,13 +712,17 @@ Aligner.prototype = {
 
         if (request != ""){
             if (address == 'IMGTSeg') {
-                imgtPostForSegmenter(this.m.species, request, system, this);
+                //imgtPostForSegmenter(this.m.species, request, system, undefined, callback);
                 var change_options = {'xv_ntseq' : 'false', // Deactivate default output
                                     'xv_summary' : 'true'}; // Activate Summary output
-                imgtPostForSegmenter(this.m.species, request, system, this, change_options);
+                imgtPostForSegmenter(this.m.species, request, system, change_options, callback);
             } else {
                 window[address+"Post"](this.m.species, request, system);
+                if (callback) callback();
             }
+        }
+        else{
+            if (callback) callback();
         }
 
         this.update();
