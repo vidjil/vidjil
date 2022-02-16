@@ -752,7 +752,7 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     html_info = m.getPointHtmlInfo(1)
     // each diversity indices has header
     assert.includes(html_info, "<tr><td colspan='5'>Shannon's diversity</td></tr>")
-    assert.includes(html_info, "<tr><td colspan='5'>Shannon's equitability</td></tr>")
+    assert.includes(html_info, "<tr><td colspan='5'>Pielou's evenness</td></tr>")
     assert.includes(html_info, "<tr><td colspan='5'>Simpson's diversity</td></tr>")
     // each present locus id visible
     assert.includes(html_info, '<tr><td colspan=\'5\'>Simpson\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>')
