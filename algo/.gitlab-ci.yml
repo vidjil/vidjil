@@ -36,6 +36,13 @@ algo_should:
     reports:
       junit: algo/tests/should.xml
 
+algo_shouldlocus:
+  <<: *vidjil-algo
+  stage: test_shouldvdj
+  script: make -C algo shouldlocus
+  artifacts:
+    <<: *lcov_artifact
+
 algo_shouldvdj:
   <<: *vidjil-algo
   stage: test_shouldvdj

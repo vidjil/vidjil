@@ -33,6 +33,7 @@ import repseq_vdj
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('--program', '-p', default=repseq_vdj.VIDJIL_FINE, help='program to launch on each file (%(default)s)')
 parser.add_argument('-q', dest='program', action='store_const', const=repseq_vdj.VIDJIL_KMER, help='shortcut for -p (VIDJIL_KMER), to be used with -2')
+parser.add_argument('--e-value', '-e', default="1", help='custom e-value (%(default)s)')
 parser.add_argument('--ignore_N', '-N', action='store_true', help='ignore N patterns, checking only gene and allele names')
 parser.add_argument('--ignore_del', '-s', action='store_true', help='ignore number of deletions at breakpoints')
 parser.add_argument('--ignore_allele', '-A', action='store_true', help='ignore allele, checking only gene names')
@@ -85,7 +86,7 @@ def should_pattern_to_regex(p):
     def process_term(term):
 
         # Comment, stop parsing here
-        if term.startswith('#'):
+        if term.startswith('#') or term.startswith('@'):
             return []
 
         if term in special_keywords(args.after_two):
@@ -370,7 +371,7 @@ def should_result_to_tap(should_pattern, result, tap_id):
     return tap
 
 
-def should_to_tap_one_file(f_should):
+def should_to_tap_one_file(f_should, args):
 
     f_tap = f_should + PROG_TAG + TAP_SUFFIX
     f_tap = f_tap.replace(SHOULD_SUFFIX, '')
@@ -384,7 +385,10 @@ def should_to_tap_one_file(f_should):
     print "<== %s" % f_should
 
     vdj = repseq_vdj.VDJ_File()
-    vdj.parse_from_gen(repseq_vdj.should_results_from_vidjil(args.program.replace('{directory}',args.directory), f_should, f_log))
+    cmd = args.program.replace('{directory}',args.directory).replace('{e_value}', args.e_value)
+    if args.verbose:
+        print cmd
+    vdj.parse_from_gen(repseq_vdj.should_results_from_vidjil(cmd, f_should, f_log))
 
     print "==> %s" % f_vdj
     vdj.write(open(f_vdj, 'w'))
@@ -424,12 +428,12 @@ if __name__ == '__main__':
             write_should_results_to_tap(vdj, f_tap)
             continue
 
-        should_to_tap_one_file(f_should)
+        should_to_tap_one_file(f_should, args)
 
         if args.revcomp:
             f_should_rc = f_should + '.rc'
             os.system('python ../../germline/revcomp-fasta.py < %s > %s' % (f_should, f_should_rc))
-            should_to_tap_one_file(f_should_rc)
+            should_to_tap_one_file(f_should_rc, args)
         print
 
     print "=== Summary, should-vdj tests ===" + (' (only locus)' if args.after_two else '')
