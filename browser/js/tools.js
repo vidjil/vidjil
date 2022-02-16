@@ -467,7 +467,7 @@ function nice_ceil(x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
- 
+
         return Math.ceil(x / floor_power10) * floor_power10
     }
     catch(e) {
@@ -689,7 +689,7 @@ function logadd1(x) { return Math.log(x + 1) ; }
  * @return {Number}      A number -1 if A before B, else 1
  */
 function locus_cmp(valA, valB){
-    // Ordered list of all  generic locus 
+    // Ordered list of all  generic locus
     var index_A = LOCUS_ORDER.indexOf(valA)
     var index_B = LOCUS_ORDER.indexOf(valB)
 
@@ -717,7 +717,7 @@ function locus_cmp(valA, valB){
  */
 function openAndFillNewTab (content){
     var w = window.open("", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
-    
+
     var result = $('<div/>', {
         html: content
     }).appendTo(w.document.body);
@@ -735,7 +735,7 @@ Array.prototype.equals = function (array) {
     if (!array)
         return false;
 
-    // compare lengths - can save a lot of time 
+    // compare lengths - can save a lot of time
     if (this.length != array.length)
         return false;
 
@@ -744,13 +744,13 @@ Array.prototype.equals = function (array) {
         if (this[i] instanceof Array && array[i] instanceof Array) {
             // recurse into the nested arrays
             if (!this[i].equals(array[i]))
-                return false;       
-        }           
-        else if (this[i] != array[i]) { 
+                return false;
+        }
+        else if (this[i] != array[i]) {
             // Warning - two different object instances will never be equal: {x:20} != {x:20}
-            return false;   
-        }           
-    }       
+            return false;
+        }
+    }
     return true;
 }
 // Hide method from for-in loops
@@ -769,7 +769,7 @@ function getNFirstSequences(data, n) {
         return data.substr(0, pos);
     } else {
         return data;
-    }    
+    }
 }
 
 /**
@@ -808,11 +808,118 @@ function removeDuplicate(array) {
 function removeEltAndDecrease(array, value) {
     for (var i = 0; i < array.length; i++) {
         if (array[i] > value) {
-            array[i] = array[i] - 1 
+            array[i] = array[i] - 1
         } else if (array[i] == value) {
             array.splice(i, 1)
             i = i-1
         }
     }
     return array
+}
+
+
+
+/**
+ * Return the number of match from an alignment cigar
+ * Cigar is given by function bsa_align of bioseq library
+ */
+function bsa_cigar2match(cigar)
+{
+    var sum = 0
+
+    for (var k = 0; k < cigar.length; ++k){
+        var match = (cigar[k]>>4 )
+        var type  = (cigar[k]&0xf)
+        if (type == 0){
+            sum += match
+        }
+    }
+    return sum
+}
+
+function download_csv(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    // CSV FILE
+    csvFile = new Blob([csv], {type: "text/csv"});
+
+    // Download link
+    downloadLink = document.createElement("a");
+
+    // File name
+    downloadLink.download = filename;
+
+    // We have to create a link to the file
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    // Make sure that the link is not displayed
+    downloadLink.style.display = "none";
+
+    // Add the link to your DOM
+    document.body.appendChild(downloadLink);
+
+    // Lanzamos
+    downloadLink.click();
+}
+
+
+function translate_key_diversity(key_diversity){
+    var table = {
+        "index_H_entropy" :      "Shannon's diversity",
+        "index_E_equitability" : "Pielou's evenness",
+        "index_Ds_diversity" :   "Simpson's diversity"
+    }
+    return table[key_diversity]
+}
+
+
+///////////////////////////
+/// Fct to fill info table
+///////////////////
+var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
+
+var header = function(content, title, time_length) {
+    title = (title == undefined) ? clean_title(content) : clean_title(title)
+    return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ;
+}
+var row_1  = function(item, content, title, time_length) {
+    title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
+    return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ;
+}
+var row_from_list  = function(item, content, title, time_length) {
+    title = (title == undefined) ?clean_title(item) : clean_title(title)
+    var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+    for (var i = 0; i < content.length; i++) {
+        col  = content[i]
+        div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+    }
+    div += "</tr>" ;
+    return div;
+}
+
+var row_cast_content = function(title, content, time_length, clone) {
+    if (content == undefined) {
+        return ""
+    } else if (typeof(content) != "object") {
+        return row_1(title, content.toString(), undefined, time_length)
+    } else if (Object.keys(content).indexOf("info") != -1) {
+        // Textual field
+        return row_1(title, content.info, undefined, time_length)
+    } else if (Object.keys(content).indexOf("name") != -1) {
+        // Textual field
+        return row_1(title, content.name, undefined, time_length)
+    } else if (Object.keys(content).indexOf("val") != -1) {
+        // Numerical field
+        return row_1(title, content.val, undefined, time_length)
+    } else if (Object.keys(content).indexOf("seq") != -1) {
+        // Sequence field with pos
+        return row_1(title, content.seq, undefined, time_length)
+    } else {
+        // Sequence field
+        var nt_seq = clone.getSegNtSequence(title);
+        if (nt_seq !== '') {
+            return row_1(title, clone.getSegNtSequence(title), undefined, time_length)
+        }
+    }
 }

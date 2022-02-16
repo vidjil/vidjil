@@ -641,7 +641,7 @@ The `--out-reads` option produces large files, and is not recommended in general
 Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are reported, both on the standard output and in the `.vidjil` file:
 
   - H (`index_H_entropy`): Shannon's diversity
-  - E (`index_E_equitability`): Shannon's equitability
+  - E (`index_E_equitability`): [Pielou's evenness J'](https://en.wikipedia.org/wiki/Species_evenness) (also known as Shannon's equitability)
   - Ds (`index_Ds_diversity`): Simpson's diversity
 
 E ans Ds values are between 0 (no diversity, one clone clusters all analyzed reads)
