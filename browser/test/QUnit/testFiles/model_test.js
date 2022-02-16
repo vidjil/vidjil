@@ -744,16 +744,16 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     // first sample has old fashion diversity
     var html_info = m.getPointHtmlInfo(0)
     assert.includes(html_info, "Diversity indices", "htmlInfo get diversity header")
-    assert.includes(html_info, "<tr><td> Simpson's diversity</td><td>5.689</td></tr>", "An index is correctly present and formated")
-    assert.notIncludes(html_info, '<tr><td colspan=\'5\'>Simpson\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>', "")
+    assert.includes(html_info, "<tr><td> Shannon's diversity</td><td>5.689</td></tr>", "An index is correctly present and formated")
+    assert.notIncludes(html_info, '<tr><td colspan=\'5\'>Shannon\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>', "")
 
 
     // second sample has diversity by locus
     html_info = m.getPointHtmlInfo(1)
     // each diversity indices has header
-    assert.includes(html_info, "<tr><td colspan='5'>Simpson's diversity</td></tr>")
-    assert.includes(html_info, "<tr><td colspan='5'>Shannon's equitability</td></tr>")
     assert.includes(html_info, "<tr><td colspan='5'>Shannon's diversity</td></tr>")
+    assert.includes(html_info, "<tr><td colspan='5'>Shannon's equitability</td></tr>")
+    assert.includes(html_info, "<tr><td colspan='5'>Simpson's diversity</td></tr>")
     // each present locus id visible
     assert.includes(html_info, '<tr><td colspan=\'5\'>Simpson\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>')
     assert.includes(html_info, '<tr><td> <span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> TRG</td><td>5.251</td></tr>')
