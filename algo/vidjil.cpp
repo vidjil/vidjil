@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil-algo <http://www.vidjil.org>
-  Copyright (C) 2011-2021 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2022 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -210,7 +210,7 @@ string string_NO_LIMIT(string s)
 int main (int argc, char **argv)
 {
   cout << "# " << PROGNAME << " -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
-       << "# Copyright (C) 2011-2021 by the Vidjil team" << endl
+       << "# Copyright (C) 2011-2022 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille" << endl 
        << "# VidjilNet consortium" << endl 
        << endl
@@ -1155,7 +1155,7 @@ int main (int argc, char **argv)
 	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
-      if (__only_on_exit__clean_memory) { delete multigermline; } return 0;
+      if (__only_on_exit__clean_memory) { delete multigermline; delete GERMLINE_NOT_DESIGNATED; } return 0;
     }
 
 
@@ -1920,7 +1920,7 @@ int main (int argc, char **argv)
   delete out_json;
 
   //$$ Clean
-  if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; } return 0 ;
+  if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; delete GERMLINE_NOT_DESIGNATED; } return 0 ;
 }
 
 //$$ end

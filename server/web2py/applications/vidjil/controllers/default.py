@@ -178,7 +178,8 @@ def run_all_request():
         
     id_sample_set = request.vars["sample_set_id"]
     ids_sequence_file = request.vars["sequence_file_ids"]
-    if type(ids_sequence_file) is int or type(ids_sequence_file) is int:
+    # if only one element, see as simple string without array (even if request was a list)
+    if type(ids_sequence_file) is int or type(ids_sequence_file) is str:
         ids_sequence_file =  [ids_sequence_file]
     ids_sequence_file = [int(i) for i in ids_sequence_file]
     id_config = request.vars["config_id"]
