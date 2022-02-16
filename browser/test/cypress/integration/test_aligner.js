@@ -45,6 +45,7 @@ describe('Aligner', function () {
 
     //align
     cy.get('#align').click()
+    cy.update_icon()
     cy.get('#seq2').find('.seq_layer_nuc').contains('–') 
     
     //cluster
@@ -53,7 +54,7 @@ describe('Aligner', function () {
     cy.get('#seq0').contains('97.56%') 
     
     //unselect
-    cy.get('#seq0').find('.delBox').click() 
+    cy.get('#seq0').find('.delBox').click({force:true})
     cy.get('.sequence-line:visible').should('have.length', 0)
 
     return
