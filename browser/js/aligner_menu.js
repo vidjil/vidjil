@@ -33,21 +33,21 @@ ALIGNER_MENU = {
         },
         {
             'id': 'IMGT_VDJ',
-            'text': '[IMGT]V/D/J genes',
+            'text': '[IMGT] V/D/J genes',
             'layers': ["IMGT_V", "IMGT_D", "IMGT_J", "IMGT_D1", "IMGT_D2", "IMGT_D3"],
             'title': 'V, D, J genes [as computed by IMGT/V-QUEST]',
             'enabled': true
         },
         {
             'id': 'IMGT_CDR',
-            'text': '[IMGT]CDR 1/2/3',
+            'text': '[IMGT] CDR 1/2/3',
             'layers': ["IMGT_CDR1","IMGT_CDR2","IMGT_CDR3"],
             'title': 'CDR1, CDR2, CDR3 [as computed by IMGT/V-QUEST]',
             'enabled': false
         },
         {
             'id': 'IMGT_FR',
-            'text': '[IMGT]FR 1/2/3',
+            'text': '[IMGT] FR 1/2/3',
             'layers': ["IMGT_FR1","IMGT_FR2","IMGT_FR3"],
             'title': 'FR1, FR2, FR3 [as computed by IMGT/V-QUEST]',
             'enabled': false
