@@ -775,7 +775,7 @@ analyzed reads, including the hidden clonotypes.
 Several indices are computed on the full list of clonotypes to assess the diversity and overlap of sample(s):
 
 - On one sample, [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) such as
-  Shannon's diversity, Shannon's equitability and Simpson's diversity, as computed by [vijdil-algo](vidjil-algo.md#diversity-measures).
+  Shannon's diversity, Pielou's evenness and Simpson's diversity, as computed by [vijdil-algo](vidjil-algo.md#diversity-measures).
   Some of these indices have values between 0 (no diversity, one clonotype clusters all analyzed reads)
   and 1 (full diversity, each analyzed read belongs to a different clonotype).
 
