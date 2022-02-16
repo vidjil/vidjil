@@ -398,7 +398,7 @@ AXIS_DEFAULT = {
                         "mode": "linear",
                         "min": 0
                     },
-        class:      "devel-mode",
+        //class:    "devel-mode",
         fct:        function(clone) {
                         var n = clone.numberInCloneDB()
                         if (typeof n == "undefined") return "-/-"
@@ -411,7 +411,7 @@ AXIS_DEFAULT = {
                     },
         autofill:   true,
         refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
-        //hide : (typeof config === 'undefined' || ! config.clonedb),
+        hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
     "[cloneDB] Hits (set)": {   
         doc:        "number of patients/runs/sets sharing clonotypes in cloneDB",
@@ -419,7 +419,7 @@ AXIS_DEFAULT = {
                         "mode": "linear",
                         "min": 0
                     },
-        class:      "devel-mode",
+        //class:    "devel-mode",
         fct:        function(clone) {
                         var n = clone.numberSampleSetInCloneDB()
                         if (typeof n == "undefined") return "-/-"
@@ -432,7 +432,7 @@ AXIS_DEFAULT = {
                     },
         autofill:   true,
         refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
-        //hide : (typeof config === 'undefined' || ! config.clonedb),
+        hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
     "TSNEX": {   
         doc:        "",
