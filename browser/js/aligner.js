@@ -164,6 +164,12 @@ Aligner.prototype = {
     retrieveExternalData: function(){
         var self = this
         var refreshList = this.needRefresh()
+
+        var callback = function(){
+            self.pendingAnalysis--
+            self.updateButton()    
+        }
+        
         for (var i in refreshList){
             serviceName = refreshList[i]
 
@@ -172,17 +178,11 @@ Aligner.prototype = {
             switch (serviceName) {
                 case "IMGT":
                     this.pendingAnalysis++
-                    this.sendTo('IMGTSeg', function(){
-                                                self.pendingAnalysis--
-                                                self.updateButton()    
-                                            })
+                    this.sendTo('IMGTSeg', callback)
                     break;
                 case "cloneDB":
                     this.pendingAnalysis++
-                    db.callCloneDB(m.getSelected(), function(){                                                
-                                                        self.pendingAnalysis--
-                                                        self.updateButton()
-                                                    })
+                    db.callCloneDB(m.getSelected(), callback)
                     break;
                 default:
                     break;
