@@ -124,23 +124,17 @@ function imgtPost(species, data, system) {
  * @param data
  * @param system
  */
-function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_options) {
+function imgtPostForSegmenter(species, data, system, override_imgt_options, callback) {
     var imgtInput = initImgtInput(species);
     if (typeof override_imgt_options != 'undefined') {
         append_to_object(override_imgt_options, imgtInput)
     }
-    var imgt4segButton= document.getElementById("toIMGTSeg");
+
     //limit #request to #
     var pos, nb = 1;
     pos = 0;
     while ((pos = data.indexOf(">", pos + 1)) > 0) {
         nb++;
-    }
-
-    //update imgt button according to request processing
-    if (imgt4segButton){
-        imgt4segButton.removeAllChildren();
-        imgt4segButton.appendChild(icon('icon-spin4 animate-spin', 'Sequences sent to IMGT/V-QUEST'));
     }
 
     //process to first 10 sequences then alert user about the remaining part
@@ -223,6 +217,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
                 "msg": logmsg+ ")" + httpRequest.statusText
             });
 
+            if (callback) callback()
         }
     };
     httpRequest.onerror = function () {
@@ -231,6 +226,8 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
             "msg": "imgtPostForSegmenter: error while requesting IMGT website: " + httpRequest.statusText,
             "priority": 2
         });
+
+        if (callback) callback()
     };
 
     //test with a local file
