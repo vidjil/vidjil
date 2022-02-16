@@ -344,7 +344,7 @@ Database.prototype = {
      * Send the given clones to CloneDB
      * @param {int list} clones - list of clones (if undefined, call on all clones)
      * */
-    callCloneDB: function(clones) {
+    callCloneDB: function(clones, callback) {
 
         if (typeof clones === 'undefined')
         {
@@ -374,7 +374,8 @@ Database.prototype = {
 		    res = jQuery.parseJSON(result);
 		    result = res;
 		} catch (err) {}
-                self.connected = true;
+
+        self.connected = true;
         if (typeof result.error == 'string' ) {
             console.log({
                 "type": "flash",
@@ -395,7 +396,7 @@ Database.prototype = {
 	            }
                     m.update()
 		}
-		
+                if (callback) callback();
             },
             error: function() {
                 self.connected = false;
@@ -404,6 +405,7 @@ Database.prototype = {
                     "msg": "Error while requesting CloneDB",
                     "priority": 2
                 });
+                if (callback) callback();
             }
         });
     },
