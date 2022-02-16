@@ -104,7 +104,7 @@ describe('Graph', function () {
     return
   })
 
-  it('Graph shortcut',  function() {
+  it('Graph shortcut', { browser: '!firefox' },  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     //right 
