@@ -6,7 +6,7 @@
  */
 Cypress.Commands.add('clone_rename', (id, new_name) => { 
 
-    cy.get('#listElem_'+id+' > .nameBox')
+    cy.getCloneInList(id)
       .dblclick()
     cy.get('#new_name')
       .type(new_name)
@@ -15,4 +15,48 @@ Cypress.Commands.add('clone_rename', (id, new_name) => {
     cy.get('#listElem_'+id+' > .nameBox')
       .should("contain", new_name)
 
+})
+
+
+Cypress.Commands.add('getCloneInList', (id) => {
+
+  cy.get('#listElem_'+id+' > .nameBox')
+    .should("exist")
+})
+
+Cypress.Commands.add('getCloneInSegmenter', (id) => {
+
+  cy.get('#seq'+id)
+    .should("exist")
+})
+
+Cypress.Commands.add('getCloneInScatterplot', (id) => {
+  cy.get('#visu_circle'+id)
+})
+
+Cypress.Commands.add('getClusterInList', (id) => {
+  cy.get('#cluster1')
+    .should("exist")
+})
+
+
+Cypress.Commands.add('selectClone', (id, ctrl_pressed) => {
+    cy.get('#listElem_'+id+' > .nameBox')
+      .click({ctrlKey: ctrl_pressed})
+})
+
+Cypress.Commands.add('unselectClone', () => {
+    cy.get('#list_clones')
+      .click()
+})
+
+Cypress.Commands.add('openClusterClone', (id) => {
+    cy.get('#clusterBox_'+id+' > .icon-plus')
+      .click()
+    cy.update_icon()
+})
+Cypress.Commands.add('closeClusterClone', (id) => {
+    cy.get('#clusterBox_'+id+' > .icon-minus')
+      .click()
+    cy.update_icon()
 })
