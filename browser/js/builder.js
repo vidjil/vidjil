@@ -493,7 +493,11 @@ Builder.prototype = {
             open_patient.className = "buttonSelector";
             open_patient.appendChild(document.createTextNode("open"));
 	    open_patient.onclick = function() {
-	        db.call('sample_set/index', {'id' : self.m.sample_set_id});
+	        if (self.m.samples.config_id.length == 1) {
+                db.call('sample_set/index', {'id' : self.m.sample_set_id, 'config_id':self.m.samples.config_id[0]});
+            } else {
+                db.call('sample_set/index', {'id' : self.m.sample_set_id});
+            }
 	    }
             menu_box.appendChild(open_patient);
 
