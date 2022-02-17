@@ -675,7 +675,8 @@ The `--out-reads` option produces large files, and is not recommended in general
 
 ## Diversity measures
 
-Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are reported, both on the standard output and in the `.vidjil` file:
+Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are reported, both on the standard output and in the `.vidjil` file,
+for each germline/locus as well as for the entire data:
 
   - H (`index_H_entropy`): Shannon's diversity
   - E (`index_E_equitability`): Shannon's equitability
@@ -683,7 +684,7 @@ Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are r
 
 E ans Ds values are between 0 (no diversity, one clone clusters all analyzed reads)
 and 1 (full diversity, each analyzed read belongs to a different clone).
-These values are now computed on the windows, before any further clustering.
+These values are computed on the full list of clones, before any further clustering.
 PCR and sequencing errors can thus lead to slightly over-estimate the diversity.
 
 ## Reads without detected recombinations
