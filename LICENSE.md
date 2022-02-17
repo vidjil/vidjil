@@ -22,25 +22,25 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 ### Software and libraries included in Vidjil repository
 
 CLI11               : Command line parser for C++11
-* @version          1.7.1
+* @version          2.1.2 (2021-10-18)
 * @author           Henry Schreiner, Philip Top, and collaborators
 * @link             <https://github.com/CLIUtils/CLI11>
 * @license          BSD
 
 gzstream            : iostream classes wrapping the zlib compression library
-* @version          1.7
+* @version          1.7 (2003, last available version as of 2022)
 * @author           Deepak Bandyopadhyay, Lutz Kettner
 * @link             <http://www.cs.unc.edu/Research/compgeom/gzstream/>
 * @license          LGPL
 
 json                : JSON for Modern C++
-* @version          3.9.1
+* @version          3.10.5 (2022-01-03)
 * @author           Niels Lohmann
 * @link             <https://github.com/nlohmann/json>
 * @license          MIT
 
 unbam (htslib)      : Extract of htslib to only read BAM files
-* @version          ??
+* @version          ?? (<⁼ 2017)
 * @link             <http://www.htslib.org/>
 * @license          Modified BSD
 

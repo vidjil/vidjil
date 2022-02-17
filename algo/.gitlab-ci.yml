@@ -36,6 +36,13 @@ algo_should:
     reports:
       junit: algo/tests/should.xml
 
+algo_shouldlocus:
+  <<: *vidjil-algo
+  stage: test_shouldvdj
+  script: make -C algo shouldlocus
+  artifacts:
+    <<: *lcov_artifact
+
 algo_shouldvdj:
   <<: *vidjil-algo
   stage: test_shouldvdj
@@ -57,6 +64,36 @@ algo_coverage:
 
 
 ## vidjil-algo, other tests
+
+# Benchmark
+
+.benchmark-algo:
+  image:  gcc:11
+  extends: .install-algo-dependencies
+  stage: benchmark
+  script:
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
+  artifacts:
+    paths:
+      - algo/tests/benchmark.log
+  when: manual
+  needs: []
+  only:
+    - /^feature-.*a.*\/.*$/
+  tags:
+    - cidocker
+
+benchmark-algo:
+  extends: .benchmark-algo
+  script:
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -b -c -i 2018.10 -i 2019.03 -i 2020.04 -i 2021.04 -i alpha-2102
+
+benchmark-algo-full:
+  extends: .benchmark-algo
+  script:
+    - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
+
+# Profiling
 
 profiling_algo:
   stage: benchmark

@@ -89,6 +89,8 @@ const char* const segmented_mesg[] = { "?",
                                        "UNSEG too short w",
                                       } ;
 
+#define ALL_LOCI             "all"
+
 // Unproductivity causes
 #define UNPROD_TOO_SHORT     "too-short"
 #define UNPROD_OUT_OF_FRAME  "out-of-frame"
