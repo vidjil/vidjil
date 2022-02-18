@@ -774,16 +774,20 @@ analyzed reads, including the hidden clonotypes.
 
 Several indices are computed on the full list of clonotypes to assess the diversity and overlap of sample(s):
 
-- On one sample, [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) such as
-  Shannon's diversity, Shannon's equitability and Simpson's diversity, as computed by [vijdil-algo](vidjil-algo.md#diversity-measures).
-  Some of these indices have values between 0 (no diversity, one clonotype clusters all analyzed reads)
+- On one sample, *diversity indices* such as
+  [Shannon's diversity](https://en.wikipedia.org/wiki/Diversity_index#Shannon_index),
+  [Pielou's evenness](https://en.wikipedia.org/wiki/Species_evenness),
+  and [Simpson's diversity](https://en.wikipedia.org/wiki/Diversity_index#Simpson_index),
+  as computed by [vijdil-algo](vidjil-algo.md#diversity-measures).
+  Pielou's evenness and Simpson's diversity have values between 0
+  (no diversity, one clonotype clusters all analyzed reads)
   and 1 (full diversity, each analyzed read belongs to a different clonotype).
 
 - On several samples, overlap indexes such as [Morisita's overlap index](https://en.wikipedia.org/wiki/Morisita%27s_overlap_index)
   having values between 0 (no overlap between the two samples)
   and 1 (full overlap, clonotypes in the same proportion in both samples).
 
-Some of these indices are currently shown on the sample information panel (“🛈” next to the sample name in the info panel).
+Some of these indices are shown on the sample information panel (“🛈” next to the sample name in the info panel).
 Contact us if you have other needs.
 
 ## Exporting the full list of clonotypes

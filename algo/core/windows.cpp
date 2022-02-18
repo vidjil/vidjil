@@ -266,7 +266,7 @@ json WindowsStorage::computeDiversity(map <string, size_t> nb_segmented) {
     // Shannon's diversity
     jsonDiversity["index_H_entropy"][code] = kv.second;
 
-    // Shannon's equitability
+    // Pielou's evenness J' (also known as Shannon's equitability)
     double nb_seg_nb_seg_m1 = nb_segmented[code] * (nb_segmented[code] - 1);
     jsonDiversity["index_E_equitability"][code] = index_H_entropy[code] / log(nb_segmented[code]) ;
 

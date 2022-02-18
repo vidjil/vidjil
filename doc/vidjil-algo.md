@@ -679,7 +679,7 @@ Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are r
 for each germline/locus as well as for the entire data:
 
   - H (`index_H_entropy`): Shannon's diversity
-  - E (`index_E_equitability`): Shannon's equitability
+  - E (`index_E_equitability`): [Pielou's evenness J'](https://en.wikipedia.org/wiki/Species_evenness) (also known as Shannon's equitability)
   - Ds (`index_Ds_diversity`): Simpson's diversity
 
 E ans Ds values are between 0 (no diversity, one clone clusters all analyzed reads)
