@@ -78,7 +78,7 @@ class TestPreProcess < ServerTest
     line = table.td(:text => "test pre-process 2").parent
     line.i(:class => "icon-erase").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    $b.button(:text => "continue").click
+    $b.element(:text => "continue").click
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
     table = $b.table(:id => "table")
     table.wait_until(&:present?)
