@@ -71,7 +71,7 @@ describe('Creation of users and groups', function () {
           }).as('getActivities')
 
         cy.get('#choose_user')
-          .select("2")
+          .select("2", {force: true})
 
         cy.wait(['@getActivities'])
         cy.update_icon(100)

@@ -1227,9 +1227,13 @@ span.warningReads {
   margin-left: 14px;
 }
 .axis_select {
-  display: flex;
-  overflow: hidden;
-  white-space: nowrap;
+    vertical-align: bottom;
+    display: inline;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.axis_select_icon {
+    display: flex;
 }
 .axis_select select {
   background: #ffffff;

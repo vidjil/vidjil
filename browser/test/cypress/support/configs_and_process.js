@@ -36,13 +36,13 @@ Cypress.Commands.add('fillConfig', (config_name, config_class, config_soft, conf
   cy.get('#config_name').type(config_name)
   if (config_class != undefined){
     cy.get('#config_classification')
-      .select(config_class)
+      .select(config_class, { force: true })
       .should('have.value', config_class)
   }
 
   if (config_soft != undefined){
     cy.get('#config_program')
-      .select(config_soft)
+      .select(config_soft, { force: true })
       .should('have.value', config_soft)
   }
 

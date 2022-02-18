@@ -8,7 +8,9 @@ requirejs.config({
 var lib = [         "js/lib/jquery-3.3.1.min",
                     "js/lib/blanket.1.1.9",
                     "js/lib/file",
-                    "js/lib/bioseq"
+                    "js/lib/bioseq",
+                    "js/lib/select2.min"
+
           ];
 
 var lib_plugin = [  "js/lib/jquery.form",
