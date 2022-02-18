@@ -5,14 +5,49 @@ console.log( Cypress.env('workdir') )
 var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
 console.log( url )
 
-// This script allow to make some action in a sandbox to quicly change made on the client when you code
-describe('Test sandbox', function () {
+// those tests are opening different .vidjil files with or without .analysis and check the expected data have been loaded
+describe('Test 00 Init', function () {
     beforeEach(function () {
         cy.setBrowser(url)
     })
 
+    it('loading-vidjil-file-noclones',  function() {
+      cy.openAnalysis("demo/Demo-X5-no-clone.vidjil")
 
-    it('00-loading-analysis',  function() {
+      //check number of segmented reads
+      cy.get('#info_segmented').contains("14 (100.00%)")
+
+      //check number of clones (0)
+      cy.get('#list_clones').children().should('have.length', 0)
+
+      cy.wait(1000)
+    })
+
+    it('loading-vidjil-file-single-sample',  function() {
+      cy.openAnalysis("doc/analysis-example1.vidjil")
+
+      //check number of segmented reads
+      cy.get('#info_segmented').contains("335 662 (76.78%)")
+
+      //check number of clones (2)
+      cy.get('#list_clones').children().should('have.length', 2)
+
+      // single sample -> both visu should be scatterplot
+      cy.get("#visu2").should('have.class', 'scatterplot')
+      cy.get("#visu").should('have.class', 'scatterplot')
+
+      //check default axis are loaded
+      cy.get('#visu2_axis_container').children().contains("Reads length")
+      cy.get('#visu2_axis_container').children().next().contains("Size")
+
+      cy.get('#visu_axis_container').children().contains("V/5' gene")
+      cy.get('#visu_axis_container').children().next().contains("J/3' gene")
+
+      cy.wait(10000)
+
+    })
+
+    it('loading-vidjil-file-multi-samples+analysis',  function() {
         cy.openAnalysis("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis", 10000)
         cy.get('body').trigger('keyright');
 
@@ -128,4 +163,5 @@ describe('Test sandbox', function () {
         cy.getCloneInSegmenter("3").should("contain", "GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT")
 
     })
+
 })
