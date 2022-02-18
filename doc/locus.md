@@ -26,7 +26,7 @@ and quantify immune recombinations.
    (1-step, 53 primers in 3 tubes, IGH FR3, IGH+, IGK, IGK+).
    These primer sets were evaluated in a multi-center validation study.
    The EuroClonality-NGS consortium also published
-   [standard operating procedures](http://www.euroclonality.org/protocols)
+   [standard operating procedures](http://www.euroclonality.org/ngs/protocols)
    for Illumina MiSeq and Ion Torrent, that can be adapted for other sequencers.
    <br />
    Download: [2019-EuroClonality-NGS-primers.csv](http://www.vidjil.org/data/2019-EuroClonality-NGS-primers.csv)
