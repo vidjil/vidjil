@@ -1185,6 +1185,7 @@ int main (int argc, char **argv)
           cout << endl;
 	}
 
+      // Exit after CMD_GERMLINES
       if (__only_on_exit__clean_memory) { delete multigermline; } return 0;
     }
 

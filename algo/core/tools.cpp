@@ -5,6 +5,16 @@
 #include "tools.h"
 #include "../lib/json.hpp"
 
+map<string, string> seedMap = {
+  {"7c", "#######"},
+  {"8c", "########"},
+  {"9c", "#########"},
+  {"8s", "####-####"},
+  {"10s", "#####-#####"},
+  {"12s", "######-######"},
+  {"13s", "#######-######"}
+};
+
 string seed_contiguous(int k)
 {
   string seed = "" ;

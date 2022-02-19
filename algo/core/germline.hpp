@@ -427,16 +427,5 @@ Germline<Tshortcut, Affect>* Germline<Tshortcut, Affect>::getUnseg() {
   return &unseg;
 }
 
-map<string, string> seedMap = {
-  {"7c", "#######"},
-  {"8c", "########"},
-  {"9c", "#########"},
-  {"10c", "##########"},
-  {"8s", "####-####"},
-  {"10s", "#####-#####"},
-  {"12s", "######-######"},
-  {"13s", "#######-######"}
-};
-
 
 #endif
