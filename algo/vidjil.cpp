@@ -1164,9 +1164,11 @@ int main (int argc, char **argv)
 	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
+      // Exit after CMD_GERMLINES
       if (__only_on_exit__clean_memory) { delete multigermline; } return 0;
     }
 
+  Germline *GERMLINE_NOT_DESIGNATED = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
 
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
@@ -1800,7 +1802,7 @@ int main (int argc, char **argv)
     } // end if (command == CMD_CLONES) || (command == CMD_WINDOWS)
 
     //$$ Clean
-
+    delete GERMLINE_NOT_DESIGNATED;
     delete windowsStorage;
 
 

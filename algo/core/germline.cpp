@@ -521,17 +521,3 @@ ostream &operator<<(ostream &out, const MultiGermline &multigermline)
   return out;
 }
 
-
-
-map<string, string> seedMap = {
-  {"7c", "#######"},
-  {"8c", "########"},
-  {"9c", "#########"},
-  {"8s", "####-####"},
-  {"10s", "#####-#####"},
-  {"12s", "######-######"},
-  {"13s", "#######-######"}
-};
-
-// need seedMap to be defined
-Germline *GERMLINE_NOT_DESIGNATED = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
