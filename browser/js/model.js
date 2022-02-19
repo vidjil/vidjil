@@ -33,15 +33,15 @@
 
 VIDJIL_JSON_VERSION = '2014.09';
 
-// See also docker/ci/Dockerfile
+// See also doc/user.md and docker/ci/Dockerfile
 BROWSER_COMPATIBILITY = {
     "Firefox": {
-        "legacy": 32,
+        "legacy": 62,
         "supported": 78,
         "latest": 89
     }, 
     "Chrome": {
-        "legacy": 49,
+        "legacy": 75,
         "supported":  79,
         "latest": 93
     }

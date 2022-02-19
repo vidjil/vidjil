@@ -2,7 +2,7 @@ FROM ubuntu:20.04
 
 LABEL version="0.2"
 
-### See also BROWSER_COMPATIBILITY browser/js/model.js
+### See also doc/user.md and BROWSER_COMPATIBILITY in browser/js/model.js
 LABEL description="An Cypress based docker image which comes with cypress pipeline and various browsers version.\
 Versions: \
     Firefox: 62 (legacy), 78 (supported), 89 (latest) \
