@@ -19,8 +19,12 @@ Cypress.Commands.add('clone_rename', (id, new_name) => {
 
 
 Cypress.Commands.add('getCloneInList', (id) => {
-
   cy.get('#listElem_'+id+' > .nameBox')
+    .should("exist")
+})
+
+Cypress.Commands.add('getCloneSize', (id) => {
+  cy.get('#listElem_'+id+' > .axisBox > .sizeBox')
     .should("exist")
 })
 
