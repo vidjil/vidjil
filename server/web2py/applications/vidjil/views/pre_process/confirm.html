@@ -10,7 +10,7 @@
 .</br>
 
     <div class="center"> 
-        <button onclick="db.call('pre_process/delete', {'id' :'{{=request.vars["id"]}}'} )">continue</button>
+        <button id='delete_preprocess_confirm_{{=request.vars["id"]}}' onclick="db.call('pre_process/delete', {'id' :'{{=request.vars["id"]}}'} )">continue</button>
     </div>
 </div>
     
