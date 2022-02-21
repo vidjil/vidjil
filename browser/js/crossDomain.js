@@ -79,7 +79,7 @@ function initIgBlastInput() {
 }
 
 function postTarget(){
-    checkbox = $("#post_target_blank")[0]
+    var checkbox = $("#post_target_blank")[0]
 
     if (checkbox && checkbox.checked)
         return "_blank"

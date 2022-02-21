@@ -790,7 +790,7 @@ function fixDuplicateNames(names){
  * @param  {String} content Clones as fasta format
  */
 function openAndFillNewTab (content){
-    var w = window.open("", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
+    var w = window.open("", postTarget(), "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
     
     var result = $('<div/>', {
         html: content
