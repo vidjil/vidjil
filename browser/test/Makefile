@@ -5,7 +5,6 @@ unit: nightmare
 
 headless:
 	HEADLESS=1 $(MAKE) functional
-	HEADLESS=1 $(MAKE) external
 
 functional: ../../doc/analysis-example1.vidjil ../../tools/tests/data/fused_multiple.vidjil
 	KEEPOPEN=0 sh launch_functional_tests $(BROWSERS)  functional/test_*rb
@@ -14,9 +13,6 @@ functional: ../../doc/analysis-example1.vidjil ../../tools/tests/data/fused_mult
 tutorial:
 	$(MAKE) -C ../../demo all
 	KEEPOPEN=0 sh launch_functional_tests $(BROWSERS)  functional/tutorial-test.rb
-
-external: ../../doc/analysis-example1.vidjil
-	sh launch_functional_tests $(BROWSERS) functional/external_test_*rb
 
 functional-rbx: ../../doc/analysis-example1.vidjil
 	LIVE_SERVER=http://app.vidjil.org/browser/ ruby test_browser.rb

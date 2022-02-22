@@ -3,7 +3,7 @@
 # Step 2, moderate:
 #   client: client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial
 #   server: server_firefox_supported, server_tutorial_server
-# Step 3, late, longuer or tricky: ff45-browser-functional-external
+# Step 3, late, longuer or tricky: 
 
 
 .before_script_global: &before_script_global
@@ -33,7 +33,6 @@ stages:
   - test_tutorial
   - test_tutorial_server
   - test_shouldvdj
-  - test_functional_external
   - coverage
   - tgz_release
   - valgrind_unit
@@ -221,35 +220,6 @@ test_browser_unit:
   extends: .browser-functional
   variables:
     WATIR_CHROME: "1"
-
-.browser-functional-external:
-  stage: test_functional_external
-  retry: 2
-  script:
-    - make -C browser
-    - source /etc/profile.d/rvm.sh
-    - rvm use 2.6.1
-    - HEADLESS=1 make -C browser/test external
-  artifacts:
-    paths:
-    - browser/
-    when: always
-    reports:
-      junit: browser/test/test/TEST-*.xml
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
-    - schedules
-  tags:
-    - web
-  # extends:
-  #   - .need_for_staged_client
-
-.browser-functional-external-chrome:
-  extends: .browser-functional-external
-  variables:
-    WATIR_CHROME: "1"
     
 ff32-browser-functional:
   extends: .browser-functional
@@ -270,27 +240,6 @@ old-chrome-browser-functional:
   extends: .browser-functional-chrome
   tags:
     - legacy
-
-ff32-browser-functional-external:
-  extends: .browser-functional-external
-  variables:
-    FIREFOX_VERSION: 32
-
-ff45-browser-functional-external:
-  extends:
-    - .browser-functional-external
-    - .need_for_moderate_client
-  variables:
-    FIREFOX_VERSION: 45
-
-chrome-browser-functional-external:
-  extends: .browser-functional-external-chrome
-    
-old-chrome-browser-functional-external-chrome:
-  extends: .browser-functional-external-chrome
-  tags:
-    - legacy
-
 
 .browser-tutorial:
   stage: test_tutorial
