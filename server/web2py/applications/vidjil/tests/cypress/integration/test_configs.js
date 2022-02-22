@@ -48,12 +48,12 @@ describe('Manipulate db page', function () {
         // Edit a preprocess
         cy.editPreprocess(1, pre_process_name_1, pre_process_command, pre_process_info+" edited")
 
-        // Delete a preprocess
-        cy.deletePreprocess(2, pre_process_name_2)
-
         // Change permissions for group public (id=3)
         cy.permissionPreprocess(2, 3, true)
         cy.permissionPreprocess(2, 3, false)
+
+        // Delete a preprocess
+        cy.deletePreprocess(2, pre_process_name_2)
     })
 
 
