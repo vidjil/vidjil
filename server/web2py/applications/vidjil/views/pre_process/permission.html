@@ -24,12 +24,12 @@
                 <td> {{=row.perms}}</td>
                 <td> {{=row.parent_access}}
                 {{if admin :}}
-                    <td> <input type="checkbox" onclick="db.call('pre_process/change_permission', {
+                    <td> <input id="permission_checkbox_{{=row.id}}" type="checkbox" onclick="db.call('pre_process/change_permission', {
                                                                   'pre_process_id' : {{=request.vars['id']}} ,
                                                                   'group_id' : {{=row.id}}})"
                                 {{if row.read :}} checked {{pass}}></td>
                 {{else:}}
-                    <td class="inactive"> <input type="checkbox" onclick="this.click()"
+                    <td class="inactive"> <input id="permission_checkbox_{{=row.id}}" type="checkbox" onclick="this.click()"
                                 {{if row.read :}} checked {{pass}}></td>
                 {{pass}}
             </tr>
