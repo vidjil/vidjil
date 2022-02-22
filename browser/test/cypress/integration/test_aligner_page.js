@@ -29,10 +29,6 @@ describe('Aligner', function () {
     cy.get('#seq0').contains('TRGV5 5/7/5 J1')
     cy.get('#seq1').should('exist')
     cy.get('#seq1').contains('IGHV3-13 1/20/5 D2-15 1/10/5 J5*02')
-
-
-    cy.get('#seq0').find('.icon-star-2').click()
-    cy.get('.tagName3').click()
     
     return
   })
@@ -46,8 +42,6 @@ describe('Aligner', function () {
                                     "GGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACATGCACTGGGTCCGCCAAGCTACAGGAAAAGGTCTGGAGTGGGTCTCAGCTATTGGTACTGCTGGTGACACATACTATCCAGGCTCCGTGAAGGGCCGATTCACCATCTCCAGAGAAAATGCCAAGAACTCCTTGTATCTTCAAATGAACAGCCTGAGAGCCGGGGACACGGCTGTGTATTACTGTGCAAGAGTGAGGCGGAGAGATCGGGGGATTGTAGTGGTGGTAGCTGCTACTCAACGGTAAGTTGGTTCGACCCCTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT")
     
     cy.get('#form_submit').click()
-
-    // aligner
     cy.get('#scatter_container_circle0', { timeout: 10000 }).should('exist')
 
     cy.get('#post_target_blank').click({force:true})
@@ -55,8 +49,6 @@ describe('Aligner', function () {
 
     cy.get('body').contains(">TRGV5*01 5/GGGCCAG/5 TRGJ1*01    200 nt, 1 read")
     cy.get('body').contains(">IGHV3-13*01 1/TGAGGCGGAGAGATCGGGGG/5 IGHD2-15*01 1/AACGGTAAGT/5 IGHJ5*02    374 nt, 1 read ")
-
-    cy.wait(10000)
     
     return
   })
@@ -70,7 +62,6 @@ describe('Aligner', function () {
 
     cy.get('.flash_container', { timeout: 10000 }).contains('invalid sequences')
 
-    
     return
   })
 
@@ -87,7 +78,6 @@ describe('Aligner', function () {
     cy.get('#seq0').contains('CGTCTT')
     cy.get('#seq1').should('not.exist')
 
-    
     return
   })
 
