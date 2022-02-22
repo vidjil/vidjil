@@ -54,10 +54,10 @@ describe('Aligner', function () {
   })
 
   it('Aligner page error bad query',  function() {
-
+    cy.update_icon(2000)
     cy.get('#form_sequences').type( "blabla")
     
-    cy.wait(500)
+
     cy.get('#form_submit').click()
 
     cy.get('.flash_container', { timeout: 10000 }).contains('invalid sequences')
@@ -66,11 +66,10 @@ describe('Aligner', function () {
   })
 
   it('Aligner page error unseg',  function() {
-
+    cy.update_icon(2000)
     cy.get('#form_sequences').type( ">seq1 \n"+
                                     "CGTCTT")
     
-    cy.wait(500)
     cy.get('#form_submit').click()
 
     cy.get('#seq0', { timeout: 10000 }).should('exist')
