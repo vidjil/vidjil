@@ -22,6 +22,7 @@ import './db_pages'
 import './user_and_group'
 import './configs_and_process'
 import './clones'
+import './menu'
 
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
