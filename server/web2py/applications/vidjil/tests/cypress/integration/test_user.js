@@ -54,10 +54,16 @@ describe('Creation of users and groups', function () {
 
         cy.goToUsersPage()
         cy.getTableLength("#table_users").should('eq', previous_length+1)
+
+        cy.goToGroupsPage()
+        var grp_user4 = 4
+        cy.setGroupRight(grp_user4, ["run"], true)
     })
 
 
     it('03-impersonate from list',  function() {
+
+        cy.goToPatientPage()
 
         cy.get('#db_auth_name')
           .contains("System Administrator")

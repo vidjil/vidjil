@@ -5,7 +5,6 @@
  * @param  {String}         new_name  New name to set for this clone
  */
 Cypress.Commands.add('clone_rename', (id, new_name) => { 
-
     cy.getCloneInList(id)
       .dblclick()
     cy.get('#new_name')
@@ -16,7 +15,6 @@ Cypress.Commands.add('clone_rename', (id, new_name) => {
       .should("contain", new_name)
 
 })
-
 
 Cypress.Commands.add('getCloneInList', (id) => {
 
@@ -43,6 +41,15 @@ Cypress.Commands.add('getClusterInList', (id) => {
 Cypress.Commands.add('selectClone', (id, ctrl_pressed) => {
     cy.get('#listElem_'+id+' > .nameBox')
       .click({ctrlKey: ctrl_pressed})
+})
+
+Cypress.Commands.add('selectCloneMulti', (ids) => {
+  for (var i = 0; i < ids.length; i++) {
+    var id = ids[i]
+    cy.get('#listElem_'+id+' > .nameBox')
+      .click({ctrlKey: (i==0 ? false: true), force: true})
+  }
+  cy.update_icon()
 })
 
 Cypress.Commands.add('unselectClone', () => {
