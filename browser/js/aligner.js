@@ -712,7 +712,7 @@ Aligner.prototype = {
 
         if (request != ""){
             if (address == 'IMGTSeg') {
-                //imgtPostForSegmenter(this.m.species, request, system, undefined, callback);
+                imgtPostForSegmenter(this.m.species, request, system, undefined, callback);
                 var change_options = {'xv_ntseq' : 'false', // Deactivate default output
                                     'xv_summary' : 'true'}; // Activate Summary output
                 imgtPostForSegmenter(this.m.species, request, system, change_options, callback);
