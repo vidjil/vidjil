@@ -493,8 +493,8 @@ Builder.prototype = {
             open_patient.className = "buttonSelector";
             open_patient.appendChild(document.createTextNode("open"));
 	    open_patient.onclick = function() {
-	        if (self.m.samples.config_id.length == 1) {
-                db.call('sample_set/index', {'id' : self.m.sample_set_id, 'config_id':self.m.samples.config_id[0]});
+            if (self.m.samples.config_id != undefined){
+                db.call('sample_set/index', {'id' : self.m.sample_set_id, 'config_id':self.m.samples.config_id[self.m.t]});
             } else {
                 db.call('sample_set/index', {'id' : self.m.sample_set_id});
             }
