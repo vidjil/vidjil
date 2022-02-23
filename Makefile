@@ -65,6 +65,7 @@ functional_browser_cypress_open:
 	# Need to create a symbolic link; but allow to directly see result
 	# Usefull for fast debugging; allow to launch script one by one
 	ln -sf browser/test/cypress
+	python tools/org-babel-tangle.py --all doc/vidjil-format.md && mv analysis-example* doc/
 	cypress open --env workdir=../,host=localhost
 
 functional_browser_cypress:
@@ -87,6 +88,7 @@ functional_server_cypress_open:
 	ln -sf ../../../../../../browser/test/cypress/fixtures cypress/fixtures
 	ln -sf ../../../../../../browser/test/cypress/plugins  cypress/plugins
 	ln -sf ../../../../../../browser/test/cypress/support  cypress/support
+	python tools/org-babel-tangle.py --all doc/vidjil-format.md && mv analysis-example* doc/
 	cypress open --env workdir=../,host=local
 
 functional_server_cypress:

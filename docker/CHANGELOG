@@ -1,7 +1,10 @@
-
 This CHANGELOG concerns the Docker images of vidjil.
 We publish here notes to help to update these images.
 See <http://www.vidjil.org/doc/server>
+
+vidjil/server:2022-XXX
+   - New cron job `check_queued.py` to reset workers.
+     Please perform a `git pull` in the `docker` repository.
 
 vidjil/server:2021-11-03-53b0fc0a
    - New variable in defs.py: `LDAP` (set it to False by default).

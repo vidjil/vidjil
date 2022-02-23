@@ -61,7 +61,7 @@ describe('Creation of users and groups', function () {
     })
 
 
-    it('03-impersonate',  function() {
+    it('03-impersonate from list',  function() {
 
         cy.goToPatientPage()
 
@@ -77,7 +77,7 @@ describe('Creation of users and groups', function () {
           }).as('getActivities')
 
         cy.get('#choose_user')
-          .select("2")
+          .select("2", {force: true})
 
         cy.wait(['@getActivities'])
         cy.update_icon(100)
@@ -91,8 +91,35 @@ describe('Creation of users and groups', function () {
 
         cy.get('#db_auth_name')
           .contains("System Administrator")
+    })
 
 
+    it('04-impersonate from table',  function() {
+
+        cy.openDBPage()
+        cy.goToUsersPage()
+
+        cy.get('#db_auth_name')
+          .contains("System Administrator")
+
+        cy.get('#desimpersonate_btn')
+          .should('not.exist')
+
+        cy.intercept({
+            method: 'GET', // Route all GET requests
+            url: 'get_active_notifications*',
+          }).as('getActivities')
+
+        // action
+        cy.get('#impersonate_btn_2')
+          .click()
+
+        cy.wait(['@getActivities'])
+        cy.update_icon(100)
+
+        cy.get('#desimpersonate_btn')
+          .click()
+        cy.wait(['@getActivities'])
     })
 
 })

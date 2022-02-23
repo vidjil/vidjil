@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -86,7 +86,7 @@ function Graph(id, model, database) {
 
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
     this.marge2 = 0.05; //marge gauche derniere colonne/bord du graph
-    this.marge3 = 70; //marge droite (non influencé par le resize)
+    this.marge3 = 30; //marge droite (non influencé par le resize)
     this.marge4 = 70; //marge gauche (non influencé par le resize)
     this.marge5 = 40; //marge top (non influencé par le resize)
 

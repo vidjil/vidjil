@@ -4,7 +4,7 @@ class SampleSetList():
 
     This class is used to load all the required information for such a list.
     '''
-    def __init__(self, helper, page=None, step=None, tags=None, search=None):
+    def __init__(self, helper, page=None, step=None, tags=None, search=None, setid=None):
         self.type = helper.get_type()
         s_table = db[self.type]
 
@@ -42,12 +42,16 @@ class SampleSetList():
 
         query = (auth.vidjil_accessible_query('read', db.sample_set))
 
+        if setid is not None and setid != "":
+            query = (query & (s_table.sample_set_id == setid ))
+
         if search is not None and search != "":
             query = (query &
                 (helper.get_filtered_fields(search) |
                  s_table.info.contains(search) |
                  db.config.name.contains(search) |
                  db.auth_group.role.contains(search) |
+                 (search.isdigit() and s_table.sample_set_id == int(search)) |
                  db.auth_user.last_name.contains(search)))
 
         select = [

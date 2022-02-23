@@ -128,4 +128,18 @@ describe('List', function () {
 
 
 
+  it('04-Title on size',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+
+    // default axis; size
+    cy.get('#listElem_4 > .axisBox')
+      .should('have.attr', 'title', '16 nt, 1021 reads (0.408%) reads')
+
+    cy.changeListAxix("Top")
+    cy.get('#listElem_4 > .axisBox')
+      .should('have.attr', 'title', '')
+    return
+  })
+
+
 })

@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
@@ -32,6 +32,8 @@
  * */
 
 VIDJIL_JSON_VERSION = '2014.09';
+
+// See also docker/ci/Dockerfile
 BROWSER_COMPATIBILITY = {
     "Firefox": {
         "legacy": 32,
@@ -727,8 +729,18 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             } else if (typeof this.diversity[key][time] != 'undefined') {
         	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
         	    // See #1941 and #3416
-        		if (this.diversity[key][time] != null) {
-                    return this.diversity[key][time].toFixed(3);
+        		if (this.diversity[key][time] != null){
+                    if (typeof this.diversity[key][time] == "number") {
+                        // old case, one global diversity
+                        return this.diversity[key][time].toFixed(3);
+                    } else {
+                        // case diversity by locus
+                        var diversity_by_locus = {}
+                        for (var locus in this.diversity[key][time]) {
+                            diversity_by_locus[locus] = this.diversity[key][time][locus].toFixed(3)
+                        }
+                        return diversity_by_locus
+                    }
                 } else {
                     return this.diversity[key][time]
                 }
@@ -1561,9 +1573,20 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         // Sub-table diversity
         if ( typeof this.diversity != 'undefined') {
-            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
+            html += "<tr><td class='header' "+colspan_header+"> Diversity indices </td></tr>"
             for (var key_diversity in this.diversity) {
-                html += "<tr><td> " + key_diversity.replace('index_', '') + "</td><td>" + this.getDiversity(key_diversity, timeID) + '</td></tr>'
+                var diversity = this.getDiversity(key_diversity, timeID)
+                if (typeof diversity == "string" || diversity == null){
+                    html += "<tr><td> " + translate_key_diversity(key_diversity) + "</td><td>" + diversity + '</td></tr>'
+                } else if (typeof diversity == "object"){
+                    html += "<tr><td "+colspan_header+">"+translate_key_diversity(key_diversity)+"</td></tr>"
+                    var present_locus = this.getLocusPresentInTop(timeID)
+                    for (var locus in diversity) {
+                        if( present_locus.indexOf(locus) != -1 || locus == "all"){
+                            html += "<tr><td> " + this.systemBox(locus).outerHTML + " "+locus+"</td><td>" + diversity[locus] + '</td></tr>'
+                        }
+                    }
+                }
             }
         }
         if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
@@ -1655,6 +1678,24 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         }
         return html
+    },
+
+    /**
+     * Allow to know if a locus is present in clonotype of a sample
+     * include each clonotype of each clone inside the top limit and present with a least one read
+     * If a clone is share between sample, it will be present even in not in top limit of the sample (see fuse of top field)
+     */
+    getLocusPresentInTop: function(time){
+        var locus = []
+        for (var i = this.clones.length - 1; i >= 0; i--) {
+            var clone = this.clones[i]
+            if (clone.reads[time] && clone.top <= m.top){
+                if (locus.indexOf(clone.germline) == -1){
+                    locus.push(clone.germline)
+                }
+            }
+        }
+        return Array.from( new Set(locus) )
     },
 
 
@@ -2197,7 +2238,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     /**
      * return sample/time name in a specified format
      * @param {integer} timeID - sample/time index
-     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 
+     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 'order'
      * @return {string} sample name
      * */
     getStrTime: function (timeID, format){
@@ -2205,6 +2246,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var result = "-/-"
 
         switch (format) {
+            case "order":
+                result = m.samples.order.indexOf(timeID);
+                if (result == -1) result = "-/-";
+                break;
+            case "original_name":
+                result = this.samples.original_names[timeID]
+                break;
             case "name":
             case "names":
                 //TODO resolve thid hack
@@ -2534,6 +2582,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         div.appendChild(span1)
         div.appendChild(span2)
         div.appendChild(this.norm_button)
+
+        // add to report button
+        var div2 = $('<div/>', {}).html("<hr>").appendTo($(this.tagSelectorList))
+        var report_button = $('<div/>', { text: 'add clone(s) to next report'
+                                        }).appendTo(div2)
+                                          .click(function (){
+                                              report.addClones(clonesIDs);
+                                              $(self.tagSelector).hide('fast')
+                                        });
+        $('<button/>', { class: "icon-newspaper"}).appendTo(report_button)
 
         var li = document.createElement('li');
         li.appendChild(div)

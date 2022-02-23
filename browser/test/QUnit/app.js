@@ -8,7 +8,9 @@ requirejs.config({
 var lib = [         "js/lib/jquery-3.3.1.min",
                     "js/lib/blanket.1.1.9",
                     "js/lib/file",
-                    "js/lib/bioseq"
+                    "js/lib/bioseq",
+                    "js/lib/select2.min"
+
           ];
 
 var lib_plugin = [  "js/lib/jquery.form",
@@ -52,6 +54,7 @@ var lib_vidjil = [  //"js/conf",
                     "js/form_builder",
                     "js/aligner_sequence",
                     "js/aligner",
+                    "js/export",
                 ];
 
 var test_files = [  "testFiles/form_test",
@@ -75,6 +78,7 @@ var test_files = [  "testFiles/form_test",
                     "testFiles/shortcut_test",
                     "testFiles/speed_test",
                     "testFiles/tokeniser_test",
+                    "testFiles/report_test",
                     "testFiles/lib/bioseq_test"
                 ];
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -322,9 +322,9 @@ Clone.prototype = {
 
         if (field_name5 != undefined && positions5 !== null) {
             if (include){
-                pos5 = positions5.start
+                pos5 = positions5.start+1
             } else {
-                pos5 = positions5.stop
+                pos5 = positions5.stop+1
             }
         } else {
             pos5 = 0
@@ -332,9 +332,9 @@ Clone.prototype = {
 
         if (field_name3 != undefined && positions3 !== null) {
             if (include){
-                pos3 = positions3.stop
+                pos3 = positions3.stop+1
             } else {
-                pos3 = positions3.start
+                pos3 = positions3.start+1
             }
         } else {
            pos3 = this.sequence.length
@@ -1706,6 +1706,9 @@ Clone.prototype = {
         if (this.id != undefined){
             html += row_1("locus", this.m.systemBox(this.germline).outerHTML + this.germline +
                 "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>", undefined, time_length)
+        }
+        if (this.seg != undefined && this.seg.junction != undefined){
+            html += row_1("Productivity", this.getProductivityNameDetailed() + "</div>", undefined, time_length)
         }
         if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("5") != "undefined V")){
             html += row_1("V gene (or 5')", this.getGene("5") +

@@ -241,3 +241,64 @@
     
         </div>
     </template>
+
+
+
+
+    <template id="report-settings">
+        <div class="">
+            <div style="text-align: center;">Report Settings</div>
+
+            <div id="report-settings-save" style="text-align: center;">
+
+            </div>
+
+            <div class="menu_box" id="report-settings-sample-select">
+                <div class="">
+                    Sample(s) <span id="rs-selected-sample-count" style="float: right;"></span>
+                </div>
+            </div>
+
+            <div class="menu_box" id="report-settings-locus-select">
+                <div class="">
+                    Locus
+                </div>
+            </div>
+
+            <div class="menu_box" id="report-settings-color-select">
+                <div class="">
+                    Color 
+                </div>
+                <table class="rs-flex-parent-v">
+                    <tr class="">
+                        <td>Default Clonotype Color :</td> <td><select name="rs-default-color" id="rs-default-color" class=""></select></td>
+                    </tr>
+                    <tr class="">
+                        <td>Selected Clonotype Color :</td> <td><select name="rs-selected-color" id="rs-selected-color" class=""></select></td>
+                    </tr>
+                </table>
+
+            </div>
+
+            <div class="menu_box" id="report-settings-clones">
+                <div class="">
+                    Clonotypes
+                    <span id="rs-selected-clones-count" style="float: right;"></span>
+                </div>
+            </div>
+
+            <div class="menu_box"  id="report-settings-block">
+                <div class="">
+                    Blocks
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button type="button" onclick="report.print();">Print</button>
+            </div>
+            <div style="float: right;">
+                <button id="rs-save-button" type="button" onclick="report.save(undefined,true);">Save</button>
+                <button id="rs-saveas-button" type="button" onclick="report.saveas();">Save As</button>
+            </div>
+        </div>
+    </template>
