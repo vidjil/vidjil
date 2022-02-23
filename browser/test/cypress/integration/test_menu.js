@@ -111,4 +111,24 @@ describe('Test sandbox', function () {
 
   })
 
+
+  it('02-load_analysis_without_clone',  function() {
+    // Test the slider value and reset after loading/reloading of analysis (issue #2583)
+    // also reset other
+
+    cy.openAnalysis("/data/issues/2583_noclone.vidjil")
+    cy.open_menu_filter()
+
+    cy.get("#top_label").should("have.text", "0 clones (top 0)") // Correct slider label text when no clone
+    cy.get("#top_slider").should("have.value", "5") // correct slider value if no clone (minimum allowed value)
+
+    // ## Load data with enough clone to change top value
+    cy.openAnalysis("/data/issues/2583_25Xclones.vidjil")
+    cy.open_menu_filter()
+
+    cy.get("#top_label").should("have.text", "20 clones (top 20)" ) // Correct slider label text when clones are present
+    cy.get("#top_slider").should("have.value", "20") // correct slider value if many clones (alligned on m.top value)
+  })
+
+
 })

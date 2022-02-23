@@ -468,6 +468,7 @@ Model.prototype = {
                 $("#external_normalization").show();
             }
         }
+        this.filter.reset()
         this.update()
     }, //end initClones
 
