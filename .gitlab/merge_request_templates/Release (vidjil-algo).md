@@ -25,11 +25,10 @@ Benchmarks
 * [ ] almost no change...
 * [ ] ... or significant changes are understood
 
-Profiling
+When there are significant changes in the benchmarks, study the profiling
 * cpu: PointerACAutomaton.getResults, ~37% ?
 * mem: PointerACAutomaton.insert, ~73% ?
-* [ ] almost no change...
-* [ ] ... or significant changes are understood
+* [ ] ... 
 
 ## The release, publish, tag and push
 
