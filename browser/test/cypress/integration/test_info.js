@@ -17,4 +17,15 @@ describe('Colors', function () {
       .should("have.text", "null")
   })
 
+  //check color and info panel are updated after selecting a new axis as color
+  it('01-overlap index',  function() {
+    cy.openAnalysis("/data/issues/4422.vidjil")
+    cy.get('.button > .icon-info').click()
+
+    cy.get("#overlap_morisita")
+      .should("exist", "Morisita overlap table exist")
+    cy.get("#overlap_jaccard")
+      .should("exist", "Jaccard overlap table exist")
+  })
+
 })
