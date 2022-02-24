@@ -19,3 +19,4 @@ ls /app/demo
 ln -sf $PWD/browser/test/data /app/cypress/fixtures/data || true
 ln -sf $PWD/doc  /app/cypress/fixtures/doc  || true
 ln -sf $PWD/demo /app/cypress/fixtures/demo || true
+ln -sf $PWD/tools /app/cypress/fixtures/tools || true

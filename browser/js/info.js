@@ -558,6 +558,7 @@ Info.prototype = {
         spantag.className = "tagColorBox";
         spantag.style.backgroundColor = l.color;
         spantag.title = l.text;
+        spantag.id    = "tag_" + l.text.replace(" ","_")
         spantag.setAttribute('value', key);
 
         if (this.m.filter.check(axis.name, "=", key) >=0)
