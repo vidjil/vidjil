@@ -164,4 +164,35 @@ describe('Test 00 Init', function () {
 
     })
 
+    it('loading-vidjil_analysis_order',  function() {
+      // load_first_config_without_analysis; 3 samples; analysis based on these files
+      cy.openAnalysis("/data/issues/4407_config_1.vidjil")
+
+      // Test line in graph, only show if analysis loading end without error
+      cy.get("#polyline4")
+        .invoke('attr', 'd')
+        .then((value) => {
+          assert(value.split(",").length == 22, "clone is present in the graph of first sample")
+        })
+
+      // load_first_config; 3 samples; analysis based on these files
+      cy.openAnalysis("/data/issues/4407_config_1.vidjil", "/data/issues/4407_.analysis")
+      // Test line in graph, only show if analysis loading end without error
+      cy.get("#polyline4")
+        .invoke('attr', 'd')
+        .then((value) => {
+          assert(value.split(",").length == 22, "clone is present in the graph of first sample")
+        })
+
+      // load_second_config, not present in loaded analysis
+      cy.openAnalysis("/data/issues/4407_config_2.vidjil", "/data/issues/4407_.analysis")
+      // Test line in graph, only show if analysis loading end without error
+      cy.get("#polyline4")
+        .invoke('attr', 'd')
+        .then((value) => {
+          // Only 2 samples
+          assert(value.split(",").length == 17, "clone is present in the graph of first sample")
+        })
+    })
+
 })
