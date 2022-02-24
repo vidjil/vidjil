@@ -136,6 +136,39 @@ describe('Scatterplot', function () {
     cy.get('.info-container').find('.closeButton').click()
 
     return
+   })
+
+
+  it('04-tooltips',  function() {
+    // # issue 4370; test tooltip content on graph
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+
+    // mouseover_delay, before hover, tooltip should be hidden
+    cy.get("#visu2_tooltip")
+      .should('have.css', 'opacity', '0')// correct opacity of tooltip when label is NOT hover
+    cy.get('#time0')
+      .trigger('mouseover')
+
+    cy.get("#visu2_tooltip")
+      .should('have.css', 'opacity', '0')// correct opacity of tooltip when label is NOT hover
+      .wait(500)
+      .should('have.css', 'opacity', '0')// correct opacity of tooltip when label is hover, but under timeout
+      .wait(1000)
+      .should('have.css', 'opacity', '1')// correct opacity of tooltip when label is hover after timeout
+
+    cy.get('#time1')
+      .trigger('mouseover')
+    cy.get("#visu2_tooltip") // tooltip text don't have '\n'
+      .should("have.text", "T8045-BC082-fu12019-12-27+10250 000 reads (57.19%)") //Correct text in tshe sample tooltip
+
+    // mouseover_without_dates
+    cy.openAnalysis("/doc/analysis-example.vidjil")
+
+    cy.get('#time0')
+      .trigger('mouseover')
+    cy.get("#visu2_tooltip") // tooltip text don't have '\n'
+      .should('have.css', 'opacity', '1')
+      .should("have.text", "helloworld741 684 reads (94.26%)") //Correct text in tshe sample tooltip
   })
 
 })
