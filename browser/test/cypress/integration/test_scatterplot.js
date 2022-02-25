@@ -171,4 +171,16 @@ describe('Scatterplot', function () {
       .should("have.text", "helloworld741 684 reads (94.26%)") //Correct text in tshe sample tooltip
   })
 
+
+  it('05-labels',  function() {
+    // Issue 4472; model precision is incorect if distributions clones are set
+    cy.openAnalysis("/data/issues/4472.vidjil")
+    cy.get('#text_container > [y="40"]').should("have.text", "100%")
+
+    // First label is 100% with TRG, and 10% TRG hide
+    cy.get('#toogleLocusSystemBox_TRG').click()
+    cy.update_icon()
+    cy.get('#text_container > [y="40"]').should("have.text", "10%")
+  })
+
 })
