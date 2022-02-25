@@ -941,7 +941,28 @@ See `server/web2py/applications/vidjil/scripts/migrator.py --help`
 
 ## Exporting an archive
 
-(to be detailed)
+### Step 1 : prepare the archive directory
+
+First you should create an export directory to receive the exported data, if you are using a docker version of vidjil this directory must be accessible from your vidjil-server docker container.
+a possible location could be `[DOCKER DIRECTORY]/vidjil-server/conf/export/`
+
+### step 2 : give access permission to a group for the results you want to export
+
+Exports are group based, you can export all results owned by a group or create a new group and provide it with permissions on the results you want to export using the vidjil server interface as an admin user.
+
+Keep the [GROUP_ID] you can find on the group page (displayed between parenthesis next to the group name) as you will require it for the next step
+
+### step 3 : run export command
+
+A script migrator.sh can be found in vidjil, if you are using docker version, it can be found at this location in the vidjil-server container.
+cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts
+
+sh migrator.sh -p [EXPORT_DIRECTORY] -s [WEB2PY_RESULTS_DIRECTORY] export group [GROUP_ID]
+ - [EXPORT_DIRECTORY] path to the export directory inside the vidjil-server container you should have prepared in step 1.
+ - [WEB2PY_RESULTS_DIRECTORY] the results directory path inside the container, it should be defined in your docker-compose.yml, by default it is /mnt/result/results/
+ - [GROUP_ID] id of the group owning the results to be exported (see step 2)
+
+The config analysis and pre-process are currently not exported as they may already exist on the recipient server and are depending on tools that can be missing or installed differently. Config an pre-process analysis must therefore be recreated or mapped manually to existing one on the recipient server (see next section step 3-4).
 
 ## Importing an archive
 
