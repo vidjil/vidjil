@@ -191,15 +191,18 @@ function tsvToArray(allText) {
 
     for (var i = 1; i < allTextLines.length; i++) {
         var data = $.trim(allTextLines[i]).split('	');
+        var tarr = {};
         if (data.length == headers.length) {
-            var tarr = {};
             for (var j = 0; j < headers.length; j++) {
                 if (headers[j] !== "") {
                     tarr[headers[j]] = data[j];
                 }
             }
-            lines.push(tarr);
+        }else{
+            tarr[headers[0]] = data[0];
+            tarr[headers[1]] = data[1];
         }
+        lines.push(tarr);
     }
     return lines;
 }
