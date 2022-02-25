@@ -49,5 +49,7 @@ After these steps, we merge back the release in `dev`:
 
 * [ ] Possibly fix things in `merge_request_templates/Release (vidjil-algo).md` on a new MR
 
+* [ ] Close the milestone associated with this release, moving remaining issues on another milestone
+
 /label ~cpp
 
