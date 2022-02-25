@@ -26,19 +26,22 @@ As of September 2020, we recommend using Firefox or Chrome/Chromium :
   - Chrome, *version \>= 79*
 
 These platforms will be supported to at least *April 2024*.
-Chrome 79, and possibly other recent versions, are tested through our continuous integration pipelines.
+Within our quality process, we test several of these versions 
+through [tests and continuous integration](https://www.vidjil.org/doc/quality/#tests-1).
 
 ## Legacy browsers
 
 We also provide an extended support on
 
-  - Firefox, versions 32 to 77
-  - Chrome, version 49 to 78
+  - Firefox, versions 62 to 77
+  - Chrome, version 75 to 78
 
 Some of these legacy platforms are also tested through our continuous integration pipelines.
 However, old platforms have security flaws and are not recommended for routine usage involving clinical data.
-They may not get the new features, and *this extended support may be dropped in September 2021*,
-or at latest in *May 2022*.
+They may not get the new features, and *this extended support will be dropped in May 2022*.
+
+Before dropping support to any platform,
+we display during at least six months a warning on those legacy browsers.
 
 ## Other browsers
 
