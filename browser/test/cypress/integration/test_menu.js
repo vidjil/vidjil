@@ -130,5 +130,14 @@ describe('Test sandbox', function () {
     cy.get("#top_slider").should("have.value", "20") // correct slider value if many clones (alligned on m.top value)
   })
 
+  it('03-cluster by V - issue 4495',  function() {
+    // Issue 4495; Erreurs lors d'un cluster by V; cluster_clone undefined
+    cy.openAnalysis("/data/issues/4495.vidjil", "/data/issues/4495.analysis")
+
+    cy.open_menu_cluster()
+    cy.get("#clusterBy_5").click()
+
+    cy.getCloneInList(1).should("have.text", "IGHV3-9") // after cluster by V, clone 1 is only maned by his seg5 value
+  })
 
 })
