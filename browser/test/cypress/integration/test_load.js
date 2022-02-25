@@ -164,7 +164,7 @@ describe('Test 00 Init', function () {
 
     })
 
-    it('loading-vidjil_analysis_order',  function() {
+    it('loading-vidjil_analysis_order_1',  function() {
       // load_first_config_without_analysis; 3 samples; analysis based on these files
       cy.openAnalysis("/data/issues/4407_config_1.vidjil")
 
@@ -196,7 +196,7 @@ describe('Test 00 Init', function () {
     })
 
 
-  it('loading-vidjil_analysis_order',  function() {
+  it('loading-vidjil_analysis_order_hidden_sample',  function() {
       // Issue 4541; Vidijl file with 3 samples, only 6 clones keeped
 
       // load_analysis_simple_reorder
@@ -268,4 +268,12 @@ describe('Test 00 Init', function () {
       cy.get('#time3').should("exist")
         .should("have.text", 'file_fu_3')
   })
+
+
+  it('loading-vidjil_empty_distributions',  function() {
+    cy.openAnalysis("/data/issues/4632.vidjil")
+    // ### Issue 4632; issue with empty distributions field (case in mixcr)
+    cy.getCloneInList('0').should("exist")
+  })
+
 })
