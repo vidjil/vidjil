@@ -696,9 +696,11 @@ Aligner.prototype = {
      * (see crossDomain.js)
      * @param {string} address - 'imgt', 'arrest', 'igBlast' or 'blast'
      * */
-    sendTo: function (address, callback) {
+    sendTo: function (address, list, callback) {
 
-        var list = this.sequenceListInSegmenter();
+        if (typeof list == 'undefined')
+            list = this.sequenceListInSegmenter();
+
         var request = "";
         var system;
         var max=0;
