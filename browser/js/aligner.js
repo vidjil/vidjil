@@ -575,15 +575,40 @@ Aligner.prototype = {
             var span = document.createElement('span');
             var axis = this.selectedAxis[i];
             span.removeAllChildren();
-            span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
-            span.setAttribute('title', this.selectedAxis[i].doc);
-            if (axis.hover != undefined){
-                span.setAttribute('title', axis.hover(clone, this.m.getTime()) )
-            }
             span.className = axis.name;
+            span.setAttribute('title', this.selectedAxis[i].doc);
+
+            if (axis.hover != undefined)
+                span.setAttribute('title', axis.hover(clone, this.m.getTime()) )
+            
+            if (typeof axis.refresh != 'undefined' && typeof axis.refresh(clone) != 'undefined')
+                span.appendChild(this.refreshIcon(axis.refresh(clone)))
+            else
+                span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
+
             axisBox.appendChild(span);
         }
     },
+
+    refreshIcon: function(provider){
+        var self = this
+        var span = document.createElement('span')
+        var im = document.createElement('i')
+        span.className = 'aligner-inline-button'
+        im.className ='icon-arrows-ccw'
+        span.setAttribute('title', "missing data, click to try to retrieve from "+provider);
+
+        if (this.pendingAnalysis>0){
+            span.className = 'aligner-inline-button disabledClass'
+            im.className = 'icon-arrows-ccw animate-spin'
+        }
+
+        span.onclick = function(){self.retrieveExternalData([provider])}
+
+        span.appendChild(im)
+        return span
+    },
+
         
     /**
      * add a clone in the segmenter<br>
