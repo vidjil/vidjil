@@ -32,8 +32,8 @@ When there are significant changes in the benchmarks, study the profiling
 
 ## The release, publish, tag and push
 
-* [ ] merge this MR to *master* and tag: `git tag release-20XX-XX` 
-* [ ] push: `git push origin master release-20XX-XX`
+* [ ] merge this MR to *master* and tag: `git tag release-20XX.XX` 
+* [ ] push: `git push origin master release-20XX.XX`
 * [ ] mirror to GH: `git push github master release-20XX.XX`
 * [ ] deploy to vidjil.org/releases and app.vidjil.org: click on `copy_release` (there may be changes to CD...)
 * [ ] deploy the doc: click on `deploy_doc`
