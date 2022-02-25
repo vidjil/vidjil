@@ -616,8 +616,15 @@
                     </div>
 
                     <div id="align-refresh-button" class="aligner-menu"
-                        title="Some data are missing has they are based on external analysis (IMGT / CloneDB / IGBLast/ ...) &#10; Click to perform those analysis"
-                        onclick="javascript:segment.retrieveExternalData();"> </span><i class="demo-icon icon-arrows-ccw"></i></span>
+                        title="Some data are missing has they are based on external analysis (IMGT / CloneDB / IGBLast/ ...) &#10; Click to perform those analysis">
+                         <span onclick="javascript:segment.retrieveExternalData();"><i class="demo-icon icon-arrows-ccw"></i></span>
+
+                        <div class="menu-content">
+                            <a id="toIMGTseg" title="Request sequences informations to IMGT"
+                                    class="aligner-button" onclick="javascript:segment.retrieveExternalData(['IMGT']);"><i class="icon-arrows-ccw"></i> IMGT/V-QUEST</a>
+                            <a id="toCloneDBseg" title="Request sequences informations to CloneDB"
+                                    class="aligner-button" onclick="javascript:segment.retrieveExternalData(['cloneDB']);"><i class="icon-arrows-ccw"></i> CloneDB</a>
+                        </div>
                     </div>
                     
                     </div>
