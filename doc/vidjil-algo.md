@@ -1,4 +1,4 @@
-# vidjil-algo 2021.04
+# vidjil-algo 2022.02
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
@@ -227,7 +227,7 @@ It is thus generally safe to run `--sampled-reads 1000` to have a fast insight o
 ## Germline presets: locus and recombination selection
 
 ``` diff
-Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)
+Germline/recombination selection (at least one -g, -V/(-D)/-J, or --find option must be given)
   -g, --germline GERMLINES ...
 
          -g <.g FILE>(:FOCUS) ...
@@ -240,6 +240,7 @@ Germline/recombination selection (at least one -g or -V/(-D)/-J option must be g
   -V FILE ...                 custom V germline multi-fasta file(s)
   -D FILE ...                 custom D germline multi-fasta file(s) for V(D)J designation
   -J FILE ...                 custom V germline multi-fasta file(s)
+  --find FILE ...             custom multi-fasta file(s) for non-recombined alignments
   -2                          try to detect unexpected recombinations
 ```
 
@@ -264,7 +265,22 @@ The following presets are provided:
 
   - Using `-2` further test unexpected recombinations (tagged as `xxx`), as in `-g germline/homo-sapiens.g -2`.
 
-Finally, the advanced `-V/(-D)/-J` options enable to select custom V, (D) and J repertoires given as `.fasta` files.
+## Custom reference sequences
+
+Some advanced options enable to indicate custom reference sequences,
+given as `.fasta` files:
+
+- The `-V/(-D)/-J` options indicates a (related) custom repertoire,
+  for V(D)J or V(D)J-like recombinations.
+
+- The `--find` option indicates reference sequences,
+  for detection of similarities/alignment of sequences *without recombinations*.
+
+Several `-g`/ `-V/(-D)/-J` / `--find` options can be used at the same time,
+describing different systems of (non-)recombinations that will be detected.
+However, it is not advised to use several time the same reference sequences.
+More generally, putting many sequences as `--find` will generate hits
+that may hide actual recombinations.
 
 ## Custom `germline/*.g` presets
 
@@ -321,19 +337,14 @@ both Vd-Dd3, Dd2-Jd (possibly Dd2-Dd-Jd), and Dd2-Dd3 recombinations are searche
     } ]
 ```
 
-There is also an experimental sequence analysis mode, called `1`,
-that detects similarities and designates sequences *without recombinations*,
+The sequence analysis mode `1`, as the command line option `--find`,
+detects similarities and designates sequences *without recombinations*,
 as in `germline/homo-sapiens-cd.g`:
 
 ```json
      "recombinations": [ { "1": ["CD-sorting.fa"] } ]
 ```
 
-This mode can also be called from the command line with arguments such as  `--find CD-sorting.fa`.
-This can be used to detect non-recombined known sequences,
-as shown here with usual CD sequences in RNA-seq data.
-However, putting too many sequences here may generate many hits
-that may hide actual recombinations.
 
 ## Main algorithm parameters
 
@@ -543,7 +554,7 @@ in the first pass: the `--label`, `-label-file`, or `--label-filter` options can
  detect a recombination that was not detected when removing all the thresholds with `--all`.
 
 To increase the sensitivity, see above the `--e-value` option, or,
-to look for non-recombined sequences, see above the experimental `1` sequence analysis.
+to look for non-recombined sequences, see above the `--find` sequence analysis.
 
 ## Options for further clone analysis
 

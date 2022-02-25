@@ -1164,9 +1164,11 @@ int main (int argc, char **argv)
 	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
-      if (__only_on_exit__clean_memory) { delete multigermline; delete GERMLINE_NOT_DESIGNATED; } return 0;
+      // Exit after CMD_GERMLINES
+      if (__only_on_exit__clean_memory) { delete multigermline; } return 0;
     }
 
+  Germline *GERMLINE_NOT_DESIGNATED = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
 
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
@@ -1800,7 +1802,7 @@ int main (int argc, char **argv)
     } // end if (command == CMD_CLONES) || (command == CMD_WINDOWS)
 
     //$$ Clean
-
+    delete GERMLINE_NOT_DESIGNATED;
     delete windowsStorage;
 
 
@@ -1932,7 +1934,7 @@ int main (int argc, char **argv)
   delete out_json;
 
   //$$ Clean
-  if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; delete GERMLINE_NOT_DESIGNATED; } return 0 ;
+  if (__only_on_exit__clean_memory) { delete multigermline ; delete reads; } return 0 ;
 }
 
 //$$ end

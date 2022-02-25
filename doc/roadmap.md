@@ -215,7 +215,7 @@ We often work on backend changes that eventually improve the efficiency on the p
 
  - Make the [VidjilNet Consortium](http://www.vidjil.net) grow
     + Expand the community, make more members join (first General Assembly in December 2021 ⏳)
-    + Setup [healthcare data hosting](http://www.vidjil.org/healthcare) (HDS, RGPD): Q3 2020 ✅
+    + Setup [healthcare data hosting](http://www.vidjil.org/doc/healthcare) (HDS, RGPD): Q3 2020 ✅
     + Regularly take into account user requests
 
  - Organize regularly Vidjil Workshops

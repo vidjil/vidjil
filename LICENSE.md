@@ -103,7 +103,7 @@ qunit-tap.js        : TAP Output Producer Plugin for QUnit
 require.js  	    : JavaScript file and module loader
 * @version          2.3.6 (2018-08-27)
 * @author           The Dojo Foundation All Rights Reserved.
-* @link             <http://jrburke.com / http://requirejs.org/>
+* @link             <http://jrburke.com>, <http://requirejs.org/>
 * @license          MIT
 * @compatibility    IE 6+, Firefox 2+, Safari 3.2+, Chrome 3+, Opera 10+
 
