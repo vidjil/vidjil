@@ -161,28 +161,33 @@ Aligner.prototype = {
         return this        
     },
 
-    retrieveExternalData: function(){
+    retrieveExternalData: function(providerList, cloneList){
         var self = this
-        var refreshList = this.needRefresh()
+
+        if (typeof providerList == 'undefined')
+            providerList = this.needRefresh()
+
+        if (typeof cloneList == 'undefined')
+            cloneList = this.sequenceListInSegmenter()
 
         var callback = function(){
             self.pendingAnalysis--
             self.updateButton()    
         }
         
-        for (var i in refreshList){
-            serviceName = refreshList[i]
+        for (var i in providerList){
+            serviceName = providerList[i]
 
             this.pendingAnalysis = 0;
 
             switch (serviceName) {
                 case "IMGT":
                     this.pendingAnalysis++
-                    this.sendTo('IMGTSeg', callback)
+                    this.sendTo('IMGTSeg', cloneList, callback)
                     break;
                 case "cloneDB":
                     this.pendingAnalysis++
-                    db.callCloneDB(m.getSelected(), callback)
+                    db.callCloneDB(cloneList, callback)
                     break;
                 default:
                     break;
