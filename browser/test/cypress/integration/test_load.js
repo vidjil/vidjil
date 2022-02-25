@@ -195,4 +195,77 @@ describe('Test 00 Init', function () {
         })
     })
 
+
+  it('loading-vidjil_analysis_order',  function() {
+      // Issue 4541; Vidijl file with 3 samples, only 6 clones keeped
+
+      // load_analysis_simple_reorder
+      cy.openAnalysis("/data/issues/issues_4541/4541.vidjil", "/data/issues/issues_4541/4541_00_stock.analysis")
+      cy.get('#visu2_title').should("have.text", "2 / 3" )// Ratio show is correct at init
+      cy.get('#time0').should("exist")
+        .should("have.text", 'file0_name')
+      cy.get('#time1').should("not.exist")
+      cy.get('#time2').should("exist")
+        .should("have.text", 'file2_name')
+
+      // Samples here haven't stock_order field (old one)
+      // load_analysis_hidden_sample
+      cy.openAnalysis("/data/issues/issues_4541/4541.vidjil", "/data/issues/issues_4541/4541_01.analysis")
+      cy.get('#visu2_title').should("have.text", "2 / 3" )// Ratio show is correct at init
+      cy.get('#time0').should("exist")
+        .should("have.text", 'file0_name')
+      cy.get('#time1').should("not.exist")
+      cy.get('#time2').should("exist")
+        .should("have.text", 'file2_name')
+
+      // load_analysis_one_more_sample
+      cy.openAnalysis("/data/issues/issues_4541/4541_02.vidjil", "/data/issues/issues_4541/4541_01.analysis")
+      cy.get('#visu2_title').should("have.text", "3 / 4" )// Ratio show is correct at init
+      cy.get('#time0').should("exist")
+        .should("have.text", 'file0_name')
+      cy.get('#time1').should("not.exist")
+      cy.get('#time2').should("exist")
+        .should("have.text", 'file2_name')
+      cy.get('#time3').should("exist")
+        .should("have.text", 'file3_name')
+
+      // load_analysis_deleted_sample
+      cy.openAnalysis("/data/issues/issues_4541/4541_03_deleted_sample.vidjil", "/data/issues/issues_4541/4541_00_stock.analysis")
+      cy.get('#visu2_title').should("have.text", "1 / 2" )// Ratio show is correct at init
+      cy.get('#time0').should("exist")
+        .should("have.text", 'file0_name')
+      cy.get('#time1').should("not.exist")
+
+      // load_analysis_all_new_samples
+      cy.openAnalysis("/data/issues/issues_4541/4541.vidjil", "/data/issues/issues_4541/4541_04_all_new_samples.analysis")
+      cy.get('#visu2_title').should("have.text", "3 / 3" )// Ratio show is correct at init
+      cy.get('#time0').should("exist")
+        .should("have.text", 'file0_name')
+      cy.get('#time1').should("exist")
+        .should("have.text", 'file1_name')
+      cy.get('#time2').should("exist")
+        .should("have.text", 'file2_name')
+
+      // load_analysis_duplicate_in_order
+      cy.openAnalysis("/data/issues/issues_4541/4541.vidjil", "/data/issues/issues_4541/4541_05_duplicate_in_order.analysis")
+      cy.get('#visu2_title').should("have.text", "2 / 3" )// Ratio show is correct at init
+      cy.get('#time0').should("exist")
+        .should("have.text", 'file0_name')
+      cy.get('#time1').should("not.exist")
+      cy.get('#time2').should("exist")
+        .should("have.text", 'file2_name')
+
+      // load_analysis_duplicate_in_order
+      cy.openAnalysis("/data/issues/issues_4541/4541_06.fused", "/data/issues/issues_4541/4541_06.analysis")
+      cy.get('#visu2_title').should("have.text", "4 / 5" )// Ratio show is correct at init
+      cy.get('#time4').should("exist")
+        .should("have.text", 'Rechute')
+      cy.get('#time1').should("exist")
+        .should("have.text", 'Fu-1')
+      cy.get('#time2').should("not.exist")
+      cy.get('#time0').should("exist")
+        .should("have.text", 'file_diag_1')
+      cy.get('#time3').should("exist")
+        .should("have.text", 'file_fu_3')
+  })
 })
