@@ -271,6 +271,42 @@ describe('Test 00 Init', function () {
 
 
   it('loading-vidjil_empty_distributions',  function() {
+    // load_data_without_mrd
+    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.get('#listElem_1 > #clone_infoBox_1 > .icon-info').click()
+
+    cy.get("#modal_line_mrd_family").should("not.exist") //modal line mrd_family NOT exist for clone without mrd
+    cy.get("#modal_line_mrd_pearson").should("not.exist") //modal line mrd_pearson NOT exist for clone without mrd
+    cy.get("#modal_line_mrd_prevalent").should("not.exist") //modal line mrd_prevalent NOT exist for clone without mrd
+    cy.get("#modal_line_mrd_prevalent_on_spike").should("not.exist") //modal line mrd_prevalent_on_spike NOT exist for clone without mrd
+    cy.get('.info-container > .closeButton > .icon-cancel').click()
+
+    // load_data_with_mrd
+    cy.openAnalysis("/data/issues/issue_mrd.vidjil")
+    cy.get('#listElem_0 > #clone_infoBox_0 > .icon-info').click()
+
+    cy.get("#modal_line_mrd_family").should("exist") //modal line mrd_family exist for clone with mrd
+    cy.get("#modal_line_mrd_pearson").should("exist") //modal line mrd_pearson exist for clone with mrd
+    cy.get("#modal_line_mrd_prevalent").should("exist") //modal line mrd_prevalent exist for clone with mrd
+    cy.get("#modal_line_mrd_prevalent_on_spike").should("exist") //modal line mrd_prevalent_on_spike exist for clone with mrd
+
+    // Test text values
+    cy.get("#modal_line_value_mrd_family_0").should("have.text", "UNI") //modal line mrd_family content is correct
+    cy.get("#modal_line_value_mrd_pearson_0").should("have.text", "0.96") //modal line mrd_pearson content is correct
+    cy.get("#modal_line_value_mrd_prevalent_0").should("have.text", "KIGK") //modal line mrd_prevalent content is correct (K locus + IGK)
+    cy.get("#modal_line_value_mrd_prevalent_on_spike_0").should("have.text", "64.89233726998077") //modal line mrd_prevalent_on_spike content is correct
+    cy.get('.info-container > .closeButton > .icon-cancel').click()
+
+    cy.get('#listElem_1 > #clone_infoBox_1 > .icon-info').click()
+    cy.get("#modal_line_mrd_family").should("not.exist") //modal line mrd_family NOT exist for clone without mrd
+    cy.get("#modal_line_mrd_pearson").should("not.exist") //modal line mrd_pearson NOT exist for clone without mrd
+    cy.get("#modal_line_mrd_prevalent").should("not.exist") //modal line mrd_prevalent NOT exist for clone without mrd
+    cy.get("#modal_line_mrd_prevalent_on_spike").should("not.exist") //modal line mrd_prevalent_on_spike NOT exist for clone without mrd
+    cy.get('.info-container > .closeButton > .icon-cancel').click()
+  })
+
+
+  it('loading-vidjil_empty_distributions',  function() {
     cy.openAnalysis("/data/issues/4632.vidjil")
     // ### Issue 4632; issue with empty distributions field (case in mixcr)
     cy.getCloneInList('0').should("exist")
