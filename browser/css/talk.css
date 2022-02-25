@@ -322,6 +322,13 @@ span .end-codon {
   position: relative;
   width: 420px;
 }
+.aligner-inline-button {
+  padding: 0px 5px;
+}
+.aligner-inline-button:hover {
+  cursor: pointer;
+  background-color: #dddddd;
+}
 /* base Vidjil style */
 /* @default, @background, @highlight, @select, @secondary and @border have to be defined */
 /* default tag color */
