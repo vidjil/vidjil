@@ -14,6 +14,8 @@ echo "==> ls /app/cypress"
 ls /app/cypress
 echo "==> ls /app/demo"
 ls /app/demo
+echo "==> ls /app/tools/tests"
+ls /app/tools/tests
 
 
 ln -sf $PWD/browser/test/data /app/cypress/fixtures/data || true

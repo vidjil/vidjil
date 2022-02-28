@@ -5,6 +5,8 @@ make -C /app/cypress/fixtures/demo
 mkdir -p /app/cypress/fixtures/demo/empty_directory
 echo "==> ls /app/cypress/fixtures/demo"
 ls /app/cypress/fixtures/demo
+echo "==> ls /app/cypress/fixtures/tools/tests"
+ls /app/cypress/fixtures/tools/tests
 
 echo "==> PWD: `pwd`"
 
