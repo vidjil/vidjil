@@ -299,7 +299,7 @@ class Vidjil:
         status  = defaultdict(lambda: dict())
         stats   = defaultdict(lambda: 0 )
         for sample_set_id in list_sets:
-            sub = self.launchAnalysisOnSet(sample_set_id, str(config_id), force=force, verbose=verbose)
+            sub = self.launchAnalysisOnSet(sample_set_id, str(config_id), force=force, retry=retry, verbose=verbose)
             for key, value in sub.items():
                 for subkey, subvalue in value.items():
                     status[key][subkey] = subvalue
@@ -336,7 +336,7 @@ class Vidjil:
             if result["status"] == "" or (result["status"] == "FAILED" and retry==True) or force==True:
                 string = "%s\n\tanalysis will be launch" % (pre_str)
                 if sample["sequence_file"]["data_file"] != None:
-                    self.launchAnalysisOnSample(sample_set_id, sequence_file_id, config_id, force=force)
+                    self.launchAnalysisOnSample(sample_set_id, sequence_file_id, config_id)
                     if result["status"] == "FAILED":
                         result["status"] = "launched (after failed)"
                     else:
