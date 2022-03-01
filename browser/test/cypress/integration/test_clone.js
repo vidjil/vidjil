@@ -27,29 +27,36 @@ describe('Test sandbox', function () {
     cy.get('body').trigger('keyup',   { keyCode: 52, key: "4"});
     cy.update_icon(1000)
 
-    cy.getCloneInScatterplot(0,  "bar").should("be.visible") // 'real' clone exist in sp
-    cy.getCloneInScatterplot(17, "bar").should("be.visible") // 'corresponding distrib' clone (IGH, len=160) exist in sp
-    cy.getCloneInScatterplot(22, "bar").should("be.visible") // 'corresponding distrib' clone (TRD, len=173) exist in sp
-    cy.getCloneInScatterplot(29, "bar").should("not.be.visible") // 'NOT correpsonding distrib' clone DON'T exist in sp
-    cy.getCloneInList(17).should("be.visible") // 'corresponding distrib' clone (IGH, len=160) exist in list
-    cy.getCloneInList(22).should("be.visible") // 'corresponding distrib' clone (TRD, len=173) exist in list
+    // Define clones ids
+    var clone_real        = 0
+    var clone_igh_distrib_preset_length = 17
+    var clone_trb_distrib_preset_length = 20
+    var clone_igh_preset_VJ             = 29
+
+
+    cy.getCloneInScatterplot(clone_real,  "bar").should("be.visible") // 'real' clone exist in sp
+    cy.getCloneInScatterplot(clone_igh_distrib_preset_length, "bar").should("be.visible") // 'corresponding distrib' clone (IGH, len=160) exist in sp
+    cy.getCloneInScatterplot(clone_trb_distrib_preset_length, "bar").should("be.visible") // 'corresponding distrib' clone (TRD, len=173) exist in sp
+    cy.getCloneInScatterplot(clone_igh_preset_VJ, "bar").should("not.be.visible") // 'NOT correpsonding distrib' clone DON'T exist in sp
+    cy.getCloneInList(clone_igh_distrib_preset_length).should("be.visible") // 'corresponding distrib' clone (IGH, len=160) exist in list
+    cy.getCloneInList(clone_trb_distrib_preset_length).should("be.visible") // 'corresponding distrib' clone (TRD, len=173) exist in list
 
 
     // Verify that data don't reappear at m.update()
     cy.get("#visu").click()
     cy.update_icon()
-    cy.getCloneInScatterplot(29, "bar").should("not.be.visible") // 'other' clone DON'T exist in graph
+    cy.getCloneInScatterplot(clone_igh_preset_VJ, "bar").should("not.be.visible") // 'other' clone DON'T exist in graph
     
 
     // Hide TRD locus and verify that it is now hidden
     cy.get(':nth-child(1) > .systemBoxNameMenu').click() // todo: change by a direct call (after !1135 trash watir)
     cy.update_icon()
     // Visibility in scatterplot
-    cy.getCloneInScatterplot(17, "bar").should("be.visible") // 'corresponding distrib' clone (IGH, len=160) exist in sp
-    cy.getCloneInScatterplot(22, "bar").should("not.be.visible") // 'corresponding distrib' clone (TRD, len=173) is hidden
+    cy.getCloneInScatterplot(clone_igh_distrib_preset_length, "bar").should("be.visible") // 'corresponding distrib' clone (IGH, len=160) exist in sp
+    cy.getCloneInScatterplot(clone_trb_distrib_preset_length, "bar").should("not.be.visible") // 'corresponding distrib' clone (TRD, len=173) is hidden
     // Visibility in list
-    cy.getCloneInList(17).should("be.visible") //'corresponding distrib' clone (IGH, len=160) exist in clone list"
-    cy.getCloneInList(22).should("not.be.visible") //'corresponding distrib' clone (TRD, len=173) is hidden in clone list"
+    cy.getCloneInList(clone_igh_distrib_preset_length).should("be.visible") //'corresponding distrib' clone (IGH, len=160) exist in clone list"
+    cy.getCloneInList(clone_trb_distrib_preset_length).should("not.be.visible") //'corresponding distrib' clone (TRD, len=173) is hidden in clone list"
 
     return
   })
