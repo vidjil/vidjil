@@ -179,6 +179,7 @@ describe('List', function () {
     // Remove filter
     cy.get('body').trigger('keydown', { keyCode: 48, key: "0"});
     cy.get('body').trigger('keyup',   { keyCode: 48, key: "0"});
+    cy.update_icon()
     cy.get('#tag_smaller_clonotypes')
       .click()
 
