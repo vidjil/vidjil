@@ -144,7 +144,7 @@ class Vidjil:
         message  = False
         if response.status_code != 200:
             message = 'Server return an error code (%s) with message:\n%s' % (response.status_code, response.content if not error_msg else error_msg)
-
+            message += "Url: %s" % url
         elif content == {'message': 'access denied'}:
             message = 'Server return an access denied response.'
 
