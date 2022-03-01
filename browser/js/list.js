@@ -381,6 +381,7 @@ List.prototype = {
         }
         this.updateElem(list);
         this.update_data_list()
+        this.updateElemStyle(list)
         
         // Apply selected sort function if no sort lock
         if (this.sort_lock == false){
