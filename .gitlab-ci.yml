@@ -29,6 +29,7 @@ stages:
   - test_germlines
   - test_functional
   - test_cypress_client
+  - test_cypress_external
   - test_cypress_server
   - test_tutorial
   - test_tutorial_server
