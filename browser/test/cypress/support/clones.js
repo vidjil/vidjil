@@ -28,8 +28,15 @@ Cypress.Commands.add('getCloneInSegmenter', (id) => {
     .should("exist")
 })
 
-Cypress.Commands.add('getCloneInScatterplot', (id) => {
-  cy.get('#visu_circle'+id)
+
+Cypress.Commands.add('getCloneInScatterplot', (id, format="circle", scatter=1) => {
+  function scatterplot_id(scatter){
+    if (scatter == 1) { return "visu"}
+    return "visu"+scatter
+  }
+
+  var name = '#'+scatterplot_id(scatter)+'_'+format+id
+  return cy.get(name)
 })
 
 Cypress.Commands.add('getClusterInList', (id) => {
