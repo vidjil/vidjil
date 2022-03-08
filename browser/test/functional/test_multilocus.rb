@@ -36,13 +36,6 @@ class TestMultilocus < BrowserTest
     assert ($b.div(:id => 'info').span(:class => 'systemBoxNameMenu', :index => 0).text.include? 'TRA'), 'missing system TRA'
   end
 
-  def test_00_legend_scatterplot
-    assert ($b.scatterplot_x_legend(0).text == 'TRBV1'), "Bad legend for scatterplot " + $b.scatterplot_x_legend(0).text 
-    assert ($b.scatterplot_x_legend(4).text == 'undefined V'), "Bad legend for scatterplot " + $b.scatterplot_x_legend(4).text
-    assert ($b.scatterplot_y_legend(0).text == 'TRBJ1-1'), "Bad legend for scatterplot " + $b.scatterplot_y_legend(0).text
-    assert ($b.scatterplot_y_legend(9).text == 'undefined J'), "Bad legend for scatterplot " + $b.scatterplot_y_legend(9).text
-  end
-
   def test_00_info_point
     assert (not $b.div(:id => 'info_timepoint').present?), "Info timepoint should not be present"
     $b.info_point.i.click
@@ -53,15 +46,6 @@ class TestMultilocus < BrowserTest
     assert (table[2][1].text.include? '742377'), "Incorrect  number of reads in infopoint"
     $b.div(:class => 'data-container').span(:class => 'closeButton').click
     assert (not $b.div(:id => 'info_timepoint').present?), "Info timepoint should not be present"
-  end
-
-  def test_01_init
-
-      assert ( $b.clone_in_list('25').exists?), ">>fail init : clone 0 missing in list"
-      assert ( $b.clone_in_scatterplot('25').exists?), ">>fail init : clone 0 missing in scatterplot"
-      #assert ( $b.clone_in_graph('25').exists?), ">>fail init : clone 0 missing in graph"
-      assert ( $b.clone_in_list('25').text.include? '0.129%' ) , ">>fail init : wrong clone size "
-
   end
 
   def test_02_fold_left_menu
@@ -103,14 +87,6 @@ class TestMultilocus < BrowserTest
     $b.unselect
   end
 
-  def check_when_list_or_scatterplot_focused
-    assert ( $b.clone_in_scatterplot('25', :class => 'circle_focus').exists?), ">> fail to focus correct plot after hovering a clone in the list"
-    assert ( $b.clone_in_graph('25', :class => "graph_focus").exists?), ">> fail to focus correct graphLine after hovering a clone in the list"
-
-    clone_name = $b.clone_info('25')[:name]
-    assert ( $b.infoline.inner_html == clone_name.title), ">> Clone name is not correct in focus div"
-  end
-
   def test_05_focus_in_list
     begin
       $b.unselect
@@ -120,29 +96,6 @@ class TestMultilocus < BrowserTest
 
       check_when_list_or_scatterplot_focused
     end
-  end
-
-  def test_05_focus_in_scatterplot
-    begin
-      $b.unselect
-      $b.clone_in_scatterplot('25').wait_until(&:present?)
-      $b.clone_in_scatterplot('25').hover
-
-      check_when_list_or_scatterplot_focused
-    end
-  end
-
-  def check_when_list_or_scatterplot_clicked
-    clone_name = $b.clone_info('25')[:name]
-    assert ( $b.clone_in_list('25').class_name.include? "list_select" ), ">> Incorrect class name, clone is not selected"
-    assert ( $b.clone_in_scatterplot('25', :class => "circle_select").exists?)
-    assert ( $b.clone_in_graph('25', :class=> "graph_select").exists?)
-    assert ( $b.clone_in_segmenter('25').present? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
-
-    stats = $b.statsline
-    assert (stats.text.include? '1 clonotype'), ">> Incorrect stats, should have one clone"
-    assert (stats.text.include? '962 reads'), ">> Incorrect stats, should have 962 reads"
-    assert (stats.text.include? '0.129%'), ">> Incorrect stats, should be at 0.129%"
   end
 
   def test_08_click_in_list
@@ -157,16 +110,6 @@ class TestMultilocus < BrowserTest
     assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
   end
 
-  def test_08_click_in_scatterplot
-    $b.clone_in_scatterplot('25').wait_until(&:present?)
-    $b.clone_in_scatterplot('25').click
-
-    check_when_list_or_scatterplot_clicked
-
-    $b.unselect
-    $b.update_icon.wait_while(&:present?)
-    assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
-  end
 
   def test_09_normalize
     $b.clone_info('25')[:star].click
@@ -358,11 +301,6 @@ class TestMultilocus < BrowserTest
 
   end
 
-  def test_18_empty_clone_invisible
-    assert ( $b.execute_script("return m.clones[66].reads[0]") == 0), "Clone should have no read"
-    assert (not $b.clone_in_scatterplot('66').present?), "Clone should not be visible"
-  end
-
   def TODO_test_14_edit_tag
     begin
       ## rename Tag 0
@@ -464,18 +402,3 @@ class TestMultilocus < BrowserTest
     close_everything
   end
 end
-
-=begin
-    TODO
-    save_analysis
-    clipboard
-    edit tag
-    change axis scatterplot
-    edit name
-    change color method
-    change color palette
-    change scatterplot/graph size
-    
-    check x/y clone position on scatterplot
-    check clone path 
-=end
