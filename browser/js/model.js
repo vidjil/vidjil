@@ -469,6 +469,7 @@ Model.prototype = {
                 $("#external_normalization").show();
             }
         }
+        this.filter.reset()
         this.update()
     }, //end initClones
 
@@ -1578,13 +1579,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             for (var key_diversity in this.diversity) {
                 var diversity = this.getDiversity(key_diversity, timeID)
                 if (typeof diversity == "string" || diversity == null){
-                    html += "<tr><td> " + translate_key_diversity(key_diversity) + "</td><td>" + diversity + '</td></tr>'
+                    html += "<tr id='line_"+key_diversity+"'><td> " + translate_key_diversity(key_diversity) + "</td><td>" + diversity + '</td></tr>'
                 } else if (typeof diversity == "object"){
                     html += "<tr><td "+colspan_header+">"+translate_key_diversity(key_diversity)+"</td></tr>"
                     var present_locus = this.getLocusPresentInTop(timeID)
                     for (var locus in diversity) {
                         if( present_locus.indexOf(locus) != -1 || locus == "all"){
-                            html += "<tr><td> " + this.systemBox(locus).outerHTML + " "+locus+"</td><td>" + diversity[locus] + '</td></tr>'
+                            html += "<tr id='line_"+key_diversity+"_"+locus+"'><td> " + this.systemBox(locus).outerHTML + " "+locus+"</td><td>" + diversity[locus] + '</td></tr>'
                         }
                     }
                 }

@@ -139,6 +139,53 @@ describe('List', function () {
     cy.get('#listElem_4 > .axisBox')
       .should('have.attr', 'title', '')
     return
+    })
+
+
+  it('05-hide_distrib_clones_with_tagspan',  function() {
+
+    //// Issue 4375; hide distrib clone by tag
+    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    // # id     0 --> biggest clone, IGHV1, IGHJ1, _average_read_length==162
+    //  # id 15/16 --> other clone (TRD, IGH)
+    //  # id    18 --> lenSeqAverage/_average_read_length == 162
+    //  # id    27 --> lenCDR3 (undefined), represent all clones
+    //  # id    29 --> seg5; seg3 (IGHV1; IGHJ1)
+
+    // first, distrib clones are visible, in opened preset 0 or 4
+    cy.getCloneInList(0)// >> real clone exist in list
+    cy.getCloneInList('29')
+      .should('have.css', 'display', 'block') // seg5/seg3 distrib clone exist in list
+    cy.getCloneInList('18')
+      .should('not.be.visible') // lenSeqAverage distrib clone DON'T show in list
+
+
+    // hide distrib clone by tag switch
+    cy.get('[title="smaller clonotypes"]')
+      .click()
+
+
+    cy.getCloneInList('0') // real clone still presnet in list
+    cy.getCloneInList('29')
+      .should('not.be.visible') // seg5/seg3 distrib clone are NO MORE present in list
+
+    // change in another preset with distributions clones
+    cy.get('body').trigger('keydown', { keyCode: 52, key: "4"});
+    cy.get('body').trigger('keyup',   { keyCode: 52, key: "4"});
+
+    cy.getCloneInList('18')
+      .should('not.be.visible') //lenSeqAverage distrib clone is NOT present in list"
+
+    // Remove filter
+    cy.get('body').trigger('keydown', { keyCode: 48, key: "0"});
+    cy.get('body').trigger('keyup',   { keyCode: 48, key: "0"});
+    cy.update_icon()
+    cy.get('#tag_smaller_clonotypes')
+      .click()
+
+    cy.getCloneInList('29')
+      .should('not.be.visible') // seg5/seg3 distrib clone is present in list
+      .should('have.css', 'display', 'block')
   })
 
 

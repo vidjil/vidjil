@@ -390,6 +390,7 @@ Info.prototype = {
 
             var span = document.createElement('span');
             span.className = "systemBoxNameMenu "+key;
+            span.id = "toogleLocusSystemBox_"+key;
             if (this.m.system_selected.indexOf(key) == -1)
                 span.className = "systemBoxNameMenu unchecked " + key;
             span.appendChild(span_system);
@@ -558,6 +559,7 @@ Info.prototype = {
         spantag.className = "tagColorBox";
         spantag.style.backgroundColor = l.color;
         spantag.title = l.text;
+        spantag.id    = "tag_" + l.text.replace(" ","_")
         spantag.setAttribute('value', key);
 
         if (this.m.filter.check(axis.name, "=", key) >=0)

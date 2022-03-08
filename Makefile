@@ -74,6 +74,7 @@ functional_browser_cypress:
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
+		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
@@ -99,6 +100,7 @@ functional_server_cypress:
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
+		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \

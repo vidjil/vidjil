@@ -744,7 +744,7 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     // first sample has old fashion diversity
     var html_info = m.getPointHtmlInfo(0)
     assert.includes(html_info, "Diversity indices", "htmlInfo get diversity header")
-    assert.includes(html_info, "<tr><td> Shannon's diversity</td><td>5.689</td></tr>", "An index is correctly present and formated")
+    assert.includes(html_info, "<tr id='line_index_H_entropy'><td> Shannon's diversity</td><td>5.689</td></tr>", "An index is correctly present and formated")
     assert.notIncludes(html_info, '<tr><td colspan=\'5\'>Shannon\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>', "")
 
 
@@ -755,7 +755,7 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     assert.includes(html_info, "<tr><td colspan='5'>Pielou's evenness</td></tr>")
     assert.includes(html_info, "<tr><td colspan='5'>Simpson's diversity</td></tr>")
     // each present locus id visible
-    assert.includes(html_info, '<tr><td colspan=\'5\'>Simpson\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>')
-    assert.includes(html_info, '<tr><td> <span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> TRG</td><td>5.251</td></tr>')
-    assert.includes(html_info, '<tr><td> <span class=\"systemBoxMenu\" title=\"IGH\" style=\"background: rgb(108, 113, 196);\">H</span> IGH</td><td>4.666</td></tr>')
+    assert.includes(html_info, '<tr><td colspan=\'5\'>Simpson\'s diversity</td></tr><tr id=\'line_index_Ds_diversity_all\'><td> <span class=\"systemBoxMenu\" title=\"all\">x</span> all</td><td>0.964</td></tr>')
+    assert.includes(html_info, '<tr id=\'line_index_H_entropy_TRG\'><td> <span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> TRG</td><td>5.251</td></tr>')
+    assert.includes(html_info, '<tr id=\'line_index_H_entropy_IGH\'><td> <span class=\"systemBoxMenu\" title=\"IGH\" style=\"background: rgb(108, 113, 196);\">H</span> IGH</td><td>4.666</td></tr><tr>')
 });

@@ -96,3 +96,10 @@ Cypress.Commands.add("update_icon", (delay=0, timeout=undefined) => {
 Cypress.Commands.add('getById', (input) => {
   cy.get(`[data-cy=${input}]`)
 })
+
+Cypress.Commands.add('pressKey', (key) => {
+  var codes = {"escape": 27}
+  cy.get('body').trigger('keydown', { keyCode: codes[key]});
+  cy.wait(500);
+  cy.get('body').trigger('keyup', { keyCode: codes[key]});
+})
