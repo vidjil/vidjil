@@ -18,11 +18,11 @@ Cypress.Commands.add('getSliderTop', () => {
 
 Cypress.Commands.add('close_menu', () => { 
   cy.get('body').click()
-  cy.get('#patient_info_text').click()
+  cy.get('#upload_summary').click({force:true})
 })
 
 Cypress.Commands.add('change_name_key', (type_name) => {
   cy.open_menu_settings()
-  cy.get('#menuTimeForm_'+type_name).click()
-  cy.get('#visu2_menu').click()
+  cy.get('#menuTimeForm_'+type_name).click({force:true})
+  cy.close_menu()
 })
