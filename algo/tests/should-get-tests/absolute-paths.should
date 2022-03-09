@@ -1,0 +1,20 @@
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -x 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/Stanford_S22.fasta 
+
+$ Load the germlines, relative path
+1: Homo sapiens .9606.
+1: homo-sapiens/IGHV.fa
+
+$ Analyze data, relative path
+1: junction detected in 1 read 
+
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -x 1 -g `pwd`/$VIDJIL_DIR/germline/homo-sapiens.g:IGH `pwd`/$VIDJIL_DATA/Stanford_S22.fasta 
+
+$ Load the germlines, absolute path
+1: Homo sapiens .9606.
+1: homo-sapiens/IGHV.fa
+
+$ Analyze data, absolute path
+1: junction detected in 1 read 
+
