@@ -73,6 +73,10 @@ string spaced(const string &input, const string &seed) {
   return string(spaced_buf);
 }
 
+string path_join(string path1, string path2)
+{
+  return path1 + (path1.empty() ? "" : "/") + path2 ;
+}
 
 string string_of_int(int number, int w)
 {
