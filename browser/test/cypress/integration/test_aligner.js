@@ -175,4 +175,35 @@ describe('Aligner', function () {
 
   //menu in aligner top right corner (focus/hide/tag) are already tested in test_filter.js
 
+
+  it('01-Aligner stats',  function() {
+    cy.viewport(1280, 720) // change size of viewport to show some clonotype in list
+
+    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+
+    cy.get('#filter_menu').click()
+    cy.get("#top_slider")
+      .invoke('val', 5)
+      .trigger('change')
+
+    // Select only distrib clonotypes
+    cy.selectCloneMulti([20, 21, 22])
+    cy.update_icon()
+
+    cy.get('.stats_content').should("have.text", "+5 clonotypes, 50 reads (20.00%) ")
+
+    cy.selectClone(0, true)
+    cy.update_icon()
+
+    // Add a real clone
+    cy.get('.stats_content').should("have.text", "1+5 clonotypes, 100 reads (40.00%) ")
+
+    // large selection
+    cy.selectCloneMulti([0, 1, 2, 3, 4, 17, 18, 19])
+    cy.update_icon()
+
+    cy.get('.stats_content').should("have.text", "5+5 clonotypes, 200 reads (80.00%) ")
+
+  })
+
 })

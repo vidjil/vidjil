@@ -26,3 +26,9 @@ Cypress.Commands.add('change_name_key', (type_name) => {
   cy.get('#menuTimeForm_'+type_name).click()
   cy.get('#visu2_menu').click()
 })
+
+Cypress.Commands.add('change_colorby', (color_by) => {
+  cy.get('#color_menu_select')
+    .select(color_by)
+})
+

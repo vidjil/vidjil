@@ -140,4 +140,30 @@ describe('Test sandbox', function () {
     cy.getCloneInList(1).should("have.text", "IGHV3-9") // after cluster by V, clone 1 is only maned by his seg5 value
   })
 
+
+
+  it('04-Colorize',  function() {
+    cy.viewport(1280, 720) // change size of viewport to show some clonotype in list
+
+    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+
+    cy.get('body').trigger('keydown', { keyCode: 52, key: "4"});
+    cy.get('body').trigger('keyup',   { keyCode: 52, key: "4"});
+    cy.update_icon()
+
+    // test color for 3 clones (real, smaller, distrib)
+    cy.getCloneInList(0).should('have.css', 'color', 'rgb(101, 123, 131)') // real clone have his standard color (grey)
+    cy.getCloneInList(16).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone haven't changed color
+    cy.getCloneInList(18).scrollIntoView().should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone haven't changed color
+
+    // change color method and observe variation or not
+    cy.change_colorby("V/5' gene")
+    cy.update_icon()
+
+    cy.getCloneInList(0).scrollIntoView().should('have.css', 'color', 'rgb(183, 128, 36)') // real clone should have changed color (diff from grey)
+    cy.getCloneInList(16).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone shouldn't have changed color
+    cy.getCloneInList(18).scrollIntoView().should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone shouldn't have changed color
+
+  })
+
 })

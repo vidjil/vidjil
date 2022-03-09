@@ -79,3 +79,16 @@ Cypress.Commands.add('closeClusterClone', (id) => {
       .click()
     cy.update_icon()
 })
+
+
+Cypress.Commands.add('openCloneInfo', (id) => {
+    cy.get('#listElem_'+id+' > #clone_infoBox_'+id)
+      .should("be.visible")
+      .click()
+    cy.update_icon()
+})
+
+Cypress.Commands.add('closeCloneInfo', () => {
+    cy.get('.info-container > .closeButton')
+      .click()
+})

@@ -7,3 +7,10 @@ Cypress.Commands.add('changeListAxix', (axis) => {
     .should('have.value', axis)
 })
 
+
+Cypress.Commands.add('changeSortList', (axis) => {
+  cy.get('#list_sort_select')
+    .select(axis, {force: true})
+    .should('have.value', axis)
+})
+

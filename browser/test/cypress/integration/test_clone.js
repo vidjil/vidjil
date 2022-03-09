@@ -61,4 +61,30 @@ describe('Test sandbox', function () {
 
     return
   })
+
+
+  it('01-hide_clone',  function() {
+    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.getCloneInList(1).should('be.visible')
+
+    cy.selectClone(1)
+    cy.get('#hide_selected').click()
+    cy.get('body').trigger('keydown', { keyCode: 52, key: "4"});
+    cy.get('body').trigger('keyup',   { keyCode: 52, key: "4"});
+    cy.update_icon(500)
+
+    cy.getCloneInList(0).should('be.visible')
+    cy.getCloneInList(1).should('not.be.visible')
+
+    cy.getCloneInScatterplot(0, "bar").should('be.visible')
+    cy.getCloneInScatterplot(1, "bar").should('not.be.visible')
+  })
+
+
+  it('02-download AIRR from getHtmlInfo',  function() {
+    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openCloneInfo(0)
+    cy.get('#download_info_0_airr').should("be.visible")
+  })
+
 })
