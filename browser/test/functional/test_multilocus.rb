@@ -56,10 +56,6 @@ class TestMultilocus < BrowserTest
     assert ($b.div(:id => "left-container").present?), ">> fail : left menu did not reappear"
   end
 
-  def test_02_export_align_sequences
-    assert ( $b.menu_item_export_fasta_align(:class => 'disabledClass').exists?), ">> export align sequences is disable by default"
-  end
-
   def test_03_rename_clone_by_clicking
     clone_name = $b.clone_info('25')[:name]
     assert (clone_name.title == 'TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01'), " >> clone name is not correct : " + clone_name.title
@@ -142,84 +138,6 @@ class TestMultilocus < BrowserTest
 
       $b.until {$b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' }
     end
-  end
-
-  def test_13_export_fasta
-    $b.unselect
-    $b.clone_in_list('77').click
-    $b.clone_in_list('25').click(:control)
-    $b.clone_in_list('88').click(:control)
-    $b.clone_in_list('90').click(:control)
-
-    $b.menu_item_export_fasta.click
-    assert ( $b.window(:url => /about:blank/ )) , ">> fail opening fasta export "
-    $b.window(:url => /about:blank/).use do
-      assert ($b.text.include? ">TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01"), "header name: "+$b.text
-      assert ($b.text.include? "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYCCCGGYYYAAACYCYCYYCCTYGG\nCYAGGYCYGG"), "sequence"
-      assert ($b.text.include? ">ERG-4F 0/TCT/0 ERG-Seq-R"), "header name locus ERG"
-      assert (not $b.text.include? ">ERG-4F\n"), "header name of segment should not exist (segment is not present in germline)"
-    end
-  end
-
-  def test_14_export_sample_report
-
-    skip_on_browser('chrome', nil, 'Issue #3699 must be solved first')
-
-    assert ($b.scatterplot_x_legend(0).text.include? 'TRB'), "Current system should be TRB"
-
-    # Select a clone
-    $b.clone_in_scatterplot('43').click
-
-    $b.menu_item_export('export_sample_report').click
-
-    assert ($b.window(:title => "analysis-example.vidjil – helloworld").exists?), ">> Report didn't show up"
-
-    $b.window(:title => "analysis-example.vidjil – helloworld").use do
-      # Check that all loci are there
-      assert ($b.element(:id => 'segmentation-report').text.include? "TRA"), "TRA should be present"
-      assert ($b.element(:id => 'segmentation-report').text.include? "TRB"), "TRB should be present"
-      assert ($b.element(:id => 'segmentation-report').text.include? "TRD"), "TRD should be present"
-      assert ($b.element(:id => 'segmentation-report').text.include? "IGH"), "IGH should be present"
-      assert (not $b.element(:id => 'segmentation-report').text.include? "TRG"), "TRG should not be present"
-      assert (not $b.element(:id => 'segmentation-report').text.include? "IGH+"), "IGH+ should not be present"
-      assert ($b.element(:class => 'clone_name').text.include? "TRBV13-1*02 -0/1/-0 TRBD1*01 -6/0/-0 TRBJ1-3*01"), "segmentation should be the one provided in the .vidjil file"
-
-      n_gene = $b.element(:class => 'n_gene', :index => 0)
-      # This is true with a 0-based index, which is the case for the vidjil
-      # JSON version used
-      assert (n_gene.text == 'A'), ("N1 should be A, it is '" + n_gene.text + "'")
-
-      n_gene = $b.element(:class => 'n_gene', :index => 1)
-      assert (n_gene.text == ''), ("N2 should be empty, it is '" + n_gene.text + "'")
-
-      assert($b.element(:class => 'j_gene').text == 'YYGYYTYYAATGTYCYYCCYAG')
-      assert($b.element(:class => 'v_gene').text == 'YTYTYAYTGGTGCTGGYACCTYAAAYGYYTGYCCTYTGGGYYAGGCYCYYAYACGYAYAYCTYTYCYCTGCTGYATTGGCTYYCCYYAYYYTTTGYCTYTGTGCYGYGTYTGCGGYYTYTGYAAYCGCYYTTTTGYYAGYAGCCGGCY')
-    end
-    $b.window(:title => "analysis-example.vidjil – helloworld").close
-
-    $b.window(:title => "analysis-example").use
-
-    assert ($b.scatterplot_x_legend(0).text.include? 'TRB'), "Current system should not have changed"
-
-    assert (not $b.element(:class => 'waiting_msg').present?), "The ``generating report'' message should not be present anymore"
-  end
-
-  def test_14b_export_sample_report
-
-    skip_on_browser('chrome', nil, 'Issue #3699 must be solved first')
-
-    # Select a clone
-    $b.clone_in_scatterplot('43').click
-
-    $b.menu_item_export('export_monitor_report').click
-
-    assert ($b.window(:title => "analysis-example.vidjil").exists?), ">> Report didn't show up"
-
-    $b.window(:title => "analysis-example.vidjil").use do
-      assert ($b.element(:class => 'clone_name').text.include? "TRBV13-1*02"), "Selected clone should be present"
-      assert (not $b.text.include? "smaller clonotype"), "Smaller clonotype should not be present"
-    end
-
   end
 
   def test_15_smaller_clones
