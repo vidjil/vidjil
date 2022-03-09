@@ -200,7 +200,7 @@ Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
         std::string affect = to_string(current_shortcut)+"-"+code+segment_code;
         std::cerr << filenam << "\t" << affect << std::endl;
         GermlineElement<Tshortcut, Affect>* element;
-        std::string filename = path + filenam;
+        std::string filename = path_join(path, filenam);
         if (repository->has(filename, seed)) {
           element = repository->get(filename, seed);
           allocated[element] = false;

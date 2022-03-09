@@ -191,9 +191,10 @@ json parse_json_g(string path, string json_filename)
 {
   //open and parse .g file
   json germlines ;
+  string json_path = path_join(path, json_filename);
 
   try {
-    ifstream germline_data(path + "/" + json_filename);
+    ifstream germline_data(json_path);
 
     string content( (std::istreambuf_iterator<char>(germline_data) ),
                     (std::istreambuf_iterator<char>()    ) );
@@ -244,9 +245,9 @@ void load_json_g(json &json_germlines, string path, string json_filename, string
         json_germlines["systems"][system.key()]["parameters"]["path"] = j["path"].get<std::string>();
       }
 
-    json_germlines["path"] = ".";
+    json_germlines["path"] = "";
   } catch (std::exception& e) {
-    cerr << ERROR_STRING << "cannot properly read " << path << "/" << json_filename << ": " << e.what() << endl;
+    cerr << ERROR_STRING << "cannot properly read " << json_path << ": " << e.what() << endl;
     exit(1);
   }
 
@@ -289,7 +290,7 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines, int filter,
 
     string s_path = path;
     if (json_parameters.contains("path"))
-      s_path += "/" + json_parameters["path"].get<std::string>();
+      s_path = path_join(path, json_parameters["path"].get<std::string>());
 
     for (auto item=recombinations[0].begin(); item!=recombinations[0].end(); item++) {
       if (json_parameters.find("seed_"+item.key()) != json_parameters.end()) {
@@ -337,7 +338,7 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines, int filter,
     }
 
     json configJson = {{"order", order}, {"segments", config}};
-    addGermline(new Germline<Tshortcut, Affect>(code, shortcut, s_path + "/", recombinations,
+    addGermline(new Germline<Tshortcut, Affect>(code, shortcut, s_path, recombinations,
                                                 configJson, repository, max_indexing));
   }
 
