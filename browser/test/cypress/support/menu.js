@@ -12,6 +12,10 @@ Cypress.Commands.add('open_menu_cluster', () => {
   cy.get('#cluster_menu').click()
 })
 
+Cypress.Commands.add('open_menu_palette', () => {
+  cy.get('#palette_menu').click()
+})
+
 Cypress.Commands.add('getSliderTop', () => {
   cy.get('#top_slider')
 })

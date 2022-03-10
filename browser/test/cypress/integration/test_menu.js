@@ -166,4 +166,35 @@ describe('Test sandbox', function () {
 
   })
 
+
+  it('05-palette css',  function() {
+    cy.openAnalysis("/doc/analysis-example2.vidjil")
+
+    cy.get("body")
+      .should('have.css', 'background-color')
+      .and('eq', 'rgb(204, 204, 204)')
+
+    cy.open_menu_palette()
+    cy.get("#palette_dark").click({force: true})
+    cy.get("body")
+      .should('have.css', 'background-color')
+      .and('eq', 'rgb(51, 51, 51)')
+    
+    cy.get("#palette_light").click({force: true})
+    cy.get("body")
+      .should('have.css', 'background-color')
+      .and('eq', 'rgb(204, 204, 204)')  
+  })
+
+  it('06-Open tab manual',  function() {
+    // Don't work for now
+    // cy.get("#help_manual").invoke('removeAttr', 'target').click({force: true})
+
+    // cy.get('body')
+    //   .should('have.text', 'Web platform, user manual')
+
+    // cy.visit()
+    // cy.get("#help_tutorial").invoke('removeAttr', 'target').click({force: true})
+  })
+
 })

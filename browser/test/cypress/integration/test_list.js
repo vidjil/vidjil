@@ -273,6 +273,7 @@ describe('List', function () {
 
 
   it('08-cluster clone',  function() {
+    cy.viewport(1280, 720)
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
     cy.get('body').trigger('keydown', { keyCode: 52, key: "4"});
     cy.get('body').trigger('keyup',   { keyCode: 52, key: "4"});
@@ -291,7 +292,7 @@ describe('List', function () {
 
     cy.getCloneInList(1).should("be.visible")     // Real clone A should be present in list 
     cy.getCloneInList(2).should("not.be.visible") // Real clone B should NOT be present in list 
-    cy.getCloneInList(18).should("be.visible")    // Distrib clone should be present in list 
+    cy.getCloneInList(18).scrollIntoView().should("be.visible")    // Distrib clone should be present in list 
 
     cy.getCloneSize(1).should("have.text", "22.00%")  // Size after merge of support real clone
     cy.getCloneSize(18).should("have.text", "8.000%") // Size after merge of distrib clone (len 162)
@@ -370,6 +371,76 @@ describe('List', function () {
     cy.get('#list_clones').children()
       .should('have.length', 8)
       .should('have.attr', 'id', "7") // No lock, should reorder
+  })
+
+
+  it('11-Tag clone',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+
+
+    cy.getCloneInList(0).scrollIntoView().should('have.css', 'color', 'rgb(101, 123, 131)')
+
+    cy.get('.tagSelector').should("not.be.visible")
+    cy.get('#tag_icon_0').click()
+
+    cy.get('.tagName0').click()
+    cy.get('.tagSelector').should("not.be.visible")
+    cy.getCloneInList(1).click() // click outside to not hover clonotype 0
+    cy.update_icon()
+    cy.getCloneInList(0).scrollIntoView().should('have.css', 'color', 'rgb(220, 50, 47)')
+
+    // Tag multiple
+    cy.selectCloneMulti([4, 5, 6])
+    cy.get("#tag_icon__multiple").click()
+    cy.get('.tagName6').click()
+    cy.selectClone(0)
+    cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')
+    cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')
+    cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')
+    return
+  })
+
+
+  it('12-smaller clonotype in list',  function() {
+    cy.openAnalysis("/doc/analysis-example.vidjil")
+
+    // Correct text and number
+    cy.getCloneInList(100).should("have.text", "TRB smaller clonotypes").should('be.visible')
+    cy.getCloneInList(101).should("have.text", "TRD smaller clonotypes").should('be.visible')
+    cy.getCloneInList(99 ).should("have.text", "TRA smaller clonotypes").should('be.visible')
+    cy.getCloneInList(102).should("have.text", "IGH smaller clonotypes").should('be.visible')
+    cy.getCloneInList(103).should("have.text", "ERG smaller clonotypes").should('not.be.visible') // not present in sample 1
+
+    // Correct order in list
+    cy.get('#list_clones')
+      .children().should('have.attr', 'id', "100") // first child should be clone 0
+    // cy.get('#list_clones')
+    //   .children().should('have.attr', 'id', "101") // second child should be clone 0
+  })
+
+  it('13-xxx',  function() {
+    cy.openAnalysis("/doc/analysis-example.vidjil")
+
+    var clone_list = ["1", "32", "24", "68"]
+    // # clone with seg & sequence (1)
+    cy.getCloneInScatterplot(clone_list[0]).click()
+    cy.update_icon()
+    cy.get('#seq'+clone_list[0]).should("be.visible")// Clone %s (seg+/seq+) is in segmenter" % clone_list[0]
+    
+    // # clone with seg & not sequence (32)
+    cy.getCloneInScatterplot(clone_list[1]).click()
+    cy.update_icon()
+    cy.get('#seq'+clone_list[1]).should("not.exist")// Clone %s (seg+/seq-) is NOT in segmenter" % clone_list[1]
+
+    // # clone without seg & sequence (24)
+    cy.getCloneInScatterplot(clone_list[2]).click()
+    cy.update_icon()
+    cy.get('#seq'+clone_list[2]).should("not.exist")// Clone %s (seg-/seq-) is NOT in segmenter" % clone_list[2]
+
+    // # clone without seg & sequence (68)
+    cy.getCloneInScatterplot(clone_list[3]).click()
+    cy.update_icon()
+    cy.get('#seq'+clone_list[3]).should("be.visible")// Clone %s (seg-/seq+) is in segmenter" % clone_list[3]
   })
 
 })

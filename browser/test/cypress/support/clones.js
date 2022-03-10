@@ -28,7 +28,6 @@ Cypress.Commands.add('getCloneSize', (id) => {
 })
 
 Cypress.Commands.add('getCloneInSegmenter', (id) => {
-
   cy.get('#seq'+id)
     .should("exist")
 })
@@ -91,4 +90,9 @@ Cypress.Commands.add('openCloneInfo', (id) => {
 Cypress.Commands.add('closeCloneInfo', () => {
     cy.get('.info-container > .closeButton')
       .click()
+})
+
+Cypress.Commands.add('removeCloneFromCluster', (id) => {
+  cy.get('#delBox_list_'+id+' > .icon-cancel')
+    .click()
 })

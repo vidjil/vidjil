@@ -14,3 +14,10 @@ Cypress.Commands.add('changeSortList', (axis) => {
     .should('have.value', axis)
 })
 
+
+
+Cypress.Commands.add('open_cluster', (id) => {
+  cy.get('#clusterBox_'+id+' > .icon-plus')
+    .click()
+})
+

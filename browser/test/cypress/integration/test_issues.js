@@ -24,6 +24,14 @@ describe('Test sandbox', function () {
     //     cy.clone_rename("4", String.fromCharCode(i) + "un clone")
     // }
 
+    // Clone rename by enter button
+    cy.getCloneInList("4")
+      .dblclick()
+    cy.get('#new_name')
+      .type("un clone{enter}")
+    cy.get('#listElem_4 > .nameBox')
+      .should("contain", "un clone")
+
     return
   })
 })
