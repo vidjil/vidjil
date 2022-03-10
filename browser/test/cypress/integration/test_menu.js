@@ -63,7 +63,7 @@ describe('Test sandbox', function () {
     cy.open_menu_settings()
     cy.get('#normalize_list').should("be.visible") // "After clicking normalize_list form should be visible"
     cy.get('#reset_norm').should("be.visible") 
-    cy.get('#reset_norm').click()
+    cy.get('#reset_norm').check({ force: true })
     cy.pressKey("escape")
     cy.close_menu()
 
@@ -143,7 +143,7 @@ describe('Test sandbox', function () {
 
 
   it('04-Colorize',  function() {
-    cy.viewport(1280, 720) // change size of viewport to show some clonotype in list
+    cy.viewport(1280, 766) // change size of viewport to show some clonotype in list
 
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
 
@@ -154,15 +154,15 @@ describe('Test sandbox', function () {
     // test color for 3 clones (real, smaller, distrib)
     cy.getCloneInList(0).should('have.css', 'color', 'rgb(101, 123, 131)') // real clone have his standard color (grey)
     cy.getCloneInList(16).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone haven't changed color
-    cy.getCloneInList(18).scrollIntoView().should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone haven't changed color
+    cy.getCloneInList(18).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone haven't changed color
 
     // change color method and observe variation or not
     cy.change_colorby("V/5' gene")
     cy.update_icon()
 
-    cy.getCloneInList(0).scrollIntoView().should('have.css', 'color', 'rgb(183, 128, 36)') // real clone should have changed color (diff from grey)
+    cy.getCloneInList(0).should('have.css', 'color', 'rgb(183, 128, 36)') // real clone should have changed color (diff from grey)
     cy.getCloneInList(16).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone shouldn't have changed color
-    cy.getCloneInList(18).scrollIntoView().should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone shouldn't have changed color
+    cy.getCloneInList(18).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone shouldn't have changed color
 
   })
 

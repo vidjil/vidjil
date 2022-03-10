@@ -28,6 +28,7 @@ Cypress.Commands.add('close_menu', () => {
 Cypress.Commands.add('change_name_key', (type_name) => {
   cy.open_menu_settings()
   cy.get('#menuTimeForm_'+type_name).click({force:true})
+  cy.update_icon()
   cy.close_menu()
 })
 
