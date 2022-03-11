@@ -24,8 +24,7 @@ describe('Test sandbox', function () {
       .trigger('change')
 
     // change in another preset with distributions clones
-    cy.get('body').trigger('keydown', { keyCode: 52, key: "4"});
-    cy.get('body').trigger('keyup',   { keyCode: 52, key: "4"});
+    cy.changePreset("read length distribution")
     cy.update_icon(1000)
 
     // Define clones ids

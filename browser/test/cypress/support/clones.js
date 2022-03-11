@@ -94,5 +94,6 @@ Cypress.Commands.add('closeCloneInfo', () => {
 
 Cypress.Commands.add('removeCloneFromCluster', (id) => {
   cy.get('#delBox_list_'+id+' > .icon-cancel')
-    .click()
+    .click({force: true})
+  cy.update_icon()
 })
