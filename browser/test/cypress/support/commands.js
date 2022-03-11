@@ -103,3 +103,10 @@ Cypress.Commands.add('pressKey', (key) => {
   cy.wait(500);
   cy.get('body').trigger('keyup', { keyCode: codes[key]});
 })
+
+Cypress.Commands.add('changePreset', (value) => {
+  cy.get('#visu_sp_menu').click()
+  cy.get(".axis_select_preset_select")
+    .select(value, {force: true})
+    .trigger('change', {force: true})
+})

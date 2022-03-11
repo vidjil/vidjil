@@ -147,8 +147,7 @@ describe('Test sandbox', function () {
 
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
 
-    cy.get('body').trigger('keydown', { keyCode: 52, key: "4"});
-    cy.get('body').trigger('keyup',   { keyCode: 52, key: "4"});
+    cy.changePreset("read length distribution")
     cy.update_icon()
 
     // test color for 3 clones (real, smaller, distrib)
