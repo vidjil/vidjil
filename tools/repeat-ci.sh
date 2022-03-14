@@ -16,6 +16,8 @@ shift 3
 
 TEMPLATES=$(sed -rn '/^\./,/^$/p' $CI_FILE)
 STAGES=$(sed -rn '/^stages:/,/^$/p' $MAIN)
+BEFORE_SCRIPT_GLOBAL=$(sed -rn '/^.before_script_global:/,/^$/p' $MAIN)
+BEFORE_SCRIPT_DOCKER=$(sed -rn '/^.before_script_global_docker:/,/^$/p' $MAIN)
 BEFORE_SCRIPT=$(sed -rn '/^before_script:/,/^$/p' $MAIN)
 
 template_names=()
@@ -44,9 +46,16 @@ for i in `seq 1 $REPEATS`; do
 done
 rm -f $NEW_CI
 
+echo "$BEFORE_SCRIPT_GLOBAL"
+echo -e "# ======\n"
+echo "$BEFORE_SCRIPT_DOCKER"
+echo -e "# ======\n"
 echo "$BEFORE_SCRIPT" 
+echo -e "# ======\n"
 echo "$STAGES"
+echo -e "# ======\n"
 echo "$TEMPLATES"
+echo -e "# ======\n"
 cat $NEW_CI.*
 rm -f $NEW_CI.*
 

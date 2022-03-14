@@ -20,7 +20,7 @@
 
 before_script:
   - *before_script_global
-  
+
 stages:
   - test_tools
   - test_quality
