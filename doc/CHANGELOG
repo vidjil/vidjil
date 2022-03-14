@@ -1,6 +1,9 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2022-03-14  The Vidjil Team
+	* Fix a regression from the previous release, correcly handling absolute paths in germlines !1144
+
 2022-02-21  The Vidjil Team
 	* New option --find to detect and align sequences without recombinations !1004
 	* Diversity measures also reported by locus !1111, Pielou's evenness index correctly named !1132
