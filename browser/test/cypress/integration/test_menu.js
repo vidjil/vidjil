@@ -29,11 +29,11 @@ function test_name_values(type_name){
     // By default, 2 samples are present in timeline graph
     cy.log("Test for: " + type_name)
     // In graph label
-    cy.get('#time0').should("have.text", get_names("0", type_name), "incorrect name show for first sample (graph label)")
-    cy.get('#time1').should("have.text", get_names("1", type_name), "incorrect name show for second sample (graph label)")
+    cy.get('#time0', { timeout: 10000 }).should("have.text", get_names("0", type_name), "incorrect name show for first sample (graph label)")
+    cy.get('#time1', { timeout: 10000 }).should("have.text", get_names("1", type_name), "incorrect name show for second sample (graph label)")
     // In graph list
-    cy.get('#visu2_listElem_text_0').should("have.text", get_names("0", type_name), "incorrect name show for first sample (graphList text)")
-    cy.get('#visu2_listElem_text_1').should("have.text", get_names("1", type_name), "incorrect name show for second sample (graphList text)")
+    cy.get('#visu2_listElem_text_0', { timeout: 10000 }).should("have.text", get_names("0", type_name), "incorrect name show for first sample (graphList text)")
+    cy.get('#visu2_listElem_text_1', { timeout: 10000 }).should("have.text", get_names("1", type_name), "incorrect name show for second sample (graphList text)")
 }
 
 
