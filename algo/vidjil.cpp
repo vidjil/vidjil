@@ -758,7 +758,7 @@ int main (int argc, char **argv)
   for(string lab : windows_labels_explicit)
     windows_labels[lab] = string("--label");
   
-  string out_seqdir = out_dir + "/" + CLONE_DIR ;
+  string out_seqdir = path_join(out_dir, CLONE_DIR) ;
 
   if (verbose)
     cout << "# verbose " << verbose << endl ;
