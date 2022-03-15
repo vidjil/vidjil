@@ -177,8 +177,6 @@ describe('Aligner', function () {
 
 
   it('01-Aligner stats',  function() {
-    cy.viewport(1280, 720) // change size of viewport to show some clonotype in list
-
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
 
     cy.get('#filter_menu').click()
@@ -207,7 +205,6 @@ describe('Aligner', function () {
   })
 
   it('02-Merge play',  function() {
-    cy.viewport(1280, 720) // change size of viewport to show some clonotype in list
     cy.openAnalysis("/doc/analysis-example.vidjil")
 
     cy.selectCloneMulti([1, 37, 90])

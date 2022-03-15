@@ -13,8 +13,6 @@ describe('Test sandbox', function () {
 
 
   it('00-distrib_splitted_by_locus',  function() {
-    cy.viewport(1280, 720) // change size of viewport to show some clonotype in list
-    // First, you probably want to open an analysis
     cy.openAnalysis("data/fused_multiple_distrib_locus.vidjil")
   
     // Tests on size after top change

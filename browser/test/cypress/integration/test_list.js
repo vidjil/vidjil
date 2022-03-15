@@ -269,7 +269,6 @@ describe('List', function () {
 
 
   it('08-cluster clone',  function() {
-    cy.viewport(1280, 720)
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
     cy.changePreset("read length distribution")
     cy.get('#filter_menu').click()

@@ -13,8 +13,6 @@ describe('Test tools', function () {
 
 
   it('00-action on vertical-separator',  function() {
-    cy.viewport(1280, 720) // change size of viewport to show some clonotype in list
-    // First, you probably want to open an analysis
     cy.openAnalysis("/doc/analysis-example.vidjil")
 
     cy.get("#left-container").should("be.visible")// left menu should be visible
