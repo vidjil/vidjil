@@ -68,8 +68,7 @@ describe('Test sandbox', function () {
 
     cy.selectClone(1)
     cy.get('#hide_selected').click()
-    cy.get('body').trigger('keydown', { keyCode: 52, key: "4"});
-    cy.get('body').trigger('keyup',   { keyCode: 52, key: "4"});
+    cy.changePreset("read length distribution")
     cy.update_icon(500)
 
     cy.getCloneInList(0).should('be.visible')
