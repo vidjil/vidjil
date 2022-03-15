@@ -29,6 +29,7 @@ Cypress.Commands.add('change_name_key', (type_name) => {
   cy.open_menu_settings()
   cy.get('#menuTimeForm_'+type_name).check({force:true})
     .should('be.checked')
+    .trigger('change', {force: true})
   cy.update_icon()
   cy.close_menu()
 })
