@@ -61,6 +61,7 @@ describe('Test sandbox', function () {
 
 
   it('01-hide_clone',  function() {
+    cy.viewport(1000, 600) // restore old viewport, old firefox seem to have probleme of superposition of DOM element
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
     cy.getCloneInList(1).should('be.visible')
 
