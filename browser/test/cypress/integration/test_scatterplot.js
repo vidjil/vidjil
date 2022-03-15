@@ -58,10 +58,8 @@ describe('Scatterplot', function () {
     cy.get('#visu_axis_y_container').children('line').should('have.length', 3)
     cy.get('#visu_axis_container').should('contain', "N length")
     
-    //using preset keyboard shortcut
-    cy.get('body').trigger('keydown', { keyCode: 49});
-    cy.wait(200);
-    cy.get('body').trigger('keyup', { keyCode: 49});
+    cy.changePreset("V/J (alleles)")
+    cy.update_icon()
 
     cy.get('#visu_axis_x_container').children('line').should('have.length', 3)
     cy.get('#visu_axis_container').should('contain', "V/5' allele")
@@ -71,7 +69,7 @@ describe('Scatterplot', function () {
     //using axis_x selector
     cy.get('#visu').find('select[name*="select_x[]"]').select('Sequence length',{ force: true })
 
-    cy.get('#visu_axis_x_container').children('line').should('have.length', 7)
+    cy.get('#visu_axis_x_container').children('line').should('have.length', 13)
     cy.get('#visu_axis_container').should('contain', "Sequence length")
 
     //using axis_y selctor
@@ -88,13 +86,13 @@ describe('Scatterplot', function () {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     cy.get('#visu').find('select[name*="select_x[]"]').select('Sequence length',{ force: true })
-    cy.get('#visu_axis_x_container').children('line').should('have.length', 7) // 0/20/40/60/80/100/120
+    cy.get('#visu_axis_x_container').children('line').should('have.length', 13) // 0/20/40/60/80/100/120
 
     cy.window().then((win) => {win.sp.updateScaleX([40,120]);});
-    cy.get('#visu_axis_x_container').children('line').should('have.length', 9) // 40/50/60/70/80/90/100/110/120
+    cy.get('#visu_axis_x_container').children('line').should('have.length', 17) // 40/50/60/70/80/90/100/110/120
 
     cy.window().then((win) => {win.sp.updateScaleX([91,114]);});
-    cy.get('#visu_axis_x_container').children('line').should('have.length', 6) // 90/95/100/105/110/115
+    cy.get('#visu_axis_x_container').children('line').should('have.length', 13) // 90/95/100/105/110/115
 
     return
   })
