@@ -70,7 +70,7 @@ describe('Test sandbox', function () {
     cy.changePreset("read length distribution")
     cy.update_icon(500)
 
-    cy.getCloneInList(0).should('be.visible')
+    cy.getCloneInList(0).scrollIntoView().should('be.visible')
     cy.getCloneInList(1).should('not.be.visible')
 
     cy.getCloneInScatterplot(0, "bar").should('be.visible')
