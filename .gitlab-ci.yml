@@ -20,7 +20,7 @@
 
 before_script:
   - *before_script_global
-  
+
 stages:
   - test_tools
   - test_quality
@@ -29,6 +29,7 @@ stages:
   - test_germlines
   - test_functional
   - test_cypress_client
+  - test_cypress_external
   - test_cypress_server
   - test_tutorial
   - test_tutorial_server
@@ -194,52 +195,6 @@ test_browser_unit:
   extends:
     - .need_for_quick_test
 
-.browser-functional:
-  stage: test_functional
-  retry: 2
-  script:
-    - make -C browser
-    - source /etc/profile.d/rvm.sh
-    - rvm use 2.6.1
-    - HEADLESS=1 make -C browser/test functional
-  artifacts:
-    paths:
-    - browser/ 
-    when: always
-    reports:
-      junit: browser/test/test/TEST-*.xml
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
-    - schedules
-  tags:
-    - web
-
-.browser-functional-chrome:
-  extends: .browser-functional
-  variables:
-    WATIR_CHROME: "1"
-    
-ff32-browser-functional:
-  extends: .browser-functional
-  variables:
-    FIREFOX_VERSION: 32
-
-ff45-browser-functional:
-  extends:
-    - .browser-functional
-    - .need_for_moderate_client
-  variables:
-    FIREFOX_VERSION: 45
-
-chrome-browser-functional:
-  extends: .browser-functional-chrome
-        
-old-chrome-browser-functional:
-  extends: .browser-functional-chrome
-  tags:
-    - legacy
 
 .browser-tutorial:
   stage: test_tutorial

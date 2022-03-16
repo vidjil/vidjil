@@ -28,7 +28,6 @@ Cypress.Commands.add('getCloneSize', (id) => {
 })
 
 Cypress.Commands.add('getCloneInSegmenter', (id) => {
-
   cy.get('#seq'+id)
     .should("exist")
 })
@@ -78,4 +77,23 @@ Cypress.Commands.add('closeClusterClone', (id) => {
     cy.get('#clusterBox_'+id+' > .icon-minus')
       .click()
     cy.update_icon()
+})
+
+
+Cypress.Commands.add('openCloneInfo', (id) => {
+    cy.get('#listElem_'+id+' > #clone_infoBox_'+id)
+      .should("be.visible")
+      .click()
+    cy.update_icon()
+})
+
+Cypress.Commands.add('closeCloneInfo', () => {
+    cy.get('.info-container > .closeButton')
+      .click()
+})
+
+Cypress.Commands.add('removeCloneFromCluster', (id) => {
+  cy.get('#delBox_list_'+id+' > .icon-cancel')
+    .click({force: true})
+  cy.update_icon()
 })

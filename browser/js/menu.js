@@ -126,18 +126,14 @@ function showSelector(elem) {
             .css('display', 'none');
         $('#' + elem)
             .css('display', 'block')
-            .animate({
-                height: $('#' + elem).children(":first").height()
-            }, 100);
+            .css('height', $('#' + elem).children(":first").height()
+            );
 }
 
 function hideSelector() {
     $('.selector')
         .stop()
-        .animate({
-            height: "hide",
-            display: "none"
-        }, 100);
+        .css('display', "none");
 }
 
 function showDisplayMenu() {

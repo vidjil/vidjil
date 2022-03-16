@@ -1561,14 +1561,14 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
-        html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
-        html += "<tr><td> analyzed reads </td><td>" + this.reads.segmented_all[timeID] +
+        html += "<tr id='info_timepoint_reads'><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
+        html += "<tr id='info_timepoint_analyzed_reads'><td> analyzed reads </td><td>" + this.reads.segmented_all[timeID] +
             " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
 
-        html += "<tr><td> analysis software </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
-        html += "<tr><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
-        html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
-        html += "<tr><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
+        html += "<tr id='info_timepoint_analysis_software'><td> analysis software </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
+        html += "<tr id='info_timepoint_parameters'><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
+        html += "<tr id='info_timepoint_timestamp'><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
+        html += "<tr id='info_timepoint_log'><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
 
         // 
         var colspan_header =  "colspan='"+(1+this.samples.number)+"'"

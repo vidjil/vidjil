@@ -13,8 +13,6 @@ describe('Test sandbox', function () {
 
 
   it('00-distrib_splitted_by_locus',  function() {
-    cy.viewport(1280, 720) // change size of viewport to show some clonotype in list
-    // First, you probably want to open an analysis
     cy.openAnalysis("data/fused_multiple_distrib_locus.vidjil")
   
     // Tests on size after top change
@@ -24,8 +22,7 @@ describe('Test sandbox', function () {
       .trigger('change')
 
     // change in another preset with distributions clones
-    cy.get('body').trigger('keydown', { keyCode: 52, key: "4"});
-    cy.get('body').trigger('keyup',   { keyCode: 52, key: "4"});
+    cy.changePreset("read length distribution")
     cy.update_icon(1000)
 
     // Define clones ids
@@ -61,4 +58,30 @@ describe('Test sandbox', function () {
 
     return
   })
+
+
+  it('01-hide_clone',  function() {
+    cy.viewport(1000, 600) // restore old viewport, old firefox seem to have probleme of superposition of DOM element
+    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.getCloneInList(1).should('be.visible')
+
+    cy.selectClone(1)
+    cy.get('#hide_selected').click()
+    cy.changePreset("read length distribution")
+    cy.update_icon(500)
+
+    cy.getCloneInList(0).scrollIntoView().should('be.visible')
+    cy.getCloneInList(1).should('not.be.visible')
+
+    cy.getCloneInScatterplot(0, "bar").should('be.visible')
+    cy.getCloneInScatterplot(1, "bar").should('not.be.visible')
+  })
+
+
+  it('02-download AIRR from getHtmlInfo',  function() {
+    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openCloneInfo(0)
+    cy.get('#download_info_0_airr').should("be.visible")
+  })
+
 })

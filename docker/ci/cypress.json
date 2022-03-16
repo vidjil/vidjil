@@ -6,5 +6,7 @@
   },
   "pluginsFile": false,
   "video": false,
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "viewportWidth": 1280,
+  "viewportHeight": 720
 }
