@@ -14,11 +14,12 @@
     - bash docker/ci/script_preprocess.bash
     - cd /app
     - export BROWSER=browsers/$BROWSER
-    - bash script.bash "/app/cypress/integration/test_*.js"
+    - bash script.bash $TEST_FILES
   variables:
     BROWSER: ../electron
     CYPRESS_PATH: browser/test/cypress
     HOST: html
+    TEST_FILES: "/app/cypress/integration/test_*.js"
   artifacts:
     reports:
       junit: $CYPRESS_PATH/reports/test-cypress-*.xml
@@ -34,37 +35,11 @@
 
 
 .test_cypress_ext:
-  image: vidjilci/cypress_with_browsers:latest
   stage: test_cypress_external
-  # extends:
-    # - .need_for_staged_client
-  script:
-    - echo -e "Run cypress with browser $BROWSER"
-    - echo -e "PWD $PWD; CYPRESS_PATH $CYPRESS_PATH"
-    # Create doc support files for testing
-    - python tools/org-babel-tangle.py --all doc/vidjil-format.md
-    - mv analysis-example1.vidjil  analysis-example2.analysis  analysis-example2.vidjil doc/
-    # Cypress
-    - bash docker/ci/script_preprocess.bash
-    - cd /app
-    - export BROWSER=browsers/$BROWSER
-    - bash script.bash "/app/cypress/integration/external_*.js"
+  extends:
+    - .test_cypress_base
   variables:
-    BROWSER: ../electron
-    CYPRESS_PATH: browser/test/cypress
-    HOST: html
-  artifacts:
-    reports:
-      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
-    paths:
-      - $CYPRESS_PATH
-    expire_in: 7 day
-    when: always
-  tags:
-    - cidocker
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
+    TEST_FILES: "/app/cypress/integration/external_*.js"
 
 
 ## cypress client
