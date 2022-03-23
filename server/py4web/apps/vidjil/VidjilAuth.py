@@ -2,6 +2,7 @@
 from py4web.utils.auth import Auth
 from pydal.objects import Row, Rows, Table, Query, Set, Expression
 from enum import Enum
+from py4web.core import Fixture, Translator, Flash, REGEX_APPJSON
 
 from .modules.permission_enum import PermissionEnum
 from . import defs, settings
@@ -21,6 +22,7 @@ class VidjilAuth(Auth):
 
     def __init__(self, session, db, define_tables):
         self.log = None
+        self.flash = Flash()
         super(VidjilAuth, self).__init__(session, db, define_tables)
 
     def preload(self):
@@ -28,6 +30,7 @@ class VidjilAuth(Auth):
         self.admin = 'admin' in self.groups
 
     def exists(self, object_of_action, object_id):
+        db = self.db
         if (object_of_action in self.permissions \
             and object_id in self.permissions[object_of_action]):
             return True
@@ -42,7 +45,7 @@ class VidjilAuth(Auth):
         result_groups = []
         if self.user is not None:
             memberships = self.db(
-                self.table_membership().user_id == self.user.id).select(self.table_membership().group_id)
+                self.table_membership().user_id == self.get_user().get('id')).select(self.table_membership().group_id)
             membership_group_ids = [x.group_id for x in memberships]
             groups = self.db(self.table_group().id.belongs(membership_group_ids)).select()
             for group in groups:
@@ -50,6 +53,7 @@ class VidjilAuth(Auth):
         return result_groups
 
     def get_user_access_groups(self, object_of_action, oid, user):
+        db = self.db
         membership = db.auth_membership
         permission = db.auth_permission
 
@@ -79,7 +83,7 @@ class VidjilAuth(Auth):
 
     def get_group_access_groups(self, object_of_action, oid, group):
         permission = self.table_permission()
-
+        db = self.db
         groups = db(
                 (permission.record_id == oid) &
                 (permission.name == PermissionEnum.access.value) &
@@ -137,6 +141,7 @@ class VidjilAuth(Auth):
         return perm
 
     def get_group_permissions(self, table_name, group_id, record_id=0, myfilter=[]):
+        db = self.db
         q = ((db.auth_permission.table_name == table_name)&
             (db.auth_permission.group_id == group_id)&
             (db.auth_permission.record_id == record_id))
@@ -151,7 +156,7 @@ class VidjilAuth(Auth):
         perform action on object_of_action
         '''
         if group is None:
-            group = auth.user_group
+            group = self.user_group
 
         has_action = self.has_permission(action, 'sample_set', 0, group_id = group)
         if id == 0:
@@ -195,6 +200,7 @@ class VidjilAuth(Auth):
         Loads the given permissions for the user into cache to allow for multiple calls to
         "can" while reducing the database overhead.
         '''
+        db = self.db
         if object_of_action not in self.permissions:
             self.permissions[object_of_action] = {}
 
@@ -290,6 +296,8 @@ class VidjilAuth(Auth):
             or self.is_admin(user))
 
     def can_modify_sample_set(self, sample_set_id, user = None) :
+        db = self.db
+
         sample_set = db.sample_set[sample_set_id]
         if sample_set is None:
             return False
@@ -349,6 +357,8 @@ class VidjilAuth(Auth):
             or self.is_admin(user))
 
     def can_modify_file(self, file_id, user = None) :
+        db = self.db
+
         if not self.exists('sequence_file', file_id):
             return False
 
@@ -404,7 +414,8 @@ class VidjilAuth(Auth):
         '''
         Returns if the user can process results for a sample_set
         '''
-        sample_set = self.db.sample_set[id]
+        db = self.db
+        sample_set = db.sample_set[id]
         if sample_set is None:
             return False
 
@@ -435,6 +446,7 @@ class VidjilAuth(Auth):
         '''
         Returns if the user can upload files for a sample_set
         '''
+        db = self.db
         sample_set = db.sample_set[id]
         if sample_set is None:
             return False
@@ -465,6 +477,8 @@ class VidjilAuth(Auth):
             or self.is_admin(user))
 
     def can_view_sample_set(self, sample_set_id, user = None) :
+        db = self.db
+
         perm = self.get_permission(PermissionEnum.read.value, 'sample_set', sample_set_id, user)\
             or self.is_admin(user)
 
@@ -522,6 +536,7 @@ class VidjilAuth(Auth):
             or self.is_admin(user))
 
     def can_save_sample_set(self, sample_set_id, user = None) :
+        db = self.db
         sample_set = db.sample_set[sample_set_id]
         if sample_set is None:
             return False
@@ -542,6 +557,7 @@ class VidjilAuth(Auth):
         return perm
 
     def get_group_parent(self, group_id):
+        db = self.db
         parent_group_list = db(
                     (db.group_assoc.second_group_id == group_id)
                 ).select(db.group_assoc.ALL)
@@ -554,6 +570,7 @@ class VidjilAuth(Auth):
         return group_list
 
     def get_user_groups(self, user = None):
+        db = self.db
         is_current_user = user == None
         if is_current_user:
             user = self.user_id
@@ -565,6 +582,7 @@ class VidjilAuth(Auth):
         return group_list
 
     def get_user_group_parents(self, user = None):
+        db = self.db
         is_current_user = user == None
         if is_current_user:
             user = self.user_id
@@ -595,8 +613,10 @@ class VidjilAuth(Auth):
 
         """
         if user_id == None:
-            user_id = self.get_user()["id"]
+            user_id = self.user_id
+
         db = self.db
+
         if isinstance(table, str) and table in self.db.tables():
             table = self.db[table]
         elif isinstance(table, (Set, Query)):
@@ -614,6 +634,10 @@ class VidjilAuth(Auth):
                 self.has_permission(name, table, 0, user_id) and\
                 self.has_permission(PermissionEnum.access.value, table, 0, user_id):
             return table.id > 0
+
+        if self.is_admin(user_id) :
+            return table.id > 0
+
         membership = db.auth_membership
         permission = db.auth_permission
         perm_groups = self.get_permission_groups(name, user_id)
@@ -687,7 +711,7 @@ class VidjilAuth(Auth):
                 return True
 
         if not user_id and not group_id and self.user:
-            user_id = self.user.id
+            user_id = self.get_user().get('id')
 
         if user_id:
             membership = self.db.auth_membership
