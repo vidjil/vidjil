@@ -225,5 +225,54 @@ db.define_table('tag_ref',
                 Field('table_name', 'string'),
                 Field('record_id', 'integer'))
 
+db.define_table('scheduler_task',
+                Field('application_name', 'reference tag'),
+                Field('task_name', 'string'),
+                Field('group_name', 'string'),
+                Field('status', 'string'),
+                Field('broadcast', 'string'),
+                Field('function_name', 'string'),
+                Field('uuid', 'string'),
+                Field('args', 'string'),
+                Field('vars', 'string'),
+                Field('enabled','boolean', default = False),
+                Field('start_time', 'string'),
+                Field('next_run_time', 'string'),
+                Field('repeats', 'string'),
+                Field('retry_failed', 'string'),
+                Field('rperiod', 'string'),
+                Field('prevent_drift', 'string'),
+                Field('crconline', 'string'),
+                Field('timeout', 'string'),
+                Field('sync_output', 'string'),
+                Field('times_run', 'integer'),
+                Field('times_failed', 'integer'),
+                Field('last_run_time', 'string'),
+                Field('assigned_worker_name', 'string'))
+
+db.define_table('scheduler_run',
+                Field('task_id', 'reference scheduler_task'),
+                Field('status', 'string'),
+                Field('start_time', 'date'),
+                Field('stop_time', 'date'),
+                Field('run_output', 'string'),
+                Field('run_result', 'string'),
+                Field('traceback', 'string'),
+                Field('worker_name', 'string'))
+
+db.define_table('scheduler_worker',
+                Field('worker_name', 'string'),
+                Field('first_heartbeat', 'date'),
+                Field('slast_heartbeat', 'date'),
+                Field('status', 'string'),
+                Field('is_ticker','boolean', default = False),
+                Field('group_names', 'string'),
+                Field('worker_stats', 'string'))
+
+db.define_table('scheduler_task_deps',
+                Field('job_name', 'string'),
+                Field('task_parent', 'reference scheduler_task'),
+                Field('task_child', 'reference scheduler_task'),
+                Field('can_visit','boolean', default = False))
 
 db.commit()
