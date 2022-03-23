@@ -1469,13 +1469,14 @@ Report.prototype = {
         var color = this.getCloneExportColor(cloneID);
         var system = this.m.clone(cloneID).germline
         var clone = $('<div/>', {'class': 'clone'})
+        var clone_polyline = document.getElementById("polyline" + cloneID)
         
         var head = $('<span/>', {'class': 'clone_head'}).appendTo(clone);
         //clone svg path icon
-        if (time == -1){
+        if (time == -1 && clone_polyline != null){
             var icon = $('<span/>', {'class': 'icon'}).appendTo(head);
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            var polyline = document.getElementById("polyline" + cloneID).cloneNode(true)
+            var polyline = clone_polyline.cloneNode(true)
             polyline.setAttribute("style", "stroke-width:30px; stroke:"+color);
             svg.appendChild(polyline)
             svg.setAttribute("viewBox","0 0 791 300");
