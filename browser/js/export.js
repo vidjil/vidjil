@@ -932,6 +932,12 @@ Report.prototype = {
             {'label': "Software used:" , 'value' : this.m.getSoftVersion()},
             {'label': "Analysis date:" , 'value' : "" }
         ]
+
+
+        if (typeof this.m.db_key != "undefined" &&
+            typeof this.m.db_key.sample_set_id != "undefined"){
+            content.push({'label': "Hosting server:"  , 'value' : window.location.hostname});
+            }
         
         var table = $('<table/>', {'class': 'info-table float-left'}).appendTo(left);
         for ( var key in content ){
