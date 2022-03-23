@@ -1,13 +1,13 @@
 [[extend 'layout.html']]
 
-<h2 class="title">Form Superhero Identity</h2>
+<h2 class="title">[[=title]]</h2>
+
+[[for message in messages:]]
+<div class="notification is-danger">
+[[=message]]
+</div>
+[[pass]]
+
 
 [[=form]]
 
-<h2 class="title">Rows</h2>
-
-<ul>
-  [[for row in rows:]]
-  <li>[[=row.id]]: [[=row.name]] ([[=row.job]])</li>
-  [[pass]]
-</ul>
