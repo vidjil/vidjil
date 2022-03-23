@@ -4,22 +4,11 @@ require 'watir'
 class VidjilBrowser < Watir::Browser
 
   def initialize
-    if ENV['WATIR_BROWSER_PATH']
-      print "Using custom browser location " + ENV['WATIR_BROWSER_PATH'] + "\n"
-      Selenium::WebDriver::Firefox.path = ENV['WATIR_BROWSER_PATH']
-      Selenium::WebDriver::Chrome.path = ENV['WATIR_BROWSER_PATH'] 
-    end
-    # :chrome or :safari
-    if ENV['WATIR_CHROME'] or (ENV['WATIR_BROWSER_PATH'] and ENV['WATIR_BROWSER_PATH'].include? "chrom")
-      super :chrome
-    elsif ENV['WATIR_MARIONETTE']
-      super :firefox
-    else
-      super :firefox, :marionette => false
-    end
+    super :chrome, switches: ['--ignore-certificate-errors']
 
     print "Running "+driver.capabilities.browser_name+" "+driver.capabilities.version+"\n"
   end
+
 
   # Return the text field that allows to edit a clone name
   def clone_name_editor

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test_sample_set.TestSampleSet-20220308111242" tests="2" time="14.962" timestamp="2022-03-08T11:12:57" failures="0" errors="2" skipped="0">
+	<testcase classname="test_sample_set.TestSampleSet" name="testLogin" time="13.693" timestamp="2022-03-08T11:12:56">
+		<error type="Abort" message=""><![CDATA[Traceback (most recent call last):
+  File "/home/duez/vidjil/server/tests/test_sample_set.py", line 9, in setUp
+    application = wsgi(apps_folder="apps")
+  File "/home/duez/.local/lib/python3.8/site-packages/py4web/core.py", line 1717, in wsgi
+    install_args(kwargs)
+  File "/home/duez/.local/lib/python3.8/site-packages/py4web/core.py", line 1661, in install_args
+    if yes or click.confirm("Create missing folder %s?" % apps_folder):
+  File "/home/duez/.local/lib/python3.8/site-packages/click/termui.py", line 236, in confirm
+    raise Abort() from None
+click.exceptions.Abort
+
+Stdout:
+Create missing folder /home/duez/vidjil/server/tests/apps? [y/N]: 
+]]></error>
+	</testcase>
+	<testcase classname="test_sample_set.TestSampleSet" name="testPatient" time="1.269" timestamp="2022-03-08T11:12:57">
+		<error type="Abort" message=""><![CDATA[Traceback (most recent call last):
+  File "/home/duez/vidjil/server/tests/test_sample_set.py", line 9, in setUp
+    application = wsgi(apps_folder="apps")
+  File "/home/duez/.local/lib/python3.8/site-packages/py4web/core.py", line 1717, in wsgi
+    install_args(kwargs)
+  File "/home/duez/.local/lib/python3.8/site-packages/py4web/core.py", line 1661, in install_args
+    if yes or click.confirm("Create missing folder %s?" % apps_folder):
+  File "/home/duez/.local/lib/python3.8/site-packages/click/termui.py", line 236, in confirm
+    raise Abort() from None
+click.exceptions.Abort
+
+Stdout:
+Create missing folder /home/duez/vidjil/server/tests/apps? [y/N]: 
+]]></error>
+	</testcase>
+	<system-out><![CDATA[Create missing folder /home/duez/vidjil/server/tests/apps? [y/N]: Create missing folder /home/duez/vidjil/server/tests/apps? [y/N]: ]]></system-out>
+	<system-err><![CDATA[]]></system-err>
+</testsuite>

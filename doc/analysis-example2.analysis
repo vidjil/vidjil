@@ -1,0 +1,69 @@
+{
+    "producer": "user Bob, via Vidjil webapp",
+    "timestamp": "2014-10-01 12:00:11",
+    "vidjil_json_version": "2016b",
+
+    "samples": {
+    "id": [
+      "T8045-BC081-Diag.fastq",
+      "T8045-BC082-fu1.fastq"
+    ],
+         "number": 2, 
+         "names": ["diag", "fu1"],
+         "order": [1, 0],
+         "stock_order": [1, 0]
+    },
+
+    "clones": [
+        {
+            "id": "clone-001",
+            "name": "Main ALL clone",
+            "tag": "0"
+        },
+        {
+            "id": "spikeE",
+            "label": "spike",
+            "sequence": "ATGACTCTGGAGTCTATTACTGTGCCACCTGGGATGTGAGTATTATAAGAAAC",
+            "tag": "3",
+            "expected": "0.1"
+        },
+        {
+            "id": "seqedited_in_analysis",
+            "segEdited": true,
+            "germline": "TRG",
+            "sequence": "GGGGGCCCCCGGGGGCCCCCGGGGGCCCCCGGGGGCCCCCAAAAATTTTTAAAAATTTTTAAAAATTTTT",
+            "reads": [ 521, 42 ],
+            "seg":
+              {
+                  "cdr3": {"start": 50, "stop": 60}
+              }
+        },
+        {
+            "id": "seqedited_new_locus",
+            "segEdited": true,
+            "germline": "IGH+",
+            "name": "clone_with_new_locus"
+        }
+
+    ],
+
+    "clusters": [
+        [ "clone3", "clone2"],
+        [ "clone_cluster2", "clone_cluster1"],
+        [ "clone-5", "clone-10", "clone-179" ]
+    ],
+
+    "data": {
+         "qPCR": [0.83, 0.024],
+         "spikeZ": [0.01, 0.02]
+    },
+
+    "tags": {
+        "names": {
+            "0" : "main clone",
+            "3" : "spike",
+            "5" : "custom tag"
+        },
+        "hide": [4, 5]
+    }
+}
