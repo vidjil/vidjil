@@ -677,23 +677,55 @@ class VidjilAuth(Auth):
                 self.log.info(message)
             else:
                 self.log.debug(message)
-    """
-    def has_permission(self, name, table, id, user_id):
-        db = self.db
 
-        membership = db.auth_membership
-        permission = db.auth_permission
-        perm_groups = self.get_permission_groups(name, user_id)
-        
-        query = db(((membership.user_id == user_id) &
-                    (membership.group_id.belongs(perm_groups)) &
-                    (membership.group_id == permission.group_id) &
-                    (permission.name == name) &
-                    (permission.record_id == id) &
-                    (permission.table_name == table))).select(permission.record_id)
+    def add_permission(self,
+                       group_id,
+                       name='any',
+                       table_name='',
+                       record_id=0,
+                       ):
+        """
+        Gives group_id 'name' access to 'table_name' and 'record_id'
+        """
 
-        return len(query) > 0
-    """
+        permission = self.table_permission()
+        if group_id == 0:
+            group_id = self.user_group()
+        record = self.db((permission.group_id == group_id) &
+                         (permission.name == name) &
+                         (permission.table_name == str(table_name)) &
+                         (permission.record_id == record_id),
+                         ignore_common_filters=True
+                         ).select(limitby=(0, 1), orderby_on_limitby=False).first()
+        if record:
+            if hasattr(record, 'is_active') and not record.is_active:
+                record.update_record(is_active=True)
+            id = record.id
+        else:
+            id = permission.insert(group_id=group_id, name=name,
+                                   table_name=str(table_name),
+                                   record_id=record_id)
+        return id
+
+    def del_permission(self,
+                       group_id,
+                       name='any',
+                       table_name='',
+                       record_id=0,
+                       ):
+        """
+        Revokes group_id 'name' access to 'table_name' and 'record_id'
+        """
+
+        permission = self.table_permission()
+        self.log_event(self.messages['del_permission_log'],
+                       dict(group_id=group_id, name=name,
+                            table_name=table_name, record_id=record_id))
+        return self.db(permission.group_id ==
+                       group_id)(permission.name ==
+                                 name)(permission.table_name ==
+                                       str(table_name))(permission.record_id ==
+                                                        record_id).delete()
 
 
 
@@ -740,6 +772,65 @@ class VidjilAuth(Auth):
         else:
             r = False
 
+        return r
+
+    def table_user(self):
+        return self.db.auth_user
+
+    def table_group(self):
+        return self.db.auth_group
+
+    def table_membership(self):
+        return self.db.auth_membership
+
+    def table_permission(self):
+        return self.db.auth_permission
+
+    def table_event(self):
+        return self.db.auth_event
+
+    def id_group(self, role):
+        """
+        Returns the group_id of the group specified by the role
+        """
+        rows = self.db(self.table_group().role == role).select()
+        if not rows:
+            return None
+        return rows[0].id
+
+    def user_group(self, user_id=None):
+        """
+        Returns the group_id of the group uniquely associated to this user
+        i.e. `role=user:[user_id]`
+        """
+        return self.id_group(self.user_group_role(user_id))
+
+    def user_group_role(self, user_id=None):
+        if user_id:
+            return  'user_%(id)04d' % {'id' : user_id }
+        else:
+            return  'user_%(id)04d' % {'id' : self.user_id }
+        
+
+    def has_membership(self, group_id=None, user_id=None, role=None, cached=False):
+        if not user_id and self.user:
+            user_id = self.user.id
+        if cached:
+            id_role = group_id or role
+            r = (user_id and id_role in self.user_groups.values()) or (user_id and id_role in self.user_groups)
+        else:
+            group_id = group_id or self.id_group(role)
+            try:
+                group_id = int(group_id)
+            except:
+                group_id = self.id_group(group_id)  # interpret group_id as a role
+            membership = self.table_membership()
+            if group_id and user_id and self.db((membership.user_id == user_id) &
+                                                (membership.group_id == group_id)).select():
+                r = True
+            else:
+                r = False
+                
         return r
 
     def __str__(self):
