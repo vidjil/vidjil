@@ -11,7 +11,7 @@ DB_FOLDER = os.path.join(APP_FOLDER, "databases")
 DB_URI = "mysql://vidjil_user:password@localhost/vidjil"
 DB_POOL_SIZE = 1
 DB_MIGRATE = True
-DB_FAKE_MIGRATE = False  # maybe?
+DB_FAKE_MIGRATE = True  # maybe?
 
 # location where to store uploaded files:
 UPLOAD_FOLDER = os.path.join(APP_FOLDER, "uploads")
@@ -69,7 +69,7 @@ LDAP_SETTINGS = {
 T_FOLDER = os.path.join(APP_FOLDER, "translations")
 
 # Celery settings
-USE_CELERY = False
+USE_CELERY = True
 CELERY_BROKER = "redis://localhost:6379/0"
 
 # try import private settings

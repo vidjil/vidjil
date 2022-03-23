@@ -187,7 +187,8 @@ if settings.USE_CELERY:
     # to use "from .common import scheduler" and then use it according
     # to celery docs
     scheduler = Celery(
-        "apps.%s.tasks" % settings.APP_NAME, broker=settings.CELERY_BROKER
+        "apps.%s.tasks" % settings.APP_NAME, broker=settings.CELERY_BROKER,
+        backend='redis://localhost'
     )
 
 
