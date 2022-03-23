@@ -7,42 +7,6 @@ import datetime
 from .common import db, Field, T, auth
 from pydal.validators import *
 from py4web.utils.populate import populate
-from py4web.utils.auth import Auth
-from .VidjilAuth import VidjilAuth
-
-# simple table example
-db.define_table(
-    'person',
-    Field('name', requires=IS_NOT_IN_DB(db, 'person.name'), label=T('name')),
-    Field('job', requires=IS_NOT_EMPTY(), label=T('job')),
-    format='%(name)s',
-)
-
-# simple reference example
-db.define_table(
-    'superhero',
-    Field('name', requires=IS_NOT_IN_DB(db, 'superhero.name')),
-    Field('real_identity', 'reference person'),
-    format='%(name)s',
-)
-
-db.define_table('superpower', Field('description'), format='%(description)s')
-
-
-if not db(db.person).count():
-    db.person.insert(
-        name='Clark Kent', job='Journalist',
-    )
-    db.person.insert(name='Peter Park', job='Photographer')
-    db.person.insert(name='Bruce Wayne', job='CEO')
-    db.superhero.insert(name='Superman', real_identity=1)
-    db.superhero.insert(name='Spiderman', real_identity=2)
-    db.superhero.insert(name='Batman', real_identity=3)
-    db.superpower.insert(description='Flight')
-    db.superpower.insert(description='Strength')
-    db.superpower.insert(description='Speed')
-    db.superpower.insert(description='Durability')
-
 
 # Used for examples of forms.
 def get_user_email():
@@ -52,54 +16,14 @@ def get_user_email():
 def get_time():
     return datetime.datetime.utcnow()
 
-
-db.define_table(
-    'product',
-    Field('product_name'),
-    Field('product_quantity', 'integer', requires=IS_INT_IN_RANGE(0, None), default=0),
-    Field('product_cost', 'float', requires=IS_FLOAT_IN_RANGE(0, None), default=0.0),
-    Field('mail_order', 'boolean'),
-    Field('created_by', default=get_user_email),
-    Field('creation_date', 'datetime', default=get_time),
-)
-
-# We do not want these fields to appear in forms by default.
-db.product.id.readable = False
-db.product.created_by.readable = False
-db.product.creation_date.readable = False
-
-db.define_table(
-    'thing',
-    Field('name', required=True),
-    Field('color', options=('red', 'green', 'blue')),
-    Field('is_ready', 'boolean'),
-    Field('time_created', 'time'),
-    Field('date_created', 'date'),
-    Field('timetime_created', 'datetime'))
-
-if db(db.thing).isempty():
-    populate(db.thing, 100)
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## AUTH old tables for import
-'''
+
 db.define_table('auth_user',
             Field('username', 'string'),
             Field('sso_id', 'string'),
             Field('action_token', 'string'),
             Field('last_password_change', 'string'),
-            Field('email__tmp', 'string'),
+            #Field('email__tmp', 'string'),
             Field('first_name', 'string'),
             Field('last_name', 'string'),
             Field('email', 'string'),
@@ -107,7 +31,7 @@ db.define_table('auth_user',
             Field('registration_key', 'string'),
             Field('reset_password_key', 'string'),
             Field('registration_id', 'string'), redefine=True)
-'''
+
 db.define_table('auth_group',
             Field('role', 'string'),
             Field('description', 'text'))
