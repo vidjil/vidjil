@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import math
 import re
-import defs
+from apps.vidjil import defs
 import json
 import datetime
-from gluon import current
 from datetime import date
 
 def format_size(n, unit='B'):
@@ -87,38 +86,35 @@ def anon_birth(patient_id, user_id):
     else:
         return age
 
-def anon_ids(patient_ids, can_view = None):
+def anon_ids(db, auth, patient_ids, can_view = None):
     '''Anonymize patient name. Only the 'anon' access see the full patient name.
     patient_ids is a list of patient IDs
     '''
-    db = current.db
-    auth=current.auth
     
     patients = db(db.patient.id.belongs(patient_ids)).select(db.patient.sample_set_id, 
                                                              db.patient.first_name,
                                                              db.patient.last_name)
 
-    return [display_names(p.sample_set_id, p.first_name, p.last_name, can_view) for p in patients]
+    return [display_names(auth, p.sample_set_id, p.first_name, p.last_name, can_view) for p in patients]
 
-def anon_names(sample_set_id, first_name, last_name, can_view=None):
+def anon_names(auth, sample_set_id, first_name, last_name, can_view=None):
     '''
     Anonymize the given names of the patient whose ID is patient_id.
     This function performs at most one db call (to know if we can see
     the patient's personal informations). None is performed if can_view
     is provided (to tell if one can view the patient's personal informations)
     '''
-    auth=current.auth
 
     ln = last_name
     fn = first_name
     if can_view or (can_view == None and auth.can_view_info('sample_set', sample_set_id)):
         name = ln + " " + fn
     else:
-        name = unicode(safe_decoding(ln)[:3])
+        name = str(safe_decoding(ln)[:3], 'utf-8')
 
     return name
 
-def display_names(sample_set_id, first_name, last_name, can_view=None):
+def display_names(auth, sample_set_id, first_name, last_name, can_view=None):
     '''
     Return the name as displayed to a user or admin of a patient
     whose ID is patient_id.
@@ -126,9 +122,8 @@ def display_names(sample_set_id, first_name, last_name, can_view=None):
     of the patient name if the user doesn't have permission to see the real name.
     Admins will also see the patient id.
     '''
-    auth = current.auth
 
-    name = anon_names(sample_set_id, first_name, last_name, can_view)
+    name = anon_names(auth, sample_set_id, first_name, last_name, can_view)
 
     # Admins also see the patient id
     if auth.is_admin():
@@ -139,11 +134,10 @@ def display_names(sample_set_id, first_name, last_name, can_view=None):
 def safe_decoding(string):
     '''
     Get a unicode string. If the string was already unicode we just return it.
+    Python3 : all string should be unicode now
     '''
-    if isinstance(string, unicode):
-        return string
-    else:
-        return string.decode('utf-8')
+    return string
+
 
 def safe_encoding(string):
     '''
@@ -151,7 +145,7 @@ def safe_encoding(string):
     returns the string.
     '''
     try:
-        return unicode(string).encode('utf-8')
+        return str(string, 'utf-8')
     except UnicodeDecodeError:
         return string
 
