@@ -433,6 +433,16 @@ Report.prototype = {
 
     initBlocks: function(){
         var self = this;
+        var available_blocks = [
+            {'block_type': "file_info",     'name': "Report information",   'unique': true,     'inMenu': true },
+            {'block_type': "reads_stats",   'name': "Reads stats per locus",'unique': true,     'inMenu': true },
+            {'block_type': "sample_info",   'name': "Sample information",   'unique': true,     'inMenu': true },
+            {'block_type': "monitor",       'name': "Monitor",              'unique': true,     'inMenu': true },
+            {'block_type': "log_db",        'name': "Database log",         'unique': true,     'inMenu': true },
+            {'block_type': "clones",        'name': "Clones",               'unique': true,     'inMenu': true },
+            {'block_type': "comments",      'name': "Comments",             'unique': false,    'inMenu': false },
+            {'block_type': "scatterplot",   'name': "Plot",                 'unique': false,    'inMenu': false },
+        ]
 
         var handle = function(){
             self.removeBlock(parseInt($(this).attr("value")));
@@ -478,7 +488,7 @@ Report.prototype = {
                     text = "Plot: ["+ conf.axisX +" | "+ conf.axisY +"] ["+ conf.locus +"]"
                     break;
                 case "comments":
-                    text = "Comment"
+                    text = "Comments"
                     break;
                 default:
                     break;
@@ -513,13 +523,22 @@ Report.prototype = {
         var select = $('<select/>', { name: 'rs-new-block-select',
                                       id:   'rs-new-block-select' }).appendTo(div_select).change(handle2);
 
-        $('<option/>',  { text: "add section"}).appendTo(select);
+        $('<option/>',  { text: "--- add section ---"}).appendTo(select);
+        
+        for (var j = 0; j < available_blocks.length; j++){
+            if (!available_blocks[j].inMenu) continue
 
-        var keys = ["file_info","reads_stats","sample_info", "monitor", "log_db", "clones"]
-        for (var j = 0; j < keys.length; j++){
-            var name = keys[j];
-            $('<option/>',  { text: name,
-                            value: name}).appendTo(select);
+            var name = available_blocks[j].name;
+            var block_type = available_blocks[j].block_type
+
+            var already_exist = false
+            for (var b in this.settings.blocks)
+                if (this.settings.blocks[b].blockType == block_type)
+                    already_exist = true
+
+            if ( !available_blocks[j].unique || !already_exist )
+                $('<option/>',  {   text: name,
+                                    value: block_type}).appendTo(select);
         }
 
     },  
