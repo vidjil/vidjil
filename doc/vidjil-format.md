@@ -61,6 +61,10 @@ or `clusters`, to further cluster some clones, see below).
         "germline" : {
             "TRG" :         [ 250000 ] ,
             "IGH" :         [ 85662  ]
+        },
+        "clonotypes": {
+          "TRG" :         [ 2500 ],
+          "IGH" :         [ 856  ]
         }
     },
 
@@ -114,6 +118,10 @@ do a correct gathering.
         "germline" : {
             "TRG" :         [ 250000, 300000 ] ,
             "IGH" :         [ 85662,   10124 ]
+        },
+        "clonotypes": {
+          "TRG" :         [ 2500, 3000 ] ,
+          "IGH" :         [ 856,   101 ]
         }
     },
 
@@ -222,6 +230,10 @@ If a pre process has been used to produce a file in the pipeline its data can be
         "germline" : {
             "TRG" :         [ 250000 ] ,
             "IGH" :         [ 85662  ]
+        },
+        "clonotypes": {
+          "TRG" :         [ 2500 ],
+          "IGH" :         [ 856  ]
         },
         "merged" :          [ 437164 ]
     },
