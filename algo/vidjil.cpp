@@ -1787,7 +1787,7 @@ int main (int argc, char **argv)
             {"total", {nb_total_reads}},
             {"segmented", {nb_segmented}},
             {"germline", reads_germline},
-            {"clones", clones_germline}
+            {"clonotypes", clones_germline}
     });
     output.set("germlines", json_germlines["systems"]["recombinations"]);
     output.set("germlines", "ref", multigermline->ref);
