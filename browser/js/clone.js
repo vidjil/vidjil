@@ -937,8 +937,12 @@ Clone.prototype = {
     },
 
     getFasta: function() {
-        fasta = ''
-        fasta += '>' + this.getCode() + '    ' + this.getPrintableSize() + '\n'
+
+        fasta = '>' 
+        if (typeof this.m.db_key != "undefined" &&
+            typeof this.m.db_key.sample_set_id != "undefined")
+            fasta +="("+this.m.db_key.sample_set_id+") "
+        fasta += this.getCode() + '    ' + this.getPrintableSize() + '\n'
         fasta += this.getPrintableSegSequence() + '\n'
 
         return fasta
