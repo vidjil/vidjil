@@ -174,6 +174,11 @@ size_t WindowExtractor<Tshortcut, Affect>::getNbReadsGermline(string germline) {
 }
 
 template <typename Tshortcut, typename Affect>
+size_t WindowExtractor<Tshortcut, Affect>::getNbClonesGermline(string germline) {
+  return stats_clones[germline].getNbScores();
+}
+
+template <typename Tshortcut, typename Affect>
 void WindowExtractor<Tshortcut, Affect>::setMaximalNbReadsPerWindow(size_t max_reads) {
   max_reads_per_window = max_reads;
 }
