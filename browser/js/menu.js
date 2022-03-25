@@ -133,7 +133,10 @@ function showSelector(elem) {
 function hideSelector() {
     $('.selector')
         .stop()
-        .css('display', "none");
+        .animate({
+            height: "hide",
+            display: "none"
+        }, 100);
 }
 
 function showDisplayMenu() {
