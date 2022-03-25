@@ -617,7 +617,7 @@ Aligner.prototype = {
                     }         
                 } // else, modified option, relunch request
 
-                request += "> [" + sample_set_id + " #" + c.index + "] " + c.getName() + "\n"
+                request += ">" + sample_set_id + " #" + c.index + " " + c.getName() + "\n"
                 if (typeof (c.getSequence()) == 0){
                     request +=  c.id + "\n";
                 } else if ( this.m.trimming_before_external && 
