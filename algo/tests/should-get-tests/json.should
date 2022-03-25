@@ -12,6 +12,9 @@ $ Number of reads
 $ Number of detected reads
 1:"segmented": \[13153\]
 
+$ Number of detected clonotypes
+1:"clonotypes": \{"IGH": \[10947\]\}
+
 $ Most abundant window
 1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \[8\]
 
