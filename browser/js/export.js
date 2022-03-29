@@ -389,36 +389,6 @@ Report.prototype = {
             var conf = this.settings.blocks[i]
             var text = this.getBlockName(conf)
 
-            switch (conf.blockType) {
-                case "file_info":
-                    text = "Report information"
-                    break;
-                case "reads_stats":
-                    text = "Reads stats per locus"
-                    break;
-                case "sample_info":
-                    text = "Sample information"
-                    break;
-                case "clones":
-                    text = "Clones"
-                    break;
-                case "monitor":
-                    text = "Monitor"
-                    break;
-                case "log_db":
-                    text = "Database log"
-                    break;
-                case "scatterplot":
-                    text = "Plot: ["+ conf.axisX +" | "+ conf.axisY +"] ["+ conf.locus +"]"
-                    break;
-                case "comments":
-                    text = "Comments"
-                    break;
-                default:
-                    break;
-            }
-
-
             var div   = $('<div/>',   { class: "rs-block rs-selected",
                                         text: text}).appendTo(parent);
                         $('<button/>',{ value:  i , 
