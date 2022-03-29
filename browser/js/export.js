@@ -1,5 +1,6 @@
 
 function Report(model, settings) {
+    var self = this;
     this.m = model;
 
     // create storage in model if needed before saving
@@ -15,8 +16,6 @@ function Report(model, settings) {
     this.default_settings = {
         "New Report" : {
             name : "New Report",
-            //type : "multi",
-            sample : undefined,
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
@@ -30,8 +29,6 @@ function Report(model, settings) {
         },
         "New Monitor Report" : {
             name : "New Monitor Report",
-            //type : "multi",
-            sample : undefined,
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
@@ -40,8 +37,6 @@ function Report(model, settings) {
         },
         "New Sample Report" : {
             name : "New Sample Report",
-            //type : "single",
-            sample : undefined,
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
@@ -191,43 +186,6 @@ Report.prototype = {
         else
             $("#rs-save-button").remove("disabledClass")
     },
-/*
-    initType: function(){
-        var self = this;
-        var max_width=0;
-        var checkBoxes = []
-        var type = ["single", "multi"]
-        var type_select = $("#report-settings-type-select")
-        var parent = $('<div/>', { class: "rs-flex-parent"}).appendTo(type_select);
-
-        var handle = function(){
-            self.settings.type = this.value
-            if (this.value == "single"){
-                $("#report-settings-multi_sample-select").hide()
-                $("#report-settings-sample-select").show()
-            }else{
-                $("#report-settings-multi_sample-select").show()
-                $("#report-settings-sample-select").hide()
-            }
-        }
-
-        for (var i = 0; i < type.length; i++){
-            var div   = $('<div/>',   { class: "rs-flex-child"}).appendTo(parent);
-            var input = $('<input/>', { id:  'rs-type-select'+i, 
-                                        name: 'rs-type-select',
-                                        type: 'radio',
-                                        checked: this.settings.type == type[i],
-                                        value: type[i]}).appendTo(div).change(handle)
-            var label = $('<label/>', { for: 'rs-type-select'+i, 
-                                        text: type[i]}).appendTo(div)
-
-            if (max_width < label.width()) max_width=label.width(); 
-            checkBoxes.push(div)
-        }
-        for(var j=0;j<checkBoxes.length;j++) 
-            checkBoxes[j].css({"min-width": ""+(max_width+30)+"px"})
-    },
-    */
 
     initSamples: function(){
         var self = this;
@@ -275,36 +233,6 @@ Report.prototype = {
         }
         $("#rs-selected-sample-count").html("["+count+" selected]")
     },
-/*
-    initSample: function(){
-        var self = this;
-
-        if (typeof this.settings.sample == "undefined")
-            this.settings.sample = this.m.getTime()
-
-        var handle = function(){
-            self.settings.sample = this.value;
-        }
-
-        var sample_select = $("#report-settings-sample-select")
-
-        var div = $('<div/>',   {}).appendTo(sample_select);
-
-        var label = $('<label/>',   { for:  'rs-sample-select',
-                                      text: '' }).appendTo(div)
-        var select = $('<select/>', { name: 'rs-sample-select',
-                                      id:   'rs-sample-select' }).appendTo(div).change(handle);                        
-
-        for (var i = 0; i < this.m.samples.order.length; i++){
-            var timeId = this.m.samples.order[i]
-            $('<option/>',  { text: this.m.getStrTime(timeId, "name"),
-                              selected: (self.settings.sample == this.m.getStrTime(timeId, "original_name")),
-                              value: this.m.getStrTime(timeId, "original_name")}).appendTo(select);
-        }
-
-        if (this.settings.type=="single") sample_select.show();
-    },
-    */
 
     initLocus: function(){
         var self = this;
@@ -369,15 +297,7 @@ Report.prototype = {
                                     value: axisP.name}).appendTo(color_select1);
             }
         }
-        /*
-        var keys = Object.keys(this.default_settings);
-        for (var i = 0; i < keys.length; i++){
-            var name = keys[i];
-            $('<option/>',  { text: name,
-                            selected: (self.settings.name == name),
-                            value: name}).appendTo(color_select1);
-        }
-        */
+
         var handle2 = function(){
             self.settings.selected_color = this.value;
         }
@@ -556,7 +476,6 @@ Report.prototype = {
                 array_sample_ids.push(timeID)
             }
         }
-        //this.settings.samples = array;
         
         this.m.wait("Generating report...")
         var color; 
@@ -597,8 +516,6 @@ Report.prototype = {
                 });
             
             self.cloneList()
-                .contamination()
-
             self.restorestate()    
             self.m.resize()
             self.m.resume()
@@ -630,29 +547,6 @@ Report.prototype = {
         this.m.changeTimeOrder(this.save_state.samples_order)
         this.m.color.set(this.save_state.axis_color)
         return this;
-    },
-    
-    reportcontamination : function() {
-        this.m.wait("Generating report...")
-        
-        var self = this
-        this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
-    
-        var text = "contamination report: "
-        if (typeof this.m.sample_name != 'undefined')
-            text += this.m.sample_name
-            
-        this.w.onload = function(){
-            self.w.document.title = text
-            self.w.document.getElementById("header-title").innerHTML = text
-            
-            self.info()
-                .contamination()
-                .comments({})
-                
-            self.m.resize()
-            self.m.resume()
-        }
     },
     
     reportHTML : function(system_list, sample_list) {
@@ -687,7 +581,6 @@ Report.prototype = {
                 .readsStat3()
                 .addGraph()
                 .cloneList()
-                .contamination()
                 .sampleLog()
                 .comments({})
                 .restorestate()
@@ -839,41 +732,6 @@ Report.prototype = {
         }).appendTo(content);
         
         return content
-    },
-
-    contamination : function(){
-        var self = this;
-        if (typeof this.m.contamination == "undefined") return this;
-        
-        var contamination = this.container("Report run contamination")
-        var left = $('<div/>', {'class': 'flex'}).appendTo(contamination);
-        
-        var sample_names = [];
-        var reads = [];
-        var percent = [];
-        
-        for (var i=0; i<this.m.samples.order.length; i++) {
-            var time = this.m.samples.order[i];
-            sample_names.push(this.m.getStrTime(time, "short_name"));
-            reads.push(""+this.m.contamination[time].total_reads);
-            percent.push( ""+(self.m.contamination[time].total_reads/self.m.reads.segmented[time]*100).toFixed(3)+"%)");
-        }
-        
-        var content = [
-            {'label': "sample name" , 'value' : sample_names},
-            {'label': "reads" , 'value' : reads},
-            {'label': "(%)" , 'value' : percent}
-        ]
-        
-        var table = $('<table/>', {'class': 'info-table2 float-left'}).appendTo(left);
-        for ( var key in content ){
-            var v = content[key]
-            var row = $('<tr/>').appendTo(table);
-            $('<td/>', {'class': 'label', 'text': v.label}).appendTo(row);
-            for (var idx in v.value) $('<td/>', {'text': v.value[idx].replace("_L001__001", "")}).appendTo(row);
-        }
-        
-        return this
     },
 
     comments: function(block, div) {
