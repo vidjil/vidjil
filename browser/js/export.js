@@ -749,7 +749,7 @@ Report.prototype = {
         $('<textarea/>', {'title': "These comments won't be saved.", 
                         'style': "width: 100%; display: block; overflow: hidden; resize: vertical;",
                         'rows': 5, 
-                        'text': block.text
+                        'placeholder': block.text != undefined ? block.text : ""
                         }).change(handle).appendTo(comments)
     
         return this
@@ -761,7 +761,7 @@ Report.prototype = {
         var parent_block = this.container_map.get(container)
 
         var comments_block = {  blockType: "comments",
-                                text : "write comments"}
+                                text : "Write comments"}
 
         var index = this.settings.blocks.indexOf(parent_block) + 1
         if ( index > 0 ){
