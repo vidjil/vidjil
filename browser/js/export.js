@@ -175,25 +175,27 @@ Report.prototype = {
         var select = $('<select/>', { name: 'rs-save-select',
                                       id:   'rs-save-select' }).appendTo(div).change(handle);
 
-        $('<option/>',  { text: "--- Default Report ---"}).appendTo(select);
+        var optgrp_default = $('<optgroup/>',  { label: "Default Report", title: "Default reports; can be use as template"})
 
         var keys = Object.keys(this.default_settings);
         for (var i = 0; i < keys.length; i++){
             var name = keys[i];
             $('<option/>',  { text: name,
                             selected: (self.settings.name == name),
-                            value: name}).appendTo(select);
+                            value: name}).appendTo(optgrp_default);
         }
+        optgrp_default.appendTo(select);
 
-        $('<option/>',  { text: "--- User Report ---"}).appendTo(select);
+        var optgrp_users = $('<optgroup/>',  { label: "User Report", title: "User report; stored locally"})
 
         keys = Object.keys(this.m.report_save);
         for (var j = 0; j < keys.length; j++){
             var savename = keys[j];
             $('<option/>',  { text: savename,
                               selected: (self.settings.name == savename),
-                              value: savename}).appendTo(select);
+                              value: savename}).appendTo(optgrp_users);
         }
+        optgrp_users.appendTo(select);
 
         if(typeof this.default_settings[this.settings.name] != "undefined")
             $("#rs-save-button").addClass("disabledClass")
