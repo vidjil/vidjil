@@ -44,6 +44,20 @@ function Report(model, settings) {
             blocks: []
         }
     }
+
+    // default blocks def
+    this.available_blocks = {
+        "file_info":    {'name': "Report information",  'unique': true,     'inMenu': true },
+        "reads_stats":  {'name': "Reads stats per locus",'unique': true,    'inMenu': true },
+        "sample_info":  {'name': function (c){ return "Sample information: ["+ self.m.getStrTime(c.time , "name")+"]"},
+                                                        'unique': true,     'inMenu': true },
+        "monitor":      {'name': "Monitor",             'unique': false,     'inMenu': true },
+        "log_db":       {'name': "Database log",        'unique': true,     'inMenu': true },
+        "clones":       {'name': "Clones",              'unique': true,     'inMenu': true },
+        "comments":     {'name': "Comments",            'unique': false,    'inMenu': false },
+        "scatterplot":  {'name': function (c){ return "Plot: ["+ c.axisX +" | "+ c.axisY +"] ["+ c.locus +"]"},
+                                                        'unique': false,    'inMenu': false },
+    }
     
     if (typeof settings != "undefined")
         this.settings = settings;
@@ -353,16 +367,6 @@ Report.prototype = {
 
     initBlocks: function(){
         var self = this;
-        var available_blocks = [
-            {'block_type': "file_info",     'name': "Report information",   'unique': true,     'inMenu': true },
-            {'block_type': "reads_stats",   'name': "Reads stats per locus",'unique': true,     'inMenu': true },
-            {'block_type': "sample_info",   'name': "Sample information",   'unique': true,     'inMenu': true },
-            {'block_type': "monitor",       'name': "Monitor",              'unique': true,     'inMenu': true },
-            {'block_type': "log_db",        'name': "Database log",         'unique': true,     'inMenu': true },
-            {'block_type': "clones",        'name': "Clones",               'unique': true,     'inMenu': true },
-            {'block_type': "comments",      'name': "Comments",             'unique': false,    'inMenu': false },
-            {'block_type': "scatterplot",   'name': "Plot",                 'unique': false,    'inMenu': false },
-        ]
 
         var handle = function(){
             self.removeBlock(parseInt($(this).attr("value")));
@@ -383,7 +387,7 @@ Report.prototype = {
         var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(block_list);
         for (var i = 0; i < this.settings.blocks.length; i++){
             var conf = this.settings.blocks[i]
-            var text = ""
+            var text = this.getBlockName(conf)
 
             switch (conf.blockType) {
                 case "file_info":
@@ -434,6 +438,7 @@ Report.prototype = {
 
         var handle2 = function(){
             var block = {blockType : this.value }
+            if (this.value == "sample_info") block.time = self.m.t
             self.addBlock(block);
             self.menu();
         }
@@ -462,6 +467,29 @@ Report.prototype = {
         }
 
     },  
+
+    getBlockName: function(conf){
+        var text = ""
+
+        switch (typeof this.available_blocks[conf.blockType].name) {
+            case "string":
+                text = this.available_blocks[conf.blockType].name
+                break;
+            case "function":
+                try {
+                    text = this.available_blocks[conf.blockType].name(conf)
+                } catch (e) {
+                    console.error("failed to generate report blockname for "+conf.blockType+" block")
+                    text = conf.blockType
+                }
+                break;
+            default:
+                text = "unknow block"
+                break;
+            }
+
+        return text
+    },
 
     print: function(){ 
         this.container_map = new WeakMap();
