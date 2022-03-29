@@ -766,7 +766,7 @@ line {
 /*	//////////////////////////////////////////////////////////////	*/
 .popup_container {
   z-index: 20;
-  min-width: 300px;
+  min-width: 450px;
   max-width: 80%;
   font-size: 13px;
   padding: 20px;
@@ -1227,13 +1227,13 @@ span.warningReads {
   margin-left: 14px;
 }
 .axis_select {
-    vertical-align: bottom;
-    display: inline;
-    overflow: hidden;
-    white-space: nowrap;
+  vertical-align: bottom;
+  display: inline;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .axis_select_icon {
-    display: flex;
+  display: flex;
 }
 .axis_select select {
   background: #000000;
