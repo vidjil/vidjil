@@ -462,6 +462,15 @@ Report.prototype = {
     },
 
     print: function(){ 
+
+        if (typeof this.settings.samples != 'object' ||
+                   this.settings.samples.length == 0 ) {
+            console.log({   msg: "Report: select at least one sample before generating report", 
+                            type: "flash", 
+                            priority: 2 });
+            return        
+        }
+
         this.container_map = new WeakMap();
 
         //reorder samples
