@@ -420,18 +420,17 @@ Report.prototype = {
 
         $('<option/>',  { text: "--- add section ---"}).appendTo(select);
         
-        for (var j = 0; j < available_blocks.length; j++){
-            if (!available_blocks[j].inMenu) continue
+        for (var block_type in this.available_blocks){
+            var name = this.getBlockName({blockType: block_type, time : self.m.t })
 
-            var name = available_blocks[j].name;
-            var block_type = available_blocks[j].block_type
-
+            if (!this.available_blocks[block_type].inMenu) continue
+            
             var already_exist = false
             for (var b in this.settings.blocks)
                 if (this.settings.blocks[b].blockType == block_type)
                     already_exist = true
 
-            if ( !available_blocks[j].unique || !already_exist )
+            if ( !this.available_blocks[block_type].unique || !already_exist )
                 $('<option/>',  {   text: name,
                                     value: block_type}).appendTo(select);
         }
@@ -625,7 +624,7 @@ Report.prototype = {
             self.w.document.getElementById("header-title").innerHTML = text
             
             self.info()
-                .sampleInfo(self.m.t)
+                .sampleInfo({'time':self.m.t})
                 .readsStat(self.m.t)
             for (var i=0; i<self.m.system_selected.length; i++){
                 var system = self.m.system_selected[i]
@@ -834,7 +833,9 @@ Report.prototype = {
         return this
     },
     
-    sampleInfo : function(time) {
+    sampleInfo : function(block) {
+        var time = block.time
+
         var sinfo = this.container("Sample information ("+this.m.getStrTime(time, "short_name")+")")
         var left = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
         
