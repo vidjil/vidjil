@@ -1141,6 +1141,7 @@ span.warningReads {
   max-height: 0px;
   opacity: 0;
   font-size: 0%;
+  overflow: hidden;
 }
 .sp_menu:hover {
   transition-property: all;
