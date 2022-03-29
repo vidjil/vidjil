@@ -694,47 +694,55 @@ Report.prototype = {
         if (typeof block != "undefined"){
             this.container_map.set(container, block)
 
-            var float = $('<div/>', {
-                'class': 'container_floatBox'
+
+            var content = $('<div/>', {
+                'class': 'container_content',
             }).appendTo(container);
 
-            var closeButton = $('<button/>', {
-                'value': 'i',
-                'class': 'container_button icon-cancel',
-                'title': 'remove this section'
-            }).click(function(){self.removeContainer(container)})
-              .appendTo(float);
 
-            var upButton = $('<button/>', {
-                'value': 'i',
-                'class': 'container_button icon-up-open',
+            var content_header = $('<div/>', {
+                'class': 'container_content',
+                "style": "display: flex;justify-content: space-between;"
+            }).appendTo(container);
+
+
+
+            $('<h3/>', {
+                'text': title
+            }).appendTo(content_header);
+
+            // Action icons, move, indert, delete
+            var icons = $('<div/>', {'class': 'container_content',"style": "display: flex;font-size:100%;"})
+
+
+            var upButton = $('<i/>', {
+                'class': 'container_button pointer icon-up-open',
                 'title': 'move this section up'
             }).click(function(){self.upContainer(container)})
-              .appendTo(float);
+              .appendTo(icons);
 
-            var downButton = $('<button/>', {
-                'value': 'i',
-                'class': 'container_button icon-down-open',
+            var downButton = $('<i/>', {
+                'class': 'container_button pointer icon-down-open',
                 'title': 'move this section down'
             }).click(function(){self.downContainer(container)})
-              .appendTo(float);
+              .appendTo(icons);
 
-            var logButton = $('<button/>', {
-                'value': 'i',
-                'class': 'container_button icon-dot-3',
+            var logButton = $('<i/>', {
+                'class': 'container_button pointer icon-pencil-1',
                 'title': 'insert comments below this section'
             }).click(function(){self.insertComments(container) })
-            .appendTo(float);
+              .appendTo(icons);
+
+            var closeButton = $('<i/>', {
+                'class': 'container_button pointer icon-cancel',
+                'title': 'remove this section'
+            }).click(function(){self.removeContainer(container)})
+              .appendTo(icons);
+
+            icons.appendTo(content_header);
+            content_header.appendTo(content);
+
         }
-
-        var content = $('<div/>', {
-            'class': 'container_content'
-        }).appendTo(container);
-
-        $('<h3/>', {
-            'text': title
-        }).appendTo(content);
-        
         return content
     },
 
