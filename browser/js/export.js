@@ -700,7 +700,6 @@ Report.prototype = {
             var closeButton = $('<button/>', {
                 'value': 'i',
                 'class': 'container_button icon-cancel',
-                'text' : 'remove',
                 'title': 'remove this section'
             }).click(function(){self.removeContainer(container)})
               .appendTo(float);
@@ -708,7 +707,6 @@ Report.prototype = {
             var upButton = $('<button/>', {
                 'value': 'i',
                 'class': 'container_button icon-up-open',
-                'text' : 'up',
                 'title': 'move this section up'
             }).click(function(){self.upContainer(container)})
               .appendTo(float);
@@ -716,7 +714,6 @@ Report.prototype = {
             var downButton = $('<button/>', {
                 'value': 'i',
                 'class': 'container_button icon-down-open',
-                // 'text' : 'down',
                 'title': 'move this section down'
             }).click(function(){self.downContainer(container)})
               .appendTo(float);
@@ -724,7 +721,6 @@ Report.prototype = {
             var logButton = $('<button/>', {
                 'value': 'i',
                 'class': 'container_button icon-dot-3',
-                // 'text' : 'comment',
                 'title': 'insert comments below this section'
             }).click(function(){self.insertComments(container) })
             .appendTo(float);
@@ -764,7 +760,7 @@ Report.prototype = {
         var parent_block = this.container_map.get(container)
 
         var comments_block = {  blockType: "comments",
-                            text : "hello"}
+                                text : "write comments"}
 
         var index = this.settings.blocks.indexOf(parent_block) + 1
         if ( index > 0 ){
