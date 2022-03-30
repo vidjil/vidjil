@@ -45,15 +45,19 @@ Cypress.Commands.add('setBrowser', (url) => {
   }
 })
 
-Cypress.Commands.add('open_menu_import', () => { 
-  cy.get('#demo_file_menu').click()
+Cypress.Commands.add('open_menu', (id) => { 
+  cy.get('#'+id+'> .selector').invoke('show')
+})
+
+Cypress.Commands.add('close_menu', (id) => { 
+  cy.get('#'+id+'> .selector').invoke('hidden')
 })
 
 
-
 Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis, timeout) => {
-  cy.open_menu_import()
-  cy.get('#import_data_anchor').click()
+  //cy.open_menu("demo_file_menu")
+  cy.get('#import_data_anchor').click({force: true})
+  //cy.close_menu("demo_file_menu")
   cy.log(`file_vidjil: ${file_vidjil}`)
   cy.log(`file_analysis: ${file_analysis}`)
   // Upload vidjil file
