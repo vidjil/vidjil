@@ -809,11 +809,19 @@ line {
 							  /*menu*/
 
 .menu{
-  padding:3px;
+  padding:7px;
   float:left;
-  margin:5px;
   cursor:pointer;
   background:inherit;
+}
+
+.menu:hover{
+  cursor: pointer;
+  background-color: #ddd
+}
+
+.menu:hover .selector{
+  display:block;
 }
 
 
@@ -833,6 +841,7 @@ line {
     border-top: solid;
     border-width: 1px;
     border-color:@border;
+    text-indent: 5px;
 }
 
 .submenu{
@@ -842,7 +851,7 @@ line {
 
 .menu_box {
     margin: 0px;
-    padding: 5px;
+    padding: 5px 0px;
     border-top: solid;
     border-width: 1px;
     border-color:@border;
@@ -916,7 +925,7 @@ line {
   background : @background;
   cursor:pointer;
   font-size: 13px;
-  margin :2px;
+  padding :3px 8px;
   display:block;
   text-align:left;
 }
@@ -1124,18 +1133,17 @@ span.logo
   display: none;
   position: fixed;
   margin-right: -5px;
-  padding: 3px;
   border: solid;
   background: inherit;
-  text-center: left;
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: calc(@top_container_height - 25px);
+  margin-top: calc(@top_container_height - 24px);
   z-index:5;
   overflow: hidden;
   border-width: 1px;
-  background-color: @background
+  background-color: @background;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 
 #bot-placeholder {
@@ -2132,7 +2140,6 @@ textarea#edit_value {
 }
 
 #top_info {
-    display: inline-flex;
     font-weight: bold;
     color: black;
 }

@@ -179,10 +179,9 @@ describe('Aligner', function () {
   it('01-Aligner stats',  function() {
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
 
-    cy.get('#filter_menu').click()
     cy.get("#top_slider")
       .invoke('val', 5)
-      .trigger('change')
+      .trigger('change',{ force: true })
 
     // Select only distrib clonotypes
     cy.selectCloneMulti([20, 21, 22])

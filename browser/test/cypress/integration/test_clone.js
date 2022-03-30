@@ -16,10 +16,9 @@ describe('Test sandbox', function () {
     cy.openAnalysis("data/fused_multiple_distrib_locus.vidjil")
   
     // Tests on size after top change
-    cy.get('#filter_menu').click()
     cy.get("#top_slider")
       .invoke('val', 5)
-      .trigger('change')
+      .trigger('change',{ force: true })
 
     // change in another preset with distributions clones
     cy.changePreset("read length distribution")

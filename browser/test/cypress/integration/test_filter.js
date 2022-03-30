@@ -67,8 +67,7 @@ describe('Filters', function () {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     //top slider
-    cy.get('#top_slider',{ force: true }).click({ force: true })
-    cy.get('#top_slider',{ force: true }).invoke('val', 5).trigger('change')
+    cy.get('#top_slider').invoke('val', 5).trigger('change',{ force: true })
     cy.get('#list_clones').children('li').filter(':visible').should('have.length', 6)
 
     //focus on single sample
