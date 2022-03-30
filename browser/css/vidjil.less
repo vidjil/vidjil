@@ -809,11 +809,14 @@ line {
 							  /*menu*/
 
 .menu{
-  padding:3px;
+  padding:7px;
   float:left;
-  margin:5px;
   cursor:pointer;
   background:inherit;
+}
+
+.menu:hover .selector{
+  display:block;
 }
 
 
@@ -1131,7 +1134,7 @@ span.logo
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: calc(@top_container_height - 25px);
+  margin-top: calc(@top_container_height - 24px);
   z-index:5;
   overflow: hidden;
   border-width: 1px;
@@ -2132,7 +2135,6 @@ textarea#edit_value {
 }
 
 #top_info {
-    display: inline-flex;
     font-weight: bold;
     color: black;
 }

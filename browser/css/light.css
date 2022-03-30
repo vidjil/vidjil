@@ -654,11 +654,13 @@ line {
 }
 /*menu*/
 .menu {
-  padding: 3px;
+  padding: 7px;
   float: left;
-  margin: 5px;
   cursor: pointer;
   background: inherit;
+}
+.menu:hover .selector {
+  display: block;
 }
 .menu a {
   text-decoration: none;
@@ -943,7 +945,7 @@ span.logo {
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: calc(7px);
+  margin-top: calc(8px);
   z-index: 5;
   overflow: hidden;
   border-width: 1px;
@@ -1228,13 +1230,13 @@ span.warningReads {
   margin-left: 14px;
 }
 .axis_select {
-    vertical-align: bottom;
-    display: inline;
-    overflow: hidden;
-    white-space: nowrap;
+  vertical-align: bottom;
+  display: inline;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .axis_select_icon {
-    display: flex;
+  display: flex;
 }
 .axis_select select {
   background: #ffffff;
@@ -1864,7 +1866,6 @@ textarea#edit_value {
   min-height: 45px;
 }
 #top_info {
-  display: inline-flex;
   font-weight: bold;
   color: black;
 }
