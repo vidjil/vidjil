@@ -731,6 +731,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             // 3 - new not fused => {index : {locus: value}}
             // 4 - new fused => {index : [{locus: values}]}
             var diversity_by_locus = {}
+            var locus;
     	    if (this.diversity[key][time] == 'na') {
                 return // Append if no diversity computable by fuse (AIRR import for exemple)
             } else{
@@ -740,7 +741,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                     if (typeof this.diversity[key][time] == "number") {
                        return this.diversity[key][time].toFixed(3);
                     } else { // case 3
-                        for (var locus in this.diversity[key][time]) {
+                        for (locus in this.diversity[key][time]) {
                             diversity_by_locus[locus] = this.diversity[key][time][locus].toFixed(3)
                         }
                         return diversity_by_locus
