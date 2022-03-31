@@ -746,7 +746,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         return diversity_by_locus
                     }
                 } else if (typeof this.diversity[key] == "object"){ // case 4
-                    for (var locus in this.diversity[key]) {
+                    for (locus in this.diversity[key]) {
                         diversity_by_locus[locus] = this.diversity[key][locus].toFixed(3)
                     }
                     return diversity_by_locus
