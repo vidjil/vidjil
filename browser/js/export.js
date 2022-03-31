@@ -65,6 +65,20 @@ function Report(model, settings) {
         this.settings = (JSON.parse(JSON.stringify(this.default_settings[this.default_setting]))); 
 
     this.container_map = new WeakMap();
+
+
+    //build clones axes selector
+    this.clone_axes_selector = document.createElement("div");
+    this.clone_axes_selector.className = "clone_axes_selector";
+
+    var close_selector = document.createElement("span");
+    close_selector.className = "closeButton" ;
+    close_selector.appendChild(icon('icon-cancel', ''));
+    close_selector.onclick = function() {$(this).parent().hide('fast')};
+    this.clone_axes_selector.appendChild(close_selector);
+
+    document.body.appendChild(this.clone_axes_selector);
+    $("#"+this.clone_axes_selector.id).hide('fast')
 }
 
 Report.prototype = {
@@ -385,6 +399,11 @@ Report.prototype = {
             self.menu();
         }
 
+        var handle_clonotype_settings = function(){
+            console.log( "clonotype settings panel")
+            $(self.clone_axes_selector).show();
+        }
+
         var block_list = $("#report-settings-block")
         var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(block_list);
         for (var i = 0; i < this.settings.blocks.length; i++){
@@ -393,6 +412,12 @@ Report.prototype = {
 
             var div   = $('<div/>',   { class: "rs-block rs-selected",
                                         text: text}).appendTo(parent);
+                        if (conf.blockType == "clones") {
+                            $('<button/>',{ value:  i , 
+                                        class: "icon-cog", 
+                                        title: "Set clonotypes axes to includes"
+                                        }).click(handle_clonotype_settings).appendTo(div)
+                        }
                         $('<button/>',{ value:  i , 
                                         class: "icon-cancel button_right", 
                                         title: "remove this section"
