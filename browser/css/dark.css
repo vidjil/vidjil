@@ -619,6 +619,16 @@ line {
   display: none;
   background: #000000;
 }
+#clone_axes_selector {
+  padding: 5px;
+  position: absolute;
+  left: 475px;
+  top: 195px;
+  width: 220px;
+  border: solid;
+  background: #000000;
+  z-index: 15;
+}
 .dataMenu {
   padding: 5px;
   position: absolute;
@@ -765,7 +775,7 @@ line {
 }
 /*	//////////////////////////////////////////////////////////////	*/
 .popup_container {
-  z-index: 20;
+  z-index: 10;
   min-width: 450px;
   max-width: 80%;
   font-size: 13px;
@@ -843,7 +853,7 @@ a.tag-link {
 #menu,
 #list_clones,
 #tagSelector,
-#display-menu,
+#clone_axes_selector #display-menu,
 #bot-container {
   background: #000000;
 }
@@ -1017,7 +1027,8 @@ span.logo {
 .list_clones,
 .bot-bar,
 #bot-container,
-.tagSelector {
+.tagSelector,
+#clone_axes_selector {
   border-color: #333333;
 }
 #info_window td {
@@ -1319,7 +1330,7 @@ span.warningReads {
   cursor: pointer;
 }
 .db_div {
-  z-index: 5;
+  z-index: 20;
   position: fixed;
   top: 35px;
   width: 100%;
