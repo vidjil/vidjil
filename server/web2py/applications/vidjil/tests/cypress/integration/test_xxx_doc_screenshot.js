@@ -38,7 +38,7 @@ describe('Creation of users and groups', function () {
           .screenshot('panel_list')
 
         // switch locus to TRG
-        cy.get('[style="left: 424.81px; top: 106.75px;"] > .sp_system > .systemBoxMenu')
+        cy.get('.sp_system').contains("TRG")
           .click()
           .update_icon(1000)
 
