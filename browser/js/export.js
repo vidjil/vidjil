@@ -1226,13 +1226,15 @@ Report.prototype = {
     readsStat_line: function(time, locus_list){
         var line = $('<tr/>', {});
 
-        $('<td/>',     {'text': this.m.getStrTime(time, "order")}).appendTo(line);
+        $('<td/>',     {'text': this.m.getStrTime(time, "order")+1}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "name")}).appendTo(line);
         var segmented_reads = this.m.reads.segmented[time]
         for (var i = 0; i < locus_list.length; i++){
             var locus_reads = this.m.reads.germline[locus_list[i]][time];
             var percent = 100*(locus_reads/segmented_reads);
-            if (percent<0.1)
+            if (locus_reads == 0)
+                percent = "";
+            else if (percent<0.1)
                 percent = " (<0.1%)";
             else
                 percent = " ("+percent.toFixed(1)+"%)";
