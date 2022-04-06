@@ -773,7 +773,7 @@ line {
 /*	//////////////////////////////////////////////////////////////	*/
 .popup_container {
   z-index: 20;
-  min-width: 300px;
+  min-width: 450px;
   max-width: 80%;
   font-size: 13px;
   padding: 20px;

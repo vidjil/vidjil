@@ -619,6 +619,16 @@ line {
   display: none;
   background: #ffffff;
 }
+#clone_axes_selector {
+  padding: 5px;
+  position: absolute;
+  left: 475px;
+  top: 195px;
+  width: 220px;
+  border: solid;
+  background: #ffffff;
+  z-index: 15;
+}
 .dataMenu {
   padding: 5px;
   position: absolute;
@@ -772,8 +782,8 @@ line {
 }
 /*	//////////////////////////////////////////////////////////////	*/
 .popup_container {
-  z-index: 20;
-  min-width: 300px;
+  z-index: 10;
+  min-width: 450px;
   max-width: 80%;
   font-size: 13px;
   padding: 20px;
@@ -850,7 +860,7 @@ a.tag-link {
 #menu,
 #list_clones,
 #tagSelector,
-#display-menu,
+#clone_axes_selector #display-menu,
 #bot-container {
   background: #ffffff;
 }
@@ -1023,8 +1033,9 @@ span.logo {
 .list_clones,
 .bot-bar,
 #bot-container,
-.tagSelector {
-  border-color: #dddddd;
+.tagSelector,
+#clone_axes_selector {
+  border-color: #cccccc;
 }
 #info_window td {
   width: 300px;
@@ -1326,7 +1337,7 @@ span.warningReads {
   cursor: pointer;
 }
 .db_div {
-  z-index: 5;
+  z-index: 20;
   position: fixed;
   top: 35px;
   width: 100%;

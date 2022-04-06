@@ -1,5 +1,6 @@
 
 function Report(model, settings) {
+    var self = this;
     this.m = model;
 
     // create storage in model if needed before saving
@@ -15,8 +16,6 @@ function Report(model, settings) {
     this.default_settings = {
         "New Report" : {
             name : "New Report",
-            //type : "multi",
-            sample : undefined,
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
@@ -26,28 +25,48 @@ function Report(model, settings) {
                     {blockType: "reads_stats"},
                     {blockType: "monitor"},
                     {blockType: "clones"}
-                    ]
+                    ],
+            clones_fields: ["productivity", "hypermutation", "5length"]
+
         },
         "New Monitor Report" : {
             name : "New Monitor Report",
-            //type : "multi",
-            sample : undefined,
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
             clones : [],
-            blocks: []
+            blocks: [],
+            clones_fields: ["productivity", "hypermutation", "5length"]
         },
         "New Sample Report" : {
             name : "New Sample Report",
-            //type : "single",
-            sample : undefined,
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
             clones : [],
-            blocks: []
+            blocks: [],
+            clones_fields: ["productivity", "hypermutation", "5length"]
         }
+    }
+
+    // default blocks def
+    this.available_blocks = {
+        "file_info":    {'name': "Report information",  'unique': true,     'inMenu': true },
+        "reads_stats":  {'name': "Reads stats per locus",'unique': true,    'inMenu': true },
+        "sample_info":  {'name': function (c){ return "Sample information: ["+ self.m.getStrTime(c.time , "name")+"]"},
+                                                        'unique': false,    'inMenu': true },
+        "monitor":      {'name': "Monitor",             'unique': true,     'inMenu': true },
+        "log_db":       {'name': "Database log",        'unique': true,     'inMenu': true },
+        "clones":       {'name': "Clones",              'unique': true,     'inMenu': true,
+                          'fields': {
+                            'productivity':  function(c){ return {'text': c.getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'} },
+                            'hypermutation': function(c){ return c.getVIdentityIMGT(t) == "unknown" ? undefined : {'text': "V-REGION Identity: "+ c.getVIdentityIMGT(t)+'%\u00a0', 'class': 'clone_value'} },
+                            '5length':       function(c){ return {'text': "V length: "     + c.getSegLength("5", (c.germline.includes("+") ? false : true))+'\u00a0', 'class': 'clone_value'}}
+                          },
+                        },
+        "comments":     {'name': "Comments",            'unique': false,    'inMenu': false },
+        "scatterplot":  {'name': function (c){ return "Plot: ["+ c.axisX +" | "+ c.axisY +"] ["+ c.locus +"]"},
+                                                        'unique': false,    'inMenu': false },
     }
     
     if (typeof settings != "undefined")
@@ -56,6 +75,7 @@ function Report(model, settings) {
         this.settings = (JSON.parse(JSON.stringify(this.default_settings[this.default_setting]))); 
 
     this.container_map = new WeakMap();
+
 }
 
 Report.prototype = {
@@ -166,68 +186,33 @@ Report.prototype = {
         var select = $('<select/>', { name: 'rs-save-select',
                                       id:   'rs-save-select' }).appendTo(div).change(handle);
 
-        $('<option/>',  { text: "--- Default Report ---"}).appendTo(select);
+        var optgrp_default = $('<optgroup/>',  { label: "Default Report", title: "Default reports; can be use as template"})
 
         var keys = Object.keys(this.default_settings);
         for (var i = 0; i < keys.length; i++){
             var name = keys[i];
             $('<option/>',  { text: name,
                             selected: (self.settings.name == name),
-                            value: name}).appendTo(select);
+                            value: name}).appendTo(optgrp_default);
         }
+        optgrp_default.appendTo(select);
 
-        $('<option/>',  { text: "--- User Report ---"}).appendTo(select);
+        var optgrp_users = $('<optgroup/>',  { label: "User Report", title: "User report; stored locally"})
 
         keys = Object.keys(this.m.report_save);
         for (var j = 0; j < keys.length; j++){
             var savename = keys[j];
             $('<option/>',  { text: savename,
                               selected: (self.settings.name == savename),
-                              value: savename}).appendTo(select);
+                              value: savename}).appendTo(optgrp_users);
         }
+        optgrp_users.appendTo(select);
 
         if(typeof this.default_settings[this.settings.name] != "undefined")
             $("#rs-save-button").addClass("disabledClass")
         else
             $("#rs-save-button").remove("disabledClass")
     },
-/*
-    initType: function(){
-        var self = this;
-        var max_width=0;
-        var checkBoxes = []
-        var type = ["single", "multi"]
-        var type_select = $("#report-settings-type-select")
-        var parent = $('<div/>', { class: "rs-flex-parent"}).appendTo(type_select);
-
-        var handle = function(){
-            self.settings.type = this.value
-            if (this.value == "single"){
-                $("#report-settings-multi_sample-select").hide()
-                $("#report-settings-sample-select").show()
-            }else{
-                $("#report-settings-multi_sample-select").show()
-                $("#report-settings-sample-select").hide()
-            }
-        }
-
-        for (var i = 0; i < type.length; i++){
-            var div   = $('<div/>',   { class: "rs-flex-child"}).appendTo(parent);
-            var input = $('<input/>', { id:  'rs-type-select'+i, 
-                                        name: 'rs-type-select',
-                                        type: 'radio',
-                                        checked: this.settings.type == type[i],
-                                        value: type[i]}).appendTo(div).change(handle)
-            var label = $('<label/>', { for: 'rs-type-select'+i, 
-                                        text: type[i]}).appendTo(div)
-
-            if (max_width < label.width()) max_width=label.width(); 
-            checkBoxes.push(div)
-        }
-        for(var j=0;j<checkBoxes.length;j++) 
-            checkBoxes[j].css({"min-width": ""+(max_width+30)+"px"})
-    },
-    */
 
     initSamples: function(){
         var self = this;
@@ -275,36 +260,6 @@ Report.prototype = {
         }
         $("#rs-selected-sample-count").html("["+count+" selected]")
     },
-/*
-    initSample: function(){
-        var self = this;
-
-        if (typeof this.settings.sample == "undefined")
-            this.settings.sample = this.m.getTime()
-
-        var handle = function(){
-            self.settings.sample = this.value;
-        }
-
-        var sample_select = $("#report-settings-sample-select")
-
-        var div = $('<div/>',   {}).appendTo(sample_select);
-
-        var label = $('<label/>',   { for:  'rs-sample-select',
-                                      text: '' }).appendTo(div)
-        var select = $('<select/>', { name: 'rs-sample-select',
-                                      id:   'rs-sample-select' }).appendTo(div).change(handle);                        
-
-        for (var i = 0; i < this.m.samples.order.length; i++){
-            var timeId = this.m.samples.order[i]
-            $('<option/>',  { text: this.m.getStrTime(timeId, "name"),
-                              selected: (self.settings.sample == this.m.getStrTime(timeId, "original_name")),
-                              value: this.m.getStrTime(timeId, "original_name")}).appendTo(select);
-        }
-
-        if (this.settings.type=="single") sample_select.show();
-    },
-    */
 
     initLocus: function(){
         var self = this;
@@ -369,15 +324,7 @@ Report.prototype = {
                                     value: axisP.name}).appendTo(color_select1);
             }
         }
-        /*
-        var keys = Object.keys(this.default_settings);
-        for (var i = 0; i < keys.length; i++){
-            var name = keys[i];
-            $('<option/>',  { text: name,
-                            selected: (self.settings.name == name),
-                            value: name}).appendTo(color_select1);
-        }
-        */
+
         var handle2 = function(){
             self.settings.selected_color = this.value;
         }
@@ -453,37 +400,7 @@ Report.prototype = {
         var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(block_list);
         for (var i = 0; i < this.settings.blocks.length; i++){
             var conf = this.settings.blocks[i]
-            var text = ""
-
-            switch (conf.blockType) {
-                case "file_info":
-                    text = "Report information"
-                    break;
-                case "reads_stats":
-                    text = "Reads stats per locus"
-                    break;
-                case "sample_info":
-                    text = "Sample information"
-                    break;
-                case "clones":
-                    text = "Clones"
-                    break;
-                case "monitor":
-                    text = "Monitor"
-                    break;
-                case "log_db":
-                    text = "Database log"
-                    break;
-                case "scatterplot":
-                    text = "Plot: ["+ conf.axisX +" | "+ conf.axisY +"] ["+ conf.locus +"]"
-                    break;
-                case "comments":
-                    text = "Comment"
-                    break;
-                default:
-                    break;
-            }
-
+            var text = this.getBlockName(conf)
 
             var div   = $('<div/>',   { class: "rs-block rs-selected",
                                         text: text}).appendTo(parent);
@@ -504,27 +421,68 @@ Report.prototype = {
 
         var handle2 = function(){
             var block = {blockType : this.value }
+            if (this.value == "sample_info") block.time = self.m.t
             self.addBlock(block);
             self.menu();
         }
 
-        var div_select = $('<div/>',   {}).appendTo(block_list);
+        var div_select = $('<div/>',   {text: "Add section: "}).appendTo(block_list);
 
         var select = $('<select/>', { name: 'rs-new-block-select',
                                       id:   'rs-new-block-select' }).appendTo(div_select).change(handle2);
 
-        $('<option/>',  { text: "add section"}).appendTo(select);
+        $('<option/>',  { text: "---", disabled:"disabled", selected: true}).appendTo(select);
 
-        var keys = ["file_info","reads_stats","sample_info", "monitor", "log_db", "clones"]
-        for (var j = 0; j < keys.length; j++){
-            var name = keys[j];
-            $('<option/>',  { text: name,
-                            value: name}).appendTo(select);
+        for (var block_type in this.available_blocks){
+            var name = this.getBlockName({blockType: block_type, time : self.m.t })
+
+            if (!this.available_blocks[block_type].inMenu) continue
+            
+            var already_exist = false
+            for (var b in this.settings.blocks)
+                if (this.settings.blocks[b].blockType == block_type)
+                    already_exist = true
+
+            if ( !this.available_blocks[block_type].unique || !already_exist )
+                $('<option/>',  {   text: name,
+                                    value: block_type}).appendTo(select);
         }
 
     },  
 
+    getBlockName: function(conf){
+        var text = ""
+
+        switch (typeof this.available_blocks[conf.blockType].name) {
+            case "string":
+                text = this.available_blocks[conf.blockType].name
+                break;
+            case "function":
+                try {
+                    text = this.available_blocks[conf.blockType].name(conf)
+                } catch (e) {
+                    console.error("failed to generate report blockname for "+conf.blockType+" block")
+                    text = conf.blockType
+                }
+                break;
+            default:
+                text = "unknow block"
+                break;
+            }
+
+        return text
+    },
+
     print: function(){ 
+
+        if (typeof this.settings.samples != 'object' ||
+                   this.settings.samples.length == 0 ) {
+            console.log({   msg: "Report: select at least one sample before generating report", 
+                            type: "flash", 
+                            priority: 2 });
+            return        
+        }
+
         this.container_map = new WeakMap();
 
         //reorder samples
@@ -537,7 +495,6 @@ Report.prototype = {
                 array_sample_ids.push(timeID)
             }
         }
-        //this.settings.samples = array;
         
         this.m.wait("Generating report...")
         var color; 
@@ -578,8 +535,6 @@ Report.prototype = {
                 });
             
             self.cloneList()
-                .contamination()
-
             self.restorestate()    
             self.m.resize()
             self.m.resume()
@@ -611,29 +566,6 @@ Report.prototype = {
         this.m.changeTimeOrder(this.save_state.samples_order)
         this.m.color.set(this.save_state.axis_color)
         return this;
-    },
-    
-    reportcontamination : function() {
-        this.m.wait("Generating report...")
-        
-        var self = this
-        this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
-    
-        var text = "contamination report: "
-        if (typeof this.m.sample_name != 'undefined')
-            text += this.m.sample_name
-            
-        this.w.onload = function(){
-            self.w.document.title = text
-            self.w.document.getElementById("header-title").innerHTML = text
-            
-            self.info()
-                .contamination()
-                .comments({})
-                
-            self.m.resize()
-            self.m.resume()
-        }
     },
     
     reportHTML : function(system_list, sample_list) {
@@ -668,7 +600,6 @@ Report.prototype = {
                 .readsStat3()
                 .addGraph()
                 .cloneList()
-                .contamination()
                 .sampleLog()
                 .comments({})
                 .restorestate()
@@ -706,7 +637,7 @@ Report.prototype = {
             self.w.document.getElementById("header-title").innerHTML = text
             
             self.info()
-                .sampleInfo(self.m.t)
+                .sampleInfo({'time':self.m.t})
                 .readsStat(self.m.t)
             for (var i=0; i<self.m.system_selected.length; i++){
                 var system = self.m.system_selected[i]
@@ -774,87 +705,56 @@ Report.prototype = {
         if (typeof block != "undefined"){
             this.container_map.set(container, block)
 
-            var float = $('<div/>', {
-                'class': 'container_floatBox'
+
+            var content = $('<div/>', {
+                'class': 'container_content',
             }).appendTo(container);
 
-            var closeButton = $('<button/>', {
-                'value': 'i',
-                'class': 'container_button icon-cancel',
-                'text' : 'remove',
-                'title': 'remove this section'
-            }).click(function(){self.removeContainer(container)})
-              .appendTo(float);
 
-            var upButton = $('<button/>', {
-                'value': 'i',
-                'class': 'container_button icon-up-open',
-                'text' : 'up',
+            var content_header = $('<div/>', {
+                'class': 'container_content',
+                "style": "display: flex;justify-content: space-between;"
+            }).appendTo(container);
+
+
+
+            $('<h3/>', {
+                'text': title
+            }).appendTo(content_header);
+
+            // Action icons, move, indert, delete
+            var icons = $('<div/>', {'class': 'container_content',"style": "display: flex;font-size:100%;"})
+
+
+            var upButton = $('<i/>', {
+                'class': 'container_button pointer icon-up-open',
                 'title': 'move this section up'
             }).click(function(){self.upContainer(container)})
-              .appendTo(float);
+              .appendTo(icons);
 
-            var downButton = $('<button/>', {
-                'value': 'i',
-                'class': 'container_button icon-down-open',
-                // 'text' : 'down',
+            var downButton = $('<i/>', {
+                'class': 'container_button pointer icon-down-open',
                 'title': 'move this section down'
             }).click(function(){self.downContainer(container)})
-              .appendTo(float);
+              .appendTo(icons);
 
-            var logButton = $('<button/>', {
-                'value': 'i',
-                'class': 'container_button icon-dot-3',
-                // 'text' : 'comment',
+            var logButton = $('<i/>', {
+                'class': 'container_button pointer icon-pencil-1',
                 'title': 'insert comments below this section'
             }).click(function(){self.insertComments(container) })
-            .appendTo(float);
-        }
+              .appendTo(icons);
 
-        var content = $('<div/>', {
-            'class': 'container_content'
-        }).appendTo(container);
+            var closeButton = $('<i/>', {
+                'class': 'container_button pointer icon-cancel',
+                'title': 'remove this section'
+            }).click(function(){self.removeContainer(container)})
+              .appendTo(icons);
 
-        $('<h3/>', {
-            'text': title
-        }).appendTo(content);
-        
-        return content
-    },
+            icons.appendTo(content_header);
+            content_header.appendTo(content);
 
-    contamination : function(){
-        var self = this;
-        if (typeof this.m.contamination == "undefined") return this;
-        
-        var contamination = this.container("Report run contamination")
-        var left = $('<div/>', {'class': 'flex'}).appendTo(contamination);
-        
-        var sample_names = [];
-        var reads = [];
-        var percent = [];
-        
-        for (var i=0; i<this.m.samples.order.length; i++) {
-            var time = this.m.samples.order[i];
-            sample_names.push(this.m.getStrTime(time, "short_name"));
-            reads.push(""+this.m.contamination[time].total_reads);
-            percent.push( ""+(self.m.contamination[time].total_reads/self.m.reads.segmented[time]*100).toFixed(3)+"%)");
+            return content
         }
-        
-        var content = [
-            {'label': "sample name" , 'value' : sample_names},
-            {'label': "reads" , 'value' : reads},
-            {'label': "(%)" , 'value' : percent}
-        ]
-        
-        var table = $('<table/>', {'class': 'info-table2 float-left'}).appendTo(left);
-        for ( var key in content ){
-            var v = content[key]
-            var row = $('<tr/>').appendTo(table);
-            $('<td/>', {'class': 'label', 'text': v.label}).appendTo(row);
-            for (var idx in v.value) $('<td/>', {'text': v.value[idx].replace("_L001__001", "")}).appendTo(row);
-        }
-        
-        return this
     },
 
     comments: function(block, div) {
@@ -868,7 +768,7 @@ Report.prototype = {
         $('<textarea/>', {'title': "These comments won't be saved.", 
                         'style': "width: 100%; display: block; overflow: hidden; resize: vertical;",
                         'rows': 5, 
-                        'text': block.text
+                        'placeholder': block.text != undefined ? block.text : ""
                         }).change(handle).appendTo(comments)
     
         return this
@@ -880,7 +780,7 @@ Report.prototype = {
         var parent_block = this.container_map.get(container)
 
         var comments_block = {  blockType: "comments",
-                            text : "hello"}
+                                text : "Write comments"}
 
         var index = this.settings.blocks.indexOf(parent_block) + 1
         if ( index > 0 ){
@@ -932,6 +832,12 @@ Report.prototype = {
             {'label': "Software used:" , 'value' : this.m.getSoftVersion()},
             {'label': "Analysis date:" , 'value' : "" }
         ]
+
+
+        if (typeof this.m.db_key != "undefined" &&
+            typeof this.m.db_key.sample_set_id != "undefined"){
+            content.push({'label': "Hosting server:"  , 'value' : window.location.hostname});
+            }
         
         var table = $('<table/>', {'class': 'info-table float-left'}).appendTo(left);
         for ( var key in content ){
@@ -948,7 +854,9 @@ Report.prototype = {
         return this
     },
     
-    sampleInfo : function(time) {
+    sampleInfo : function(block) {
+        var time = block.time
+
         var sinfo = this.container("Sample information ("+this.m.getStrTime(time, "short_name")+")")
         var left = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
         
@@ -1295,6 +1203,8 @@ Report.prototype = {
 
         $('<th/>',     {'text': '#'}).appendTo(header);
         $('<th/>',     {'text': 'Sample'}).appendTo(header);
+        $('<th/>',     {'text': 'Sampling'}).appendTo(header);
+        $('<th/>',     {'text': 'Delta'}).appendTo(header);
         for (var i = 0; i < locus_list.length; i++)
             $('<th/>', {'text': locus_list[i]}).appendTo(header);
 
@@ -1304,13 +1214,17 @@ Report.prototype = {
     readsStat_line: function(time, locus_list){
         var line = $('<tr/>', {});
 
-        $('<td/>',     {'text': this.m.getStrTime(time, "order")}).appendTo(line);
+        $('<td/>',     {'text': this.m.getStrTime(time, "order")+1}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "name")}).appendTo(line);
+        $('<td/>',     {'text': this.m.getStrTime(time, "sampling_date")}).appendTo(line);
+        $('<td/>',     {'text': this.m.getStrTime(time, "delta_date")}).appendTo(line);
         var segmented_reads = this.m.reads.segmented[time]
         for (var i = 0; i < locus_list.length; i++){
             var locus_reads = this.m.reads.germline[locus_list[i]][time];
             var percent = 100*(locus_reads/segmented_reads);
-            if (percent<0.1)
+            if (locus_reads == 0)
+                percent = "";
+            else if (percent<0.1)
                 percent = " (<0.1%)";
             else
                 percent = " ("+percent.toFixed(1)+"%)";
@@ -1463,13 +1377,14 @@ Report.prototype = {
         var color = this.getCloneExportColor(cloneID);
         var system = this.m.clone(cloneID).germline
         var clone = $('<div/>', {'class': 'clone'})
+        var clone_polyline = document.getElementById("polyline" + cloneID)
         
         var head = $('<span/>', {'class': 'clone_head'}).appendTo(clone);
         //clone svg path icon
-        if (time == -1){
+        if (time == -1 && clone_polyline != null){
             var icon = $('<span/>', {'class': 'icon'}).appendTo(head);
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            var polyline = document.getElementById("polyline" + cloneID).cloneNode(true)
+            var polyline = clone_polyline.cloneNode(true)
             polyline.setAttribute("style", "stroke-width:30px; stroke:"+color);
             svg.appendChild(polyline)
             svg.setAttribute("viewBox","0 0 791 300");
@@ -1489,11 +1404,22 @@ Report.prototype = {
             var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
             for (var i=0; i<this.m.samples.order.length; i++){
                 var t = this.m.samples.order[i]
-                $('<span/>', {'text': this.m.clone(cloneID).getStrSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
+                $('<span/>', {'text': "#"+ (this.m.getStrTime(t, "order")+1) + "; " + this.m.clone(cloneID).getStrSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
         }else{
             $('<span/>', {'text': this.m.clone(cloneID).getPrintableSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
         }
+
+        // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
+        var more_info = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
+        for (var field_pos = 0; field_pos < this.settings.clones_fields.length; field_pos++) {
+            var field   = this.settings.clones_fields[field_pos]
+            var content = this.available_blocks.clones.fields[field](this.m.clone(cloneID))
+            if (content){
+                $('<span/>', content ).appendTo(more_info);
+            }
+        }
+
         
         //colorized clone sequence
         var sequence = $('<div/>', {'class': 'sequence'}).appendTo(clone);
