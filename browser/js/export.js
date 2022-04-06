@@ -25,7 +25,9 @@ function Report(model, settings) {
                     {blockType: "reads_stats"},
                     {blockType: "monitor"},
                     {blockType: "clones"}
-                    ]
+                    ],
+            clones_fields: ["productivity", "hypermutation", "5length"]
+
         },
         "New Monitor Report" : {
             name : "New Monitor Report",
@@ -33,7 +35,8 @@ function Report(model, settings) {
             locus : undefined,
             selected_color: "unique",
             clones : [],
-            blocks: []
+            blocks: [],
+            clones_fields: ["productivity", "hypermutation", "5length"]
         },
         "New Sample Report" : {
             name : "New Sample Report",
@@ -41,7 +44,8 @@ function Report(model, settings) {
             locus : undefined,
             selected_color: "unique",
             clones : [],
-            blocks: []
+            blocks: [],
+            clones_fields: ["productivity", "hypermutation", "5length"]
         }
     }
 
@@ -53,7 +57,13 @@ function Report(model, settings) {
                                                         'unique': false,    'inMenu': true },
         "monitor":      {'name': "Monitor",             'unique': true,     'inMenu': true },
         "log_db":       {'name': "Database log",        'unique': true,     'inMenu': true },
-        "clones":       {'name': "Clones",              'unique': true,     'inMenu': true },
+        "clones":       {'name': "Clones",              'unique': true,     'inMenu': true,
+                          'fields': {
+                            'productivity':  function(c){ return {'text': "Producitivty: " + c.getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'} },
+                            'hypermutation': function(c){ return {'text': "Hypermutation: "+ c.getVIdentityIMGT(t)+'\u00a0', 'class': 'clone_value'} },
+                            '5length':       function(c){ return {'text': "V length: "     + c.getSegLength("5", (c.germline.includes("+") ? false : true))+'\u00a0', 'class': 'clone_value'}}
+                          },
+                        },
         "comments":     {'name': "Comments",            'unique': false,    'inMenu': false },
         "scatterplot":  {'name': function (c){ return "Plot: ["+ c.axisX +" | "+ c.axisY +"] ["+ c.locus +"]"},
                                                         'unique': false,    'inMenu': false },
@@ -1420,11 +1430,14 @@ Report.prototype = {
         }else{
             $('<span/>', {'text': this.m.clone(cloneID).getPrintableSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
         }
-        // prod and hypermutation
+
+        // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
         var more_info = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
-        $('<span/>', {'text': "Producitivty: " + this.m.clone(cloneID).getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'}).appendTo(more_info);
-        $('<span/>', {'text': "Hypermutation: "+ this.m.clone(cloneID).getVIdentityIMGT(t)+'\u00a0', 'class': 'clone_value'}).appendTo(more_info);
-        $('<span/>', {'text': "V length: "+ this.m.clone(cloneID).getSegLength("5", ("+" in this.m.clone(cloneID).germline ? false : true))+'\u00a0', 'class': 'clone_value'}).appendTo(more_info);
+        for (var field_pos = 0; field_pos < this.settings.clones_fields.length; field_pos++) {
+            var field = this.settings.clones_fields[field_pos]
+            $('<span/>', this.available_blocks.clones.fields[field](this.m.clone(cloneID)) ).appendTo(more_info);
+        }
+
         
         //colorized clone sequence
         var sequence = $('<div/>', {'class': 'sequence'}).appendTo(clone);
