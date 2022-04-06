@@ -59,8 +59,8 @@ function Report(model, settings) {
         "log_db":       {'name': "Database log",        'unique': true,     'inMenu': true },
         "clones":       {'name': "Clones",              'unique': true,     'inMenu': true,
                           'fields': {
-                            'productivity':  function(c){ return {'text': "Producitivty: " + c.getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'} },
-                            'hypermutation': function(c){ return {'text': "Hypermutation: "+ c.getVIdentityIMGT(t)+'\u00a0', 'class': 'clone_value'} },
+                            'productivity':  function(c){ return {'text': c.getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'} },
+                            'hypermutation': function(c){ return c.getVIdentityIMGT(t) == "unknown" ? undefined : {'text': "V-REGION Identity: "+ c.getVIdentityIMGT(t)+'\u00a0', 'class': 'clone_value'} },
                             '5length':       function(c){ return {'text': "V length: "     + c.getSegLength("5", (c.germline.includes("+") ? false : true))+'\u00a0', 'class': 'clone_value'}}
                           },
                         },
@@ -1413,8 +1413,11 @@ Report.prototype = {
         // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
         var more_info = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
         for (var field_pos = 0; field_pos < this.settings.clones_fields.length; field_pos++) {
-            var field = this.settings.clones_fields[field_pos]
-            $('<span/>', this.available_blocks.clones.fields[field](this.m.clone(cloneID)) ).appendTo(more_info);
+            var field   = this.settings.clones_fields[field_pos]
+            var content = this.available_blocks.clones.fields[field](this.m.clone(cloneID))
+            if (content){
+                $('<span/>', content ).appendTo(more_info);
+            }
         }
 
         
