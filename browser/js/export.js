@@ -22,7 +22,7 @@ function Report(model, settings) {
             clones : [],
             blocks: [
                     {blockType: "file_info"},
-                    {blockType: "sample_info"},
+                    {blockType: "sample_info", time: this.m.t},
                     {blockType: "reads_stats"},
                     {blockType: "monitor"},
                     {blockType: "scatterplot"},
@@ -41,7 +41,7 @@ function Report(model, settings) {
             clones : [],
             blocks: [
                 {blockType: "file_info"},
-                {blockType: "sample_info"},
+                {blockType: "sample_info", time: this.m.t},
                 {blockType: "reads_stats"},
                 {blockType: "scatterplot"},
                 {blockType: "clones"},
@@ -58,7 +58,7 @@ function Report(model, settings) {
             clones : [],
             blocks: [
                 {blockType: "file_info"},
-                {blockType: "sample_info"},
+                {blockType: "sample_info", time: this.m.t},
                 {blockType: "reads_stats"},
                 {blockType: "scatterplot"},
                 {blockType: "clones"},
@@ -1167,7 +1167,7 @@ Report.prototype = {
         this.m.sp.fastForward()
         
         var container_name  =   this.m.sp.toString() +"  ["+ 
-                                this.m.getStrTime(block.time, "order")+"]."+
+                                (this.m.getStrTime(block.time, "order")+1)+"]."+
                                 this.m.getStrTime(block.time, "short_name");
         var w_sp = this.container(container_name, block)
         w_sp.addClass("scatterplot");
