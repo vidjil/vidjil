@@ -10,7 +10,7 @@ function Report(model, settings) {
     this.colorMode = "colorBy";     // "colorBy" / "tag" / TODO...
 
     // name of setting sheet to use as default
-    this.default_setting = "New Report";
+    this.default_setting = "Full report";
 
     // hard coded default settings for report
     this.default_settings = {
