@@ -70,6 +70,7 @@ function Report(model, settings) {
     //build clones axes selector
     this.clone_axes_selector = document.createElement("div");
     this.clone_axes_selector.className = "clone_axes_selector";
+    this.clone_axes_selector.id = "clone_axes_selector";
 
     var close_selector = document.createElement("span");
     close_selector.className = "closeButton" ;
