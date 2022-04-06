@@ -1228,6 +1228,8 @@ Report.prototype = {
 
         $('<th/>',     {'text': '#'}).appendTo(header);
         $('<th/>',     {'text': 'Sample'}).appendTo(header);
+        $('<th/>',     {'text': 'Sampling'}).appendTo(header);
+        $('<th/>',     {'text': 'Delta'}).appendTo(header);
         for (var i = 0; i < locus_list.length; i++)
             $('<th/>', {'text': locus_list[i]}).appendTo(header);
 
@@ -1239,6 +1241,8 @@ Report.prototype = {
 
         $('<td/>',     {'text': this.m.getStrTime(time, "order")+1}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "name")}).appendTo(line);
+        $('<td/>',     {'text': this.m.getStrTime(time, "sampling_date")}).appendTo(line);
+        $('<td/>',     {'text': this.m.getStrTime(time, "delta_date")}).appendTo(line);
         var segmented_reads = this.m.reads.segmented[time]
         for (var i = 0; i < locus_list.length; i++){
             var locus_reads = this.m.reads.germline[locus_list[i]][time];
