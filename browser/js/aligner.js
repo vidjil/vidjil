@@ -600,6 +600,12 @@ Aligner.prototype = {
         var system;
         var max=0;
 
+        var sample_set_id = "(---)"
+        if (typeof this.m.db_key != "undefined" &&
+            typeof this.m.db_key.sample_set_id != "undefined")
+            sample_set_id ="("+this.m.db_key.sample_set_id+")"
+            
+
         for (var i = 0; i < list.length; i++) {
             if (this.isClone(list[i])) {
                 var c = this.m.clone(list[i]);
@@ -611,15 +617,16 @@ Aligner.prototype = {
                     }         
                 } // else, modified option, relunch request
 
-                if (typeof (c.getSequence()) !== 0){
-                    if (this.m.trimming_before_external && this.m.primerSetCurrent != undefined) {
-                        request += ">" + c.index + "#" + c.getName() + "\n" + c.trimmingFeature("primer5", "primer3", false) + "\n";
-                    } else {
-                        request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
-                    }
+                request += ">" + sample_set_id + " #" + c.index + " " + c.getName() + "\n"
+                if (typeof (c.getSequence()) == 0){
+                    request +=  c.id + "\n";
+                } else if ( this.m.trimming_before_external && 
+                            this.m.primerSetCurrent != undefined) {
+                    request += c.trimmingFeature("primer5", "primer3", false) + "\n";
                 } else {
-                    request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
+                    request += c.getSequence() + "\n";
                 }
+                
                 if (c.getSize()>max){
                     system = c.getLocus();
                     max=c.getSize();

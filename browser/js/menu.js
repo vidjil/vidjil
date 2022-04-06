@@ -119,23 +119,6 @@ function cancel() {
         .style.display = "none";
 }
 
-function showSelector(elem) {
-        $('.selector')
-            .stop()
-        $('.selector')
-            .css('display', 'none');
-        $('#' + elem)
-            .css('display', 'block')
-            .css('height', $('#' + elem).children(":first").height()
-            );
-}
-
-function hideSelector() {
-    $('.selector')
-        .stop()
-        .css('display', "none");
-}
-
 function showDisplayMenu() {
     $('#display-menu')
         .stop()

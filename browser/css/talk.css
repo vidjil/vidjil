@@ -25,7 +25,7 @@ body {
   display: flex;
   flex-flow: column;
   overflow-x: hidden;
-  background: #cccccc;
+  background: #dddddd;
 }
 body,
 svg {
@@ -194,7 +194,7 @@ line {
 .info_line {
   border-bottom: solid;
   border-bottom-width: 1px;
-  border-color: #cccccc;
+  border-color: #dddddd;
 }
 .locus_line {
   text-align: center;
@@ -332,7 +332,7 @@ line {
 }
 .graph_listAll:hover,
 .graph_listElem:hover {
-  background: #cccccc;
+  background: #dddddd;
   width: 100%;
   cursor: pointer;
   cursor: webkit-grab;
@@ -437,7 +437,7 @@ line {
 .list:hover,
 .tagElem:hover,
 .data:hover {
-  background: #cccccc;
+  background: #dddddd;
 }
 #list {
   flex: 1 1 auto;
@@ -461,7 +461,7 @@ line {
 #list_data {
   display: block;
   border-width: 4px;
-  border-color: #cccccc;
+  border-color: #dddddd;
   overflow-y: scroll;
 }
 .data_name {
@@ -549,7 +549,7 @@ line {
   background: #fdf6e3;
 }
 .infoBox-open {
-  background: #cccccc;
+  background: #dddddd;
 }
 .systemBox,
 .systemBoxMenu {
@@ -565,7 +565,7 @@ line {
   color: #fff;
   color: rgba(255, 255, 255, 0.7);
   font-size: 70%;
-  background: #cccccc;
+  background: #dddddd;
   float: left;
 }
 .systemBox {
@@ -654,11 +654,17 @@ line {
 }
 /*menu*/
 .menu {
-  padding: 3px;
+  padding: 7px;
   float: left;
-  margin: 5px;
   cursor: pointer;
   background: inherit;
+}
+.menu:hover {
+  cursor: pointer;
+  background-color: #dddddd;
+}
+.menu:hover .selector {
+  display: block;
 }
 .menu a {
   text-decoration: none;
@@ -673,7 +679,8 @@ line {
   padding: 5px;
   border-top: solid;
   border-width: 1px;
-  border-color: #cccccc;
+  border-color: #dddddd;
+  text-indent: 5px;
 }
 .submenu {
   width: 200px;
@@ -681,10 +688,10 @@ line {
 }
 .menu_box {
   margin: 0px;
-  padding: 5px;
+  padding: 5px 0px;
   border-top: solid;
   border-width: 1px;
-  border-color: #cccccc;
+  border-color: #dddddd;
 }
 .div-menu-selector {
   float: right;
@@ -749,7 +756,7 @@ line {
   background: #ffffff;
   cursor: pointer;
   font-size: 13px;
-  margin: 2px;
+  padding: 3px 8px;
   display: block;
   text-align: left;
 }
@@ -759,7 +766,7 @@ line {
 .button_right:hover,
 .buttonSelector:hover,
 .button2:hover {
-  background: #cccccc;
+  background: #dddddd;
   color: #002b36;
   cursor: pointer;
 }
@@ -889,7 +896,7 @@ div.button {
   margin: 3px;
   display: inline-block;
   cursor: pointer;
-  background: #cccccc;
+  background: #dddddd;
   width: auto;
   text-align: center;
   padding-left: 10px;
@@ -936,18 +943,17 @@ span.logo {
   display: none;
   position: fixed;
   margin-right: -5px;
-  padding: 3px;
   border: solid;
   background: inherit;
-  text-center: left;
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: calc(7px);
+  margin-top: calc(8px);
   z-index: 5;
   overflow: hidden;
   border-width: 1px;
   background-color: #ffffff;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 }
 #bot-placeholder {
   flex: 0 0 155px;
@@ -1018,7 +1024,7 @@ span.logo {
 .bot-bar,
 #bot-container,
 .tagSelector {
-  border-color: #cccccc;
+  border-color: #dddddd;
 }
 #info_window td {
   width: 300px;
@@ -1026,7 +1032,7 @@ span.logo {
   overflow-wrap: break-word;
   word-wrap: break-word;
   border-style: solid;
-  border-color: #cccccc;
+  border-color: #dddddd;
   border-width: 1px;
   text-align: center;
   vertical-align: middle;
@@ -1039,7 +1045,7 @@ span.logo {
   overflow-wrap: break-word;
   word-wrap: break-word;
   border-style: solid;
-  border-color: #cccccc;
+  border-color: #dddddd;
   border-width: 1px;
   vertical-align: middle;
 }
@@ -1047,17 +1053,17 @@ span.logo {
 #info_timepoint table,
 .info_overlaps {
   border-style: solid;
-  border-color: #cccccc;
+  border-color: #dddddd;
   border-collapse: collapse;
 }
 #info_window table .header,
 #info_timepoint table .header,
 .info_overlaps table .header {
   border-width: 2px;
-  background-color: #cccccc;
+  background-color: #dddddd;
 }
 .info_overlaps_line {
-  background-color: #cccccc;
+  background-color: #dddddd;
   font-weight: bold;
 }
 span.ok {
@@ -1141,6 +1147,7 @@ span.warningReads {
   max-height: 0px;
   opacity: 0;
   font-size: 0%;
+  overflow: hidden;
 }
 .sp_menu:hover {
   transition-property: all;
@@ -1185,7 +1192,7 @@ span.warningReads {
   border-color: #ffffff;
 }
 .sp_menu_icon:hover {
-  background: #cccccc;
+  background: #dddddd;
 }
 .sp_selected_mode {
   border-color: #657b83;
@@ -1273,7 +1280,7 @@ span.warningReads {
   cursor: grab;
 }
 #bot-separator {
-  background: #cccccc;
+  background: #dddddd;
   width: 100%;
   height: 6px;
   cursor: pointer;
@@ -1420,19 +1427,19 @@ h3 .uid {
 }
 .db_table th {
   border-bottom: solid;
-  border-color: #cccccc;
+  border-color: #dddddd;
   border-width: 1px;
 }
 .db_table tr {
   border-bottom: solid;
-  border-color: #cccccc;
+  border-color: #dddddd;
   border-width: 1px;
 }
 .pointer {
   cursor: pointer;
 }
 .db_table tr:hover {
-  background: #cccccc;
+  background: #dddddd;
 }
 .db_table td {
   border-width: 0px;
@@ -1503,7 +1510,7 @@ h3 .uid {
 .loading_seq {
   height: 15px;
   width: 100px;
-  background-image: linear-gradient(-45deg, #cccccc 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #cccccc 50%, #cccccc 75%, rgba(255, 154, 26, 0) 75%);
+  background-image: linear-gradient(-45deg, #dddddd 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #dddddd 50%, #dddddd 75%, rgba(255, 154, 26, 0) 75%);
   background-size: 50px 50px;
   -webkit-animation: move 2s linear infinite;
   -moz-animation: move 2s linear infinite;
@@ -1549,8 +1556,8 @@ h3 .uid {
   right: 0px;
   padding: 5px;
   margin: 5px;
-  background: #cccccc;
-  border-color: #cccccc;
+  background: #dddddd;
+  border-color: #dddddd;
   z-index: 15;
   border: solid;
   border-width: 1px;
@@ -1571,7 +1578,7 @@ h3 .uid {
   padding: 5px;
   margin: 5px;
   background: #ffffff;
-  border-color: #cccccc;
+  border-color: #dddddd;
   transition: background 1s linear;
   box-shadow: 1px 1px 2px;
 }
@@ -1613,7 +1620,7 @@ h3 .uid {
   padding: 5px;
   margin: 5px;
   background: #dff0d8;
-  border-color: #cccccc;
+  border-color: #dddddd;
 }
 #tip_img {
   margin: 20px auto;
@@ -1642,7 +1649,7 @@ h3 .uid {
   float: left;
 }
 select > option:hover {
-  background-color: #cccccc;
+  background-color: #dddddd;
 }
 .inactive {
   opacity: 0.5;
@@ -1661,7 +1668,7 @@ select > option:hover {
   border-width: 1px;
   min-height: 20px;
   background: #ffffff;
-  border-color: #cccccc;
+  border-color: #dddddd;
   max-height: 100px;
   display: none;
   width: 300px;
@@ -1685,8 +1692,8 @@ select > option:hover {
 input:focus,
 textarea:focus,
 #add_clone_menu > #addclone_input:focus {
-  border-color: #cccccc;
-  box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #cccccc;
+  border-color: #dddddd;
+  box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #dddddd;
   outline: 0;
   outline: thin dotted \9;
 }
@@ -1789,7 +1796,7 @@ table.log textarea {
   background-color: #f2dede;
 }
 .info_message {
-  border: 1px solid #cccccc;
+  border: 1px solid #dddddd;
   margin: 4px;
   background-color: #dff0d8;
 }
@@ -1843,7 +1850,7 @@ table.log textarea {
   color: #657b83;
   display: block;
   padding: 5px;
-  border: 1px solid #cccccc;
+  border: 1px solid #dddddd;
   overflow-wrap: break-word;
   overflow-y: hidden;
   min-height: 32px;
@@ -1863,7 +1870,6 @@ textarea#edit_value {
   min-height: 45px;
 }
 #top_info {
-  display: inline-flex;
   font-weight: bold;
   color: black;
 }
@@ -2228,7 +2234,7 @@ form .form_label {
   cursor: auto;
 }
 .list_lock_off {
-  color: #cccccc;
+  color: #dddddd;
 }
 .list_lock_on {
   color: #657b83;
@@ -2357,7 +2363,7 @@ div.tooltip {
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
-  border-color: #cccccc;
+  border-color: #dddddd;
   border: solid;
   border-width: 1px;
 }
@@ -2380,7 +2386,7 @@ div.tooltip {
   border-color: #002b36;
 }
 .list_focus {
-  background: #cccccc !important;
+  background: #dddddd !important;
 }
 .sequence-line {
   white-space: nowrap;

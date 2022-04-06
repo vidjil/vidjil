@@ -120,13 +120,13 @@
     </div>
 
         <!-- TOP-CONTAINER -->
-        <div id="top-container" onmouseout="hideSelector()">
+        <div id="top-container">
             <div id="menu-container">
                 <div class="menu" id="top_info">
                     <!--Div is filled programmatically -->
                 </div>
-                <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none">samples
-                    <div id="dbSelector" class="selector"><div>
+                <div class="menu" id="db_menu" style="display : none">samples
+                    <div class="selector"><div>
                         <div class="menu_box">
                             <a class="buttonSelector" onclick="javascript:db.call('sample_set/all', {'type': 'patient', 'page': 0})">open list</a>
                         </div>
@@ -138,7 +138,7 @@
                 </div>
             </div>
 
-            <div class="menu" id="static_file_menu" onmouseover="showSelector('fileSelector');" style="display : none">
+            <div class="menu" id="static_file_menu" style="display : none">
                 file
                 <div id="fileSelector" class="selector">
                     <div>
@@ -150,8 +150,8 @@
                 </div>
             </div>
 
-            <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
-                <div id="demoSelector" class="selector">
+            <div class="menu" id="demo_file_menu">import/export
+                <div class="selector">
                     <div>
                         <div class="menu_box">
                             <a id="import_data_anchor" class="buttonSelector" onclick="javascript:loadData()">import
@@ -191,7 +191,7 @@
                 </div>
             </div>
 
-            <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');"> cluster
+            <div class="menu" id="cluster_menu"> cluster
                 <div id="clusterSelector" class="selector">
                     <div>
                         <div class="menu_box">
@@ -215,15 +215,14 @@
                 </div>
             </div>
 
-                <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
+                <div class="menu" id="color_menu" > color by
                     <div class="div-menu-selector"><select id="color_menu_select" class="menu-selector">
 
                     </select></div>
             </div>
 
-            <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();"
-                onmouseover="showSelector('filterSelector');"> filter
-                <div id="filterSelector" class="selector">
+            <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();"> filter
+                <div class="selector">
                     <div>
                         <div class="menu_box">
                             <span id="top_label"></span></br>
@@ -246,9 +245,8 @@
                 </div>
             </div>
 
-            <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();"
-                onmouseover=" showSelector('settingsSelector');"> settings
-                <div id="settingsSelector" class="selector">
+            <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();"> settings
+                <div class="selector">
                     <div>
 
                         <div class="menu_box">
@@ -392,9 +390,9 @@
             </div>
 
 
-            <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none">
+            <div id="debug_menu" class="menu" style="display : none">
                 development
-                <div id="adminSelector" class="selector">
+                <div class="selector">
                     <div>
                         <input type="checkbox"
                             onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display
@@ -426,8 +424,7 @@
                 </div>
             </div>
 
-            <div id="upload_summary" class="menu" onmouseover="showSelector('upload_summary_selector');"
-                onmouseout="hideSelector();">
+            <div id="upload_summary" class="menu">
                 <span id="upload_summary_label">upload</span>
                 <div id="upload_summary_selector" class="selector">
                     <div>
@@ -436,8 +433,8 @@
                 </div>
             </div>
 
-            <div id="palette_menu" class="menu" onmouseover="showSelector('paletteSelector');"> palette
-                <div id="paletteSelector" class="selector">
+            <div id="palette_menu" class="menu"> palette
+                <div class="selector">
                     <div>
                         <a id="palette_light" class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
                         <a id="palette_light_presentation" class="buttonSelector" onclick="changeStyle('display')">light
@@ -446,8 +443,8 @@
                     </div>
                 </div>
             </div>
-            <div id="help_menu" class="menu" onmouseover="showSelector('helpSelector');"> help
-                <div id="helpSelector" class="selector">
+            <div id="help_menu" class="menu"> help
+                <div class="selector">
                     <div>
                         <a id="help_support" class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
                         <a id="help_manual" class="buttonSelector" href="http://www.vidjil.org/doc/user"
@@ -477,7 +474,7 @@
         <div id="vmiSelector"></div>
         <div id='vidjil-panels'>
             <!-- MID-CONTAINER -->
-            <div id="mid-container" onmouseover="hideSelector()">
+            <div id="mid-container">
 
                 <!-- LEFT-CONTAINER -->
                 <div id="left-container">

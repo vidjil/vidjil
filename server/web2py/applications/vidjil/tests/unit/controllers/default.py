@@ -76,6 +76,7 @@ class DefaultController(unittest.TestCase):
         resp = get_data()
         self.assertNotEqual(resp.find('segmented":[742377'), -1, "get_data doesn't return a valid json " + resp)
         self.assertNotEqual(resp.find('(config_test_popipo)'), -1, "get_data doesn't return a valid json")
+        self.assertNotEqual(resp.find('this is a fake log msg'), -1, "get_data file doesn't contain expected log data")
         
         
     def testCustomDataNoFile(self):

@@ -511,9 +511,6 @@ Builder.prototype = {
             menu_box.appendChild(save_analysis);
         }
 
-        $(parent).on('mouseover', function() {
-            showSelector('patientSelector');
-        })
         document.title = this.m.getPrintableAnalysisName()
     },
 
