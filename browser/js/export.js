@@ -1419,6 +1419,11 @@ Report.prototype = {
         }else{
             $('<span/>', {'text': this.m.clone(cloneID).getPrintableSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
         }
+        // prod and hypermutation
+        var more_info = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
+        $('<span/>', {'text': "Producitivty: " + this.m.clone(cloneID).getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'}).appendTo(more_info);
+        $('<span/>', {'text': "Hypermutation: "+ this.m.clone(cloneID).getVIdentityIMGT(t)+'\u00a0', 'class': 'clone_value'}).appendTo(more_info);
+        $('<span/>', {'text': "V length: "+ this.m.clone(cloneID).getSegLength("5", ("+" in this.m.clone(cloneID).germline ? false : true))+'\u00a0', 'class': 'clone_value'}).appendTo(more_info);
         
         //colorized clone sequence
         var sequence = $('<div/>', {'class': 'sequence'}).appendTo(clone);
