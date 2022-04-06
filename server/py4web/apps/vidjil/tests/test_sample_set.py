@@ -5,7 +5,7 @@ from py4web.core import Session, DAL, request, response, HTTP, Field, bottle, _b
 from py4web.utils.auth import Auth, AuthAPI
 from ..VidjilAuth import VidjilAuth
 from ..models import *
-from ..controllers.patient import *
+from ..controllers.sampleset_patient import *
 
 
 class Sample_setController(unittest.TestCase):
