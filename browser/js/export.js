@@ -14,37 +14,57 @@ function Report(model, settings) {
 
     // hard coded default settings for report
     this.default_settings = {
-        "New Report" : {
-            name : "New Report",
+        "Full report" : {
+            name : "Full report",
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
             clones : [],
             blocks: [
                     {blockType: "file_info"},
+                    {blockType: "sample_info"},
                     {blockType: "reads_stats"},
                     {blockType: "monitor"},
-                    {blockType: "clones"}
+                    {blockType: "scatterplot"},
+                    {blockType: "clones"},
+                    {blockType: "log_db"},
+                    {blockType: "comments"},
                     ],
             clones_fields: ["productivity", "hypermutation", "5length"]
 
         },
-        "New Monitor Report" : {
-            name : "New Monitor Report",
+        "ALL -- Diagnosis" : {
+            name : "ALL -- Diagnosis",
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
             clones : [],
-            blocks: [],
-            clones_fields: ["productivity", "hypermutation", "5length"]
+            blocks: [
+                {blockType: "file_info"},
+                {blockType: "sample_info"},
+                {blockType: "reads_stats"},
+                {blockType: "scatterplot"},
+                {blockType: "clones"},
+                {blockType: "log_db"},
+                {blockType: "comments"},
+                ],
+            clones_fields: []
         },
-        "New Sample Report" : {
-            name : "New Sample Report",
+        "CLL -- Diagnosis" : {
+            name : "CLL -- Diagnosis",
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
             clones : [],
-            blocks: [],
+            blocks: [
+                {blockType: "file_info"},
+                {blockType: "sample_info"},
+                {blockType: "reads_stats"},
+                {blockType: "scatterplot"},
+                {blockType: "clones"},
+                {blockType: "log_db"},
+                {blockType: "comments"},
+            ],
             clones_fields: ["productivity", "hypermutation", "5length"]
         }
     }
