@@ -803,6 +803,22 @@ Clone.prototype = {
         }
         return max;
     },
+
+    /**
+     * return time in which a clone reach it's biggest size in the current samples
+     * */
+    getMaxSizeTimepoint: function () {
+        var max=0;
+        var maxTime=0;
+        for (var i in this.m.samples.order){
+            var tmp=this.getSize(this.m.samples.order[i]);
+            if (tmp>max){ 
+                max=tmp;
+                maxTime=this.m.samples.order[i];
+            }
+        }
+        return maxTime;
+    }, 
     
 
     /**
