@@ -515,8 +515,8 @@ Clone.prototype = {
      * (difference between the stop and the start).
      * If no start and stop are given, return 0
      */
-    getSegLength: function(field_name) {
-        positions = this.getSegStartStop(field_name)
+    getSegLength: function(field_name, assume) {
+        positions = this.getSegStartStop(field_name, assume)
         if (positions !== null) {
             return (positions.stop+1) - positions.start
         } else {
