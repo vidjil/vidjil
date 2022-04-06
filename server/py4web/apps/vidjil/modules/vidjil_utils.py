@@ -110,7 +110,7 @@ def anon_names(auth, sample_set_id, first_name, last_name, can_view=None):
     if can_view or (can_view == None and auth.can_view_info('sample_set', sample_set_id)):
         name = ln + " " + fn
     else:
-        name = str(safe_decoding(ln)[:3], 'utf-8')
+        name = ln[:3]
 
     return name
 
