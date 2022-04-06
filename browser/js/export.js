@@ -1187,7 +1187,7 @@ Report.prototype = {
     readsStat3: function(block, time_list, locus_list) {
         if (typeof time_list == "undefined")  time_list  = this.m.samples.order;
         if (typeof locus_list == "undefined") locus_list = this.m.system_selected;
-        var container = this.container('Reads distribution', block)
+        var container = this.container('Samples, loci, reads', block)
                 
         var reads_stats = $('<table/>', {'class': "report_table"}).appendTo(container);
 
@@ -1203,8 +1203,8 @@ Report.prototype = {
 
         $('<th/>',     {'text': '#'}).appendTo(header);
         $('<th/>',     {'text': 'Sample'}).appendTo(header);
-        $('<th/>',     {'text': 'Sampling'}).appendTo(header);
-        $('<th/>',     {'text': 'Delta'}).appendTo(header);
+        $('<th/>',     {'text': 'Sampling date'}).appendTo(header);
+        $('<th/>',     {'text': '+'}).appendTo(header);
         for (var i = 0; i < locus_list.length; i++)
             $('<th/>', {'text': locus_list[i]}).appendTo(header);
 
@@ -1214,7 +1214,7 @@ Report.prototype = {
     readsStat_line: function(time, locus_list){
         var line = $('<tr/>', {});
 
-        $('<td/>',     {'text': this.m.getStrTime(time, "order")+1}).appendTo(line);
+        $('<td/>',     {'text': '#' + (this.m.getStrTime(time, "order")+1)}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "name")}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "sampling_date")}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "delta_date")}).appendTo(line);
@@ -1229,7 +1229,7 @@ Report.prototype = {
             else
                 percent = " ("+percent.toFixed(1)+"%)";
 
-            $('<td/>', {'text': locus_reads + percent}).appendTo(line);
+            $('<td/>', {'text': this.m.toStringThousands(locus_reads) + percent}).appendTo(line);
         }
 
         return line;
@@ -1237,7 +1237,7 @@ Report.prototype = {
 
     readsStat: function(time) {
         if (typeof time == "undefined") time = -1
-        var container = this.container('Reads distribution')
+        var container = this.container('Reads')
                 
         var reads_stats = $('<div/>', {'class': 'flex'}).appendTo(container);
         
@@ -1404,7 +1404,7 @@ Report.prototype = {
             var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
             for (var i=0; i<this.m.samples.order.length; i++){
                 var t = this.m.samples.order[i]
-                $('<span/>', {'text': "#"+ (this.m.getStrTime(t, "order")+1) + "; " + this.m.clone(cloneID).getStrSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
+                $('<span/>', {'text': "#"+ (this.m.getStrTime(t, "order")+1) + ": " + this.m.clone(cloneID).getStrSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
         }else{
             $('<span/>', {'text': this.m.clone(cloneID).getPrintableSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
