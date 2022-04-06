@@ -1429,7 +1429,7 @@ Report.prototype = {
             var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
             for (var i=0; i<this.m.samples.order.length; i++){
                 var t = this.m.samples.order[i]
-                $('<span/>', {'text': this.m.clone(cloneID).getStrSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
+                $('<span/>', {'text': "#"+ (this.m.getStrTime(t, "order")+1) + "; " + this.m.clone(cloneID).getStrSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
         }else{
             $('<span/>', {'text': this.m.clone(cloneID).getPrintableSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
