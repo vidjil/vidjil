@@ -753,8 +753,8 @@ Report.prototype = {
             icons.appendTo(content_header);
             content_header.appendTo(content);
 
+            return content
         }
-        return content
     },
 
     comments: function(block, div) {
