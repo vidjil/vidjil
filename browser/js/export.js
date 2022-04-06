@@ -451,13 +451,13 @@ Report.prototype = {
             self.menu();
         }
 
-        var div_select = $('<div/>',   {}).appendTo(block_list);
+        var div_select = $('<div/>',   {text: "Add section: "}).appendTo(block_list);
 
         var select = $('<select/>', { name: 'rs-new-block-select',
                                       id:   'rs-new-block-select' }).appendTo(div_select).change(handle2);
 
-        $('<option/>',  { text: "--- add section ---"}).appendTo(select);
-        
+        $('<option/>',  { text: "---", disabled:"disabled", selected: true}).appendTo(select);
+
         for (var block_type in this.available_blocks){
             var name = this.getBlockName({blockType: block_type, time : self.m.t })
 
