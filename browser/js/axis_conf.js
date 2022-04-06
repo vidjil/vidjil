@@ -80,7 +80,7 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "J/3' length",
                     "[cloneDB] Hits (sample)",
                     "[cloneDB] Hits (set)",
-                    "main sample"
+                    "Main sample"
                 ]
 
 // list of Axis available for aligner
@@ -111,7 +111,7 @@ AXIS_COLOR = [
                     "[IMGT] Productivity",
                     "[IMGT] VIdentity",
                     "Number of samples",
-                    "main sample"
+                    "Main sample"
                 ]
 
 
@@ -462,8 +462,8 @@ AXIS_DEFAULT = {
         min_step:   0.1,
         max_step:   0.1
     },
-    "main sample":{
-        doc:        "sample # in which the clone reach it's maximum size",
+    "Main sample":{
+        doc:        "sample in which the clone reach its maximum size",
         fct:        function(c){ return c.getMaxSizeTimepoint() },
         //color:      function(t,c){ return colorGeneratorIndex(c.getMaxSizeTimepoint()) },
         labels:     function(){ 
