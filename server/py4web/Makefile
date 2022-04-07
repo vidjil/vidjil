@@ -6,7 +6,7 @@ install_py4web:
 	pip3 install pymysql
 	pip3 install pytest
 	pip3 install pytest-cov
-	pip 3install "celery[redis]"
+	pip3 install "celery[redis]"
 
 init:
 	py4web setup apps 

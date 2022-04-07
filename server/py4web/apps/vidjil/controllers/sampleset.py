@@ -112,7 +112,7 @@ def patient(id=None):
                 orderby=orderby,
                 show_id=True,
                 create='/vidjil/patient/'+str(id)+'/add_file',
-                editable='/vidjil/sequence_file/update',
+                editable=False, #'/vidjil/sequence_file/update',
                 deletable='/vidjil/patient/'+str(id)+'/remove_file',
                 T=T,
                 **grid_param)
