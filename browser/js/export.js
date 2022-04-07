@@ -1382,12 +1382,15 @@ Report.prototype = {
     cloneList : function(time) {
         if (typeof time == "undefined") time = -1
         var container = this.container('Clonotypes')
+        graph.resize(791,300)
+        graph.draw(0)
         
         for (var i=0; i<this.list.length; i++){
             var cloneID = this.list[i]
             if (this.m.clone(cloneID).hasSizeConstant())
                 this.clone(cloneID, time).appendTo(this.w.document.body);
         }
+        graph.resize()
         
         return this
     },
