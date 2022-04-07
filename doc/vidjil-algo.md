@@ -56,6 +56,21 @@ Vidjil-algo is open-source, released under GNU GPLv3+ license.
 
 # Requirements and installation
 
+## Performance
+
+To run with the default options on a 1GB .fastq file,
+vidjil-algo typically uses approximately 1.2GB of RAM
+and will take approx. 5+ minutes on a standard core at a few GHz.
+The actual performance mainly depends on the size of the input file,
+the number of processed germlines, and on some parameters.
+
+Anyway, to process occasional requests from a single user with a few samples,
+a laptop or a desktop computer with any standard multi-core processor
+and 2GB RAM will be enough.
+Requirements for running a server handling more regular requests
+are detailed in [server.md](server.md#requirements).
+
+
 ## Supported platforms
 
 Vidjil-algo is systematically tested with the following compilers :
