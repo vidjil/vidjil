@@ -296,7 +296,7 @@ The sequence panel shows, for the selected clonotypes:
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/panel_sequence.png"/>
-      <p style="text-align:center">For each clonotype, name and sequences are shown. You can align sequences and see differences between them. Here the two first sequences seem identical on the region displayed though they actually differ. The third and fifth sequences differ by a deletion and an insertion in the junction, within a stretch of cytosine. From here you can remove more divergent clonotypes (using the cross on the left side) and cluster others with the corresponding button.</p>
+      <p style="text-align:center">For each clonotype, name and sequences are shown. You can align sequences and see differences between them. Here the two first sequences seem identical on the region displayed though they actually differ. The third and fifth sequences differ by a deletion and an insertion in the junction, within a stretch of cytosine. From here you can remove more divergent clonotypes (using the cross on the left side) and cluster others with the corresponding button. You can also choose to show some available features on the seuqence as primers, visible here under sequence on 3' extremities.</p>
     </p>
   </figure>
 
@@ -375,6 +375,7 @@ The sequence feature `☰` menu usually contains at least the following genes/re
 
   - V/D/J genes
   - CDR3 position
+  - Primers as computed after selection of a primer set
 
 ### IMGT Sequence Features
 
@@ -540,7 +541,7 @@ There are also processes for other species and for other RepSeq algorithms, such
 The server mainteners can add new process configurations tailored to specific needs, contact us if you have other needs.
 
 The « reload » button (bottom left) updates the view. It is useful to see if the status of the task changed.
-It should do `QUEUED` → `ASSIGNED` → `RUNNING` → `COMPLETED`.
+It should do `PREPROCESSING (optional)` → `QUEUED` → `ASSIGNED` → `RUNNING` → `COMPLETED`.
 It is possible to launch several processes at the same time (some will wait in the `QUEUED` / `ASSIGNED` states), and also to launch processes while you
 are uploading data. Finally, you can safely close the window with the sample database (and even your web browser) when some process are queued/launched.
 The only thing you should not do is to close completely your web browser (or the webpage) while sequences are uploading.
@@ -926,6 +927,35 @@ detection is.
 
 Whenever the e-value is too large, a warning sign will be shown next to the
 clonotype, instead of the info icon.
+
+# How to work with primers?
+
+## Displaying primers
+
+Library preparation may involve some [usual sets of primers](locus.md).
+To display the primers,
+select such a primer set with ``settings -> primer set``.
+This aligns the clonotype sequences against the selected primer set.
+It works even with approximate matches and/or degenerate primers.
+Note that retrieving the positions may take a few seconds to about one minute when many clonotypes and/or samples are opened.
+
+Primers are then displayed
+- on the clone information panel (line `Primer 5` or `Primer 3`)
+- on the sequence aligner (`☰ Sequences features` > `Primers`)
+
+Moreover, when one or both primers are not found in the clonotype sequence,
+their position will nevertheless be estimed "outside" of the read, based on the germline sequence
+(but this is not displayed).
+This will allow to estimate an `interpolated length` for such clonotypes,
+that is plot in a Genescan-like view (preset `Primer gap`).
+
+## Removing primers before external analysis
+
+As they are (mostly) conserved across reads, primers can bias some analyses such as the hypermutation rate.
+They can be removed before sending the sequence to external tools (IMGT/V-Quest, IgBlast, Blast, or AssignSubset).
+You should have previously select a primer set,
+open the settings menu, select `trim primers for external tools`.
+The sequences sent for external analysis will then be trimmed at primers positions, even if only one primer was found.
 
 
 # How can I have further support or help on a specific sample or on some sequences?
