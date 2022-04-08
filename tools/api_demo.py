@@ -4,19 +4,22 @@ from collections import defaultdict
 
 TAGS = []
 TAGS_UNDEFINED = []
-url  = "https://localhost/vidjil/"
-certificat="localhost-chain.pem"
 
+### Public database server behind app.vidjil.org
+SERVER = "https://db.vidjil.org/vidjil"
+CERTIFICATE = ""
+
+### Local server (see doc/server.md)
+# SERVER = "https://localhost/vidjil/"
+# CERTIFICATE = "localhost-chain.pem"
 
 
 if  __name__ =='__main__':
 
     """A set of example to use vidjil API """
 
-
-    # Define a vidjil object with at least an url and ssl certificat file
-    vidjil = Vidjil(url, ssl=certificat)
-    # Login to the server by giving a user email and password
+    ### Login to a Vidjil server
+    vidjil = Vidjil(SERVER, ssl=CERTIFICATE)
     vidjil.login("demo@vidjil.org", "demo")
 
     ### Define a set of id and config
