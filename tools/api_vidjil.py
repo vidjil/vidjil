@@ -283,15 +283,15 @@ class Vidjil:
         return self.request(new_url, "get")
 
     def launchAnalysisBunchesSet(self, list_sets:list, config_id:int, force:bool=False, retry:bool=False, verbose:bool=False):
-        """This function allow to take a list of sets and to launch a specified configuration on each sequence file inside them.
+        """Launch an analysis on each sequence file inside the given list of sets.
         Sequence file with a previous result for this configuration will be bypass.
 
         Args:
-            list_sets (list): List of sets that will be analysed (int format)
-            config_id (int): Configuration id to launch analysis.
-            force (bool, optional): Allow to make a new launch of analysis if the current status is FAILED. Defaults to False.
-            retry (bool, optional): Allow to launch an analysis with no consideration of current result statut. Defaults to False.
-            verbose (bool, optional): Allow to print some informations on each sequence file status and some stats on sets. Defaults to False.
+            list_sets (int list): List of sets to analyze
+            config_id (int): Configuration id of the analysis
+            force (bool, optional): Relaunch the analysis when the current status is FAILED. Defaults to False.
+            retry (bool, optional): Launch an analysis with no consideration of current result status (XXXXX). Defaults to False.
+            verbose (bool, optional)
 
         Returns:
             dict: Return a dict of format {set_id:{sample_id:status}}
@@ -315,14 +315,14 @@ class Vidjil:
 
 
     def launchAnalysisOnSet(self, sample_set_id:int, config_id:int, force:bool=False, retry:bool=False, verbose:bool=False):
-        """This function allow to take a set and to launch a specified configuration on each sequence file inside it.
+        """Launch an analysis on each sample associated to the given sample set.
 
         Args:
-            sample_set_id (int): Sample set id to use.
-            config_id (int): Configuration id to launch analysis.
-            force (bool, optional): Allow to make a new launch of analysis if the current status is FAILED. Defaults to False.
-            retry (bool, optional): Allow to launch an analysis with no consideration of current result statut. Defaults to False.
-            verbose (bool, optional): Allow to print some informations on each sequence file status and some stats on sets. Defaults to False.
+            sample_set_id (int): Sample set to analyze
+            config_id (int): Configuration id of the analysis
+            force (bool, optional): Relaunch analysis if the current status is FAILED. Defaults to False.
+            retry (bool, optional): Launch an analysis with no consideration of current result statut. (XXX) Defaults to False.
+            verbose (bool, optional)
 
         Returns:
             dict: Return a dict of format {set_id:{sample_id:status}}
@@ -359,7 +359,7 @@ class Vidjil:
         Args:
             sample_id (int): Sample set id from where analysis should be launched
             sequence_file_id (int): Sequence file id to analyse
-            config_id (int): Id of the configuration to use for analysis
+            config_id (int): Configuration id of the analysis
 
         Returns:
             dict: ???
