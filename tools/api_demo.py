@@ -40,9 +40,9 @@ if  __name__ =='__main__':
     ### From API, you could create patient, run or generic set.
     # Some parameters are mandatory
     # WARNING: These sets will be created on the server. Don't spam your server
-    vidjil.createPatient("first_name", "last_name", info="some informations and #tags")
-    vidjil.createRun("run_name", run_date="2022-01-01")
-    vidjil.createSet("set_api", info="Set to group sample with XXX protocol")
+    vidjil.createPatient("Jane", "Austen", info="Patient from Winchester hospital, #LAL-B")
+    vidjil.createRun("Run 2022-072", run_date="2022-04-01")
+    vidjil.createSet("Set for API tests", info="Libraries with EuroClonality-NGS 2019 primers")
 
 
     ### Get a list of all samples sets, filter by set type (patient, run or generic), or a given filter value (see example under)
