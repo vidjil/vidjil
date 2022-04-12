@@ -520,7 +520,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         for (var key in this.data){
             if (this.data[key].length == this.samples.number){
                 this.data_info[key] = {
-                    "color" : this.tag[i].color,
+                    "color" : colorGeneratorIndex(i),
                     "isActive" : false
                 }
                 i++
