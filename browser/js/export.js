@@ -1381,6 +1381,9 @@ Report.prototype = {
     
     cloneList : function(time) {
         if (typeof time == "undefined") time = -1
+
+        if (this.list.length == 0) return this
+
         var container = this.container('Clonotypes')
         graph.resize(791,300)
         graph.draw(0)
