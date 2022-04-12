@@ -373,7 +373,7 @@ Model.prototype = {
             "standard_2":           {"color" : "#6c71c4", "display" : true},
             "custom_1":             {"color" : "#2aa198", "display" : true},
             "custom_2":             {"color" : "#d33682", "display" : true},
-            "custom_2":             {"color" : "#859900", "display" : true},
+            "custom_3":             {"color" : "#859900", "display" : true},
             "none":                 {"color" : "",        "display" : true},
             "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true}
         }
