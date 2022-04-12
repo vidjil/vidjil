@@ -363,28 +363,28 @@ Builder.prototype = {
     },
 
     initTag: function (){
-        for (var i =0; i<this.m.tag.length; i++){
-            $(".tagColor"+i).prop("title", this.m.tag[i].name);
-            $(".tagName"+i).html(this.m.tag[i].name);
+        for (var k in this.m.tag){
+            $(".tagColor_"+k).prop("title", k);
+            $(".tagName_"+k).html(k);
         }
         this.updateTagBox();
     },
     
   
     updateTagBox: function(){
-        for (var i =0; i<this.m.tag.length; i++){
-            if (this.m.tag[i].display){
-                $(".tagColor"+i).removeClass("inactiveTag")
+        for (var k in this.m.tag){
+            if (this.m.tag[k].display){
+                $(".tagColor_"+k).removeClass("inactiveTag")
             }else{
-                $(".tagColor"+i).addClass("inactiveTag")
+                $(".tagColor_"+k).addClass("inactiveTag")
             }
         }
     },
     
     nextDisplayTag: function(elem){
-        var id_tag = elem.id.charAt( elem.id.length-1 ) 
-        var s = this.m.tag[id_tag].display;
-        this.m.tag[id_tag].display = !s;
+        var tag_name = elem.id.substr(9) 
+        var s = this.m.tag[tag_name].display;
+        this.m.tag[tag_name].display = !s;
         this.m.update();
     },
 

@@ -1313,7 +1313,9 @@ Clone.prototype = {
     }, 
     
     getTagName: function () {
-        return this.m.tag[this.getTag()].name
+        if (typeof this.m.tag[this.getTag()].name != "undefined")
+            return this.m.tag[this.getTag()].name
+        return this.getTag()
     }, 
     
     getProductivityName: function () {
@@ -1918,7 +1920,7 @@ Clone.prototype = {
         this.active = true
         this.hidden = false
 
-        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller clonotypes") != -1)
+        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller_clonotypes") != -1)
             this.active = false
     },
 
