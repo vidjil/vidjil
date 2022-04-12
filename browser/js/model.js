@@ -352,21 +352,34 @@ Model.prototype = {
             "= SEG, but no window",
         ];
 
-        this.tag = [
-            {"color" : "#dc322f", "name" : "clonotype 1", "display" : true},
-            {"color" : "#cb4b16", "name" : "clonotype 2", "display" : true},
-            {"color" : "#b58900", "name" : "clonotype 3", "display" : true},
-            {"color" : "#268bd2", "name" : "standard", "display" : true},
-            {"color" : "#6c71c4", "name" : "standard (noise)", "display" : true},
-            {"color" : "#2aa198", "name" : "custom 1", "display" : true},
-            {"color" : "#d33682", "name" : "custom 2", "display" : true},
-            {"color" : "#859900", "name" : "custom 3", "display" : true},
-            {"color" : "",        "name" : "-/-", "display" : true},
-            {"color" : "#bdbdbd", "name" : "smaller clonotypes", "display" : true}
-        ]
+        this.old_tag = {
+            0 : "clonotype_1",
+            1 : "clonotype_2",
+            2 : "clonotype_3",
+            3 : "standard_1",
+            4 : "standard_2",
+            5 : "custom_1",
+            6 : "custom_2",
+            7 : "custom_3",
+            8 : "none",
+            9 : "smaller_clonotypes"
+        }
 
-        this.default_tag=8;
-        this.distrib_tag=9;
+        this.tag = {
+            "clonotype_1":          {"color" : "#dc322f", "display" : true},
+            "clonotype_2":          {"color" : "#cb4b16", "display" : true},
+            "clonotype_3":          {"color" : "#b58900", "display" : true},
+            "standard_1":           {"color" : "#268bd2", "display" : true},
+            "standard_2":           {"color" : "#6c71c4", "display" : true},
+            "custom_1":             {"color" : "#2aa198", "display" : true},
+            "custom_2":             {"color" : "#d33682", "display" : true},
+            "custom_2":             {"color" : "#859900", "display" : true},
+            "none":                 {"color" : "",        "display" : true},
+            "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true}
+        }
+
+        this.default_tag="none";
+        this.distrib_tag="smaller_clonotypes";
 
         this.axis_color = "Tag"
         this.notation_type = "percent"
