@@ -2522,22 +2522,23 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         clonesIDs = clonesIDs !== undefined ? clonesIDs : this.clonesIDs; 
         this.clonesIDs=clonesIDs
 
-        var buildTagSelector = function (i) {
+        var buildTagSelector = function (tag_name) {
             var span1 = document.createElement('span');
-            span1.className = "tagColorBox tagColor" + i
+            span1.className = "tagColorBox tagColor_" + tag_name
+            span1.style.backgroundColor = m.tag[tag_name].color
            
             var span2 = document.createElement('span');
-            span2.className = "tagName" + i + " tn"
-            span2.appendChild(document.createTextNode(self.tag[i].name))
+            span2.className = "tagName_" + tag_name + " tn"
+            span2.appendChild(document.createTextNode(tag_name))
 
             var div = document.createElement('div');
             div.className = "tagElem"
-            div.id = "tagElem_" + i
+            div.id = "tagElem_" + tag_name
             div.appendChild(span1)
             div.appendChild(span2)
             div.onclick = function () {
                 for (var j = 0; j < clonesIDs.length; j++) {
-                    self.clone(clonesIDs[j]).changeTag(i)
+                    self.clone(clonesIDs[j]).changeTag(tag_name)
                 }
                 $(self.tagSelector).hide('fast')
             }
@@ -2548,8 +2549,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             self.tagSelectorList.appendChild(li);
         }
 
-        for (var i = 0; i < this.tag.length; i++) {
-            buildTagSelector(i);
+        for (var k in m.tag) {
+            buildTagSelector(k);
         }
         
         var separator = document.createElement('div');
