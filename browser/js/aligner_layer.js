@@ -155,7 +155,9 @@ LAYERS = {
         'stop': function (s,c) { return c.seg.imgt["V-REGION end"] - 1; },
         'className': "seq_layer_underline",
         'style': { 'background': "#484" },
-        'enabled': true
+        'refresh': function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"},
+        'enabled': true,
+        
     },
     'IMGT_J':
     {
@@ -209,6 +211,7 @@ LAYERS = {
         'stop': function (s,c) { return c.seg.imgt["CDR1-IMGT end"] - 1; },
         'className': "seq_layer_bracket",
         'style': { 'borderColor': "#888" },
+        'refresh': function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"},
         'enabled': false
     },
     'IMGT_CDR2':
@@ -236,6 +239,7 @@ LAYERS = {
         'stop': function (s,c) { return c.seg.imgt["FR1-IMGT end"] - 1; },
         'className': "seq_layer_bracket",
         'style': { 'borderColor': "#aaa" },
+        'refresh': function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"},
         'enabled': false
     },
     'IMGT_FR2':
