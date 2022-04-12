@@ -1498,11 +1498,31 @@ Report.prototype = {
         if (typeof this.m.logs == 'undefined')
             return this
 
-        var log = this.container("Log", block)
+        // remove logs with specific text
+        var filters = ["load sample", "load analysis"]
 
-        var table = $('<table/>', {'class': 'log-table flex'}).appendTo(log);
-        for (var i=0; i < this.m.logs.length; i++ ){
-            line = this.logLine(m.logs[i]);
+        var filtered_logs = []
+        var isFiltered;
+        for (var i=0; i<this.m.logs.length; i++){
+
+            isFiltered = false
+            for (var j=0; j<filters.length; j++)
+                if (this.m.logs[i].indexOf(filters[j]) != -1)
+                    isFiltered = true
+
+            if (!isFiltered)
+                filtered_logs.push(this.m.logs[i])
+        }
+
+        // all logs have been filtered out
+        if (filtered_logs.length == 0)
+            return this
+
+        var div_log = this.container("Log", block)
+        var table = $('<table/>', {'class': 'log-table flex'}).appendTo(div_log);
+
+        for (var l=0; l < filtered_logs.length; l++ ){
+            line = this.logLine(filtered_logs[l]);
             if(i % 2 === 0)
                 line.addClass('even');
             else
