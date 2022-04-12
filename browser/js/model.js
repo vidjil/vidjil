@@ -564,14 +564,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         f = clone.getSize() / c[i].expected;
                         
                         if (f < 100 && f > 0.01) {
-                            if (typeof (c[i].tag) != "undefined") {
-                                clone.tag = c[i].tag;
-                            }
-
-                            if (typeof (c[i].name) != "undefined") {
-                                clone.c_name = c[i].name;
-                            }
-                            
                             if (c[i].expected>max.size){
                                 max.size = c[i].expected
                                 max.id = id
@@ -579,14 +571,14 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         }else{
                             console.log(" apply analysis : clones "+ c[i].id + " > incorrect expected value", 0)
                         }
-                    }else{
-                        if (typeof (c[i].tag) != "undefined") {
-                            clone.tag = c[i].tag;
-                        }
-                        if (typeof (c[i].name) != "undefined") {
-                            clone.c_name = c[i].name;
-                        }
                     }
+
+                    if (typeof (c[i].tag) != "undefined")
+                        if (isNaN(parseInt(c[i].tag))) clone.tag = c[i].tag;
+                        else  clone.tag = m.old_tag[c[i].tag];
+
+                    if (typeof (c[i].name) != "undefined") clone.c_name = c[i].name;
+                
                 }else{
                     this.analysis_clones.push(c[i])
                 }
