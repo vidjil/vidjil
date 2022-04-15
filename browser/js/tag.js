@@ -221,25 +221,31 @@ TagManager.prototype = {
         }
         this.tagSelectorInfo.innerHTML = string
         $(this.tagSelector).show();
-        
-        
-        //replace tagSeelector
+
+        // selector size
         var tagSelectorH = $(this.tagSelector).outerHeight()
-        var minTop = 40;
-        var maxTop = Math.max(40, $(window).height()-tagSelectorH);
-        var top = e.clientY - tagSelectorH/2;
+        var tagSelectorW = $(this.tagSelector).outerWidth()
+
+        var offsetH = 2;
+        var offsetW = 0;
+
+        // position of clicked element
+        var rect = e.target.getBoundingClientRect()
+        var targetX = rect.x;
+        var targetY = rect.y + rect.height;
+
+        var minTop = 20;
+        var maxTop = Math.max(20, $(window).height()-tagSelectorH);
+        var top = targetY - tagSelectorH + offsetH;
         if (top<minTop) top=minTop;
         if (top>maxTop) top=maxTop;
-        this.tagSelector.style.top=top+"px";
 
-        var tagSelectorW = $(this.tagSelector).outerWidth()
         var maxLeft = $(window).width() - tagSelectorW;
-        var tmp = e.clientX;
-        if(typeof e.currentTarget !== 'undefined') {
-            tmp = e.currentTarget.offsetLeft + (e.currentTarget.offsetWidth/2);
-        }
-        var left = tmp + (tagSelectorW/2);
-        if (left>maxLeft) left=maxLeft;
+        var left = targetX + rect.width + offsetW;
+        if (left>maxLeft) 
+            left = targetX - tagSelectorW + offsetW;
+
+        this.tagSelector.style.top=top+"px";
         this.tagSelector.style.left=left+"px";
 
         // If multiple clones Ids; disabled normalization div
