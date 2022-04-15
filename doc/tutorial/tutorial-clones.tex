@@ -171,11 +171,11 @@ Usually we may want to tag them in order to remember them later on.
 
     $b.clone_in_list("0").click
     $b.clone_info("1")[:star].click # top IGH
-    $b.tag_item('0')[:name].click
+    $b.tag_item('clonotype_1')[:name].click
     $b.clone_info("4")[:star].click # top TRG 
-    $b.tag_item('1')[:name].click
+    $b.tag_item('clonotype_2')[:name].click
     $b.clone_info("0")[:star].click ## clone rechute
-    $b.tag_item('4')[:name].click
+    $b.tag_item('standard_2')[:name].click
     $b.update_icon.wait_while(&:present?)
     $b.clone_in_list("5").click ## select other clone to see real color of clone 0
 
@@ -330,7 +330,7 @@ After this rename, you can see that the clone is still selected.
     $b.update_icon.wait_while(&:present?)
 
     $b.element(:id => "tag_icon__multiple").click
-    $b.element(:id => 'tagElem_6').click
+    $b.element(:id => 'tagElem_custom_2').click
     $b.update_icon.wait_while(&:present?)
     $b.clone_in_list("0").click(:control) # select another clone, else last selected still keep default color as "hover"
     assert ($b.clone_info('5')[:name].style('color') ==  'rgba(101, 123, 131, 1)' ) , "clone 5 still have default color"
@@ -1045,7 +1045,7 @@ expected concentration is 1\% (.01).
 
     # New color
     cinfo = $b.clone_info("454")
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgb(108, 113, 196)' )
   end
 \end{verbatim}
 
