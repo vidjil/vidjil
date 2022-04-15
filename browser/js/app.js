@@ -90,6 +90,7 @@ function loadAfterConf() {
                                          "js/url",
                                          "js/autocomplete",
                                          "js/tips",
+                                         "js/tag",
                                          "js/tokeniser",
                                          "js/indexedDom",
                                          // Speed test

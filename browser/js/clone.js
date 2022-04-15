@@ -1304,18 +1304,16 @@ Clone.prototype = {
     
     getTag: function () {
         if (this.hasSizeDistrib()) {
-            return this.m.distrib_tag;
+            return this.m.tags.getDistrib();
         } else if (this.tag) {
             return this.tag;
         } else {
-            return this.m.default_tag;
+            return this.m.tags.getDefault();
         }
     }, 
     
     getTagName: function () {
-        if (typeof this.m.tag[this.getTag()].name != "undefined")
-            return this.m.tag[this.getTag()].name
-        return this.getTag()
+        this.m.tags.getName(this.getTag);
     }, 
     
     getProductivityName: function () {
@@ -1827,7 +1825,7 @@ Clone.prototype = {
 
         if(typeof clear != undefined && clear==false ){
             div_elem.getElementsByClassName("starBox")[0].onclick = function (e) {
-                self.m.openTagSelector([self.index], e);
+                self.m.tags.openSelector([self.index], e);
             }
             return; 
         }
@@ -1838,7 +1836,7 @@ Clone.prototype = {
         var span_star = document.createElement('span')
         span_star.setAttribute('class', 'starBox');
         span_star.onclick = function (e) {
-            self.m.openTagSelector([self.index], e);
+            self.m.tags.openSelector([self.index], e);
         }
         span_star.id = self.index
         var tag_icon = document.createElement('i')
@@ -1852,7 +1850,7 @@ Clone.prototype = {
         span_star.appendChild(tag_icon)
         span_star.setAttribute('id', 'color' + this.index);
         if (typeof this.tag != 'undefined')
-            span_star.style.color = this.m.tag[this.getTag()].color
+            span_star.style.color = this.m.tags.getColor(this.getTag())
 
         // Axis
         var span_axis = document.createElement('span');
@@ -1926,7 +1924,7 @@ Clone.prototype = {
 
     disable: function () {
         if (!this.hasSizeConstant() && !this.hasSizeDistrib()) return
-        if (this.hasSizeDistrib() && this.m.tag[this.getTag()].display) return
+        if (this.hasSizeDistrib() && this.m.tags.isVisible(this.getTag())) return
         this.active = false;
     },
 

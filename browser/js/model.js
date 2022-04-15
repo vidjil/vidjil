@@ -420,7 +420,7 @@ Model.prototype = {
         this.n_max = n_max
         
         for (var j = 0; j < this.clones.length; j++) 
-            this.clone(j).tag = this.default_tag;
+            this.clone(j).tag = this.tags.getDefault();
         
         this.applyAnalysis(this.analysis);
         this.initData();

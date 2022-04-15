@@ -307,7 +307,7 @@ Aligner.prototype = {
         document.getElementById("reset_focus").onclick = function () {  self.m.filter.remove("Clonotype", "focus")
                                                                         self.m.filter.remove("Clonotype", "hide") };
         document.getElementById("star_selected").onclick = function (e) {
-            if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
+            if (m.getSelected().length > 0) { self.m.tags.openSelector(m.getSelected(), e); }};
         document.getElementById("cluster").onclick = function () { self.m.merge(); };
         document.getElementById("align").onclick = function () { self.toggleAlign(); };
         document.getElementById("aligner-open-button").onclick = function () { self.toggle(); };

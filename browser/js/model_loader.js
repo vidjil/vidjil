@@ -741,7 +741,7 @@ Model_loader.prototype = {
             var clone = this.clone(i)
 
             //tag, custom name, expected_value
-            if ((typeof clone.tag != "undefined" && clone.tag != 8 && clone.tag != m.default_tag) || 
+            if ((typeof clone.tag != "undefined" && clone.tag != 8 && clone.tag != m.tags.getDefault()) || 
                  typeof clone.c_name != "undefined" ||
                  typeof clone.expected != "undefined" || 
                 (typeof clone.segEdited != "undefined"  && clone.segEdited)) {
@@ -750,7 +750,7 @@ Model_loader.prototype = {
                 elem.id = clone.id;
                 elem.sequence = clone.sequence;
 
-                if (typeof clone.tag != "undefined" && clone.tag != 8 && clone.tag != m.default_tag)
+                if (typeof clone.tag != "undefined" && clone.tag != 8 && clone.tag != m.tags.getDefault)
                     elem.tag = clone.tag;
                 if (typeof clone.c_name != "undefined")
                     elem.name = clone.c_name;

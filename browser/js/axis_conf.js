@@ -305,10 +305,10 @@ AXIS_DEFAULT = {
         doc:        "tag, as defined by the user",   
         labels:     function(){
                         var l = {}
-                        for (var k in m.tag)
+                        for (var k in m.tags.tag)
                             l[k] =  {
-                                                    text:   k,   
-                                                    color:  m.tag[k].color
+                                                    text:   m.tags.getName(k),   
+                                                    color:  m.tags.getColor(k)
                                                 }
                         return l
                     },
