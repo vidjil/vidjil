@@ -526,7 +526,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
                     if (typeof (c[i].tag) != "undefined")
                         if (isNaN(parseInt(c[i].tag))) clone.tag = c[i].tag;
-                        else  clone.tag = m.old_tag[c[i].tag];
+                        else  clone.tag = m.tags.old_tag[c[i].tag];
 
                     if (typeof (c[i].name) != "undefined") clone.c_name = c[i].name;
                 

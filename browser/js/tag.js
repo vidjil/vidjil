@@ -15,16 +15,16 @@ function TagManager(model) {
     }
 
     this.tag = {
-        "clonotype_1":          {"color" : "#dc322f", "display" : true},
-        "clonotype_2":          {"color" : "#cb4b16", "display" : true},
-        "clonotype_3":          {"color" : "#b58900", "display" : true},
-        "standard_1":           {"color" : "#268bd2", "display" : true},
-        "standard_2":           {"color" : "#6c71c4", "display" : true},
-        "custom_1":             {"color" : "#2aa198", "display" : true},
-        "custom_2":             {"color" : "#d33682", "display" : true},
-        "custom_3":             {"color" : "#859900", "display" : true},
+        "clonotype_1":          {"color" : "#dc322f", "display" : true, name: "clonotype 1"},
+        "clonotype_2":          {"color" : "#cb4b16", "display" : true, name: "clonotype 2"},
+        "clonotype_3":          {"color" : "#b58900", "display" : true, name: "clonotype 3"},
+        "standard_1":           {"color" : "#268bd2", "display" : true, name: "standard"},
+        "standard_2":           {"color" : "#6c71c4", "display" : true, name: "standard(noise)"},
+        "custom_1":             {"color" : "#2aa198", "display" : true, name: "custom 1"},
+        "custom_2":             {"color" : "#d33682", "display" : true, name: "custom 2"},
+        "custom_3":             {"color" : "#859900", "display" : true, name: "custom 3"},
         "none":                 {"color" : "",        "display" : true},
-        "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true}
+        "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true, name: "smaller clonotype"}
     }
 
     this.default_tag="none";
@@ -120,23 +120,23 @@ TagManager.prototype = {
         clonesIDs = clonesIDs !== undefined ? clonesIDs : this.clonesIDs; 
         this.clonesIDs=clonesIDs
 
-        var buildTagSelector = function (tag_name) {
+        var buildTagSelector = function (tag_key) {
             var span1 = document.createElement('span');
-            span1.className = "tagColorBox tagColor_" + tag_name
-            span1.style.backgroundColor = m.tag[tag_name].color
+            span1.className = "tagColorBox tagColor_" + tag_key
+            span1.style.backgroundColor = self.getColor(tag_key)
             
             var span2 = document.createElement('span');
-            span2.className = "tagName_" + tag_name + " tn"
-            span2.appendChild(document.createTextNode(tag_name))
+            span2.className = "tagName_" + tag_key + " tn"
+            span2.appendChild(document.createTextNode(self.getName(tag_key)))
 
             var div = document.createElement('div');
             div.className = "tagElem"
-            div.id = "tagElem_" + tag_name
+            div.id = "tagElem_" + tag_key
             div.appendChild(span1)
             div.appendChild(span2)
             div.onclick = function () {
                 for (var j = 0; j < clonesIDs.length; j++) {
-                    self.m.clone(clonesIDs[j]).changeTag(tag_name)
+                    self.m.clone(clonesIDs[j]).changeTag(tag_key)
                 }
                 $(self.tagSelector).hide('fast')
             }
@@ -147,7 +147,7 @@ TagManager.prototype = {
             self.tagSelectorList.appendChild(li);
         }
 
-        for (var k in m.tag) {
+        for (var k in this.tag) {
             buildTagSelector(k);
         }
         

@@ -312,7 +312,7 @@ AXIS_DEFAULT = {
                                                 }
                         return l
                     },
-        fct:        function(clone) {return clone.getTagName()},
+        fct:        function(clone) {return clone.getTag()},
         sort :      false,
         autofill :  false
     },

@@ -1899,7 +1899,7 @@ Clone.prototype = {
     toCSV: function () {
         var csv = [
             this.getCluster().join("+"), this.getName(), this.id,
-            this.get('germline'), this.getTagName(),
+            this.get('germline'), this.getTag(),
             this.getGene("5"), this.getGene("4"), this.getGene("3"),
             this.getProductivityName(),
             this.getSegNtSequence("junction"),
