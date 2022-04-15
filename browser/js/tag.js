@@ -1,0 +1,250 @@
+
+function TagManager(model) {
+    this.m=model;
+    this.old_tag = {
+        0 : "clonotype_1",
+        1 : "clonotype_2",
+        2 : "clonotype_3",
+        3 : "standard_1",
+        4 : "standard_2",
+        5 : "custom_1",
+        6 : "custom_2",
+        7 : "custom_3",
+        8 : "none",
+        9 : "smaller_clonotypes"
+    }
+
+    this.tag = {
+        "clonotype_1":          {"color" : "#dc322f", "display" : true},
+        "clonotype_2":          {"color" : "#cb4b16", "display" : true},
+        "clonotype_3":          {"color" : "#b58900", "display" : true},
+        "standard_1":           {"color" : "#268bd2", "display" : true},
+        "standard_2":           {"color" : "#6c71c4", "display" : true},
+        "custom_1":             {"color" : "#2aa198", "display" : true},
+        "custom_2":             {"color" : "#d33682", "display" : true},
+        "custom_3":             {"color" : "#859900", "display" : true},
+        "none":                 {"color" : "",        "display" : true},
+        "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true}
+    }
+
+    this.default_tag="none";
+    this.distrib_tag="smaller_clonotypes";
+}
+
+
+TagManager.prototype = {
+
+    // return default tag key
+    getDefault: function() {
+        return this.default_tag;
+    },
+
+    // return distrib tag key
+    getDistrib: function() {
+        return this.distrib_tag;
+    },
+
+    // return name of a corresponding tag key
+    getName: function(key){
+        if (tag[key] && tag[key].name) 
+            return this.tag[key].name
+        else
+            return key
+    },
+
+    // return color of a corresponding tag key
+    getColor: function(key){
+        return this.tag[key].color
+    },
+
+    // return tag current display value
+    isVisible: function(key){
+        return this.tag[key].display
+    },
+
+    registerTag: function(key, color, display, name){
+
+    },
+
+    update: function (){
+        for (var k in this.tag){
+            $(".tagColor_"+k).prop("title", k);
+            $(".tagName_"+k).html(k);
+        }
+        this.updateBoxes();
+    },
+    
+  
+    updateBoxes: function(){
+        for (var k in this.tag){
+            if (this.tag[k].display){
+                $(".tagColor_"+k).removeClass("inactiveTag")
+            }else{
+                $(".tagColor_"+k).addClass("inactiveTag")
+            }
+        }
+    },
+
+    buildSelector: function() {
+
+        this.tagSelector = document.createElement("div");
+        this.tagSelector.className = "tagSelector";
+        
+        var closeTag = document.createElement("span");
+        closeTag.className = "closeButton" ;
+        closeTag.appendChild(icon('icon-cancel', ''));
+        closeTag.onclick = function() {$(this).parent().hide('fast')};
+        this.tagSelector.appendChild(closeTag);
+        
+        this.tagSelectorInfo = document.createElement("div")
+        this.tagSelector.appendChild(this.tagSelectorInfo);
+        
+        this.tagSelectorList = document.createElement("ul")
+        this.tagSelector.appendChild(this.tagSelectorList);
+        
+        document.body.appendChild(this.tagSelector);
+        $('.tagSelector').hover(function() { 
+            $(this).addClass('hovered');
+        }, function() {
+            $(this).removeClass('hovered');
+        });
+    },
+
+    /**
+     * open/build the tag/normalize menu for a clone
+     * @param {integer} cloneID - clone index
+     * */
+    openSelector: function (clonesIDs, e) {
+        var self = this;
+        this.tagSelectorList.removeAllChildren();
+        clonesIDs = clonesIDs !== undefined ? clonesIDs : this.clonesIDs; 
+        this.clonesIDs=clonesIDs
+
+        var buildTagSelector = function (tag_name) {
+            var span1 = document.createElement('span');
+            span1.className = "tagColorBox tagColor_" + tag_name
+            span1.style.backgroundColor = m.tag[tag_name].color
+            
+            var span2 = document.createElement('span');
+            span2.className = "tagName_" + tag_name + " tn"
+            span2.appendChild(document.createTextNode(tag_name))
+
+            var div = document.createElement('div');
+            div.className = "tagElem"
+            div.id = "tagElem_" + tag_name
+            div.appendChild(span1)
+            div.appendChild(span2)
+            div.onclick = function () {
+                for (var j = 0; j < clonesIDs.length; j++) {
+                    self.m.clone(clonesIDs[j]).changeTag(tag_name)
+                }
+                $(self.tagSelector).hide('fast')
+            }
+
+            var li = document.createElement('li');
+            li.appendChild(div)
+
+            self.tagSelectorList.appendChild(li);
+        }
+
+        for (var k in m.tag) {
+            buildTagSelector(k);
+        }
+        
+        var separator = document.createElement('div');
+        separator.innerHTML = "<hr>"
+
+        var span1 = document.createElement('span');
+        span1.appendChild(document.createTextNode("normalize to: "))
+
+        
+        this.m.norm_input = document.createElement('input');
+        this.m.norm_input.id = "normalized_size";
+        this.m.norm_input.type = "text";
+        
+        var span2 = document.createElement('span');
+        span2.appendChild(this.m.norm_input)
+        
+        this.m.norm_button = document.createElement('button');
+        this.m.norm_input.id = "norm_button";
+        this.m.norm_button.appendChild(document.createTextNode("ok"))
+        
+        this.m.norm_button.onclick = function () {
+            var cloneID = self.clonesIDs[0];
+            var size = parseFloat(self.m.norm_input.value);
+            
+            if (size>0 && size<1){
+                self.m.set_normalization( self.m.NORM_EXPECTED )
+                $("#expected_normalization").show();
+                self.m.norm_input.value = ""
+                self.m.clone(cloneID).expected=size;
+                self.m.compute_normalization(cloneID, size)
+                self.m.update()
+                $(self.tagSelector).hide('fast')
+                $("expected_normalization_input").prop("checked", true)
+            }else{
+                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
+            }
+        }
+        this.m.norm_input.onkeydown = function (event) {
+            if (event.keyCode == 13) self.m.norm_button.click();
+        }
+        
+        var div = document.createElement('div');
+        div.id  = "normalization_expected_input_div"
+        div.appendChild(separator)
+        div.appendChild(span1)
+        div.appendChild(span2)
+        div.appendChild(this.m.norm_button)
+
+        // add to report button
+        var div2 = $('<div/>', {}).html("<hr>").appendTo($(this.tagSelectorList))
+        var report_button = $('<div/>', { text: 'add clone(s) to next report'
+                                        }).appendTo(div2)
+                                            .click(function (){
+                                                report.addClones(clonesIDs);
+                                                $(self.tagSelector).hide('fast')
+                                        });
+        $('<button/>', { class: "icon-newspaper"}).appendTo(report_button)
+
+        var li = document.createElement('li');
+        li.appendChild(div)
+
+        this.tagSelectorList.appendChild(li);
+        
+        var string;
+        if (clonesIDs.length > 1){
+            string = "Tag for " + clonesIDs.length +  " clonotypes"
+        } else {
+            if (clonesIDs[0][0] == "s") cloneID = clonesIDs[0].substr(3);
+            string = "Tag for "+this.m.clone(clonesIDs[0]).getName()
+        }
+        this.tagSelectorInfo.innerHTML = string
+        $(this.tagSelector).show();
+        
+        
+        //replace tagSeelector
+        var tagSelectorH = $(this.tagSelector).outerHeight()
+        var minTop = 40;
+        var maxTop = Math.max(40, $(window).height()-tagSelectorH);
+        var top = e.clientY - tagSelectorH/2;
+        if (top<minTop) top=minTop;
+        if (top>maxTop) top=maxTop;
+        this.tagSelector.style.top=top+"px";
+
+        var tagSelectorW = $(this.tagSelector).outerWidth()
+        var maxLeft = $(window).width() - tagSelectorW;
+        var tmp = e.clientX;
+        if(typeof e.currentTarget !== 'undefined') {
+            tmp = e.currentTarget.offsetLeft + (e.currentTarget.offsetWidth/2);
+        }
+        var left = tmp + (tagSelectorW/2);
+        if (left>maxLeft) left=maxLeft;
+        this.tagSelector.style.left=left+"px";
+
+        // If multiple clones Ids; disabled normalization div
+        if (clonesIDs.length > 1) {
+            $("#"+div.id).addClass("disabledbutton");
+        }
+    },
+}

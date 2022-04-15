@@ -66,7 +66,7 @@ Builder.prototype = {
                 });
 
             this.build_top_container()
-            this.initTag();
+            this.m.tags.update()
 
             if (this.m.samples.stock_order.length == 1)
                 // One sample, two scatterplots
@@ -87,7 +87,7 @@ Builder.prototype = {
     update: function () {
         try {
             this.build_top_container()
-            this.updateTagBox();
+            this.m.tags.update()
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -360,32 +360,6 @@ Builder.prototype = {
         }
 
         document.title = this.m.getPrintableAnalysisName()
-    },
-
-    initTag: function (){
-        for (var k in this.m.tag){
-            $(".tagColor_"+k).prop("title", k);
-            $(".tagName_"+k).html(k);
-        }
-        this.updateTagBox();
-    },
-    
-  
-    updateTagBox: function(){
-        for (var k in this.m.tag){
-            if (this.m.tag[k].display){
-                $(".tagColor_"+k).removeClass("inactiveTag")
-            }else{
-                $(".tagColor_"+k).addClass("inactiveTag")
-            }
-        }
-    },
-    
-    nextDisplayTag: function(elem){
-        var tag_name = elem.id.substr(9) 
-        var s = this.m.tag[tag_name].display;
-        this.m.tag[tag_name].display = !s;
-        this.m.update();
     },
 
     // Build an html input tag
