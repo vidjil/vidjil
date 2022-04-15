@@ -174,8 +174,6 @@ Model_loader.prototype = {
         } else {
             self.initClones();
         }
-
-        if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
         
         input = $("#"+analysis)
         input.replaceWith(input.val('').clone(true));
