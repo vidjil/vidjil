@@ -1523,7 +1523,7 @@ Report.prototype = {
         switch (this.settings.selected_color) {
             case "unique":
                 var index = this.settings.clones.indexOf(this.m.clone(cloneID).id)
-                if (index != -1 && index <8) color = m.tag[index].color 
+                color = colorGeneratorIndex(index)
                 break;
             default:
                 color = this.m.clone(cloneID).getColor();
