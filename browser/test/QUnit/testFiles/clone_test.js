@@ -588,7 +588,7 @@ QUnit.test("export", function(assert) {
 
     var res3 = [
         "0", "custom name", "id3",
-        "TRG", "-/-",
+        "TRG", "none",
         "undefined V", "IGHD2*03", "IGHV4*01",
         "not productive",
         "aaaaaaaatttt",
@@ -603,7 +603,7 @@ QUnit.test("export", function(assert) {
 
     var res4 = [
         "1", "custom name", "id4",
-        "TRG", "-/-",
+        "TRG", "none",
         "undefined V", "IGHD2*03", "IGHV4*01",
         "no CDR3",
         "",

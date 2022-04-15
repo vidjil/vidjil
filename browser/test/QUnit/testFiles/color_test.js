@@ -10,14 +10,14 @@ QUnit.test("Clone color", function(assert) {
     m.initClones()
 
     // check default color // colorAxis = "Tag"  // clone tag = 8
-    assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");
+    assert.equal(c1.getTag(), "none", "getTag() >> default tag : none");
     c1.updateColor()
     assert.equal(c1.getColor(), "", "getColor() >> default tag color : ");
     
     // change clone tag -> 5
-    c1.changeTag(5)
+    c1.changeTag("custom_1")
     c1.updateColor()
-    assert.equal(c1.getTag(), 5, "changeTag() >> tag : 5");
+    assert.equal(c1.getTag(), "custom_1", "changeTag() >> tag : custom_1");
     assert.equal(c1.getColor(), "#2aa198", "getColor() >> default tag color : ");
     
     // change color axis -> "Size"
