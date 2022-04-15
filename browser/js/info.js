@@ -189,7 +189,7 @@ Info.prototype = {
                     'info');
             parent.appendChild(div_sequence_info);
 
-            this.builder.initTag();
+            this.m.tags.update()
         } catch(err) {
             sendErrorToDb(err, this.db);
         }

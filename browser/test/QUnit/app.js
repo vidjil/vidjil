@@ -55,6 +55,7 @@ var lib_vidjil = [  //"js/conf",
                     "js/aligner_sequence",
                     "js/aligner",
                     "js/export",
+                    "js/tag"
                 ];
 
 var test_files = [  "testFiles/form_test",

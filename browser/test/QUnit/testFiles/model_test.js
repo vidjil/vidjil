@@ -478,12 +478,12 @@ QUnit.test("tag / color", function(assert) {
     assert.equal(m.getColorSelectedClone(), "", "Color of selected clones (without tags) is correct")
 
     // Change tag of clones
-    assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");  
-    c1.changeTag(5)
-    c2.changeTag(5)
+    assert.equal(c1.getTag(), "none", "getTag() >> default tag : none");  
+    c1.changeTag("custom_1")
+    c2.changeTag("custom_1")
     c1.updateColor()
     c2.updateColor()
-    assert.equal(c1.getTag(), 5, "changeTag() >> tag : 5");
+    assert.equal(c1.getTag(), "custom_1", "changeTag() >> tag : custom_1");
 
     // tag 8 color: ''
     // tag 5 color: #2aa198
