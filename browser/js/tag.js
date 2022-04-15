@@ -46,7 +46,7 @@ TagManager.prototype = {
 
     // return name of a corresponding tag key
     getName: function(key){
-        if (tag[key] && tag[key].name) 
+        if (this.tag[key] && this.tag[key].name) 
             return this.tag[key].name
         else
             return key
