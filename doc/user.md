@@ -122,7 +122,7 @@ to learn the essential features of Vidjil.
     you can change the sample viewed by clicking on the `←` and `→` buttons,
     or cycle trough them by clicking on the "▶" button.
 
-  - *analyzed reads.* umber of reads where the underlying RepSeq algorithm
+  - *analyzed reads.* Number of reads where the underlying RepSeq algorithm
     found a V(D)J recombination, for that sample.
     See *Number of analyzed reads* below.
     By hovering the mouse, one also sees the *total*
