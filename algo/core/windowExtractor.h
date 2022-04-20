@@ -99,6 +99,13 @@ class WindowExtractor {
    */
   size_t getNbReadsGermline(string germline_code);
 
+   /**
+   * @return the number of clones segmented from germline
+   * @param germline_code: one of the germline code in multigermline
+   * @pre extract() must have been launched.
+   */
+  size_t getNbClonesGermline(string germline_code);
+
   /**
    * cf. WindowsStorage::setMaximalNbReadsPerWindow()
    */
