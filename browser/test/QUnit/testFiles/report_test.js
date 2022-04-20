@@ -20,8 +20,8 @@ QUnit.test("Report: save/load", function(assert) {
     assert.ok(m.analysisHasChanged, ".analysis should have been modified")
 
     // load default settings
-    report.load("New Report")
-    assert.equal(report.settings.name, "New Report", "loaded report should be named 'New report', got " + report.settings.name);
+    report.load("Full report")
+    assert.equal(report.settings.name, "Full report", "loaded report should be named 'Full report', got " + report.settings.name);
     assert.equal(report.settings.clones.length, 0, "default report should have 0 clone(s) selected, got "  + report.settings.clones.length);
 
     // load saved settings 
