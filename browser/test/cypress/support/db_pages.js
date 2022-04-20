@@ -53,10 +53,12 @@ Cypress.Commands.add('openDBPage', () => {
   cy.isDbPageVisible().then((val) => {
     console.log( val )
     if (val == false){
-      cy.get('#db_menu').trigger('mouseover')
+      cy.get('#db_menu div')
+        .first()
+        .invoke('show')
         .contains('open list')
         .should('be.visible')
-        .click()
+        .click({ force: true })
 
       cy.get('.db_div')
         .should('be.visible')
