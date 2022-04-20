@@ -183,7 +183,8 @@ def run_all_request():
         
     id_sample_set = request.vars["sample_set_id"]
     ids_sequence_file = request.vars["sequence_file_ids"]
-    if type(ids_sequence_file) is int or type(ids_sequence_file) is int:
+    # if only one element, see as simple string without array (even if request was a list)
+    if type(ids_sequence_file) is int or type(ids_sequence_file) is str:
         ids_sequence_file =  [ids_sequence_file]
     ids_sequence_file = [int(i) for i in ids_sequence_file]
     id_config = request.vars["config_id"]
@@ -342,8 +343,10 @@ def get_data():
                 data["sample_name"] = run_name
                 data["group_id"] = get_set_group(row.sample_set_id)
 
-        log_query = db(  ( db.user_log.record_id == log_reference_id )
-                       & ( db.user_log.table_name == sample_set.sample_type )
+        log_query = db(  (( db.user_log.record_id == log_reference_id )
+                       & ( db.user_log.table_name == sample_set.sample_type )) |
+                       (( db.user_log.record_id == request.vars["sample_set_id"] )
+                       & ( db.user_log.table_name == "sample_set" ))
                       ).select(db.user_log.ALL, orderby=db.user_log.created)
 
         data["logs"] = []

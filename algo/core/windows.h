@@ -192,7 +192,7 @@ class WindowsStorage {
    * @pre should be called before keepInterestingWindows()
    * Compute, display, and return some diversity measures
    */
-  json computeDiversity(int nb_segmented);
+  json computeDiversity(map <string, size_t> nb_segmented_by_germline);
 
   /**
    * @pre sort() must have been called.

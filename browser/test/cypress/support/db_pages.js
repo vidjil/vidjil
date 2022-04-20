@@ -255,7 +255,7 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
 
 Cypress.Commands.add('selectPreprocess', (preprocess) => {
   cy.get('#pre_process')
-    .select(preprocess)
+    .select(preprocess, { force: true })
     .should('have.value', preprocess)
 })
 
@@ -269,7 +269,7 @@ Cypress.Commands.add('selectConfig', (config) => {
   }).as('getActivities')
 
   cy.get('#choose_config')
-    .select(config)
+    .select(config, { force: true })
     .should('have.value', config)
   
   cy.wait(['@getActivities'])

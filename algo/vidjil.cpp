@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil-algo <http://www.vidjil.org>
-  Copyright (C) 2011-2021 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2022 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -210,7 +210,7 @@ string string_NO_LIMIT(string s)
 int main (int argc, char **argv)
 {
   cout << "# " << PROGNAME << " -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
-       << "# Copyright (C) 2011-2021 by the Vidjil team" << endl
+       << "# Copyright (C) 2011-2022 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille" << endl 
        << "# VidjilNet consortium" << endl 
        << endl
@@ -253,6 +253,10 @@ int main (int argc, char **argv)
   //$$ options: definition with CLI11
   string group = "";
 
+  // Check whether an option was actually called inside add_flag_function()
+#define COUNT(n) if (n <= 0) return;
+
+
   // ----------------------------------------------------------------------------------------------------------------------
   string f_reads = DEFAULT_READS ;
   app.add_option("reads_file", f_reads, R"Z(reads file, in one of the following formats:
@@ -285,7 +289,7 @@ int main (int argc, char **argv)
     -> group(group) -> level();
 
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
-  app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file", false)
+  app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file")
     -> group(group) -> level() -> type_name("CHAR='" DEFAULT_READ_HEADER_SEPARATOR "'");
 
   int max_reads_processed = NO_LIMIT_VALUE;
@@ -355,7 +359,7 @@ int main (int argc, char **argv)
 
   IndexTypes indexType = AC_AUTOMATON;
   app.add_flag_function("--plain-index",
-                        [&](size_t n) { UNUSED(n); indexType = KMER_INDEX; },
+                        [&](int64_t n) { COUNT(n); indexType = KMER_INDEX; },
                         "use a plain index (pre-2019 method) instead of the recommended Aho-Corasick-like automaton")
     -> group(group) -> level();
 
@@ -382,8 +386,8 @@ int main (int argc, char **argv)
 
   double expected_value_kmer = NO_LIMIT_VALUE;
   app.add_option("--e-value-kmer", expected_value_kmer,
-                 "maximal e-value for the k-mer heuristics ('" NO_LIMIT "': use same value than '-e')", true)
-    -> group(group) -> level() -> transform(string_NO_LIMIT);
+                 "maximal e-value for the k-mer heuristics ('" NO_LIMIT "': use same value than '-e')")
+    -> capture_default_str() -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   int trim_sequences = DEFAULT_TRIM;
   bool trim_sequences_changed = false;
@@ -457,16 +461,19 @@ int main (int argc, char **argv)
   int min_reads_clone = DEFAULT_MIN_READS_CLONE ;
   float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
 
-  app.add_option("--min-reads,-r", min_reads_clone, "minimal number of reads supporting a clone", true) -> group(group);
-  app.add_option("--min-ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone", true) -> group(group);
-  app.add_option("--max-clones", max_clones_id, "maximal number of output clones ('" NO_LIMIT "': no maximum, default)", false) -> group(group);
+  app.add_option("--min-reads,-r", min_reads_clone, "minimal number of reads supporting a clone")
+      -> capture_default_str() -> group(group);
+  app.add_option("--min-ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone")
+      -> capture_default_str() -> group(group);
+  app.add_option("--max-clones", max_clones_id, "maximal number of output clones ('" NO_LIMIT "': no maximum, default)")
+      -> group(group);
 
   int max_clones = DEFAULT_MAX_CLONES ;
   int max_representatives = DEFAULT_MAX_REPRESENTATIVES ;
 
   app.add_option("--max-consensus,-y", max_representatives,
-                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true)
-    -> group(group) -> transform(string_NO_LIMIT);
+                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)")
+    -> capture_default_str() -> group(group) -> transform(string_NO_LIMIT);
 
   app.add_option("--max-designations,-z",
                  [&max_clones, &max_representatives](CLI::results_t res) {
@@ -479,8 +486,8 @@ int main (int argc, char **argv)
                  "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)")
     -> group(group) -> type_name("INT=" + string_of_int(max_clones));
 
-  app.add_flag_function("--all", [&](size_t n) {
-      UNUSED(n);
+  app.add_flag_function("--all", [&](int64_t n) {
+      COUNT(n);
       ratio_reads_clone = 0 ;
       min_reads_clone = 1 ;
       max_representatives = NO_LIMIT_VALUE ;
@@ -494,8 +501,8 @@ int main (int argc, char **argv)
   VirtualReadScore *readScorer = &DEFAULT_READ_SCORE;
   ReadQualityScore readQualityScore;
   app.add_flag_function("--consensus-on-longest-sequences",
-                        [&readScorer, &readQualityScore](size_t n) {
-                          UNUSED(n);
+                        [&readScorer, &readQualityScore](int64_t n) {
+                          COUNT(n);
                           readScorer = &readQualityScore;
                         }, "for large clones, use a sample of the longest and highest quality reads to compute the consensus sequence (instead of a random sample)")
     ->group(group) -> level();
@@ -505,8 +512,8 @@ int main (int argc, char **argv)
 
   double expected_value = THRESHOLD_NB_EXPECTED;
   app.add_option("--e-value,-e", expected_value,
-                 "maximal e-value for trusting the detection of a V-J recombination", true)
-    -> group(group) -> transform(string_NO_LIMIT);
+                 "maximal e-value for trusting the detection of a V-J recombination")
+    -> capture_default_str() -> group(group) -> transform(string_NO_LIMIT);
 
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
   app.add_option("--analysis-cost",
@@ -519,27 +526,29 @@ int main (int argc, char **argv)
 
   double expected_value_D = THRESHOLD_NB_EXPECTED_D;
   app.add_option("--analysis-e-value-D,-E", expected_value_D,
-                 "maximal e-value for trusting the detection of a D segment", true)
-    -> group(group) -> level();
+                 "maximal e-value for trusting the detection of a D segment")
+    -> capture_default_str() -> group(group) -> level();
 
   int kmer_threshold = DEFAULT_KMER_THRESHOLD;
   app.add_option("--analysis-filter", kmer_threshold,
-                 "typical number of V genes, filtered by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes)", true)
-    -> group(group) -> transform(string_NO_LIMIT) -> level();
+                 "typical number of V genes, filtered by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes)")
+    -> capture_default_str() -> group(group) -> transform(string_NO_LIMIT) -> level();
 
   bool several_D = false;
   app.add_flag("-d,--several-D", several_D, "try to detect several D (experimental)") -> group(group);
 
   int alternative_genes = 0;
-  app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one", true)
-    -> group(group) -> level();
+  app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one")
+    -> capture_default_str() -> group(group) -> level();
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Additional clustering (third pass, experimental)" ;
 
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
-  app.add_option("--cluster-epsilon", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) -> group(group) -> level();
-  app.add_option("--cluster-N", minPts, "minimum required neighbors for automatic clustering", true) -> group(group) -> level();
+  app.add_option("--cluster-epsilon", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.")
+    -> capture_default_str() -> group(group) -> level();
+  app.add_option("--cluster-N", minPts, "minimum required neighbors for automatic clustering")
+    -> capture_default_str() -> group(group) -> level();
 
   bool save_comp = false;
   bool load_comp = false;
@@ -571,7 +580,7 @@ int main (int argc, char **argv)
   bool output_unsegmented_detail = false;
   bool output_unsegmented_detail_full = false;
 
-  app.add_flag_function("--out-undetected,-u", [&](size_t n) {
+  app.add_flag_function("--out-undetected,-u", [&](int64_t n) {
       output_unsegmented = (n >= 3);             // -uuu
       output_unsegmented_detail_full = (n >= 2); // -uu
       output_unsegmented_detail = (n >= 1);      // -u
@@ -596,7 +605,8 @@ int main (int argc, char **argv)
   string out_dir = DEFAULT_OUT_DIR;
   string f_basename = "";
 
-  app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> type_name("PATH");
+  app.add_option("--dir,-o", out_dir, "output directory")
+    -> capture_default_str() -> group(group) -> type_name("PATH");
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
   bool out_gz = false;
@@ -628,7 +638,7 @@ int main (int argc, char **argv)
     -> group(group) -> level();
 
   int verbose = 0 ;
-  app.add_flag_function("--verbose,-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
+  app.add_flag_function("--verbose,-v", [&](int64_t n) { COUNT(n); verbose += n ; }, "verbose mode") -> group(group);
 
   bool __only_on_exit__clean_memory; // Do not use except on exit, see #3729
   app.add_flag("--clean-memory", __only_on_exit__clean_memory, "clean memory on exit") -> group(group) -> level();
@@ -636,13 +646,12 @@ int main (int argc, char **argv)
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Presets";
 
-  app.add_flag_function("--filter-reads", [&](int n) {
-      UNUSED(n);
+  app.add_flag_function("--filter-reads", [&](int64_t n) {
+      COUNT(n);
       cmd = COMMAND_DETECT;
       output_segmented = true;
       expected_value = EVALUE_FILTER_READS ;
       multi_germline_unexpected_recombinations_12 = true;
-      return true;
     },
     "filter possibly huge datasets, with a permissive threshold, to extract reads that may have V(D)J recombinations"
     PAD_HELP "(equivalent to -c " COMMAND_DETECT " --out-detected --e-value " STR(EVALUE_FILTER_READS) " -2)")
@@ -664,7 +673,7 @@ int main (int argc, char **argv)
   app.set_help_flag("--help,-h", "help")
     -> group(group);
 
-  app.add_flag_function("--help-advanced,-H", [&](size_t n) { UNUSED(n); throw CLI::CallForAdvancedHelp() ; },
+  app.add_flag_function("--help-advanced,-H", [&](int64_t n) { COUNT(n); throw CLI::CallForAdvancedHelp(); },
                         "help, including advanced and experimental options"
                         "\n                              "
                         "The full help is available in " DOCUMENTATION ".")
@@ -674,8 +683,8 @@ int main (int argc, char **argv)
   // Deprecated options
   bool deprecated = false;
 
-#define IGNORED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); cout << endl << "* WARNING: " << text << endl << endl ; })-> level(3);
-#define DEPRECATED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); deprecated = true ; return app.exit(CLI::ConstructionError((text), 1));}) -> level(3);
+#define IGNORED(options, text) app.add_flag_function((options), [&](int64_t n) { COUNT(n); cout << endl << "* WARNING: " << text << endl << endl ; })-> level(3);
+#define DEPRECATED(options, text) app.add_flag_function((options), [&](int64_t n) { COUNT(n); deprecated = true ; app.exit(CLI::ConstructionError((text), 1));}) -> level(3);
 
   IGNORED("-3", "'-3' is deprecated. This option is ignored and has to be removed, CDR3/JUNCTION are now always analyzed on clones under the '--max-designations' threshold");
   DEPRECATED("-t", "'-t' is deprecated, please use '--trim'");
@@ -749,7 +758,7 @@ int main (int argc, char **argv)
   for(string lab : windows_labels_explicit)
     windows_labels[lab] = string("--label");
   
-  string out_seqdir = out_dir + "/" + CLONE_DIR ;
+  string out_seqdir = path_join(out_dir, CLONE_DIR) ;
 
   if (verbose)
     cout << "# verbose " << verbose << endl ;
@@ -1155,9 +1164,11 @@ int main (int argc, char **argv)
 	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
+      // Exit after CMD_GERMLINES
       if (__only_on_exit__clean_memory) { delete multigermline; } return 0;
     }
 
+  Germline *GERMLINE_NOT_DESIGNATED = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
 
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
@@ -1289,7 +1300,17 @@ int main (int argc, char **argv)
   cout << endl;
 
     //$$ compute, display and store diversity measures
-    json jsonDiversity = windowsStorage->computeDiversity(nb_segmented);
+    json reads_germline;
+    map <string, size_t> nb_segmented_by_germline;
+    for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
+        Germline *germline = *it ;
+        size_t nb = we.getNbReadsGermline(germline->code);
+        nb_segmented_by_germline[germline->code] = nb;
+        reads_germline[germline->code] = {nb};
+    }
+
+    nb_segmented_by_germline[ALL_LOCI] = nb_segmented;
+    json jsonDiversity = windowsStorage->computeDiversity(nb_segmented_by_germline);
 
     //////////////////////////////////
     //$$ min_reads_clone (ou label)
@@ -1755,13 +1776,6 @@ int main (int argc, char **argv)
 
     windowsStorage->clearSequences();
     windowsStorage->sortedWindowsToOutput(&output, max_clones_id);
-    
-    json reads_germline;
-    for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
-        Germline *germline = *it ;
-        reads_germline[germline->code] = {we.getNbReadsGermline(germline->code)};
-    }
-
 
     // Complete main output
     output.set("config", j_config);
@@ -1788,7 +1802,7 @@ int main (int argc, char **argv)
     } // end if (command == CMD_CLONES) || (command == CMD_WINDOWS)
 
     //$$ Clean
-
+    delete GERMLINE_NOT_DESIGNATED;
     delete windowsStorage;
 
 

@@ -26,7 +26,7 @@ and quantify immune recombinations.
    (1-step, 53 primers in 3 tubes, IGH FR3, IGH+, IGK, IGK+).
    These primer sets were evaluated in a multi-center validation study.
    The EuroClonality-NGS consortium also published
-   [standard operating procedures](http://www.euroclonality.org/protocols)
+   [standard operating procedures](http://www.euroclonality.org/ngs/protocols)
    for Illumina MiSeq and Ion Torrent, that can be adapted for other sequencers.
    <br />
    Download: [2019-EuroClonality-NGS-primers.csv](http://www.vidjil.org/data/2019-EuroClonality-NGS-primers.csv)
@@ -127,10 +127,16 @@ The detection of incomplete/special recombinaisons is more challenging and may f
 In particular, as D genes may be very short, detecting TRD+ (Dd2/Dd3) and IGH+ (Dh-Jh) recombinations
 require to have reads with fairly conserved D genes or up/downstream regions.
 
-Finally, the `-2` command line option and the `multi+inc+xxx` server configuration try to
+The `-2` command line option and the `multi+inc+xxx` server configuration try to
 detect unexpected or chimeric recombinations between genes of different germlines or on different
 strands (such as PCR dimers or +V/-V recombinations).
 These recombinations, tagged as `xxx`, can be technological artefacts or unusual biological recombinations.
+
+Finally, the experimental `--find` command line option detect *non-recombined* known sequences,
+and may be used for
+standards/spikes, spurious adaptors,
+CD or other sequences in RNA-seq data,
+unrecombined V/J sequences, or heptamers/nonamers/RSS.
 
 Note that the Vidjil web application can also display recombinations detected by other software,
 as long as this information is provided in the `.vidjil` file computed by such other software.

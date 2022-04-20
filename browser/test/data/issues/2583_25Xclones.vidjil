@@ -4,19 +4,10 @@
   "timestamp": "2020-09-02 09:17:49", 
   "vidjil_json_version": "2016b", 
   "reads": {
-    "segmented": [
-      7258, 4149
-    ], 
-    "total": [
-      25000, 25000
-    ], 
+    "segmented": [ 142180 ],
+    "total": [ 142180 ],
     "germline": {
-      "IGH+": [
-        48, 5
-      ], 
-      "IGH": [
-        7209, 4142
-      ]
+      "TRG": [142180]
     }
   }, 
   "samples": {

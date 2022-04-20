@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -174,8 +174,6 @@ Model_loader.prototype = {
         } else {
             self.initClones();
         }
-
-        if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
         
         input = $("#"+analysis)
         input.replaceWith(input.val('').clone(true));
@@ -600,20 +598,6 @@ Model_loader.prototype = {
                 s = this.analysis.samples
                 this.samples = this.copySampleFields(this.samples, s);
             }
-            
-            //tags
-            if (this.analysis.tags && this.analysis.tags.names) {
-                s = this.analysis.tags
-                
-                var keys = Object.keys(s.names);
-                for (var i=0; i<keys.length; i++){
-                    this.tag[parseInt(keys[i])].name = s.names[keys[i]]
-                }
-               
-                for (var j=0; j<s.hide.length; j++){
-                    this.tag[s.hide[j]].display = false;
-                }
-            }
 
             if (this.analysis.info) {
                m.info = this.analysis.info
@@ -623,6 +607,11 @@ Model_loader.prototype = {
                 for (var key in this.analysis.data)
                     this.data[key] = this.analysis.data[key]
             }
+
+            if (this.analysis.report_save) {
+                m.report_save = this.analysis.report_save
+            }
+
             this.initClones();
             this.initData();
             
@@ -742,7 +731,7 @@ Model_loader.prototype = {
                 names: this.samples.names},
             clones : this.analysis_clones,
             clusters : this.analysis_clusters,
-            tags : {}
+            report_save :this.report_save
         }
 
         var elem;
@@ -750,7 +739,7 @@ Model_loader.prototype = {
             var clone = this.clone(i)
 
             //tag, custom name, expected_value
-            if ((typeof clone.tag != "undefined" && clone.tag != 8) || 
+            if ((typeof clone.tag != "undefined" && clone.tag != 8 && clone.tag != m.tags.getDefault()) || 
                  typeof clone.c_name != "undefined" ||
                  typeof clone.expected != "undefined" || 
                 (typeof clone.segEdited != "undefined"  && clone.segEdited)) {
@@ -759,7 +748,7 @@ Model_loader.prototype = {
                 elem.id = clone.id;
                 elem.sequence = clone.sequence;
 
-                if (typeof clone.tag != "undefined" && clone.tag != 8)
+                if (typeof clone.tag != "undefined" && clone.tag != 8 && clone.tag != m.tags.getDefault)
                     elem.tag = clone.tag;
                 if (typeof clone.c_name != "undefined")
                     elem.name = clone.c_name;
@@ -786,16 +775,7 @@ Model_loader.prototype = {
                 analysisData.clusters.push(elem);
             }
         }
-        
-        //tags
-        analysisData.tags.names = {}
-        analysisData.tags.hide = []
-        for (var k=0; k<this.tag.length; k++){
-            analysisData.tags.names[""+k] = this.tag[k].name
-            if (!this.tag[k].display) analysisData.tags.hide.push(k)
-        }
-        
-        
+      
         analysisData.normalization = this.normalization
 
         return JSON.stringify(analysisData, undefined, 2);

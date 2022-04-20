@@ -1,6 +1,22 @@
 
 This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+2022-03-14  The Vidjil Team
+	* Fix a regression from the previous release, correcly handling absolute paths in germlines !1144
+
+2022-02-21  The Vidjil Team
+	* New option --find to detect and align sequences without recombinations !1004
+	* Diversity measures also reported by locus !1111, Pielou's evenness index correctly named !1132
+	* Report not designated sequences as "Possibly", new warning W68 !1008
+	* Refactor, streamlining germline handling/declaration  !1010
+	  :xxx filter works with several -g / mix of -g / -V/-D/-J / --find
+	* Update third-party libraries (CLI11, json, see also doc/LICENSE.md) !1036 !1123
+	* New Docker framework to run tests #4203
+	* Update test framework !669, faster tests launching at once .should-vdj tests !413
+	* New support policy for compilers, gcc >= 7.5, clang >= 6.0, support also gcc 11, clang 12 !1005 !1128
+	* Bugs closed #4425 #4775
+	* New and updated documentation, roadmap, and credits
+
 2021-04-28  The Vidjil Team
 	* New unproductivity cause, reporting IGH sequences without a {WP}GxG pattern !935
 	* Updated germlines from IMGT/GENE-DB, as well with 60bp up/downstream !885 !892

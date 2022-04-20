@@ -284,8 +284,8 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
         "getHtmlInfo: segmentation information + modification button + manuallyChanged icon");
     
     // <tr><td>locus</td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
-    
-
+    assert.includes(html, "<tr id='modal_line_Productivity'><td id='modal_line_title_Productivity'>Productivity</td><td colspan='4' id='modal_line_value_Productivity'>",
+        "getHtmlInfo: productivity information (if exist)");
     // locus/genes content tests
     // TODO correct this locus test/function for chromium/firefox (inversion des balises)
     /*assert.includes(html, "<tr><td>locus</td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
@@ -588,7 +588,7 @@ QUnit.test("export", function(assert) {
 
     var res3 = [
         "0", "custom name", "id3",
-        "TRG", "-/-",
+        "TRG", "none",
         "undefined V", "IGHD2*03", "IGHV4*01",
         "not productive",
         "aaaaaaaatttt",
@@ -603,7 +603,7 @@ QUnit.test("export", function(assert) {
 
     var res4 = [
         "1", "custom name", "id4",
-        "TRG", "-/-",
+        "TRG", "none",
         "undefined V", "IGHD2*03", "IGHV4*01",
         "no CDR3",
         "",

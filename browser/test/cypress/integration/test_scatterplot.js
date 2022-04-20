@@ -58,10 +58,8 @@ describe('Scatterplot', function () {
     cy.get('#visu_axis_y_container').children('line').should('have.length', 3)
     cy.get('#visu_axis_container').should('contain', "N length")
     
-    //using preset keyboard shortcut
-    cy.get('body').trigger('keydown', { keyCode: 49});
-    cy.wait(200);
-    cy.get('body').trigger('keyup', { keyCode: 49});
+    cy.changePreset("V/J (alleles)")
+    cy.update_icon()
 
     cy.get('#visu_axis_x_container').children('line').should('have.length', 3)
     cy.get('#visu_axis_container').should('contain', "V/5' allele")
@@ -71,7 +69,7 @@ describe('Scatterplot', function () {
     //using axis_x selector
     cy.get('#visu').find('select[name*="select_x[]"]').select('Sequence length',{ force: true })
 
-    cy.get('#visu_axis_x_container').children('line').should('have.length', 7)
+    cy.get('#visu_axis_x_container').children('line').should('have.length', 13)
     cy.get('#visu_axis_container').should('contain', "Sequence length")
 
     //using axis_y selctor
@@ -88,13 +86,13 @@ describe('Scatterplot', function () {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     cy.get('#visu').find('select[name*="select_x[]"]').select('Sequence length',{ force: true })
-    cy.get('#visu_axis_x_container').children('line').should('have.length', 7) // 0/20/40/60/80/100/120
+    cy.get('#visu_axis_x_container').children('line').should('have.length', 13) // 0/20/40/60/80/100/120
 
     cy.window().then((win) => {win.sp.updateScaleX([40,120]);});
-    cy.get('#visu_axis_x_container').children('line').should('have.length', 9) // 40/50/60/70/80/90/100/110/120
+    cy.get('#visu_axis_x_container').children('line').should('have.length', 17) // 40/50/60/70/80/90/100/110/120
 
     cy.window().then((win) => {win.sp.updateScaleX([91,114]);});
-    cy.get('#visu_axis_x_container').children('line').should('have.length', 6) // 90/95/100/105/110/115
+    cy.get('#visu_axis_x_container').children('line').should('have.length', 13) // 90/95/100/105/110/115
 
     return
   })
@@ -136,6 +134,51 @@ describe('Scatterplot', function () {
     cy.get('.info-container').find('.closeButton').click()
 
     return
+   })
+
+
+  it('04-tooltips',  function() {
+    // # issue 4370; test tooltip content on graph
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+
+    // mouseover_delay, before hover, tooltip should be hidden
+    cy.get("#visu2_tooltip")
+      .should('have.css', 'opacity', '0')// correct opacity of tooltip when label is NOT hover
+    cy.get('#time0')
+      .trigger('mouseover')
+
+    cy.get("#visu2_tooltip")
+      .should('have.css', 'opacity', '0')// correct opacity of tooltip when label is NOT hover
+      .wait(500)
+      .should('have.css', 'opacity', '0')// correct opacity of tooltip when label is hover, but under timeout
+      .wait(1000)
+      .should('have.css', 'opacity', '1')// correct opacity of tooltip when label is hover after timeout
+
+    cy.get('#time1')
+      .trigger('mouseover')
+    cy.get("#visu2_tooltip") // tooltip text don't have '\n'
+      .should("have.text", "T8045-BC082-fu12019-12-27+10250 000 reads (57.19%)") //Correct text in tshe sample tooltip
+
+    // mouseover_without_dates
+    cy.openAnalysis("/doc/analysis-example.vidjil")
+
+    cy.get('#time0')
+      .trigger('mouseover')
+    cy.get("#visu2_tooltip") // tooltip text don't have '\n'
+      .should('have.css', 'opacity', '1')
+      .should("have.text", "helloworld741 684 reads (94.26%)") //Correct text in tshe sample tooltip
+  })
+
+
+  it('05-labels',  function() {
+    // Issue 4472; model precision is incorect if distributions clones are set
+    cy.openAnalysis("/data/issues/4472.vidjil")
+    cy.get('#text_container > [y="40"]').should("have.text", "100%")
+
+    // First label is 100% with TRG, and 10% TRG hide
+    cy.get('#toogleLocusSystemBox_TRG').click()
+    cy.update_icon()
+    cy.get('#text_container > [y="40"]').should("have.text", "10%")
   })
 
 })

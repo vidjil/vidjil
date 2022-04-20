@@ -101,7 +101,8 @@ def edit_form():
 
 def confirm():
     if auth.can_modify_pre_process(request.vars['id']):
-        return dict(message=T('confirm pre_process deletion'))
+        query = db( (db.pre_process.id == request.vars['id']) & (auth.vidjil_accessible_query(PermissionEnum.read_pre_process.value, db.pre_process) | auth.vidjil_accessible_query(PermissionEnum.admin_pre_process.value, db.pre_process) )  ).select()
+        return dict(message=T('confirm pre_process deletion'), query=query)
     return error_message(ACCESS_DENIES)
 
 def delete():

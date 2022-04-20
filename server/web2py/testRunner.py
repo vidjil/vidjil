@@ -149,6 +149,14 @@ db.auth_permission.insert(group_id = fake_group_id,
                         record_id = fake_patient_id
                         )
 
+# add fake log 
+db.user_log.insert(user_id = user_id,
+                        created= '2022-03-30 13:23:59',
+                        table_name = "sample_set",
+                        msg = "this is a fake log msg",
+                        record_id = fake_sample_set_id
+                        )
+
 # for permission testing
 permission_group_id = db.auth_group.insert(role="test_group_perm", description="test group perm")
 permission_sample_set = db.sample_set.insert(sample_type="patient")

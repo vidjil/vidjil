@@ -106,7 +106,6 @@ Germline::Germline(string _code, char _shortcut,
 Germline::Germline(string code, char shortcut, string path, json json_recom,
                    string seed_5, string seed_4, string seed_3, int max_indexing, bool build_automaton)
 {
-
   bool regular = (code.find("+") == string::npos);
   
   rep_5 = BioReader(2, "|", regular ? CYS104_IN_GAPPED_V : 0) ;
@@ -116,9 +115,9 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
   for (json::iterator it = json_recom["5"].begin();
        it != json_recom["5"].end(); ++it) 
   {
-    string filename = *it;
-    f_reps_5.push_back(path + filename);
-    rep_5.add(path + filename);
+    string path_file = path_join(path, *it);
+    f_reps_5.push_back(path_file);
+    rep_5.add(path_file);
   }
 
   init(code, shortcut, seed_5, seed_4, seed_3, max_indexing, build_automaton);
@@ -127,18 +126,18 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
     for (json::iterator it = json_recom["4"].begin();
         it != json_recom["4"].end(); ++it) 
     {
-        string filename = *it;
-        f_reps_4.push_back(path + filename);
-        rep_4.add(path + filename);
+        string path_file = path_join(path, *it);
+        f_reps_4.push_back(path_file);
+        rep_4.add(path_file);
     }
   }
   
   for (json::iterator it = json_recom["3"].begin();
        it != json_recom["3"].end(); ++it) 
   {
-    string filename = *it;
-    f_reps_3.push_back(path + filename);
-    rep_3.add(path + filename);
+    string path_file = path_join(path, *it);
+    f_reps_3.push_back(path_file);
+    rep_3.add(path_file);
   }
 
   if (rep_4.size())
@@ -151,9 +150,9 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
       for (json::iterator it = json_recom["1"].begin();
            it != json_recom["1"].end(); ++it)
         {
-          string filename = *it;
-          f_reps_4.push_back(path + filename);
-          rep_4.add(path + filename);
+          string path_file = path_join(path, *it);
+          f_reps_4.push_back(path_file);
+          rep_4.add(path_file);
         }
     }
 }
@@ -300,8 +299,10 @@ json parse_json_g(string path, string json_filename)
   //open and parse .g file
   json germlines ;
 
+  string json_path = path_join(path, json_filename);
+
   try {
-    ifstream germline_data(path + "/" + json_filename);
+    ifstream germline_data(json_path);
 
     string content( (std::istreambuf_iterator<char>(germline_data) ),
                     (std::istreambuf_iterator<char>()    ) );
@@ -309,12 +310,12 @@ json parse_json_g(string path, string json_filename)
     germlines = json::parse(content);
 
   } catch (const invalid_argument &e) {
-    cerr << ERROR_STRING << "Vidjil cannot open .g file " << path + "/" + json_filename << ": " << e.what() << endl;
+    cerr << ERROR_STRING << "Vidjil cannot open .g file " << json_path << ": " << e.what() << endl;
     exit(1);
   }
 
   // Prepend actual path
-  germlines["path"] = path + '/' + germlines["path"].get<std::string>();
+  germlines["path"] = path_join(path, germlines["path"].get<std::string>());
 
   return germlines;
 }
@@ -352,7 +353,7 @@ void load_json_g(json &json_germlines, string path, string json_filename, string
         json_germlines["systems"][system.key()]["parameters"]["path"] = j["path"].get<std::string>();
       }
 
-    json_germlines["path"] = ".";
+    json_germlines["path"] = "";
   } catch (std::exception& e) {
     cerr << ERROR_STRING << "cannot properly read " << path << "/" << json_filename << ": " << e.what() << endl;
     exit(1);
@@ -390,7 +391,7 @@ void MultiGermline::build_from_json(json germlines, int filter,
 
     string s_path = path;
     if (json_parameters.contains("path"))
-      s_path += "/" + json_parameters["path"].get<std::string>();
+      s_path = path_join(path, json_parameters["path"].get<std::string>());
 
     if (json_parameters.find("seed") != json_parameters.end()) {
       seed = json_parameters["seed"];
@@ -430,7 +431,7 @@ void MultiGermline::build_from_json(json germlines, int filter,
 
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
-      add_germline(new Germline(code, shortcut, s_path + "/", *it2,
+      add_germline(new Germline(code, shortcut, s_path, *it2,
                                 seed_5, seed_4, seed_3, max_indexing, build_automaton));
     }
   }
@@ -521,17 +522,3 @@ ostream &operator<<(ostream &out, const MultiGermline &multigermline)
   return out;
 }
 
-
-
-map<string, string> seedMap = {
-  {"7c", "#######"},
-  {"8c", "########"},
-  {"9c", "#########"},
-  {"8s", "####-####"},
-  {"10s", "#####-#####"},
-  {"12s", "######-######"},
-  {"13s", "#######-######"}
-};
-
-// need seedMap to be defined
-Germline *GERMLINE_NOT_DESIGNATED = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);

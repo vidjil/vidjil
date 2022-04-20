@@ -113,15 +113,15 @@
                                                     title="Send sequences to ARResT/CompileJunctions and see the results in a new tab"
                                                     class="aligner-button"
                                                     onclick="javascript:segment.sendTo('arrest');"><i class="icon-forward-1"></i> ARResT/CJ</a></span>
-                                    <span class="devel-mode"><a id="toCloneDB"
-                                                    title="Send sequences to EC-NGS/CloneDB in the background"
-                                                    class="aligner-button"
-                                                    onclick="javascript:db.callCloneDB(m.getSelected());"><i class="icon-forward-1"></i> CloneDB</a></span>
                                     <a id="toBlast" title="Send sequences to Ensembl Blast and see the results in a new tab"
                                             class="aligner-button" onclick="javascript:segment.sendTo('blast');"><i class="icon-forward-1"></i> Blast</a>
                                     <a id="toAssignSubsets"
                                             title="Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset"
                                             class="aligner-button" onclick="javascript:segment.sendTo('assignSubsets');"><i class="icon-forward-1"></i> AssignSubsets</a>
+                                    <span class="devel-mode"><label title="Open external tool in another tab" class="aligner-checkbox-label" for="post_target_blank">
+                                        <span><input class="aligner-checkbox-input" type="checkbox" id="post_target_blank" autocomplete="off" checked="true"></span>
+                                        <span class="aligner-checkbox-text">use new tab</span>
+                                    </label></span>
                             </div>
                     </div>
 
@@ -132,12 +132,9 @@
                             </div>
                     </div>
 
-                    <div id="align-imgt" class="aligner-menu"
-                    title="Sequence features from IMGT [click to reload]" onclick="javascript:segment.sendTo('IMGTSeg');"> <i class="icon-menu"></i> IMGT
-                       <span title="reload IMGT info" ></span><i class="demo-icon icon-arrows-ccw"></i></span>
-                       <div class="menu-content">
-
-                       </div>
+                    <div id="align-refresh-button" class="aligner-menu"
+                        title="Some data are missing has they are based on external analysis (IMGT / CloneDB / IGBLast/ ...) &#10; Click to perform those analysis"
+                        onclick="javascript:segment.retrieveExternalData();"> </span><i class="demo-icon icon-arrows-ccw"></i></span>
                     </div>
                     
                     </div>
@@ -147,13 +144,13 @@
 
                     <div id="aligner-stats" class="stats"><span  title="">
                             <span class="stats_content"></span>
-                            <span id="focus_selected" class="button"    title="Focus on selected Clones (ctrl+z)" >
+                            <span id="focus_selected" class="button"    title="Focus on selected clonotypes (ctrl+z)" >
                                 <i class="icon-eye"></i></span>
-                            <span id="hide_selected" class="button"     title="Hide selected Clones (shift+z)">
+                            <span id="hide_selected" class="button"     title="Hide selected clonotypes (shift+z)">
                                 <i  class="icon-eye-off"></i></span>
-                            <span class="button" id="reset_focus"       title="Reset Focus/Hide filters (z)">
+                            <span class="button" id="reset_focus"       title="Reset focus / Hide filters (z)">
                                 <i  class="icon-cancel-circled-outline"></i></span>
-                            <span class="button" id="star_selected"     title="Tag selected clones">
+                            <span class="button" id="star_selected"     title="Tag selected clonotypes">
                                 <i id="tag_icon__multiple" class="icon-star-2"></i></span>
                     </div>
             </div>
@@ -176,13 +173,13 @@
 
 <template id="aligner-F">
     <div class="seq-fixed cloneName">
-            <span class="nameBox" title="clone name">
-                    <span class="delBox"><i class="icon-cancel" title="Unselect this clone"></i></span>
+            <span class="nameBox" title="clonotype name">
+                    <span class="delBox"><i class="icon-cancel" title="Unselect this clonotype"></i></span>
                     <span class="nameBox2"></span>
             </span>
             <span class="axisBox"></span>
             <span class="starBox" id="color60"><i id="tag_icon_60" title="clone_tag" class="icon-star-2"></i></span>
-            <span class="infoBox"><i class="icon-info" title="clone information"></i></span>
+            <span class="infoBox"><i class="icon-info" title="clonotype information"></i></span>
     </div>
 </template>
 

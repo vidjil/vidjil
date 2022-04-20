@@ -1,4 +1,4 @@
-var DEFAULT_DB_ADDRESS="https://db.vidjil.org/vidjil/";
+var DEFAULT_DB_ADDRESS="https://db.vidjil.org/";
 
 requirejs.config({
     baseUrl: '',
@@ -21,7 +21,8 @@ require(["jquery",
          "js/lib/jquery.atwho",
          "js/lib/vmi",
          "js/lib/svgExport",
-         "js/lib/bioseq"], function() {
+         "js/lib/bioseq",
+         "js/lib/select2.min"], function() {
              // Then config file (needed by Vidjil)
              require(['js/conf'], function() {
                  loadAfterConf()
@@ -37,7 +38,8 @@ require(["js/git-sha1"], function () { console.log("Vidjil client " + git_sha1) 
 function loadAfterConf() {
     if (typeof config === "undefined") {
         config = {};
-        config.db_address = DEFAULT_DB_ADDRESS;
+        config.db_address   = DEFAULT_DB_ADDRESS+"vidjil/";
+        config.cgi_address  = DEFAULT_DB_ADDRESS+"cgi/";
         config.use_database = false;
     }
 
@@ -88,6 +90,7 @@ function loadAfterConf() {
                                          "js/url",
                                          "js/autocomplete",
                                          "js/tips",
+                                         "js/tag",
                                          "js/tokeniser",
                                          "js/indexedDom",
                                          // Speed test

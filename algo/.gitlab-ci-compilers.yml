@@ -46,33 +46,16 @@
   extends:
     - .testing-compilers
 
-.installing-testing-gcc:
-  variables:
-    COMPILER_PKG: "g++"
-    COMPILER_CPP: "g++"
-    COMPILER_C: "gcc"
-    VERSION: $GCC_VERSION
-  extends:
-    - .testing-compilers
-    - .installing-compiler
-    
-gcc48:
-  image: debian:8-slim
-  variables:
-    GCC_VERSION: "4.8"
-  extends:
-    - .installing-testing-gcc
-
 gcc:
   extends:
     - .testing-gcc
   parallel:
     matrix:
-      - GCC_VERSION: ["5.3", "6.3", "7.3", "8", "9", "10", "11"]
+      - GCC_VERSION: ["5.5", "6.5", "7.5", "8", "9", "10", "11"]
 
 clang:
   extends:
     - .testing-clang
   parallel:
     matrix:
-      - CLANG_VERSION: ["4", "6", "7", "11", "12"]
+      - CLANG_VERSION: ["6", "7", "11", "12"]

@@ -36,4 +36,25 @@ describe('Manipulate db page', function () {
     })
 
 
+    it('01-preprocess_config', function() {
+        // Create a preprocess (with id == 2)
+        var pre_process_name_1  = 'dummy1'
+        var pre_process_name_2  = 'dummy2'
+        var pre_process_command = 'dummy &file1& &file2& > &result&'
+        var pre_process_info    = 'dummy pre-process for testing purposes'
+        cy.createPreprocess(pre_process_name_1, pre_process_command, pre_process_info)
+        cy.createPreprocess(pre_process_name_2, pre_process_command, pre_process_info)
+
+        // Edit a preprocess
+        cy.editPreprocess(1, pre_process_name_1, pre_process_command, pre_process_info+" edited")
+
+        // Change permissions for group public (id=3)
+        cy.permissionPreprocess(2, 3, true)
+        cy.permissionPreprocess(2, 3, false)
+
+        // Delete a preprocess
+        cy.deletePreprocess(2, pre_process_name_2)
+    })
+
+
 })

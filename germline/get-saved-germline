@@ -17,7 +17,7 @@ database, Nucl. Acids Res., 29, 207-209 (2001). PMID:11125093.
 Otherwise please remove the files from your system.
 EOF
 
-wget -N http://www.vidjil.org/germlines/germline-${germline_id}.tar.gz
+wget --no-check-certificate -N https://www.vidjil.org/germlines/germline-${germline_id}.tar.gz
 tar xzmfv germline-${germline_id}.tar.gz --strip-components=1 germline/
 if [ -d "$dir/../browser" ]; then
     tar xzmfv germline-${germline_id}.tar.gz --strip-components=1 -C $dir/../browser/ browser/

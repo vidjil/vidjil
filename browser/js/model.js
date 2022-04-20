@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
@@ -32,14 +32,16 @@
  * */
 
 VIDJIL_JSON_VERSION = '2014.09';
+
+// See also doc/user.md and docker/ci/Dockerfile
 BROWSER_COMPATIBILITY = {
     "Firefox": {
-        "legacy": 32,
+        "legacy": 62,
         "supported": 78,
         "latest": 89
     }, 
     "Chrome": {
-        "legacy": 49,
+        "legacy": 75,
         "supported":  79,
         "latest": 93
     }
@@ -64,6 +66,7 @@ function Model() {
         this[f] = Model_loader.prototype[f]
     }
 
+    this.tags = new TagManager(this);
     this.germline = {};
     this.create_germline_obj();
     this.view = [];
@@ -128,28 +131,7 @@ Model.prototype = {
         
         document.body.appendChild(this.infoBox);
         
-        //build tagSelector
-        this.tagSelector = document.createElement("div");
-        this.tagSelector.className = "tagSelector";
-        
-        var closeTag = document.createElement("span");
-        closeTag.className = "closeButton" ;
-        closeTag.appendChild(icon('icon-cancel', ''));
-        closeTag.onclick = function() {$(this).parent().hide('fast')};
-        this.tagSelector.appendChild(closeTag);
-        
-        this.tagSelectorInfo = document.createElement("div")
-        this.tagSelector.appendChild(this.tagSelectorInfo);
-        
-        this.tagSelectorList = document.createElement("ul")
-        this.tagSelector.appendChild(this.tagSelectorList);
-        
-        document.body.appendChild(this.tagSelector);
-        $('.tagSelector').hover(function() { 
-          $(this).addClass('hovered');
-        }, function() {
-          $(this).removeClass('hovered');
-        });
+        this.tags.buildSelector()
 
         $("#filter_switch_sample").click(function(){
             self.filter.toggle("Size", "=", 0)
@@ -193,6 +175,7 @@ Model.prototype = {
             "lenCDR3":          "CDR3 length",
             "lenSeqConsensus":  "Sequence length",
             "lenSeqAverage":    "Reads length",
+            "germline" :        "Locus",
         }
         // List of axe that must be in an array format
         this.distrib_axe_is_timmed = {
@@ -349,22 +332,6 @@ Model.prototype = {
             "= SEG, but no window",
         ];
 
-        this.tag = [
-            {"color" : "#dc322f", "name" : "clonotype 1", "display" : true},
-            {"color" : "#cb4b16", "name" : "clonotype 2", "display" : true},
-            {"color" : "#b58900", "name" : "clonotype 3", "display" : true},
-            {"color" : "#268bd2", "name" : "standard", "display" : true},
-            {"color" : "#6c71c4", "name" : "standard (noise)", "display" : true},
-            {"color" : "#2aa198", "name" : "custom 1", "display" : true},
-            {"color" : "#d33682", "name" : "custom 2", "display" : true},
-            {"color" : "#859900", "name" : "custom 3", "display" : true},
-            {"color" : "",        "name" : "-/-", "display" : true},
-            {"color" : "#bdbdbd", "name" : "smaller clonotypes", "display" : true}
-        ]
-
-        this.default_tag=8;
-        this.distrib_tag=9;
-
         this.axis_color = "Tag"
         this.notation_type = "percent"
         this.time_type = "name"
@@ -453,7 +420,7 @@ Model.prototype = {
         this.n_max = n_max
         
         for (var j = 0; j < this.clones.length; j++) 
-            this.clone(j).tag = this.default_tag;
+            this.clone(j).tag = this.tags.getDefault();
         
         this.applyAnalysis(this.analysis);
         this.initData();
@@ -466,6 +433,7 @@ Model.prototype = {
                 $("#external_normalization").show();
             }
         }
+        this.filter.reset()
         this.update()
     }, //end initClones
 
@@ -503,7 +471,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         for (var key in this.data){
             if (this.data[key].length == this.samples.number){
                 this.data_info[key] = {
-                    "color" : this.tag[i].color,
+                    "color" : colorGeneratorIndex(i),
                     "isActive" : false
                 }
                 i++
@@ -547,14 +515,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         f = clone.getSize() / c[i].expected;
                         
                         if (f < 100 && f > 0.01) {
-                            if (typeof (c[i].tag) != "undefined") {
-                                clone.tag = c[i].tag;
-                            }
-
-                            if (typeof (c[i].name) != "undefined") {
-                                clone.c_name = c[i].name;
-                            }
-                            
                             if (c[i].expected>max.size){
                                 max.size = c[i].expected
                                 max.id = id
@@ -562,14 +522,14 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         }else{
                             console.log(" apply analysis : clones "+ c[i].id + " > incorrect expected value", 0)
                         }
-                    }else{
-                        if (typeof (c[i].tag) != "undefined") {
-                            clone.tag = c[i].tag;
-                        }
-                        if (typeof (c[i].name) != "undefined") {
-                            clone.c_name = c[i].name;
-                        }
                     }
+
+                    if (typeof (c[i].tag) != "undefined")
+                        if (isNaN(parseInt(c[i].tag))) clone.tag = c[i].tag;
+                        else  clone.tag = m.tags.old_tag[c[i].tag];
+
+                    if (typeof (c[i].name) != "undefined") clone.c_name = c[i].name;
+                
                 }else{
                     this.analysis_clones.push(c[i])
                 }
@@ -727,8 +687,18 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             } else if (typeof this.diversity[key][time] != 'undefined') {
         	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
         	    // See #1941 and #3416
-        		if (this.diversity[key][time] != null) {
-                    return this.diversity[key][time].toFixed(3);
+        		if (this.diversity[key][time] != null){
+                    if (typeof this.diversity[key][time] == "number") {
+                        // old case, one global diversity
+                        return this.diversity[key][time].toFixed(3);
+                    } else {
+                        // case diversity by locus
+                        var diversity_by_locus = {}
+                        for (var locus in this.diversity[key][time]) {
+                            diversity_by_locus[locus] = this.diversity[key][time][locus].toFixed(3)
+                        }
+                        return diversity_by_locus
+                    }
                 } else {
                     return this.diversity[key][time]
                 }
@@ -1547,23 +1517,34 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
-        html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
-        html += "<tr><td> analyzed reads </td><td>" + this.reads.segmented_all[timeID] +
+        html += "<tr id='info_timepoint_reads'><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
+        html += "<tr id='info_timepoint_analyzed_reads'><td> analyzed reads </td><td>" + this.reads.segmented_all[timeID] +
             " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
 
-        html += "<tr><td> analysis software </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
-        html += "<tr><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
-        html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
-        html += "<tr><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
+        html += "<tr id='info_timepoint_analysis_software'><td> analysis software </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
+        html += "<tr id='info_timepoint_parameters'><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
+        html += "<tr id='info_timepoint_timestamp'><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
+        html += "<tr id='info_timepoint_log'><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
 
         // 
         var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
 
         // Sub-table diversity
         if ( typeof this.diversity != 'undefined') {
-            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
+            html += "<tr><td class='header' "+colspan_header+"> Diversity indices </td></tr>"
             for (var key_diversity in this.diversity) {
-                html += "<tr><td> " + key_diversity.replace('index_', '') + "</td><td>" + this.getDiversity(key_diversity, timeID) + '</td></tr>'
+                var diversity = this.getDiversity(key_diversity, timeID)
+                if (typeof diversity == "string" || diversity == null){
+                    html += "<tr id='line_"+key_diversity+"'><td> " + translate_key_diversity(key_diversity) + "</td><td>" + diversity + '</td></tr>'
+                } else if (typeof diversity == "object"){
+                    html += "<tr><td "+colspan_header+">"+translate_key_diversity(key_diversity)+"</td></tr>"
+                    var present_locus = this.getLocusPresentInTop(timeID)
+                    for (var locus in diversity) {
+                        if( present_locus.indexOf(locus) != -1 || locus == "all"){
+                            html += "<tr id='line_"+key_diversity+"_"+locus+"'><td> " + this.systemBox(locus).outerHTML + " "+locus+"</td><td>" + diversity[locus] + '</td></tr>'
+                        }
+                    }
+                }
             }
         }
         if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
@@ -1655,6 +1636,24 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         }
         return html
+    },
+
+    /**
+     * Allow to know if a locus is present in clonotype of a sample
+     * include each clonotype of each clone inside the top limit and present with a least one read
+     * If a clone is share between sample, it will be present even in not in top limit of the sample (see fuse of top field)
+     */
+    getLocusPresentInTop: function(time){
+        var locus = []
+        for (var i = this.clones.length - 1; i >= 0; i--) {
+            var clone = this.clones[i]
+            if (clone.reads[time] && clone.top <= m.top){
+                if (locus.indexOf(clone.germline) == -1){
+                    locus.push(clone.germline)
+                }
+            }
+        }
+        return Array.from( new Set(locus) )
     },
 
 
@@ -2197,7 +2196,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     /**
      * return sample/time name in a specified format
      * @param {integer} timeID - sample/time index
-     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 
+     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 'order'
      * @return {string} sample name
      * */
     getStrTime: function (timeID, format){
@@ -2205,6 +2204,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var result = "-/-"
 
         switch (format) {
+            case "order":
+                result = m.samples.order.indexOf(timeID);
+                if (result == -1) result = "-/-";
+                break;
+            case "original_name":
+                result = this.samples.original_names[timeID]
+                break;
             case "name":
             case "names":
                 //TODO resolve thid hack
@@ -2447,135 +2453,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.infoBox.style.display = "none";
         this.infoBox.lastElementChild.removeAllChildren();
     },
-
- 
-    /**
-     * open/build the tag/normalize menu for a clone
-     * @param {integer} cloneID - clone index
-     * */
-    openTagSelector: function (clonesIDs, e) {
-        var self = this;
-        this.tagSelectorList.removeAllChildren();
-        clonesIDs = clonesIDs !== undefined ? clonesIDs : this.clonesIDs; 
-        this.clonesIDs=clonesIDs
-
-        var buildTagSelector = function (i) {
-            var span1 = document.createElement('span');
-            span1.className = "tagColorBox tagColor" + i
-           
-            var span2 = document.createElement('span');
-            span2.className = "tagName" + i + " tn"
-            span2.appendChild(document.createTextNode(self.tag[i].name))
-
-            var div = document.createElement('div');
-            div.className = "tagElem"
-            div.id = "tagElem_" + i
-            div.appendChild(span1)
-            div.appendChild(span2)
-            div.onclick = function () {
-                for (var j = 0; j < clonesIDs.length; j++) {
-                    self.clone(clonesIDs[j]).changeTag(i)
-                }
-                $(self.tagSelector).hide('fast')
-            }
-
-            var li = document.createElement('li');
-            li.appendChild(div)
-
-            self.tagSelectorList.appendChild(li);
-        }
-
-        for (var i = 0; i < this.tag.length; i++) {
-            buildTagSelector(i);
-        }
-        
-        var separator = document.createElement('div');
-        separator.innerHTML = "<hr>"
-
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("normalize to: "))
-
-        
-        this.norm_input = document.createElement('input');
-        this.norm_input.id = "normalized_size";
-        this.norm_input.type = "text";
-        
-        var span2 = document.createElement('span');
-        span2.appendChild(this.norm_input)
-        
-        this.norm_button = document.createElement('button');
-        this.norm_input.id = "norm_button";
-        this.norm_button.appendChild(document.createTextNode("ok"))
-        
-        this.norm_button.onclick = function () {
-            var cloneID = self.clonesIDs[0];
-            var size = parseFloat(self.norm_input.value);
-            
-            if (size>0 && size<1){
-                self.set_normalization( self.NORM_EXPECTED )
-                $("#expected_normalization").show();
-                self.norm_input.value = ""
-                self.clone(cloneID).expected=size;
-                self.compute_normalization(cloneID, size)
-                self.update()
-                $(self.tagSelector).hide('fast')
-                $("expected_normalization_input").prop("checked", true)
-            }else{
-                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
-            }
-        }
-        this.norm_input.onkeydown = function (event) {
-            if (event.keyCode == 13) self.norm_button.click();
-        }
-        
-        var div = document.createElement('div');
-        div.id  = "normalization_expected_input_div"
-        div.appendChild(separator)
-        div.appendChild(span1)
-        div.appendChild(span2)
-        div.appendChild(this.norm_button)
-
-        var li = document.createElement('li');
-        li.appendChild(div)
-
-        this.tagSelectorList.appendChild(li);
-        
-        var string;
-        if (clonesIDs.length > 1){
-            string = "Tag for " + clonesIDs.length +  " clonotypes"
-        } else {
-            if (clonesIDs[0][0] == "s") cloneID = clonesIDs[0].substr(3);
-            string = "Tag for "+this.clone(clonesIDs[0]).getName()
-        }
-        this.tagSelectorInfo.innerHTML = string
-        $(this.tagSelector).show();
-        
-        
-        //replace tagSeelector
-        var tagSelectorH = $(this.tagSelector).outerHeight()
-        var minTop = 40;
-        var maxTop = Math.max(40, $(window).height()-tagSelectorH);
-        var top = e.clientY - tagSelectorH/2;
-        if (top<minTop) top=minTop;
-        if (top>maxTop) top=maxTop;
-        this.tagSelector.style.top=top+"px";
-
-        var tagSelectorW = $(this.tagSelector).outerWidth()
-        var maxLeft = $(window).width() - tagSelectorW;
-        var tmp = e.clientX;
-        if(typeof e.currentTarget !== 'undefined') {
-            tmp = e.currentTarget.offsetLeft + (e.currentTarget.offsetWidth/2);
-        }
-        var left = tmp + (tagSelectorW/2);
-        if (left>maxLeft) left=maxLeft;
-        this.tagSelector.style.left=left+"px";
-
-        // If multiple clones Ids; disabled normalization div
-        if (clonesIDs.length > 1) {
-            $("#"+div.id).addClass("disabledbutton");
-        }
-    },
-
 
     /**
      * load a new germline and update 
@@ -2861,169 +2738,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.updateIcon();
     },
     
-    
-    /* --------------------- */
-
-    
-   /*For DBSCAN*/
-    loadRandomTab: function() {
-        this.tabRandomColor = [];
-        /*Initialisation du tableau de couleurs*/
-        for (var h = 0; h < this.clones.length; h++) {
-            this.tabRandomColor.push(h);
-        }
-        /*Fisher yates algorithm to shuffle the array*/
-        for (var i = this.clones.length - 1; i >= 1; i--) {
-            var j = Math.floor(Math.random() * i) + 1;
-            var abs = this.tabRandomColor[i];
-            this.tabRandomColor[i] = this.tabRandomColor[j];
-            this.tabRandomColor[j] = abs;
-        }
-    },
-
-    /* Fonction permettant de charger la clusterisation avec DBSCAN, mais aussi de colorer les nodes 
-    directement après en fonction de cette clusterisation
-     *
-     */
-    loadDBSCAN: function(sp) {
-        if (typeof(sp) != "undefined") this.sp = sp;
-            this.dbscan = new DBSCAN(this.sp, this.eps, this.nbr);
-            this.dbscan.runAlgorithm();
-            for (var i = 0; i < this.dbscan.clusters.length; i++)
-                for (var j = 0; j < this.dbscan.clusters[i].length; j++)
-                    this.clones[this.dbscan.clusters[i][j]].cluster = i;
-            //Color DBSCAN
-            if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
-            this.colorNodesDBSCAN();
-            //Add information about the window (Noise, Core, ...)
-            this.addTagCluster();
-    },
-
-    /* Fonction permettant de colorer les nodes en fonction de la clusterisation DBSCAN
-    */
-    colorNodesDBSCAN: function() {
-        /*Adding color by specific cluster*/
-        /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, 
-        mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
-        var maxCluster = this.dbscan.clusters.length;
-        for (var i = 0; i < this.clones.length; i++) {
-            if (typeof(this.clone(i)) != 'undefined') {
-                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i)] + 1) ));
-            }
-            else
-                this.clone(i).colorDBSCAN = "";
-        }
-    },
-
-    /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, 
-    à l'extérieur ou appartenant à...
-     */
-    addTagCluster: function() {
-        for (var i = 0; i < this.clones.length; i++)
-            if (typeof(this.clone(i)) != 'undefined')
-                switch (this.dbscan.visitedTab[i].mark) {
-                case -1:
-                        this.clone(i).tagCluster = "NOISE";
-                        break;
-                case 0:
-                        this.clone(i).tagCluster = "CORE";
-                        break;
-                case 1:
-                        this.clone(i).tagCluster = "NEAR";
-                        break;
-                }
-            else
-                this.clone(i).tagCluster = null;
-    },
-
-    /*
-    // Fonction permettant de changer dynamiquement le nombre epsilon, pour DBSCAN
-    //
-    changeEps: function(newEps) {
-        //Modification de l'attribut 'Eps' contenu dans l'objet
-        this.eps = newEps;
-        //Prise en compte du slider
-        var html_container = document.getElementById('changeEps');
-        if (html_container != null) {
-            html_container.value = newEps;
-        }
-        //Création d'un nouvel objet DBSCAN
-        this.loadDBSCAN();
-        this.update();
-        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
-        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
-        //Changement de l'affichage de la valeur liée au slider
-        this.changeSliderValue(true, "DBSCANEpsSlider", "Eps ", this.eps);
-    },
-
-    // Fonction permettant de changer dynamiquement le nombre de voisins minimum, pour DBSCAN
-    //
-    changeNbr: function(newNbr) {
-        //Modification de l'attribut 'nbr' contenu dans l'objet
-        this.nbr = newNbr;
-        //Prise en compte du slider
-        var html_container = document.getElementById('changeNbr');
-        //Changement de la valeur du slider
-        if (html_container != null) {
-            html_container.value = newNbr;
-        }
-        //Création d'un nouvel objet DBSCAN
-        this.loadDBSCAN();
-        this.update();
-        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
-        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
-        //Changement de l'affichage de la valeur liée au slider
-        this.changeSliderValue(true, "DBSCANNbrSlider", "Nbr ", this.nbr);
-    },
-
-    */
-    /* Fonction permettant de changer dynamiquement la valeur d'affichage, à côté du slider Epsilon/MinPts dans le menu Display
-    */
-    changeSliderValue: function(bool, div, name, value) {
-        div = document.getElementById(div);
-        var text = document.createTextNode(name + value);
-        if (bool) {
-            //Suppression du précédent noeud
-            div.removeChild(div.childNodes[0]);
-        }
-        if (!bool) div.insertBefore(document.createElement('br'), div.firstChild);
-        div.insertBefore(text, div.firstChild);
-    },
-
-    /* Fonction permettant de changer dynamiquement la valeur d'affichage du slider "Edit Distance"
-    */
-    changeSliderEditDistanceValue: function(bool, value) {
-        var div = document.getElementById("EditDistanceSlider");
-        var text =  document.createTextNode("Distance: " + value);
-        if (!bool) {
-            div.removeChild(div.childNodes[0]);
-        }
-        else {
-            div.insertBefore(text, div.firstChild);
-        }
-    },
-    
-    /* put a marker on a specific edge, for the edit distance distribution
-     *
-     */
-    focusEdge: function(edge) {
-       $(".focus")
-            .text(this.printInformationEdge(edge));
-    },
-
-    /* remove the focus marker to the edge
-     *
-     */
-    removeFocusEdge: function() {
-        $(".focus")
-            .text("")
-    },
-
-    /* print informations of a specific edge
-     */
-    printInformationEdge: function(edge) {
-        return this.getName(edge.source)+" -- "+this.getName(edge.target)+" == "+edge.len;
-    },
 
     DEFAULT_SEGMENTER_URL: "https://dev.vidjil.org/vidjil/segmenter",
 

@@ -540,7 +540,7 @@ Sequence.prototype = {
                 try{
                     text = l.text(this, this.m.clone(this.id));
                     if (typeof text == "string") { 
-                        div_layer.innerHTML = l.text(this, this.m.clone(this.id));
+                        div_layer.innerHTML = text.replace('\t','-');
                     }else {
                         div_layer.innerHTML = "";
                         div_layer.append(text);
@@ -607,5 +607,43 @@ Sequence.prototype = {
             div_nuc.style.letterSpacing = this.l_spacing+"px";
         }
         return this.l_spacing;
+    },
+
+    // return a list of external services (IMGT / CloneDB) data required to display enabled layers
+    needRefresh: function(){
+        var refreshList = []
+
+        // check enabled layers
+        for (var i in this.layers){
+            var l = this.layers[i];
+            var r = false
+            if (l.enabled && typeof l.refresh != 'undefined')
+                try{
+                    r = l.refresh(this.m.clone(this.id));
+                }catch(e){
+                    r = false;
+                }
+            
+            if (typeof r == 'string' && refreshList.indexOf(r) ==-1) 
+                refreshList.push(r)
+        
+        }
+
+        // check select axis info
+        for (var j in this.segmenter.selectedAxis){
+            var a = this.segmenter.selectedAxis[j];
+            var r2 = false
+            if (a.refresh != 'undefined')
+                try{
+                    r2 = a.refresh(this.m.clone(this.id));
+                }catch(e){
+                    r2 = false;
+                }
+            
+            if (typeof r2 == 'string' && refreshList.indexOf(r2) ==-1) 
+                refreshList.push(r2)
+        
+        }
+        return refreshList
     },
 };

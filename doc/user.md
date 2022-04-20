@@ -26,19 +26,22 @@ As of September 2020, we recommend using Firefox or Chrome/Chromium :
   - Chrome, *version \>= 79*
 
 These platforms will be supported to at least *April 2024*.
-Chrome 79, and possibly other recent versions, are tested through our continuous integration pipelines.
+Within our quality process, we test several of these versions 
+through [tests and continuous integration](https://www.vidjil.org/doc/quality/#tests-1).
 
 ## Legacy browsers
 
 We also provide an extended support on
 
-  - Firefox, versions 32 to 77
-  - Chrome, version 49 to 78
+  - Firefox, versions 62 to 77
+  - Chrome, version 75 to 78
 
 Some of these legacy platforms are also tested through our continuous integration pipelines.
 However, old platforms have security flaws and are not recommended for routine usage involving clinical data.
-They may not get the new features, and *this extended support may be dropped in September 2021*,
-or at latest in *May 2022*.
+They may not get the new features, and *this extended support will be dropped in May 2022*.
+
+Before dropping support to any platform,
+we display during at least six months a warning on those legacy browsers.
 
 ## Other browsers
 
@@ -293,7 +296,7 @@ The sequence panel shows, for the selected clonotypes:
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/panel_sequence.png"/>
-      <p style="text-align:center">For each clonotype, name and sequences are shown. You can align sequences and see differences between them. Here the two first sequences seem identical on the region displayed though they actually differ. The third and fifth sequences differ by a deletion and an insertion in the junction, within a stretch of cytosine. From here you can remove more divergent clonotypes (using the cross on the left side) and cluster others with the corresponding button.</p>
+      <p style="text-align:center">For each clonotype, name and sequences are shown. You can align sequences and see differences between them. Here the two first sequences seem identical on the region displayed though they actually differ. The third and fifth sequences differ by a deletion and an insertion in the junction, within a stretch of cytosine. From here you can remove more divergent clonotypes (using the cross on the left side) and cluster others with the corresponding button. You can also choose to show some available features on the seuqence as primers, visible here under sequence on 3' extremities.</p>
     </p>
   </figure>
 
@@ -372,6 +375,7 @@ The sequence feature `☰` menu usually contains at least the following genes/re
 
   - V/D/J genes
   - CDR3 position
+  - Primers as computed after selection of a primer set
 
 ### IMGT Sequence Features
 
@@ -537,7 +541,7 @@ There are also processes for other species and for other RepSeq algorithms, such
 The server mainteners can add new process configurations tailored to specific needs, contact us if you have other needs.
 
 The « reload » button (bottom left) updates the view. It is useful to see if the status of the task changed.
-It should do `QUEUED` → `ASSIGNED` → `RUNNING` → `COMPLETED`.
+It should do `PREPROCESSING (optional)` → `QUEUED` → `ASSIGNED` → `RUNNING` → `COMPLETED`.
 It is possible to launch several processes at the same time (some will wait in the `QUEUED` / `ASSIGNED` states), and also to launch processes while you
 are uploading data. Finally, you can safely close the window with the sample database (and even your web browser) when some process are queued/launched.
 The only thing you should not do is to close completely your web browser (or the webpage) while sequences are uploading.
@@ -774,16 +778,20 @@ analyzed reads, including the hidden clonotypes.
 
 Several indices are computed on the full list of clonotypes to assess the diversity and overlap of sample(s):
 
-- On one sample, [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) such as
-  Shannon's diversity, Shannon's equitability and Simpson's diversity, as computed by [vijdil-algo](vidjil-algo.md#diversity-measures).
-  Some of these indices have values between 0 (no diversity, one clonotype clusters all analyzed reads)
+- On one sample, *diversity indices* such as
+  [Shannon's diversity](https://en.wikipedia.org/wiki/Diversity_index#Shannon_index),
+  [Pielou's evenness](https://en.wikipedia.org/wiki/Species_evenness),
+  and [Simpson's diversity](https://en.wikipedia.org/wiki/Diversity_index#Simpson_index),
+  as computed by [vijdil-algo](vidjil-algo.md#diversity-measures).
+  Pielou's evenness and Simpson's diversity have values between 0
+  (no diversity, one clonotype clusters all analyzed reads)
   and 1 (full diversity, each analyzed read belongs to a different clonotype).
 
 - On several samples, overlap indexes such as [Morisita's overlap index](https://en.wikipedia.org/wiki/Morisita%27s_overlap_index)
   having values between 0 (no overlap between the two samples)
   and 1 (full overlap, clonotypes in the same proportion in both samples).
 
-Some of these indices are currently shown on the sample information panel (“🛈” next to the sample name in the info panel).
+Some of these indices are shown on the sample information panel (“🛈” next to the sample name in the info panel).
 Contact us if you have other needs.
 
 ## Exporting the full list of clonotypes
@@ -919,6 +927,35 @@ detection is.
 
 Whenever the e-value is too large, a warning sign will be shown next to the
 clonotype, instead of the info icon.
+
+# How to work with primers?
+
+## Displaying primers
+
+Library preparation may involve some [usual sets of primers](locus.md).
+To display the primers,
+select such a primer set with ``settings -> primer set``.
+This aligns the clonotype sequences against the selected primer set.
+It works even with approximate matches and/or degenerate primers.
+Note that retrieving the positions may take a few seconds to about one minute when many clonotypes and/or samples are opened.
+
+Primers are then displayed
+- on the clone information panel (line `Primer 5` or `Primer 3`)
+- on the sequence aligner (`☰ Sequences features` > `Primers`)
+
+Moreover, when one or both primers are not found in the clonotype sequence,
+their position will nevertheless be estimed "outside" of the read, based on the germline sequence
+(but this is not displayed).
+This will allow to estimate an `interpolated length` for such clonotypes,
+that is plot in a Genescan-like view (preset `Primer gap`).
+
+## Removing primers before external analysis
+
+As they are (mostly) conserved across reads, primers can bias some analyses such as the hypermutation rate.
+They can be removed before sending the sequence to external tools (IMGT/V-Quest, IgBlast, Blast, or AssignSubset).
+You should have previously select a primer set,
+open the settings menu, select `trim primers for external tools`.
+The sequences sent for external analysis will then be trimmed at primers positions, even if only one primer was found.
 
 
 # How can I have further support or help on a specific sample or on some sequences?

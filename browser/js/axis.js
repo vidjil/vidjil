@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2020 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
@@ -73,12 +73,15 @@ Axis.prototype = {
      * 
      */
     init: function(axis_name){
-        if (AXIS_DEFAULT[axis_name]){
-            this.load(AXIS_DEFAULT[axis_name])
-            this.name = axis_name
-            return this
+        if (!AXIS_DEFAULT[axis_name]){
+            console.error("no axis descriptor named '" + axis_name + "' found, use 'Size' instead")
+            axis_name = "Size"
         }
-        console.error("no axis descriptor named " + axis_name + " found")
+
+        this.load(AXIS_DEFAULT[axis_name])
+        this.name = axis_name
+        return this
+
     },
 
     //reload last json descriptor

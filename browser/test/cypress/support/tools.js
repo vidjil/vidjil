@@ -30,3 +30,8 @@ Cypress.Commands.add("text", { prevSubject: true }, (subject, options) => {
 Cypress.Commands.add("getTableLength", (datatable) => {
   return cy.get(datatable).find('tr').then(elm => elm.length)
 });
+
+
+Cypress.Commands.add("getExternalData", (id) => {
+    return cy.get("#data_"+id)
+});

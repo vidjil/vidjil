@@ -1,11 +1,11 @@
-# vidjil-algo 2021.04
+# vidjil-algo 2022.03
 **Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
 
 ```
   Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire -- [[http://www.vidjil.org]]
-  Copyright (C) 2011-2021 by Bonsai bioinformatics
+  Copyright (C) 2011-2022 by Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   and VidjilNet consortium.
   contact@vidjil.org
@@ -14,11 +14,11 @@
 This is the help of vidjil-algo, for command-line usage.
 This manual can be browsed online:
 
- - <http://www.vidjil.org/doc/vidjil-algo>                (last stable release)
+ - <https://www.vidjil.org/doc/vidjil-algo>                (last stable release)
  - <http://gitlab.vidjil.org/blob/dev/doc/vidjil-algo.md> (development version)
 
 Other documentations for life scientists, bioinformaticians, server administrators, and developers
-can be found ats <http://www.vidjil.org/doc/>.
+can be found at <https://www.vidjil.org/doc/>.
 
 
 ## About
@@ -27,7 +27,7 @@ can be found ats <http://www.vidjil.org/doc/>.
 diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
-With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
+With adapted [library preparation and sequencing](https://www.vidjil.org/doc/locus),
 high-throughput sequencing (NGS/HTS) now
 enables the deep sequencing of a lymphoid population with dedicated
 sequencing methods and software, called either Rep-Seq or AIRR-Seq.
@@ -62,15 +62,16 @@ Vidjil-algo is open-source, released under GNU GPLv3+ license.
 
 Vidjil-algo is systematically tested with the following compilers :
 
-  - gcc/g++ 4.8, 5.3, 6.3, 7.3, 8.4, 9.3, 10.1
-  - clang 3.4, 4.0, 6.0, 7.0, 11.0
+  - gcc/g++ 7.5, 8.4, 9.3, 10.1, 11
+  - clang 6.0, 7.0, 11.0, 12.0
 
+We support all gcc/clang versions released in the last 3 years.
 These compilers are available on recent OS X and on the following Linux distributions:
 
-  - CentOS 7, 8
-  - Debian Jessie 8.0, Stretch 9.0, Buster 10.0, Bullseye 11
-  - FreeBSD 9.2, 10, 11, 12
-  - Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS
+  - CentOS 8, CentOS Stream (installation possible on CentOS 7)
+  - Debian Stretch 9.0, Buster 10.0, Bullseye 11
+  - FreeBSD 12.2, 12.3, 13.0
+  - Ubuntu 18.04 LTS, 20.04 LTS
 
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
 The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) for that,
@@ -84,7 +85,7 @@ and the tested compilers are run through Docker containers described in `.gitlab
 To compile Vidjil-algo, make sure:
 
   - to be on a POSIX system ;
-  - to have a C++11 compiler (as `g++` 4.8 or above, or `clang` 3.4 or above).
+  - to have a C++11 compiler (as `g++` 7.5 or above, or `clang` 6.0 or above).
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
   - to have GNU make (`gmake` under FreeBSD).
@@ -92,10 +93,10 @@ To compile Vidjil-algo, make sure:
 
 ### Download
 
-These instructions target *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>.
+These instructions target *stable releases* of vidjil-algo, as downloaded from <https://www.vidjil.org/releases>.
 
 ``` sh
-curl -O http://www.vidjil.org/releases/vidjil-algo-latest.tar.gz
+curl -O https://www.vidjil.org/releases/vidjil-algo-latest.tar.gz
 tar xvfz vidjil-algo-latest.tar.gz
 cd vidjil-algo-*
 ```
@@ -121,7 +122,7 @@ make germline
 
 
 make -C src              # build vijil-algo from the sources (see the requirements,
-                         # another option is: wget http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
+                         # another option is: wget https://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
                          # to download a static binary (built for x86_64 architectures)
 
 make demo                # download demo files (S22 and L4, see demo/get-sequences)
@@ -156,7 +157,7 @@ make -C src test                # run self-tests (can take 5 to 60 minutes)
 Run the following commands:
 
 ``` sh
-curl http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -o vidjil-algo
+curl https://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -o vidjil-algo
 chmod 755 vidjil-algo
 curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/doc/vidjil-algo.md
 
@@ -226,7 +227,7 @@ It is thus generally safe to run `--sampled-reads 1000` to have a fast insight o
 ## Germline presets: locus and recombination selection
 
 ``` diff
-Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)
+Germline/recombination selection (at least one -g, -V/(-D)/-J, or --find option must be given)
   -g, --germline GERMLINES ...
 
          -g <.g FILE>(:FOCUS) ...
@@ -239,6 +240,7 @@ Germline/recombination selection (at least one -g or -V/(-D)/-J option must be g
   -V FILE ...                 custom V germline multi-fasta file(s)
   -D FILE ...                 custom D germline multi-fasta file(s) for V(D)J designation
   -J FILE ...                 custom V germline multi-fasta file(s)
+  --find FILE ...             custom multi-fasta file(s) for non-recombined alignments
   -2                          try to detect unexpected recombinations
 ```
 
@@ -263,7 +265,22 @@ The following presets are provided:
 
   - Using `-2` further test unexpected recombinations (tagged as `xxx`), as in `-g germline/homo-sapiens.g -2`.
 
-Finally, the advanced `-V/(-D)/-J` options enable to select custom V, (D) and J repertoires given as `.fasta` files.
+## Custom reference sequences
+
+Some advanced options enable to indicate custom reference sequences,
+given as `.fasta` files:
+
+- The `-V/(-D)/-J` options indicates a (related) custom repertoire,
+  for V(D)J or V(D)J-like recombinations.
+
+- The `--find` option indicates reference sequences,
+  for detection of similarities/alignment of sequences *without recombinations*.
+
+Several `-g`/ `-V/(-D)/-J` / `--find` options can be used at the same time,
+describing different systems of (non-)recombinations that will be detected.
+However, it is not advised to use several time the same reference sequences.
+More generally, putting many sequences as `--find` will generate hits
+that may hide actual recombinations.
 
 ## Custom `germline/*.g` presets
 
@@ -320,19 +337,14 @@ both Vd-Dd3, Dd2-Jd (possibly Dd2-Dd-Jd), and Dd2-Dd3 recombinations are searche
     } ]
 ```
 
-There is also an experimental sequence analysis mode, called `1`,
-that detects similarities and designates sequences *without recombinations*,
+The sequence analysis mode `1`, as the command line option `--find`,
+detects similarities and designates sequences *without recombinations*,
 as in `germline/homo-sapiens-cd.g`:
 
 ```json
      "recombinations": [ { "1": ["CD-sorting.fa"] } ]
 ```
 
-This mode can also be called from the command line with arguments such as  `--find CD-sorting.fa`.
-This can be used to detect non-recombined known sequences,
-as shown here with usual CD sequences in RNA-seq data.
-However, putting too many sequences here may generate many hits
-that may hide actual recombinations.
 
 ## Main algorithm parameters
 
@@ -542,7 +554,7 @@ in the first pass: the `--label`, `-label-file`, or `--label-filter` options can
  detect a recombination that was not detected when removing all the thresholds with `--all`.
 
 To increase the sensitivity, see above the `--e-value` option, or,
-to look for non-recombined sequences, see above the experimental `1` sequence analysis.
+to look for non-recombined sequences, see above the `--find` sequence analysis.
 
 ## Options for further clone analysis
 
@@ -594,7 +606,7 @@ The default output of Vidjil-algo (with the default `-c clones` command) are the
     The web application takes this `.vidjil` file ([possibly merged with `fuse.py`](#following-clones-in-several-samples)) for the *visualization and analysis* of clones and their
     tracking along different samples (for example time points in a MRD
     setup or in a immunological study).
-    Please see the [web application user manual](http://www.vidjil.org/doc/user) for more information.
+    Please see the [web application user manual](https://www.vidjil.org/doc/user) for more information.
 
   - The `.tsv` file is the AIRR output, for compatibility with other software
     using the same format. See [below](#airr-tsv-output) for details.
@@ -674,15 +686,16 @@ The `--out-reads` option produces large files, and is not recommended in general
 
 ## Diversity measures
 
-Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are reported, both on the standard output and in the `.vidjil` file:
+Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are reported, both on the standard output and in the `.vidjil` file,
+for each germline/locus as well as for the entire data:
 
   - H (`index_H_entropy`): Shannon's diversity
-  - E (`index_E_equitability`): Shannon's equitability
+  - E (`index_E_equitability`): [Pielou's evenness J'](https://en.wikipedia.org/wiki/Species_evenness) (also known as Shannon's equitability)
   - Ds (`index_Ds_diversity`): Simpson's diversity
 
 E ans Ds values are between 0 (no diversity, one clone clusters all analyzed reads)
 and 1 (full diversity, each analyzed read belongs to a different clone).
-These values are now computed on the windows, before any further clustering.
+These values are computed on the full list of clones, before any further clustering.
 PCR and sequencing errors can thus lead to slightly over-estimate the diversity.
 
 ## Reads without detected recombinations
@@ -752,7 +765,7 @@ When processing large datasets, such as RNA-Seq or capture, one may want to pre-
 In such a case, the recommanded option is to use the `--filter-reads` preset, that launches Vidjil-algo without clone clustering and analysis,
 while outputing a `out/basename.detected.vdj.fa` file. This file contains reads /that may have V(D)J recombinations/, evaluated with a very permissive threshold.
 The resulting file is usually much smaller on such datasets and can then be transferred or analysed in-depth more easily.
-This filtering can also be part of a [post-sequencer workflow](http://www.vidjil.org/doc/workflow/).
+This filtering can also be part of a [post-sequencer workflow](https://www.vidjil.org/doc/workflow/).
 
 ## AIRR .tsv output
 

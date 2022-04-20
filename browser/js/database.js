@@ -344,7 +344,7 @@ Database.prototype = {
      * Send the given clones to CloneDB
      * @param {int list} clones - list of clones (if undefined, call on all clones)
      * */
-    callCloneDB: function(clones) {
+    callCloneDB: function(clones, callback) {
 
         if (typeof clones === 'undefined')
         {
@@ -353,8 +353,8 @@ Database.prototype = {
 
         console.log("Send to cloneDB: " + clones)
         var windows = [];
-	var self = this;
-	var kept_clones = [];
+        var self = this;
+        var kept_clones = [];
         for (var i = 0; i < clones.length; i++) {
             var clone = this.m.clones[clones[i]];
             if (clone.hasSeg('5', '3')) {
@@ -374,22 +374,29 @@ Database.prototype = {
 		    res = jQuery.parseJSON(result);
 		    result = res;
 		} catch (err) {}
-                self.connected = true;
-		if (typeof result.success !== 'undefined' && result.success == 'false') {
-                    console.log({
-			"type": "flash",
-			"msg": result.message,
-			"priority": 2
-                    });
-                    self.connected = false;
+
+        self.connected = true;
+        if (typeof result.error == 'string' ) {
+            console.log({
+                "type": "flash",
+                "msg": "CloneDB: " +result.error,
+                "priority": 2
+            });
+            self.connected = false;
+        } else if (typeof result.success !== 'undefined' && result.success == 'false') {
+            console.log({
+                "type": "flash",
+                "msg": "CloneDB: " +result.message,
+                "priority": 2
+            });
+            self.connected = false;
 		} else { 
 	            for (var i = 0; i < kept_clones.length; i++) {
 			self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i], self.m);
 	            }
-                    m.shouldRefresh()
                     m.update()
 		}
-		
+                if (callback) callback();
             },
             error: function() {
                 self.connected = false;
@@ -398,6 +405,7 @@ Database.prototype = {
                     "msg": "Error while requesting CloneDB",
                     "priority": 2
                 });
+                if (callback) callback();
             }
         });
     },
@@ -446,6 +454,11 @@ Database.prototype = {
 
             // Hax !
             $('.jstree').trigger('load');
+
+            var list_select = ["choose_user", "select_user"]
+            for (var i = list_select.length - 1; i >= 0; i--) {
+                $('#'+list_select[i]).select2();
+            }
 
             return 0 ;
         }

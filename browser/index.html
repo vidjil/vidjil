@@ -39,8 +39,10 @@
     <link rel="stylesheet" href="css/jquery-ui/jquery-ui.css" />
     <link rel="stylesheet" href="css/jquery-ui/jquery-ui.structure.css" />
     <link rel="stylesheet" href="css/jquery-ui/jquery-ui.theme.css" />
+    <link rel="stylesheet" href="css/lib/select2.min.css" />
 
     <script data-main="js/app.js" src="js/lib/require.js"></script>
+
 
 <!--
     <script>
@@ -118,13 +120,13 @@
     </div>
 
         <!-- TOP-CONTAINER -->
-        <div id="top-container" onmouseout="hideSelector()">
+        <div id="top-container">
             <div id="menu-container">
                 <div class="menu" id="top_info">
                     <!--Div is filled programmatically -->
                 </div>
-                <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none">samples
-                    <div id="dbSelector" class="selector"><div>
+                <div class="menu" id="db_menu" style="display : none">samples
+                    <div class="selector"><div>
                         <div class="menu_box">
                             <a class="buttonSelector" onclick="javascript:db.call('sample_set/all', {'type': 'patient', 'page': 0})">open list</a>
                         </div>
@@ -136,7 +138,7 @@
                 </div>
             </div>
 
-            <div class="menu" id="static_file_menu" onmouseover="showSelector('fileSelector');" style="display : none">
+            <div class="menu" id="static_file_menu" style="display : none">
                 file
                 <div id="fileSelector" class="selector">
                     <div>
@@ -148,8 +150,8 @@
                 </div>
             </div>
 
-            <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
-                <div id="demoSelector" class="selector">
+            <div class="menu" id="demo_file_menu">import/export
+                <div class="selector">
                     <div>
                         <div class="menu_box">
                             <a id="import_data_anchor" class="buttonSelector" onclick="javascript:loadData()">import
@@ -168,6 +170,8 @@
                                 onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
                             <a class="buttonSelector" id="export_monitor_report"
                                 onclick="javascript:report.reportHTML()">export report (monitor)</a>
+                            <a class="buttonSelector" id="export_report_menu"
+                                onclick="javascript:report.menu()">export report</a>
                         </div>
                         <div class="menu_box">
                             <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>
@@ -187,7 +191,7 @@
                 </div>
             </div>
 
-            <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');"> cluster
+            <div class="menu" id="cluster_menu"> cluster
                 <div id="clusterSelector" class="selector">
                     <div>
                         <div class="menu_box">
@@ -211,15 +215,14 @@
                 </div>
             </div>
 
-                <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
+                <div class="menu" id="color_menu" > color by
                     <div class="div-menu-selector"><select id="color_menu_select" class="menu-selector">
 
                     </select></div>
             </div>
 
-            <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();"
-                onmouseover="showSelector('filterSelector');"> filter
-                <div id="filterSelector" class="selector">
+            <div class="menu" id="filter_menu"> filter
+                <div class="selector">
                     <div>
                         <div class="menu_box">
                             <span id="top_label"></span></br>
@@ -242,9 +245,8 @@
                 </div>
             </div>
 
-            <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();"
-                onmouseover=" showSelector('settingsSelector');"> settings
-                <div id="settingsSelector" class="selector">
+            <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();"> settings
+                <div class="selector">
                     <div>
 
                         <div class="menu_box">
@@ -265,6 +267,10 @@
                         </div>
                         <div class="menu_box">
                             sample key</br>
+                            <label for="menuTimeForm_order" class="buttonSelector">
+                                <input id="menuTimeForm_order" type="radio" name="time" value="order"
+                                       onclick="m.changeTimeFormat('order', true, true)"/> #
+                            </label>
                             <label for="menuTimeForm_name" class="buttonSelector">
                                 <input id="menuTimeForm_name" type="radio" name="time" value="name" checked
                                        onclick="m.changeTimeFormat('name', true, true)"/>name
@@ -384,9 +390,9 @@
             </div>
 
 
-            <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none">
+            <div id="debug_menu" class="menu" style="display : none">
                 development
-                <div id="adminSelector" class="selector">
+                <div class="selector">
                     <div>
                         <input type="checkbox"
                             onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display
@@ -418,8 +424,7 @@
                 </div>
             </div>
 
-            <div id="upload_summary" class="menu" onmouseover="showSelector('upload_summary_selector');"
-                onmouseout="hideSelector();">
+            <div id="upload_summary" class="menu">
                 <span id="upload_summary_label">upload</span>
                 <div id="upload_summary_selector" class="selector">
                     <div>
@@ -428,8 +433,8 @@
                 </div>
             </div>
 
-            <div id="palette_menu" class="menu" onmouseover="showSelector('paletteSelector');"> palette
-                <div id="paletteSelector" class="selector">
+            <div id="palette_menu" class="menu"> palette
+                <div class="selector">
                     <div>
                         <a id="palette_light" class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
                         <a id="palette_light_presentation" class="buttonSelector" onclick="changeStyle('display')">light
@@ -438,8 +443,8 @@
                     </div>
                 </div>
             </div>
-            <div id="help_menu" class="menu" onmouseover="showSelector('helpSelector');"> help
-                <div id="helpSelector" class="selector">
+            <div id="help_menu" class="menu"> help
+                <div class="selector">
                     <div>
                         <a id="help_support" class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
                         <a id="help_manual" class="buttonSelector" href="http://www.vidjil.org/doc/user"
@@ -469,7 +474,7 @@
         <div id="vmiSelector"></div>
         <div id='vidjil-panels'>
             <!-- MID-CONTAINER -->
-            <div id="mid-container" onmouseover="hideSelector()">
+            <div id="mid-container">
 
                 <!-- LEFT-CONTAINER -->
                 <div id="left-container">
@@ -573,7 +578,7 @@
 
                     <div id="align-settings" class="aligner-menu" title="Alignement settings">
                             <span ><i class="icon-cog"></i></span>
-                            <div class="menu-content">
+                            <div id="align-settings_select" class="menu-content">
                                 <label for="highlight_match" title="matches">
                                             <span><input type="checkbox" id="highlight_match" autocomplete="off"></span>
                                             <span>Show only mutations</span>
@@ -591,31 +596,35 @@
                                                     title="Send sequences to ARResT/CompileJunctions and see the results in a new tab"
                                                     class="aligner-button"
                                                     onclick="javascript:segment.sendTo('arrest');"><i class="icon-forward-1"></i> ARResT/CJ</a></span>
-                                    <span class="devel-mode"><a id="toCloneDB"
-                                                    title="Send sequences to EC-NGS/CloneDB in the background"
-                                                    class="aligner-button"
-                                                    onclick="javascript:db.callCloneDB(m.getSelected());"><i class="icon-forward-1"></i> CloneDB</a></span>
                                     <a id="toBlast" title="Send sequences to Ensembl Blast and see the results in a new tab"
                                             class="aligner-button" onclick="javascript:segment.sendTo('blast');"><i class="icon-forward-1"></i> Blast</a>
                                     <a id="toAssignSubsets"
                                             title="Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset"
                                             class="aligner-button" onclick="javascript:segment.sendTo('assignSubsets');"><i class="icon-forward-1"></i> AssignSubsets</a>
+                                    <span class="devel-mode"><label title="Open external tool in another tab" class="aligner-checkbox-label" for="post_target_blank">
+                                        <span><input class="aligner-checkbox-input" type="checkbox" id="post_target_blank" autocomplete="off" checked="true"></span>
+                                        <span class="aligner-checkbox-text">use new tab</span>
+                                    </label></span>
                             </div>
                     </div>
 
                     <div id="align-segment-info" class="aligner-menu" title="Sequence features">
                             <span  ><i class="icon-menu"></i></span>
-                            <div class="menu-content">
+                            <div id="align-segment-info_select" class="menu-content">
      
                             </div>
                     </div>
 
-                    <div id="align-imgt" class="aligner-menu"
-                    title="Sequence features from IMGT [click to reload]" onclick="javascript:segment.sendTo('IMGTSeg');"> <i class="icon-menu"></i> IMGT
-                       <span title="reload IMGT info" ></span><i class="demo-icon icon-arrows-ccw"></i></span>
-                       <div class="menu-content">
+                    <div id="align-refresh-button" class="aligner-menu"
+                        title="Some data are missing has they are based on external analysis (IMGT / CloneDB / IGBLast/ ...) &#10; Click to perform those analysis">
+                         <span onclick="javascript:segment.retrieveExternalData();"><i class="demo-icon icon-arrows-ccw"></i></span>
 
-                       </div>
+                        <div class="menu-content">
+                            <a id="toIMGTseg" title="Request sequences informations to IMGT"
+                                    class="aligner-button" onclick="javascript:segment.retrieveExternalData(['IMGT']);"><i class="icon-arrows-ccw"></i> IMGT/V-QUEST</a>
+                            <a id="toCloneDBseg" title="Request sequences informations to CloneDB"
+                                    class="aligner-button" onclick="javascript:segment.retrieveExternalData(['cloneDB']);"><i class="icon-arrows-ccw"></i> CloneDB</a>
+                        </div>
                     </div>
                     
                     </div>
@@ -695,8 +704,8 @@
                 <option value="custom">–</option>
             </select>
         </div>
-        <div class="axis_select">
-            Mode :
+        <div class="axis_select axis_select_icon">
+            <p>Mode :</p>
             <div class="sp_menu_icon sp_menu_icon_bar"></div>
             <div class="sp_menu_icon sp_menu_icon_grid"></div>
         </div>
@@ -726,5 +735,69 @@
         </div>
         </div>
 
+        <div class="menu_box">
+        <div onclick="report.addScatterplot(m.sp)">
+            <i class="icon-newspaper"></i> Add to next report
+        </div>
+        </div>
+
+    </div>
+</template>
+
+<template id="report-settings">
+    <div class="">
+        <div style="text-align: center;"><b>Export report</b></div>
+
+        Preset: <div id="report-settings-save">
+
+        </div>
+
+        <div class="menu_box" id="report-settings-sample-select">
+            <div class="">
+                Sample(s) <span id="rs-selected-sample-count" style="float: right;"></span>
+            </div>
+        </div>
+
+        <div class="menu_box" id="report-settings-locus-select">
+            <div class="">
+                Locus
+            </div>
+        </div>
+
+        <div class="menu_box" id="report-settings-color-select">
+            <div class="">
+                Color 
+            </div>
+            <table class="rs-flex-parent-v">
+                <tr class="">
+                    <td>Default clonotype color :</td> <td><select name="rs-default-color" id="rs-default-color" class=""></select></td>
+                </tr>
+                <tr class="">
+                    <td>Selected clonotype color :</td> <td><select name="rs-selected-color" id="rs-selected-color" class=""></select></td>
+                </tr>
+            </table>
+
+        </div>
+
+        <div class="menu_box" id="report-settings-clones">
+            <div class="">
+                Clonotypes
+                <span id="rs-selected-clones-count" style="float: right;"></span>
+            </div>
+        </div>
+
+        <div class="menu_box"  id="report-settings-block">
+            <div class="">
+                Report sections
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button type="button" onclick="report.print();">Show report</button>
+        </div>
+        <div style="float: right;">
+            <button id="rs-saveas-button" type="button" onclick="report.saveas();">Save as new report settings</button>
+            <button id="rs-save-button" type="button" onclick="report.save(undefined,true);">Save report settings</button>
+        </div>
     </div>
 </template>

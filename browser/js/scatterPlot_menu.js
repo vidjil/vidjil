@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -131,6 +131,7 @@ ScatterPlot_menu.prototype = {
             if (typeof axisP.hide == "undefined" || !axisP.hide){
 
                 element = document.createElement("option");
+                if (typeof axisP.class == "string") element.className = axisP.class
                 element.setAttribute('value', axisP.name);
                 element.appendChild(document.createTextNode( axisP.name));
 
@@ -148,6 +149,11 @@ ScatterPlot_menu.prototype = {
             self.changeYaxis();
             self.cancelPreset();
         }
+
+        // Comment while CSS error with opened select2 menu
+        // $(".axis_select_preset_select").select2();
+        // $("[name='select_x[]']").select2();
+        // $("[name='select_y[]']").select2();
     },
 
     initPreset: function(){
@@ -198,20 +204,6 @@ ScatterPlot_menu.prototype = {
             },
             stop: function( event, ui ) {
                 self.updateScaleY(ui.values);
-            }
-        });
-
-
-        this.slider_y = $(this.menu).find(".slider_y")[0];
-        this.slider_box_y = $(this.menu).find(".slider_box_y")[0];
-
-        $( this.slider_y ).slider({
-            range: true,
-            slide: function( event, ui ) {
-                self.updateDisplayY(ui.values);
-            },
-            stop: function( event, ui ) {
-                self.updateScaleY();
             }
         });
 

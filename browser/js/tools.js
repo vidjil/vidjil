@@ -191,14 +191,27 @@ function tsvToArray(allText) {
 
     for (var i = 1; i < allTextLines.length; i++) {
         var data = $.trim(allTextLines[i]).split('	');
-        if (data.length == headers.length) {
-            var tarr = {};
-            for (var j = 0; j < headers.length; j++) {
-                if (headers[j] !== "") {
-                    tarr[headers[j]] = data[j];
+        var tarr = {};
+        switch (data.length) {
+            case headers.length:
+                // imgt prodcuced a complete results -> copy each columns
+                for (var j = 0; j < headers.length; j++) {
+                    if (headers[j] !== "") {
+                        tarr[headers[j]] = data[j];
+                    }
                 }
-            }
-            lines.push(tarr);
+                lines.push(tarr);
+                break;
+            case 1:
+                // empty data line -> do nothing
+                break;
+            default:
+                // imgt returned no results or incomplete results for a sequence 
+                // -> copy only first two column (Sequence number + ID)
+                tarr[headers[0]] = data[0];
+                tarr[headers[1]] = data[1];
+                lines.push(tarr);
+                break;
         }
     }
     return lines;
@@ -790,7 +803,7 @@ function fixDuplicateNames(names){
  * @param  {String} content Clones as fasta format
  */
 function openAndFillNewTab (content){
-    var w = window.open("", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
+    var w = window.open("", postTarget(), "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
     
     var result = $('<div/>', {
         html: content
@@ -935,6 +948,16 @@ function download_csv(csv, filename) {
 
     // Lanzamos
     downloadLink.click();
+}
+
+
+function translate_key_diversity(key_diversity){
+    var table = {
+        "index_H_entropy" :      "Shannon's diversity",
+        "index_E_equitability" : "Pielou's evenness",
+        "index_Ds_diversity" :   "Simpson's diversity"
+    }
+    return table[key_diversity]
 }
 
 
