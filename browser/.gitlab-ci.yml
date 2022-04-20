@@ -32,6 +32,8 @@
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
+    - /^prod-client/
+    - dev
 
 
 .test_cypress_ext:
