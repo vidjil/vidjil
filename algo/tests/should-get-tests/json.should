@@ -91,9 +91,11 @@ $ Warning on common genes
 
 ######### Second clonotype
 
-$ Second sequence has a DNA sequence provided
+$ Second clonotype have correct Id
 :clones[1].id: TGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTAC
-:clones[1].sequence: 
+
+$ Second sequence has a DNA sequence provided
+:clones[1].sequence
 
 $ Second sequence also has evalues
 :clones[1].seg.evalue.val
