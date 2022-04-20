@@ -597,6 +597,13 @@ For each group, you will find:
 This page lists the last processes you ran, with information such as its configuration and its status.
 Each sample is provided with links to the related patient/runs/sets.
 
+## Edit my personal informations
+
+It is possible for you to update your personal informations or your login password.
+On the database page, click on the pen icon next to your name.
+
+Please note that your email adress is also your login name to fill for connection. 
+Change it wisely.
 
 # How do you define clones, their sequences, their V(D)J designation and their productivity?
 
