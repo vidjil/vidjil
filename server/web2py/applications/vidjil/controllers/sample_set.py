@@ -84,6 +84,7 @@ def index():
 
     if config :
         config_name = db.config[config_id].name
+        print( "===  config_name: %s" % config_name)
 
         fused = db(
             (db.fused_file.sample_set_id == sample_set_id)
@@ -270,16 +271,42 @@ def all():
         'table_name': "sample_set"})
     log.debug("sample_set list (%.3fs)" % (time.time()-start))
 
-
-    return dict(query = result,
-                fields = fields,
+    return dict(query= result,
+                fields= fields,
                 helper = helper,
                 group_ids = group_ids,
                 admin_permissions = admin_permissions,
                 isAdmin = isAdmin,
                 reverse = reverse,
                 step = step,
-                page = page)
+                page= page)
+
+
+def samples():
+    '''
+    API: List of samples, possibly filtered
+    '''
+    res = all()
+    export = dict(samples = res['query'],
+                  group_ids = res['group_ids'],
+                  step = res['step'],
+                  page = res['page'])
+    return response.json(export)
+
+def samplesetById():
+    '''
+    API: Get a specific sample based on the set id
+    Take two paramaters: set id and set type
+    '''
+    type    = (request.vars['type'] if ("type" in request.vars.keys()) else defs.SET_TYPE_GENERIC )
+    set_id  =  request.vars['id']
+
+    factory = ModelFactory()
+    helper  = factory.get_instance(type=type)
+    slist   = SampleSetList(helper, setid=set_id)
+
+    return response.json(slist.result)
+
 
 def stats():
     start = time.time()

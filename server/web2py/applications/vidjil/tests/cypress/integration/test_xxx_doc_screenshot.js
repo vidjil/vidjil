@@ -64,9 +64,9 @@ describe('Creation of users and groups', function () {
 
         cy.selectClone(1)
         // hide untagged clones
-        cy.get('[title="-/-"]').click()
+        cy.get('#tag_none').click()
         cy.update_icon()
-        cy.get('[title="standard"]').click()
+        cy.get('#tag_standard').click()
         cy.update_icon()
         cy.get('#aligner-open-button')
           .screenshot('panel_bot_bar')

@@ -1,0 +1,17 @@
+{{
+    from gluon.serializers import json
+    # response.write(json(response._vars), escape=False)
+    response.headers['Content-Type'] = 'application/json'
+    data = {"ignored_fields":[]}
+    for key in response._vars.keys():
+        # Some object are not serializable; extract them before rendering json
+        try:
+            json(response._vars[key])
+            data[key] = response._vars[key]
+        except:
+            data["ignored_fields"].append(key)
+            continue
+    pass
+    response.write( json(data), escape=False)
+    #response.write( json(response._vars), escape=False)
+}}

@@ -70,7 +70,7 @@ lr1:"values": { "IGH": { "\?": \[ 2, 350 \]
 ####################################################
 ### Part with real clones, only some distribution ##
 ####################################################
-!LAUNCH: python3 ../../fuse.py  -d seg5,seg3 -d evalue -d unknow_AXIS  --no-clones --output fused_only_some_axes.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_only_some_axes.vidjil
+!LAUNCH: python3 ../../fuse.py  -d seg5,seg3 evalue unknow_AXIS  --no-clones --output fused_only_some_axes.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_only_some_axes.vidjil
 
 $ Get correct keys for distributions json content
 1:"repertoires"
@@ -161,7 +161,7 @@ lr1:"values": { "IGH": { "\?": { "\?": \[ 2, 900 \]
 #################################################
 ### Part with real clones, test rounded axis   ##
 #################################################
-!LAUNCH: python3 ../../fuse.py  -d lenSeqAverage -d unknow_AXIS  --no-clones --output fused_rounded_axes.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil; cat fused_rounded_axes.vidjil
+!LAUNCH: python3 ../../fuse.py  -d lenSeqAverage unknow_AXIS  --no-clones --output fused_rounded_axes.vidjil ../../../algo/tests/data/results_five_segmented_clones.vidjil; cat fused_rounded_axes.vidjil
 
 
 $ Rounded values: 76.123 (should not be present)
