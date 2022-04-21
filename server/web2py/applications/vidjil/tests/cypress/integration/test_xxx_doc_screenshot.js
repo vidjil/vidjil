@@ -20,14 +20,10 @@ describe('Creation of users and groups', function () {
 
         cy.screenshot('starting_state')
 
-        
-
 
         cy.get('#info')
           .screenshot('panel_info')
 
-
-        
 
         cy.openClusterClone(1)
         cy.get('#list')
@@ -38,7 +34,7 @@ describe('Creation of users and groups', function () {
           .screenshot('panel_list')
 
         // switch locus to TRG
-        cy.get('.sp_system').contains("TRG")
+        cy.get('#toogleLocusSystemBox_TRG')
           .click()
           .update_icon(1000)
 
@@ -60,8 +56,6 @@ describe('Creation of users and groups', function () {
         cy.get('.aligner')
           .screenshot('panel_sequence')
 
-
-
         cy.selectClone(1)
         // hide untagged clones
         cy.get('#tag_none').click()
@@ -76,7 +70,21 @@ describe('Creation of users and groups', function () {
         cy.get('#visu2_back')
           .screenshot('panel_graph')
 
+        cy.get('.button > .icon-info').click()
+        cy.get('#line_index_Ds_diversity > :nth-child(1)')
+          .scrollIntoView()
+        cy.screenshot("diversity_not_splitted", { clip: { x: 505, y: 470, width: 250, height: 80 } })
+
+
+        // Splitted diversity
+        cy.openAnalysis("data/fused_diversity_splitted.vidjil")
+        cy.get('.button > .icon-info').click()
+        cy.get('#line_index_Ds_diversity_IGH > :nth-child(1)')
+          .scrollIntoView()
+        cy.screenshot("diversity_splitted_by_locus", { clip: { x: 512, y: 255, width: 250, height: 250 } })
+
     })
+
 
     it('01-screenshot_on_db',  function() {
 
@@ -98,8 +106,6 @@ describe('Creation of users and groups', function () {
         
         cy.get('.db_msg')
           .screenshot('table_db_content_patient_0_multi_config')
-
-
 
         return    
     })

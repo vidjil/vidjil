@@ -682,29 +682,34 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     	if (typeof this.diversity != 'undefined' &&
     	    typeof this.diversity[key] != 'undefined') {
 
+            // 1 - old not fused => {index : value}
+            // 2 - old fused => {index : [values]}
+            // 3 - new not fused => {index : {locus: value}}
+            // 4 - new fused => {index : [{locus: values}]}
+            var diversity_by_locus = {}
+            var locus;
     	    if (this.diversity[key][time] == 'na') {
                 return // Append if no diversity computable by fuse (AIRR import for exemple)
-            } else if (typeof this.diversity[key][time] != 'undefined') {
-        	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
-        	    // See #1941 and #3416
-        		if (this.diversity[key][time] != null){
+            } else{
+                if (typeof this.diversity[key] == "number"){ // case 1
+                    return this.diversity[key].toFixed(3);
+                } else if (Array.isArray(this.diversity[key])){ // case 2
                     if (typeof this.diversity[key][time] == "number") {
-                        // old case, one global diversity
-                        return this.diversity[key][time].toFixed(3);
-                    } else {
-                        // case diversity by locus
-                        var diversity_by_locus = {}
-                        for (var locus in this.diversity[key][time]) {
+                       return this.diversity[key][time].toFixed(3);
+                    } else { // case 3
+                        for (locus in this.diversity[key][time]) {
                             diversity_by_locus[locus] = this.diversity[key][time][locus].toFixed(3)
                         }
                         return diversity_by_locus
                     }
-                } else {
-                    return this.diversity[key][time]
+                } else if (typeof this.diversity[key] == "object"){ // case 4
+                    for (locus in this.diversity[key]) {
+                        diversity_by_locus[locus] = this.diversity[key][locus].toFixed(3)
+                    }
+                    return diversity_by_locus
                 }
-    	    } else {
-    		    return this.diversity[key].toFixed(3);
-    	    }
+            }
+
     	}
     },
     

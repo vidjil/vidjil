@@ -787,6 +787,16 @@ Several indices are computed on the full list of clonotypes to assess the divers
   (no diversity, one clonotype clusters all analyzed reads)
   and 1 (full diversity, each analyzed read belongs to a different clonotype).
 
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/diversity_splitted_by_locus.png"/>
+  </figure>
+  <i>
+      The diversity section of sample information panel.
+      Since algo release `2022.03`, diversity is also splitted by locus.
+      The section contain only locus present in sample and active in analysis.
+      </p>
+  </i>
+
 - On several samples, overlap indexes such as [Morisita's overlap index](https://en.wikipedia.org/wiki/Morisita%27s_overlap_index)
   having values between 0 (no overlap between the two samples)
   and 1 (full overlap, clonotypes in the same proportion in both samples).
