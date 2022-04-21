@@ -8,6 +8,7 @@ function Report(model, settings) {
     this.m.report_save = {}; 
 
     this.colorMode = "colorBy";     // "colorBy" / "tag" / TODO...
+    this.clones    = []
 
     // name of setting sheet to use as default
     this.default_setting = "Full report";
@@ -19,7 +20,6 @@ function Report(model, settings) {
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
-            clones : [],
             blocks: [
                     {blockType: "file_info"},
                     {blockType: "sample_info", time: this.m.t},
@@ -38,7 +38,6 @@ function Report(model, settings) {
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
-            clones : [],
             blocks: [
                 {blockType: "file_info"},
                 {blockType: "sample_info", time: this.m.t},
@@ -55,7 +54,6 @@ function Report(model, settings) {
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
-            clones : [],
             blocks: [
                 {blockType: "file_info"},
                 {blockType: "sample_info", time: this.m.t},
@@ -374,8 +372,8 @@ Report.prototype = {
         }
 
         var count =0;
-        for (var i=0; i<this.settings.clones.length; i++){
-            var cloneID = this.settings.clones[i]
+        for (var i=0; i<this.clones.length; i++){
+            var cloneID = this.clones[i]
             
             var text;
             for (var j=0; j<this.m.clones.length; j++){
@@ -527,8 +525,8 @@ Report.prototype = {
         
         //convert cloneID into clone index
         this.list = []
-        for (var j=0; j<this.settings.clones.length; j++){
-            cloneID = this.settings.clones[j];
+        for (var j=0; j<this.clones.length; j++){
+            cloneID = this.clones[j];
             for (var k=0; k<this.m.clones.length; k++)
                 if (cloneID == this.m.clones[k].id) 
                     this.list.push(k)   
@@ -1056,15 +1054,15 @@ Report.prototype = {
     addClones : function(list) {
         for (var i=0; i<list.length; i++){
             var clone_id  = m.clone(list[i]).id
-            if (this.settings.clones.indexOf(clone_id) == -1)
-                this.settings.clones.push(clone_id)
+            if (this.clones.indexOf(clone_id) == -1)
+                this.clones.push(clone_id)
         }
     },
 
     // remove a clone from settings by clone id 
     removeClone : function(id) {
-        var index = this.settings.clones.indexOf(id)
-        if ( index != -1) this.settings.clones.splice(index, 1)
+        var index = this.clones.indexOf(id)
+        if ( index != -1) this.clones.splice(index, 1)
     },
 
     // print a block in the report using given conf
@@ -1438,8 +1436,8 @@ Report.prototype = {
 
         // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
         var more_info = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
-        for (var field_pos = 0; field_pos < this.settings.clones_fields.length; field_pos++) {
-            var field   = this.settings.clones_fields[field_pos]
+        for (var field_pos = 0; field_pos < this.clones_fields.length; field_pos++) {
+            var field   = this.clones_fields[field_pos]
             var content = this.available_blocks.clones.fields[field](this.m.clone(cloneID))
             if (content){
                 $('<span/>', content ).appendTo(more_info);
@@ -1568,7 +1566,7 @@ Report.prototype = {
         var color = this.m.clone(cloneID).getColor();
         switch (this.settings.selected_color) {
             case "unique":
-                var index = this.settings.clones.indexOf(this.m.clone(cloneID).id)
+                var index = this.clones.indexOf(this.m.clone(cloneID).id)
                 color = colorGeneratorIndex(index)
                 break;
             default:
