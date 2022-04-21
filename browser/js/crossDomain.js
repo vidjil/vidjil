@@ -193,7 +193,7 @@ function imgtPostForSegmenter(species, data, system, override_imgt_options, call
                 //merge clone from segmenter and imgtinfo
                 //loop through the model maintained selection list
                 seq_id = imgtArray[i]["Sequence ID"]
-                cloneIdx= seq_id.substr(0,seq_id.indexOf('#'))
+                cloneIdx= seq_id.split("_")[1].substr(1) // ($sample)_#$cloneIdx_IGHV3-9*01_7/CCCGGA/17_IGHJ6*02
                 logmsg += cloneIdx + ",";
                 //remove unneeded info coz relative to # of selected items
                 delete  imgtArray[i]["Sequence number"];
