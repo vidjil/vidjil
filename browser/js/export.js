@@ -394,6 +394,14 @@ Report.prototype = {
             }
         }
         $("#rs-selected-clones-count").html("["+count+" selected]")
+
+        if (count == 0){
+            var info = $('<div/>', {text: "Add clonotypes to the report with"})
+            $('<i/>', {class: "icon-star-2", style:"pointer-events:none;"}).appendTo(info)
+            info.appendTo(parent)
+        }
+
+
     },
 
     initBlocks: function(){
