@@ -1508,7 +1508,7 @@ Report.prototype = {
 
             isFiltered = false
             for (var j=0; j<filters.length; j++)
-                if (this.m.logs[i]["message"].indexOf(filters[j]) != -1)
+                if (this.m.logs[i].message.indexOf(filters[j]) != -1)
                     isFiltered = true
 
             if (!isFiltered)
