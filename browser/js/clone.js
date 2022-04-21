@@ -515,8 +515,8 @@ Clone.prototype = {
      * (difference between the stop and the start).
      * If no start and stop are given, return 0
      */
-    getSegLength: function(field_name) {
-        positions = this.getSegStartStop(field_name)
+    getSegLength: function(field_name, assume) {
+        positions = this.getSegStartStop(field_name, assume)
         if (positions !== null) {
             return (positions.stop+1) - positions.start
         } else {
@@ -545,13 +545,19 @@ Clone.prototype = {
      * Get the start and stop position of a given field (e.g. cdr3)
      * Getted positions are 0 based.
      * If start OR stop position does not exist return null
+     * If assume is set tot true, we will try to define missing value with getSegStart/getSegStop function
      */
-    getSegStartStop: function(field_name) {
-        if (this.hasSequence() && this.hasSeg(field_name) &&
-            typeof this.seg[field_name].start !== 'undefined' &&
-            typeof this.seg[field_name].stop !== 'undefined') {
-            return {'start': this.seg[field_name].start,
-                    'stop': this.seg[field_name].stop}
+    getSegStartStop: function(field_name, assume) {
+        if (this.hasSequence() && this.hasSeg(field_name)) {
+            if (this.seg[field_name].start != undefined && this.seg[field_name].stop != undefined) {
+                return {'start': this.seg[field_name].start,
+                        'stop': this.seg[field_name].stop}
+            }
+            else if (assume == true && this.seg[field_name].start != undefined && this.getSegStop(field_name) != null) {
+                return {'start': this.seg[field_name].start, 'stop': this.getSegStop(field_name)}
+            } else if (assume == true && this.getSegStart(field_name) != null && this.seg[field_name].stop != undefined) {
+                return {'start': this.getSegStart(field_name), 'stop': this.seg[field_name].stop}
+            }
         }
         return null;
     },
@@ -803,6 +809,22 @@ Clone.prototype = {
         }
         return max;
     },
+
+    /**
+     * return time in which a clone reach it's biggest size in the current samples
+     * */
+    getMaxSizeTimepoint: function () {
+        var max=0;
+        var maxTime=0;
+        for (var i in this.m.samples.order){
+            var tmp=this.getSize(this.m.samples.order[i]);
+            if (tmp>max){ 
+                max=tmp;
+                maxTime=this.m.samples.order[i];
+            }
+        }
+        return maxTime;
+    }, 
     
 
     /**
@@ -1282,16 +1304,16 @@ Clone.prototype = {
     
     getTag: function () {
         if (this.hasSizeDistrib()) {
-            return this.m.distrib_tag;
+            return this.m.tags.getDistrib();
         } else if (this.tag) {
             return this.tag;
         } else {
-            return this.m.default_tag;
+            return this.m.tags.getDefault();
         }
     }, 
     
     getTagName: function () {
-        return this.m.tag[this.getTag()].name
+        this.m.tags.getName(this.getTag);
     }, 
     
     getProductivityName: function () {
@@ -1803,7 +1825,7 @@ Clone.prototype = {
 
         if(typeof clear != undefined && clear==false ){
             div_elem.getElementsByClassName("starBox")[0].onclick = function (e) {
-                self.m.openTagSelector([self.index], e);
+                self.m.tags.openSelector([self.index], e);
             }
             return; 
         }
@@ -1814,7 +1836,7 @@ Clone.prototype = {
         var span_star = document.createElement('span')
         span_star.setAttribute('class', 'starBox');
         span_star.onclick = function (e) {
-            self.m.openTagSelector([self.index], e);
+            self.m.tags.openSelector([self.index], e);
         }
         span_star.id = self.index
         var tag_icon = document.createElement('i')
@@ -1828,7 +1850,7 @@ Clone.prototype = {
         span_star.appendChild(tag_icon)
         span_star.setAttribute('id', 'color' + this.index);
         if (typeof this.tag != 'undefined')
-            span_star.style.color = this.m.tag[this.getTag()].color
+            span_star.style.color = this.m.tags.getColor(this.getTag())
 
         // Axis
         var span_axis = document.createElement('span');
@@ -1877,7 +1899,7 @@ Clone.prototype = {
     toCSV: function () {
         var csv = [
             this.getCluster().join("+"), this.getName(), this.id,
-            this.get('germline'), this.getTagName(),
+            this.get('germline'), this.getTag(),
             this.getGene("5"), this.getGene("4"), this.getGene("3"),
             this.getProductivityName(),
             this.getSegNtSequence("junction"),
@@ -1896,13 +1918,13 @@ Clone.prototype = {
         this.active = true
         this.hidden = false
 
-        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller clonotypes") != -1)
+        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller_clonotypes") != -1)
             this.active = false
     },
 
     disable: function () {
         if (!this.hasSizeConstant() && !this.hasSizeDistrib()) return
-        if (this.hasSizeDistrib() && this.m.tag[this.getTag()].display) return
+        if (this.hasSizeDistrib() && this.m.tags.isVisible(this.getTag())) return
         this.active = false;
     },
 

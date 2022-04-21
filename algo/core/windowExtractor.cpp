@@ -163,6 +163,10 @@ size_t WindowExtractor::getNbReadsGermline(string germline) {
   return stats_reads[germline].getNbScores();
 }
 
+size_t WindowExtractor::getNbClonesGermline(string germline) {
+  return stats_clones[germline].getNbScores();
+}
+
 void WindowExtractor::setMaximalNbReadsPerWindow(size_t max_reads) {
   max_reads_per_window = max_reads;
 }

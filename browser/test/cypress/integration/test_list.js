@@ -191,10 +191,9 @@ describe('List', function () {
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
 
     // Tests on size after top change
-    cy.get('#filter_menu').click()
     cy.get("#top_slider")
       .invoke('val', 5)
-      .trigger('change')
+      .trigger('change',{ force: true })
     cy.get('body').click()
 
     // change in another preset with distributions clones
@@ -211,10 +210,9 @@ describe('List', function () {
     cy.getCloneInList(18).should('have.text', "162 (7 clonotypes)")
 
     cy.get('#time0').click()
-    cy.get('#filter_menu').click()
     cy.get("#top_slider")
       .invoke('val', 15)
-      .trigger('change')
+      .trigger('change',{ force: true })
     cy.get('body').click()
     cy.getCloneInList(18).should('have.text', "162 (0 clonotype)") //name of distrib clonotype for time 0, top max
 
@@ -229,10 +227,9 @@ describe('List', function () {
   it('07-focus_clone',  function() {
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
     cy.changePreset("read length distribution")
-    cy.get('#filter_menu').click()
     cy.get("#top_slider")
       .invoke('val', 5)
-      .trigger('change')
+      .trigger('change',{ force: true })
     cy.update_icon()
 
     // test size before focus
@@ -271,10 +268,9 @@ describe('List', function () {
   it('08-cluster clone',  function() {
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
     cy.changePreset("read length distribution")
-    cy.get('#filter_menu').click()
     cy.get("#top_slider")
       .invoke('val', 5)
-      .trigger('change')
+      .trigger('change',{ force: true })
     cy.update_icon()
 
     cy.getCloneSize(1).should("have.text", "12.00%")  // Init size of a real clone before merge

@@ -41,6 +41,11 @@ def home():
     res = {"redirect" : redirect}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+def whoami():
+    if auth.user:
+        return dict(auth.user)
+    return {}
+
 def logger():
     '''Log to the server'''
     res = {"success" : "false",
@@ -338,8 +343,10 @@ def get_data():
                 data["sample_name"] = run_name
                 data["group_id"] = get_set_group(row.sample_set_id)
 
-        log_query = db(  ( db.user_log.record_id == log_reference_id )
-                       & ( db.user_log.table_name == sample_set.sample_type )
+        log_query = db(  (( db.user_log.record_id == log_reference_id )
+                       & ( db.user_log.table_name == sample_set.sample_type )) |
+                       (( db.user_log.record_id == request.vars["sample_set_id"] )
+                       & ( db.user_log.table_name == "sample_set" ))
                       ).select(db.user_log.ALL, orderby=db.user_log.created)
 
         data["logs"] = []

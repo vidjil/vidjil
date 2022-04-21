@@ -2,18 +2,19 @@
 
 Cypress.Commands.add('open_menu_settings', () => { 
   cy.get('#settings_menu').click()
+  cy.get('#settings_menu > .selector').invoke('show')
 })
 
 Cypress.Commands.add('open_menu_filter', () => {
-  cy.get('#filter_menu').click()
+  cy.get('#filter_menu > .selector').invoke('show')
 })
 
 Cypress.Commands.add('open_menu_cluster', () => {
-  cy.get('#cluster_menu').click()
+  cy.get('#cluster_menu > .selector').invoke('show')
 })
 
 Cypress.Commands.add('open_menu_palette', () => {
-  cy.get('#palette_menu').click()
+  cy.get('#palette_menu > .selector').invoke('show')
 })
 
 Cypress.Commands.add('getSliderTop', () => {
@@ -21,8 +22,7 @@ Cypress.Commands.add('getSliderTop', () => {
 })
 
 Cypress.Commands.add('close_menu', () => { 
-  cy.get('body').click()
-  cy.get('#upload_summary').click({force:true})
+  cy.get('.selector').invoke('hide')
 })
 
 Cypress.Commands.add('change_name_key', (type_name) => {

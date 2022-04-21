@@ -24,10 +24,8 @@ describe('Aligner', function () {
     cy.get('#align-settings_select').children().should('have.length', 4)
 
     cy.get('#align-segment-info').click({force:true})
-    cy.get('#align-segment-info_select').children().should('have.length', 4)
+    cy.get('#align-segment-info_select').children().should('have.length', 7)
 
-    cy.get('#align-imgt').click({force:true})
-    cy.get('#align-imgt_select').children().should('have.length', 3)
     return
   })
 
@@ -179,10 +177,9 @@ describe('Aligner', function () {
   it('01-Aligner stats',  function() {
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
 
-    cy.get('#filter_menu').click()
     cy.get("#top_slider")
       .invoke('val', 5)
-      .trigger('change')
+      .trigger('change',{ force: true })
 
     // Select only distrib clonotypes
     cy.selectCloneMulti([20, 21, 22])

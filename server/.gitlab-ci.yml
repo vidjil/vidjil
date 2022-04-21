@@ -30,6 +30,8 @@
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
+    - /^prod-server/
+    - dev
   tags:
     - x86_64
     - docker

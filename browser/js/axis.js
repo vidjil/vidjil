@@ -73,12 +73,15 @@ Axis.prototype = {
      * 
      */
     init: function(axis_name){
-        if (AXIS_DEFAULT[axis_name]){
-            this.load(AXIS_DEFAULT[axis_name])
-            this.name = axis_name
-            return this
+        if (!AXIS_DEFAULT[axis_name]){
+            console.error("no axis descriptor named '" + axis_name + "' found, use 'Size' instead")
+            axis_name = "Size"
         }
-        console.error("no axis descriptor named " + axis_name + " found")
+
+        this.load(AXIS_DEFAULT[axis_name])
+        this.name = axis_name
+        return this
+
     },
 
     //reload last json descriptor
