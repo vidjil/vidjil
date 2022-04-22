@@ -81,6 +81,18 @@ function Report(model, settings) {
                             'hypermutation': function(c){ return c.getVIdentityIMGT(t) == "unknown" ? undefined : {'text': "V-REGION Identity: "+ c.getVIdentityIMGT(t)+'%\u00a0', 'class': 'clone_value'} },
                             '5length':       function(c){ return {'text': "V length: "     + c.getSegLength("5", (c.germline.includes("+") ? false : true))+'\u00a0', 'class': 'clone_value'}}
                           },
+                          'options': {
+                            'reads' : {
+                                "short": function(c){
+                                    var sizes    = c.getStrAllSystemSize(t, true)
+                                    var size_str = sizes["global"] == "−" ? ("−") : (`${sizes["global"]} (${sizes["system"]}; ${sizes["systemGroup"]})`)
+                                    return size_str
+                                },
+                                "long": function(c){ return c.getPrintableSize() },
+                                "default": "long",
+                                "selected": "long"
+                            }
+                          }
                         },
         "comments":     {'name': "Comments",            'unique': false,    'inMenu': false },
         "scatterplot":  {'name': function (c){ return "Plot: ["+ c.axisX +" | "+ c.axisY +"] ["+ c.locus +"]"},
@@ -1440,6 +1452,7 @@ Report.prototype = {
                 var t = this.m.samples.order[i]
                 var sizes    = this.m.clone(cloneID).getStrAllSystemSize(t, true)
                 var size_str = sizes["global"] == "−" ? ("−") : (`${sizes["global"]} (${sizes["system"]}; ${sizes["systemGroup"]})`)
+                var size_str = this.available_blocks.clones.options.reads[this.available_blocks.clones.options.reads.selected](this.m.clone(cloneID))
                 $('<span/>', {'text': "#"+ (this.m.getStrTime(t, "order")+1) + ": " + size_str +'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
         }else{
@@ -1448,6 +1461,7 @@ Report.prototype = {
 
         // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
         var more_info = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
+        this.clones_fields = Object.keys(this.available_blocks.clones.fields)
         for (var field_pos = 0; field_pos < this.clones_fields.length; field_pos++) {
             var field   = this.clones_fields[field_pos]
             var content = this.available_blocks.clones.fields[field](this.m.clone(cloneID))
