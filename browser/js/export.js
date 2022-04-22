@@ -83,14 +83,13 @@ function Report(model, settings) {
                           },
                           'options': {
                             'reads' : {
-                                "short": function(c){
+                                'short': function(c){
                                     var sizes    = c.getStrAllSystemSize(t, true)
-                                    var size_str = sizes["global"] == "−" ? ("−") : (`${sizes["global"]} (${sizes["system"]}; ${sizes["systemGroup"]})`)
-                                    return size_str
+                                    return sizes.global == "−" ? ("−") : (`${sizes.global} (${sizes.system}; ${sizes.systemGroup})`)
                                 },
-                                "long": function(c){ return c.getPrintableSize() },
-                                "default": "long",
-                                "selected": "long"
+                                'long': function(c){ return c.getPrintableSize() },
+                                'default': "long",
+                                'selected': "long"
                             }
                           }
                         },
@@ -1450,8 +1449,6 @@ Report.prototype = {
             var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
             for (var i=0; i<this.m.samples.order.length; i++){
                 var t = this.m.samples.order[i]
-                var sizes    = this.m.clone(cloneID).getStrAllSystemSize(t, true)
-                var size_str = sizes["global"] == "−" ? ("−") : (`${sizes["global"]} (${sizes["system"]}; ${sizes["systemGroup"]})`)
                 var size_str = this.available_blocks.clones.options.reads[this.available_blocks.clones.options.reads.selected](this.m.clone(cloneID))
                 $('<span/>', {'text': "#"+ (this.m.getStrTime(t, "order")+1) + ": " + size_str +'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
