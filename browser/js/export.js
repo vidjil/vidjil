@@ -363,12 +363,14 @@ Report.prototype = {
     initClones: function(){
         var self = this;
         var main = $("#report-settings-clones")
-        var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(main);
+        var parent = $("#report-clones-list");
+        parent.empty() // Erase previous content
 
         // add/remove sample to list on click
         var handle = function(){
             self.removeClone($(this).attr("value"));
             $(this).parent().remove()
+            report.initClones() // update
         }
 
         var count =0;
