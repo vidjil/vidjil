@@ -48,6 +48,10 @@ Model_loader.prototype = {
         if (typeof config != 'undefined' && typeof config.server_id != 'undefined')
             document.getElementById('server-id').innerText = config.server_id
 
+        if (self.db == undefined ){
+            console.log({"type": "flash", "msg": "error : No db server connected to this client", "priority": 3 });
+            return
+        }
         /** load the default vidjil file, open the database or display the welcome popup depending on the case*/
         if (typeof params.data !== "undefined") {
             if (typeof params.analysis !== "undefined"){
