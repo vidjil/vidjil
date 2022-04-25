@@ -80,7 +80,7 @@ Filter.prototype = {
             case ">":
             case "<":
                 text += f.axis + " " + f.operator + " "+ f.value
-                title += "pouet!"
+                title += `Filter on axis ${f.axis} with values ${f.operator == ">"? "greater than " : (f.operator == "<" ? "inferior at " : "equal to ")} ${f.value}`
                 break;
             case "focus":
                 text += "Focus on "+f.value.length+" Clonotypes"
