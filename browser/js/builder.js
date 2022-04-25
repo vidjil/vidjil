@@ -159,6 +159,7 @@ Builder.prototype = {
        
         var div = document.createElement("div");
         div.appendChild(input);
+        div.classList.add("buttonSelector")
 
         div.appendChild(document.createTextNode("none"))
         div.onclick = function () {
