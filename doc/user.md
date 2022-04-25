@@ -327,10 +327,11 @@ with the first (largest) selected clonotype acting as its representative.
 The `align` button aligns all the selected sequences,
 the sequence of the first (largest) clonotype used as a reference.
 
-  - `*` is a match
+  - `.` is a match
   - `-` is a gap
   - a single line under a character is a nucleotide mismatch
   - a double line under a character is a silent nucelotide mismatch (not impacting the resulting amino acid sequence)
+  - `*` in an amino acid sequence indicates a stop codon
   - `#` in an amino acid sequence indicates a frameshift in the junction (and thus an unproductive sequence)
 
 The alignment settings `⚙` menu allows to customize such alignements, by
