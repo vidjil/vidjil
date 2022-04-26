@@ -27,7 +27,10 @@ require(["jquery",
              require(['js/conf'], function() {
                  loadAfterConf()
              },
-                     function(err) {loadAfterConf()})
+                     function(err) {
+                        // Never call even if conf.js is malformed (syntax error)
+                        loadAfterConf()
+                     })
          });
 
 
@@ -41,7 +44,11 @@ function loadAfterConf() {
         config.db_address   = DEFAULT_DB_ADDRESS+"vidjil/";
         config.cgi_address  = DEFAULT_DB_ADDRESS+"cgi/";
         config.use_database = false;
+        config.load_error   = true;
+    } else {
+        config.load_error   = false;
     }
+
 
     require(['doctips/tips'],
             function(){},
