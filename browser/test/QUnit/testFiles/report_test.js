@@ -15,31 +15,34 @@ QUnit.test("Report: save/load", function(assert) {
     // save
     assert.notOk(m.analysisHasChanged, ".analysis should be unchanged")
     report.addClones([1])
+    assert.equal(report.clones.length, 1, "report should have 1 clone(s) selected, got "  + report.clones.length);
     report.save("new_save_1")
     assert.equal(report.settings.name, "new_save_1", "save report settings under new_save_1 got " + report.settings.name);
     assert.ok(m.analysisHasChanged, ".analysis should have been modified")
 
     // load default settings
-    report.load("New Report")
-    assert.equal(report.settings.name, "New Report", "loaded report should be named 'New report', got " + report.settings.name);
-    assert.equal(report.settings.clones.length, 0, "default report should have 0 clone(s) selected, got "  + report.settings.clones.length);
+    report.load("Full report")
+    assert.equal(report.settings.name, "Full report", "loaded report should be named 'Full report', got " + report.settings.name);
+    assert.equal(report.clones.length, 1, "Full report should still have 1 clone(s) selected, got "  + report.clones.length);
 
     // load saved settings 
     report.load("new_save_1")
     assert.equal(report.settings.name, "new_save_1", "loaded report should be named 'new_save_1', got " + report.settings.name);
-    assert.equal(report.settings.clones.length, 1, "default report should have 1 clone(s) selected, got "  + report.settings.clones.length);
+    assert.equal(report.clones.length, 1, "default report should still have 1 clone(s) selected, got "  + report.clones.length);
 
     // overwrite existing file (overwrite false)
     report.addClones([2])
+    assert.equal(report.clones.length, 2, "default report should now have 2 clone(s) selected, got " + report.clones.length);
     report.save("new_save_1")
     report.load("new_save_1")
-    assert.equal(report.settings.clones.length, 1, "test overwriting: default report should still have 1 clone(s) selected, got " + report.settings.clones.length);
+    assert.equal(report.clones.length, 2, "test overwriting: default report should still have 2 clone(s) selected, got " + report.clones.length);
 
-    // overwrite existing file (overwrite true)
-    report.addClones([2])
-    report.save("new_save_1", true)
-    report.load("new_save_1")
-    assert.equal(report.settings.clones.length, 2, "test overwriting: default report should now have 2 clone(s) selected, got " + report.settings.clones.length);
+    // For the moment, clone list in no more stocked inside analysis (issue #4996)
+    // // overwrite existing file (overwrite true)
+    // report.addClones([2])
+    // report.save("new_save_1", true)
+    // report.load("new_save_1")
+    // assert.equal(report.clones.length, 2, "test overwriting: default report should now have 2 clone(s) selected, got " + report.clones.length);
     
 });
 
@@ -134,7 +137,7 @@ QUnit.test("Report: clones", function(assert) {
     m.parseJsonData(json_data,100)
 
    report.addClones([0,1])
-   assert.equal(report.settings.clones.length, 2, "added 2 clones");
+   assert.equal(report.clones.length, 2, "added 2 clones");
 
    //TODO extract handle functions to test button
 
