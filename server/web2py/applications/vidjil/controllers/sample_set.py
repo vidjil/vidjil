@@ -1008,7 +1008,10 @@ def getStatData(results_file_ids):
             for head, htype, model in headers:
                 if htype == 'db':
                     r[head] = res[head]
-                r[head] = model.decorate(r[head])
+                if head in r.keys():
+                    r[head] = model.decorate(r[head])
+                else: 
+                    r[head] = ""
             r['sequence_file_id'] = res['results_file']['sequence_file_id']
             r['config_id'] = res['results_file']['config_id']
             data.append(r)
