@@ -621,9 +621,17 @@
 
                         <div class="menu-content">
                             <a id="toIMGTseg" title="Request sequences informations to IMGT"
-                                    class="aligner-button" onclick="javascript:segment.retrieveExternalData(['IMGT']);"><i class="icon-arrows-ccw"></i> IMGT/V-QUEST</a>
+                                    class="aligner-button"
+                                    data-target = 'IMGT'
+                                    onclick="javascript:segment.retrieveExternalData(['IMGT']);">
+                                    <i id="icon_external_IMGT" class="icon-arrows-ccw"></i> IMGT/V-QUEST
+                            </a>
                             <a id="toCloneDBseg" title="Request sequences informations to CloneDB"
-                                    class="aligner-button" onclick="javascript:segment.retrieveExternalData(['cloneDB']);"><i class="icon-arrows-ccw"></i> CloneDB</a>
+                                    class="aligner-button"
+                                    data-target = 'cloneDB'
+                                    onclick="javascript:segment.retrieveExternalData(['cloneDB']);">
+                                    <i id="icon_external_cloneDB" class="icon-arrows-ccw"></i> CloneDB
+                            </a>
                         </div>
                     </div>
                     

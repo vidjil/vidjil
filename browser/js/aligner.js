@@ -139,24 +139,34 @@ Aligner.prototype = {
 
     // check if some enabled layers in segmenter need external data from IMGT/cloneDB to be displayed and update buttons accordingly
     updateButton: function(){
+        var self = this;
 
         var refreshList = this.needRefresh()
         var button = $("#align-refresh-button")
-        var icon = button.find('i')
+        var icon   = button.find('i')
 
-        if (typeof this.pendingAnalysis != 'undefined' && 
-            this.pendingAnalysis > 0){
+        refreshList.filter(provider => (self.pendingAnalysis != undefined && self.pendingAnalysis[provider] > 0))
+        // Update global external provider button
+        if (typeof this.pendingAnalysis != 'undefined' && this.pendingAnalysis > 0){
+            // Some provider are pending
             icon.addClass('animate-spin')
             button.addClass('disabledClass')
-        }else{
+        }else if (refreshList.length == 0)  {
+            // No provider pending
             button.removeClass('disabledClass')
-            icon.removeClass('animate-spin')
+            icon.removeClass()
+            icon.addClass('icon-ok')
+        }else{
+            // At least one provider is possible
+            button.removeClass('disabledClass')
+            icon.removeClass()
+            icon.addClass('icon-arrows-ccw')
         }
 
-        if (refreshList.length == 0)
-            button.hide()
-        else
-            button.show()
+        // Update child button of each provider
+        button.children(".menu-content").children("a").each(function () {
+            self.refreshIconProvider($(this).data("target"))
+        })
 
         return this        
     },
@@ -170,24 +180,25 @@ Aligner.prototype = {
         if (typeof cloneList == 'undefined')
             cloneList = this.sequenceListInSegmenter()
 
-        var callback = function(){
-            self.pendingAnalysis--
+        var callback = function(serviceName){
+            self.pendingAnalysis[serviceName]--
             self.updateButton()    
         }
         
+        this.pendingAnalysis = {}
         for (var i in providerList){
             serviceName = providerList[i]
 
-            this.pendingAnalysis = 0;
+            this.pendingAnalysis[serviceName] = 0;
 
             switch (serviceName) {
                 case "IMGT":
-                    this.pendingAnalysis++
-                    this.sendTo('IMGTSeg', cloneList, callback)
+                    this.pendingAnalysis[serviceName]++
+                    this.sendTo('IMGTSeg', cloneList, callback(serviceName))
                     break;
                 case "cloneDB":
-                    this.pendingAnalysis++
-                    db.callCloneDB(cloneList, callback)
+                    this.pendingAnalysis[serviceName]++
+                    db.callCloneDB(cloneList, callback(serviceName))
                     break;
                 default:
                     break;
@@ -590,23 +601,41 @@ Aligner.prototype = {
         }
     },
 
-    refreshIcon: function(provider){
+    refreshIconProvider: function(provider){
         var self = this
-        var span = document.createElement('span')
-        var im = document.createElement('i')
-        span.className = 'aligner-inline-button'
-        im.className ='icon-arrows-ccw'
-        span.setAttribute('title', "missing data, click to try to retrieve from "+provider);
 
-        if (this.pendingAnalysis>0){
-            span.className = 'aligner-inline-button disabledClass'
-            im.className = 'icon-arrows-ccw animate-spin'
+        var button = $("#align-refresh-button").children(".menu-content")
+                                               .find(`[data-target='${provider}']`)
+        var icon   = $("#icon_external_"+provider)
+
+        var onclickfct = function(){
+            segment.retrieveExternalData([$(this).data("target")])
         }
 
-        span.onclick = function(){self.retrieveExternalData([provider])}
+        if (!config[provider]){
+            button.hide()
+            button.prop('onclick', null);
+        } else {
+            button.show()
 
-        span.appendChild(im)
-        return span
+            var needRefresh = this.needRefresh()
+            if (typeof this.pendingAnalysis != 'undefined' 
+                && needRefresh.indexOf(provider) != -1
+                && this.pendingAnalysis[provider] > 0){ // get list provider
+                    icon.removeClass()
+                        .addClass('animate-spin')
+            } else if (this.pendingAnalysis == undefined || (typeof this.pendingAnalysis != 'undefined' && needRefresh.indexOf(provider) != -1)){
+                button.removeClass('disabledClass')
+                icon.removeClass()
+                    .addClass('icon-arrows-ccw')
+            } else {
+                button.addClass('disabledClass')
+                icon.removeClass()
+                    .addClass('icon-ok')
+            }
+        }
+
+
     },
 
         
