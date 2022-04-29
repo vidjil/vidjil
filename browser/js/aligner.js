@@ -592,15 +592,45 @@ Aligner.prototype = {
             if (axis.hover != undefined)
                 span.setAttribute('title', axis.hover(clone, this.m.getTime()) )
             
-            if (typeof axis.refresh != 'undefined' && typeof axis.refresh(clone) != 'undefined')
+            if (typeof axis.refresh != 'undefined' && typeof axis.refresh(clone) != 'undefined'){
                 span.appendChild(this.refreshIcon(axis.refresh(clone)))
-            else
+            } else {
                 span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
+            }
 
             axisBox.appendChild(span);
         }
     },
 
+    /**
+     * Refresh external icon of one clonotype in aligner
+     * Allow to launch external action for on provider
+     */
+    refreshIcon: function(provider){
+        var self = this
+        var span = document.createElement('span')
+        var im = document.createElement('i')
+        var button = $("#align-refresh-button")
+
+        span.className = 'aligner-inline-button'
+        im.className ='icon-arrows-ccw'
+        span.setAttribute('title', "missing data, click to try to retrieve from "+provider);
+
+        if (typeof this.pendingAnalysis != 'undefined' &&
+                this.pendingAnalysis[provider] > 0){ // get list provider
+                span.className = 'aligner-inline-button disabledClass'
+                im.className = 'icon-arrows-ccw animate-spin'
+        }
+
+        span.onclick = function(){self.retrieveExternalData([provider])}
+
+        span.appendChild(im)
+        return span
+    },
+
+    /**
+     * Allow to refresh icon in aligner header and menu.
+     */
     refreshIconProvider: function(provider){
         var self = this
 
@@ -619,9 +649,9 @@ Aligner.prototype = {
             button.show()
 
             var needRefresh = this.needRefresh()
-            if (typeof this.pendingAnalysis != 'undefined' 
-                && needRefresh.indexOf(provider) != -1
-                && this.pendingAnalysis[provider] > 0){ // get list provider
+            if (typeof this.pendingAnalysis != 'undefined' &&
+                needRefresh.indexOf(provider) != -1 &&
+                this.pendingAnalysis[provider] > 0){ // get list provider
                     icon.removeClass()
                         .addClass('animate-spin')
             } else if (this.pendingAnalysis == undefined || (typeof this.pendingAnalysis != 'undefined' && needRefresh.indexOf(provider) != -1)){
@@ -634,7 +664,6 @@ Aligner.prototype = {
                     .addClass('icon-ok')
             }
         }
-
 
     },
 
