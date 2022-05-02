@@ -49,8 +49,7 @@ Model_loader.prototype = {
             document.getElementById('server-id').innerText = config.server_id
 
         if (self.db == undefined ){
-            console.log({"type": "flash", "msg": "error : No db server connected to this client", "priority": 3 });
-            return
+            console.log({"type": "flash", "msg": "No db server connected at client", "priority": 2 });
         }
         /** load the default vidjil file, open the database or display the welcome popup depending on the case*/
         if (typeof params.data !== "undefined") {
