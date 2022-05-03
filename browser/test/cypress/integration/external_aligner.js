@@ -146,4 +146,51 @@ describe('External Aligner', function () {
 
   //menu in aligner top right corner (focus/hide/tag) are already tested in test_filter.js
 
+
+  it('Aligner external provider',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis")
+
+    cy.get('#polyline0').click()
+    cy.get('#align-refresh-button')
+      .should("be.visible")
+
+    // before calling provider
+    cy.get('#align-refresh-button > span > .icon-arrows-ccw')
+      .should("exist")
+    cy.get("#icon_external_IMGT")
+      .should("have.class", "icon-arrows-ccw")
+
+    cy.get('#toIMGTseg').click({force:true})
+
+    cy.get('.identityBad')
+      .should("be.visible")
+
+    cy.get('#align-refresh-button > span > i')
+      .should("have.class", "icon-ok")
+
+    cy.get('#align-refresh-button')
+      .should("be.visible")
+
+    cy.get('#align-refresh-button > span > i')
+      .should("have.class", "icon-ok")
+    cy.get("#icon_external_IMGT")
+      .should("have.class", "icon-ok")
+
+    // test after add of one new clonotype
+    cy.selectClone(1, true)
+    cy.get('#align-refresh-button > span > .icon-arrows-ccw')
+      .should("exist")
+    cy.get("#icon_external_IMGT")
+      .should("have.class", "icon-arrows-ccw")
+
+
+    // TODO; testing menu hover is not possible by cypress fro the moment
+    // Default config have provider IMGT, but not CloneDB
+    // Only imgt button should be displayed
+    cy.get("#toIMGTseg").should('not.have.css', 'display', 'none')
+    cy.get("#toCloneDBseg").should('have.css', 'display', 'none')
+
+
+    return
+  })
 })
