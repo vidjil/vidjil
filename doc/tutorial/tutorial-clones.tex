@@ -1,15 +1,18 @@
 \section{Viewing and filtering clones}
 
+If you are not familirize with the vidjil interface, you can go at [www.vidjil.org/doc/user/#the-elements-of-the-vidjil-web-application](https://www.vidjil.org/doc/user/#the-elements-of-the-vidjil-web-application) to understand how are organize the interface of the client and the main content of each panels.
+% Le mettre en amont ? 
 
 \subsection{Looking at a clone}
 \begin{verbatim}
 
 
-  #################################
-  ### Viewing and filtering clones
-  #################################
+  // #################################
+  // ### Viewing and filtering clones
+  // #################################
 
 \end{verbatim}
+
 
 Each RepSeq algorithm has its own definition of what a clone is (or, more precisely
 a clonotype), and on how to output its sequence and how to assign a V(D)J designation.
@@ -104,7 +107,7 @@ There are several options to display the V(D)J designation.
 
 \subsection{Showing more clones}
 
-By default Vidjil displays the 50 most abundant clones at each time point.
+By default Vidjil displays the 50 most abundant clones at each time point in scatterplot, and 10 in timeline graph.
 With five time points, we may therefore have from 50 to 250 clones displayed
 depending if the top 50 are always the same or always different or, more
 realistically, in-between.
@@ -160,7 +163,7 @@ because they are never among the most abundant ones.
 \subsection{Tagging and filtering clones}
 
 Consider the most abundant clones in the list:  \texttt{IGHV3-9 7/CCCGGA/17 J6*02} and  \texttt{TRGV10 13//5 JP1}.
-Usually we may want to tag them in order to remember them later on.
+Usually we may want to tag them in order to remember and follow them later on.
 \question{Click on the star and choose colored tags for these two clones, such as \texttt{clonotype 1} or \texttt{clonotype 2}.
   Notice how the color applies throughout all the views.}
 
@@ -205,8 +208,10 @@ Later you may want to filter clones depending on the tags you have chosen.
 \end{verbatim}
 
 This is a way of filtering some clones. This may be useful when we want to
-focus on some specific clones. Another way of doing so is to filter them by
-their gene names or by their DNA sequences.  
+focus on some specific clones. Some other way of doing so are to filter them by
+their gene names, by their DNA sequences, 
+by locus visibility switch
+or by direct hidding/focusing them after selection.
 \question{In the search box,
   enter \texttt{GGAGTCGGGG} and validate with \texttt{Enter}.  How many sequences are
   left?}
@@ -221,8 +226,11 @@ their gene names or by their DNA sequences.
 Note that the search is performed both on the forward and the reverse strand.
 \question{Check that by searching for the reverse complement of the
   sequence: \texttt{CCCCGACTCC}. Do you find the same results as previously?}
-\question{How can you cancel this filter and view again all the clones?}
 
+Note that you can compose with multiple filter. 
+The list of active filter is showed in the menu filter.
+\question{How can you cancel this filter and view again all the clones?}
+\reponse{In the filter menu, the list of active filter is present and you can remove, one by one, all rules of filtration. You can also remove text filtration by clickiong on the cross above the text field of the clone list.}
 \begin{verbatim}
   def test_B_clones_07_filter_search_area
     ## test that clone are present before filtering
@@ -319,7 +327,7 @@ After this rename, you can see that the clone is still selected.
   end
 \end{verbatim}
 
-\question{ Notice the star at the the right of the screen, near the number
+\question{ Notice the star at the right of the screen, near the number
   of reads. You can also tag clones using this icon. In that way, you will be able to tag
   all the selected clones at once.}
 \begin{verbatim}
@@ -341,7 +349,7 @@ After this rename, you can see that the clone is still selected.
 \end{verbatim}
 
 \question{When you want to focus on the selected clones, you can click on the
-  focus link on the right, next to the number of selected clones.
+  focus button (eye icon) on the right, next to the number of selected clones.
   This feature is useful when you want to analyse some clones more thoroughly
   without being annoyed by other clones.}
 \begin{verbatim}
@@ -368,7 +376,7 @@ After this rename, you can see that the clone is still selected.
 \end{verbatim}
 
 \question{To remove this focus, click on the cross next to the search box,
-  above the list.}
+  above the list or on the corresponding line in filter menu.}
 \begin{verbatim}
   def test_B_clones_13_remove_filter
     ## test that clone are present after resetting filtering
@@ -390,8 +398,8 @@ After this rename, you can see that the clone is still selected.
 
 Sometimes, one wants to hide noisy or unrelated clones.
 
-\question{Select a clone or several clones and click on the \com{hide} button, near the \com{focus} button. Show again these
-  clones by clicking on the cross next to the search box.}
+\question{Select a clone or several clones and click on the \com{hide} button (slashed eye icon), near the \com{focus} button. Show again these
+  clones by clicking on the cross in the corresponding line in filter menu.}
 \begin{verbatim}
   def test_B_clones_15_hide_selected
     ## test that clone are present before focus
@@ -541,17 +549,13 @@ By default in the bottom plot (the \textit{grid}), the clones
 
 The sequences of the clones now appear in the bottom part of the browser (the
 \textit{sequence panel}). If many clones are selected you can view more sequences
-by moving the mouse above the sequence panel.
- In such a case, you may be bothered by the sequence panel going up and
-down each time your mouse enters or exits the sequence panel. You can stick it
-in its current shape by clicking on the pin at the upper right corner of the
-sequence panel.
-
+by clicking on the \textit{flat up arrow} in the middle of menu bar of sequence panelmoving the mouse above the sequence panel.
+ 
 Then, the sequences in the sequence panel can be visually compared but you can also align
 them to see more easily their similarities.
 
 
-\question{Click on the \com{align} button on the left-hand side. The differences are
+\question{Click on the \com{Align} button on the left-hand side. The differences are
 emphasized in bold.}
 \begin{verbatim}
   def test_B_clones_19_align
@@ -560,7 +564,11 @@ emphasized in bold.}
 \end{verbatim}
 
 Now it is the user's expertise to determine if sequences are sufficiently
-similar, depending on her or his specific question. If some sequences don't appear to be similar enough, you can remove
+similar, depending on her or his specific question. 
+An efficiant hint to do so is to show the quality of each base of the Vidjil windows (menu sequence feature/quality). 
+% dans l'exemple, on a des séquence très similaire, à une mutation près. Pourtant, l'id est fortement décallé (~20nt)
+We can easily consider that sequence with a mismtach but with a poor quality at this position is a sequencing artifact and could be considered as identical of the support clonotype.
+If some sequences don't appear to be similar enough, you can remove
 them from the sequence panel by clicking on the cross in front of the sequence in
 the sequence panel.
 \question{Remove all the sequences that are not similar enough with the first
@@ -578,8 +586,8 @@ differences could be due to sequencing or PCR errors.
 These artifacts (mutations, homopolymers, insertions, deletions)
 depend on the sequencer and the PCR technique.
 
-\question{Cluster all those clones in a single clone by clicking on the ``cluster''
-  button, next to the \com{align} button.}
+\question{Cluster all those clones in a single clone by clicking on the ``Cluster''
+  button, next to the \com{Align} button.}
 \begin{verbatim}
   def test_B_clones_21_click_on_merge
     $b.merge.click
@@ -616,7 +624,8 @@ cluster by clicking on the cross at their left in the list.
 \question{%
 %For the next step, choose the preset \com{V distribution} (keyboard shortcut \com{5}).
 % On n'a pas encore parlé ici des presets. 
-Open the \com{cluster} menu, and choose \com{cluster by V/5}. What happened ? There are now two clones with TRGV2. Why ?}
+Open the \com{cluster} menu at the top of the page, and choose \com{cluster by V/5}. What happened ? There are now two clones with TRGV2. Why ?}
+\reponse{These two clonotypes have been clustered on their V gene, but they differ by their allele. You can verify this by changing scatterplot preset by `V/J (allele)`.}
 %%  Confirm this by changing the x axis into ``V allele``.
 %%% -> Problème, on n'a pas encore parlé des axes à cet endroit.
 \begin{verbatim}
@@ -689,6 +698,7 @@ and the $y$ axis selects the order of the boxes sharing a same $x$).
 
 \question{In the \com{plot} menu, switch between the ``bubble plot'' and the ``bar plot''.
 In the bar plot mode, pass the mouse over the bars: What happens?}
+% on cherche a faire dire quoi ? Le highligth ? Dans ce cas est-il plus simple de le dire directement ? ou en tout cas sans le rapport avec le bar plot.
 \begin{verbatim}
   def test_B_clones_28_switch_scatterplot_mode
 
@@ -724,6 +734,7 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 % that two similar clones are far apart.
 
 \question{Press the keys \texttt{0} to \texttt{9} on the numeric keypad. What happens ?}
+\reponse{This allow to automatically switch between each preset. For preset greater than 9, you should press shift button on the same time.}
 \begin{verbatim}
   def test_B_clones_29_shortcut_preset
 
@@ -840,10 +851,12 @@ with the \com{color by} menu.
   
 \marginpar{We apologize to color blinds: the colors are not yet color-blind friendly.}Clones that are close on the grid with similar colors are likely to
 be similar.
+% hum hum, voir si c'est bien vrai. Juste avec le Nlength ?
 
 \question{Choose now the preset \com{CDR3 length distribution} and
   then color by \com{size}.
   See that the color tiles in the info part (upper right) change to show the color key.}
+You can not that axis with continue values will have a gradient color tiles and some other axis with few discretes values will have a selector has for tag axis. Other, as V and J genes will not be reported in this section.
 \begin{verbatim}
   def test_B_clones_31_color_gradient
     $b.scatterplot_select_preset "CDR3 length distribution"
@@ -863,6 +876,8 @@ be similar.
   \com{CDR3}. In such case all clones with the same CDR3 will have the same
   color (note that, due to a lack of available colors two different CDR3s
   could share the same color just by chance).}
+  % CDR3 par AA ? sinon comment puisqu'il doit y a voir au moins une variation...
+  % A partir de quand ds ce cas se retrouve-t-on avec une couleur completement différente ?
 \begin{verbatim}
   def test_B_clones_32_color_by_clone
     select_color = $b.select_list(:id => "color_menu_select")
@@ -884,6 +899,7 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
   Now we would like to compare the sequence with the germline genes.
   We can add the germline genes to the sequence panel by going
   to the \com{import/export} menu and by clicking on \com{add germline genes}.
+  % toujours noté experimental d'ailleur
   Now we can click on the \com{align} button to see the alignment between the
   genes and the sequence. Mutations can be identified and silent mutations are
   displayed with a double border in blue.
@@ -941,11 +957,13 @@ There may have several reasons:
 \item average coverage: in that case the clonal sequence displayed is short
   compared to the reads in the clone. This may be the case when too different
   sequences have been put in a clone. The value is generally $\geq 80\,\%$.
+  % nuancer, toujours valable ? Si merge ou non ?
 \item $e$-value: It is a statistical value computed to ensure that
   recombinations have not been spot by chance. This value is generally much
   lower than 1 ($<10^{-5}$).
 \item Clone similar to another one: In that case Vidjil-algo tells you that
   other clones have the same genes and may be similar
+\item Several genes with equal probability: The algorithm have found several genes with the exact same evalue. This is possible when the sequence is too short to distinguish between allele or sometimes between various similar genes.
 \item Non-recombined sequences: Some known unrecombined sequences are tagged
   so that you can spot them easily. We tag the unrecombined IGHD7-27/IGHJ1
   sequences that may be amplified.
@@ -953,6 +971,9 @@ There may have several reasons:
 
 You can view those values for any clone by clicking the \textit{i} icon on the
 right side, in the list of clones.
+
+You can also find a detailled list of existing warning at page [https://www.vidjil.org/doc/warnings/](https://www.vidjil.org/doc/warnings/)
+
 \subsection{Analysing recombinations from several loci}
 
 First make sure to come back to the preset \com{V/J (genes)} in the \com{plot} menu.
@@ -1046,12 +1067,15 @@ expected concentration is 1\% (.01).
     # New color
     cinfo = $b.clone_info("454")
     assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' ), "color: "+$b.clone_info('0')[:name].style('color')
+    // voir ici car l'action ne correspond pas tout a fait.
   end
 \end{verbatim}
 
 \question{ Now we will set its concentration to 1\% as expected. Click again on
   the star. In the \com{normalize to} field enter \com{1} and click \com{ok}.
   Now, in the graph, this clone should correspond to a straight line at 1\%.}
+  % on pourrait indiquer dans le champs la valeur en pourcent ou non, ce n'est pas clair 
+  % l'iunclur en placeholder ? 
 \begin{verbatim}
   def test_B_clones_40_normalization
     cinfo = $b.clone_info("1")
