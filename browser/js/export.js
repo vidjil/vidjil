@@ -748,6 +748,7 @@ Report.prototype = {
 
         this.removeBlock(block)
         $(container).remove()
+        this.menu();
     },
 
     upContainer: function(container){
@@ -755,6 +756,7 @@ Report.prototype = {
 
         this.upBlock(block)
         $(container).insertBefore($(container).prev());
+        this.menu();
     },
 
     downContainer: function(container){
@@ -762,6 +764,7 @@ Report.prototype = {
 
         this.downBlock(block)
         $(container).insertAfter($(container).next());
+        this.menu();
     },
 
     info : function(block) {
