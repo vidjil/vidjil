@@ -994,6 +994,11 @@ Report.prototype = {
             if (this.clones.indexOf(clone_id) == -1)
                 this.clones.push(clone_id)
         }
+        // If menu is already open, update it
+        // Usefull when user already selected clonotype, but don't add them
+        if ($("#report-menu").is(":visible")){
+            this.menu()
+        }
     },
 
     // remove a clone from settings by clone id 
