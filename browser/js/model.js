@@ -3417,7 +3417,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             cloneIds = this.getSelected()
         }
         if (cloneIds.length == 0){
-            console.error( "Export "+file_format+": please select clones to be exported")
+            console.log({ msg: `Export ${file_format}: please select clones to be exported`, type: "flash", priority: 2 });
             return
         }
 
