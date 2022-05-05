@@ -179,6 +179,7 @@ TagManager.prototype = {
             this.m.norm_input = document.createElement('input');
             this.m.norm_input.id = "normalized_size";
             this.m.norm_input.type = "text";
+            this.m.norm_input.placeholder = (this.m.clone(clonesIDs[0]).getSize()*100).toFixed(2)
 
             var span2 = document.createElement('span');
             span2.appendChild(this.m.norm_input)
@@ -189,7 +190,7 @@ TagManager.prototype = {
 
             this.m.norm_button.onclick = function () {
                 var cloneID = self.clonesIDs[0];
-                var size = parseFloat(self.m.norm_input.value);
+                var size = parseFloat(self.m.norm_input.value)/100;
 
                 if (size>0 && size<1){
                     self.m.set_normalization( self.m.NORM_EXPECTED )
