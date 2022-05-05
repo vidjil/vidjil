@@ -381,7 +381,7 @@ Report.prototype = {
         var handle = function(){
             self.removeClone($(this).attr("value"));
             $(this).parent().remove()
-            report.initClones() // update
+            report.menu() // update
         }
 
         var count =0;
