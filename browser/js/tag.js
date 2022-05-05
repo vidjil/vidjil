@@ -252,10 +252,5 @@ TagManager.prototype = {
 
         this.tagSelector.style.top=top+"px";
         this.tagSelector.style.left=left+"px";
-
-        // If multiple clones Ids; disabled normalization div
-        if (clonesIDs.length > 1) {
-            $("#"+div.id).addClass("disabledbutton");
-        }
     },
 }
