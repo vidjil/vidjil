@@ -1059,7 +1059,7 @@ expected concentration is 1\% (.01).
     ## open tag menu for clone 1
     $b.clone_info("1")[:star].click # top IGH
     ## change norm value
-    $b.tag_selector_edit_normalisation.send_keys "0.01"
+    $b.tag_selector_edit_normalisation.send_keys "1"
     $b.tag_selector_normalisation_validator.click
     # $b.send_keys :enter
     $b.update_icon.wait_while(&:present?)
