@@ -600,11 +600,12 @@ Each sample is provided with links to the related patient/runs/sets.
 
 ## Edit my personal informations
 
-It is possible for you to update your personal informations or your login password.
-On the database page, click on the pen icon next to your name.
+Your login is your email address.
+To update other personal information or your password,
+on the database page, click on the pen icon next to your name.
+Change them wisely.
 
-Please note that your email adress is also your login name to fill for connection. 
-Change it wisely.
+See also the [Vidjil privacy policy](https://www.vidjil.org/doc/privacy/) and our compliance to the GDPR.
 
 # How do you define clones, their sequences, their V(D)J designation and their productivity?
 
