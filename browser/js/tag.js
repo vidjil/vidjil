@@ -183,7 +183,8 @@ TagManager.prototype = {
 
             var span2 = document.createElement('span');
             span2.appendChild(this.m.norm_input)
-
+            span2.appendChild(document.createTextNode(" % "))
+            
             this.m.norm_button = document.createElement('button');
             this.m.norm_input.id = "norm_button";
             this.m.norm_button.appendChild(document.createTextNode("ok"))
