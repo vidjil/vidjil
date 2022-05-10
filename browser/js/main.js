@@ -38,7 +38,7 @@ var devel_mode = false;
 console = new Com(console)
 
 if (config.load_error){
-    console.log({"type": "flash", "msg": "Loading of conf.js has failed.<br/>Does this script is present ?", "priority": 3});
+    console.log({"type": "flash", "msg": "Loading of conf.js has failed.<br/>Does this script exist?", "priority": 3});
 }
 
 /* Model
