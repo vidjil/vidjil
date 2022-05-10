@@ -312,4 +312,23 @@ describe('Test 00 Init', function () {
     cy.getCloneInList('0').should("exist")
   })
 
+   it('close previous opened modal at reset',  function() {
+      cy.openAnalysis("doc/analysis-example1.vidjil")
+
+      // Open some modal panels
+      cy.get('#listElem_0 > #clone_infoBox_0 > .icon-info').click()
+      cy.get('.info-container > .closeButton > .icon-cancel')
+        .should('be.visible')
+      cy.get('#tag_icon_0').click()
+      cy.get('.tagSelector > .closeButton > .icon-cancel')
+        .should('be.visible')
+
+      // Reload analysis and control that popup are closed
+      cy.openAnalysis("doc/analysis-example1.vidjil")
+      cy.get('.info-container > .closeButton > .icon-cancel')
+        .should('not.be.visible')
+      cy.get('.tagSelector > .closeButton > .icon-cancel')
+        .should('not.be.visible')
+
+    })
 })

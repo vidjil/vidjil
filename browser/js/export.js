@@ -381,7 +381,7 @@ Report.prototype = {
         var handle = function(){
             self.removeClone($(this).attr("value"));
             $(this).parent().remove()
-            report.initClones() // update
+            report.menu() // update
         }
 
         var count =0;
@@ -607,93 +607,6 @@ Report.prototype = {
         return this;
     },
     
-    reportHTML : function(system_list, sample_list) {
-        sample_list = typeof sample_list !== 'undefined' ? sample_list : this.m.samples.order;
-        system_list = typeof system_list !== 'undefined' ? system_list : this.m.system_selected;
-        
-        this.m.wait("Generating report...")
-        this.switchstate(system_list, sample_list);
-        var self = this
-        this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
-        
-        this.list = this.m.getSelected()
-        if (this.list.length===0) this.list = this.defaultList()
-        
-        var text = ""
-        date_min = this.m.dateMin()
-        date_max = this.m.dateMax()
-        
-        if (typeof this.m.sample_name != 'undefined')
-            text += this.m.sample_name
-        else
-            text += this.m.dataFileName
-        if (date_max != "0" && date_min != "0")
-            text += " – " + date_min + " → " + date_max 
-            
-        this.w.onload = function(){
-            self.w.document.title = text
-            self.w.document.getElementById("header-title").innerHTML = text
-            
-            self.info()
-                //.normalizeInfo()
-                .readsStat3()
-                .addGraph()
-                .cloneList()
-                .sampleLog()
-                .comments({})
-                .restorestate()
-                
-            self.m.resize()
-            self.m.resume()
-        }
-    },
-    
-    reportHTMLdiag : function(system_list, sample_list) {
-        sample_list = typeof sample_list !== 'undefined' ? sample_list : this.m.samples.order;
-        system_list = typeof system_list !== 'undefined' ? system_list : this.m.system_selected;
-        console.log(sample_list);
-        console.log(system_list);
-        this.m.wait("Generating report...")
-        this.switchstate(system_list, sample_list);
-        var current_system = this.m.sp.system;
-        var self = this
-        this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
-        
-        var text = ""
-        if (typeof this.m.sample_name != 'undefined')
-            text += this.m.sample_name
-        else
-            text += this.m.dataFileName
-        text += " – "+ this.m.getStrTime(this.m.t, "name")
-        if (typeof this.m.samples.timestamp != 'undefined') 
-            text += " – "+this.m.samples.timestamp[this.m.t].split(" ")[0]
-        
-        this.list = this.m.getSelected()
-        if (this.list.length===0) this.list = this.defaultList()
-            
-        this.w.onload = function(){
-            self.w.document.title = text
-            self.w.document.getElementById("header-title").innerHTML = text
-            
-            self.info()
-                .sampleInfo({'time':self.m.t})
-                .readsStat(self.m.t)
-            for (var i=0; i<self.m.system_selected.length; i++){
-                var system = self.m.system_selected[i]
-                self.scatterplot({'locus' : system, 'time': self.m.t})
-            }
-
-            self.cloneList(self.m.t)
-                .sampleLog()
-                .softwareInfo(self.m.t)
-                .comments({})
-                .restorestate()
-
-            self.m.changeGermline(current_system)
-            self.m.resize()
-            self.m.resume()
-        }
-    },
     
     defaultList: function() {
         var list = []
@@ -835,6 +748,7 @@ Report.prototype = {
 
         this.removeBlock(block)
         $(container).remove()
+        this.menu();
     },
 
     upContainer: function(container){
@@ -842,6 +756,7 @@ Report.prototype = {
 
         this.upBlock(block)
         $(container).insertBefore($(container).prev());
+        this.menu();
     },
 
     downContainer: function(container){
@@ -849,6 +764,7 @@ Report.prototype = {
 
         this.downBlock(block)
         $(container).insertAfter($(container).next());
+        this.menu();
     },
 
     info : function(block) {
@@ -1077,6 +993,11 @@ Report.prototype = {
             var clone_id  = m.clone(list[i]).id
             if (this.clones.indexOf(clone_id) == -1)
                 this.clones.push(clone_id)
+        }
+        // If menu is already open, update it
+        // Usefull when user already selected clonotype, but don't add them
+        if ($("#report-menu").is(":visible")){
+            this.menu()
         }
     },
 

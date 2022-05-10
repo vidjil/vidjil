@@ -166,10 +166,6 @@
                         <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                         <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
                         <div class="menu_box">
-                            <a class="buttonSelector" id="export_sample_report"
-                                onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
-                            <a class="buttonSelector" id="export_monitor_report"
-                                onclick="javascript:report.reportHTML()">export report (monitor)</a>
                             <a class="buttonSelector" id="export_report_menu"
                                 onclick="javascript:report.menu()">export report</a>
                         </div>
@@ -621,9 +617,17 @@
 
                         <div class="menu-content">
                             <a id="toIMGTseg" title="Request sequences informations to IMGT"
-                                    class="aligner-button" onclick="javascript:segment.retrieveExternalData(['IMGT']);"><i class="icon-arrows-ccw"></i> IMGT/V-QUEST</a>
+                                    class="aligner-button"
+                                    data-target = 'IMGT'
+                                    onclick="javascript:segment.retrieveExternalData(['IMGT']);">
+                                    <i id="icon_external_IMGT" class="icon-arrows-ccw"></i> IMGT/V-QUEST
+                            </a>
                             <a id="toCloneDBseg" title="Request sequences informations to CloneDB"
-                                    class="aligner-button" onclick="javascript:segment.retrieveExternalData(['cloneDB']);"><i class="icon-arrows-ccw"></i> CloneDB</a>
+                                    class="aligner-button"
+                                    data-target = 'cloneDB'
+                                    onclick="javascript:segment.retrieveExternalData(['cloneDB']);">
+                                    <i id="icon_external_cloneDB" class="icon-arrows-ccw"></i> CloneDB
+                            </a>
                         </div>
                     </div>
                     
@@ -745,7 +749,7 @@
 </template>
 
 <template id="report-settings">
-    <div class="">
+    <div id="report-menu" class="">
         <div style="text-align: center;"><b>Export report</b></div>
 
         Preset: <div id="report-settings-save">

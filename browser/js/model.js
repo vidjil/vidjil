@@ -339,6 +339,7 @@ Model.prototype = {
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].reset();
         }
+        this.closeOpenModal()
 
     },
     
@@ -3417,7 +3418,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             cloneIds = this.getSelected()
         }
         if (cloneIds.length == 0){
-            console.error( "Export "+file_format+": please select clones to be exported")
+            console.log({ msg: `Export ${file_format}: please select clones to be exported`, type: "flash", priority: 2 });
             return
         }
 
@@ -3438,5 +3439,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         download_csv(data, filename);
     },
 
+    /**
+     * Close all modal by clicking on close button
+     * Call at analysis loading to close all popup panel already present
+     */
+    closeOpenModal: function(){
+        $(".closeButton").each(function(){
+            if ($( this ).is(":visible")){
+                $( this ).click()
+            }
+        })
+    }
 
 }; //end prototype Model
