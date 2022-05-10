@@ -381,7 +381,7 @@ Report.prototype = {
         var handle = function(){
             self.removeClone($(this).attr("value"));
             $(this).parent().remove()
-            report.initClones() // update
+            report.menu() // update
         }
 
         var count =0;
@@ -748,6 +748,7 @@ Report.prototype = {
 
         this.removeBlock(block)
         $(container).remove()
+        this.menu();
     },
 
     upContainer: function(container){
@@ -755,6 +756,7 @@ Report.prototype = {
 
         this.upBlock(block)
         $(container).insertBefore($(container).prev());
+        this.menu();
     },
 
     downContainer: function(container){
@@ -762,6 +764,7 @@ Report.prototype = {
 
         this.downBlock(block)
         $(container).insertAfter($(container).next());
+        this.menu();
     },
 
     info : function(block) {
@@ -990,6 +993,11 @@ Report.prototype = {
             var clone_id  = m.clone(list[i]).id
             if (this.clones.indexOf(clone_id) == -1)
                 this.clones.push(clone_id)
+        }
+        // If menu is already open, update it
+        // Usefull when user already selected clonotype, but don't add them
+        if ($("#report-menu").is(":visible")){
+            this.menu()
         }
     },
 
