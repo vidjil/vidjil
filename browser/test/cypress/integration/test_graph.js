@@ -161,7 +161,7 @@ describe('Graph', function () {
     //hidden
     // set tag 0 to clone 0
     cy.get('#listElem_0').find('.starBox').click()
-    cy.get('.tagSelector').find('#tagElem_0').click()
+    cy.get('.tagSelector').find('#tagElem_clonotype_1').click()
     // hide tag 0
     cy.get('#color_menu_select').select('Tag')
     cy.get('#info').find('.tagColorBox').first().click()

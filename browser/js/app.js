@@ -27,7 +27,10 @@ require(["jquery",
              require(['js/conf'], function() {
                  loadAfterConf()
              },
-                     function(err) {loadAfterConf()})
+                     function(err) {
+                        // Never call even if conf.js is malformed (syntax error)
+                        loadAfterConf()
+                     })
          });
 
 
@@ -43,7 +46,12 @@ function loadAfterConf() {
         config.use_database = false;
         // External provider to activate by default
         config.IMGT = true
+
+        config.load_error   = true;
+    } else {
+        config.load_error   = false;
     }
+
 
     require(['doctips/tips'],
             function(){},

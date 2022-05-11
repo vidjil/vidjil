@@ -47,7 +47,7 @@ describe('Colors', function () {
 
       //change tag of clone0
       cy.get('#0').find('.starBox').click()
-      cy.get('.tagSelector').find('#tagElem_0').click()
+      cy.get('.tagSelector').find('#tagElem_clonotype_1').click()
 
       //check color of clone_0 has been updated 
       cy.get("#visu2").click()
