@@ -151,51 +151,6 @@ TagManager.prototype = {
             buildTagSelector(k);
         }
         
-        var separator = document.createElement('div');
-        separator.innerHTML = "<hr>"
-
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("normalize to: "))
-
-        
-        this.m.norm_input = document.createElement('input');
-        this.m.norm_input.id = "normalized_size";
-        this.m.norm_input.type = "text";
-        
-        var span2 = document.createElement('span');
-        span2.appendChild(this.m.norm_input)
-        
-        this.m.norm_button = document.createElement('button');
-        this.m.norm_input.id = "norm_button";
-        this.m.norm_button.appendChild(document.createTextNode("ok"))
-        
-        this.m.norm_button.onclick = function () {
-            var cloneID = self.clonesIDs[0];
-            var size = parseFloat(self.m.norm_input.value);
-            
-            if (size>0 && size<1){
-                self.m.set_normalization( self.m.NORM_EXPECTED )
-                $("#expected_normalization").show();
-                self.m.norm_input.value = ""
-                self.m.clone(cloneID).expected=size;
-                self.m.compute_normalization(cloneID, size)
-                self.m.update()
-                $(self.tagSelector).hide('fast')
-                $("expected_normalization_input").prop("checked", true)
-            }else{
-                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
-            }
-        }
-        this.m.norm_input.onkeydown = function (event) {
-            if (event.keyCode == 13) self.m.norm_button.click();
-        }
-        
-        var div = document.createElement('div');
-        div.id  = "normalization_expected_input_div"
-        div.appendChild(separator)
-        div.appendChild(span1)
-        div.appendChild(span2)
-        div.appendChild(this.m.norm_button)
 
         // add to report button
         var div2 = $('<div/>', {}).html("<hr>").appendTo($(this.tagSelectorList))
@@ -207,11 +162,62 @@ TagManager.prototype = {
                                         });
         $('<button/>', { class: "icon-newspaper"}).appendTo(report_button)
 
-        var li = document.createElement('li');
-        li.appendChild(div)
 
-        this.tagSelectorList.appendChild(li);
-        
+        // Add normalization field only if one clone is selected
+        if (clonesIDs.length ==1){
+            var separator = document.createElement('div');
+            separator.innerHTML = "<hr>"
+
+            var span1 = document.createElement('span');
+            span1.appendChild(document.createTextNode("normalize to: "))
+
+            var div = document.createElement('div');
+            div.id  = "normalization_expected_input_div"
+            div.appendChild(separator)
+            div.appendChild(span1)
+
+            this.m.norm_input = document.createElement('input');
+            this.m.norm_input.id = "normalized_size";
+            this.m.norm_input.type = "text";
+            this.m.norm_input.placeholder = (this.m.clone(clonesIDs[0]).getSize()*100).toFixed(2)
+
+            var span2 = document.createElement('span');
+            span2.appendChild(this.m.norm_input)
+            span2.appendChild(document.createTextNode(" % "))
+            
+            this.m.norm_button = document.createElement('button');
+            this.m.norm_input.id = "norm_button";
+            this.m.norm_button.appendChild(document.createTextNode("ok"))
+
+            this.m.norm_button.onclick = function () {
+                var cloneID = self.clonesIDs[0];
+                var size = parseFloat(self.m.norm_input.value)/100;
+
+                if (size>0 && size<1){
+                    self.m.set_normalization( self.m.NORM_EXPECTED )
+                    $("#expected_normalization").show();
+                    self.m.norm_input.value = ""
+                    self.m.clone(cloneID).expected=size;
+                    self.m.compute_normalization(cloneID, size)
+                    self.m.update()
+                    $(self.tagSelector).hide('fast')
+                    $("expected_normalization_input").prop("checked", true)
+                }else{
+                    console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
+                }
+            }
+            this.m.norm_input.onkeydown = function (event) {
+                if (event.keyCode == 13) self.m.norm_button.click();
+            }
+
+            div.appendChild(span2)
+            div.appendChild(this.m.norm_button)
+
+            var li = document.createElement('li');
+            li.appendChild(div)
+            this.tagSelectorList.appendChild(li);
+        }
+
         var string;
         if (clonesIDs.length > 1){
             string = "Tag for " + clonesIDs.length +  " clonotypes"
@@ -247,10 +253,5 @@ TagManager.prototype = {
 
         this.tagSelector.style.top=top+"px";
         this.tagSelector.style.left=left+"px";
-
-        // If multiple clones Ids; disabled normalization div
-        if (clonesIDs.length > 1) {
-            $("#"+div.id).addClass("disabledbutton");
-        }
     },
 }
