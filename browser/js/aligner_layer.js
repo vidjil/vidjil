@@ -156,6 +156,7 @@ LAYERS = {
         'className': "seq_layer_underline",
         'style': { 'background': "#484" },
         'refresh': function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"},
+        'reset':   function(c){ delete c.seg.imgt },
         'enabled': true,
         
     },

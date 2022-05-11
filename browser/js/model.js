@@ -151,6 +151,17 @@ Model.prototype = {
                 check.checked = self.trimming_before_external
                 console.default.log( self.trimming_before_external )
             }
+
+            // get list of layers to reset
+            for (var l in LAYERS){
+                if (LAYERS[l].reset != undefined){
+                    for (var c_id in self.clones){
+                        LAYERS[l].reset(self.clones[c_id])
+                    }
+                }
+            }
+
+            self.update()
         })
 
         
