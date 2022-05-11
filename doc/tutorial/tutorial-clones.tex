@@ -648,6 +648,37 @@ Open the \com{cluster} menu at the top of the page, and choose \com{cluster by V
   end
 \end{verbatim}
 
+\subsection{Show and use primers informations}
+
+From the vidjil client, we have the possibility to compute primers positions on the sequence and to switch between multiple predefined primerset (biomed2 and euroclonality-NGS at the moment).
+If primer positon is not supported on the sequence, we will extrapolated from the germline sequence 
+With this information, we are able to compute distance between primer in 5' and in 3' position
+and make a genescan like plot.
+
+\question{Select the preset \textit{Primers gap} and observe the starting position of each clonotype.}
+\question{Open the settings menu and select the primer set \textit{Biomed2}.}
+
+
+\begin{verbatim}
+\end{verbatim}
+
+This step is computationally intensive and apply on each clonotype of the analysis.
+More samples you have, more time it will take to finish.
+
+\question{You should now see a refresh of the graphic and see a genescan like plot.}
+
+This plot show only present clontype, limited to the top 100 by default.
+
+\question{Change the color by value with \textit{Locus} entrie. What do you see ? }
+
+\question{Change the primer set to \textit{Euroclonality-NGS}. What happen ? }
+
+\begin{verbatim}
+\end{verbatim}
+
+\reponse{Remarque that some clonotypes become \textit{undefined}. This happen for some particular segment, as \textit{IGH J6} .}
+
+
 \subsection{Other metrics and analysis on the clones}
 
 As a proxy to sequence similarity we used the V and J genes, however there are
