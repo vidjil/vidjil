@@ -220,7 +220,7 @@ Report.prototype = {
         var select = $('<select/>', { name: 'rs-save-select',
                                       id:   'rs-save-select' }).appendTo(div).change(handle);
 
-        var optgrp_default = $('<optgroup/>',  { label: "Default Report", title: "Default reports; can be use as template"})
+        var optgrp_default = $('<optgroup/>',  { label: "Report templates", title: "Default reports; can be use as template"})
 
         var keys = Object.keys(this.default_settings);
         for (var i = 0; i < keys.length; i++){
@@ -231,7 +231,7 @@ Report.prototype = {
         }
         optgrp_default.appendTo(select);
 
-        var optgrp_users = $('<optgroup/>',  { label: "User Report", title: "User report; stored locally"})
+        var optgrp_users = $('<optgroup/>',  { label: "Saved reports", title: "User report; stored locally"})
 
         keys = Object.keys(this.m.report_save);
         for (var j = 0; j < keys.length; j++){
