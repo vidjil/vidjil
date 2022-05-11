@@ -1005,6 +1005,39 @@ right side, in the list of clones.
 
 You can also find a detailled list of existing warning at page [https://www.vidjil.org/doc/warnings/](https://www.vidjil.org/doc/warnings/)
 
+\subsection{Show more information of the sequence}
+
+When you select a clonotype, you can see the sequence and VDJ position in the aligner by default.
+Now, you can also put more information on the clonotype by adding feature columns and overlays on sequence.
+
+Hover menus in the aligner header, next to the Align button. 
+You can see that each menus allow to set axis and values to show on each clonotype lines of the aligner.
+
+\question{Select both first clonotype in IGH and TRG. In the menu named \textit{Data columns}, check the \textit{productivity} entrie.}
+
+\question{Now, click on the spin icon.}
+
+Each active provider will be interogate with the sequence and data will be incorporated inside the clonotype values. 
+Some values getted this way is showable, as for IMGt productivity that is show by default.
+
+Providers list depends of the server setup. 
+
+You could also see a lot of sequence feature available.
+
+\question{Open the \textit{sequence feature} menu. Click on CDR3 and quality entries.}
+
+If you observe the clonotype sequencein the aligner, you should see 2 new overlays on sequences. First is the upside overlay to show the CDR3.
+The second is under the sequence and show a color for each base with a color indexed on the mean of reads quality at this position, with a gradient color from green for a correct quality to red for an insuficent one. 
+Usually, you can use this to align sequences and see if a mutation is provoqued by a sequencing artifact (bad quality value in red) or not.
+This feature is limited to window of the sequence.
+
+Note that some feature is not showable until you produce it as for \textit{primers} or \textit{IMGT productivity}.
+
+
+
+\begin{verbatim}
+\end{verbatim}
+
 \subsection{Analysing recombinations from several loci}
 
 First make sure to come back to the preset \com{V/J (genes)} in the \com{plot} menu.
