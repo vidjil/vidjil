@@ -193,4 +193,38 @@ describe('External Aligner', function () {
 
     return
   })
+
+  it('Aligner external provider - Get Correct Videntity',  function() {
+    // Use ins/del event if available
+    cy.openAnalysis("data/demo_lil_l3_tutorial.vidjil")
+
+    cy.selectClone(4)
+
+    cy.get('#align-refresh-button')
+      .should("be.visible")
+
+    // before calling provider
+    cy.get('#align-refresh-button > span > .icon-arrows-ccw')
+      .should("exist")
+    cy.get("#icon_external_IMGT")
+      .should("have.class", "icon-arrows-ccw")
+
+
+    cy.get('#align-refresh-button > span > .icon-arrows-ccw')
+      .click({force:true})
+
+    // Make test on aligner before to be sure that data have been received
+    cy.get('#seq4 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad')
+      .should("be.visible") // TRG locus
+      .should("not.have.text", "100%") // If use ins/del, value is not 100%
+
+    // Now panel will include imgt information
+    cy.get('#listElem_4 > #clone_infoBox_4 > .icon-info')
+      .click()
+    cy.get('#modal_line_value_V-REGION_identity__with_ins_del_events_')
+      .should("have.text", "99.10")
+
+    return
+  })
+
 })
