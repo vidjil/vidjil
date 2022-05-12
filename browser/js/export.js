@@ -177,6 +177,10 @@ Report.prototype = {
         // exist in model 
         if (typeof this.m.report_save[name] != "undefined"){
             this.settings = (JSON.parse(JSON.stringify(this.m.report_save[name]))); 
+
+            if (typeof this.settings.clones != 'undefined' && this.settings.clones.length != 0)
+            this.clones =  (JSON.parse(JSON.stringify(this.settings.clones)));
+
             this.menu();
             return
         }
