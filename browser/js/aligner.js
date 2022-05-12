@@ -768,6 +768,28 @@ Aligner.prototype = {
             typeof this.m.db_key.sample_set_id != "undefined")
             sample_set_id ="("+this.m.db_key.sample_set_id+")"
             
+        // Split list of clonotype by system
+        var systems = {}
+        for (var i = 0; i < list.length; i++) {
+            if (this.isClone(list[i])) {
+                var c = this.m.clone(list[i]);
+                if (c.getSize()>max){
+                    system = c.getLocus();
+                    if (systems[system] == undefined){
+                        systems[system] = [list[i]]
+                    } else { systems[system].push(list[i]) }
+                }
+            }
+        }
+        // Make recursive call if needed on each system
+        var systems_keys = Object.keys(systems)
+        if (systems_keys.length > 1) {
+            for (var i = 0; i < systems_keys.length; i++) {
+                var locus = systems_keys[i]
+                this.sendTo(address, systems[locus], callback)
+            }
+            return // bypass after recursive calls
+        }
 
         for (var i = 0; i < list.length; i++) {
             if (this.isClone(list[i])) {
