@@ -1301,12 +1301,14 @@ int main (int argc, char **argv)
 
     //$$ compute, display and store diversity measures
     json reads_germline;
+    json clones_germline;
     map <string, size_t> nb_segmented_by_germline;
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
         Germline *germline = *it ;
         size_t nb = we.getNbReadsGermline(germline->code);
         nb_segmented_by_germline[germline->code] = nb;
         reads_germline[germline->code] = {nb};
+        clones_germline[germline->code] = {we.getNbClonesGermline(germline->code)};
     }
 
     nb_segmented_by_germline[ALL_LOCI] = nb_segmented;
@@ -1784,7 +1786,8 @@ int main (int argc, char **argv)
     output.set("reads", {
             {"total", {nb_total_reads}},
             {"segmented", {nb_segmented}},
-            {"germline", reads_germline}
+            {"germline", reads_germline},
+            {"clones", clones_germline}
     });
     output.set("germlines", json_germlines["systems"]["recombinations"]);
     output.set("germlines", "ref", multigermline->ref);

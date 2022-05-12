@@ -8,43 +8,61 @@ function Report(model, settings) {
     this.m.report_save = {}; 
 
     this.colorMode = "colorBy";     // "colorBy" / "tag" / TODO...
+    this.clones    = []
 
     // name of setting sheet to use as default
-    this.default_setting = "New Report";
+    this.default_setting = "Full report";
 
     // hard coded default settings for report
     this.default_settings = {
-        "New Report" : {
-            name : "New Report",
+        "Full report" : {
+            name : "Full report",
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
-            clones : [],
             blocks: [
                     {blockType: "file_info"},
+                    {blockType: "sample_info", time: this.m.t},
                     {blockType: "reads_stats"},
                     {blockType: "monitor"},
-                    {blockType: "clones"}
+                    {blockType: "scatterplot"},
+                    {blockType: "clones"},
+                    {blockType: "log_db"},
+                    {blockType: "comments"},
                     ],
             clones_fields: ["productivity", "hypermutation", "5length"]
 
         },
-        "New Monitor Report" : {
-            name : "New Monitor Report",
+        "ALL -- Diagnosis" : {
+            name : "ALL -- Diagnosis",
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
-            clones : [],
-            blocks: [],
-            clones_fields: ["productivity", "hypermutation", "5length"]
+            blocks: [
+                {blockType: "file_info"},
+                {blockType: "sample_info", time: this.m.t},
+                {blockType: "reads_stats"},
+                {blockType: "scatterplot"},
+                {blockType: "clones"},
+                {blockType: "log_db"},
+                {blockType: "comments"},
+                ],
+            clones_fields: []
         },
-        "New Sample Report" : {
-            name : "New Sample Report",
+        "CLL -- Diagnosis" : {
+            name : "CLL -- Diagnosis",
             samples : undefined,
             locus : undefined,
             selected_color: "unique",
-            clones : [],
-            blocks: [],
+            blocks: [
+                {blockType: "file_info"},
+                {blockType: "sample_info", time: this.m.t},
+                {blockType: "reads_stats"},
+                {blockType: "scatterplot"},
+                {blockType: "clones"},
+                {blockType: "log_db"},
+                {blockType: "comments"},
+            ],
             clones_fields: ["productivity", "hypermutation", "5length"]
         }
     }
@@ -63,6 +81,17 @@ function Report(model, settings) {
                             'hypermutation': function(c){ return c.getVIdentityIMGT(t) == "unknown" ? undefined : {'text': "V-REGION Identity: "+ c.getVIdentityIMGT(t)+'%\u00a0', 'class': 'clone_value'} },
                             '5length':       function(c){ return {'text': "V length: "     + c.getSegLength("5", (c.germline.includes("+") ? false : true))+'\u00a0', 'class': 'clone_value'}}
                           },
+                          'options': {
+                            'reads' : {
+                                'short': function(c){
+                                    var sizes    = c.getStrAllSystemSize(t, true)
+                                    return sizes.global == "−" ? ("−") : (`${sizes.global} (${sizes.system}; ${sizes.systemGroup})`)
+                                },
+                                'long': function(c){ return c.getPrintableSize() },
+                                'default': "long",
+                                'selected': "long"
+                            }
+                          }
                         },
         "comments":     {'name': "Comments",            'unique': false,    'inMenu': false },
         "scatterplot":  {'name': function (c){ return "Plot: ["+ c.axisX +" | "+ c.axisY +"] ["+ c.locus +"]"},
@@ -345,17 +374,19 @@ Report.prototype = {
     initClones: function(){
         var self = this;
         var main = $("#report-settings-clones")
-        var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(main);
+        var parent = $("#report-clones-list");
+        parent.empty() // Erase previous content
 
         // add/remove sample to list on click
         var handle = function(){
             self.removeClone($(this).attr("value"));
             $(this).parent().remove()
+            report.menu() // update
         }
 
         var count =0;
-        for (var i=0; i<this.settings.clones.length; i++){
-            var cloneID = this.settings.clones[i]
+        for (var i=0; i<this.clones.length; i++){
+            var cloneID = this.clones[i]
             
             var text;
             for (var j=0; j<this.m.clones.length; j++){
@@ -376,6 +407,14 @@ Report.prototype = {
             }
         }
         $("#rs-selected-clones-count").html("["+count+" selected]")
+
+        if (count == 0){
+            var info = $('<div/>', {text: "Add clonotypes to the report with"})
+            $('<i/>', {class: "icon-star-2", style:"pointer-events:none;"}).appendTo(info)
+            info.appendTo(parent)
+        }
+
+
     },
 
     initBlocks: function(){
@@ -507,8 +546,8 @@ Report.prototype = {
         
         //convert cloneID into clone index
         this.list = []
-        for (var j=0; j<this.settings.clones.length; j++){
-            cloneID = this.settings.clones[j];
+        for (var j=0; j<this.clones.length; j++){
+            cloneID = this.clones[j];
             for (var k=0; k<this.m.clones.length; k++)
                 if (cloneID == this.m.clones[k].id) 
                     this.list.push(k)   
@@ -568,93 +607,6 @@ Report.prototype = {
         return this;
     },
     
-    reportHTML : function(system_list, sample_list) {
-        sample_list = typeof sample_list !== 'undefined' ? sample_list : this.m.samples.order;
-        system_list = typeof system_list !== 'undefined' ? system_list : this.m.system_selected;
-        
-        this.m.wait("Generating report...")
-        this.switchstate(system_list, sample_list);
-        var self = this
-        this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
-        
-        this.list = this.m.getSelected()
-        if (this.list.length===0) this.list = this.defaultList()
-        
-        var text = ""
-        date_min = this.m.dateMin()
-        date_max = this.m.dateMax()
-        
-        if (typeof this.m.sample_name != 'undefined')
-            text += this.m.sample_name
-        else
-            text += this.m.dataFileName
-        if (date_max != "0" && date_min != "0")
-            text += " – " + date_min + " → " + date_max 
-            
-        this.w.onload = function(){
-            self.w.document.title = text
-            self.w.document.getElementById("header-title").innerHTML = text
-            
-            self.info()
-                //.normalizeInfo()
-                .readsStat3()
-                .addGraph()
-                .cloneList()
-                .sampleLog()
-                .comments({})
-                .restorestate()
-                
-            self.m.resize()
-            self.m.resume()
-        }
-    },
-    
-    reportHTMLdiag : function(system_list, sample_list) {
-        sample_list = typeof sample_list !== 'undefined' ? sample_list : this.m.samples.order;
-        system_list = typeof system_list !== 'undefined' ? system_list : this.m.system_selected;
-        console.log(sample_list);
-        console.log(system_list);
-        this.m.wait("Generating report...")
-        this.switchstate(system_list, sample_list);
-        var current_system = this.m.sp.system;
-        var self = this
-        this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
-        
-        var text = ""
-        if (typeof this.m.sample_name != 'undefined')
-            text += this.m.sample_name
-        else
-            text += this.m.dataFileName
-        text += " – "+ this.m.getStrTime(this.m.t, "name")
-        if (typeof this.m.samples.timestamp != 'undefined') 
-            text += " – "+this.m.samples.timestamp[this.m.t].split(" ")[0]
-        
-        this.list = this.m.getSelected()
-        if (this.list.length===0) this.list = this.defaultList()
-            
-        this.w.onload = function(){
-            self.w.document.title = text
-            self.w.document.getElementById("header-title").innerHTML = text
-            
-            self.info()
-                .sampleInfo({'time':self.m.t})
-                .readsStat(self.m.t)
-            for (var i=0; i<self.m.system_selected.length; i++){
-                var system = self.m.system_selected[i]
-                self.scatterplot({'locus' : system, 'time': self.m.t})
-            }
-
-            self.cloneList()
-                .sampleLog()
-                .softwareInfo(self.m.t)
-                .comments({})
-                .restorestate()
-
-            self.m.changeGermline(current_system)
-            self.m.resize()
-            self.m.resume()
-        }
-    },
     
     defaultList: function() {
         var list = []
@@ -796,6 +748,7 @@ Report.prototype = {
 
         this.removeBlock(block)
         $(container).remove()
+        this.menu();
     },
 
     upContainer: function(container){
@@ -803,6 +756,7 @@ Report.prototype = {
 
         this.upBlock(block)
         $(container).insertBefore($(container).prev());
+        this.menu();
     },
 
     downContainer: function(container){
@@ -810,6 +764,7 @@ Report.prototype = {
 
         this.downBlock(block)
         $(container).insertAfter($(container).next());
+        this.menu();
     },
 
     info : function(block) {
@@ -1036,15 +991,20 @@ Report.prototype = {
     addClones : function(list) {
         for (var i=0; i<list.length; i++){
             var clone_id  = m.clone(list[i]).id
-            if (this.settings.clones.indexOf(clone_id) == -1)
-                this.settings.clones.push(clone_id)
+            if (this.clones.indexOf(clone_id) == -1)
+                this.clones.push(clone_id)
+        }
+        // If menu is already open, update it
+        // Usefull when user already selected clonotype, but don't add them
+        if ($("#report-menu").is(":visible")){
+            this.menu()
         }
     },
 
     // remove a clone from settings by clone id 
     removeClone : function(id) {
-        var index = this.settings.clones.indexOf(id)
-        if ( index != -1) this.settings.clones.splice(index, 1)
+        var index = this.clones.indexOf(id)
+        if ( index != -1) this.clones.splice(index, 1)
     },
 
     // print a block in the report using given conf
@@ -1147,7 +1107,7 @@ Report.prototype = {
         this.m.sp.fastForward()
         
         var container_name  =   this.m.sp.toString() +"  ["+ 
-                                this.m.getStrTime(block.time, "order")+"]."+
+                                (this.m.getStrTime(block.time, "order")+1)+"]."+
                                 this.m.getStrTime(block.time, "short_name");
         var w_sp = this.container(container_name, block)
         w_sp.addClass("scatterplot");
@@ -1187,7 +1147,7 @@ Report.prototype = {
     readsStat3: function(block, time_list, locus_list) {
         if (typeof time_list == "undefined")  time_list  = this.m.samples.order;
         if (typeof locus_list == "undefined") locus_list = this.m.system_selected;
-        var container = this.container('Reads distribution', block)
+        var container = this.container('Samples, loci, reads', block)
                 
         var reads_stats = $('<table/>', {'class': "report_table"}).appendTo(container);
 
@@ -1203,8 +1163,8 @@ Report.prototype = {
 
         $('<th/>',     {'text': '#'}).appendTo(header);
         $('<th/>',     {'text': 'Sample'}).appendTo(header);
-        $('<th/>',     {'text': 'Sampling'}).appendTo(header);
-        $('<th/>',     {'text': 'Delta'}).appendTo(header);
+        $('<th/>',     {'text': 'Sampling date'}).appendTo(header);
+        $('<th/>',     {'text': '+'}).appendTo(header);
         for (var i = 0; i < locus_list.length; i++)
             $('<th/>', {'text': locus_list[i]}).appendTo(header);
 
@@ -1214,7 +1174,7 @@ Report.prototype = {
     readsStat_line: function(time, locus_list){
         var line = $('<tr/>', {});
 
-        $('<td/>',     {'text': this.m.getStrTime(time, "order")+1}).appendTo(line);
+        $('<td/>',     {'text': '#' + (this.m.getStrTime(time, "order")+1)}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "name")}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "sampling_date")}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "delta_date")}).appendTo(line);
@@ -1229,7 +1189,7 @@ Report.prototype = {
             else
                 percent = " ("+percent.toFixed(1)+"%)";
 
-            $('<td/>', {'text': locus_reads + percent}).appendTo(line);
+            $('<td/>', {'text': this.m.toStringThousands(locus_reads) + percent}).appendTo(line);
         }
 
         return line;
@@ -1237,7 +1197,7 @@ Report.prototype = {
 
     readsStat: function(time) {
         if (typeof time == "undefined") time = -1
-        var container = this.container('Reads distribution')
+        var container = this.container('Reads')
                 
         var reads_stats = $('<div/>', {'class': 'flex'}).appendTo(container);
         
@@ -1361,13 +1321,19 @@ Report.prototype = {
     
     cloneList : function(time) {
         if (typeof time == "undefined") time = -1
+
+        if (this.list.length == 0) return this
+
         var container = this.container('Clonotypes')
+        graph.resize(791,300)
+        graph.draw(0)
         
         for (var i=0; i<this.list.length; i++){
             var cloneID = this.list[i]
             if (this.m.clone(cloneID).hasSizeConstant())
                 this.clone(cloneID, time).appendTo(this.w.document.body);
         }
+        graph.resize()
         
         return this
     },
@@ -1404,7 +1370,8 @@ Report.prototype = {
             var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
             for (var i=0; i<this.m.samples.order.length; i++){
                 var t = this.m.samples.order[i]
-                $('<span/>', {'text': "#"+ (this.m.getStrTime(t, "order")+1) + "; " + this.m.clone(cloneID).getStrSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
+                var size_str = this.available_blocks.clones.options.reads[this.available_blocks.clones.options.reads.selected](this.m.clone(cloneID))
+                $('<span/>', {'text': "#"+ (this.m.getStrTime(t, "order")+1) + ": " + size_str +'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
         }else{
             $('<span/>', {'text': this.m.clone(cloneID).getPrintableSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
@@ -1412,8 +1379,9 @@ Report.prototype = {
 
         // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
         var more_info = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
-        for (var field_pos = 0; field_pos < this.settings.clones_fields.length; field_pos++) {
-            var field   = this.settings.clones_fields[field_pos]
+        this.clones_fields = Object.keys(this.available_blocks.clones.fields)
+        for (var field_pos = 0; field_pos < this.clones_fields.length; field_pos++) {
+            var field   = this.clones_fields[field_pos]
             var content = this.available_blocks.clones.fields[field](this.m.clone(cloneID))
             if (content){
                 $('<span/>', content ).appendTo(more_info);
@@ -1475,11 +1443,31 @@ Report.prototype = {
         if (typeof this.m.logs == 'undefined')
             return this
 
-        var log = this.container("Log", block)
+        // remove logs with specific text
+        var filters = ["load sample", "load analysis"]
 
-        var table = $('<table/>', {'class': 'log-table flex'}).appendTo(log);
-        for (var i=0; i < this.m.logs.length; i++ ){
-            line = this.logLine(m.logs[i]);
+        var filtered_logs = []
+        var isFiltered;
+        for (var i=0; i<this.m.logs.length; i++){
+
+            isFiltered = false
+            for (var j=0; j<filters.length; j++)
+                if (this.m.logs[i].message.indexOf(filters[j]) != -1)
+                    isFiltered = true
+
+            if (!isFiltered)
+                filtered_logs.push(this.m.logs[i])
+        }
+
+        // all logs have been filtered out
+        if (filtered_logs.length == 0)
+            return this
+
+        var div_log = this.container("Log", block)
+        var table = $('<table/>', {'class': 'log-table flex'}).appendTo(div_log);
+
+        for (var l=0; l < filtered_logs.length; l++ ){
+            line = this.logLine(filtered_logs[l]);
             if(i % 2 === 0)
                 line.addClass('even');
             else
@@ -1522,8 +1510,8 @@ Report.prototype = {
         var color = this.m.clone(cloneID).getColor();
         switch (this.settings.selected_color) {
             case "unique":
-                var index = this.settings.clones.indexOf(this.m.clone(cloneID).id)
-                if (index != -1 && index <8) color = m.tag[index].color 
+                var index = this.clones.indexOf(this.m.clone(cloneID).id)
+                color = colorGeneratorIndex(index)
                 break;
             default:
                 color = this.m.clone(cloneID).getColor();

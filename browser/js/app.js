@@ -41,6 +41,8 @@ function loadAfterConf() {
         config.db_address   = DEFAULT_DB_ADDRESS+"vidjil/";
         config.cgi_address  = DEFAULT_DB_ADDRESS+"cgi/";
         config.use_database = false;
+        // External provider to activate by default
+        config.IMGT = true
     }
 
     require(['doctips/tips'],
@@ -90,6 +92,7 @@ function loadAfterConf() {
                                          "js/url",
                                          "js/autocomplete",
                                          "js/tips",
+                                         "js/tag",
                                          "js/tokeniser",
                                          "js/indexedDom",
                                          // Speed test

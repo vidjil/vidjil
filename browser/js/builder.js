@@ -66,8 +66,7 @@ Builder.prototype = {
                 });
 
             this.build_top_container()
-            this.build_clusterSelector()
-            this.initTag();
+            this.m.tags.update()
 
             if (this.m.samples.stock_order.length == 1)
                 // One sample, two scatterplots
@@ -88,7 +87,7 @@ Builder.prototype = {
     update: function () {
         try {
             this.build_top_container()
-            this.updateTagBox();
+            this.m.tags.update()
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -270,77 +269,6 @@ Builder.prototype = {
     normalizeCheckbox.disabled = false;
 	normalizeCheckbox.checked = true;
     },
-    
-    /* 
-     * */
-    editTagName: function (tagID, elem) {
-        var self = this;
-        var divParent = elem.parentNode;
-        divParent.removeAllChildren();
-
-        var input = this.setupInput("new_tag_name", "", "text", this.m.tag[tagID].name);
-        input.style.width = "100px";
-        input.style.border = "0px";
-        input.style.margin = "0px";
-        input.onkeydown = function (e) {
-            e = e || window.event;
-            var key = e.keyCode;
-            if (key === 0) key = e.which ;
-            if (key === 13) document.getElementById('btnSaveTag')
-                .click();
-        };
-        divParent.appendChild(input);
-        divParent.onclick = "";
-
-        var a = document.createElement('a');
-        a.className = "button";
-        a.appendChild(document.createTextNode("save"));
-        a.id = "btnSaveTag";
-        a.onclick = function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            var newTagName = document.getElementById("new_tag_name")
-                .value;
-            self.m.tag[tagID].name = newTagName;
-            self.m.analysisHasChanged = true;
-        };
-        divParent.appendChild(a);
-        $('#new_tag_name')
-            .select();
-    },
-
-    buildListTab: function(i) {
-        var span3 = document.createElement('span');
-        span3.onclick = function (tag) {
-            self.editTagName(i, this);
-        }
-        span3.className = "edit_button"
-        span3.appendChild(document.createTextNode("..."))
-
-        var span1 = document.createElement('span');
-        span1.className = "tagColorBox tagColor" + i
-
-        var span2 = document.createElement('span');
-        span2.className = "tagName" + i + " tn"
-
-        var div = document.createElement('div');
-        div.className = "tagElem"
-        div.id = "tagDisplay" + i
-        div.onclick = function () {
-            self.nextDisplayTag(this)
-        }
-        div.appendChild(span1)
-        div.appendChild(span2)
-        div.appendChild(span3)
-
-        var li = document.createElement('li');
-        li.appendChild(div)
-
-        var listTag = document.getElementById("tagList")
-        if (listTag != null){
-            listTag.appendChild(li);
-        }
-    },
 
     buildSystemSelector: function (system){
         var self = this
@@ -361,86 +289,6 @@ Builder.prototype = {
         li = document.createElement('li');
         li.appendChild(div)
         // listGermline.appendChild(li);
-    },
-
-    /**
-     * complete displaySelector menu with correct info about current tagname / top
-     **/
-    build_displaySelector: function () {
-        var self = this;
-
-        var displaySelector = document.getElementById("displaySelector")
-        var listTag = document.getElementById("tagList")
-        // var listGermline = document.getElementById("germline_list")
-        
-        //reset
-        if (listTag != null){
-            listTag.removeAllChildren();
-        }
-        // listGermline.removeAllChildren();
-
-        //init tag list
-        for (var i = 0; i < this.m.tag.length; i++) {
-            this.buildListTab(i);
-        }
-
-        //init notation
-        if (this.m.notation_type == "scientific") {
-            document.getElementById("notation").checked = true
-        }
-        
-        //init system
-        if (this.m.system == "multi") {
-            $("#system_menu").css("display", "")
-            $("#color_system_button").css("display", "")
-            
-            for (var key in this.m.system_available) {
-                var system = this.m.system_available[key];
-                this.buildSystemSelector(system);
-            }
-             
-        }else{
-            $("#system_menu").css("display", "none")
-            $("#color_system_button").css("display", "none")
-        }
-
-        this.initTag();
-    },
-    
-    //TODO need to build complete Selector 
-    build_clusterSelector: function () {
-        var self = this;
-    /*
-        var clusterSelector = document.getElementById("cluster_menu")
-        clusterSelector.removeAllChildren();
-        
-        if (self.m.clones[0]._target){
-        
-            var target = document.createElement('a');
-                target.className = "buttonSelector"
-                target.onclick = function () { m.clusterBy(function(id){return m.clone(id)['_target']});}
-                target.appendChild(document.createTextNode("target"));
-            clusterSelector.appendChild(target)
-            
-            var targetV = document.createElement('a');
-                targetV.className = "buttonSelector"
-                targetV.onclick = function () { m.clusterBy(function(id){return m.clone(id)['_target.V-GENE']});}
-                targetV.appendChild(document.createTextNode("target V"));
-            clusterSelector.appendChild(targetV)
-            
-            var targetJ = document.createElement('a');
-                targetJ.className = "buttonSelector"
-                targetJ.onclick = function () { m.clusterBy(function(id){return m.clone(id)['_target.J-GENE']});} 
-                targetJ.appendChild(document.createTextNode("target J"));
-            clusterSelector.appendChild(targetJ)
-            
-            var clonotype = document.createElement('a');
-                clonotype.className = "buttonSelector"
-                clonotype.onclick = function () { m.clusterBy(function(id){return m.clone(id)['_clonotype']});} 
-                clonotype.appendChild(document.createTextNode("clonotype"));
-            clusterSelector.appendChild(clonotype)
-        }
-    */
     },
 
     toggle_container: function(container_id) {
@@ -512,32 +360,6 @@ Builder.prototype = {
         }
 
         document.title = this.m.getPrintableAnalysisName()
-    },
-
-    initTag: function (){
-        for (var i =0; i<this.m.tag.length; i++){
-            $(".tagColor"+i).prop("title", this.m.tag[i].name);
-            $(".tagName"+i).html(this.m.tag[i].name);
-        }
-        this.updateTagBox();
-    },
-    
-  
-    updateTagBox: function(){
-        for (var i =0; i<this.m.tag.length; i++){
-            if (this.m.tag[i].display){
-                $(".tagColor"+i).removeClass("inactiveTag")
-            }else{
-                $(".tagColor"+i).addClass("inactiveTag")
-            }
-        }
-    },
-    
-    nextDisplayTag: function(elem){
-        var id_tag = elem.id.charAt( elem.id.length-1 ) 
-        var s = this.m.tag[id_tag].display;
-        this.m.tag[id_tag].display = !s;
-        this.m.update();
     },
 
     // Build an html input tag

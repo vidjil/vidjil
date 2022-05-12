@@ -166,10 +166,6 @@
                         <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                         <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
                         <div class="menu_box">
-                            <a class="buttonSelector" id="export_sample_report"
-                                onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
-                            <a class="buttonSelector" id="export_monitor_report"
-                                onclick="javascript:report.reportHTML()">export report (monitor)</a>
                             <a class="buttonSelector" id="export_report_menu"
                                 onclick="javascript:report.menu()">export report</a>
                         </div>
@@ -221,7 +217,7 @@
                     </select></div>
             </div>
 
-            <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();"> filter
+            <div class="menu" id="filter_menu"> filter
                 <div class="selector">
                     <div>
                         <div class="menu_box">
@@ -596,10 +592,6 @@
                                                     title="Send sequences to ARResT/CompileJunctions and see the results in a new tab"
                                                     class="aligner-button"
                                                     onclick="javascript:segment.sendTo('arrest');"><i class="icon-forward-1"></i> ARResT/CJ</a></span>
-                                    <span class="devel-mode"><a id="toCloneDB"
-                                                    title="Send sequences to EC-NGS/CloneDB in the background"
-                                                    class="aligner-button"
-                                                    onclick="javascript:db.callCloneDB(m.getSelected());"><i class="icon-forward-1"></i> CloneDB</a></span>
                                     <a id="toBlast" title="Send sequences to Ensembl Blast and see the results in a new tab"
                                             class="aligner-button" onclick="javascript:segment.sendTo('blast');"><i class="icon-forward-1"></i> Blast</a>
                                     <a id="toAssignSubsets"
@@ -619,12 +611,24 @@
                             </div>
                     </div>
 
-                    <div id="align-imgt" class="aligner-menu"
-                    title="Sequence features from IMGT [click to reload]" onclick="javascript:segment.sendTo('IMGTSeg');"> <i class="icon-menu"></i> IMGT
-                       <span title="reload IMGT info" ></span><i class="demo-icon icon-arrows-ccw"></i></span>
-                       <div id="align-imgt_select" class="menu-content">
+                    <div id="align-refresh-button" class="aligner-menu"
+                        title="Some data are missing has they are based on external analysis (IMGT / CloneDB / IGBLast/ ...) &#10; Click to perform those analysis">
+                         <span onclick="javascript:segment.retrieveExternalData();"><i class="demo-icon icon-arrows-ccw"></i></span>
 
-                       </div>
+                        <div class="menu-content">
+                            <a id="toIMGTseg" title="Request sequences informations to IMGT"
+                                    class="aligner-button"
+                                    data-target = 'IMGT'
+                                    onclick="javascript:segment.retrieveExternalData(['IMGT']);">
+                                    <i id="icon_external_IMGT" class="icon-arrows-ccw"></i> IMGT/V-QUEST
+                            </a>
+                            <a id="toCloneDBseg" title="Request sequences informations to CloneDB"
+                                    class="aligner-button"
+                                    data-target = 'cloneDB'
+                                    onclick="javascript:segment.retrieveExternalData(['cloneDB']);">
+                                    <i id="icon_external_cloneDB" class="icon-arrows-ccw"></i> CloneDB
+                            </a>
+                        </div>
                     </div>
                     
                     </div>
@@ -745,7 +749,7 @@
 </template>
 
 <template id="report-settings">
-    <div class="">
+    <div id="report-menu" class="">
         <div style="text-align: center;"><b>Export report</b></div>
 
         Preset: <div id="report-settings-save">
@@ -783,6 +787,8 @@
             <div class="">
                 Clonotypes
                 <span id="rs-selected-clones-count" style="float: right;"></span>
+            </div>
+            <div class="rs-flex-parent-v" id="report-clones-list">
             </div>
         </div>
 

@@ -478,12 +478,12 @@ QUnit.test("tag / color", function(assert) {
     assert.equal(m.getColorSelectedClone(), "", "Color of selected clones (without tags) is correct")
 
     // Change tag of clones
-    assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");  
-    c1.changeTag(5)
-    c2.changeTag(5)
+    assert.equal(c1.getTag(), "none", "getTag() >> default tag : none");  
+    c1.changeTag("custom_1")
+    c2.changeTag("custom_1")
     c1.updateColor()
     c2.updateColor()
-    assert.equal(c1.getTag(), 5, "changeTag() >> tag : 5");
+    assert.equal(c1.getTag(), "custom_1", "changeTag() >> tag : custom_1");
 
     // tag 8 color: ''
     // tag 5 color: #2aa198
@@ -704,6 +704,40 @@ QUnit.test("getLocusPresentInTop", function(assert) {
 
     locus = m.getLocusPresentInTop(1)
     assert.deepEqual( locus, ["IGH", "TRG"] )
+});
+
+
+QUnit.test("getDiversity", function(assert) {
+    // 1 - old not fused => {index : "na"}
+    // 1 - old not fused => {index : value}
+    // 2 - old fused     => {index : [values]}
+    // 3 - new not fused => {index : {locus: value}}
+    // 4 - new fused     => {index : [{locus: values}]}
+
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    var diversity_0 = { "index": "na" }
+    var diversity_1 = { "index": 5.68 }
+    var diversity_2 = { "index": [5.68] }
+    var diversity_3 = { "index": { "all": 5.68, "TRG": 5.25 }}
+    var diversity_4 = { "index": [{ "all": 5.68, "TRG": 5.25 }] }
+
+    m.diversity = diversity_0
+    assert.equal(m.getDiversity("index", 0), undefined, "Correct diversity returned in case 0 (na)")
+
+    m.diversity = diversity_1
+    assert.equal(m.getDiversity("index", 0), 5.68, "Correct diversity returned in case 1 (old, not fused)")
+
+    m.diversity = diversity_2
+    assert.equal(m.getDiversity("index", 0), 5.68, "Correct diversity returned in case 2 (old, fused)")
+
+    m.diversity = diversity_3
+    assert.deepEqual(m.getDiversity("index", 0), { "all": "5.680", "TRG": "5.250" }, "Correct diversity returned in case 3 (new, not fused)")
+
+    m.diversity = diversity_4
+    assert.deepEqual(m.getDiversity("index", 0), { "all": "5.680", "TRG": "5.250" }, "Correct diversity returned in case 4 (new, fused)")
 });
 
 

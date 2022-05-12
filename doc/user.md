@@ -122,7 +122,7 @@ to learn the essential features of Vidjil.
     you can change the sample viewed by clicking on the `←` and `→` buttons,
     or cycle trough them by clicking on the "▶" button.
 
-  - *analyzed reads.* umber of reads where the underlying RepSeq algorithm
+  - *analyzed reads.* Number of reads where the underlying RepSeq algorithm
     found a V(D)J recombination, for that sample.
     See *Number of analyzed reads* below.
     By hovering the mouse, one also sees the *total*
@@ -327,10 +327,11 @@ with the first (largest) selected clonotype acting as its representative.
 The `align` button aligns all the selected sequences,
 the sequence of the first (largest) clonotype used as a reference.
 
-  - `*` is a match
+  - `.` is a match
   - `-` is a gap
   - a single line under a character is a nucleotide mismatch
   - a double line under a character is a silent nucelotide mismatch (not impacting the resulting amino acid sequence)
+  - `*` in an amino acid sequence indicates a stop codon
   - `#` in an amino acid sequence indicates a frameshift in the junction (and thus an unproductive sequence)
 
 The alignment settings `⚙` menu allows to customize such alignements, by
@@ -597,6 +598,14 @@ For each group, you will find:
 This page lists the last processes you ran, with information such as its configuration and its status.
 Each sample is provided with links to the related patient/runs/sets.
 
+## Edit my personal informations
+
+Your login is your email address.
+To update other personal information or your password,
+on the database page, click on the pen icon next to your name.
+Change them wisely.
+
+See also the [Vidjil privacy policy](https://www.vidjil.org/doc/privacy/) and our compliance to the GDPR.
 
 # How do you define clones, their sequences, their V(D)J designation and their productivity?
 
@@ -786,6 +795,16 @@ Several indices are computed on the full list of clonotypes to assess the divers
   Pielou's evenness and Simpson's diversity have values between 0
   (no diversity, one clonotype clusters all analyzed reads)
   and 1 (full diversity, each analyzed read belongs to a different clonotype).
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/diversity_splitted_by_locus.png"/>
+  </figure>
+  <i>
+      The diversity section of sample information panel.
+      Since algo release `2022.03`, diversity is also splitted by locus.
+      The section contain only locus present in sample and active in analysis.
+      </p>
+  </i>
 
 - On several samples, overlap indexes such as [Morisita's overlap index](https://en.wikipedia.org/wiki/Morisita%27s_overlap_index)
   having values between 0 (no overlap between the two samples)

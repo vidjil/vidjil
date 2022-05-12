@@ -1,8 +1,10 @@
 site_name: Vidjil
+site_url: https://www.vidjil.org/doc
 
 docs_dir: doc
 
 plugins:
+    - search
     - gitlab_links:
          gitlab_url: 'https://gitlab.inria.fr/vidjil/vidjil'
 

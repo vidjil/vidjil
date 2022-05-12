@@ -311,7 +311,7 @@ QUnit.test("processCloneDBContents", function(assert) {
 
 QUnit.test("processImgtContents", function(assert) {
     var ready = assert.async();
-    assert.expect(5);
+    assert.expect(6);
 
     var xhr = $.ajax({
             url: 'testFiles/vquest_imgt.html',
@@ -323,6 +323,7 @@ QUnit.test("processImgtContents", function(assert) {
             assert.ok(imgtArray[0]["Sequence number"] == "1", "first line is sequence 1");
             assert.ok(imgtArray[0]["CDR3-IMGT"] == "gcggcggaaactc", "CDR3-IMGT's seq 1 is gcggcggaaactc");
             assert.ok(imgtArray[3]["Sequence number"] == "4", "4th ligne is seq 4");
+            assert.ok(imgtArray[3]["CDR3-IMGT"] == undefined, "imgt did not return a cdr3 result for line 4");
             assert.ok(imgtArray.length == 5, "5 sequences were identified");
             ready();
         });

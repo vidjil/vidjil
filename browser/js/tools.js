@@ -191,14 +191,27 @@ function tsvToArray(allText) {
 
     for (var i = 1; i < allTextLines.length; i++) {
         var data = $.trim(allTextLines[i]).split('	');
-        if (data.length == headers.length) {
-            var tarr = {};
-            for (var j = 0; j < headers.length; j++) {
-                if (headers[j] !== "") {
-                    tarr[headers[j]] = data[j];
+        var tarr = {};
+        switch (data.length) {
+            case headers.length:
+                // imgt prodcuced a complete results -> copy each columns
+                for (var j = 0; j < headers.length; j++) {
+                    if (headers[j] !== "") {
+                        tarr[headers[j]] = data[j];
+                    }
                 }
-            }
-            lines.push(tarr);
+                lines.push(tarr);
+                break;
+            case 1:
+                // empty data line -> do nothing
+                break;
+            default:
+                // imgt returned no results or incomplete results for a sequence 
+                // -> copy only first two column (Sequence number + ID)
+                tarr[headers[0]] = data[0];
+                tarr[headers[1]] = data[1];
+                lines.push(tarr);
+                break;
         }
     }
     return lines;

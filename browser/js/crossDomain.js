@@ -124,23 +124,17 @@ function imgtPost(species, data, system) {
  * @param data
  * @param system
  */
-function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_options) {
+function imgtPostForSegmenter(species, data, system, override_imgt_options, callback) {
     var imgtInput = initImgtInput(species);
     if (typeof override_imgt_options != 'undefined') {
         append_to_object(override_imgt_options, imgtInput)
     }
-    var imgt4segButton= document.getElementById("toIMGTSeg");
+
     //limit #request to #
     var pos, nb = 1;
     pos = 0;
     while ((pos = data.indexOf(">", pos + 1)) > 0) {
         nb++;
-    }
-
-    //update imgt button according to request processing
-    if (imgt4segButton){
-        imgt4segButton.removeAllChildren();
-        imgt4segButton.appendChild(icon('icon-spin4 animate-spin', 'Sequences sent to IMGT/V-QUEST'));
     }
 
     //process to first 10 sequences then alert user about the remaining part
@@ -199,7 +193,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
                 //merge clone from segmenter and imgtinfo
                 //loop through the model maintained selection list
                 seq_id = imgtArray[i]["Sequence ID"]
-                cloneIdx= seq_id.substr(0,seq_id.indexOf('#'))
+                cloneIdx= seq_id.split("_")[1].substr(1) // ($sample)_#$cloneIdx_IGHV3-9*01_7/CCCGGA/17_IGHJ6*02
                 logmsg += cloneIdx + ",";
                 //remove unneeded info coz relative to # of selected items
                 delete  imgtArray[i]["Sequence number"];
@@ -213,9 +207,9 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
                                  modelRef.clones[cloneIdx].seg.imgt2display);
                 //toggle save in analysis file
                 modelRef.clones[cloneIdx].segEdited = true;
+                modelRef.clones[cloneIdx].seg.imgt.trimming_before   = modelRef.trimming_before_external
+                modelRef.clones[cloneIdx].seg.imgt.trimming_primer   = modelRef.primerSetCurrent
             }
-            modelRef.clones[cloneIdx].seg.imgt.trimming_before   = modelRef.trimming_before_external
-            modelRef.clones[cloneIdx].seg.imgt.trimming_primer   = modelRef.primerSetCurrent
             modelRef.updateElemStyle(modelRef.getSelected());
 
             console.log({
@@ -223,6 +217,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
                 "msg": logmsg+ ")" + httpRequest.statusText
             });
 
+            if (callback) callback()
         }
     };
     httpRequest.onerror = function () {
@@ -231,6 +226,8 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
             "msg": "imgtPostForSegmenter: error while requesting IMGT website: " + httpRequest.statusText,
             "priority": 2
         });
+
+        if (callback) callback()
     };
 
     //test with a local file

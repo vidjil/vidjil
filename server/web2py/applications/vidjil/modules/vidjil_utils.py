@@ -7,6 +7,7 @@ import datetime
 from gluon import current
 from datetime import date
 
+
 def format_size(n, unit='B'):
     '''
     Takes an integer n, representing a filesize and returns a string

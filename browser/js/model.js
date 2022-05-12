@@ -66,6 +66,7 @@ function Model() {
         this[f] = Model_loader.prototype[f]
     }
 
+    this.tags = new TagManager(this);
     this.germline = {};
     this.create_germline_obj();
     this.view = [];
@@ -130,28 +131,7 @@ Model.prototype = {
         
         document.body.appendChild(this.infoBox);
         
-        //build tagSelector
-        this.tagSelector = document.createElement("div");
-        this.tagSelector.className = "tagSelector";
-        
-        var closeTag = document.createElement("span");
-        closeTag.className = "closeButton" ;
-        closeTag.appendChild(icon('icon-cancel', ''));
-        closeTag.onclick = function() {$(this).parent().hide('fast')};
-        this.tagSelector.appendChild(closeTag);
-        
-        this.tagSelectorInfo = document.createElement("div")
-        this.tagSelector.appendChild(this.tagSelectorInfo);
-        
-        this.tagSelectorList = document.createElement("ul")
-        this.tagSelector.appendChild(this.tagSelectorList);
-        
-        document.body.appendChild(this.tagSelector);
-        $('.tagSelector').hover(function() { 
-          $(this).addClass('hovered');
-        }, function() {
-          $(this).removeClass('hovered');
-        });
+        this.tags.buildSelector()
 
         $("#filter_switch_sample").click(function(){
             self.filter.toggle("Size", "=", 0)
@@ -352,22 +332,6 @@ Model.prototype = {
             "= SEG, but no window",
         ];
 
-        this.tag = [
-            {"color" : "#dc322f", "name" : "clonotype 1", "display" : true},
-            {"color" : "#cb4b16", "name" : "clonotype 2", "display" : true},
-            {"color" : "#b58900", "name" : "clonotype 3", "display" : true},
-            {"color" : "#268bd2", "name" : "standard", "display" : true},
-            {"color" : "#6c71c4", "name" : "standard (noise)", "display" : true},
-            {"color" : "#2aa198", "name" : "custom 1", "display" : true},
-            {"color" : "#d33682", "name" : "custom 2", "display" : true},
-            {"color" : "#859900", "name" : "custom 3", "display" : true},
-            {"color" : "",        "name" : "-/-", "display" : true},
-            {"color" : "#bdbdbd", "name" : "smaller clonotypes", "display" : true}
-        ]
-
-        this.default_tag=8;
-        this.distrib_tag=9;
-
         this.axis_color = "Tag"
         this.notation_type = "percent"
         this.time_type = "name"
@@ -375,6 +339,7 @@ Model.prototype = {
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].reset();
         }
+        this.closeOpenModal()
 
     },
     
@@ -456,7 +421,7 @@ Model.prototype = {
         this.n_max = n_max
         
         for (var j = 0; j < this.clones.length; j++) 
-            this.clone(j).tag = this.default_tag;
+            this.clone(j).tag = this.tags.getDefault();
         
         this.applyAnalysis(this.analysis);
         this.initData();
@@ -507,7 +472,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         for (var key in this.data){
             if (this.data[key].length == this.samples.number){
                 this.data_info[key] = {
-                    "color" : this.tag[i].color,
+                    "color" : colorGeneratorIndex(i),
                     "isActive" : false
                 }
                 i++
@@ -551,14 +516,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         f = clone.getSize() / c[i].expected;
                         
                         if (f < 100 && f > 0.01) {
-                            if (typeof (c[i].tag) != "undefined") {
-                                clone.tag = c[i].tag;
-                            }
-
-                            if (typeof (c[i].name) != "undefined") {
-                                clone.c_name = c[i].name;
-                            }
-                            
                             if (c[i].expected>max.size){
                                 max.size = c[i].expected
                                 max.id = id
@@ -566,14 +523,14 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         }else{
                             console.log(" apply analysis : clones "+ c[i].id + " > incorrect expected value", 0)
                         }
-                    }else{
-                        if (typeof (c[i].tag) != "undefined") {
-                            clone.tag = c[i].tag;
-                        }
-                        if (typeof (c[i].name) != "undefined") {
-                            clone.c_name = c[i].name;
-                        }
                     }
+
+                    if (typeof (c[i].tag) != "undefined")
+                        if (isNaN(parseInt(c[i].tag))) clone.tag = c[i].tag;
+                        else  clone.tag = m.tags.old_tag[c[i].tag];
+
+                    if (typeof (c[i].name) != "undefined") clone.c_name = c[i].name;
+                
                 }else{
                     this.analysis_clones.push(c[i])
                 }
@@ -726,29 +683,34 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     	if (typeof this.diversity != 'undefined' &&
     	    typeof this.diversity[key] != 'undefined') {
 
+            // 1 - old not fused => {index : value}
+            // 2 - old fused => {index : [values]}
+            // 3 - new not fused => {index : {locus: value}}
+            // 4 - new fused => {index : [{locus: values}]}
+            var diversity_by_locus = {}
+            var locus;
     	    if (this.diversity[key][time] == 'na') {
                 return // Append if no diversity computable by fuse (AIRR import for exemple)
-            } else if (typeof this.diversity[key][time] != 'undefined') {
-        	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
-        	    // See #1941 and #3416
-        		if (this.diversity[key][time] != null){
+            } else{
+                if (typeof this.diversity[key] == "number"){ // case 1
+                    return this.diversity[key].toFixed(3);
+                } else if (Array.isArray(this.diversity[key])){ // case 2
                     if (typeof this.diversity[key][time] == "number") {
-                        // old case, one global diversity
-                        return this.diversity[key][time].toFixed(3);
-                    } else {
-                        // case diversity by locus
-                        var diversity_by_locus = {}
-                        for (var locus in this.diversity[key][time]) {
+                       return this.diversity[key][time].toFixed(3);
+                    } else { // case 3
+                        for (locus in this.diversity[key][time]) {
                             diversity_by_locus[locus] = this.diversity[key][time][locus].toFixed(3)
                         }
                         return diversity_by_locus
                     }
-                } else {
-                    return this.diversity[key][time]
+                } else if (typeof this.diversity[key] == "object"){ // case 4
+                    for (locus in this.diversity[key]) {
+                        diversity_by_locus[locus] = this.diversity[key][locus].toFixed(3)
+                    }
+                    return diversity_by_locus
                 }
-    	    } else {
-    		    return this.diversity[key].toFixed(3);
-    	    }
+            }
+
     	}
     },
     
@@ -2498,145 +2460,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.infoBox.lastElementChild.removeAllChildren();
     },
 
- 
-    /**
-     * open/build the tag/normalize menu for a clone
-     * @param {integer} cloneID - clone index
-     * */
-    openTagSelector: function (clonesIDs, e) {
-        var self = this;
-        this.tagSelectorList.removeAllChildren();
-        clonesIDs = clonesIDs !== undefined ? clonesIDs : this.clonesIDs; 
-        this.clonesIDs=clonesIDs
-
-        var buildTagSelector = function (i) {
-            var span1 = document.createElement('span');
-            span1.className = "tagColorBox tagColor" + i
-           
-            var span2 = document.createElement('span');
-            span2.className = "tagName" + i + " tn"
-            span2.appendChild(document.createTextNode(self.tag[i].name))
-
-            var div = document.createElement('div');
-            div.className = "tagElem"
-            div.id = "tagElem_" + i
-            div.appendChild(span1)
-            div.appendChild(span2)
-            div.onclick = function () {
-                for (var j = 0; j < clonesIDs.length; j++) {
-                    self.clone(clonesIDs[j]).changeTag(i)
-                }
-                $(self.tagSelector).hide('fast')
-            }
-
-            var li = document.createElement('li');
-            li.appendChild(div)
-
-            self.tagSelectorList.appendChild(li);
-        }
-
-        for (var i = 0; i < this.tag.length; i++) {
-            buildTagSelector(i);
-        }
-        
-        var separator = document.createElement('div');
-        separator.innerHTML = "<hr>"
-
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("normalize to: "))
-
-        
-        this.norm_input = document.createElement('input');
-        this.norm_input.id = "normalized_size";
-        this.norm_input.type = "text";
-        
-        var span2 = document.createElement('span');
-        span2.appendChild(this.norm_input)
-        
-        this.norm_button = document.createElement('button');
-        this.norm_input.id = "norm_button";
-        this.norm_button.appendChild(document.createTextNode("ok"))
-        
-        this.norm_button.onclick = function () {
-            var cloneID = self.clonesIDs[0];
-            var size = parseFloat(self.norm_input.value);
-            
-            if (size>0 && size<1){
-                self.set_normalization( self.NORM_EXPECTED )
-                $("#expected_normalization").show();
-                self.norm_input.value = ""
-                self.clone(cloneID).expected=size;
-                self.compute_normalization(cloneID, size)
-                self.update()
-                $(self.tagSelector).hide('fast')
-                $("expected_normalization_input").prop("checked", true)
-            }else{
-                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
-            }
-        }
-        this.norm_input.onkeydown = function (event) {
-            if (event.keyCode == 13) self.norm_button.click();
-        }
-        
-        var div = document.createElement('div');
-        div.id  = "normalization_expected_input_div"
-        div.appendChild(separator)
-        div.appendChild(span1)
-        div.appendChild(span2)
-        div.appendChild(this.norm_button)
-
-        // add to report button
-        var div2 = $('<div/>', {}).html("<hr>").appendTo($(this.tagSelectorList))
-        var report_button = $('<div/>', { text: 'add clone(s) to next report'
-                                        }).appendTo(div2)
-                                          .click(function (){
-                                              report.addClones(clonesIDs);
-                                              $(self.tagSelector).hide('fast')
-                                        });
-        $('<button/>', { class: "icon-newspaper"}).appendTo(report_button)
-
-        var li = document.createElement('li');
-        li.appendChild(div)
-
-        this.tagSelectorList.appendChild(li);
-        
-        var string;
-        if (clonesIDs.length > 1){
-            string = "Tag for " + clonesIDs.length +  " clonotypes"
-        } else {
-            if (clonesIDs[0][0] == "s") cloneID = clonesIDs[0].substr(3);
-            string = "Tag for "+this.clone(clonesIDs[0]).getName()
-        }
-        this.tagSelectorInfo.innerHTML = string
-        $(this.tagSelector).show();
-        
-        
-        //replace tagSeelector
-        var tagSelectorH = $(this.tagSelector).outerHeight()
-        var minTop = 40;
-        var maxTop = Math.max(40, $(window).height()-tagSelectorH);
-        var top = e.clientY - tagSelectorH/2;
-        if (top<minTop) top=minTop;
-        if (top>maxTop) top=maxTop;
-        this.tagSelector.style.top=top+"px";
-
-        var tagSelectorW = $(this.tagSelector).outerWidth()
-        var maxLeft = $(window).width() - tagSelectorW;
-        var tmp = e.clientX;
-        if(typeof e.currentTarget !== 'undefined') {
-            tmp = e.currentTarget.offsetLeft + (e.currentTarget.offsetWidth/2);
-        }
-        var left = tmp + (tagSelectorW/2);
-        if (left>maxLeft) left=maxLeft;
-        this.tagSelector.style.left=left+"px";
-
-        // If multiple clones Ids; disabled normalization div
-        if (clonesIDs.length > 1) {
-            $("#"+div.id).addClass("disabledbutton");
-        }
-    },
-
-
     /**
      * load a new germline and update 
      * @param {string} system - system string to load
@@ -2921,169 +2744,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.updateIcon();
     },
     
-    
-    /* --------------------- */
-
-    
-   /*For DBSCAN*/
-    loadRandomTab: function() {
-        this.tabRandomColor = [];
-        /*Initialisation du tableau de couleurs*/
-        for (var h = 0; h < this.clones.length; h++) {
-            this.tabRandomColor.push(h);
-        }
-        /*Fisher yates algorithm to shuffle the array*/
-        for (var i = this.clones.length - 1; i >= 1; i--) {
-            var j = Math.floor(Math.random() * i) + 1;
-            var abs = this.tabRandomColor[i];
-            this.tabRandomColor[i] = this.tabRandomColor[j];
-            this.tabRandomColor[j] = abs;
-        }
-    },
-
-    /* Fonction permettant de charger la clusterisation avec DBSCAN, mais aussi de colorer les nodes 
-    directement après en fonction de cette clusterisation
-     *
-     */
-    loadDBSCAN: function(sp) {
-        if (typeof(sp) != "undefined") this.sp = sp;
-            this.dbscan = new DBSCAN(this.sp, this.eps, this.nbr);
-            this.dbscan.runAlgorithm();
-            for (var i = 0; i < this.dbscan.clusters.length; i++)
-                for (var j = 0; j < this.dbscan.clusters[i].length; j++)
-                    this.clones[this.dbscan.clusters[i][j]].cluster = i;
-            //Color DBSCAN
-            if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
-            this.colorNodesDBSCAN();
-            //Add information about the window (Noise, Core, ...)
-            this.addTagCluster();
-    },
-
-    /* Fonction permettant de colorer les nodes en fonction de la clusterisation DBSCAN
-    */
-    colorNodesDBSCAN: function() {
-        /*Adding color by specific cluster*/
-        /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, 
-        mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
-        var maxCluster = this.dbscan.clusters.length;
-        for (var i = 0; i < this.clones.length; i++) {
-            if (typeof(this.clone(i)) != 'undefined') {
-                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i)] + 1) ));
-            }
-            else
-                this.clone(i).colorDBSCAN = "";
-        }
-    },
-
-    /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, 
-    à l'extérieur ou appartenant à...
-     */
-    addTagCluster: function() {
-        for (var i = 0; i < this.clones.length; i++)
-            if (typeof(this.clone(i)) != 'undefined')
-                switch (this.dbscan.visitedTab[i].mark) {
-                case -1:
-                        this.clone(i).tagCluster = "NOISE";
-                        break;
-                case 0:
-                        this.clone(i).tagCluster = "CORE";
-                        break;
-                case 1:
-                        this.clone(i).tagCluster = "NEAR";
-                        break;
-                }
-            else
-                this.clone(i).tagCluster = null;
-    },
-
-    /*
-    // Fonction permettant de changer dynamiquement le nombre epsilon, pour DBSCAN
-    //
-    changeEps: function(newEps) {
-        //Modification de l'attribut 'Eps' contenu dans l'objet
-        this.eps = newEps;
-        //Prise en compte du slider
-        var html_container = document.getElementById('changeEps');
-        if (html_container != null) {
-            html_container.value = newEps;
-        }
-        //Création d'un nouvel objet DBSCAN
-        this.loadDBSCAN();
-        this.update();
-        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
-        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
-        //Changement de l'affichage de la valeur liée au slider
-        this.changeSliderValue(true, "DBSCANEpsSlider", "Eps ", this.eps);
-    },
-
-    // Fonction permettant de changer dynamiquement le nombre de voisins minimum, pour DBSCAN
-    //
-    changeNbr: function(newNbr) {
-        //Modification de l'attribut 'nbr' contenu dans l'objet
-        this.nbr = newNbr;
-        //Prise en compte du slider
-        var html_container = document.getElementById('changeNbr');
-        //Changement de la valeur du slider
-        if (html_container != null) {
-            html_container.value = newNbr;
-        }
-        //Création d'un nouvel objet DBSCAN
-        this.loadDBSCAN();
-        this.update();
-        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
-        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
-        //Changement de l'affichage de la valeur liée au slider
-        this.changeSliderValue(true, "DBSCANNbrSlider", "Nbr ", this.nbr);
-    },
-
-    */
-    /* Fonction permettant de changer dynamiquement la valeur d'affichage, à côté du slider Epsilon/MinPts dans le menu Display
-    */
-    changeSliderValue: function(bool, div, name, value) {
-        div = document.getElementById(div);
-        var text = document.createTextNode(name + value);
-        if (bool) {
-            //Suppression du précédent noeud
-            div.removeChild(div.childNodes[0]);
-        }
-        if (!bool) div.insertBefore(document.createElement('br'), div.firstChild);
-        div.insertBefore(text, div.firstChild);
-    },
-
-    /* Fonction permettant de changer dynamiquement la valeur d'affichage du slider "Edit Distance"
-    */
-    changeSliderEditDistanceValue: function(bool, value) {
-        var div = document.getElementById("EditDistanceSlider");
-        var text =  document.createTextNode("Distance: " + value);
-        if (!bool) {
-            div.removeChild(div.childNodes[0]);
-        }
-        else {
-            div.insertBefore(text, div.firstChild);
-        }
-    },
-    
-    /* put a marker on a specific edge, for the edit distance distribution
-     *
-     */
-    focusEdge: function(edge) {
-       $(".focus")
-            .text(this.printInformationEdge(edge));
-    },
-
-    /* remove the focus marker to the edge
-     *
-     */
-    removeFocusEdge: function() {
-        $(".focus")
-            .text("")
-    },
-
-    /* print informations of a specific edge
-     */
-    printInformationEdge: function(edge) {
-        return this.getName(edge.source)+" -- "+this.getName(edge.target)+" == "+edge.len;
-    },
 
     DEFAULT_SEGMENTER_URL: "https://dev.vidjil.org/vidjil/segmenter",
 
@@ -3758,7 +3418,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             cloneIds = this.getSelected()
         }
         if (cloneIds.length == 0){
-            console.error( "Export "+file_format+": please select clones to be exported")
+            console.log({ msg: `Export ${file_format}: please select clones to be exported`, type: "flash", priority: 2 });
             return
         }
 
@@ -3779,5 +3439,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         download_csv(data, filename);
     },
 
+    /**
+     * Close all modal by clicking on close button
+     * Call at analysis loading to close all popup panel already present
+     */
+    closeOpenModal: function(){
+        $(".closeButton").each(function(){
+            if ($( this ).is(":visible")){
+                $( this ).click()
+            }
+        })
+    }
 
 }; //end prototype Model

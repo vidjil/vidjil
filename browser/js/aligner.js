@@ -92,9 +92,12 @@ Aligner.prototype = {
         for (var i in available_axis) {
             var axis_p = Axis.prototype.getAxisProperties(available_axis[i]);
 
+            if (typeof axis_p.hide != 'undefined' && axis_p.hide) continue;
+
             var axis_label = document.createElement('label');
             axis_label.setAttribute('for', "sai"+i);
             axis_label.className = "aligner-checkbox-label";
+            if (typeof axis_p.class == "string") axis_label.className += " "+axis_p.class
             axis_label.title = axis_p.doc;
 
             var axis_option = document.createElement('span');
@@ -120,6 +123,87 @@ Aligner.prototype = {
         this.selectedAxis = [Axis.prototype.getAxisProperties("[IMGT] Productivity"),
                             Axis.prototype.getAxisProperties("[IMGT] VIdentity"),
                             Axis.prototype.getAxisProperties("Size")];
+    },
+
+    // return list of external data that need to be refreshed to display enabled layers
+    needRefresh: function(){
+        var refreshList = []
+        for (var s in this.sequence){
+            var r = this.sequence[s].needRefresh()
+            for (var s2 in r ) 
+                if (refreshList.indexOf(r[s2]) == -1)
+                    refreshList.push(r[s2])
+        }
+        return refreshList
+    },
+
+    // check if some enabled layers in segmenter need external data from IMGT/cloneDB to be displayed and update buttons accordingly
+    updateButton: function(){
+        var self = this;
+
+        var refreshList = this.needRefresh()
+        var button = $("#align-refresh-button")
+        var icon   = button.find('i')
+
+        refreshList.filter(provider => (self.pendingAnalysis != undefined && self.pendingAnalysis[provider] > 0))
+        // Update global external provider button
+        if (typeof this.pendingAnalysis != 'undefined' && this.pendingAnalysis > 0){
+            // Some provider are pending
+            icon.addClass('animate-spin')
+            button.addClass('disabledClass')
+        }else if (refreshList.length == 0)  {
+            // No provider pending
+            button.removeClass('disabledClass')
+            icon.removeClass()
+            icon.addClass('icon-ok')
+        }else{
+            // At least one provider is possible
+            button.removeClass('disabledClass')
+            icon.removeClass()
+            icon.addClass('icon-arrows-ccw')
+        }
+
+        // Update child button of each provider
+        button.children(".menu-content").children("a").each(function () {
+            self.refreshIconProvider($(this).data("target"))
+        })
+
+        return this        
+    },
+
+    retrieveExternalData: function(providerList, cloneList){
+        var self = this
+
+        if (typeof providerList == 'undefined')
+            providerList = this.needRefresh()
+
+        if (typeof cloneList == 'undefined')
+            cloneList = this.sequenceListInSegmenter()
+
+        var callback = function(serviceName){
+            self.pendingAnalysis[serviceName]--
+            self.updateButton()    
+        }
+        
+        this.pendingAnalysis = {}
+        for (var i in providerList){
+            serviceName = providerList[i]
+
+            this.pendingAnalysis[serviceName] = 0;
+
+            switch (serviceName) {
+                case "IMGT":
+                    this.pendingAnalysis[serviceName]++
+                    this.sendTo('IMGTSeg', cloneList, callback(serviceName))
+                    break;
+                case "cloneDB":
+                    this.pendingAnalysis[serviceName]++
+                    db.callCloneDB(cloneList, callback(serviceName))
+                    break;
+                default:
+                    break;
+            }
+        }
     },
 
     //check axis selected in menu to update and update axisBox dom elements accordingly
@@ -234,7 +318,7 @@ Aligner.prototype = {
         document.getElementById("reset_focus").onclick = function () {  self.m.filter.remove("Clonotype", "focus")
                                                                         self.m.filter.remove("Clonotype", "hide") };
         document.getElementById("star_selected").onclick = function (e) {
-            if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
+            if (m.getSelected().length > 0) { self.m.tags.openSelector(m.getSelected(), e); }};
         document.getElementById("cluster").onclick = function () { self.m.merge(); };
         document.getElementById("align").onclick = function () { self.toggleAlign(); };
         document.getElementById("aligner-open-button").onclick = function () { self.toggle(); };
@@ -336,6 +420,8 @@ Aligner.prototype = {
         if (update)
             for (var s in this.sequence)
                 this.sequence[s].updateLayers(layers);
+        
+        this.updateButton()
     },
 
 
@@ -381,6 +467,7 @@ Aligner.prototype = {
             this.removeSequence(keys[i], false)
 
         if (update) this.updateDom()
+                        .updateButton()
                         .show()
     },
 
@@ -421,7 +508,7 @@ Aligner.prototype = {
         for (var i = 0; i < list.length; i++) {     
             cloneID = list[i];   
             if (!this.m.clone(cloneID).isSelected()) 
-                if (this.sequence[cloneID])             
+                if (this.sequence[cloneID])         
                     this.removeSequence(cloneID, false);
         }
 
@@ -429,12 +516,14 @@ Aligner.prototype = {
         for (var j = 0; j < list.length; j++) {     
             cloneID = list[j];
             if (this.m.clone(cloneID).isSelected() && 
-                Object.keys(this.sequence).indexOf(cloneID) == -1 ){ 
-                this.addCloneToSegmenter(cloneID);
-            }
+                Object.keys(this.sequence).indexOf(cloneID) == -1 )
+                this.addCloneToSegmenter(cloneID)
+            
         }
 
         this.updateDom(list)
+            .updateButton()
+        
     },
 
     updateDom:function(list){
@@ -497,15 +586,87 @@ Aligner.prototype = {
             var span = document.createElement('span');
             var axis = this.selectedAxis[i];
             span.removeAllChildren();
-            span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
-            span.setAttribute('title', this.selectedAxis[i].doc);
-            if (axis.hover != undefined){
-                span.setAttribute('title', axis.hover(clone, this.m.getTime()) )
-            }
             span.className = axis.name;
+            span.setAttribute('title', this.selectedAxis[i].doc);
+
+            if (axis.hover != undefined)
+                span.setAttribute('title', axis.hover(clone, this.m.getTime()) )
+            
+            if (typeof axis.refresh != 'undefined' && typeof axis.refresh(clone) != 'undefined'){
+                span.appendChild(this.refreshIcon(axis.refresh(clone)))
+            } else {
+                span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
+            }
+
             axisBox.appendChild(span);
         }
     },
+
+    /**
+     * Refresh external icon of one clonotype in aligner
+     * Allow to launch external action for on provider
+     */
+    refreshIcon: function(provider){
+        var self = this
+        var span = document.createElement('span')
+        var im = document.createElement('i')
+        var button = $("#align-refresh-button")
+
+        span.className = 'aligner-inline-button'
+        im.className ='icon-arrows-ccw'
+        span.setAttribute('title', "missing data, click to try to retrieve from "+provider);
+
+        if (typeof this.pendingAnalysis != 'undefined' &&
+                this.pendingAnalysis[provider] > 0){ // get list provider
+                span.className = 'aligner-inline-button disabledClass'
+                im.className = 'icon-arrows-ccw animate-spin'
+        }
+
+        span.onclick = function(){self.retrieveExternalData([provider])}
+
+        span.appendChild(im)
+        return span
+    },
+
+    /**
+     * Allow to refresh icon in aligner header and menu.
+     */
+    refreshIconProvider: function(provider){
+        var self = this
+
+        var button = $("#align-refresh-button").children(".menu-content")
+                                               .find(`[data-target='${provider}']`)
+        var icon   = $("#icon_external_"+provider)
+
+        var onclickfct = function(){
+            segment.retrieveExternalData([$(this).data("target")])
+        }
+
+        if (!config[provider]){
+            button.hide()
+            button.prop('onclick', null);
+        } else {
+            button.show()
+
+            var needRefresh = this.needRefresh()
+            if (typeof this.pendingAnalysis != 'undefined' &&
+                needRefresh.indexOf(provider) != -1 &&
+                this.pendingAnalysis[provider] > 0){ // get list provider
+                    icon.removeClass()
+                        .addClass('animate-spin')
+            } else if (this.pendingAnalysis == undefined || (typeof this.pendingAnalysis != 'undefined' && needRefresh.indexOf(provider) != -1)){
+                button.removeClass('disabledClass')
+                icon.removeClass()
+                    .addClass('icon-arrows-ccw')
+            } else {
+                button.addClass('disabledClass')
+                icon.removeClass()
+                    .addClass('icon-ok')
+            }
+        }
+
+    },
+
         
     /**
      * add a clone in the segmenter<br>
@@ -593,9 +754,11 @@ Aligner.prototype = {
      * (see crossDomain.js)
      * @param {string} address - 'imgt', 'arrest', 'igBlast' or 'blast'
      * */
-    sendTo: function (address) {
+    sendTo: function (address, list, callback) {
 
-        var list = this.sequenceListInSegmenter();
+        if (typeof list == 'undefined')
+            list = this.sequenceListInSegmenter();
+
         var request = "";
         var system;
         var max=0;
@@ -639,13 +802,17 @@ Aligner.prototype = {
 
         if (request != ""){
             if (address == 'IMGTSeg') {
-                imgtPostForSegmenter(this.m.species, request, system, this);
+                imgtPostForSegmenter(this.m.species, request, system, undefined, callback);
                 var change_options = {'xv_ntseq' : 'false', // Deactivate default output
                                     'xv_summary' : 'true'}; // Activate Summary output
-                imgtPostForSegmenter(this.m.species, request, system, this, change_options);
+                imgtPostForSegmenter(this.m.species, request, system, change_options, callback);
             } else {
                 window[address+"Post"](this.m.species, request, system);
+                if (callback) callback();
             }
+        }
+        else{
+            if (callback) callback();
         }
 
         this.update();

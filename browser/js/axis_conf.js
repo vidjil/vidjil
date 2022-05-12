@@ -93,6 +93,8 @@ AXIS_ALIGNER = [
                     "Number of samples",
                     "[IMGT] Productivity",
                     "[IMGT] VIdentity",
+                    "[cloneDB] Hits (sample)",
+                    "[cloneDB] Hits (set)"
                 ]
 
 // list of Axis available as color
@@ -266,45 +268,51 @@ AXIS_DEFAULT = {
     "[IMGT] Productivity": {
         doc:        "productivity (as computed by IMGT/V-QUEST)",
         labels:     {
-            "not productive":   {text:"not productive"},
-            "no CDR3 detected": {text:"no CDR3 detected"},
-            "productive":       {text:"productive"},
-        },
+                        "not productive":   {text:"not productive"},
+                        "no CDR3 detected": {text:"no CDR3 detected"},
+                        "productive":       {text:"productive"},
+                    },
         fct:        function(clone) { return clone.getProductivityIMGT() },
-        pretty: function(tag) { return icon_pm(tag, "productive", "not productive"); },
+        pretty:     function(tag) { return icon_pm(tag, "productive", "not productive"); },
+        refresh:    function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"}
     },
     "[IMGT] VIdentity": {
         doc:        "V identity (as computed by IMGT/V-QUEST)",
-        fct:        function(clone) { return clone.getVIdentityIMGT() },
+        fct:        function(clone) { 
+                        var vIdentity = parseFloat(clone.getVIdentityIMGT()) 
+                        if (isNaN(vIdentity)) return clone.getVIdentityIMGT()
+                        return vIdentity
+                    },
         pretty: function(val) {
-            var Videntity_info = document.createElement('span');
-            Videntity_info.className = "identityBox widestBox";
+                        var Videntity_info = document.createElement('span');
+                        Videntity_info.className = "identityBox widestBox";
 
-            var identityRate = parseFloat(val)
-            if (!isNaN(identityRate)) {
-                var info = document.createElement('span');
-                if (V_IDENTITY_THRESHOLD)
-                    info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
-                info.appendChild(document.createTextNode(floatToFixed(identityRate,5) + "%"))
-                info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
-                Videntity_info.appendChild(info)
-            } else Videntity_info.innerHTML = "&nbsp;";
-            return Videntity_info;
-
-        },
+                        var identityRate = parseFloat(val)
+                        if (!isNaN(identityRate)) {
+                            var info = document.createElement('span');
+                            if (V_IDENTITY_THRESHOLD)
+                                info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
+                            info.appendChild(document.createTextNode(floatToFixed(identityRate,5) + "%"))
+                            info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
+                            Videntity_info.appendChild(info)
+                        } else Videntity_info.innerHTML = "&nbsp;";
+                        return Videntity_info;
+                    },
+        refresh:    function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"},
+        autofill :  true
     },
     "Tag": {
         doc:        "tag, as defined by the user",   
         labels:     function(){
                         var l = {}
-                        for (var i=0; i<m.tag.length; i++)
-                            l[m.tag[i].name] =  {
-                                                    text:   m.tag[i].name,   
-                                                    color:  m.tag[i].color
+                        for (var k in m.tags.tag)
+                            l[k] =  {
+                                                    text:   m.tags.getName(k),   
+                                                    color:  m.tags.getColor(k)
                                                 }
                         return l
                     },
-        fct:        function(clone) {return clone.getTagName()},
+        fct:        function(clone) {return clone.getTag()},
         sort :      false,
         autofill :  false
     },
@@ -390,9 +398,20 @@ AXIS_DEFAULT = {
                         "mode": "linear",
                         "min": 0
                     },
-        fct: function(clone) {return clone.numberInCloneDB()},
-        autofill: true,
-        //hide : (typeof config === 'undefined' || ! config.clonedb),
+        //class:    "devel-mode",
+        fct:        function(clone) {
+                        var n = clone.numberInCloneDB()
+                        if (typeof n == "undefined") return "-/-"
+                        return n
+                    },
+        pretty:     function(n) {
+                        var span = createClassedSpan("sizeBox sixChars", n)
+                        if (n == "-/-") span.title = "missing data, use 'send to cloneDB' tool in aligner to update value"
+                        return span
+                    },
+        autofill:   true,
+        refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
+        hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
     "[cloneDB] Hits (set)": {   
         doc:        "number of patients/runs/sets sharing clonotypes in cloneDB",
@@ -400,9 +419,20 @@ AXIS_DEFAULT = {
                         "mode": "linear",
                         "min": 0
                     },
-        fct: function(clone) {return clone.numberSampleSetInCloneDB()},
-        autofill: true
-        //hide : (typeof config === 'undefined' || ! config.clonedb),
+        //class:    "devel-mode",
+        fct:        function(clone) {
+                        var n = clone.numberSampleSetInCloneDB()
+                        if (typeof n == "undefined") return "-/-"
+                        return n
+                    },
+        pretty:     function(n) {
+                        var span = createClassedSpan("sizeBox sixChars", n)
+                        if (n == "-/-") span.title = "missing data, use 'send to cloneDB' tool in aligner to update value"
+                        return span
+                    },
+        autofill:   true,
+        refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
+        hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
     "TSNEX": {   
         doc:        "",

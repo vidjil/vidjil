@@ -225,11 +225,6 @@ test_browser_unit:
     WATIR_CHROME: "1"
 
 
-ff32-browser-tutorial:
-  extends: .browser-tutorial
-  variables:
-    FIREFOX_VERSION: 32
-
 ff45-browser-tutorial:
   extends:
     - .browser-tutorial
@@ -240,11 +235,6 @@ ff45-browser-tutorial:
 
 chrome-browser-tutorial:
   extends: .browser-tutorial-chrome
-        
-old-chrome-browser-tutorial:
-  extends: .browser-tutorial-chrome
-  tags:
-    - legacy
 
 
 
@@ -378,11 +368,6 @@ test_server_unit:
       - server/web2py/applications/vidjil/
     when: always
 
-
-ff32-server-functional:
-  extends: .test_server_functional
-  variables:
-    FIREFOX_VERSION: 32
 
 ff45-server-functional:
   extends:

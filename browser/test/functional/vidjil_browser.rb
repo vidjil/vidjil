@@ -346,8 +346,8 @@ class VidjilBrowser < Watir::Browser
   # The hash contains the following keys:
   def tag_item(id)
     ts = tag_selector
-    return {color: ts.span(:class => 'tagColor'+id),
-            name: ts.span(:class => 'tagName'+id),
+    return {color: ts.span(:class => 'tagColor_'+id),
+            name: ts.span(:class => 'tagName_'+id),
             edit: ts.li(:index => id.to_i).span(:class => 'edit_button')}
   end
   
