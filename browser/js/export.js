@@ -135,6 +135,7 @@ Report.prototype = {
         if (typeof this.m.report_save[savename] == "undefined" || overwrite){
             // save
             try {
+                this.settings.clones = (JSON.parse(JSON.stringify(this.clones))); 
                 this.m.report_save[savename] = JSON.parse(JSON.stringify(this.settings))
                 console.log({ msg: "report settings '"+savename+"' has been saved", type: "flash", priority: 1 });
                 this.m.analysisHasChanged = true;
