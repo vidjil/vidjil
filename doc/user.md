@@ -390,6 +390,59 @@ To avoid overloading the IMGT servers that provide us this feature,
 after adding new clonotypes to the selection,
 one has to click on the refresh `↻` button to request the features for the new sequences.
 
+## Printable report
+
+A composent of the client is to generate specific report of your analysis.
+This report is highly composable.
+To access to it, click on the entrie `export report` inside the menu `ìmport/export`.
+
+### Report menu
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/report_menu_default.png"/>
+  </figure>
+  <i>
+  The report menu is prefilled with some defaults templates.
+  You can easily change it component
+  </i>
+
+This menu allow to set your report by used prefilled template and to save it if needed.
+
+It include 5 subsections:
+* preset selector: Fill with some preset with already fixed blocs. Once selected, you can modify his content and save it as a new template.
+* Samples: Only active samples at the time you open the menu is present here. Moreover, you can choose to switch some samples that you want to hide inside the report.
+* Locus: From here you can select locus th switch to hide them.
+* Color: Color to use can be setted here. First choice is for the global clonotype color. The second is specific at clonotype included in the report. If `use unique color` is selected, some bloc will give color only to selected clonotype.
+* Clonotypes: You can find here the list of clonotype that you choose to add to the report and you can also remove them from the list.
+* Reports sections: This panel allow to set the blocs to include or not in the report. You can reorder them and add new section. You can find plot that you include in the export (see below)
+* Show button: You can use this button to generate the report as setted.
+* Save: These buttons allow to save the report settings. The first button allow to save the settings as a user template. This template is limited at this analysis and need that you save analysis before leaving the page. The second allow to update selected template and is limited to user template.
+
+### Add clonotype to export
+
+To add clonotypes to report, select them and open the `tag selected clonotypes` button (Star icon) in the bottom right of the page.
+
+You will find the list of added clonotype in the report menu.
+
+
+### Add plot section to report
+
+Generated plots can be add to report. These plots will keep exact composition, as X/Y axis, filter on clonotype or axis.
+
+To add them, open the plot menu in the up left corner and click on `Add to next report`. Now you will find a new entry on the report menu with the name of axis.
+
+### Generate report
+
+The generated report will open a new browser tab. It composition will reflect settings setted previously.
+
+When sections is hovered, some icons appear in the top right of the section. These icons allow to make some modifications:
+* Reorder sections: You can move up/down sections using arrow icons.
+* Delete section: You can choose to delete some sections.
+* Add comment: You can add comments sections on the fly to the report. These comments sections are generated under the section that create them and offer the same customisation options that any other section.
+
+These modifications made from this tab will be included in your report template and you can make a new save of these settings.
+
+
 
 # The sample database and the server
 
