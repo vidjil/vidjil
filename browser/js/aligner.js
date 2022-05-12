@@ -762,6 +762,7 @@ Aligner.prototype = {
         var request = "";
         var system;
         var max=0;
+        var c;
 
         var sample_set_id = "(---)"
         if (typeof this.m.db_key != "undefined" &&
@@ -770,22 +771,22 @@ Aligner.prototype = {
             
         // Split list of clonotype by system
         var systems = {}
-        for (var i = 0; i < list.length; i++) {
-            if (this.isClone(list[i])) {
-                var c = this.m.clone(list[i]);
+        for (var l_pos = 0; l_pos < list.length; l_pos++) {
+            if (this.isClone(list[l_pos])) {
+                c = this.m.clone(list[l_pos]);
                 if (c.getSize()>max){
                     system = c.getLocus();
                     if (systems[system] == undefined){
-                        systems[system] = [list[i]]
-                    } else { systems[system].push(list[i]) }
+                        systems[system] = [list[l_pos]]
+                    } else { systems[system].push(list[l_pos]) }
                 }
             }
         }
         // Make recursive call if needed on each system
         var systems_keys = Object.keys(systems)
         if (systems_keys.length > 1) {
-            for (var i = 0; i < systems_keys.length; i++) {
-                var locus = systems_keys[i]
+            for (var key_pos = 0; key_pos < systems_keys.length; key_pos++) {
+                var locus = systems_keys[key_pos]
                 this.sendTo(address, systems[locus], callback)
             }
             return // bypass after recursive calls
@@ -793,7 +794,7 @@ Aligner.prototype = {
 
         for (var i = 0; i < list.length; i++) {
             if (this.isClone(list[i])) {
-                var c = this.m.clone(list[i]);
+                c = this.m.clone(list[i]);
                 
                 if (c.seg.imgt && address == 'IMGTSeg'){
                     if (c.seg.imgt.trimming_before  == this.m.trimming_before_external &&
