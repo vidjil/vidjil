@@ -222,6 +222,42 @@ describe('External Aligner', function () {
     return
   })
 
+  it('Aligner external provider reset if trimming',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis")
+
+    cy.get('#polyline0').click()
+
+    cy.get('#align-refresh-button')
+      .should("be.visible")
+
+    // before calling provider
+    cy.get('#align-refresh-button > span > .icon-arrows-ccw')
+      .should("exist")
+    cy.get("#icon_external_IMGT")
+      .should("have.class", "icon-arrows-ccw")
+
+    cy.get('#toIMGTseg').click({force:true})
+
+    cy.get('.identityBad')
+      .should("be.visible")
+
+    cy.get('#align-refresh-button > span > i')
+      .should("have.class", "icon-ok")
+
+    cy.get("#primerEcngs").click({force:true})
+
+    cy.get("#remove_primer_external").click({force:true})
+
+    // after trimming call
+    cy.get('#align-refresh-button > span > .icon-arrows-ccw')
+      .should("exist")
+    cy.get("#icon_external_IMGT")
+      .should("have.class", "icon-arrows-ccw")
+    return
+  })
+
+
+
   it('Aligner external provider - Get Correct Videntity',  function() {
     // Use ins/del event if available
     cy.openAnalysis("data/demo_lil_l3_tutorial.vidjil")
@@ -236,7 +272,6 @@ describe('External Aligner', function () {
       .should("exist")
     cy.get("#icon_external_IMGT")
       .should("have.class", "icon-arrows-ccw")
-
 
     cy.get('#align-refresh-button > span > .icon-arrows-ccw')
       .click({force:true})
