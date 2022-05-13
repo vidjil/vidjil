@@ -254,7 +254,8 @@ When there is only one sample, two such views are shown.
   - The default view, by V/J genes, focus on one recombination system within one locus.
     All the analyzes locus are on the right of the grid. You can select another locus by clicking on it or by using the associated shortcuts (see *Keyboard shortcuts* below).
 
-  - The “plot“ menu allow to customize the plots, by selecting the X and Y axes and also by switching between grid and bar plots.
+  - The “plot“ menu allows to customize the plots, by selecting the X and Y axes,
+    by switching between grid and bar plots, and also by saving plots for the next report.
     There are [20+ available axes](axes.md) to study the clonotypes.
     Some presets are available.
     For example, the preset 4, similar to a "Genescan analysis", shows a bar plot of the clonotypes according to the length of their consensus sequence,
@@ -284,7 +285,8 @@ to focus on the clonotypes, then to display them according either to their “cl
 or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
    - The “★” button (status bar, bottom right) allows
-   to tag at once all the selected clonotypes.
+   to tag at once all the selected clonotypes
+   and/or to select them for the next report.
 
 ## The sequence panel (bottom panel)
 
@@ -390,57 +392,48 @@ To avoid overloading the IMGT servers that provide us this feature,
 after adding new clonotypes to the selection,
 one has to click on the refresh `↻` button to request the features for the new sequences.
 
-## Printable report
+## The reports
 
-A composent of the client is to generate specific report of your analysis.
-This report is highly composable.
-To access to it, click on the entrie `export report` inside the menu `ìmport/export`.
+To export reports from your data, you may first select clonotypes and/or plots:
 
-### Report menu
+ - Select some clonotypes by using the “★” button (status bar, bottom right), and `add to next report`. These clonotyo
+
+ - On any grid or bar plot, open the “plot“ menu and again `add to next report`. These plots will keep the exact composition (X/Y axes, clonotype/axes filters).
+
+Then select `export report` inside the menu `ìmport/export`.
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/report_menu_default.png"/>
   </figure>
   <i>
-  The report menu is prefilled with some defaults templates.
-  You can easily change it component
+  The report menu with some default templates.
   </i>
 
-This menu allow to set your report by used prefilled template and to save it if needed.
+The report menu allows to select a *template* and to load a previously saved *report*,
+and to customize the report by:
 
-It include 5 subsections:
-* preset selector: Fill with some preset with already fixed blocs. Once selected, you can modify his content and save it as a new template.
-* Samples: Only active samples at the time you open the menu is present here. Moreover, you can choose to switch some samples that you want to hide inside the report.
-* Locus: From here you can select locus th switch to hide them.
-* Color: Color to use can be setted here. First choice is for the global clonotype color. The second is specific at clonotype included in the report. If `use unique color` is selected, some bloc will give color only to selected clonotype.
-* Clonotypes: You can find here the list of clonotype that you choose to add to the report and you can also remove them from the list.
-* Reports sections: This panel allow to set the blocs to include or not in the report. You can reorder them and add new section. You can find plot that you include in the export (see below)
-* Show button: You can use this button to generate the report as setted.
-* Save: These buttons allow to save the report settings. The first button allow to save the settings as a user template. This template is limited at this analysis and need that you save analysis before leaving the page. The second allow to update selected template and is limited to user template.
+* Showing or hiding any *sample*
+* Showing or hiding any *locus*
+* Selecting the *colors* for all clonotypes and for selected clonotypes
+* Updating the *clonotypes* you previously selected (with “★”),  possibly removing them for the report
+* Adding, moving, or deleting *reports sections*, including plots you previously selected (within the “plot“ menu)
 
-### Add clonotype to export
-
-To add clonotypes to report, select them and open the `tag selected clonotypes` button (Star icon) in the bottom right of the page.
-
-You will find the list of added clonotype in the report menu.
+`Show report` will then open the report (see below).
+The (possibly customized) report can also be saved for later reuse.
+Saved reports are stored when you "save" the analysis on a patient/sample.
+If you need other customized templates, please contact us.
 
 
-### Add plot section to report
+### Show report
 
-Generated plots can be add to report. These plots will keep exact composition, as X/Y axis, filter on clonotype or axis.
+The report opens a new browser tab.
+When a section is hovered, some icons at the top right allow to
+*move that section* (up/down),
+*delete that section*,
+and finally, under the current section,
+to *add a comment section* where you can enter a free text.
 
-To add them, open the plot menu in the up left corner and click on `Add to next report`. Now you will find a new entry on the report menu with the name of axis.
-
-### Generate report
-
-The generated report will open a new browser tab. It composition will reflect settings setted previously.
-
-When sections is hovered, some icons appear in the top right of the section. These icons allow to make some modifications:
-* Reorder sections: You can move up/down sections using arrow icons.
-* Delete section: You can choose to delete some sections.
-* Add comment: You can add comments sections on the fly to the report. These comments sections are generated under the section that create them and offer the same customisation options that any other section.
-
-These modifications made from this tab will be included in your report template and you can make a new save of these settings.
+Both regular and comment sections will be saved when you save the report.
 
 
 
