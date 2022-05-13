@@ -1048,6 +1048,32 @@ QUnit.test("export_json", function(assert) {
 
 });
 
+QUnit.test("Use IMGT getter", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    var c7 = new Clone(json_clone7, m, 0, c_attributes);
+    m.initClones();
+
+    c7.seg.imgt = {
+      "V-REGION identity %": "100.00",
+      "V-REGION identity nt": "111/111 nt",
+      "V-REGION identity % (with ins/del events)": "99.10",
+      "V-REGION identity nt (with ins/del events)": "110/111 nt"
+    }
+
+    assert.deepEqual(c7.getVIdentityIMGT(), "99.10",           "correct values getted if Videntity (with ins/del events)" )
+
+    c7.seg.imgt = {
+      "V-REGION identity %": "100.00",
+      "V-REGION identity nt": "111/111 nt",
+      "V-REGION identity % (with ins/del events)": "",
+      "V-REGION identity nt (with ins/del events)": ""
+    }
+
+    assert.deepEqual(c7.getVIdentityIMGT(), "100.00",           "correct values getted; if NO Videntity (with ins/del events)" )
+
+});
+
 
 QUnit.test("deletion_feature", function(assert) {
     var m = new Model();

@@ -161,7 +161,7 @@ describe('List', function () {
 
 
     // hide distrib clone by tag switch
-    cy.get('[title="smaller clonotypes"]')
+    cy.get('#tag_smaller_clonotype')
       .click()
 
 
@@ -178,7 +178,7 @@ describe('List', function () {
     // Remove filter
     cy.changePreset("V/J (genes)")
     cy.update_icon()
-    cy.get('#tag_smaller_clonotypes')
+    cy.get('#tag_smaller_clonotype')
       .click()
 
     cy.getCloneInList('29')
@@ -373,7 +373,7 @@ describe('List', function () {
     cy.get('.tagSelector').should("not.be.visible")
     cy.get('#tag_icon_0').click()
 
-    cy.get('.tagName0').click()
+    cy.get('.tagName_clonotype_1').click()
     cy.get('.tagSelector').should("not.be.visible")
     cy.getCloneInList(1).click() // click outside to not hover clonotype 0
     cy.update_icon()
@@ -382,7 +382,7 @@ describe('List', function () {
     // Tag multiple
     cy.selectCloneMulti([4, 5, 6])
     cy.get("#tag_icon__multiple").click()
-    cy.get('.tagName6').click()
+    cy.get('.tagName_custom_2').click()
     cy.selectClone(0)
     cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')
     cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')

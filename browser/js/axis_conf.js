@@ -277,7 +277,7 @@ AXIS_DEFAULT = {
         refresh:    function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"}
     },
     "[IMGT] VIdentity": {
-        doc:        "V identity (as computed by IMGT/V-QUEST)",
+        doc:        "V identity (as computed by IMGT/V-QUEST), with ins/del events if occur",
         fct:        function(clone) { 
                         var vIdentity = parseFloat(clone.getVIdentityIMGT()) 
                         if (isNaN(vIdentity)) return clone.getVIdentityIMGT()

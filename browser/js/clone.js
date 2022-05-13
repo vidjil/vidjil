@@ -1367,11 +1367,14 @@ Clone.prototype = {
         if (typeof this.seg.imgt !== 'undefined' &&
             this.seg.imgt !== null) {
 
-            if (typeof this.seg.imgt['V-REGION identity %'] != 'undefined')
-                return this.seg.imgt["V-REGION identity %"];
-
-            if (typeof this.seg.imgt['V-REGION identity % (with ins/del events)'] != 'undefined')
+            if (typeof this.seg.imgt['V-REGION identity % (with ins/del events)'] != 'undefined' &&
+                this.seg.imgt['V-REGION identity % (with ins/del events)'] != ''){
                 return this.seg.imgt["V-REGION identity % (with ins/del events)"];
+            }
+            if (typeof this.seg.imgt['V-REGION identity %'] != 'undefined'){
+                return this.seg.imgt["V-REGION identity %"];
+            }
+
         }
         return "unknown"
     },

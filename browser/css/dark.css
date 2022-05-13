@@ -331,7 +331,6 @@ span .end-codon {
 }
 /* base Vidjil style */
 /* @default, @background, @highlight, @select, @secondary and @border have to be defined */
-/* default tag color */
 /* #dcffed also available */
 #vmi-menu {
   top: 32px;
@@ -994,7 +993,7 @@ line {
 }
 /*menu*/
 .menu {
-  padding: 7px;
+  padding: 8px;
   float: left;
   cursor: pointer;
   background: inherit;
@@ -1797,7 +1796,7 @@ h3 .uid {
 #db_table_container {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(70%);
+  height: calc(100% - 30px);
   position: relative;
 }
 #db_fixed_header {
@@ -2089,35 +2088,7 @@ table.log textarea {
 .console-flex {
   flex-grow: 1;
 }
-.tagColor0 {
-  background: #dc322f;
-}
-.tagColor1 {
-  background: #cb4b16;
-}
-.tagColor2 {
-  background: #b58900;
-}
-.tagColor3 {
-  background: #268bd2;
-}
-.tagColor4 {
-  background: #6c71c4;
-}
-.tagColor5 {
-  background: #2aa198;
-}
-.tagColor6 {
-  background: #d33682;
-}
-.tagColor7 {
-  background: #859900;
-}
-.tagColor8 {
-  background: #839496;
-}
-.tagColor9 {
-  background: #bdbdbd;
+.tagColor_smaller_clones {
   margin-left: 7px;
 }
 .inactiveTag {

@@ -37,6 +37,9 @@ var devel_mode = false;
  * */
 console = new Com(console)
 
+if (config.load_error){
+    console.log({"type": "flash", "msg": "Loading of conf.js has failed.<br/>Does this script exist?", "priority": 3});
+}
 
 /* Model
  * The model is the main object of the Vidjil browser.

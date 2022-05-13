@@ -21,7 +21,7 @@ describe('Filters', function () {
 
     //change tag of clone0
     cy.get('#listElem_0').find('.starBox').click()
-    cy.get('.tagSelector').find('#tagElem_0').click()
+    cy.get('.tagSelector').find('#tagElem_clonotype_1').click()
 
     //filter tag 0 out
     cy.get('#info').find('.tagColorBox').first().click()

@@ -33,7 +33,7 @@ QUnit.test("Report: save/load", function(assert) {
     // overwrite existing file (overwrite false)
     report.addClones([2])
     assert.equal(report.clones.length, 2, "default report should now have 2 clone(s) selected, got " + report.clones.length);
-    report.save("new_save_1")
+    report.save("new_save_1", true)
     report.load("new_save_1")
     assert.equal(report.clones.length, 2, "test overwriting: default report should still have 2 clone(s) selected, got " + report.clones.length);
 
