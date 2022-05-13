@@ -1,6 +1,5 @@
 /* base Vidjil style */
 /* @default, @background, @highlight, @select, @secondary and @border have to be defined */
-/* default tag color */
 /* #dcffed also available */
 #vmi-menu {
   top: 32px;
@@ -618,6 +617,16 @@ line {
   display: none;
   background: #ffffff;
 }
+#clone_axes_selector {
+  padding: 5px;
+  position: absolute;
+  left: 475px;
+  top: 195px;
+  width: 220px;
+  border: solid;
+  background: #ffffff;
+  z-index: 15;
+}
 .dataMenu {
   padding: 5px;
   position: absolute;
@@ -653,7 +662,7 @@ line {
 }
 /*menu*/
 .menu {
-  padding: 7px;
+  padding: 8px;
   float: left;
   cursor: pointer;
   background: inherit;
@@ -771,7 +780,7 @@ line {
 }
 /*	//////////////////////////////////////////////////////////////	*/
 .popup_container {
-  z-index: 20;
+  z-index: 10;
   min-width: 450px;
   max-width: 80%;
   font-size: 13px;
@@ -849,7 +858,7 @@ a.tag-link {
 #menu,
 #list_clones,
 #tagSelector,
-#display-menu,
+#clone_axes_selector #display-menu,
 #bot-container {
   background: #ffffff;
 }
@@ -1022,7 +1031,8 @@ span.logo {
 .list_clones,
 .bot-bar,
 #bot-container,
-.tagSelector {
+.tagSelector,
+#clone_axes_selector {
   border-color: #333333;
 }
 #info_window td {
@@ -1325,7 +1335,7 @@ span.warningReads {
   cursor: pointer;
 }
 .db_div {
-  z-index: 5;
+  z-index: 20;
   position: fixed;
   top: 35px;
   width: 100%;
@@ -1747,35 +1757,7 @@ table.log textarea {
 .console-flex {
   flex-grow: 1;
 }
-.tagColor0 {
-  background: #dc322f;
-}
-.tagColor1 {
-  background: #cb4b16;
-}
-.tagColor2 {
-  background: #b58900;
-}
-.tagColor3 {
-  background: #268bd2;
-}
-.tagColor4 {
-  background: #6c71c4;
-}
-.tagColor5 {
-  background: #2aa198;
-}
-.tagColor6 {
-  background: #d33682;
-}
-.tagColor7 {
-  background: #859900;
-}
-.tagColor8 {
-  background: #777777;
-}
-.tagColor9 {
-  background: #bdbdbd;
+.tagColor_smaller_clones {
   margin-left: 7px;
 }
 .inactiveTag {
