@@ -159,7 +159,7 @@ Report.prototype = {
             savename = this.settings.name
         
 
-        console.confirmBox( "Define a new name for this report settings, </br>"+
+        console.confirmBox( "Enter a name to save this report</br>"+
                             "",
                             function(){self.save(console.confirm.input.val())},
                             savename)
