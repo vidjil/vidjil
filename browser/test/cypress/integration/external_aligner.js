@@ -254,7 +254,6 @@ describe('External Aligner', function () {
     cy.get("#icon_external_IMGT")
       .should("have.class", "icon-arrows-ccw")
     return
-    })
   })
 
 
