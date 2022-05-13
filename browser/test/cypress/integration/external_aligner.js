@@ -148,7 +148,7 @@ describe('External Aligner', function () {
 
 
   it('Aligner external provider - mix locus',  function() {
-    cy.openAnalysis("data/demo_lil_l3_tutorial.vidjil")
+    cy.openAnalysis("data/demo_lil_l3_0.vidjil")
 
     cy.selectCloneMulti([1, 4]) // Locus IGH && TRG
 
