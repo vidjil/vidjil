@@ -147,6 +147,34 @@ describe('External Aligner', function () {
   //menu in aligner top right corner (focus/hide/tag) are already tested in test_filter.js
 
 
+  it('Aligner external provider - mix locus',  function() {
+    cy.openAnalysis("data/demo_lil_l3_0.vidjil")
+
+    cy.selectCloneMulti([1, 4]) // Locus IGH && TRG
+
+    cy.get('#align-refresh-button')
+      .should("be.visible")
+
+    // before calling provider
+    cy.get('#align-refresh-button > span > .icon-arrows-ccw')
+      .should("exist")
+    cy.get("#icon_external_IMGT")
+      .should("have.class", "icon-arrows-ccw")
+
+
+    cy.get('#align-refresh-button > span > .icon-arrows-ccw')
+      .click({force:true})
+
+    // Both clonotype have a result
+    cy.get('#seq1 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad')
+      .should("be.visible") // IGH locus
+    cy.get('#seq4 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad')
+      .should("be.visible") // TRG locus
+
+    return
+  })
+
+
   it('Aligner external provider',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis")
 
