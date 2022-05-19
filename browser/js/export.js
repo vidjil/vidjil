@@ -109,6 +109,10 @@ function Report(model, settings) {
 
 Report.prototype = {
 
+    reset: function(){
+        this.settings = (JSON.parse(JSON.stringify(this.default_settings[this.default_setting]))); 
+    },
+
     // save current setting sheet
     save: function(savename, overwrite){
         var self=this;
