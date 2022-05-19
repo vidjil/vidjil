@@ -768,7 +768,7 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 % that two similar clones are far apart.
 
 \question{Press the keys \texttt{0} to \texttt{9} on the numeric keypad. What happens ?}
-\reponse{This allow to automatically switch between each preset. For preset greater than 9, you should press shift button on the same time.}
+\reponse{This switches the grid preset. Use shift + number to access to presets 10-19.}
 \begin{verbatim}
   def test_B_clones_29_shortcut_preset
 
@@ -890,7 +890,9 @@ be similar.
 \question{Choose now the preset \com{CDR3 length distribution} and
   then color by \com{size}.
   See that the color tiles in the info part (upper right) change to show the color key.}
-You can not that axis with continue values will have a gradient color tiles and some other axis with few discretes values will have a selector has for tag axis. Other, as V and J genes will not be reported in this section.
+Discrete axes (as tags) are shown with a selector.
+Some axes with many values (such as V and J genes) will not be displayed here.
+Continuous axes are shown with a radient color.
 \begin{verbatim}
   def test_B_clones_31_color_gradient
     $b.scatterplot_select_preset "CDR3 length distribution"
@@ -997,7 +999,7 @@ There may have several reasons:
   lower than 1 ($<10^{-5}$).
 \item Clone similar to another one: In that case Vidjil-algo tells you that
   other clones have the same genes and may be similar
-\item Several genes with equal probability: The algorithm have found several genes with the exact same evalue. This is possible when the sequence is too short to distinguish between allele or sometimes between various similar genes.
+\item Several genes with equal probability: The algorithm found several alleles or genes with the exact same e-value. This may happen when the sequence is too short.
 \item Non-recombined sequences: Some known unrecombined sequences are tagged
   so that you can spot them easily. We tag the unrecombined IGHD7-27/IGHJ1
   sequences that may be amplified.
@@ -1006,35 +1008,33 @@ There may have several reasons:
 You can view those values for any clone by clicking the \textit{i} icon on the
 right side, in the list of clones.
 
-You can also find a detailled list of existing warning at page [https://www.vidjil.org/doc/warnings/](https://www.vidjil.org/doc/warnings/)
+The existing warnings are listed on [https://www.vidjil.org/doc/warnings/](https://www.vidjil.org/doc/warnings/).
 
-\subsection{Show more information of the sequence}
+\subsection{Show sequence features and information}
 
-When you select a clonotype, you can see the sequence and VDJ position in the aligner by default.
-Now, you can also put more information on the clonotype by adding feature columns and overlays on sequence.
-
-Hover menus in the aligner header, next to the Align button. 
-You can see that each menus allow to set axis and values to show on each clonotype lines of the aligner.
-
-\question{Select both first clonotype in IGH and TRG. In the menu named \textit{Data columns}, check the \textit{productivity} entrie.}
+When you select a clonotype, you first see, in the aligner, the DNA sequence and its V, (D), and J segments.
+Next to the "align" button, menus allow to display more features or information about the sequences.
+ 
+\question{Select the first clonotypes both in IGH and TRG. Then in the \textit{Data columns} menu, click on \textit{productivity}.}
 
 \question{Now, click on the spin icon.}
 
-Each active provider will be interogate with the sequence and data will be incorporated inside the clonotype values. 
-Some values getted this way is showable, as for IMGt productivity that is show by default.
+This queries external tools to process the selected sequences (as for example IMGT/V-QUEST)
+and, after a short time, will add the results to the clonotyoes (as for example productivity computed by IMGT/V-QUEST, which is displayed by default).
 
-Providers list depends of the server setup. 
+Contact us if you have need to query other sofrware.
 
-You could also see a lot of sequence feature available.
 
-\question{Open the \textit{sequence feature} menu. Click on CDR3 and quality entries.}
+\question{Open the \textit{sequence feature} menu. Click on "CDR3" and "quality".}
 
-If you observe the clonotype sequencein the aligner, you should see 2 new overlays on sequences. First is the upside overlay to show the CDR3.
-The second is under the sequence and show a color for each base with a color indexed on the mean of reads quality at this position, with a gradient color from green for a correct quality to red for an insuficent one. 
-Usually, you can use this to align sequences and see if a mutation is provoqued by a sequencing artifact (bad quality value in red) or not.
-This feature is limited to window of the sequence.
+In the aligner, there are now two new overlays on sequences. 
+Above the sequence, the CDR3 is shown.
+Under the sequence, the base quality of each position is show, with a gradient color, from green (correct quality) to red (insuficent quality). The quality is now shown for the window centered on the CDR3.
 
-Note that some feature is not showable until you produce it as for \textit{primers} or \textit{IMGT productivity}.
+You should align sequence and see whether mutations between similar clonotypes may come from a technological artifact... or not.
+
+
+Note that some features, such as \textit{primers} or \textit{IMGT productivity}, are available only after some additional compution.
 
 
 
