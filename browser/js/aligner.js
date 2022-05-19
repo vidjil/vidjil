@@ -531,6 +531,13 @@ Aligner.prototype = {
         var keys2 = Object.keys(this.sequence)
         if (typeof list == "undefined") list = Object.keys(this.sequence)
 
+        //update germline sequence
+        for (var k in keys2)
+            if(isNaN(keys2[k]))
+                if (list.indexOf(keys2[k]) == -1)
+                    list.push(keys2[k])
+
+
         //update dom object of sequence in aligner
         var l_spacing;        
         for (var j=0; j<list.length; j++)  
