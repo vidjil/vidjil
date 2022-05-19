@@ -222,7 +222,7 @@ Aligner.prototype = {
                 self.selectedAxis = selectedAxis;
                 self.update();
             }else{
-                console.log({ msg: "selection is limited to 5", type: "flash", priority: 2 });
+                console.log({ msg: "Data columns selection is limited to 5.<br/>Please disable some axis before adding new one.", type: "flash", priority: 2 });
                 this.checked = false;
             }
             e.stopPropagation();            

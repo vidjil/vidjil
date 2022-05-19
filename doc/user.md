@@ -254,7 +254,8 @@ When there is only one sample, two such views are shown.
   - The default view, by V/J genes, focus on one recombination system within one locus.
     All the analyzes locus are on the right of the grid. You can select another locus by clicking on it or by using the associated shortcuts (see *Keyboard shortcuts* below).
 
-  - The “plot“ menu allow to customize the plots, by selecting the X and Y axes and also by switching between grid and bar plots.
+  - The “plot“ menu allows to customize the plots, by selecting the X and Y axes,
+    by switching between grid and bar plots, and also by saving plots for the next report.
     There are [20+ available axes](axes.md) to study the clonotypes.
     Some presets are available.
     For example, the preset 4, similar to a "Genescan analysis", shows a bar plot of the clonotypes according to the length of their consensus sequence,
@@ -284,7 +285,8 @@ to focus on the clonotypes, then to display them according either to their “cl
 or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
    - The “★” button (status bar, bottom right) allows
-   to tag at once all the selected clonotypes.
+   to tag at once all the selected clonotypes
+   and/or to select them for the next report.
 
 ## The sequence panel (bottom panel)
 
@@ -389,6 +391,50 @@ The `☰ IMGT` menu further allows to select features provided by IMGT/V-QUEST:
 To avoid overloading the IMGT servers that provide us this feature,
 after adding new clonotypes to the selection,
 one has to click on the refresh `↻` button to request the features for the new sequences.
+
+## The reports
+
+To export reports from your data, you may first select clonotypes and/or plots:
+
+ - Select some clonotypes by using the “★” button (status bar, bottom right), and `add to next report`. These clonotyo
+
+ - On any grid or bar plot, open the “plot“ menu and again `add to next report`. These plots will keep the exact composition (X/Y axes, clonotype/axes filters).
+
+Then select `export report` inside the menu `ìmport/export`.
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/report_menu_default.png"/>
+  </figure>
+  <i>
+  The report menu with some default templates.
+  </i>
+
+The report menu allows to select a *template* and to load a previously saved *report*,
+and to customize the report by:
+
+* Showing or hiding any *sample*
+* Showing or hiding any *locus*
+* Selecting the *colors* for all clonotypes and for selected clonotypes
+* Updating the *clonotypes* you previously selected (with “★”),  possibly removing them for the report
+* Adding, moving, or deleting *reports sections*, including plots you previously selected (within the “plot“ menu)
+
+`Show report` will then open the report (see below).
+The (possibly customized) report can also be saved for later reuse.
+Saved reports are stored when you "save" the analysis on a patient/sample.
+If you need other customized templates, please contact us.
+
+
+### Show report
+
+The report opens a new browser tab.
+When a section is hovered, some icons at the top right allow to
+*move that section* (up/down),
+*delete that section*,
+and finally, under the current section,
+to *add a comment section* where you can enter a free text.
+
+Both regular and comment sections will be saved when you save the report.
+
 
 
 # The sample database and the server

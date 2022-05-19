@@ -352,7 +352,8 @@ AXIS_DEFAULT = {
         autofill:   true,
     },
     "Number of samples" : {
-        label:      "number of samples sharing each clonotype",
+        doc:        "number of samples sharing each clonotype",
+        labels:     "number of samples sharing each clonotype",
         fct :       function(clone){return clone.getNumberNonZeroSamples()},
         scale:      {   
                         mode: "linear",
