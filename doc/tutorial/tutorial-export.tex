@@ -20,10 +20,12 @@ We can double check this designation with other popular software.
 Note that data returned by IMGT/V-QUEST is available by clicking on the \textit{i} icon of analyzed clones,
 enabling you to compare the annotations made by the original software and by IMGT/V-QUEST. 
 
-\question{Search clonotype with sequence \textit{GCAGCCTAAAGGCTGAGGACACCCGACAGGGTATGGACGTCTGGGGCCAA} and select it. Repeat the process to get hypermutation value showed in the aligner. Note this value for later comparaison.}
+
+%%% Un peu trop spécifique ?
+\question{Search a clonotype with sequence \textit{GCAGCCTAAAGGCTGAGGACACCCGACAGGGTATGGACGTCTGGGGCCAA} and select it. Use the aligner to get the  hypermutation value. Note this value for later comparaison.}
 
 \question{As see previously, change the primer set to \textit{Biomed2} that is the set use for this sequencing.}
-\question{Reopen the settings menu and check the line \textit{trim primers before external analysis}. Relunch imgt analysis and observe variation of hypermutation. Why this is happen ?}
+\question{Reopen the settings menu and check the line \textit{trim primers before external analysis}. Relaunch IMGT and observe variation of hypermutation. What happened ?}
 % A voir avec l'issue #5013
 
 \begin{verbatim}
@@ -64,29 +66,29 @@ For this demonstration data, you cannot save your changes as you do not have
 the rights to modify this patient.
 
 % TODO : créer un should-vdj automatiquement !
-\subsection{Exporting data by reports}
+\subsection{Exporting reports}
 
-Generate printable reports can be usefull in a clinical practice.
-You have the possibility to use default preset or compose and save your own sets of report.
-This allow to include specific blocks of content to reflect the sample, disease that you currently analyze. % reformuler 
+You can generate reports following predefined or custom templates, using different report sections
+to reflect the sample/disease you are analyzing.
 
-\question{In the export menu, open the report menu by clicking on \textit{export report} entrie.}
+\question{In the export menu, open the report menu with \textit{export report}.}
 
-We will use default `Full report` that should be already selected.
-In this menu, we can see various section:
-\begin{itemize}
-\item Samples: You can choose to hide some sample from the report. Note that this list is only compose of active sample. If you already hide a sample as seen previously, it will not be present.
-\item Locus: Click on tiles to switch locus inclusion in report.
-\item Color: As in current interface, it is possible to change the color of clones based on various axis.
-\item Clonotypes: Here will be the list of clonotypes added to the report that will be present and described. The list is empty for the moment and we will explained later how to insert them.
-\item Report sections: a list of section to include. You can reorder them from this menu (and later from the report directly), delete some and add other.
-\end{itemize}
+We start with the default `Full report`.
+You can custom this report buy showing or hiding any *sample*,
+showing or hiding any *locus*, selecting the *colors* for all clonotypes and for selected clonotypes,
+updating the *clonotypes* you previously selected (with "star"),  possibly removing them for the report,
+and finally adding, moving, or deleting *reports sections*, including plots you previously selected (within the “plot“ menu).
 
-\question{Select some clones and add them to report. To do so, click on star icon at the bottom rigth of the page. Reopen report menu. What happens?}
+\question{Close the report. Select clonotype by using the "star" button (status bar, bottom right), and "add to next report".
+Reopen the report menu.  What happens?}
+
+% On any grid or bar plot, open the “plot“ menu and again `add to next report`. These plots will keep the exact composition (X/Y axes, clonotype/axes filters).
+
+
 
 \question{Click on \textit{Show report} button.}
 
-A report is generated. It can be modify, commented and save or printed.
+The generated report can be updated, commented, saved, or printed.
 
 \question{Hover inside a section. What are the four icon that appear in ?}
 
