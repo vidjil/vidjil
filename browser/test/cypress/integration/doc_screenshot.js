@@ -1,20 +1,18 @@
+/// <reference types="cypress" />
 
-describe('Creation of users and groups', function () {
-    before(function () {
-        cy.login(Cypress.env('host'))
-        cy.close_tips()
-    })
+var localhost = true
+console.log( Cypress.env('workdir') )
+var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
+console.log( url )
+
+// This script allow to make some action in a sandbox to quicly change made on the client when you code
+describe('Test screenshot client', function () {
     beforeEach(function () {
-    })
-    afterEach(function () {
-    })
-    after(function () {
-        cy.clearCookies()
+        cy.setBrowser(url)
     })
 
     it('00-screenshot_on_opened_analysis',  function() {
 
-        cy.closeDBPage()
         
         cy.openAnalysis("doc/demo_lil_l3_tutorial.vidjil", "doc/demo_lil_l3_tutorial.analysis", 90000)
 
@@ -85,30 +83,6 @@ describe('Creation of users and groups', function () {
 
     })
 
-
-    it('01-screenshot_on_db',  function() {
-
-        cy.logout()
-        cy.fillLogin("user4@email.org", "OnePassword123")
-
-        cy.get('.db_msg')
-          .screenshot('table_db_content_patient_list')
-
-
-        cy.goToPatientPage()
-        var uid = 2;
-        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
-          .click({force: true})
-        cy.update_icon()
-
-        // cy.selectConfig(2)
-        // useless, patient created by public user, so no config switch available
-        
-        cy.get('.db_msg')
-          .screenshot('table_db_content_patient_0_multi_config')
-
-        return    
-    })
 
 
 })
