@@ -108,18 +108,17 @@ tuto-c1-ff-supported:
     - /^prod-client/
     - dev
     - doc
-  tags:
-    - cidocker
 
-# tuto-c2:
-#   extends:
-#     - tuto-c1-ff-supported
-#   parallel:
-#     matrix:
-#       - BROWSER: [
-#           firefox_latest/firefox,
-#           firefox_legacy/firefox,
-#           chrome_supported/chrome,
-#           chrome_latest/chrome,
-#           chrome_legacy/chrome
-#         ]
+
+tuto-c2:
+  extends:
+    - tuto-c1-ff-supported
+  parallel:
+    matrix:
+      - BROWSER: [
+          firefox_latest/firefox,
+          firefox_legacy/firefox,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
+          chrome_legacy/chrome
+        ]
