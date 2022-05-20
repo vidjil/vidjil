@@ -30,12 +30,11 @@ them to a same \com{run} and each of them to a single \com{patient}.
   three patients.
 }
 \begin{verbatim}
-  def test_001_start
-    table = go_to_list_patient
-    lines = table.tbody.rows
-    puts "Demo sees %s patients." % lines.count
-    assert(lines.count < 20)
-  end
+
+  cy.goToPatientPage()
+  cy.log(`There are ${cy.getTableLength("#table_users")} patients`)
+  cy.getTableLength("#table_users").should('be.lt', 20)
+/**
 
 \end{verbatim}
 

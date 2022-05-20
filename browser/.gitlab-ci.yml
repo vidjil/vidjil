@@ -99,6 +99,9 @@ tuto-c1-ff-supported:
     BROWSER: firefox_supported/firefox
     PATH_CYPRESS: browser/test/cypress/integration/
     TEST_FILES: "/app/cypress/integration/doc_*.js"
+  before_script:
+    - apt-get -y install pandoc
+    - make -C doc/tutorial/ build_tutorial_cypress_client
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
