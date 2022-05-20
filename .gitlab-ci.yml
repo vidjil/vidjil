@@ -1,8 +1,8 @@
 # Step 0, independant: deploy_review, deploy_review_server
 # Step 1, quicker: test_tools, test_browser_unit, code_quality_custom, test_server_unit
 # Step 2, moderate:
-#   client: client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial
-#   server: server_firefox_supported, server_tutorial_server
+#   client: client_firefox_supported, tuto-c1-ff-supported
+#   server: server_firefox_supported, tuto-s1-ff-supported
 # Step 3, late, longuer or tricky: 
 
 
@@ -88,17 +88,17 @@ include:
 .need_for_moderate_client:
   needs: [test_tools, test_browser_unit, code_quality_custom]
 .need_for_late_client:
-  needs: [client1-ff-supported, ff45-browser-functional, ff45-browser-tutorial]
+  needs: [client1-ff-supported, tuto-c1-ff-supported]
 .need_for_staged_client:
-  needs: [client1-ff-supported, ff45-browser-functional, ff45-browser-tutorial]
+  needs: [client1-ff-supported, tuto-c1-ff-supported]
 
 ### Server part should not containt client stage
 .need_for_moderate_server:
   needs: [test_tools, test_server_unit]
 .need_for_late_server:
-  needs: [server1-ff-supported, server_tutorial_server]
+  needs: [server1-ff-supported, tuto-s1-ff-supported]
 .need_for_staged_server:
-  needs: [server1-ff-supported, server_tutorial_server]
+  needs: [server1-ff-supported, tuto-s1-ff-supported]
 
 
 
