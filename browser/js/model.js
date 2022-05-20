@@ -351,7 +351,9 @@ Model.prototype = {
             this.view[i].reset();
         }
         this.closeOpenModal()
-
+        if (this.filter != undefined){
+            this.filter.filters = [{axis: "Top", operator:">", value:50}]
+        }
     },
     
     
