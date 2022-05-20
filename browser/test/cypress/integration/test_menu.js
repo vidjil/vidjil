@@ -57,7 +57,7 @@ describe('Test sandbox', function () {
     cy.getCloneSize("25").should("have.text", '0.129%') // Span show correct size before normalization"
     cy.get('#tag_icon_25').click()
 
-    cy.get('#norm_button').type('0.1{enter}')
+    cy.get('#norm_button').type('10{enter}')
     cy.getCloneSize("25").should("have.text", '10.00%') //Span show correct normalized size
 
     cy.open_menu_settings()
@@ -171,7 +171,7 @@ describe('Test sandbox', function () {
 
     cy.get("body")
       .should('have.css', 'background-color')
-      .and('eq', 'rgb(204, 204, 204)')
+      .and('eq', 'rgb(221, 221, 221)')
 
     cy.open_menu_palette()
     cy.get("#palette_dark").click({force: true})
@@ -182,7 +182,7 @@ describe('Test sandbox', function () {
     cy.get("#palette_light").click({force: true})
     cy.get("body")
       .should('have.css', 'background-color')
-      .and('eq', 'rgb(204, 204, 204)')  
+      .and('eq', 'rgb(221, 221, 221)')
   })
 
   it('06-Open tab manual',  function() {
