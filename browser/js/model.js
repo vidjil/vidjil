@@ -2187,6 +2187,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         } catch (e) {}
         
+        if (typeof date_min == "undefined") return "0"
+        
         return date_min
     },        
     
@@ -2206,7 +2208,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 }
             }
         } catch (e) {}
-        
+
+        if (typeof date_max == "undefined") return "0"
+
         return date_max
     },        
     
