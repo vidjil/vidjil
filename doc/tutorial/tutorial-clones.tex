@@ -5,9 +5,9 @@
 \begin{verbatim}
 
 
-  #################################
-  ### Viewing and filtering clones
-  #################################
+  // #################################
+  // ### Viewing and filtering clones
+  // #################################
 
 \end{verbatim}
 
@@ -23,15 +23,11 @@ is \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
 \reponse{The bottom panel display information about currently selected clones \fl 189 991 reads (9.665\,\%)}
 
 \begin{verbatim}
-  def test_B_clones_01_major
-    # major clone of sample 0 is clone 1 
-    clone = $b.clone_in_list("1").click
-    cinfo = $b.clone_info("1")
-    assert ( cinfo[:name].text == "IGHV3-9 7/CCCGGA/17 J6*02"), "correct name for first clone"
+  // test_B_clones_01_major
+  cy.selectClone('1')
+  cy.get('.focus').should('have.text', "IGHV3-9*01 7/CCCGGA/17 IGHJ6*02")
+  cy.get('.stats_content').should('have.text', '1 clonotype, 189 991 reads (9.665%) ')
 
-    stats = $b.statsline
-    assert (stats.text.include? '1 clonotype, 189 991 reads (9.665%)'),  "Correct stats, number of reads and percentage: " + stats.text
-  end
 \end{verbatim}
 
 
@@ -41,36 +37,32 @@ There are several options to display the V(D)J designation.
   default \com{sequence (when short)} setting to show the full N on short sequences.}
 
 \begin{verbatim}
-  def test_B_clones_02_setting_n_length
-    $b.menu_settings.click
-    $b.input(:id => "menuCloneNot_nucleotide_number").click
-    $b.update_icon.wait_while(&:present?) # wait update
-    cinfo = $b.clone_info("1")
-    assert ( cinfo[:name].text == "IGHV3-9 7/6/17 J6*02"), "correct name for first clone (nucleotide_number)"
-    cinfo30 = $b.clone_info("30")
-    assert ( cinfo30[:name].text == "IGHV3-13*05 1/55/16 J6*02"), "correct name for 30th clone (nucleotide_number)"
 
-    $b.menu_settings.click
-    $b.input(:id => "menuCloneNot_short_sequence").click
-    $b.update_icon.wait_while(&:present?) # wait update
-    cinfo = $b.clone_info("1")
-    assert ( cinfo[:name].text == "IGHV3-9 7/CCCGGA/17 J6*02"), "correct name for first clone (short_sequence)"
-    cinfo30 = $b.clone_info("30")
-    assert ( cinfo30[:name].text == "IGHV3-13*05 1/55/16 J6*02"), "correct name for 30th clone (short_sequence)"
+  // test_B_clones_02_setting_n_length
+  cy.get('#menuCloneNot_nucleotide_number')
+    .click({force: true})
+  cy.get('#listElem_1 > .nameBox')
+    .should('have.text', "IGHV3-9 7/6/17 J6*02")
+  cy.get('#listElem_30 > .nameBox')
+    .should('have.text', "IGHV3-13*05 1/55/16 J6*02")
 
-    $b.menu_settings.click
-    $b.input(:id => "menuCloneNot_full_sequence").click
-    $b.update_icon.wait_while(&:present?) # wait update
-    cinfo = $b.clone_info("1")
-    assert ( cinfo[:name].text == "IGHV3-9 7/CCCGGA/17 J6*02"), "correct name for first clone (full_sequence)"
-    cinfo30 = $b.clone_info("30")
-    assert ( cinfo30[:name].text == "IGHV3-13*05 1/GAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGG/16 J6*02"), "correct name for 30th clone (full_sequence)"
+  cy.get('#menuCloneNot_short_sequence')
+    .click({force: true})
+  cy.get('#listElem_1 > .nameBox')
+    .should('have.text', "IGHV3-9 7/CCCGGA/17 J6*02")
+  cy.get('#listElem_30 > .nameBox')
+    .should('have.text', "IGHV3-13*05 1/55/16 J6*02")
 
-    # Reset params as nucleotide number
-    $b.menu_settings.click
-    $b.input(:id => "menuCloneNot_nucleotide_number").click
-    $b.update_icon.wait_while(&:present?) # wait update
-  end
+  cy.get('#menuCloneNot_full_sequence')
+    .click({force: true})
+  cy.get('#listElem_1 > .nameBox')
+    .should('have.text', "IGHV3-9 7/CCCGGA/17 J6*02")
+  cy.get('#listElem_30 > .nameBox')
+    .should('have.text', "IGHV3-13*05 1/GAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGG/16 J6*02")
+
+  cy.get('#menuCloneNot_nucleotide_number')
+    .click({force: true})
+
 \end{verbatim}
 
 \question{Try also the options  \com{alleles in clonotype names} : by selecting \com{always}, the clone
@@ -80,26 +72,23 @@ There are several options to display the V(D)J designation.
 
 
 \begin{verbatim}
-  def test_B_clones_03_setting_allele
-    $b.menu_settings.click
-    $b.input(:id => "menuAlleleNot_never").click
-    $b.update_icon.wait_while(&:present?) # wait update
-    cinfo = $b.clone_info("1")
-    assert ( cinfo[:name].text == "IGHV3-9 7/6/17 J6"), "correct name for first clone (menuAlleleNot_never): " + cinfo[:name].text
 
-    $b.menu_settings.click
-    $b.input(:id => "menuAlleleNot_when_not_01").click
-    $b.update_icon.wait_while(&:present?) # wait update
-    cinfo = $b.clone_info("1")
-    assert ( cinfo[:name].text == "IGHV3-9 7/6/17 J6*02"), "correct name for first clone (menuAlleleNot_when_not_01)"
+  // test_B_clones_03_setting_allele
+  cy.get('#menuAlleleNot_never')
+    .click({force: true})
+  cy.get('#listElem_1 > .nameBox')
+    .should('have.text', "IGHV3-9 7/6/17 J6")
 
-    $b.menu_settings.click
-    $b.input(:id => "menuAlleleNot_always").click
-    $b.update_icon.wait_while(&:present?) # wait update
-    cinfo = $b.clone_info("1")
-    assert ( cinfo[:name].text == "IGHV3-9*01 7/6/17 J6*02"), "correct name for first clone (menuAlleleNot_always)"
+  cy.get('#menuAlleleNot_when_not_01')
+    .click({force: true})
+  cy.get('#listElem_1 > .nameBox')
+    .should('have.text', "IGHV3-9 7/6/17 J6*02")
 
-  end
+  cy.get('#menuAlleleNot_always')
+    .click({force: true})
+  cy.get('#listElem_1 > .nameBox')
+    .should('have.text', "IGHV3-9*01 7/6/17 J6*02")
+
 \end{verbatim}
 
 \subsection{Showing more clones}
@@ -116,41 +105,31 @@ slider to its right end.
 \reponse{filter set to 50 \fl IGH smaller clonotypes 10.11\,\%\\*
  filter set to 100 \fl IGH smaller clonotypes 8.92\,\%\\*}
 \begin{verbatim}
-  def test_B_clones_04_filter_slider
-    if not ENV['HEADLESS']
-      # Igh small position: 454
-      cinfo = $b.clone_info("454")
-      assert ( cinfo[:size].text == "10.11%"), "correct name for first clone (short_sequence)"
+  // test_B_clones_04_filter_slider
+  // Igh smaller position: 454
 
-      ## Change slider value
-      assert ( not $b.clone_in_list('308').present?), "small clone is not present in list (before slider increase)"
-      slider = $b.menu_item("top_slider")
-      slider.click
-      $b.menu_filter.hover
-      slider.send_keys :arrow_right 
-      slider.send_keys :arrow_right
-      slider.send_keys :arrow_right
-      $b.clone_in_list("0").click
-      ### exist in scatterplot
-      $b.clone_in_list('308').wait_until(&:present?) # "small clone is present in list (after slider increase)"
-      assert ( not $b.clone_in_list('309').present?), "Not all real clones are present in list"
 
-      ## control by size of smaller clone
-      assert ( cinfo[:size].text == "9.768%"), "correct name for first clone (short_sequence)"
+  cy.getCloneSize("454").should('have.text', "10.11%")
+  cy.getCloneInList('308').should("not.visible")
 
-      ### decrease by slider usage
-      slider = $b.menu_item("top_slider")
-      slider.click
-      $b.menu_filter.hover
-      slider.send_keys :arrow_left 
-      $b.clone_in_list("0").click
-      $b.update_icon.wait_while(&:present?)
+  cy.getSliderTop().invoke("val", 100)
+    .trigger("change", { force: true })
+    .click({ force: true })
+    // small clone is present in list (after slider increase)
 
-      ### exist in scatterplot
-      assert ( not $b.clone_in_list('308').present?), "a small clone is hidden if slider decrease"
-      assert ( cinfo[:size].text == "10.11%"), "correct name for first clone (short_sequence) after decrease slider value"
-    end
-  end
+  cy.getCloneInList('308').should("exist")
+
+  cy.getCloneInList('309').should("not.visible") //"Not all real clones are present in list"
+  cy.getCloneSize("454").should('have.text', "8.920%")
+
+
+  cy.getSliderTop().invoke("val", 50)
+    .trigger("change", { force: true })
+    .click({ force: true })
+  cy.getCloneSize("454").should('have.text', "10.11%")
+  cy.getCloneInList('308').should("not.visible")
+
+
 \end{verbatim}
 
 The \textit{smaller clonotypes} correspond to clones that are not displayed
@@ -165,23 +144,22 @@ Usually we may want to tag them in order to remember them later on.
   Notice how the color applies throughout all the views.}
 
 \begin{verbatim}
-  def test_B_clones_05_tag_biggest_clone
-    # control default color of clones
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(101, 123, 131, 1)' )
+  // test_B_clones_05_tag_biggest_clone
 
-    $b.clone_in_list("0").click
-    $b.clone_info("1")[:star].click # top IGH
-    $b.tag_item('clonotype_1')[:name].click
-    $b.clone_info("4")[:star].click # top TRG 
-    $b.tag_item('clonotype_2')[:name].click
-    $b.clone_info("0")[:star].click ## clone rechute
-    $b.tag_item('standard_2')[:name].click
-    $b.update_icon.wait_while(&:present?)
-    $b.clone_in_list("5").click ## select other clone to see real color of clone 0
+  // control default color of clones
+  cy.getCloneInList(0).should('have.css', 'color', 'rgb(101, 123, 131)')
 
-    # New color
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
-  end
+  // Tag multiple times one clonotype
+  cy.get('#tag_icon_1').click()
+  cy.get('.tagName_clonotype_1').click()
+  cy.get('#tag_icon_4').click()
+  cy.get('.tagName_clonotype_2').click()
+  cy.get('#tag_icon_0').click()
+  cy.get('.tagName_standard_2').click()
+  cy.selectClone("5") // select other clone to see real color of clone 0
+  cy.getCloneInList(0).should('have.css', 'color', 'rgb(108, 113, 196)')
+
+
 \end{verbatim}
 
 Later you may want to filter clones depending on the tags you have chosen.
@@ -190,18 +168,23 @@ Later you may want to filter clones depending on the tags you have chosen.
   second coloured square starting from the right). What happens? What if you click again?}
 
 \begin{verbatim}
-  def test_B_clones_06_filter_by_tag
-    assert ($b.clone_in_list("1").present?), "clone 0 is present at starting test"
+  // test_B_clones_06_filter_by_tag
 
-    # Click on tag switch; clone 1 will be hidden
-    $b.info_colorBy.span(title: 'clonotype 1').click
-    $b.update_icon.wait_while(&:present?)
-    assert (not $b.clone_in_list("1").present?), "clone 0 is hidden"
+  cy.get('#listElem_454 > .nameBox')
+    .scrollIntoView()
 
-    $b.info_colorBy.span(title: 'clonotype 1').click
-    $b.update_icon.wait_while(&:present?)
-    assert ($b.clone_in_list("1").present?), "clone 0 is present at the end of the test"
-  end
+  cy.get('#listElem_1')
+    .should("be.visible")
+
+  cy.getCloneInList("1")
+  cy.switchTag("clonotype_1")
+
+  cy.getCloneInList('1').should("not.be.visible")
+
+  cy.switchTag("clonotype_1")
+  cy.getCloneInList('1').should("be.visible")
+
+
 \end{verbatim}
 
 This is a way of filtering some clones. This may be useful when we want to
@@ -213,9 +196,10 @@ their gene names or by their DNA sequences.
 
 
 \begin{verbatim}
-  def test_B_clones_06b_filter_by_tag
-    # TODO
-  end
+
+  // test_B_clones_06b_filter_by_tag
+  // TODO
+
 \end{verbatim}
 
 Note that the search is performed both on the forward and the reverse strand.
@@ -224,39 +208,31 @@ Note that the search is performed both on the forward and the reverse strand.
 \question{How can you cancel this filter and view again all the clones?}
 
 \begin{verbatim}
-  def test_B_clones_07_filter_search_area
-    ## test that clone are present before filtering
-    assert ( $b.clone_in_list('0').present?),  ">> clone 0 is present"
-    assert ( $b.clone_in_list('1').present?),  ">> clone 1 is present"
-    #assert ( $b.clone_in_list('212').present?),  ">> clone 212 is present"
-    assert ( $b.clone_in_list('454').present?),  ">> clone 454 is present"
+  // test_B_clones_07_filter_search_area
 
-    filter = $b.filter_area
-    filter.value = 'CCCCGACTCC'
-    $b.send_keys :enter
-    $b.update_icon.wait_while(&:present?)
-    # clone present before filtering; not after
-    assert ( not $b.clone_in_list('0').present?), ">> clone 0 is hidden"
-    assert ( not $b.clone_in_list('1').present?), ">> clone 1 is hidden"
-    #assert ( not $b.clone_in_list('212').present?), ">> clone 212 is hidden"
-    assert ( not $b.clone_in_list('454').present?), ">> clone 454 is hidden"
-    # clones that should stay present (19 clones, test somes)
-    assert (     $b.clone_in_list('6').present?),   ">> clone 6   is present even with filtering"
-    assert (     $b.clone_in_list('142').present?), ">> clone 142 is present even with filtering"
-    assert (     $b.clone_in_list('51').present?),  ">> clone 51  is present even with filtering"
-    assert (     $b.clone_in_list('52').present?),  ">> clone 52  is present even with filtering"
-    assert (     $b.clone_in_list('16').present?),  ">> clone 16  is present even with filtering"
+  // cy.getCloneInList('0').should("be.visible")
+  cy.getCloneInList('1').should("be.visible")
+  cy.getCloneInList('454').should("be.visible")
 
-    # tester le nombre de clone présents
 
-    $b.clear_filter.click
-    $b.clone_in_scatterplot('1').hover
-    ## test that clone are present again after remove filter
-    assert ( $b.clone_in_list('0').present?),   ">> clone 0 is present again"
-    assert ( $b.clone_in_list('1').present?),   ">> clone 1 is present again"
-    #assert ( $b.clone_in_list('212').present?), ">> clone 212 is present again"
-    assert ( $b.clone_in_list('454').present?), ">> clone 454 is present again"
-  end
+  cy.filterSearch('CCCCGACTCC')
+
+  // cy.getCloneInList('0').should("not.be.visible")
+  cy.getCloneInList('1').should("not.be.visible")
+  cy.getCloneInList('454').should("not.be.visible")
+
+  //clones that should stay present (19 clones, test somes)
+  cy.getCloneInList('6').scrollIntoView().should("be.visible")
+  cy.getCloneInList('142').scrollIntoView().should("be.visible")
+  cy.getCloneInList('51').scrollIntoView().should("be.visible")
+  cy.getCloneInList('52').scrollIntoView().should("be.visible")
+  cy.getCloneInList('16').scrollIntoView().should("be.visible")
+
+  cy.filterSearchReset()
+  cy.getCloneInList('1').scrollIntoView().should("be.visible")
+  cy.getCloneInList('454').scrollIntoView().should("be.visible")
+
+
 \end{verbatim}  
 \bigskip
 
@@ -265,16 +241,17 @@ Another solution to tag a specific clone is to rename it.
   choose another name (\textit{e.g.} interesting clone) and validate using
   \texttt{Enter}.}
 \begin{verbatim}
-  def test_B_clones_08_change_clone_name
-    $b.clone_in_list("1").click
-    cinfo = $b.clone_info("1")
-    cinfo[:name].double_click # set mode to allow setting
+  // test_B_clones_08_change_clone_name
 
-    $b.clone_name_editor.set 'interesting clone'
-    $b.clone_name_saver.click
-    $b.update_icon.wait_while(&:present?)
-    assert (cinfo[:name].text == 'interesting clone'), " >> clone name ('interesting clone') has changed"
-  end
+  cy.getCloneInList('1')
+    .dblclick()
+  cy.get('#new_name')
+    .type("interesting clone")
+  cy.get('#btnSave').click()
+
+  cy.getCloneInList('1')
+    .should('have.text', "interesting clone")
+
 \end{verbatim}
 
 \bigskip
@@ -284,26 +261,21 @@ After this rename, you can see that the clone is still selected.
   more. Each time you add a new clone to the selection, its sequence
   is added in the bottom part.}
 \begin{verbatim}
-  def test_B_clones_09_multiselection
-    $b.menu_filter.click
-    $b.update_icon.wait_while(&:present?)
-    $b.send_keys 4
-    $b.update_icon.wait_while(&:present?)
-    # to verify correct selection, We will look in segmenter the presence if clone entrie
-    # Maybe another method could be more acurate
-    
-    $b.clone_in_list("1").click
-    $b.update_icon.wait_while(&:present?)
-    assert ( not $b.clone_in_segmenter('0').present? ), ">> Another click; Clone 0 should not be present anymore in segmenter"
-    assert (     $b.clone_in_segmenter('1').present? ), ">> Another click; Correct selection of clone 1 after second click in scatterplot"
-   
-    $b.clone_in_list("0").click(:control)
-    $b.update_icon.wait_while(&:present?)
-    # clone is present in segmenter
-    assert ( $b.clone_in_segmenter('0').present? ), ">> ctrl+click; Clone 0 should be present in segmenter"
-    assert ( $b.clone_in_segmenter('1').present? ), ">> ctrl+click; Clone 1 should be present in segmenter"
-    # As whell than their sequences ? TODO
-  end
+
+  // test_B_clones_09_multiselection
+  cy.changePreset("read length distribution")
+  // to verify correct selection, We will look in segmenter the presence if clone entrie
+  // Maybe another method could be more acurate
+
+  cy.selectClone("1")
+  cy.getCloneInList('0').should("not.be.visible") //Clone 0 should not be present anymore in segmenter
+  cy.getCloneInList('1').should("be.visible") // Correct selection of clone 1 after second click in scatterplot
+
+  cy.selectCloneMulti([0, 1])
+  cy.getCloneInSegmenter(0)
+  cy.getCloneInSegmenter(1)
+
+/**
 \end{verbatim}
 
 \question{How many clones are selected? How many reads do those clones
