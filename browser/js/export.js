@@ -128,6 +128,12 @@ Report.prototype = {
             return;
         }   
 
+        // we are on a template settings, save as a new report instead
+        if(typeof this.default_settings[savename] != "undefined"){
+            this.saveas()
+            return;
+        }
+        
         this.settings.name = savename;
 
         keys = Object.keys(this.default_settings)
@@ -245,11 +251,12 @@ Report.prototype = {
                               value: savename}).appendTo(optgrp_users);
         }
         optgrp_users.appendTo(select);
-
+/*
         if(typeof this.default_settings[this.settings.name] != "undefined")
             $("#rs-save-button").addClass("disabledClass")
         else
             $("#rs-save-button").remove("disabledClass")
+*/
     },
 
     initSamples: function(){
