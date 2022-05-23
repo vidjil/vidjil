@@ -481,7 +481,7 @@ Report.prototype = {
             self.menu();
         }
 
-        var div_select = $('<div/>',   {text: "Add section: "}).appendTo(block_list);
+        var div_select = $('<div/>',   {class : "rs-flex", text: "Add section: "}).appendTo(block_list);
 
         var select = $('<select/>', { name: 'rs-new-block-select',
                                       id:   'rs-new-block-select' }).appendTo(div_select).change(handle2);
