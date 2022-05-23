@@ -900,8 +900,13 @@ Report.prototype = {
         return svg_graph
     },
     
+    
     addGraph : function(block) {
-        
+    
+        // We can't output a monitoring graph with a single sample 
+        if (report.settings.samples.length < 2)
+            return this
+
         //resize 791px ~> 21cm
         graph.resize(791,250)
         graph.draw(0)
