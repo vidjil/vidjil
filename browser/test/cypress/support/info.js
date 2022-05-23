@@ -9,3 +9,8 @@ Cypress.Commands.add('close_sample_info', () => {
   cy.get('.data-container > .closeButton > .icon-cancel').click()
   cy.get("#info_timepoint").should("not.exist")
 })
+
+Cypress.Commands.add('switchTag', (name) => { 
+  cy.get(`#tag_${name}`).click()
+})
+
