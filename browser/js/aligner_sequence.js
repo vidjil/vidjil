@@ -45,10 +45,10 @@ Sequence.prototype = {
                     str = this.m.clone(this.id).sequence;
             }
             else{
-                str = this.seq.join('').replaceAll(SYMBOL_VOID, "")
+                str = this.seq.join('').replace(/\–/g, "")
             }
         }
-        str = str.replaceAll(/\-/g, SYMBOL_VOID);
+        str = str.replace(/\-/g, SYMBOL_VOID);
         this.seq = str.split("");
         this.seqAA = str.split("");
         this.computePos();
