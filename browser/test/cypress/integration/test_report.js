@@ -12,36 +12,6 @@ describe('Report', function () {
     })
 
 
-  it('export_disable',  function() {
-    cy.openAnalysis("doc/analysis-example1.vidjil")
-
-    // single sample -> disable monitor report
-    cy.get('#export_monitor_report')
-      .invoke('css', 'pointer-events')
-      .should('equal', 'none')
-
-    // sequence not aligned -> disable export align
-    cy.get('#export_fasta_align')
-      .invoke('css', 'pointer-events')
-      .should('equal', 'none')
-
-    return
-  })
-
-  it('export_monitor',  function() {
-    cy.openAnalysis("doc/analysis-example2.vidjil")
-
-    // multi sample -> enable monitor report
-    cy.get('#export_monitor_report')
-      .invoke('css', 'pointer-events')
-      .should('equal', 'auto')
-
-    //TODO
-
-    return
-  })
-
-
   it('export_fasta',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 

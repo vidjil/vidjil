@@ -351,7 +351,9 @@ Model.prototype = {
             this.view[i].reset();
         }
         this.closeOpenModal()
-
+        if (this.filter != undefined){
+            this.filter.filters = [{axis: "Top", operator:">", value:50}]
+        }
     },
     
     
@@ -700,7 +702,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             // 4 - new fused => {index : [{locus: values}]}
             var diversity_by_locus = {}
             var locus;
-    	    if (this.diversity[key][time] == 'na') {
+    	    if (this.diversity[key][time] == 'na' ||
+                (Array.isArray(this.diversity[key]) && this.diversity[key][time] == null) ) {
                 return // Append if no diversity computable by fuse (AIRR import for exemple)
             } else{
                 if (typeof this.diversity[key] == "number"){ // case 1

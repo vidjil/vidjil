@@ -23,10 +23,11 @@
       --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
       --shm-size=1GB
       --network="host"
-      "vidjilci/cypress_with_browsers:latest" bash script.bash
+      "vidjilci/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
   variables:
     CYPRESS_PATH: server/web2py/applications/vidjil/tests/cypress
     HOST: local
+    TEST_FILES: "/app/cypress/integration/test_*.js"
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/

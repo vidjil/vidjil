@@ -157,7 +157,7 @@ describe('Scatterplot', function () {
     cy.get('#time1')
       .trigger('mouseover')
     cy.get("#visu2_tooltip") // tooltip text don't have '\n'
-      .should("have.text", "T8045-BC082-fu12019-12-27+10250 000 reads (57.19%)") //Correct text in tshe sample tooltip
+      .should("have.text", "T8045-BC082-fu12019-12-27+10300 000 reads (65.53%)") //Correct text in tshe sample tooltip
 
     // mouseover_without_dates
     cy.openAnalysis("/doc/analysis-example.vidjil")
