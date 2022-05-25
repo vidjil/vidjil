@@ -113,5 +113,5 @@ Cypress.Commands.add('changePreset', (value) => {
   cy.get(".axis_select_preset_select")
     .select(value, {force: true})
     .trigger('change', {force: true})
-  cy.update_icon()
+  cy.update_icon(10000)
 })
