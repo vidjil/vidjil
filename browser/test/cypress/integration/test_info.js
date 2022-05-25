@@ -14,7 +14,7 @@ describe('Colors', function () {
     cy.get('.button > .icon-info').click()
 
     cy.get('#line_index_Ds_diversity > :nth-child(2)')
-      .should("have.text", "null")
+      .should("have.text", "undefined")
   })
 
   //check color and info panel are updated after selecting a new axis as color
