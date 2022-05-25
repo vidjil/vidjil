@@ -33,3 +33,17 @@ Cypress.Commands.add('filterSearchReset', () => {
     .click()
 })
 
+
+Cypress.Commands.add('openTagPanelOneClone', (id) => {
+  cy.get(`#tag_icon_${id}`).click({force: true})
+  cy.get(`#tag_panel_clones_${id}`).should('be.visible')
+})
+
+
+Cypress.Commands.add('changeTagClone', (id, tagname) => {
+  cy.openTagPanelOneClone(id)
+  cy.get(`.tagName_${tagname}`).click()
+  cy.get(`#tag_panel_clones_${id}`).should('not.be.visible')
+  cy.get('.tagSelector').should('not.be.visible')
+})
+
