@@ -623,38 +623,6 @@ Report.prototype = {
         return this;
     },
     
-    
-    defaultList: function() {
-        var list = []
-        
-        //use taged clones 
-        var tag=0
-        while (tag < 8 && list.length < 10) {
-            for (var i = 0; i < this.m.clones.length; i++) {
-                var clone_tag = this.m.clone(i).getTag()
-                if (clone_tag == tag && this.m.clone(i).isActive && !this.m.clone(i).virtual) list.push(i)
-            }
-            tag++
-        }
-        
-        //add best two clones from each system
-        if (list.length <5){
-            for (var k=0; k<2; k++){
-                for (var l=0; l<this.m.system_available.length; l++){
-                    var system = this.m.system_available[l]
-                    
-                    var clone = -1
-                    for (var j=0; j<this.m.clones.length; j++) {
-                        if (list.indexOf(j)==-1 && this.m.clone(j).germline==system && 
-                            (clone==-1 || this.m.clone(j).top < this.m.clone(clone).top ) && !this.m.clone(j).virtual) clone=j
-                    }
-                    if (clone!=-1) list.push(clone)
-                }
-            }
-        }
-        return list
-    },
-    
     //add a new container to the html report 
     container : function(title, block, sibling) {
         var self = this;
@@ -856,6 +824,7 @@ Report.prototype = {
         
     },
 
+    // TODO: make it use block 
     softwareInfo : function(time) {
         var sinfo = this.container("Software information ("+this.m.getStrTime(time, "short_name")+")");
          var div = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
@@ -929,6 +898,7 @@ Report.prototype = {
         return this;
     },
     
+    //TODO
     normalizeInfo: function (block) {
         if (this.m.normalization_mode != this.NORM_FALSE){
             var container = this.container("Normalization", block)
@@ -1051,7 +1021,7 @@ Report.prototype = {
                 this.sampleInfo(conf)
                 break;
             case "reads_stats":
-                this.readsStat3(conf)
+                this.readsStat(conf)
                 break;
             case "monitor":
                 this.addGraph(conf)
@@ -1165,7 +1135,7 @@ Report.prototype = {
         return this
     },
     
-    readsStat3: function(block, time_list, locus_list) {
+    readsStat: function(block, time_list, locus_list) {
         if (typeof time_list == "undefined")  time_list  = this.m.samples.order;
         if (typeof locus_list == "undefined") locus_list = this.m.system_selected;
         var container = this.container('Samples, loci, reads', block)
@@ -1214,130 +1184,6 @@ Report.prototype = {
         }
 
         return line;
-    },
-
-    readsStat: function(time) {
-        if (typeof time == "undefined") time = -1
-        var container = this.container('Reads')
-                
-        var reads_stats = $('<div/>', {'class': 'flex'}).appendTo(container);
-        
-        var head = $('<div/>', {'class': 'float-left', 'id': 'segmentation-report'}).appendTo(reads_stats);
-        $('<div/>', {'class': 'case', 'text': ' '}).appendTo(head);
-        $('<div/>', {'class': 'case', 'text': 'total'}).appendTo(head);
-        $('<div/>', {'class': 'case', 'text': 'analyzed'}).appendTo(head);
-
-        if (this.m.system_selected.length < this.m.system_available.length) {
-            $('<div/>', {'class': 'case', 'text': 'selected locus'}).appendTo(head); 
-        }
-        
-        if (this.m.system_available.length>1){
-            for (var i=0; i<this.m.system_selected.length; i++){
-                var system = this.m.system_selected[i]
-                var system_label = $('<div/>', {'class': 'case', 'text': system}).appendTo(head);
-                $('<span/>', {'class': 'system_colorbox', style:'background-color:'+this.m.germlineList.getColor(system)}).appendTo(system_label);
-            }
-        }
-
-        var box;
-        if (time == -1){
-            for (var j=0; j<this.m.samples.order.length; j++){
-                var t = this.m.samples.order[j]
-                box=this.readsStat2(t)
-                box.appendTo(reads_stats);
-            }
-        }else{
-            box=this.readsStat2(time)
-            box.appendTo(reads_stats);
-        }
-        
-        return this;
-    },
-    
-    readsStat2: function (time){
-        var box = $('<div/>', {'class': 'float-left'})
-        $('<div/>', {'class': 'case centered', 'text': this.m.getStrTime(time, "short_name")}).appendTo(box);
-        $('<div/>', {'class': 'case centered', 'text': this.m.toStringThousands(this.m.reads.total[time])}).appendTo(box);
-        
-        var segmented = ((this.m.reads.segmented_all[time]/this.m.reads.total[time])*100).toFixed(0) + "%"
-        var seg_box = $('<div/>', {'class': 'case centered', 'text': segmented}).appendTo(box);
-        $('<div/>', {'class': 'background1'}).appendTo(seg_box);
-        $('<div/>', {'class': 'background2', style: 'width:'+segmented}).appendTo(seg_box);
-        
-        if (this.m.system_selected.length < this.m.system_available.length) {
-
-            segmented = ((this.m.reads.segmented[time]/this.m.reads.total[time])*100).toFixed(0) + "%"
-            seg_box = $('<div/>', {'class': 'case centered', 'text': segmented}).appendTo(box);
-            $('<div/>', {'class': 'background1'}).appendTo(seg_box);
-            $('<div/>', {'class': 'background2', style: 'width:'+segmented}).appendTo(seg_box);
-        }
-
-        if (this.m.system_available.length>1){
-            var pie = $('<div/>').appendTo(box);
-            
-            var pie_label = $('<div/>', {'class': 'left'}).appendTo(pie);
-            for (var j=0; j<this.m.system_selected.length; j++){
-                var system = this.m.system_selected[j]
-                var value = ((this.m.systemSize(system,time))*100).toFixed(0) + "%"
-                $('<div/>', {'class': 'case', 'text': value}).appendTo(pie_label);
-            }
-            
-            var pie_chart = $('<div/>', {'class': 'left'}).appendTo(pie)
-            var p = this.systemPie(time)
-            p.setAttribute('style','margin:5px')
-            pie_chart.append(p)
-        }
-        
-        return box
-    },
-    
-    systemPie: function(time) {
-        if (typeof time == "undefined") time = this.m.t
-        var radius = 40
-        var pie = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        pie.setAttribute("viewBox","0 0 100 100");
-        pie.setAttribute("width",(radius*2)+"px");
-        pie.setAttribute("height",(radius*2)+"px");
-        
-        var start = 0
-        for (var i=0; i<this.m.system_selected.length; i++){
-            var system = this.m.system_selected[i]
-            var value = this.m.systemSize(system,time)
-            var angle = Math.PI*2*(value)
-            var stop = start+angle
-
-            var slice;
-            if (value <1){
-                slice = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    
-                var x1 = radius * Math.sin(start);
-                var y1 = -radius * Math.cos(start);
-                var x2 = radius * Math.sin(stop);
-                var y2 = -radius * Math.cos(stop);
-                
-                var longArc = (stop-start <= Math.PI) ? 0 : 1;
-                
-                //d is a string that describes the path of the slice.
-                var d = " M " + radius + " " + radius + " L " + (radius + x1) + " " + (radius + y1) + 
-                        " A " + radius + " " + radius + " 0 "+longArc+" 1 " + (radius + x2) + " " + (radius + y2) + 
-                        " z ";       
-                slice.setAttribute('d', d);
-                slice.setAttribute('fill', this.m.germlineList.getColor(system));
-                pie.appendChild(slice)
-            }else{
-                slice = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                    
-                slice.setAttribute('r', radius)
-                slice.setAttribute('cx', radius)
-                slice.setAttribute('cy', radius)
-                slice.setAttribute('fill', this.m.germlineList.getColor(system));
-                pie.appendChild(slice)
-            }
-            
-            start = stop;
-        }
-
-        return pie
     },
     
     cloneList : function(time) {
