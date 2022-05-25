@@ -23,6 +23,11 @@ QUnit.module("Clone", {
                 "start": 10,
                 "stop": 12,
                 "productive": true
+            },
+            "clonedb": {
+                "–": "No occurrence of this clonotype in CloneDB",
+                "original": [],
+                "clones_names": {}
             }
         }
     }
@@ -320,6 +325,9 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.includes(html, 
         "<tr id='modal_line_V_gene_or_5_'><td id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td><td colspan='4' id='modal_line_value_V_gene_or_5_'>testV5<div class='div-menu-selector' id='listVsegment' style='display: none'><form name=Vsegment>",
         "getHtmlInfo: segmentation information (V gene) after changment");
+
+    // Test external seg key (cloneDB) in html report
+    assert.includes(html, "No occurrence of this clonotype in CloneDB");
 
     // Test junction in html export
     assert.includes(html, "<tr id='modal_line_junction'><td id='modal_line_title_junction'>junction</td><td colspan='4' id='modal_line_value_junction'>att</td></tr>",

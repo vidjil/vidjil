@@ -1795,7 +1795,7 @@ Clone.prototype = {
                   var keys = Object.keys(this.seg[s]).sort();
                   for (var key_seg = 0; key_seg < keys.length; key_seg++) {
                       var sub = keys[key_seg]
-                      html += row_cast_content(sub, this.seg[s][sub], time_length)
+                      html += row_cast_content(sub, this.seg[s][sub], time_length, self)
                   }
             }
         }
@@ -1811,7 +1811,7 @@ Clone.prototype = {
                   var keys_seg = Object.keys(this[thiskey]).sort();
                   for (var key_segthis = 0; key_segthis < keys_seg.length; key_segthis++) {
                       var subthis = keys_seg[key_segthis]
-                      html += row_cast_content(subthis, this[thiskey][subthis], time_length)
+                      html += row_cast_content(subthis, this[thiskey][subthis], time_length, self)
                   }
             }
         }

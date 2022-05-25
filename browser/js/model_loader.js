@@ -129,6 +129,8 @@ Model_loader.prototype = {
                 .files[0].name;
             self.check_export_monitor()
             self.file_source = "local";
+            if (typeof report != "undefined") 
+                report.reset()
         }
         this.loading_is_pending = false
 

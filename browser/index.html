@@ -752,25 +752,43 @@
     <div id="report-menu" class="">
         <div style="text-align: center;"><b>Export report</b></div>
 
-        Templates, saved reports: <div id="report-settings-save">
+        <div class="rs-header">
+            Templates, user reports: 
+            <div class="rs-flex" id="report-settings-save">
+
+                <div style="float: right;">
+                    <button id="rs-saveas-button" type="button" onclick="report.saveas();">Create new report</button>
+                </div>
+            </div> 
+
 
         </div>
+            
 
-        <div class="menu_box" id="report-settings-sample-select">
-            <div class="">
-                Sample(s) <span id="rs-selected-sample-count" style="float: right;"></span>
+        <div  id="report-settings-sample-select">
+            <div class="rs-header">
+                SAMPLE(S) <span id="rs-selected-sample-count" style="float: right;"></span>
             </div>
         </div>
 
-        <div class="menu_box" id="report-settings-locus-select">
-            <div class="">
-                Locus
+        <div  id="report-settings-locus-select">
+            <div class="rs-header">
+                LOCUS
             </div>
         </div>
 
-        <div class="menu_box" id="report-settings-color-select">
-            <div class="">
-                Color 
+        <div  id="report-settings-clones">
+            <div class="rs-header">
+                CLONOTYPE(S)
+                <span id="rs-selected-clones-count" style="float: right;"></span>
+            </div>
+            <div class="rs-flex-parent-v" id="report-clones-list">
+            </div>
+        </div>
+
+        <div  id="report-settings-color-select">
+            <div class="rs-header">
+                COLOR
             </div>
             <table class="rs-flex-parent-v">
                 <tr class="">
@@ -783,27 +801,19 @@
 
         </div>
 
-        <div class="menu_box" id="report-settings-clones">
-            <div class="">
-                Clonotypes
-                <span id="rs-selected-clones-count" style="float: right;"></span>
-            </div>
-            <div class="rs-flex-parent-v" id="report-clones-list">
-            </div>
-        </div>
-
-        <div class="menu_box"  id="report-settings-block">
-            <div class="">
-                Report sections
+        <div  id="report-settings-block">
+            <div class="rs-header">
+                SECTIONS
             </div>
         </div>
 
         <div style="text-align: center;">
             <button type="button" onclick="report.print();">Show report</button>
         </div>
+
         <div style="float: right;">
-            <button id="rs-saveas-button" type="button" onclick="report.saveas();">Save as a new report</button>
             <button id="rs-save-button" type="button" onclick="report.save(undefined,true);">Save this report</button>
         </div>
+
     </div>
 </template>
