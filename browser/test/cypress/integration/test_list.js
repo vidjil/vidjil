@@ -399,7 +399,7 @@ describe('List', function () {
     cy.getCloneInList(101).should("have.text", "TRD smaller clonotypes").should('be.visible')
     cy.getCloneInList(99 ).should("have.text", "TRA smaller clonotypes").should('be.visible')
     cy.getCloneInList(102).should("have.text", "IGH smaller clonotypes").should('be.visible')
-    cy.getCloneInList(103).should("have.text", "ERG smaller clonotypes").should('not.be.visible') // not present in sample 1
+    cy.getCloneInList(103).should("have.text", "ERG smaller clonotypes").should('be.visible') // not present in sample 1; but present
 
     // Correct order in list
     cy.get('#list_clones')
