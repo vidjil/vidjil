@@ -2611,6 +2611,7 @@ div.tooltip {
   border-width: 0px 1px;
   border-color: #cccccc;
   padding: 1px;
+  margin-left: 15px;
 }
 .rs-flex-parent-h {
   display: flex;
@@ -2619,6 +2620,11 @@ div.tooltip {
   align-content: stretch;
   justify-content: center;
   padding: 1px;
+  margin-left: 15px;
+}
+.rs-flex {
+  padding: 1px;
+  margin-left: 15px;
 }
 .rs-sample {
   flex: 1 1 0px;
@@ -2644,7 +2650,8 @@ div.tooltip {
   user-select: none;
   cursor: pointer;
   padding: 1px 1px 0px 1px;
-  width: 65px;
+  width: 70px;
+  max-width: 100px;
 }
 .rs-selected {
   opacity: 1;
@@ -2664,4 +2671,18 @@ div.tooltip {
 }
 .rs-selected:hover {
   background: lightgray;
+}
+.rs-header {
+  font-weight: bold;
+  margin: 3px 0px;
+  border-top: solid;
+  border-width: 1px;
+  border-color: #aaa;
+  padding: 4px 0px 0px 0px;
+}
+#report-menu {
+  width: 650px;
+}
+#rs-new-block-select {
+  max-width: 200px;
 }

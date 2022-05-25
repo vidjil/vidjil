@@ -14,7 +14,7 @@
 
 Load now some data with several samples, such as again the \textit{Demo LIL-L3} dataset.
 The \textit{time graph} shows the evolution of the top clones of each sample into all the samples.
-Bear in mind that to ensure readability at most 50 curves are displayed in this graph.
+Bear in mind that to ensure readability at most 10 curves are displayed in this graph by time point.
 \marginpar{When loading data with only one sample, the time graph is replaced by a second bar/grid plot.}
 
 \question{Pass the mouse over the bubbles in the grid or over the lines in the time graph.
@@ -63,6 +63,8 @@ easily track the changes along time. Also note that the number of analyzed
 reads differ from the previous point. We can again analyse the reason why some
 reads were unsegmented.
 
+\question{Hover labels of the time graph. What are you seeing ? }
+
 \bigskip
 
 We will look now at how the V gene distribution evolves along the time.
@@ -97,6 +99,7 @@ the evolution of another information.
 \bigskip
 
 We remind that by default at most 50 clones are displayed
+% verifier ça.
 on the time graph. However the remaining of the application usually displays
 the 50 \textit{most abundant clones} at each sample (which can account to hundreds of
 clones, when having several samples).
@@ -138,7 +141,8 @@ Another case of usage is to load a run analysis with a lot of sample, and to res
 
 Open the menu to the upper right corner of graph. you can see that their are 3 buttons and 5 entries in the list corresponding to the list of samples.
 See the effet of the button here
-\question{Hover a sample name. See what happend.}
+The name dispayed in the list is set accordingly with the settings choice for \textit{samples key}.
+\question{Hover a sample name in the list. See what happend.}
 \begin{verbatim}
   ////////////////////
   // test_C_samples_06

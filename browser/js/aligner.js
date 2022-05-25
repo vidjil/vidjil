@@ -222,7 +222,7 @@ Aligner.prototype = {
                 self.selectedAxis = selectedAxis;
                 self.update();
             }else{
-                console.log({ msg: "selection is limited to 5", type: "flash", priority: 2 });
+                console.log({ msg: "Data columns selection is limited to 5.<br/>Please disable some axis before adding new one.", type: "flash", priority: 2 });
                 this.checked = false;
             }
             e.stopPropagation();            
@@ -530,6 +530,13 @@ Aligner.prototype = {
         var keys = Object.keys(this.index)
         var keys2 = Object.keys(this.sequence)
         if (typeof list == "undefined") list = Object.keys(this.sequence)
+
+        //update germline sequence
+        for (var k in keys2)
+            if(isNaN(keys2[k]))
+                if (list.indexOf(keys2[k]) == -1)
+                    list.push(keys2[k])
+
 
         //update dom object of sequence in aligner
         var l_spacing;        

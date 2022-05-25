@@ -38,11 +38,15 @@ Sequence.prototype = {
         if (typeof str === 'undefined') {
 
             //this is a clone sequence
-            if (!isNaN(this.id)) 
+            if (!isNaN(this.id)){
                 if (typeof this.m.clone(this.id).sequence == 'undefined' || this.m.clone(this.id).sequence === 0) 
                     str = this.m.clone(this.id).id;
                 else
-                    str = this.m.clone(this.id).sequence;      
+                    str = this.m.clone(this.id).sequence;
+            }
+            else{
+                str = this.seq.join('').replace(/\–/g, "")
+            }
         }
         str = str.replace(/\-/g, SYMBOL_VOID);
         this.seq = str.split("");
