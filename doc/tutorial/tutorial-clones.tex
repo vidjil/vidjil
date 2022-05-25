@@ -23,6 +23,7 @@ is \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
 \reponse{The bottom panel display information about currently selected clones \fl 189 991 reads (9.665\,\%)}
 
 \begin{verbatim}
+  /////////////////////////
   // test_B_clones_01_major
   cy.selectClone('1')
   cy.get('.focus').should('have.text', "IGHV3-9*01 7/CCCGGA/17 IGHJ6*02")
@@ -148,6 +149,7 @@ Usually we may want to tag them in order to remember them later on.
   Notice how the color applies throughout all the views.}
 
 \begin{verbatim}
+  /////////////////////////////////////
   // test_B_clones_05_tag_biggest_clone
 
   // control default color of clones
@@ -170,6 +172,7 @@ Later you may want to filter clones depending on the tags you have chosen.
   second coloured square starting from the right). What happens? What if you click again?}
 
 \begin{verbatim}
+  /////////////////////////////////
   // test_B_clones_06_filter_by_tag
 
   cy.get('#listElem_454 > .nameBox')
@@ -210,6 +213,7 @@ Note that the search is performed both on the forward and the reverse strand.
 \question{How can you cancel this filter and view again all the clones?}
 
 \begin{verbatim}
+  //////////////////////////////////////
   // test_B_clones_07_filter_search_area
 
   // cy.getCloneInList('0').should("be.visible")
@@ -243,6 +247,7 @@ Another solution to tag a specific clone is to rename it.
   choose another name (\textit{e.g.} interesting clone) and validate using
   \texttt{Enter}.}
 \begin{verbatim}
+  /////////////////////////////////////
   // test_B_clones_08_change_clone_name
 
   cy.getCloneInList('1')
