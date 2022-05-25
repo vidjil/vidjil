@@ -34,7 +34,7 @@ them to a same \com{run} and each of them to a single \com{patient}.
   cy.goToPatientPage()
   cy.log(`There are ${cy.getTableLength("#table_users")} patients`)
   cy.getTableLength("#table_users").should('be.lt', 20)
-/**
+
 
 \end{verbatim}
 
@@ -56,12 +56,12 @@ upper left corner
   Thus click twice on \com{add patient} and once on \com{add run}.
 }
 \begin{verbatim}
-  def test_002_add_new_patient
-    $b.a(:class => "button button_token patient_token", :text => "patients").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
+  ///////////////////////////
+  // test_002_add_new_patient
+    cy.goToPatientPage()
+    cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'patient\'})"]')
+    .click()
 
-    $b.element(:class => "button2", :text => "+ new patients").click
-  end
 
 \end{verbatim}
 
@@ -77,9 +77,13 @@ upper left corner
   called Patient 4).
 }
 \begin{verbatim}
-  def test_003_add_new_patient
-    ## Add 2 new patients + run lines
-    $b.span(:id => "patient_button").click
+  ///////////////////////////
+  // test_003_add_new_patient
+    // Add 2 new patients + run lines
+    cy.get("#patient_button").click()
+    cy.get("#patient_button").click()
+
+    /**
     $b.span(:id => "patient_button").click
     # delete last line
     form = $b.set_add_form
@@ -93,19 +97,19 @@ upper left corner
 \question{ Now you can fill the mandatory fields (circled with red) and,
   optionally, the other fields.}
 \begin{verbatim}
- 
-  def test_004_fill_new_patient
+  ////////////////////////////
+  // test_004_fill_new_patient
 
     ## Add 2 new patients + run lines
     $b.span(:id => "run_button").click
     $b.set_selected_owner_grp("public")
 
     ## Fill forms
-    $b.fill_patient_form(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "")
-    $b.fill_patient_form(1, "id_p2", "First_name_2", "Last_name_2", "2000-01-01", "")
-    $b.fill_patient_form(3, "id_p3", "First_name_3", "Last_name_3", "2000-01-01", "")
-    $b.fill_run_form(0, "id_r1", "run_name 1", "2010-01-01", "run informations #tagtest")
-  end
+    cy.createPatient(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "")
+    cy.createPatient(1, "id_p2", "First_name_2", "Last_name_2", "2000-01-01", "")
+    cy.createPatient(3, "id_p3", "First_name_3", "Last_name_3", "2000-01-01", "")
+    cy.createRun(0, "id_r1", "run_name 1", "2010-01-01", "run informations #tagtest")
+ 
 
 \end{verbatim}
 

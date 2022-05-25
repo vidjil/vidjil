@@ -19,7 +19,17 @@ describe('Tutorial server', function () {
   // ######################################
   // ### Manipulate server and database
   // ######################################
-  it('00-tutorial-server',  function() {
+
+  it('00-Before all launching',  function() {
+        // Cypress can't navigate between multiple superdomain (even http/https)
+        // This test allow to launch the before all test, with init database (only available at http)
+        // See https://docs.cypress.io/guides/guides/web-security#Same-superdomain-per-test
+        assert.isTrue(true, "Should init database (error visit https after http)")
+        cy.screenshot('tutorial_server_init_state')
+
+    })
+
+  it('01-tutorial-server',  function() {
 
 
 \end{verbatim}
