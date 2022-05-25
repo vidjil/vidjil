@@ -12,6 +12,7 @@ Cypress.Commands.add('changeSortList', (axis) => {
   cy.get('#list_sort_select')
     .select(axis, {force: true})
     .should('have.value', axis)
+    .trigger('change', {force: true})
 })
 
 

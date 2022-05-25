@@ -14,3 +14,12 @@ Cypress.Commands.add('switchTag', (name) => {
   cy.get(`#tag_${name}`).click()
 })
 
+
+Cypress.Commands.add('getInfoAnalysedReads', () => {
+  cy.get('#info_segmented > :nth-child(2)')
+})
+
+Cypress.Commands.add('getInfoSelectedLocus', () => {
+  cy.get('#info_selected_locus > :nth-child(2)')
+})
+
