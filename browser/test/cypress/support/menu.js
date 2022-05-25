@@ -34,7 +34,7 @@ Cypress.Commands.add('change_name_key', (type_name) => {
   cy.close_menu()
 })
 
-Cypress.Commands.add('change_colorby', (color_by) => {
+Cypress.Commands.add('changeColorby', (color_by) => {
   cy.get('#color_menu_select')
     .select(color_by)
 })
