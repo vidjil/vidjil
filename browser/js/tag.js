@@ -226,6 +226,7 @@ TagManager.prototype = {
             string = "Tag for "+this.m.clone(clonesIDs[0]).getName()
         }
         this.tagSelectorInfo.innerHTML = string
+        this.tagSelectorInfo.id = `tag_panel_clones_${clonesIDs}`
         $(this.tagSelector).show();
 
         // selector size
