@@ -178,11 +178,11 @@ describe('List', function () {
     // Remove filter
     cy.changePreset("V/J (genes)")
     cy.update_icon()
-    cy.get('#tag_smaller_clonotype')
+    cy.get('#tag_smaller_clonotype') // switch back
       .click()
 
     cy.getCloneInList('29')
-      .should('not.be.visible') // seg5/seg3 distrib clone is present in list
+      .should('be.visible') // seg5/seg3 distrib clone is present in list
       .should('have.css', 'display', 'block')
   })
 
