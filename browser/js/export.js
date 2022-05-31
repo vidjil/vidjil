@@ -1002,8 +1002,8 @@ Report.prototype = {
 
     },
 
-    addBlock : function(block) {
-        if (this.indexOfBlock(block) == -1){
+    addBlock: function(block) {
+        if (this.indexOfBlock(block) == -1 && !this.isUniqueBlock(block)){
             this.settings.blocks.push(block)
             console.log({ msg: "Section added to the report", type: "flash", priority: 1 });
         }
@@ -1121,6 +1121,32 @@ Report.prototype = {
             block = this.settings.blocks.splice(index, 1)[0];
             this.settings.blocks.splice(index+1, 0, block);
         }
+    },
+
+    isUniqueBlock: function(block){
+        if (typeof block.blockType != "string")
+            return true
+
+        if (typeof this.available_blocks[block.blockType] != "object")
+            return true
+
+        if (typeof this.available_blocks[block.blockType].unique == "boolean")
+            return this.available_blocks[block.blockType].unique
+
+        return true
+    },
+
+    isInMenuBlock: function(block){
+        if (typeof block.blockType != "string")
+            return false
+
+        if (typeof this.available_blocks[block.blockType] != "object")
+            return false
+
+        if (typeof this.available_blocks[block.blockType].inMenu == "boolean")
+            return this.available_blocks[block.blockType].inMenu
+
+        return false
     },
 
     scatterplot : function(block) {
