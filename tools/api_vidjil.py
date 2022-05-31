@@ -17,6 +17,7 @@ from collections import defaultdict
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+
 TAGS = []
 TAGS_UNDEFINED = []
 url  = "https://localhost/vidjil/"
@@ -54,6 +55,11 @@ def prettyUrl(string: str):
 
 class Vidjil:
 
+    PATIENT = "patient"
+    RUN = "run"
+    SET = "generic"
+
+    COMPLETED = "COMPLETED"
 
     def __init__(self, url_server:str, url_client:str=None, ssl:str=True):
         """_summary_
@@ -86,6 +92,8 @@ class Vidjil:
             Exception: Error of server that return an incorect exit code
 
         """
+        print()
+        print('### %s (%s)' % (self.url_server, email))
         response = self.session.get(self.url_server + '/default/user/login', verify=self.ssl)
         if not "auth_user_email__row" in str(response.content):
             raise Exception( "Login; server don't return a correct login form.\nPlease verify your url and certificate parameters.")
@@ -107,8 +115,8 @@ class Vidjil:
             raise Exception( "Login; error at login step.\nStatus code is %s and content is '%s'."  % (response.status_code, response.content))
         else:
             self.logged = True
-            print( "Successfull login")
-            self.whoami()
+            print( "Successful login")
+            # self.whoami()
             # todo; print admin status; groups ?
 
     def request(self, url:str, method:str, error_msg:bool=False, bypass_error:bool=False):
