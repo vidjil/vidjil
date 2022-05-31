@@ -67,6 +67,7 @@ tuto-s1-ff-supported:
   stage: test_tutorial
   extends:
     - .test_cypress_server
+    - .need_for_moderate_client
   variables:
     BROWSER: firefox_supported/firefox
     PATH_CYPRESS: server/web2py/applications/vidjil/tests/cypress/integration

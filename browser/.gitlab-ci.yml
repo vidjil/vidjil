@@ -95,6 +95,7 @@ tuto-c1-ff-supported:
   stage: test_tutorial
   extends:
     - .test_cypress_base
+    - .need_for_moderate_client
   variables:
     BROWSER: firefox_supported/firefox
     PATH_CYPRESS: browser/test/cypress/integration/
