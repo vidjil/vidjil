@@ -120,7 +120,7 @@ slider to its right end.
   cy.getCloneSize("454").should('have.text', "10.11%")
   cy.getCloneInList('308').should("not.visible")
 
-  cy.getSliderTop().invoke("val", 100)
+  cy.getSliderTop().invoke("val", 65)
     .trigger("change", { force: true })
     .click({ force: true })
     // small clone is present in list (after slider increase)
@@ -128,7 +128,7 @@ slider to its right end.
   cy.getCloneInList('308').should("exist")
 
   cy.getCloneInList('309').should("not.visible") //"Not all real clones are present in list"
-  cy.getCloneSize("454").should('have.text', "8.920%")
+  cy.getCloneSize("454").should('have.text', "9.828%")
 
 
   cy.getSliderTop().invoke("val", 50)
