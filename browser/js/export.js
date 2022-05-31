@@ -538,10 +538,15 @@ Report.prototype = {
         var options = parameter.options()
         for (var i in options) {
             var o = options[i]
+
             var text = o
             if (parameter.pretty) text = parameter.pretty(o)
+
+            var selected = false
+            if (o == block[parameter.name]) selected = true
+            
             $('<option/>',  {   text:  text,
-                                //selected: true,
+                                selected: selected,
                                 value: o}).appendTo(select);
         }
 
