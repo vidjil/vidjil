@@ -796,7 +796,7 @@ Report.prototype = {
     sampleInfo : function(block) {
         var time = block.time
 
-        var sinfo = this.container("Sample information ("+this.m.getStrTime(time, "short_name")+")")
+        var sinfo = this.container("Sample information ("+this.m.getStrTime(time, "short_name")+")", block)
         var left = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
         
         var content = [
