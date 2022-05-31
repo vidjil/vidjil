@@ -471,6 +471,15 @@ Report.prototype = {
                                         class: "icon-up-open button_right", 
                                         title: "move this section down"
                                         }).click(handle_up).appendTo(div)
+
+            //this block has parameters
+            if (this.available_blocks[conf.blockType] && this.available_blocks[conf.blockType].parameters){   
+                for (p in this.available_blocks[conf.blockType].parameters){
+                    var parameter = this.available_blocks[conf.blockType].parameters[p]
+                    var div_parameter = this.parameterDiv(conf, parameter).appendTo(div)
+                }
+            }
+
         }
 
 
@@ -504,6 +513,29 @@ Report.prototype = {
         }
 
     },  
+
+    parameterDiv: function(block, parameter){
+
+        var handle = function(){
+            if (this.value)
+                block[parameter.name] = this.value
+        }
+
+        var div = $('<div/>',   {class : "rs-flex", text: parameter.name+": "}) 
+        var select = $('<select/>').change(handle).appendTo(div);
+
+        var options = parameter.options()
+        for (var i in options) {
+            var o = options[i]
+            var text = o
+            if (parameter.pretty) text = parameter.pretty(o)
+            $('<option/>',  {   text:  text,
+                                //selected: true,
+                                value: o}).appendTo(select);
+        }
+
+        return div
+    },
 
     getBlockName: function(conf){
         var text = ""
