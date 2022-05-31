@@ -523,10 +523,13 @@ Report.prototype = {
     },  
 
     parameterDiv: function(block, parameter){
+        var self = this;
+
+        var blockIndex = this.indexOfBlock(block)
 
         var handle = function(){
             if (this.value)
-                block[parameter.name] = this.value
+                self.settings.blocks[blockIndex][parameter.name] = this.value
         }
 
         var div = $('<div/>',   {class : "rs-flex", text: parameter.name+": "}) 
