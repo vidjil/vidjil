@@ -71,8 +71,13 @@ function Report(model, settings) {
     this.available_blocks = {
         "file_info":    {'name': "Report information",  'unique': true,     'inMenu': true },
         "reads_stats":  {'name': "Reads stats per locus",'unique': true,    'inMenu': true },
-        "sample_info":  {'name': function (c){ return "Sample information: ["+ self.m.getStrTime(c.time , "name")+"]"},
-                                                        'unique': false,    'inMenu': true },
+        "sample_info":  {'name': "Sample information",  'unique': false,    'inMenu': true,
+                         'parameters':[{
+                                    'name': 'time',
+                                    'default' : function(b){ return b.time},
+                                    'options' : function() { return m.samples.order},
+                                    'pretty'  : function(t){return self.m.getStrTime(t, "name")} 
+                                      }]},
         "monitor":      {'name': "Monitor",             'unique': true,     'inMenu': true },
         "log_db":       {'name': "Database log",        'unique': true,     'inMenu': true },
         "clones":       {'name': "Clones",              'unique': true,     'inMenu': true,
