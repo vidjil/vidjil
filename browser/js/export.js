@@ -490,7 +490,10 @@ Report.prototype = {
 
         var handle2 = function(){
             var block = {blockType : this.value }
-            if (this.value == "sample_info") block.time = self.m.t
+            if (this.value == "sample_info") {
+                block.time = self.m.t
+                block.timestamp = Date.now()
+            }
             self.addBlock(block);
             self.menu();
         }
