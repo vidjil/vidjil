@@ -473,7 +473,7 @@ Report.prototype = {
 
             //this block has parameters
             if (this.available_blocks[conf.blockType] && this.available_blocks[conf.blockType].parameters){   
-                for (p in this.available_blocks[conf.blockType].parameters){
+                for (var p in this.available_blocks[conf.blockType].parameters){
                     var parameter = this.available_blocks[conf.blockType].parameters[p]
                     
                     if (parameter.options)
@@ -483,7 +483,6 @@ Report.prototype = {
                     
                 }
             }
-
         }
 
 
