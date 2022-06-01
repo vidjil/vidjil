@@ -26,7 +26,7 @@ function Report(model, settings) {
                     {blockType: "reads_stats"},
                     {blockType: "monitor"},
                     {blockType: "scatterplot"},
-                    {blockType: "clones"},
+                    {blockType: "clones", info : ["productivity", "hypermutation", "5length"]},
                     {blockType: "log_db"},
                     {blockType: "comments"},
                     ],
@@ -43,7 +43,7 @@ function Report(model, settings) {
                 {blockType: "sample_info", time: this.m.t},
                 {blockType: "reads_stats"},
                 {blockType: "scatterplot"},
-                {blockType: "clones"},
+                {blockType: "clones", info : []},
                 {blockType: "log_db"},
                 {blockType: "comments"},
                 ],
@@ -59,7 +59,7 @@ function Report(model, settings) {
                 {blockType: "sample_info", time: this.m.t},
                 {blockType: "reads_stats"},
                 {blockType: "scatterplot"},
-                {blockType: "clones"},
+                {blockType: "clones", info : ["productivity", "hypermutation", "5length"]},
                 {blockType: "log_db"},
                 {blockType: "comments"},
             ],
@@ -74,13 +74,16 @@ function Report(model, settings) {
         "sample_info":  {'name': "Sample information",  'unique': false,    'inMenu': true,
                          'parameters':[{
                                     'name': 'time',
-                                    'default' : function(b){ return b.time},
                                     'options' : function() { return m.samples.order},
                                     'pretty'  : function(t){return self.m.getStrTime(t, "name")} 
                                       }]},
         "monitor":      {'name': "Monitor",             'unique': true,     'inMenu': true },
         "log_db":       {'name': "Database log",        'unique': true,     'inMenu': true },
         "clones":       {'name': "Clones",              'unique': true,     'inMenu': true,
+                         'parameters':[{
+                                    'name': 'info',
+                                    'checkboxes' : ['productivity', 'hypermutation', '5length'],
+                                        }],
                           'fields': {
                             'productivity':  function(c){ return {'text': c.getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'} },
                             'hypermutation': function(c){ return c.getVIdentityIMGT(t) == "unknown" ? undefined : {'text': "V-REGION Identity: "+ c.getVIdentityIMGT(t)+'%\u00a0', 'class': 'clone_value'} },
@@ -481,7 +484,12 @@ Report.prototype = {
             if (this.available_blocks[conf.blockType] && this.available_blocks[conf.blockType].parameters){   
                 for (p in this.available_blocks[conf.blockType].parameters){
                     var parameter = this.available_blocks[conf.blockType].parameters[p]
-                    var div_parameter = this.parameterDiv(conf, parameter).appendTo(div)
+                    
+                    if (parameter.options)
+                        this.parameterDivOptions(conf, parameter).appendTo(div)
+                    else if (parameter.checkboxes)
+                        this.parameterDivCheckboxes(conf, parameter).appendTo(div)
+                    
                 }
             }
 
@@ -522,7 +530,7 @@ Report.prototype = {
 
     },  
 
-    parameterDiv: function(block, parameter){
+    parameterDivOptions: function(block, parameter){
         var self = this;
 
         var blockIndex = this.indexOfBlock(block)
