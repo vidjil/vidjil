@@ -2229,8 +2229,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         switch (format) {
             case "order":
-                result = m.samples.order.indexOf(timeID);
-                if (result == -1) result = "-/-";
+                result = m.samples.order.indexOf(timeID)+1;
+                if (result == 0) result = "-/-";
                 break;
             case "original_name":
                 result = this.samples.original_names[timeID]

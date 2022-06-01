@@ -1248,7 +1248,7 @@ Report.prototype = {
         this.m.sp.fastForward()
         
         var container_name  =   this.m.sp.toString() +"  ["+ 
-                                (this.m.getStrTime(block.time, "order")+1)+"]."+
+                                this.m.getStrTime(block.time, "order")+"]."+
                                 this.m.getStrTime(block.time, "short_name");
         var w_sp = this.container(container_name, block)
         w_sp.addClass("scatterplot");
@@ -1315,7 +1315,7 @@ Report.prototype = {
     readsStat_line: function(time, locus_list){
         var line = $('<tr/>', {});
 
-        $('<td/>',     {'text': '#' + (this.m.getStrTime(time, "order")+1)}).appendTo(line);
+        $('<td/>',     {'text': '#' + this.m.getStrTime(time, "order")}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "name")}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "sampling_date")}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "delta_date")}).appendTo(line);
