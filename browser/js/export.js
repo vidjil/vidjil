@@ -547,7 +547,62 @@ Report.prototype = {
             
             $('<option/>',  {   text:  text,
                                 selected: selected,
-                                value: o}).appendTo(select);
+                                value: o
+                            }).appendTo(select);
+        }
+
+        return div
+    },
+
+    parameterDivCheckboxes: function(block, parameter){
+
+        var self = this;
+
+        var blockIndex = this.indexOfBlock(block)
+
+        var handle = function(){
+            var p = self.settings.blocks[blockIndex][parameter.name]
+            var index = p.indexOf(this.value)
+
+            if (index == -1)
+                p.push(this.value)
+            else
+                p.splice(index, 1)
+
+        }
+
+
+        var div = $('<div/>',   {class : "rs-flex-parent-h", text: parameter.name+": "}) 
+        var dropdown = $('<span/>',   {class : "dropdown-check-list"}).appendTo(div)
+
+        var anchorEvent = function(evt) {
+            var checkList = $(this).parent()[0]
+            if (checkList.classList.contains('visible'))
+              checkList.classList.remove('visible');
+            else
+              checkList.classList.add('visible');
+        }
+        var span = $('<span/>',   {class : "rs-anchor", text: "Select "}).click(anchorEvent).appendTo(dropdown)
+        var ul = $('<ul/>',   {class : "rs-items"}).appendTo(dropdown)
+
+        var checkboxes 
+        if (typeof parameter.checkboxes  == 'function')
+            checkboxes  = parameter.checkboxes()
+        else
+            checkboxes = parameter.checkboxes
+        
+        for (var i in checkboxes) {
+            var c = checkboxes[i]
+
+            var checked = false
+            if (block[parameter.name].indexOf(c) != -1) checked = true
+            
+            var li = $('<li/>', {text : c}).appendTo(ul);
+            $('<input/>', { type    : "checkbox", 
+                            value   : c
+                            }).prop('checked', checked)
+                              .click(handle)
+                              .prependTo(li)
         }
 
         return div
