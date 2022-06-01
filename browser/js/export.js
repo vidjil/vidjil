@@ -1201,15 +1201,15 @@ Report.prototype = {
 
     isUniqueBlock: function(block){
         if (typeof block.blockType != "string")
-            return true
+            return false
 
         if (typeof this.available_blocks[block.blockType] != "object")
-            return true
+            return false
 
         if (typeof this.available_blocks[block.blockType].unique == "boolean")
             return this.available_blocks[block.blockType].unique
 
-        return true
+        return false
     },
 
     isInMenuBlock: function(block){
