@@ -407,17 +407,19 @@ Report.prototype = {
         var handle = function(){
             self.removeClone($(this).attr("value"));
             $(this).parent().remove()
-            report.menu() // update
+            report.initClones() // update
         }
 
         var count =0;
         for (var i=0; i<this.clones.length; i++){
             var cloneID = this.clones[i]
             
-            var text;
+            var text, locus;
             for (var j=0; j<this.m.clones.length; j++){
-                if ( this.m.clones[j].id == cloneID)
-                    text = this.m.clones[j].getName();
+                if ( this.m.clones[j].id == cloneID){
+                    text = this.m.clones[j].getName()
+                    locus = this.m.clones[j].getLocus()
+                }
             }
 
             if (text != undefined){
@@ -425,7 +427,8 @@ Report.prototype = {
                 var div = $('<div/>',   {id:  'rs-clone-'+cloneID, 
                                         class: 'rs-selected',
                                         value: cloneID,
-                                        text: text}).appendTo(parent)
+                                        text: text}).prepend(this.m.systemBox(locus)).appendTo(parent)
+                                        
                           $('<button/>',{value: cloneID , 
                                         title: "remove clone from report",
                                         class: "icon-cancel button_right", 
@@ -448,20 +451,23 @@ Report.prototype = {
 
         var handle = function(){
             self.removeBlock(parseInt($(this).attr("value")));
-            self.menu();
+            self.initBlocks()
         }
 
         var handle_up = function(){
             self.upBlock(parseInt($(this).attr("value")));
-            self.menu();
+            self.initBlocks()
         }
 
         var handle_down = function(){
             self.downBlock(parseInt($(this).attr("value")));
-            self.menu();
+            self.initBlocks()
         }
 
         var block_list = $("#report-settings-block")
+        block_list.find(".rs-flex").remove()
+        block_list.find(".rs-flex-parent-v").remove()
+
         var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(block_list);
         for (var i = 0; i < this.settings.blocks.length; i++){
             var conf = this.settings.blocks[i]
@@ -505,7 +511,7 @@ Report.prototype = {
                 block.timestamp = Date.now()
             }
             self.addBlock(block);
-            self.menu();
+            self.initBlocks();
         }
 
         var div_select = $('<div/>',   {class : "rs-flex", text: "Add section: "}).appendTo(block_list);
@@ -542,10 +548,15 @@ Report.prototype = {
                 self.settings.blocks[blockIndex][parameter.name] = this.value
         }
 
-        var div = $('<div/>',   {class : "rs-flex", text: parameter.name+": "}) 
+        var div = $('<div/>',   {class : "rs-flex-parent-h", text: parameter.name+": "}) 
         var select = $('<select/>').change(handle).appendTo(div);
 
-        var options = parameter.options()
+        var options
+        if (typeof parameter.options == 'function')
+            options = parameter.options()
+        else
+            options = parameter.option
+
         for (var i in options) {
             var o = options[i]
 
