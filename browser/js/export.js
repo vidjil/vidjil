@@ -304,12 +304,14 @@ Report.prototype = {
             var timeId = this.m.samples.order[i]
 
             var selected = (self.settings.samples.indexOf(this.m.getStrTime(timeId, "original_name")) != -1)
+            var text = "#"+this.m.getStrTime(timeId, "order") +" "+ this.m.getStrTime(timeId, "name")
+
             if (selected) count++
             var div = $('<div/>',   { id:  'rs-sample-select'+i, 
                                         type: 'checkbox', 
                                         class: (selected) ? "rs-sample rs-selected" : "rs-sample rs-unselected",
                                         value: this.m.getStrTime(timeId, "original_name"),
-                                        text: this.m.getStrTime(timeId, "name")}).appendTo(parent).click(handle)
+                                        text: text}).appendTo(parent).click(handle)
         }
         $("#rs-selected-sample-count").html("["+count+" selected]")
     },
