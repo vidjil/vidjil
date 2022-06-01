@@ -764,52 +764,57 @@
 
         </div>
             
+    
+        <div class="rs-body">
 
-        <div  id="report-settings-sample-select">
-            <div class="rs-header">
-                SAMPLE(S) <span id="rs-selected-sample-count" style="float: right;"></span>
+            <div  id="report-settings-sample-select">
+                <div class="rs-header">
+                    SAMPLE(S) <span id="rs-selected-sample-count" style="float: right;"></span>
+                </div>
             </div>
-        </div>
 
-        <div  id="report-settings-locus-select">
-            <div class="rs-header">
-                LOCUS
+            <div  id="report-settings-locus-select">
+                <div class="rs-header">
+                    LOCUS
+                </div>
             </div>
-        </div>
 
-        <div  id="report-settings-clones">
-            <div class="rs-header">
-                CLONOTYPE(S)
-                <span id="rs-selected-clones-count" style="float: right;"></span>
+            <div  id="report-settings-clones">
+                <div class="rs-header">
+                    CLONOTYPE(S)
+                    <span id="rs-selected-clones-count" style="float: right;"></span>
+                </div>
+                <div class="rs-flex-parent-v" id="report-clones-list">
+                </div>
             </div>
-            <div class="rs-flex-parent-v" id="report-clones-list">
-            </div>
-        </div>
 
-        <div  id="report-settings-color-select">
-            <div class="rs-header">
-                COLOR
-            </div>
-            <table class="rs-flex-parent-v">
-                <tr class="">
-                    <td>Default clonotype color :</td> <td><select name="rs-default-color" id="rs-default-color" class=""></select></td>
-                </tr>
-                <tr class="">
-                    <td>Selected clonotype color :</td> <td><select name="rs-selected-color" id="rs-selected-color" class=""></select></td>
-                </tr>
-            </table>
+            <div  id="report-settings-color-select">
+                <div class="rs-header">
+                    COLOR
+                </div>
+                <table class="rs-flex-parent-v">
+                    <tr class="">
+                        <td>Default clonotype color :</td> <td><select name="rs-default-color" id="rs-default-color" class=""></select></td>
+                    </tr>
+                    <tr class="">
+                        <td>Selected clonotype color :</td> <td><select name="rs-selected-color" id="rs-selected-color" class=""></select></td>
+                    </tr>
+                </table>
 
-        </div>
-
-        <div  id="report-settings-block">
-            <div class="rs-header">
-                SECTIONS
             </div>
+
+            <div  id="report-settings-block">
+                <div class="rs-header">
+                    SECTIONS
+                </div>
+            </div>
+
         </div>
 
         <div style="text-align: center;">
             <button type="button" onclick="report.print();">Show report</button>
         </div>
+
 
         <div style="float: right;">
             <button id="rs-save-button" type="button" onclick="report.save(undefined,true);">Save this report</button>
