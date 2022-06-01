@@ -83,24 +83,7 @@ function Report(model, settings) {
                          'parameters':[{
                                     'name': 'info',
                                     'checkboxes' : ['productivity', 'hypermutation', '5length'],
-                                        }],
-                          'fields': {
-                            'productivity':  function(c){ return {'text': c.getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'} },
-                            'hypermutation': function(c){ return c.getVIdentityIMGT(t) == "unknown" ? undefined : {'text': "V-REGION Identity: "+ c.getVIdentityIMGT(t)+'%\u00a0', 'class': 'clone_value'} },
-                            '5length':       function(c){ return {'text': "V length: "     + c.getSegLength("5", (c.germline.includes("+") ? false : true))+'\u00a0', 'class': 'clone_value'}}
-                          },
-                          'options': {
-                            'reads' : {
-                                'short': function(c){
-                                    var sizes    = c.getStrAllSystemSize(t, true)
-                                    return sizes.global == "−" ? ("−") : (`${sizes.global} (${sizes.system}; ${sizes.systemGroup})`)
-                                },
-                                'long': function(c){ return c.getPrintableSize() },
-                                'default': "long",
-                                'selected': "long"
-                            }
-                          }
-                        },
+                                        }]},
         "comments":     {'name': "Comments",            'unique': false,    'inMenu': false },
         "scatterplot":  {'name': function (c){ return "Plot: ["+ c.axisX +" | "+ c.axisY +"] ["+ c.locus +"]"},
                                                         'unique': false,    'inMenu': false },
@@ -713,7 +696,6 @@ Report.prototype = {
                     self.block(block);
                 });
             
-            self.cloneList()
             self.restorestate()    
             self.m.resize()
             self.m.resume()
@@ -1153,6 +1135,9 @@ Report.prototype = {
             case "log_db":
                 this.sampleLog(conf)
                 break;
+            case "clones":
+                this.cloneList(conf)
+                break;
             default:
                 break;
         }
@@ -1336,8 +1321,7 @@ Report.prototype = {
         return line;
     },
     
-    cloneList : function(time) {
-        if (typeof time == "undefined") time = -1
+    cloneList : function(block) {
 
         if (this.list.length == 0) return this
 
@@ -1348,23 +1332,21 @@ Report.prototype = {
         for (var i=0; i<this.list.length; i++){
             var cloneID = this.list[i]
             if (this.m.clone(cloneID).hasSizeConstant())
-                this.clone(cloneID, time).appendTo(this.w.document.body);
+                this.clone(cloneID, block).appendTo(this.w.document.body);
         }
         graph.resize()
         
         return this
     },
     
-    clone : function(cloneID, time) {
-        if (typeof time == "undefined") time = -1
+    clone : function(cloneID, block) {
         var color = this.getCloneExportColor(cloneID);
-        var system = this.m.clone(cloneID).germline
         var clone = $('<div/>', {'class': 'clone'})
         var clone_polyline = document.getElementById("polyline" + cloneID)
         
         var head = $('<span/>', {'class': 'clone_head'}).appendTo(clone);
         //clone svg path icon
-        if (time == -1 && clone_polyline != null){
+        if (clone_polyline != null){
             var icon = $('<span/>', {'class': 'icon'}).appendTo(head);
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             var polyline = clone_polyline.cloneNode(true)
@@ -1383,29 +1365,72 @@ Report.prototype = {
         }
         
         //clone reads stats
-        if (time == -1){
-            var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
+        var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
+
+        if (this.m.samples.order.length < 4){
             for (var i=0; i<this.m.samples.order.length; i++){
                 var t = this.m.samples.order[i]
-                var size_str = this.available_blocks.clones.options.reads[this.available_blocks.clones.options.reads.selected](this.m.clone(cloneID))
-                $('<span/>', {'text': "#"+ (this.m.getStrTime(t, "order")+1) + ": " + size_str +'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
+    
+                var print_format = block.print_format 
+                if (typeof block.print_format != "undefined")
+                    print_format = block.print_format
+    
+                var size_str= this.m.clone(cloneID).getPrintableSize()
+    
+                $('<span/>', {'text': "#"+ this.m.getStrTime(t, "order") + ": " + size_str +'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
-        }else{
-            $('<span/>', {'text': this.m.clone(cloneID).getPrintableSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
+        }else{ // more than 3 samples
+            var system = this.m.clone(cloneID).getLocus()
+            var systemGroup = this.m.systemGroup(system)
+
+            var header = "sample # </br>"+
+                        "reads # </br>"+
+                        "reads % </br>"+
+                        system + " %"
+
+            if (systemGroup != system && systemGroup != '')
+                header += "</br>"+systemGroup+" %"
+
+            $('<span/>', {  'html':  header,
+                            'class': 'clone_value'}).appendTo(reads_stats);
+
+            for (var i=0; i<this.m.samples.order.length; i++){
+                var t = this.m.samples.order[i]
+                var sizes    = this.m.clone(cloneID).getStrAllSystemSize(t)
+
+                var html = "#"+this.m.getStrTime(t, "order") + "</br>"+
+                            this.m.clone(cloneID).getReads(t)+ "</br>"+
+                            sizes.global+ "</br>"+
+                            sizes.system
+
+                if (systemGroup != system && systemGroup != '')
+                    html += "</br>"+sizes.systemGroup
+
+                $('<span/>', {  'html':  html,
+                                'class': 'clone_value'}).appendTo(reads_stats);
+                }
         }
+        
 
         // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
+        var fields = {
+            'productivity':  function(c){ return {'text': c.getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'} },
+            'hypermutation': function(c){ return c.getVIdentityIMGT(t) == "unknown" ? undefined : {'text': "V-REGION Identity: "+ c.getVIdentityIMGT(t)+'%\u00a0', 'class': 'clone_value'} },
+            '5length':       function(c){ return {'text': "V length: "     + c.getSegLength("5", (c.germline.includes("+") ? false : true))+'\u00a0', 'class': 'clone_value'}}
+            }
         var more_info = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
-        this.clones_fields = Object.keys(this.available_blocks.clones.fields)
-        for (var field_pos = 0; field_pos < this.clones_fields.length; field_pos++) {
-            var field   = this.clones_fields[field_pos]
-            var content = this.available_blocks.clones.fields[field](this.m.clone(cloneID))
-            if (content){
-                $('<span/>', content ).appendTo(more_info);
+
+        var field_keys = Object.keys(fields)
+        for (var k=0; k<field_keys.length; k++){
+            var field_key = field_keys[k]
+
+            if (block.info.indexOf(field_key) != -1){
+                var content = fields[field_key](this.m.clone(cloneID))
+                if (content)
+                    $('<span/>', content ).appendTo(more_info);
             }
         }
-
-        
+ 
         //colorized clone sequence
         var sequence = $('<div/>', {'class': 'sequence'}).appendTo(clone);
         var nbsp = "\u00A0"
