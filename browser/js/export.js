@@ -1393,12 +1393,12 @@ Report.prototype = {
             $('<span/>', {  'html':  header,
                             'class': 'clone_value'}).appendTo(reads_stats);
 
-            for (var i=0; i<this.m.samples.order.length; i++){
-                var t = this.m.samples.order[i]
-                var sizes    = this.m.clone(cloneID).getStrAllSystemSize(t)
+            for (var i2=0; i2<this.m.samples.order.length; i2++){
+                var t2 = this.m.samples.order[i2]
+                var sizes    = this.m.clone(cloneID).getStrAllSystemSize(t2)
 
-                var html = "#"+this.m.getStrTime(t, "order") + "</br>"+
-                            this.m.clone(cloneID).getReads(t)+ "</br>"+
+                var html = "#"+this.m.getStrTime(t2, "order") + "</br>"+
+                            this.m.clone(cloneID).getReads(t2)+ "</br>"+
                             sizes.global+ "</br>"+
                             sizes.system
 
