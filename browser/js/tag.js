@@ -15,11 +15,12 @@ function TagManager(model) {
     }
 
     this.tag = {
-        "dominant":             {"color" : "#f1474f", "display" : true, name: "dominant clonotype"},
-        "clonotype_1":          {"color" : "#dc322f", "display" : true, name: "clonotype 1"},
-        "clonotype_2":          {"color" : "#cb4b16", "display" : true, name: "clonotype 2"},
-        "clonotype_3":          {"color" : "#b58900", "display" : true, name: "clonotype 3"},
-        "clonotype_4":          {"color" : "#a07400", "display" : true, name: "clonotype 4"},
+        "dominant":             {"color" : "#ff0070", "display" : true, name: "dominant clonotype"},
+        "clonotype_1":          {"color" : "#c03038", "display" : true, name: "clonotype 1"},
+        "clonotype_2":          {"color" : "#900020", "display" : true, name: "clonotype 2"},
+        "clonotype_3":          {"color" : "#603000", "display" : true, name: "clonotype 3"},
+        "clonotype_4":          {"color" : "#b58900", "display" : true, name: "clonotype 4"},
+        "clonotype_5":          {"color" : "#d0b000", "display" : true, name: "clonotype 5"},
         "standard":             {"color" : "#268bd2", "display" : true, name: "standard / spike"},
         "noise":                {"color" : "#6c71c4", "display" : true, name: "noise"},
         "dimer":                {"color" : "#3c4194", "display" : true, name: "dimer"},
