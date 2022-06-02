@@ -22,7 +22,7 @@ function Report(model, settings) {
             selected_color: "unique",
             blocks: [
                     {blockType: "file_info"},
-                    {blockType: "sample_info", time: this.m.t},
+                    {blockType: "sample_info", sample: "#1"},
                     {blockType: "reads_stats"},
                     {blockType: "monitor"},
                     {blockType: "scatterplot"},
@@ -40,7 +40,7 @@ function Report(model, settings) {
             selected_color: "unique",
             blocks: [
                 {blockType: "file_info"},
-                {blockType: "sample_info", time: this.m.t},
+                {blockType: "sample_info", time: "#1"},
                 {blockType: "reads_stats"},
                 {blockType: "scatterplot"},
                 {blockType: "clones", info : []},
@@ -73,9 +73,13 @@ function Report(model, settings) {
         "reads_stats":  {'name': "Reads stats per locus",'unique': true,    'inMenu': true },
         "sample_info":  {'name': "Sample information",  'unique': false,    'inMenu': true,
                          'parameters':[{
-                                    'name': 'time',
-                                    'options' : function() { return m.samples.order},
-                                    'pretty'  : function(t){return self.m.getStrTime(t, "name")} 
+                                    'name': 'sample',
+                                    'options' : function() {
+                                        var o = []
+                                        for (var i in self.m.samples.order) 
+                                            o.push(self.m.samples.original_names[self.m.samples.order[i]])
+                                        return o},
+                                    'pretty'  : function(o){return self.m.getStrTime(self.m.getTimeFromFileName(o), "name")} 
                                       }]},
         "monitor":      {'name': "Monitor",             'unique': true,     'inMenu': true },
         "log_db":       {'name': "Database log",        'unique': true,     'inMenu': true },
@@ -899,7 +903,17 @@ Report.prototype = {
     },
     
     sampleInfo : function(block) {
-        var time = block.time
+        //retrieve timeID
+        var time
+        if (block.sample && typeof block.sample == "string"){
+            if (block.sample[0] == '#')
+                time = this.m.getTimeFromOrder(parseInt(block.sample.substring(1)))
+            else
+                time = this.m.getTimeFromFileName(block.sample)
+        }
+
+        if (typeof time == "undefined" || time == -1)
+            return this
 
         var sinfo = this.container("Sample information ("+this.m.getStrTime(time, "short_name")+")", block)
         var left = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
