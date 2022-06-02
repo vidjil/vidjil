@@ -573,6 +573,9 @@ Info.prototype = {
             spantag.style.margin = "1px"
         }
 
+        if (l.text == 'dominant clonotype' || l.text == 'clonotype 5' || l.text == 'dimer' || l.text == 'custom 3')
+            spantag.style.marginRight = "12px";
+
         spantag.onclick = function(){
             var v = this.getAttribute('value')
             var a = m.color.axis
