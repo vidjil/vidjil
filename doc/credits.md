@@ -72,6 +72,8 @@ The development of Vidjil is funded by:
 
 If you use vidjil-algo, please cite [Giraud, Salson 2014].
 If you use the web platform, please cite [Duez 2016].
+Reference for protocols are [Villarese 2022] (marker identification in ALL)
+and [Septenville 2022] (assessment of mutational status in CLL).
 
 Marc Duez et al.,
 *Vidjil: A web platform for analysis of high-throughput repertoire sequencing*,
@@ -83,6 +85,15 @@ Mathieu Giraud, Mikaël Salson, et al.,
 BMC Genomics 2014, 15:409
 <http://dx.doi.org/10.1186/1471-2164-15-409>
 
+Patrick Villarese et al.,
+*One-Step Next-Generation Sequencing of Immunoglobulin and T-Cell Receptor Gene Recombinations for MRD Marker Identification in Acute Lymphoblastic Leukemia*,
+Immunogenetics, Methods in Molecular Biology 2453, pp. 43-59,
+<http://dx.doi.org/10.1007/978-1-0716-2115-8_3>
+
+Anne Langlois de Septenville et al.,
+*Immunoglobulin Gene Mutational Status Assessment by Next Generation Sequencing in Chronic Lymphocytic Leukemia*,
+Immunogenetics, Methods in Molecular Biology 2453, pp. 153-167,
+<http://dx.doi.org/10.1007/978-1-0716-2115-8_10>
 
 
 ## Some publications using Vidjil
