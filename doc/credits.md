@@ -176,7 +176,7 @@ Nature Communications, 2021,
 
 Vincent Jauvague et al.,
 *RNA-based immunoglobulin repertoire sequencing is a new tool for the management of monoclonal gammopathy of renal (kidney) significance.*
-Kidney International, 2021,
+Kidney International, 2022, 101(2), 331-337,
 <https://doi.org/10.1016/j.kint.2021.10.017>
 
 Takashi Kanamori et al.,
@@ -233,6 +233,11 @@ Dai Nishijima et al.,
 *Capture Sequencing Is a Useful Method for Comprehensive Clonality Analysis Based on Ig/TCR Gene Rearrangements in Acute Lymphoblastic Leukemia*,
 ASH 2018, Blood, 132(S1):1543,
 <https://doi.org/10.1182/blood-2018-99-115624>
+
+Alexis Piedrafita et al.,
+*Spectrum of Kidney Disorders Associated with T-Cell Immunoclones*,
+Journal of Clinical Medicine, 2022, 11(3), 604,
+<https://doi.org/10.3390/jcm11030604>
 
 Edit Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
