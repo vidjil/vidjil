@@ -2217,6 +2217,28 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return date_max
     },        
     
+    /*return TimeID of a given sample original_name
+    * return -1 if id does not exist
+    */
+    getTimeFromFileName(o_n){
+        for(var i in this.samples.original_names)
+            if (o_n == this.samples.original_names[i])
+                return i;
+
+        return -1
+    },
+
+    /*return TimeID of a given sample order value
+    * return -1 if id does not exist
+    */
+    getTimeFromOrder(o){
+        for(var i in this.samples.original_names)
+            if (o == parseInt(this.getStrTime(parseInt(i), "order")))
+                return parseInt(i);
+
+        return -1
+    },
+
     /**
      * return sample/time name in a specified format
      * @param {integer} timeID - sample/time index
