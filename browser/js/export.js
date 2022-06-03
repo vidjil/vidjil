@@ -90,7 +90,16 @@ function Report(model, settings) {
                                         }]},
         "comments":     {'name': "Comments",            'unique': false,    'inMenu': false },
         "scatterplot":  {'name': function (c){ return "Plot: ["+ c.axisX +" | "+ c.axisY +"] ["+ c.locus +"]"},
-                                                        'unique': false,    'inMenu': false },
+                         'unique': false,    'inMenu': false,
+                         'parameters':[{
+                                    'name': 'sample',
+                                    'options' : function() {
+                                        var o = []
+                                        for (var i in self.m.samples.order) 
+                                            o.push(self.m.samples.original_names[self.m.samples.order[i]])
+                                        return o},
+                                    'pretty'  : function(o){return self.m.getStrTime(self.m.getTimeFromFileName(o), "name")} 
+                                        }]}
     }
     
     if (typeof settings != "undefined")
@@ -522,7 +531,7 @@ Report.prototype = {
         var handle2 = function(){
             var block = {blockType : this.value }
             if (this.value == "sample_info") {
-                block.time = self.m.t
+                block.sample = self.m.samples.original_names[self.m.t]
                 block.timestamp = Date.now()
             }
             self.addBlock(block);
@@ -1079,8 +1088,8 @@ Report.prototype = {
     addScatterplot : function(sp) {
         var block = {
             'blockType' : "scatterplot",
-            'locus' :   sp.m.germlineV.system,
-            'time'  :   sp.m.t,
+            'locus' :   sp.system,
+            'sample':   this.m.samples.original_names[sp.m.t],
             'axisX' :   sp.axisX.name,
             'axisY' :   sp.axisY.name,
             'mode'  :   sp.mode
@@ -1253,15 +1262,27 @@ Report.prototype = {
     },
 
     scatterplot : function(block) {
-
         if (typeof block == "undefined")       block = {}
-        if (typeof block.locus == "undefined") block.locus = this.m.germlineV.system
-        if (typeof block.time == "undefined")  block.time  = this.m.t
+        if (typeof block.locus == "undefined") block.locus = this.m.sp.system
+        if (block.locus == "")                 block.locus = this.m.sp.system
+        if (typeof block.sample == "undefined")block.sample= this.m.samples.original_names[this.m.t]
         if (typeof block.axisX == "undefined") block.axisX = this.m.sp.axisX.name
         if (typeof block.axisY == "undefined") block.axisY = this.m.sp.axisY.name
         if (typeof block.mode == "undefined")  block.mode  = this.m.sp.mode
 
-        this.m.changeTime(block.time)
+        //retrieve timeID
+        var time
+        if (block.sample && typeof block.sample == "string"){
+            if (block.sample[0] == '#')
+                time = this.m.getTimeFromOrder(parseInt(block.sample.substring(1)))
+            else
+                time = this.m.getTimeFromFileName(block.sample)
+        }
+
+        if (typeof time == "undefined" || time == -1)
+            return this
+
+        this.m.changeTime(time)
         this.m.changeGermline(block.locus, false)
 
         this.m.sp.changeSplitMethod(block.axisX, block.axisY, block.mode, true)
@@ -1275,8 +1296,8 @@ Report.prototype = {
         this.m.sp.fastForward()
         
         var container_name  =   this.m.sp.toString() +"  ["+ 
-                                this.m.getStrTime(block.time, "order")+"]."+
-                                this.m.getStrTime(block.time, "short_name");
+                                this.m.getStrTime(time, "order")+"]."+
+                                this.m.getStrTime(time, "short_name");
         var w_sp = this.container(container_name, block)
         w_sp.addClass("scatterplot");
         
