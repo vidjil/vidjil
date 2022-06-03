@@ -178,12 +178,12 @@ Usually we may want to tag them in order to remember and follow them later on.
     $b.clone_info("4")[:star].click # top TRG 
     $b.tag_item('clonotype_2')[:name].click
     $b.clone_info("0")[:star].click ## clone rechute
-    $b.tag_item('standard_2')[:name].click
+    $b.tag_item('standard')[:name].click
     $b.update_icon.wait_while(&:present?)
     $b.clone_in_list("5").click ## select other clone to see real color of clone 0
 
     # New color
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' )
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(38, 139, 210, 1)' )
   end
 \end{verbatim}
 
@@ -343,9 +343,9 @@ After this rename, you can see that the clone is still selected.
     $b.update_icon.wait_while(&:present?)
     $b.clone_in_list("0").click(:control) # select another clone, else last selected still keep default color as "hover"
     assert ($b.clone_info('5')[:name].style('color') ==  'rgba(101, 123, 131, 1)' ) , "clone 5 still have default color"
-    assert ($b.clone_info('7')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 7 have also changed color"
-    assert ($b.clone_info('11')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 11 have also changed color"
-    assert ($b.clone_info('13')[:name].style('color') ==  'rgba(211, 54, 130, 1)' ) , "clone 13 have also changed color"
+    assert ($b.clone_info('7')[:name].style('color') ==  'rgba(55, 145, 73, 1)' ) , "clone 7 have also changed color"
+    assert ($b.clone_info('11')[:name].style('color') ==  'rgba(55, 145, 73, 1)' ) , "clone 11 have also changed color"
+    assert ($b.clone_info('13')[:name].style('color') ==  'rgba(55, 145, 73, 1)' ) , "clone 13 have also changed color"
   end
 \end{verbatim}
 
@@ -1133,7 +1133,7 @@ expected concentration is 1\% (.01).
 
     # New color
     cinfo = $b.clone_info("454")
-    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(108, 113, 196, 1)' ), "color: "+$b.clone_info('0')[:name].style('color')
+    assert ($b.clone_info('0')[:name].style('color') ==  'rgba(38, 139, 210, 1)' ), "color: "+$b.clone_info('0')[:name].style('color')
     # voir ici car l'action ne correspond pas tout a fait.
   end
 \end{verbatim}
