@@ -170,6 +170,28 @@ Report.prototype = {
                             savename)
     },
 
+    delete: function(skipConfirm){
+        var self = this
+
+        if (typeof this.default_settings[this.settings.name] != "undefined"){
+            console.log({ msg: "you cannot delete a default template", type: "flash", priority: 2 });
+            return;
+        }
+
+        var savename = this.settings.name
+        if (this.m.report_save[savename]){    
+            if (typeof skipConfirm == "boolean" && skipConfirm){
+                delete this.m.report_save[savename]
+                this.load(this.default_setting); 
+            }
+            else{
+                console.confirmBox( "Are you sure you want to delete ["+savename+"] report ?</br>",
+                                    function(){self.delete(true)})
+            }
+        }
+
+    },
+
     // load a setting sheet from default_list or model using name
     load: function(name){
         // exist in default settings list 
@@ -252,6 +274,12 @@ Report.prototype = {
         else
             $("#rs-save-button").remove("disabledClass")
 */
+
+        if(typeof this.default_settings[this.settings.name] != "undefined")
+            $("#rs-delete-button").addClass("disabledClass")
+        else
+            $("#rs-delete-button").remove("disabledClass")
+
     },
 
     initSamples: function(){
