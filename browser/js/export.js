@@ -117,9 +117,10 @@ Report.prototype = {
             savename = this.settings.name;
         }
 
-        // if settings does not contain a name -> abort
-        if (typeof savename == "undefined"){
-            console.log("you must set a name to your report before saving");
+        // if settings does not contain a name -> retry
+        if (typeof savename == "undefined" || savename == ""){
+            console.log({ msg: "you must set a name to your report before saving it", type: "flash", priority: 2 });
+            this.saveas();
             return;
         }   
 
