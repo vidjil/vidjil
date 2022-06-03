@@ -215,6 +215,8 @@ Model_loader.prototype = {
                 self.dataFileName = url_split[url_split.length-1]
                 self.check_export_monitor()
                 self.file_source = "database";
+                if (typeof report != "undefined") 
+                    report.reset()
 
                 // self.applyUrlParams(paramsDict);
                 callback()

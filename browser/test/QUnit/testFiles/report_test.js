@@ -94,24 +94,24 @@ QUnit.test("Report: blocks", function(assert) {
     assert.equal(report.settings.blocks[report.settings.blocks.length-1].blockType , "scatterplot", "scatterplot block added")
 
     //add generic block
-    report.addBlock({blockType : "db_log"})
+    report.addBlock({blockType : "comments", text: "test"})
     assert.equal(report.settings.blocks.length, default_blockCount+2)
-    assert.equal(report.settings.blocks[report.settings.blocks.length-1].blockType , "db_log", "db_log block added")
+    assert.equal(report.settings.blocks[report.settings.blocks.length-1].blockType , "comments", "comments block added")
 
     //try add an already existing block (blockcount does not increase)
-    report.addBlock({blockType : "db_log"})
-    assert.equal(report.settings.blocks.length, default_blockCount+2, "db_log block already added")
+    report.addBlock({blockType : "comments", text: "test"})
+    assert.equal(report.settings.blocks.length, default_blockCount+2, "comments block already added")
 
     //find block 
-    assert.equal(report.indexOfBlock({blockType : "db_log"}), default_blockCount+1, "find block")
+    assert.equal(report.indexOfBlock({blockType : "comments", text: "test"}), default_blockCount+1, "find block")
 
     //remove block by index 
     report.removeBlock(1)
     assert.equal(report.settings.blocks.length, default_blockCount+1, "remove block using index")
 
     //remove block
-    report.removeBlock({blockType : "db_log"})
-    assert.equal(report.indexOfBlock({blockType : "db_log"}), -1, "remove block using object descriptor")
+    report.removeBlock({blockType : "comments", text: "test"})
+    assert.equal(report.indexOfBlock({blockType : "comments", text: "test"}), -1, "remove block using object descriptor")
 
     //move block up 
     report.addBlock({blockType : "blockTest"})
