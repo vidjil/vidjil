@@ -20,7 +20,7 @@ PCR approaches are the state-of-the-art way to detect
 and quantify immune recombinations.
 
  - As of 2022, the  reference protocols
-   for library preparation using **EuroClonality-NGS** primers
+   for library preparation on Illumina MiSeq using **EuroClonality-NGS** primers
    and analysis with Vidjil are described
    in [(Villarese, 2022)](http://dx.doi.org/10.1007/978-1-0716-2115-8_3)
    (marker identification in ALL,
