@@ -180,6 +180,7 @@ describe('List', function () {
     cy.update_icon()
     cy.get('#tag_smaller_clonotype') // switch back
       .click()
+    cy.update_icon()
 
     cy.getCloneInList('29')
       .should('be.visible') // seg5/seg3 distrib clone is present in list
