@@ -1393,16 +1393,14 @@ Report.prototype = {
 
         if (this.list.length == 0) return this
 
-        var container = this.container('Clonotypes')
-        graph.resize(791,300)
-        graph.draw(0)
+        var container = this.container('Clonotypes', block)
+        container.parent().css("page-break-inside", "auto") // revert css value to allow this block on 2+ pages
         
         for (var i=0; i<this.list.length; i++){
             var cloneID = this.list[i]
             if (this.m.clone(cloneID).hasSizeConstant())
-                this.clone(cloneID, block).appendTo(this.w.document.body);
+                this.clone(cloneID, block).appendTo(container);
         }
-        graph.resize()
         
         return this
     },
