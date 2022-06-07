@@ -19,8 +19,8 @@ describe('Colors', function () {
     //default axis color used is Tag
     cy.get("#0").find(".nameBox").invoke('css', 'color').then((old_color) => {
 
-      //check correct number of element in info panel (10 boxes / 0 gradient)
-      cy.get('#info').find('.tagColorBox').should('have.length', 10)
+      //check correct number of element in info panel (14 boxes / 0 gradient)
+      cy.get('#info').find('.tagColorBox').should('have.length', 14)
       cy.get('#info').find('.gradient').should('have.length', 0)
 
       //update axis color Size
@@ -47,7 +47,7 @@ describe('Colors', function () {
 
       //change tag of clone0
       cy.get('#0').find('.starBox').click()
-      cy.get('.tagSelector').find('#tagElem_clonotype_1').click()
+      cy.get('.tagSelector').find('#tagElem_dominant').click()
 
       //check color of clone_0 has been updated 
       cy.get("#visu2").click()

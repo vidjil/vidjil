@@ -17,11 +17,11 @@ describe('Filters', function () {
 
     //use color by tag
     cy.get('#color_menu_select').select('Tag')
-    cy.get('#info').find('.tagColorBox').should('have.length', 10)
+    cy.get('#info').find('.tagColorBox').should('have.length', 14)
 
     //change tag of clone0
     cy.get('#listElem_0').find('.starBox').click()
-    cy.get('.tagSelector').find('#tagElem_clonotype_1').click()
+    cy.get('.tagSelector').find('#tagElem_dominant').click()
 
     //filter tag 0 out
     cy.get('#info').find('.tagColorBox').first().click()

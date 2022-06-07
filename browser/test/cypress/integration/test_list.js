@@ -377,16 +377,16 @@ describe('List', function () {
     cy.get('.tagSelector').should("not.be.visible")
     cy.getCloneInList(1).click() // click outside to not hover clonotype 0
     cy.update_icon()
-    cy.getCloneInList(0).scrollIntoView().should('have.css', 'color', 'rgb(220, 50, 47)')
+    cy.getCloneInList(0).scrollIntoView().should('have.css', 'color', 'rgb(192, 48, 56)')
 
     // Tag multiple
     cy.selectCloneMulti([4, 5, 6])
     cy.get("#tag_icon__multiple").click()
     cy.get('.tagName_custom_2').click()
     cy.selectClone(0)
-    cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')
-    cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')
-    cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')
+    cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
+    cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
+    cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
     return
   })
 

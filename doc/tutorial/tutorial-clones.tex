@@ -161,10 +161,10 @@ Usually we may want to tag them in order to remember and follow them later on.
   // Tag multiple times one clonotype
   cy.changeTagClone(1, 'clonotype_1')
   cy.changeTagClone(4, "clonotype_2")
-  cy.changeTagClone(0, "standard_2")
+  cy.changeTagClone(0, "standard")
 
   cy.selectClone("5") // select other clone to see real color of clone 0
-  cy.getCloneInList(0).should('have.css', 'color', 'rgb(108, 113, 196)')
+  cy.getCloneInList(0).should('have.css', 'color', 'rgb(38, 139, 210)')
 
 
 \end{verbatim}
@@ -316,9 +316,9 @@ After this rename, you can see that the clone is still selected.
     cy.selectClone(0)
 
     cy.getCloneInList(5).should('have.css', 'color', 'rgb(101, 123, 131)') // clone 5 still have default color
-    cy.getCloneInList(7).should('have.css', 'color', 'rgb(211, 54, 130)') // clone 7 have also changed color
-    cy.getCloneInList(11).should('have.css', 'color', 'rgb(211, 54, 130)') // clone 11 have also changed color
-    cy.getCloneInList(13).should('have.css', 'color', 'rgb(211, 54, 130)') // clone 13 have also changed color
+    cy.getCloneInList(7).should('have.css', 'color', 'rgb(55, 145, 73)') // clone 7 have also changed color
+    cy.getCloneInList(11).should('have.css', 'color', 'rgb(55, 145, 73)') // clone 11 have also changed color
+    cy.getCloneInList(13).should('have.css', 'color', 'rgb(55, 145, 73)') // clone 13 have also changed color
 
 
 \end{verbatim}
@@ -1075,7 +1075,7 @@ expected concentration is 1\% (.01).
   ///////////////////////////////////
   // test_B_clones_39_reset_color_tag
     cy.changeColorby("Tag")
-    cy.getCloneInList(0).should('have.css', 'color', 'rgb(108, 113, 196)')
+    cy.getCloneInList(0).should('have.css', 'color', 'rgb(38, 139, 210)')
 
 
 \end{verbatim}
