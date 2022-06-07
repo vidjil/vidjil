@@ -19,7 +19,7 @@ but give a few links to commonly used strategies for library preparation and seq
 PCR approaches are the state-of-the-art way to detect
 and quantify immune recombinations.
 
- - As of 2022, the  reference protocols
+ - As of 2022, the reference protocols
    for library preparation on Illumina MiSeq using **EuroClonality-NGS** primers
    and analysis with Vidjil are described
    in [(Villarese, 2022)](http://dx.doi.org/10.1007/978-1-0716-2115-8_3)
@@ -28,16 +28,16 @@ and quantify immune recombinations.
    and [(de Septenville, 2022)](http://dx.doi.org/10.1007/978-1-0716-2115-8_10)
    (assessment of mutational status in CLL,
    24+1 primers in 1 tube, IGHV-leader/IGHJ).
+   They can be adapted for other sequencers.
 
  - The reference for **EuroClonality-NGS** primer sets
    are [(Brüggemann, 2019)](http://dx.doi.org/10.1038/s41375-019-0496-7)
    (2-step, 138 primers in 8 tubes, IGH FR1, IGH+, IGK, IGK+, TRB, TRB+, TRD/TRD+, TRG)
    and [(Scheijen, 2019)](http://dx.doi.org/10.1038/s41375-019-0508-7)
    (1-step, 53 primers in 3 tubes, IGH FR3, IGH+, IGK, IGK+).
-   These primer sets were evaluated in a multi-center validation study.
-   The EuroClonality-NGS consortium also published
-   [standard operating procedures](http://www.euroclonality.org/ngs/protocols)
-   for Illumina MiSeq and Ion Torrent, that can be adapted for other sequencers.
+   The EuroClonality-NGS consortium also published previous
+   [protocols](http://www.euroclonality.org/ngs/protocols)
+   for Illumina MiSeq and Ion Torrent.
    <br />
    Download: [2019-EuroClonality-NGS-primers.csv](http://www.vidjil.org/data/2019-EuroClonality-NGS-primers.csv)
 
@@ -47,7 +47,8 @@ and quantify immune recombinations.
    See for example [(Ferret, 2016)](http://dx.doi.org/10.1111/bjh.13981)
    (1-step, 23 primers in 5 tubes, TRG, TRD/TRD+, IGK, IGK+).
 
-These primer sets were designed and evaluated for onco-hematological studies on lymphoma and/or leukemia samples
+These primer sets were designed and evaluated in multi-center validation studies
+for onco-hematological studies on lymphoma and/or leukemia samples,
 but may also be used in other studies on the immune repertoire.
 Such primer sets or DNA-Seq (or even on RNA-Seq) are very specific,
 leading to usually datasets with more than 90% or 99% of reads with V(D)J recombinations.
