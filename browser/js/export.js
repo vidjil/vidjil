@@ -734,7 +734,12 @@ Report.prototype = {
             
             if (self.settings.blocks)
                 self.settings.blocks.forEach(function(block){
-                    self.block(block);
+                    try {
+                        self.block(block);
+                    } catch (error) {
+                        console.log("failed to print block " + block.blockType)
+                    }
+                    
                 });
             
             self.restorestate()    
