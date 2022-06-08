@@ -24,7 +24,7 @@ and quantify immune recombinations.
    and analysis with Vidjil are described
    in [(Villarese, 2022)](http://dx.doi.org/10.1007/978-1-0716-2115-8_3)
    (marker identification in ALL,
-   1-step, 7/19 tubes, IGH FR2, IGH+, IGK/IGK+, TRB, TRB+, TRD/TRD+, TRG)
+   1-step, IGH FR2, IGH+, IGK/IGK+, TRB, TRB+, TRD/TRD+, TRG)
    and [(de Septenville, 2022)](http://dx.doi.org/10.1007/978-1-0716-2115-8_10)
    (assessment of mutational status in CLL,
    24+1 primers in 1 tube, IGHV-leader/IGHJ).
