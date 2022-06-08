@@ -72,6 +72,8 @@ The development of Vidjil is funded by:
 
 If you use vidjil-algo, please cite [Giraud, Salson 2014].
 If you use the web platform, please cite [Duez 2016].
+Reference for protocols are [Villarese 2022] (marker identification in ALL)
+and [Septenville 2022] (assessment of mutational status in CLL).
 
 Marc Duez et al.,
 *Vidjil: A web platform for analysis of high-throughput repertoire sequencing*,
@@ -83,6 +85,15 @@ Mathieu Giraud, Mikaël Salson, et al.,
 BMC Genomics 2014, 15:409
 <http://dx.doi.org/10.1186/1471-2164-15-409>
 
+Patrick Villarese et al.,
+*One-Step Next-Generation Sequencing of Immunoglobulin and T-Cell Receptor Gene Recombinations for MRD Marker Identification in Acute Lymphoblastic Leukemia*,
+Immunogenetics, Methods in Molecular Biology 2453, pp. 43-59,
+<http://dx.doi.org/10.1007/978-1-0716-2115-8_3>
+
+Anne Langlois de Septenville et al.,
+*Immunoglobulin Gene Mutational Status Assessment by Next Generation Sequencing in Chronic Lymphocytic Leukemia*,
+Immunogenetics, Methods in Molecular Biology 2453, pp. 153-167,
+<http://dx.doi.org/10.1007/978-1-0716-2115-8_10>
 
 
 ## Some publications using Vidjil
@@ -165,7 +176,7 @@ Nature Communications, 2021,
 
 Vincent Jauvague et al.,
 *RNA-based immunoglobulin repertoire sequencing is a new tool for the management of monoclonal gammopathy of renal (kidney) significance.*
-Kidney International, 2021,
+Kidney International, 2022, 101(2), 331-337,
 <https://doi.org/10.1016/j.kint.2021.10.017>
 
 Takashi Kanamori et al.,
@@ -222,6 +233,11 @@ Dai Nishijima et al.,
 *Capture Sequencing Is a Useful Method for Comprehensive Clonality Analysis Based on Ig/TCR Gene Rearrangements in Acute Lymphoblastic Leukemia*,
 ASH 2018, Blood, 132(S1):1543,
 <https://doi.org/10.1182/blood-2018-99-115624>
+
+Alexis Piedrafita et al.,
+*Spectrum of Kidney Disorders Associated with T-Cell Immunoclones*,
+Journal of Clinical Medicine, 2022, 11(3), 604,
+<https://doi.org/10.3390/jcm11030604>
 
 Edit Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
