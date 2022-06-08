@@ -73,7 +73,6 @@ tuto-s1-ff-supported:
     PATH_CYPRESS: server/web2py/applications/vidjil/tests/cypress/integration
     TEST_FILES: "/app/cypress/integration/doc_*.js"
   before_script:
-    - apt-get -y install pandoc
     - make -C doc/tutorial/ build_tutorial_cypress_server
   only:
     - /^feature-.*s.*\/.*$/
