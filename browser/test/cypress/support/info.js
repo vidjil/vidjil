@@ -10,8 +10,30 @@ Cypress.Commands.add('close_sample_info', () => {
   cy.get("#info_timepoint").should("not.exist")
 })
 
-Cypress.Commands.add('switchTag', (name) => { 
-  cy.get(`#tag_${name}`).click()
+/**
+ * Switch tag stauts; starting status can be given to ensure that switch is correctly done
+ * and DOM element render before return
+ */
+Cypress.Commands.add('switchTag', (name, starting_status) => {
+  if (starting_status == true) {
+      cy.get(`#tag_${name}`)
+        .should('not.have.class', 'inactiveTag')
+  } else if (starting_status == false) {
+      cy.get(`#tag_${name}`)
+        .should('have.class', 'inactiveTag')
+  }
+
+  cy.get(`#tag_${name}`)
+    .click()
+
+  if (starting_status == true) {
+      cy.get(`#tag_${name}`)
+        .should('have.class', 'inactiveTag')
+  } else if (starting_status == false) {
+      cy.get(`#tag_${name}`)
+        .should('not.have.class', 'inactiveTag')
+  }
+
 })
 
 

@@ -185,11 +185,11 @@ Later you may want to filter clones depending on the tags you have chosen.
     .should("be.visible")
 
   cy.getCloneInList("1")
-  cy.switchTag("clonotype_1")
+  cy.switchTag("clonotype_1", true)
 
   cy.getCloneInList('1').should("not.be.visible")
 
-  cy.switchTag("clonotype_1")
+  cy.switchTag("clonotype_1", false)
   cy.getCloneInList('1').should("be.visible")
 
 
