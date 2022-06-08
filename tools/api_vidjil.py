@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
 from requests import Session
 from bs4 import BeautifulSoup as bs
 import json
@@ -115,7 +118,7 @@ class Vidjil:
             raise Exception( "Login; error at login step.\nStatus code is %s and content is '%s'."  % (response.status_code, response.content))
         else:
             self.logged = True
-            print( "Successful login")
+            print( f"Successful login as {email}")
             # self.whoami()
             # todo; print admin status; groups ?
 
@@ -155,6 +158,8 @@ class Vidjil:
             message += "Url: %s" % url
         elif content == {'message': 'access denied'}:
             message = 'Server return an access denied response.'
+        elif "success" in content and content["success"] == "false":
+            message = f'Server return a failed message : {content["message"]}'
 
         if message:
             if bypass_error:

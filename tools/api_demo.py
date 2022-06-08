@@ -28,9 +28,11 @@ def demoReadFromServer(server, ssl, user, password):
 
     ### Define a set of id and config
     sample_set_id = 25736  # Demo lil L3
- 
+    config_id     = 25     # multi+inc+xxx
+
     ### Get a set from server by is id and set type
     demo_set = vidjil.getSamplesetById(sample_set_id, vidjil.PATIENT)
+    print("Demo set content:")
     print(demo_set)
 
     ### Get a list of all samples sets by set type (vjdjil.PATIENT, vidjil.RUN or vidjil.SET)
@@ -38,27 +40,24 @@ def demoReadFromServer(server, ssl, user, password):
     samples = vidjil.getAllSampleset(set_type=vidjil.PATIENT)
     
     # The data is under samples["query"]
-    print("Patients: %s" % len(samples["query"]) )
+    print("Patients list: %s" % len(samples["query"]) )
     print(samples)
 
     # You can also set a filter value that will be searched into various field of sets (name, info, ...)
-    samples = vidjil.getAllSampleset(set_type=vidjil.PATIENT, filter_val="#API_PATIENT")
-    print("Result: %s" % len(samples["query"]) )
+    samples = vidjil.getAllSampleset(set_type=vidjil.PATIENT, filter_val="#DEMO")
+    print("Result getAllSampleset; filter #DEMO: %s" % len(samples["query"]) )
 
-    ### Launch analyses
-    # config_id = 2
-    # status = vidjil.launchAnalysisBunchesSet(list_sets = [25736, 3296], config_id) # Lil-L3 et Lil-L4
-    # print(status)
 
     ###################################################################
     ### Example 1: download results from a set for a configuration id.
-    path_out = "output/" # be sure to create this directory first
 
     os.system('mkdir -p %s' % DOWNLOAD_PATH)
     
-    # Get information from server about set and samples (we reuse here the set id previously created)
-    sampleset = vidjil.getSamplesetById(setid_set, vidjil.SET)[0]
-    samples   = vidjil.getSampleOfSet(setid_set, config_id)
+    # Get information from server about set and samples (we reuse here the set id of Demo Lil L3)
+    sampleset = vidjil.getSamplesetById(sample_set_id, vidjil.PATIENT)
+    print( sampleset )
+
+    samples   = vidjil.getSampleOfSet(sample_set_id, config_id)
     # download result file from all samples if completed
     for sample in samples["query"]:
         if sample["results_file"]["status"] == vidjil.COMPLETED:
@@ -84,7 +83,7 @@ def demoWriteRunOnServer(server, ssl, user, password):
     """
 
     # Login
-    vidjil = Vidjil(server, ssl)
+    vidjil = Vidjil(server, ssl=ssl)
     vidjil.login(user, password)
 
     # Create patient/run/set
@@ -92,16 +91,16 @@ def demoWriteRunOnServer(server, ssl, user, password):
     vidjil.createRun("Run 2022-072", run_date="2022-04-01")
     set_data = vidjil.createSet("Set for API tests", info="Libraries with EuroClonality-NGS 2019 primers")
     setid_set = set_data["args"]["id"]
+    print( f"setid_set: {setid_set}")
 
-    # set_ids filed take value in a specific format: :$set+$name+($id)
+    # set_ids filed take value in a specific format: :$set+($id)
     # With :
     #   $set can be ans 's', 'p' or 'r' respectivly for generic set, patient of run
-    #   $name is a part or complete name of set 
     #   $id is the id of the set 
     sample = vidjil.createSample(source="computer",
                 pre_process= "0",
-                set_ids= ":s+set_api+(%s)" % setid_set ,
-                file_filename= "path_to_file/file.fastq.gz",
+                set_ids= ":s+(%s)" % setid_set ,
+                file_filename= "../demo/Demo-X5.fa",
                 file_filename2= "",
                 file_id= "",
                 file_sampling_date= "2016-01-13",
@@ -111,14 +110,12 @@ def demoWriteRunOnServer(server, ssl, user, password):
                 sample_type= "set")
 
     file_id  = sample["file_ids"][0]  ## Uploaded file
-    config_id = 2 ## multi+inc+xxx
+    print( f"Sample:\n{sample}file_id: {file_id}")
 
     ### Get status of sample of this set
-    analysis = vidjil.launchAnalysisSample(setid_set, file_id, config_id)
+    config_id = 2 ## multi+inc+xxx
+    analysis  = vidjil.launchAnalysisOnSample(setid_set, file_id, config_id)
     print(analysis)
-
-
-
 
 
 if  __name__ =='__main__':
