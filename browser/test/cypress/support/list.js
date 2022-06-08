@@ -43,7 +43,12 @@ Cypress.Commands.add('openTagPanelOneClone', (id) => {
 
 Cypress.Commands.add('changeTagClone', (id, tagname) => {
   cy.openTagPanelOneClone(id)
-  cy.get(`.tagName_${tagname}`).click()
+
+  cy.get('.tagSelector')
+    .should("be.visible")
+  cy.get(`.tagName_${tagname}`)
+    .should("be.visible")
+    .click()
   cy.get(`#tag_panel_clones_${id}`).should('not.be.visible')
   cy.get('.tagSelector').should('not.be.visible')
 })
