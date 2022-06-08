@@ -312,7 +312,9 @@ After this rename, you can see that the clone is still selected.
   cy.log("// test_B_clones_11_multiple_tag")
     cy.selectCloneMulti([7, 11, 13])
     cy.get('#tag_icon__multiple').click()
+    cy.update_icon()
     cy.get('#tagElem_custom_2').click()
+    cy.update_icon()
     cy.selectClone(0)
 
     cy.getCloneInList(5).should('have.css', 'color', 'rgb(101, 123, 131)') // clone 5 still have default color
@@ -481,6 +483,7 @@ By default in the bottom plot (the \textit{grid}), the clones
     cy.get("body").type("0")
 
     cy.get('#id_label_x_IGHV3-13').click()
+    cy.update_icon()
 
     // control that these clonotype is selected and visible in semgenter
     cy.getCloneInSegmenter(0).should("not.be.visible") // should not be present
@@ -603,6 +606,7 @@ Open the \com{cluster} menu at the top of the page, and choose \com{cluster by V
   ///////////////////
   cy.log("// test_B_clones_25")
     cy.get('#cluster_break_all').click({force: true})
+    cy.update_icon()
     cy.getCloneInList(1).should("have.text", "interesting clone")
     cy.get('#clusterBox_1 > .icon-plus').should("not.exist")
     cy.getCloneInList(4).should("have.text", "TRGV10 13//5 JP1")
@@ -707,11 +711,13 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
     cy.get('#id_legend_y').should("have.text", "J/3' gene")
 
     cy.get("#visu_bar").click({force: true})
+    cy.update_icon()
 
     cy.get('#id_legend_x').should("have.text", "V/5' gene") // Correct legend for axe X after switch in bar mode
     cy.get('#id_legend_y').should("have.text", "Size")      // Correct legend for axe Y after switch in bar mode
 
     cy.get("#visu_plot").click({force: true})
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "V/5' gene") // Correct legend for axe X after switch back in bubble mode"
     cy.get('#id_legend_y').should("have.text", "J/3' gene") // Correct legend for axe Y after switch back in bubble mode"
 
@@ -1009,6 +1015,7 @@ clicked on.
     cy.get('#toogleLocusSystemBox_IGH').should('not.have.class', 'unchecked')
 
     cy.get('#toogleLocusSystemBox_IGH').click({shiftKey: true})
+    cy.update_icon()
 
     cy.get('#toogleLocusSystemBox_TRG').should('have.class', 'unchecked')     // locus TRG NOT present in info panel after switch
     cy.get('#toogleLocusSystemBox_IGH').should('not.have.class', 'unchecked') // locus IGH present in info panel after switch
@@ -1021,6 +1028,7 @@ clicked on.
   ////////////////////////////////////////
   cy.log("// test_B_clones_36_activate_again_locus")
     cy.get('#toogleLocusSystemBox_TRG').click()
+    cy.update_icon()
     cy.get('#toogleLocusSystemBox_TRG').should('not.have.class', 'unchecked')
     cy.get('#toogleLocusSystemBox_IGH').should('not.have.class', 'unchecked')
 
