@@ -22,7 +22,7 @@ This sample has been processed using the Vidjil algorithm.
 \reponse{In the upper left corner, you can see an information panel with \com{analyzed reads 1 967 338 (82.31\,\%)'}}
 \begin{verbatim}
 
-  //def test_A_quality_01_number_reads
+  cy.log("// test_A_quality_01_number_reads")
   cy.get('#info_segmented').contains("1 967 338 (82.31%)")
   cy.get('#info_selected_locus').contains("1 965 646 (82.24%)")
 
@@ -41,7 +41,7 @@ IGH \fl 314.5\\*
 TRG \fl 197.6 }
 \begin{verbatim}
 
-    //def test_A_quality_02_sample_log
+    cy.log("// test_A_quality_02_sample_log")
     cy.get('.button > .icon-info').click()
     cy.get('#info_timepoint').should("be.visible")
 

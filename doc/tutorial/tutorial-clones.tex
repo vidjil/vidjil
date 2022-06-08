@@ -27,7 +27,7 @@ is \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
 
 \begin{verbatim}
   /////////////////////////
-  // test_B_clones_01_major
+  cy.log("// test_B_clones_01_major")
   cy.selectClone('1')
   cy.get('.focus').should('have.text', "IGHV3-9*01 7/CCCGGA/17 IGHJ6*02")
   cy.get('.stats_content').should('have.text', '1 clonotype, 189 991 reads (9.665%) ')
@@ -42,7 +42,7 @@ There are several options to display the V(D)J designation.
 
 \begin{verbatim}
   ////////////////////////////////////
-  // test_B_clones_02_setting_n_length
+  cy.log("// test_B_clones_02_setting_n_length")
   cy.get('#menuCloneNot_nucleotide_number')
     .click({force: true})
   cy.get('#listElem_1 > .nameBox')
@@ -77,7 +77,7 @@ There are several options to display the V(D)J designation.
 
 \begin{verbatim}
   //////////////////////////////////
-  // test_B_clones_03_setting_allele
+  cy.log("// test_B_clones_03_setting_allele")
   cy.get('#menuAlleleNot_never')
     .click({force: true})
   cy.get('#listElem_1 > .nameBox')
@@ -113,7 +113,7 @@ slider to its right end.
  filter set to 100 \fl IGH smaller clonotypes 8.92\,\%\\*}
 \begin{verbatim}
   /////////////////////////////////
-  // test_B_clones_04_filter_slider
+  cy.log("// test_B_clones_04_filter_slider")
   // Igh smaller position: 454
 
 
@@ -153,7 +153,7 @@ Usually we may want to tag them in order to remember and follow them later on.
 
 \begin{verbatim}
   /////////////////////////////////////
-  // test_B_clones_05_tag_biggest_clone
+  cy.log("// test_B_clones_05_tag_biggest_clone")
 
   // control default color of clones
   cy.getCloneInList(0).should('have.css', 'color', 'rgb(101, 123, 131)')
@@ -176,7 +176,7 @@ Later you may want to filter clones depending on the tags you have chosen.
 
 \begin{verbatim}
   /////////////////////////////////
-  // test_B_clones_06_filter_by_tag
+  cy.log("// test_B_clones_06_filter_by_tag")
 
   cy.get('#listElem_454 > .nameBox')
     .scrollIntoView()
@@ -207,7 +207,7 @@ or directly by hidding/focusing some clones.
 
 \begin{verbatim}
   //////////////////////////////////
-  // test_B_clones_06b_filter_by_tag
+  cy.log("// test_B_clones_06b_filter_by_tag")
   // TODO
 
 \end{verbatim}
@@ -223,7 +223,7 @@ The menu filter shows the list of currently active filters.
 \reponse{In the filter menu, you can remove filters one by one. You can also remove the text filter by clicking on the cross above the clone list.}
 \begin{verbatim}
   //////////////////////////////////////
-  // test_B_clones_07_filter_search_area
+  cy.log("// test_B_clones_07_filter_search_area")
 
   // cy.getCloneInList('0').should("be.visible")
   cy.getCloneInList('1').should("be.visible")
@@ -257,7 +257,7 @@ Another solution to tag a specific clone is to rename it.
   \texttt{Enter}.}
 \begin{verbatim}
   /////////////////////////////////////
-  // test_B_clones_08_change_clone_name
+  cy.log("// test_B_clones_08_change_clone_name")
 
   cy.getCloneInList('1')
     .dblclick()
@@ -278,7 +278,7 @@ After this rename, you can see that the clone is still selected.
   is added in the bottom part.}
 \begin{verbatim}
   //////////////////////////////////
-  // test_B_clones_09_multiselection
+  cy.log("// test_B_clones_09_multiselection")
     cy.changePreset("read length distribution")
     // to verify correct selection, We will look in segmenter the presence if clone entrie
     // Maybe another method could be more acurate
@@ -297,7 +297,7 @@ After this rename, you can see that the clone is still selected.
   represent?}
 \begin{verbatim}
   //////////////////////////////////////////////
-  // test_B_clones_10_size_if_multiple_selection
+  cy.log("// test_B_clones_10_size_if_multiple_selection")
     cy.selectCloneMulti([1, 4])
     cy.get('.stats_content').should('have.text', '2 clonotypes, 364 027 reads (18.51%) ')
 
@@ -309,7 +309,7 @@ After this rename, you can see that the clone is still selected.
   all the selected clones at once.}
 \begin{verbatim}
   ////////////////////////////////
-  // test_B_clones_11_multiple_tag
+  cy.log("// test_B_clones_11_multiple_tag")
     cy.selectCloneMulti([7, 11, 13])
     cy.get('#tag_icon__multiple').click()
     cy.get('#tagElem_custom_2').click()
@@ -329,7 +329,7 @@ After this rename, you can see that the clone is still selected.
   without being annoyed by other clones.}
 \begin{verbatim}
   /////////////////////////
-  // test_B_clones_12_focus
+  cy.log("// test_B_clones_12_focus")
     cy.getCloneInList(1).should("be.visible")
     cy.getCloneInList(7).should("be.visible")
     cy.getCloneInList(11).should("be.visible")
@@ -349,7 +349,7 @@ After this rename, you can see that the clone is still selected.
   above the list or on the corresponding line in the filter menu.}
 \begin{verbatim}
   /////////////////////////////////
-  // test_B_clones_13_remove_filter
+  cy.log("// test_B_clones_13_remove_filter")
     cy.resetAllFilter()
     cy.getCloneInList(1).should("be.visible")
     cy.getCloneInList(7).should("be.visible")
@@ -363,7 +363,7 @@ After this rename, you can see that the clone is still selected.
   bottom plot.}
 \begin{verbatim}
   ///////////////////////////////////////////////////
-  // test_B_clones_14_unselect_by_click_in_empty_zone
+  cy.log("// test_B_clones_14_unselect_by_click_in_empty_zone")
     // TODO
 
 
@@ -375,7 +375,7 @@ Sometimes, one wants to hide noisy or unrelated clones.
   clones by clicking on the cross in the corresponding line in filter menu.}
 \begin{verbatim}
   /////////////////////////////////
-  // test_B_clones_15_hide_selected
+  cy.log("// test_B_clones_15_hide_selected")
     // test that clone are present before focus
     cy.getCloneInList(1).should("be.visible")
     cy.getCloneInList(7).should("be.visible")
@@ -411,7 +411,7 @@ of sample is quite limited, so the feature may appear less useful.
 }
 \begin{verbatim}
   ////////////////////////////////////
-  // test_B_clones_16_graphmenu_filter
+  cy.log("// test_B_clones_16_graphmenu_filter")
     cy.getCloneInList(5).should("be.visible")
     cy.get('#visu2_title').should("have.text", "5 / 5")
     cy.get('#time0').should("be.visible")
@@ -438,7 +438,7 @@ samples.
   samples to be shown.}
 \begin{verbatim}
   //////////////////////////////////////
-  // test_B_clones_17_graphmenu_activate
+  cy.log("// test_B_clones_17_graphmenu_activate")
     cy.get('#visu2_title').should("have.text", "3 / 5") //Ratio show is correct after focus
 
     cy.get('#visu2_listElem_check_0').click({force: true})
@@ -476,7 +476,7 @@ By default in the bottom plot (the \textit{grid}), the clones
   maintaining down the left button of the mouse.}
 \begin{verbatim}
   /////////////////////////////////////////////////////
-  // test_B_clones_18_select_mulitple_ighv3_13_clonotype
+  cy.log("// test_B_clones_18_select_mulitple_ighv3_13_clonotype")
     cy.selectClone(0)
     cy.get("body").type("0")
 
@@ -503,7 +503,7 @@ them to see more easily their similarities.
 emphasized in bold.}
 \begin{verbatim}
   /////////////////////////
-  // test_B_clones_19_align
+  cy.log("// test_B_clones_19_align")
     // TODO; align don't available without server
 
 
@@ -521,7 +521,7 @@ the sequence panel.
   one.}
 \begin{verbatim}
   ///////////////////////////////////////////
-  // test_B_clones_20_unselect_from_segmenter
+  cy.log("// test_B_clones_20_unselect_from_segmenter")
     cy.removeCloneInSegmenter(47) // automatic assert not visible
 
 
@@ -536,7 +536,7 @@ depend on the sequencer and the PCR technique.
   button, next to the \com{Align} button.}
 \begin{verbatim}
   //////////////////////////////////
-  // test_B_clones_21_click_on_merge
+  cy.log("// test_B_clones_21_click_on_merge")
     cy.getCloneInSegmenter(30).should("be.visible")
     cy.getCloneInSegmenter(43).should("be.visible")
     cy.get('#cluster').click()
@@ -555,7 +555,7 @@ the main one.
 \question{Click on the $+$ and observe the changes in the grid.}
 \begin{verbatim}
   ///////////////////
-  // test_B_clones_22
+  cy.log("// test_B_clones_22")
     // TODO
 
 
@@ -568,7 +568,7 @@ cluster by clicking on the cross at their left in the list.
 \question{For the sake of the exercise, remove the last clone of the cluster.}
 \begin{verbatim}
   ///////////////////
-  // test_B_clones_23
+  cy.log("// test_B_clones_23")
     // TODO
 
 
@@ -583,7 +583,7 @@ Open the \com{cluster} menu at the top of the page, and choose \com{cluster by V
 %%% -> Problème, on n'a pas encore parlé des axes à cet endroit.
 \begin{verbatim}
   ////////////////////////////////
-  // test_B_clones_24_cluster_by_V
+  cy.log("// test_B_clones_24_cluster_by_V")
     cy.getCloneInList(1).should("not.have.text", "IGHV3-9")
     cy.get('#clusterBox_1 > .icon-plus').should("not.exist")
 
@@ -601,7 +601,7 @@ Open the \com{cluster} menu at the top of the page, and choose \com{cluster by V
 \question{In the \com{cluster} menu, select  \com{revert to previous clusters} to undo these clusterings.}
 \begin{verbatim}
   ///////////////////
-  // test_B_clones_25
+  cy.log("// test_B_clones_25")
     cy.get('#cluster_break_all').click({force: true})
     cy.getCloneInList(1).should("have.text", "interesting clone")
     cy.get('#clusterBox_1 > .icon-plus').should("not.exist")
@@ -656,7 +656,7 @@ insertions.
   and in the preset box choose \com{V/N length}.}
 \begin{verbatim}
   ///////////////////////////////////////
-  // test_B_clones_26_change_scatter_axis
+  cy.log("// test_B_clones_26_change_scatter_axis")
     // change preset, first time manually as user can do (don't use $b.scatterplot_select_preset this time)
     cy.changePreset("V/N length")
 
@@ -675,7 +675,7 @@ Then you can continue aligning and clustering clones if necessary.
   which tends to separate quite nicely the distinct clones.}
 \begin{verbatim}
   ///////////////////////////////////
-  // test_B_clones_27_change_preset_2
+  cy.log("// test_B_clones_27_change_preset_2")
     cy.changePreset("read length / GC content")
 
     cy.get('#id_legend_x').should("have.text", "Reads length")
@@ -698,7 +698,7 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 % on cherche a faire dire quoi ? Le highligth ? Dans ce cas est-il plus simple de le dire directement ? ou en tout cas sans le rapport avec le bar plot.
 \begin{verbatim}
   ///////////////////////////////////////////
-  // test_B_clones_28_switch_scatterplot_mode
+  cy.log("// test_B_clones_28_switch_scatterplot_mode")
 
     cy.get("body").type(0)
     cy.update_icon()
@@ -732,7 +732,7 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 \reponse{This switches the grid preset. Use shift + number to access to presets 10-19.}
 \begin{verbatim}
   ///////////////////////////////////
-  // test_B_clones_29_shortcut_preset
+  cy.log("// test_B_clones_29_shortcut_preset")
 
     cy.get("body").type(0)
     cy.get('#id_legend_x').should("have.text", "V/5' gene") // Correct legend for axe X for preset 0
@@ -811,7 +811,7 @@ with the \com{color by} menu.
   then color by \com{N length} (in the box at the top of the screen).}
 \begin{verbatim}
   //////////////////////////////
-  // test_B_clones_30_color_mode
+  cy.log("// test_B_clones_30_color_mode")
 
     cy.changePreset("V/J (genes)")
     cy.get("#id_label_x_IGHV1-2") // scatter plot legend X is correct after preset change
@@ -841,7 +841,7 @@ Some axes with many values (such as V and J genes) will not be displayed here.
 Continuous axes are shown with a radient color.
 \begin{verbatim}
   //////////////////////////////////
-  // test_B_clones_31_color_gradient
+  cy.log("// test_B_clones_31_color_gradient")
 
     cy.changePreset("CDR3 length distribution")
     cy.changeColorby("Size")
@@ -864,7 +864,7 @@ Continuous axes are shown with a radient color.
   % A partir de quand ds ce cas se retrouve-t-on avec une couleur completement différente ?
 \begin{verbatim}
   //////////////////////////////////
-  // test_B_clones_32_color_by_clone
+  cy.log("// test_B_clones_32_color_by_clone")
     cy.changeColorby("Clonotype")
     cy.update_icon()
 
@@ -891,7 +891,7 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
 }
 \begin{verbatim}
   //////////////////////////////////
-  // test_B_clones_33_align_germline
+  cy.log("// test_B_clones_33_align_germline")
 
     // sequence germline is NOT present in the segmenter
     cy.get('#seqIGHJ6\*02 > .sequence-holder > .seq-fixed > .nameBox').should("not.exist")
@@ -914,7 +914,7 @@ Some clones may be less trustable than other ones\dots{} Let's see how to spot t
   right side. Click on the warning. What are the warnings due to?}
 \begin{verbatim}
   ///////////////////
-  // test_B_clones_34
+  cy.log("// test_B_clones_34")
     cy.selectClone(11)
     cy.get('#clone_infoBox_1  > .icon-warning-1').should("not.exist")
     cy.get('#clone_infoBox_11 > .icon-warning-1').should("exist")
@@ -1004,7 +1004,7 @@ clicked on.
   number of analyzed reads? Why did it change?}
 \begin{verbatim}
   ////////////////////////////////
-  // test_B_clones_35_locus_switch
+  cy.log("// test_B_clones_35_locus_switch")
     cy.get('#toogleLocusSystemBox_TRG').should('not.have.class', 'unchecked')
     cy.get('#toogleLocusSystemBox_IGH').should('not.have.class', 'unchecked')
 
@@ -1019,7 +1019,7 @@ clicked on.
 \question{Now click on \com{TRG}, to filter it in again.}
 \begin{verbatim}
   ////////////////////////////////////////
-  // test_B_clones_36_activate_again_locus
+  cy.log("// test_B_clones_36_activate_again_locus")
     cy.get('#toogleLocusSystemBox_TRG').click()
     cy.get('#toogleLocusSystemBox_TRG').should('not.have.class', 'unchecked')
     cy.get('#toogleLocusSystemBox_IGH').should('not.have.class', 'unchecked')
@@ -1031,7 +1031,7 @@ clicked on.
   like :)). Let's stick to the TRG locus.}
 \begin{verbatim}
   ////////////////////////////
-  // test_B_clones_37_shortcut
+  cy.log("// test_B_clones_37_shortcut")
     cy.get("body").type(0) // return to a grap with locus 
     cy.get('#id_label_x_IGHV1-2').should("exist").should("be.visible")
     cy.get('#id_label_y_IGHJ1').should("exist").should("be.visible")
@@ -1051,7 +1051,7 @@ You can also change the current locus by clicking on the locus name in the
 right part of the grid.
 \begin{verbatim}
   /////////////////////////////////////////////////////
-  // test_B_clones_38_switch_locus_by_scatterplot_click
+  cy.log("// test_B_clones_38_switch_locus_by_scatterplot_click")
     cy.get("body").type(0) // locus IGH
     cy.get('#id_label_x_IGHV1-2').should("exist").should("be.visible") // scatterplot_legend X at init; IGHV1-2
     cy.get('#id_label_y_IGHJ1').should("exist").should("be.visible")   // scatterplot_legend Y at init; IGHJ-1
@@ -1073,7 +1073,7 @@ expected concentration is 1\% (.01).
 \question{First let's color this clone with the \com{standard} tag.}
 \begin{verbatim}
   ///////////////////////////////////
-  // test_B_clones_39_reset_color_tag
+  cy.log("// test_B_clones_39_reset_color_tag")
     cy.changeColorby("Tag")
     cy.getCloneInList(0).should('have.css', 'color', 'rgb(38, 139, 210)')
 
@@ -1087,7 +1087,7 @@ expected concentration is 1\% (.01).
   % l'iunclur en placeholder ? 
 \begin{verbatim}
   /////////////////////////////////
-  // test_B_clones_40_normalization
+  cy.log("// test_B_clones_40_normalization")
     cy.getCloneSize("1").should('have.text', "9.665%")
 
     cy.openTagPanelOneClone(1)
@@ -1112,7 +1112,7 @@ expected concentration is 1\% (.01).
   go back to the raw concentrations.}
 \begin{verbatim}
   /////////////////////////////////////////
-  // test_B_clones_41_disable_normalization
+  cy.log("// test_B_clones_41_disable_normalization")
     cy.get("#reset_norm").click({force: true})
     cy.getCloneSize("1").should('have.text', "9.665%") //correct size after disabled normalization"
 
