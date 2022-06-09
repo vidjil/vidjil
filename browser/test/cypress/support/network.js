@@ -13,7 +13,9 @@ Cypress.Commands.add('submitSegmenterNetwork', () => {
 
     cy.wait(500)
     cy.get('#form_submit')
-      .click()
+      .should("be.visible")
+      .click({force: true})
+      .should('be.disabled')
 
     cy.wait(['@getActivities'], {timeout: 15000})
     cy.update_icon(100)
