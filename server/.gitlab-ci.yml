@@ -63,13 +63,11 @@ s2:
 
 
 ## Cypress TUTORIAL with server
-tuto-s1-ff-supported:
+.tuto-server:
   stage: test_tutorial
   extends:
     - .test_cypress_server
-    - .need_for_moderate_client
   variables:
-    BROWSER: firefox_supported/firefox
     PATH_CYPRESS: server/web2py/applications/vidjil/tests/cypress/integration
     TEST_FILES: "/app/cypress/integration/doc_*.js"
   before_script:
@@ -82,10 +80,20 @@ tuto-s1-ff-supported:
     - doc
 
 
+tuto-s1-ff-supported:
+  stage: test_tutorial
+  extends:
+    - .tuto-server
+    - .need_for_moderate_client
+  variables:
+    BROWSER: firefox_supported/firefox
+
+
+
 ## Cypress with server
 tuto-s2:
   extends:
-    - tuto-s1-ff-supported
+    - .tuto-server
   parallel:
     matrix:
       - BROWSER: [

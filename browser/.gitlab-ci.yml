@@ -91,13 +91,11 @@ external2:
 
 ## cypress client
 # For the moment, need to be into separate stage (https://gitlab.com/gitlab-org/gitlab/-/issues/30632)
-tuto-c1-ff-supported:
+.tuto-client:
   stage: test_tutorial
   extends:
     - .test_cypress_base
-    - .need_for_moderate_client
   variables:
-    BROWSER: firefox_supported/firefox
     PATH_CYPRESS: browser/test/cypress/integration/
     TEST_FILES: "/app/cypress/integration/doc_*.js"
   before_script:
@@ -110,10 +108,16 @@ tuto-c1-ff-supported:
     - dev
     - doc
 
+tuto-c1-ff-supported:
+  extends:
+    - .tuto-client
+    - .need_for_moderate_client
+  variables:
+    BROWSER: firefox_supported/firefox
 
 tuto-c2:
   extends:
-    - tuto-c1-ff-supported
+    - .tuto-client
   parallel:
     matrix:
       - BROWSER: [
