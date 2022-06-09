@@ -5,7 +5,7 @@
     - .test_server_base
     - .test_cypress_base
     # - .need_for_staged_server
-  script:
+  script: &test_cypress_server_script
     - docker pull "vidjilci/cypress_with_browsers:latest"
     - >
       docker run
@@ -28,7 +28,7 @@
     CYPRESS_PATH: server/web2py/applications/vidjil/tests/cypress
     HOST: local
     TEST_FILES: "/app/cypress/integration/test_*.js"
-  only:
+  only: &onlyServerBranches
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
     - /^prod-server/
@@ -67,11 +67,11 @@ s2:
   stage: test_tutorial
   extends:
     - .test_cypress_server
-  variables:
-    PATH_CYPRESS: server/web2py/applications/vidjil/tests/cypress/integration
-    TEST_FILES: "/app/cypress/integration/doc_*.js"
-  before_script:
+  script:
     - make -C doc/tutorial/ build_tutorial_cypress_server
+    - *test_cypress_server_script
+  variables:
+    TEST_FILES: "/app/cypress/integration/doc_*.js"
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
