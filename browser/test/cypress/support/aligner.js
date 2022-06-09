@@ -13,8 +13,8 @@ Cypress.Commands.add('hideSelection', () => {
 
 Cypress.Commands.add('resetAllFilter', () => { 
   cy.get('#reset_focus').click({force: true})
-  cy.get('.icon-cancel-circled-outline')
-    .should('not.exist')
+  cy.get('#reset_focus > .icon-cancel-circled-outline')
+    .should('not.be.visible')
   cy.update_icon()
 })
 
