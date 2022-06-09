@@ -903,6 +903,8 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
     cy.get('#seqIGHJ6\*02 > .sequence-holder > .seq-fixed > .nameBox').should("not.exist")
 
     cy.selectClone(1)
+    cy.update_icon()
+    cy.getCloneInSegmenter(1)
     cy.get("#export_add_germline").click({force: true})
 
     cy.get('#seqIGHJ6\\*02 > .sequence-holder > .seq-fixed > .nameBox').should("exist")
