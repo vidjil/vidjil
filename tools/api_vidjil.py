@@ -153,9 +153,12 @@ class Vidjil:
             exit()
 
         message  = False
-        if response.status_code != 200:
-            message = 'Server return an error code (%s) with message:\n%s' % (response.status_code, response.content if not error_msg else error_msg)
-            message += "Url: %s" % url
+        if response.status_code not in [200, 404]:
+            message  = f'Server return an error code ({response.status_code}) with message: {str(response.content if not error_msg else error_msg)}\n'
+            message += f"\nUrl: {url}"
+        elif response.status_code == 404:
+            message  = f'Server return an error code ({response.status_code}). Does server is updated ?'
+            message += f"\nUrl: {url}"
         elif content == {'message': 'access denied'}:
             message = 'Server return an access denied response.'
         elif "success" in content and content["success"] == "false":
