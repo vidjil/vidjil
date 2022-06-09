@@ -200,10 +200,13 @@ class Vidjil:
         Returns:
             dict: Json response of the server that contain the set if available
         """
-        set_type = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
-        new_url  = self.url_server+"/sample_set/samplesetById?&id=%s&%s" % (set_id, set_type)
+        pretty_set_type = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
+        new_url  = self.url_server+"/sample_set/samplesetById?&id=%s&%s" % (set_id, pretty_set_type)
         # warning, don't present on prod server for the moment !!!
-        return self.request(new_url, "get")
+        content = self.request(new_url, "get")
+        if not len(content):
+            raise Exception( f"getSamplesetById error. \nNo sample found with this id '{set_id}' and type '{set_type}'")
+        return content
 
     def createPatient(self, first_name:str, last_name:str, sample_set_id:int=None, id:int=None, id_label:int=None, birth_date:str=None, info:str=None):
         """Take information to create a patient under the default group of the user
