@@ -31,8 +31,6 @@ describe('Tutorial server', function () {
 
 
     it('01-Remove anon for public grp',  function() {
-        cy.login(Cypress.env('host'))
-        cy.close_tips()
 
         cy.goToGroupsPage()
         var grp_public = 3
