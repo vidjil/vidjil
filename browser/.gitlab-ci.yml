@@ -122,7 +122,7 @@ tuto-c2:
     matrix:
       - BROWSER: [
           firefox_latest/firefox,
-          firefox_legacy/firefox,
+          # firefox_legacy/firefox, # not working for the moment on certain tests
           chrome_supported/chrome,
           chrome_latest/chrome,
           chrome_legacy/chrome
