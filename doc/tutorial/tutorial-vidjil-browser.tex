@@ -1,30 +1,22 @@
 
 \begin{verbatim}
-# coding: utf-8
-load 'vidjil_browser.rb'
-load 'browser_test.rb'
+/// <reference types="cypress" />
 
-#browser test suite
-class TestList < BrowserTest
+var localhost = true
+console.log( Cypress.env('workdir') )
+var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
+console.log( url )
 
-  def setup
-    super
-    if not defined? $b
-      set_browser("/browser/test/data/demo_lil_l3_tutorial.vidjil")
-      if $b.div(id: 'tip-container').present?
-        $b.div(:id => 'tip-container').div(:class => 'tip_1').element(:class => 'icon-cancel').click
-      end
-    end
-  end
+// This script allow to make some action in a sandbox to quicly change made on the client when you code
+describe('Tutorial browser', function () {
+    beforeEach(function () {
+        cy.setBrowser(url)
+    })
 
-  # position of clones
-  # clone 0, top clone of last sample (relapse)
-  # clone 1, top clone of first sample
-  # clone 4, second clone of first sample
-  # clone 7, 11, 13; clone 3, 4 and 5 of first sample
+  it('00-tutorial-browser',  function() {
+    cy.openAnalysis("doc/demo_lil_l3_tutorial.vidjil", undefined, 90000)
 
-  def after_tests
-  end
+
 \end{verbatim}
 
 
@@ -37,12 +29,12 @@ class TestList < BrowserTest
 \input{tutorial-export}
 
 \begin{verbatim}
+*/
 
-  # Not really a test
-  def test_zz_close
-    close_everything
-  end
-end
+    return
+  })
+})
+
 \end{verbatim}
 
 

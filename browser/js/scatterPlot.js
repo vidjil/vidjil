@@ -548,14 +548,16 @@ ScatterPlot.prototype = {
                     "text": system,
                     "enabled": enabled,
                     "x": xpos + 0.01,
-                    "y": ((i * 2) + 1) / (n * 2)
+                    "y": ((i * 2) + 1) / (n * 2),
+                    "id": `id_label_${system}`
                 })
             } else {
                 this.systemGrid.label.push({
                     "text": system,
                     "enabled": enabled,
                     "x": xpos,
-                    "y": ((i * 2) + 1) / (n * 2)
+                    "y": ((i * 2) + 1) / (n * 2),
+                    "id": `id_label_${system}`
                 })
             }
             this.systemGrid[system].x = 0.92
@@ -1156,6 +1158,9 @@ ScatterPlot.prototype = {
             .attr("class", function(d) {
                 return className;
             })
+            .attr("id", function(d) {
+                return `id_label_x_${d.text}`;
+            })
             .attr("transform", function(d) {
                 var y = self.text_position_x
                 if (d.type == "subline") y = self.sub_text_position_x
@@ -1237,6 +1242,9 @@ ScatterPlot.prototype = {
             .text(function(d) {
                 return d.text;
             })
+            .attr("id", function(d) {
+                return `id_label_y_${d.text}`;
+            })
             .attr("class", "sp_legend")
             /*
             .attr("transform", function(d) {
@@ -1267,7 +1275,10 @@ ScatterPlot.prototype = {
             .text(function(d) {return d.text})
             .attr("class", "sp_legend2")
             .attr("transform", function(d) {
-                if (d.rotate !== 0) return "rotate(" + d.rotation + " " + d.x + " " + d.y + ")"
+                if (d.rotation !== 0) return "rotate(" + d.rotation + " " + d.x + " " + d.y + ")"
+            })
+            .attr("id", function(d) {
+                return `id_legend_${(d.rotation !== 0) ? "y" : "x"}`;
             })
     },
 
@@ -1305,6 +1316,9 @@ ScatterPlot.prototype = {
                 .attr("class", function(d) {
                     if (d.enabled) return "sp_system_label"
                     return "sp_system_label inactive"
+                })
+                .attr("id", function(d) {
+                    return `id_sp_system_label_${d.text}`
                 })
         }
     },

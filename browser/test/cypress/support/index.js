@@ -24,6 +24,8 @@ import './configs_and_process'
 import './clones'
 import './menu'
 import './info'
+import './aligner'
+import './network'
 
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/

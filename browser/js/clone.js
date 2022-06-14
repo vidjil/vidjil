@@ -1921,8 +1921,9 @@ Clone.prototype = {
         this.active = true
         this.hidden = false
 
-        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller_clonotypes") != -1)
+        if (this.getTag() == "smaller_clonotypes" && this.m.filter.check("Tag", "=", "smaller_clonotypes") != -1){
             this.active = false
+        }
     },
 
     disable: function () {
