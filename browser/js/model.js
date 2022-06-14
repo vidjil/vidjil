@@ -1526,6 +1526,33 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         })
     },
     
+
+
+    /**
+     * Return a table of each warning, with number of clone and reads by type of warning
+     * @param {integer} timeID - time/sample index
+     * @return {Object} Dict of warning, with list of clonotype and sum of reads by type of warning
+     * */
+    getWarningsClonotypeInfo: function (timeID) {
+        var warned = {}
+        for (var cloneId in this.clones){
+            var clone = this.clone(cloneId)
+            if (clone.isWarned()){
+                for (var warn_pos in clone.warn){
+                    var warn = clone.warn[warn_pos]
+                    if (warned[warn.code] == undefined){
+                        warned[warn.code] = {"clones": [], "reads": 0, "msg": ""}
+                    }
+                    warned[warn.code].clones.push(clone.index)
+                    warned[warn.code].reads += clone.reads[timeID]
+                    warned[warn.code].msg = warn.msg.indexOf(":") != -1 ? warn.msg.split(":")[0] : warn.msg
+                }
+            }
+        }
+        return warned
+    },
+
+
     /**
      * return info about a timePoint in html 
      * @param {integer} timeID - time/sample index
@@ -1610,10 +1637,19 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 html += html_preprocess
             }
         }
-
-
-
         html += "</table></div>"
+
+
+        html += "<br/><div id='info_warnings'><table>"
+        html += header("Warnings", "warnings", 2)
+        html += row_from_list("message", ["clones", "reads"], "", 2)
+        warnings_clones = this.getWarningsClonotypeInfo(timeID)
+        for (var w_type in warnings_clones) {
+            var warn = warnings_clones[w_type]
+            html += row_from_list(`${w_type}; ${warn.msg}`, [warn.clones.length, warn.reads], undefined, 2)
+        }
+        html += "</table></div>"
+
 
         if ( typeof this.overlaps != 'undefined') {
             html += "<br/><h3>Overlaps index</h3>"

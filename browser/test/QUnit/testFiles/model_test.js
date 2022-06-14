@@ -748,6 +748,8 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     var data_copy = JSON.parse(JSON.stringify(json_data));
     m.parseJsonData(data_copy, 100)
     m.initClones()
+    m.clones[0].warn = [{"code": "W69", "msg": "Several genes with equal probability", "level": "warn"}]
+
     m.diversity = {
         "index_H_entropy": [
           5.688690639121887,
@@ -780,6 +782,9 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     assert.includes(html_info, "Diversity indices", "htmlInfo get diversity header")
     assert.includes(html_info, "<tr id='line_index_H_entropy'><td> Shannon's diversity</td><td>5.689</td></tr>", "An index is correctly present and formated")
     assert.notIncludes(html_info, '<tr><td colspan=\'5\'>Shannon\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>', "")
+
+    assert.includes(html_info, "id='info_warnings'", "table info_warnings present")
+    assert.includes(html_info, "id='modal_line_title_W69;_Several_genes_with_equal_probability'", "line in info_warnings present")
 
 
     // second sample has diversity by locus
