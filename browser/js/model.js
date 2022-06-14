@@ -1561,6 +1561,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     getPointHtmlInfo: function (timeID) {
         var time_length = this.samples.order.length
         var html = ""
+        var locus
 
         html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
@@ -1576,6 +1577,12 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         // 
         var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
 
+        html += header("Reads by locus", "reads_by_locus", 1)
+        for(locus in this.reads.germline){
+            html += row_from_list(`${locus}`, [this.reads.germline[locus][timeID]], `reads_by_locus_${locus}`, 1)
+        }
+
+
         // Sub-table diversity
         if ( typeof this.diversity != 'undefined') {
             html += "<tr><td class='header' "+colspan_header+"> Diversity indices </td></tr>"
@@ -1586,7 +1593,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 } else if (typeof diversity == "object"){
                     html += "<tr><td "+colspan_header+">"+translate_key_diversity(key_diversity)+"</td></tr>"
                     var present_locus = this.getLocusPresentInTop(timeID)
-                    for (var locus in diversity) {
+                    for (locus in diversity) {
                         if( present_locus.indexOf(locus) != -1 || locus == "all"){
                             html += "<tr id='line_"+key_diversity+"_"+locus+"'><td> " + this.systemBox(locus).outerHTML + " "+locus+"</td><td>" + diversity[locus] + '</td></tr>'
                         }

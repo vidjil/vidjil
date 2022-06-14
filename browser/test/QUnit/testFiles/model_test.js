@@ -783,6 +783,8 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     assert.includes(html_info, "<tr id='line_index_H_entropy'><td> Shannon's diversity</td><td>5.689</td></tr>", "An index is correctly present and formated")
     assert.notIncludes(html_info, '<tr><td colspan=\'5\'>Shannon\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>', "")
 
+    assert.includes(html_info, "modal_header_reads_by_locus", "htmlInfo get reads by locus header")
+    assert.includes(html_info, "modal_line_title_reads_by_locus_IGH", "htmlInfo get reads by locus line IGH")
     assert.includes(html_info, "id='info_warnings'", "table info_warnings present")
     assert.includes(html_info, "id='modal_line_title_W69;_Several_genes_with_equal_probability'", "line in info_warnings present")
 
