@@ -49,7 +49,7 @@ def get_upload_group_ids(auth):
                 group_ids.append(group.id)
     return group_ids
 
-def get_involved_groups():
+def get_involved_groups(db, auth):
     '''
     Returns all the groups that are related to the user. This includes all groups
     that the user is a member of, as well as any of their parents

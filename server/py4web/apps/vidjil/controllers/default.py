@@ -1,3 +1,5 @@
+
+
 # -*- coding: utf-8 -*-
 # this file is released under public domain and you can use without limitations
 
@@ -9,17 +11,36 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
-import defs
-import vidjil_utils
-import StringIO
+from sys import modules
+from .. import defs
+from ..modules import vidjil_utils
+from ..modules.controller_utils import error_message
+from io import StringIO
 import logging
-from controller_utils import error_message
+import json
+import os
+from py4web import action, request, abort, redirect, URL, Field, HTTP
+from yatl.helpers import A, I
+from py4web.utils.form import Form, FormStyleDefault
+from py4web.utils.grid import Grid, GridClassStyle, Column
+from py4web.utils.publisher import Publisher, ALLOW_ALL_POLICY
+from pydal.validators import IS_NOT_EMPTY, IS_INT_IN_RANGE, IS_IN_SET, IS_IN_DB
+from yatl.helpers import INPUT, H1, HTML, BODY, A, DIV
+from py4web.utils.param import Param
+from ..settings import SESSION_SECRET_KEY
+from ..modules.permission_enum import PermissionEnum
+from ..user_groups import get_default_creation_group
+from ..VidjilAuth import VidjilAuth
+import types
 
-import gluon.contrib.simplejson, time, datetime
-if request.env.http_origin:
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth
+
+if request.environ.get("HTTP_ORIGIN") :
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
+
+
 
 #########################################################################
 ##return the default index page for vidjil (redirect to the browser)
@@ -39,7 +60,7 @@ def home():
     else:
         redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True, host=True)
     res = {"redirect" : redirect}
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 def logger():
     '''Log to the server'''
@@ -56,7 +77,7 @@ def init_db():
     if (db(db.auth_user.id > 0).count() == 0) :
         return dict(message=T('create admin user and initialise database'))
     res = {"redirect" : "default/user/login"}
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 
 def init_db_form():
@@ -77,10 +98,10 @@ def init_db_form():
             res = {"success" : "false",
                    "message" : error}
             log.error(res)
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+            return json.dumps(res, separators=(',',':'))
 
     res = {"redirect" : "default/user/login"}
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 def init_from_csv():
     if db(db.auth_user.id > 0).count() == 0:
@@ -143,13 +164,13 @@ def run_request():
     if error == "" :
         res = schedule_run(request.vars["sequence_file_id"], id_config, grep_reads)
         log.info("run requested "+extra_info, extra={'user_id': auth.user.id, 'record_id': request.vars['sequence_file_id'], 'table_name': 'sequence_file'})
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     else :
         res = {"success" : "false",
                "message" : "default/run_request "+extra_info+" : " + error}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
 def run_all_request():
     error = ""
@@ -174,7 +195,7 @@ def run_all_request():
         res = {"success" : "false",
                "message" : "default/run_all_request "+extra_info+" : " + error}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
         
     id_sample_set = request.vars["sample_set_id"]
     ids_sequence_file = request.vars["sequence_file_ids"]
@@ -190,7 +211,7 @@ def run_all_request():
     log.info("run_all requested for {} files ".format(len(sequence_file_ids))+extra_info, extra={'user_id': auth.user.id, 'sample_set_id': id_sample_set})
     for s_id in sequence_file_ids:
         schedule_run(s_id, id_config)
-    return gluon.contrib.simplejson.dumps({'success': 'true', 'redirect': 'reload'}, separators=(',',':'))
+    return json.dumps({'success': 'true', 'redirect': 'reload'}, separators=(',',':'))
 
     
 def run_contamination():
@@ -202,7 +223,7 @@ def run_contamination():
     res = {"success" : "true",
            "processId" : task.id}
     log.debug(str(res))
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 def run_extra():
     task = scheduler.queue_task('compute_extra', pvars=dict(id_file=request.vars["sequence_file_id"],
@@ -211,7 +232,7 @@ def run_extra():
     res = {"success" : "true",
            "processId" : task.id}
     log.debug(str(res))
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 def checkProcess():
     task = db.scheduler_task[request.vars["processId"]]
@@ -244,7 +265,7 @@ def checkProcess():
                    "processId" : task.id}
 
     log.debug(str(res))
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 
 #########################################################################
@@ -260,7 +281,7 @@ def get_data():
                                                           config =request.vars["config"]))
                                       )
                             )}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     error = ""
     
@@ -298,7 +319,7 @@ def get_data():
     if error == "" :
 
         f = open(fused_file, "r")
-        data = gluon.contrib.simplejson.loads(f.read())
+        data = json.loads(f.read())
         f.close()
         
         patient_name = ""
@@ -434,7 +455,7 @@ def get_data():
         log.debug("get_data (%s) c%s -> %s (%s)" % (request.vars["sample_set_id"], request.vars["config"], fused_file, "downloaded" if download else "streamed"))
         log.info("load sample", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
 
-        dumped_json = gluon.contrib.simplejson.dumps(data, separators=(',',':'))
+        dumped_json = json.dumps(data, separators=(',',':'))
 
         if download:
              return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.vars['filename'])
@@ -444,14 +465,14 @@ def get_data():
         res = {"success" : "false",
                "message" : "get_data (%s) c%s : %s " % (request.vars["sample_set_id"], request.vars["config"], error)}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
     
 #########################################################################
 def get_custom_data():
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True)} #TODO _next
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     error = ""
 
@@ -475,7 +496,7 @@ def get_custom_data():
     if error == "" :
         try:
             data = custom_fuse(samples)
-        except IOError, error:
+        except IOError:
             return error_message(str(error))
         
         generic_info = "Compare samples" if len(samples) > 1 else "Sample %s" % samples[0]
@@ -509,13 +530,13 @@ def get_custom_data():
 
         log.info("load custom data #TODO log db")
 
-        return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
+        return json.dumps(data, separators=(',',':'))
 
     else :
         res = {"success" : "false",
                "message" : "default/get_custom_data : " + error}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
     
 #########################################################################
 ## return .analysis file
@@ -526,7 +547,7 @@ def get_analysis():
 
     if "custom" in request.vars and "sample_set_id" not in request.vars :
         res = {"success" : "true"}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     if "patient" in request.vars :
         request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
@@ -548,7 +569,7 @@ def get_analysis():
         ## récupération des infos se trouvant dans le fichier .analysis
         analysis_data = get_analysis_data(request.vars['sample_set_id'])
         #analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
-        dumped_json = gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
+        dumped_json = json.dumps(analysis_data, separators=(',',':'))
 
         log.info("load analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
 
@@ -561,7 +582,7 @@ def get_analysis():
         res = {"success" : "false",
                "message" : "default/get_analysis : " + error}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
 
 #########################################################################
@@ -600,8 +621,8 @@ def save_analysis():
                 db(db.run.sample_set_id == sample_set_id).update(info = request.vars['info']);
 
         if (request.vars['samples_id'] is not None and request.vars['samples_info'] is not None):
-	    ids = request.vars['samples_id'].split(',')
-	    infos = request.vars['samples_info'].split(',')
+            ids = request.vars['samples_id'].split(',')
+            infos = request.vars['samples_info'].split(',')
         
         
             # TODO find way to remove loop ?
@@ -616,12 +637,12 @@ def save_analysis():
         log.info(res, extra={'user_id': auth.user.id})
 
         log.info("save analysis", extra={'user_id': auth.user.id, 'record_id': sample_set_id, 'table_name': 'sample_set'})
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
     else :
         res = {"success" : "false",
                "message" : error}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
 
 
@@ -653,8 +674,10 @@ def error():
 
     return "Server error"
 
-    
-def user():
+
+@action("/vidjil/default/user/<path>", method=["POST", "GET"])
+@action.uses(db, "db_layout.html")
+def user(path=None):
     """
     exposes:
     http://..../[app]/default/user/login
@@ -671,12 +694,12 @@ def user():
     """
 
     #redirect already logged user 
-    if auth.user and request.args[0] == 'login' :
-        res = {"redirect" : URL('default', 'home', scheme=True, host=True)}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    if auth.user and path == 'login' :
+        res = {"redirect" : URL('default', 'home', scheme=True)}
+        return json.dumps(res, separators=(',',':'))
     
     #only authentified admin user can access register view
-    if auth.user and request.args[0] == 'register' :
+    if auth.user and path == 'register' :
         #save admin session (the registering will automatically login the new user in order to initialize its default values)
         admin_auth = session.auth
         auth.is_logged_in = lambda: False
@@ -707,7 +730,7 @@ def user():
     #reject others
     if request.args[0] == 'register' :
         res = {"message": "you need to be admin and logged to add new users"}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
     
     return dict(form=auth())
 
@@ -722,7 +745,7 @@ def impersonate() :
         res = {"redirect": "reload"}
     else:
         res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 def stop_impersonate() :
     if auth.is_impersonating() :
@@ -732,12 +755,12 @@ def stop_impersonate() :
         auth.login_user(db.auth_user(auth.user.id))
 
     res = {"redirect" : "reload"}
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 
 
 ## TODO make custom download for .data et .analysis
-@cache.action()
+#@cache.action()
 def download():
     """
     allows downloading of uploaded files

@@ -25,6 +25,10 @@ class VidjilAuth(Auth):
         self.flash = Flash()
         super(VidjilAuth, self).__init__(session, db, define_tables)
 
+    # TODO
+    def is_impersonating(self):
+        return False
+
     def preload(self):
         self.groups = self.get_group_names()
         self.admin = 'admin' in self.groups

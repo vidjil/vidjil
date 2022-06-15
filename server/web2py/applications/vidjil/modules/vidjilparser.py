@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import ijson.backends.yajl2_cffi as ijson
+import ijson
 from six import string_types
 from enum import Enum
 
