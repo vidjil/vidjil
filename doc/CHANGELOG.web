@@ -2,6 +2,36 @@
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
+## 2022-06-15
+
+Improve analysis
+
+* More sample information: diversity measures by germline, summary of warnings
+* More clonotype information: detailed productivity
+* More tags and colors, new color by sample
+* V gene identity computed by IMGT now takes into account ins/del events
+* Distributions clonotypes can now be filtered by locus
+
+Improve ergonomy
+* New reports, with flexible template/blocks
+* More flexible inclusion of third-party sequence analysis tools
+* Many fixes, including better page resets between analyses
+
+Improve patient/run/set database usage
+* Search can be done by set number
+* Upload from network includes a search field
+* Returning to a sample page keeps the current analysis configuration
+
+Interoperability, API
+* New Python module to interact with a Vidjil server, see <https://www.vidjil.org/doc/api>
+
+Improve software quality
+* New cypress tests on client and tutorial (deleting old watir)
+* Updated documentation, also with a search field
+
+Other points
+* Update supported browsers, see <https://www.vidjil.org/doc/user/#supported-browsers>
+
 ## 2021-11-03
 
 Improve analysis
