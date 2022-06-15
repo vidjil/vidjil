@@ -1534,18 +1534,35 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @return {Object} Dict of warning, with list of clonotype and sum of reads by type of warning
      * */
     getWarningsClonotypeInfo: function (timeID) {
+        var getCleanedWarningName = function( msg ){
+            if (msg.indexOf(":") != -1){
+                return msg.split(":")[0]
+            } else if (msg.indexOf("Bad e-value") != -1){
+                return "Bad e-value"
+            } else if (msg.indexOf("Similar to clone") != -1){
+                return "Similar to another clone"
+            } else if (msg.indexOf("Merged clone has different V(D)J designations") != -1){
+                return "Merged clone has different V(D)J designations cross samples"
+            }
+        }
+
         var warned = {}
         for (var cloneId in this.clones){
             var clone = this.clone(cloneId)
             if (clone.isWarned()){
                 for (var warn_pos in clone.warn){
                     var warn = clone.warn[warn_pos]
-                    if (warned[warn.code] == undefined){
-                        warned[warn.code] = {"clones": [], "reads": 0, "msg": ""}
+                    if (Object.keys(warn).length == 0){
+                        continue
                     }
-                    warned[warn.code].clones.push(clone.index)
-                    warned[warn.code].reads += clone.reads[timeID]
-                    warned[warn.code].msg = warn.msg.indexOf(":") != -1 ? warn.msg.split(":")[0] : warn.msg
+                    if (clone.reads[timeID] != 0){
+                        if (warned[warn.code] == undefined){
+                            warned[warn.code] = {"clones": [], "reads": 0, "msg": ""}
+                        }
+                        warned[warn.code].clones.push(clone.index)
+                        warned[warn.code].reads += clone.reads[timeID]
+                        warned[warn.code].msg = getCleanedWarningName(warn.msg)
+                    }
                 }
             }
         }
