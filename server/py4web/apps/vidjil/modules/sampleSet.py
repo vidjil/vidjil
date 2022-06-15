@@ -1,6 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from apps.vidjil.modules.tag import TagDecorator, get_tag_prefix
-from yatl.helpers import SPAN
+from apps.vidjil.user_groups import *
+from apps.vidjil.modules import vidjil_utils as v_u
+from yatl.helpers import SPAN, XML
+from py4web import request
 
 class SampleSet(object):
     __metaclass__ = ABCMeta
@@ -48,23 +51,23 @@ class SampleSet(object):
     def get_stats_path(self):
         return '/sample_set/stats'
 
-    def get_config_urls(self, data, request):
+    def get_config_urls(self, data):
         configs = []
         http_origin = ""
-        if request.env['HTTP_ORIGIN'] is not None:
-            http_origin = request.env['HTTP_ORIGIN'] + "/"
+        if request.environ.get("HTTP_ORIGIN") is not None:
+            http_origin = request.environ.get("HTTP_ORIGIN") + "/"
         key = get_conf_list_select()
         conf_list = [] if data._extra[key] is None else data._extra[key].split(',')
         for conf in conf_list:
             c = conf.split(';')
-            filename =  "(%s %s)" % (self.get_name(data), c[1])
+            filename =  "(%s %s)" % (self.get_name(data), c[0])
             if len(c) > 2 and c[2] is not None :
                 configs.append(
                     str(A(c[1],
                         _href="index.html?sample_set_id=%d&config=%s" % (data['sample_set_id'], c[0]), _type="text/html",
                         _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c[0], filename))))
             else:
-                configs.append(c[1])
+                configs.append(c[0])
         return XML(", ".join(configs))
 
     def get_groups(self, data):
@@ -87,14 +90,14 @@ class SampleSet(object):
 
     def get_files(self, data):
         file_count, size = self.get_files_values(data)
-        return '%d (%s)' % (file_count, vidjil_utils.format_size(size))
+        return '%d (%s)' % (file_count, v_u.format_size(size))
 
     def get_fields(self):
         fields = []
         fields.append({'name': 'name', 'sort': 'name', 'call': self.get_display_name, 'width': 200, 'public': True})
         fields.append({'name': 'info', 'sort': 'info', 'call': self.get_tagged_info, 'width': None, 'public': True})
         fields.append({'name': 'results', 'sort': 'confs', 'call': self.get_config_urls, 'width': None, 'public': True})
-        if auth.is_admin() or len(get_group_list(auth)) > 1:
+        if self.auth.is_admin() or len(get_group_list(self.auth)) > 1:
             fields.append({'name': 'groups', 'sort': 'groups', 'call': self.get_groups_string, 'width': 100, 'public': True})
             fields.append({'name': 'creator', 'sort': 'creator', 'call': self.get_creator, 'width': 100, 'public': True})
         fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'width': 100, 'public': True})

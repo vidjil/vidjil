@@ -76,7 +76,7 @@ class TagDecorator(TagManager):
     def decorate(self, text, ltype, stype, target):
         if (text is None):
             return None
-        return re.sub(self.expression(), self.decoration(ltype, stype, target), unicode(text, 'utf-8'), flags=re.UNICODE)
+        return re.sub(self.expression(), self.decoration(ltype, stype, target), text, flags=re.UNICODE)
 
     def sanitize(self, text):
         return XML(text,
