@@ -252,7 +252,6 @@ def submit():
         if (f["id"] != ""):
             reupload = True
             fid = int(f["id"])
-            sequence_file = db.sequence_file[fid]
             if f['filename'] == '':
                 # If we don't reupload a new file
                 file_data.pop('pre_process_flag')
@@ -362,7 +361,7 @@ def upload():
         error += "missing id"
     elif db.sequence_file[request.vars["id"]] is None:
         error += "no sequence file with this id"
-
+        
     if not error:
         mes += " file {%s} " % (request.vars['id'])
         res = {"message": mes + "processing uploaded file"}
@@ -371,9 +370,9 @@ def upload():
             f = request.vars.file
             try:
                 if request.vars["file_number"] == "1" :
-                    db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
+                    db(db.sequence_file.id == request.vars["id"]).update(data_file = db.sequence_file.data_file.store(f.file, f.filename))
                 else :
-                    db.sequence_file[request.vars["id"]] = dict(data_file2 = db.sequence_file.data_file.store(f.file, f.filename))
+                    db(db.sequence_file.id == request.vars["id"]).update(data_file2 = db.sequence_file.data_file.store(f.file, f.filename))
                 mes += "upload finished (%s)" % (f.filename)
             except IOError as e:
                 if str(e).find("File name too long") > -1:
@@ -390,10 +389,11 @@ def upload():
         if request.vars["file_number"] == "2" and len(error) == 0 and data_file2 is None:
             error += "no data file"
 
-        db.sequence_file[request.vars["id"]] = dict(pre_process_flag=None,
-                                                    pre_process_result=None)
+        db(db.sequence_file.id == request.vars["id"]).update(pre_process_flag=None)
+        db(db.sequence_file.id == request.vars["id"]).update(pre_process_result=None)
+        
         if data_file is not None and data_file2 is not None and request.vars['pre_process'] is not None and request.vars['pre_process'] != '0':
-            db.sequence_file[request.vars["id"]] = dict(pre_process_flag = "WAIT")
+            db(db.sequence_file.id == request.vars["id"]).update(pre_process_flag="WAIT")
             old_task_id = db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id
             if db.scheduler_task[old_task_id] != None:
                 scheduler.stop_task(old_task_id)
@@ -407,7 +407,7 @@ def upload():
             # Compute and store file size
             size = os.path.getsize(seq_file)
             mes += ' (%s)' % vidjil_utils.format_size(size)
-            db.sequence_file[request.vars["id"]] = dict(size_file = size)
+            db(db.sequence_file.id == request.vars["id"]).update(size_file=size)
 
         if data_file2 is not None :
             seq_file2 = defs.DIR_SEQUENCES + data_file2
