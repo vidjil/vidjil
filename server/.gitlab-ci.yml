@@ -84,7 +84,7 @@ tuto-s1-ff-supported:
   stage: test_tutorial
   extends:
     - .tuto-server
-    - .need_for_moderate_client
+    - .need_for_moderate_server
   variables:
     BROWSER: firefox_supported/firefox
 
