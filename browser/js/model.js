@@ -1596,7 +1596,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         html += header("Reads by locus", "reads_by_locus", 1)
         for(locus in this.reads.germline){
-            html += row_from_list(`${locus}`, [this.reads.germline[locus][timeID]], `reads_by_locus_${locus}`, 1)
+            if (this.reads.germline[locus][timeID] != 0){
+                html += row_from_list(`${locus}`, [this.reads.germline[locus][timeID]], `reads_by_locus_${locus}`, 1)
+            }
         }
 
 
