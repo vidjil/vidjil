@@ -1,0 +1,123 @@
+{{extend 'db_layout.html'}}
+{{import vidjil_utils}}
+
+
+
+<div>
+
+	{{ if request.vars['id']: }}
+		<h3>Preview or compare samples from {{=helper.get_type_display()}} {{=get_sample_name(request.vars["id"])}}</h3>
+	{{ else: }}
+	        <h3>Preview or compare samples</h3>
+    {{pass}}
+
+    <p>Select up to 10 samples to be compared.</p>
+
+    <div class="db_block">
+
+        <div class="db_block_left">
+            search
+            <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}" 
+                   onchange="db.call('sample_set/custom', {'config_id' : '{{=request.vars["config_id"]}}', 
+                                                      'filter' : this.value, 
+                                                      'custom_list' : db.getListInput('custom_result[]')} )"
+                   onfocus="new VidjilAutoComplete().setupTags(this);"
+                   data-needs-atwho="true" data-keys="{{=group_ids}}">
+        </div>
+
+
+        <div class="db_block_right">
+        {{if auth.has_permission(PermissionEnum.run.value, 'sample_set', 0) :}}
+            config
+            <span>
+                <select id="choose_config" name="config" onchange="db.call('sample_set/custom', {'config_id' : this.value, 
+                                                                   'filter' : '{{=request.vars["filter"]}}',
+                                                                  'custom_list' : db.getListInput('custom_result[]'),
+                                                                  'id' : '{{='' if request.vars["id"] is None else request.vars["id"]}}' })">
+                    <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
+                    {{ for class_name in classification.keys(): }}
+                      {{ class_elt = classification[class_name] }}
+                      <optgroup label="{{ =class_elt['name'] }}"  title="{{ =class_elt['info'] }}">
+                        {{ for row in class_elt['configs']: }}
+                            <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
+                              {{=row.name}}
+                            </option>
+                        {{pass}}
+                      </optgroup>
+                    {{pass}}
+                </select>
+            </span>
+        {{pass}}
+        </div>
+    </div>
+
+</div>
+
+<div id="db_table_container">
+    <table class="db_table table_compare" id="table">
+        <thead>
+            <tr><td class="column_20"> </td>
+                <td class="column_200"> {{=helper.get_type_display() if helper is not None else "name"}} </td>
+                <td class="column_200"> file name </td>
+                <td class="column_100"> sampling date </td>
+                <td> info </td>
+                <td class="column_200"> pcr </td>
+                <td class="column_100"> size </td>
+
+		<td class="column_100"> config </td>
+                <td class="column_sep"></td>
+
+                <td class="column_150">last processing</td>
+            </tr>
+        </thead>
+        <tbody>
+
+            {{for row in query :}}
+
+                 <tr>
+                    <td> <input type="checkbox" name="custom_result[]" value="{{=row.results_file.id}}" {{if row.checked :}} checked {{pass}}> </td>
+                    <td> {{=row.names}} </td>
+                    <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
+                         {{=row.sequence_file.filename}}
+                    </td>
+                    <td> {{=row.sequence_file.sampling_date}} </td>
+                    <td> {{=tag_decorator.sanitize(tag_decorator.decorate(row.sequence_file.info, 'tag', 'sequence_file', '/sample_set/custom'))}} </td>
+                    <td> {{=row.sequence_file.pcr}} </td>
+                    <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
+                        {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
+		    <td> {{=row.config.name}}
+                    <td class="column_sep"></td>
+
+                   {{if row.results_file.run_date :}}
+                       <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
+                   {{else:}}<td></td>{{pass}}
+                </tr>
+            {{pass}}
+
+        </tbody>
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
+</div>
+
+
+<div class="db_block">
+
+    <div class="db_block_left">
+
+    </div>
+
+    <div class="db_block_right">
+        <span class="devel-mode button2" onclick="db.call('sample_set/multi_sample_stats', {'custom_result': db.getListInput('custom_result[]') })" >preview / quality control</span>
+        <span class="button2" 
+          {{if request.vars["id"] != None: }}
+            onclick="myUrl.loadCustomUrl(db, {'sample_set_id':{{=request.vars["id"]}} })" 
+          {{else:}}
+            onclick="myUrl.loadCustomUrl(db, undefined)" 
+          {{pass}}
+          > see results </span>
+    </div>
+
+</div>
+
+
+</div>

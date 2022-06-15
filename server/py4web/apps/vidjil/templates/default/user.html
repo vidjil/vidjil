@@ -1,0 +1,95 @@
+	[[extend 'db_layout.html']]
+
+<h2>[[=T( request.args(0).replace('_',' ').capitalize() )]]</h2>
+
+<div>
+[[if db(db.auth_user.id > 0).count() == 0:]]
+
+<a class="button" onclick="db.call('default/init_db');">init database</a>
+<a class="button" onclick="db.call('default/init_from_csv');">load backup</a>
+    
+[[else:]]
+    
+    
+[[if 'form' in locals():]]
+    [[form['_id'] ="login_form"]]
+    [[=form]]
+[[pass]]
+    
+[[if request.args(0)=='login':]]
+    
+    [[if not 'register' in auth.settings.actions_disabled:]]
+        [[#<button class="btn" onclick="db.call('default/user/register')">Register</button>]]
+    [[pass]]
+
+<!--    
+    [[if not 'request_reset_password' in auth.settings.actions_disabled:]]
+        <button class="btn" onclick="db.call('default/user/request_reset_password')">Lost Password</button>
+    [[pass]]
+ -->
+
+<p>
+demo login: <i>demo@vidjil.org</i>
+<br />password: <i>demo</i>
+</p>
+
+<div id="login_messages" class="message_container"></div>
+
+
+[[ if not hasattr(defs, 'HEALTHCARE_COMPLIANCE') or not defs.HEALTHCARE_COMPLIANCE: ]]
+<p>
+  <span class='warn'><b>⚠️ Research Use Only.</b></span>
+  This server is not compliant for clinical use and comes with no warranty.
+  See options for using Vidjil while <a href="http://www.vidjil.org/doc/healthcare">hosting healthcare data</a>.
+</p>
+[[ else: ]]
+<p>
+  ☤ This server has been set up to be <b>compliant for clinical use</b> by the server maintainers.
+  You should ensure that you comply with the applicable regulations in your country
+  concerning storage and processing of healthcare data.
+</p>
+[[ pass ]]
+
+<p>
+  You can <a href="mailto:support@vidjil.org?Subject=%5BVidjil%5D%20Account%20on%20app.vidjil.org&Body=%0ADear%20Vidjil%20Team%2C%0A%0AI%20would%20like%20to%20have%20an%20account%20on%20the%20Vidjil%20server.%0A%0A">request an account</a>
+  on the public test server  <a href="http://app.vidjil.org/">app.vidjil.org</a>
+  to test your high-throughput sequencing data from lymphocyte recombinations.
+  You can also go on <a href="http://app.vidjil.org/analyze">http://app.vidjil.org/analyze</a> to analyze a few sequences without any account.
+</p>
+
+<hr />
+
+<h3>About</h3>
+
+<p>            
+<b><a href="http://www.vidjil.org">Vidjil</a> is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.</b>
+  It contains an algorithm gathering reads into clonotypes according to their V(D)J junctions, a web application made of a sample, experiment and patient database and a visualization for the analysis of clonotypes along the time.</p>
+
+
+<p>
+(c) 2011-2021, the Vidjil team:
+Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Florian Thonier and Tatiana Rocher &ndash;
+<a href='http://www.vidjil.org'>http://www.vidjil.org/</a>
+<br />
+Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics lab</a>
+at CRIStAL (UMR 9189 CNRS, Univ. Lille) and the <a href='http://www.vidjil.net'>VidjilNet consortium</a> (Inria).
+<br />
+We are grateful to
+the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille,
+the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL) and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group,
+as well to all members of the <a href='http://www.vidjil.net'>VidjilNet consortium</a>.
+</p>
+
+<p>
+
+<p>Vidjil is free software, and you are welcome to redistribute it
+  under <a href='http://git.vidjil.org/blob/master/doc/LICENSE'>certain conditions</a>.
+<br />
+  Please cite <a href='http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0166126'>(Duez, 2016)</a>
+  if you use the Vidjil web platform for your research.
+</p>
+
+[[pass]]
+[[pass]]
+
+</div>

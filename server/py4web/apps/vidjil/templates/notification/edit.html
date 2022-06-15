@@ -1,0 +1,62 @@
+{{extend 'db_layout.html'}}
+
+{{
+info = db.notification[request.vars["id"]]
+}}
+
+<h3>{{=message}}</h3>
+
+<form id="data_form" action="DB_ADDRESS/notification/edit_form" enctype="multipart/form-data" method="post">
+	<input type="HIDDEN" id="notification_id" name="id" value="{{=request.vars["id"]}}"> 
+    <table>
+        <tbody>
+            <tr>
+                <td ><label for="notification_message_type" id="notification_message_type__label">type: </label></td>
+                <td >
+	                {{=SELECT(
+	                	OPTION('Login page', _value='login'),
+	                	OPTION('Header', _value='header'),
+	                	value=info.message_type,
+	                	_name="message_type"
+	                )}}
+	                <span>*</span></td>
+                <td ></td>
+            </tr>
+            <tr>
+                <td><label for="notification_priority" id="notification_priority__label">priority: </label></td>
+                <td>
+	                {{=SELECT(
+	                	OPTION('Information', _value='info'),
+	                	OPTION('Urgent', _value='urgent'),
+	                	value=info.priority,
+	                	_name="priority"
+	                )}}
+	                <span>*</span></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><label for="notification_title" id="notification_title__label">title: </label></td>
+                <td><input class="string" id="notification_title" name="title" type="text" value="{{=info.title}}" size="50" /><span>*</span></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><label for="notification_message_content" id="notification_message_content__label">message: </label></td>
+                <td><textarea class="string" id="notification_message_content" name="message_content" rows="20" cols="100" type="text">{{=XML(info.message_content)}}</textarea><span>*</span><br/><span><a href="http://commonmark.org/help/" target="_blank">Use Markdown for formatting</a></span></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><label for="notification_expiration" id="notification_expiration__label">expiration date: </label></td>
+                <td><input class="date" id="notification_expiration" name="expiration" type="text" value="{{=info.expiration if info.expiration is not None else ''}}"><span>(format: yyyy-mm-dd)</span></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td ><input type="submit" value="save" class="btn"></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+<div>
+    (* required fields)
+</div>

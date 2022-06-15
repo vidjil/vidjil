@@ -1,0 +1,24 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    Are you sure you want to delete this pre-process config?
+    <strong id="preprocess_name">{{=query[0]["name"]}}</strong> ({{=request.vars["id"]}}).
+    </br></br>
+
+    <b>Info:</b> {{=query[0]["info"]}}</br>
+    <b>Command:</b> {{=query[0]["command"]}}</br>
+    <div class="center"> 
+        <button id='delete_preprocess_confirm_btn' onclick="db.call('pre_process/delete', {'id' :'{{=request.vars["id"]}}'} )">delete pre-process config</button>
+    </div>
+</div>
+    
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}
