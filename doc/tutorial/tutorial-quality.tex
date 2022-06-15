@@ -3,9 +3,9 @@
 \begin{verbatim}
 
 
-  ########################################################
-  ### Assessing the quality of the run and of the analysis
-  ########################################################
+  // ########################################################
+  // ### Assessing the quality of the run and of the analysis
+  // ########################################################
 
 \end{verbatim}
 
@@ -21,10 +21,11 @@ This sample has been processed using the Vidjil algorithm.
 \question{How many reads have been analyzed in the current sample by Vidjil-algo?}
 \reponse{In the upper left corner, you can see an information panel with \com{analyzed reads 1 967 338 (82.31\,\%)'}}
 \begin{verbatim}
-  def test_A_quality_01_number_reads
-    assert ($b.info_segmented.text == "1 967 338 (82.31%)"), "number of reads segmented"
-    assert ($b.info_selected_locus.text == "1 965 646 (82.24%)"), "number of reads selected"
-  end
+
+  cy.log("// test_A_quality_01_number_reads")
+  cy.get('#info_segmented').contains("1 967 338 (82.31%)")
+  cy.get('#info_selected_locus').contains("1 965 646 (82.24%)")
+
 \end{verbatim}
 
 Now we will try to assess the reason why some reads were not analyzed in our
@@ -39,18 +40,21 @@ For that sake you will need to display the information box by clicking on the
 IGH \fl 314.5\\*
 TRG \fl 197.6 }
 \begin{verbatim}
-  def test_A_quality_02_sample_log
-    $b.info_point.i.click
-    assert ($b.div(:id => 'info_timepoint').present?), "After clicking info timepoint should be visible"
-    table = $b.div(:id => 'info_timepoint').table
-    assert (table[1][1].text == '2390273'), "Incorrect  number of reads in infopoint"
-    assert (table[2][1].text.include? '1967338'), "Incorrect  number of reads in infopoint"
-    assert (table[6][1].text.include? 'IGH               ->   562520   314.5      31770   0.056'), "Correct number of reads+info in infopoint: IGH"
-    assert (table[6][1].text.include? 'TRG               ->  1403126   197.6      73089   0.052'), "Correct number of reads+info in infopoint: TRG"
-    assert (table[6][1].text.include? 'UNSEG only V/5\'   ->   332125   191.2'), "Correct  number of reads+info in infopoint: UNSEG only V"
-    $b.div(:class => 'data-container').span(:class => 'closeButton').click
-    assert (not $b.div(:id => 'info_timepoint').present?), "Info timepoint should not be present"
-  end
+
+    cy.log("// test_A_quality_02_sample_log")
+    cy.get('.button > .icon-info').click()
+    cy.get('#info_timepoint').should("be.visible")
+
+    cy.get('#info_timepoint_reads').contains('2390273')
+    cy.get('#info_timepoint_analyzed_reads').contains('1967338')
+    cy.get('#info_timepoint_log').contains('IGH               ->   562520   314.5      31770   0.056')
+    cy.get('#info_timepoint_log').contains('TRG               ->  1403126   197.6      73089   0.052')
+    cy.get('#info_timepoint_log').contains('UNSEG only V/5\'   ->   332125   191.2')
+
+    cy.get('.data-container > .closeButton > .icon-cancel').click()
+    cy.get('#info_timepoint').should("not.exist")
+
+
 \end{verbatim}
 
 The lines starting with \texttt{UNSEG} display the reasons why some reads have

@@ -1,6 +1,7 @@
 # Init css files
 make -C browser/css/icons
 make -C demo
+make germline
 
 # Create symbolic links for cypress (to avoid "--project" param error)
 ln -sf $PWD /app/vidjil
