@@ -1544,6 +1544,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             } else if (msg.indexOf("Merged clone has different V(D)J designations") != -1){
                 return "Merged clone has different V(D)J designations cross samples"
             }
+            return msg
         }
 
         var warned = {}
