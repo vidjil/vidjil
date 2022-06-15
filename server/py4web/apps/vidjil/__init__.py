@@ -9,8 +9,8 @@ from .models import db
 # by importing controllers you expose the actions defined in it
 from . import controllers_default
 from . import controllers_components
-from .controllers import sampleset_generic, sampleset_patient, sampleset_run, sampleset
-from .modules import zmodel_factory, tag, vidjil_utils
+from .controllers import sampleset_generic, sampleset_patient, sampleset_run, sampleset, default, sample_set
+from .modules import zmodel_factory, tag, vidjil_utils, sampleSet, sampleSetList
 
 # optional parameters
 __version__ = "0.0.0"

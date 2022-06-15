@@ -3,6 +3,7 @@ install: install_py4web
 
 install_py4web:
 	python3 -m pip install --upgrade py4web --no-cache-dir --user
+	pip3 install ijson
 	pip3 install pymysql
 	pip3 install pytest
 	pip3 install pytest-cov
