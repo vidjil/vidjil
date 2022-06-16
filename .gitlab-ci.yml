@@ -91,9 +91,9 @@ include:
 .need_for_moderate_client:
   needs: [test_tools, test_browser_unit, code_quality_custom]
 .need_for_late_client:
-  needs: [client1-ff-supported, tuto-c1-ff-supported]
+  needs: [client1-ff-supported, client1-ff-supported, tuto-c1-ff-supported]
 .need_for_staged_client:
-  needs: [client1-ff-supported, tuto-c1-ff-supported]
+  needs: [client1-ff-supported, client1-ff-supported, tuto-c1-ff-supported]
 
 ### Server part should not containt client stage
 .need_for_moderate_server:

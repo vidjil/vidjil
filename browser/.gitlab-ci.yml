@@ -76,6 +76,7 @@ external1-ff-supported:
 external2:
   extends:
     - .test_cypress_ext
+    - .need_for_late_client
   parallel:
     matrix:
       - BROWSER: [
@@ -118,6 +119,7 @@ tuto-c1-ff-supported:
 tuto-c2:
   extends:
     - .tuto-client
+    - .need_for_late_client
   parallel:
     matrix:
       - BROWSER: [
