@@ -1581,50 +1581,50 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var html = ""
         var locus
 
-        html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+")</h2>"
-        html += "<div id='info_timepoint'><table><tr><th></th>"
-        html += "<tr id='info_timepoint_reads'><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
-        html += "<tr id='info_timepoint_analyzed_reads'><td> analyzed reads </td><td>" + this.reads.segmented_all[timeID] +
-            " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
+        html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+") "
+        html += "</h2>"
 
-        html += "<tr id='info_timepoint_analysis_software'><td> analysis software </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
-        html += "<tr id='info_timepoint_parameters'><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
-        html += "<tr id='info_timepoint_timestamp'><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
-        html += "<tr id='info_timepoint_log'><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
+        html += "<div id='info_timepoint'><table>" //<tr><th></th>"
+        html += row_1("reads", this.reads.total[timeID], 'info_timepoint_reads', 1)
+        var analyzed_reads = this.reads.segmented_all[timeID] + " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )"
+        html += row_1("analyzed reads", analyzed_reads, 'info_timepoint_analyzed_reads', 1)
+
+        html += row_1("analysis software", this.getSoftVersionTime(timeID),  'info_timepoint_analysis_software', 1)
+        html += row_1("parameters",        this.getCommandTime(timeID),      'info_timepoint_parameters', 1)
+        html += row_1("timestamp",         this.getTimestampTime(timeID),    'info_timepoint_timestamp', 1)
+        html += row_1("analysis log",      this.getSegmentationInfo(timeID), 'info_timepoint_log', 1)
 
         // 
         var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
 
         html += header("Reads by locus", "reads_by_locus", 1)
         for(locus in this.reads.germline){
-            if (this.reads.germline[locus][timeID] != 0){
-                html += row_from_list(`${locus}`, [this.reads.germline[locus][timeID]], `reads_by_locus_${locus}`, 1)
-            }
+            html += row_from_list(`${locus}`, [this.reads.germline[locus][timeID]], `reads_by_locus_${locus}`, 1)
         }
 
 
         // Sub-table diversity
         if ( typeof this.diversity != 'undefined') {
-            html += "<tr><td class='header' "+colspan_header+"> Diversity indices </td></tr>"
+            html += header("Diversity indices", "diversity_indexes", 1)
             for (var key_diversity in this.diversity) {
                 var diversity = this.getDiversity(key_diversity, timeID)
                 if (typeof diversity == "string" || diversity == null){
-                    html += "<tr id='line_"+key_diversity+"'><td> " + translate_key_diversity(key_diversity) + "</td><td>" + diversity + '</td></tr>'
+                    html += row_1(translate_key_diversity(key_diversity), diversity, `${key_diversity}`, 1)
                 } else if (typeof diversity == "object"){
-                    html += "<tr><td "+colspan_header+">"+translate_key_diversity(key_diversity)+"</td></tr>"
+                    html += header(translate_key_diversity(key_diversity), key_diversity, (this.samples.number))
                     var present_locus = this.getLocusPresentInTop(timeID)
                     for (locus in diversity) {
                         if( present_locus.indexOf(locus) != -1 || locus == "all"){
-                            html += "<tr id='line_"+key_diversity+"_"+locus+"'><td> " + this.systemBox(locus).outerHTML + " "+locus+"</td><td>" + diversity[locus] + '</td></tr>'
+                            html += row_1(`${this.systemBox(locus).outerHTML} locus`, diversity[locus], `${key_diversity}_${locus}`, 1)
                         }
                     }
                 }
             }
         }
         if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
-            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
+            html += header("diversity", "diversity_indexes", 1)
             for (var k in this.samples.diversity[timeID]) {
-                html += "<tr><td> " + k.replace('index_', '') + "</td><td>" + this.samples.diversity[timeID][k].toFixed(3) + '</td></tr>'
+                html += row_1(k.replace('index_', ''), this.samples.diversity[timeID][k].toFixed(3), k.replace('index_', ''), 1)
             }
         }
 
