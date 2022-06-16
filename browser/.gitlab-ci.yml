@@ -76,7 +76,7 @@ external1-ff-supported:
 external2:
   extends:
     - .test_cypress_ext
-    - .need_for_late_client
+    - .need_for_staged_client
   parallel:
     matrix:
       - BROWSER: [
