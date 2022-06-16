@@ -55,6 +55,7 @@ Cypress.Commands.add('close_menu', (id) => {
 
 
 Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis, timeout) => {
+  timeout = (timeout!=undefined) ? timeout : 30000
   //cy.open_menu("demo_file_menu")
   cy.get('#import_data_anchor').click({force: true})
   //cy.close_menu("demo_file_menu")
