@@ -974,7 +974,7 @@ var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{
  */
 var header = function(content, title, time_length) {
     title = (title == undefined) ? clean_title(content) : clean_title(title)
-    return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
+    return `<tr id='modal_header_${title}'><td class='header' colspan='${(time_length + 1)}'>${content}</td></tr>` ; 
 }
 
 /**
@@ -986,7 +986,7 @@ var header = function(content, title, time_length) {
  */
 var row_1  = function(item, content, title, time_length) { 
     title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
-    return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
+    return `<tr id='modal_line_${title}'><td id='modal_line_title_${title}'>${item}</td><td colspan='${time_length}' id='modal_line_value_${title}'>${content}</td></tr>`;
 }
 
 /**
@@ -998,10 +998,10 @@ var row_1  = function(item, content, title, time_length) {
  */
 var row_from_list  = function(item, content, title, time_length) { 
     title = (title == undefined) ?clean_title(item) : clean_title(title)
-    var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+    var div = `<tr id='modal_line_${title}'><td id='modal_line_title_${title}'>${item}</td>`
     for (var i = 0; i < content.length; i++) {
         col  = content[i]
-        div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+        div += `<td id='modal_line_value_${title}_${i}'>${col}</td>`
     }
     div += "</tr>" ;
     return div;
