@@ -1009,11 +1009,7 @@ var row_from_list  = function(item, content, title, time_length) {
 
 
 /**
- * Create cell content by casting given parameter to be showable in table
- *  @param {string} title - Specific title id to give to the line
- *  @param {} content - Content that will be automatically casted
- *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
- *  @param {} clone 
+ *
  */
 var row_cast_content = function(title, content, time_length, clone) {
     if (content == undefined) {
