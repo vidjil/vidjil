@@ -741,12 +741,14 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
   cy.log("// test_B_clones_29_shortcut_preset")
 
     cy.get("body").type(0)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "V/5' gene") // Correct legend for axe X for preset 0
     cy.get('#id_legend_y').should("have.text", "J/3' gene") // Correct legend for axe Y for preset 0
     // cy.get("#id_label_x_IGHV1-2") // scatterplot_legend X at init; IGHV1-2
     // cy.get("#id_label_y_IGHJ1")   // scatterplot_legend Y at init; IGHJ-1
 
     cy.get("body").type(1)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "V/5' allele") // Correct legend for axe X for preset 1
     cy.get('#id_legend_y').should("have.text", "J/3' allele") // Correct legend for axe Y for preset 1
     // cy.get("#id_label_x_IGHV1-2*04") // scatterplot_legend X with shortcut/preset XXX is: IGHV1-2
@@ -754,54 +756,63 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 
 
     cy.get("body").type(2)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "V/5' gene") // Correct legend for axe X for preset 2
     cy.get('#id_legend_y').should("have.text", "N length")  // Correct legend for axe Y for preset 2
     // cy.get("#id_label_x_IGHV1-2") // scatterplot_legend X with shortcut/preset XXX is: IGHV1-2
     // cy.get("#id_label_y_\\?")     // scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1
 
     cy.get("body").type(3)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "Reads length") // Correct legend for axe X for preset 3
     cy.get('#id_legend_y').should("have.text", "Locus")        // Correct legend for axe Y for preset 3
     // cy.get("#id_label_x_20")  // scatterplot_legend X with shortcut/preset XXX is: IGHV1-2
     // cy.get("#id_label_y_IGH") // scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1
 
     cy.get("body").type(4)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "Reads length") // Correct legend for axe X for preset 4
     cy.get('#id_legend_y').should("have.text", "Size")         // Correct legend for axe Y for preset 4
     // cy.get("#id_label_x_20")   // scatterplot_legend X with shortcut/preset XXX is: IGHV1-2
     // cy.get("#id_label_y_20\%") // scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1
 
     cy.get("body").type(5)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "V/5' gene") // Correct legend for axe X for preset 5
     cy.get('#id_legend_y').should("have.text", "Size")      // Correct legend for axe Y for preset 5
     // cy.get("#id_label_x_IGHV1-2") //scatterplot_legend X with shortcut/preset XXX is: IGHV1-2
     // cy.get("#id_label_y_16\%")    //scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1
 
     cy.get("body").type(6)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "N length") // Correct legend for axe X for preset 6
     cy.get('#id_legend_y').should("have.text", "Size")     // Correct legend for axe Y for preset 6
     // cy.get("#id_label_x_\\?")  // scatterplot_legend X with shortcut/preset XXX is: IGHV1-2
     // cy.get("#id_label_y_55\%") // scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1
 
     cy.get("body").type(7)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "CDR3 length") // Correct legend for axe X for preset 7
     cy.get('#id_legend_y').should("have.text", "Size")        // Correct legend for axe Y for preset 7
     // cy.get("#id_label_x_") // scatterplot_legend X with shortcut/preset XXX is: IGHV1-2
     // cy.get("#id_label_y_") // scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1
 
     cy.get("body").type(8)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "J/3' gene") // Correct legend for axe X for preset 8
     cy.get('#id_legend_y').should("have.text", "Size")      // Correct legend for axe Y for preset 8
     // cy.get("#id_label_x_") // scatterplot_legend X with shortcut/preset XXX is: IGHV1-2
     // cy.get("#id_label_y_") // scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1
 
     cy.get("body").type(9)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "Size")         // Correct legend for axe X for preset 9
     cy.get('#id_legend_y').should("have.text", "Size (other)") // Correct legend for axe Y for preset 9
     // cy.get("#id_label_x_") // scatterplot_legend X with shortcut/preset XXX is: IGHV1-2
     // cy.get("#id_label_y_") // scatterplot_legend Y with shortcut/preset XXX is: IGHJ-1
 
     cy.get("body").type(0)
+    cy.update_icon()
     cy.get('#id_legend_x').should("have.text", "V/5' gene") // Correct legend for axe X for preset 0
     cy.get('#id_legend_y').should("have.text", "J/3' gene") // Correct legend for axe Y for preset 0
     // cy.get("#id_label_x_IGHV1-2")// scatterplot_legend X with shortcut/preset XXX is: IGHV1-2
@@ -1043,14 +1054,17 @@ clicked on.
   ////////////////////////////
   cy.log("// test_B_clones_37_shortcut")
     cy.get("body").type(0) // return to a grap with locus 
+    cy.update_icon()
     cy.get('#id_label_x_IGHV1-2').should("exist").should("be.visible")
     cy.get('#id_label_y_IGHJ1').should("exist").should("be.visible")
 
     cy.get("body").type("g") // locus TRG
+    cy.update_icon()
     cy.get('#id_label_x_TRGV2').should("exist").should("be.visible")
     cy.get('#id_label_y_TRGJ1').should("exist").should("be.visible")
 
     cy.get("body").type("h") // locus IGH
+    cy.update_icon()
     cy.get('#id_label_x_IGHV1-2').should("exist").should("be.visible")
     cy.get('#id_label_y_IGHJ1').should("exist").should("be.visible")
 
@@ -1063,10 +1077,12 @@ right part of the grid.
   /////////////////////////////////////////////////////
   cy.log("// test_B_clones_38_switch_locus_by_scatterplot_click")
     cy.get("body").type(0) // locus IGH
+    cy.update_icon()
     cy.get('#id_label_x_IGHV1-2').should("exist").should("be.visible") // scatterplot_legend X at init; IGHV1-2
     cy.get('#id_label_y_IGHJ1').should("exist").should("be.visible")   // scatterplot_legend Y at init; IGHJ-1
 
     cy.get('#id_sp_system_label_TRG > .sp_system').click()
+    cy.update_icon()
     cy.get('#id_label_x_TRGV2').should("exist").should("be.visible")
     cy.get('#id_label_y_TRGJ1').should("exist").should("be.visible")
 
