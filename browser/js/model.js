@@ -1607,7 +1607,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         /// Table overlaps
         if ( typeof this.overlaps != 'undefined') {
             html += "<br/><h3>Overlaps index</h3>"
-
+            var overlaps_data = this.getPointHtmlInfoDataOverlap()
             var overlap_links = {
                 "morisita": "https://en.wikipedia.org/wiki/Morisita%27s_overlap_index",
                 "jaccard": "https://en.wikipedia.org/wiki/Jaccard_index"
@@ -1617,21 +1617,11 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 html += "<h4 style='display:inline'>"+overlap_name+"'s index</h4>"
                 html += "<a title='Help link for "+overlap_name+"\'s index' class='icon-help-circled-1' target='_blank' href='"+overlap_links[key_overlap]+"' style='text-decoration: none;'></a>"
                 html += "<table class='info_overlaps' id='overlap_"+key_overlap+"'>"
-                var overlap = this.overlaps[key_overlap]
-                var dd = []
-                for (var posSample = 0; posSample < overlap.length; posSample++) {
-                    dd.push( this.getSampleName(posSample) )
-                }
-                html += row_from_list("", dd, undefined, overlap.length, "info_overlaps_line")
 
-                for (posSample = 0; posSample < overlap.length; posSample++) {
-                    class_line = (posSample == this.t) ? "error" : undefined
-                    var dd = []
-                    for (var j = 0; j < (overlap[posSample].length); j++) {
-                        dd.push( (j == posSample) ? "--" : overlap[posSample][j])
-                    }
-
-                    html += row_from_list(this.getSampleName(posSample), dd, undefined, overlap.length, class_line)
+                var values = overlaps_data[overlap_name]
+                for (var i = 0; i < values.length; i++) {
+                    var value = values[i]
+                    html += value[0].apply(this, value.slice(1))
                 }
                 html += "</table>"
             }
@@ -1659,12 +1649,33 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
     /**
      * Get data for overlaps table
-     * @param {integer} timeID - time/sample index
      * @return {string} array 
      */
-    getPointHtmlInfoDataOverlap: function (timeID) {
-        var data = []
-        return data
+    getPointHtmlInfoDataOverlap: function () {
+        var overlaps = {}
+        if ( typeof this.overlaps != 'undefined') {
+            for (var key_overlap in this.overlaps) {
+                var data = []
+                var overlap_name = key_overlap.charAt(0).toUpperCase() + key_overlap.slice(1);
+                overlaps[overlap_name] = []
+                var overlap = this.overlaps[key_overlap]
+                var dd = []
+                for (var posSample = 0; posSample < overlap.length; posSample++) {
+                    dd.push( this.getSampleName(posSample) )
+                }
+                overlaps[overlap_name].push([row_from_list, "", dd, undefined, overlap.length, "info_overlaps_line"])
+
+                for (posSample = 0; posSample < overlap.length; posSample++) {
+                    class_line = (posSample == this.t) ? "error" : undefined
+                    var dd = []
+                    for (var j = 0; j < (overlap[posSample].length); j++) {
+                        dd.push( (j == posSample) ? "--" : overlap[posSample][j])
+                    }
+                    overlaps[overlap_name].push([row_from_list, this.getSampleName(posSample), dd, undefined, overlap.length, class_line])
+                }
+            }
+        }
+        return overlaps
     },
 
     /**
