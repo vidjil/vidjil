@@ -1584,47 +1584,139 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+") "
         html += "</h2>"
 
-        html += "<div id='info_timepoint'><table>" //<tr><th></th>"
-        html += row_1("reads", this.reads.total[timeID], 'info_timepoint_reads', 1)
-        var analyzed_reads = this.reads.segmented_all[timeID] + " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )"
-        html += row_1("analyzed reads", analyzed_reads, 'info_timepoint_analyzed_reads', 1)
+        /// Table generic
+        html += "<div id='info_timepoint'><table>"
+        var values = this.getPointHtmlInfoDataGeneric(timeID)
+        for (var i = 0; i < values.length; i++) {
+            var value = values[i]
+            html += value[0].apply(this, value.slice(1))
+        }
+        html += "</table></div>"
 
-        html += row_1("analysis software", this.getSoftVersionTime(timeID),  'info_timepoint_analysis_software', 1)
-        html += row_1("parameters",        this.getCommandTime(timeID),      'info_timepoint_parameters', 1)
-        html += row_1("timestamp",         this.getTimestampTime(timeID),    'info_timepoint_timestamp', 1)
-        html += row_1("analysis log",      this.getSegmentationInfo(timeID), 'info_timepoint_log', 1)
+
+        /// Table warnings
+        html += "<br/><div id='info_warnings'><table>"
+        var values = this.getPointHtmlInfoDataWarnings(timeID)
+        for (var i = 0; i < values.length; i++) {
+            var value = values[i]
+            html += value[0].apply(this, value.slice(1))
+        }
+        html += "</table></div>"
+
+
+        /// Table overlaps
+        if ( typeof this.overlaps != 'undefined') {
+            html += "<br/><h3>Overlaps index</h3>"
+
+            var overlap_links = {
+                "morisita": "https://en.wikipedia.org/wiki/Morisita%27s_overlap_index",
+                "jaccard": "https://en.wikipedia.org/wiki/Jaccard_index"
+            }
+            for (var key_overlap in this.overlaps) {
+                var overlap_name = key_overlap.charAt(0).toUpperCase() + key_overlap.slice(1);
+                html += "<h4 style='display:inline'>"+overlap_name+"'s index</h4>"
+                html += "<a title='Help link for "+overlap_name+"\'s index' class='icon-help-circled-1' target='_blank' href='"+overlap_links[key_overlap]+"' style='text-decoration: none;'></a>"
+                html += "<table class='info_overlaps' id='overlap_"+key_overlap+"'>"
+                var overlap = this.overlaps[key_overlap]
+                var dd = []
+                for (var posSample = 0; posSample < overlap.length; posSample++) {
+                    dd.push( this.getSampleName(posSample) )
+                }
+                html += row_from_list("", dd, undefined, overlap.length, "info_overlaps_line")
+
+                for (posSample = 0; posSample < overlap.length; posSample++) {
+                    class_line = (posSample == this.t) ? "error" : undefined
+                    var dd = []
+                    for (var j = 0; j < (overlap[posSample].length); j++) {
+                        dd.push( (j == posSample) ? "--" : overlap[posSample][j])
+                    }
+
+                    html += row_from_list(this.getSampleName(posSample), dd, undefined, overlap.length, class_line)
+                }
+                html += "</table>"
+            }
+        }
+        return html
+    },
+
+    /**
+     * Get data for warnings table
+     * @param {integer} timeID - time/sample index
+     * @return {string} array 
+     */
+    getPointHtmlInfoDataWarnings: function (timeID) {
+        var data = []
+        data.push([header, "Warnings", "warnings", 2])
+        data.push([row_from_list, "message", ["clones", "reads"], "", 2])
+        warnings_clones = this.getWarningsClonotypeInfo(timeID)
+        for (var w_type in warnings_clones) {
+            var warn = warnings_clones[w_type]
+            data.push([row_from_list, `${w_type}; ${warn.msg}`, [warn.clones.length, warn.reads], undefined, 2])
+        }
+        return data
+
+    },
+
+    /**
+     * Get data for overlaps table
+     * @param {integer} timeID - time/sample index
+     * @return {string} array 
+     */
+    getPointHtmlInfoDataOverlap: function (timeID) {
+        var data = []
+        return data
+    },
+
+    /**
+     * Get data for generic information panel
+     * @param {integer} timeID - time/sample index
+     * @return {string} array 
+     * */
+    getPointHtmlInfoDataGeneric: function (timeID) {
+        var time_length = this.samples.order.length
+        var data = []
+        var locus
+
+        data.push([row_1, "reads", this.reads.total[timeID], 'info_timepoint_reads', 1])
+        var analyzed_reads = this.reads.segmented_all[timeID] + " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )"
+        data.push([row_1, "analyzed reads", analyzed_reads, 'info_timepoint_analyzed_reads', 1])
+
+        data.push([row_1, "analysis software", this.getSoftVersionTime(timeID),  'info_timepoint_analysis_software', 1])
+        data.push([row_1, "parameters",        this.getCommandTime(timeID),      'info_timepoint_parameters', 1])
+        data.push([row_1, "timestamp",         this.getTimestampTime(timeID),    'info_timepoint_timestamp', 1])
+        data.push([row_1, "analysis log",      this.getSegmentationInfo(timeID), 'info_timepoint_log', 1])
 
         // 
         var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
 
-        html += header("Reads by locus", "reads_by_locus", 1)
+        data.push([header, "Reads by locus", "reads_by_locus", 1])
         for(locus in this.reads.germline){
-            html += row_from_list(`${locus}`, [this.reads.germline[locus][timeID]], `reads_by_locus_${locus}`, 1)
+            data.push([row_from_list, `${locus}`, [this.reads.germline[locus][timeID]], `reads_by_locus_${locus}`, 1])
         }
 
 
         // Sub-table diversity
         if ( typeof this.diversity != 'undefined') {
-            html += header("Diversity indices", "diversity_indexes", 1)
+            data.push([header, "Diversity indices", "diversity_indexes", 1])
             for (var key_diversity in this.diversity) {
                 var diversity = this.getDiversity(key_diversity, timeID)
                 if (typeof diversity == "string" || diversity == null){
-                    html += row_1(translate_key_diversity(key_diversity), diversity, `${key_diversity}`, 1)
+                    data.push([row_1, translate_key_diversity(key_diversity), diversity, `${key_diversity}`, 1])
                 } else if (typeof diversity == "object"){
-                    html += header(translate_key_diversity(key_diversity), key_diversity, (this.samples.number))
+                    data.push([header, translate_key_diversity(key_diversity), key_diversity, (this.samples.number)])
                     var present_locus = this.getLocusPresentInTop(timeID)
                     for (locus in diversity) {
                         if( present_locus.indexOf(locus) != -1 || locus == "all"){
-                            html += row_1(`${this.systemBox(locus).outerHTML} locus`, diversity[locus], `${key_diversity}_${locus}`, 1)
+                            data.push([row_1, `${this.systemBox(locus).outerHTML} locus`, diversity[locus], `${key_diversity}_${locus}`, 1])
                         }
                     }
                 }
             }
         }
         if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
-            html += header("diversity", "diversity_indexes", 1)
+            data.push([header, "diversity", "diversity_indexes", 1])
             for (var k in this.samples.diversity[timeID]) {
-                html += row_1(k.replace('index_', ''), this.samples.diversity[timeID][k].toFixed(3), k.replace('index_', ''), 1)
+                data.push([row_1, k.replace('index_', ''), this.samples.diversity[timeID][k].toFixed(3), k.replace('index_', ''), 1])
             }
         }
 
@@ -1632,6 +1724,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if ( typeof this.samples.pre_process != 'undefined') {
 
             html_preprocess = "<tr><td class='header' "+colspan_header+"> Preprocess </td></tr>"
+            data.push([header, "Preprocess", "preprocess", (this.samples.number)])
             // order fct for preprocess
             sort_preprocess = function(a,b){
                 var order = ["producer", "run_timestamp", "commandline", "parameters", "input", "output", "stats"]
@@ -1655,70 +1748,15 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                             var subkey = value_keys[i]
                             var subval = value_pre[subkey]
                             if (subval[timeID] == null){ continue }
-                            html_preprocess += row_1(key+" - "+subkey, subval[timeID], undefined, time_length)
+                            data.push([row_1, key+" - "+subkey, subval[timeID], undefined, time_length])
                         }
                     }
                 }
             }
-            if (html_preprocess != "<tr><td class='header' "+colspan_header+"> Preprocess </td></tr>"){
-                html += html_preprocess
-            }
+
         }
-        html += "</table></div>"
+        return data
 
-
-        html += "<br/><div id='info_warnings'><table>"
-        html += header("Warnings", "warnings", 2)
-        html += row_from_list("message", ["clones", "reads"], "", 2)
-        warnings_clones = this.getWarningsClonotypeInfo(timeID)
-        for (var w_type in warnings_clones) {
-            var warn = warnings_clones[w_type]
-            html += row_from_list(`${w_type}; ${warn.msg}`, [warn.clones.length, warn.reads], undefined, 2)
-        }
-        html += "</table></div>"
-
-
-        if ( typeof this.overlaps != 'undefined') {
-            html += "<br/><h3>Overlaps index</h3>"
-
-            var overlap_links = {
-                "morisita": "https://en.wikipedia.org/wiki/Morisita%27s_overlap_index",
-                "jaccard": "https://en.wikipedia.org/wiki/Jaccard_index"
-            }
-            for (var key_overlap in this.overlaps) {
-                var overlap_name = key_overlap.charAt(0).toUpperCase() + key_overlap.slice(1);
-                html += "<h4 style='display:inline'>"+overlap_name+"'s index</h4>"
-                html += "<a title='Help link for "+overlap_name+"\'s index' class='icon-help-circled-1' target='_blank' href='"+overlap_links[key_overlap]+"' style='text-decoration: none;'></a>"
-                html += "<table class='info_overlaps' id='overlap_"+key_overlap+"'>"
-                var overlap = this.overlaps[key_overlap]
-                html += "<tr><td  class='header'></td>" // header with samples names
-                for (var posSample = 0; posSample < overlap.length; posSample++) {
-                    html += "<td  class='header'>"+this.getSampleName(posSample)+"</td>"
-                }
-                html += '</tr>'
-                for (posSample = 0; posSample < overlap.length; posSample++) {
-                    if (posSample == this.t){
-                        html += "<tr class='info_overlaps_line' >"
-                    } else {
-                        html += "<tr>"
-                    }
-                    html += "<td class='header'>"+this.getSampleName(posSample)+"</td>"
-                    values = overlap[posSample]
-                    for (var j = 0; j < (overlap[posSample].length); j++) {
-                        value = overlap[posSample][j]
-
-                        if (j == posSample){
-                            html += "<td class=''>" + "--" + '</td>'
-                        } else {
-                            html += "<td>" + value + '</td>'
-                        }
-                    }
-                    html += '</tr>'
-                }
-                html += "</table>"
-            }
-        }
-        return html
     },
 
     /**
