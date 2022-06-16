@@ -208,8 +208,11 @@ code_quality:
     paths: [gl-code-quality-report.json]
 
 code_quality_custom:
+  image: vidjilci/cypress_with_browsers:latest
   stage: test_quality
-  script: make -C browser quality
+  script:
+    - npm install -g jshint
+    - make -C browser quality
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
