@@ -9,7 +9,10 @@
             "type": "python",
             "request": "launch",
             "console": "integratedTerminal",
-            "args": ["run", "apps"],
+            "args": ["run", "apps",
+                "--ssl_cert", "/home/duez/cert/localhost/localhost.crt",
+                "--ssl_key", "/home/duez/cert/localhost/localhost.decrypted.key",
+                "--server", "rocketServer",],
             "program": "/home/duez/vidjil/server/py4web/apps/py4web-start.py"
         }
     ]
