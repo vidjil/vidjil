@@ -5,6 +5,8 @@ These are fixtures that every app needs so probably you will not be editing this
 import os
 import sys
 import logging
+from .modules import vidjil_utils
+from . import defs
 from py4web import Session, Cache, Translator, Flash, DAL, Field, action
 from py4web.utils.mailer import Mailer
 from py4web.utils.auth import Auth
@@ -31,7 +33,9 @@ class CORS(Fixture):
         self.methods = methods
 
     def on_request(self, context):
-        response.headers["Access-Control-Allow-Origin"] = request.environ['HTTP_ORIGIN']
+        response.headers["Access-Control-Allow-Origin"] = self.origin
+        if 'HTTP_ORIGIN' in request.environ :
+            response.headers["Access-Control-Allow-Origin"] = request.environ['HTTP_ORIGIN']
         response.headers["Access-Control-Max-Age"] = self.age
         response.headers["Access-Control-Allow-Headers"] = self.headers
         response.headers["Access-Control-Allow-Methods"] = self.methods
@@ -237,3 +241,104 @@ auth.enable(uses=(cors,session, T, db, flash), env=dict(T=T))
 # #######################################################
 unauthenticated = ActionFactory(cors, db, session, T, flash, auth)
 authenticated = ActionFactory(cors, db, session, T, flash, auth.user)
+
+
+
+# #######################################################
+# Reverse IP
+# #######################################################
+ips = {}
+
+try:
+    for l in open(defs.REVERSE_IP):
+        ip, kw = l.split()
+        ips[ip] = kw
+except:
+    pass
+
+
+# #######################################################
+# Define custom log
+# #######################################################
+logging.ADMIN = logging.INFO + 1
+logging.addLevelName(logging.ADMIN, 'ADMIN')
+
+class MsgUserAdapter(logging.LoggerAdapter):
+
+    def process(self, msg, kwargs):
+        if type(msg) is dict:
+            if 'message' in msg:
+                msg = msg['message']
+            else:
+                msg = '?'
+        ip = request.remote_addr
+        if ip:
+            for ip_prefix in ips:
+                if ip.startswith(ip_prefix):
+                    ip = "%s/%s" % (ip, ips[ip_prefix])
+
+        usern = (str(auth.user_id)) if auth.user else ''
+        usern = usern.replace(' ','-')
+        if auth.is_impersonating():
+            usern = 'team!' + usern
+        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % vidjil_utils.safe_decoding(usern)),
+                                      vidjil_utils.safe_decoding(msg))
+        return new_msg, kwargs
+    
+    def admin(self, msg, extra=None):
+        self.log(logging.ADMIN, msg, extra)
+#
+class UserLogHandler(logging.Handler):
+
+    def __init__(self):
+        logging.Handler.__init__(self)
+        self.table = 'user_log'
+
+    def emit(self, record):
+        '''
+        When 'user_id' and 'record_id' are defined,
+        further store the record in the db.
+        '''
+        if hasattr(record, 'user_id') and hasattr(record, 'record_id'):
+            from datetime import datetime
+            now = datetime.now()
+            db[self.table].insert(
+                user_id=record.user_id,
+                table_name=record.table_name,
+                created=now,
+                msg=record.message,
+                record_id=record.record_id
+            )
+            db.commit()
+
+def _init_log():
+    """
+    adapted from http://article.gmane.org/gmane.comp.python.web2py/11091
+    """
+
+    import logging
+    import sys
+
+    def create_handler(filename, level):
+        try:
+            handler = logging.FileHandler(filename)
+        except:
+            handler = logging.StreamHandler(sys.stderr)
+        else:
+            handler.setLevel(level)
+            handler.setFormatter(formatter)
+        return handler
+
+    logger = logging.getLogger('vidjil') # (request.application)
+    if not logger.handlers:
+        logger.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
+
+        logger.addHandler(create_handler(defs.LOG_DEBUG, logging.DEBUG))
+        logger.addHandler(create_handler(defs.LOG_INFO, logging.INFO))
+        logger.addHandler(UserLogHandler())
+
+        logger.debug("Creating logger")
+    return MsgUserAdapter(logger, {})
+
+log = _init_log()
