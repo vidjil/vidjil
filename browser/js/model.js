@@ -1697,7 +1697,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         data.push([row_1, "analysis software", this.getSoftVersionTime(timeID),  'info_timepoint_analysis_software', 1])
         data.push([row_1, "parameters",        this.getCommandTime(timeID),      'info_timepoint_parameters', 1])
         data.push([row_1, "timestamp",         this.getTimestampTime(timeID),    'info_timepoint_timestamp', 1])
-        data.push([row_1, "analysis log",      this.getSegmentationInfo(timeID), 'info_timepoint_log', 1])
+        data.push([row_1, "analysis log",      "<pre>"+ this.getSegmentationInfo(timeID)+"</pre>", 'info_timepoint_log', 1])
 
         // 
         var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
