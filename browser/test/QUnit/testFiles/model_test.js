@@ -780,7 +780,7 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     // first sample has old fashion diversity
     var html_info = m.getPointHtmlInfo(0)
     assert.includes(html_info, "Diversity indices", "htmlInfo get diversity header")
-    assert.includes(html_info, "<tr id='modal_line_index_H_entropy'><td id='modal_line_title_index_H_entropy'>Shannon's diversity</td><td colspan='1' id='modal_line_value_index_H_entropy'>5.689</td></tr>", "An index is correctly present and formated")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy' ><td  id='modal_line_title_index_H_entropy'>Shannon's diversity</td><td  colspan='1' id='modal_line_value_index_H_entropy'>5.689</td></tr>", "An index is correctly present and formated")
     assert.notIncludes(html_info, '<tr><td colspan=\'5\'>Shannon\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>', "")
 
     assert.includes(html_info, "modal_header_reads_by_locus", "htmlInfo get reads by locus header")
@@ -792,11 +792,11 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     // second sample has diversity by locus
     html_info = m.getPointHtmlInfo(1)
     // each diversity indices has header
-    assert.includes(html_info, "<tr id='modal_header_index_H_entropy'><td class='header' colspan='5'>Shannon's diversity</td></tr>")
-    assert.includes(html_info, "<tr id='modal_header_index_E_equitability'><td class='header' colspan='5'>Pielou's evenness</td></tr>")
-    assert.includes(html_info, "<tr id='modal_header_index_Ds_diversity'><td class='header' colspan='5'>Simpson's diversity</td></tr>")
+    assert.includes(html_info, "<tr id='modal_header_index_H_entropy' ><td class='header' colspan='5'>Shannon's diversity</td></tr>")
+    assert.includes(html_info, "<tr id='modal_header_index_E_equitability' ><td class='header' colspan='5'>Pielou's evenness</td></tr>")
+    assert.includes(html_info, "<tr id='modal_header_index_Ds_diversity' ><td class='header' colspan='5'>Simpson's diversity</td></tr>")
     // each present locus id visible
-    assert.includes(html_info, "<tr id='modal_line_index_Ds_diversity_all'><td id='modal_line_title_index_Ds_diversity_all'><span class=\"systemBoxMenu\" title=\"all\">x</span> locus</td><td colspan='1' id='modal_line_value_index_Ds_diversity_all'>0.964</td></tr>")
-    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_TRG'><td id='modal_line_title_index_H_entropy_TRG'><span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> locus</td><td colspan='1' id='modal_line_value_index_H_entropy_TRG'>5.251</td></tr>")
-    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_IGH'><td id='modal_line_title_index_H_entropy_IGH'><span class=\"systemBoxMenu\" title=\"IGH\" style=\"background: rgb(108, 113, 196);\">H</span> locus</td><td colspan='1' id='modal_line_value_index_H_entropy_IGH'>4.666</td></tr>")
+    assert.includes(html_info, "<tr id='modal_line_index_Ds_diversity_all' ><td  id='modal_line_title_index_Ds_diversity_all'><span class=\"systemBoxMenu\" title=\"all\">x</span> locus</td><td  colspan='1' id='modal_line_value_index_Ds_diversity_all'>0.964</td></tr>")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_TRG' ><td  id='modal_line_title_index_H_entropy_TRG'><span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> locus</td><td  colspan='1' id='modal_line_value_index_H_entropy_TRG'>5.251</td></tr>")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_IGH' ><td  id='modal_line_title_index_H_entropy_IGH'><span class=\"systemBoxMenu\" title=\"IGH\" style=\"background: rgb(108, 113, 196);\">H</span> locus</td><td  colspan='1' id='modal_line_value_index_H_entropy_IGH'>4.666</td></tr>")
 });
