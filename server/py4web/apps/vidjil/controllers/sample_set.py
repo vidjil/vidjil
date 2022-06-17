@@ -2,22 +2,22 @@
 from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
-from ..modules import vidjilparser
 from ..modules import tag
-from ..modules import sampleSet
-from ..modules import sampleSetList
+from ..modules.sampleSet import SampleSet
+from ..modules.sampleSets import SampleSets
+from ..modules.sampleSetList import SampleSetList
+from ..modules.sequenceFile import get_associated_sample_sets
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
 from ..user_groups import get_default_creation_group, get_involved_groups
 from ..VidjilAuth import VidjilAuth
 from io import StringIO
-import logging
 import json
 import time
 import os
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections  import defaultdict
+from collections import defaultdict
 import math
 
 #if request.environ.get("HTTP_ORIGIN") :
@@ -27,21 +27,37 @@ import math
 
 ACCESS_DENIED = "access denied"
 
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
+def getConfigsByClassification():
+    """ Return list of available and auth config, classed by classification values """
+    i = 0
+    classification   = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
+    if auth.can_process_sample_set(int(request.query['id'])) :
+        for class_elt in db( (db.classification)).select(orderby=db.classification.id):
+            configs = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
+            if len(configs): # don't show empty optgroup
+                classification["%02d_%s" % (i, class_elt)]["name"]    = class_elt.name
+                classification["%02d_%s" % (i, class_elt)]["info"]    = class_elt.info
+                classification["%02d_%s" % (i, class_elt)]["configs"] = configs
+            i += 1
+        classification["%02d_noclass" % i]["name"]    = "–"
+        classification["%02d_noclass" % i]["info"]    = ""
+        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
+    return classification
 
 #
 #
 def next_sample_set():
     '''
-    Process request, possibly changing request.vars['id'] depending on request.vars['next']
+    Process request, possibly changing request.query['id'] depending on request.query['next']
     '''
-    if 'next' in request.vars:
+    if 'next' in request.query:
         try:
-            sample_type = db.sample_set[request.vars["id"]].sample_type
-            sample_set_id = int(request.vars['id'])
+            sample_type = db.sample_set[request.query["id"]].sample_type
+            sample_set_id = int(request.query['id'])
             
-            go_next = int(request.vars['next'])
+            go_next = int(request.query['next'])
             same_type_with_permissions = (db.sample_set.sample_type == sample_type) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set))
             if go_next > 0:
                 res = db((db.sample_set.id > sample_set_id) & (same_type_with_permissions)).select(
@@ -50,31 +66,33 @@ def next_sample_set():
                 res = db((db.sample_set.id < sample_set_id) & (same_type_with_permissions)).select(
                     db.sample_set.id, orderby=~db.sample_set.id, limitby=(0,1))
             if (len(res) > 0):
-                request.vars["id"] = str(res[0].id)
+                request.query["id"] = str(res[0].id)
         except:
             pass
 
 ## return patient file list
 ##
+@action("/vidjil/sample_set/index", method=["POST", "GET"])
+@action.uses("sample_set/index.html", db, auth.user)
 def index():
 
     next_sample_set()
-    if not auth.can_view_sample_set(request.vars["id"]):
+    if not auth.can_view_sample_set(int(request.query["id"])):
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
 
-    sample_set = db.sample_set[request.vars["id"]]
+    sample_set = db.sample_set[request.query["id"]]
     sample_set_id = sample_set.id
     factory = ModelFactory()
     helper = factory.get_instance(type=sample_set.sample_type)
     data = helper.get_data(sample_set_id)
     info_file = helper.get_info_dict(data)
 
-    if request.vars["config_id"] and request.vars["config_id"] != "-1" and request.vars["config_id"] != "None":
-        config_id = long(request.vars["config_id"])
+    if request.query["config_id"] and request.query["config_id"] != "-1" and request.query["config_id"] != "None":
+        config_id = int(request.query["config_id"])
         config = True
-    elif request.vars["config_id"] and request.vars["config_id"] == "-1":
+    elif request.query["config_id"] and request.query["config_id"] == "-1":
         most_used_query = db(
                 (db.fused_file.sample_set_id == sample_set.id)
             ).select(
@@ -115,19 +133,19 @@ def index():
         analysis_file = analysis
         analysis_filename = info_file["filename"]+"_"+ config_name + ".analysis"
         
-        query =[]
+    query =[]
     
-        query2 = db(
-            (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-            & (db.sample_set_membership.sample_set_id == sample_set_id)
-        ).select(
-            left=db.results_file.on(
-                (db.results_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.config_id==str(config_id))
-                & (db.results_file.hidden == False)
-            ), 
-            orderby = db.sequence_file.id|~db.results_file.run_date
-        )
+    query2 = db(
+        (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+        & (db.sample_set_membership.sample_set_id == sample_set_id)
+    ).select(
+        left=db.results_file.on(
+            (db.results_file.sequence_file_id==db.sequence_file.id)
+            & (db.results_file.config_id==str(config_id))
+            & (db.results_file.hidden == False)
+        ), 
+        orderby = db.sequence_file.id|~db.results_file.run_date
+    )
         
     previous=-1
     for row in query2 :
@@ -181,7 +199,7 @@ def index():
         scheduler_ids[s.id].status = s.status
     
 
-    tag_decorator = TagDecorator(get_tag_prefix())
+    tag_decorator = tag.TagDecorator(tag.get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()
     pre_process_list = {}
     for row in query_pre_process:
@@ -190,13 +208,13 @@ def index():
     classification   = getConfigsByClassification()
 
     http_origin = ""
-    if request.env['HTTP_ORIGIN'] is not None:
-        http_origin = request.env['HTTP_ORIGIN'] + "/"
+    if 'HTTP_ORIGIN' in request.environ :
+        http_origin = request.environ['HTTP_ORIGIN'] + "/"
 
-    log.info('sample_set (%s)' % request.vars["id"], extra={'user_id': auth.user.id,
-        'record_id': request.vars["id"],
+    log.info('sample_set (%s)' % request.query["id"], extra={'user_id': auth.user_id,
+        'record_id': request.query["id"],
         'table_name': "sample_set"})
-    #if (auth.can_view_patient(request.vars["id"]) ):
+    #if (auth.can_view_patient(request.query["id"]) ):
     return dict(query=query,
                 has_shared_sets = len(shared_sets) > 0,
                 pre_process_list=pre_process_list,
@@ -210,11 +228,13 @@ def index():
                 analysis_count=analysis_count,
                 analysis_file = analysis_file,
                 analysis_filename = analysis_filename,
-                sample_type = db.sample_set[request.vars["id"]].sample_type,
+                sample_type = db.sample_set[request.query["id"]].sample_type,
                 config=config,
                 classification=classification,
                 tag_decorator=tag_decorator,
-                http_origin=http_origin)
+                http_origin=http_origin,
+                auth=auth,
+                db=db)
 
 ## return a list of generic sample_sets
 @action("/vidjil/sample_set/all", method=["POST", "GET"])
@@ -248,10 +268,10 @@ def all():
     group_ids = get_involved_groups(db, auth)
 
     factory = ModelFactory()
-    helper = factory.get_instance(type, db, auth)
+    helper = factory.get_instance(type)
 
     f = time.time()
-    slist = sampleSetList.SampleSetList(helper, db, auth, page, step, tags, search)
+    slist = SampleSetList(helper, page, step, tags, search)
 
     #log.debug("list loaded (%.3fs)" % (time.time() - f))
 
@@ -282,7 +302,7 @@ def all():
         request.query["sort"] = ""
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-    #log.info("%s list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
+    #log.info("%s list %s" % (request.query["type"], search), extra={'user_id': auth.user.id,
     #    'record_id': None,
     #    'table_name': "sample_set"})
     #log.debug("sample_set list (%.3fs)" % (time.time()-start))
@@ -316,8 +336,8 @@ def samplesetById():
     API: Get a specific sample based on the set id
     Take two paramaters: set id and set type
     '''
-    type    = (request.vars['type'] if ("type" in request.vars.keys()) else defs.SET_TYPE_GENERIC )
-    set_id  =  request.vars['id']
+    type    = (request.query['type'] if ("type" in request.query.keys()) else defs.SET_TYPE_GENERIC )
+    set_id  =  request.query['id']
 
     factory = ModelFactory()
     helper  = factory.get_instance(type=type)
@@ -335,16 +355,16 @@ def stats():
         return json.dumps(res, separators=(',',':'))
 
     isAdmin = auth.is_admin()
-    if request.vars['type']:
-        type = request.vars['type']
+    if request.query['type']:
+        type = request.query['type']
     else :
         type = defs.SET_TYPE_GENERIC
 
     ##filter
-    if "filter" not in request.vars :
-        request.vars["filter"] = ""
+    if "filter" not in request.query :
+        request.query["filter"] = ""
 
-    search, tags = parse_search(request.vars["filter"])
+    search, tags = tag.parse_search(request.query["filter"])
     group_ids = get_involved_groups(auth)
 
     factory = ModelFactory()
@@ -357,17 +377,17 @@ def stats():
 
     ##sort result
     reverse = False
-    if request.vars["reverse"] == "true" :
+    if request.query["reverse"] == "true" :
         reverse = True
-    if "sort" in request.vars:
-        result = sorted(result, key = lambda row : row[request.vars["sort"]], reverse=reverse)
+    if "sort" in request.query:
+        result = sorted(result, key = lambda row : row[request.query["sort"]], reverse=reverse)
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
     classification   = getConfigsByClassification()
 
     result = helper.filter(search, result)
-    log.info("%s stat list %s" % (request.vars["type"], search), extra={'user_id': auth.user.id,
+    log.info("%s stat list %s" % (request.query["type"], search), extra={'user_id': auth.user.id,
         'record_id': None,
         'table_name': "sample_set"})
     log.debug("stat list (%.3f s)" % (time.time()-start))
@@ -385,10 +405,10 @@ def result_files():
     from cStringIO import StringIO
     import types
     errors = []
-    config_id = request.vars['config_id']
+    config_id = request.query['config_id']
     sample_set_ids = []
-    if 'sample_set_ids' in request.vars:
-        sample_set_ids = request.vars['sample_set_ids']
+    if 'sample_set_ids' in request.query:
+        sample_set_ids = request.query['sample_set_ids']
 
     #little hack since we can't pass array parameters with only one value
     if isinstance(sample_set_ids, types.StringTypes):
@@ -506,10 +526,10 @@ def mystats():
     d['f_samples'] = f_samples # TMP, for debug
 
     #TODO can we get a record id here ?
-    log.info('stats (%s)' % request.vars["id"], extra={'user_id': auth.user.id,
+    log.info('stats (%s)' % request.query["id"], extra={'user_id': auth.user.id,
         'record_id': None,
         'table_name': "results_file"})
-    log.debug("mystats (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
+    log.debug("mystats (%.3fs) %s" % (time.time()-start, request.query["filter"]))
     # Return
     return json.dumps(d, separators=(',',':'))
 
@@ -518,8 +538,8 @@ def form():
     denied = False
     # edit set
     extra = {'user_id': auth.user.id, 'record_id': None, 'table_name': "sample_set"}
-    if("id" in request.vars):
-        sample_set = db.sample_set[request.vars["id"]]
+    if("id" in request.query):
+        sample_set = db.sample_set[request.query["id"]]
         set_type = sample_set.sample_type
         sset = db(db[set_type].sample_set_id == sample_set.id).select().first()
         if(auth.can_modify_sample_set(sset.sample_set_id)):
@@ -528,12 +548,12 @@ def form():
             max_group = None
         else:
             denied = True
-        extra['record_id'] = request.vars["id"]
+        extra['record_id'] = request.query["id"]
 
     # new set
     elif (auth.can_create_patient()):
         sset = None
-        set_type = request.vars["type"]
+        set_type = request.query["type"]
         creation_group_tuple = get_default_creation_group(auth)
         groups = creation_group_tuple[0]
         max_group = creation_group_tuple[1]
@@ -569,7 +589,7 @@ def form():
 ## redirect to patient list if success
 ## return a flash error message if fail
 def submit():
-    data = json.loads(request.vars['data'], encoding='utf-8')
+    data = json.loads(request.query['data'], encoding='utf-8')
     mf = ModelFactory()
 
     error = False
@@ -689,29 +709,29 @@ def submit():
 def custom():
     start = time.time()
 
-    if request.vars["config_id"] and request.vars["config_id"] != "-1" :
-        config_id = long(request.vars["config_id"])
-        config_name = db.config[request.vars["config_id"]].name
+    if request.query["config_id"] and request.query["config_id"] != "-1" :
+        config_id = long(request.query["config_id"])
+        config_name = db.config[request.query["config_id"]].name
         config = True
         
     else:
-        request.vars["config_id"] = -1
+        request.query["config_id"] = -1
         config_id = -1
         config_name = None
         config = False
         
-    if "custom_list" not in request.vars :
-        request.vars["custom_list"] = []
-    if type(request.vars["custom_list"]) is str :
-        request.vars["custom_list"] = [request.vars["custom_list"]]
+    if "custom_list" not in request.query :
+        request.query["custom_list"] = []
+    if type(request.query["custom_list"]) is str :
+        request.query["custom_list"] = [request.query["custom_list"]]
         
     myGroupBy = None
     helper = None
-    if request.vars["id"] and auth.can_view_sample_set(request.vars["id"]):
-        sample_set = db.sample_set[request.vars["id"]]
+    if request.query["id"] and auth.can_view_sample_set(request.query["id"]):
+        sample_set = db.sample_set[request.query["id"]]
         factory = ModelFactory()
         helper = factory.get_instance(type=sample_set.sample_type)
-        qq = (db.sample_set.id == request.vars["id"])
+        qq = (db.sample_set.id == request.query["id"])
         
     else:
         qq = (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set))
@@ -729,10 +749,10 @@ def custom():
     group_ids = get_involved_groups(auth)
 
     ##filter
-    if "filter" not in request.vars :
-        request.vars["filter"] = ""
+    if "filter" not in request.query :
+        request.query["filter"] = ""
 
-    search, tags = parse_search(request.vars["filter"])
+    search, tags = parse_search(request.query["filter"])
 
     left_join = [
         db.patient.on(db.patient.sample_set_id == db.sample_set.id),
@@ -775,7 +795,7 @@ def custom():
 
     for row in query :
         row.checked = False
-        if (str(row.results_file.id) in request.vars["custom_list"]) :
+        if (str(row.results_file.id) in request.query["custom_list"]) :
             row.checked = True
 
         if row.patient.id is not None:
@@ -793,7 +813,7 @@ def custom():
 
     
     if config :
-        query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.vars["custom_list"])) )
+        query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.query["custom_list"])) )
     
     tag_decorator = TagDecorator(get_tag_prefix())
     log.info("load compare list", extra={'user_id': auth.user.id, 'record_id': None, 'table_name': "results_file"})
@@ -810,22 +830,6 @@ def custom():
                 classification=classification,
                 group_ids=group_ids)
 
-def getConfigsByClassification():
-    """ Return list of available and auth config, classed by classification values """
-    i = 0
-    classification   = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
-    if auth.can_process_sample_set(request.vars['id']) :
-        for class_elt in db( (db.classification)).select(orderby=db.classification.id):
-            configs = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
-            if len(configs): # don't show empty optgroup
-                classification["%02d_%s" % (i, class_elt)]["name"]    = class_elt.name
-                classification["%02d_%s" % (i, class_elt)]["info"]    = class_elt.info
-                classification["%02d_%s" % (i, class_elt)]["configs"] = configs
-            i += 1
-        classification["%02d_noclass" % i]["name"]    = "–"
-        classification["%02d_noclass" % i]["info"]    = ""
-        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
-    return classification
 
 def getStatHeaders():
     m = StatDecorator()
@@ -1039,7 +1043,7 @@ def multi_sample_stats():
     data = {}
     data['headers'] = [h for h, t, m in getStatHeaders()]
     results = []
-    custom_result = request.vars['custom_result']
+    custom_result = request.query['custom_result']
     if not isinstance(custom_result, list):
         custom_result = [custom_result]
 
@@ -1067,8 +1071,8 @@ def multi_sample_stats():
     return dict(data=data)
 
 def confirm():
-    if auth.can_modify_sample_set(request.vars["id"]):
-        sample_set = db.sample_set[request.vars["id"]]
+    if auth.can_modify_sample_set(request.query["id"]):
+        sample_set = db.sample_set[request.query["id"]]
         data = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select().first()
         factory = ModelFactory()
         helper = factory.get_instance(type=sample_set.sample_type)
@@ -1082,8 +1086,8 @@ def confirm():
         return json.dumps(res, separators=(',',':'))
 
 def delete():
-    if (auth.can_modify_sample_set(request.vars["id"]) ):
-        sample_set = db.sample_set[request.vars["id"]]
+    if (auth.can_modify_sample_set(request.query["id"]) ):
+        sample_set = db.sample_set[request.query["id"]]
         sample_type = sample_set.sample_type
         if sample_set is None:
             res = {"message": 'An error occured. This sample_set may have already been deleted'}
@@ -1118,8 +1122,8 @@ def delete():
         res = {"redirect": "sample_set/all",
                "args": {"type": sample_type, "page": 0},
                "success": "true",
-               "message": "sample set ("+str(request.vars["id"])+") deleted"}
-        log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars["id"], 'table_name': 'sample_set'})
+               "message": "sample set ("+str(request.query["id"])+") deleted"}
+        log.info(res, extra={'user_id': auth.user.id, 'record_id': request.query["id"], 'table_name': 'sample_set'})
         return json.dumps(res, separators=(',',':'))
     else :
         res = {"message": ACCESS_DENIED}
@@ -1128,8 +1132,8 @@ def delete():
 
 #
 def permission():
-    if (auth.can_modify_sample_set(request.vars["id"]) ):
-        sample_set = db.sample_set[request.vars["id"]]
+    if (auth.can_modify_sample_set(request.query["id"]) ):
+        sample_set = db.sample_set[request.query["id"]]
         stype = sample_set.sample_type
         factory = ModelFactory()
         helper = factory.get_instance(type=stype)
@@ -1150,11 +1154,11 @@ def permission():
                     (db.auth_permission.table_name == db.sample_set)).select()
             row.perms = ', '.join(map(lambda x: x.name, permissions))
 
-            row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[stype], request.vars['id'], group=row.id))
-            row.read =  auth.get_group_access("sample_set", request.vars["id"] , row.id)
+            row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[stype], request.query['id'], group=row.id))
+            row.read =  auth.get_group_access("sample_set", request.query["id"] , row.id)
 
-        log.info("load permission page for sample_set (%s)" % request.vars["id"],
-                extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': "sample_set"})
+        log.info("load permission page for sample_set (%s)" % request.query["id"],
+                extra={'user_id': auth.user.id, 'record_id': request.query['id'], 'table_name': "sample_set"})
         return dict(query=query,
                     helper=helper,
                     data=data)
@@ -1165,13 +1169,13 @@ def permission():
 
 #
 def change_permission():
-    if (auth.can_modify_sample_set(request.vars["sample_set_id"]) ):
-        ssid = request.vars["sample_set_id"]
+    if (auth.can_modify_sample_set(request.query["sample_set_id"]) ):
+        ssid = request.query["sample_set_id"]
         sample_set = db.sample_set[ssid]
         sample_type = sample_set.sample_type
 
         error = ""
-        if request.vars["group_id"] == "" :
+        if request.query["group_id"] == "" :
             error += "missing group_id, "
         if ssid == "" :
             error += "missing sample_set_id, "
@@ -1179,15 +1183,15 @@ def change_permission():
         if error=="":
             if auth.get_group_access("sample_set",
                       ssid,
-                      int(request.vars["group_id"])):
-                auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
-                res = {"message" : "access '%s' deleted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
+                      int(request.query["group_id"])):
+                auth.del_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
+                res = {"message" : "access '%s' deleted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
             else :
 
-                auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
-                res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
+                auth.add_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
+                res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
 
-            log.info(res, extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
+            log.info(res, extra={'user_id': auth.user.id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
             return json.dumps(res, separators=(',',':'))
         else :
             res = {"message": "incomplete request : "+error }
@@ -1226,10 +1230,10 @@ def get_sample_set_list(stype, q):
     return ss_list
 
 def auto_complete():
-    if "keys" not in request.vars:
+    if "keys" not in request.query:
         return error_message("missing group ids")
 
-    query = json.loads(request.vars['keys'])[0]
+    query = json.loads(request.query['keys'])[0]
     sample_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
     result = []
     for sample_type in sample_types:

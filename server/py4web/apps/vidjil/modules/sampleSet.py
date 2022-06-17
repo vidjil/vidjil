@@ -5,10 +5,15 @@ from apps.vidjil.modules import vidjil_utils as v_u
 from yatl.helpers import SPAN, XML
 from py4web import request
 
+from ..modules import vidjil_utils
+from ..modules.permission_enum import PermissionEnum
+from .. import defs
+from ..common import db, auth
+
 class SampleSet(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, type, db, auth):
+    def __init__(self, type):
         self.type = type
         prefix = get_tag_prefix()
         self.tag_decorator = TagDecorator(prefix)

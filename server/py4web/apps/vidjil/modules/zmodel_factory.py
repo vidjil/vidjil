@@ -4,10 +4,12 @@ from apps.vidjil.modules import vidjil_utils
 from apps.vidjil.modules.sampleSet import SampleSet
 from yatl.helpers import SPAN
 
+from ..common import db, auth
+
 class Generic(SampleSet):
 
-    def __init__(self, type, db, auth):
-        super(Generic, self).__init__(type, db, auth)
+    def __init__(self, type):
+        super(Generic, self).__init__(type)
         self.auth = auth
         self.db = db
 
@@ -59,8 +61,8 @@ class Generic(SampleSet):
 
 class Patient(SampleSet):
 
-    def __init__(self, type, db, auth):
-        super(Patient, self).__init__(type, db, auth)
+    def __init__(self, type):
+        super(Patient, self).__init__(type)
         self.auth = auth
         self.db = db
 
@@ -153,8 +155,8 @@ class Patient(SampleSet):
 
 
 class Run(SampleSet):
-    def __init__(self, type, db, auth):
-        super(Run, self).__init__(type, db, auth)
+    def __init__(self, type):
+        super(Run, self).__init__(type)
         self.auth = auth
         self.db = db
 
@@ -246,6 +248,6 @@ class ModelFactory():
         #filler constructor, do we need a class here ?
         self.id = 0
 
-    def get_instance(self, type, db, auth):
-        return FactoryEnum[type].value(type, db, auth)
+    def get_instance(self, type):
+        return FactoryEnum[type].value(type)
 

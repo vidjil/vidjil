@@ -1,13 +1,15 @@
 from .permission_enum import PermissionEnum
 from .sampleSet import *
 
+from ..common import db, auth
+
 class SampleSetList():
     '''
     Deals with a list of a type of sample set (either patient, run or set).
 
     This class is used to load all the required information for such a list.
     '''
-    def __init__(self, helper, db=None, auth=None, page=None, step=None, tags=None, search=None, setid=None):
+    def __init__(self, helper, page=None, step=None, tags=None, search=None, setid=None):
         self.type = helper.get_type()
         s_table = db[self.type]
         self.db = db

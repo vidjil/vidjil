@@ -19,7 +19,7 @@ from ..common import db, session, T, flash, cache, authenticated, unauthenticate
 publisher = Publisher(db, policy=ALLOW_ALL_POLICY)
 
 @action("patient", method=["POST", "GET"])
-@action.uses("html_grid.html",session, db, auth, T)
+@action.uses("html_grid.html", auth)
 @action.uses(auth.user)
 def patient_grid(path=None):
 
