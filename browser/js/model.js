@@ -1570,6 +1570,35 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return warned
     },
 
+    exportSampleInfo: function(timeID){
+        convertContent = function( value ){
+            if (value[0] == header){
+                return [[], [value[1]]]
+            } else if (value[0] == row_1) {
+                return [[value[1], value[2]]]
+            } else if (value[0] == row_from_list) {
+                return [[value[1]].concat(value[2])]
+            }
+        }
+        var data = []
+        var values;
+
+        /// Table generic
+        values = this.getPointHtmlInfoDataGeneric(timeID)
+        for (var i = 0; i < values.length; i++) {
+            data = data.concat( convertContent(values[i]))
+        }
+
+        /// Table warnings
+        values = this.getPointHtmlInfoDataWarnings(timeID)
+        for (var j = 0; j < values.length; j++) {
+            data = data.concat( convertContent(values[j]))
+        }
+
+        var filename = `sample_${this.samples.names[timeID] != "" ? this.samples.names[timeID] : this.samples.original_names[timeID].split('\\').pop().split('/').pop()}.csv`
+        download_csv(data.join("\n"), filename)
+        return data
+    },
 
     /**
      * return info about a timePoint in html 
@@ -1582,6 +1611,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var locus, values, value
 
         html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+") "
+        html += `<a class="button" id="download_info_sample_${timeID}" onclick="m.exportSampleInfo(${timeID})">download</a>`
         html += "</h2>"
 
         /// Table generic
