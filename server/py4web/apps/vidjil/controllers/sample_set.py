@@ -16,14 +16,14 @@ import logging
 import json
 import time
 import os
-from py4web import action, request, abort, redirect, URL, Field, HTTP
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections  import defaultdict
 import math
 
-if request.environ.get("HTTP_ORIGIN") :
-    response.headers['Access-Control-Allow-Origin'] = request.environ.get("HTTP_ORIGIN")
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Max-Age'] = 86400
+#if request.environ.get("HTTP_ORIGIN") :
+#    response.headers['Access-Control-Allow-Origin'] = request.environ.get("HTTP_ORIGIN")
+#    response.headers['Access-Control-Allow-Credentials'] = 'true'
+#    response.headers['Access-Control-Max-Age'] = 86400
 
 ACCESS_DENIED = "access denied"
 

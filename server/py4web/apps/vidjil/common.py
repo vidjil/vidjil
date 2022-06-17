@@ -14,6 +14,40 @@ from py4web.utils.factories import ActionFactory
 from . import settings
 from .VidjilAuth import VidjilAuth
 
+from py4web.core import HTTP, Fixture, request, response
+
+
+class CORS(Fixture):
+    """
+    Fixture helper for sharing web service avoiding cross origin resource sharing problems
+    """
+
+    def __init__(self, age=86400, origin="*", headers="*", methods="*"):
+        Fixture.__init__(self)
+
+        self.age = age
+        self.origin = origin
+        self.headers = headers
+        self.methods = methods
+
+    def on_request(self, context):
+        response.headers["Access-Control-Allow-Origin"] = request.environ['HTTP_ORIGIN']
+        response.headers["Access-Control-Max-Age"] = self.age
+        response.headers["Access-Control-Allow-Headers"] = self.headers
+        response.headers["Access-Control-Allow-Methods"] = self.methods
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        if request.method == "OPTIONS":
+            raise HTTP(200)
+
+    def on_success(self, status=200):
+        response.set_cookie('auth_test_session', 'bar', samesite='Lax', secure=True);
+
+# set the origin to where ever your frontend server is running,
+# use host and port rather than "localhost" as the browser session
+# cookies may not be set otherwise preventing auth usage.
+# headers="Content-Type" is required to prevent a different CORs browser issue.
+cors = CORS(origin='https://localhost:8000/vidjil', headers="Content-Type") 
+
 
 # #######################################################
 # implement custom loggers form settings.LOGGERS
@@ -64,7 +98,7 @@ flash = Flash()
 # pick the session type that suits you best
 # #######################################################
 if settings.SESSION_TYPE == "cookies":
-    session = Session(secret=settings.SESSION_SECRET_KEY)
+    session = Session(secret=settings.SESSION_SECRET_KEY, same_site="None")
 elif settings.SESSION_TYPE == "redis":
     import redis
 
@@ -76,16 +110,16 @@ elif settings.SESSION_TYPE == "redis":
         if ct(k) >= 0
         else cs(k, v, e)
     )
-    session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn)
+    session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn, same_site="None")
 elif settings.SESSION_TYPE == "memcache":
     import memcache, time
 
     conn = memcache.Client(settings.MEMCACHE_CLIENTS, debug=0)
-    session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn)
+    session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn, same_site="None")
 elif settings.SESSION_TYPE == "database":
     from py4web.utils.dbstore import DBStore
 
-    session = Session(secret=settings.SESSION_SECRET_KEY, storage=DBStore(db))
+    session = Session(secret=settings.SESSION_SECRET_KEY, storage=DBStore(db), same_site="None")
 
 # #######################################################
 # Instantiate the object and actions that handle auth
@@ -98,6 +132,7 @@ auth.allowed_actions = ["all"]
 auth.login_expiration_time = 3600
 auth.password_complexity = {"entropy": 50}
 auth.block_previous_password_num = 3
+auth.__prerequisites__.insert(0, cors) 
 auth.define_tables()
 
 # #######################################################
@@ -195,10 +230,10 @@ if settings.USE_CELERY:
 # #######################################################
 # Enable authentication
 # #######################################################
-auth.enable(uses=(session, T, db), env=dict(T=T))
+auth.enable(uses=(cors,session, T, db, flash), env=dict(T=T))
 
 # #######################################################
 # Define convenience decorators
 # #######################################################
-unauthenticated = ActionFactory(db, session, T, flash, auth)
-authenticated = ActionFactory(db, session, T, flash, auth.user)
+unauthenticated = ActionFactory(cors, db, session, T, flash, auth)
+authenticated = ActionFactory(cors, db, session, T, flash, auth.user)

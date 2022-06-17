@@ -19,7 +19,7 @@ from io import StringIO
 import logging
 import json
 import os
-from py4web import action, request, abort, redirect, URL, Field, HTTP
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from yatl.helpers import A, I
 from py4web.utils.form import Form, FormStyleDefault
 from py4web.utils.grid import Grid, GridClassStyle, Column
@@ -35,10 +35,10 @@ import types
 
 from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth
 
-if request.environ.get("HTTP_ORIGIN") :
-    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Max-Age'] = 86400
+#if request.environ.get("HTTP_ORIGIN") :
+#    response.headers['Access-Control-Allow-Origin'] = request.environ.get("HTTP_ORIGIN")
+#    response.headers['Access-Control-Allow-Credentials'] = 'true'
+#    response.headers['Access-Control-Max-Age'] = 86400
 
 
 
