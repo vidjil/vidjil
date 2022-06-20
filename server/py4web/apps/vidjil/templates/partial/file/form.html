@@ -1,122 +1,122 @@
 
 <div class="form_line">
-    <span class="left form_label" style="line-height: 33px">Sample {{=i+1}}</span>
-    {{ if file is not None and 'error' in file and len(file['error']) > 0: }}
-        <div class="error">error: {{=", ".join(file['error'])}}</div>
-    {{ pass }}
-    {{ if file is not None and 'message' in file and len(file['message']) > 0: }}
-        <div>{{=", ".join(file['message'])}}</div>
-    {{ pass }}
+    <span class="left form_label" style="line-height: 33px">Sample [[=i+1]]</span>
+    [[ if file is not None and 'error' in file and len(file['error']) > 0: ]]
+        <div class="error">error: [[=", ".join(file['error'])]]</div>
+    [[ pass ]]
+    [[ if file is not None and 'message' in file and len(file['message']) > 0: ]]
+        <div>[[=", ".join(file['message'])]]</div>
+    [[ pass ]]
     <div class="hidden">
-        <input type="hidden" id="file_filename_{{=i}}" class="filename" name="file[{{=i}}][filename]" type="text" value="">
-        <input type="hidden" id="file_filename2_{{=i}}" class="filename" name="file[{{=i}}][filename2]" type="text" value="">
-        <input type="hidden" id="file_id_{{=i}}" name="file[{{=i}}][id]"
-            value="{{if 'id' in file:}}{{=file['id']}}{{pass}}" >
-        <input type="hidden" id="sample_set_id" name="sample_set_id" value="{{if "sample_set_id" in request.vars:}}{{=request.vars["sample_set_id"]}}{{pass}}" >
-        <input type="hidden" id="sample_type" name="sample_type" value="{{=sample_type}}" />
-        {{if isEditing:}}
+        <input type="hidden" id="file_filename_[[=i]]" class="filename" name="file[[[=i]]][filename]" type="text" value="">
+        <input type="hidden" id="file_filename2_[[=i]]" class="filename" name="file[[[=i]]][filename2]" type="text" value="">
+        <input type="hidden" id="file_id_[[=i]]" name="file[[[=i]]][id]"
+            value="[[if 'id' in file:]][[=(file['id'])]][[pass]]" >
+        <input type="hidden" id="sample_set_id" name="sample_set_id" value="[[if "sample_set_id" in request.vars:]][[=request.vars["sample_set_id"]]][[pass]]" >
+        <input type="hidden" id="sample_type" name="sample_type" value="[[=sample_type]]" />
+        [[if isEditing:]]
           <input type="hidden" id="is_editing" name="is_editing" value="1" />
-        {{pass}}
+        [[pass]]
     </div>
 
     <div class="field_div">
 
-        <div id="file_field_1_{{=i}}" class="field_div" {{if network_source:}} style="display: none" {{pass}}>
-            <input class="upload_field file_1 form-control" id="file_upload_1_{{=i}}" type="file"
-            {{if network_source:}}
+        <div id="file_field_1_[[=i]]" class="field_div" [[if network_source:]] style="display: none" [[pass]]>
+            <input class="upload_field file_1 form-control" id="file_upload_1_[[=i]]" type="file"
+            [[if network_source:]]
                 disabled
-            {{elif not isEditing:}}
+            [[elif not isEditing:]]
                 required
-            {{pass}}
+            [[pass]]
                 title="first file for this sample (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)"
             >
         </div>
 
-        <div id="file_field_2_{{=i}}" class="field_div" {{if network_source or required_files < 2:}}style="display: none"{{pass}}>
-            <input class="upload_field file_2 form-control" id="file_upload_2_{{=i}}" type="file"
-            {{if network_source:}}
+        <div id="file_field_2_[[=i]]" class="field_div" [[if network_source or required_files < 2:]]style="display: none"[[pass]]>
+            <input class="upload_field file_2 form-control" id="file_upload_2_[[=i]]" type="file"
+            [[if network_source:]]
                 disabled
-            {{elif not isEditing and required_files >= 2:}}
+            [[elif not isEditing and required_files >= 2:]]
                 required
-            {{pass}}
+            [[pass]]
                 title="second file for this sample (.fa, .fastq, .fa.gz, .fastq.gz)"
             >
         </div>
 
-        <div    id="jstree_field_1_{{=i}}" class="field_div" 
+        <div    id="jstree_field_1_[[=i]]" class="field_div" 
 
-                data-index={{=i}}
+                data-index=[[=i]]
                 onclick="db.display_jstree(1, this.dataset.index)">
             <div    class=" jstree_field form-control file_1" 
-                    {{if not network_source:}} hidden {{pass}}
+                    [[if not network_source:]] hidden [[pass]]
                     style="display: block;">
                 <span class="button2">browse</span>
-                <span id="file_indicator_1_{{=i}}"></span>
+                <span id="file_indicator_1_[[=i]]"></span>
             </div>
         </div>
 
-        <div    id="jstree_field_2_{{=i}}" class="field_div"
-                data-index={{=i}}
+        <div    id="jstree_field_2_[[=i]]" class="field_div"
+                data-index=[[=i]]
                 onclick="db.display_jstree(2, this.dataset.index)">
             <div    class=" jstree_field form-control file_2" 
-                    {{if required_files < 2:}}style="display: none"{{pass}}
-                    {{if not network_source:}} hidden {{pass}}
+                    [[if required_files < 2:]]style="display: none"[[pass]]
+                    [[if not network_source:]] hidden [[pass]]
                     style="display: block;">
                 <span class="button2">browse</span>
-                <span id="file_indicator_2_{{=i}}"></span>
+                <span id="file_indicator_2_[[=i]]"></span>
             </div>
         </div>
 
     </div>
     <div class="field_div">
-        <input class="date form-control" id="file_sampling_date_{{=i}}" name="file[{{=i}}][sampling_date]" type="text" title="sampling date"
-            value="{{if 'sampling_date' in file and file['sampling_date'] is not None:}}{{=file['sampling_date']}}{{pass}}"
+        <input class="date form-control" id="file_sampling_date_[[=i]]" name="file[[[=i]]][sampling_date]" type="text" title="sampling date"
+            value="[[if 'sampling_date' in file and file['sampling_date'] is not None:]][[=file['sampling_date']]][[pass]]"
             placeholder="yyyy-mm-dd" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
     </div>
     <div class="field_div">
-        <input id="file_info_{{=i}}"
+        <input id="file_info_[[=i]]"
             onfocus="new VidjilAutoComplete().setupTags(this);"
             onkeydown="if (event.keyCode == 13) return false;"
             data-needs-atwho="true"
-            data-keys="{{=group_ids}}"
+            data-keys="[[=group_ids]]"
             class="text form-control"
-            name="file[{{=i}}][info]"
+            name="file[[[=i]]][info]"
             rows="1"
             placeholder="sample information (#tags can be used)"
             autocomplete="off"
-            value="{{if 'info' in file and file['info'] is not None:}}{{=file['info']}}{{pass}}"/>
+            value="[[if 'info' in file and file['info'] is not None:]][[=file['info']]][[pass]]"/>
     </div>
     <div class="field_div">
-        <div class="token_div form-control" onclick="$('#token_input_{{=i}}').focus()">
+        <div class="token_div form-control" onclick="$('#token_input_[[=i]]').focus()">
             <input
                 hidden
-                id="file_set_list_{{=i}}"
-                name="file[{{=i}}][set_ids]"
+                id="file_set_list_[[=i]]"
+                name="file[[[=i]]][set_ids]"
                 type="text"
-                value="{{=",".join([set['id'] for set in file['sets']])}}">
-            <div id="file_set_div_{{=i}}" class="token_container">
-                {{ for set in file['sets']: }}
-                    <span class="set_token {{=set['type']}}_token" data-set-id="{{=set['id']}}">
-                        <i class="icon-cancel" onclick="new Tokeniser(document.getElementById('file_set_div_{{=i}}'), document.getElementById('file_set_list_{{=i}}')).removeToken(this.parentNode);"></i>
-                        {{=set['id'][3:]}}
+                value="[[=",".join([set['id'] for set in file['sets']])]]">
+            <div id="file_set_div_[[=i]]" class="token_container">
+                [[ for set in file['sets']: ]]
+                    <span class="set_token [[=set['type']]]_token" data-set-id="[[=set['id']]]">
+                        <i class="icon-cancel" onclick="new Tokeniser(document.getElementById('file_set_div_[[=i]]'), document.getElementById('file_set_list_[[=i]]')).removeToken(this.parentNode);"></i>
+                        [[=set['id'][3:]]]
                     </span>
-                {{pass}}
+                [[pass]]
             </div>
-	    {{ if isEditing: }}
-            {{ else: }}
+	    [[ if isEditing: ]]
+            [[ else: ]]
 	    <input
-                id="token_input_{{=i}}"
+                id="token_input_[[=i]]"
                 class="token_input"
                 autocomplete="off"
                 onfocus="new VidjilAutoComplete().setupSamples(this);
-                new Tokeniser(document.getElementById('file_set_div_{{=i}}'), document.getElementById('file_set_list_{{=i}}'));"
+                new Tokeniser(document.getElementById('file_set_div_[[=i]]'), document.getElementById('file_set_list_[[=i]]'));"
                 data-needs-atwho="true"
                 data-needs-tokeniser="true"
-                data-group-ids="{{=upload_group_ids}}"
+                data-group-ids="[[=upload_group_ids]]"
                 data-keys='["generic", "patient", "run"]'
                 placeholder="other patient/run/sets"
                 type="text">
-	    {{ pass }}
+	    [[ pass ]]
         </div>
     </div>
 </div>

@@ -1,17 +1,17 @@
-{{extend 'db_layout.html'}}
-{{import vidjil_utils}}
+[[extend 'db_layout.html']]
+[[from apps.vidjil.modules import vidjil_utils]]
 
 <h3>Stats</h3>
 
 <div class="db_block">
     <div class="db_block_left">
         search
-        <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"
-               onchange="db.call('sample_set/stats', {'config_id' : '{{=request.vars["config_id"]}}',
+        <input id="db_filter_input" type="text" value="[[=request.vars["filter"]]]"
+               onchange="db.call('sample_set/stats', {'config_id' : '[[=request.vars["config_id"]]]',
                                                        'filter' : this.value,
-                                                       'type' : '{{=helper.get_type()}}' })"
+                                                       'type' : '[[=helper.get_type()]]' })"
         onfocus="new VidjilAutoComplete().setupTags(this);"
-        data-needs-atwho="true" data-keys="{{=group_ids}}">
+        data-needs-atwho="true" data-keys="[[=group_ids]]">
     </div>
     <div class="db_block_right">
     </div>
@@ -21,16 +21,16 @@
     <span>
         <select id="choose_config" name="config" onchange="db.updateStatsButton()">
             <option value="-1" selected> --- </option>
-            {{ for class_name in classification.keys(): }}
-              {{ class_elt = classification[class_name] }}
-              <optgroup label="{{ =class_elt['name'] }}"  title="{{ =class_elt['info'] }}">
-                {{ for row in class_elt['configs']: }}
-                    <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
-                      {{=row.name}}
+            [[ for class_name in classification.keys(): ]]
+              [[ class_elt = classification[class_name] ]]
+              <optgroup label="[[ =class_elt['name'] ]]"  title="[[ =class_elt['info'] ]]">
+                [[ for row in class_elt['configs']: ]]
+                    <option value="[[=row.id ]]" [[if row.id==config_id:]]selected[[pass]] title="[[=row.info]]" >
+                      [[=row.name]]
                     </option>
-                {{pass}}
+                [[pass]]
               </optgroup>
-            {{pass}}
+            [[pass]]
         </select>
     </span>
 </div>
@@ -44,33 +44,33 @@
         <thead>
             <tr>
                 <td class="column_50"> </td>
-            {{ for header in fields: }}
-	        {{if isAdmin or header['public']:}}
-	            <td class="{{if header['width']:}}column_{{=header['width']}}{{pass}} pointer"
-                 onclick="db.call('sample_set/stats', {'type': '{{=helper.get_type()}}', 'sort' : '{{=header['sort']}}', 'filter' : '{{=request.vars["filter"]}}'
-		            {{if not reverse and request.vars["sort"]==header['sort'] :}} , 'reverse' : true {{pass}} })">
-                        {{=header['name']}}
+            [[ for header in fields: ]]
+	        [[if isAdmin or header['public']:]]
+	            <td class="[[if header['width']:]]column_[[=header['width']]][[pass]] pointer"
+                 onclick="db.call('sample_set/stats', {'type': '[[=helper.get_type()]]', 'sort' : '[[=header['sort']]]', 'filter' : '[[=request.vars["filter"]]]'
+		            [[if not reverse and request.vars["sort"]==header['sort'] :]] , 'reverse' : true [[pass]] })">
+                        [[=header['name']]]
                     </td>
-                {{ pass }}
-            {{ pass }}
+                [[ pass ]]
+            [[ pass ]]
             </tr>
         </thead>
         <tbody>
-        {{for row in query :}}
+        [[for row in query :]]
             <tr>
                 <td class="column_50">
                     <input type="checkbox"
                         name="sample_set_ids[]"
-                        value="{{=row['sample_set_id']}}"
+                        value="[[=row['sample_set_id']]]"
                         onclick="db.updateStatsButton()">
                 </td>
-            {{ for field in fields: }}
+            [[ for field in fields: ]]
                 <td>
-		    {{= field['call'](row)}}
+		    [[= field['call'](row)]]
                 </td>
-            {{ pass }}
+            [[ pass ]]
             </tr>
-        {{pass}}
+        [[pass]]
         </tbody>
     </table>
     <table class="db_table" id="db_fixed_header"></table>
