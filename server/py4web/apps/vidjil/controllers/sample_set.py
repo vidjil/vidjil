@@ -3,7 +3,7 @@ from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules import tag
-from ..modules.sampleSet import SampleSet
+from ..modules.sampleSet import SampleSet, get_set_group
 from ..modules.sampleSets import SampleSets
 from ..modules.sampleSetList import SampleSetList
 from ..modules.sequenceFile import get_associated_sample_sets
@@ -320,224 +320,13 @@ def all():
                 auth=auth)
 
 
-def samples():
-    '''
-    API: List of samples, possibly filtered
-    '''
-    res = all()
-    export = dict(samples = res['query'],
-                  group_ids = res['group_ids'],
-                  step = res['step'],
-                  page = res['page'])
-    return response.json(export)
-
-def samplesetById():
-    '''
-    API: Get a specific sample based on the set id
-    Take two paramaters: set id and set type
-    '''
-    type    = (request.query['type'] if ("type" in request.query.keys()) else defs.SET_TYPE_GENERIC )
-    set_id  =  request.query['id']
-
-    factory = ModelFactory()
-    helper  = factory.get_instance(type=type)
-    slist   = SampleSetList(helper, setid=set_id)
-
-    return response.json(slist.result)
-
-
-def stats():
-    start = time.time()
-    if not auth.user :
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
-                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True, host=True)))
-            }
-        return json.dumps(res, separators=(',',':'))
-
-    isAdmin = auth.is_admin()
-    if request.query['type']:
-        type = request.query['type']
-    else :
-        type = defs.SET_TYPE_GENERIC
-
-    ##filter
-    if "filter" not in request.query :
-        request.query["filter"] = ""
-
-    search, tags = tag.parse_search(request.query["filter"])
-    group_ids = get_involved_groups(auth)
-
-    factory = ModelFactory()
-    helper = factory.get_instance(type=type)
-
-    slist = SampleSetList(helper, tags=tags)
-    result = slist.result
-
-    fields = helper.get_reduced_fields()
-
-    ##sort result
-    reverse = False
-    if request.query["reverse"] == "true" :
-        reverse = True
-    if "sort" in request.query:
-        result = sorted(result, key = lambda row : row[request.query["sort"]], reverse=reverse)
-    else:
-        result = sorted(result, key = lambda row : row.id, reverse=not reverse)
-
-    classification   = getConfigsByClassification()
-
-    result = helper.filter(search, result)
-    log.info("%s stat list %s" % (request.query["type"], search), extra={'user_id': auth.user.id,
-        'record_id': None,
-        'table_name': "sample_set"})
-    log.debug("stat list (%.3f s)" % (time.time()-start))
-
-    return dict(query = result,
-                fields = fields,
-                helper = helper,
-                group_ids = group_ids,
-                isAdmin = isAdmin,
-                classification=classification,
-                reverse = False)
-
-def result_files():
-    from zipfile import ZipFile
-    from cStringIO import StringIO
-    import types
-    errors = []
-    config_id = request.query['config_id']
-    sample_set_ids = []
-    if 'sample_set_ids' in request.query:
-        sample_set_ids = request.query['sample_set_ids']
-
-    #little hack since we can't pass array parameters with only one value
-    if isinstance(sample_set_ids, types.StringTypes):
-        sample_set_ids = [sample_set_ids]
-
-    permissions = [auth.can_view_sample_set(int(id)) for id in sample_set_ids]
-    if sum(permissions) < len(permissions):
-        res = {"message": "You don't have permissions to access those sample sets"}
-        log.error("An error occured when creating archive of sample_sets %s" % str(sample_set_ids))
-        return json.dumps(res, separators=(',',':'))
-
-
-    if int(config_id) == -1:
-        config_query = (db.results_file.config_id > 0)
-    else:
-        config_query = (db.results_file.config_id == config_id)
-
-
-    left_join = [
-        db.patient.on(db.patient.sample_set_id == db.sample_set.id),
-        db.run.on(db.run.sample_set_id == db.sample_set.id),
-        db.generic.on(db.generic.sample_set_id == db.sample_set.id)
-    ]
-    q = db(
-            (db.sample_set.id.belongs(sample_set_ids)) &
-            (db.sample_set_membership.sample_set_id == db.sample_set.id) &
-            (db.sequence_file.id == db.sample_set_membership.sequence_file_id) &
-            (db.results_file.sequence_file_id == db.sequence_file.id) &
-            (db.results_file.data_file != None) &
-            (db.results_file.hidden == False) &
-            config_query
-        )
-
-    results = q.select(db.results_file.ALL, db.sequence_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL, left=left_join)
-
-    sample_types = ['patient', 'run', 'generic']
-    mf = ModelFactory()
-    helpers = {}
-
-    for t in sample_types:
-        helpers[t] = mf.get_instance(type=t)
-
-    filename = "export_%s_%s.zip" % ('-'.join(sample_set_ids), str(datetime.date.today()))
-    filedir = defs.DIR_SEQUENCES + '/' + filename
-    try:
-        zipfile = ZipFile(filedir, 'w')
-        metadata = []
-        for res in results:
-            metadata.append({'id': res.sample_set.id,
-                'name': helpers[res.sample_set.sample_type].get_name(res[res.sample_set.sample_type]),
-                'file': res.results_file.data_file,
-                'set_info': res[res.sample_set.sample_type].info,
-                'sample_info': res.sequence_file.info,
-                'sequence_file': res.sequence_file.filename})
-            path = defs.DIR_RESULTS + res.results_file.data_file
-            zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
-
-        zipfile.writestr('metadata.json', json.dumps(metadata))
-
-        zipfile.close()
-
-        response.headers['Content-Type'] = "application/zip"
-        response.headers['Content-Disposition'] = 'attachment; filename=%s' % filename# to force download as attachment
-        log.info("extract results files (%s)" % sample_set_ids, extra={'user_id': auth.user.id,
-            'record_id': None,
-            'table_name': "sample_set"})
-
-        return response.stream(open(filedir), chunk_size=4096)
-    except:
-        res = {"message": "an error occurred"}
-        log.error("An error occured when creating archive of sample_sets %s" % str(sample_set_ids))
-        return json.dumps(res, separators=(',',':'))
-    finally:
-        try:
-            os.unlink(filedir)
-        except OSError:
-            pass
-
-
-## Stats
-
-def mystats():
-    start = time.time()
-
-    # d = all()
-    d = custom()
-    
-    # Build .vidjil file list
-    f_samples = []
-    for row in d['query']:
-        found = {}
-        f_results = defs.DIR_RESULTS + row.results_file.data_file
-
-        f_fused = None
-        pos_in_fused = None
-
-        fused_file = ''
-        # TODO: fix the following request
-        # fused_file = db((db.fused_file.sample_set_id == row.sample_set.id) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
-        if len(fused_file) > 0 and fused_file[0].sequence_file_list is not None:
-            sequence_file_list = fused_file[0].sequence_file_list.split('_')
-            try:
-                pos_in_fused = sequence_file_list.index(str(row.sequence_file.id))
-                f_fused = defs.DIR_RESULTS + fused_file[0].fused_file
-            except ValueError:
-                pass
-                
-        metadata = { } # 'patient': row.patient, 'sequence_file': row.sequence_file }
-        f_samples += [(metadata, f_results, f_fused, pos_in_fused)]
-    
-    # Send to vidjil_utils.stats
-    res = vidjil_utils.stats(f_samples)
-    d = {}
-    d['stats'] = res
-    d['f_samples'] = f_samples # TMP, for debug
-
-    #TODO can we get a record id here ?
-    log.info('stats (%s)' % request.query["id"], extra={'user_id': auth.user.id,
-        'record_id': None,
-        'table_name': "results_file"})
-    log.debug("mystats (%.3fs) %s" % (time.time()-start, request.query["filter"]))
-    # Return
-    return json.dumps(d, separators=(',',':'))
-
 ## return form to create new set
+@action("/vidjil/sample_set/form", method=["POST", "GET"])
+@action.uses("sample_set/form.html", db, auth.user)
 def form():
     denied = False
     # edit set
-    extra = {'user_id': auth.user.id, 'record_id': None, 'table_name': "sample_set"}
+    extra = {'user_id': auth.user_id, 'record_id': None, 'table_name': "sample_set"}
     if("id" in request.query):
         sample_set = db.sample_set[request.query["id"]]
         set_type = sample_set.sample_type
@@ -577,10 +366,12 @@ def form():
     log.info("load form " + message, extra=extra)
     return dict(message=T(message),
                 groups=groups,
-                group_ids = get_involved_groups(auth),
+                group_ids = get_involved_groups(db, auth),
                 master_group=max_group,
                 sets=sets,
-                isEditing = (action=='edit'))
+                isEditing = (action=='edit'),
+                auth=auth,
+                db=db)
 
 
 
@@ -588,8 +379,10 @@ def form():
 ## need ["first_name", "last_name", "birth_date", "info"]
 ## redirect to patient list if success
 ## return a flash error message if fail
+@action("/vidjil/sample_set/submit", method=["POST", "GET"])
+@action.uses( db, auth.user)
 def submit():
-    data = json.loads(request.query['data'], encoding='utf-8')
+    data = json.loads(request.params['data'], encoding='utf-8')
     mf = ModelFactory()
 
     error = False
@@ -650,10 +443,10 @@ def submit():
 
                 action = "add"
 
-                if (p['id'] % 100) == 0:
-                    mail.send(to=defs.ADMIN_EMAILS,
-                    subject=defs.EMAIL_SUBJECT_START+" %d" % p['id'],
-                    message="The %dth %s has just been created." % (p['id'], set_type))
+                #if (p['id'] % 100) == 0:
+                #    mail.send(to=defs.ADMIN_EMAILS,
+                #    subject=defs.EMAIL_SUBJECT_START+" %d" % p['id'],
+                #    message="The %dth %s has just been created." % (p['id'], set_type))
 
             else :
                 p['error'].append("permission denied")
@@ -664,12 +457,12 @@ def submit():
             p['message'].append(mes)
             log.info(mes, extra={'user_id': auth.user.id, 'record_id': id_sample_set, 'table_name': 'sample_set'})
             if register:
-                register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
+                tag.register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
     if not error:
         if not bool(length_mapping):
             creation_group_tuple = get_default_creation_group(auth)
-            response.view = 'sample_set/form.html'
+            #response.view = 'sample_set/form.html'
             sets = {
                 'patient': [],
                 'run': [],
@@ -677,7 +470,7 @@ def submit():
             }
             return dict(message=T("form is empty"),
                     groups=creation_group_tuple[0],
-                    group_ids = get_involved_groups(auth),
+                    group_ids = get_involved_groups(db, auth),
                     master_group=creation_group_tuple[1],
                     sets=sets,
                     isEditing = False)
@@ -699,7 +492,7 @@ def submit():
                 'run': data['run'] if 'run' in data else [],
                 'generic': data['generic'] if 'generic' in data else []
                 }
-        response.view = 'sample_set/form.html'
+        #response.view = 'sample_set/form.html'
         return dict(message=T("an error occured"),
                 groups=[{'name': 'foobar', 'id': int(data['group'])}],
                 master_group=data['group'],
@@ -1242,3 +1035,244 @@ def auto_complete():
     res = {}
     res[query] = result
     return json.dumps(res)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def samples():
+    '''
+    API: List of samples, possibly filtered
+    '''
+    res = all()
+    export = dict(samples = res['query'],
+                  group_ids = res['group_ids'],
+                  step = res['step'],
+                  page = res['page'])
+    return response.json(export)
+
+def samplesetById():
+    '''
+    API: Get a specific sample based on the set id
+    Take two paramaters: set id and set type
+    '''
+    type    = (request.query['type'] if ("type" in request.query.keys()) else defs.SET_TYPE_GENERIC )
+    set_id  =  request.query['id']
+
+    factory = ModelFactory()
+    helper  = factory.get_instance(type=type)
+    slist   = SampleSetList(helper, setid=set_id)
+
+    return response.json(slist.result)
+
+
+@action("/vidjil/sample_set/stats", method=["POST", "GET"])
+@action.uses("sample_set/stats.html", db, auth.user)
+def stats():
+    start = time.time()
+    if not auth.user :
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
+                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True, host=True)))
+            }
+        return json.dumps(res, separators=(',',':'))
+
+    isAdmin = auth.is_admin()
+    if request.query['type']:
+        type = request.query['type']
+    else :
+        type = defs.SET_TYPE_GENERIC
+
+    ##filter
+    if "filter" not in request.query :
+        request.query["filter"] = ""
+
+    search, tags = tag.parse_search(request.query["filter"])
+    group_ids = get_involved_groups(db, auth)
+
+    factory = ModelFactory()
+    helper = factory.get_instance(type=type)
+
+    slist = SampleSetList(helper, tags=tags)
+    result = slist.result
+
+    fields = helper.get_reduced_fields()
+
+    ##sort result
+    reverse = False
+    if "reverse" in request.query:
+        reverse = request.query["reverse"]
+    if "sort" in request.query:
+        result = sorted(result, key = lambda row : row[request.query["sort"]], reverse=reverse)
+    else:
+        result = sorted(result, key = lambda row : row.id, reverse=not reverse)
+
+    classification   = getConfigsByClassification()
+
+    result = helper.filter(search, result)
+    log.info("%s stat list %s" % (request.query["type"], search), extra={'user_id': auth.user.id,
+        'record_id': None,
+        'table_name': "sample_set"})
+    log.debug("stat list (%.3f s)" % (time.time()-start))
+
+    return dict(query = result,
+                fields = fields,
+                helper = helper,
+                group_ids = group_ids,
+                isAdmin = isAdmin,
+                classification=classification,
+                reverse = False)
+
+@action("/vidjil/sample_set/result_files", method=["POST", "GET"])
+@action.uses(db, auth.user)
+def result_files():
+    from zipfile import ZipFile
+    import types
+    errors = []
+    config_id = request.query['config_id']
+    sample_set_ids = []
+    if 'sample_set_ids' in request.query:
+        sample_set_ids = request.query['sample_set_ids']
+
+    #little hack since we can't pass array parameters with only one value
+    if isinstance(sample_set_ids, types.StringTypes):
+        sample_set_ids = [sample_set_ids]
+
+    permissions = [auth.can_view_sample_set(int(id)) for id in sample_set_ids]
+    if sum(permissions) < len(permissions):
+        res = {"message": "You don't have permissions to access those sample sets"}
+        log.error("An error occured when creating archive of sample_sets %s" % str(sample_set_ids))
+        return json.dumps(res, separators=(',',':'))
+
+
+    if int(config_id) == -1:
+        config_query = (db.results_file.config_id > 0)
+    else:
+        config_query = (db.results_file.config_id == config_id)
+
+
+    left_join = [
+        db.patient.on(db.patient.sample_set_id == db.sample_set.id),
+        db.run.on(db.run.sample_set_id == db.sample_set.id),
+        db.generic.on(db.generic.sample_set_id == db.sample_set.id)
+    ]
+    q = db(
+            (db.sample_set.id.belongs(sample_set_ids)) &
+            (db.sample_set_membership.sample_set_id == db.sample_set.id) &
+            (db.sequence_file.id == db.sample_set_membership.sequence_file_id) &
+            (db.results_file.sequence_file_id == db.sequence_file.id) &
+            (db.results_file.data_file != None) &
+            (db.results_file.hidden == False) &
+            config_query
+        )
+
+    results = q.select(db.results_file.ALL, db.sequence_file.ALL, db.sample_set.ALL, db.patient.ALL, db.run.ALL, db.generic.ALL, left=left_join)
+
+    sample_types = ['patient', 'run', 'generic']
+    mf = ModelFactory()
+    helpers = {}
+
+    for t in sample_types:
+        helpers[t] = mf.get_instance(type=t)
+
+    filename = "export_%s_%s.zip" % ('-'.join(sample_set_ids), str(datetime.date.today()))
+    filedir = defs.DIR_SEQUENCES + '/' + filename
+    try:
+        zipfile = ZipFile(filedir, 'w')
+        metadata = []
+        for res in results:
+            metadata.append({'id': res.sample_set.id,
+                'name': helpers[res.sample_set.sample_type].get_name(res[res.sample_set.sample_type]),
+                'file': res.results_file.data_file,
+                'set_info': res[res.sample_set.sample_type].info,
+                'sample_info': res.sequence_file.info,
+                'sequence_file': res.sequence_file.filename})
+            path = defs.DIR_RESULTS + res.results_file.data_file
+            zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
+
+        zipfile.writestr('metadata.json', json.dumps(metadata))
+
+        zipfile.close()
+
+        response.headers['Content-Type'] = "application/zip"
+        response.headers['Content-Disposition'] = 'attachment; filename=%s' % filename# to force download as attachment
+        log.info("extract results files (%s)" % sample_set_ids, extra={'user_id': auth.user.id,
+            'record_id': None,
+            'table_name': "sample_set"})
+
+        return response.stream(open(filedir), chunk_size=4096)
+    except:
+        res = {"message": "an error occurred"}
+        log.error("An error occured when creating archive of sample_sets %s" % str(sample_set_ids))
+        return json.dumps(res, separators=(',',':'))
+    finally:
+        try:
+            os.unlink(filedir)
+        except OSError:
+            pass
+
+
+## Stats
+
+def mystats():
+    start = time.time()
+
+    # d = all()
+    d = custom()
+    
+    # Build .vidjil file list
+    f_samples = []
+    for row in d['query']:
+        found = {}
+        f_results = defs.DIR_RESULTS + row.results_file.data_file
+
+        f_fused = None
+        pos_in_fused = None
+
+        fused_file = ''
+        # TODO: fix the following request
+        # fused_file = db((db.fused_file.sample_set_id == row.sample_set.id) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
+        if len(fused_file) > 0 and fused_file[0].sequence_file_list is not None:
+            sequence_file_list = fused_file[0].sequence_file_list.split('_')
+            try:
+                pos_in_fused = sequence_file_list.index(str(row.sequence_file.id))
+                f_fused = defs.DIR_RESULTS + fused_file[0].fused_file
+            except ValueError:
+                pass
+                
+        metadata = { } # 'patient': row.patient, 'sequence_file': row.sequence_file }
+        f_samples += [(metadata, f_results, f_fused, pos_in_fused)]
+    
+    # Send to vidjil_utils.stats
+    res = vidjil_utils.stats(f_samples)
+    d = {}
+    d['stats'] = res
+    d['f_samples'] = f_samples # TMP, for debug
+
+    #TODO can we get a record id here ?
+    log.info('stats (%s)' % request.query["id"], extra={'user_id': auth.user.id,
+        'record_id': None,
+        'table_name': "results_file"})
+    log.debug("mystats (%.3fs) %s" % (time.time()-start, request.query["filter"]))
+    # Return
+    return json.dumps(d, separators=(',',':'))
