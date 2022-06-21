@@ -1,7 +1,8 @@
-{{extend 'db_layout.html'}}
+[[extend 'db_layout.html']]
+
 
 <h3>
-    Access to {{=helper.get_type_display()}} {{=helper.get_display_name(data)}}
+    Access to [[=helper.get_type_display()]] [[=helper.get_display_name(data)]]
 </h3>
 
 <div id="db_table_container">
@@ -15,28 +16,28 @@
                 <td class="column_100"> read</td>
             </tr>
         </thead>
-        {{admin = auth.can_modify_sample_set(request.vars["id"])}}
-        {{ for row in query :}}
+        [[admin = auth.can_modify_sample_set(int(request.query["id"]))]]
+        [[ for row in query :]]
             <tr>
-                <td> {{=row.id}} </td><td> {{=row.owner}} </td>
-                <td>{{=row.perms}}</td>
-                <td>{{=row.parent_access}}</td>
+                <td> [[=row.id]] </td><td> [[=row.owner]] </td>
+                <td>[[=row.perms]]</td>
+                <td>[[=row.parent_access]]</td>
                 <td></td>
-                {{if admin :}}
+                [[if admin :]]
                     <td> <input type="checkbox" onclick="db.call('sample_set/change_permission', {
-                                                                  'sample_set_id' : {{=request.vars["id"]}} ,
-                                                                  'group_id' : {{=row.id}}} )"
-                                {{if row.read :}} checked {{pass}}></td>
-                {{else:}}
+                                                                  'sample_set_id' : [[=request.query["id"] ]] ,
+                                                                  'group_id' : [[=row.id]]} )"
+                                [[if row.read :]] checked [[pass]]></td>
+                [[else:]]
                     <td class="inactive"> <input type="checkbox" onclick="this.click()"
-                                {{if row.read :}} checked {{pass}}></td>
-                {{pass}}
+                                [[if row.read :]] checked [[pass]]></td>
+                [[pass]]
             </tr>
-        {{pass}}
+        [[pass]]
     </table>
     <table class="db_table" id="db_fixed_header"></table>    
 </div>
 
-{{if not auth.can_modify_patient(request.vars["id"]) :}}
-    <div>you need admin access on this {{=helper.get_type_display()}} if you want to change permission </div>
-{{pass}}
+[[if not auth.can_modify_patient(request.query["id"]) :]]
+    <div>you need admin access on this [[=helper.get_type_display()]] if you want to change permission </div>
+[[pass]]
