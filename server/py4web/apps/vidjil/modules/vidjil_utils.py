@@ -552,7 +552,7 @@ def check_enough_space(directory):
     import subprocess
     df = subprocess.Popen(["df", directory], stdout=subprocess.PIPE)
     output = df.communicate()[0]
-    device, size, used, available, percent, mountpoint = output.split("\n")[1].split()
+    device, size, used, available, percent, mountpoint = output.decode().split("\n")[1].split()
     available = int(available)
     size = int(size)
     result = available >= (size * (defs.FS_LOCK_THRESHHOLD/100))

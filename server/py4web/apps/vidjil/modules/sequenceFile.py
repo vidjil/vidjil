@@ -1,6 +1,8 @@
+import os
 import apps.vidjil.defs as defs
 import base64
-from ..common import db
+from ..modules import vidjil_utils, controller_utils
+from ..common import db, auth, mail
 from collections import defaultdict
 
 class SequenceFile():
@@ -178,5 +180,5 @@ def check_space(directory, what):
         mail.send(to=defs.ADMIN_EMAILS,
             subject=defs.EMAIL_SUBJECT_START+" Server space",
             message="The space in directory %s has passed below %d%%." % (defs.DIR_RESULTS, defs.FS_LOCK_THRESHHOLD))
-        return error_message("{} are temporarily disabled. System admins have been made aware of the situation.".format(what))
+        return controller_utils.error_message("{} are temporarily disabled. System admins have been made aware of the situation.".format(what))
     
