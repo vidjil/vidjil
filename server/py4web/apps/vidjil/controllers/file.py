@@ -1,20 +1,41 @@
 # coding: utf8
-import gluon.contrib.simplejson
-import defs
-import vidjil_utils
-import os
-import os.path
-import datetime
-from controller_utils import error_message
-import jstree
 import base64
+import datetime
+from sys import modules
+from .. import defs
+from ..modules import vidjil_utils
+from ..modules import tag
+from ..modules.stats_decorator import *
+from ..modules.sampleSet import SampleSet, get_set_group
+from ..modules.sampleSets import SampleSets
+from ..modules.sampleSetList import SampleSetList, filter_by_tags
+from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets
+from ..modules.controller_utils import error_message
+from ..modules.permission_enum import PermissionEnum
+from ..modules.zmodel_factory import ModelFactory
+from ..user_groups import get_upload_group_ids, get_involved_groups
+from ..VidjilAuth import VidjilAuth
+from io import StringIO
+import json
+import time
+import os
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from collections import defaultdict
+import math
+
+#if request.environ.get("HTTP_ORIGIN") :
+#    response.headers['Access-Control-Allow-Origin'] = request.environ.get("HTTP_ORIGIN")
+#    response.headers['Access-Control-Allow-Credentials'] = 'true'
+#    response.headers['Access-Control-Max-Age'] = 86400
+
+ACCESS_DENIED = "access denied"
+
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
 
-if request.env.http_origin:
-    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Max-Age'] = 86400
-
+###########################
+# HELPERS
+###########################
 def extract_set_type(target):
     mapping = {
         'p': 'patient',
@@ -55,7 +76,6 @@ def link_to_sample_sets(seq_file_id, id_dict):
         db.sample_set_membership.bulk_insert(arr)
     db.commit()
 
-# TODO put these in a model or utils or smth
 def validate(myfile, id , pre_process):
     reupload = id != ""
     error = []
@@ -79,7 +99,7 @@ def validate(myfile, id , pre_process):
         if myfile['filename'] == "" :
             error.append("missing filename")
     
-    if myfile['sampling_date'] != '' :
+    if "sampling date" in myfile and myfile['sampling_date'] != '' :
         try:
             datetime.datetime.strptime(""+myfile['sampling_date'], '%Y-%m-%d')
         except ValueError:
@@ -147,6 +167,42 @@ def get_set_helpers():
         helpers[stype] = factory.get_instance(type=stype)
     return helpers
 
+def form_response(data):
+    source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
+    network_source = source_module_active and (data['action'] != 'edit'     \
+                                               or len(data['file']) == 0    \
+                                               or data['file'][0].network)
+    # should be true only when we want to use the network view
+    upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
+    group_ids = get_involved_groups()
+    pre_process_list = get_pre_process_list()
+    return dict(message=T("an error occured"),
+           pre_process_list = pre_process_list,
+           files = data['file'],
+           sets = data['sets'],
+           sample_type = data['sample_type'],
+           errors = data['errors'],
+           source_module_active = source_module_active,
+           network_source = network_source,
+           group_ids = group_ids,
+           upload_group_ids = upload_group_ids,
+           isEditing = data['action']=='edit',
+           auth=auth,
+           db=db)
+
+
+
+
+
+
+
+
+
+############################
+# CONTROLLERS
+############################
+@action("/vidjil/file/form", method=["POST", "GET"])
+@action.uses("file/form.html", db, auth.user)
 def form():
     group_ids = []
     relevant_ids = {}
@@ -154,31 +210,31 @@ def form():
     helpers = get_set_helpers()
 
     # new file
-    if 'sample_set_id' in request.vars:
-        sample_set = db.sample_set[request.vars["sample_set_id"]]
+    if 'sample_set_id' in request.query:
+        sample_set = db.sample_set[request.query["sample_set_id"]]
         if not auth.can_upload_sample_set(sample_set.id):
             return error_message("you don't have right to upload files")
 
         sample_type = sample_set.sample_type
         check_space(defs.DIR_SEQUENCES, "Uploads")
 
-        row = db(db[sample_set.sample_type].sample_set_id == request.vars["sample_set_id"]).select().first()
+        row = db(db[sample_set.sample_type].sample_set_id == request.query["sample_set_id"]).select().first()
         stype = sample_set.sample_type
         if stype not in relevant_ids:
             relevant_ids[stype] = []
         relevant_ids[stype].append(row.id)
         action = 'add'
-        log.debug("load add form", extra={'user_id': auth.user.id,
-                'record_id': request.vars['sample_set_id'],
+        log.debug("load add form", extra={'user_id': auth.user_id,
+                'record_id': request.query['sample_set_id'],
                 'table_name': "sample_set"})
 
     # edit file
-    elif 'file_id' in request.vars and request.vars['file_id'] is not None:
-        if not auth.can_modify_file(request.vars['file_id']):
+    elif 'file_id' in request.query and request.query['file_id'] is not None:
+        if not auth.can_modify_file(request.query['file_id']):
             return error_message("you need admin permission to edit files")
 
         sample_set_list = db(
-                (db.sample_set_membership.sequence_file_id == request.vars['file_id'])
+                (db.sample_set_membership.sequence_file_id == request.query['file_id'])
                 & (db.sample_set_membership.sample_set_id != None)
                 & (db.sample_set.id == db.sample_set_membership.sample_set_id)
                 & (db.sample_set.sample_type != 'sequence_file')
@@ -190,14 +246,16 @@ def form():
             relevant_ids[smp_type].append(db(db[smp_type].sample_set_id == row.sample_set_id).select()[0].id)
         action = 'edit'
 
-        sample_type = request.vars["sample_type"]
-        log.debug("load edit form", extra={'user_id': auth.user.id,
-                'record_id': request.vars['file_id'],
+        sample_type = request.query["sample_type"]
+        log.debug("load edit form", extra={'user_id': auth.user_id,
+                'record_id': request.query['file_id'],
                 'table_name': "sequence_file"})
     else:
         return error_message("missing sample_set or file id")
 
-    myfile = db.sequence_file[request.vars["file_id"]]
+    myfile = {}
+    if 'file_id' in request.query:
+        myfile = db.sequence_file[request.query["file_id"]]
     if myfile is None:
         myfile = {}
     myfile['sets'] = []
@@ -213,8 +271,10 @@ def form():
     return form_response(data)
 
 #TODO check data
+@action("/vidjil/file/submit", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def submit():
-    data = json.loads(request.vars['data'], encoding='utf-8')
+    data = json.loads(request.params['data'], encoding='utf-8')
     error = False
 
     pre_process = None
@@ -241,6 +301,9 @@ def submit():
         if len(f['errors']) > 0:
             error = True
             continue
+
+        if not 'sampling_date' in f:
+            f['sampling_date'] = ''
 
         file_data = dict(sampling_date=f['sampling_date'],
                          info=f['info'],
@@ -284,7 +347,7 @@ def submit():
         for key in id_dict:
             for sid in id_dict[key]:
                 group_id = get_set_group(sid)
-                register_tags(db, 'sequence_file', fid, f["info"], group_id, reset=True)
+                tag.register_tags(db, 'sequence_file', fid, f["info"], group_id, reset=True)
 
         if f['filename'] != "":
             if reupload:
@@ -312,11 +375,13 @@ def submit():
         # pre-process for nfs files can be started immediately
         data_file = db.sequence_file[fid].data_file
         data_file2 = db.sequence_file[fid].data_file2
-        if data["source"] == "nfs" :
-            if data_file is not None and data_file2 is not None and pre_process != '0':
-                schedule_pre_process(fid, pre_process)
 
-        log.info(mes, extra={'user_id': auth.user.id,
+
+        #if data["source"] == "nfs" :
+        #    if data_file is not None and data_file2 is not None and pre_process != '0':
+        #        schedule_pre_process(fid, pre_process)
+
+        log.info(mes, extra={'user_id': auth.user_id,
                 'record_id': f['id'],
                 'table_name': "sequence_file"})
 
@@ -327,53 +392,34 @@ def submit():
                 "redirect": "sample_set/index",
                 "args" : { "id" : set_id, "config_id": -1},
                 "message": "successfully added/edited file(s)"}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
     else:
         return error_message("add_form() failed")
-    
-def form_response(data):
-    source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
-    network_source = source_module_active and (data['action'] != 'edit'     \
-                                               or len(data['file']) == 0    \
-                                               or data['file'][0].network)
-      # should be true only when we want to use the network view
-    response.view = 'file/form.html'
-    upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
-    group_ids = get_involved_groups()
-    pre_process_list = get_pre_process_list()
-    return dict(message=T("an error occured"),
-           pre_process_list = pre_process_list,
-           files = data['file'],
-           sets = data['sets'],
-           sample_type = data['sample_type'],
-           errors = data['errors'],
-           source_module_active = source_module_active,
-           network_source = network_source,
-           group_ids = group_ids,
-           upload_group_ids = upload_group_ids,
-           isEditing = data['action']=='edit')
 
+
+@action("/vidjil/file/up", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def upload(): 
-    session.forget(response)
+    #session.forget(response)
     mes = ""
     error = ""
 
-    if request.vars['id'] == None :
+    if not 'id' in request.query:
         error += "missing id"
-    elif db.sequence_file[request.vars["id"]] is None:
+    elif db.sequence_file[request.query["id"]] is None:
         error += "no sequence file with this id"
 
     if not error:
-        mes += " file {%s} " % (request.vars['id'])
+        mes += " file {%s} " % (request.query['id'])
         res = {"message": mes + "processing uploaded file"}
         log.debug(res)
-        if request.vars.file != None :
-            f = request.vars.file
+        if request.query.file != None :
+            f = request.query.file
             try:
-                if request.vars["file_number"] == "1" :
-                    db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
+                if request.query["file_number"] == "1" :
+                    db.sequence_file[request.query["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
                 else :
-                    db.sequence_file[request.vars["id"]] = dict(data_file2 = db.sequence_file.data_file.store(f.file, f.filename))
+                    db.sequence_file[request.query["id"]] = dict(data_file2 = db.sequence_file.data_file.store(f.file, f.filename))
                 mes += "upload finished (%s)" % (f.filename)
             except IOError as e:
                 if str(e).find("File name too long") > -1:
@@ -382,32 +428,32 @@ def upload():
                     error += "System error during processing of uploaded file."
                     log.error(str(e))
         
-        data_file = db.sequence_file[request.vars["id"]].data_file
-        data_file2 = db.sequence_file[request.vars["id"]].data_file2
+        data_file = db.sequence_file[request.query["id"]].data_file
+        data_file2 = db.sequence_file[request.query["id"]].data_file2
         
-        if request.vars["file_number"] == "1" and len(error) == 0 and data_file is None:
+        if request.query["file_number"] == "1" and len(error) == 0 and data_file is None:
             error += "no data file"
-        if request.vars["file_number"] == "2" and len(error) == 0 and data_file2 is None:
+        if request.query["file_number"] == "2" and len(error) == 0 and data_file2 is None:
             error += "no data file"
 
-        db.sequence_file[request.vars["id"]] = dict(pre_process_flag=None,
+        db.sequence_file[request.query["id"]] = dict(pre_process_flag=None,
                                                     pre_process_result=None)
-        if data_file is not None and data_file2 is not None and request.vars['pre_process'] is not None and request.vars['pre_process'] != '0':
-            db.sequence_file[request.vars["id"]] = dict(pre_process_flag = "WAIT")
-            old_task_id = db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id
+        if data_file is not None and data_file2 is not None and request.query['pre_process'] is not None and request.query['pre_process'] != '0':
+            db.sequence_file[request.query["id"]] = dict(pre_process_flag = "WAIT")
+            old_task_id = db.sequence_file[request.query["id"]].pre_process_scheduler_task_id
             if db.scheduler_task[old_task_id] != None:
                 scheduler.stop_task(old_task_id)
                 db(db.scheduler_task.id == old_task_id).delete()
                 db.commit()
-            schedule_pre_process(int(request.vars['id']), int(request.vars['pre_process']))
-            mes += " | p%s start pre_process %s " % (request.vars['pre_process'], request.vars['id'] + "-" +request.vars['pre_process'])
+            schedule_pre_process(int(request.query['id']), int(request.query['pre_process']))
+            mes += " | p%s start pre_process %s " % (request.query['pre_process'], request.query['id'] + "-" +request.query['pre_process'])
 
         if data_file is not None :
             seq_file = defs.DIR_SEQUENCES + data_file
             # Compute and store file size
             size = os.path.getsize(seq_file)
             mes += ' (%s)' % vidjil_utils.format_size(size)
-            db.sequence_file[request.vars["id"]] = dict(size_file = size)
+            db.sequence_file[request.query["id"]] = dict(size_file = size)
 
         if data_file2 is not None :
             seq_file2 = defs.DIR_SEQUENCES + data_file2
@@ -422,7 +468,7 @@ def upload():
     else:
         log.info(res)
         log.debug("#TODO log all relevant info to database")
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
   
 
 def confirm():
@@ -431,14 +477,14 @@ def confirm():
     \param delete_results: (optional) boolean
     \param id: sequence file ID
     '''
-    delete_only_sequence = ('delete_only_sequence' in request.vars and request.vars['delete_only_sequence'] == 'True')
-    delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')
-    sequence_file = db.sequence_file[request.vars['id']]
+    delete_only_sequence = ('delete_only_sequence' in request.query and request.query['delete_only_sequence'] == 'True')
+    delete_results = ('delete_results' in request.query and request.query['delete_results'] == 'True')
+    sequence_file = db.sequence_file[request.query['id']]
     if sequence_file == None:
         return error_message("The requested file doesn't exist")
     if sequence_file.data_file == None:
         delete_results = True
-    if auth.can_modify_sample_set(request.vars['redirect_sample_set_id']):
+    if auth.can_modify_sample_set(request.query['redirect_sample_set_id']):
         return dict(message=T('choose what you would like to delete'),
                     delete_only_sequence = delete_only_sequence,
                     delete_results = delete_results)
@@ -462,31 +508,31 @@ def delete():
     \param: id (the sequence ID)
     \param: delete_results: (optional) boolean stating if we also want to delete the results.
     '''
-    delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == "True")
-    sample_set = db.sample_set[request.vars["redirect_sample_set_id"]]
+    delete_results = ('delete_results' in request.query and request.query['delete_results'] == "True")
+    sample_set = db.sample_set[request.query["redirect_sample_set_id"]]
     associated_id = None
     if sample_set.sample_type not in ['sequence_file', 'sample_set']:
         associated_elements = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select()
         if len(associated_elements) > 0:
             associated_id = associated_elements[0].id
 
-    if auth.can_modify_file(request.vars["id"]):
+    if auth.can_modify_file(request.query["id"]):
         if not(delete_results):
-            delete_sequence_file(request.vars['id'])
+            delete_sequence_file(request.query['id'])
         else:
-            sample_set_ids = get_sequence_file_sample_sets(request.vars["id"])
-            config_ids = get_sequence_file_config_ids(request.vars["id"])
-            db(db.results_file.sequence_file_id == request.vars["id"]).delete()
-            db(db.sequence_file.id == request.vars["id"]).delete()
+            sample_set_ids = get_sequence_file_sample_sets(request.query["id"])
+            config_ids = get_sequence_file_config_ids(request.query["id"])
+            db(db.results_file.sequence_file_id == request.query["id"]).delete()
+            db(db.sequence_file.id == request.query["id"]).delete()
             set_memberships = db(db.sample_set_membership.sample_set_id.belongs(sample_set_ids)).select()
             non_empty_set_ids = [r.sample_set_id for r in set_memberships]
             schedule_fuse(non_empty_set_ids, config_ids)
 
         res = {"redirect": "sample_set/index",
-               "args" : { "id" : request.vars["redirect_sample_set_id"]},
-               "message": "sequence file ({}) deleted".format(request.vars['id'])}
+               "args" : { "id" : request.query["redirect_sample_set_id"]},
+               "message": "sequence file ({}) deleted".format(request.query['id'])}
         if associated_id is not None:
-            log.info(res, extra={'user_id': auth.user.id, 'record_id': associated_id, 'table_name': sample_set.sample_type})
+            log.info(res, extra={'user_id': auth.user_id, 'record_id': associated_id, 'table_name': sample_set.sample_type})
         else:
             log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
@@ -521,16 +567,16 @@ def producer_list():
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def restart_pre_process():
-    if "sequence_file_id" not in request.vars or request.vars['sequence_file_id'] is None:
+    if "sequence_file_id" not in request.query or request.query['sequence_file_id'] is None:
         return error_message("missing parameter")
-    sequence_file = db.sequence_file[request.vars["sequence_file_id"]]
+    sequence_file = db.sequence_file[request.query["sequence_file_id"]]
     if sequence_file is None or not auth.can_modify_file(sequence_file.id):
         return error_message("Permission denied")
     pre_process = db.pre_process[sequence_file.pre_process_id]
     db.sequence_file[sequence_file.id] = dict(pre_process_flag = 'WAIT')
     db.commit()
     res = schedule_pre_process(sequence_file.id, pre_process.id)
-    log.debug("restart pre process", extra={'user_id': auth.user.id,
+    log.debug("restart pre process", extra={'user_id': auth.user_id,
                 'record_id': sequence_file.id,
                 'table_name': "sequence_file"})
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
@@ -541,7 +587,7 @@ def match_filetype(filename, extension):
 
 def filesystem():
     json = []
-    id = "" if request.vars["node"] is None else request.vars["node"] + '/'
+    id = "" if request.query["node"] is None else request.query["node"] + '/'
     if id == "":
         json = [{"text": "/", "id": "/",  "children": True}]
     else:
