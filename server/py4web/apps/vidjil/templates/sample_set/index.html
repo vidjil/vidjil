@@ -6,8 +6,8 @@
 <div>
 
     <h3>
-    <i class="icon-left-open-1" title="previous" onclick="db.call('sample_set/index', {'next': '1', 'id' :'[[=request.query['id']]]', 'config_id' : '[[=request.query['config_id']]]'})"></i>
-    <i class="icon-right-open-1" title="next" onclick="db.call('sample_set/index', {'next': '-1', 'id' :'[[=request.query['id']]]', 'config_id' : '[[=request.query['config_id']]]'})"></i>
+    <i class="icon-left-open-1" title="previous" onclick="db.call('sample_set/index', {'next': '1', 'id' :'[[=request.query['id']]]', 'config_id' : '[[=config_id]]'})"></i>
+    <i class="icon-right-open-1" title="next" onclick="db.call('sample_set/index', {'next': '-1', 'id' :'[[=request.query['id']]]', 'config_id' : '[[=config_id]]'})"></i>
        <span class="uid">[[=request.query['id']]]</span> [[=info["name"]]]
     </h3>
 
@@ -314,9 +314,9 @@
     <div class="db_block_right">
         [[if fused_file is not None :]]
             download [[=db.config[config_id].name]]
-            <a class="button" href=[[=URL('default', 'get_data', scheme='https', vars=dict(sample_set_id = request.query['id'], config = request.query['config_id'], filename=vidjil_utils.safe_encoding(fused_filename)))]]> .vidjil </a>
+            <a class="button" href=[[=URL('default', 'get_data', scheme='https', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=vidjil_utils.safe_encoding(fused_filename)))]]> .vidjil </a>
             [[if analysis_count >0:]]
-            <a class="button" href=[[=URL('default', 'get_analysis', scheme='https', vars=dict(sample_set_id = request.query['id'], config = request.query['config_id'], filename=vidjil_utils.safe_encoding(analysis_filename)))]]> .analysis </a>
+            <a class="button" href=[[=URL('default', 'get_analysis', scheme='https', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=vidjil_utils.safe_encoding(analysis_filename)))]]> .analysis </a>
             [[pass]]
         [[pass]]
     </div>

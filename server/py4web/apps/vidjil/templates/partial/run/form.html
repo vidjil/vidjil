@@ -44,19 +44,24 @@
         data-needs-atwho="true"
         class="text form-control"
         id="run_info_[[=i]]"
-        name="run[([[=i]])][info]"
+        name="[[="run["+str(i)+"][info]"]]" 
         rows="1"
         placeholder="run information (#tags can be used)"
         autocomplete="off"
         value="[[if set is not None and set['info'] is not None:]][[=set['info']]][[pass]]"/>
 </div>
+
 <div class="field_div">
-    <input id="run_sequencer_[[=i]]" name="run[([[=i]])][sequencer]" type="text" class="form-control sequencer"
-        value="[[if set is not None and set['sequencer'] is not None:]][[=set['sequencer']]][[pass]]" placeholder="sequencer">
+    <input  id="run_sequencer_[[=i]]" 
+            name="[[="run["+str(i)+"][sequencer]"]]" type="text" class="form-control sequencer"
+            value="[[if set is not None and set['sequencer'] is not None:]][[=set['sequencer']]][[pass]]" placeholder="sequencer">
 </div>
+
 <div class="field_div">
-    <input id="run_pcr_[[=i]]" name="run[([[=i]])][pcr]" type="text" class="form-control pcr"
-        value="[[if set is not None and set['pcr'] is not None:]][[=set['pcr']]][[pass]]" placeholder="primers, capture...">
+    <input  id="run_pcr_[[=i]]" 
+            name="[[="run["+str(i)+"][pcr]"]]" type="text" class="form-control pcr"
+            value="[[if set is not None and set['pcr'] is not None:]][[=set['pcr']]][[pass]]" placeholder="primers, capture...">
 </div>
+
 </div>
 
