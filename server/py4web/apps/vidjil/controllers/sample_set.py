@@ -3,9 +3,10 @@ from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules import tag
+from ..modules.stats_decorator import *
 from ..modules.sampleSet import SampleSet, get_set_group
 from ..modules.sampleSets import SampleSets
-from ..modules.sampleSetList import SampleSetList
+from ..modules.sampleSetList import SampleSetList, filter_by_tags
 from ..modules.sequenceFile import get_associated_sample_sets
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
@@ -302,7 +303,7 @@ def all():
         request.query["sort"] = ""
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-    log.info("%s list %s" % (request.query["type"], search), extra={'user_id': auth.user_id,
+    log.info("%s list %s" % (type, search), extra={'user_id': auth.user_id,
         'record_id': None,
         'table_name': "sample_set"})
     log.debug("sample_set list (%.3fs)" % (time.time()-start))
@@ -499,11 +500,13 @@ def submit():
                 sets=sets,
                 isEditing = (action=='edit'))
 
+@action("/vidjil/sample_set/custom", method=["POST", "GET"])
+@action.uses("sample_set/custom.html", db, auth.user)
 def custom():
     start = time.time()
 
-    if request.query["config_id"] and request.query["config_id"] != "-1" :
-        config_id = long(request.query["config_id"])
+    if "config_id" in request.query and request.query["config_id"] != "-1" :
+        config_id = int(request.query["config_id"])
         config_name = db.config[request.query["config_id"]].name
         config = True
         
@@ -520,7 +523,7 @@ def custom():
         
     myGroupBy = None
     helper = None
-    if request.query["id"] and auth.can_view_sample_set(request.query["id"]):
+    if request.query["id"] and auth.can_view_sample_set(int(request.query["id"])):
         sample_set = db.sample_set[request.query["id"]]
         factory = ModelFactory()
         helper = factory.get_instance(type=sample_set.sample_type)
@@ -539,13 +542,13 @@ def custom():
         & (db.results_file.hidden == False)
         & (db.config.id==db.results_file.config_id))
 
-    group_ids = get_involved_groups(auth)
+    group_ids = get_involved_groups(db, auth)
 
     ##filter
     if "filter" not in request.query :
         request.query["filter"] = ""
 
-    search, tags = parse_search(request.query["filter"])
+    search, tags = tag.parse_search(request.query["filter"])
 
     left_join = [
         db.patient.on(db.patient.sample_set_id == db.sample_set.id),
@@ -608,7 +611,7 @@ def custom():
     if config :
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.query["custom_list"])) )
     
-    tag_decorator = TagDecorator(get_tag_prefix())
+    tag_decorator = tag.TagDecorator(tag.get_tag_prefix())
     log.info("load compare list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': "results_file"})
     log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
@@ -621,7 +624,24 @@ def custom():
                 helper=helper,
                 tag_decorator=tag_decorator,
                 classification=classification,
-                group_ids=group_ids)
+                group_ids=group_ids,
+                auth=auth,
+                db=db)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def getStatHeaders():
