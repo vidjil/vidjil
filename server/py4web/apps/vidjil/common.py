@@ -5,7 +5,6 @@ These are fixtures that every app needs so probably you will not be editing this
 import os
 import sys
 import logging
-from .modules import vidjil_utils
 from . import defs
 from py4web import Session, Cache, Translator, Flash, DAL, Field, action
 from py4web.utils.mailer import Mailer
@@ -281,8 +280,7 @@ class MsgUserAdapter(logging.LoggerAdapter):
         usern = usern.replace(' ','-')
         if auth.is_impersonating():
             usern = 'team!' + usern
-        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % vidjil_utils.safe_decoding(usern)),
-                                      vidjil_utils.safe_decoding(msg))
+        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % usern), msg)
         return new_msg, kwargs
     
     def admin(self, msg, extra=None):
