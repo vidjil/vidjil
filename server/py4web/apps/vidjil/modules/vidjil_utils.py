@@ -5,6 +5,7 @@ from apps.vidjil import defs
 import json
 import datetime
 from datetime import date
+from ..common import auth, db
 
 def format_size(n, unit='B'):
     '''
@@ -86,7 +87,7 @@ def anon_birth(patient_id, user_id):
     else:
         return age
 
-def anon_ids(db, auth, patient_ids, can_view = None):
+def anon_ids(patient_ids, can_view = None):
     '''Anonymize patient name. Only the 'anon' access see the full patient name.
     patient_ids is a list of patient IDs
     '''
@@ -95,9 +96,9 @@ def anon_ids(db, auth, patient_ids, can_view = None):
                                                              db.patient.first_name,
                                                              db.patient.last_name)
 
-    return [display_names(auth, p.sample_set_id, p.first_name, p.last_name, can_view) for p in patients]
+    return [display_names(p.sample_set_id, p.first_name, p.last_name, can_view) for p in patients]
 
-def anon_names(auth, sample_set_id, first_name, last_name, can_view=None):
+def anon_names(sample_set_id, first_name, last_name, can_view=None):
     '''
     Anonymize the given names of the patient whose ID is patient_id.
     This function performs at most one db call (to know if we can see
@@ -114,7 +115,7 @@ def anon_names(auth, sample_set_id, first_name, last_name, can_view=None):
 
     return name
 
-def display_names(auth, sample_set_id, first_name, last_name, can_view=None):
+def display_names(sample_set_id, first_name, last_name, can_view=None):
     '''
     Return the name as displayed to a user or admin of a patient
     whose ID is patient_id.
@@ -123,7 +124,7 @@ def display_names(auth, sample_set_id, first_name, last_name, can_view=None):
     Admins will also see the patient id.
     '''
 
-    name = anon_names(auth, sample_set_id, first_name, last_name, can_view)
+    name = anon_names(sample_set_id, first_name, last_name, can_view)
 
     # Admins also see the patient id
     if auth.is_admin():
@@ -175,7 +176,7 @@ def advanced_filter(list_searched, filter_str):
         else:
             pattern = f
         result = filter(lambda item: pattern.lower() in item, list_searched)
-        if len(result) == 0:
+        if len(list(result)) == 0:
             return False
     return True
 
