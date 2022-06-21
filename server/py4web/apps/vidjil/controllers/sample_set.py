@@ -7,7 +7,7 @@ from ..modules.stats_decorator import *
 from ..modules.sampleSet import SampleSet, get_set_group
 from ..modules.sampleSets import SampleSets
 from ..modules.sampleSetList import SampleSetList, filter_by_tags
-from ..modules.sequenceFile import get_associated_sample_sets
+from ..modules.sequenceFile import get_associated_sample_sets, get_sequence_file_sample_sets
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
@@ -21,14 +21,14 @@ from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
 import math
 
-#if request.environ.get("HTTP_ORIGIN") :
-#    response.headers['Access-Control-Allow-Origin'] = request.environ.get("HTTP_ORIGIN")
-#    response.headers['Access-Control-Allow-Credentials'] = 'true'
-#    response.headers['Access-Control-Max-Age'] = 86400
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+
+
+##################################
+# HELPERS
+##################################
 
 ACCESS_DENIED = "access denied"
-
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
 def getConfigsByClassification():
     """ Return list of available and auth config, classed by classification values """
@@ -70,6 +70,20 @@ def next_sample_set():
                 request.query["id"] = str(res[0].id)
         except:
             pass
+
+
+
+
+
+
+
+
+
+
+
+##################################
+# CONTROLLERS
+##################################
 
 ## return patient file list
 ##
@@ -266,7 +280,7 @@ def all():
         request.query["filter"] = ""
 
     search, tags = tag.parse_search(request.query["filter"])
-    group_ids = get_involved_groups(db, auth)
+    group_ids = get_involved_groups()
 
     factory = ModelFactory()
     helper = factory.get_instance(type)
@@ -274,7 +288,7 @@ def all():
     f = time.time()
     slist = SampleSetList(helper, page, step, tags, search)
 
-    #log.debug("list loaded (%.3fs)" % (time.time() - f))
+    log.debug("list loaded (%.3fs)" % (time.time() - f))
 
     mid = time.time()
 
@@ -282,7 +296,7 @@ def all():
     admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set) &  (db.sample_set.id.belongs(set_ids))).select(db.sample_set.id)]
     admin_permissions = list(set(admin_permissions))
 
-    #log.debug("permission load (%.3fs)" % (time.time() - mid))
+    log.debug("permission load (%.3fs)" % (time.time() - mid))
 
     # failsafe if filtered display all results
     step = len(slist) if step is None else step
@@ -367,7 +381,7 @@ def form():
     log.info("load form " + message, extra=extra)
     return dict(message=T(message),
                 groups=groups,
-                group_ids = get_involved_groups(db, auth),
+                group_ids = get_involved_groups(),
                 master_group=max_group,
                 sets=sets,
                 isEditing = (action=='edit'),
@@ -381,7 +395,7 @@ def form():
 ## redirect to patient list if success
 ## return a flash error message if fail
 @action("/vidjil/sample_set/submit", method=["POST", "GET"])
-@action.uses( db, auth.user)
+@action.uses(db, auth.user)
 def submit():
     data = json.loads(request.params['data'], encoding='utf-8')
     mf = ModelFactory()
@@ -413,7 +427,7 @@ def submit():
             name = helper.get_name(p)
 
             # edit
-            if (p['sample_set_id'] != "" and auth.can_modify_sample_set(p['sample_set_id'])):
+            if (p['sample_set_id'] != "" and auth.can_modify_sample_set(int(p['sample_set_id']))):
                 reset = True
                 sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
                 db[set_type][sset.id] = p
@@ -471,7 +485,7 @@ def submit():
             }
             return dict(message=T("form is empty"),
                     groups=creation_group_tuple[0],
-                    group_ids = get_involved_groups(db, auth),
+                    group_ids = get_involved_groups(),
                     master_group=creation_group_tuple[1],
                     sets=sets,
                     isEditing = False)
@@ -542,7 +556,7 @@ def custom():
         & (db.results_file.hidden == False)
         & (db.config.id==db.results_file.config_id))
 
-    group_ids = get_involved_groups(db, auth)
+    group_ids = get_involved_groups()
 
     ##filter
     if "filter" not in request.query :
@@ -628,7 +642,149 @@ def custom():
                 auth=auth,
                 db=db)
 
+@action("/vidjil/sample_set/confirm", method=["POST", "GET"])
+@action.uses("sample_set/confirm.html", db, auth.user)
+def confirm():
+    if auth.can_modify_sample_set(int(request.query["id"])):
+        sample_set = db.sample_set[request.query["id"]]
+        data = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select().first()
+        factory = ModelFactory()
+        helper = factory.get_instance(type=sample_set.sample_type)
+        log.debug('request sample_set deletion')
+        return dict(message=T('confirm sample_set deletion'),
+                    data=data,
+                    helper=helper,
+                    auth=auth,
+                    db=db)
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/sample_set/delete", method=["POST", "GET"])
+@action.uses(db, auth.user)
+def delete():
+    if (auth.can_modify_sample_set(int(request.query["id"])) ):
+        sample_set = db.sample_set[request.query["id"]]
+        sample_type = sample_set.sample_type
+        if sample_set is None:
+            res = {"message": 'An error occured. This sample_set may have already been deleted'}
+            log.error(res)
+            return json.dumps(res, separators=(',',':'))
+
+        sequence_file_id_sample_sets = {}
+        #delete data file
+        query = db( (db.sample_set_membership.sample_set_id == sample_set.id)
+                    & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+                ).select(db.sequence_file.id)
+        for row in query :
+            sample_sets = get_sequence_file_sample_sets(row.id)
+            sequence_file_id_sample_sets[row.id] = sample_sets
+            if len(sample_sets) == 1:
+                db(db.results_file.sequence_file_id == row.id).delete()
+
+        #delete sequence file
+        query = db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            & (db.sample_set_membership.sample_set_id == sample_set.id)
+            ).select(db.sequence_file.id)
+        for row in query :
+            if not row.id in sequence_file_id_sample_sets: 
+                sample_sets = get_sequence_file_sample_sets(row.id)
+                sequence_file_id_sample_sets[row.id] = sample_sets
+            if len(sequence_file_id_sample_sets[row.id]) == 1:
+                db(db.sequence_file.id == row.id).delete()
+
+        #delete patient sample_set
+        db(db.sample_set.id == sample_set.id).delete()
+
+        res = {"redirect": "sample_set/all",
+               "args": {"type": sample_type, "page": 0},
+               "success": "true",
+               "message": "sample set ("+str(request.query["id"])+") deleted"}
+        log.info(res, extra={'user_id': auth.user_id, 'record_id': request.query["id"], 'table_name': 'sample_set'})
+        return json.dumps(res, separators=(',',':'))
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return json.dumps(res, separators=(',',':'))
+
+#
+@action("/vidjil/sample_set/permission", method=["POST", "GET"])
+@action.uses("sample_set/permission.html", db, auth.user)
+def permission():
+    if (auth.can_modify_sample_set(int(request.query["id"])) ):
+        sample_set = db.sample_set[request.query["id"]]
+        stype = sample_set.sample_type
+        factory = ModelFactory()
+        helper = factory.get_instance(type=stype)
+
+        data = db(db[stype].sample_set_id == sample_set.id).select().first()
+
+        query = db( db.auth_group.role != 'admin' ).select()
+
+        for row in query :
+            row.owner = row.role
+            if row.owner[:5] == "user_" :
+                id = int(row.owner[5:])
+                row.owner = db.auth_user[id].first_name + " " + db.auth_user[id].last_name
+
+            permissions = db(
+                    (db.auth_permission.group_id == row.id) &
+                    (db.auth_permission.record_id == 0) &
+                    (db.auth_permission.table_name == db.sample_set)).select()
+            row.perms = ', '.join(map(lambda x: x.name, permissions))
+
+            row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[stype], request.query['id'], group=row.id))
+            row.read =  auth.get_group_access("sample_set", request.query["id"] , row.id)
+
+        log.info("load permission page for sample_set (%s)" % request.query["id"],
+                extra={'user_id': auth.user_id, 'record_id': request.query['id'], 'table_name': "sample_set"})
+        return dict(query=query,
+                    helper=helper,
+                    data=data,
+                    auth=auth,
+                    db=db)
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return json.dumps(res, separators=(',',':'))
+
+#
+@action("/vidjil/sample_set/change_permission", method=["POST", "GET"])
+@action.uses(db, auth.user)
+def change_permission():
+    if (auth.can_modify_sample_set(int(request.query["sample_set_id"])) ):
+        ssid = request.query["sample_set_id"]
+        sample_set = db.sample_set[ssid]
+        sample_type = sample_set.sample_type
+
+        error = ""
+        if request.query["group_id"] == "" :
+            error += "missing group_id, "
+        if ssid == "" :
+            error += "missing sample_set_id, "
+
+        if error=="":
+            if auth.get_group_access("sample_set",
+                      ssid,
+                      int(request.query["group_id"])):
+                auth.del_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
+                res = {"message" : "access '%s' deleted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
+            else :
+
+                auth.add_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
+                res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
+
+            log.info(res, extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
+            return json.dumps(res, separators=(',',':'))
+        else :
+            res = {"message": "incomplete request : "+error }
+            log.error(res)
+            return json.dumps(res, separators=(',',':'))
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return json.dumps(res, separators=(',',':'))
 
 
 
@@ -883,137 +1039,7 @@ def multi_sample_stats():
             extra={'user_id': auth.user_id, 'record_id': None, 'table_name': 'results_file'})
     return dict(data=data)
 
-def confirm():
-    if auth.can_modify_sample_set(request.query["id"]):
-        sample_set = db.sample_set[request.query["id"]]
-        data = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select().first()
-        factory = ModelFactory()
-        helper = factory.get_instance(type=sample_set.sample_type)
-        log.debug('request sample_set deletion')
-        return dict(message=T('confirm sample_set deletion'),
-                    data=data,
-                    helper=helper)
-    else :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-        return json.dumps(res, separators=(',',':'))
 
-def delete():
-    if (auth.can_modify_sample_set(request.query["id"]) ):
-        sample_set = db.sample_set[request.query["id"]]
-        sample_type = sample_set.sample_type
-        if sample_set is None:
-            res = {"message": 'An error occured. This sample_set may have already been deleted'}
-            log.error(res)
-            return json.dumps(res, separators=(',',':'))
-
-        sequence_file_id_sample_sets = {}
-        #delete data file
-        query = db( (db.sample_set_membership.sample_set_id == sample_set.id)
-                    & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-                ).select(db.sequence_file.id)
-        for row in query :
-            sample_sets = get_sequence_file_sample_sets(row.id)
-            sequence_file_id_sample_sets[row.id] = sample_sets
-            if len(sample_sets) == 1:
-                db(db.results_file.sequence_file_id == row.id).delete()
-
-        #delete sequence file
-        query = db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-            & (db.sample_set_membership.sample_set_id == sample_set.id)
-            ).select(db.sequence_file.id)
-        for row in query :
-            if not row.id in sequence_file_id_sample_sets: 
-                sample_sets = get_sequence_file_sample_sets(row.id)
-                sequence_file_id_sample_sets[row.id] = sample_sets
-            if len(sequence_file_id_sample_sets[row.id]) == 1:
-                db(db.sequence_file.id == row.id).delete()
-
-        #delete patient sample_set
-        db(db.sample_set.id == sample_set.id).delete()
-
-        res = {"redirect": "sample_set/all",
-               "args": {"type": sample_type, "page": 0},
-               "success": "true",
-               "message": "sample set ("+str(request.query["id"])+") deleted"}
-        log.info(res, extra={'user_id': auth.user_id, 'record_id': request.query["id"], 'table_name': 'sample_set'})
-        return json.dumps(res, separators=(',',':'))
-    else :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-        return json.dumps(res, separators=(',',':'))
-
-#
-def permission():
-    if (auth.can_modify_sample_set(request.query["id"]) ):
-        sample_set = db.sample_set[request.query["id"]]
-        stype = sample_set.sample_type
-        factory = ModelFactory()
-        helper = factory.get_instance(type=stype)
-
-        data = db(db[stype].sample_set_id == sample_set.id).select().first()
-
-        query = db( db.auth_group.role != 'admin' ).select()
-
-        for row in query :
-            row.owner = row.role
-            if row.owner[:5] == "user_" :
-                id = int(row.owner[5:])
-                row.owner = db.auth_user[id].first_name + " " + db.auth_user[id].last_name
-
-            permissions = db(
-                    (db.auth_permission.group_id == row.id) &
-                    (db.auth_permission.record_id == 0) &
-                    (db.auth_permission.table_name == db.sample_set)).select()
-            row.perms = ', '.join(map(lambda x: x.name, permissions))
-
-            row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[stype], request.query['id'], group=row.id))
-            row.read =  auth.get_group_access("sample_set", request.query["id"] , row.id)
-
-        log.info("load permission page for sample_set (%s)" % request.query["id"],
-                extra={'user_id': auth.user_id, 'record_id': request.query['id'], 'table_name': "sample_set"})
-        return dict(query=query,
-                    helper=helper,
-                    data=data)
-    else :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-        return json.dumps(res, separators=(',',':'))
-
-#
-def change_permission():
-    if (auth.can_modify_sample_set(request.query["sample_set_id"]) ):
-        ssid = request.query["sample_set_id"]
-        sample_set = db.sample_set[ssid]
-        sample_type = sample_set.sample_type
-
-        error = ""
-        if request.query["group_id"] == "" :
-            error += "missing group_id, "
-        if ssid == "" :
-            error += "missing sample_set_id, "
-
-        if error=="":
-            if auth.get_group_access("sample_set",
-                      ssid,
-                      int(request.query["group_id"])):
-                auth.del_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
-                res = {"message" : "access '%s' deleted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
-            else :
-
-                auth.add_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
-                res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
-
-            log.info(res, extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
-            return json.dumps(res, separators=(',',':'))
-        else :
-            res = {"message": "incomplete request : "+error }
-            log.error(res)
-            return json.dumps(res, separators=(',',':'))
-    else :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-        return json.dumps(res, separators=(',',':'))
 
 def get_sample_set_list(stype, q):
     factory = ModelFactory()
@@ -1128,7 +1154,7 @@ def stats():
         request.query["filter"] = ""
 
     search, tags = tag.parse_search(request.query["filter"])
-    group_ids = get_involved_groups(db, auth)
+    group_ids = get_involved_groups()
 
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
