@@ -722,9 +722,6 @@ class VidjilAuth(Auth):
         """
 
         permission = self.table_permission()
-        self.log_event(self.messages['del_permission_log'],
-                       dict(group_id=group_id, name=name,
-                            table_name=table_name, record_id=record_id))
         return self.db(permission.group_id ==
                        group_id)(permission.name ==
                                  name)(permission.table_name ==

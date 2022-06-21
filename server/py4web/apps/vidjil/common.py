@@ -141,13 +141,13 @@ auth.define_tables()
 # #######################################################
 # Configure email sender for auth
 # #######################################################
-if settings.SMTP_SERVER:
+if defs.SMTP_SERVER:
     auth.sender = Mailer(
-        server=settings.SMTP_SERVER,
-        sender=settings.SMTP_SENDER,
-        login=settings.SMTP_LOGIN,
-        tls=settings.SMTP_TLS,
-        ssl=settings.SMTP_SSL,
+        server=defs.SMTP_SERVER,
+        sender=defs.FROM_EMAIL,
+        login=defs.SMTP_CREDENTIALS,
+        #tls=defs.SMTP_TLS,
+        #ssl=defs.SMTP_SSL,
     )
 
 # #######################################################
@@ -340,3 +340,14 @@ def _init_log():
     return MsgUserAdapter(logger, {})
 
 log = _init_log()
+
+# #######################################################
+# Configure mail
+# #######################################################
+mail = Mailer(
+        server=defs.SMTP_SERVER,
+        sender=defs.FROM_EMAIL,
+        login=defs.SMTP_CREDENTIALS
+        #tls=defs.SMTP_TLS,
+        #ssl=defs.SMTP_SSL
+    )

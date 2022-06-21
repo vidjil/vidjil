@@ -1,3 +1,5 @@
+from .common import db, auth
+
 def get_group_list(auth):
     db = auth.db
     if (auth.is_admin()):
@@ -49,7 +51,7 @@ def get_upload_group_ids(auth):
                 group_ids.append(group.id)
     return group_ids
 
-def get_involved_groups(db, auth):
+def get_involved_groups():
     '''
     Returns all the groups that are related to the user. This includes all groups
     that the user is a member of, as well as any of their parents

@@ -22,13 +22,6 @@ VERIFY_EMAIL = False
 # account requires to be approved ?
 REQUIRES_APPROVAL = False
 
-# email settings
-SMTP_SSL = False
-SMTP_SERVER = None
-SMTP_SENDER = "you@example.com"
-SMTP_LOGIN = "username:password"
-SMTP_TLS = False
-
 # session settings
 SESSION_TYPE = "cookies"
 SESSION_SECRET_KEY = "<my secret key>"
