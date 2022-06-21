@@ -89,10 +89,10 @@ def index():
     data = helper.get_data(sample_set_id)
     info_file = helper.get_info_dict(data)
 
-    if request.query["config_id"] and request.query["config_id"] != "-1" and request.query["config_id"] != "None":
+    if "config_id" in request.query and request.query["config_id"] != "-1":
         config_id = int(request.query["config_id"])
         config = True
-    elif request.query["config_id"] and request.query["config_id"] == "-1":
+    elif "config_id" in request.query and request.query["config_id"] == "-1":
         most_used_query = db(
                 (db.fused_file.sample_set_id == sample_set.id)
             ).select(
@@ -302,10 +302,10 @@ def all():
         request.query["sort"] = ""
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-    #log.info("%s list %s" % (request.query["type"], search), extra={'user_id': auth.user.id,
-    #    'record_id': None,
-    #    'table_name': "sample_set"})
-    #log.debug("sample_set list (%.3fs)" % (time.time()-start))
+    log.info("%s list %s" % (request.query["type"], search), extra={'user_id': auth.user_id,
+        'record_id': None,
+        'table_name': "sample_set"})
+    log.debug("sample_set list (%.3fs)" % (time.time()-start))
 
     return dict(query= result,
                 fields= fields,
@@ -455,7 +455,7 @@ def submit():
             p['message'] = []
             mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
             p['message'].append(mes)
-            log.info(mes, extra={'user_id': auth.user.id, 'record_id': id_sample_set, 'table_name': 'sample_set'})
+            log.info(mes, extra={'user_id': auth.user_id, 'record_id': id_sample_set, 'table_name': 'sample_set'})
             if register:
                 tag.register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
@@ -609,7 +609,7 @@ def custom():
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.query["custom_list"])) )
     
     tag_decorator = TagDecorator(get_tag_prefix())
-    log.info("load compare list", extra={'user_id': auth.user.id, 'record_id': None, 'table_name': "results_file"})
+    log.info("load compare list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': "results_file"})
     log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
 
@@ -860,7 +860,7 @@ def multi_sample_stats():
     results = getStatData(custom_result)
     data['results'] = results
     log.info("load multi sample stats (%s)" % str(custom_result),
-            extra={'user_id': auth.user.id, 'record_id': None, 'table_name': 'results_file'})
+            extra={'user_id': auth.user_id, 'record_id': None, 'table_name': 'results_file'})
     return dict(data=data)
 
 def confirm():
@@ -916,7 +916,7 @@ def delete():
                "args": {"type": sample_type, "page": 0},
                "success": "true",
                "message": "sample set ("+str(request.query["id"])+") deleted"}
-        log.info(res, extra={'user_id': auth.user.id, 'record_id': request.query["id"], 'table_name': 'sample_set'})
+        log.info(res, extra={'user_id': auth.user_id, 'record_id': request.query["id"], 'table_name': 'sample_set'})
         return json.dumps(res, separators=(',',':'))
     else :
         res = {"message": ACCESS_DENIED}
@@ -951,7 +951,7 @@ def permission():
             row.read =  auth.get_group_access("sample_set", request.query["id"] , row.id)
 
         log.info("load permission page for sample_set (%s)" % request.query["id"],
-                extra={'user_id': auth.user.id, 'record_id': request.query['id'], 'table_name': "sample_set"})
+                extra={'user_id': auth.user_id, 'record_id': request.query['id'], 'table_name': "sample_set"})
         return dict(query=query,
                     helper=helper,
                     data=data)
@@ -984,7 +984,7 @@ def change_permission():
                 auth.add_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
                 res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
 
-            log.info(res, extra={'user_id': auth.user.id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
+            log.info(res, extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
             return json.dumps(res, separators=(',',':'))
         else :
             res = {"message": "incomplete request : "+error }
@@ -1130,7 +1130,7 @@ def stats():
     classification   = getConfigsByClassification()
 
     result = helper.filter(search, result)
-    log.info("%s stat list %s" % (request.query["type"], search), extra={'user_id': auth.user.id,
+    log.info("%s stat list %s" % (request.query["type"], search), extra={'user_id': auth.user_id,
         'record_id': None,
         'table_name': "sample_set"})
     log.debug("stat list (%.3f s)" % (time.time()-start))
@@ -1216,7 +1216,7 @@ def result_files():
 
         response.headers['Content-Type'] = "application/zip"
         response.headers['Content-Disposition'] = 'attachment; filename=%s' % filename# to force download as attachment
-        log.info("extract results files (%s)" % sample_set_ids, extra={'user_id': auth.user.id,
+        log.info("extract results files (%s)" % sample_set_ids, extra={'user_id': auth.user_id,
             'record_id': None,
             'table_name': "sample_set"})
 
@@ -1270,7 +1270,7 @@ def mystats():
     d['f_samples'] = f_samples # TMP, for debug
 
     #TODO can we get a record id here ?
-    log.info('stats (%s)' % request.query["id"], extra={'user_id': auth.user.id,
+    log.info('stats (%s)' % request.query["id"], extra={'user_id': auth.user_id,
         'record_id': None,
         'table_name': "results_file"})
     log.debug("mystats (%.3fs) %s" % (time.time()-start, request.query["filter"]))
