@@ -173,7 +173,7 @@ class Vidjil:
         return content
 
 
-    def getAllSampleset(self, set_type:str=None, filter_val:str=None):
+    def getSets(self, set_type:str=None, filter_val:str=None):
         """_summary_
 
         Args:
@@ -191,7 +191,7 @@ class Vidjil:
         new_url  = self.url_server+"/sample_set/all.json?&%s%s&" % (set_type, filter_val)
         return self.request(new_url, "get")
 
-    def getSamplesetById(self, set_id:int, set_type:str=None):
+    def getSetById(self, set_id:int, set_type:str=None):
         """Get sample set by is id.
 
         Args:
@@ -206,7 +206,7 @@ class Vidjil:
         # warning, don't present on prod server for the moment !!!
         content = self.request(new_url, "get")
         if not len(content):
-            raise Exception( f"getSamplesetById error. \nNo sample found with this id '{set_id}' and type '{set_type}'")
+            raise Exception( f"getSetById error. \nNo sample found with this id '{set_id}' and type '{set_type}'")
         return content
 
     def createPatient(self, first_name:str, last_name:str, sample_set_id:int=None, id:int=None, id_label:int=None, birth_date:str=None, info:str=None):
@@ -429,7 +429,7 @@ class Vidjil:
         for pattern in ["\\.fastq.gz", "\\.fq.gz", "\\.fasta", "\\.fastq", "\\.fa"]:
             os.system( "sed -i 's/%s//g' %s" % (pattern, filename) )
 
-        print( "File created: %s" % filename)
+        print( "==> %s" % filename)
         return
 
     def createSample(self, set_ids:list, sample_set_id:str, sample_type:str, file_filename:str, file_filename2:str, file_info:str, file_sampling_date:str, file_id:int="", file_set_ids:list="", source:str="computer", pre_process="0"):
