@@ -23,13 +23,15 @@ parser = argparse.ArgumentParser(description= 'Vidjil API Demo')
 parser.add_argument('--public', '-p', action='store_true', help='Demo on public server')
 parser.add_argument('--local',  '-l', action='store_true', help='Demo on local server (require a server)')
 
+def printKeys(d):
+    print("  ", "keys:", " ". join(d.keys()))
 
 def infoSamples(info, samples, verbose=False):
     print("# %s ==> %s samples" % (info, len(samples)))
     for s in samples:
         print("  ", s['id'], s['first_name'], s['last_name'])
         if verbose:
-            print("  ", "keys:", " ". join(s.keys()))
+            printKeys(s)
 
     print()
 
@@ -71,7 +73,7 @@ def demoReadFromServer(server, ssl, user, password):
 
     samples   = vidjil.getSampleOfSet(sample_set_id, config_id)
     print("# getSampleOfSet(%s, %d) ==>" % (sample_set_id, config_id))
-    print(samples.keys())
+    printKeys(samples)
 
     # download result file from all samples if completed
     for sample in samples["query"]:
