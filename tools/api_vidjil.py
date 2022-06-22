@@ -415,6 +415,9 @@ class Vidjil:
             original_names (str, optional): Filename present in the analysis under original_names (so as hashed by server) for replacing purpose. Defaults to None.
         """
         url = "%s/default/download/%s?filename=%s" % (self.url_server, filepath, filename)
+        print( "==> %s " % filename, end='')
+        sys.stdout.flush()
+
         reponse = self.session.get(url, verify=self.ssl)
         # TODO: add verification step if same filename is already present
         if os.path.isfile(filepath+"/"+filename):
@@ -429,7 +432,7 @@ class Vidjil:
         for pattern in ["\\.fastq.gz", "\\.fq.gz", "\\.fasta", "\\.fastq", "\\.fa"]:
             os.system( "sed -i 's/%s//g' %s" % (pattern, filename) )
 
-        print( "==> %s" % filename)
+        print()
         return
 
     def createSample(self, set_ids:list, sample_set_id:str, sample_type:str, file_filename:str, file_filename2:str, file_info:str, file_sampling_date:str, file_id:int="", file_set_ids:list="", source:str="computer", pre_process="0"):

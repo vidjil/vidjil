@@ -1,6 +1,7 @@
-from api_vidjil import *
-from collections import defaultdict
 
+from api_vidjil import Vidjil
+import argparse
+import os
 
 TAGS = []
 TAGS_UNDEFINED = []
