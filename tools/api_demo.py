@@ -24,6 +24,15 @@ parser.add_argument('--public', '-p', action='store_true', help='Demo on public 
 parser.add_argument('--local',  '-l', action='store_true', help='Demo on local server (require a server)')
 
 
+def infoSamples(info, samples, verbose=False):
+    print("# %s ==> %s samples" % (info, len(samples)))
+    for s in samples:
+        print("  ", s['id'], s['first_name'], s['last_name'])
+        if verbose:
+            print("  ", "keys:", " ". join(s.keys()))
+
+    print()
+
 def demoReadFromServer(server, ssl, user, password):
     """Demo on the public server (only read)"""
 
@@ -37,21 +46,18 @@ def demoReadFromServer(server, ssl, user, password):
 
     ### Get a set from server by is id and set type
     demo_set = vidjil.getSamplesetById(sample_set_id, vidjil.PATIENT)
-    print("Demo set content:")
-    print(demo_set)
+    infoSamples("Set %s" % sample_set_id, demo_set, verbose=True)
 
     ### Get a list of all samples sets by set type (vjdjil.PATIENT, vidjil.RUN or vidjil.SET)
     # or a given filter value (see example under)
     samples = vidjil.getAllSampleset(set_type=vidjil.PATIENT)
     
     # The data is under samples["query"]
-    print("Patients list: %s" % len(samples["query"]) )
-    print(samples)
+    infoSamples("getAllSampleset(vidjil.PATIENT)", samples["query"])
 
     # You can also set a filter value that will be searched into various field of sets (name, info, ...)
     samples = vidjil.getAllSampleset(set_type=vidjil.PATIENT, filter_val="#DEMO")
-    print("Result getAllSampleset; filter #DEMO: %s" % len(samples["query"]) )
-
+    infoSamples('getAllSampleset(vidjil.PATIENT, "#DEMO")', samples["query"])
 
     ###################################################################
     ### Example 1: download results from a set for a configuration id.
@@ -60,7 +66,7 @@ def demoReadFromServer(server, ssl, user, password):
     
     # Get information from server about set and samples (we reuse here the set id of Demo Lil L3)
     sampleset = vidjil.getSamplesetById(sample_set_id, vidjil.PATIENT)
-    print( sampleset )
+    infoSamples("Set %s" % sample_set_id, samples["query"])
 
     samples   = vidjil.getSampleOfSet(sample_set_id, config_id)
     # download result file from all samples if completed

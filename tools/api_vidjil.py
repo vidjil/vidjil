@@ -119,6 +119,7 @@ class Vidjil:
         else:
             self.logged = True
             print( f"Successful login as {email}")
+            print()
             # self.whoami()
             # todo; print admin status; groups ?
 
