@@ -1467,7 +1467,7 @@ Uploader.prototype = {
     upload_file : function (id) {
         var self = this;
         
-        var url = db.db_address + "file/upload"
+        var url = db.db_address + "file/up"
         //url = url.replace("https://", "http://");
         $.ajax({
             xhr: function(){
@@ -1485,13 +1485,13 @@ Uploader.prototype = {
                 return xhr;
             },
             type: "POST",
-            cache: false,
             crossDomain: true,
+            context: self,      
             url: url,
             processData: false,
             contentType: false,
             data: self.queue[id].data,
-            xhrFields: {withCredentials: false},
+            xhrFields: {withCredentials: true},
             beforeSend: function(jqxhr){
                 self.queue[id].status = "upload"
                 self.queue[id].jqXHR = jqxhr
