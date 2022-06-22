@@ -66,10 +66,13 @@ def demoReadFromServer(server, ssl, user, password):
     os.system('mkdir -p %s' % DOWNLOAD_PATH)
     
     # Get information from server about set and samples (we reuse here the set id of Demo Lil L3)
-    sampleset = vidjil.getSamplesetById(sample_set_id, vidjil.PATIENT)
-    infoSamples("Set %s" % sample_set_id, samples["query"])
+    # sampleset = vidjil.getSamplesetById(sample_set_id, vidjil.PATIENT)
+    # infoSamples("Set %s" % sample_set_id, sampleset["query"])
 
     samples   = vidjil.getSampleOfSet(sample_set_id, config_id)
+    print("# getSampleOfSet(%s, %d) ==>" % (sample_set_id, config_id))
+    print(samples.keys())
+
     # download result file from all samples if completed
     for sample in samples["query"]:
         if sample["results_file"]["status"] == vidjil.COMPLETED:
