@@ -80,8 +80,8 @@ def demoReadFromServer(server, ssl, user, password):
     # sampleset = vidjil.getSetById(sample_set_id, vidjil.PATIENT)
     # infoSets("Set %s" % sample_set_id, sampleset["query"])
 
-    samples   = vidjil.getSampleOfSet(sample_set_id, config_id)
-    infoSamples("getSampleOfSet(%s, %d)" % (sample_set_id, config_id), samples["query"])
+    samples   = vidjil.getSamplesOfSet(sample_set_id, config_id)
+    infoSamples("getSamplesOfSet(%s, %d)" % (sample_set_id, config_id), samples["query"])
 
     # download result file from the first two samples if completed
     for sample in samples["query"][:2]:

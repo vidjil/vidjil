@@ -298,7 +298,7 @@ class Vidjil:
         print( "whoami: %s" % user)
         return
 
-    def getSampleOfSet(self, set_id, config_id=-1):
+    def getSamplesOfSet(self, set_id, config_id=-1):
         new_url  = self.url_server+"/sample_set/index.json?id=%s&config_id=%s" % (set_id, config_id)
         return self.request(new_url, "get")
 
@@ -348,7 +348,7 @@ class Vidjil:
             dict: Return a dict of format {set_id:{sample_id:status}}
         """
         status  = defaultdict(lambda: dict())
-        samples = self.getSampleOfSet(sample_set_id, config_id)
+        samples = self.getSamplesOfSet(sample_set_id, config_id)
         for sample in samples["query"]:
             sequence_file_id = sample["sequence_file"]["id"]
             result  = sample["results_file"]
