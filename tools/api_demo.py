@@ -56,8 +56,9 @@ def demoReadFromServer(server, ssl, user, password):
     infoSamples("getAllSampleset(vidjil.PATIENT)", samples["query"])
 
     # You can also set a filter value that will be searched into various field of sets (name, info, ...)
-    samples = vidjil.getAllSampleset(set_type=vidjil.PATIENT, filter_val="#DEMO")
-    infoSamples('getAllSampleset(vidjil.PATIENT, "#DEMO")', samples["query"])
+    filter = "LIL-L3"
+    samples = vidjil.getAllSampleset(set_type=vidjil.PATIENT, filter_val=filter)
+    infoSamples('getAllSampleset(vidjil.PATIENT, "%s")' % filter, samples["query"])
 
     ###################################################################
     ### Example 1: download results from a set for a configuration id.
