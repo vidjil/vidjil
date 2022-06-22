@@ -15,6 +15,7 @@ from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules.controller_utils import error_message
+from ..modules.sampleSet import get_set_group
 from io import StringIO
 import logging
 import json
@@ -33,7 +34,7 @@ from ..user_groups import get_default_creation_group
 from ..VidjilAuth import VidjilAuth
 import types
 
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
 #if request.environ.get("HTTP_ORIGIN") :
 #    response.headers['Access-Control-Allow-Origin'] = request.environ.get("HTTP_ORIGIN")
@@ -65,10 +66,10 @@ def home():
 def logger():
     '''Log to the server'''
     res = {"success" : "false",
-           "message" : "/client/: %s" % request.vars['msg']}
+           "message" : "/client/: %s" % request.query['msg']}
 
     try:
-        lvl = int(request.vars['lvl'])
+        lvl = int(request.query['lvl'])
     except:
         lvl = logging.INFO
     log.log(lvl, res)
@@ -84,16 +85,16 @@ def init_db_form():
     if (db(db.auth_user.id > 0).count() == 0) :
         error = ""
         force = False
-        if request.vars['email'] == "":
+        if request.query['email'] == "":
             error += "You must specify an admin email address, "
-        if len(request.vars['password']) < 8:
+        if len(request.query['password']) < 8:
             error += "Password must be at least 8 characters long, "
-        if request.vars['confirm_password'] != request.vars['password']:
+        if request.query['confirm_password'] != request.query['password']:
             error += "Passwords didn't match"
-        if "force" in request.vars and request.vars["force"].lower() == 'true':
+        if "force" in request.query and request.query["force"].lower() == 'true':
             force = True
         if error == "":
-            vidjil_utils.init_db_helper(db, auth, force=force, admin_email=request.vars['email'], admin_password=request.vars['password'])
+            vidjil_utils.init_db_helper(db, auth, force=force, admin_email=request.query['email'], admin_password=request.query['password'])
         else :
             res = {"success" : "false",
                    "message" : error}
@@ -130,24 +131,24 @@ def run_request():
     check_space(defs.DIR_RESULTS, "Runs")
 
     ##TODO check
-    if not "sequence_file_id" in request.vars :
+    if not "sequence_file_id" in request.query :
         error += "id sequence file needed, "
-    elif not "sample_set_id" in request.vars:
+    elif not "sample_set_id" in request.query:
         error += "sample set ID needed, "
-    if not "config_id" in request.vars:
+    if not "config_id" in request.query:
         error += "id config needed, "
         id_config = None
     else:
-        id_config = request.vars["config_id"]
-    if not auth.can_process_sample_set(request.vars['sample_set_id']):
+        id_config = request.query["config_id"]
+    if not auth.can_process_sample_set(request.query['sample_set_id']):
         error += "permission needed"
 
-    id_sample_set = request.vars["sample_set_id"]
+    id_sample_set = request.query["sample_set_id"]
 
     extra_info = ''
 
-    if "grep_reads" in request.vars:
-        grep_reads = request.vars["grep_reads"]
+    if "grep_reads" in request.query:
+        grep_reads = request.query["grep_reads"]
         extra_info += 'to get reads '
     else:
         grep_reads = None
@@ -162,8 +163,8 @@ def run_request():
             extra_info += 'with config '+db.config[id_config].name
 
     if error == "" :
-        res = schedule_run(request.vars["sequence_file_id"], id_config, grep_reads)
-        log.info("run requested "+extra_info, extra={'user_id': auth.user.id, 'record_id': request.vars['sequence_file_id'], 'table_name': 'sequence_file'})
+        res = schedule_run(request.query["sequence_file_id"], id_config, grep_reads)
+        log.info("run requested "+extra_info, extra={'user_id': auth.user_id, 'record_id': request.query['sequence_file_id'], 'table_name': 'sequence_file'})
         return json.dumps(res, separators=(',',':'))
 
     else :
@@ -177,19 +178,19 @@ def run_all_request():
     extra_info = ''
     check_space(defs.DIR_RESULTS, "Runs")
 
-    if not "sequence_file_ids" in request.vars:
+    if not "sequence_file_ids" in request.query:
         error += "sequence file ids required "
-    if not 'sample_set_id' in request.vars:
+    if not 'sample_set_id' in request.query:
         error += "sample set ID required "
-    elif not auth.can_process_sample_set(request.vars['sample_set_id']):
+    elif not auth.can_process_sample_set(request.query['sample_set_id']):
         error += "you do not have permission to launch process for this sample_set ("+str(id_sample_set)+"), "
 
-    if not "config_id" in request.vars:
+    if not "config_id" in request.query:
         error += "id config needed, "
     else:
-        extra_info += 'with config '+db.config[request.vars["config_id"]].name
-        if not auth.can_use_config(request.vars["config_id"]) :
-            error += "you do not have permission to launch process for this config ("+str(request.vars["config_id"])+"), "
+        extra_info += 'with config '+db.config[request.query["config_id"]].name
+        if not auth.can_use_config(request.query["config_id"]) :
+            error += "you do not have permission to launch process for this config ("+str(request.query["config_id"])+"), "
 
     if error != "":
         res = {"success" : "false",
@@ -197,27 +198,27 @@ def run_all_request():
         log.error(res)
         return json.dumps(res, separators=(',',':'))
         
-    id_sample_set = request.vars["sample_set_id"]
-    ids_sequence_file = request.vars["sequence_file_ids"]
+    id_sample_set = request.query["sample_set_id"]
+    ids_sequence_file = request.query["sequence_file_ids"]
     # if only one element, see as simple string without array (even if request was a list)
     if type(ids_sequence_file) is int or type(ids_sequence_file) is str:
         ids_sequence_file =  [ids_sequence_file]
     ids_sequence_file = [int(i) for i in ids_sequence_file]
-    id_config = request.vars["config_id"]
+    id_config = request.query["config_id"]
 
     # Filter the sequence_file IDS: we only keep sequence file IDs that do belong to the sample set (as we only checked the permission for this sample set)
     sequence_file_ids = [i.id for i in db((db.sample_set.id == id_sample_set) & (db.sequence_file.id.belongs(ids_sequence_file))).select(db.sequence_file.id, join=[db.sample_set_membership.on(db.sample_set_membership.sample_set_id == db.sample_set.id), db.sequence_file.on(db.sequence_file.id == db.sample_set_membership.sequence_file_id)])]
 
-    log.info("run_all requested for {} files ".format(len(sequence_file_ids))+extra_info, extra={'user_id': auth.user.id, 'sample_set_id': id_sample_set})
+    log.info("run_all requested for {} files ".format(len(sequence_file_ids))+extra_info, extra={'user_id': auth.user_id, 'sample_set_id': id_sample_set})
     for s_id in sequence_file_ids:
         schedule_run(s_id, id_config)
     return json.dumps({'success': 'true', 'redirect': 'reload'}, separators=(',',':'))
 
     
 def run_contamination():
-    task = scheduler.queue_task('compute_contamination', pvars=dict(sequence_file_id=request.vars["sequence_file_id"],
-                                                                    results_file_id=request.vars["results_file_id"],
-                                                                    config_id=request.vars["config_id"]),
+    task = scheduler.queue_task('compute_contamination', pvars=dict(sequence_file_id=request.query["sequence_file_id"],
+                                                                    results_file_id=request.query["results_file_id"],
+                                                                    config_id=request.query["config_id"]),
              repeats = 1, timeout = defs.TASK_TIMEOUT,immediate=True)
     
     res = {"success" : "true",
@@ -226,8 +227,8 @@ def run_contamination():
     return json.dumps(res, separators=(',',':'))
 
 def run_extra():
-    task = scheduler.queue_task('compute_extra', pvars=dict(id_file=request.vars["sequence_file_id"],
-                                                            id_config=request.vars["config_id"],
+    task = scheduler.queue_task('compute_extra', pvars=dict(id_file=request.query["sequence_file_id"],
+                                                            id_config=request.query["config_id"],
                                                             min_threshold=5))
     res = {"success" : "true",
            "processId" : task.id}
@@ -235,7 +236,7 @@ def run_extra():
     return json.dumps(res, separators=(',',':'))
 
 def checkProcess():
-    task = db.scheduler_task[request.vars["processId"]]
+    task = db.scheduler_task[request.query["processId"]]
     results_file = db(db.results_file.scheduler_task_id == task.id).select().first()
 
     msg = ''
@@ -272,42 +273,44 @@ def checkProcess():
 ## return .data file
 # need sample_set/patient, config
 # need sample_set admin or read permission
+@action("/vidjil/default/get_data", method=["POST", "GET"])
+@action.uses( db, auth.user)
 def get_data():
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
                             vars=dict(_next=URL('default', 'get_data', scheme=True, host=True,
-                                                vars=dict(sample_set_id = request.vars["sample_set_id"],
-                                                          config =request.vars["config"]))
+                                                vars=dict(sample_set_id = request.query["sample_set_id"],
+                                                          config =request.query["config"]))
                                       )
                             )}
         return json.dumps(res, separators=(',',':'))
 
     error = ""
     
-    if "patient" in request.vars :
-        request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
+    if "patient" in request.query :
+        request.query["sample_set_id"] = db.patient[request.query["patient"]].sample_set_id
 
     download = False
-    if "filename" in request.vars:
+    if "filename" in request.query:
         download = True
 
-    if "run" in request.vars :
-        request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
+    if "run" in request.query :
+        request.query["sample_set_id"] = db.run[request.query["run"]].sample_set_id
     
-    if not "sample_set_id" in request.vars or request.vars['sample_set_id'] is None:
+    if not "sample_set_id" in request.query or request.query['sample_set_id'] is None:
         error += "id sampleset file needed, "
     else : 
-        if not auth.can_view_sample_set(request.vars["sample_set_id"]):
-            error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
-    if not "config" in request.vars:
+        if not auth.can_view_sample_set(int(request.query["sample_set_id"])):
+            error += "you do not have permission to consult this sample_set ("+str(request.query["sample_set_id"])+")"
+    if not "config" in request.query:
         error += "id config needed, "
 
 
-    sample_set = db.sample_set[request.vars["sample_set_id"]]
+    sample_set = db.sample_set[request.query["sample_set_id"]]
     
-    query = db( ( db.fused_file.sample_set_id == request.vars["sample_set_id"])
-               & ( db.fused_file.config_id == request.vars["config"] )
+    query = db( ( db.fused_file.sample_set_id == request.query["sample_set_id"])
+               & ( db.fused_file.config_id == request.query["config"] )
                ).select(db.fused_file.ALL, orderby=db.fused_file.fuse_date).last()
     if query is not None:
         fused_file = defs.DIR_RESULTS+'/'+query.fused_file
@@ -324,13 +327,13 @@ def get_data():
         
         patient_name = ""
         run_name = ""
-        config_name = db.config[request.vars["config"]].name
-        command = db.config[request.vars["config"]].command
+        config_name = db.config[request.query["config"]].name
+        command = db.config[request.query["config"]].command
 
-        log_reference_id = request.vars["sample_set_id"]
+        log_reference_id = request.query["sample_set_id"]
 
         if (sample_set.sample_type == defs.SET_TYPE_GENERIC) :
-            for row in db( db.generic.sample_set_id == request.vars["sample_set_id"] ).select() :
+            for row in db( db.generic.sample_set_id == request.query["sample_set_id"] ).select() :
                 log_reference_id = row.id
                 generic_name = db.generic[row.id].name
                 data["dataFileName"] = generic_name + " (" + config_name + ")"
@@ -340,7 +343,7 @@ def get_data():
                 data["group_id"] = get_set_group(row.sample_set_id)
 
         if (sample_set.sample_type == defs.SET_TYPE_PATIENT):
-            for row in db( db.patient.sample_set_id == request.vars["sample_set_id"] ).select() :
+            for row in db( db.patient.sample_set_id == request.query["sample_set_id"] ).select() :
                 log_reference_id = row.id
                 patient_name = vidjil_utils.anon_ids([row.id])[0]
                 data["dataFileName"] = patient_name + " (" + config_name + ")"
@@ -350,7 +353,7 @@ def get_data():
                 data["group_id"] = get_set_group(row.sample_set_id)
 
         if (sample_set.sample_type == defs.SET_TYPE_RUN) :
-            for row in db( db.run.sample_set_id == request.vars["sample_set_id"] ).select() :
+            for row in db( db.run.sample_set_id == request.query["sample_set_id"] ).select() :
                 log_reference_id = row.id
                 run_name = db.run[row.id].name
                 data["dataFileName"] = run_name + " (" + config_name + ")"
@@ -368,12 +371,12 @@ def get_data():
             data["logs"].append({'message': row.msg, 'created': str(row.created)})
 
         ## récupération des infos stockées sur la base de données
-        query = db(  ( db.sample_set.id == request.vars["sample_set_id"] )
+        query = db(  ( db.sample_set.id == request.query["sample_set_id"] )
                    & ( db.sample_set.id == db.sample_set_membership.sample_set_id )
                    & ( db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
                    & ( db.results_file.hidden == False )
-                   & ( db.results_file.config_id == request.vars["config"]  )
+                   & ( db.results_file.config_id == request.query["config"]  )
                    ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
 
         query2 = {}
@@ -405,7 +408,7 @@ def get_data():
                 data['distributions']['repertoires'][o_n] = data['distributions']['repertoires'][data["samples"]["original_names"][i]]
                 del data['distributions']['repertoires'][data["samples"]["original_names"][i]]
             data["samples"]["original_names"][i] = o_n
-            data["samples"]["config_id"].append(request.vars['config'])
+            data["samples"]["config_id"].append(request.query['config'])
             data["samples"]["db_key"].append('')
             data["samples"]["commandline"].append(command)
             
@@ -452,18 +455,18 @@ def get_data():
                 data["samples"]["names"].append("deleted")
                 data["samples"]["id"].append("")
 
-        log.debug("get_data (%s) c%s -> %s (%s)" % (request.vars["sample_set_id"], request.vars["config"], fused_file, "downloaded" if download else "streamed"))
-        log.info("load sample", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
+        log.debug("get_data (%s) c%s -> %s (%s)" % (request.query["sample_set_id"], request.query["config"], fused_file, "downloaded" if download else "streamed"))
+        log.info("load sample", extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
 
         dumped_json = json.dumps(data, separators=(',',':'))
 
         if download:
-             return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.vars['filename'])
+             return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.query['filename'])
 
         return dumped_json
     else :
         res = {"success" : "false",
-               "message" : "get_data (%s) c%s : %s " % (request.vars["sample_set_id"], request.vars["config"], error)}
+               "message" : "get_data (%s) c%s : %s " % (request.query["sample_set_id"], request.query["config"], error)}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
     
@@ -478,10 +481,10 @@ def get_custom_data():
 
     samples = []
 
-    if not "custom" in request.vars :
+    if not "custom" in request.query :
         error += "no file selected, "
     else:
-        samples = request.vars['custom'] if type(request.vars['custom']) is not str else [request.vars['custom']]
+        samples = request.query['custom'] if type(request.query['custom']) is not str else [request.query['custom']]
         if not samples:
             error += "incorrect query, need at least one sample"
         else:
@@ -545,36 +548,36 @@ def get_custom_data():
 def get_analysis():
     error = ""
 
-    if "custom" in request.vars and "sample_set_id" not in request.vars :
+    if "custom" in request.query and "sample_set_id" not in request.query :
         res = {"success" : "true"}
         return json.dumps(res, separators=(',',':'))
 
-    if "patient" in request.vars :
-        request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
+    if "patient" in request.query :
+        request.query["sample_set_id"] = db.patient[request.query["patient"]].sample_set_id
 
     download = False
-    if "filename" in request.vars:
+    if "filename" in request.query:
         download = True
 
-    if "run" in request.vars :
-        request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
+    if "run" in request.query :
+        request.query["sample_set_id"] = db.run[request.query["run"]].sample_set_id
     
-    if not "sample_set_id" in request.vars or request.vars['sample_set_id'] is None:
+    if not "sample_set_id" in request.query or request.query['sample_set_id'] is None:
         error += "id sample_set file needed, "
-    if not auth.can_view_sample_set(request.vars["sample_set_id"]):
-        error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
+    if not auth.can_view_sample_set(request.query["sample_set_id"]):
+        error += "you do not have permission to consult this sample_set ("+str(request.query["sample_set_id"])+")"
     
     if error == "" :
         
         ## récupération des infos se trouvant dans le fichier .analysis
-        analysis_data = get_analysis_data(request.vars['sample_set_id'])
-        #analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
+        analysis_data = get_analysis_data(request.query['sample_set_id'])
+        #analysis_data["info_patient"] = db.patient[request.query["patient"]].info
         dumped_json = json.dumps(analysis_data, separators=(',',':'))
 
-        log.info("load analysis", extra={'user_id': auth.user.id, 'record_id': request.vars['sample_set_id'], 'table_name': 'sample_set'})
+        log.info("load analysis", extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
 
         if download:
-            return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.vars['filename'])
+            return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.query['filename'])
 
         return dumped_json
 
@@ -592,20 +595,20 @@ def get_analysis():
 def save_analysis():
     error = ""
 
-    if "patient" in request.vars :
-        request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
+    if "patient" in request.query :
+        request.query["sample_set_id"] = db.patient[request.query["patient"]].sample_set_id
 
-    if "run" in request.vars :
-        request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
+    if "run" in request.query :
+        request.query["sample_set_id"] = db.run[request.query["run"]].sample_set_id
 
-    if not auth.can_save_sample_set(request.vars['sample_set_id']) :
+    if not auth.can_save_sample_set(request.query['sample_set_id']) :
         error += "you do not have permission to save changes on this sample set"
 
     if error == "" :
-        f = request.vars['fileToUpload']
+        f = request.query['fileToUpload']
         ts = time.time()
         
-        sample_set_id = request.vars['sample_set_id']
+        sample_set_id = request.query['sample_set_id']
         
         analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
                                               sample_set_id = sample_set_id,
@@ -613,16 +616,16 @@ def save_analysis():
                                               )
 
         sample_type = db.sample_set[sample_set_id].sample_type
-        if (request.vars['info'] is not None):
+        if (request.query['info'] is not None):
             if (sample_type == defs.SET_TYPE_PATIENT) :
-                db(db.patient.sample_set_id == sample_set_id).update(info = request.vars['info']);
+                db(db.patient.sample_set_id == sample_set_id).update(info = request.query['info']);
 
             if (sample_type == defs.SET_TYPE_RUN) :
-                db(db.run.sample_set_id == sample_set_id).update(info = request.vars['info']);
+                db(db.run.sample_set_id == sample_set_id).update(info = request.query['info']);
 
-        if (request.vars['samples_id'] is not None and request.vars['samples_info'] is not None):
-            ids = request.vars['samples_id'].split(',')
-            infos = request.vars['samples_info'].split(',')
+        if (request.query['samples_id'] is not None and request.query['samples_info'] is not None):
+            ids = request.query['samples_id'].split(',')
+            infos = request.query['samples_info'].split(',')
         
         
             # TODO find way to remove loop ?
@@ -630,13 +633,13 @@ def save_analysis():
                 if(len(ids[i]) > 0):
                     db(db.sequence_file.id == int(ids[i])).update(info = infos[i])
 
-        #patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
+        #patient_name = db.patient[request.query['patient']].first_name + " " + db.patient[request.query['patient']].last_name
 
         res = {"success" : "true",
                "message" : "(%s): analysis saved" % (sample_set_id)}
-        log.info(res, extra={'user_id': auth.user.id})
+        log.info(res, extra={'user_id': auth.user_id})
 
-        log.info("save analysis", extra={'user_id': auth.user.id, 'record_id': sample_set_id, 'table_name': 'sample_set'})
+        log.info("save analysis", extra={'user_id': auth.user_id, 'record_id': sample_set_id, 'table_name': 'sample_set'})
         return json.dumps(res, separators=(',',':'))
     else :
         res = {"success" : "false",
@@ -653,10 +656,10 @@ def error():
     adapted from http://www.web2pyslices.com/slice/show/1529/custom-error-routing
     """
 
-    code = request.vars.code
-    request_url = request.vars.request_url
-    requested_uri = request.vars.requested_uri
-    ticket = request.vars.ticket
+    code = request.query.code
+    request_url = request.query.request_url
+    requested_uri = request.query.requested_uri
+    ticket = request.query.ticket
     response.status = int(code)
 
     assert(response.status == 500 and request_url != request.url) # avoid infinite loop
@@ -712,9 +715,9 @@ def user(path=None):
 
             # Appartenance to the public group
             group_id = db(db.auth_group.role == 'public').select()[0].id
-            db.auth_membership.insert(user_id = auth.user.id, group_id = group_id)
+            db.auth_membership.insert(user_id = auth.user_id, group_id = group_id)
 
-            log.admin('User %s <%s> registered, group %s' % (auth.user.id, auth.user.email, auth.user_group()))
+            log.admin('User %s <%s> registered, group %s' % (auth.user_id, auth.user.email, auth.user_group()))
 
             #restore admin session after register
             session.auth = admin_auth
@@ -737,11 +740,11 @@ def user(path=None):
 def impersonate() :
     if auth.is_impersonating() :
         stop_impersonate()
-    if request.vars["id"] != 0 :
-        log.debug({"success" : "true", "message" : "impersonate >> %s" % request.vars["id"]})
-        auth.impersonate(request.vars["id"]) 
+    if request.query["id"] != 0 :
+        log.debug({"success" : "true", "message" : "impersonate >> %s" % request.query["id"]})
+        auth.impersonate(request.query["id"]) 
         log.debug({"success" : "true", "message" : "impersonated"})
-    if not 'admin' in request.vars['next']:
+    if not 'admin' in request.query['next']:
         res = {"redirect": "reload"}
     else:
         res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
@@ -752,7 +755,7 @@ def stop_impersonate() :
         log.debug({"success" : "true", "message" : "impersonate << stop"})
         auth.impersonate(0) 
         # force clean login (default impersonate don't restore everything :/ )
-        auth.login_user(db.auth_user(auth.user.id))
+        auth.login_user(db.auth_user(auth.user_id))
 
     res = {"redirect" : "reload"}
     return json.dumps(res, separators=(',',':'))
@@ -766,12 +769,12 @@ def download():
     allows downloading of uploaded files
     http://..../[app]/default/download/[filename]
     """
-    return response.download(request, db, download_filename=request.vars.filename)
+    return response.download(request, db, download_filename=request.query.filename)
 
 def download_data():
 
     file = "test"
-    return response.stream( file, chunk_size=4096, filename=request.vars.filename)
+    return response.stream( file, chunk_size=4096, filename=request.query.filename)
 
 
 

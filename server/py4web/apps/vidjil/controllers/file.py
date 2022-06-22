@@ -3,7 +3,8 @@ import base64
 import datetime
 from sys import modules
 
-from apps.vidjil.modules import jstree
+
+#from apps.vidjil.modules import jstree
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules import tag
