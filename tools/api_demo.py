@@ -19,6 +19,11 @@ LOCAL_SSL = "localhost-chain.pem"
 LOCAL_USER = "demo@vidjil.org"
 LOCAL_PASSWORD = "demo"
 
+parser = argparse.ArgumentParser(description= 'Vidjil API Demo')
+parser.add_argument('--public', '-p', action='store_true', help='Demo on public server')
+parser.add_argument('--local',  '-l', action='store_true', help='Demo on local server (require a server)')
+
+
 def demoReadFromServer(server, ssl, user, password):
     """Demo on the public server (only read)"""
 
@@ -119,7 +124,15 @@ def demoWriteRunOnServer(server, ssl, user, password):
 
 
 if  __name__ =='__main__':
-
     """Examples using Vidjil API """
-    demoReadFromServer(PUBLIC_SERVER, PUBLIC_SSL, PUBLIC_USER, PUBLIC_PASSWORD)
-    demoWriteRunOnServer(LOCAL_SERVER, LOCAL_SSL, LOCAL_USER, LOCAL_PASSWORD)
+
+    args = parser.parse_args()
+
+    if not args.public and not args.local:
+        parser.print_help()
+
+    if args.public:
+        demoReadFromServer(PUBLIC_SERVER, PUBLIC_SSL, PUBLIC_USER, PUBLIC_PASSWORD)
+
+    if args.local:
+        demoWriteRunOnServer(LOCAL_SERVER, LOCAL_SSL, LOCAL_USER, LOCAL_PASSWORD)
