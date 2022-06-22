@@ -2,6 +2,8 @@
 import base64
 import datetime
 from sys import modules
+
+from apps.vidjil.modules import jstree
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules import tag
@@ -9,7 +11,7 @@ from ..modules.stats_decorator import *
 from ..modules.sampleSet import SampleSet, get_set_group
 from ..modules.sampleSets import SampleSets
 from ..modules.sampleSetList import SampleSetList, filter_by_tags
-from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets
+from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets, get_sequence_file_config_ids
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
@@ -230,7 +232,7 @@ def form():
 
     # edit file
     elif 'file_id' in request.query and request.query['file_id'] is not None:
-        if not auth.can_modify_file(request.query['file_id']):
+        if not auth.can_modify_file(int(request.query['file_id'])):
             return error_message("you need admin permission to edit files")
 
         sample_set_list = db(
@@ -397,29 +399,29 @@ def submit():
         return error_message("add_form() failed")
 
 
-@action("/vidjil/file/up", method=["POST", "GET"])
+@action("/vidjil/file/up", method=["POST", "GET", "OPTIONS"])
 @action.uses(db, auth.user)
 def upload(): 
     #session.forget(response)
     mes = ""
     error = ""
 
-    if not 'id' in request.query:
+    if not 'id' in request.params:
         error += "missing id"
-    elif db.sequence_file[request.query["id"]] is None:
+    elif db.sequence_file[request.params["id"]] is None:
         error += "no sequence file with this id"
 
     if not error:
-        mes += " file {%s} " % (request.query['id'])
+        mes += " file {%s} " % (request.params['id'])
         res = {"message": mes + "processing uploaded file"}
         log.debug(res)
-        if request.query.file != None :
-            f = request.query.file
+        if "file" in request.files:
+            f = request.files['file'] 
             try:
-                if request.query["file_number"] == "1" :
-                    db.sequence_file[request.query["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
+                if request.params["file_number"] == "1" :
+                    db.sequence_file[request.params["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
                 else :
-                    db.sequence_file[request.query["id"]] = dict(data_file2 = db.sequence_file.data_file.store(f.file, f.filename))
+                    db.sequence_file[request.params["id"]] = dict(data_file2 = db.sequence_file.data_file.store(f.file, f.filename))
                 mes += "upload finished (%s)" % (f.filename)
             except IOError as e:
                 if str(e).find("File name too long") > -1:
@@ -428,32 +430,33 @@ def upload():
                     error += "System error during processing of uploaded file."
                     log.error(str(e))
         
-        data_file = db.sequence_file[request.query["id"]].data_file
-        data_file2 = db.sequence_file[request.query["id"]].data_file2
+        data_file = db.sequence_file[request.params["id"]].data_file
+        data_file2 = db.sequence_file[request.params["id"]].data_file2
         
-        if request.query["file_number"] == "1" and len(error) == 0 and data_file is None:
+        if request.params["file_number"] == "1" and len(error) == 0 and data_file is None:
             error += "no data file"
-        if request.query["file_number"] == "2" and len(error) == 0 and data_file2 is None:
+        if request.params["file_number"] == "2" and len(error) == 0 and data_file2 is None:
             error += "no data file"
 
-        db.sequence_file[request.query["id"]] = dict(pre_process_flag=None,
+        db.sequence_file[request.params["id"]] = dict(pre_process_flag=None,
                                                     pre_process_result=None)
-        if data_file is not None and data_file2 is not None and request.query['pre_process'] is not None and request.query['pre_process'] != '0':
-            db.sequence_file[request.query["id"]] = dict(pre_process_flag = "WAIT")
-            old_task_id = db.sequence_file[request.query["id"]].pre_process_scheduler_task_id
-            if db.scheduler_task[old_task_id] != None:
-                scheduler.stop_task(old_task_id)
-                db(db.scheduler_task.id == old_task_id).delete()
-                db.commit()
-            schedule_pre_process(int(request.query['id']), int(request.query['pre_process']))
-            mes += " | p%s start pre_process %s " % (request.query['pre_process'], request.query['id'] + "-" +request.query['pre_process'])
+        #TODO PRE-PROCESS
+        #if data_file is not None and data_file2 is not None and request.query['pre_process'] is not None and request.query['pre_process'] != '0':
+        #    db.sequence_file[request.params["id"]] = dict(pre_process_flag = "WAIT")
+        #    old_task_id = db.sequence_file[request.query["id"]].pre_process_scheduler_task_id
+        #    if db.scheduler_task[old_task_id] != None:
+        #        scheduler.stop_task(old_task_id)
+        #        db(db.scheduler_task.id == old_task_id).delete()
+        #        db.commit()
+        #    schedule_pre_process(int(request.query['id']), int(request.query['pre_process']))
+        #    mes += " | p%s start pre_process %s " % (request.query['pre_process'], request.query['id'] + "-" +request.query['pre_process'])
 
         if data_file is not None :
             seq_file = defs.DIR_SEQUENCES + data_file
             # Compute and store file size
             size = os.path.getsize(seq_file)
             mes += ' (%s)' % vidjil_utils.format_size(size)
-            db.sequence_file[request.query["id"]] = dict(size_file = size)
+            db.sequence_file[request.params["id"]] = dict(size_file = size)
 
         if data_file2 is not None :
             seq_file2 = defs.DIR_SEQUENCES + data_file2
@@ -470,7 +473,8 @@ def upload():
         log.debug("#TODO log all relevant info to database")
     return json.dumps(res, separators=(',',':'))
   
-
+@action("/vidjil/file/confirm", method=["POST", "GET"])
+@action.uses("file/confirm.html", db, auth.user)
 def confirm():
     '''
     Request parameters:
@@ -484,10 +488,12 @@ def confirm():
         return error_message("The requested file doesn't exist")
     if sequence_file.data_file == None:
         delete_results = True
-    if auth.can_modify_sample_set(request.query['redirect_sample_set_id']):
+    if auth.can_modify_sample_set(int(request.query['redirect_sample_set_id'])):
         return dict(message=T('choose what you would like to delete'),
                     delete_only_sequence = delete_only_sequence,
-                    delete_results = delete_results)
+                    delete_results = delete_results,
+                    auth=auth,
+                    db=db)
     else:
         return error_message("you need admin permission to delete this file")
 
@@ -502,6 +508,9 @@ def delete_sequence_file(seq_id):
     else:
         return error_message('you need admin permission to delete this file')
 
+
+@action("/vidjil/file/delete", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def delete():
     '''
     Called (via request) with:
@@ -516,7 +525,7 @@ def delete():
         if len(associated_elements) > 0:
             associated_id = associated_elements[0].id
 
-    if auth.can_modify_file(request.query["id"]):
+    if auth.can_modify_file(int(request.query["id"])):
         if not(delete_results):
             delete_sequence_file(request.query['id'])
         else:
@@ -526,7 +535,10 @@ def delete():
             db(db.sequence_file.id == request.query["id"]).delete()
             set_memberships = db(db.sample_set_membership.sample_set_id.belongs(sample_set_ids)).select()
             non_empty_set_ids = [r.sample_set_id for r in set_memberships]
-            schedule_fuse(non_empty_set_ids, config_ids)
+            #############################
+            # TODO
+            ##########################
+            #schedule_fuse(non_empty_set_ids, config_ids)
 
         res = {"redirect": "sample_set/index",
                "args" : { "id" : request.query["redirect_sample_set_id"]},
@@ -535,7 +547,7 @@ def delete():
             log.info(res, extra={'user_id': auth.user_id, 'record_id': associated_id, 'table_name': sample_set.sample_type})
         else:
             log.info(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
     else:
         return error_message("you need admin permission to delete this file")
 
@@ -546,7 +558,7 @@ def sequencer_list():
             sequencer_list.append(row.sequencer)
             
     res = {"sequencer": sequencer_list}
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 def pcr_list():
     pcr_list = []
@@ -555,7 +567,7 @@ def pcr_list():
             pcr_list.append(row.pcr)
             
     res = {"pcr": pcr_list}
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 def producer_list():
     producer_list = []
@@ -564,7 +576,17 @@ def producer_list():
             producer_list.append(row.producer)
             
     res = {"producer": producer_list}
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
+
+
+
+
+
+
+
+
+
+
 
 def restart_pre_process():
     if "sequence_file_id" not in request.query or request.query['sequence_file_id'] is None:
@@ -579,7 +601,7 @@ def restart_pre_process():
     log.debug("restart pre process", extra={'user_id': auth.user_id,
                 'record_id': sequence_file.id,
                 'table_name': "sequence_file"})
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 def match_filetype(filename, extension):
     ext_len = len(extension)
@@ -605,4 +627,4 @@ def filesystem():
                 if correct_type: json_node['icon'] = 'jstree-file'
                 json_node['li_attr']['title'] = f
                 json.append(json_node)
-    return gluon.contrib.simplejson.dumps(json, separators=(',',':'))
+    return json.dumps(json, separators=(',',':'))
