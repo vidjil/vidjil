@@ -2,7 +2,7 @@
 This file defines the database models
 """
 import datetime
-#import defs
+import apps.vidjil.defs as defs
 
 from .common import db, Field, T, auth
 from pydal.validators import *
@@ -125,13 +125,13 @@ db.define_table('sequence_file',
                 Field('pre_process_flag', 'text'),
                 Field('pre_process_scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', 
-                      uploadfolder="upload/uploads/",
+                      uploadfolder=defs.DIR_SEQUENCES,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE),
                 Field('data_file2', 'upload', 
-                      uploadfolder="upload/uploads/",
+                      uploadfolder=defs.DIR_SEQUENCES,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE),
                 Field('pre_process_file', 'upload',
-                      uploadfolder="result/results/",
+                      uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 
