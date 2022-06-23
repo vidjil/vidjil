@@ -114,15 +114,21 @@ def demoWriteRunOnServer(server, ssl, user, password):
     vidjil.login(user, password)
 
     # Create patient/run/set
-    vidjil.createPatient("Jane", "Austen",
+    patient_data = vidjil.createPatient("Jane", "Austen",
                          info="Patient from Winchester hospital, #LAL-B")
-    vidjil.createRun("Run 2022-072",
+    run_data = vidjil.createRun("Run 2022-072",
                      run_date="2022-04-01")
 
     set_data = vidjil.createSet("Set for API tests",
                                 info="Libraries with EuroClonality-NGS 2019 primers")
-    set_id = set_data["args"]["id"]
-    print( f"==> new set {set_id}")
+
+    setid_patient = patient_data["args"]["id"]
+    setid_run = run_data["args"]["id"]
+    setid_set = set_data["args"]["id"]
+
+    print( f"setid_patient: {setid_patient}")
+    print( f"setid_run: {setid_run}")
+    print( f"setid_set: {setid_set}")
 
     # Show newly created set
     set_new = vidjil.getSetById(set_id, vidjil.SET)
@@ -130,14 +136,14 @@ def demoWriteRunOnServer(server, ssl, user, password):
     samples   = vidjil.getSamplesOfSet(set_id)
     infoSamples("getSamplesOfSet(%s)" % set_id, samples["query"])
 
-
     # set_ids filed take value in a specific format: :$set+($id)
     # With :
     #   $set can be 's' (generic set), 'p' (patient), or 'r' (run)
     #   $id is the id of the set 
+    #   Multiple field should be separated with a '|' as above
     sample = vidjil.createSample(source="computer",
                 pre_process= "0",
-                set_ids= ":s+(%s)" % set_id ,
+                set_ids= f":s+({setid_patient})|:r+({setid_run})|:p+({setid_set})",
                 file_filename= "../demo/Demo-X5.fa",
                 file_filename2= "",
                 file_id= "",
