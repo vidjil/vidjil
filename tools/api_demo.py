@@ -30,19 +30,21 @@ def printKeys(d):
 def infoSets(info, sets, verbose=False):
     print("# %s ==> %s sets" % (info, len(sets)))
     for s in sets:
-        print("  ", s['id'], s['first_name'], s['last_name'])
         if verbose:
             printKeys(s)
-
+        print("  ", s['id'], end=' ')
+        if 'first_name' in s: # Patient
+            print(s['first_name'], s['last_name'])
+        else: # Run, set
+            print(s['info'])
     print()
 
 def infoSamples(info, samples, verbose=False):
     print("# %s ==> %s samples" % (info, len(samples)))
     for s in samples:
-        print("  ", s['results_file']['status'], s['results_file']['data_file'], s['sequence_file']['filename'], s['sequence_file']['info'])
         if verbose:
             printKeys(s)
-
+        print("  ", s['results_file']['status'], s['results_file']['data_file'], s['sequence_file']['filename'], s['sequence_file']['info'])
     print()
 
 def demoReadFromServer(server, ssl, user, password):
