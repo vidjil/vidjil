@@ -77,7 +77,16 @@ class Vidjil:
         self.ssl = ssl
         print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
         self.session = requests.Session()
+
         cookie = requests.cookies.RequestsCookieJar()
+        try:
+            response = self.session.get(self.url_server, verify=self.ssl)
+        except requests.exceptions.SSLError:
+            print( f"{self.url_server} has INVALID SSL certificate!")
+            print("Please use api_certificate script to download locally certificate and fill certificate variables in your script.")
+            print(f"Launch following command:\n\tbash api_certificate.bash {self.url_server.split('/')[2]} certifiacte_{self.url_server.split('/')[2]}.pem")
+            exit()
+
         if os.path.exists('cookies'):
             cookie.load(ignore_discard=True, ignore_expires=True)
         self.session.cookies = cookie
@@ -98,6 +107,7 @@ class Vidjil:
         print()
         print('### %s (%s)' % (self.url_server, email))
         response = self.session.get(self.url_server + '/default/user/login', verify=self.ssl)
+
         if not "auth_user_email__row" in str(response.content):
             raise Exception( "Login; server don't return a correct login form.\nPlease verify your url and certificate parameters.")
 
