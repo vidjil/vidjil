@@ -121,8 +121,15 @@ def demoWriteRunOnServer(server, ssl, user, password):
 
     set_data = vidjil.createSet("Set for API tests",
                                 info="Libraries with EuroClonality-NGS 2019 primers")
-    setid_set = set_data["args"]["id"]
-    print( f"setid_set: {setid_set}")
+    set_id = set_data["args"]["id"]
+    print( f"==> new set {set_id}")
+
+    # Show newly created set
+    set_new = vidjil.getSetById(set_id, vidjil.SET)
+    infoSets("Set %s" % set_id, set_new, verbose=True)
+    samples   = vidjil.getSamplesOfSet(set_id)
+    infoSamples("getSamplesOfSet(%s)" % set_id, samples["query"])
+
 
     # set_ids filed take value in a specific format: :$set+($id)
     # With :
@@ -130,23 +137,27 @@ def demoWriteRunOnServer(server, ssl, user, password):
     #   $id is the id of the set 
     sample = vidjil.createSample(source="computer",
                 pre_process= "0",
-                set_ids= ":s+(%s)" % setid_set ,
+                set_ids= ":s+(%s)" % set_id ,
                 file_filename= "../demo/Demo-X5.fa",
                 file_filename2= "",
                 file_id= "",
                 file_sampling_date= "2016-01-13",
-                file_info= "Diagnosis #ALL" ,
+                file_info= "Uploaded by API" ,
                 file_set_ids= "",
-                sample_set_id= setid_set,
+                sample_set_id= set_id,
                 # can include multiple set_ids as a concatenation of string
                 sample_type= "set")
 
     file_id  = sample["file_ids"][0]  ## Uploaded file
-    print( f"Sample:\n{sample}file_id: {file_id}")
+    print( f"==> new file {file_id}")
+
+    # Show again the set, now with one sample
+    samples   = vidjil.getSamplesOfSet(set_id)
+    infoSamples("getSamplesOfSet(%s)" % set_id, samples["query"])
 
     ### Get status of sample of this set
     config_id = 2 ## multi+inc+xxx
-    analysis  = vidjil.launchAnalysisOnSample(setid_set, file_id, config_id)
+    analysis  = vidjil.launchAnalysisOnSample(set_id, file_id, config_id)
     print(analysis)
 
 
