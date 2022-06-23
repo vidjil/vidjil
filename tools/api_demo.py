@@ -91,8 +91,7 @@ def demoReadFromServer(server, ssl, user, password):
             filename = DOWNLOAD_PATH + "set%s_sequence%s_config%s.vidjil" % (sample["sample_set_membership"]["sample_set_id"],
                                                                              sample["sample_set_membership"]["sequence_file_id"],
                                                                              config_id)
-            # We also rename the sample in file, under original_names field, to reflet real original name.
-            # If don't, the field we be fill with hashed filename as store in the server.
+            # download the file to 'filename', while properly handling 'original_names' field in the .vidjil
             vidjil.download(sample["results_file"]["data_file"],
                             filename,
                             sample["sequence_file"]["data_file"],

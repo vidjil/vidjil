@@ -403,30 +403,30 @@ class Vidjil:
             string+= "%s=%s&" % (key, data[key])
         return string
 
-    def download(self, filepath:str, filename:str, server_name:str=None, original_names:str=None):
-        """Download a result file by is name given on the server storage
-        A speficic name can be given to the downloaded file
-        if server_name and original_names are both setted, replace inside the file the name of the file under original_names filed
+    def download(self, server_path:str, filename:str, replace_from:str=None, replace_to:str=None):
+        """Download a result file from the server.
+        When replace_from and replace_to are both defined, 
+        replace that inside the downloaded file.
 
         Args:
-            filepath (str): filepath is the name of the file as present in the server storage
-            filename (str): filename is the output filename to set to locally store
-            server_name (str, optional): Original filename uploaded on the server before hashing for storage. Give for replacing purpose. Defaults to None.
-            original_names (str, optional): Filename present in the analysis under original_names (so as hashed by server) for replacing purpose. Defaults to None.
+            server_path (str): path/name of the file on the server
+            filename (str): name for the file 
+            replace_from (str, optional): Original filename (before upload to the server and hashing). Give for replacing purpose. Defaults to None.
+            replace_to (str, optional): Filename present in the analysis under original_names (so as hashed by server) for replacing purpose. Defaults to None.
         """
-        url = "%s/default/download/%s?filename=%s" % (self.url_server, filepath, filename)
+        url = "%s/default/download/%s?filename=%s" % (self.url_server, server_path, filename)
         print( "==> %s " % filename, end='')
         sys.stdout.flush()
 
         reponse = self.session.get(url, verify=self.ssl)
         # TODO: add verification step if same filename is already present
-        if os.path.isfile(filepath+"/"+filename):
+        if os.path.isfile(server_path+"/"+filename):
             raise Exception('download', "A file with same name already exist")
         open(filename, 'wb').write(reponse.content)
 
         # Clean file names
-        if server_name and original_names:
-            cmd = "sed -i 's/%s/%s/g' %s" % (server_name, original_names, filename)
+        if replace_from and replace_to:
+            cmd = "sed -i 's/%s/%s/g' %s" % (replace_from, replace_to, filename)
             os.system( cmd )
         os.system( "sed -i 's/\\/mnt\\/upload\\/uploads\\///g' %s" % (filename) )
         for pattern in ["\\.fastq.gz", "\\.fq.gz", "\\.fasta", "\\.fastq", "\\.fa"]:
