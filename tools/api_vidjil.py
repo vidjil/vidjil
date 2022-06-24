@@ -161,7 +161,7 @@ class Vidjil:
             print( url )
             print( response.content)
             print(e)
-            exit()
+            raise e
 
         message  = False
         if response.status_code not in [200, 404]:

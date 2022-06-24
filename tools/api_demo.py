@@ -23,6 +23,7 @@ LOCAL_USER = "demo@vidjil.org"
 LOCAL_PASSWORD = "demo"
 
 parser = argparse.ArgumentParser(description= 'Vidjil API Demo')
+parser.add_argument('--stress', '-s', action='store_true', help='Demo on public server, stress test (do not abuse)')
 parser.add_argument('--public', '-p', action='store_true', help='Demo on public server')
 parser.add_argument('--local',  '-l', action='store_true', help='Demo on local server (require a server)')
 
@@ -71,7 +72,7 @@ def infoSamples(info, samples, verbose=False):
     print()
     return
 
-def demoReadFromServer(server, ssl, user, password):
+def demoReadFromServer(server, ssl, user, password, only_fast_tests=False):
     """Demo on the public server (only read)"""
 
     ### Login to a Vidjil server
@@ -109,6 +110,9 @@ def demoReadFromServer(server, ssl, user, password):
 
     samples   = vidjil.getSamplesOfSet(sample_set_id, config_id)
     infoSamples("getSamplesOfSet(%s, %d)" % (sample_set_id, config_id), samples["query"])
+
+    if only_fast_tests:
+        return
 
     # download result file from the first two samples if completed
     for sample in samples["query"][:2]:
@@ -198,6 +202,17 @@ if  __name__ =='__main__':
 
     if not args.public and not args.local:
         parser.print_help()
+
+    if args.stress:
+        failures = 0
+        total = 20
+        for i in range(total):
+            try:
+                demoReadFromServer(PUBLIC_SERVER, PUBLIC_SSL, PUBLIC_USER, PUBLIC_PASSWORD,
+                                   only_fast_tests = True)
+            except Exception:
+                failures += 1
+        print(f'==> {failures}/{total} failures')
 
     if args.public:
         demoReadFromServer(PUBLIC_SERVER, PUBLIC_SSL, PUBLIC_USER, PUBLIC_PASSWORD)
