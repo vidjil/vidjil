@@ -137,11 +137,11 @@ def demoWriteRunOnServer(server, ssl, user, password):
     samples   = vidjil.getSamplesOfSet(setid_generic)
     infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
 
-    # set_ids filed take value in a specific format: :$set+($id)
+    # set_ids filed take value in a specific format: ':$set+($id)'
+    # Multiple field should be separated with a '|' as above
     # With :
     #   $set can be 's' (generic set), 'p' (patient), or 'r' (run)
     #   $id is the id of the set 
-    #   Multiple field should be separated with a '|' as above
     sample = vidjil.createSample(source="computer",
                 pre_process= "0",
                 set_ids= f":s+({setid_patient})|:r+({setid_run})|:p+({setid_generic})",
