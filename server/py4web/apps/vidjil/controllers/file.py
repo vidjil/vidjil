@@ -16,6 +16,7 @@ from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets, g
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
+from ..tasks import schedule_pre_process
 from ..user_groups import get_upload_group_ids, get_involved_groups
 from ..VidjilAuth import VidjilAuth
 from io import StringIO
@@ -33,7 +34,7 @@ import math
 
 ACCESS_DENIED = "access denied"
 
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
 
 
 ###########################
@@ -439,25 +440,25 @@ def upload():
         if request.params["file_number"] == "2" and len(error) == 0 and data_file2 is None:
             error += "no data file"
 
-        db.sequence_file[request.params["id"]] = dict(pre_process_flag=None,
+        db.sequence_file[request.params["id"]].update(pre_process_flag=None,
                                                     pre_process_result=None)
-        #TODO PRE-PROCESS
-        #if data_file is not None and data_file2 is not None and request.query['pre_process'] is not None and request.query['pre_process'] != '0':
-        #    db.sequence_file[request.params["id"]] = dict(pre_process_flag = "WAIT")
-        #    old_task_id = db.sequence_file[request.query["id"]].pre_process_scheduler_task_id
-        #    if db.scheduler_task[old_task_id] != None:
-        #        scheduler.stop_task(old_task_id)
-        #        db(db.scheduler_task.id == old_task_id).delete()
-        #        db.commit()
-        #    schedule_pre_process(int(request.query['id']), int(request.query['pre_process']))
-        #    mes += " | p%s start pre_process %s " % (request.query['pre_process'], request.query['id'] + "-" +request.query['pre_process'])
+
+        if data_file is not None and data_file2 is not None and 'pre_process' in request.params and request.params['pre_process'] != '0':
+            db.sequence_file[request.params["id"]].update(pre_process_flag = "WAIT")
+            old_task_id = db.sequence_file[request.params["id"]].pre_process_scheduler_task_id
+            if db.scheduler_task[old_task_id] != None:
+                scheduler.stop_task(old_task_id)
+                db(db.scheduler_task.id == old_task_id).delete()
+                db.commit()
+            schedule_pre_process(int(request.params['id']), int(request.params['pre_process']))
+            mes += " | p%s start pre_process %s " % (request.params['pre_process'], request.params['id'] + "-" +request.params['pre_process'])
 
         if data_file is not None :
             seq_file = defs.DIR_SEQUENCES + data_file
             # Compute and store file size
             size = os.path.getsize(seq_file)
             mes += ' (%s)' % vidjil_utils.format_size(size)
-            db.sequence_file[request.params["id"]] = dict(size_file = size)
+            db.sequence_file[request.params["id"]].update(size_file = size)
 
         if data_file2 is not None :
             seq_file2 = defs.DIR_SEQUENCES + data_file2
@@ -555,7 +556,7 @@ def delete():
 def sequencer_list():
     sequencer_list = []
     for row in db(db.sequence_file.sequencer != None).select(db.sequence_file.sequencer, distinct=True):
-        if row.sequencer is not "null" :
+        if row.sequencer != "null" :
             sequencer_list.append(row.sequencer)
             
     res = {"sequencer": sequencer_list}
@@ -564,7 +565,7 @@ def sequencer_list():
 def pcr_list():
     pcr_list = []
     for row in db(db.sequence_file.pcr != None).select(db.sequence_file.pcr, distinct=True):
-        if row.pcr is not "null" :
+        if row.pcr != "null" :
             pcr_list.append(row.pcr)
             
     res = {"pcr": pcr_list}
@@ -573,7 +574,7 @@ def pcr_list():
 def producer_list():
     producer_list = []
     for row in db(db.sequence_file.producer != None).select(db.sequence_file.producer, distinct=True):
-        if row.producer is not "null" :
+        if row.producer != "null" :
             producer_list.append(row.producer)
             
     res = {"producer": producer_list}
