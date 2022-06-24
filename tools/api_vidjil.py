@@ -83,7 +83,7 @@ class Vidjil:
             response = self.session.get(self.url_server, verify=self.ssl)
         except requests.exceptions.SSLError:
             print( f"{self.url_server} has INVALID SSL certificate!")
-            print("See api_certificate.bash.")
+            print("Please upgrade your system, and/or see api_certificate.bash, but this could lead to insecure calls.")
             exit()
 
         if os.path.exists('cookies'):
