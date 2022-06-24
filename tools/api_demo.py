@@ -40,18 +40,18 @@ def demoReadFromServer(server, ssl, user, password, only_fast_tests=False):
 
     ### Get a set from server by is id and set type
     sets_demo = vidjil.getSetById(sample_set_id, vidjil.PATIENT)
-    vidjil.infoSets("Set %s" % sample_set_id, sets_demo, verbose=True)
+    vidjil.infoSets("Set %s" % sample_set_id, sets_demo, set_type=vidjil.PATIENT, verbose=True)
     ### Get a list of all samples sets by set type (vjdjil.PATIENT, vidjil.RUN or vidjil.SET)
     # or a given filter value (see example under)
     sets_all = vidjil.getSets(set_type=vidjil.PATIENT)
     
     # The data is under samples["query"]
-    vidjil.infoSets("getSets(vidjil.PATIENT)", sets_all["query"])
+    vidjil.infoSets("getSets(vidjil.PATIENT)", sets_all["query"], set_type=vidjil.PATIENT)
 
     # You can also set a filter value that will be searched into various field of sets (name, info, ...)
     filter = "LIL-L3"
     sets_filtered = vidjil.getSets(set_type=vidjil.PATIENT, filter_val=filter)
-    vidjil.infoSets('getSets(vidjil.PATIENT, "%s")' % filter, sets_filtered["query"])
+    vidjil.infoSets('getSets(vidjil.PATIENT, "%s")' % filter, sets_filtered["query"], set_type=vidjil.PATIENT)
 
     ###################################################################
     ### Example 1: download results from a set for a configuration id.
@@ -115,9 +115,9 @@ def demoWriteRunOnServer(server, ssl, user, password):
 
     # Show newly created set
     set_new = vidjil.getSetById(setid_generic, vidjil.SET)
-    infoSets("Set %s" % setid_generic, set_new, verbose=True)
+    vidjil.infoSets("Set %s" % setid_generic, set_new, vidjil.SET, verbose=True)
     samples   = vidjil.getSamplesOfSet(setid_generic)
-    infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
+    vidjil.infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
 
     # set_ids filed take value in a specific format: ':$set+($id)'
     # Multiple field should be separated with a '|' as above
