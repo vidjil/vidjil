@@ -45,11 +45,17 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 
 ### Directory for program used in task.py
 ### relative path start from server/web2py
-DIR_VIDJIL = '/usr/share/vidjil/'
-DIR_FUSE = '../../tools'
-DIR_MIXCR = '/usr/bin'
+DIR_VIDJIL = '/usr/share/vidjil-algo/latest/'
+DIR_VIDJIL_NEXT = '/usr/share/vidjil-algo/next/'
+DIR_FUSE = '/home/duez/vidjil/tools/'
+DIR_MIXCR = '/usr/share/mixcr/'
 DIR_IGREC = '/usr/local/bin/'
 DIR_GERMLINE = '/usr/share/vidjil/germline'
+DIR_GERMLINE_NEXT = '/usr/share/vidjil/germline'
+DIR_PEAR = '/home/duez/tools/'
+DIR_FLASH2 = DIR_PEAR
+DIR_CLONEDB = '/usr/share/clonedb/'
+
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py
 FUSE_SERVER = 'fuse'

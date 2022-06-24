@@ -1,6 +1,6 @@
 
 import collections
-import defs
+import apps.vidjil.defs as defs
 import sys
 
 #### Utilities on dictionaries
