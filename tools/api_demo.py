@@ -25,8 +25,6 @@ parser.add_argument('--stress', '-s', action='store_true', help='Demo on public 
 parser.add_argument('--public', '-p', action='store_true', help='Demo on public server')
 parser.add_argument('--local',  '-l', action='store_true', help='Demo on local server (require a server)')
 
-def printKeys(d):
-    print("  ", "keys:", " ". join(d.keys()))
 
 
 def demoReadFromServer(server, ssl, user, password, only_fast_tests=False):

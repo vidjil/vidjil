@@ -601,6 +601,9 @@ def extractTags(string):
     TAGS += tags
     return tags
 
+def printKeys(d):
+    print("  ", "keys:", " ". join(d.keys()))
+
 
 if  __name__ =='__main__':
 
