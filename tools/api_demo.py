@@ -43,7 +43,7 @@ def infoSets(info, sets, verbose=False):
     print()
 
 def infoSamples(info, samples, verbose=False):
-    print(f"\n# {info} ==> {len(samples)} samples\n" )
+    print(f"\n# {info} ==> {len(samples['query'])} samples\n" )
     if not len(samples):
         return
     d = []
