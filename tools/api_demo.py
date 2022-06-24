@@ -109,7 +109,7 @@ def demoReadFromServer(server, ssl, user, password, only_fast_tests=False):
     # infoSets("Set %s" % sample_set_id, sampleset["query"])
 
     samples   = vidjil.getSamplesOfSet(sample_set_id, config_id)
-    infoSamples("getSamplesOfSet(%s, %d)" % (sample_set_id, config_id), samples["query"])
+    infoSamples("getSamplesOfSet(%s, %d)" % (sample_set_id, config_id), samples)
 
     if only_fast_tests:
         return
