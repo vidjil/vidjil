@@ -2,6 +2,8 @@
 from api_vidjil import Vidjil
 import argparse
 import os
+import pandas
+from tabulate import tabulate
 
 TAGS = []
 TAGS_UNDEFINED = []
@@ -40,12 +42,34 @@ def infoSets(info, sets, verbose=False):
     print()
 
 def infoSamples(info, samples, verbose=False):
-    print("# %s ==> %s samples" % (info, len(samples)))
-    for s in samples:
+    print(f"\n# {info} ==> {len(samples)} samples\n" )
+    if not len(samples):
+        return
+    d = []
+    for s in samples["query"]:
         if verbose:
             printKeys(s)
-        print("  ", s['results_file']['status'], s['results_file']['data_file'], s['sequence_file']['filename'], s['sequence_file']['info'])
+        sub_d = []
+        sub_d.append(s['sequence_file']['filename'])
+        sub_d.append(s['sequence_file']['info'])
+        ### preprocess
+        if s["sequence_file"]["pre_process_id"] != None:
+            sub_d.append(samples["pre_process_list"][str(s['sequence_file']['pre_process_id'])])
+            sub_d.append(s['sequence_file']['pre_process_flag'])
+        else:
+            sub_d.append("")
+            sub_d.append("")
+
+        ### Shared set
+        shared = ", ".join(map(lambda x : f" {x['title']} ({x['sample_type']} {x['id']})", s["list_share_set"]))
+        sub_d.append(shared)
+        d.append(sub_d)
+
+    headers=["filename", "informations", "pre process", "pre process status", "shared sets"]
+    df = pandas.DataFrame(d, columns=headers)
+    print(tabulate(df, showindex=False, headers=df.columns))
     print()
+    return
 
 def demoReadFromServer(server, ssl, user, password):
     """Demo on the public server (only read)"""
@@ -159,7 +183,7 @@ def demoWriteRunOnServer(server, ssl, user, password):
 
     # Show again the set, now with one sample
     samples   = vidjil.getSamplesOfSet(setid_generic)
-    infoSamples("getSamplesOfSet(%s)" % setid_generic, samples["query"])
+    infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
 
     ### Get status of sample of this set
     config_id = 2 ## multi+inc+xxx
