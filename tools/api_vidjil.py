@@ -522,19 +522,41 @@ class Vidjil:
             raise Exception('uploadSample', "Error in upload of sample")
         return
 
-    def infoSets(self, info, sets, verbose=False):
-        print("# %s ==> %s sets" % (info, len(sets)))
+
+    def infoSets(self, info: str, sets: dict, set_type: str, verbose=False):
+        print(f"# Sets {info}; {set_type} ==> {len(sets)} sets")
+        if not len(sets):
+            return
+        d = []
         for s in sets:
             if verbose:
                 printKeys(s)
-            print("  ", s['id'], end=' ')
-            if 'first_name' in s: # Patient
-                print(s['first_name'], s['last_name'])
-            else: # Run, set
-                print(s['info'])
+            sub_d = [s['sample_set_id']]
+            if set_type==self.PATIENT:
+                sub_d.append(f"{s['first_name']}, {s['last_name']}")
+                sub_d.append(s['birth'])
+                sub_d.append(s['file_count'])
+                sub_d.append(s['creator'])
+                sub_d.append(s['info'].replace("\r\n\r\n", "\n")) #.replace("\r", "; "))
+                headers=["id", "names", "birth", "files", "creator", "informations"]
+            elif set_type==self.SET:
+                sub_d.append(s['name'])
+                sub_d.append(s['file_count'])
+                sub_d.append(s['creator'])
+                sub_d.append(s['info'].replace("\r\n\r\n", "\n")) #.replace("\r", "; "))
+                headers=["id", "name", "files", "creator", "informations"]
+            elif set_type==self.RUN:
+                sub_d.append(s['name'])
+                sub_d.append(s['run_date'])
+                sub_d.append(s['file_count'])
+                sub_d.append(s['creator'])
+                sub_d.append(s['info'].replace("\r\n\r\n", "\n")) #.replace("\r", "; "))
+                headers=["id", "name", "date", "files", "creator", "informations"]
+            d.append(sub_d)
+        print(tabulate(d, showindex=False, headers=headers))
         print()
 
-    def infoSamples(self, info, samples, verbose=False):
+    def infoSamples(self, info: str, samples, verbose=False):
         print(f"\n# {info} ==> {len(samples['query'])} samples\n" )
         if not len(samples):
             return
@@ -562,8 +584,6 @@ class Vidjil:
         print(tabulate(d, showindex=False, headers=headers))
         print()
         return
-
-
 
 #########################
 ### Some utils functions
