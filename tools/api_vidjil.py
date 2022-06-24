@@ -19,7 +19,7 @@ from collections import defaultdict
 # REmove warning if no SSL vérification
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
+from tabulate import tabulate
 
 TAGS = []
 TAGS_UNDEFINED = []
@@ -520,6 +520,47 @@ class Vidjil:
         response = self.session.post(new_url, data = data, files={'file':(filename, open(filepath+"/"+filename,'rb'))}, verify=self.ssl)
         if response.status_code != 200:
             raise Exception('uploadSample', "Error in upload of sample")
+        return
+
+    def infoSets(self, info, sets, verbose=False):
+        print("# %s ==> %s sets" % (info, len(sets)))
+        for s in sets:
+            if verbose:
+                printKeys(s)
+            print("  ", s['id'], end=' ')
+            if 'first_name' in s: # Patient
+                print(s['first_name'], s['last_name'])
+            else: # Run, set
+                print(s['info'])
+        print()
+
+    def infoSamples(self, info, samples, verbose=False):
+        print(f"\n# {info} ==> {len(samples['query'])} samples\n" )
+        if not len(samples):
+            return
+        d = []
+        for s in samples["query"]:
+            if verbose:
+                printKeys(s)
+            sub_d = []
+            sub_d.append(s['sequence_file']['filename'])
+            sub_d.append(s['sequence_file']['info'])
+            ### preprocess
+            if s["sequence_file"]["pre_process_id"] != None:
+                sub_d.append(samples["pre_process_list"][str(s['sequence_file']['pre_process_id'])])
+                sub_d.append(s['sequence_file']['pre_process_flag'])
+            else:
+                sub_d.append("")
+                sub_d.append("")
+
+            ### Shared set
+            shared = ", ".join(map(lambda x : f" {x['title']} ({x['sample_type']} {x['id']})", s["list_share_set"]))
+            sub_d.append(shared)
+            d.append(sub_d)
+
+        headers=["filename", "informations", "pre process", "pre process status", "shared sets"]
+        print(tabulate(d, showindex=False, headers=headers))
+        print()
         return
 
 

@@ -2,8 +2,6 @@
 from api_vidjil import Vidjil
 import argparse
 import os
-import pandas
-from tabulate import tabulate
 
 TAGS = []
 TAGS_UNDEFINED = []
@@ -30,47 +28,6 @@ parser.add_argument('--local',  '-l', action='store_true', help='Demo on local s
 def printKeys(d):
     print("  ", "keys:", " ". join(d.keys()))
 
-def infoSets(info, sets, verbose=False):
-    print("# %s ==> %s sets" % (info, len(sets)))
-    for s in sets:
-        if verbose:
-            printKeys(s)
-        print("  ", s['id'], end=' ')
-        if 'first_name' in s: # Patient
-            print(s['first_name'], s['last_name'])
-        else: # Run, set
-            print(s['info'])
-    print()
-
-def infoSamples(info, samples, verbose=False):
-    print(f"\n# {info} ==> {len(samples['query'])} samples\n" )
-    if not len(samples):
-        return
-    d = []
-    for s in samples["query"]:
-        if verbose:
-            printKeys(s)
-        sub_d = []
-        sub_d.append(s['sequence_file']['filename'])
-        sub_d.append(s['sequence_file']['info'])
-        ### preprocess
-        if s["sequence_file"]["pre_process_id"] != None:
-            sub_d.append(samples["pre_process_list"][str(s['sequence_file']['pre_process_id'])])
-            sub_d.append(s['sequence_file']['pre_process_flag'])
-        else:
-            sub_d.append("")
-            sub_d.append("")
-
-        ### Shared set
-        shared = ", ".join(map(lambda x : f" {x['title']} ({x['sample_type']} {x['id']})", s["list_share_set"]))
-        sub_d.append(shared)
-        d.append(sub_d)
-
-    headers=["filename", "informations", "pre process", "pre process status", "shared sets"]
-    df = pandas.DataFrame(d, columns=headers)
-    print(tabulate(df, showindex=False, headers=df.columns))
-    print()
-    return
 
 def demoReadFromServer(server, ssl, user, password, only_fast_tests=False):
     """Demo on the public server (only read)"""
@@ -85,19 +42,18 @@ def demoReadFromServer(server, ssl, user, password, only_fast_tests=False):
 
     ### Get a set from server by is id and set type
     sets_demo = vidjil.getSetById(sample_set_id, vidjil.PATIENT)
-    infoSets("Set %s" % sample_set_id, sets_demo, verbose=True)
-
+    vidjil.infoSets("Set %s" % sample_set_id, sets_demo, verbose=True)
     ### Get a list of all samples sets by set type (vjdjil.PATIENT, vidjil.RUN or vidjil.SET)
     # or a given filter value (see example under)
     sets_all = vidjil.getSets(set_type=vidjil.PATIENT)
     
     # The data is under samples["query"]
-    infoSets("getSets(vidjil.PATIENT)", sets_all["query"])
+    vidjil.infoSets("getSets(vidjil.PATIENT)", sets_all["query"])
 
     # You can also set a filter value that will be searched into various field of sets (name, info, ...)
     filter = "LIL-L3"
     sets_filtered = vidjil.getSets(set_type=vidjil.PATIENT, filter_val=filter)
-    infoSets('getSets(vidjil.PATIENT, "%s")' % filter, sets_filtered["query"])
+    vidjil.infoSets('getSets(vidjil.PATIENT, "%s")' % filter, sets_filtered["query"])
 
     ###################################################################
     ### Example 1: download results from a set for a configuration id.
@@ -106,10 +62,10 @@ def demoReadFromServer(server, ssl, user, password, only_fast_tests=False):
     
     # Get information from server about set and samples (we reuse here the set id of Demo Lil L3)
     # sampleset = vidjil.getSetById(sample_set_id, vidjil.PATIENT)
-    # infoSets("Set %s" % sample_set_id, sampleset["query"])
+    # vidjil.# infoSets("Set %s" % sample_set_id, sampleset["query"])
 
     samples   = vidjil.getSamplesOfSet(sample_set_id, config_id)
-    infoSamples("getSamplesOfSet(%s, %d)" % (sample_set_id, config_id), samples)
+    vidjil.infoSamples("getSamplesOfSet(%s, %d)" % (sample_set_id, config_id), samples)
 
     if only_fast_tests:
         return
@@ -186,8 +142,8 @@ def demoWriteRunOnServer(server, ssl, user, password):
     print( f"==> new file {file_id}")
 
     # Show again the set, now with one sample
-    samples   = vidjil.getSamplesOfSet(setid_generic)
-    infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
+    samples  = vidjil.getSamplesOfSet(setid_generic)
+    vidjil.infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
 
     ### Get status of sample of this set
     config_id = 2 ## multi+inc+xxx
