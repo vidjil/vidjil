@@ -558,7 +558,7 @@ class Vidjil:
 
     def infoSamples(self, info: str, samples, verbose=False):
         print(f"\n# {info} ==> {len(samples['query'])} samples\n" )
-        if not len(samples):
+        if not len(samples["query"]):
             return
         d = []
         for s in samples["query"]:
