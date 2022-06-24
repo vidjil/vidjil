@@ -122,19 +122,20 @@ def demoWriteRunOnServer(server, ssl, user, password):
     set_data = vidjil.createSet("Set for API tests",
                                 info="Libraries with EuroClonality-NGS 2019 primers")
 
+
     setid_patient = patient_data["args"]["id"]
     setid_run = run_data["args"]["id"]
-    setid_set = set_data["args"]["id"]
+    setid_generic = set_data["args"]["id"]
 
-    print( f"setid_patient: {setid_patient}")
-    print( f"setid_run: {setid_run}")
-    print( f"setid_set: {setid_set}")
+    print( f"==> new set patient: {setid_patient}")
+    print( f"==> new set run: {setid_run}")
+    print( f"==> new set generic: {setid_generic}")
 
     # Show newly created set
-    set_new = vidjil.getSetById(set_id, vidjil.SET)
-    infoSets("Set %s" % set_id, set_new, verbose=True)
-    samples   = vidjil.getSamplesOfSet(set_id)
-    infoSamples("getSamplesOfSet(%s)" % set_id, samples["query"])
+    set_new = vidjil.getSetById(setid_generic, vidjil.SET)
+    infoSets("Set %s" % setid_generic, set_new, verbose=True)
+    samples   = vidjil.getSamplesOfSet(setid_generic)
+    infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
 
     # set_ids filed take value in a specific format: :$set+($id)
     # With :
@@ -143,28 +144,27 @@ def demoWriteRunOnServer(server, ssl, user, password):
     #   Multiple field should be separated with a '|' as above
     sample = vidjil.createSample(source="computer",
                 pre_process= "0",
-                set_ids= f":s+({setid_patient})|:r+({setid_run})|:p+({setid_set})",
+                set_ids= f":s+({setid_patient})|:r+({setid_run})|:p+({setid_generic})",
                 file_filename= "../demo/Demo-X5.fa",
                 file_filename2= "",
                 file_id= "",
                 file_sampling_date= "2016-01-13",
                 file_info= "Uploaded by API" ,
                 file_set_ids= "",
-                sample_set_id= set_id,
-                # can include multiple set_ids as a concatenation of string
+                sample_set_id= setid_generic,
                 sample_type= "set")
 
     file_id  = sample["file_ids"][0]  ## Uploaded file
     print( f"==> new file {file_id}")
 
     # Show again the set, now with one sample
-    samples   = vidjil.getSamplesOfSet(set_id)
-    infoSamples("getSamplesOfSet(%s)" % set_id, samples["query"])
+    samples   = vidjil.getSamplesOfSet(setid_generic)
+    infoSamples("getSamplesOfSet(%s)" % setid_generic, samples["query"])
 
     ### Get status of sample of this set
     config_id = 2 ## multi+inc+xxx
-    analysis  = vidjil.launchAnalysisOnSample(set_id, file_id, config_id)
-    print(analysis)
+    analysis  = vidjil.launchAnalysisOnSample(setid_generic, file_id, config_id)
+    print(f"Launch analysis: {analysis}")
 
 
 if  __name__ =='__main__':
