@@ -377,7 +377,10 @@ class UserLogHandler(logging.Handler):
                 )
                 db.commit()
             except:
-                db.rollback()
+                try:
+                    db.rollback()
+                except:
+                    pass
 
 
 def _init_log():
