@@ -127,7 +127,7 @@ def edit_form():
         error += "group name needed, "
 
     if error=="" :
-        db.auth_group[request.vars["id"]] = dict(role=request.vars["group_name"],
+        db(db.auth_group.id == request.vars["id"]).update(role=request.vars["group_name"],
                                                description=request.vars["info"])
 
         res = {"redirect": "group/index",

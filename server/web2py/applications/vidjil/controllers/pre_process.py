@@ -80,7 +80,7 @@ def edit_form():
 
     if error=="" :
 
-        db.pre_process[request.vars["id"]] = dict(name=request.vars['pre_process_name'],
+        db(db.pre_process.id == request.vars["id"]).update(name=request.vars['pre_process_name'],
                         info=request.vars['pre_process_info'],
                         command=request.vars['pre_process_command']
                         )

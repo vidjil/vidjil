@@ -91,7 +91,7 @@ def edit_form():
             if 'password' in vars():
                 data["password"] = password
 
-            db.auth_user[request.vars['id']] = data
+            db(db.auth_user.id == request.vars['id']).update(**data)
             db.commit()
             res = {"redirect": "back",
                     "message": "%s (%s) user edited" % (request.vars["email"], request.vars["id"])}

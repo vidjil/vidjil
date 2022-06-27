@@ -256,7 +256,7 @@ def submit():
                 # If we don't reupload a new file
                 file_data.pop('pre_process_flag')
             
-            db.sequence_file[fid] = file_data
+            db( db.sequence_file.id == fid ).update(**file_data)
             #remove previous membership
             db( db.sample_set_membership.sequence_file_id == fid).delete()
             action = "edit"
