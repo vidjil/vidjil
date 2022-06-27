@@ -82,7 +82,7 @@ class Vidjil:
         try:
             response = self.session.get(self.url_server, verify=self.ssl)
         except requests.exceptions.SSLError:
-            print( f"{self.url_server} has INVALID SSL certificate!")
+            print( "%s has INVALID SSL certificate!" % self.url_server)
             print("Please upgrade your system, and/or see api_certificate.bash, but this could lead to insecure calls.")
             exit()
 
@@ -127,7 +127,7 @@ class Vidjil:
             raise Exception( "Login; error at login step.\nStatus code is %s and content is '%s'."  % (response.status_code, response.content))
         else:
             self.logged = True
-            print( f"Successful login as {email}")
+            print( "Successful login as %s" % email)
             print()
             # self.whoami()
             # todo; print admin status; groups ?
@@ -164,15 +164,15 @@ class Vidjil:
 
         message  = False
         if response.status_code not in [200, 404]:
-            message  = f'Server return an error code ({response.status_code}) with message: {str(response.content if not error_msg else error_msg)}\n'
-            message += f"\nUrl: {url}"
+            message  = 'Server return an error code (%s) with message: %s\n' % (response.status_code, str(response.content if not error_msg else error_msg))
+            message += "\nUrl: %s" % url
         elif response.status_code == 404:
-            message  = f'Server return an error code ({response.status_code}). Does server is updated ?'
-            message += f"\nUrl: {url}"
+            message  = 'Server return an error code (%s). Does server is updated ?' % response.status_code
+            message += "\nUrl: %s" % url
         elif content == {'message': 'access denied'}:
             message = 'Server return an access denied response.'
         elif "success" in content and content["success"] == "false":
-            message = f'Server return a failed message : {content["message"]}'
+            message = 'Server return a failed message : %s' % content["message"]
 
         if message:
             if bypass_error:
@@ -215,7 +215,7 @@ class Vidjil:
         # warning, don't present on prod server for the moment !!!
         content = self.request(new_url, "get")
         if not len(content):
-            raise Exception( f"getSetById error. \nNo sample found with this id '{set_id}' and type '{set_type}'")
+            raise Exception( "getSetById error. \nNo sample found with this id '%s' and type '%s'" % (set_id, set_type))
         return content
 
     def createPatient(self, first_name:str, last_name:str, sample_set_id:int=None, id:int=None, id_label:int=None, birth_date:str=None, info:str=None):
@@ -523,7 +523,7 @@ class Vidjil:
 
 
     def infoSets(self, info: str, sets: dict, set_type: str, verbose=False):
-        print(f"# Sets {info}; {set_type} ==> {len(sets)} sets")
+        print("# Sets %s; %s ==> %s sets" % (info, set_type, len(sets)))
         if not len(sets):
             return
         d = []
@@ -532,7 +532,7 @@ class Vidjil:
                 printKeys(s)
             sub_d = [s['sample_set_id']]
             if set_type==self.PATIENT:
-                sub_d.append(f"{s['first_name']}, {s['last_name']}")
+                sub_d.append("%s, %s" % (s['first_name'], s['last_name']))
                 sub_d.append(s['birth'])
                 sub_d.append(s['file_count'])
                 sub_d.append(s['creator'])
@@ -556,7 +556,7 @@ class Vidjil:
         print()
 
     def infoSamples(self, info: str, samples, verbose=False):
-        print(f"\n# {info} ==> {len(samples['query'])} samples\n" )
+        print("\n# %s ==> %s samples\n" % (info, len(samples['query'])) )
         if not len(samples["query"]):
             return
         d = []
@@ -575,7 +575,7 @@ class Vidjil:
                 sub_d.append("")
 
             ### Shared set
-            shared = ", ".join(map(lambda x : f" {x['title']} ({x['sample_type']} {x['id']})", s["list_share_set"]))
+            shared = ", ".join(map(lambda x : "%s (%s %s)"% (x['title'], x['sample_type'], x['id']), s["list_share_set"]))
             sub_d.append(shared)
             d.append(sub_d)
 

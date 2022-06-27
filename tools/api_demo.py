@@ -109,9 +109,9 @@ def demoWriteRunOnServer(server, ssl, user, password):
     setid_run = run_data["args"]["id"]
     setid_generic = set_data["args"]["id"]
 
-    print( f"==> new set patient: {setid_patient}")
-    print( f"==> new set run: {setid_run}")
-    print( f"==> new set generic: {setid_generic}")
+    print( "==> new set patient: %s" % setid_patient)
+    print( "==> new set run: %s" % setid_run)
+    print( "==> new set generic: %s" % setid_generic)
 
     # Show newly created set
     set_new = vidjil.getSetById(setid_generic, vidjil.SET)
@@ -126,7 +126,7 @@ def demoWriteRunOnServer(server, ssl, user, password):
     #   $id is the id of the set 
     sample = vidjil.createSample(source="computer",
                 pre_process= "0",
-                set_ids= f":s+({setid_patient})|:r+({setid_run})|:p+({setid_generic})",
+                set_ids= ":s+(%s)|:r+(%s)|:p+(%s)" % (setid_patient, setid_run, setid_generic),
                 file_filename= "../demo/Demo-X5.fa",
                 file_filename2= "",
                 file_id= "",
@@ -137,7 +137,7 @@ def demoWriteRunOnServer(server, ssl, user, password):
                 sample_type= "set")
 
     file_id  = sample["file_ids"][0]  ## Uploaded file
-    print( f"==> new file {file_id}")
+    print( "==> new file %s" % file_id)
 
     # Show again the set, now with one sample
     samples  = vidjil.getSamplesOfSet(setid_generic)
@@ -146,7 +146,7 @@ def demoWriteRunOnServer(server, ssl, user, password):
     ### Get status of sample of this set
     config_id = 2 ## multi+inc+xxx
     analysis  = vidjil.launchAnalysisOnSample(setid_generic, file_id, config_id)
-    print(f"Launch analysis: {analysis}")
+    print("Launch analysis: %s" % analysis)
 
 
 if  __name__ =='__main__':
@@ -166,7 +166,7 @@ if  __name__ =='__main__':
                                    only_fast_tests = True)
             except Exception:
                 failures += 1
-        print(f'==> {failures}/{total} failures')
+        print('==> %s/%s failures' % (failures, total))
 
     if args.public:
         demoReadFromServer(PUBLIC_SERVER, PUBLIC_SSL, PUBLIC_USER, PUBLIC_PASSWORD)
