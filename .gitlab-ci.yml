@@ -49,7 +49,9 @@ stages:
 test_tools:
   image: vidjilci/cypress_with_browsers:latest
   stage: test_tools
-  script: make -C tools/tests
+  script:
+    - pip install -r requirements.txt
+    - make -C tools/tests
   extends:
     - .need_for_quick_test
   tags:
