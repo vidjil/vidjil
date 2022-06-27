@@ -178,11 +178,12 @@ describe('List', function () {
     // Remove filter
     cy.changePreset("V/J (genes)")
     cy.update_icon()
-    cy.get('#tag_smaller_clonotype')
+    cy.get('#tag_smaller_clonotype') // switch back
       .click()
+    cy.update_icon()
 
     cy.getCloneInList('29')
-      .should('not.be.visible') // seg5/seg3 distrib clone is present in list
+      .should('be.visible') // seg5/seg3 distrib clone is present in list
       .should('have.css', 'display', 'block')
   })
 
@@ -377,16 +378,16 @@ describe('List', function () {
     cy.get('.tagSelector').should("not.be.visible")
     cy.getCloneInList(1).click() // click outside to not hover clonotype 0
     cy.update_icon()
-    cy.getCloneInList(0).scrollIntoView().should('have.css', 'color', 'rgb(220, 50, 47)')
+    cy.getCloneInList(0).scrollIntoView().should('have.css', 'color', 'rgb(192, 48, 56)')
 
     // Tag multiple
     cy.selectCloneMulti([4, 5, 6])
     cy.get("#tag_icon__multiple").click()
     cy.get('.tagName_custom_2').click()
     cy.selectClone(0)
-    cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')
-    cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')
-    cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(211, 54, 130)')
+    cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
+    cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
+    cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
     return
   })
 
@@ -399,7 +400,7 @@ describe('List', function () {
     cy.getCloneInList(101).should("have.text", "TRD smaller clonotypes").should('be.visible')
     cy.getCloneInList(99 ).should("have.text", "TRA smaller clonotypes").should('be.visible')
     cy.getCloneInList(102).should("have.text", "IGH smaller clonotypes").should('be.visible')
-    cy.getCloneInList(103).should("have.text", "ERG smaller clonotypes").should('not.be.visible') // not present in sample 1
+    cy.getCloneInList(103).should("have.text", "ERG smaller clonotypes").should('be.visible') // not present in sample 1; but present
 
     // Correct order in list
     cy.get('#list_clones')

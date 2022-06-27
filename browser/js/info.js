@@ -559,7 +559,7 @@ Info.prototype = {
         spantag.className = "tagColorBox";
         spantag.style.backgroundColor = l.color;
         spantag.title = l.text;
-        spantag.id    = "tag_" + l.text.replace(" ","_")
+        spantag.id    = "tag_" + l.text.replace(/\s/g, "_").replace(/\//g, "_")
         spantag.setAttribute('value', key);
 
         if (this.m.filter.check(axis.name, "=", key) >=0)
@@ -572,6 +572,9 @@ Info.prototype = {
             spantag.style.width = boxWidth
             spantag.style.margin = "1px"
         }
+
+        if (l.text == 'dominant clonotype' || l.text == 'clonotype 5' || l.text == 'dimer' || l.text == 'custom 3')
+            spantag.style.marginRight = "12px";
 
         spantag.onclick = function(){
             var v = this.getAttribute('value')

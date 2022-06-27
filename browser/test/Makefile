@@ -10,9 +10,6 @@ functional: ../../doc/analysis-example1.vidjil ../../tools/tests/data/fused_mult
 	KEEPOPEN=0 sh launch_functional_tests $(BROWSERS)  functional/test_*rb
 	KEEPOPEN=0 sh launch_functional_tests $(BROWSERS)  functional/issues/test_*rb
 
-tutorial:
-	$(MAKE) -C ../../demo all
-	KEEPOPEN=0 sh launch_functional_tests $(BROWSERS)  functional/tutorial-test.rb
 
 functional-rbx: ../../doc/analysis-example1.vidjil
 	LIVE_SERVER=http://app.vidjil.org/browser/ ruby test_browser.rb

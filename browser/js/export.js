@@ -22,11 +22,11 @@ function Report(model, settings) {
             selected_color: "unique",
             blocks: [
                     {blockType: "file_info"},
-                    {blockType: "sample_info", time: this.m.t},
+                    {blockType: "sample_info", sample: "#1"},
                     {blockType: "reads_stats"},
                     {blockType: "monitor"},
-                    {blockType: "scatterplot"},
-                    {blockType: "clones"},
+                    {blockType: "scatterplot", sample: "#1", axisX:"V/5' gene", axisY:"J/3' gene", locus:""},
+                    {blockType: "clones", info : ["productivity", "hypermutation", "5length"]},
                     {blockType: "log_db"},
                     {blockType: "comments"},
                     ],
@@ -40,10 +40,10 @@ function Report(model, settings) {
             selected_color: "unique",
             blocks: [
                 {blockType: "file_info"},
-                {blockType: "sample_info", time: this.m.t},
+                {blockType: "sample_info", time: "#1"},
                 {blockType: "reads_stats"},
-                {blockType: "scatterplot"},
-                {blockType: "clones"},
+                {blockType: "scatterplot", sample: "#1", axisX:"V/5' gene", axisY:"J/3' gene", locus:""},
+                {blockType: "clones", info : []},
                 {blockType: "log_db"},
                 {blockType: "comments"},
                 ],
@@ -58,8 +58,8 @@ function Report(model, settings) {
                 {blockType: "file_info"},
                 {blockType: "sample_info", time: this.m.t},
                 {blockType: "reads_stats"},
-                {blockType: "scatterplot"},
-                {blockType: "clones"},
+                {blockType: "scatterplot", sample: "#1", axisX:"V/5' gene", axisY:"J/3' gene", locus:""},
+                {blockType: "clones", info : ["productivity", "hypermutation", "5length"]},
                 {blockType: "log_db"},
                 {blockType: "comments"},
             ],
@@ -71,31 +71,35 @@ function Report(model, settings) {
     this.available_blocks = {
         "file_info":    {'name': "Report information",  'unique': true,     'inMenu': true },
         "reads_stats":  {'name': "Reads stats per locus",'unique': true,    'inMenu': true },
-        "sample_info":  {'name': function (c){ return "Sample information: ["+ self.m.getStrTime(c.time , "name")+"]"},
-                                                        'unique': false,    'inMenu': true },
+        "sample_info":  {'name': "Sample information",  'unique': false,    'inMenu': true,
+                         'parameters':[{
+                                    'name': 'sample',
+                                    'options' : function() {
+                                        var o = []
+                                        for (var i in self.m.samples.order) 
+                                            o.push(self.m.samples.original_names[self.m.samples.order[i]])
+                                        return o},
+                                    'pretty'  : function(o){return self.m.getStrTime(self.m.getTimeFromFileName(o), "name")} 
+                                      }]},
         "monitor":      {'name': "Monitor",             'unique': true,     'inMenu': true },
         "log_db":       {'name': "Database log",        'unique': true,     'inMenu': true },
         "clones":       {'name': "Clones",              'unique': true,     'inMenu': true,
-                          'fields': {
-                            'productivity':  function(c){ return {'text': c.getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'} },
-                            'hypermutation': function(c){ return c.getVIdentityIMGT(t) == "unknown" ? undefined : {'text': "V-REGION Identity: "+ c.getVIdentityIMGT(t)+'%\u00a0', 'class': 'clone_value'} },
-                            '5length':       function(c){ return {'text': "V length: "     + c.getSegLength("5", (c.germline.includes("+") ? false : true))+'\u00a0', 'class': 'clone_value'}}
-                          },
-                          'options': {
-                            'reads' : {
-                                'short': function(c){
-                                    var sizes    = c.getStrAllSystemSize(t, true)
-                                    return sizes.global == "−" ? ("−") : (`${sizes.global} (${sizes.system}; ${sizes.systemGroup})`)
-                                },
-                                'long': function(c){ return c.getPrintableSize() },
-                                'default': "long",
-                                'selected': "long"
-                            }
-                          }
-                        },
+                         'parameters':[{
+                                    'name': 'info',
+                                    'checkboxes' : ['productivity', 'hypermutation', '5length'],
+                                        }]},
         "comments":     {'name': "Comments",            'unique': false,    'inMenu': false },
         "scatterplot":  {'name': function (c){ return "Plot: ["+ c.axisX +" | "+ c.axisY +"] ["+ c.locus +"]"},
-                                                        'unique': false,    'inMenu': false },
+                         'unique': false,    'inMenu': false,
+                         'parameters':[{
+                                    'name': 'sample',
+                                    'options' : function() {
+                                        var o = []
+                                        for (var i in self.m.samples.order) 
+                                            o.push(self.m.samples.original_names[self.m.samples.order[i]])
+                                        return o},
+                                    'pretty'  : function(o){return self.m.getStrTime(self.m.getTimeFromFileName(o), "name")} 
+                                        }]}
     }
     
     if (typeof settings != "undefined")
@@ -122,9 +126,10 @@ Report.prototype = {
             savename = this.settings.name;
         }
 
-        // if settings does not contain a name -> abort
-        if (typeof savename == "undefined"){
-            console.log("you must set a name to your report before saving");
+        // if settings does not contain a name -> retry
+        if (typeof savename == "undefined" || savename == ""){
+            console.log({ msg: "you must set a name to your report before saving it", type: "flash", priority: 2 });
+            this.saveas();
             return;
         }   
 
@@ -173,6 +178,28 @@ Report.prototype = {
                             "",
                             function(){self.save(console.confirm.input.val())},
                             savename)
+    },
+
+    delete: function(skipConfirm){
+        var self = this
+
+        if (typeof this.default_settings[this.settings.name] != "undefined"){
+            console.log({ msg: "you cannot delete a default template", type: "flash", priority: 2 });
+            return;
+        }
+
+        var savename = this.settings.name
+        if (this.m.report_save[savename]){    
+            if (typeof skipConfirm == "boolean" && skipConfirm){
+                delete this.m.report_save[savename]
+                this.load(this.default_setting); 
+            }
+            else{
+                console.confirmBox( "Are you sure you want to delete ["+savename+"] report ?</br>",
+                                    function(){self.delete(true)})
+            }
+        }
+
     },
 
     // load a setting sheet from default_list or model using name
@@ -257,6 +284,12 @@ Report.prototype = {
         else
             $("#rs-save-button").remove("disabledClass")
 */
+
+        if(typeof this.default_settings[this.settings.name] != "undefined")
+            $("#rs-delete-button").addClass("disabledClass")
+        else
+            $("#rs-delete-button").remove("disabledClass")
+
     },
 
     initSamples: function(){
@@ -296,12 +329,14 @@ Report.prototype = {
             var timeId = this.m.samples.order[i]
 
             var selected = (self.settings.samples.indexOf(this.m.getStrTime(timeId, "original_name")) != -1)
+            var text = "#"+this.m.getStrTime(timeId, "order") +" "+ this.m.getStrTime(timeId, "name")
+
             if (selected) count++
             var div = $('<div/>',   { id:  'rs-sample-select'+i, 
                                         type: 'checkbox', 
                                         class: (selected) ? "rs-sample rs-selected" : "rs-sample rs-unselected",
                                         value: this.m.getStrTime(timeId, "original_name"),
-                                        text: this.m.getStrTime(timeId, "name")}).appendTo(parent).click(handle)
+                                        text: text}).appendTo(parent).click(handle)
         }
         $("#rs-selected-sample-count").html("["+count+" selected]")
     },
@@ -397,17 +432,19 @@ Report.prototype = {
         var handle = function(){
             self.removeClone($(this).attr("value"));
             $(this).parent().remove()
-            report.menu() // update
+            report.initClones() // update
         }
 
         var count =0;
         for (var i=0; i<this.clones.length; i++){
             var cloneID = this.clones[i]
             
-            var text;
+            var text, locus;
             for (var j=0; j<this.m.clones.length; j++){
-                if ( this.m.clones[j].id == cloneID)
-                    text = this.m.clones[j].getName();
+                if ( this.m.clones[j].id == cloneID){
+                    text = this.m.clones[j].getName()
+                    locus = this.m.clones[j].getLocus()
+                }
             }
 
             if (text != undefined){
@@ -415,7 +452,8 @@ Report.prototype = {
                 var div = $('<div/>',   {id:  'rs-clone-'+cloneID, 
                                         class: 'rs-selected',
                                         value: cloneID,
-                                        text: text}).appendTo(parent)
+                                        text: text}).prepend(this.m.systemBox(locus)).appendTo(parent)
+                                        
                           $('<button/>',{value: cloneID , 
                                         title: "remove clone from report",
                                         class: "icon-cancel button_right", 
@@ -438,20 +476,23 @@ Report.prototype = {
 
         var handle = function(){
             self.removeBlock(parseInt($(this).attr("value")));
-            self.menu();
+            self.initBlocks()
         }
 
         var handle_up = function(){
             self.upBlock(parseInt($(this).attr("value")));
-            self.menu();
+            self.initBlocks()
         }
 
         var handle_down = function(){
             self.downBlock(parseInt($(this).attr("value")));
-            self.menu();
+            self.initBlocks()
         }
 
         var block_list = $("#report-settings-block")
+        block_list.find(".rs-flex").remove()
+        block_list.find(".rs-flex-parent-v").remove()
+
         var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(block_list);
         for (var i = 0; i < this.settings.blocks.length; i++){
             var conf = this.settings.blocks[i]
@@ -471,14 +512,30 @@ Report.prototype = {
                                         class: "icon-up-open button_right", 
                                         title: "move this section down"
                                         }).click(handle_up).appendTo(div)
+
+            //this block has parameters
+            if (this.available_blocks[conf.blockType] && this.available_blocks[conf.blockType].parameters){   
+                for (var p in this.available_blocks[conf.blockType].parameters){
+                    var parameter = this.available_blocks[conf.blockType].parameters[p]
+                    
+                    if (parameter.options)
+                        this.parameterDivOptions(conf, parameter).appendTo(div)
+                    else if (parameter.checkboxes)
+                        this.parameterDivCheckboxes(conf, parameter).appendTo(div)
+                    
+                }
+            }
         }
 
 
         var handle2 = function(){
             var block = {blockType : this.value }
-            if (this.value == "sample_info") block.time = self.m.t
+            if (this.value == "sample_info") {
+                block.sample = self.m.samples.original_names[self.m.t]
+                block.timestamp = Date.now()
+            }
             self.addBlock(block);
-            self.menu();
+            self.initBlocks();
         }
 
         var div_select = $('<div/>',   {class : "rs-flex", text: "Add section: "}).appendTo(block_list);
@@ -504,6 +561,97 @@ Report.prototype = {
         }
 
     },  
+
+    parameterDivOptions: function(block, parameter){
+        var self = this;
+
+        var blockIndex = this.indexOfBlock(block)
+
+        var handle = function(){
+            if (this.value)
+                self.settings.blocks[blockIndex][parameter.name] = this.value
+        }
+
+        var div = $('<div/>',   {class : "rs-flex-parent-h", text: parameter.name+": "}) 
+        var select = $('<select/>').change(handle).appendTo(div);
+
+        var options
+        if (typeof parameter.options == 'function')
+            options = parameter.options()
+        else
+            options = parameter.option
+
+        for (var i in options) {
+            var o = options[i]
+
+            var text = o
+            if (parameter.pretty) text = parameter.pretty(o)
+
+            var selected = false
+            if (o == block[parameter.name]) selected = true
+            
+            $('<option/>',  {   text:  text,
+                                selected: selected,
+                                value: o
+                            }).appendTo(select);
+        }
+
+        return div
+    },
+
+    parameterDivCheckboxes: function(block, parameter){
+
+        var self = this;
+
+        var blockIndex = this.indexOfBlock(block)
+
+        var handle = function(){
+            var p = self.settings.blocks[blockIndex][parameter.name]
+            var index = p.indexOf(this.value)
+
+            if (index == -1)
+                p.push(this.value)
+            else
+                p.splice(index, 1)
+
+        }
+
+
+        var div = $('<div/>',   {class : "rs-flex-parent-h", text: parameter.name+": "}) 
+        var dropdown = $('<span/>',   {class : "dropdown-check-list"}).appendTo(div)
+
+        var anchorEvent = function(evt) {
+            var checkList = $(this).parent()[0]
+            if (checkList.classList.contains('visible'))
+              checkList.classList.remove('visible');
+            else
+              checkList.classList.add('visible');
+        }
+        var span = $('<span/>',   {class : "rs-anchor", text: "Select "}).click(anchorEvent).appendTo(dropdown)
+        var ul = $('<ul/>',   {class : "rs-items"}).appendTo(dropdown)
+
+        var checkboxes 
+        if (typeof parameter.checkboxes  == 'function')
+            checkboxes  = parameter.checkboxes()
+        else
+            checkboxes = parameter.checkboxes
+        
+        for (var i in checkboxes) {
+            var c = checkboxes[i]
+
+            var checked = false
+            if (block[parameter.name].indexOf(c) != -1) checked = true
+            
+            var li = $('<li/>', {text : c}).appendTo(ul);
+            $('<input/>', { type    : "checkbox", 
+                            value   : c
+                            }).prop('checked', checked)
+                              .click(handle)
+                              .prependTo(li)
+        }
+
+        return div
+    },
 
     getBlockName: function(conf){
         var text = ""
@@ -586,10 +734,14 @@ Report.prototype = {
             
             if (self.settings.blocks)
                 self.settings.blocks.forEach(function(block){
-                    self.block(block);
+                    try {
+                        self.block(block);
+                    } catch (error) {
+                        console.log("failed to print block " + block.blockType)
+                    }
+                    
                 });
             
-            self.cloneList()
             self.restorestate()    
             self.m.resize()
             self.m.resume()
@@ -794,9 +946,19 @@ Report.prototype = {
     },
     
     sampleInfo : function(block) {
-        var time = block.time
+        //retrieve timeID
+        var time
+        if (block.sample && typeof block.sample == "string"){
+            if (block.sample[0] == '#')
+                time = this.m.getTimeFromOrder(parseInt(block.sample.substring(1)))
+            else
+                time = this.m.getTimeFromFileName(block.sample)
+        }
 
-        var sinfo = this.container("Sample information ("+this.m.getStrTime(time, "short_name")+")")
+        if (typeof time == "undefined" || time == -1)
+            return this
+
+        var sinfo = this.container("Sample information ("+this.m.getStrTime(time, "short_name")+")", block)
         var left = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
         
         var content = [
@@ -931,8 +1093,8 @@ Report.prototype = {
     addScatterplot : function(sp) {
         var block = {
             'blockType' : "scatterplot",
-            'locus' :   sp.m.germlineV.system,
-            'time'  :   sp.m.t,
+            'locus' :   sp.system,
+            'sample':   this.m.samples.original_names[sp.m.t],
             'axisX' :   sp.axisX.name,
             'axisY' :   sp.axisY.name,
             'mode'  :   sp.mode
@@ -954,8 +1116,8 @@ Report.prototype = {
 
     },
 
-    addBlock : function(block) {
-        if (this.indexOfBlock(block) == -1){
+    addBlock: function(block) {
+        if (this.indexOfBlock(block) == -1 && !this.isUniqueBlock(block)){
             this.settings.blocks.push(block)
             console.log({ msg: "Section added to the report", type: "flash", priority: 1 });
         }
@@ -1029,6 +1191,9 @@ Report.prototype = {
             case "log_db":
                 this.sampleLog(conf)
                 break;
+            case "clones":
+                this.cloneList(conf)
+                break;
             default:
                 break;
         }
@@ -1075,16 +1240,54 @@ Report.prototype = {
         }
     },
 
-    scatterplot : function(block) {
+    isUniqueBlock: function(block){
+        if (typeof block.blockType != "string")
+            return false
 
+        if (typeof this.available_blocks[block.blockType] != "object")
+            return false
+
+        if (typeof this.available_blocks[block.blockType].unique == "boolean")
+            return this.available_blocks[block.blockType].unique
+
+        return false
+    },
+
+    isInMenuBlock: function(block){
+        if (typeof block.blockType != "string")
+            return false
+
+        if (typeof this.available_blocks[block.blockType] != "object")
+            return false
+
+        if (typeof this.available_blocks[block.blockType].inMenu == "boolean")
+            return this.available_blocks[block.blockType].inMenu
+
+        return false
+    },
+
+    scatterplot : function(block) {
         if (typeof block == "undefined")       block = {}
-        if (typeof block.locus == "undefined") block.locus = this.m.germlineV.system
-        if (typeof block.time == "undefined")  block.time  = this.m.t
+        if (typeof block.locus == "undefined") block.locus = this.m.sp.system
+        if (block.locus == "")                 block.locus = this.m.sp.system
+        if (typeof block.sample == "undefined")block.sample= this.m.samples.original_names[this.m.t]
         if (typeof block.axisX == "undefined") block.axisX = this.m.sp.axisX.name
         if (typeof block.axisY == "undefined") block.axisY = this.m.sp.axisY.name
         if (typeof block.mode == "undefined")  block.mode  = this.m.sp.mode
 
-        this.m.changeTime(block.time)
+        //retrieve timeID
+        var time
+        if (block.sample && typeof block.sample == "string"){
+            if (block.sample[0] == '#')
+                time = this.m.getTimeFromOrder(parseInt(block.sample.substring(1)))
+            else
+                time = this.m.getTimeFromFileName(block.sample)
+        }
+
+        if (typeof time == "undefined" || time == -1)
+            return this
+
+        this.m.changeTime(time)
         this.m.changeGermline(block.locus, false)
 
         this.m.sp.changeSplitMethod(block.axisX, block.axisY, block.mode, true)
@@ -1098,8 +1301,8 @@ Report.prototype = {
         this.m.sp.fastForward()
         
         var container_name  =   this.m.sp.toString() +"  ["+ 
-                                (this.m.getStrTime(block.time, "order")+1)+"]."+
-                                this.m.getStrTime(block.time, "short_name");
+                                this.m.getStrTime(time, "order")+"]."+
+                                this.m.getStrTime(time, "short_name");
         var w_sp = this.container(container_name, block)
         w_sp.addClass("scatterplot");
         
@@ -1165,7 +1368,7 @@ Report.prototype = {
     readsStat_line: function(time, locus_list){
         var line = $('<tr/>', {});
 
-        $('<td/>',     {'text': '#' + (this.m.getStrTime(time, "order")+1)}).appendTo(line);
+        $('<td/>',     {'text': '#' + this.m.getStrTime(time, "order")}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "name")}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "sampling_date")}).appendTo(line);
         $('<td/>',     {'text': this.m.getStrTime(time, "delta_date")}).appendTo(line);
@@ -1186,35 +1389,30 @@ Report.prototype = {
         return line;
     },
     
-    cloneList : function(time) {
-        if (typeof time == "undefined") time = -1
+    cloneList : function(block) {
 
         if (this.list.length == 0) return this
 
-        var container = this.container('Clonotypes')
-        graph.resize(791,300)
-        graph.draw(0)
+        var container = this.container('Clonotypes', block)
+        container.parent().css("page-break-inside", "auto") // revert css value to allow this block on 2+ pages
         
         for (var i=0; i<this.list.length; i++){
             var cloneID = this.list[i]
             if (this.m.clone(cloneID).hasSizeConstant())
-                this.clone(cloneID, time).appendTo(this.w.document.body);
+                this.clone(cloneID, block).appendTo(container);
         }
-        graph.resize()
         
         return this
     },
     
-    clone : function(cloneID, time) {
-        if (typeof time == "undefined") time = -1
+    clone : function(cloneID, block) {
         var color = this.getCloneExportColor(cloneID);
-        var system = this.m.clone(cloneID).germline
         var clone = $('<div/>', {'class': 'clone'})
         var clone_polyline = document.getElementById("polyline" + cloneID)
         
         var head = $('<span/>', {'class': 'clone_head'}).appendTo(clone);
         //clone svg path icon
-        if (time == -1 && clone_polyline != null){
+        if (clone_polyline != null){
             var icon = $('<span/>', {'class': 'icon'}).appendTo(head);
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             var polyline = clone_polyline.cloneNode(true)
@@ -1233,29 +1431,72 @@ Report.prototype = {
         }
         
         //clone reads stats
-        if (time == -1){
-            var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
+        var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
+
+        if (this.m.samples.order.length < 4){
             for (var i=0; i<this.m.samples.order.length; i++){
                 var t = this.m.samples.order[i]
-                var size_str = this.available_blocks.clones.options.reads[this.available_blocks.clones.options.reads.selected](this.m.clone(cloneID))
-                $('<span/>', {'text': "#"+ (this.m.getStrTime(t, "order")+1) + ": " + size_str +'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
+    
+                var print_format = block.print_format 
+                if (typeof block.print_format != "undefined")
+                    print_format = block.print_format
+    
+                var size_str= this.m.clone(cloneID).getPrintableSize()
+    
+                $('<span/>', {'text': "#"+ this.m.getStrTime(t, "order") + ": " + size_str +'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
-        }else{
-            $('<span/>', {'text': this.m.clone(cloneID).getPrintableSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
+        }else{ // more than 3 samples
+            var system = this.m.clone(cloneID).getLocus()
+            var systemGroup = this.m.systemGroup(system)
+
+            var header = "sample # </br>"+
+                        "reads # </br>"+
+                        "reads % </br>"+
+                        system + " %"
+
+            if (systemGroup != system && systemGroup != '')
+                header += "</br>"+systemGroup+" %"
+
+            $('<span/>', {  'html':  header,
+                            'class': 'clone_value'}).appendTo(reads_stats);
+
+            for (var i2=0; i2<this.m.samples.order.length; i2++){
+                var t2 = this.m.samples.order[i2]
+                var sizes    = this.m.clone(cloneID).getStrAllSystemSize(t2)
+
+                var html = "#"+this.m.getStrTime(t2, "order") + "</br>"+
+                            this.m.clone(cloneID).getReads(t2)+ "</br>"+
+                            sizes.global+ "</br>"+
+                            sizes.system
+
+                if (systemGroup != system && systemGroup != '')
+                    html += "</br>"+sizes.systemGroup
+
+                $('<span/>', {  'html':  html,
+                                'class': 'clone_value'}).appendTo(reads_stats);
+                }
         }
+        
 
         // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
+        var fields = {
+            'productivity':  function(c){ return {'text': c.getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'} },
+            'hypermutation': function(c){ return c.getVIdentityIMGT(t) == "unknown" ? undefined : {'text': "V-REGION Identity: "+ c.getVIdentityIMGT(t)+'%\u00a0', 'class': 'clone_value'} },
+            '5length':       function(c){ return {'text': "V length: "     + c.getSegLength("5", (c.germline.includes("+") ? false : true))+'\u00a0', 'class': 'clone_value'}}
+            }
         var more_info = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
-        this.clones_fields = Object.keys(this.available_blocks.clones.fields)
-        for (var field_pos = 0; field_pos < this.clones_fields.length; field_pos++) {
-            var field   = this.clones_fields[field_pos]
-            var content = this.available_blocks.clones.fields[field](this.m.clone(cloneID))
-            if (content){
-                $('<span/>', content ).appendTo(more_info);
+
+        var field_keys = Object.keys(fields)
+        for (var k=0; k<field_keys.length; k++){
+            var field_key = field_keys[k]
+
+            if (block.info.indexOf(field_key) != -1){
+                var content = fields[field_key](this.m.clone(cloneID))
+                if (content)
+                    $('<span/>', content ).appendTo(more_info);
             }
         }
-
-        
+ 
         //colorized clone sequence
         var sequence = $('<div/>', {'class': 'sequence'}).appendTo(clone);
         var nbsp = "\u00A0"

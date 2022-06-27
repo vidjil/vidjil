@@ -5,8 +5,8 @@ function TagManager(model) {
         0 : "clonotype_1",
         1 : "clonotype_2",
         2 : "clonotype_3",
-        3 : "standard_1",
-        4 : "standard_2",
+        3 : "standard",
+        4 : "noise",
         5 : "custom_1",
         6 : "custom_2",
         7 : "custom_3",
@@ -15,14 +15,18 @@ function TagManager(model) {
     }
 
     this.tag = {
-        "clonotype_1":          {"color" : "#dc322f", "display" : true, name: "clonotype 1"},
-        "clonotype_2":          {"color" : "#cb4b16", "display" : true, name: "clonotype 2"},
-        "clonotype_3":          {"color" : "#b58900", "display" : true, name: "clonotype 3"},
-        "standard_1":           {"color" : "#268bd2", "display" : true, name: "standard"},
-        "standard_2":           {"color" : "#6c71c4", "display" : true, name: "standard(noise)"},
+        "dominant":             {"color" : "#ff0070", "display" : true, name: "dominant clonotype"},
+        "clonotype_1":          {"color" : "#c03038", "display" : true, name: "clonotype 1"},
+        "clonotype_2":          {"color" : "#900020", "display" : true, name: "clonotype 2"},
+        "clonotype_3":          {"color" : "#603000", "display" : true, name: "clonotype 3"},
+        "clonotype_4":          {"color" : "#b58900", "display" : true, name: "clonotype 4"},
+        "clonotype_5":          {"color" : "#d0b000", "display" : true, name: "clonotype 5"},
+        "standard":             {"color" : "#268bd2", "display" : true, name: "standard / spike"},
+        "noise":                {"color" : "#6c71c4", "display" : true, name: "noise"},
+        "dimer":                {"color" : "#3c4194", "display" : true, name: "dimer"},
         "custom_1":             {"color" : "#2aa198", "display" : true, name: "custom 1"},
-        "custom_2":             {"color" : "#d33682", "display" : true, name: "custom 2"},
-        "custom_3":             {"color" : "#859900", "display" : true, name: "custom 3"},
+        "custom_2":             {"color" : "#379149", "display" : true, name: "custom 2"},
+        "custom_3":             {"color" : "#508100", "display" : true, name: "custom 3"},
         "none":                 {"color" : "",        "display" : true},
         "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true, name: "smaller clonotype"}
     }
@@ -226,6 +230,7 @@ TagManager.prototype = {
             string = "Tag for "+this.m.clone(clonesIDs[0]).getName()
         }
         this.tagSelectorInfo.innerHTML = string
+        this.tagSelectorInfo.id = `tag_panel_clones_${clonesIDs}`
         $(this.tagSelector).show();
 
         // selector size

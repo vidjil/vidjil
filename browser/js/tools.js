@@ -966,14 +966,36 @@ function translate_key_diversity(key_diversity){
 ///////////////////
 var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
         
+/**
+ * Create a header line for info table
+ *  @param {String} content - String to show in the header
+ *  @param {string} title - Specific DOM id to give to the line
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ */
 var header = function(content, title, time_length) {
     title = (title == undefined) ? clean_title(content) : clean_title(title)
     return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
 }
+
+/**
+ * Create a table row with given content
+ *  @param {} item - Content of the first cell of the line
+ *  @param {} content - content to show on the second cell of the line (value)
+ *  @param {string} title - Specific title id to give as extension of the DOM id of the line; can be undefined
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ */
 var row_1  = function(item, content, title, time_length) { 
     title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
     return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
 }
+
+/**
+ * Create a html row element from given item and list of values
+ *  @param {String} item - Content of first row of the line
+ *  @param {} content - Array of value to put on each other cells of the line
+ *  @param {string} title - Specific title id to give to the line
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ */
 var row_from_list  = function(item, content, title, time_length) { 
     title = (title == undefined) ?clean_title(item) : clean_title(title)
     var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
@@ -985,6 +1007,14 @@ var row_from_list  = function(item, content, title, time_length) {
     return div;
 }
 
+
+/**
+ * Create cell content by casting given parameter to be showable in table
+ *  @param {string} title - Specific title id to give to the line
+ *  @param {} content - Content that will be automatically casted
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ *  @param {} clone 
+ */
 var row_cast_content = function(title, content, time_length, clone) {
     if (content == undefined) {
         return ""

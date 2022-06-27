@@ -1526,6 +1526,51 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         })
     },
     
+
+
+    /**
+     * Return a table of each warning, with number of clone and reads by type of warning
+     * @param {integer} timeID - time/sample index
+     * @return {Object} Dict of warning, with list of clonotype and sum of reads by type of warning
+     * */
+    getWarningsClonotypeInfo: function (timeID) {
+        var getCleanedWarningName = function( msg ){
+            if (msg.indexOf(":") != -1){
+                return msg.split(":")[0]
+            } else if (msg.indexOf("Bad e-value") != -1){
+                return "Bad e-value"
+            } else if (msg.indexOf("Similar to clone") != -1){
+                return "Similar to another clone"
+            } else if (msg.indexOf("Merged clone has different V(D)J designations") != -1){
+                return "Merged clone has different V(D)J designations cross samples"
+            }
+            return msg
+        }
+
+        var warned = {}
+        for (var cloneId in this.clones){
+            var clone = this.clone(cloneId)
+            if (clone.isWarned()){
+                for (var warn_pos in clone.warn){
+                    var warn = clone.warn[warn_pos]
+                    if (Object.keys(warn).length == 0){
+                        continue
+                    }
+                    if (clone.reads[timeID] != 0){
+                        if (warned[warn.code] == undefined){
+                            warned[warn.code] = {"clones": [], "reads": 0, "msg": ""}
+                        }
+                        warned[warn.code].clones.push(clone.index)
+                        warned[warn.code].reads += clone.reads[timeID]
+                        warned[warn.code].msg = getCleanedWarningName(warn.msg)
+                    }
+                }
+            }
+        }
+        return warned
+    },
+
+
     /**
      * return info about a timePoint in html 
      * @param {integer} timeID - time/sample index
@@ -1534,6 +1579,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     getPointHtmlInfo: function (timeID) {
         var time_length = this.samples.order.length
         var html = ""
+        var locus
 
         html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
@@ -1549,6 +1595,14 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         // 
         var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
 
+        html += header("Reads by locus", "reads_by_locus", 1)
+        for(locus in this.reads.germline){
+            if (this.reads.germline[locus][timeID] != 0){
+                html += row_from_list(`${locus}`, [this.reads.germline[locus][timeID]], `reads_by_locus_${locus}`, 1)
+            }
+        }
+
+
         // Sub-table diversity
         if ( typeof this.diversity != 'undefined') {
             html += "<tr><td class='header' "+colspan_header+"> Diversity indices </td></tr>"
@@ -1559,7 +1613,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 } else if (typeof diversity == "object"){
                     html += "<tr><td "+colspan_header+">"+translate_key_diversity(key_diversity)+"</td></tr>"
                     var present_locus = this.getLocusPresentInTop(timeID)
-                    for (var locus in diversity) {
+                    for (locus in diversity) {
                         if( present_locus.indexOf(locus) != -1 || locus == "all"){
                             html += "<tr id='line_"+key_diversity+"_"+locus+"'><td> " + this.systemBox(locus).outerHTML + " "+locus+"</td><td>" + diversity[locus] + '</td></tr>'
                         }
@@ -1610,10 +1664,19 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 html += html_preprocess
             }
         }
-
-
-
         html += "</table></div>"
+
+
+        html += "<br/><div id='info_warnings'><table>"
+        html += header("Warnings", "warnings", 2)
+        html += row_from_list("message", ["clones", "reads"], "", 2)
+        warnings_clones = this.getWarningsClonotypeInfo(timeID)
+        for (var w_type in warnings_clones) {
+            var warn = warnings_clones[w_type]
+            html += row_from_list(`${w_type}; ${warn.msg}`, [warn.clones.length, warn.reads], undefined, 2)
+        }
+        html += "</table></div>"
+
 
         if ( typeof this.overlaps != 'undefined') {
             html += "<br/><h3>Overlaps index</h3>"
@@ -2217,6 +2280,28 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return date_max
     },        
     
+    /*return TimeID of a given sample original_name
+    * return -1 if id does not exist
+    */
+    getTimeFromFileName(o_n){
+        for(var i in this.samples.original_names)
+            if (o_n == this.samples.original_names[i])
+                return i;
+
+        return -1
+    },
+
+    /*return TimeID of a given sample order value
+    * return -1 if id does not exist
+    */
+    getTimeFromOrder(o){
+        for(var i in this.samples.original_names)
+            if (o == parseInt(this.getStrTime(parseInt(i), "order")))
+                return parseInt(i);
+
+        return -1
+    },
+
     /**
      * return sample/time name in a specified format
      * @param {integer} timeID - sample/time index
@@ -2229,8 +2314,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         switch (format) {
             case "order":
-                result = m.samples.order.indexOf(timeID);
-                if (result == -1) result = "-/-";
+                result = m.samples.order.indexOf(timeID)+1;
+                if (result == 0) result = "-/-";
                 break;
             case "original_name":
                 result = this.samples.original_names[timeID]

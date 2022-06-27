@@ -52,7 +52,7 @@ describe('Report', function () {
     cy.selectCloneMulti([0, 2, 6])
 
     cy.get('#tag_icon__multiple').click()
-    cy.get(':nth-child(11) > div > .icon-newspaper').click()
+    cy.get(':nth-child(15) > div > .icon-newspaper').click()
 
     cy.selectCloneMulti([0, 2]) // change active selection
 

@@ -158,13 +158,25 @@ Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, inform
 
 Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, informations) => {
   if (id != ""){
-    cy.get('#patient_id_label_'  + index.toString()).type(id)
+    cy.get('#patient_id_label_'  + index.toString()).clear().type(id)
   }
-  cy.get('#patient_first_name_'+ index.toString()).type(firstname)
-  cy.get('#patient_last_name_' + index.toString()).type(lastname)
-  cy.get('#patient_birth_'     + index.toString()).type(birthday)
+  cy.get('#patient_first_name_'+ index.toString()).clear().type(firstname)
+  cy.get('#patient_last_name_' + index.toString()).clear().type(lastname)
+  cy.get('#patient_birth_'     + index.toString()).clear().type(birthday)
   if (informations != ""){
-    cy.get('#patient_info_'      + index.toString()).type(informations)
+    cy.get('#patient_info_'      + index.toString()).clear().type(informations)
+  }
+  cy.update_icon()
+})
+
+Cypress.Commands.add('fillRun', (index, id, name, date, informations) => {
+  if (id != ""){
+    cy.get('#run_id_label_'  + index.toString()).clear().type(id)
+  }
+  cy.get('#run_name_'+ index.toString()).clear().type(name)
+  cy.get('#run_run_date_' + index.toString()).clear().type(date)
+  if (informations != ""){
+    cy.get('#run_info_'      + index.toString()).clear().type(informations)
   }
   cy.update_icon()
 })
@@ -205,7 +217,7 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
 
     if (storage == "computer"){
       cy.get('#source_computer')
-        .click()
+        .click({force: true})
       // Upload vidjil file
       cy.get('#file_upload_1_0').uploadFile(filename1)
 

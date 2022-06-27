@@ -156,7 +156,7 @@ describe('Test sandbox', function () {
     cy.getCloneInList(18).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone haven't changed color
 
     // change color method and observe variation or not
-    cy.change_colorby("V/5' gene")
+    cy.changeColorby("V/5' gene")
     cy.update_icon()
 
     cy.getCloneInList(0).should('have.css', 'color', 'rgb(183, 128, 36)') // real clone should have changed color (diff from grey)

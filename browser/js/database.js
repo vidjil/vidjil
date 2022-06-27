@@ -485,6 +485,8 @@ Database.prototype = {
             this.last_file = args
             this.close()
             this.m.db_key = args
+            if (typeof report != "undefined") 
+                report.reset()
             return;
         }
         

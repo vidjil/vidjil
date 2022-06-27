@@ -72,6 +72,8 @@ browser/test/test/TEST*
 # Tutorial generated script
 browser/test/functional/tutorial-test.rb
 server/web2py/applications/vidjil/tests/functional/tutorial-server.rb
+browser/test/cypress/integration/doc_tutorial_client.js
+server/web2py/applications/vidjil/tests/cypress/integration/doc_tutorial_server.js
 
 browser/css/icons/*
 server/web2py/applications/admin

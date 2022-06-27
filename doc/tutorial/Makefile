@@ -10,10 +10,11 @@ $(PDF): %.pdf: %.tex
 $(HTML): %.html: %.tex
 	htlatex $^
 
-tutorial-test.rb: *.tex
-	pandoc --lua-filter extract-code.lua tutorial-vidjil-browser.tex -o /dev/null > tutorial-test.rb
-	mv tutorial-test.rb ../../browser/test/functional/tutorial-test.rb
 
-tutorial-server.rb: *.tex
-	pandoc --lua-filter extract-code.lua tutorial-vidjil-server.tex -o /dev/null > tutorial-server.rb
-	mv tutorial-server.rb ../../server/web2py/applications/vidjil/tests/functional/tutorial-server.rb
+build_tutorial_cypress_client: *.tex
+	pandoc --lua-filter extract-code.lua tutorial-vidjil-browser.tex -o /dev/null > doc_tutorial_client.js
+	mv doc_tutorial_client.js ../../browser/test/cypress/integration/doc_tutorial_client.js
+
+build_tutorial_cypress_server: *.tex
+	pandoc --lua-filter extract-code.lua tutorial-vidjil-server.tex -o /dev/null > doc_tutorial_server.js
+	mv doc_tutorial_server.js ../../server/web2py/applications/vidjil/tests/cypress/integration/doc_tutorial_server.js

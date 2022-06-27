@@ -19,6 +19,7 @@ Cypress.Commands.add('clone_rename', (id, new_name) => {
 Cypress.Commands.add('getCloneInList', (id) => {
   cy.get('#listElem_'+id+' > .nameBox')
     .should("exist")
+    .scrollIntoView()
   return cy.get('#listElem_'+id+' > .nameBox')
 })
 
@@ -30,6 +31,16 @@ Cypress.Commands.add('getCloneSize', (id) => {
 Cypress.Commands.add('getCloneInSegmenter', (id) => {
   cy.get('#seq'+id)
     .should("exist")
+    .scrollIntoView()
+})
+
+
+Cypress.Commands.add('removeCloneInSegmenter', (id) => {
+  // Automaticaly assert that present in starting state, adn not visible at the end
+  cy.get('#seq47 > .sequence-holder > .seq-fixed > .nameBox > .delBox > .icon-cancel')
+    .should("exist")
+    .click()
+    .should("not.be.visible")
 })
 
 
