@@ -50,7 +50,8 @@ test_tools:
   image: vidjilci/cypress_with_browsers:latest
   stage: test_tools
   script:
-    - pip install -r requirements.txt
+    - apt-get update && apt-get install -y python3-pip
+    - pip3 install beautifulsoup4 tabulate requests requests_toolbelt
     - make -C tools/tests
   extends:
     - .need_for_quick_test
