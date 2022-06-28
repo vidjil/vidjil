@@ -47,9 +47,12 @@ stages:
 # Tools
 
 test_tools:
-  image: python:2.7
+  image: vidjilci/cypress_with_browsers:latest
   stage: test_tools
-  script: make -C tools/tests
+  script:
+    - apt-get update && apt-get install -y python3-pip
+    - pip3 install beautifulsoup4 tabulate requests requests_toolbelt
+    - make -C tools/tests
   extends:
     - .need_for_quick_test
   tags:

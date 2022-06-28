@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
 from requests import Session
 from bs4 import BeautifulSoup as bs
 import json
@@ -16,6 +19,7 @@ from collections import defaultdict
 # REmove warning if no SSL vérification
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from tabulate import tabulate
 
 TAGS = []
 TAGS_UNDEFINED = []
@@ -54,6 +58,11 @@ def prettyUrl(string: str):
 
 class Vidjil:
 
+    PATIENT = "patient"
+    RUN = "run"
+    SET = "generic"
+
+    COMPLETED = "COMPLETED"
 
     def __init__(self, url_server:str, url_client:str=None, ssl:str=True):
         """_summary_
@@ -68,7 +77,15 @@ class Vidjil:
         self.ssl = ssl
         print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
         self.session = requests.Session()
+
         cookie = requests.cookies.RequestsCookieJar()
+        try:
+            response = self.session.get(self.url_server, verify=self.ssl)
+        except requests.exceptions.SSLError:
+            print( "%s has INVALID SSL certificate!" % self.url_server)
+            print("Please upgrade your system, and/or see api_certificate.bash, but this could lead to insecure calls.")
+            exit()
+
         if os.path.exists('cookies'):
             cookie.load(ignore_discard=True, ignore_expires=True)
         self.session.cookies = cookie
@@ -86,7 +103,10 @@ class Vidjil:
             Exception: Error of server that return an incorect exit code
 
         """
+        print()
+        print('### %s (%s)' % (self.url_server, email))
         response = self.session.get(self.url_server + '/default/user/login', verify=self.ssl)
+
         if not "auth_user_email__row" in str(response.content):
             raise Exception( "Login; server don't return a correct login form.\nPlease verify your url and certificate parameters.")
 
@@ -107,8 +127,9 @@ class Vidjil:
             raise Exception( "Login; error at login step.\nStatus code is %s and content is '%s'."  % (response.status_code, response.content))
         else:
             self.logged = True
-            print( "Successfull login")
-            self.whoami()
+            print( "Successful login as %s" % email)
+            print()
+            # self.whoami()
             # todo; print admin status; groups ?
 
     def request(self, url:str, method:str, error_msg:bool=False, bypass_error:bool=False):
@@ -139,14 +160,19 @@ class Vidjil:
             print( url )
             print( response.content)
             print(e)
-            exit()
+            raise e
 
         message  = False
-        if response.status_code != 200:
-            message = 'Server return an error code (%s) with message:\n%s' % (response.status_code, response.content if not error_msg else error_msg)
-            message += "Url: %s" % url
+        if response.status_code not in [200, 404]:
+            message  = 'Server return an error code (%s) with message: %s\n' % (response.status_code, str(response.content if not error_msg else error_msg))
+            message += "\nUrl: %s" % url
+        elif response.status_code == 404:
+            message  = 'Server return an error code (%s). Does server is updated ?' % response.status_code
+            message += "\nUrl: %s" % url
         elif content == {'message': 'access denied'}:
             message = 'Server return an access denied response.'
+        elif "success" in content and content["success"] == "false":
+            message = 'Server return a failed message : %s' % content["message"]
 
         if message:
             if bypass_error:
@@ -156,7 +182,7 @@ class Vidjil:
         return content
 
 
-    def getAllSampleset(self, set_type:str=None, filter_val:str=None):
+    def getSets(self, set_type:str=None, filter_val:str=None):
         """_summary_
 
         Args:
@@ -174,7 +200,7 @@ class Vidjil:
         new_url  = self.url_server+"/sample_set/all.json?&%s%s&" % (set_type, filter_val)
         return self.request(new_url, "get")
 
-    def getSamplesetById(self, set_id:int, set_type:str=None):
+    def getSetById(self, set_id:int, set_type:str=None):
         """Get sample set by is id.
 
         Args:
@@ -184,10 +210,13 @@ class Vidjil:
         Returns:
             dict: Json response of the server that contain the set if available
         """
-        set_type = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
-        new_url  = self.url_server+"/sample_set/samplesetById?&id=%s&%s" % (set_id, set_type)
+        pretty_set_type = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
+        new_url  = self.url_server+"/sample_set/samplesetById?&id=%s&%s" % (set_id, pretty_set_type)
         # warning, don't present on prod server for the moment !!!
-        return self.request(new_url, "get")
+        content = self.request(new_url, "get")
+        if not len(content):
+            raise Exception( "getSetById error. \nNo sample found with this id '%s' and type '%s'" % (set_id, set_type))
+        return content
 
     def createPatient(self, first_name:str, last_name:str, sample_set_id:int=None, id:int=None, id_label:int=None, birth_date:str=None, info:str=None):
         """Take information to create a patient under the default group of the user
@@ -278,20 +307,20 @@ class Vidjil:
         print( "whoami: %s" % user)
         return
 
-    def getSampleOfSet(self, set_id, config_id=-1):
+    def getSamplesOfSet(self, set_id, config_id=-1):
         new_url  = self.url_server+"/sample_set/index.json?id=%s&config_id=%s" % (set_id, config_id)
         return self.request(new_url, "get")
 
     def launchAnalysisBunchesSet(self, list_sets:list, config_id:int, force:bool=False, retry:bool=False, verbose:bool=False):
-        """This function allow to take a list of sets and to launch a specified configuration on each sequence file inside them.
+        """Launch an analysis on each sequence file inside the given list of sets.
         Sequence file with a previous result for this configuration will be bypass.
 
         Args:
-            list_sets (list): List of sets that will be analysed (int format)
-            config_id (int): Configuration id to launch analysis.
-            force (bool, optional): Allow to make a new launch of analysis if the current status is FAILED. Defaults to False.
-            retry (bool, optional): Allow to launch an analysis with no consideration of current result statut. Defaults to False.
-            verbose (bool, optional): Allow to print some informations on each sequence file status and some stats on sets. Defaults to False.
+            list_sets (int list): List of sets to analyze
+            config_id (int): Configuration id of the analysis
+            force (bool, optional): Relaunch the analysis when the current status is FAILED. Defaults to False.
+            retry (bool, optional): Launch an analysis with no consideration of current result status (XXXXX). Defaults to False.
+            verbose (bool, optional)
 
         Returns:
             dict: Return a dict of format {set_id:{sample_id:status}}
@@ -315,20 +344,20 @@ class Vidjil:
 
 
     def launchAnalysisOnSet(self, sample_set_id:int, config_id:int, force:bool=False, retry:bool=False, verbose:bool=False):
-        """This function allow to take a set and to launch a specified configuration on each sequence file inside it.
+        """Launch an analysis on each sample associated to the given sample set.
 
         Args:
-            sample_set_id (int): Sample set id to use.
-            config_id (int): Configuration id to launch analysis.
-            force (bool, optional): Allow to make a new launch of analysis if the current status is FAILED. Defaults to False.
-            retry (bool, optional): Allow to launch an analysis with no consideration of current result statut. Defaults to False.
-            verbose (bool, optional): Allow to print some informations on each sequence file status and some stats on sets. Defaults to False.
+            sample_set_id (int): Sample set to analyze
+            config_id (int): Configuration id of the analysis
+            force (bool, optional): Relaunch analysis if the current status is FAILED. Defaults to False.
+            retry (bool, optional): Launch an analysis with no consideration of current result statut. (XXX) Defaults to False.
+            verbose (bool, optional)
 
         Returns:
             dict: Return a dict of format {set_id:{sample_id:status}}
         """
         status  = defaultdict(lambda: dict())
-        samples = self.getSampleOfSet(sample_set_id, config_id)
+        samples = self.getSamplesOfSet(sample_set_id, config_id)
         for sample in samples["query"]:
             sequence_file_id = sample["sequence_file"]["id"]
             result  = sample["results_file"]
@@ -359,7 +388,7 @@ class Vidjil:
         Args:
             sample_id (int): Sample set id from where analysis should be launched
             sequence_file_id (int): Sequence file id to analyse
-            config_id (int): Id of the configuration to use for analysis
+            config_id (int): Configuration id of the analysis
 
         Returns:
             dict: ???
@@ -383,33 +412,36 @@ class Vidjil:
             string+= "%s=%s&" % (key, data[key])
         return string
 
-    def download(self, filepath:str, filename:str, server_name:str=None, original_names:str=None):
-        """Download a result file by is name given on the server storage
-        A speficic name can be given to the downloaded file
-        if server_name and original_names are both setted, replace inside the file the name of the file under original_names filed
+    def download(self, server_path:str, filename:str, replace_from:str=None, replace_to:str=None):
+        """Download a result file from the server.
+        When replace_from and replace_to are both defined, 
+        replace that inside the downloaded file.
 
         Args:
-            filepath (str): filepath is the name of the file as present in the server storage
-            filename (str): filename is the output filename to set to locally store
-            server_name (str, optional): Original filename uploaded on the server before hashing for storage. Give for replacing purpose. Defaults to None.
-            original_names (str, optional): Filename present in the analysis under original_names (so as hashed by server) for replacing purpose. Defaults to None.
+            server_path (str): path/name of the file on the server
+            filename (str): name for the file 
+            replace_from (str, optional): Original filename (before upload to the server and hashing). Give for replacing purpose. Defaults to None.
+            replace_to (str, optional): Filename present in the analysis under original_names (so as hashed by server) for replacing purpose. Defaults to None.
         """
-        url = "%s/default/download/%s?filename=%s" % (self.url_server, filepath, filename)
+        url = "%s/default/download/%s?filename=%s" % (self.url_server, server_path, filename)
+        print( "==> %s " % filename, end='')
+        sys.stdout.flush()
+
         reponse = self.session.get(url, verify=self.ssl)
         # TODO: add verification step if same filename is already present
-        if os.path.isfile(filepath+"/"+filename):
+        if os.path.isfile(server_path+"/"+filename):
             raise Exception('download', "A file with same name already exist")
         open(filename, 'wb').write(reponse.content)
 
         # Clean file names
-        if server_name and original_names:
-            cmd = "sed -i 's/%s/%s/g' %s" % (server_name, original_names, filename)
+        if replace_from and replace_to:
+            cmd = "sed -i 's/%s/%s/g' %s" % (replace_from, replace_to, filename)
             os.system( cmd )
         os.system( "sed -i 's/\\/mnt\\/upload\\/uploads\\///g' %s" % (filename) )
         for pattern in ["\\.fastq.gz", "\\.fq.gz", "\\.fasta", "\\.fastq", "\\.fa"]:
             os.system( "sed -i 's/%s//g' %s" % (pattern, filename) )
 
-        print( "File created: %s" % filename)
+        print()
         return
 
     def createSample(self, set_ids:list, sample_set_id:str, sample_type:str, file_filename:str, file_filename2:str, file_info:str, file_sampling_date:str, file_id:int="", file_set_ids:list="", source:str="computer", pre_process="0"):
@@ -490,6 +522,67 @@ class Vidjil:
         return
 
 
+    def infoSets(self, info: str, sets: dict, set_type: str, verbose=False):
+        print("# Sets %s; %s ==> %s sets" % (info, set_type, len(sets)))
+        if not len(sets):
+            return
+        d = []
+        for s in sets:
+            if verbose:
+                printKeys(s)
+            sub_d = [s['sample_set_id']]
+            if set_type==self.PATIENT:
+                sub_d.append("%s, %s" % (s['first_name'], s['last_name']))
+                sub_d.append(s['birth'])
+                sub_d.append(s['file_count'])
+                sub_d.append(s['creator'])
+                sub_d.append(s['info'].replace("\r\n\r\n", "\n")) #.replace("\r", "; "))
+                headers=["id", "names", "birth", "files", "creator", "informations"]
+            elif set_type==self.SET:
+                sub_d.append(s['name'])
+                sub_d.append(s['file_count'])
+                sub_d.append(s['creator'])
+                sub_d.append(s['info'].replace("\r\n\r\n", "\n")) #.replace("\r", "; "))
+                headers=["id", "name", "files", "creator", "informations"]
+            elif set_type==self.RUN:
+                sub_d.append(s['name'])
+                sub_d.append(s['run_date'])
+                sub_d.append(s['file_count'])
+                sub_d.append(s['creator'])
+                sub_d.append(s['info'].replace("\r\n\r\n", "\n")) #.replace("\r", "; "))
+                headers=["id", "name", "date", "files", "creator", "informations"]
+            d.append(sub_d)
+        print(tabulate(d, showindex=False, headers=headers))
+        print()
+
+    def infoSamples(self, info: str, samples, verbose=False):
+        print("\n# %s ==> %s samples\n" % (info, len(samples['query'])) )
+        if not len(samples["query"]):
+            return
+        d = []
+        for s in samples["query"]:
+            if verbose:
+                printKeys(s)
+            sub_d = []
+            sub_d.append(s['sequence_file']['filename'])
+            sub_d.append(s['sequence_file']['info'])
+            ### preprocess
+            if s["sequence_file"]["pre_process_id"] != None:
+                sub_d.append(samples["pre_process_list"][str(s['sequence_file']['pre_process_id'])])
+                sub_d.append(s['sequence_file']['pre_process_flag'])
+            else:
+                sub_d.append("")
+                sub_d.append("")
+
+            ### Shared set
+            shared = ", ".join(map(lambda x : "%s (%s %s)"% (x['title'], x['sample_type'], x['id']), s["list_share_set"]))
+            sub_d.append(shared)
+            d.append(sub_d)
+
+        headers=["filename", "informations", "pre process", "pre process status", "shared sets"]
+        print(tabulate(d, showindex=False, headers=headers))
+        print()
+        return
 
 #########################
 ### Some utils functions
@@ -506,6 +599,9 @@ def extractTags(string):
     global TAGS
     TAGS += tags
     return tags
+
+def printKeys(d):
+    print("  ", "keys:", " ". join(d.keys()))
 
 
 if  __name__ =='__main__':

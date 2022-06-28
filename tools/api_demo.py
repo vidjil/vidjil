@@ -1,110 +1,175 @@
-from api_vidjil import *
-from collections import defaultdict
 
+from api_vidjil import Vidjil
+import argparse
+import os
 
 TAGS = []
 TAGS_UNDEFINED = []
-url  = "https://localhost/vidjil/"
-certificat="localhost-chain.pem"
+
+DOWNLOAD_PATH = "download/"
+
+### Public database server behind app.vidjil.org
+PUBLIC_SERVER = "https://db.vidjil.org/vidjil"
+PUBLIC_SSL = ""
+PUBLIC_USER = "demo@vidjil.org"
+PUBLIC_PASSWORD = "demo"
+
+### Local server (see doc/server.md)
+LOCAL_SERVER = "https://localhost/vidjil/"
+LOCAL_SSL = "localhost-chain.pem"
+LOCAL_USER = "demo@vidjil.org"
+LOCAL_PASSWORD = "demo"
+
+parser = argparse.ArgumentParser(description= 'Vidjil API Demo')
+parser.add_argument('--stress', '-s', action='store_true', help='Demo on public server, stress test (do not abuse)')
+parser.add_argument('--public', '-p', action='store_true', help='Demo on public server')
+parser.add_argument('--local',  '-l', action='store_true', help='Demo on local server (require a server)')
 
 
 
-if  __name__ =='__main__':
+def demoReadFromServer(server, ssl, user, password, only_fast_tests=False):
+    """Demo on the public server (only read)"""
 
-    """A set of example to use vidjil API """
-
-
-    # Define a vidjil object with at least an url and ssl certificat file
-    vidjil = Vidjil(url, ssl=certificat)
-    # Login to the server by giving a user email and password
-    vidjil.login("demo@vidjil.org", "demo")
+    ### Login to a Vidjil server
+    vidjil = Vidjil(server, ssl=ssl)
+    vidjil.login(user, password)
 
     ### Define a set of id and config
     sample_set_id = 25736  # Demo lil L3
-    config_id     = 2      # multi+inc+xxx
-    
-    
+    config_id     = 25     # multi+inc+xxx
+
     ### Get a set from server by is id and set type
-    set25736 = vidjil.getSamplesetById(sample_set_id, "patient")
-    print( set25736 )
-
-    ### Get status of sample of this set
-    status        = vidjil.launchAnalysisOnSet(sample_set_id, config_id)
-    print( status)
- 
-    ### Same as previous, but on a list of sets
-    status        = vidjil.launchAnalysisBunchesSet(list_sets = [25736,  3296], config_id) # Lil-L3 et Lil-L4
-    print( status)
-
-
-    ### From API, you could create patient, run or generic set.
-    # Some parameters are mandatory
-    # WARNING: These sets will be created on the server. Don't spam your server
-    vidjil.createPatient("first_name", "last_name", info="some informations and #tags")
-    vidjil.createRun("run_name", run_date="2022-01-01")
-    vidjil.createSet("set_api", info="Set to group sample with XXX protocol")
-
-
-    ### Get a list of all samples sets, filter by set type (patient, run or generic), or a given filter value (see example under)
-    # All sets information will be stored under query field
-
-    samples = vidjil.getAllSampleset(set_type="patient")
-    print( "Len without filter: %s" % len(samples["query"]) )
-
-    # If needed, you can also set a filter value that will be searched into various field of sets (name, info, ...)
-    samples = vidjil.getAllSampleset(set_type="patient", filter_val="#API_PATIENT")
-
-
-
-    # ################################
-    # #### More complex examples
-    # ################################
+    sets_demo = vidjil.getSetById(sample_set_id, vidjil.PATIENT)
+    vidjil.infoSets("Set %s" % sample_set_id, sets_demo, set_type=vidjil.PATIENT, verbose=True)
+    ### Get a list of all samples sets by set type (vjdjil.PATIENT, vidjil.RUN or vidjil.SET)
+    # or a given filter value (see example under)
+    sets_all = vidjil.getSets(set_type=vidjil.PATIENT)
     
+    # The data is under samples["query"]
+    vidjil.infoSets("getSets(vidjil.PATIENT)", sets_all["query"], set_type=vidjil.PATIENT)
 
+    # You can also set a filter value that will be searched into various field of sets (name, info, ...)
+    filter = "LIL-L3"
+    sets_filtered = vidjil.getSets(set_type=vidjil.PATIENT, filter_val=filter)
+    vidjil.infoSets('getSets(vidjil.PATIENT, "%s")' % filter, sets_filtered["query"], set_type=vidjil.PATIENT)
 
     ###################################################################
     ### Example 1: download results from a set for a configuration id.
-    path_out = "output_dir/" # be sure to create this directory first
+
+    os.system('mkdir -p %s' % DOWNLOAD_PATH)
     
+    # Get information from server about set and samples (we reuse here the set id of Demo Lil L3)
+    # sampleset = vidjil.getSetById(sample_set_id, vidjil.PATIENT)
+    # vidjil.# infoSets("Set %s" % sample_set_id, sampleset["query"])
 
-    # Get information from server about set and samples (we reuse here the set id previously created)
-    sampleset = vidjil.getSamplesetById(setid_set, "generic")[0]
-    samples   = vidjil.getSampleOfSet(setid_set, config_id)
-    # download result file from all samples if completed
-    for sample in samples["query"]:
-        if sample["results_file"]["status"] == "COMPLETED":
-            # compose a name as you need, here by a combinaison of ids of sets, seuqence file and config id.
-            filename = path_out+"set%s_sequence%s_config%s.vidjil" % (sample["sample_set_membership"]["sample_set_id"], sample["sample_set_membership"]["sequence_file_id"], config_id)  
-            # We also rename the sample in file, under original_names field, to reflet real original name. If don't, the field we be fill with hashed filename as store in the server.
-            vidjil.download(sample["results_file"]["data_file"], filename, sample["sequence_file"]["data_file"], sample["sequence_file"]["filename"])
+    samples   = vidjil.getSamplesOfSet(sample_set_id, config_id)
+    vidjil.infoSamples("getSamplesOfSet(%s, %d)" % (sample_set_id, config_id), samples)
+
+    if only_fast_tests:
+        return
+
+    # download result file from the first two samples if completed
+    for sample in samples["query"][:2]:
+        if sample["results_file"]["status"] == vidjil.COMPLETED:
+            # compose a name as you need
+            filename = DOWNLOAD_PATH + "set%s_sequence%s_config%s.vidjil" % (sample["sample_set_membership"]["sample_set_id"],
+                                                                             sample["sample_set_membership"]["sequence_file_id"],
+                                                                             config_id)
+            # download the file to 'filename', while properly handling 'original_names' field in the .vidjil
+            vidjil.download(sample["results_file"]["data_file"],
+                            filename,
+                            sample["sequence_file"]["data_file"],
+                            sample["sequence_file"]["filename"])
 
 
-    ###################################################################
-    ### Example 2; creating a set, upload data and launch analysis
-    
-    # create set to use
-    set_data  = vidjil.createSet("set for upload by api")
-    setid_set = set_data["args"]["id"]
-    ### Create sample in recently created patient, set and run
-    # set_ids filed take value in a specific format: :$set+$name+($id)
+
+
+def demoWriteRunOnServer(server, ssl, user, password):
+    """
+    This demo requires a server/login with write access.
+    It creates patients/set/runs, upload data, and run analysis.
+    Do not spam a production server!
+    """
+
+    # Login
+    vidjil = Vidjil(server, ssl=ssl)
+    vidjil.login(user, password)
+
+    # Create patient/run/set
+    patient_data = vidjil.createPatient("Jane", "Austen",
+                         info="Patient from Winchester hospital, #LAL-B")
+    run_data = vidjil.createRun("Run 2022-072",
+                     run_date="2022-04-01")
+
+    set_data = vidjil.createSet("Set for API tests",
+                                info="Libraries with EuroClonality-NGS 2019 primers")
+
+
+    setid_patient = patient_data["args"]["id"]
+    setid_run = run_data["args"]["id"]
+    setid_generic = set_data["args"]["id"]
+
+    print( "==> new set patient: %s" % setid_patient)
+    print( "==> new set run: %s" % setid_run)
+    print( "==> new set generic: %s" % setid_generic)
+
+    # Show newly created set
+    set_new = vidjil.getSetById(setid_generic, vidjil.SET)
+    vidjil.infoSets("Set %s" % setid_generic, set_new, vidjil.SET, verbose=True)
+    samples   = vidjil.getSamplesOfSet(setid_generic)
+    vidjil.infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
+
+    # set_ids filed take value in a specific format: ':$set+($id)'
+    # Multiple field should be separated with a '|' as above
     # With :
-    #   $set can be ans 's', 'p' or 'r' respectivly for generic set, patient of run
-    #   $name is a part or complete name of set 
+    #   $set can be 's' (generic set), 'p' (patient), or 'r' (run)
     #   $id is the id of the set 
     sample = vidjil.createSample(source="computer",
-                pre_process="0",
-                set_ids=":s+set_api+(%s)"%setid_set ,
-                file_filename="path_to_file/file.fastq.gz",
-                file_filename2="",
-                file_id="",
-                file_sampling_date="2016-01-13",
-                file_info="Some informations and #VERY #IMPORTANT #TAG" ,
-                file_set_ids="",
-                sample_set_id=setid_set, # can include multiple set_ids as a concatenation of string
-                sample_type="set")
-    file_id  = sample["file_ids"][0]
+                pre_process= "0",
+                set_ids= ":s+(%s)|:r+(%s)|:p+(%s)" % (setid_patient, setid_run, setid_generic),
+                file_filename= "../demo/Demo-X5.fa",
+                file_filename2= "",
+                file_id= "",
+                file_sampling_date= "2016-01-13",
+                file_info= "Uploaded by API" ,
+                file_set_ids= "",
+                sample_set_id= setid_generic,
+                sample_type= "set")
 
-    # Launch analysis on the created sample, with a given configuration id
-    analysis = vidjil.launchAnalisysSample(setid_set, file_id, config_id)
-    # TODO: how to get configuration id ?
+    file_id  = sample["file_ids"][0]  ## Uploaded file
+    print( "==> new file %s" % file_id)
 
+    # Show again the set, now with one sample
+    samples  = vidjil.getSamplesOfSet(setid_generic)
+    vidjil.infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
+
+    ### Get status of sample of this set
+    config_id = 2 ## multi+inc+xxx
+    analysis  = vidjil.launchAnalysisOnSample(setid_generic, file_id, config_id)
+    print("Launch analysis: %s" % analysis)
+
+
+if  __name__ =='__main__':
+    """Examples using Vidjil API"""
+
+    args = parser.parse_args()
+
+    if not args.public and not args.local:
+        parser.print_help()
+
+    if args.stress:
+        failures = 0
+        total = 20
+        for i in range(total):
+            try:
+                demoReadFromServer(PUBLIC_SERVER, PUBLIC_SSL, PUBLIC_USER, PUBLIC_PASSWORD,
+                                   only_fast_tests = True)
+            except Exception:
+                failures += 1
+        print('==> %s/%s failures' % (failures, total))
+
+    if args.public:
+        demoReadFromServer(PUBLIC_SERVER, PUBLIC_SSL, PUBLIC_USER, PUBLIC_PASSWORD)
+
+    if args.local:
+        demoWriteRunOnServer(LOCAL_SERVER, LOCAL_SSL, LOCAL_USER, LOCAL_PASSWORD)

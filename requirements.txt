@@ -9,3 +9,5 @@ uWSGI==2.0.15
 ijson==2.3
 cffi==1.11.5
 python-ldap==3.3.1
+beautifulsoup4==4.11.1
+tabulate==0.8.10
