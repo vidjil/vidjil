@@ -94,6 +94,7 @@ tuto-s1-ff-supported:
 tuto-s2:
   extends:
     - .tuto-server
+    - .need_for_late_server
   parallel:
     matrix:
       - BROWSER: [
