@@ -1,9 +1,9 @@
-{{extend 'db_layout.html'}}
-{{import vidjil_utils}}
+[[extend 'db_layout.html']]
+[[from apps.vidjil.modules import vidjil_utils]]
 
 
 <h3>
-    Pre Process {{=db.pre_process[request.vars["id"]].name}}
+    Pre Process [[=db.pre_process[(request.query["id"])].name]]
 </h3>
 
 <div id="db_table_container">
@@ -16,28 +16,28 @@
                 <td class="column_100"> access</td>
             </tr>
         </thead>
-        {{admin = auth.can_modify_pre_process(request.vars["id"])}}
-        {{ for row in query :}}
+        [[admin = auth.can_modify_pre_process(int(request.query["id"]))]]
+        [[ for row in query :]]
             <tr>
-                <td> {{=row.id}}</td>
-                <td> {{=row.owner}} </td>
-                <td> {{=row.perms}}</td>
-                <td> {{=row.parent_access}}
-                {{if admin :}}
-                    <td> <input id="permission_checkbox_{{=row.id}}" type="checkbox" onclick="db.call('pre_process/change_permission', {
-                                                                  'pre_process_id' : {{=request.vars['id']}} ,
-                                                                  'group_id' : {{=row.id}}})"
-                                {{if row.read :}} checked {{pass}}></td>
-                {{else:}}
-                    <td class="inactive"> <input id="permission_checkbox_{{=row.id}}" type="checkbox" onclick="this.click()"
-                                {{if row.read :}} checked {{pass}}></td>
-                {{pass}}
+                <td> [[=row.id]]</td>
+                <td> [[=row.owner]] </td>
+                <td> [[=row.perms]]</td>
+                <td> [[=row.parent_access]]
+                [[if admin :]]
+                    <td> <input id="permission_checkbox_[[=row.id]]" type="checkbox" onclick="db.call('pre_process/change_permission', {
+                                                                  'pre_process_id' : [[=request.query['id'] ]] ,
+                                                                  'group_id' : [[=row.id]]})"
+                                [[if row.read :]] checked [[pass]]></td>
+                [[else:]]
+                    <td class="inactive"> <input id="permission_checkbox_[[=row.id]]" type="checkbox" onclick="this.click()"
+                                [[if row.read :]] checked [[pass]]></td>
+                [[pass]]
             </tr>
-        {{pass}}
+        [[pass]]
     </table>
     <table class="db_table" id="db_fixed_header"></table>    
 </div>
 
-{{if not auth.can_modify_pre_process(request.vars["id"]) :}}
+[[if not auth.can_modify_pre_process(int(request.query["id"])) :]]
     <div>you need admin access on this pre process if you want to change permission </div>
-{{pass}}
+[[pass]]
