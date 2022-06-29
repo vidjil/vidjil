@@ -75,7 +75,7 @@ def generic_open(path, mode='r', verbose=False):
 
     if 'r' in mode:
         try:
-            f = gzip.open(path, mode)
+            f = gzip.open(path, "rt")
             f.read(1)
             f.seek(0)
             return f
