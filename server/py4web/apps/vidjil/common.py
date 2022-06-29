@@ -284,7 +284,7 @@ class MsgUserAdapter(logging.LoggerAdapter):
         return new_msg, kwargs
     
     def admin(self, msg, extra=None):
-        self.log(logging.ADMIN, msg, extra)
+        self.log(logging.ADMIN, msg, extra=extra)
 #
 class UserLogHandler(logging.Handler):
 
