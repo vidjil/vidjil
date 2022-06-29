@@ -1,34 +1,70 @@
 # coding: utf8
-import gluon.contrib.simplejson
-if request.env.http_origin:
-    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Max-Age'] = 86400
+import base64
+import datetime
+from sys import modules
 
+
+#from apps.vidjil.modules import jstree
+from .. import defs
+from ..modules import vidjil_utils
+from ..modules import tag
+from ..modules.stats_decorator import *
+from ..modules.sampleSet import SampleSet, get_set_group
+from ..modules.sampleSets import SampleSets
+from ..modules.sampleSetList import SampleSetList, filter_by_tags
+from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets, get_sequence_file_config_ids
+from ..modules.controller_utils import error_message
+from ..modules.permission_enum import PermissionEnum
+from ..modules.zmodel_factory import ModelFactory
+from ..tasks import schedule_pre_process
+from ..user_groups import get_upload_group_ids, get_involved_groups
+from ..VidjilAuth import VidjilAuth
+from io import StringIO
+import json
+import time
+import os
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from collections import defaultdict
+import math
+
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
+
+
+###########################
+# HELPERS
+###########################
     
 ACCESS_DENIED = "access denied"
 
+
+@action("/vidjil/pre_process/index", method=["POST", "GET"])
+@action.uses("pre_process/index.html", db, auth.user)
 def index():
     if not auth.user : 
         res = {"redirect" : "default/user/login"}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     query = db((auth.vidjil_accessible_query(PermissionEnum.read_pre_process.value, db.pre_process) | auth.vidjil_accessible_query(PermissionEnum.admin_pre_process.value, db.pre_process) ) ).select(orderby=~db.pre_process.name)
-    log.info("view pre process list", extra={'user_id': auth.user.id,
+    log.info("view pre process list", extra={'user_id': auth.user_id,
                 'record_id': None,
                 'table_name': "pre_process"})
 
     return dict(message=T('Pre-process list'),
                query=query,
-               isAdmin = auth.is_admin())
+               isAdmin = auth.is_admin(),
+               auth=auth,
+               db=db)
 
-
+@action("/vidjil/pre_process/add", method=["POST", "GET"])
+@action.uses("pre_process/add.html", db, auth.user)
 def add():
     if auth.can_create_pre_process():
-        return dict(message=T('Add pre-process'))
+        return dict(message=T('Add pre-process'), auth=auth, db=db)
     return error_message(ACCESS_DENIED)
 
 
+@action("/vidjil/pre_process/add_form", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def add_form():
     if not auth.can_create_pre_process():
         return error_message(ACCESS_DENIED)
@@ -36,107 +72,123 @@ def add_form():
 
     required_fields = ['pre_process_name', 'pre_process_command']
     for field in required_fields:
-        if request.vars[field] == "" :
+        if request.params[field] == "" :
             error += field+" needed, "
 
     if error=="" :
         
-        pre_proc_id = db.pre_process.insert(name=request.vars['pre_process_name'],
-                        info=request.vars['pre_process_info'],
-                        command=request.vars['pre_process_command']
+        pre_proc_id = db.pre_process.insert(name=request.params['pre_process_name'],
+                        info=request.params['pre_process_info'],
+                        command=request.params['pre_process_command']
                         )
 
-	auth.add_permission(auth.user_group(), PermissionEnum.read_pre_process.value, db.pre_process, pre_proc_id)
+        auth.add_permission(auth.user_group(), PermissionEnum.read_pre_process.value, db.pre_process, pre_proc_id)
 
         res = {"redirect": "pre_process/index",
-               "message": "pre_process '%s' added" % request.vars['pre_process_name']}
+               "message": "pre_process '%s' added" % request.params['pre_process_name']}
         log.admin(res)
-        log.info(res, extra={'user_id': auth.user.id,
+        log.info(res, extra={'user_id': auth.user_id,
                 'record_id': pre_proc_id,
                 'table_name': "pre_process"})
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
         
     else :
         res = {"success" : "false", "message" : error}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
-
+@action("/vidjil/pre_process/edit", method=["POST", "GET"])
+@action.uses("pre_process/edit.html", db, auth.user)
 def edit(): 
-    if auth.can_modify_pre_process(request.vars['id']):
-        return dict(message=T('edit config'))
+    if auth.can_modify_pre_process(int(request.query['id'])):
+        return dict(message=T('edit config'), 
+                    info = db.pre_process[request.query["id"]],
+                    auth=auth,
+                    db=db)
     return error_message(ACCESS_DENIED)
 
-
+@action("/vidjil/pre_process/edit_form", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def edit_form(): 
-    if not auth.can_modify_pre_process(request.vars['id']):
+    if not auth.can_modify_pre_process(int(request.params['id'])):
         return error_message(ACCESS_DENIED)
     error =""
 
     required_fields = ['pre_process_name', 'pre_process_command']
     for field in required_fields:
-        if request.vars[field] == "" :
+        if request.params[field] == "" :
             error += field+" needed, "
 
     if error=="" :
 
-        db.pre_process[request.vars["id"]] = dict(name=request.vars['pre_process_name'],
-                        info=request.vars['pre_process_info'],
-                        command=request.vars['pre_process_command']
+        db.pre_process[request.params["id"]] = dict(name=request.params['pre_process_name'],
+                        info=request.params['pre_process_info'],
+                        command=request.params['pre_process_command']
                         )
 
         res = {"redirect": "pre_process/index",
-               "message": "pre_process '%s' updated" % request.vars['pre_process_name']}
+               "message": "pre_process '%s' updated" % request.params['pre_process_name']}
 
         log.admin(res)
-        log.info(res, extra={'user_id': auth.user.id,
-                'record_id': request.vars["id"],
+        log.info(res, extra={'user_id': auth.user_id,
+                'record_id': request.params["id"],
                 'table_name': "pre_process"})
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     else :
         res = {"success" : "false", "message" : error}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/pre_process/confirm", method=["POST", "GET"])
+@action.uses("pre_process/confirm.html",db, auth.user)
 def confirm():
-    if auth.can_modify_pre_process(request.vars['id']):
-        query = db( (db.pre_process.id == request.vars['id']) & (auth.vidjil_accessible_query(PermissionEnum.read_pre_process.value, db.pre_process) | auth.vidjil_accessible_query(PermissionEnum.admin_pre_process.value, db.pre_process) )  ).select()
-        return dict(message=T('confirm pre_process deletion'), query=query)
-    return error_message(ACCESS_DENIES)
+    if auth.can_modify_pre_process(int(request.query['id'])):
+        query = db( (db.pre_process.id == request.query['id']) & (auth.vidjil_accessible_query(PermissionEnum.read_pre_process.value, db.pre_process) | auth.vidjil_accessible_query(PermissionEnum.admin_pre_process.value, db.pre_process) )  ).select()
+        return dict(message=T('confirm pre_process deletion'), query=query, auth=auth,db=db)
+    return error_message(ACCESS_DENIED)
 
+
+@action("/vidjil/pre_process/delete", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def delete():
     
-    if not auth.can_modify_pre_process(request.vars['id']):
+    if not auth.can_modify_pre_process(int(request.query['id'])):
         return error_message(ACCESS_DENIED)
     #delete pre_process
-    db(db.pre_process.id==request.vars["id"]).delete() 
+    db(db.pre_process.id==request.query["id"]).delete() 
     
     res = {"redirect": "pre_process/index",
-           "message": "pre_process '%s' deleted" % request.vars["id"]}
+           "message": "pre_process '%s' deleted" % request.query["id"]}
     log.admin(res)
-    log.info(res, extra={'user_id': auth.user.id,
-            'record_id': request.vars["id"],
+    log.info(res, extra={'user_id': auth.user_id,
+            'record_id': request.query["id"],
             'table_name': "pre_process"})
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
+
 
 ## need ["sequence_file_id"]
 ## need ["sample_set_id"]
+@action("/vidjil/pre_process/info", method=["POST", "GET"])
+@action.uses("pre_process/info.html",db, auth.user)
 def info():
-    if (auth.can_modify_sample_set(request.vars["sample_set_id"])):
-        log.info("view pre process info", extra={'user_id': auth.user.id,
-                'record_id': request.vars["sample_set_id"],
+    if (auth.can_modify_sample_set(int(request.query["sample_set_id"]))):
+        log.info("view pre process info", extra={'user_id': auth.user_id,
+                'record_id': request.query["sample_set_id"],
                 'table_name': "sample_set_id"})
-        return dict(message=T('result info'))
+        return dict(message=T('result info'), auth=auth, db=db)
     else :
         res = {"message": "acces denied"}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
+
+@action("/vidjil/pre_process/permission", method=["POST", "GET"])
+@action.uses("pre_process/permission.html",db, auth.user)
 def permission():
-    if (not auth.can_modify_pre_process(request.vars["id"]) ):
+    if (not auth.can_modify_pre_process(int(request.query["id"])) ):
         res = {"message": ACCESS_DENIED}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     query = db( (db.auth_group.role != 'admin') ).select()
 
@@ -162,40 +214,41 @@ def permission():
                 (db.auth_permission.table_name == 'sample_set')).select()
         row.perms = ', '.join(map(lambda x: x.name, permissions))
 
-        row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db.pre_process, request.vars['id'], group=row.id))
-        row.read =  auth.get_group_access('pre_process', request.vars['id'], row.id)
+        row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db.pre_process, request.query['id'], group=row.id))
+        row.read =  auth.get_group_access('pre_process', request.query['id'], row.id)
 
-    return dict(query = query)
+    return dict(query = query, auth=auth,db=db)
 
-#TODO refactor with patient/change_permission
+@action("/vidjil/pre_process/change_permission", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def change_permission():
-    if (not auth.can_modify_pre_process(request.vars["pre_process_id"]) ):
+    if (not auth.can_modify_pre_process(int(request.query["pre_process_id"])) ):
         res = {"message": ACCESS_DENIED}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     error = ""
-    if request.vars["group_id"] == "" :
+    if request.query["group_id"] == "" :
         error += "missing group_id, "
-    if request.vars["pre_process_id"] == "" :
+    if request.query["pre_process_id"] == "" :
         error += "missing pre_process_id, "
 
     if error=="":
-        if auth.get_group_access(db.pre_process, int(request.vars["pre_process_id"]), int(request.vars["group_id"])):
-            auth.del_permission(request.vars["group_id"], PermissionEnum.access.value, db.pre_process, request.vars["pre_process_id"])
-            res = {"message" : "c%s: access '%s' deleted to '%s'" % (request.vars["pre_process_id"],
-                                                                     PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
+        if auth.get_group_access(db.pre_process, int(request.query["pre_process_id"]), int(request.query["group_id"])):
+            auth.del_permission(request.query["group_id"], PermissionEnum.access.value, db.pre_process, request.query["pre_process_id"])
+            res = {"message" : "c%s: access '%s' deleted to '%s'" % (request.query["pre_process_id"],
+                                                                     PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
         else :
-            auth.add_permission(request.vars["group_id"], PermissionEnum.access.value, db.pre_process, request.vars["pre_process_id"])
-            res = {"message" : "c%s: access '%s' granted to '%s'" % (request.vars["pre_process_id"],
-                                                                     PermissionEnum.access.value, db.auth_group[request.vars["group_id"]].role)}
+            auth.add_permission(request.query["group_id"], PermissionEnum.access.value, db.pre_process, request.query["pre_process_id"])
+            res = {"message" : "c%s: access '%s' granted to '%s'" % (request.query["pre_process_id"],
+                                                                     PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
 
         log.admin(res)
-        log.info(res, extra={'user_id': auth.user.id,
-                'record_id': request.vars["pre_process_id"],
+        log.info(res, extra={'user_id': auth.user_id,
+                'record_id': request.query["pre_process_id"],
                 'table_name': "pre_process"})
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
     else :
         res = {"message": "incomplete request : "+error }
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
