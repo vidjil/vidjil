@@ -1,14 +1,25 @@
 # coding: utf8
-
-from datetime import datetime, timedelta
-import time
+import datetime
 import types
 
-if request.env.http_origin:
-    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Max-Age'] = 86400
+#from apps.vidjil.modules import jstree
+from .. import defs
+from ..modules.tag import parse_search, TagDecorator, get_tag_prefix
+from ..user_groups import get_involved_groups
+from datetime import timedelta 
+from io import StringIO
+import json
+import time
+import os
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from collections import defaultdict
 
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
+
+
+###########################
+# HELPERS
+###########################
 ACCESS_DENIED = "access denied"
 
 def generic_get_group(element_type):
@@ -99,23 +110,30 @@ def get_most_used_tags(group_list):
         limitby=(0,100)
     )
 
+
+
+############################
+# CONTROLLERS
+############################
+@action("/vidjil/my_account/index", method=["POST", "GET"])
+@action.uses("my_account/index.html", db, auth.user)
 def index():
     start = time.time()
 
-    since = datetime.today() - timedelta(days=30)
+    since = datetime.date.today() - timedelta(days=30)
 
-    if auth.is_admin() and 'data' in request.vars:
+    if auth.is_admin() and 'data' in request.query:
         import json
-        group_list = json.loads(request.vars['data'])['group_ids']
+        group_list = json.loads(request.query['data'])['group_ids']
     else:
         group_list = [int(g.id) for g in auth.get_user_groups() + auth.get_user_group_parents()]
 
     log.debug("group_list: %s" % group_list)
 
-    if "filter" not in request.vars :
-        request.vars["filter"] = ""
+    if "filter" not in request.query :
+        request.query["filter"] = ""
 
-    search, tags = parse_search(request.vars["filter"])
+    search, tags = parse_search(request.query["filter"])
 
     result = {}
     perm_query = get_permissions(group_list)
@@ -216,13 +234,17 @@ def index():
     return dict(keys = keys,
                 result=result,
                 group_ids = group_list,
-                involved_group_ids = involved_group_ids)
+                involved_group_ids = involved_group_ids,
+                auth=auth,
+                db=db)
 
+@action("/vidjil/my_account/jobs", method=["POST", "GET"])
+@action.uses("my_account/jobs.html", db, auth.user)
 def jobs():
-    since = datetime.today() - timedelta(days=30)
+    since = datetime.date.today() - timedelta(days=30)
 
-    if auth.is_admin() and 'group_ids' in request.vars and request.vars['group_ids'] is not None:
-        group_list = request.vars['group_ids']
+    if auth.is_admin() and 'group_ids' in request.query and request.query['group_ids'] is not None:
+        group_list = request.query['group_ids']
         if isinstance(group_list, types.StringTypes):
             group_list = [group_list]
     else:
@@ -230,10 +252,10 @@ def jobs():
 
     log.debug("group_list: %s" % group_list)
 
-    if "filter" not in request.vars :
-        request.vars["filter"] = ""
+    if "filter" not in request.query :
+        request.query["filter"] = ""
 
-    search, tags = parse_search(request.vars["filter"])
+    search, tags = parse_search(request.query["filter"])
 
     query = (access_query(group_list) &
             (db.sample_set.id == db.auth_permission.record_id) &
@@ -285,4 +307,6 @@ def jobs():
                 group_ids = group_list,
                 involved_group_ids = involved_group_ids,
                 tagdecorator = tagdecorator,
-                names = names)
+                names = names,
+                auth=auth,
+                db=db)
