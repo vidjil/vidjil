@@ -1,3 +1,4 @@
+from __future__ import print_function
 import fuse
 import argparse
 import base64
@@ -261,7 +262,7 @@ def process_files(args):
             data = fuse.ListWindows()
             data.load(vidjil, "")
         except Exception:
-            print "** Warning ** file %s could not be loaded" % vidjil
+            print( "** Warning ** file %s could not be loaded" % vidjil )
         else:
             write_fuse_to_fasta(data, outfile, used_names, vidjil, args, args.metadata[current_file])
         current_file += 1
