@@ -1,4 +1,4 @@
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS  ../data/airr_output/airr_vquest.tsv -o fuse_airr_vquest.vidjil ; cat fuse_airr_vquest.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS  ../data/airr_output/airr_vquest.tsv -o fuse_airr_vquest.vidjil ; cat fuse_airr_vquest.vidjil
 
 $ check original name
 1: "../data/airr_output/airr_vquest.tsv"

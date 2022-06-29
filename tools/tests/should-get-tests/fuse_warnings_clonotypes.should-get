@@ -1,5 +1,5 @@
 !OUTPUT_FILE: fuse_warnings_clone.vidjil
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil -o fuse_warnings_clone.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil -o fuse_warnings_clone.vidjil
 
 $ Fuse the three files
 j: reads.total: [9500, 9500]
@@ -28,7 +28,7 @@ $ Correct warning is present: W82 (productivity)
 #################################
 ### Same tests but with 4 samples
 !OUTPUT_FILE: fuse_warnings_clones_many_samples.vidjil
-!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil  ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil -o fuse_warnings_clones_many_samples.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil  ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil -o fuse_warnings_clones_many_samples.vidjil
 
 
 $ Middle file has the good 40-bp windows

@@ -19,7 +19,7 @@ j: clones[1].germline: IGH
 
 ## Apply a simple 'sed' script; IGH --> TRG
 !OUTPUT_FILE: fused_prefuse_igh-to-trg.vidjil
-!LAUNCH: python3 ../../fuse.py $FUSE_OPTIONS --pre igh-to-trg.sh ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_prefuse_igh-to-trg.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS --pre igh-to-trg.sh ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_prefuse_igh-to-trg.vidjil
 
 $ No more reads IGH 
 j0: reads.germline.IGH
@@ -33,7 +33,7 @@ j: clones[1].germline: TRG
 
 ## Apply this sed script but with param
 !OUTPUT_FILE: fused_prefuse_with_param.vidjil
-!LAUNCH: python3 ../../fuse.py $FUSE_OPTIONS --pre "igh-to-trg.sh -l IGK" ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_prefuse_with_param.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS --pre "igh-to-trg.sh -l IGK" ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_prefuse_with_param.vidjil
 
 $ No more reads IGH 
 j0: reads.germline.IGH
@@ -47,7 +47,7 @@ j: clones[1].germline: IGK
 
 ## With multiple prefuse call (script replace original_names value by 'A')
 !OUTPUT_FILE: fused_prefuse_multiple.vidjil
-!LAUNCH: python3 ../../fuse.py $FUSE_OPTIONS --pre "igh-to-trg.sh -l IGK && script_a.py" ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_prefuse_multiple.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS --pre "igh-to-trg.sh -l IGK && script_a.py" ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_prefuse_multiple.vidjil
 
 $ No more reads IGH 
 j0: reads.germline.IGH
@@ -64,7 +64,7 @@ j: samples.original_names[1]: A
 
 ## With multiple prefuse call; but with a fail inside script; so process should fail
 !EXIT_CODE: 1
-!LAUNCH: python3 ../../fuse.py $FUSE_OPTIONS --pre "igh-to-trg.sh -l IGK && script_fail.py && script_a.py" ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_prefuse_multiple.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS --pre "igh-to-trg.sh -l IGK && script_fail.py && script_a.py" ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_prefuse_multiple.vidjil
 
 
 ### Restore inital defs.py file

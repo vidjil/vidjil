@@ -1,7 +1,7 @@
-!LAUNCH: python3 ../../api_demo.py --public
 # This test is launched on the public server.
 # Another tests is launched on a dev deployed review server. See files vidjil/tools/gitlab-ci.yml & vidjil/tools/tests/test_api.py
 # This test can failed if api and server are not on the same sync (api for py4web, but app server on web2py)
+!LAUNCH: $PYTHON ../../api_demo.py --public
 
 $ Correct url of server
 2: db.vidjil.org\/vidjil 

@@ -1,5 +1,5 @@
 ##### Test on file 1; no "normalized_reads"
-!LAUNCH: python ../../spike-normalization.py --input ../data/input-spike-norm-1.vidjil --output spike_out1.vidjil && cat spike_out1.vidjil
+!LAUNCH: $PYTHON ../../spike-normalization.py --input ../data/input-spike-norm-1.vidjil --output spike_out1.vidjil && cat spike_out1.vidjil
 
 $ clones in the output, as in the input
 9: "id"
@@ -11,7 +11,7 @@ $ no "normalized_reads": diagnostic sample
 0: "normalized_reads"
 
 ##### Test on file 2; 6/8 normalization
-!LAUNCH: python ../../spike-normalization.py --input ../data/input-spike-norm-2.vidjil --output spike_out2.vidjil && cat spike_out2.vidjil
+!LAUNCH: $PYTHON ../../spike-normalization.py --input ../data/input-spike-norm-2.vidjil --output spike_out2.vidjil && cat spike_out2.vidjil
 
 $ clones in the output, same as in the input
 8: "id"
@@ -26,7 +26,7 @@ $ Good value for the first clone
 : 0.3739975328
 
 ##### Test on file 3; 2/7 normalization
-!LAUNCH: python ../../spike-normalization.py --input ../data/input-spike-norm-3.vidjil --output spike_out3.vidjil && cat spike_out3.vidjil
+!LAUNCH: $PYTHON ../../spike-normalization.py --input ../data/input-spike-norm-3.vidjil --output spike_out3.vidjil && cat spike_out3.vidjil
 
 $ clones in the output, same as in the input
 7: "id"

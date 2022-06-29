@@ -16,7 +16,7 @@ $ Init, correct number of TRG
 
 # Apply a simple 'sed' script; IGH --> TRG
 !OUTPUT_FILE: fused_postprocess_igh-to-trg.vidjil
-python3 ../../fuse.py $FUSE_OPTIONS --post igh-to-trg.sh ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_postprocess_igh-to-trg.vidjil
+$PYTHON ../../fuse.py $FUSE_OPTIONS --post igh-to-trg.sh ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_postprocess_igh-to-trg.vidjil
 
 $ IGH  should become TRG (-3 that come from "custom" field; not replicate after fuse): TRG
 3:TRG
@@ -25,7 +25,7 @@ $ IGH  should become TRG (-3 that come from "custom" field; not replicate after 
 
 
 !OUTPUT_FILE: fused_postprocess_with_param.vidjil
-python3 ../../fuse.py $FUSE_OPTIONS --post "igh-to-trg.sh -l IGK" ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_postprocess_with_param.vidjil
+$PYTHON ../../fuse.py $FUSE_OPTIONS --post "igh-to-trg.sh -l IGK" ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_postprocess_with_param.vidjil
 
 $ IGH  should become IGK: TRG 
 0:TRG
