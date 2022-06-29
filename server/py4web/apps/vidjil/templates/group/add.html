@@ -1,8 +1,8 @@
-{{extend 'db_layout.html'}}
+[[extend 'db_layout.html']]
 
 <div>
     
-    <h3>{{=message}}</h3>
+    <h3>[[=message]]</h3>
 
     <form id="data_form" action="DB_ADDRESS/group/add_form" enctype="multipart/form-data" method="post">
         <table>
@@ -22,7 +22,7 @@
                         <label for="group_parent" id="group_parent__label"> Parent Group </label>
                     </td>
                     <td>
-                        {{= SELECT(*[OPTION('None', _value='None')] + [OPTION(g.role, _value=g.id) for g in groups], _name="group_parent") }}
+                        [[= SELECT(*[OPTION('None', _value='None')] + [OPTION(g.role, _value=g.id) for g in groups], _name="group_parent") ]]
                     </td>
                 </tr>
                 <tr>
