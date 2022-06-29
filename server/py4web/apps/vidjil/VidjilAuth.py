@@ -834,6 +834,65 @@ class VidjilAuth(Auth):
                 
         return r
 
+    def add_membership(self, group_id=None, user_id=None, role=None):
+        group_id = group_id or self.id_group(role)
+        try:
+            group_id = int(group_id)
+        except:
+            group_id = self.id_group(group_id)  # interpret group_id as a role
+
+        if not user_id and self.user:
+            user_id = self.user.id
+        if not group_id:
+            raise ValueError('group_id not provided or invalid')
+        if not user_id:
+            raise ValueError('user_id not provided or invalid')
+
+        membership = self.table_membership()
+        db = membership._db
+        record = db((membership.user_id == user_id) &
+                    (membership.group_id == group_id),
+                    ignore_common_filters=True).select().first()
+        if record:
+            if hasattr(record, 'is_active') and not record.is_active:
+                record.update_record(is_active=True)
+            return record.id
+        else:
+            id = membership.insert(group_id=group_id, user_id=user_id)
+        if role and user_id == self.user_id:
+            self.user_groups[group_id] = role
+        else:
+            self.update_groups()
+        return id
+
+    def del_membership(self, group_id=None, user_id=None, role=None):
+        group_id = group_id or self.id_group(role)
+        try:
+            group_id = int(group_id)
+        except:
+            group_id = self.id_group(group_id) 
+
+        if not user_id and self.user:
+            user_id = self.user_id
+
+        membership = self.table_membership()
+        ret = self.db(membership.user_id == user_id)(membership.group_id == group_id).delete()
+
+        return ret
+
+    def update_groups(self):
+        if not self.user:
+            return
+        user_groups = self.user_groups = {}
+        table_group = self.table_group()
+        table_membership = self.table_membership()
+        memberships = self.db(
+            table_membership.user_id == self.user_id).select()
+        for membership in memberships:
+            group = table_group(membership.group_id)
+            if group:
+                user_groups[membership.group_id] = group.role
+
     def __str__(self):
         return "%04d – %s %s" % (self.id, self.first_name, self.last_name)
 
