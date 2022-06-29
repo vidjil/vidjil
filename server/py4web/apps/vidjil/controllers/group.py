@@ -1,13 +1,50 @@
-import gluon.contrib.simplejson
-from controller_utils import error_message
-if request.env.http_origin:
-    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Max-Age'] = 86400
+# coding: utf8
+import base64
+import datetime
+from sys import modules
+
+
+#from apps.vidjil.modules import jstree
+from .. import defs
+from ..modules import vidjil_utils
+from ..modules import tag
+from ..modules.stats_decorator import *
+from ..modules.controller_utils import error_message
+from ..modules.permission_enum import PermissionEnum
+from ..modules.zmodel_factory import ModelFactory
+from ..VidjilAuth import VidjilAuth, PermissionLetterMapping
+from io import StringIO
+import json
+import time
+import os
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from collections import defaultdict
+import math
+
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
+
+###########################
+# HELPERS
+###########################
+def add_default_group_permissions(auth, group_id, anon=False):
+    auth.add_permission(group_id, PermissionEnum.create.value, 'sample_set', 0);
+    auth.add_permission(group_id, PermissionEnum.read.value, 'sample_set', 0);
+    auth.add_permission(group_id, PermissionEnum.admin.value, 'sample_set', 0);
+    auth.add_permission(group_id, PermissionEnum.upload.value, 'sample_set', 0);
+    auth.add_permission(group_id, PermissionEnum.save.value, 'sample_set', 0);
+    if anon:
+        auth.add_permission(group_id, PermissionEnum.anon.value, 'sample_set', 0);
 
 ACCESS_DENIED = "access denied"
 
+
+
+############################
+# CONTROLLERS
+############################
 ## return group list
+@action("/vidjil/group/index", method=["POST", "GET"])
+@action.uses("group/index.html", db, auth.user)
 def index():
     count = db.auth_group.id.count()
     user_count = db.auth_user.id.count()
@@ -36,48 +73,53 @@ def index():
         permissions = auth.get_group_permissions(table_name='sample_set', group_id=row.id, myfilter=permissions_list)
         row.access = ''.join([PermissionLetterMapping[p].value for p in permissions])
 
-    log.info("access group list", extra={'user_id': auth.user.id,
+    log.info("access group list", extra={'user_id': auth.user_id,
                 'record_id': None,
                 'table_name': "group"})
 
-    return dict(message=T('Groups'), query=query, count=count)
+    return dict(message=T('Groups'), query=query, count=count, auth=auth, db=db)
+
 
 ## return an html form to add a group
+@action("/vidjil/group/add", method=["POST", "GET"])
+@action.uses("group/add.html", db, auth.user)
 def add():
     if auth.is_admin():
         groups = db(db.auth_group).select()
     else:
         groups = auth.get_user_groups()
 
-    log.info('access group add form', extra={'user_id': auth.user.id,
+    log.info('access group add form', extra={'user_id': auth.user_id,
                 'record_id': None,
                 'table_name': "group"})
-    return dict(message=T('New group'), groups=groups)
+    return dict(message=T('New group'), groups=groups, auth=auth, db=db)
 
 
 ## create a group if the html form is complete
 ## need ["group_name", "info"]
 ## redirect to group list if success
 ## return a flash error message if error
+@action("/vidjil/group/add_form", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def add_form():
     if not auth.is_admin():
         return error_message(ACCESS_DENIED)
 
     error = ""
 
-    if request.vars["group_name"] == "" :
+    if request.params["group_name"] == "" :
         error += "group name needed, "
 
     if error=="" :
-        id = db.auth_group.insert(role=request.vars["group_name"],
-                               description=request.vars["info"])
-        user_group = auth.user_group(auth.user.id)
+        id = db.auth_group.insert(role=request.params["group_name"],
+                               description=request.params["info"])
+        user_group = auth.user_group(auth.user_id)
 
         #group creator is a group member
-        auth.add_membership(id, auth.user.id)
+        auth.add_membership(id, auth.user_id)
 
         # Associate group with parent group network
-        group_parent = request.vars["group_parent"]
+        group_parent = request.params["group_parent"]
         if group_parent != None and group_parent != 'None':
             parent_list = db(db.group_assoc.second_group_id == group_parent).select(db.group_assoc.ALL)
             parent = None
@@ -94,98 +136,108 @@ def add_form():
         add_default_group_permissions(auth, id)
 
         res = {"redirect": "group/index",
-               "message" : "group '%s' (%s) created" % (id, request.vars["group_name"])}
+               "message" : "group '%s' (%s) created" % (id, request.params["group_name"])}
 
-        log.info(res, extra={'user_id': auth.user.id,
+        log.info(res, extra={'user_id': auth.user_id,
                 'record_id': id,
                 'table_name': "group"})
         log.admin(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     else :
         res = {"success" : "false", "message" : error}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/group/edit", method=["POST", "GET"])
+@action.uses("group/edit.html", db, auth.user)
 def edit():
-    if auth.is_admin() or auth.has_permission(PermissionsEnum.admin.value, db.auth_group, request.vars["id"]):
-        group = db.auth_group[request.vars["id"]]
-        return dict(message=T('Edit group'), group=group)
+    if auth.is_admin() or auth.has_permission(PermissionEnum.admin.value, db.auth_group, request.query["id"]):
+        group = db.auth_group[request.query["id"]]
+        log.info('access group edit form', extra={'user_id': auth.user_id,
+            'record_id': request.query["id"],
+            'table_name': "group"})
+        return dict(message=T('Edit group'), group=group, auth=auth, db=db)
 
-    log.info('access group edit form', extra={'user_id': auth.user.id,
-                'record_id': request.vars["id"],
-                'table_name': "group"})
     return error_message(ACCESS_DENIED)
 
+@action("/vidjil/group/edit_form", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def edit_form():
-    if not auth.can_modify_group(request.vars['id']):
+    if not auth.can_modify_group(int(request.params['id'])):
         return error_message(ACCESS_DENIED)
 
     error = ""
 
-    if request.vars["group_name"] == "" :
+    if request.params["group_name"] == "" :
         error += "group name needed, "
 
     if error=="" :
-        db.auth_group[request.vars["id"]] = dict(role=request.vars["group_name"],
-                                               description=request.vars["info"])
+        db(db.auth_group.id == request.params["id"]).update(role=request.params["group_name"],
+                                                            description=request.params["info"])
 
         res = {"redirect": "group/index",
-               "message" : "group '%s' modified" % request.vars["id"]}
+               "message" : "group '%s' modified" % request.params["id"]}
 
-        log.info(res, extra={'user_id': auth.user.id,
-                'record_id': request.vars['id'],
+        log.info(res, extra={'user_id': auth.user_id,
+                'record_id': request.params['id'],
                 'table_name': "group"})
         log.admin(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     else :
         res = {"success" : "false", "message" : error}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
 ## confirm page before group deletion
 ## need ["id"]
+@action("/vidjil/group/confirm", method=["POST", "GET"])
+@action.uses("group/confirm.html", db, auth.user)
 def confirm():
-    if auth.can_modify_group(request.vars["id"]):
-        return dict(message=T('confirm group deletion'))
+    if auth.can_modify_group(int(request.query["id"])):
+        return dict(message=T('confirm group deletion'), auth=auth, db=db)
     return error_message(ACCESS_DENIED)
 
 
 ## delete group
 ## need ["id"]
 ## redirect to group list if success
+@action("/vidjil/group/delete", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def delete():
-    if not auth.can_modify_group(request.vars["id"]):
+    if not auth.can_modify_group(int(request.query["id"])):
         return error_message(ACCESS_DENIED)
     #delete group
-    db(db.auth_group.id == request.vars["id"]).delete()
+    db(db.auth_group.id == request.query["id"]).delete()
     
     res = {"redirect": "group/index",
-           "message": "group '%s' deleted" % request.vars["id"]}
-    log.info(res, extra={'user_id': auth.user.id,
-                'record_id': request.vars["id"],
+           "message": "group '%s' deleted" % request.query["id"]}
+    log.info(res, extra={'user_id': auth.user_id,
+                'record_id': request.query["id"],
                 'table_name': "group"})
     log.admin(res)
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(',',':'))
 
 
 ## return list of group member
 ## need ["id"]
+@action("/vidjil/group/info", method=["POST", "GET"])
+@action.uses("group/info.html", db, auth.user)
 def info():
-    if auth.can_view_group(request.vars["id"]):
-        log.info("access user list", extra={'user_id': auth.user.id,
-                'record_id': request.vars["id"],
+    if auth.can_view_group(int(request.query["id"])):
+        log.info("access user list", extra={'user_id': auth.user_id,
+                'record_id': request.query["id"],
                 'table_name': "group"})
 
-        group = db.auth_group[request.vars["id"]]
+        group = db.auth_group[request.query["id"]]
 
         base_query = ((db.auth_user.id == db.auth_membership.user_id)
-                & (db.auth_membership.group_id == request.vars["id"]))
+                & (db.auth_membership.group_id == request.query["id"]))
 
-        parent_group = db(db.group_assoc.second_group_id == request.vars["id"]).select()
+        parent_group = db(db.group_assoc.second_group_id == request.query["id"]).select()
 
-        group_ids = [request.vars["id"]] + [r.first_group_id for r in parent_group]
+        group_ids = [request.query["id"]] + [r.first_group_id for r in parent_group]
 
         base_left = [db.auth_permission.on(
                         (db.auth_permission.group_id.belongs(group_ids)) &
@@ -250,124 +302,82 @@ def info():
 
         return dict(message=T('group info'),
                     result=result,
-                    group=group)
+                    group=group,
+                    auth=auth,
+                    db=db)
     return error_message(ACCESS_DENIED)
-
-
-## return list of group admin
-## need ["id"]
-def permission():
-    if auth.can_modify_group(request.vars["id"]):
-        log.info("view permission page", extra={'user_id': auth.user.id,
-                'record_id': request.vars["id"],
-                'table_name': "group"})
-        return dict(message=T('permission'))
-    return error_message(ACCESS_DENIED)
-
-## remove admin right
-## need ["group_id", "user_id"]
-def remove_permission():
-    if not auth.can_modify_group(request.vars["group_id"]):
-        return error_message(ACCESS_DENIED)
-    error = ""
-
-    if request.vars["group_id"] == "" :
-        error += "missing group_id, "
-    if request.vars["user_id"] == "" :
-        error += "missing user_id, "
-
-    if error=="":
-        auth.del_permission(auth.user_group(request.vars["user_id"]), PermissionEnum.admin_group.value, db.auth_group, request.vars["group_id"])
-
-    res = {"redirect" : "group/permission" ,
-           "args" : { "id" : request.vars["group_id"]},
-           "message": "user '%s' is not anymore owner of the group '%s'" % (request.vars["user_id"], request.vars["group_id"]) 
-    }
-    log.info(res, extra={'user_id': auth.user.id,
-                'record_id': request.vars["id"],
-                'table_name': "group"})
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-## give admin right to a group member
-## need ["group_id", "user_id"]
-def change_permission():
-    if not auth.can_modify_group(request.vars["group_id"]):
-        return error_message("ACCESS_DENIED")
-    auth.add_permission(auth.user_group(request.vars["user_id"]), PermissionEnum.admin_group.value, db.auth_group, request.vars["group_id"])
-
-    res = {"redirect" : "group/permission" , "args" : { "id" : request.vars["group_id"]},
-           "message": "user '%s' is now owner of the group '%s'" % (request.vars["user_id"], request.vars["group_id"]) }
-    log.admin(res)
-    log.info(res, extra={'user_id': auth.user.id,
-                'record_id': request.vars["id"],
-                'table_name': "group"})
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 ## invite an user to join the group
 ## need ["group_id", "user_id"]
+@action("/vidjil/group/invite", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def invite():
     #check admin 
-    if auth.can_modify_group(request.vars["group_id"]):
-        auth.add_membership(request.vars["group_id"], request.vars["user_id"])
+    if auth.can_modify_group(int(request.query["group_id"])):
+        auth.add_membership(request.query["group_id"], request.query["user_id"])
         res = {"redirect" : "group/info" ,
-               "args" : { "id" : request.vars["group_id"]},
-               "message" : "user '%s' added to group '%s'" % (request.vars["user_id"], request.vars["group_id"])}
+               "args" : { "id" : request.query["group_id"]},
+               "message" : "user '%s' added to group '%s'" % (request.query["user_id"], request.query["group_id"])}
         log.admin(res)
-        log.info(res, extra={'user_id': auth.user.id,
-                'record_id': request.vars["group_id"],
+        log.info(res, extra={'user_id': auth.user_id,
+                'record_id': request.query["group_id"],
                 'table_name': "group"})
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     else:
         res = {"redirect" : "group/info" ,
-               "args" : { "id" : request.vars["group_id"]},
+               "args" : { "id" : request.query["group_id"]},
                "message" : "you don't have permission to invite people"}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
         
 ## revoke membership
 ## need ["group_id", "user_id"]
+@action("/vidjil/group/kick", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def kick():
     #check admin 
-    if auth.can_modify_group(request.vars["group_id"]):
-        auth.del_membership(request.vars["group_id"], request.vars["user_id"])
+    if auth.can_modify_group(int(request.query["group_id"])):
+        auth.del_membership(request.query["group_id"], request.query["user_id"])
         res = {"redirect" : "group/info" ,
-               "args" : { "id" : request.vars["group_id"]},
-               "message" : "user '%s' removed from group '%s'" % (request.vars["user_id"], request.vars["group_id"])}
+               "args" : { "id" : request.query["group_id"]},
+               "message" : "user '%s' removed from group '%s'" % (request.query["user_id"], request.query["group_id"])}
         log.admin(res)
-        log.info(res, extra={'user_id': auth.user.id,
-                'record_id': request.vars["group_id"],
+        log.info(res, extra={'user_id': auth.user_id,
+                'record_id': request.query["group_id"],
                 'table_name': "group"})
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     else:
         res = {"redirect" : "group/info" ,
-               "args" : { "id" : request.vars["group_id"]},
+               "args" : { "id" : request.query["group_id"]},
                "message" : "you don't have permission to kick people"}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/group/rights", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def rights():
     if auth.is_admin():
-        group_id = request.vars["id"]
+        group_id = request.query["id"]
         msg = ""
 
-        if request.vars["value"] == "true" :
-            auth.add_permission(group_id, request.vars["right"], request.vars["name"], 0)
-            msg += "add '" + request.vars["right"] + "' permission on '" + request.vars["name"] + "' for group " + db.auth_group[group_id].role
+        if request.query["value"] == "true" :
+            auth.add_permission(group_id, request.query["right"], request.query["name"], 0)
+            msg += "add '" + request.query["right"] + "' permission on '" + request.query["name"] + "' for group " + db.auth_group[group_id].role
         else :
-            auth.del_permission(group_id, request.vars["right"], request.vars["name"], 0)
-            msg += "remove '" + request.vars["right"] + "' permission on '" + request.vars["name"] + "' for group " + db.auth_group[group_id].role
+            auth.del_permission(group_id, request.query["right"], request.query["name"], 0)
+            msg += "remove '" + request.query["right"] + "' permission on '" + request.query["name"] + "' for group " + db.auth_group[group_id].role
 
         res = { "redirect": "group/info",
                 "args" : {"id" : group_id },
                 "message": msg}
-        log.admin(res)
-        log.info(res, extra={'user_id': auth.user.id,
-                'record_id': request.vars["id"],
+        log.admin(json.dumps(res))
+        log.info(res, extra={'user_id': auth.user_id,
+                'record_id': request.query["id"],
                 'table_name': "group"})
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
     else :
         res = {"message": "admin only"}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
