@@ -64,20 +64,21 @@ class Vidjil:
 
     COMPLETED = "COMPLETED"
 
-    def __init__(self, url_server:str, url_client:str=None, ssl:str=True):
+    def __init__(self, url_server:str, url_client:str=None, ssl:str=True, dangerous:bool=True):
         """_summary_
 
         Args:
             url_server (str): Url of server to use
             url_client (str, optional): Url of client to use. Sometimes, backend and frontend server are different (as for app.vidjil.org). If not setted, wille use the server url. (Defaults to None).
             ssl (str, optional): Path to the Pem file to use for ssl connection for self hosted server.
+            dangerous (boolean, optional): Set if vidjil object will be able to make dangerous action as deleting sets or samples
         """
         self.url_server = url_server
         self.url_client = url_client if url_client != None else url_server
         self.ssl = ssl
         print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
         self.session = requests.Session()
-
+        self.dangerous  = dangerous
         cookie = requests.cookies.RequestsCookieJar()
         try:
             response = self.session.get(self.url_server, verify=self.ssl)
