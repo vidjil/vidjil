@@ -1,5 +1,5 @@
-{{extend 'db_layout.html'}}
-{{import vidjil_utils}}
+[[extend 'db_layout.html']]
+[[from apps.vidjil.modules import vidjil_utils]]
 
     <h3 id="page_user">Users</h3>
     
@@ -13,31 +13,31 @@
                     <td class="column_100">groups</td>
                     <td class="column_150">first login</td>
                     <td class="column_150" onclick="db.call('user/index', {'sort' : 'login'
-                    {{if not reverse and request.vars["sort"]=="login" :}} , 'reverse' : true {{pass}} })">last login</td>
+                    [[if not reverse and request.query["sort"]=="login" :]] , 'reverse' : true [[pass]] })">last login</td>
                     <td class="column_50" onclick="db.call('user/index', {'sort' :'patients'
-                  {{if not reverse and request.vars["sort"]=="patients" :}} , 'reverse' : true {{pass}} })">patients created </td>
+                  [[if not reverse and request.query["sort"]=="patients" :]] , 'reverse' : true [[pass]] })">patients created </td>
                     <td class="column_100" onclick="db.call('user/index', {'sort' :'files'
-                  {{if not reverse and request.vars["sort"]=="files" :}} , 'reverse' : true {{pass}} })">files uploaded </td>
+                  [[if not reverse and request.query["sort"]=="files" :]] , 'reverse' : true [[pass]] })">files uploaded </td>
                     <td class="column_20"> </td>
                     <td class="column_20"> </td>
                 </tr>
             </thead>
             
-           {{for row in query :}}
-               <tr class="pointer" onclick="db.call('user/info', {'id' :'{{=row.id}}'} )">
-                    <td> {{=row.id}}</td>
-                    <td> {{=row.first_name}} {{=row.last_name}}</td>
-                    <td> {{=row.email}}  </td>
-                    <td> {{=row.access}}  </td>
-                    <td> {{=row.groups}}  </td>
-                    <td> {{=row.first_login}} </td>
-                    <td> {{=row.last_login}} </td>
-                    <td> {{=row.created}}  </td>
-                    <td> {{=row.files}} ({{=vidjil_utils.format_size(row.size)}}) </td>
-                    <td onclick="db.call('user/edit', {'id' :'{{=row.id}}'} )" > <i class="icon-pencil-2" title="edit user information"></i> </td>
-                    <td onclick="db.call('default/impersonate', {'id' : {{=row.id}}, 'next': '{{=request.url}}'})" id="impersonate_btn_{{=row.id}}"> <i class="icon-user" title="impersonate user {{=row.id}} ({{=row.first_name}} {{=row.last_name}})"></i> </td>
+           [[for row in query :]]
+               <tr class="pointer" onclick="db.call('user/info', {'id' :'[[=row.id]]'} )">
+                    <td> [[=row.id]]</td>
+                    <td> [[=row.first_name]] [[=row.last_name]]</td>
+                    <td> [[=row.email]]  </td>
+                    <td> [[=row.access]]  </td>
+                    <td> [[=row.groups]]  </td>
+                    <td> [[=row.first_login]] </td>
+                    <td> [[=row.last_login]] </td>
+                    <td> [[=row.created]]  </td>
+                    <td> [[=row.files]] ([[=vidjil_utils.format_size(row.size)]]) </td>
+                    <td onclick="db.call('user/edit', {'id' :'[[=row.id]]'} )" > <i class="icon-pencil-2" title="edit user information"></i> </td>
+                    <td onclick="db.call('default/impersonate', {'id' : [[=row.id]], 'next': '[[=request.url]]'})" id="impersonate_btn_[[=row.id]]"> <i class="icon-user" title="impersonate user [[=row.id]] ([[=row.first_name]] [[=row.last_name]])"></i> </td>
                 </tr>
-           {{pass}}
+           [[pass]]
         
         </table>
 

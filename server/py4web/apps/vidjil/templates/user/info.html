@@ -1,21 +1,21 @@
-{{extend 'db_layout.html'}}
+[[extend 'db_layout.html']]
 
-{{('message' in globals())}}
-{{if 'message' in globals():}}
+[[('message' in globals())]]
+[[if 'message' in globals():]]
 
-{{
-id = request.vars["id"]
+[[
+id = request.query["id"]
 query = db( 
         (db.auth_user.id == id) 
         & (db.auth_membership.user_id == db.auth_user.id) 
         & (db.auth_membership.group_id == db.auth_group.id) 
     ).select() 
-}}
+]]
 
 <div>
 
     <div>
-        <h3 id="user_info">{{=message}} {{=db.auth_user[id].first_name}} {{=db.auth_user[id].last_name}} </h3>
+        <h3 id="user_info">[[=message]] [[=db.auth_user[id].first_name]] [[=db.auth_user[id].last_name]] </h3>
     </div>
     
     
@@ -29,18 +29,18 @@ query = db(
                 </tr>
             </thead>
             <tbody>
-                {{for row in query :}}
+                [[for row in query :]]
                          <tr>
-                            <td>{{=row.auth_group.role}}</td>
-                            <td>{{if auth.can_modify_group(row.auth_group.id, request.vars["id"]) :}}
+                            <td>[[=row.auth_group.role]]</td>
+                            <td>[[if auth.can_modify_group(row.auth_group.id, request.query["id"]) :]]
                                 admin
-                                {{else:}}
+                                [[else:]]
                                 member
-                                {{pass}}
+                                [[pass]]
                             </td>
                             <td> X </td>
                         </tr>
-                {{pass}}
+                [[pass]]
             </tbody>
         </table>
         <table class="db_table" id="db_fixed_header"></table>
@@ -50,8 +50,8 @@ query = db(
     
 </div>
 
-{{elif 'content' in globals():}}
-{{=content}}
-{{else:}}
-{{=BEAUTIFY(response._vars)}}
-{{pass}}
+[[elif 'content' in globals():]]
+[[=content]]
+[[else:]]
+[[=BEAUTIFY(response._vars)]]
+[[pass]]
