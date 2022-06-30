@@ -22,16 +22,6 @@ from .socketio import *
 # exposes services necessary to access the db.thing via ajax
 publisher = Publisher(db, policy=ALLOW_ALL_POLICY)
 
-
-
-####
-
-@action("user")
-@action.uses("ajax_grid.html")
-def user_list():
-    return dict(grid=publisher.grid(db.auth_user))
-
-
 ####
 
 
