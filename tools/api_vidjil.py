@@ -509,13 +509,13 @@ class Vidjil:
         print("Samples created (%s): launch upload" % (file_ids))
         
         ## Upload files
-        self.uploadSample(sample_id=file_ids, filepath=head_f1, filename=tail_f1,  pre_process=pre_process, file_number='1')
+        self.uploadSample(sample_id=file_ids, filepath=head_f1, filename=tail_f1,  pre_process=pre_process, file_number='1', source=source)
         if file_filename2 != None and file_filename2 != "":
-            self.uploadSample(sample_id=file_ids, filepath=head_f2, filename=tail_f2, pre_process=pre_process, file_number='2')
+            self.uploadSample(sample_id=file_ids, filepath=head_f2, filename=tail_f2, pre_process=pre_process, file_number='2', source=source)
         print("Samples created (%s): upload completed ('%s' and '%s')" % (file_ids, tail_f1, tail_f2))
         return content
 
-    def uploadSample(self, sample_id:int, filepath:str, filename:str, pre_process:str, file_number:str):
+    def uploadSample(self, sample_id:int, filepath:str, filename:str, pre_process:str, file_number:str, source:str="computer"):
         """Upload a sample file to a sample
 
         Args:
@@ -529,7 +529,7 @@ class Vidjil:
             FileNotFoundError: Raise an eception if the file don't exist locally
             Exception: Raise an exception if the server return an error after upload of file
         """
-        if not os.path.isfile(filepath+"/"+filename):
+        if source == "computer" and not os.path.isfile(filepath+"/"+filename):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), filepath+"/"+filename)
 
         data     = {'pre_process': pre_process, 'id': sample_id, 'file_number': file_number}
