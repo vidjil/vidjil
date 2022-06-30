@@ -1,4 +1,4 @@
-{{extend 'db_layout.html'}}
+[[extend 'db_layout.html']]
 
 <form id="data_form" action="DB_ADDRESS/config/add_form" enctype="multipart/form-data" method="post">
     <table>
@@ -13,9 +13,9 @@
                 <td><select id="config_classification" name="config_classification">
                         <option value="-1" title="No classification">---</option>
 
-                        {{for class_elt in classification: }}
-                            <option value="{{=class_elt.id}}" title="{{=class_elt.info}}">{{=class_elt.name}}</option>
-                        {{pass}}
+                        [[for class_elt in classification: ]]
+                            <option value="[[=class_elt.id]]" title="[[=class_elt.info]]">[[=class_elt.name]]</option>
+                        [[pass]]
                     </select></td>
                 <td> </td>
             </tr>

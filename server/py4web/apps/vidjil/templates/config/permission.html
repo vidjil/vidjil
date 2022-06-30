@@ -1,9 +1,9 @@
-{{extend 'db_layout.html'}}
-{{import vidjil_utils}}
+[[extend 'db_layout.html']]
+[[from apps.vidjil.modules import vidjil_utils]]
 
 
 <h3>
-    Config {{=db.config[request.vars["id"]].name}}
+    Config [[=db.config[request.query["id"] ].name]]
 </h3>
 
 <div id="db_table_container">
@@ -17,29 +17,29 @@
                 <td class="column_100"> access</td>
             </tr>
         </thead>
-        {{admin = auth.can_modify_config(request.vars["id"])}}
-        {{ for row in query :}}
+        [[admin = auth.can_modify_config(int(request.query["id"]))]]
+        [[ for row in query :]]
             <tr>
-                <td> {{=row.id}}</td>
-                <td> {{=row.owner}} </td>
-                <td> {{=row.perms}}</td>
-                <td> {{=row.parent_access}}
+                <td> [[=row.id]]</td>
+                <td> [[=row.owner]] </td>
+                <td> [[=row.perms]]</td>
+                <td> [[=row.parent_access]]
                 <td></td>
-                {{if admin :}}
+                [[if admin :]]
                     <td> <input type="checkbox" onclick="db.call('config/change_permission', {
-                                                                  'config_id' : {{=request.vars['id']}} ,
-                                                                  'group_id' : {{=row.id}}})"
-                                {{if row.read :}} checked {{pass}}></td>
-                {{else:}}
+                                                                  'config_id' : [[=request.query['id'] ]] ,
+                                                                  'group_id' : [[=row.id]]})"
+                                [[if row.read :]] checked [[pass]]></td>
+                [[else:]]
                     <td class="inactive"> <input type="checkbox" onclick="this.click()"
-                                {{if row.read :}} checked {{pass}}></td>
-                {{pass}}
+                                [[if row.read :]] checked [[pass]]></td>
+                [[pass]]
             </tr>
-        {{pass}}
+        [[pass]]
     </table>
     <table class="db_table" id="db_fixed_header"></table>    
 </div>
 
-{{if not auth.can_modify_config(request.vars["id"]) :}}
+[[if not auth.can_modify_config(int(request.query["id"])) :]]
     <div>you need admin access on this patient if you want to change permission </div>
-{{pass}}
+[[pass]]
