@@ -1,14 +1,28 @@
-import gluon.contrib.simplejson
+# coding: utf8
+from sys import modules
+from .. import defs
+from ..modules import vidjil_utils
+from ..modules import tag
+from ..modules.stats_decorator import *
+from ..modules.controller_utils import error_message
+from ..modules.permission_enum import PermissionEnum
+import json
 import re
-from controller_utils import error_message
-if request.env.http_origin:
-    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Max-Age'] = 86400
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from collections import defaultdict
 
-ACCESS_DENIED = 'access denied'
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+
+
+##################################
+# HELPERS
+##################################
+
+ACCESS_DENIED = "access denied"
         
 ## return user list
+@action("/vidjil/user/index", method=["POST", "GET"])
+@action.uses("user/index.html", db, auth.user)
 def index():
     
     query = db(db.auth_user).select()
@@ -41,78 +55,89 @@ def index():
 
     ##sort query
     reverse = False
-    if request.vars["reverse"] == "true" :
+    if "reverse" in request.query and request.query["reverse"] == "true" :
         reverse = True
-    if request.vars["sort"] == "files" :
+    if not "sort" in request.query :
+        request.query["sort"] = ""
+    
+    if request.query["sort"] == "files" :
         query = sorted(query, key = lambda row : row.size, reverse=reverse)
-    elif request.vars["sort"] == "patients" :
+    elif request.query["sort"] == "patients" :
         query = sorted(query, key = lambda row : row.created, reverse=reverse)
-    elif request.vars["sort"] == "login" :
+    elif request.query["sort"] == "login" :
         query = sorted(query, key = lambda row : row.last_login, reverse=reverse)
     else:
         query = sorted(query, key = lambda row : row.id, reverse=False)
 
-    log.info("view user list", extra={'user_id': auth.user.id, 'record_id': None, 'table_name': 'auth_user'})
+    log.info("view user list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': 'auth_user'})
     return dict(query=query,
-    			reverse=reverse)
+    			reverse=reverse,
+                auth=auth,
+                db=db)
 
+@action("/vidjil/user/edit", method=["POST", "GET"])
+@action.uses("user/edit.html", db, auth.user)
 def edit():
-    if auth.can_modify_user(int(request.vars['id'])):
-        user = db.auth_user[request.vars["id"]]
+    if auth.can_modify_user(int(request.query['id'])):
+        user = db.auth_user[request.query["id"]]
         log.info("load edit form for user",
-                extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'auth_user'})
-        return dict(message=T("Edit user"), user=user)
+                extra={'user_id': auth.user_id, 'record_id': request.query['id'], 'table_name': 'auth_user'})
+        return dict(message=T("Edit user"), user=user, auth=auth, db=db)
     return error_message(ACCESS_DENIED)
 
+@action("/vidjil/user/edit_form", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def edit_form():
-    if auth.can_modify_user(int(request.vars['id'])):
+    if auth.can_modify_user(int(request.params['id'])):
         error = []
-        if request.vars["first_name"] == "" :
+        if request.params["first_name"] == "" :
             error.append("first name needed")
-        if request.vars["last_name"] == "" :
+        if request.params["last_name"] == "" :
             error.append("last name needed")
-        if request.vars["email"] == "":
+        if request.params["email"] == "":
             error.append("email cannot be empty")
-        elif not re.match(r"[^@]+@[^@]+\.[^@]+", request.vars["email"]):
+        elif not re.match(r"[^@]+@[^@]+\.[^@]+", request.params["email"]):
             error.append("incorrect email format")
 
-        if request.vars["password"] != "":
-            if request.vars["confirm_password"] != request.vars["password"]:
+        if request.params["password"] != "":
+            if request.params["confirm_password"] != request.params["password"]:
                 error.append("password fields must match")
             else:
-                password = db.auth_user.password.validate(request.vars["password"])[0]
+                password = db.auth_user.password.validate(request.params["password"])[0]
                 if not password:
                     error.append("Password is too short, should be at least of length "+str(auth.settings.password_min_length))
 
         if len(error) == 0:
-            data = dict(first_name = request.vars["first_name"],
-                                                    last_name = request.vars["last_name"],
-                                                    email = request.vars["email"])
+            data = dict(first_name = request.params["first_name"],
+                                                    last_name = request.params["last_name"],
+                                                    email = request.params["email"])
             if 'password' in vars():
                 data["password"] = password
 
-            db.auth_user[request.vars['id']] = data
+            db.auth_user[request.params['id']] = data
             db.commit()
             res = {"redirect": "back",
-                    "message": "%s (%s) user edited" % (request.vars["email"], request.vars["id"])}
+                    "message": "%s (%s) user edited" % (request.params["email"], request.params["id"])}
             log.info(res,
-                extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'auth_user'})
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+                extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'auth_user'})
+            return json.dumps(res, separators=(',',':'))
 
         else :
             res = {"success" : "false", "message" : ', '.join(error)}
             log.error(res)
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+            return json.dumps(res, separators=(',',':'))
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
 ## return user information
 ## need ["id"]
+@action("/vidjil/user/info", method=["POST", "GET"])
+@action.uses("user/info.html", db, auth.user)
 def info():
-    if "id" not in request.vars:
-        request.vars["id"] = db().select(db.auth_user.ALL, orderby=~db.auth_user.id)[0].id
-    log.info("view info for user (%d)" % int(request.vars['id']),
-            extra={'user_id': auth.user.id, 'record_id': request.vars['id'], 'table_name': 'auth_user'})
-    return dict(message=T('user info'))
+    if "id" not in request.query:
+        request.query["id"] = db().select(db.auth_user.ALL, orderby=~db.auth_user.id)[0].id
+    log.info("view info for user (%d)" % int(request.query['id']),
+            extra={'user_id': auth.user_id, 'record_id': request.query['id'], 'table_name': 'auth_user'})
+    return dict(message=T('user info'), auth=auth, db=db)
