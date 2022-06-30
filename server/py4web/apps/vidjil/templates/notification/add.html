@@ -1,6 +1,7 @@
-{{extend 'db_layout.html'}}
+[[extend 'db_layout.html']]
+[[from yatl.helpers import SELECT, OPTION]]
 
-<h3>{{=message}}</h3>
+<h3>[[=message]]</h3>
 
 <form id="data_form" action="DB_ADDRESS/notification/add_form" enctype="multipart/form-data" method="post">
     <table>
@@ -8,22 +9,14 @@
             <tr>
                 <td ><label for="notification_message_type" id="notification_message_type__label">type: </label></td>
                 <td >
-	                {{=SELECT(
-	                	OPTION('Login page', _value='login'),
-	                	OPTION('Header', _value='header'),
-	                	_name="message_type"
-	                )}}
+	                [[=SELECT(OPTION('Login page', _value='login'),OPTION('Header', _value='header'),_name="message_type")]]
 	                <span>*</span></td>
                 <td ></td>
             </tr>
             <tr>
                 <td><label for="notification_priority" id="notification_priority__label">priority: </label></td>
                 <td>
-	                {{=SELECT(
-	                	OPTION('Information', _value='info'),
-	                	OPTION('Urgent', _value='urgent'),
-	                	_name="priority"
-	                )}}
+	                [[=SELECT(OPTION('Information', _value='info'),OPTION('Urgent', _value='urgent'),_name="priority")]]
 	                <span>*</span></td>
                 <td></td>
             </tr>

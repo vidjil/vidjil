@@ -1,18 +1,19 @@
-{{from gluon.contrib.markdown.markdown2 import markdown}}
-{{extend 'db_layout.html'}}
+[[import markdown]]
+[[extend 'db_layout.html']]
+[[from yatl.helpers import XML]]
 
-<h3 id="page_news">{{=query.title if query is not None else message}}</h3>
+<h3 id="page_news">[[=query.title if query is not None else message]]</h3>
 
-{{if query is not None:}}
+[[if query is not None:]]
     <div class="db_block info_block">
-        {{=XML(markdown(query.message_content))}}
+        [[=XML(markdown.markdown(m_content))]]
     </div>
 
 
     <h3>Older news</h3>
-{{pass}}
+[[pass]]
 
-<div id="db_table_container" {{if query is not None:}}class="info_table"{{pass}}>
+<div id="db_table_container" [[if query is not None:]]class="info_table"[[pass]]>
     <table class="db_table" id="table">
 
         <thead>
@@ -20,57 +21,57 @@
                 <td class="column_100"> Title </td>
                 <td class="column_200"> Message </td>
                 <td class="column_100"> Date </td>
-            {{if auth.is_admin():}} 
+            [[if auth.is_admin():]] 
                 <td class="column_50"> Creator </td>
                 <td class="column_50"> Type </td>
                 <td class="column_50"> Priority </td>
                 <td class="column_100"> Expiration Date </td>
                 <td class="column_20"> </td>
                 <td class="column_20"> </td>
-            {{pass}}
+            [[pass]]
             </tr>
         </thead>
         
         <tbody>
-        {{for row in notifications:}}
+        [[for row in notifications:]]
             <tr>
-                <td class="pointer" onclick="db.call('notification/index', {'id' : '{{=row.id}}'})">
-                    {{=row.title}}
+                <td class="pointer" onclick="db.call('notification/index', {'id' : '[[=row.id]]'})">
+                    [[=row.title]]
                 </td>
-                <td class="pointer" onclick="db.call('notification/index', {'id' : '{{=row.id}}'})">
-                    {{=XML(row.message_content)}}
+                <td class="pointer" onclick="db.call('notification/index', {'id' : '[[=row.id]]'})">
+                    [[=XML(row.message_content)]]
                 </td>
-                <td class="pointer" onclick="db.call('notification/index', {'id' : '{{=row.id}}'})">
-                    {{=row.creation_datetime}}
+                <td class="pointer" onclick="db.call('notification/index', {'id' : '[[=row.id]]'})">
+                    [[=row.creation_datetime]]
                 </td>
 
-            {{if auth.is_admin():}}
-                <td class="pointer" onclick="db.call('notification/index', {'id' : '{{=row.id}}'})">
-                    {{=row.creator}}
+            [[if auth.is_admin():]]
+                <td class="pointer" onclick="db.call('notification/index', {'id' : '[[=row.id]]'})">
+                    [[=row.creator]]
                 </td>
-                <td class="pointer" onclick="db.call('notification/index', {'id' : '{{=row.id}}'})">
-                    {{=row.message_type}}
+                <td class="pointer" onclick="db.call('notification/index', {'id' : '[[=row.id]]'})">
+                    [[=row.message_type]]
                 </td>
-                <td class="pointer" onclick="db.call('notification/index', {'id' : '{{=row.id}}'})">
-                    {{=row.priority}}
+                <td class="pointer" onclick="db.call('notification/index', {'id' : '[[=row.id]]'})">
+                    [[=row.priority]]
                 </td>
-                <td class="pointer" onclick="db.call('notification/index', {'id' : '{{=row.id}}'})">
-                    {{=row.expiration}}
+                <td class="pointer" onclick="db.call('notification/index', {'id' : '[[=row.id]]'})">
+                    [[=row.expiration]]
                 </td>
-                <td class="pointer" onclick="db.call('notification/edit', {'id' : '{{=row.id}}'})">
+                <td class="pointer" onclick="db.call('notification/edit', {'id' : '[[=row.id]]'})">
                     <i class="icon-pencil-2" title="edit notification"></i>
                 </td>
-                <td class="pointer" onclick="db.call('notification/delete', {'id' : '{{=row.id}}'})">
+                <td class="pointer" onclick="db.call('notification/delete', {'id' : '[[=row.id]]'})">
                     <i class="icon-erase" title="delete notification"></i>
                 </td>
-            {{pass}}
+            [[pass]]
             </tr>
-        {{pass}}
+        [[pass]]
         </tbody>
     </table>
     <table class="db_table" id="db_fixed_header"></table>
 </div>
 
-{{if auth.is_admin():}}
+[[if auth.is_admin():]]
     <span class="button2" onclick="db.call('notification/add')"> + add news </span>
-{{pass}}
+[[pass]]
