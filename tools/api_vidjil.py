@@ -399,6 +399,23 @@ class Vidjil:
         return self.request(new_url, "get")
 
 
+    def removeSet(self, set_id:int):
+        """Remove set with the given id.
+        Warning, no alert step by this method
+
+        Args:
+            set_id (int): Set id to delete
+        Returns:
+            dict: ???
+        """
+        if self.dangerous:
+            print("This action (delete set) is not available.\nChange dangerous setting of Vidjil before doing such actions.")
+            exit()
+        data     = { 'id' : set_id }
+        new_url  = self.url_server + "sample_set/delete?" + self.convertDataAsUrl(data)
+        return self.request(new_url, "get")
+
+
     def convertDataAsUrl(self, data:dict):
         """Allow to get an url compatible string to add to an url to launch request from a dict
 
