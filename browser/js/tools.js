@@ -1129,3 +1129,13 @@ var row_cast_content = function(title, content, time_length, clone) {
         }
     }
 }
+
+/**
+ * Change check status of each checkbox from a given list of id
+ * Use for selection in compare samples
+ */
+var selectListOfCheckbox = function(idx, state){
+    for (var pos in idx){
+        document.getElementById(idx[pos]).checked = state
+    }
+}
