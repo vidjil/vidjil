@@ -1,21 +1,21 @@
-{{extend 'db_layout.html'}}
-{{import vidjil_utils}}
+[[extend 'db_layout.html']]
+[[from apps.vidjil.modules import vidjil_utils]]
 
-<h3>{{=request.vars["file"]}}</h3>
+<h3>[[=request.query["file"] ]]</h3>
 
-{{ if format == 'raw': }}
+[[ if format == 'raw': ]]
 
  <div class="console-div">
-        <div class="console-flex"><pre>{{ =raw }}</pre></div>
+        <div class="console-flex"><pre>[[ =raw ]]</pre></div>
  </div>
 
-{{ else: }}
+[[ else: ]]
 
 <div class="db_block">
     <div class="db_block_left">
         search
-        <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}" 
-               onchange="db.call('admin/showlog', {'file' : '{{=request.vars["file"]}}', 'filter' : this.value, 'format': '{{=request.vars["format"]}}' } )"  >
+        <input id="db_filter_input" type="text" value="[[=request.query["filter"] ]]" 
+               onchange="db.call('admin/showlog', {'file' : '[[=request.query["file"] ]]', 'filter' : this.value, 'format': '[[=request.query["format"] ]]' } )"  >
     </div>
 </div>
 
@@ -25,31 +25,31 @@
         
         <thead>
             <tr>
-              {{ if format: }}
+              [[ if format: ]]
                 <td class="column_100"> date </td>
                 <td class="column_100"> </td>
                 <td class="column_200"> user </td>
                 <td class="column_100"> type </td>
                 <td class="column_100"> file </td>
-             {{ pass }}
+             [[ pass ]]
                 <td>  </td>
             </tr>
         </thead>
         
-        {{for line in lines :}}
-        <tr class='log-{{=line["type"]}}'>
-            {{ if format: }}
-            <td> {{=line["date"]}} </td>
-            <td> {{=line["date2"]}} </td>
-            <td> {{=line["user"]}} </td>
-            <td> {{=line["type"]}} </td>
-            <td> {{=XML(line["file"])}} </td>
-           {{ pass }}
-           <td class="pre-line"> {{=XML(line["mes"])}} </td>
+        [[for line in lines :]]
+        <tr class='log-[[=line["type"] ]]'>
+            [[ if format: ]]
+            <td> [[=line["date"] ]] </td>
+            <td> [[=line["date2"] ]] </td>
+            <td> [[=line["user"] ]] </td>
+            <td> [[=line["type"] ]] </td>
+            <td> [[=XML(line["file"])]] </td>
+           [[ pass ]]
+           <td class="pre-line"> [[=XML(line["mes"])]] </td>
         </tr>
-        {{pass}}
+        [[pass]]
     </table>
     <table class="db_table" id="db_fixed_header"></table>
 </div>
 
-{{ pass }}
+[[ pass ]]

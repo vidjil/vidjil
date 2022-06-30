@@ -1,4 +1,4 @@
-{{extend 'db_layout.html'}}
+[[extend 'db_layout.html']]
 
 
 <h3 id="page_admin">Admin</h3>
@@ -36,25 +36,25 @@
 <div>
     Workers and tasks
     <div class="console-div">
-        <div class="console-flex">active workers: {{=worker}}</div>
-        <div class="console-flex">QUEUED: {{=queued}}</div>
-        <div class="console-flex">ASSIGNED: {{=assigned}}</div>
-        <div class="console-flex">RUNNING: {{=running}}</div>
-        <div class="console-flex">LAST_RESULTS: {{=last_results}}...</div>
+        <div class="console-flex">active workers: [[=worker]]</div>
+        <div class="console-flex">QUEUED: [[=queued]]</div>
+        <div class="console-flex">ASSIGNED: [[=assigned]]</div>
+        <div class="console-flex">RUNNING: [[=running]]</div>
+        <div class="console-flex">LAST_RESULTS: [[=last_results]]...</div>
     </div>
 </div>
 
 <div>
     Server status
     <div class="console-div">
-        <div class="console-flex">{{=uptime}}</div>
-	<div class="console-flex">revision: {{=revision}}</div>
+        <div class="console-flex">[[=uptime]]</div>
+	<div class="console-flex">revision: [[=revision]]</div>
     </div>
 </div>
 
 <div>
     Server disk usage
     <div class="console-div">
-        <div class="console-flex">{{=disk_use}}</div>
+        <div class="console-flex">[[=disk_use]]</div>
     </div>
 </div>
