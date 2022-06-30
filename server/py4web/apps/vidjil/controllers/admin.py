@@ -1,39 +1,28 @@
 # coding: utf8
-import gluon.contrib.simplejson, re
-import os.path, subprocess
-import vidjil_utils
-from gluon.scheduler import RUNNING, QUEUED, ASSIGNED
+import subprocess
+from sys import modules
+from .. import defs
+from ..modules import vidjil_utils
+from ..modules.stats_decorator import *
+from ..VidjilAuth import VidjilAuth
+from io import StringIO
+import json
+import os
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from collections import defaultdict
+RUNNING ="RUNNING"
+QUEUED = "QUEUED"
+ASSIGNED ="ASSIGNED"
 MAX_LOG_LINES = 500
+
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+
+
+##################################
+# HELPERS
+##################################
+
 ACCESS_DENIED = "access denied"
-
-if request.env.http_origin:
-    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Max-Age'] = 86400
-    
-
-## return admin_panel
-def index():
-    if auth.is_admin():
-        p = subprocess.Popen(["uptime"], stdout=subprocess.PIPE)
-        uptime, err = p.communicate()
-        
-        p = subprocess.Popen(["df", "-h"], stdout=subprocess.PIPE)
-        disk_use, err = p.communicate()
-        revision = 'not versioned'
-        try:
-            p = subprocess.Popen(["git", "log", "-1", "--pretty=format:'%h (%cd)'", "--date=short", "--abbrev-commit"], stdout=subprocess.PIPE)
-            revision,  err = p.communicate()
-        except:
-            pass
-        
-        d = monitor()
-        return dict(d,
-                    uptime=uptime,
-                    disk_use=disk_use,
-                    revision=revision,
-                    )
-
 
 def monitor():
     """
@@ -54,25 +43,57 @@ def monitor():
                  running = len(db(db.scheduler_task.status==RUNNING).select()),
                  last_results = last_results)
     
-    
+
+##################################
+# CONTROLLERS
+##################################
+
+## return admin_panel
+@action("/vidjil/admin/index", method=["POST", "GET"])
+@action.uses("admin/index.html", db, auth.user)
+def index():
+    if auth.is_admin():
+        p = subprocess.Popen(["uptime"], stdout=subprocess.PIPE)
+        uptime, err = p.communicate()
+        
+        p = subprocess.Popen(["df", "-h"], stdout=subprocess.PIPE)
+        disk_use, err = p.communicate()
+        revision = 'not versioned'
+        try:
+            p = subprocess.Popen(["git", "log", "-1", "--pretty=format:'%h (%cd)'", "--date=short", "--abbrev-commit"], stdout=subprocess.PIPE)
+            revision,  err = p.communicate()
+        except:
+            pass
+        
+        d = monitor()
+        return dict(d,
+                    uptime=uptime,
+                    disk_use=disk_use,
+                    revision=revision,
+                    auth=auth,
+                    db=db
+                    )
+
+
+@action("/vidjil/admin/showlog", method=["POST", "GET"])
+@action.uses("admin/showlog.html", db, auth.user)
 def showlog():
     if auth.is_admin():
-        
-        
+         
         lines = []
-        file = open(defs.DIR_LOG+request.vars["file"])
-        log_format = request.vars['format'] if 'format' in request.vars else ''
+        file = open(defs.DIR_LOG+request.query["file"])
+        log_format = request.query['format'] if 'format' in request.query else ''
 
         if log_format == 'raw':
             return {'raw': ''.join(file.readlines()), 'format': log_format}
 
-        if "filter" not in request.vars :
-            request.vars["filter"] = ""
+        if "filter" not in request.query :
+            request.query["filter"] = ""
             
         for row in reversed(file.readlines()) :
             parsed = False
 
-            if not vidjil_utils.advanced_filter([row], request.vars["filter"]) :
+            if not vidjil_utils.advanced_filter([row], request.query["filter"]) :
                 continue
 
             if log_format: # == 'vidjil'
@@ -137,7 +158,7 @@ def repair_missing_files():
                 
         res = {"success" : "true", "message" : "DB: references to missing files have been removed: "+flist}
         log.admin(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
     
 def backup_database(stream):
@@ -150,7 +171,7 @@ def make_backup():
                 
         res = {"success" : "true", "message" : "DB backup -> %s" % defs.DB_BACKUP_FILE}
         log.admin(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
     
     
 def load_backup():
@@ -192,7 +213,7 @@ def repair():
         
         res = {"success" : "true", "message" : "DB repaired: " + flist}
         log.admin(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
 
 def reset_workers():
     if auth.is_admin():
@@ -205,4 +226,4 @@ def reset_workers():
         else:
             res = {"success" : "false", "message" : "Jobs are currently running or assigned. I don't want to restart workers"}
         log.admin(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',',':'))
