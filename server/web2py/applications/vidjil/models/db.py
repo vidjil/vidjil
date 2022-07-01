@@ -367,14 +367,22 @@ class UserLogHandler(logging.Handler):
         if hasattr(record, 'user_id') and hasattr(record, 'record_id'):
             from datetime import datetime
             now = datetime.now()
-            current.db[self.table].insert(
-                user_id=record.user_id,
-                table_name=record.table_name,
-                created=now,
-                msg=record.message,
-                record_id=record.record_id
-            )
-            db.commit()
+            #TODO test potential fix db._adapter.reconnect()
+            #try:
+            #    current.db[self.table].insert(
+            #        user_id=record.user_id,
+            #        table_name=record.table_name,
+            #        created=now,
+            #        msg=record.message,
+            #        record_id=record.record_id
+            #    )
+            #    db.commit()
+            #except:
+            #    try:
+            #        db.rollback()
+            #    except:
+            #        pass
+
 
 def _init_log():
     """

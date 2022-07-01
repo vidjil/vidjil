@@ -2,10 +2,9 @@
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
-## 2022-06-15
+## 2022-06-28
 
 Improve analysis
-
 * More sample information: diversity measures by germline, summary of warnings
 * More clonotype information: detailed productivity
 * More tags and colors, new color by sample

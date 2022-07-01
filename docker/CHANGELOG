@@ -2,7 +2,7 @@ This CHANGELOG concerns the Docker images of vidjil.
 We publish here notes to help to update these images.
 See <http://www.vidjil.org/doc/server>
 
-vidjil/server:2022-XXX
+vidjil/server:2022-06-28-0f7a2655
    - New cron job `check_queued.py` to reset workers.
      Please perform a `git pull` in the `docker` repository.
 

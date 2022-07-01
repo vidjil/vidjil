@@ -584,7 +584,7 @@ def submit():
             if (p['sample_set_id'] != "" and auth.can_modify_sample_set(p['sample_set_id'])):
                 reset = True
                 sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
-                db[set_type][sset.id] = p
+                db( db[set_type].id == sset.id ).update(**p)
                 id_sample_set = sset['sample_set_id']
 
                 if (sset.info != p['info']):
