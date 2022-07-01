@@ -1,15 +1,25 @@
-# -*- coding: utf-8 -*-
+# coding: utf8
+from sys import modules
+from .. import defs
+from ..modules.stats_decorator import *
+from ..VidjilAuth import VidjilAuth
+from io import StringIO
+import json
+import os
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from collections import defaultdict
 from contextlib import contextmanager
 import tempfile
 import shutil
-import defs
-import gluon
-import gluon.contrib.simplejson
 
-if request.env.http_origin:
-    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Max-Age'] = 86400
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+
+
+##################################
+# HELPERS
+##################################
+
+ACCESS_DENIED = "access denied"
 
 @contextmanager
 def TemporaryDirectory():
@@ -22,13 +32,6 @@ def TemporaryDirectory():
         
 limit_max = 10 #max sequence per request
         
-
-def index():
-    if request.vars['sequences'] == None or request.vars['sequences'] == '':
-        return None
-
-    sequences = request.vars['sequences']
-    return segment_sequences(sequences)
 
 def segment_sequences(sequences):
     '''
@@ -73,7 +76,7 @@ def segment_sequences(sequences):
                 return response.json({'error': 'Error while processing the file'})
 
     log.debug("segment sequences %s" % str(sequences))
-    return response.json(gluon.contrib.simplejson.loads(text_result))
+    return response.json(json.loads(text_result))
 
 def check_sequences(sequences):
     #fasta format ?
@@ -90,3 +93,19 @@ def check_sequences(sequences):
     else :
         return "invalid sequences, please use fasta or fastq format"
     return None
+
+
+##################################
+# CONTROLLERS
+##################################
+
+@action("/vidjil/segmenter/index", method=["POST", "GET"])
+@action.uses(db, auth.user)
+def index():
+    if request.query['sequences'] == None or request.query['sequences'] == '':
+        return None
+
+    sequences = request.query['sequences']
+    return segment_sequences(sequences)
+
+
