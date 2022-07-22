@@ -3864,6 +3864,29 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     /**
+     * Export statQC data from a json string
+     * @param  {Array}  data    Data to convert in csv format
+     */
+    exportStatsQC: function(data){
+        console.default.log( "exportStatsQC" )
+        // Replace some caracters of the json string to be compliant with json parsing
+        data  = data.replaceAll('\'', '"').replaceAll('None', 'null').replaceAll('L, "', ', "')
+        jdata = JSON.parse(data)
+
+        var headers  = Object.keys(jdata[0])
+        var new_data = [headers.join("\t")]
+
+        for (var i = 0; i < jdata.length; i++) {
+            var elt = jdata[i]
+            var tsv_line = headers.map(x => elt[x])
+            new_data.push(tsv_line.join("\t"))
+        }
+
+        var filename = "vidjil_statsQC.tsv"
+        download_csv(new_data.join("\n"), filename);
+    },
+
+    /**
      * Close all modal by clicking on close button
      * Call at analysis loading to close all popup panel already present
      */
