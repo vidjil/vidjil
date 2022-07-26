@@ -3877,7 +3877,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var new_data = [headers.join("\t")]
 
         for (var i = 0; i < jdata.length; i++) {
-            var elt = jdata[i]
+            const elt = jdata[i]
             var tsv_line = headers.map(x => elt[x])
             new_data.push(tsv_line.join("\t"))
         }

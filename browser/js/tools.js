@@ -1145,7 +1145,7 @@ var selectListOfCheckbox = function(idx, state){
  */
 var toggleDisplay = function (element) {
   element.style.display = (element.style.display === 'none')? '':'none';
-};
+}
 /**
  * Function that allow to call toogleDisplay on each cells of a table for a given column
  *  @param {string}  tableid     - Specific id of the table to use
@@ -1159,4 +1159,4 @@ function toogleColumn(tableid, pos, checkbox_id) {
         var checkbox = document.getElementById(checkbox_id)
         checkbox.checked = !checkbox.checked
     }
-};
+}
