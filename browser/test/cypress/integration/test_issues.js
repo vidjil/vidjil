@@ -34,4 +34,17 @@ describe('Test sandbox', function () {
 
     return
   })
+
+
+  it('error_with_wrong_analysis_format',  function() {
+    // With analysis; wrong formated json string
+    cy.openAnalysis("data/demo_lil_l3_tutorial.vidjil", "data/5240_wrong_json.analysis")
+    cy.get('#listElem_1 > .nameBox')
+      .should("have.text", "IGHV3-9 7/CCCGGA/17 J6*02")
+
+    cy.get('.popup_msg').should("be.visible")
+      .invoke('text').should('contain', "Error – incorrect .analysis file")
+    return
+
+  })
 })

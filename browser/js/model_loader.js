@@ -246,10 +246,12 @@ Model_loader.prototype = {
             crossDomain: true,
             url: url2,
             success: function (result) {
-                self.parseJsonAnalysis(result)
-                self.initClones()
-                self.analysisFileName = url_split[url_split.length-1]
-                self.check_export_monitor()
+                var analysis_data = self.parseJsonAnalysis(result)
+                if (analysis != undefined){
+                    self.initClones()
+                    self.analysisFileName = url_split[url_split.length-1]
+                    self.check_export_monitor()
+                }
             },
             error: function () {
                 self.update()
@@ -589,8 +591,8 @@ Model_loader.prototype = {
             try {
                 this.analysis = jQuery.parseJSON(analysis)
             } catch (e) {
-                    console.log({"type": "popup", "default": "file_error"});
-                return 0
+                    console.log({"type": "popup", "default": "file_error_analysis"});
+                return true
             }
         }else{
             this.analysis=analysis
