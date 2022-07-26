@@ -452,7 +452,6 @@ describe('List', function () {
     cy.getCloneInList(13).should('have.css', 'color', 'rgb(255, 0, 112)') // tag "dominant"
     cy.getCloneInList(18).should('have.css', 'color', 'rgb(101, 123, 131)') // tag "unknown tag"
 
-
   })
 
 
