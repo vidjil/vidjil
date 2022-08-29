@@ -412,7 +412,7 @@ class Vidjil:
             string+= "%s=%s&" % (key, data[key])
         return string
 
-    def download(self, server_path:str, filename:str, replace_from:str=None, replace_to:str=None):
+    def download(self, server_path:str, filename:str, replace_from:str=None, replace_to:str=None, overwrite=True):
         """Download a result file from the server.
         When replace_from and replace_to are both defined, 
         replace that inside the downloaded file.
@@ -429,7 +429,7 @@ class Vidjil:
 
         reponse = self.session.get(url, verify=self.ssl)
         # TODO: add verification step if same filename is already present
-        if os.path.isfile(server_path+"/"+filename):
+        if os.path.isfile(filename) and not overwrite:
             raise Exception('download', "A file with same name already exist")
         open(filename, 'wb').write(reponse.content)
 
