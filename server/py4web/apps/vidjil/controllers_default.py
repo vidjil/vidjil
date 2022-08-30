@@ -15,15 +15,9 @@ from .settings import SESSION_SECRET_KEY
 
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 
-# import websocket examples
-from .ws import *
-from .socketio import *
 
 # exposes services necessary to access the db.thing via ajax
 publisher = Publisher(db, policy=ALLOW_ALL_POLICY)
-
-####
-
 
 @action("index")
 @action.uses("index.html", auth)

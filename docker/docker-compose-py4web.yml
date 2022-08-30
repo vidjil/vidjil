@@ -17,8 +17,9 @@ services:
     image: vidjil/server2:latest
     ports:
       - "8000:8000"
+    command: bash /usr/share/vidjil/server/py4web make start
     environment:
-     - PYDAL_URI=postgres://foo:bar@postgres:5432/baz
+     - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
     stdin_open: true
     tty: true
     depends_on:

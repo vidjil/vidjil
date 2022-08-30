@@ -7,8 +7,12 @@ APP_NAME = os.path.split(APP_FOLDER)[-1]
 # DB_FOLDER:    Sets the place where migration files will be created
 #               and is the store location for SQLite databases
 DB_FOLDER = os.path.join(APP_FOLDER, "databases")
-#DB_URI = "sqlite://storage.db"
-DB_URI = "mysql://vidjil_user:password@localhost/vidjil"
+
+DB_URI=os.environ.get('PYDAL_URI')
+if (DB_URI is None):
+    DB_URI = "sqlite://storage.db"
+    #DB_URI = "mysql://vidjil_user:password@localhost/vidjil"
+
 DB_POOL_SIZE = 1
 DB_MIGRATE = True
 DB_FAKE_MIGRATE = True  # maybe?
