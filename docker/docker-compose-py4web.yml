@@ -13,27 +13,28 @@ services:
         timeout: 20s
         retries: 10
 
+  nginx:
+      image: vidjil/client:latest
+      ports:
+          - "80:80"
+          - "443:443"
+      command: bash /entrypoints/nginx-entrypoint.sh
+      volumes:
+          - /opt/vidjil/log/nginx:/var/log/nginx
+          - /opt/vidjil/certs:/etc/letsencrypt/well-known
+          - ./vidjil-client/ssl:/etc/nginx/ssl
+          - ./vidjil-client/conf:/etc/vidjil
+          - ../germline:/usr/share/vidjil/germline
+
   web:
     image: vidjil/server2:latest
     ports:
       - "8000:8000"
-    command: bash /usr/share/vidjil/server/py4web make start
+    command: make -C /usr/share/vidjil/server/py4web start
     environment:
      - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
     stdin_open: true
     tty: true
     depends_on:
       - mysql
-
-  #postgres:
-  #  restart: always
-  #  image: postgres
-  #  environment:
-  #    - POSTGRES_USER=foo
-  #    - POSTGRES_PASSWORD=bar
-  #    - POSTGRES_DB=baz
-  #    - POSTGRES_PORT=5432
-  #  ports:
-  #    - "5432:5432"
-  #  volumes:
-  #     - ./data/postgres:/var/lib/postgresql/data
+      - nginx
