@@ -3,13 +3,37 @@
 # ##########################################################
 # ## make sure administrator is on localhost
 # ###########################################################
-
+# coding: utf8
+from sys import modules
+from .. import defs
+from ..modules import vidjil_utils
+from ..modules import tag
+from ..modules.stats_decorator import *
+from ..modules.sampleSet import SampleSet, get_set_group
+from ..modules.sampleSets import SampleSets
+from ..modules.sampleSetList import SampleSetList, filter_by_tags
+from ..modules.sequenceFile import get_associated_sample_sets, get_sequence_file_sample_sets
+from ..modules.controller_utils import error_message
+from ..modules.permission_enum import PermissionEnum
+from ..modules.zmodel_factory import ModelFactory
+from ..user_groups import get_default_creation_group, get_involved_groups
+from ..VidjilAuth import VidjilAuth
+from io import StringIO
+import json
+import time
 import os
-import socket
-import datetime
-import copy
-import gluon.contenttype
-import gluon.fileutils
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from collections import defaultdict
+import math
+
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+
+
+##################################
+# HELPERS
+##################################
+
+ACCESS_DENIED = "access denied"
 
 try:
     import pygraphviz as pgv
@@ -55,7 +79,7 @@ if request.function == 'manage':
 elif (request.application == 'admin' and not session.authorized) or \
         (request.application != 'admin' and not gluon.fileutils.check_credentials(request)):
     redirect(URL('admin', 'default', 'index',
-                 vars=dict(send=URL(args=request.args, vars=request.vars))))
+                 vars=dict(send=URL(args=request.args, vars=request.query))))
 else:
     response.subtitle = T('Database Administration (appadmin)')
     menu = True
@@ -118,7 +142,7 @@ def get_table(request):
 
 def get_query(request):
     try:
-        return eval_in_global_env(request.vars.query)
+        return eval_in_global_env(request.query.query)
     except Exception:
         return None
 
@@ -152,7 +176,7 @@ def index():
 def insert():
     (db, table) = get_table(request)
     form = SQLFORM(db[table], ignore_rw=ignore_rw)
-    if form.accepts(request.vars, session):
+    if form.accepts(request.query, session):
         response.flash = T('new record inserted')
     return dict(form=form, table=db[table])
 
@@ -177,7 +201,7 @@ def csv():
     if not query:
         return None
     response.headers['Content-disposition'] = 'attachment; filename=%s_%s.csv'\
-        % tuple(request.vars.query.split('.')[:2])
+        % tuple(request.query.query.split('.')[:2])
     return str(db(query, ignore_common_filters=True).select())
 
 
@@ -192,24 +216,24 @@ def select():
     regex = re.compile('(?P<table>\w+)\.(?P<field>\w+)=(?P<value>\d+)')
     if len(request.args) > 1 and hasattr(db[request.args[1]], '_primarykey'):
         regex = re.compile('(?P<table>\w+)\.(?P<field>\w+)=(?P<value>.+)')
-    if request.vars.query:
-        match = regex.match(request.vars.query)
+    if request.query.query:
+        match = regex.match(request.query.query)
         if match:
-            request.vars.query = '%s.%s.%s==%s' % (request.args[0],
+            request.query.query = '%s.%s.%s==%s' % (request.args[0],
                                                    match.group('table'), match.group('field'),
                                                    match.group('value'))
     else:
-        request.vars.query = session.last_query
+        request.query.query = session.last_query
     query = get_query(request)
-    if request.vars.start:
-        start = int(request.vars.start)
+    if request.query.start:
+        start = int(request.query.start)
     else:
         start = 0
     nrows = 0
     stop = start + 100
     table = None
     rows = []
-    orderby = request.vars.orderby
+    orderby = request.query.orderby
     if orderby:
         orderby = dbname + '.' + orderby
         if orderby == session.last_orderby:
@@ -218,21 +242,21 @@ def select():
             else:
                 orderby = '~' + orderby
     session.last_orderby = orderby
-    session.last_query = request.vars.query
+    session.last_query = request.query.query
     form = FORM(TABLE(TR(T('Query:'), '', INPUT(_style='width:400px',
-                _name='query', _value=request.vars.query or '',
+                _name='query', _value=request.query.query or '',
                 requires=IS_NOT_EMPTY(
                     error_message=T("Cannot be empty")))), TR(T('Update:'),
                 INPUT(_name='update_check', _type='checkbox',
                 value=False), INPUT(_style='width:400px',
-                _name='update_fields', _value=request.vars.update_fields
+                _name='update_fields', _value=request.query.update_fields
                                     or '')), TR(T('Delete:'), INPUT(_name='delete_check',
                 _class='delete', _type='checkbox', value=False), ''),
                 TR('', '', INPUT(_type='submit', _value=T('submit')))),
                 _action=URL(r=request, args=request.args))
 
     tb = None
-    if form.accepts(request.vars, formname=None):
+    if form.accepts(request.query, formname=None):
         regex = re.compile(request.args[0] + '\.(?P<table>\w+)\..+')
         match = regex.match(form.vars.query.strip())
         if match:
@@ -259,7 +283,7 @@ def select():
             (rows, nrows) = ([], 0)
             response.flash = DIV(T('Invalid Query'), PRE(str(e)))
     # begin handle upload csv
-    csv_table = table or request.vars.table
+    csv_table = table or request.query.table
     if csv_table:
         formcsv = FORM(str(T('or import from csv file')) + " ",
                        INPUT(_type='file', _name='csvfile'),
@@ -269,8 +293,8 @@ def select():
         formcsv = None
     if formcsv and formcsv.process().accepted:
         try:
-            import_csv(db[request.vars.table],
-                       request.vars.csvfile.file)
+            import_csv(db[request.query.table],
+                       request.query.csvfile.file)
             response.flash = T('data uploaded')
         except Exception, e:
             response.flash = DIV(T('unable to parse csv file'), PRE(str(e)))
@@ -283,7 +307,7 @@ def select():
         stop=stop,
         nrows=nrows,
         rows=rows,
-        query=request.vars.query,
+        query=request.query.query,
         formcsv=formcsv,
         tb=tb,
     )
@@ -300,9 +324,9 @@ def update():
     record = None
     db[table]._common_filter = None
     if keyed:
-        key = [f for f in request.vars if f in db[table]._primarykey]
+        key = [f for f in request.query if f in db[table]._primarykey]
         if key:
-            record = db(db[table][key[0]] == request.vars[key[
+            record = db(db[table][key[0]] == request.query[key[
                         0]]).select().first()
     else:
         record = db(db[table].id == request.args(
@@ -325,7 +349,7 @@ def update():
                    args=request.args[:1]), upload=URL(r=request,
                                                       f='download', args=request.args[:1]))
 
-    if form.accepts(request.vars, session):
+    if form.accepts(request.query, session):
         session.flash = T('done!')
         qry = query_by_table_type(table, db)
         redirect(URL('select', args=request.args[:1],
@@ -355,15 +379,15 @@ def ccache():
             T("Clear DISK"), _type="submit", _name="disk", _value="disk")),
     )
 
-    if form.accepts(request.vars, session):
+    if form.accepts(request.query, session):
         clear_ram = False
         clear_disk = False
         session.flash = ""
-        if request.vars.yes:
+        if request.query.yes:
             clear_ram = clear_disk = True
-        if request.vars.ram:
+        if request.query.ram:
             clear_ram = True
-        if request.vars.disk:
+        if request.query.disk:
             clear_disk = True
 
         if clear_ram:

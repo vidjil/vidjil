@@ -1,19 +1,40 @@
 # coding: utf8
-import gluon.contrib.simplejson, datetime
-import vidjil_utils
+from sys import modules
+from .. import defs
+from ..modules import vidjil_utils
+from ..modules import tag
+from ..modules.stats_decorator import *
+from ..modules.sampleSet import SampleSet, get_set_group
+from ..modules.sampleSets import SampleSets
+from ..modules.sampleSetList import SampleSetList, filter_by_tags
+from ..modules.sequenceFile import get_associated_sample_sets, get_sequence_file_sample_sets
+from ..modules.controller_utils import error_message
+from ..modules.permission_enum import PermissionEnum
+from ..modules.zmodel_factory import ModelFactory
+from ..user_groups import get_default_creation_group, get_involved_groups
+from ..VidjilAuth import VidjilAuth
+from io import StringIO
+import json
+import sys
 import time
 import os
-import sys
-import imp
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from collections import defaultdict
+import math
 
-from controller_utils import error_message
-
-if request.env.http_origin:
-    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Max-Age'] = 86400
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
 
+##################################
+# HELPERS
+##################################
+
+ACCESS_DENIED = "access denied"
+
+
+##################################
+# CONTROLLERS
+##################################
 def index():
     '''
     The request should receive two parameters:
@@ -23,11 +44,11 @@ def index():
     if not auth.user:
         return response.json({'error': 'Access denied'})
 
-    if request.vars['sequences'] == None or request.vars['sequences'] == ''\
-       or request.vars['sample_set_id'] == None:
+    if request.query['sequences'] == None or request.query['sequences'] == ''\
+       or request.query['sample_set_id'] == None:
         return error_message('Malformed request')
 
-    return search_clonedb(request.vars['sequences'].split(','), int(request.vars['sample_set_id']))
+    return search_clonedb(request.query['sequences'].split(','), int(request.query['sample_set_id']))
 
 def search_clonedb(sequences, sample_set_id):
     sys.path.insert(1, os.path.abspath(defs.DIR_CLONEDB))
@@ -73,7 +94,7 @@ def search_clonedb(sequences, sample_set_id):
 def get_info_of_viewable_sample_set(sample_sets, config, sample_names, sample_tags):
     info = {'viewable': [], 'name': [], 'sample_tags': []}
     for sample_id in sample_sets:
-        viewable = auth.can_view_sample_set(sample_id, auth.user.id)
+        viewable = auth.can_view_sample_set(sample_id, auth.user_id)
         info['viewable'].append(viewable)
         if viewable:
             info['name'].append(sample_names.get(sample_id))
