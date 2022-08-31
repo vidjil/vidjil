@@ -13,6 +13,14 @@ services:
         timeout: 20s
         retries: 10
 
+  uwsgi:
+      image: vidjil/server:latest
+      #command: bash /entrypoints/uwsgi-entrypoint.sh
+      depends_on:
+          - mysql
+      links:
+          - mysql:mysql
+
   nginx:
       image: vidjil/client:latest
       links:
