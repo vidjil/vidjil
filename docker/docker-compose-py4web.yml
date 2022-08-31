@@ -15,6 +15,10 @@ services:
 
   nginx:
       image: vidjil/client:latest
+      links:
+          - uwsgi:uwsgi
+      environment:
+          - DOMAIN_NAME=plop
       ports:
           - "80:80"
           - "443:443"
@@ -30,7 +34,7 @@ services:
     image: vidjil/server2:latest
     ports:
       - "8000:8000"
-    command: make -C /usr/share/vidjil/server/py4web start
+    #command: make -C /usr/share/vidjil/server/py4web start
     environment:
      - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
     stdin_open: true
@@ -38,3 +42,5 @@ services:
     depends_on:
       - mysql
       - nginx
+
+

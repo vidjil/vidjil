@@ -5,7 +5,7 @@ label description="An Ubuntu based docker image which comes \
 with a full installation of the Vidjil algoright and browser/server."
 
 #ARG user=py4web
-run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python3 python3-pip python3-setuptools memcached && \
+run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python3 python3-pip python3-dev python3-setuptools uwsgi memcached && \
     service memcached restart && \
     #groupadd -r $user && \
     #useradd -m -r -g $user $user && \
@@ -23,11 +23,9 @@ run cd /usr/share/ && git config --global http.sslVerify false && git clone -b $
 run cd /usr/share/vidjil/server/py4web && cat Makefile
 run cd /usr/share/vidjil/server/py4web && make install 
 
+
 run mkdir /etc/vidjil
-copy ./conf/wsgihandler.py /etc/vidjil/wsgihandler.py
-run mkdir -p /etc/uwsgi/apps-enabled && ln -s /etc/vidjil/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
-run ln -s /etc/vidjil/defs.py /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
-run ln -s /etc/vidjil/wsgihandler.py /usr/share/vidjil/server/web2py/wsgihandler.py
+run mkdir -p /etc/uwsgi/sites && ln -s /etc/vidjil/py4web.ini /etc/uwsgi/sites/py4web.ini
 
 run wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 /usr/share/vidjil/vidjil-algo && cd /usr/share/vidjil/ && chmod +x vidjil-algo
 
