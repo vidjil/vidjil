@@ -4,11 +4,12 @@ label version="1.1"
 label description="An Ubuntu based docker image which comes \
 with a full installation of the Vidjil algoright and browser/server."
 
+
+
+#INSTALL REQUIREMENTS
 #ARG user=py4web
 run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python3 python3-pip python3-dev python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached && \
     service memcached restart && \
-    #groupadd -r $user && \
-    #useradd -m -r -g $user $user && \
 	pip3 install setuptools  && \
 	pip3 install setuptools-rust && \
 	pip3 install wheel && \
@@ -18,12 +19,24 @@ run apt-get update ; apt-get install --no-install-recommends --no-install-sugges
 	pip3 install --upgrade pip && \
     python3 -m pip install -U py4web
 
+#run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y -q sudo curl apt-utils uwsgi-plugin-python
+
+
+
+# COPY LATEST VIDJIL DEPOSITORY
 arg git_branch=feature-sc/py4web
 arg remote_repo=https://gitlab.inria.fr/vidjil/vidjil.git
-run cd /usr/share/ && git config --global http.sslVerify false && git clone -b $git_branch $remote_repo
-run cd /usr/share/vidjil/server/py4web && cat Makefile
-run cd /usr/share/vidjil/server/py4web && make install 
+#run cd /usr/share/ && git config --global http.sslVerify false && git clone -b $git_branch $remote_repo
 
+arg repo_path=./vidjil
+ADD ./vidjil /usr/share/vidjil
+
+run cd /usr/share/vidjil/server/py4web && make install 
+run cd /usr/share/vidjil/server/py4web && py4web setup -Y apps 
+
+
+
+# INSTALL UWSGI
 run mkdir /usr/lib/uwsgi
 run mkdir /usr/lib/uwsgi/plugins
 run PYTHON=python3.8 uwsgi --build-plugin "/usr/src/uwsgi/plugins/python python38"
@@ -31,10 +44,13 @@ run mv python38_plugin.so /usr/lib/uwsgi/plugins/python38_plugin.so
 run chmod 644 /usr/lib/uwsgi/plugins/python38_plugin.so
 
 
-run mkdir /etc/vidjil
-run mkdir -p /etc/uwsgi/sites && ln -s /etc/vidjil/py4web.ini /etc/uwsgi/sites/py4web.ini
+run mkdir -p /etc/uwsgi/sites
+COPY ./conf/uwsgi.ini /etc/uwsgi/sites/uwsgi.ini
 
+
+# INSTALL LATEST VIDJIL ALGO
 run wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 /usr/share/vidjil/vidjil-algo && cd /usr/share/vidjil/ && chmod +x vidjil-algo
+
 
 copy ./scripts/uwsgi-entrypoint.sh /entrypoints/uwsgi-entrypoint.sh
 copy ./scripts/fuse-entrypoint.sh /entrypoints/fuse-entrypoint.sh

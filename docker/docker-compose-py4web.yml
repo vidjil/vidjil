@@ -7,15 +7,22 @@ services:
           - MYSQL_ROOT_PASSWORD=password
       volumes:
           - ./mysql/:/docker-entrypoint-initdb.d/
-          - ./volumes/mysql:/var/lib/mysql
+          - ./volumes/mysql2:/var/lib/mysql
       healthcheck:
         test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
         timeout: 20s
         retries: 10
+      ports:
+          - "3307:3306"
 
   uwsgi:
-      image: vidjil/server:latest
+      image: vidjil/server2:latest
       #command: bash /entrypoints/uwsgi-entrypoint.sh
+      command: uwsgi /etc/uwsgi/sites/uwsgi.ini
+      environment:
+          - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
+      volumes:
+          - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
       depends_on:
           - mysql
       links:
@@ -30,7 +37,8 @@ services:
       ports:
           - "80:80"
           - "443:443"
-      command: bash /entrypoints/nginx-entrypoint.sh
+      command: 
+            bash -c "make -C /usr/share/vidjil browser && bash /entrypoints/nginx-entrypoint.sh"
       volumes:
           - /opt/vidjil/log/nginx:/var/log/nginx
           - /opt/vidjil/certs:/etc/letsencrypt/well-known
