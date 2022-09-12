@@ -26,10 +26,9 @@ run apt-get update ; apt-get install --no-install-recommends --no-install-sugges
 # COPY LATEST VIDJIL DEPOSITORY
 arg git_branch=feature-sc/py4web
 arg remote_repo=https://gitlab.inria.fr/vidjil/vidjil.git
-#run cd /usr/share/ && git config --global http.sslVerify false && git clone -b $git_branch $remote_repo
+run cd /usr/share/ && git config --global http.sslVerify false && git clone -b $git_branch $remote_repo
 
-arg repo_path=./vidjil
-ADD ./vidjil /usr/share/vidjil
+#ADD ./vidjil /usr/share/vidjil
 
 run cd /usr/share/vidjil/server/py4web && make install 
 run cd /usr/share/vidjil/server/py4web && py4web setup -Y apps 
