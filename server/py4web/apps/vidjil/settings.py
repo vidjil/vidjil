@@ -16,7 +16,7 @@ if (DB_URI is None):
 #DB_URI = "mysql://vidjil_user:password@localhost/vidjil"
 DB_POOL_SIZE = 1
 DB_MIGRATE = True
-DB_FAKE_MIGRATE = True  # maybe?
+DB_FAKE_MIGRATE = False  # maybe?
 
 # location where to store uploaded files:
 UPLOAD_FOLDER = os.path.join(APP_FOLDER, "uploads")

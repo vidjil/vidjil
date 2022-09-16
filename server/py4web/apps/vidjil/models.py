@@ -18,19 +18,19 @@ def get_time():
 
 ## AUTH old tables for import
 
-db.define_table('auth_user',
-            Field('username', 'string'),
-            Field('sso_id', 'string'),
-            Field('action_token', 'string'),
-            Field('last_password_change', 'string'),
-            #Field('email__tmp', 'string'),
-            Field('first_name', 'string'),
-            Field('last_name', 'string'),
-            Field('email', 'string'),
-            Field('password', 'password'),
-            Field('registration_key', 'string'),
-            Field('reset_password_key', 'string'),
-            Field('registration_id', 'string'), redefine=True)
+#db.define_table('auth_user',
+#            Field('username', 'string'),
+#            Field('sso_id', 'string'),
+#            Field('action_token', 'string'),
+#            Field('last_password_change', 'string'),
+#            Field('email__tmp', 'string'),
+#            Field('first_name', 'string'),
+#            Field('last_name', 'string'),
+#            Field('email', 'string'),
+#            Field('password', 'password'),
+#            Field('registration_key', 'string'),
+#            Field('reset_password_key', 'string'),
+#            Field('registration_id', 'string'), redefine=True)
 
 db.define_table('auth_group',
             Field('role', 'string'),

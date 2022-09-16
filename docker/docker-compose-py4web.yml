@@ -44,6 +44,15 @@ services:
       links:
           - redis:redis
 
+  celery:
+      image: vidjil/server2:latest
+      command: bash /entrypoints/celery-entrypoint.sh
+      depends_on:
+          - uwsgi
+          - redis
+      links:
+          - redis:redis
+
   flower:
       image: vidjil/server2:latest
       command: bash /entrypoints/flower-entrypoint.sh
