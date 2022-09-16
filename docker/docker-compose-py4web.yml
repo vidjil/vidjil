@@ -64,6 +64,7 @@ services:
       command: 
             bash -c "make -C /usr/share/vidjil browser && bash /entrypoints/nginx-entrypoint.sh"
       volumes:
+          - ./vidjil-client/scripts:/entrypoints
           - /opt/vidjil/log/nginx:/var/log/nginx
           - /opt/vidjil/certs:/etc/letsencrypt/well-known
           - ./vidjil-client/ssl:/etc/nginx/ssl
