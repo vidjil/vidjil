@@ -8,25 +8,27 @@ docker build --no-cache -t vidjil/server2:latest .
 Make sure your py4web/vidjil/databases and mysql folder are empty (in case you mounted those volumes in your docker-compose)
 
 #step 2
-in server/py4web/apps/vidjil/settings.py
-set DB_FAKE_MIGRATE = False  
+start mysql service first 
+docker-compose -f docker-compose-py4web.yml up -d mysql
 
 #step 3
 start docker
 docker-compose -f docker-compose-py4web.yml up -d
 
 #step 4
+load backup .sql file
+mysql --protocol=TCP --port=3307 -u vidjil -prootpass vidjil < db-backup.sql 
+
+#step 5
 stop docker
 docker-compose down --remove-orphans
-
-#step 5 
-in server/py4web/apps/vidjil/settings.py
-set DB_FAKE_MIGRATE = True
 
 #step 6
 start docker again
 docker-compose -f docker-compose-py4web.yml up -d
 
-#step 7 
-load backup .sql file
-mysql --protocol=TCP --port=3307 -u vidjil -prootpass vidjil < db-backup.sql 
+
+localhost               > vidjil/browser
+localhost/vidjil        > vidjil/server
+localhost/_dashboard    > py4web admin panel (default password : password)
+localhost:5555          > flower / celery monitoring tool
