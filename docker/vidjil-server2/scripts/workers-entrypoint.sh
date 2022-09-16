@@ -1,4 +1,2 @@
-#!/bin/bash
-. $(dirname $0)/tools.sh
-user=$(get_user_of_results)
-/usr/local/bin/gosu $user python /usr/share/vidjil/server/web2py/web2py.py -K vidjil,vidjil,vidjil
+cd usr/share/vidjil/server/py4web
+celery -b redis://redis:6379/0 -A apps.vidjil.tasks worker --loglevel=info

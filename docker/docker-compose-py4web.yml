@@ -15,18 +15,42 @@ services:
       ports:
           - "3307:3306"
 
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+
   uwsgi:
       image: vidjil/server2:latest
-      #command: bash /entrypoints/uwsgi-entrypoint.sh
-      command: uwsgi /etc/uwsgi/sites/uwsgi.ini
+      command: bash /entrypoints/uwsgi-entrypoint.sh
       environment:
           - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
       volumes:
           - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
+      stdin_open: true
+      tty: true
       depends_on:
           - mysql
       links:
           - mysql:mysql
+
+  workers:
+      image: vidjil/server2:latest
+      command: bash /entrypoints/workers-entrypoint.sh
+      depends_on:
+          - uwsgi
+          - redis
+      links:
+          - redis:redis
+
+  flower:
+      image: vidjil/server2:latest
+      command: bash /entrypoints/flower-entrypoint.sh
+      depends_on:
+          - workers
+      ports:
+          - "5555:5555"
 
   nginx:
       image: vidjil/client:latest
@@ -46,17 +70,5 @@ services:
           - ./vidjil-client/conf:/etc/vidjil
           - ../germline:/usr/share/vidjil/germline
 
-  web:
-    image: vidjil/server2:latest
-    ports:
-      - "8000:8000"
-    #command: make -C /usr/share/vidjil/server/py4web start
-    environment:
-     - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
-    stdin_open: true
-    tty: true
-    depends_on:
-      - mysql
-      - nginx
 
 

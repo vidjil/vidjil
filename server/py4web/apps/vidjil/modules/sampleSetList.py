@@ -1,7 +1,7 @@
 from .permission_enum import PermissionEnum
 from .sampleSet import *
 
-from ..common import db, auth
+from ..common import db, auth, log
 
 class SampleSetList():
     '''

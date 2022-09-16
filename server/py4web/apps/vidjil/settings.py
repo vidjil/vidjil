@@ -31,7 +31,7 @@ REQUIRES_APPROVAL = False
 SESSION_TYPE = "cookies"
 SESSION_SECRET_KEY = "<my secret key>"
 MEMCACHE_CLIENTS = ["127.0.0.1:11211"]
-REDIS_SERVER = "localhost:6379"
+REDIS_SERVER = "redis:6379"
 
 # logger settings
 LOGGERS = [
@@ -68,7 +68,7 @@ T_FOLDER = os.path.join(APP_FOLDER, "translations")
 
 # Celery settings
 USE_CELERY = True
-CELERY_BROKER = "redis://localhost:6379/0"
+CELERY_BROKER = "redis://redis:6379/0"
 
 # try import private settings
 try:

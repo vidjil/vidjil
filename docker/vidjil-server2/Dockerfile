@@ -8,7 +8,7 @@ with a full installation of the Vidjil algoright and browser/server."
 
 #INSTALL REQUIREMENTS
 #ARG user=py4web
-run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python3 python3-pip python3-dev python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached && \
+run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python3 python3-pip python3-dev python3-gdbm python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached && \
     service memcached restart && \
 	pip3 install setuptools  && \
 	pip3 install setuptools-rust && \
@@ -17,6 +17,7 @@ run apt-get update ; apt-get install --no-install-recommends --no-install-sugges
 	pip3 install rocket3 && \
 	pip3 install uwsgi && \
 	pip3 install --upgrade pip && \
+	pip3 install flower && \
     python3 -m pip install -U py4web
 
 #run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y -q sudo curl apt-utils uwsgi-plugin-python
@@ -51,8 +52,7 @@ COPY ./conf/uwsgi.ini /etc/uwsgi/sites/uwsgi.ini
 run wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 /usr/share/vidjil/vidjil-algo && cd /usr/share/vidjil/ && chmod +x vidjil-algo
 
 
-copy ./scripts/uwsgi-entrypoint.sh /entrypoints/uwsgi-entrypoint.sh
-copy ./scripts/fuse-entrypoint.sh /entrypoints/fuse-entrypoint.sh
+copy ./scripts/* /entrypoints/
 run mkdir /usr/share/vidjil/server/web2py/applications/vidjil/databases && touch /usr/share/vidjil/server/web2py/applications/vidjil/databases/sql.log
 run mkdir /var/vidjil
 run touch /var/vidjil/vidjil.log && touch /var/vidjil/vidjil-debug.log

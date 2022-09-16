@@ -1,1 +1,1 @@
-uwsgi /etc/uwsgi/sites/py4web.ini
+uwsgi /etc/uwsgi/sites/uwsgi.ini

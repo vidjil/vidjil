@@ -226,7 +226,7 @@ if settings.USE_CELERY:
     # to celery docs
     scheduler = Celery(
         "apps.%s.tasks" % settings.APP_NAME, broker=settings.CELERY_BROKER,
-        backend='redis://localhost'
+        backend='redis://redis'
     )
 
 
@@ -351,3 +351,15 @@ mail = Mailer(
         #tls=defs.SMTP_TLS,
         #ssl=defs.SMTP_SSL
     )
+
+# #######################################################
+# try to create an index on these un-indexed columns, if it fails, we assume they already exist
+# #######################################################
+try:
+    db.executesql('CREATE INDEX table_name_index ON tag_ref (table_name);')
+    db.executesql('CREATE INDEX record_id_index ON tag_ref (record_id);')
+    db.executesql('CREATE INDEX name_index ON auth_permission (name);')
+    db.executesql('CREATE INDEX record_id_index ON auth_permission (record_id);')
+    log.info("rebuild indexes")
+except:
+        pass

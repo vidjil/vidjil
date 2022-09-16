@@ -27,13 +27,13 @@ def task_test():
 
 
 # run task_test every 10 seconds
-#scheduler.conf.beat_schedule = {
-#    "my_first_task": {
-#        "task": "apps.vidjil.tasks.task_test",
-#        "schedule": 10.0,
-#        "args": (),
-#    },
-#}
+scheduler.conf.beat_schedule = {
+    "my_first_task": {
+        "task": "apps.vidjil.tasks.task_test",
+        "schedule": 10.0,
+        "args": (),
+    },
+}
 
 
 
