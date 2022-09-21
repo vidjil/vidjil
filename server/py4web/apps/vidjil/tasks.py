@@ -19,18 +19,18 @@ from .common import settings, scheduler, db, Field, log
 def task_test():
     try:
         db._adapter.reconnect()
-        db.patient[28821].update_record( info = db.patient[28821]['info']+"z")
+        db.patient[28815].update_record( info = db.patient[28815]['info']+"z")
         print('POUET')
         db.commit()
     except:
         db.rollback()
 
 
-# run task_test every 10 seconds
+# run task_test every 100 seconds
 scheduler.conf.beat_schedule = {
     "my_first_task": {
         "task": "apps.vidjil.tasks.task_test",
-        "schedule": 10.0,
+        "schedule": 100.0,
         "args": (),
     },
 }

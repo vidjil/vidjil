@@ -47,12 +47,12 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 ### relative path start from server/web2py
 DIR_VIDJIL = '/usr/share/vidjil-algo/latest/'
 DIR_VIDJIL_NEXT = '/usr/share/vidjil-algo/next/'
-DIR_FUSE = '/home/duez/vidjil/tools/'
+DIR_FUSE = '/usr/share/vidjil/tools/'
 DIR_MIXCR = '/usr/share/mixcr/'
 DIR_IGREC = '/usr/local/bin/'
 DIR_GERMLINE = '/usr/share/vidjil/germline'
 DIR_GERMLINE_NEXT = '/usr/share/vidjil/germline'
-DIR_PEAR = '/home/duez/tools/'
+DIR_PEAR = '/usr/share/tools/'
 DIR_FLASH2 = DIR_PEAR
 DIR_CLONEDB = '/usr/share/clonedb/'
 

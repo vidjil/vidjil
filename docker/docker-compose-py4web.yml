@@ -28,6 +28,11 @@ services:
           - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
       volumes:
           - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
+          - ./vidjil-server2/scripts:/entrypoints
+          - ./volumes/results:/mnt/result/results
+          - ./volumes/tmp:/mnt/result/tmp
+          - ./volumes/uploads:/mnt/upload/uploads
+          - ./volumes/tools:/usr/share/tools
       stdin_open: true
       tty: true
       depends_on:
@@ -38,24 +43,41 @@ services:
   workers:
       image: vidjil/server2:latest
       command: bash /entrypoints/workers-entrypoint.sh
+      stdin_open: true
+      tty: true
+      volumes:
+          - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
+          - ./vidjil-server2/scripts:/entrypoints
       depends_on:
+          - mysql
           - uwsgi
           - redis
       links:
           - redis:redis
+          - mysql:mysql
 
   celery:
       image: vidjil/server2:latest
       command: bash /entrypoints/celery-entrypoint.sh
+      stdin_open: true
+      tty: true
+      volumes:
+          - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
+          - ./vidjil-server2/scripts:/entrypoints
       depends_on:
+          - mysql
           - uwsgi
           - redis
       links:
           - redis:redis
+          - mysql:mysql
 
   flower:
       image: vidjil/server2:latest
       command: bash /entrypoints/flower-entrypoint.sh
+      volumes:
+          - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
+          - ./vidjil-server2/scripts:/entrypoints
       depends_on:
           - workers
       ports:

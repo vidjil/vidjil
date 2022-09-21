@@ -226,7 +226,7 @@ if settings.USE_CELERY:
     # to celery docs
     scheduler = Celery(
         "apps.%s.tasks" % settings.APP_NAME, broker=settings.CELERY_BROKER,
-        backend='redis://redis'
+        backend='redis://redis' 
     )
 
 

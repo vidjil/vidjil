@@ -8,7 +8,7 @@ with a full installation of the Vidjil algoright and browser/server."
 
 #INSTALL REQUIREMENTS
 #ARG user=py4web
-run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python3 python3-pip python3-dev python3-gdbm python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached && \
+run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python python3 python3-pip python3-dev python3-gdbm python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached && \
     service memcached restart && \
 	pip3 install setuptools  && \
 	pip3 install setuptools-rust && \

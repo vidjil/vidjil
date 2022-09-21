@@ -16,7 +16,7 @@ from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets, g
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
-from ..tasks import schedule_pre_process
+from ..tasks import schedule_pre_process, task_test
 from ..user_groups import get_upload_group_ids, get_involved_groups
 from ..VidjilAuth import VidjilAuth
 from io import StringIO
@@ -394,7 +394,7 @@ def submit():
         return error_message("add_form() failed")
 
 
-@action("/vidjil/file/up", method=["POST", "GET", "OPTIONS"])
+@action("/vidjil/file/upload", method=["POST", "GET", "OPTIONS"])
 @action.uses(db, auth.user)
 def upload(): 
     #session.forget(response)
