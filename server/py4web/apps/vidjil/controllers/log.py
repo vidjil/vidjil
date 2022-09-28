@@ -49,8 +49,8 @@ def get_data_list(table):
 @action.uses("log/index.html", db, auth.user)
 def index():
     if not auth.user:
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
-                            vars=dict(_next=URL('patient', 'index', scheme=True, host=True)))
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True,
+                            vars=dict(_next=URL('patient', 'index', scheme=True)))
             }
 
         return json.dumps(res, separators=(',',':'))

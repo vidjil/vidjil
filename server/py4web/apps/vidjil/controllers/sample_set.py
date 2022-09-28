@@ -262,8 +262,8 @@ def all():
         type = defs.SET_TYPE_GENERIC
 
     if not auth.user :
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
-                    vars=dict(_next=URL('sample_set', 'all', vars={'type': type, 'page': 0}, scheme=True, host=True)))
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True,
+                    vars=dict(_next=URL('sample_set', 'all', vars={'type': type, 'page': 0}, scheme=True)))
             }
         return json.dumps(res, separators=(',',':'))
 
@@ -1138,8 +1138,8 @@ def samplesetById():
 def stats():
     start = time.time()
     if not auth.user :
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
-                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True, host=True)))
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True,
+                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True)))
             }
         return json.dumps(res, separators=(',',':'))
 
