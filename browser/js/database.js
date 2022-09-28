@@ -253,6 +253,9 @@ Database.prototype = {
             url += "?" + arg;
         }
 
+        //hack to process both web2py and py4web redirected url
+        url = url.replace("vidjil/vidjil", "vidjil")
+        url = url.replace("vidjil//vidjil", "vidjil")
         
         this.callUrl(url, args)
     },
