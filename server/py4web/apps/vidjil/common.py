@@ -233,7 +233,7 @@ if settings.USE_CELERY:
 # #######################################################
 # Enable authentication
 # #######################################################
-auth.enable(uses=(cors,session, T, db, flash), env=dict(T=T))
+#auth.enable(uses=(cors,session, T, db, flash), env=dict(T=T))
 
 # #######################################################
 # Define convenience decorators
