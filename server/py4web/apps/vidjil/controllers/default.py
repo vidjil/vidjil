@@ -32,9 +32,10 @@ from ..settings import SESSION_SECRET_KEY
 from ..modules.permission_enum import PermissionEnum
 from ..user_groups import get_default_creation_group
 from ..VidjilAuth import VidjilAuth
+from py4web.utils.auth import Auth, AuthAPI
 import types
 
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+from ..common import db, session, cors, T, flash, cache, authenticated, unauthenticated, auth, log
 
 #if request.environ.get("HTTP_ORIGIN") :
 #    response.headers['Access-Control-Allow-Origin'] = request.environ.get("HTTP_ORIGIN")
@@ -55,11 +56,13 @@ def help():
 
 #########################################################################
 ## default home page
+@action("/vidjil/default/home.html", method=["POST", "GET"])
+@action.uses("default/index.html", db, auth.user, cors)
 def home():
     if auth.is_admin():
-        redirect = URL('admin', 'index', scheme=True, host=True)
+        redirect = URL('admin/index')
     else:
-        redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True, host=True)
+        redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)
     res = {"redirect" : redirect}
     return json.dumps(res, separators=(',',':'))
 
@@ -278,8 +281,8 @@ def checkProcess():
 def get_data():
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
-                            vars=dict(_next=URL('default', 'get_data', scheme=True, host=True,
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True,
+                            vars=dict(_next=URL('default', 'get_data', scheme=True,
                                                 vars=dict(sample_set_id = request.query["sample_set_id"],
                                                           config =request.query["config"]))
                                       )
@@ -474,7 +477,7 @@ def get_data():
 def get_custom_data():
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True)} #TODO _next
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True)} #TODO _next
         return json.dumps(res, separators=(',',':'))
 
     error = ""
@@ -678,8 +681,8 @@ def error():
     return "Server error"
 
 
-@action("/vidjil/default/user/<path>", method=["POST", "GET"])
-@action.uses(db, "db_layout.html")
+#@action("/vidjil/default/user/<path>", method=["POST", "GET"])
+@action.uses(db, session, "db_layout.html")
 def user(path=None):
     """
     exposes:
@@ -704,7 +707,7 @@ def user(path=None):
     #only authentified admin user can access register view
     if auth.user and path == 'register' :
         #save admin session (the registering will automatically login the new user in order to initialize its default values)
-        admin_auth = session.auth
+        admin_auth = auth
         auth.is_logged_in = lambda: False
         
         def post_register(form):
@@ -720,7 +723,7 @@ def user(path=None):
             log.admin('User %s <%s> registered, group %s' % (auth.user_id, auth.user.email, auth.user_group()))
 
             #restore admin session after register
-            session.auth = admin_auth
+            auth = admin_auth
             auth.user = session.auth.user
         auth.settings.register_onaccept = post_register
         
@@ -731,10 +734,16 @@ def user(path=None):
         return dict(form=auth.register())
     
     #reject others
-    if request.args[0] == 'register' :
+    if path == 'register'  :
         res = {"message": "you need to be admin and logged to add new users"}
         return json.dumps(res, separators=(',',':'))
     
+    if auth.user and path == 'logout' :
+        auth.user = None
+        auth.session.clear()
+        
+        return home()
+
     return dict(form=auth())
 
 def impersonate() :
@@ -747,7 +756,7 @@ def impersonate() :
     if not 'admin' in request.query['next']:
         res = {"redirect": "reload"}
     else:
-        res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
+        res = {"redirect" : URL('patient', 'index', scheme=True)}
     return json.dumps(res, separators=(',',':'))
 
 def stop_impersonate() :
