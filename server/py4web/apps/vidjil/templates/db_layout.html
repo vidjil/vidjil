@@ -9,7 +9,7 @@
         <a id="db_page_news" class="button" onclick="db.call('notification/index');">news</a>
         <a class="button" onclick="db.call('log/index');">log</a>
 
-        [[if auth.is_admin():]]
+        [[if globals().get('user'):]]
         - - -
         <a id="db_page_preprocess" class="button" onclick="db.call('pre_process/index');">pre-process configs</a>
         <a id="db_page_configs" class="button" onclick="db.call('config/index');">process configs</a>
@@ -21,7 +21,7 @@
     </div>
     
     <div id="db_auth">
-            [[if auth.user:]]
+            [[if globals().get('user'):]]
         
                 [[if auth.is_impersonating() :]]                     
                     impersonate
@@ -63,7 +63,7 @@
         
         
         
-                <a id="logout_button" class="button" onclick="db.logout();">(logout)</a>
+                <a id="logout_button" class="button" onclick="db.call('auth/logout');">(logout)</a>
             [[pass]]
     </div>
     

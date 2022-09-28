@@ -1,0 +1,43 @@
+[[extend 'db_layout.html']]
+
+<div>
+    
+    <h3>[[=message]]</h3>
+
+    <form id="data_form" action="DB_ADDRESS/auth/submit" enctype="multipart/form-data" method="post">
+        <table>
+            <tbody>
+                <tr>
+                    <td >
+                        <label for="login" id="login__label"> Login: </label>
+                    </td>
+                    <td >
+                        <input class="string" id="login" name="login" type="text" value="">
+                    </td>
+                    <td >
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="password" id="password__label">Password: </label>
+                    </td>
+                    <td>
+                        <input class="string" id="password" name="password" type="password" value="">
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    </td>
+                    <td >
+                        <input type="submit" value="login" class="btn">
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+
+</div>
