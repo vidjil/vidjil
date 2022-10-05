@@ -184,7 +184,7 @@ deploy_release_prod:
 # Client
 
 test_browser_unit:
-  image: node:latest
+  image: vidjilci/cypress_with_browsers:latest
   stage: test_unit
   script: 
     - npm -v
