@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-
+// Nb: These tests are launched at the end of other tests. this allow to get already present analysis on the server when they are executed
 
 describe('Manipulate db page', function () {
     before(function () {
@@ -85,5 +85,20 @@ describe('Manipulate db page', function () {
         return
     })
 
+    it('5070 - get_reads',  function() {
+        cy.goToPatientPage()
+        var uid = 2; // TODO; reuse previous uid // async
+        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
+          .click({force: true})
+        cy.update_icon()
+        cy.get('[href="?sample_set_id='+uid+'&config=2"]').click()
+        cy.openCloneInfo(0)
+        cy.get(':nth-child(2) > .icon-down').click()
 
+        const downloadsFolder = Cypress.config('downloadsFolder')
+        const downloadedFilename = downloadsFolder+'/reads__0__file_id__'+uid+'.fa'
+        
+        cy.readFile(downloadedFilename, { timeout: 120000 })
+        .should('contain', '>clone-001')
+    })
 })
