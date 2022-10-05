@@ -184,8 +184,14 @@ deploy_release_prod:
 # Client
 
 test_browser_unit:
+  image: vidjilci/cypress_with_browsers:latest
   stage: test_unit
-  script: make unit_browser
+  script: 
+    - npm -v
+    - npm install --save-dev qunit
+    - npm link nightmare --unsafe-perm=true ;
+    - apt-get update && apt-get -y install xvfb grep
+    - make unit_browser
   artifacts:
     paths:
     - browser/
@@ -197,7 +203,7 @@ test_browser_unit:
     - dev
     - schedules
   tags:
-    - web
+    - cidocker
   extends:
     - .need_for_quick_test
 
@@ -223,7 +229,7 @@ code_quality_custom:
     - dev
     - schedules
   tags:
-    - web
+    - cidocker
   extends:
     - .need_for_quick_test
 
