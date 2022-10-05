@@ -184,7 +184,7 @@ deploy_release_prod:
 # Client
 
 test_browser_unit:
-  image: node
+  image: node:latest
   stage: test_unit
   script: 
     - npm -v
@@ -203,7 +203,7 @@ test_browser_unit:
     - dev
     - schedules
   tags:
-    - web
+    - cidocker
   extends:
     - .need_for_quick_test
 
