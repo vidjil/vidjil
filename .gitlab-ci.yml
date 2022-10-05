@@ -229,7 +229,7 @@ code_quality_custom:
     - dev
     - schedules
   tags:
-    - web
+    - cidocker
   extends:
     - .need_for_quick_test
 
