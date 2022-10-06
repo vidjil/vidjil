@@ -73,11 +73,18 @@ Aligner.prototype = {
                 var id  = "aligner_checkbox_"+mc.id;
                 clone.title = mc.title;
                 input.id = id;
-                input.checked = mc.enabled;
+
+                if (localStorage.getItem(`aligner_layers_${mc.title}`)){
+                    input.checked = localStorage.getItem(`aligner_layers_${mc.title}`) === "true"
+                    self.toggleLayers(mc.layers, input.checked, true);
+                } else {
+                    input.checked = mc.enabled;
+                }
+
                 clone.setAttribute("for", id);
                 text.innerHTML = mc.text;
 
-                this.connect_checkbox(clone, mc.layers);
+                this.connect_checkbox(clone, mc.title, mc.layers);
                 menuC.appendChild(clone);
             }
         }
@@ -87,6 +94,7 @@ Aligner.prototype = {
         var self = this;
 
         var available_axis = AXIS_ALIGNER;
+        this.selectedAxis  = []
 
         var menu = document.getElementById("segmenter_axis_select");
         for (var i in available_axis) {
@@ -107,22 +115,35 @@ Aligner.prototype = {
             axis_input.setAttribute('value', axis_p.name);
             axis_input.setAttribute('id', "sai"+i); // segmenter axis input
             axis_input.className = "aligner-checkbox-input";
-            if (axis_p.name == "Size" ||
-                axis_p.name == "[IMGT] Productivity" ||
-                axis_p.name == "[IMGT] VIdentity" ) axis_input.setAttribute('checked', "");
+
+            // control if a value is present in localsettings
+            if (localStorage.getItem(`aligner_axis_${axis_p.name}`)){
+                if (localStorage.getItem(`aligner_axis_${axis_p.name}`) == "true"){
+                    if (this.selectedAxis.length < 5) {
+                        this.selectedAxis.push(Axis.prototype.getAxisProperties(axis_p.name))
+                        axis_input.setAttribute('checked', "");
+                    }
+                }
+            } else {
+                if (axis_p.name == "Size" ||
+                    axis_p.name == "[IMGT] Productivity" ||
+                    axis_p.name == "[IMGT] VIdentity" ){
+                        if (this.selectedAxis.length < 5) {
+                            axis_input.setAttribute('checked', "");
+                            this.selectedAxis.push(Axis.prototype.getAxisProperties(axis_p.name))
+                        }
+                } 
+            }
+
 
             axis_label.appendChild(axis_input);
             axis_label.appendChild(axis_text);
             axis_option.appendChild(axis_label);
             menu.appendChild(axis_label);
+            this.connect_axisbox(axis_label, axis_p.name);
 
             $(axis_input).unbind("click");
-            self.connect_axisbox(axis_input);
         }
-
-        this.selectedAxis = [Axis.prototype.getAxisProperties("[IMGT] Productivity"),
-                            Axis.prototype.getAxisProperties("[IMGT] VIdentity"),
-                            Axis.prototype.getAxisProperties("Size")];
     },
 
     // return list of external data that need to be refreshed to display enabled layers
@@ -207,29 +228,56 @@ Aligner.prototype = {
     },
 
     //check axis selected in menu to update and update axisBox dom elements accordingly
-    connect_axisbox:function (elem){
+    getSelectedAxis:function (){
         var self = this;
 
-        $(elem).click(function(e) {
-            var menu = document.getElementById("segmenter_axis_select");
-            var inputs = menu.getElementsByTagName("input");
-            var selectedAxis = [];
-    
-            for (var i in inputs)
-                if (inputs[i].checked) selectedAxis.push(Axis.prototype.getAxisProperties(inputs[i].value));
-    
-            if (selectedAxis.length <= 5){
-                self.selectedAxis = selectedAxis;
-                self.update();
-            }else{
-                console.log({ msg: "Data columns selection is limited to 5.<br/>Please disable some axis before adding new one.", type: "flash", priority: 2 });
-                this.checked = false;
-            }
-            e.stopPropagation();            
-        })
+        var menu = document.getElementById("segmenter_axis_select");
+        var inputs = menu.getElementsByTagName("input");
+        var selectedAxis = [];
+
+        for (var i in inputs){
+            if (inputs[i].checked) selectedAxis.push(inputs[i].value);
+        }
+
+        console.default.log( `${selectedAxis.length} selectedAxis: ${selectedAxis}`)
+        return selectedAxis
     },
 
-    connect_checkbox: function(elem, layers){
+
+    //check axis selected in menu to update and update axisBox dom elements accordingly
+    connect_axisbox:function (elem, title){
+        var self = this;
+
+        $(function () {
+            $(elem).find('input').unbind("click");
+            $(elem).find('input').click(function(e){
+                var input = elem.getElementsByTagName("input")[0];
+                var axis  = Axis.prototype.getAxisProperties(input.value)
+                var selectedAxis = self.getSelectedAxis()
+
+                if (input.checked){
+                    if (selectedAxis.length > 5 ){
+                        console.log({ msg: "Data columns selection is limited to 5.<br/>Please disable some axis before adding new one.", type: "flash", priority: 2 });
+                        input.checked = false;
+                        return
+                    } else {
+                        self.selectedAxis.push(axis)
+                        self.update()
+                    }
+                } else if (!input.checked){
+                    var index = self.selectedAxis.indexOf(axis)
+                    self.selectedAxis.splice(index, 1)
+                    self.update()
+                }
+
+                if (localStorage){
+                    localStorage.setItem(`aligner_axis_${title}`, input.checked)
+                } 
+            });
+        });
+    },
+
+    connect_checkbox: function(elem, title, layers){
         var self = this;
         
         //connect event to checkbox and checkbox_label
@@ -237,6 +285,9 @@ Aligner.prototype = {
             $(elem).find('input').unbind("click");
             $(elem).find('input').click(function(e){
                 var input = elem.getElementsByTagName("input")[0];
+                if (localStorage){
+                    localStorage.setItem(`aligner_layers_${title}`, input.checked)
+                } 
                 self.toggleLayers(layers, input.checked, true);
                 e.stopPropagation();
             });

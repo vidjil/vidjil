@@ -96,7 +96,53 @@ describe('Aligner', function () {
     return
   })
 
-  it('Aligner align menu',  function() {
+
+  it('Aligner menu, settings keep collumns',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+    cy.selectClone(0)
+    // Start with size + imgt productivity + imgt identity
+    cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .Size > .sizeBox')
+      .should("exist")
+      .should("be.visible")
+    cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .Sequence')
+      .should("not.exist")
+
+    // Set quality layer to true, verify that div is present
+    cy.get("#sai0") // size col
+      .should("be.checked")
+      .click({force: true})
+    cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .Size > .sizeBox')
+      .should("not.exist")
+    cy.get("#sai1") // seq length
+      .should("not.be.checked")
+      .click({force: true})
+    cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .Sequence')
+      .should("exist")
+
+    // Reload page but keep settings
+    cy.reload()
+    cy.setBrowser(url)
+
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+    cy.selectClone(0)
+
+    // Check if checkbox is correctly setted, and quality layer visible when a clone is selected
+    cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .Size > .sizeBox')
+      .should("not.exist")
+    cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .Sequence')
+      .should("exist")
+
+    // Test limit of five concurent element selected
+    cy.get("#sai0").should("not.be.checked")
+      .click({force: true}).should("be.checked")
+    cy.get("#sai2").should("not.be.checked")
+      .click({force: true}).should("be.checked")
+    cy.get("#sai3").should("not.be.checked") // Click on 6th element
+      .click({force: true}).wait(50).should("not.be.checked")
+  })
+
+
+  it('Aligner align menu - alignement layers',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     //select/align clones
@@ -123,7 +169,7 @@ describe('Aligner', function () {
     return
   })
 
-  it('Aligner highlight menu',  function() {
+  it('Aligner highlight menu - layer visible',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     //select/align clones
@@ -227,5 +273,54 @@ describe('Aligner', function () {
     cy.getCloneInScatterplot(1)
       .should("be.visible")
   })
+
+
+
+  it('Aligner menu, settings keep features/layers',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+    cy.selectClone(0)
+    cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .Size > .sizeBox')
+      .should("exist")
+      .should("be.visible")
+
+
+    // Set quality layer to TRUE, verify that div is present
+    cy.get('.seq_layer_quality > div')
+      .should("not.exist")
+    cy.get("#aligner_checkbox_Quality")
+      .should("not.be.checked")
+      .click({force: true})
+      .should("be.checked")
+    cy.get('.seq_layer_quality > div')
+      .should("exist")
+
+    // Set VDJ layer to FALSE, verify that div is NOT visible
+    cy.get('#seq0 > .sequence-holder > .seq-mobil > .sequence-holder2 > :nth-child(1) > .seq_layer_V')
+      .should('not.have.css', 'display', 'none')
+    cy.get("#aligner_checkbox_VDJ")
+      .should("be.checked")
+      .click({force: true})
+      .should("not.be.checked")
+    cy.get('#seq0 > .sequence-holder > .seq-mobil > .sequence-holder2 > :nth-child(1) > .seq_layer_V')
+      .should('have.css', 'display', 'none')
+
+
+    // Reload page but keep settings
+    cy.reload()
+    cy.setBrowser(url)
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+    cy.selectClone(0)
+
+    // Quality layer still TRUE
+    cy.get("#aligner_checkbox_Quality").should("be.checked")
+    cy.get('.seq_layer_quality > div').should("exist")
+
+    // VDJ layer still FALSE
+    cy.get("#aligner_checkbox_VDJ").should("not.be.checked")
+    cy.get('#seq0 > .sequence-holder > .seq-mobil > .sequence-holder2 > :nth-child(1) > .seq_layer_V')
+      .should('have.css', 'display', 'none')
+
+  })
+
 
 })
