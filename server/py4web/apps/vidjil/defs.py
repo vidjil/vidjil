@@ -45,8 +45,8 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 
 ### Directory for program used in task.py
 ### relative path start from server/web2py
-DIR_VIDJIL = '/usr/share/vidjil-algo/latest/'
-DIR_VIDJIL_NEXT = '/usr/share/vidjil-algo/next/'
+DIR_VIDJIL = '/usr/share/vidjil/'
+DIR_VIDJIL_NEXT = '/usr/share/vidjil/'
 DIR_FUSE = '/usr/share/vidjil/tools/'
 DIR_MIXCR = '/usr/share/mixcr/'
 DIR_IGREC = '/usr/local/bin/'
