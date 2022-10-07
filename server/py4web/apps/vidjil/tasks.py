@@ -99,7 +99,7 @@ def compute_extra(id_file, id_config, min_threshold):
             print('invalid_json')
             return "FAIL"
     d['reads']['distribution'] = result
-    with open(filename, 'wb') as extra:
+    with open(filename, 'w') as extra:
         json.dump(d, extra)
     return "SUCCESS"
 
@@ -126,19 +126,18 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
         return err
 
     program = db.config[id_config].program
+
     ##add task to scheduler
-    task = scheduler.queue_task(program, args,
-                                repeats = 1, timeout = defs.TASK_TIMEOUT)
+    run_process.delay(program, args)
     
-    if db.sequence_file[id_sequence].pre_process_flag not in ["COMPLETED", "DONE"] and db.sequence_file[id_sequence].pre_process_flag :
-        db.scheduler_task[task.id] = dict(status ="STOPPED")
-    
-    db.results_file[data_id] = dict(scheduler_task_id = task.id)
+    #if db.sequence_file[id_sequence].pre_process_flag not in ["COMPLETED", "DONE"] and db.sequence_file[id_sequence].pre_process_flag :
+    #    db.scheduler_task[task.id] = dict(status ="STOPPED")
+    #db.results_file[data_id] = dict(scheduler_task_id = task.id)
 
     filename= db.sequence_file[id_sequence].filename
 
     res = {"redirect": "reload",
-           "processId": task.id,
+           #"processId": task.id,
            "message": "[%s] c%s: process requested - %s %s" % (data_id, id_config, grep_reads, filename)}
 
     log.info(res)
@@ -270,7 +269,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
     segs = None
     ratio = None
     wins = None
-    for l in open(out_log):
+    for l in open(out_log, 'r', encoding='utf-8'):
         m = segmented.search(l)
         if m:
             print(l, end=' ')
@@ -307,16 +306,12 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
 
     config_name = db.config[id_config].name
 
-    res = {"message": "[%s] c%s: Vidjil finished - %s - %s" % (id_data, id_config, info, out_folder)}
-    log.info(res)
-
-
     if not grep_reads:
         for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
             sample_set_id = row.sample_set_id
             print(row.sample_set_id)
             compute_extra(id_file, id_config, 5)
-            run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
+            run_fuse.delay(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
     os.remove(results_filepath)
     return "SUCCESS"
@@ -597,6 +592,7 @@ def run_refuse(args):
         run_fuse(arg[0], arg[1], arg[2], arg[3], arg[4])
     return "SUCCESS"
 
+@scheduler.task()
 def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     
@@ -938,4 +934,9 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 
     return "SUCCESS"
     
-    
+
+
+@scheduler.task()
+def run_process(program, args):
+    if program == "vidjil" :
+        run_vidjil(args[0],args[1],args[2],args[3])
