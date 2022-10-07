@@ -2,6 +2,7 @@
 This file defines cache, session, and translator T object for the app
 These are fixtures that every app needs so probably you will not be editing this file
 """
+from ast import Try
 import os
 import sys
 import logging
@@ -276,10 +277,15 @@ class MsgUserAdapter(logging.LoggerAdapter):
                 if ip.startswith(ip_prefix):
                     ip = "%s/%s" % (ip, ips[ip_prefix])
 
-        usern = (str(auth.user_id)) if auth.user else ''
-        usern = usern.replace(' ','-')
-        if auth.is_impersonating():
-            usern = 'team!' + usern
+        usern = ''
+        try:
+            usern = (str(auth.user_id)) if auth.user else ''
+            usern = usern.replace(' ','-')
+            if auth.is_impersonating():
+                usern = 'team!' + usern
+        except:
+            pass
+        
         new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % usern), msg)
         return new_msg, kwargs
     
