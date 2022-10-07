@@ -55,6 +55,19 @@ def index():
                auth=auth,
                db=db)
 
+@scheduler.task
+@action("/vidjil/pre_process/task", method=["POST", "GET"])
+@action.uses(db, auth.user)
+def task_test2():
+    try:
+        db._adapter.reconnect()
+        db.patient[28815].update_record( info = db.patient[28815]['info']+"z")
+        print('POUET')
+        db.commit()
+    except:
+        print('FAIL')
+        db.rollback()
+
 @action("/vidjil/pre_process/add", method=["POST", "GET"])
 @action.uses("pre_process/add.html", db, auth.user)
 def add():
