@@ -277,7 +277,9 @@ test_server_unit:
   
       
 .test_server_base_dind:
-  image: alpine:latest
+  image:
+    name: pandoc/core:latest
+    entrypoint: [""]
   stage: test_functional
   services:
     - docker:dind

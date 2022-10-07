@@ -83,7 +83,6 @@ s2:
   extends:
     - .test_cypress_server
   script:
-    - apk add pandoc
     - make -C doc/tutorial/ build_tutorial_cypress_server
     - *test_cypress_server_script
   variables:
