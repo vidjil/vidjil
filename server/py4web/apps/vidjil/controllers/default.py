@@ -16,20 +16,22 @@ from .. import defs
 from ..modules import vidjil_utils
 from ..modules.controller_utils import error_message
 from ..modules.sampleSet import get_set_group
+from ..modules.sequenceFile import *
+from ..modules.sampleSet import get_sample_set_id_from_results_file
+from ..modules.analysis_file import get_analysis_data
+from ..controllers.group import add_default_group_permissions
 from io import StringIO
 import logging
 import json
 import os
+import time
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from yatl.helpers import A, I
-from py4web.utils.form import Form, FormStyleDefault
-from py4web.utils.grid import Grid, GridClassStyle, Column
-from py4web.utils.publisher import Publisher, ALLOW_ALL_POLICY
-from pydal.validators import IS_NOT_EMPTY, IS_INT_IN_RANGE, IS_IN_SET, IS_IN_DB
+from ..tasks import schedule_run
 from yatl.helpers import INPUT, H1, HTML, BODY, A, DIV
 from py4web.utils.param import Param
 from ..settings import SESSION_SECRET_KEY
 from ..modules.permission_enum import PermissionEnum
+from ..modules.sequenceFile import check_space
 from ..user_groups import get_default_creation_group
 from ..VidjilAuth import VidjilAuth
 from py4web.utils.auth import Auth, AuthAPI
@@ -129,6 +131,8 @@ def init_from_csv():
 ## add a scheduller task to run vidjil on a specific sequence file
 # need sequence_file_id, config_id
 # need patient admin permission
+@action("/vidjil/default/run_request", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def run_request():
     error = ""
     check_space(defs.DIR_RESULTS, "Runs")
@@ -142,11 +146,11 @@ def run_request():
         error += "id config needed, "
         id_config = None
     else:
-        id_config = request.query["config_id"]
-    if not auth.can_process_sample_set(request.query['sample_set_id']):
+        id_config = int(request.query["config_id"])
+    if not auth.can_process_sample_set(int(request.query['sample_set_id'])):
         error += "permission needed"
 
-    id_sample_set = request.query["sample_set_id"]
+    id_sample_set = int(request.query["sample_set_id"])
 
     extra_info = ''
 
@@ -548,6 +552,8 @@ def get_custom_data():
 ## return .analysis file
 # need patient_id
 # need patient admin or read permission
+@action("/vidjil/default/get_analysis", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def get_analysis():
     error = ""
 
@@ -567,7 +573,7 @@ def get_analysis():
     
     if not "sample_set_id" in request.query or request.query['sample_set_id'] is None:
         error += "id sample_set file needed, "
-    if not auth.can_view_sample_set(request.query["sample_set_id"]):
+    if not auth.can_view_sample_set(int(request.query["sample_set_id"])):
         error += "you do not have permission to consult this sample_set ("+str(request.query["sample_set_id"])+")"
     
     if error == "" :
