@@ -317,9 +317,10 @@ def submit():
                 # If we don't reupload a new file
                 file_data.pop('pre_process_flag')
             
-            db.sequence_file[fid] = file_data
+            sequence_file = file_data
             #remove previous membership
             db( db.sample_set_membership.sequence_file_id == fid).delete()
+            db.commit()
             action = "edit"
 
         # add
@@ -365,8 +366,6 @@ def submit():
                     file_data['data_file2'] = str(file_data2['data_file'])
                     os.symlink(filepath2, defs.DIR_SEQUENCES + file_data2['data_file'])
 
-            db.sequence_file[fid] = file_data
-
         link_to_sample_sets(fid, id_dict)
 
         # pre-process for nfs files can be started immediately
@@ -394,7 +393,7 @@ def submit():
         return error_message("add_form() failed")
 
 
-@action("/vidjil/file/upload", method=["POST", "GET", "OPTIONS"])
+@action("/vidjil/file/up", method=["POST", "GET", "OPTIONS"])
 @action.uses(db, auth.user)
 def upload(): 
     #session.forget(response)
@@ -623,3 +622,9 @@ def filesystem():
                 json_node['li_attr']['title'] = f
                 json.append(json_node)
     return json.dumps(json, separators=(',',':'))
+
+
+@action("/vidjil/file/test_run", method=["POST", "GET"])
+@action.uses(db, auth.user)
+def form():
+    task_test()
