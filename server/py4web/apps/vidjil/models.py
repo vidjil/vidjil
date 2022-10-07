@@ -158,7 +158,7 @@ db.define_table('results_file',
                 Field('scheduler_task_id', 'integer'),
                 Field('hidden', 'boolean', default = False, notnull = True),
                 Field('data_file', 'upload', 
-                      uploadfolder="result/results/",
+                      uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 
@@ -170,7 +170,7 @@ db.define_table('fused_file',
                 Field('status', 'string'),
                 Field('sequence_file_list', 'string'),
                 Field('fused_file', 'upload', 
-                      uploadfolder="result/results/",
+                      uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 db.define_table('analysis_file',
@@ -180,7 +180,7 @@ db.define_table('analysis_file',
                 Field('analyze_date','datetime'),
                 Field('status', 'string'),
                 Field('analysis_file', 'upload', 
-                      uploadfolder="result/results/",
+                      uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 db.define_table('notification',

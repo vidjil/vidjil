@@ -11,15 +11,21 @@ DB_FOLDER = os.path.join(APP_FOLDER, "databases")
 DB_URI=os.environ.get('PYDAL_URI')
 if (DB_URI is None):
     #DB_URI = "sqlite://storage.db"
-    DB_URI = "mysql://vidjil:rootpass@mysql/vidjil"
+    DB_URI = "mysql://vidjil:rootpass@localhost:3307/vidjil"
+    #DB_URI = "mysql://vidjil:rootpass@mysql/vidjil"
 
 #DB_URI = "mysql://vidjil_user:password@localhost/vidjil"
 DB_POOL_SIZE = 1
 DB_MIGRATE = True
-DB_FAKE_MIGRATE = False  # maybe?
+DB_FAKE_MIGRATE = True  # maybe?
 
 # location where to store uploaded files:
-UPLOAD_FOLDER = os.path.join(APP_FOLDER, "uploads")
+### Upload directory for .fasta/.fastq.
+### Old sequences files could be thrown away.
+### No regular backup.
+DIR_SEQUENCES = '/mnt/upload/uploads/'
+#UPLOAD_FOLDER = os.path.join(APP_FOLDER, "uploads")
+UPLOAD_FOLDER = '/mnt/upload/uploads/'
 
 # send email on regstration
 VERIFY_EMAIL = False
