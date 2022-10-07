@@ -427,3 +427,14 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
   }
 
 })
+
+
+
+Cypress.Commands.add('saveAnalysis', () => {
+    cy.get('body', { timeout: 10000 })
+      .type('{ctrl}s')
+    cy.get('.flash_1')
+      .should("be.visible")
+      .contains("analysis saved")
+
+})
