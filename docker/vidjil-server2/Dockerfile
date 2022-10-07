@@ -16,6 +16,7 @@ run apt-get update ; apt-get install --no-install-recommends --no-install-sugges
 	pip3 install ombott && \
 	pip3 install rocket3 && \
 	pip3 install uwsgi && \
+	pip3 install markdown && \
 	pip3 install --upgrade pip && \
 	pip3 install flower && \
     python3 -m pip install -U py4web
@@ -50,6 +51,7 @@ COPY ./conf/uwsgi.ini /etc/uwsgi/sites/uwsgi.ini
 
 # INSTALL LATEST VIDJIL ALGO
 run wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 /usr/share/vidjil/vidjil-algo && cd /usr/share/vidjil/ && chmod +x vidjil-algo
+run cd /usr/share/vidjil/germline/ && make
 
 
 copy ./scripts/* /entrypoints/
