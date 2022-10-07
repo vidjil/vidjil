@@ -77,7 +77,10 @@ class Patient(SampleSet):
         return fields
 
     def get_name(self, data, anon=None):
-        return vidjil_utils.anon_names(int(data['sample_set_id']), data['first_name'], data['last_name'], anon)
+        sample_set_id = None
+        if data['sample_set_id'] and data['sample_set_id'] != '' :
+            sample_set_id = int(data['sample_set_id'])
+        return vidjil_utils.anon_names(sample_set_id, data['first_name'], data['last_name'], anon)
 
     def get_display_name(self, data, anon=None):
         return SPAN(vidjil_utils.display_names(data.sample_set_id, data.first_name, data.last_name, anon), _class="set_token patient_token")
