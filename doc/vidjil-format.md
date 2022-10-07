@@ -129,13 +129,18 @@ do a correct gathering.
         {
             "id": "clone-001",
             "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
-    "reads" : [ 243241, 14717 ],
+            "reads" : [ 243241, 14717 ],
             "germline": "TRG",
             "top": 1,
             "seg":
             {
-        "5": {"name": "TRGV5*01",  "start": 1,  "stop": 87,  "delRight": 5},
-        "3": {"name": "TRGJ1*02",  "start": 89, "stop": 118, "delLeft":  0}
+                "5": {"name": "TRGV5*01",  "start": 1,  "stop": 87,  "delRight": 5},
+                "3": {"name": "TRGJ1*02",  "start": 89, "stop": 118, "delLeft":  0},
+                "quality": {
+                  "start": 1,
+                  "stop": 118,
+                  "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!TAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGA!!!!!!!!!!!!!!!!!!!"
+                }
            }
         },
         {
