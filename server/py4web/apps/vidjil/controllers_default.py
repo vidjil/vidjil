@@ -22,7 +22,10 @@ publisher = Publisher(db, policy=ALLOW_ALL_POLICY)
 @action("index")
 @action.uses("index.html", auth)
 def index():
-    return {}
+    return dict(
+            auth=auth,
+            db=db
+            )
 
 
 @action("my_task")
