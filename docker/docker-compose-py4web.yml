@@ -28,6 +28,7 @@ services:
           - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
       volumes:
           - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
+          - ../tools:/usr/share/vidjil/tools
           - ./vidjil-server2/scripts:/entrypoints
           - ./volumes/results:/mnt/result/results
           - ./volumes/tmp:/mnt/result/tmp
@@ -43,11 +44,18 @@ services:
   workers:
       image: vidjil/server2:latest
       command: bash /entrypoints/workers-entrypoint.sh
+      environment:
+          - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
       stdin_open: true
       tty: true
       volumes:
           - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
+          - ../tools:/usr/share/vidjil/tools
           - ./vidjil-server2/scripts:/entrypoints
+          - ./volumes/results:/mnt/result/results
+          - ./volumes/tmp:/mnt/result/tmp
+          - ./volumes/uploads:/mnt/upload/uploads
+          - ./volumes/tools:/usr/share/tools
       depends_on:
           - mysql
           - uwsgi
@@ -59,11 +67,18 @@ services:
   celery:
       image: vidjil/server2:latest
       command: bash /entrypoints/celery-entrypoint.sh
+      environment:
+          - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
       stdin_open: true
       tty: true
       volumes:
           - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
+          - ../tools:/usr/share/vidjil/tools
           - ./vidjil-server2/scripts:/entrypoints
+          - ./volumes/results:/mnt/result/results
+          - ./volumes/tmp:/mnt/result/tmp
+          - ./volumes/uploads:/mnt/upload/uploads
+          - ./volumes/tools:/usr/share/tools
       depends_on:
           - mysql
           - uwsgi
@@ -75,9 +90,16 @@ services:
   flower:
       image: vidjil/server2:latest
       command: bash /entrypoints/flower-entrypoint.sh
+      environment:
+          - PYDAL_URI=mysql://vidjil:rootpass@mysql/vidjil
       volumes:
           - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
+          - ../tools:/usr/share/vidjil/tools
           - ./vidjil-server2/scripts:/entrypoints
+          - ./volumes/results:/mnt/result/results
+          - ./volumes/tmp:/mnt/result/tmp
+          - ./volumes/uploads:/mnt/upload/uploads
+          - ./volumes/tools:/usr/share/tools
       depends_on:
           - workers
       ports:
@@ -85,8 +107,6 @@ services:
 
   nginx:
       image: vidjil/client:latest
-      links:
-          - uwsgi:uwsgi
       environment:
           - DOMAIN_NAME=plop
       ports:
@@ -101,6 +121,7 @@ services:
           - ./vidjil-client/ssl:/etc/nginx/ssl
           - ./vidjil-client/conf:/etc/vidjil
           - ../germline:/usr/share/vidjil/germline
+          - ../browser:/usr/share/vidjil/browser
 
 
 
