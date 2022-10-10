@@ -291,10 +291,6 @@ test_server_unit:
     - docker cp docker_uwsgi_1:/usr/share/vidjil/server/web2py/applications/vidjil/errors/ server/web2py/applications/vidjil/
     - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
-    DOCKER_HOST: tcp://docker:2375    
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
@@ -302,7 +298,8 @@ test_server_unit:
     - dev
     - schedules
   tags:
-    - cidocker
+    - ci.inria.fr
+    - medium
 
 .test_server_base:
   stage: test_functional
