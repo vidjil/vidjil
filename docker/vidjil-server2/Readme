@@ -8,8 +8,8 @@ build docker image
 'docker build --no-cache -t vidjil/server2:latest . '
 
 #step 2
-Make sure vidjil/server/py4web/vidjil/databases 
-and vidjil/docker/volumes/mysql2 folders are empty (in case you mounted those volumes in your docker-compose)
+Make sure vidjil/docker/volumes/databases and vidjil/docker/volumes/mysql2 folders 
+are empty (in case you mounted those volumes in your docker-compose)
 
 #step 3
 start mysql service first 
@@ -22,14 +22,6 @@ docker-compose -f docker-compose-py4web.yml up -d
 #step 5
 load backup .sql file ( un fichier de backup se trouve sur bbi:/mnt/data/export/db-backup.sql )
 'mysql --protocol=TCP --port=3307 -u vidjil -prootpass vidjil < db-backup.sql'
-
-#step 6
-stop docker
-'docker-compose down --remove-orphans'
-
-#step 7
-start docker again
-'docker-compose -f docker-compose-py4web.yml up -d'
 
 
 localhost               > vidjil/browser

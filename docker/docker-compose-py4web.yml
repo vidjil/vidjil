@@ -34,6 +34,7 @@ services:
           - ./volumes/tmp:/mnt/result/tmp
           - ./volumes/uploads:/mnt/upload/uploads
           - ./volumes/tools:/usr/share/tools
+          - ./volumes/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
       stdin_open: true
       tty: true
       depends_on:
@@ -56,6 +57,7 @@ services:
           - ./volumes/tmp:/mnt/result/tmp
           - ./volumes/uploads:/mnt/upload/uploads
           - ./volumes/tools:/usr/share/tools
+          - ./volumes/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
       depends_on:
           - mysql
           - uwsgi
@@ -79,6 +81,7 @@ services:
           - ./volumes/tmp:/mnt/result/tmp
           - ./volumes/uploads:/mnt/upload/uploads
           - ./volumes/tools:/usr/share/tools
+          - ./volumes/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
       depends_on:
           - mysql
           - uwsgi
@@ -100,6 +103,7 @@ services:
           - ./volumes/tmp:/mnt/result/tmp
           - ./volumes/uploads:/mnt/upload/uploads
           - ./volumes/tools:/usr/share/tools
+          - ./volumes/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
       depends_on:
           - workers
       ports:
