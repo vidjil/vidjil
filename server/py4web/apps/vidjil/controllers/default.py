@@ -79,34 +79,39 @@ def logger():
         lvl = logging.INFO
     log.log(lvl, res)
 
+@action("/vidjil/default/init_db", method=["POST", "GET"])
+@action.uses("default/init_db.html", db, auth, cors)
 def init_db():
     if (db(db.auth_user.id > 0).count() == 0) :
-        return dict(message=T('create admin user and initialise database'))
-    res = {"redirect" : "default/user/login"}
+        return dict(message=T('create admin user and initialize database'),
+                    auth=auth,
+                    db=db)
+    res = {"redirect" : "vidjil/auth/login"}
     return json.dumps(res, separators=(',',':'))
 
-
+@action("/vidjil/default/init_db_form", method=["POST", "GET"])
+@action.uses(db, auth, cors)
 def init_db_form():
     if (db(db.auth_user.id > 0).count() == 0) :
         error = ""
         force = False
-        if request.query['email'] == "":
+        if request.params['email'] == "":
             error += "You must specify an admin email address, "
-        if len(request.query['password']) < 8:
+        if len(request.params['password']) < 8:
             error += "Password must be at least 8 characters long, "
-        if request.query['confirm_password'] != request.query['password']:
+        if request.params['confirm_password'] != request.params['password']:
             error += "Passwords didn't match"
-        if "force" in request.query and request.query["force"].lower() == 'true':
+        if "force" in request.params and request.params["force"].lower() == 'true':
             force = True
         if error == "":
-            vidjil_utils.init_db_helper(db, auth, force=force, admin_email=request.query['email'], admin_password=request.query['password'])
+            vidjil_utils.init_db_helper(db, auth, force=force, admin_email=request.params['email'], admin_password=request.params['password'])
         else :
             res = {"success" : "false",
                    "message" : error}
             log.error(res)
             return json.dumps(res, separators=(',',':'))
 
-    res = {"redirect" : "default/user/login"}
+    res = {"redirect" : "vidjil/auth/login"}
     return json.dumps(res, separators=(',',':'))
 
 def init_from_csv():

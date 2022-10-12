@@ -586,8 +586,7 @@ def reset_db(db):
             db.executesql('SET FOREIGN_KEY_CHECKS = 1;')
 
 def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_password="1234"):
-    from gluon.main import save_password
-    from permission_enum import PermissionEnum
+    from ..modules.permission_enum import PermissionEnum
     if (force) or (db(db.auth_user.id > 0).count() == 0) : 
         if force:
             reset_db(db)
@@ -601,9 +600,6 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             first_name = 'System',
             last_name = 'Administrator'
         )
-
-        # set web2py administration interface password to the same as vidjil admin password
-        save_password(admin_password, 443)
 
         ## création des groupes de base
         id_admin_group=db.auth_group.insert(role='admin')

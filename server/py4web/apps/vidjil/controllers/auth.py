@@ -28,10 +28,19 @@ from ..common import db, session, cors, T, flash, cache, authenticated, unauthen
 
 ACCESS_DENIED = "access denied"
         
+def prevent_open_redirect(url):
+    """url must be a valid absolute URL whithout schema"""
+    if url and url[0] == "/" and "//" not in url:
+        return url
+    return None
 
 @action("/vidjil/auth/login", method=["POST", "GET"])
 @action.uses("auth/login.html", db, cors, flash)
 def login():
+
+    if (db(db.auth_user.id > 0).count() == 0) :
+        res = {"redirect" : URL('default/init_db')}
+        return json.dumps(res, separators=(',',':'))
 
     if globals().get('user'):
         res = {"redirect" : URL('default/home.html')}
@@ -39,7 +48,8 @@ def login():
 
     return dict(message="login page",
                 auth=auth,
-                db=db)
+                db=db,
+                defs=defs)
 
 @action("/vidjil/auth/submit", method=["POST", "GET"])
 @action.uses(db, session, auth, cors, flash)
