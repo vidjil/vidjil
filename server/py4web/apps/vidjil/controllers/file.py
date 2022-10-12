@@ -368,14 +368,14 @@ def submit():
 
         link_to_sample_sets(fid, id_dict)
 
+        db.sequence_file[fid] = file_data
+
         # pre-process for nfs files can be started immediately
         data_file = db.sequence_file[fid].data_file
         data_file2 = db.sequence_file[fid].data_file2
-
-
-        #if data["source"] == "nfs" :
-        #    if data_file is not None and data_file2 is not None and pre_process != '0':
-        #        schedule_pre_process(fid, pre_process)
+        if data["source"] == "nfs" :
+            if data_file is not None and data_file2 is not None and pre_process != '0':
+                schedule_pre_process(fid, pre_process)
 
         log.info(mes, extra={'user_id': auth.user_id,
                 'record_id': f['id'],
