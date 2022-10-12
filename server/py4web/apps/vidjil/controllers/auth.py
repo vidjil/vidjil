@@ -12,6 +12,7 @@ from ..modules import tag
 from ..modules.stats_decorator import *
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
+from ..controllers.group import add_default_group_permissions
 import json
 import re
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
@@ -63,3 +64,46 @@ def logout():
     session.clear()
     res = {"redirect" : URL('default/home.html')}
     return json.dumps(res, separators=(',',':'))
+
+@action("/vidjil/auth/register", method=["POST", "GET"])
+@action.uses("auth_form.html", db, session, auth, cors, flash)
+def register():
+    #only authentified admin user can access register view
+    if auth.user:
+        daf = DefaultAuthForms(auth)
+        
+        @action.uses(db, session, auth, flash)
+        def post_register(form, user):
+            # Set up a new user, after register
+            new_user_id = db(db.auth_user).select(orderby=db.auth_user.id).last().id
+            new_user_email = db(db.auth_user).select(orderby=db.auth_user.id).last().email
+            # create new user default group 
+            new_user_group_id = db.auth_group.insert(role = "user_%i"%(new_user_id), 
+                                                     description = "Group uniquely assigned to user %i"%(new_user_id))
+            db.auth_membership.insert(user_id = new_user_id, group_id = new_user_group_id)
+
+            # Default permissions
+            add_default_group_permissions(auth, new_user_group_id, anon=True)
+
+            # Join public group
+            public_group_id = db(db.auth_group.role == 'public').select()[0].id
+            db.auth_membership.insert(user_id = new_user_id, group_id = public_group_id)
+
+            log.admin('User %s <%s> registered, group %s' % (new_user_id, new_user_email, new_user_group_id))
+
+
+        auth.on_accept['register'] = post_register
+        
+        #redirect to the last added user view
+        next_url = prevent_open_redirect(URL("index"))
+        auth.session["_next_register"] = next_url
+        form=daf.register()
+        return dict(title="register user",
+                    auth=auth,
+                    db=db,
+                    form=form)
+    
+    #unauthentified users
+    else:
+        res = {"message": "you need to be admin and logged to add new users"}
+        return json.dumps(res, separators=(',',':'))
