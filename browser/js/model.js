@@ -1550,7 +1550,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var warned = {}
         for (var cloneId in this.clones){
             var clone = this.clone(cloneId)
-            if (clone.isWarned()){
+            if (clone.isWarned(settings_leveled=false)){
                 for (var warn_pos in clone.warn){
                     var warn = clone.warn[warn_pos]
                     if (Object.keys(warn).length == 0){
@@ -1570,6 +1570,125 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return warned
     },
 
+    changeWarningLevel: function(subwarn_code, current_level, bump){
+        console.default.log(`change warn level before; ${subwarn_code}, ${current_level}; bump ${bump}`)
+        var div  = document.getElementById(`warn_icon_${subwarn_code}`)
+        var span = document.getElementById(`warn_span_${subwarn_code}`)
+        
+        if (bump == "bump-" && current_level > 0){
+            current_level -= 1
+        } else if (bump == "bump+" && current_level < 2){
+            current_level += 1
+        }
+
+        // update dom elements
+        if (current_level == 0){ 
+            div.classList  = "icon-info" 
+            span.classList = "" 
+        } else {
+            div.classList = "icon-warning-1"
+            // change color
+            if (current_level == 1){ 
+                span.classList = "warn" 
+                console.default.log( "span: warn")
+            }
+            else if (current_level == 2){ 
+                span.classList = "alert"
+                console.default.log( "span: alert")
+            }
+        }
+
+        // Update function of icons minus/plus
+        var self = this
+        document.getElementById(`warn_span_${subwarn_code}_plus`).onclick =  ()=> { self.changeWarningLevel(subwarn_code, current_level, "bump+") }
+        document.getElementById(`warn_span_${subwarn_code}_minus`).onclick = ()=> { self.changeWarningLevel(subwarn_code, current_level, "bump-") }
+
+
+
+        console.default.log( )
+        Object.keys(warnings_data).forEach( (category) => {
+            Object.keys(warnings_data[category]).forEach( (warn_code) => {
+                if (warn_code == subwarn_code) {
+                    localStorage.setItem(`warn_${warn_code}`, current_level)
+                }
+            })
+        })
+
+        this.view.forEach( (view) => {
+            if (view.id == "list") { 
+                view.update()
+                view.update_data_list()
+            }
+        })
+        console.default.log(`change warn level after; ${subwarn_code}, ${current_level}`)
+    },
+
+    /*
+     * Return the maximum level of warning from a list of warning
+     * Computed from the setted level of warning
+     */
+    getWarningLevelFromList: function(warn_list){
+        var maximum = 0
+        warn_list.forEach( (warn) => {
+            // get warn level
+            if (localStorage.getItem(`warn_${warn.code}`) &&
+                localStorage.getItem(`warn_${warn.code}`) > maximum) {
+                   maximum = localStorage.getItem(`warn_${warn.code}`)
+            }
+        })
+        return maximum
+    },
+
+
+    expendWarningSection: function(warn_section, show){
+        var current_warnings = Object.keys(this.getWarningsClonotypeInfo())
+
+        var warns = Object.keys(warnings_data[warn_section])
+        for (var i = warns.length - 1; i >= 0; i--) {
+            var subwarn_code = warns[i]
+            var warn = warnings_data[warn_section][subwarn_code]
+            var div  = document.getElementById(`subwarn_${subwarn_code}`)
+            if (show == true){
+                div.style.display = ""
+            } else {
+                console.default.log( `Hide - ${subwarn_code}` )
+                if (current_warnings.indexOf(subwarn_code) != -1){
+                    div.style.display = ""
+                } else {
+                    div.style.display = "none"
+                }
+            }
+        }
+        var self = this;
+        var span_expend  = document.getElementById(`warn_section_expend_${warn_section}`)
+        var icon_expend  = document.getElementById(`warn_section_expend_icon_${warn_section}`)
+        if (show == true){
+            icon_expend.classList = 'icon-minus'
+            icon_expend.title     = `Hide unpresent warnings of this type - "${warn_section}"`
+            span_expend.onclick = () => { self.expendWarningSection(warn_section, show=false) }
+        } else {
+            icon_expend.classList = 'icon-plus'
+            icon_expend.title     = `Expend to show all warning of this type - "${warn_section}"`
+            span_expend.onclick = () => { self.expendWarningSection(warn_section, show=true) }
+        }
+    },
+
+    resetWarnings: function(){
+        var warnings_class = Object.keys(warnings_data)
+        for (var i = 0; i < warnings_class.length; i++) {
+            var warning_section = warnings_data[warnings_class[i]]
+                Object.keys(warning_section).forEach( (subwarn_code) =>{
+                var subwarn = warning_section[subwarn_code]
+                if (localStorage.getItem(`warn_${subwarn_code}`)){
+                    localStorage.setItem(`warn_${subwarn_code}`, subwarn.level)
+                }
+            })
+        }
+        // reset menu
+        builder.build_warnings()
+        console.default.log( "TODO - reset warnings level" )
+        
+    },
 
     /**
      * return info about a timePoint in html 

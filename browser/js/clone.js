@@ -107,15 +107,16 @@ Clone.prototype = {
     COVERAGE_WARN: 0.5,
     EVALUE_WARN: 0.001,
     
-    isWarned: function () {
+    isWarned: function (settings_leveled) {
     /**
+     * settings_leveled (Boolean) Use level as setted in the localstorage of not
      * @return {string} a warning class is set on this clone
      */
-        var wL = this.warnLevel()
-
-        if (wL >= WARN) {
-            return warnTextOf(wL)
+        if (!settings_leveled){
+            return this.warn.length > 0
         }
+        var wL = this.warnLevel()
+        if (wL){ return warnText[wL] }
 
         if (this.hasSeg('clonedb')) {
             if (typeof(this.seg.clonedb['–']) != 'undefined') // TODO: use a stored number of occurrences
@@ -136,14 +137,12 @@ Clone.prototype = {
             this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.eValue + ')' });
     },
 
+    /**
+     * Return maximum level of warning, using setted warning level in localStorage
+     */
     warnLevel: function () {
-        var level = 0
-
-        for (var i = 0; i < this.warn.length; i++) {
-            level = Math.max(level, warnLevelOf(this.warn[i].level))
-        }
-
-        return level
+        // get list of warn code
+        return this.m.getWarningLevelFromList(this.warn)
     },
 
     warnText: function () {
@@ -1868,8 +1867,8 @@ Clone.prototype = {
                 self.m.displayInfoBox(self.index);
             }
 
-            if (this.isWarned()) {
-                span_info.className += " " + this.isWarned() ;
+            if (this.isWarned(settings_leveled = true)) {
+                span_info.className += " " + this.isWarned(settings_leveled = true) ;
                 span_info.appendChild(icon('icon-warning-1', this.warnText()));
             } else {
                 span_info.appendChild(icon('icon-info', 'clonotype information'));
