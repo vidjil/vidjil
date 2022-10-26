@@ -507,6 +507,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             //      CUSTOM TAG / NAME
             //      EXPECTED VALUE
             var max = {"id" : -1 , "size" : 0 }     //store biggest expected value ( will be used for normalization)
+            var error_loading_tags = 0;
+
             for (var i = 0; i < c.length; i++) {
                 
                 var id = -1
@@ -538,16 +540,27 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         }
                     }
 
-                    if (typeof (c[i].tag) != "undefined")
-                        if (isNaN(parseInt(c[i].tag))) clone.tag = c[i].tag;
+                    if (typeof (c[i].tag) != "undefined") {
+                        console.log(i)
+                        console.log(c[i].tag)
+                        if (isNaN(parseInt(c[i].tag))) {
+                            if (c[i].tag in m.tags.tag)
+                                clone.tag = c[i].tag;
+                            else
+                                error_loading_tags += 1;
+                        }
                         else  clone.tag = m.tags.old_tag[c[i].tag];
-
+                    }
                     if (typeof (c[i].name) != "undefined") clone.c_name = c[i].name;
                 
                 }else{
                     this.analysis_clones.push(c[i])
                 }
             }
+            if (error_loading_tags > 0) {
+                console.log({"type": "flash", "msg": "Tags assigned to "+error_loading_tags+" clone(s) had to be ignored because they are unknown. Feel free to contact the support on that matter.", "priority": 2});
+            }
+                
             this.loadCluster(analysis.clusters)
         }
         this.init()
