@@ -395,7 +395,7 @@ deploy_client:
          && cp doc/analysis-example.vidjil browser/
          && cd docker
          && docker-compose down
-         && docker-compose up -d"
+         && docker-compose up -d nginx"
   environment:
     name: production
     url: https://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
