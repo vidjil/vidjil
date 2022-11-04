@@ -1875,8 +1875,9 @@ def main():
         jlist_fused.save_json(args.output)
 
     # Clean pre fuse temp files
-    for filein in pre_processed_files:
-        os.system("rm %s*" % filein)
+    if args.pre:
+        for filein in pre_processed_files:
+            os.system("rm %s*" % filein)
     
     
     
