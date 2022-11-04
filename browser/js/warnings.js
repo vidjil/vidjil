@@ -129,6 +129,8 @@ Warnings.prototype = {
         if (subwarn_code == "W53"){console.default.log( subwarn_code )}
         var sub = document.createElement("div");
         sub.id  = `subwarn_${subwarn_code}`
+        sub.style = "margin:3px; display:flew;"
+        sub.classList = "buttonSelector warnings_line"
         // console.default.log( subwarn )
         // create line
 
@@ -161,9 +163,13 @@ Warnings.prototype = {
         spans.appendChild(span_bump_plus)
         sub.appendChild(spans)
         
-        var text    = document.createTextNode(subwarn_code+" - "+subwarn.title)
-        
-        sub.appendChild(text)
+        var div_text = document.createElement("div")
+        div_text.style = "margin-left:8px;"
+
+        var text   = document.createTextNode(subwarn_code+" - "+subwarn.title)
+        div_text.appendChild(text)
+        sub.appendChild(div_text)
+
         if (Object.keys(current_warnings).indexOf(subwarn_code) != -1){
         } else {
             sub.classList.add("warnings_section_unpresent")

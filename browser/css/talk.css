@@ -2748,6 +2748,13 @@ div.tooltip {
 .dropdown-check-list.visible .rs-items {
   display: block;
 }
+.warnings_section_unpresent {
+  color: #93a1a1;
+}
+.warnings_line {
+  display: flex;
+  margin: 4px;
+}
 #mid-container {
   font-size: 125%;
 }

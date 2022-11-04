@@ -2417,6 +2417,13 @@ div.tooltip {
 .dropdown-check-list.visible .rs-items {
   display: block;
 }
+.warnings_section_unpresent {
+  color: #586e75;
+}
+.warnings_line {
+  display: flex;
+  margin: 4px;
+}
 .segmenter .axisBox > span {
   margin: 0 3px;
   background: #ffffff;
