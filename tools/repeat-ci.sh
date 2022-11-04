@@ -56,6 +56,7 @@ echo "$STAGES"
 echo -e "# ======\n"
 echo "$TEMPLATES"
 echo -e "# ======\n"
+echo "$BEFORE_SCRIPT" 
 cat $NEW_CI.*
 rm -f $NEW_CI.*
 
