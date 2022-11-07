@@ -434,4 +434,26 @@ describe('List', function () {
     cy.get('#seq'+clone_list[3]).should("be.visible")// Clone %s (seg-/seq+) is in segmenter" % clone_list[3]
   })
 
+
+  it('issue-5040-Open an analysis file mix old/new/unknow tag',  function() {
+    // Without analysis
+    cy.openAnalysis("data/demo_lil_l3_tutorial.vidjil")
+    cy.get('#listElem_1 > .nameBox').should("have.text", "IGHV3-9 7/CCCGGA/17 J6*02")
+
+    
+    // With analysis; various type of tags
+    cy.openAnalysis("data/demo_lil_l3_tutorial.vidjil", "data/5040.analysis")
+    cy.get('#listElem_1 > .nameBox').should("have.text", "IGHV3-9 7/CCCGGA/17 J6*02")
+
+    cy.getCloneInList(1).should('have.css', 'color', 'rgb(192, 48, 56)')  // tag "0" -> clonotype_1
+    cy.getCloneInList(4).should('have.css', 'color', 'rgb(38, 139, 210)')  // tag "3" -> standard
+    cy.getCloneInList(7).should('have.css', 'color', 'rgb(101, 123, 131)')  // tag "standard_1" → unknown
+    cy.getCloneInList(11).should('have.css', 'color', 'rgb(55, 145, 73)') // tag "custom_2"
+    cy.getCloneInList(13).should('have.css', 'color', 'rgb(255, 0, 112)') // tag "dominant"
+    cy.getCloneInList(18).should('have.css', 'color', 'rgb(101, 123, 131)') // tag "unknown tag"
+
+
+  })
+
+
 })

@@ -1,0 +1,55 @@
+[[extend 'db_layout.html']]
+
+<form id="data_form" action="DB_ADDRESS/config/add_form" enctype="multipart/form-data" method="post">
+    <table>
+        <tbody>
+            <tr>
+                <td > <label for="config_name" id="config_name__label">Name: </label> </td>
+                <td > <input class="string" id="config_name" name="config_name" type="text" value=""> </td> 
+                <td > </td>
+            </tr>
+            <tr>
+                <td> <label for="config_classification" id="config_classification__label">classification: </label> </td>
+                <td><select id="config_classification" name="config_classification">
+                        <option value="-1" title="No classification">---</option>
+
+                        [[for class_elt in classification: ]]
+                            <option value="[[=class_elt.id]]" title="[[=class_elt.info]]">[[=class_elt.name]]</option>
+                        [[pass]]
+                    </select></td>
+                <td> </td>
+            </tr>
+            <tr>
+                <td> <label for="config_program" id="config_program__label">Program: </label> </td>
+                <td><select id="config_program" name="config_program">
+                        <option value="none">none</option>
+                        <option value="vidjil">vidjil</option>
+                        <option value="igrec">igrec</option>
+                        <option value="euro-mrd pipeline">euro-mrd pipeline</option>
+                        <option value="mixcr">mixcr</option>
+                    </select></td>
+                <td> </td>
+            </tr>
+            <tr>
+                <td> <label for="config_command" id="config_command__label">Command: </label> </td>
+                <td> <textarea class="text" cols="60" id="config_command" name="config_command" rows="2"></textarea> </td> 
+                <td> </td>
+            </tr>
+            <tr>
+                <td> <label for="config_fuse_command" id="config_fuse_command__label">Fuse command: </label> </td>
+                <td> <textarea class="text" cols="60" id="config_fuse_command" name="config_fuse_command" rows="2"></textarea> </td> 
+                <td> </td>
+            </tr>
+            <tr>
+                <td> <label for="config_info" id="config_info__label">Info: </label> </td>
+                <td> <textarea class="text" cols="60" id="config_info" name="config_info" rows="10"></textarea> </td> 
+                <td> </td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td ><input id="add_config_submit" type="submit" value="add config" class="btn"> </td>
+                <td> </td>
+            </tr>
+        </tbody>
+    </table>
+</form>

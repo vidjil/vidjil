@@ -13,7 +13,7 @@ describe('Colors', function () {
     cy.openAnalysis("/data/issues/4070_diversity_null.vidjil")
     cy.get('.button > .icon-info').click()
 
-    cy.get('#line_index_Ds_diversity > :nth-child(2)')
+    cy.get('#modal_line_value_index_Ds_diversity')
       .should("have.text", "undefined")
   })
 
@@ -48,8 +48,8 @@ describe('Colors', function () {
     cy.open_sample_info()
     cy.get("#info_timepoint").should("be.visible")
 
-    cy.get('#info_timepoint_reads > :nth-child(2)').should("have.text", "786861")
-    cy.get('#info_timepoint_analyzed_reads > :nth-child(2)').should("have.text", "742377 (94.347 % )")
+    cy.get('#modal_line_value_info_timepoint_reads').should("have.text", "786861")
+    cy.get('#modal_line_value_info_timepoint_analyzed_reads').should("have.text", "742377 (94.347 % )")
     
     cy.close_sample_info()
   })

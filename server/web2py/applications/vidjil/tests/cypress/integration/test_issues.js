@@ -86,4 +86,36 @@ describe('Manipulate db page', function () {
     })
 
 
+    it('5069_download_link_of_result',  function() {
+
+        var uid = 1; // TODO; reuse previous uid // async
+        var config_id = 9 // not directly use for the moment (issue with cypress and variable in regexp)
+
+        // Create analysis
+        cy.goToPatientPage()
+        cy.get('[href="index.html?sample_set_id='+uid+'&config='+config_id+'"]')
+          .click({force: true})
+        cy.update_icon()
+        cy.get('#top_info')
+          .should("contain", "test")
+        cy.saveAnalysis()
+
+        
+        // Test Link
+        cy.goToPatientPage()
+        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
+          .click({force: true})
+        cy.update_icon()
+
+        cy.get('#db_content > :nth-child(4) > .db_block_right a')
+          .eq(0)
+          .should("have.attr", "href")
+          .and("match", /get_data\?config=9/);
+
+        
+        cy.get('#db_content > :nth-child(4) > .db_block_right a')
+          .eq(1)
+          .should("have.attr", "href")
+          .and("match", /get_analysis\?config=9&/);
+    })
 })

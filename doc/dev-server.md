@@ -388,8 +388,8 @@ Modifications for `nginx volumes` declaration.
 
 As some files are virtualy linked into docker image from the docker directory, you should add them into `code/`.
 ```bash
-cp docker/vidjil-client/conf/conf.js copy/browser/js/
-cp docker/vidjil-server/conf/defs.py copy/server/web2py/applications/vidjil/modules/
+cp docker/vidjil-client/conf/conf.js code/browser/js/
+cp docker/vidjil-server/conf/defs.py code/server/web2py/applications/vidjil/modules/
 ```
 
 ### Restart docker-compose

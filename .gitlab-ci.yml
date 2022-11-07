@@ -184,8 +184,14 @@ deploy_release_prod:
 # Client
 
 test_browser_unit:
+  image: vidjilci/cypress_with_browsers:latest
   stage: test_unit
-  script: make unit_browser
+  script: 
+    - npm -v
+    - npm install --save-dev qunit
+    - npm link nightmare --unsafe-perm=true ;
+    - apt-get update && apt-get -y install xvfb grep
+    - make unit_browser
   artifacts:
     paths:
     - browser/
@@ -197,7 +203,7 @@ test_browser_unit:
     - dev
     - schedules
   tags:
-    - web
+    - cidocker
   extends:
     - .need_for_quick_test
 
@@ -223,7 +229,7 @@ code_quality_custom:
     - dev
     - schedules
   tags:
-    - web
+    - cidocker
   extends:
     - .need_for_quick_test
 
@@ -253,9 +259,7 @@ test_server_unit:
     extends:
       - .need_for_quick_test
 
-.test_server_base:
-  stage: test_functional
-  before_script:
+.setup_docker_server:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
     - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
@@ -270,6 +274,37 @@ test_server_unit:
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
+  
+      
+.test_server_base_dind:
+  image:
+    name: pandoc/core:latest
+    entrypoint: [""]
+  stage: test_functional
+  services:
+    - docker:dind
+  before_script:
+    - apk update
+    - apk add docker docker-compose make wget tar
+    - !reference [.setup_docker_server]
+  after_script:
+    - docker cp docker_uwsgi_1:/usr/share/vidjil/server/web2py/applications/vidjil/errors/ server/web2py/applications/vidjil/
+    - cd docker && docker-compose down -v
+    - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^prod-server/
+    - dev
+    - schedules
+  tags:
+    - ci.inria.fr
+    - medium
+
+.test_server_base:
+  stage: test_functional
+  before_script:
+    - !reference [.setup_docker_server]
   after_script:
     - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
@@ -370,6 +405,35 @@ deploy_review_server:
   extends:
     - .need_for_independant_test
 
+deploy_client:
+  stage: deploy_prod
+  image: testcontainers/sshd
+  before_script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh    
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts  
+  script:
+    - ssh vidjil@$PROD_CLIENT_SERVER "
+         cd $PROD_CLIENT_PATH && \
+         git fetch
+         && git reset --hard origin/prod-client
+         && make germline
+         && cp doc/analysis-example.vidjil browser/
+         && cd docker
+         && docker-compose down
+         && docker-compose up -d nginx"
+  environment:
+    name: production
+    url: https://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
+  only:
+    - prod-client
+  tags:
+    - cidocker
+  
+    
 deploy_docker:
   stage: deploy_prod
   script:

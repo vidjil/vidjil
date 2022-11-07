@@ -1,0 +1,143 @@
+# coding: utf8
+from sys import modules
+from .. import defs
+from ..modules import vidjil_utils
+from ..modules import tag
+from ..modules.stats_decorator import *
+from ..modules.controller_utils import error_message
+from ..modules.permission_enum import PermissionEnum
+import json
+import re
+from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from collections import defaultdict
+
+from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+
+
+##################################
+# HELPERS
+##################################
+
+ACCESS_DENIED = "access denied"
+        
+## return user list
+@action("/vidjil/user/index", method=["POST", "GET"])
+@action.uses("user/index.html", db, auth.user)
+def index():
+    
+    query = db(db.auth_user).select()
+
+    for row in query :
+        row.created = db( db.patient.creator == row.id ).count()
+        
+        row.access = ''
+        if auth.can_create_patient(user=row.id): row.access += 'c'
+
+        q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select()]
+        q.sort()
+        row.groups = ' '.join([str(g) for g in q])
+
+        row.size = 0
+        row.files = 0
+        query_size = db( db.sequence_file.provider == row.id ).select()
+        
+        for row2 in query_size:
+            row.files += 1
+            row.size += row2.size_file
+
+        last_logins = db((db.auth_event.user_id==row.id)
+                        &(db.auth_event.description=='User ' + str(row.id) + ' Logged-in')
+                        &(db.auth_event.origin=='auth')).select(db.auth_event.time_stamp,
+                                                                orderby=~db.auth_event.time_stamp)
+        
+        row.first_login = str(last_logins[-1].time_stamp) if len(last_logins) > 0 else '-'
+        row.last_login = str(last_logins[0].time_stamp) if len(last_logins) > 0 else '-'
+
+    ##sort query
+    reverse = False
+    if "reverse" in request.query and request.query["reverse"] == "true" :
+        reverse = True
+    if not "sort" in request.query :
+        request.query["sort"] = ""
+    
+    if request.query["sort"] == "files" :
+        query = sorted(query, key = lambda row : row.size, reverse=reverse)
+    elif request.query["sort"] == "patients" :
+        query = sorted(query, key = lambda row : row.created, reverse=reverse)
+    elif request.query["sort"] == "login" :
+        query = sorted(query, key = lambda row : row.last_login, reverse=reverse)
+    else:
+        query = sorted(query, key = lambda row : row.id, reverse=False)
+
+    log.info("view user list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': 'auth_user'})
+    return dict(query=query,
+    			reverse=reverse,
+                auth=auth,
+                db=db)
+
+@action("/vidjil/user/edit", method=["POST", "GET"])
+@action.uses("user/edit.html", db, auth.user)
+def edit():
+    if auth.can_modify_user(int(request.query['id'])):
+        user = db.auth_user[request.query["id"]]
+        log.info("load edit form for user",
+                extra={'user_id': auth.user_id, 'record_id': request.query['id'], 'table_name': 'auth_user'})
+        return dict(message=T("Edit user"), user=user, auth=auth, db=db)
+    return error_message(ACCESS_DENIED)
+
+@action("/vidjil/user/edit_form", method=["POST", "GET"])
+@action.uses(db, auth.user)
+def edit_form():
+    if auth.can_modify_user(int(request.params['id'])):
+        error = []
+        if request.params["first_name"] == "" :
+            error.append("first name needed")
+        if request.params["last_name"] == "" :
+            error.append("last name needed")
+        if request.params["email"] == "":
+            error.append("email cannot be empty")
+        elif not re.match(r"[^@]+@[^@]+\.[^@]+", request.params["email"]):
+            error.append("incorrect email format")
+
+        if request.params["password"] != "":
+            if request.params["confirm_password"] != request.params["password"]:
+                error.append("password fields must match")
+            else:
+                password = db.auth_user.password.validate(request.params["password"])[0]
+                if not password:
+                    error.append("Password is too short, should be at least of length "+str(auth.settings.password_min_length))
+
+        if len(error) == 0:
+            data = dict(first_name = request.params["first_name"],
+                                                    last_name = request.params["last_name"],
+                                                    email = request.params["email"])
+            if 'password' in vars():
+                data["password"] = password
+
+            db.auth_user[request.params['id']] = data
+            db.commit()
+            res = {"redirect": "back",
+                    "message": "%s (%s) user edited" % (request.params["email"], request.params["id"])}
+            log.info(res,
+                extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'auth_user'})
+            return json.dumps(res, separators=(',',':'))
+
+        else :
+            res = {"success" : "false", "message" : ', '.join(error)}
+            log.error(res)
+            return json.dumps(res, separators=(',',':'))
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return json.dumps(res, separators=(',',':'))
+
+## return user information
+## need ["id"]
+@action("/vidjil/user/info", method=["POST", "GET"])
+@action.uses("user/info.html", db, auth.user)
+def info():
+    if "id" not in request.query:
+        request.query["id"] = db().select(db.auth_user.ALL, orderby=~db.auth_user.id)[0].id
+    log.info("view info for user (%d)" % int(request.query['id']),
+            extra={'user_id': auth.user_id, 'record_id': request.query['id'], 'table_name': 'auth_user'})
+    return dict(message=T('user info'), auth=auth, db=db)

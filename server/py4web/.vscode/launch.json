@@ -1,0 +1,19 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: py4web",
+            "type": "python",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "args": ["run", "apps",
+                "--ssl_cert", "/home/duez/cert/localhost/localhost.crt",
+                "--ssl_key", "/home/duez/cert/localhost/localhost.decrypted.key",
+                "--server", "rocketServer",],
+            "program": "/home/duez/vidjil/server/py4web/apps/py4web-start.py"
+        }
+    ]
+}
