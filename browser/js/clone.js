@@ -128,6 +128,17 @@ Clone.prototype = {
         return false
     },
 
+    /**
+     * Return true if this clone hava at least one warning with this code
+     */
+    haveWarning: function(warn_code){
+        if (sum(this.warn.map((warn) => { return warn_code == warn.code ? 1 : 0}))) {
+            return true
+        }
+        return false
+    },
+
+
     computeWarnings: function() {
 
         if (this.getCoverage() < this.COVERAGE_WARN)

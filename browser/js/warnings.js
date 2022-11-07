@@ -156,8 +156,11 @@ Warnings.prototype = {
         span_bump_plus.id   = `warn_span_${subwarn_code}_plus`
         span_bump_plus.innerHTML += "<i class='icon-plus' title='Decrease level of this warning'></i>"
 
-        span_bump_minus.onclick = ()=> { self.m.changeWarningLevel(subwarn_code, subwarn_level, "bump-") }
+        span_bump_minus.onclick = ()=> { self.m.changeWarningLevel(subwarn_code, subwarn_level, "bump-") } 
         span_bump_plus.onclick  = ()=> { self.m.changeWarningLevel(subwarn_code, subwarn_level, "bump+") }
+        span_icon.onclick    = ()=> { self.m.selectCloneByWarningLevel(subwarn_code, true) }
+        span_icon.ondblclick = ()=> { self.m.selectCloneByWarningLevel(subwarn_code, false) }
+
         spans.appendChild(span_bump_minus)
         spans.appendChild(span_icon)
         spans.appendChild(span_bump_plus)
