@@ -412,6 +412,19 @@ List.prototype = {
             if (val > 100) this.index_data[key].innerHTML = val.toFixed(0);
             if (val < 100) this.index_data[key].innerHTML = val.toPrecision(3);
         }
+
+        for (var id = 0; id < this.m.clones.length; id++) {
+            var clone = this.m.clones[id]
+            span_info = document.getElementById("clone_infoBox_"+id)
+            span_info.innerHTML = ""
+            span_info.className = ""
+            if (clone.isWarned(settings_leveled = true)) {
+                span_info.className = clone.isWarned(settings_leveled = true) ;
+                span_info.appendChild(icon('icon-warning-1', clone.warnText()));
+            } else {
+                span_info.appendChild(icon('icon-info', 'clonotype information'));
+            }
+        }
     },
 
     /**

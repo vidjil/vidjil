@@ -1673,12 +1673,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
     },
 
-    /**
-     * Allow to select all clone that have a warning with the specified code
-     * only_present arg allow to filter selection with clones that have at least one read for the current sample
-     **/
-    selectCloneByWarningLevel: function(warn_code, only_present=false){
-        this.unselectAll()
+    getClonesWithWarningLevel: function(warn_code, only_present=false){
         var selection = [];
 
         for (var i = 0; i < this.clones.length; i++) {
@@ -1687,6 +1682,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 selection.push( i )
             }
         }
+        return selection
+    },
+
+    /**
+     * Allow to select all clone that have a warning with the specified code
+     * only_present arg allow to filter selection with clones that have at least one read for the current sample
+     **/
+    selectCloneByWarningLevel: function(warn_code, only_present=false){
+        this.unselectAll()
+        var selection = this.getClonesWithWarningLevel(warn_code, only_present);
         this.multiSelect(selection)
     },
 
