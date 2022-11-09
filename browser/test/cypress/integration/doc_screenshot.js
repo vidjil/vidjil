@@ -70,7 +70,7 @@ describe('Test screenshot client', function () {
           .screenshot('panel_graph')
 
         cy.get('.button > .icon-info').click()
-        cy.get('#line_index_Ds_diversity > :nth-child(1)')
+        cy.get('#modal_line_value_index_Ds_diversity')
           .scrollIntoView()
         cy.screenshot("diversity_not_splitted", { clip: { x: 505, y: 470, width: 250, height: 80 } })
 
@@ -78,7 +78,7 @@ describe('Test screenshot client', function () {
         // Splitted diversity
         cy.openAnalysis("data/fused_diversity_splitted.vidjil")
         cy.get('.button > .icon-info').click()
-        cy.get('#line_index_Ds_diversity_IGH > :nth-child(1)')
+        cy.get('#modal_header_index_Ds_diversity > .header')
           .scrollIntoView()
         cy.screenshot("diversity_splitted_by_locus", { clip: { x: 512, y: 255, width: 250, height: 250 } })
 

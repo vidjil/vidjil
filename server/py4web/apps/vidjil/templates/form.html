@@ -1,0 +1,13 @@
+[[extend 'db_layout.html']]
+
+<h2 class="title">[[=title]]</h2>
+
+[[for message in messages:]]
+<div class="notification is-danger">
+[[=message]]
+</div>
+[[pass]]
+
+
+[[=form]]
+

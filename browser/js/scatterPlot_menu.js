@@ -48,7 +48,8 @@ function ScatterPlot_menu(default_preset) {
         "number of deletions for the segment J/3 in 5" :{ "x": "J/3' del'",             mode: "bar"},
         "Primers gap" :             { "x": "Primers gap",                               mode: "bar"},
         "Similarity"    :           { "x" : "TSNEX",            "y": "TSNEY",           mode: "tsne"},
-        "Similarity (locus)":       { "x" : "TSNEX_LOCUS",      "y": "TSNEY_LOCUS",     mode: "tsne"}
+        "Similarity (locus)":       { "x" : "TSNEX_LOCUS",      "y": "TSNEY_LOCUS",     mode: "tsne"},
+        "Locus sizes":              { "x": "Locus",              "y": "Size",           mode: "grid"}
     };
 
     this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset 

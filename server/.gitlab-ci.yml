@@ -2,10 +2,12 @@
 .test_cypress_server:
   stage: test_cypress_server
   extends:
-    - .test_server_base
-    - .test_cypress_base
+    - .test_server_base_dind
     # - .need_for_staged_server
   script: &test_cypress_server_script
+    - docker exec docker_uwsgi_1  mkdir /usr/share/vidjil/server/web2py/applications/vidjil/errors
+    - docker exec docker_uwsgi_1  chmod a+w /usr/share/vidjil/server/web2py/applications/vidjil/errors
+    - docker exec docker_uwsgi_1  chown www-data /mnt/upload/uploads/ /mnt/result/results
     - docker pull "vidjilci/cypress_with_browsers:latest"
     - >
       docker run
@@ -24,6 +26,14 @@
       --shm-size=1GB
       --network="host"
       "vidjilci/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
+  artifacts:
+    reports:
+      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+    paths:
+      - $CYPRESS_PATH
+      - server/web2py/applications/vidjil/errors/*
+    expire_in: 7 day
+    when: always
   variables:
     CYPRESS_PATH: server/web2py/applications/vidjil/tests/cypress
     HOST: local
@@ -33,9 +43,6 @@
     - /^hotfix-.*s.*\/.*$/
     - /^prod-server/
     - dev
-  tags:
-    - x86_64
-    - docker
 
 
 ## Cypress with server

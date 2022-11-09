@@ -1,7 +1,11 @@
 
 import collections
-import defs
 import sys
+try :
+    import apps.vidjil.modules.defs
+except:
+    import defs
+    pass
 
 #### Utilities on dictionaries
 

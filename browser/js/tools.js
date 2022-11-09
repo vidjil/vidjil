@@ -972,9 +972,11 @@ var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{
  *  @param {string} title - Specific DOM id to give to the line
  *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
  */
-var header = function(content, title, time_length) {
+var header = function(content, title, time_length, class_line, class_cell) {
+    class_line = class_line != undefined ? `class='${class_line}'` : ""
+    class_cell = class_cell != undefined ? `class='${class_cell} header'` : "class='header'"
     title = (title == undefined) ? clean_title(content) : clean_title(title)
-    return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
+    return `<tr id='modal_header_${title}' ${class_line}><td ${class_cell} colspan='${(time_length + 1)}'>${content}</td></tr>` ; 
 }
 
 /**
@@ -984,9 +986,12 @@ var header = function(content, title, time_length) {
  *  @param {string} title - Specific title id to give as extension of the DOM id of the line; can be undefined
  *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
  */
-var row_1  = function(item, content, title, time_length) { 
+var row_1  = function(item, content, title, time_length, class_line, class_cell_first, class_cell_other) { 
+    class_line = class_line != undefined ? `class='${class_line}'` : ""
+    class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
+    class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
     title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
-    return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
+    return `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}</td><td ${class_cell_other} colspan='${time_length}' id='modal_line_value_${title}'>${content}</td></tr>`;
 }
 
 /**
@@ -996,12 +1001,15 @@ var row_1  = function(item, content, title, time_length) {
  *  @param {string} title - Specific title id to give to the line
  *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
  */
-var row_from_list  = function(item, content, title, time_length) { 
+var row_from_list  = function(item, content, title, time_length, class_line, class_cell_first, class_cell_other) { 
+    class_line = class_line != undefined ? `class='${class_line}'` : ""
+    class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
+    class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
     title = (title == undefined) ?clean_title(item) : clean_title(title)
-    var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+    var div = `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}</td>`
     for (var i = 0; i < content.length; i++) {
         col  = content[i]
-        div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+        div += `<td ${class_cell_other} id='modal_line_value_${title}_${i}'>${col}</td>`
     }
     div += "</tr>" ;
     return div;
@@ -1009,11 +1017,7 @@ var row_from_list  = function(item, content, title, time_length) {
 
 
 /**
- * Create cell content by casting given parameter to be showable in table
- *  @param {string} title - Specific title id to give to the line
- *  @param {} content - Content that will be automatically casted
- *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
- *  @param {} clone 
+ *
  */
 var row_cast_content = function(title, content, time_length, clone) {
     if (content == undefined) {
