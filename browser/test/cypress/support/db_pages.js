@@ -419,7 +419,6 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
 })
 
 
-
 Cypress.Commands.add('saveAnalysis', () => {
     cy.get('body', { timeout: 10000 })
       .type('{ctrl}s')
@@ -427,4 +426,13 @@ Cypress.Commands.add('saveAnalysis', () => {
       .should("be.visible")
       .contains("analysis saved")
 
+})
+
+
+
+Cypress.Commands.add('openAnalysisFromSetPage', (sample_id, config_id) => {
+  cy.get(`result_sample_set_${sample_id}_config_${config_id}`)
+    .should("exist")
+    .click({force: true})
+  cy.update_icon()
 })

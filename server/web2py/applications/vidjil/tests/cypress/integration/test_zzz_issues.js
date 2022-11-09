@@ -123,10 +123,7 @@ describe('Manipulate db page', function () {
     it('5070 - get_reads',  function() {
         cy.goToPatientPage()
         var uid = 2; // TODO; reuse previous uid // async
-        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
-          .click({force: true})
-        cy.update_icon()
-        cy.get('[href="?sample_set_id='+uid+'&config=2"]').click()
+        cy.openAnalysisFromSetPage(uid, 2)
         cy.openCloneInfo(0)
         cy.get(':nth-child(2) > .icon-down').click()
 
