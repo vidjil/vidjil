@@ -107,6 +107,11 @@ function Report(model, settings) {
     else
         this.settings = (JSON.parse(JSON.stringify(this.default_settings[this.default_setting]))); 
 
+    this.local_settings = {};
+    if (localStorage && localStorage.getItem('report_templates')){
+        this.local_settings = JSON.parse(localStorage.getItem('report_templates'))
+    }
+
     this.container_map = new WeakMap();
 
 }
@@ -117,8 +122,14 @@ Report.prototype = {
         this.settings = (JSON.parse(JSON.stringify(this.default_settings[this.default_setting]))); 
     },
 
-    // save current setting sheet
-    save: function(savename, overwrite){
+
+    /**
+     * save current setting sheet
+     * savename      Name for report
+     * overwrite     (bool); overwrite report/template
+     * destination   Save as report in analysis, or as template in localstorage
+     */
+    save: function(savename, overwrite, as_template){
         var self=this;
 
         // use name found in setting sheet if savename is not provided
@@ -126,12 +137,17 @@ Report.prototype = {
             savename = this.settings.name;
         }
 
+        // use default settings target if as_template is not provided
+        if (as_template == undefined){
+            as_template = true
+        }
+
         // if settings does not contain a name -> retry
         if (typeof savename == "undefined" || savename == ""){
             console.log({ msg: "you must set a name to your report before saving it", type: "flash", priority: 2 });
             this.saveas();
             return;
-        }   
+        }
 
         // we are on a template settings, save as a new report instead
         if(typeof this.default_settings[savename] != "undefined"){
@@ -143,17 +159,34 @@ Report.prototype = {
 
         keys = Object.keys(this.default_settings)
         if (keys.indexOf(savename) != -1) {
-            console.log("you can't save on this setting page, use 'save as' to save it under a new name");
+            console.log("You try to overwrite an default template, use 'save as template/report' to save it under a new name");
+            return;
+        } else if (this.m.report_save[savename] != undefined && as_template){
+            console.log("A report with the same name already exist. Please change the template name");
+            return;
+        } else if (this.local_settings[savename] != undefined && !as_template){
+            console.log("A local template with the same name already exist. Please change the report name");
             return;
         }
-        
+
         if (typeof this.m.report_save[savename] == "undefined" || overwrite){
             // save
             try {
-                this.settings.clones = (JSON.parse(JSON.stringify(this.clones))); 
-                this.m.report_save[savename] = JSON.parse(JSON.stringify(this.settings))
-                console.log({ msg: "report settings '"+savename+"' has been saved", type: "flash", priority: 1 });
-                this.m.analysisHasChanged = true;
+                if (as_template){
+                    var temp_settings = JSON.parse(JSON.stringify(this.settings))
+                    temp_settings.clones  = []
+                    temp_settings.locus   = undefined
+                    temp_settings.samples = undefined
+                    this.local_settings[savename] = temp_settings
+                    localStorage.setItem('report_templates', JSON.stringify(this.local_settings))
+                    console.log({ msg: "report template '"+savename+"' has been saved", type: "flash", priority: 1 });
+                } else if (!as_template) {
+                    this.settings.clones = (JSON.parse(JSON.stringify(this.clones))); 
+                    this.m.report_save[savename] = JSON.parse(JSON.stringify(this.settings))
+                    console.log({ msg: "report settings '"+savename+"' has been saved", type: "flash", priority: 1 });
+                    this.m.analysisHasChanged = true;
+                }
+
             } catch (error) {
                 console.log({ msg: "failed to save report settings", type: "flash", priority: 3 });
             }
@@ -162,11 +195,11 @@ Report.prototype = {
         else{
             console.confirmBox( "A report with this name already exist, saving will overwrite it </br>"+
                                 "Use 'Save As' instead to create a new save under another name",
-                                function(){self.save(savename, true)})
+                                function(){self.save(savename, true, as_template)})
         }
     },
 
-    saveas: function(){
+    saveas: function(overwrite, as_template){
         var self = this;
 
         var savename = true;
@@ -176,7 +209,7 @@ Report.prototype = {
 
         console.confirmBox( "Enter a name to save this report</br>"+
                             "",
-                            function(){self.save(console.confirm.input.val())},
+                            function(){self.save(console.confirm.input.val(), overwrite, as_template)},
                             savename)
     },
 
@@ -203,7 +236,8 @@ Report.prototype = {
     },
 
     // load a setting sheet from default_list or model using name
-    load: function(name){
+    load: function(name, source){
+
         // exist in default settings list 
         if (typeof this.default_settings[name] != "undefined"){
             this.settings = (JSON.parse(JSON.stringify(this.default_settings[name]))); 
@@ -212,18 +246,22 @@ Report.prototype = {
         }
 
         // exist in model 
-        if (typeof this.m.report_save[name] != "undefined"){
+        else if (source == "analysis" && typeof this.m.report_save[name] != "undefined"){
             this.settings = (JSON.parse(JSON.stringify(this.m.report_save[name]))); 
-
             if (typeof this.settings.clones != 'undefined' && this.settings.clones.length != 0)
             this.clones =  (JSON.parse(JSON.stringify(this.settings.clones)));
-
-            this.menu();
-            return
+        }
+        else if (source == "template" && typeof this.local_settings[name] != "undefined"){
+            this.settings = (JSON.parse(JSON.stringify(this.local_settings[name]))); 
+            this.initLocus()
+        }
+        else {
+            //does not exist
+            console.log("requested save does not exist")
         }
 
-        //does not exist
-        console.log("requested save does not exist")
+        this.menu();
+        return
     },
 
     menu: function(){
@@ -244,10 +282,12 @@ Report.prototype = {
         var self = this;
 
         var handle = function(){
-            if (this.value)
-                self.load(this.value);
-            else
+            if (this.value) {
+                var source = this.options[this.selectedIndex].getAttribute('source')
+                self.load(this.value, source);
+            } else {
                 self.menu();
+            }
         }
 
         var save_select = $("#report-settings-save")
@@ -264,9 +304,24 @@ Report.prototype = {
             var name = keys[i];
             $('<option/>',  { text: name,
                             selected: (self.settings.name == name),
+                            source: "default",
                             value: name}).appendTo(optgrp_default);
         }
         optgrp_default.appendTo(select);
+ 
+
+        var optgrp_default = $('<optgroup/>',  { label: "Own templates", title: "User created reports templates"})
+
+        var keys = Object.keys(this.local_settings);
+        for (var i = 0; i < keys.length; i++){
+            var name = keys[i];
+            $('<option/>',  { text: name,
+                            selected: (self.settings.name == name),
+                            source: "template",
+                            value: name}).appendTo(optgrp_default);
+        }
+        optgrp_default.appendTo(select);
+
 
         var optgrp_users = $('<optgroup/>',  { label: "Saved reports", title: "User report; stored locally"})
 
@@ -275,6 +330,7 @@ Report.prototype = {
             var savename = keys[j];
             $('<option/>',  { text: savename,
                               selected: (self.settings.name == savename),
+                              source: "analysis",
                               value: savename}).appendTo(optgrp_users);
         }
         optgrp_users.appendTo(select);
