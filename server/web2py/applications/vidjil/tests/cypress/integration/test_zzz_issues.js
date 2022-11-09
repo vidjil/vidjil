@@ -93,9 +93,7 @@ describe('Manipulate db page', function () {
 
         // Create analysis
         cy.goToPatientPage()
-        cy.get('[href="index.html?sample_set_id='+uid+'&config='+config_id+'"]')
-          .click({force: true})
-        cy.update_icon()
+        cy.openAnalysisFromSetPage(uid, config_id)
         cy.get('#top_info')
           .should("contain", "test")
         cy.saveAnalysis()
@@ -103,9 +101,7 @@ describe('Manipulate db page', function () {
         
         // Test Link
         cy.goToPatientPage()
-        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
-          .click({force: true})
-        cy.update_icon()
+        cy.openSet(uid)
 
         cy.get('#db_content > :nth-child(4) > .db_block_right a')
           .eq(0)

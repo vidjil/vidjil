@@ -430,8 +430,24 @@ Cypress.Commands.add('saveAnalysis', () => {
 
 
 
-Cypress.Commands.add('openAnalysisFromSetPage', (sample_id, config_id) => {
-  cy.get(`result_sample_set_${sample_id}_config_${config_id}`)
+Cypress.Commands.add('newSet', (set_type) => {
+  // Availalble types: patient, run, generic
+  cy.get(`create_new_set_type_${set_type}`).click()
+    .should("exist")
+    .click({force: true})
+  cy.update_icon()
+})
+
+
+Cypress.Commands.add('openSet', (sample_set_id) => {
+  cy.get(`sample_set_open_${sample_set_id}_config_id_-1`)
+    .should("exist")
+    .click({force: true})
+  cy.update_icon()
+})
+
+Cypress.Commands.add('openAnalysisFromSetPage', (sample_set_id, config_id) => {
+  cy.get(`result_sample_set_${sample_set_id}_config_${config_id}`)
     .should("exist")
     .click({force: true})
   cy.update_icon()

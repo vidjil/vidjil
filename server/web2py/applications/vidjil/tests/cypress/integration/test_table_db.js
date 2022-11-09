@@ -45,9 +45,7 @@ describe('Manipulate patient, sample and launch analysis', function () {
         var uid = 2; // TODO; reuse previous uid // async
         var sample_id = 2
 
-        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
-          .click({force: true})
-        cy.update_icon()
+        cy.openSet(uid)
 
         cy.deleteProcess("2", sample_id)
     })
