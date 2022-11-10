@@ -2868,6 +2868,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
       //  Primer Biomed2, can include degenerated sequences
       this.primersSetData.biomed2.name  = "Primers Biomed2"
       this.primersSetData.biomed2.title = "primers biomed2, publi XXX"
+      this.primersSetData.biomed2.source = "server"
       this.primersSetData.biomed2.TRD = {}; // TODO : init by defaultdict equivalent
       this.primersSetData.biomed2.TRD.primer5 = ["CAGCCAAATCCTTCAGTCTCAA", "CCCTGCATTATTGATAGCCAT", "ACCCTGCTGAAGGTCCTACAT", "ATGACCAGCAAAATGCAACAG", "GTACCGGATAAGGCCAGATTA", "ATACCGAGAAAAGGACATCTATG", "ATGCAAAAAGTGGTCGCTATT", "TTGTACCTCCAGATAGGTTCC", "CTCACGGGGCTCCACGAAGAG", "GTTCCACGATGAGTTGTGTTC", "GTTCCACAGTCACACGGGTTC"];
       this.primersSetData.biomed2.TRD.primer5.concat(["TGGGACCCAGGGTGAGGATAT", "AGCGGGTGGTGATGGCAAAGT"]); // D
@@ -2897,6 +2898,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
       // Primer ECNGS, can include degenerated sequences
       this.primersSetData.ecngs.name  = "Primers ECNGS"
       this.primersSetData.ecngs.title = "Primers ECNGS, publi XXX"
+      this.primersSetData.ecngs.source = "server"
 
       this.primersSetData.ecngs.IGH = {};
       this.primersSetData.ecngs.IGH.primer5  = ["CTGGGTGCGACAGGCCCCT", "CAGGCTCCTGGAAAAGGGCTTGA", "CCCCCGGACAAAGGCTTGA", "CCCGGACAAGCGCTTGAG", "CGACAGGCTCGTGGACAAC", "CGTCAGCCCCCAGGAAAGG", "CCGCCAGGCTCCAGGGAA", "ATGCACTGGGTCCGCCAAG", "CCAGGCTCCAGGAAAGGG", "GCCAGGCTCCCGGGAAGG", "CAGGCTCCAGGCAAGGGG", "ATGCACTGGGTCCGTCAAGC", "GCACTGGGTCTGCCAGGCTC", "CCAGGCTTCCGGGAAAGGG", "ATGCACTGGGTCCGGCAAG", "GGCAGCCCCCAGGGAAGG", "GCCAGCACCCAGGGAAGG", "CAGCCACCAGGGAAGGGCC", "AACTGGGTGCGACAGGCCAC", "CTGGGTGCGCCAGATGCC", "GAACTGGATCAGGCAGTCCC", "GGTTAGATCTGTCAGCCCTCAG", "ATGAGCTGGGTCCGCCAAG", "CTGGGTCCGCCAAGCTACAGGAAA", "GGTCCGCCAGGCTCCAGGGAA", "GGTCCGCCAAGCTCCAGGGAA", "TCCGCCAGCCCCCAGGGAAGG"]
@@ -2928,6 +2930,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
       // IGH FR1
       this.primersSetData.ecngs_FR1.name  = "Primers ECNGS, IGH FR1 only"
       this.primersSetData.ecngs_FR1.title = "Primers ECNGS, IGH FR1 only, publi XXX"
+      this.primersSetData.ecngs_FR1.source = "server"
       this.primersSetData.ecngs_FR1.IGH = {}
       this.primersSetData.ecngs_FR1.IGH.primer5  = ["CTGGGGCTGAGGTGAAGAAG", "GCAGTCTGGAGCAGAGGTGAAAA", "TCACCTTGAAGGAGTCTGGTCC", "AGGTGCAGCTGGTGGAGTC", "GAGGTGCAGCTGTTGGAGTC", "CCAGGACTGGTGAAGCCTTC", "CAGTGGGGCGCAGGACTGTT", "CCAGGACTGGTGAAGCCTCC", "GTACAGCTGCAGCAGTCAGG", "GCTGGTGCAATCTGGGTCTG", "CCTCAGTGAAGGTTTCCTGCAAGG", "AAACCCACAGAGACCCTCACGCTGAC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCACAGACCCTGTCCCTCACCTG", "TCGCAGACCCTCTCACTCACCTGTG"]
       this.primersSetData.ecngs_FR1.IGH.primer5.concat(["GATTCYGAACAGCCCCGAGTCA", "GATTTTGTGGGGGYTCGTGTC", "GTTTGRRGTGAGGTCTGTGTCA", "GTTTRGRRTGAGGTCTGTGTCACT", "CTTTTTGTGAAGGSCCCTCCTR", "GTTATTGTCAGGSGRTGTCAGAC", "GTTATTGTCAGGGGGTGYCAGRC", "GTTTCTGAAGSTGTCTGTRTCAC"])
@@ -2953,22 +2956,22 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             var label     = document.createElement("label")
             label.htmlFor = "primers_"+setname
             label.title   = setdata.title
+
+            label.innerHTML = `<input type="radio" id="${'primers_'+setname}" name="primers" value="${setname}">`
+            if (setdata.source == "server"){
+                label.innerHTML += setdata.name 
+            } else { // Add an icon to view source
+                label.innerHTML += "<i class='icon-user-add' title='"+setdata.title+"'></i>"+setdata.name
+            }
             label.classList = "buttonSelector"
 
-            var input     = document.createElement("input")
-            input.type    = "radio"
-            input.id      = "primers_"+setname
-            input.name    = "primers"
-            input.value   = setname
+            menu.appendChild(label)
+            var input = document.getElementById('primers_'+setname)
             input.onclick = function() { self.switchPrimersSet(setname)}
             if (this.primerSetCurrent == setname ) {
                 input.checked = true
             }
-            label.appendChild(input)
 
-            var description = document.createTextNode(setdata.name);
-            label.appendChild(description);
-            menu.appendChild(label)
         }
     },
 
