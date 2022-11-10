@@ -439,7 +439,7 @@ deploy_client:
   
     
 deploy_docker:
-  stage: deploy_prod
+  stage: publish_release
   script:
     - export CUR_DATE=`date +%Y-%m-%d`
     - export TYPE=`echo $CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'`
