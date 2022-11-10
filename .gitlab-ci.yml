@@ -420,8 +420,8 @@ deploy_client:
     - chmod 644 ~/.ssh/known_hosts  
   script:
     - ssh vidjil@$PROD_CLIENT_SERVER "
-         cd $PROD_CLIENT_PATH && \
-         git fetch
+         cd $PROD_CLIENT_PATH
+         && git fetch
          && git reset --hard origin/prod-client
          && make germline
          && cp doc/analysis-example.vidjil browser/
@@ -457,19 +457,6 @@ deploy_docker:
   tags:
     - web
     - docker
-
-deploy_prod:
-  stage: deploy_prod
-  script:
-    - ssh $PROD_CLIENT_SERVER "
-         cd $PROD_CLIENT_PATH;"
-  environment:
-    name: production
-    url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
-  only:
-    - /^prod-client/
-  tags:
-    - web
 
 deploy_germlines:
   stage: deploy_prod
