@@ -310,17 +310,17 @@ Report.prototype = {
         optgrp_default.appendTo(select);
  
 
-        var optgrp_default = $('<optgroup/>',  { label: "Own templates", title: "User created reports templates"})
+        var optgrp_local_template = $('<optgroup/>',  { label: "Own templates", title: "User created reports templates"})
 
-        var keys = Object.keys(this.local_settings);
-        for (var i = 0; i < keys.length; i++){
-            var name = keys[i];
-            $('<option/>',  { text: name,
-                            selected: (self.settings.name == name),
+        keys = Object.keys(this.local_settings);
+        for (var t = 0; t < keys.length; t++){
+            var template_name = keys[t];
+            $('<option/>',  { text: template_name,
+                            selected: (self.settings.name == template_name),
                             source: "template",
-                            value: name}).appendTo(optgrp_default);
+                            value: template_name}).appendTo(optgrp_local_template);
         }
-        optgrp_default.appendTo(select);
+        optgrp_local_template.appendTo(select);
 
 
         var optgrp_users = $('<optgroup/>',  { label: "Saved reports", title: "User report; stored locally"})
