@@ -161,10 +161,10 @@ Report.prototype = {
         if (keys.indexOf(savename) != -1) {
             console.log("You try to overwrite an default template, use 'save as template/report' to save it under a new name");
             return;
-        } else if (this.m.report_save[savename] != undefined && as_template){
+        } else if (as_template && this.m.report_save[savename] != undefined ){
             console.log("A report with the same name already exist. Please change the template name");
             return;
-        } else if (this.local_settings[savename] != undefined && !as_template){
+        } else if (!as_template && this.local_settings[savename] != undefined ){
             console.log("A local template with the same name already exist. Please change the report name");
             return;
         }
@@ -172,7 +172,7 @@ Report.prototype = {
         if (typeof this.m.report_save[savename] == "undefined" || overwrite){
             // save
             try {
-                if (as_template){
+                if (as_template && (this.local_settings[savename] == undefined || overwrite)){
                     var temp_settings = JSON.parse(JSON.stringify(this.settings))
                     temp_settings.clones  = []
                     temp_settings.locus   = undefined
@@ -180,7 +180,7 @@ Report.prototype = {
                     this.local_settings[savename] = temp_settings
                     localStorage.setItem('report_templates', JSON.stringify(this.local_settings))
                     console.log({ msg: "report template '"+savename+"' has been saved", type: "flash", priority: 1 });
-                } else if (!as_template) {
+                } else if (!as_template && (this.m.report_save[savename] == undefined || overwrite)) {
                     this.settings.clones = (JSON.parse(JSON.stringify(this.clones))); 
                     this.m.report_save[savename] = JSON.parse(JSON.stringify(this.settings))
                     console.log({ msg: "report settings '"+savename+"' has been saved", type: "flash", priority: 1 });
@@ -236,6 +236,7 @@ Report.prototype = {
     },
 
     // load a setting sheet from default_list or model using name
+    // Available sources: analysis, template, default
     load: function(name, source){
 
         // exist in default settings list 

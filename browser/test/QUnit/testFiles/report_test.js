@@ -4,8 +4,63 @@ QUnit.module("Report", {
 });
 
 
-QUnit.test("Report: save/load", function(assert) {
+QUnit.test("Report: save/load under analysis", function(assert) {
     
+    localStorage.removeItem("report_templates")
+    var m = new Model(m);
+    var report = new Report(m)
+    if (!console.build)
+        console = new Com(console)
+    m.parseJsonData(json_data,100)
+
+    console.log("m.report_save")
+    console.default.log(Object.keys(m.report_save))
+    console.default.log(m.report_save)
+    console.default.log(Object.keys(report.local_settings))
+    console.default.log(report.local_settings)
+    // save
+    assert.notOk(m.analysisHasChanged, ".analysis should be unchanged")
+    report.addClones([1])
+    assert.equal(report.clones.length, 1, "report should have 1 clone(s) selected, got "  + report.clones.length);
+    report.save("new_save_1", overwrite=true, as_template=false)
+    console.default.log(Object.keys(m.report_save))
+    console.default.log(m.report_save)
+
+    console.default.log(Object.keys(report.local_settings))
+    console.default.log(report.local_settings)
+    assert.equal(report.settings.name, "new_save_1", "save report settings under new_save_1 got " + report.settings.name);
+    assert.ok(m.analysisHasChanged, ".analysis should have been modified")
+    // load default settings
+    report.load("Full report", "default")
+    assert.equal(report.settings.name, "Full report", "loaded report should be named 'Full report', got " + report.settings.name);
+    assert.equal(report.clones.length, 1, "Full report should still have 1 clone(s) selected, got "  + report.clones.length);
+
+    // load saved settings 
+    report.load("new_save_1", "analysis")
+    assert.equal(report.settings.name, "new_save_1", "loaded report should be named 'new_save_1', got " + report.settings.name);
+    assert.equal(report.clones.length, 1, "default report should still have 1 clone(s) selected, got "  + report.clones.length);
+
+    // overwrite existing file (overwrite false)
+    report.addClones([2])
+    assert.equal(report.clones.length, 2, "test !overwriting: default report should now have 2 clone(s) selected, got " + report.clones.length);
+    report.save("new_save_1", overwrite=false, as_template=false)
+    report.load("new_save_1", "analysis")
+    assert.equal(report.clones.length, 1, "test !overwriting: default report should still have 1 clone(s) selected, got " + report.clones.length);
+
+    // For the moment, clone list in no more stocked inside analysis (issue #4996)
+    // overwrite existing file (overwrite true)
+    report.addClones([2])
+    assert.equal(report.clones.length, 2, "test overwriting: current report should now have 2 clone(s) selected, got " + report.clones.length);
+    report.save("new_save_1", overwrite=true, as_template=false)
+    report.load("new_save_1", "analysis")
+    assert.equal(report.clones.length, 2, "test overwriting: default report should now have 2 clone(s) selected, got " + report.clones.length);
+    
+});
+
+
+QUnit.test("Report: save/load under template", function(assert) {
+    
+    localStorage.removeItem("report_templates")
     var m = new Model(m);
     var report = new Report(m)
     if (!console.build)
@@ -16,34 +71,32 @@ QUnit.test("Report: save/load", function(assert) {
     assert.notOk(m.analysisHasChanged, ".analysis should be unchanged")
     report.addClones([1])
     assert.equal(report.clones.length, 1, "report should have 1 clone(s) selected, got "  + report.clones.length);
-    report.save("new_save_1")
-    assert.equal(report.settings.name, "new_save_1", "save report settings under new_save_1 got " + report.settings.name);
-    assert.ok(m.analysisHasChanged, ".analysis should have been modified")
+    report.save("new_template_1", true, as_template=true)
+    assert.equal(report.settings.name, "new_template_1", "save report settings under new_template_1 got " + report.settings.name);
+    assert.notOk(m.analysisHasChanged, ".analysis should have been modified")
 
     // load default settings
-    report.load("Full report")
+    report.load("Full report", source="template")
     assert.equal(report.settings.name, "Full report", "loaded report should be named 'Full report', got " + report.settings.name);
     assert.equal(report.clones.length, 1, "Full report should still have 1 clone(s) selected, got "  + report.clones.length);
 
+    // reset model
+    var m = new Model(m); 
+    var report = new Report(m)
+    m.parseJsonData(json_data,100)
+    
     // load saved settings 
-    report.load("new_save_1")
-    assert.equal(report.settings.name, "new_save_1", "loaded report should be named 'new_save_1', got " + report.settings.name);
-    assert.equal(report.clones.length, 1, "default report should still have 1 clone(s) selected, got "  + report.clones.length);
+    report.load("new_template_1", source="template")
+    assert.equal(report.settings.name, "new_template_1", "loaded report should be named 'new_template_1', got " + report.settings.name);
+    assert.equal(report.clones.length, 0, "default report should still have 0 clone(s) selected, got "  + report.clones.length);
 
-    // overwrite existing file (overwrite false)
-    report.addClones([2])
+    // overwrite existing file (overwrite true)
+    report.addClones([1, 2])
     assert.equal(report.clones.length, 2, "default report should now have 2 clone(s) selected, got " + report.clones.length);
-    report.save("new_save_1", true)
-    report.load("new_save_1")
+    report.save("new_template_1", true)
+    report.load("new_template_1", source="template")
     assert.equal(report.clones.length, 2, "test overwriting: default report should still have 2 clone(s) selected, got " + report.clones.length);
 
-    // For the moment, clone list in no more stocked inside analysis (issue #4996)
-    // // overwrite existing file (overwrite true)
-    // report.addClones([2])
-    // report.save("new_save_1", true)
-    // report.load("new_save_1")
-    // assert.equal(report.clones.length, 2, "test overwriting: default report should now have 2 clone(s) selected, got " + report.clones.length);
-    
 });
 
 
