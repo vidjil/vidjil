@@ -38,7 +38,8 @@ def get_clean_analysis(filehandle):
     result = vidjil_utils.put_properties_in_dict(analysis, result, {'cluster': 'clusters', 
                                                                     'clusters': 'clusters',
                                                                     'clones': 'clones', 
-                                                                    'tags': 'tags', 
+                                                                    'tags': 'tags',
+                                                                    'report_save': 'report_save',
                                                                     'samples': 'samples'})
     return result
     
@@ -68,5 +69,6 @@ def get_default_analysis():
            "clusters": [],
            "clones" : [],
            "tags": {},
+           'report_save': {},
            "vidjil_json_version" : "2014.09"
            }
