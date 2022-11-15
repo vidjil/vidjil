@@ -1865,7 +1865,7 @@ def main():
         jlist_fused = ListWindows()
         jlist_fused.load(post_out_name, args.pipeline)
         jlist_fused.build_stat()
-        os.system("rm %s*" % post_out_name)
+        os.system("rm %s" % post_out_name)
 
     if args.export_airr:
         output = args.output.replace(".vidjil", ".airr")
@@ -1877,7 +1877,7 @@ def main():
     # Clean pre fuse temp files
     if args.pre:
         for filein in pre_processed_files:
-            os.system("rm %s*" % filein)
+            os.system("rm %s" % filein)
     
     
     
