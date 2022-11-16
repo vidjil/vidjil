@@ -120,11 +120,11 @@ describe('Manipulate db page', function () {
         cy.goToPatientPage()
         var uid = 2; // TODO; reuse previous uid // async
         cy.openAnalysisFromSetPage(uid, 2)
-        cy.openCloneInfo(0)
+        cy.openCloneInfo(1)
         cy.get(':nth-child(2) > .icon-down').click()
 
         const downloadsFolder = Cypress.config('downloadsFolder')
-        const downloadedFilename = downloadsFolder+'/reads__0__file_id__'+uid+'.fa'
+        const downloadedFilename = downloadsFolder+'/reads__1__file_id__'+uid+'.fa'
         
         cy.readFile(downloadedFilename, { timeout: 120000 })
         .should('contain', '>clone-001')
