@@ -177,6 +177,10 @@ Report.prototype = {
                     temp_settings.clones  = []
                     temp_settings.locus   = undefined
                     temp_settings.samples = undefined
+                    for (var i = temp_settings.blocks.length - 1; i >= 0; i--) {
+                        var block = temp_settings.blocks[i]
+                        block["sample"] = undefined
+                    }
                     this.local_settings[savename] = temp_settings
                     localStorage.setItem('report_templates', JSON.stringify(this.local_settings))
                     console.log({ msg: "report template '"+savename+"' has been saved", type: "flash", priority: 1 });
