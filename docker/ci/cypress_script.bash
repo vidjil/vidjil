@@ -15,13 +15,14 @@ echo "==> ls /app/vidjil/browser/test/data/addons: `ls /app/vidjil/browser/test/
 
 # Move addons to the correct path for test
 mv /app/vidjil/browser/test/data/addons/* /app/vidjil/browser/js/addons/
-mv /app/vidjil/browser/test/data/confs/conf_no_db.js /app/vidjil/browser/js/conf.js
+mv /app/vidjil/browser/js/conf.js.sample /app/vidjil/browser/js/conf.js
 files=`printf "'%s'," /app/vidjil/browser/js/addons/*`
 echo -e "Copy addons file: $files"
-sed -i "s|\"addons\" : \[|\"addons\" : [$files|" "/app/vidjil/browser/js/conf.js"
-sed -i "s|,]|]|g" "/app/vidjil/browser/js/conf.js"
+sed -i "s|\"js/lib/important-lib.js\", \"js/myscript.js\"|$files|g" "/app/vidjil/browser/js/conf.js"
+sed -i "s|\"use_database\" : true,|\"use_database\" : false,|g" "/app/vidjil/browser/js/conf.js"
+sed -i "s|/\* \"addons\"|\"addons\"|g" "/app/vidjil/browser/js/conf.js"
+sed -i "s|,], \*/|],|g" "/app/vidjil/browser/js/conf.js"
 sed -i "s|/app/vidjil/browser/||g" "/app/vidjil/browser/js/conf.js"
-
 
 echo "===== conf.js content ===\n"
 cat /app/vidjil/browser/js/conf.js
