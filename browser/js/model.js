@@ -3542,7 +3542,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         for (var pos = 0; pos < selected.length; pos++) {
             var clone = this.clones[selected[pos]]
             for (var time = 0; time < clone.reads.length; time++) {
-                if (clone.reads[time] != 0 && list.indexOf(time) == -1) {
+                if (clone.getRawReads(time) != 0 && list.indexOf(time) == -1) {
                     list.push(time)
                 }
             }
