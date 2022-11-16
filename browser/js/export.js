@@ -222,13 +222,23 @@ Report.prototype = {
         }
 
         var savename = this.settings.name
-        if (this.m.report_save[savename]){    
+        if (this.m.report_save[savename]){ // analysis
             if (typeof skipConfirm == "boolean" && skipConfirm){
                 delete this.m.report_save[savename]
                 this.load(this.default_setting); 
             }
             else{
                 console.confirmBox( "Are you sure you want to delete ["+savename+"] report ?</br>",
+                                    function(){self.delete(true)})
+            }
+        } else if (this.local_settings[savename]){ // template
+            if (typeof skipConfirm == "boolean" && skipConfirm){
+                delete this.local_settings[savename]
+                localStorage.setItem('report_templates', JSON.stringify(this.local_settings))
+                this.load(this.default_setting); 
+            }
+            else{
+                console.confirmBox( "Are you sure you want to delete ["+savename+"] template ?</br>",
                                     function(){self.delete(true)})
             }
         }
