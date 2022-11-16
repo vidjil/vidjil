@@ -675,12 +675,16 @@ Report.prototype = {
 
         var handle = function(){
             var p = self.settings.blocks[blockIndex][parameter.name]
-            var index = p.indexOf(this.value)
 
-            if (index == -1)
-                p.push(this.value)
-            else
+            var index = p.indexOf(this.firstChild.value)
+
+            if (index == -1){
+                p.push(this.firstChild.value)
+                this.firstChild.checked = true
+            } else {
+                this.firstChild.checked = ""
                 p.splice(index, 1)
+            }
 
         }
 
@@ -710,11 +714,10 @@ Report.prototype = {
             var checked = false
             if (block[parameter.name].indexOf(c) != -1) checked = true
             
-            var li = $('<li/>', {text : c}).appendTo(ul);
+            var li = $('<li/>', {text : c}).click(handle).appendTo(ul);
             $('<input/>', { type    : "checkbox", 
                             value   : c
                             }).prop('checked', checked)
-                              .click(handle)
                               .prependTo(li)
         }
 
