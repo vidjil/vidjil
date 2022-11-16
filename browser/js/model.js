@@ -3053,7 +3053,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             if (setdata.source == "server"){
                 label.innerHTML += setdata.name 
             } else { // Add an icon to view source
-                label.innerHTML += "<i class='icon-user-add' title='"+setdata.title+"'></i>"+setdata.name
+                label.innerHTML += "<i style='margin-right:6px;text-indent:0px;' class='icon-user-add' title='"+setdata.title+"'></i>"+setdata.name
             }
             label.classList = "buttonSelector"
 
