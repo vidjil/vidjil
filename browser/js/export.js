@@ -667,6 +667,7 @@ Report.prototype = {
     },
 
     parameterDivCheckboxes: function(block, parameter){
+        if (block[parameter.name] == undefined) {block[parameter.name] = []}
 
         var self = this;
 
