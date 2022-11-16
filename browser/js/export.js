@@ -1188,7 +1188,7 @@ Report.prototype = {
     },
 
     addBlock: function(block) {
-        if (this.indexOfBlock(block) == -1 && !this.isUniqueBlock(block)){
+        if (this.indexOfBlock(block) == -1 || !this.isUniqueBlock(block)){
             this.settings.blocks.push(block)
             console.log({ msg: "Section added to the report", type: "flash", priority: 1 });
         }
@@ -1205,8 +1205,9 @@ Report.prototype = {
         // check if a similar block object already exist
         var strblock = JSON.stringify(block);  
         for (var i=0; i< this.settings.blocks.length; i++){
-            if (JSON.stringify(this.settings.blocks[i]) == strblock)
+            if (JSON.stringify(this.settings.blocks[i]) == strblock){
                 return i;
+            }
         }
         return -1
     },
