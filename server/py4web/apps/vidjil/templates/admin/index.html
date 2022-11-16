@@ -1,0 +1,60 @@
+[[extend 'db_layout.html']]
+
+
+<h3 id="page_admin">Admin</h3>
+
+<a class="button" onclick="db.call('results_file/index');">.vidjil file list</a>
+
+</br>Database maintenance:
+<a class="button" href="/vidjil/appadmin/index">administration</a>
+<a class="button" onclick="db.call('admin/repair_missing_files');">fix missing files</a>
+<a class="button" onclick="db.call('admin/repair');">repair db</a>
+<a class="button" onclick="db.call('admin/make_backup');">make backup</a>
+<a class="button" title="When jobs remain QUEUED, restarting workers may help" onclick="db.call('admin/reset_workers');">reset workers</a>
+
+</br>
+
+<hr>
+
+</br>Vidjil server:
+<a class="button" onclick="db.call('admin/showlog', {'file' : 'vidjil.log', 'format': 'vidjil'} );">vidjil.log</a>
+<a class="button" onclick="db.call('admin/showlog', {'file' : 'vidjil-debug.log', 'format': 'vidjil'} );">debug.log</a>
+<a class="button" href="/admin/default/errors/vidjil">web2py tickets</a>
+
+</br>Ngnix:  
+<a class="button" onclick="db.call('admin/showlog', {'file' : '../log/nginx/access.log'} );">access.log</a>
+<a class="button" onclick="db.call('admin/showlog', {'file' : '../log/nginx/error.log'} );">error.log</a>
+
+</br>System:
+<a class="button" onclick="db.call('admin/showlog', {'file' : '../log/syslog'} );">syslog</a>
+
+
+
+</br>
+</br>
+
+<div>
+    Workers and tasks
+    <div class="console-div">
+        <div class="console-flex">active workers: [[=worker]]</div>
+        <div class="console-flex">QUEUED: [[=queued]]</div>
+        <div class="console-flex">ASSIGNED: [[=assigned]]</div>
+        <div class="console-flex">RUNNING: [[=running]]</div>
+        <div class="console-flex">LAST_RESULTS: [[=last_results]]...</div>
+    </div>
+</div>
+
+<div>
+    Server status
+    <div class="console-div">
+        <div class="console-flex">[[=uptime]]</div>
+	<div class="console-flex">revision: [[=revision]]</div>
+    </div>
+</div>
+
+<div>
+    Server disk usage
+    <div class="console-div">
+        <div class="console-flex">[[=disk_use]]</div>
+    </div>
+</div>

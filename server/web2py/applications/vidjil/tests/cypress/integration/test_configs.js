@@ -26,7 +26,7 @@ describe('Manipulate db page', function () {
         cy.createConfig(config_name, config_class, config_soft, config_cmd, config_fuse, config_info, expected_id )
 
         cy.createPatient("", "config_airr", "test", "2000-01-01", "Patient with airr uploaded file")
-        
+
         cy.addSample(undefined, "nfs", "Demo-X5.airr", undefined, "2000-01-01", "file in AIRR format")
 
         var sample_id = 1
