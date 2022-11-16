@@ -319,25 +319,12 @@
 
                         <div class="menu_box" id="primerset_menu">
                             primer set<br/>
-                            <label for="primerBiomed2" class="buttonSelector" >
-                                <input type="radio" id="primerBiomed2" name="primers" value="biomed2" onclick="m.switchPrimersSet('biomed2')"/>EuroClonality/BIOMED-2
-                            </label>
-
-                            <label for="primerEcngs" class="buttonSelector">
-                                <input type="radio" id="primerEcngs" name="primers" value="ecngs" onclick="m.switchPrimersSet('ecngs')"/>EuroClonality-NGS
-                            </label>
-
-                            <label for="primerEcngsFR1" class="buttonSelector">
-                                <input type="radio" id="primerEcngsFR1" name="primers" value="ecngs_FR1" onclick="m.switchPrimersSet('ecngs_FR1')"/>EuroClonality-NGS FR1
-                            </label>
-			                <!-- TODO : construire liste à partir des data disponibles/chargées dans le model.
-                              TODO : passer ça en liste deroulante ? -->
-                            </div>
-                            <div id="remove_primer_external"
-                                title="Primers will be trimmed before sending them to an external tool (such as IMGT/V-QUEST, IgBlast, Blast, …)">
-                                <input id="remove_primer_external_check" type="checkbox">trim primers before external analyses</input>
-                            </div>
                         </div>
+		                <div id="remove_primer_external"
+                            title="Primers will be trimmed before sending them to an external tool (such as IMGT/V-QUEST, IgBlast, Blast, …)">
+                            <input id="remove_primer_external_check" type="checkbox">trim primers before external analyses</input>
+                        </div>
+
 
                         <div class="menu_box">
                             <a class="buttonSelector" onclick="m.resetSettings();">reset settings</a>
