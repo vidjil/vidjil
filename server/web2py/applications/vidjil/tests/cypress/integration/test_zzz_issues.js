@@ -127,7 +127,7 @@ describe('Manipulate db page', function () {
         const downloadedFilename = downloadsFolder+'/reads__1__file_id__'+uid+'.fa'
         
         cy.readFile(downloadedFilename, { timeout: 120000 })
-        .should('contain', '>clone-001')
+          .should('contain', '>clone-001')
     })
 
 })

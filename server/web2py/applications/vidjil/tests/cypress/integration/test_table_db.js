@@ -31,8 +31,6 @@ describe('Manipulate patient, sample and launch analysis', function () {
         var samplingdate = "2021-01-01"
         var informations = "un set d'information"
         cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations)
-        cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations) // supplementary for later tests
-
 
         var sample_id = 2
         cy.launchProcess("2", sample_id)
