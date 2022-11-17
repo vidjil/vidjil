@@ -18,6 +18,8 @@ echo "==> ls /app/vidjil/browser/test/data/addons: `ls /app/vidjil/browser/test/
 # Move addons to the correct path for test
 if [[ $1 == /app/cypress/integration/external* ]]
 then
+	echo "External test, no configuration loaded"
+else
 	mv /app/vidjil/browser/test/data/addons/* /app/vidjil/browser/js/addons/
 	mv /app/vidjil/browser/js/conf.js.sample /app/vidjil/browser/js/conf.js
 	files=`printf "'%s'," /app/vidjil/browser/js/addons/*`
@@ -31,8 +33,6 @@ then
 	echo "===== conf.js content ===\n"
 	cat /app/vidjil/browser/js/conf.js
 	echo "=====\n"
-else
-	echo "External test, no configuration loaded"
 fi
 
 echo -e "$ ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec $@ --env workdir=vidjil,host=$HOST,initiated_database=false"
