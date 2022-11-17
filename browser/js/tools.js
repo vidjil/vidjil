@@ -960,6 +960,19 @@ function translate_key_diversity(key_diversity){
     return table[key_diversity]
 }
 
+function getRelativeZindex(elem){
+    var body = document.getElementsByTagName("body")[0]
+    var getZindex = (elem) => {return window.getComputedStyle(elem).zIndex}
+    
+    while (elem != body){
+        if (Number.isInteger( parseFloat(getZindex(elem)))) {
+            return parseFloat(getZindex(elem))
+        } else {
+            elem = elem.parentNode
+        }
+    }
+    return 0
+}
 
 ///////////////////////////
 /// Fct to fill info table
