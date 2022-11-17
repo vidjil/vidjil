@@ -198,6 +198,10 @@ Model.prototype = {
         // List of axe that must be returned as number
         this.distrib_axe_as_number = {
         }
+
+        // Primers
+        this.primersSetData = {"biomed2" : {}, "ecngs": {}, "ecngs_FR1": {} }
+        this.populatePrimerSet()
     },
 
     /**
@@ -2949,11 +2953,14 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      */
     populatePrimerSet : function () {
       console.log("Model; populatePrimerSet()")
-      this.primersSetData = {"biomed2" : {}, "primer_fictif": {}, "primer_test": {}, "ecngs": {}, "ecngs_FR1": {} }
+
       // warning: Primer3 are in reverse complement state
       // WARNING: TRA & IGL are missing
 
       //  Primer Biomed2, can include degenerated sequences
+      this.primersSetData.biomed2.name  = "Primers Biomed2"
+      this.primersSetData.biomed2.title = "primers biomed2, publi XXX"
+      this.primersSetData.biomed2.source = "server"
       this.primersSetData.biomed2.TRD = {}; // TODO : init by defaultdict equivalent
       this.primersSetData.biomed2.TRD.primer5 = ["CAGCCAAATCCTTCAGTCTCAA", "CCCTGCATTATTGATAGCCAT", "ACCCTGCTGAAGGTCCTACAT", "ATGACCAGCAAAATGCAACAG", "GTACCGGATAAGGCCAGATTA", "ATACCGAGAAAAGGACATCTATG", "ATGCAAAAAGTGGTCGCTATT", "TTGTACCTCCAGATAGGTTCC", "CTCACGGGGCTCCACGAAGAG", "GTTCCACGATGAGTTGTGTTC", "GTTCCACAGTCACACGGGTTC"];
       this.primersSetData.biomed2.TRD.primer5.concat(["TGGGACCCAGGGTGAGGATAT", "AGCGGGTGGTGATGGCAAAGT"]); // D
@@ -2981,6 +2988,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
 
       // Primer ECNGS, can include degenerated sequences
+      this.primersSetData.ecngs.name  = "Primers ECNGS"
+      this.primersSetData.ecngs.title = "Primers ECNGS, publi XXX"
+      this.primersSetData.ecngs.source = "server"
+
       this.primersSetData.ecngs.IGH = {};
       this.primersSetData.ecngs.IGH.primer5  = ["CTGGGTGCGACAGGCCCCT", "CAGGCTCCTGGAAAAGGGCTTGA", "CCCCCGGACAAAGGCTTGA", "CCCGGACAAGCGCTTGAG", "CGACAGGCTCGTGGACAAC", "CGTCAGCCCCCAGGAAAGG", "CCGCCAGGCTCCAGGGAA", "ATGCACTGGGTCCGCCAAG", "CCAGGCTCCAGGAAAGGG", "GCCAGGCTCCCGGGAAGG", "CAGGCTCCAGGCAAGGGG", "ATGCACTGGGTCCGTCAAGC", "GCACTGGGTCTGCCAGGCTC", "CCAGGCTTCCGGGAAAGGG", "ATGCACTGGGTCCGGCAAG", "GGCAGCCCCCAGGGAAGG", "GCCAGCACCCAGGGAAGG", "CAGCCACCAGGGAAGGGCC", "AACTGGGTGCGACAGGCCAC", "CTGGGTGCGCCAGATGCC", "GAACTGGATCAGGCAGTCCC", "GGTTAGATCTGTCAGCCCTCAG", "ATGAGCTGGGTCCGCCAAG", "CTGGGTCCGCCAAGCTACAGGAAA", "GGTCCGCCAGGCTCCAGGGAA", "GGTCCGCCAAGCTCCAGGGAA", "TCCGCCAGCCCCCAGGGAAGG"]
       this.primersSetData.ecngs.IGH.primer5.concat(["GATTCYGAACAGCCCCGAGTCA", "GATTTTGTGGGGGYTCGTGTC", "GTTTGRRGTGAGGTCTGTGTCA", "GTTTRGRRTGAGGTCTGTGTCACT", "CTTTTTGTGAAGGSCCCTCCTR", "GTTATTGTCAGGSGRTGTCAGAC", "GTTATTGTCAGGGGGTGYCAGRC", "GTTTCTGAAGSTGTCTGTRTCAC"])
@@ -3009,18 +3020,52 @@ changeAlleleNotation: function(alleleNotation, update, save) {
       this.primersSetData.ecngs.TRG.primer3 = ["CTTTGGCAGTGGAACAACACT", "CAAGGTATTTGGTCCCGGAAC", "TATTTGCTGAAGGGACTAAGCTC", "CGTTTGCAAAAGGGACTAGG"] // complement
 
       // IGH FR1
+      this.primersSetData.ecngs_FR1.name  = "Primers ECNGS, IGH FR1 only"
+      this.primersSetData.ecngs_FR1.title = "Primers ECNGS, IGH FR1 only, publi XXX"
+      this.primersSetData.ecngs_FR1.source = "server"
       this.primersSetData.ecngs_FR1.IGH = {}
       this.primersSetData.ecngs_FR1.IGH.primer5  = ["CTGGGGCTGAGGTGAAGAAG", "GCAGTCTGGAGCAGAGGTGAAAA", "TCACCTTGAAGGAGTCTGGTCC", "AGGTGCAGCTGGTGGAGTC", "GAGGTGCAGCTGTTGGAGTC", "CCAGGACTGGTGAAGCCTTC", "CAGTGGGGCGCAGGACTGTT", "CCAGGACTGGTGAAGCCTCC", "GTACAGCTGCAGCAGTCAGG", "GCTGGTGCAATCTGGGTCTG", "CCTCAGTGAAGGTTTCCTGCAAGG", "AAACCCACAGAGACCCTCACGCTGAC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCACAGACCCTGTCCCTCACCTG", "TCGCAGACCCTCTCACTCACCTGTG"]
       this.primersSetData.ecngs_FR1.IGH.primer5.concat(["GATTCYGAACAGCCCCGAGTCA", "GATTTTGTGGGGGYTCGTGTC", "GTTTGRRGTGAGGTCTGTGTCA", "GTTTRGRRTGAGGTCTGTGTCACT", "CTTTTTGTGAAGGSCCCTCCTR", "GTTATTGTCAGGSGRTGTCAGAC", "GTTATTGTCAGGGGGTGYCAGRC", "GTTTCTGAAGSTGTCTGTRTCAC"])
       this.primersSetData.ecngs_FR1.IGH.primer3  = ["GGTCACCGTCTCCTCAGGTAAG", "GGTCACCGTCTCCTCAGGTGAG"] // complement
 
-      // test fictif; sequence inclut dans les sequences de clones
-      this.primersSetData.primer_fictif.TRD = {};
-      this.primersSetData.primer_fictif.TRD.primer5 = ["GATTTTACTCAAGGACGGTT", "GCAAAGAACCTGGCTGT", "AGATTTTACTCAAGGAC"] // V3, V2,
-      this.primersSetData.primer_fictif.TRD.primer3 = ["AGGAACCCGTGTGACT", "GAACACAACTCATCGTGGA", "GAACTGGCATCAAACTCTTC"] // J1, J2, J3
 
+      this.buildPrimersMenu()
     },
 
+    buildPrimersMenu: function(){
+        const self = this;
+        var menu   = document.getElementById("primerset_menu")
+        if (menu == undefined){ // case of unit testing
+            return
+        }
+        menu.innerHTML = "Primers sets<br/>"
+
+        primersSetData = Object.keys(this.primersSetData)
+        for (var i = 0; i < primersSetData.length; i++) {
+            const setname = primersSetData[i]
+            var setdata   = this.primersSetData[setname]
+
+            var label     = document.createElement("label")
+            label.htmlFor = "primers_"+setname
+            label.title   = setdata.title
+
+            label.innerHTML = `<input type="radio" id="${'primers_'+setname}" name="primers" value="${setname}">`
+            if (setdata.source == "server"){
+                label.innerHTML += setdata.name 
+            } else { // Add an icon to view source
+                label.innerHTML += "<i style='margin-right:6px;text-indent:0px;' class='icon-user-add' title='"+setdata.title+"'></i>"+setdata.name
+            }
+            label.classList = "buttonSelector"
+
+            menu.appendChild(label)
+            var input = document.getElementById('primers_'+setname)
+            input.onclick = function() { self.switchPrimersSet(setname)}
+            if (this.primerSetCurrent == setname ) {
+                input.checked = true
+            }
+
+        }
+    },
 
     /*
      * Generic function to add a feature based on sequence for each clones
@@ -3082,7 +3127,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.cleanPreviousFeature("primer3")
         for (var i = 0; i < this.system_available.length; i++) {
             var germline = this.system_available[i].replace("+", "")
-            if (this.primersSetData[this.primerSetCurrent][germline] != undefined){
+            if (this.primersSetData[this.primerSetCurrent] != undefined &&
+                this.primersSetData[this.primerSetCurrent][germline] != undefined){
                 primer5 = this.primersSetData[this.primerSetCurrent][germline].primer5
                 primer3 = this.primersSetData[this.primerSetCurrent][germline].primer3
 
@@ -3106,13 +3152,19 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             console.log("Primer set unknow")
             return 1
         } else {
-            document.body.style.cursor = 'wait';
-            this.primerSetCurrent = primersSet;
-            console.log("Current primer set : "+ this.primerSetCurrent)
-            this.switchPrimers();
-            console.log("Switch primers values : "+ this.primerSetCurrent)
-            this.update();
-            document.body.style.cursor = 'default';
+            var setname = this.primersSetData[primersSet].name
+            this.wait(`Computing primers positions: ${setname}`);
+            setTimeout(() => {
+                document.body.style.cursor = 'wait';
+                this.primerSetCurrent = primersSet;
+                console.log("Current primer set : "+ this.primerSetCurrent)
+                this.switchPrimers(setname);
+                console.log("Switch primers values : "+ this.primerSetCurrent)
+                this.update();
+                document.body.style.cursor = 'default';
+                this.resume();
+            }, 100);
+
             return 0
         }
     },

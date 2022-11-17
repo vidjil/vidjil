@@ -244,7 +244,7 @@ describe('External Aligner', function () {
     cy.get('#align-refresh-button > span > i')
       .should("have.class", "icon-ok")
 
-    cy.get("#primerEcngs").click({force:true})
+    cy.get("#primers_ecngs").click({force:true})
 
     cy.get("#remove_primer_external").click({force:true})
 

@@ -311,27 +311,31 @@ QUnit.test("model: primer detection", function(assert) {
     m.parseJsonData(json_data, 100)
 
     // primer set loading
-    assert.equal(typeof m.primersSetData, "undefined", "primers sets are initialy unset")
-    m.populatePrimerSet();
     assert.equal(typeof m.primersSetData, 'object', "primers are loaded inside model")
 
     // model primer setting
-    assert.equal(m.switchPrimersSet("no set"), 1, "primer set doesn't exist")
-    assert.equal(m.switchPrimersSet("ecngs"), 0, "primer set exist & are set")
+    // assert.equal(m.switchPrimersSet("no set"), 1, "primer set doesn't exist")
+    assert.equal(m.switchPrimersSet("ecngs"), 0, "primer set 'ecngs' exist & are set")
 
     // Test switch to a Qunit dataset
     m.primersSetData = primersSetData // no primer for IGH, One primer for TRG
-    assert.equal(m.switchPrimersSet("primer_test"), 0, "primer set exist & are set")
+    assert.equal(m.switchPrimersSet("primer_test"), 0, "primer set 'primer_test' exist & are set")
+    var ready = assert.async(2)
 
-    // primer found inside clones
-    assert.equal(m.clones[2]["seg"]["primer5"], undefined, "Control neg primer 5 not in sequence")
-    assert.equal(m.clones[2]["seg"]["primer3"], undefined, "Control neg primer 3 not in sequence")
-    assert.deepEqual(m.clones[3]["seg"]["primer5"], { seq: "GGAAGGCCCCACAGCG", start: 0, stop: 15 },    "Found primer 5")
-    assert.deepEqual(m.clones[3]["seg"]["primer3"], { seq: "AACTTCGCCTGGTAA",  start: 226, stop: 240 }, "Found primer 3")
+    setTimeout( function(){
+        // primer found inside clones
+        assert.equal(m.clones[2]["seg"]["primer5"], undefined, "Control neg primer 5 not in sequence")
+        assert.equal(m.clones[2]["seg"]["primer3"], undefined, "Control neg primer 3 not in sequence")
+        assert.deepEqual(m.clones[3]["seg"]["primer5"], { seq: "GGAAGGCCCCACAGCG", start: 0, stop: 15 },    "Found primer 5")
+        assert.deepEqual(m.clones[3]["seg"]["primer3"], { seq: "AACTTCGCCTGGTAA",  start: 226, stop: 240 }, "Found primer 3")
+        m.cleanPreviousFeature("primer3")
+        ready()
+    }, 200)
+    setTimeout( function(){
+        assert.equal(typeof m.clones[3]["seg"]["primer3"], "undefined", "Feature has been deleted before new attribution")
+        ready()
+    }, 300)
 
-
-    m.cleanPreviousFeature("primer3")
-    assert.equal(typeof m.clones[3]["seg"]["primer3"], "undefined", "Feature has been deleted before new attribution")
 });
 
 
