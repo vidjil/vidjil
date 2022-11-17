@@ -147,24 +147,29 @@ QUnit.test("Report: blocks", function(assert) {
     assert.equal(report.settings.blocks[report.settings.blocks.length-1].blockType , "scatterplot", "scatterplot block added")
 
     //add generic block
-    report.addBlock({blockType : "comments", text: "test"})
+    report.addBlock({blockType : "comments", text: "test"}) // duplicable
     assert.equal(report.settings.blocks.length, default_blockCount+2)
     assert.equal(report.settings.blocks[report.settings.blocks.length-1].blockType , "comments", "comments block added")
 
     //try add an already existing block (blockcount does not increase)
-    report.addBlock({blockType : "comments", text: "test"})
-    assert.equal(report.settings.blocks.length, default_blockCount+2, "comments block already added")
+    console.default.log( report.settings.blocks)
+    report.addBlock({blockType: 'reads_stats'}) // unique block
+    assert.equal(report.settings.blocks.length, default_blockCount+2, "Reads stats block already added") //
+    report.addBlock({blockType : "comments", text: "test"}) // not unique block
+    assert.equal(report.settings.blocks.length, default_blockCount+3, "comments block added") //
 
     //find block 
     assert.equal(report.indexOfBlock({blockType : "comments", text: "test"}), default_blockCount+1, "find block")
 
     //remove block by index 
     report.removeBlock(1)
-    assert.equal(report.settings.blocks.length, default_blockCount+1, "remove block using index")
+    assert.equal(report.settings.blocks.length, default_blockCount+2, "remove block using index")
 
     //remove block
     report.removeBlock({blockType : "comments", text: "test"})
-    assert.equal(report.indexOfBlock({blockType : "comments", text: "test"}), -1, "remove block using object descriptor")
+    assert.equal(report.indexOfBlock({blockType : "comments", text: "test"}), 8, "remove block using object descriptor, still second comment block")
+    report.removeBlock({blockType : "comments", text: "test"})
+    assert.equal(report.indexOfBlock({blockType : "comments", text: "test"}), -1, "remove second comment block using object descriptor")
 
     //move block up 
     report.addBlock({blockType : "blockTest"})
