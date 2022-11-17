@@ -64,10 +64,13 @@ build_cypress_image:
 functional_browser_cypress_open:
 	# Need to create a symbolic link; but allow to directly see result
 	# Usefull for fast debugging; allow to launch script one by one
+	mv browser/js/conf.js browser/js/conf.js.bak  || true
 	ln -sf browser/test/cypress
 	ln -sf docker/ci/cypress.json
 	python tools/org-babel-tangle.py --all doc/vidjil-format.md && mv analysis-example* doc/
 	cypress open --env workdir=../,host=localhost
+	cp browser/js/conf.js.bak browser/js/conf.js || true
+
 
 functional_browser_cypress:
 	docker run \
