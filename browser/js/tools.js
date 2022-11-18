@@ -977,18 +977,26 @@ function translate_key_diversity(key_diversity){
     return table[key_diversity]
 }
 
+/**
+ * Get relative zindex of an element, as a list of zindexs by depth from parents to children
+ * Return null if element is not visible
+ */
 function getRelativeZindex(elem){
+    if (!$(elem).is(":visible")){
+        return null
+    }
+
     var body = document.getElementsByTagName("body")[0]
     var getZindex = (elem) => {return window.getComputedStyle(elem).zIndex}
-    
+    var zindexs   = []
+
     while (elem != body){
         if (Number.isInteger( parseFloat(getZindex(elem)))) {
-            return parseFloat(getZindex(elem))
-        } else {
-            elem = elem.parentNode
+            zindexs.unshift( parseFloat(getZindex(elem)) )
         }
+        elem = elem.parentNode
     }
-    return 0
+    return zindexs
 }
 
 ///////////////////////////
