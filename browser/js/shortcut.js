@@ -166,17 +166,20 @@ Shortcut.prototype = {
                 var zIndexs = []
                 var panels  = document.getElementsByClassName("closeButton")
                 for (var i = 0; i < panels.length; i++) {
-                    if (panels[i].offsetParent !== null) {
-                        zIndexs.push(getRelativeZindex(panels[i]))
-                    } else {
-                        zIndexs.push(-1)
+                    if (getRelativeZindex(panels[i]) != null){
+                        zIndexs.push({"elem": panels[i], "zindex": getRelativeZindex(panels[i])})
                     }
                 }
-                if (zIndexs.length > 0) {
-                    // found max Zindex to close
-                    var max = Math.max( ...zIndexs );
-                    var indexs = getAllIndexes(zIndexs, max)
-                    panels[zIndexs.indexOf(max)].click()
+
+                var max=undefined
+                for (var z = 0; z < zIndexs.length; z++) {
+                    var panel = zIndexs[z]
+                    if (max == undefined || compareNumericalArrays(panel.zindex, max.zindex) == 1){
+                        max = panel
+                    }
+                }
+                if (max != undefined) {
+                    max.elem.click()
                     return
                 }
             }
