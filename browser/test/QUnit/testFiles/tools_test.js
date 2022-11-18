@@ -478,3 +478,10 @@ QUnit.test("fixDuplicateNames", function(assert) {
 
     assert.deepEqual(source, expected)
 });
+
+
+QUnit.test("compareNumericalArrays", function(assert) {
+    assert.equal(compareNumericalArrays([5,4, 3, 4], [5, 4]), 1, "compareNumericalArrays, [5,4, 3, 4] > [5, 4]")
+    assert.equal(compareNumericalArrays([5,4, 3, 4], [5, 5]), -1, "compareNumericalArrays, [5,4, 3, 4] < [5, 5]")
+    assert.equal(compareNumericalArrays([5, 5], [5, 5]),0 , "compareNumericalArrays, [5, 5] == [5, 5]")
+});

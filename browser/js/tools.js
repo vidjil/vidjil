@@ -540,7 +540,24 @@ function nice_floor(x, force_pow10)
     }
 }
 
-
+/**
+ * Return 1 if array A is "bigger" than array B, else -1 if it is smaller, and 0 is there are equal
+ */
+function compareNumericalArrays(arrA, arrB){
+    for (var i = 0; i < arrA.length; i++) {
+        if (arrB[i] == undefined) {
+            return 1
+        }
+        if (arrA[i] > arrB[i]){
+            return 1
+        }
+        if (arrA[i] < arrB[i]){
+            return -1
+        }
+        // else should be equal, so continue for one more depth
+    }
+    return 0
+}
 
 
 
