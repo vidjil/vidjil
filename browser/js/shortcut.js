@@ -165,13 +165,13 @@ Shortcut.prototype = {
             } else {
                 var zIndexs = []
                 var panels  = document.getElementsByClassName("closeButton")
-                for (var i = 0; i < panels.length; i++) {
-                    if (getRelativeZindex(panels[i]) != null){
-                        zIndexs.push({"elem": panels[i], "zindex": getRelativeZindex(panels[i])})
+                for (var p = 0; p < panels.length; p++) {
+                    if (getRelativeZindex(panels[p]) != null){
+                        zIndexs.push({"elem": panels[p], "zindex": getRelativeZindex(panels[p])})
                     }
                 }
 
-                var max=undefined
+                var max;
                 for (var z = 0; z < zIndexs.length; z++) {
                     var panel = zIndexs[z]
                     if (max == undefined || compareNumericalArrays(panel.zindex, max.zindex) == 1){
