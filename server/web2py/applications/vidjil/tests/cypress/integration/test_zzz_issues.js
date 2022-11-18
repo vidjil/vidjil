@@ -124,7 +124,7 @@ describe('Manipulate db page', function () {
         cy.get(':nth-child(2) > .icon-down').click()
 
         const downloadsFolder = Cypress.config('downloadsFolder')
-        const downloadedFilename = downloadsFolder+'/reads__1__file_id__'+uid+'.fa'
+        const downloadedFilename = downloadsFolder+'/reads__2__file_id__'+uid+'.fa'
         
         cy.readFile(downloadedFilename, { timeout: 120000 })
           .should('contain', '>clone-001')
