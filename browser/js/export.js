@@ -176,7 +176,7 @@ Report.prototype = {
 
         console.confirmBox( "Enter a name to save this report</br>"+
                             "",
-                            function(){self.save(console.confirm.input.val(), overwrite, as_template)},
+                            function(){self.save(console.confirm.input.val())},
                             savename)
     },
 
