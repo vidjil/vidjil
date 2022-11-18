@@ -1003,6 +1003,14 @@ span.sample-tag, a.tag-link {
   background: @background;
   display:none;
 
+  &.data-container {
+    z-index:4;
+  }
+  
+  &.info-container {
+    z-index:3;
+  }
+
   &.data-container, &.info-container{
     top: 50px;
     left: 20px + @width_left_container;

@@ -1164,6 +1164,12 @@ a.tag-link {
   background: #ffffff;
   display: none;
 }
+.modal.data-container {
+  z-index: 4;
+}
+.modal.info-container {
+  z-index: 3;
+}
 .modal.data-container,
 .modal.info-container {
   top: 50px;
