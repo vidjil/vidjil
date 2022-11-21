@@ -1164,18 +1164,18 @@ a.tag-link {
   background: #ffffff;
   display: none;
 }
-.modal.data-container {
-  z-index: 4;
-}
-.modal.info-container {
-  z-index: 3;
-}
 .modal.data-container,
 .modal.info-container {
   top: 50px;
   left: 495px;
   max-width: calc(100% - (475px + 60px));
   height: calc(100% - 215px);
+}
+.modal.data-container {
+  z-index: 4;
+}
+.modal.info-container {
+  z-index: 3;
 }
 .modal.jstree-container {
   padding-top: 30px;

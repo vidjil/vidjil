@@ -840,6 +840,12 @@ a.tag-link {
   max-width: calc(100% - (475px + 60px));
   height: calc(100% - 215px);
 }
+.modal.data-container {
+  z-index: 4;
+}
+.modal.info-container {
+  z-index: 3;
+}
 .modal.jstree-container {
   padding-top: 30px;
   top: 10%;
