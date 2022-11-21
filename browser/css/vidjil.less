@@ -1003,19 +1003,19 @@ span.sample-tag, a.tag-link {
   background: @background;
   display:none;
 
+  &.data-container, &.info-container{
+    top: 50px;
+    left: 20px + @width_left_container;
+     max-width: calc(~"100%" - (@width_left_container + 60px));
+    height: calc(~"100%" - 215px);
+  }
+
   &.data-container {
     z-index:4;
   }
   
   &.info-container {
     z-index:3;
-  }
-
-  &.data-container, &.info-container{
-    top: 50px;
-    left: 20px + @width_left_container;
-     max-width: calc(~"100%" - (@width_left_container + 60px));
-    height: calc(~"100%" - 215px);
   }
 
   &.jstree-container {
