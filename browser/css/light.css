@@ -9,7 +9,7 @@
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
-  border-color: #dddddd;
+  border-color: #ddd;
   border: solid;
   border-width: 1px;
 }
@@ -32,7 +32,7 @@
   border-color: #002b36;
 }
 .list_focus {
-  background: #dddddd !important;
+  background: #ddd !important;
 }
 .sequence-line {
   white-space: nowrap;
@@ -103,13 +103,13 @@
   bottom: 1px;
 }
 .highlight_seq {
-  top: .9em;
+  top: 0.9em;
   padding-bottom: 1px;
   opacity: 0.6;
   font-size: 70%;
-  letter-spacing: .428em;
+  letter-spacing: 0.428em;
   /* (1-.7) / .7 */
-  left: .214em;
+  left: 0.214em;
 }
 .highlight {
   display: inline-block;
@@ -175,7 +175,7 @@ span .end-codon {
 }
 .aligner-menu:hover {
   cursor: pointer;
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 .aligner-button {
   cursor: pointer;
@@ -209,10 +209,10 @@ span .end-codon {
   cursor: pointer;
 }
 .menu-content a:hover {
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 .menu-content label:hover {
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 .seq_layer {
   position: absolute;
@@ -327,7 +327,7 @@ span .end-codon {
 }
 .aligner-inline-button:hover {
   cursor: pointer;
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 /* base Vidjil style */
 /* @default, @background, @highlight, @select, @secondary and @border have to be defined */
@@ -354,7 +354,7 @@ body {
   display: flex;
   flex-flow: column;
   overflow-x: hidden;
-  background: #dddddd;
+  background: #ddd;
 }
 body,
 svg {
@@ -523,7 +523,7 @@ line {
 .info_line {
   border-bottom: solid;
   border-bottom-width: 1px;
-  border-color: #dddddd;
+  border-color: #ddd;
 }
 .locus_line {
   text-align: center;
@@ -583,12 +583,12 @@ line {
 }
 .axis_m {
   stroke: #657b83;
-  opacity: 0.5 ;
+  opacity: 0.5;
   stroke-width: 20px;
 }
 .axis_m_other {
   stroke: #657b83;
-  opacity: 0.25 ;
+  opacity: 0.25;
   stroke-width: 10px;
   display: none;
 }
@@ -661,7 +661,7 @@ line {
 }
 .graph_listAll:hover,
 .graph_listElem:hover {
-  background: #dddddd;
+  background: #ddd;
   width: 100%;
   cursor: pointer;
   cursor: webkit-grab;
@@ -676,7 +676,7 @@ line {
 .circle {
   cursor: pointer;
   -webkit-transition: fill 0.2s;
-  -o-transition: fill  0.2s;
+  -o-transition: fill 0.2s;
   -ms-transition: fill 0.2s;
   transition: fill 0.2s;
   fill: #657b83;
@@ -766,7 +766,7 @@ line {
 .list:hover,
 .tagElem:hover,
 .data:hover {
-  background: #dddddd;
+  background: #ddd;
 }
 #list {
   flex: 1 1 auto;
@@ -790,7 +790,7 @@ line {
 #list_data {
   display: block;
   border-width: 4px;
-  border-color: #dddddd;
+  border-color: #ddd;
   overflow-y: scroll;
 }
 .data_name {
@@ -809,7 +809,7 @@ line {
   font-size: 13px;
   cursor: pointer;
   -webkit-transition: color 0.2s;
-  -o-transition: color  0.2s;
+  -o-transition: color 0.2s;
   -ms-transition: color 0.2s;
   transition: color 0.2s;
   padding: 1px 4px 4px 1px;
@@ -878,7 +878,7 @@ line {
   background: #fdf6e3;
 }
 .infoBox-open {
-  background: #dddddd;
+  background: #ddd;
 }
 .systemBox,
 .systemBoxMenu {
@@ -894,7 +894,7 @@ line {
   color: #fff;
   color: rgba(255, 255, 255, 0.7);
   font-size: 70%;
-  background: #dddddd;
+  background: #ddd;
   float: left;
 }
 .systemBox {
@@ -1000,7 +1000,7 @@ line {
 }
 .menu:hover {
   cursor: pointer;
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 .menu:hover .selector {
   display: block;
@@ -1018,7 +1018,7 @@ line {
   padding: 5px;
   border-top: solid;
   border-width: 1px;
-  border-color: #dddddd;
+  border-color: #ddd;
   text-indent: 5px;
 }
 .submenu {
@@ -1030,7 +1030,7 @@ line {
   padding: 5px 0px;
   border-top: solid;
   border-width: 1px;
-  border-color: #dddddd;
+  border-color: #ddd;
 }
 .div-menu-selector {
   float: right;
@@ -1105,7 +1105,7 @@ line {
 .button_right:hover,
 .buttonSelector:hover,
 .button2:hover {
-  background: #dddddd;
+  background: #ddd;
   color: #002b36;
   cursor: pointer;
 }
@@ -1168,7 +1168,7 @@ a.tag-link {
 .modal.info-container {
   top: 50px;
   left: 495px;
-  max-width: calc(100% - 535px);
+  max-width: calc(100% - (475px + 60px));
   height: calc(100% - 215px);
 }
 .modal.data-container {
@@ -1241,7 +1241,7 @@ div.button {
   margin: 3px;
   display: inline-block;
   cursor: pointer;
-  background: #dddddd;
+  background: #ddd;
   width: auto;
   text-align: center;
   padding-left: 10px;
@@ -1267,7 +1267,7 @@ span.logo {
   font-size: 60% ;
   font-weight: bold;
   vertical-align: super;
-  opacity: .8;
+  opacity: 0.8;
   color: #f88;
 }
 .devel-mode,
@@ -1293,7 +1293,7 @@ span.logo {
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: calc(8px);
+  margin-top: calc(32px - 24px);
   z-index: 5;
   overflow: hidden;
   border-width: 1px;
@@ -1370,7 +1370,7 @@ span.logo {
 #bot-container,
 .tagSelector,
 #clone_axes_selector {
-  border-color: #dddddd;
+  border-color: #ddd;
 }
 #info_window td {
   width: 300px;
@@ -1378,7 +1378,7 @@ span.logo {
   overflow-wrap: break-word;
   word-wrap: break-word;
   border-style: solid;
-  border-color: #dddddd;
+  border-color: #ddd;
   border-width: 1px;
   text-align: center;
   vertical-align: middle;
@@ -1397,7 +1397,7 @@ span.logo {
   overflow-wrap: break-word;
   word-wrap: break-word;
   border-style: solid;
-  border-color: #dddddd;
+  border-color: #ddd;
   border-width: 1px;
   vertical-align: middle;
 }
@@ -1406,7 +1406,7 @@ span.logo {
 #info_warnings table,
 .info_overlaps {
   border-style: solid;
-  border-color: #dddddd;
+  border-color: #ddd;
   border-collapse: collapse;
 }
 #info_window table .header,
@@ -1414,10 +1414,10 @@ span.logo {
 #info_warnings table .header,
 .info_overlaps table .header {
   border-width: 2px;
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 .info_overlaps_line {
-  background-color: #dddddd;
+  background-color: #ddd;
   font-weight: bold;
 }
 span.ok {
@@ -1451,7 +1451,7 @@ text.alert {
   fill: red;
 }
 span.warningReads {
-  margin-left: .5em;
+  margin-left: 0.5em;
   display: inline-block;
   width: 1em;
   text-align: center;
@@ -1546,7 +1546,7 @@ span.warningReads {
   border-color: #ffffff;
 }
 .sp_menu_icon:hover {
-  background: #dddddd;
+  background: #ddd;
 }
 .sp_selected_mode {
   border-color: #657b83;
@@ -1634,7 +1634,7 @@ span.warningReads {
   cursor: grab;
 }
 #bot-separator {
-  background: #dddddd;
+  background: #ddd;
   width: 100%;
   height: 6px;
   cursor: pointer;
@@ -1781,19 +1781,19 @@ h3 .uid {
 }
 .db_table th {
   border-bottom: solid;
-  border-color: #dddddd;
+  border-color: #ddd;
   border-width: 1px;
 }
 .db_table tr {
   border-bottom: solid;
-  border-color: #dddddd;
+  border-color: #ddd;
   border-width: 1px;
 }
 .pointer {
   cursor: pointer;
 }
 .db_table tr:hover {
-  background: #dddddd;
+  background: #ddd;
 }
 .db_table td {
   border-width: 0px;
@@ -1864,7 +1864,7 @@ h3 .uid {
 .loading_seq {
   height: 15px;
   width: 100px;
-  background-image: linear-gradient(-45deg, #dddddd 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #dddddd 50%, #dddddd 75%, rgba(255, 154, 26, 0) 75%);
+  background-image: linear-gradient(-45deg, #ddd 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, #ddd 50%, #ddd 75%, rgba(255, 154, 26, 0) 75%);
   background-size: 50px 50px;
   -webkit-animation: move 2s linear infinite;
   -moz-animation: move 2s linear infinite;
@@ -1910,8 +1910,8 @@ h3 .uid {
   right: 0px;
   padding: 5px;
   margin: 5px;
-  background: #dddddd;
-  border-color: #dddddd;
+  background: #ddd;
+  border-color: #ddd;
   z-index: 15;
   border: solid;
   border-width: 1px;
@@ -1932,7 +1932,7 @@ h3 .uid {
   padding: 5px;
   margin: 5px;
   background: #ffffff;
-  border-color: #dddddd;
+  border-color: #ddd;
   transition: background 1s linear;
   box-shadow: 1px 1px 2px;
 }
@@ -1952,18 +1952,18 @@ h3 .uid {
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
-  background-color: #f2deae;
+  background-color: #F2DEAE;
 }
 .flash_3,
 .log_3 {
   font-weight: bold;
   border-color: darkred;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .tip_1 {
   width: 400px;
@@ -1973,8 +1973,8 @@ h3 .uid {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #dff0d8;
-  border-color: #dddddd;
+  background: #DFF0D8;
+  border-color: #ddd;
 }
 #tip_img {
   margin: 20px auto;
@@ -2003,7 +2003,7 @@ h3 .uid {
   float: left;
 }
 select > option:hover {
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 .inactive {
   opacity: 0.5;
@@ -2022,7 +2022,7 @@ select > option:hover {
   border-width: 1px;
   min-height: 20px;
   background: #ffffff;
-  border-color: #dddddd;
+  border-color: #ddd;
   max-height: 100px;
   display: none;
   width: 300px;
@@ -2046,8 +2046,8 @@ select > option:hover {
 input:focus,
 textarea:focus,
 #add_clone_menu > #addclone_input:focus {
-  border-color: #dddddd;
-  box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #dddddd;
+  border-color: #ddd;
+  box-shadow: inset 0 1px 1px #ffffff, 0 0 8px #ddd;
   outline: 0;
   outline: thin dotted \9;
 }
@@ -2119,12 +2119,12 @@ table.log textarea {
   border: 2px solid #8b0000;
   margin: 3px;
   font-weight: bold;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .info_message {
-  border: 1px solid #dddddd;
+  border: 1px solid #ddd;
   margin: 4px;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .notification {
   padding: 3px;
@@ -2176,7 +2176,7 @@ table.log textarea {
   color: #657b83;
   display: block;
   padding: 5px;
-  border: 1px solid #dddddd;
+  border: 1px solid #ddd;
   overflow-wrap: break-word;
   overflow-y: hidden;
   min-height: 32px;
@@ -2560,7 +2560,7 @@ form .form_label {
   cursor: auto;
 }
 .list_lock_off {
-  color: #dddddd;
+  color: #ddd;
 }
 .list_lock_on {
   color: #657b83;
