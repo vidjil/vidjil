@@ -1425,7 +1425,7 @@ Report.prototype = {
         }
         
         //clone label
-        $('<span/>', {'text': ">"+this.m.clone(cloneID).getCode()+'\u00a0', 'class': 'clone_name', style : 'color:'+color}).appendTo(head);
+        $('<span/>', {'text': ">"+this.m.clone(cloneID).getShortName()+'\u00a0', 'class': 'clone_name', style : 'color:'+color}).appendTo(head);
         if (typeof this.m.clone(cloneID).c_name != "undefined"){
             $('<span/>', {'text': this.m.clone(cloneID).c_name+'\u00a0', 'class': 'clone_name', style : 'color:'+color}).appendTo(head);
         }
