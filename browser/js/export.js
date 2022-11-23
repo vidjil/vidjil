@@ -745,6 +745,7 @@ Report.prototype = {
             self.restorestate()    
             self.m.resize()
             self.m.resume()
+            self.m.update()
         }
         
     },
@@ -755,7 +756,13 @@ Report.prototype = {
         this.save_state.system_selected = this.m.system_selected.slice()
         this.save_state.samples_order = this.m.samples.order.slice()
         this.save_state.axis_color = this.m.color.axis.name
-        
+        this.save_state.time   = copyHard(this.m.t)
+        if (this.m.sp != undefined){
+            this.save_state.locus = copyHard(this.m.sp.system)
+            this.save_state.axisX = copyHard(this.m.sp.axisX.name)
+            this.save_state.axisY = copyHard(this.m.sp.axisY.name)
+            this.save_state.mode  = copyHard(this.m.sp.mode)
+        }
         return this;
     },
     
@@ -772,6 +779,13 @@ Report.prototype = {
         this.m.system_selected = this.save_state.system_selected.slice()
         this.m.changeTimeOrder(this.save_state.samples_order)
         this.m.color.set(this.save_state.axis_color)
+
+        // rerender with locus present in main page
+        this.m.changeTime(this.save_state.time)
+        this.m.changeGermline(this.save_state.locus, false)
+        if (this.m.sp != undefined){
+            this.m.sp.changeSplitMethod(this.save_state.axisX, this.save_state.axisY, this.save_state.mode, false)
+        }
         return this;
     },
     

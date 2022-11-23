@@ -812,6 +812,14 @@ function openAndFillNewTab (content){
 }
 
 /**
+ * Return a copy of the given object
+ */
+function copyHard(obj){
+    if (obj == undefined){return undefined}
+    return JSON.parse(JSON.stringify(obj))
+}
+
+/**
  * Function that allow to make comparison between two arrays.
  */
 if(Array.prototype.equals)
