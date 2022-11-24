@@ -79,6 +79,53 @@ describe('Report', function () {
 
     return
   })
+
+  it('Save as template & report',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+    cy.get('#export_report_menu').click({force: true})
+
+
+    // first save as template, should save and close
+    cy.get('#rs-save-button-template').click()
+    cy.get('#console_text_input')
+      .should("be.visible")
+      .clear().type("test")
+    cy.get("#confirm_btn_continue").click()
+    cy.get('#console_text_input')
+      .should("not.be.visible")
+    cy.get('.flash_1').should("contain", "report template 'test'")
+
+    // second save as template, should save and close
+    cy.get('#rs-save-button-template').click()
+    cy.get('#console_text_input')
+      .should("be.visible")
+      .clear().type("test")
+    cy.get("#confirm_btn_continue").click()
+    cy.get('#console_text_input')
+      .should("not.be.visible")
+    cy.get('.flash_1').should("contain", "report template 'test'")
+
+    // Save as report with same name, should show flash and 9keep open confirbox
+    cy.get('#rs-save-button-report').click()
+    cy.get('#console_text_input')
+      .should("be.visible")
+      .clear().type("test")
+    cy.get("#confirm_btn_continue").click()
+    cy.get('#console_text_input')
+      .should("be.visible")
+    cy.get('.flash_2').should("contain", "A local template with the same")
+
+    // Set a new name
+    cy.get('#console_text_input')
+      .clear().type("test_report")
+    cy.get("#confirm_btn_continue").click()
+    cy.get('#console_text_input')
+      .should("not.be.visible")
+    cy.get('.flash_1').should("contain", "report settings 'test_report'")
+
+  
+    return
+  })
   
 })
 
