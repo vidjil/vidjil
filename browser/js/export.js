@@ -1433,50 +1433,37 @@ Report.prototype = {
         //clone reads stats
         var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
 
-        if (this.m.samples.order.length < 4){
-            for (var i=0; i<this.m.samples.order.length; i++){
-                var t = this.m.samples.order[i]
-    
-                var print_format = block.print_format 
-                if (typeof block.print_format != "undefined")
-                    print_format = block.print_format
-    
-                var size_str= this.m.clone(cloneID).getPrintableSize()
-    
-                $('<span/>', {'text': "#"+ this.m.getStrTime(t, "order") + ": " + size_str +'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
-            }
-        }else{ // more than 3 samples
-            var system = this.m.clone(cloneID).getLocus()
-            var systemGroup = this.m.systemGroup(system)
 
-            var header = "sample # </br>"+
-                        "reads # </br>"+
-                        "reads % </br>"+
-                        system + " %"
+        var system = this.m.clone(cloneID).getLocus()
+        var systemGroup = this.m.systemGroup(system)
+
+        var header = "sample # </br>"+
+                    "reads # </br>"+
+                    "reads % </br>"+
+                    system + " %"
+
+        if (systemGroup != system && systemGroup != '')
+            header += "</br>"+systemGroup+" %"
+
+        $('<span/>', {  'html':  header,
+                        'class': 'clone_value'}).appendTo(reads_stats);
+
+        for (var i2=0; i2<this.m.samples.order.length; i2++){
+            var t2 = this.m.samples.order[i2]
+            var sizes    = this.m.clone(cloneID).getStrAllSystemSize(t2)
+
+            var html = "#"+this.m.getStrTime(t2, "order") + "</br>"+
+                        this.m.clone(cloneID).getReads(t2)+ "</br>"+
+                        sizes.global+ "</br>"+
+                        sizes.system
 
             if (systemGroup != system && systemGroup != '')
-                header += "</br>"+systemGroup+" %"
+                html += "</br>"+sizes.systemGroup
 
-            $('<span/>', {  'html':  header,
+            $('<span/>', {  'html':  html,
                             'class': 'clone_value'}).appendTo(reads_stats);
-
-            for (var i2=0; i2<this.m.samples.order.length; i2++){
-                var t2 = this.m.samples.order[i2]
-                var sizes    = this.m.clone(cloneID).getStrAllSystemSize(t2)
-
-                var html = "#"+this.m.getStrTime(t2, "order") + "</br>"+
-                            this.m.clone(cloneID).getReads(t2)+ "</br>"+
-                            sizes.global+ "</br>"+
-                            sizes.system
-
-                if (systemGroup != system && systemGroup != '')
-                    html += "</br>"+sizes.systemGroup
-
-                $('<span/>', {  'html':  html,
-                                'class': 'clone_value'}).appendTo(reads_stats);
-                }
-        }
-        
+            }
+    
 
         // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
         var fields = {
