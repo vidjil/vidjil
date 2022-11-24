@@ -228,11 +228,13 @@ Com.prototype = {
 
         this.confirm.cancel = $('<button/>',{   class: 'container_button',
                                                 text : 'cancel',
+                                                id:    'confirm_btn_cancel'
                                             }).click(function() {self.closeConfirmBox()})
                                               .appendTo(this.confirm.buttondiv);
 
         this.confirm.continue = $('<button/>',{ class: 'container_button',
                                                 text : 'continue',
+                                                id:    'confirm_btn_continue'
                                             }).appendTo(this.confirm.buttondiv);
         
         /*
