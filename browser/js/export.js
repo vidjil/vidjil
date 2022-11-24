@@ -206,6 +206,10 @@ Report.prototype = {
         }
     },
 
+    /**
+     * Open confirmBox to ask user to fill a name for report/template
+     * Close confirmBox only if save succesed
+     */
     saveas: function(overwrite, as_template){
         var self = this;
 
@@ -216,8 +220,9 @@ Report.prototype = {
 
         console.confirmBox( "Enter a name to save this report</br>"+
                             "",
-                            function(){self.save(console.confirm.input.val(), overwrite, as_template)},
-                            savename)
+                            function(){self.save(console.confirm.input.val(), overwrite, as_template);},
+                            savename,
+                            close_by_callback=true )
     },
 
     delete: function(skipConfirm){
