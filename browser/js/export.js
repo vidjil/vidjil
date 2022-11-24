@@ -341,10 +341,18 @@ Report.prototype = {
         $("#rs-selected-sample-count").html("["+count+" selected]")
     },
 
+    /**
+     * Get locus state inside export obj. true if present in list, false in other case
+     */
     getLocusState: function(locus){
         return self.settings.locus.indexOf(locus) != -1
     },
 
+    /**
+     * Change the locus status after a click on one locus tile
+     * Take into account the shift press status to modifiy the behavior of seleciton
+     * Menu is rerender after modification
+     */
     changeLocus: function(locusDom, shiftkey){
         var locus = $(locusDom).attr("value")
         if (!shiftkey){ // swich only this locus
