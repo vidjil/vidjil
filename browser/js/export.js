@@ -159,13 +159,16 @@ Report.prototype = {
 
         keys = Object.keys(this.default_settings)
         if (keys.indexOf(savename) != -1) {
-            console.log("You try to overwrite an default template, use 'save as template/report' to save it under a new name");
+            console.log({ msg: "You try to overwrite an default template, use 'save as template/report' to save it under a new name",
+             type: "flash", priority: 2 });
             return;
         } else if (as_template && this.m.report_save[savename] != undefined ){
-            console.log("A report with the same name already exist. Please change the template name");
+            console.log({ msg: "A report with the same name already exist. Please change the template name",
+                type: "flash", priority: 2 });
             return;
         } else if (!as_template && this.local_settings[savename] != undefined ){
-            console.log("A local template with the same name already exist. Please change the report name");
+            console.log({ msg: "A local template with the same name already exist. Please change the report name",
+                type: "flash", priority: 2 });
             return;
         }
 
