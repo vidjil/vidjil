@@ -88,7 +88,47 @@ QUnit.test("Report: save/load under template", function(assert) {
     report.load("new_template_1", source="template")
     assert.equal(report.clones.length, 2, "test overwriting: default report should still have 2 clone(s) selected, got " + report.clones.length);
 
-});
+})
+
+QUnit.test("Report: delete report/template", function(assert) {
+
+    localStorage.removeItem("report_templates")
+    var m = new Model(m);
+    var report = new Report(m)
+    if (!console.build)
+        console = new Com(console)
+    m.parseJsonData(json_data,100)
+
+    // Create fake template & report
+    report.save("new_save_1", overwrite=true, as_template=false)
+    report.save("new_template_1", overwrite=true, as_template=true)
+
+
+    // Delete saved user template
+    assert.equal(report.settings.name, "new_template_1", "loaded report should be named 'new_template_1', got " + report.settings.name);
+    report.delete(skipConfirm=false)
+    assert.notEqual(report.local_settings.new_template_1, undefined, "Report still present as deletion not confimred")
+    report.delete(skipConfirm=true)
+    assert.equal(report.local_settings.new_template_1, undefined, "Report removed as deletion COMFIRMED")
+
+
+    // Delete saved report
+    report.load("new_save_1", source="analysis")
+    assert.equal(report.settings.name, "new_save_1", "loaded report should be named 'new_save_1', got " + report.settings.name);
+    report.delete(skipConfirm=false)
+    assert.notEqual(report.m.report_save.new_save_1, undefined, "Report still present as deletion not confimred")
+    report.delete(skipConfirm=true)
+    assert.equal(report.m.report_save.new_save_1, undefined, "Report removed as deletion COMFIRMED")
+
+
+    // Try delete defualt template
+    report.load("Full report")
+    assert.equal(report.settings.name, "Full report", "loaded report should be named 'new_template_1', got " + report.settings.name);
+    report.delete(skipConfirm=false)
+    assert.notEqual(report.default_settings["Full report"], undefined, "Default template still present as deletion not confimred")
+    report.delete(skipConfirm=true)
+    assert.notEqual(report.default_settings["Full report"], undefined, "Default template still present even if deletion IS confimred")
+})
 
 
 QUnit.test("Report: savestate", function(assert) {

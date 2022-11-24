@@ -80,7 +80,7 @@ describe('Report', function () {
     return
   })
 
-  it('Save as template & report',  function() {
+  it('Save/delete as template & report',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
     cy.get('#export_report_menu').click({force: true})
 
@@ -123,7 +123,29 @@ describe('Report', function () {
       .should("not.be.visible")
     cy.get('.flash_1').should("contain", "report settings 'test_report'")
 
-  
+    // Delete report
+    cy.get('#optgroup_report_saved')
+      .should("contain", "test_report")
+
+    cy.get('#rs-delete-button').click()
+    cy.get('#popup_container_box')
+      .should("contain", "Are you sure you want to delete")
+    cy.get("#confirm_btn_continue").click()
+    cy.get('#optgroup_report_saved')
+      .should("not.contain", "test_report")
+
+    // Save again this report AS template
+    cy.get('#rs-save-button-template').click()
+    cy.get('#console_text_input')
+      .should("be.visible")
+      .clear().type("test_report")
+    cy.get("#confirm_btn_continue").click()
+    cy.get('#console_text_input')
+      .should("not.be.visible")
+    cy.get('.flash_1').should("contain", "report template 'test'")
+    cy.get('#optgroup_user_template')
+      .should("contain", "test_report")
+
     return
   })
   
