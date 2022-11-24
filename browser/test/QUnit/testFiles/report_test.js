@@ -13,21 +13,12 @@ QUnit.test("Report: save/load under analysis", function(assert) {
         console = new Com(console)
     m.parseJsonData(json_data,100)
 
-    console.log("m.report_save")
-    console.default.log(Object.keys(m.report_save))
-    console.default.log(m.report_save)
-    console.default.log(Object.keys(report.local_settings))
-    console.default.log(report.local_settings)
     // save
     assert.notOk(m.analysisHasChanged, ".analysis should be unchanged")
     report.addClones([1])
     assert.equal(report.clones.length, 1, "report should have 1 clone(s) selected, got "  + report.clones.length);
     report.save("new_save_1", overwrite=true, as_template=false)
-    console.default.log(Object.keys(m.report_save))
-    console.default.log(m.report_save)
 
-    console.default.log(Object.keys(report.local_settings))
-    console.default.log(report.local_settings)
     assert.equal(report.settings.name, "new_save_1", "save report settings under new_save_1 got " + report.settings.name);
     assert.ok(m.analysisHasChanged, ".analysis should have been modified")
     // load default settings
