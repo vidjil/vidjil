@@ -209,7 +209,8 @@ Com.prototype = {
         //
         this.confirm = {};
 
-        this.confirm.box =  $('<div/>',     {   class: "popup_container"
+        this.confirm.box =  $('<div/>',     {   class: "popup_container",
+                                                id: "popup_container_box"
                                             }).appendTo(document.body);
 
         this.confirm.content = $('<div/>',  {   class: "info-msg",
