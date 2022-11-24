@@ -193,7 +193,7 @@ Report.prototype = {
                     console.log({ msg: "report settings '"+savename+"' has been saved", type: "flash", priority: 1 });
                     this.m.analysisHasChanged = true;
                 }
-
+                console.closeConfirmBox()
             } catch (error) {
                 console.log({ msg: "failed to save report settings", type: "flash", priority: 3 });
             }
