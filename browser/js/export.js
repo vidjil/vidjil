@@ -757,7 +757,7 @@ Report.prototype = {
         this.save_state.samples_order = this.m.samples.order.slice()
         this.save_state.axis_color = this.m.color.axis.name
         this.save_state.time   = copyHard(this.m.t)
-        if (sp_export != undefined){
+        if (typeof sp_export != "undefined"){
             this.save_state.locus = copyHard(sp_export.system)
             this.save_state.axisX = copyHard(sp_export.axisX.name)
             this.save_state.axisY = copyHard(sp_export.axisY.name)
@@ -783,7 +783,7 @@ Report.prototype = {
         // rerender with locus present in main page
         this.m.changeTime(this.save_state.time)
         this.m.changeGermline(this.save_state.locus, false)
-        if (sp_export != undefined){
+        if (typeof sp_export != "undefined"){
             sp_export.changeSplitMethod(this.save_state.axisX, this.save_state.axisY, this.save_state.mode, false)
         }
         return this;
