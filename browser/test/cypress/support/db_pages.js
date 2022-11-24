@@ -447,7 +447,7 @@ Cypress.Commands.add('openSet', (sample_set_id) => {
 })
 
 Cypress.Commands.add('openAnalysisFromSetPage', (sample_set_id, config_id) => {
-  cy.get(`#result_sample_set_${sample_set_id}_config_${config_id}`)
+  cy.get(`#result_sample_set_id_${sample_set_id}_config_${config_id}`)
     .should("exist")
     .click({force: true})
   cy.update_icon()
