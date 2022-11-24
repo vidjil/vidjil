@@ -143,3 +143,44 @@ QUnit.test("Report: clones", function(assert) {
 
 });
 
+
+QUnit.test("Report: locus", function(assert) {
+    
+    var m = new Model(m);
+    var report = new Report(m)
+    if (!console.build)
+        console = new Com(console)
+    m.parseJsonData(json_data,100)
+
+
+    report.menu()
+    // As locus is rerender at each modification, use function
+    var locusList = function(pos) { return document.getElementById("rs-locus-list").childNodes[pos]}
+    var locusTRG  = function(){ return locusList(0).childNodes[0] }
+    var locusIGH  = function(){ return locusList(1).childNodes[0] }
+
+    assert.equal(document.getElementById("rs-locus-list").childNodes.length, 2, "Two locus present in clone list")
+    assert.equal( locusTRG().classList[0], "rs-selected", "locus trg, correct class before switch (selected)" )
+
+    locusTRG().click()
+    // locusTRG.click()
+    console.default.log( locusTRG() )
+    console.default.log( locusTRG().classList[0] )
+    assert.equal( locusTRG().classList[0], "rs-unselected", "locus TRG, correct class after switch (unselected)")
+    assert.equal( locusIGH().classList[0], "rs-selected", "locus IGH, correct class after TRG switch (selected)")
+
+    // simple call to switch fucntion, unselect -> select
+    report.changeLocus(locusTRG())
+    assert.equal( locusTRG().classList[0], "rs-selected", "locus TRG, correct class after function switch (selected)")
+
+    // call to switch fucntion + shift, still select, hide other locus
+    report.changeLocus(locusTRG(), true)
+    assert.equal( locusTRG().classList[0], "rs-selected", "locus TRG, correct class after function switch (selected)")
+    assert.equal( locusIGH().classList[0], "rs-unselected", "locus IGH, correct class after function switch + shift (unselected)")
+
+    // call to switch fucntion + shift if already last active locus, still select, restore other locus
+    report.changeLocus(locusTRG(), true)
+    assert.equal( locusIGH().classList[0], "rs-selected", "locus IGH, correct class after function switch + shift if all locus already hidden (selected)")
+
+});
+
