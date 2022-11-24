@@ -2470,7 +2470,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     /**
-     * 
+     * Add decimal separator for large number
      * */
     toStringThousands: function (num) {
         
