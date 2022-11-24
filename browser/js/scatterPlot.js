@@ -32,7 +32,7 @@
  * @param {string} id - dom id of the html div who will contain the scatterplot
  * @param {Model} model
  * */
-function ScatterPlot(id, model, database, default_preset) {
+function ScatterPlot(id, model, database, default_preset, hidden=false) {
     var self = this
 
     ScatterPlot_menu.call(this, default_preset)
@@ -41,6 +41,7 @@ function ScatterPlot(id, model, database, default_preset) {
 
     this.db = database
     this.id = id
+    this.hidden = hidden
 
     //size ( computed value -> resize() function)
     this.resizeCoef = 1; //Multiplifying factor, application to nodes radius
@@ -104,7 +105,9 @@ ScatterPlot.prototype = {
             this.initSVG();
             this.initBar();
             this.initMenu();
-            this.initSelector();
+            if (!this.hidden){
+                this.initSelector();
+            }
             this.resize();
             this.tsne_ready=false;
 
