@@ -21,7 +21,7 @@ describe('Test sandbox', function () {
       .trigger('change',{ force: true })
 
     // change in another preset with distributions clones
-    cy.changePreset("read length distribution")
+    cy.changePreset("visu", "read length distribution")
     cy.update_icon(1000)
 
     // Define clones ids
@@ -66,7 +66,7 @@ describe('Test sandbox', function () {
 
     cy.selectClone(1)
     cy.get('#hide_selected').click()
-    cy.changePreset("read length distribution")
+    cy.changePreset("visu", "read length distribution")
     cy.update_icon(500)
 
     cy.getCloneInList(0).scrollIntoView().should('be.visible')

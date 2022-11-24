@@ -109,9 +109,9 @@ Cypress.Commands.add('pressKey', (key) => {
   cy.get('body').trigger('keyup', { keyCode: codes[key]});
 })
 
-Cypress.Commands.add('changePreset', (value) => {
-  cy.get('#visu_sp_menu').click()
-  cy.get(".axis_select_preset_select")
+Cypress.Commands.add('changePreset', (sp_id, value) => {
+  cy.get(`#${sp_id}`).click()
+  cy.get(`#${sp_id}_select_preset`)
     .select(value, {force: true})
     .trigger('change', {force: true})
   cy.update_icon(10000)
