@@ -757,11 +757,11 @@ Report.prototype = {
         this.save_state.samples_order = this.m.samples.order.slice()
         this.save_state.axis_color = this.m.color.axis.name
         this.save_state.time   = copyHard(this.m.t)
-        if (this.m.sp != undefined){
-            this.save_state.locus = copyHard(this.m.sp.system)
-            this.save_state.axisX = copyHard(this.m.sp.axisX.name)
-            this.save_state.axisY = copyHard(this.m.sp.axisY.name)
-            this.save_state.mode  = copyHard(this.m.sp.mode)
+        if (sp_export != undefined){
+            this.save_state.locus = copyHard(sp_export.system)
+            this.save_state.axisX = copyHard(sp_export.axisX.name)
+            this.save_state.axisY = copyHard(sp_export.axisY.name)
+            this.save_state.mode  = copyHard(sp_export.mode)
         }
         return this;
     },
@@ -783,8 +783,8 @@ Report.prototype = {
         // rerender with locus present in main page
         this.m.changeTime(this.save_state.time)
         this.m.changeGermline(this.save_state.locus, false)
-        if (this.m.sp != undefined){
-            this.m.sp.changeSplitMethod(this.save_state.axisX, this.save_state.axisY, this.save_state.mode, false)
+        if (sp_export != undefined){
+            sp_export.changeSplitMethod(this.save_state.axisX, this.save_state.axisY, this.save_state.mode, false)
         }
         return this;
     },
@@ -1282,12 +1282,12 @@ Report.prototype = {
 
     scatterplot : function(block) {
         if (typeof block == "undefined")       block = {}
-        if (typeof block.locus == "undefined") block.locus = this.m.sp.system
-        if (block.locus == "")                 block.locus = this.m.sp.system
+        if (typeof block.locus == "undefined") block.locus = sp_export.system
+        if (block.locus == "")                 block.locus = sp_export.system
         if (typeof block.sample == "undefined")block.sample= this.m.samples.original_names[this.m.t]
-        if (typeof block.axisX == "undefined") block.axisX = this.m.sp.axisX.name
-        if (typeof block.axisY == "undefined") block.axisY = this.m.sp.axisY.name
-        if (typeof block.mode == "undefined")  block.mode  = this.m.sp.mode
+        if (typeof block.axisX == "undefined") block.axisX = sp_export.axisX.name
+        if (typeof block.axisY == "undefined") block.axisY = sp_export.axisY.name
+        if (typeof block.mode == "undefined")  block.mode  = sp_export.mode
 
         //retrieve timeID
         var time
@@ -1304,29 +1304,29 @@ Report.prototype = {
         this.m.changeTime(time)
         this.m.changeGermline(block.locus, false)
 
-        this.m.sp.changeSplitMethod(block.axisX, block.axisY, block.mode, true)
+        sp_export.changeSplitMethod(block.axisX, block.axisY, block.mode, true)
         if (typeof block.domainX != "undefined")
-            this.m.sp.updateScaleX(block.domainX)
+            sp_export.updateScaleX(block.domainX)
         if (typeof block.domainY != "undefined")
-            this.m.sp.updateScaleY(block.domainY)  
+            sp_export.updateScaleY(block.domainY)
         
         //resize 791px ~> 21cm
-        this.m.sp.resize(771,250)
-        this.m.sp.fastForward()
+        sp_export.resize(771,250)
+        sp_export.fastForward()
         
-        var container_name  =   this.m.sp.toString() +"  ["+ 
+        var container_name  =   sp_export.toString() +"  ["+
                                 this.m.getStrTime(time, "order")+"]."+
                                 this.m.getStrTime(time, "short_name");
         var w_sp = this.container(container_name, block)
         w_sp.addClass("scatterplot");
         
-        var svg_sp = document.getElementById(this.m.sp.id+"_svg").cloneNode(true);
+        var svg_sp = document.getElementById(sp_export.id+"_svg").cloneNode(true);
         
         //set viewbox (same as resize)
         svg_sp.setAttribute("viewBox","0 0 791 250");
         
         for (var i = 0; i < this.m.clones.length; i++) {
-            var circle = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_circle'+i+'"]')[0]
+            var circle = svg_sp.querySelectorAll('[id="'+sp_export.id+'_circle'+i+'"]')[0]
             var color = this.getCloneExportColor(i);
             $(circle).css({"fill": color});
             
@@ -1337,17 +1337,17 @@ Report.prototype = {
         }
         
         if (block.mode != "bar"){
-            var bar_container = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_bar_container"]')[0]
+            var bar_container = svg_sp.querySelectorAll('[id="'+sp_export.id+'_bar_container"]')[0]
             bar_container.parentNode.removeChild(bar_container);
         }
 
         if (block.mode != "grid" && block.mode != "tsne"){
-            var plot_container = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_plot_container"]')[0]
+            var plot_container = svg_sp.querySelectorAll('[id="'+sp_export.id+'_plot_container"]')[0]
             plot_container.parentNode.removeChild(plot_container);
         }
 
         w_sp.append(svg_sp)
-        this.m.sp.resize();
+        sp_export.resize();
 
         return this
     },
