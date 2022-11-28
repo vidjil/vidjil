@@ -93,7 +93,7 @@ describe('Manipulate db page', function () {
 
         // Create analysis
         cy.goToPatientPage()
-        cy.openAnalysisFromSetPage(uid, config_id)
+        cy.openAnalysisFromDbPage(uid, config_id)
         cy.get('#top_info')
           .should("contain", "test")
         cy.saveAnalysis()
