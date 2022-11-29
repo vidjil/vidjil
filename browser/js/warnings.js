@@ -170,11 +170,11 @@ Warnings.prototype = {
         var span_select_warn_sample = document.createElement("span")
         span_select_warn_sample.id  = `warn_span_${subwarn_code}_selection_current`
         span_select_warn_sample.innerHTML += `<i class='icon-search-1' title='Select clonotypes with warning ${subwarn_code} (${subwarn.title}) in current sample.'></i>`
-        span_select_warn_sample.onclick = ()=> { self.m.selectCloneByWarningLevel(subwarn_code, true) }
+        span_select_warn_sample.onclick = ()=> { self.m.selectCloneByWarningCode(subwarn_code, true) }
         var span_select_warn_all = document.createElement("span")
         span_select_warn_all.id  = `warn_span_${subwarn_code}_selection_all_samples`
         span_select_warn_all.innerHTML += `<i class='icon-search-1' title='Select clonotypes with warning ${subwarn_code} (${subwarn.title}) in all samples.'></i>`
-        span_select_warn_all.onclick    = ()=> { self.m.selectCloneByWarningLevel(subwarn_code, false) }
+        span_select_warn_all.onclick    = ()=> { self.m.selectCloneByWarningCode(subwarn_code, false) }
         span_warn_show_sample.appendChild(span_select_warn_sample)
         span_warn_show_all_sample.appendChild(span_select_warn_all)
 
