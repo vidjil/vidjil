@@ -1639,11 +1639,19 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      */
     getWarningLevelFromList: function(warn_list){
         var maximum = 0
+        var value;
         warn_list.forEach( (warn) => {
             // get warn level
-            if (localStorage.getItem(`warn_${warn.code}`) &&
-                localStorage.getItem(`warn_${warn.code}`) > maximum) {
-                   maximum = localStorage.getItem(`warn_${warn.code}`)
+            if (localStorage.getItem(`warn_${warn.code}`) ) {
+                value = localStorage.getItem(`warn_${warn.code}`)
+            } else if (warn.level == undefined){ // Old style value
+                value = 1
+            } else {
+                value = parseInt(Object.keys(warnText).find(key => warnText[key] === warn.level))
+            }
+
+            if (value != undefined && value > maximum) {
+               maximum = value
             }
         })
         return maximum
