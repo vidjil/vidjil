@@ -1197,7 +1197,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     multiSelect: function (list) {
 
         if (list.length == 0) return;
-        console.log("select() (clone " + list + ")");
+        console.log("select() (clone " + list + "); "+list.length+"x clones");
 
         var tmp = []
         for (var i = 0; i < list.length; i++) {
