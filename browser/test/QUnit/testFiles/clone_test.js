@@ -183,6 +183,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     var c4 = new Clone(json_clone4, m, 3, c_attributes)
     var c5 = new Clone(json_clone5, m, 4, c_attributes)
     m.initClones()
+    localStorage.clear()
     
     assert.equal(c1.getSequenceName(), "hello", "get name clone1 : hello");
     assert.equal(c1.getCode(), "hello", "get code clone1 : hello");
@@ -199,9 +200,16 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c1.getLocus(), "TRG")
     assert.equal(c2.getLocus(), "IGH")
 
+
+    assert.equal(c1.warnLevel(), 1, "clone1 is warned (client, bad e-value, but level undef)")
+    assert.equal(c2.warnLevel(), 0, "clone2 is not warned (only 'info')")
+    assert.equal(c3.warnLevel(), 1, "clone3 is warned with 'warn'")
+    assert.equal(c4.warnLevel(), 3, "clone4 is warned with 'error'")
+    assert.equal(c5.warnLevel(), 0, "clone5 is not warned")
+
     assert.equal(c1.isWarned(), 'warn', "clone1 is warned (client, bad e-value)")
     assert.equal(c2.isWarned(), false, "clone2 is not warned (only 'info')")
-    assert.equal(c3.isWarned(), 'warn', "clone3 is warned with 'warn'")
+    assert.equal(c3.isWarned(), 'warn', "clone3 is warned with 'warn', 'a warning, old style' (code & level undef")
     assert.equal(c4.isWarned(), 'error', "clone4 is warned with 'error'")
     assert.equal(c5.isWarned(), false, "clone5 is not warned")
 
@@ -234,7 +242,6 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
 
     assert.deepEqual(c1.getReadsAllSamples(), [20, 20, 30, 30], "cluster c1+c2 reads on all samples");
 
-    console.log(m.samples.order);
 
     html = m.clones[0].getHtmlInfo();
     assert.includes(html, "<h2>Cluster info : hello</h2>")
@@ -293,8 +300,8 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
         "getHtmlInfo: productivity information (if exist)");
     // locus/genes content tests
     // TODO correct this locus test/function for chromium/firefox (inversion des balises)
-    /*assert.includes(html, "<tr><td>locus</td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
-        "getHtmlInfo: segmentation information (Locus)");*/
+    assert.includes(html, "<tr id='modal_line_locus'><td id='modal_line_title_locus'>locus</td><td colspan='4' id='modal_line_value_locus'><span class=\"systemBoxMenu\" title=\"TRG\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
+        "getHtmlInfo: segmentation information (Locus)");
 
     assert.includes(html, "<tr id='modal_line_V_gene_or_5_'><td id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td><td colspan='4' id='modal_line_value_V_gene_or_5_'>undefined V<div class='div-menu-selector' id='listVsegment' style='display: none'><form name=Vsegment>",
         "getHtmlInfo: segmentation information (V gene)");
@@ -374,7 +381,6 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     dclone.defineCompatibleClones()
     dclone.updateReadsDistribClones()
     html = m.clones[0].getHtmlInfo();
-    console.log( html)
     // Representative
     var include = html.includes("<td class='header' colspan='2'>representative sequence</td>")
     assert.ok(include, "getHtmlInfo: if clone distrib, keep field 'representative sequence'");
@@ -805,6 +811,48 @@ QUnit.test("productivity detailed", function(assert) {
     assert.equal(c4.getProductivityNameDetailed(), "no CDR3", "detailed productivity; without junction");
     assert.equal(c5.getProductivityNameDetailed(), "productive",       "detailed productivity; productive");
     assert.equal(c6.getProductivityNameDetailed(), "no-WPGxG-pattern", "detailed productivity; no-WPGxG-pattern");
+});
+
+
+QUnit.test("isWarnedBool", function(assert) {
+    
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c3 = new Clone(json_clone3, m, 2, c_attributes)
+    var c4 = new Clone(json_clone4, m, 3, c_attributes)
+    var c5 = new Clone(json_clone5, m, 4, c_attributes)
+    m.initClones()
+    console.log( c2.warn)
+    assert.equal(c1.isWarnedBool(), true,  "clone1 is warned")
+    assert.equal(c2.isWarnedBool(), true, "clone2 is not warned")
+    assert.equal(c3.isWarnedBool(), true,  "clone3 is warned")
+    assert.equal(c4.isWarnedBool(), true,  "clone4 is warned")
+    assert.equal(c5.isWarnedBool(), false, "clone5 is not warned")
+});
+
+
+QUnit.test("haveWarning", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data_productivity, 100);
+    m.initClones();
+
+    m.clones[0].warn  = [{"code": "W69", "msg": "", "level": "warn"}]
+    m.clones[1].warn  = [{"code": "W82", "msg": "", "level": "warn"}]
+    m.clones[5].warn  = [{"code": "W69", "msg": "", "level": "warn"}, {"code": "W82", "msg": "", "level": "warn"}]
+    
+    assert.ok(m.clones[0].haveWarning("W69"), "clone 0, haveWarning(W69)")
+    assert.notOk(m.clones[0].haveWarning("W82"), "clone 0, haveWarning(W69)")
+    assert.notOk(m.clones[0].haveWarning("Wxx"), "clone 0, haveWarning(W69)")
+
+    assert.notOk(m.clones[1].haveWarning("W69"), "clone 1, haveWarning(W82)")
+    assert.ok(m.clones[1].haveWarning("W82"), "clone 1, haveWarning(W82)")
+    assert.notOk(m.clones[1].haveWarning("Wxx"), "clone 1, haveWarning(W82)")
+
+    assert.ok(m.clones[5].haveWarning("W69"), "clone 5, haveWarning(Wxx)")
+    assert.ok(m.clones[5].haveWarning("W82"), "clone 5, haveWarning(Wxx)")
+    assert.notOk(m.clones[5].haveWarning("Wxx"), "clone 5, haveWarning(Wxx)")
 });
 
 
