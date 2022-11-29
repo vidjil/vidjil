@@ -1713,7 +1713,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.multiSelect(selection)
     },
 
-
+    /**
+     * For all presetn warning in localstorage, give the original value as setted in warnings_data
+     */
     resetWarnings: function(){
         var warnings_class = Object.keys(warnings_data)
         for (var i = 0; i < warnings_class.length; i++) {

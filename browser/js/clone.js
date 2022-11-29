@@ -150,7 +150,7 @@ Clone.prototype = {
     },
 
     /**
-     * Return maximum level of warning, using setted warning level in localStorage
+     * Return maximum level of warning (number format), using setted warning level in localStorage when present
      */
     warnLevel: function () {
         // get list of warn code
