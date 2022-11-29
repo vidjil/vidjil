@@ -1530,6 +1530,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
     /**
      * Return a table of each warning, with number of clone and reads by type of warning
+     * if timeId equal -1, return summed warnings table for all samples
      * @param {integer} timeID - time/sample index
      * @return {Object} Dict of warning, with list of clonotype and sum of reads by type of warning
      * */
@@ -1547,6 +1548,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             return msg
         }
 
+        if (timeID == undefined){
+            timeID = -1
+        }
+
         var warned = {}
         for (var cloneId in this.clones){
             var clone = this.clone(cloneId)
@@ -1556,13 +1561,18 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                     if (Object.keys(warn).length == 0){
                         continue
                     }
-                    if (clone.reads[timeID] != 0){
+                    if (timeID != -1 && clone.reads[timeID] != 0){
                         if (warned[warn.code] == undefined){
-                            warned[warn.code] = {"clones": [], "reads": 0, "msg": ""}
+                            warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg)}
                         }
                         warned[warn.code].clones.push(clone.index)
                         warned[warn.code].reads += clone.reads[timeID]
-                        warned[warn.code].msg = getCleanedWarningName(warn.msg)
+                    } else if (timeID == -1){
+                        if (warned[warn.code] == undefined){
+                            warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg)}
+                        }
+                        warned[warn.code].clones.push(clone.index)
+                        warned[warn.code].reads += sum(clone.reads)
                     }
                 }
             }
