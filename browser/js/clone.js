@@ -107,14 +107,15 @@ Clone.prototype = {
     COVERAGE_WARN: 0.5,
     EVALUE_WARN: 0.001,
     
-    isWarned: function (settings_leveled) {
+    isWarnedBool: function () {
+        return this.warn.length > 0
+    },
+
     /**
      * settings_leveled (Boolean) Use level as setted in the localstorage of not
      * @return {string} a warning class is set on this clone
      */
-        if (!settings_leveled){
-            return this.warn.length > 0
-        }
+    isWarned: function () {
         var wL = this.warnLevel()
         if (wL){ return warnText[wL] }
 
@@ -1878,8 +1879,8 @@ Clone.prototype = {
                 self.m.displayInfoBox(self.index);
             }
 
-            if (this.isWarned(settings_leveled = true)) {
-                span_info.className += " " + this.isWarned(settings_leveled = true) ;
+            if (this.isWarnedBool()) {
+                span_info.className += " " + this.isWarnedBool() ;
                 span_info.appendChild(icon('icon-warning-1', this.warnText()));
             } else {
                 span_info.appendChild(icon('icon-info', 'clonotype information'));

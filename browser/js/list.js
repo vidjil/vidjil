@@ -418,8 +418,8 @@ List.prototype = {
             span_info = document.getElementById("clone_infoBox_"+id)
             span_info.innerHTML = ""
             span_info.className = ""
-            if (clone.isWarned(settings_leveled = true)) {
-                span_info.className = clone.isWarned(settings_leveled = true) ;
+            if (clone.isWarnedBool()) {
+                span_info.className = clone.isWarnedBool() ;
                 span_info.appendChild(icon('icon-warning-1', clone.warnText()));
             } else {
                 span_info.appendChild(icon('icon-info', 'clonotype information'));

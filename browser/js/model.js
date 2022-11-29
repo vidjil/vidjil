@@ -1550,7 +1550,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var warned = {}
         for (var cloneId in this.clones){
             var clone = this.clone(cloneId)
-            if (clone.isWarned(settings_leveled=false)){
+            if (clone.isWarned()){
                 for (var warn_pos in clone.warn){
                     var warn = clone.warn[warn_pos]
                     if (Object.keys(warn).length == 0){
@@ -1571,7 +1571,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     changeWarningLevel: function(subwarn_code, current_level, bump){
-        console.default.log(`change warn level before; ${subwarn_code}, ${current_level}; bump ${bump}`)
+        // console.default.log(`change warn level before; ${subwarn_code}, ${current_level}; bump ${bump}`)
         var div  = document.getElementById(`warn_icon_${subwarn_code}`)
         var span = document.getElementById(`warn_span_${subwarn_code}`)
         
