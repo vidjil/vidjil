@@ -70,13 +70,14 @@ Warnings.prototype = {
         var self = this;
         var target = document.getElementById("warnings_list")
         target.innerHTML = ""
-        var current_warnings = this.m.getWarningsClonotypeInfo()
+        var warn_info_sample = this.m.getWarningsClonotypeInfo(this.m.t)
+        var warn_info_all    = this.m.getWarningsClonotypeInfo(undefined)
 
         var warnings_class = Object.keys(warnings_data)
         for (var i = 0; i < warnings_class.length; i++) {
             
             var warning_section = warnings_data[warnings_class[i]]
-            var section = this.build_warnings_section(warnings_class[i], warning_section, current_warnings)
+            var section = this.build_warnings_section(warnings_class[i], warning_section, warn_info_all, warn_info_sample)
             target.appendChild(section)
         }
 
@@ -96,7 +97,7 @@ Warnings.prototype = {
      * warning_section  = content of all warning of this type
      * current_warnings = Warnings present in this sample
      */
-    build_warnings_section: function(warn_class, warning_section, current_warnings){
+    build_warnings_section: function(warn_class, warning_section, warn_info_all, warn_info_sample){
         var div = document.createElement("div");
         console.default.log( `warning_section == ${warn_class}`)
         div.id   = warn_class
@@ -111,7 +112,7 @@ Warnings.prototype = {
         
         Object.keys(warning_section).forEach( (subwarn_code) =>{
             var subwarn = warning_section[subwarn_code]
-            div.appendChild( this.build_warning_entrie(subwarn_code, subwarn, current_warnings))
+            div.appendChild( this.build_warning_entrie(subwarn_code, subwarn, warn_info_all, warn_info_sample))
            
         })
         return div
@@ -124,7 +125,7 @@ Warnings.prototype = {
      * subwarn          content of the warning
      * current_warnings Warnings present in this sample
      */
-    build_warning_entrie: function(subwarn_code, subwarn, current_warnings){
+    build_warning_entrie: function(subwarn_code, subwarn, warn_info_all, warn_info_sample){
         var self = this
         if (subwarn_code == "W53"){console.default.log( subwarn_code )}
         var sub = document.createElement("div");
@@ -135,9 +136,6 @@ Warnings.prototype = {
         // create line
 
         var subwarn_level = localStorage.getItem(`warn_${subwarn_code}`) ? Number(localStorage.getItem(`warn_${subwarn_code}`)) : subwarn.level
-        if (subwarn_code == "W53"){
-            console.default.log( `loaded level ${subwarn_code}; ${subwarn_level}; ${typeof(subwarn_level)}`)
-        }
 
         var icon_class; var span_warn
         if (subwarn_level == 0) {icon_class = "icon-info"; span_warn=""}
@@ -145,6 +143,42 @@ Warnings.prototype = {
         else if (subwarn_level == 2) {icon_class = "icon-warning-1"; span_warn="alert"}
 
         var spans = document.createElement("span")
+        spans.classList.add("list")
+
+        // Table with clone/reads number
+        var span_warn_show_sample    = document.createElement("span")
+        span_warn_show_sample.id     = `warn_span_${subwarn_code}_sample`
+        span_warn_show_sample.style  = "border: solid; border-width:2px; border-right:0.5px; min-width:100px; display: inline-block; text-align: right"
+        var span_warn_show_all_sample    = document.createElement("span")
+        span_warn_show_all_sample.id     = `warn_span_${subwarn_code}_all_samples`
+        span_warn_show_all_sample.style  = "border: solid; border-width:2px; border-left:0.5px; min-width:100px; display: inline-block; text-align: right"
+        if (Object.keys(warn_info_sample).indexOf(subwarn_code) != -1){
+            span_warn_show_sample.innerHTML += `${warn_info_sample[subwarn_code].clones.length} (${warn_info_sample[subwarn_code].reads})`
+        } else {
+            span_warn_show_sample.innerHTML += `0 (0)`
+        }
+
+        if (Object.keys(warn_info_sample).indexOf(subwarn_code) != -1){
+            span_warn_show_all_sample.innerHTML += `${warn_info_all[subwarn_code].clones.length} (${warn_info_all[subwarn_code].reads})`
+        } else {
+            span_warn_show_all_sample.innerHTML += `0 (0)`
+        }
+        spans.appendChild(span_warn_show_sample)
+        spans.appendChild(span_warn_show_all_sample)
+        
+        // Action for selection
+        var span_select_warn_sample = document.createElement("span")
+        span_select_warn_sample.id  = `warn_span_${subwarn_code}_selection_current`
+        span_select_warn_sample.innerHTML += `<i class='icon-search-1' title='Select clonotypes with warning ${subwarn_code} (${subwarn.title}) in current sample.'></i>`
+        span_select_warn_sample.onclick = ()=> { self.m.selectCloneByWarningLevel(subwarn_code, true) }
+        var span_select_warn_all = document.createElement("span")
+        span_select_warn_all.id  = `warn_span_${subwarn_code}_selection_all_samples`
+        span_select_warn_all.innerHTML += `<i class='icon-search-1' title='Select clonotypes with warning ${subwarn_code} (${subwarn.title}) in all samples.'></i>`
+        span_select_warn_all.onclick    = ()=> { self.m.selectCloneByWarningLevel(subwarn_code, false) }
+        span_warn_show_sample.appendChild(span_select_warn_sample)
+        span_warn_show_all_sample.appendChild(span_select_warn_all)
+
+
         var span_bump_minus = document.createElement("span")
         span_bump_minus.id  = `warn_span_${subwarn_code}_minus`
         span_bump_minus.innerHTML += "<i class='icon-minus' title='Increase level of this warning'></i>"
@@ -152,14 +186,13 @@ Warnings.prototype = {
         span_icon.classList = span_warn
         span_icon.id        = `warn_span_${subwarn_code}`
         span_icon.innerHTML += `<i class="${icon_class}" title='Current level' id=warn_icon_${subwarn_code}></i>`
+        
         var span_bump_plus  = document.createElement("span")
         span_bump_plus.id   = `warn_span_${subwarn_code}_plus`
         span_bump_plus.innerHTML += "<i class='icon-plus' title='Decrease level of this warning'></i>"
 
         span_bump_minus.onclick = ()=> { self.m.changeWarningLevel(subwarn_code, subwarn_level, "bump-") } 
         span_bump_plus.onclick  = ()=> { self.m.changeWarningLevel(subwarn_code, subwarn_level, "bump+") }
-        span_icon.onclick    = ()=> { self.m.selectCloneByWarningLevel(subwarn_code, true) }
-        span_icon.ondblclick = ()=> { self.m.selectCloneByWarningLevel(subwarn_code, false) }
 
         spans.appendChild(span_bump_minus)
         spans.appendChild(span_icon)
@@ -173,7 +206,7 @@ Warnings.prototype = {
         div_text.appendChild(text)
         sub.appendChild(div_text)
 
-        if (Object.keys(current_warnings).indexOf(subwarn_code) != -1){
+        if (Object.keys(warn_info_sample).indexOf(subwarn_code) != -1){
         } else {
             sub.classList.add("warnings_section_unpresent")
             sub.style.display = "none"
@@ -188,7 +221,7 @@ Warnings.prototype = {
 
         this.updateElem(list);
         this.updateElemStyle(list)
-        
+        this.build_warnings()
     },
 
 
