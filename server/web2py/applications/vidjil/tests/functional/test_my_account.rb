@@ -57,7 +57,7 @@ class TestMyAccount < ServerTest
       elem.click if elem.present?
     end
     Watir::Wait.until(timeout: 30) {$b.execute_script("return jQuery.active") == 0}
-    assert(filter.value == '#test2 ')
+    assert(filter.value == '#test2')
     assert(public_group_info.span(class: 'patient_num_sets').text != num_patients)
   end
 

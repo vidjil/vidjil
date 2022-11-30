@@ -32,7 +32,6 @@ describe('Manipulate patient, sample and launch analysis', function () {
         var informations = "un set d'information"
         cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations)
 
-
         var sample_id = 2
         cy.launchProcess("2", sample_id)
         cy.waitAnalysisCompleted("2", sample_id)
@@ -42,14 +41,13 @@ describe('Manipulate patient, sample and launch analysis', function () {
 
     it('01-Delete analysis',  function() {
         cy.goToPatientPage()
-        var uid = 3; // TODO; reuse previous uid // async
+        var uid = 2; // TODO; reuse previous uid // async
         var sample_id = 2
 
-        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
-          .click({force: true})
-        cy.update_icon()
-
+        cy.openSet(uid)
         cy.deleteProcess("2", sample_id)
+
+        cy.launchProcess("2", sample_id) // suppl for later tests
     })
 
 

@@ -19,7 +19,7 @@ describe('Creation of users and groups', function () {
         // Test visibility of some panel and z-index
         cy.goToPatientPage()
         cy.get('.db_div').should("be.visible")
-        cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'patient\'})"]').click()
+        cy.newSet('patient')
         cy.get('.db_div').should("be.visible")
         cy.get('#patient_clipboard > .icon-newspaper').click()
         cy.get('.popup_container').should("be.visible")
