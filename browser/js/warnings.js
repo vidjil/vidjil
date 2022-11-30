@@ -68,7 +68,7 @@ Warnings.prototype = {
      */
     build_warnings: function(){
         var self = this;
-        var target = document.getElementById("warnings_list")
+        var target = document.getElementById(this.id)
         target.innerHTML = ""
         var warn_info_sample = this.m.getWarningsClonotypeInfo(this.m.t)
         var warn_info_all    = this.m.getWarningsClonotypeInfo(undefined)
