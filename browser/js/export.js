@@ -341,6 +341,43 @@ Report.prototype = {
         $("#rs-selected-sample-count").html("["+count+" selected]")
     },
 
+    /**
+     * Get locus state inside export obj. true if present in list, false in other case
+     */
+    getLocusState: function(locus){
+        return self.settings.locus.indexOf(locus) != -1
+    },
+
+    /**
+     * Change the locus status after a click on one locus tile
+     * Take into account the shift press status to modifiy the behavior of seleciton
+     * Menu is rerender after modification
+     */
+    changeLocus: function(locusDom, shiftkey){
+        var locus = $(locusDom).attr("value")
+        if (!shiftkey){ // swich only this locus
+            if (this.settings.locus.indexOf(locus) != -1){
+                this.settings.locus.splice(this.settings.locus.indexOf(locus),1)
+            } else {
+                this.settings.locus.push(locus)
+            }
+        } else { // Switch all locus action
+            if (this.settings.locus.indexOf(locus) == -1){// case 0; locus not present, hide all other, and show only this one
+                this.settings.locus = [locus]
+            } else if (this.settings.locus.length > 1 && this.settings.locus.indexOf(locus) != -1){// case 1; some/all locus present
+                // hide all other locus
+                this.settings.locus = [locus]
+            } else if (this.settings.locus.length == 1 && this.m.system_selected.length > 1){ // only one active locus
+                // Show all locus
+                this.settings.locus = []
+                for (var i=0; i<this.m.system_selected.length; i++){
+                    this.settings.locus.push(this.m.system_selected[i])
+                }
+            }
+        }
+        this.initLocus() // rerender content
+    },
+
     initLocus: function(){
         var self = this;
 
@@ -351,20 +388,14 @@ Report.prototype = {
                 this.settings.locus.push(this.m.system_selected[i])
         }
 
-        var handle = function(){
-
-            if ($(this).hasClass("rs-selected"))
-                self.settings.locus.splice(self.settings.locus.indexOf($(this).attr("value")),1)
-            else
-                self.settings.locus.push($(this).attr("value"))
-        
-            $(this).toggleClass("rs-selected");
-            $(this).toggleClass("rs-unselected");
+        var handle = function(e){
+            self.changeLocus(this, e.shiftKey)
         }
 
-        var checkBoxes = []
+        var checkBoxes   = []
         var locus_select = $("#report-settings-locus-select")
-        var parent = $('<div/>', { class: "rs-flex-parent-h"}).appendTo(locus_select);
+        var parent       = $("#rs-locus-list")
+        parent.empty() // remove all previous dom element if rerender
         for (var j = 0; j < this.m.system_available.length; j++){
             var locus = this.m.system_available[j]
             var selected = this.settings.locus.indexOf(locus) != -1
