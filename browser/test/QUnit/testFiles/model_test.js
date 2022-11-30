@@ -792,11 +792,8 @@ QUnit.test("getClonesWithWarningCode", function(assert) {
     m.clones[5].reads = [10,10, 0, 10]
     m.clones.forEach( (c) => {console.log(`${c.index}; ${c.reads}: ==> ${c.warn.map((w)=>{return w.code})}`)})
 
-    console.log("m.getClonesWithWarningCode('W69')" )
     assert.deepEqual( m.getClonesWithWarningCode("W69"), [0, 5], "Select clones with warn code W69, current sample (0) with reads" )
-    console.log("m.getClonesWithWarningCode('W82')" )
     assert.deepEqual( m.getClonesWithWarningCode("W82"), [1, 5], "Select clones with warn code W82, current sample (0) with reads" )
-    console.log("m.getClonesWithWarningCode('Wxx')" )
     assert.deepEqual( m.getClonesWithWarningCode("Wxx"), [], "Select clones with warn code Wxx (not present), current sample (0) with reads" )
     assert.deepEqual( m.getClonesWithWarningCode("Wdouble"), [2], "Select clones with 2x the same warnings" )
 
