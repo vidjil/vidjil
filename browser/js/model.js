@@ -1645,14 +1645,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var maximum = 0
         var value;
         warn_list.forEach( (warn) => {
-            // get warn level
-            if (localStorage.getItem(`warn_${warn.code}`) ) {
-                value = localStorage.getItem(`warn_${warn.code}`)
-            } else if (warn.level == undefined){ // Old style value
-                value = 1
-            } else {
-                value = parseInt(Object.keys(warnText).find(key => warnText[key] === warn.level))
-            }
+            value = getWarningLevelFromWarn(warn)
 
             if (value != undefined && value > maximum) {
                maximum = value
@@ -1661,6 +1654,23 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return maximum
     },
 
+    /**
+     * Return the level of a warning depending of the localstorage declaration
+     * Can use old fashion warnings and new warnings type.
+     * If warn level is undefined, return 1 by default (old type)
+     */
+    getWarningLevelFromWarn: function(warn){
+        if (!("code" in warn) && !("msg" in warn)  && !("level" in warn) ){
+            return 0
+        } else if (localStorage.getItem(`warn_${warn.code}`) ) {
+            return localStorage.getItem(`warn_${warn.code}`)
+        } else if (warn.level == undefined){ // Old style value
+            return 1
+        } else {
+            return parseInt(Object.keys(warnText).find(key => warnText[key] === warn.level))
+        }
+        return 2
+    },
 
     expendWarningSection: function(warn_section, show){
         var current_warnings = Object.keys(this.getWarningsClonotypeInfo())
