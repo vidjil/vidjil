@@ -62,12 +62,15 @@ test_tools:
 # Germlines
 
 test_germlines:
+  image: vidjilci/cypress_with_browsers:latest
   stage: test_germlines
   script:
     - make -C germline get-all-data
     - make -C germline tests
   only:
     - /^feature-.*g.*\/.*$/
+  tags:
+    - cidocker
 
 
 # Includes
