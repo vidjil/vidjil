@@ -793,8 +793,13 @@ class ListWindows(VidjilJson):
         extension = file_path.split('.')[-1]
 
         with generic_open(file_path, "r", verbose) as f:
-            self.init_data(json.load(f, object_hook=self.toPython))
-            self.check_version(file_path)
+            try:
+                self.init_data(json.load(f, object_hook=self.toPython))
+                self.check_version(file_path)
+            except ValueError:
+                print("\n\nError at loading file %s.\nDid it is in correct vidjil format ?" % file_path)
+                exit(1)
+
 
         if pipeline: 
             # renaming, private pipeline
@@ -812,15 +817,23 @@ class ListWindows(VidjilJson):
 
     def loads_vidjil(self, string, pipeline, verbose=True):
         '''init listWindows with a json string'''
-        self.init_data(json.loads(string, object_hook=self.toPython))
+        try:
+            self.init_data(json.loads(string, object_hook=self.toPython))
+        except ValueError:
+                print("\n\nError at loading file %s.\nDid it is in correct vidjil format ?" % file_path)
+                exit(1)
 
     def load_pre_process(self, file_path, verbose = True):
         '''init listWindows with the pre_process data file'''
-        with generic_open(file_path, 'r', verbose) as f:
-            json_data = json.load(f, object_hook=self.toPython)
+        try:
+            with generic_open(file_path, 'r', verbose) as f:
+                json_data = json.load(f, object_hook=self.toPython)
 
-            self.d['samples'].d['pre_process'] = json_data['pre_process']
-            self.d['reads'].d['merged'] = json_data['reads'].d['merged']
+                self.d['samples'].d['pre_process'] = json_data['pre_process']
+                self.d['reads'].d['merged'] = json_data['reads'].d['merged']
+        except ValueError:
+                print("\n\nError at loading file %s.\nDid it is in correct vidjil format ?" % file_path)
+                exit(1)
 
     def getTop(self, top):
         result = []
