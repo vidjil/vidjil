@@ -1743,7 +1743,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             })
         }
         // reset menu
-        builder.build_warnings()
+        warnings.build_warnings()
         console.default.log( "TODO - reset warnings level" )
         
     },
