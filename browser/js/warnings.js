@@ -146,9 +146,11 @@ Warnings.prototype = {
         var span_warn_show_sample    = document.createElement("span")
         span_warn_show_sample.id     = `warn_span_${subwarn_code}_sample`
         span_warn_show_sample.style  = "border: solid; border-width:2px; border-right:0.5px; min-width:100px; display: inline-block; text-align: right"
+        span_warn_show_sample.title  = `Number of clonotypes (and reads) with warning ${subwarn_code} in the sample ${this.m.getStrTime(this.m.t)}`
         var span_warn_show_all_sample    = document.createElement("span")
         span_warn_show_all_sample.id     = `warn_span_${subwarn_code}_all_samples`
         span_warn_show_all_sample.style  = "border: solid; border-width:2px; border-left:0.5px; min-width:100px; display: inline-block; text-align: right"
+        span_warn_show_all_sample.title  = `Number of clonotypes (and reads) with warning ${subwarn_code} in all samples`
         if (Object.keys(warn_info_sample).indexOf(subwarn_code) != -1){
             span_warn_show_sample.innerHTML += `${warn_info_sample[subwarn_code].clones.length} (${warn_info_sample[subwarn_code].reads})`
         } else {
