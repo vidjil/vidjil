@@ -1553,30 +1553,34 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
 
         var warned = {}
-        for (var cloneId in this.clones){
-            var clone = this.clone(cloneId)
-            if (clone.isWarned()){
+        this.clones.forEach( (clone) => {
+            if (clone.isWarnedBool()){
                 for (var warn_pos in clone.warn){
                     var warn = clone.warn[warn_pos]
                     if (Object.keys(warn).length == 0){
                         continue
                     }
+
                     if (timeID != -1 && clone.reads[timeID] != 0){
                         if (warned[warn.code] == undefined){
                             warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg)}
                         }
-                        warned[warn.code].clones.push(clone.index)
-                        warned[warn.code].reads += clone.reads[timeID]
+                        if (warned[warn.code].clones.indexOf(clone.index) == -1){
+                            warned[warn.code].clones.push(clone.index)
+                            warned[warn.code].reads += clone.reads[timeID]
+                        }
                     } else if (timeID == -1){
                         if (warned[warn.code] == undefined){
                             warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg)}
                         }
-                        warned[warn.code].clones.push(clone.index)
-                        warned[warn.code].reads += sum(clone.reads)
+                        if (warned[warn.code].clones.indexOf(clone.index) == -1){
+                            warned[warn.code].clones.push(clone.index)
+                            warned[warn.code].reads += sum(clone.reads)
+                        }
                     }
                 }
             }
-        }
+        })
         return warned
     },
 
@@ -1696,8 +1700,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         for (var i = 0; i < this.clones.length; i++) {
             var clone = this.clones[i]
-            if (clone.haveWarning(warn_code) && (!only_present || (only_present && clone.getSize(this.t))) ){
-                selection.push( i )
+            if (clone.haveWarning(warn_code) &&
+                (!only_present || (only_present && clone.getSize(this.t))) ){
+                    selection.push( i )
             }
         }
         return selection
