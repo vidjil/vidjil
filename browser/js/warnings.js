@@ -99,7 +99,6 @@ Warnings.prototype = {
      */
     build_warnings_section: function(warn_class, warning_section, warn_info_all, warn_info_sample){
         var div = document.createElement("div");
-        console.default.log( `warning_section == ${warn_class}`)
         div.id   = warn_class
         div.classList = "menu_box"
         var span_expend = document.createElement("span")
@@ -127,12 +126,10 @@ Warnings.prototype = {
      */
     build_warning_entrie: function(subwarn_code, subwarn, warn_info_all, warn_info_sample){
         var self = this
-        if (subwarn_code == "W53"){console.default.log( subwarn_code )}
         var sub = document.createElement("div");
         sub.id  = `subwarn_${subwarn_code}`
         sub.style = "margin:3px; display:flew;"
         sub.classList = "buttonSelector warnings_line"
-        // console.default.log( subwarn )
         // create line
 
         var subwarn_level = localStorage.getItem(`warn_${subwarn_code}`) ? Number(localStorage.getItem(`warn_${subwarn_code}`)) : subwarn.level
