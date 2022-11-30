@@ -211,7 +211,8 @@ Com.prototype = {
         //
         this.confirm = {};
 
-        this.confirm.box =  $('<div/>',     {   class: "popup_container"
+        this.confirm.box =  $('<div/>',     {   class: "popup_container",
+                                                id: "popup_container_box"
                                             }).appendTo(document.body);
 
         this.confirm.content = $('<div/>',  {   class: "info-msg",
@@ -230,11 +231,13 @@ Com.prototype = {
 
         this.confirm.cancel = $('<button/>',{   class: 'container_button',
                                                 text : 'cancel',
+                                                id:    'confirm_btn_cancel'
                                             }).click(function() {self.closeConfirmBox()})
                                               .appendTo(this.confirm.buttondiv);
 
         this.confirm.continue = $('<button/>',{ class: 'container_button',
                                                 text : 'continue',
+                                                id:    'confirm_btn_continue'
                                             }).appendTo(this.confirm.buttondiv);
         
         /*
@@ -420,16 +423,21 @@ Com.prototype = {
         this.div_dataBox.lastElementChild.removeAllChildren();
     },
 
-    // ask user to confirm action before executing fallback
-    // if input is defined box will ask for a value to use in callback
-    confirmBox: function (text, callback, input){
+    /**
+     * ask user to confirm action before executing fallback
+     * if input is defined box will ask for a value to use in callback
+     * @param close_by_callback; prevent to close confirmBox if a callback should close it himself (after textarea verification for example)
+     */
+    confirmBox: function (text, callback, input, close_by_callback=false){
         var self = this
         this.confirm.box.show();
         this.confirm.input.val("");
         this.confirm.inputdiv.hide();
         this.confirm.content.html(text);
         this.confirm.continue.unbind("click");
-        this.confirm.continue.click(function(){self.closeConfirmBox()});
+        if (!close_by_callback){
+            this.confirm.continue.click(function(){self.closeConfirmBox()});
+        }
 
         if (typeof input != "undefined")
             this.confirm.inputdiv.show();

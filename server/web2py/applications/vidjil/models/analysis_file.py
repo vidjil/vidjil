@@ -37,6 +37,7 @@ def get_clean_analysis(filehandle):
                                                                     'clusters': 'clusters',
                                                                     'clones': 'clones', 
                                                                     'tags': 'tags', 
+                                                                    'report_save': 'report_save',
                                                                     'samples': 'samples'})
     return result
     
@@ -66,5 +67,6 @@ def get_default_analysis():
            "clusters": [],
            "clones" : [],
            "tags": {},
+           "report_save": {},
            "vidjil_json_version" : "2014.09"
            }
