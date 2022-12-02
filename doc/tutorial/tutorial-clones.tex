@@ -480,7 +480,7 @@ By default in the bottom plot (the \textit{grid}), the clones
   /////////////////////////////////////////////////////
   cy.log("// test_B_clones_18_select_mulitple_ighv3_13_clonotype")
     cy.selectClone(0)
-    cy.get("body").type("0")
+    cy.get("body").type(0)
 
     cy.get('#visu_id_label_x_IGHV3-13').click()
     cy.update_icon()
@@ -704,7 +704,8 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
   ///////////////////////////////////////////
   cy.log("// test_B_clones_28_switch_scatterplot_mode")
 
-    cy.get("body").type(0)
+    cy.selectClone(0)
+    cy.get("body").type("0")
     cy.update_icon()
 
     cy.get('#visu_id_legend_x').should("have.text", "V/5' gene")
