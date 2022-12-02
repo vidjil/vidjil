@@ -455,6 +455,22 @@ function append_to_object(data, append_to) {
     }
 }
 
+/**
+ * Allow to copy passed content into the clipboard
+ */
+function copyTextToClipboard(text, field) {
+    if (!navigator.clipboard) {
+        console.log({ msg: "Unable to copy content into clipboard. Maybe cause by an old browser", type: "flash", priority: 3 });
+        return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+        var msg_field = (field != undefined) ? ` field: <B>${field}</B>` : ""
+        console.log({ msg: 'Copying to clipboard'+msg_field, type: "flash", priority: 1 });
+    }, function(err) {
+        console.log({ msg: 'Could not copy to clipboard: '+ err, type: "flash", priority: 2 });
+    });
+}
+
 
 /**
  * Floor the given number to a power of 10
@@ -986,12 +1002,13 @@ var header = function(content, title, time_length, class_line, class_cell) {
  *  @param {string} title - Specific title id to give as extension of the DOM id of the line; can be undefined
  *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
  */
-var row_1  = function(item, content, title, time_length, class_line, class_cell_first, class_cell_other) { 
+var row_1  = function(item, content, title, time_length, class_line, class_cell_first, class_cell_other, allow_copy=false) {
     class_line = class_line != undefined ? `class='${class_line}'` : ""
     class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
     class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
     title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
-    return `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}</td><td ${class_cell_other} colspan='${time_length}' id='modal_line_value_${title}'>${content}</td></tr>`;
+    var copy  = (allow_copy == true) ? "<i class='icon-docs' style='cursor: copy'onclick='copyTextToClipboard(\""+content+"\", \""+title+"\")''></i>" : ""
+    return `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}${copy}</td><td ${class_cell_other} colspan='${time_length}' id='modal_line_value_${title}'>${content}</td></tr>`;
 }
 
 /**
@@ -1017,7 +1034,11 @@ var row_from_list  = function(item, content, title, time_length, class_line, cla
 
 
 /**
- *
+ * Create cell content by casting given parameter to be showable in table
+ *  @param {string} title - Specific title id to give to the line
+ *  @param {} content - Content that will be automatically casted
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ *  @param {} clone 
  */
 var row_cast_content = function(title, content, time_length, clone) {
     if (content == undefined) {

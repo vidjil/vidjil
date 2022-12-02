@@ -1664,7 +1664,7 @@ Clone.prototype = {
         
         //sequence info (or cluster main sequence info)
         if (this.hasSequence()){
-            html += row_1("sequence name", this.getSequenceName(), undefined, time_length)
+            html += row_1("sequence name", this.getSequenceName(), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
             html += row_1("code", this.getCode(), undefined, time_length)
             html += row_1("length", this.getSequenceLength(), undefined, time_length)
         }
@@ -1684,7 +1684,7 @@ Clone.prototype = {
                           "<span " +
                           (this.eValue > this.EVALUE_WARN ? "class='warning'" : "") +
                           ">" +
-                          this.eValue + "</span>", undefined, time_length)
+                          this.eValue + "</span>", undefined, time_length, undefined, undefined, undefined, allow_copy=true)
         }
 
         // abundance info
@@ -1735,17 +1735,17 @@ Clone.prototype = {
         }
         
         if (this.hasSequence()){
-            html += row_1("sequence", this.sequence, undefined, time_length)
+            html += row_1("sequence", this.sequence, undefined, time_length, undefined, undefined, undefined, allow_copy=true)
         }
         if (this.id != undefined){
-            html += row_1("id", this.id, undefined, time_length)
+            html += row_1("id", this.id, undefined, time_length, undefined, undefined, undefined, allow_copy=true)
         }
         if (this.id != undefined){
             html += row_1("locus", this.m.systemBox(this.germline).outerHTML + this.germline +
                 "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>", undefined, time_length)
         }
         if (this.seg != undefined && this.seg.junction != undefined){
-            html += row_1("Productivity", this.getProductivityNameDetailed() + "</div>", undefined, time_length)
+            html += row_1("Productivity", this.getProductivityNameDetailed() + "</div>", undefined, time_length, undefined, undefined, undefined, allow_copy=true)
         }
         if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("5") != "undefined V")){
             html += row_1("V gene (or 5')", this.getGene("5") +
@@ -1770,7 +1770,7 @@ Clone.prototype = {
         }
         if (typeof this.seg.junction != 'undefined' &&
             typeof this.seg.junction.aa != "undefined") {
-            html += row_1("junction (AA seq)", this.getSegAASequence('junction'), undefined, time_length)
+            html += row_1("junction (AA seq)", this.getSegAASequence('junction'), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
         }
 
         
