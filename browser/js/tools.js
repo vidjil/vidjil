@@ -458,14 +458,17 @@ function append_to_object(data, append_to) {
 /**
  * Allow to copy passed content into the clipboard
  */
-function copyTextToClipboard(text, field) {
+function copyTextToClipboard(text, field, elem) {
     if (!navigator.clipboard) {
         console.log({ msg: "Unable to copy content into clipboard. Maybe cause by an old browser", type: "flash", priority: 3 });
         return;
     }
     navigator.clipboard.writeText(text).then(function() {
         var msg_field = (field != undefined) ? ` field: <B>${field}</B>` : ""
-        console.log({ msg: 'Copying to clipboard'+msg_field, type: "flash", priority: 1 });
+        console.log({ msg: 'Copied '+msg_field, type: "flash", priority: 1 });
+        elem.title = 'Copied!'
+        setTimeout(function() { elem.title = "Copy to clipboard"}, 3000);
+
     }, function(err) {
         console.log({ msg: 'Could not copy to clipboard: '+ err, type: "flash", priority: 2 });
     });
@@ -1007,7 +1010,14 @@ var row_1  = function(item, content, title, time_length, class_line, class_cell_
     class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
     class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
     title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
-    var copy  = (allow_copy == true) ? "<i class='icon-docs' style='cursor: copy'onclick='copyTextToClipboard(\""+content+"\", \""+title+"\")''></i>" : ""
+    var copy = ""
+    if (allow_copy == true) {
+        copy = "<i class='icon-docs' style='cursor: copy' "+
+                   `id='modal_line_title_${title}_clipboard' `+
+                   `onclick='copyTextToClipboard("${content}", "${item}", this)' `+
+                   "title='Copy to clipboard'>"+
+               "</i>"
+    }
     return `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}${copy}</td><td ${class_cell_other} colspan='${time_length}' id='modal_line_value_${title}'>${content}</td></tr>`;
 }
 
