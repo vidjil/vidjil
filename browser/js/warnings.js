@@ -182,7 +182,8 @@ Warnings.prototype = {
         span_warn_show_all_sample.appendChild(span_select_warn_all)
 
 
-        var span_warn_checkbox  = document.createElement("input")+
+        var span_warn_checkbox = document.createElement("input")
+
         span_warn_checkbox.type = "checkbox"
         span_warn_checkbox.id   = `warn_filter_${subwarn_code}`
         span_warn_checkbox.checked = !this.m.getWarningFilterStatusFromCode(subwarn_code)
