@@ -745,6 +745,35 @@ QUnit.test("getWarningsClonotypeInfo", function(assert) {
 });
 
 
+QUnit.test("getWarningLevelFromCode", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    localStorage.clear()
+
+    var warn_1 = "W69"
+    var warn_2 = "W82"
+    var warn_3 = "Wxx"
+    var warn_undef = undefined
+    var warn_empty = {}
+    
+    assert.equal( m.getWarningLevelFromCode(warn_1), 0, "getWarningLevelFromCode; before local change, 'warn")
+    assert.equal( m.getWarningLevelFromCode(warn_2), 2, "getWarningLevelFromCode; before local change, 'alert'")
+    assert.equal( m.getWarningLevelFromCode(warn_3), 2, "getWarningLevelFromCode; before local change, 'error'")
+    assert.equal( m.getWarningLevelFromCode(warn_undef), 0, "getWarningLevelFromCode; before local change, 'undef'")
+
+    localStorage.setItem(`warn_W69`, 2)
+    localStorage.setItem(`warn_W82`, 3)
+    localStorage.setItem(`warn_Wxx`, 2)
+
+    assert.equal( m.getWarningLevelFromCode(warn_1), 2, "getWarningLevelFromCode; after local change, 'warn")
+    assert.equal( m.getWarningLevelFromCode(warn_2), 3, "getWarningLevelFromCode; after local change, 'alert'")
+    assert.equal( m.getWarningLevelFromCode(warn_3), 2, "getWarningLevelFromCode; after local change, 'error'")
+    assert.equal( m.getWarningLevelFromCode(warn_undef), 0, "getWarningLevelFromCode; after local change, 'undef'")
+
+});
+
 QUnit.test("getWarningLevelFromWarn", function(assert) {
     var m = new Model();
     var data_copy = JSON.parse(JSON.stringify(json_data));
