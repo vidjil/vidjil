@@ -752,15 +752,15 @@ QUnit.test("getWarningLevelFromCode", function(assert) {
     m.initClones()
     localStorage.clear()
 
-    var warn_1 = "W69"
-    var warn_2 = "W82"
-    var warn_3 = "Wxx"
+    var warn_1 = "W69" // level 0
+    var warn_2 = "W82" // level 3
+    var warn_3 = "Wxx" // level 1
     var warn_undef = undefined
     var warn_empty = {}
     
     assert.equal( m.getWarningLevelFromCode(warn_1), 0, "getWarningLevelFromCode; before local change, 'warn")
     assert.equal( m.getWarningLevelFromCode(warn_2), 2, "getWarningLevelFromCode; before local change, 'alert'")
-    assert.equal( m.getWarningLevelFromCode(warn_3), 2, "getWarningLevelFromCode; before local change, 'error'")
+    assert.equal( m.getWarningLevelFromCode(warn_3), 1, "getWarningLevelFromCode; before local change, 'error'")
     assert.equal( m.getWarningLevelFromCode(warn_undef), 0, "getWarningLevelFromCode; before local change, 'undef'")
 
     localStorage.setItem(`warn_W69`, 2)
