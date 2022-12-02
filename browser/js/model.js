@@ -1683,6 +1683,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         for (var i = warns.length - 1; i >= 0; i--) {
             var subwarn_code = warns[i]
             var warn = warnings_data[warn_section][subwarn_code]
+            if (!warn.visibility) { continue } // Bypass not implemented warn
             var div  = document.getElementById(`subwarn_${subwarn_code}`)
             if (show == true){
                 div.style.display = ""

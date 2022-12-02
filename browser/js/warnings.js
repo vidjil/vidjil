@@ -77,8 +77,10 @@ Warnings.prototype = {
         for (var i = 0; i < warnings_class.length; i++) {
             
             var warning_section = warnings_data[warnings_class[i]]
-            var section = this.build_warnings_section(warnings_class[i], warning_section, warn_info_all, warn_info_sample)
-            target.appendChild(section)
+            if (sum( Object.keys(warning_section).map( key => { return warning_section[key].visibility}))){
+                var section = this.build_warnings_section(warnings_class[i], warning_section, warn_info_all, warn_info_sample)
+                target.appendChild(section)
+            }
         }
 
         var reset = document.createElement("div")
@@ -111,7 +113,9 @@ Warnings.prototype = {
         
         Object.keys(warning_section).forEach( (subwarn_code) =>{
             var subwarn = warning_section[subwarn_code]
-            div.appendChild( this.build_warning_entrie(subwarn_code, subwarn, warn_info_all, warn_info_sample))
+            if (subwarn.visibility){
+                div.appendChild( this.build_warning_entrie(subwarn_code, subwarn, warn_info_all, warn_info_sample))
+            }
            
         })
         return div
