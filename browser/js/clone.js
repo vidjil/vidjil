@@ -169,6 +169,19 @@ Clone.prototype = {
         return items.join('\n')
     },
 
+    getWarningsDom: function(){
+        var dom = {}
+        if (this.isWarnedBool() && this.warnLevel()) {
+            dom.className = this.isWarned() ;
+            dom.icon = 'icon-warning-1'
+            dom.title = this.warnText()
+        } else {
+            dom.icon = 'icon-info'
+            dom.title = 'clonotype information'
+        }
+        return dom
+    },
+
     /**
      * return clone's most important name, shortened
      * @return {string} name
@@ -1878,13 +1891,11 @@ Clone.prototype = {
             span_info.onclick = function () {
                 self.m.displayInfoBox(self.index);
             }
+            // console.default.log( `${this.index} - ${this.isWarnedBool()}, ${this.warnLevel()}; => ${this.isWarnedBool() && this.warnLevel()}`)
+            var dom_content = this.getWarningsDom()
+            span_info.classList = dom_content.className
+            span_info.appendChild(icon(dom_content.icon, dom_content.title))
 
-            if (this.isWarnedBool()) {
-                span_info.className += " " + this.isWarnedBool() ;
-                span_info.appendChild(icon('icon-warning-1', this.warnText()));
-            } else {
-                span_info.appendChild(icon('icon-info', 'clonotype information'));
-            }
         }
 
         // Gather all elements
