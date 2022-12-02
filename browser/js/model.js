@@ -1584,42 +1584,14 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return warned
     },
 
-    changeWarningLevel: function(subwarn_code, current_level, bump){
-        // console.default.log(`change warn level before; ${subwarn_code}, ${current_level}; bump ${bump}`)
-        var div  = document.getElementById(`warn_icon_${subwarn_code}`)
-        var span = document.getElementById(`warn_span_${subwarn_code}`)
-        
-        if (bump == "bump-" && current_level > 0){
+    changeWarningLevel: function(subwarn_code, operation){
+        var current_level = this.getWarningLevelFromCode(subwarn_code)
+        if (operation == "decrease" && current_level > 0){
             current_level -= 1
-        } else if (bump == "bump+" && current_level < 2){
+        } else if (operation == "increase" && current_level < 2){
             current_level += 1
         }
 
-        // update dom elements
-        if (current_level == 0){ 
-            div.classList  = "icon-info" 
-            span.classList = "" 
-        } else {
-            div.classList = "icon-warning-1"
-            // change color
-            if (current_level == 1){ 
-                span.classList = "warn" 
-                console.default.log( "span: warn")
-            }
-            else if (current_level == 2){ 
-                span.classList = "alert"
-                console.default.log( "span: alert")
-            }
-        }
-
-        // Update function of icons minus/plus
-        var self = this
-        document.getElementById(`warn_span_${subwarn_code}_plus`).onclick =  ()=> { self.changeWarningLevel(subwarn_code, current_level, "bump+") }
-        document.getElementById(`warn_span_${subwarn_code}_minus`).onclick = ()=> { self.changeWarningLevel(subwarn_code, current_level, "bump-") }
-
-
-
-        console.default.log( )
         Object.keys(warnings_data).forEach( (category) => {
             Object.keys(warnings_data[category]).forEach( (warn_code) => {
                 if (warn_code == subwarn_code) {
@@ -1629,9 +1601,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         })
 
         this.view.forEach( (view) => {
-            if (view.id == "list") { 
+            if (view.id == "warnings_list") { 
                 view.update()
-                view.update_data_list()
             }
         })
         console.default.log(`change warn level after; ${subwarn_code}, ${current_level}`)
@@ -1743,7 +1714,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             })
         }
         // reset menu
-        warnings.build_warnings()
+        warnings.update()
         console.default.log( "TODO - reset warnings level" )
         
     },
