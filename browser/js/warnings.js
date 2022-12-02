@@ -232,10 +232,38 @@ Warnings.prototype = {
      * update all content for list and data list
      * */
     update: function () {
+        m.clones.forEach( c =>{
+            var info_list   = document.getElementById(`clone_infoBox_${c.index}`)
+            var info_align  = document.getElementById(`aligner_info_${c.index}`)
+            var dom_content = c.getWarningsDom()
+            if (info_list != null) {
+                info_list.classList = dom_content.className
+                info_list.firstChild.classList = dom_content.icon
+                info_list.firstChild.title = dom_content.title
+            }
+            if (info_align != null) {
+                info_align.classList = dom_content.className
+                info_align.firstChild.classList = dom_content.icon
+                info_align.firstChild.title = dom_content.title
+            }
+        })
 
-        this.updateElem(list);
-        this.updateElemStyle(list)
-        this.build_warnings()
+        Object.keys(warnings_data).forEach( (category) => {
+            Object.keys(warnings_data[category]).forEach( (warn_code) => {
+                var current = localStorage.getItem(`warn_${warn_code}`)
+                var warn_icon = current > 0 ? 'icon-warning-1' : 'icon-info'
+                var warn_text = warnText[current]
+                var span = document.getElementById(`warn_span_${warn_code}`)
+                if (span != null) {
+                    // console.default.log( `Update warning ${warn_code}`)
+                    span.innerHTML = ""
+                    span.classList = warn_text
+                    span.appendChild(icon(warn_icon))
+                    span.title = `Level of warning ${warn_code}: ${warn_text != "" ? warn_text : "info"}`
+                }
+
+            })
+        })
     },
 
 
