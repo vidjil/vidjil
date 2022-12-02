@@ -1642,16 +1642,18 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * If warn level is undefined, return 1 by default (old type)
      */
     getWarningLevelFromWarn: function(warn){
-        if (!("code" in warn) && !("msg" in warn)  && !("level" in warn) ){
+        var value = 2
+        if (!("code" in warn) && !("msg" in warn)  && !("level" in warn) ){ // empty
             return 0
-        } else if (localStorage.getItem(`warn_${warn.code}`) ) {
-            return localStorage.getItem(`warn_${warn.code}`)
         } else if (warn.level == undefined){ // Old style value
-            return 1
+            value = 1
+        } else if (warn.code != undefined && localStorage.getItem(`warn_${warn.code}`) ) {
+            value = parseInt(localStorage.getItem(`warn_${warn.code}`))
         } else {
-            return parseInt(Object.keys(warnText).find(key => warnText[key] === warn.level))
+            value = parseInt(Object.keys(warnText).find(key => warnText[key] === warn.level))
         }
-        return 2
+        if (this.getWarningFilterStatusFromCode(warn.code)){ return 0}
+        return value
     },
 
     /**
