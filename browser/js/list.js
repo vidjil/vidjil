@@ -771,7 +771,7 @@ List.prototype = {
      * */
     sortListBy:function(fct){
         self = this;
-        var list = jQuery('.list')
+        var list = jQuery('#list_clones > .list')
         var value = {};
         for (var i=0; i<list.length; i++){
             var id = list[i].getAttribute("id")
@@ -789,7 +789,7 @@ List.prototype = {
 
     sortListByGene: function(gene_type) {
         self = this;
-        var list = jQuery('.list')
+        var list = jQuery('#list_clones > .list')
         var sort = list.sort(function (a, b) {
             var idA = a.getAttribute("id");
             var idB = b.getAttribute("id");
