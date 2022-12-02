@@ -1608,6 +1608,17 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         console.default.log(`change warn level after; ${subwarn_code}, ${current_level}`)
     },
 
+    /**
+     * Toogle a warning  between is current level and info (level 0)
+     * Update the icon to show a warning or not
+     */
+    toogleWarningFilter: function(subwarn_code){
+        this.setWarningFilterStatus(subwarn_code, !this.getWarningFilterStatusFromCode(subwarn_code))
+        this.view.forEach( (view) => {
+            if (view.id == "warnings_list") {view.update()}
+        })
+    },
+
     /*
      * Return the maximum level of warning from a list of warning
      * Computed from the setted level of warning
@@ -1641,6 +1652,28 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             return parseInt(Object.keys(warnText).find(key => warnText[key] === warn.level))
         }
         return 2
+    },
+
+    /**
+     * Return the filter status of a warning depending of the localstorage declaration
+     * If warn level is undefined, return false by default
+     * @param (string) warn_code The warning code to search
+     */
+    getWarningFilterStatusFromCode: function(warn_code){
+        if (warn_code == undefined){
+            return false
+        } else if (localStorage.getItem(`warn_filter_${warn_code}`) ) {
+            return localStorage.getItem(`warn_filter_${warn_code}`) === "true"
+        }
+        return false
+    },
+    /**
+     * Set the filter status of a warning by his warning code
+     * @param (string) warn_code The warning code to set
+     * @param (Boolean) status The status to set
+     */
+    setWarningFilterStatus: function(warn_code, status){
+        localStorage.setItem(`warn_filter_${warn_code}`, status)
     },
 
     expendWarningSection: function(warn_section, show){
@@ -1711,6 +1744,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 if (localStorage.getItem(`warn_${subwarn_code}`)){
                     localStorage.setItem(`warn_${subwarn_code}`, subwarn.level)
                 }
+                this.setWarningFilterStatus(subwarn_code, false)
             })
         }
         // reset menu
