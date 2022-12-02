@@ -218,6 +218,16 @@ Warnings.prototype = {
         return sub
     },
     
+    getListCode: function(warns){
+        var codes = []
+        warns.forEach( w => {
+            if (w.code != undefined && codes.indexOf(w.code)){
+                codes.push(w.code)
+            }
+        })
+        return codes
+    },
+
     /**
      * update all content for list and data list
      * */
