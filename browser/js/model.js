@@ -1627,8 +1627,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var maximum = 0
         var value;
         warn_list.forEach( (warn) => {
-            value = getWarningLevelFromWarn(warn)
-
+            value = this.getWarningLevelFromWarn(warn)
             if (value != undefined && value > maximum) {
                maximum = value
             }
