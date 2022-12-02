@@ -1765,14 +1765,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     resetWarnings: function(){
         var warnings_class = Object.keys(warnings_data)
         for (var i = 0; i < warnings_class.length; i++) {
-            var warning_section = warnings_data[warnings_class[i]]
-                Object.keys(warning_section).forEach( (subwarn_code) =>{
+            const warning_section = warnings_data[warnings_class[i]]
+            /* jshint ignore:start */
+            Object.keys(warning_section).forEach( (subwarn_code) =>{
                 var subwarn = warning_section[subwarn_code]
                 if (localStorage.getItem(`warn_${subwarn_code}`)){
                     localStorage.setItem(`warn_${subwarn_code}`, subwarn.level)
                 }
                 this.setWarningFilterStatus(subwarn_code, false)
             })
+            /* jshint ignore:end */
         }
         // reset menu
         warnings.update()

@@ -76,8 +76,8 @@ Warnings.prototype = {
         var warnings_class = Object.keys(warnings_data)
         for (var i = 0; i < warnings_class.length; i++) {
             
-            var warning_section = warnings_data[warnings_class[i]]
-            if (sum( Object.keys(warning_section).map( key => { return warning_section[key].visibility}))){
+            const warning_section = warnings_data[warnings_class[i]]
+            if (sum( Object.keys(warning_section).map( key => { return warning_section[key].visibility}))){ 
                 var section = this.build_warnings_section(warnings_class[i], warning_section, warn_info_all, warn_info_sample)
                 target.appendChild(section)
             }
