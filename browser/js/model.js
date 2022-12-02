@@ -1656,6 +1656,31 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     /**
+     * Return the level of a warning depending of the localstorage declaration
+     * Can use old fashion warnings and new warnings type.
+     * If warn level is undefined, return 1 by default (old type)
+     * @param (string) warn_code The warning code to search
+     */
+    getWarningLevelFromCode: function(warn_code){
+        var level = 2
+        if (warn_code == undefined){
+            return 0
+        } else if (localStorage.getItem(`warn_${warn_code}`) ) {
+            level = parseInt(localStorage.getItem(`warn_${warn_code}`))
+        } else {
+            Object.keys(warnings_data).forEach( (category) => {
+                Object.keys(warnings_data[category]).forEach( (sub_warn_code) => {
+                    if (warn_code == sub_warn_code){
+                        level = warnings_data[category][warn_code].level;
+                    }
+                })
+            })
+        }
+        if (this.getWarningFilterStatusFromCode(warn_code)){ return 0 }
+        return level
+    },
+
+    /**
      * Return the filter status of a warning depending of the localstorage declaration
      * If warn level is undefined, return false by default
      * @param (string) warn_code The warning code to search
