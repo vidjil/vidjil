@@ -1321,7 +1321,7 @@ ScatterPlot.prototype = {
                     return "sp_system_label inactive"
                 })
                 .attr("id", function(d) {
-                    return `id_sp_system_label_${d.text}`
+                    return `${self.id}_id_sp_system_label_${d.text}`
                 })
         }
     },
