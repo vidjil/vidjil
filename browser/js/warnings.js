@@ -182,6 +182,12 @@ Warnings.prototype = {
         span_warn_show_all_sample.appendChild(span_select_warn_all)
 
 
+        var span_warn_checkbox  = document.createElement("input")+
+        span_warn_checkbox.type = "checkbox"
+        span_warn_checkbox.id   = `warn_filter_${subwarn_code}`
+        span_warn_checkbox.checked = !this.m.getWarningFilterStatusFromCode(subwarn_code)
+        span_warn_checkbox.onclick = ()=> { self.m.toogleWarningFilter(subwarn_code) }
+
         var span_warn_decrease = document.createElement("span")
         span_warn_decrease.id  = `warn_span_${subwarn_code}_minus`
         span_warn_decrease.innerHTML += "<i class='icon-minus' title='Increase level of this warning'></i>"
@@ -262,6 +268,8 @@ Warnings.prototype = {
                     span.title = `Level of warning ${warn_code}: ${warn_text != "" ? warn_text : "info"}`
                 }
 
+                var checkbox = document.getElementById(`warn_filter_${warn_code}`)
+                if (checkbox != null){ checkbox.checked = !this.m.getWarningFilterStatusFromCode(warn_code) }
             })
         })
     },
