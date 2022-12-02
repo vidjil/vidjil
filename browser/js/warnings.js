@@ -188,7 +188,7 @@ Warnings.prototype = {
         var span_icon       = document.createElement("span")
         span_icon.classList = span_warn
         span_icon.id        = `warn_span_${subwarn_code}`
-        span_icon.innerHTML += `<i class="${icon_class}" title='Current level' id=warn_icon_${subwarn_code}></i>`
+        span_icon.innerHTML += `<i class="${icon_class}" title='Level of warning ${subwarn_code}: ${span_warn != "" ? span_warn : "info"}' id=warn_icon_${subwarn_code}></i>`
         
         var span_warn_increase  = document.createElement("span")
         span_warn_increase.id   = `warn_span_${subwarn_code}_plus`
