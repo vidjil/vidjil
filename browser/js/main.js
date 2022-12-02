@@ -96,7 +96,7 @@ try {
     var sp2;
     var segment  = new Aligner("segmenter", m, db);      // Segmenter
     var warnings = new Warnings("warnings_list", m, db); // Warnings menu
-
+    m.warnings = warnings
 
     /* Similarity
      * retrieve and compute everything related to the similarity matrix
