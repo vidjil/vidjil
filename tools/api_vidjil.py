@@ -532,6 +532,7 @@ class Vidjil:
             filename (str): Name of the file
             pre_process (str): Number of the preprocess in string format
             file_number (str): Position of the file in string format ("1" or "2")
+            source (str, optional): Source of files. Two avalaible options: "computer" and "nfs" (for local storage). Defaults to "computer".
 
         Raises:
             FileNotFoundError: Raise an eception if the file don't exist locally
