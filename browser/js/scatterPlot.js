@@ -32,7 +32,7 @@
  * @param {string} id - dom id of the html div who will contain the scatterplot
  * @param {Model} model
  * */
-function ScatterPlot(id, model, database, default_preset) {
+function ScatterPlot(id, model, database, default_preset, hidden=false) {
     var self = this
 
     ScatterPlot_menu.call(this, default_preset)
@@ -41,6 +41,7 @@ function ScatterPlot(id, model, database, default_preset) {
 
     this.db = database
     this.id = id
+    this.hidden = hidden
 
     //size ( computed value -> resize() function)
     this.resizeCoef = 1; //Multiplifying factor, application to nodes radius
@@ -104,7 +105,9 @@ ScatterPlot.prototype = {
             this.initSVG();
             this.initBar();
             this.initMenu();
-            this.initSelector();
+            if (!this.hidden){
+                this.initSelector();
+            }
             this.resize();
             this.tsne_ready=false;
 
@@ -549,7 +552,7 @@ ScatterPlot.prototype = {
                     "enabled": enabled,
                     "x": xpos + 0.01,
                     "y": ((i * 2) + 1) / (n * 2),
-                    "id": `id_label_${system}`
+                    "id": `${self.id}_id_label_${system}`
                 })
             } else {
                 this.systemGrid.label.push({
@@ -557,7 +560,7 @@ ScatterPlot.prototype = {
                     "enabled": enabled,
                     "x": xpos,
                     "y": ((i * 2) + 1) / (n * 2),
-                    "id": `id_label_${system}`
+                    "id": `${self.id}_id_label_${system}`
                 })
             }
             this.systemGrid[system].x = 0.92
@@ -1159,7 +1162,7 @@ ScatterPlot.prototype = {
                 return className;
             })
             .attr("id", function(d) {
-                return `id_label_x_${d.text}`;
+                return `${self.id}_id_label_x_${d.text}`;
             })
             .attr("transform", function(d) {
                 var y = self.text_position_x
@@ -1243,7 +1246,7 @@ ScatterPlot.prototype = {
                 return d.text;
             })
             .attr("id", function(d) {
-                return `id_label_y_${d.text}`;
+                return `${self.id}_id_label_y_${d.text}`;
             })
             .attr("class", "sp_legend")
             /*
@@ -1278,7 +1281,7 @@ ScatterPlot.prototype = {
                 if (d.rotation !== 0) return "rotate(" + d.rotation + " " + d.x + " " + d.y + ")"
             })
             .attr("id", function(d) {
-                return `id_legend_${(d.rotation !== 0) ? "y" : "x"}`;
+                return `${self.id}_id_legend_${(d.rotation !== 0) ? "y" : "x"}`;
             })
     },
 
@@ -1318,7 +1321,7 @@ ScatterPlot.prototype = {
                     return "sp_system_label inactive"
                 })
                 .attr("id", function(d) {
-                    return `id_sp_system_label_${d.text}`
+                    return `${self.id}_id_sp_system_label_${d.text}`
                 })
         }
     },

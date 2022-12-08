@@ -1,3 +1,5 @@
+echo "Arguments: $@"
+
 echo "$ change chmod of cypress directory"
 chmod 777 cypress -R 
 
@@ -10,6 +12,28 @@ ls /app/cypress/fixtures/tools/tests/data
 
 echo "==> PWD: `pwd`"
 
+echo "==> ls /app/vidjil/browser/test/data/addons: `ls /app/vidjil/browser/test/data/addons`"
+
+
+# Move addons to the correct path for test
+if [[ $1 == /app/cypress/integration/external* ]]
+then
+	echo "External test, no configuration loaded"
+else
+	mv /app/vidjil/browser/test/data/addons/* /app/vidjil/browser/js/addons/
+	mv /app/vidjil/browser/js/conf.js.sample /app/vidjil/browser/js/conf.js
+	files=`printf "'%s'," /app/vidjil/browser/js/addons/*`
+	echo -e "Copy addons file: $files"
+	sed -i "s|\"js/lib/important-lib.js\", \"js/myscript.js\"|$files|g" "/app/vidjil/browser/js/conf.js"
+	sed -i "s|\"use_database\" : true,|\"use_database\" : false,|g" "/app/vidjil/browser/js/conf.js"
+	sed -i "s|/\* \"addons\"|\"addons\"|g" "/app/vidjil/browser/js/conf.js"
+	sed -i "s|,], \*/|],|g" "/app/vidjil/browser/js/conf.js"
+	sed -i "s|/app/vidjil/browser/||g" "/app/vidjil/browser/js/conf.js"
+
+	echo "===== conf.js content ===\n"
+	cat /app/vidjil/browser/js/conf.js
+	echo "=====\n"
+fi
 
 echo -e "$ ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec $@ --env workdir=vidjil,host=$HOST,initiated_database=false"
 ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec $@ --env workdir=vidjil,host=$HOST,initiated_database=false

@@ -202,6 +202,12 @@ Clone.prototype = {
         return parseFloat(size);
     },
 
+    /**
+     * Return clone name transformed with settings notation rules.
+     * short locus (IGHV3 ... IGHJ4 into IGHV3... J4)
+     * short allele notation
+     * short N region
+     */
     getShortName: function () {
 
         if ( this.hasSizeDistrib() ){

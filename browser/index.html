@@ -315,34 +315,20 @@
                                 <input id="menuAlleleNot_always" type="radio" name="menu_allele" value="always" onclick="m.changeAlleleNotation('always', true, true)" />always
                             </label>
                         </div>
+
+
+                        <div class="menu_box" id="primerset_menu">
+                            primer set<br/>
+                        </div>
+		                <div id="remove_primer_external"
+                            title="Primers will be trimmed before sending them to an external tool (such as IMGT/V-QUEST, IgBlast, Blast, …)">
+                            <input id="remove_primer_external_check" type="checkbox">trim primers before external analyses</input>
+                        </div>
+
+
                         <div class="menu_box">
                             <a class="buttonSelector" onclick="m.resetSettings();">reset settings</a>
                         </div>
-
-
-                        <div class="menu_box">
-                            primer set<br/>
-                            <label for="primerBiomed2" class="buttonSelector" >
-                                <input type="radio" id="primerBiomed2" name="primers" value="biomed2" onclick="m.switchPrimersSet('biomed2')"/>EuroClonality/BIOMED-2
-                            </label>
-
-                            <label for="primerEcngs" class="buttonSelector">
-                                <input type="radio" id="primerEcngs" name="primers" value="ecngs" onclick="m.switchPrimersSet('ecngs')"/>EuroClonality-NGS
-                            </label>
-
-                            <label for="primerEcngsFR1" class="buttonSelector">
-                                <input type="radio" id="primerEcngsFR1" name="primers" value="ecngs_FR1" onclick="m.switchPrimersSet('ecngs_FR1')"/>EuroClonality-NGS FR1
-                            </label>
-			                <!-- TODO : construire liste à partir des data disponibles/chargées dans le model.
-                              TODO : passer ça en liste deroulante ? -->
-
-                            <div id="remove_primer_external"
-                                title="Primers will be trimmed before sending them to an external tool (such as IMGT/V-QUEST, IgBlast, Blast, …)">
-                                <input id="remove_primer_external_check" type="checkbox">trim primers before external analyses</input>
-                            </div>
-                        </div>
-
-
                         <!--
                         <div class="submenu" id="system_menu" style="display:none">
                             <div class="menu_box">
@@ -767,7 +753,6 @@
 
                 <div style="float: right;">
                     <button id="rs-delete-button" type="button" onclick="report.delete();">Delete</button>
-                    <button id="rs-saveas-button" type="button" onclick="report.saveas();">Create new report</button>
                 </div>
             </div> 
 
@@ -786,6 +771,8 @@
             <div  id="report-settings-locus-select">
                 <div class="rs-header">
                     LOCUS
+                </div>
+                <div class="rs-flex-parent-h" id="rs-locus-list">
                 </div>
             </div>
 
@@ -827,7 +814,8 @@
 
 
         <div style="float: right;">
-            <button id="rs-save-button" type="button" onclick="report.save(undefined,true);">Save this report</button>
+            <button id="rs-save-button-template" type="button" onclick="report.saveas(true, true);" >Save as template</button>
+            <button id="rs-save-button-report"   type="button" onclick="report.saveas(true, false);">Save as report</button>
         </div>
 
     </div>

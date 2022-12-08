@@ -311,27 +311,31 @@ QUnit.test("model: primer detection", function(assert) {
     m.parseJsonData(json_data, 100)
 
     // primer set loading
-    assert.equal(typeof m.primersSetData, "undefined", "primers sets are initialy unset")
-    m.populatePrimerSet();
     assert.equal(typeof m.primersSetData, 'object', "primers are loaded inside model")
 
     // model primer setting
-    assert.equal(m.switchPrimersSet("no set"), 1, "primer set doesn't exist")
-    assert.equal(m.switchPrimersSet("ecngs"), 0, "primer set exist & are set")
+    // assert.equal(m.switchPrimersSet("no set"), 1, "primer set doesn't exist")
+    assert.equal(m.switchPrimersSet("ecngs"), 0, "primer set 'ecngs' exist & are set")
 
     // Test switch to a Qunit dataset
     m.primersSetData = primersSetData // no primer for IGH, One primer for TRG
-    assert.equal(m.switchPrimersSet("primer_test"), 0, "primer set exist & are set")
+    assert.equal(m.switchPrimersSet("primer_test"), 0, "primer set 'primer_test' exist & are set")
+    var ready = assert.async(2)
 
-    // primer found inside clones
-    assert.equal(m.clones[2]["seg"]["primer5"], undefined, "Control neg primer 5 not in sequence")
-    assert.equal(m.clones[2]["seg"]["primer3"], undefined, "Control neg primer 3 not in sequence")
-    assert.deepEqual(m.clones[3]["seg"]["primer5"], { seq: "GGAAGGCCCCACAGCG", start: 0, stop: 15 },    "Found primer 5")
-    assert.deepEqual(m.clones[3]["seg"]["primer3"], { seq: "AACTTCGCCTGGTAA",  start: 226, stop: 240 }, "Found primer 3")
+    setTimeout( function(){
+        // primer found inside clones
+        assert.equal(m.clones[2]["seg"]["primer5"], undefined, "Control neg primer 5 not in sequence")
+        assert.equal(m.clones[2]["seg"]["primer3"], undefined, "Control neg primer 3 not in sequence")
+        assert.deepEqual(m.clones[3]["seg"]["primer5"], { seq: "GGAAGGCCCCACAGCG", start: 0, stop: 15 },    "Found primer 5")
+        assert.deepEqual(m.clones[3]["seg"]["primer3"], { seq: "AACTTCGCCTGGTAA",  start: 226, stop: 240 }, "Found primer 3")
+        m.cleanPreviousFeature("primer3")
+        ready()
+    }, 200)
+    setTimeout( function(){
+        assert.equal(typeof m.clones[3]["seg"]["primer3"], "undefined", "Feature has been deleted before new attribution")
+        ready()
+    }, 300)
 
-
-    m.cleanPreviousFeature("primer3")
-    assert.equal(typeof m.clones[3]["seg"]["primer3"], "undefined", "Feature has been deleted before new attribution")
 });
 
 
@@ -940,7 +944,7 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     // first sample has old fashion diversity
     var html_info = m.getPointHtmlInfo(0)
     assert.includes(html_info, "Diversity indices", "htmlInfo get diversity header")
-    assert.includes(html_info, "<tr id='line_index_H_entropy'><td> Shannon's diversity</td><td>5.689</td></tr>", "An index is correctly present and formated")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy' ><td  id='modal_line_title_index_H_entropy'>Shannon's diversity</td><td  colspan='1' id='modal_line_value_index_H_entropy'>5.689</td></tr>", "An index is correctly present and formated")
     assert.notIncludes(html_info, '<tr><td colspan=\'5\'>Shannon\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>', "")
 
     assert.includes(html_info, "modal_header_reads_by_locus", "htmlInfo get reads by locus header")
@@ -952,11 +956,11 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     // second sample has diversity by locus
     html_info = m.getPointHtmlInfo(1)
     // each diversity indices has header
-    assert.includes(html_info, "<tr><td colspan='5'>Shannon's diversity</td></tr>")
-    assert.includes(html_info, "<tr><td colspan='5'>Pielou's evenness</td></tr>")
-    assert.includes(html_info, "<tr><td colspan='5'>Simpson's diversity</td></tr>")
+    assert.includes(html_info, "<tr id='modal_header_index_H_entropy' ><td class='header' colspan='5'>Shannon's diversity</td></tr>")
+    assert.includes(html_info, "<tr id='modal_header_index_E_equitability' ><td class='header' colspan='5'>Pielou's evenness</td></tr>")
+    assert.includes(html_info, "<tr id='modal_header_index_Ds_diversity' ><td class='header' colspan='5'>Simpson's diversity</td></tr>")
     // each present locus id visible
-    assert.includes(html_info, '<tr><td colspan=\'5\'>Simpson\'s diversity</td></tr><tr id=\'line_index_Ds_diversity_all\'><td> <span class=\"systemBoxMenu\" title=\"all\">x</span> all</td><td>0.964</td></tr>')
-    assert.includes(html_info, '<tr id=\'line_index_H_entropy_TRG\'><td> <span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> TRG</td><td>5.251</td></tr>')
-    assert.includes(html_info, '<tr id=\'line_index_H_entropy_IGH\'><td> <span class=\"systemBoxMenu\" title=\"IGH\" style=\"background: rgb(108, 113, 196);\">H</span> IGH</td><td>4.666</td></tr><tr>')
+    assert.includes(html_info, "<tr id='modal_line_index_Ds_diversity_all' ><td  id='modal_line_title_index_Ds_diversity_all'><span class=\"systemBoxMenu\" title=\"all\">x</span> locus</td><td  colspan='1' id='modal_line_value_index_Ds_diversity_all'>0.964</td></tr>")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_TRG' ><td  id='modal_line_title_index_H_entropy_TRG'><span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> locus</td><td  colspan='1' id='modal_line_value_index_H_entropy_TRG'>5.251</td></tr>")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_IGH' ><td  id='modal_line_title_index_H_entropy_IGH'><span class=\"systemBoxMenu\" title=\"IGH\" style=\"background: rgb(108, 113, 196);\">H</span> locus</td><td  colspan='1' id='modal_line_value_index_H_entropy_IGH'>4.666</td></tr>")
 });

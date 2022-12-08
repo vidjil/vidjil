@@ -202,13 +202,13 @@ Another option is to directly plot a log-log curve comparing two samples.
     cy.get("#time4").click() // set current sample
     cy.get("body").type(9)
 
-    cy.get('#id_legend_x').should("have.text", "Size", "Correct legend for axe X")
-    cy.get('#id_legend_y').should("have.text", "Size (other)", "Correct legend for axe Y")
+    cy.get('#visu_id_legend_x').should("have.text", "Size", "Correct legend for axe X")
+    cy.get('#visu_id_legend_y').should("have.text", "Size (other)", "Correct legend for axe Y")
 
-    cy.get('#id_label_x_0').should("exist").should("be.visible", "correct legend for axe X at pos 0")
-    cy.get('#id_label_x_1').should("exist").should("be.visible", "correct legend for axe X at pos 8 (biggest)")
-    cy.get('#id_label_y_0').should("exist").should("be.visible", "correct legend for axe Y at pos 0")
-    cy.get('#id_label_y_0\\.0000001').should("exist").should("be.visible", "correct legend for axe Y at pos 7 (smallest)")
+    cy.get('#visu_id_label_x_0').should("exist").should("be.visible", "correct legend for axe X at pos 0")
+    cy.get('#visu_id_label_x_1').should("exist").should("be.visible", "correct legend for axe X at pos 8 (biggest)")
+    cy.get('#visu_id_label_y_0').should("exist").should("be.visible", "correct legend for axe Y at pos 0")
+    cy.get('#visu_id_label_y_0\\.0000001').should("exist").should("be.visible", "correct legend for axe Y at pos 7 (smallest)")
 
 /**
 \end{verbatim}

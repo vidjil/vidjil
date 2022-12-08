@@ -138,8 +138,8 @@ Database.prototype = {
 			  'grep_reads': window},
 			 function(a) {
 				// Link to result file and launch download
-                             var path_data = DB_ADDRESS+"/results_file/download?filename=seq/clone.fa-1&results_file_id="+a.result_id
                              var file_name = "reads__"+clone_id+"__file_id_"+"_"+sequence_file_id+".fa"
+                             var path_data = DB_ADDRESS+"/results_file/download?results_file_id="+a.result_id+"&filename="+file_name
                              var anchor = document.createElement('a');
                              anchor.setAttribute("download", file_name);
                              anchor.setAttribute("href",     path_data);

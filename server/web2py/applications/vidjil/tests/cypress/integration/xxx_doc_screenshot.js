@@ -24,9 +24,7 @@ describe('Screenshot on server', function () {
 
         cy.goToPatientPage()
         var uid = 2;
-        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
-          .click({force: true})
-        cy.update_icon()
+        cy.openSet(uid)
 
         // cy.selectConfig(2)
         // useless, patient created by public user, so no config switch available

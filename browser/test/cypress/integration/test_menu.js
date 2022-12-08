@@ -147,7 +147,7 @@ describe('Test sandbox', function () {
 
     cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
 
-    cy.changePreset("read length distribution")
+    cy.changePreset("visu", "read length distribution")
     cy.update_icon()
 
     // test color for 3 clones (real, smaller, distrib)

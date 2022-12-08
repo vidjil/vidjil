@@ -9,10 +9,8 @@ Cypress.Commands.add('initDatabase', (host) => {
 
       cy.get('body').then(($body) => {
         var init_button = $body.find(":contains('init database')").length > 0
-        cy.log( "find init database button: " + init_button)
 
         if (init_button) {
-          cy.log( "FOUND init database")
           cy.contains('init database').click()
 
           cy.get('#email', { timeout: 10000 })
@@ -51,7 +49,6 @@ Cypress.Commands.add('isDbPageVisible', () => {
 
 Cypress.Commands.add('openDBPage', () => {
   cy.isDbPageVisible().then((val) => {
-    console.log( val )
     if (val == false){
       cy.get('#db_menu div')
         .first()
@@ -71,7 +68,6 @@ Cypress.Commands.add('openDBPage', () => {
 Cypress.Commands.add('closeDBPage', () => {
   cy.isDbPageVisible()
   .then((val) => {
-      console.log( val )
       if (val == true){
         cy.get('.db_div > .closeButton > .icon-cancel')
           .click()
@@ -383,7 +379,7 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
     var start = new Date().getTime();
   }
 
-  cy.log( `waitAnalysisCompleted: step ${iter}`)
+  cy.log( `waitAnalysisCompleted: step ${iter} -- ${new Date().getTime()-start} elapsed`)
   cy.intercept({
     method: 'GET', // Route all GET requests
     url: 'get_active_notifications*',
@@ -396,30 +392,24 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
   cy.update_icon(100)
 
   // Check status
-  cy.sampleStatusValue(sequence_file_id)
-    .then($status => {
-      var now = new Date().getTime()
-
-      // Add a wait if needed between recursive call
-      if ( (now - start) < (iter*1000) ){
-        cy.log( ` wait ... ${(iter*1000) - (now - start)} `)
-        cy.wait( (iter*1000) - (now - start) )
-      }
-
-
-      if ($status == " COMPLETED ") {
-        return true
-      } else if ( (now - start)/1000 > nb_retry){
-          cy.log("waitAnalysisCompleted; Timeout without COMPLETED status")
-          throw new Error("waitAnalysisCompleted; Timeout without COMPLETED status")
-          return false
-      } else if ( iter > nb_retry){
-          cy.log("waitAnalysisCompleted; Number of retry reached")
-          throw new Error("waitAnalysisCompleted; Number of retry reached")
-          return false
-      }
-      cy.waitAnalysisCompleted(config, sequence_file_id, start, nb_retry, iter=iter+1)
-    })
+  cy.sampleStatusValue(sequence_file_id).then($status => {
+        cy.log(`status: '${$status}'`);
+        var now = new Date().getTime()
+        if ($status != " COMPLETED ") {
+         if ( (now - start)/1000 > nb_retry){
+            cy.log("waitAnalysisCompleted; Timeout without COMPLETED status").then(() => {
+                throw new Error("waitAnalysisCompleted; Timeout without COMPLETED status");});
+         } else if ( iter > nb_retry){
+            cy.log("waitAnalysisCompleted; Number of retry reached").then(() => {
+                throw new Error("waitAnalysisCompleted; Number of retry reached");})
+         } else {
+            cy.log( ` wait ... `).then(() => {
+                cy.wait( 1000).then(() => {
+                    cy.waitAnalysisCompleted(config, sequence_file_id, start, nb_retry, iter=iter+1);
+                })});
+         }
+        }
+    });
 
   if (!iter){
     cy.sampleStatus(sequence_file_id)
@@ -429,7 +419,6 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
 })
 
 
-
 Cypress.Commands.add('saveAnalysis', () => {
     cy.get('body', { timeout: 10000 })
       .type('{ctrl}s')
@@ -437,4 +426,42 @@ Cypress.Commands.add('saveAnalysis', () => {
       .should("be.visible")
       .contains("analysis saved")
 
+})
+
+
+
+Cypress.Commands.add('newSet', (set_type) => {
+  // Availalble types: patient, run, generic
+  cy.get(`#create_new_set_type_${set_type}`).click()
+    .should("exist")
+    .click({force: true})
+  cy.update_icon()
+})
+
+
+Cypress.Commands.add('openSet', (sample_set_id) => {
+  cy.get(`#sample_set_open_${sample_set_id}_config_id_-1`)
+    .should("exist")
+    .click({force: true})
+  cy.update_icon()
+})
+
+/**
+ * Open an analysis by direct link inside DB pages (patient/run/set)
+ */
+Cypress.Commands.add('openAnalysisFromDbPage', (sample_set_id, config_id) => {
+  cy.get(`#result_sample_set_${sample_set_id}_config_${config_id}`)
+    .should("exist")
+    .click({force: true})
+  cy.update_icon()
+})
+
+/**
+ * Open an analysis by direct link inside set page
+ */
+Cypress.Commands.add('openAnalysisFromSetPage', (sample_set_id, config_id) => {
+  cy.get(`#result_sample_set_id_${sample_set_id}_config_${config_id}`)
+    .should("exist")
+    .click({force: true})
+  cy.update_icon()
 })

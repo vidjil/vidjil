@@ -25,7 +25,7 @@ function Report(model, settings) {
                     {blockType: "sample_info", sample: "#1"},
                     {blockType: "reads_stats"},
                     {blockType: "monitor"},
-                    {blockType: "scatterplot", sample: "#1", axisX:"V/5' gene", axisY:"J/3' gene", locus:""},
+                    {blockType: "scatterplot", sample: "#1", axisX:"V/5' gene", axisY:"J/3' gene", locus:"", mode:"grid"},
                     {blockType: "clones", info : ["productivity", "hypermutation", "5length"]},
                     {blockType: "log_db"},
                     {blockType: "comments"},
@@ -42,7 +42,7 @@ function Report(model, settings) {
                 {blockType: "file_info"},
                 {blockType: "sample_info", time: "#1"},
                 {blockType: "reads_stats"},
-                {blockType: "scatterplot", sample: "#1", axisX:"V/5' gene", axisY:"J/3' gene", locus:""},
+                {blockType: "scatterplot", sample: "#1", axisX:"V/5' gene", axisY:"J/3' gene", locus:"", mode:"grid"},
                 {blockType: "clones", info : []},
                 {blockType: "log_db"},
                 {blockType: "comments"},
@@ -58,7 +58,7 @@ function Report(model, settings) {
                 {blockType: "file_info"},
                 {blockType: "sample_info", time: this.m.t},
                 {blockType: "reads_stats"},
-                {blockType: "scatterplot", sample: "#1", axisX:"V/5' gene", axisY:"J/3' gene", locus:""},
+                {blockType: "scatterplot", sample: "#1", axisX:"V/5' gene", axisY:"J/3' gene", locus:"", mode:"grid"},
                 {blockType: "clones", info : ["productivity", "hypermutation", "5length"]},
                 {blockType: "log_db"},
                 {blockType: "comments"},
@@ -107,6 +107,11 @@ function Report(model, settings) {
     else
         this.settings = (JSON.parse(JSON.stringify(this.default_settings[this.default_setting]))); 
 
+    this.local_settings = {};
+    if (localStorage && localStorage.getItem('report_templates')){
+        this.local_settings = JSON.parse(localStorage.getItem('report_templates'))
+    }
+
     this.container_map = new WeakMap();
 
 }
@@ -117,8 +122,14 @@ Report.prototype = {
         this.settings = (JSON.parse(JSON.stringify(this.default_settings[this.default_setting]))); 
     },
 
-    // save current setting sheet
-    save: function(savename, overwrite){
+
+    /**
+     * save current setting sheet
+     * savename      Name for report
+     * overwrite     (bool); overwrite report/template
+     * destination   Save as report in analysis, or as template in localstorage
+     */
+    save: function(savename, overwrite, as_template){
         var self=this;
 
         // use name found in setting sheet if savename is not provided
@@ -126,12 +137,17 @@ Report.prototype = {
             savename = this.settings.name;
         }
 
+        // use default settings target if as_template is not provided
+        if (as_template == undefined){
+            as_template = true
+        }
+
         // if settings does not contain a name -> retry
         if (typeof savename == "undefined" || savename == ""){
             console.log({ msg: "you must set a name to your report before saving it", type: "flash", priority: 2 });
             this.saveas();
             return;
-        }   
+        }
 
         // we are on a template settings, save as a new report instead
         if(typeof this.default_settings[savename] != "undefined"){
@@ -143,17 +159,41 @@ Report.prototype = {
 
         keys = Object.keys(this.default_settings)
         if (keys.indexOf(savename) != -1) {
-            console.log("you can't save on this setting page, use 'save as' to save it under a new name");
+            console.log({ msg: "You try to overwrite an default template, use 'save as template/report' to save it under a new name",
+             type: "flash", priority: 2 });
+            return;
+        } else if (as_template && this.m.report_save[savename] != undefined ){
+            console.log({ msg: "A report with the same name already exist. Please change the template name",
+                type: "flash", priority: 2 });
+            return;
+        } else if (!as_template && this.local_settings[savename] != undefined ){
+            console.log({ msg: "A local template with the same name already exist. Please change the report name",
+                type: "flash", priority: 2 });
             return;
         }
-        
+
         if (typeof this.m.report_save[savename] == "undefined" || overwrite){
             // save
             try {
-                this.settings.clones = (JSON.parse(JSON.stringify(this.clones))); 
-                this.m.report_save[savename] = JSON.parse(JSON.stringify(this.settings))
-                console.log({ msg: "report settings '"+savename+"' has been saved", type: "flash", priority: 1 });
-                this.m.analysisHasChanged = true;
+                if (as_template && (this.local_settings[savename] == undefined || overwrite)){
+                    var temp_settings = JSON.parse(JSON.stringify(this.settings))
+                    temp_settings.clones  = []
+                    temp_settings.locus   = undefined
+                    temp_settings.samples = undefined
+                    for (var b = temp_settings.blocks.length - 1; b >= 0; b--) {
+                        var block = temp_settings.blocks[b]
+                        block.sample = undefined
+                    }
+                    this.local_settings[savename] = temp_settings
+                    localStorage.setItem('report_templates', JSON.stringify(this.local_settings))
+                    console.log({ msg: "report template '"+savename+"' has been saved", type: "flash", priority: 1 });
+                } else if (!as_template && (this.m.report_save[savename] == undefined || overwrite)) {
+                    this.settings.clones = (JSON.parse(JSON.stringify(this.clones))); 
+                    this.m.report_save[savename] = JSON.parse(JSON.stringify(this.settings))
+                    console.log({ msg: "report settings '"+savename+"' has been saved", type: "flash", priority: 1 });
+                    this.m.analysisHasChanged = true;
+                }
+                console.closeConfirmBox()
             } catch (error) {
                 console.log({ msg: "failed to save report settings", type: "flash", priority: 3 });
             }
@@ -162,11 +202,15 @@ Report.prototype = {
         else{
             console.confirmBox( "A report with this name already exist, saving will overwrite it </br>"+
                                 "Use 'Save As' instead to create a new save under another name",
-                                function(){self.save(savename, true)})
+                                function(){self.save(savename, true, as_template)})
         }
     },
 
-    saveas: function(){
+    /**
+     * Open confirmBox to ask user to fill a name for report/template
+     * Close confirmBox only if save succesed
+     */
+    saveas: function(overwrite, as_template){
         var self = this;
 
         var savename = true;
@@ -176,8 +220,9 @@ Report.prototype = {
 
         console.confirmBox( "Enter a name to save this report</br>"+
                             "",
-                            function(){self.save(console.confirm.input.val())},
-                            savename)
+                            function(){self.save(console.confirm.input.val(), overwrite, as_template);},
+                            savename,
+                            close_by_callback=true )
     },
 
     delete: function(skipConfirm){
@@ -189,7 +234,7 @@ Report.prototype = {
         }
 
         var savename = this.settings.name
-        if (this.m.report_save[savename]){    
+        if (this.m.report_save[savename]){ // analysis
             if (typeof skipConfirm == "boolean" && skipConfirm){
                 delete this.m.report_save[savename]
                 this.load(this.default_setting); 
@@ -198,12 +243,24 @@ Report.prototype = {
                 console.confirmBox( "Are you sure you want to delete ["+savename+"] report ?</br>",
                                     function(){self.delete(true)})
             }
+        } else if (this.local_settings[savename]){ // template
+            if (typeof skipConfirm == "boolean" && skipConfirm){
+                delete this.local_settings[savename]
+                localStorage.setItem('report_templates', JSON.stringify(this.local_settings))
+                this.load(this.default_setting); 
+            }
+            else{
+                console.confirmBox( "Are you sure you want to delete ["+savename+"] template ?</br>",
+                                    function(){self.delete(true)})
+            }
         }
 
     },
 
     // load a setting sheet from default_list or model using name
-    load: function(name){
+    // Available sources: analysis, template, default
+    load: function(name, source){
+
         // exist in default settings list 
         if (typeof this.default_settings[name] != "undefined"){
             this.settings = (JSON.parse(JSON.stringify(this.default_settings[name]))); 
@@ -212,18 +269,22 @@ Report.prototype = {
         }
 
         // exist in model 
-        if (typeof this.m.report_save[name] != "undefined"){
+        else if (source == "analysis" && typeof this.m.report_save[name] != "undefined"){
             this.settings = (JSON.parse(JSON.stringify(this.m.report_save[name]))); 
-
             if (typeof this.settings.clones != 'undefined' && this.settings.clones.length != 0)
             this.clones =  (JSON.parse(JSON.stringify(this.settings.clones)));
-
-            this.menu();
-            return
+        }
+        else if (source == "template" && typeof this.local_settings[name] != "undefined"){
+            this.settings = (JSON.parse(JSON.stringify(this.local_settings[name]))); 
+            this.initLocus()
+        }
+        else {
+            //does not exist
+            console.log("requested save does not exist")
         }
 
-        //does not exist
-        console.log("requested save does not exist")
+        this.menu();
+        return
     },
 
     menu: function(){
@@ -244,10 +305,12 @@ Report.prototype = {
         var self = this;
 
         var handle = function(){
-            if (this.value)
-                self.load(this.value);
-            else
+            if (this.value) {
+                var source = this.options[this.selectedIndex].getAttribute('source')
+                self.load(this.value, source);
+            } else {
                 self.menu();
+            }
         }
 
         var save_select = $("#report-settings-save")
@@ -257,24 +320,40 @@ Report.prototype = {
         var select = $('<select/>', { name: 'rs-save-select',
                                       id:   'rs-save-select' }).appendTo(div).change(handle);
 
-        var optgrp_default = $('<optgroup/>',  { label: "Report templates", title: "Default reports; can be use as template"})
+        var optgrp_default = $('<optgroup/>',  { id: "optgroup_default_template", label: "Report templates", title: "Default reports; can be use as template"})
 
         var keys = Object.keys(this.default_settings);
         for (var i = 0; i < keys.length; i++){
             var name = keys[i];
             $('<option/>',  { text: name,
                             selected: (self.settings.name == name),
+                            source: "default",
                             value: name}).appendTo(optgrp_default);
         }
         optgrp_default.appendTo(select);
+ 
 
-        var optgrp_users = $('<optgroup/>',  { label: "Saved reports", title: "User report; stored locally"})
+        var optgrp_local_template = $('<optgroup/>',  { id: "optgroup_user_template", label: "Own templates", title: "User created reports templates"})
+
+        keys = Object.keys(this.local_settings);
+        for (var t = 0; t < keys.length; t++){
+            var template_name = keys[t];
+            $('<option/>',  { text: template_name,
+                            selected: (self.settings.name == template_name),
+                            source: "template",
+                            value: template_name}).appendTo(optgrp_local_template);
+        }
+        optgrp_local_template.appendTo(select);
+
+
+        var optgrp_users = $('<optgroup/>',  { id: "optgroup_report_saved", label: "Saved reports", title: "User report; stored locally"})
 
         keys = Object.keys(this.m.report_save);
         for (var j = 0; j < keys.length; j++){
             var savename = keys[j];
             $('<option/>',  { text: savename,
                               selected: (self.settings.name == savename),
+                              source: "analysis",
                               value: savename}).appendTo(optgrp_users);
         }
         optgrp_users.appendTo(select);
@@ -341,6 +420,43 @@ Report.prototype = {
         $("#rs-selected-sample-count").html("["+count+" selected]")
     },
 
+    /**
+     * Get locus state inside export obj. true if present in list, false in other case
+     */
+    getLocusState: function(locus){
+        return self.settings.locus.indexOf(locus) != -1
+    },
+
+    /**
+     * Change the locus status after a click on one locus tile
+     * Take into account the shift press status to modifiy the behavior of seleciton
+     * Menu is rerender after modification
+     */
+    changeLocus: function(locusDom, shiftkey){
+        var locus = $(locusDom).attr("value")
+        if (!shiftkey){ // swich only this locus
+            if (this.settings.locus.indexOf(locus) != -1){
+                this.settings.locus.splice(this.settings.locus.indexOf(locus),1)
+            } else {
+                this.settings.locus.push(locus)
+            }
+        } else { // Switch all locus action
+            if (this.settings.locus.indexOf(locus) == -1){// case 0; locus not present, hide all other, and show only this one
+                this.settings.locus = [locus]
+            } else if (this.settings.locus.length > 1 && this.settings.locus.indexOf(locus) != -1){// case 1; some/all locus present
+                // hide all other locus
+                this.settings.locus = [locus]
+            } else if (this.settings.locus.length == 1 && this.m.system_selected.length > 1){ // only one active locus
+                // Show all locus
+                this.settings.locus = []
+                for (var i=0; i<this.m.system_selected.length; i++){
+                    this.settings.locus.push(this.m.system_selected[i])
+                }
+            }
+        }
+        this.initLocus() // rerender content
+    },
+
     initLocus: function(){
         var self = this;
 
@@ -351,20 +467,14 @@ Report.prototype = {
                 this.settings.locus.push(this.m.system_selected[i])
         }
 
-        var handle = function(){
-
-            if ($(this).hasClass("rs-selected"))
-                self.settings.locus.splice(self.settings.locus.indexOf($(this).attr("value")),1)
-            else
-                self.settings.locus.push($(this).attr("value"))
-        
-            $(this).toggleClass("rs-selected");
-            $(this).toggleClass("rs-unselected");
+        var handle = function(e){
+            self.changeLocus(this, e.shiftKey)
         }
 
-        var checkBoxes = []
+        var checkBoxes   = []
         var locus_select = $("#report-settings-locus-select")
-        var parent = $('<div/>', { class: "rs-flex-parent-h"}).appendTo(locus_select);
+        var parent       = $("#rs-locus-list")
+        parent.empty() // remove all previous dom element if rerender
         for (var j = 0; j < this.m.system_available.length; j++){
             var locus = this.m.system_available[j]
             var selected = this.settings.locus.indexOf(locus) != -1
@@ -600,6 +710,7 @@ Report.prototype = {
     },
 
     parameterDivCheckboxes: function(block, parameter){
+        if (block[parameter.name] == undefined) {block[parameter.name] = []}
 
         var self = this;
 
@@ -607,12 +718,16 @@ Report.prototype = {
 
         var handle = function(){
             var p = self.settings.blocks[blockIndex][parameter.name]
-            var index = p.indexOf(this.value)
 
-            if (index == -1)
-                p.push(this.value)
-            else
+            var index = p.indexOf(this.firstChild.value)
+
+            if (index == -1){
+                p.push(this.firstChild.value)
+                this.firstChild.checked = true
+            } else {
+                this.firstChild.checked = ""
                 p.splice(index, 1)
+            }
 
         }
 
@@ -642,11 +757,10 @@ Report.prototype = {
             var checked = false
             if (block[parameter.name].indexOf(c) != -1) checked = true
             
-            var li = $('<li/>', {text : c}).appendTo(ul);
+            var li = $('<li/>', {text : c}).click(handle).appendTo(ul);
             $('<input/>', { type    : "checkbox", 
                             value   : c
                             }).prop('checked', checked)
-                              .click(handle)
                               .prependTo(li)
         }
 
@@ -745,6 +859,7 @@ Report.prototype = {
             self.restorestate()    
             self.m.resize()
             self.m.resume()
+            self.m.update()
         }
         
     },
@@ -755,7 +870,13 @@ Report.prototype = {
         this.save_state.system_selected = this.m.system_selected.slice()
         this.save_state.samples_order = this.m.samples.order.slice()
         this.save_state.axis_color = this.m.color.axis.name
-        
+        this.save_state.time   = copyHard(this.m.t)
+        if (typeof sp_export != "undefined"){
+            this.save_state.locus = copyHard(sp_export.system)
+            this.save_state.axisX = copyHard(sp_export.axisX.name)
+            this.save_state.axisY = copyHard(sp_export.axisY.name)
+            this.save_state.mode  = copyHard(sp_export.mode)
+        }
         return this;
     },
     
@@ -772,6 +893,13 @@ Report.prototype = {
         this.m.system_selected = this.save_state.system_selected.slice()
         this.m.changeTimeOrder(this.save_state.samples_order)
         this.m.color.set(this.save_state.axis_color)
+
+        // rerender with locus present in main page
+        this.m.changeTime(this.save_state.time)
+        this.m.changeGermline(this.save_state.locus, false)
+        if (typeof sp_export != "undefined"){
+            sp_export.changeSplitMethod(this.save_state.axisX, this.save_state.axisY, this.save_state.mode, false)
+        }
         return this;
     },
     
@@ -1117,7 +1245,7 @@ Report.prototype = {
     },
 
     addBlock: function(block) {
-        if (this.indexOfBlock(block) == -1 && !this.isUniqueBlock(block)){
+        if (this.indexOfBlock(block) == -1 || !this.isUniqueBlock(block)){
             this.settings.blocks.push(block)
             console.log({ msg: "Section added to the report", type: "flash", priority: 1 });
         }
@@ -1134,8 +1262,9 @@ Report.prototype = {
         // check if a similar block object already exist
         var strblock = JSON.stringify(block);  
         for (var i=0; i< this.settings.blocks.length; i++){
-            if (JSON.stringify(this.settings.blocks[i]) == strblock)
+            if (JSON.stringify(this.settings.blocks[i]) == strblock){
                 return i;
+            }
         }
         return -1
     },
@@ -1268,12 +1397,12 @@ Report.prototype = {
 
     scatterplot : function(block) {
         if (typeof block == "undefined")       block = {}
-        if (typeof block.locus == "undefined") block.locus = this.m.sp.system
-        if (block.locus == "")                 block.locus = this.m.sp.system
+        if (typeof block.locus == "undefined") block.locus = sp_export.system
+        if (block.locus == "")                 block.locus = sp_export.system
         if (typeof block.sample == "undefined")block.sample= this.m.samples.original_names[this.m.t]
-        if (typeof block.axisX == "undefined") block.axisX = this.m.sp.axisX.name
-        if (typeof block.axisY == "undefined") block.axisY = this.m.sp.axisY.name
-        if (typeof block.mode == "undefined")  block.mode  = this.m.sp.mode
+        if (typeof block.axisX == "undefined") block.axisX = sp_export.axisX.name
+        if (typeof block.axisY == "undefined") block.axisY = sp_export.axisY.name
+        if (typeof block.mode == "undefined")  block.mode  = sp_export.mode
 
         //retrieve timeID
         var time
@@ -1290,29 +1419,29 @@ Report.prototype = {
         this.m.changeTime(time)
         this.m.changeGermline(block.locus, false)
 
-        this.m.sp.changeSplitMethod(block.axisX, block.axisY, block.mode, true)
+        sp_export.changeSplitMethod(block.axisX, block.axisY, block.mode, true)
         if (typeof block.domainX != "undefined")
-            this.m.sp.updateScaleX(block.domainX)
+            sp_export.updateScaleX(block.domainX)
         if (typeof block.domainY != "undefined")
-            this.m.sp.updateScaleY(block.domainY)  
+            sp_export.updateScaleY(block.domainY)
         
         //resize 791px ~> 21cm
-        this.m.sp.resize(771,250)
-        this.m.sp.fastForward()
+        sp_export.resize(771,250)
+        sp_export.fastForward()
         
-        var container_name  =   this.m.sp.toString() +"  ["+ 
+        var container_name  =   sp_export.toString() +"  ["+
                                 this.m.getStrTime(time, "order")+"]."+
                                 this.m.getStrTime(time, "short_name");
         var w_sp = this.container(container_name, block)
         w_sp.addClass("scatterplot");
         
-        var svg_sp = document.getElementById(this.m.sp.id+"_svg").cloneNode(true);
+        var svg_sp = document.getElementById(sp_export.id+"_svg").cloneNode(true);
         
         //set viewbox (same as resize)
         svg_sp.setAttribute("viewBox","0 0 791 250");
         
         for (var i = 0; i < this.m.clones.length; i++) {
-            var circle = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_circle'+i+'"]')[0]
+            var circle = svg_sp.querySelectorAll('[id="'+sp_export.id+'_circle'+i+'"]')[0]
             var color = this.getCloneExportColor(i);
             $(circle).css({"fill": color});
             
@@ -1323,17 +1452,17 @@ Report.prototype = {
         }
         
         if (block.mode != "bar"){
-            var bar_container = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_bar_container"]')[0]
+            var bar_container = svg_sp.querySelectorAll('[id="'+sp_export.id+'_bar_container"]')[0]
             bar_container.parentNode.removeChild(bar_container);
         }
 
         if (block.mode != "grid" && block.mode != "tsne"){
-            var plot_container = svg_sp.querySelectorAll('[id="'+this.m.sp.id+'_plot_container"]')[0]
+            var plot_container = svg_sp.querySelectorAll('[id="'+sp_export.id+'_plot_container"]')[0]
             plot_container.parentNode.removeChild(plot_container);
         }
 
         w_sp.append(svg_sp)
-        this.m.sp.resize();
+        sp_export.resize();
 
         return this
     },
@@ -1425,7 +1554,7 @@ Report.prototype = {
         }
         
         //clone label
-        $('<span/>', {'text': ">"+this.m.clone(cloneID).getCode()+'\u00a0', 'class': 'clone_name', style : 'color:'+color}).appendTo(head);
+        $('<span/>', {'text': ">"+this.m.clone(cloneID).getShortName()+'\u00a0', 'class': 'clone_name', style : 'color:'+color}).appendTo(head);
         if (typeof this.m.clone(cloneID).c_name != "undefined"){
             $('<span/>', {'text': this.m.clone(cloneID).c_name+'\u00a0', 'class': 'clone_name', style : 'color:'+color}).appendTo(head);
         }
@@ -1433,50 +1562,37 @@ Report.prototype = {
         //clone reads stats
         var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
 
-        if (this.m.samples.order.length < 4){
-            for (var i=0; i<this.m.samples.order.length; i++){
-                var t = this.m.samples.order[i]
-    
-                var print_format = block.print_format 
-                if (typeof block.print_format != "undefined")
-                    print_format = block.print_format
-    
-                var size_str= this.m.clone(cloneID).getPrintableSize()
-    
-                $('<span/>', {'text': "#"+ this.m.getStrTime(t, "order") + ": " + size_str +'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
-            }
-        }else{ // more than 3 samples
-            var system = this.m.clone(cloneID).getLocus()
-            var systemGroup = this.m.systemGroup(system)
 
-            var header = "sample # </br>"+
-                        "reads # </br>"+
-                        "reads % </br>"+
-                        system + " %"
+        var system = this.m.clone(cloneID).getLocus()
+        var systemGroup = this.m.systemGroup(system)
+
+        var header = "sample # </br>"+
+                    "reads # </br>"+
+                    "reads % </br>"+
+                    system + " %"
+
+        if (systemGroup != system && systemGroup != '')
+            header += "</br>"+systemGroup+" %"
+
+        $('<span/>', {  'html':  header,
+                        'class': 'clone_value'}).appendTo(reads_stats);
+
+        for (var i2=0; i2<this.m.samples.order.length; i2++){
+            var t2 = this.m.samples.order[i2]
+            var sizes    = this.m.clone(cloneID).getStrAllSystemSize(t2)
+
+            var html = "#"+this.m.getStrTime(t2, "order") + "</br>"+
+                        this.m.clone(cloneID).getReads(t2)+ "</br>"+
+                        sizes.global+ "</br>"+
+                        sizes.system
 
             if (systemGroup != system && systemGroup != '')
-                header += "</br>"+systemGroup+" %"
+                html += "</br>"+sizes.systemGroup
 
-            $('<span/>', {  'html':  header,
+            $('<span/>', {  'html':  html,
                             'class': 'clone_value'}).appendTo(reads_stats);
-
-            for (var i2=0; i2<this.m.samples.order.length; i2++){
-                var t2 = this.m.samples.order[i2]
-                var sizes    = this.m.clone(cloneID).getStrAllSystemSize(t2)
-
-                var html = "#"+this.m.getStrTime(t2, "order") + "</br>"+
-                            this.m.clone(cloneID).getReads(t2)+ "</br>"+
-                            sizes.global+ "</br>"+
-                            sizes.system
-
-                if (systemGroup != system && systemGroup != '')
-                    html += "</br>"+sizes.systemGroup
-
-                $('<span/>', {  'html':  html,
-                                'class': 'clone_value'}).appendTo(reads_stats);
-                }
-        }
-        
+            }
+    
 
         // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
         var fields = {

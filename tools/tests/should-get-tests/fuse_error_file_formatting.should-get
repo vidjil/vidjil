@@ -1,0 +1,17 @@
+##################
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil -o fuse_error_file_formatting.vidjil
+
+1:==> fuse_error_file_formatting.vidjil
+
+
+##################
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/fused_multiple.vidjil.gz -o fuse_error_file_formatting.vidjil
+
+1:==> fuse_error_file_formatting.vidjil
+
+
+##################
+!EXIT_CODE: 1
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/flash2.log -o fuse_error_file_formatting.vidjil
+
+1:Did it is in correct vidjil format

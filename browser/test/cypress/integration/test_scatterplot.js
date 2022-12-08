@@ -58,7 +58,7 @@ describe('Scatterplot', function () {
     cy.get('#visu_axis_y_container').children('line').should('have.length', 3)
     cy.get('#visu_axis_container').should('contain', "N length")
     
-    cy.changePreset("V/J (alleles)")
+    cy.changePreset("visu", "V/J (alleles)")
     cy.update_icon()
 
     cy.get('#visu_axis_x_container').children('line').should('have.length', 3)

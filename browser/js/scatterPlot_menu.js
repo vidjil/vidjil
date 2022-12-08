@@ -161,6 +161,7 @@ ScatterPlot_menu.prototype = {
         var self=this;
 
         this.select_preset = $(this.menu).find("[name='select_preset[]']")[0];
+        this.select_preset.id = this.id+"_select_preset"
 
         var p = 0
         for (var i in this.preset) {

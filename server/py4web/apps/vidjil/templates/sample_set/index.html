@@ -297,6 +297,7 @@
         
               
                 <a class="button2" href="[[=http_origin]]?sample_set_id=[[=request.query["id"]]]&config=[[=row.config.id]]" type="text/html"
+                   id="result_sample_set_id_[[=request.vars["id"]]]_config_[[=row.config.id]]"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '[[=request.query["id"]]]' , 'config' : [[=row.config.id]] }, '[[=info["filename"]]]' ) }" >

@@ -252,28 +252,28 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.includes(html, "<table id='clone_info_table_0'><tr><th>Samples names</th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
-    assert.includes(html, "tr id='modal_line_clonotype_name'><td id='modal_line_title_clonotype_name'>clonotype name</td><td colspan='4' id='modal_line_value_clonotype_name'>hello</td></tr>",
+    assert.includes(html, "tr id='modal_line_clonotype_name' ><td  id='modal_line_title_clonotype_name'>clonotype name</td><td  colspan='4' id='modal_line_value_clonotype_name'>hello</td></tr>",
              "getHtmlInfo: clone names")
 
     assert.includes(html, "<tr><td>clonotype size (n-reads (total reads))</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td>clonotype size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
              "getHtmlInfo: clone information");
     
-    assert.includes(html, "<tr id='modal_line_sequence_name'><td id='modal_line_title_sequence_name'>sequence name</td><td colspan='4' id='modal_line_value_sequence_name'>hello</td></tr><tr id='modal_line_code'><td id='modal_line_title_code'>code</td><td colspan='4' id='modal_line_value_code'>hello</td></tr><tr id='modal_line_length'><td id='modal_line_title_length'>length</td><td colspan='4' id='modal_line_value_length'>19</td></tr><tr id='modal_line_e-value'><td id='modal_line_title_e-value'>e-value</td><td colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
+    assert.includes(html, "modal_line_sequence_name' ><td  id='modal_line_title_sequence_name'>sequence name</td><td  colspan='4' id='modal_line_value_sequence_name'>hello</td></tr><tr id='modal_line_code' ><td  id='modal_line_title_code'>code</td><td  colspan='4' id='modal_line_value_code'>hello</td></tr><tr id='modal_line_length' ><td  id='modal_line_title_length'>length</td><td  colspan='4' id='modal_line_value_length'>19</td></tr><tr id='modal_line_e-value' ><td  id='modal_line_title_e-value'>e-value</td><td  colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
         "getHtmlInfo: representative sequence information; sequence name");
-    assert.includes(html, "<tr id='modal_line_code'><td id='modal_line_title_code'>code</td><td colspan='4' id='modal_line_value_code'>hello</td></tr><tr id='modal_line_length'><td id='modal_line_title_length'>length</td><td colspan='4' id='modal_line_value_length'>19</td></tr><tr id='modal_line_e-value'><td id='modal_line_title_e-value'>e-value</td><td colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
+    assert.includes(html, "tr id='modal_line_code' ><td  id='modal_line_title_code'>code</td><td  colspan='4' id='modal_line_value_code'>hello</td></tr><tr id='modal_line_length' ><td  id='modal_line_title_length'>length</td><td  colspan='4' id='modal_line_value_length'>19</td></tr><tr id='modal_line_e-value' ><td  id='modal_line_title_e-value'>e-value</td><td  colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
         "getHtmlInfo: representative sequence information; code");
-    assert.includes(html, "<tr id='modal_line_length'><td id='modal_line_title_length'>length</td><td colspan='4' id='modal_line_value_length'>19</td></tr><tr id='modal_line_e-value'><td id='modal_line_title_e-value'>e-value</td><td colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
+    assert.includes(html, "<tr id='modal_line_length' ><td  id='modal_line_title_length'>length</td><td  colspan='4' id='modal_line_value_length'>19</td></tr><tr id='modal_line_e-value' ><td  id='modal_line_title_e-value'>e-value</td><td  colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
         "getHtmlInfo: representative sequence information; length");
-    assert.includes(html, "<tr id='modal_line_e-value'><td id='modal_line_title_e-value'>e-value</td><td colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
+    assert.includes(html, "<tr id='modal_line_e-value' ><td  id='modal_line_title_e-value'>e-value</td><td  colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr><tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
         "getHtmlInfo: representative sequence information; evalue");
     assert.includes(html, "<tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
         "getHtmlInfo: representative sequence information; size total");
     assert.includes(html, "<tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
         "getHtmlInfo: representative sequence information; size %");
 
-    assert.includes(html, "<tr id='modal_header_segmentation'><td class='header' colspan='5'>segmentation <button type='button' onclick='m.clones[0].toggle()'>edit</button></td></tr>",
+    assert.includes(html, "<tr id='modal_header_segmentation' ><td class='header' colspan='5'>segmentation <button type='button' onclick='m.clones[0].toggle()'>edit</button></td></tr>",
         "getHtmlInfo: segmentation information + modification button; header");
-    assert.includes(html, "<tr id='modal_line_sequence'><td id='modal_line_title_sequence'>sequence</td><td colspan='4' id='modal_line_value_sequence'>aaaaaaaaaattttttttt</td></tr>",
+    assert.includes(html, "<tr id='modal_line_sequence' ><td  id='modal_line_title_sequence'>sequence</td><td  colspan='4' id='modal_line_value_sequence'>aaaaaaaaaattttttttt</td></tr>",
         "getHtmlInfo: segmentation information + modification button; content");
 
     // Test on download reads button
@@ -292,22 +292,22 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     // Test icon 
     m.clones[0].segEdited = true;
     html = m.clones[0].getHtmlInfo();
-    assert.includes(html, "<tr id='modal_header_segmentation'><td class='header' colspan='5'>segmentation <button type='button' onclick='m.clones[0].toggle()'>edit</button> <img src='images/icon_fav_on.png' alt='This clone has been edited by a user'></td></tr>",
+    assert.includes(html, "<tr id='modal_header_segmentation' ><td class='header' colspan='5'>segmentation <button type='button' onclick='m.clones[0].toggle()'>edit</button> <img src='images/icon_fav_on.png' alt='This clone has been edited by a user'></td></tr>",
         "getHtmlInfo: segmentation information + modification button + manuallyChanged icon");
     
     // <tr><td>locus</td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
-    assert.includes(html, "<tr id='modal_line_Productivity'><td id='modal_line_title_Productivity'>Productivity</td><td colspan='4' id='modal_line_value_Productivity'>",
+    assert.includes(html, "<tr id='modal_line_Productivity' ><td  id='modal_line_title_Productivity'>Productivity</td><td  colspan='4' id='modal_line_value_Productivity'>productive</div></td></tr>",
         "getHtmlInfo: productivity information (if exist)");
     // locus/genes content tests
     // TODO correct this locus test/function for chromium/firefox (inversion des balises)
     assert.includes(html, "<tr id='modal_line_locus'><td id='modal_line_title_locus'>locus</td><td colspan='4' id='modal_line_value_locus'><span class=\"systemBoxMenu\" title=\"TRG\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
         "getHtmlInfo: segmentation information (Locus)");
 
-    assert.includes(html, "<tr id='modal_line_V_gene_or_5_'><td id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td><td colspan='4' id='modal_line_value_V_gene_or_5_'>undefined V<div class='div-menu-selector' id='listVsegment' style='display: none'><form name=Vsegment>",
+    assert.includes(html, "tr id='modal_line_V_gene_or_5_' ><td  id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td><td  colspan='4' id='modal_line_value_V_gene_or_5_'>undefined V<div class='div-menu-selector' id='listVsegment' style='display: none'><form name=Vsegment>",
         "getHtmlInfo: segmentation information (V gene)");
-    assert.includes(html, "<tr id='modal_line__D_gene_'><td id='modal_line_title__D_gene_'>(D gene)</td><td colspan='4' id='modal_line_value__D_gene_'>IGHD2*03<div class='div-menu-selector' id='listDsegment' style='display: none'><form name=Dsegment><select class='menu-selector' NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'  style='width: 100px' >",
+    assert.includes(html, "<tr id='modal_line__D_gene_' ><td  id='modal_line_title__D_gene_'>(D gene)</td><td  colspan='4' id='modal_line_value__D_gene_'>IGHD2*03<div class='div-menu-selector' id='listDsegment' style='display: none'><form name=Dsegment><select class='menu-selector' NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'  style='width: 100px' >",
         "getHtmlInfo: segmentation information (D gene)");
-    assert.includes(html, "<tr id='modal_line_J_gene_or_3_'><td id='modal_line_title_J_gene_or_3_'>J gene (or 3')</td><td colspan='4' id='modal_line_value_J_gene_or_3_'>IGHV4*01<div class='div-menu-selector' id='listJsegment' style='display: none'><form name=Jsegment>",
+    assert.includes(html, "<tr id='modal_line_J_gene_or_3_' ><td  id='modal_line_title_J_gene_or_3_'>J gene (or 3')</td><td  colspan='4' id='modal_line_value_J_gene_or_3_'>IGHV4*01<div class='div-menu-selector' id='listJsegment' style='display: none'><form name=Jsegment>",
         "getHtmlInfo: segmentation information (J gene)");
 
     // forms tests
@@ -330,19 +330,19 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
         "<option value=IGH>IGH</option><option value=TRA>TRA</option>",
         "getHtmlInfo:  first options in select locus (after changment)"); // after germline changment
     assert.includes(html, 
-        "<tr id='modal_line_V_gene_or_5_'><td id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td><td colspan='4' id='modal_line_value_V_gene_or_5_'>testV5<div class='div-menu-selector' id='listVsegment' style='display: none'><form name=Vsegment>",
+        "<tr id='modal_line_V_gene_or_5_' ><td  id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td><td  colspan='4' id='modal_line_value_V_gene_or_5_'>testV5<div class='div-menu-selector' id='listVsegment' style='display: none'><form name=Vsegment>",
         "getHtmlInfo: segmentation information (V gene) after changment");
 
     // Test external seg key (cloneDB) in html report
     assert.includes(html, "No occurrence of this clonotype in CloneDB");
 
     // Test junction in html export
-    assert.includes(html, "<tr id='modal_line_junction'><td id='modal_line_title_junction'>junction</td><td colspan='4' id='modal_line_value_junction'>att</td></tr>",
+    assert.includes(html, "<tr id='modal_line_junction' ><td  id='modal_line_title_junction'>junction</td><td  colspan='4' id='modal_line_value_junction'>att</td></tr>",
                  "getHtmlInfo c1: junction info for productive clone");   
     html = c3.getHtmlInfo();
-    assert.includes(html, "<tr id='modal_line_junction'><td id='modal_line_title_junction'>junction</td><td colspan='4' id='modal_line_value_junction'>aaaaaaaatttt</td></tr>",
+    assert.includes(html, "<tr id='modal_line_junction' ><td  id='modal_line_title_junction'>junction</td><td  colspan='4' id='modal_line_value_junction'>aaaaaaaatttt</td></tr>",
                  "getHtmlInfo c3: junction info for non productive clone");   
-    assert.includes(html, "<tr id='modal_line_junction_AA_seq_'><td id='modal_line_title_junction_AA_seq_'>junction (AA seq)</td><td colspan='4' id='modal_line_value_junction_AA_seq_'>WKIC</td></tr>",
+    assert.includes(html, "<tr id='modal_line_junction_AA_seq_' ><td  id='modal_line_title_junction_AA_seq_'>junction (AA seq)</td><td  colspan='4' id='modal_line_value_junction_AA_seq_'>WKIC</td></tr>",
                  "getHtmlInfo c3: junction (AAseq) info for non productive clone"); 
     // test sequence if not prsent
     html = c5.getHtmlInfo();
@@ -391,7 +391,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     include = html.includes("current clonotype size")
     assert.ok(include, "getHtmlInfo: if no sequence, field 'current clonotype size'");
     // gene V
-    assert.includes(html, "<tr id='modal_line_V_gene_or_5_'><td id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td>",
+    assert.includes(html, "<tr id='modal_line_V_gene_or_5_' ><td  id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td>",
         "getHtmlInfo: distrib clone with seg5 have field segment V");
     
     // Sequence
@@ -429,7 +429,7 @@ QUnit.test("warnText and getHTMLwarning", function(assert) {
 
 
     html = c1.getHtmlInfo()
-    var expected = "<tr id='modal_line_Wxx'><td id='modal_line_title_Wxx'>Wxx</td><td colspan='4' id='modal_line_value_Wxx'>a warning that is only an information</td></tr><tr id='modal_line_W69'><td id='modal_line_title_W69'>W69</td><td colspan='4' id='modal_line_value_W69'>Several genes with equal probability: IGKV1-39*01 IGKV1D-39*01</td></tr><tr id='modal_header_clonotype'><td class='header' colspan='5'>clonotype</td>"
+    var expected = "<tr id='modal_line_Wxx' ><td  id='modal_line_title_Wxx'>Wxx</td><td  colspan='4' id='modal_line_value_Wxx'>a warning that is only an information</td></tr><tr id='modal_line_W69' ><td  id='modal_line_title_W69'>W69</td><td  colspan='4' id='modal_line_value_W69'>Several genes with equal probability: IGKV1-39*01 IGKV1D-39*01</td></tr><tr id='modal_header_clonotype' ><td class='header' colspan='5'>clonotype</td></tr>"
     assert.includes(html, expected, "gethmlinfo don't include 'undefined' warning")
 });
 
@@ -458,21 +458,21 @@ QUnit.test("getHtmlInfo; feature from script", function(assert) {
 
 
     // Feature_aaa
-    var part_script_aaa_header  = "<tr id='modal_header_Results_of_script_AAA_'><td class='header' colspan='5'>Results of script 'AAA'</td></tr>"
+    var part_script_aaa_header  = "<tr id='modal_header_Results_of_script_AAA_' ><td class='header' colspan='5'>Results of script 'AAA'</td></tr>"
     assert.includes(html_script, part_script_aaa_header, "Correct row for feature script: header_aaa")
-    var part_script_aaa_content_name = "<tr id='modal_line_5'><td id='modal_line_title_5'>5</td><td colspan='4' id='modal_line_value_5'>IGHV3-11*01</td></tr>"
+    var part_script_aaa_content_name = "<tr id='modal_line_5' ><td  id='modal_line_title_5'>5</td><td  colspan='4' id='modal_line_value_5'>IGHV3-11*01</td></tr>"
     assert.includes(html_script, part_script_aaa_content_name, "Correct row for feature script: aaa/name")
-    var part_script_aaa_content_val = "<tr id='modal_line_evalue_right'><td id='modal_line_title_evalue_right'>evalue_right</td><td colspan='4' id='modal_line_value_evalue_right'>7.79e-111</td></tr>"
+    var part_script_aaa_content_val = "<tr id='modal_line_evalue_right' ><td  id='modal_line_title_evalue_right'>evalue_right</td><td  colspan='4' id='modal_line_value_evalue_right'>7.79e-111</td></tr>"
     assert.includes(html_script, part_script_aaa_content_val, "Correct row for feature script: aaa/val")
 
     // Feature_bbb
-    var part_script_bbb_header  = "<tr id='modal_header_Results_of_script_BBB_'><td class='header' colspan='5'>Results of script 'BBB'</td></tr>"
+    var part_script_bbb_header  = "<tr id='modal_header_Results_of_script_BBB_' ><td class='header' colspan='5'>Results of script 'BBB'</td></tr>"
     assert.includes(html_script, part_script_bbb_header, "Correct row for feature script: header bbb")
-    var part_script_bbb_content_info = "<tr id='modal_line_feature_val'><td id='modal_line_title_feature_val'>feature_val</td><td colspan='4' id='modal_line_value_feature_val'>7.79e-111</td></tr>"
+    var part_script_bbb_content_info = "<tr id='modal_line_feature_val' ><td  id='modal_line_title_feature_val'>feature_val</td><td  colspan='4' id='modal_line_value_feature_val'>7.79e-111</td></tr>"
     assert.includes(html_script, part_script_bbb_content_info, "Correct row for feature script: bbb/info")
-    var part_script_bbb_content_val = "<tr id='modal_line_feature_str'><td id='modal_line_title_feature_str'>feature_str</td><td colspan='4' id='modal_line_value_feature_str'>a feature value</td></tr>"
+    var part_script_bbb_content_val = "<tr id='modal_line_feature_str' ><td  id='modal_line_title_feature_str'>feature_str</td><td  colspan='4' id='modal_line_value_feature_str'>a feature value</td></tr>"
     assert.includes(html_script, part_script_bbb_content_val, "Correct row for feature script: bbb/val")
-    var part_script_bbb_content_seq = "<tr id='modal_line_feature_seq'><td id='modal_line_title_feature_seq'>feature_seq</td><td colspan='4' id='modal_line_value_feature_seq'>CARLY</td></tr>"
+    var part_script_bbb_content_seq = "<tr id='modal_line_feature_seq' ><td  id='modal_line_title_feature_seq'>feature_seq</td><td  colspan='4' id='modal_line_value_feature_seq'>CARLY</td></tr>"
     assert.includes(html_script, part_script_bbb_content_seq, "Correct row for feature script: bbb/seq")
 
 });

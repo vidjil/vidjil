@@ -360,7 +360,7 @@ Graph.prototype = {
             list_content.appendChild(line_content_text)
 
             // Add all descripion of sample keys as tooltip
-            var tooltip = this.getTooltip(i, false, false)
+            var tooltip = this.getTooltip(i, false)
             list_content.title = tooltip
 
             /* jshint ignore:start */
@@ -1464,7 +1464,7 @@ Graph.prototype = {
             .on("mouseover", function(d) {
                 var div = d3.select("#"+self.id + "_tooltip")
                 var time = d.time
-                var tooltip = self.getTooltip(time, true, true)
+                var tooltip = self.getTooltip(time, true)
                 div.transition()
                     .delay(1000)
                     .duration(200)
@@ -1626,7 +1626,11 @@ Graph.prototype = {
         this.resize();
     },
 
-    getTooltip: function(time, htmlFormat, includeName){
+    getTooltip: function(time, htmlFormat){
+        if (time == undefined){ // Zaxis label; percentage, bypass
+            return
+        }
+
         var breakChar
         if (htmlFormat){
             breakChar = "<br/>"

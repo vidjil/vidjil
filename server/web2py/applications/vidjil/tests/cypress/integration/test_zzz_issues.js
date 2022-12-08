@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-
+// Nb: These tests are launched at the end of other tests. this allow to get already present analysis on the server when they are executed
 
 describe('Manipulate db page', function () {
     before(function () {
@@ -93,9 +93,7 @@ describe('Manipulate db page', function () {
 
         // Create analysis
         cy.goToPatientPage()
-        cy.get('[href="index.html?sample_set_id='+uid+'&config='+config_id+'"]')
-          .click({force: true})
-        cy.update_icon()
+        cy.openAnalysisFromDbPage(uid, config_id)
         cy.get('#top_info')
           .should("contain", "test")
         cy.saveAnalysis()
@@ -103,9 +101,7 @@ describe('Manipulate db page', function () {
         
         // Test Link
         cy.goToPatientPage()
-        cy.get('[onclick="db.call(\'sample_set/index\', {\'id\' :\''+uid+'\' , \'config_id\' : \'-1\' })"] > :nth-child(2) > .set_token')
-          .click({force: true})
-        cy.update_icon()
+        cy.openSet(uid)
 
         cy.get('#db_content > :nth-child(4) > .db_block_right a')
           .eq(0)
@@ -118,4 +114,28 @@ describe('Manipulate db page', function () {
           .should("have.attr", "href")
           .and("match", /get_analysis\?config=9&/);
     })
+
+
+    it('5070 - get_reads',  function() {
+        var uid = 2; // TODO; reuse previous uid // async
+
+        cy.goToPatientPage()
+        // cy.screenshot('debug_5070_1_patient_page')
+
+        cy.openSet(uid)
+        // cy.screenshot('debug_5070_2_open_set')
+
+        cy.openAnalysisFromSetPage(uid, 2)
+        cy.openCloneInfo(1)
+        // cy.screenshot('debug_5070_3_clone_panel')
+        cy.get(':nth-child(2) > .icon-down').click()
+
+        const downloadsFolder = Cypress.config('downloadsFolder')
+        const downloadedFilename = downloadsFolder+'/reads__1__file_id__'+uid+'.fa'
+
+        // Don't work on gitlab, but work locally...
+        // cy.readFile(downloadedFilename, { timeout: 120000 })
+        //   .should('contain', '>clone-001')
+    })
+
 })
