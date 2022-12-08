@@ -64,14 +64,13 @@ class Vidjil:
 
     COMPLETED = "COMPLETED"
 
-    def __init__(self, url_server:str, url_client:str=None, ssl:str=True, dangerous:bool=True):
+    def __init__(self, url_server:str, url_client:str=None, ssl:str=True):
         """_summary_
 
         Args:
             url_server (str): Url of server to use
             url_client (str, optional): Url of client to use. Sometimes, backend and frontend server are different (as for app.vidjil.org). If not setted, wille use the server url. (Defaults to None).
             ssl (str, optional): Path to the Pem file to use for ssl connection for self hosted server.
-            dangerous (boolean, optional): Set if vidjil object will be able to make dangerous action as deleting sets or samples
         """
         self.url_server = url_server
         self.url_client = url_client if url_client != None else url_server
@@ -182,6 +181,15 @@ class Vidjil:
                 raise ValueError(message)
         return content
 
+    def enableDeletion(self):
+        """ Enable the ability of the API to make deletion"""
+        self.auth_deletion = True
+        return
+
+    def disableDeletion(self):
+        """ Disable the ability of the API to make deletion"""
+        self.auth_deletion = False
+        return
 
     def getSets(self, set_type:str=None, filter_val:str=None):
         """_summary_
@@ -401,15 +409,15 @@ class Vidjil:
 
     def removeSet(self, set_id:int):
         """Remove set with the given id.
-        Warning, no alert step by this method
+        For security reason, a call at enableDeletion() is needed before doing this action.
 
         Args:
             set_id (int): Set id to delete
         Returns:
             dict: ???
         """
-        if self.dangerous:
-            print("This action (delete set) is not available.\nChange dangerous setting of Vidjil before doing such actions.")
+        if self.auth_deletion != True:
+            print("This action (delete set) is not available.\nCall function enableDeletion before doing such actions to switch off the security.")
             exit()
         data     = { 'id' : set_id }
         new_url  = self.url_server + "sample_set/delete?" + self.convertDataAsUrl(data)
