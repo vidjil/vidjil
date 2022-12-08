@@ -181,15 +181,11 @@ class Vidjil:
                 raise ValueError(message)
         return content
 
-    def enableDeletion(self):
+    def allowDeletion(self):
         """ Enable the ability of the API to make deletion"""
         self.auth_deletion = True
         return
 
-    def disableDeletion(self):
-        """ Disable the ability of the API to make deletion"""
-        self.auth_deletion = False
-        return
 
     def getSets(self, set_type:str=None, filter_val:str=None):
         """_summary_
@@ -409,7 +405,7 @@ class Vidjil:
 
     def removeSet(self, set_id:int):
         """Remove set with the given id.
-        For security reason, a call at enableDeletion() is needed before doing this action.
+        For security reason, a call at allowDeletion() is needed before doing this action.
 
         Args:
             set_id (int): Set id to delete
@@ -417,7 +413,7 @@ class Vidjil:
             dict: ???
         """
         if self.auth_deletion != True:
-            print("This action (delete set) is not available.\nCall function enableDeletion before doing such actions to switch off the security.", file=sys.stderr)
+            print("This action (delete set) is not available.\nCall function allowDeletion before doing such actions to switch off the security.", file=sys.stderr)
             exit()
         data     = { 'id' : set_id }
         new_url  = self.url_server + "sample_set/delete?" + self.convertDataAsUrl(data)
