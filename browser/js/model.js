@@ -1656,6 +1656,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * If warn level is undefined, return 1 by default (old type)
      */
     getWarningLevelFromWarn: function(warn){
+        if (warn == 0 ) {return 0} // Error in fuse merge, by already in production
         var value = 2
         if (!("code" in warn) && !("msg" in warn)  && !("level" in warn) ){ // empty
             return 0
