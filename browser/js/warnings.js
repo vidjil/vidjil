@@ -64,6 +64,7 @@ Warnings.prototype = {
      * */
     init: function () {
         try {
+            if (this.m.samples == undefined) { return }
             this.build_warnings()
         } catch(err) {
             sendErrorToDb(err, this.db);
