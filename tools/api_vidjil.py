@@ -77,7 +77,7 @@ class Vidjil:
         self.ssl = ssl
         print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
         self.session = requests.Session()
-        self.dangerous  = dangerous
+        self.auth_deletion = False
         cookie = requests.cookies.RequestsCookieJar()
         try:
             response = self.session.get(self.url_server, verify=self.ssl)
