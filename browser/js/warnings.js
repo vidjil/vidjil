@@ -197,25 +197,26 @@ Warnings.prototype = {
         span_warn_checkbox.checked = !this.m.getWarningFilterStatusFromCode(subwarn_code)
         span_warn_checkbox.onclick = ()=> { self.m.toogleWarningFilter(subwarn_code) }
 
-        var span_warn_decrease = document.createElement("span")
-        span_warn_decrease.id  = `warn_span_${subwarn_code}_minus`
-        span_warn_decrease.innerHTML += "<i class='icon-minus' title='Increase level of this warning'></i>"
         var span_icon       = document.createElement("span")
         span_icon.classList = span_warn
         span_icon.id        = `warn_span_${subwarn_code}`
         span_icon.innerHTML += `<i class="${icon_class}" title='Level of warning ${subwarn_code}: ${span_warn != "" ? span_warn : "info"}' id=warn_icon_${subwarn_code}></i>`
         
+        var span_warn_decrease = document.createElement("span")
+        span_warn_decrease.id  = `warn_span_${subwarn_code}_minus`
+        span_warn_decrease.style = "devel-mode"
+        span_warn_decrease.innerHTML += "<i class='icon-minus' title='Increase level of this warning'></i>"
         var span_warn_increase  = document.createElement("span")
         span_warn_increase.id   = `warn_span_${subwarn_code}_plus`
+        span_warn_increase.style  ="devel-mode"
         span_warn_increase.innerHTML += "<i class='icon-plus' title='Decrease level of this warning'></i>"
-
         span_warn_decrease.onclick = ()=> { self.m.changeWarningLevel(subwarn_code, "decrease") } 
         span_warn_increase.onclick = ()=> { self.m.changeWarningLevel(subwarn_code, "increase") }
 
         spans.appendChild(span_warn_checkbox)
-        spans.appendChild(span_warn_decrease)
         spans.appendChild(span_icon)
-        spans.appendChild(span_warn_increase)
+        // spans.appendChild(span_warn_decrease)
+        // spans.appendChild(span_warn_increase)
         sub.appendChild(spans)
         
         var div_text = document.createElement("div")
