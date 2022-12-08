@@ -50,6 +50,13 @@ Warnings.prototype = {
     build: function () {
         this.init()
     },
+        
+    /**
+     * Reset and rebuild html elements needed
+     * */
+    reset: function () {
+        this.init()
+    },
     
     /** 
      * build html elements for clone and data list <br>
