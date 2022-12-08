@@ -300,7 +300,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
         "getHtmlInfo: productivity information (if exist)");
     // locus/genes content tests
     // TODO correct this locus test/function for chromium/firefox (inversion des balises)
-    assert.includes(html, "<tr id='modal_line_locus'><td id='modal_line_title_locus'>locus</td><td colspan='4' id='modal_line_value_locus'><span class=\"systemBoxMenu\" title=\"TRG\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
+    assert.includes(html, "<tr id='modal_line_locus' ><td  id='modal_line_title_locus'>locus</td><td  colspan='4' id='modal_line_value_locus'><span class=\"systemBoxMenu\" title=\"TRG\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
         "getHtmlInfo: segmentation information (Locus)");
 
     assert.includes(html, "tr id='modal_line_V_gene_or_5_' ><td  id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td><td  colspan='4' id='modal_line_value_V_gene_or_5_'>undefined V<div class='div-menu-selector' id='listVsegment' style='display: none'><form name=Vsegment>",
