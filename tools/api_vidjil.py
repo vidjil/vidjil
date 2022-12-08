@@ -417,7 +417,7 @@ class Vidjil:
             dict: ???
         """
         if self.auth_deletion != True:
-            print("This action (delete set) is not available.\nCall function enableDeletion before doing such actions to switch off the security.")
+            print("This action (delete set) is not available.\nCall function enableDeletion before doing such actions to switch off the security.", file=sys.stderr)
             exit()
         data     = { 'id' : set_id }
         new_url  = self.url_server + "sample_set/delete?" + self.convertDataAsUrl(data)
