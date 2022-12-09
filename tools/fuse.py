@@ -868,7 +868,7 @@ class ListWindows(VidjilJson):
         concatenate_with_padding(obj.d, 
                                  self.d, l1,
                                  other.d, l2,
-                                 ["clones", "links", "germlines",
+                                 ["clones", "links", "germlines", "warn",
                                   "vidjil_json_version"])
         
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
@@ -903,6 +903,22 @@ class ListWindows(VidjilJson):
                 obj.d["distributions"]["repertoires"][filename] = other.d["distributions"]["repertoires"][filename]
         except:
             pass
+
+        ### Warnings
+        if "warn" in self.d:
+            if ("warn" not in obj.d): 
+                obj.d["warn"] = []
+            for warn in self.d["warn"]:
+                if not "sample" in warn:
+                    warn["sample"] = l1-1
+                obj.d["warn"].append(warn)
+        if "warn" in other.d:
+            if ("warn" not in obj.d): 
+                obj.d["warn"] = []
+            for warn in other.d["warn"]:
+                if not "sample" in warn:
+                    warn["sample"] = l1
+                obj.d["warn"].append(warn)
 
         return obj
         
