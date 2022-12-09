@@ -199,8 +199,8 @@ Warnings.prototype = {
 
         var span_icon       = document.createElement("span")
         span_icon.classList = span_warn
+        span_icon.innerHTML += `<i class="${icon_class}" title='Level of warning ${subwarn_code}: ${(span_warn != "" && span_warn != undefined) ? span_warn : "info"}' id=warn_icon_${subwarn_code}></i>`
         span_icon.id        = `warn_span_${subwarn_code}`
-        span_icon.innerHTML += `<i class="${icon_class}" title='Level of warning ${subwarn_code}: ${span_warn != "" ? span_warn : "info"}' id=warn_icon_${subwarn_code}></i>`
         
         var span_warn_decrease = document.createElement("span")
         span_warn_decrease.id  = `warn_span_${subwarn_code}_minus`
@@ -266,7 +266,7 @@ Warnings.prototype = {
 
         Object.keys(warnings_data).forEach( (category) => {
             Object.keys(warnings_data[category]).forEach( (warn_code) => {
-                var current = localStorage.getItem(`warn_${warn_code}`)
+                var current = this.m.getWarningLevelFromCode(warn_code)
                 var warn_icon = current > 0 ? 'icon-warning-1' : 'icon-info'
                 var warn_text = warnText[current]
                 var span = document.getElementById(`warn_span_${warn_code}`)
