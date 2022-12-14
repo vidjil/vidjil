@@ -77,7 +77,7 @@ class Vidjil:
         self.ssl = ssl
         print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
         self.session = requests.Session()
-
+        self.auth_deletion = False
         cookie = requests.cookies.RequestsCookieJar()
         try:
             response = self.session.get(self.url_server, verify=self.ssl)
@@ -180,6 +180,11 @@ class Vidjil:
             else:
                 raise ValueError(message)
         return content
+
+    def allowDeletion(self):
+        """ Enable the ability of the API to make deletion"""
+        self.auth_deletion = True
+        return
 
 
     def getSets(self, set_type:str=None, filter_val:str=None):
@@ -398,6 +403,23 @@ class Vidjil:
         return self.request(new_url, "get")
 
 
+    def removeSet(self, set_id:int):
+        """Remove set with the given id.
+        For security reason, a call at allowDeletion() is needed before doing this action.
+
+        Args:
+            set_id (int): Set id to delete
+        Returns:
+            dict: ???
+        """
+        if self.auth_deletion != True:
+            print("This action (delete set) is not available.\nCall function allowDeletion before doing such actions to switch off the security.", file=sys.stderr)
+            exit()
+        data     = { 'id' : set_id }
+        new_url  = self.url_server + "sample_set/delete?" + self.convertDataAsUrl(data)
+        return self.request(new_url, "get")
+
+
     def convertDataAsUrl(self, data:dict):
         """Allow to get an url compatible string to add to an url to launch request from a dict
 
@@ -491,13 +513,13 @@ class Vidjil:
         print("Samples created (%s): launch upload" % (file_ids))
         
         ## Upload files
-        self.uploadSample(sample_id=file_ids, filepath=head_f1, filename=tail_f1,  pre_process=pre_process, file_number='1')
+        self.uploadSample(sample_id=file_ids, filepath=head_f1, filename=tail_f1,  pre_process=pre_process, file_number='1', source=source)
         if file_filename2 != None and file_filename2 != "":
-            self.uploadSample(sample_id=file_ids, filepath=head_f2, filename=tail_f2, pre_process=pre_process, file_number='2')
+            self.uploadSample(sample_id=file_ids, filepath=head_f2, filename=tail_f2, pre_process=pre_process, file_number='2', source=source)
         print("Samples created (%s): upload completed ('%s' and '%s')" % (file_ids, tail_f1, tail_f2))
         return content
 
-    def uploadSample(self, sample_id:int, filepath:str, filename:str, pre_process:str, file_number:str):
+    def uploadSample(self, sample_id:int, filepath:str, filename:str, pre_process:str, file_number:str, source:str="computer"):
         """Upload a sample file to a sample
 
         Args:
@@ -506,12 +528,13 @@ class Vidjil:
             filename (str): Name of the file
             pre_process (str): Number of the preprocess in string format
             file_number (str): Position of the file in string format ("1" or "2")
+            source (str, optional): Source of files. Two avalaible options: "computer" and "nfs" (for local storage). Defaults to "computer".
 
         Raises:
             FileNotFoundError: Raise an eception if the file don't exist locally
             Exception: Raise an exception if the server return an error after upload of file
         """
-        if not os.path.isfile(filepath+"/"+filename):
+        if source == "computer" and not os.path.isfile(filepath+"/"+filename):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), filepath+"/"+filename)
 
         data     = {'pre_process': pre_process, 'id': sample_id, 'file_number': file_number}
