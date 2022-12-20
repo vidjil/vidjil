@@ -93,7 +93,7 @@ Each configuration has permissions for some groups.
 ## Pre- and post-processes (around fuse)
 
 It is possible to run further pre- or post-process scripts around the "fusing" of results
-by giving `--pre` and/or `--post` options to fue.
+by giving `--pre` and/or `--post` options to fuse.
 These scripts can also be wrappers of other software.
 This can be useful to further process the result files, possibly taking into account several result files
  as in a MRD setup developed by Joao Medianis (Boldrini center, Brasil).
@@ -110,7 +110,7 @@ This can be useful to further process the result files, possibly taking into acc
     as for example in `-t 100 --pre spike-normalization.py`.
     A `--pre` script will be called on each `.vidjil` file, before the actual fusing,
     whereas a `--post` script will be called on the combined `.vidjil` file after the fusing.
-
+  - Multiple scripts can be call. To do that, concatenate commands to use inside fuse line to call with a '&&' separator. `-t 100 --pre 'scriptA --opt optvalA && scriptB --opt optvalB`. This can be done for prefuse and postfuse step.
 
 When the users select this config, these pre- and post-processes will also be called.
 
