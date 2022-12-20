@@ -2749,10 +2749,16 @@ div.tooltip {
 .dropdown-check-list.visible .rs-items {
   display: block;
 }
+.warning_span {
+  min-width: 100px;
+  display: inline-block;
+  text-align: right;
+  cursor: pointer;
+}
+.warning_span:hover {
+  color: #fdf6e3;
+  font-style: oblique;
+}
 .warnings_section_unpresent {
   color: #586e75;
-}
-.warnings_line {
-  display: flex;
-  margin: 4px;
 }
