@@ -1,4 +1,9 @@
-
+/**
+ * Some warnings are not implemented for the moment
+ * Some other are sample warnings and need to be better implmeented inside client 
+ * For the moment, only clone warning is implemented
+ * Warning is no visibility will not be used for the moment inside client warning view
+ */
 var warnings_data = {
     "Generic errors":
     {
@@ -39,7 +44,7 @@ var warnings_data = {
         {
             "title": "Few assembled reads  #2243  ",
             "level": 1,
-            "visibility": 1
+            "visibility": 0
         },
         "W1z":
         {
@@ -54,7 +59,7 @@ var warnings_data = {
         {
             "title": "Very few V(D)J recombinations found",
             "level": 1,
-            "visibility": 1
+            "visibility": 0
         },
         "W21":
         {
