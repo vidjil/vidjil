@@ -194,12 +194,15 @@ Warnings.prototype = {
         span_warn_show_all_sample.appendChild(span_select_warn_all)
 
 
+        var span_warn_switch  = document.createElement("span")
+        span_warn_switch.style = "cursor: pointer"
+        span_warn_switch.onclick = ()=> { self.m.toogleWarningFilter(subwarn_code) }
+
         var span_warn_checkbox = document.createElement("input")
 
         span_warn_checkbox.type = "checkbox"
         span_warn_checkbox.id   = `warn_filter_${subwarn_code}`
         span_warn_checkbox.checked = !this.m.getWarningFilterStatusFromCode(subwarn_code)
-        span_warn_checkbox.onclick = ()=> { self.m.toogleWarningFilter(subwarn_code) }
 
         var span_icon       = document.createElement("span")
         span_icon.classList = span_warn
@@ -217,8 +220,9 @@ Warnings.prototype = {
         // span_warn_decrease.onclick = ()=> { self.m.changeWarningLevel(subwarn_code, "decrease") } 
         // span_warn_increase.onclick = ()=> { self.m.changeWarningLevel(subwarn_code, "increase") }
 
-        spans.appendChild(span_warn_checkbox)
-        spans.appendChild(span_icon)
+        span_warn_switch.appendChild(span_warn_checkbox)
+        span_warn_switch.appendChild(span_icon)
+
         // spans.appendChild(span_warn_decrease)
         // spans.appendChild(span_warn_increase)
         
@@ -227,7 +231,8 @@ Warnings.prototype = {
 
         var text   = document.createTextNode(subwarn_code+" - "+subwarn.title)
         div_text.appendChild(text)
-        spans.appendChild(div_text)
+        span_warn_switch.appendChild(div_text)
+        spans.appendChild(span_warn_switch)
         sub.appendChild(spans)
 
         if (Object.keys(warn_info_sample).indexOf(subwarn_code) != -1){
