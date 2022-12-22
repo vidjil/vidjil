@@ -144,7 +144,7 @@ Warnings.prototype = {
         sub.classList = " warnings_line"
         // create line
 
-        var subwarn_level = localStorage.getItem(`warn_${subwarn_code}`) ? Number(localStorage.getItem(`warn_${subwarn_code}`)) : subwarn.level
+        var subwarn_level = this.m.getWarningLevelFromCode(subwarn_code)
 
         var icon_class; var span_warn
         if (subwarn_level == 0) {icon_class = "icon-info"; span_warn=""}
