@@ -1,0 +1,22 @@
+!OUTPUT_FILE: logparser_generic.vidjil
+!LAUNCH: python ../../logparser.py -i ../data/preprocess_generic.log -o logparser_generic.vidjil --parser LogParser;
+
+$ Reads field is defined
+j0: reads # in fact; reads == {}
+$ Reads field is empty because no information to fill: merged value
+j0: reads.merged
+$ Reads field is empty because no information to fill: total value
+j0: reads.total
+
+
+$ field 1; string
+j: pre_process.preprocess: ["generic_script"]
+
+$ field 2; datetime string
+j: pre_process.date[0]: 2022-12-22
+
+$ field 3; integer
+j: pre_process.reads_found: [1000]
+
+$ field 4; string "XXX field"
+j: pre_process.computed: [234]
