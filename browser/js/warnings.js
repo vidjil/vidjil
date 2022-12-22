@@ -202,12 +202,12 @@ Warnings.prototype = {
 
         span_warn_checkbox.type = "checkbox"
         span_warn_checkbox.id   = `warn_filter_${subwarn_code}`
+        span_warn_checkbox.style   = "margin-left:20px;"
         span_warn_checkbox.checked = !this.m.getWarningFilterStatusFromCode(subwarn_code)
 
         var span_icon       = document.createElement("span")
-        span_icon.classList = span_warn
-        span_icon.innerHTML += `<i class="${icon_class}" title='Level of warning ${subwarn_code}: ${(span_warn != "" && span_warn != undefined) ? span_warn : "info"}' id=warn_icon_${subwarn_code}></i>`
-        span_icon.id        = `warn_span_${subwarn_code}`
+        span_icon.id        = `warn_span_${subwarn_code}` 
+        // Will be filled by update function
         
         // var span_warn_decrease = document.createElement("span")
         // span_warn_decrease.id  = `warn_span_${subwarn_code}_minus`
@@ -280,11 +280,14 @@ Warnings.prototype = {
                 var warn_text = warnText[current]
                 var span = document.getElementById(`warn_span_${warn_code}`)
                 if (span != null) {
-                    // console.default.log( `Update warning ${warn_code}`)
                     span.innerHTML = ""
                     span.classList = warn_text
-                    span.appendChild(icon(warn_icon))
-                    span.title = `Level of warning ${warn_code}: ${warn_text != "" ? warn_text : "info"}`
+                    span.style     = "min-width:24px; display: inline-block;"
+                    if (warn_text != ""){
+                        span.appendChild(icon(warn_icon))
+                        span.firstChild.classList = warn_icon
+                        // span.title = `Level of warning ${warn_code}: ${warn_text != "" ? warn_text : "info"}`
+                    }
                 }
 
                 var checkbox = document.getElementById(`warn_filter_${warn_code}`)
