@@ -158,22 +158,24 @@ Warnings.prototype = {
         // Table with clone/reads number
         var span_intermediate = document.createElement("span")
         span_intermediate.style = "min-width: 25px; display: block;"
+
         var span_warn_show_sample    = document.createElement("span")
         span_warn_show_sample.id     = `warn_span_${subwarn_code}_sample`
         span_warn_show_sample.classList  = `warning_span`
-        span_warn_show_sample.title  = `Number of clonotypes (and reads) with warning ${subwarn_code} in the sample ${this.m.getStrTime(this.m.t)}`
         var span_warn_show_all_sample    = document.createElement("span")
         span_warn_show_all_sample.id     = `warn_span_${subwarn_code}_all_samples`
         span_warn_show_all_sample.classList  = `warning_span`
-        span_warn_show_all_sample.title  = `Number of clonotypes (and reads) with warning ${subwarn_code} in all samples`
+
         if (Object.keys(warn_info_sample).indexOf(subwarn_code) != -1){
             span_warn_show_sample.innerHTML += `${warn_info_sample[subwarn_code].clones.length} (${warn_info_sample[subwarn_code].reads})`
+            span_warn_show_sample.title  = `${warn_info_sample[subwarn_code].clones.length} clonotypes in ${warn_info_sample[subwarn_code].reads} reads with warning ${subwarn_code} in the sample ${this.m.getStrTime(this.m.t)}`
         } else {
             span_warn_show_sample.innerHTML += `0 (0)`
         }
 
         if (Object.keys(warn_info_sample).indexOf(subwarn_code) != -1){
             span_warn_show_all_sample.innerHTML += `${warn_info_all[subwarn_code].clones.length} (${warn_info_all[subwarn_code].reads})`
+            span_warn_show_all_sample.title  = `${warn_info_all[subwarn_code].clones.length} clonotypes in ${warn_info_all[subwarn_code].reads} reads with warning ${subwarn_code} in the all samples`
         } else {
             span_warn_show_all_sample.innerHTML += `0 (0)`
         }
