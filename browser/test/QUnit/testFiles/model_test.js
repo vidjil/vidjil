@@ -757,7 +757,7 @@ QUnit.test("getWarningLevelFromCode", function(assert) {
     localStorage.clear()
 
     var warn_1 = "W69" // level 0
-    var warn_2 = "W82" // level 3
+    var warn_2 = "W82" // level 2
     var warn_3 = "Wxx" // level 1
     var warn_undef = undefined
     var warn_empty = {}
@@ -765,7 +765,7 @@ QUnit.test("getWarningLevelFromCode", function(assert) {
     assert.equal( m.getWarningLevelFromCode(warn_1), 0, "getWarningLevelFromCode; before local change, 'warn")
     assert.equal( m.getWarningLevelFromCode(warn_2), 2, "getWarningLevelFromCode; before local change, 'alert'")
     assert.equal( m.getWarningLevelFromCode(warn_3), 1, "getWarningLevelFromCode; before local change, 'error'")
-    assert.equal( m.getWarningLevelFromCode(warn_undef), 0, "getWarningLevelFromCode; before local change, 'undef'")
+    assert.equal( m.getWarningLevelFromCode(warn_undef), 2, "getWarningLevelFromCode; before local change, 'undef'")
 
     localStorage.setItem(`warn_W69`, 2)
     localStorage.setItem(`warn_W82`, 3)
@@ -774,7 +774,7 @@ QUnit.test("getWarningLevelFromCode", function(assert) {
     assert.equal( m.getWarningLevelFromCode(warn_1), 2, "getWarningLevelFromCode; after local change, 'warn")
     assert.equal( m.getWarningLevelFromCode(warn_2), 3, "getWarningLevelFromCode; after local change, 'alert'")
     assert.equal( m.getWarningLevelFromCode(warn_3), 2, "getWarningLevelFromCode; after local change, 'error'")
-    assert.equal( m.getWarningLevelFromCode(warn_undef), 0, "getWarningLevelFromCode; after local change, 'undef'")
+    assert.equal( m.getWarningLevelFromCode(warn_undef), 2, "getWarningLevelFromCode; after local change, 'undef'")
 
 });
 
@@ -785,16 +785,16 @@ QUnit.test("getWarningLevelFromWarn", function(assert) {
     m.initClones()
     localStorage.clear()
 
-    var warn_1 = {"code": "W69", "level": "warn"}
-    var warn_2 = {"code": "W82", "level": "alert"}
-    var warn_3 = {"code": "Wxx", "level": "error"}
-    var warn_undef = {"code": "Wyy", "level": undefined} // old style warnings
+    var warn_1 = {"code": "W69", "level": "warn"}  // level 0
+    var warn_2 = {"code": "W82", "level": "alert"} // level 2
+    var warn_3 = {"code": "Wxx", "level": "error"} // level 1
+    var warn_undef = {"code": "Wyy", "level": undefined} // old style warnings; level 2
     var warn_empty = {}
 
-    assert.equal( m.getWarningLevelFromWarn(warn_1), 1, "getWarningLevelFromWarn; before local change, 'warn")
+    assert.equal( m.getWarningLevelFromWarn(warn_1), 0, "getWarningLevelFromWarn; before local change, 'warn")
     assert.equal( m.getWarningLevelFromWarn(warn_2), 2, "getWarningLevelFromWarn; before local change, 'alert'")
-    assert.equal( m.getWarningLevelFromWarn(warn_3), 3, "getWarningLevelFromWarn; before local change, 'error'")
-    assert.equal( m.getWarningLevelFromWarn(warn_undef), 1, "getWarningLevelFromWarn; before local change, 'undef'")
+    assert.equal( m.getWarningLevelFromWarn(warn_3), 1, "getWarningLevelFromWarn; before local change, 'error'")
+    assert.equal( m.getWarningLevelFromWarn(warn_undef), 2, "getWarningLevelFromWarn; before local change, 'undef'")
     assert.equal( m.getWarningLevelFromWarn(warn_empty), 0, "getWarningLevelFromWarn; before local change, empty warn")
 
     localStorage.setItem(`warn_W69`, 2)
@@ -804,7 +804,7 @@ QUnit.test("getWarningLevelFromWarn", function(assert) {
     assert.equal( m.getWarningLevelFromWarn(warn_1), 2, "getWarningLevelFromWarn; after local change, 'warn")
     assert.equal( m.getWarningLevelFromWarn(warn_2), 3, "getWarningLevelFromWarn; after local change, 'alert'")
     assert.equal( m.getWarningLevelFromWarn(warn_3), 2, "getWarningLevelFromWarn; after local change, 'error'")
-    assert.equal( m.getWarningLevelFromWarn(warn_undef), 1, "getWarningLevelFromWarn; after local change, 'undef'")
+    assert.equal( m.getWarningLevelFromWarn(warn_undef), 2, "getWarningLevelFromWarn; after local change, 'undef'")
 
 });
 
@@ -815,16 +815,17 @@ QUnit.test("getWarningLevelFromList", function(assert) {
     m.initClones()
     // m.resetWarnings()
     localStorage.clear()
+    // Will use warnings data to set level; so level present here will not be used
     var warn_1 = {"code": "W69", "level": "warn"}
     var warn_2 = {"code": "W82", "level": "alert"}
     var warn_3 = {"code": "Wxx", "level": "error"}
-    var warn_undef = {"code": "Wyy", "level": undefined} // old style warnings
+    var warn_undef = {"code": "Wyy", "level": undefined} // old style warnings, alert by default
     
-    assert.equal( m.getWarningLevelFromList([warn_1]), 1, "getWarningLevelFromList; before local change, only 'warn")
+    assert.equal( m.getWarningLevelFromList([warn_1]), 0, "getWarningLevelFromList; before local change, only 'warn")
     assert.equal( m.getWarningLevelFromList([warn_2]), 2, "getWarningLevelFromList; before local change, only 'alert'")
-    assert.equal( m.getWarningLevelFromList([warn_3]), 3, "getWarningLevelFromList; before local change, only 'error'")
-    assert.equal( m.getWarningLevelFromList([warn_undef]), 1, "getWarningLevelFromList; before local change, only 'undef'")
-    assert.equal( m.getWarningLevelFromList([warn_undef, warn_3]), 3, "getWarningLevelFromList; before local change, [undef, error]")
+    assert.equal( m.getWarningLevelFromList([warn_3]), 1, "getWarningLevelFromList; before local change, only 'error'")
+    assert.equal( m.getWarningLevelFromList([warn_undef]), 2, "getWarningLevelFromList; before local change, only 'undef'")
+    assert.equal( m.getWarningLevelFromList([warn_undef, warn_3]), 2, "getWarningLevelFromList; before local change, [undef, error]")
     assert.equal( m.getWarningLevelFromList([warn_1, warn_2]), 2, "getWarningLevelFromList; before local change, [warn, alert]")
 
     localStorage.setItem(`warn_W69`, 2)
@@ -834,7 +835,7 @@ QUnit.test("getWarningLevelFromList", function(assert) {
     assert.equal( m.getWarningLevelFromList([warn_1]), 2, "getWarningLevelFromList; after local change, only 'warn")
     assert.equal( m.getWarningLevelFromList([warn_2]), 3, "getWarningLevelFromList; after local change, only 'alert'")
     assert.equal( m.getWarningLevelFromList([warn_3]), 2, "getWarningLevelFromList; after local change, only 'error'")
-    assert.equal( m.getWarningLevelFromList([warn_undef]), 1, "getWarningLevelFromList; after local change, only 'undef'")
+    assert.equal( m.getWarningLevelFromList([warn_undef]), 2, "getWarningLevelFromList; after local change, only 'undef'")
     assert.equal( m.getWarningLevelFromList([warn_undef, warn_3]), 2, "getWarningLevelFromList; after local change, [undef, error]")
     assert.equal( m.getWarningLevelFromList([warn_1, warn_2]), 3, "getWarningLevelFromList; after local change, [warn, alert]")
 

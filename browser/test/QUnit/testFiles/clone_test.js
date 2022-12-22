@@ -200,17 +200,16 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.equal(c1.getLocus(), "TRG")
     assert.equal(c2.getLocus(), "IGH")
 
-
     assert.equal(c1.warnLevel(), 1, "clone1 is warned (client, bad e-value, but level undef)")
-    assert.equal(c2.warnLevel(), 0, "clone2 is not warned (only 'info')")
+    assert.equal(c2.warnLevel(), 1, "clone2 is not warned (only 'info')")
     assert.equal(c3.warnLevel(), 1, "clone3 is warned with 'warn'")
-    assert.equal(c4.warnLevel(), 3, "clone4 is warned with 'error'")
+    assert.equal(c4.warnLevel(), 2, "clone4 is warned with 'error'")
     assert.equal(c5.warnLevel(), 0, "clone5 is not warned")
 
     assert.equal(c1.isWarned(), 'warn', "clone1 is warned (client, bad e-value)")
-    assert.equal(c2.isWarned(), false, "clone2 is not warned (only 'info')")
+    assert.equal(c2.isWarned(), "warn", "clone2 is not warned (level 'info', but warning data level at 'warn')")
     assert.equal(c3.isWarned(), 'warn', "clone3 is warned with 'warn', 'a warning, old style' (code & level undef")
-    assert.equal(c4.isWarned(), 'error', "clone4 is warned with 'error'")
+    assert.equal(c4.isWarned(), 'alert', "clone4 is warned with 'error', but max level is 'alert'")
     assert.equal(c5.isWarned(), false, "clone5 is not warned")
 
     assert.equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
