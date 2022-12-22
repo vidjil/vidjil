@@ -1614,7 +1614,7 @@ Clone.prototype = {
         html += "</tr>"
 
         //warnings
-        if (this.isWarned()) {
+        if (this.isWarnedBool()) {
             html += header("warnings", undefined, time_length)
             var warnings = {}
             // Create a dict of all warning present, and add each sample with it
