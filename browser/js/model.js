@@ -1660,7 +1660,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var value = 2
         if (!("code" in warn) && !("msg" in warn)  && !("level" in warn) ){ // empty
             return 0
-        } else if (warn.code != undefined){
+        } else if (warn.code != undefined && warn.code != ""){
             value = this.getWarningLevelFromCode(warn.code)
         } else if (warn.level == undefined){ // Old style value
             value = 1
@@ -1680,7 +1680,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     getWarningLevelFromCode: function(warn_code){
         var level = 2
         if (warn_code == undefined){
-            return 0
+            return level
         } else if (localStorage.getItem(`warn_${warn_code}`) ) {
             level = parseInt(localStorage.getItem(`warn_${warn_code}`))
         } else {
