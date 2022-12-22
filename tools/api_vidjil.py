@@ -1,25 +1,45 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from requests import Session
-from bs4 import BeautifulSoup as bs
+import sys
 import json
 import re
-import requests
-
 import os
 import random, string
 import argparse
 import getpass
-import sys
 import errno
+from collections import defaultdict
+
+### Particular module to load
+import subprocess
+import pkg_resources
+
+required  = {'requests', 'bs4', 'tabulate', 'requests-toolbelt', 'urllib3'}
+installed = {pkg.key for pkg in pkg_resources.working_set}
+missing   = required - installed
+
+if missing:
+    python = sys.executable
+    print( f"Missing modules: {missing}")
+    cmd = [python, '-m', 'pip', 'install', *missing]
+    install = input("Do you want to install these modules? (y)es or no? ")
+    if install.lower() in ["y", "yes"]:
+        subprocess.check_call(cmd, stdout=subprocess.DEVNULL)
+    else:
+        print(f"You choose to not install missing modules. \nYou can install them yourself by typing:  `{' '.join(cmd)}`")
+        print(f"Script will end now.")
+        exit()
+
+
+import requests
+from tabulate import tabulate
 from bs4 import BeautifulSoup
 from requests_toolbelt import MultipartEncoder
-from collections import defaultdict
 # REmove warning if no SSL vérification
+
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-from tabulate import tabulate
 
 TAGS = []
 TAGS_UNDEFINED = []
