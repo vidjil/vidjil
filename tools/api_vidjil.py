@@ -129,8 +129,43 @@ class Vidjil:
             self.logged = True
             print( "Successful login as %s" % email)
             print()
-            # self.whoami()
+            whoami = self.whoami()
+            self.user_id    = whoami["id"]
+            self.user_email = whoami["email"]
             # todo; print admin status; groups ?
+
+    def impersonate( self, impersonate_id:int):
+        """Lauch impersonating action. If not allowed to imperosnate, server will raise an error 'Forbidden' and the script will end.
+        
+        Args:
+            impersonate_id (int): Id of the user to impersonate
+        Raises:
+            Exception: Error when impersonate don't be succesful; multiple possible reasons: you are not admin, user don't exist
+        Returns:
+            dict: Json response of the server that contain the set if available
+        """
+        new_url = self.url_server + f"/default/impersonate?id={impersonate_id}&next=/vidjil/user/index&="
+        result  = self.request(new_url, "post")
+        whoami  = self.whoami()
+        if whoami["id"] != impersonate_id:
+            raise(f"Error. Impersonate haven't work (id: {impersonate_id})")
+        if "redirect" in result.keys():
+            print( f"Successful impersonate of user {impersonate_id} ({whoami['email']})")
+        return
+
+    def stop_impersonate( self):
+        """Stop impersonating action.
+        Returns:
+            dict: Json response of the server that contain the set if available
+        """
+        new_url = self.url_server + f"/default/stop_impersonate"
+        result  = self.request(new_url, "post")
+        whoami  = self.whoami()
+        if whoami["id"] != self.user_id:
+            raise(f"Error. Stop Impersonate haven't work ( still id: {whoami['id']})")
+        if "redirect" in result.keys():
+            print( f"Successful desimpersonating")
+        return
 
     def request(self, url:str, method:str, error_msg:bool=False, bypass_error:bool=False):
         """Send a request to server by a designed url and return a json content response
@@ -153,6 +188,10 @@ class Vidjil:
             response = self.session.post(url, verify=self.ssl)
         else:
             raise("Error. request function don't get correct method argument")
+
+        if response.content in [b"Forbidden", b"Not Authorized"] :
+            print(f"This call is '{response.content}'. \nVerify that you try to access to a data that EXIST, of your OWN or that you use an ADMIN account.", file=sys.stderr)
+            exit()
 
         try:
             content  = json.loads(response.content)
@@ -304,13 +343,17 @@ class Vidjil:
         return self.request(new_url, "post")
 
 
-    def whoami(self):
+    def whoami(self, verbose=False):
         """Return a json with user informations on the server for logged user"""
         new_url = self.url_server + "/default/whoami.json"
         error_msg = "Error of login; WHOAMI function present on server ?"
         user = self.request(new_url, "get", error_msg=error_msg, bypass_error=True)
-        print( "whoami: %s" % user)
-        return
+        for key_to_del in ["ignored_fields", "registration_id", "reset_password_key", "password", "registration_key"]:
+            user.pop(key_to_del, None)
+
+        if verbose:
+            print( "whoami: %s" % user)
+        return user
 
     def getSamplesOfSet(self, set_id, config_id=-1):
         new_url  = self.url_server+"/sample_set/index.json?id=%s&config_id=%s" % (set_id, config_id)
