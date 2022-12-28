@@ -436,6 +436,8 @@ deploy_client:
     - prod-client
   tags:
     - cidocker
+  needs:
+    - deploy_docker
   
     
 deploy_docker:
