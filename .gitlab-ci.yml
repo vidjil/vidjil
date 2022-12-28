@@ -426,7 +426,7 @@ deploy_client:
          && make germline
          && cp doc/analysis-example.vidjil browser/
          && cd docker
-         && docker-compose pull
+         && docker-compose pull nginx
          && docker-compose down
          && docker-compose up -d nginx"
   environment:
