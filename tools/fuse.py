@@ -200,7 +200,7 @@ class Window:
     def __add__(self, other):
         """Concat two windows, extending lists such as 'reads'"""
         #data we don't need to duplicate
-        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd"]
+        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd", "warn"]
         obj = Window(1)
         
         # 'id' and 'top' will be taken from 'topmost' clone
@@ -218,6 +218,14 @@ class Window:
                   "R2": [0],
                   "family": ["None"],
                    "norm_coeff": [0]}
+
+        if "warn" in self.d or "warn" in other.d:
+            obj.d["warn"] = []
+            for source in [self, other]:
+                if "warn" in source.d:
+                    for warn in source.d["warn"]:
+                        obj.d["warn"].append(warn)
+
         if "mrd" in self.d or "mrd" in other.d:
             if "mrd" in self.d:
                 first = self.d["mrd"]
