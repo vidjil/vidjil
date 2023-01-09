@@ -296,21 +296,6 @@ Warnings.prototype = {
      * update all content for list and data list
      * */
     update: function () {
-        m.clones.forEach( c =>{
-            var info_list   = document.getElementById(`clone_infoBox_${c.index}`)
-            var info_align  = document.getElementById(`aligner_info_${c.index}`)
-            var dom_content = c.getWarningsDom()
-            if (info_list != null) {
-                info_list.classList = dom_content.className
-                info_list.firstChild.classList = dom_content.icon
-                info_list.firstChild.title = dom_content.title
-            }
-            if (info_align != null) {
-                info_align.classList = dom_content.className
-                info_align.firstChild.classList = dom_content.icon
-                info_align.firstChild.title = dom_content.title
-            }
-        })
 
         Object.keys(warnings_data).forEach( (category) => {
             Object.keys(warnings_data[category]).forEach( (warn_code) => {

@@ -1615,11 +1615,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             })
         })
 
-        this.view.forEach( (view) => {
-            if (view.id == "warnings_list") { 
-                view.update()
-            }
-        })
+        this.update()
         console.default.log(`change warn level after; ${subwarn_code}, ${current_level}`)
     },
 
@@ -1629,9 +1625,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      */
     toogleWarningFilter: function(subwarn_code){
         this.setWarningFilterStatus(subwarn_code, !this.getWarningFilterStatusFromCode(subwarn_code))
-        this.view.forEach( (view) => {
-            if (view.id == "warnings_list") {view.update()}
-        })
+        this.update()
     },
 
     /*
@@ -1709,6 +1703,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
         return false
     },
+
     /**
      * Set the filter status of a warning by his warning code
      * @param (string) warn_code The warning code to set

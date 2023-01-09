@@ -526,6 +526,14 @@ Aligner.prototype = {
             
         }
 
+        var dom_content = this.m.clone(cloneID).getWarningsDom()
+        var info_align  = document.getElementById(`aligner_info_${this.m.clone(cloneID).index}`)
+        if (info_align != null) {
+            info_align.classList = dom_content.className
+            info_align.firstChild.classList = dom_content.icon
+            info_align.firstChild.title = dom_content.title
+        }
+
         this.updateDom(list)
             .updateButton()
         

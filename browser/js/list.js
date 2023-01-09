@@ -546,6 +546,14 @@ List.prototype = {
                 if (this.m.clusters[cloneID].length < 2) display = false
                 document.getElementById("cluster"+cloneID).style.display = "none";
             }
+
+            var info_list   = document.getElementById(`clone_infoBox_${clone.index}`)
+            var dom_content = clone.getWarningsDom()
+            if (info_list != null) {
+                info_list.classList = dom_content.className
+                info_list.firstChild.classList = dom_content.icon
+                info_list.firstChild.title = dom_content.title
+            }
         }
     },
     
