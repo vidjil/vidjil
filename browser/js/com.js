@@ -208,6 +208,23 @@ Com.prototype = {
         
         document.body.appendChild(this.div_dataBox);
 
+        var inputChange = function(){
+            var key = window.event.keyCode;
+
+            // If the user has pressed enter
+            if (key === 13) {
+                console.confirm.continue[0].click()
+                document.getElementsByTagName("body")[0].focus() // escape from this text input
+                return false;
+            } else if (key === 27) {
+                console.confirm.cancel[0].click()
+                document.getElementsByTagName("body")[0].focus() // escape from this text input
+                return false;
+            } else {
+                return true;
+            }
+        }
+
         //
         this.confirm = {};
 
@@ -224,7 +241,9 @@ Com.prototype = {
         this.confirm.input =   $('<input/>',{   id: 'console_text_input',
                                                 type: 'text',
                                                 maxlength: 25,
-                                            }).appendTo(this.confirm.inputdiv);
+                                            })
+                                            .keypress(inputChange)
+                                            .appendTo(this.confirm.inputdiv);
                                             
         this.confirm.buttondiv = $('<div/>',{   class :"popup_button"
                                             }).appendTo(this.confirm.box);
@@ -439,11 +458,13 @@ Com.prototype = {
             this.confirm.continue.click(function(){self.closeConfirmBox()});
         }
 
-        if (typeof input != "undefined")
+        if (input != undefined){
             this.confirm.inputdiv.show();
-
-        if (typeof input == "string")
-            this.confirm.input.val(input);
+            this.confirm.input.focus()
+            if (typeof input == "string"){
+                this.confirm.input.val(input);
+            }
+        }
 
         this.confirm.continue.click(callback);
 

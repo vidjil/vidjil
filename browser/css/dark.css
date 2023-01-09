@@ -103,13 +103,13 @@
   bottom: 1px;
 }
 .highlight_seq {
-  top: .9em;
+  top: 0.9em;
   padding-bottom: 1px;
   opacity: 0.6;
   font-size: 70%;
-  letter-spacing: .428em;
+  letter-spacing: 0.428em;
   /* (1-.7) / .7 */
-  left: .214em;
+  left: 0.214em;
 }
 .highlight {
   display: inline-block;
@@ -175,7 +175,7 @@ span .end-codon {
 }
 .aligner-menu:hover {
   cursor: pointer;
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 .aligner-button {
   cursor: pointer;
@@ -209,10 +209,10 @@ span .end-codon {
   cursor: pointer;
 }
 .menu-content a:hover {
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 .menu-content label:hover {
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 .seq_layer {
   position: absolute;
@@ -327,7 +327,7 @@ span .end-codon {
 }
 .aligner-inline-button:hover {
   cursor: pointer;
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 /* base Vidjil style */
 /* @default, @background, @highlight, @select, @secondary and @border have to be defined */
@@ -583,12 +583,12 @@ line {
 }
 .axis_m {
   stroke: #839496;
-  opacity: 0.5 ;
+  opacity: 0.5;
   stroke-width: 20px;
 }
 .axis_m_other {
   stroke: #839496;
-  opacity: 0.25 ;
+  opacity: 0.25;
   stroke-width: 10px;
   display: none;
 }
@@ -676,7 +676,7 @@ line {
 .circle {
   cursor: pointer;
   -webkit-transition: fill 0.2s;
-  -o-transition: fill  0.2s;
+  -o-transition: fill 0.2s;
   -ms-transition: fill 0.2s;
   transition: fill 0.2s;
   fill: #839496;
@@ -809,7 +809,7 @@ line {
   font-size: 13px;
   cursor: pointer;
   -webkit-transition: color 0.2s;
-  -o-transition: color  0.2s;
+  -o-transition: color 0.2s;
   -ms-transition: color 0.2s;
   transition: color 0.2s;
   padding: 1px 4px 4px 1px;
@@ -1000,7 +1000,7 @@ line {
 }
 .menu:hover {
   cursor: pointer;
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 .menu:hover .selector {
   display: block;
@@ -1168,8 +1168,14 @@ a.tag-link {
 .modal.info-container {
   top: 50px;
   left: 495px;
-  max-width: calc(100% - 535px);
+  max-width: calc(100% - (475px + 60px));
   height: calc(100% - 215px);
+}
+.modal.data-container {
+  z-index: 4;
+}
+.modal.info-container {
+  z-index: 3;
 }
 .modal.jstree-container {
   padding-top: 30px;
@@ -1261,7 +1267,7 @@ span.logo {
   font-size: 60% ;
   font-weight: bold;
   vertical-align: super;
-  opacity: .8;
+  opacity: 0.8;
   color: #f88;
 }
 .devel-mode,
@@ -1287,7 +1293,7 @@ span.logo {
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: calc(8px);
+  margin-top: calc(32px - 24px);
   z-index: 5;
   overflow: hidden;
   border-width: 1px;
@@ -1445,7 +1451,7 @@ text.alert {
   fill: red;
 }
 span.warningReads {
-  margin-left: .5em;
+  margin-left: 0.5em;
   display: inline-block;
   width: 1em;
   text-align: center;
@@ -1946,18 +1952,18 @@ h3 .uid {
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
-  background-color: #f2deae;
+  background-color: #F2DEAE;
 }
 .flash_3,
 .log_3 {
   font-weight: bold;
   border-color: darkred;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .tip_1 {
   width: 400px;
@@ -1967,7 +1973,7 @@ h3 .uid {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  background: #dff0d8;
+  background: #DFF0D8;
   border-color: #333333;
 }
 #tip_img {
@@ -2113,12 +2119,12 @@ table.log textarea {
   border: 2px solid #8b0000;
   margin: 3px;
   font-weight: bold;
-  background-color: #f2dede;
+  background-color: #F2DEDE;
 }
 .info_message {
   border: 1px solid #333333;
   margin: 4px;
-  background-color: #dff0d8;
+  background-color: #DFF0D8;
 }
 .notification {
   padding: 3px;

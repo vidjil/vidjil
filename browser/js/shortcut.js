@@ -157,6 +157,34 @@ Shortcut.prototype = {
         // e.which is deprecated, see #2448
         switch(key) {
 
+        case 27 :   // Escape
+            e.preventDefault()
+            console.default.log( "press escape")
+            if (console.confirm.cancel[0].offsetParent !== null){
+                console.confirm.cancel[0].click()
+            } else {
+                var zIndexs = []
+                var panels  = document.getElementsByClassName("closeButton")
+                for (var p = 0; p < panels.length; p++) {
+                    if (getRelativeZindex(panels[p]) != null){
+                        zIndexs.push({"elem": panels[p], "zindex": getRelativeZindex(panels[p])})
+                    }
+                }
+
+                var max;
+                for (var z = 0; z < zIndexs.length; z++) {
+                    var panel = zIndexs[z]
+                    if (max == undefined || compareNumericalArrays(panel.zindex, max.zindex) == 1){
+                        max = panel
+                    }
+                }
+                if (max != undefined) {
+                    max.elem.click()
+                    return
+                }
+            }
+            break;
+
         case 37 :   // Left arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
