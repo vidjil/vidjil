@@ -1718,39 +1718,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         localStorage.setItem(`warn_filter_${warn_code}`, status)
     },
 
-    expendWarningSection: function(warn_section, show){
-        var current_warnings = Object.keys(this.getWarningsClonotypeInfo())
-
-        var warns = Object.keys(warnings_data[warn_section])
-        for (var i = warns.length - 1; i >= 0; i--) {
-            var subwarn_code = warns[i]
-            var warn = warnings_data[warn_section][subwarn_code]
-            if (!warn.visibility) { continue } // Bypass not implemented warn
-            var div  = document.getElementById(`subwarn_${subwarn_code}`)
-            if (show == true){
-                div.style.display = ""
-            } else {
-                console.default.log( `Hide - ${subwarn_code}` )
-                if (current_warnings.indexOf(subwarn_code) != -1){
-                    div.style.display = ""
-                } else {
-                    div.style.display = "none"
-                }
-            }
-        }
-        var self = this;
-        var span_expend  = document.getElementById(`warn_section_expend_${warn_section}`)
-        var icon_expend  = document.getElementById(`warn_section_expend_icon_${warn_section}`)
-        if (show == true){
-            icon_expend.classList = 'icon-minus'
-            icon_expend.title     = `Hide unpresent warnings of this type - "${warn_section}"`
-            span_expend.onclick = () => { self.expendWarningSection(warn_section, show=false) }
-        } else {
-            icon_expend.classList = 'icon-plus'
-            icon_expend.title     = `Expend to show all warning of this type - "${warn_section}"`
-            span_expend.onclick = () => { self.expendWarningSection(warn_section, show=true) }
-        }
-    },
 
     getClonesWithWarningCode: function(warn_code, only_present=false){
         var selection = [];

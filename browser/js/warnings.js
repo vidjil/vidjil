@@ -108,13 +108,14 @@ Warnings.prototype = {
      * current_warnings = Warnings present in this sample
      */
     build_warnings_section: function(warn_class, warning_section, warn_info_all, warn_info_sample){
-        var div = document.createElement("div");
+        var self = this;
+        var div  = document.createElement("div");
         div.id   = warn_class
         div.classList = "menu_box"
         var span_expend = document.createElement("span")
         span_expend.id  = `warn_section_expend_${warn_class}`
         span_expend.innerHTML += `<i id="warn_section_expend_icon_${warn_class}" class='icon-plus' title='Expend to show all warning of this type - "${warn_class}"'></i>`
-        span_expend.onclick = () => { self.m.expendWarningSection(warn_class, show=true) }
+        span_expend.onclick = () => { self.expendWarningSection(warn_class, show=true) }
         var text = document.createTextNode(warn_class)
         div.appendChild(text)
         div.appendChild(span_expend)
@@ -257,6 +258,40 @@ Warnings.prototype = {
         return codes
     },
 
+
+    expendWarningSection: function(warn_section, show){
+        var current_warnings = Object.keys(this.m.getWarningsClonotypeInfo())
+
+        var warns = Object.keys(warnings_data[warn_section])
+        for (var i = warns.length - 1; i >= 0; i--) {
+            var subwarn_code = warns[i]
+            var warn = warnings_data[warn_section][subwarn_code]
+            if (!warn.visibility) { continue } // Bypass not implemented warn
+            var div  = document.getElementById(`subwarn_${subwarn_code}`)
+            if (show == true){
+                div.style.display = ""
+            } else {
+                console.default.log( `Hide - ${subwarn_code}` )
+                if (current_warnings.indexOf(subwarn_code) != -1){
+                    div.style.display = ""
+                } else {
+                    div.style.display = "none"
+                }
+            }
+        }
+        var self = this;
+        var span_expend  = document.getElementById(`warn_section_expend_${warn_section}`)
+        var icon_expend  = document.getElementById(`warn_section_expend_icon_${warn_section}`)
+        if (show == true){
+            icon_expend.classList = 'icon-minus'
+            icon_expend.title     = `Hide unpresent warnings of this type - "${warn_section}"`
+            span_expend.onclick = () => { self.expendWarningSection(warn_section, show=false) }
+        } else {
+            icon_expend.classList = 'icon-plus'
+            icon_expend.title     = `Expend to show all warning of this type - "${warn_section}"`
+            span_expend.onclick = () => { self.expendWarningSection(warn_section, show=true) }
+        }
+    },
     /**
      * update all content for list and data list
      * */
