@@ -434,7 +434,7 @@ class Vidjil:
             string+= "%s=%s&" % (key, data[key])
         return string
 
-    def download(self, server_path:str, filename:str, replace_from:str=None, replace_to:str=None):
+    def download(self, server_path:str, filename:str, replace_from:str=None, replace_to:str=None, overwrite=True):
         """Download a result file from the server.
         When replace_from and replace_to are both defined, 
         replace that inside the downloaded file.
@@ -451,7 +451,7 @@ class Vidjil:
 
         reponse = self.session.get(url, verify=self.ssl)
         # TODO: add verification step if same filename is already present
-        if os.path.isfile(server_path+"/"+filename):
+        if os.path.isfile(filename) and not overwrite:
             raise Exception('download', "A file with same name already exist")
         open(filename, 'wb').write(reponse.content)
 
@@ -464,6 +464,27 @@ class Vidjil:
             os.system( "sed -i 's/%s//g' %s" % (pattern, filename) )
 
         print()
+        return
+
+    def downloadAnalysis(self, config_id:int, filename:str, sample_set_id:int, overwrite=True):
+        """Download an analysis file from the server.
+        default/get_analysis?config=2&filename=lil3+long+demo_multi%2Binc%2Bxxx.analysis&sample_set_id=1
+        Args:
+            filename (str): name of the output file
+            config_id (str): Configuration of the analysis to download (for the moment, will be the same for all configutation, but needed)
+            sample_set_id (str): Number of the sample set to use
+            overwrite (bool): Overwrite the file if a previous version already present
+        """
+        url = "%s/default/get_analysis?config=%s&filename=%s&sample_set_id=%s" % (self.url_server, config_id, filename, sample_set_id)
+        print( "==> %s " % filename, end='')
+        sys.stdout.flush()
+
+        reponse = self.session.get(url, verify=self.ssl)
+        # TODO: add verification step if same filename is already present
+        if os.path.isfile(filename) and not overwrite:
+            raise Exception('download', "A file with same name already exist")
+        open(filename, 'wb').write(reponse.content)
+
         return
 
     def createSample(self, set_ids:list, sample_set_id:str, sample_type:str, file_filename:str, file_filename2:str, file_info:str, file_sampling_date:str, file_id:int="", file_set_ids:list="", source:str="computer", pre_process="0"):
