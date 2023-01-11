@@ -234,7 +234,8 @@ def checkProcess():
         res = {"success" : "true",
                "status" : task.status,
                "data" : {'run_result': run.run_result,
-                         'result_id': results_file.id
+                         'result_id': results_file.id,
+                         'data_file': results_file.data_file
                          },
                "processId" : task.id}
     else :
