@@ -51,7 +51,7 @@ test_tools:
   stage: test_tools
   script:
     - apt-get update && apt-get install -y python3-pip
-    - pip3 install beautifulsoup4 tabulate requests requests_toolbelt
+    - pip3 install beautifulsoup4 bs4 tabulate requests requests-toolbelt urllib3
     - make -C tools/tests
   extends:
     - .need_for_quick_test
