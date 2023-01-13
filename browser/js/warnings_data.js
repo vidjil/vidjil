@@ -91,7 +91,7 @@ var warnings_data = {
             "visibility": 0
         }
     },
-    "Clone quality (KmerSegmenter in vidjil-algo)":
+    "Clonotype quality":
     {
         "W50":
         {
@@ -115,7 +115,7 @@ var warnings_data = {
         {
             "title": "Bad e-value",
             "level": 1,
-            "visibility": 1, 
+            "visibility": 0,
             "reference": "W5a"
         },
         "W53":
@@ -131,7 +131,7 @@ var warnings_data = {
             "visibility": 0
         }
     },
-    "Strange recombination (FineSegmenter in vidjil-algo), V and J genes":
+    "Uncommon recombination":
     {
         "W6a":
         {
@@ -203,7 +203,7 @@ var warnings_data = {
             "visibility": 0
         }
     },
-    "Comparisons between several samples or patients (such as with clonedb)":
+    "Clonotypes across samples":
     {
         "W8x":
         {
@@ -219,13 +219,13 @@ var warnings_data = {
         },
         "W81":
         {
-            "title": "Merged clone has different V(D)J designation in some samples",
+            "title": "Clonotype with different V(D)J designations in some samples",
             "level": 2,
             "visibility": 1
         },
         "W82":
         {
-            "title": "Merged clone has different productivities in some samples",
+            "title": "Clonotype with different productivities in some samples",
             "level": 2,
             "visibility": 1
         }
