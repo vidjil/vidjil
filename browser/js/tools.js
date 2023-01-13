@@ -669,6 +669,14 @@ warnLevels = {
 }
 
 warnTexts = { }
+warnText  = {
+    0: "",
+    1: "warn",
+    2: "alert",
+    3: "error",
+    4: "fatal",
+    5: "ok"
+}
 
 for (var key in warnLevels) {
     warnTexts[warnLevels[key]] = key ;

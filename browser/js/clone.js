@@ -107,15 +107,17 @@ Clone.prototype = {
     COVERAGE_WARN: 0.5,
     EVALUE_WARN: 0.001,
     
-    isWarned: function () {
+    isWarnedBool: function () {
+        return this.warn.length > 0
+    },
+
     /**
+     * settings_leveled (Boolean) Use level as setted in the localstorage of not
      * @return {string} a warning class is set on this clone
      */
+    isWarned: function () {
         var wL = this.warnLevel()
-
-        if (wL >= WARN) {
-            return warnTextOf(wL)
-        }
+        if (wL){ return warnText[wL] }
 
         if (this.hasSeg('clonedb')) {
             if (typeof(this.seg.clonedb['–']) != 'undefined') // TODO: use a stored number of occurrences
@@ -127,6 +129,17 @@ Clone.prototype = {
         return false
     },
 
+    /**
+     * Return true if this clone hava at least one warning with this code
+     */
+    haveWarning: function(warn_code){
+        if (sum(this.warn.map((warn) => { return warn_code == warn.code ? 1 : 0}))) {
+            return true
+        }
+        return false
+    },
+
+
     computeWarnings: function() {
 
         if (this.getCoverage() < this.COVERAGE_WARN)
@@ -136,14 +149,12 @@ Clone.prototype = {
             this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.eValue + ')' });
     },
 
+    /**
+     * Return maximum level of warning (number format), using setted warning level in localStorage when present
+     */
     warnLevel: function () {
-        var level = 0
-
-        for (var i = 0; i < this.warn.length; i++) {
-            level = Math.max(level, warnLevelOf(this.warn[i].level))
-        }
-
-        return level
+        // get list of warn code
+        return this.m.getWarningLevelFromList(this.warn)
     },
 
     warnText: function () {
@@ -156,6 +167,19 @@ Clone.prototype = {
         }
 
         return items.join('\n')
+    },
+
+    getWarningsDom: function(){
+        var dom = {}
+        if (this.isWarnedBool() && this.warnLevel()) {
+            dom.className = this.isWarned() ;
+            dom.icon = 'icon-warning-1'
+            dom.title = this.warnText()
+        } else {
+            dom.icon = 'icon-info'
+            dom.title = 'clonotype information'
+        }
+        return dom
     },
 
     /**
@@ -1590,7 +1614,7 @@ Clone.prototype = {
         html += "</tr>"
 
         //warnings
-        if (this.isWarned()) {
+        if (this.isWarnedBool()) {
             html += header("warnings", undefined, time_length)
             var warnings = {}
             // Create a dict of all warning present, and add each sample with it
@@ -1873,13 +1897,11 @@ Clone.prototype = {
             span_info.onclick = function () {
                 self.m.displayInfoBox(self.index);
             }
+            // console.default.log( `${this.index} - ${this.isWarnedBool()}, ${this.warnLevel()}; => ${this.isWarnedBool() && this.warnLevel()}`)
+            var dom_content = this.getWarningsDom()
+            span_info.classList = dom_content.className
+            span_info.appendChild(icon(dom_content.icon, dom_content.title))
 
-            if (this.isWarned()) {
-                span_info.className += " " + this.isWarned() ;
-                span_info.appendChild(icon('icon-warning-1', this.warnText()));
-            } else {
-                span_info.appendChild(icon('icon-info', 'clonotype information'));
-            }
         }
 
         // Gather all elements

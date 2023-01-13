@@ -94,8 +94,10 @@ try {
     var list_clones = new List("list", "data", m, db);   // List of clones
     var sp = new ScatterPlot("visu", m, db);             // Scatterplot (both grid and bar plot view)
     var sp2;
+    var segment   = new Aligner("segmenter", m, db);      // Segmenter
     var sp_export = new ScatterPlot("visu3", m, db, undefined, hidden=true);     // Scatterplot used for export render
-    var segment = new Aligner("segmenter", m, db);   // Segmenter
+    var warnings  = new Warnings("warnings_list", m, db); // Warnings menu
+    m.warnings = warnings
 
 
     /* Similarity

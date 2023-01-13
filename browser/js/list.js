@@ -412,6 +412,19 @@ List.prototype = {
             if (val > 100) this.index_data[key].innerHTML = val.toFixed(0);
             if (val < 100) this.index_data[key].innerHTML = val.toPrecision(3);
         }
+
+        for (var id = 0; id < this.m.clones.length; id++) {
+            var clone = this.m.clones[id]
+            span_info = document.getElementById("clone_infoBox_"+id)
+            span_info.innerHTML = ""
+            span_info.className = ""
+            if (clone.isWarnedBool() && clone.warnLevel()) {
+                span_info.className = clone.isWarned() ;
+                span_info.appendChild(icon('icon-warning-1', clone.warnText()));
+            } else {
+                span_info.appendChild(icon('icon-info', 'clonotype information'));
+            }
+        }
     },
 
     /**
@@ -532,6 +545,14 @@ List.prototype = {
                 cloneDom.getElement("clusterBox").innerHTML = "<text> </text>";
                 if (this.m.clusters[cloneID].length < 2) display = false
                 document.getElementById("cluster"+cloneID).style.display = "none";
+            }
+
+            var info_list   = document.getElementById(`clone_infoBox_${clone.index}`)
+            var dom_content = clone.getWarningsDom()
+            if (info_list != null) {
+                info_list.classList = dom_content.className
+                info_list.firstChild.classList = dom_content.icon
+                info_list.firstChild.title = dom_content.title
             }
         }
     },
@@ -758,7 +779,7 @@ List.prototype = {
      * */
     sortListBy:function(fct){
         self = this;
-        var list = jQuery('.list')
+        var list = jQuery('#list_clones > .list')
         var value = {};
         for (var i=0; i<list.length; i++){
             var id = list[i].getAttribute("id")
@@ -776,7 +797,7 @@ List.prototype = {
 
     sortListByGene: function(gene_type) {
         self = this;
-        var list = jQuery('.list')
+        var list = jQuery('#list_clones > .list')
         var sort = list.sort(function (a, b) {
             var idA = a.getAttribute("id");
             var idB = b.getAttribute("id");

@@ -55,7 +55,9 @@ var lib_vidjil = [  //"js/conf",
                     "js/aligner_sequence",
                     "js/aligner",
                     "js/export",
-                    "js/tag"
+                    "js/tag",
+                    "js/warnings",
+                    "js/warnings_data"
                 ];
 
 var test_files = [  "testFiles/form_test",
@@ -80,6 +82,7 @@ var test_files = [  "testFiles/form_test",
                     "testFiles/speed_test",
                     "testFiles/tokeniser_test",
                     "testFiles/report_test",
+                    "testFiles/warnings_test",
                     "testFiles/lib/bioseq_test"
                 ];
 
