@@ -434,34 +434,6 @@ AXIS_DEFAULT = {
         refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
         hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
-    "TSNEX": {   
-        doc:        "",
-        fct:        function(clone) {
-                        if (clone.tsne )return clone.tsne[0]
-                        return undefined
-                    },
-        scale:      {
-                        "mode": "linear",
-                        "min": 0,
-                        "max": 1
-                    },
-        min_step:   0.1,
-        max_step:   0.1
-    },
-    "TSNEY": {   
-        doc:        "",
-        fct:        function(clone) {            
-                        if (clone.tsne )return clone.tsne[1]
-                        return undefined
-                    },
-        scale:      {
-                        "mode": "linear",
-                        "min": 0,
-                        "max": 1
-                    },
-        min_step:   0.1,
-        max_step:   0.1
-    },
     "TSNEX_LOCUS": {   
         doc:        "",
         germline:   function(){return m.germlineV.system},
