@@ -120,15 +120,8 @@ def download():
     if auth.can_view_sample_set(sample_set_id) and not '..' in request.vars['filename']:
         try:
             results_id = int(request.vars["results_file_id"])
-            query      = db( (db.results_file.id == request.vars["results_file_id"]) ).select(db.results_file.id, db.results_file.hidden, db.results_file.data_file)
-
-            if query[0].hidden == True:
-                # If hidden, only result file is important (getReads)
-                filepath   = defs.DIR_RESULTS + query[0].data_file
-            else: # else download given file
-                olddir     = defs.DIR_OUT_VIDJIL_ID % results_id
-                filepath   = olddir + request.vars['filename']
-
+            directory  = defs.DIR_OUT_VIDJIL_ID % results_id
+            filepath   = directory + request.vars['filename']
 
             log.info("Downloaded results file", extra={'user_id': auth.user.id,
                 'record_id': request.vars["results_file_id"],
