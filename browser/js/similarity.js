@@ -21,7 +21,7 @@ Similarity.prototype = {
      * */
     init : function(callback) {
         this.callback=callback;
-        if (typeof this.m.similarity != "undefined"){
+        if (this.m.similarity["nt"] != undefined){
             this.callback();
         }else{
             this.get_similarity()
@@ -35,12 +35,37 @@ Similarity.prototype = {
      * */
     get_similarity: function () {
         var self = this
-        var request = "";
+        var requestNT = "";
+        var requestAA = "";
 
-        for (var i = 0; i < this.m.clones.length; i++) 
-            if (m.clone(i).hasSizeConstant())
-                if (m.clone(i).sequence!==0) request += ">" + i + "\n" + this.m.clone(i).id + "\n";
+        this.m.clones.forEach( clone =>{
+            if (clone.hasSizeConstant()){
+                if (clone.sequence!==0){
+                    requestNT += ">" + i + "\n" + clone.id + "\n";
+                    requestAA += ">" + i + "\n" + clone.getSegAASequence('cdr3').toUpperCase() + "\n";
+                }
+            }
+        })
 
+        self.m.similarity = {}
+        function callback_success_nt (result){
+            self.m.similarity["nt"] = JSON.parse(result)
+            self.compute_tsne(self.m.similarity["nt"],        "nt", self.e,self.p,self.po)
+                .compute_system_tsne(self.m.similarity["nt"], "nt", self.e,self.p,self.po)
+                .callback();
+        }
+        function callback_success_aa (result){
+            self.m.similarity["aa"] = JSON.parse(result)
+            self.compute_tsne(self.m.similarity["aa"],        "aa", self.e,self.p,self.po)
+                .compute_system_tsne(self.m.similarity["aa"], "aa", self.e,self.p,self.po)
+                .callback();
+        }
+
+        this.postSimilarityRequest(requestNT, callback_success_nt)
+        this.postSimilarityRequest(requestAA, callback_success_aa)
+    },
+
+    postSimilarityRequest: function(request, sucess_fct){
         $.ajax({
             type: "POST",
             timeout: 120000,
@@ -53,10 +78,7 @@ Similarity.prototype = {
                 self.m.resume();
             },
             success: function (result) {
-                self.m.similarity = JSON.parse(result)
-                self.compute_tsne(self.e,self.p,self.po)
-                .compute_system_tsne(self.e,self.p,self.po)
-                .callback();
+                sucess_fct(result)
             },
             error: function () {
                 console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
@@ -67,7 +89,10 @@ Similarity.prototype = {
     /* compute tsne using the similarity matrix (default parameters are defined in the similarity Object)
      * tsne computes a 2D coordinate for each clones and tries to conserve the relative distance between each clones.
      * */
-    compute_tsne: function(e,p,po) {
+    compute_tsne: function(similarity, source, e,p,po) {
+        var clone_field = `tsne_${source}`
+        console.default.log( `clone_field: ${clone_field}`)
+
         var opt = {
             epsilon: e,
             perplexity: p
@@ -75,10 +100,10 @@ Similarity.prototype = {
         this.tsne = new tsnejs.tSNE(opt);
 
         this.dists = []
-        for (var i=0; i<this.m.similarity.length; i++) {
+        for (var i=0; i<similarity.length; i++) {
             this.dists[i] = []
-            for (var j=0; j<this.m.similarity.length; j++) {
-                this.dists[i][j]= Math.pow( (100-this.m.similarity[i][j]) ,po)
+            for (var j=0; j<similarity.length; j++) {
+                this.dists[i][j]= Math.pow( (100-similarity[i][j]) ,po)
             }
         }
         this.tsne.initDataDist(this.dists);
@@ -95,7 +120,7 @@ Similarity.prototype = {
         for (var r in result){
             if (result[r][1] > yMax) yMax = result[r][1];
             if (result[r][0] > xMax) xMax = result[r][0];
-            m.clone(r).tsne = result[r]
+            m.clone(r)[clone_field] = result[r]
         }
         this.yMax = yMax;
         this.xMax = xMax;
@@ -156,7 +181,10 @@ Similarity.prototype = {
     /* same as compute_tsne() but treats each systems independently
      *
      * */
-    compute_system_tsne: function(e,p,po) {
+    compute_system_tsne: function(similarity, source, e,p,po) {
+
+        var clone_field = `tsne_system_${source}`
+        console.default.log( `clone_field: ${clone_field}`)
 
         for (var l in this.m.system_available){
             var locus = this.m.system_available[l]
@@ -167,14 +195,20 @@ Similarity.prototype = {
             var tsne = new tsnejs.tSNE(opt);
 
             var list = []
-            for (var idx=0; idx<this.m.similarity.length; idx++) if (this.m.clone(idx).get("germline") == locus) list.push(idx)
+            for (var idx=0; idx < similarity.length; idx++) {
+                if (this.m.clone(idx).get("germline") == locus) {
+                    if (source == "nt" || (source == "aa" && this.m.clone(idx).getSegAASequence('cdr3') != "") ){
+                        list.push(idx)
+                    }
+                }
+            }
 
             var dists = []
             for (var l1 in list) dists[l1] = []
 
             for (var i in list) {
                 for (var j in list) {
-                    dists[i][j]= Math.pow( (100-this.m.similarity[list[i]][list[j]]) ,po)
+                    dists[i][j]= Math.pow( (100-similarity[list[i]][list[j]]) ,po)
                 }
             }
 
@@ -191,7 +225,7 @@ Similarity.prototype = {
 
             for (var r in result){
                 if (result[r][1] > yMax) yMax = result[r][1];
-                m.clone(list[r]).tsne_system = result[r];
+                m.clone(list[r])[clone_field] = result[r];
             }
 
             this.system_yMax[locus] = yMax;
@@ -202,10 +236,10 @@ Similarity.prototype = {
     /* 
      * return a list of clusters found with the DBscan algorithm
      * */
-    DBscan: function (eps, min) {
+    DBscan: function (similarity, eps, min) {
         var self = this;
-        this.callback = function(){self.DBscan(eps,min)};
-        if (typeof this.m.similarity == "undefined"){
+        this.callback = function(){self.DBscan(similarity, eps,min)};
+        if (this.m.similarity["nt"] == undefined){
             this.get_similarity();
             return;
         }
@@ -217,18 +251,18 @@ Similarity.prototype = {
         var visit_flag = []
         var cluster_flag = []
         
-        for (var i in this.m.similarity){
+        for (var i in similarity){
             visit_flag[i]=false;
             cluster_flag[i]=false;
         } 
         
-        for (var sim in this.m.similarity) {
+        for (var sim in similarity) {
             //search for an unvisited node
             if (!visit_flag[sim]){
                 visit_flag[sim]=true;
                 
                 //compute neighborhood of the unvisited node
-                var tmp = this.compute_neighborhood(sim, eps);
+                var tmp = this.compute_neighborhood(similarity, sim, eps);
                 var neighborhood = tmp[0];
                 var neighborhood_size = tmp[1];
                 
@@ -241,7 +275,7 @@ Similarity.prototype = {
                         if (!visit_flag[neighborhood[j]]){
                             visit_flag[neighborhood[j]]=true;
                             
-                            var tmp2 = this.compute_neighborhood(neighborhood[j], eps);
+                            var tmp2 = this.compute_neighborhood(similarity, neighborhood[j], eps);
                             var neighborhood2 = tmp2[0];
                             var neighborhood_size2 = tmp2[1];
                                 
@@ -275,11 +309,11 @@ Similarity.prototype = {
     /* find the eps-neighborhood of a given clone
      * return a list of neighbor and the density of this neighborhood 
      * */
-    compute_neighborhood: function (id, eps) {
+    compute_neighborhood: function (similarity, id, eps) {
         var neighborhood=[];
         var neighborhood_size=0;
-        for (var j in this.m.similarity){
-            if (this.m.similarity[id][j] > eps) {
+        for (var j in similarity){
+            if (similarity[id][j] > eps) {
                 neighborhood.push(j); 
                 neighborhood_size += this.m.clone(j).getMaxSize()
             }
@@ -293,17 +327,17 @@ Similarity.prototype = {
      * eps : neighborhood distance
      * limit : relative size needed for a clone to not be considered as noise
      * */
-    find_real_clones : function (eps, limit) {
+    find_real_clones : function (similarity, eps, limit) {
         var clone_list = [];
         
-        for (var i in this.m.similarity) {
+        for (var i in similarity) {
             var flag = true;
             var size = this.m.clone(i).getMaxSize();
             var n = [];
             
-            for (var j in this.m.similarity){
+            for (var j in similarity){
                 var neighbor_size = this.m.clone(j).getMaxSize();
-                if (this.m.similarity[i][j] > eps) {
+                if (similarity[i][j] > eps) {
                     if (neighbor_size>(size*limit) ) n.push(j);
                     if (neighbor_size>size) flag = false;
                 }
@@ -321,26 +355,27 @@ Similarity.prototype = {
     /* 
      * 
      * */
-    cluster_me : function (eps, limit) {
+    cluster_me : function (source, eps, limit) {
         var self = this;
-        this.callback = function(){self.cluster_me(eps,limit)};
-        if (typeof this.m.similarity == "undefined"){
+        this.callback = function(){self.cluster_me(source, eps,limit)};
+        if (this.m.similarity[source] == undefined){
             this.get_similarity();
             return;
         }
+        var similarity = this.m.similarity[source];
         
         this.m.resetClusters();
-        var c = this.find_real_clones(eps, limit);
+        var c = this.find_real_clones(similarity, eps, limit);
         
         var cluster_list = [];
         var cluster_flag = []
-        for (var sim in this.m.similarity) cluster_flag[sim] = false; 
+        for (var sim in similarity) cluster_flag[sim] = false; 
         
         for (var i in c) {
             var cluster = [c[i]];
             
-            for (var j in this.m.similarity){
-                if (this.m.similarity[c[i]][j] > eps && c.indexOf(j)==-1 && !cluster_flag[j]) {
+            for (var j in similarity){
+                if (similarity[c[i]][j] > eps && c.indexOf(j)==-1 && !cluster_flag[j]) {
                     cluster_flag[j] = true;
                     cluster.push(j);
                 }

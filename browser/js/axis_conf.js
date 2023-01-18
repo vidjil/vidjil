@@ -434,12 +434,11 @@ AXIS_DEFAULT = {
         refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
         hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
-    "TSNEX_LOCUS": {   
+    "TSNEX_LOCUS_NT": {   
         doc:        "",
         germline:   function(){return m.germlineV.system},
         fct:        function(clone) {
-                        if (clone.tsne_system )return clone.tsne_system[0]
-                        return undefined
+                        return (clone.tsne_system_nt != undefined) ? clone.tsne_system_nt[0] : undefined
                     },
         scale:      {
                         "mode": "linear",
@@ -449,12 +448,39 @@ AXIS_DEFAULT = {
         min_step:   0.1,
         max_step:   0.1
     },
-    "TSNEY_LOCUS": {   
+    "TSNEY_LOCUS_NT": {   
         doc:        "",
         germline:   function(){return m.germlineV.system},
         fct:        function(clone) {            
-                        if (clone.tsne_system )return clone.tsne_system[1]
-                        return undefined
+                        return (clone.tsne_system_nt != undefined) ? clone.tsne_system_nt[1] : undefined
+                    },
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
+                    },
+        min_step:   0.1,
+        max_step:   0.1
+    },
+    "TSNEX_LOCUS_AA": {   
+        doc:        "",
+        germline:   function(){return m.germlineV.system},
+        fct:        function(clone) {
+                        return (clone.tsne_system_aa != undefined) ? clone.tsne_system_aa[0] : undefined
+                    },
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
+                    },
+        min_step:   0.1,
+        max_step:   0.1
+    },
+    "TSNEY_LOCUS_AA": {   
+        doc:        "",
+        germline:   function(){return m.germlineV.system},
+        fct:        function(clone) {            
+                        return (clone.tsne_system_aa != undefined) ? clone.tsne_system_aa[1] : undefined
                     },
         scale:      {
                         "mode": "linear",

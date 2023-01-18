@@ -1384,9 +1384,9 @@ ScatterPlot.prototype = {
         }
  
 
-        if (this.available_axis.indexOf(splitX) != -1 || splitX == "TSNEX" || splitX == "TSNEX_LOCUS")        
+        if (this.available_axis.indexOf(splitX) != -1 || splitX == "TSNEX" || splitX == "TSNEX_LOCUS_NT" || splitX == "TSNEX_LOCUS_AA")
             this.splitX = splitX
-        if (this.available_axis.indexOf(splitY) != -1 || splitY == "TSNEY" || splitY == "TSNEY_LOCUS")
+        if (this.available_axis.indexOf(splitY) != -1 || splitY == "TSNEY" || splitY == "TSNEY_LOCUS_NT" || splitY == "TSNEY_LOCUS_AA")
             this.splitY = splitY
         this.computeSize()
 

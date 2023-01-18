@@ -200,7 +200,8 @@
                           <a id="clusterBy_cdr3"       class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getSegAASequence('junction')});">cluster by CDR3 </a>
                           <a id="clusterBy_locus"      class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).germline});">cluster by locus </a>
                           <a id="clusterBy_dbscan"     class="buttonSelector devel-mode" onclick="m.similarity_builder.DBscan(95,0.001);">cluster by DBscan (experimental) </a>
-                          <a id="clusterBy_similarity" class="buttonSelector" onclick="m.similarity_builder.cluster_me(95,0.1);">cluster by similarity </a>
+                          <a id="clusterBy_similarity_by_nt" class="buttonSelector" onclick="m.similarity_builder.cluster_me('nt', 95,0.1);">cluster by similarity (nt) </a>
+                          <a id="clusterBy_similarity_by_aa" class="buttonSelector" onclick="m.similarity_builder.cluster_me('aa', 95,0.1);">cluster by similarity (aa)</a>
                           <div id="clusterby_button"> </div>
                         </div>
                         <div class="menu_box">
