@@ -1001,6 +1001,39 @@ Clone.prototype = {
     },
 
     /**
+     * Return the percentage of germline gene covered by the segment
+     * TODO: See if we should take into account deletion and how. (my recommandation is to don't include deletion in value)
+     * TODO: controle case with up/down sequence ?
+     * @param {string} gene_way 
+     * @returns undefined if not segment, percentage of covered sequence 
+     */
+    getGermlineRatio: function(gene_way) {
+
+        var gene     = this.getGene(gene_way);
+        var germName = this.germline.substring(0, 3);
+        if (this.germline != undefined) {
+            seq_germ = this.m.findGermlineFromGene(gene)
+            seq_germ = (seq_germ != undefined) ? seq_germ.replaceAll(".","") : undefined
+        }
+
+        if (!this.hasSeg('3', '5')) {
+            return undefined
+        }
+        if (gene_way == "5") {
+            seq_clone = this.sequence.substring(this.seg['5'].start != undefined ? this.seg['5'].start : 0,  this.seg['5'].stop+1)
+            seq_germ_length = seq_germ.length - this.seg['5'].delRight
+        } else if (gene_way == '4' && this.seg['4']){
+            seq_clone = this.sequence.substring(this.seg['4'].start,  this.seg['4'].stop)
+            seq_germ_length = seq_germ.length - this.seg['4'].delLeft - this.seg['4'].delRight
+        } else if (gene_way == '3'){
+            seq_clone = this.sequence.substring(this.seg['3'].start, this.seg['3'].stop? this.seg['3'].stop+1 : this.sequence.length)
+            seq_germ_length = seq_germ.length - this.seg['3'].delLeft
+        }
+
+        return (seq_clone.length / seq_germ_length)*100
+    },
+
+    /**
      * compute the clone size (**only the main sequence, without merging**) at a given time
      * @param {integer} time - tracking point (default value : current tracking point)
      * @return {float} size
