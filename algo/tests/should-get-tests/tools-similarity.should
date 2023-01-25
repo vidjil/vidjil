@@ -5,6 +5,6 @@ $ Read 3 sequences
 1: 54 bp in .* 3 sequences
 
 $ Compute table of similarities
-1: seq1 .* 100 .* 76 .* 82 
+1: seq1 .* 100 .* 61 .* 63 
 
 
