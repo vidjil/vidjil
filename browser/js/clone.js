@@ -1020,16 +1020,11 @@ Clone.prototype = {
         if (!this.hasSeg('3', '5')) {
             return undefined
         }
-        if (gene_way == "5") {
-            seq_clone = this.sequence.substring(this.seg['5'].start != undefined ? this.seg['5'].start : 0,  this.seg['5'].stop+1)
-            seq_germ_length = seq_germ.length - this.seg['5'].delRight
-        } else if (gene_way == '4' && this.seg['4']){
-            seq_clone = this.sequence.substring(this.seg['4'].start,  this.seg['4'].stop)
-            seq_germ_length = seq_germ.length - this.seg['4'].delLeft - this.seg['4'].delRight
-        } else if (gene_way == '3'){
-            seq_clone = this.sequence.substring(this.seg['3'].start, this.seg['3'].stop? this.seg['3'].stop+1 : this.sequence.length)
-            seq_germ_length = seq_germ.length - this.seg['3'].delLeft
-        }
+
+        var start = this.seg[gene_way].start != undefined ? this.seg[gene_way].start : 0
+        var stop  = this.seg[gene_way].stop? this.seg[gene_way].stop+1 : this.sequence.length
+        seq_clone = this.sequence.substring(start, stop)
+        seq_germ_length = seq_germ.length - (this.seg[gene_way].delRight != undefined ? this.seg[gene_way].delRight:0) - (this.seg[gene_way].delLeft != undefined ? this.seg[gene_way].delLeft:0)
 
         return (seq_clone.length / seq_germ_length)
     },
