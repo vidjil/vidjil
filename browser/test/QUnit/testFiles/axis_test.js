@@ -30,3 +30,4 @@ QUnit.test("axis gene length", function(assert) {
     assert.equal(AXIS_DEFAULT["V/5' length"].fct(c1), 3, "axis 'v/5 length', correct for clone 0 after resize" )
     assert.equal(AXIS_DEFAULT["J/3' length"].fct(c2), 3, "axis 'j/3 length', correct for clone 1 after resize" )
 });
+

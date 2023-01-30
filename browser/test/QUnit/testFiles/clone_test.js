@@ -1191,3 +1191,29 @@ QUnit.test("deletion_feature", function(assert) {
     assert.equal(trimmed_seq_c4_modprimer_trim3,  c4_modprimer_expected_trim3,  "correct sequence after trimming (c4 outside/partially primer; primers 3 only)")
     
 }); 
+
+
+QUnit.test("segment coverage", function(assert) {
+    
+    var m = new Model(m);
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+
+    //TODO
+    var c1 = m.clones[0]
+    var c2 = m.clones[1]
+    var c3 = m.clones[2]
+    
+    // C1 germline V length => 300
+    assert.equal(6/300, c1.getGermlineRatio("5"), "getGermlineRatio; 5/V; NO start value")
+    c1.seg["5"].start=2
+    assert.equal(4/300, c1.getGermlineRatio("5"), "getGermlineRatio; 5/V; WITH start value")
+
+    // C1 germline J length => 50 (without down)
+    assert.equal(15/50, c1.getGermlineRatio("3"), "getGermlineRatio; 3/J; NO stop value")
+    c1.seg["3"].stop = 16
+    assert.equal(10/50, c1.getGermlineRatio("3"), "getGermlineRatio; 3/J; NO stop value")
+
+    return
+});
