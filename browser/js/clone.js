@@ -1031,7 +1031,7 @@ Clone.prototype = {
             seq_germ_length = seq_germ.length - this.seg['3'].delLeft
         }
 
-        return (seq_clone.length / seq_germ_length)*100
+        return (seq_clone.length / seq_germ_length)
     },
 
     /**
