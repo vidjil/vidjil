@@ -79,8 +79,6 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "V/5' length",
                     "J/3' length",
                     "V/5' ratio",
-                    "D/4' ratio",
-                    "J/3' ratio",
                     "[cloneDB] Hits (sample)",
                     "[cloneDB] Hits (set)",
                     "Main sample"
@@ -203,21 +201,6 @@ AXIS_DEFAULT = {
         doc:        "Proportion of V/5' germline sequence covered by clonotype sequencing (exclude CDR3 deletion)",
         fct:        function(clone) {
                         return clone.getGermlineRatio('5')
-                        // var feature = clone.getSegFeature('5')
-                    },
-        autofill:   true
-    },
-    "D/4' ratio": {
-        doc:        "Proportion of D/4' germline sequence covered by clonotype sequencing (exclude CDR3 deletion)",
-        fct:        function(clone) {
-                        return clone.getGermlineRatio('4')
-                    },
-        autofill:   true
-    },
-    "J/3' ratio": {
-        doc:        "Proportion of J/3' germline sequence covered by clonotype sequencing (exclude CDR3 deletion)",
-        fct:        function(clone) {
-                        return clone.getGermlineRatio('3')
                     },
         autofill:   true
     },
