@@ -1010,9 +1010,10 @@ Clone.prototype = {
     getGermlineRatio: function(gene_way) {
 
         var gene     = this.getGene(gene_way);
-        var germName = this.germline.substring(0, 3);
         if (this.germline != undefined) {
+            var germName = this.germline.substring(0, 3);
             seq_germ = this.m.findGermlineFromGene(gene)
+            if (seq_germ == undefined) { return }
             seq_germ = (seq_germ != undefined) ? seq_germ.replaceAll(".","") : undefined
         }
 
