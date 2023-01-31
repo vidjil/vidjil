@@ -84,10 +84,10 @@ Warnings.prototype = {
         // Include unknown warning in list
         Object.keys(warn_info_all).forEach( warn => { 
             if (this.getWarnSection(warn) == undefined){
-                warnings_data["Unclassified"][warn] = warn_info_all[warn]
-                warnings_data["Unclassified"][warn].visibility = 1
-                var level = Object.keys(warnText).find(key => warnText[warn.level] === value)
-                warnings_data["Unclassified"][warn].level = (level != undefined ? parseInt(level): 2)
+                warnings_data.Unclassified[warn] = warn_info_all[warn]
+                warnings_data.Unclassified[warn].visibility = 1
+                var level = Object.keys(warnText).find(key => warnText[key] === warn.level)
+                warnings_data.Unclassified[warn].level = (level != undefined ? parseInt(level): 2)
             }
         })
 
