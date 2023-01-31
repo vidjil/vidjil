@@ -1014,7 +1014,7 @@ Clone.prototype = {
             var germName = this.germline.substring(0, 3);
             seq_germ = this.m.findGermlineFromGene(gene)
             if (seq_germ == undefined) { return }
-            seq_germ = (seq_germ != undefined) ? seq_germ.replaceAll(".","") : undefined
+            seq_germ = (seq_germ != undefined) ? seq_germ.split(".").join("") : undefined
         }
 
         if (!this.hasSeg('3', '5')) {
