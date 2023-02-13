@@ -128,12 +128,13 @@ ScatterPlot_menu.prototype = {
 
         var element;
         for (var key in this.available_axis) {
-            var axisP = Axis.prototype.getAxisProperties(this.available_axis[key])
+            var axisP = new Axis(this.available_axis[key])
             if (typeof axisP.hide == "undefined" || !axisP.hide){
 
                 element = document.createElement("option");
                 if (typeof axisP.class == "string") element.className = axisP.class
                 element.setAttribute('value', axisP.name);
+                element.title = axisP.getAxisDescrition();
                 element.appendChild(document.createTextNode( axisP.name));
 
                 this.select_x.appendChild(element);
