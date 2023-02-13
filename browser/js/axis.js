@@ -779,7 +779,7 @@ Axis.prototype = {
      * @returns axis doc if axis is hidden (ugly or irrelevant name) else axis name
      */
     getAxisDescrition: function() {
-        return !this.hide ? this.getAxisName(this) : this.doc != undefined ? this.doc : ""
+        return this.doc != undefined ? this.doc : this.name != undefined ? this.name : ""
     }
 
 };
