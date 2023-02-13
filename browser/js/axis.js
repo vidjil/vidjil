@@ -766,4 +766,20 @@ Axis.prototype = {
         return max
     },
 
+    /**
+     * Get the name of the axis to show
+     * @returns axis name if defined, else axis doc if defined and in last condition an empty string
+     */
+    getAxisName: function() {
+        return this.name != undefined ? this.name : this.doc != undefined ? this.doc : ""
+    },
+
+    /**
+     * 
+     * @returns axis doc if axis is hidden (ugly or irrelevant name) else axis name
+     */
+    getAxisDescrition: function() {
+        return !this.hide ? this.getAxisName(this) : this.doc != undefined ? this.doc : ""
+    }
+
 };
