@@ -439,7 +439,7 @@ AXIS_DEFAULT = {
         hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
     "TSNEX_LOCUS_NT": {   
-        doc:        "",
+        doc:        "Similarity (CDR3, NT)",
         germline:   function(){return m.germlineV.system},
         fct:        function(clone) {
                         return (clone.tsne_system_nt != undefined) ? clone.tsne_system_nt[0] : undefined
@@ -469,7 +469,7 @@ AXIS_DEFAULT = {
         hide :      true
     },
     "TSNEX_LOCUS_AA": {   
-        doc:        "",
+        doc:        "Similarity (CDR3, AA)",
         germline:   function(){return m.germlineV.system},
         fct:        function(clone) {
                         return (clone.tsne_system_aa != undefined) ? clone.tsne_system_aa[0] : undefined
