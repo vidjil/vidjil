@@ -106,6 +106,7 @@ Axis.prototype = {
         this.color = json.color
         this.sort = json.sort
         this.min_step = json.min_step
+        this.hide = json.hide
 
         this.germline = "multi" 
         if ('germline' in json)
