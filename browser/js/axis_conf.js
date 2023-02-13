@@ -80,7 +80,11 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "J/3' length",
                     "[cloneDB] Hits (sample)",
                     "[cloneDB] Hits (set)",
-                    "Main sample"
+                    "Main sample",
+                    "TSNEX_LOCUS_NT",
+                    "TSNEY_LOCUS_NT",
+                    "TSNEX_LOCUS_AA",
+                    "TSNEY_LOCUS_AA"
                 ]
 
 // list of Axis available for aligner
@@ -446,7 +450,8 @@ AXIS_DEFAULT = {
                         "max": 1
                     },
         min_step:   0.1,
-        max_step:   0.1
+        max_step:   0.1,
+        hide :      true
     },
     "TSNEY_LOCUS_NT": {   
         doc:        "",
@@ -460,7 +465,8 @@ AXIS_DEFAULT = {
                         "max": 1
                     },
         min_step:   0.1,
-        max_step:   0.1
+        max_step:   0.1,
+        hide :      true
     },
     "TSNEX_LOCUS_AA": {   
         doc:        "",
@@ -474,7 +480,8 @@ AXIS_DEFAULT = {
                         "max": 1
                     },
         min_step:   0.1,
-        max_step:   0.1
+        max_step:   0.1,
+        hide :      true
     },
     "TSNEY_LOCUS_AA": {   
         doc:        "",
@@ -488,7 +495,8 @@ AXIS_DEFAULT = {
                         "max": 1
                     },
         min_step:   0.1,
-        max_step:   0.1
+        max_step:   0.1,
+        hide :      true
     },
     "Main sample":{
         doc:        "sample in which the clone reach its maximum size",
