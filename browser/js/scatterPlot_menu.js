@@ -132,6 +132,7 @@ ScatterPlot_menu.prototype = {
             if (typeof axisP.hide == "undefined" || !axisP.hide){
 
                 element = document.createElement("option");
+                element.id = `${this.id}_${axisP.name.replace(" ", "_").replace("/", "").replace("'", "")}`;
                 if (typeof axisP.class == "string") element.className = axisP.class
                 element.setAttribute('value', axisP.name);
                 element.title = axisP.getAxisDescrition();
