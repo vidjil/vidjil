@@ -1,5 +1,5 @@
 !OUTPUT_FILE: logparser_generic.vidjil
-!LAUNCH: python ../../logparser.py -i ../data/preprocess_generic.log -o logparser_generic.vidjil --parser LogParser;
+!LAUNCH: python ../../logparser.py -i ../data/preprocess_generic.log -o logparser_generic.vidjil;
 
 $ Reads field is defined
 j0: reads # in fact; reads == {}
