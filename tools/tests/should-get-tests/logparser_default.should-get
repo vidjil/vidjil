@@ -1,3 +1,12 @@
+!OUTPUT_FILE: logparser_list.log
+!LAUNCH: python ../../logparser.py -list > logparser_list.log;
+
+$ Description of available parsers is printed
+1: List of available parsers
+
+
+
+
 !OUTPUT_FILE: logparser_generic.vidjil
 !LAUNCH: python ../../logparser.py -i ../data/preprocess_generic.log -o logparser_generic.vidjil;
 
