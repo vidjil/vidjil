@@ -14,6 +14,8 @@ class LogParser:
     Store data into a json file that will be used later at fuse step of analysis.
     """
     def __init__(self, log_file):
+        if isinstance(log_file, str):
+            log_file   = open(log_file, "r")
         self.log_file = log_file
 
     def export(self, preprocessArgs, output_file):
