@@ -29,6 +29,7 @@ sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 ### Bioinformatician
   - [Vidjil-algo documentation](vidjil-algo.md), usage from the command-line
   - [fuse.py](tools.md), converting and merging immune repertoire data
+  - [server API](api.md), for batch interaction with a vidjil server
   - Specification of the [.vidjil format](vidjil-format.md) to encode immune repertoires with clones with V(D)J recombinations
   - Specification of the [warnings](warnings.md), list of default [tags](tags.org)
   - Specification of the [.should-vdj.fa tests](should-vdj.md) for encoding and testing curated V(D)J designations
