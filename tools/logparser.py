@@ -163,22 +163,23 @@ if  __name__ =='__main__':
 
     ### Argument parser (argparse)
     parser = argparse.ArgumentParser(description= DESCRIPTION,
-                                     epilog='''Example: python2 %(prog)s  out/flash2.log''')
+                                     epilog='''Example: python %(prog)s -i out/flash2.log -o preprocess.vidjil --parser FlashLogParser''')
 
     group_options = parser.add_argument_group() # title='Options and parameters')
     group_options.add_argument('--input',  '-i', type=str, default='preprocess.log',    help='input file (%(default)s)')
     group_options.add_argument('--output', '-o', type=str, default='preprocess.vidjil', help='output file (%(default)s)')
-    group_options.add_argument('--parser', '-p', type=str, default='FlashLogParser', help='Parser to use; by default use %(default)s')
+    group_options.add_argument('--parser', '-p', type=str, default='generic',           help='Parser to use; by default use \'%(default)s\'')
     args = parser.parse_args()
 
 
     logfile   = open(args.input, "r")
-    if args.parser == "FlashLogParser":
-        logparser = FlashLogParser(logfile)
-    elif args.parser == "LogParser" or args.parser == "generic":
+    if args.parser == "generic":
         logparser = LogParser(logfile)
+    elif args.parser in globals():
+        logparser = globals()[args.parser](logfile)
     else:
         print( "Warning; Parser to use not recognize; use default parser.")
-        logparser = LogParser(logfile) ## default
+        logparser = LogParser(logfile)
+
 
     logparser.export("args from preprocess", args.output)
