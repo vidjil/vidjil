@@ -153,6 +153,11 @@ class FlashLogParser(LogParser):
         return log_line
 
 
+parser_description="\
+List of available parsers:\n\
+\tgeneric: (default) A generic log parser. Will transform each line 'key: value'  and  'key: value unity' into entries inside generated file\n\
+\tFlashLogParser: A specific parser for Flash2 log\n\
+"
 
 if  __name__ =='__main__':
     print("#", ' '.join(sys.argv))
@@ -169,8 +174,12 @@ if  __name__ =='__main__':
     group_options.add_argument('--input',  '-i', type=str, default='preprocess.log',    help='input file (%(default)s)')
     group_options.add_argument('--output', '-o', type=str, default='preprocess.vidjil', help='output file (%(default)s)')
     group_options.add_argument('--parser', '-p', type=str, default='generic',           help='Parser to use; by default use \'%(default)s\'')
+    group_options.add_argument('--list', '-l',   action="store_true",                   help='List all available parsers')
     args = parser.parse_args()
 
+    if args.list:
+        print( parser_description)
+        exit()
 
     logfile   = open(args.input, "r")
     if args.parser == "generic":
