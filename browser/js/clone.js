@@ -1002,12 +1002,16 @@ Clone.prototype = {
 
     /**
      * Return the percentage of germline gene covered by the segment
+     * This is limited to gene 5'/V for the moment
      * TODO: See if we should take into account deletion and how. (my recommandation is to don't include deletion in value)
      * TODO: controle case with up/down sequence ?
      * @param {string} gene_way 
      * @returns undefined if not segment, percentage of covered sequence 
      */
     getGermlineRatio: function(gene_way) {
+        if (gene_way != "5"){
+            return undefined
+        }
 
         var gene     = this.getGene(gene_way);
         if (this.germline != undefined) {

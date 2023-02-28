@@ -1210,10 +1210,5 @@ QUnit.test("segment coverage", function(assert) {
     c1.seg["5"].start=2
     assert.equal(4/300, c1.getGermlineRatio("5"), "getGermlineRatio; 5/V; WITH start value")
 
-    // C1 germline J length => 50 (without down)
-    assert.equal(15/50, c1.getGermlineRatio("3"), "getGermlineRatio; 3/J; NO stop value")
-    c1.seg["3"].stop = 16
-    assert.equal(10/50, c1.getGermlineRatio("3"), "getGermlineRatio; 3/J; NO stop value")
-
     return
 });
