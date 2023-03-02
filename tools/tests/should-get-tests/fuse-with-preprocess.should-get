@@ -68,7 +68,8 @@ j: samples.original_names[1]: A
 
 
 ### Restore inital defs.py file
-mv defs.py.tmp ../../defs.py
+!EXIT_CODE: 0
+!LAUNCH: mv defs.py.tmp ../../defs.py
 
 
 
