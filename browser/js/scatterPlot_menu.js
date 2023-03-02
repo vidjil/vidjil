@@ -48,7 +48,7 @@ function ScatterPlot_menu(default_preset) {
         "number of deletions for the segment J/3 in 5" :{ "x": "J/3' del'",             mode: "bar"},
         "Primers gap" :             { "x": "Primers gap",                               mode: "bar"},
         "Similarity NT (locus)":    { "x" : "TSNEX_LOCUS_NT",   "y": "TSNEY_LOCUS_NT",  mode: "tsne"},
-        "Similarity AA (locus)":    { "x" : "TSNEX_LOCUS_AA",   "y": "TSNEY_LOCUS_AA",  mode: "tsne"},
+        // "Similarity AA (locus)":    { "x" : "TSNEX_LOCUS_AA",   "y": "TSNEY_LOCUS_AA",  mode: "tsne"}, // Uncomment after change of smiliarity CGI from local to global
         "Locus sizes":              { "x": "Locus",              "y": "Size",           mode: "grid"}
     };
 
