@@ -1657,22 +1657,28 @@ def exec_command(command, directory, input_file):
     Execute the command `command` from the directory
     `directory`. The executable must exist in
     this directory. No path changes are allowed in `command`.
-    
+    Multiple command can be chained with a '&&' separator
     Returns the output filename (a .vidjil). 
     '''
-    # split command
-    soft = command.split()[0]
-    args = command[len(soft):]
+    # split commands
+    calls = command.split("&&")
+    for call in calls:
+        call = call.strip()
+        soft = call.split()[0]
+        args = "" if soft == call else call[len(soft):]
+        print( "soft: '%s'; args: %s" % (soft, args))
 
-    assert (not os.path.sep in command), "No {} allowed in the command name".format(os.path.sep)
-    ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
+        # Security
+        assert (not os.path.sep in call), "No {} allowed in the command name".format(os.path.sep)
 
-    basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
-    com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
-    print("Pre/Post process command: \n%s" % com)
-    os.system(com)
-    print()
+        ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
+        basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
+        com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
+        print("Pre/Post process command: \n%s" % com)
+        os.system(com)
+        print()
+        input_file = ff.name # Continue process from new tmp file
     return ff.name
 
 
