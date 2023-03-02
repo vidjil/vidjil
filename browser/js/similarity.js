@@ -21,7 +21,7 @@ Similarity.prototype = {
      * */
     init : function(callback) {
         this.callback=callback;
-        if (this.m.similarity["nt"] != undefined){
+        if (this.m.similarity.nt != undefined){
             this.callback();
         }else{
             this.get_similarity()
@@ -49,15 +49,15 @@ Similarity.prototype = {
 
         self.m.similarity = {}
         function callback_success_nt (result){
-            self.m.similarity["nt"] = JSON.parse(result)
-            self.compute_tsne(self.m.similarity["nt"],        "nt", self.e,self.p,self.po)
-                .compute_system_tsne(self.m.similarity["nt"], "nt", self.e,self.p,self.po)
+            self.m.similarity.nt = JSON.parse(result)
+            self.compute_tsne(self.m.similarity.nt,        "nt", self.e,self.p,self.po)
+                .compute_system_tsne(self.m.similarity.nt, "nt", self.e,self.p,self.po)
                 .callback();
         }
         function callback_success_aa (result){
-            self.m.similarity["aa"] = JSON.parse(result)
-            self.compute_tsne(self.m.similarity["aa"],        "aa", self.e,self.p,self.po)
-                .compute_system_tsne(self.m.similarity["aa"], "aa", self.e,self.p,self.po)
+            self.m.similarity.aa = JSON.parse(result)
+            self.compute_tsne(self.m.similarity.aa,        "aa", self.e,self.p,self.po)
+                .compute_system_tsne(self.m.similarity.aa, "aa", self.e,self.p,self.po)
                 .callback();
         }
 
@@ -239,7 +239,7 @@ Similarity.prototype = {
     DBscan: function (similarity, eps, min) {
         var self = this;
         this.callback = function(){self.DBscan(similarity, eps,min)};
-        if (this.m.similarity["nt"] == undefined){
+        if (this.m.similarity.nt == undefined){
             this.get_similarity();
             return;
         }
