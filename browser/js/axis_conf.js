@@ -81,9 +81,9 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "[cloneDB] Hits (sample)",
                     "[cloneDB] Hits (set)",
                     "Main sample",
-                    "TSNEX_LOCUS_NT",
+                    "Similarity (CDR3, nucleotide)", // previously "TSNEX_LOCUS_NT",
                     "TSNEY_LOCUS_NT",
-                    "TSNEX_LOCUS_AA",
+                    "Similarity (CDR3, Amino acid)", // previously "TSNEX_LOCUS_AA",
                     "TSNEY_LOCUS_AA"
                 ]
 
@@ -438,7 +438,7 @@ AXIS_DEFAULT = {
         refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
         hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
-    "TSNEX_LOCUS_NT": {   
+    "Similarity (CDR3, nucleotide)": {
         doc:        "Similarity (CDR3, NT)",
         germline:   function(){return m.germlineV.system},
         fct:        function(clone) {
@@ -468,7 +468,7 @@ AXIS_DEFAULT = {
         max_step:   0.1,
         hide :      true
     },
-    "TSNEX_LOCUS_AA": {   
+    "Similarity (CDR3, amino acid)": {
         doc:        "Similarity (CDR3, AA)",
         germline:   function(){return m.germlineV.system},
         fct:        function(clone) {

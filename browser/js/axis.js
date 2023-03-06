@@ -99,7 +99,7 @@ Axis.prototype = {
         }
 
         this.json = json
-        this.name = json.name   
+        this.name = json.name != undefined ? json.name : this.name
         this.doc = ('doc' in json) ? json.doc : json.name
         this.fct = json.fct
         this.pretty = json.pretty   
@@ -771,7 +771,7 @@ Axis.prototype = {
      * @returns axis name if defined, else axis doc if defined and in last condition an empty string
      */
     getAxisName: function() {
-        return this.name != undefined ? this.name : this.doc != undefined ? this.doc : ""
+        return this.name != undefined ? this.name : ""
     },
 
     /**

@@ -1269,7 +1269,7 @@ ScatterPlot.prototype = {
             ]
         } else {
             data = [
-                {x:(this.gridSizeW/2)+this.margin[3], y:12, text:this.axisX.getAxisDescrition(), rotation:0 },
+                {x:(this.gridSizeW/2)+this.margin[3], y:12, text:this.axisX.getAxisName(), rotation:0 },
                 {y:(this.gridSizeH/2)+this.margin[0], x:12, text:undefined, rotation:270}
             ]
         }
@@ -1391,7 +1391,7 @@ ScatterPlot.prototype = {
         }
  
 
-        if (this.available_axis.indexOf(splitX) != -1 || splitX == "TSNEX" || splitX == "TSNEX_LOCUS_NT" || splitX == "TSNEX_LOCUS_AA")
+        if (this.available_axis.indexOf(splitX) != -1 || splitX == "TSNEX" || splitX == "Similarity (CDR3, nucleotide)" || splitX == "Similarity (CDR3, Amino acid)")
             this.splitX = splitX
         if (this.available_axis.indexOf(splitY) != -1 || splitY == "TSNEY" || splitY == "TSNEY_LOCUS_NT" || splitY == "TSNEY_LOCUS_AA")
             this.splitY = splitY
