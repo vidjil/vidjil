@@ -273,6 +273,14 @@ When there is only one sample, two such views are shown.
 </i>
 
 
+## Similarity of clonotypes
+
+A particular preset for similarity is available.\
+Similarity values are computed on vidjil windows sequences, so centered on cdr3 of the clonotype, but with a length depending of configuration.\ 
+To compute these values, a request is done to vidjil server and a matrix of each similarity between each clonotype is returned. A 2D representation is done locally, splitted by locus, with tSNE algorithm ([t-distributed stochastic neighbor embedding](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding)).
+
+NB: A new version of similarity computing tools will be release in 2023 with improve accuracy and the ability to analyse similarity on amino acid cdr3 sequence.
+
 ## Status bar
 
   - At the bottom of the plot view, the “status bar“ displays information
