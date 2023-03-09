@@ -1616,9 +1616,9 @@ Clone.prototype = {
         //cluster info
         if (isCluster) {
             html += header("clonotype", undefined, time_length)
-            html += row_1("clonotype name", this.getName(), undefined, time_length)
+            html += row_1("clonotype name", this.getName(), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
             if (this.hasSizeConstant()){
-                html += row_1("clonotype short name", this.getShortName(), undefined, time_length)
+                html += row_1("clonotype short name", this.getShortName(), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
                 html += "<tr><td>clonotype size (n-reads (total reads))"
             } else if (this.hasSizeDistrib()) {
                 html += "<tr><td title='Current size; depending of the number of clonotypes curently not filtered'>current clonotype size<br/>(n-reads (total reads))"
@@ -1664,8 +1664,7 @@ Clone.prototype = {
         
         //sequence info (or cluster main sequence info)
         if (this.hasSequence()){
-            html += row_1("sequence name", this.getSequenceName(), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
-            html += row_1("code", this.getCode(), undefined, time_length)
+            html += row_1("code", this.getCode(), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
             html += row_1("length", this.getSequenceLength(), undefined, time_length)
         }
 
@@ -1684,7 +1683,7 @@ Clone.prototype = {
                           "<span " +
                           (this.eValue > this.EVALUE_WARN ? "class='warning'" : "") +
                           ">" +
-                          this.eValue + "</span>", undefined, time_length, undefined, undefined, undefined, allow_copy=true)
+                          this.eValue + "</span>", undefined, time_length, undefined, undefined, undefined)
         }
 
         // abundance info
@@ -1745,7 +1744,7 @@ Clone.prototype = {
                 "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>", undefined, time_length)
         }
         if (this.seg != undefined && this.seg.junction != undefined){
-            html += row_1("Productivity", this.getProductivityNameDetailed() + "</div>", undefined, time_length, undefined, undefined, undefined, allow_copy=true)
+            html += row_1("Productivity", this.getProductivityNameDetailed() + "</div>", undefined, time_length, undefined, undefined, undefined)
         }
         if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("5") != "undefined V")){
             html += row_1("V gene (or 5')", this.getGene("5") +
