@@ -112,7 +112,6 @@ Similarity.prototype = {
         console.log(this.tsne.step());
 
         var result = this.tsne.getSolution();
-        console.log(result[5][4])
         result = this.rescale(result);
         var yMax = 0;
         var xMax = 0;
