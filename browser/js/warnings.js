@@ -81,15 +81,24 @@ Warnings.prototype = {
         var warn_info_sample = this.m.getWarningsClonotypeInfo(this.m.t)
         var warn_info_all    = this.m.getWarningsClonotypeInfo(undefined)
 
+        // Include unknown warning in list
+        Object.keys(warn_info_all).forEach( warn => { 
+            if (this.getWarnSection(warn) == undefined){
+                warnings_data.Unclassified[warn] = warn_info_all[warn]
+                warnings_data.Unclassified[warn].visibility = 1
+                var level = Object.keys(warnText).find(key => warnText[key] === warn.level)
+                warnings_data.Unclassified[warn].level = (level != undefined ? parseInt(level): 2)
+            }
+        })
+
         var warnings_class = Object.keys(warnings_data)
-        for (var i = 0; i < warnings_class.length; i++) {
-            
-            const warning_section = warnings_data[warnings_class[i]]
+        warnings_class.forEach( warn_class => {
+            const warning_section = warnings_data[warn_class]
             if (sum( Object.keys(warning_section).map( key => { return warning_section[key].visibility}))){ 
-                var section = this.build_warnings_section(warnings_class[i], warning_section, warn_info_all, warn_info_sample)
+                var section = this.build_warnings_section(warn_class, warning_section, warn_info_all, warn_info_sample)
                 target.appendChild(section)
             }
-        }
+        })
 
         var reset = document.createElement("div")
         var text = document.createTextNode("Reset warnings level")
@@ -258,6 +267,17 @@ Warnings.prototype = {
         return codes
     },
 
+    /**
+     * Look for a warning and return his owner section.
+     */
+    getWarnSection: function(warn){
+        var find;
+        Object.keys(warnings_data).forEach( warn_class => {
+            const warning_section = warnings_data[warn_class]
+            if (warning_section[warn]){ find = warn_class }
+        })
+        return find
+    },
 
     expendWarningSection: function(warn_section, show){
         var current_warnings = Object.keys(this.m.getWarningsClonotypeInfo())
