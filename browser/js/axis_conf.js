@@ -83,7 +83,7 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "Main sample",
                     "Similarity (CDR3, nucleotide)", // previously "TSNEX_LOCUS_NT",
                     "TSNEY_LOCUS_NT",
-                    "Similarity (CDR3, Amino acid)", // previously "TSNEX_LOCUS_AA",
+                    "Similarity (CDR3, amino acid)", // previously "TSNEX_LOCUS_AA",
                     "TSNEY_LOCUS_AA"
                 ]
 
