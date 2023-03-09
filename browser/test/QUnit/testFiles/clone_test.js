@@ -245,19 +245,17 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     assert.includes(html, "<table id='clone_info_table_0'><tr><th>Samples names</th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
-    assert.includes(html, "tr id='modal_line_clonotype_name' ><td  id='modal_line_title_clonotype_name'>clonotype name</td><td  colspan='4' id='modal_line_value_clonotype_name'>hello</td></tr>",
-             "getHtmlInfo: clone names")
+
+    assert.regexp_includes(html, "tr id='modal_line_clonotype_name' ><td  id='modal_line_title_clonotype_name'>clonotype name.*clipboard.*</td><td  colspan='4' id='modal_line_value_clonotype_name'>hello</td></tr>",
+             "getHtmlInfo: clone names") // use regexp for clipboard
 
     assert.includes(html, "<tr><td>clonotype size (n-reads (total reads))</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td>clonotype size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
              "getHtmlInfo: clone information");
-    
-    assert.includes(html, "<tr id='modal_line_sequence_name' ><td  id='modal_line_title_sequence_name'>sequence name<i class='icon-docs' style='cursor: copy' id='modal_line_title_sequence_name_clipboard' onclick='copyTextToClipboard(\"hello\", \"sequence name\", this)' title='Copy to clipboard'></i></td><td  colspan='4' id='modal_line_value_sequence_name'>hello</td></tr>",
-        "getHtmlInfo: representative sequence information; sequence name + clipboad button");
-    assert.includes(html, "tr id='modal_line_code' ><td  id='modal_line_title_code'>code</td><td  colspan='4' id='modal_line_value_code'>hello</td></tr>",
-        "getHtmlInfo: representative sequence information; code");
-    assert.includes(html, "<tr id='modal_line_length' ><td  id='modal_line_title_length'>length</td><td  colspan='4' id='modal_line_value_length'>19</td></tr><tr id='modal_line_e-value' ><td  id='modal_line_title_e-value'>e-value<i class='icon-docs' style='cursor: copy' id='modal_line_title_e-value_clipboard' onclick='copyTextToClipboard(\"<span class='warning'>0.01</span>\", \"e-value\", this)' title='Copy to clipboard'></i></td><td  colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr>",
+    assert.regexp_includes(html, "tr id='modal_line_code' ><td  id='modal_line_title_code'>code.*clipboard.*</td><td  colspan='4' id='modal_line_value_code'>hello</td></tr>",
+        "getHtmlInfo: representative sequence information; code + clipboard");
+    assert.includes(html, "<tr id='modal_line_length' ><td  id='modal_line_title_length'>length</td><td  colspan='4' id='modal_line_value_length'>19</td></tr><tr id='modal_line_e-value' ><td  id='modal_line_title_e-value'>e-value</td><td  colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr>",
         "getHtmlInfo: representative sequence information; length");
-    assert.includes(html, "<tr id='modal_line_e-value' ><td  id='modal_line_title_e-value'>e-value<i class='icon-docs' style='cursor: copy' id='modal_line_title_e-value_clipboard' onclick='copyTextToClipboard(\"<span class='warning'>0.01</span>\", \"e-value\", this)' title='Copy to clipboard'></i></td><td  colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr>",
+    assert.includes(html, "<tr id='modal_line_e-value' ><td  id='modal_line_title_e-value'>e-value</td><td  colspan='4' id='modal_line_value_e-value'><span class='warning'>0.01</span></td></tr>",
         "getHtmlInfo: representative sequence information; evalue");
     assert.includes(html, "<tr><td>size (n-reads (total reads))</td><td>10  (200)</td><td>10  (100)</td><td>0  (200)</td><td>30  (100)</td></tr><tr><td>size (%)</td><td>5.000%</td><td>10.00%</td><td>−</td><td>30.00%</td></tr>",
         "getHtmlInfo: representative sequence information; size total");
@@ -266,7 +264,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
 
     assert.includes(html, "<tr id='modal_header_segmentation' ><td class='header' colspan='5'>segmentation <button type='button' onclick='m.clones[0].toggle()'>edit</button></td></tr>",
         "getHtmlInfo: segmentation information + modification button; header");
-    assert.includes(html, "<tr id='modal_line_sequence' ><td  id='modal_line_title_sequence'>sequence<i class='icon-docs' style='cursor: copy' id='modal_line_title_sequence_clipboard' onclick='copyTextToClipboard(\"aaaaaaaaaattttttttt\", \"sequence\", this)' title='Copy to clipboard'></i></td><td  colspan='4' id='modal_line_value_sequence'>aaaaaaaaaattttttttt</td></tr>",
+    assert.regexp_includes(html, "<tr id='modal_line_sequence' ><td  id='modal_line_title_sequence'>sequence.*clipboard.*</td><td  colspan='4' id='modal_line_value_sequence'>aaaaaaaaaattttttttt</td></tr>",
         "getHtmlInfo: segmentation information + modification button; content");
 
     // Test on download reads button
@@ -289,7 +287,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
         "getHtmlInfo: segmentation information + modification button + manuallyChanged icon");
     
     // <tr><td>locus</td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
-    assert.includes(html, "<tr id='modal_line_Productivity' ><td  id='modal_line_title_Productivity'>Productivity<i class='icon-docs' style='cursor: copy' id='modal_line_title_Productivity_clipboard' onclick='copyTextToClipboard(\"productive</div>\", \"Productivity\", this)' title='Copy to clipboard'></i></td><td  colspan='4' id='modal_line_value_Productivity'>productive</div></td></tr>",
+    assert.includes(html, "<tr id='modal_line_Productivity' ><td  id='modal_line_title_Productivity'>Productivity</td><td  colspan='4' id='modal_line_value_Productivity'>productive</div></td></tr>",
         "getHtmlInfo: productivity information (if exist)");
     // locus/genes content tests
     // TODO correct this locus test/function for chromium/firefox (inversion des balises)
