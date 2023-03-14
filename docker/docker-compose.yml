@@ -7,11 +7,8 @@ version: '2.1'
 services:
     mysql:
         image: mysql:5.7
-        environment:
-            - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
-            - MYSQL_DATABASE=$MYSQL_DATABASE
-            - MYSQL_USER=$MYSQL_USER
-            - MYSQL_PASSWORD=$MYSQL_PASSWORD
+        env_file:
+            - '.env'
         volumes:
             - ./mysql/:/docker-entrypoint-initdb.d/
             - $VOLUME_PATH/mysql:/var/lib/mysql
@@ -21,8 +18,8 @@ services:
           retries: 10
     uwsgi:
         image: vidjil/server:latest
-        environment:
-            - WEB2PY_ADMIN_PASSWORD=$WEB2PY_ADMIN_PASSWORD
+        env_file:
+            - '.env'
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes_from:
             - fuse
@@ -40,6 +37,8 @@ services:
     fuse:
         image: vidjil/server:latest
         command: bash /entrypoints/fuse-entrypoint.sh
+        env_file:
+            - '.env'
         volumes:
             - $VOLUME_PATH/databases/:/usr/share/vidjil/server/web2py/applications/vidjil/databases/
             - $VOLUME_PATH/result/results:/mnt/result/results
@@ -53,6 +52,8 @@ services:
             - ../germline:/usr/share/vidjil/germline
     nginx:
         image: vidjil/client:latest
+        env_file:
+            - '.env'
         ports:
             - "80:80"
             - "443:443"
@@ -67,6 +68,8 @@ services:
 
     workers:
         image: vidjil/server:latest
+        env_file:
+            - '.env'
         command: bash /entrypoints/workers-entrypoint.sh
         volumes_from:
             - uwsgi

@@ -8,3 +8,4 @@ get_user_of_results() {
     echo $user
 }
 
+sed -i "s/MYSQL_PASSWORD/${MYSQL_PASSWORD}/g" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
