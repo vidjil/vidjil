@@ -9,3 +9,5 @@ get_user_of_results() {
 }
 
 sed -i "s/MYSQL_PASSWORD/${MYSQL_PASSWORD}/g" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
+sed -i "s/smtp_user/${smtp_user}/g" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
+sed -i "s/maildomain/${maildomain}/g" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py

@@ -106,10 +106,10 @@ services:
             - uwsgi:uwsgi
     postfix:
         image: catatnight/postfix
+        env_file:
+            - '.env'
         expose:
             - 587
         volumes:
             - ./postfix/ssl:/etc/postfix/certs
-        environment:
-            - maildomain=vidjil.org
-            - smtp_user=vidjil:smtp_pass
+
