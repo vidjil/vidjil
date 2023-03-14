@@ -1,12 +1,20 @@
 version: '2.1'
+
+# ## Docker-compose
+# You can set variables (as $MYSQL_ROOT_PASSWORD) values inside .env file
+# Path variable and folders trees can be modified to your liking.
+
 services:
     mysql:
         image: mysql:5.7
         environment:
-            - MYSQL_ROOT_PASSWORD=MySRPimSRP
+            - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+            - MYSQL_DATABASE=$MYSQL_DATABASE
+            - MYSQL_USER=$MYSQL_USER
+            - MYSQL_PASSWORD=$MYSQL_PASSWORD
         volumes:
             - ./mysql/:/docker-entrypoint-initdb.d/
-            - /opt/vidjil/mysql:/var/lib/mysql
+            - $VOLUME_PATH/mysql:/var/lib/mysql
         healthcheck:
           test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
           timeout: 20s
@@ -14,7 +22,7 @@ services:
     uwsgi:
         image: vidjil/server:latest
         environment:
-            - WEB2PY_ADMIN_PASSWORD=
+            - WEB2PY_ADMIN_PASSWORD=$WEB2PY_ADMIN_PASSWORD
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes_from:
             - fuse
@@ -33,13 +41,13 @@ services:
         image: vidjil/server:latest
         command: bash /entrypoints/fuse-entrypoint.sh
         volumes:
-            - /opt/vidjil/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
-            - /opt/vidjil/result/results:/mnt/result/results
-            - /opt/vidjil/result/tmp:/mnt/result/tmp
-            - /opt/vidjil/upload/uploads:/mnt/upload/uploads
-            - /opt/vidjil/log:/var/vidjil
-            - /opt/vidjil/log/uwsgi:/var/log/uwsgi
-            - /opt/vidjil/backup:/mnt/backup
+            - $VOLUME_PATH/databases/:/usr/share/vidjil/server/web2py/applications/vidjil/databases/
+            - $VOLUME_PATH/result/results:/mnt/result/results
+            - $VOLUME_PATH/result/tmp:/mnt/result/tmp
+            - $VOLUME_PATH/upload/uploads:/mnt/upload/uploads
+            - $VOLUME_PATH/log:/var/vidjil
+            - $VOLUME_PATH/log/uwsgi:/var/log/uwsgi
+            - $VOLUME_PATH/backup:/mnt/backup
             - ./vidjil-server/conf:/etc/vidjil
             - ./vidjil-server/scripts:/entrypoints
             - ../germline:/usr/share/vidjil/germline
@@ -50,11 +58,12 @@ services:
             - "443:443"
         command: bash /entrypoints/nginx-entrypoint.sh
         volumes:
-            - /opt/vidjil/log/nginx:/var/log/nginx
-            - /opt/vidjil/certs:/etc/letsencrypt/well-known
+            - $VOLUME_PATH/log/nginx:/var/log/nginx
+            - $VOLUME_PATH/certs:/etc/letsencrypt/well-known
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
+            - ../browser/js/germline.js:/usr/share/vidjil/browser/js/germline.js
 
     workers:
         image: vidjil/server:latest
