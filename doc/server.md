@@ -374,6 +374,18 @@ save_password(PASSWORD, 443)
 This password will not persist when the container will be restarted.
 For a persistent password, please use the environment variable.
 
+
+## CORS header 'Access-Control-Allow-Origin' missing
+
+Sometime, you want to split the client and the server on different server. 
+This type of configuration need to allow cross origin in nginx server.
+To do so, you need to modify nginx configuration files `vidjil-client/conf/nginx_web2py` or `.../nginx_web2py_http`.
+Adapt and add this line to server declaration: 
+
+```
+add_header 'Access-Control-Allow-Origin' 'your_other_domain';
+```
+
 # Docker -- Updating a Docker installation
 
 ## Before the update
