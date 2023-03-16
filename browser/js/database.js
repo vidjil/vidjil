@@ -139,7 +139,7 @@ Database.prototype = {
 			 function(a) {
 				// Link to result file and launch download
                              var file_name = "reads__"+clone_id+"__file_id_"+"_"+sequence_file_id+".fa"
-                             var path_data = DB_ADDRESS+"/results_file/download?results_file_id="+a.result_id+"&filename="+file_name
+                             var path_data = DB_ADDRESS+"/default/download/"+a.data_file+"?filename="+file_name
                              var anchor = document.createElement('a');
                              anchor.setAttribute("download", file_name);
                              anchor.setAttribute("href",     path_data);

@@ -51,7 +51,7 @@ test_tools:
   stage: test_tools
   script:
     - apt-get update && apt-get install -y python3-pip
-    - pip3 install beautifulsoup4 tabulate requests requests_toolbelt
+    - pip3 install beautifulsoup4 bs4 tabulate requests requests-toolbelt urllib3
     - make -C tools/tests
   extends:
     - .need_for_quick_test
@@ -447,7 +447,7 @@ deploy_docker:
     - export TYPE=`echo $CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'`
     - export SHA=`echo $CI_COMMIT_SHA | awk '{ print substr($0, 0, 8) }'`
     - export TAG="vidjil/$TYPE:$CUR_DATE-$SHA"
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker login -u "$CI_DOCKER_USER" -p "$CI_DOCKER_PASSWORD" $CI_DOCKER
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=PRODUCTION -t $TAG docker/vidjil-$TYPE
     - docker push $TAG
     - docker tag $TAG "vidjil/$TYPE:latest"

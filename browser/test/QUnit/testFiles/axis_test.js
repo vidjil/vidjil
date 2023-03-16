@@ -41,3 +41,4 @@ QUnit.test("Test axis getter name/description", function(assert) {
     assert.equal( axis.getAxisDescrition(), doc, "Axis, get correct description")
 
 });
+

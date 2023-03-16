@@ -200,7 +200,7 @@ class Window:
     def __add__(self, other):
         """Concat two windows, extending lists such as 'reads'"""
         #data we don't need to duplicate
-        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd"]
+        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd", "warn"]
         obj = Window(1)
         
         # 'id' and 'top' will be taken from 'topmost' clone
@@ -218,6 +218,14 @@ class Window:
                   "R2": [0],
                   "family": ["None"],
                    "norm_coeff": [0]}
+
+        if "warn" in self.d or "warn" in other.d:
+            obj.d["warn"] = []
+            for source in [self, other]:
+                if "warn" in source.d:
+                    for warn in source.d["warn"]:
+                        obj.d["warn"].append(warn)
+
         if "mrd" in self.d or "mrd" in other.d:
             if "mrd" in self.d:
                 first = self.d["mrd"]
@@ -868,7 +876,7 @@ class ListWindows(VidjilJson):
         concatenate_with_padding(obj.d, 
                                  self.d, l1,
                                  other.d, l2,
-                                 ["clones", "links", "germlines",
+                                 ["clones", "links", "germlines", "warn",
                                   "vidjil_json_version"])
         
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
@@ -903,6 +911,22 @@ class ListWindows(VidjilJson):
                 obj.d["distributions"]["repertoires"][filename] = other.d["distributions"]["repertoires"][filename]
         except:
             pass
+
+        ### Warnings
+        if "warn" in self.d:
+            if ("warn" not in obj.d): 
+                obj.d["warn"] = []
+            for warn in self.d["warn"]:
+                if not "sample" in warn:
+                    warn["sample"] = l1-1
+                obj.d["warn"].append(warn)
+        if "warn" in other.d:
+            if ("warn" not in obj.d): 
+                obj.d["warn"] = []
+            for warn in other.d["warn"]:
+                if not "sample" in warn:
+                    warn["sample"] = l1
+                obj.d["warn"].append(warn)
 
         return obj
         
@@ -1633,22 +1657,28 @@ def exec_command(command, directory, input_file):
     Execute the command `command` from the directory
     `directory`. The executable must exist in
     this directory. No path changes are allowed in `command`.
-    
+    Multiple command can be chained with a '&&' separator
     Returns the output filename (a .vidjil). 
     '''
-    # split command
-    soft = command.split()[0]
-    args = command[len(soft):]
+    # split commands
+    calls = command.split("&&")
+    for call in calls:
+        call = call.strip()
+        soft = call.split()[0]
+        args = "" if soft == call else call[len(soft):]
+        print( "soft: '%s'; args: %s" % (soft, args))
 
-    assert (not os.path.sep in command), "No {} allowed in the command name".format(os.path.sep)
-    ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
+        # Security
+        assert (not os.path.sep in call), "No {} allowed in the command name".format(os.path.sep)
 
-    basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
-    com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
-    print("Pre/Post process command: \n%s" % com)
-    os.system(com)
-    print()
+        ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
+        basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
+        com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
+        print("Pre/Post process command: \n%s" % com)
+        os.system(com)
+        print()
+        input_file = ff.name # Continue process from new tmp file
     return ff.name
 
 

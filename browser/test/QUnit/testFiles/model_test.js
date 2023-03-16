@@ -711,6 +711,167 @@ QUnit.test("getLocusPresentInTop", function(assert) {
 });
 
 
+QUnit.test("getWarningsClonotypeInfo", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+
+    m.clones[0].warn  = [{"code": "W69", "msg": "Several genes with equal probability", "level": "warn"}]
+    m.clones[5].warn  = [{"code": "W82", "msg": "Merged clone has different productivities in some samples", "level": "warn"}]
+    m.clones[5].reads = [10,10, 0, 10]
+    // m.clones.forEach( (c) => {console.log(`${c.index}; ${c.reads}: ==> ${c.warn}`)})
+
+
+    var warns_undef = m.getWarningsClonotypeInfo()
+    assert.notEqual( warns_undef["W69"], undefined, "warns_undef, error W69 exist")
+    assert.notEqual( warns_undef["W82"], undefined, "warns_undef, error W82 exist")
+    assert.equal( warns_undef["W69"].reads, 50, "warns_undef")
+    assert.equal( warns_undef["W82"].reads, 30, "warns_undef")
+
+    var warns_all   = m.getWarningsClonotypeInfo(-1)
+    assert.notEqual( warns_all["W69"], undefined, "warns_all, error W69 exist")
+    assert.notEqual( warns_all["W82"], undefined, "warns_all, error W82 exist")
+    assert.equal( warns_all["W69"].reads, 50, "warns_all")
+    assert.equal( warns_all["W82"].reads, 30, "warns_all")
+
+    var warns_time0 = m.getWarningsClonotypeInfo(0)
+    assert.notEqual( warns_time0["W69"], undefined, "warns_time0, error W69 exist")
+    assert.notEqual( warns_time0["W82"], undefined, "warns_time0, error W82 exist")
+    assert.equal( warns_time0["W69"].reads, 10, "warns_time0")
+    assert.equal( warns_time0["W82"].reads, 10, "warns_time0")
+
+    var warns_time3 = m.getWarningsClonotypeInfo(2)
+    assert.notEqual( warns_time3["W69"], undefined, "warns_time3, error W69 exist")
+    assert.equal( warns_time3["W82"],    undefined, "warns_time3, error W82 exist")
+    assert.equal( warns_time3["W69"].reads, 15, "warns_time3")
+
+});
+
+
+QUnit.test("getWarningLevelFromCode", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    localStorage.clear()
+
+    var warn_1 = "W69" // level 0
+    var warn_2 = "W82" // level 2
+    var warn_3 = "Wxx" // level 1
+    var warn_undef = undefined
+    var warn_empty = {}
+    
+    assert.equal( m.getWarningLevelFromCode(warn_1), 0, "getWarningLevelFromCode; before local change, 'warn")
+    assert.equal( m.getWarningLevelFromCode(warn_2), 2, "getWarningLevelFromCode; before local change, 'alert'")
+    assert.equal( m.getWarningLevelFromCode(warn_3), 1, "getWarningLevelFromCode; before local change, 'error'")
+    assert.equal( m.getWarningLevelFromCode(warn_undef), 2, "getWarningLevelFromCode; before local change, 'undef'")
+
+    localStorage.setItem(`warn_W69`, 2)
+    localStorage.setItem(`warn_W82`, 3)
+    localStorage.setItem(`warn_Wxx`, 2)
+
+    assert.equal( m.getWarningLevelFromCode(warn_1), 2, "getWarningLevelFromCode; after local change, 'warn")
+    assert.equal( m.getWarningLevelFromCode(warn_2), 3, "getWarningLevelFromCode; after local change, 'alert'")
+    assert.equal( m.getWarningLevelFromCode(warn_3), 2, "getWarningLevelFromCode; after local change, 'error'")
+    assert.equal( m.getWarningLevelFromCode(warn_undef), 2, "getWarningLevelFromCode; after local change, 'undef'")
+
+});
+
+QUnit.test("getWarningLevelFromWarn", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    localStorage.clear()
+
+    var warn_1 = {"code": "W69", "level": "warn"}  // level 0
+    var warn_2 = {"code": "W82", "level": "alert"} // level 2
+    var warn_3 = {"code": "Wxx", "level": "error"} // level 1
+    var warn_undef = {"code": "Wyy", "level": undefined} // old style warnings; level 2
+    var warn_empty = {}
+
+    assert.equal( m.getWarningLevelFromWarn(warn_1), 0, "getWarningLevelFromWarn; before local change, 'warn")
+    assert.equal( m.getWarningLevelFromWarn(warn_2), 2, "getWarningLevelFromWarn; before local change, 'alert'")
+    assert.equal( m.getWarningLevelFromWarn(warn_3), 1, "getWarningLevelFromWarn; before local change, 'error'")
+    assert.equal( m.getWarningLevelFromWarn(warn_undef), 2, "getWarningLevelFromWarn; before local change, 'undef'")
+    assert.equal( m.getWarningLevelFromWarn(warn_empty), 0, "getWarningLevelFromWarn; before local change, empty warn")
+
+    localStorage.setItem(`warn_W69`, 2)
+    localStorage.setItem(`warn_W82`, 3)
+    localStorage.setItem(`warn_Wxx`, 2)
+
+    assert.equal( m.getWarningLevelFromWarn(warn_1), 2, "getWarningLevelFromWarn; after local change, 'warn")
+    assert.equal( m.getWarningLevelFromWarn(warn_2), 3, "getWarningLevelFromWarn; after local change, 'alert'")
+    assert.equal( m.getWarningLevelFromWarn(warn_3), 2, "getWarningLevelFromWarn; after local change, 'error'")
+    assert.equal( m.getWarningLevelFromWarn(warn_undef), 2, "getWarningLevelFromWarn; after local change, 'undef'")
+
+});
+
+QUnit.test("getWarningLevelFromList", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    // m.resetWarnings()
+    localStorage.clear()
+    // Will use warnings data to set level; so level present here will not be used
+    var warn_1 = {"code": "W69", "level": "warn"}
+    var warn_2 = {"code": "W82", "level": "alert"}
+    var warn_3 = {"code": "Wxx", "level": "error"}
+    var warn_undef = {"code": "Wyy", "level": undefined} // old style warnings, alert by default
+    
+    assert.equal( m.getWarningLevelFromList([warn_1]), 0, "getWarningLevelFromList; before local change, only 'warn")
+    assert.equal( m.getWarningLevelFromList([warn_2]), 2, "getWarningLevelFromList; before local change, only 'alert'")
+    assert.equal( m.getWarningLevelFromList([warn_3]), 1, "getWarningLevelFromList; before local change, only 'error'")
+    assert.equal( m.getWarningLevelFromList([warn_undef]), 2, "getWarningLevelFromList; before local change, only 'undef'")
+    assert.equal( m.getWarningLevelFromList([warn_undef, warn_3]), 2, "getWarningLevelFromList; before local change, [undef, error]")
+    assert.equal( m.getWarningLevelFromList([warn_1, warn_2]), 2, "getWarningLevelFromList; before local change, [warn, alert]")
+
+    localStorage.setItem(`warn_W69`, 2)
+    localStorage.setItem(`warn_W82`, 3)
+    localStorage.setItem(`warn_Wxx`, 2)
+
+    assert.equal( m.getWarningLevelFromList([warn_1]), 2, "getWarningLevelFromList; after local change, only 'warn")
+    assert.equal( m.getWarningLevelFromList([warn_2]), 3, "getWarningLevelFromList; after local change, only 'alert'")
+    assert.equal( m.getWarningLevelFromList([warn_3]), 2, "getWarningLevelFromList; after local change, only 'error'")
+    assert.equal( m.getWarningLevelFromList([warn_undef]), 2, "getWarningLevelFromList; after local change, only 'undef'")
+    assert.equal( m.getWarningLevelFromList([warn_undef, warn_3]), 2, "getWarningLevelFromList; after local change, [undef, error]")
+    assert.equal( m.getWarningLevelFromList([warn_1, warn_2]), 3, "getWarningLevelFromList; after local change, [warn, alert]")
+
+});
+
+
+QUnit.test("getClonesWithWarningCode", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    localStorage.clear()
+
+    m.clones[0].warn  = [{"code": "W69", "msg": "Several genes with equal probability", "level": "warn"}]
+    m.clones[1].warn  = [{"code": "W82", "msg": "Merged clone has different productivities in some samples", "level": "warn"}]
+    m.clones[2].warn  = [{"code": "Wdouble", "level": "warn"}, {"code": "Wdouble", "level": "warn"}]
+    m.clones[5].warn  = [{"code": "W69", "msg": "Several genes with equal probability", "level": "warn"}, {"code": "W82", "msg": "Merged clone has different productivities in some samples", "level": "warn"}]
+    m.clones[5].reads = [10,10, 0, 10]
+    m.clones.forEach( (c) => {console.log(`${c.index}; ${c.reads}: ==> ${c.warn.map((w)=>{return w.code})}`)})
+
+    assert.deepEqual( m.getClonesWithWarningCode("W69"), [0, 5], "Select clones with warn code W69, current sample (0) with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("W82"), [1, 5], "Select clones with warn code W82, current sample (0) with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("Wxx"), [], "Select clones with warn code Wxx (not present), current sample (0) with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("Wdouble"), [2], "Select clones with 2x the same warnings" )
+
+    m.changeTime(2)
+    m.update()
+
+    m.clones[5].reads = [10,10, 0, 10]
+    assert.deepEqual( m.getClonesWithWarningCode("W69", only_present=false), [0, 5], "Select clones with warn code W69, only_present=false, sample 2 with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("W82", only_present=false), [1, 5], "Select clones with warn code W82, only_present=false, sample 2 with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("W69", only_present=true), [0], "Select clones with warn code W69, only_present=true, sample 2 with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("W82", only_present=true), [1], "Select clones with warn code W82, only_present=true, sample 2 with reads" )
+}); 
+
+
 QUnit.test("getDiversity", function(assert) {
     // 1 - old not fused => {index : "na"}
     // 1 - old not fused => {index : value}

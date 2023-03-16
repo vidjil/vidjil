@@ -451,11 +451,16 @@ Aligner.prototype = {
         cloneT.getElementsByClassName("delBox")[0].onclick = function () {
             self.removeSequence(cloneID);
         };
-        if (this.m.clone_info == cloneID) 
-        cloneT.getElementsByClassName("infoBox")[0].className += " infoBox-open";
-        cloneT.getElementsByClassName("infoBox")[0].onclick = function () {
-            self.m.displayInfoBox(cloneID);
-        }
+
+        var span_info = cloneT.getElementsByClassName("infoBox")[0]
+        span_info.id = `aligner_info_${cloneID}`
+        span_info.onclick = function () {self.m.displayInfoBox(cloneID)}
+
+        var dom_content = clone.getWarningsDom()
+        span_info.classList            = dom_content.className
+        span_info.firstChild.classList = dom_content.icon
+        span_info.firstChild.title     = dom_content.title
+
         cloneT.getElementsByClassName("axisBox")[0].color = clone.getColor();
         this.fillAxisBox(cloneT.getElementsByClassName("axisBox")[0], clone);
 
@@ -570,6 +575,14 @@ Aligner.prototype = {
                 Object.keys(this.sequence).indexOf(cloneID) == -1 )
                 this.addCloneToSegmenter(cloneID)
             
+        }
+
+        var dom_content = this.m.clone(cloneID).getWarningsDom()
+        var info_align  = document.getElementById(`aligner_info_${this.m.clone(cloneID).index}`)
+        if (info_align != null) {
+            info_align.classList = dom_content.className
+            info_align.firstChild.classList = dom_content.icon
+            info_align.firstChild.title = dom_content.title
         }
 
         this.updateDom(list)

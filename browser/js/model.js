@@ -1212,7 +1212,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     multiSelect: function (list) {
 
         if (list.length == 0) return;
-        console.log("select() (clone " + list + ")");
+        console.log("select() (clone " + list + "); "+list.length+"x clones");
 
         var tmp = []
         for (var i = 0; i < list.length; i++) {
@@ -1545,6 +1545,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
     /**
      * Return a table of each warning, with number of clone and reads by type of warning
+     * if timeId equal -1, return summed warnings table for all samples
      * @param {integer} timeID - time/sample index
      * @return {Object} Dict of warning, with list of clonotype and sum of reads by type of warning
      * */
@@ -1562,27 +1563,200 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             return msg
         }
 
+        if (timeID == undefined){
+            timeID = -1
+        }
+
         var warned = {}
-        for (var cloneId in this.clones){
-            var clone = this.clone(cloneId)
-            if (clone.isWarned()){
+        this.clones.forEach( (clone) => {
+            if (clone.isWarnedBool()){
                 for (var warn_pos in clone.warn){
                     var warn = clone.warn[warn_pos]
                     if (Object.keys(warn).length == 0){
                         continue
                     }
-                    if (clone.reads[timeID] != 0){
+
+                    if (timeID != -1 && clone.reads[timeID] != 0){
                         if (warned[warn.code] == undefined){
-                            warned[warn.code] = {"clones": [], "reads": 0, "msg": ""}
+                            warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg), "level": warn.level}
                         }
-                        warned[warn.code].clones.push(clone.index)
-                        warned[warn.code].reads += clone.reads[timeID]
-                        warned[warn.code].msg = getCleanedWarningName(warn.msg)
+                        if (warned[warn.code].clones.indexOf(clone.index) == -1){
+                            warned[warn.code].clones.push(clone.index)
+                            warned[warn.code].reads += clone.reads[timeID]
+                        }
+                    } else if (timeID == -1){
+                        if (warned[warn.code] == undefined){
+                            warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg), "level": warn.level}
+                        }
+                        if (warned[warn.code].clones.indexOf(clone.index) == -1){
+                            warned[warn.code].clones.push(clone.index)
+                            warned[warn.code].reads += sum(clone.reads)
+                        }
                     }
                 }
             }
-        }
+        })
         return warned
+    },
+
+    changeWarningLevel: function(subwarn_code, operation){
+        var current_level = this.getWarningLevelFromCode(subwarn_code)
+        if (operation == "decrease" && current_level > 0){
+            current_level -= 1
+        } else if (operation == "increase" && current_level < 2){
+            current_level += 1
+        }
+
+        Object.keys(warnings_data).forEach( (category) => {
+            Object.keys(warnings_data[category]).forEach( (warn_code) => {
+                if (warn_code == subwarn_code) {
+                    localStorage.setItem(`warn_${warn_code}`, current_level)
+                }
+            })
+        })
+
+        this.update()
+        console.default.log(`change warn level after; ${subwarn_code}, ${current_level}`)
+    },
+
+    /**
+     * Toogle a warning  between is current level and info (level 0)
+     * Update the icon to show a warning or not
+     */
+    toogleWarningFilter: function(subwarn_code){
+        this.setWarningFilterStatus(subwarn_code, !this.getWarningFilterStatusFromCode(subwarn_code))
+        this.update()
+    },
+
+    /*
+     * Return the maximum level of warning from a list of warning
+     * Computed from the setted level of warning
+     */
+    getWarningLevelFromList: function(warn_list){
+        var maximum = 0
+        var value;
+        warn_list.forEach( (warn) => {
+            value = this.getWarningLevelFromWarn(warn)
+            if (value != undefined && value > maximum) {
+               maximum = value
+            }
+        })
+        return maximum
+    },
+
+    /**
+     * Return the level of a warning depending of the localstorage declaration
+     * Can use old fashion warnings and new warnings type.
+     * If warn level is undefined, return 1 by default (old type)
+     */
+    getWarningLevelFromWarn: function(warn){
+        if (warn == 0 ) {return 0} // Error in fuse merge, by already in production
+        var value = 2
+        if (!("code" in warn) && !("msg" in warn)  && !("level" in warn) ){ // empty
+            return 0
+        } else if (warn.code != undefined && warn.code != ""){
+            value = this.getWarningLevelFromCode(warn.code)
+        } else if (warn.level == undefined){ // Old style value
+            value = 1
+        } else {
+            value = parseInt(Object.keys(warnText).find(key => warnText[key] === warn.level))
+        }
+        if (this.getWarningFilterStatusFromCode(warn.code)){ return 0}
+        return value
+    },
+
+    /**
+     * Return the level of a warning depending of the localstorage declaration
+     * Can use old fashion warnings and new warnings type.
+     * If warn level is undefined, return 1 by default (old type)
+     * @param (string) warn_code The warning code to search
+     */
+    getWarningLevelFromCode: function(warn_code){
+        var level = 2
+        if (warn_code == undefined){
+            return level
+        } else if (localStorage.getItem(`warn_${warn_code}`) ) {
+            level = parseInt(localStorage.getItem(`warn_${warn_code}`))
+        } else {
+            Object.keys(warnings_data).forEach( (category) => {
+                Object.keys(warnings_data[category]).forEach( (sub_warn_code) => {
+                    if (warn_code == sub_warn_code){
+                        level = warnings_data[category][warn_code].level;
+                    }
+                })
+            })
+        }
+        if (this.getWarningFilterStatusFromCode(warn_code)){ return 0 }
+        return level
+    },
+
+    /**
+     * Return the filter status of a warning depending of the localstorage declaration
+     * If warn level is undefined, return false by default
+     * @param (string) warn_code The warning code to search
+     */
+    getWarningFilterStatusFromCode: function(warn_code){
+        if (warn_code == undefined){
+            return false
+        } else if (localStorage.getItem(`warn_filter_${warn_code}`) ) {
+            return localStorage.getItem(`warn_filter_${warn_code}`) === "true"
+        }
+        return false
+    },
+
+    /**
+     * Set the filter status of a warning by his warning code
+     * @param (string) warn_code The warning code to set
+     * @param (Boolean) status The status to set
+     */
+    setWarningFilterStatus: function(warn_code, status){
+        localStorage.setItem(`warn_filter_${warn_code}`, status)
+    },
+
+
+    getClonesWithWarningCode: function(warn_code, only_present=false){
+        var selection = [];
+
+        for (var i = 0; i < this.clones.length; i++) {
+            var clone = this.clones[i]
+            if (clone.haveWarning(warn_code) &&
+                (!only_present || (only_present && clone.getSize(this.t))) ){
+                    selection.push( i )
+            }
+        }
+        return selection
+    },
+
+    /**
+     * Allow to select all clone that have a warning with the specified code
+     * only_present arg allow to filter selection with clones that have at least one read for the current sample
+     **/
+    selectCloneByWarningCode: function(warn_code, only_present=false){
+        this.unselectAll()
+        var selection = this.getClonesWithWarningCode(warn_code, only_present);
+        this.multiSelect(selection)
+    },
+
+    /**
+     * For all presetn warning in localstorage, give the original value as setted in warnings_data
+     */
+    resetWarnings: function(){
+        var warnings_class = Object.keys(warnings_data)
+        for (var i = 0; i < warnings_class.length; i++) {
+            const warning_section = warnings_data[warnings_class[i]]
+            /* jshint ignore:start */
+            Object.keys(warning_section).forEach( (subwarn_code) =>{
+                var subwarn = warning_section[subwarn_code]
+                if (localStorage.getItem(`warn_${subwarn_code}`)){
+                    localStorage.setItem(`warn_${subwarn_code}`, subwarn.level)
+                }
+                this.setWarningFilterStatus(subwarn_code, false)
+            })
+            /* jshint ignore:end */
+        }
+        // reset menu
+        warnings.update()
+        console.default.log( "TODO - reset warnings level" )
     },
 
     exportSampleInfo: function(timeID){

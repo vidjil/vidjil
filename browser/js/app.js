@@ -103,6 +103,8 @@ function loadAfterConf() {
                                          "js/tag",
                                          "js/tokeniser",
                                          "js/indexedDom",
+                                         "js/warnings",
+                                         "js/warnings_data",
                                          // Speed test
                                          "js/speed_test",
                                          "js/form_builder",

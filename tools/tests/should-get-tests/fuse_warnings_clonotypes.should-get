@@ -1,0 +1,67 @@
+!OUTPUT_FILE: fuse_warnings_clone.vidjil
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil -o fuse_warnings_clone.vidjil
+
+$ Fuse the three files
+j: reads.total: [9500, 9500]
+
+
+$ Middle file has the good 40-bp windows
+1: "id": "clone_1"
+1: "id": "clone_2"
+1: "id": "clone_3"
+
+$ fields 'warn' present 2 times (w81 & w82)
+j: clones[0].warn[0].code: W82
+j: clones[1].warn[0].code: W81
+
+
+$ Correct warning is present: W81 (designation)
+1: W81
+1: .*different .* designations .*\(pos 1\): clone_name_3b
+
+
+$ Correct warning is present: W82 (productivity)
+1: W82
+1: .* different productivities.*\(pos 1\): not productive
+
+
+#################################
+### Same tests but with 4 samples
+!OUTPUT_FILE: fuse_warnings_clones_many_samples.vidjil
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil  ../data/warnings/w81_sample_1.vidjil  ../data/warnings/w81_sample_2.vidjil -o fuse_warnings_clones_many_samples.vidjil
+
+
+$ Middle file has the good 40-bp windows
+1: "id": "clone_1"
+1: "id": "clone_2"
+1: "id": "clone_3"
+
+$ fields 'warn' in clone 0
+$ 2 warns present in clone 0, warn 1
+j: clones[0].warn[0].code: W82
+$ 2 warns present in clone 0, warn 2
+j: clones[0].warn[1].code: W82
+
+$ 2 warns present in clone 0, correct message
+j: clones[0].warn[0].msg: Merged clone has different productivities in some samples \(pos 1\)
+
+$ fields 'warn' present 2 times (w81) in clone 1
+$ 2 warns present in clone 1, warn 1
+j: clones[1].warn[0].code: W81
+$ 2 warns present in clone 1, warn 2
+j: clones[1].warn[1].code: W81
+
+$ 2 warns present in clone 1, correct message
+j: clones[1].warn[0].msg: Merged clone has different V\(D\)J designations in some samples \(pos 1\)
+
+
+$ Correct warning is present: W81 (name)
+2: W81
+1: .*different .* designations .*\(pos 1\): clone_name_3b
+1: .*different .* designations .*\(pos 3\): clone_name_3b
+
+
+$ Correct warning is present: W82 (productivity)
+2: W82
+1: .*different productivities .*\(pos 1\): not productive
+1: .*different productivities .*\(pos 3\): not productive

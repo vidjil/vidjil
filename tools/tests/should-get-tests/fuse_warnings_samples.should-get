@@ -1,0 +1,13 @@
+!OUTPUT_FILE: fuse_warnings_sample.vidjil
+!LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil ../data/warnings/sample_3_no_warn.vidjil  ../data/warnings/w81_sample_2.vidjil -o fuse_warnings_sample.vidjil
+
+j:warn
+
+# two warns in sample 0, one in sample 2
+$ Correct number of warnings in sample level
+j3:warn
+
+$ Correct sample value for each warnings in sample level
+j:warn[0].sample: 0
+j:warn[2].sample: 2
+

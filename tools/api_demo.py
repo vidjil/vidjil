@@ -2,6 +2,7 @@
 from api_vidjil import Vidjil
 import argparse
 import os
+import getpass
 
 TAGS = []
 TAGS_UNDEFINED = []
@@ -156,6 +157,21 @@ if  __name__ =='__main__':
 
     if not args.public and not args.local:
         parser.print_help()
+
+    if (args.stress or args.public):
+        if PUBLIC_USER == "":
+            PUBLIC_USER = input("Enter public login user:")
+        if PUBLIC_PASSWORD == "":
+            print( "Attempted to log as '%s' on public server" % PUBLIC_USER)
+            PUBLIC_PASSWORD = getpass.getpass("Password for public server:")
+
+    if args.local:
+        if LOCAL_USER == "":
+            LOCAL_USER = input("Enter local login user:")
+        if LOCAL_PASSWORD == "":
+            print( "Attempted to log as '%s' on local server" % LOCAL_USER)
+            LOCAL_PASSWORD = getpass.getpass("Password for local server:")
+
 
     if args.stress:
         failures = 0

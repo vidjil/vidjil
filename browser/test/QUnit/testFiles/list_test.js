@@ -46,6 +46,7 @@ QUnit.test("sort", function(assert) {
     m.loadGermline()
     m.initClones()
     m.changeTime(3)
+    var warnings = new Warnings("warnings_list", m, false);
     
     var list = new List("list","data",m);
     list.init();

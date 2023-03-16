@@ -55,7 +55,9 @@ var lib_vidjil = [  //"js/conf",
                     "js/aligner_sequence",
                     "js/aligner",
                     "js/export",
-                    "js/tag"
+                    "js/tag",
+                    "js/warnings",
+                    "js/warnings_data"
                 ];
 
 var test_files = [  "testFiles/form_test",
@@ -80,6 +82,7 @@ var test_files = [  "testFiles/form_test",
                     "testFiles/speed_test",
                     "testFiles/tokeniser_test",
                     "testFiles/report_test",
+                    "testFiles/warnings_test",
                     "testFiles/lib/bioseq_test"
                 ];
 
@@ -102,6 +105,12 @@ function startQunit(){
         var res = result.indexOf(pattern) > -1;
     
         this.push(res, result, "{includes} " + pattern, message);
+    };
+    QUnit.assert.regexp_includes = function(result, pattern, message ) {
+        // Checks that the result includes the pattern
+        var res = result.match(pattern) !== null
+    
+        this.push(res, result, "{regexp_includes} " + pattern, message);
     };
     QUnit.assert.notIncludes = function(result, pattern, message ) {
         // Checks that the result don't includes the pattern
