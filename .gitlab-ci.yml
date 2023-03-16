@@ -407,6 +407,9 @@ deploy_review_server:
     - /^hotfix-.*s.*\/.*$/
   extends:
     - .need_for_independant_test
+  artifacts:
+    paths:
+      - docker/
 
 deploy_client:
   stage: deploy_prod
