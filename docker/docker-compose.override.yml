@@ -1,0 +1,20 @@
+version: '2.1'
+
+# ## Docker-compose
+# You can set variables (as $MYSQL_ROOT_PASSWORD) values inside .env file
+# Path variable and folders trees can be modified to your liking.
+
+services:
+    fuse:
+        volumes:
+            - $VOLUME_PATH/databases/:/usr/share/vidjil/server/web2py/applications/vidjil/databases/
+            - $VOLUME_PATH/result/results:/mnt/result/results
+            - $VOLUME_PATH/result/tmp:/mnt/result/tmp
+            - $VOLUME_PATH/upload/uploads:/mnt/upload/uploads
+            - $VOLUME_PATH/log:/var/vidjil
+            - $VOLUME_PATH/log/uwsgi:/var/log/uwsgi
+            - $VOLUME_PATH/backup:/mnt/backup
+    nginx:
+        volumes:
+            - $VOLUME_PATH/log/nginx:/var/log/nginx
+            - $VOLUME_PATH/certs:/etc/letsencrypt/well-known

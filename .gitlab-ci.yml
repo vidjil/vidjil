@@ -267,7 +267,7 @@ test_server_unit:
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
     - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
     - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml
-    - sed -i 's/\/opt\/vidjil\/databases/databases/' ./docker/docker-compose.yml
+    - sed -i 's/${VOLUME_PATH}\/databases/databases/' ./docker/docker-compose.yml
     - echo -e "volumes:\n    databases:" >> ./docker/docker-compose.yml
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
@@ -388,14 +388,11 @@ deploy_review_server:
     - cp docker/vidjil-client/conf/*.cgi browser/cgi
     - mv docker docker_${CI_BUILD_REF_SLUG}
     - cd docker_${CI_BUILD_REF_SLUG}
-    - TMP_DOCKER=$(tempfile)
-    - cp docker-compose.yml $TMP_DOCKER
-    - awk -f ci/for-review.awk $TMP_DOCKER > docker-compose.yml
-    - rm -f $TMP_DOCKER
-    - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=/WEB2PY_ADMIN_PASSWORD=$REVIEW_SERVER_ADMIN_PASSWORD/" docker-compose.yml
+    - sed -i "s/virtual_host/${CI_BUILD_REF_SLUG}/" docker-compose-ci.yml
+    - sed -i -r "s/web2py_admin_password/$REVIEW_SERVER_ADMIN_PASSWORD/" .env
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
-    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose -f docker-compose.yml -f docker-compose-ci.yml up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
   environment:
     name: review_server/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/
@@ -409,7 +406,7 @@ deploy_review_server:
     - .need_for_independant_test
   artifacts:
     paths:
-      - docker/
+      - docker_${CI_BUILD_REF_SLUG}/docker-compose*
 
 deploy_client:
   stage: deploy_prod
