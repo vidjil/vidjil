@@ -28,7 +28,7 @@ and used by the *color by* menu.
 * **tag**: Tag, as defined by the user with the `★` button in the [list of clones](user.md#the-list-of-clonotypes-left-panel)
 
 * **VIdentity IMGT**: V identity (as computed by IMGT/V-QUEST, availabe when the clonotypes have been submited there)
-
+* **V ratio**: coverage ratio of germline sequence of V segment. A complete coverage return 1.
 
 ### N-region / CDR3 analysis
 
@@ -82,6 +82,7 @@ These values require to have some setup on some instances of the server.
 | J/3' deletions in 5'     |    x         |            |          |
 | V/5' length              |    x         |            |          |
 | J/3' length              |    x         |            |          |
+| V/5' ratio               |    x         |            |          |
 | cloneDB occurrences      |    x         |            |          |
 | cloneDB patients/runs/sets occurrences| |            |          |
 
