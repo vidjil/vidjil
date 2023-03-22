@@ -8,6 +8,22 @@ plugins:
     - gitlab_links:
          gitlab_url: 'https://gitlab.inria.fr/vidjil/vidjil'
 
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: ⚓︎
+      toc_depth: 4
+
 repo_url: https://gitlab.inria.fr/vidjil/vidjil
 repo_name: gitlab
 
@@ -42,4 +58,47 @@ nav:
 
 extra_css:
     - mkdocs-extra.css
+
+theme:
+    name: material
+    shortcuts:
+        next: 78     # n
+        previous: 80 # p
+        search: 83   # s
+    features:
+      - navigation.tracking
+      - navigation.top
+      # - navigation.footer
+      - navigation.instant
+      - content.code.copy
+      - toc.follow
+    icon:
+        admonition:
+          note: octicons/tag-16
+          abstract: octicons/checklist-16
+          info: octicons/info-16
+          tip: octicons/squirrel-16
+          success: octicons/check-16
+          question: octicons/question-16
+          warning: octicons/alert-16
+          failure: octicons/x-circle-16
+          danger: octicons/zap-16
+          bug: octicons/bug-16
+          example: octicons/beaker-16
+          quote: octicons/quote-16
+
+
+
+extra:
+  generator: true
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/vidjilnet
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/u/vidjil
+    - icon: fontawesome/brands/gitlab
+      link: https://gitlab.inria.fr/vidjil/vidjil
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:<contact@vidjil.org>
+
 
