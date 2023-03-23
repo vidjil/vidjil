@@ -23,7 +23,7 @@ services:
         expose:
             - 443
         environment:
-            # - VIRTUAL_HOST=virtual_host.server.ci.vidjil.org
+            - VIRTUAL_HOST=virtual_host.server.ci.vidjil.org
             - VIRTUAL_PORT=443
             - VIRTUAL_PROTO=https
         volumes:
