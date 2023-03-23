@@ -269,6 +269,7 @@ test_server_unit:
     - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml
     - echo -e "volumes:\n    databases:" >> ./docker/docker-compose.yml
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
+    - sed -i '/ports/,+2d' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
     - mkdir -p docker/postfix/ssl
