@@ -5,6 +5,10 @@ server {
         location / {
                 return 301 https://$host$request_uri;
         }
+
+        ## Enable  CORS from one domain
+        # add_header Access-Control-Allow-Origin "example.com";
+
 }
 
 server {
@@ -28,4 +32,8 @@ server {
         location /.well-known {
                  root /etc/letsencrypt/well-known;
         }
+
+        ## Enable  CORS from one domain
+        # add_header Access-Control-Allow-Origin "example.com";
+
 }
