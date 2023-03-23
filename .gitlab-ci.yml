@@ -405,9 +405,6 @@ deploy_review_server:
     - /^hotfix-.*s.*\/.*$/
   extends:
     - .need_for_independant_test
-  artifacts:
-    paths:
-      - docker_${CI_BUILD_REF_SLUG}/docker-compose*
 
 deploy_client:
   stage: deploy_prod
