@@ -11,6 +11,7 @@ services:
         network_mode: bridge
         volumes:
             - ./ci/result:/mnt/result
+            - ./ci/result/results:/mnt/result/results
             - ./ci/uploads:/mnt/upload/uploads
             - ../browser:/usr/share/vidjil/browser
             - ../server/web2py/applications/vidjil:/usr/share/vidjil/server/web2py/applications/vidjil
