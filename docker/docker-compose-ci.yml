@@ -29,6 +29,8 @@ services:
         volumes:
             - ../browser:/usr/share/vidjil/browser
             - ./:/usr/share/vidjil/docker
+        links:
+            - uwsgi:uwsgi
 
     workers:
         network_mode: bridge
