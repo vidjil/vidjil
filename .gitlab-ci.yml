@@ -269,7 +269,6 @@ test_server_unit:
     - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml
     - echo -e "volumes:\n    databases:" >> ./docker/docker-compose.yml
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
-    - sed -i '/ports/,+2d' ./docker/docker-compose.yml
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
     - mkdir -p docker/postfix/ssl
@@ -389,6 +388,7 @@ deploy_review_server:
     - mv docker docker_${CI_BUILD_REF_SLUG}
     - cd docker_${CI_BUILD_REF_SLUG}
     - sed -i "s/virtual_host/${CI_BUILD_REF_SLUG}/" docker-compose-ci.yml
+    - sed -i '/ports/,+2d' docker-compose.yml
     - sed -i -r "s/web2py_admin_password/$REVIEW_SERVER_ADMIN_PASSWORD/" .env
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
