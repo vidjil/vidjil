@@ -64,7 +64,6 @@ services:
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
-            - ../browser/js/germline.js:/usr/share/vidjil/browser/js/germline.js
 
     workers:
         image: vidjil/server:latest
