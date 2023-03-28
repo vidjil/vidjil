@@ -1,6 +1,4 @@
 
-
-# Software and development quality in Vidjil
  
 Quality relies both on **software engineering methods** (agile development, systematic testing, continuous integration and delivery) and on **human and team processes**. We plan to be as efficient as possible while keeping a friendly and open attitude.
 
@@ -16,15 +14,15 @@ We always want to extend the test coverage and to improve our development policy
  - regular stable releases of the platform, including new features of the algorithm vidjil-algo
  - deliver continuously the web application, but also provide regular releases
 
-# Vidjil-algo
+## Vidjil-algo
 
-## Roadmap
+### Roadmap
 
 We develop an algorithm to process high-throughput sequencing data to detect sequences with V(D)J recombinations as well as incomplete or uncommon recombinations. We gather these sequences into clonotypes. We use and improve state-of-the-art text algorithms (spaced seeds, automata, bit parallelism, indexing structures...) to provide efficient analytical methods. As far as possible, we do not compute full alignments. We always plan to improve the algorithm, improving accuracy and speed and providing more pertinent analysis for immunology and hematology. We benchmark and improve the algorithm on carefully curated sequences.
 
 The original algorithm was published in [BMC Genomics 2014], and extension to several loci as well as incomplete recombinations have been described in [PLOS One 2016]. Vidjil-algo was evaluated as very reliable. As of 2020, we are still working in improving again the efficiency of the algorithm and use more efficient algorithms for seed patterns evaluation.
 
-## Tests
+### Tests
 
 Each new feature or release is carefully tested and goes through the following tests:
 
@@ -38,9 +36,9 @@ Each new feature or release is carefully tested and goes through the following t
         but we will nevertheless soon add a part of automation to check more things.
     
 
-# Vidjil web application
+## Vidjil web application
 
-## Roadmap
+### Roadmap
 
 We develop the web application (both client and server) to wrap or to link several software to pre-process, process, or post-process RepSeq data. 
 
@@ -48,7 +46,7 @@ Developed in Javascript with jQuery and d3.js, the web client is made for the vi
 
 A sample database links the web application and the algorithmic part, allowing users to upload sequence files and manage their jobs directly from the web application. When uploading files, the user can choose some predefined preprocess to be launch on her data. A server, implemented in Python with the web2py framework (<http://web2py.com>), queues the job requests, allowing many jobs to be scheduled without overloading the server.
 
-## Tests
+### Tests
 
  - *Web client unit tests.*. [700+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/QUnit/testFiles) on atomic functions of the web application
  - *Web client functional tests.* [350+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/functional) web automation with [Cypress](https://www.cypress.io/). 
@@ -60,9 +58,9 @@ A sample database links the web application and the algorithmic part, allowing u
  - *Hosting monitoring.*  We monitor our public server as well as remote maintened servers.
  
 
-# Sofware engeneering methods
+## Sofware engeneering methods
 
-## Continuous integration, continuous or qualified delivery
+### Continuous integration, continuous or qualified delivery
 
 Continuous integration (CI) consists in systematically testing the modification brought to the code (either on the algorithm or on the web application). This is used since 2017, and the test coverage regularly improves.
 
@@ -70,7 +68,7 @@ Continuous delivery (CD) consists in systematically deploying new releases when 
 
 However, on production servers used in routine analysis, we do not use CD but rather qualified delivery. In collaboration with members of the consortium, we identify releases to be deployed. Some consortium members have also they own qualification tests to double-check new releases, and we provide to them additional qualification documents, for example for certification purposes.
 
-## Tracking issues
+### Tracking issues
 
 Both bug reports and feature requests are followed on our public bugtracker, <http://gitlab.vidjil.org>.
 
@@ -80,9 +78,9 @@ Both bug reports and feature requests are followed on our public bugtracker, <ht
  - We document each code modification (commits and branches) and link each of them to the related issues
  
  
-# Human and Team processes
+## Human and Team processes
  
-## User relations
+### User relations
 
  - There are at least two channels to join us : <support@vidjil.org> or the issue tracker. We can also arrange audio meetings.
  - We answer to each request: Even if we cannot solve the request, we acknowledge the request and create issues when needed.
@@ -93,7 +91,7 @@ Both bug reports and feature requests are followed on our public bugtracker, <ht
 Members of the VidjilNet consortium have access to the support with guaranteed response time.
 
 
-## Team organization
+### Team organization
 
 The Vidjil Team works remotely, in Lille, Rennes, and in other places in the world.
 
@@ -105,14 +103,14 @@ Interactions between the developers are frequent:
  - quarterly 2-days physical meetings (all the team)
  
 
-## Developer relations
+### Developer relations
 
 The Vidjil platform aims to interact with other RepSeq software.
 We both use and propose APIs to work within a ecosystem of RepSeq software. 
 We contribute to open formats to exchange RepSeq data.
 
 
-# Maintenance and hosting
+## Maintenance and hosting
 
 We maintain a public test server, <http://app.vidjil.org>, open to everyone and free to use.
 This server is only for test and should not be used for clinical purposes.
@@ -122,7 +120,7 @@ Throughout the VidjilNet consortium, we propose two options for production serve
  - remote maintenance of self-hosted instance of the platform in hospitals or other centers
  - shared hosting (HDS, hébergement de données de santé), complying with French and EU regulations.
 
-## Backups and incidents
+### Backups and incidents
 
 Incidents, either on our side, or due to the hosting operator, can always happen. However our goal is to ensure that no results or analyses could be lost.
 Since October 2014, we lost once 1.5 days of data analyzed by our users on the public server

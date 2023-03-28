@@ -1,4 +1,3 @@
-# Roadmap
 
 The development of the Vidjil platform is tracked with [gitlab](http://gitlab.vidjil.org).
 As of 2021, there are more than 1500 [open issues](http://gitlab.vidjil.org/issues),
@@ -29,13 +28,13 @@ in progress (🚧),
 or finished (✅).
 
 
-# Bioinformatics roadmap
+## Bioinformatics roadmap
 
 The following points mix bioinformatics research, often in collaboration with hematologists or immunologists,
 with software engineering. 
 
 
-## Better tools for full repertoire analysis
+### Better tools for full repertoire analysis
 
  - Show distributions of the full repertoire #3902
     + **Availability: Q2 2020** ✅
@@ -46,7 +45,7 @@ with software engineering.
     + **Development: ongoing in Q4 2021** 🚧 @flothoni
     + Beta: Q1 2022
 
-## Better tools for MRD analysis
+### Better tools for MRD analysis
 
  - Run custom scripts for MRD #3838
     + Beta: Q4 2020 for #3846  ✅  @flothoni @meidanis
@@ -55,7 +54,7 @@ with software engineering.
  - Better display MRD data in the web platform
 
 
-## Analysis of data with UMI, single-cell and/or paired chains
+### Analysis of data with UMI, single-cell and/or paired chains
 
  - Provide more tools to analyze UMI data (demultiplexing to handle UMI) #2309
     + Initial steps in 2020
@@ -63,7 +62,7 @@ with software engineering.
     + Beta: 2021
  - Provide specific tools to analyze single cell data and/or paired chains data #2344
  
-## Better sequence and recombination analysis
+### Better sequence and recombination analysis
 
  - Detect primer dimers #2820
 
@@ -96,7 +95,7 @@ Contact us if you are interested and/or if you have/plan to have
 such analysis needs.
 
 
-## Better tools for quality assesment and massification of analyses
+### Better tools for quality assesment and massification of analyses
 
 Routine, and sometimes even 100+ samples.
 
@@ -118,12 +117,12 @@ Routine, and sometimes even 100+ samples.
 
 
  
-# Technical roadmap
+## Technical roadmap
 
 These software engineering tasks may of course influence biological studies.
 They often require development or refactor work.
  
-## Improved technical foundations
+### Improved technical foundations
 
 State-of-the-art technical foundations help agile development
 These point 
@@ -140,7 +139,7 @@ These point
  - Use a Javascript framework  #4511 #4883
     + Evaluation: Q1 2022 ⏳
 
-## User preferences and presets
+### User preferences and presets
 
  - Allow the user to store preferences #878
     + **Availability: Q3 2020** ✅
@@ -153,7 +152,7 @@ These point
  - Allow more colors for clonotypes #1547
     + Development: 2022 ⏳ @duez
 
-## Improved data import/export and interoperability
+### Improved data import/export and interoperability
 
  - Improve upload of multiple files with batch creation of patients/runs/sets #2878
     + **Availibility : Q3 2020** ✅
@@ -174,7 +173,7 @@ These point
 
 
        
-## Speed
+### Speed
 
  - Speed-up vidjil-algo, especially for full designation of every clone #920
     + 2018: 10x speed-up of V(D)J designation  ✅
@@ -189,7 +188,7 @@ These point
 These points are always ongoing:
 We often work on backend changes that eventually improve the efficiency on the platform.
 
-## Improved ergonomy of the web platform
+### Improved ergonomy of the web platform
 
  - Make the web client be fully responsive (works on tablet, and better work on various resolutions) #1740
     + Development: since 2020 🚧 @magiraud
@@ -211,7 +210,7 @@ We often work on backend changes that eventually improve the efficiency on the p
 
 
 
-# Human and administrative roadmap
+## Human and administrative roadmap
 
  - Make the [VidjilNet Consortium](http://www.vidjil.net) grow
     + Expand the community, make more members join (first General Assembly in December 2021 ⏳)
