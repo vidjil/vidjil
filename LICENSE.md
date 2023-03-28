@@ -107,13 +107,20 @@ require.js  	    : JavaScript file and module loader
 * @license          MIT
 * @compatibility    IE 6+, Firefox 2+, Safari 3.2+, Chrome 3+, Opera 10+
 
+seedrandom.js       : A replacement of Math.random of javascript that allow to get fixed seed
+* @author           David Bau + external contributor
+* @version          3.0.5
+* @link             <https://github.com/davidbau/seedrandom>
+* @license          BSD
+
+
 svgExport.js        : Export SVG to PNG
 * @author           Nikita Rokotyan, adapted by the Vidjil Team
 * @version          retrieven on 2018-09-14
 * @link             <http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177>
 * @license          MIT
 
-tsne.js             : Implementation of TSNE algorithm
+tsne.js             : Implementation of TSNE algorithm, adapted by the Vidjil Team for randomseed
 * @version          2d62a1c4 (2015-10-13)
 * @author           Andrej Karpathy
 * @link             <https://github.com/karpathy/tsnejs>
