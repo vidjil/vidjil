@@ -1,7 +1,7 @@
 
 
 !OUTPUT_FILE: logparser_flash2.vidjil
-!LAUNCH: touch tt.log; python ../../logparser.py -i ../data/flash2.log -o logparser_flash2.vidjil ;
+!LAUNCH: python ../../logparser.py -i ../data/flash2.log -o logparser_flash2.vidjil --parser FlashLogParser > logparser_test.log ;
 
 $ MRD key is NOT present
 j: reads.merged: [285000]

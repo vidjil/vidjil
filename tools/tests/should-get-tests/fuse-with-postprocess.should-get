@@ -35,6 +35,26 @@ $ IGH  should become IGK: IGK
 3:IGK
 
 
+
+
+## With multiple prefuse call (script replace original_names value by 'A')
+!OUTPUT_FILE: fused_postfuse_multiple.vidjil
+!LAUNCH: python3 ../../fuse.py $FUSE_OPTIONS --post "igh-to-trg.sh -l IGK && script_a.py" ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil -o fused_postfuse_multiple.vidjil
+
+$ No more reads IGH 
+j0: reads.germline.IGH
+$ New reads IGK 
+j:  reads.germline.IGK: [950, 950]
+$ Correct new germline for clone 0
+j: clones[0].germline: IGK
+$ Correct new germline for clone 1
+j: clones[1].germline: IGK
+
+$ Value added by script A
+j: samples.original_names[0]: A
+j: samples.original_names[1]: /some/file_1
+
+
 ### Restore inital defs.py file
 mv defs.py.tmp ../../defs.py
 

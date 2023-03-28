@@ -181,4 +181,10 @@ describe('Scatterplot', function () {
     cy.get('#text_container > [y="40"]').should("have.text", "10%")
   })
 
+  it('06-Axis selector in menus',  function() {
+    cy.openAnalysis("/doc/analysis-example.vidjil")
+    cy.get("#visu_V5_gene")
+      .should('have.attr', 'title', "V gene (or 5' segment), gathering all alleles")
+  })
+
 })

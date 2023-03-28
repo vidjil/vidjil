@@ -1,14 +1,14 @@
-# Administration of a Vidjil server
+
 
 This is the preliminary help for bioinformaticians administrators of the Vidjil web application.
 This help covers administrative features that are mostly accessible from the web application,
 and is complementary to the [Docker/Server documentation](server.md).
 Users should consult the [Web Platform User Manual](user.md).
 
-# Configuring pre-processes, processes and post-processes
+## Configuring pre-processes, processes and post-processes
 
 
-## Pre-processes (after sample upload)
+### Pre-processes (after sample upload)
 
 Custom pre-processing steps can be added.
 They are called right after the upload of each sample, before launching the main processes.
@@ -19,7 +19,7 @@ Warning:
 Adding an external program may bring additional security or performance issues.
 Make sure you trust scripts you need to add before putting them on a production server.
 
-### Adding a pre-process
+#### Adding a pre-process
 
 Steps may differ if you use a plain-installation or a docker image.
 
@@ -74,7 +74,7 @@ do that by given permission to public group.
 You can also give permissions to some specifics users of the list.
 
 
-## Main process and "fuse" configuration
+### Main process and "fuse" configuration
 
 This page shows the configurations list for the main analysis process.
 Config are just parameters for:
@@ -90,15 +90,15 @@ Config are just parameters for:
 Each configuration has permissions for some groups.
 
 
-## Pre- and post-processes (around fuse)
+### Pre- and post-processes (around fuse)
 
 It is possible to run further pre- or post-process scripts around the "fusing" of results
-by giving `--pre` and/or `--post` options to fue.
+by giving `--pre` and/or `--post` options to fuse.
 These scripts can also be wrappers of other software.
 This can be useful to further process the result files, possibly taking into account several result files
  as in a MRD setup developed by Joao Medianis (Boldrini center, Brasil).
 
-### Adding such a pre/post-process
+#### Adding such a pre/post-process
 
   - Your script needs to take as an input a `.vidjil` file with `-i` argument, and export another `.vidjil` file with `-o`,
     such as in the call `spike-normalization.py -i res-samples.vidjil -o res-samples.vidjil`
@@ -110,14 +110,14 @@ This can be useful to further process the result files, possibly taking into acc
     as for example in `-t 100 --pre spike-normalization.py`.
     A `--pre` script will be called on each `.vidjil` file, before the actual fusing,
     whereas a `--post` script will be called on the combined `.vidjil` file after the fusing.
-
+  - Multiple scripts can be call. To do that, concatenate commands to use inside fuse line to call with a '&&' separator. `-t 100 --pre 'scriptA --opt optvalA && scriptB --opt optvalB`. This can be done for prefuse and postfuse step.
 
 When the users select this config, these pre- and post-processes will also be called.
 
 
-# Users, groups, and permissions
+## Users, groups, and permissions
 
-## Users
+### Users
 
 Users can be granted with various permissions:
 
@@ -137,7 +137,7 @@ sets of patients with different permissions on each set.
 For example, he could be able to edit the patients of one group, but not
 the patients of another one.
 
-## Groups
+### Groups
 
 Groups can be hierarchic: A group can have a parent group. 
 All patient/run/set assigned to a group are also accessible to the children groups.
@@ -150,7 +150,7 @@ They also cannot possess any children of their own. Assigning a new group
 to a group which has a parent defer the parent-child
 relationship to that parent.
 
-## Creating groups
+### Creating groups
 
 When creating the groups for an organization the parent group MUST be the
 first group created. Assigning a parent to a group cannot be done after
@@ -158,7 +158,7 @@ creation. A group cannot change parents.
 Users can be created at any time. They can also be added
 or removed from groups whenever it is convenient
 
-### Example: create organization with sub groups/roles
+#### Example: create organization with sub groups/roles
 
   - Create group, for example `lab_xxx` (select `None` for parent group).
   - Create sub-group for roles (eg. `Technician`, `Engineer`, `Doctor`). Be sure to select
@@ -175,7 +175,7 @@ these groups. Any patient created should automatically be assigned to the
 parent group. Any patient created for the parent group will be
 accessible by any member of one of the child groups.
 
-### Example: converting a previous user account into a group account
+#### Example: converting a previous user account into a group account
 
 Sometimes a user has a account, does some analyses, and then want to create accounts
 for other members of her team.
@@ -194,7 +194,7 @@ If needed, you can also recreate a personal group for the user.
 - Set the permissions for this user into his own group.
 - Attach the user to this new group `user_xxx`
 
-### Adding roles to an organization
+#### Adding roles to an organization
 
 You can use various panel of rights depending of the roles that you want create.
 For example, in a hospital,
@@ -208,12 +208,12 @@ you rather have to select, inside the detailed view of each group and sub-group,
 the permissions you want to grant for each of these groups.
 
 
-## Adding an user to a group
+### Adding an user to a group
 
 Adding a user to a group gives him access to the data of the group.
 This should be done only with explicit authorization of the group manager.
 
-## Removing an user from a group
+### Removing an user from a group
 
 To remove  a user from a group, 
 open the corresponding group and click on the cross at the end of the line.
@@ -222,7 +222,7 @@ Data will still be accessible for other users of this group.
 If the user should no longer have access to an account, you can after that delete the user 
 or simply remove access by changing his password and/or restrain rights for his personnal group.
 
-# Server Monitoring
+## Server Monitoring
 
 Some monitoring features are accessible through the web application :
 XXX TODO XXX

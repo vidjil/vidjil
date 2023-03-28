@@ -65,7 +65,7 @@ SimilarityMatrix compare_all(list <Sequence> sequences,
 
 	  string seq2 = it2 -> sequence ;
 
-	  DynProg dp = DynProg(seq1, seq2, DynProg::Local, IdentityDirty);
+	  DynProg dp = DynProg(seq1, seq2, DynProg::Global, IdentityDirty);
   
 	  int score = dp.compute() ;
 	  float identity = identity_percent(score);

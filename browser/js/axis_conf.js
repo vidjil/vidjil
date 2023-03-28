@@ -78,9 +78,14 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "J/3' del'",
                     "V/5' length",
                     "J/3' length",
+                    "V/5' ratio",
                     "[cloneDB] Hits (sample)",
                     "[cloneDB] Hits (set)",
-                    "Main sample"
+                    "Main sample",
+                    "Similarity (CDR3, nucleotide)", // previously "TSNEX_LOCUS_NT",
+                    "TSNEY_LOCUS_NT",
+                    "Similarity (CDR3, amino acid)", // previously "TSNEX_LOCUS_AA",
+                    "TSNEY_LOCUS_AA"
                 ]
 
 // list of Axis available for aligner
@@ -195,6 +200,13 @@ AXIS_DEFAULT = {
         germline:   function(){return m.germlineJ.system},
         sort :      "alphanumerical",
         autofill:   false
+    },
+    "V/5' ratio": {
+        doc:        "Proportion of V/5' germline sequence covered by clonotype sequencing (exclude CDR3 deletion)",
+        fct:        function(clone) {
+                        return clone.getGermlineRatio('5')
+                    },
+        autofill:   true
     },
     "Sequence length" : {
         doc:        "length of the consensus sequence of the clonotype",
@@ -434,40 +446,11 @@ AXIS_DEFAULT = {
         refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
         hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
-    "TSNEX": {   
-        doc:        "",
-        fct:        function(clone) {
-                        if (clone.tsne )return clone.tsne[0]
-                        return undefined
-                    },
-        scale:      {
-                        "mode": "linear",
-                        "min": 0,
-                        "max": 1
-                    },
-        min_step:   0.1,
-        max_step:   0.1
-    },
-    "TSNEY": {   
-        doc:        "",
-        fct:        function(clone) {            
-                        if (clone.tsne )return clone.tsne[1]
-                        return undefined
-                    },
-        scale:      {
-                        "mode": "linear",
-                        "min": 0,
-                        "max": 1
-                    },
-        min_step:   0.1,
-        max_step:   0.1
-    },
-    "TSNEX_LOCUS": {   
-        doc:        "",
+    "Similarity (CDR3, nucleotide)": {
+        doc:        "Similarity (CDR3, NT)",
         germline:   function(){return m.germlineV.system},
         fct:        function(clone) {
-                        if (clone.tsne_system )return clone.tsne_system[0]
-                        return undefined
+                        return (clone.tsne_system_nt != undefined) ? clone.tsne_system_nt[0] : undefined
                     },
         scale:      {
                         "mode": "linear",
@@ -475,14 +458,14 @@ AXIS_DEFAULT = {
                         "max": 1
                     },
         min_step:   0.1,
-        max_step:   0.1
+        max_step:   0.1,
+        hide :      true
     },
-    "TSNEY_LOCUS": {   
+    "TSNEY_LOCUS_NT": {   
         doc:        "",
         germline:   function(){return m.germlineV.system},
         fct:        function(clone) {            
-                        if (clone.tsne_system )return clone.tsne_system[1]
-                        return undefined
+                        return (clone.tsne_system_nt != undefined) ? clone.tsne_system_nt[1] : undefined
                     },
         scale:      {
                         "mode": "linear",
@@ -490,7 +473,38 @@ AXIS_DEFAULT = {
                         "max": 1
                     },
         min_step:   0.1,
-        max_step:   0.1
+        max_step:   0.1,
+        hide :      true
+    },
+    "Similarity (CDR3, amino acid)": {
+        doc:        "Similarity (CDR3, AA)",
+        germline:   function(){return m.germlineV.system},
+        fct:        function(clone) {
+                        return (clone.tsne_system_aa != undefined) ? clone.tsne_system_aa[0] : undefined
+                    },
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
+                    },
+        min_step:   0.1,
+        max_step:   0.1,
+        hide :      true
+    },
+    "TSNEY_LOCUS_AA": {   
+        doc:        "",
+        germline:   function(){return m.germlineV.system},
+        fct:        function(clone) {            
+                        return (clone.tsne_system_aa != undefined) ? clone.tsne_system_aa[1] : undefined
+                    },
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
+                    },
+        min_step:   0.1,
+        max_step:   0.1,
+        hide :      true
     },
     "Main sample":{
         doc:        "sample in which the clone reach its maximum size",

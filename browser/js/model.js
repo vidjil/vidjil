@@ -1578,7 +1578,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
                     if (timeID != -1 && clone.reads[timeID] != 0){
                         if (warned[warn.code] == undefined){
-                            warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg)}
+                            warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg), "level": warn.level}
                         }
                         if (warned[warn.code].clones.indexOf(clone.index) == -1){
                             warned[warn.code].clones.push(clone.index)
@@ -1586,7 +1586,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         }
                     } else if (timeID == -1){
                         if (warned[warn.code] == undefined){
-                            warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg)}
+                            warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg), "level": warn.level}
                         }
                         if (warned[warn.code].clones.indexOf(clone.index) == -1){
                             warned[warn.code].clones.push(clone.index)

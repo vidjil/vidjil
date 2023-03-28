@@ -53,7 +53,7 @@ function ScatterPlot(id, model, database, default_preset, hidden=false) {
 
     //Margins (css style : top/right/bottom/left)
     this.default_margin = [70,10,15,100];
-    this.tsne_margin = [25,25,25,25];
+    this.tsne_margin = [30,25,15,25];
     this.margin = this.default_margin;
 
     this.CLONE_MIN_SIZE = 0.001
@@ -1261,11 +1261,18 @@ ScatterPlot.prototype = {
     },
 
     label_update : function () {
-
-        var data = [
-            {x:(this.gridSizeW/2)+this.margin[3], y:12, text:this.axisX.name, rotation:0 },
-            {y:(this.gridSizeH/2)+this.margin[0], x:12, text:this.axisY.name, rotation:270}
-        ]
+        var data;
+        if (this.mode != "tsne") {
+            data = [
+                {x:(this.gridSizeW/2)+this.margin[3], y:12, text:this.axisX.getAxisName(), rotation:0 },
+                {y:(this.gridSizeH/2)+this.margin[0], x:12, text:this.axisY.getAxisName(), rotation:270}
+            ]
+        } else {
+            data = [
+                {x:(this.gridSizeW/2)+this.margin[3], y:12, text:this.axisX.getAxisName(), rotation:0 },
+                {y:(this.gridSizeH/2)+this.margin[0], x:12, text:undefined, rotation:270}
+            ]
+        }
 
         leg = this.axis_container.selectAll("text")
             .data(data);
@@ -1384,9 +1391,9 @@ ScatterPlot.prototype = {
         }
  
 
-        if (this.available_axis.indexOf(splitX) != -1 || splitX == "TSNEX" || splitX == "TSNEX_LOCUS")        
+        if (this.available_axis.indexOf(splitX) != -1 || splitX == "TSNEX" || splitX == "Similarity (CDR3, nucleotide)" || splitX == "Similarity (CDR3, Amino acid)")
             this.splitX = splitX
-        if (this.available_axis.indexOf(splitY) != -1 || splitY == "TSNEY" || splitY == "TSNEY_LOCUS")
+        if (this.available_axis.indexOf(splitY) != -1 || splitY == "TSNEY" || splitY == "TSNEY_LOCUS_NT" || splitY == "TSNEY_LOCUS_AA")
             this.splitY = splitY
         this.computeSize()
 

@@ -1,0 +1,71 @@
+!NO_LAUNCHER:
+!OUTPUT_FILE: homo-sapiens.js
+!LAUNCH:(cd $VIDJIL_DIR/germline ; python2 buildBrowserGermline.py homo-sapiens.g tests/should-get-tests/homo-sapiens.js)
+
+
+$ IGHD
+:IGHD
+$ IGHD+up
+:IGHD\+up
+$ IGHJ+down
+:IGHJ\+down
+$ IGHV
+:IGHV
+$ IGK-INTRON
+:IGK-INTRON
+$ IGK-KDE
+:IGK-KDE
+$ IGKJ+down
+:IGKJ\+down
+$ IGKV
+:IGKV
+$ IGLJ+down
+:IGLJ\+down
+$ IGLV
+:IGLV
+$ TRAJ+down
+:TRAJ\+down
+$ TRAV
+:TRAV
+$ TRBD
+:TRBD
+$ TRBD+up
+:TRBD\+up
+$ TRBJ+down
+:TRBJ\+down
+$ TRBV
+:TRBV
+$ TRDD
+:TRDD
+$ TRDD+up
+:TRDD\+up
+$ TRDD2+up
+:TRDD2\+up
+$ TRDD3+down
+:TRDD3\+down
+$ TRDJ+down
+:TRDJ\+down
+$ TRDV
+:TRDV
+$ TRGJ+down
+:TRGJ\+down
+$ TRGV
+:TRGV
+
+
+
+
+$ species
+: species
+$ systems
+: systems
+$ shortcut
+: shortcut
+$ color
+: color
+$ description
+: description
+$ recombinations
+: recombinations
+$ parameters
+: parameters
