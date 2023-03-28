@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.8'
 
 # ## Docker-compose
 # You can set variables (as $MYSQL_ROOT_PASSWORD) values inside .env file
@@ -40,7 +40,7 @@ services:
         env_file:
             - '.env'
         volumes:
-            - $VOLUME_PATH/databases/:/usr/share/vidjil/server/web2py/applications/vidjil/databases/
+            - $VOLUME_PATH/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
             - $VOLUME_PATH/result/results:/mnt/result/results
             - $VOLUME_PATH/result/tmp:/mnt/result/tmp
             - $VOLUME_PATH/upload/uploads:/mnt/upload/uploads
@@ -64,7 +64,6 @@ services:
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
-            - ../browser/js/germline.js:/usr/share/vidjil/browser/js/germline.js
 
     workers:
         image: vidjil/server:latest

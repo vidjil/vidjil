@@ -1,0 +1,44 @@
+version: '3.8'
+
+# See https://docs.docker.com/compose/extends/ for more information
+services:
+    mysql:
+        network_mode: bridge
+        volumes:
+            - ./ci/mysql:/var/lib/mysql
+    uwsgi:
+        network_mode: bridge
+        command: bash /entrypoints/uwsgi-entrypoint.sh --ci
+    fuse:
+        network_mode: bridge
+        volumes:
+            - ./ci/result:/mnt/result
+            - ./ci/result/results:/mnt/result/results
+            - ./ci/uploads:/mnt/upload/uploads
+            - ../browser:/usr/share/vidjil/browser
+            - ../server/web2py/applications/vidjil:/usr/share/vidjil/server/web2py/applications/vidjil
+            - ./:/usr/share/vidjil/docker
+            - databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
+        extra_hosts:
+          - "fuse:127.0.0.1"
+    nginx:
+        network_mode: bridge
+        expose:
+            - 443
+        environment:
+            - VIRTUAL_HOST=virtual_host.server.ci.vidjil.org
+            - VIRTUAL_PORT=443
+            - VIRTUAL_PROTO=https
+        volumes:
+            - ../browser:/usr/share/vidjil/browser
+            - ./:/usr/share/vidjil/docker
+        links:
+            - uwsgi:uwsgi
+
+    workers:
+        network_mode: bridge
+    postfix:
+        network_mode: bridge
+
+volumes:
+    databases:
