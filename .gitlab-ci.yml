@@ -274,6 +274,8 @@ test_server_unit:
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
     - mkdir -p docker/postfix/ssl
     - cd docker && docker-compose up -d && cd ..
+    - pwd
+    - ls
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
