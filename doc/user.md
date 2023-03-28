@@ -264,6 +264,25 @@ When there is only one sample, two such views are shown.
   </figcaption>
 </figure>
 
+#### Similarity of clonotypes
+
+A particular preset for similarity is available.  
+Similarity values are computed on vidjil windows sequences, so centered on cdr3 of the clonotype, but with a length depending of configuration.   
+To compute these values, a request is done to vidjil server and a matrix of each similarity between each clonotype is returned. A 2D representation is done locally, splitted by locus, with tSNE algorithm ([t-distributed stochastic neighbor embedding](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding)). Only clonotype present in the current sample are represented in the projection.
+
+As the similarity is computed only on present clonotype, and tSNE aim is to maximize the distance between them in a 2D view, a side effet is that if you test this functionnality on a small sample with only few similar clones, they will be seclude more than they would be on a sample with mulitple clonotype.  
+Note that the more dissimilarity there is among the clonotypes of the samples, the more the ability to obtain a group of clonotypes is improved (see the figure below).
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/scatterplot_similarity.png"/>
+      <p style="text-align:center">A) A small artificial sample with only 5 clonotypes, divergent by only one mismatch each in a tSNE projection. On this small set, distances are miximize and each clonotype seem to be extremly different.<br/>B)
+      Same sample fused with polyclonal sample with one hundred various sequences. In this case, clonotype of first sample are clusterize.</p>
+    </p>
+  </figure>
+
+NB: tSNE algorithm use a random seed step at launch of analysis. In our case, a seeded random function call allow to get reproductible projection when you reopen a sample. However, if you modify clonotype composition of analysis (launching with another configuration, add samples, ...), the 2D projection will be different.
+NB: A new version of similarity computing tools will be release in 2023 with improve accuracy and the ability to analyze similarity on amino acid cdr3 sequence.
+
 
 ### Status bar
 
