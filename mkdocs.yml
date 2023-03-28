@@ -1,3 +1,4 @@
+
 site_name: Vidjil
 site_url: https://www.vidjil.org/doc
 
@@ -55,6 +56,10 @@ nav:
         - Roadmap: roadmap.md
         - Credits, references: credits.md
         - Open-source and licensing: license.md
+    - Changelogs:
+        - Vidjil-algo: CHANGELOG
+        - Vidjil-server: CHANGELOG.web
+        - Docker: changelog-docker.md
 
 extra_css:
     - mkdocs-extra.css

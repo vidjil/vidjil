@@ -52,6 +52,14 @@ are available from the [doc/](http://gitlab.vidjil.org/tree/master/doc) director
 including development notes on Vidjil-algo (`dev-algo.md`), on the germlines (`dev-germline.md`),
 on the web application client (`dev-client.md`), and on the server (`dev-server.md`).
 
+### Changelogs
+
+Changelogs of revisions of algorithm, server or client is available.
+You can find a list of all new features, bug fixes or improvements there.
+
+  - [Vidjil-algo](CHANGELOG)
+  - [Vidjil-server](CHANGELOG.web)
+  - [Docker](changelog-docker.md)
 ### Further help
 
 Further help can always be asked to <contact@vidjil.org>. We can also arrange
