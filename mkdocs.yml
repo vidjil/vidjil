@@ -40,6 +40,7 @@ nav:
     - Bioinformatician:
         - vidjil-algo, command-line manual: vidjil-algo.md
         - fuse.py, converting and merging immune repertoire data: tools.md
+        - Server API: api.md
         - Specification of the .vidjil format: vidjil-format.md
         - Specification of the warnings: warnings.md
         - Specification of the .should-vdj.fa tests: should-vdj.md
