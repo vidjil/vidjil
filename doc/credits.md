@@ -65,7 +65,7 @@ The development of Vidjil is funded by:
   - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
   - Inria Lille, 2015-2018
   - InCA, 2016-2019
-  - VidjilNet consortium at Inria, 2018-2022
+  - VidjilNet consortium at Inria, 2018-2023
 
 
 ## References
