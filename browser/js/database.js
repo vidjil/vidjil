@@ -1470,7 +1470,7 @@ Uploader.prototype = {
     upload_file : function (id) {
         var self = this;
         
-        var url = db.db_address + "file/up"
+        var url = db.db_address + "file/upload"
         //url = url.replace("https://", "http://");
         $.ajax({
             xhr: function(){
