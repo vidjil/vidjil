@@ -452,25 +452,24 @@ Both regular and comment sections will be saved when you save the report.
 
 ## Warnings view
 
-New in release 2022.12\
-A dedicated view allow to interact with warnings of the loaded analysis.
+The warning views (bew in release 2023.03) lists global and clonotype warnings.
+Clonotype with a specific warning can be selected (🔍), either from the current sample or from all samples.
+
 
 <figure> <p style="text-align:center">
       <img src="..//pictures/warnings_view.png"/>
   </figure>
   <i>
-      Warnings view list of present warnings of the loaded analysis.</p>
-      You can select clonotype with a specific warning, or decide to mute a warning.
+      The most frequent warning in this sample, W69, tells that some clonotype
+      may have alternate V(D)J designation 
+      Clonotypes with this warnings can be selected (🔍): 
+      here most of them have VXXX or VXXX, and that is expected due to the sequences.
+      The warning was then muted.
   </i>
 </figure>
 
-This view list all present warnings of the load analysis, organize by type of warnings.\
-For each warnings, you have the possibility to select clonotypes with this warning, either from the current sample or from all samples.
-
-You also have the ability to mute a warning. This will disable the throw of the warning icon for this specific entrie.
-In every cases, this warning still listed on the clonotype information panel or on hover of the “🛈” icon of each clonotypes.
-
-If loaded analysis include undeclared warning, there will be shown in a specific section `Unknown warnings`.
+Warnings can be muted by unchecking the checkbox.
+Muted warnings are still listed on the clonotype information panel or on hover of the “🛈” icon of each clonotype.
 
 
 # The sample database and the server
