@@ -264,25 +264,26 @@ When there is only one sample, two such views are shown.
   </figcaption>
 </figure>
 
-#### Similarity of clonotypes
+#### Similarity between clonotypes
 
 A particular preset for similarity is available.  
-Similarity values are computed on vidjil windows sequences, so centered on cdr3 of the clonotype, but with a length depending of configuration.   
-To compute these values, a request is done to vidjil server and a matrix of each similarity between each clonotype is returned. A 2D representation is done locally, splitted by locus, with tSNE algorithm ([t-distributed stochastic neighbor embedding](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding)). Only clonotype present in the current sample are represented in the projection.
+Similarity values are now computed on vidjil *windows* sequences (centered on CDR3 of the clonotype, with a length depending of analysis preset).
+
+The "Similarity by nucleotides" preset computes the similarity between each pair of clonotypes, and displays clonotypes on a 2D plane, split by locus, with the [tSNE algorithm](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding). 
 
 !!! warning
-    As the similarity is computed only on present clonotype, and tSNE aim is to maximize the distance between them in a 2D view, a side effet is that if you test this functionnality on a small sample with only few similar clones, they will be seclude more than they would be on a sample with mulitple clonotype.  
-    Note that the more dissimilarity there is among the clonotypes of the samples, the more the ability to obtain a group of clonotypes is improved (see the figure below).
+    The similarity is computed only on clonotypes present on the current samples. The same clonotypes will thus be displayed further apart on smaller samples with more similar clones.
+    In most cases, the more dissimilarity there is among the clonotypes of the sample, the better the clonotypes are grouped.
 
   <figure> <p style="text-align:center">
       <img src="..//pictures/scatterplot_similarity.png"/>
-      <p style="text-align:center">A) A small artificial sample with only 5 clonotypes, divergent by only one mismatch each in a tSNE projection. On this small set, distances are miximize and each clonotype seem to be extremly different.<br/>B)
-      Same sample fused with polyclonal sample with one hundred various sequences. In this case, clonotype of first sample are clusterize.</p>
+      <p style="text-align:center">A) Artificial sample with only 5 clonotypes, divergent by only one mismatch, but
+      here displayed far apart. <br/>B)
+      Same clonotypes in a large polyclonal sample with one hundred clonotypes. The five clonotypes are clusterized.</p>
     </p>
   </figure>
 
-NB: tSNE algorithm use a random seed step at launch of analysis. In our case, a seeded random function call allow to get reproductible projection when you reopen a sample. However, if you modify clonotype composition of analysis (launching with another configuration, add samples, ...), the 2D projection will be slightly different.
-
+Note that when another analysis produce a slightly different list of clonotypes (launching another configuration, adding samples...), the tSNE algorithm will be relaunched and the 2D projection may look slightly different.
 
 ### Status bar
 
