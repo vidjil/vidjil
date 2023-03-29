@@ -58,7 +58,7 @@ New features, improvements, and bug fixes are listed in the following files.
 
   - [Vidjil-algo](CHANGELOG)
   - [Vidjil client and server](CHANGELOG.web)
-  - [Docker](changelog-docker.md)
+  - [Docker](../docker/CHANGELOG)
 
 ### Further help
 
