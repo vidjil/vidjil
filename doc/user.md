@@ -452,7 +452,7 @@ Both regular and comment sections will be saved when you save the report.
 
 ## Warnings view
 
-The warning views (bew in release 2023.03) lists global and clonotype warnings.
+The warning views (new in release 2023.03) lists global and clonotype warnings.
 Clonotype with a specific warning can be selected (🔍), either from the current sample or from all samples.
 
 
