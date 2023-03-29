@@ -2,44 +2,38 @@
 This changelog concerns the Vidjil web application, client and server.
 As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
-# [2023-02-28](https://gitlab.inria.fr/groups/vidjil/-/milestones/8)
+# [2023-02-29](https://gitlab.inria.fr/groups/vidjil/-/milestones/8)
 
 Improve analysis
-* A new view allow to list present warnings and select associated clonotype
-* A local primer set can be set on your own server to be use from the client side
-* Add a new preset locus by sizes
+* New view displaying warnings and allowing to select related clonotypes
+* New preset "locus by sizes"
+* New .csv export of metadata information of a sample
+* Custom primer sets can be set on local server installations
 
+Improve reports and report templates
+* Shared template across analyses
+* Harmonize rendering of clonotypes depending of the number of samples
+* Better selection of loci
+* Better clone name display, using N region parameters
 
 Improve ergonomy
-* Collumns and features layers selection in aligner are stored in your settings
-* Add an escape shourtcut to close opened panels
-* Add a button to download all metadata informations of a sample analysis as a csv
+* Remember columns and feature layers selection in aligner
+* Keyboard "Esc" shortcut to close open panels
 
-API\
-Various improvement on the API toolbox have been added as impersonating, download of analysis file and ability to delete some data with a security confirmation
+API, <https://www.vidjil.org/doc/api>
+* More endpoints: impersonating, analysis download, data deletion with a confirmation
 
-If you want to use this API, consider to [contact](support@vidjil.org) us.
-
-Reports\
-Since first refactoring of report, some asked improvement have been included as:
-* Improve preset to create a shared template available accross analysis
-* Harmonize render of clonotype information depending of the number of samples present
-* Selection of locus in report template is improved
-* Use your N region setting to show clone name
-
-Bugs\
-A set of blocking or annoying bugs have been fixed:
-* Resolve changes done on scatterplot when a report is generated
-* Resolve error on the downloading of vidjil result file or artifacts from database page
-* Resolve error on axe "number of samples" that don't work
+Bugs corrected
+* Reflect changes on grid on reports
+* Resolve error on the downloading of result file
+* Fix "number of samples" axis
 * Resolve bug in selection of sample by presence of selected clonotypes
-* Cleaner error message if vidjil file is incorrectly formated
+* Cleaner error message on broken files
 * Faster groups controller
-* Automatic deletion of temporary (and potentially large) files from addon scripts on server
+* Automatic deletion of temporary (and potentially large) files from addon scripts
 
-Continuous integration\
-We now use docker image for more jobs (test on tools, germlines, ...)
-
+Continuous integration
+* More testing on Docker images (tools, germlines)
 
 ## 2022-06-28
 
