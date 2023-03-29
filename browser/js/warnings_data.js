@@ -5,7 +5,7 @@
  * Warning is no visibility will not be used for the moment inside client warning view
  */
 var warnings_data = {
-    "Generic errors":
+    "Generic warnings":
     {
         "W0x":
         {
@@ -15,13 +15,13 @@ var warnings_data = {
         },
         "W0a":
         {
-            "title": "Outdated germlines  ",
+            "title": "Outdated germlines",
             "level": 1,
             "visibility": 0
         },
         "W0b":
         {
-            "title": "Strange parameters: xxxx xxxx",
+            "title": "Strange parameters",
             "level": 0,
             "visibility": 0
         },
@@ -38,11 +38,11 @@ var warnings_data = {
             "visibility": 0
         }
     },
-    "Output of a pre-process ~'server-pre-process'":
+    "Pre-process warnings":
     {
         "W10":
         {
-            "title": "Few assembled reads  #2243  ",
+            "title": "Few assembled reads",
             "level": 1,
             "visibility": 0
         },
@@ -53,7 +53,7 @@ var warnings_data = {
             "visibility": 0
         }
     },
-    "Output of an analysis, global warnings":
+    "Analysis global warnings":
     {
         "W20":
         {
@@ -69,18 +69,18 @@ var warnings_data = {
         },
         "W2x":
         {
-            "title": "Sequences with known adapters #1669",
+            "title": "Sequences with known adapter",
             "level": 1,
             "visibility": 0
         },
         "W2y":
         {
-            "title": "CDR3 detection without gapped germlines   #2187   (ou bien par clone ?)",
+            "title": "CDR3 detection without gapped germline",
             "level": 0,
             "visibility": 0
         }
     },
-    "Output of an analysis, warnings on some clones":
+    "Warnings on some clones":
     {},
     "Read quality":
     {
@@ -131,7 +131,7 @@ var warnings_data = {
             "visibility": 0
         }
     },
-    "Uncommon recombination":
+    "Uncommon recombinations":
     {
         "W6a":
         {
@@ -171,22 +171,22 @@ var warnings_data = {
         },
         "W68":
         {
-            "title": "V(D)J designation failed, possibly complex or not recombined sequence #4818",
+            "title": "V(D)J designation failed, possibly complex or not recombined sequence",
             "level": 2,
             "visibility": 0
         },
         "W69":
         {
-            "title": "Several V/J candidate genes with equal probability #3575",
+            "title": "Several V/J candidate genes with equal probability",
             "level": 0,
             "visibility": 1
         }
     },
-    "Strange recombination (FineSegmenter in vidjil-algo), D gene, N regions*":
+    "Strange recombination, D gene, N regions*":
     {
         "W7x":
         {
-            "title": "Mutations near breakpoint #1412",
+            "title": "Mutations near breakpoint",
             "level": 0,
             "visibility": 0
         },

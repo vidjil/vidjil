@@ -101,7 +101,7 @@ Warnings.prototype = {
         })
 
         var reset = document.createElement("div")
-        var text = document.createTextNode("Reset warnings level")
+        var text = document.createTextNode("Reset warnings")
         reset.onclick = () => {self.m.resetWarnings()}
         reset.appendChild(text)
         target.appendChild(reset)
