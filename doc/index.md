@@ -55,8 +55,8 @@ on the web application client (`dev-client.md`), and on the server (`dev-server.
 ### Changelogs
 
 New features, improvements, and bug fixes are listed in the following files.
-  - [Vidjil-algo](CHANGELOG)
-  - [Vidjil client and server](CHANGELOG.web)
+  - [Vidjil-algo](changelog-algo.md)
+  - [Vidjil client and server](changelog-web.md)
   - [Docker](changelog-docker.md)
 
 ### Further help

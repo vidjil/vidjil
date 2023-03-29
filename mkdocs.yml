@@ -29,7 +29,7 @@ repo_url: https://gitlab.inria.fr/vidjil/vidjil
 repo_name: gitlab
 
 nav:
-    - / : index.md
+    - Summary : index.md
     - Life scientist:
         - Web application user manual: user.md
         - Libraries and recombinations: locus.md
@@ -58,8 +58,8 @@ nav:
         - Credits, references: credits.md
         - Open-source and licensing: license.md
     - Changelogs:
-        - Vidjil-algo: CHANGELOG
-        - Vidjil-server: CHANGELOG.web
+        - Vidjil-algo: changelog-algo.md
+        - Vidjil-server: changelog-web.md
         - Docker: changelog-docker.md
 
 extra_css:
