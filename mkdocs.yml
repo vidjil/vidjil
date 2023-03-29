@@ -49,7 +49,11 @@ nav:
     - Server administrator:
         - Server administration (web): admin.md
         - Server installation and maintenance (docker): server.md
-        - Further developer documentation: http://www.vidjil.org/doc/#further-developer-documentation
+    - Further developer documentation: 
+        - Algorithm: dev-algo.md
+        - Germlines: dev-germline.md
+        - Web client: dev-client.md
+        - Web server: dev-server.md
     - Quality, roadmap, credits:
         - Software and development quality: quality.md
         - Public datasets supporting Vidjil publications 🔗: http://www.vidjil.org/data

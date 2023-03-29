@@ -1,9 +1,9 @@
+!!! note
+    Here are aggregated notes forming a part of the developer documentation on the vidjil server.  
+    These notes are a work-in-progress, they are not as polished as the user documentation.  
+    Developers should also have a look at the documentation for [bioinformaticians](/doc/vidjil-algo/) and [server administrators](/doc/admin/),
+    at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
 
-Here are aggregated notes forming a part of the developer documentation on the Vidjil server,
-on client-server interaction as well as on packaging.
-These notes are a work-in-progress, they are not as polished as the user documentation.
-Developers should also have a look at the [documentation for bioinformaticians and server administrators](/),
-at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
 
 # Development notes -- Server
 
@@ -68,7 +68,9 @@ specialised to Vidjil's characteristics through the `VidjilAuth` class.
 
 ### Export
 
+``` bash
 mysqldump -u \<user\> -p \<database\> -c –no-create-info \> \<file\>
+```
 
 ### Import
 
@@ -76,13 +78,15 @@ In order to import the data from another server, you need to ensure
 there will be no key collision, or the import will fail.
 If the database contains data, the easiest is to drop the database and
 create a new empty database.
-This will require you to delete the .table file in web2py/applications/vidjil/databases
+This will require you to delete the .table file in `web2py/applications/vidjil/databases`  
 In order to create the tables you should then load a page from the
 webapp, but DO NOT init the database, because this will raise the problem
 of colliding primary keys again.
 
 Then run:
+```bash
 mysql -u \<user\> -p \<database\> \< file
+```
 
 ### VidjilAuth
 
@@ -122,6 +126,7 @@ task's state) is `STOP_TASK`.
 Data should be tabulated (row separated with a break line, cells separated with a tabulation).
 
 Browser cannot access data from the clipboard in the following cases:
+
  - the browser does not support it (FF)
  - the user refused to grant the access
 
@@ -149,12 +154,12 @@ can be found in the packaging directory in each package's subdirectory.
 
 In the packaging directory can be found the scripts for building each of
 the vidjil packages: germline, algo (named vidjil) and server.
-Note: build-generic.sh is a helper script that is used by the other
+Note: `build-generic.sh` is a helper script that is used by the other
 build-\* scripts to build a package.
 
 Executing one of the scripts will copy the necessary files to the
 corresponding packaging subdirectory (germline, vidjil and server)
-And build the package in the /tmp folder along with all the files needed
+And build the package in the `/tmp` folder along with all the files needed
 to add the package to a repository
 
 It is worth noting that while all packages can be built directly from the
@@ -231,9 +236,10 @@ sudo dpkg -i vidjil_<version>_all.deb
 
 ## Packaging Vidjil into a Debian Source Package
 
-Note: This document is currently incomplete. This process will not produce a
-working debian package. The package build will fail when attempting to
-emulate \`make install\`
+!!! note
+    This document is currently incomplete. This process will not produce a
+    working debian package. The package build will fail when attempting to
+    emulate \`make install\`
 
 ### Requirements
 
@@ -322,8 +328,8 @@ Ensure your docker-compose.yml contains the correct reference to the
 vidjil image you want to use. Usually this will be vidjil/vidjil:latest,
 but more tags are available at <https://hub.docker.com/r/vidjil/vidjil/tags/>.
 
-You may also want to uncomment the volume in the fuse volume block "-
-./vidjil/conf:/etc/vidjil" this will provide easier access to all of the
+You may also want to uncomment the volume in the fuse volume block `-
+./vidjil/conf:/etc/vidjil` this will provide easier access to all of the
 configuration files, allowing for tweaks.
 
 Running the following command will automatically download any missing
@@ -416,7 +422,7 @@ make to the containers. The Dockerfile accepts some build arguments:
   - git<sub>branch</sub> : The git branch to clone from the repository. By default:
     dev.
 
-<!-- end list -->
+
 
 ``` bash
 docker build --build-arg build_env=PRODUCTION --build-arg git_branch=<my_feature_branch> docker/vidjil-client -t vidjil/client:<version>
