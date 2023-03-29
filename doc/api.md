@@ -12,6 +12,12 @@ Code snippet and example can be found in tools directory inside both files `api_
     Please be warned of danger of what you do on a production server.  
     Don't spam our production server with excecive data and be attentive if you modifiy or delete your data.
 
+If you want to use it and need help, don't hesitate to contact us if needed at [support@vidjil.org](mailto:support@vidjil.org).
+
+### Installation
+
+API is build as a python script. 
+
 Some library is needed. A prompt line will be show at first launch to propose you to install them for you if you want.  
 If you prefer install them by yourself, you can launch the floowing code:
 
