@@ -151,3 +151,14 @@ unrecombined V/J sequences, or heptamers/nonamers/RSS.
 
 Note that the Vidjil web application can also display recombinations detected by other software,
 as long as this information is provided in the `.vidjil` file computed by such other software.
+
+
+## Others species
+
+Germlines for the following species are included on the public server and available as `germline/*/*.g` files. Contact us to setup parameter analyses for such species or to add new species.
+
+* Homo Sapiens
+* Gallus Gallus
+* Rattus Norvegicus
+* Mus Musculus
+* Sus Scrofa

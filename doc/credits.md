@@ -8,11 +8,11 @@ Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
 ## Vidjil core development
 
-  - Mathieu Giraud, 2011-2022
-  - Mikaël Salson, 2011-2022
+  - Mathieu Giraud, 2011-2023
+  - Mikaël Salson, 2011-2023
   - Marc Duez, 2012-2016, 2019-2022
   - Tatiana Rocher, 2014-2017
-  - Florian Thonier, 2015-2022
+  - Florian Thonier, 2015-2023
   - Ryan Herbert, 2015-2020
   - Aurélien Béliard, 2016-2017
 

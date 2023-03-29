@@ -264,6 +264,26 @@ When there is only one sample, two such views are shown.
   </figcaption>
 </figure>
 
+#### Similarity between clonotypes
+
+A particular preset for similarity is available.  
+Similarity values are now computed on vidjil *windows* sequences (centered on CDR3 of the clonotype, with a length depending of analysis preset).
+
+The "Similarity by nucleotides" preset computes the similarity between each pair of clonotypes, and displays clonotypes on a 2D plane, split by locus, with the [tSNE algorithm](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding). 
+
+!!! warning
+    The similarity is computed only on clonotypes present on the current samples. The same clonotypes will thus be displayed further apart on smaller samples with more similar clones.
+    In most cases, the more dissimilarity there is among the clonotypes of the sample, the better the clonotypes are grouped.
+
+  <figure> <p style="text-align:center">
+      <img src="..//pictures/scatterplot_similarity.png"/>
+      <p style="text-align:center">A) Artificial sample with only 5 clonotypes, divergent by only one mismatch, but
+      here displayed far apart. <br/>B)
+      Same clonotypes in a large polyclonal sample with one hundred clonotypes. The five clonotypes are clusterized.</p>
+    </p>
+  </figure>
+
+Note that when another analysis produce a slightly different list of clonotypes (launching another configuration, adding samples...), the tSNE algorithm will be relaunched and the 2D projection may look slightly different.
 
 ### Status bar
 
@@ -429,6 +449,27 @@ to *add a comment section* where you can enter a free text.
 
 Both regular and comment sections will be saved when you save the report.
 
+
+## Warnings view
+
+The warning views (new in release 2023.03) lists global and clonotype warnings.
+Clonotype with a specific warning can be selected (🔍), either from the current sample or from all samples.
+
+
+<figure> <p style="text-align:center">
+      <img src="..//pictures/warnings_view.png"/>
+  </figure>
+  <i>
+      The most frequent warning in this sample, W69, tells that some clonotype
+      may have alternate V(D)J designation 
+      Clonotypes with this warnings can be selected (🔍): 
+      here most of them have VXXX or VXXX, and that is expected due to the sequences.
+      The warning was then muted.
+  </i>
+</figure>
+
+Warnings can be muted by unchecking the checkbox.
+Muted warnings are still listed on the clonotype information panel or on hover of the “🛈” icon of each clonotype.
 
 
 # The sample database and the server

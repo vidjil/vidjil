@@ -226,3 +226,36 @@ or simply remove access by changing his password and/or restrain rights for his 
 
 Some monitoring features are accessible through the web application :
 XXX TODO XXX
+
+
+## Plugins
+
+Some features of vidjil server/client need to add a dedicated script in `browser/js/addons/` directory.  
+
+!!! info
+    If you use docker installation, don't forget to link these plugins directory/files to volume declaration.
+
+### Declare our own primers set
+
+A dedicated plugin allow to add your own primer set.
+To do this, adapt the following content with your own list of primers sequences:
+
+``` js title='Addon for primer declaration'
+setTimeout( () => {
+    m.primersSetData.primers_set_XXX = {
+        "name": "primers_set_XXX",
+        "title": "primers_title",
+        "TRB": {
+            "primer5" : [
+                "VVV","VVV","VVV", // segments V
+                "DDD", "DDD"       // segments D
+            ],
+            "primer3": ["JJJ", "JJJ", "JJJ"] // primer3 complement
+        }
+    }
+    console.default.log( "==> ADDONS PRIMERS  XXX loaded" ) // To control in browser log
+    m.buildPrimersMenu()
+}, 100)
+```
+
+If you want to add multiple primers sets by this way, don't forget to adapt it and avoid duplicate name in `m.primersSetData`.
