@@ -155,10 +155,7 @@ as long as this information is provided in the `.vidjil` file computed by such o
 
 ## Others species
 
-Some other species are included on public server. You can also get them on the vidjil project.  
-If you need a new one not already present, you can [contact us]().
-
-For the moment, available species are:
+Germlines for the following species are included on the public server and available as `germline/*/*.g` files. Contact us to setup parameter analyses for such species or to add new species.
 
 * Homo Sapiens
 * Gallus Gallus

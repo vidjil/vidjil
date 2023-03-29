@@ -54,12 +54,11 @@ on the web application client (`dev-client.md`), and on the server (`dev-server.
 
 ### Changelogs
 
-Changelogs of revisions of algorithm, server or client is available.
-You can find a list of all new features, bug fixes or improvements there.
-
+New features, improvements, and bug fixes are listed in the following files.
   - [Vidjil-algo](CHANGELOG)
-  - [Vidjil-server](CHANGELOG.web)
+  - [Vidjil client and server](CHANGELOG.web)
   - [Docker](changelog-docker.md)
+
 ### Further help
 
 Further help can always be asked to <contact@vidjil.org>. We can also arrange
