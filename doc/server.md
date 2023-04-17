@@ -462,8 +462,10 @@ the Dockerhub page](https://hub.docker.com/r/vidjil/server/tags/).
 
 ## Plain server installation
 
-This installation is not supported anymore.
-We rather advise to use the Docker containers (see above).
+!!! warning
+
+    This installation is not supported anymore.
+    We rather advise to use the Docker containers (see above).
 
 ### Requirements (for Ubuntu 16.04)
 
@@ -962,9 +964,10 @@ A script `migrator.sh` can be found in vidjil, if you are using the docker versi
 ```bash
 sh migrator.sh -p [EXPORT_DIRECTORY] -s [WEB2PY_RESULTS_DIRECTORY] export group [GROUP_ID]
 ```
- - `[EXPORT_DIRECTORY]`:  path to the export directory inside the vidjil-server container you should have prepared in step 1.
- - `[WEB2PY_RESULTS_DIRECTORY]`: the results directory path inside the container, it should be defined in your `docker-compose.yml`, by default it is `/mnt/result/results/`
- - `[GROUP_ID]`: id of the group owning the results to be exported (see step 2)
+
+- `[EXPORT_DIRECTORY]`:  path to the export directory inside the vidjil-server container you should have prepared in step 1.
+- `[WEB2PY_RESULTS_DIRECTORY]`: the results directory path inside the container, it should be defined in your `docker-compose.yml`, by default it is `/mnt/result/results/`
+- `[GROUP_ID]`: id of the group owning the results to be exported (see step 2)
 
 The config analyses and pre-processes are currently not exported as they may already exist on the recipient server and are depending on tools that can be missing or installed differently. Config and pre-processes must therefore be recreated or mapped manually to existing one on the recipient server (see next section step 3-4).
 
@@ -1100,9 +1103,11 @@ In order to import the data into an installation you first need to ensure
 the tables have been created by Web2py this can be achieved by simply
 accessing a non-static page.
 
-/\!\\ If the database has been initialised from the interface you will
-likely encounter primary key collisions or duplicated data, so it is best
-to skip the initialisation altogether.
+!!! warning
+
+    If the database has been initialised from the interface you will
+    likely encounter primary key collisions or duplicated data, so it is best
+    to skip the initialisation altogether.
 
 Once the tables have been created, the data can be imported as follows:
 
