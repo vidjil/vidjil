@@ -462,8 +462,10 @@ the Dockerhub page](https://hub.docker.com/r/vidjil/server/tags/).
 
 ## Plain server installation
 
-This installation is not supported anymore.
-We rather advise to use the Docker containers (see above).
+!!! warning
+
+    This installation is not supported anymore.
+    We rather advise to use the Docker containers (see above).
 
 ### Requirements (for Ubuntu 16.04)
 
@@ -953,19 +955,21 @@ a possible location could be `[DOCKER DIRECTORY]/vidjil-server/conf/export/`
 
 Exports are group based, you can export all results owned by a group or create a new group and provide it with permissions on the results you want to export using the vidjil server interface as an admin user.
 
-Keep the [GROUP_ID] you can find on the group page (displayed between parenthesis next to the group name) as you will require it for the next step
+Keep the `[GROUP_ID]` you can find on the group page (displayed between parenthesis next to the group name) as you will require it for the next step
 
 ##### step 3 : run export command
 
-A script migrator.sh can be found in vidjil, if you are using docker version, it can be found at this location in the vidjil-server container.
-cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts
+A script `migrator.sh` can be found in vidjil, if you are using the docker version, it can be found at this location in the vidjil-server container: `/usr/share/vidjil/server/web2py/applications/vidjil/scripts`.
 
+```bash
 sh migrator.sh -p [EXPORT_DIRECTORY] -s [WEB2PY_RESULTS_DIRECTORY] export group [GROUP_ID]
- - [EXPORT_DIRECTORY] path to the export directory inside the vidjil-server container you should have prepared in step 1.
- - [WEB2PY_RESULTS_DIRECTORY] the results directory path inside the container, it should be defined in your docker-compose.yml, by default it is /mnt/result/results/
- - [GROUP_ID] id of the group owning the results to be exported (see step 2)
+```
 
-The config analysis and pre-process are currently not exported as they may already exist on the recipient server and are depending on tools that can be missing or installed differently. Config an pre-process analysis must therefore be recreated or mapped manually to existing one on the recipient server (see next section step 3-4).
+- `[EXPORT_DIRECTORY]`:  path to the export directory inside the vidjil-server container you should have prepared in step 1.
+- `[WEB2PY_RESULTS_DIRECTORY]`: the results directory path inside the container, it should be defined in your `docker-compose.yml`, by default it is `/mnt/result/results/`
+- `[GROUP_ID]`: id of the group owning the results to be exported (see step 2)
+
+The config analyses and pre-processes are currently not exported as they may already exist on the recipient server and are depending on tools that can be missing or installed differently. Config and pre-processes must therefore be recreated or mapped manually to existing one on the recipient server (see next section step 3-4).
 
 #### Importing an archive
 
@@ -1008,10 +1012,10 @@ This `config.json` file initially contains a list of the analysis configs from t
 In the `config.json` file, you have to replace all` link_local` values with the corresponding config ID
 of a similar config on your server (if you don't have a similar one you should create one).
 
-If you much of your imported data was on `old` configs, that you do not intend to run anymore,
+If much of your imported data was on `old` configs, that you do not intend to run anymore,
 a solution is to create a generic `legacy` config for these old data.
 
-Below is an example of such a `config.json`, linking actual configuration on the public >app.vidjil.org> server to configs to a newly installed server.
+Below is an example of such a `config.json`, linking actual configuration on the public `app.vidjil.org` server to configs to a newly installed server.
 This should be completed by a mapping of other configs that were used in the migrated data.
 
 ```
@@ -1058,14 +1062,14 @@ cd usr/share/vidjil/server/web2py/applications/vidjil/scripts/
 sh migrator.sh -p [RESULTS DIRECTORY] -s [EXPORT DIRECTORY] import --config [CONFIG.JSON FILE] --pre-process [PPROCESS.JSON FILE] [GROUP ID]
 ```
 
-- [RESULTS DIRECTORY]          the results directory path inside the container, it should be defined in your docker-compose.yml, by default it is /mnt/result/results/
-- [EXPORT DIRECTORY]        the export directory you installed in step 1, if you set it up in docker/vidjil-server/conf/export/ is location inside the container should be /etc/vidjil/export/
-- [CONFIG.JSON FILE]         this file is located in the export folder and you should have edited it during step 3
-- [PPROCESS.JSON FILE]         this file is located in the export folder and you should have edited it during step 4
-- [GROUP ID]                         ID of the group you should have created/selected during step 2
+- `[RESULTS DIRECTORY]`:          the results directory path inside the container, it should be defined in your `docker-compose.yml`, by default it is `/mnt/result/results/`
+- `[EXPORT DIRECTORY]`:        the export directory you installed in step 1, if you set it up in `docker/vidjil-server/conf/export/` is location inside the container should be `/etc/vidjil/export/`
+- `[CONFIG.JSON FILE]`         this file is located in the export folder and you should have edited it during step 3
+- `[PPROCESS.JSON FILE]`         this file is located in the export folder and you should have edited it during step 4
+- `[GROUP ID]`                         ID of the group you should have created/selected during step 2
 
 Usually, the command is thus:
-```
+```sh
 sh migrator.sh -p /mnt/result/results/ -s /etc/vidjil/export/XXXX/ import --config/etc/vidjil/exportXXXX/config.json --pre-process /etc/vidjil/export/XXXX/pprocess.json  4
 ```
 
@@ -1099,9 +1103,11 @@ In order to import the data into an installation you first need to ensure
 the tables have been created by Web2py this can be achieved by simply
 accessing a non-static page.
 
-/\!\\ If the database has been initialised from the interface you will
-likely encounter primary key collisions or duplicated data, so it is best
-to skip the initialisation altogether.
+!!! warning
+
+    If the database has been initialised from the interface you will
+    likely encounter primary key collisions or duplicated data, so it is best
+    to skip the initialisation altogether.
 
 Once the tables have been created, the data can be imported as follows:
 
