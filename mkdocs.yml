@@ -60,7 +60,7 @@ nav:
     - Changelogs:
         - Vidjil-algo: CHANGELOG
         - Vidjil-server: CHANGELOG.web
-        - Docker: changelog-docker.md
+        - Docker: ../docker/CHANGELOG
 
 extra_css:
     - mkdocs-extra.css

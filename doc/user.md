@@ -407,13 +407,13 @@ To avoid overloading the IMGT servers that provide us this feature,
 after adding new clonotypes to the selection,
 one has to click on the refresh `↻` button to request the features for the new sequences.
 
-### The reports
+### Exporting reports
 
 To export reports from your data, you may first select clonotypes and/or plots:
 
- - Select some clonotypes by using the “★” button (status bar, bottom right), and `add to next report`. These clonotyo
+ - Select some clonotypes by using the “★” button (status bar, bottom right), and `add to next report`.
 
- - On any grid or bar plot, open the “plot“ menu and again `add to next report`. These plots will keep the exact composition (X/Y axes, clonotype/axes filters).
+ - On any grid or bar plot, open the “plot“ menu and again `add to next report`. The report will show these plots with the same parameters (X/Y axes, clonotype/axes filters).
 
 Then select `export report` inside the menu `ìmport/export`.
 
@@ -432,15 +432,14 @@ and to customize the report by:
 * Updating the *clonotypes* you previously selected (with “★”),  possibly removing them for the report
 * Adding, moving, or deleting *reports sections*, including plots you previously selected (within the “plot“ menu)
 
-`Show report` will then open the report (see below).
-The (possibly customized) report can also be saved for later reuse.
+This (possibly customized) report can be saved for later reuse.
 Saved reports are stored when you "save" the analysis on a patient/sample.
 If you need other customized templates, please contact us.
 
 
 #### Show report
 
-The report opens a new browser tab.
+`Show report` opens the report in a new browser tab.
 When a section is hovered, some icons at the top right allow to
 *move that section* (up/down),
 *delete that section*,
@@ -452,18 +451,17 @@ Both regular and comment sections will be saved when you save the report.
 
 ## Warnings view
 
-The warning views (new in release 2023.03) lists global and clonotype warnings.
-Clonotype with a specific warning can be selected (🔍), either from the current sample or from all samples.
-
+The warning view (new in release 2023.03) lists global and clonotype warnings.
+Clonotypes with a specific warning can be selected (🔍), either from the current sample or from all samples.
 
 <figure> <p style="text-align:center">
       <img src="..//pictures/warnings_view.png"/>
   </figure>
   <i>
-      The most frequent warning in this sample, W69, tells that some clonotype
-      may have alternate V(D)J designation 
+      The most frequent warning in this sample, W69, tells that some clonotypes
+      may have alternate V(D)J designation.
       Clonotypes with this warnings can be selected (🔍): 
-      here most of them have VXXX or VXXX, and that is expected due to the sequences.
+      here most of them have VXXX or VXX, and that is expected due to the sequences.
       The warning was then muted.
   </i>
 </figure>
@@ -494,11 +492,10 @@ you can process your data and save the results of your analysis.
   </figcaption>
 </figure>
 
-<b>
-⚠️ The public <http://app.vidjil.org/> server is for Research Use Only
-and is not compliant for clinical use.
-Clinical data have to be uploaded on a [certified healthcare server](http://www.vidjil.org/doc/healthcare).
-</b>
+!!! warning
+    The public <http://app.vidjil.org/> server is for Research Use Only
+    and is not compliant for clinical use.
+    Clinical data have to be uploaded on a [certified healthcare server](http://www.vidjil.org/doc/healthcare).
 
 Once you are authenticated, this page shows the patient list. Here you
 can see your patients and patients whose permission has been given to you.
