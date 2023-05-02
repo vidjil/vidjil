@@ -25,43 +25,40 @@ There are two ways to install and run a Vidjil server:
 
 ### CPU, RAM
 
-#### Minimal
+The recommended hardware depends on your needs.
 
-vidjil-algo typically uses
-approx. 1.2GB of RAM to run on a 1GB `.fastq` and will take approx. 5+ minutes.
-Therefore in order to process requests from a single user with a few samples,
-any standard multi-core processor with 2GB RAM will be enough.
-
-#### Recommended
-
-When choosing hardware for your server it is important to know the scale
-of usage you require.
-If you have many users that use the app on a daily basis, you will need to
-have multiple cores to ensure the worker queues don't build up.
 One worker will occupy one core completely when running vidjil-algo (which is
 currently single-threaded).
+When you have several users that use the app on a daily basis, you will need to
+have multiple cores to ensure the worker queues don't build up.
 
-For reference, here are various setups of our public
-testing server <https://app.vidjil.org>:
-
-
-  - 2016 -- 2017 (40+ users, including 15 regular users)
-
-    - Processor: Quad core Intel 2.4MHz
-    - 3 workers
-    - RAM: 16GB
-
-
-  - since 2018  (100+ users, including 30+ regular users)
-
-    - Virtual Machine: 8 virtual CPUs
-    - 6 workers
-    - RAM: 28GB
-    
-  
-We create less workers for executing Vidjil-algo than there are (virtual) CPU availabe,
+We create less workers for executing Vidjil-algo than there are (virtual) CPU or cores available,
 keeping always one CPU core dedicated to the web server, even when the workers run at full capacity.
 Running other RepSeq programs through the Vidjil server may require additional CPU and RAM.
+
+#### Minimal (single user)
+
+vidjil-algo typically uses
+approx. 1.2GB of RAM to run on a 1GB `.fastq` and will take approx. 5+ minute
+on a standard computer.
+
+Therefore in order to process requests from a single user with a few samples,
+**any standard multi-core processor with 2GB RAM per worker** will be enough.
+
+#### Recommended (multiple users)
+
+For a single-team lab with one or two weekly sequencing runs, we advise
+a standard computer with **4 CPU/cores** (hence 3 workers + 1 client),
+at at least 1 GHz and **8GB RAM**.
+
+For reference, here are various setups of our public servers as of 2023 (300+ users, including 50+ regular users)
+<!-- - 2016-2017 Quad core Intel 2.4GHz, 3 workers, 16 GB
+     - 2018-2020? 8vCPU, 6 workers, 28GB 
+     -->
+- Health certified server: 12 vCPUs, 14GB RAM, with redundant backups
+- Public server <https://app.vidjil.org>: 16 vCPUs (11 workers), 120GB RAM
+🌱 You probably don't need so much resources for your lab!
+  
 
 ### Storage
 
@@ -73,7 +70,7 @@ is now the main constraint** in our environment.
 Depending on the sequencer, files can weigh several GB.
 Depending of the number of users, a full installation's total storage should thus be serveral hundred GB, or even several TB
 (as of the end of 2018, 4 TB for the public server).
-We recommend a RAID setup of at least 2x2TB to allow for user files and at least one backup.
+We recommend a **RAID setup** of at least **2x2TB** to allow for user files and at least one backup.
 
 User files (results, annotations) as well as the metadata database are quite smaller
 (as of the end of 2016, on the public server, 3 GB for all user files of 40+ users).
