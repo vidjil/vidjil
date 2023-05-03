@@ -30,7 +30,7 @@ The recommended hardware depends on your needs.
 One worker will occupy one core completely when running vidjil-algo (which is
 currently single-threaded).
 When you have several users that use the app on a daily basis, you will need to
-have multiple cores to ensure the worker queues don't build up.
+have multiple (virtual) CPUs or cores to ensure the worker queues don't build up.
 
 We create less workers for executing Vidjil-algo than there are (virtual) CPU or cores available,
 keeping always one CPU core dedicated to the web server, even when the workers run at full capacity.
@@ -51,14 +51,17 @@ For a single-team lab with one or two weekly sequencing runs, we advise
 a standard computer with **4 CPU/cores** (hence 3 workers + 1 client),
 at at least 1 GHz and **8GB RAM**.
 
-For reference, here are various setups of our public servers as of 2023 (300+ users, including 50+ regular users)
+For reference, here are setups of our public servers 
+as of 2023 (300+ users, including 50+ regular users).
+🌱 You probably don't need so much resources for your lab!
+  
 <!-- - 2016-2017 Quad core Intel 2.4GHz, 3 workers, 16 GB
      - 2018-2020? 8vCPU, 6 workers, 28GB 
      -->
 - Health certified server: 12 vCPUs, 14GB RAM, with redundant backups
 - Public server <https://app.vidjil.org>: 16 vCPUs (11 workers), 120GB RAM
-🌱 You probably don't need so much resources for your lab!
-  
+
+
 
 ### Storage
 
