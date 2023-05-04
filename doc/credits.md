@@ -123,6 +123,11 @@ Marie-Laure Boulland et al.,
 Leukemia & Lymphoma, 2021,
 <https://doi.org/10.1080/10428194.2021.1933476>
 
+Estelle Bourbon et al.,
+*Next-CLL: A New Next-Generation Sequencing–Based Method for Assessment of IGHV Gene Mutational Status in Chronic Lymphoid Leukemia*,
+The Journal of Molecular Diagnostics, 2023,
+<https://doi.org/10.1016/j.jmoldx.2023.01.009>
+
 Monika Brüggemann et al., on behalf of the EuroClonality-NGS working group,
 *Standardized next-generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukaemia; a EuroClonality-NGS validation study*,
 Leukemia, 2019, 33, 2241–2253,
