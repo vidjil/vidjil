@@ -317,6 +317,7 @@ Warnings.prototype = {
      * */
     update: function () {
 
+        this.build_warnings()
         Object.keys(warnings_data).forEach( (category) => {
             Object.keys(warnings_data[category]).forEach( (warn_code) => {
                 var current = this.m.getWarningLevelFromCode(warn_code)
