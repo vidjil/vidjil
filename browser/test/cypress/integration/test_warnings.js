@@ -14,7 +14,7 @@ describe('Test tools', function () {
 
 
   it('00-action on vertical-separator',  function() {
-    cy.openAnalysis("browser/test/data/fused_multiple_distrib_locus.vidjil")
+    cy.openAnalysis("data/fused_multiple_distrib_locus.vidjil")
 
     cy.get("#warn_span_W69_sample").should("have.text","1 (50)")
 
