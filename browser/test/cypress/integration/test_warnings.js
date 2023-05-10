@@ -19,6 +19,7 @@ describe('Test tools', function () {
     cy.get("#warn_span_W69_sample").should("have.text","1 (50)")
 
     cy.get("body").type("{rightarrow}")
+    cy.get('#time1').click({force: true})
     cy.get("#warn_span_W69_sample").should("have.text","1 (95)")
     // cy.get('#warnings_menu').trigger('mousemove', { which: 1, pageX: 350, pageY: 10 })
     return
