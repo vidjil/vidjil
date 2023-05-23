@@ -1232,7 +1232,9 @@ ScatterPlot.prototype = {
             .on("click", function(d){
                 if (self.mode !="bar"){
                     self.m.unselectAllUnlessKey(d3.event)
-                    self.m.multiSelect(self.axisY.getLabelInfo(d.id).clones);
+                    var selection = self.axisY.getLabelInfo(d.id).clones.map(function(str) {
+                         return parseInt(str); }); // using map() to convert array of strings to numbers
+                    self.m.multiSelect(selection);
                 }
             })
             .attr("x", function(d) {
