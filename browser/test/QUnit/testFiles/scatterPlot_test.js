@@ -58,7 +58,7 @@ QUnit.test("grid", function(assert) {
         sp.changeSplitMethod("N length", "Size", "bar");
         sp.update()
 
-        assert.equal(   sp.select_x.selectedIndex,      9,                      'select_x index')
+        assert.equal(   sp.select_x.selectedIndex,      11,                     'select_x index')
         assert.equal(   sp.select_y.selectedIndex,      6,                      'select_y index')
         assert.approx(  sp.nodes[1].bar_h/sp.resizeH,   0.40, 0.05,             "node 1, bar h position " + m.clone(1).getSize())
         assert.equal(   sp.axisX.getPos(m.clone(1)),    sp.axisX.getValuePos(9),"node 1, bar x position " + m.clone(1).getNlength())
