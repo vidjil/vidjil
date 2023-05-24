@@ -18,7 +18,7 @@ describe('Aligner', function () {
 
     //check menu has been init
     cy.get('#segmenter_axis_menu').click({force:true})
-    cy.get('#segmenter_axis_select').children().should('have.length', 8)
+    cy.get('#segmenter_axis_select').children().should('have.length', 10)
 
     cy.get('#align-settings').click({force:true})
     cy.get('#align-settings_select').children().should('have.length', 4)
@@ -98,6 +98,9 @@ describe('Aligner', function () {
 
 
   it('Aligner menu, settings keep collumns',  function() {
+    //////////////////////////////////////////////////////////////////////////////////
+    // Warning; #saXX will vary depending of list of axis. Need to be update if modify
+
     cy.openAnalysis("doc/analysis-example2.vidjil")
     cy.selectClone(0)
     // Start with size + imgt productivity + imgt identity
@@ -113,7 +116,7 @@ describe('Aligner', function () {
       .click({force: true})
     cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .Size > .sizeBox')
       .should("not.exist")
-    cy.get("#sai1") // seq length
+    cy.get("#sai3") // seq length
       .should("not.be.checked")
       .click({force: true})
     cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .Sequence')
@@ -135,9 +138,9 @@ describe('Aligner', function () {
     // Test limit of five concurent element selected
     cy.get("#sai0").should("not.be.checked")
       .click({force: true}).should("be.checked")
-    cy.get("#sai2").should("not.be.checked")
+    cy.get("#sai4").should("not.be.checked") // reads length
       .click({force: true}).should("be.checked")
-    cy.get("#sai3").should("not.be.checked") // Click on 6th element
+    cy.get("#sai5").should("not.be.checked") // Click on 6th element
       .click({force: true}).wait(50).should("not.be.checked")
   })
 
