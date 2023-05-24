@@ -50,17 +50,17 @@ QUnit.test("axis size related to locus", function(assert) {
     // Default value of size; all clonotype
     assert.equal(AXIS_DEFAULT["Size"].fct(c1), 0.05, `axis 'Size', correct for clone 0 (get ${AXIS_DEFAULT["Size"].fct(c1)})` )
     assert.equal(AXIS_DEFAULT["Size"].fct(c2), 0.1,  `axis 'Size', correct for clone 1 (get ${AXIS_DEFAULT["Size"].fct(c2)})` )
-    assert.equal(AXIS_DEFAULT["Size"].fct(c3), 0.125,  `axis 'Size', correct for clone 1 (get ${AXIS_DEFAULT["Size"].fct(c2)})` )
+    assert.equal(AXIS_DEFAULT["Size"].fct(c3), 0.125,  `axis 'Size', correct for clone 2 (get ${AXIS_DEFAULT["Size"].fct(c3)})` )
 
     // Size relative to locus
     assert.equal(AXIS_DEFAULT["Size in locus"].fct(c1), 0.1, `axis 'Size in locus', correct for clone 0 (get ${AXIS_DEFAULT["Size in locus"].fct(c1)})` )
     assert.equal(AXIS_DEFAULT["Size in locus"].fct(c2), 0.2, `axis 'Size in locus', correct for clone 1 (get ${AXIS_DEFAULT["Size in locus"].fct(c2)})` )
-    assert.equal(AXIS_DEFAULT["Size in locus"].fct(c3), 0.25, `axis 'Size in locus', correct for clone 1 (get ${AXIS_DEFAULT["Size in locus"].fct(c2)})` )
+    assert.equal(AXIS_DEFAULT["Size in locus"].fct(c3), 0.25, `axis 'Size in locus', correct for clone 2 (get ${AXIS_DEFAULT["Size in locus"].fct(c3)})` )
 
     // Size relative to group of locus (locus+incomplete)
     assert.equal(AXIS_DEFAULT["Size in locus (+inc)"].fct(c1), 0.1, `axis 'Size in locus (+inc)', correct for clone 0 (get ${AXIS_DEFAULT["Size in locus (+inc)"].fct(c1)})` )
     assert.equal(AXIS_DEFAULT["Size in locus (+inc)"].fct(c2), 0.2, `axis 'Size in locus (+inc)', correct for clone 1 (get ${AXIS_DEFAULT["Size in locus (+inc)"].fct(c2)})` )
-    assert.equal(AXIS_DEFAULT["Size in locus (+inc)"].fct(c3), 0.20, `axis 'Size in locus (+inc)', correct for clone 1 (get ${AXIS_DEFAULT["Size in locus (+inc)"].fct(c2)})` )
+    assert.equal(AXIS_DEFAULT["Size in locus (+inc)"].fct(c3), 0.20, `axis 'Size in locus (+inc)', correct for clone 2 (get ${AXIS_DEFAULT["Size in locus (+inc)"].fct(c3)})` )
 
 });
 
