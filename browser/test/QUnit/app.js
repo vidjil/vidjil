@@ -106,6 +106,12 @@ function startQunit(){
     
         this.push(res, result, "{includes} " + pattern, message);
     };
+    QUnit.assert.regexp_includes = function(result, pattern, message ) {
+        // Checks that the result includes the pattern
+        var res = result.match(pattern) !== null
+    
+        this.push(res, result, "{regexp_includes} " + pattern, message);
+    };
     QUnit.assert.notIncludes = function(result, pattern, message ) {
         // Checks that the result don't includes the pattern
         // TODO: see and use qunit-regexp !

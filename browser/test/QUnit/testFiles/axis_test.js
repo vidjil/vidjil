@@ -31,3 +31,14 @@ QUnit.test("axis gene length", function(assert) {
     assert.equal(AXIS_DEFAULT["J/3' length"].fct(c2), 3, "axis 'j/3 length', correct for clone 1 after resize" )
 });
 
+QUnit.test("Test axis getter name/description", function(assert) {
+
+    var axis = new Axis("V/5' gene")
+    var name = "V/5' gene"
+    var doc  = "V gene (or 5' segment), gathering all alleles"
+
+    assert.equal( axis.getAxisName(), name, "Axis, get correct name")
+    assert.equal( axis.getAxisDescrition(), doc, "Axis, get correct description")
+
+});
+

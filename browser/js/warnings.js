@@ -101,7 +101,7 @@ Warnings.prototype = {
         })
 
         var reset = document.createElement("div")
-        var text = document.createTextNode("Reset warnings level")
+        var text = document.createTextNode("Reset warnings")
         reset.onclick = () => {self.m.resetWarnings()}
         reset.appendChild(text)
         target.appendChild(reset)
@@ -317,6 +317,7 @@ Warnings.prototype = {
      * */
     update: function () {
 
+        this.build_warnings()
         Object.keys(warnings_data).forEach( (category) => {
             Object.keys(warnings_data[category]).forEach( (warn_code) => {
                 var current = this.m.getWarningLevelFromCode(warn_code)

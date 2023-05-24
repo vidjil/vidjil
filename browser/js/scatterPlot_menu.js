@@ -47,8 +47,8 @@ function ScatterPlot_menu(default_preset) {
         "number of deletions for the segment V/5 in 3" :{ "x": "V/5' del'",             mode: "bar"},
         "number of deletions for the segment J/3 in 5" :{ "x": "J/3' del'",             mode: "bar"},
         "Primers gap" :             { "x": "Primers gap",                               mode: "bar"},
-        "Similarity"    :           { "x" : "TSNEX",            "y": "TSNEY",           mode: "tsne"},
-        "Similarity (locus)":       { "x" : "TSNEX_LOCUS",      "y": "TSNEY_LOCUS",     mode: "tsne"},
+        "Similarity by nucleotides (locus)":    { "x" : "Similarity (CDR3, nucleotide)",   "y": "TSNEY_LOCUS_NT",  mode: "tsne"},
+        // "Similarity AA (locus)":    { "x" : "Similarity (CDR3, amino acid)",   "y": "TSNEY_LOCUS_AA",  mode: "tsne"}, // Uncomment after change of smiliarity CGI from local to global
         "Locus sizes":              { "x": "Locus",              "y": "Size",           mode: "grid"}
     };
 
@@ -128,12 +128,14 @@ ScatterPlot_menu.prototype = {
 
         var element;
         for (var key in this.available_axis) {
-            var axisP = Axis.prototype.getAxisProperties(this.available_axis[key])
+            var axisP = new Axis(this.available_axis[key])
             if (typeof axisP.hide == "undefined" || !axisP.hide){
 
                 element = document.createElement("option");
+                element.id = `${this.id}_${axisP.name.replace(" ", "_").replace("/", "").replace("'", "")}`;
                 if (typeof axisP.class == "string") element.className = axisP.class
                 element.setAttribute('value', axisP.name);
+                element.title = axisP.getAxisDescrition();
                 element.appendChild(document.createTextNode( axisP.name));
 
                 this.select_x.appendChild(element);

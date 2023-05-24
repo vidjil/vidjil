@@ -1,4 +1,4 @@
-# Sequencing and analyzing human immune repertoires
+## Sequencing and analyzing human immune repertoires
 
 [V(D)J recombinations](http://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
@@ -6,7 +6,7 @@ High-throughput sequencing (NGS/HTS) now
 enables the deep sequencing of a lymphoid population with dedicated
 sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
-# Library preparation and sequencing for human AIRR/RepSeq studies
+## Library preparation and sequencing for human AIRR/RepSeq studies
 
 Choosing library preparation and sequencing for immune repertoire analysis
 is a challenging task [(Langerak 2017)](http://dx.doi.org/10.4049/jimmunol.1602050)
@@ -14,7 +14,7 @@ and depends of multiple factors: aim of the study, people, sequencers, reagents,
 We do not aim here to be authoritative,
 but give a few links to commonly used strategies for library preparation and sequencing.
 
-## Amplicon-based strategies
+### Amplicon-based strategies
 
 PCR approaches are the state-of-the-art way to detect
 and quantify immune recombinations.
@@ -64,7 +64,7 @@ many samples (10 to 100, or even more)
 can be pooled with proper barcoding in a same sequencing run.
 Contamination should then particularly be monitored.
 
-## Capture and other strategies
+### Capture and other strategies
 
 Several library preparations on DNA or RNA can be done with limited or no amplification:
 whole-genome or whole-transcriptome sequencing, capture, 5'RACE...
@@ -85,7 +85,7 @@ but quantification is more limited.
 For such libraries, it may be worth to set up a [post-sequencer workflow](http://www.vidjil.org/doc/workflow/)
 to work with smaller files.
 
-## Read length
+### Read length
 
 When the read length is too short and the reads do not span the CDR3 and a few more nucleotides,
 some V(D)J recombinations may not be properly detected or designated.
@@ -102,7 +102,7 @@ Anyway, with short reads, the identified recombinations may be skewed towards sh
 Those biases could occur inside one locus but also favor loci/systems with shorter recombinations
 
 
-# Analyzed human immune recombinations in Vidjil
+## Analyzed human immune recombinations in Vidjil
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
 It was designed to detect all the common V(D)J recombinations,
@@ -151,3 +151,14 @@ unrecombined V/J sequences, or heptamers/nonamers/RSS.
 
 Note that the Vidjil web application can also display recombinations detected by other software,
 as long as this information is provided in the `.vidjil` file computed by such other software.
+
+
+## Others species
+
+Germlines for the following species are included on the public server and available as `germline/*/*.g` files. Contact us to setup parameter analyses for such species or to add new species.
+
+* Homo Sapiens
+* Gallus Gallus
+* Rattus Norvegicus
+* Mus Musculus
+* Sus Scrofa

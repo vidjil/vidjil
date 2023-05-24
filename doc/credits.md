@@ -8,11 +8,11 @@ Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
 ## Vidjil core development
 
-  - Mathieu Giraud, 2011-2022
-  - Mikaël Salson, 2011-2022
+  - Mathieu Giraud, 2011-2023
+  - Mikaël Salson, 2011-2023
   - Marc Duez, 2012-2016, 2019-2022
   - Tatiana Rocher, 2014-2017
-  - Florian Thonier, 2015-2022
+  - Florian Thonier, 2015-2023
   - Ryan Herbert, 2015-2020
   - Aurélien Béliard, 2016-2017
 
@@ -65,7 +65,7 @@ The development of Vidjil is funded by:
   - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
   - Inria Lille, 2015-2018
   - InCA, 2016-2019
-  - VidjilNet consortium at Inria, 2018-2022
+  - VidjilNet consortium at Inria, 2018-2023
 
 
 ## References
@@ -122,6 +122,11 @@ Marie-Laure Boulland et al.,
 *Reliable IGHV status assessment by next generation sequencing in routine practice for chronic lymphocytic leukemia*,
 Leukemia & Lymphoma, 2021,
 <https://doi.org/10.1080/10428194.2021.1933476>
+
+Estelle Bourbon et al.,
+*Next-CLL: A New Next-Generation Sequencing–Based Method for Assessment of IGHV Gene Mutational Status in Chronic Lymphoid Leukemia*,
+The Journal of Molecular Diagnostics, 2023,
+<https://doi.org/10.1016/j.jmoldx.2023.01.009>
 
 Monika Brüggemann et al., on behalf of the EuroClonality-NGS working group,
 *Standardized next-generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukaemia; a EuroClonality-NGS validation study*,
