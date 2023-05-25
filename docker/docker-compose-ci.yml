@@ -1,4 +1,4 @@
-version: '3.3'
+version: '2.4'
 
 # See https://docs.docker.com/compose/extends/ for more information
 services:
