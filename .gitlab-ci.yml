@@ -273,6 +273,7 @@ test_server_unit:
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
     - mkdir -p docker/postfix/ssl
     - cd docker && docker-compose up -d && cd ..
+    - sleep 10 && docker ps
     - pwd
     - ls
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
