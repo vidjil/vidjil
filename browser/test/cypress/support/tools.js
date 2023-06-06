@@ -28,7 +28,7 @@ Cypress.Commands.add("text", { prevSubject: true }, (subject, options) => {
 });
 
 Cypress.Commands.add("getTableLength", (datatable) => {
-  return cy.get(datatable).find('tr').then(elm => elm.length)
+  return cy.get(datatable).find('tbody').find('tr').then(elm => elm.length)
 });
 
 

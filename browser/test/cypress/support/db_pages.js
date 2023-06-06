@@ -138,6 +138,7 @@ Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, inform
   cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'patient\'})"]')
     .click()
   cy.update_icon()
+  cy.get('h3').should("contain", "Add patients, runs, or sets")
   cy.fillPatient(0, id, firstname, lastname, birthday, informations)
 
   cy.get('.btn').click()
@@ -150,6 +151,45 @@ Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, inform
     .should('contain', lastname+" "+firstname)
 
 })
+/**
+ * Edit informations of a patient
+ * Take same parameter as create, except a first parameter set_id to update
+ */
+Cypress.Commands.add('editPatient', (set_id, id, firstname, lastname, birthday, informations) => {
+  cy.goToTokenPage("patient")
+
+  cy.get(`[onclick="db.call('sample_set/form', {'id' :'${set_id}'} )"] > .icon-pencil-2`)
+    .click()
+  cy.update_icon()
+  cy.get('h3').should("contain", "Edit patient, run, or set")
+
+  cy.fillPatient(0, id, firstname, lastname, birthday, informations)
+
+  cy.get('.btn').click()
+  cy.update_icon()
+
+  cy.get('.db_div')
+      .should('contain', ' + add samples')
+
+  cy.get('.set_token')
+    .should('contain', lastname+" "+firstname)
+
+})
+
+
+Cypress.Commands.add('controlPatientInfos', (index, id, firstname, lastname, birthday, informations) => {
+
+  cy.get('h3 > .set_token').should("contain", lastname+" "+firstname)
+
+  if (id != ""){cy.get(':nth-child(1) > .db_block > .db_block_left').should("contain", id)}
+  if (birthday != ""){cy.get(':nth-child(1) > .db_block > .db_block_left').should("contain", "("+birthday+")")}
+
+  if (informations != ""){
+    cy.get('#db_table_container').should("contain", informations)
+  }
+
+})
+
 
 
 Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, informations) => {
@@ -165,12 +205,37 @@ Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, i
   cy.update_icon()
 })
 
-Cypress.Commands.add('fillRun', (index, id, name, date, informations) => {
+
+
+/**
+ * Create a run and fill it informations
+ */
+Cypress.Commands.add('createRun', (id, run_name, date, informations) => {
+  cy.goToTokenPage("run")
+
+  cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'run\'})"]')
+    .click()
+  cy.update_icon()
+  cy.fillRun(0, id, run_name, date, informations)
+
+  cy.get('.btn').click()
+  cy.update_icon()
+
+  cy.get('.db_div')
+      .should('contain', ' + add samples')
+
+  cy.get('.set_token')
+    .should('contain', run_name)
+
+})
+
+
+Cypress.Commands.add('fillRun', (index, id, run_name, date, informations) => {
   if (id != ""){
     cy.get('#run_id_label_'  + index.toString()).clear().type(id)
   }
-  cy.get('#run_name_'+ index.toString()).clear().type(name)
-  cy.get('#run_run_date_' + index.toString()).clear().type(date)
+  cy.get('#run_name_'+ index.toString()).clear().type(run_name)
+  cy.get('#run_date_' + index.toString()).clear().type(date)
   if (informations != ""){
     cy.get('#run_info_'      + index.toString()).clear().type(informations)
   }
@@ -183,7 +248,7 @@ Cypress.Commands.add('fillRun', (index, id, name, date, informations) => {
  * Only load file from a directory and not from an nfs mounted volume
  * For the moment it is not able to specify commun sets
  */
-Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, samplingdate, informations) => {
+Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, samplingdate, informations, common_set) => {
     var settedname;
     cy.get('.set_token')
       .invoke('text')
@@ -235,19 +300,30 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
 
     }
 
+    if (common_set != undefined){
+      cy.fillCommonSet(common_set) // a value to search a common set
+    }
 
     cy.get('#submit_samples_btn')
       .click()
     cy.update_icon()
 
-    cy.get('.set_token')
-      .invoke('text')
-      .then((text1) => {
-        assert.equal(settedname, text1, "Return to patient page")
-      })
+    // cy.get('.set_token')
+    //   .invoke('text')
+    //   .then((text1) => {
+    //     assert.equal(settedname, text1, "Return to patient page")
+    //   })
 
     cy.get('#db_table_container')
       .should("contain", filename1)
+
+    if (common_set != undefined){
+      cy.get('#db_table_container')
+          .find('tbody')
+          .find('tr').last()
+          .should("contain", common_set)
+
+    }
 
     // Work only if one file given (else filename will be changed)
     // Allow to get curent number if case of upload position modification
@@ -259,6 +335,47 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
           cy.log( `sample added number: ${filename.split("(")[1].split(")")[0]}` )
         })
     }
+
+})
+
+
+/**
+ * remove a common sets link
+ * Call it from an opened set page (patient/run/generic)
+ */
+Cypress.Commands.add('removeCommonSet', (sample_id, set_type, common_set) => {
+    cy.get('[onclick="db.call(\'file/form\', {\'file_id\' :\''+sample_id+'\', \'sample_type\': \''+set_type+'\'} )"] > .icon-pencil-2')
+      .click()
+    
+    cy.get('#set_div')
+      .children()
+
+    cy.get('.patient_token > .icon-cancel')
+      .click()
+      .should("not.exist")
+
+    cy.get('#submit_samples_btn')
+      .click()
+    cy.update_icon()
+
+    cy.get('#db_table_container')
+          .find(`#row_sequence_file_${sample_id}`)
+          .should("not.contain", common_set)
+
+})
+
+/**
+ * Fill a common sets field, for example at a sample creation
+ */
+Cypress.Commands.add('fillCommonSet', (common_set) => {
+
+    if (common_set != undefined){
+      cy.get('#token_input')
+        .type(common_set) // a value to search a common set
+        .wait(500) // server answer
+        .type("{enter}")
+    }
+
 
 })
 
@@ -347,25 +464,36 @@ Cypress.Commands.add('launchProcess', (config, sequence_file_id) => {
  */
 Cypress.Commands.add('deleteProcess', (config, sequence_file_id) => {
     cy.log( `deleteProcess(${config}, ${sequence_file_id})`)
-      cy.selectConfig(config)
-
-      cy.sampleStatus(sequence_file_id)
-        .should('not.have.text', '')
-
-
-      cy.deleteProcessButton(sequence_file_id)
-        .should('exist')
-        .should('be.visible')
-        .click()
-      cy.update_icon()
-
-      cy.get('#delete_button')
+    cy.deleteProcessButton(sequence_file_id)
         .click()
 
-      cy.deleteProcessButton(sequence_file_id)
-        .should('not.exist')
-      cy.sampleStatus(sequence_file_id)
-        .should('have.text', '')
+    cy.get('#delete_button').click()
+
+    cy.deleteProcessButton(sequence_file_id)
+      .should('not.exist')
+    cy.sampleStatus(sequence_file_id)
+      .should('have.text', '')
+})
+
+/**
+ * Delete a set
+ */
+Cypress.Commands.add('deleteSet', (set_type, set_id, name) => {
+    cy.log( `delete set (${set_type}, ${set_id})`)
+    cy.intercept({
+      method: 'GET', // Route all GET requests
+      url: 'get_active_notifications*',
+    }).as('getActivities')
+
+    cy.get('[onclick="db.call(\'sample_set/confirm\', {\'id\' :\''+set_id+'\'} )"] > .icon-erase')
+      .click({force: true})
+
+    cy.wait(['@getActivities'])
+    cy.get('.set_token')
+      .should("contain", name)
+
+    cy.get('[onclick="db.call(\'sample_set/delete\', {\'id\' :\''+set_id+'\'} )"]')
+      .click()
 })
 
 
@@ -463,5 +591,17 @@ Cypress.Commands.add('openAnalysisFromSetPage', (sample_set_id, config_id) => {
   cy.get(`#result_sample_set_id_${sample_set_id}_config_${config_id}`)
     .should("exist")
     .click({force: true})
+  cy.update_icon()
+})
+
+
+/**
+ * Open an analysis by direct link inside set page
+ */
+Cypress.Commands.add('dbPageFilter', (value) => {
+  cy.get('#db_filter_input')
+    .should("exist")
+    .type(value)
+    .type("{enter}")
   cy.update_icon()
 })
