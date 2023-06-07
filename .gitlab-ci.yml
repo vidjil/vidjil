@@ -280,7 +280,7 @@ test_server_unit:
     - cd docker && docker-compose up -d && cd ..
     # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
-    - bash server/web2py/applications/vidjil/tests/init_tests.sh
+    - sh server/web2py/applications/vidjil/tests/init_tests.sh
     # Change File source definition in defs.py file 
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser # init browser content
