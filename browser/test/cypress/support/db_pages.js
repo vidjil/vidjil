@@ -244,11 +244,20 @@ Cypress.Commands.add('fillRun', (index, id, run_name, date, informations) => {
 
 
 /**
+ * Alias of multiSamplesAdd for only one sample
  * Add a sample; should be called from an open set (patient/run/set)
- * Only load file from a directory and not from an nfs mounted volume
- * For the moment it is not able to specify commun sets
  */
 Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, samplingdate, informations, common_set) => {
+    cy.multiSamplesAdd([[preprocess, storage, filename1, filename2, samplingdate, informations, common_set]])
+
+})
+
+
+/**
+ * Open a sample addition form
+ * To be called from an openend set
+ */
+Cypress.Commands.add('openSampleAddPage', () => {
     var settedname;
     cy.get('.set_token')
       .invoke('text')
@@ -259,7 +268,6 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
       .click()
     cy.update_icon()
 
-
     cy.get('#upload_sample_form > :nth-child(1)')
       .should('contain', 'Add samples')
       .click()
@@ -267,9 +275,95 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
     cy.update_icon()
     cy.get('#submit_samples_btn')
       .click()
+    return settedname
+})
 
-    cy.get('#file_sampling_date_0').type(samplingdate)
-    cy.get('#file_info_0').type(informations)
+/**
+ * Take a list of sample to add and will make it. 
+ * Will create new form line of needed, will fill informations and check avec submit that each row is present
+ * Parameter is an array of array herited from fillSampleLine function (see below)
+ * Example: [[preprocess, storage, filename1, filename2, samplingdate, informations, common_set), ...]
+ **/
+Cypress.Commands.add('multiSamplesAdd', (array_samples) => {
+    var settedname = cy.openSampleAddPage()
+
+    var pos_sample = 0;
+    array_samples.forEach( (sample, index) => {
+      cy.log(`multiSamplesAdd; iter ${pos_sample}; index ${index}; ${sample}`)
+      var preprocess   = sample[0]
+      var storage      = sample[1]
+      var filename1    = sample[2]
+      var filename2    = sample[3]
+      var samplingdate = sample[4]
+      var informations = sample[5]
+      var common_set   = sample[6]
+      cy.fillSampleLine(pos_sample, preprocess, storage, filename1, filename2, samplingdate, informations, common_set)
+      pos_sample += 1
+    })
+
+
+    cy.get('#submit_samples_btn')
+      .click()
+    cy.update_icon()
+
+    var lastTr = cy.get('#db_table_container')
+                   .find('tbody')
+                   .find("tr").last()
+      
+    array_samples.reverse().forEach( (sample, index) => {
+      var filename1    = sample[2]
+      var filename2    = sample[3]
+      var common_set   = sample[6]
+
+      if (index != 0) {
+        lastTr = lastTr.prev()
+      }
+
+      lastTr.should("contain", filename1)
+      if (common_set != undefined){
+        lastTr.should("contain", common_set)
+      }
+
+      // Work only if one file given (else filename will be changed)
+      // Allow to get curent number if case of upload position modification
+      if (filename2 == undefined){
+        lastTr
+          .contains(filename1)
+          .invoke('text')
+          .then( (filename) => {
+            cy.log( `sample added number: ${filename.split("(")[1].split(")")[0]}` )
+          })
+      }
+
+    })
+
+})
+
+/**
+ * Will create a new sample line in the sample addition form
+ * Will control the current iteration if given
+ */
+Cypress.Commands.add('createNewSampleLine', (iter) => {
+      cy.get("#add_sample_line").click()
+      if (iter != undefined){
+        cy.get("#fieldset_container").find(".form_line").should('have.length', 1+iter)
+      }
+})
+
+/**
+ * Fill a sample form line
+ * 
+ */
+Cypress.Commands.add('fillSampleLine', (iter, preprocess, storage, filename1, filename2, samplingdate, informations, common_set) => {
+    cy.log(`iter: ${iter}\n preprocess: ${preprocess}\n storage: ${storage}\n filename1: ${filename1}\n filename2: ${filename2}\n samplingdate: ${samplingdate}\n informations: ${informations}\n common_set: ${common_set}\n`)
+    if (iter > 0) { // Create a new sample line
+      cy.createNewSampleLine(iter)
+    }
+
+    cy.get(`#file_sampling_date_${iter}`)
+      .should("exist") // first field, control that correct line exist
+      .type(samplingdate) 
+    cy.get(`#file_info_${iter}`).type(informations)
 
 
     if (preprocess != undefined){
@@ -280,16 +374,21 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
       cy.get('#source_computer')
         .click({force: true})
       // Upload vidjil file
-      cy.get('#file_upload_1_0').uploadFile(filename1)
+      cy.get(`#file_upload_1_${iter}`).uploadFile(filename1)
 
       if (filename2 != undefined){
-        cy.get('#file_upload_2_0').uploadFile(filename2)
+        cy.get(`#file_upload_2_${iter}`).uploadFile(filename2)
       }
     } else if (storage == "nfs"){
-      cy.get('#jstree_field_1_0').click()
-      cy.get('.jstree-ocl').click()
-      cy.wait(1000)
-
+      cy.get(`#jstree_field_1_${iter}`).click()
+      
+      cy.get('body').then(($body) => {
+        if ($body.find('[id="\/"][aria-expanded="false"]').length) {
+          cy.get('.jstree-ocl').click()
+          cy.wait(1000)
+        }
+      })
+      
       cy.get('.jstree-anchor').contains(filename1)
         .click( { force: true} )
 
@@ -301,40 +400,9 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
     }
 
     if (common_set != undefined){
-      cy.fillCommonSet(common_set) // a value to search a common set
+      cy.fillCommonSet(iter, common_set) // a value to search a common set
     }
 
-    cy.get('#submit_samples_btn')
-      .click()
-    cy.update_icon()
-
-    // cy.get('.set_token')
-    //   .invoke('text')
-    //   .then((text1) => {
-    //     assert.equal(settedname, text1, "Return to patient page")
-    //   })
-
-    cy.get('#db_table_container')
-      .should("contain", filename1)
-
-    if (common_set != undefined){
-      cy.get('#db_table_container')
-          .find('tbody')
-          .find('tr').last()
-          .should("contain", common_set)
-
-    }
-
-    // Work only if one file given (else filename will be changed)
-    // Allow to get curent number if case of upload position modification
-    if (filename2 == undefined){
-      cy.get('td')
-        .contains(filename1)
-        .invoke('text')
-        .then( (filename) => {
-          cy.log( `sample added number: ${filename.split("(")[1].split(")")[0]}` )
-        })
-    }
 
 })
 
@@ -344,6 +412,7 @@ Cypress.Commands.add('addSample', (preprocess, storage, filename1, filename2, sa
  * Call it from an opened set page (patient/run/generic)
  */
 Cypress.Commands.add('removeCommonSet', (sample_id, set_type, common_set) => {
+    // Open modification for sample line
     cy.get('[onclick="db.call(\'file/form\', {\'file_id\' :\''+sample_id+'\', \'sample_type\': \''+set_type+'\'} )"] > .icon-pencil-2')
       .click()
     
@@ -365,17 +434,19 @@ Cypress.Commands.add('removeCommonSet', (sample_id, set_type, common_set) => {
 })
 
 /**
- * Fill a common sets field, for example at a sample creation
+ * Fill a sets field, for example at a sample creation
+ * iter: position of the line to fill
+ * common_set: value of common_set call (to launch search/selection)
  */
-Cypress.Commands.add('fillCommonSet', (common_set) => {
+Cypress.Commands.add('fillCommonSet', (iter, common_set) => {
+    // if (common_set == undefined ) { common_set = 0} // For old tests call
 
     if (common_set != undefined){
-      cy.get('#token_input')
+      cy.get(`#token_input_${iter}`)
         .type(common_set) // a value to search a common set
         .wait(500) // server answer
         .type("{enter}")
     }
-
 
 })
 
@@ -451,7 +522,7 @@ Cypress.Commands.add('launchProcess', (config, sequence_file_id) => {
 
       cy.sampleLauncher(sequence_file_id)
         // .should('be.visible')
-        .click()
+        .click({force: true})
 
       cy.update_icon()
       cy.sampleStatus(sequence_file_id)

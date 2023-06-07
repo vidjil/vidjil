@@ -32,6 +32,11 @@ Cypress.Commands.add("getTableLength", (datatable) => {
 });
 
 
+Cypress.Commands.add("getFormLineLength", () => {
+  return cy.get("#fieldset_container > .form_line").then(elm => elm.length)
+});
+
+
 Cypress.Commands.add("getExternalData", (id) => {
     return cy.get("#data_"+id)
 });
