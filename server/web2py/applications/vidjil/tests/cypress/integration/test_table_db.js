@@ -32,7 +32,7 @@ describe('Manipulate patient, sample and launch analysis', function () {
         var informations = "un set d'information; #tag_sample"
         cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations)
 
-        var sample_id = 2
+        var sample_id = 50
         cy.launchProcess("2", sample_id)
         cy.waitAnalysisCompleted("2", sample_id)
 
@@ -41,8 +41,8 @@ describe('Manipulate patient, sample and launch analysis', function () {
 
     it('01-Delete analysis',  function() {
         cy.goToPatientPage()
-        var uid = 2; // TODO; reuse previous uid // async
-        var sample_id = 2
+        var uid = 26; // TODO; reuse previous uid // async
+        var sample_id = 50
 
         cy.openSet(uid)
         cy.deleteProcess("2", sample_id)
@@ -53,18 +53,14 @@ describe('Manipulate patient, sample and launch analysis', function () {
 
     it('02-Use search field',  function() {
         cy.goToPatientPage()
-        var uid = 2; // TODO; reuse previous uid // async
-        var sample_id = 2
 
         var value_filter = "airr"
         cy.dbPageFilter(value_filter)
 
         cy.get('#db_table_container')
           .find('tbody')
-          .find('tr').each(($el, index, $list) => {
-              // $el is a wrapped jQuery element
-              // wrap this element so we can
-              // use cypress commands on it
+          .find('tr').each(($el, index, $list) => {// $el is a wrapped jQuery element
+              // wrap this element so we can use cypress commands on it
               cy.wrap($el).should("contain", value_filter)
         })
     })
@@ -84,7 +80,7 @@ describe('Manipulate patient, sample and launch analysis', function () {
         cy.createRun(id, "run with samples linked to some patients", "2023-01-01", "A run created by cypress")
 
         cy.goToTokenPage("run")
-        cy.openSet(6)
+        cy.openSet(30)
 
         var preprocess   = undefined
         var filename1    = "Demo-X5.fa"
@@ -100,8 +96,8 @@ describe('Manipulate patient, sample and launch analysis', function () {
     it('04-Association between sets; jump',  function() {
         cy.goToPatientPage()
         
-        var uid = 3
-        var sample_id = 3
+        var uid = 27
+        var sample_id = 51
 
         cy.openSet(uid)
         cy.get(`#row_sequence_file_${sample_id} > :nth-child(5) > .run_token`)
@@ -117,8 +113,8 @@ describe('Manipulate patient, sample and launch analysis', function () {
     it('05-Delete association between sets',  function() {
         cy.goToPatientPage()
         
-        var uid = 3
-        var sample_id = 3
+        var uid = 27
+        var sample_id = 51
 
         cy.openSet(uid)
         cy.removeCommonSet(sample_id, "patient", "run with samples linked")
@@ -129,20 +125,20 @@ describe('Manipulate patient, sample and launch analysis', function () {
         cy.goToPatientPage()
 
         var firstname = "first name"
-        cy.deleteSet("patient", 3, firstname+"_1")
+        cy.deleteSet("patient", 27, firstname+"_1")
     })
 
 
     it('07-Set and samples with tags',  function() {
         cy.goToPatientPage()
-        var previous_length=4
+        var previous_length=12
         cy.getTableLength('#db_table_container').should('eq', previous_length)
         
         var id          = ""
         var firstname   = "first_tagged"
         var lastname    = "last_tagged"
         var birthday    = "2000-01-01"
-        var informations= "patient with tags"
+        var informations= "Cypress; patient with tags"
 
         // Some with tag
         cy.createPatient(id, firstname+"_4", lastname+"_4", birthday, informations + " (iter 4) #tagXXX #tagYYY")
@@ -152,7 +148,8 @@ describe('Manipulate patient, sample and launch analysis', function () {
         cy.goToPatientPage()
         cy.getTableLength('#db_table_container').should('eq', previous_length+3)
 
-        cy.get('#sample_set_open_9_config_id_-1 > :nth-child(4) > [data-linkable-name="#tagXXX"]')
+        var uid = 33 // last created patient, with only one tag
+        cy.get(`#sample_set_open_${uid}_config_id_-1 > :nth-child(4) > [data-linkable-name="#tagXXX"]`)
           .should("exist")
           .should("contain", "#tagXXX")
           .click()
@@ -163,8 +160,8 @@ describe('Manipulate patient, sample and launch analysis', function () {
 
 
         // from inside a patient
-        cy.openSet(9)
-        cy.get('.tag-link')
+        cy.openSet(uid)
+        cy.get('.tag-link') // work only if one tag available
           .should("contain", "#tagXXX")
           .click()
 
@@ -178,32 +175,32 @@ describe('Manipulate patient, sample and launch analysis', function () {
         cy.goToUsagePage()
 
         // Start ; 2 sample present, only first with tag
-        cy.get('#public_info > :nth-child(5) > :nth-child(2) > .button > a')
+        cy.get('#public_info > :nth-child(6) > :nth-child(2) > .button > a')
           .should("contain", "test config_airr")
-        cy.get('#public_info > :nth-child(5) > :nth-child(3) > .button > a')
-          .should("contain", "name first (2)")
+        cy.get('#public_info > :nth-child(6) > :nth-child(3) > .button > a')
+          .should("contain", "name first")
           .should("exist")
 
         // Click on a tag 
-        cy.get('#public_info > .set_data.margined-bottom > .tag-link')
+        cy.get('#public_info > .set_data.margined-bottom > [data-linkable-name="#tag_sample"]')
           .should("contain", "tag_sample")
           .click()
 
         // only one sample still present
-        cy.get('#public_info > :nth-child(5) > :nth-child(2) > .button > a')
+        cy.get('#public_info > :nth-child(6) > :nth-child(2) > .button > a')
           .should("contain", "test config_airr")
-        cy.get('#public_info > :nth-child(5) > :nth-child(3) > .button > a')
+        cy.get('#public_info > :nth-child(6) > :nth-child(3) > .button > a')
           .should("not.exist")
     })
 
 
     it('09-Page process',  function() {
         cy.goToProcessPage()
-        var previous_length=2
+        var previous_length=47
         cy.getTableLength('#table_process').should('eq', previous_length)
 
-
-        cy.get('.tag-link')
+        var sequence_id = 26
+        cy.get(`[onclick="db.call(\'sample_set/index\', {\'id\': ${sequence_id}, \'config_id\': 2})"] > :nth-child(4) > .tag-link`)
           .should("contain", "tag_sample")
           .click()
 
@@ -216,6 +213,8 @@ describe('Manipulate patient, sample and launch analysis', function () {
           .type("{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{rightArrow}{enter}") // 11 calls to del + 1 space
           .click({force: true})
 
+        cy.wait(['@getActivities'])
+        cy.wait(500)
         cy.getTableLength('#table_process').should('eq', previous_length)
     })
 
@@ -227,7 +226,8 @@ describe('Manipulate patient, sample and launch analysis', function () {
         var birthday    = "2000-01-01"
         var informations= "patient with tags"
 
-        cy.editPatient(7, id, firstname+"_4", lastname+"_4", birthday, informations + " (iter 4) MODIFY")
+        var uid = 31
+        cy.editPatient(uid, id, firstname+"_4", lastname+"_4", birthday, informations + " (iter 4) MODIFY")
     })
 
 
