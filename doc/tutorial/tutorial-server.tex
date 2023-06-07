@@ -209,15 +209,15 @@ need to modify this field.
     var preprocess   = undefined
     var filename1    = "Demo-X5.fa"
     var filename2    = undefined
-    var informations = " from tutorial server test #functional #tutorial"
+    var informations = " from tutorial server tests #functional #tutorial"
 
-    cy.addSample(preprocess, "nfs", filename1, filename2, "2010-01-01", "Sample 1"+informations, "Last_name_1")
-    cy.addSample(preprocess, "nfs", filename1, filename2, "2011-01-01", "Sample 2"+informations, "Last_name_2")
-    cy.addSample(preprocess, "nfs", filename1, filename2, "2012-01-01", "Sample 3"+informations, "Last_name_3")
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2010-01-01", "Solo; Sample 1"+informations, "Last_name_1")
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2011-01-01", "Solo; Sample 2"+informations, "Last_name_2")
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2012-01-01", "Solo; Sample 3"+informations, "Last_name_3")
 
-    var sample_to_add_1 = [preprocess, "nfs", filename1, filename2, "2010-01-01", "Sample 1x from tutorial server test #functional #tutorial; multiple add", "Last_name_1"]
-    var sample_to_add_2 = [preprocess, "nfs", filename1, filename2, "2011-01-01", "Sample 2x from tutorial server test #functional #tutorial; multiple add", "Last_name_2"]
-    var sample_to_add_3 = [preprocess, "nfs", filename1, filename2, "2012-01-01", "Sample 3x from tutorial server test #functional #tutorial; multiple add", "Last_name_3"]
+    var sample_to_add_1 = [preprocess, "nfs", filename1, filename2, "2010-01-01", "Batch; Sample 1x #functional #tutorial; multiple add", "Last_name_1"]
+    var sample_to_add_2 = [preprocess, "nfs", filename1, filename2, "2011-01-01", "Batch; Sample 2x #functional #tutorial; multiple add", "Last_name_2"]
+    var sample_to_add_3 = [preprocess, "nfs", filename1, filename2, "2012-01-01", "Batch; Sample 3x #functional #tutorial; multiple add", "Last_name_3"]
     cy.multiSamplesAdd([sample_to_add_1, sample_to_add_2, sample_to_add_3])
 
 \end{verbatim}
