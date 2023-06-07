@@ -388,7 +388,7 @@ RunFormBuilder.prototype = {
         div.appendChild(this.build_input('sample_set_id', 'text', 'sample_set_id', 'hidden', this.type));
         div.appendChild(this.set_id(this.content.run_id));
         div.appendChild(this.build_field('name', undefined, undefined, this.content.name, true));
-        div.appendChild(this.build_date('run_date', this.type, 'run_date', 'Date', this.content.date));
+        div.appendChild(this.build_date('date', this.type, 'run_date', 'Date', this.content.date));
         div.appendChild(this.build_info(this.type, [$('#group_select option:selected').val()], 'run', this.content.info));
         // div.appendChild(this.build_field('sequencer'));
         // div.appendChild(this.build_field('pcr', 'pcr', 'PCR'));
