@@ -476,15 +476,15 @@ Cypress.Commands.add('selectConfig', (config) => {
 
 
 
-Cypress.Commands.add('sampleStatus', (sequence_file_id) => {
-  return cy.get('#row_sequence_file_'+sequence_file_id+' > :nth-child(12)')
+Cypress.Commands.add('sampleStatus', (sequence_file_id, config_id) => {
+  return cy.get(`#status_${sequence_file_id}_${config_id}`)
 })
 
 /**
  * Get status text value of a sample
  */
-Cypress.Commands.add('sampleStatusValue', (sequence_file_id) => {
-  cy.sampleStatus(sequence_file_id)
+Cypress.Commands.add('sampleStatusValue', (sequence_file_id, config_id) => {
+  cy.sampleStatus(sequence_file_id, config_id)
     .text()
     .then(status => {
       return status
@@ -493,8 +493,9 @@ Cypress.Commands.add('sampleStatusValue', (sequence_file_id) => {
 
 
 
-Cypress.Commands.add('sampleLauncher', (sequence_file_id) => {
-  return cy.get('#row_sequence_file_'+sequence_file_id+' > :nth-child(16)')
+Cypress.Commands.add('sampleLauncher', (sequence_file_id, config_id) => {
+  cy.log( `sampleLauncher(config ${config_id}, sequence file ${sequence_file_id})`)
+  return cy.get(`#launch_${sequence_file_id}_${config_id} > .icon-cog-2`)
 })
 
 Cypress.Commands.add('deleteProcessButton', (sequence_file_id) => {
@@ -507,25 +508,31 @@ Cypress.Commands.add('deleteProcessButton', (sequence_file_id) => {
  * Select the correct configuration and launch an analysis on it
  * TODO: be able to relaunch analysis
  */
-Cypress.Commands.add('launchProcess', (config, sequence_file_id) => {
-  cy.log( `launchProcess(${config}, ${sequence_file_id})`)
-      cy.selectConfig(config)
+Cypress.Commands.add('launchProcess', (config_id, sequence_file_id) => {
+  cy.log( `launchProcess(config ${config_id}, sequence file ${sequence_file_id})`)
+      cy.selectConfig(config_id)
 
       cy.get('#sequence_file_'+sequence_file_id)
         .should('exist')
 
-      cy.get('.icon-cog-2')
+      cy.get('#sequence_file_'+sequence_file_id)
+        .get('.icon-cog-2')
         .should('be.visible')
+        // .as("@launcherProcess")
 
-      cy.sampleStatus(sequence_file_id)
+      cy.get('#choose_config') // Do it before prelaunch control, else status is not present
+        .select(config_id, { force: true })
+        .should('have.value', config_id)
+
+      cy.sampleStatus(sequence_file_id, config_id)
         .should('have.text', '')
 
-      cy.sampleLauncher(sequence_file_id)
+      cy.sampleLauncher(sequence_file_id, config_id)
         // .should('be.visible')
         .click({force: true})
 
       cy.update_icon()
-      cy.sampleStatus(sequence_file_id)
+      cy.sampleStatus(sequence_file_id, config_id)
         .should('not.have.text', '')
 })
 
@@ -533,8 +540,8 @@ Cypress.Commands.add('launchProcess', (config, sequence_file_id) => {
 /**
  * Delete result of an analysis; even if not complete
  */
-Cypress.Commands.add('deleteProcess', (config, sequence_file_id) => {
-    cy.log( `deleteProcess(${config}, ${sequence_file_id})`)
+Cypress.Commands.add('deleteProcess', (config_id, sequence_file_id) => {
+    cy.log( `deleteProcess(${config_id}, ${sequence_file_id})`)
     cy.deleteProcessButton(sequence_file_id)
         .click()
 
@@ -542,7 +549,7 @@ Cypress.Commands.add('deleteProcess', (config, sequence_file_id) => {
 
     cy.deleteProcessButton(sequence_file_id)
       .should('not.exist')
-    cy.sampleStatus(sequence_file_id)
+    cy.sampleStatus(sequence_file_id, config_id)
       .should('have.text', '')
 })
 
@@ -573,12 +580,12 @@ Cypress.Commands.add('deleteSet', (set_type, set_id, name) => {
  * Make a recursive call from himself while status is not 'COMPLETED', in limit of given number of retry
  * Unfortunatly, last control will be called X times at the end, X as the depth of the recusive iteration
  */
-Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, nb_retry=120, iter=0) => {
+Cypress.Commands.add('waitAnalysisCompleted', (config_id, sequence_file_id, start, nb_retry=120, iter=0) => {
   if (start == undefined){
     var start = new Date().getTime();
   }
 
-  cy.log( `waitAnalysisCompleted: step ${iter} -- ${new Date().getTime()-start} elapsed`)
+  cy.log( `**waitAnalysisCompleted**: step ${iter} -- ${(new Date().getTime()-start)/1000} seconds`)
   cy.intercept({
     method: 'GET', // Route all GET requests
     url: 'get_active_notifications*',
@@ -591,10 +598,10 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
   cy.update_icon(100)
 
   // Check status
-  cy.sampleStatusValue(sequence_file_id).then($status => {
-        cy.log(`status: '${$status}'`);
+  cy.sampleStatusValue(sequence_file_id, config_id).then($status => {
+        cy.log(`status: '**${$status.trimRight().trimLeft()}**'`);
         var now = new Date().getTime()
-        if ($status != " COMPLETED ") {
+        if ($status.trimRight().trimLeft() != 'COMPLETED') {
          if ( (now - start)/1000 > nb_retry){
             cy.log("waitAnalysisCompleted; Timeout without COMPLETED status").then(() => {
                 throw new Error("waitAnalysisCompleted; Timeout without COMPLETED status");});
@@ -604,15 +611,15 @@ Cypress.Commands.add('waitAnalysisCompleted', (config, sequence_file_id, start, 
          } else {
             cy.log( ` wait ... `).then(() => {
                 cy.wait( 1000).then(() => {
-                    cy.waitAnalysisCompleted(config, sequence_file_id, start, nb_retry, iter=iter+1);
+                    cy.waitAnalysisCompleted(config_id, sequence_file_id, start, nb_retry, iter=iter+1);
                 })});
          }
         }
     });
 
   if (!iter){
-    cy.sampleStatus(sequence_file_id)
-      .should('have.text', ' COMPLETED ')
+    cy.sampleStatus(sequence_file_id, config_id)
+      .should('contain', 'COMPLETED')
   }
 
 })
