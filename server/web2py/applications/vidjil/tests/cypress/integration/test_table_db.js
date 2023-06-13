@@ -152,7 +152,7 @@ describe('Manipulate patient, sample and launch analysis', function () {
         cy.get(`#sample_set_open_${uid}_config_id_-1 > :nth-child(4) > [data-linkable-name="#tagXXX"]`)
           .should("exist")
           .should("contain", "#tagXXX")
-          .click()
+          .click({force: true})
           
         cy.wait(['@getActivities'])
         cy.wait(500)

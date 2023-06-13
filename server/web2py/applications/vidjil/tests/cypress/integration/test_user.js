@@ -50,7 +50,7 @@ describe('Creation of users and groups', function () {
         var last_name  = "user_last"
         var email      = "user4@email.org"
         var password   = "OnePassword123"
-        // cy.createUser(first_name, last_name, email, password)
+        cy.createUser(first_name, last_name, email, password)
 
         cy.goToUsersPage()
         cy.getTableLength("#table_users").should('eq', previous_length+1)
