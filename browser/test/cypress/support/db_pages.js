@@ -306,35 +306,45 @@ Cypress.Commands.add('multiSamplesAdd', (array_samples) => {
       .click()
     cy.update_icon()
 
-    var lastTr = cy.get('#db_table_container')
-                   .find('tbody')
-                   .find("tr").last()
-      
+
     array_samples.reverse().forEach( (sample, index) => {
-      var filename1    = sample[2]
-      var filename2    = sample[3]
-      var common_set   = sample[6]
+      var last_id = cy.get('#db_table_container')
+        .find('tbody')
+        .find("tr").last()
+        .invoke('text')
+        .then( (filename) => {
+          // Get current id for given sample
+          var last_id    = Number( filename.split("(")[1].split(")")[0] )
+          var current_id = last_id - index
+          cy.log( `Sample number: ${current_id}` )
 
-      if (index != 0) {
-        lastTr = lastTr.prev()
-      }
+          // Control values
+          var filename1    = sample[2]
+          var filename2    = sample[3]
+          var common_set   = sample[6]
 
-      lastTr.should("contain", filename1)
-      if (common_set != undefined){
-        lastTr.should("contain", common_set)
-      }
+          cy.get('#db_table_container')
+              .find(`#row_sequence_file_${current_id}`)
+              .should("contain", filename1)
 
-      // Work only if one file given (else filename will be changed)
-      // Allow to get curent number if case of upload position modification
-      if (filename2 == undefined){
-        lastTr
-          .contains(filename1)
-          .invoke('text')
-          .then( (filename) => {
-            cy.log( `sample added number: ${filename.split("(")[1].split(")")[0]}` )
-          })
-      }
+          if (common_set != undefined){
+            cy.get('#db_table_container')
+              .find(`#row_sequence_file_${current_id}`)
+              .should("contain", common_set)
+          }
 
+          // Work only if one file given (else filename will be changed)
+          // Allow to get curent number if case of upload position modification
+          if (filename2 == undefined){
+            cy.get('#db_table_container')
+              .find(`#row_sequence_file_${current_id}`)
+              .contains(filename1)
+              .invoke('text')
+              .then( (filename) => {
+                cy.log( `sample added number: ${filename.split("(")[1].split(")")[0]}` )
+              })
+          }
+        })
     })
 
 })

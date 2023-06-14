@@ -242,4 +242,24 @@ describe('Manipulate patient, sample and launch analysis', function () {
     })
 
 
+
+    it('12-Create multiple samples',  function() {
+        cy.goToTokenPage("run")
+        var uid = 30
+        cy.openSet(uid)
+
+        var preprocess   = undefined
+        var filename1    = "Demo-X5.fa"
+        var filename2    = undefined
+        var informations = " from tutorial server tests #functional #tutorial"
+
+
+        cy.addSample(preprocess, "nfs", filename1, filename2, "2012-01-01", "Solo; Sample 1"+informations)
+
+        var sample_to_add_2 = [preprocess, "nfs", filename1, filename2, "2011-01-01", "Batch; Sample 2x #functional #tutorial; multiple add", "last name_2"]
+        var sample_to_add_3 = [preprocess, "nfs", filename1, filename2, "2012-01-01", "Batch; Sample 3x #functional #tutorial; multiple add", "last name_3"]
+        cy.multiSamplesAdd([sample_to_add_2, sample_to_add_3])
+    })
+
+
 })
