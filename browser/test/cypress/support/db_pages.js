@@ -377,7 +377,7 @@ Cypress.Commands.add('fillSampleLine', (iter, preprocess, storage, filename1, fi
 
 
     if (preprocess != undefined){
-      cy.selectPreprocess('#pre_process')
+      cy.selectPreprocess(pre_process)
     }
 
     if (storage == "computer"){
@@ -390,23 +390,10 @@ Cypress.Commands.add('fillSampleLine', (iter, preprocess, storage, filename1, fi
         cy.get(`#file_upload_2_${iter}`).uploadFile(filename2)
       }
     } else if (storage == "nfs"){
-      cy.get(`#jstree_field_1_${iter}`).click()
-      
-      cy.get('body').then(($body) => {
-        if ($body.find('[id="\/"][aria-expanded="false"]').length) {
-          cy.get('.jstree-ocl').click()
-          cy.wait(1000)
-        }
-      })
-      
-      cy.get('.jstree-anchor').contains(filename1)
-        .click( { force: true} )
-
-      cy.get('#jstree_button')
-        .contains('ok')
-        .should('be.visible')
-        .click()
-
+      cy.addNfsSample(iter, 1, filename1)
+      if (filename2 != undefined){
+        cy.addNfsSample(iter, 2, filename2)
+      }
     }
 
     if (common_set != undefined){
@@ -414,6 +401,30 @@ Cypress.Commands.add('fillSampleLine', (iter, preprocess, storage, filename1, fi
     }
 
 
+})
+
+
+/**
+ * Open NFS loader panel and select correct file
+ */
+Cypress.Commands.add('addNfsSample', (iter, position, filename) => {
+    // don't click to change storage to nfs, that should be already seleted
+    cy.get(`#jstree_field_${position}_${iter}`).click()
+
+    cy.get('body').then(($body) => {
+      if ($body.find('[id="\/"][aria-expanded="false"]').length) {
+        cy.get('.jstree-ocl').click()
+        cy.wait(1000)
+      }
+    })
+
+    cy.get('.jstree-anchor').contains(filename)
+      .click( { force: true} )
+
+    cy.get('#jstree_button')
+      .contains('ok')
+      .should('be.visible')
+      .click()
 })
 
 
