@@ -24,7 +24,7 @@ describe('Creation of users and groups', function () {
         cy.get('#patient_clipboard > .icon-newspaper').click()
         cy.get('.popup_container').should("be.visible")
 
-        cy.get(':nth-child(20) > .closeButton > .icon-cancel').click()
+        cy.get(':nth-child(20) > .closeButton > .icon-cancel').click() // close db panel
         cy.get('.popup_container').should("not.be.visible")
         cy.get('.db_div > .closeButton > .icon-cancel').click()
         cy.get('.db_div').should("not.be.visible")

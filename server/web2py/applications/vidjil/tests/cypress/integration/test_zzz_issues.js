@@ -88,7 +88,7 @@ describe('Manipulate db page', function () {
 
     it('5069_download_link_of_result',  function() {
 
-        var uid = 1; // TODO; reuse previous uid // async
+        var uid = 25; // TODO; reuse previous uid // async; first cypress created patient with real analysis
         var config_id = 9 // not directly use for the moment (issue with cypress and variable in regexp)
 
         // Create analysis
@@ -117,7 +117,8 @@ describe('Manipulate db page', function () {
 
 
     it('5070 - get_reads',  function() {
-        var uid = 2; // TODO; reuse previous uid // async
+        var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
+        var config_id = 2
 
         cy.goToPatientPage()
         // cy.screenshot('debug_5070_1_patient_page')
@@ -125,7 +126,7 @@ describe('Manipulate db page', function () {
         cy.openSet(uid)
         // cy.screenshot('debug_5070_2_open_set')
 
-        cy.openAnalysisFromSetPage(uid, 2)
+        cy.openAnalysisFromSetPage(uid, config_id)
         cy.openCloneInfo(1)
         // cy.screenshot('debug_5070_3_clone_panel')
         cy.get(':nth-child(2) > .icon-down').click()

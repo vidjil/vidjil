@@ -23,7 +23,7 @@ describe('Screenshot on server', function () {
 
 
         cy.goToPatientPage()
-        var uid = 2;
+        var uid = 26;
         cy.openSet(uid)
 
         // cy.selectConfig(2)

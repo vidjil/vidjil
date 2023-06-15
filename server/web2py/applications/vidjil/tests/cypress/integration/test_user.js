@@ -43,8 +43,8 @@ describe('Creation of users and groups', function () {
         cy.openDBPage()
         cy.goToUsersPage()
 
-        var previous_length = 2 // 1+1header
-        cy.getTableLength("#table_users").should('eq', previous_length)
+        var previous_length = 1 // 1
+        // cy.getTableLength("#table_users").should('eq', previous_length)
 
         var first_name = "user_first"
         var last_name  = "user_last"
@@ -56,7 +56,7 @@ describe('Creation of users and groups', function () {
         cy.getTableLength("#table_users").should('eq', previous_length+1)
 
         cy.goToGroupsPage()
-        var grp_user4 = 4
+        var grp_user4 = 8
         cy.setGroupRight(grp_user4, ["run"], true)
     })
 

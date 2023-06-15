@@ -145,7 +145,6 @@ can be suggested later on).
     cy.get('tr').contains("Last_name_2 First_name_2 ")
     cy.get('tr').contains("Last_name_3 First_name_3 ")
 
-
 \end{verbatim}
 
 \marginpar{{\bf New!}
@@ -162,8 +161,6 @@ the sequence files yet.
     cy.goToRunPage()
     cy.get('tr').contains("run_name 1")
       .click()
-  /**
-
 
 \end{verbatim}
 
@@ -183,10 +180,7 @@ want on this page.
   tags, as previously.}
 \begin{verbatim}
   cy.log("// test_008_upload_new_samples_in_run")
-    var path = "../../../../../../tutorial/"
-    cy.addSample(undefined, "computer", "tutorial/run1-sample1.fasta", undefined, "2010-01-01", "Sample 1 from tutorial server test #functional #tutorial")
-    cy.addSample(undefined, "computer", "tutorial/run1-sample2.fasta", undefined, "2010-01-01", "Sample 2 from tutorial server test #functional #tutorial")
-    cy.addSample(undefined, "computer", "tutorial/run1-sample3.fasta", undefined, "2010-01-01", "Sample 3 from tutorial server test #functional #tutorial")
+    // Do by the next cypress function call
 
 \end{verbatim}
 
@@ -204,16 +198,7 @@ need to modify this field.
 \begin{verbatim}
  
   cy.log("// test_009_upload_sample_set_common_sets")
-    # $b.fill_sample_token_input_by_arrow(0, 3) # by arrow move; select third sample in list (patient "Last_name_1")
-
-    // cy.get('tr').contains("Last_name_1 ")
-    // cy.get('tr').contains("Last_name_2 ")
-    // cy.get('tr').contains("Last_name_3 ")
-    // $b.fill_sample_token_input_by_name(0, "Last_name_1")  # by text setting
-    // $b.fill_sample_token_input_by_name(1, "Last_name_2")  # by text setting
-    // $b.fill_sample_token_input_by_name(2, "Last_name_3")  # by text setting
-    // $b.send_keys :enter
-  end
+    // Do by the next cypress function call
 
 \end{verbatim}
 
@@ -221,9 +206,19 @@ need to modify this field.
   you can upload the samples by clicking on the \com{Submit samples} button.}
 \begin{verbatim}
   cy.log("// test_010_upload_sample_submit")
-    $b.input(:id => "submit_samples_btn").click
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
-  end
+    var preprocess   = undefined
+    var filename1    = "Demo-X5.fa"
+    var filename2    = undefined
+    var informations = " from tutorial server tests #functional #tutorial"
+
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2010-01-01", "Solo; Sample 1"+informations, "Last_name_1")
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2011-01-01", "Solo; Sample 2"+informations, "Last_name_2")
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2012-01-01", "Solo; Sample 3"+informations, "Last_name_3")
+
+    var sample_to_add_1 = [preprocess, "nfs", filename1, filename2, "2010-01-01", "Batch; Sample 1x #functional #tutorial; multiple add", "Last_name_1"]
+    var sample_to_add_2 = [preprocess, "nfs", filename1, filename2, "2011-01-01", "Batch; Sample 2x #functional #tutorial; multiple add", "Last_name_2"]
+    var sample_to_add_3 = [preprocess, "nfs", filename1, filename2, "2012-01-01", "Batch; Sample 3x #functional #tutorial; multiple add", "Last_name_3"]
+    cy.multiSamplesAdd([sample_to_add_1, sample_to_add_2, sample_to_add_3])
 
 \end{verbatim}
 
@@ -235,13 +230,8 @@ configuration in the drop down at the right (\com{multi+inc+xxx}) and then
 clicking on the gearwheel.}
 \begin{verbatim}
   cy.log("// test_011_launch_analysis_sample")
-    $b.select_configutation_in_available_list("multi+inc+xxx")
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
-    gearwheels = $b.elements(:class => "icon-cog-2")
-    for gearwheel in gearwheels[1..-1]
-      gearwheel.click
-    end
-  end
+    var sample_id = 49
+    cy.launchProcess("2", sample_id)
 
 \end{verbatim}
 
@@ -255,29 +245,7 @@ launched.
   \com{FAILED} when there is an issue, in such a case please contact us)}
 \begin{verbatim}
   cy.log("// test_012_sample_analysis")
-    def wait_and_reload(timeout, repeatition)
-      repeatition.times do
-        print "new repeatition"
-        $b.span(:id => "db_reload").click
-        table = $b.table(:id => "table")
-        line_0 = table.tbody.rows[0]
-        line_1 = table.tbody.rows[1]
-        line_2 = table.tbody.rows[2]
-        sleep timeout
-        line_completed_0 = line_0.element(:class => "button", :text => "COMPLETED").present?
-        line_completed_1 = line_1.element(:class => "button", :text => "COMPLETED").present?
-        line_completed_2 = line_2.element(:class => "button", :text => "COMPLETED").present?
-        if line_completed_0 and line_completed_1 and line_completed_2
-          return true
-        end
-      end
-      return false
-    end
-
-    completed = wait_and_reload(10, 30) # 5minutes
-    assert( completed == true)
-
-  end
+    cy.waitAnalysisCompleted("2", sample_id)
 
 \end{verbatim}
 
@@ -290,19 +258,21 @@ Instead we will remain on the server.
   and validate with \com{Enter}.}
 \begin{verbatim}
   cy.log("// test_013_patient_page_and_filter")
-    $b.go_to_list_patient
+    cy.goToPatientPage()
+  
+    var value_filter = "#B-ALL"
+    cy.dbPageFilter(value_filter)
 
-    filter = $b.text_field(:id => "db_filter_input")
-    filter.wait_until_present
-    filter.set('#B-ALL')
-
-    filter.fire_event('onchange')
-    Watir::Wait.until(30) {$b.execute_script("return jQuery.active") == 0}
-
-    # assert on sample 2 not present
-    token = $b.element(:class => ["set_token", "patient_token"], :text => "Last_name_2 First_name_2")
-    assert( ! token.present? )
-  end
+    cy.get('#db_table_container')
+      .find('tbody')
+      .find('tr').each(($el, index, $list) => {// $el is a wrapped jQuery element
+          // wrap this element so we can use cypress commands on it
+          cy.wrap($el).should("contain", value_filter)
+    })
+    
+    var uid_sample2 = 33
+    cy.get(`#sample_set_open_${uid_sample2}_config_id_-1`)
+      .should("not.exist")
 
 \end{verbatim}
 
