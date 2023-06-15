@@ -8,6 +8,7 @@ services:
     mysql:
         image: mysql:5.7
         env_file:
+            - '.env-default'
             - '.env'
         volumes:
             - ./mysql/:/docker-entrypoint-initdb.d/
@@ -19,6 +20,7 @@ services:
     uwsgi:
         image: vidjil/server:latest
         env_file:
+            - '.env-default'
             - '.env'
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes_from:
@@ -38,6 +40,7 @@ services:
         image: vidjil/server:latest
         command: bash /entrypoints/fuse-entrypoint.sh
         env_file:
+            - '.env-default'
             - '.env'
         volumes:
             - $VOLUME_PATH/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
@@ -53,6 +56,7 @@ services:
     nginx:
         image: vidjil/client:latest
         env_file:
+            - '.env-default'
             - '.env'
         ports:
             - "80:80"
@@ -68,6 +72,7 @@ services:
     workers:
         image: vidjil/server:latest
         env_file:
+            - '.env-default'
             - '.env'
         command: bash /entrypoints/workers-entrypoint.sh
         volumes_from:
@@ -106,6 +111,7 @@ services:
     postfix:
         image: catatnight/postfix
         env_file:
+            - '.env-default'
             - '.env'
         expose:
             - 587
