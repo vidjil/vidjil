@@ -187,4 +187,20 @@ describe('Scatterplot', function () {
       .should('have.attr', 'title', "V gene (or 5' segment), gathering all alleles")
   })
 
+  it('07-legend interaction and update (issue 5125)',  function() {
+    // Issue 5125; model update completly when click on a legend of scatterplot (missing update of graph view)
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+    cy.get('#visu_id_label_y_TRGJ1').should("have.text", "TRGJ1")
+
+    //default style
+    cy.get('#polyline0').should('have.class', 'graph_line')
+
+    cy.get('#visu_id_label_y_TRGJ1')
+      .should("have.text", "TRGJ1")
+      .click()
+
+    //selected
+    cy.get('#polyline0').should('have.class', 'graph_select')
+
+  })
 })
