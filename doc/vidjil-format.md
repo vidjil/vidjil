@@ -1,7 +1,7 @@
-# Encoding clones with V(D)J recombinations with `.vidjil` files
+## Encoding clones with V(D)J recombinations with `.vidjil` files
 
 The following [.json](http://en.wikipedia.org/wiki/JSON) format (2016b) allows to
-encode a set of clones with V(D)J immune recombinations,
+encode a set of clones (formally, clonotypes) with V(D)J immune recombinations,
 possibly with user annotations.
 
 In Vidjil, this format is used by both the `.analysis` and the `.vidjil` files.
@@ -15,13 +15,13 @@ It is intended to be very small (a few kilobytes).
 All settings in the `.analysis` file override the settings that could be
 present in the `.vidjil` file.
 
-# What is a clone ?
+## What is a clone ?
 
 There are several definitions of what may be a clonotype,
 depending on different RepSeq software or studies.
 This format accept any kind of definition:
-Clones are identified by a `id` string that may be an arbitrary identifier such as `clone-072a`.
-Software computing clones may choose some relevant identifiers:
+Clonotypes are identified by a `id` string that may be an arbitrary identifier such as `clone-072a`.
+Software computing clonotypes may choose some relevant identifiers:
 
   - `CGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTAC`, Vidjil algorithm, 50 nt window centered on the CDR3
   - `CARPRDWNTYYYYGMDVW`, a CDR3 AA sequence
@@ -29,9 +29,9 @@ Software computing clones may choose some relevant identifiers:
   - the 'clone sequence' as computed by the ARReST in `.clntab` files (processed by `fuse.py`)
   - see also 'IMGT clonotype (AA) or (nt)'
 
-# Examples
+## Examples
 
-## `.vidjil` file – one sample
+### `.vidjil` file – one sample
 
 This is an almost minimal `.vidjil` file, describing clones in one sample.
 The `seg` element is optional: clones without `seg` elements will be shown on the grid with '?/?'.
@@ -61,6 +61,10 @@ or `clusters`, to further cluster some clones, see below).
         "germline" : {
             "TRG" :         [ 250000 ] ,
             "IGH" :         [ 85662  ]
+        },
+        "clones": {
+          "TRG" :         [ 2500 ],
+          "IGH" :         [ 856  ]
         }
     },
 
@@ -85,7 +89,7 @@ or `clusters`, to further cluster some clones, see below).
 }
 ```
 
-## `.vidjil` file – several related samples
+### `.vidjil` file – several related samples
 
 This a `.vidjil` file obtained by merging with `fuse.py` two `.vidjil` files corresponding to two samples.
 Clones that are from different files but that have a same `id` are gathered (see 'What is a clone?', above).
@@ -114,6 +118,10 @@ do a correct gathering.
         "germline" : {
             "TRG" :         [ 250000, 300000 ] ,
             "IGH" :         [ 85662,   10124 ]
+        },
+        "clones": {
+          "TRG" :         [ 2500, 3000 ] ,
+          "IGH" :         [ 856,   101 ]
         }
     },
 
@@ -121,13 +129,18 @@ do a correct gathering.
         {
             "id": "clone-001",
             "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
-    "reads" : [ 243241, 14717 ],
+            "reads" : [ 243241, 14717 ],
             "germline": "TRG",
             "top": 1,
             "seg":
             {
-        "5": {"name": "TRGV5*01",  "start": 1,  "stop": 87,  "delRight": 5},
-        "3": {"name": "TRGJ1*02",  "start": 89, "stop": 118, "delLeft":  0}
+                "5": {"name": "TRGV5*01",  "start": 1,  "stop": 87,  "delRight": 5},
+                "3": {"name": "TRGJ1*02",  "start": 89, "stop": 118, "delLeft":  0},
+                "quality": {
+                  "start": 1,
+                  "stop": 118,
+                  "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!TAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGA!!!!!!!!!!!!!!!!!!!"
+                }
            }
         },
         {
@@ -193,8 +206,65 @@ do a correct gathering.
 }
 ```
 
+#### `.vidjil` file - pre process data
 
-## `.analysis` file
+If a pre process has been used to produce a file in the pipeline its data can be fused into the .vidjil file.
+
+``` javascript
+{
+    "producer": "program xyz version xyz",
+    "timestamp": "2014-10-01 12:00:11",
+    "vidjil_json_version": "2016b",
+
+    "samples": {
+         "number": 1,
+         "original_names": ["T8045-BC081-Diag.fastq"],
+         "pre_process": {
+             "stats": {
+                 ...
+             },
+             "parameters": {
+                 ...
+             }
+         }
+    },
+
+    "reads" : {
+        "total" :           [ 437164 ] ,
+        "segmented" :       [ 335662 ] ,
+        "germline" : {
+            "TRG" :         [ 250000 ] ,
+            "IGH" :         [ 85662  ]
+        },
+        "clones": {
+          "TRG" :         [ 2500 ],
+          "IGH" :         [ 856  ]
+        },
+        "merged" :          [ 437164 ]
+    },
+
+    "clones": [
+        {
+            "id": "clone-001",
+            "name": "TRGV5*01 5/CC/0 TRGJ1*02",
+            "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
+    "reads" : [ 243241 ],
+            "_average_read_length": [ 119.3 ],
+            "germline": "TRG",
+            "top": 1,
+            "seg":
+            {
+        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 87, "delRight":5},
+        "3": {"name": "TRGJ1*02",  "start": 89,  "stop": 118,   "delLeft":0},
+                "cdr3": { "start": 78, "stop": 105, "seq": "gccacctgggccttattataagaaactc" }
+    }
+
+        }
+    ]
+}
+```
+
+### `.analysis` file
 
 This file reflects the annotations a user could have done within the Vidjil web application or some other tool.
 She has manually set sample names (`names`), tagged (`tag`, `tags`), named (`name`) and clustered (`clusters`)
@@ -290,9 +360,9 @@ see the `.vidjil` file in the previous section). If these clones do not exist, t
 just ignored. The first item of the cluster is considered as the
 representative clone of the cluster.
 
-# Detailed specification
+## Detailed specification
 
-## Generic information for traceability \[required\]
+### Generic information for traceability \[required\]
 
 ``` javascript
 "producer": "my-repseq-software -z -k (v. 123)",    // arbitrary string, user/software/version/options producing this file [required]
@@ -317,7 +387,7 @@ when one choose to report only the 'top' clones (`-t` option for fuse).
 }
 ```
 
-## `samples` element \[required\]
+### `samples` element \[required\]
 
 ``` javascript
 {
@@ -338,7 +408,7 @@ when one choose to report only the 'top' clones (`-t` option for fuse).
 }
 ```
 
-## `clones` list, with read count, tags, V(D)J designation and other sequence features
+### `clones` list, with read count, tags, V(D)J designation and other sequence features
 
 Each element in the `clones` list describes properties of a clone.
 
@@ -421,7 +491,7 @@ In the `.analysis` file, this section is intended to describe some specific clon
 ```
 
 
-## `distributions`: providing statistics on full clonal populations
+### `distributions`: providing statistics on full clonal populations
 
 In some situations, one would like to represent whole distributions of clones
 according to "axes" such as V/J distribution or length.
@@ -468,12 +538,12 @@ python fuse.py -d lenSeqAverage -d seg3,seg5 sample_42.vidjil
 The command `fuse.py -l` yields the list of available axes,
 but currently only `lenSeqAverage` and `seq3,seq5` are supported.
 Adding axes can be done trough in `get_values()` in `tools/fuse.py`.
-Note that axes should also be added to `browser/js/axes.js` to be displayed in the client.
+Note that axes should also be added to `browser/js/axis_conf.js` to be displayed in the client.
 
 
-## `germlines` list \[optional\]\[work in progress, to be documented\]
+### `germlines` list \[optional\]\[work in progress, to be documented\]
 
-extend the `germline.data` default file with a custom germline
+Extend the `germline.data` default file with a custom germline.
 
 ``` javascript
 "germlines" : {
@@ -486,7 +556,7 @@ extend the `germline.data` default file with a custom germline
 }
 ```
 
-## `MRD data` \[optional\]\[work in progress, to be documented\]
+### `MRD data` \[optional\]\[work in progress, to be documented\]
 
 Vidjil offers support for the use of spike-ins to serve as a yardstick
 to obtain copy numbers from read counts, with the goal of estimating
@@ -623,13 +693,13 @@ by its read count; `family` is the clone family; and
 
 TODO: COMMENTS?
 
-## Further clustering of clones: the `clusters` list \[optional\]
+### Further clustering of clones: the `clusters` list \[optional\]
 
 Each element in the 'clusters' list describe a list of clones that are 'merged'.
 In the web application, it will be still possible to see them or to unmerge them.
 The first clone of each line is used as a representative for the cluster.
 
-## `data` list \[optional\]\[work in progress, to be documented\]
+### `data` list \[optional\]\[work in progress, to be documented\]
 
 Each element in the `data` list is a list of values (of size samples.number)
 showing additional data for each sample, as for example qPCR levels or spike information.
@@ -637,7 +707,7 @@ showing additional data for each sample, as for example qPCR levels or spike inf
 In the browser, it will be possible to display these data and to normalize
 against them (not implemented now).
 
-## Tagging some clones: `tags` list \[optional\]
+### Tagging some clones: `tags` list \[optional\]
 
 The `tags` list describe the custom tag names as well as tags that should be hidden by default.
 The default tag names are defined in [../browser/js/vidjil-style.js](http://gitlab.vidjil.org/-/blob/master/browser/js/vidjil-style.js).

@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -164,7 +164,10 @@ Germline.prototype = {
         //On trie tous les élèment dans germline, via le nom des objets
         var tmp1 = [];
         tmp1 = Object.keys(this.allele).slice();
-        mySortedArray(tmp1);
+
+        var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+        tmp1.sort(collator.compare)
+
         var list1 = {};
         //Pour chaque objet, on fait un push sur this.allele
         for (var k = 0; k<tmp1.length; k++) {

@@ -75,7 +75,7 @@ SCHEDULER_HEARTBEAT = 5
 
 # Directory to search for files
 FILE_SOURCE = '/mnt/data/src'
-FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa']
+FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa', 'tsv', 'airr', 'AIRR']
 
 SET_TYPE_PATIENT = 'patient'
 SET_TYPE_RUN= 'run'
@@ -83,3 +83,17 @@ SET_TYPE_GENERIC = 'generic'
 
 REQUIRE_HTTPS = False
 BROWSER_PATH = 'browser/index.html'
+
+# LDAP authentification
+LDAP = False
+# online test server available for test purposes
+# account:  euler@ldap.forumsys.com
+# password: password
+LDAP_CONF = {
+    "mode" :            'custom',
+    "server":           'ldap.forumsys.com',    
+    "base_dn":          'dc=example,dc=com',   
+    "logging_level":    'debug',
+    "username_attrib":  'mail',
+    "custom_scope":     'subtree'
+}

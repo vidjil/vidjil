@@ -56,10 +56,29 @@ def link_to_sample_sets(seq_file_id, id_dict):
     db.commit()
 
 # TODO put these in a model or utils or smth
-def validate(myfile):
+def validate(myfile, id , pre_process):
+    reupload = id != ""
     error = []
-    if myfile['filename'] == None :
-        error.append("missing filename")
+
+    # 0 or two filename must be provided to update a file with pre-process
+    if reupload and pre_process is not None:
+        if myfile['filename'] == "" and myfile['filename2'] != "" :
+            error.append("missing filename")
+        if myfile['filename2'] == "" and myfile['filename'] != "" :
+            error.append("missing filename2")
+
+    # both filename must be provided to add a file with pre-process
+    if not reupload and pre_process is not None:
+        if myfile['filename'] == "" :
+            error.append("missing filename")
+        if myfile['filename2'] == "":
+            error.append("missing filename2")
+
+    # a single filename must be provided to add a file without pre_process
+    if not reupload and pre_process is None :
+        if myfile['filename'] == "" :
+            error.append("missing filename")
+    
     if myfile['sampling_date'] != '' :
         try:
             datetime.datetime.strptime(""+myfile['sampling_date'], '%Y-%m-%d')
@@ -141,12 +160,7 @@ def form():
             return error_message("you don't have right to upload files")
 
         sample_type = sample_set.sample_type
-        enough_space = vidjil_utils.check_enough_space(defs.DIR_SEQUENCES)
-        if not enough_space:
-            mail.send(to=defs.ADMIN_EMAILS,
-                subject=defs.EMAIL_SUBJECT_START+" Server space",
-                message="The space in directory %s has passed below %d%%." % (defs.DIR_SEQUENCES, defs.FS_LOCK_THRESHHOLD))
-            return error_message("Uploads are temporarily disabled. System admins have been made aware of the situation.")
+        check_space(defs.DIR_SEQUENCES, "Uploads")
 
         row = db(db[sample_set.sample_type].sample_set_id == request.vars["sample_set_id"]).select().first()
         stype = sample_set.sample_type
@@ -220,7 +234,7 @@ def submit():
         error = True
 
     for f in data['file']:
-        f['errors'] = validate(f)
+        f['errors'] = validate(f, f["id"], pre_process)
 
         f['sets'], f['id_dict'], err = validate_sets(f['set_ids'])
 
@@ -238,12 +252,11 @@ def submit():
         if (f["id"] != ""):
             reupload = True
             fid = int(f["id"])
-            sequence_file = db.sequence_file[fid]
             if f['filename'] == '':
                 # If we don't reupload a new file
                 file_data.pop('pre_process_flag')
             
-            db.sequence_file[fid] = file_data
+            db( db.sequence_file.id == fid ).update(**file_data)
             #remove previous membership
             db( db.sample_set_membership.sequence_file_id == fid).delete()
             action = "edit"
@@ -279,15 +292,28 @@ def submit():
                 mes += " file was replaced"
 
             file_data, filepath = manage_filename(f["filename"])
-            filename = file_data['filename']
             if 'data_file' in file_data and file_data['data_file'] is not None:
                 os.symlink(filepath, defs.DIR_SEQUENCES + file_data['data_file'])
                 file_data['size_file'] = os.path.getsize(filepath)
-                file_data['network'] = True
+                file_data['network']   = True
                 file_data['data_file'] = str(file_data['data_file'])
+
+            if data["source"] == "nfs" :
+                file_data2, filepath2 = manage_filename(f["filename2"])
+                if 'data_file' in file_data2 and file_data2['data_file'] is not None:
+                    file_data['data_file2'] = str(file_data2['data_file'])
+                    os.symlink(filepath2, defs.DIR_SEQUENCES + file_data2['data_file'])
+
             db.sequence_file[fid] = file_data
 
         link_to_sample_sets(fid, id_dict)
+
+        # pre-process for nfs files can be started immediately
+        data_file = db.sequence_file[fid].data_file
+        data_file2 = db.sequence_file[fid].data_file2
+        if data["source"] == "nfs" :
+            if data_file is not None and data_file2 is not None and pre_process != '0':
+                schedule_pre_process(fid, pre_process)
 
         log.info(mes, extra={'user_id': auth.user.id,
                 'record_id': f['id'],
@@ -302,7 +328,7 @@ def submit():
                 "message": "successfully added/edited file(s)"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
-        return form_response(data)
+        return error_message("add_form() failed")
     
 def form_response(data):
     source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
@@ -335,7 +361,7 @@ def upload():
         error += "missing id"
     elif db.sequence_file[request.vars["id"]] is None:
         error += "no sequence file with this id"
-
+        
     if not error:
         mes += " file {%s} " % (request.vars['id'])
         res = {"message": mes + "processing uploaded file"}
@@ -344,9 +370,9 @@ def upload():
             f = request.vars.file
             try:
                 if request.vars["file_number"] == "1" :
-                    db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
+                    db(db.sequence_file.id == request.vars["id"]).update(data_file = db.sequence_file.data_file.store(f.file, f.filename))
                 else :
-                    db.sequence_file[request.vars["id"]] = dict(data_file2 = db.sequence_file.data_file.store(f.file, f.filename))
+                    db(db.sequence_file.id == request.vars["id"]).update(data_file2 = db.sequence_file.data_file.store(f.file, f.filename))
                 mes += "upload finished (%s)" % (f.filename)
             except IOError as e:
                 if str(e).find("File name too long") > -1:
@@ -363,10 +389,11 @@ def upload():
         if request.vars["file_number"] == "2" and len(error) == 0 and data_file2 is None:
             error += "no data file"
 
-        db.sequence_file[request.vars["id"]] = dict(pre_process_flag=None,
-                                                    pre_process_result=None)
-        if data_file is not None and data_file2 is not None and request.vars['pre_process'] != '0':
-            db.sequence_file[request.vars["id"]] = dict(pre_process_flag = "WAIT")
+        db(db.sequence_file.id == request.vars["id"]).update(pre_process_flag=None)
+        db(db.sequence_file.id == request.vars["id"]).update(pre_process_result=None)
+        
+        if data_file is not None and data_file2 is not None and request.vars['pre_process'] is not None and request.vars['pre_process'] != '0':
+            db(db.sequence_file.id == request.vars["id"]).update(pre_process_flag="WAIT")
             old_task_id = db.sequence_file[request.vars["id"]].pre_process_scheduler_task_id
             if db.scheduler_task[old_task_id] != None:
                 scheduler.stop_task(old_task_id)
@@ -380,7 +407,7 @@ def upload():
             # Compute and store file size
             size = os.path.getsize(seq_file)
             mes += ' (%s)' % vidjil_utils.format_size(size)
-            db.sequence_file[request.vars["id"]] = dict(size_file = size)
+            db(db.sequence_file.id == request.vars["id"]).update(size_file=size)
 
         if data_file2 is not None :
             seq_file2 = defs.DIR_SEQUENCES + data_file2

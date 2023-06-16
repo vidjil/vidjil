@@ -18,7 +18,7 @@
     <table class="db_table" id="table">
         <thead>
 	    <tr>
-	      <td class="column4"></td>
+	      <td class="column_50"></td>
             {{ for header in fields: }}
 	        {{if isAdmin or header['public']:}}
 	            <td class="{{if header['width']:}}column_{{=header['width']}}{{pass}} pointer"
@@ -29,16 +29,18 @@
                 {{ pass }}
             {{ pass }}
                 
-                <td class="column5"> </td>
-                <td class="column5"> </td>
-                <td class="column5"> </td>
+                <td class="column_20"> </td>
+                <td class="column_20"> </td>
+                <td class="column_20"> </td>
             </tr>
         </thead>
         
         
        {{for i in range(0, min(len(query), step)) :}}
            {{data = query[i]}}
-           <tr class="pointer" onclick="db.call('sample_set/index', {'id' :'{{=data.sample_set_id}}' , 'config_id' : '-1' })" >
+           <tr class="pointer" 
+               id="sample_set_open_{{=data.sample_set_id}}_config_id_-1"
+               onclick="db.call('sample_set/index', {'id' :'{{=data.sample_set_id}}' , 'config_id' : '-1' })" >
 	       <td class="uid">{{=data.sample_set_id}}</td>
                {{ for field in fields: }}
   		   <td>
@@ -64,7 +66,7 @@
     <div class="db_block_left">
 
 {{if auth.can_create_patient():}}
-<span class="button2" onclick="db.call('sample_set/form', {'type': '{{=helper.type}}'})"> + new {{=helper.get_type_display()}}s </span>
+<span class="button2" id="create_new_set_type_{{=helper.type}}" onclick="db.call('sample_set/form', {'type': '{{=helper.type}}'})"> + new {{=helper.get_type_display()}}s </span>
 <span class="button2 devel-mode" onclick="db.call('sample_set/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
 {{else:}}
 <!-- <span class="button2 inactive" onclick="db.call('sample_set/add')" title="you don't have permission to create new {{=helper.get_type_display()}}s"> add sample_set </span> -->

@@ -16,7 +16,7 @@ Through the VidjilNet consortium, we also offer options for data hosting and pro
 - Available for [VidjilNet](http://www.vidjil.net) members, with dedicated support
 - Suitable for production and hosting clinical data in France and some other EU countries
 - Secure data center in Gravelines (F) contracted with [OVHcloud Healthcare](https://www.ovhcloud.com/en/enterprise/solutions/certified-cloud-solutions/healthcare-data-hosting-hds/)
-- Data hosting: ISO 27001, compliant with healthcare data hosting regulation (GDPR, French HDS certification)
+- Data hosting: ISO 27001, compliant with healthcare data hosting regulation (GDPR, [French HDS certification](https://ue.esante.gouv.fr/information-systems-security-pre-condition-trust/health-data-hosting-hds))
 - Eligible for laboratory accreditation (through COFRAC in France or national equivalents in other EU countries)
 
 ## In-lab/in-hospital Hosting

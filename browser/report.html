@@ -3,7 +3,8 @@
     <head>
         <meta charset="utf-8">
         <title>Vidjil report</title>
-
+        <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/fontello.css" />
+        <link rel="stylesheet" type="text/css" href="css/icons/fontello/css/animation.css" />
         <!-- page style-->
         <style>
             @page {
@@ -67,7 +68,7 @@
         <!--style-->
         <style>
             body {
-                font-family: Helvetica;
+                font-family: "Iosevka Custom",Helvetica, monospace;
                 color: #222;
                 text-align: justify;
             }
@@ -77,6 +78,64 @@
                 opacity : .75;
                 margin: 0.2em 0em;
             }
+
+            .container_floatBox {
+                float: right;
+                position: relative;
+                width: 0px;
+                height: 0px;
+            }
+
+            .container:hover {
+                background: red;
+            }
+
+            .container .container_content:hover {
+                background: white;
+            }
+            
+            .container_button {
+                display: none;
+            }
+
+            .container:hover .container_button {
+                display: block;
+            }
+
+            .container_content {
+                padding: 1px;
+            }
+            .container_h3_input{
+                border: none;
+                font-family: "Iosevka Custom",Helvetica, monospace;
+                color: #222;
+                font-weight: bold;
+                display: block;
+                font-size: 12px;
+                opacity: .75;
+                width: 400px;
+            }
+
+            .report_table {
+                border-collapse: collapse;
+                width: -webkit-fill-available;
+                font-size: 65%;
+            }
+
+            .report_table td, .report_table th {
+                border: 1px solid #ddd;
+                padding: 4px 4px;
+                overflow-wrap: break-word;
+            }
+
+            .report_table tr:nth-child(even){background-color: #f2f2f2;}
+
+            .report_table th {
+                text-align: left;
+                background-color: #2AA198;
+                color: white;
+            }
+
             #header {
                 font-size : 150%;
                 font-weight :bold;
@@ -134,7 +193,7 @@
             .flex{
                 width: 100%;
                 display: flex;
-                font-size: 80%;
+                font-size: 70%;
                 flex-wrap: wrap;
             }
             .case {
@@ -214,7 +273,7 @@
                 float: right;
             }
             .clone{
-                font-size : 75%;
+                font-size : 70%;
                 margin: 1em 0;
             }
             .clone_head{
@@ -255,7 +314,7 @@
         <!-- graph style-->
         <style>
             .graph {
-                font-size : 75%;
+                font-size : 70%;
             }
             .graph_menu {
                 display: none;
@@ -303,7 +362,7 @@
         <!-- scatterplot style-->
         <style>
             .scatterplot {
-                font-size : 75%;
+                font-size : 70%;
             }
             .axis_select, #visu_label_container {
                 display: none;
@@ -337,6 +396,9 @@
             .circle{
                 stroke : none;
             }
+            .circle_hidden{
+                display : none;
+            }
         </style>
     </head>
     
@@ -349,6 +411,9 @@
         <div id="header">
             <div id="header-logo"><div id="logo">Vidjil <span class="logo">(beta)</span></div></div>
             <div id="header-title">Report template</div>
+        </div>
+
+        <div id="containers">
         </div>
     </body>
 

@@ -1,6 +1,6 @@
 /*
-  This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011-2020 by VidjilNet consortium and Bonsai bioinformatics
+  This file is part of Vidjil-algo <http://www.vidjil.org>
+  Copyright (C) 2011-2022 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -1149,7 +1149,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
   if (because != NOT_PROCESSED)
     {
       segmented = false;
-      info = " @" + string_of_int (box_V->end + FIRST_POS) + "  @" + string_of_int(box_J->start + FIRST_POS) ;
+      info = code + " @" + string_of_int (box_V->end + FIRST_POS) + "  @" + string_of_int(box_J->start + FIRST_POS) ;
       return ;
     }
 
@@ -1444,9 +1444,9 @@ void FineSegmenter::toOutput(CloneOutput *clone, bool details){
       box->addToOutput(clone, this->alternative_genes);
     }
 
-  if (isSegmented()) {
+  clone->set("name", code);
 
-    clone->set("name", code);
+  if (isSegmented()) {
 
     if (isDSegmented()) {
       clone->setSeg("N1", seg_N1.size());

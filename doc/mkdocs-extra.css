@@ -24,14 +24,11 @@ div.container h2 { font-size: 170%; }
 div.container h3 { font-size: 140%; }
 div.container h4 { font-size: 110%; }
 
-.navbar-default, .navbar-form {
-    background-color: #2a0d45;
+.navbar {
+    background-color: #2a0d45 !important;
     background-image: none;
 }
 
-a {
-    color: purple;
-}
 
 a:hover {
     color: black;

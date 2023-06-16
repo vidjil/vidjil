@@ -36,8 +36,14 @@
     <link id="palette" rel="stylesheet" type="text/css" href="css/light.css" />
     <link id="seg_highlight" rel="stylesheet" type="text/css" href="css/segmenter_highlight.css" />
     <link rel="stylesheet" href="css/jstree_themes/default/style.min.css" />
+    <link rel="stylesheet" href="css/jquery-ui/jquery-ui.css" />
+    <link rel="stylesheet" href="css/jquery-ui/jquery-ui.structure.css" />
+    <link rel="stylesheet" href="css/jquery-ui/jquery-ui.theme.css" />
+    <link rel="stylesheet" href="css/lib/select2.min.css" />
 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
     <script data-main="js/app.js" src="js/lib/require.js"></script>
+
 
 <!--
     <script>
@@ -83,7 +89,7 @@
 
         Data file (.vidjil):<br />
         <input id="upload_json" type="file" name="json" /></br>
-        <p class='help'>The .vidjil file stores a set of clones on several points.</p>
+        <p class='help'>The .vidjil file stores a set of clonotypes on several points.</p>
 
         Analysis file (.analysis, optional):<br />
         <input id="upload_pref" type="file" name="pref" /></br>
@@ -106,7 +112,7 @@
 
     <div id="add_clone_menu">
         <span class="closeButton" onclick="cancel();">X</span>
-        <h2>Add clones from sequences</h2>
+        <h2>Add clonotypes from sequences</h2>
 
         <textarea id="addclone_input" placeholder="Sequence(s) (Fasta)"></textarea>
 
@@ -115,13 +121,13 @@
     </div>
 
         <!-- TOP-CONTAINER -->
-        <div id="top-container" onmouseout="hideSelector()">
+        <div id="top-container">
             <div id="menu-container">
                 <div class="menu" id="top_info">
                     <!--Div is filled programmatically -->
                 </div>
-                <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none">samples
-                    <div id="dbSelector" class="selector"><div>
+                <div class="menu" id="db_menu" style="display : none">samples
+                    <div class="selector"><div>
                         <div class="menu_box">
                             <a class="buttonSelector" onclick="javascript:db.call('sample_set/all', {'type': 'patient', 'page': 0})">open list</a>
                         </div>
@@ -133,7 +139,7 @@
                 </div>
             </div>
 
-            <div class="menu" id="static_file_menu" onmouseover="showSelector('fileSelector');" style="display : none">
+            <div class="menu" id="static_file_menu" style="display : none">
                 file
                 <div id="fileSelector" class="selector">
                     <div>
@@ -145,8 +151,8 @@
                 </div>
             </div>
 
-            <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
-                <div id="demoSelector" class="selector">
+            <div class="menu" id="demo_file_menu">import/export
+                <div class="selector">
                     <div>
                         <div class="menu_box">
                             <a id="import_data_anchor" class="buttonSelector" onclick="javascript:loadData()">import
@@ -156,48 +162,47 @@
                         </div>
                         <div class="menu_box devel-mode">
                             <a class="buttonSelector" id="add_clones" onclick="javascript:showAddManualCloneMenu()">add
-                                clones from sequences</a>
+                                clonotypes from sequences</a>
                         </div>
                         <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                         <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
                         <div class="menu_box">
-                            <a class="buttonSelector" id="export_sample_report"
-                                onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
-                            <a class="buttonSelector" id="export_monitor_report"
-                                onclick="javascript:report.reportHTML()">export report (monitor)</a>
+                            <a class="buttonSelector" id="export_report_menu"
+                                onclick="javascript:report.menu()">export report</a>
                         </div>
                         <div class="menu_box">
                             <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>
                             <a class="buttonSelector" id="export_svg1" onclick="javascript:m.exportViewToPNG(document.querySelector('#visu2_svg'))">export top graph (PNG)</a>
                             <a class="buttonSelector" id="export_svg2" onclick="javascript:m.exportViewToPNG(document.querySelector('#visu_svg'))">export bottom graph (PNG)</a>
-                            <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
-                            <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export fasta (selected clones)</a>
-                            <a class="buttonSelector" id="export_airr" onclick="javascript:m.exportCloneAs('airr')">export AIRR (selected clones)</a>
-                            <a class="buttonSelector devel-mode" id="export_json" onclick="javascript:m.exportCloneAs('json')">export JSON (selected clones)</a>
-                            <a class="buttonSelector disabledClass" id="export_fasta_align" onclick="javascript:segment.exportAlignFasta()">export aligned fasta (selected clones)</a>
+                            <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv (visible clonotypes)</a>
+                            <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export fasta (selected clonotypes)</a>
+                            <a class="buttonSelector" id="export_airr" onclick="javascript:m.exportCloneAs('airr')">export AIRR (selected clonotypes)</a>
+                            <a class="buttonSelector devel-mode" id="export_json" onclick="javascript:m.exportCloneAs('json')">export JSON (selected clonotypes)</a>
+                            <a class="buttonSelector disabledClass" id="export_fasta_align" onclick="javascript:segment.exportAlignFasta()">export aligned fasta (selected clonotypes)</a>
 
                         </div>
-                        <div class="menu_box devel-mode">
+                        <div class="menu_box">
                             <a class="buttonSelector" id="export_add_germline" onclick="javascript:segment.add_all_germline_to_segmenter()">add germline genes (experimental)</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');"> cluster
+            <div class="menu" id="cluster_menu"> cluster
                 <div id="clusterSelector" class="selector">
                     <div>
                         <div class="menu_box">
                             <a class="buttonSelector" onclick="m.restoreClusters();">revert to previous clusters</a>
                         </div>
                         <div class="menu_box">
-                          <a id="clusterBy_selected"   class="buttonSelector" onclick="m.merge();">cluster selected clones</a>
+                          <a id="clusterBy_selected"   class="buttonSelector" onclick="m.merge();">cluster selected clonotypes</a>
                           <a id="clusterBy_5"          class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V/5' </a>
                           <a id="clusterBy_3"          class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J/3' </a>
                           <a id="clusterBy_cdr3"       class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getSegAASequence('junction')});">cluster by CDR3 </a>
                           <a id="clusterBy_locus"      class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).germline});">cluster by locus </a>
                           <a id="clusterBy_dbscan"     class="buttonSelector devel-mode" onclick="m.similarity_builder.DBscan(95,0.001);">cluster by DBscan (experimental) </a>
-                          <a id="clusterBy_similarity" class="buttonSelector" onclick="m.similarity_builder.cluster_me(95,0.1);">cluster by similarity </a>
+                          <a id="clusterBy_similarity_by_nt" class="buttonSelector" onclick="m.similarity_builder.cluster_me('nt', 95,0.1);">cluster by similarity (nt) </a>
+                          <a id="clusterBy_similarity_by_aa" class="buttonSelector" onclick="m.similarity_builder.cluster_me('aa', 95,0.1);">cluster by similarity (aa)</a>
                           <div id="clusterby_button"> </div>
                         </div>
                         <div class="menu_box">
@@ -208,33 +213,29 @@
                 </div>
             </div>
 
-                <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
-                    <div class="div-menu-selector"><select id="color_menu_select" class="menu-selector" onchange="m.changeColorMethod(this.value, true, true)">
-                        <option value="Tag">tag</option>
-                        <option value="clone">clone</option>
-                        <option value="cdr3">CDR3</option>
-                        <option value="V">V/5'</option>
-                        <option value="J">J/3'</option>
-                        <option value="N">N</option>
-                        <option value="system" id="color_system_button">locus/germline</option>
-                        <option value="abundance">abundance</option>
-                        <option value="productive">productivity</option>
+                <div class="menu" id="color_menu" > color by
+                    <div class="div-menu-selector"><select id="color_menu_select" class="menu-selector">
+
                     </select></div>
             </div>
 
-            <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();"
-                onmouseover="showSelector('filterSelector');"> filter
-                <div id="filterSelector" class="selector">
+            <div class="menu" id="filter_menu"> filter
+                <div class="selector">
                     <div>
                         <div class="menu_box">
                             <span id="top_label"></span></br>
                             <input id="top_slider" type="range" min="5" max="100" step="5" value="10"
-                                onchange="m.displayTop(this.value)" />
+                                onchange="m.filter.add('Top', '>', parseInt(this.value))" />
+                        </div>
+                        <div class="menu_box">
+                            <div id="filter_list">
+
+                            </div>
                         </div>
                         <div class="menu_box">
                             <div id="filter_switch_sample"
-                                title="Hide clones that are not present in the current sample">
-                                <input id="filter_switch_sample_check" type="checkbox"></input> Focus on clones of one
+                                title="Hide clonotypes that are not present in the current sample">
+                                <input id="filter_switch_sample_check" type="checkbox"></input> Focus on clonotypes of one
                                 sample
                             </div>
                         </div>
@@ -242,9 +243,8 @@
                 </div>
             </div>
 
-            <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();"
-                onmouseover=" showSelector('settingsSelector');"> settings
-                <div id="settingsSelector" class="selector">
+            <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();"> settings
+                <div class="selector">
                     <div>
 
                         <div class="menu_box">
@@ -254,41 +254,40 @@
                         </div>
                         <div class="menu_box">
                             size display</br>
-                            <label for="menuNotation_scientific" class="buttonSelector"
-                                onclick="m.changeNotation('scientific', true, true)">
+                            <label for="menuNotation_scientific" class="buttonSelector">
                                 <input id="menuNotation_scientific" type="radio" name="notation"
-                                    value="scientific" />scientific notation
+                                    onclick="m.changeNotation('scientific', true, true)" value="scientific" />scientific notation
                             </label>
-                            <label for="menuNotation_percent" class="buttonSelector"
-                                onclick="m.changeNotation('percent', true, true)">
+                            <label for="menuNotation_percent" class="buttonSelector">
                                 <input id="menuNotation_percent" type="radio" name="notation" value="percent"
-                                    checked />percent
+                                    onclick="m.changeNotation('percent', true, true)" checked />percent
                             </label>
                         </div>
                         <div class="menu_box">
                             sample key</br>
-                            <label for="menuTimeForm_name" class="buttonSelector"
-                                onclick="m.changeTimeFormat('name', true, true)">
-                                <input id="menuTimeForm_name" type="radio" name="time" value="name" checked />name
+                            <label for="menuTimeForm_order" class="buttonSelector">
+                                <input id="menuTimeForm_order" type="radio" name="time" value="order"
+                                       onclick="m.changeTimeFormat('order', true, true)"/> #
                             </label>
-                            <label for="menuTimeForm_short_name" class="buttonSelector"
-                                onclick="m.changeTimeFormat('short_name', true, true)">
-                                <input id="menuTimeForm_short_name" type="radio" name="time" value="short_name" />name
-                                (short)
+                            <label for="menuTimeForm_name" class="buttonSelector">
+                                <input id="menuTimeForm_name" type="radio" name="time" value="name" checked
+                                       onclick="m.changeTimeFormat('name', true, true)"/>name
                             </label>
-                            <label for="menuTimeForm_sampling_date" class="buttonSelector"
-                                onclick="m.changeTimeFormat('sampling_date', true, true)">
+                            <label for="menuTimeForm_short_name" class="buttonSelector">
+                                <input id="menuTimeForm_short_name" type="radio" name="time" value="short_name"
+                                       onclick="m.changeTimeFormat('short_name', true, true)"/> name (short)
+                            </label>
+                            <label for="menuTimeForm_sampling_date" class="buttonSelector">
                                 <input id="menuTimeForm_sampling_date" type="radio" name="time"
-                                    value="sampling_date" />sampling date
+                                       onclick="m.changeTimeFormat('sampling_date', true, true)" value="sampling_date" />sampling date
                             </label>
-                            <label for="menuTimeForm_delta_date" class="buttonSelector"
-                                onclick="m.changeTimeFormat('delta_date', true, true)">
-                                <input id="menuTimeForm_delta_date" type="radio" name="time" value="delta_date" />day
-                                after first sample
+                            <label for="menuTimeForm_delta_date" class="buttonSelector">
+                                <input id="menuTimeForm_delta_date" type="radio" name="time" value="delta_date"
+                                       onclick="m.changeTimeFormat('delta_date', true, true)" />day after first sample
                             </label>
                         </div>
                         <div class="menu_box">
-                            N regions in clone names</br>
+                            N regions in clonotype names</br>
                             <label for="menuCloneNot_nucleotide_number" class="buttonSelector"
                                 onclick="m.changeCloneNotation('nucleotide_number', true, true)">
                                 <input id="menuCloneNot_nucleotide_number" type="radio" name="show_name"
@@ -307,32 +306,30 @@
                         </div>
                         <div class="menu_box">
                             alleles in clone names</br>
-                            <label for="menuAlleleNot_never" class="buttonSelector"
-                                onclick="m.changeAlleleNotation('never', true, true)">
-                                <input id="menuAlleleNot_never" type="radio" name="menu_allele" value="never" />never
+                            <label for="menuAlleleNot_never" class="buttonSelector">
+                                <input id="menuAlleleNot_never" type="radio" name="menu_allele" value="never" onclick="m.changeAlleleNotation('never', true, true)" />never
                             </label>
-                            <label for="menuAlleleNot_when_not_01" class="buttonSelector"
-                                onclick="m.changeAlleleNotation('when_not_01', true, true)">
-                                <input id="menuAlleleNot_when_not_01" type="radio" name="menu_allele"
+                            <label for="menuAlleleNot_when_not_01" class="buttonSelector">
+                                <input id="menuAlleleNot_when_not_01" type="radio" name="menu_allele" onclick="m.changeAlleleNotation('when_not_01', true, true)"
                                     value="when_not_01" checked />when not *01
                             </label>
-                            <label for="menuAlleleNot_always" class="buttonSelector"
-                                onclick="m.changeAlleleNotation('always', true, true)">
-                                <input id="menuAlleleNot_always" type="radio" name="menu_allele" value="always" />always
+                            <label for="menuAlleleNot_always" class="buttonSelector">
+                                <input id="menuAlleleNot_always" type="radio" name="menu_allele" value="always" onclick="m.changeAlleleNotation('always', true, true)" />always
                             </label>
                         </div>
-                        <div class="menu_box">
-                            <a class="buttonSelector" onclick="m.resetSettings();">reset settings</a>
+
+
+                        <div class="menu_box" id="primerset_menu">
+                            primer set<br/>
+                        </div>
+		                <div id="remove_primer_external"
+                            title="Primers will be trimmed before sending them to an external tool (such as IMGT/V-QUEST, IgBlast, Blast, …)">
+                            <input id="remove_primer_external_check" type="checkbox">trim primers before external analyses</input>
                         </div>
 
 
                         <div class="menu_box">
-                            primer set</br>
-                            <label for="primerBiomed2" class="buttonSelector" onclick="m.switchPrimersSet('biomed2')"><input type="radio" id="primerBiomed2" name="primers" value="biomed2" />biomed2</label>
-                            <label for="primerEcngs" class="buttonSelector" onclick="m.switchPrimersSet('ecngs')"><input type="radio" id="primerEcngs" name="primers" value="ecngs" />ecngs</label>
-                            <label for="primerEcngsFR1" class="buttonSelector" onclick="m.switchPrimersSet('ecngs_FR1')"><input type="radio" id="primerEcngsFR1" name="primers" value="ecngs_FR1" />ecngs FR1</label>
-			                <!-- TODO : construire liste à partir des data disponibles/chargées dans le model.
-                              TODO : passer ça en liste deroulante ? -->
+                            <a class="buttonSelector" onclick="m.resetSettings();">reset settings</a>
                         </div>
                         <!--
                         <div class="submenu" id="system_menu" style="display:none">
@@ -377,9 +374,18 @@
             </div>
 
 
-            <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none">
+            <div class="menu" id="warnings_menu"> warnings
+                <div class="selector" id="warnings_selector">
+                    <div class="menu_box">
+                        <div id="warnings_list"></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="debug_menu" class="menu" style="display : none">
                 development
-                <div id="adminSelector" class="selector">
+                <div class="selector">
                     <div>
                         <input type="checkbox"
                             onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display
@@ -411,8 +417,7 @@
                 </div>
             </div>
 
-            <div id="upload_summary" class="menu" onmouseover="showSelector('upload_summary_selector');"
-                onmouseout="hideSelector();">
+            <div id="upload_summary" class="menu">
                 <span id="upload_summary_label">upload</span>
                 <div id="upload_summary_selector" class="selector">
                     <div>
@@ -421,8 +426,8 @@
                 </div>
             </div>
 
-            <div id="palette_menu" class="menu" onmouseover="showSelector('paletteSelector');"> palette
-                <div id="paletteSelector" class="selector">
+            <div id="palette_menu" class="menu"> palette
+                <div class="selector">
                     <div>
                         <a id="palette_light" class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
                         <a id="palette_light_presentation" class="buttonSelector" onclick="changeStyle('display')">light
@@ -431,8 +436,8 @@
                     </div>
                 </div>
             </div>
-            <div id="help_menu" class="menu" onmouseover="showSelector('helpSelector');"> help
-                <div id="helpSelector" class="selector">
+            <div id="help_menu" class="menu"> help
+                <div class="selector">
                     <div>
                         <a id="help_support" class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
                         <a id="help_manual" class="buttonSelector" href="http://www.vidjil.org/doc/user"
@@ -462,14 +467,16 @@
         <div id="vmiSelector"></div>
         <div id='vidjil-panels'>
             <!-- MID-CONTAINER -->
-            <div id="mid-container" onmouseover="hideSelector()">
+            <div id="mid-container">
 
                 <!-- LEFT-CONTAINER -->
                 <div id="left-container">
                 </div>
                 <!-- fin left-container -->
 
-                <div id="vertical-separator"></div>
+                <div id="vertical-separator">
+                    <i class="vertical-separator-icon icon-left-open"></i>
+                </div>
 
                 <!-- VISU-CONTAINER  -->
                 <div id="visu-container">
@@ -543,6 +550,9 @@
 <template id='aligner'>
     <div class="aligner">
             <div class="bot-bar">
+                <div id="aligner-open-button"><i class="icon-up-open"></i></div>
+
+                <div id="aligner-left">
                     <div id="cluster" class="aligner-menu" title="Merge the selected clones into a unique cluster"
                             onclick="javascript:self.m.merge()"> Cluster </div>
 
@@ -561,7 +571,7 @@
 
                     <div id="align-settings" class="aligner-menu" title="Alignement settings">
                             <span ><i class="icon-cog"></i></span>
-                            <div class="menu-content">
+                            <div id="align-settings_select" class="menu-content">
                                 <label for="highlight_match" title="matches">
                                             <span><input type="checkbox" id="highlight_match" autocomplete="off"></span>
                                             <span>Show only mutations</span>
@@ -579,44 +589,60 @@
                                                     title="Send sequences to ARResT/CompileJunctions and see the results in a new tab"
                                                     class="aligner-button"
                                                     onclick="javascript:segment.sendTo('arrest');"><i class="icon-forward-1"></i> ARResT/CJ</a></span>
-                                    <span class="devel-mode"><a id="toCloneDB"
-                                                    title="Send sequences to EC-NGS/CloneDB in the background"
-                                                    class="aligner-button"
-                                                    onclick="javascript:db.callCloneDB(m.getSelected());"><i class="icon-forward-1"></i> CloneDB</a></span>
                                     <a id="toBlast" title="Send sequences to Ensembl Blast and see the results in a new tab"
                                             class="aligner-button" onclick="javascript:segment.sendTo('blast');"><i class="icon-forward-1"></i> Blast</a>
                                     <a id="toAssignSubsets"
                                             title="Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset"
-                                            class="aligner-button"><i class="icon-forward-1"></i> AssignSubsets</a>
+                                            class="aligner-button" onclick="javascript:segment.sendTo('assignSubsets');"><i class="icon-forward-1"></i> AssignSubsets</a>
+                                    <span class="devel-mode"><label title="Open external tool in another tab" class="aligner-checkbox-label" for="post_target_blank">
+                                        <span><input class="aligner-checkbox-input" type="checkbox" id="post_target_blank" autocomplete="off" checked="true"></span>
+                                        <span class="aligner-checkbox-text">use new tab</span>
+                                    </label></span>
                             </div>
                     </div>
 
                     <div id="align-segment-info" class="aligner-menu" title="Sequence features">
                             <span  ><i class="icon-menu"></i></span>
-                            <div class="menu-content">
+                            <div id="align-segment-info_select" class="menu-content">
      
                             </div>
                     </div>
 
-                    <div id="align-imgt" class="aligner-menu"
-                    title="Sequence features from IMGT [click to reload]" onclick="javascript:segment.sendTo('IMGTSeg');"> <i class="icon-menu"></i> IMGT
-                       <span title="reload IMGT info" ></span><i class="demo-icon icon-arrows-ccw"></i></span>
-                       <div class="menu-content">
+                    <div id="align-refresh-button" class="aligner-menu"
+                        title="Some data are missing has they are based on external analysis (IMGT / CloneDB / IGBLast/ ...) &#10; Click to perform those analysis">
+                         <span onclick="javascript:segment.retrieveExternalData();"><i class="demo-icon icon-arrows-ccw"></i></span>
 
-                       </div>
+                        <div class="menu-content">
+                            <a id="toIMGTseg" title="Request sequences informations to IMGT"
+                                    class="aligner-button"
+                                    data-target = 'IMGT'
+                                    onclick="javascript:segment.retrieveExternalData(['IMGT']);">
+                                    <i id="icon_external_IMGT" class="icon-arrows-ccw"></i> IMGT/V-QUEST
+                            </a>
+                            <a id="toCloneDBseg" title="Request sequences informations to CloneDB"
+                                    class="aligner-button"
+                                    data-target = 'cloneDB'
+                                    onclick="javascript:segment.retrieveExternalData(['cloneDB']);">
+                                    <i id="icon_external_cloneDB" class="icon-arrows-ccw"></i> CloneDB
+                            </a>
+                        </div>
                     </div>
-                    <div class="focus cloneName"></div>
+                    
+                    </div>
 
+                    <div class="focus cloneName"></div>
                             
 
                     <div id="aligner-stats" class="stats"><span  title="">
                             <span class="stats_content"></span>
-                            <a class="focus_selected" id="focus_selected">(focus)</a> 
-                            <a class="focus_selected" id="hide_selected">(hide)</a>
-                            <span class="button" id="star_selected" title="Tag selected clones">
-                                    <i id="tag_icon__multiple" class="icon-star-2"></i></span>
-                            <span id="fixsegmenter" class="button">
-                                    <i title="fix the segmenter in his position" class="icon-pin-outline"></i></span>
+                            <span id="focus_selected" class="button"    title="Focus on selected clonotypes (ctrl+z)" >
+                                <i class="icon-eye"></i></span>
+                            <span id="hide_selected" class="button"     title="Hide selected clonotypes (shift+z)">
+                                <i  class="icon-eye-off"></i></span>
+                            <span class="button" id="reset_focus"       title="Reset focus / Hide filters (z)">
+                                <i  class="icon-cancel-circled-outline"></i></span>
+                            <span class="button" id="star_selected"     title="Tag selected clonotypes">
+                                <i id="tag_icon__multiple" class="icon-star-2"></i></span>
                     </div>
             </div>
 
@@ -638,13 +664,13 @@
 
 <template id="aligner-F">
     <div class="seq-fixed cloneName">
-            <span class="nameBox" title="clone name">
-                    <span class="delBox"><i class="icon-cancel" title="Unselect this clone"></i></span>
+            <span class="nameBox" title="clonotype name">
+                    <span class="delBox"><i class="icon-cancel" title="Unselect this clonotype"></i></span>
                     <span class="nameBox2"></span>
             </span>
             <span class="axisBox"></span>
             <span class="starBox" id="color60"><i id="tag_icon_60" title="clone_tag" class="icon-star-2"></i></span>
-            <span class="infoBox"><i class="icon-info" title="clone information"></i></span>
+            <span class="infoBox"><i class="icon-info" title="clonotype information"></i></span>
     </div>
 </template>
 
@@ -668,3 +694,131 @@
         </label>
 </template>
 
+
+<template id="scatterplot-menu-content">
+    <div class="sp_menu_content">
+        <div style="text-align: center;">Plot Settings</div>
+        <div class="menu_box">
+        <div class="axis_select axis_select_preset">
+            Preset : 
+            <select class="axis_select_preset_select" name="select_preset[]">
+                <option value="custom">–</option>
+            </select>
+        </div>
+        <div class="axis_select axis_select_icon">
+            <p>Mode :</p>
+            <div class="sp_menu_icon sp_menu_icon_bar"></div>
+            <div class="sp_menu_icon sp_menu_icon_grid"></div>
+        </div>
+        </div>
+
+        <div class="menu_box menu_box_axis_x">
+        <div class="axis_select axis_select_x">
+            Axis X :
+            <select name="select_x[]"></select>
+        </div>
+        <div class="sp_slider_box slider_box_x">
+            <div class="sp_slider_left  slider_x_value1"></div>
+            <div class="sp_slider_mid   slider_x"></div>
+            <div class="sp_slider_right slider_x_value2"></div>
+        </div>
+        </div>
+
+        <div class="menu_box menu_box_axis_y">
+        <div class="axis_select axis_select_y">
+            Axis Y :
+            <select name="select_y[]"></select>
+        </div>
+        <div class="sp_slider_box slider_box_y">
+            <div class="sp_slider_left  slider_y_value1"></div>
+            <div class="sp_slider_mid   slider_y"></div>
+            <div class="sp_slider_right slider_y_value2"></div>
+        </div>
+        </div>
+
+        <div class="menu_box">
+        <div onclick="report.addScatterplot(m.sp)">
+            <i class="icon-newspaper"></i> Add to next report
+        </div>
+        </div>
+
+    </div>
+</template>
+
+<template id="report-settings">
+    <div id="report-menu" class="">
+        <div style="text-align: center;"><b>Export report</b></div>
+
+        <div class="rs-header">
+            Templates, user reports: 
+            <div class="rs-flex" id="report-settings-save">
+
+                <div style="float: right;">
+                    <button id="rs-delete-button" type="button" onclick="report.delete();">Delete</button>
+                </div>
+            </div> 
+
+
+        </div>
+            
+    
+        <div class="rs-body">
+
+            <div  id="report-settings-sample-select">
+                <div class="rs-header">
+                    SAMPLE(S) <span id="rs-selected-sample-count" style="float: right;"></span>
+                </div>
+            </div>
+
+            <div  id="report-settings-locus-select">
+                <div class="rs-header">
+                    LOCUS
+                </div>
+                <div class="rs-flex-parent-h" id="rs-locus-list">
+                </div>
+            </div>
+
+            <div  id="report-settings-clones">
+                <div class="rs-header">
+                    CLONOTYPE(S)
+                    <span id="rs-selected-clones-count" style="float: right;"></span>
+                </div>
+                <div class="rs-flex-parent-v" id="report-clones-list">
+                </div>
+            </div>
+
+            <div  id="report-settings-color-select">
+                <div class="rs-header">
+                    COLOR
+                </div>
+                <table class="rs-flex-parent-v">
+                    <tr class="">
+                        <td>Default clonotype color :</td> <td><select name="rs-default-color" id="rs-default-color" class=""></select></td>
+                    </tr>
+                    <tr class="">
+                        <td>Selected clonotype color :</td> <td><select name="rs-selected-color" id="rs-selected-color" class=""></select></td>
+                    </tr>
+                </table>
+
+            </div>
+
+            <div  id="report-settings-block">
+                <div class="rs-header">
+                    SECTIONS
+                </div>
+            </div>
+
+        </div>
+
+        <div style="text-align: center;">
+            <button type="button" onclick="report.print();">Show report</button>
+        </div>
+
+
+        <div style="float: right;">
+            <button id="rs-save-button-template" type="button" onclick="report.saveas(true, true);" >Save as template</button>
+            <button id="rs-save-button-report"   type="button" onclick="report.saveas(true, false);">Save as report</button>
+        </div>
+
+    </div>
+</template>

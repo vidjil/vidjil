@@ -1,6 +1,6 @@
 /*
-  This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011-2020 by VidjilNet consortium and Bonsai bioinformatics
+  This file is part of Vidjil-algo <http://www.vidjil.org>
+  Copyright (C) 2011-2022 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -65,7 +65,7 @@ SimilarityMatrix compare_all(list <Sequence> sequences,
 
 	  string seq2 = it2 -> sequence ;
 
-	  DynProg dp = DynProg(seq1, seq2, DynProg::Local, IdentityDirty);
+	  DynProg dp = DynProg(seq1, seq2, DynProg::Global, IdentityDirty);
   
 	  int score = dp.compute() ;
 	  float identity = identity_percent(score);

@@ -1,0 +1,131 @@
+
+.test_cypress_base:
+  image: vidjilci/cypress_with_browsers:latest
+  stage: test_cypress_client
+  # extends:
+    # - .need_for_staged_client
+  script:
+    - echo -e "Run cypress with browser $BROWSER"
+    - echo -e "PWD $PWD; CYPRESS_PATH $CYPRESS_PATH"
+    # Create doc support files for testing
+    - python tools/org-babel-tangle.py --all doc/vidjil-format.md
+    - mv analysis-example1.vidjil  analysis-example2.analysis  analysis-example2.vidjil doc/
+    # Cypress
+    - bash docker/ci/script_preprocess.bash
+    - cd /app
+    - export BROWSER=browsers/$BROWSER
+    - bash script.bash $TEST_FILES
+  variables:
+    BROWSER: ../electron
+    CYPRESS_PATH: browser/test/cypress
+    HOST: html
+    TEST_FILES: "/app/cypress/integration/test_*.js"
+  artifacts:
+    reports:
+      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+    paths:
+      - $CYPRESS_PATH
+    expire_in: 7 day
+    when: always
+  tags:
+    - cidocker
+  only:
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
+    - /^prod-client/
+    - dev
+
+
+.test_cypress_ext:
+  stage: test_cypress_external
+  extends:
+    - .test_cypress_base
+  variables:
+    TEST_FILES: "/app/cypress/integration/external_*.js"
+
+
+## cypress client
+# For the moment, need to be into separate stage (https://gitlab.com/gitlab-org/gitlab/-/issues/30632)
+client1-ff-supported:
+  extends:
+    - .test_cypress_base
+    - .need_for_moderate_client
+  variables:
+    BROWSER: firefox_supported/firefox
+
+c2:
+  extends:
+    - .test_cypress_base
+  parallel:
+    matrix:
+      - BROWSER: [
+          firefox_latest/firefox,
+          firefox_legacy/firefox,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
+          chrome_legacy/chrome
+        ]
+
+external1-ff-supported:
+  extends:
+    - .test_cypress_ext
+    - .need_for_moderate_client
+  variables:
+    BROWSER: firefox_supported/firefox
+
+external2:
+  extends:
+    - .test_cypress_ext
+    - .need_for_staged_client
+  parallel:
+    matrix:
+      - BROWSER: [
+          firefox_latest/firefox,
+          firefox_legacy/firefox,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
+          chrome_legacy/chrome
+        ]
+
+
+
+
+## cypress client
+# For the moment, need to be into separate stage (https://gitlab.com/gitlab-org/gitlab/-/issues/30632)
+.tuto-client:
+  stage: test_tutorial
+  extends:
+    - .test_cypress_base
+  variables:
+    PATH_CYPRESS: browser/test/cypress/integration/
+    TEST_FILES: "/app/cypress/integration/doc_*.js"
+  before_script:
+    - apt-get -y install pandoc
+    - make -C doc/tutorial/ build_tutorial_cypress_client
+  only:
+    - /^feature-.*c.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
+    - /^prod-client/
+    - dev
+    - doc
+
+tuto-c1-ff-supported:
+  extends:
+    - .tuto-client
+    - .need_for_moderate_client
+  variables:
+    BROWSER: firefox_supported/firefox
+
+tuto-c2:
+  extends:
+    - .tuto-client
+    - .need_for_late_client
+  parallel:
+    matrix:
+      - BROWSER: [
+          firefox_latest/firefox,
+          # firefox_legacy/firefox, # not working for the moment on certain tests
+          chrome_supported/chrome,
+          chrome_latest/chrome,
+          chrome_legacy/chrome
+        ]

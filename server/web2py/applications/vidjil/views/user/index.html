@@ -1,10 +1,10 @@
 {{extend 'db_layout.html'}}
 {{import vidjil_utils}}
 
-    <h3>Users</h3>
+    <h3 id="page_user">Users</h3>
     
     <div id="db_table_container">
-        <table class="db_table" id="table">
+        <table class="db_table" id="table_users">
             <thead>
                 <tr><td class="column_50" onclick="db.call('user/index', {'sort' :'id'})">id</td>
                     <td class="column_200"> name</td>
@@ -18,7 +18,8 @@
                   {{if not reverse and request.vars["sort"]=="patients" :}} , 'reverse' : true {{pass}} })">patients created </td>
                     <td class="column_100" onclick="db.call('user/index', {'sort' :'files'
                   {{if not reverse and request.vars["sort"]=="files" :}} , 'reverse' : true {{pass}} })">files uploaded </td>
-                    <td class="column5"> </td>
+                    <td class="column_20"> </td>
+                    <td class="column_20"> </td>
                 </tr>
             </thead>
             
@@ -34,6 +35,7 @@
                     <td> {{=row.created}}  </td>
                     <td> {{=row.files}} ({{=vidjil_utils.format_size(row.size)}}) </td>
                     <td onclick="db.call('user/edit', {'id' :'{{=row.id}}'} )" > <i class="icon-pencil-2" title="edit user information"></i> </td>
+                    <td onclick="db.call('default/impersonate', {'id' : {{=row.id}}, 'next': '{{=request.url}}'})" id="impersonate_btn_{{=row.id}}"> <i class="icon-user" title="impersonate user {{=row.id}} ({{=row.first_name}} {{=row.last_name}})"></i> </td>
                 </tr>
            {{pass}}
         
@@ -42,5 +44,5 @@
         <table class="db_table" id="db_fixed_header"></table>
     </div>
 
-<span class="button2" onclick="db.call('default/user/register');">+ new user</span>
+<span id="create_user_button" class="button2" onclick="db.call('default/user/register');">+ new user</span>
 

@@ -1,11 +1,12 @@
+!!! note
+    This is the help of the Vidjil server.  
+    This help is intended for server administrators.  
+    Users should consult the [web application manual](http://www.vidjil.org/doc/user/)  
+    Other documentation can also be found in [doc/](http://www.vidjil.org/doc/).  
 
-This is the help of the Vidjil server.
-This help is intended for server administrators.
-Users should consult the [web application manual](http://www.vidjil.org/doc/user/)
-Other documentation can also be found in [doc/](http://www.vidjil.org/doc/).
-Finally, developer documentation
 
-# Docker containers or Plain installation
+
+## Docker containers or Plain installation
 
 There are two ways to install and run a Vidjil server:
 
@@ -20,18 +21,18 @@ There are two ways to install and run a Vidjil server:
     We provide below detailed instructions for Ubuntu 14.04 LTS.
     We used this installation on the public server between 2014 and 2018.
 
-# Requirements
+## Requirements
 
-## CPU, RAM
+### CPU, RAM
 
-### Minimal
+#### Minimal
 
 vidjil-algo typically uses
 approx. 1.2GB of RAM to run on a 1GB `.fastq` and will take approx. 5+ minutes.
 Therefore in order to process requests from a single user with a few samples,
 any standard multi-core processor with 2GB RAM will be enough.
 
-### Recommended
+#### Recommended
 
 When choosing hardware for your server it is important to know the scale
 of usage you require.
@@ -44,25 +45,27 @@ For reference, here are various setups of our public
 testing server <https://app.vidjil.org>:
 
 
-#### 2016 -- 2017 (40+ users, including 15 regular users)
-  - Processor: Quad core Intel 2.4MHz
-  - 3 workers
-  - RAM: 16GB
+  - 2016 -- 2017 (40+ users, including 15 regular users)
+
+    - Processor: Quad core Intel 2.4MHz
+    - 3 workers
+    - RAM: 16GB
 
 
-#### since 2018  (100+ users, including 30+ regular users)
-  - Virtual Machine: 8 virtual CPUs
-  - 6 workers
-  - RAM: 28GB
-  
+  - since 2018  (100+ users, including 30+ regular users)
+
+    - Virtual Machine: 8 virtual CPUs
+    - 6 workers
+    - RAM: 28GB
+    
   
 We create less workers for executing Vidjil-algo than there are (virtual) CPU availabe,
 keeping always one CPU core dedicated to the web server, even when the workers run at full capacity.
 Running other RepSeq programs through the Vidjil server may require additional CPU and RAM.
 
-## Storage
+### Storage
 
-### Full upload of sequences
+#### Full upload of sequences
 
 As for many high-throughput sequencing pipeline, **disk storage to store input data (`.fastq`, `.fasta`, `.fastq.gz` or `.fasta.gz`)
 is now the main constraint** in our environment.
@@ -76,17 +79,19 @@ User files (results, annotations) as well as the metadata database are quite sma
 (as of the end of 2016, on the public server, 3 GB for all user files of 40+ users).
 Note that even when the input sequences are deleted, the server is still able to display the results of previous analyses.
 
-### Remote access on a mounted filesystem
+#### Remote access on a mounted filesystem
 
 Moreover, it is possible to access `.fastq` files on a mounted filesystem.
 See `FILE_SOURCE` below.
 
-## Authentication
+### Authentication
 
-The accounts are now local to the Vidjil server.
-We intend to implement some LDAP access at some point of 2020.
+By default, accounts are local to the Vidjil server.
 
-## Network
+An experimental integration to LDAP servers is now available (`LDAP` variable in defs.py).
+Contact us if you need help in setting such an authentication.
+
+### Network
 
 Once installed, the server can run on a private network.
 However, the following network access are recommended:
@@ -100,7 +105,7 @@ However, the following network access are recommended:
         provided a SSH access can be arranged, possibly over VPN.
 
 
-# Docker -- Installation
+## Docker -- Installation
 
 All our images are hosted on DockerHub in the [vidjil/](https://hub.docker.com/r/vidjil) repositories.
 The last images are tagged with `vidjil/server:latest` and `vidjil/client:latest`.
@@ -108,7 +113,7 @@ The last images are tagged with `vidjil/server:latest` and `vidjil/client:latest
 Individual services are started by docker-compose  (<https://docs.docker.com/compose/>).
 
 
-## Before installation
+### Before installation
 
 Install `docker-compose`. See <https://docs.docker.com/compose/install/#install-compose>
 
@@ -120,7 +125,7 @@ Clone the [Vidjil git](https://gitlab.inria.fr/vidjil/vidjil) with `git clone ht
 and go to the directory [vidjil/docker](https://gitlab.inria.fr/vidjil/vidjil/tree/dev/docker).
 This contains both [docker-compose.yml](http://gitlab.vidjil.org/blob/dev/docker/docker-compose.yml) as well as configuration files.
 
-## Docker environment
+### Docker environment
 
 The vidjil Docker environment is managed by `docker-compose`, who launches the following services:
 
@@ -141,7 +146,7 @@ From image `vidjil/server`
 
 
 
-## Network usage and SSL certificates
+### Network usage and SSL certificates
 
 *If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps.*
 
@@ -185,10 +190,13 @@ You can achieve this with the following steps:
     cp /etc/letsencrypt/live/vdd.vidjil.org/fullchain.pem vidjil-client/ssl/web2py.crt
     cp /etc/letsencrypt/live/vdd.vidjil.org/privkey.pem vidjil-client/ssl/web2py.key
     ```
-    The certificates can be renewed with `certbot renew` but beware to copy the certificates after that.
-    Instead of copying the certificates, you may wish to mount `/etc/letsencrypt` in the Docker image as a volume (*eg.* `/etc/letsencrypt:/etc/nginx/ssl`).
+    The certificates can be renewed with `certbot renew` to do so, you may wish to mount `/etc/letsencrypt` in the Docker image as a volume (*eg.* `/etc/letsencrypt:/etc/nginx/ssl`).
     However beware, because you would not be able to start Nginx till the certificates are in place.
-    On certificate renewal (with `certbot`), you then need to restart the Nginx server.
+    On certificate renewal (with `certbot`), you then need to restart the Nginx server. The following `cron` line can be used for certificate renewal (you may want to update the paths):
+    ```
+0 0 1 * * root (test -x /usr/bin/certbot && perl -e 'sleep int(rand(14400))' && certbot --webroot -w /opt/vidjil/certs renew && (cd /path/to/vidjil/docker/vidjil/docker; sudo -u vidjil docker-compose stop nginx && sudo -u vidjil docker-compose rm -f nginx && sudo -u vidjil docker-compose up -d nginx)) >> /var/log/certbot.log 2>&1
+  ```
+
     
 If necessary, in `docker-compose.yml`, update `nginx.volumes`, line `./vidjil-client/ssl:/etc/nginx/ssl`, to set the directory with the certificates.
     The same can be done for the `postfix` container.
@@ -199,7 +207,7 @@ use the provided configuration files in `docker/vidjil-server/conf` and `docker/
 that contain "http" in their name. Simply replace the existing config files with their HTTP counter-part (for safety reasons, don't
 forget to make a backup of any file you replace.)
  
-## First configuration and first launch
+### First configuration and first launch
 
   - Set the SSL certificates (see above)
   - Change the mysql root password and the web2py admin password in `docker-compose.yml`
@@ -247,7 +255,7 @@ section of the `docker-compose.yml` file or by stopping the service using port
 
   
 
-## Further configuration
+### Further configuration
 
 The following configuration files are found in the `vidjil/docker` directory:
 
@@ -302,7 +310,7 @@ Here are some notable configuration changes you should consider:
 
 
 
-# Docker -- Adding external software
+### Adding external software
 
 Some software can be added to Vidjil for pre-processing or even processing if the
 software outputs data compatible with the `.vidjil` or AIRR format.
@@ -315,9 +323,9 @@ to configure then the appropriate `pre process` or `analysis config` (to be docu
 In some cases, using the software may require development such as wrappers.
 Contact us (<mailto:contact@vidjil.org>) to have more information and help.
 
-# Docker -- Troubleshooting
+### Troubleshooting
 
-##  Error "Can't connect to MySQL server on 'mysql'"
+#### Error "Can't connect to MySQL server on 'mysql'"
 
 The mysql container is not fully launched. This can happen especially at the first launch.
 You may relaunch the containers.
@@ -347,7 +355,7 @@ you can look into:
  ```
  If the database does not exist, mysql will display an error after logging in.
 
-## Launching manually the backup
+#### Launching manually the backup
 
 The backup should be handled by the backup container, see [*Making backups* below](#makingbackups). Otherwise you can use the `backup.sh` script by connecting to the `backup` or `uwsgi` container (for a full backup, otherwise add the `-i` option when
 running `backup.sh`):
@@ -357,7 +365,7 @@ cd /usr/share/vidjil/server
 sh backup.sh vidjil /mnt/backup >> /var/log/cron.log 2>&1
 ```
 
-## I can't connect to the web2py administration site
+#### I can't connect to the web2py administration site
 The URL to this site is https://mywebsite/admin/default/.
 The password should be given in the `docker-compose.yml` file.
 Otherwise a random password is generated. You can still modify
@@ -371,9 +379,9 @@ save_password(PASSWORD, 443)
 This password will not persist when the container will be restarted.
 For a persistent password, please use the environment variable.
 
-# Docker -- Updating a Docker installation
+### Updating a Docker installation
 
-## Before the update
+#### Before the update
 
 We post news on image updates at <http://gitlab.vidjil.org/tree/dev/docker/CHANGELOG>.
 Check there whether the new image require any configuration change.
@@ -381,7 +389,7 @@ Check there whether the new image require any configuration change.
 By security, we please you to always make a backup (see "Backups", below) before doing this process.
 It is especially important to backup the database, as the update process may transform it.
 
-## Pulling the new images
+#### Pulling the new images
 
 ``` bash
 docker pull vidjil/server:latest
@@ -406,7 +414,7 @@ Import:
 docker load -i <input_file>
 ```
 
-## Launch the new containers
+#### Launch the new containers
 
 In some cases, you may need to update your `docker-compose.yml` file or some
 of the configuration files. We will describe the changes in the `CHANGELOG` file.
@@ -428,7 +436,7 @@ If something is not working properly, you have still the option to rollback
 to the previous images (for example by tagging as `latest` a previous image),
 and possibly by reusing also your last databse backup if something went wrong.
 
-### Launching a single container
+#### Launching a single container
 
 When an update occurs on a single container, one may not want to relaunch all
 the containers, to save time. With `docker-compose` it is possible to do so.
@@ -444,7 +452,7 @@ Then launch it again
 docker-compose up -d nginx
 ```
 
-## Knowing what docker image version is running
+### Knowing what docker image version is running
 
 As our latest image is always tagged `latest` you may have troubles to know
 what version is currently running on your server. To determine that, you can
@@ -452,12 +460,14 @@ use the *digest* of the image. You can view it, for example with `docker image
 --digests vidjil/server`. Then you can compare it with the digests shown [on
 the Dockerhub page](https://hub.docker.com/r/vidjil/server/tags/).
 
-# Plain server installation
+## Plain server installation
 
-This installation is not supported anymore.
-We rather advise to use the Docker containers (see above).
+!!! warning
 
-## Requirements (for Ubuntu 16.04)
+    This installation is not supported anymore.
+    We rather advise to use the Docker containers (see above).
+
+### Requirements (for Ubuntu 16.04)
 
 ``` bash
 apt-get install git
@@ -472,7 +482,7 @@ pip install enum34
 pip install ijson cffi
 ```
 
-## Server installation and initialization
+### Server installation and initialization
 
 Enter in the `server/` directory.
 
@@ -481,7 +491,7 @@ then launch `make install_web2py_standalone`. In the other case, launch
 `make install_web2py`.
 
 
-## Detailed manual server installation and browser linking
+### Detailed manual server installation and browser linking
 
 Requirements:
 ssh, zip unzip, tar, openssh-server, build-essential, python, python-dev,
@@ -657,7 +667,7 @@ server {
         ssl_session_cache shared:SSL:10m;
         ssl_session_timeout 10m;
         ssl_ciphers ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA;
-        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_protocols TLSv1.2 TLSv1.3;
         keepalive_timeout    70;
         location / {
             #uwsgi_pass      127.0.0.1:9001;
@@ -756,7 +766,7 @@ This creates a default admin user: plop@plop.com and password: 1234 (make sure t
 remove this user in your production environment) and creates the configurations you can have
 for files and results.
 
-# Testing the server
+### Testing the server
 
 If you develop on the server, or just want to check if everything is ok, you
 should launch the server tests.
@@ -774,7 +784,7 @@ Then you can launch the tests with `make unit`.
 Check whether the relevant disks are properly mounted.
 Disks failures or other events could have triggered a read-only partition.
 
-## Jobs stay in `QUEUED`, workers seem to be stuck
+##### Jobs stay in `QUEUED`, workers seem to be stuck
 
 For some reasons, that are not clear yet, it may happen that workers are not
 assigned any additional jobs even if they don't have any ongoing jobs.
@@ -783,8 +793,14 @@ In such a (rare) case, it may be useful to restart the workers by clicking on
 the *reset workers* link in the Vidjil administration interface. Restarting
 workers won't be performed if jobs are currently running or assigned.
 
+A cron job is executed by UWSGI that periodically checks whether jobs remain
+queued for too long. By default the cron task is run every 20 min and restart
+the workers as soon as jobs are queued for at least 1 hour. Those values can
+be modified in the `docker/vidjil-server/conf/uwsgi.ini` (changing it requires
+to restart the UWSGI container).
 
-## Debugging Web2py workers
+
+##### Debugging Web2py workers
 
 One can launch the workers by hand (see in the `/etc/init` script and add a
 `-D 0` option. It prints debugging information on what the workers are doing.
@@ -793,7 +809,7 @@ The most useful information are from the TICKER worker: the one that
 assigns jobs to workers. So you'd better first kill all the workers and
 then launch one by hand to be sure that it will be the ticker.
 
-## Restarting web2py
+##### Restarting web2py
 
 Just touch the file `/etc/uwsgi/web2py.ini`.
 
@@ -801,7 +817,7 @@ Another of restarting it is by touching the file
 `server/web2py/applications/vidjil/modules/defs.py`.
 This will tell `uwsgi` to restart web2py (including the workers).
 
-## Restarting uwsgi
+##### Restarting uwsgi
 
 When one modifies an uwsgi config file (usually in `/etc/uwsgi` directory, it
 may be necessary to restart uwsgi so that the modifications are taken into
@@ -811,9 +827,9 @@ account. This can be done using
 initctl restart uwsgi-emperor
 ```
 
-## Logging database queries
+##### Logging database queries
 
-### MySQL
+MySQL
 
 One can see some [insightful SO post](https://stackoverflow.com/questions/650238/how-to-show-the-last-queries-executed-on-mysql).
 To summarize, this can either be done at runtime:
@@ -833,9 +849,9 @@ general_log             = 1
 
 In that case the server must be restarted afterwards.
 
-# Running the server in a production environment
+## Running the server in a production environment
 
-## Introduction
+### Introduction
 
 When manipulating a production environment it is important to take certain
 precautionnary mesures, in order to ensure production can either be rolled
@@ -844,7 +860,7 @@ retrieved.
 
 Web2py and Vidjil are no exception to this rule.
 
-## <a name="makingbackups"></a> Making backups
+### <a name="makingbackups"></a> Making backups
 
 The top priority is to backup *files created during the analysis*
 (either by a software or a human).
@@ -862,7 +878,7 @@ The `docker/backup/conf/backup.cnf` gives the authentication information to the 
 
 Then the backup strategy can be configured in the `docker/backup/conf/backup-cron` file. The cron file states how often the backup script will be called. There are three options: backing up all results/analyses since yesterday, since the start of the month, since forever. On top of that the database is exported under two formats (CSV and SQL).
 
-## Autodelete and Permissions
+### Autodelete and Permissions
 
 Web2py has a handy feature called `AutoDelete` which allows the administrator
 to state that file reference deletions should be cascaded if no other
@@ -916,7 +932,7 @@ cd server/web2py
 python web2py -S vidjil -M db.auth_user[<user-id>].update_record(password=CRYPT(key=auth.settings.hmac_key)('<password>')[0],reset_password_key='')
 ```
 
-# Migrating Data
+### Migrating Data
 
 
 Usually, when extracting data for a given user or group, the whole database should not be
@@ -928,24 +944,47 @@ The script takes care both of database, but also of results and analysis files (
 
 See `server/web2py/applications/vidjil/scripts/migrator.py --help`
 
-## Exporting an archive
+#### Exporting an archive
 
-(to be detailed)
+##### Step 1 : prepare the archive directory
 
-## Importing an archive
+First you should create an export directory to receive the exported data, if you are using a docker version of vidjil this directory must be accessible from your vidjil-server docker container.
+a possible location could be `[DOCKER DIRECTORY]/vidjil-server/conf/export/`
 
-### Step 1 : extract the archive on your server
+##### step 2 : give access permission to a group for the results you want to export
+
+Exports are group based, you can export all results owned by a group or create a new group and provide it with permissions on the results you want to export using the vidjil server interface as an admin user.
+
+Keep the `[GROUP_ID]` you can find on the group page (displayed between parenthesis next to the group name) as you will require it for the next step
+
+##### step 3 : run export command
+
+A script `migrator.sh` can be found in vidjil, if you are using the docker version, it can be found at this location in the vidjil-server container: `/usr/share/vidjil/server/web2py/applications/vidjil/scripts`.
+
+```bash
+sh migrator.sh -p [EXPORT_DIRECTORY] -s [WEB2PY_RESULTS_DIRECTORY] export group [GROUP_ID]
+```
+
+- `[EXPORT_DIRECTORY]`:  path to the export directory inside the vidjil-server container you should have prepared in step 1.
+- `[WEB2PY_RESULTS_DIRECTORY]`: the results directory path inside the container, it should be defined in your `docker-compose.yml`, by default it is `/mnt/result/results/`
+- `[GROUP_ID]`: id of the group owning the results to be exported (see step 2)
+
+The config analyses and pre-processes are currently not exported as they may already exist on the recipient server and are depending on tools that can be missing or installed differently. Config and pre-processes must therefore be recreated or mapped manually to existing one on the recipient server (see next section step 3-4).
+
+#### Importing an archive
+
+##### Step 1 : extract the archive on your server
 
 The export directory must be on your server and accessible from your vidjil-server docker container.
 You can define a new shared volume; or simply put the export directory on an already accessible location such as  `[DOCKER DIRECTORY]/vidjil-server/conf/export/`
 
-### Step 2 : prepare the group that will own the data
+##### Step 2 : prepare the group that will own the data
 
 The permissions on a vidjil server are *group* based. Users and groups may be different from one server to another one. Before importing data on a server, one must have a group ready to receive the permissions to manage the imported files.
 
 From the admin web interface has, you can create a new group  ("groups" -> "+new group" -> "add group"). The group ID is displayed between parenthesis next to its name on the group page, you will need it later. If you create such a group on a blank vidjil server, the ID is *4*.
 
-### Step 3 : prepare your server analysis configs
+##### Step 3 : prepare your server analysis configs
 
 *This step may require bioinformatics support depending on your data, the config previously used, and the ones you intend to use on your new installation. We can offer support via the [VidjilNet consortium](http://www.vidjil.net) for help on setting that.*
 
@@ -973,10 +1012,10 @@ This `config.json` file initially contains a list of the analysis configs from t
 In the `config.json` file, you have to replace all` link_local` values with the corresponding config ID
 of a similar config on your server (if you don't have a similar one you should create one).
 
-If you much of your imported data was on `old` configs, that you do not intend to run anymore,
+If much of your imported data was on `old` configs, that you do not intend to run anymore,
 a solution is to create a generic `legacy` config for these old data.
 
-Below is an example of such a `config.json`, linking actual configuration on the public >app.vidjil.org> server to configs to a newly installed server.
+Below is an example of such a `config.json`, linking actual configuration on the public `app.vidjil.org` server to configs to a newly installed server.
 This should be completed by a mapping of other configs that were used in the migrated data.
 
 ```
@@ -1009,12 +1048,12 @@ This should be completed by a mapping of other configs that were used in the mig
 
 
 
-### Step 4 : prepare your server pre-process configs
+##### Step 4 : prepare your server pre-process configs
 
 Proceed as in step 3 for pre-process configs. The file to edit is named `pprocess.json`.
 
 
-### Step 5 : import
+##### Step 5 : import
 
 The import takes place inside the vidjil-server container
 ```sh
@@ -1023,20 +1062,20 @@ cd usr/share/vidjil/server/web2py/applications/vidjil/scripts/
 sh migrator.sh -p [RESULTS DIRECTORY] -s [EXPORT DIRECTORY] import --config [CONFIG.JSON FILE] --pre-process [PPROCESS.JSON FILE] [GROUP ID]
 ```
 
-- [RESULTS DIRECTORY]          the results directory path inside the container, it should be defined in your docker-compose.yml, by default it is /mnt/result/results/
-- [EXPORT DIRECTORY]        the export directory you installed in step 1, if you set it up in docker/vidjil-server/conf/export/ is location inside the container should be /etc/vidjil/export/
-- [CONFIG.JSON FILE]         this file is located in the export folder and you should have edited it during step 3
-- [PPROCESS.JSON FILE]         this file is located in the export folder and you should have edited it during step 4
-- [GROUP ID]                         ID of the group you should have created/selected during step 2
+- `[RESULTS DIRECTORY]`:          the results directory path inside the container, it should be defined in your `docker-compose.yml`, by default it is `/mnt/result/results/`
+- `[EXPORT DIRECTORY]`:        the export directory you installed in step 1, if you set it up in `docker/vidjil-server/conf/export/` is location inside the container should be `/etc/vidjil/export/`
+- `[CONFIG.JSON FILE]`         this file is located in the export folder and you should have edited it during step 3
+- `[PPROCESS.JSON FILE]`         this file is located in the export folder and you should have edited it during step 4
+- `[GROUP ID]`                         ID of the group you should have created/selected during step 2
 
 Usually, the command is thus:
-```
+```sh
 sh migrator.sh -p /mnt/result/results/ -s /etc/vidjil/export/XXXX/ import --config/etc/vidjil/exportXXXX/config.json --pre-process /etc/vidjil/export/XXXX/pprocess.json  4
 ```
 
 
 
-## Exporting/importing input sequence files
+#### Exporting/importing input sequence files
 
 Note that web2py and the Vidjil server are robust to missing *input* files.
 These files are not backuped and may be removed from the server at any time.
@@ -1048,7 +1087,7 @@ they are in the correct directories.
 
 
 
-## Exporting/importing a full database
+#### Exporting/importing a full database
 
 When a full database migration is needed, it can be done with the following command:
 
@@ -1064,9 +1103,11 @@ In order to import the data into an installation you first need to ensure
 the tables have been created by Web2py this can be achieved by simply
 accessing a non-static page.
 
-/\!\\ If the database has been initialised from the interface you will
-likely encounter primary key collisions or duplicated data, so it is best
-to skip the initialisation altogether.
+!!! warning
+
+    If the database has been initialised from the interface you will
+    likely encounter primary key collisions or duplicated data, so it is best
+    to skip the initialisation altogether.
 
 Once the tables have been created, the data can be imported as follows:
 
@@ -1083,7 +1124,7 @@ It is also possible to create a user directly from the database although
 this is not the recommended course of action.
 
 
-# Using CloneDB [Under development]
+## Using CloneDB [Under development]
 The [CloneDB](https://gitlab.inria.fr/vidjil/clonedb) has to be installed
 independently of the Vidjil platform.
 

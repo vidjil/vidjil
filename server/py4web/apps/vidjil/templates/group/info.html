@@ -1,0 +1,100 @@
+[[extend 'db_layout.html']]
+
+[[from apps.vidjil.modules import vidjil_utils]]
+
+[[('message' in globals())]]
+[[if 'message' in globals():]]
+
+    <div>
+        <h3>group : [[=group.role]]  ([[=group.id]])</h3>
+    </div>
+
+    <div class="db_block">
+        <div class="db_block_left">
+            create patient
+            <input type="checkbox"  id="group_right_create" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'create', [[=group.id]]);" [[if auth.has_permission('create', 'sample_set', group_id=group.id) :]][[="checked"]][[pass]]>
+
+            view patient
+            <input type="checkbox"  id="group_right_read" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'read', [[=group.id]]);" [[if auth.has_permission('read', 'sample_set', group_id=group.id) :]][[="checked"]][[pass]]>
+
+            edit patient
+            <input  type="checkbox" id="group_right_admin" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'admin', [[=group.id]]);" [[if auth.has_permission('admin', 'sample_set', group_id=group.id) :]][[="checked"]][[pass]]>
+
+            upload sequence
+            <input type="checkbox"  id="group_right_upload" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'upload', [[=group.id]]);" [[if auth.has_permission('upload', 'sample_set', group_id=group.id) :]][[="checked"]][[pass]]>
+
+            run vidjil
+            <input type="checkbox"  id="group_right_run" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'run', [[=group.id]]);" [[if auth.has_permission('run', 'sample_set', group_id=group.id) :]][[="checked"]][[pass]]>
+
+            save analysis
+            <input type="checkbox"  id="group_right_save" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'save', [[=group.id]]);" [[if auth.has_permission('save', 'sample_set', group_id=group.id) :]][[="checked"]][[pass]]>
+
+            real info
+            <input type="checkbox"  id="group_right_anon" name="sample_set" onclick="db.group_rights(this.checked, this.name, 'anon', [[=group.id]]);" [[if auth.has_permission('anon', 'sample_set', group_id=group.id) :]][[="checked"]][[pass]]>
+
+            </br>
+            <!--create config <input type="checkbox" name="config" onclick="db.test(this.checked, this.name, [[request.query["id"] ]]);"></br>-->
+        </div>
+    </div>
+
+    <div id="db_table_container">
+        <table class="db_table" id="table">
+            <thead>
+                <tr><td class="column_100"> user name </td>
+                    <td> email </td>
+                    <td> last login </td>
+                    <td class="column_150"> - </td>
+                    <td class="column_100"> sets created </td>
+                    <td class="column_100"> files </td>
+                    <td class="column_20"> </td>
+                </tr>
+            </thead>
+            <tbody>
+                [[for id in result :]]
+                    [[ row = result[id] ]]
+                     <tr>
+                        <td> [[=row.auth_user.first_name + " " + row.auth_user.last_name]]</td>
+                        <td> [[=row.auth_user.email]] </td>
+                        <td> [[=row['last_login'] ]] </td>
+                        <td> [[if auth.can_modify_group(int(request.query["id"]), row.auth_user.id):]]
+                         admin
+                         [[pass]]</td>
+                        <td> [[=row['count'] ]] </td>
+                        <td>[[=row.file_count]] ([[=vidjil_utils.format_size(row.size)]])</td>
+                        <td onclick="db.call('group/kick', {'user_id' :'[[=row.auth_user.id]]', 'group_id' : '[[=request.query["id"] ]]'} )" > X </td>
+                    </tr>
+                [[pass]]
+            </tbody>
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>
+    </div>
+
+    [[if auth.can_modify_group(int(request.query["id"])) :]]
+
+        <div>
+            invite
+            <span>
+                <select id="select_user" name="config">
+                    [[for row in db(db.auth_user).select():]]
+                            <option value="[[=row.id]]">[[=row.first_name + " " + row.last_name]] </option>
+                    [[pass]]
+                </select>
+            </span>
+            <span class="button" onclick="db.call('group/invite', {
+                                          'group_id' : [[=request.query["id"] ]] ,
+                                          'user_id' : document.getElementById('select_user').value
+                                                                             } )">
+                add
+            </span>
+        </div>
+
+    [[else:]]
+        <div>you need admin access on this group if you want to invite people </div>
+    [[pass]]
+    
+
+[[elif 'content' in globals():]]
+[[=content]]
+[[else:]]
+[[=BEAUTIFY(response._vars)]]
+[[pass]]

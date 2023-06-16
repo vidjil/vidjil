@@ -1,5 +1,5 @@
 
-ARCHIVE = 'http://www.vidjil.org/releases/'
+ARCHIVE = 'https://www.vidjil.org/releases/'
 DEST = 'bench/'
 SRC = DEST + 'src/'
 BIN = DEST + 'bin/'
@@ -35,18 +35,18 @@ DESIGNATIONS = '-c designations '
 from collections import OrderedDict
 
 BENCHS = OrderedDict([
-  ('init', '-x 1 ' + MULTI + L4 + CONSENSUS_NO),
-  ('germ', LIMIT1e5 + MULTI + L4 + '-c germlines '),
+  ('init', '-x 1 ' + MULTI + CONSENSUS_NO + L4),
+  ('germ', LIMIT1e5 + MULTI + '-c germlines ' + L4),
 
   ('filter', LIMIT2e5 + FILTER + MULTI + L4),
 
-  ('multi-0', LIMIT1e5 + MULTI + L4 + CONSENSUS_NO),
-  ('multi-1', LIMIT1e5 + MULTI + L4 + CONSENSUS_ALL),
-  ('multi-a', LIMIT1e3 + MULTI + L4 + DESIGNATIONS + '-z 1000'),
+  ('igh-0', LIMIT1e5 + IGH + CONSENSUS_NO + L4),
+  ('multi-0', LIMIT1e5 + MULTI + CONSENSUS_NO + L4),
+  ('multi-y', LIMIT1e5 + MULTI + CONSENSUS_ALL + L4),
+  ('multi-a', LIMIT1e3 + MULTI + DESIGNATIONS + '-z 1000 ' + L4),
 
-  ('igh-0', LIMIT1e5 + IGH + S22 + CONSENSUS_NO),
-  ('igh-1', LIMIT1e5 + IGH + S22 + CONSENSUS_ALL),
-  ('igh-a', LIMIT1e3 + IGH + S22 + DESIGNATIONS),
+  ('S22-y', LIMIT1e3 + IGH + CONSENSUS_ALL + S22),
+  ('S22-a', LIMIT1e3 + IGH + DESIGNATIONS + S22),
 ])
 
 COMPATIBILITY = [
@@ -58,7 +58,8 @@ INFOS = {
   '2019.03': 'Aho by default',
   '2018.07': '--analysis-filter (always 3)',
   '2018.10': '--analysis-filter 1',
-  '2020.04': '#4287',
+  '2020.04': 'Report info only when not null #4287',
+  '2021.04': 'Update germlines (~ +50% IGH) !885',
 }
 
 # Simple colored output
@@ -204,7 +205,7 @@ def install(release, tgz):
 
     go('wget %s/%s -O %s/src.tgz' % (ARCHIVE, tgz, dir), log)
     go('cd %s ; tar xfz src.tgz' % dir, log)
-    go('cd %s/*%s* ; make vidjil-algo germline || make CXX=g++-6 vidjil-algo germline' % (dir, release), log)
+    go('cd %s/*%s* ; make germline ; cd algo ; make || make CXX=g++-11' % (dir, release), log)
     res = go('cp %s/*%s*/vidjil* %s/%s ' % (dir, release, BIN, release), log)
     go('cp -pr %s/*%s*/germline %s/%s ' % (dir, release, GERM, release), log)
 

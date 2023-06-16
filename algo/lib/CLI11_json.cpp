@@ -20,7 +20,7 @@ class ConfigJSON : public CLI::Config {
                 std::string name = opt->get_lnames()[0];
 
                 // Non-flags
-                if(opt->get_type_size() != 0) {
+                if(!opt->get_flag_like()) {
 
                     // If the option was found on command line
                     if(opt->count() == 1)
@@ -29,8 +29,8 @@ class ConfigJSON : public CLI::Config {
                         j[name] = opt->results();
 
                     // If the option has a default and is requested by optional argument
-                    else if(default_also && !opt->get_defaultval().empty())
-                        j[name] = opt->get_defaultval();
+                    else if(default_also && !opt->get_default_str().empty())
+                        j[name] = opt->get_default_str();
 
                     // Flag, one passed
                 } else if(opt->count() == 1) {

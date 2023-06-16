@@ -142,42 +142,6 @@ QUnit.test("time control", function(assert) {
     
 });
 
-QUnit.test("top clones", function(assert) {
-    
-    function count_active() {
-        var nb_active = 0
-        for (i = 0; i < m.clones.length; i++)
-            if (m.clones[i].isActive())
-                nb_active += 1
-        return nb_active
-    }
-    
-    var m = new Model();
-    m.parseJsonData(json_data,100)
-    m.initClones()
-
-    assert.equal(m.countRealClones(), 5, "Real clones, expected 5")
-    m.displayTop(-10)
-    assert.equal(m.top, 0, "Top cannot be negative")
-    m.displayTop(m.countRealClones() * 2 + 10)
-    
-    assert.equal(m.top, m.countRealClones() * 2 + 10, "Model top can be greater than the number of real clones")
-    assert.equal(m.current_top, m.countRealClones(), "Current Top cannot be greater than the number of real clones")
-
-    c = m
-    assert.equal(m.clones.length, 7, "m.clones.length")
-    assert.equal(count_active(), 5, "Without top modification, there should be one active clone")
-
-    // 0-4; clone reel; 5-6, clone virtuel    
-    m.displayTop(1)
-
-    assert.equal(count_active(), 1, "With top 1, there should be one active clone")
-    m.changeTime(2)
-    assert.equal(count_active(), 1, "With top 1, there should be one active clone")
-    m.displayTop(2)
-    assert.equal(count_active(), 2, "With top 2, there should be two active clones")
-    
-});
 
 QUnit.test("select/focus", function(assert) {
     var m = new Model();
@@ -224,36 +188,6 @@ QUnit.test("correlate", function(assert) {
     assert.deepEqual(m.getSelected(), [0, 1], "Clone 1 strongly (negatively) correlated to clone 0");
 })
 
-
-QUnit.test("focus/hide/reset_filter", function(assert) {
-
-    var m = new Model();
-    m.parseJsonData(json_data,100)
-    
-    m.multiSelect([0,2,3])
-    assert.equal(m.someClonesFiltered, false, "no clones are filtered")
-
-    m.focusSelected()
-    assert.equal(m.someClonesFiltered, true, "some clones are filtered")
-    assert.equal(m.clone(0).isFiltered, false, "clone 0 is not filtered")
-    assert.equal(m.clone(1).isFiltered, true, "clone 1 is filtered")
-
-    m.unselectAll()
-    m.select(2)
-    assert.equal(m.clone(2).isFiltered, false, "clone 2 is not filtered")
-
-    m.hideSelected()
-    assert.equal(m.clone(2).isFiltered, true, "clone 2 is filtered")
-
-    assert.equal(m.clone(0).isFiltered, false, "clone 0 is not filtered")
-    assert.equal(m.clone(1).isFiltered, true, "clone 1 is filtered")
-
-    m.reset_filter(false)
-    assert.equal(m.clone(2).isFiltered, false, "clone 2 is not filtered")
-    m.update()
-    assert.equal(m.someClonesFiltered, false, "no clones are filtered")
-
-});
 
 QUnit.test("cluster", function(assert) {
     var m = new Model();
@@ -377,27 +311,31 @@ QUnit.test("model: primer detection", function(assert) {
     m.parseJsonData(json_data, 100)
 
     // primer set loading
-    assert.equal(typeof m.primersSetData, "undefined", "primers sets are initialy unset")
-    m.populatePrimerSet();
     assert.equal(typeof m.primersSetData, 'object', "primers are loaded inside model")
 
     // model primer setting
-    assert.equal(m.switchPrimersSet("no set"), 1, "primer set doesn't exist")
-    assert.equal(m.switchPrimersSet("ecngs"), 0, "primer set exist & are set")
+    // assert.equal(m.switchPrimersSet("no set"), 1, "primer set doesn't exist")
+    assert.equal(m.switchPrimersSet("ecngs"), 0, "primer set 'ecngs' exist & are set")
 
     // Test switch to a Qunit dataset
     m.primersSetData = primersSetData // no primer for IGH, One primer for TRG
-    assert.equal(m.switchPrimersSet("primer_test"), 0, "primer set exist & are set")
+    assert.equal(m.switchPrimersSet("primer_test"), 0, "primer set 'primer_test' exist & are set")
+    var ready = assert.async(2)
 
-    // primer found inside clones
-    assert.equal(m.clones[2]["seg"]["primer5"], undefined, "Control neg primer 5 not in sequence")
-    assert.equal(m.clones[2]["seg"]["primer3"], undefined, "Control neg primer 3 not in sequence")
-    assert.deepEqual(m.clones[3]["seg"]["primer5"], { seq: "GGAAGGCCCCACAGCG", start: 0, stop: 15 },    "Found primer 5")
-    assert.deepEqual(m.clones[3]["seg"]["primer3"], { seq: "AACTTCGCCTGGTAA",  start: 226, stop: 240 }, "Found primer 3")
+    setTimeout( function(){
+        // primer found inside clones
+        assert.equal(m.clones[2]["seg"]["primer5"], undefined, "Control neg primer 5 not in sequence")
+        assert.equal(m.clones[2]["seg"]["primer3"], undefined, "Control neg primer 3 not in sequence")
+        assert.deepEqual(m.clones[3]["seg"]["primer5"], { seq: "GGAAGGCCCCACAGCG", start: 0, stop: 15 },    "Found primer 5")
+        assert.deepEqual(m.clones[3]["seg"]["primer3"], { seq: "AACTTCGCCTGGTAA",  start: 226, stop: 240 }, "Found primer 3")
+        m.cleanPreviousFeature("primer3")
+        ready()
+    }, 200)
+    setTimeout( function(){
+        assert.equal(typeof m.clones[3]["seg"]["primer3"], "undefined", "Feature has been deleted before new attribution")
+        ready()
+    }, 300)
 
-
-    m.cleanPreviousFeature("primer3")
-    assert.equal(typeof m.clones[3]["seg"]["primer3"], "undefined", "Feature has been deleted before new attribution")
 });
 
 
@@ -544,12 +482,12 @@ QUnit.test("tag / color", function(assert) {
     assert.equal(m.getColorSelectedClone(), "", "Color of selected clones (without tags) is correct")
 
     // Change tag of clones
-    assert.equal(c1.getTag(), 8, "getTag() >> default tag : 8");  
-    c1.changeTag(5)
-    c2.changeTag(5)
+    assert.equal(c1.getTag(), "none", "getTag() >> default tag : none");  
+    c1.changeTag("custom_1")
+    c2.changeTag("custom_1")
     c1.updateColor()
     c2.updateColor()
-    assert.equal(c1.getTag(), 5, "changeTag() >> tag : 5");
+    assert.equal(c1.getTag(), "custom_1", "changeTag() >> tag : custom_1");
 
     // tag 8 color: ''
     // tag 5 color: #2aa198
@@ -564,17 +502,26 @@ QUnit.test("tag / color", function(assert) {
 
 QUnit.test("distribution_load", function(assert) {
 
+    countRealClones = function(m) {
+        var sum = 0;
+        for (var i = 0; i < m.clones.length; i++)
+            if (m.clones[i].hasSizeConstant())
+                sum++
+            
+        return sum
+    }
+
     var m1 = new Model();
     m1.parseJsonData(json_data, 100)
     m1.initClones()
 
     assert.equal(m1.clones.length, 7, 'Correct number of clones WITHOUT distributions clones')
-    assert.equal(m1.countRealClones(), 5, 'Correct number of real clones WITHOUT distributions clones')
+    assert.equal(countRealClones(m1), 5, 'Correct number of real clones WITHOUT distributions clones')
 
     m1.distributions = data_distributions
     m1.loadAllDistribClones()
     assert.equal(m1.clones.length, 12, 'Correct number of clones WITH distributions clones')
-    assert.equal(m1.countRealClones(), 5, 'Correct number of real clones WITH distributions clones')
+    assert.equal(countRealClones(m1), 5, 'Correct number of real clones WITH distributions clones')
    
     // Add distrib values directly into json data
     var json_data_bis = JSON.parse(JSON.stringify(json_data)) // hard copy
@@ -584,7 +531,7 @@ QUnit.test("distribution_load", function(assert) {
     m2.parseJsonData(json_data_bis, 100)
 
     assert.equal(m2.clones.length, 12, 'Correct number of clones WITH distributions clones (directly from json_data)')
-    assert.equal(m2.countRealClones(), 5, 'Correct number of real clones WITH distributions clones (directly from json_data)')
+    assert.equal(countRealClones(m2), 5, 'Correct number of real clones WITH distributions clones (directly from json_data)')
    
 });
 
@@ -667,6 +614,15 @@ QUnit.test("getSampleWithSelectedClones", function(assert) {
     m.select(2)
     assert.deepEqual( m.getSampleWithSelectedClones(), [0,1,2], "clone 1 and 2, should return samples 1 and 2 and 3")
 
+    // Test order 
+    // clone 1 present only in sample 1 and 3
+    m.clones[1].reads[1] = 0
+    m.clones[1].reads[2] = 10
+
+    // clone 2 present only in sample 1 and 2
+    m.clones[2].reads[0] = 10
+    m.clones[2].reads[2] = 0
+    assert.deepEqual( m.getSampleWithSelectedClones(), [0,1,2], "clone 1 and 2, should return samples 1 and 2 and 3 in the correct order")
   
 });
 
@@ -736,4 +692,276 @@ QUnit.test("export clone informations", function(assert) {
     // ** Don't call, open a download file popup ** //
     // var airr_without_list = m.exportCloneAs("airr")
     // assert.deepEqual(airr, airr_without_list, "Get export informations by model exportCloneAs function")
+
+});
+
+
+QUnit.test("getLocusPresentInTop", function(assert) {
+    // Create and populate model
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+
+    var locus = m.getLocusPresentInTop(0)
+    assert.deepEqual( locus, ["IGH", "TRG"] )
+
+    locus = m.getLocusPresentInTop(1)
+    assert.deepEqual( locus, ["IGH", "TRG"] )
+});
+
+
+QUnit.test("getWarningsClonotypeInfo", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+
+    m.clones[0].warn  = [{"code": "W69", "msg": "Several genes with equal probability", "level": "warn"}]
+    m.clones[5].warn  = [{"code": "W82", "msg": "Merged clone has different productivities in some samples", "level": "warn"}]
+    m.clones[5].reads = [10,10, 0, 10]
+    // m.clones.forEach( (c) => {console.log(`${c.index}; ${c.reads}: ==> ${c.warn}`)})
+
+
+    var warns_undef = m.getWarningsClonotypeInfo()
+    assert.notEqual( warns_undef["W69"], undefined, "warns_undef, error W69 exist")
+    assert.notEqual( warns_undef["W82"], undefined, "warns_undef, error W82 exist")
+    assert.equal( warns_undef["W69"].reads, 50, "warns_undef")
+    assert.equal( warns_undef["W82"].reads, 30, "warns_undef")
+
+    var warns_all   = m.getWarningsClonotypeInfo(-1)
+    assert.notEqual( warns_all["W69"], undefined, "warns_all, error W69 exist")
+    assert.notEqual( warns_all["W82"], undefined, "warns_all, error W82 exist")
+    assert.equal( warns_all["W69"].reads, 50, "warns_all")
+    assert.equal( warns_all["W82"].reads, 30, "warns_all")
+
+    var warns_time0 = m.getWarningsClonotypeInfo(0)
+    assert.notEqual( warns_time0["W69"], undefined, "warns_time0, error W69 exist")
+    assert.notEqual( warns_time0["W82"], undefined, "warns_time0, error W82 exist")
+    assert.equal( warns_time0["W69"].reads, 10, "warns_time0")
+    assert.equal( warns_time0["W82"].reads, 10, "warns_time0")
+
+    var warns_time3 = m.getWarningsClonotypeInfo(2)
+    assert.notEqual( warns_time3["W69"], undefined, "warns_time3, error W69 exist")
+    assert.equal( warns_time3["W82"],    undefined, "warns_time3, error W82 exist")
+    assert.equal( warns_time3["W69"].reads, 15, "warns_time3")
+
+});
+
+
+QUnit.test("getWarningLevelFromCode", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    localStorage.clear()
+
+    var warn_1 = "W69" // level 0
+    var warn_2 = "W82" // level 2
+    var warn_3 = "Wxx" // level 1
+    var warn_undef = undefined
+    var warn_empty = {}
+    
+    assert.equal( m.getWarningLevelFromCode(warn_1), 0, "getWarningLevelFromCode; before local change, 'warn")
+    assert.equal( m.getWarningLevelFromCode(warn_2), 2, "getWarningLevelFromCode; before local change, 'alert'")
+    assert.equal( m.getWarningLevelFromCode(warn_3), 1, "getWarningLevelFromCode; before local change, 'error'")
+    assert.equal( m.getWarningLevelFromCode(warn_undef), 2, "getWarningLevelFromCode; before local change, 'undef'")
+
+    localStorage.setItem(`warn_W69`, 2)
+    localStorage.setItem(`warn_W82`, 3)
+    localStorage.setItem(`warn_Wxx`, 2)
+
+    assert.equal( m.getWarningLevelFromCode(warn_1), 2, "getWarningLevelFromCode; after local change, 'warn")
+    assert.equal( m.getWarningLevelFromCode(warn_2), 3, "getWarningLevelFromCode; after local change, 'alert'")
+    assert.equal( m.getWarningLevelFromCode(warn_3), 2, "getWarningLevelFromCode; after local change, 'error'")
+    assert.equal( m.getWarningLevelFromCode(warn_undef), 2, "getWarningLevelFromCode; after local change, 'undef'")
+
+});
+
+QUnit.test("getWarningLevelFromWarn", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    localStorage.clear()
+
+    var warn_1 = {"code": "W69", "level": "warn"}  // level 0
+    var warn_2 = {"code": "W82", "level": "alert"} // level 2
+    var warn_3 = {"code": "Wxx", "level": "error"} // level 1
+    var warn_undef = {"code": "Wyy", "level": undefined} // old style warnings; level 2
+    var warn_empty = {}
+
+    assert.equal( m.getWarningLevelFromWarn(warn_1), 0, "getWarningLevelFromWarn; before local change, 'warn")
+    assert.equal( m.getWarningLevelFromWarn(warn_2), 2, "getWarningLevelFromWarn; before local change, 'alert'")
+    assert.equal( m.getWarningLevelFromWarn(warn_3), 1, "getWarningLevelFromWarn; before local change, 'error'")
+    assert.equal( m.getWarningLevelFromWarn(warn_undef), 2, "getWarningLevelFromWarn; before local change, 'undef'")
+    assert.equal( m.getWarningLevelFromWarn(warn_empty), 0, "getWarningLevelFromWarn; before local change, empty warn")
+
+    localStorage.setItem(`warn_W69`, 2)
+    localStorage.setItem(`warn_W82`, 3)
+    localStorage.setItem(`warn_Wxx`, 2)
+
+    assert.equal( m.getWarningLevelFromWarn(warn_1), 2, "getWarningLevelFromWarn; after local change, 'warn")
+    assert.equal( m.getWarningLevelFromWarn(warn_2), 3, "getWarningLevelFromWarn; after local change, 'alert'")
+    assert.equal( m.getWarningLevelFromWarn(warn_3), 2, "getWarningLevelFromWarn; after local change, 'error'")
+    assert.equal( m.getWarningLevelFromWarn(warn_undef), 2, "getWarningLevelFromWarn; after local change, 'undef'")
+
+});
+
+QUnit.test("getWarningLevelFromList", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    // m.resetWarnings()
+    localStorage.clear()
+    // Will use warnings data to set level; so level present here will not be used
+    var warn_1 = {"code": "W69", "level": "warn"}
+    var warn_2 = {"code": "W82", "level": "alert"}
+    var warn_3 = {"code": "Wxx", "level": "error"}
+    var warn_undef = {"code": "Wyy", "level": undefined} // old style warnings, alert by default
+    
+    assert.equal( m.getWarningLevelFromList([warn_1]), 0, "getWarningLevelFromList; before local change, only 'warn")
+    assert.equal( m.getWarningLevelFromList([warn_2]), 2, "getWarningLevelFromList; before local change, only 'alert'")
+    assert.equal( m.getWarningLevelFromList([warn_3]), 1, "getWarningLevelFromList; before local change, only 'error'")
+    assert.equal( m.getWarningLevelFromList([warn_undef]), 2, "getWarningLevelFromList; before local change, only 'undef'")
+    assert.equal( m.getWarningLevelFromList([warn_undef, warn_3]), 2, "getWarningLevelFromList; before local change, [undef, error]")
+    assert.equal( m.getWarningLevelFromList([warn_1, warn_2]), 2, "getWarningLevelFromList; before local change, [warn, alert]")
+
+    localStorage.setItem(`warn_W69`, 2)
+    localStorage.setItem(`warn_W82`, 3)
+    localStorage.setItem(`warn_Wxx`, 2)
+
+    assert.equal( m.getWarningLevelFromList([warn_1]), 2, "getWarningLevelFromList; after local change, only 'warn")
+    assert.equal( m.getWarningLevelFromList([warn_2]), 3, "getWarningLevelFromList; after local change, only 'alert'")
+    assert.equal( m.getWarningLevelFromList([warn_3]), 2, "getWarningLevelFromList; after local change, only 'error'")
+    assert.equal( m.getWarningLevelFromList([warn_undef]), 2, "getWarningLevelFromList; after local change, only 'undef'")
+    assert.equal( m.getWarningLevelFromList([warn_undef, warn_3]), 2, "getWarningLevelFromList; after local change, [undef, error]")
+    assert.equal( m.getWarningLevelFromList([warn_1, warn_2]), 3, "getWarningLevelFromList; after local change, [warn, alert]")
+
+});
+
+
+QUnit.test("getClonesWithWarningCode", function(assert) {
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    localStorage.clear()
+
+    m.clones[0].warn  = [{"code": "W69", "msg": "Several genes with equal probability", "level": "warn"}]
+    m.clones[1].warn  = [{"code": "W82", "msg": "Merged clone has different productivities in some samples", "level": "warn"}]
+    m.clones[2].warn  = [{"code": "Wdouble", "level": "warn"}, {"code": "Wdouble", "level": "warn"}]
+    m.clones[5].warn  = [{"code": "W69", "msg": "Several genes with equal probability", "level": "warn"}, {"code": "W82", "msg": "Merged clone has different productivities in some samples", "level": "warn"}]
+    m.clones[5].reads = [10,10, 0, 10]
+    m.clones.forEach( (c) => {console.log(`${c.index}; ${c.reads}: ==> ${c.warn.map((w)=>{return w.code})}`)})
+
+    assert.deepEqual( m.getClonesWithWarningCode("W69"), [0, 5], "Select clones with warn code W69, current sample (0) with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("W82"), [1, 5], "Select clones with warn code W82, current sample (0) with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("Wxx"), [], "Select clones with warn code Wxx (not present), current sample (0) with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("Wdouble"), [2], "Select clones with 2x the same warnings" )
+
+    m.changeTime(2)
+    m.update()
+
+    m.clones[5].reads = [10,10, 0, 10]
+    assert.deepEqual( m.getClonesWithWarningCode("W69", only_present=false), [0, 5], "Select clones with warn code W69, only_present=false, sample 2 with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("W82", only_present=false), [1, 5], "Select clones with warn code W82, only_present=false, sample 2 with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("W69", only_present=true), [0], "Select clones with warn code W69, only_present=true, sample 2 with reads" )
+    assert.deepEqual( m.getClonesWithWarningCode("W82", only_present=true), [1], "Select clones with warn code W82, only_present=true, sample 2 with reads" )
+}); 
+
+
+QUnit.test("getDiversity", function(assert) {
+    // 1 - old not fused => {index : "na"}
+    // 1 - old not fused => {index : value}
+    // 2 - old fused     => {index : [values]}
+    // 3 - new not fused => {index : {locus: value}}
+    // 4 - new fused     => {index : [{locus: values}]}
+
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    var diversity_0 = { "index": "na" }
+    var diversity_1 = { "index": 5.68 }
+    var diversity_2 = { "index": [5.68] }
+    var diversity_3 = { "index": { "all": 5.68, "TRG": 5.25 }}
+    var diversity_4 = { "index": [{ "all": 5.68, "TRG": 5.25 }] }
+
+    m.diversity = diversity_0
+    assert.equal(m.getDiversity("index", 0), undefined, "Correct diversity returned in case 0 (na)")
+
+    m.diversity = diversity_1
+    assert.equal(m.getDiversity("index", 0), 5.68, "Correct diversity returned in case 1 (old, not fused)")
+
+    m.diversity = diversity_2
+    assert.equal(m.getDiversity("index", 0), 5.68, "Correct diversity returned in case 2 (old, fused)")
+
+    m.diversity = diversity_3
+    assert.deepEqual(m.getDiversity("index", 0), { "all": "5.680", "TRG": "5.250" }, "Correct diversity returned in case 3 (new, not fused)")
+
+    m.diversity = diversity_4
+    assert.deepEqual(m.getDiversity("index", 0), { "all": "5.680", "TRG": "5.250" }, "Correct diversity returned in case 4 (new, fused)")
+});
+
+
+QUnit.test("getPointHtmlInfo", function(assert) {
+
+    // Create and populate model
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    m.parseJsonData(data_copy, 100)
+    m.initClones()
+    m.clones[0].warn = [{"code": "W69", "msg": "Several genes with equal probability", "level": "warn"}]
+
+    m.diversity = {
+        "index_H_entropy": [
+          5.688690639121887,
+          {
+            "all": 5.685521833966959,
+            "TRG": 5.251430198730304,
+            "IGH": 4.6659245018527145
+          }
+        ],
+        "index_E_equitability": [
+          0.39255398511886597,
+          {
+            "all": 0.39234431286307087,
+            "TRG": 0.3710257284862601,
+            "IGH": 0.3524275802230387
+          }
+        ],
+        "index_Ds_diversity": [
+          0.9644120931625366,
+          {
+            "all": 0.9643881817723228,
+            "TRG": 0.9505217377100443,
+            "IGH": 0.8727130704274034
+          }
+        ]
+      }
+
+    // first sample has old fashion diversity
+    var html_info = m.getPointHtmlInfo(0)
+    assert.includes(html_info, "Diversity indices", "htmlInfo get diversity header")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy' ><td  id='modal_line_title_index_H_entropy'>Shannon's diversity</td><td  colspan='1' id='modal_line_value_index_H_entropy'>5.689</td></tr>", "An index is correctly present and formated")
+    assert.notIncludes(html_info, '<tr><td colspan=\'5\'>Shannon\'s diversity</td></tr><tr><td> <span class="systemBoxMenu" title="all">x</span> all</td>', "")
+
+    assert.includes(html_info, "modal_header_reads_by_locus", "htmlInfo get reads by locus header")
+    assert.includes(html_info, "modal_line_title_reads_by_locus_IGH", "htmlInfo get reads by locus line IGH")
+    assert.includes(html_info, "id='info_warnings'", "table info_warnings present")
+    assert.includes(html_info, "id='modal_line_title_W69;_Several_genes_with_equal_probability'", "line in info_warnings present")
+
+
+    // second sample has diversity by locus
+    html_info = m.getPointHtmlInfo(1)
+    // each diversity indices has header
+    assert.includes(html_info, "<tr id='modal_header_index_H_entropy' ><td class='header' colspan='5'>Shannon's diversity</td></tr>")
+    assert.includes(html_info, "<tr id='modal_header_index_E_equitability' ><td class='header' colspan='5'>Pielou's evenness</td></tr>")
+    assert.includes(html_info, "<tr id='modal_header_index_Ds_diversity' ><td class='header' colspan='5'>Simpson's diversity</td></tr>")
+    // each present locus id visible
+    assert.includes(html_info, "<tr id='modal_line_index_Ds_diversity_all' ><td  id='modal_line_title_index_Ds_diversity_all'><span class=\"systemBoxMenu\" title=\"all\">x</span> locus</td><td  colspan='1' id='modal_line_value_index_Ds_diversity_all'>0.964</td></tr>")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_TRG' ><td  id='modal_line_title_index_H_entropy_TRG'><span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> locus</td><td  colspan='1' id='modal_line_value_index_H_entropy_TRG'>5.251</td></tr>")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_IGH' ><td  id='modal_line_title_index_H_entropy_IGH'><span class=\"systemBoxMenu\" title=\"IGH\" style=\"background: rgb(108, 113, 196);\">H</span> locus</td><td  colspan='1' id='modal_line_value_index_H_entropy_IGH'>4.666</td></tr>")
 });

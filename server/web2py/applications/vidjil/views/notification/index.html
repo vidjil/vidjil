@@ -1,7 +1,7 @@
 {{from gluon.contrib.markdown.markdown2 import markdown}}
 {{extend 'db_layout.html'}}
 
-<h3>{{=query.title if query is not None else message}}</h3>
+<h3 id="page_news">{{=query.title if query is not None else message}}</h3>
 
 {{if query is not None:}}
     <div class="db_block info_block">
@@ -25,8 +25,8 @@
                 <td class="column_50"> Type </td>
                 <td class="column_50"> Priority </td>
                 <td class="column_100"> Expiration Date </td>
-                <td class="column5"> </td>
-                <td class="column5"> </td>
+                <td class="column_20"> </td>
+                <td class="column_20"> </td>
             {{pass}}
             </tr>
         </thead>

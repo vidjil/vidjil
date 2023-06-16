@@ -9,11 +9,11 @@
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
-            <tr><td class="column1">id</td>
+            <tr><td class="column_100">id</td>
                 <td class="column_200"> group / user</td>
                 <td class="column_200">permissions</td>
-                <td class="column1">access from</td>
-                <td class="column1"> access</td>
+                <td class="column_100">access from</td>
+                <td class="column_100"> access</td>
             </tr>
         </thead>
         {{admin = auth.can_modify_pre_process(request.vars["id"])}}
@@ -24,12 +24,12 @@
                 <td> {{=row.perms}}</td>
                 <td> {{=row.parent_access}}
                 {{if admin :}}
-                    <td> <input type="checkbox" onclick="db.call('pre_process/change_permission', {
+                    <td> <input id="permission_checkbox_{{=row.id}}" type="checkbox" onclick="db.call('pre_process/change_permission', {
                                                                   'pre_process_id' : {{=request.vars['id']}} ,
                                                                   'group_id' : {{=row.id}}})"
                                 {{if row.read :}} checked {{pass}}></td>
                 {{else:}}
-                    <td class="inactive"> <input type="checkbox" onclick="this.click()"
+                    <td class="inactive"> <input id="permission_checkbox_{{=row.id}}" type="checkbox" onclick="this.click()"
                                 {{if row.read :}} checked {{pass}}></td>
                 {{pass}}
             </tr>

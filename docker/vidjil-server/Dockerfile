@@ -6,7 +6,8 @@ with a full installation of the Vidjil algoright and browser/server."
 
 env GOSU_VERSION 1.10
 run set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates wget cron unzip make python ipython python-enum34 python-requests git python-ijson libyajl2 python-cffi gnupg2 && rm -rf /var/lib/apt/lists/* \
+	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates wget cron unzip make python ipython python-enum34 python-requests git python-ijson libyajl2 python-cffi python-pip gnupg2 gcc libsasl2-dev python-dev python-setuptools libldap2-dev libssl-dev libsasl2-dev && rm -rf /var/lib/apt/lists/* \
+	&& pip install python-ldap \
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
 	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
@@ -28,15 +29,14 @@ run cd /usr/share/vidjil/server && make download_web2py && unzip web2py_src.zip 
 add ./scripts/install.sh /opt/install_scripts/install.sh
 copy ./conf/defs.py /opt/vidjil_conf/defs.py
 copy ./conf/defs_http.py /opt/vidjil_conf/defs_http.py
-copy ./conf/base.py /usr/share/vidjil/server/web2py/gluon/packages/dal/pydal/base.py
 
 arg build_env='PRODUCTION'
 env BUILD_ENV $build_env
 
-copy ./conf/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
 run mkdir /etc/vidjil
 copy ./conf/wsgihandler.py /etc/vidjil/wsgihandler.py
 run chmod +x /opt/install_scripts/install.sh; sync && /opt/install_scripts/install.sh
+run mkdir -p /etc/uwsgi/apps-enabled && ln -s /etc/vidjil/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
 run ln -s /etc/vidjil/defs.py /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
 run ln -s /etc/vidjil/wsgihandler.py /usr/share/vidjil/server/web2py/wsgihandler.py
 

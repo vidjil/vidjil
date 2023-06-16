@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil-algo <http://www.vidjil.org>
-  Copyright (C) 2011-2021 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2022 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -210,7 +210,7 @@ string string_NO_LIMIT(string s)
 int main (int argc, char **argv)
 {
   cout << "# " << PROGNAME << " -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
-       << "# Copyright (C) 2011-2021 by the Vidjil team" << endl
+       << "# Copyright (C) 2011-2022 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille" << endl 
        << "# VidjilNet consortium" << endl 
        << endl
@@ -253,6 +253,10 @@ int main (int argc, char **argv)
   //$$ options: definition with CLI11
   string group = "";
 
+  // Check whether an option was actually called inside add_flag_function()
+#define COUNT(n) if (n <= 0) return;
+
+
   // ----------------------------------------------------------------------------------------------------------------------
   string f_reads = DEFAULT_READS ;
   app.add_option("reads_file", f_reads, R"Z(reads file, in one of the following formats:
@@ -285,7 +289,7 @@ int main (int argc, char **argv)
     -> group(group) -> level();
 
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
-  app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file", false)
+  app.add_option("--header-sep", read_header_separator, "separator for headers in the reads file")
     -> group(group) -> level() -> type_name("CHAR='" DEFAULT_READ_HEADER_SEPARATOR "'");
 
   int max_reads_processed = NO_LIMIT_VALUE;
@@ -306,7 +310,7 @@ int main (int argc, char **argv)
     -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   // ----------------------------------------------------------------------------------------------------------------------
-  group = "Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)";
+  group = "Germline/recombination selection (at least one -g, -V/(-D)/-J, or --find option must be given)";
 
   vector <string> multi_germlines ;
   app.add_option("--germline,-g", multi_germlines, R"Z(
@@ -336,6 +340,10 @@ int main (int argc, char **argv)
                  "custom V germline multi-fasta file(s)")
     -> group(group) -> type_name("FILE");
 
+  vector <string> v_reps_align ;
+  app.add_option("--find", v_reps_align,
+                 "custom multi-fasta file(s) for non-recombined alignments")
+    -> group(group) -> type_name("FILE") -> level();
 
   bool multi_germline_unexpected_recombinations_12 = false;
   app.add_flag("-2", multi_germline_unexpected_recombinations_12, "try to detect unexpected recombinations") -> group(group);
@@ -351,7 +359,7 @@ int main (int argc, char **argv)
 
   IndexTypes indexType = AC_AUTOMATON;
   app.add_flag_function("--plain-index",
-                        [&](size_t n) { UNUSED(n); indexType = KMER_INDEX; },
+                        [&](int64_t n) { COUNT(n); indexType = KMER_INDEX; },
                         "use a plain index (pre-2019 method) instead of the recommended Aho-Corasick-like automaton")
     -> group(group) -> level();
 
@@ -378,8 +386,8 @@ int main (int argc, char **argv)
 
   double expected_value_kmer = NO_LIMIT_VALUE;
   app.add_option("--e-value-kmer", expected_value_kmer,
-                 "maximal e-value for the k-mer heuristics ('" NO_LIMIT "': use same value than '-e')", true)
-    -> group(group) -> level() -> transform(string_NO_LIMIT);
+                 "maximal e-value for the k-mer heuristics ('" NO_LIMIT "': use same value than '-e')")
+    -> capture_default_str() -> group(group) -> level() -> transform(string_NO_LIMIT);
 
   int trim_sequences = DEFAULT_TRIM;
   bool trim_sequences_changed = false;
@@ -453,16 +461,19 @@ int main (int argc, char **argv)
   int min_reads_clone = DEFAULT_MIN_READS_CLONE ;
   float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
 
-  app.add_option("--min-reads,-r", min_reads_clone, "minimal number of reads supporting a clone", true) -> group(group);
-  app.add_option("--min-ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone", true) -> group(group);
-  app.add_option("--max-clones", max_clones_id, "maximal number of output clones ('" NO_LIMIT "': no maximum, default)", false) -> group(group);
+  app.add_option("--min-reads,-r", min_reads_clone, "minimal number of reads supporting a clone")
+      -> capture_default_str() -> group(group);
+  app.add_option("--min-ratio", ratio_reads_clone, "minimal percentage of reads supporting a clone")
+      -> capture_default_str() -> group(group);
+  app.add_option("--max-clones", max_clones_id, "maximal number of output clones ('" NO_LIMIT "': no maximum, default)")
+      -> group(group);
 
   int max_clones = DEFAULT_MAX_CLONES ;
   int max_representatives = DEFAULT_MAX_REPRESENTATIVES ;
 
   app.add_option("--max-consensus,-y", max_representatives,
-                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)", true)
-    -> group(group) -> transform(string_NO_LIMIT);
+                 "maximal number of clones computed with a consensus sequence ('" NO_LIMIT "': no limit)")
+    -> capture_default_str() -> group(group) -> transform(string_NO_LIMIT);
 
   app.add_option("--max-designations,-z",
                  [&max_clones, &max_representatives](CLI::results_t res) {
@@ -475,8 +486,8 @@ int main (int argc, char **argv)
                  "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)")
     -> group(group) -> type_name("INT=" + string_of_int(max_clones));
 
-  app.add_flag_function("--all", [&](size_t n) {
-      UNUSED(n);
+  app.add_flag_function("--all", [&](int64_t n) {
+      COUNT(n);
       ratio_reads_clone = 0 ;
       min_reads_clone = 1 ;
       max_representatives = NO_LIMIT_VALUE ;
@@ -490,8 +501,8 @@ int main (int argc, char **argv)
   VirtualReadScore *readScorer = &DEFAULT_READ_SCORE;
   ReadQualityScore readQualityScore;
   app.add_flag_function("--consensus-on-longest-sequences",
-                        [&readScorer, &readQualityScore](size_t n) {
-                          UNUSED(n);
+                        [&readScorer, &readQualityScore](int64_t n) {
+                          COUNT(n);
                           readScorer = &readQualityScore;
                         }, "for large clones, use a sample of the longest and highest quality reads to compute the consensus sequence (instead of a random sample)")
     ->group(group) -> level();
@@ -501,8 +512,8 @@ int main (int argc, char **argv)
 
   double expected_value = THRESHOLD_NB_EXPECTED;
   app.add_option("--e-value,-e", expected_value,
-                 "maximal e-value for trusting the detection of a V-J recombination", true)
-    -> group(group) -> transform(string_NO_LIMIT);
+                 "maximal e-value for trusting the detection of a V-J recombination")
+    -> capture_default_str() -> group(group) -> transform(string_NO_LIMIT);
 
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
   app.add_option("--analysis-cost",
@@ -515,27 +526,29 @@ int main (int argc, char **argv)
 
   double expected_value_D = THRESHOLD_NB_EXPECTED_D;
   app.add_option("--analysis-e-value-D,-E", expected_value_D,
-                 "maximal e-value for trusting the detection of a D segment", true)
-    -> group(group) -> level();
+                 "maximal e-value for trusting the detection of a D segment")
+    -> capture_default_str() -> group(group) -> level();
 
   int kmer_threshold = DEFAULT_KMER_THRESHOLD;
   app.add_option("--analysis-filter", kmer_threshold,
-                 "typical number of V genes, filtered by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes)", true)
-    -> group(group) -> transform(string_NO_LIMIT) -> level();
+                 "typical number of V genes, filtered by k-mer comparison, to compare to the read ('" NO_LIMIT "': all genes)")
+    -> capture_default_str() -> group(group) -> transform(string_NO_LIMIT) -> level();
 
   bool several_D = false;
   app.add_flag("-d,--several-D", several_D, "try to detect several D (experimental)") -> group(group);
 
   int alternative_genes = 0;
-  app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one", true)
-    -> group(group) -> level();
+  app.add_option("--alternative-genes", alternative_genes, "number of alternative V(D)J genes to show beyond the most similar one")
+    -> capture_default_str() -> group(group) -> level();
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Additional clustering (third pass, experimental)" ;
 
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
-  app.add_option("--cluster-epsilon", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.", true) -> group(group) -> level();
-  app.add_option("--cluster-N", minPts, "minimum required neighbors for automatic clustering", true) -> group(group) -> level();
+  app.add_option("--cluster-epsilon", epsilon, "minimum required neighbors for automatic clustering. No automatic clusterisation if =0.")
+    -> capture_default_str() -> group(group) -> level();
+  app.add_option("--cluster-N", minPts, "minimum required neighbors for automatic clustering")
+    -> capture_default_str() -> group(group) -> level();
 
   bool save_comp = false;
   bool load_comp = false;
@@ -567,7 +580,7 @@ int main (int argc, char **argv)
   bool output_unsegmented_detail = false;
   bool output_unsegmented_detail_full = false;
 
-  app.add_flag_function("--out-undetected,-u", [&](size_t n) {
+  app.add_flag_function("--out-undetected,-u", [&](int64_t n) {
       output_unsegmented = (n >= 3);             // -uuu
       output_unsegmented_detail_full = (n >= 2); // -uu
       output_unsegmented_detail = (n >= 1);      // -u
@@ -592,7 +605,8 @@ int main (int argc, char **argv)
   string out_dir = DEFAULT_OUT_DIR;
   string f_basename = "";
 
-  app.add_option("--dir,-o", out_dir, "output directory", true) -> group(group) -> type_name("PATH");
+  app.add_option("--dir,-o", out_dir, "output directory")
+    -> capture_default_str() -> group(group) -> type_name("PATH");
   app.add_option("--base,-b", f_basename, "output basename (by default basename of the input file)") -> group(group) -> type_name("STRING");
 
   bool out_gz = false;
@@ -624,7 +638,7 @@ int main (int argc, char **argv)
     -> group(group) -> level();
 
   int verbose = 0 ;
-  app.add_flag_function("--verbose,-v", [&](size_t n) { verbose += n ; }, "verbose mode") -> group(group);
+  app.add_flag_function("--verbose,-v", [&](int64_t n) { COUNT(n); verbose += n ; }, "verbose mode") -> group(group);
 
   bool __only_on_exit__clean_memory; // Do not use except on exit, see #3729
   app.add_flag("--clean-memory", __only_on_exit__clean_memory, "clean memory on exit") -> group(group) -> level();
@@ -632,13 +646,12 @@ int main (int argc, char **argv)
   // ----------------------------------------------------------------------------------------------------------------------
   group = "Presets";
 
-  app.add_flag_function("--filter-reads", [&](int n) {
-      UNUSED(n);
+  app.add_flag_function("--filter-reads", [&](int64_t n) {
+      COUNT(n);
       cmd = COMMAND_DETECT;
       output_segmented = true;
       expected_value = EVALUE_FILTER_READS ;
       multi_germline_unexpected_recombinations_12 = true;
-      return true;
     },
     "filter possibly huge datasets, with a permissive threshold, to extract reads that may have V(D)J recombinations"
     PAD_HELP "(equivalent to -c " COMMAND_DETECT " --out-detected --e-value " STR(EVALUE_FILTER_READS) " -2)")
@@ -660,7 +673,7 @@ int main (int argc, char **argv)
   app.set_help_flag("--help,-h", "help")
     -> group(group);
 
-  app.add_flag_function("--help-advanced,-H", [&](size_t n) { UNUSED(n); throw CLI::CallForAdvancedHelp() ; },
+  app.add_flag_function("--help-advanced,-H", [&](int64_t n) { COUNT(n); throw CLI::CallForAdvancedHelp(); },
                         "help, including advanced and experimental options"
                         "\n                              "
                         "The full help is available in " DOCUMENTATION ".")
@@ -670,8 +683,8 @@ int main (int argc, char **argv)
   // Deprecated options
   bool deprecated = false;
 
-#define IGNORED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); cout << endl << "* WARNING: " << text << endl << endl ; })-> level(3);
-#define DEPRECATED(options, text) app.add_flag_function((options), [&](size_t n) { UNUSED(n); deprecated = true ; return app.exit(CLI::ConstructionError((text), 1));}) -> level(3);
+#define IGNORED(options, text) app.add_flag_function((options), [&](int64_t n) { COUNT(n); cout << endl << "* WARNING: " << text << endl << endl ; })-> level(3);
+#define DEPRECATED(options, text) app.add_flag_function((options), [&](int64_t n) { COUNT(n); deprecated = true ; app.exit(CLI::ConstructionError((text), 1));}) -> level(3);
 
   IGNORED("-3", "'-3' is deprecated. This option is ignored and has to be removed, CDR3/JUNCTION are now always analyzed on clones under the '--max-designations' threshold");
   DEPRECATED("-t", "'-t' is deprecated, please use '--trim'");
@@ -712,14 +725,12 @@ int main (int argc, char **argv)
   list <string> f_reps_D(v_reps_D.begin(), v_reps_D.end());
   list <string> f_reps_J(v_reps_J.begin(), v_reps_J.end());
 
+  list <string> f_reps_align(v_reps_align.begin(), v_reps_align.end());
 
   list <pair <string, string>> multi_germline_paths_and_files ;
-  bool multi_germline = false;
 
   for (string arg: multi_germlines)
     {
-      multi_germline = true;
-
       struct stat buffer;
       if (stat(arg.c_str(), &buffer) == 0)
         {
@@ -736,10 +747,6 @@ int main (int argc, char **argv)
     }
 
 
-  if (!multi_germline && (!f_reps_V.size() || !f_reps_J.size()))
-    {
-      return app.exit(CLI::ConstructionError("At least one germline must be given with -g or -V/(-D)/-J.", 1));
-    }
 
   if (options_s_k > 1)
     {
@@ -751,7 +758,7 @@ int main (int argc, char **argv)
   for(string lab : windows_labels_explicit)
     windows_labels[lab] = string("--label");
   
-  string out_seqdir = out_dir + "/" + CLONE_DIR ;
+  string out_seqdir = path_join(out_dir, CLONE_DIR) ;
 
   if (verbose)
     cout << "# verbose " << verbose << endl ;
@@ -914,44 +921,79 @@ int main (int argc, char **argv)
 
   if (command == CMD_GERMLINES)
     {
-      multi_germline = true ;
       multi_germline_one_unique_index = true ;
     }
 
-  MultiGermline *multigermline = new MultiGermline(indexType, !multi_germline_one_unique_index);
+  //////////////////////////////////
+  //$$ Prepare json_germlines from .g and CLI
 
+  json json_germlines;
+
+  // -g: .g files
+  for (pair <string, string> path_file: multi_germline_paths_and_files)
     {
-      cout << "Load germlines and build Kmer indexes" << endl ;
-    
-      if (multi_germline)
-	{
-          for (pair <string, string> path_file: multi_germline_paths_and_files)
-            {
-              try {
-                multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_REGULAR,
-                                               FIRST_IF_UNCHANGED("", seed, seed_changed),
-                                               FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), (kmer_threshold != NO_LIMIT_VALUE));
-              } catch (std::exception& e) {
-                cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
-                delete multigermline;
-                return 1;
-              }
-            }
-	}
-      else
-	{
-	  // Custom germline
-	  Germline *germline;
-	  germline = new Germline("custom", 'X',
-                                  f_reps_V, f_reps_D, f_reps_J,
-                                  seed, seed, seed, trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
+      // extract json_filename and systems_filter
+      string systems_filter;
+      string json_filename = path_file.second;
+      size_t pos_lastcolon = path_file.second.find_last_of(':');
+      if (pos_lastcolon != std::string::npos) {
+        json_filename = path_file.second.substr(0, pos_lastcolon);
+        systems_filter = "," + path_file.second.substr(pos_lastcolon+1) + "," ;
+      }
 
-          germline->new_index(indexType);
+      load_json_g(json_germlines, path_file.first, json_filename, systems_filter);
+  }
 
-	  multigermline->insert(germline);
+  if (json_germlines.empty())
+  {
+    json_germlines = {
+      {"ref", "custom germlines"},
+      {"species", "custom germlines"},
+      {"species_taxon_id", 0},
+      {"path", "."}
+    };
+  }
+
+  // Custom -V/(-D)/-J germline
+  if (f_reps_V.size())
+	{
+    // multi_germline_one_unique_index = true;
+
+    json_germlines["systems"]["custom"] = {
+            {"shortcut", "X"},
+            {"recombinations", {{
+              {"5", f_reps_V},
+              {"4", f_reps_D},
+              {"3", f_reps_J}
+            }}}
+    };
+  }
+
+  // Custom --find germline
+  if (f_reps_align.size())
+	{
+    json_germlines["systems"]["align"] = {
+            {"shortcut", "Y"},
+            {"recombinations", {{
+              {"1", f_reps_align}
+            }}}
+    };
 	}
+
+  if (!json_germlines["systems"].size())
+    {
+      return app.exit(CLI::ConstructionError("At least one germline must be given with -g, -V/(-D)/-J, or --find", 1));
     }
 
+  //////////////////////////////////
+  //$$ Load germlines and build indexes
+
+  cout << "Load germlines and build Kmer indexes" << endl ;
+  MultiGermline *multigermline = new MultiGermline(indexType, !multi_germline_one_unique_index);
+
+  multigermline->build_from_json(json_germlines, GERMLINES_REGULAR,
+                                 FIRST_IF_UNCHANGED("", seed, seed_changed),
+                                 FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), (kmer_threshold != NO_LIMIT_VALUE));
     cout << endl ;
 
     if (multi_germline_one_unique_index) {
@@ -981,14 +1023,14 @@ int main (int argc, char **argv)
 
       // Should come after the initialization of regular (and possibly pseudo) germlines
     {
-      for (pair <string, string> path_file: multi_germline_paths_and_files)
-        multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE,
+        multigermline->build_from_json(json_germlines, GERMLINES_INCOMPLETE,
                                        FIRST_IF_UNCHANGED("", seed, seed_changed),
                                        FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), (kmer_threshold != NO_LIMIT_VALUE));
       if ((! multigermline->one_index_per_germline) && (command != CMD_GERMLINES)) {
         multigermline->insert_in_one_index(multigermline->index, true);
       }
     }
+
 
     if (multi_germline_mark)
       multigermline->mark_cross_germlines_as_ambiguous();
@@ -1122,9 +1164,11 @@ int main (int argc, char **argv)
 	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
+      // Exit after CMD_GERMLINES
       if (__only_on_exit__clean_memory) { delete multigermline; } return 0;
     }
 
+  Germline *GERMLINE_NOT_DESIGNATED = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
 
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
@@ -1256,7 +1300,19 @@ int main (int argc, char **argv)
   cout << endl;
 
     //$$ compute, display and store diversity measures
-    json jsonDiversity = windowsStorage->computeDiversity(nb_segmented);
+    json reads_germline;
+    json clones_germline;
+    map <string, size_t> nb_segmented_by_germline;
+    for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
+        Germline *germline = *it ;
+        size_t nb = we.getNbReadsGermline(germline->code);
+        nb_segmented_by_germline[germline->code] = nb;
+        reads_germline[germline->code] = {nb};
+        clones_germline[germline->code] = {we.getNbClonesGermline(germline->code)};
+    }
+
+    nb_segmented_by_germline[ALL_LOCI] = nb_segmented;
+    json jsonDiversity = windowsStorage->computeDiversity(nb_segmented_by_germline);
 
     //////////////////////////////////
     //$$ min_reads_clone (ou label)
@@ -1521,6 +1577,7 @@ int main (int argc, char **argv)
         output.addClone(it->first, clone);
 
         // Basic information that will always be output
+        clone->set("germline", segmented_germline->code);
         clone->set("_average_read_length", { fixed_string_of_float(windowsStorage->getAverageLength(it->first), 2) });
         clone->set("sequence", kseg->getSequence().sequence);
         clone->set("_coverage", { repComp.getCoverage() });
@@ -1584,19 +1641,6 @@ int main (int argc, char **argv)
         seg.findCDR3();
 
           
-	// Output representative, possibly segmented... 
-	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
-  if (clone_on_stdout)
-    cout << seg << endl ;
-
-  if (output_clone_files)
-    *out_clone << seg << endl ;
-
-  if (output_vdjfa)
-    *out_clones << seg << endl ;
-    
-        seg.toOutput(clone);
-
         if (seg.isSegmented())
 	  {
 	      // Check for identical code, outputs to out_edge
@@ -1631,10 +1675,29 @@ int main (int argc, char **argv)
                 *out_clone << ">" << seg.box_J->ref_label << endl << seg.box_J->ref << endl ;
               *out_clone << endl;
         }
+     }
+     else
+     {
+        // We remember that the KmerSegmenter detected that sequence and raise W68
+        seg.code = "Possibly " + segmented_germline->code;
+        seg.info = seg.code + seg.info;
+        clone->add_warning("W68", "V(D)J designation failed, possibly complex or not recombined sequence", LEVEL_WARN, clone_on_stdout);
 	   } // end if (seg.isSegmented())
 
         seg.checkWarnings(clone, clone_on_stdout);
-        
+	// Output representative, possibly segmented...
+	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
+  if (clone_on_stdout)
+    cout << seg << endl ;
+
+  if (output_clone_files)
+    *out_clone << seg << endl ;
+
+  if (output_vdjfa)
+    *out_clones << seg << endl ;
+
+  seg.toOutput(clone);
+
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
 	    list<Sequence> sequences = windowsStorage->getReads(it->first);
@@ -1645,8 +1708,11 @@ int main (int argc, char **argv)
 	      }
 	  }
 	
-  if (clone_on_stdout)
-    cout << endl ;
+      if (clone_on_stdout)
+      {
+        cout << endl ;
+        cerr.flush();
+      }
 
       if (output_clone_files)
       {
@@ -1705,26 +1771,6 @@ int main (int argc, char **argv)
     //$$ .json output
     cout << endl ;
     
-    //json custom germline
-    json json_germlines;
-    json_germlines = {
-        {"custom", {
-            {"shortcut", "X"},
-            {"3", json::array()},
-            {"4", json::array()},
-            {"5", json::array()}
-        }}
-    };
-
-    for (list<string>::iterator it = f_reps_V.begin(); it != f_reps_V.end(); it++){
-        json_germlines["custom"]["3"].push_back(*it);
-    }
-    for (list<string>::iterator it = f_reps_D.begin(); it != f_reps_D.end(); it++){
-        json_germlines["custom"]["4"].push_back(*it);
-    }
-    for (list<string>::iterator it = f_reps_J.begin(); it != f_reps_J.end(); it++){
-        json_germlines["custom"]["5"].push_back(*it);
-    }
     
     //Added edges in the json output file
     //json->add("links", jsonLevenshtein);
@@ -1732,13 +1778,6 @@ int main (int argc, char **argv)
 
     windowsStorage->clearSequences();
     windowsStorage->sortedWindowsToOutput(&output, max_clones_id);
-    
-    json reads_germline;
-    for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
-        Germline *germline = *it ;
-        reads_germline[germline->code] = {we.getNbReadsGermline(germline->code)};
-    }
-
 
     // Complete main output
     output.set("config", j_config);
@@ -1747,9 +1786,10 @@ int main (int argc, char **argv)
     output.set("reads", {
             {"total", {nb_total_reads}},
             {"segmented", {nb_segmented}},
-            {"germline", reads_germline}
+            {"germline", reads_germline},
+            {"clones", clones_germline}
     });
-    output.set("germlines", json_germlines);
+    output.set("germlines", json_germlines["systems"]["recombinations"]);
     output.set("germlines", "ref", multigermline->ref);
     output.set("germlines", "species", multigermline->species) ;
     output.set("germlines", "species_taxon_id", multigermline->species_taxon_id) ;
@@ -1765,7 +1805,7 @@ int main (int argc, char **argv)
     } // end if (command == CMD_CLONES) || (command == CMD_WINDOWS)
 
     //$$ Clean
-
+    delete GERMLINE_NOT_DESIGNATED;
     delete windowsStorage;
 
 
@@ -1791,7 +1831,7 @@ int main (int argc, char **argv)
     int nb_segmented = 0 ;
     map <string, int> nb_segmented_by_germline ;
 
-    Germline *not_segmented = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
+
 
     // Multiplier is 1.0, we expect that the sequences are actual recombinations. See #3594.
     double fine_evalue_multiplier = 1.0 ;
@@ -1812,7 +1852,6 @@ int main (int argc, char **argv)
         CloneOutput *clone = new CloneOutput();
         output.addClone(id, clone);
         clone->set("id", id);
-        clone->set("name", seq.label);
         clone->set("sequence", seq.sequence);
         clone->set("reads", { 1 });
         clone->set("top", 0);
@@ -1831,7 +1870,9 @@ int main (int argc, char **argv)
               }
         else
           {
-            g = not_segmented ;
+            // Not designated, will output label as 'name' in .vidjil
+            s.code = seq.label;
+            g = GERMLINE_NOT_DESIGNATED ;
           }
 
         s.toOutput(clone);
@@ -1851,7 +1892,7 @@ int main (int argc, char **argv)
     output.set("reads", "segmented", { nb_segmented }) ;
     output.set("reads", "total", { nb }) ;
 
-    multigermline->insert(not_segmented);
+    multigermline->insert(GERMLINE_NOT_DESIGNATED);
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
       Germline *germline = *it ;
       if (nb_segmented_by_germline[germline->code])

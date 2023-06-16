@@ -13,8 +13,10 @@ class DefaultController(unittest.TestCase)
 BEWARE that the name is NOT in plural (controllers->Controller)
 
 require: 
+apt-get install python-pip
 pip install unittest2
 pip install unittest-xml-reporting
+pip install mock
 
 Execute with:
 >   python web2py.py -S vidjil -M -R testRunner.py
@@ -145,6 +147,14 @@ db.auth_permission.insert(group_id = fake_group_id,
                         name = PermissionEnum.access.value,
                         table_name = "patient",
                         record_id = fake_patient_id
+                        )
+
+# add fake log 
+db.user_log.insert(user_id = user_id,
+                        created= '2022-03-30 13:23:59',
+                        table_name = "sample_set",
+                        msg = "this is a fake log msg",
+                        record_id = fake_sample_set_id
                         )
 
 # for permission testing

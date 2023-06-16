@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -48,6 +48,9 @@ Model_loader.prototype = {
         if (typeof config != 'undefined' && typeof config.server_id != 'undefined')
             document.getElementById('server-id').innerText = config.server_id
 
+        if (self.db == undefined ){
+            console.log({"type": "flash", "msg": "No db server connected to the client", "priority": 2 });
+        }
         /** load the default vidjil file, open the database or display the welcome popup depending on the case*/
         if (typeof params.data !== "undefined") {
             if (typeof params.analysis !== "undefined"){
@@ -58,6 +61,17 @@ Model_loader.prototype = {
             }
         }
             
+        else if (typeof params.custom !== "undefined" && params.custom.length>0){
+            //wait 1sec to check ssl
+            if (typeof params.sample_set_id !== "undefined" && typeof params.config !== "undefined"){
+                //wait 1sec to check ssl
+                setTimeout(function () { self.db.load_custom_data( {"custom" : params.custom, "sample_set_id" : params.sample_set_id, "config": params.config })  }, 1000);
+                return
+            }
+            setTimeout(function () { self.db.load_custom_data( {"custom" : params.custom })  }, 1000);
+            return
+        }
+
         else if (typeof params.sample_set_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
             setTimeout(function () { self.db.load_data( {"sample_set_id" : params.sample_set_id , "config" : params.config } , "") }, 1000);
@@ -71,11 +85,6 @@ Model_loader.prototype = {
         else if (typeof params.run_id !== "undefined" && typeof params.config !== "undefined"){
             //wait 1sec to check ssl
             setTimeout(function () { self.db.load_data( {"run" : params.run_id , "config" : params.config } , "")  }, 1000);
-        }
-            
-        else if (typeof params.custom !== "undefined" && params.custom.length>0){
-            //wait 1sec to check ssl
-            setTimeout(function () { self.db.load_custom_data( {"custom" : params.custom })  }, 1000);
         }
                 
         else if (typeof config != 'undefined' && config.use_database){
@@ -97,7 +106,7 @@ Model_loader.prototype = {
         var self = this;
 
         console.log("load()");
-
+        this.loading_is_pending = true
         if (document.getElementById(id)
             .files.length === 0) {
             return;
@@ -120,7 +129,10 @@ Model_loader.prototype = {
                 .files[0].name;
             self.check_export_monitor()
             self.file_source = "local";
+            if (typeof report != "undefined") 
+                report.reset()
         }
+        this.loading_is_pending = false
 
     }, 
 
@@ -167,8 +179,6 @@ Model_loader.prototype = {
         } else {
             self.initClones();
         }
-
-        if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
         
         input = $("#"+analysis)
         input.replaceWith(input.val('').clone(true));
@@ -205,6 +215,8 @@ Model_loader.prototype = {
                 self.dataFileName = url_split[url_split.length-1]
                 self.check_export_monitor()
                 self.file_source = "database";
+                if (typeof report != "undefined") 
+                    report.reset()
 
                 // self.applyUrlParams(paramsDict);
                 callback()
@@ -234,10 +246,12 @@ Model_loader.prototype = {
             crossDomain: true,
             url: url2,
             success: function (result) {
-                self.parseJsonAnalysis(result)
-                self.initClones()
-                self.analysisFileName = url_split[url_split.length-1]
-                self.check_export_monitor()
+                var analysis_data = self.parseJsonAnalysis(result)
+                if (analysis != undefined){
+                    self.initClones()
+                    self.analysisFileName = url_split[url_split.length-1]
+                    self.check_export_monitor()
+                }
             },
             error: function () {
                 self.update()
@@ -396,7 +410,7 @@ Model_loader.prototype = {
         }
         
         //remove incomplete similarity matrix (TODO: fix fuse.py)
-        this.similarity = undefined;
+        this.similarity = {"nt": undefined, "aa": undefined};
         this.check_export_monitor()
 
         if (data.distributions != undefined){
@@ -449,6 +463,9 @@ Model_loader.prototype = {
 
     copySampleFields: function(samples, analysis) {
         var clone = $.extend({}, samples);
+
+        // Fix error when filename is present multiple times
+        clone.original_names = fixDuplicateNames(clone.original_names)
 
         if ('id' in analysis) {
             //replace names, timestamps, order...
@@ -574,8 +591,8 @@ Model_loader.prototype = {
             try {
                 this.analysis = jQuery.parseJSON(analysis)
             } catch (e) {
-                    console.log({"type": "popup", "default": "file_error"});
-                return 0
+                    console.log({"type": "popup", "default": "file_error_analysis"});
+                return true
             }
         }else{
             this.analysis=analysis
@@ -590,20 +607,6 @@ Model_loader.prototype = {
                 s = this.analysis.samples
                 this.samples = this.copySampleFields(this.samples, s);
             }
-            
-            //tags
-            if (this.analysis.tags && this.analysis.tags.names) {
-                s = this.analysis.tags
-                
-                var keys = Object.keys(s.names);
-                for (var i=0; i<keys.length; i++){
-                    this.tag[parseInt(keys[i])].name = s.names[keys[i]]
-                }
-               
-                for (var j=0; j<s.hide.length; j++){
-                    this.tag[s.hide[j]].display = false;
-                }
-            }
 
             if (this.analysis.info) {
                m.info = this.analysis.info
@@ -613,6 +616,11 @@ Model_loader.prototype = {
                 for (var key in this.analysis.data)
                     this.data[key] = this.analysis.data[key]
             }
+
+            if (this.analysis.report_save) {
+                m.report_save = this.analysis.report_save
+            }
+
             this.initClones();
             this.initData();
             
@@ -732,7 +740,7 @@ Model_loader.prototype = {
                 names: this.samples.names},
             clones : this.analysis_clones,
             clusters : this.analysis_clusters,
-            tags : {}
+            report_save :this.report_save
         }
 
         var elem;
@@ -740,7 +748,7 @@ Model_loader.prototype = {
             var clone = this.clone(i)
 
             //tag, custom name, expected_value
-            if ((typeof clone.tag != "undefined" && clone.tag != 8) || 
+            if ((typeof clone.tag != "undefined" && clone.tag != 8 && clone.tag != m.tags.getDefault()) || 
                  typeof clone.c_name != "undefined" ||
                  typeof clone.expected != "undefined" || 
                 (typeof clone.segEdited != "undefined"  && clone.segEdited)) {
@@ -749,7 +757,7 @@ Model_loader.prototype = {
                 elem.id = clone.id;
                 elem.sequence = clone.sequence;
 
-                if (typeof clone.tag != "undefined" && clone.tag != 8)
+                if (typeof clone.tag != "undefined" && clone.tag != 8 && clone.tag != m.tags.getDefault)
                     elem.tag = clone.tag;
                 if (typeof clone.c_name != "undefined")
                     elem.name = clone.c_name;
@@ -776,16 +784,7 @@ Model_loader.prototype = {
                 analysisData.clusters.push(elem);
             }
         }
-        
-        //tags
-        analysisData.tags.names = {}
-        analysisData.tags.hide = []
-        for (var k=0; k<this.tag.length; k++){
-            analysisData.tags.names[""+k] = this.tag[k].name
-            if (!this.tag[k].display) analysisData.tags.hide.push(k)
-        }
-        
-        
+      
         analysisData.normalization = this.normalization
 
         return JSON.stringify(analysisData, undefined, 2);

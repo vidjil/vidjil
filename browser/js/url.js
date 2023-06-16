@@ -51,7 +51,8 @@ Url.prototype= {
             var custom_split = this.m.custom.split('&');
             for (var j = 0; j < custom_split.length; j++) {
                 if (custom_split[j] !== "") {
-                    custom_ids.push(custom_split[j].split('=')[1]);
+                    if (custom_split[j].split('=')[0] == "custom")
+                        custom_ids.push(custom_split[j].split('=')[1]);
                 }
             }
 
@@ -208,10 +209,10 @@ Url.prototype= {
         db.load_data(args, filename);
     },
 
-    loadCustomUrl: function(db) {
+    loadCustomUrl: function(db, args) {
         this.url_dict = {};
         this.pushUrl("");
-        db.load_custom_data();
+        db.load_custom_data(args);
     },
 
     clean: function(){

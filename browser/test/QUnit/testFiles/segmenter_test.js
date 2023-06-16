@@ -33,14 +33,14 @@ QUnit.test("segmenter", function(assert) {
     setTimeout( function() {
         var div1 = document.getElementById("seq1").getElementsByClassName("seq-fixed")[0];;
         assert.notEqual(div1.innerHTML.indexOf("test2"), -1, "select : Ok")
-        assert.equal(segment.sequence_order[0], 0, "segment.first_clone still set to 0 if clones 0 and 1 are selected")
+        assert.equal(segment.sequence_order[0], 0, "segment.first_clone still set to 0 if clonotypes 0 and 1 are selected")
         
         m.unselect(0)
         done()
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(segment.sequence_order[0], 1, "segment.first_clone is set to 1 if clones 0 is unselected")
+        assert.equal(segment.sequence_order[0], 1, "segment.first_clone is set to 1 if clonotypes 0 is unselected")
         
         m.select(2)
         done()
@@ -83,7 +83,6 @@ QUnit.test("segmenter", function(assert) {
         m.updateElem([0])
         done()
     }, delay+=step);
-    // assert.deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
     
     setTimeout( function() {
         assert.equal(document.getElementById("seq0").getElementsByClassName("seq-fixed")[0].className.includes("list_focus"), true, "focus : Ok")
@@ -109,14 +108,14 @@ QUnit.test("segmenter", function(assert) {
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 10 reads (5.000%) ", "stats (1 clone) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clonotype, 10 reads (5.000%) ", "stats (1 clone) : Ok")
 
         m.multiSelect([0,1])
         done()
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clones, 30 reads (15.00%) ", "stats (several clones) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clonotypes, 30 reads (15.00%) ", "stats (several clones) : Ok")
 
         // Select multiple clones and check they are ordered.
         m.unselectAll()
@@ -143,7 +142,7 @@ QUnit.test("segmenter", function(assert) {
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 3 reads ", "stats (1 clone with few reads) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clonotype, 3 reads ", "stats (1 clone with few reads) : Ok")
         
         m.unselectAll()
         m.select(2)
@@ -168,10 +167,10 @@ QUnit.test("sequence", function(assert) {
     segment.init()
     segment.update()
 
-    segment.addToSegmenter(1);
-    segment.addToSegmenter(2);
-    segment.addToSegmenter(3);
-    segment.addToSegmenter(4);
+    segment.addCloneToSegmenter(1);
+    segment.addCloneToSegmenter(2);
+    segment.addCloneToSegmenter(3);
+    segment.addCloneToSegmenter(4);
 
     var seq1 = segment.sequence[1];
     var seq2 = segment.sequence[2];
@@ -189,7 +188,7 @@ QUnit.test("sequence", function(assert) {
     var aminoSplit4 = seq4.aminoSplitString().replace(/(?=\s)[^\r\n\t]/g, '_');
     assert.equal(aminoSplit4, "___|_|__|__|__|__|__|__|_|", aminoSplit4 + " aminoSplit sequence ");
 
-    m.filter("cat")
+    m.filter.add("Clone","search", "cat")
     var search4 = seq4.searchString().replace(/(?=\s)[^\r\n\t]/g, '_');
     assert.equal(search4,     "catcatcat_____tac_____tac", search4 + " search 'cat' in sequence");
 
@@ -206,7 +205,35 @@ QUnit.test("sequence", function(assert) {
 
     //check layer div position match start/stop position % CHAR_WIDTH
     assert.equal(seq3_cdr3.style.width, ((char_stop-char_start-1)*CHAR_WIDTH)+6+"px" );
-    assert.equal(seq3_cdr3.style.left,  ( char_start*CHAR_WIDTH)-2.5+"px" );
+    assert.equal(seq3_cdr3.style.left,  ( char_start*CHAR_WIDTH)-3+"px" );
+
+    //////////////
+    // Check primers
+
+    // no primer values in clone
+    char_start_p5 = seq3.segment_start(LAYERS['primer5'].start);
+    char_stop_p5  = seq3.segment_stop( LAYERS['primer5'].stop);
+    assert.equal(char_start_p5, undefined, "aligner; correct for primer5 start if no primer set");
+    assert.equal(char_stop_p5,  undefined, "aligner; correct for primer5 stop if no primer set");
+
+    // Set a values for primers of clone
+    m.clones[3].seg.primer5 = { seq: "CAGGAGGTGGAGCTGGATATT", start: 17, stop: 37 }
+    m.clones[3].seg.primer3 = { seq: "TATTTGCTGAAGGGACTAAGCTC", start: 112, stop: 134 }
+
+    var seq3_primer5 = seq3.updateLayerDiv('primer5', true);
+    var seq3_primer3 = seq3.updateLayerDiv('primer3', true);
+
+    //use layer functions to retrieve start/stop position
+    char_start_p5 = seq3.segment_start(LAYERS['primer5'].start);
+    char_stop_p5  = seq3.segment_stop( LAYERS['primer5'].stop);
+    char_start_p3 = seq3.segment_start(LAYERS['primer3'].start);
+    char_stop_p3  = seq3.segment_stop( LAYERS['primer3'].stop);
+
+    assert.equal(char_start_p5, 17, "aligner; correct position of primer5 start");
+    assert.equal(char_stop_p5,  38, "aligner; correct position of primer5 stop");
+    assert.equal(char_start_p3, 112, "aligner; correct position of primer3 start");
+    assert.equal(char_stop_p3,  135, "aligner; correct position of primer3 stop");
+
 
     //toFasta
     var done = assert.async(1);
@@ -223,7 +250,7 @@ QUnit.test("sequence", function(assert) {
 
 });
 
-QUnit.test("segt", function (assert) {
+QUnit.test("germline", function (assert) {
        var m = new Model();
     m.parseJsonData(json_data, 100);
     m.initClones();
@@ -231,10 +258,10 @@ QUnit.test("segt", function (assert) {
     segment.init();
     segment.update();
     m.select(2)
-    segment.addGermlineToSegmenter("IGHD1-1*01","IGH");
+    segment.addGermlineToSegmenter("IGHD1-1*01");
     assert.equal(segment.sequence["IGHD1-1*01"].seq.join("").toUpperCase(), "CCAGGAGGCCCCAGAGCTCAGGGCGCCGGGGCAGATTCTGAACAGCCCCGAGTCACGGTGGGTACAACTGGAACGAC", "seq.join IGHD1-1*01")
-    assert.equal(segment.sequence["IGHD1-1*01"].is_clone, false, "segment sequence is_clone");
-    segment.addToSegmenter(2);
+    assert.equal(segment.isClone("IGHD1-1*01"), false, "segment sequence is_clone");
+    segment.addCloneToSegmenter(2);
     segment.add_all_germline_to_segmenter();
     // segment.updateElem()
     assert.equal(segment.sequence[2].seq.join(" "),"c c c c c c c c c c c c c c c c c c c c", "clone 3 sequence")
@@ -242,9 +269,9 @@ QUnit.test("segt", function (assert) {
     assert.equal(segment.sequence["IGHD2-2*02"].seq.join("").toUpperCase(),"GAGGGGACTCAGTGACTCCCGCGGGGACAGGAGGATTTTGTGGGGGCTCGTGTCACTGTGAGGATATTGTAGTAGTACCAGCTGCTATACC","4 germline (IGHD2-2*02)")
     assert.equal(segment.sequence["IGHJ6*01"].seq.join("").toLowerCase(),"attactactactactacggtatggacgtctgggggcaagggaccacggtcaccgtctcctcagaagaatggccactctagggcctttgttttctgctactgcctgtggggtttcctgagcatt","3 germline (IGHJ6*01)")
 
-    segment.addSequenceTosegmenter("test","igh", "accccccgtgtagtagtcc")
+    segment.addSequenceToSegmenter("test", "accccccgtgtagtagtcc")
     assert.equal(segment.sequence["test"].seq.join("").toLowerCase(),"accccccgtgtagtagtcc"," test sequence ")
-    assert.equal(segment.sequence["test"].is_clone, false);
+    assert.equal(segment.isClone("test"), false);
 
     m.clone(3).addSegFeatureFromSeq('test_feature','CACCCAGGAGGTGGAGCTGGATATTGAGACT');
     f1 = m.clone(3).getSegFeature("test_feature");
@@ -271,11 +298,13 @@ QUnit.test("align", function (assert) {
     m.select(0)
     m.select(1)
 
-
-
     var done = assert.async(3);
     var delay = 0;
     var step = 500;
+
+    //init quality
+    m.clone(0).seg.quality = { seq :[] };
+    for (var i =0; i<75; i++) m.clone(0).seg.quality.seq.push(String.fromCharCode(40+ (i%25)))
 
     setTimeout( function() {
         segment.align()
@@ -313,10 +342,20 @@ QUnit.test("align", function (assert) {
                       insert1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " inserted nucleotide");
 
         var amino1 = seq1.aminoString();
+        assert.equal( amino1.replace(/(?=\s)[^\r\n\t]/g, ' '),  " I ## C  M  H  –––––A  P  P  P  P  N  F  F  F  F  F  F  D  A  S  D  A  –*  ?", 
+                      amino1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " Amino seq");
+
         var aminosplit1 = seq1.aminoSplitString();
+        assert.equal( aminosplit1 .replace(/(?=\s)[^\r\n\t]/g, ' '),  "  | |  |  |  |       |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   | |", 
+                      aminosplit1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " Amino split seq");
+        
         var mute1 = seq1.muteSubstitutionString();
         assert.equal( mute1.replace(/(?=\s)[^\r\n\t]/g, ' '),  "  _    _                                                                   ", 
                       mute1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " mute substitution");
+
+        var quality1 = seq1.qualityString(true)
+        assert.equal( quality1.replace(/(?=\s)[^\r\n\t]/g, ' '),  "()*+,-./0123456-1-1-1-1-1789:;<=>?@()*+,-./0123456789:;<=>?@()*+,-./01234567-189:;", 
+                      quality1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " Quality");
 
         segment.resetAlign()
         done()
@@ -372,3 +411,38 @@ QUnit.test("reset", function (assert) {
  
 })
 
+
+QUnit.test("toggle", function (assert) {
+    var m = new Model();
+    m.parseJsonData(json_data, 100);
+    m.initClones();
+
+    var segment = new Aligner("segment",m);
+    segment.init();
+    m.multiSelect(Object.keys(m.clones))
+
+    var h1;
+    var done = assert.async(3);
+    var delay = 0;
+    var step = 1000;
+    segment.open()
+    segment.close()
+    
+    setTimeout( function() {
+        h1 = $("#segment").height()
+        segment.toggle()
+        done()
+    }, delay+=step)
+
+    setTimeout( function() {
+        assert.ok(($("#segment").height() > h1), "segmenter height should increased" + $("#segment").height())
+        segment.toggle()
+        done()
+    }, delay+=step)
+
+    setTimeout( function() {
+        assert.ok(($("#segment").height() == h1), "segmenter height be back to normal" + h1)
+        done()
+    }, delay+=step)
+ 
+})

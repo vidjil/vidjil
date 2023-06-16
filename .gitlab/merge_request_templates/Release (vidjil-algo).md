@@ -17,7 +17,6 @@ https://gitlab.inria.fr/vidjil/vidjil/pipelines/XXXXX
 (if tests passed on different pipelines, indicate below the relevant pipelines)
 
 Usual tests should pass, but also:
-* [ ] prepare_release
 * [ ] valgrind_unit
 * [ ] valgrind_functional
 * [ ] multiple_tests
@@ -26,16 +25,15 @@ Benchmarks
 * [ ] almost no change...
 * [ ] ... or significant changes are understood
 
-Profiling
+When there are significant changes in the benchmarks, study the profiling
 * cpu: PointerACAutomaton.getResults, ~37% ?
 * mem: PointerACAutomaton.insert, ~73% ?
-* [ ] almost no change...
-* [ ] ... or significant changes are understood
+* [ ] ... 
 
 ## The release, publish, tag and push
 
-* [ ] merge this MR to *master* and tag: `git tag release-20XX-XX` 
-* [ ] push: `git push origin master release-20XX-XX`
+* [ ] merge this MR to *master* and tag: `git tag release-20XX.XX` 
+* [ ] push: `git push origin master release-20XX.XX`
 * [ ] mirror to GH: `git push github master release-20XX.XX`
 * [ ] deploy to vidjil.org/releases and app.vidjil.org: click on `copy_release` (there may be changes to CD...)
 * [ ] deploy the doc: click on `deploy_doc`
@@ -50,6 +48,8 @@ After these steps, we merge back the release in `dev`:
 * [ ] Open a new internal issue with the `Deploy (vidjil-algo)` template : vdj#XXXXX
 
 * [ ] Possibly fix things in `merge_request_templates/Release (vidjil-algo).md` on a new MR
+
+* [ ] Close the milestone associated with this release, moving remaining issues on another milestone
 
 /label ~cpp
 

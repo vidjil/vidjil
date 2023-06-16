@@ -73,11 +73,18 @@ Aligner.prototype = {
                 var id  = "aligner_checkbox_"+mc.id;
                 clone.title = mc.title;
                 input.id = id;
-                input.checked = mc.enabled;
+
+                if (localStorage.getItem(`aligner_layers_${mc.title}`)){
+                    input.checked = localStorage.getItem(`aligner_layers_${mc.title}`) === "true"
+                    self.toggleLayers(mc.layers, input.checked, true);
+                } else {
+                    input.checked = mc.enabled;
+                }
+
                 clone.setAttribute("for", id);
                 text.innerHTML = mc.text;
 
-                this.connect_checkbox(clone, mc.layers);
+                this.connect_checkbox(clone, mc.title, mc.layers);
                 menuC.appendChild(clone);
             }
         }
@@ -86,66 +93,191 @@ Aligner.prototype = {
     build_axis_menu: function(){
         var self = this;
 
-        var available_axis = Axis.prototype.available();
+        var available_axis = AXIS_ALIGNER;
+        this.selectedAxis  = []
 
         var menu = document.getElementById("segmenter_axis_select");
         for (var i in available_axis) {
             var axis_p = Axis.prototype.getAxisProperties(available_axis[i]);
-            if (!axis_p.isInAligner) continue;
+
+            if (typeof axis_p.hide != 'undefined' && axis_p.hide) continue;
 
             var axis_label = document.createElement('label');
             axis_label.setAttribute('for', "sai"+i);
             axis_label.className = "aligner-checkbox-label";
+            if (typeof axis_p.class == "string") axis_label.className += " "+axis_p.class
+            axis_label.title = axis_p.doc;
 
             var axis_option = document.createElement('span');
-            var axis_text = document.createTextNode(available_axis[i]);
+            var axis_text = document.createTextNode(axis_p.name);
             var axis_input = document.createElement('input');
             axis_input.setAttribute('type', "checkbox");
-            axis_input.setAttribute('value', available_axis[i]);
+            axis_input.setAttribute('value', axis_p.name);
             axis_input.setAttribute('id', "sai"+i); // segmenter axis input
             axis_input.className = "aligner-checkbox-input";
-            if (available_axis[i] == "size" ||
-                available_axis[i] == "productivity IMGT" ||
-                available_axis[i] == "VIdentity IMGT" ) axis_input.setAttribute('checked', "");
+
+            // control if a value is present in localsettings
+            if (localStorage.getItem(`aligner_axis_${axis_p.name}`)){
+                if (localStorage.getItem(`aligner_axis_${axis_p.name}`) == "true"){
+                    if (this.selectedAxis.length < 5) {
+                        this.selectedAxis.push(Axis.prototype.getAxisProperties(axis_p.name))
+                        axis_input.setAttribute('checked', "");
+                    }
+                }
+            } else {
+                if (axis_p.name == "Size" ||
+                    axis_p.name == "[IMGT] Productivity" ||
+                    axis_p.name == "[IMGT] VIdentity" ){
+                        if (this.selectedAxis.length < 5) {
+                            axis_input.setAttribute('checked', "");
+                            this.selectedAxis.push(Axis.prototype.getAxisProperties(axis_p.name))
+                        }
+                } 
+            }
+
 
             axis_label.appendChild(axis_input);
             axis_label.appendChild(axis_text);
             axis_option.appendChild(axis_label);
             menu.appendChild(axis_label);
+            this.connect_axisbox(axis_label, axis_p.name);
 
             $(axis_input).unbind("click");
-            self.connect_axisbox(axis_input);
+        }
+    },
+
+    // return list of external data that need to be refreshed to display enabled layers
+    needRefresh: function(){
+        var refreshList = []
+        for (var s in this.sequence){
+            var r = this.sequence[s].needRefresh()
+            for (var s2 in r ) 
+                if (refreshList.indexOf(r[s2]) == -1)
+                    refreshList.push(r[s2])
+        }
+        return refreshList
+    },
+
+    // check if some enabled layers in segmenter need external data from IMGT/cloneDB to be displayed and update buttons accordingly
+    updateButton: function(){
+        var self = this;
+
+        var refreshList = this.needRefresh()
+        var button = $("#align-refresh-button")
+        var icon   = button.find('i')
+
+        refreshList.filter(provider => (self.pendingAnalysis != undefined && self.pendingAnalysis[provider] > 0))
+        // Update global external provider button
+        if (typeof this.pendingAnalysis != 'undefined' && this.pendingAnalysis > 0){
+            // Some provider are pending
+            icon.addClass('animate-spin')
+            button.addClass('disabledClass')
+        }else if (refreshList.length == 0)  {
+            // No provider pending
+            button.removeClass('disabledClass')
+            icon.removeClass()
+            icon.addClass('icon-ok')
+        }else{
+            // At least one provider is possible
+            button.removeClass('disabledClass')
+            icon.removeClass()
+            icon.addClass('icon-arrows-ccw')
         }
 
-        this.selectedAxis = [Axis.prototype.getAxisProperties("productivity IMGT"),
-                            Axis.prototype.getAxisProperties("VIdentity IMGT"),
-                            Axis.prototype.getAxisProperties("size")];
+        // Update child button of each provider
+        button.children(".menu-content").children("a").each(function () {
+            self.refreshIconProvider($(this).data("target"))
+        })
+
+        return this        
+    },
+
+    retrieveExternalData: function(providerList, cloneList){
+        var self = this
+
+        if (typeof providerList == 'undefined')
+            providerList = this.needRefresh()
+
+        if (typeof cloneList == 'undefined')
+            cloneList = this.sequenceListInSegmenter()
+
+        var callback = function(serviceName){
+            self.pendingAnalysis[serviceName]--
+            self.updateButton()    
+        }
+        
+        this.pendingAnalysis = {}
+        for (var i in providerList){
+            serviceName = providerList[i]
+
+            this.pendingAnalysis[serviceName] = 0;
+
+            switch (serviceName) {
+                case "IMGT":
+                    this.pendingAnalysis[serviceName]++
+                    this.sendTo('IMGTSeg', cloneList, callback(serviceName))
+                    break;
+                case "cloneDB":
+                    this.pendingAnalysis[serviceName]++
+                    db.callCloneDB(cloneList, callback(serviceName))
+                    break;
+                default:
+                    break;
+            }
+        }
     },
 
     //check axis selected in menu to update and update axisBox dom elements accordingly
-    connect_axisbox:function (elem){
+    getSelectedAxis:function (){
         var self = this;
 
-        $(elem).click(function(e) {
-            var menu = document.getElementById("segmenter_axis_select");
-            var inputs = menu.getElementsByTagName("input");
-            var selectedAxis = [];
-    
-            for (var i in inputs)
-                if (inputs[i].checked) selectedAxis.push(Axis.prototype.getAxisProperties(inputs[i].value));
-    
-            if (selectedAxis.length <= 5){
-                self.selectedAxis = selectedAxis;
-                self.update();
-            }else{
-                console.log({ msg: "selection is limited to 5", type: "flash", priority: 2 });
-                this.checked = false;
-            }
-            e.stopPropagation();            
-        })
+        var menu = document.getElementById("segmenter_axis_select");
+        var inputs = menu.getElementsByTagName("input");
+        var selectedAxis = [];
+
+        for (var i in inputs){
+            if (inputs[i].checked) selectedAxis.push(inputs[i].value);
+        }
+
+        console.default.log( `${selectedAxis.length} selectedAxis: ${selectedAxis}`)
+        return selectedAxis
     },
 
-    connect_checkbox: function(elem, layers){
+
+    //check axis selected in menu to update and update axisBox dom elements accordingly
+    connect_axisbox:function (elem, title){
+        var self = this;
+
+        $(function () {
+            $(elem).find('input').unbind("click");
+            $(elem).find('input').click(function(e){
+                var input = elem.getElementsByTagName("input")[0];
+                var axis  = Axis.prototype.getAxisProperties(input.value)
+                var selectedAxis = self.getSelectedAxis()
+
+                if (input.checked){
+                    if (selectedAxis.length > 5 ){
+                        console.log({ msg: "Data columns selection is limited to 5.<br/>Please disable some axis before adding new one.", type: "flash", priority: 2 });
+                        input.checked = false;
+                        return
+                    } else {
+                        self.selectedAxis.push(axis)
+                        self.update()
+                    }
+                } else if (!input.checked){
+                    var index = self.selectedAxis.indexOf(axis)
+                    self.selectedAxis.splice(index, 1)
+                    self.update()
+                }
+
+                if (localStorage){
+                    localStorage.setItem(`aligner_axis_${title}`, input.checked)
+                } 
+            });
+        });
+    },
+
+    connect_checkbox: function(elem, title, layers){
         var self = this;
         
         //connect event to checkbox and checkbox_label
@@ -153,10 +285,58 @@ Aligner.prototype = {
             $(elem).find('input').unbind("click");
             $(elem).find('input').click(function(e){
                 var input = elem.getElementsByTagName("input")[0];
+                if (localStorage){
+                    localStorage.setItem(`aligner_layers_${title}`, input.checked)
+                } 
                 self.toggleLayers(layers, input.checked, true);
                 e.stopPropagation();
             });
         });
+    },
+
+    open : function(){
+        var self = this;
+        this.min_H = 130;
+        this.max_H = 500;
+
+        var seg = $(this.div_segmenter);
+
+        var cur_H = seg.height()
+        var auto_H = seg.css('height', 'auto').height();
+        if (auto_H > self.max_H) auto_H = this.max_H;
+        if (cur_H  < self.min_H) cur_H  = this.min_H;
+        seg.stop().height(cur_H).animate({ height: auto_H }, 250, function(){
+            $(self.div_segmenter).height('auto');
+        });
+
+        $("#"+this.id).css('box-shadow', '0px -4px 8px 0px rgba(0, 0, 0, 0.2)')
+
+        var icon = $("#aligner-open-button").find(".icon-up-open")
+        icon.removeClass("icon-up-open")
+        icon.addClass("icon-down-open")
+
+        this.is_open = true;
+    },
+
+    close : function(){
+        this.min_H = 130;
+
+        $(this.div_segmenter).stop().animate({ height: this.min_H }, 250);
+
+        $("#"+this.id).css('box-shadow', '')
+
+        var icon = $("#aligner-open-button").find(".icon-down-open")
+        icon.removeClass("icon-down-open")
+        icon.addClass("icon-up-open")
+
+        this.is_open = false;
+    },
+
+    toggle : function(){
+        if (this.is_open)
+            this.close();
+        else
+            this.open()
     },
 
     build_segmenter: function () {
@@ -176,65 +356,28 @@ Aligner.prototype = {
         this.div_segmenter = clone.getElementsByClassName("segmenter")[0];
         self.min_H = 130;
         self.max_H = 500;
-        $(".menu-content").css("bottom", (self.min_H+22)+"px");
         $(this.div_segmenter)
             .scroll(function () {
                 var leftScroll = $(self.div_segmenter).scrollLeft();
                 $('.seq-fixed').css({ 'left': +leftScroll });
             })
-            .mouseenter(function () {
-                if (!self.fixed && !self.is_open) {
-                    var seg = $(self.div_segmenter);
-                    var cur_H = seg.height();
-                    var auto_H = seg.css('height', 'auto').height();
-
-                    if (auto_H >= self.min_H+20) {
-                        if (auto_H > self.max_H) auto_H = self.max_H;
-                        if (cur_H  < self.min_H) cur_H  = self.min_H;
-                        $(".menu-content").css("bottom", (auto_H+22)+"px");
-                        seg.stop().height(cur_H).animate({ height: auto_H }, 250);
-                    } else {
-                        $(".menu-content").css("bottom", (self.min_H+22)+"px");
-                        seg.stop().height(self.min_H);
-                    }
-                    self.is_open = true;
-                }
-            });
-
-        $('#' + this.id)
-            .mouseleave(function (e) {
-                if (e.relatedTarget !== null && self.is_open) {
-                    setTimeout(function () {
-                        if ($(".tagSelector").hasClass("hovered")) return;
-
-                        var seg = $(self.div_segmenter);
-
-                        if (!self.fixed  && seg.height() > self.min_H) 
-                            seg.stop().animate({ height: self.min_H }, 250);
-                        else 
-                            seg.stop();
-                        
-                        $(".menu-content").css("bottom", (self.min_H+22)+"px");
-                        self.is_open = false;
-                        
-                    }, 200);
-                }
-            });
+  
 
         // Focus/hide/label
-        document.getElementById("focus_selected").onclick = function () { self.m.focusSelected(); };
-        document.getElementById("hide_selected").onclick = function () { self.m.hideSelected(); };
+        document.getElementById("focus_selected").onclick = function () { self.m.filter.add("Clonotype", "focus", self.m.getSelected()); };
+        document.getElementById("hide_selected").onclick = function () { self.m.filter.add("Clonotype", "hide", self.m.getSelected()); };
+        document.getElementById("reset_focus").onclick = function () {  self.m.filter.remove("Clonotype", "focus")
+                                                                        self.m.filter.remove("Clonotype", "hide") };
         document.getElementById("star_selected").onclick = function (e) {
-            if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
-        document.getElementById("fixsegmenter").onclick = function () { self.switchFixed(); };
+            if (m.getSelected().length > 0) { self.m.tags.openSelector(m.getSelected(), e); }};
         document.getElementById("cluster").onclick = function () { self.m.merge(); };
         document.getElementById("align").onclick = function () { self.toggleAlign(); };
-        this.setFixed(false);
+        document.getElementById("aligner-open-button").onclick = function () { self.toggle(); };
 
     },
 
     build_sequence: function(cloneID){
-        if ( !this.m.clone(cloneID).hasSequence() ){
+        if (this.m.clone(cloneID) && !this.m.clone(cloneID).hasSequence() ){
             // This clone should not be added to the segmenter
             return;
         }
@@ -249,35 +392,6 @@ Aligner.prototype = {
 
         this.index[cloneID] = new IndexedDom(clone);
 
-    },
-
-    /**
-     * Switch the fixed status of the segmenter.
-     * @post old this.fixed == ! this.fixed
-     */
-    switchFixed: function() {
-        this.setFixed(!this.fixed);
-    },
-
-    /**
-     * Set the fixed status of the segmenter.
-     * Should be used rather than directly modifying the fixe property
-     */
-    setFixed: function(fixed) {
-        this.fixed = fixed;
-        this.updateFixedPicture();
-    },
-
-    updateFixedPicture: function() {
-        fix_icons = $('#fixsegmenter i');
-        if (fix_icons.length > 0) {
-            fix_icons = fix_icons[0];
-            if (this.fixed) {
-                fix_icons.className = 'icon-pin';
-            } else {
-                fix_icons.className = 'icon-pin-outline';
-            }
-        }
     },
 
    build_align_settings_menu: function(){
@@ -304,17 +418,28 @@ Aligner.prototype = {
     
     /**
      * complete a node with a clone information
-     * @param {integer} cloneID - clone index 
+     * @param {integer} sequenceID - sequence index 
      * */
-    build_spanF: function (cloneID) {
-
+    build_spanF: function (sequenceID) {
         var self = this;
-        var clone = this.m.clone(cloneID);
-        
+
         //copy template
         var template = document.getElementById("aligner-F");
         var cloneT = template.content.firstElementChild.cloneNode(true);
 
+        //this is a custom sequence
+        if (this.isGermline(sequenceID)){
+            cloneT.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(sequenceID));
+            cloneT.getElementsByClassName("delBox")[0].onclick = function () {
+                self.removeSequence(sequenceID);
+            };
+            return cloneT;
+        }
+
+        //this is a clone sequence
+        var cloneID = sequenceID;
+        var clone = this.m.clone(cloneID);
+        
         //???
         clone.div_elem(cloneT, false);
 
@@ -324,14 +449,18 @@ Aligner.prototype = {
         cloneT.getElementsByClassName("nameBox")[0].style.color = clone.color;
         cloneT.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(clone.getShortName()));
         cloneT.getElementsByClassName("delBox")[0].onclick = function () {
-            clone.unselect();
-            self.aligned = false;
+            self.removeSequence(cloneID);
         };
-        if (this.m.clone_info == cloneID) 
-        cloneT.getElementsByClassName("infoBox")[0].className += " infoBox-open";
-        cloneT.getElementsByClassName("infoBox")[0].onclick = function () {
-            self.m.displayInfoBox(cloneID);
-        }
+
+        var span_info = cloneT.getElementsByClassName("infoBox")[0]
+        span_info.id = `aligner_info_${cloneID}`
+        span_info.onclick = function () {self.m.displayInfoBox(cloneID)}
+
+        var dom_content = clone.getWarningsDom()
+        span_info.classList            = dom_content.className
+        span_info.firstChild.classList = dom_content.icon
+        span_info.firstChild.title     = dom_content.title
+
         cloneT.getElementsByClassName("axisBox")[0].color = clone.getColor();
         this.fillAxisBox(cloneT.getElementsByClassName("axisBox")[0], clone);
 
@@ -347,6 +476,8 @@ Aligner.prototype = {
         if (update)
             for (var s in this.sequence)
                 this.sequence[s].updateLayers(layers);
+        
+        this.updateButton()
     },
 
 
@@ -373,11 +504,27 @@ Aligner.prototype = {
             document.getElementById("listSeq").innerHTML = "";
     },
 
-    removeGermline:function(id){
-        elem = document.getElementById("seq"+id);
-        elem.parentNode.removeChild(elem);
+    removeSequence:function(id, update){
+        if (typeof update == "undefined") update=true 
+
         delete this.sequence[id];
         this.sequence_order.splice( this.sequence_order.indexOf(id), 1 );
+        if (this.isClone(id)) this.m.clone(id).unselect();
+        
+        if (update) this.updateDom()
+                        .show()
+    },
+
+    removeAllSequence: function(update){
+        if (typeof update == "undefined") update=true 
+
+        var keys = Object.keys(this.sequence)
+        for (var i =0; i<keys.length; i++)
+            this.removeSequence(keys[i], false)
+
+        if (update) this.updateDom()
+                        .updateButton()
+                        .show()
     },
 
     /**
@@ -401,64 +548,84 @@ Aligner.prototype = {
      * @param {integer[]} list - array of clone index
      * */
     updateElem: function (list) {
+
+        //nothing selected => remove all sequence including germline
+        if (this.m.getSelected().length == 0) {
+            this.removeAllSequence()
+            return
+        }
+
         var self = this;
+        var cloneID;
+        
         list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
-        var sliderNeedUpdate = (Object.keys(this.sequence).length==0);//slider move only if we add sequence to an empty segmenter
-        var cloneID, liDom;
 
-        // remove unselected sequences
+        // remove unselected clones
         for (var i = 0; i < list.length; i++) {     
-            cloneID = list[i];
-            liDom = this.index[cloneID];
-            
-            if (!this.m.clone(cloneID).isSelected()) {            
-                if (this.sequence[cloneID]){                         
-                    delete this.sequence[cloneID];       
-                    this.sequence_order.splice( this.sequence_order.indexOf(cloneID), 1 );
-                }
-
-                if (liDom != null) 
-                    liDom.display("main", "none");
-            }
+            cloneID = list[i];   
+            if (!this.m.clone(cloneID).isSelected()) 
+                if (this.sequence[cloneID])         
+                    this.removeSequence(cloneID, false);
         }
 
-        // update sequences already in segmenter
-        for (var k = 0; k < this.sequence_order.length; k++) {   
-            cloneID = this.sequence_order[k];
-            liDom = this.index[cloneID];
-
-            if(list.indexOf(cloneID) != -1){
-                list.splice( list.indexOf(cloneID), 1 );
-                this.addToSegmenter(cloneID);
-                if (liDom != null) {
-                    liDom.display("main", "block");
-                    liDom.replace("seq-fixed", this.build_spanF(cloneID));
-                    liDom.content("seq-mobil", this.sequence[cloneID].toString());        
-                }
-            }
-        }
-
-        // add newly selected sequences
+        // add newly selected clones
         for (var j = 0; j < list.length; j++) {     
             cloneID = list[j];
-            liDom = this.index[cloneID];
+            if (this.m.clone(cloneID).isSelected() && 
+                Object.keys(this.sequence).indexOf(cloneID) == -1 )
+                this.addCloneToSegmenter(cloneID)
             
-            if (this.m.clone(cloneID).isSelected()) {
-                this.addToSegmenter(cloneID);
-                if (liDom != null) {
-                    liDom.display("main", "block");
-                    liDom.replace("seq-fixed", this.build_spanF(cloneID));
-                    liDom.content("seq-mobil", this.sequence[cloneID].toString());        
-                }
-            } 
         }
 
-        // update 
-        if (sliderNeedUpdate) this.show();
-        this.updateAlignmentButton();
-        this.updateStats();  
-        var leftScroll = $(this.div_segmenter).scrollLeft();
-        $('.seq-fixed').css({'left':+leftScroll});
+        var dom_content = this.m.clone(cloneID).getWarningsDom()
+        var info_align  = document.getElementById(`aligner_info_${this.m.clone(cloneID).index}`)
+        if (info_align != null) {
+            info_align.classList = dom_content.className
+            info_align.firstChild.classList = dom_content.icon
+            info_align.firstChild.title = dom_content.title
+        }
+
+        this.updateDom(list)
+            .updateButton()
+        
+    },
+
+    updateDom:function(list){
+        var keys = Object.keys(this.index)
+        var keys2 = Object.keys(this.sequence)
+        if (typeof list == "undefined") list = Object.keys(this.sequence)
+
+        //update germline sequence
+        for (var k in keys2)
+            if(isNaN(keys2[k]))
+                if (list.indexOf(keys2[k]) == -1)
+                    list.push(keys2[k])
+
+
+        //update dom object of sequence in aligner
+        var l_spacing;        
+        for (var j=0; j<list.length; j++)  
+            if (this.sequence[list[j]] != null){
+                var dom = this.index[list[j]]
+                dom.display("main", "block");
+                dom.replace("seq-fixed", this.build_spanF(list[j]));
+                if (l_spacing == undefined)
+                    l_spacing = this.sequence[list[j]].updateLetterSpacing();
+                else
+                    this.sequence[list[j]].updateLetterSpacing(l_spacing);
+                dom.content("seq-mobil", this.sequence[list[j]].toString());        
+            }
+
+        //hide unused sequence dom object
+        for (var i=0; i<keys.length; i++)
+            if (this.index[keys[i]] != null && keys2.indexOf(keys[i])==-1) 
+                this.index[keys[i]].display("main", "none");
+
+        var div_segmenter = document.getElementsByClassName("segmenter")[0];
+        $('.seq-fixed').css({ 'left': + $(div_segmenter).scrollLeft() });
+        this.updateStats();
+
+        return this;
     },
 
     /**
@@ -472,59 +639,116 @@ Aligner.prototype = {
     },
 
     isClone: function (id) {
-        return ((typeof this.m.clone(id) != "undefined") && this.m.clone(id).isSelected());
+        return !isNaN(id);
     },
     
     isGermline: function (id) {
-        return (typeof this.m.germline[this.sequence[id].locus] != "undefined");
-    },
-
-    /**
-     * enable/disable align button if their is currently enough sequences selected
-     * */
-    updateAlignmentButton: function() {
-        var align = document.getElementById("align");
-        var cluster = document.getElementById("cluster");
-        list = this.sequenceListInSegmenter();
-        if (align !== null) {
-            if (list.length > 1) {
-                align.className = "aligner-menu button";
-                cluster.className = "aligner-menu button";
-            }
-            else {
-                align.className = "button inactive";
-                cluster.className = "button inactive";
-            }
-        }
+        return isNaN(id);
     },
 
     sequenceListInSegmenter: function() {
         return Object.keys(this.sequence);
     },
 
-
     fillAxisBox: function (axisBox, clone) {
         axisBox.removeAllChildren();
-        var available_axis = Axis.prototype.available();
         
         for (var i in this.selectedAxis) {
             var span = document.createElement('span');
             var axis = this.selectedAxis[i];
             span.removeAllChildren();
-            span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
-            span.setAttribute('title', this.selectedAxis[i].doc);
             span.className = axis.name;
+            span.setAttribute('title', this.selectedAxis[i].doc);
+
+            if (axis.hover != undefined)
+                span.setAttribute('title', axis.hover(clone, this.m.getTime()) )
+            
+            if (typeof axis.refresh != 'undefined' && typeof axis.refresh(clone) != 'undefined'){
+                span.appendChild(this.refreshIcon(axis.refresh(clone)))
+            } else {
+                span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
+            }
+
             axisBox.appendChild(span);
         }
     },
+
+    /**
+     * Refresh external icon of one clonotype in aligner
+     * Allow to launch external action for on provider
+     */
+    refreshIcon: function(provider){
+        var self = this
+        var span = document.createElement('span')
+        var im = document.createElement('i')
+        var button = $("#align-refresh-button")
+
+        span.className = 'aligner-inline-button'
+        im.className ='icon-arrows-ccw'
+        span.setAttribute('title', "missing data, click to try to retrieve from "+provider);
+
+        if (typeof this.pendingAnalysis != 'undefined' &&
+                this.pendingAnalysis[provider] > 0){ // get list provider
+                span.className = 'aligner-inline-button disabledClass'
+                im.className = 'icon-arrows-ccw animate-spin'
+        }
+
+        span.onclick = function(){self.retrieveExternalData([provider])}
+
+        span.appendChild(im)
+        return span
+    },
+
+    /**
+     * Allow to refresh icon in aligner header and menu.
+     */
+    refreshIconProvider: function(provider){
+        var self = this
+
+        var button = $("#align-refresh-button").children(".menu-content")
+                                               .find(`[data-target='${provider}']`)
+        var icon   = $("#icon_external_"+provider)
+
+        var onclickfct = function(){
+            segment.retrieveExternalData([$(this).data("target")])
+        }
+
+        if (!config[provider]){
+            button.hide()
+            button.prop('onclick', null);
+        } else {
+            button.show()
+
+            var needRefresh = this.needRefresh()
+            if (typeof this.pendingAnalysis != 'undefined' &&
+                needRefresh.indexOf(provider) != -1 &&
+                this.pendingAnalysis[provider] > 0){ // get list provider
+                    icon.removeClass()
+                        .addClass('animate-spin')
+            } else if (this.pendingAnalysis == undefined || (typeof this.pendingAnalysis != 'undefined' && needRefresh.indexOf(provider) != -1)){
+                button.removeClass('disabledClass')
+                icon.removeClass()
+                    .addClass('icon-arrows-ccw')
+            } else {
+                button.addClass('disabledClass')
+                icon.removeClass()
+                    .addClass('icon-ok')
+            }
+        }
+
+    },
+
         
     /**
      * add a clone in the segmenter<br>
      * build a div with clone information and sequence
      * @param {intger} cloneID - clone index 
      * */
-    addToSegmenter: function (cloneID) {
+    addCloneToSegmenter: function (cloneID, update) {
         var self = this;
+
+        if (typeof update == "undefined") update = false
+
         if ( !this.m.clone(cloneID).hasSequence() ){
             // This clone should not be added to the segmenter
             return;
@@ -541,57 +765,8 @@ Aligner.prototype = {
         this.sequence[cloneID].load();
         this.sequence_order.push(cloneID);
         
-        if (document.getElementById("seq" + cloneID) != null ){                 //div already exist
-            document.getElementById("seq" + cloneID).style.display = "block";
-            var divParent = document.getElementById("listSeq");
-            divParent.appendChild(document.getElementById("seq" + cloneID));
-            return;
-        }
-        else{                                                                   //create div
-            this.build_sequence(cloneID);
-        }
-
-    },
-
-    /**
-    * select all the germline of a clone .
-    * add them to the segmenter
-    **/
-    add_all_germline_to_segmenter : function() {
-       for (var id in this.sequence) {
-           if (this.isClone(id)) {
-                var c = this.m.clone(id);
-                this.addGermlineToSegmenter(c.getGene("3"),c.germline);
-                this.addGermlineToSegmenter(c.getGene("4"),c.germline);
-                this.addGermlineToSegmenter(c.getGene("5"),c.germline);
-            }
-        }
-        this.show();
-    },
-
-    /**
-    * return a spanF completed with germline gene info
-    * @param {str} geneID - gene id 
-    **/
-    spanF_germline:function(geneID) {
-        var self = this; 
-
-        //copy template
-        var template = document.getElementById("aligner-F");
-        var clone = template.content.firstElementChild.cloneNode(true);
-
-        //edit
-        if (this.m.focus == geneID) $(clone).addClass("list_focus");
-        clone.getElementsByClassName("nameBox")[0].title = geneID;
-        clone.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(geneID));
-        clone.getElementsByClassName("delBox")[0].onclick = function () {
-            delete self.sequence[geneID];
-            self.sequence_order.splice( self.sequence_order.indexOf(geneID), 1 );
-            self.aligned = false;
-            self.removeGermline(geneID);
-        };
-        
-        return clone;
+        document.getElementById("listSeq").appendChild(document.getElementById("seq" + cloneID))
+        if (update) this.updateDom();
     },
 
     /**
@@ -600,40 +775,49 @@ Aligner.prototype = {
     * @param {str} id sequence id
     * @param {str} sequence
     **/
-    addSequenceTosegmenter : function(id, locus, str){
-        this.aligned = false ;
-        this.resetAlign();
-        if ( typeof this.sequence[id]=="undefined"){
-            this.sequence[id] = new genSeq(id, locus, this.m, this);
-            this.sequence[id].load("str");
-            var divParent = document.getElementById("listSeq");
+        addSequenceToSegmenter : function(id, str, update){
+        if (typeof update == "undefined") update = true
+        this.aligned = false
+        this.resetAlign()
+        str = str.split(".").join("")
+        if (typeof this.sequence[id]=="undefined"){
+            this.sequence[id] = new Sequence(id, this.m, this);
+            this.sequence[id].load(str);
             this.sequence_order.push(id);
-
-            var li = document.createElement('li');
-            li.id = "seq" + id;
-            li.className = "sequence-line";
-            var spanF = this.spanF_germline(id);
-            var spanM = document.createElement('span');
-
-            spanM.className = "seq-mobil";
-            spanM.innerHTML = this.sequence[id].load(str).toString(this);
-            li.appendChild(spanF);
-            li.appendChild(spanM);
-            divParent.appendChild(li);
         }
+        document.getElementById("listSeq").appendChild(document.getElementById("seq" + id));
+        if (update) this.updateDom();
+    },
+
+    /**
+    * select all the germline of a clone .
+    * add them to the segmenter
+    **/
+    add_all_germline_to_segmenter : function(update) {
+        if (typeof update == "undefined") update = true
+        for (var id in this.sequence) {
+           if (this.isClone(id)) {
+                var c = this.m.clone(id);
+                this.addGermlineToSegmenter(c.getGene("3"), false);
+                this.addGermlineToSegmenter(c.getGene("4"), false);
+                this.addGermlineToSegmenter(c.getGene("5"), false);
+            }
+        }
+        if (update) this.updateDom();
+        this.show();
     },
 
     /**
     * get the germline from the germline object
     * and use add germline to the segmenter
-    * @param {str} id sequence id
+    * @param {str} geneId sequence id
     **/
-    addGermlineToSegmenter: function(id, locus) {
-        if (typeof this.m.germline[locus][id]==="undefined"){
-            console.log("addGermlineToSegmenter: no germline, " + locus + ", " + id);
-        }else{
-            this.addSequenceTosegmenter(id , locus, this.m.germline[locus][id]);
-        }
+    addGermlineToSegmenter: function(geneId, update) {
+        if (typeof update == "undefined") update = true
+        var keys = Object.keys(this.m.germline)
+        for (var i = 0; i < keys.length; i++)
+        if (typeof this.m.germline[keys[i]][geneId] != "undefined")
+            this.addSequenceToSegmenter(geneId, this.m.germline[keys[i]][geneId], update); 
     },
 
     /**
@@ -641,23 +825,65 @@ Aligner.prototype = {
      * (see crossDomain.js)
      * @param {string} address - 'imgt', 'arrest', 'igBlast' or 'blast'
      * */
-    sendTo: function (address) {
+    sendTo: function (address, list, callback) {
 
-        var list = this.sequenceListInSegmenter();
+        if (typeof list == 'undefined')
+            list = this.sequenceListInSegmenter();
+
         var request = "";
         var system;
         var max=0;
+        var c;
+
+        var sample_set_id = "(---)"
+        if (typeof this.m.db_key != "undefined" &&
+            typeof this.m.db_key.sample_set_id != "undefined")
+            sample_set_id ="("+this.m.db_key.sample_set_id+")"
+            
+        // Split list of clonotype by system
+        var systems = {}
+        for (var l_pos = 0; l_pos < list.length; l_pos++) {
+            if (this.isClone(list[l_pos])) {
+                c = this.m.clone(list[l_pos]);
+                if (c.getSize()>max){
+                    system = c.getLocus();
+                    if (systems[system] == undefined){
+                        systems[system] = [list[l_pos]]
+                    } else { systems[system].push(list[l_pos]) }
+                }
+            }
+        }
+        // Make recursive call if needed on each system
+        var systems_keys = Object.keys(systems)
+        if (systems_keys.length > 1) {
+            for (var key_pos = 0; key_pos < systems_keys.length; key_pos++) {
+                var locus = systems_keys[key_pos]
+                this.sendTo(address, systems[locus], callback)
+            }
+            return // bypass after recursive calls
+        }
 
         for (var i = 0; i < list.length; i++) {
             if (this.isClone(list[i])) {
-                var c = this.m.clone(list[i]);
+                c = this.m.clone(list[i]);
                 
-                if (c.seg.imgt && address == 'IMGTSeg') continue;
-                if (typeof (c.getSequence()) !== 0){
-                    request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
+                if (c.seg.imgt && address == 'IMGTSeg'){
+                    if (c.seg.imgt.trimming_before  == this.m.trimming_before_external &&
+                        c.seg.imgt.trimming_primer  == this.m.primerSetCurrent){
+                      continue;
+                    }         
+                } // else, modified option, relunch request
+
+                request += ">" + sample_set_id + " #" + c.index + " " + c.getName() + "\n"
+                if (typeof (c.getSequence()) == 0){
+                    request +=  c.id + "\n";
+                } else if ( this.m.trimming_before_external && 
+                            this.m.primerSetCurrent != undefined) {
+                    request += c.trimmingFeature("primer5", "primer3", false) + "\n";
                 } else {
-                    request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
+                    request += c.getSequence() + "\n";
                 }
+                
                 if (c.getSize()>max){
                     system = c.getLocus();
                     max=c.getSize();
@@ -667,15 +893,20 @@ Aligner.prototype = {
                 request += ">" +list[i] + "\n" +this.m.germline[this.sequence[list[i]].locus][list[i]] + "\n";
             }
         }
+
         if (request != ""){
             if (address == 'IMGTSeg') {
-                imgtPostForSegmenter(this.m.species, request, system, this);
+                imgtPostForSegmenter(this.m.species, request, system, undefined, callback);
                 var change_options = {'xv_ntseq' : 'false', // Deactivate default output
                                     'xv_summary' : 'true'}; // Activate Summary output
-                imgtPostForSegmenter(this.m.species, request, system, this, change_options);
+                imgtPostForSegmenter(this.m.species, request, system, change_options, callback);
             } else {
                 window[address+"Post"](this.m.species, request, system);
+                if (callback) callback();
             }
+        }
+        else{
+            if (callback) callback();
         }
 
         this.update();
@@ -707,6 +938,7 @@ Aligner.prototype = {
                     scrollLeft: mid
                 }, 0);
         }
+        return this
     },
 
     /**
@@ -731,19 +963,10 @@ Aligner.prototype = {
         if (list.length === 0) return;
 
         for (var i = 0; i < list.length; i++) {
-            if (this.isClone(list[i]) && !(this.m.clone(list[i]).sequence).match("undefined") && this.m.clone(list[i]).sequence !== 0) { /// why '.match' ? why 0 ?
-                request += ">" + list[i] + "\n" + this.m.clone(list[i]).sequence + "\n";
-
-               }
-                else if(typeof this.m.germline[this.sequence[list[i]].locus]!="undefined"){
-                    request += ">" + list[i] + "\n" + this.m.germline[this.sequence[list[i]].locus][list[i]] + "\n";
-
-               }
-            else{
-                request += ">" + list[i] + "\n" + this.m.clone(list[i]).id + "\n";
-            }
+            var seq = this.sequence[list[i]].seq.join("")
+            if (seq == "") seq = "---"
+            request += ">" + list[i] + "\n" + seq + "\n";
         }
-
 
         $.ajax({
             type: "POST",
@@ -786,8 +1009,7 @@ Aligner.prototype = {
         for (var i = 0; i < selected.length; i++) {
             if (typeof this.sequence[selected[i]] !== "undefined" &&
                 typeof this.sequence[selected[i]].seq !== "undefined") {
-                var seq = this.sequence[selected[i]];
-                if (seq.is_clone) {
+                if (this.isClone(selected[i])) {
                     result += "> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
                 } else {
                     result += "> " + selected[i];
@@ -893,7 +1115,7 @@ Aligner.prototype = {
 
             if (length) t += length ;
             if (nb_clones_not_constant) t += '+' + nb_clones_not_constant;
-            t += " clone" + (length+nb_clones_not_constant>1 ? "s" : "") + ", ";
+            t += " clonotype" + (length+nb_clones_not_constant>1 ? "s" : "") + ", ";
 
             t += this.m.toStringThousands(sumRawReads) + " read" + (sumRawReads>1 ? "s" : "");
 
@@ -909,10 +1131,6 @@ Aligner.prototype = {
                 extra_info_system = "";
             }
             t += " ";
-            $(".focus_selected").css("display", "");
-        }
-        else {
-            $(".focus_selected").css("display", "none");
         }
             
         $(".stats_content").text(t);
@@ -930,10 +1148,20 @@ Aligner.prototype = {
         }
 
         if (this.m.getSelected().length > 0){  
-            $("#tag_icon__multiple").css("display", "");
+            $("#star_selected").css("display", "")
+            $("#focus_selected").css("display", "")
+            $("#hide_selected").css("display", "")
         } else {
-            $("#tag_icon__multiple").css("display", "none");
+            $("#star_selected").css("display", "none")
+            $("#focus_selected").css("display", "none")
+            $("#hide_selected").css("display", "none")
         }
+
+        if (this.m.filter.check("Clonotype", "focus") != -1 ||
+            this.m.filter.check("Clonotype", "hide") != -1)
+                $("#reset_focus").css("display", "")
+            else
+                $("#reset_focus").css("display", "none")
     },
 
     /**
@@ -1005,24 +1233,6 @@ Aligner.prototype = {
             return false;
         }else if (typeof obj.start != 'undefined' && typeof obj.stop != 'undefined') {
             return true;
-        }else{
-            return false;
-        }
-    },
-
-    /**
-     * determine if a string is an amino acid sequence or not
-     * @param {string}
-     * @return {bool}
-     * */
-    isAA : function (string) {
-        if (typeof string === 'undefined' || string === null) {
-            return false;
-        }else if (string.constructor === String) {
-            var reg = new RegExp("^[ACDEFGHIKLMNOPQRSTUVWY]+$");
-            return reg.test(string);
-        }else if (string.constructor === Array & string.length>0) {
-            return this.isAA(string[0]);
         }else{
             return false;
         }

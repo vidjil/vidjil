@@ -8,11 +8,11 @@ Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
 ## Vidjil core development
 
-  - Mathieu Giraud, 2011-2021
-  - Mikaël Salson, 2011-2021
-  - Marc Duez, 2012-2016, 2019-2021
+  - Mathieu Giraud, 2011-2023
+  - Mikaël Salson, 2011-2023
+  - Marc Duez, 2012-2016, 2019-2022
   - Tatiana Rocher, 2014-2017
-  - Florian Thonier, 2015-2021
+  - Florian Thonier, 2015-2023
   - Ryan Herbert, 2015-2020
   - Aurélien Béliard, 2016-2017
 
@@ -65,13 +65,15 @@ The development of Vidjil is funded by:
   - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
   - Inria Lille, 2015-2018
   - InCA, 2016-2019
-  - VidjilNet consortium at Inria, 2018-2021
+  - VidjilNet consortium at Inria, 2018-2023
 
 
 ## References
 
 If you use vidjil-algo, please cite [Giraud, Salson 2014].
 If you use the web platform, please cite [Duez 2016].
+Reference for protocols are [Villarese 2022] (marker identification in ALL)
+and [Septenville 2022] (assessment of mutational status in CLL).
 
 Marc Duez et al.,
 *Vidjil: A web platform for analysis of high-throughput repertoire sequencing*,
@@ -83,6 +85,15 @@ Mathieu Giraud, Mikaël Salson, et al.,
 BMC Genomics 2014, 15:409
 <http://dx.doi.org/10.1186/1471-2164-15-409>
 
+Patrick Villarese et al.,
+*One-Step Next-Generation Sequencing of Immunoglobulin and T-Cell Receptor Gene Recombinations for MRD Marker Identification in Acute Lymphoblastic Leukemia*,
+Immunogenetics, Methods in Molecular Biology 2453, pp. 43-59,
+<http://dx.doi.org/10.1007/978-1-0716-2115-8_3>
+
+Anne Langlois de Septenville et al.,
+*Immunoglobulin Gene Mutational Status Assessment by Next Generation Sequencing in Chronic Lymphocytic Leukemia*,
+Immunogenetics, Methods in Molecular Biology 2453, pp. 153-167,
+<http://dx.doi.org/10.1007/978-1-0716-2115-8_10>
 
 
 ## Some publications using Vidjil
@@ -107,6 +118,16 @@ Sébastien Bender et al.,
 Blood, 2020,
 <https://doi.org/10.1182/blood.2019004197>
 
+Marie-Laure Boulland et al.,
+*Reliable IGHV status assessment by next generation sequencing in routine practice for chronic lymphocytic leukemia*,
+Leukemia & Lymphoma, 2021,
+<https://doi.org/10.1080/10428194.2021.1933476>
+
+Estelle Bourbon et al.,
+*Next-CLL: A New Next-Generation Sequencing–Based Method for Assessment of IGHV Gene Mutational Status in Chronic Lymphoid Leukemia*,
+The Journal of Molecular Diagnostics, 2023,
+<https://doi.org/10.1016/j.jmoldx.2023.01.009>
+
 Monika Brüggemann et al., on behalf of the EuroClonality-NGS working group,
 *Standardized next-generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukaemia; a EuroClonality-NGS validation study*,
 Leukemia, 2019, 33, 2241–2253,
@@ -128,6 +149,11 @@ Frédéric Davi et al., on behalf of ERIC, the European Research Initiative on C
 Leukemia, 2020,
 <https://doi.org/10.1038/s41375-020-0923-9>
 
+Rachel Dobson et al.,
+*Widespread in situ follicular neoplasia in patients who subsequently developed follicular lymphoma*,
+The Journal of Pathology, 2021,
+<https://doi.org/10.1002/path.5861>
+
 Yann Ferret et al.,
 *Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
 British Journal of Haematology, 2016, 173, 413–420,
@@ -148,15 +174,25 @@ Irene Jo et al.,
 Clinica Chimica Acta, 2019,
 <https://doi.org/10.1016/j.cca.2018.10.037>
 
+Natalia Izotova et al.,
+*Long-term lymphoid progenitors independently sustain naïve T and NK cell production in humans*,
+Nature Communications, 2021,
+<https://doi.org/10.1038/s41467-021-21834-9>
+
+Vincent Jauvague et al.,
+*RNA-based immunoglobulin repertoire sequencing is a new tool for the management of monoclonal gammopathy of renal (kidney) significance.*
+Kidney International, 2022, 101(2), 331-337,
+<https://doi.org/10.1016/j.kint.2021.10.017>
+
 Takashi Kanamori et al.,
 *Genomic analysis of multiple myeloma using targeted capture sequencing in the Japanese cohort*,
 British Journal of Haematology, 2020,
 <https://doi.org/10.1111/bjh.16720>
 
 Kenji Kimura et al.,
-*Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next Generation Sequencing*,
-ASH 2019, Blood, 134(S1):1748,
-<https://doi.org/10.1182/blood-2019-125028>
+*Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next-Generation Sequencing*,
+Experimental Hematology, 2021, 101:34-41.e4
+<https://doi.org/10.1016/j.exphem.2021.08.001>
 
 Michaela Kotrova et al.,
 *The predictive strength of next-generation sequencing MRD detection for relapse compared with current methods in childhood ALL*,
@@ -167,6 +203,16 @@ Michaela Kotrova et al.,
 *Next‐generation amplicon TRB locus sequencing can overcome limitations of flow‐cytometric Vβ expression analysis and confirms clonality in all T‐cell ,prolymphocytic leukemia cases*,
 Cytometry Part A, 93(11):1118-1124, 2018
 <http://dx.doi.org/10.1002/cyto.a.23604>
+
+Anton W. Langerak,
+*High-Throughput Immunogenetics for Clinical and Research Applications in Immunohematology: Potential and Challenges*,
+Journal of Immunology, 2017, 198(10):3765-3774,
+<https://dx.doi.org/10.4049/jimmunol.1602050>
+
+Yannick Le Bris et al.,
+*Single Capture High Throughput Sequencing Assay for Combined V(D)J Clonality Analysis and Oncogene Mutations in the Diagnosis of T and B Lymphoid Malignancies*,
+ASH 2021, Blood, 138(S1):2404,
+<https://doi.org/10.1182/blood-2021-151083>
 
 Zhenhua Li et al.,
 *Identifying IGH disease clones for MRD monitoring in childhood B-cell acute lymphoblastic leukemia using RNA-Seq*,
@@ -193,10 +239,25 @@ Dai Nishijima et al.,
 ASH 2018, Blood, 132(S1):1543,
 <https://doi.org/10.1182/blood-2018-99-115624>
 
+Alexis Piedrafita et al.,
+*Spectrum of Kidney Disorders Associated with T-Cell Immunoclones*,
+Journal of Clinical Medicine, 2022, 11(3), 604,
+<https://doi.org/10.3390/jcm11030604>
+
 Edit Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
 Blood, 2018,
 <https://dx.doi.org/10.1182/blood-2017-10-810739>
+
+Natalia Izotova et al.,
+*Long-term lymphoid progenitors independently sustain naïve T and NK cell production in humans*,
+Nature Communications, 2021, 12:1622,
+<https://doi.org/10.1038/s41467-021-21834-9>
+
+Rathana Kim et al.,
+*Adult T-cell acute lymphoblastic leukemias with IL7R pathway mutations are slow-responders who do not benefit from allogeneic stem-cell transplantation*,
+Leukemia, 2020, 34, 1730-1740,
+<https://dx.doi.org/10.1038/s41375-019-0685-4>
 
 Mikaël Salson et al.,
 *High-throughput sequencing in acute lymphoblastic leukemia: Follow-up of minimal residual disease and emergence of new clones*,
@@ -228,10 +289,19 @@ Lucia Stranavova et al.,
 Frontiers in Immunology, 2019,
 <https://doi.org/10.3389/fimmu.2019.02549>
 
+Manuela Tosi et al.,
+*MRD-Based Therapeutic Decisions in Genetically Defined Subsets of Adolescents and Young Adult Philadelphia-Negative ALL*
+Cancers 2021, 13(9), 2108,
+<https://doi.org/10.3390/cancers13092108>
+
 Amelie Trinquand et al.,
 *Towards molecular stratification of pediatric T-cell lymphoblastic lymphomas based on Minimal Disseminated Disease and NOTCH1/FBXW7 mutational status: the French EURO-LB02 experience (preprint)*,
 medRxiv 2020.09.08.20189829,
 <https://www.medrxiv.org/content/10.1101/2020.09.08.20189829v1>
+
+Patrik Villarèse et al.,
+*One step next generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukemia*,
+ed. Anton W. Langerak, Methods in Molecular Biology, forthcoming
 
 Gary Wright et al.,
 *Clinical benefit of a high‐throughput sequencing approach for minimal residual disease in acute lymphoblastic leukemia*,

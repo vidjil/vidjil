@@ -17,13 +17,15 @@
   }
 
   .stats {
-    position: relative;
+    position: absolute;
     text-align: right;
     float: right;
-    width: @width_stats - 3px;
-    padding: 2px 5px;
+    max-width: 347px;
+    padding: 2px 0px;
     overflow: hidden;
     height: 16px;
+    right: 0px;
+    top: 1px;
   }
 
 .list_select{
@@ -136,7 +138,7 @@
     box-shadow: 1px 0 0 @default;
   }
   
-  #segmenter_axis_menu, .seq-fixed{
+  .seq-fixed{
     background : @background;
   }
 
@@ -163,6 +165,7 @@
     overflow-y: auto;
     min-height : 130px;
     margin-top: 1px;
+    max-height: 500px;
 }
 
 #segmenter {
@@ -200,13 +203,18 @@
   display: block;
 }
 
+.aligner-checkbox-label{
+  display: block;
+}
+
 .menu-content{
   display: none;
   position: absolute;
-  bottom: 154px;
+  bottom: 20px;
   background-color: white;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
+  margin-left: -10px;
 }
 
 .menu-content a{
@@ -217,7 +225,6 @@
 .menu-content label{
   padding: 8px 12px;
   text-decoration: none;
-  display: block;
   cursor: pointer;
 }
 
@@ -252,7 +259,7 @@
 .seq_layer_highlight{
   border-left: solid black 1px;
   border-right: solid black 1px;
-  opacity: 0.1;
+  opacity: 0.15;
   height:15px;
   top:5px;
 
@@ -322,4 +329,36 @@
 .seq_layer_underline:hover{
   height: 5px;
   opacity : 1;
+}
+
+#aligner-open-button{
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 12px;
+  background: white;
+  right: auto;
+  text-align: center;
+  line-height: 0px;
+  height: 16px;
+  padding-top: 4px;
+  padding-left: 100px;
+}
+
+#aligner-open-button:hover{
+  background: @highlight;
+}
+
+#aligner-left{
+  position: relative;
+  width: 420px;
+}
+
+.aligner-inline-button{
+  padding: 0px 5px;
+}
+
+.aligner-inline-button:hover{
+  cursor: pointer;
+  background-color: #ddd
 }

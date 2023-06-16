@@ -84,6 +84,7 @@ def index():
 
     if config :
         config_name = db.config[config_id].name
+        print( "===  config_name: %s" % config_name)
 
         fused = db(
             (db.fused_file.sample_set_id == sample_set_id)
@@ -141,6 +142,7 @@ def index():
                 )
             )
 
+
     all_sequence_files = [r.sample_set_membership.sequence_file_id for r in query]
 
     (shared_sets, sample_sets) = get_associated_sample_sets(all_sequence_files, [sample_set_id])
@@ -148,6 +150,8 @@ def index():
     samplesets = SampleSets(sample_sets.keys())
     sets_names = samplesets.get_names()
 
+    scheduler_ids = {}
+    
     ## assign set to each rows
     for row in query:
         row.list_share_set = []
@@ -156,6 +160,14 @@ def index():
                 values = {"title": sets_names[elt],
                           "sample_type": sample_sets[elt].sample_type, "id":elt}
                 row.list_share_set.append(values)
+        if row.results_file.scheduler_task_id:
+            scheduler_ids[row.results_file.scheduler_task_id] = row.results_file
+        row.results_file.status = ''
+
+    schedulers = db(db.scheduler_task.id.belongs(scheduler_ids.keys())).select()
+    for s in schedulers:
+        scheduler_ids[s.id].status = s.status
+    
 
     tag_decorator = TagDecorator(get_tag_prefix())
     query_pre_process = db( db.pre_process.id >0 ).select()
@@ -232,8 +244,8 @@ def all():
     mid = time.time()
 
     set_ids = set([s.sample_set_id for s in slist.result])
-    admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set)).select(db.sample_set.id)]
-    admin_permissions = list(set(admin_permissions) & set_ids)
+    admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set) &  (db.sample_set.id.belongs(set_ids))).select(db.sample_set.id)]
+    admin_permissions = list(set(admin_permissions))
 
     log.debug("permission load (%.3fs)" % (time.time() - mid))
 
@@ -259,16 +271,42 @@ def all():
         'table_name': "sample_set"})
     log.debug("sample_set list (%.3fs)" % (time.time()-start))
 
-
-    return dict(query = result,
-                fields = fields,
+    return dict(query= result,
+                fields= fields,
                 helper = helper,
                 group_ids = group_ids,
                 admin_permissions = admin_permissions,
                 isAdmin = isAdmin,
                 reverse = reverse,
                 step = step,
-                page = page)
+                page= page)
+
+
+def samples():
+    '''
+    API: List of samples, possibly filtered
+    '''
+    res = all()
+    export = dict(samples = res['query'],
+                  group_ids = res['group_ids'],
+                  step = res['step'],
+                  page = res['page'])
+    return response.json(export)
+
+def samplesetById():
+    '''
+    API: Get a specific sample based on the set id
+    Take two paramaters: set id and set type
+    '''
+    type    = (request.vars['type'] if ("type" in request.vars.keys()) else defs.SET_TYPE_GENERIC )
+    set_id  =  request.vars['id']
+
+    factory = ModelFactory()
+    helper  = factory.get_instance(type=type)
+    slist   = SampleSetList(helper, setid=set_id)
+
+    return response.json(slist.result)
+
 
 def stats():
     start = time.time()
@@ -546,7 +584,7 @@ def submit():
             if (p['sample_set_id'] != "" and auth.can_modify_sample_set(p['sample_set_id'])):
                 reset = True
                 sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
-                db[set_type][sset.id] = p
+                db( db[set_type].id == sset.id ).update(**p)
                 id_sample_set = sset['sample_set_id']
 
                 if (sset.info != p['info']):
@@ -783,6 +821,7 @@ def getStatHeaders():
     return [('sets', 'db', s),
             #('reads', 'parser', m),
             ('mapped reads', 'parser', m),
+            ('merged reads', 'parser', m),
             #('mapped_percent', 'parser', p),
             ('read lengths', 'parser', g),
             #('bool', 'parser', b),
@@ -790,7 +829,8 @@ def getStatHeaders():
             ('loci', 'parser', l),
             #('distribution', 'parser', lbc),
             #('clones_five_percent', 'parser', m),
-            ('main clone', 'parser', m)
+            ('main clone', 'parser', m),
+            ('pre process', 'parser', m)
             #('abundance', 'parser', lbc)
         ]
 
@@ -829,6 +869,10 @@ def getFusedStats(fuse):
             dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
             dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
             dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
+            if 'merged' in data['reads']:
+                dest['merged reads'] = data['reads']['merged'][result_index]
+            else:
+                dest['merged reads'] = None
 
             tmp = {}
             for c in data['clones']:
@@ -864,6 +908,8 @@ def getFusedStats(fuse):
             #dest['bool_true'] = True
             dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
             dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
+            if 'pre_process' in data['samples']:
+                dest['pre process'] = data['samples']['pre_process']['producer'][result_index]
             d[results_file_id] = dest
     return d
 
@@ -962,7 +1008,10 @@ def getStatData(results_file_ids):
             for head, htype, model in headers:
                 if htype == 'db':
                     r[head] = res[head]
-                r[head] = model.decorate(r[head])
+                if head in r.keys():
+                    r[head] = model.decorate(r[head])
+                else: 
+                    r[head] = ""
             r['sequence_file_id'] = res['results_file']['sequence_file_id']
             r['config_id'] = res['results_file']['config_id']
             data.append(r)

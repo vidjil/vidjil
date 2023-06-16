@@ -28,16 +28,16 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 - [ ] W2x CDR3 detection without gapped germlines   #2187   (ou bien par clone ?)
 
 
-## Output of an analysis, warnings on some clones
+## Output of an analysis, warnings on some clonotypes
 
 ### Read quality
 - [ ] W40 Low quality  #1544 
 
-### Clone quality (KmerSegmenter in vidjil-algo)
+### Clonotype quality (KmerSegmenter in vidjil-algo)
 - [x] W50 Short or shifted window in vidjil-algo
 - [x] W51 Low coverage (0.112)
 - [ ]     Bad e-value (0.xxx)  #1437/#1566/#1889 
-- [x] W53 Similar to another clone      
+- [x] W53 Similar to another clonotype
 - [ ]     Possible strand ambiguity 
 
 ### Strange recombination (FineSegmenter in vidjil-algo), V and J genes
@@ -46,8 +46,8 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 - [ ]     Potential di-mer #2820 
 - [ ]     Very large deletion (xxx bp) #2909
 - [ ]     Unexpected recombination
-- [ ]     High probability clone ?
-- [ ] W6z Unexpected error in V(D)J analysis (FineSegmenter failed)
+- [ ]     High probability clonotype ?
+- [x] W68 V(D)J designation failed, possibly complex or not recombined sequence #4818
 - [x] W69 Several V/J candidate genes with equal probability #3575
 
 ### Strange recombination (FineSegmenter in vidjil-algo), D gene, N regions*
@@ -58,7 +58,7 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 
 ## Comparisons between several samples or patients (such as with clonedb)
 - [ ] W8x Potential contamination or public clone #1744 
-- [ ]     Known public clone 
-- [x] W81 Merged clone has different V(D)J designation in some samples #4566
-- [x] W82 Merged clone has different productivities in some samples #4578
+- [ ]     Known public clonotype
+- [x] W81 Clonotyoe with different V(D)J designations in some samples #4566
+- [x] W82 Clonotype with different productivities in some samples #4578
 

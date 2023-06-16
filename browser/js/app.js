@@ -1,4 +1,4 @@
-var DEFAULT_DB_ADDRESS="https://db.vidjil.org/vidjil/";
+var DEFAULT_DB_ADDRESS="https://db.vidjil.org/";
 
 requirejs.config({
     baseUrl: '',
@@ -13,6 +13,7 @@ requirejs.config({
 require(['d3'], function(d3) {window.d3 = d3;});
 require(["jquery",
          "js/lib/jquery.form",
+         "js/lib/jquery-ui",
          "js/lib/file",
          "js/lib/tsne",
          "js/lib/jstree.min",
@@ -20,12 +21,16 @@ require(["jquery",
          "js/lib/jquery.atwho",
          "js/lib/vmi",
          "js/lib/svgExport",
-         "js/lib/bioseq"], function() {
+         "js/lib/bioseq",
+         "js/lib/select2.min"], function() {
              // Then config file (needed by Vidjil)
              require(['js/conf'], function() {
                  loadAfterConf()
              },
-                     function(err) {loadAfterConf()})
+                     function(err) {
+                        // Never call even if conf.js is malformed (syntax error)
+                        loadAfterConf()
+                     })
          });
 
 
@@ -36,9 +41,17 @@ require(["js/git-sha1"], function () { console.log("Vidjil client " + git_sha1) 
 function loadAfterConf() {
     if (typeof config === "undefined") {
         config = {};
-        config.db_address = DEFAULT_DB_ADDRESS;
+        config.db_address   = DEFAULT_DB_ADDRESS+"vidjil/";
+        config.cgi_address  = DEFAULT_DB_ADDRESS+"cgi/";
         config.use_database = false;
+        // External provider to activate by default
+        config.IMGT = true
+
+        config.load_error   = true;
+    } else {
+        config.load_error   = false;
     }
+
 
     require(['doctips/tips'],
             function(){},
@@ -49,31 +62,34 @@ function loadAfterConf() {
     // some files are loaded before the views)
     require(["js/view"], function() {
 
-        require(["js/germline"],
+        require(["js/germline",
+                 "js/vidjil-style",
+                 "js/aligner_layer"],
                 function() {
-                    require(["js/closeable"],
+                    require(["js/closeable",
+                              "js/scatterPlot_menu",
+                              "js/scatterPlot_selector",
+                              "js/aligner_menu"],
                             function() {
-                                require(["js/compare",
-                                         "js/menu",
+                                require(["js/menu",
                                          "js/dbscan",
                                          "js/germline_builder",
                                          "js/aligner",
                                          "js/aligner_sequence",
                                          "js/model_loader",
+                                         "js/color",
+                                         "js/filter",
                                          "js/model",
                                          "js/clone",
                                          "js/dynprog",
                                          "js/list",
-                                         "js/axes",
+                                         "js/axis_conf",
                                          "js/axis",
                                          "js/graph",
-                                         "js/scatterPlot_menu",
-                                         "js/scatterPlot_selector",
                                          "js/scatterPlot",
                                          "js/builder",
                                          "js/info",
                                          "js/com",
-                                         "js/vidjil-style",
                                          "js/crossDomain",
                                          "js/database",
                                          "js/shortcut",
@@ -84,8 +100,11 @@ function loadAfterConf() {
                                          "js/url",
                                          "js/autocomplete",
                                          "js/tips",
+                                         "js/tag",
                                          "js/tokeniser",
                                          "js/indexedDom",
+                                         "js/warnings",
+                                         "js/warnings_data",
                                          // Speed test
                                          "js/speed_test",
                                          "js/form_builder",

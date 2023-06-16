@@ -33,8 +33,6 @@ enum SEGMENTATION_METHODS {
 #define PSEUDO_NOT_ANALYZED       "not analyzed"
 #define PSEUDO_NOT_ANALYZED_CODE  'z'
 
-#define KEYS_COMPRESS  1.65   //  enough for ~208 *01 genes (191 IGHV + ...) / 127
-
 using namespace std;
 using json = nlohmann::json;
 
@@ -133,6 +131,15 @@ class Germline {
 ostream &operator<<(ostream &out, const Germline &germline);
 
 
+/* Get a json .g from a path and filename */
+json parse_json_g(string path, string json_filename);
+
+/* Load a json .g
+   - into an existing json_germlins
+   - from a path and filename
+   - possibly filtering some systems
+ */
+void load_json_g(json &json_germlines, string path, string json_filename, string systems_filter);
 
 enum GERMLINES_FILTER { GERMLINES_ALL,
                         GERMLINES_REGULAR,
@@ -160,13 +167,12 @@ class MultiGermline {
 
   /**
    * Build from a json .g germline file
-   *   path: path, such as 'germline/'
-   *   json_filename_and_filter: filename, optionally embedding a filter, such as 'homo-sapiens.g:IGH,TRG'
+   *   germlines: .g, possibly modified/updated with CLI options
    *   filter: see GERMLINES_FILTER
    *   max_indexing:
    */
-  void build_from_json(string path, string json_filename_and_filter, int filter,
-                       string default_seed="", int default_max_indexing=0, bool build_automaton=false);
+  void build_from_json(json germlines, int filter,
+                      string default_seed, int default_max_indexing, bool build_automaton);
 
   /**
    * Finishes the construction of the multi germline so that it can be used

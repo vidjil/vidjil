@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2017 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -216,7 +216,7 @@ List.prototype = {
             star.className = "starBox";
             star_onclick(key, star);
 
-            star.appendChild(icon('icon-star-2', 'clone tag'))
+            star.appendChild(icon('icon-star-2', 'clonotype tag'))
             div.appendChild(star)
             
             this.index_data[key] = value;
@@ -239,7 +239,7 @@ List.prototype = {
 
         var a_split = document.createElement('a')
         a_split.className = "button"
-        a_split.appendChild(icon('icon-plus', 'Show all subclones'))
+        a_split.appendChild(icon('icon-plus', 'Show all sub-clonotypes'))
         a_split.id = "list_split_all"
         a_split.onclick = function () {
             self.m.split_all(true)
@@ -247,21 +247,21 @@ List.prototype = {
         
         var a_unsplit = document.createElement('a')
         a_unsplit.className = "button"
-        a_unsplit.appendChild(icon('icon-minus', 'Hide all subclones'))
+        a_unsplit.appendChild(icon('icon-minus', 'Hide all sub-clonotypes'))
         a_unsplit.id = "list_unsplit_all"
         a_unsplit.onclick = function () {
             self.m.split_all(false)
         }
 
         var filter_label = document.createElement('span')
-        filter_label.appendChild(icon('icon-search-1', 'Search a clone by name, sequence, or V/D/J gene'))
+        filter_label.appendChild(icon('icon-search-1', 'Search a clonotype by name, sequence, or V/D/J gene'))
         
         var filter_input = document.createElement('input')
         filter_input.id = 'filter_input'
         filter_input.type = 'text'
         filter_input.setAttribute('placeholder', 'search');
         filter_input.onchange = function () {
-            self.m.filter(this.value)
+            self.m.filter.add("Clonotype", "search", this.value)
         }
         
         var filter_reset = document.createElement('span')
@@ -270,7 +270,7 @@ List.prototype = {
         filter_reset.className = "button"
         filter_reset.onclick = function () {
             document.getElementById('filter_input').value = ''
-            self.m.reset_filter(false)
+            self.m.filter.remove("Clonotype", "search", undefined)
             self.m.update()
         }
         
@@ -282,6 +282,9 @@ List.prototype = {
         sort.id = "list_sort_select"
         sort.className = "list_sort_select"
         sort.onchange = function() {
+            self.update_is_pending = true
+            self.m.updateIcon()
+
             self.sort_option[this.value]()
             self.sort_option_selected = this.value
             // close the lock
@@ -290,6 +293,8 @@ List.prototype = {
             var div = document.getElementById("div_sortLock")
             div.className  = "icon-lock-1 list_lock_on"
             div.title  = "Release sort as '" + self.sort_option_selected +"' on sample " + self.m.getStrTime(self.m.t, "names")
+            self.update_is_pending = false
+            self.m.updateIcon()
         }
         
         for (var key in this.sort_option) {
@@ -342,7 +347,7 @@ List.prototype = {
             axis.appendChild(axis_option)
         }
         axis.value = "size"
-        this.selectedAxis = Axis.prototype.getAxisProperties("size")
+        this.selectedAxis = Axis.prototype.getAxisProperties("Size")
         axis.onchange = function() {
             self.selectedAxis = Axis.prototype.getAxisProperties(axis.value)
             self.update()
@@ -376,6 +381,7 @@ List.prototype = {
         }
         this.updateElem(list);
         this.update_data_list()
+        this.updateElemStyle(list)
         
         // Apply selected sort function if no sort lock
         if (this.sort_lock == false){
@@ -405,6 +411,19 @@ List.prototype = {
             if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,this.m.t)
             if (val > 100) this.index_data[key].innerHTML = val.toFixed(0);
             if (val < 100) this.index_data[key].innerHTML = val.toPrecision(3);
+        }
+
+        for (var id = 0; id < this.m.clones.length; id++) {
+            var clone = this.m.clones[id]
+            span_info = document.getElementById("clone_infoBox_"+id)
+            span_info.innerHTML = ""
+            span_info.className = ""
+            if (clone.isWarnedBool() && clone.warnLevel()) {
+                span_info.className = clone.isWarned() ;
+                span_info.appendChild(icon('icon-warning-1', clone.warnText()));
+            } else {
+                span_info.appendChild(icon('icon-info', 'clonotype information'));
+            }
         }
     },
 
@@ -481,8 +500,11 @@ List.prototype = {
             
             if (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
                 (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  )||
-                (clone.isFiltered) || 
-                (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]))){ // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
+                (!clone.isActive()) || 
+                 (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]) 
+                  // || (clone.axes != undefined && clone.axes.indexOf("germline") != -1 && this.system_selected.indexOf(clone.germline) != -1 )
+                 )){
+                  // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
                 
                 cloneDom.display("main", "none");
                 continue;
@@ -496,28 +518,41 @@ List.prototype = {
             if (cloneDom.getElement(divClass) == null) return false
 
             cloneDom.color(  divClass, clone.getColor());
-            cloneDom.content(divClass, clone.getShortName());
+            cloneDom.content(divClass, clone.getShortName().replace('<', '&lt;'));
             cloneDom.title(  divClass, clone.getNameAndCode());
             
             //update clone axis
             var axis = this.selectedAxis;
             cloneDom.color("axisBox", clone.getColor());
             cloneDom.content("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : axis.fct(clone))
+            if (axis.hover != undefined){
+                cloneDom.title( "axisBox", axis.hover(clone, this.m.getTime()))
+            } else {
+                cloneDom.title( "axisBox", "")
+            }
 
             //update cluster icon
             if (this.m.clusters[cloneID].length > 1) {
                 if (clone.split) {
-                    cloneDom.content("clusterBox", icon('icon-minus', 'Hide the subclones').outerHTML)
+                    cloneDom.content("clusterBox", icon('icon-minus', 'Hide the sub-clonotypes').outerHTML)
                     this.showClusterContent(cloneID, false)
                 } else {
-                    cloneDom.content("clusterBox", icon('icon-plus', 'Show the subclones').outerHTML)
+                    cloneDom.content("clusterBox", icon('icon-plus', 'Show the sub-clonotypes').outerHTML)
                     this.hideClusterContent(cloneID, false)
                 }
                 self.div_cluster(document.getElementById("cluster" + cloneID), cloneID);
             } else {
-                cloneDom.getElement("clusterBox").appendChild(document.createTextNode(' '));
+                cloneDom.getElement("clusterBox").innerHTML = "<text> </text>";
                 if (this.m.clusters[cloneID].length < 2) display = false
                 document.getElementById("cluster"+cloneID).style.display = "none";
+            }
+
+            var info_list   = document.getElementById(`clone_infoBox_${clone.index}`)
+            var dom_content = clone.getWarningsDom()
+            if (info_list != null) {
+                info_list.classList = dom_content.className
+                info_list.firstChild.classList = dom_content.icon
+                info_list.firstChild.title = dom_content.title
             }
         }
     },
@@ -578,7 +613,7 @@ List.prototype = {
             span_info.onclick = function () {
                 self.m.displayInfoBox(id);
             }
-            span_info.appendChild(icon('icon-info', 'clone information'));
+            span_info.appendChild(icon('icon-info', 'clonotype information'));
 
             var img = document.createElement('span');
             img.onclick = function () {
@@ -700,14 +735,17 @@ List.prototype = {
             var clusterDom = this.index_cluster[list[i]];
             var clone = this.m.clone(list[i])
 
-            if (!((clone.isActive() && this.m.clusters[list[i]].length !== 0) ||
-                  (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) != -1))){
+            if (!(clone.isActive() && this.m.clusters[list[i]].length !== 0)){
+                cloneDom.display("main", "none");
+            } else if (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) == -1){
                 cloneDom.display("main", "none");
             }else{
                 if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
                     // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
                     cloneDom.display("main", "none");
-                } else if (clone.isFiltered){
+                } else if (clone.hasSizeDistrib() && clone.germline != undefined && this.m.system_selected.indexOf(clone.germline) == -1){
+                    cloneDom.display("main", "none");
+                } else if (!clone.isActive()){
                     cloneDom.display("main", "none");
                 } else {               
                     cloneDom.display("main", "block");
@@ -741,7 +779,7 @@ List.prototype = {
      * */
     sortListBy:function(fct){
         self = this;
-        var list = jQuery('.list')
+        var list = jQuery('#list_clones > .list')
         var value = {};
         for (var i=0; i<list.length; i++){
             var id = list[i].getAttribute("id")
@@ -759,7 +797,7 @@ List.prototype = {
 
     sortListByGene: function(gene_type) {
         self = this;
-        var list = jQuery('.list')
+        var list = jQuery('#list_clones > .list')
         var sort = list.sort(function (a, b) {
             var idA = a.getAttribute("id");
             var idB = b.getAttribute("id");

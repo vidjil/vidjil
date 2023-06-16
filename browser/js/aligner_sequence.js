@@ -1,71 +1,66 @@
 require(['./js/aligner_amino.js']);
 
-CHAR_WIDTH = 12;
-
-
-function genSeq(id, locus, model, segmenter) {
-    this.id = id; //clone ID     
-    this.m = model; //Model utilisé     
-    this.segmenter = segmenter;     
-    this.seq = [];     
-    this.pos = [];     
-    this.locus = locus;
-    this.use_marge = true; 
-    this.is_clone = false;
+/**
+ * Sequence object contain a dna sequence and various functions to manipulate them
+ * @param {integer/string} id - sequence id (same as clone id for clone sequence / same as gene name for gene sequence)
+ * @param {Model} model 
+ * @constructor
+ * */
+function Sequence(id, model, segmenter) {
+    this.id = id;
+    this.m = model;
+    this.segmenter = segmenter;
+    this.seq = [];
+    this.pos = [];
     this.is_aligned = false;
+
+    //build required dom element if missing
+    if (typeof this.segmenter.index[id] == "undefined")
+        this.segmenter.build_sequence(id)
+    
+    //retrieve parent dom element 
+    this.div = this.segmenter.index[id].getElement("main");
+
+    this.layers = LAYERS;
 }
 
-genSeq.prototype = {
+Sequence.prototype = {
     /**
-     * load the sequence <br>
-     * retrieve the one in the model or use the one given in parameter <br>
+     * load the clone sequence <br>
+     * retrieve clone sequence in model or use the one given in parameter <br>
      * @param {string} str
      * */
     load: function (str, isAligned) {
         this.is_aligned = false;
-        if (typeof isAligned == 'undefined') this.is_aligned = isAligned;
+        if (typeof isAligned !== 'undefined') this.is_aligned = isAligned;
 
-        if (typeof str !== 'undefined') this.use_marge = false;
-        str = typeof str !== 'undefined' ? str : this.m.germline[this.locus][this.id];
+        //str sequence is not provided, go search in model
+        if (typeof str === 'undefined') {
 
-        str = str.replace(/\./g, "");
+            //this is a clone sequence
+            if (!isNaN(this.id)){
+                if (typeof this.m.clone(this.id).sequence == 'undefined' || this.m.clone(this.id).sequence === 0) 
+                    str = this.m.clone(this.id).id;
+                else
+                    str = this.m.clone(this.id).sequence;
+            }
+            else{
+                str = this.seq.join('').replace(/\–/g, "")
+            }
+        }
+        str = str.replace(/\-/g, SYMBOL_VOID);
         this.seq = str.split("");
         this.seqAA = str.split("");
         this.computePos();
+
         return this;
     },
-
-
-    /**
-     * TODO !
-     * @param {char} self
-     * @param {char} other
-     * @return {string}  
-     * */
-    spanify_mutation: function (self, other, mutation, i_am_first_clone) {
-        if (mutation != undefined && !i_am_first_clone) {
-            mutation = mutation.replace(END_CODON, END_CODON_NOT_FIRST);
-        }
-        if (mutation != undefined && mutation) {
-            var span = document.createElement('span');
-            span.className = mutation;
-            span.setAttribute('other', other + '-' + this.segmenter.sequence_order[0]);
-            span.appendChild(document.createTextNode(self));
-            return span;
-        }else {
-
-            return document.createTextNode(self);
-        }
-    },
-
-    updateLayers: function () {},
-
 
     /**
      * save the position of each nucleotide in an array <br>
      * return {array}
      * */
-    computePos: function () {
+     computePos: function () {
         this.pos = [];
         var j = 0;
         for (var i = 0; i < this.seq.length; i++) {
@@ -76,136 +71,6 @@ genSeq.prototype = {
         this.pos.push(this.seq.length);
         return this;
     },
-/*
-    toString:function(){
-        var highlights=[];
-
-        result = document.createElement('span');
-        currentSpan = document.createElement('span');
-        currentSpan.id = "sequence-clone-"+ this.id;
-
-        var canDisplaySynMutations = (!LAYERS.amino.enabled &&
-                                      this.m.clones.hasOwnProperty(this.segmenter.sequence_order[0]) &&
-                                      this.m.clones[this.segmenter.sequence_order[0]].isProductive());
-        var reference_phase = (canDisplaySynMutations) ? (this.m.clones[this.segmenter.sequence_order[0]].getPhase()) : undefined;
-
-        var mutations = {};
-        var ref = '';
-        var seq = '';
-
-        if (LAYERS.amino.enabled) {
-            seq = this.seqAA;
-            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seqAA;
-        } else {
-            seq = this.seq;
-            ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
-        }
-        if (this.segmenter.aligned) {
-            mutations = get_mutations(ref, seq, reference_phase, true);
-        }
-
-        var i_am_first_clone = (this.id == this.segmenter.sequence_order[0]);
-        
-        for (var i = 0; i < this.seq.length; i++) {
-            for (var m in highlights){
-                var h = highlights[m];
-
-                if (i == h.start){
-                    result.appendChild(currentSpan);
-                    var highlightSpan = document.createElement('span');
-                    highlightSpan.style.color = h.color;
-                    highlightSpan.className = h.css ? h.css : h.type;
-                    if(typeof h.tooltipe != 'undefined') {
-                        highlightSpan.dataset.tooltip = h.tooltip;
-                        highlightSpan.dataset.tooltip_position = "right";
-                    }
-
-                    if (typeof h.seq !== "undefined") {
-                        // highlight is designed to underline the sequence
-                        // or add information underneath the sequence
-                        highlightSpan.innerHTML = h.seq;
-
-                        var highlightWrapper = document.createElement("span");
-                        highlightWrapper.appendChild(highlightSpan);
-                        highlightWrapper.className = "highlight";
-                        result.appendChild(highlightWrapper);
-
-                        // create a new currentSpan
-                        var oldCurSpan = currentSpan;
-                        currentSpan = document.createElement('span');
-                        currentSpan.className = oldCurSpan.className;
-                        result.appendChild(currentSpan);
-                        //console.log("results: " + result.innerHTML);
-                    } else {
-                        currentSpan = highlightSpan;
-                    }
-                }
-            }
-
-            currentSpan.appendChild(this.spanify_mutation(seq[i], ref[i], mutations.hasOwnProperty(i) ? mutations[i] : undefined, i_am_first_clone));
-        }
-        result.appendChild(currentSpan);
-        var marge = "";
-        if (this.use_marge){
-            marge += "<span class='seq-marge'>";
-            var size_marge = 300 - window_start;
-            if (size_marge > 0) {
-                for (var n = 0; n < size_marge; n++) marge += "\u00A0";
-            }
-            marge += "</span>";
-        }
-        return marge + result.innerHTML;
-    },
-    */
-};
-
-
-/**
- * Sequence object contain a dna sequence and various functions to manipulate them
- * @param {integer} id - clone index
- * @param {Model} model 
- * @constructor
- * */
-function Sequence(id, model, segmenter) {
-    this.id = id; //clone ID
-    this.m = model; //Model utilisé
-    this.segmenter = segmenter;
-    this.seq = [];
-    this.pos = [];
-    this.use_marge = true;
-    this.is_clone = true;
-    this.is_aligned = false;
-    this.locus = this.m.clone(id).germline;
-    this.div = this.segmenter.index[id].getElement("main");
-
-    this.layers = LAYERS;
-}
-
-Sequence.prototype = {
-    /**
-     * load the clone sequence <br>
-     * retrieve the one in the model or use the one given in parameter <br>
-     * @param {string} str
-     * */
-    load: function (str, isAligned) {
-        this.is_aligned = false;
-        if (typeof isAligned !== 'undefined') this.is_aligned = isAligned;
-
-        if (typeof str !== 'undefined') this.use_marge = false;
-        str = typeof str !== 'undefined' ? str : this.m.clone(this.id).sequence;
-
-        if (typeof this.m.clone(this.id).sequence == 'undefined' || this.m.clone(this.id).sequence === 0) {
-            str = this.m.clone(this.id).id;
-        }
-        
-        str = str.replace(/\-/g, SYMBOL_VOID);
-        this.seq = str.split("");
-        this.seqAA = str.split("");
-        this.computePos();
-        //this.computeAAseq();
-
-        return this;
-    },
 
     /**
      * use the cdr3 (if available) to compute the amino acid sequence <br>
@@ -214,6 +79,10 @@ Sequence.prototype = {
         var start = -1;
         var stop = -1;
         var cdr3aa = "";
+
+        // custom sequence don't have cdr3 to anchor amino sequence
+        // TODO check how to do it for germline sequence
+        if (isNaN(this.id)) return ""
                 
         var clone = this.m.clone(this.id);
         if (!clone.hasSequence()) return "";
@@ -320,6 +189,8 @@ Sequence.prototype = {
         var stop = -1;
         var cdr3aa = "";
         this.AAlink = [];
+
+        if (isNaN(this.id)) return ""
                 
         var clone = this.m.clone(this.id);
         if (!clone.hasSequence()) return "";
@@ -388,15 +259,11 @@ Sequence.prototype = {
 
     toString: function(div) {
         if (typeof this.div == "undefined") this.div = div;
-        this.updateLetterSpacing();
         this.updateLayers();
     },
 
     nucleoString: function(){
-        var clone = this.m.clone(this.id);
-        
         if (this.segmenter.use_dot && this.segmenter.aligned &&
-            (typeof clone.sequence != 'undefined' && clone.sequence !== 0 ) &&
             (this.id != this.segmenter.sequence[this.segmenter.sequence_order[0]].id)){
 
             var ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;
@@ -417,13 +284,13 @@ Sequence.prototype = {
         }
     },
 
-    qualityString: function(){
+    qualityString: function(test){
         var max_quality_illumina = 40;
         var max_quality_sanger = 93;
-
         var max_quality = max_quality_illumina;
-
         var h = 6; // height in pixel
+
+        if (isNaN(this.id)) return ""
 
         var clone = this.m.clone(this.id);
         var result = document.createElement('div');
@@ -477,6 +344,8 @@ Sequence.prototype = {
                 width = 0;
             }
         }
+
+        if (typeof test != "undefined" && test) return this.quality.join("");
 
         return result;
     },
@@ -572,15 +441,16 @@ Sequence.prototype = {
     },   
 
     searchString: function(){
-        if (typeof this.m.filter_string == 'undefined') return "";
+        if (this.m.filter.check("Clone", "search") == -1) return "";
 
+        var f = this.m.filter.filters[this.m.filter.check("Clone", "search")]
         var seq = this.seq;  
 
         var str = seq.filter(function(e){return e != SYMBOL_VOID;}).join('').toUpperCase();
 
         var search = [];
-        search.push(this.m.filter_string.toUpperCase());    //sequence
-        search.push(this.m.filter_string.toUpperCase().split("").reverse().join("")); //reverse sequence
+        search.push(f.value.toUpperCase());    //sequence
+        search.push(f.value.toUpperCase().split("").reverse().join("")); //reverse sequence
 
         var hitmap = [];
         for (var i in seq) hitmap.push(false);
@@ -604,24 +474,20 @@ Sequence.prototype = {
     },
 
     updateLayers: function(){
-        var clone = this.m.clone(this.id);
+        for (var i in this.layers){
+            var l = this.layers[i];
 
-        if (typeof clone.sequence != 'undefined' && clone.sequence !== 0) {
-            for (var i in this.layers){
-                var l = this.layers[i];
-
-                // check if layer condition are met
-                var isOk = true;
-                if (l.condition){   
-                    try{
-                        isOk = l.condition(this,undefined);
-                    }catch(e){
-                        isOk = false;
-                    }
+            // check if layer condition are met
+            var isOk = true;
+            if (l.condition){   
+                try{
+                    isOk = l.condition(this,undefined);
+                }catch(e){
+                    isOk = false;
                 }
-
-                this.updateLayerDiv(i, (isOk && l.enabled) );
             }
+
+            this.updateLayerDiv(i, (isOk && l.enabled) );
         }
     },
 
@@ -678,7 +544,7 @@ Sequence.prototype = {
                 try{
                     text = l.text(this, this.m.clone(this.id));
                     if (typeof text == "string") { 
-                        div_layer.innerHTML = l.text(this, this.m.clone(this.id));
+                        div_layer.innerHTML = text.replace('\t','-');
                     }else {
                         div_layer.innerHTML = "";
                         div_layer.append(text);
@@ -719,23 +585,69 @@ Sequence.prototype = {
         }
     },
 
-    updateLetterSpacing: function(){
+    updateLetterSpacing: function(l_spacing){
         var div_nuc = this.div.getElementsByClassName("seq_layer_test")[0];
-        div_nuc.style.letterSpacing = "0px";
+        
+        if (typeof l_spacing == "undefined"){
 
-        var size = 1000;
-        var text = "";
-        for (var i = 0; i < size; i++) text+="A";
-        var div = document.createElement("div");
-        div.style.display = "block";
-        div.textContent = text;
-        div_nuc.appendChild(div);
-        this.c_size = div.offsetWidth/size;
-        console.log(this.c_size); 
-        div_nuc.removeChild(div);
-        this.l_spacing = CHAR_WIDTH - this.c_size;
+            div_nuc.style.letterSpacing = "0px";
 
-        div_nuc.style.letterSpacing = this.l_spacing+"px";
+            var size = 1000;
+            var text = "";
+            for (var i = 0; i < size; i++) text+="A";
+            var div = document.createElement("div");
+            div.style.display = "block";
+            div.textContent = text;
+            div_nuc.appendChild(div);
+            this.c_size = div.offsetWidth/size;
+            div_nuc.removeChild(div);
+            this.l_spacing = CHAR_WIDTH - this.c_size;
+
+            div_nuc.style.letterSpacing = this.l_spacing+"px";
+        }
+        else{
+            if (l_spacing == this.l_spacing) return this.l_spacing;
+            this.l_spacing = l_spacing;
+            div_nuc.style.letterSpacing = this.l_spacing+"px";
+        }
+        return this.l_spacing;
+    },
+
+    // return a list of external services (IMGT / CloneDB) data required to display enabled layers
+    needRefresh: function(){
+        var refreshList = []
+
+        // check enabled layers
+        for (var i in this.layers){
+            var l = this.layers[i];
+            var r = false
+            if (l.enabled && typeof l.refresh != 'undefined')
+                try{
+                    r = l.refresh(this.m.clone(this.id));
+                }catch(e){
+                    r = false;
+                }
+            
+            if (typeof r == 'string' && refreshList.indexOf(r) ==-1) 
+                refreshList.push(r)
+        
+        }
+
+        // check select axis info
+        for (var j in this.segmenter.selectedAxis){
+            var a = this.segmenter.selectedAxis[j];
+            var r2 = false
+            if (a.refresh != 'undefined')
+                try{
+                    r2 = a.refresh(this.m.clone(this.id));
+                }catch(e){
+                    r2 = false;
+                }
+            
+            if (typeof r2 == 'string' && refreshList.indexOf(r2) ==-1) 
+                refreshList.push(r2)
+        
+        }
+        return refreshList
     },
 };
-Sequence.prototype = $.extend(Object.create(genSeq.prototype), Sequence.prototype);

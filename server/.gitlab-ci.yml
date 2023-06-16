@@ -1,0 +1,113 @@
+
+.test_cypress_server:
+  stage: test_cypress_server
+  extends:
+    - .test_server_base_dind
+    # - .need_for_staged_server
+  script: &test_cypress_server_script
+    - docker exec docker_uwsgi_1  mkdir /usr/share/vidjil/server/web2py/applications/vidjil/errors
+    - docker exec docker_uwsgi_1  chmod a+w /usr/share/vidjil/server/web2py/applications/vidjil/errors
+    - docker exec docker_uwsgi_1  chown www-data /mnt/upload/uploads/ /mnt/result/results
+    - docker pull "vidjilci/cypress_with_browsers:latest"
+    - >
+      docker run
+      -v $PWD/$CYPRESS_PATH:/app/cypress
+      -v $PWD/browser/test/data:/app/cypress/fixtures/data
+      -v $PWD/doc:/app/cypress/fixtures/doc
+      -v $PWD/demo:/app/cypress/fixtures/demo
+      -v $PWD:/app/vidjil
+      -v "$PWD/docker/ci/cypress.json":"/app/cypress.json"
+      -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash"
+      --env BROWSER=browsers/$BROWSER
+      --env HOST=$HOST
+      --env PROJECT=$PROJECT
+      --env URL=$URL
+      --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
+      --shm-size=1GB
+      --network="host"
+      "vidjilci/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
+  artifacts:
+    reports:
+      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+    paths:
+      - $CYPRESS_PATH
+      - server/web2py/applications/vidjil/errors/*
+    expire_in: 7 day
+    when: always
+  variables:
+    CYPRESS_PATH: server/web2py/applications/vidjil/tests/cypress
+    HOST: local
+    TEST_FILES: "/app/cypress/integration/test_*.js"
+  only: &onlyServerBranches
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^prod-server/
+    - dev
+
+
+## Cypress with server
+server1-ff-supported:
+  extends:
+    - .test_cypress_server
+    - .need_for_moderate_server
+  variables:
+    BROWSER: firefox_supported/firefox
+
+## Cypress with server
+s2:
+  extends:
+    - .test_cypress_server
+  parallel:
+    matrix:
+      - BROWSER: [
+          firefox_latest/firefox,
+          firefox_legacy/firefox,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
+          chrome_legacy/chrome
+        ]
+
+
+
+## Cypress TUTORIAL with server
+.tuto-server:
+  stage: test_tutorial
+  extends:
+    - .test_cypress_server
+  script:
+    - make -C doc/tutorial/ build_tutorial_cypress_server
+    - *test_cypress_server_script
+  variables:
+    TEST_FILES: "/app/cypress/integration/doc_*.js"
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^prod-server/
+    - dev
+    - doc
+
+
+tuto-s1-ff-supported:
+  stage: test_tutorial
+  extends:
+    - .tuto-server
+    - .need_for_moderate_server
+  variables:
+    BROWSER: firefox_supported/firefox
+
+
+
+## Cypress with server
+tuto-s2:
+  extends:
+    - .tuto-server
+    - .need_for_late_server
+  parallel:
+    matrix:
+      - BROWSER: [
+          firefox_latest/firefox,
+          firefox_legacy/firefox,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
+          chrome_legacy/chrome
+        ]

@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Antonin Carette <antonin.carette@etudiant.univ-lille1.fr>
@@ -87,6 +87,11 @@ Shortcut.prototype = {
     checkKey : function (e) {
         var self = this
 
+        if (document.getElementsByClassName("select2-dropdown").length) {
+            // select filter opened; bypass action
+            return
+        }
+
         this.inProgress++
         setTimeout(function(){
             self.inProgress--
@@ -152,10 +157,38 @@ Shortcut.prototype = {
         // e.which is deprecated, see #2448
         switch(key) {
 
+        case 27 :   // Escape
+            e.preventDefault()
+            console.default.log( "press escape")
+            if (console.confirm.cancel[0].offsetParent !== null){
+                console.confirm.cancel[0].click()
+            } else {
+                var zIndexs = []
+                var panels  = document.getElementsByClassName("closeButton")
+                for (var p = 0; p < panels.length; p++) {
+                    if (getRelativeZindex(panels[p]) != null){
+                        zIndexs.push({"elem": panels[p], "zindex": getRelativeZindex(panels[p])})
+                    }
+                }
+
+                var max;
+                for (var z = 0; z < zIndexs.length; z++) {
+                    var panel = zIndexs[z]
+                    if (max == undefined || compareNumericalArrays(panel.zindex, max.zindex) == 1){
+                        max = panel
+                    }
+                }
+                if (max != undefined) {
+                    max.elem.click()
+                    return
+                }
+            }
+            break;
+
         case 37 :   // Left arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
-                m.displayTop(this.m.top - NB_CLONES_CHANGE)
+                m.filter.decrease("Top", ">", NB_CLONES_CHANGE)
             else
                 m.previousTime();
             break;
@@ -163,7 +196,7 @@ Shortcut.prototype = {
         case 39 :   // Right arrow
             e.preventDefault()
             if (e.shiftKey || e.metakey)
-                m.displayTop(m.top + NB_CLONES_CHANGE)
+                m.filter.increase("Top", ">", NB_CLONES_CHANGE)
             else
                 m.nextTime();
             break;
@@ -222,22 +255,23 @@ Shortcut.prototype = {
             e.preventDefault()
             if (m.getSelected().length === 0) {
                 // z, no clone selected: reset filters
-                m.reset_filter(false)
+                m.filter.remove("Clonotype", "focus", undefined)
+                m.filter.remove("Clonotype", "hide", undefined)
                 m.update()
             } else {
                 if (!e.shiftKey)
                     // z, some clone selected: focus (zoom) on these clones
-                    m.focusSelected()
+                    m.filter.add("Clonotype", "focus", self.m.getSelected())
                 else
                     // shift+z, some clone selected: hide these clones
-                    m.hideSelected()
+                    m.filter.add("Clonotype", "hide", self.m.getSelected())
             }
             break;
             
             // Scatterplot
         case '#':   // switch grid/bar mode
             e.preventDefault()
-            this.m.sp.switchMode()
+            m.sp.switchMode()
             break;
         }
     }

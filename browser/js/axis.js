@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2020 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
@@ -53,7 +53,9 @@ Axis.prototype = {
     
     //return json descriptor of a registered Axis
     getAxisProperties: function(name){
-        return AXIS_DEFAULT[name]
+        var axisP = AXIS_DEFAULT[name]
+        axisP.name  = name
+        return axisP
     },
 
     //register an axis json descriptor 
@@ -71,11 +73,15 @@ Axis.prototype = {
      * 
      */
     init: function(axis_name){
-        if (AXIS_DEFAULT[axis_name]){
-            this.load(AXIS_DEFAULT[axis_name])
-            return this
+        if (!AXIS_DEFAULT[axis_name]){
+            console.error("no axis descriptor named '" + axis_name + "' found, use 'Size' instead")
+            axis_name = "Size"
         }
-        console.error("no axis descriptor named " + axis_name + " found")
+
+        this.load(AXIS_DEFAULT[axis_name])
+        this.name = axis_name
+        return this
+
     },
 
     //reload last json descriptor
@@ -87,22 +93,20 @@ Axis.prototype = {
     //load a json Axis descriptor
     load: function(json){
         //check
-        if (!('name' in json)){
-            console.error("missing required field in unknow Axis descriptor 'name'")
-            return
-        }
         if (!('fct' in json)){
             console.error("missing required field in '" + this.name + "' Axis descriptor 'fct'")
             return
         }
 
-
         this.json = json
-        this.name = json.name   
+        this.name = json.name != undefined ? json.name : this.name
         this.doc = ('doc' in json) ? json.doc : json.name
-        this.fct = json.fct    
+        this.fct = json.fct
+        this.pretty = json.pretty   
         this.color = json.color
         this.sort = json.sort
+        this.min_step = json.min_step
+        this.hide = json.hide
 
         this.germline = "multi" 
         if ('germline' in json)
@@ -148,7 +152,7 @@ Axis.prototype = {
             clone = m.clone(cloneID)
 
             if (clone.isInScatterplot() &&
-                !clone.isFiltered &&
+                clone.isActive() && 
                 (this.germline == "multi" || this.germline == clone.germline)){
                 value = this.fct(clone)
 
@@ -191,8 +195,6 @@ Axis.prototype = {
                 else if (s.max > 0) s.min_p = s.max/10
                 else                s.min_p = 0.1        //TODO: case of negative log scale
             }
-
-
         }
 
         return this
@@ -223,15 +225,27 @@ Axis.prototype = {
         var max = this.maxLabel - Object.keys(this.labels).length
         if (max < 4) max = 5
 
+
         if (this.scale){
             var labelCount = 0
 
+            //select min/max range before computing labels
+            var smin = this.scale.min;
+            var sminp = this.scale.min_p
+            var smax = this.scale.max;
+            if (this.useCustomScale){
+                smin = this.scale_custom_min;
+                sminp = this.scale_custom_min;
+                smax = this.scale_custom_max;
+            }
+
             if (this.scale.mode == "linear"){
-                var delta = this.scale.max - this.scale.min
                 
-                var nice = nice_min_max_steps(this.scale.min, this.scale.max, max)
-                this.step = nice.step
+                var nice = nice_min_max_steps(smin, smax, max)
+                if (typeof this.min_step == "undefined") this.min_step = nice.step
+                this.step = Math.max(nice.step, this.min_step)
                 this.precision = nice_number_digits(this.step, 1)
+
 
                 this.scale.nice_min = nice.min
                 var l = nice.min.toFixed(this.precision)
@@ -246,13 +260,15 @@ Axis.prototype = {
                 //add labels for each steps between min and max
                 if (this.scale.reverse){
                     for (var i = this.scale.nice_max; 
-                         this.scale.nice_min.toFixed(this.precision) <= (i+this.step/2).toFixed(this.precision); 
+                         parseFloat(this.scale.nice_min.toFixed(this.precision)) <= parseFloat((i+this.step/2).toFixed(this.precision)); 
                          i=i-this.step){
                         this.addScaleLabel(i, "linearScale")
                         labelCount++
                     }
                 }else{
-                    for (var j = this.scale.nice_min; j < this.scale.nice_max+this.step; j+= this.step){
+                    for (var j = this.scale.nice_min; 
+                         parseFloat(j.toFixed(this.precision)) <= parseFloat(this.scale.nice_max.toFixed(this.precision)); 
+                         j+= this.step){
                         this.addScaleLabel(j, "linearScale")
                         labelCount++
                     }
@@ -262,24 +278,34 @@ Axis.prototype = {
             if (this.scale.mode == "log"){
                 this.scale.nice_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(this.scale.max))))
                 this.scale.nice_min = Math.pow(10, Math.floor(Math.log10(Math.abs(this.scale.min_p))))
-                this.scale.nice_min_label = (this.scale.nice_min).toFixed(nice_number_digits(this.scale.nice_min, 1)) + "_l"
-                this.scale.nice_max_label = (this.scale.nice_max).toFixed(nice_number_digits(this.scale.nice_max, 1)) + "_l"
+                this.scale.nice_custom_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(smax))))
+                this.scale.nice_custom_min = Math.pow(10, Math.floor(Math.log10(Math.abs(smin))))
+                
+                var nmax=this.scale.nice_max;
+                var nmin=this.scale.nice_min;
+                if (this.useCustomScale){
+                    nmax = this.scale.nice_custom_max;
+                    nmin = this.scale.nice_custom_min;
+                }
+
+                this.scale.nice_min_label = (nmin).toFixed(nice_number_digits(nmin, 1)) + "_l"
+                this.scale.nice_max_label = (nmax).toFixed(nice_number_digits(nmax, 1)) + "_l"
 
                 //add labels
                 if (this.scale.reverse){
-                    if (this.scale.min == 0 && this.labels[0] == undefined)
-                        this.labels[0] = {text: "0", type:"slim", side: "right"}
-                    for (var k = this.scale.nice_max; k >= this.scale.nice_min; k=k/10){
+                    if (this.labels[0] == undefined)
+                        this.labels[0] = {text: "0", type:"slim", side: "right", color : "#657b83"}
+                    for (var k = nmax; k >= nmin; k=k/10){
                         this.addScaleLabel(k, "logScale")
                         labelCount++
                     } 
                 }else{
-                    for (var z = this.scale.nice_min; z <= this.scale.nice_max; z=z*10){
+                    for (var z = nmin; z <= nmax; z=z*10){
                         this.addScaleLabel(z, "logScale")
                         labelCount++
                     } 
-                    if (this.scale.min == 0 && this.labels[0] == undefined)
-                        this.labels[0] = {text: "0", type:"slim", side: "left"}
+                    if (this.labels[0] == undefined)
+                        this.labels[0] = {text: "0", type:"slim", side: "left" , color : "#657b83"}
                 }
             }
             this.scaledMargin = max/labelCount
@@ -377,10 +403,20 @@ Axis.prototype = {
         }
 
         if (typeof this.sort == "string"){
-            if (this.sort == "alphabetical")
+            if (this.sort == "alphabetical"){
                 array.sort()
-            else if (this.sort == "reverse_alphabetical")
+            } else if (this.sort == "reverse_alphabetical"){
                 array.sort().reverse()
+            } else if (this.sort == "alphanumerical") {
+                array.sort(function(a,b){
+                        // TODO: Change line when old version of browser will be replaced
+                        // if (a == undefined || a.includes("undefined") || a.includes("?") ){
+                        if (a == undefined || a.search("undefined") != -1 ){
+                            return 1
+                        }
+                        return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'})
+                    })
+            }
             
             return
         }
@@ -501,6 +537,8 @@ Axis.prototype = {
 
             }else if (this.scale.mode == "log"){
                 this.scale.domain = [this.scale.nice_min, this.scale.nice_max]
+                if (this.useCustomScale) 
+                    this.scale.domain = [this.scale.nice_custom_min, this.scale.nice_custom_max]
                 this.scale.range  = [this.labels[this.scale.nice_min_label].position,
                                      this.labels[this.scale.nice_max_label].position]
 
@@ -623,37 +661,69 @@ Axis.prototype = {
         return this.getValuePos(v)
     },
 
-    //return position of a given value
+    //return position[0,1] of a given value
     getValuePos: function(v){
         //discret value
         if (v in this.labels) 
             return this.labels[v].position
+        
+        if (this.useCustomScale && v<this.scale_custom_min && this.labels[0])
+            return this.labels[0].position
 
         //continuous value
         if (this.scale && typeof v == "number" && !isNaN(v))
-            return this.scale.fct(v) 
+            //do not return position for clone outside scale domain
+            if (v >= this.scale.domain[0] && v <= this.scale.domain[1])
+                return this.scale.fct(v) 
 
         return undefined
     },
 
-    getColor: function(clone) {
-        var v = this.fct(clone)
+    invert: function(pos){
+        var v = this.scale.fct.invert(pos)
 
-        if (v in this.labels && this.labels[v].color)
-            if (this.labels[v].color === "") 
-                return undefined
-            else
-                return this.labels[v].color
+        if (this.pretty) v = this.pretty(v)
 
-        var pos = this.getValuePos(v)
-        if (pos === undefined) return undefined
-        
-        if (this.color){
-            var offset = 0
-            if (this.color.offset) offset = this.color.offset
-            return this.color.fct((pos+offset)%1)
+        if (typeof v == "string" ||typeof v == "number") 
+            v = document.createTextNode(v)
+
+        return v
+    },
+
+
+    getColor: function(pos, clone) {
+        try {
+
+            if (typeof clone != "undefined"){
+                var v = this.fct(clone)
+
+                if (v in this.labels && typeof this.labels[v].color != "undefined")
+                    return this.labels[v].color
+
+                if (typeof pos == "undefined")
+                    pos = this.getValuePos(v)
+            }
+
+            if (this.color)
+                return this.color(pos, clone)
+
+            if (typeof pos != "undefined")
+                return oldColorGenerator(pos)
+
+            return undefined
+        } catch (e) {
+            return undefined
         }
-        return oldColorGenerator(pos)
+    },
+
+    getCSSColorGradient: function(){
+        var text = "linear-gradient(90deg";
+        
+        for (var i = 0; i<100; i=i+10)
+            text += ", " + this.getColor(i/100) + " " + i + "%";
+        
+        text += ")";
+        return text;
     },
 
     getLabelInfo: function(label) {
@@ -695,5 +765,21 @@ Axis.prototype = {
         }
         return max
     },
+
+    /**
+     * Get the name of the axis to show
+     * @returns axis name if defined, else axis doc if defined and in last condition an empty string
+     */
+    getAxisName: function() {
+        return this.name != undefined ? this.name : ""
+    },
+
+    /**
+     * 
+     * @returns axis doc if axis is hidden (ugly or irrelevant name) else axis name
+     */
+    getAxisDescrition: function() {
+        return this.doc != undefined ? this.doc : this.name != undefined ? this.name : ""
+    }
 
 };
