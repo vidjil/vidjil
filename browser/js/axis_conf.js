@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
@@ -78,8 +78,14 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "J/3' del'",
                     "V/5' length",
                     "J/3' length",
+                    "V/5' ratio",
                     "[cloneDB] Hits (sample)",
-                    "[cloneDB] Hits (set)"
+                    "[cloneDB] Hits (set)",
+                    "Main sample",
+                    "Similarity (CDR3, nucleotide)", // previously "TSNEX_LOCUS_NT",
+                    "TSNEY_LOCUS_NT",
+                    "Similarity (CDR3, amino acid)", // previously "TSNEX_LOCUS_AA",
+                    "TSNEY_LOCUS_AA"
                 ]
 
 // list of Axis available for aligner
@@ -92,6 +98,8 @@ AXIS_ALIGNER = [
                     "Number of samples",
                     "[IMGT] Productivity",
                     "[IMGT] VIdentity",
+                    "[cloneDB] Hits (sample)",
+                    "[cloneDB] Hits (set)"
                 ]
 
 // list of Axis available as color
@@ -109,7 +117,8 @@ AXIS_COLOR = [
                     "Productivity",
                     "[IMGT] Productivity",
                     "[IMGT] VIdentity",
-                    "Number of samples"
+                    "Number of samples",
+                    "Main sample"
                 ]
 
 
@@ -192,6 +201,13 @@ AXIS_DEFAULT = {
         sort :      "alphanumerical",
         autofill:   false
     },
+    "V/5' ratio": {
+        doc:        "Proportion of V/5' germline sequence covered by clonotype sequencing (exclude CDR3 deletion)",
+        fct:        function(clone) {
+                        return clone.getGermlineRatio('5')
+                    },
+        autofill:   true
+    },
     "Sequence length" : {
         doc:        "length of the consensus sequence of the clonotype",
         fct:        function(clone) {return clone.getSequenceLength()},
@@ -264,45 +280,51 @@ AXIS_DEFAULT = {
     "[IMGT] Productivity": {
         doc:        "productivity (as computed by IMGT/V-QUEST)",
         labels:     {
-            "not productive":   {text:"not productive"},
-            "no CDR3 detected": {text:"no CDR3 detected"},
-            "productive":       {text:"productive"},
-        },
+                        "not productive":   {text:"not productive"},
+                        "no CDR3 detected": {text:"no CDR3 detected"},
+                        "productive":       {text:"productive"},
+                    },
         fct:        function(clone) { return clone.getProductivityIMGT() },
-        pretty: function(tag) { return icon_pm(tag, "productive", "not productive"); },
+        pretty:     function(tag) { return icon_pm(tag, "productive", "not productive"); },
+        refresh:    function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"}
     },
     "[IMGT] VIdentity": {
-        doc:        "V identity (as computed by IMGT/V-QUEST)",
-        fct:        function(clone) { return clone.getVIdentityIMGT() },
+        doc:        "V identity (as computed by IMGT/V-QUEST), with ins/del events if occur",
+        fct:        function(clone) { 
+                        var vIdentity = parseFloat(clone.getVIdentityIMGT()) 
+                        if (isNaN(vIdentity)) return clone.getVIdentityIMGT()
+                        return vIdentity
+                    },
         pretty: function(val) {
-            var Videntity_info = document.createElement('span');
-            Videntity_info.className = "identityBox widestBox";
+                        var Videntity_info = document.createElement('span');
+                        Videntity_info.className = "identityBox widestBox";
 
-            var identityRate = parseFloat(val)
-            if (!isNaN(identityRate)) {
-                var info = document.createElement('span');
-                if (V_IDENTITY_THRESHOLD)
-                    info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
-                info.appendChild(document.createTextNode(floatToFixed(identityRate,5) + "%"))
-                info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
-                Videntity_info.appendChild(info)
-            } else Videntity_info.innerHTML = "&nbsp;";
-            return Videntity_info;
-
-        },
+                        var identityRate = parseFloat(val)
+                        if (!isNaN(identityRate)) {
+                            var info = document.createElement('span');
+                            if (V_IDENTITY_THRESHOLD)
+                                info.className += identityRate < V_IDENTITY_THRESHOLD ? ' identityGood' : ' identityBad'
+                            info.appendChild(document.createTextNode(floatToFixed(identityRate,5) + "%"))
+                            info.setAttribute('title', 'V-REGION identity %, as computed by IMGT/V-QUEST')  // with indel or not ?
+                            Videntity_info.appendChild(info)
+                        } else Videntity_info.innerHTML = "&nbsp;";
+                        return Videntity_info;
+                    },
+        refresh:    function(c){ if (typeof c.seg.imgt == 'undefined') return "IMGT"},
+        autofill :  true
     },
     "Tag": {
         doc:        "tag, as defined by the user",   
         labels:     function(){
                         var l = {}
-                        for (var i=0; i<m.tag.length; i++)
-                            l[m.tag[i].name] =  {
-                                                    text:   m.tag[i].name,   
-                                                    color:  m.tag[i].color
+                        for (var k in m.tags.tag)
+                            l[k] =  {
+                                                    text:   m.tags.getName(k),   
+                                                    color:  m.tags.getColor(k)
                                                 }
                         return l
                     },
-        fct:        function(clone) {return clone.getTagName()},
+        fct:        function(clone) {return clone.getTag()},
         sort :      false,
         autofill :  false
     },
@@ -330,6 +352,7 @@ AXIS_DEFAULT = {
         color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
         autofill:   true,
         pretty:     function(size) {return createClassedSpan("sizeBox sixChars", (self.m ? self.m : self).getStrAnySize(undefined, size)) },
+        hover:      function(clone, t){ return ""+ clone.getPrintableSize(t) + " reads"}
     },
     "Size (other)" : {
         doc:        "ratio of the number of reads of each clonotype to the total number of reads in the selected locus, on the previously selected sample",
@@ -341,7 +364,7 @@ AXIS_DEFAULT = {
         autofill:   true,
     },
     "Number of samples" : {
-        label:      "number of samples sharing each clonotype",
+        doc:        "number of samples sharing each clonotype",
         fct :       function(clone){return clone.getNumberNonZeroSamples()},
         scale:      {   
                         mode: "linear",
@@ -387,9 +410,20 @@ AXIS_DEFAULT = {
                         "mode": "linear",
                         "min": 0
                     },
-        fct: function(clone) {return clone.numberInCloneDB()},
-        autofill: true,
-        //hide : (typeof config === 'undefined' || ! config.clonedb),
+        //class:    "devel-mode",
+        fct:        function(clone) {
+                        var n = clone.numberInCloneDB()
+                        if (typeof n == "undefined") return "-/-"
+                        return n
+                    },
+        pretty:     function(n) {
+                        var span = createClassedSpan("sizeBox sixChars", n)
+                        if (n == "-/-") span.title = "missing data, use 'send to cloneDB' tool in aligner to update value"
+                        return span
+                    },
+        autofill:   true,
+        refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
+        hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
     "[cloneDB] Hits (set)": {   
         doc:        "number of patients/runs/sets sharing clonotypes in cloneDB",
@@ -397,44 +431,26 @@ AXIS_DEFAULT = {
                         "mode": "linear",
                         "min": 0
                     },
-        fct: function(clone) {return clone.numberSampleSetInCloneDB()},
-        autofill: true
-        //hide : (typeof config === 'undefined' || ! config.clonedb),
-    },
-    "TSNEX": {   
-        doc:        "",
+        //class:    "devel-mode",
         fct:        function(clone) {
-                        if (clone.tsne )return clone.tsne[0]
-                        return undefined
+                        var n = clone.numberSampleSetInCloneDB()
+                        if (typeof n == "undefined") return "-/-"
+                        return n
                     },
-        scale:      {
-                        "mode": "linear",
-                        "min": 0,
-                        "max": 1
+        pretty:     function(n) {
+                        var span = createClassedSpan("sizeBox sixChars", n)
+                        if (n == "-/-") span.title = "missing data, use 'send to cloneDB' tool in aligner to update value"
+                        return span
                     },
-        min_step:   0.1,
-        max_step:   0.1
+        autofill:   true,
+        refresh:    function(c){ if (typeof c.seg.clonedb == 'undefined') return "cloneDB"},
+        hide :      (typeof config === 'undefined' || ! config.clonedb),
     },
-    "TSNEY": {   
-        doc:        "",
-        fct:        function(clone) {            
-                        if (clone.tsne )return clone.tsne[1]
-                        return undefined
-                    },
-        scale:      {
-                        "mode": "linear",
-                        "min": 0,
-                        "max": 1
-                    },
-        min_step:   0.1,
-        max_step:   0.1
-    },
-    "TSNEX_LOCUS": {   
-        doc:        "",
+    "Similarity (CDR3, nucleotide)": {
+        doc:        "Similarity (CDR3, NT)",
         germline:   function(){return m.germlineV.system},
         fct:        function(clone) {
-                        if (clone.tsne_system )return clone.tsne_system[0]
-                        return undefined
+                        return (clone.tsne_system_nt != undefined) ? clone.tsne_system_nt[0] : undefined
                     },
         scale:      {
                         "mode": "linear",
@@ -442,14 +458,14 @@ AXIS_DEFAULT = {
                         "max": 1
                     },
         min_step:   0.1,
-        max_step:   0.1
+        max_step:   0.1,
+        hide :      true
     },
-    "TSNEY_LOCUS": {   
+    "TSNEY_LOCUS_NT": {   
         doc:        "",
         germline:   function(){return m.germlineV.system},
         fct:        function(clone) {            
-                        if (clone.tsne_system )return clone.tsne_system[1]
-                        return undefined
+                        return (clone.tsne_system_nt != undefined) ? clone.tsne_system_nt[1] : undefined
                     },
         scale:      {
                         "mode": "linear",
@@ -457,7 +473,55 @@ AXIS_DEFAULT = {
                         "max": 1
                     },
         min_step:   0.1,
-        max_step:   0.1
+        max_step:   0.1,
+        hide :      true
+    },
+    "Similarity (CDR3, amino acid)": {
+        doc:        "Similarity (CDR3, AA)",
+        germline:   function(){return m.germlineV.system},
+        fct:        function(clone) {
+                        return (clone.tsne_system_aa != undefined) ? clone.tsne_system_aa[0] : undefined
+                    },
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
+                    },
+        min_step:   0.1,
+        max_step:   0.1,
+        hide :      true
+    },
+    "TSNEY_LOCUS_AA": {   
+        doc:        "",
+        germline:   function(){return m.germlineV.system},
+        fct:        function(clone) {            
+                        return (clone.tsne_system_aa != undefined) ? clone.tsne_system_aa[1] : undefined
+                    },
+        scale:      {
+                        "mode": "linear",
+                        "min": 0,
+                        "max": 1
+                    },
+        min_step:   0.1,
+        max_step:   0.1,
+        hide :      true
+    },
+    "Main sample":{
+        doc:        "sample in which the clone reach its maximum size",
+        fct:        function(c){ return c.getMaxSizeTimepoint() },
+        //color:      function(t,c){ return colorGeneratorIndex(c.getMaxSizeTimepoint()) },
+        labels:     function(){ 
+                        var l = {}
+                        if (typeof m.samples == 'undefined') return l
+                        for (var i in m.samples.order){
+                            var time = m.samples.order[i]
+                            l[time] =  {
+                                text:   "" + m.getStrTime(time),
+                                color: colorGeneratorIndex(time)}
+                        }
+                        return l
+                    }
+        
     }
 }
 

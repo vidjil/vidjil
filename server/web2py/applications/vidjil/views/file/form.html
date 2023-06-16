@@ -8,9 +8,9 @@
    {{ pass }}
 
    {{ required_files = 1 }}
+   <input hidden type=checkbox id="submitForm_isEditing" name="isEditing" {{ if isEditing: }} checked {{ pass }}>
     {{ if source_module_active: }}
         <span>file source: </span>
-        <input hidden type=checkbox id="submitForm_isEditing" name="isEditing" {{ if isEditing: }} checked {{ pass }}>
         <label for="source_computer">my computer</label>
         <input type="radio" id="source_computer" name="source" value="computer" onchange="db.update_upload_fields()" {{ if not network_source: }} checked="checked" {{pass}}/>
         <label for="source_nfs">network</label>
@@ -90,7 +90,7 @@
        Click on 
          <span class="button2"
           onclick="add_file('fieldset_container', this.dataset.index++, {{=group_ids}})"
-          id="file_button"
+          id="add_sample_line"
           data-index="{{=len(files)}}">add other sample</span>
        to add at once more than one sample.
     </div>
@@ -113,6 +113,10 @@
         onclick="db.close_jstree()">
         <i class="icon-cancel"></i>
     </span>
+    <form id="jstree_search_form">
+      <input class="form-control jstree_search" type="search" id="jstree_search_input" placeholder="Search (only for opened folder)" />
+      <button type="submit">Search</button>
+    </form>
     <input type="hidden" id="file_filename" />
     <span>file:</span>
     <span id="file_indicator"></span>

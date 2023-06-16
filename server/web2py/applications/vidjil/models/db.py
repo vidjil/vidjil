@@ -2,7 +2,7 @@
 
 #  This file is part of Vidjil <http://www.vidjil.org>,
 #  High-throughput Analysis of V(D)J Immune Repertoire.
-#  Copyright (C) 2014-2017 by Bonsai bioinformatics
+#  Copyright (C) 2014-2022 by Bonsai bioinformatics
 #  at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
 #
 #  "Vidjil" is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ else:
 
 ## by default give a view/generic.extension to all actions from localhost
 ## none otherwise. a pattern can be 'controller/function.extension'
-response.generic_patterns = ['*'] if request.is_local else []
+response.generic_patterns = ['*'] if request.is_local else ['*.json']
 ## (optional) optimize handling of static files
 # response.optimize_css = 'concat,minify,inline'
 # response.optimize_js = 'concat,minify,inline'
@@ -365,14 +365,22 @@ class UserLogHandler(logging.Handler):
         if hasattr(record, 'user_id') and hasattr(record, 'record_id'):
             from datetime import datetime
             now = datetime.now()
-            current.db[self.table].insert(
-                user_id=record.user_id,
-                table_name=record.table_name,
-                created=now,
-                msg=record.message,
-                record_id=record.record_id
-            )
-            db.commit()
+            #TODO test potential fix db._adapter.reconnect()
+            #try:
+            #    current.db[self.table].insert(
+            #        user_id=record.user_id,
+            #        table_name=record.table_name,
+            #        created=now,
+            #        msg=record.message,
+            #        record_id=record.record_id
+            #    )
+            #    db.commit()
+            #except:
+            #    try:
+            #        db.rollback()
+            #    except:
+            #        pass
+
 
 def _init_log():
     """

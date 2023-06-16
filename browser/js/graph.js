@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -86,7 +86,7 @@ function Graph(id, model, database) {
 
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
     this.marge2 = 0.05; //marge gauche derniere colonne/bord du graph
-    this.marge3 = 70; //marge droite (non influencé par le resize)
+    this.marge3 = 30; //marge droite (non influencé par le resize)
     this.marge4 = 70; //marge gauche (non influencé par le resize)
     this.marge5 = 40; //marge top (non influencé par le resize)
 
@@ -360,7 +360,7 @@ Graph.prototype = {
             list_content.appendChild(line_content_text)
 
             // Add all descripion of sample keys as tooltip
-            var tooltip = this.getTooltip(i, false, false)
+            var tooltip = this.getTooltip(i, false)
             list_content.title = tooltip
 
             /* jshint ignore:start */
@@ -1464,7 +1464,7 @@ Graph.prototype = {
             .on("mouseover", function(d) {
                 var div = d3.select("#"+self.id + "_tooltip")
                 var time = d.time
-                var tooltip = self.getTooltip(time, true, true)
+                var tooltip = self.getTooltip(time, true)
                 div.transition()
                     .delay(1000)
                     .duration(200)
@@ -1626,7 +1626,11 @@ Graph.prototype = {
         this.resize();
     },
 
-    getTooltip: function(time, htmlFormat, includeName){
+    getTooltip: function(time, htmlFormat){
+        if (time == undefined){ // Zaxis label; percentage, bypass
+            return
+        }
+
         var breakChar
         if (htmlFormat){
             breakChar = "<br/>"
@@ -1641,8 +1645,8 @@ Graph.prototype = {
         tooltip    += ( (delta_date != "-/-") ? (breakChar + delta_date) : "" )
         // duplicate from info; refactor
         var read_number = this.m.reads.segmented
-        var percent = (read_number[this.m.t] / this.m.reads.total[this.m.t]) * 100;
-        var reads   = this.m.toStringThousands(read_number[this.m.t]) + " reads (" + percent.toFixed(2) + "%)";
+        var percent = (read_number[time] / this.m.reads.total[time]) * 100;
+        var reads   = this.m.toStringThousands(read_number[time]) + " reads (" + percent.toFixed(2) + "%)";
         tooltip    += breakChar + reads
         return tooltip
     },

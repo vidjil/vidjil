@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2020 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
@@ -73,12 +73,15 @@ Axis.prototype = {
      * 
      */
     init: function(axis_name){
-        if (AXIS_DEFAULT[axis_name]){
-            this.load(AXIS_DEFAULT[axis_name])
-            this.name = axis_name
-            return this
+        if (!AXIS_DEFAULT[axis_name]){
+            console.error("no axis descriptor named '" + axis_name + "' found, use 'Size' instead")
+            axis_name = "Size"
         }
-        console.error("no axis descriptor named " + axis_name + " found")
+
+        this.load(AXIS_DEFAULT[axis_name])
+        this.name = axis_name
+        return this
+
     },
 
     //reload last json descriptor
@@ -96,13 +99,14 @@ Axis.prototype = {
         }
 
         this.json = json
-        this.name = json.name   
+        this.name = json.name != undefined ? json.name : this.name
         this.doc = ('doc' in json) ? json.doc : json.name
         this.fct = json.fct
         this.pretty = json.pretty   
         this.color = json.color
         this.sort = json.sort
         this.min_step = json.min_step
+        this.hide = json.hide
 
         this.germline = "multi" 
         if ('germline' in json)
@@ -761,5 +765,21 @@ Axis.prototype = {
         }
         return max
     },
+
+    /**
+     * Get the name of the axis to show
+     * @returns axis name if defined, else axis doc if defined and in last condition an empty string
+     */
+    getAxisName: function() {
+        return this.name != undefined ? this.name : ""
+    },
+
+    /**
+     * 
+     * @returns axis doc if axis is hidden (ugly or irrelevant name) else axis name
+     */
+    getAxisDescrition: function() {
+        return this.doc != undefined ? this.doc : this.name != undefined ? this.name : ""
+    }
 
 };

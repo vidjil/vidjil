@@ -3,7 +3,7 @@ build_doc:
   image: python:3.8
   stage: tgz_release
   before_script:
-    - pip3 install mkdocs-gitlab-plugin requests
+    - pip3 install mkdocs mkdocs-gitlab-plugin requests mkdocs-material
   script:
     - make -C doc html
     - cd tools ; python validate-links.py

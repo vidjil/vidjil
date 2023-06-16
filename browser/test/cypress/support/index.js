@@ -16,9 +16,16 @@
 // Import commands.js using ES2015 syntax:
 import './tools'
 import './login'
+import './list'
 import './commands'
 import './db_pages'
 import './user_and_group'
+import './configs_and_process'
+import './clones'
+import './menu'
+import './info'
+import './aligner'
+import './network'
 
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/

@@ -73,11 +73,18 @@ Aligner.prototype = {
                 var id  = "aligner_checkbox_"+mc.id;
                 clone.title = mc.title;
                 input.id = id;
-                input.checked = mc.enabled;
+
+                if (localStorage.getItem(`aligner_layers_${mc.title}`)){
+                    input.checked = localStorage.getItem(`aligner_layers_${mc.title}`) === "true"
+                    self.toggleLayers(mc.layers, input.checked, true);
+                } else {
+                    input.checked = mc.enabled;
+                }
+
                 clone.setAttribute("for", id);
                 text.innerHTML = mc.text;
 
-                this.connect_checkbox(clone, mc.layers);
+                this.connect_checkbox(clone, mc.title, mc.layers);
                 menuC.appendChild(clone);
             }
         }
@@ -87,14 +94,18 @@ Aligner.prototype = {
         var self = this;
 
         var available_axis = AXIS_ALIGNER;
+        this.selectedAxis  = []
 
         var menu = document.getElementById("segmenter_axis_select");
         for (var i in available_axis) {
             var axis_p = Axis.prototype.getAxisProperties(available_axis[i]);
 
+            if (typeof axis_p.hide != 'undefined' && axis_p.hide) continue;
+
             var axis_label = document.createElement('label');
             axis_label.setAttribute('for', "sai"+i);
             axis_label.className = "aligner-checkbox-label";
+            if (typeof axis_p.class == "string") axis_label.className += " "+axis_p.class
             axis_label.title = axis_p.doc;
 
             var axis_option = document.createElement('span');
@@ -104,48 +115,169 @@ Aligner.prototype = {
             axis_input.setAttribute('value', axis_p.name);
             axis_input.setAttribute('id', "sai"+i); // segmenter axis input
             axis_input.className = "aligner-checkbox-input";
-            if (axis_p.name == "Size" ||
-                axis_p.name == "[IMGT] Productivity" ||
-                axis_p.name == "[IMGT] VIdentity" ) axis_input.setAttribute('checked', "");
+
+            // control if a value is present in localsettings
+            if (localStorage.getItem(`aligner_axis_${axis_p.name}`)){
+                if (localStorage.getItem(`aligner_axis_${axis_p.name}`) == "true"){
+                    if (this.selectedAxis.length < 5) {
+                        this.selectedAxis.push(Axis.prototype.getAxisProperties(axis_p.name))
+                        axis_input.setAttribute('checked', "");
+                    }
+                }
+            } else {
+                if (axis_p.name == "Size" ||
+                    axis_p.name == "[IMGT] Productivity" ||
+                    axis_p.name == "[IMGT] VIdentity" ){
+                        if (this.selectedAxis.length < 5) {
+                            axis_input.setAttribute('checked', "");
+                            this.selectedAxis.push(Axis.prototype.getAxisProperties(axis_p.name))
+                        }
+                } 
+            }
+
 
             axis_label.appendChild(axis_input);
             axis_label.appendChild(axis_text);
             axis_option.appendChild(axis_label);
             menu.appendChild(axis_label);
+            this.connect_axisbox(axis_label, axis_p.name);
 
             $(axis_input).unbind("click");
-            self.connect_axisbox(axis_input);
+        }
+    },
+
+    // return list of external data that need to be refreshed to display enabled layers
+    needRefresh: function(){
+        var refreshList = []
+        for (var s in this.sequence){
+            var r = this.sequence[s].needRefresh()
+            for (var s2 in r ) 
+                if (refreshList.indexOf(r[s2]) == -1)
+                    refreshList.push(r[s2])
+        }
+        return refreshList
+    },
+
+    // check if some enabled layers in segmenter need external data from IMGT/cloneDB to be displayed and update buttons accordingly
+    updateButton: function(){
+        var self = this;
+
+        var refreshList = this.needRefresh()
+        var button = $("#align-refresh-button")
+        var icon   = button.find('i')
+
+        refreshList.filter(provider => (self.pendingAnalysis != undefined && self.pendingAnalysis[provider] > 0))
+        // Update global external provider button
+        if (typeof this.pendingAnalysis != 'undefined' && this.pendingAnalysis > 0){
+            // Some provider are pending
+            icon.addClass('animate-spin')
+            button.addClass('disabledClass')
+        }else if (refreshList.length == 0)  {
+            // No provider pending
+            button.removeClass('disabledClass')
+            icon.removeClass()
+            icon.addClass('icon-ok')
+        }else{
+            // At least one provider is possible
+            button.removeClass('disabledClass')
+            icon.removeClass()
+            icon.addClass('icon-arrows-ccw')
         }
 
-        this.selectedAxis = [Axis.prototype.getAxisProperties("[IMGT] Productivity"),
-                            Axis.prototype.getAxisProperties("[IMGT] VIdentity"),
-                            Axis.prototype.getAxisProperties("Size")];
+        // Update child button of each provider
+        button.children(".menu-content").children("a").each(function () {
+            self.refreshIconProvider($(this).data("target"))
+        })
+
+        return this        
+    },
+
+    retrieveExternalData: function(providerList, cloneList){
+        var self = this
+
+        if (typeof providerList == 'undefined')
+            providerList = this.needRefresh()
+
+        if (typeof cloneList == 'undefined')
+            cloneList = this.sequenceListInSegmenter()
+
+        var callback = function(serviceName){
+            self.pendingAnalysis[serviceName]--
+            self.updateButton()    
+        }
+        
+        this.pendingAnalysis = {}
+        for (var i in providerList){
+            serviceName = providerList[i]
+
+            this.pendingAnalysis[serviceName] = 0;
+
+            switch (serviceName) {
+                case "IMGT":
+                    this.pendingAnalysis[serviceName]++
+                    this.sendTo('IMGTSeg', cloneList, callback(serviceName))
+                    break;
+                case "cloneDB":
+                    this.pendingAnalysis[serviceName]++
+                    db.callCloneDB(cloneList, callback(serviceName))
+                    break;
+                default:
+                    break;
+            }
+        }
     },
 
     //check axis selected in menu to update and update axisBox dom elements accordingly
-    connect_axisbox:function (elem){
+    getSelectedAxis:function (){
         var self = this;
 
-        $(elem).click(function(e) {
-            var menu = document.getElementById("segmenter_axis_select");
-            var inputs = menu.getElementsByTagName("input");
-            var selectedAxis = [];
-    
-            for (var i in inputs)
-                if (inputs[i].checked) selectedAxis.push(Axis.prototype.getAxisProperties(inputs[i].value));
-    
-            if (selectedAxis.length <= 5){
-                self.selectedAxis = selectedAxis;
-                self.update();
-            }else{
-                console.log({ msg: "selection is limited to 5", type: "flash", priority: 2 });
-                this.checked = false;
-            }
-            e.stopPropagation();            
-        })
+        var menu = document.getElementById("segmenter_axis_select");
+        var inputs = menu.getElementsByTagName("input");
+        var selectedAxis = [];
+
+        for (var i in inputs){
+            if (inputs[i].checked) selectedAxis.push(inputs[i].value);
+        }
+
+        console.default.log( `${selectedAxis.length} selectedAxis: ${selectedAxis}`)
+        return selectedAxis
     },
 
-    connect_checkbox: function(elem, layers){
+
+    //check axis selected in menu to update and update axisBox dom elements accordingly
+    connect_axisbox:function (elem, title){
+        var self = this;
+
+        $(function () {
+            $(elem).find('input').unbind("click");
+            $(elem).find('input').click(function(e){
+                var input = elem.getElementsByTagName("input")[0];
+                var axis  = Axis.prototype.getAxisProperties(input.value)
+                var selectedAxis = self.getSelectedAxis()
+
+                if (input.checked){
+                    if (selectedAxis.length > 5 ){
+                        console.log({ msg: "Data columns selection is limited to 5.<br/>Please disable some axis before adding new one.", type: "flash", priority: 2 });
+                        input.checked = false;
+                        return
+                    } else {
+                        self.selectedAxis.push(axis)
+                        self.update()
+                    }
+                } else if (!input.checked){
+                    var index = self.selectedAxis.indexOf(axis)
+                    self.selectedAxis.splice(index, 1)
+                    self.update()
+                }
+
+                if (localStorage){
+                    localStorage.setItem(`aligner_axis_${title}`, input.checked)
+                } 
+            });
+        });
+    },
+
+    connect_checkbox: function(elem, title, layers){
         var self = this;
         
         //connect event to checkbox and checkbox_label
@@ -153,6 +285,9 @@ Aligner.prototype = {
             $(elem).find('input').unbind("click");
             $(elem).find('input').click(function(e){
                 var input = elem.getElementsByTagName("input")[0];
+                if (localStorage){
+                    localStorage.setItem(`aligner_layers_${title}`, input.checked)
+                } 
                 self.toggleLayers(layers, input.checked, true);
                 e.stopPropagation();
             });
@@ -234,7 +369,7 @@ Aligner.prototype = {
         document.getElementById("reset_focus").onclick = function () {  self.m.filter.remove("Clonotype", "focus")
                                                                         self.m.filter.remove("Clonotype", "hide") };
         document.getElementById("star_selected").onclick = function (e) {
-            if (m.getSelected().length > 0) { self.m.openTagSelector(m.getSelected(), e); }};
+            if (m.getSelected().length > 0) { self.m.tags.openSelector(m.getSelected(), e); }};
         document.getElementById("cluster").onclick = function () { self.m.merge(); };
         document.getElementById("align").onclick = function () { self.toggleAlign(); };
         document.getElementById("aligner-open-button").onclick = function () { self.toggle(); };
@@ -316,11 +451,16 @@ Aligner.prototype = {
         cloneT.getElementsByClassName("delBox")[0].onclick = function () {
             self.removeSequence(cloneID);
         };
-        if (this.m.clone_info == cloneID) 
-        cloneT.getElementsByClassName("infoBox")[0].className += " infoBox-open";
-        cloneT.getElementsByClassName("infoBox")[0].onclick = function () {
-            self.m.displayInfoBox(cloneID);
-        }
+
+        var span_info = cloneT.getElementsByClassName("infoBox")[0]
+        span_info.id = `aligner_info_${cloneID}`
+        span_info.onclick = function () {self.m.displayInfoBox(cloneID)}
+
+        var dom_content = clone.getWarningsDom()
+        span_info.classList            = dom_content.className
+        span_info.firstChild.classList = dom_content.icon
+        span_info.firstChild.title     = dom_content.title
+
         cloneT.getElementsByClassName("axisBox")[0].color = clone.getColor();
         this.fillAxisBox(cloneT.getElementsByClassName("axisBox")[0], clone);
 
@@ -336,6 +476,8 @@ Aligner.prototype = {
         if (update)
             for (var s in this.sequence)
                 this.sequence[s].updateLayers(layers);
+        
+        this.updateButton()
     },
 
 
@@ -381,6 +523,7 @@ Aligner.prototype = {
             this.removeSequence(keys[i], false)
 
         if (update) this.updateDom()
+                        .updateButton()
                         .show()
     },
 
@@ -413,53 +556,73 @@ Aligner.prototype = {
         }
 
         var self = this;
-        list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
         var cloneID;
+        
+        list.sort(function(a,b){ return self.m.clone(b).getSize() - self.m.clone(a).getSize(); });
 
         // remove unselected clones
         for (var i = 0; i < list.length; i++) {     
             cloneID = list[i];   
             if (!this.m.clone(cloneID).isSelected()) 
-                if (this.sequence[cloneID])                    
+                if (this.sequence[cloneID])         
                     this.removeSequence(cloneID, false);
-        }
-
-        // update clones already in segmenter
-        for (var k = 0; k < this.sequence_order.length; k++) {   
-            cloneID = this.sequence_order[k];
-            if(list.indexOf(cloneID) != -1){
-                list.splice( list.indexOf(cloneID), 1 );
-                this.addCloneToSegmenter(cloneID);
-            }
         }
 
         // add newly selected clones
         for (var j = 0; j < list.length; j++) {     
             cloneID = list[j];
-            if (this.m.clone(cloneID).isSelected()) 
-                this.addCloneToSegmenter(cloneID);
+            if (this.m.clone(cloneID).isSelected() && 
+                Object.keys(this.sequence).indexOf(cloneID) == -1 )
+                this.addCloneToSegmenter(cloneID)
+            
         }
 
-        this.updateDom()
+        var dom_content = this.m.clone(cloneID).getWarningsDom()
+        var info_align  = document.getElementById(`aligner_info_${this.m.clone(cloneID).index}`)
+        if (info_align != null) {
+            info_align.classList = dom_content.className
+            info_align.firstChild.classList = dom_content.icon
+            info_align.firstChild.title = dom_content.title
+        }
+
+        this.updateDom(list)
+            .updateButton()
+        
     },
 
-    updateDom:function(){
-        //hide all sequence dom object
+    updateDom:function(list){
         var keys = Object.keys(this.index)
-        for (var i=0; i<keys.length; i++)
-            if (this.index[keys[i]] != null) 
-                this.index[keys[i]].display("main", "none");
+        var keys2 = Object.keys(this.sequence)
+        if (typeof list == "undefined") list = Object.keys(this.sequence)
+
+        //update germline sequence
+        for (var k in keys2)
+            if(isNaN(keys2[k]))
+                if (list.indexOf(keys2[k]) == -1)
+                    list.push(keys2[k])
+
 
         //update dom object of sequence in aligner
-        var keys2 = Object.keys(this.sequence)
-        for (var j=0; j<keys2.length; j++)  
-            if (this.sequence[keys2[j]] != null){
-                var dom = this.index[keys2[j]]
+        var l_spacing;        
+        for (var j=0; j<list.length; j++)  
+            if (this.sequence[list[j]] != null){
+                var dom = this.index[list[j]]
                 dom.display("main", "block");
-                dom.replace("seq-fixed", this.build_spanF(keys2[j]));
-                dom.content("seq-mobil", this.sequence[keys2[j]].toString());        
+                dom.replace("seq-fixed", this.build_spanF(list[j]));
+                if (l_spacing == undefined)
+                    l_spacing = this.sequence[list[j]].updateLetterSpacing();
+                else
+                    this.sequence[list[j]].updateLetterSpacing(l_spacing);
+                dom.content("seq-mobil", this.sequence[list[j]].toString());        
             }
 
+        //hide unused sequence dom object
+        for (var i=0; i<keys.length; i++)
+            if (this.index[keys[i]] != null && keys2.indexOf(keys[i])==-1) 
+                this.index[keys[i]].display("main", "none");
+
+        var div_segmenter = document.getElementsByClassName("segmenter")[0];
+        $('.seq-fixed').css({ 'left': + $(div_segmenter).scrollLeft() });
         this.updateStats();
 
         return this;
@@ -494,12 +657,87 @@ Aligner.prototype = {
             var span = document.createElement('span');
             var axis = this.selectedAxis[i];
             span.removeAllChildren();
-            span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
-            span.setAttribute('title', this.selectedAxis[i].doc);
             span.className = axis.name;
+            span.setAttribute('title', this.selectedAxis[i].doc);
+
+            if (axis.hover != undefined)
+                span.setAttribute('title', axis.hover(clone, this.m.getTime()) )
+            
+            if (typeof axis.refresh != 'undefined' && typeof axis.refresh(clone) != 'undefined'){
+                span.appendChild(this.refreshIcon(axis.refresh(clone)))
+            } else {
+                span.appendChild(axis.pretty ? axis.pretty(axis.fct(clone)) : document.createTextNode(axis.fct(clone)));
+            }
+
             axisBox.appendChild(span);
         }
     },
+
+    /**
+     * Refresh external icon of one clonotype in aligner
+     * Allow to launch external action for on provider
+     */
+    refreshIcon: function(provider){
+        var self = this
+        var span = document.createElement('span')
+        var im = document.createElement('i')
+        var button = $("#align-refresh-button")
+
+        span.className = 'aligner-inline-button'
+        im.className ='icon-arrows-ccw'
+        span.setAttribute('title', "missing data, click to try to retrieve from "+provider);
+
+        if (typeof this.pendingAnalysis != 'undefined' &&
+                this.pendingAnalysis[provider] > 0){ // get list provider
+                span.className = 'aligner-inline-button disabledClass'
+                im.className = 'icon-arrows-ccw animate-spin'
+        }
+
+        span.onclick = function(){self.retrieveExternalData([provider])}
+
+        span.appendChild(im)
+        return span
+    },
+
+    /**
+     * Allow to refresh icon in aligner header and menu.
+     */
+    refreshIconProvider: function(provider){
+        var self = this
+
+        var button = $("#align-refresh-button").children(".menu-content")
+                                               .find(`[data-target='${provider}']`)
+        var icon   = $("#icon_external_"+provider)
+
+        var onclickfct = function(){
+            segment.retrieveExternalData([$(this).data("target")])
+        }
+
+        if (!config[provider]){
+            button.hide()
+            button.prop('onclick', null);
+        } else {
+            button.show()
+
+            var needRefresh = this.needRefresh()
+            if (typeof this.pendingAnalysis != 'undefined' &&
+                needRefresh.indexOf(provider) != -1 &&
+                this.pendingAnalysis[provider] > 0){ // get list provider
+                    icon.removeClass()
+                        .addClass('animate-spin')
+            } else if (this.pendingAnalysis == undefined || (typeof this.pendingAnalysis != 'undefined' && needRefresh.indexOf(provider) != -1)){
+                button.removeClass('disabledClass')
+                icon.removeClass()
+                    .addClass('icon-arrows-ccw')
+            } else {
+                button.addClass('disabledClass')
+                icon.removeClass()
+                    .addClass('icon-ok')
+            }
+        }
+
+    },
+
         
     /**
      * add a clone in the segmenter<br>
@@ -587,16 +825,47 @@ Aligner.prototype = {
      * (see crossDomain.js)
      * @param {string} address - 'imgt', 'arrest', 'igBlast' or 'blast'
      * */
-    sendTo: function (address) {
+    sendTo: function (address, list, callback) {
 
-        var list = this.sequenceListInSegmenter();
+        if (typeof list == 'undefined')
+            list = this.sequenceListInSegmenter();
+
         var request = "";
         var system;
         var max=0;
+        var c;
+
+        var sample_set_id = "(---)"
+        if (typeof this.m.db_key != "undefined" &&
+            typeof this.m.db_key.sample_set_id != "undefined")
+            sample_set_id ="("+this.m.db_key.sample_set_id+")"
+            
+        // Split list of clonotype by system
+        var systems = {}
+        for (var l_pos = 0; l_pos < list.length; l_pos++) {
+            if (this.isClone(list[l_pos])) {
+                c = this.m.clone(list[l_pos]);
+                if (c.getSize()>max){
+                    system = c.getLocus();
+                    if (systems[system] == undefined){
+                        systems[system] = [list[l_pos]]
+                    } else { systems[system].push(list[l_pos]) }
+                }
+            }
+        }
+        // Make recursive call if needed on each system
+        var systems_keys = Object.keys(systems)
+        if (systems_keys.length > 1) {
+            for (var key_pos = 0; key_pos < systems_keys.length; key_pos++) {
+                var locus = systems_keys[key_pos]
+                this.sendTo(address, systems[locus], callback)
+            }
+            return // bypass after recursive calls
+        }
 
         for (var i = 0; i < list.length; i++) {
             if (this.isClone(list[i])) {
-                var c = this.m.clone(list[i]);
+                c = this.m.clone(list[i]);
                 
                 if (c.seg.imgt && address == 'IMGTSeg'){
                     if (c.seg.imgt.trimming_before  == this.m.trimming_before_external &&
@@ -605,15 +874,16 @@ Aligner.prototype = {
                     }         
                 } // else, modified option, relunch request
 
-                if (typeof (c.getSequence()) !== 0){
-                    if (this.m.trimming_before_external && this.m.primerSetCurrent != undefined) {
-                        request += ">" + c.index + "#" + c.getName() + "\n" + c.trimmingFeature("primer5", "primer3", false) + "\n";
-                    } else {
-                        request += ">" + c.index + "#" + c.getName() + "\n" + c.getSequence() + "\n";
-                    }
+                request += ">" + sample_set_id + " #" + c.index + " " + c.getName() + "\n"
+                if (typeof (c.getSequence()) == 0){
+                    request +=  c.id + "\n";
+                } else if ( this.m.trimming_before_external && 
+                            this.m.primerSetCurrent != undefined) {
+                    request += c.trimmingFeature("primer5", "primer3", false) + "\n";
                 } else {
-                    request += ">" + c.index + "#" + c.getName() + "\n" + c.id + "\n";
+                    request += c.getSequence() + "\n";
                 }
+                
                 if (c.getSize()>max){
                     system = c.getLocus();
                     max=c.getSize();
@@ -626,13 +896,17 @@ Aligner.prototype = {
 
         if (request != ""){
             if (address == 'IMGTSeg') {
-                imgtPostForSegmenter(this.m.species, request, system, this);
+                imgtPostForSegmenter(this.m.species, request, system, undefined, callback);
                 var change_options = {'xv_ntseq' : 'false', // Deactivate default output
                                     'xv_summary' : 'true'}; // Activate Summary output
-                imgtPostForSegmenter(this.m.species, request, system, this, change_options);
+                imgtPostForSegmenter(this.m.species, request, system, change_options, callback);
             } else {
                 window[address+"Post"](this.m.species, request, system);
+                if (callback) callback();
             }
+        }
+        else{
+            if (callback) callback();
         }
 
         this.update();

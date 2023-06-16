@@ -30,6 +30,27 @@ ALIGNER_MENU = {
             'layers': ["primer5", "primer3"],
             'title': 'Primers (estimated with settings > primers)',
             'enabled': false
+        },
+        {
+            'id': 'IMGT_VDJ',
+            'text': '[IMGT] V/D/J genes',
+            'layers': ["IMGT_V", "IMGT_D", "IMGT_J", "IMGT_D1", "IMGT_D2", "IMGT_D3"],
+            'title': 'V, D, J genes [as computed by IMGT/V-QUEST]',
+            'enabled': true
+        },
+        {
+            'id': 'IMGT_CDR',
+            'text': '[IMGT] CDR 1/2/3',
+            'layers': ["IMGT_CDR1","IMGT_CDR2","IMGT_CDR3"],
+            'title': 'CDR1, CDR2, CDR3 [as computed by IMGT/V-QUEST]',
+            'enabled': false
+        },
+        {
+            'id': 'IMGT_FR',
+            'text': '[IMGT] FR 1/2/3',
+            'layers': ["IMGT_FR1","IMGT_FR2","IMGT_FR3"],
+            'title': 'FR1, FR2, FR3 [as computed by IMGT/V-QUEST]',
+            'enabled': false
         }]
     },
 
@@ -53,32 +74,6 @@ ALIGNER_MENU = {
             'text': 'Use AA sequence',
             'layers': ["amino"],
             'title': 'Show Amino Acid sequences (AA positions based on CDR3)',
-            'enabled': false
-        }]
-    },
-
-
-    'align-imgt': {
-        'id': 'align-imgt',
-        'checkbox': [{
-            'id': 'IMGT_VDJ',
-            'text': 'V/D/J genes',
-            'layers': ["IMGT_V", "IMGT_D", "IMGT_J", "IMGT_D1", "IMGT_D2", "IMGT_D3"],
-            'title': 'V, D, J genes [as computed by IMGT/V-QUEST]',
-            'enabled': true
-        },
-        {
-            'id': 'IMGT_CDR',
-            'text': 'CDR 1/2/3',
-            'layers': ["IMGT_CDR1","IMGT_CDR2","IMGT_CDR3"],
-            'title': 'CDR1, CDR2, CDR3 [as computed by IMGT/V-QUEST]',
-            'enabled': false
-        },
-        {
-            'id': 'IMGT_FR',
-            'text': 'FR 1/2/3',
-            'layers': ["IMGT_FR1","IMGT_FR2","IMGT_FR3"],
-            'title': 'FR1, FR2, FR3 [as computed by IMGT/V-QUEST]',
             'enabled': false
         }]
     }

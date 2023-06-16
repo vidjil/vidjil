@@ -129,6 +129,16 @@ In that cases, a textarea is provided.
 
 # Tests
 
+
+# Security
+
+- task.py: chargé du traitement des fichiers => Si le fichier devient compromis (erreur développeur, intervention inattendue par un tiers, ...), celà pourrait entrainer une fuite de données, une perte de données, voire des traitements malicieux.
+- VidjilAuth: chargé de la gestion des permissions et (par hérritage), du login/logout des utilisateurs => fichier compromis (erreur dev, ou accès non-anticipé) peut mener à des fuites de données, voire à un accès admin pour un utilisateur inattendu.
+- defs.py: fichier de config, contient le mot de passe de la BDD. => potentiel de fuite de données, voire de l'utilisation de logiciels modifiés pour les traitements (DIR_VIDJIL, DIR_PEAR, etc.)
+- conf.js: fichier chargé de faire pointer le client sur le serveur. => un conf.js compromis peut engendrer un client qui pointe vers un serveur avec de mauvaises intentions (man-in-the-middle, phishing de mot de passe, etc.)
+- XXX La base de données elle-même XXX Elle est protégé par un mot de passe ?
+
+
 # Packaging
 
 ## Script driven building
@@ -378,8 +388,8 @@ Modifications for `nginx volumes` declaration.
 
 As some files are virtualy linked into docker image from the docker directory, you should add them into `code/`.
 ```bash
-cp docker/vidjil-client/conf/conf.js copy/browser/js/
-cp docker/vidjil-server/conf/defs.py copy/server/web2py/applications/vidjil/modules/
+cp docker/vidjil-client/conf/conf.js code/browser/js/
+cp docker/vidjil-server/conf/defs.py code/server/web2py/applications/vidjil/modules/
 ```
 
 ### Restart docker-compose

@@ -45,15 +45,20 @@ Cypress.Commands.add('setBrowser', (url) => {
   }
 })
 
-Cypress.Commands.add('open_menu_import', () => { 
-  cy.get('#demo_file_menu').click()
+Cypress.Commands.add('open_menu', (id) => { 
+  cy.get('#'+id+'> .selector').invoke('show')
+})
+
+Cypress.Commands.add('close_menu', (id) => { 
+  cy.get('#'+id+'> .selector').invoke('hidden')
 })
 
 
-
-Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis) => {
-  cy.open_menu_import()
-  cy.get('#import_data_anchor').click()
+Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis, timeout) => {
+  timeout = (timeout!=undefined) ? timeout : 30000
+  //cy.open_menu("demo_file_menu")
+  cy.get('#import_data_anchor').click({force: true})
+  //cy.close_menu("demo_file_menu")
   cy.log(`file_vidjil: ${file_vidjil}`)
   cy.log(`file_analysis: ${file_analysis}`)
   // Upload vidjil file
@@ -68,28 +73,46 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis) => {
   cy.get("button[id=start_import_json]")
     .click();
   // Wait the end of the loading (async)
-  cy.update_icon()
+  cy.update_icon(0, timeout)
 })
 
 /**
  * Allow to wait for update icon to be not visible
  */
-Cypress.Commands.add("update_icon", (delay) => {
+Cypress.Commands.add("update_icon", (delay=0, timeout=undefined) => {
   let visible_icon = false;
   cy.get('#updateIcon')
     .then( ($icon) => {
-      cy.log( "wait icon already visible")
-      visible_icon = $icon.is(":visible")
+      if ($icon.is(":visible")) { 
+        // cy.log( "wait icon already visible")
+        delay = 0 // Don't use delay if icon already visible
+      }
+      if (delay){
+        cy.wait(delay)
+      }
     }
   )
-  if (delay == undefined || visible_icon){ delay = 0 } // Don't wait if icon already visible
-  cy.wait(delay)
-  
-  cy.get('#updateIcon', { timeout: 6000 })
+  timeout = (timeout!=undefined) ? timeout : 6000
+  cy.get('#updateIcon', { timeout: timeout })
     .should("not.visible")
 
 })
 
 Cypress.Commands.add('getById', (input) => {
   cy.get(`[data-cy=${input}]`)
+})
+
+Cypress.Commands.add('pressKey', (key) => {
+  var codes = {"escape": 27}
+  cy.get('body').trigger('keydown', { keyCode: codes[key]});
+  cy.wait(500);
+  cy.get('body').trigger('keyup', { keyCode: codes[key]});
+})
+
+Cypress.Commands.add('changePreset', (sp_id, value) => {
+  cy.get(`#${sp_id}`).click()
+  cy.get(`#${sp_id}_select_preset`)
+    .select(value, {force: true})
+    .trigger('change', {force: true})
+  cy.update_icon(10000)
 })

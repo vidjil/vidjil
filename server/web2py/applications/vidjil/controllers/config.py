@@ -123,7 +123,7 @@ def edit_form():
 
     if error=="" :
 
-        db.config[request.vars["id"]] = dict(name=request.vars['config_name'],
+        db(db.config.id == request.vars["id"]).update(name=request.vars['config_name'],
                                              info=request.vars['config_info'],
                                              command=request.vars['config_command'],
                                              fuse_command=request.vars['config_fuse_command'],

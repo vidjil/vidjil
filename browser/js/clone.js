@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -107,15 +107,17 @@ Clone.prototype = {
     COVERAGE_WARN: 0.5,
     EVALUE_WARN: 0.001,
     
-    isWarned: function () {
+    isWarnedBool: function () {
+        return this.warn.length > 0
+    },
+
     /**
+     * settings_leveled (Boolean) Use level as setted in the localstorage of not
      * @return {string} a warning class is set on this clone
      */
+    isWarned: function () {
         var wL = this.warnLevel()
-
-        if (wL >= WARN) {
-            return warnTextOf(wL)
-        }
+        if (wL){ return warnText[wL] }
 
         if (this.hasSeg('clonedb')) {
             if (typeof(this.seg.clonedb['–']) != 'undefined') // TODO: use a stored number of occurrences
@@ -127,6 +129,17 @@ Clone.prototype = {
         return false
     },
 
+    /**
+     * Return true if this clone hava at least one warning with this code
+     */
+    haveWarning: function(warn_code){
+        if (sum(this.warn.map((warn) => { return warn_code == warn.code ? 1 : 0}))) {
+            return true
+        }
+        return false
+    },
+
+
     computeWarnings: function() {
 
         if (this.getCoverage() < this.COVERAGE_WARN)
@@ -136,24 +149,37 @@ Clone.prototype = {
             this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.eValue + ')' });
     },
 
+    /**
+     * Return maximum level of warning (number format), using setted warning level in localStorage when present
+     */
     warnLevel: function () {
-        var level = 0
-
-        for (var i = 0; i < this.warn.length; i++) {
-            level = Math.max(level, warnLevelOf(this.warn[i].level))
-        }
-
-        return level
+        // get list of warn code
+        return this.m.getWarningLevelFromList(this.warn)
     },
 
     warnText: function () {
         var items = []
 
         for (var i = 0; i < this.warn.length; i++) {
-            items.push(this.warn[i].code + ': ' + this.warn[i].msg)
+            if (this.warn[i].code != undefined){
+                items.push(this.warn[i].code + ': ' + this.warn[i].msg)
+            }
         }
 
         return items.join('\n')
+    },
+
+    getWarningsDom: function(){
+        var dom = {}
+        if (this.isWarnedBool() && this.warnLevel()) {
+            dom.className = this.isWarned() ;
+            dom.icon = 'icon-warning-1'
+            dom.title = this.warnText()
+        } else {
+            dom.icon = 'icon-info'
+            dom.title = 'clonotype information'
+        }
+        return dom
     },
 
     /**
@@ -176,6 +202,12 @@ Clone.prototype = {
         return parseFloat(size);
     },
 
+    /**
+     * Return clone name transformed with settings notation rules.
+     * short locus (IGHV3 ... IGHJ4 into IGHV3... J4)
+     * short allele notation
+     * short N region
+     */
     getShortName: function () {
 
         if ( this.hasSizeDistrib() ){
@@ -320,9 +352,9 @@ Clone.prototype = {
 
         if (field_name5 != undefined && positions5 !== null) {
             if (include){
-                pos5 = positions5.start
+                pos5 = positions5.start+1
             } else {
-                pos5 = positions5.stop
+                pos5 = positions5.stop+1
             }
         } else {
             pos5 = 0
@@ -330,9 +362,9 @@ Clone.prototype = {
 
         if (field_name3 != undefined && positions3 !== null) {
             if (include){
-                pos3 = positions3.stop
+                pos3 = positions3.stop+1
             } else {
-                pos3 = positions3.start
+                pos3 = positions3.start+1
             }
         } else {
            pos3 = this.sequence.length
@@ -513,8 +545,8 @@ Clone.prototype = {
      * (difference between the stop and the start).
      * If no start and stop are given, return 0
      */
-    getSegLength: function(field_name) {
-        positions = this.getSegStartStop(field_name)
+    getSegLength: function(field_name, assume) {
+        positions = this.getSegStartStop(field_name, assume)
         if (positions !== null) {
             return (positions.stop+1) - positions.start
         } else {
@@ -543,13 +575,19 @@ Clone.prototype = {
      * Get the start and stop position of a given field (e.g. cdr3)
      * Getted positions are 0 based.
      * If start OR stop position does not exist return null
+     * If assume is set tot true, we will try to define missing value with getSegStart/getSegStop function
      */
-    getSegStartStop: function(field_name) {
-        if (this.hasSequence() && this.hasSeg(field_name) &&
-            typeof this.seg[field_name].start !== 'undefined' &&
-            typeof this.seg[field_name].stop !== 'undefined') {
-            return {'start': this.seg[field_name].start,
-                    'stop': this.seg[field_name].stop}
+    getSegStartStop: function(field_name, assume) {
+        if (this.hasSequence() && this.hasSeg(field_name)) {
+            if (this.seg[field_name].start != undefined && this.seg[field_name].stop != undefined) {
+                return {'start': this.seg[field_name].start,
+                        'stop': this.seg[field_name].stop}
+            }
+            else if (assume == true && this.seg[field_name].start != undefined && this.getSegStop(field_name) != null) {
+                return {'start': this.seg[field_name].start, 'stop': this.getSegStop(field_name)}
+            } else if (assume == true && this.getSegStart(field_name) != null && this.seg[field_name].stop != undefined) {
+                return {'start': this.getSegStart(field_name), 'stop': this.seg[field_name].stop}
+            }
         }
         return null;
     },
@@ -801,6 +839,22 @@ Clone.prototype = {
         }
         return max;
     },
+
+    /**
+     * return time in which a clone reach it's biggest size in the current samples
+     * */
+    getMaxSizeTimepoint: function () {
+        var max=0;
+        var maxTime=0;
+        for (var i in this.m.samples.order){
+            var tmp=this.getSize(this.m.samples.order[i]);
+            if (tmp>max){ 
+                max=tmp;
+                maxTime=this.m.samples.order[i];
+            }
+        }
+        return maxTime;
+    }, 
     
 
     /**
@@ -935,11 +989,48 @@ Clone.prototype = {
     },
 
     getFasta: function() {
-        fasta = ''
-        fasta += '>' + this.getCode() + '    ' + this.getPrintableSize() + '\n'
+
+        fasta = '>' 
+        if (typeof this.m.db_key != "undefined" &&
+            typeof this.m.db_key.sample_set_id != "undefined")
+            fasta +="("+this.m.db_key.sample_set_id+") "
+        fasta += this.getCode() + '    ' + this.getPrintableSize() + '\n'
         fasta += this.getPrintableSegSequence() + '\n'
 
         return fasta
+    },
+
+    /**
+     * Return the percentage of germline gene covered by the segment
+     * This is limited to gene 5'/V for the moment
+     * TODO: See if we should take into account deletion and how. (my recommandation is to don't include deletion in value)
+     * TODO: controle case with up/down sequence ?
+     * @param {string} gene_way 
+     * @returns undefined if not segment, percentage of covered sequence 
+     */
+    getGermlineRatio: function(gene_way) {
+        if (gene_way != "5"){
+            return undefined
+        }
+
+        var gene     = this.getGene(gene_way);
+        if (this.germline != undefined) {
+            var germName = this.germline.substring(0, 3);
+            seq_germ = this.m.findGermlineFromGene(gene)
+            if (seq_germ == undefined) { return }
+            seq_germ = (seq_germ != undefined) ? seq_germ.split(".").join("") : undefined
+        }
+
+        if (!this.hasSeg('3', '5')) {
+            return undefined
+        }
+
+        var start = this.seg[gene_way].start != undefined ? this.seg[gene_way].start : 0
+        var stop  = this.seg[gene_way].stop? this.seg[gene_way].stop+1 : this.sequence.length
+        seq_clone = this.sequence.substring(start, stop)
+        seq_germ_length = seq_germ.length - (this.seg[gene_way].delRight != undefined ? this.seg[gene_way].delRight:0) - (this.seg[gene_way].delLeft != undefined ? this.seg[gene_way].delLeft:0)
+
+        return (seq_clone.length / seq_germ_length)
     },
 
     /**
@@ -1009,7 +1100,9 @@ Clone.prototype = {
                     var cluster = this.m.clusters[c_index]
                     if (clone.hasSizeConstant() ) {
                         if (cluster.length){
-                            if (clone.isActive() || clone.hidden) { // cluster ?
+                            if (clone.isActive() || clone.hidden || 
+                                 (this.axes.indexOf("germline") != -1  && this.m.system_selected.indexOf(this.germline) == -1) ||
+                                 (this.m.filter.getValuesByAxis("Tag").indexOf(clone.getTagName()) != -1 )) {
                                 this.current_reads[timepoint]  -= clone.reads[timepoint]
                                 this.current_clones[timepoint] -= 1
                             }
@@ -1274,16 +1367,16 @@ Clone.prototype = {
     
     getTag: function () {
         if (this.hasSizeDistrib()) {
-            return this.m.distrib_tag;
+            return this.m.tags.getDistrib();
         } else if (this.tag) {
             return this.tag;
         } else {
-            return this.m.default_tag;
+            return this.m.tags.getDefault();
         }
     }, 
     
     getTagName: function () {
-        return this.m.tag[this.getTag()].name
+        this.m.tags.getName(this.getTag);
     }, 
     
     getProductivityName: function () {
@@ -1337,11 +1430,14 @@ Clone.prototype = {
         if (typeof this.seg.imgt !== 'undefined' &&
             this.seg.imgt !== null) {
 
-            if (typeof this.seg.imgt['V-REGION identity %'] != 'undefined')
-                return this.seg.imgt["V-REGION identity %"];
-
-            if (typeof this.seg.imgt['V-REGION identity % (with ins/del events)'] != 'undefined')
+            if (typeof this.seg.imgt['V-REGION identity % (with ins/del events)'] != 'undefined' &&
+                this.seg.imgt['V-REGION identity % (with ins/del events)'] != ''){
                 return this.seg.imgt["V-REGION identity % (with ins/del events)"];
+            }
+            if (typeof this.seg.imgt['V-REGION identity %'] != 'undefined'){
+                return this.seg.imgt["V-REGION identity %"];
+            }
+
         }
         return "unknown"
     },
@@ -1551,7 +1647,7 @@ Clone.prototype = {
         html += "</tr>"
 
         //warnings
-        if (this.isWarned()) {
+        if (this.isWarnedBool()) {
             html += header("warnings", undefined, time_length)
             var warnings = {}
             // Create a dict of all warning present, and add each sample with it
@@ -1568,16 +1664,18 @@ Clone.prototype = {
             // put warning html content, with list of concerned sample, without duplication
             for (var warn in warnings) {
                 var pluriel = warnings[warn].samples.length > 1 ? "s" : ""
-                html += row_1(warnings[warn].code, warnings[warn].msg, undefined, time_length);
+                if (warnings[warn].code != undefined){
+                    html += row_1(warnings[warn].code, warnings[warn].msg, undefined, time_length);
+                }
             }
         }
 
         //cluster info
         if (isCluster) {
             html += header("clonotype", undefined, time_length)
-            html += row_1("clonotype name", this.getName(), undefined, time_length)
+            html += row_1("clonotype name", this.getName(), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
             if (this.hasSizeConstant()){
-                html += row_1("clonotype short name", this.getShortName(), undefined, time_length)
+                html += row_1("clonotype short name", this.getShortName(), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
                 html += "<tr><td>clonotype size (n-reads (total reads))"
             } else if (this.hasSizeDistrib()) {
                 html += "<tr><td title='Current size; depending of the number of clonotypes curently not filtered'>current clonotype size<br/>(n-reads (total reads))"
@@ -1623,8 +1721,7 @@ Clone.prototype = {
         
         //sequence info (or cluster main sequence info)
         if (this.hasSequence()){
-            html += row_1("sequence name", this.getSequenceName(), undefined, time_length)
-            html += row_1("code", this.getCode(), undefined, time_length)
+            html += row_1("code", this.getCode(), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
             html += row_1("length", this.getSequenceLength(), undefined, time_length)
         }
 
@@ -1643,7 +1740,7 @@ Clone.prototype = {
                           "<span " +
                           (this.eValue > this.EVALUE_WARN ? "class='warning'" : "") +
                           ">" +
-                          this.eValue + "</span>", undefined, time_length)
+                          this.eValue + "</span>", undefined, time_length, undefined, undefined, undefined)
         }
 
         // abundance info
@@ -1694,14 +1791,17 @@ Clone.prototype = {
         }
         
         if (this.hasSequence()){
-            html += row_1("sequence", this.sequence, undefined, time_length)
+            html += row_1("sequence", this.sequence, undefined, time_length, undefined, undefined, undefined, allow_copy=true)
         }
         if (this.id != undefined){
-            html += row_1("id", this.id, undefined, time_length)
+            html += row_1("id", this.id, undefined, time_length, undefined, undefined, undefined, allow_copy=true)
         }
         if (this.id != undefined){
             html += row_1("locus", this.m.systemBox(this.germline).outerHTML + this.germline +
                 "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div>", undefined, time_length)
+        }
+        if (this.seg != undefined && this.seg.junction != undefined){
+            html += row_1("Productivity", this.getProductivityNameDetailed() + "</div>", undefined, time_length, undefined, undefined, undefined)
         }
         if (this.hasSizeConstant() || (this.hasSizeDistrib() && this.getGene("5") != "undefined V")){
             html += row_1("V gene (or 5')", this.getGene("5") +
@@ -1726,7 +1826,7 @@ Clone.prototype = {
         }
         if (typeof this.seg.junction != 'undefined' &&
             typeof this.seg.junction.aa != "undefined") {
-            html += row_1("junction (AA seq)", this.getSegAASequence('junction'), undefined, time_length)
+            html += row_1("junction (AA seq)", this.getSegAASequence('junction'), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
         }
 
         
@@ -1757,7 +1857,7 @@ Clone.prototype = {
                   var keys = Object.keys(this.seg[s]).sort();
                   for (var key_seg = 0; key_seg < keys.length; key_seg++) {
                       var sub = keys[key_seg]
-                      html += row_cast_content(sub, this.seg[s][sub], time_length)
+                      html += row_cast_content(sub, this.seg[s][sub], time_length, self)
                   }
             }
         }
@@ -1773,7 +1873,7 @@ Clone.prototype = {
                   var keys_seg = Object.keys(this[thiskey]).sort();
                   for (var key_segthis = 0; key_segthis < keys_seg.length; key_segthis++) {
                       var subthis = keys_seg[key_segthis]
-                      html += row_cast_content(subthis, this[thiskey][subthis], time_length)
+                      html += row_cast_content(subthis, this[thiskey][subthis], time_length, self)
                   }
             }
         }
@@ -1790,7 +1890,7 @@ Clone.prototype = {
 
         if(typeof clear != undefined && clear==false ){
             div_elem.getElementsByClassName("starBox")[0].onclick = function (e) {
-                self.m.openTagSelector([self.index], e);
+                self.m.tags.openSelector([self.index], e);
             }
             return; 
         }
@@ -1801,7 +1901,7 @@ Clone.prototype = {
         var span_star = document.createElement('span')
         span_star.setAttribute('class', 'starBox');
         span_star.onclick = function (e) {
-            self.m.openTagSelector([self.index], e);
+            self.m.tags.openSelector([self.index], e);
         }
         span_star.id = self.index
         var tag_icon = document.createElement('i')
@@ -1815,7 +1915,7 @@ Clone.prototype = {
         span_star.appendChild(tag_icon)
         span_star.setAttribute('id', 'color' + this.index);
         if (typeof this.tag != 'undefined')
-            span_star.style.color = this.m.tag[this.getTag()].color
+            span_star.style.color = this.m.tags.getColor(this.getTag())
 
         // Axis
         var span_axis = document.createElement('span');
@@ -1829,13 +1929,11 @@ Clone.prototype = {
             span_info.onclick = function () {
                 self.m.displayInfoBox(self.index);
             }
+            // console.default.log( `${this.index} - ${this.isWarnedBool()}, ${this.warnLevel()}; => ${this.isWarnedBool() && this.warnLevel()}`)
+            var dom_content = this.getWarningsDom()
+            span_info.classList = dom_content.className
+            span_info.appendChild(icon(dom_content.icon, dom_content.title))
 
-            if (this.isWarned()) {
-                span_info.className += " " + this.isWarned() ;
-                span_info.appendChild(icon('icon-warning-1', this.warnText()));
-            } else {
-                span_info.appendChild(icon('icon-info', 'clonotype information'));
-            }
         }
 
         // Gather all elements
@@ -1864,7 +1962,7 @@ Clone.prototype = {
     toCSV: function () {
         var csv = [
             this.getCluster().join("+"), this.getName(), this.id,
-            this.get('germline'), this.getTagName(),
+            this.get('germline'), this.getTag(),
             this.getGene("5"), this.getGene("4"), this.getGene("3"),
             this.getProductivityName(),
             this.getSegNtSequence("junction"),
@@ -1883,13 +1981,14 @@ Clone.prototype = {
         this.active = true
         this.hidden = false
 
-        if (this.getTag() == 9 && this.m.filter.check("Tag", "=", "smaller clonotypes") != -1)
+        if (this.getTag() == "smaller_clonotypes" && this.m.filter.check("Tag", "=", "smaller_clonotypes") != -1){
             this.active = false
+        }
     },
 
     disable: function () {
         if (!this.hasSizeConstant() && !this.hasSizeDistrib()) return
-        if (this.hasSizeDistrib() && this.m.tag[this.getTag()].display) return
+        if (this.hasSizeDistrib() && this.m.tags.isVisible(this.getTag())) return
         this.active = false;
     },
 
@@ -2159,6 +2258,7 @@ Clone.prototype = {
             else if (axe == "seg3")             { this.seg[3] =       { name: value}}
             else if (axe == "lenCDR3")          { this.seg.cdr3 =     { start: 0, 
                                                                         stop: value}} 
+            else if (axe == "germline")         { this.germline = value }
     },
 
     sameAxesAsScatter: function(scatterplot){

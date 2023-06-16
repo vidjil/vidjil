@@ -46,6 +46,7 @@ QUnit.test("sort", function(assert) {
     m.loadGermline()
     m.initClones()
     m.changeTime(3)
+    var warnings = new Warnings("warnings_list", m, false);
     
     var list = new List("list","data",m);
     list.init();
@@ -113,7 +114,7 @@ QUnit.test("tag/norm", function(assert) {
     assert.equal(m.clone(1).getSize(), 0.1, "size before norm : Ok")
     assert.equal(m.clone(2).getSize(), 0.125, "size before norm : Ok")
     
-    m.norm_input.value = 0.25;
+    m.norm_input.value = 25;
     m.norm_button.click();
     
     assert.equal(m.clone(1).getSize(), 0.25, "size after norm : Ok")

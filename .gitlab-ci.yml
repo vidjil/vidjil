@@ -1,17 +1,25 @@
 # Step 0, independant: deploy_review, deploy_review_server
 # Step 1, quicker: test_tools, test_browser_unit, code_quality_custom, test_server_unit
 # Step 2, moderate:
-#   client: client_firefox_supported, ff45-browser-functional, ff45-browser-tutorial
-#   server: server_firefox_supported, server_tutorial_server
-# Step 3, late, longuer or tricky: ff45-browser-functional-external
+#   client: client_firefox_supported, tuto-c1-ff-supported
+#   server: server_firefox_supported, tuto-s1-ff-supported
+# Step 3, late, longuer or tricky: 
 
 
-before_script:
+.before_script_global: &before_script_global
   - make demo
   - make data
   - make germline
   - make -C browser sha1
   - cp -p doc/analysis-example.vidjil browser/
+
+.before_script_global_docker: &before_script_global_docker
+  before_script:
+    - apt update && apt upgrade -y && apt install -y make unzip wget
+    - *before_script_global
+
+before_script:
+  - *before_script_global
 
 stages:
   - test_tools
@@ -21,11 +29,11 @@ stages:
   - test_germlines
   - test_functional
   - test_cypress_client
+  - test_cypress_external
   - test_cypress_server
   - test_tutorial
   - test_tutorial_server
   - test_shouldvdj
-  - test_functional_external
   - coverage
   - tgz_release
   - valgrind_unit
@@ -34,32 +42,35 @@ stages:
   - benchmark
   - publish_release
   - deploy_prod
-# Anchors
 
-.coverage_dependency:
-  artifacts: &lcov_artifact
-    paths:
-      - algo/lcov_test_*.filtered
-    expire_in: 1 week
 
 # Tools
 
 test_tools:
+  image: vidjilci/cypress_with_browsers:latest
   stage: test_tools
-  script: make -C tools/tests
+  script:
+    - apt-get update && apt-get install -y python3-pip
+    - pip3 install beautifulsoup4 bs4 tabulate requests requests-toolbelt urllib3
+    - make -C tools/tests
   extends:
     - .need_for_quick_test
+  tags:
+    - cidocker
 
 
 # Germlines
 
 test_germlines:
+  image: vidjilci/cypress_with_browsers:latest
   stage: test_germlines
   script:
     - make -C germline get-all-data
     - make -C germline tests
   only:
     - /^feature-.*g.*\/.*$/
+  tags:
+    - cidocker
 
 
 # Includes
@@ -85,65 +96,22 @@ include:
 ### Client part should not containt server stage
 .need_for_moderate_client:
   needs: [test_tools, test_browser_unit, code_quality_custom]
-.need_for_late_client:
-  needs: [client1-ff-supported, ff45-browser-functional, ff45-browser-tutorial]
 .need_for_staged_client:
-  needs: [client1-ff-supported, ff45-browser-functional, ff45-browser-tutorial]
+  needs: [client1-ff-supported, external1-ff-supported]
+.need_for_late_client:
+  needs: [client1-ff-supported, external1-ff-supported, tuto-c1-ff-supported]
 
 ### Server part should not containt client stage
 .need_for_moderate_server:
   needs: [test_tools, test_server_unit]
 .need_for_late_server:
-  needs: [server1-ff-supported, server_tutorial_server]
+  needs: [server1-ff-supported, tuto-s1-ff-supported]
 .need_for_staged_server:
-  needs: [server1-ff-supported, server_tutorial_server]
+  needs: [server1-ff-supported, tuto-s1-ff-supported]
 
 
 
 # Algorithm
-
-test_algo_unit:
-  stage: test_unit
-  script: make -C algo unit_coverage
-  artifacts:
-    <<: *lcov_artifact
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
-
-test_algo_should:
-  stage: test_functional
-  script: make -C algo should_coverage
-  artifacts:
-    <<: *lcov_artifact
-    reports:
-      junit: algo/tests/should.xml
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
-
-test_algo_shouldvdj:
-  stage: test_shouldvdj
-  script: make -C algo shouldvdj_coverage
-  artifacts:
-    <<: *lcov_artifact
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
-  
-algo_coverage:
-  stage: coverage
-  coverage: /^\s*lines\.*:\s+([0-9.]+\%)/
-  script:
-    - make -C algo lcov_reports
-    - mv algo/reports/ coverage
-  artifacts:
-    paths:
-      - coverage/
-    expire_in: 1 week
-  only:
-    - /^feature-.*a.*\/.*$/
-    - schedules
 
 algo_valgrind_unit:
   stage: valgrind_unit
@@ -219,8 +187,14 @@ deploy_release_prod:
 # Client
 
 test_browser_unit:
+  image: vidjilci/cypress_with_browsers:latest
   stage: test_unit
-  script: make unit_browser
+  script: 
+    - npm -v
+    - npm install --save-dev qunit
+    - npm link nightmare --unsafe-perm=true ;
+    - apt-get update && apt-get -y install xvfb grep
+    - make unit_browser
   artifacts:
     paths:
     - browser/
@@ -232,187 +206,9 @@ test_browser_unit:
     - dev
     - schedules
   tags:
-    - web
+    - cidocker
   extends:
     - .need_for_quick_test
-
-.browser-functional:
-  stage: test_functional
-  retry: 2
-  script:
-    - make -C browser
-    - source /etc/profile.d/rvm.sh
-    - rvm use 2.6.1
-    - HEADLESS=1 make -C browser/test functional
-  artifacts:
-    paths:
-    - browser/ 
-    when: always
-    reports:
-      junit: browser/test/test/TEST-*.xml
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
-    - schedules
-  tags:
-    - web
-
-.browser-functional-chrome:
-  extends: .browser-functional
-  variables:
-    WATIR_CHROME: "1"
-
-.browser-functional-external:
-  stage: test_functional_external
-  retry: 2
-  script:
-    - make -C browser
-    - source /etc/profile.d/rvm.sh
-    - rvm use 2.6.1
-    - HEADLESS=1 make -C browser/test external
-  artifacts:
-    paths:
-    - browser/
-    when: always
-    reports:
-      junit: browser/test/test/TEST-*.xml
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
-    - schedules
-  tags:
-    - web
-  # extends:
-  #   - .need_for_staged_client
-
-.browser-functional-external-chrome:
-  extends: .browser-functional-external
-  variables:
-    WATIR_CHROME: "1"
-    
-ff32-browser-functional:
-  extends: .browser-functional
-  variables:
-    FIREFOX_VERSION: 32
-
-ff45-browser-functional:
-  extends:
-    - .browser-functional
-    - .need_for_moderate_client
-  variables:
-    FIREFOX_VERSION: 45
-
-chrome-browser-functional:
-  extends: .browser-functional-chrome
-        
-old-chrome-browser-functional:
-  extends: .browser-functional-chrome
-  tags:
-    - legacy
-
-ff32-browser-functional-external:
-  extends: .browser-functional-external
-  variables:
-    FIREFOX_VERSION: 32
-
-ff45-browser-functional-external:
-  extends:
-    - .browser-functional-external
-    - .need_for_moderate_client
-  variables:
-    FIREFOX_VERSION: 45
-
-chrome-browser-functional-external:
-  extends: .browser-functional-external-chrome
-    
-old-chrome-browser-functional-external-chrome:
-  extends: .browser-functional-external-chrome
-  tags:
-    - legacy
-
-
-.browser-tutorial:
-  stage: test_tutorial
-  retry: 2
-  script:
-    - make -C browser
-    - source /etc/profile.d/rvm.sh
-    - rvm use 2.6.1
-    - HEADLESS=1 make test_tutorial
-  artifacts:
-    paths:
-    - browser/
-    reports:
-      junit: browser/test/test/TEST-*.xml
-    when: always
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
-    - schedules
-    - /tutorial/
-  tags:
-    - web-pandoc
-
-.browser-tutorial-chrome:
-  extends: .browser-tutorial
-  variables:
-    WATIR_CHROME: "1"
-
-
-ff32-browser-tutorial:
-  extends: .browser-tutorial
-  variables:
-    FIREFOX_VERSION: 32
-
-ff45-browser-tutorial:
-  extends:
-    - .browser-tutorial
-    - .need_for_moderate_client
-  variables:
-    FIREFOX_VERSION: 45
-
-
-chrome-browser-tutorial:
-  extends: .browser-tutorial-chrome
-        
-old-chrome-browser-tutorial:
-  extends: .browser-tutorial-chrome
-  tags:
-    - legacy
-
-
-
-server_tutorial_server:
-  stage: test_tutorial_server
-  extends:
-    - .test_server_base
-    - .need_for_moderate_server
-  retry: 1
-  script:
-    - source /etc/profile.d/rvm.sh
-    - rvm use 2.6.1
-    - HEADLESS=1 make test_tutorial_server
-  artifacts:
-    paths:
-      - browser/
-      - server/web2py/applications/vidjil/
-    reports:
-      junit: server/web2py/applications/vidjil/test/TEST-*.xml
-    when: always
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - prod-server
-    - dev
-    - schedules
-    - /tutorial/
-  tags:
-    - web-pandoc
-  variables:
-    FIREFOX_VERSION: 45
 
 
 
@@ -424,8 +220,11 @@ code_quality:
     paths: [gl-code-quality-report.json]
 
 code_quality_custom:
+  image: vidjilci/cypress_with_browsers:latest
   stage: test_quality
-  script: make -C browser quality
+  script:
+    - npm install -g jshint
+    - make -C browser quality
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
@@ -433,24 +232,22 @@ code_quality_custom:
     - dev
     - schedules
   tags:
-    - web
+    - cidocker
   extends:
     - .need_for_quick_test
 
 # Server
 
 test_server_unit:
+    image: python:2.7-slim
     stage: test_unit
+    <<: *before_script_global_docker
     script:
-      - virtualenv $CI_COMMIT_SHORT_SHA
-      - source $CI_COMMIT_SHORT_SHA/bin/activate
-      - sudo apt-get update && apt-get install -y --no-install-recommends gcc libsasl2-dev python-dev python-setuptools libldap2-dev libssl-dev libsasl2-dev
+      - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends gcc libldap2-dev libssl-dev libsasl2-dev python-ijson libyajl2 python-cffi wget unzip procps
       - pip install -r requirements.txt
       - make -C server install_web2py_standalone
       - make -C server launch_fuse_server
-      - make unit_server || (make -C server kill_fuse_server; deactivate; false)
-      - make -C server kill_fuse_server
-      - deactivate
+      - make unit_server
     artifacts:
       reports:
         junit: server/web2py/test-reports/TEST*xml
@@ -461,37 +258,49 @@ test_server_unit:
       - dev
       - schedules
     tags:
-      - web
+      - cidocker
     extends:
       - .need_for_quick_test
 
-.test_server_base:
-  stage: test_functional
-  before_script:
+.setup_docker_server:
+    # Build specific version of docker images
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
+    # Replace path for some volumes
     - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
     - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml
     - sed -i 's/\/opt\/vidjil\/databases/databases/' ./docker/docker-compose.yml
     - echo -e "volumes:\n    databases:" >> ./docker/docker-compose.yml
     - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
+    # Use http version of config
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
     - mkdir -p docker/postfix/ssl
+    # Start docker images
     - cd docker && docker-compose up -d && cd ..
+    # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
     - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
+    # Change File source definition in defs.py file 
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
-    - docker exec docker_nginx_1 make -C /usr/share/vidjil browser
+    - docker exec docker_nginx_1 make -C /usr/share/vidjil browser # init browser content
+    - sh server/web2py/applications/vidjil/tests/init_tests.sh
+  
+      
+.test_server_base_dind:
+  image:
+    name: pandoc/core:latest
+    entrypoint: [""]
+  stage: test_functional
+  services:
+    - docker:dind
+  before_script:
+    - apk update
+    - apk add docker docker-compose make wget tar
+    - !reference [.setup_docker_server]
   after_script:
+    - docker cp docker_uwsgi_1:/usr/share/vidjil/server/web2py/applications/vidjil/errors/ server/web2py/applications/vidjil/
     - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
-  artifacts:
-    reports:
-      junit: server/web2py/applications/vidjil/tests/test/TEST-*.xml
-    when: always
-    expire_in: 1 week
-    paths:
-    - server/web2py/ap‎plications/vidjil‎/tests/
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
@@ -499,67 +308,8 @@ test_server_unit:
     - dev
     - schedules
   tags:
-    - x86_64
-    - docker
-
-.test_server_functional:
-  stage: test_functional
-  extends: .test_server_base
-  script:
-    - source /etc/profile.d/rvm.sh
-    - rvm use 2.6.1
-    - HEADLESS=1 make functional_server
-  artifacts:
-    reports:
-      junit: server/web2py/applications/vidjil/tests/test/TEST-*.xml
-    paths:
-      - browser/
-      - server/web2py/applications/vidjil/
-    when: always
-
-
-ff32-server-functional:
-  extends: .test_server_functional
-  variables:
-    FIREFOX_VERSION: 32
-
-ff45-server-functional:
-  extends:
-    - .test_server_functional
-    - .need_for_moderate_server
-  variables:
-    FIREFOX_VERSION: 45
-
-
-
-
-# Benchmark
-
-.benchmark-algo:
-  image:  gcc:6.3
-  extends: .install-algo-dependencies
-  stage: benchmark
-  script:
-    - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
-  artifacts:
-    paths:
-      - algo/tests/benchmark.log
-  when: manual
-  dependencies: []
-  only:
-    - /^feature-.*a.*\/.*$/
-  tags:
-    - cidocker
-
-benchmark-algo:
-  extends: .benchmark-algo
-  script:
-    - cd algo/tests ; python3 benchmark-releases.py -r 3 -b -c -i 2018.10 -i 2019.03 -i 2020.04 -i 2021.02.2 -i alpha-2102
-
-benchmark-algo-full:
-  extends: .benchmark-algo
-  script:
-    - cd algo/tests ; python3 benchmark-releases.py -r 3 -bIc
+    - ci.inria.fr
+    - medium
 
 
 # Deployment
@@ -617,14 +367,46 @@ deploy_review_server:
   extends:
     - .need_for_independant_test
 
-deploy_docker:
+deploy_client:
   stage: deploy_prod
+  image: testcontainers/sshd
+  before_script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh    
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts  
+  script:
+    - ssh vidjil@$PROD_CLIENT_SERVER "
+         cd $PROD_CLIENT_PATH
+         && git fetch
+         && git reset --hard origin/prod-client
+         && make germline
+         && cp doc/analysis-example.vidjil browser/
+         && cd docker
+         && docker-compose pull nginx
+         && docker-compose down
+         && docker-compose up -d nginx"
+  environment:
+    name: production
+    url: https://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
+  only:
+    - prod-client
+  tags:
+    - cidocker
+  needs:
+    - deploy_docker
+  
+    
+deploy_docker:
+  stage: publish_release
   script:
     - export CUR_DATE=`date +%Y-%m-%d`
     - export TYPE=`echo $CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'`
     - export SHA=`echo $CI_COMMIT_SHA | awk '{ print substr($0, 0, 8) }'`
     - export TAG="vidjil/$TYPE:$CUR_DATE-$SHA"
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker login -u "$CI_DOCKER_USER" -p "$CI_DOCKER_PASSWORD" $CI_DOCKER
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=PRODUCTION -t $TAG docker/vidjil-$TYPE
     - docker push $TAG
     - docker tag $TAG "vidjil/$TYPE:latest"
@@ -637,19 +419,6 @@ deploy_docker:
   tags:
     - web
     - docker
-
-deploy_prod:
-  stage: deploy_prod
-  script:
-    - ssh $PROD_CLIENT_SERVER "
-         cd $PROD_CLIENT_PATH;"
-  environment:
-    name: production
-    url: http://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
-  only:
-    - /^prod-client/
-  tags:
-    - web
 
 deploy_germlines:
   stage: deploy_prod

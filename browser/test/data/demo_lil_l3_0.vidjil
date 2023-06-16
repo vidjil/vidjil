@@ -1,0 +1,4377 @@
+{
+  "germlines": {
+    "species_taxon_id": 9606, 
+    "ref": "http://www.vidjil.org/germlines/germline-2021-01-21.tar.gz", 
+    "species": "Homo sapiens", 
+    "custom": {
+      "3": [], 
+      "5": [], 
+      "4": [], 
+      "shortcut": "X"
+    }
+  }, 
+  "diversity": {
+    "index_H_entropy": [
+      5.688690639121887
+    ], 
+    "index_E_equitability": [
+      0.39255398511886597
+    ], 
+    "index_Ds_diversity": [
+      0.9644120931625366
+    ]
+  }, 
+  "similarity": [
+    [
+      0.0, 
+      27.0, 
+      28.0, 
+      26.0, 
+      27.0, 
+      28.0, 
+      29.0, 
+      27.0, 
+      26.0, 
+      27.0, 
+      31.0, 
+      26.0, 
+      20.0, 
+      27.0, 
+      25.0, 
+      31.0, 
+      22.0, 
+      26.0, 
+      28.0, 
+      27.0
+    ], 
+    [
+      27.0, 
+      0.0, 
+      20.0, 
+      2.0, 
+      22.0, 
+      20.0, 
+      33.0, 
+      30.0, 
+      26.0, 
+      33.0, 
+      27.0, 
+      22.0, 
+      28.0, 
+      33.0, 
+      29.0, 
+      29.0, 
+      29.0, 
+      4.0, 
+      30.0, 
+      22.0
+    ], 
+    [
+      28.0, 
+      20.0, 
+      0.0, 
+      20.0, 
+      2.0, 
+      2.0, 
+      34.0, 
+      31.0, 
+      27.0, 
+      32.0, 
+      33.0, 
+      28.0, 
+      29.0, 
+      32.0, 
+      29.0, 
+      25.0, 
+      24.0, 
+      20.0, 
+      30.0, 
+      4.0
+    ], 
+    [
+      26.0, 
+      2.0, 
+      20.0, 
+      0.0, 
+      20.0, 
+      20.0, 
+      33.0, 
+      30.0, 
+      26.0, 
+      34.0, 
+      29.0, 
+      23.0, 
+      29.0, 
+      34.0, 
+      30.0, 
+      29.0, 
+      29.0, 
+      2.0, 
+      30.0, 
+      20.0
+    ], 
+    [
+      27.0, 
+      22.0, 
+      2.0, 
+      20.0, 
+      0.0, 
+      4.0, 
+      34.0, 
+      31.0, 
+      27.0, 
+      33.0, 
+      33.0, 
+      29.0, 
+      29.0, 
+      33.0, 
+      27.0, 
+      25.0, 
+      25.0, 
+      20.0, 
+      30.0, 
+      2.0
+    ], 
+    [
+      28.0, 
+      20.0, 
+      2.0, 
+      20.0, 
+      4.0, 
+      0.0, 
+      33.0, 
+      30.0, 
+      27.0, 
+      32.0, 
+      33.0, 
+      28.0, 
+      30.0, 
+      32.0, 
+      28.0, 
+      26.0, 
+      23.0, 
+      22.0, 
+      30.0, 
+      2.0
+    ], 
+    [
+      29.0, 
+      33.0, 
+      34.0, 
+      33.0, 
+      34.0, 
+      33.0, 
+      0.0, 
+      6.0, 
+      33.0, 
+      26.0, 
+      31.0, 
+      27.0, 
+      34.0, 
+      26.0, 
+      26.0, 
+      23.0, 
+      18.0, 
+      34.0, 
+      8.0, 
+      33.0
+    ], 
+    [
+      27.0, 
+      30.0, 
+      31.0, 
+      30.0, 
+      31.0, 
+      30.0, 
+      6.0, 
+      0.0, 
+      32.0, 
+      28.0, 
+      33.0, 
+      30.0, 
+      30.0, 
+      27.0, 
+      28.0, 
+      24.0, 
+      18.0, 
+      30.0, 
+      2.0, 
+      30.0
+    ], 
+    [
+      26.0, 
+      26.0, 
+      27.0, 
+      26.0, 
+      27.0, 
+      27.0, 
+      33.0, 
+      32.0, 
+      0.0, 
+      30.0, 
+      33.0, 
+      23.0, 
+      26.0, 
+      31.0, 
+      11.0, 
+      27.0, 
+      30.0, 
+      27.0, 
+      33.0, 
+      27.0
+    ], 
+    [
+      27.0, 
+      33.0, 
+      32.0, 
+      34.0, 
+      33.0, 
+      32.0, 
+      26.0, 
+      28.0, 
+      30.0, 
+      0.0, 
+      30.0, 
+      32.0, 
+      34.0, 
+      2.0, 
+      29.0, 
+      28.0, 
+      26.0, 
+      35.0, 
+      28.0, 
+      33.0
+    ], 
+    [
+      31.0, 
+      27.0, 
+      33.0, 
+      29.0, 
+      33.0, 
+      33.0, 
+      31.0, 
+      33.0, 
+      33.0, 
+      30.0, 
+      0.0, 
+      30.0, 
+      29.0, 
+      31.0, 
+      32.0, 
+      31.0, 
+      32.0, 
+      30.0, 
+      33.0, 
+      33.0
+    ], 
+    [
+      26.0, 
+      22.0, 
+      28.0, 
+      23.0, 
+      29.0, 
+      28.0, 
+      27.0, 
+      30.0, 
+      23.0, 
+      32.0, 
+      30.0, 
+      0.0, 
+      32.0, 
+      32.0, 
+      25.0, 
+      31.0, 
+      28.0, 
+      24.0, 
+      32.0, 
+      29.0
+    ], 
+    [
+      20.0, 
+      28.0, 
+      29.0, 
+      29.0, 
+      29.0, 
+      30.0, 
+      34.0, 
+      30.0, 
+      26.0, 
+      34.0, 
+      29.0, 
+      32.0, 
+      0.0, 
+      35.0, 
+      30.0, 
+      29.0, 
+      33.0, 
+      30.0, 
+      30.0, 
+      30.0
+    ], 
+    [
+      27.0, 
+      33.0, 
+      32.0, 
+      34.0, 
+      33.0, 
+      32.0, 
+      26.0, 
+      27.0, 
+      31.0, 
+      2.0, 
+      31.0, 
+      32.0, 
+      35.0, 
+      0.0, 
+      30.0, 
+      29.0, 
+      25.0, 
+      35.0, 
+      29.0, 
+      33.0
+    ], 
+    [
+      25.0, 
+      29.0, 
+      29.0, 
+      30.0, 
+      27.0, 
+      28.0, 
+      26.0, 
+      28.0, 
+      11.0, 
+      29.0, 
+      32.0, 
+      25.0, 
+      30.0, 
+      30.0, 
+      0.0, 
+      23.0, 
+      24.0, 
+      30.0, 
+      28.0, 
+      27.0
+    ], 
+    [
+      31.0, 
+      29.0, 
+      25.0, 
+      29.0, 
+      25.0, 
+      26.0, 
+      23.0, 
+      24.0, 
+      27.0, 
+      28.0, 
+      31.0, 
+      31.0, 
+      29.0, 
+      29.0, 
+      23.0, 
+      0.0, 
+      22.0, 
+      30.0, 
+      24.0, 
+      26.0
+    ], 
+    [
+      22.0, 
+      29.0, 
+      24.0, 
+      29.0, 
+      25.0, 
+      23.0, 
+      18.0, 
+      18.0, 
+      30.0, 
+      26.0, 
+      32.0, 
+      28.0, 
+      33.0, 
+      25.0, 
+      24.0, 
+      22.0, 
+      0.0, 
+      29.0, 
+      20.0, 
+      24.0
+    ], 
+    [
+      26.0, 
+      4.0, 
+      20.0, 
+      2.0, 
+      20.0, 
+      22.0, 
+      34.0, 
+      30.0, 
+      27.0, 
+      35.0, 
+      30.0, 
+      24.0, 
+      30.0, 
+      35.0, 
+      30.0, 
+      30.0, 
+      29.0, 
+      0.0, 
+      30.0, 
+      22.0
+    ], 
+    [
+      28.0, 
+      30.0, 
+      30.0, 
+      30.0, 
+      30.0, 
+      30.0, 
+      8.0, 
+      2.0, 
+      33.0, 
+      28.0, 
+      33.0, 
+      32.0, 
+      30.0, 
+      29.0, 
+      28.0, 
+      24.0, 
+      20.0, 
+      30.0, 
+      0.0, 
+      30.0
+    ], 
+    [
+      27.0, 
+      22.0, 
+      4.0, 
+      20.0, 
+      2.0, 
+      2.0, 
+      33.0, 
+      30.0, 
+      27.0, 
+      33.0, 
+      33.0, 
+      29.0, 
+      30.0, 
+      33.0, 
+      27.0, 
+      26.0, 
+      24.0, 
+      22.0, 
+      30.0, 
+      0.0
+    ]
+  ], 
+  "vidjil_json_version": "2016b", 
+  "reads": {
+    "germline": {
+      "unexpected": [
+        707
+      ], 
+      "TRD+": [
+        0
+      ], 
+      "TRA": [
+        0
+      ], 
+      "TRB": [
+        0
+      ], 
+      "IGH": [
+        562048
+      ], 
+      "TRD": [
+        0
+      ], 
+      "TRG": [
+        1402539
+      ], 
+      "IGK+": [
+        0
+      ], 
+      "TRB+": [
+        0
+      ], 
+      "IGL": [
+        0
+      ], 
+      "IGK": [
+        0
+      ], 
+      "IGH+": [
+        655
+      ], 
+      "TRA+D": [
+        0
+      ]
+    }, 
+    "distribution": {
+      "unexpected": [
+        0
+      ], 
+      "TRD+": [
+        0
+      ], 
+      "0.000001": [
+        153609
+      ], 
+      "TRA": [
+        0
+      ], 
+      "0.01": [
+        1148834
+      ], 
+      "TRB": [
+        0
+      ], 
+      "0.00001": [
+        225324
+      ], 
+      "TRD": [
+        0
+      ], 
+      "TRG": [
+        7
+      ], 
+      "0.1": [
+        0
+      ], 
+      "IGK+": [
+        0
+      ], 
+      "0.0000001": [
+        71374
+      ], 
+      "TRA+D": [
+        0
+      ], 
+      "TRB+": [
+        0
+      ], 
+      "0.0001": [
+        175200
+      ], 
+      "IGL": [
+        0
+      ], 
+      "IGK": [
+        0
+      ], 
+      "IGH+": [
+        0
+      ], 
+      "0.001": [
+        191608
+      ], 
+      "IGH": [
+        2
+      ]
+    }, 
+    "total": [
+      2390273
+    ], 
+    "segmented": [
+      1965949
+    ]
+  }, 
+  "samples": {
+    "log": [
+      "  ==> junction detected in 1965949 reads (82.2%)\n  ==> found 105324 windows in 1965949 reads (82.2% of 2390273 reads)\n                          reads av. len     clones clo/rds\n  IGH               ->   562048   314.5      31487   0.056\n  IGH+              ->      655   110.4        408   0.623\n  IGK               ->        0       -          0       -\n  IGK+              ->        0       -          0       -\n  IGL               ->        0       -          0       -\n  TRA               ->        0       -          0       -\n  TRA+D             ->        0       -          0       -\n  TRB               ->        0       -          0       -\n  TRB+              ->        0       -          0       -\n  TRD               ->        0       -          0       -\n  TRD+              ->        0       -          0       -\n  TRG               ->  1402539   197.6      72896   0.052\n  unexpected        ->      707   191.7        533   0.757\n\n  SEG               ->  1965949   231.0\n  SEG_+             ->  1015609   218.5\n  SEG_-             ->   950340   244.4\n  SEG changed w     ->    16733   213.6\n\n  UNSEG too short   ->     5203    10.0\n  UNSEG strand      ->      534    78.1\n  UNSEG too few V/J ->    30302    85.3\n  UNSEG only V/5'   ->   334169   191.2\n  UNSEG only J/3'   ->    54012    55.4\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->      104   376.6\n  UNSEG too short w ->        0       -\n"
+    ], 
+    "producer": [
+      "vidjil-algo 2021.04"
+    ], 
+    "timestamp": [
+      "2022-01-12 16:06:16"
+    ], 
+    "commandline": [
+      "../..//vidjil-algo -o /mnt/result/tmp/out-000006/ -b 000006 -c clones -z 100 -r 1 -g../../germline//homo-sapiens.g -e 1 -2 -d -w 50 /mnt/upload/uploads/sequence_file.data_file.bb7444cf5ff3e50e.4c494c2d4c332d302e6661737471.gz "
+    ], 
+    "number": 1, 
+    "original_names": [
+      "/mnt/upload/uploads/sequence_file.data_file.bb7444cf5ff3e50e.4c494c2d4c332d302e6661737471.gz"
+    ], 
+    "run_timestamp": [
+      "2021-12-13 13:50:28"
+    ]
+  }, 
+  "clones": [
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "246.47"
+      ], 
+      "name": "TRGV2*01 0/TCCCCCTG/3 TRGJP1*01", 
+      "_coverage_info": [
+        "248 bp (100% of 246.5 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGTCCCCCTGCCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0062072277069092
+      ], 
+      "top": 30, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGSPC#TGWFKIF", 
+          "start": 162, 
+          "stop": 210, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ATWDGSPC#TGWFKI", 
+          "start": 165, 
+          "stop": 207, 
+          "seq": "GCCACCTGGGACGGGTCCCCCTGCCACTGGTTGGTTCAAGATA"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 248, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!7>>?<@@<<<?9@<:?>=97<<35===<7>;><6:8;8>;<<?>;>>?<?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "2.45e-157"
+        }, 
+        "N": 8, 
+        "3": {
+          "start": 188, 
+          "name": "TRGJP1*01", 
+          "delLeft": 3
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 248, 
+          "seq": "---------------------------------------------------                  ------------------------------------------------------------------------------------------ ------------------------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 179, 
+          "name": "TRGV2*01", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "2.45e-157"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 248, 
+          "seq": "ggggggggggggggggggggggggggggggggggggggggggggggggggg__________________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        4263
+      ], 
+      "id": "TTACTGTGCCACCTGGGACGGGTCCCCCTGCCACTGGTTGGTTCAAGATA"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "174.07"
+      ], 
+      "name": "TRGV10*01 13//5 TRGJP1*01", 
+      "_coverage_info": [
+        "175 bp (100% of 174.1 bp)"
+      ], 
+      "sequence": "AGCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCGGACTGGTTGGTTCAAGATATTTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0053247213363647
+      ], 
+      "top": 27, 
+      "seg": {
+        "junction": {
+          "aa": "CA#TGWFKIF", 
+          "start": 109, 
+          "stop": 136, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "A#TGWFKI", 
+          "start": 112, 
+          "stop": 133, 
+          "seq": "GCGGACTGGTTGGTTCAAGATA"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 175, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!A;>>>@AA<A9>>@8@A@@@@?@AAB<A@>=7=7>7=7<?6;<=7777(4!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "7.82e-126"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 116, 
+          "name": "TRGJP1*01", 
+          "delLeft": 5
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 175, 
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++            +++++++++++        +++++++++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 115, 
+          "name": "TRGV10*01", 
+          "delRight": 13
+        }, 
+        "evalue_right": {
+          "val": "7.82e-126"
+        }, 
+        "evalue_left": {
+          "val": "8.82e-249"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 175, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGG____________ggggggggggg________ggggggggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        4965
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #2 - TRGV10*01 13//5 TRGJP1*01", 
+          "code": "W53", 
+          "level": "info"
+        }
+      ], 
+      "id": "AAGACATGGCCGTTTACTACTGTGCGGACTGGTTGGTTCAAGATATTTTG"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "233.37"
+      ], 
+      "name": "TRGV2*02 0/GGCCTACTCCAAGGCCCACTCGG/3 TRGJ1*01", 
+      "_coverage_info": [
+        "234 bp (100% of 233.4 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGCCTACTCCAAGGCCCACTCGGTTATTATAAGAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0027117729187012
+      ], 
+      "top": 31, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGLLQGPLGYYKKLF", 
+          "start": 162, 
+          "productive": true, 
+          "stop": 218
+        }, 
+        "cdr3": {
+          "aa": "ATWDGLLQGPLGYYKKL", 
+          "start": 165, 
+          "stop": 215, 
+          "seq": "GCCACCTGGGACGGCCTACTCCAAGGCCCACTCGGTTATTATAAGAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 234, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!?=>7<:5;<=2<66178????@9@:@9@@5>>@?@9@8>>8?>>7>?@2<!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "2.70e-65"
+        }, 
+        "N": 23, 
+        "3": {
+          "start": 200, 
+          "name": "TRGJ1*01", 
+          "delLeft": 3
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 234, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                               +++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 176, 
+          "name": "TRGV2*02", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "2.70e-65"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 234, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG_______________________________ggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        4197
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "TGCCACCTGGGACGGCCTACTCCAAGGCCCACTCGGTTATTATAAGAAAC"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "210.95"
+      ], 
+      "name": "TRGV2*02 0/GGTCTACCCCCACG/2 TRGJ1*01", 
+      "_coverage_info": [
+        "212 bp (100% of 211.0 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTCTTTGGC", 
+      "_coverage": [
+        1.0049537420272827
+      ], 
+      "top": 38, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGLPPRLYKKLF", 
+          "start": 162, 
+          "productive": true, 
+          "stop": 209
+        }, 
+        "cdr3": {
+          "aa": "ATWDGLPPRLYKKL", 
+          "start": 165, 
+          "stop": 206, 
+          "seq": "GCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 212, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!@<@@;=@?=?:?<=??=??<====>8>?5>?<>?<>?=@<@:;=<9<9??!"
+        }, 
+        "evalue": {
+          "val": "3.97e-17"
+        }, 
+        "N": 14, 
+        "3": {
+          "start": 191, 
+          "name": "TRGJ1*01", 
+          "delLeft": 2
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 212, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++          +               ++++++++          "
+        }, 
+        "5": {
+          "stop": 176, 
+          "name": "TRGV2*02", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "3.97e-17"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 212, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________G_______________gggggggg__________"
+        }
+      }, 
+      "reads": [
+        2932
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #7 - TRGV2*02 0/GGTCTACCCCCACG/2 TRGJ1*01", 
+          "code": "W53", 
+          "level": "info"
+        }, 
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }, 
+        {
+          "msg": "Short or shifted window", 
+          "code": "W50", 
+          "level": "warn"
+        }
+      ], 
+      "id": "TGTGCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTCTTTGG"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "214.15"
+      ], 
+      "name": "TRGV2*01 0/CAGGG/6 TRGJ1*01", 
+      "_coverage_info": [
+        "217 bp (101% of 214.1 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGCAGGGTTATAAGAAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0133312940597534
+      ], 
+      "top": 39, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGQG#IRKLF", 
+          "start": 162, 
+          "stop": 201, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ATWDGQG#IRKL", 
+          "start": 165, 
+          "stop": 198, 
+          "seq": "GCCACCTGGGACGGGCAGGGTTATAAGAAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 217, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!BABB=7<<;AA:BB??7@?@?8A@;@<<5<5'8888>?3?A<AA@AA<A;!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.66e-36"
+        }, 
+        "N": 5, 
+        "3": {
+          "start": 185, 
+          "name": "TRGJ1*01", 
+          "delLeft": 6
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 217, 
+          "seq": "---------------                       ------------------------------------------------------------------------------------------ ------------------------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 179, 
+          "name": "TRGV2*01", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "1.66e-36"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 217, 
+          "seq": "ggggggggggggggg_______________________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        2921
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "CTGTGCCACCTGGGACGGGCAGGGTTATAAGAAAACTCTTTGGCAGTGGA"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "175.51"
+      ], 
+      "name": "TRGV10*01 13//5 TRGJP1*01", 
+      "_coverage_info": [
+        "176 bp (100% of 175.5 bp)"
+      ], 
+      "sequence": "AGCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTTACTACTGTGCGGACTGGTTGGTTCAAGATATTTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.002772331237793
+      ], 
+      "top": 18, 
+      "seg": {
+        "junction": {
+          "aa": "CA#TGWFKIF", 
+          "start": 110, 
+          "stop": 137, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "A#TGWFKI", 
+          "start": 113, 
+          "stop": 134, 
+          "seq": "GCGGACTGGTTGGTTCAAGATA"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 176, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!;@@@@A?8?68888(4999;??@@@A;A?>?8>8>8>8>@6<;=7777(5!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "7.82e-126"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 117, 
+          "name": "TRGJP1*01", 
+          "delLeft": 5
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 176, 
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++       -+++            +++++++++++        +++++++++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 116, 
+          "name": "TRGV10*01", 
+          "delRight": 13
+        }, 
+        "evalue_right": {
+          "val": "7.82e-126"
+        }, 
+        "evalue_left": {
+          "val": "1.05e-221"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 176, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGG_______GGGG____________ggggggggggg________ggggggggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        9770
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #2 - TRGV10*01 13//5 TRGJP1*01", 
+          "code": "W53", 
+          "level": "info"
+        }
+      ], 
+      "id": "AGACATGGCCGTTTTACTACTGTGCGGACTGGTTGGTTCAAGATATTTTG"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "240.17"
+      ], 
+      "name": "TRGV2*01 0/CCG/2 TRGJP2*01", 
+      "_coverage_info": [
+        "244 bp (101% of 240.2 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGCCGAGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0159541368484497
+      ], 
+      "top": 36, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGPSSDWIKTF", 
+          "start": 162, 
+          "productive": true, 
+          "stop": 206
+        }, 
+        "cdr3": {
+          "aa": "ATWDGPSSDWIKT", 
+          "start": 165, 
+          "stop": 203, 
+          "seq": "GCCACCTGGGACGGGCCGAGTAGTGATTGGATCAAGACG"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 244, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!=;>8<=@>???:<>8>>?7>>>@7?6<<;>???<>?9>:=>??;>==898!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.14e-165"
+        }, 
+        "N": 3, 
+        "3": {
+          "start": 183, 
+          "name": "TRGJP2*01", 
+          "delLeft": 2
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 244, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++             ++++++++++++++++++++++++++++++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 179, 
+          "name": "TRGV2*01", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "1.14e-165"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 244, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG_____________gggggggggggggggggggggggggggggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        3184
+      ], 
+      "id": "TATTACTGTGCCACCTGGGACGGGCCGAGTAGTGATTGGATCAAGACGTT"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "225.81"
+      ], 
+      "name": "TRGV2*02 0/GGTCTACCCCCACG/2 TRGJ1*01", 
+      "_coverage_info": [
+        "226 bp (100% of 225.8 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTCTTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0008479356765747
+      ], 
+      "top": 19, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGLPPRLYKKLF", 
+          "start": 162, 
+          "productive": true, 
+          "stop": 209
+        }, 
+        "cdr3": {
+          "aa": "ATWDGLPPRLYKKL", 
+          "start": 165, 
+          "stop": 206, 
+          "seq": "GCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 226, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!7<<7<=>4==>6==?<=>>>,;<<<=4;;?=>7=>>.:;7777(66<<<=!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "2.27e-33"
+        }, 
+        "N": 14, 
+        "3": {
+          "start": 191, 
+          "name": "TRGJ1*01", 
+          "delLeft": 2
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 226, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++          +               +++++        +++++++++          "
+        }, 
+        "5": {
+          "stop": 176, 
+          "name": "TRGV2*02", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "2.27e-33"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 226, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________G_______________ggggg________ggggggggg__________"
+        }
+      }, 
+      "reads": [
+        9286
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #7 - TRGV2*02 0/GGTCTACCCCCACG/2 TRGJ1*01", 
+          "code": "W53", 
+          "level": "info"
+        }, 
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "CACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTCTTTTGGCAGT"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "332.56"
+      ], 
+      "name": "IGHV3-9*01 7/CCCGGA/17 IGHJ6*02", 
+      "_coverage_info": [
+        "324 bp (97% of 332.6 bp)"
+      ], 
+      "sequence": "GGGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        0.9742547273635864
+      ], 
+      "top": 43, 
+      "seg": {
+        "junction": {
+          "aa": "CAPGGMDVW", 
+          "start": 266, 
+          "productive": true, 
+          "stop": 292
+        }, 
+        "cdr3": {
+          "aa": "APGGMDV", 
+          "start": 269, 
+          "stop": 289, 
+          "seq": "GCACCCGGAGGTATGGACGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 324, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<;<=7=5;4:<<>7<<=>==<:;>1<6;<7<;;;7=:7677899+7+008!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "4.35e-84"
+        }, 
+        "N": 6, 
+        "3": {
+          "start": 278, 
+          "delLeft": 17, 
+          "stop": 321, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 324, 
+          "seq": " +++++++++++++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++                 ++++++++   +       +++++++++++++++             "
+        }, 
+        "5": {
+          "start": 2, 
+          "delLeft": 21, 
+          "stop": 271, 
+          "name": "IGHV3-9*01", 
+          "delRight": 7
+        }, 
+        "evalue_right": {
+          "val": "4.35e-84"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 324, 
+          "seq": "_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH_________________hhhhhhhh___h_______hhhhhhhhhhhhhhh_____________"
+        }
+      }, 
+      "reads": [
+        2739
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #1 - IGHV3-9*01 7/CCCGGA/17 IGHJ6*02", 
+          "code": "W53", 
+          "level": "info"
+        }
+      ], 
+      "id": "CACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAGG"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "337.78"
+      ], 
+      "name": "IGHV3-13*05 1/GAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAAACTGGGCCCAGCGG/16 IGHJ6*02", 
+      "_coverage_info": [
+        "341 bp (100% of 337.8 bp)"
+      ], 
+      "sequence": "ACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACATGCACTGGGTCCGCCAAGCTACAGGAAAAGGTCTGGAGTGGGTCTCAGCTATTGGTACTGCTGGTGACCCATACTATCCAGGCTCCGTGAAGGGCCGATTCACCATCTCCAGAGAAAATGCCAAGAACTCCTTGTATCTTCAAATGAACAGCCTGAGAGCCGGGGACACGGCTGTGTATTACTGTGCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAAACTGGGCCCAGCGGCGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        1.0095194578170776
+      ], 
+      "top": 13, 
+      "seg": {
+        "junction": {
+          "aa": "CARGGGPPSTPLTSEKQNWAQR#GMDVW", 
+          "start": 227, 
+          "stop": 308, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ARGGGPPSTPLTSEKQNWAQR#GMDV", 
+          "start": 230, 
+          "stop": 305, 
+          "seq": "GCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAAACTGGGCCCAGCGGCGGTATGGACGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 341, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!8>8??<<8-77653'77779/:8.:99760850979:5888???>2??>7!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.36e-135"
+        }, 
+        "N": 56, 
+        "3": {
+          "start": 293, 
+          "delLeft": 16, 
+          "stop": 338, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 341, 
+          "seq": " ------------------------------------                      -                                          ------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------  --------- ----------------            "
+        }, 
+        "5": {
+          "stop": 236, 
+          "name": "IGHV3-13*05", 
+          "delRight": 1
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "1.36e-135"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 341, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh______________________H__________________________________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH??HHHHHHHHH?HHHHHHHHHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        21247
+      ], 
+      "id": "AACCAGTGAAAAGCAAAACTGGGCCCAGCGGCGGTATGGACGTCTGGGGC"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "233.22"
+      ], 
+      "name": "TRGV2*01 0/CCTACTCCAAGGCCCACTCGG/3 TRGJ1*01", 
+      "_coverage_info": [
+        "236 bp (101% of 233.2 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGCCTACTCCAAGGCCCACTCGGTTATTATAAGAAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0119012594223022
+      ], 
+      "top": 28, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGPTPRPTR#IIRKLF", 
+          "start": 162, 
+          "stop": 220, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ATWDGPTPRPTR#IIRKL", 
+          "start": 165, 
+          "stop": 217, 
+          "seq": "GCCACCTGGGACGGGCCTACTCCAAGGCCCACTCGGTTATTATAAGAAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 236, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!A<@@<BA9A@@@9BB<BBBBA<A;A;A9AB@@==74.336;;=6=5(888!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.22e-41"
+        }, 
+        "N": 21, 
+        "3": {
+          "start": 201, 
+          "name": "TRGJ1*01", 
+          "delLeft": 3
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 236, 
+          "seq": "---------------        ---                               ------------------------------------------------------------------------------------------ ------------------------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 179, 
+          "name": "TRGV2*01", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "1.22e-41"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 236, 
+          "seq": "ggggggggggggggg________ggg_______________________________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        4471
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "GCCACCTGGGACGGGCCTACTCCAAGGCCCACTCGGTTATTATAAGAAAA"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "252.07"
+      ], 
+      "name": "IGHV3-9*01 7/CCCGGA/17 IGHJ6*02", 
+      "_coverage_info": [
+        "251 bp (99% of 252.1 bp)"
+      ], 
+      "sequence": "TATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        0.995757520198822
+      ], 
+      "top": 26, 
+      "seg": {
+        "junction": {
+          "aa": "CAPGGMDVW", 
+          "start": 193, 
+          "stop": 219, 
+          "productive": false, 
+          "unproductive": "no-WPGxG-pattern"
+        }, 
+        "cdr3": {
+          "aa": "APGGMDV", 
+          "start": 196, 
+          "stop": 216, 
+          "seq": "GCACCCGGAGGTATGGACGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 251, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!;7538554777:6;<:<<<;9:4891:84778;7;;9;995-763856/8!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.58e-88"
+        }, 
+        "N": 6, 
+        "3": {
+          "start": 205, 
+          "delLeft": 17, 
+          "stop": 248, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 251, 
+          "seq": " ---------------------         ----                 ------------------------------- ------------------------------------ ----------------------------------------- ----------------------------------------------------------------------------            "
+        }, 
+        "5": {
+          "stop": 198, 
+          "name": "IGHV3-9*01", 
+          "delRight": 7
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "1.58e-88"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 251, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhh_________hhhh_________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        4986
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #1 - IGHV3-9*01 7/CCCGGA/17 IGHJ6*02", 
+          "code": "W53", 
+          "level": "info"
+        }, 
+        {
+          "msg": "Several genes with equal probability: IGHV3-9*01 IGHV3-9*02", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "CACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGCCAAGG"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "320.67"
+      ], 
+      "name": "IGHV3-9*01 7/CCCCGGGTATCGGG/14 IGHJ4*03", 
+      "_coverage_info": [
+        "320 bp (99% of 320.7 bp)"
+      ], 
+      "sequence": "GGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCCGGGTATCGGGTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        0.9979252815246582
+      ], 
+      "top": 34, 
+      "seg": {
+        "junction": {
+          "aa": "CAPRVS#W", 
+          "start": 265, 
+          "stop": 287, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "APRVS#", 
+          "start": 268, 
+          "stop": 284, 
+          "seq": "GCACCCCGGGTATCGGG"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 320, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!9?<?6;=<6:8<6;;;29<<56=>9<=7=??1=>@@9?=?=;?:=>;::?!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "7.44e-81"
+        }, 
+        "N": 14, 
+        "3": {
+          "start": 285, 
+          "delLeft": 14, 
+          "stop": 319, 
+          "name": "IGHJ4*03", 
+          "delRight": 59
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 320, 
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++                         +++++++++++++++++++++++             "
+        }, 
+        "5": {
+          "stop": 270, 
+          "name": "IGHV3-9*01", 
+          "delRight": 7
+        }, 
+        "evalue_right": {
+          "val": "7.44e-81"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 320, 
+          "seq": "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH_________________________hhhhhhhhhhhhhhhhhhhhhhh_____________"
+        }
+      }, 
+      "reads": [
+        3376
+      ], 
+      "id": "GCCTTGTATTACTGTGCACCCCGGGTATCGGGTGGGGCCAAGGGACCCTG"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "340.41"
+      ], 
+      "name": "IGHV3-9*01 7/CCCGGAGGTATG/8 IGHJ4*03", 
+      "_coverage_info": [
+        "330 bp (96% of 340.4 bp)"
+      ], 
+      "sequence": "GGAGTCGGGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        0.96940678358078
+      ], 
+      "top": 35, 
+      "seg": {
+        "junction": {
+          "aa": "CAPGGM#RW", 
+          "start": 272, 
+          "stop": 297, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "APGGM#R", 
+          "start": 275, 
+          "stop": 294, 
+          "seq": "GCACCCGGAGGTATGGACGC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 330, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!=4;5:=<<5;;<<<;<:<=0:5;?7=<<=7=;;9:;<<,:2818:/677-!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "4.35e-84"
+        }, 
+        "N": 12, 
+        "3": {
+          "start": 290, 
+          "delLeft": 8, 
+          "stop": 329, 
+          "name": "IGHJ4*03", 
+          "delRight": 59
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 330, 
+          "seq": "+      +++++++++++++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++                           ++++++++++++++++++++++++             "
+        }, 
+        "5": {
+          "stop": 277, 
+          "name": "IGHV3-9*01", 
+          "delRight": 7
+        }, 
+        "evalue_right": {
+          "val": "4.35e-84"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 330, 
+          "seq": "H______HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH___________________________hhhhhhhhhhhhhhhhhhhhhhhh_____________"
+        }
+      }, 
+      "reads": [
+        3299
+      ], 
+      "id": "CCTTGTATTACTGTGCACCCGGAGGTATGGACGCTGGGGCCAAGGGACCC"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "221.94"
+      ], 
+      "name": "TRGV2*02 0/GGTCTACCCCACG/2 TRGJ1*01", 
+      "_coverage_info": [
+        "224 bp (100% of 221.9 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGTCTACCCCACGATTATATAAGAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0092679262161255
+      ], 
+      "top": 32, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGLPH#LYKKLF", 
+          "start": 162, 
+          "stop": 208, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ATWDGLPH#LYKKL", 
+          "start": 165, 
+          "stop": 205, 
+          "seq": "GCCACCTGGGACGGTCTACCCCACGATTATATAAGAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 224, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!=>>?<<4::48::.9:;4:>?>>@@0=<<;<499<;<6;<=09:777-:8!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "9.09e-55"
+        }, 
+        "N": 13, 
+        "3": {
+          "start": 190, 
+          "name": "TRGJ1*01", 
+          "delLeft": 2
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 224, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                         +++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 176, 
+          "name": "TRGV2*02", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "9.09e-55"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 224, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG_________________________ggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        4092
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "CTGTGCCACCTGGGACGGTCTACCCCACGATTATATAAGAAACTCTTTGG"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "215.01"
+      ], 
+      "name": "TRGV2*02 6/CCTCCTGCTCATTCCACGAG/11 TRGJ1*01", 
+      "_coverage_info": [
+        "217 bp (100% of 215.0 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCCCTCCTGCTCATTCCACGAGAGAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0092699527740479
+      ], 
+      "top": 16, 
+      "seg": {
+        "junction": {
+          "aa": "CATPPAHSTR#KLF", 
+          "start": 162, 
+          "stop": 201, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ATPPAHSTR#KL", 
+          "start": 165, 
+          "stop": 198, 
+          "seq": "GCCACCCCTCCTGCTCATTCCACGAGAGAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 217, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!??<?=<@@??>;:====4<?9?=AA@>>;?:>??@:??=@:?@>=>6=;>!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.09e-40"
+        }, 
+        "N": 20, 
+        "3": {
+          "start": 191, 
+          "name": "TRGJ1*01", 
+          "delLeft": 11
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 217, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++        -  -                  +++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 170, 
+          "name": "TRGV2*02", 
+          "delRight": 6
+        }, 
+        "evalue_right": {
+          "val": "1.09e-40"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 217, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG________G__G__________________ggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        11452
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "CTATTACTGTGCCACCCCTCCTGCTCATTCCACGAGAGAAACTCTTTGGC"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "180.34"
+      ], 
+      "name": "TRGV10*01 4//8 TRGJP2*01", 
+      "_coverage_info": [
+        "146 bp (80% of 180.3 bp)"
+      ], 
+      "sequence": "AAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        0.8095819354057312
+      ], 
+      "top": 6, 
+      "seg": {
+        "junction": {
+          "aa": "CAACL#DWIKTF", 
+          "start": 74, 
+          "stop": 108, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "AACL#DWIKT", 
+          "start": 77, 
+          "stop": 105, 
+          "seq": "GCTGCGTGTCTGGGGATTGGATCAAGACG"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 146, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>8>>8@@@A@@AAAAAAABBBBBB@<2<<;;8=8?@BB=C@??>6>=>?3!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "2.40e-142"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 91, 
+          "name": "TRGJP2*01", 
+          "delLeft": 8
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 146, 
+          "seq": "----------------------------------------------                ----------------------- --------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 90, 
+          "name": "TRGV10*01", 
+          "delRight": 4
+        }, 
+        "evalue_right": {
+          "val": "2.29e-170"
+        }, 
+        "evalue_left": {
+          "val": "2.40e-142"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 146, 
+          "seq": "gggggggggggggggggggggggggggggggggggggggggggggg________________GGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        96928
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #3 - TRGV10*01 4//8 TRGJP2*01", 
+          "code": "W53", 
+          "level": "warn"
+        }
+      ], 
+      "id": "GCCGTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTGCA"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "206.37"
+      ], 
+      "name": "TRGV3*01 8/TCTGAC/8 TRGJ1*01", 
+      "_coverage_info": [
+        "208 bp (100% of 206.4 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTTCTGACATAAGAAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0078984498977661
+      ], 
+      "top": 40, 
+      "seg": {
+        "junction": {
+          "aa": "CATF*#IRKLF", 
+          "start": 162, 
+          "stop": 192, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ATF*#IRKL", 
+          "start": 165, 
+          "stop": 189, 
+          "seq": "GCCACCTTCTGACATAAGAAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 208, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!==<??@;A@@AAAA<AA=B<BABBAA==6=6(8899@>3>@:@@@@?:@9!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "7.73e-37"
+        }, 
+        "N": 6, 
+        "3": {
+          "start": 178, 
+          "name": "TRGJ1*01", 
+          "delLeft": 8
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 208, 
+          "seq": "---------------                      ---------------------------------------------------------------------------------- --- ----------- --------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 171, 
+          "name": "TRGV3*01", 
+          "delRight": 8
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "7.73e-37"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 208, 
+          "seq": "ggggggggggggggg______________________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGG?GGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        2873
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #17 - TRGV3*01 8/TCTGAC/8 TRGJ1*01", 
+          "code": "W53", 
+          "level": "info"
+        }, 
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "GGTCTATTACTGTGCCACCTTCTGACATAAGAAAACTCTTTGGCAGTGGA"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "181.98"
+      ], 
+      "name": "TRGV10*01 4//8 TRGJP2*01", 
+      "_coverage_info": [
+        "183 bp (100% of 182.0 bp)"
+      ], 
+      "sequence": "AGCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.005586862564087
+      ], 
+      "top": 49, 
+      "seg": {
+        "junction": {
+          "aa": "CAACL#DWIKTF", 
+          "start": 109, 
+          "stop": 143, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "AACL#DWIKT", 
+          "start": 112, 
+          "stop": 140, 
+          "seq": "GCTGCGTGTCTGGGGATTGGATCAAGACG"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 183, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<B:??@8@ABBAAAAA@@@AA@@@?=>>>2>?9>:@@@@:>><89989*:!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "7.04e-113"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 126, 
+          "name": "TRGJP2*01", 
+          "delLeft": 8
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 183, 
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++                ++++++++         +++++++++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 125, 
+          "name": "TRGV10*01", 
+          "delRight": 4
+        }, 
+        "evalue_right": {
+          "val": "7.04e-113"
+        }, 
+        "evalue_left": {
+          "val": "8.98e-259"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 183, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGG________________gggggggg_________ggggggggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        1914
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #3 - TRGV10*01 4//8 TRGJP2*01", 
+          "code": "W53", 
+          "level": "info"
+        }
+      ], 
+      "id": "GCCGTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTTTG"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "337.54"
+      ], 
+      "name": "IGHV3-9*01 7/CCCGGA/17 IGHJ6*02", 
+      "_coverage_info": [
+        "323 bp (95% of 337.5 bp)"
+      ], 
+      "sequence": "GGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        0.9569224715232849
+      ], 
+      "top": 44, 
+      "seg": {
+        "junction": {
+          "aa": "CAPGGMDVW", 
+          "start": 264, 
+          "stop": 290, 
+          "productive": false, 
+          "unproductive": "stop-codon"
+        }, 
+        "cdr3": {
+          "aa": "APGGMDV", 
+          "start": 267, 
+          "stop": 287, 
+          "seq": "GCACCCGGAGGTATGGACGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 323, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<<97828,0088;287:::::889-848;6;;:<7<;88789<;+91706!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "6.18e-135"
+        }, 
+        "N": 6, 
+        "3": {
+          "start": 276, 
+          "delLeft": 17, 
+          "stop": 320, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 323, 
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++ ++++++++++++++++         + +++                 +++++++++++++++++++++++++++++++++++             "
+        }, 
+        "5": {
+          "stop": 269, 
+          "name": "IGHV3-9*01", 
+          "delRight": 7
+        }, 
+        "evalue_right": {
+          "val": "6.18e-135"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 323, 
+          "seq": "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHH_________H_HHH_________________hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_____________"
+        }
+      }, 
+      "reads": [
+        2711
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #1 - IGHV3-9*01 7/CCCGGA/17 IGHJ6*02", 
+          "code": "W53", 
+          "level": "info"
+        }
+      ], 
+      "id": "ACACGGCCTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAG"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "317.35"
+      ], 
+      "name": "IGHV3-9*01 7/CCCGGA/17 IGHJ6*02", 
+      "_coverage_info": [
+        "324 bp (102% of 317.3 bp)"
+      ], 
+      "sequence": "GGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        1.0209637880325317
+      ], 
+      "top": 1, 
+      "seg": {
+        "junction": {
+          "aa": "CAPGGMDVW", 
+          "start": 265, 
+          "productive": true, 
+          "stop": 291
+        }, 
+        "cdr3": {
+          "aa": "APGGMDV", 
+          "start": 268, 
+          "stop": 288, 
+          "seq": "GCACCCGGAGGTATGGACGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 324, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!@??:A;B;???B<BBBBBA@@?8@>7>;5:::?:@@@A@@<0==<6?9>6!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "6.18e-135"
+        }, 
+        "N": 6, 
+        "3": {
+          "start": 277, 
+          "delLeft": 17, 
+          "stop": 321, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 324, 
+          "seq": " -----------------------------------                 ------------------------------- ------------------------------------ ----------------------------------------- ------------------------------------------------------------------------------------------------ ---------------------------------------------------            "
+        }, 
+        "5": {
+          "stop": 270, 
+          "name": "IGHV3-9*01", 
+          "delRight": 7
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "6.18e-135"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 324, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        189991
+      ], 
+      "id": "CACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAG"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "331.17"
+      ], 
+      "name": "IGHV3-13*05 1/GAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAAGCAAACTGGGCCCAGCGG/16 IGHJ6*02", 
+      "_coverage_info": [
+        "340 bp (102% of 331.2 bp)"
+      ], 
+      "sequence": "CTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACATGCACTGGGTCCGCCAAGCTACAGGAAAAGGTCTGGAGTGGGTCTCAGCTATTGGTACTGCTGGTGACCCATACTATCCAGGCTCCGTGAAGGGCCGATTCACCATCTCCAGAGAAAATGCCAAGAACTCCTTGTATCTTCAAATGAACAGCCTGAGAGCCGGGGACACGGCTGTGTATTACTGTGCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAAGCAAACTGGGCCCAGCGGCGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        1.0266497135162354
+      ], 
+      "top": 42, 
+      "seg": {
+        "junction": {
+          "aa": "CARGGGPPSTPLTSEKANWAQR#GMDVW", 
+          "start": 226, 
+          "stop": 307, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ARGGGPPSTPLTSEKANWAQR#GMDV", 
+          "start": 229, 
+          "stop": 304, 
+          "seq": "GCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAAGCAAACTGGGCCCAGCGGCGGTATGGACGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 340, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!???>7B?8A@?9@>3??><=:4;5<;;;5'888889/;::80:9.:8766!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.35e-120"
+        }, 
+        "N": 56, 
+        "3": {
+          "start": 292, 
+          "delLeft": 16, 
+          "stop": 337, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 340, 
+          "seq": " ------------------------------------                                                                 ------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------  --------- ---------------            "
+        }, 
+        "5": {
+          "stop": 235, 
+          "name": "IGHV3-13*05", 
+          "delRight": 1
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "1.35e-120"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 340, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_________________________________________________________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH??HHHHHHHHH?HHHHHHHHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        2754
+      ], 
+      "id": "GGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAAGCAAACTGGGCCCAGC"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "177.30"
+      ], 
+      "name": "TRGV10*01 13//5 TRGJP1*01", 
+      "_coverage_info": [
+        "178 bp (100% of 177.3 bp)"
+      ], 
+      "sequence": "AGCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTTACTACTGTGCGGACTGGTTGGTTTCAAGATATTTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0039576292037964
+      ], 
+      "top": 50, 
+      "seg": {
+        "junction": {
+          "aa": "CA#LVGFKIF", 
+          "start": 111, 
+          "stop": 139, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "A#LVGFKI", 
+          "start": 114, 
+          "stop": 136, 
+          "seq": "GCGGACTGGTTGGTTTCAAGATA"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 178, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!;>>>?A@9>68777)6;<<=?=>?A@;?>==1507/66*5=6<=?9677)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.03e-94"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 118, 
+          "name": "TRGJP1*01", 
+          "delLeft": 5
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 178, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++         +++++++++++++++++++++ +++++++       -+++            +         ++        +++++++++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 117, 
+          "name": "TRGV10*01", 
+          "delRight": 13
+        }, 
+        "evalue_right": {
+          "val": "1.03e-94"
+        }, 
+        "evalue_left": {
+          "val": "2.64e-194"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 178, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG_________GGGGGGGGGGGGGGGGGGGGG?GGGGGGG_______GGGG____________g_________gg________ggggggggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        1857
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #2 - TRGV10*01 13//5 TRGJP1*01", 
+          "code": "W53", 
+          "level": "info"
+        }
+      ], 
+      "id": "AGACATGGCCGTTTTACTACTGTGCGGACTGGTTGGTTTCAAGATATTTT"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "180.99"
+      ], 
+      "name": "TRGV10*01 4//8 TRGJP2*01", 
+      "_coverage_info": [
+        "182 bp (100% of 181.0 bp)"
+      ], 
+      "sequence": "AGCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0055948495864868
+      ], 
+      "top": 3, 
+      "seg": {
+        "junction": {
+          "aa": "CAACL#DWIKTF", 
+          "start": 109, 
+          "stop": 143, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "AACL#DWIKT", 
+          "start": 112, 
+          "stop": 140, 
+          "seq": "GCTGCGTGTCTGGGGATTGGATCAAGACG"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 182, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<B;??@9@AAAABA@A@AAAAAAA@>???2>>9>:@???8<==7777*79!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.96e-113"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 126, 
+          "name": "TRGJP2*01", 
+          "delLeft": 8
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 182, 
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++                ++++++++        +++++++++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 125, 
+          "name": "TRGV10*01", 
+          "delRight": 4
+        }, 
+        "evalue_right": {
+          "val": "1.96e-113"
+        }, 
+        "evalue_left": {
+          "val": "8.98e-259"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 182, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGG________________gggggggg________ggggggggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        131525
+      ], 
+      "id": "GCCGTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTTGC"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "333.90"
+      ], 
+      "name": "IGHV3-13*05 1/GAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGG/16 IGHJ6*02", 
+      "_coverage_info": [
+        "339 bp (101% of 333.9 bp)"
+      ], 
+      "sequence": "CTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACATGCACTGGGTCCGCCAAGCTACAGGAAAAGGTCTGGAGTGGGTCTCAGCTATTGGTACTGCTGGTGACCCATACTATCCAGGCTCCGTGAAGGGCCGATTCACCATCTCCAGAGAAAATGCCAAGAACTCCTTGTATCTTCAAATGAACAGCCTGAGAGCCGGGGACACGGCTGTGTATTACTGTGCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGCGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        1.015278935432434
+      ], 
+      "top": 10, 
+      "seg": {
+        "junction": {
+          "aa": "CARGGGPPSTPLTSEKQTGPSGGMDVW", 
+          "start": 226, 
+          "productive": true, 
+          "stop": 306
+        }, 
+        "cdr3": {
+          "aa": "ARGGGPPSTPLTSEKQTGPSGGMDV", 
+          "start": 229, 
+          "stop": 303, 
+          "seq": "GCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGCGGTATGGACGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 339, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!????>7AA:CA@<A@5ABA??=8>8?>??=0==<<;1<<<<3=;0;:866!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "8.08e-121"
+        }, 
+        "N": 55, 
+        "3": {
+          "start": 291, 
+          "delLeft": 16, 
+          "stop": 336, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 339, 
+          "seq": " ------------------------------------                                                                ------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------  --------- ---------------            "
+        }, 
+        "5": {
+          "stop": 235, 
+          "name": "IGHV3-13*05", 
+          "delRight": 1
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "8.08e-121"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 339, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh________________________________________________________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH??HHHHHHHHH?HHHHHHHHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        47264
+      ], 
+      "id": "GGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGC"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "219.45"
+      ], 
+      "name": "TRGV2*02 0/GGTCTACCCCCACG/2 TRGJ1*01", 
+      "_coverage_info": [
+        "226 bp (102% of 219.5 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0298469066619873
+      ], 
+      "top": 7, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGLPPR#YIRKLF", 
+          "start": 162, 
+          "stop": 210, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ATWDGLPPR#YIRKL", 
+          "start": 165, 
+          "stop": 207, 
+          "seq": "GCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 226, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!BA;BB@?:BAABA2CCCA=>>@<AAA><6<5(9999>?4?A<@??AA<A;!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "7.73e-37"
+        }, 
+        "N": 14, 
+        "3": {
+          "start": 191, 
+          "name": "TRGJ1*01", 
+          "delLeft": 2
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 226, 
+          "seq": "---------------                      -          ----------------------------------------------------------------------------------------- ------------------------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 176, 
+          "name": "TRGV2*02", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "7.73e-37"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 226, 
+          "seq": "ggggggggggggggg______________________G__________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        90830
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "CTGGGACGGTCTACCCCCACGATTATATAAGAAAACTCTTTGGCAGTGGA"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "318.12"
+      ], 
+      "name": "IGHV7-27*01 10/CCG/12 IGHJ6*02", 
+      "_coverage_info": [
+        "313 bp (98% of 318.1 bp)"
+      ], 
+      "sequence": "GGAGTCGGGGCCTGAGGTGAAGAAGCCTGGAGCCTCATTGAAGGTTTCCTGCAAGGCTTCTGGATACACCTTCACAAGCTATGCTATCAGCTGGGTATGACAGGCCCATGGACAAGGGCTTGAGGAAATGGGATGGATCAACACCAACACTGGGAACCTAACGTATGCCCAGGGCTTCACAGGACGGTTTGTCTTCTCCATGGACACCTCCGTCAGCATGGCATATCTTCATATCAGCAGCCTAAAGGCTGAGGACACCCGACAGGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        0.9838907122612
+      ], 
+      "top": 21, 
+      "seg": {
+        "quality": {
+          "start": 1, 
+          "stop": 313, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!@=?;>;>8?<A>@@@=A>>>=;@=@@BB?C>AA>A>@?<9;>:?@6?=@<!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.99e-133"
+        }, 
+        "N": 3, 
+        "3": {
+          "start": 262, 
+          "delLeft": 12, 
+          "stop": 310, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "5": {
+          "start": 3, 
+          "delLeft": 16, 
+          "stop": 258, 
+          "name": "IGHV7-27*01", 
+          "delRight": 10
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 313, 
+          "seq": "       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++                   +++++++++++++++++++++++++++++++++++             "
+        }, 
+        "evalue_right": {
+          "val": "1.99e-133"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 313, 
+          "seq": "_______HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHH___________________hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_____________"
+        }
+      }, 
+      "reads": [
+        9018
+      ], 
+      "id": "GCAGCCTAAAGGCTGAGGACACCCGACAGGGTATGGACGTCTGGGGCCAA"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "182.10"
+      ], 
+      "name": "TRGV10*01 4//8 TRGJP2*01", 
+      "_coverage_info": [
+        "183 bp (100% of 182.1 bp)"
+      ], 
+      "sequence": "AGCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0049221515655518
+      ], 
+      "top": 5, 
+      "seg": {
+        "junction": {
+          "aa": "CAACL#DWIKTF", 
+          "start": 110, 
+          "stop": 144, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "AACL#DWIKT", 
+          "start": 113, 
+          "stop": 141, 
+          "seq": "GCTGCGTGTCTGGGGATTGGATCAAGACG"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 183, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>68888'4:;:;@@AAAA@@@A@?>=>>>1=?9?:@@>?7<=<9:::+9;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.96e-113"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 127, 
+          "name": "TRGJP2*01", 
+          "delLeft": 8
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 183, 
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++       -+++++++++                ++++++++        +++++++++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 126, 
+          "name": "TRGV10*01", 
+          "delRight": 4
+        }, 
+        "evalue_right": {
+          "val": "1.96e-113"
+        }, 
+        "evalue_left": {
+          "val": "4.55e-233"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 183, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGG_______GGGGGGGGGG________________gggggggg________ggggggggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        98121
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #3 - TRGV10*01 4//8 TRGJP2*01", 
+          "code": "W53", 
+          "level": "warn"
+        }
+      ], 
+      "id": "CCGTTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTTGC"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "331.22"
+      ], 
+      "name": "IGHV3-13*01 1/GAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGG/16 IGHJ6*02", 
+      "_coverage_info": [
+        "214 bp (64% of 331.2 bp)"
+      ], 
+      "sequence": "GCTCCGTGAAGGGCCGATTCACCATCTCCAGAGAAAATGCCAAGAACTCCTTGTATCTTCAAATGAACAGCCTGAGAGCCGGGGACACGGCTGTGTATTACTGTGCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGCGGTATGGCGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        0.6461005806922913
+      ], 
+      "top": 41, 
+      "seg": {
+        "junction": {
+          "aa": "CARGGGPPSTPLTSEKQTGPS#RYGVW", 
+          "start": 102, 
+          "stop": 181, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ARGGGPPSTPLTSEKQTGPS#RYGV", 
+          "start": 105, 
+          "stop": 178, 
+          "seq": "GCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGCGGTATGGCGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 214, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!;6<=8?>:9>:3=<;8;;8<5=<<<<2=;<9;5=<8;4<:2<96873:90!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "4.24e-85"
+        }, 
+        "N": 55, 
+        "3": {
+          "start": 167, 
+          "delLeft": 16, 
+          "stop": 211, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 214, 
+          "seq": " ---------------------------                                                                        ------------------------------------- ----------------------------------------------------------------            "
+        }, 
+        "5": {
+          "stop": 111, 
+          "name": "IGHV3-13*01", 
+          "delRight": 1
+        }, 
+        "evalue_right": {
+          "val": "4.11e-233"
+        }, 
+        "evalue_left": {
+          "val": "4.24e-85"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 214, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhh________________________________________________________________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        2778
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: IGHV3-13*01 IGHV3-13*04 IGHV3-13*05", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "GCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGCG"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "214.75"
+      ], 
+      "name": "TRGV2*02 6/CCTCCTGCTCATTCCACGAGAGA/13 TRGJ1*01", 
+      "_coverage_info": [
+        "218 bp (101% of 214.8 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCCCTCCTGCTCATTCCACGAGAGAAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0151309967041016
+      ], 
+      "top": 25, 
+      "seg": {
+        "junction": {
+          "aa": "CATPPAHSTR#KLF", 
+          "start": 162, 
+          "stop": 202, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ATPPAHSTR#KL", 
+          "start": 165, 
+          "stop": 199, 
+          "seq": "GCCACCCCTCCTGCTCATTCCACGAGAGAAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 218, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!@;@AABAB@;@@4AAAA=BBBBBBB=B=BAA<=<<6(9999@=2=?9@@@!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "6.85e-34"
+        }, 
+        "N": 23, 
+        "3": {
+          "start": 194, 
+          "name": "TRGJ1*01", 
+          "delLeft": 13
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 218, 
+          "seq": "---------------                     +  +        --------------------------------------------------------------------------------- ------------------------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 170, 
+          "name": "TRGV2*02", 
+          "delRight": 6
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "6.85e-34"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 218, 
+          "seq": "ggggggggggggggg_____________________G__G________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        5345
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "ATTACTGTGCCACCCCTCCTGCTCATTCCACGAGAGAAAACTCTTTGGCA"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "173.56"
+      ], 
+      "name": "TRGV10*01 13//5 TRGJP1*01", 
+      "_coverage_info": [
+        "174 bp (100% of 173.6 bp)"
+      ], 
+      "sequence": "AGCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTTACTACTGTGCGGACTGGTTGGTTCAAGATATTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0025112628936768
+      ], 
+      "top": 46, 
+      "seg": {
+        "junction": {
+          "aa": "CA#TGWFKIL", 
+          "start": 110, 
+          "stop": 137, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "A#TGWFKI", 
+          "start": 113, 
+          "stop": 134, 
+          "seq": "GCGGACTGGTTGGTTCAAGATA"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 174, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:>==>>=7<57777(4:::<?>@AAA;??>?6<5;5;5;=5:8;11+18;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "3.29e-119"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 117, 
+          "name": "TRGJP1*01", 
+          "delLeft": 5
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 174, 
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++       -+++            ++++++++++        ++++++++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 116, 
+          "name": "TRGV10*01", 
+          "delRight": 13
+        }, 
+        "evalue_right": {
+          "val": "3.29e-119"
+        }, 
+        "evalue_left": {
+          "val": "1.05e-221"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 174, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGG_______GGGG____________gggggggggg________gggggggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        2191
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #2 - TRGV10*01 13//5 TRGJP1*01", 
+          "code": "W53", 
+          "level": "info"
+        }
+      ], 
+      "id": "AGACATGGCCGTTTTACTACTGTGCGGACTGGTTGGTTCAAGATATTGCT"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "205.87"
+      ], 
+      "name": "TRGV3*01 8/TCTGAC/8 TRGJ1*01", 
+      "_coverage_info": [
+        "207 bp (100% of 205.9 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTTCTGACATAAGAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0055031776428223
+      ], 
+      "top": 17, 
+      "seg": {
+        "junction": {
+          "aa": "CATF*HKKLF", 
+          "start": 162, 
+          "stop": 191, 
+          "productive": false, 
+          "unproductive": "stop-codon"
+        }, 
+        "cdr3": {
+          "aa": "ATF*HKKL", 
+          "start": 165, 
+          "stop": 188, 
+          "seq": "GCCACCTTCTGACATAAGAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 207, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>@AA;A?AA>?BAAA=@B<BB?A>AAB?B@BB<AAA;@A>:=7<;>??:?!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "9.60e-56"
+        }, 
+        "N": 6, 
+        "3": {
+          "start": 178, 
+          "name": "TRGJ1*01", 
+          "delLeft": 8
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 207, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++ +++ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                ++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 171, 
+          "name": "TRGV3*01", 
+          "delRight": 8
+        }, 
+        "evalue_right": {
+          "val": "9.60e-56"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 207, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGG?GGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG________________gggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        10862
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "TGGGGTCTATTACTGTGCCACCTTCTGACATAAGAAACTCTTTGGCAGTG"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "222.47"
+      ], 
+      "name": "TRGV2*02 0/GGTCTACCCCCACG/2 TRGJ1*01", 
+      "_coverage_info": [
+        "225 bp (101% of 222.5 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0113500356674194
+      ], 
+      "top": 8, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGLPPRLYKKLF", 
+          "start": 162, 
+          "productive": true, 
+          "stop": 209
+        }, 
+        "cdr3": {
+          "aa": "ATWDGLPPRLYKKL", 
+          "start": 165, 
+          "stop": 206, 
+          "seq": "GCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 225, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!9>>:>?>8?<?:??@;>><>1<=>;=6;;???::?@6=>8::4=:AA???!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.08e-59"
+        }, 
+        "N": 14, 
+        "3": {
+          "start": 191, 
+          "name": "TRGJ1*01", 
+          "delLeft": 2
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 225, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++          +               +++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 176, 
+          "name": "TRGV2*02", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "1.08e-59"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 225, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________G_______________ggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        80702
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #7 - TRGV2*02 0/GGTCTACCCCCACG/2 TRGJ1*01", 
+          "code": "W53", 
+          "level": "warn"
+        }, 
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "CACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTCTTTGGCAGTG"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "181.02"
+      ], 
+      "name": "TRGV10*01 4//8 TRGJP2*01", 
+      "_coverage_info": [
+        "182 bp (100% of 181.0 bp)"
+      ], 
+      "sequence": "AGCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0054123401641846
+      ], 
+      "top": 20, 
+      "seg": {
+        "junction": {
+          "aa": "CAACL#DWIKTF", 
+          "start": 110, 
+          "stop": 144, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "AACL#DWIKT", 
+          "start": 113, 
+          "stop": 141, 
+          "seq": "GCTGCGTGTCTGGGGATTGGATCAAGACG"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 182, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!=67777(4899;?????@A@A@???==>>1<>8>9?>>>8>>@>>=3<<;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "2.40e-142"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 127, 
+          "name": "TRGJP2*01", 
+          "delLeft": 8
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 182, 
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++       -+++++++++                ++++++++++++++++++++++++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 126, 
+          "name": "TRGV10*01", 
+          "delRight": 4
+        }, 
+        "evalue_right": {
+          "val": "2.40e-142"
+        }, 
+        "evalue_left": {
+          "val": "4.55e-233"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 182, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGG_______GGGGGGGGGG________________gggggggggggggggggggggggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        9079
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #3 - TRGV10*01 4//8 TRGJP2*01", 
+          "code": "W53", 
+          "level": "info"
+        }
+      ], 
+      "id": "CCGTTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTGCA"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "245.38"
+      ], 
+      "name": "TRGV3*01 3/CCCCGGGGCGG/3 TRGJP2*01", 
+      "_coverage_info": [
+        "210 bp (85% of 245.4 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACCCCCGGGGCGGGTAGTGATTGGATCAAGACGTTT", 
+      "_coverage": [
+        0.8558319211006165
+      ], 
+      "top": 9, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDPRGG#SDWIKTF", 
+          "start": 162, 
+          "stop": 210, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ATWDPRGG#SDWIKT", 
+          "start": 165, 
+          "stop": 207, 
+          "seq": "GCCACCTGGGACCCCCGGGGCGGGTAGTGATTGGATCAAGACG"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 210, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>>;??ABA@>=>A=ABC;?><>>3<8=5>@;;AA?@A?A<><@B@@;?>?!!!!"
+        }, 
+        "evalue": {
+          "val": "7.19e-31"
+        }, 
+        "N": 11, 
+        "3": {
+          "start": 188, 
+          "name": "TRGJP2*01", 
+          "delLeft": 3
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 210, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++ +++ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                     +++++++++++++          "
+        }, 
+        "5": {
+          "stop": 176, 
+          "name": "TRGV3*01", 
+          "delRight": 3
+        }, 
+        "evalue_right": {
+          "val": "7.19e-31"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 210, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGG?GGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG_____________________ggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        64944
+      ], 
+      "id": "ATTACTGTGCCACCTGGGACCCCCGGGGCGGGTAGTGATTGGATCAAGAC"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "221.66"
+      ], 
+      "name": "TRGV2*02 0/GGTCTACCCCCACG/2 TRGJ1*01", 
+      "_coverage_info": [
+        "224 bp (101% of 221.7 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTCTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.010565996170044
+      ], 
+      "top": 48, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGLPPRLYKKLL", 
+          "start": 162, 
+          "productive": true, 
+          "stop": 209
+        }, 
+        "cdr3": {
+          "aa": "ATWDGLPPRLYKKL", 
+          "start": 165, 
+          "stop": 206, 
+          "seq": "GCCACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 224, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!6<<7<==2<<<4;=>:::::)8;;:;39:=;<4::;.8922,47<==>?9!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "3.81e-27"
+        }, 
+        "N": 14, 
+        "3": {
+          "start": 191, 
+          "name": "TRGJ1*01", 
+          "delLeft": 2
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 224, 
+          "seq": "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++          +               ++++        ++++++++          "
+        }, 
+        "5": {
+          "stop": 176, 
+          "name": "TRGV2*02", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "3.81e-27"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 224, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________G_______________gggg________gggggggg__________"
+        }
+      }, 
+      "reads": [
+        1915
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #7 - TRGV2*02 0/GGTCTACCCCCACG/2 TRGJ1*01", 
+          "code": "W53", 
+          "level": "info"
+        }, 
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "CACCTGGGACGGTCTACCCCCACGATTATATAAGAAACTCTTGGCAGTGG"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "351.25"
+      ], 
+      "name": "IGHV3-13*05 1/GAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAAGCAAAACTGGGCCCAGCGG/16 IGHJ6*02", 
+      "_coverage_info": [
+        "354 bp (100% of 351.3 bp)"
+      ], 
+      "sequence": "GGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACATGCACTGGGTCCGCCAAGCTACAGGAAAAGGTCTGGAGTGGGTCTCAGCTATTGGTACTGCTGGTGACCCATACTATCCAGGCTCCGTGAAGGGCCGATTCACCATCTCCAGAGAAAATGCCAAGAACTCCTTGTATCTTCAAATGAACAGCCTGAGAGCCGGGGACACGGCTGTGTATTACTGTGCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAAGCAAAACTGGGCCCAGCGGCGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        1.0078229904174805
+      ], 
+      "top": 22, 
+      "seg": {
+        "junction": {
+          "aa": "CARGGGPPSTPLTSEKAKLGPA#GMDVW", 
+          "start": 239, 
+          "stop": 321, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ARGGGPPSTPLTSEKAKLGPA#GMDV", 
+          "start": 242, 
+          "stop": 318, 
+          "seq": "GCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAAGCAAAACTGGGCCCAGCGGCGGTATGGACGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 354, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:4=<::3'333333'66666,76+98866/84.76:83789??><0<<;5!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.36e-135"
+        }, 
+        "N": 57, 
+        "3": {
+          "start": 306, 
+          "delLeft": 16, 
+          "stop": 351, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 354, 
+          "seq": " ------------------------------------                      -                                           ------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------  --------- ----------------------------            "
+        }, 
+        "5": {
+          "stop": 248, 
+          "name": "IGHV3-13*05", 
+          "delRight": 1
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "1.36e-135"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 354, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh______________________H___________________________________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH??HHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        8645
+      ], 
+      "id": "ACCAGTGAAAAAGCAAAACTGGGCCCAGCGGCGGTATGGACGTCTGGGGC"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "312.10"
+      ], 
+      "name": "IGHV3-13*05 1/GAGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGG/16 IGHJ6*02", 
+      "_coverage_info": [
+        "322 bp (103% of 312.1 bp)"
+      ], 
+      "sequence": "CTGGATTCACCTTCAGTAGCTACGACATGCACTGGGTCCGCCAAGCTACAGGAAAAGGTCTGGAGTGGGTCTCAGCTATTGGTACTGCTGGTGACCCATACTATCCAGGCTCCGTGAAGGGCCGATTCACCATCTCCAGAGAAAATGCCAAGAACTCCTTGTATCTTCAAATGAACAGCCTGAGAGCCGGGGACACGGCTGTGTATTACTGTGCAAGAGGAGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGCGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        1.0317283868789673
+      ], 
+      "top": 14, 
+      "seg": {
+        "junction": {
+          "aa": "CARGGGLPPPL*PVKSKLGPA#GMDVW", 
+          "start": 210, 
+          "stop": 289, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ARGGGLPPPL*PVKSKLGPA#GMDV", 
+          "start": 213, 
+          "stop": 286, 
+          "seq": "GCAAGAGGAGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGCGGTATGGACGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 322, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:::91==6B?>9>;1<<;;<<7=8>>?>>2??<==6?>><3<;1;98761!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "4.81e-121"
+        }, 
+        "N": 54, 
+        "3": {
+          "start": 274, 
+          "delLeft": 16, 
+          "stop": 319, 
+          "name": "IGHJ6*02", 
+          "delRight": 60
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 322, 
+          "seq": " ------------------------------------                                                               ------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------  ---------            "
+        }, 
+        "5": {
+          "stop": 219, 
+          "name": "IGHV3-13*05", 
+          "delRight": 1
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "4.81e-121"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 322, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_______________________________________________________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH??HHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        18022
+      ], 
+      "id": "GGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCG"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "302.04"
+      ], 
+      "name": "IGHV3-21*01 0/CGGGGCCTGGG/3 IGHJ5*02", 
+      "_coverage_info": [
+        "307 bp (101% of 302.0 bp)"
+      ], 
+      "sequence": "CCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTATAGCATGAACTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTCTCATCCATTAGTAGTAGTAGTAGTTACATATACTACGCAGACTCAGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCACTGTATCTGCAAATGAACAGCCTGAGAGCCGAGGACACGGCTGTGTATTACTGTGCGAGAGACGGGGCCTGGGACTGGTTCGACCCCTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        1.0164382457733154
+      ], 
+      "top": 33, 
+      "seg": {
+        "junction": {
+          "aa": "CARDGAWDWFDPW", 
+          "start": 236, 
+          "productive": true, 
+          "stop": 274
+        }, 
+        "cdr3": {
+          "aa": "ARDGAWDWFDP", 
+          "start": 239, 
+          "stop": 271, 
+          "seq": "GCGAGAGACGGGGCCTGGGACTGGTTCGACCCC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 307, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!???4?@@A5@@@@<A<A@??@7?@4<;</;>@A@AAAA?@?@>?9?A@A@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "4.09e-139"
+        }, 
+        "N": 11, 
+        "3": {
+          "start": 258, 
+          "delLeft": 3, 
+          "stop": 306, 
+          "name": "IGHJ5*02", 
+          "delRight": 59
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 307, 
+          "seq": "++++++++++++++++++++++ +++++++++ ++++++++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++    +++++++++++++++++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++                       +++++++++++++++++++++++++++++++++++++             "
+        }, 
+        "5": {
+          "stop": 246, 
+          "name": "IGHV3-21*01", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "4.09e-139"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 307, 
+          "seq": "HHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHH????HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH_______________________hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_____________"
+        }
+      }, 
+      "reads": [
+        3964
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: IGHV3-21*01 IGHV3-21*02", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "GTGTATTACTGTGCGAGAGACGGGGCCTGGGACTGGTTCGACCCCTGGGG"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "244.06"
+      ], 
+      "name": "TRGV3*01 3/CTTGATG/0 TRGJP2*01", 
+      "_coverage_info": [
+        "247 bp (101% of 244.1 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACCTTGATGATAGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0120311975479126
+      ], 
+      "top": 15, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDLDDSSDWIKTF", 
+          "start": 162, 
+          "productive": true, 
+          "stop": 209
+        }, 
+        "cdr3": {
+          "aa": "ATWDLDDSSDWIKT", 
+          "start": 165, 
+          "stop": 206, 
+          "seq": "GCCACCTGGGACCTTGATGATAGTAGTGATTGGATCAAGACG"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 247, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<=;=?@?;@<@?@@>@><?@@>A>@;<7<<:@@=:>=9><A?AAB>ABAA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "2.92e-168"
+        }, 
+        "N": 7, 
+        "3": {
+          "start": 184, 
+          "name": "TRGJP2*01", 
+          "delLeft": 0
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 247, 
+          "seq": "------------------------------------------------------                 --------------------------------------------------------------------------------------- --- ----------- --------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 176, 
+          "name": "TRGV3*01", 
+          "delRight": 3
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "2.92e-168"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 247, 
+          "seq": "gggggggggggggggggggggggggggggggggggggggggggggggggggggg_________________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGG?GGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        14302
+      ], 
+      "id": "CTATTACTGTGCCACCTGGGACCTTGATGATAGTAGTGATTGGATCAAGA"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "316.66"
+      ], 
+      "name": "IGHV3-11*01 3/CCTACCCC/0 IGHD6-19*01 0/GGGGG/5 IGHJ5*02", 
+      "_coverage_info": [
+        "281 bp (88% of 316.7 bp)"
+      ], 
+      "sequence": "TACTACATGAGCTGGATCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTTTCATACATTAGTAGTAGTGGTAGTACCATATACTACGCAGACTCTGTGAAGGGCCGATTCACCATCTCCAGGGACAACGCCAAGAACTCACTGTATCTGCAAATGAACAGCCTGAGAGCCGAGGACACGGCCGTGTATTACTGTGCGAGCCTACCCCGGGTATAGCAGTGCTGGTACGGGGGTGGTTCGACCCCTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        0.8873922228813171
+      ], 
+      "top": 23, 
+      "seg": {
+        "junction": {
+          "aa": "CASLPRV*QCWYG#WFDPW", 
+          "start": 193, 
+          "stop": 248, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ASLPRV*QCWYG#WFDP", 
+          "start": 196, 
+          "stop": 245, 
+          "seq": "GCGAGCCTACCCCGGGTATAGCAGTGCTGGTACGGGGGTGGTTCGACCCC"
+        }, 
+        "evalue": {
+          "val": "7.70e-122"
+        }, 
+        "evalue_left": {
+          "val": "7.70e-122"
+        }, 
+        "3": {
+          "start": 234, 
+          "delLeft": 5, 
+          "stop": 280, 
+          "name": "IGHJ5*02", 
+          "delRight": 59
+        }, 
+        "5": {
+          "stop": 200, 
+          "name": "IGHV3-11*01", 
+          "delRight": 3
+        }, 
+        "4": {
+          "start": 209, 
+          "delLeft": 0, 
+          "stop": 228, 
+          "name": "IGHD6-19*01", 
+          "delRight": 0
+        }, 
+        "N1": 8, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 281, 
+          "seq": " -----------------------------------                        -                    -------------------------------- ------------------------------------------------------------------------------------------- -------------------------- ---------------------- -------------            "
+        }, 
+        "N2": 5, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 281, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!=========9?>?3@A?6@@?>??@@@?>==@:?>>=.>>>==:@:?>>=!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 281, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh________________________V____________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        5602
+      ], 
+      "id": "CTGTGCGAGCCTACCCCGGGTATAGCAGTGCTGGTACGGGGGTGGTTCGA"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "241.57"
+      ], 
+      "name": "TRGV3*01 0/CGG/2 TRGJP2*01", 
+      "_coverage_info": [
+        "244 bp (101% of 241.6 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCGGAGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0100582838058472
+      ], 
+      "top": 29, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDRRSSDWIKTF", 
+          "start": 162, 
+          "productive": true, 
+          "stop": 206
+        }, 
+        "cdr3": {
+          "aa": "ATWDRRSSDWIKT", 
+          "start": 165, 
+          "stop": 203, 
+          "seq": "GCCACCTGGGACAGGCGGAGTAGTGATTGGATCAAGACG"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 244, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!9:9>>>:??>=:?:@?=@@@AA>;@><@@@@:@@?:?><@AA@BA@;@>@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.14e-165"
+        }, 
+        "N": 3, 
+        "3": {
+          "start": 183, 
+          "name": "TRGJP2*01", 
+          "delLeft": 2
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 244, 
+          "seq": "----------------------------------------------------             ------------------------------------------------------------------------------------------ --- ----------- --------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 179, 
+          "name": "TRGV3*01", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "1.14e-165"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 244, 
+          "seq": "gggggggggggggggggggggggggggggggggggggggggggggggggggg_____________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGG?GGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        4444
+      ], 
+      "id": "TATTACTGTGCCACCTGGGACAGGCGGAGTAGTGATTGGATCAAGACGTT"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "174.65"
+      ], 
+      "name": "TRGV10*01 13//5 TRGJP1*01", 
+      "_coverage_info": [
+        "175 bp (100% of 174.7 bp)"
+      ], 
+      "sequence": "AGCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTTACTACTGTGCGGACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0019971132278442
+      ], 
+      "top": 4, 
+      "seg": {
+        "junction": {
+          "aa": "CA#TGWFKIF", 
+          "start": 110, 
+          "stop": 137, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "A#TGWFKI", 
+          "start": 113, 
+          "stop": 134, 
+          "seq": "GCGGACTGGTTGGTTCAAGATA"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 175, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!;@?@AA?8>79888(4:::;A@AAAA;AA@@:?9?9?:?@:??@<<<4<?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "9.14e-157"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 117, 
+          "name": "TRGJP1*01", 
+          "delLeft": 5
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 175, 
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++       -+++            +++++++++++++++++++++++++++++++++++++++++++++++++          "
+        }, 
+        "5": {
+          "stop": 116, 
+          "name": "TRGV10*01", 
+          "delRight": 13
+        }, 
+        "evalue_right": {
+          "val": "9.14e-157"
+        }, 
+        "evalue_left": {
+          "val": "1.05e-221"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 175, 
+          "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGG_______GGGG____________ggggggggggggggggggggggggggggggggggggggggggggggggg__________"
+        }
+      }, 
+      "reads": [
+        100354
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #2 - TRGV10*01 13//5 TRGJP1*01", 
+          "code": "W53", 
+          "level": "warn"
+        }
+      ], 
+      "id": "AGACATGGCCGTTTTACTACTGTGCGGACTGGTTGGTTCAAGATATTTGC"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "313.70"
+      ], 
+      "name": "IGHV3-9*01 0/TTCTTAAATCACTTA/6 IGHD6-13*01 3/CCACCCCG/2 IGHJ5*02", 
+      "_coverage_info": [
+        "356 bp (113% of 313.7 bp)"
+      ], 
+      "sequence": "GCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCAAAAGATATTCTTAAATCACTTAAGCAGCAGCTGGCCACCCCGAACTGGTTCGACCCCTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        1.1348587274551392
+      ], 
+      "top": 11, 
+      "seg": {
+        "junction": {
+          "aa": "CAKDILKSLKQQLATPNWFDPW", 
+          "start": 258, 
+          "productive": true, 
+          "stop": 323
+        }, 
+        "cdr3": {
+          "aa": "AKDILKSLKQQLATPNWFDP", 
+          "start": 261, 
+          "stop": 320, 
+          "seq": "GCAAAAGATATTCTTAAATCACTTAAGCAGCAGCTGGCCACCCCGAACTGGTTCGACCCC"
+        }, 
+        "evalue": {
+          "val": "4.28e-133"
+        }, 
+        "evalue_left": {
+          "val": "4.28e-133"
+        }, 
+        "3": {
+          "start": 306, 
+          "delLeft": 2, 
+          "stop": 355, 
+          "name": "IGHJ5*02", 
+          "delRight": 59
+        }, 
+        "5": {
+          "stop": 270, 
+          "name": "IGHV3-9*01", 
+          "delRight": 0
+        }, 
+        "4": {
+          "start": 286, 
+          "delLeft": 6, 
+          "stop": 297, 
+          "name": "IGHD6-13*01", 
+          "delRight": 3
+        }, 
+        "N1": 15, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 356, 
+          "seq": " --------------------------------------                                               ------------------------------------- ------------------------------------ ----------------------------------------- ------------------------------------------------------------------------------------------------ --------------------------------------------            "
+        }, 
+        "N2": 8, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 356, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!0===<=>>:@@:?7@??@@@:@:??@@AAA@A@=@:?>3??><6==?:?:!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 356, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_______________________________________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        27485
+      ], 
+      "id": "AAAAGATATTCTTAAATCACTTAAGCAGCAGCTGGCCACCCCGAACTGGT"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "190.03"
+      ], 
+      "name": "TRGV2*02 11//11 TRGJ1*01", 
+      "_coverage_info": [
+        "191 bp (100% of 190.0 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGAGGGCTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0051182508468628
+      ], 
+      "top": 12, 
+      "seg": {
+        "junction": {
+          "aa": "C#GLF", 
+          "start": 162, 
+          "stop": 175, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "#GL", 
+          "start": 165, 
+          "stop": 172, 
+          "seq": "GAGGGCTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 191, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!@@@=@@>?5>>>=?<>6>>>?>9??;A@@A?;<?<?@@:@=?<@@>A@?9"
+        }, 
+        "evalue": {
+          "val": "1.34e-30"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 166, 
+          "name": "TRGJ1*01", 
+          "delLeft": 11
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 191, 
+          "seq": "------------              ---------------------------------------------------------------------------- ------------------------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 165, 
+          "name": "TRGV2*02", 
+          "delRight": 11
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "1.34e-30"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 191, 
+          "seq": "gggggggggggg______________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        25407
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "ATGACTCTGGGGTCTATTACTGTGAGGGCTCTTTGGCAGTGGAACAACAC"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "290.40"
+      ], 
+      "name": "IGHV3-23D*01 6/T/4 IGHD1-1*01 5/CCCACGTGGGGG/4 IGHJ5*02", 
+      "_coverage_info": [
+        "316 bp (108% of 290.4 bp)"
+      ], 
+      "sequence": "GGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTAGCAGCTATGCCATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTCTCAGCTATTAGTGGTAGTGGTGGTAGCACATACTACGCAGACTCCGTGAAGGGCCGGTTCACCATCTCCAGAGACAATTCCAAGAACACGCTGTATCTGCAAATGAACAGCCTGAGAGCCGAGGACACGGCCGTATATTACTGTGCTCAACTGGACCCACGTGGGGGCTGGTTCGACCCCTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        1.0881531238555908
+      ], 
+      "top": 47, 
+      "seg": {
+        "junction": {
+          "aa": "CAQLDPRGGWFDPW", 
+          "start": 242, 
+          "productive": true, 
+          "stop": 283
+        }, 
+        "cdr3": {
+          "aa": "AQLDPRGGWFDP", 
+          "start": 245, 
+          "stop": 280, 
+          "seq": "GCTCAACTGGACCCACGTGGGGGCTGGTTCGACCCC"
+        }, 
+        "evalue": {
+          "val": "7.56e-132"
+        }, 
+        "evalue_left": {
+          "val": "7.56e-132"
+        }, 
+        "3": {
+          "start": 268, 
+          "delLeft": 4, 
+          "stop": 315, 
+          "name": "IGHJ5*02", 
+          "delRight": 59
+        }, 
+        "5": {
+          "stop": 246, 
+          "name": "IGHV3-23D*01", 
+          "delRight": 6
+        }, 
+        "4": {
+          "start": 248, 
+          "delLeft": 4, 
+          "stop": 255, 
+          "name": "IGHD1-1*01", 
+          "delRight": 5
+        }, 
+        "N1": 1, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 316, 
+          "seq": " ------------------------------------                             --- ----------------------------- -----------------------------------------------------------------------------------------  --------------------------- -------------------------------------------------------- ----------------------------            "
+        }, 
+        "N2": 12, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 316, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>>>>:@???>==<=<8=<<7<;5=776;9+;;;;;>9?9?>>=1>>><0>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 316, 
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_____________________________HHH_HHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH??HHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHH____________"
+        }
+      }, 
+      "reads": [
+        2111
+      ], 
+      "warn": [
+        {
+          "msg": "Several genes with equal probability: IGHV3-23D*01 IGHV3-23*01 IGHV3-23*04", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "TATATTACTGTGCTCAACTGGACCCACGTGGGGGCTGGTTCGACCCCTGG"
+    }, 
+    {
+      "germline": "IGH", 
+      "_average_read_length": [
+        "369.51"
+      ], 
+      "name": "IGHV3-13*05 1/GAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGCGG/2 IGHJ4*03", 
+      "_coverage_info": [
+        "354 bp (95% of 369.5 bp)"
+      ], 
+      "sequence": "GGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACGACATGCACTGGGTCCGCCAAGCTACAGGAAAAGGTCTGGAGTGGGTCTCAGCTATTGGTACTGCTGGTGACCCATACTATCCAGCTCCGTGAAGGGCCGATTCACCATCTCCAGAGAAAATGCCAAGAACTCCTTGTATCTTCAAATGAACAGCCTGAGAGCCGGGGACACGGCTGTGTATTACTGTGCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGCGGTACTGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      "_coverage": [
+        0.9580289721488953
+      ], 
+      "top": 45, 
+      "seg": {
+        "junction": {
+          "aa": "CARGGGPPSTPLTSEKQTGPSGG#LDVW", 
+          "start": 240, 
+          "stop": 321, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ARGGGPPSTPLTSEKQTGPSGG#LDV", 
+          "start": 243, 
+          "stop": 318, 
+          "seq": "GCAAGAGGAGGGGGGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGCGGTACTGGACGTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 354, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!;,97;<=4:>79<=>0:===9?6===;:9:.777:198;<1;=29;<:68!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "1.72e-100"
+        }, 
+        "N": 58, 
+        "3": {
+          "start": 308, 
+          "delLeft": 2, 
+          "stop": 353, 
+          "name": "IGHJ4*03", 
+          "delRight": 59
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 354, 
+          "seq": "++++++++++++++++++++++++++++++ +++++++++  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++         + ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++                                                                      +++++++++++++++++++++++++++++++             "
+        }, 
+        "5": {
+          "stop": 249, 
+          "name": "IGHV3-13*05", 
+          "delRight": 1
+        }, 
+        "evalue_right": {
+          "val": "1.72e-100"
+        }, 
+        "evalue_left": {
+          "val": "0.00e+00"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 354, 
+          "seq": "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHH??HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH_________H_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH______________________________________________________________________hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_____________"
+        }
+      }, 
+      "reads": [
+        2308
+      ], 
+      "id": "GGCCTCCCTCCACCCCTCTAACCAGTGAAAAGCAAACTGGGCCCAGCGGC"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "246.56"
+      ], 
+      "name": "TRGV2*01 0/CCGGAGG/0 TRGJP1*01", 
+      "_coverage_info": [
+        "250 bp (101% of 246.6 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGCCGGAGGATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0139360427856445
+      ], 
+      "top": 24, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGPEDTTGWFKIF", 
+          "start": 162, 
+          "productive": true, 
+          "stop": 212
+        }, 
+        "cdr3": {
+          "aa": "ATWDGPEDTTGWFKI", 
+          "start": 165, 
+          "stop": 209, 
+          "seq": "GCCACCTGGGACGGGCCGGAGGATACCACTGGTTGGTTCAAGATA"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 250, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:=:??;?:;9=8>>9=9>>:?<>>8=:=9@??=9@@?:@=<=?=>?<?<?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "2.92e-168"
+        }, 
+        "N": 7, 
+        "3": {
+          "start": 187, 
+          "name": "TRGJP1*01", 
+          "delLeft": 0
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 250, 
+          "seq": "------------------------------------------------------                 ------------------------------------------------------------------------------------------ ------------------------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 179, 
+          "name": "TRGV2*01", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "2.92e-168"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 250, 
+          "seq": "gggggggggggggggggggggggggggggggggggggggggggggggggggggg_________________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        5517
+      ], 
+      "id": "TTACTGTGCCACCTGGGACGGGCCGGAGGATACCACTGGTTGGTTCAAGA"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "173.03"
+      ], 
+      "name": "TRGV10*01 13//5 TRGJP1*01", 
+      "_coverage_info": [
+        "175 bp (101% of 173.0 bp)"
+      ], 
+      "sequence": "AGCATGGGTAAGACAAGCAACAAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCGGACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTGGTAA", 
+      "_coverage": [
+        1.0113707780838013
+      ], 
+      "top": 2, 
+      "seg": {
+        "junction": {
+          "aa": "CA#TGWFKIF", 
+          "start": 110, 
+          "stop": 137, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "A#TGWFKI", 
+          "start": 113, 
+          "stop": 134, 
+          "seq": "GCGGACTGGTTGGTTCAAGATA"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 175, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!4<=?@@@:>9??8AA@AAAAA@AAA<AABA<A<A;@:@@<BAAA?7@@?B!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "9.14e-157"
+        }, 
+        "N": 0, 
+        "3": {
+          "start": 117, 
+          "name": "TRGJP1*01", 
+          "delLeft": 5
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 175, 
+          "seq": "-------------------------------------------------            ----------------- ---------------------------------------------------------------- -      --------------          "
+        }, 
+        "5": {
+          "stop": 116, 
+          "name": "TRGV10*01", 
+          "delRight": 13
+        }, 
+        "evalue_right": {
+          "val": "3.03e-225"
+        }, 
+        "evalue_left": {
+          "val": "9.14e-157"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 175, 
+          "seq": "ggggggggggggggggggggggggggggggggggggggggggggggggg____________GGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG_G______GGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        174036
+      ], 
+      "id": "AAGACATGGCCGTTTACTACTGTGCGGACTGGTTGGTTCAAGATATTTGC"
+    }, 
+    {
+      "germline": "TRG", 
+      "_average_read_length": [
+        "232.13"
+      ], 
+      "name": "TRGV2*01 0/CCTACTCCAAGGCCCACTCGG/3 TRGJ1*01", 
+      "_coverage_info": [
+        "235 bp (101% of 232.1 bp)"
+      ], 
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGCCTACTCCAAGGCCCACTCGGTTATTATAAGAAACTCTTTGGCAGTGGAACAACAC", 
+      "_coverage": [
+        1.0123684406280518
+      ], 
+      "top": 37, 
+      "seg": {
+        "junction": {
+          "aa": "CATWDGPTPRPTR#YYKKLF", 
+          "start": 162, 
+          "stop": 219, 
+          "productive": false, 
+          "unproductive": "out-of-frame"
+        }, 
+        "cdr3": {
+          "aa": "ATWDGPTPRPTR#YYKKL", 
+          "start": 165, 
+          "stop": 216, 
+          "seq": "GCCACCTGGGACGGGCCTACTCCAAGGCCCACTCGGTTATTATAAGAAACTC"
+        }, 
+        "quality": {
+          "start": 1, 
+          "stop": 235, 
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>7@?==@=A=@@9A=>A@A@;=@:A;@9AA@?>:7135597>?<<>:<>>!!!!!!!!!!!!!!!!!!!!!"
+        }, 
+        "evalue": {
+          "val": "2.70e-65"
+        }, 
+        "N": 21, 
+        "3": {
+          "start": 201, 
+          "name": "TRGJ1*01", 
+          "delLeft": 3
+        }, 
+        "affectSigns": {
+          "start": 1, 
+          "stop": 235, 
+          "seq": "-------------------------                               ------------------------------------------------------------------------------------------ ------------------------------------------------------------------------------          "
+        }, 
+        "5": {
+          "stop": 179, 
+          "name": "TRGV2*01", 
+          "delRight": 0
+        }, 
+        "evalue_right": {
+          "val": "0.00e+00"
+        }, 
+        "evalue_left": {
+          "val": "2.70e-65"
+        }, 
+        "affectValues": {
+          "start": 1, 
+          "stop": 235, 
+          "seq": "ggggggggggggggggggggggggg_______________________________GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG?GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG__________"
+        }
+      }, 
+      "reads": [
+        3149
+      ], 
+      "warn": [
+        {
+          "msg": "Similar to clone #28 - TRGV2*01 0/CCTACTCCAAGGCCCACTCGG/3 TRGJ1*01", 
+          "code": "W53", 
+          "level": "info"
+        }, 
+        {
+          "msg": "Several genes with equal probability: TRGJ1*01 TRGJ1*02 TRGJ2*01", 
+          "code": "W69", 
+          "level": "warn"
+        }
+      ], 
+      "id": "GCCACCTGGGACGGGCCTACTCCAAGGCCCACTCGGTTATTATAAGAAAC"
+    }
+  ], 
+  "config": {
+    "all": false, 
+    "out-detected": false, 
+    "verbose": false, 
+    "no-airr": false, 
+    "min-ratio": "0", 
+    "analysis-e-value-D": "0.05", 
+    "out-reads": false, 
+    "e-value-kmer": "-1", 
+    "not-analyzed-as-clones": false, 
+    "alternative-genes": "0", 
+    "show-junction": false, 
+    "clean-memory": false, 
+    "cluster-save-matrix": false, 
+    "window": "50", 
+    "e-value": "1", 
+    "max-consensus": "100", 
+    "germline": "../../germline//homo-sapiens.g", 
+    "filter-reads": false, 
+    "several-D": true, 
+    "label-filter": false, 
+    "cluster-N": "10", 
+    "gz": false, 
+    "plain-index": false, 
+    "no-vidjil": false, 
+    "base": "000006", 
+    "cluster-epsilon": "0", 
+    "cluster-load-matrix": false, 
+    "out-clone-files": false, 
+    "out-affects": false, 
+    "out-undetected": false, 
+    "min-reads": "1", 
+    "out-details": false, 
+    "consensus-on-longest-sequences": false, 
+    "analysis-filter": "1", 
+    "max-designations": "100", 
+    "help-advanced": false, 
+    "dir": "/mnt/result/tmp/out-000006/", 
+    "out-vdjfa": false
+  }
+}

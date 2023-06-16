@@ -80,7 +80,7 @@ Filter.prototype = {
             case ">":
             case "<":
                 text += f.axis + " " + f.operator + " "+ f.value
-                title += "pouet!"
+                title += `Filter on axis ${f.axis} with values ${f.operator == ">"? "greater than " : (f.operator == "<" ? "inferior at " : "equal to ")} ${f.value}`
                 break;
             case "focus":
                 text += "Focus on "+f.value.length+" Clonotypes"
@@ -263,6 +263,20 @@ Filter.prototype = {
             if (!this.m.clone(j).isActive()) list.push(this.m.clone(j).index) 
         
         return list
+    },
+
+    getValuesByAxis: function(axis){
+        return this.filters.filter(function(f) { return f.axis == "Tag" })
+
+    },
+
+    /**
+     * Return each values of filters of a specified axis
+     * @param  {String} axis Name of an axis to use for filter
+     * @return {[type]}      [description]
+     */
+    getValuesForAxis: function(axis){
+        this.getValuesByAxis().map(function(item) { return item.value})
     },
 
     // return the list of clones currently visible

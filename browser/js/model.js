@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
@@ -32,14 +32,16 @@
  * */
 
 VIDJIL_JSON_VERSION = '2014.09';
+
+// See also doc/user.md and docker/ci/Dockerfile
 BROWSER_COMPATIBILITY = {
     "Firefox": {
-        "legacy": 32,
+        "legacy": 62,
         "supported": 78,
         "latest": 89
     }, 
     "Chrome": {
-        "legacy": 49,
+        "legacy": 75,
         "supported":  79,
         "latest": 93
     }
@@ -64,6 +66,7 @@ function Model() {
         this[f] = Model_loader.prototype[f]
     }
 
+    this.tags = new TagManager(this);
     this.germline = {};
     this.create_germline_obj();
     this.view = [];
@@ -128,28 +131,7 @@ Model.prototype = {
         
         document.body.appendChild(this.infoBox);
         
-        //build tagSelector
-        this.tagSelector = document.createElement("div");
-        this.tagSelector.className = "tagSelector";
-        
-        var closeTag = document.createElement("span");
-        closeTag.className = "closeButton" ;
-        closeTag.appendChild(icon('icon-cancel', ''));
-        closeTag.onclick = function() {$(this).parent().hide('fast')};
-        this.tagSelector.appendChild(closeTag);
-        
-        this.tagSelectorInfo = document.createElement("div")
-        this.tagSelector.appendChild(this.tagSelectorInfo);
-        
-        this.tagSelectorList = document.createElement("ul")
-        this.tagSelector.appendChild(this.tagSelectorList);
-        
-        document.body.appendChild(this.tagSelector);
-        $('.tagSelector').hover(function() { 
-          $(this).addClass('hovered');
-        }, function() {
-          $(this).removeClass('hovered');
-        });
+        this.tags.buildSelector()
 
         $("#filter_switch_sample").click(function(){
             self.filter.toggle("Size", "=", 0)
@@ -169,6 +151,17 @@ Model.prototype = {
                 check.checked = self.trimming_before_external
                 console.default.log( self.trimming_before_external )
             }
+
+            // get list of layers to reset
+            for (var l in LAYERS){
+                if (LAYERS[l].reset != undefined){
+                    for (var c_id in self.clones){
+                        LAYERS[l].reset(self.clones[c_id])
+                    }
+                }
+            }
+
+            self.update()
         })
 
         
@@ -193,6 +186,7 @@ Model.prototype = {
             "lenCDR3":          "CDR3 length",
             "lenSeqConsensus":  "Sequence length",
             "lenSeqAverage":    "Reads length",
+            "germline" :        "Locus",
         }
         // List of axe that must be in an array format
         this.distrib_axe_is_timmed = {
@@ -204,6 +198,10 @@ Model.prototype = {
         // List of axe that must be returned as number
         this.distrib_axe_as_number = {
         }
+
+        // Primers
+        this.primersSetData = {"biomed2" : {}, "ecngs": {}, "ecngs_FR1": {} }
+        this.populatePrimerSet()
     },
 
     /**
@@ -349,22 +347,6 @@ Model.prototype = {
             "= SEG, but no window",
         ];
 
-        this.tag = [
-            {"color" : "#dc322f", "name" : "clonotype 1", "display" : true},
-            {"color" : "#cb4b16", "name" : "clonotype 2", "display" : true},
-            {"color" : "#b58900", "name" : "clonotype 3", "display" : true},
-            {"color" : "#268bd2", "name" : "standard", "display" : true},
-            {"color" : "#6c71c4", "name" : "standard (noise)", "display" : true},
-            {"color" : "#2aa198", "name" : "custom 1", "display" : true},
-            {"color" : "#d33682", "name" : "custom 2", "display" : true},
-            {"color" : "#859900", "name" : "custom 3", "display" : true},
-            {"color" : "",        "name" : "-/-", "display" : true},
-            {"color" : "#bdbdbd", "name" : "smaller clonotypes", "display" : true}
-        ]
-
-        this.default_tag=8;
-        this.distrib_tag=9;
-
         this.axis_color = "Tag"
         this.notation_type = "percent"
         this.time_type = "name"
@@ -372,7 +354,10 @@ Model.prototype = {
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].reset();
         }
-
+        this.closeOpenModal()
+        if (this.filter != undefined){
+            this.filter.filters = [{axis: "Top", operator:">", value:50}]
+        }
     },
     
     
@@ -453,7 +438,7 @@ Model.prototype = {
         this.n_max = n_max
         
         for (var j = 0; j < this.clones.length; j++) 
-            this.clone(j).tag = this.default_tag;
+            this.clone(j).tag = this.tags.getDefault();
         
         this.applyAnalysis(this.analysis);
         this.initData();
@@ -466,6 +451,7 @@ Model.prototype = {
                 $("#external_normalization").show();
             }
         }
+        this.filter.reset()
         this.update()
     }, //end initClones
 
@@ -503,7 +489,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         for (var key in this.data){
             if (this.data[key].length == this.samples.number){
                 this.data_info[key] = {
-                    "color" : this.tag[i].color,
+                    "color" : colorGeneratorIndex(i),
                     "isActive" : false
                 }
                 i++
@@ -525,6 +511,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             //      CUSTOM TAG / NAME
             //      EXPECTED VALUE
             var max = {"id" : -1 , "size" : 0 }     //store biggest expected value ( will be used for normalization)
+            var error_loading_tags = 0;
+
             for (var i = 0; i < c.length; i++) {
                 
                 var id = -1
@@ -547,14 +535,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         f = clone.getSize() / c[i].expected;
                         
                         if (f < 100 && f > 0.01) {
-                            if (typeof (c[i].tag) != "undefined") {
-                                clone.tag = c[i].tag;
-                            }
-
-                            if (typeof (c[i].name) != "undefined") {
-                                clone.c_name = c[i].name;
-                            }
-                            
                             if (c[i].expected>max.size){
                                 max.size = c[i].expected
                                 max.id = id
@@ -562,18 +542,27 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         }else{
                             console.log(" apply analysis : clones "+ c[i].id + " > incorrect expected value", 0)
                         }
-                    }else{
-                        if (typeof (c[i].tag) != "undefined") {
-                            clone.tag = c[i].tag;
-                        }
-                        if (typeof (c[i].name) != "undefined") {
-                            clone.c_name = c[i].name;
-                        }
                     }
+
+                    if (typeof (c[i].tag) != "undefined") {
+                        if (isNaN(parseInt(c[i].tag))) {
+                            if (c[i].tag in m.tags.tag)
+                                clone.tag = c[i].tag;
+                            else
+                                error_loading_tags += 1;
+                        }
+                        else  clone.tag = m.tags.old_tag[c[i].tag];
+                    }
+                    if (typeof (c[i].name) != "undefined") clone.c_name = c[i].name;
+                
                 }else{
                     this.analysis_clones.push(c[i])
                 }
             }
+            if (error_loading_tags > 0) {
+                console.log({"type": "flash", "msg": "Tags assigned to "+error_loading_tags+" clone(s) had to be ignored because they are unknown. Feel free to contact the support on that matter.", "priority": 2});
+            }
+                
             this.loadCluster(analysis.clusters)
         }
         this.init()
@@ -718,22 +707,40 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     getDiversity: function(key, time) {
-	time = typeof time !== 'undefined' ? time : this.t
-	if (typeof this.diversity != 'undefined' &&
-	    typeof this.diversity[key] != 'undefined') {
+    	time = typeof time !== 'undefined' ? time : this.t
+    	if (typeof this.diversity != 'undefined' &&
+    	    typeof this.diversity[key] != 'undefined') {
 
-	    // Diversity may not be stored in an Array for retrocompatiblitiy reasons
-	    // See #1941 and #3416
-	    if (typeof this.diversity[key][time] != 'undefined') {
-            if (this.diversity[key][time] != null) {
-                return this.diversity[key][time].toFixed(3);
-            } else {
-                return this.diversity[key][time]
+            // 1 - old not fused => {index : value}
+            // 2 - old fused => {index : [values]}
+            // 3 - new not fused => {index : {locus: value}}
+            // 4 - new fused => {index : [{locus: values}]}
+            var diversity_by_locus = {}
+            var locus;
+    	    if (this.diversity[key][time] == 'na' ||
+                (Array.isArray(this.diversity[key]) && this.diversity[key][time] == null) ) {
+                return // Append if no diversity computable by fuse (AIRR import for exemple)
+            } else{
+                if (typeof this.diversity[key] == "number"){ // case 1
+                    return this.diversity[key].toFixed(3);
+                } else if (Array.isArray(this.diversity[key])){ // case 2
+                    if (typeof this.diversity[key][time] == "number") {
+                       return this.diversity[key][time].toFixed(3);
+                    } else { // case 3
+                        for (locus in this.diversity[key][time]) {
+                            diversity_by_locus[locus] = this.diversity[key][time][locus].toFixed(3)
+                        }
+                        return diversity_by_locus
+                    }
+                } else if (typeof this.diversity[key] == "object"){ // case 4
+                    for (locus in this.diversity[key]) {
+                        diversity_by_locus[locus] = this.diversity[key][locus].toFixed(3)
+                    }
+                    return diversity_by_locus
+                }
             }
-	    } else {
-            return this.diversity[key].toFixed(3);
-	    }
-	}
+
+    	}
     },
     
     /**
@@ -1205,7 +1212,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     multiSelect: function (list) {
 
         if (list.length == 0) return;
-        console.log("select() (clone " + list + ")");
+        console.log("select() (clone " + list + "); "+list.length+"x clones");
 
         var tmp = []
         for (var i = 0; i < list.length; i++) {
@@ -1534,6 +1541,254 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         })
     },
     
+
+
+    /**
+     * Return a table of each warning, with number of clone and reads by type of warning
+     * if timeId equal -1, return summed warnings table for all samples
+     * @param {integer} timeID - time/sample index
+     * @return {Object} Dict of warning, with list of clonotype and sum of reads by type of warning
+     * */
+    getWarningsClonotypeInfo: function (timeID) {
+        var getCleanedWarningName = function( msg ){
+            if (msg.indexOf(":") != -1){
+                return msg.split(":")[0]
+            } else if (msg.indexOf("Bad e-value") != -1){
+                return "Bad e-value"
+            } else if (msg.indexOf("Similar to clone") != -1){
+                return "Similar to another clone"
+            } else if (msg.indexOf("Merged clone has different V(D)J designations") != -1){
+                return "Merged clone has different V(D)J designations cross samples"
+            }
+            return msg
+        }
+
+        if (timeID == undefined){
+            timeID = -1
+        }
+
+        var warned = {}
+        this.clones.forEach( (clone) => {
+            if (clone.isWarnedBool()){
+                for (var warn_pos in clone.warn){
+                    var warn = clone.warn[warn_pos]
+                    if (Object.keys(warn).length == 0){
+                        continue
+                    }
+
+                    if (timeID != -1 && clone.reads[timeID] != 0){
+                        if (warned[warn.code] == undefined){
+                            warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg), "level": warn.level}
+                        }
+                        if (warned[warn.code].clones.indexOf(clone.index) == -1){
+                            warned[warn.code].clones.push(clone.index)
+                            warned[warn.code].reads += clone.reads[timeID]
+                        }
+                    } else if (timeID == -1){
+                        if (warned[warn.code] == undefined){
+                            warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg), "level": warn.level}
+                        }
+                        if (warned[warn.code].clones.indexOf(clone.index) == -1){
+                            warned[warn.code].clones.push(clone.index)
+                            warned[warn.code].reads += sum(clone.reads)
+                        }
+                    }
+                }
+            }
+        })
+        return warned
+    },
+
+    changeWarningLevel: function(subwarn_code, operation){
+        var current_level = this.getWarningLevelFromCode(subwarn_code)
+        if (operation == "decrease" && current_level > 0){
+            current_level -= 1
+        } else if (operation == "increase" && current_level < 2){
+            current_level += 1
+        }
+
+        Object.keys(warnings_data).forEach( (category) => {
+            Object.keys(warnings_data[category]).forEach( (warn_code) => {
+                if (warn_code == subwarn_code) {
+                    localStorage.setItem(`warn_${warn_code}`, current_level)
+                }
+            })
+        })
+
+        this.update()
+        console.default.log(`change warn level after; ${subwarn_code}, ${current_level}`)
+    },
+
+    /**
+     * Toogle a warning  between is current level and info (level 0)
+     * Update the icon to show a warning or not
+     */
+    toogleWarningFilter: function(subwarn_code){
+        this.setWarningFilterStatus(subwarn_code, !this.getWarningFilterStatusFromCode(subwarn_code))
+        this.update()
+    },
+
+    /*
+     * Return the maximum level of warning from a list of warning
+     * Computed from the setted level of warning
+     */
+    getWarningLevelFromList: function(warn_list){
+        var maximum = 0
+        var value;
+        warn_list.forEach( (warn) => {
+            value = this.getWarningLevelFromWarn(warn)
+            if (value != undefined && value > maximum) {
+               maximum = value
+            }
+        })
+        return maximum
+    },
+
+    /**
+     * Return the level of a warning depending of the localstorage declaration
+     * Can use old fashion warnings and new warnings type.
+     * If warn level is undefined, return 1 by default (old type)
+     */
+    getWarningLevelFromWarn: function(warn){
+        if (warn == 0 ) {return 0} // Error in fuse merge, by already in production
+        var value = 2
+        if (!("code" in warn) && !("msg" in warn)  && !("level" in warn) ){ // empty
+            return 0
+        } else if (warn.code != undefined && warn.code != ""){
+            value = this.getWarningLevelFromCode(warn.code)
+        } else if (warn.level == undefined){ // Old style value
+            value = 1
+        } else {
+            value = parseInt(Object.keys(warnText).find(key => warnText[key] === warn.level))
+        }
+        if (this.getWarningFilterStatusFromCode(warn.code)){ return 0}
+        return value
+    },
+
+    /**
+     * Return the level of a warning depending of the localstorage declaration
+     * Can use old fashion warnings and new warnings type.
+     * If warn level is undefined, return 1 by default (old type)
+     * @param (string) warn_code The warning code to search
+     */
+    getWarningLevelFromCode: function(warn_code){
+        var level = 2
+        if (warn_code == undefined){
+            return level
+        } else if (localStorage.getItem(`warn_${warn_code}`) ) {
+            level = parseInt(localStorage.getItem(`warn_${warn_code}`))
+        } else {
+            Object.keys(warnings_data).forEach( (category) => {
+                Object.keys(warnings_data[category]).forEach( (sub_warn_code) => {
+                    if (warn_code == sub_warn_code){
+                        level = warnings_data[category][warn_code].level;
+                    }
+                })
+            })
+        }
+        if (this.getWarningFilterStatusFromCode(warn_code)){ return 0 }
+        return level
+    },
+
+    /**
+     * Return the filter status of a warning depending of the localstorage declaration
+     * If warn level is undefined, return false by default
+     * @param (string) warn_code The warning code to search
+     */
+    getWarningFilterStatusFromCode: function(warn_code){
+        if (warn_code == undefined){
+            return false
+        } else if (localStorage.getItem(`warn_filter_${warn_code}`) ) {
+            return localStorage.getItem(`warn_filter_${warn_code}`) === "true"
+        }
+        return false
+    },
+
+    /**
+     * Set the filter status of a warning by his warning code
+     * @param (string) warn_code The warning code to set
+     * @param (Boolean) status The status to set
+     */
+    setWarningFilterStatus: function(warn_code, status){
+        localStorage.setItem(`warn_filter_${warn_code}`, status)
+    },
+
+
+    getClonesWithWarningCode: function(warn_code, only_present=false){
+        var selection = [];
+
+        for (var i = 0; i < this.clones.length; i++) {
+            var clone = this.clones[i]
+            if (clone.haveWarning(warn_code) &&
+                (!only_present || (only_present && clone.getSize(this.t))) ){
+                    selection.push( i )
+            }
+        }
+        return selection
+    },
+
+    /**
+     * Allow to select all clone that have a warning with the specified code
+     * only_present arg allow to filter selection with clones that have at least one read for the current sample
+     **/
+    selectCloneByWarningCode: function(warn_code, only_present=false){
+        this.unselectAll()
+        var selection = this.getClonesWithWarningCode(warn_code, only_present);
+        this.multiSelect(selection)
+    },
+
+    /**
+     * For all presetn warning in localstorage, give the original value as setted in warnings_data
+     */
+    resetWarnings: function(){
+        var warnings_class = Object.keys(warnings_data)
+        for (var i = 0; i < warnings_class.length; i++) {
+            const warning_section = warnings_data[warnings_class[i]]
+            /* jshint ignore:start */
+            Object.keys(warning_section).forEach( (subwarn_code) =>{
+                var subwarn = warning_section[subwarn_code]
+                if (localStorage.getItem(`warn_${subwarn_code}`)){
+                    localStorage.setItem(`warn_${subwarn_code}`, subwarn.level)
+                }
+                this.setWarningFilterStatus(subwarn_code, false)
+            })
+            /* jshint ignore:end */
+        }
+        // reset menu
+        warnings.update()
+        console.default.log( "TODO - reset warnings level" )
+    },
+
+    exportSampleInfo: function(timeID){
+        convertContent = function( value ){
+            if (value[0] == header){
+                return [[], [value[1]]]
+            } else if (value[0] == row_1) {
+                return [[value[1], value[2]]]
+            } else if (value[0] == row_from_list) {
+                return [[value[1]].concat(value[2])]
+            }
+        }
+        var data = []
+        var values;
+
+        /// Table generic
+        values = this.getPointHtmlInfoDataGeneric(timeID)
+        for (var i = 0; i < values.length; i++) {
+            data = data.concat( convertContent(values[i]))
+        }
+
+        /// Table warnings
+        values = this.getPointHtmlInfoDataWarnings(timeID)
+        for (var j = 0; j < values.length; j++) {
+            data = data.concat( convertContent(values[j]))
+        }
+
+        var filename = `sample_${this.samples.names[timeID] != "" ? this.samples.names[timeID] : this.samples.original_names[timeID].split('\\').pop().split('/').pop()}.csv`
+        download_csv(data.join("\n"), filename)
+        return data
+    },
+
     /**
      * return info about a timePoint in html 
      * @param {integer} timeID - time/sample index
@@ -1542,32 +1797,158 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     getPointHtmlInfo: function (timeID) {
         var time_length = this.samples.order.length
         var html = ""
+        var locus, values, value
 
-        html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+")</h2>"
-        html += "<div id='info_timepoint'><table><tr><th></th>"
-        html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
-        html += "<tr><td> analyzed reads </td><td>" + this.reads.segmented_all[timeID] +
-            " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
+        html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+ this.getSampleTime(timeID)+") "
+        html += `<a class="button" id="download_info_sample_${timeID}" onclick="m.exportSampleInfo(${timeID})">download</a>`
+        html += "</h2>"
 
-        html += "<tr><td> analysis software </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
-        html += "<tr><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
-        html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
-        html += "<tr><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
+        /// Table generic
+        html += "<div id='info_timepoint'><table>"
+        values = this.getPointHtmlInfoDataGeneric(timeID)
+        for (var i = 0; i < values.length; i++) {
+            value = values[i]
+            html += value[0].apply(this, value.slice(1))
+        }
+        html += "</table></div>"
+
+
+        /// Table warnings
+        html += "<br/><div id='info_warnings'><table>"
+        values = this.getPointHtmlInfoDataWarnings(timeID)
+        for (var j = 0; j < values.length; j++) {
+            value = values[j]
+            html += value[0].apply(this, value.slice(1))
+        }
+        html += "</table></div>"
+
+
+        /// Table overlaps
+        if ( typeof this.overlaps != 'undefined') {
+            html += "<br/><h3>Overlaps index</h3>"
+            var overlaps_data = this.getPointHtmlInfoDataOverlap()
+            var overlap_links = {
+                "morisita": "https://en.wikipedia.org/wiki/Morisita%27s_overlap_index",
+                "jaccard": "https://en.wikipedia.org/wiki/Jaccard_index"
+            }
+            for (var key_overlap in this.overlaps) {
+                var overlap_name = key_overlap.charAt(0).toUpperCase() + key_overlap.slice(1);
+                html += "<h4 style='display:inline'>"+overlap_name+"'s index</h4>"
+                html += "<a title='Help link for "+overlap_name+"\'s index' class='icon-help-circled-1' target='_blank' href='"+overlap_links[key_overlap]+"' style='text-decoration: none;'></a>"
+                html += "<table class='info_overlaps' id='overlap_"+key_overlap+"'>"
+
+                values = overlaps_data[overlap_name]
+                for (var k = 0; k < values.length; k++) {
+                    value = values[k]
+                    html += value[0].apply(this, value.slice(1))
+                }
+                html += "</table>"
+            }
+        }
+        return html
+    },
+
+    /**
+     * Get data for warnings table
+     * @param {integer} timeID - time/sample index
+     * @return {string} array 
+     */
+    getPointHtmlInfoDataWarnings: function (timeID) {
+        var data = []
+        data.push([header, "Warnings", "warnings", 2])
+        data.push([row_from_list, "message", ["clones", "reads"], "", 2])
+        warnings_clones = this.getWarningsClonotypeInfo(timeID)
+        for (var w_type in warnings_clones) {
+            var warn = warnings_clones[w_type]
+            data.push([row_from_list, `${w_type}; ${warn.msg}`, [warn.clones.length, warn.reads], undefined, 2])
+        }
+        return data
+
+    },
+
+    /**
+     * Get data for overlaps table
+     * @return {string} array 
+     */
+    getPointHtmlInfoDataOverlap: function () {
+        var overlaps = {}
+        var dd;
+
+        if ( typeof this.overlaps != 'undefined') {
+            for (var key_overlap in this.overlaps) {
+                var data = []
+                var overlap_name = key_overlap.charAt(0).toUpperCase() + key_overlap.slice(1);
+                overlaps[overlap_name] = []
+                var overlap = this.overlaps[key_overlap]
+                dd = []
+                for (var posSample = 0; posSample < overlap.length; posSample++) {
+                    dd.push( this.getSampleName(posSample) )
+                }
+                overlaps[overlap_name].push([row_from_list, "", dd, undefined, overlap.length, "info_overlaps_line"])
+
+                for (posSample = 0; posSample < overlap.length; posSample++) {
+                    class_line = (posSample == this.t) ? "error" : undefined
+                    dd = []
+                    for (var j = 0; j < (overlap[posSample].length); j++) {
+                        dd.push( (j == posSample) ? "--" : overlap[posSample][j])
+                    }
+                    overlaps[overlap_name].push([row_from_list, this.getSampleName(posSample), dd, undefined, overlap.length, class_line])
+                }
+            }
+        }
+        return overlaps
+    },
+
+    /**
+     * Get data for generic information panel
+     * @param {integer} timeID - time/sample index
+     * @return {string} array 
+     * */
+    getPointHtmlInfoDataGeneric: function (timeID) {
+        var time_length = this.samples.order.length
+        var data = []
+        var locus
+
+        data.push([row_1, "reads", this.reads.total[timeID], 'info_timepoint_reads', 1])
+        var analyzed_reads = this.reads.segmented_all[timeID] + " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )"
+        data.push([row_1, "analyzed reads", analyzed_reads, 'info_timepoint_analyzed_reads', 1])
+
+        data.push([row_1, "analysis software", this.getSoftVersionTime(timeID),  'info_timepoint_analysis_software', 1])
+        data.push([row_1, "parameters",        this.getCommandTime(timeID),      'info_timepoint_parameters', 1])
+        data.push([row_1, "timestamp",         this.getTimestampTime(timeID),    'info_timepoint_timestamp', 1])
+        data.push([row_1, "analysis log",      "<pre>"+ this.getSegmentationInfo(timeID)+"</pre>", 'info_timepoint_log', 1])
 
         // 
         var colspan_header =  "colspan='"+(1+this.samples.number)+"'"
 
+        data.push([header, "Reads by locus", "reads_by_locus", 1])
+        for(locus in this.reads.germline){
+            data.push([row_from_list, `${locus}`, [this.reads.germline[locus][timeID]], `reads_by_locus_${locus}`, 1])
+        }
+
+
         // Sub-table diversity
         if ( typeof this.diversity != 'undefined') {
-            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
+            data.push([header, "Diversity indices", "diversity_indexes", 1])
             for (var key_diversity in this.diversity) {
-                html += "<tr><td> " + key_diversity.replace('index_', '') + "</td><td>" + this.getDiversity(key_diversity, timeID) + '</td></tr>'
+                var diversity = this.getDiversity(key_diversity, timeID)
+                if (typeof diversity == "string" || diversity == null){
+                    data.push([row_1, translate_key_diversity(key_diversity), diversity, `${key_diversity}`, 1])
+                } else if (typeof diversity == "object"){
+                    data.push([header, translate_key_diversity(key_diversity), key_diversity, (this.samples.number)])
+                    var present_locus = this.getLocusPresentInTop(timeID)
+                    for (locus in diversity) {
+                        if( present_locus.indexOf(locus) != -1 || locus == "all"){
+                            data.push([row_1, `${this.systemBox(locus).outerHTML} locus`, diversity[locus], `${key_diversity}_${locus}`, 1])
+                        }
+                    }
+                }
             }
         }
         if ( typeof this.samples.diversity != 'undefined' && typeof this.samples.diversity[timeID] != 'undefined') {
-            html += "<tr><td class='header' "+colspan_header+"> diversity </td></tr>"
+            data.push([header, "diversity", "diversity_indexes", 1])
             for (var k in this.samples.diversity[timeID]) {
-                html += "<tr><td> " + k.replace('index_', '') + "</td><td>" + this.samples.diversity[timeID][k].toFixed(3) + '</td></tr>'
+                data.push([row_1, k.replace('index_', ''), this.samples.diversity[timeID][k].toFixed(3), k.replace('index_', ''), 1])
             }
         }
 
@@ -1575,6 +1956,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if ( typeof this.samples.pre_process != 'undefined') {
 
             html_preprocess = "<tr><td class='header' "+colspan_header+"> Preprocess </td></tr>"
+            data.push([header, "Preprocess", "preprocess", (this.samples.number)])
             // order fct for preprocess
             sort_preprocess = function(a,b){
                 var order = ["producer", "run_timestamp", "commandline", "parameters", "input", "output", "stats"]
@@ -1598,61 +1980,33 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                             var subkey = value_keys[i]
                             var subval = value_pre[subkey]
                             if (subval[timeID] == null){ continue }
-                            html_preprocess += row_1(key+" - "+subkey, subval[timeID], undefined, time_length)
+                            data.push([row_1, key+" - "+subkey, subval[timeID], undefined, time_length])
                         }
                     }
                 }
             }
-            if (html_preprocess != "<tr><td class='header' "+colspan_header+"> Preprocess </td></tr>"){
-                html += html_preprocess
+
+        }
+        return data
+
+    },
+
+    /**
+     * Allow to know if a locus is present in clonotype of a sample
+     * include each clonotype of each clone inside the top limit and present with a least one read
+     * If a clone is share between sample, it will be present even in not in top limit of the sample (see fuse of top field)
+     */
+    getLocusPresentInTop: function(time){
+        var locus = []
+        for (var i = this.clones.length - 1; i >= 0; i--) {
+            var clone = this.clones[i]
+            if (clone.reads[time] && clone.top <= m.top){
+                if (locus.indexOf(clone.germline) == -1){
+                    locus.push(clone.germline)
+                }
             }
         }
-
-
-
-        html += "</table></div>"
-
-        if ( typeof this.overlaps != 'undefined') {
-            html += "<br/><h3>Overlaps index</h3>"
-
-            var overlap_links = {
-                "morisita": "https://en.wikipedia.org/wiki/Morisita%27s_overlap_index",
-                "jaccard": "https://en.wikipedia.org/wiki/Jaccard_index"
-            }
-            for (var key_overlap in this.overlaps) {
-                var overlap_name = key_overlap.charAt(0).toUpperCase() + key_overlap.slice(1);
-                html += "<h4 style='display:inline'>"+overlap_name+"'s index</h4>"
-                html += "<a title='Help link for "+overlap_name+"\'s index' class='icon-help-circled-1' target='_blank' href='"+overlap_links[key_overlap]+"' style='text-decoration: none;'></a>"
-                html += "<table class='info_overlaps' id='overlap_"+key_overlap+"'>"
-                var overlap = this.overlaps[key_overlap]
-                html += "<tr><td  class='header'></td>" // header with samples names
-                for (var posSample = 0; posSample < overlap.length; posSample++) {
-                    html += "<td  class='header'>"+this.getSampleName(posSample)+"</td>"
-                }
-                html += '</tr>'
-                for (posSample = 0; posSample < overlap.length; posSample++) {
-                    if (posSample == this.t){
-                        html += "<tr class='info_overlaps_line' >"
-                    } else {
-                        html += "<tr>"
-                    }
-                    html += "<td class='header'>"+this.getSampleName(posSample)+"</td>"
-                    values = overlap[posSample]
-                    for (var j = 0; j < (overlap[posSample].length); j++) {
-                        value = overlap[posSample][j]
-
-                        if (j == posSample){
-                            html += "<td class=''>" + "--" + '</td>'
-                        } else {
-                            html += "<td>" + value + '</td>'
-                        }
-                    }
-                    html += '</tr>'
-                }
-                html += "</table>"
-            }
-        }
-        return html
+        return Array.from( new Set(locus) )
     },
 
 
@@ -2169,6 +2523,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         } catch (e) {}
         
+        if (typeof date_min == "undefined") return "0"
+        
         return date_min
     },        
     
@@ -2188,14 +2544,38 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 }
             }
         } catch (e) {}
-        
+
+        if (typeof date_max == "undefined") return "0"
+
         return date_max
     },        
     
+    /*return TimeID of a given sample original_name
+    * return -1 if id does not exist
+    */
+    getTimeFromFileName(o_n){
+        for(var i in this.samples.original_names)
+            if (o_n == this.samples.original_names[i])
+                return i;
+
+        return -1
+    },
+
+    /*return TimeID of a given sample order value
+    * return -1 if id does not exist
+    */
+    getTimeFromOrder(o){
+        for(var i in this.samples.original_names)
+            if (o == parseInt(this.getStrTime(parseInt(i), "order")))
+                return parseInt(i);
+
+        return -1
+    },
+
     /**
      * return sample/time name in a specified format
      * @param {integer} timeID - sample/time index
-     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 
+     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 'order'
      * @return {string} sample name
      * */
     getStrTime: function (timeID, format){
@@ -2203,6 +2583,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         var result = "-/-"
 
         switch (format) {
+            case "order":
+                result = m.samples.order.indexOf(timeID)+1;
+                if (result == 0) result = "-/-";
+                break;
+            case "original_name":
+                result = this.samples.original_names[timeID]
+                break;
             case "name":
             case "names":
                 //TODO resolve thid hack
@@ -2257,7 +2644,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     /**
-     * 
+     * Add decimal separator for large number
      * */
     toStringThousands: function (num) {
         
@@ -2445,135 +2832,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.infoBox.style.display = "none";
         this.infoBox.lastElementChild.removeAllChildren();
     },
-
- 
-    /**
-     * open/build the tag/normalize menu for a clone
-     * @param {integer} cloneID - clone index
-     * */
-    openTagSelector: function (clonesIDs, e) {
-        var self = this;
-        this.tagSelectorList.removeAllChildren();
-        clonesIDs = clonesIDs !== undefined ? clonesIDs : this.clonesIDs; 
-        this.clonesIDs=clonesIDs
-
-        var buildTagSelector = function (i) {
-            var span1 = document.createElement('span');
-            span1.className = "tagColorBox tagColor" + i
-           
-            var span2 = document.createElement('span');
-            span2.className = "tagName" + i + " tn"
-            span2.appendChild(document.createTextNode(self.tag[i].name))
-
-            var div = document.createElement('div');
-            div.className = "tagElem"
-            div.id = "tagElem_" + i
-            div.appendChild(span1)
-            div.appendChild(span2)
-            div.onclick = function () {
-                for (var j = 0; j < clonesIDs.length; j++) {
-                    self.clone(clonesIDs[j]).changeTag(i)
-                }
-                $(self.tagSelector).hide('fast')
-            }
-
-            var li = document.createElement('li');
-            li.appendChild(div)
-
-            self.tagSelectorList.appendChild(li);
-        }
-
-        for (var i = 0; i < this.tag.length; i++) {
-            buildTagSelector(i);
-        }
-        
-        var separator = document.createElement('div');
-        separator.innerHTML = "<hr>"
-
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("normalize to: "))
-
-        
-        this.norm_input = document.createElement('input');
-        this.norm_input.id = "normalized_size";
-        this.norm_input.type = "text";
-        
-        var span2 = document.createElement('span');
-        span2.appendChild(this.norm_input)
-        
-        this.norm_button = document.createElement('button');
-        this.norm_input.id = "norm_button";
-        this.norm_button.appendChild(document.createTextNode("ok"))
-        
-        this.norm_button.onclick = function () {
-            var cloneID = self.clonesIDs[0];
-            var size = parseFloat(self.norm_input.value);
-            
-            if (size>0 && size<1){
-                self.set_normalization( self.NORM_EXPECTED )
-                $("#expected_normalization").show();
-                self.norm_input.value = ""
-                self.clone(cloneID).expected=size;
-                self.compute_normalization(cloneID, size)
-                self.update()
-                $(self.tagSelector).hide('fast')
-                $("expected_normalization_input").prop("checked", true)
-            }else{
-                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
-            }
-        }
-        this.norm_input.onkeydown = function (event) {
-            if (event.keyCode == 13) self.norm_button.click();
-        }
-        
-        var div = document.createElement('div');
-        div.id  = "normalization_expected_input_div"
-        div.appendChild(separator)
-        div.appendChild(span1)
-        div.appendChild(span2)
-        div.appendChild(this.norm_button)
-
-        var li = document.createElement('li');
-        li.appendChild(div)
-
-        this.tagSelectorList.appendChild(li);
-        
-        var string;
-        if (clonesIDs.length > 1){
-            string = "Tag for " + clonesIDs.length +  " clonotypes"
-        } else {
-            if (clonesIDs[0][0] == "s") cloneID = clonesIDs[0].substr(3);
-            string = "Tag for "+this.clone(clonesIDs[0]).getName()
-        }
-        this.tagSelectorInfo.innerHTML = string
-        $(this.tagSelector).show();
-        
-        
-        //replace tagSeelector
-        var tagSelectorH = $(this.tagSelector).outerHeight()
-        var minTop = 40;
-        var maxTop = Math.max(40, $(window).height()-tagSelectorH);
-        var top = e.clientY - tagSelectorH/2;
-        if (top<minTop) top=minTop;
-        if (top>maxTop) top=maxTop;
-        this.tagSelector.style.top=top+"px";
-
-        var tagSelectorW = $(this.tagSelector).outerWidth()
-        var maxLeft = $(window).width() - tagSelectorW;
-        var tmp = e.clientX;
-        if(typeof e.currentTarget !== 'undefined') {
-            tmp = e.currentTarget.offsetLeft + (e.currentTarget.offsetWidth/2);
-        }
-        var left = tmp + (tagSelectorW/2);
-        if (left>maxLeft) left=maxLeft;
-        this.tagSelector.style.left=left+"px";
-
-        // If multiple clones Ids; disabled normalization div
-        if (clonesIDs.length > 1) {
-            $("#"+div.id).addClass("disabledbutton");
-        }
-    },
-
 
     /**
      * load a new germline and update 
@@ -2859,169 +3117,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.updateIcon();
     },
     
-    
-    /* --------------------- */
-
-    
-   /*For DBSCAN*/
-    loadRandomTab: function() {
-        this.tabRandomColor = [];
-        /*Initialisation du tableau de couleurs*/
-        for (var h = 0; h < this.clones.length; h++) {
-            this.tabRandomColor.push(h);
-        }
-        /*Fisher yates algorithm to shuffle the array*/
-        for (var i = this.clones.length - 1; i >= 1; i--) {
-            var j = Math.floor(Math.random() * i) + 1;
-            var abs = this.tabRandomColor[i];
-            this.tabRandomColor[i] = this.tabRandomColor[j];
-            this.tabRandomColor[j] = abs;
-        }
-    },
-
-    /* Fonction permettant de charger la clusterisation avec DBSCAN, mais aussi de colorer les nodes 
-    directement après en fonction de cette clusterisation
-     *
-     */
-    loadDBSCAN: function(sp) {
-        if (typeof(sp) != "undefined") this.sp = sp;
-            this.dbscan = new DBSCAN(this.sp, this.eps, this.nbr);
-            this.dbscan.runAlgorithm();
-            for (var i = 0; i < this.dbscan.clusters.length; i++)
-                for (var j = 0; j < this.dbscan.clusters[i].length; j++)
-                    this.clones[this.dbscan.clusters[i][j]].cluster = i;
-            //Color DBSCAN
-            if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
-            this.colorNodesDBSCAN();
-            //Add information about the window (Noise, Core, ...)
-            this.addTagCluster();
-    },
-
-    /* Fonction permettant de colorer les nodes en fonction de la clusterisation DBSCAN
-    */
-    colorNodesDBSCAN: function() {
-        /*Adding color by specific cluster*/
-        /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, 
-        mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
-        var maxCluster = this.dbscan.clusters.length;
-        for (var i = 0; i < this.clones.length; i++) {
-            if (typeof(this.clone(i)) != 'undefined') {
-                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i)] + 1) ));
-            }
-            else
-                this.clone(i).colorDBSCAN = "";
-        }
-    },
-
-    /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, 
-    à l'extérieur ou appartenant à...
-     */
-    addTagCluster: function() {
-        for (var i = 0; i < this.clones.length; i++)
-            if (typeof(this.clone(i)) != 'undefined')
-                switch (this.dbscan.visitedTab[i].mark) {
-                case -1:
-                        this.clone(i).tagCluster = "NOISE";
-                        break;
-                case 0:
-                        this.clone(i).tagCluster = "CORE";
-                        break;
-                case 1:
-                        this.clone(i).tagCluster = "NEAR";
-                        break;
-                }
-            else
-                this.clone(i).tagCluster = null;
-    },
-
-    /*
-    // Fonction permettant de changer dynamiquement le nombre epsilon, pour DBSCAN
-    //
-    changeEps: function(newEps) {
-        //Modification de l'attribut 'Eps' contenu dans l'objet
-        this.eps = newEps;
-        //Prise en compte du slider
-        var html_container = document.getElementById('changeEps');
-        if (html_container != null) {
-            html_container.value = newEps;
-        }
-        //Création d'un nouvel objet DBSCAN
-        this.loadDBSCAN();
-        this.update();
-        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
-        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
-        //Changement de l'affichage de la valeur liée au slider
-        this.changeSliderValue(true, "DBSCANEpsSlider", "Eps ", this.eps);
-    },
-
-    // Fonction permettant de changer dynamiquement le nombre de voisins minimum, pour DBSCAN
-    //
-    changeNbr: function(newNbr) {
-        //Modification de l'attribut 'nbr' contenu dans l'objet
-        this.nbr = newNbr;
-        //Prise en compte du slider
-        var html_container = document.getElementById('changeNbr');
-        //Changement de la valeur du slider
-        if (html_container != null) {
-            html_container.value = newNbr;
-        }
-        //Création d'un nouvel objet DBSCAN
-        this.loadDBSCAN();
-        this.update();
-        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
-        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
-        //Changement de l'affichage de la valeur liée au slider
-        this.changeSliderValue(true, "DBSCANNbrSlider", "Nbr ", this.nbr);
-    },
-
-    */
-    /* Fonction permettant de changer dynamiquement la valeur d'affichage, à côté du slider Epsilon/MinPts dans le menu Display
-    */
-    changeSliderValue: function(bool, div, name, value) {
-        div = document.getElementById(div);
-        var text = document.createTextNode(name + value);
-        if (bool) {
-            //Suppression du précédent noeud
-            div.removeChild(div.childNodes[0]);
-        }
-        if (!bool) div.insertBefore(document.createElement('br'), div.firstChild);
-        div.insertBefore(text, div.firstChild);
-    },
-
-    /* Fonction permettant de changer dynamiquement la valeur d'affichage du slider "Edit Distance"
-    */
-    changeSliderEditDistanceValue: function(bool, value) {
-        var div = document.getElementById("EditDistanceSlider");
-        var text =  document.createTextNode("Distance: " + value);
-        if (!bool) {
-            div.removeChild(div.childNodes[0]);
-        }
-        else {
-            div.insertBefore(text, div.firstChild);
-        }
-    },
-    
-    /* put a marker on a specific edge, for the edit distance distribution
-     *
-     */
-    focusEdge: function(edge) {
-       $(".focus")
-            .text(this.printInformationEdge(edge));
-    },
-
-    /* remove the focus marker to the edge
-     *
-     */
-    removeFocusEdge: function() {
-        $(".focus")
-            .text("")
-    },
-
-    /* print informations of a specific edge
-     */
-    printInformationEdge: function(edge) {
-        return this.getName(edge.source)+" -- "+this.getName(edge.target)+" == "+edge.len;
-    },
 
     DEFAULT_SEGMENTER_URL: "https://dev.vidjil.org/vidjil/segmenter",
 
@@ -3032,11 +3127,14 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      */
     populatePrimerSet : function () {
       console.log("Model; populatePrimerSet()")
-      this.primersSetData = {"biomed2" : {}, "primer_fictif": {}, "primer_test": {}, "ecngs": {}, "ecngs_FR1": {} }
+
       // warning: Primer3 are in reverse complement state
       // WARNING: TRA & IGL are missing
 
       //  Primer Biomed2, can include degenerated sequences
+      this.primersSetData.biomed2.name  = "Primers Biomed2"
+      this.primersSetData.biomed2.title = "primers biomed2, publi XXX"
+      this.primersSetData.biomed2.source = "server"
       this.primersSetData.biomed2.TRD = {}; // TODO : init by defaultdict equivalent
       this.primersSetData.biomed2.TRD.primer5 = ["CAGCCAAATCCTTCAGTCTCAA", "CCCTGCATTATTGATAGCCAT", "ACCCTGCTGAAGGTCCTACAT", "ATGACCAGCAAAATGCAACAG", "GTACCGGATAAGGCCAGATTA", "ATACCGAGAAAAGGACATCTATG", "ATGCAAAAAGTGGTCGCTATT", "TTGTACCTCCAGATAGGTTCC", "CTCACGGGGCTCCACGAAGAG", "GTTCCACGATGAGTTGTGTTC", "GTTCCACAGTCACACGGGTTC"];
       this.primersSetData.biomed2.TRD.primer5.concat(["TGGGACCCAGGGTGAGGATAT", "AGCGGGTGGTGATGGCAAAGT"]); // D
@@ -3064,6 +3162,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
 
       // Primer ECNGS, can include degenerated sequences
+      this.primersSetData.ecngs.name  = "Primers ECNGS"
+      this.primersSetData.ecngs.title = "Primers ECNGS, publi XXX"
+      this.primersSetData.ecngs.source = "server"
+
       this.primersSetData.ecngs.IGH = {};
       this.primersSetData.ecngs.IGH.primer5  = ["CTGGGTGCGACAGGCCCCT", "CAGGCTCCTGGAAAAGGGCTTGA", "CCCCCGGACAAAGGCTTGA", "CCCGGACAAGCGCTTGAG", "CGACAGGCTCGTGGACAAC", "CGTCAGCCCCCAGGAAAGG", "CCGCCAGGCTCCAGGGAA", "ATGCACTGGGTCCGCCAAG", "CCAGGCTCCAGGAAAGGG", "GCCAGGCTCCCGGGAAGG", "CAGGCTCCAGGCAAGGGG", "ATGCACTGGGTCCGTCAAGC", "GCACTGGGTCTGCCAGGCTC", "CCAGGCTTCCGGGAAAGGG", "ATGCACTGGGTCCGGCAAG", "GGCAGCCCCCAGGGAAGG", "GCCAGCACCCAGGGAAGG", "CAGCCACCAGGGAAGGGCC", "AACTGGGTGCGACAGGCCAC", "CTGGGTGCGCCAGATGCC", "GAACTGGATCAGGCAGTCCC", "GGTTAGATCTGTCAGCCCTCAG", "ATGAGCTGGGTCCGCCAAG", "CTGGGTCCGCCAAGCTACAGGAAA", "GGTCCGCCAGGCTCCAGGGAA", "GGTCCGCCAAGCTCCAGGGAA", "TCCGCCAGCCCCCAGGGAAGG"]
       this.primersSetData.ecngs.IGH.primer5.concat(["GATTCYGAACAGCCCCGAGTCA", "GATTTTGTGGGGGYTCGTGTC", "GTTTGRRGTGAGGTCTGTGTCA", "GTTTRGRRTGAGGTCTGTGTCACT", "CTTTTTGTGAAGGSCCCTCCTR", "GTTATTGTCAGGSGRTGTCAGAC", "GTTATTGTCAGGGGGTGYCAGRC", "GTTTCTGAAGSTGTCTGTRTCAC"])
@@ -3092,18 +3194,52 @@ changeAlleleNotation: function(alleleNotation, update, save) {
       this.primersSetData.ecngs.TRG.primer3 = ["CTTTGGCAGTGGAACAACACT", "CAAGGTATTTGGTCCCGGAAC", "TATTTGCTGAAGGGACTAAGCTC", "CGTTTGCAAAAGGGACTAGG"] // complement
 
       // IGH FR1
+      this.primersSetData.ecngs_FR1.name  = "Primers ECNGS, IGH FR1 only"
+      this.primersSetData.ecngs_FR1.title = "Primers ECNGS, IGH FR1 only, publi XXX"
+      this.primersSetData.ecngs_FR1.source = "server"
       this.primersSetData.ecngs_FR1.IGH = {}
       this.primersSetData.ecngs_FR1.IGH.primer5  = ["CTGGGGCTGAGGTGAAGAAG", "GCAGTCTGGAGCAGAGGTGAAAA", "TCACCTTGAAGGAGTCTGGTCC", "AGGTGCAGCTGGTGGAGTC", "GAGGTGCAGCTGTTGGAGTC", "CCAGGACTGGTGAAGCCTTC", "CAGTGGGGCGCAGGACTGTT", "CCAGGACTGGTGAAGCCTCC", "GTACAGCTGCAGCAGTCAGG", "GCTGGTGCAATCTGGGTCTG", "CCTCAGTGAAGGTTTCCTGCAAGG", "AAACCCACAGAGACCCTCACGCTGAC", "CTGGGGGGTCCCTGAGACTCTCCTG", "CTTCACAGACCCTGTCCCTCACCTG", "TCGCAGACCCTCTCACTCACCTGTG"]
       this.primersSetData.ecngs_FR1.IGH.primer5.concat(["GATTCYGAACAGCCCCGAGTCA", "GATTTTGTGGGGGYTCGTGTC", "GTTTGRRGTGAGGTCTGTGTCA", "GTTTRGRRTGAGGTCTGTGTCACT", "CTTTTTGTGAAGGSCCCTCCTR", "GTTATTGTCAGGSGRTGTCAGAC", "GTTATTGTCAGGGGGTGYCAGRC", "GTTTCTGAAGSTGTCTGTRTCAC"])
       this.primersSetData.ecngs_FR1.IGH.primer3  = ["GGTCACCGTCTCCTCAGGTAAG", "GGTCACCGTCTCCTCAGGTGAG"] // complement
 
-      // test fictif; sequence inclut dans les sequences de clones
-      this.primersSetData.primer_fictif.TRD = {};
-      this.primersSetData.primer_fictif.TRD.primer5 = ["GATTTTACTCAAGGACGGTT", "GCAAAGAACCTGGCTGT", "AGATTTTACTCAAGGAC"] // V3, V2,
-      this.primersSetData.primer_fictif.TRD.primer3 = ["AGGAACCCGTGTGACT", "GAACACAACTCATCGTGGA", "GAACTGGCATCAAACTCTTC"] // J1, J2, J3
 
+      this.buildPrimersMenu()
     },
 
+    buildPrimersMenu: function(){
+        const self = this;
+        var menu   = document.getElementById("primerset_menu")
+        if (menu == undefined){ // case of unit testing
+            return
+        }
+        menu.innerHTML = "Primers sets<br/>"
+
+        primersSetData = Object.keys(this.primersSetData)
+        for (var i = 0; i < primersSetData.length; i++) {
+            const setname = primersSetData[i]
+            var setdata   = this.primersSetData[setname]
+
+            var label     = document.createElement("label")
+            label.htmlFor = "primers_"+setname
+            label.title   = setdata.title
+
+            label.innerHTML = `<input type="radio" id="${'primers_'+setname}" name="primers" value="${setname}">`
+            if (setdata.source == "server"){
+                label.innerHTML += setdata.name 
+            } else { // Add an icon to view source
+                label.innerHTML += "<i style='margin-right:6px;text-indent:0px;' class='icon-user-add' title='"+setdata.title+"'></i>"+setdata.name
+            }
+            label.classList = "buttonSelector"
+
+            menu.appendChild(label)
+            var input = document.getElementById('primers_'+setname)
+            input.onclick = function() { self.switchPrimersSet(setname)}
+            if (this.primerSetCurrent == setname ) {
+                input.checked = true
+            }
+
+        }
+    },
 
     /*
      * Generic function to add a feature based on sequence for each clones
@@ -3165,7 +3301,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.cleanPreviousFeature("primer3")
         for (var i = 0; i < this.system_available.length; i++) {
             var germline = this.system_available[i].replace("+", "")
-            if (this.primersSetData[this.primerSetCurrent][germline] != undefined){
+            if (this.primersSetData[this.primerSetCurrent] != undefined &&
+                this.primersSetData[this.primerSetCurrent][germline] != undefined){
                 primer5 = this.primersSetData[this.primerSetCurrent][germline].primer5
                 primer3 = this.primersSetData[this.primerSetCurrent][germline].primer3
 
@@ -3189,13 +3326,19 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             console.log("Primer set unknow")
             return 1
         } else {
-            document.body.style.cursor = 'wait';
-            this.primerSetCurrent = primersSet;
-            console.log("Current primer set : "+ this.primerSetCurrent)
-            this.switchPrimers();
-            console.log("Switch primers values : "+ this.primerSetCurrent)
-            this.update();
-            document.body.style.cursor = 'default';
+            var setname = this.primersSetData[primersSet].name
+            this.wait(`Computing primers positions: ${setname}`);
+            setTimeout(() => {
+                document.body.style.cursor = 'wait';
+                this.primerSetCurrent = primersSet;
+                console.log("Current primer set : "+ this.primerSetCurrent)
+                this.switchPrimers(setname);
+                console.log("Switch primers values : "+ this.primerSetCurrent)
+                this.update();
+                document.body.style.cursor = 'default';
+                this.resume();
+            }, 100);
+
             return 0
         }
     },
@@ -3573,7 +3716,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         for (var pos = 0; pos < selected.length; pos++) {
             var clone = this.clones[selected[pos]]
             for (var time = 0; time < clone.reads.length; time++) {
-                if (clone.reads[time] != 0 && list.indexOf(time) == -1) {
+                if (clone.getRawReads(time) != 0 && list.indexOf(time) == -1) {
                     list.push(time)
                 }
             }
@@ -3696,7 +3839,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             cloneIds = this.getSelected()
         }
         if (cloneIds.length == 0){
-            console.error( "Export "+file_format+": please select clones to be exported")
+            console.log({ msg: `Export ${file_format}: please select clones to be exported`, type: "flash", priority: 2 });
             return
         }
 
@@ -3717,5 +3860,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         download_csv(data, filename);
     },
 
+    /**
+     * Close all modal by clicking on close button
+     * Call at analysis loading to close all popup panel already present
+     */
+    closeOpenModal: function(){
+        $(".closeButton").each(function(){
+            if ($( this ).is(":visible")){
+                $( this ).click()
+            }
+        })
+    }
 
 }; //end prototype Model

@@ -19,14 +19,16 @@ and used by the *color by* menu.
 
 * **clone consensus length**: Length of the consensus sequence
 * **clone average read length**: Average length of the reads belonging to each clone
+* **primers**: Length of the consensus sequence between primers (inclusive), possibly interpolated, see [Working with primers](user.md#how-to-work-with-primers))
+
 * **clone consensus coverage**: Ratio of the length of the clone consensus sequence to the median read length of the clone. Coverage between .85 and 1.0 (or more) are good values. See [clone coverage](user.md#clone-coverage)
 * **GC content**: %GC content of the consensus sequence
 
 * **number of samples**: Number of samples sharing the clone
-* **tag**: Tag, as defined by the user with the `★` button in the [list of clones](user.md#the-list-of-clones-left-panel)
+* **tag**: Tag, as defined by the user with the `★` button in the [list of clones](user.md#the-list-of-clonotypes-left-panel)
 
 * **VIdentity IMGT**: V identity (as computed by IMGT/V-QUEST, availabe when the clonotypes have been submited there)
-
+* **V ratio**: coverage ratio of germline sequence of V segment. A complete coverage return 1.
 
 ### N-region / CDR3 analysis
 
@@ -43,11 +45,10 @@ following ERIC guidelines ([Rosenquist et al., 2017](https://www.ncbi.nlm.nih.go
 
 ## Other axes
 
-Some of these values requires to have some setup on some instances of the server.
+These values require to have some setup on some instances of the server.
 
 * **cloneDB occurrences**: number of occurrences in cloneDB
 * **cloneDB patients/runs/sets occurrences**:  "number of patients/runs/sets sharing clones in cloneDB
-* **primers**: interpolated length, between primers (inclusive)
 
 
 
@@ -76,9 +77,12 @@ Some of these values requires to have some setup on some instances of the server
 | size                     |    x         |      x     |          |
 | size (other sample)      |    x         |            |          |
 | number of samples        |    x         |      x     |          |
-| primers                  |    x         |            |          |
+| primers                  |    x         |      x     |          |
 | V/5' deletions in 3'     |    x         |            |          |
 | J/3' deletions in 5'     |    x         |            |          |
+| V/5' length              |    x         |            |          |
+| J/3' length              |    x         |            |          |
+| V/5' ratio               |    x         |            |          |
 | cloneDB occurrences      |    x         |            |          |
 | cloneDB patients/runs/sets occurrences| |            |          |
 

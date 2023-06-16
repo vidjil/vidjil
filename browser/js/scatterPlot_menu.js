@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -47,8 +47,9 @@ function ScatterPlot_menu(default_preset) {
         "number of deletions for the segment V/5 in 3" :{ "x": "V/5' del'",             mode: "bar"},
         "number of deletions for the segment J/3 in 5" :{ "x": "J/3' del'",             mode: "bar"},
         "Primers gap" :             { "x": "Primers gap",                               mode: "bar"},
-        "Similarity"    :           { "x" : "TSNEX",            "y": "TSNEY",           mode: "tsne"},
-        "Similarity (locus)":       { "x" : "TSNEX_LOCUS",      "y": "TSNEY_LOCUS",     mode: "tsne"}
+        "Similarity by nucleotides (locus)":    { "x" : "Similarity (CDR3, nucleotide)",   "y": "TSNEY_LOCUS_NT",  mode: "tsne"},
+        // "Similarity AA (locus)":    { "x" : "Similarity (CDR3, amino acid)",   "y": "TSNEY_LOCUS_AA",  mode: "tsne"}, // Uncomment after change of smiliarity CGI from local to global
+        "Locus sizes":              { "x": "Locus",              "y": "Size",           mode: "grid"}
     };
 
     this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset 
@@ -127,11 +128,14 @@ ScatterPlot_menu.prototype = {
 
         var element;
         for (var key in this.available_axis) {
-            var axisP = Axis.prototype.getAxisProperties(this.available_axis[key])
+            var axisP = new Axis(this.available_axis[key])
             if (typeof axisP.hide == "undefined" || !axisP.hide){
 
                 element = document.createElement("option");
+                element.id = `${this.id}_${axisP.name.replace(" ", "_").replace("/", "").replace("'", "")}`;
+                if (typeof axisP.class == "string") element.className = axisP.class
                 element.setAttribute('value', axisP.name);
+                element.title = axisP.getAxisDescrition();
                 element.appendChild(document.createTextNode( axisP.name));
 
                 this.select_x.appendChild(element);
@@ -148,12 +152,18 @@ ScatterPlot_menu.prototype = {
             self.changeYaxis();
             self.cancelPreset();
         }
+
+        // Comment while CSS error with opened select2 menu
+        // $(".axis_select_preset_select").select2();
+        // $("[name='select_x[]']").select2();
+        // $("[name='select_y[]']").select2();
     },
 
     initPreset: function(){
         var self=this;
 
         this.select_preset = $(this.menu).find("[name='select_preset[]']")[0];
+        this.select_preset.id = this.id+"_select_preset"
 
         var p = 0
         for (var i in this.preset) {
@@ -198,20 +208,6 @@ ScatterPlot_menu.prototype = {
             },
             stop: function( event, ui ) {
                 self.updateScaleY(ui.values);
-            }
-        });
-
-
-        this.slider_y = $(this.menu).find(".slider_y")[0];
-        this.slider_box_y = $(this.menu).find(".slider_box_y")[0];
-
-        $( this.slider_y ).slider({
-            range: true,
-            slide: function( event, ui ) {
-                self.updateDisplayY(ui.values);
-            },
-            stop: function( event, ui ) {
-                self.updateScaleY();
             }
         });
 

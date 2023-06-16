@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2017 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -381,6 +381,7 @@ List.prototype = {
         }
         this.updateElem(list);
         this.update_data_list()
+        this.updateElemStyle(list)
         
         // Apply selected sort function if no sort lock
         if (this.sort_lock == false){
@@ -410,6 +411,19 @@ List.prototype = {
             if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,this.m.t)
             if (val > 100) this.index_data[key].innerHTML = val.toFixed(0);
             if (val < 100) this.index_data[key].innerHTML = val.toPrecision(3);
+        }
+
+        for (var id = 0; id < this.m.clones.length; id++) {
+            var clone = this.m.clones[id]
+            span_info = document.getElementById("clone_infoBox_"+id)
+            span_info.innerHTML = ""
+            span_info.className = ""
+            if (clone.isWarnedBool() && clone.warnLevel()) {
+                span_info.className = clone.isWarned() ;
+                span_info.appendChild(icon('icon-warning-1', clone.warnText()));
+            } else {
+                span_info.appendChild(icon('icon-info', 'clonotype information'));
+            }
         }
     },
 
@@ -487,7 +501,10 @@ List.prototype = {
             if (!( (clone.isActive() && this.m.clusters[cloneID].length !== 0) || 
                 (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) !== -1)  )||
                 (!clone.isActive()) || 
-                (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]))){ // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
+                 (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1]) 
+                  // || (clone.axes != undefined && clone.axes.indexOf("germline") != -1 && this.system_selected.indexOf(clone.germline) != -1 )
+                 )){
+                  // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
                 
                 cloneDom.display("main", "none");
                 continue;
@@ -501,13 +518,18 @@ List.prototype = {
             if (cloneDom.getElement(divClass) == null) return false
 
             cloneDom.color(  divClass, clone.getColor());
-            cloneDom.content(divClass, clone.getShortName());
+            cloneDom.content(divClass, clone.getShortName().replace('<', '&lt;'));
             cloneDom.title(  divClass, clone.getNameAndCode());
             
             //update clone axis
             var axis = this.selectedAxis;
             cloneDom.color("axisBox", clone.getColor());
             cloneDom.content("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : axis.fct(clone))
+            if (axis.hover != undefined){
+                cloneDom.title( "axisBox", axis.hover(clone, this.m.getTime()))
+            } else {
+                cloneDom.title( "axisBox", "")
+            }
 
             //update cluster icon
             if (this.m.clusters[cloneID].length > 1) {
@@ -523,6 +545,14 @@ List.prototype = {
                 cloneDom.getElement("clusterBox").innerHTML = "<text> </text>";
                 if (this.m.clusters[cloneID].length < 2) display = false
                 document.getElementById("cluster"+cloneID).style.display = "none";
+            }
+
+            var info_list   = document.getElementById(`clone_infoBox_${clone.index}`)
+            var dom_content = clone.getWarningsDom()
+            if (info_list != null) {
+                info_list.classList = dom_content.className
+                info_list.firstChild.classList = dom_content.icon
+                info_list.firstChild.title = dom_content.title
             }
         }
     },
@@ -705,12 +735,15 @@ List.prototype = {
             var clusterDom = this.index_cluster[list[i]];
             var clone = this.m.clone(list[i])
 
-            if (!((clone.isActive() && this.m.clusters[list[i]].length !== 0) ||
-                  (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) != -1))){
+            if (!(clone.isActive() && this.m.clusters[list[i]].length !== 0)){
+                cloneDom.display("main", "none");
+            } else if (clone.hasSizeOther() && this.m.system_selected.indexOf(clone.germline) == -1){
                 cloneDom.display("main", "none");
             }else{
                 if (clone.hasSizeDistrib() && !clone.sameAxesAsScatter(this.m.view[1])){
                     // TODO: trouver une meilleur manière d'avoir le scatterplot entre els mains
+                    cloneDom.display("main", "none");
+                } else if (clone.hasSizeDistrib() && clone.germline != undefined && this.m.system_selected.indexOf(clone.germline) == -1){
                     cloneDom.display("main", "none");
                 } else if (!clone.isActive()){
                     cloneDom.display("main", "none");
@@ -746,7 +779,7 @@ List.prototype = {
      * */
     sortListBy:function(fct){
         self = this;
-        var list = jQuery('.list')
+        var list = jQuery('#list_clones > .list')
         var value = {};
         for (var i=0; i<list.length; i++){
             var id = list[i].getAttribute("id")
@@ -764,7 +797,7 @@ List.prototype = {
 
     sortListByGene: function(gene_type) {
         self = this;
-        var list = jQuery('.list')
+        var list = jQuery('#list_clones > .list')
         var sort = list.sort(function (a, b) {
             var idA = a.getAttribute("id");
             var idB = b.getAttribute("id");

@@ -1,6 +1,6 @@
  /* This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
@@ -37,6 +37,9 @@ var devel_mode = false;
  * */
 console = new Com(console)
 
+if (config.load_error){
+    console.log({"type": "flash", "msg": "Loading of conf.js has failed.<br/>Does this script exist?", "priority": 3});
+}
 
 /* Model
  * The model is the main object of the Vidjil browser.
@@ -91,7 +94,10 @@ try {
     var list_clones = new List("list", "data", m, db);   // List of clones
     var sp = new ScatterPlot("visu", m, db);             // Scatterplot (both grid and bar plot view)
     var sp2;
-    var segment = new Aligner("segmenter", m, db);   // Segmenter
+    var segment   = new Aligner("segmenter", m, db);      // Segmenter
+    var sp_export = new ScatterPlot("visu3", m, db, undefined, hidden=true);     // Scatterplot used for export render
+    var warnings  = new Warnings("warnings_list", m, db); // Warnings menu
+    m.warnings = warnings
 
 
     /* Similarity

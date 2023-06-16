@@ -118,10 +118,11 @@ def output():
 def download():
     sample_set_id = get_sample_set_id_from_results_file(request.vars["results_file_id"])
     if auth.can_view_sample_set(sample_set_id) and not '..' in request.vars['filename']:
-        results_id = int(request.vars["results_file_id"])
-        directory = defs.DIR_OUT_VIDJIL_ID % results_id
-        filepath = directory + request.vars['filename']
         try:
+            results_id = int(request.vars["results_file_id"])
+            directory  = defs.DIR_OUT_VIDJIL_ID % results_id
+            filepath   = directory + request.vars['filename']
+
             log.info("Downloaded results file", extra={'user_id': auth.user.id,
                 'record_id': request.vars["results_file_id"],
                 'table_name': "results_file"})

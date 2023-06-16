@@ -64,8 +64,13 @@ build_cypress_image:
 functional_browser_cypress_open:
 	# Need to create a symbolic link; but allow to directly see result
 	# Usefull for fast debugging; allow to launch script one by one
+	mv browser/js/conf.js browser/js/conf.js.bak  || true
 	ln -sf browser/test/cypress
+	ln -sf docker/ci/cypress.json
+	python tools/org-babel-tangle.py --all doc/vidjil-format.md && mv analysis-example* doc/
 	cypress open --env workdir=../,host=localhost
+	cp browser/js/conf.js.bak browser/js/conf.js || true
+
 
 functional_browser_cypress:
 	docker run \
@@ -73,21 +78,66 @@ functional_browser_cypress:
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
+		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.json" \
-		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:latest" bash script.bash
+		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:latest" bash script.bash "/app/cypress/integration/test_*.js"
 
+functional_tutorial_browser_cypress:
+	$(MAKE) -C doc/tutorial build_tutorial_cypress_client
+	docker run \
+		-v `pwd`/browser/test/cypress:/app/cypress \
+		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
+		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
+		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
+		-v `pwd`:/app/vidjil \
+		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
+		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
+		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.json" \
+		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:latest" bash script.bash "/app/cypress/integration/doc_*.js"
 
+functional_browser_external_cypress:
+	docker run \
+		-v `pwd`/browser/test/cypress:/app/cypress \
+		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
+		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
+		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
+		-v `pwd`:/app/vidjil \
+		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
+		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
+		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.json" \
+		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:latest" bash script.bash "/app/cypress/integration/external_*.js"
 
 functional_server_cypress_open:
 	ln -sf server/web2py/applications/vidjil/tests/cypress/ .
-	rm -r cypress/fixtures  cypress/plugins  cypress/support || true
+	rm -r cypress/fixtures  cypress/plugins  cypress/support  cypress.json || true
 	ln -sf ../../../../../../browser/test/cypress/fixtures cypress/fixtures
 	ln -sf ../../../../../../browser/test/cypress/plugins  cypress/plugins
 	ln -sf ../../../../../../browser/test/cypress/support  cypress/support
+	ln -sf docker/ci/cypress.json
+	python tools/org-babel-tangle.py --all doc/vidjil-format.md && mv analysis-example* doc/
 	cypress open --env workdir=../,host=local
+
+functional_tutorial_server_cypress:
+	$(MAKE) -C doc/tutorial build_tutorial_cypress_client
+	# Need to have a local server deploy with the ci data integrated
+	docker run \
+		-v `pwd`/browser/test/cypress:/app/cypress \
+		-v `pwd`/server/web2py/applications/vidjil/tests/cypress/integration:/app/cypress/integration \
+		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
+		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
+		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
+		-v `pwd`:/app/vidjil \
+		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
+		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
+		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.json" \
+		--network="host" \
+		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash "/app/cypress/integration/doc_*.js"
 
 functional_server_cypress:
 	# Need to have a local server deploy with the ci data integrated
@@ -97,12 +147,13 @@ functional_server_cypress:
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
+		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.json" \
 		--network="host" \
-		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash
+		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:latest" bash script.bash "/app/cypress/integration/test_*.js"
 
 ###############################
 

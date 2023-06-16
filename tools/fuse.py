@@ -200,7 +200,7 @@ class Window:
     def __add__(self, other):
         """Concat two windows, extending lists such as 'reads'"""
         #data we don't need to duplicate
-        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd"]
+        myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline", "mrd", "warn"]
         obj = Window(1)
         
         # 'id' and 'top' will be taken from 'topmost' clone
@@ -218,6 +218,14 @@ class Window:
                   "R2": [0],
                   "family": ["None"],
                    "norm_coeff": [0]}
+
+        if "warn" in self.d or "warn" in other.d:
+            obj.d["warn"] = []
+            for source in [self, other]:
+                if "warn" in source.d:
+                    for warn in source.d["warn"]:
+                        obj.d["warn"].append(warn)
+
         if "mrd" in self.d or "mrd" in other.d:
             if "mrd" in self.d:
                 first = self.d["mrd"]
@@ -561,12 +569,15 @@ class Diversity:
         for k in self.keys:
             if data == None or not (k in data):
                 self.d[k] = ["na"]
+            elif isinstance(data[k], list):
+                self.d[k]= data[k]
             else:
                 self.d[k]= [data[k]]
 
     def __add__(self, other):
         for k in self.keys:
             self.d[k].append(other.d[k][0])
+
         return self
 
     def __str__(self):
@@ -790,8 +801,13 @@ class ListWindows(VidjilJson):
         extension = file_path.split('.')[-1]
 
         with generic_open(file_path, "r", verbose) as f:
-            self.init_data(json.load(f, object_hook=self.toPython))
-            self.check_version(file_path)
+            try:
+                self.init_data(json.load(f, object_hook=self.toPython))
+                self.check_version(file_path)
+            except ValueError:
+                print("\n\nError at loading file %s.\nDid it is in correct vidjil format ?" % file_path)
+                exit(1)
+
 
         if pipeline: 
             # renaming, private pipeline
@@ -805,19 +821,27 @@ class ListWindows(VidjilJson):
                 print()
 
         time = os.path.getmtime(file_path)
-        self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
+        self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]*self.d["samples"].d["number"]
 
     def loads_vidjil(self, string, pipeline, verbose=True):
         '''init listWindows with a json string'''
-        self.init_data(json.loads(string, object_hook=self.toPython))
+        try:
+            self.init_data(json.loads(string, object_hook=self.toPython))
+        except ValueError:
+                print("\n\nError at loading file %s.\nDid it is in correct vidjil format ?" % file_path)
+                exit(1)
 
     def load_pre_process(self, file_path, verbose = True):
         '''init listWindows with the pre_process data file'''
-        with generic_open(file_path, 'r', verbose) as f:
-            json_data = json.load(f, object_hook=self.toPython)
+        try:
+            with generic_open(file_path, 'r', verbose) as f:
+                json_data = json.load(f, object_hook=self.toPython)
 
-            self.d['samples'].d['pre_process'] = json_data['pre_process']
-            self.d['reads'].d['merged'] = json_data['reads'].d['merged']
+                self.d['samples'].d['pre_process'] = json_data['pre_process']
+                self.d['reads'].d['merged'] = json_data['reads'].d['merged']
+        except ValueError:
+                print("\n\nError at loading file %s.\nDid it is in correct vidjil format ?" % file_path)
+                exit(1)
 
     def getTop(self, top):
         result = []
@@ -852,7 +876,7 @@ class ListWindows(VidjilJson):
         concatenate_with_padding(obj.d, 
                                  self.d, l1,
                                  other.d, l2,
-                                 ["clones", "links", "germlines",
+                                 ["clones", "links", "germlines", "warn",
                                   "vidjil_json_version"])
         
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
@@ -887,6 +911,22 @@ class ListWindows(VidjilJson):
                 obj.d["distributions"]["repertoires"][filename] = other.d["distributions"]["repertoires"][filename]
         except:
             pass
+
+        ### Warnings
+        if "warn" in self.d:
+            if ("warn" not in obj.d): 
+                obj.d["warn"] = []
+            for warn in self.d["warn"]:
+                if not "sample" in warn:
+                    warn["sample"] = l1-1
+                obj.d["warn"].append(warn)
+        if "warn" in other.d:
+            if ("warn" not in obj.d): 
+                obj.d["warn"] = []
+            for warn in other.d["warn"]:
+                if not "sample" in warn:
+                    warn["sample"] = l1
+                obj.d["warn"].append(warn)
 
         return obj
         
@@ -1617,22 +1657,28 @@ def exec_command(command, directory, input_file):
     Execute the command `command` from the directory
     `directory`. The executable must exist in
     this directory. No path changes are allowed in `command`.
-    
+    Multiple command can be chained with a '&&' separator
     Returns the output filename (a .vidjil). 
     '''
-    # split command
-    soft = command.split()[0]
-    args = command[len(soft):]
+    # split commands
+    calls = command.split("&&")
+    for call in calls:
+        call = call.strip()
+        soft = call.split()[0]
+        args = "" if soft == call else call[len(soft):]
+        print( "soft: '%s'; args: %s" % (soft, args))
 
-    assert (not os.path.sep in command), "No {} allowed in the command name".format(os.path.sep)
-    ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
+        # Security
+        assert (not os.path.sep in call), "No {} allowed in the command name".format(os.path.sep)
 
-    basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
-    com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
-    print("Preprocess command: \n%s" % com)
-    os.system(com)
-    print()
+        ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
+        basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
+        com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
+        print("Pre/Post process command: \n%s" % com)
+        os.system(com)
+        print()
+        input_file = ff.name # Continue process from new tmp file
     return ff.name
 
 
@@ -1666,8 +1712,10 @@ def main():
 
     group_options.add_argument('--pre', type=str,help='pre-process program (launched on each input .vidjil file) (needs defs.PRE_PROCESS_DIR). \
                                              Program should take arguments -i/-o for input of vidjil file and output of temporary modified vidjil file.')
+    group_options.add_argument('--post', type=str,help='post-process program (launched on fused .vidjil file) (needs defs.PRE_PROCESS_DIR). \
+                                             Program should take arguments -i/-o for input of vidjil file and output of temporary modified vidjil file.')
 
-    group_options.add_argument("--distribution", "-d", action='append', type=str, help='compute the given distribution; callable multiple times')
+    group_options.add_argument("--distribution", "-d", nargs='+', type=str, help='compute the given distribution; callable multiple times')
     group_options.add_argument('--distributions-all', '-D', action='store_true', default=False, help='compute a preset of distributions')
     group_options.add_argument('--distributions-list', '-l', action='store_true', default=False, help='list the available axes for distributions')
     group_options.add_argument('--no-clones', action='store_true', default=False, help='do not output individual clones')
@@ -1850,11 +1898,29 @@ def main():
         del jlist_fused.d["clones"]
 
     print("### Save merged file")
+
+
+    if args.post:
+        print("Post-processing files...")
+        jlist_fused.save_json(args.output)
+        post_out_name = exec_command(args.post, PRE_PROCESS_DIR, args.output)
+        # reload post processed file
+        jlist_fused = ListWindows()
+        jlist_fused.load(post_out_name, args.pipeline)
+        jlist_fused.build_stat()
+        os.system("rm %s" % post_out_name)
+
     if args.export_airr:
-        output= args.output.replace(".vidjil", ".airr")
+        output = args.output.replace(".vidjil", ".airr")
         jlist_fused.save_airr(output)
     else:
+        output =  args.output
         jlist_fused.save_json(args.output)
+
+    # Clean pre fuse temp files
+    if args.pre:
+        for filein in pre_processed_files:
+            os.system("rm %s" % filein)
     
     
     

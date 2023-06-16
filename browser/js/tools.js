@@ -191,14 +191,27 @@ function tsvToArray(allText) {
 
     for (var i = 1; i < allTextLines.length; i++) {
         var data = $.trim(allTextLines[i]).split('	');
-        if (data.length == headers.length) {
-            var tarr = {};
-            for (var j = 0; j < headers.length; j++) {
-                if (headers[j] !== "") {
-                    tarr[headers[j]] = data[j];
+        var tarr = {};
+        switch (data.length) {
+            case headers.length:
+                // imgt prodcuced a complete results -> copy each columns
+                for (var j = 0; j < headers.length; j++) {
+                    if (headers[j] !== "") {
+                        tarr[headers[j]] = data[j];
+                    }
                 }
-            }
-            lines.push(tarr);
+                lines.push(tarr);
+                break;
+            case 1:
+                // empty data line -> do nothing
+                break;
+            default:
+                // imgt returned no results or incomplete results for a sequence 
+                // -> copy only first two column (Sequence number + ID)
+                tarr[headers[0]] = data[0];
+                tarr[headers[1]] = data[1];
+                lines.push(tarr);
+                break;
         }
     }
     return lines;
@@ -442,6 +455,25 @@ function append_to_object(data, append_to) {
     }
 }
 
+/**
+ * Allow to copy passed content into the clipboard
+ */
+function copyTextToClipboard(text, field, elem) {
+    if (!navigator.clipboard) {
+        console.log({ msg: "Unable to copy content into clipboard. Maybe cause by an old browser", type: "flash", priority: 3 });
+        return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+        var msg_field = (field != undefined) ? ` field: <B>${field}</B>` : ""
+        console.log({ msg: 'Copied '+msg_field, type: "flash", priority: 1 });
+        elem.title = 'Copied!'
+        setTimeout(function() { elem.title = "Copy to clipboard"}, 3000);
+
+    }, function(err) {
+        console.log({ msg: 'Could not copy to clipboard: '+ err, type: "flash", priority: 2 });
+    });
+}
+
 
 /**
  * Floor the given number to a power of 10
@@ -527,7 +559,24 @@ function nice_floor(x, force_pow10)
     }
 }
 
-
+/**
+ * Return 1 if array A is "bigger" than array B, else -1 if it is smaller, and 0 is there are equal
+ */
+function compareNumericalArrays(arrA, arrB){
+    for (var i = 0; i < arrA.length; i++) {
+        if (arrB[i] == undefined) {
+            return 1
+        }
+        if (arrA[i] > arrB[i]){
+            return 1
+        }
+        if (arrA[i] < arrB[i]){
+            return -1
+        }
+        // else should be equal, so continue for one more depth
+    }
+    return 0
+}
 
 
 
@@ -639,6 +688,14 @@ warnLevels = {
 }
 
 warnTexts = { }
+warnText  = {
+    0: "",
+    1: "warn",
+    2: "alert",
+    3: "error",
+    4: "fatal",
+    5: "ok"
+}
 
 for (var key in warnLevels) {
     warnTexts[warnLevels[key]] = key ;
@@ -790,12 +847,20 @@ function fixDuplicateNames(names){
  * @param  {String} content Clones as fasta format
  */
 function openAndFillNewTab (content){
-    var w = window.open("", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
+    var w = window.open("", postTarget(), "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
     
     var result = $('<div/>', {
         html: content
     }).appendTo(w.document.body);
     return
+}
+
+/**
+ * Return a copy of the given object
+ */
+function copyHard(obj){
+    if (obj == undefined){return undefined}
+    return JSON.parse(JSON.stringify(obj))
 }
 
 /**
@@ -938,30 +1003,107 @@ function download_csv(csv, filename) {
 }
 
 
+function translate_key_diversity(key_diversity){
+    var table = {
+        "index_H_entropy" :      "Shannon's diversity",
+        "index_E_equitability" : "Pielou's evenness",
+        "index_Ds_diversity" :   "Simpson's diversity"
+    }
+    return table[key_diversity]
+}
+
+/**
+ * Get relative zindex of an element, as a list of zindexs by depth from parents to children
+ * Return null if element is not visible
+ */
+function getRelativeZindex(elem){
+    if (!$(elem).is(":visible")){
+        return null
+    }
+
+    var body = document.getElementsByTagName("body")[0]
+    var getZindex = (elem) => {return window.getComputedStyle(elem).zIndex}
+    var zindexs   = []
+
+    while (elem != body){
+        if (Number.isInteger( parseFloat(getZindex(elem)))) {
+            zindexs.unshift( parseFloat(getZindex(elem)) )
+        }
+        elem = elem.parentNode
+    }
+    return zindexs
+}
+
 ///////////////////////////
 /// Fct to fill info table
 ///////////////////
 var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
         
-var header = function(content, title, time_length) {
+/**
+ * Create a header line for info table
+ *  @param {String} content - String to show in the header
+ *  @param {string} title - Specific DOM id to give to the line
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ */
+var header = function(content, title, time_length, class_line, class_cell) {
+    class_line = class_line != undefined ? `class='${class_line}'` : ""
+    class_cell = class_cell != undefined ? `class='${class_cell} header'` : "class='header'"
     title = (title == undefined) ? clean_title(content) : clean_title(title)
-    return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ; 
+    return `<tr id='modal_header_${title}' ${class_line}><td ${class_cell} colspan='${(time_length + 1)}'>${content}</td></tr>` ; 
 }
-var row_1  = function(item, content, title, time_length) { 
-    title = (title == undefined) ? clean_title(item) : clean_title(title)
-    return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ; 
+
+/**
+ * Create a table row with given content
+ *  @param {} item - Content of the first cell of the line
+ *  @param {} content - content to show on the second cell of the line (value)
+ *  @param {string} title - Specific title id to give as extension of the DOM id of the line; can be undefined
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ */
+var row_1  = function(item, content, title, time_length, class_line, class_cell_first, class_cell_other, allow_copy=false) {
+    class_line = class_line != undefined ? `class='${class_line}'` : ""
+    class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
+    class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
+    title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
+    var copy = ""
+    if (allow_copy == true) {
+        copy = "<i class='icon-docs' style='cursor: copy' "+
+                   `id='modal_line_title_${title}_clipboard' `+
+                   `onclick='copyTextToClipboard("${content}", "${item}", this)' `+
+                   "title='Copy to clipboard'>"+
+               "</i>"
+    }
+    return `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}${copy}</td><td ${class_cell_other} colspan='${time_length}' id='modal_line_value_${title}'>${content}</td></tr>`;
 }
-var row_from_list  = function(item, content, title, time_length) { 
+
+/**
+ * Create a html row element from given item and list of values
+ *  @param {String} item - Content of first row of the line
+ *  @param {} content - Array of value to put on each other cells of the line
+ *  @param {string} title - Specific title id to give to the line
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ */
+var row_from_list  = function(item, content, title, time_length, class_line, class_cell_first, class_cell_other) { 
+    class_line = class_line != undefined ? `class='${class_line}'` : ""
+    class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
+    class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
     title = (title == undefined) ?clean_title(item) : clean_title(title)
-    var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+    var div = `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}</td>`
     for (var i = 0; i < content.length; i++) {
         col  = content[i]
-        div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+        div += `<td ${class_cell_other} id='modal_line_value_${title}_${i}'>${col}</td>`
     }
     div += "</tr>" ;
     return div;
 }
 
+
+/**
+ * Create cell content by casting given parameter to be showable in table
+ *  @param {string} title - Specific title id to give to the line
+ *  @param {} content - Content that will be automatically casted
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ *  @param {} clone 
+ */
 var row_cast_content = function(title, content, time_length, clone) {
     if (content == undefined) {
         return ""

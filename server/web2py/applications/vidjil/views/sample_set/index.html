@@ -98,7 +98,7 @@
                        {{if config_id > 0 and auth.can_use_config(config_id) :}}
                        {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
                               {{ launch_sequence_files = [ int(row.sequence_file.id) for row in query ] }}
-                              <span class="pointer devel-mode" 
+                              <span class="pointer devel-mode" id="launch_all_samples_{{=config_id}}"
                                onclick="db.call('default/run_all_request', {'sequence_file_ids' : {{=launch_sequence_files}}, 'sample_set_id': {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } ) "
                               ><i class="icon-cog-2" title="Run the selected configuration for all samples">
                                </i></span>
@@ -112,7 +112,7 @@
                               {{ launch_sequence_files = [int(row.sequence_file.id) for row in query if row.results_file.status in ["FAILED",'']] }}
                            {{pass}}
                               {{ if len(launch_sequence_files) > 0: }}
-                               <span class="pointer" 
+                               <span class="pointer" id="launch_all_unanalyzed_samples_{{=config_id}}"
                                      onclick="db.call('default/run_all_request', { 'sequence_file_ids' : {{=launch_sequence_files}}, 'sample_set_id': {{=request.vars["id"]}}, 'config_id' : {{=config_id}}} )">
                                  <i class="icon-cog-2" title="Run the selected configuration for all samples not already analysed or failed">
                                  </i>
@@ -142,7 +142,7 @@
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
                     {{ has_pre_process = row.sequence_file.pre_process_id != None}}
                     {{if has_shared_sets:}}
-                    <td>
+                     <td> <!--create flaky cypress test; should be always present ? -->
                       <!-- Select set with this sample -->
                       {{ for sample_set in row.list_share_set:}}
                           <!-- Show values -->
@@ -188,11 +188,13 @@
                     {{pass}}
 
                     {{if row.results_file.id:}}
-                        {{if row.sequence_file.pre_process_flag in ["RUN", "WAIT"] :}}
-                            <td> PREPROCESSING </td>
-                        {{ else:}}
-                            <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=status}} </td>
-                        {{ pass}}
+                        <td id="status_{{=row.sequence_file.id}}_{{=config_id}}"
+                            {{if row.sequence_file.pre_process_flag in ["RUN", "WAIT"] :}}
+                                > PREPROCESSING
+                            {{ else:}}
+                                class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=status}} 
+                            {{ pass}}
+                         </td>
 
                      <td>
                         {{if row.results_file.data_file:}}
@@ -200,19 +202,23 @@
                                type="application/octet-stream"><i class="icon-down" title="Download result file"></i></a>
                         {{pass}}
                      </td>
-                     <td {{if status in ["COMPLETED", "FAILED"]:}} class="pointer" onclick="db.call('results_file/output', { 'results_file_id' : '{{=row.results_file.id}}' }) " {{else:}} class="inactive" {{pass}}><i class="icon-docs" title="See the output files"></i></td>
+                     <td 
+                         {{if status in ["COMPLETED", "FAILED"]:}} class="pointer" onclick="db.call('results_file/output', { 'results_file_id' : '{{=row.results_file.id}}' }) " 
+                         {{else:}} class="inactive" {{pass}}>
+                         <i class="icon-docs" title="See the output files"></i>
+                     </td>
                     {{if can_modify and auth.can_process_sample_set(request.vars['id']):}}
                      <td id="delete_process_{{=row.sequence_file.id}}" class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}', 'sample_set_id': '{{=request.vars["id"]}}'})" >  <i class="icon-erase" title="delete process"></i> </td>
                     {{else:}}
                      <td></td>
                     {{pass}}
                    {{else:}}
-                     <td></td><td></td><td></td><td></td>
+                     <td  id="status_{{=row.sequence_file.id}}_{{=config_id}}"></td><td></td><td></td><td></td>
                    {{pass}}
-                   <td>
+                   <td >
                    {{if row.sequence_file.data_file != None and ( row.results_file.id != None or ( status not in ["RUNNING", "QUEUED", "ASSIGNED"]) ) and (not has_pre_process or (row.sequence_file.pre_process_flag != None and row.sequence_file.pre_process_flag != "FAILED")) :}}
                        {{if auth.can_process_sample_set(request.vars['id']) and (config_id > 0 and auth.can_use_config(config_id)) :}}
-                           <span class="pointer" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"><i class="icon-cog-2" title="Run a process with the selected configuration for this file"></i></span>
+                           <span class="pointer" id="launch_{{=row.sequence_file.id}}_{{=config_id}}" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"><i class="icon-cog-2" title="Run a process with the selected configuration for this file"></i></span>
                        {{pass}}
                    {{pass}}
                    </td>
@@ -294,6 +300,7 @@
         
               
                 <a class="button2" href="{{=http_origin}}?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
+                   id="result_sample_set_id_{{=request.vars["id"]}}_config_{{=row.config.id}}"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >
@@ -311,9 +318,9 @@
     <div class="db_block_right">
         {{if fused_file is not None :}}
             download {{=db.config[config_id].name}}
-            <a class="button" href={{=URL('default', 'get_data', scheme='https', vars=dict(sample_set_id = request.vars['id'], config = request.vars['config_id'], filename=vidjil_utils.safe_encoding(fused_filename)))}}> .vidjil </a>
+            <a class="button" href={{=URL('default', 'get_data', scheme='https', vars=dict(sample_set_id = request.vars['id'], config = config_id, filename=vidjil_utils.safe_encoding(fused_filename)))}}> .vidjil </a>
             {{if analysis_count >0:}}
-            <a class="button" href={{=URL('default', 'get_analysis', scheme='https', vars=dict(sample_set_id = request.vars['id'], config = request.vars['config_id'], filename=vidjil_utils.safe_encoding(analysis_filename)))}}> .analysis </a>
+            <a class="button" href={{=URL('default', 'get_analysis', scheme='https', vars=dict(sample_set_id = request.vars['id'], config = config_id, filename=vidjil_utils.safe_encoding(analysis_filename)))}}> .analysis </a>
             {{pass}}
         {{pass}}
     </div>

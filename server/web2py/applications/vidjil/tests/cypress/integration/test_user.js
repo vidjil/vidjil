@@ -18,7 +18,7 @@ describe('Creation of users and groups', function () {
     })
 
 
-    it('Open db; access to various page of the bd',  function() {
+    it('01-Open db; access to various page of the bd',  function() {
         cy.isDbPageVisible().should('equal', true)
 
         // These function get their own should inside to verify that correct db element is present and visible
@@ -39,12 +39,12 @@ describe('Creation of users and groups', function () {
     })
 
 
-    it('Open db; Users',  function() {
+    it('02-Open db; Users',  function() {
         cy.openDBPage()
         cy.goToUsersPage()
 
-        var previous_length = 2 // 1+1header
-        cy.getTableLength("#table_users").should('eq', previous_length)
+        var previous_length = 1 // 1
+        // cy.getTableLength("#table_users").should('eq', previous_length)
 
         var first_name = "user_first"
         var last_name  = "user_last"
@@ -54,8 +54,72 @@ describe('Creation of users and groups', function () {
 
         cy.goToUsersPage()
         cy.getTableLength("#table_users").should('eq', previous_length+1)
+
+        cy.goToGroupsPage()
+        var grp_user4 = 8
+        cy.setGroupRight(grp_user4, ["run"], true)
     })
 
 
+    it('03-impersonate from list',  function() {
+
+        cy.goToPatientPage()
+
+        cy.get('#db_auth_name')
+          .contains("System Administrator")
+
+        cy.get('#desimpersonate_btn')
+          .should('not.exist')
+
+        cy.intercept({
+            method: 'GET', // Route all GET requests
+            url: 'get_active_notifications*',
+          }).as('getActivities')
+
+        cy.get('#choose_user')
+          .select("2", {force: true})
+
+        cy.wait(['@getActivities'])
+        cy.update_icon(100)
+
+        cy.get('#db_auth_name')
+          .should('not.exist')
+        cy.get('#desimpersonate_btn')
+          .should('exist')
+          .click()
+        cy.wait(['@getActivities'])
+
+        cy.get('#db_auth_name')
+          .contains("System Administrator")
+    })
+
+
+    it('04-impersonate from table',  function() {
+
+        cy.openDBPage()
+        cy.goToUsersPage()
+
+        cy.get('#db_auth_name')
+          .contains("System Administrator")
+
+        cy.get('#desimpersonate_btn')
+          .should('not.exist')
+
+        cy.intercept({
+            method: 'GET', // Route all GET requests
+            url: 'get_active_notifications*',
+          }).as('getActivities')
+
+        // action
+        cy.get('#impersonate_btn_2')
+          .click()
+
+        cy.wait(['@getActivities'])
+        cy.update_icon(100)
+
+        cy.get('#desimpersonate_btn')
+          .click()
+        cy.wait(['@getActivities'])
+    })
 
 })

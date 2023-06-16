@@ -20,8 +20,8 @@ QUnit.test("grid", function(assert) {
                                         "IGH": {"x": 0.92,"y": 0.75},
                                         "TRG": {"x": 0.92,"y": 0.25}, 
                                         "label": [
-                                                    {"enabled": true,"text": "TRG","x": 0.81,"y": 0.25 },
-                                                    {"enabled": true,"text": "IGH","x": 0.80,"y": 0.75}
+                                                    {"enabled": true,"id": "visu_id_label_TRG","text": "TRG","x": 0.81,"y": 0.25 },
+                                                    {"enabled": true,"id": "visu_id_label_IGH","text": "IGH","x": 0.80,"y": 0.75}
                                                  ]
                                     }, 
                                     "buildSystemGrid()");

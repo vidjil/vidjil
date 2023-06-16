@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
@@ -189,7 +189,7 @@ Info.prototype = {
                     'info');
             parent.appendChild(div_sequence_info);
 
-            this.builder.initTag();
+            this.m.tags.update()
         } catch(err) {
             sendErrorToDb(err, this.db);
         }
@@ -390,6 +390,7 @@ Info.prototype = {
 
             var span = document.createElement('span');
             span.className = "systemBoxNameMenu "+key;
+            span.id = "toogleLocusSystemBox_"+key;
             if (this.m.system_selected.indexOf(key) == -1)
                 span.className = "systemBoxNameMenu unchecked " + key;
             span.appendChild(span_system);
@@ -558,6 +559,7 @@ Info.prototype = {
         spantag.className = "tagColorBox";
         spantag.style.backgroundColor = l.color;
         spantag.title = l.text;
+        spantag.id    = "tag_" + l.text.replace(/\s/g, "_").replace(/\//g, "_")
         spantag.setAttribute('value', key);
 
         if (this.m.filter.check(axis.name, "=", key) >=0)
@@ -570,6 +572,9 @@ Info.prototype = {
             spantag.style.width = boxWidth
             spantag.style.margin = "1px"
         }
+
+        if (l.text == 'dominant clonotype' || l.text == 'clonotype 5' || l.text == 'dimer' || l.text == 'custom 3')
+            spantag.style.marginRight = "12px";
 
         spantag.onclick = function(){
             var v = this.getAttribute('value')

@@ -38,11 +38,15 @@ Sequence.prototype = {
         if (typeof str === 'undefined') {
 
             //this is a clone sequence
-            if (!isNaN(this.id)) 
+            if (!isNaN(this.id)){
                 if (typeof this.m.clone(this.id).sequence == 'undefined' || this.m.clone(this.id).sequence === 0) 
                     str = this.m.clone(this.id).id;
                 else
-                    str = this.m.clone(this.id).sequence;      
+                    str = this.m.clone(this.id).sequence;
+            }
+            else{
+                str = this.seq.join('').replace(/\–/g, "")
+            }
         }
         str = str.replace(/\-/g, SYMBOL_VOID);
         this.seq = str.split("");
@@ -255,7 +259,6 @@ Sequence.prototype = {
 
     toString: function(div) {
         if (typeof this.div == "undefined") this.div = div;
-        this.updateLetterSpacing();
         this.updateLayers();
     },
 
@@ -541,7 +544,7 @@ Sequence.prototype = {
                 try{
                     text = l.text(this, this.m.clone(this.id));
                     if (typeof text == "string") { 
-                        div_layer.innerHTML = l.text(this, this.m.clone(this.id));
+                        div_layer.innerHTML = text.replace('\t','-');
                     }else {
                         div_layer.innerHTML = "";
                         div_layer.append(text);
@@ -582,21 +585,69 @@ Sequence.prototype = {
         }
     },
 
-    updateLetterSpacing: function(){
+    updateLetterSpacing: function(l_spacing){
         var div_nuc = this.div.getElementsByClassName("seq_layer_test")[0];
-        div_nuc.style.letterSpacing = "0px";
+        
+        if (typeof l_spacing == "undefined"){
 
-        var size = 1000;
-        var text = "";
-        for (var i = 0; i < size; i++) text+="A";
-        var div = document.createElement("div");
-        div.style.display = "block";
-        div.textContent = text;
-        div_nuc.appendChild(div);
-        this.c_size = div.offsetWidth/size;
-        div_nuc.removeChild(div);
-        this.l_spacing = CHAR_WIDTH - this.c_size;
+            div_nuc.style.letterSpacing = "0px";
 
-        div_nuc.style.letterSpacing = this.l_spacing+"px";
+            var size = 1000;
+            var text = "";
+            for (var i = 0; i < size; i++) text+="A";
+            var div = document.createElement("div");
+            div.style.display = "block";
+            div.textContent = text;
+            div_nuc.appendChild(div);
+            this.c_size = div.offsetWidth/size;
+            div_nuc.removeChild(div);
+            this.l_spacing = CHAR_WIDTH - this.c_size;
+
+            div_nuc.style.letterSpacing = this.l_spacing+"px";
+        }
+        else{
+            if (l_spacing == this.l_spacing) return this.l_spacing;
+            this.l_spacing = l_spacing;
+            div_nuc.style.letterSpacing = this.l_spacing+"px";
+        }
+        return this.l_spacing;
+    },
+
+    // return a list of external services (IMGT / CloneDB) data required to display enabled layers
+    needRefresh: function(){
+        var refreshList = []
+
+        // check enabled layers
+        for (var i in this.layers){
+            var l = this.layers[i];
+            var r = false
+            if (l.enabled && typeof l.refresh != 'undefined')
+                try{
+                    r = l.refresh(this.m.clone(this.id));
+                }catch(e){
+                    r = false;
+                }
+            
+            if (typeof r == 'string' && refreshList.indexOf(r) ==-1) 
+                refreshList.push(r)
+        
+        }
+
+        // check select axis info
+        for (var j in this.segmenter.selectedAxis){
+            var a = this.segmenter.selectedAxis[j];
+            var r2 = false
+            if (a.refresh != 'undefined')
+                try{
+                    r2 = a.refresh(this.m.clone(this.id));
+                }catch(e){
+                    r2 = false;
+                }
+            
+            if (typeof r2 == 'string' && refreshList.indexOf(r2) ==-1) 
+                refreshList.push(r2)
+        
+        }
+        return refreshList
     },
 };

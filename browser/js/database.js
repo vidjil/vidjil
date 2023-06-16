@@ -138,8 +138,8 @@ Database.prototype = {
 			  'grep_reads': window},
 			 function(a) {
 				// Link to result file and launch download
-                             var path_data = DB_ADDRESS+"/results_file/download?filename=seq/clone.fa-1&results_file_id="+a.result_id
                              var file_name = "reads__"+clone_id+"__file_id_"+"_"+sequence_file_id+".fa"
+                             var path_data = DB_ADDRESS+"/default/download/"+a.data_file+"?filename="+file_name
                              var anchor = document.createElement('a');
                              anchor.setAttribute("download", file_name);
                              anchor.setAttribute("href",     path_data);
@@ -253,6 +253,9 @@ Database.prototype = {
             url += "?" + arg;
         }
 
+        //hack to process both web2py and py4web redirected url
+        url = url.replace("vidjil/vidjil", "vidjil")
+        url = url.replace("vidjil//vidjil", "vidjil")
         
         this.callUrl(url, args)
     },
@@ -344,7 +347,7 @@ Database.prototype = {
      * Send the given clones to CloneDB
      * @param {int list} clones - list of clones (if undefined, call on all clones)
      * */
-    callCloneDB: function(clones) {
+    callCloneDB: function(clones, callback) {
 
         if (typeof clones === 'undefined')
         {
@@ -353,8 +356,8 @@ Database.prototype = {
 
         console.log("Send to cloneDB: " + clones)
         var windows = [];
-	var self = this;
-	var kept_clones = [];
+        var self = this;
+        var kept_clones = [];
         for (var i = 0; i < clones.length; i++) {
             var clone = this.m.clones[clones[i]];
             if (clone.hasSeg('5', '3')) {
@@ -374,22 +377,29 @@ Database.prototype = {
 		    res = jQuery.parseJSON(result);
 		    result = res;
 		} catch (err) {}
-                self.connected = true;
-		if (typeof result.success !== 'undefined' && result.success == 'false') {
-                    console.log({
-			"type": "flash",
-			"msg": result.message,
-			"priority": 2
-                    });
-                    self.connected = false;
+
+        self.connected = true;
+        if (typeof result.error == 'string' ) {
+            console.log({
+                "type": "flash",
+                "msg": "CloneDB: " +result.error,
+                "priority": 2
+            });
+            self.connected = false;
+        } else if (typeof result.success !== 'undefined' && result.success == 'false') {
+            console.log({
+                "type": "flash",
+                "msg": "CloneDB: " +result.message,
+                "priority": 2
+            });
+            self.connected = false;
 		} else { 
 	            for (var i = 0; i < kept_clones.length; i++) {
 			self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i], self.m);
 	            }
-                    m.shouldRefresh()
                     m.update()
 		}
-		
+                if (callback) callback();
             },
             error: function() {
                 self.connected = false;
@@ -398,6 +408,7 @@ Database.prototype = {
                     "msg": "Error while requesting CloneDB",
                     "priority": 2
                 });
+                if (callback) callback();
             }
         });
     },
@@ -447,6 +458,11 @@ Database.prototype = {
             // Hax !
             $('.jstree').trigger('load');
 
+            var list_select = ["choose_user", "select_user"]
+            for (var i = list_select.length - 1; i >= 0; i--) {
+                $('#'+list_select[i]).select2();
+            }
+
             return 0 ;
         }
         
@@ -472,6 +488,8 @@ Database.prototype = {
             this.last_file = args
             this.close()
             this.m.db_key = args
+            if (typeof report != "undefined") 
+                report.reset()
             return;
         }
         
@@ -686,7 +704,7 @@ Database.prototype = {
 
     set_jstree: function(elem) {
         elem.jstree({
-            "plugins" : ["sort"],
+            "plugins" : ["sort", "search"],
             'core' : {
                 'multiple': false,
                 'data' : {
@@ -699,11 +717,23 @@ Database.prototype = {
                 },
             }
         });
+        // Action for selection of a node
         elem.on('select_node.jstree', function(event, data){
+            if( data.node.icon != "jstree-file"){
+                // folder seletcion; disable submit button
+                document.getElementById("jstree_button").classList.add( "disabledClass" )
+                return
+            }
+            document.getElementById("jstree_button").classList.remove( "disabledClass" )
             $('#file_filename').val(data.selected);
             var split_file = data.selected.toString().split('/');
             var file = split_file[split_file.length - 1];
             $('#file_indicator').text(file);
+        });
+        // Search action
+        $("#jstree_search_form").submit(function(e) {
+          e.preventDefault();
+          elem.jstree(true).search($("#jstree_search_input").val());
         });
     },
 
@@ -1458,13 +1488,13 @@ Uploader.prototype = {
                 return xhr;
             },
             type: "POST",
-            cache: false,
             crossDomain: true,
+            context: self,      
             url: url,
             processData: false,
             contentType: false,
             data: self.queue[id].data,
-            xhrFields: {withCredentials: false},
+            xhrFields: {withCredentials: true},
             beforeSend: function(jqxhr){
                 self.queue[id].status = "upload"
                 self.queue[id].jqXHR = jqxhr
