@@ -2,7 +2,7 @@
 # Post-sequencer workflow before upload to a Vidjil server
 
 This help is intended for bioinformaticians preparing workflows after their sequencer output.
-See also considerations on [libraries and recombinations](locus.md).
+See also considerations on [libraries and recombinations](libraries-recombinations.md).
 
 ## File formats
 
