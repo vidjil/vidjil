@@ -37,8 +37,8 @@ function test_name_values(type_name){
 }
 
 
-// This script allow to make some action in a sandbox to quicly change made on the client when you code
-describe('Test sandbox', function () {
+
+describe('Test menu', function () {
     beforeEach(function () {
         cy.setBrowser(url)
     })
@@ -120,7 +120,7 @@ describe('Test sandbox', function () {
     cy.open_menu_filter()
 
     cy.get("#top_label").should("have.text", "0 clones (top 0)") // Correct slider label text when no clone
-    cy.get("#top_slider").should("have.value", "5") // correct slider value if no clone (minimum allowed value)
+    cy.get("#top_slider").should("have.value", "1") // correct slider value if no clone (minimum allowed value)
 
     // ## Load data with enough clone to change top value
     cy.openAnalysis("/data/issues/2583_25Xclones.vidjil")
