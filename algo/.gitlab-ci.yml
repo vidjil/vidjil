@@ -52,6 +52,7 @@ algo_shouldvdj:
 
 algo_coverage:
   <<: *vidjil-algo
+  needs: [algo_unit, algo_should, algo_shouldlocus, algo_shouldvdj]
   stage: coverage
   coverage: /^\s*lines\.*:\s+([0-9.]+\%)/
   script:
