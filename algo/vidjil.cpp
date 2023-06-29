@@ -83,7 +83,9 @@
 #define DEFAULT_MIN_READS_CLONE 5
 #define DEFAULT_MAX_REPRESENTATIVES 100
 #define DEFAULT_MAX_CLONES 100
+#define DEFAULT_MAX_CLONES_PER_LOCUS 10
 #define DEFAULT_RATIO_READS_CLONE 0.0
+#define DEFAULT_LIMIT_RATIO_TOP_PER_LOCUS .01
 #define NO_LIMIT "all"
 
 #define COMMAND_DETECT "detect"
@@ -469,6 +471,7 @@ int main (int argc, char **argv)
       -> group(group);
 
   int max_clones = DEFAULT_MAX_CLONES ;
+  int max_clones_per_locus = DEFAULT_MAX_CLONES_PER_LOCUS;
   int max_representatives = DEFAULT_MAX_REPRESENTATIVES ;
 
   app.add_option("--max-consensus,-y", max_representatives,
@@ -486,6 +489,9 @@ int main (int argc, char **argv)
                  "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)")
     -> group(group) -> type_name("INT=" + string_of_int(max_clones));
 
+  app.add_option("--max-clones-per-locus", max_clones_per_locus, "number of guaranteed output clones per locus (" + to_string(DEFAULT_MAX_CLONES_PER_LOCUS)+ ", default)")
+      -> group(group) -> type_name("INT");
+  
   app.add_flag_function("--all", [&](int64_t n) {
       COUNT(n);
       ratio_reads_clone = 0 ;
@@ -1443,6 +1449,8 @@ int main (int argc, char **argv)
     global_interrupted = false;
     signal(SIGINT, sigintHandler);
 
+    map<string, size_t> nb_output_clones_by_locus;
+
     for (list <pair<junction,size_t> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
       junction win = it->first;
@@ -1484,20 +1492,21 @@ int main (int argc, char **argv)
       string label = windowsStorage->getLabel(it->first);
       string window_str = ">" + clone_id + "--window" + " " + label + '\n' + it->first + '\n' ;
 
-
+      bool in_top_by_locus = ((int)nb_output_clones_by_locus[segmented_germline->code] < max_clones_per_locus &&
+                              we.getNbReadsGermline(segmented_germline->code) >= DEFAULT_LIMIT_RATIO_TOP_PER_LOCUS*nb_segmented);
 
       // interesting junctions are always handled
       if (!windowsStorage->isInterestingJunction(it->first))
       {
 
         // If max_clones is reached, we stop here
-        if ((max_clones_id >= 0) && (num_clone >= max_clones_id + 1))
+        if ((max_clones_id >= 0) && (num_clone >= max_clones_id + 1 && ! in_top_by_locus))
           { cout << "STOP" << endl ;
             continue ;
           }
 
         // If max_representatives is reached, we stop here but still outputs the window
-        if ((max_representatives >= 0) && (num_clone >= max_representatives + 1))
+        if ((max_representatives >= 0) && (num_clone >= max_representatives + 1 && ! in_top_by_locus))
           {
             if (output_vdjfa)
               *out_clones << window_str << endl ;
@@ -1505,6 +1514,8 @@ int main (int argc, char **argv)
           }
       }
 
+      
+      nb_output_clones_by_locus[segmented_germline->code]++;
       if (clone_on_stdout)
         {
           cout << clone_id_human << endl ;
@@ -1589,7 +1600,7 @@ int main (int argc, char **argv)
           clone->set("label", label) ;
 
         //$$ If max_clones is reached, we will not run a FineSegmenter but we will still output the representative
-        bool stop_analysis = ((max_clones >= 0) && (num_clone >= max_clones + 1)
+        bool stop_analysis = ((max_clones >= 0) && (num_clone >= max_clones + 1 && ! in_top_by_locus)
             && ! windowsStorage->isInterestingJunction(it->first));
 
         kseg->toOutput(clone, (!stop_analysis || output_details));
