@@ -5,10 +5,10 @@
 
 ### Email notifications for server errors
 SMTP_SERVER = 'postfix'
-SMTP_CREDENTIALS = 'vidjil:smtp_pass' # set to None if no auth required
+SMTP_CREDENTIALS = "smtp_user" # set to None if no auth required
 # SMTP_SERVER = 'logging' # no mail
-FROM_EMAIL = 'notifications@vidjil.org'
-ADMIN_EMAILS = ['notifications@vidjil.org']
+FROM_EMAIL = 'notifications@maildomain'
+ADMIN_EMAILS = ['notifications@maildomain']
 EMAIL_SUBJECT_START = '[Vidjil]' # Customize the start of the email subject
 
 ### Server healthcare compliance
@@ -20,7 +20,7 @@ HEALTHCARE_COMPLIANCE = False
 # DB_ADDRESS = 'sqlite://storage.sqlite'
 
 ### mysql, with password (to be also set in mysql/create_db.sql)
-DB_ADDRESS = 'mysql://vidjil:rootpass@mysql/vidjil'
+DB_ADDRESS = 'mysql://vidjil:MYSQL_PASSWORD@mysql/vidjil'
 DB_POOL_SIZE = 4
 
 ### Backup file

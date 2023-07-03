@@ -1,1 +1,0 @@
-uwsgi /etc/uwsgi/sites/uwsgi.ini

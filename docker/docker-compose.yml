@@ -1,4 +1,4 @@
-version: '2.4'
+version: '3.3'
 
 # ## Docker-compose
 # You can set variables (as $MYSQL_ROOT_PASSWORD) values inside .env file
@@ -17,104 +17,121 @@ services:
           test: "mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"
           timeout: 20s
           retries: 10
+
+    redis:
+        image: redis
+        restart: always
+        ports:
+        - '6379:6379'
+
     uwsgi:
-        image: vidjil/server:latest
+        image: vidjil/server:py4web
         env_file:
             - '.env-default'
             - '.env'
         command: bash /entrypoints/uwsgi-entrypoint.sh
-        volumes_from:
-            - fuse
+        stdin_open: true
+        tty: true
         depends_on:
             mysql:
               condition: service_healthy
             fuse:
               condition: service_started
-            postfix:
-              condition: service_started
         links:
             - mysql:mysql
             - fuse:fuse
-            - postfix:postfix
+        volumes_from:
+            - fuse
+
+
     fuse:
-        image: vidjil/server:latest
+        image: vidjil/server:py4web
         command: bash /entrypoints/fuse-entrypoint.sh
         env_file:
-            - '.env-default'
-            - '.env'
+          - '.env-default'
+          - '.env'
         volumes:
-            - $VOLUME_PATH/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
-            - $VOLUME_PATH/result/results:/mnt/result/results
-            - $VOLUME_PATH/result/tmp:/mnt/result/tmp
-            - $VOLUME_PATH/upload/uploads:/mnt/upload/uploads
-            - $VOLUME_PATH/log:/var/vidjil
-            - $VOLUME_PATH/log/uwsgi:/var/log/uwsgi
-            - $VOLUME_PATH/backup:/mnt/backup
-            - ./vidjil-server/conf:/etc/vidjil
-            - ./vidjil-server/scripts:/entrypoints
-            - ../germline:/usr/share/vidjil/germline
+          - ./vidjil-server/scripts:/entrypoints
+          - $VOLUME_PATH/results:/mnt/result/results
+          - $VOLUME_PATH/tmp:/mnt/result/tmp
+          - $VOLUME_PATH/uploads:/mnt/upload/uploads
+          - $VOLUME_PATH/tools:/usr/share/tools
+          - $VOLUME_PATH/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
+          - $VOLUME_PATH/log:/var/vidjil
+          - $VOLUME_PATH/log/uwsgi:/var/log/uwsgi
+          - $VOLUME_PATH/backup:/mnt/backup
+        #   - ./vidjil-server/conf:/etc/vidjil
+
+
     nginx:
         image: vidjil/client:latest
         env_file:
             - '.env-default'
             - '.env'
+        environment:
+          - DOMAIN_NAME=plop
         ports:
             - "80:80"
             - "443:443"
-        command: bash /entrypoints/nginx-entrypoint.sh
+        command: bash -c "make -C /usr/share/vidjil browser && bash /entrypoints/nginx-entrypoint.sh"
         volumes:
+            - ./vidjil-client/scripts:/entrypoints
             - $VOLUME_PATH/log/nginx:/var/log/nginx
             - $VOLUME_PATH/certs:/etc/letsencrypt/well-known
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
+            # - ../browser:/usr/share/vidjil/browser
 
     workers:
-        image: vidjil/server:latest
+        image: vidjil/server:py4web
         env_file:
             - '.env-default'
             - '.env'
+        stdin_open: true
+        tty: true
         command: bash /entrypoints/workers-entrypoint.sh
         volumes_from:
-            - uwsgi
+            - fuse
         depends_on:
             uwsgi:
+              condition: service_started
+            redis:
               condition: service_started
             mysql:
               condition: service_healthy
         links:
             - mysql
-            - postfix
-    backup:
-        build: ./backup
-        volumes_from:
-            - uwsgi
-        volumes:
-            - ./backup/conf:/etc/backup
-        depends_on:
-            - mysql
-        links:
-            - mysql
-            - uwsgi:uwsgi
-    reporter:
-        build: ./reporter
-        image: reporter:latest
-        volumes_from:
-            - uwsgi
-        volumes:
-            - ./reporter/code:/opt/reporter
-        depends_on:
-            uwsgi:
-              condition: service_started
-        links:
-            - uwsgi:uwsgi
-    postfix:
-        image: catatnight/postfix
-        env_file:
-            - '.env-default'
-            - '.env'
-        expose:
-            - 587
-        volumes:
-            - ./postfix/ssl:/etc/postfix/certs
+            - redis
 
+
+    celery:
+      image: vidjil/server:py4web
+      env_file:
+          - '.env-default'
+          - '.env'
+      command: bash /entrypoints/celery-entrypoint.sh
+      stdin_open: true
+      tty: true
+      volumes_from:
+          - fuse
+      depends_on:
+          - mysql
+          - uwsgi
+          - redis
+      links:
+          - redis:redis
+          - mysql:mysql
+
+    flower:
+      image: vidjil/server:py4web
+      env_file:
+          - '.env-default'
+          - '.env'
+      command: bash /entrypoints/flower-entrypoint.sh
+      volumes_from:
+          - fuse
+      depends_on:
+          - workers
+      ports:
+          - "5555:5555"
