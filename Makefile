@@ -113,7 +113,7 @@ functional_browser_external_cypress:
 		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:latest" bash script.bash "/app/cypress/integration/external_*.js"
 
 functional_server_cypress_open:
-	ln -sf server/web2py/applications/vidjil/tests/cypress/ .
+	ln -sf server/py4web/apps/vidjil/tests/cypress/ .
 	rm -r cypress/fixtures  cypress/plugins  cypress/support  cypress.json || true
 	ln -sf ../../../../../../browser/test/cypress/fixtures cypress/fixtures
 	ln -sf ../../../../../../browser/test/cypress/plugins  cypress/plugins
@@ -127,7 +127,7 @@ functional_tutorial_server_cypress:
 	# Need to have a local server deploy with the ci data integrated
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/server/web2py/applications/vidjil/tests/cypress/integration:/app/cypress/integration \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/integration:/app/cypress/integration \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
@@ -143,7 +143,7 @@ functional_server_cypress:
 	# Need to have a local server deploy with the ci data integrated
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/server/web2py/applications/vidjil/tests/cypress/integration:/app/cypress/integration \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/integration:/app/cypress/integration \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
