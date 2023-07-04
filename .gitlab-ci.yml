@@ -245,12 +245,12 @@ test_server_unit:
     script:
       - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends gcc libldap2-dev libssl-dev libsasl2-dev python-ijson libyajl2 python-cffi wget unzip procps
       - pip install -r requirements.txt
-      - make -C server install_web2py_standalone
+      - make -C server/py4web install_py4web
       - make -C server launch_fuse_server
       - make unit_server
     artifacts:
       reports:
-        junit: server/web2py/test-reports/TEST*xml
+        junit: server/py4web/test-reports/TEST*xml
     only:
       - /^feature-.*s.*\/.*$/
       - /^hotfix-.*s.*\/.*$/
@@ -275,6 +275,25 @@ test_server_unit:
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
     - mkdir -p docker/postfix/ssl
+
+    # Up py4web
+    - cp browser/js/conf.js.sample browser/js/conf.js
+    - 'sed -i "s|\"proxy\": \"https://db.vidjil.org/proxy/\"|\"proxy\": \"https://localhost/proxy/\"|g" browser/js/conf.js'
+    - 'sed -i "s|\"db_address\" : \"https://db.vidjil.org/vidjil/\"|\"db_address\" : \"https://localhost/vidjil/\"|g" browser/js/conf.js'
+    - cd docker
+    - mkdir volumes
+    - docker-compose -f docker-compose-py4web.yml up -d mysql
+    - docker-compose -f docker-compose-py4web.yml down ## restart for write right error on DB
+    - docker-compose -f docker-compose-py4web.yml up -d
+    # Set rights
+    - sleep 5 && docker ps
+    - docker exec docker_mysql_1 chmod 0777 /var/lib/mysql/vidjil -R
+    - docker exec docker_uwsgi_1 chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R
+    - docker exec docker_uwsgi_1 chmod 0777 /mnt/result/results   -R
+    - docker exec docker_uwsgi_1 chmod 0777 /mnt/result/tmp       -R
+    - docker exec docker_uwsgi_1 chmod 0777 /mnt/upload/uploads   -R
+    - docker exec docker_uwsgi_1 chmod 0777 /usr/share/tools      -R
+
     # Start docker images
     - cd docker && docker-compose up -d && cd ..
     # Show some information on current states of docker services
@@ -283,11 +302,11 @@ test_server_unit:
     - ls
 
     # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
-    - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/web2py/" server/web2py/applications/vidjil/tests/init_tests.sh
+    - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/py4web/" server/py4web/apps/vidjil/tests/init_tests.sh
     # Change File source definition in defs.py file 
-    - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
+    - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/py4web/apps/vidjil/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser # init browser content
-    - sh server/web2py/applications/vidjil/tests/init_tests.sh
+    - sh server/py4web/apps/vidjil/tests/init_tests.sh
   
       
 .test_server_base_dind:
@@ -302,7 +321,7 @@ test_server_unit:
     - apk add docker docker-compose make wget tar
     - !reference [.setup_docker_server]
   after_script:
-    - docker cp docker_uwsgi_1:/usr/share/vidjil/server/web2py/applications/vidjil/errors/ server/web2py/applications/vidjil/
+    - docker cp docker_uwsgi_1:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
     - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
   only:
@@ -344,8 +363,8 @@ deploy_review_server:
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
     - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_BUILD_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
-    - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/web2py/applications/vidjil/modules/defs.py
-    - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/web2py/applications/vidjil/modules/defs.py
+    - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/py4web/apps/vidjil/defs.py
+    - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/py4web/apps/vidjil/defs.py
     - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
     - mkdir browser/cgi
     - cp docker/vidjil-client/conf/*.cgi browser/cgi
@@ -354,10 +373,10 @@ deploy_review_server:
     - sed -i "s/virtual_host/${CI_BUILD_REF_SLUG}/" docker-compose-ci.yml
     - mv docker-compose-ci.yml docker-compose.override.yml
     - sed -i '/ports/,+2d' docker-compose.yml
-    - sed -i -r "s/web2py_admin_password/$REVIEW_SERVER_ADMIN_PASSWORD/" .env
+    - sed -i -r "s/py4web_admin_password/$REVIEW_SERVER_ADMIN_PASSWORD/" .env
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
-    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/py4web/apps/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
   environment:
     name: review_server/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/
