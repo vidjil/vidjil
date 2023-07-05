@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from apps.vidjil.modules.tag import TagDecorator, get_tag_prefix
 from apps.vidjil.user_groups import *
 from apps.vidjil.modules import vidjil_utils as v_u
-from yatl.helpers import SPAN, XML
+from yatl.helpers import SPAN, XML, A
 from py4web import request
 
 from ..modules import vidjil_utils
@@ -66,13 +66,13 @@ class SampleSet(object):
         for conf in conf_list:
             c = conf.split(';')
             filename =  "(%s %s)" % (self.get_name(data), c[0])
-            if len(c) > 2 and c[2] is not None :
-                configs.append(
-                    str(A(c[1],
-                        _href="index.html?sample_set_id=%d&config=%s" % (data['sample_set_id'], c[0]), _type="text/html",  _id="result_sample_set_%d_config_%s" % (data['sample_set_id'], c[0]),
-                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c[0], filename))))
-            else:
-                configs.append(c[0])
+            config_name = data._extra['GROUP_CONCAT(DISTINCT config.name)']
+            config_id = data._extra['GROUP_CONCAT(DISTINCT config.id)']
+            configs.append(
+                    str(A(config_name,
+                        _href="index.html?sample_set_id=%d&config=%s" % (data['sample_set_id'], config_id), _type="text/html",
+                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], config_id, filename))))
+
         return XML(", ".join(configs))
 
     def get_groups(self, data):

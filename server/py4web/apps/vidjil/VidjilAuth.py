@@ -41,6 +41,11 @@ class VidjilAuth(Auth):
     def is_impersonating(self):
         return False
 
+    #TODO
+    def impersonate():
+        return False
+
+
     def define_tables(self):
         """Defines the auth_user table"""
         db = self.db
