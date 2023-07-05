@@ -7,6 +7,8 @@ version: '3.3'
 services:
     mysql:
         image: mysql:5.7
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME MYSQL
         env_file:
             - '.env-default'
             - '.env'
@@ -26,6 +28,8 @@ services:
 
     uwsgi:
         image: vidjil/server:py4web
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME UWSGI
         env_file:
             - '.env-default'
             - '.env'
@@ -46,6 +50,8 @@ services:
 
     fuse:
         image: vidjil/server:py4web
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME FUSE
         command: bash /entrypoints/fuse-entrypoint.sh
         env_file:
           - '.env-default'
@@ -65,6 +71,8 @@ services:
 
     nginx:
         image: vidjil/client:latest
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME NGINX
         env_file:
             - '.env-default'
             - '.env'
@@ -85,6 +93,8 @@ services:
 
     workers:
         image: vidjil/server:py4web
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME WORKERS
         env_file:
             - '.env-default'
             - '.env'
@@ -107,6 +117,8 @@ services:
 
     celery:
       image: vidjil/server:py4web
+      environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME CELERY
       env_file:
           - '.env-default'
           - '.env'
@@ -125,6 +137,8 @@ services:
 
     flower:
       image: vidjil/server:py4web
+      environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME FLOWER
       env_file:
           - '.env-default'
           - '.env'

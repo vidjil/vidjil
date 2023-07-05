@@ -36,3 +36,5 @@ run ln -s /usr/share/vidjil/browser /usr/share/vidjil/b
 copy ./scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
 run chown -R www-data:www-data /usr/share/vidjil
 run useradd -ms /bin/bash vidjil && usermod -aG sudo vidjil
+
+RUN echo 'if [ "$PRODUCTION" = "true" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc; echo 'export PS1="🐳 $prompt_color$SERVICE_NAME\e[0m \w # "' >> ~/.bashrc

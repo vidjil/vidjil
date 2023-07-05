@@ -5,10 +5,9 @@ label description="An Ubuntu based docker image which comes \
 with a full installation of the Vidjil algoright and browser/server."
 
 
-
 #INSTALL REQUIREMENTS
 #ARG user=py4web
-run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python python3 python3-pip python3-dev python3-gdbm python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached && \
+run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python python3.8 python3-pip python3-dev python3-gdbm python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached htop nano && \
     service memcached restart && \
 	pip3 install setuptools  && \
 	pip3 install setuptools-rust && \
@@ -65,5 +64,8 @@ run chmod 644 -R /usr/share/vidjil/server/py4web/apps/vidjil/databases
 
 
 run useradd -ms /bin/bash vidjil && usermod -aG sudo vidjil
+
+
+RUN echo 'if [ "$ENV" = "production" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc; echo 'export PS1="🐳 $prompt_color$SERVICE_NAME\e[0m \w # "' >> ~/.bashrc
 
 
