@@ -10,7 +10,7 @@ import time
 import sys
 import datetime
 import random
-import xmlrpclib.client
+import xmlrpc.client
 import apps.vidjil.modules.tools_utils as tools_utils
 from .modules.sequenceFile import get_original_filename
 from .common import settings, scheduler, db, Field, log
