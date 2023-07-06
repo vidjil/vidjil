@@ -66,6 +66,6 @@ run chmod 644 -R /usr/share/vidjil/server/py4web/apps/vidjil/databases
 run useradd -ms /bin/bash vidjil && usermod -aG sudo vidjil
 
 
-RUN echo 'if [ "$ENV" = "production" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc; echo 'export PS1="🐳 $prompt_color$SERVICE_NAME\e[0m \w # "' >> ~/.bashrc
+RUN echo 'if [ "$ENV" = "production" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc; echo 'export PS1="🐳 $prompt_color$SERVICE_NAME \e[32m[ \w ]# \e[0m"' >> ~/.bashrc
 
 
