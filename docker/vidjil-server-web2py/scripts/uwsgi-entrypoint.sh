@@ -1,4 +1,9 @@
 #!/bin/bash
+echo -e "\n\e[34m=======================\e[0m"
+echo -e "\e[34m=== Start service uwsgi\e[0m"
+echo -e "\e[34m=== `date +'%Y/%m/%d; %H:%M'`\e[0m"; echo
+
+
 . $(dirname $0)/tools.sh
 touch /var/vidjil/vidjil.log
 touch /var/vidjil/vidjil-debug.log

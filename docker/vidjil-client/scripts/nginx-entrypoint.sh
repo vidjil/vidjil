@@ -1,4 +1,8 @@
 # create a self signed ssl certificate if nothing specified
+echo -e "\n\e[34m=======================\e[0m"
+echo -e "\e[34m=== Start service nginx\e[0m"
+echo -e "\e[34m=== `date +'%Y/%m/%d; %H:%M'`\e[0m"; echo
+
 DIR=/etc/nginx/ssl
 if test -e "$DIR"; then
     echo "$DIR exists."
