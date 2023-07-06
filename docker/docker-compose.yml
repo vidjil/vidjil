@@ -39,23 +39,8 @@ services:
         depends_on:
             mysql:
               condition: service_healthy
-            fuse:
-              condition: service_started
         links:
-            - mysql:mysql
-            - fuse:fuse
-        volumes_from:
-            - fuse
-
-
-    fuse:
-        image: vidjil/server:py4web
-        environment:
-            - SERVICE_NAME=$SERVICE_PREFIX_NAME FUSE
-        command: bash /entrypoints/fuse-entrypoint.sh
-        env_file:
-          - '.env-default'
-          - '.env'
+            - mysql
         volumes:
           - ./vidjil-server/scripts:/entrypoints
           - $VOLUME_PATH/results:/mnt/result/results
@@ -66,7 +51,27 @@ services:
           - $VOLUME_PATH/log:/var/vidjil
           - $VOLUME_PATH/log/uwsgi:/var/log/uwsgi
           - $VOLUME_PATH/backup:/mnt/backup
-        #   - ./vidjil-server/conf:/etc/vidjil
+
+
+    fuse:
+        image: vidjil/server:py4web
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME FUSE
+        command: bash /entrypoints/fuse-entrypoint.sh
+        env_file:
+          - '.env-default'
+          - '.env'
+        volumes_from:
+            - uwsgi
+        depends_on:
+            mysql:
+              condition: service_healthy
+            uwsgi:
+              condition: service_started
+        links:
+            - mysql
+            - redis
+            - uwsgi
 
 
     nginx:
@@ -89,7 +94,6 @@ services:
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
-            # - ../browser:/usr/share/vidjil/browser
 
     workers:
         image: vidjil/server:py4web
@@ -102,7 +106,7 @@ services:
         tty: true
         command: bash /entrypoints/workers-entrypoint.sh
         volumes_from:
-            - fuse
+            - uwsgi
         depends_on:
             uwsgi:
               condition: service_started
@@ -126,7 +130,7 @@ services:
       stdin_open: true
       tty: true
       volumes_from:
-          - fuse
+          - uwsgi
       depends_on:
           - mysql
           - uwsgi
@@ -144,7 +148,7 @@ services:
           - '.env'
       command: bash /entrypoints/flower-entrypoint.sh
       volumes_from:
-          - fuse
+          - uwsgi
       depends_on:
           - workers
       ports:
