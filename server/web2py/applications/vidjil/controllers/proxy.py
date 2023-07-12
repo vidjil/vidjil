@@ -27,5 +27,5 @@ def imgt():
     return proxy_request("https://www.imgt.org/IMGT_vquest/analysis")
 
 def assign_subsets():
-    return proxy_request("http://tools.bat.infspire.org/cgi-bin/arrest/assignsubsets_html.pl",
-                         {'referer': "http://tools.bat.infspire.org/arrest/assignsubsets/"})
+    return proxy_request(" https://bat.infspire.org/cgi-bin/arrest/assignsubsets_html.pl",
+                         {'referer': "https://bat.infspire.org/arrest/assignsubsets/"})
