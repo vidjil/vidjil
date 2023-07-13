@@ -45,7 +45,7 @@ var config = {
     // "cgi_address" : "http://127.0.1.1/cgi-bin/",
 
     /* Proxy for accessing resources without cross-domain issues */
-    "proxy": "https://localhost/vidjil/proxy/imgt",
+    "proxy": "https://localhost/vidjil/proxy/",
 
     /* Used for the standalone http://app.vidjil.org/analyze page */
     "segmenter_address" : "https://db.vidjil.org/vidjil/segmenter",
