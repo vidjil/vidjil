@@ -16,6 +16,8 @@ python repseq_vdj.py data-curated/curated_TR.fa data-curated/igblast/TR/*.aln > 
 
 import sys
 import os
+import json
+
 
 V = 'V'
 D = 'D'
@@ -245,6 +247,63 @@ def header_vquest_results(ff_fasta, ff_vquest):
         r = IMGT_VQUEST_Result(vquest)
         yield (fasta.replace('>', ''), r.to_vdj())
 
+### Vidjil (AIRR output)
+
+class Vidjil_Result(Result):
+
+    def __init__(self, l):
+        self.d = l
+        self.vdj = {}
+        self.result = self.parse(l)
+        if self.result:
+            self.populate()
+    
+    def parse(self, l):
+        self.labels = vidjil_labels
+        return l
+
+    def populate(self):
+        if self['germline'] == 'not analyzed' or 'seg' not in self:
+            self.result = None
+            return
+        self.vdj[V] = [self['seg']['5']['name']]
+        seq = self['sequence']
+        if '4' in self['seg']:
+            self.vdj[D] = [self['seg']['4']['name']]
+            if '5' in self['seg']:
+                self.vdj[N1] = seq[self['seg']['5']['stop']+1:self['seg']['4']['start']]
+            if 'j_sequence_start' in self:
+                self.vdj[N2] = seq[self['seg']['4']['stop']+1:self['seg']['3']['start']]
+        else:
+            if '5' in self['seg'] and '3' in self['seg']:
+                self.vdj[N] = seq[self['seg']['5']['stop']+1:self['seg']['3']['start']]
+        self.vdj[J] = [self['seg']['3']['name']]
+
+        if 'junction' in self['seg']:
+            self.vdj[JUNCTION] = self['seg']['junction']['aa']
+
+
+def header_vidjil_results(ff_fasta, ff_vidjil):
+
+    f_fasta = open(ff_fasta).__iter__()
+    vidjil = json.load(open(ff_vidjil))
+
+    
+    globals()['vidjil_labels'] = vidjil["clones"][0].keys()
+    clone_nb = 0
+
+    print(vidjil_labels)
+    while True:
+
+        fasta = ''
+        # Advance until header line
+        while not '>' in fasta:
+            fasta = f_fasta.next().strip()
+
+        result = Vidjil_Result(vidjil['clones'][clone_nb])
+        yield (fasta.replace('>', ''), result.to_vdj())
+        clone_nb += 1
+
 
 ### igBlast
 
@@ -403,12 +462,14 @@ if __name__ == '__main__':
 
     vdj = VDJ_File()
 
-    if 'mixcr' in sys.argv[1]:
+    if 'mixcr' in sys.argv[1].lower():
         vdj.parse_from_gen(header_mixcr_results(sys.argv[1]))
-    elif 'igrec' in sys.argv[1]:
+    elif 'igrec' in sys.argv[1].lower():
         vdj.parse_from_gen(header_igrec_results(sys.argv[1]))
-    elif 'igblast' in sys.argv[2]:
+    elif 'igblast' in sys.argv[2].lower():
         vdj.parse_from_gen(header_igblast_results(sys.argv[1], sys.argv[2:]))
+    elif 'vidjil' in sys.argv[2].lower():
+        vdj.parse_from_gen(header_vidjil_results(sys.argv[1], sys.argv[2]))
     else:
         vdj.parse_from_gen(header_vquest_results(sys.argv[1], sys.argv[2]))
 
