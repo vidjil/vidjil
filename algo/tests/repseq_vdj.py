@@ -33,6 +33,89 @@ JUNCTION = 'JUNCTION'
 class VDJ_Formatter():
     '''Stores fields and outputs a .vdj line'''
 
+    def __init__(self):
+
+        self.d = {}
+        self.vdj = {}
+        self.result = None
+
+    def get_locus(self):
+        '''
+        >>> vdj = VDJ_Formatter()
+        >>> vdj.vdj[V] = ['IGHV1-2*02']; vdj.vdj[D] = ['IGHD6-13*01']; vdj.vdj[J] = ['IGHJ5*02']
+        >>> vdj.get_locus()
+        'IGH'
+        >>> vdj.vdj[J]=None
+        >>> vdj.get_locus()
+        'IGH+'
+        >>> vdj.vdj[V]=None
+        >>> vdj.get_locus()
+        >>> vdj.vdj[V]=['TRAV1-1']; vdj.vdj[D]=None; vdj.vdj[J]=['TRAJ1*01']
+        >>> vdj.get_locus()
+        'TRA'
+        >>> vdj.vdj[V]=['TRDV2*01']; vdj.vdj[D]=None; vdj.vdj[J]=['TRAJ29*01']
+        >>> vdj.get_locus()
+        'TRA+D'
+        >>> vdj.vdj[V]=None; vdj.vdj[D]=['TRDD2*01']; vdj.vdj[J]=['TRAJ29*01']
+        >>> vdj.get_locus()
+        'TRA+D'
+        >>> vdj.vdj[V]=['TRAV29/DV5*01']; vdj.vdj[D]=['TRDD3']; vdj.vdj[J]=['TRDJ1*01']
+        >>> vdj.get_locus()
+        'TRD'
+        >>> vdj.vdj[V]=None; vdj.vdj[D]=['TRDD2']; vdj.vdj[J]=['TRDD3*01']
+        >>> vdj.get_locus()
+        'TRD+'
+        >>> vdj.vdj[V]=None; vdj.vdj[D]=['TRDD2']; vdj.vdj[J]=['TRDJ3*01']
+        >>> vdj.get_locus()
+        'TRD+'
+        >>> vdj.vdj[V]=['TRAV1']; vdj.vdj[D]=['TRDD2']; vdj.vdj[J]=['TRDJ3*01']
+        >>> vdj.get_locus()
+        'unexpected'
+        '''
+        genes = []
+        if V in self.vdj and self.vdj[V]:
+            if self.vdj[V][0] == 'Intron':
+                genes.append('IGKV-Intron')
+            else:
+                genes.append(self.vdj[V][0])
+        if D in self.vdj and self.vdj[D]:
+            genes.append(self.vdj[D][0])
+        if J in self.vdj and self.vdj[J]:
+            if self.vdj[J][0] == 'KDE':
+                genes.append('IGKJ-KDE')
+            else:
+                genes.append(self.vdj[J][0])
+        if len(genes) <= 1:
+            return None
+
+        short_genes = [g[:4] for g in genes]
+        locus_genes = set([g[:3] for g in genes])
+
+        if len(locus_genes)==1:
+            locus = locus_genes.pop()
+            if locus+V in short_genes and locus+J in short_genes:
+                return locus
+
+            if len(set(short_genes))==1:
+                return 'unexpected'
+            return locus+'+'
+        else:
+            if 'TRA' in locus_genes and 'TRD' in locus_genes:
+                # We may have a mix of TRA or TRD but still being a real
+                # TRD. We can also have TRA+D (TRDV and TRAJ)
+
+                has_tradv = sum([ re.match('TRAV[0-9-]+/DV', g) != None for g in genes]) >0
+                if 'TRAV' in short_genes and 'TRDJ' in short_genes and has_tradv:
+                    return 'TRD'
+                if ('TRDV' in short_genes or has_tradv or (len(genes) == 2 and 'TRDD' in short_genes)) \
+                   and 'TRAJ' in short_genes:
+                    return 'TRA+D'
+                if 'TRDV' in short_genes and has_tradv and len(genes)==2 and 'TRDD' in short_genes:
+                    # TRA/DV with TRDD
+                    return 'TRD+'
+
+        return 'unexpected'
+    
     def genes_to_vdj(self, genes):
         if not genes:
             return ''
@@ -48,6 +131,10 @@ class VDJ_Formatter():
 
     def CDR3_to_vdj(self, s):
         return '{%s}' % s if s else ''
+
+    def locus_to_vdj(self, s):
+        return ' [%s]' % s if s else ''
+    
 
     def to_vdj(self):
         if not self.result:
@@ -75,6 +162,8 @@ class VDJ_Formatter():
         if JUNCTION in self.vdj:
             s += ' '
             s += self.CDR3_to_vdj(self.vdj[JUNCTION])
+
+        s += self.locus_to_vdj(self.get_locus())
 
         return s
 
