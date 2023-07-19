@@ -381,7 +381,6 @@ def header_vidjil_results(ff_fasta, ff_vidjil):
     globals()['vidjil_labels'] = vidjil["clones"][0].keys()
     clone_nb = 0
 
-    print(vidjil_labels)
     while True:
 
         fasta = ''
