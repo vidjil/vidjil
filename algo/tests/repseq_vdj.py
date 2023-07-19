@@ -96,7 +96,7 @@ class VDJ_Formatter():
             if locus+V in short_genes and locus+J in short_genes:
                 return locus
 
-            if len(set(short_genes))==1:
+            if len(set(short_genes))==1 and set(short_genes).pop() != 'TRDD':
                 return 'unexpected'
             return locus+'+'
         else:
