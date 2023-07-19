@@ -17,7 +17,7 @@ python repseq_vdj.py data-curated/curated_TR.fa data-curated/igblast/TR/*.aln > 
 import sys
 import os
 import json
-
+import re
 
 V = 'V'
 D = 'D'
@@ -393,6 +393,18 @@ def header_vidjil_results(ff_fasta, ff_vidjil):
         yield (fasta.replace('>', ''), result.to_vdj())
         clone_nb += 1
 
+def vidjil_reads_output(vidjil):
+    v = open(vidjil)
+    for line in v.readlines():
+        line = line.rstrip()
+        if line.startswith('>'):
+            fields = re.split(' [+!-] ', line)
+            should = fields[0][1:]
+            matches = re.search('seed ([a-zA-Z+]+) SEG', fields[1])
+            if matches and matches.groups():
+                yield (should, '['+matches.group(1)+']')
+            else:
+                yield (should, '[xxx]')
 
 ### igBlast
 
@@ -555,10 +567,14 @@ if __name__ == '__main__':
         vdj.parse_from_gen(header_mixcr_results(sys.argv[1]))
     elif 'igrec' in sys.argv[1].lower():
         vdj.parse_from_gen(header_igrec_results(sys.argv[1]))
-    elif 'igblast' in sys.argv[2].lower():
+    elif 'igblast' in sys.argv[-1].lower():
         vdj.parse_from_gen(header_igblast_results(sys.argv[1], sys.argv[2:]))
-    elif 'vidjil' in sys.argv[2].lower():
-        vdj.parse_from_gen(header_vidjil_results(sys.argv[1], sys.argv[2]))
+    elif 'vidjil' in sys.argv[-1].lower():
+        if '_detect.fa' in sys.argv[-1].lower():
+            # Output obtained from the segmented/unsegmented reads
+            vdj.parse_from_gen(vidjil_reads_output(sys.argv[1]))
+        else:
+            vdj.parse_from_gen(header_vidjil_results(sys.argv[1], sys.argv[2]))
     else:
         vdj.parse_from_gen(header_vquest_results(sys.argv[1], sys.argv[2]))
 
