@@ -1,5 +1,6 @@
 #include "proba.h"
 #include <math.h>
+#include <limits>
 #include "tools.h"
 
 // ProbaPrecomputer::ProbaPrecomputer() {}
@@ -35,7 +36,7 @@ void ProbaPrecomputer::precomputeProba(float index_load, int length) {
     
     double proba = 0;
     precomp_proba[0] = proba;
-    double Cnk = 1; // nChoosek(length, length);
+    long double Cnk = 1; // nChoosek(length, length);
     for (int i=length; i>=1; i--) {
       proba += probabilityPreviousIteration(i, length, Cnk, probability_having_system,
                                         probability_not_having_system, index_load);
@@ -44,11 +45,13 @@ void ProbaPrecomputer::precomputeProba(float index_load, int length) {
   }
 }
 
-double ProbaPrecomputer::probabilityPreviousIteration(int iteration, int length, double &Cnk, double &proba_with, double &proba_without, float index_load) {
+double ProbaPrecomputer::probabilityPreviousIteration(int iteration, int length, long double &Cnk, double &proba_with, double &proba_without, float index_load) {
   double proba = Cnk * proba_with * proba_without;
   proba_with = getProbaWith(index_load, iteration-1); // Otherwise when probability are too low they are stored as 0 and we are f*****
   proba_without *= (1 - index_load);
   Cnk *= iteration*1. / (length-iteration+1);
+  if (std::isinf(Cnk))
+    Cnk = std::numeric_limits<long double>::max();
   return proba;
 }
 
@@ -79,7 +82,7 @@ double ProbaPrecomputer::getProba(float index_load, int at_least, int length) {
   probability_having_system = pow(index_load, length);
   probability_not_having_system = 1;
 
-  double Cnk = 1;
+  long double Cnk = 1;
   for (int i=length; i >= at_least; i--) {
     proba += probabilityPreviousIteration(i, length, Cnk, probability_having_system,
                                           probability_not_having_system, index_load);
