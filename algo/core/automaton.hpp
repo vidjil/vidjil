@@ -350,12 +350,6 @@ map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bo
 #endif
     }
   }
-#ifdef DEBUG
-  for (auto it: bitsets) {
-    KmerAffect info = it.first;
-    cerr << info << "\t" << (int)info.getLength() << "\t" << this->getIndexLoad(info) << "\tin getAllResults" << endl;
-  }
-#endif
 
   for (Info &info : found_affects) {
     size_t hash = std::hash<Info>{}(info);
@@ -363,6 +357,16 @@ map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bo
     delete lookup_bitsets[hash];
     lookup_bitsets[hash] = NULL;
   }
+
+#ifdef DEBUG
+  for (auto it: bitsets) {
+    KmerAffect info = it.first;
+    cerr << info << "\t" << (int)info.getLength() << "\t" <<
+    this->getIndexLoad(info) << "\tin getAllResults" << endl
+	 << "\t" << it.second.size()<< endl;
+    
+  }
+#endif
   
   return bitsets;
 }
