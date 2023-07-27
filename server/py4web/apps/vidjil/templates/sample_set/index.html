@@ -176,7 +176,7 @@
                       <td></td>
                     [[pass]]
                         <td> <a [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]]
-                                [[else:]] href="[[=URL('patient','download', row.sequence_file.data_file, scheme='https')]]" [[pass]]  ><i class="icon-down" title="Download sequence file"></i></a></td>
+                                [[else:]] href="[[=URL('sample_set','download_sequence_file', row.sequence_file.data_file, vars=dict(filename=row.sequence_file.filename), scheme='https')]]" [[pass]]  ><i class="icon-down" title="Download sequence file"></i></a></td>
                     [[if can_modify:]]
                         <td class="pointer" onclick="db.call('file/confirm', {'id' :'[[=row.sequence_file.id ]]', 'redirect_sample_set_id' : '[[=request.query["id"]]]'} )" >  <i class="icon-erase" title="delete sample"></i> </td>
                     [[else:]]<td></td>[[pass]]
@@ -297,7 +297,6 @@
         
               
                 <a class="button2" href="[[=http_origin]]?sample_set_id=[[=request.query["id"]]]&config=[[=row.config.id]]" type="text/html"
-                   id="result_sample_set_id_[[=request.vars["id"]]]_config_[[=row.config.id]]"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '[[=request.query["id"]]]' , 'config' : [[=row.config.id]] }, '[[=info["filename"]]]' ) }" >

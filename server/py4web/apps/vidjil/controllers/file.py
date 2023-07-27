@@ -16,7 +16,7 @@ from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets, g
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
-from ..tasks import schedule_pre_process, task_test
+from ..tasks import schedule_pre_process
 from ..user_groups import get_upload_group_ids, get_involved_groups
 from ..VidjilAuth import VidjilAuth
 from io import StringIO
@@ -623,8 +623,3 @@ def filesystem():
                 json.append(json_node)
     return json.dumps(json, separators=(',',':'))
 
-
-@action("/vidjil/file/test_run", method=["POST", "GET"])
-@action.uses(db, auth.user)
-def form():
-    task_test()

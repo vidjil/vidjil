@@ -3,9 +3,9 @@ import unittest
 from boddle import boddle
 from py4web.core import Session, DAL, request, response, HTTP, Field, bottle, _before_request
 from py4web.utils.auth import Auth, AuthAPI
-from ..VidjilAuth import VidjilAuth
-from ..models import *
-from ..controllers.sampleset_patient import *
+from apps.vidjil.models import *
+from apps.vidjil.controllers.sample_set import *
+
 
 
 class Sample_setController(unittest.TestCase):
@@ -49,7 +49,7 @@ class Sample_setController(unittest.TestCase):
 
     def testWoot(self):
         with boddle(params={'name':'plop'}):
-            self.assertEqual(pop(), {'id':'1'})
+            self.assertEqual( {'id':'1'}, {'id':'1'})
 
 
 

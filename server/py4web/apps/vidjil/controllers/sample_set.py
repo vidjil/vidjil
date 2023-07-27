@@ -20,6 +20,8 @@ import os
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
 import math
+import mimetypes
+from ombott import static_file
 
 from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
@@ -1322,3 +1324,10 @@ def mystats():
     log.debug("mystats (%.3fs) %s" % (time.time()-start, request.query["filter"]))
     # Return
     return json.dumps(d, separators=(',',':'))
+
+@action("/vidjil/sample_set/download_sequence_file/<filename>", method=["POST", "GET"])
+@action.uses(db, session)
+def download(filename=None):
+    mimetype = mimetypes.guess_type(defs.DIR_SEQUENCES+filename)
+    return static_file(filename, root=defs.DIR_SEQUENCES, download=request.query.filename, mimetype=mimetype[1])
+    
