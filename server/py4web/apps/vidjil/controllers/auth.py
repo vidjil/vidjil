@@ -64,7 +64,7 @@ def submit():
     else:
         data = auth._error(error)
 
-    res = {"redirect" : URL('default/home.html')}
+    res = {"redirect" : URL('default/home.html'), "error": error, "user_id": user["id"] if user != None else None, "user_email": user["email"] if user != None else None}
     return json.dumps(res, separators=(',',':'))
 
 
