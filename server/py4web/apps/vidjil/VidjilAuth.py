@@ -266,7 +266,7 @@ class VidjilAuth(Auth):
             return has_action
         return has_action and self.get_group_access(object_of_action, id, group)
 
-    def get_permission(self, action, object_of_action, id = 0, user = None):
+    def get_permission(self, action, object_of_action, object_id = 0, user = None):
         '''
         Returns whether the current user has the permission 
         to perform the action on the object_of_action.
@@ -281,22 +281,22 @@ class VidjilAuth(Auth):
         if is_current_user:
             if not object_of_action in self.permissions:
                 self.permissions[object_of_action] = {}
-            if not id in self.permissions[object_of_action]:
-                self.permissions[object_of_action][id] = {}
+            if not object_id in self.permissions[object_of_action]:
+                self.permissions[object_of_action][object_id] = {}
                 missing_value = True
-            if not action in self.permissions[object_of_action][id]:
+            if not action in self.permissions[object_of_action][object_id]:
                 missing_value = True
         if not is_current_user or missing_value:
             perm_groups = self.get_permission_groups(action, user)
-            if id > 0:
-                access_groups = self.get_access_groups(object_of_action, id, user)
+            if int(object_id) > 0:
+                access_groups = self.get_access_groups(object_of_action, object_id, user)
                 intersection = set(access_groups).intersection(perm_groups)
             else :
                 intersection = perm_groups
             if not is_current_user:
                 return len(intersection) > 0
-            self.permissions[object_of_action][id][action] = len(intersection) > 0
-        return self.permissions[object_of_action][id][action]
+            self.permissions[object_of_action][object_id][action] = len(intersection) > 0
+        return self.permissions[object_of_action][object_id][action]
 
     def load_permissions(self, action, object_of_action):
         '''
@@ -513,16 +513,15 @@ class VidjilAuth(Auth):
             and (self.get_permission(PermissionEnum.run.value, object_of_action, id, user=user)\
             or self.is_admin(user))
 
-    def can_process_sample_set(self, id, user = None):
+    def can_process_sample_set(self, sample_set_id, user = None):
         '''
         Returns if the user can process results for a sample_set
         '''
         db = self.db
-        sample_set = db.sample_set[id]
+        sample_set = db.sample_set[sample_set_id]
         if sample_set is None:
             return False
-
-        perm = self.get_permission(PermissionEnum.run.value, 'sample_set', id, user) \
+        perm = self.get_permission(PermissionEnum.run.value, 'sample_set', sample_set_id, user) \
             or self.is_admin(user)
 
         if perm:
