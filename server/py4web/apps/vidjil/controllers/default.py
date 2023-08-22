@@ -69,6 +69,19 @@ def home():
     res = {"redirect" : redirect}
     return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/default/whoami")
+@action.uses(db, session)
+def whoami():
+    if auth.user:
+        user_data = {
+            "id": auth.current_user.get('id'),
+            "email": auth.current_user.get('email'),
+            "uuid": session["uuid"],
+            "admin": auth.is_admin(auth.current_user.get('id'))
+        }
+        return user_data
+    return {}
+
 def logger():
     '''Log to the server'''
     res = {"success" : "false",
