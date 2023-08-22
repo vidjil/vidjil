@@ -377,7 +377,7 @@ def submit():
             if data_file is not None and data_file2 is not None and pre_process != '0':
                 schedule_pre_process(fid, pre_process)
 
-        log.info(mes, extra={'user_id': auth.user_id,
+        log.info(mes, extra={'user_id': auth.current_user.get('id'),
                 'record_id': f['id'],
                 'table_name': "sequence_file"})
 
