@@ -450,11 +450,14 @@ def upload():
             # Compute and store file size
             size = os.path.getsize(seq_file)
             mes += ' (%s)' % vidjil_utils.format_size(size)
-            db.sequence_file[request.params["id"]].update(size_file = size)
+            db(db.sequence_file.id == request.params["id"]).update(size_file = size)
+
 
         if data_file2 is not None :
             seq_file2 = defs.DIR_SEQUENCES + data_file2
-            #TODO
+            size2 = os.path.getsize(seq_file2)
+            mes += ' (%s)' % vidjil_utils.format_size(size2)
+            db(db.sequence_file.id == request.params["id"]).update(size_file2 = size2)
         
     # Log and exit
     res = {"message": error + mes}
