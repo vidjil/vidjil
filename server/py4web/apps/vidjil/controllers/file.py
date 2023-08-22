@@ -393,7 +393,7 @@ def submit():
         return error_message("add_form() failed")
 
 
-@action("/vidjil/file/up", method=["POST", "GET", "OPTIONS"])
+@action("/vidjil/file/upload", method=["POST", "GET", "OPTIONS"])
 @action.uses(db, auth.user)
 def upload(): 
     #session.forget(response)
