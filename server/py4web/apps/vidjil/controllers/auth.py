@@ -4,6 +4,7 @@
 import calendar
 import time
 import uuid
+from datetime import datetime
 
 from sys import modules
 from .. import defs
@@ -61,6 +62,13 @@ def submit():
         auth.session["uuid"] = str(uuid.uuid1())
         user = {f.name: user[f.name] for f in auth.db.auth_user if f.readable}
         data = {"user": user}
+        log.info("Login ", extra={'user_id': auth.user_id, "timestamp": auth.session["recent_activity"]})
+        auth_event_data = dict(time_stamp=str(datetime.fromtimestamp(auth.session['recent_activity'])),
+                         client_ip=request.remote_addr ,
+                         user_id=user.get("id"),
+                         origin="todo",
+                         description="login")
+        db.auth_event.insert(**auth_event_data)
     else:
         data = auth._error(error)
 
@@ -71,8 +79,16 @@ def submit():
 @action("/vidjil/auth/logout", method=["POST", "GET"])
 @action.uses(db, session, auth, cors, flash)
 def logout():
+    user_id = auth.session["user"]["id"]
     session.clear()
     res = {"redirect" : URL('default/home.html')}
+
+    auth_event_data = dict(time_stamp=str(datetime.now()),
+                         client_ip=request.remote_addr ,
+                         user_id=user_id,
+                         origin="todo",
+                         description="logout")
+    db.auth_event.insert(**auth_event_data)
     return json.dumps(res, separators=(',',':'))
 
 @action("/vidjil/auth/register", method=["POST", "GET"])
