@@ -993,5 +993,5 @@ class VidjilAuth(Auth):
                 user_groups[membership.group_id] = group.role
 
     def __str__(self):
-        return "%04d – %s %s" % (self.id, self.first_name, self.last_name)
+        return "%04d - %s %s" % (self.id, self.first_name, self.last_name)
 

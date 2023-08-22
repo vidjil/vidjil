@@ -44,7 +44,7 @@ def getConfigsByClassification():
                 classification["%02d_%s" % (i, class_elt)]["info"]    = class_elt.info
                 classification["%02d_%s" % (i, class_elt)]["configs"] = configs
             i += 1
-        classification["%02d_noclass" % i]["name"]    = "–"
+        classification["%02d_noclass" % i]["name"]    = "-"
         classification["%02d_noclass" % i]["info"]    = ""
         classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
     return classification
