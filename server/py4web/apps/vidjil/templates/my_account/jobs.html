@@ -28,10 +28,10 @@
                 <tr class="pointer" onclick="db.call('sample_set/index', {'id': [[=row.sample_set_id]], 'config_id': [[=row.config_id]]})">
                     <td class="uid"><span class="[[=row.sample_type]]_token">[[=row.sample_set_id]]</span></td>
                     [[ if row.sample_type == 'patient': ]]
-                        [[split_name = row._extra[(names['patient'])].split(' ')]]
+                        [[split_name = row.name.split(' ')]]
                         [[ name = vidjil_utils.display_names(row.sample_set_id, split_name[0], split_name[1]) ]]
                     [[ else: ]]
-                        [[ name = row[row.sample_type].name ]]
+                        [[ name = row.name ]]
                     [[pass]]
                     <td>[[=name]]</td>
                     <td>[[=row.filename]]</td>

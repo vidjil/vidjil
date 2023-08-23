@@ -270,9 +270,9 @@ def jobs():
         query = (query & filter_by_tags(tags))
 
     names = {}
-    names['patient'] = "patient.first_name || ' ' || patient.last_name"
-    names['run'] = "run.name"
-    names['generic'] = "generic.name"
+    names['patient'] = "CONCAT(patient.first_name, ' ', patient.last_name) AS name"
+    names['run'] = "run.name AS name"
+    names['generic'] = "generic.name AS name"
 
     queries = {}
     for set_type in ['patient', 'run', 'generic']:
