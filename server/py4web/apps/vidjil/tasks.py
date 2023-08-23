@@ -56,9 +56,12 @@ def assert_scheduler_task_does_not_exist(args):
 def register_task(task_name, args):
     ##check scheduled run
     db._adapter.reconnect()
+
+    timestamp = time.time()
     task_id = db.scheduler_task.insert( task_name = task_name,
                                         args = args,
-                                        status = "PENDING"
+                                        status = "PENDING",
+                                        start_time = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S'),
                                         )
 
     return task_id
