@@ -62,12 +62,12 @@ def submit():
         auth.session["uuid"] = str(uuid.uuid1())
         user = {f.name: user[f.name] for f in auth.db.auth_user if f.readable}
         data = {"user": user}
-        log.info("Login ", extra={'user_id': auth.user_id, "timestamp": auth.session["recent_activity"]})
+        log.info("Login ", extra={'user_id': auth.current_user.get('id'), "timestamp": auth.session["recent_activity"]})
         auth_event_data = dict(time_stamp=str(datetime.fromtimestamp(auth.session['recent_activity'])),
                          client_ip=request.remote_addr ,
                          user_id=user.get("id"),
-                         origin="todo",
-                         description="login")
+                         origin="auth",
+                         description='User ' + str(user.get("id")) + ' Logged-in')
         db.auth_event.insert(**auth_event_data)
     else:
         data = auth._error(error)
@@ -82,12 +82,12 @@ def logout():
     user_id = auth.session["user"]["id"]
     session.clear()
     res = {"redirect" : URL('default/home.html')}
-
+    log.info("Logout ", extra={'user_id': auth.current_user.get('id'), "timestamp": calendar.timegm(time.gmtime())})
     auth_event_data = dict(time_stamp=str(datetime.now()),
                          client_ip=request.remote_addr ,
                          user_id=user_id,
-                         origin="todo",
-                         description="logout")
+                         origin="auth",
+                         description='User ' + str(user_id) + ' Logged-out')
     db.auth_event.insert(**auth_event_data)
     return json.dumps(res, separators=(',',':'))
 
