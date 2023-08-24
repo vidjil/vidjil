@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+ 
 from collections import defaultdict
 from . import vidjil_utils
 import apps.vidjil.defs as defs

@@ -1,4 +1,4 @@
-#coding: utf-8
+# -*- coding: utf-8 -*-
 from py4web.utils.auth import Auth
 from pydal.objects import Row, Rows, Table, Query, Set, Expression
 from enum import Enum

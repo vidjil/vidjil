@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import apps.vidjil.defs as defs
 import base64

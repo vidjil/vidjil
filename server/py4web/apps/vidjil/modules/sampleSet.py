@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from abc import ABCMeta, abstractmethod
 from apps.vidjil.modules.tag import TagDecorator, get_tag_prefix
 from apps.vidjil.user_groups import *

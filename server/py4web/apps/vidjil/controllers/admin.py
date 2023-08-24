@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import subprocess
 from sys import modules
 from .. import defs

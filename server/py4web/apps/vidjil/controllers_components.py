@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This file defines actions, i.e. functions the URLs are mapped into
 The @action(path) decorator exposed the function at URL:

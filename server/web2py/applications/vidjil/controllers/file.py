@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import gluon.contrib.simplejson
 import defs
 import vidjil_utils

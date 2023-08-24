@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .common import db, auth
 
 def get_group_list(auth):

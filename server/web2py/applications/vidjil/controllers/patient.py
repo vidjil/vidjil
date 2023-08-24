@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import gluon.contrib.simplejson, datetime
 import vidjil_utils
 import time

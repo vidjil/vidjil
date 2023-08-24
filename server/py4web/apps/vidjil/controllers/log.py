@@ -3,7 +3,7 @@ Returns messages previouly logged within the 'user_log' table.
 See UserLogHandler() in models/db.py.
 '''
 
-# coding: utf8
+# -*- coding: utf-8 -*-
 from sys import modules
 from .. import defs
 from ..modules import vidjil_utils

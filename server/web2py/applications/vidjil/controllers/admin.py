@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import gluon.contrib.simplejson, re
 import os.path, subprocess
 import vidjil_utils
