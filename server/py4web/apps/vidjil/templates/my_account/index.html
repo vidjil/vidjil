@@ -1,3 +1,5 @@
+[[from apps.vidjil.modules import vidjil_utils]]
+
 [[extend 'db_layout.html']]
 
 <div>
@@ -45,7 +47,7 @@
                             <span class="button button_token [[=fuse[3] ]]_token">
                                 [[ if fuse[3] == 'patient': ]]
                                     [[ split_name = fuse[4].split(' ') ]]
-                                    [[ name = display_names(fuse[1], split_name[0], split_name[1]) ]]
+                                    [[ name = vidjil_utils.display_names(fuse[1], split_name[0], split_name[1]) ]]
                                 [[else:]]
                                     [[ name = fuse[4] ]]
                                 [[ pass ]]

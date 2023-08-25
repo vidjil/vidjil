@@ -13,7 +13,6 @@ import time
 import os
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
-from ..modules import vidjil_utils
 
 from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
 
@@ -235,7 +234,6 @@ def index():
     log.debug("my account list (%.3fs)" % (time.time()-start))
     return dict(keys = keys,
                 result=result,
-                display_names=vidjil_utils.display_names, # Need as import don't follow to template as for web2py
                 group_ids = group_list,
                 involved_group_ids = involved_group_ids,
                 auth=auth,
