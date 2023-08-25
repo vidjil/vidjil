@@ -27,8 +27,6 @@ class PermissionLetterMapping(Enum):
     save = 's'
 
 class VidjilAuth(Auth):
-    admin = None
-    groups = None
     permissions = {}
 
     def __init__(self, session, db, define_tables):
@@ -45,6 +43,13 @@ class VidjilAuth(Auth):
     def impersonate():
         return False
 
+    @property
+    def admin(self):
+        return self.is_admin()
+
+    @property
+    def groups(self):
+        return self.get_group_names()
 
     def define_tables(self):
         """Defines the auth_user table"""
@@ -127,11 +132,6 @@ class VidjilAuth(Auth):
             db.define_table("auth_user", *(auth_fields + self.extra_auth_user_fields))
 
             
-
-    def preload(self):
-        self.groups = self.get_group_names()
-        self.admin = 'admin' in self.groups
-
     def exists(self, object_of_action, object_id):
         db = self.db
         if (object_of_action in self.permissions \
@@ -325,11 +325,9 @@ class VidjilAuth(Auth):
         '''Tells if the user is an admin.  If the user is None, the current
         user is taken into account'''
 
-        if self.admin == None:
-            self.preload()
-
         if user == None:
-            return self.admin
+            user = self.user_id
+
         return self.has_membership(user_id = user, role = 'admin')
 
     def is_in_group(self, group):
@@ -337,8 +335,6 @@ class VidjilAuth(Auth):
         '''
         Tells if the current user is in the group
         '''
-        if self.groups == None:
-            self.preload()
         return group in self.groups
 
     def can_create_patient(self, user = None):
@@ -992,5 +988,5 @@ class VidjilAuth(Auth):
                 user_groups[membership.group_id] = group.role
 
     def __str__(self):
-        return "%04d - %s %s" % (self.id, self.first_name, self.last_name)
+        return "AUTH USER --- %04d - [user id %s] [admin %s] [groups %s]" % (self.user_id, self.get_user().get('id'), self.admin, self.groups) 
 
