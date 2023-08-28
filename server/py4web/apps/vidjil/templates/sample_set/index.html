@@ -246,7 +246,6 @@
     
     
     
-    
    <br /><br />
    [[if can_modify:]]
    <i class="icon-pencil-2 pointer" title="edit information" onclick="db.call('sample_set/form', { 'id' : '[[=request.query["id"]]]' } )" > </i>
@@ -254,13 +253,12 @@
    [[ text = tag_decorator.decorate(info["info"], 'tag', sample_type, '/sample_set/all') ]]
    [[=tag_decorator.sanitize(text)]]
 
-        [[if can_upload: ]]
+    [[if can_upload: ]]
         [[if not auth.can_process_sample_set(int(request.query['id'])) :]]
-  <br /> Once your data are uploaded, please
-  <a href="mailto:support@vidjil.org?Subject=%5Bvidjil%5D%20New%20sequences%20(user%20[[=auth.user.id]])&Body=%0AHi%2C%0A%0AI%20uploaded%20some%20sequences%20on%20the%20[[=request.env.http_host]]%20server%20(set%20[[=request.query['id']]]).%0ACould%20you%20run%20Vidjil%20on%20these%20data%20%3F%0A%0A">request an analysis</a>.
+            <br /> Once your data are uploaded, please
+            <a href="mailto:support@vidjil.org?Subject=%5Bvidjil%5D%20New%20sequences%20(user%20[[=auth.user_id]])&Body=%0AHi%2C%0A%0AI%20uploaded%20some%20sequences%20on%20the%20[[=request['HTTP_HOST']]]%20server%20(set%20[[=request.query['id']]]).%0ACould%20you%20run%20Vidjil%20on%20these%20data%20%3F%0A%0A">request an analysis</a>.
         [[pass]]
-
-        [[pass]]
+    [[pass]]
 
 
    [[if auth.can_process_sample_set(int(request.query['id'])) :]]
