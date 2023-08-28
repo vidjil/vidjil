@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from .common import db, auth
+from .modules.permission_enum import PermissionEnum
 
 def get_group_list(auth):
     db = auth.db
