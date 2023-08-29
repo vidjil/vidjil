@@ -239,7 +239,7 @@ code_quality_custom:
 # Server
 
 test_server_unit:
-    image: python:2.7-slim
+    image: python:slim
     stage: test_unit
     <<: *before_script_global_docker
     script:
