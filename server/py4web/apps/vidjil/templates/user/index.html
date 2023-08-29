@@ -10,7 +10,7 @@
                     <td class="column_200"> name</td>
                     <td class="column_200"> @</td>
                     <td class="column_50">access</td>
-                    <td class="column_100">groups</td>
+                    <td class="column_200">groups</td>
                     <td class="column_150">first login</td>
                     <td class="column_150" onclick="db.call('user/index', {'sort' : 'login'
                     [[if not reverse and request.query["sort"]=="login" :]] , 'reverse' : true [[pass]] })">last login</td>
@@ -29,7 +29,15 @@
                     <td> [[=row.first_name]] [[=row.last_name]]</td>
                     <td> [[=row.email]]  </td>
                     <td> [[=row.access]]  </td>
-                    <td> [[=row.groups]]  </td>
+                    <td style="">
+                        [[ for groupx in row.groups: ]]
+                            <a style="color:[[='red' if groups[int(groupx)]['role'] == 'admin' else 'teal' if groups[int(groupx)]['role'].startswith('user_') else 'grey'  ]]"
+                                ondblclick="db.call('group/info', {'id' :[[=groupx]]} )"
+                                title="[[=groups[int(groupx)]['description'] if not None else '']]">
+                                [[=groups[int(groupx)]["role"]]]
+                            </a>
+                        [[pass]]  
+                    </td>
                     <td> [[=row.first_login]] </td>
                     <td> [[=row.last_login]] </td>
                     <td> [[=row.created]]  </td>

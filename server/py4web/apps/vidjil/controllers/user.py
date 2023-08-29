@@ -27,6 +27,7 @@ def index():
     
     query = db(db.auth_user).select()
 
+    groups =  {g.id: {'id': g.id, 'role': g.role, 'description': g.description} for g in db(db.auth_group.id).select()}
     for row in query :
         row.created = db( db.patient.creator == row.id ).count()
         
@@ -35,7 +36,7 @@ def index():
 
         q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select()]
         q.sort()
-        row.groups = ' '.join([str(g) for g in q])
+        row.groups = q
 
         row.size = 0
         row.files = 0
