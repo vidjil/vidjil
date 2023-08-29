@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # check compatibility
 import py4web
 

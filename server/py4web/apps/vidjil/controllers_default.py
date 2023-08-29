@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from py4web import action, request, abort, redirect, URL, Field, HTTP
 from yatl.helpers import A, I

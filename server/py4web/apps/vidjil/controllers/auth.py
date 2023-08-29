@@ -1,9 +1,10 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 
 
 import calendar
 import time
 import uuid
+from datetime import datetime
 
 from sys import modules
 from .. import defs
@@ -61,18 +62,33 @@ def submit():
         auth.session["uuid"] = str(uuid.uuid1())
         user = {f.name: user[f.name] for f in auth.db.auth_user if f.readable}
         data = {"user": user}
+        log.info("Login ", extra={'user_id': auth.current_user.get('id'), "timestamp": auth.session["recent_activity"]})
+        auth_event_data = dict(time_stamp=str(datetime.fromtimestamp(auth.session['recent_activity'])),
+                         client_ip=request.remote_addr ,
+                         user_id=user.get("id"),
+                         origin="auth",
+                         description='User ' + str(user.get("id")) + ' Logged-in')
+        db.auth_event.insert(**auth_event_data)
     else:
         data = auth._error(error)
 
-    res = {"redirect" : URL('default/home.html')}
+    res = {"redirect" : URL('default/home.html'), "error": error, "user_id": user["id"] if user != None else None, "user_email": user["email"] if user != None else None}
     return json.dumps(res, separators=(',',':'))
 
 
 @action("/vidjil/auth/logout", method=["POST", "GET"])
 @action.uses(db, session, auth, cors, flash)
 def logout():
+    user_id = auth.session["user"]["id"]
     session.clear()
     res = {"redirect" : URL('default/home.html')}
+    log.info("Logout ", extra={'user_id': auth.current_user.get('id'), "timestamp": calendar.timegm(time.gmtime())})
+    auth_event_data = dict(time_stamp=str(datetime.now()),
+                         client_ip=request.remote_addr ,
+                         user_id=user_id,
+                         origin="auth",
+                         description='User ' + str(user_id) + ' Logged-out')
+    db.auth_event.insert(**auth_event_data)
     return json.dumps(res, separators=(',',':'))
 
 @action("/vidjil/auth/register", method=["POST", "GET"])

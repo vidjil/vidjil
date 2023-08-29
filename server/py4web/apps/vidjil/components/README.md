@@ -1,3 +1,7 @@
+!!!note
+    This file describe another approach and use case of py4web.
+    Py4web allow to create `components` and split code. It seem to be not apply for vidjil.
+
 # Vue Components for Py4Web
 
 We provide here a few components that implement UI elements. 

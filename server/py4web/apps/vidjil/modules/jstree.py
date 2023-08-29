@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import dictobj
 import os
 from collections import namedtuple

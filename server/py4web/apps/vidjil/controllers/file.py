@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import base64
 import datetime
 from sys import modules
@@ -377,7 +377,7 @@ def submit():
             if data_file is not None and data_file2 is not None and pre_process != '0':
                 schedule_pre_process(fid, pre_process)
 
-        log.info(mes, extra={'user_id': auth.user_id,
+        log.info(mes, extra={'user_id': auth.current_user.get('id'),
                 'record_id': f['id'],
                 'table_name': "sequence_file"})
 
@@ -393,7 +393,7 @@ def submit():
         return error_message("add_form() failed")
 
 
-@action("/vidjil/file/up", method=["POST", "GET", "OPTIONS"])
+@action("/vidjil/file/upload", method=["POST", "GET", "OPTIONS"])
 @action.uses(db, auth.user)
 def upload(): 
     #session.forget(response)
@@ -450,11 +450,14 @@ def upload():
             # Compute and store file size
             size = os.path.getsize(seq_file)
             mes += ' (%s)' % vidjil_utils.format_size(size)
-            db.sequence_file[request.params["id"]].update(size_file = size)
+            db(db.sequence_file.id == request.params["id"]).update(size_file = size)
+
 
         if data_file2 is not None :
             seq_file2 = defs.DIR_SEQUENCES + data_file2
-            #TODO
+            size2 = os.path.getsize(seq_file2)
+            mes += ' (%s)' % vidjil_utils.format_size(size2)
+            db(db.sequence_file.id == request.params["id"]).update(size_file2 = size2)
         
     # Log and exit
     res = {"message": error + mes}

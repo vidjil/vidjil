@@ -1,4 +1,4 @@
-#coding: utf-8
+# -*- coding: utf-8 -*-
 from py4web.utils.auth import Auth
 from pydal.objects import Row, Rows, Table, Query, Set, Expression
 from enum import Enum
@@ -27,8 +27,6 @@ class PermissionLetterMapping(Enum):
     save = 's'
 
 class VidjilAuth(Auth):
-    admin = None
-    groups = None
     permissions = {}
 
     def __init__(self, session, db, define_tables):
@@ -45,6 +43,13 @@ class VidjilAuth(Auth):
     def impersonate():
         return False
 
+    @property
+    def admin(self):
+        return self.is_admin()
+
+    @property
+    def groups(self):
+        return self.get_group_names()
 
     def define_tables(self):
         """Defines the auth_user table"""
@@ -127,11 +132,6 @@ class VidjilAuth(Auth):
             db.define_table("auth_user", *(auth_fields + self.extra_auth_user_fields))
 
             
-
-    def preload(self):
-        self.groups = self.get_group_names()
-        self.admin = 'admin' in self.groups
-
     def exists(self, object_of_action, object_id):
         db = self.db
         if (object_of_action in self.permissions \
@@ -266,7 +266,7 @@ class VidjilAuth(Auth):
             return has_action
         return has_action and self.get_group_access(object_of_action, id, group)
 
-    def get_permission(self, action, object_of_action, id = 0, user = None):
+    def get_permission(self, action, object_of_action, object_id = 0, user = None):
         '''
         Returns whether the current user has the permission 
         to perform the action on the object_of_action.
@@ -281,22 +281,22 @@ class VidjilAuth(Auth):
         if is_current_user:
             if not object_of_action in self.permissions:
                 self.permissions[object_of_action] = {}
-            if not id in self.permissions[object_of_action]:
-                self.permissions[object_of_action][id] = {}
+            if not object_id in self.permissions[object_of_action]:
+                self.permissions[object_of_action][object_id] = {}
                 missing_value = True
-            if not action in self.permissions[object_of_action][id]:
+            if not action in self.permissions[object_of_action][object_id]:
                 missing_value = True
         if not is_current_user or missing_value:
             perm_groups = self.get_permission_groups(action, user)
-            if id > 0:
-                access_groups = self.get_access_groups(object_of_action, id, user)
+            if int(object_id) > 0:
+                access_groups = self.get_access_groups(object_of_action, object_id, user)
                 intersection = set(access_groups).intersection(perm_groups)
             else :
                 intersection = perm_groups
             if not is_current_user:
                 return len(intersection) > 0
-            self.permissions[object_of_action][id][action] = len(intersection) > 0
-        return self.permissions[object_of_action][id][action]
+            self.permissions[object_of_action][object_id][action] = len(intersection) > 0
+        return self.permissions[object_of_action][object_id][action]
 
     def load_permissions(self, action, object_of_action):
         '''
@@ -325,11 +325,9 @@ class VidjilAuth(Auth):
         '''Tells if the user is an admin.  If the user is None, the current
         user is taken into account'''
 
-        if self.admin == None:
-            self.preload()
-
         if user == None:
-            return self.admin
+            user = self.user_id
+
         return self.has_membership(user_id = user, role = 'admin')
 
     def is_in_group(self, group):
@@ -337,8 +335,6 @@ class VidjilAuth(Auth):
         '''
         Tells if the current user is in the group
         '''
-        if self.groups == None:
-            self.preload()
         return group in self.groups
 
     def can_create_patient(self, user = None):
@@ -513,16 +509,15 @@ class VidjilAuth(Auth):
             and (self.get_permission(PermissionEnum.run.value, object_of_action, id, user=user)\
             or self.is_admin(user))
 
-    def can_process_sample_set(self, id, user = None):
+    def can_process_sample_set(self, sample_set_id, user = None):
         '''
         Returns if the user can process results for a sample_set
         '''
         db = self.db
-        sample_set = db.sample_set[id]
+        sample_set = db.sample_set[sample_set_id]
         if sample_set is None:
             return False
-
-        perm = self.get_permission(PermissionEnum.run.value, 'sample_set', id, user) \
+        perm = self.get_permission(PermissionEnum.run.value, 'sample_set', sample_set_id, user) \
             or self.is_admin(user)
 
         if perm:
@@ -993,5 +988,5 @@ class VidjilAuth(Auth):
                 user_groups[membership.group_id] = group.role
 
     def __str__(self):
-        return "%04d – %s %s" % (self.id, self.first_name, self.last_name)
+        return "AUTH USER --- %04d - [user id %s] [admin %s] [groups %s]" % (self.user_id, self.get_user().get('id'), self.admin, self.groups) 
 

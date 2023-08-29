@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ###
 ### Vidjil server, main configuration file
 ### This file must be named 'modules/defs.py' to be taken into account

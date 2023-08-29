@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import datetime
 import types
 
@@ -24,16 +24,16 @@ ACCESS_DENIED = "access denied"
 
 def generic_get_group(element_type):
     group = {}
-    separator = "|| ';' ||"
+    separator = ", ';', "
     fields = ["config.name",
               "%s_file.sample_set_id" % element_type,
               "%s_file.config_id" % element_type,
               "sample_set.sample_type"
             ]
     group_concat = "GROUP_CONCAT(DISTINCT  " + separator.join(fields)
-    group['patient'] =  group_concat + separator + "patient.first_name || ' ' || patient.last_name || '#')"
-    group['run'] = group_concat + separator + "run.name || '#')"
-    group['set'] = group_concat + separator + "generic.name || '#')"
+    group['patient'] =  group_concat + separator + "patient.first_name, ' ', patient.last_name, '#')"
+    group['run'] = group_concat + separator + "run.name, '#')"
+    group['set'] = group_concat + separator + "generic.name, '#')"
     return group
 
 def get_group_fuses():
@@ -41,14 +41,14 @@ def get_group_fuses():
 
 def get_group_analyses():
     group = {}
-    separator = "|| ';' ||"
+    separator = ", ';', "
     fields = ["analysis_file.sample_set_id",
               "sample_set.sample_type"
             ]
     group_concat = "GROUP_CONCAT(DISTINCT  " + separator.join(fields)
-    group['patient'] =  group_concat + separator + "patient.first_name || ' ' || patient.last_name || '#')"
-    group['run'] = group_concat + separator + "run.name || '#')"
-    group['set'] = group_concat + separator + "generic.name || '#')"
+    group['patient'] =  group_concat + separator + "patient.first_name, ' ', patient.last_name, '#')"
+    group['run'] = group_concat + separator + "run.name, '#')"
+    group['set'] = group_concat + separator + "generic.name, '#')"
     return group
 
 def group_permissions():
@@ -139,6 +139,7 @@ def index():
     perm_query = get_permissions(group_list)
     for r in perm_query:
         if(r.auth_group.role not in result):
+            # Init default values of results
             result[r.auth_group.role] = {}
             for set_type in ['patient', 'run', 'set']:
                 result[r.auth_group.role][set_type] = {'count': {'num_sets': 0, 'num_samples': 0, 'sample_type': 'generic' if set_type == 'set' else set_type}}
@@ -154,8 +155,8 @@ def index():
     if (tags is not None and len(tags) > 0):
         query = (query & filter_by_tags(tags))
 
-    group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id || ';' || scheduler_task.status || '#')"
-    group_fuses = get_group_fuses()
+    group_statuses = "GROUP_CONCAT(DISTINCT scheduler_task.id, ';', scheduler_task.status, '#')"
+    group_fuses    = get_group_fuses()
     group_analyses = get_group_analyses()
 
     left = base_left() + [
@@ -270,9 +271,9 @@ def jobs():
         query = (query & filter_by_tags(tags))
 
     names = {}
-    names['patient'] = "patient.first_name || ' ' || patient.last_name"
-    names['run'] = "run.name"
-    names['generic'] = "generic.name"
+    names['patient'] = "CONCAT(patient.first_name, ' ', patient.last_name) AS name"
+    names['run'] = "run.name AS name"
+    names['generic'] = "generic.name AS name"
 
     queries = {}
     for set_type in ['patient', 'run', 'generic']:
@@ -303,6 +304,7 @@ def jobs():
     sorted_start = time.time()
     result = sorted(result, key=lambda x: x.time, reverse=True)
     log.debug("jobs list sort (%.3fs)" % (time.time() - sorted_start))
+
     return dict(result=result,
                 group_ids = group_list,
                 involved_group_ids = involved_group_ids,

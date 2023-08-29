@@ -5,9 +5,9 @@
 
 <div id="block_left">
     table:
-    [[=SELECT(*[OPTION(elem) for elem in ['all', 'patient', 'run'] ], _id="table_selector", _name="table", _onchange="db.call('log/index', {'table': this.value})", value=stable)]]
+    [[=SELECT(*[OPTION(elem, _selected=(elem==request.query.table)) for elem in ['all', 'patient', 'run'] ], _id="table_selector", _name="table", _onchange="db.call('log/index', {'table': this.value})", value=stable)]]
     id:
-    [[=SELECT(*[OPTION(tup[1], _value=tup[0]) for tup in ([(0, 'None')] + data_list)], _id="id_selector", _name="id", _onchange="db.call('log/index', {'table': $('#table_selector').val(), 'id': this.value})", value=sid)]]
+    [[=SELECT(*[OPTION(tup[1], _value=tup[0], _selected=(str(tup[0])==request.query.id)) for tup in ([(0, 'None')] + data_list)], _id="id_selector", _name="id", _onchange="db.call('log/index', {'table': $('#table_selector').val(), 'id': this.value})", value=sid)]]
 </div>
 <div id="db_table_container">
     <table class="db_table" id="table">

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from abc import ABCMeta, abstractmethod
 from apps.vidjil.modules.tag import TagDecorator, get_tag_prefix
 from apps.vidjil.user_groups import *
@@ -231,7 +233,7 @@ def get_sample_set_id_from_results_file(results_file_id):
     return sample_set_id
 
 def get_conf_list_select():
-    return "GROUP_CONCAT(DISTINCT (config.id || ';' || config.name || ';' || fused_file.fused_file))"
+    return "GROUP_CONCAT(DISTINCT config.id, ';', config.name, ';', fused_file.fused_file)"
 
 def get_config_ids_select():
     return "GROUP_CONCAT(DISTINCT config.id)"

@@ -15,7 +15,7 @@
     <div class="db_block_left">
         search
         <input id="db_filter_input" type="text" value="[[=request.query["filter"] ]]" 
-               onchange="db.call('admin/showlog', {'file' : '[[=request.query["file"] ]]', 'filter' : this.value, 'format': '[[=request.query["format"] ]]' } )"  >
+               onchange="db.call('admin/showlog', {'file' : '[[=request.query["file"] ]]', 'filter' : this.value, 'format': '[[=format]]' } )"  >
     </div>
 </div>
 
