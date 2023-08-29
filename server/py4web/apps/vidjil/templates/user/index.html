@@ -39,7 +39,16 @@
                         [[pass]]  
                     </td>
                     <td> [[=row.first_login]] </td>
-                    <td> [[=row.last_login]] </td>
+                    <td> 
+                        [[ if row.login_status =="-": ]]
+                            <i class="icon-minus-circled-1" title="User never logged" style="color:lightgrey;"></i>
+                        [[ elif row.login_status==False: ]]
+                            <i class="icon-cancel-circled-2" title="User logged since more that 3 month" style="color:red;"></i>
+                        [[ else: ]]
+                            <i class="icon-check" title="User logged recently" style="color:green;"></i>
+                        [[pass]]
+                        [[=row.last_login]]
+                    </td>
                     <td> [[=row.created]]  </td>
                     <td> [[=row.files]] ([[=vidjil_utils.format_size(row.size)]]) </td>
                     <td onclick="db.call('user/edit', {'id' :'[[=row.id]]'} )" > <i class="icon-pencil-2" title="edit user information"></i> </td>

@@ -10,6 +10,8 @@ import json
 import re
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
+import datetime
+from datetime import timedelta 
 
 from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
@@ -25,6 +27,8 @@ ACCESS_DENIED = "access denied"
 @action.uses("user/index.html", db, auth.user)
 def index():
     
+    since = datetime.datetime.now() - timedelta(days=90)
+
     query = db(db.auth_user).select()
 
     groups =  {g.id: {'id': g.id, 'role': g.role, 'description': g.description} for g in db(db.auth_group.id).select()}
@@ -53,6 +57,8 @@ def index():
         
         row.first_login = str(last_logins[-1].time_stamp) if len(last_logins) > 0 else '-'
         row.last_login = str(last_logins[0].time_stamp) if len(last_logins) > 0 else '-'
+        # login status between never ('-'), recent (True) and old (False)
+        row.login_status =  datetime.datetime.strptime(row.last_login, '%Y-%m-%d %H:%M:%S') > since if row.last_login != "-" else "-"
 
     ##sort query
     reverse = False
