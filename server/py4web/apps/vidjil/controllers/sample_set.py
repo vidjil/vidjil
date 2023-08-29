@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
@@ -20,6 +20,8 @@ import os
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
 import math
+import mimetypes
+from ombott import static_file
 
 from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
@@ -42,7 +44,7 @@ def getConfigsByClassification():
                 classification["%02d_%s" % (i, class_elt)]["info"]    = class_elt.info
                 classification["%02d_%s" % (i, class_elt)]["configs"] = configs
             i += 1
-        classification["%02d_noclass" % i]["name"]    = "–"
+        classification["%02d_noclass" % i]["name"]    = "-"
         classification["%02d_noclass" % i]["info"]    = ""
         classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
     return classification
@@ -1322,3 +1324,10 @@ def mystats():
     log.debug("mystats (%.3fs) %s" % (time.time()-start, request.query["filter"]))
     # Return
     return json.dumps(d, separators=(',',':'))
+
+@action("/vidjil/sample_set/download_sequence_file/<filename>", method=["POST", "GET"])
+@action.uses(db, session)
+def download(filename=None):
+    mimetype = mimetypes.guess_type(defs.DIR_SEQUENCES+filename)
+    return static_file(filename, root=defs.DIR_SEQUENCES, download=request.query.filename, mimetype=mimetype[1])
+    

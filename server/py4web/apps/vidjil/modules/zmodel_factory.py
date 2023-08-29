@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import datetime
 from enum import Enum
 from apps.vidjil.modules import vidjil_utils

@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
@@ -10,6 +10,8 @@ import json
 import re
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
+import datetime
+from datetime import timedelta 
 
 from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
@@ -25,8 +27,11 @@ ACCESS_DENIED = "access denied"
 @action.uses("user/index.html", db, auth.user)
 def index():
     
+    since = datetime.datetime.now() - timedelta(days=90)
+
     query = db(db.auth_user).select()
 
+    groups =  {g.id: {'id': g.id, 'role': g.role, 'description': g.description} for g in db(db.auth_group.id).select()}
     for row in query :
         row.created = db( db.patient.creator == row.id ).count()
         
@@ -35,7 +40,7 @@ def index():
 
         q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select()]
         q.sort()
-        row.groups = ' '.join([str(g) for g in q])
+        row.groups = q
 
         row.size = 0
         row.files = 0
@@ -52,6 +57,8 @@ def index():
         
         row.first_login = str(last_logins[-1].time_stamp) if len(last_logins) > 0 else '-'
         row.last_login = str(last_logins[0].time_stamp) if len(last_logins) > 0 else '-'
+        # login status between never ('-'), recent (True) and old (False)
+        row.login_status =  datetime.datetime.strptime(row.last_login, '%Y-%m-%d %H:%M:%S') > since if row.last_login != "-" else "-"
 
     ##sort query
     reverse = False
@@ -71,7 +78,8 @@ def index():
 
     log.info("view user list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': 'auth_user'})
     return dict(query=query,
-    			reverse=reverse,
+                groups=groups,
+                reverse=reverse,
                 auth=auth,
                 db=db)
 

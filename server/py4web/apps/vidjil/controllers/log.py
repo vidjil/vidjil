@@ -3,7 +3,7 @@ Returns messages previouly logged within the 'user_log' table.
 See UserLogHandler() in models/db.py.
 '''
 
-# coding: utf8
+# -*- coding: utf-8 -*-
 from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
@@ -90,23 +90,22 @@ def index():
         id_value = request.query['id']
         query &= user_log.record_id == request.query['id']
 
-    if 'table' in request.query and 'id' in request.query :
-        query &= (db.auth_user.id == user_log.user_id)
-        query = db(query).select(user_log.ALL, db.auth_user.first_name, db.auth_user.last_name, db.patient.first_name, db.patient.last_name, db.run.name,
-                left = [
-                    db.patient.on((db.patient.id == db.user_log.record_id) & (db.user_log.table_name == 'patient')),
-                    db.run.on((db.run.id == db.user_log.record_id) & (db.user_log.table_name == 'run'))
-                ],
-                orderby=~db.user_log.created)
-        for row in query:
-            if row.patient.first_name is not None:
-                row.names = vidjil_utils.anon_ids([row.user_log.record_id])[0]
-            else:
-                row.names = row.run.name
-    else :
-        query =[]
+    query &= (db.auth_user.id == user_log.user_id)
+    query = db(query).select(user_log.ALL, db.auth_user.first_name, db.auth_user.last_name, db.patient.first_name, db.patient.last_name, db.run.name,
+            left = [
+                db.patient.on((db.patient.id == db.user_log.record_id) & (db.user_log.table_name == 'patient')),
+                db.run.on((db.run.id == db.user_log.record_id) & (db.user_log.table_name == 'run'))
+            ],
+            orderby=~db.user_log.created)
+    for row in query:
+        if row.patient.first_name is not None:
+            row.names = vidjil_utils.anon_ids([row.user_log.record_id])[0]
+        else:
+            row.names = row.run.name
+
 
     return dict(query=query,
+                request=request,
                 data_list=data_list,
                 stable=table_name,
                 sid=id_value,

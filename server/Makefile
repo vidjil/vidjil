@@ -1,7 +1,7 @@
 
 WEB2PY_VERSION=2.20.1
 
-install: install_web2py
+install:  $(MAKE) -C py4web/ install_py4web
 
 download_web2py:
 	wget -O web2py_src.zip http://www.vidjil.org/lib/web2py_src-${WEB2PY_VERSION}.zip
@@ -43,4 +43,4 @@ clean_unit_tests:
 
 cleanall: clean_unit_tests
 
-.PHONY: install install_web2py unit install_web2py_standalone launch_web2py_localhost launch_fuse_server kill_fuse_server clean_unit_tests cleanall
+.PHONY: install

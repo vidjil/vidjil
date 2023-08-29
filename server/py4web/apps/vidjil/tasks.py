@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 
 import json
@@ -10,13 +10,13 @@ import time
 import sys
 import datetime
 import random
-#import xmlrpclib
+import xmlrpc.client
 import apps.vidjil.modules.tools_utils as tools_utils
 from .modules.sequenceFile import get_original_filename
 from .common import settings, scheduler, db, Field, log
 
 @scheduler.task
-def task_test():
+def periodic_task():
     try:
         db._adapter.reconnect()
         db.patient[28815].update_record( info = db.patient[28815]['info']+"z")
@@ -28,8 +28,8 @@ def task_test():
 
 # run task_test every 100 seconds
 scheduler.conf.beat_schedule = {
-    "my_first_task": {
-        "task": "apps.vidjil.tasks.task_test",
+    "periodic_task": {
+        "task": "apps.vidjil.tasks.periodic_task",
         "schedule": 100.0,
         "args": (),
     },
@@ -55,14 +55,22 @@ def assert_scheduler_task_does_not_exist(args):
 
 def register_task(task_name, args):
     ##check scheduled run
+    db._adapter.reconnect()
+
+    timestamp = time.time()
     task_id = db.scheduler_task.insert( task_name = task_name,
                                         args = args,
-                                        status = "PENDING"
+                                        status = "PENDING",
+                                        start_time = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S'),
                                         )
 
     return task_id
 
-    
+def update_task(task_id, status):
+    db._adapter.reconnect()
+    db.scheduler_task[task_id].update_record(status = status)
+    db.commit()
+
 
 
 
@@ -108,9 +116,9 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     from subprocess import Popen, PIPE, STDOUT, os
 
     #check results_file
-    row = db( ( db.results_file.config_id == id_config ) & 
+    db( ( db.results_file.config_id == id_config ) & 
              ( db.results_file.sequence_file_id == id_sequence )  
-             ).select()
+             ).update(hidden = True)
     
     ts = time.time()
     data_id = db.results_file.insert(sequence_file_id = id_sequence,
@@ -128,7 +136,11 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     program = db.config[id_config].program
 
     ##add task to scheduler
-    run_process.delay(program, args)
+    task_id = register_task("process", args)
+    db.results_file[data_id] = dict(scheduler_task_id = task_id)
+    run_process.delay(task_id, program, args)
+    update_task(task_id,"QUEUED")
+
     
     #if db.sequence_file[id_sequence].pre_process_flag not in ["COMPLETED", "DONE"] and db.sequence_file[id_sequence].pre_process_flag :
     #    db.scheduler_task[task.id] = dict(status ="STOPPED")
@@ -155,25 +167,26 @@ def schedule_fuse(sample_set_ids, config_ids):
                 ).select(db.sample_set_membership.sample_set_id, db.sample_set_membership.sequence_file_id,
                         db.results_file.id, db.results_file.config_id).first()
             if row:
-                args.append([row.sample_set_membership.sequence_file_id, row.results_file.config_id,
-                row.results_file.id, row.sample_set_membership.sample_set_id, False])
-    if len(args) > 0:
-        task = scheduler.queue_task('refuse', [args],
-                                    repeats = 1, timeout = defs.TASK_TIMEOUT)
+                run_fuse.delay( row.sample_set_membership.sequence_file_id, 
+                row.results_file.config_id, 
+                row.results_file.id, 
+                row.sample_set_membership.sample_set_id, 
+                clean_before = False)
+
 
 def schedule_compute_extra(id_file, id_config, min_threshold):
     args = [id_file, id_config,  min_threshold]
     task = scheduler.queue_task('compute_extra', args, repeats=1, timeout=defs.TASK_TIMEOUT)
 
-def run_vidjil(id_file, id_config, id_data, grep_reads,
+def run_vidjil(task_id, id_file, id_config, id_data, grep_reads,
                clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     from datetime import timedelta as timed
     
     if db.sequence_file[id_file].pre_process_flag == "FAILED" :
         print("Pre-process has failed")
+        update_task(task_id, "FAIL")
         raise ValueError('pre-process has failed')
-        return "FAIL"
     
     ## re schedule if pre_process is still pending
     if db.sequence_file[id_file].pre_process_flag not in ["COMPLETED", "DONE"] and db.sequence_file[id_file].pre_process_flag:
@@ -181,15 +194,12 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         print("Pre-process is still pending, re-schedule")
     
         args = [id_file, id_config, id_data, grep_reads]
-        task = scheduler.queue_task("vidjil", args,
-                        repeats = 1, timeout = defs.TASK_TIMEOUT,
-                               start_time=request.now + timed(seconds=1200))
-        db.results_file[id_data] = dict(scheduler_task_id = task.id)
-        db.commit()
-        print(task.id)
-        sys.stdout.flush()
-        
-        return "SUCCESS"
+        run_process.apply_async((task_id, "vidjil", args), countdown=1200)
+        update_task(task_id, "WAIT")
+        return
+
+    update_task(task_id, "RUNNING")
+
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     upload_folder = defs.DIR_SEQUENCES
@@ -257,6 +267,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
         print("!!! Vidjil failed, no result file")
         res = {"message": "[%s] c%s: Vidjil FAILED - %s" % (id_data, id_config, out_folder)}
         log.error(res)
+        update_task(task_id, "FAIL")
         raise
     
     ## Parse some info in .log
@@ -314,7 +325,7 @@ def run_vidjil(id_file, id_config, id_data, grep_reads,
             run_fuse.delay(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
     os.remove(results_filepath)
-    return "SUCCESS"
+    update_task(task_id, "COMPLETED")
 
 def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
@@ -732,11 +743,11 @@ def custom_fuse(file_list):
     
     try:
         cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
-        proc_srvr = xmlrpclib.ServerProxy("http://%s:%d" % (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
+        proc_srvr = xmlrpc.client.ServerProxy("http://%s:%d" % (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
         fuse_filepath = proc_srvr.fuse(cmd, out_folder, output_filename)
     
         f = open(fuse_filepath, 'rb')
-        data = gluon.contrib.simplejson.loads(f.read())
+        data = json.loads(f.read())
     except:
         res = {"message": "'custom fuse' -> IOError"}
         log.error(res)
@@ -937,6 +948,6 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 
 
 @scheduler.task()
-def run_process(program, args):
+def run_process(task_id, program, args):
     if program == "vidjil" :
-        run_vidjil(args[0],args[1],args[2],args[3])
+        run_vidjil(task_id, args[0],args[1],args[2],args[3])

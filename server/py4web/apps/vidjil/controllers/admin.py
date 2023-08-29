@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import subprocess
 from sys import modules
 from .. import defs
@@ -8,6 +8,7 @@ from ..VidjilAuth import VidjilAuth
 from io import StringIO
 import json
 import os
+import re
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
 RUNNING ="RUNNING"
@@ -76,7 +77,7 @@ def index():
 
 
 @action("/vidjil/admin/showlog", method=["POST", "GET"])
-@action.uses("admin/showlog.html", db, auth.user)
+@action.uses("admin/showlog.html", db, auth)
 def showlog():
     if auth.is_admin():
          
@@ -139,7 +140,7 @@ def showlog():
             if len(lines) >= MAX_LOG_LINES :
                 break
             
-        return {'lines': lines, 'format': log_format}
+        return {'lines': lines, 'format': log_format, "auth": auth, "db":db}
 
 ## to use after change in the upload folder
 def repair_missing_files():

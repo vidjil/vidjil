@@ -20,6 +20,7 @@ from ..modules.sequenceFile import *
 from ..modules.sampleSet import get_sample_set_id_from_results_file
 from ..modules.analysis_file import get_analysis_data
 from ..controllers.group import add_default_group_permissions
+from ..tasks import custom_fuse
 from io import StringIO
 import logging
 import json
@@ -67,6 +68,19 @@ def home():
         redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)
     res = {"redirect" : redirect}
     return json.dumps(res, separators=(',',':'))
+
+@action("/vidjil/default/whoami")
+@action.uses(db, session)
+def whoami():
+    if auth.user:
+        user_data = {
+            "id": auth.current_user.get('id'),
+            "email": auth.current_user.get('email'),
+            "uuid": session["uuid"],
+            "admin": auth.is_admin(auth.current_user.get('id'))
+        }
+        return user_data
+    return {}
 
 def logger():
     '''Log to the server'''
@@ -185,10 +199,14 @@ def run_request():
         log.error(res)
         return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/default/run_all_request", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def run_all_request():
     error = ""
     extra_info = ''
     check_space(defs.DIR_RESULTS, "Runs")
+    
+    id_sample_set = int(request.query["sample_set_id"])
 
     if not "sequence_file_ids" in request.query:
         error += "sequence file ids required "
@@ -226,17 +244,6 @@ def run_all_request():
         schedule_run(s_id, id_config)
     return json.dumps({'success': 'true', 'redirect': 'reload'}, separators=(',',':'))
 
-    
-def run_contamination():
-    task = scheduler.queue_task('compute_contamination', pvars=dict(sequence_file_id=request.query["sequence_file_id"],
-                                                                    results_file_id=request.query["results_file_id"],
-                                                                    config_id=request.query["config_id"]),
-             repeats = 1, timeout = defs.TASK_TIMEOUT,immediate=True)
-    
-    res = {"success" : "true",
-           "processId" : task.id}
-    log.debug(str(res))
-    return json.dumps(res, separators=(',',':'))
 
 def run_extra():
     task = scheduler.queue_task('compute_extra', pvars=dict(id_file=request.query["sequence_file_id"],
@@ -483,6 +490,8 @@ def get_data():
         return json.dumps(res, separators=(',',':'))
     
 #########################################################################
+@action("/vidjil/default/get_custom_data", method=["POST", "GET"])
+@action.uses( db, auth.user)
 def get_custom_data():
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
@@ -783,14 +792,16 @@ def stop_impersonate() :
 
 
 ## TODO make custom download for .data et .analysis
-#@cache.action()
-def download():
-    """
-    allows downloading of uploaded files
-    http://..../[app]/default/download/[filename]
-    """
-    return response.download(request, db, download_filename=request.query.filename)
+@action("/vidjil/default/download/<filename>", method=["POST", "GET"])
+@action.uses(db, session)
+def download(filename=None):
+    from ombott import static_file
 
+    return static_file(filename, root=defs.DIR_RESULTS, download=request.query.filename)
+
+
+@action("/vidjil/default/download_data", method=["POST", "GET"])
+@action.uses(db, session)
 def download_data():
 
     file = "test"
