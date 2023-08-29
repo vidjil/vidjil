@@ -78,7 +78,8 @@ def index():
 
     log.info("view user list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': 'auth_user'})
     return dict(query=query,
-    			reverse=reverse,
+                groups=groups,
+                reverse=reverse,
                 auth=auth,
                 db=db)
 
