@@ -134,9 +134,6 @@ class VidjilAuth(Auth):
             
     def exists(self, object_of_action, object_id):
         db = self.db
-        if (object_of_action in self.permissions \
-            and object_id in self.permissions[object_of_action]):
-            return True
         return object_id and db[object_of_action][object_id] is not None
 
     def get_group_names(self):
@@ -277,26 +274,15 @@ class VidjilAuth(Auth):
         if is_current_user:
             user = self.user_id
 
-        missing_value = False
-        if is_current_user:
-            if not object_of_action in self.permissions:
-                self.permissions[object_of_action] = {}
-            if not object_id in self.permissions[object_of_action]:
-                self.permissions[object_of_action][object_id] = {}
-                missing_value = True
-            if not action in self.permissions[object_of_action][object_id]:
-                missing_value = True
-        if not is_current_user or missing_value:
-            perm_groups = self.get_permission_groups(action, user)
-            if int(object_id) > 0:
-                access_groups = self.get_access_groups(object_of_action, object_id, user)
-                intersection = set(access_groups).intersection(perm_groups)
-            else :
-                intersection = perm_groups
-            if not is_current_user:
-                return len(intersection) > 0
-            self.permissions[object_of_action][object_id][action] = len(intersection) > 0
-        return self.permissions[object_of_action][object_id][action]
+
+        # if not is_current_user or missing_value:
+        perm_groups = self.get_permission_groups(action, user)
+        if int(object_id) > 0:
+            access_groups = self.get_access_groups(object_of_action, object_id, user)
+            intersection = set(access_groups).intersection(perm_groups)
+        else :
+            intersection = perm_groups
+        return len(intersection) > 0
 
     def load_permissions(self, action, object_of_action):
         '''
@@ -304,20 +290,9 @@ class VidjilAuth(Auth):
         "can" while reducing the database overhead.
         '''
         db = self.db
-        if object_of_action not in self.permissions:
-            self.permissions[object_of_action] = {}
 
-        query = db(self.vidjil_accessible_query(PermissionEnum.read.value, object_of_action)).select(self.db[object_of_action].id)
-        for row in query:
-            if row.id not in self.permissions[object_of_action]:
-                self.permissions[object_of_action][row.id] = {}
-            self.permissions[object_of_action][row.id][action] = False
 
         query = db(self.vidjil_accessible_query(action, object_of_action)).select(self.db[object_of_action].id)
-        for row in query:
-            if row.id not in self.permissions[object_of_action]:
-                self.permissions[object_of_action][row.id] = {}
-            self.permissions[object_of_action][row.id][action] = True
 
         return query
 
@@ -910,6 +885,7 @@ class VidjilAuth(Auth):
     def has_membership(self, group_id=None, user_id=None, role=None, cached=False):
         if not user_id and self.user:
             user_id = self.user.id
+        print( f"=== user_id: {user_id}" )
         if cached:
             id_role = group_id or role
             r = (user_id and id_role in self.user_groups.values()) or (user_id and id_role in self.user_groups)
