@@ -18,12 +18,12 @@ Cypress.Commands.add('login', (host) => {
 
 
 Cypress.Commands.add('fillLogin', (user, password) => { 
-    cy.get('#auth_user_email', { timeout: 10000 })
+    cy.get('#login', { timeout: 10000 })
       .should('exist').should('be.visible')
       .type(user)
-    cy.get('#auth_user_password')
+    cy.get('#password')
       .type(password)
-    cy.get('#submit_record__row > .w2p_fw > input').click()
+    cy.get('#submit_login').click()
     cy.update_icon()
 
     cy.verifyLogin()
