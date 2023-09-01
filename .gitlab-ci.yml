@@ -302,7 +302,7 @@ test_server_unit:
     - ls
 
     # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
-    - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python\ \/usr\/share\/vidjil\/server\/py4web/" server/py4web/apps/vidjil/tests/init_tests.sh
+    - sed -i "s/^python\ \.\.\/\.\.\/\.\./docker\ exec\ docker_uwsgi_1\ python3\ \/usr\/share\/vidjil\/server\/py4web/" server/py4web/apps/vidjil/tests/functional/init_tests.py
     # Change File source definition in defs.py file 
     - docker exec docker_uwsgi_1 sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" /usr/share/vidjil/server/py4web/apps/vidjil/defs.py
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser # init browser content
