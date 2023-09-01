@@ -885,7 +885,7 @@ class VidjilAuth(Auth):
     def has_membership(self, group_id=None, user_id=None, role=None, cached=False):
         if not user_id and self.user:
             user_id = self.user.id
-        print( f"=== user_id: {user_id}" )
+
         if cached:
             id_role = group_id or role
             r = (user_id and id_role in self.user_groups.values()) or (user_id and id_role in self.user_groups)
