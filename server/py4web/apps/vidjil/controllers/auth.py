@@ -96,7 +96,14 @@ def logout():
 def register():
     #only authentified admin user can access register view
     if auth.user:
-        daf = DefaultAuthForms(auth)
+        import copy
+        auth_mod = copy.copy(auth)
+        if "login" in auth_mod.param.allowed_actions: 
+            auth_mod.param.allowed_actions.remove("login")
+        if "request_reset_password" in auth_mod.param.allowed_actions: 
+            auth_mod.param.allowed_actions.remove("request_reset_password")
+        daf = DefaultAuthForms(auth_mod)
+        daf.auth.param.exclude_extra_fields_in_register = ["email__tmp","registration_key","reset_password_key","registration_id"]
         
         @action.uses(db, session, auth, flash)
         def post_register(form, user):
