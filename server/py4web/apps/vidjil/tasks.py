@@ -534,7 +534,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
 
     return "SUCCESS"
 
-def run_copy(id_file, id_config, id_data, clean_before=False, clean_after=False):
+def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
@@ -562,6 +562,7 @@ def run_copy(id_file, id_config, id_data, clean_before=False, clean_after=False)
 
     try:
         stream = open(results_filepath, 'rb')
+        update_task(task_id, "COMPLETED")
     except IOError:
         print("!!! 'copy' failed, no file")
         res = {"message": "[%s] c%s: 'copy' FAILED - %s - %s" % (id_data, id_config, info, out_folder)}
@@ -951,3 +952,5 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 def run_process(task_id, program, args):
     if program == "vidjil" :
         run_vidjil(task_id, args[0],args[1],args[2],args[3])
+    elif program == "none" :
+        run_copy(task_id, args[0],args[1],args[2],args[3])
