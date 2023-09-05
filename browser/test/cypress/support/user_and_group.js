@@ -84,7 +84,9 @@ Cypress.Commands.add('createUser', (first_name, last_name, email, password) => {
   cy.update_icon()  
 
   cy.fillUser(first_name, last_name, email, password)
-  cy.get('#submit_record__row > .w2p_fw > input')
+
+  cy.get(':nth-child(7) > div > input')
+    .should("contain", "Sign Up")
     .click()
 
   cy.update_icon()  
@@ -101,7 +103,7 @@ Cypress.Commands.add('fillUser', (first_name, last_name, email, password) => {
   cy.get('#auth_user_last_name').type(last_name)
   cy.get('#auth_user_email').type(email)
   cy.get('#auth_user_password').type(password)
-  cy.get('#auth_user_password_two').type(password)
+  cy.get('#no_table_password_again').type(password)
   return
 })
 
