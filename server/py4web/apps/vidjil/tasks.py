@@ -265,7 +265,7 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads,
         stream = open(results_filepath, 'rb')
     except:
         print("!!! Vidjil failed, no result file")
-        res = {"message": "[%s] c%s: Vidjil FAILED - %s" % (id_data, id_config, out_folder)}
+        res = {"message": "[%s] c%s: Vidjil FAILED - %s; log at %s/%s.vidjil.log" % (id_data, id_config, out_folder, out_folder, output_filename)}
         log.error(res)
         update_task(task_id, "FAIL")
         raise
