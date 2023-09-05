@@ -1070,11 +1070,14 @@ def get_sample_set_list(stype, q):
         ss_list.append({'name':tmp, 'id': row.sample_set_id, 'type': stype})
     return ss_list
 
+
+@action("/vidjil/sample_set/auto_complete", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def auto_complete():
     if "keys" not in request.query:
         return error_message("missing group ids")
 
-    query = json.loads(request.query['keys'])[0]
+    query = request.query['keys']
     sample_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
     result = []
     for sample_type in sample_types:
