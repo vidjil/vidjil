@@ -93,10 +93,19 @@ def run_all_patients():
 def info():
     sample_set_id = get_sample_set_id_from_results_file(request.query["results_file_id"])
     if (auth.can_modify_sample_set(int(sample_set_id))):
+        out_folder = defs.DIR_OUT_VIDJIL_ID % int(request.query["results_file_id"])
+        output_filename = defs.BASENAME_OUT_VIDJIL_ID % int(request.query["results_file_id"])
+
+        if os.path.exists(f"{out_folder}/{output_filename}.vidjil.log"):
+            with open(f"{out_folder}/{output_filename}.vidjil.log", 'r', encoding='utf-8') as f: 
+                content = f.read()
+        else:
+            content = None
+            
         log.info("access results file info", extra={'user_id': auth.user_id,
                 'record_id': request.query["results_file_id"],
                 'table_name': "results_file"})
-        return dict(message=T('result info'), auth=auth, db=db)
+        return dict(message=T('result info'), content_log=content, auth=auth, db=db)
     else :
         res = {"message": "acces denied"}
         return json.dumps(res, separators=(',',':'))

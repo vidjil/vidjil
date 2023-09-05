@@ -46,7 +46,18 @@ task = db.scheduler_task[results_file.scheduler_task_id]
            <td>stop :</td>
            <td>[[=task.stop_time]]</td>
        </tr>
+        [[ if content_log == None : ]]
+        <tr>
+           <td>Processus: </td>
+           <td>still in Queued</td>
+       </tr>
+       [[ pass ]]
     </table>
+
+    [[ if content_log: ]]
+        <pre style="height:calc(90%); width:calc(90%); overflow-y:scroll; overflow-x:scroll; background-color:gray; color:white;">[[=content_log]]</pre>
+    [[ pass]]
+
 </div>
 [[pass]]
 
