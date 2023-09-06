@@ -8,7 +8,7 @@
     <h3>
     <i class="icon-left-open-1" title="previous" onclick="db.call('sample_set/index', {'next': '1', 'id' :'[[=request.query['id']]]', 'config_id' : '[[=config_id]]'})"></i>
     <i class="icon-right-open-1" title="next" onclick="db.call('sample_set/index', {'next': '-1', 'id' :'[[=request.query['id']]]', 'config_id' : '[[=config_id]]'})"></i>
-       <span class="uid">[[=request.query['id']]]</span> [[=info["name"]]]
+        <span class="uid">[[=request.query['id']]]</span> [[=info["name"]]]
         [[ for owner in owners: ]]
             <span class="owner" style="display:none;">[[=owner['auth_group.role']]]</span>
         [[pass]]
@@ -102,6 +102,7 @@
                        [[if auth.can_process_sample_set(int(request.query['id'])) and (config_id > 0 and auth.can_use_config(config_id)) :]]
                               [[ launch_sequence_files_all = [ int(row.sequence_file.id) for row in query ] ]]
                               <span class="pointer devel-mode" 
+                                id="launch_all_samples_[[=config_id]]"
                                onclick="db.call('default/run_all_request', {'sequence_file_ids' : [[=launch_sequence_files_all]], 'sample_set_id': [[=request.query["id"]]], 'config_id' : [[=config_id]] } ) "
                               ><i class="icon-cog-2" title="Run the selected configuration for all samples">
                                </i></span>
@@ -116,6 +117,7 @@
                            [[pass]]
                               [[ if len(launch_sequence_files_unavailable) > 0: ]]
                                <span class="pointer" 
+                                id="launch_all_unanalyzed_samples_[[=config_id]]"
                                      onclick="db.call('default/run_all_request', { 'sequence_file_ids' : [[=launch_sequence_files_unavailable]], 'sample_set_id': [[=request.query["id"]]], 'config_id' : [[=config_id]]} )">
                                  <i class="icon-cog-2" title="Run the selected configuration for all samples not already analysed or failed">
                                  </i>
@@ -298,6 +300,7 @@
         
               
                 <a class="button2" href="[[=http_origin]]?sample_set_id=[[=request.query["id"]]]&config=[[=row.config.id]]" type="text/html"
+                   id="result_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '[[=request.query["id"]]]' , 'config' : [[=row.config.id]] }, '[[=info["filename"]]]' ) }" >

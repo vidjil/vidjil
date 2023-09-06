@@ -38,13 +38,13 @@ Cypress.Commands.add('verifyLogin', (host) => {
 
 // LOGOUT
 Cypress.Commands.add('logout', (host) => {
-  cy.get('#login-container')
+  cy.get('#logout_button')
     .should('exist')
   cy.intercept({
         method: 'GET', // Route all GET requests
         url: 'get_active_notifications*',
       }).as('getActivities')
-  cy.get('#login-container > .button')
+  cy.get('#logout_button')
     .click()
   cy.wait(['@getActivities'])
 
@@ -55,7 +55,7 @@ Cypress.Commands.add('logout', (host) => {
 
 
 Cypress.Commands.add('verifyLogout', (host) => {
-  cy.get('#auth_user_email', { timeout: 10000 })
+  cy.get('#login', { timeout: 10000 })
       .should('exist')
       .should('be.visible')
   cy.get('body').should('contain', 'You can request an account')
