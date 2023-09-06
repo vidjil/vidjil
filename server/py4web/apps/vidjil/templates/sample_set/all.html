@@ -43,9 +43,7 @@
                 onclick="db.call('sample_set/index', {'id' :'[[=data.sample_set_id]]' , 'config_id' : '-1' })" >
 	       <td class="uid">[[=data.sample_set_id]]</td>
                [[ for field in fields: ]]
-  		   <td>
-		       [[= field['call'](data)]]
-            </td>
+          		   <td> [[= field['call'](data)]] </td>
                [[ pass ]]
             [[ file_count, size =  helper.get_files_values(data) ]]
             [[ total_file_count += file_count ; total_size += size ]]
