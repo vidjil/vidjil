@@ -132,14 +132,14 @@ Cypress.Commands.add('goToSetPage', () => {
 /**
  * Create a patient and fill it informations
  */
-Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, informations) => {
+Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, informations, owner) => {
   cy.goToTokenPage("patient")
 
   cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'patient\'})"]')
     .click()
   cy.update_icon()
   cy.get('h3').should("contain", "Add patients, runs, or sets")
-  cy.fillPatient(0, id, firstname, lastname, birthday, informations)
+  cy.fillPatient(0, id, firstname, lastname, birthday, informations, owner)
 
   cy.get('.btn').click()
   cy.update_icon()
@@ -177,7 +177,7 @@ Cypress.Commands.add('editPatient', (set_id, id, firstname, lastname, birthday, 
 })
 
 
-Cypress.Commands.add('controlPatientInfos', (index, id, firstname, lastname, birthday, informations) => {
+Cypress.Commands.add('controlPatientInfos', (index, id, firstname, lastname, birthday, informations, owner="") => {
 
   cy.get('h3 > .set_token').should("contain", lastname+" "+firstname)
 
@@ -187,12 +187,19 @@ Cypress.Commands.add('controlPatientInfos', (index, id, firstname, lastname, bir
   if (informations != ""){
     cy.get('#db_table_container').should("contain", informations)
   }
-
+  if (owner != null){
+      // For the moment, test only one owner, but a sample can belong to multiple owner.
+      // In this case; launch mulitple time this function
+      cy.get('.owner').should("contain", owner)
+  }
 })
 
 
 
-Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, informations) => {
+Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, informations, owner) => {
+  if (owner != null){
+    cy.get('#group_select').select(owner)
+  }  
   if (id != ""){
     cy.get('#patient_id_label_'  + index.toString()).clear().type(id)
   }

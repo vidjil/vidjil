@@ -100,6 +100,12 @@ def index():
         return json.dumps(res, separators=(',',':'))
 
     sample_set = db.sample_set[request.query["id"]]
+    owners = db((db.auth_permission.record_id == request.query["id"])
+        & (db.auth_permission.name == "access")
+        & (db.auth_permission.table_name == "sample_set")
+        & (db.auth_group.id == db.auth_permission.group_id)
+        ).select(db.auth_group.id,db.auth_group.role, db.auth_permission.table_name,db.auth_permission.record_id)
+
     sample_set_id = sample_set.id
     factory = ModelFactory()
     helper = factory.get_instance(type=sample_set.sample_type)
@@ -233,6 +239,7 @@ def index():
         'table_name': "sample_set"})
     #if (auth.can_view_patient(request.query["id"]) ):
     return dict(query=query,
+                owners=owners,
                 has_shared_sets = len(shared_sets) > 0,
                 pre_process_list=pre_process_list,
                 config_id=config_id,
