@@ -615,6 +615,8 @@ def get_analysis():
 ## upload .analysis file and store it on the database
 # need patient_id, fileToUpload
 # need patient admin permission
+@action("/vidjil/default/save_analysis", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def save_analysis():
     error = ""
 
