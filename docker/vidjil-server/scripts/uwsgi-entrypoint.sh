@@ -20,5 +20,10 @@ cd /usr/share/vidjil/server/py4web/apps/
 ls /usr/share/vidjil/server/py4web/apps/
 
 
+if [[ -v $UWSGI_POOL ]]; then
+    echo "==== Change number of threads: '$UWSGI_POOL'"
+    sed -i "s/processes = 6/processes = $UWSGI_POOL/g" /etc/uwsgi/sites/uwsgi.ini
+fi
+
 echo "==== Start uwsgi script ==="
 uwsgi /etc/uwsgi/sites/uwsgi.ini
