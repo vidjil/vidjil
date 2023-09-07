@@ -2,6 +2,8 @@ echo "Arguments: $@"
 
 echo "$ change chmod of cypress directory"
 chmod 777 cypress -R 
+chmod 777 * -R
+chmod 777 /app/vidjil/server/py4web/apps/vidjil/databases -R
 
 make -C /app/cypress/fixtures/demo
 mkdir -p /app/cypress/fixtures/demo/empty_directory
