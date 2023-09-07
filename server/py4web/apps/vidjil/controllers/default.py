@@ -1,5 +1,6 @@
 
 
+
 # -*- coding: utf-8 -*-
 # this file is released under public domain and you can use without limitations
 
@@ -26,6 +27,7 @@ import logging
 import json
 import os
 import time
+import datetime
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from ..tasks import schedule_run
 from yatl.helpers import INPUT, H1, HTML, BODY, A, DIV
@@ -620,20 +622,20 @@ def get_analysis():
 def save_analysis():
     error = ""
 
-    if "patient" in request.query :
-        request.query["sample_set_id"] = db.patient[request.query["patient"]].sample_set_id
+    if "patient" in request.params :
+        request.params["sample_set_id"] = db.patient[request.params["patient"]].sample_set_id
 
-    if "run" in request.query :
-        request.query["sample_set_id"] = db.run[request.query["run"]].sample_set_id
+    if "run" in request.params :
+        request.params["sample_set_id"] = db.run[request.params["run"]].sample_set_id
 
-    if not auth.can_save_sample_set(request.query['sample_set_id']) :
+    if not auth.can_save_sample_set(request.params['sample_set_id']) :
         error += "you do not have permission to save changes on this sample set"
 
     if error == "" :
-        f = request.query['fileToUpload']
+        f = request.files['fileToUpload']
         ts = time.time()
         
-        sample_set_id = request.query['sample_set_id']
+        sample_set_id = request.params['sample_set_id']
         
         analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
                                               sample_set_id = sample_set_id,
@@ -641,16 +643,17 @@ def save_analysis():
                                               )
 
         sample_type = db.sample_set[sample_set_id].sample_type
-        if (request.query['info'] is not None):
+        if ('info' in request.params and request.params['info'] is not None):
             if (sample_type == defs.SET_TYPE_PATIENT) :
-                db(db.patient.sample_set_id == sample_set_id).update(info = request.query['info']);
+                db(db.patient.sample_set_id == sample_set_id).update(info = request.params['info']);
 
             if (sample_type == defs.SET_TYPE_RUN) :
-                db(db.run.sample_set_id == sample_set_id).update(info = request.query['info']);
+                db(db.run.sample_set_id == sample_set_id).update(info = request.params['info']);
 
-        if (request.query['samples_id'] is not None and request.query['samples_info'] is not None):
-            ids = request.query['samples_id'].split(',')
-            infos = request.query['samples_info'].split(',')
+        if ('samples_id' in request.params and request.params['samples_id'] is not None
+             and 'samples_info' in request.params and request.params['samples_info'] is not None):
+            ids = request.params['samples_id'].split(',')
+            infos = request.params['samples_info'].split(',')
         
         
             # TODO find way to remove loop ?
@@ -658,7 +661,7 @@ def save_analysis():
                 if(len(ids[i]) > 0):
                     db(db.sequence_file.id == int(ids[i])).update(info = infos[i])
 
-        #patient_name = db.patient[request.query['patient']].first_name + " " + db.patient[request.query['patient']].last_name
+        #patient_name = db.patient[request.params['patient']].first_name + " " + db.patient[request.params['patient']].last_name
 
         res = {"success" : "true",
                "message" : "(%s): analysis saved" % (sample_set_id)}
