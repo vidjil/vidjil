@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#from apps.vidjil.modules import jstree
 import json
 import os
 from .. import defs

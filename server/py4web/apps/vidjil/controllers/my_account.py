@@ -2,7 +2,6 @@
 import datetime
 import types
 
-#from apps.vidjil.modules import jstree
 from .. import defs
 from ..modules.tag import parse_search, TagDecorator, get_tag_prefix
 from ..user_groups import get_involved_groups
