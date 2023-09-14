@@ -9,16 +9,16 @@ services:
     uwsgi:
         network_mode: bridge
         command: bash /entrypoints/uwsgi-entrypoint.sh --ci
-    fuse:
-        network_mode: bridge
         volumes:
             - ./ci/result:/mnt/result
             - ./ci/result/results:/mnt/result/results
             - ./ci/uploads:/mnt/upload/uploads
             - ../browser:/usr/share/vidjil/browser
-            - ../server/web2py/applications/vidjil:/usr/share/vidjil/server/web2py/applications/vidjil
+            - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
             - ./:/usr/share/vidjil/docker
             - databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
+    fuse:
+        network_mode: bridge
         extra_hosts:
           - "fuse:127.0.0.1"
     nginx:
@@ -35,9 +35,14 @@ services:
         links:
             - uwsgi:uwsgi
 
+
     workers:
         network_mode: bridge
-    postfix:
+    redis:
+        network_mode: bridge
+    celery:
+        network_mode: bridge
+    flower:
         network_mode: bridge
 
 volumes:
