@@ -43,6 +43,8 @@
     - /^hotfix-.*s.*\/.*$/
     - /^prod-server/
     - dev
+  needs:
+    - []
 
 
 ## Cypress with server
