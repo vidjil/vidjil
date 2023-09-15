@@ -383,9 +383,9 @@ deploy_review_server:
         cat docker-compose.yml; 
         ls; 
         docker-compose config; 
-        docker-compose up -d mysql fuse uwsgi nginx workers; 
+        docker-compose up -d mysql fuse uwsgi nginx workers celery flowers; 
         sleep 20s; 
-        docker-compose exec -T uwsgi bash -c ''cd /usr/share/vidjil/server/py4web/apps/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql''"'
+        docker-compose exec -T uwsgi bash -c ''pip show py4web; cd /usr/share/vidjil/server/py4web/apps/vidjil/scripts; bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql''"'
   environment:
     name: review_server/$CI_BUILD_REF_NAME
     url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/
