@@ -282,9 +282,9 @@ test_server_unit:
     - 'sed -i "s|\"db_address\" : \"https://db.vidjil.org/vidjil/\"|\"db_address\" : \"https://localhost/vidjil/\"|g" browser/js/conf.js'
     - cd docker
     - mkdir volumes
-    - docker-compose -f docker-compose-py4web.yml up -d mysql
-    - docker-compose -f docker-compose-py4web.yml down ## restart for write right error on DB
-    - docker-compose -f docker-compose-py4web.yml up -d
+    - docker-compose -f docker-compose.yml up -d mysql
+    - docker-compose -f docker-compose.yml down ## restart for write right error on DB
+    - docker-compose -f docker-compose.yml up -d
     # Set rights
     - sleep 5 && docker ps
     - docker exec docker_mysql_1 chmod 0777 /var/lib/mysql/vidjil -R
