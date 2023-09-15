@@ -10,13 +10,19 @@ services:
         network_mode: bridge
         command: bash /entrypoints/uwsgi-entrypoint.sh --ci
         volumes:
+            # Local volume path
             - ./ci/result:/mnt/result
             - ./ci/result/results:/mnt/result/results
             - ./ci/uploads:/mnt/upload/uploads
+            - ./ci/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
+            # Use local vidjil repository
+            - ../algo:/usr/share/vidjil/algo
             - ../browser:/usr/share/vidjil/browser
-            - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
+            - ../demo:/usr/share/vidjil/demo
+            - ../doc:/usr/share/vidjil/doc
             - ./:/usr/share/vidjil/docker
-            - databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
+            - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
+            - ../tools:/usr/share/vidjil/tools
     fuse:
         network_mode: bridge
         extra_hosts:
