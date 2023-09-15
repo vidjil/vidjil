@@ -11,4 +11,5 @@ fi
 SCRIPT_DIR=$(dirname $0)
 script_name=$1
 shift
-python $SCRIPT_DIR/../../py4web-start.py -S vidjil -M -R "vidjil/scripts/$script_name" -A $*
+python3 $SCRIPT_DIR/../../py4web-start.py -S vidjil -M -R "vidjil/scripts/$script_name" -A $*
+
