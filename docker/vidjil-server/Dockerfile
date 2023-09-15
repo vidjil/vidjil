@@ -20,7 +20,7 @@ run apt-get update ; apt-get install --no-install-recommends --no-install-sugges
 	pip3 install --upgrade pip && \
 	pip3 install flower && \
 	pip3 install coverage && \
-    python3 -m pip install -U py4web
+    pip3 install -U py4web
 
 #run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y -q sudo curl apt-utils uwsgi-plugin-python
 
