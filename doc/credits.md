@@ -108,6 +108,11 @@ Jean-Sebastien Allain et al.,
 Haematologica, 2018, 103:e207-e210,
 <http://dx.doi.org/10.3324/haematol.2017.177444>
 
+Kristian Assing et al.,
+*A Novel CDC42 Variant with Impaired Thymopoiesis, IL-7R Signaling, PAK1 Binding, and TCR Repertoire Diversity*
+Journal of Clinical Immunology, 2023,
+<https://doi.org/10.1007/s10875-023-01561-0>
+ 
 Jack Bartram et al.,
 *High throughput sequencing in acute lymphoblastic leukemia reveals clonal architecture of central nervous system and bone marrow compartments*,
 Haematologica, 2018,
@@ -164,10 +169,15 @@ Henrike J. Fischer et al.,
 Journal of Neuroimmunology, 2015, S0165-5728(15)30065-5,
 <http://dx.doi.org/10.1016/j.jneuroim.2015.10.020>
 
-Navarro Nilo Giusti et al., 2020
+Navarro Nilo Giusti et al.,
 *Test trial of spike-in immunoglobulin heavy-chain (IGH) controls for next generation sequencing quantification of minimal residual disease in acute lymphoblastic leukaemia*,
 British Journal of Haematology, 2020, 189: e150-e154,
 <https://doi.org/10.1111/bjh.16571>
+
+Isadoral Heraud et al.,
+*Monoclonal B-cell lymphocytosis with a non-CLL immunophenotype–Review of 34 cases*
+Annales de Biologie Clinique, 2023,
+<https://www.jle.com./fr/revues/abc/e-docs/monoclonal_b_cell_lymphocytosis_with_a_non_cll_immunophenotype_review_of_34_cases_330642/article.phtml?tab=texte>
 
 Irene Jo et al.,
 *Considerations for monitoring minimal residual disease using immunoglobulin clonality in patients with precursor B-cell lymphoblastic leukemia*,
@@ -259,6 +269,11 @@ Rathana Kim et al.,
 Leukemia, 2020, 34, 1730-1740,
 <https://dx.doi.org/10.1038/s41375-019-0685-4>
 
+Cédric Pastoret et al.,
+*Molecular mechanisms underlying transformation of large granular lymphocytic leukemia to high-grade T-cell lymphoma*,
+Leukemia, 2023,
+<https://www.nature.com/articles/s41375-023-01922-z>
+
 Mikaël Salson et al.,
 *High-throughput sequencing in acute lymphoblastic leukemia: Follow-up of minimal residual disease and emergence of new clones*,
 Leukemia Research, 2017, 53, 1–7,
@@ -302,6 +317,11 @@ medRxiv 2020.09.08.20189829,
 Patrik Villarèse et al.,
 *One step next generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukemia*,
 ed. Anton W. Langerak, Methods in Molecular Biology, forthcoming
+
+Christine Wennerås et al.,
+*Infection with Neoehrlichia mikurensis promotes the development of malignant B-cell lymphomas* ,
+British Journal of Haematology, 2023,
+<https://doi.org/10.1111/bjh.18652>
 
 Gary Wright et al.,
 *Clinical benefit of a high‐throughput sequencing approach for minimal residual disease in acute lymphoblastic leukemia*,
