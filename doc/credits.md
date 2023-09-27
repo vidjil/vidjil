@@ -211,7 +211,7 @@ Blood, 2015, 126:1045-1047,
 
 Michaela Kotrova et al.,
 *Next‐generation amplicon TRB locus sequencing can overcome limitations of flow‐cytometric Vβ expression analysis and confirms clonality in all T‐cell ,prolymphocytic leukemia cases*,
-Cytometry Part A, 93(11):1118-1124, 2018
+Cytometry Part A, 93(11):1118-1124, 2018,
 <http://dx.doi.org/10.1002/cyto.a.23604>
 
 Anton W. Langerak,
@@ -241,7 +241,7 @@ Cancers, 2021, 13(2), 340,
 
 Alejandro Medina et al.,
 *Comparison of next-generation sequencing (NGS) and next-generation flow (NGF) for minimal residual disease (MRD) assessment in multiple myeloma*,
-Blood Cancer Journal, 10, 108,
+Blood Cancer Journal, 10, 108, 2020,
 <https://doi.org/10.1038/s41408-020-00377-0>
 
 Dai Nishijima et al.,
@@ -310,13 +310,14 @@ Cancers 2021, 13(9), 2108,
 <https://doi.org/10.3390/cancers13092108>
 
 Amelie Trinquand et al.,
-*Towards molecular stratification of pediatric T-cell lymphoblastic lymphomas based on Minimal Disseminated Disease and NOTCH1/FBXW7 mutational status: the French EURO-LB02 experience (preprint)*,
-medRxiv 2020.09.08.20189829,
-<https://www.medrxiv.org/content/10.1101/2020.09.08.20189829v1>
+*Toward Pediatric T Lymphoblastic Lymphoma Stratification Based on Minimal Disseminated Disease and NOTCH1/FBXW7 Status*,
+HemaSphere, 2021,
+<https://doi.org/10.1097/hs9.0000000000000641>
 
 Patrik Villarèse et al.,
 *One step next generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukemia*,
-ed. Anton W. Langerak, Methods in Molecular Biology, forthcoming
+ed. Anton W. Langerak, Methods in Molecular Biology, 2022,
+<https://link.springer.com/protocol/10.1007/978-1-0716-2115-8_3>
 
 Christine Wennerås et al.,
 *Infection with Neoehrlichia mikurensis promotes the development of malignant B-cell lymphomas* ,
