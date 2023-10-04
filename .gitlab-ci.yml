@@ -323,7 +323,7 @@ deploy_review:
     - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_COMMIT_REF_SLUG
   dependencies: []
   environment:
-    name: review/$CI_BUILD_REF_NAME
+    name: review-$CI_BUILD_REF_NAME
     url: http://$CI_COMMIT_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy_review
   only:
@@ -357,7 +357,7 @@ deploy_review_server:
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_COMMIT_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
     - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_COMMIT_REF_SLUG}; cd ${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
   environment:
-    name: review_server/$CI_BUILD_REF_NAME
+    name: review_server-$CI_BUILD_REF_NAME
     url: http://$CI_COMMIT_REF_SLUG.server.ci.vidjil.org/
     on_stop: stop_deploy_review_server
     auto_stop_in: 2 months
@@ -443,7 +443,7 @@ stop_deploy_review:
     - ssh $REVIEW_SERVER "rm -rf $REVIEW_SERVER_PATH$CI_COMMIT_REF_SLUG"
   when: manual
   environment:
-    name: review/$CI_BUILD_REF_NAME
+    name: review-$CI_BUILD_REF_NAME
     action: stop
   dependencies: []
   only:
@@ -459,7 +459,7 @@ stop_deploy_review_server:
   when: manual
   dependencies: []
   environment:
-    name: review_server/$CI_BUILD_REF_NAME
+    name: review_server-$CI_BUILD_REF_NAME
     action: stop
   only:
     - /^feature-.*s.*\/.*$/
