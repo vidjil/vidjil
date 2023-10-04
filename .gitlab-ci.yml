@@ -12,6 +12,7 @@
   - make germline
   - make -C browser sha1
   - cp -p doc/analysis-example.vidjil browser/
+  - echo $CI_COMMIT_REF_SLUG
 
 .before_script_global_docker: &before_script_global_docker
   before_script:
@@ -319,11 +320,11 @@ deploy_review:
   script:
     - make -C browser icons
     - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
-    - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG
+    - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_COMMIT_REF_SLUG
   dependencies: []
   environment:
     name: review/$CI_BUILD_REF_NAME
-    url: http://$CI_BUILD_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
+    url: http://$CI_COMMIT_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy_review
   only:
     - /^feature-.*c.*\/.*$/
@@ -338,26 +339,26 @@ deploy_review_server:
   script:
     - make -C browser icons
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
-    - sed -i -r "s/localhost/${CI_BUILD_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
-    - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_BUILD_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
+    - sed -i -r "s/localhost/${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
+    - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
     - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/web2py/applications/vidjil/modules/defs.py
     - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/web2py/applications/vidjil/modules/defs.py
     - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
     - mkdir browser/cgi
     - cp docker/vidjil-client/conf/*.cgi browser/cgi
-    - mv docker docker_${CI_BUILD_REF_SLUG}
-    - cd docker_${CI_BUILD_REF_SLUG}
+    - mv docker docker_${CI_COMMIT_REF_SLUG}
+    - cd docker_${CI_COMMIT_REF_SLUG}
     - TMP_DOCKER=$(tempfile)
     - cp docker-compose.yml $TMP_DOCKER
     - awk -f ci/for-review.awk $TMP_DOCKER > docker-compose.yml
     - rm -f $TMP_DOCKER
     - sed -i -r "s/WEB2PY_ADMIN_PASSWORD=/WEB2PY_ADMIN_PASSWORD=$REVIEW_SERVER_ADMIN_PASSWORD/" docker-compose.yml
     - cd ..
-    - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
-    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_BUILD_REF_SLUG}; cd ${CI_BUILD_REF_SLUG}/docker_${CI_BUILD_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
+    - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER$CI_COMMIT_REF_SLUG || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER; ./install_certs.sh ${CI_COMMIT_REF_SLUG}; cd ${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; mkdir -p postfix/ssl; docker-compose up -d mysql fuse uwsgi nginx workers; sleep 20s; docker-compose exec -T uwsgi bash -c 'cd /usr/share/vidjil/server/web2py/applications/vidjil/scripts; /usr/local/bin/gosu 1005 bash launch_python_script.sh load-sql.py -n /usr/share/vidjil/docker/ci/ci.sql'"
   environment:
     name: review_server/$CI_BUILD_REF_NAME
-    url: http://$CI_BUILD_REF_SLUG.server.ci.vidjil.org/
+    url: http://$CI_COMMIT_REF_SLUG.server.ci.vidjil.org/
     on_stop: stop_deploy_review_server
     auto_stop_in: 2 months
   dependencies: []
@@ -439,7 +440,7 @@ stop_deploy_review:
   variables:
     GIT_STRATEGY: none
   script:
-    - ssh $REVIEW_SERVER "rm -rf $REVIEW_SERVER_PATH$CI_BUILD_REF_SLUG"
+    - ssh $REVIEW_SERVER "rm -rf $REVIEW_SERVER_PATH$CI_COMMIT_REF_SLUG"
   when: manual
   environment:
     name: review/$CI_BUILD_REF_NAME
@@ -454,7 +455,7 @@ stop_deploy_review:
 stop_deploy_review_server:
   stage: deploy_review
   script:
-    - ssh $REVIEW_SERVER "set -o xtrace; docker-compose -f $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG/docker_$CI_BUILD_REF_SLUG/docker-compose.yml down -v ; rm -rf $REVIEW_SERVER_PATH_SERVER$CI_BUILD_REF_SLUG; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh $CI_BUILD_REF_SLUG"
+    - ssh $REVIEW_SERVER "set -o xtrace; docker-compose -f $REVIEW_SERVER_PATH_SERVER$CI_COMMIT_REF_SLUG/docker_$CI_COMMIT_REF_SLUG/docker-compose.yml down -v ; rm -rf $REVIEW_SERVER_PATH_SERVER$CI_COMMIT_REF_SLUG; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh $CI_COMMIT_REF_SLUG"
   when: manual
   dependencies: []
   environment:
