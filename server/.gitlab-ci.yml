@@ -25,7 +25,7 @@
       --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
       --shm-size=1GB
       --network="host"
-      "vidjilci/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
+      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
   artifacts:
     reports:
       junit: $CYPRESS_PATH/reports/test-cypress-*.xml
