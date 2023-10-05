@@ -100,7 +100,7 @@ external2:
     PATH_CYPRESS: browser/test/cypress/integration/
     TEST_FILES: "/app/cypress/integration/doc_*.js"
   before_script:
-    - apt-get -y install pandoc
+    - apt-get update && apt-get -y install pandoc
     - make -C doc/tutorial/ build_tutorial_cypress_client
   only:
     - /^feature-.*c.*\/.*$/
