@@ -48,7 +48,7 @@ stages:
 # Tools
 
 test_tools:
-  image: vidjilci/cypress_with_browsers:latest
+  image: registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest
   stage: test_tools
   script:
     - apt-get update && apt-get install -y python3-pip
@@ -63,7 +63,7 @@ test_tools:
 # Germlines
 
 test_germlines:
-  image: vidjilci/cypress_with_browsers:latest
+  image: registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest
   stage: test_germlines
   script:
     - make -C germline get-all-data
@@ -188,7 +188,7 @@ deploy_release_prod:
 # Client
 
 test_browser_unit:
-  image: vidjilci/cypress_with_browsers:latest
+  image: registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest
   stage: test_unit
   script: 
     - npm -v
@@ -221,7 +221,7 @@ code_quality:
     paths: [gl-code-quality-report.json]
 
 code_quality_custom:
-  image: vidjilci/cypress_with_browsers:latest
+  image: registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest
   stage: test_quality
   script:
     - npm install -g jshint
