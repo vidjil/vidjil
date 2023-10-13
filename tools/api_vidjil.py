@@ -154,6 +154,16 @@ class Vidjil:
             self.user_email = whoami["email"]
             # todo; print admin status; groups ?
 
+    def setGroup(self, group_id:int):
+        """Set default group to use for the user. Usefull for sets creation
+        Todo; verify that user have group rights on this selected group
+
+        Args:
+            group_id (int): Number of group to use as default group
+        """
+        self.group= group_id
+        return
+
     def impersonate( self, impersonate_id:int):
         """Lauch impersonating action. If not allowed to imperosnate, server will raise an error 'Forbidden' and the script will end.
         
