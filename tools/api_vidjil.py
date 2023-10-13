@@ -282,12 +282,13 @@ class Vidjil:
             raise Exception( "getSetById error. \nNo sample found with this id '%s' and type '%s'" % (set_id, set_type))
         return content
 
-    def createPatient(self, first_name:str, last_name:str, sample_set_id:int=None, id:int=None, id_label:int=None, birth_date:str=None, info:str=None):
+    def createPatient(self, first_name:str, last_name:str, group:int=None, sample_set_id:int=None, id:int=None, id_label:int=None, birth_date:str=None, info:str=None):
         """Take information to create a patient under the default group of the user
 
         Args:
             first_name (str): First name of the patient
             last_name (str): Last name of the patient
+            group (int, optional): Group owner of the patient. If not setted, use the default group of user. Defaults to None.
             sample_set_id (int, optional): Sample set id to use. Defaults to None.
             id (int, optional): Id given by laboratory. Defaults to None.
             id_label (int, optional): _description_. Defaults to None.
@@ -297,7 +298,8 @@ class Vidjil:
         Returns:
             dict: ???
         """
-        data = {"group":"1","patient":[{
+        data = {"group":group if group else self.group,
+                "patient":[{
                     'id': id if id else "",
                     'sample_set_id': sample_set_id if sample_set_id else "",
                     'id_label': id_label if id_label else "",
@@ -310,11 +312,12 @@ class Vidjil:
         new_url  = self.url_server + "/sample_set/submit?data=%s" % json.dumps(data).replace(" ", "")
         return self.request(new_url, "post")
 
-    def createRun(self, name:str, sample_set_id:int=None, id:int=None, id_label:int=None, run_date:string=None, info:str=None, sequencer:str=None, pcr:str=None):
+    def createRun(self, name:str, group:int=None, sample_set_id:int=None, id:int=None, id_label:int=None, run_date:string=None, info:str=None, sequencer:str=None, pcr:str=None):
         """Create a new run set on the server filled with given informations
 
         Args:
             name (str): Name of the run
+            group (int, optional): Group owner of the run. If not setted, use the default group of user. Defaults to None.
             sample_set_id (int, optional): Sample set id to use. Defaults to None.
             id (int, optional): Id given by laboratory. Defaults to None.
             id_label (int, optional): ???. Defaults to None.
@@ -326,7 +329,8 @@ class Vidjil:
         Returns:
             dict: ???
         """
-        data = {"group":"1","run":[{
+        data = {"group":group if group else self.group,
+                "run":[{
                     'id': id if id else "",
                     'sample_set_id': sample_set_id if sample_set_id else "",
                     'id_label': id_label if id_label else "",
@@ -340,11 +344,12 @@ class Vidjil:
         new_url  = self.url_server + "/sample_set/submit?data=%s" % json.dumps(data).replace(" ", "")
         return self.request(new_url, "post")
 
-    def createSet(self, name:str, sample_set_id:int=None, id:int=None, info:str=None):
+    def createSet(self, name:str, group:int=None, sample_set_id:int=None, id:int=None, info:str=None):
         """Create a new generic set on the server filled with given informations
 
         Args:
             name (str): Name of the run
+            group (int, optional): Group owner of the set. If not setted, use the default group of user. Defaults to None.
             sample_set_id (int, optional): Sample set id to use. Defaults to None.
             id (int, optional): Id given by laboratory. Defaults to None.
             info (str, optional): Some information  to fill information field of run, can include tags. Defaults to None.
@@ -352,7 +357,8 @@ class Vidjil:
         Returns:
             dict: ???
         """
-        data = {"group":"1","generic":[{
+        data = {"group":group if group else self.group,
+                "generic":[{
                     'id': id if id else "",
                     'sample_set_id': sample_set_id if sample_set_id else "",
                     'name': name, # mandatory
