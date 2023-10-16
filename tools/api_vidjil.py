@@ -152,17 +152,37 @@ class Vidjil:
             whoami = self.whoami()
             self.user_id    = whoami["id"]
             self.user_email = whoami["email"]
+            self.groups     = whoami["groups"]
             # todo; print admin status; groups ?
 
     def setGroup(self, group_id:int):
         """Set default group to use for the user. Usefull for sets creation
-        Todo; verify that user have group rights on this selected group
 
         Args:
             group_id (int): Number of group to use as default group
         """
-        self.group= group_id
+        grp = [g for g in self.groups if int(g["id"]) == group_id]
+        print( len(grp) )
+        if not len(grp) or not len(self.groups):
+            raise Exception(f"Selected group id is not in list of accessible group (id={group_id})")
+        self.group = group_id
         return
+
+    def getGroups(self):
+        """ Print a "tabulate" of list of group available for the connected user
+
+        Returns:
+            groups (list): Array of available group, with values for id, role and description for each entries
+        """
+        if not self.logged:
+            print( "Should be logged")
+            return -1
+        d = []
+        headers = ["role", "id", "description"]
+        for grp in self.groups:
+            d.append([grp["role"], grp["id"], grp["description"]])
+        print(tabulate(d, showindex=False, headers=headers))
+        return self.groups
 
     def impersonate( self, impersonate_id:int):
         """Lauch impersonating action. If not allowed to imperosnate, server will raise an error 'Forbidden' and the script will end.
