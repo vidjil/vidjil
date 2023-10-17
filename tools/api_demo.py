@@ -96,6 +96,12 @@ def demoWriteRunOnServer(server, ssl, user, password):
     vidjil = Vidjil(server, ssl=ssl)
     vidjil.login(user, password)
 
+    # To create a set, a group id should be selected. For the moment, this step is manual if more than 2 groups are available
+    # See available groups of logged-in user
+    vidjil.getGroups() 
+    # Select default group id to use for creation of sets 
+    vidjil.setGroup(1) # 1 is the default group of admin, use another if you want from the list return from "vidjil.getGroups()" above
+    
     # Create patient/run/set
     patient_data = vidjil.createPatient("Jane", "Austen",
                          info="Patient from Winchester hospital, #LAL-B")
