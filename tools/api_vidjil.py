@@ -156,6 +156,12 @@ class Vidjil:
             self.groups     = whoami["groups"] if "groups" in whoami.keys() else None
             if self.groups == None: # old verison of server, previous 2023/10
                 warn('You use old version of server that not return list of avaialble user.\nThis will be deprecate.\nPlease update your server.', DeprecationWarning, stacklevel=2)
+            elif len(self.groups) == 1:
+                print(f"Only one group available. Automatic set ({self.groups[0]})")
+                self.setGroup(self.groups[0]["id"])
+            elif len(self.groups) > 1:
+                print(f"Multiple groups available. No automatic set.\nPlease call `vidjil.setGroup` with corresponding id (needed for sets creation).")
+                self.getGroups()
             # todo; print admin status ?
 
     def setGroup(self, group_id:int):
@@ -169,7 +175,6 @@ class Vidjil:
             self.group = str(group_id)
             return
         grp = [g for g in self.groups if int(g["id"]) == group_id]
-        print( len(grp) )
         if not len(grp) or not len(self.groups):
             raise Exception(f"Selected group id is not in list of accessible group (id={group_id})")
         self.group = group_id
