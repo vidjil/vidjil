@@ -10,6 +10,7 @@ import argparse
 import getpass
 import errno
 from collections import defaultdict
+from warnings import warn
 
 ### Particular module to load
 import subprocess
@@ -152,8 +153,10 @@ class Vidjil:
             whoami = self.whoami()
             self.user_id    = whoami["id"]
             self.user_email = whoami["email"]
-            self.groups     = whoami["groups"]
-            # todo; print admin status; groups ?
+            self.groups     = whoami["groups"] if "groups" in whoami.keys() else None
+            if self.groups == None: # old verison of server, previous 2023/10
+                warn('You use old version of server that not return list of avaialble user.\nThis will be deprecate.\nPlease update your server.', DeprecationWarning, stacklevel=2)
+            # todo; print admin status ?
 
     def setGroup(self, group_id:int):
         """Set default group to use for the user. Usefull for sets creation
@@ -161,6 +164,10 @@ class Vidjil:
         Args:
             group_id (int): Number of group to use as default group
         """
+        if self.groups == None:
+            print(f"Old server version, no available groups filled.\nTry to set given group id but without certification of access (id={group_id}).")
+            self.group = str(group_id)
+            return
         grp = [g for g in self.groups if int(g["id"]) == group_id]
         print( len(grp) )
         if not len(grp) or not len(self.groups):
