@@ -418,9 +418,9 @@ def submit():
             if p is None:
                 continue
             errors = helper.validate(p)
+            p['error'] = errors
             action = "add"
             if len(errors) > 0:
-                p['error'] = errors
                 error = True
                 continue
 
@@ -449,38 +449,38 @@ def submit():
                     
             # add
             elif (auth.can_create_patient()):
-
-                id_sample_set = db.sample_set.insert(sample_type=set_type)
-
-                p['creator'] = auth.user_id
-                p['sample_set_id'] = id_sample_set
-                p['id'] = db[set_type].insert(**p)
-
                 group_id = int(data["group"])
 
-                register = True
+                if group_id not in auth.get_permission_groups("create"):
+                    p['error'].append("unknow group or permission denied on this group") 
+                    error = True
+                else:
+                    id_sample_set = db.sample_set.insert(sample_type=set_type)
 
-                #patient creator automaticaly has all rights
-                auth.add_permission(group_id, PermissionEnum.access.value, 'sample_set', p['sample_set_id'])
+                    p['creator'] = auth.user_id
+                    p['sample_set_id'] = id_sample_set
+                    p['id'] = db[set_type].insert(**p)
+                    register = True
 
-                action = "add"
+                    #patient creator automaticaly has all rights
+                    auth.add_permission(group_id, PermissionEnum.access.value, 'sample_set', p['sample_set_id'])
+
+                    action = "add"
 
                 #if (p['id'] % 100) == 0:
                 #    mail.send(to=defs.ADMIN_EMAILS,
                 #    subject=defs.EMAIL_SUBJECT_START+" %d" % p['id'],
                 #    message="The %dth %s has just been created." % (p['id'], set_type))
+                    p['message'] = []
+                    mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
+                    p['message'].append(mes)
+                    log.info(mes, extra={'user_id': auth.user_id, 'record_id': id_sample_set, 'table_name': 'sample_set'})
+                    if register:
+                        tag.register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
             else :
                 p['error'].append("permission denied")
                 error = True
-
-            p['message'] = []
-            mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
-            p['message'].append(mes)
-            log.info(mes, extra={'user_id': auth.user_id, 'record_id': id_sample_set, 'table_name': 'sample_set'})
-            if register:
-                tag.register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
-
     if not error:
         if not bool(length_mapping):
             creation_group_tuple = get_default_creation_group(auth)
