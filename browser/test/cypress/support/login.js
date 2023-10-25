@@ -30,7 +30,7 @@ Cypress.Commands.add('fillLogin', (user, password) => {
 })
 
 
-Cypress.Commands.add('verifyLogin', (host) => { 
+Cypress.Commands.add('verifyLogin', () => { 
   cy.get('body').should('not.contain', 'You can request an account')
   cy.get('body').should('contain', 'logout')
 })
