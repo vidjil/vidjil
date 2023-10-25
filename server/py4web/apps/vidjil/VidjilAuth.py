@@ -219,7 +219,7 @@ class VidjilAuth(Auth):
         '''
         is_current_user = user == None
         if is_current_user:
-            user = self.session.get("user")
+            user = self.user_id
 
         db = self.db
 
