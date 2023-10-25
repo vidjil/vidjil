@@ -2,19 +2,15 @@ version: '2.4'
 
 # See https://docs.docker.com/compose/extends/ for more information
 services:
-    mysql:
-        network_mode: bridge
-        volumes:
-            - ./ci/mysql:/var/lib/mysql
     uwsgi:
-        network_mode: bridge
-        command: bash /entrypoints/uwsgi-entrypoint.sh --ci
+        command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes:
             # Local volume path
-            - ./ci/result:/mnt/result
-            - ./ci/result/results:/mnt/result/results
-            - ./ci/uploads:/mnt/upload/uploads
-            - ./ci/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
+            - $VOLUME_PATH/results:/mnt/result
+            - $VOLUME_PATH/results/results:/mnt/result/results
+            - $VOLUME_PATH/tmp:/mnt/result/tmp
+            - $VOLUME_PATH/uploads:/mnt/upload/uploads
+            - $VOLUME_PATH/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
             # Use local vidjil repository
             - ../algo:/usr/share/vidjil/algo
             - ../browser:/usr/share/vidjil/browser
@@ -23,33 +19,11 @@ services:
             - ./:/usr/share/vidjil/docker
             - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
             - ../tools:/usr/share/vidjil/tools
-    fuse:
-        network_mode: bridge
-        extra_hosts:
-          - "fuse:127.0.0.1"
     nginx:
-        network_mode: bridge
-        expose:
-            - 443
-        environment:
-            - VIRTUAL_HOST=virtual_host.server.ci.vidjil.org
-            - VIRTUAL_PORT=443
-            - VIRTUAL_PROTO=https
         volumes:
             - ../browser:/usr/share/vidjil/browser
             - ./:/usr/share/vidjil/docker
-        links:
-            - uwsgi:uwsgi
 
-
-    workers:
-        network_mode: bridge
-    redis:
-        network_mode: bridge
-    celery:
-        network_mode: bridge
-    flower:
-        network_mode: bridge
 
 volumes:
     databases:
