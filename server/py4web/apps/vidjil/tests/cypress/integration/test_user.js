@@ -71,7 +71,7 @@ describe('Creation of users and groups', function () {
         cy.createPatient("", `owner ${owner_public}`, "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_public}`, owner_public)
         cy.createPatient("", `owner ${owner_admin}`,  "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_admin}`, owner_admin)
         cy.createPatient("", `owner ${owner_user1}`,  "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_user1}`, owner_user1)
-        cy.createPatient("", `owner ${owner_user4}`,  "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_user1}`, owner_user1)
+        cy.createPatient("", `owner ${owner_user4}`,  "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_user4}`, owner_user4)
         return
     })
 
