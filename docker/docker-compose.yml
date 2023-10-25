@@ -27,7 +27,7 @@ services:
         - '6379:6379'
 
     uwsgi:
-        image: vidjil/server:py4web
+        image: vidjil/server:latest
         environment:
             - SERVICE_NAME=$SERVICE_PREFIX_NAME UWSGI
         env_file:
@@ -61,7 +61,7 @@ services:
 
 
     fuse:
-        image: vidjil/server:py4web
+        image: vidjil/server:latest
         environment:
             - SERVICE_NAME=$SERVICE_PREFIX_NAME FUSE
         command: bash /entrypoints/fuse-entrypoint.sh
@@ -107,7 +107,7 @@ services:
           retries: 2
 
     workers:
-        image: vidjil/server:py4web
+        image: vidjil/server:latest
         environment:
             - SERVICE_NAME=$SERVICE_PREFIX_NAME WORKERS
         env_file:
@@ -131,7 +131,7 @@ services:
 
 
     celery:
-      image: vidjil/server:py4web
+      image: vidjil/server:latest
       environment:
             - SERVICE_NAME=$SERVICE_PREFIX_NAME CELERY
       env_file:
@@ -154,7 +154,7 @@ services:
           - mysql:mysql
 
     flower:
-      image: vidjil/server:py4web
+      image: vidjil/server:latest
       environment:
             - SERVICE_NAME=$SERVICE_PREFIX_NAME FLOWER
       env_file:
