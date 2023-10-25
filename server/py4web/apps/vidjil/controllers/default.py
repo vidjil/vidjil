@@ -504,7 +504,9 @@ def get_data():
         dumped_json = json.dumps(data, separators=(',',':'))
 
         if download:
-             return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.query['filename'])
+            response.headers['Content-Type'] = "application/json"  # Removed to force file download
+            response.headers['Content-Disposition'] = f'attachment; filename="{str(request.query["filename"])}"'
+            return dumped_json
 
         return dumped_json
     else :
@@ -624,7 +626,9 @@ def get_analysis():
         log.info("load analysis", extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
 
         if download:
-            return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.query['filename'])
+            response.headers['Content-Type'] = "application/json"  # Removed to force file download
+            response.headers['Content-Disposition'] = f'attachment; filename="{str(request.query["filename"])}"'
+            return dumped_json
 
         return dumped_json
 
