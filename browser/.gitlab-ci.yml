@@ -1,6 +1,6 @@
 
 .test_cypress_base:
-  image: vidjilci/cypress_with_browsers:latest
+  image: registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest
   stage: test_cypress_client
   # extends:
     # - .need_for_staged_client
