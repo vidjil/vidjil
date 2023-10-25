@@ -88,8 +88,6 @@ services:
         env_file:
             - '.env-default'
             - '.env'
-        environment:
-          - DOMAIN_NAME=plop
         ports:
             - "80:80"
             - "443:443"
