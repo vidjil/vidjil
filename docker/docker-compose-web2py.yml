@@ -9,7 +9,7 @@ services:
         image: mysql:5.7
         env_file:
             - '.env-default'
-            - '.env'
+            - '.env-web2py'
         volumes:
             - ./mysql/:/docker-entrypoint-initdb.d/
             - $VOLUME_PATH/mysql:/var/lib/mysql
@@ -21,7 +21,7 @@ services:
         image: vidjil/server:latest
         env_file:
             - '.env-default'
-            - '.env'
+            - '.env-web2py'
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes_from:
             - fuse
@@ -30,18 +30,18 @@ services:
               condition: service_healthy
             fuse:
               condition: service_started
-            postfix:
-              condition: service_started
+            # postfix:
+            #   condition: service_started
         links:
             - mysql:mysql
             - fuse:fuse
-            - postfix:postfix
+            # - postfix:postfix
     fuse:
         image: vidjil/server:latest
         command: bash /entrypoints/fuse-entrypoint.sh
         env_file:
             - '.env-default'
-            - '.env'
+            - '.env-web2py'
         volumes:
             - $VOLUME_PATH/databases:/usr/share/vidjil/server/web2py/applications/vidjil/databases
             - $VOLUME_PATH/result/results:/mnt/result/results
@@ -51,14 +51,14 @@ services:
             - $VOLUME_PATH/log/uwsgi:/var/log/uwsgi
             - $VOLUME_PATH/backup:/mnt/backup
             - $VOLUME_NFS:/mnt/data/src
-            - ./vidjil-server/conf:/etc/vidjil
-            - ./vidjil-server/scripts:/entrypoints
+            - ./vidjil-server-web2py/conf:/etc/vidjil
+            - ./vidjil-server-web2py/scripts:/entrypoints
             - ../germline:/usr/share/vidjil/germline
     nginx:
         image: vidjil/client:latest
         env_file:
             - '.env-default'
-            - '.env'
+            - '.env-web2py'
         ports:
             - "80:80"
             - "443:443"
@@ -74,7 +74,7 @@ services:
         image: vidjil/server:latest
         env_file:
             - '.env-default'
-            - '.env'
+            - '.env-web2py'
         command: bash /entrypoints/workers-entrypoint.sh
         volumes_from:
             - uwsgi
@@ -85,37 +85,37 @@ services:
               condition: service_healthy
         links:
             - mysql
-            - postfix
-    backup:
-        build: ./backup
-        volumes_from:
-            - uwsgi
-        volumes:
-            - ./backup/conf:/etc/backup
-        depends_on:
-            - mysql
-        links:
-            - mysql
-            - uwsgi:uwsgi
-    reporter:
-        build: ./reporter
-        image: reporter:latest
-        volumes_from:
-            - uwsgi
-        volumes:
-            - ./reporter/code:/opt/reporter
-        depends_on:
-            uwsgi:
-              condition: service_started
-        links:
-            - uwsgi:uwsgi
-    postfix:
-        image: catatnight/postfix
-        env_file:
-            - '.env-default'
-            - '.env'
-        expose:
-            - 587
-        volumes:
-            - ./postfix/ssl:/etc/postfix/certs
+            # - postfix
+    # backup:
+    #     build: ./backup
+    #     volumes_from:
+    #         - uwsgi
+    #     volumes:
+    #         - ./backup/conf:/etc/backup
+    #     depends_on:
+    #         - mysql
+    #     links:
+    #         - mysql
+    #         - uwsgi:uwsgi
+    # reporter:
+    #     build: ./reporter
+    #     image: reporter:latest
+    #     volumes_from:
+    #         - uwsgi
+    #     volumes:
+    #         - ./reporter/code:/opt/reporter
+    #     depends_on:
+    #         uwsgi:
+    #           condition: service_started
+    #     links:
+    #         - uwsgi:uwsgi
+    # postfix:
+    #     image: catatnight/postfix
+    #     env_file:
+    #         - '.env-default'
+    #         - '.env'
+    #     expose:
+    #         - 587
+    #     volumes:
+    #         - ./postfix/ssl:/etc/postfix/certs
 
