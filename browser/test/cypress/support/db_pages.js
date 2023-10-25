@@ -621,7 +621,10 @@ Cypress.Commands.add('waitAnalysisCompleted', (config_id, sequence_file_id, star
   cy.sampleStatusValue(sequence_file_id, config_id).then($status => {
         cy.log(`status: '**${$status.trimRight().trimLeft()}**'`);
         var now = new Date().getTime()
-        if ($status.trimRight().trimLeft() != 'COMPLETED') {
+        if ($status.trimRight().trimLeft() == 'FAILED') {
+            cy.log("waitAnalysisCompleted; Process have FAILED").then(() => {
+                throw new Error("waitAnalysisCompleted; Process have FAILED");});
+        } else if ($status.trimRight().trimLeft() != 'COMPLETED') {
          if ( (now - start)/1000 > nb_retry){
             cy.log("waitAnalysisCompleted; Timeout without COMPLETED status").then(() => {
                 throw new Error("waitAnalysisCompleted; Timeout without COMPLETED status");});
