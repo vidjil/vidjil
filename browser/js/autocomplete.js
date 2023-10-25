@@ -278,13 +278,15 @@ VidjilAutoComplete.prototype = {
         if (uncached.length > 0) {
             $.ajax({
                 type: "POST",
-
+                data: {
+                    keys: JSON.stringify(uncached)
+                },
                 xhrFields: {
                     withCredentials: true
                 },
                 timeout: 5000,
                 crossDomain: true,
-                url: `${self.dataUrls[at]}?keys=${keys[0]}`,
+                url: self.dataUrls[at],
                 success: function (data) {
                     var my_data = JSON.parse(data);
                     self.cacheData(at, my_data, uncached);
