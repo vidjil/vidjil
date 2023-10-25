@@ -71,16 +71,38 @@ def home():
     res = {"redirect" : redirect}
     return json.dumps(res, separators=(',',':'))
 
-@action("/vidjil/default/whoami")
+@action("/vidjil/default/whoami", method=["POST", "GET"])
 @action.uses(db, session)
 def whoami():
+    """
+    Return some informations about logged in user (id, names, groups, admin status)
+    Use for API
+    """
+
     if auth.user:
         user_data = {
-            "id": auth.current_user.get('id'),
+            "id": auth.user_id,
             "email": auth.current_user.get('email'),
             "uuid": session["uuid"],
-            "admin": auth.is_admin(auth.current_user.get('id'))
+            "admin": auth.is_admin(auth.user_id)
         }
+
+        membership = auth.table_membership()
+        permission = auth.table_permission()
+        action = "create"
+        groups = db(
+                (db.auth_user.id == user_data["id"]) &
+                (membership.user_id == user_data["id"]) &
+                (membership.group_id == permission.group_id) & (permission.record_id == 0) &
+                (permission.table_name == "sample_set") &
+                (db.auth_membership.group_id == db.auth_group.id) &
+                (permission.name == action)
+            ).select()
+        transform_groups = []
+        for elt in groups:
+            transform_groups.append({"role": elt["auth_group"].role, "id": str(elt["auth_group"].id), "description": elt["auth_group"].description })
+
+        user_data["groups"] = transform_groups
         return user_data
     return {}
 
