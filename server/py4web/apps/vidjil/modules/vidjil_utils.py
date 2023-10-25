@@ -148,7 +148,7 @@ def safe_encoding(string):
     returns the string.
     '''
     try:
-        return str(string, 'utf-8')
+        return string.encode(encoding = 'UTF-8')
     except UnicodeDecodeError:
         return string
 
