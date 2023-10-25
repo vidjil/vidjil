@@ -5,7 +5,6 @@
     - .test_server_base_dind
     # - .need_for_staged_server
   script: &test_cypress_server_script
-    - docker exec docker_uwsgi_1  mkdir /usr/share/vidjil/server/py4web/apps/vidjil/errors
     - docker exec docker_uwsgi_1  chmod a+w /usr/share/vidjil/server/py4web/apps/vidjil/errors
     - docker exec docker_uwsgi_1  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
     - mkdir -p logs/before; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/before/${service}.log 2>&1; done
