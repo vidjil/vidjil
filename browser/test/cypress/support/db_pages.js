@@ -217,12 +217,15 @@ Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, i
 /**
  * Create a run and fill it informations
  */
-Cypress.Commands.add('createRun', (id, run_name, date, informations) => {
+Cypress.Commands.add('createRun', (id, run_name, date, informations, owner) => {
   cy.goToTokenPage("run")
 
   cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'run\'})"]')
     .click()
   cy.update_icon()
+  if (owner != null){
+    cy.get('#group_select').select(owner)
+  }
   cy.fillRun(0, id, run_name, date, informations)
 
   cy.get('.btn').click()

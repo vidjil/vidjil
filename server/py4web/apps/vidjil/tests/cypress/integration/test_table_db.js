@@ -22,7 +22,7 @@ describe('Manipulate patient, sample and launch analysis', function () {
         var lastname    = "last name"
         var birthday    = "2000-01-01"
         var informations= "a patient created by cypress"
-        cy.createPatient(id, firstname, lastname, birthday, informations)
+        cy.createPatient(id, firstname, lastname, birthday, informations, "public")
 
 
         var preprocess   = undefined
@@ -74,10 +74,10 @@ describe('Manipulate patient, sample and launch analysis', function () {
         var lastname    = "last name"
         var birthday    = "2000-01-01"
         var informations= "a patient created by cypress"
-        cy.createPatient(id, firstname+"_1", lastname+"_1", birthday, informations + " (iter 1)")
-        cy.createPatient(id, firstname+"_2", lastname+"_2", birthday, informations + " (iter 2)")
-        cy.createPatient(id, firstname+"_3", lastname+"_3", birthday, informations + " (iter 3)")
-        cy.createRun(id, "run with samples linked to some patients", "2023-01-01", "A run created by cypress")
+        cy.createPatient(id, firstname+"_1", lastname+"_1", birthday, informations + " (iter 1)", "public")
+        cy.createPatient(id, firstname+"_2", lastname+"_2", birthday, informations + " (iter 2)", "public")
+        cy.createPatient(id, firstname+"_3", lastname+"_3", birthday, informations + " (iter 3)", "public")
+        cy.createRun(id, "run with samples linked to some patients", "2023-01-01", "A run created by cypress", "public")
 
         cy.goToTokenPage("run")
         cy.openSet(30)
@@ -141,9 +141,9 @@ describe('Manipulate patient, sample and launch analysis', function () {
         var informations= "Cypress; patient with tags"
 
         // Some with tag
-        cy.createPatient(id, firstname+"_4", lastname+"_4", birthday, informations + " (iter 4) #tagXXX #tagYYY")
-        cy.createPatient(id, firstname+"_5", lastname+"_5", birthday, informations + " (iter 5) #tagXXX #tagZZZ")
-        cy.createPatient(id, firstname+"_6", lastname+"_6", birthday, informations + " (iter 6) #tagXXX")
+        cy.createPatient(id, firstname+"_4", lastname+"_4", birthday, informations + " (iter 4) #tagXXX #tagYYY", "public")
+        cy.createPatient(id, firstname+"_5", lastname+"_5", birthday, informations + " (iter 5) #tagXXX #tagZZZ", "public")
+        cy.createPatient(id, firstname+"_6", lastname+"_6", birthday, informations + " (iter 6) #tagXXX", "public")
 
         cy.goToPatientPage()
         cy.getTableLength('#db_table_container').should('eq', previous_length+3)
