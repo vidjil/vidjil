@@ -353,7 +353,8 @@ def submit():
                 db(db.results_file.sequence_file_id == fid).delete()
                 mes += " file was replaced"
 
-            file_data, filepath = manage_filename(f["filename"])
+            filename, filepath = manage_filename(f["filename"])
+            file_data.update(filename)
             if 'data_file' in file_data and file_data['data_file'] is not None:
                 os.symlink(filepath, defs.DIR_SEQUENCES + file_data['data_file'])
                 file_data['size_file'] = os.path.getsize(filepath)
@@ -368,7 +369,10 @@ def submit():
 
         link_to_sample_sets(fid, id_dict)
 
-        db.sequence_file[fid] = file_data
+        row = db.sequence_file[fid]
+        for key in file_data.keys():
+            row.update( **{key: file_data[key]} )
+        row.update_record()
 
         # pre-process for nfs files can be started immediately
         data_file = db.sequence_file[fid].data_file
