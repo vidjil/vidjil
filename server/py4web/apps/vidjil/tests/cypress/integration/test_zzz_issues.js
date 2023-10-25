@@ -105,13 +105,17 @@ describe('Manipulate db page', function () {
         cy.get('#db_content > :nth-child(4) > .db_block_right a')
           .eq(0)
           .should("have.attr", "href")
-          .and("match", /get_data\?config=9/);
+          .and("match", /get_data\?/)
+          .and("match", /config=9/)
+          .and("match", /sample_set_id=25/)
 
         
         cy.get('#db_content > :nth-child(4) > .db_block_right a')
           .eq(1)
           .should("have.attr", "href")
-          .and("match", /get_analysis\?config=9&/);
+          .and("match", /get_analysis\?/)
+          .and("match", /config=9/)
+          .and("match", /sample_set_id=25/)
     })
 
 
