@@ -156,25 +156,25 @@ def index():
         analysis_file = analysis
         analysis_filename = info_file["filename"]+"_"+ config_name + ".analysis"
         
-    query =[]
-    
-    query2 = db(
-        (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-        & (db.sample_set_membership.sample_set_id == sample_set_id)
-    ).select(
-        left=db.results_file.on(
-            (db.results_file.sequence_file_id==db.sequence_file.id)
-            & (db.results_file.config_id==str(config_id))
-            & (db.results_file.hidden == False)
-        ), 
-        orderby = db.sequence_file.id|~db.results_file.run_date
-    )
+        query =[]
         
-    previous=-1
-    for row in query2 :
-        if row.sequence_file.id != previous : 
-            query.append(row)
-            previous=row.sequence_file.id
+        query2 = db(
+            (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            & (db.sample_set_membership.sample_set_id == sample_set_id)
+        ).select(
+            left=db.results_file.on(
+                (db.results_file.sequence_file_id==db.sequence_file.id)
+                & (db.results_file.config_id==str(config_id))
+                & (db.results_file.hidden == False)
+            ),
+            orderby = db.sequence_file.id|~db.results_file.run_date
+        )
+
+        previous=-1
+        for row in query2 :
+            if row.sequence_file.id != previous :
+                query.append(row)
+                previous=row.sequence_file.id
 
     else:
         fused_count = 0
