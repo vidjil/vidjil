@@ -41,6 +41,10 @@ echo -e "$ ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless 
 ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec $@ --env workdir=vidjil,host=$HOST,initiated_database=false
 ECODE=$?
 
+# Rename reports with name of testing script
+apt-get update -qq && apt-get install -y -qq libxml2-utils
+for file in `ls /app/cypress/reports/*.xml`; do mv $file /app/cypress/reports/report_`xmllint --xpath 'string(/testsuites/testsuite/@file)' $file| cut -f3 -d"/"`; done
+
 echo "$ change again chmod of cypress directory (include new directories)" 
 chmod 777 cypress -R 
 echo -e "exit code: $ECODE"
