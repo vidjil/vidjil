@@ -36,13 +36,19 @@ services:
         command: bash /entrypoints/uwsgi-entrypoint.sh
         stdin_open: true
         tty: true
+        healthcheck:
+          test: "bash /healthchecks/healthcheck_uwsgi.bash"
+          timeout: 20s
+          start_period: 0s
+          retries: 2
         depends_on:
             mysql:
               condition: service_healthy
         links:
-            - mysql
+            - mysql:mysql
         volumes:
           - ./vidjil-server/scripts:/entrypoints
+          - ./vidjil-server/healthchecks:/healthchecks
           - ./vidjil-server/conf/defs.py:/usr/share/vidjil/server/py4web/apps/vidjil/defs.py
           - $VOLUME_PATH/results:/mnt/result/results
           - $VOLUME_PATH/tmp:/mnt/result/tmp
@@ -68,11 +74,11 @@ services:
             mysql:
               condition: service_healthy
             uwsgi:
-              condition: service_started
+              condition: service_healthy
         links:
-            - mysql
-            - redis
-            - uwsgi
+            - mysql:mysql
+            - redis:redis
+            - uwsgi:uwsgi
 
 
     nginx:
@@ -90,11 +96,17 @@ services:
         command: bash -c "make -C /usr/share/vidjil browser && bash /entrypoints/nginx-entrypoint.sh"
         volumes:
             - ./vidjil-client/scripts:/entrypoints
+            - ./vidjil-client/healthchecks:/healthchecks
             - $VOLUME_PATH/log/nginx:/var/log/nginx
             - $VOLUME_PATH/certs:/etc/letsencrypt/well-known
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
+        healthcheck:
+          test: "bash /healthchecks/healthcheck_nginx.bash"
+          timeout: 30s
+          start_period: 30s
+          retries: 2
 
     workers:
         image: vidjil/server:py4web
@@ -110,14 +122,14 @@ services:
             - uwsgi
         depends_on:
             uwsgi:
-              condition: service_started
+              condition: service_healthy
             redis:
               condition: service_started
             mysql:
               condition: service_healthy
         links:
-            - mysql
-            - redis
+            - redis:redis
+            - mysql:mysql
 
 
     celery:
@@ -133,9 +145,12 @@ services:
       volumes_from:
           - uwsgi
       depends_on:
-          - mysql
-          - uwsgi
-          - redis
+            uwsgi:
+              condition: service_healthy
+            redis:
+              condition: service_started
+            mysql:
+              condition: service_healthy
       links:
           - redis:redis
           - mysql:mysql
@@ -151,6 +166,9 @@ services:
       volumes_from:
           - uwsgi
       depends_on:
-          - workers
+          uwsgi:
+              condition: service_healthy
+          workers:
+              condition: service_started
       ports:
           - "5555:5555"

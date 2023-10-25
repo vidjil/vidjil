@@ -3,6 +3,7 @@ echo -e "\n\e[34m=======================\e[0m"
 echo -e "\e[34m=== Start service uwsgi\e[0m"
 echo -e "\e[34m=== `date +'%Y/%m/%d; %H:%M'`\e[0m"; echo
 
+mkdir -p /mnt/backup/  /mnt/data/ /mnt/result/ /mnt/upload/
 
 . $(dirname $0)/tools.sh
 user=$(get_user_of_results)
@@ -20,10 +21,15 @@ cd /usr/share/vidjil/server/py4web/apps/
 ls /usr/share/vidjil/server/py4web/apps/
 
 
-if [[ -v $UWSGI_POOL ]]; then
+if [[ -v UWSGI_POOL ]]; then
     echo "==== Change number of threads: '$UWSGI_POOL'"
     sed -i "s/processes = 6/processes = $UWSGI_POOL/g" /etc/uwsgi/sites/uwsgi.ini
 fi
+
+
+echo "==== Start healthcheck ==="
+bash /healthchecks/healthcheck_uwsgi.bash
+
 
 echo "==== Start uwsgi script ==="
 uwsgi /etc/uwsgi/sites/uwsgi.ini
