@@ -31,7 +31,12 @@
       junit: $CYPRESS_PATH/reports/test-cypress-*.xml
     paths:
       - $CYPRESS_PATH
+      - docker/*.yml
+      - docker/vidjil-*
+      - browser/js/conf.js
+      - browser/test/cypress
       - server/py4web/apps/vidjil/errors/*
+      - logs
     expire_in: 7 day
     when: always
   variables:
