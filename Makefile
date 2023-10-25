@@ -76,6 +76,8 @@ functional_browser_cypress:
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v `pwd`/browser/test/cypress/screenshots:/app/cypress/screenshots \
+		-v `pwd`/browser/test/cypress/reports:/app/cypress/reports \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
 		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
@@ -90,6 +92,8 @@ functional_tutorial_browser_cypress:
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v `pwd`/browser/test/cypress/screenshots:/app/cypress/screenshots \
+		-v `pwd`/browser/test/cypress/reports:/app/cypress/reports \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
 		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
@@ -128,6 +132,8 @@ functional_tutorial_server_cypress:
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
 		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/integration:/app/cypress/integration \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/screenshots:/app/cypress/screenshots \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/reports:/app/cypress/reports \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
@@ -144,6 +150,8 @@ functional_server_cypress:
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
 		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/integration:/app/cypress/integration \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/screenshots:/app/cypress/screenshots \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/reports:/app/cypress/reports \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
