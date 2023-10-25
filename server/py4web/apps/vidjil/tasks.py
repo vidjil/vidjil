@@ -182,7 +182,12 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads,
                clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     from datetime import timedelta as timed
-    
+
+    if db.sequence_file[id_file] == None:
+        print("Sequence file not found in DB (delay of upload/processing ?)")
+        update_task(task_id, "FAILED")
+        raise ValueError('Process has failed, no entrie in DB for this sequence file')
+
     if db.sequence_file[id_file].pre_process_flag == "FAILED" :
         print("Pre-process has failed")
         update_task(task_id, "FAIL")
