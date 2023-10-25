@@ -288,11 +288,11 @@ test_server_unit:
     - docker-compose -f docker-compose.yml down ## restart for write right error on DB
     - docker-compose -f docker-compose.yml up -d
     # Set rights
-    - sleep 5 && docker ps
+    - docker exec docker_uwsgi_1 mkdir -p /usr/share/vidjil/server/py4web/apps/vidjil/errors/
     - docker exec docker_mysql_1 chmod 0777 /var/lib/mysql/vidjil -R
     - docker exec docker_uwsgi_1 chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R
     - docker exec docker_uwsgi_1 chmod 0777 /mnt/result/results   -R
-    - docker exec docker_uwsgi_1 chmod 0777 /mnt/result/tmp       -R
+    - docker exec docker_uwsgi_1 chmod 0777 /mnt/result/tmp
     - docker exec docker_uwsgi_1 chmod 0777 /mnt/upload/uploads   -R
     - docker exec docker_uwsgi_1 chmod 0777 /usr/share/tools      -R
 
@@ -323,6 +323,8 @@ test_server_unit:
     - !reference [.setup_docker_server]
   after_script:
     - docker cp docker_uwsgi_1:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
+    - docker ps
+    - mkdir -p logs/after; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/after/${service}.log 2>&1; done
     - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test" reporter:test
   only:
