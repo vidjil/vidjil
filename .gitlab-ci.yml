@@ -380,8 +380,10 @@ deploy_review_server:
     - cp docker/vidjil-client/conf/*.cgi browser/cgi
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
+    - sed -i 's/vidjil\/server\:latest/registry.gitlab.inria.fr\/vidjil\/vidjil\/server\:py4web/g' docker-compose.yml
     - sed -i "s/virtual_host/${CI_COMMIT_REF_SLUG}/" docker-compose-ci-review.yml
     - mv docker-compose-ci.yml docker-compose.override.yml
+    - cp .env-default .env
     - sed -i '/ports/,+2d' docker-compose.yml
     - sed -i -r "s/py4web_admin_password/$REVIEW_SERVER_ADMIN_PASSWORD/" .env
     - cd ..
@@ -392,10 +394,17 @@ deploy_review_server:
         mkdir -p postfix/ssl; 
         cat docker-compose.yml; 
         ls; 
-        docker-compose config; 
-        docker-compose up -d mysql fuse uwsgi nginx workers celery flowers; 
+        docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml config; 
+        docker-compose --version; 
+        docker-compose stop && docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml up -d mysql fuse nginx uwsgi workers celery flower; 
         sleep 20s; 
-        docker-compose exec -T uwsgi bash -c ''cd /usr/share/vidjil/server/py4web/apps/vidjil/scripts; python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci.sql''"'
+        docker exec docker_${CI_COMMIT_REF_SLUG}_mysql_1 bash -c ''chmod 0777 /var/lib/mysql/vidjil -R'';
+        docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R'';
+        docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''chmod 0777 /mnt/result/results   -R'';
+        docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''chmod 0777 /mnt/result/tmp '';
+        docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''chmod 0777 /mnt/upload/uploads  -R'';
+        docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''cd /usr/share/vidjil/server/py4web/apps/vidjil/scripts; python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci.sql'';
+        "'
   environment:
     name: review_server-$CI_COMMIT_REF_SLUG
     url: http://$CI_COMMIT_REF_SLUG.server.ci.vidjil.org/
