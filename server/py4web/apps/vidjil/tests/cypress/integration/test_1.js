@@ -14,7 +14,6 @@ describe('Manipulate db page (for cypress pipeline)', function () {
     afterEach(function () {
     })
     after(function () {
-        cy.clearCookies()
     })
 
 

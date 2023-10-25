@@ -11,7 +11,6 @@ describe('Manipulate db page', function () {
     afterEach(function () {
     })
     after(function () {
-        cy.clearCookies()
     })
 
 

@@ -14,7 +14,6 @@ describe('Creation of users and groups', function () {
     afterEach(function () {
     })
     after(function () {
-        cy.clearCookies()
     })
 
 

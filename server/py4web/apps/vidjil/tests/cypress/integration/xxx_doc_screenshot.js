@@ -9,7 +9,6 @@ describe('Screenshot on server', function () {
     afterEach(function () {
     })
     after(function () {
-        cy.clearCookies()
     })
 
 
