@@ -1,6 +1,7 @@
 Cypress.Commands.add('initDatabase', (host) => {
   // init database if button is present at opening of page
   if (host=="local"){
+    cy.log(`initiated_database: ${Cypress.env('initiated_database')}`)
     if (Cypress.env('initiated_database') === false){ // allow to bypass waiting
 
       cy.visit('http://localhost/browser')
