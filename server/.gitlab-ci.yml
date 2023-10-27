@@ -59,6 +59,8 @@ server1-ff-supported:
     - .need_for_moderate_server
   variables:
     BROWSER: firefox_supported/firefox
+  needs:
+    - []
 
 ## Cypress with server
 s2:
@@ -86,12 +88,6 @@ s2:
     - *test_cypress_server_script
   variables:
     TEST_FILES: "/app/cypress/integration/doc_*.js"
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^prod-server/
-    - dev
-    - doc
 
 
 tuto-s1-ff-supported:
@@ -101,7 +97,8 @@ tuto-s1-ff-supported:
     - .need_for_moderate_server
   variables:
     BROWSER: firefox_supported/firefox
-
+  needs:
+    - []
 
 
 ## Cypress with server
