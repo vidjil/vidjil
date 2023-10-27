@@ -24,6 +24,8 @@ fi
 
 make -C /usr/share/vidjil/browser/
 
+echo "==== Start healthcheck ==="
+bash /healthchecks/healthcheck_nginx.bash &
 
 #!/bin/bash
 spawn-fcgi -u www-data -s /var/run/fcgiwrap.socket /usr/sbin/fcgiwrap

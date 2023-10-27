@@ -2,7 +2,7 @@ from SimpleXMLRPCServer import SimpleXMLRPCServer
 from subprocess import *
 
 import sys
-sys.path.insert(0, './web2py/applications/vidjil/modules')
+sys.path.insert(0, './py4web/apps/vidjil')
 import defs
 import os.path
 

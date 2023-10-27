@@ -1,5 +1,6 @@
 
 
+
 # -*- coding: utf-8 -*-
 # this file is released under public domain and you can use without limitations
 
@@ -26,6 +27,7 @@ import logging
 import json
 import os
 import time
+import datetime
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from ..tasks import schedule_run
 from yatl.helpers import INPUT, H1, HTML, BODY, A, DIV
@@ -69,16 +71,38 @@ def home():
     res = {"redirect" : redirect}
     return json.dumps(res, separators=(',',':'))
 
-@action("/vidjil/default/whoami")
+@action("/vidjil/default/whoami", method=["POST", "GET"])
 @action.uses(db, session)
 def whoami():
+    """
+    Return some informations about logged in user (id, names, groups, admin status)
+    Use for API
+    """
+
     if auth.user:
         user_data = {
-            "id": auth.current_user.get('id'),
+            "id": auth.user_id,
             "email": auth.current_user.get('email'),
             "uuid": session["uuid"],
-            "admin": auth.is_admin(auth.current_user.get('id'))
+            "admin": auth.is_admin(auth.user_id)
         }
+
+        membership = auth.table_membership()
+        permission = auth.table_permission()
+        action = "create"
+        groups = db(
+                (db.auth_user.id == user_data["id"]) &
+                (membership.user_id == user_data["id"]) &
+                (membership.group_id == permission.group_id) & (permission.record_id == 0) &
+                (permission.table_name == "sample_set") &
+                (db.auth_membership.group_id == db.auth_group.id) &
+                (permission.name == action)
+            ).select()
+        transform_groups = []
+        for elt in groups:
+            transform_groups.append({"role": elt["auth_group"].role, "id": str(elt["auth_group"].id), "description": elt["auth_group"].description })
+
+        user_data["groups"] = transform_groups
         return user_data
     return {}
 
@@ -480,7 +504,9 @@ def get_data():
         dumped_json = json.dumps(data, separators=(',',':'))
 
         if download:
-             return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.query['filename'])
+            response.headers['Content-Type'] = "application/json"  # Removed to force file download
+            response.headers['Content-Disposition'] = f'attachment; filename="{str(request.query["filename"])}"'
+            return dumped_json
 
         return dumped_json
     else :
@@ -600,7 +626,9 @@ def get_analysis():
         log.info("load analysis", extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
 
         if download:
-            return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.query['filename'])
+            response.headers['Content-Type'] = "application/json"  # Removed to force file download
+            response.headers['Content-Disposition'] = f'attachment; filename="{str(request.query["filename"])}"'
+            return dumped_json
 
         return dumped_json
 
@@ -615,23 +643,25 @@ def get_analysis():
 ## upload .analysis file and store it on the database
 # need patient_id, fileToUpload
 # need patient admin permission
+@action("/vidjil/default/save_analysis", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def save_analysis():
     error = ""
 
-    if "patient" in request.query :
-        request.query["sample_set_id"] = db.patient[request.query["patient"]].sample_set_id
+    if "patient" in request.params :
+        request.params["sample_set_id"] = db.patient[request.params["patient"]].sample_set_id
 
-    if "run" in request.query :
-        request.query["sample_set_id"] = db.run[request.query["run"]].sample_set_id
+    if "run" in request.params :
+        request.params["sample_set_id"] = db.run[request.params["run"]].sample_set_id
 
-    if not auth.can_save_sample_set(request.query['sample_set_id']) :
+    if not auth.can_save_sample_set(request.params['sample_set_id']) :
         error += "you do not have permission to save changes on this sample set"
 
     if error == "" :
-        f = request.query['fileToUpload']
+        f = request.files['fileToUpload']
         ts = time.time()
         
-        sample_set_id = request.query['sample_set_id']
+        sample_set_id = request.params['sample_set_id']
         
         analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
                                               sample_set_id = sample_set_id,
@@ -639,16 +669,17 @@ def save_analysis():
                                               )
 
         sample_type = db.sample_set[sample_set_id].sample_type
-        if (request.query['info'] is not None):
+        if ('info' in request.params and request.params['info'] is not None):
             if (sample_type == defs.SET_TYPE_PATIENT) :
-                db(db.patient.sample_set_id == sample_set_id).update(info = request.query['info']);
+                db(db.patient.sample_set_id == sample_set_id).update(info = request.params['info']);
 
             if (sample_type == defs.SET_TYPE_RUN) :
-                db(db.run.sample_set_id == sample_set_id).update(info = request.query['info']);
+                db(db.run.sample_set_id == sample_set_id).update(info = request.params['info']);
 
-        if (request.query['samples_id'] is not None and request.query['samples_info'] is not None):
-            ids = request.query['samples_id'].split(',')
-            infos = request.query['samples_info'].split(',')
+        if ('samples_id' in request.params and request.params['samples_id'] is not None
+             and 'samples_info' in request.params and request.params['samples_info'] is not None):
+            ids = request.params['samples_id'].split(',')
+            infos = request.params['samples_info'].split(',')
         
         
             # TODO find way to remove loop ?
@@ -656,7 +687,7 @@ def save_analysis():
                 if(len(ids[i]) > 0):
                     db(db.sequence_file.id == int(ids[i])).update(info = infos[i])
 
-        #patient_name = db.patient[request.query['patient']].first_name + " " + db.patient[request.query['patient']].last_name
+        #patient_name = db.patient[request.params['patient']].first_name + " " + db.patient[request.params['patient']].last_name
 
         res = {"success" : "true",
                "message" : "(%s): analysis saved" % (sample_set_id)}

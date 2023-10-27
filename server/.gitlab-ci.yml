@@ -5,9 +5,9 @@
     - .test_server_base_dind
     # - .need_for_staged_server
   script: &test_cypress_server_script
-    - docker exec docker_uwsgi_1  mkdir /usr/share/vidjil/server/web2py/applications/vidjil/errors
-    - docker exec docker_uwsgi_1  chmod a+w /usr/share/vidjil/server/web2py/applications/vidjil/errors
-    - docker exec docker_uwsgi_1  chown www-data /mnt/upload/uploads/ /mnt/result/results
+    - docker exec docker_uwsgi_1  chmod a+w /usr/share/vidjil/server/py4web/apps/vidjil/errors
+    - docker exec docker_uwsgi_1  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
+    - mkdir -p logs/before; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/before/${service}.log 2>&1; done
     - docker pull "vidjilci/cypress_with_browsers:latest"
     - >
       docker run
@@ -25,17 +25,22 @@
       --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
       --shm-size=1GB
       --network="host"
-      "vidjilci/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
+      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
   artifacts:
     reports:
       junit: $CYPRESS_PATH/reports/test-cypress-*.xml
     paths:
       - $CYPRESS_PATH
-      - server/web2py/applications/vidjil/errors/*
+      - docker/*.yml
+      - docker/vidjil-*
+      - browser/js/conf.js
+      - browser/test/cypress
+      - server/py4web/apps/vidjil/errors/*
+      - logs
     expire_in: 7 day
     when: always
   variables:
-    CYPRESS_PATH: server/web2py/applications/vidjil/tests/cypress
+    CYPRESS_PATH: server/py4web/apps/vidjil/tests/cypress
     HOST: local
     TEST_FILES: "/app/cypress/integration/test_*.js"
   only: &onlyServerBranches
@@ -43,6 +48,8 @@
     - /^hotfix-.*s.*\/.*$/
     - /^prod-server/
     - dev
+  needs:
+    - []
 
 
 ## Cypress with server
@@ -52,6 +59,8 @@ server1-ff-supported:
     - .need_for_moderate_server
   variables:
     BROWSER: firefox_supported/firefox
+  needs:
+    - []
 
 ## Cypress with server
 s2:
@@ -79,12 +88,6 @@ s2:
     - *test_cypress_server_script
   variables:
     TEST_FILES: "/app/cypress/integration/doc_*.js"
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^prod-server/
-    - dev
-    - doc
 
 
 tuto-s1-ff-supported:
@@ -94,7 +97,8 @@ tuto-s1-ff-supported:
     - .need_for_moderate_server
   variables:
     BROWSER: firefox_supported/firefox
-
+  needs:
+    - []
 
 
 ## Cypress with server

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ###
 ### Vidjil server, main configuration file
 ### This file must be named 'modules/defs.py' to be taken into account
@@ -6,21 +5,18 @@
 
 ### Email notifications for server errors
 SMTP_SERVER = 'postfix'
-SMTP_CREDENTIALS = 'vidjil:smtp_pass' # set to None if no auth required
+SMTP_CREDENTIALS = 'smtp_user' # set to None if no auth required
 # SMTP_SERVER = 'logging' # no mail
 FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
-EMAIL_SUBJECT_START = '[Vidjil]' # Customize the start of the email subject
 
 ### Server healthcare compliance
 ### Please see <http://www.vidjil.org/doc/server#healthcare>
 HEALTHCARE_COMPLIANCE = False
 
 ### address for the sql database
-### sqlite (not recommended)
-# DB_ADDRESS = 'sqlite://storage.sqlite'
-
-### mysql, with password (to be also set in mysql/create_db.sql)
+###
+DB_ADDRESS = 'sqlite://storage.sqlite'
 DB_ADDRESS = 'mysql://vidjil:rootpass@mysql/vidjil'
 DB_POOL_SIZE = 4
 
@@ -47,17 +43,10 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 ### Directory for program used in task.py
 ### relative path start from server/web2py
 DIR_VIDJIL = '/usr/share/vidjil/'
-DIR_VIDJIL_NEXT = '/usr/share/vidjil/'
-DIR_FUSE = '/usr/share/vidjil/tools/'
-DIR_MIXCR = '/usr/share/mixcr/'
+DIR_FUSE = '../../tools'
+DIR_MIXCR = '/usr/bin'
 DIR_IGREC = '/usr/local/bin/'
 DIR_GERMLINE = '/usr/share/vidjil/germline'
-DIR_GERMLINE_NEXT = '/usr/share/vidjil/germline'
-DIR_PEAR = '/usr/share/tools/'
-DIR_FLASH2 = DIR_PEAR
-DIR_CLONEDB = '/usr/share/clonedb/'
-DIR_BINARIES = "/binaries/"
-
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py
 FUSE_SERVER = 'fuse'
@@ -92,7 +81,7 @@ SET_TYPE_PATIENT = 'patient'
 SET_TYPE_RUN= 'run'
 SET_TYPE_GENERIC = 'generic'
 
-REQUIRE_HTTPS = True
+REQUIRE_HTTPS = False
 BROWSER_PATH = 'browser/index.html'
 
 # LDAP authentification

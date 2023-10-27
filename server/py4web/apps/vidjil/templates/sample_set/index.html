@@ -8,9 +8,11 @@
     <h3>
     <i class="icon-left-open-1" title="previous" onclick="db.call('sample_set/index', {'next': '1', 'id' :'[[=request.query['id']]]', 'config_id' : '[[=config_id]]'})"></i>
     <i class="icon-right-open-1" title="next" onclick="db.call('sample_set/index', {'next': '-1', 'id' :'[[=request.query['id']]]', 'config_id' : '[[=config_id]]'})"></i>
-       <span class="uid">[[=request.query['id']]]</span> [[=info["name"]]]
+        <span class="uid">[[=request.query['id']]]</span> [[=info["name"]]]
+        [[ for owner in owners: ]]
+            <span class="owner" style="display:none;">[[=owner['auth_group.role']]]</span>
+        [[pass]]
     </h3>
-
         
         
     <div class="db_block">
@@ -100,6 +102,7 @@
                        [[if auth.can_process_sample_set(int(request.query['id'])) and (config_id > 0 and auth.can_use_config(config_id)) :]]
                               [[ launch_sequence_files_all = [ int(row.sequence_file.id) for row in query ] ]]
                               <span class="pointer devel-mode" 
+                                id="launch_all_samples_[[=config_id]]"
                                onclick="db.call('default/run_all_request', {'sequence_file_ids' : [[=launch_sequence_files_all]], 'sample_set_id': [[=request.query["id"]]], 'config_id' : [[=config_id]] } ) "
                               ><i class="icon-cog-2" title="Run the selected configuration for all samples">
                                </i></span>
@@ -114,6 +117,7 @@
                            [[pass]]
                               [[ if len(launch_sequence_files_unavailable) > 0: ]]
                                <span class="pointer" 
+                                id="launch_all_unanalyzed_samples_[[=config_id]]"
                                      onclick="db.call('default/run_all_request', { 'sequence_file_ids' : [[=launch_sequence_files_unavailable]], 'sample_set_id': [[=request.query["id"]]], 'config_id' : [[=config_id]]} )">
                                  <i class="icon-cog-2" title="Run the selected configuration for all samples not already analysed or failed">
                                  </i>
@@ -191,12 +195,13 @@
                     [[pass]]
 
                     [[if row.results_file.id:]]
+                        <td id="status_[[=row.sequence_file.id]]_[[=config_id]]"
                         [[if row.sequence_file.pre_process_flag in ["RUN", "WAIT"] :]]
-                            <td> PREPROCESSING </td>
+                            > PREPROCESSING
                         [[ else:]]
-                            <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '[[=row.results_file.id]]' } )"> [[=status]] </td>
+                            class="button" onclick="db.call('results_file/info', { 'results_file_id' : '[[=row.results_file.id]]' } )"> [[=status]]
                         [[ pass]]
-
+                         </td>
                      <td>
                         [[if row.results_file.data_file:]]
                             <a href=[[=URL('default', 'download', row.results_file.data_file, scheme='https', vars=dict(filename='result-%s-%s.txt' % (request.query['id'], row.results_file.id)))]]
@@ -210,12 +215,12 @@
                      <td></td>
                     [[pass]]
                    [[else:]]
-                     <td></td><td></td><td></td><td></td>
+                     <td id="status_[[=row.sequence_file.id]]_[[=config_id]]"></td><td></td><td></td><td></td>
                    [[pass]]
                    <td>
                    [[if row.sequence_file.data_file != None and ( row.results_file.id != None or ( status not in ["RUNNING", "QUEUED", "ASSIGNED"]) ) and (not has_pre_process or (row.sequence_file.pre_process_flag != None and row.sequence_file.pre_process_flag != "FAILED")) :]]
                        [[if auth.can_process_sample_set(int(request.query['id'])) and (config_id > 0 and auth.can_use_config(config_id)) :]]
-                           <span class="pointer" onclick="db.call('default/run_request', { 'sequence_file_id' : '[[=row.sequence_file.id]]', 'sample_set_id' : [[=request.query["id"]]], 'config_id' : [[=config_id]] } )"><i class="icon-cog-2" title="Run a process with the selected configuration for this file"></i></span>
+                           <span class="pointer" id="launch_[[=row.sequence_file.id]]_[[=config_id]]"  onclick="db.call('default/run_request', { 'sequence_file_id' : '[[=row.sequence_file.id]]', 'sample_set_id' : [[=request.query["id"]]], 'config_id' : [[=config_id]] } )"><i class="icon-cog-2" title="Run a process with the selected configuration for this file"></i></span>
                        [[pass]]
                    [[pass]]
                    </td>
@@ -261,16 +266,6 @@
     [[pass]]
 
 
-   [[if auth.can_process_sample_set(int(request.query['id'])) :]]
-  <!--
-   <div class="db_block_right">
-     <b>News (2015-May-08)</b>
-     <br/>Vidjil has been upgraded, and some configs have been renamed.
-     <br/>The default TRG, IGH, multi+inc configs now use a e-value threshold that should give better results.
-     <br/>We advise to not use the '[old]' configs for your new sequences.
-   </div>
-   -->
-   [[pass]]
 
 </div>
 
@@ -295,6 +290,7 @@
         
               
                 <a class="button2" href="[[=http_origin]]?sample_set_id=[[=request.query["id"]]]&config=[[=row.config.id]]" type="text/html"
+                   id="result_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
                                else { myUrl.loadUrl(db, { 'sample_set_id' : '[[=request.query["id"]]]' , 'config' : [[=row.config.id]] }, '[[=info["filename"]]]' ) }" >
@@ -312,9 +308,9 @@
     <div class="db_block_right">
         [[if fused_file is not None :]]
             download [[=db.config[config_id].name]]
-            <a class="button" href=[[=URL('default', 'get_data', scheme='https', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=vidjil_utils.safe_encoding(fused_filename)))]]> .vidjil </a>
+            <a class="button" href=[[=URL('default', 'get_data', scheme='https', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=fused_filename))]]> .vidjil </a>
             [[if analysis_count >0:]]
-            <a class="button" href=[[=URL('default', 'get_analysis', scheme='https', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=vidjil_utils.safe_encoding(analysis_filename)))]]> .analysis </a>
+            <a class="button" href=[[=URL('default', 'get_analysis', scheme='https', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=analysis_filename))]]> .analysis </a>
             [[pass]]
         [[pass]]
     </div>

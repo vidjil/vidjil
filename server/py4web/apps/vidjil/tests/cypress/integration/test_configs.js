@@ -11,7 +11,6 @@ describe('Manipulate db page', function () {
     afterEach(function () {
     })
     after(function () {
-        cy.clearCookies()
     })
 
 
@@ -25,7 +24,7 @@ describe('Manipulate db page', function () {
         var expected_id  = "9"
         cy.createConfig(config_name, config_class, config_soft, config_cmd, config_fuse, config_info, expected_id )
 
-        cy.createPatient("", "config_airr", "test", "2000-01-01", "Cypress; Patient with airr uploaded file")
+        cy.createPatient("", "config_airr", "test", "2000-01-01", "Cypress; Patient with airr uploaded file", "public")
 
         cy.addSample(undefined, "nfs", "Demo-X5.airr", undefined, "2000-01-01", "file in AIRR format")
 

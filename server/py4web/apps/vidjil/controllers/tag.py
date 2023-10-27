@@ -27,6 +27,10 @@ def auto_complete():
 
     prefix = tag.get_tag_prefix()
     group_ids = json.loads(request.params["keys"])
+
+    if not isinstance(group_ids, list):
+        return error_message(f"Group ids are not in a correct format ({request.params['keys']})")
+
     tags = tag.get_tags(db, group_ids)
 
     return tag.tags_to_json(tags, group_ids)

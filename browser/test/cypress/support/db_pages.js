@@ -1,6 +1,7 @@
 Cypress.Commands.add('initDatabase', (host) => {
   // init database if button is present at opening of page
   if (host=="local"){
+    cy.log(`initiated_database: ${Cypress.env('initiated_database')}`)
     if (Cypress.env('initiated_database') === false){ // allow to bypass waiting
 
       cy.visit('http://localhost/browser')
@@ -132,14 +133,14 @@ Cypress.Commands.add('goToSetPage', () => {
 /**
  * Create a patient and fill it informations
  */
-Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, informations) => {
+Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, informations, owner) => {
   cy.goToTokenPage("patient")
 
   cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'patient\'})"]')
     .click()
   cy.update_icon()
   cy.get('h3').should("contain", "Add patients, runs, or sets")
-  cy.fillPatient(0, id, firstname, lastname, birthday, informations)
+  cy.fillPatient(0, id, firstname, lastname, birthday, informations, owner)
 
   cy.get('.btn').click()
   cy.update_icon()
@@ -177,7 +178,7 @@ Cypress.Commands.add('editPatient', (set_id, id, firstname, lastname, birthday, 
 })
 
 
-Cypress.Commands.add('controlPatientInfos', (index, id, firstname, lastname, birthday, informations) => {
+Cypress.Commands.add('controlPatientInfos', (index, id, firstname, lastname, birthday, informations, owner="") => {
 
   cy.get('h3 > .set_token').should("contain", lastname+" "+firstname)
 
@@ -187,12 +188,19 @@ Cypress.Commands.add('controlPatientInfos', (index, id, firstname, lastname, bir
   if (informations != ""){
     cy.get('#db_table_container').should("contain", informations)
   }
-
+  if (owner != null){
+      // For the moment, test only one owner, but a sample can belong to multiple owner.
+      // In this case; launch mulitple time this function
+      cy.get('.owner').should("contain", owner)
+  }
 })
 
 
 
-Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, informations) => {
+Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, informations, owner) => {
+  if (owner != null){
+    cy.get('#group_select').select(owner)
+  }  
   if (id != ""){
     cy.get('#patient_id_label_'  + index.toString()).clear().type(id)
   }
@@ -210,12 +218,15 @@ Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, i
 /**
  * Create a run and fill it informations
  */
-Cypress.Commands.add('createRun', (id, run_name, date, informations) => {
+Cypress.Commands.add('createRun', (id, run_name, date, informations, owner) => {
   cy.goToTokenPage("run")
 
   cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'run\'})"]')
     .click()
   cy.update_icon()
+  if (owner != null){
+    cy.get('#group_select').select(owner)
+  }
   cy.fillRun(0, id, run_name, date, informations)
 
   cy.get('.btn').click()
@@ -611,7 +622,10 @@ Cypress.Commands.add('waitAnalysisCompleted', (config_id, sequence_file_id, star
   cy.sampleStatusValue(sequence_file_id, config_id).then($status => {
         cy.log(`status: '**${$status.trimRight().trimLeft()}**'`);
         var now = new Date().getTime()
-        if ($status.trimRight().trimLeft() != 'COMPLETED') {
+        if ($status.trimRight().trimLeft() == 'FAILED') {
+            cy.log("waitAnalysisCompleted; Process have FAILED").then(() => {
+                throw new Error("waitAnalysisCompleted; Process have FAILED");});
+        } else if ($status.trimRight().trimLeft() != 'COMPLETED') {
          if ( (now - start)/1000 > nb_retry){
             cy.log("waitAnalysisCompleted; Timeout without COMPLETED status").then(() => {
                 throw new Error("waitAnalysisCompleted; Timeout without COMPLETED status");});

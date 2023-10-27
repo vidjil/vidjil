@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import dictobj
+import apps.vidjil.modules.dictobj  as dictobj
 import os
 from collections import namedtuple
 

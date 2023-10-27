@@ -1,7 +1,18 @@
 #!/usr/bin/env python
 
-import vidjil_utils
+import sys
+import time
 from datetime import datetime
+
+from py4web import *
+from pydal.objects import Row, Rows, Table, Query, Set, Expression
+
+
+sys.path.append("../../../../")
+from apps.vidjil.modules.vidjil_utils import *
+from apps.vidjil.common import *
+from apps.vidjil.modules.permission_enum import PermissionEnum
+
 
 class DBInitialiser(object):
 
@@ -51,7 +62,7 @@ class DBInitialiser(object):
         return d
 
     def _init_users(self):
-        vidjil_utils.init_db_helper(db, auth, force=True, admin_email="plop@plop.com", admin_password="foobartest")
+        init_db_helper(db, auth, force=True, admin_email="plop@plop.com", admin_password="foobartest")
         self.initialised = True
 
     @_needs_init
@@ -66,6 +77,7 @@ class DBInitialiser(object):
                 sid = db[t].insert(**self.get_set_dict(t, ssid, i))
                 auth.add_permission(public_group.id, PermissionEnum.access.value, db.sample_set, ssid)
                 db.tag_ref.insert(tag_id=tag_id, table_name=t, record_id=sid)
+        db.commit()
         self.initialised_sets = True
 
     @_needs_init
@@ -76,6 +88,7 @@ class DBInitialiser(object):
         for i in range(3):
             db.pre_process.insert(name="test pre-process %d" % i, command="dummy &file1& &file2& > &result&", info="test %d" % i)
         db.pre_process.insert(name="pre-process perm", command="dummy &file1& &file2& > &result&", info="dummy pre_process for permissions")
+        db.commit()
 
     @_needs_sets
     def _init_sequence_files(self):
@@ -93,17 +106,19 @@ class DBInitialiser(object):
                 )
                 db.sample_set_membership.insert(sample_set_id=sample_set.id, sequence_file_id=sfid)
                 db.tag_ref.insert(tag_id=tag_id, table_name=db.sequence_file, record_id=sfid)
+        db.commit()
 
     @_needs_files
     def _init_results_files(self):
         sequence_files = db(db.sequence_file.id > 0).select()
         config = db(db.config.id > 0).select(limitby=(0,1)).first()
+        timestamp = time.time()
         for sf in sequence_files:
             membership = db(db.sample_set_membership.sequence_file_id == sf.id).select(limitby=(0,1)).first()
             stid = db.scheduler_task.insert(
                 application_name="vidjil",
                 status="COMPLETED",
-                start_time=datetime.now()
+                start_time=datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
             )
             db.results_file.insert(
                 sequence_file_id=sf.id,
@@ -120,6 +135,7 @@ class DBInitialiser(object):
                 sequence_file_list="%d_" % membership.sequence_file_id,
                 fused_file="test_fused_file"
             )
+        db.commit()
 
     @_needs_init
     def _init_notifications(self):
@@ -130,6 +146,7 @@ class DBInitialiser(object):
                 message_content="this is a test %d" % i,
                 creation_datetime="2010-10-10 10:10:10"
             )
+        db.commit()
 
     @_needs_init
     def _init_groups(self):
@@ -137,6 +154,7 @@ class DBInitialiser(object):
         for i in range(3):
             c = db.auth_group.insert(role="test child %d" % i)
             db.group_assoc.insert(first_group_id=parent, second_group_id=c)
+        db.commit()
 
     @_needs_init
     def _init_set_association_data(self):
@@ -163,6 +181,7 @@ class DBInitialiser(object):
                 auth.add_permission(public_group.id, PermissionEnum.access.value, db.sample_set, ssid)
                 db.tag_ref.insert(tag_id=tag_id, table_name=t, record_id=sid)
                 db.sample_set_membership.insert(sample_set_id=ssid, sequence_file_id=sfid)
+        db.commit()
 
 
 initialiser = DBInitialiser()

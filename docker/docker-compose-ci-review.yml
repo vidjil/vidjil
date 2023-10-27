@@ -1,0 +1,38 @@
+version: '2.4'
+
+# See https://docs.docker.com/compose/extends/ for more information
+services:
+    mysql:
+        network_mode: bridge
+        volumes:
+            - ./ci/mysql:/var/lib/mysql
+    uwsgi:
+        network_mode: bridge
+        command: bash /entrypoints/uwsgi-entrypoint.sh --ci
+        
+    fuse:
+        network_mode: bridge
+        extra_hosts:
+          - "fuse:127.0.0.1"
+    nginx:
+        network_mode: bridge
+        expose:
+            - 443
+        environment:
+            - VIRTUAL_HOST=virtual_host.server.ci.vidjil.org
+            - VIRTUAL_PORT=443
+            - VIRTUAL_PROTO=https
+
+
+
+    workers:
+        network_mode: bridge
+    redis:
+        network_mode: bridge
+    celery:
+        network_mode: bridge
+    flower:
+        network_mode: bridge
+
+volumes:
+    databases:

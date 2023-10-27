@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import math
 import re
+import sys
+sys.path.append("../../../")
 from apps.vidjil import defs
 import json
 import datetime
@@ -146,7 +148,7 @@ def safe_encoding(string):
     returns the string.
     '''
     try:
-        return str(string, 'utf-8')
+        return string.encode(encoding = 'UTF-8')
     except UnicodeDecodeError:
         return string
 
@@ -704,6 +706,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             info = 'Export all clones in the tabular AIRR format. The results can not be browsed online. See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output',
             classification = 3
         )
+        db.commit()
 
         ## permission
         ## system admin have admin/read/create rights on all patients, groups and configs
@@ -767,7 +770,8 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         for tag in tags:
             tid  = db.tag.insert(name=tag)
             db.group_tag.insert(group_id=id_public_group, tag_id=tid)
-
+        db.commit()
+    return
 
 def publicGroupIsInList(db, group_ids):
     """ Return True if the first public group is in list """

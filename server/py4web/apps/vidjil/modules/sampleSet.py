@@ -72,7 +72,7 @@ class SampleSet(object):
             config_id = data._extra['GROUP_CONCAT(DISTINCT config.id)']
             configs.append(
                     str(A(config_name,
-                        _href="index.html?sample_set_id=%d&config=%s" % (data['sample_set_id'], config_id), _type="text/html",
+                        _href="index.html?sample_set_id=%d&config=%s" % (data['sample_set_id'], config_id), _type="text/html",  _id="result_sample_set_%d_config_%s" % (data['sample_set_id'], c[0]),
                         _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], config_id, filename))))
 
         return XML(", ".join(configs))

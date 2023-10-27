@@ -14,7 +14,6 @@ describe('Creation of users and groups', function () {
     afterEach(function () {
     })
     after(function () {
-        cy.clearCookies()
     })
 
 
@@ -48,9 +47,10 @@ describe('Creation of users and groups', function () {
 
         var first_name = "user_first"
         var last_name  = "user_last"
+        var username   = `${first_name}__${last_name}`
         var email      = "user4@email.org"
-        var password   = "OnePassword123"
-        cy.createUser(first_name, last_name, email, password)
+        var password   = "4P99n!vP3c_/kA]3Yv" // complex password 
+        cy.createUser(first_name, last_name, email, username, password)
 
         cy.goToUsersPage()
         cy.getTableLength("#table_users").should('eq', previous_length+1)
@@ -61,7 +61,21 @@ describe('Creation of users and groups', function () {
     })
 
 
-    it('03-impersonate from list',  function() {
+    it('03-owner_set', function() {
+        var owner_public = "admin"
+        var owner_admin  = "public"
+        var owner_user1  = "user_1"
+        var owner_user4  = "user_2"
+
+        cy.createPatient("", `owner ${owner_public}`, "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_public}`, owner_public)
+        cy.createPatient("", `owner ${owner_admin}`,  "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_admin}`, owner_admin)
+        cy.createPatient("", `owner ${owner_user1}`,  "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_user1}`, owner_user1)
+        cy.createPatient("", `owner ${owner_user4}`,  "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_user4}`, owner_user4)
+        return
+    })
+
+
+    it('04-impersonate from list',  function() {
 
         cy.goToPatientPage()
 
@@ -94,7 +108,7 @@ describe('Creation of users and groups', function () {
     })
 
 
-    it('04-impersonate from table',  function() {
+    it('05-impersonate from table',  function() {
 
         cy.openDBPage()
         cy.goToUsersPage()

@@ -7,6 +7,8 @@ version: '3.3'
 services:
     mysql:
         image: mysql:5.7
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME MYSQL
         env_file:
             - '.env-default'
             - '.env'
@@ -25,33 +27,29 @@ services:
         - '6379:6379'
 
     uwsgi:
-        image: vidjil/server:py4web
+        image: vidjil/server:latest
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME UWSGI
         env_file:
             - '.env-default'
             - '.env'
         command: bash /entrypoints/uwsgi-entrypoint.sh
         stdin_open: true
         tty: true
+        healthcheck:
+          test: "bash /healthchecks/healthcheck_uwsgi.bash"
+          timeout: 20s
+          start_period: 0s
+          retries: 2
         depends_on:
             mysql:
               condition: service_healthy
-            fuse:
-              condition: service_started
         links:
             - mysql:mysql
-            - fuse:fuse
-        volumes_from:
-            - fuse
-
-
-    fuse:
-        image: vidjil/server:py4web
-        command: bash /entrypoints/fuse-entrypoint.sh
-        env_file:
-          - '.env-default'
-          - '.env'
         volumes:
           - ./vidjil-server/scripts:/entrypoints
+          - ./vidjil-server/healthchecks:/healthchecks
+          - ./vidjil-server/conf/defs.py:/usr/share/vidjil/server/py4web/apps/vidjil/defs.py
           - $VOLUME_PATH/results:/mnt/result/results
           - $VOLUME_PATH/tmp:/mnt/result/tmp
           - $VOLUME_PATH/uploads:/mnt/upload/uploads
@@ -60,31 +58,58 @@ services:
           - $VOLUME_PATH/log:/var/vidjil
           - $VOLUME_PATH/log/uwsgi:/var/log/uwsgi
           - $VOLUME_PATH/backup:/mnt/backup
-        #   - ./vidjil-server/conf:/etc/vidjil
+
+
+    fuse:
+        image: vidjil/server:latest
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME FUSE
+        command: bash /entrypoints/fuse-entrypoint.sh
+        env_file:
+          - '.env-default'
+          - '.env'
+        volumes_from:
+            - uwsgi
+        depends_on:
+            mysql:
+              condition: service_healthy
+            uwsgi:
+              condition: service_healthy
+        links:
+            - mysql:mysql
+            - redis:redis
+            - uwsgi:uwsgi
 
 
     nginx:
         image: vidjil/client:latest
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME NGINX
         env_file:
             - '.env-default'
             - '.env'
-        environment:
-          - DOMAIN_NAME=plop
         ports:
             - "80:80"
             - "443:443"
         command: bash -c "make -C /usr/share/vidjil browser && bash /entrypoints/nginx-entrypoint.sh"
         volumes:
             - ./vidjil-client/scripts:/entrypoints
+            - ./vidjil-client/healthchecks:/healthchecks
             - $VOLUME_PATH/log/nginx:/var/log/nginx
             - $VOLUME_PATH/certs:/etc/letsencrypt/well-known
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
-            # - ../browser:/usr/share/vidjil/browser
+        healthcheck:
+          test: "bash /healthchecks/healthcheck_nginx.bash"
+          timeout: 30s
+          start_period: 30s
+          retries: 2
 
     workers:
-        image: vidjil/server:py4web
+        image: vidjil/server:latest
+        environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME WORKERS
         env_file:
             - '.env-default'
             - '.env'
@@ -92,21 +117,23 @@ services:
         tty: true
         command: bash /entrypoints/workers-entrypoint.sh
         volumes_from:
-            - fuse
+            - uwsgi
         depends_on:
             uwsgi:
-              condition: service_started
+              condition: service_healthy
             redis:
               condition: service_started
             mysql:
               condition: service_healthy
         links:
-            - mysql
-            - redis
+            - redis:redis
+            - mysql:mysql
 
 
     celery:
-      image: vidjil/server:py4web
+      image: vidjil/server:latest
+      environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME CELERY
       env_file:
           - '.env-default'
           - '.env'
@@ -114,24 +141,32 @@ services:
       stdin_open: true
       tty: true
       volumes_from:
-          - fuse
-      depends_on:
-          - mysql
           - uwsgi
-          - redis
+      depends_on:
+            uwsgi:
+              condition: service_healthy
+            redis:
+              condition: service_started
+            mysql:
+              condition: service_healthy
       links:
           - redis:redis
           - mysql:mysql
 
     flower:
-      image: vidjil/server:py4web
+      image: vidjil/server:latest
+      environment:
+            - SERVICE_NAME=$SERVICE_PREFIX_NAME FLOWER
       env_file:
           - '.env-default'
           - '.env'
       command: bash /entrypoints/flower-entrypoint.sh
       volumes_from:
-          - fuse
+          - uwsgi
       depends_on:
-          - workers
+          uwsgi:
+              condition: service_healthy
+          workers:
+              condition: service_started
       ports:
           - "5555:5555"

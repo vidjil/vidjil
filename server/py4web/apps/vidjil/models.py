@@ -227,7 +227,7 @@ db.define_table('tag_ref',
                 Field('record_id', 'integer'))
 
 db.define_table('scheduler_task',
-                Field('application_name', 'reference tag'),
+                Field('application_name', 'string'),
                 Field('task_name', 'string'),
                 Field('group_name', 'string'),
                 Field('status', 'string'),

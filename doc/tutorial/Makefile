@@ -17,4 +17,4 @@ build_tutorial_cypress_client: *.tex
 
 build_tutorial_cypress_server: *.tex
 	pandoc --lua-filter extract-code.lua tutorial-vidjil-server.tex -o /dev/null > doc_tutorial_server.js
-	mv doc_tutorial_server.js ../../server/web2py/applications/vidjil/tests/cypress/integration/doc_tutorial_server.js
+	mv doc_tutorial_server.js ../../server/py4web/apps/vidjil/tests/cypress/integration/doc_tutorial_server.js
