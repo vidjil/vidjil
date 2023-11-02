@@ -98,8 +98,6 @@ def edit():
 def edit_form():
     if auth.can_modify_user(int(request.params['id'])):
         error = []
-        if request.params["username"] == "" :
-            error.append("username needed")
         if request.params["first_name"] == "" :
             error.append("first name needed")
         if request.params["last_name"] == "" :
