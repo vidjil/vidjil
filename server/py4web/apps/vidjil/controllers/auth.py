@@ -105,7 +105,6 @@ def register():
         daf = DefaultAuthForms(auth_mod)
         daf.auth.param.exclude_extra_fields_in_register = ["email__tmp","registration_key","reset_password_key","registration_id"]
         
-        @action.uses(db, session, auth, flash)
         def post_register(form, user):
             # Set up a new user, after register
             new_user_id = db(db.auth_user).select(orderby=db.auth_user.id).last().id
