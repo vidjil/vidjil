@@ -130,7 +130,7 @@ elif settings.SESSION_TYPE == "database":
 # Instantiate the object and actions that handle auth
 # #######################################################
 auth = VidjilAuth(session, db, define_tables=False)
-auth.use_username = True
+auth.use_username = False
 auth.param.registration_requires_confirmation = settings.VERIFY_EMAIL
 auth.param.registration_requires_approval = settings.REQUIRES_APPROVAL
 auth.allowed_actions = ["all"]
