@@ -101,7 +101,7 @@ def logout():
 def register():
     # only authentified admin user can access register view
     if auth.user:
-        return dict(message=T("Register user"), auth=auth, db=db)
+        return dict(message=T("Register new user"), auth=auth, db=db)
     # unauthentified users
     else:
         res = {"message": "you need to be admin and logged to add new users"}

@@ -1,39 +1,40 @@
 [[extend 'db_layout.html']]
 
-[[=message]]
-<form id="data_form" action="DB_ADDRESS/auth/register_form" enctype="multipart/form-data" method="post">
-    <table>
-        <tbody>
-            <tr>
-                <td><label for="first_name" id="first_name__label">First name: </label></td>
-                <td><input class="string" id="first_name" name="first_name" type="text" value=""><span></span></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><label for="last_name" id="last_name__label">Last name: </label></td>
-                <td><input class="string" id="last_name" name="last_name" type="text" value=""><span></span></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><label for="email" id="email__label">Email: </label></td>
-                <td><input class="string" id="email" name="email" type="text" value=""><span></span></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><label for="password" id="password__label">Password: </label></td>
-                <td><input class="string" id="password" name="password" type="password" value=""><span></span></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><label for="confirm_password" id="confirm_password__label">Confirm Password: </label></td>
-                <td><input class="string" id="confirm_password" name="confirm_password" type="password" value=""><span></span></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td ><input type="submit" value="save" class="btn"></td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
-</form>
+    <h3 id="register_user">[[=message]]</h3>
+
+    <form id="data_form" action="DB_ADDRESS/auth/register_form" enctype="multipart/form-data" method="post">
+        <table>
+            <tbody>
+                <tr>
+                    <td><label for="first_name" id="first_name__label">First name: </label></td>
+                    <td><input class="string" id="first_name" name="first_name" type="text" value=""><span></span></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label for="last_name" id="last_name__label">Last name: </label></td>
+                    <td><input class="string" id="last_name" name="last_name" type="text" value=""><span></span></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label for="email" id="email__label">Email: </label></td>
+                    <td><input class="string" id="email" name="email" type="text" value=""><span></span></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label for="password" id="password__label">Password: </label></td>
+                    <td><input class="string" id="password" name="password" type="password" value=""><span></span></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label for="confirm_password" id="confirm_password__label">Confirm Password: </label></td>
+                    <td><input class="string" id="confirm_password" name="confirm_password" type="password" value=""><span></span></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td ><input type="submit" id="sign_up" value="Sign up" class="btn"></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>

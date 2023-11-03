@@ -47,10 +47,9 @@ describe('Creation of users and groups', function () {
 
         var first_name = "user_first"
         var last_name  = "user_last"
-        var username   = `${first_name}__${last_name}`
         var email      = "user4@email.org"
         var password   = "4P99n!vP3c_/kA]3Yv" // complex password 
-        cy.createUser(first_name, last_name, email, username, password)
+        cy.createUser(first_name, last_name, email, password)
 
         cy.goToUsersPage()
         cy.getTableLength("#table_users").should('eq', previous_length+1)
