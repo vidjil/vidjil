@@ -61,15 +61,16 @@ describe('Creation of users and groups', function () {
 
 
     it('03-owner_set', function() {
-        var owner_public = "admin"
-        var owner_admin  = "public"
+        var owner_public = "public"
+        var owner_admin  = "admin"
         var owner_user1  = "user_1"
-        var owner_user4  = "user_2"
+        var owner_user2  = "user_2"
 
-        cy.createPatient("", `owner ${owner_public}`, "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_public}`, owner_public)
-        cy.createPatient("", `owner ${owner_admin}`,  "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_admin}`, owner_admin)
-        cy.createPatient("", `owner ${owner_user1}`,  "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_user1}`, owner_user1)
-        cy.createPatient("", `owner ${owner_user4}`,  "test", "2000-01-01", `Cypress; Patient to test owner, ${owner_user4}`, owner_user4)
+        cy.createPatient("", `owner ${owner_public}`, "test", "2000-01-01", `Cypress; Patient to test owner ${owner_public}`, owner_public, `test owner ${owner_public}`)
+        cy.createPatient("", `owner ${owner_admin}`,  "test2", "2000-01-02", `Cypress; Patient to test owner ${owner_admin}`, owner_admin, `test2 owner ${owner_admin}`)
+        // groups of users should be annon.
+        cy.createPatient("", `owner ${owner_user1}`,  "test3", "2000-01-03", `Cypress; Patient to test owner ${owner_user1}`, owner_user1, `tes (`)
+        cy.createPatient("", `owner ${owner_user2}`,  "test4", "2000-01-04", `Cypress; Patient to test owner ${owner_user2}`, owner_user2, `tes (`)
         return
     })
 

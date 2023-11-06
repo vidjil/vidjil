@@ -131,9 +131,9 @@ Cypress.Commands.add('goToSetPage', () => {
 
 
 /**
- * Create a patient and fill it informations
+ * Create a patient and fill its informations
  */
-Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, informations, owner) => {
+Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, informations, owner, expected_display_name = "") => {
   cy.goToTokenPage("patient")
 
   cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'patient\'})"]')
@@ -148,9 +148,12 @@ Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, inform
   cy.get('.db_div')
       .should('contain', ' + add samples')
 
-  cy.get('.set_token')
-    .should('contain', lastname+" "+firstname)
+  if (expected_display_name == "") {
+    expected_display_name = lastname+" "+firstname
+  }
 
+  cy.get('.set_token')
+    .should('contain', expected_display_name)
 })
 /**
  * Edit informations of a patient
@@ -174,7 +177,6 @@ Cypress.Commands.add('editPatient', (set_id, id, firstname, lastname, birthday, 
 
   cy.get('.set_token')
     .should('contain', lastname+" "+firstname)
-
 })
 
 

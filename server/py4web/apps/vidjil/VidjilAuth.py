@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
-from py4web.utils.auth import Auth
-from pydal.objects import Row, Rows, Table, Query, Set, Expression
 from enum import Enum
-from py4web.core import Fixture, Translator, Flash, REGEX_APPJSON
-from py4web import HTTP, URL, Field, action, redirect, request, response
-
+from py4web.utils.auth import Auth
+from py4web.core import Flash
+from py4web import Field
+from pydal.objects import Query, Set
 from pydal.validators import (
     CRYPT,
     IS_EMAIL,
-    IS_EQUAL_TO,
     IS_MATCH,
     IS_NOT_EMPTY,
     IS_NOT_IN_DB,
     IS_STRONG,
 )
-
 from .modules.permission_enum import PermissionEnum
-from . import defs, settings
+from . import defs
 
 class PermissionLetterMapping(Enum):
     admin = 'e'
@@ -29,8 +26,8 @@ class PermissionLetterMapping(Enum):
 class VidjilAuth(Auth):
     permissions = {}
 
-    def __init__(self, session, db, define_tables):
-        self.log = None
+    def __init__(self, log, session, db, define_tables):
+        self.log = log
         self.flash = Flash()
         self.user_groups = {}
         super(VidjilAuth, self).__init__(session, db, define_tables)
