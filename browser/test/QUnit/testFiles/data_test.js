@@ -234,7 +234,11 @@ json_data.clones = [
                     "A": [2, 0.25],
                     "B": [124, 0.01]
                 }
-            }
+            },
+            "evalue": {"val": "8.30e-81"},
+            "evalue_left": {"val": "1.15-297"},
+            "evalue_right": {"val": "8.30e-81"},
+
         },
         "_average_read_length": [
             21
