@@ -1168,7 +1168,6 @@ Clone.prototype = {
     },
 
     getEValue: function (type) {
-        var e = undefined
         switch (type) {
             case "evalue_left" :
                 if (this.seg != undefined && this.seg.evalue_left != undefined){
