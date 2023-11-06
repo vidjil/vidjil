@@ -61,6 +61,9 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "Size",
                     "Size in locus",
                     "Size in locus (+inc)",
+                    "EValue",
+                    "EValue Left",
+                    "EValue Right",
                     "Sequence length",
                     "Reads length",
                     "N length",
@@ -403,6 +406,21 @@ AXIS_DEFAULT = {
     "V/5' del'": {
         doc:        "number of deleted nucleotides at the 3' side of the V/5' segment",
         fct:        function(clone) { return clone.getDeletion('5', 'delRight') },
+        autofill:   true
+    },
+    "EValue": {
+        doc:        "evalue by default",
+        fct:        function(clone) { return clone.getEValue() },
+        autofill:   true
+    },
+    "EValue Left": {
+        doc:        "evalue left",
+        fct:        function(clone) { return clone.getEValue('evalue_left') },
+        autofill:   true
+    },
+    "EValue Right": {
+        doc:        "evalue right",
+        fct:        function(clone) { return clone.getEValue('evalue_right') },
         autofill:   true
     },
     "J/3' del'": {

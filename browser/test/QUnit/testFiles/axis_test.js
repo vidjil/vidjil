@@ -75,3 +75,31 @@ QUnit.test("Test axis getter name/description", function(assert) {
 
 });
 
+
+QUnit.test("axis evalues", function(assert) {
+
+    var m = new Model(m);
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+
+    //TODO
+    var c1 = m.clones[0]
+    var c2 = m.clones[1]
+    var c3 = m.clones[2]
+
+    AXIS_DEFAULT["EValue"].fct(c1) // Default value of size; all clonotype
+    assert.equal(AXIS_DEFAULT["EValue"].fct(c1), 5, `axis 'EValue', correct for clone 0 (get ${AXIS_DEFAULT["EValue"].fct(c1)})` )
+    assert.equal(AXIS_DEFAULT["EValue"].fct(c2), 5, `axis 'EValue', correct for clone 1 (get ${AXIS_DEFAULT["EValue"].fct(c2)})` )
+
+    AXIS_DEFAULT["EValue Left"].fct(c1) // Size relative to locus
+    assert.equal(AXIS_DEFAULT["EValue Left"].fct(c1), 5, `axis 'EValue Left', correct for clone 0 (get ${AXIS_DEFAULT["EValue Left"].fct(c1)})` )
+    assert.equal(AXIS_DEFAULT["EValue Left"].fct(c2), 5, `axis 'EValue Left', correct for clone 1 (get ${AXIS_DEFAULT["EValue Left"].fct(c2)})` )
+
+    AXIS_DEFAULT["EValue Right"].fct(c1) // Size relative to group of locus (locus+incomplete)
+    assert.equal(AXIS_DEFAULT["EValue Right"].fct(c1), 5, `axis 'EValue Right', correct for clone 0 (get ${AXIS_DEFAULT["EValue Right"].fct(c1)})` )
+    assert.equal(AXIS_DEFAULT["EValue Right"].fct(c2), 5, `axis 'EValue Right', correct for clone 1 (get ${AXIS_DEFAULT["EValue Right"].fct(c2)})` )
+
+});
+
+
