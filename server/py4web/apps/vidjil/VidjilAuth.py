@@ -32,14 +32,6 @@ class VidjilAuth(Auth):
         self.user_groups = {}
         super(VidjilAuth, self).__init__(session, db, define_tables)
 
-    # TODO
-    def is_impersonating(self):
-        return False
-
-    #TODO
-    def impersonate():
-        return False
-
     @property
     def admin(self):
         return self.is_admin()
