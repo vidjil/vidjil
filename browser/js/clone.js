@@ -95,6 +95,7 @@ function Clone(data, model, index, attributes) {
     this.m.clones[index]=this
     this.tag = this.getTag();
 
+
     // .warn, client computed warnings
     this.computeWarnings()
 }
@@ -1168,25 +1169,28 @@ Clone.prototype = {
     },
 
     getEValue: function (type) {
+        e = undefined
         switch (type) {
             case "evalue_left" :
                 if (this.seg != undefined && this.seg.evalue_left != undefined){
-                    e = this.seg.evalue_left.val;
+                    e = this.seg.evalue_left;
                 }
                 break;
             case "evalue_right" :
                 if (this.seg != undefined && this.seg.evalue_right != undefined){
-                    e = this.seg.evalue_right.val;
+                    e = this.seg.evalue_right;
                 }
                 break;
             default :
-                if (this.seg != undefined && this.seg.evalue != undefined){
-                    e = this.seg.evalue_left.val;
+            if (this.seg != undefined && this.seg.evalue != undefined){
+                    e = this.seg.evalue;
                 }
         }
 
         if (e != undefined){
-          e = parseFloat(e)
+            // Evalue can be direct float values as hash {"val": value}
+            if (typeof(e) == "object" && e.val != undefined){ e = e.val }
+            e = parseFloat(e)
         } 
 
         return e
