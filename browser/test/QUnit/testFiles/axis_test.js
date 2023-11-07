@@ -87,7 +87,7 @@ QUnit.test("axis evalues", function(assert) {
     var c1 = m.clones[0]
     c1.seg.evalue       = {"val": "8.30e-81"}
     c1.seg.evalue_left  = {"val": "1.15e-297"}
-    c1.seg.evalue_right = {"val": "8.30e-81"}
+    c1.seg.evalue_right = "8.30e-81" // old format of evalue
     var c2 = m.clones[1]
     c2.seg.evalue       = undefined
     c2.seg.evalue_left  = undefined
