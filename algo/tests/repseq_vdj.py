@@ -16,6 +16,8 @@ python repseq_vdj.py data-curated/curated_TR.fa data-curated/igblast/TR/*.aln > 
 
 import sys
 import os
+import json
+import re
 
 V = 'V'
 D = 'D'
@@ -31,6 +33,89 @@ JUNCTION = 'JUNCTION'
 class VDJ_Formatter():
     '''Stores fields and outputs a .vdj line'''
 
+    def __init__(self):
+
+        self.d = {}
+        self.vdj = {}
+        self.result = None
+
+    def get_locus(self):
+        '''
+        >>> vdj = VDJ_Formatter()
+        >>> vdj.vdj[V] = ['IGHV1-2*02']; vdj.vdj[D] = ['IGHD6-13*01']; vdj.vdj[J] = ['IGHJ5*02']
+        >>> vdj.get_locus()
+        'IGH'
+        >>> vdj.vdj[J]=None
+        >>> vdj.get_locus()
+        'IGH+'
+        >>> vdj.vdj[V]=None
+        >>> vdj.get_locus()
+        >>> vdj.vdj[V]=['TRAV1-1']; vdj.vdj[D]=None; vdj.vdj[J]=['TRAJ1*01']
+        >>> vdj.get_locus()
+        'TRA'
+        >>> vdj.vdj[V]=['TRDV2*01']; vdj.vdj[D]=None; vdj.vdj[J]=['TRAJ29*01']
+        >>> vdj.get_locus()
+        'TRA+D'
+        >>> vdj.vdj[V]=None; vdj.vdj[D]=['TRDD2*01']; vdj.vdj[J]=['TRAJ29*01']
+        >>> vdj.get_locus()
+        'TRA+D'
+        >>> vdj.vdj[V]=['TRAV29/DV5*01']; vdj.vdj[D]=['TRDD3']; vdj.vdj[J]=['TRDJ1*01']
+        >>> vdj.get_locus()
+        'TRD'
+        >>> vdj.vdj[V]=None; vdj.vdj[D]=['TRDD2']; vdj.vdj[J]=['TRDD3*01']
+        >>> vdj.get_locus()
+        'TRD+'
+        >>> vdj.vdj[V]=None; vdj.vdj[D]=['TRDD2']; vdj.vdj[J]=['TRDJ3*01']
+        >>> vdj.get_locus()
+        'TRD+'
+        >>> vdj.vdj[V]=['TRAV1']; vdj.vdj[D]=['TRDD2']; vdj.vdj[J]=['TRDJ3*01']
+        >>> vdj.get_locus()
+        'unexpected'
+        '''
+        genes = []
+        if V in self.vdj and self.vdj[V]:
+            if self.vdj[V][0] == 'Intron':
+                genes.append('IGKV-Intron')
+            else:
+                genes.append(self.vdj[V][0])
+        if D in self.vdj and self.vdj[D]:
+            genes.append(self.vdj[D][0])
+        if J in self.vdj and self.vdj[J]:
+            if self.vdj[J][0] == 'KDE':
+                genes.append('IGKJ-KDE')
+            else:
+                genes.append(self.vdj[J][0])
+        if len(genes) <= 1:
+            return None
+
+        short_genes = [g[:4] for g in genes]
+        locus_genes = set([g[:3] for g in genes])
+
+        if len(locus_genes)==1:
+            locus = locus_genes.pop()
+            if locus+V in short_genes and locus+J in short_genes:
+                return locus
+
+            if len(set(short_genes))==1 and set(short_genes).pop() != 'TRDD':
+                return 'unexpected'
+            return locus+'+'
+        else:
+            if 'TRA' in locus_genes and 'TRD' in locus_genes:
+                # We may have a mix of TRA or TRD but still being a real
+                # TRD. We can also have TRA+D (TRDV and TRAJ)
+
+                has_tradv = sum([ re.match('TRAV[0-9-]+/DV', g) != None for g in genes]) >0
+                if 'TRAV' in short_genes and 'TRDJ' in short_genes and has_tradv:
+                    return 'TRD'
+                if ('TRDV' in short_genes or has_tradv or (len(genes) == 2 and 'TRDD' in short_genes)) \
+                   and 'TRAJ' in short_genes:
+                    return 'TRA+D'
+                if 'TRDV' in short_genes and has_tradv and len(genes)==2 and 'TRDD' in short_genes:
+                    # TRA/DV with TRDD
+                    return 'TRD+'
+
+        return 'unexpected'
+    
     def genes_to_vdj(self, genes):
         if not genes:
             return ''
@@ -46,6 +131,10 @@ class VDJ_Formatter():
 
     def CDR3_to_vdj(self, s):
         return '{%s}' % s if s else ''
+
+    def locus_to_vdj(self, s):
+        return ' [%s]' % s if s else ''
+    
 
     def to_vdj(self):
         if not self.result:
@@ -73,6 +162,8 @@ class VDJ_Formatter():
         if JUNCTION in self.vdj:
             s += ' '
             s += self.CDR3_to_vdj(self.vdj[JUNCTION])
+
+        s += self.locus_to_vdj(self.get_locus())
 
         return s
 
@@ -245,6 +336,74 @@ def header_vquest_results(ff_fasta, ff_vquest):
         r = IMGT_VQUEST_Result(vquest)
         yield (fasta.replace('>', ''), r.to_vdj())
 
+### Vidjil (AIRR output)
+
+class Vidjil_Result(Result):
+
+    def __init__(self, l):
+        self.d = l
+        self.vdj = {}
+        self.result = self.parse(l)
+        if self.result:
+            self.populate()
+    
+    def parse(self, l):
+        self.labels = vidjil_labels
+        return l
+
+    def populate(self):
+        if self['germline'] == 'not analyzed' or 'seg' not in self:
+            self.result = None
+            return
+        self.vdj[V] = [self['seg']['5']['name']]
+        seq = self['sequence']
+        if '4' in self['seg']:
+            self.vdj[D] = [self['seg']['4']['name']]
+            if '5' in self['seg']:
+                self.vdj[N1] = seq[self['seg']['5']['stop']+1:self['seg']['4']['start']]
+            if 'j_sequence_start' in self:
+                self.vdj[N2] = seq[self['seg']['4']['stop']+1:self['seg']['3']['start']]
+        else:
+            if '5' in self['seg'] and '3' in self['seg']:
+                self.vdj[N] = seq[self['seg']['5']['stop']+1:self['seg']['3']['start']]
+        self.vdj[J] = [self['seg']['3']['name']]
+
+        if 'junction' in self['seg']:
+            self.vdj[JUNCTION] = self['seg']['junction']['aa']
+
+
+def header_vidjil_results(ff_fasta, ff_vidjil):
+
+    f_fasta = open(ff_fasta).__iter__()
+    vidjil = json.load(open(ff_vidjil))
+
+    
+    globals()['vidjil_labels'] = vidjil["clones"][0].keys()
+    clone_nb = 0
+
+    while True:
+
+        fasta = ''
+        # Advance until header line
+        while not '>' in fasta:
+            fasta = f_fasta.next().strip()
+
+        result = Vidjil_Result(vidjil['clones'][clone_nb])
+        yield (fasta.replace('>', ''), result.to_vdj())
+        clone_nb += 1
+
+def vidjil_reads_output(vidjil):
+    v = open(vidjil)
+    for line in v.readlines():
+        line = line.rstrip()
+        if line.startswith('>'):
+            fields = re.split(' [+!-] ', line)
+            should = fields[0][1:]
+            matches = re.search('seed ([a-zA-Z+]+) SEG', fields[1])
+            if matches and matches.groups():
+                yield (should, '['+matches.group(1)+']')
+            else:
+                yield (should, '[xxx]')
 
 ### igBlast
 
@@ -403,12 +562,18 @@ if __name__ == '__main__':
 
     vdj = VDJ_File()
 
-    if 'mixcr' in sys.argv[1]:
+    if 'mixcr' in sys.argv[1].lower():
         vdj.parse_from_gen(header_mixcr_results(sys.argv[1]))
-    elif 'igrec' in sys.argv[1]:
+    elif 'igrec' in sys.argv[1].lower():
         vdj.parse_from_gen(header_igrec_results(sys.argv[1]))
-    elif 'igblast' in sys.argv[2]:
+    elif 'igblast' in sys.argv[-1].lower():
         vdj.parse_from_gen(header_igblast_results(sys.argv[1], sys.argv[2:]))
+    elif 'vidjil' in sys.argv[-1].lower():
+        if '_detect.fa' in sys.argv[-1].lower():
+            # Output obtained from the segmented/unsegmented reads
+            vdj.parse_from_gen(vidjil_reads_output(sys.argv[1]))
+        else:
+            vdj.parse_from_gen(header_vidjil_results(sys.argv[1], sys.argv[2]))
     else:
         vdj.parse_from_gen(header_vquest_results(sys.argv[1], sys.argv[2]))
 

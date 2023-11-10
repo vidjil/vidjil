@@ -59,6 +59,8 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "J/3' gene",
                     "J/3' allele",
                     "Size",
+                    "Size in locus",
+                    "Size in locus (+inc)",
                     "Sequence length",
                     "Reads length",
                     "N length",
@@ -91,6 +93,8 @@ AXIS_SCATTERPLOT = ["V/5' gene",
 // list of Axis available for aligner
 AXIS_ALIGNER = [    
                     "Size",
+                    "Size in locus",
+                    "Size in locus (+inc)",
                     "Sequence length",
                     "Reads length",
                     "GC content",
@@ -362,6 +366,24 @@ AXIS_DEFAULT = {
                         reverse: true
                     },
         autofill:   true,
+    },
+    "Size in locus" : {
+        doc:        "ratio of the number of reads of each clonotype to the total number of reads in the selected locus",
+        fct :       function(clone,t){return clone.getSystemSize(t)},
+        scale:      {   mode: "log"},
+        color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
+        autofill:   true,
+        pretty:     function(size) {return createClassedSpan("sizeBox sixChars", (self.m ? self.m : self).getStrAnySize(undefined, size)) },
+        hover:      function(clone, t){ return ""+ clone.getPrintableSize(t) + " reads"}
+    },
+    "Size in locus (+inc)" : {
+        doc:        "ratio of the number of reads of each clonotype to the total number of reads in the selected locus (merging complete and incomplete)",
+        fct :       function(clone,t){return clone.getSystemGroupSize(t)},
+        scale:      {   mode: "log"},
+        color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
+        autofill:   true,
+        pretty:     function(size) {return createClassedSpan("sizeBox sixChars", (self.m ? self.m : self).getStrAnySize(undefined, size)) },
+        hover:      function(clone, t){ return ""+ clone.getPrintableSize(t) + " reads"}
     },
     "Number of samples" : {
         doc:        "number of samples sharing each clonotype",

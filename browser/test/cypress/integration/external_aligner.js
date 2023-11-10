@@ -18,7 +18,7 @@ describe('External Aligner', function () {
 
     //check menu has been init
     cy.get('#segmenter_axis_menu').click({force:true})
-    cy.get('#segmenter_axis_select').children().should('have.length', 8)
+    cy.get('#segmenter_axis_select').children().should('have.length', 10)
 
     cy.get('#align-settings').click({force:true})
     cy.get('#align-settings_select').children().should('have.length', 4)

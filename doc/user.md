@@ -110,7 +110,7 @@ to learn the essential features of Vidjil.
 
   - *patient/run/set information.*
   - *locus.* Germline(s) used for analyzing the data. In case of multi-locus
-    data, you can select what locus should be displayed (see [Libraries and recombinations](locus.md))
+    data, you can select what locus should be displayed (see [Libraries and recombinations](libraries-recombinations.md))
   - *analysis.*   Name (without extension) of the loaded file.
   - *sample.* Name of the current sample.
 
@@ -613,7 +613,7 @@ The processing can take a few seconds to a few hours, depending on the
 software lauched, the options set in the process configuration, the size of the sample and the server load.
 
 The base human configurations with **vidjil-algo** are « TRG », « IGH », « multi » (`-g germline`), « multi+inc » (`-g germline -i`), « multi+inc+xxx » (`-g germline -i -2`, default advised configuration).
-See [Libraries and recombinations](locus.md) for information on these processes.
+See [Libraries and recombinations](libraries-recombinations.md) for information on these processes.
 There are also processes for other species and for other RepSeq algorithms, such as « MiXCR ».
 The server mainteners can add new process configurations tailored to specific needs, contact us if you have other needs.
 
@@ -1120,6 +1120,236 @@ the letter corresponding to the locus of interest.
 | --------- | -------------------------------------------------------- |
 | `Ctrl-s`  | save the analysis (when connected to a database)         |
 | `Shift-p` | open the database panel (when connected to a database)   |
+
+### Configurations
+
+<!-- Can be more or less updated with script mysql_conf_getter -->
+
+A list of mainstream configurations is given below.  
+These description include vidjil-algo and fuse parameters if you want to recreate them locally or on your own server.
+
+|   |   |
+| :------|:-----------------------------------------|
+| Program| The selection to do in process creation on server interface|
+| Command| Parameters given to vidjil-algo|
+| Fuse command| Parameter given to fuse script|
+
+If you want have access to configuration listed below, 
+or ask for a specific configuration fitting your need, 
+it can be done by email us at [contact@vidjil.org](mailto:contact@vidjil.org).
+
+Note that some specifics, in progress or unmaintained existants configurations are not shown here.  
+
+#### Group 'Human V(D)J recombinations'
+Analysis with vidjil-algo of human TR/IG recombinations. 
+This is a group of most common configurations to use for analysis.
+
+##### multi+inc+xxx (default configuration)
+default: multi-locus, with some incomplete/unusual/unexpected recombinations
+
+??? Parameters
+        program: vidjil
+        command: -c clones -z 100 -r 1 -g germline/homo-sapiens.g  -e 1 -2 -d -w 50 -y all --no-airr
+        fuse_command: -t 100 -d lenSeqAverage --overlaps
+
+##### IGH 
+Locus IGH, Vh(Dh)Jh
+
+??? Parameters
+        program: `vidjil`
+        command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH  -d -y all  --no-airr`
+        fuse_command: `-t 100 -d lenSeqAverage --overlaps`
+
+
+##### TRG 
+Locus TRG, VgJg
+
+??? Parameters
+        program: `vidjil`
+        command: `-c clones -z 100 -r 1 -g germline/homo-sapiens.g:TRG  -y all --no-airr`
+        fuse_command: `-t 100 -d lenSeqAverage --overlaps`
+
+##### multi 
+Multi-locus, only complete locus
+
+??? Parameters
+        program: `vidjil`
+        command: `-c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD  -e 1 -w 50  -d -y all --no-airr`
+        fuse_command: `-t 100 -d lenSeqAverage --overlaps`
+
+##### Clonality 
+Incomplete germlines + larger window (90bp), thus 20bp more on each side. 
+This configuration is advised for studies on IGH clonality
+
+??? Parameters
+        program: `vidjil`
+        command: `-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -w 90 -y all --no-airr`
+        fuse_command: `-t 100 -d lenSeqAverage --overlaps`
+
+##### IGK 
+Locus IGK, including KDE and Intron recombinations
+
+??? Parameters
+        program: `vidjil`
+        command: `-c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGK,IGK+ -y all --no-airr`
+        fuse_command: `-t 100 -d lenSeqAverage --overlaps`
+
+##### IGL 
+Locus IGL
+
+??? Parameters
+        program: `vidjil`
+        command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGL  -d -y all  --no-airr`
+        fuse_command: `-t 100 -d lenSeqAverage --overlaps`
+
+#### Group 'Other recombinations'
+Analysis with vidjil-algo of human non-V(D)J recombinations
+This set of configurations includes some specific analysis.
+
+##### IGH/isotypes 
+Multi-locus, with IgH constant chains
+
+(before:  -g /home/vidjil-ci/custom-germlines/germlines-classes.data)
+
+??? Parameters
+        program: `vidjil`
+        command: `-c clones -z 100 -r 1 -g germline/homo-sapiens-isotypes.g  -e 1 -2 -d -w 50 --no-airr`
+        fuse_command: `-t 100 --overlaps`
+
+##### IKZF1/ERG 
+Experimental search of intronic deletions (IKZF1, ERG)
+
+??? Parameters
+        program: `vidjil`
+        command: `  -c clones -z 100 -g germline/homo-sapiens-isoforms.g -e 1 -2 -d -w 50 -r 1 -y all  --no-airr`
+        fuse_command: `-t 100 -d lenSeqAverage --overlaps`
+
+##### IGH+ 
+Locus IGH+ (DJ)
+
+??? Parameters
+        program: `vidjil`
+        command: ` -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH+ -e 1 -2 -d -w 50 -y all --no-airr`
+        fuse_command: ` -t 100 -d lenSeqAverage  --overlaps`
+
+##### IGH/IGH+ 
+Locus IGH, Vh(Dh)Jh
+
+??? Parameters
+        program: `vidjil`
+        command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGH+  -d -y all  --no-airr`
+        fuse_command: `-t 100 -d lenSeqAverage --overlaps`
+
+##### IGL/IGK 
+Locus IGK/IGH+; IGL
+
+??? Parameters
+        program: `vidjil`
+        command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGK,IGK+,IGL  -d -y all  --no-airr`
+        fuse_command: `-t 100 -d lenSeqAverage --overlaps`
+
+#### Group 'Analysis with/for other software'
+Analysis that use other repertoire software or generate with vidjil-algo compatible output formats
+
+##### MiXCR 
+MiXCR. Run a version of MixCR from 2018. 
+A new version will be release based on AIRR format should be released soon
+
+??? Parameters
+        program: `mixcr`
+        command: `| -OaddReadsCountOnClustering=true |`
+        fuse_command: `-t 100`
+
+##### Export all clones (AIRR) 
+Export all clones in the tabular AIRR format. 
+A threshold of 5 reads is set to report a clonotype. 
+The results can not be browsed online. 
+
+See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output
+
+Another similar configuration with a limit set to 1 reads is available but only on demand and for small set of sequences.
+
+
+The results can not be browsed online.
+See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output
+
+
+??? Parameters
+        program: `vidjil`
+        command: ` -c clones -y all -z all  -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -r 5 --no-vidjil`
+        fuse_command: `-t 100 `
+
+#### Group 'Other species'
+Analysis with vidjil-algo of V(D)J recombinations for other species. 
+Contact us at support@vidjil.org should you need other species.
+
+##### Mus musculus 
+Mus musculus, multiple locus
+
+??? Parameters
+        program: `vidjil`
+        command: `-c clones -z 100 -r 1 -g germline/mus-musculus.g -d --no-airr`
+        fuse_command: `-t 100 --overlaps`
+
+##### Gallus gallus 
+Analyze IGH and IGL recombinations for Gallus gallus
+Analyze also some incomplete/unusual/unexpected recombinations.
+
+
+??? Parameters
+        program: `vidjil`
+        command: ` -c clones -z 100 -r 1 -g germline/gallus-gallus.g -e 1 -2 -d -w 50 --no-airr`
+        fuse_command: `-t 100  --overlaps`
+
+##### Sus Scrofa 
+Analyze IGH, IGL and TRB recombinations for Sus scrofa.
+Analyze also some incomplete/unusual/unexpected recombinations. 
+
+??? Parameters
+        program: `vidjil`
+        command: `-c clones -z 100 -r 1 -g germline/sus-scrofa.g -e 1 -2 -d -w 50 --no-airr`
+        fuse_command: `-t 100 --overlaps`
+
+#### Group 'Experimental configs'
+Experimental analyses, under development.
+These configuration may evolve or moved into other groups without notice.
+
+##### vidjil-algo-next 
+Default configuration, beta release of next vidjil-algo engine.
+The last release is 2021.01.
+
+??? Parameters
+        program: `vidjil`
+        command: `next -c clones --no-airr -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 --no-airr`
+        fuse_command: `-t 100`
+
+##### Multi + contigs 
+Experimental;  default mutli+inc+xxx configuration + pre-fuse script for creation of contigs on the top 5 of clones from raw reads.
+Run script `capture_contigs.py` available in contribution repository and developped with Nantes CHU team ([publication xxx & al](xxx)).
+
+??? Parameters
+        program: `vidjil`
+        command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g -d -y all --no-airr`
+        fuse_command: ` -t 100 -d lenSeqAverage --overlaps --pre "rnaseq_contigs.py --adaptater-length 6" `
+
+##### IGH + contigs 
+Same as Multi+contigs, but limit to IGH complete locus.
+
+??? Parameters
+        program: `vidjil`
+        command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH -d -y all --no-airr`
+        fuse_command: ` -t 100 -d lenSeqAverage --overlaps --pre "rnaseq_contigs.py --adaptater-length 6" `
+
+#####  Export all clones (AIRR), limit 1 read 
+Export all clones in the tabular AIRR format, from 1 read. 
+Use wisely on file with few clonotypes.
+The results can not be browsed online. 
+See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output 
+
+??? Parameters
+        program: `vidjil`
+        command: ` -c clones -y all -z all -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -r 1 --no-vidjil `
+        fuse_command: ` -t 100 `
 
 ## References
 

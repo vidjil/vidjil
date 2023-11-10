@@ -40,20 +40,10 @@ shouldvdj_generate:
 unit_browser:
 	$(MAKE) -C browser/test unit
 
-functional_browser:
-	$(MAKE) -C browser/test functional
-
-headless_browser:
-	$(MAKE) -C browser/test headless
 
 unit_server:
 	$(MAKE) -C server/ unit
 
-functional_server:
-	$(MAKE) -C server functional
-
-headless_server:
-	$(MAKE) -C server headless
 
 
 ###############################

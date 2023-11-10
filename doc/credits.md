@@ -108,6 +108,11 @@ Jean-Sebastien Allain et al.,
 Haematologica, 2018, 103:e207-e210,
 <http://dx.doi.org/10.3324/haematol.2017.177444>
 
+Kristian Assing et al.,
+*A Novel CDC42 Variant with Impaired Thymopoiesis, IL-7R Signaling, PAK1 Binding, and TCR Repertoire Diversity*
+Journal of Clinical Immunology, 2023,
+<https://doi.org/10.1007/s10875-023-01561-0>
+ 
 Jack Bartram et al.,
 *High throughput sequencing in acute lymphoblastic leukemia reveals clonal architecture of central nervous system and bone marrow compartments*,
 Haematologica, 2018,
@@ -164,10 +169,15 @@ Henrike J. Fischer et al.,
 Journal of Neuroimmunology, 2015, S0165-5728(15)30065-5,
 <http://dx.doi.org/10.1016/j.jneuroim.2015.10.020>
 
-Navarro Nilo Giusti et al., 2020
+Navarro Nilo Giusti et al.,
 *Test trial of spike-in immunoglobulin heavy-chain (IGH) controls for next generation sequencing quantification of minimal residual disease in acute lymphoblastic leukaemia*,
 British Journal of Haematology, 2020, 189: e150-e154,
 <https://doi.org/10.1111/bjh.16571>
+
+Isadoral Heraud et al.,
+*Monoclonal B-cell lymphocytosis with a non-CLL immunophenotype–Review of 34 cases*
+Annales de Biologie Clinique, 2023,
+<https://www.jle.com./fr/revues/abc/e-docs/monoclonal_b_cell_lymphocytosis_with_a_non_cll_immunophenotype_review_of_34_cases_330642/article.phtml?tab=texte>
 
 Irene Jo et al.,
 *Considerations for monitoring minimal residual disease using immunoglobulin clonality in patients with precursor B-cell lymphoblastic leukemia*,
@@ -201,7 +211,7 @@ Blood, 2015, 126:1045-1047,
 
 Michaela Kotrova et al.,
 *Next‐generation amplicon TRB locus sequencing can overcome limitations of flow‐cytometric Vβ expression analysis and confirms clonality in all T‐cell ,prolymphocytic leukemia cases*,
-Cytometry Part A, 93(11):1118-1124, 2018
+Cytometry Part A, 93(11):1118-1124, 2018,
 <http://dx.doi.org/10.1002/cyto.a.23604>
 
 Anton W. Langerak,
@@ -231,7 +241,7 @@ Cancers, 2021, 13(2), 340,
 
 Alejandro Medina et al.,
 *Comparison of next-generation sequencing (NGS) and next-generation flow (NGF) for minimal residual disease (MRD) assessment in multiple myeloma*,
-Blood Cancer Journal, 10, 108,
+Blood Cancer Journal, 10, 108, 2020,
 <https://doi.org/10.1038/s41408-020-00377-0>
 
 Dai Nishijima et al.,
@@ -258,6 +268,11 @@ Rathana Kim et al.,
 *Adult T-cell acute lymphoblastic leukemias with IL7R pathway mutations are slow-responders who do not benefit from allogeneic stem-cell transplantation*,
 Leukemia, 2020, 34, 1730-1740,
 <https://dx.doi.org/10.1038/s41375-019-0685-4>
+
+Cédric Pastoret et al.,
+*Molecular mechanisms underlying transformation of large granular lymphocytic leukemia to high-grade T-cell lymphoma*,
+Leukemia, 2023,
+<https://www.nature.com/articles/s41375-023-01922-z>
 
 Mikaël Salson et al.,
 *High-throughput sequencing in acute lymphoblastic leukemia: Follow-up of minimal residual disease and emergence of new clones*,
@@ -295,13 +310,19 @@ Cancers 2021, 13(9), 2108,
 <https://doi.org/10.3390/cancers13092108>
 
 Amelie Trinquand et al.,
-*Towards molecular stratification of pediatric T-cell lymphoblastic lymphomas based on Minimal Disseminated Disease and NOTCH1/FBXW7 mutational status: the French EURO-LB02 experience (preprint)*,
-medRxiv 2020.09.08.20189829,
-<https://www.medrxiv.org/content/10.1101/2020.09.08.20189829v1>
+*Toward Pediatric T Lymphoblastic Lymphoma Stratification Based on Minimal Disseminated Disease and NOTCH1/FBXW7 Status*,
+HemaSphere, 2021,
+<https://doi.org/10.1097/hs9.0000000000000641>
 
 Patrik Villarèse et al.,
 *One step next generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukemia*,
-ed. Anton W. Langerak, Methods in Molecular Biology, forthcoming
+ed. Anton W. Langerak, Methods in Molecular Biology, 2022,
+<https://link.springer.com/protocol/10.1007/978-1-0716-2115-8_3>
+
+Christine Wennerås et al.,
+*Infection with Neoehrlichia mikurensis promotes the development of malignant B-cell lymphomas* ,
+British Journal of Haematology, 2023,
+<https://doi.org/10.1111/bjh.18652>
 
 Gary Wright et al.,
 *Clinical benefit of a high‐throughput sequencing approach for minimal residual disease in acute lymphoblastic leukemia*,

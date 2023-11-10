@@ -13,12 +13,14 @@ import ncbi
 GENES_SEQ_FROM_NCBI = False
 
 IMGT_LICENSE = '''
-   # To use the IMGT germline databases (IMGT/GENE-DB), you have to agree to IMGT license: 
-   # academic research only, provided that it is referred to IMGT®,
-   # and cited as "IMGT®, the international ImMunoGeneTics information system® 
-   # http://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
-   # Lefranc, M.-P., IMGT®, the international ImMunoGeneTics database,
-   # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
+   # To use the IMGT germline databases (IMGT/GENE-DB), you accept the IMGT®
+   # license: the IMGT® software and data are provided to the academic users and
+   # NPO's (Not for Profit Organization(s)) under the CC BY-NC-ND 4.0 license. Any
+   # other use of IMGT® material, from the private sector, needs a financial
+   # arrangement with CNRS. Citing IMGT-GENEDB: Giudicelli V., Chaume D. and Lefranc
+   # M.-P. IMGT/GENE-DB: a comprehensive database for human and mouse immunoglobulin
+   # and T cell receptor genes Nucl. Acids Res., 33(S1):D256-D261
+   # (2005). PMID:15608191
 '''
 
 def remove_allele(name):
