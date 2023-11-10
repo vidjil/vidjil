@@ -125,12 +125,104 @@ elif settings.SESSION_TYPE == "database":
     from py4web.utils.dbstore import DBStore
 
     session = Session(secret=settings.SESSION_SECRET_KEY, storage=DBStore(db), same_site="None")
+    
+
+# #######################################################
+# Define custom log
+# #######################################################
+logging.ADMIN = logging.INFO + 1
+logging.addLevelName(logging.ADMIN, 'ADMIN')
+
+class MsgUserAdapter(logging.LoggerAdapter):
+
+    def process(self, msg, kwargs):
+        if type(msg) is dict:
+            if 'message' in msg:
+                msg = msg['message']
+            else:
+                msg = '?'
+        ip = request.remote_addr
+        if ip:
+            for ip_prefix in ips:
+                if ip.startswith(ip_prefix):
+                    ip = "%s/%s" % (ip, ips[ip_prefix])
+
+        usern = ''
+        try:
+            usern = (str(auth.user_id)) if auth.user else ''
+            usern = usern.replace(' ','-')
+            if auth.is_impersonating():
+                usern = 'team!' + usern
+        except:
+            pass
+        
+        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % usern), msg)
+        return new_msg, kwargs
+    
+    def admin(self, msg, extra=None):
+        self.log(logging.ADMIN, msg, extra=extra)
+#
+class UserLogHandler(logging.Handler):
+
+    def __init__(self):
+        logging.Handler.__init__(self)
+        self.table = 'user_log'
+
+    def emit(self, record):
+        '''
+        When 'user_id' and 'record_id' are defined,
+        further store the record in the db.
+        '''
+        if hasattr(record, 'user_id') and hasattr(record, 'record_id'):
+            from datetime import datetime
+            now = datetime.now()
+            db[self.table].insert(
+                user_id=record.user_id,
+                table_name=record.table_name,
+                created=now,
+                msg=record.message,
+                record_id=record.record_id
+            )
+            db.commit()
+
+def _init_log():
+    """
+    adapted from http://article.gmane.org/gmane.comp.python.web2py/11091
+    """
+
+    import logging
+    import sys
+
+    def create_handler(filename, level):
+        try:
+            handler = logging.FileHandler(filename)
+        except:
+            handler = logging.StreamHandler(sys.stderr)
+        else:
+            handler.setLevel(level)
+            handler.setFormatter(formatter)
+        return handler
+
+    logger = logging.getLogger('vidjil') # (request.application)
+    if not logger.handlers:
+        logger.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
+
+        logger.addHandler(create_handler(defs.LOG_DEBUG, logging.DEBUG))
+        logger.addHandler(create_handler(defs.LOG_INFO, logging.INFO))
+        logger.addHandler(UserLogHandler())
+
+        logger.debug("Creating logger")
+    return MsgUserAdapter(logger, {})
+
+log = _init_log()
+
 
 # #######################################################
 # Instantiate the object and actions that handle auth
 # #######################################################
-auth = VidjilAuth(session, db, define_tables=False)
-auth.use_username = True
+auth = VidjilAuth(log, session, db, define_tables=False)
+auth.use_username = False
 auth.param.registration_requires_confirmation = settings.VERIFY_EMAIL
 auth.param.registration_requires_approval = settings.REQUIRES_APPROVAL
 auth.allowed_actions = ["all"]
@@ -256,97 +348,6 @@ try:
         ips[ip] = kw
 except:
     pass
-
-
-# #######################################################
-# Define custom log
-# #######################################################
-logging.ADMIN = logging.INFO + 1
-logging.addLevelName(logging.ADMIN, 'ADMIN')
-
-class MsgUserAdapter(logging.LoggerAdapter):
-
-    def process(self, msg, kwargs):
-        if type(msg) is dict:
-            if 'message' in msg:
-                msg = msg['message']
-            else:
-                msg = '?'
-        ip = request.remote_addr
-        if ip:
-            for ip_prefix in ips:
-                if ip.startswith(ip_prefix):
-                    ip = "%s/%s" % (ip, ips[ip_prefix])
-
-        usern = ''
-        try:
-            usern = (str(auth.user_id)) if auth.user else ''
-            usern = usern.replace(' ','-')
-            if auth.is_impersonating():
-                usern = 'team!' + usern
-        except:
-            pass
-        
-        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % usern), msg)
-        return new_msg, kwargs
-    
-    def admin(self, msg, extra=None):
-        self.log(logging.ADMIN, msg, extra=extra)
-#
-class UserLogHandler(logging.Handler):
-
-    def __init__(self):
-        logging.Handler.__init__(self)
-        self.table = 'user_log'
-
-    def emit(self, record):
-        '''
-        When 'user_id' and 'record_id' are defined,
-        further store the record in the db.
-        '''
-        if hasattr(record, 'user_id') and hasattr(record, 'record_id'):
-            from datetime import datetime
-            now = datetime.now()
-            db[self.table].insert(
-                user_id=record.user_id,
-                table_name=record.table_name,
-                created=now,
-                msg=record.message,
-                record_id=record.record_id
-            )
-            db.commit()
-
-def _init_log():
-    """
-    adapted from http://article.gmane.org/gmane.comp.python.web2py/11091
-    """
-
-    import logging
-    import sys
-
-    def create_handler(filename, level):
-        try:
-            handler = logging.FileHandler(filename)
-        except:
-            handler = logging.StreamHandler(sys.stderr)
-        else:
-            handler.setLevel(level)
-            handler.setFormatter(formatter)
-        return handler
-
-    logger = logging.getLogger('vidjil') # (request.application)
-    if not logger.handlers:
-        logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
-
-        logger.addHandler(create_handler(defs.LOG_DEBUG, logging.DEBUG))
-        logger.addHandler(create_handler(defs.LOG_INFO, logging.INFO))
-        logger.addHandler(UserLogHandler())
-
-        logger.debug("Creating logger")
-    return MsgUserAdapter(logger, {})
-
-log = _init_log()
 
 # #######################################################
 # Configure mail

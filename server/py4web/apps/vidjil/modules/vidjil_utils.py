@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-import math
 import re
-import sys
-sys.path.append("../../../")
-from apps.vidjil import defs
 import json
 import datetime
 from datetime import date
-from ..common import auth, db
+from .. import defs
+from ..common import auth, db, log
 
 def format_size(n, unit='B'):
     '''
@@ -108,12 +105,10 @@ def anon_names(sample_set_id, first_name, last_name, can_view=None):
     is provided (to tell if one can view the patient's personal informations)
     '''
 
-    ln = last_name
-    fn = first_name
     if can_view or (can_view == None and auth.can_view_info('sample_set', sample_set_id)):
-        name = ln + " " + fn
+        name = last_name + " " + first_name
     else:
-        name = ln[:3]
+        name = last_name[:3]
 
     return name
 

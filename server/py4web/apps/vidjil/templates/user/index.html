@@ -11,10 +11,10 @@
                     <td class="column_200"> @</td>
                     <td class="column_50">access</td>
                     <td class="column_200">groups</td>
-                    <td class="column_150">first login</td>
-                    <td class="column_150" onclick="db.call('user/index', {'sort' : 'login'
+                    <td class="column_100">first login</td>
+                    <td class="column_100" onclick="db.call('user/index', {'sort' : 'login'
                     [[if not reverse and request.query["sort"]=="login" :]] , 'reverse' : true [[pass]] })">last login</td>
-                    <td class="column_50" onclick="db.call('user/index', {'sort' :'patients'
+                    <td class="column_100" onclick="db.call('user/index', {'sort' :'patients'
                   [[if not reverse and request.query["sort"]=="patients" :]] , 'reverse' : true [[pass]] })">patients created </td>
                     <td class="column_100" onclick="db.call('user/index', {'sort' :'files'
                   [[if not reverse and request.query["sort"]=="files" :]] , 'reverse' : true [[pass]] })">files uploaded </td>

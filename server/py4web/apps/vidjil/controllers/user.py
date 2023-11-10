@@ -96,50 +96,34 @@ def edit():
 @action("/vidjil/user/edit_form", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def edit_form():
-    if auth.can_modify_user(int(request.params['id'])):
-        error = []
-        if request.params["username"] == "" :
-            error.append("username needed")
-        if request.params["first_name"] == "" :
-            error.append("first name needed")
-        if request.params["last_name"] == "" :
-            error.append("last name needed")
-        if request.params["email"] == "":
-            error.append("email cannot be empty")
-        elif not re.match(r"[^@]+@[^@]+\.[^@]+", request.params["email"]):
-            error.append("incorrect email format")
-
-        if request.params["password"] != "":
-            if request.params["confirm_password"] != request.params["password"]:
-                error.append("password fields must match")
-            else:
-                password = db.auth_user.password.validate(request.params["password"])[0]
-                if not password:
-                    error.append("Password is too short, should be at least of length "+str(auth.settings.password_min_length))
-
-        if len(error) == 0:
-            data = dict(first_name = request.params["first_name"],
-                                                    last_name = request.params["last_name"],
-                                                    email = request.params["email"])
-            if 'password' in vars():
-                data["password"] = password
-
-            db.auth_user[request.params['id']] = data
-            db.commit()
-            res = {"redirect": "back",
-                    "message": "%s (%s) user edited" % (request.params["email"], request.params["id"])}
-            log.info(res,
-                extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'auth_user'})
-            return json.dumps(res, separators=(',',':'))
-
-        else :
-            res = {"success" : "false", "message" : ', '.join(error)}
-            log.error(res)
-            return json.dumps(res, separators=(',',':'))
-    else :
+    if not auth.can_modify_user(int(request.params['id'])):
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
+
+    if request.params["confirm_password"] != request.params["password"]:
+        res = {"success": "false", "message": "password fields must match"}
+        log.error(res)
+        return json.dumps(res, separators=(',', ':'))
+
+    updated_user = dict(first_name = request.params["first_name"],
+                        last_name = request.params["last_name"],
+                        email = request.params["email"])
+    if request.params["password"] != "":
+        updated_user["password"] = request.params["password"] 
+    log.debug(f"updated_user : {updated_user}")
+    response = db(db.auth_user.id == request.params['id']).validate_and_update(**updated_user)
+    errors = response.get("errors")
+    if errors:
+        res = {"success": "false", "message": json.dumps(errors)}
+        log.error(res)
+        return json.dumps(res, separators=(',', ':'))
+    
+    res = {"redirect": "back",
+            "message": "%s (%s) user edited" % (request.params["email"], request.params["id"])}
+    log.info(res,
+        extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'auth_user'})
+    return json.dumps(res, separators=(',',':'))
 
 ## return user information
 ## need ["id"]
