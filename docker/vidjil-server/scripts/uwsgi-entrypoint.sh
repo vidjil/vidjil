@@ -17,7 +17,7 @@ rm -r  apps/_default  apps/_minimal apps/_scaffold apps/showcase # clean useless
 
 echo "==== Setup password"
 cd /usr/share/vidjil/server/py4web/apps/
-/usr/local/bin/gosu $user py4web set_password --password "$PY4WEB_ADMIN_PASSWORD"
+gosu $user py4web set_password --password "$PY4WEB_ADMIN_PASSWORD"
 ls /usr/share/vidjil/server/py4web/apps/
 
 

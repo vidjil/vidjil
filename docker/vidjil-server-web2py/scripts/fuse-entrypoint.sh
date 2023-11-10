@@ -8,4 +8,4 @@ echo -e "\e[34m=== `date +'%Y/%m/%d; %H:%M'`\e[0m"; echo
 user=$(get_user_of_results)
 
 cd /usr/share/vidjil/server
-/usr/local/bin/gosu $user python fuse_server.py
+gosu $user python fuse_server.py

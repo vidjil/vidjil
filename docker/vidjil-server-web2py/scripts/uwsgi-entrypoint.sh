@@ -20,4 +20,4 @@ if [ "$1" == "--ci" ]; then
     python /usr/share/vidjil/tools/fuse.py --output /mnt/result/results/fused.vidjil /usr/share/vidjil/doc/analysis-example.vidjil /usr/share/vidjil/doc/analysis-example.vidjil /usr/share/vidjil/doc/analysis-example.vidjil
 fi
 
-/usr/local/bin/gosu $user /usr/bin/uwsgi --ini /etc/uwsgi/apps-enabled/web2py.ini
+gosu $user /usr/bin/uwsgi --ini /etc/uwsgi/apps-enabled/web2py.ini
