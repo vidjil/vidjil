@@ -8,9 +8,9 @@ user=$(get_user_of_results)
 
 sed -i "s/web2py\/applications\/vidjil\/modules/py4web\/apps\/vidjil/g" /usr/share/vidjil/server/fuse_server.py
 sed -i "s/\/usr\/share\/vidjil\/server//g" /usr/share/vidjil/server/fuse_server.py
-echo -e "Whoami : `whoami`; User gosu $user `/usr/local/bin/gosu $user whoami`"
+echo -e "Whoami : `whoami`; User gosu $user `gosu $user whoami`"
 pwd
 
 
 cd /usr/share/vidjil/server
-/usr/local/bin/gosu $user python fuse_server.py
+gosu $user python fuse_server.py
