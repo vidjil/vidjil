@@ -159,7 +159,7 @@ Database.prototype = {
      callProcess : function (page, args, callback){
          var self=this;
          this.temporarilyDisableClickedLink();
-	 
+
          var arg = "";
          if (typeof args != "undefined" && Object.keys(args).length) 
              arg = this.argsToStr(args)
@@ -183,13 +183,7 @@ Database.prototype = {
                  self.connected = true;
              }, 
              error: function (request, status, error) {
-                 self.connected = false;
-                 if (status === "timeout") {
-                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                 } else {
-                     self.check_cert()
-                 }
-                 self.warn("callProcess: " + status + " - " + url.replace(self.db_address, '') + "?" + this.argsToStr(args))
+                self.error_log(request, status, error, name="callProcess", msg=undefined, url=url, args=args, type="flash") 
              }
          });
      },
@@ -211,7 +205,7 @@ Database.prototype = {
              xhrFields: {withCredentials: true},
              success: function (result) {
                  self.connected = true;
-		 console.log(result);
+                 console.log(result);
                  result = jQuery.parseJSON(result)
                  if (result.status == "COMPLETED"){
                      callback(result.data);
@@ -223,13 +217,7 @@ Database.prototype = {
                  
              }, 
              error: function (request, status, error) {
-                 self.connected = false;
-                 if (status === "timeout") {
-                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                 } else {
-                     self.check_cert()
-                 }
-                 self.warn("waitProcess: " + status )
+                self.error_log(request, status, error, name="waitProcess", msg=undefined, url=this.url, args=undefined, type="flash")
              }
          });
      },
@@ -286,19 +274,39 @@ Database.prototype = {
                 self.m.updateIcon()
             }, 
             error: function (request, status, error) {
-                self.connected = false;
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                } else {
-                    self.check_cert()
-                }
-                self.m.loading_is_pending = false
-                self.m.updateIcon()
-
-		self.warn("callUrl: " + status + " - " + url.replace(self.db_address, '') + "?" + this.argsToStr(args))
+                self.error_log(request, status, error, name="callUrl", url=url, args=args, type="flash")
+                this.m.loading_is_pending = false
+                this.m.updateIcon()
             }
             
         });
+    },
+
+    /**
+     * error_log; Function launched when a request failed. 
+     * Search reason of fail (timeout, unavailable db server, internal server error)
+     * Log reason on error, called url and args, open a flash/popup (optional)
+     * request, status, error: values given by ajax in case of fail
+     * name: name of the function/component calling request
+     * msg: optional; a message to log instead of default url/args values
+     * url: url called; cleaned of db adress
+     * args: args added to called url
+     * type: type of log printed (flash; popup or undefined)
+     */
+    error_log: function(request, status, error, name, msg=undefined, url, args, type="flash"){
+        if (status === "timeout") {
+            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+        } else {
+            this.check_cert()
+        }
+
+        this.warn(name +": " + status + " - " + url.replace(this.db_address, '') + "?" + this.argsToStr(args))
+
+        if (type != undefined){
+            url = url.replace(this.db_address, '') + "?" + this.argsToStr(args)
+            text = msg !== undefined ? msg : `An error occured (${request.statusText}; code ${request.status})` //<br/>URL called: ${url}` // limit url to admin ?
+            console.log({"type": type, "msg": text, "priority": 2});
+        }
     },
 
     callUrlJson : function(url, args) {
@@ -316,13 +324,7 @@ Database.prototype = {
                 self.connected = true;
             },
             error: function (request, status, error) {
-                self.connected = false;
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                } else {
-                    self.check_cert()
-                }
-                self.warn("callUrlJson: " + status + " - " + url.replace(self.db_address, '') + "?" + self.argsToStr(args))
+                self.error_log(request, status, error, name="callUrlJson", url, args, type=undefined)
             }
 
         });
@@ -363,7 +365,7 @@ Database.prototype = {
             if (clone.hasSeg('5', '3')) {
                 var middle_pos = Math.round((clone.seg['5'].stop + clone.seg['3'].start)/2);
                 windows.push(clone.sequence.substr(middle_pos - Math.round(SEQ_LENGTH_CLONEDB/2), SEQ_LENGTH_CLONEDB));
-		kept_clones.push(clones[i]);
+                kept_clones.push(clones[i]);
             }
         }
 
@@ -534,12 +536,7 @@ Database.prototype = {
                     self.connected = true;
                 },
                 error: function (request, status, error) {
-                    self.connected = false;
-                    if (status === "timeout") {
-                        console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                    } else {
-                        console.log({"type": "popup", "msg": request.responseText})
-                    }
+                    self.error_log(request, status, error, name="init_ajaxform (data_form)", url=$(this).attr('action'), args=undefined, type="popup")
                 }
             });
         }
@@ -561,12 +558,7 @@ Database.prototype = {
                         self.connected = true;
                     },
                     error: function (request, status, error) {
-                        self.connected = false;
-                        if (status === "timeout") {
-                            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                        } else {
-                            console.log({"type": "popup", "msg": request.responseText})
-                        }
+                        self.error_log(request, status, error, name="init_ajaxform (object_form)", url=$('#object_form').attr('action'), args=undefined, type="popup")
                     }
                 });
                 return false;
@@ -611,10 +603,8 @@ Database.prototype = {
                     self.call(next, args)
                 },
                 error: function (request, status, error) {
-                    if (status === "timeout") {
-                        console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                    } else {
-                        console.log(args)
+                    self.error_log(request, status, error, name="init_ajaxform (login_form)", url=$(this).attr('action'), args=undefined, type=undefined)
+                    if (status != "timeout") {
                         self.call(next, args)
                     }
                 }
@@ -689,11 +679,7 @@ Database.prototype = {
                         }
                     },
                     error: function (request, status, error) {
-                        if(status==="timeout") {
-                            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                        } else {
-                            console.log({"type": "popup", "msg": request + " " + status + " " + error});
-                        }
+                        self.error_log(request, status, error, name="init_ajaxform (upload_sample_form)", url=$(this).attr('action'), args=undefined, type="popup")
                     }
                 });
                 return false;
@@ -915,17 +901,13 @@ Database.prototype = {
                 console.log({"type": "flash", "msg": result , "priority": 1});
             },
             error: function (request, status, error) {
-                if (typeof quiet == 'undefined')
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                } else {
+                if (quiet == undefined) {
+                    // This triggers another request() call, but this time with quiet=true
+                    self.error_log(request, status, error, name="request", url, args, type="popup")
+                }
+                if (status != "timeout") {
                     self.call("default/home")
                 }
-
-                if (typeof quiet == 'undefined') {
-		    // This triggers another request() call, but this time with quiet=true
-		    self.warn("request: " + status + " - " + url)
-		}
             }
         });
     },
@@ -1015,12 +997,7 @@ Database.prototype = {
                 // self.callCloneDB()
             },
             error: function (request, status, error) {
-                self.connected = false;
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "msg" : " - unable to access patient data" , "priority": 2});
-                } else {
-                    console.log({"type": "popup", "msg": request.responseText});
-                }
+                self.error_log(request, status, error, name="load_data", url=$(this).attr('url'), args=undefined, type="popup")
             }
         });
     },
@@ -1076,13 +1053,8 @@ Database.prototype = {
                 self.connected = true;
             },
             error: function (request, status, error) {
-                self.connected = false;
+                self.error_log(request, status, error, name="load_custom_data", url=$(this).attr('url'), args=undefined, type="popup")
                 self.m.resume()
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 2});
-                } else {
-                    console.log({"type": "popup", "msg": request.responseText});
-                }
             }
         });
     },
@@ -1102,11 +1074,7 @@ Database.prototype = {
                 console.log('=== load_analysis: success ===');
             },
             error: function (request, status, error) {
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 2});
-                } else {
-                    console.log({"type": "popup", "msg": request.responseText});
-                }
+                self.error_log(request, status, error, name="load_analysis", url=$(this).attr('url'), args=undefined, type="popup")
             }
         });
     },
@@ -1154,10 +1122,11 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to save analysis" , "priority": 2});
+                        msg = "database_timeout - unable to save analysis"
                     } else {
-                        console.log({"type": "flash", "msg": "server : save analysis error : "+request.responseText , "priority": 2});
+                        msg = "server error<br/>" +request.responseText
                     }
+                    self.error_log(request, status, error, name="Save analysis", msg=msg, this.url, args=self.last_file, type="popup")
                 }
             });
         }else{
@@ -1167,7 +1136,7 @@ Database.prototype = {
 
     // periodically query the server for notifications
     // And loads them into elements with id 'header_messages' and 'login_messages'
-	// TODO : Tidy up
+    // TODO : Tidy up
     loadNotifications: function(adress) {
     	var self = this;
 		if (adress !== "") {
@@ -1182,11 +1151,7 @@ Database.prototype = {
 		            
 		        }, 
 		        error: function (request, status, error) {
-		            if (status === "timeout") {
-		                console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-		            } else {
-		                console.log("unable to get notifications");
-		            }
+                           self.error_log(request, status, error, name="loadNotifications", msg="unable to get notifications", url=undefined, args=undefined, type=undefined)
 		        }
 		    });
 		} else {
@@ -1316,7 +1281,7 @@ Database.prototype = {
     },
 
     temporarilyDisableClickedLink: function() {
-	var self = this;
+        var self = this;
         try {
             var event = window.event;
             if (typeof(event) === 'undefined') {
