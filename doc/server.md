@@ -205,10 +205,8 @@ forget to make a backup of any file you replace.)
 ### First configuration and first launch
 
   - Set the SSL certificates (see above)
-  - Change the mysql root password and the web2py admin password in `docker-compose.yml`
-  - Change the mysql vidjil password in `mysql/create_db.sql` and sets it also in `DB_ADDRESS` in `vidjil-server/conf/defs.py`
-  - Set the desired mail domain and credentials for the `postfix` container and update `vidjil-server/conf/defs.py`
-    `SMTP_CREDENTIALS` and `FROM_EMAIL` to match
+  - Change the mysql root password, mysql user password and the web2py admin password in `.env` file
+  - Set the desired mail domain and credentials for the `postfix` container in `.env`
 
   - Comment reporter services in `docker-compose.yml`
 
@@ -320,6 +318,19 @@ Contact us (<mailto:contact@vidjil.org>) to have more information and help.
 
 ### Troubleshooting
 
+
+## CORS header 'Access-Control-Allow-Origin' missing
+
+Sometime, you want to split the client and the server on different server. 
+This type of configuration need to allow cross origin in nginx server.
+To do so, you need to modify nginx configuration files `vidjil-client/conf/nginx_web2py` or `.../nginx_web2py_http`.
+Adapt and add this line to server declaration: 
+
+```
+add_header 'Access-Control-Allow-Origin' 'your_other_domain';
+```
+
+
 #### Error "Can't connect to MySQL server on 'mysql'"
 
 The mysql container is not fully launched. This can happen especially at the first launch.
@@ -375,6 +386,8 @@ This password will not persist when the container will be restarted.
 For a persistent password, please use the environment variable.
 
 ### Updating a Docker installation
+
+
 
 #### Before the update
 

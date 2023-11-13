@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import apps.vidjil.defs
 import re
 import json

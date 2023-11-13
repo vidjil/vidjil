@@ -937,7 +937,7 @@ Database.prototype = {
             document.getElementById('db_auth').innerHTML = "";
             dbc.innerHTML = "";
         }
-        db.call('default/user/logout');
+        db.call('auth/logout');
     },
 
     extract_login_info: function() {

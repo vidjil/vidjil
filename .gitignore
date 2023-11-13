@@ -50,6 +50,7 @@ vidjil-algo
 
 server/web2py/gluon/packages/dal/
 
+cypress/
 cypress/reports
 cypress/screenshots
 cypress/videos
@@ -124,3 +125,7 @@ server/py4web/password.txt
 docker/vidjil-server2/vidjil/
 
 browser/js/germline.js
+*.swp
+cypress
+browser/js/git-sha1.js
+firefox/

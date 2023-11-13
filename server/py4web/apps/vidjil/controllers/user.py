@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
@@ -10,6 +10,8 @@ import json
 import re
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
+import datetime
+from datetime import timedelta 
 
 from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
@@ -25,8 +27,11 @@ ACCESS_DENIED = "access denied"
 @action.uses("user/index.html", db, auth.user)
 def index():
     
+    since = datetime.datetime.now() - timedelta(days=90)
+
     query = db(db.auth_user).select()
 
+    groups =  {g.id: {'id': g.id, 'role': g.role, 'description': g.description} for g in db(db.auth_group.id).select()}
     for row in query :
         row.created = db( db.patient.creator == row.id ).count()
         
@@ -35,7 +40,7 @@ def index():
 
         q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select()]
         q.sort()
-        row.groups = ' '.join([str(g) for g in q])
+        row.groups = q
 
         row.size = 0
         row.files = 0
@@ -52,6 +57,8 @@ def index():
         
         row.first_login = str(last_logins[-1].time_stamp) if len(last_logins) > 0 else '-'
         row.last_login = str(last_logins[0].time_stamp) if len(last_logins) > 0 else '-'
+        # login status between never ('-'), recent (True) and old (False)
+        row.login_status =  datetime.datetime.strptime(row.last_login, '%Y-%m-%d %H:%M:%S') > since if row.last_login != "-" else "-"
 
     ##sort query
     reverse = False
@@ -71,7 +78,8 @@ def index():
 
     log.info("view user list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': 'auth_user'})
     return dict(query=query,
-    			reverse=reverse,
+                groups=groups,
+                reverse=reverse,
                 auth=auth,
                 db=db)
 
@@ -88,48 +96,34 @@ def edit():
 @action("/vidjil/user/edit_form", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def edit_form():
-    if auth.can_modify_user(int(request.params['id'])):
-        error = []
-        if request.params["first_name"] == "" :
-            error.append("first name needed")
-        if request.params["last_name"] == "" :
-            error.append("last name needed")
-        if request.params["email"] == "":
-            error.append("email cannot be empty")
-        elif not re.match(r"[^@]+@[^@]+\.[^@]+", request.params["email"]):
-            error.append("incorrect email format")
-
-        if request.params["password"] != "":
-            if request.params["confirm_password"] != request.params["password"]:
-                error.append("password fields must match")
-            else:
-                password = db.auth_user.password.validate(request.params["password"])[0]
-                if not password:
-                    error.append("Password is too short, should be at least of length "+str(auth.settings.password_min_length))
-
-        if len(error) == 0:
-            data = dict(first_name = request.params["first_name"],
-                                                    last_name = request.params["last_name"],
-                                                    email = request.params["email"])
-            if 'password' in vars():
-                data["password"] = password
-
-            db.auth_user[request.params['id']] = data
-            db.commit()
-            res = {"redirect": "back",
-                    "message": "%s (%s) user edited" % (request.params["email"], request.params["id"])}
-            log.info(res,
-                extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'auth_user'})
-            return json.dumps(res, separators=(',',':'))
-
-        else :
-            res = {"success" : "false", "message" : ', '.join(error)}
-            log.error(res)
-            return json.dumps(res, separators=(',',':'))
-    else :
+    if not auth.can_modify_user(int(request.params['id'])):
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
+
+    if request.params["confirm_password"] != request.params["password"]:
+        res = {"success": "false", "message": "password fields must match"}
+        log.error(res)
+        return json.dumps(res, separators=(',', ':'))
+
+    updated_user = dict(first_name = request.params["first_name"],
+                        last_name = request.params["last_name"],
+                        email = request.params["email"])
+    if request.params["password"] != "":
+        updated_user["password"] = request.params["password"] 
+    log.debug(f"updated_user : {updated_user}")
+    response = db(db.auth_user.id == request.params['id']).validate_and_update(**updated_user)
+    errors = response.get("errors")
+    if errors:
+        res = {"success": "false", "message": json.dumps(errors)}
+        log.error(res)
+        return json.dumps(res, separators=(',', ':'))
+    
+    res = {"redirect": "back",
+            "message": "%s (%s) user edited" % (request.params["email"], request.params["id"])}
+    log.info(res,
+        extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'auth_user'})
+    return json.dumps(res, separators=(',',':'))
 
 ## return user information
 ## need ["id"]

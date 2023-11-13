@@ -1,0 +1,4 @@
+.env
+*.pem
+binaries/
+docker-compose.*.yml

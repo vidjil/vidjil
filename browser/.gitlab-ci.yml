@@ -52,6 +52,8 @@ client1-ff-supported:
     - .need_for_moderate_client
   variables:
     BROWSER: firefox_supported/firefox
+  needs:
+    - []
 
 c2:
   extends:
@@ -72,6 +74,8 @@ external1-ff-supported:
     - .need_for_moderate_client
   variables:
     BROWSER: firefox_supported/firefox
+  needs:
+    - []
 
 external2:
   extends:
@@ -115,6 +119,8 @@ tuto-c1-ff-supported:
     - .need_for_moderate_client
   variables:
     BROWSER: firefox_supported/firefox
+  needs:
+    - []
 
 tuto-c2:
   extends:

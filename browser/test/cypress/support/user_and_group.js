@@ -78,30 +78,30 @@ Cypress.Commands.add('createUser', (first_name, last_name, email, password) => {
 
   cy.update_icon()
   
-  cy.get('#db_content > h2')
+  cy.get('#register_user')
     .should('exist')
-    .should("contain", "Register")
+    .should("contain", "Register new user")
   cy.update_icon()  
 
   cy.fillUser(first_name, last_name, email, password)
-  cy.get('#submit_record__row > .w2p_fw > input')
+
+  cy.get('#sign_up')
+    .should("contain", "Sign up")
     .click()
 
   cy.update_icon()  
-  cy.get('#user_info')
+  cy.get('#table_users')
     .should('exist')
-    .should("contain", `user info ${first_name} ${last_name}`)
-
-
+    .should("contain", `${first_name} ${last_name}`)
 })
 
 
 Cypress.Commands.add('fillUser', (first_name, last_name, email, password) => {
-  cy.get('#auth_user_first_name').type(first_name)
-  cy.get('#auth_user_last_name').type(last_name)
-  cy.get('#auth_user_email').type(email)
-  cy.get('#auth_user_password').type(password)
-  cy.get('#auth_user_password_two').type(password)
+  cy.get('#first_name').type(first_name)
+  cy.get('#last_name').type(last_name)
+  cy.get('#email').type(email)
+  cy.get('#password').type(password)
+  cy.get('#confirm_password').type(password)
   return
 })
 

@@ -1,6 +1,7 @@
 [[extend 'db_layout.html']]
 
-[[=message]]
+<h3 id="edit_user">[[=message]]</h3>
+
 <form id="data_form" action="DB_ADDRESS/user/edit_form" enctype="multipart/form-data" method="post">
     <input type="HIDDEN" id="user_id" name="id" value="[[=request.query["id"] ]]"> 
     <table>
@@ -32,7 +33,7 @@
             </tr>
             <tr>
                 <td></td>
-                <td ><input type="submit" value="save" class="btn"></td>
+                <td><input type="submit" value="Update user" class="btn"></td>
                 <td></td>
             </tr>
         </tbody>
