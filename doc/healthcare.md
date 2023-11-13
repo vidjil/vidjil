@@ -2,8 +2,10 @@
 # Hosting options and healthcare compliance
 
 The Vidjil platform is open-source.
-We gladly help any people to install or use the platform.
-Through the VidjilNet consortium, we also offer options for data hosting and processing.
+We gladly help any people to install or use the platform, notably through the [http://vidjil.org/doc](documentation).
+Through the VidjilNet consortium, we also offer options for data hosting, data processing,
+dedicated training of biologists (platform usage),
+and dedicated support for IT staff (platform administration and maintenance).
 
 ## Public server – [app.vidjil.org](https://app.vidjil.org)
 
@@ -23,7 +25,6 @@ Through the VidjilNet consortium, we also offer options for data hosting and pro
 
 - Installed by your local IT staff, with support from the Vidjil team
 - Documentation on [installation and maintenance](server.md#docker-installation)
-- Remote dedicated support and/or maintenance available for [VidjilNet](http://www.vidjil.net) members, possibly through remote SSH access
+- For [VidjilNet](http://www.vidjil.net) members, dedicated support including dedicated training/support of IT staff, and/or remote dedicated maintenance through remote SSH access
 - Suitable for production and hosting clinical data, depending the regulations of your country
 - Eligible for laboratory accreditation (through COFRAC in France or national equivalents in other EU countries)
-
