@@ -12,13 +12,15 @@ and dedicated support for IT staff (platform administration and maintenance).
 - Open and free for anyone, with basic support
 - Research use only
 - University data center: [Mésocentre de Calcul Scientifique Intensif de l'Université de Lille](http://hpc.univ-lille.fr/), in Lille (F)
+- [Privacy policy](privacy.md) (EU GDPR)
 
 ## VidjilNet Healthcare server – [health.vidjil.org](http://health.vidjil.org)
 
 - Available for [VidjilNet](http://www.vidjil.net) members, with dedicated support
 - Suitable for production and hosting clinical data in France and some other EU countries
 - Secure data center in Gravelines (F) contracted with [OVHcloud Healthcare](https://www.ovhcloud.com/en/enterprise/solutions/certified-cloud-solutions/healthcare-data-hosting-hds/)
-- Data hosting: ISO 27001, compliant with healthcare data hosting regulation (GDPR, [French HDS certification](https://ue.esante.gouv.fr/information-systems-security-pre-condition-trust/health-data-hosting-hds))
+- Data hosting: ISO 27001, compliant with healthcare data hosting regulation ([French HDS certification](https://ue.esante.gouv.fr/information-systems-security-pre-condition-trust/health-data-hosting-hds))
+- [Privacy policy](privacy.md) (EU GDPR)
 - Eligible for laboratory accreditation (through COFRAC in France or national equivalents in other EU countries)
 
 ## In-lab/in-hospital Hosting
@@ -27,4 +29,5 @@ and dedicated support for IT staff (platform administration and maintenance).
 - Documentation on [installation and maintenance](server.md#docker-installation)
 - For [VidjilNet](http://www.vidjil.net) members, dedicated support including dedicated training/support of IT staff, and/or remote dedicated maintenance through remote SSH access
 - Suitable for production and hosting clinical data, depending the regulations of your country
+- Privacy policy managed in your lab/hospital
 - Eligible for laboratory accreditation (through COFRAC in France or national equivalents in other EU countries)
