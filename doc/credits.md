@@ -87,12 +87,12 @@ BMC Genomics 2014, 15:409
 
 Patrick Villarese et al.,
 *One-Step Next-Generation Sequencing of Immunoglobulin and T-Cell Receptor Gene Recombinations for MRD Marker Identification in Acute Lymphoblastic Leukemia*,
-Immunogenetics, Methods in Molecular Biology 2453, pp. 43-59,
+Immunogenetics, Methods in Molecular Biology 2453, 2022, pp. 43-59,
 <http://dx.doi.org/10.1007/978-1-0716-2115-8_3>
 
 Anne Langlois de Septenville et al.,
 *Immunoglobulin Gene Mutational Status Assessment by Next Generation Sequencing in Chronic Lymphocytic Leukemia*,
-Immunogenetics, Methods in Molecular Biology 2453, pp. 153-167,
+Immunogenetics, Methods in Molecular Biology 2453, 2022, pp. 153-167,
 <http://dx.doi.org/10.1007/978-1-0716-2115-8_10>
 
 
