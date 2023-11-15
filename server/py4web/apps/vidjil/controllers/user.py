@@ -22,7 +22,6 @@ from ..common import db, session, T, flash, cache, authenticated, unauthenticate
 
 ACCESS_DENIED = "access denied"
         
-## return user list
 @action("/vidjil/user/index", method=["POST", "GET"])
 @action.uses("user/index.html", db, auth.user)
 @vidjil_utils.jsontransformer

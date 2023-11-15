@@ -7,9 +7,12 @@ from datetime import datetime
 sys.path.append("../../../../")
 from apps.vidjil import defs
 from apps.vidjil.modules import vidjil_utils
-from apps.vidjil.common import auth, log
+from apps.vidjil.common import auth
 from apps.vidjil.modules.permission_enum import PermissionEnum
 
+
+TEST_ADMIN_EMAIL = "plop@plop.com"
+TEST_ADMIN_PASSWORD = "foobartest"
 
 class DBInitialiser(object):
 
@@ -60,7 +63,7 @@ class DBInitialiser(object):
         return d
 
     def _init_users(self):
-        vidjil_utils.init_db_helper(self.db, auth, force=True, admin_email="plop@plop.com", admin_password="foobartest")
+        vidjil_utils.init_db_helper(self.db, auth, force=True, admin_email=TEST_ADMIN_EMAIL, admin_password=TEST_ADMIN_PASSWORD)
         self.initialised = True
 
     @_needs_init
