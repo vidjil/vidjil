@@ -12,8 +12,8 @@ install_web2py: download_web2py
 	rm web2py_src.zip
 	cp web2py/applications/vidjil/modules/defs.py.sample web2py/applications/vidjil/modules/defs.py
 
-unit: clean_unit_tests
-	python web2py/web2py.py -S vidjil -M -R testRunner.py
+unit: clean_unit
+	PYDAL_URI='sqlite://storage.db' pytest py4web/apps/vidjil/tests/unit --junitxml=unit_report.xml
 
 functional:
 	$(MAKE) -C web2py/applications/vidjil/tests functional
@@ -38,9 +38,9 @@ launch_fuse_server:
 kill_fuse_server:
 	pkill -f fuse_server.py
 
-clean_unit_tests:
-	rm -f web2py/test-reports/*.xml
+clean_unit:
+	rm -f unit_report.xml
 
-cleanall: clean_unit_tests
+cleanall: clean_unit
 
 .PHONY: install

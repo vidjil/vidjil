@@ -12,10 +12,11 @@ except ImportError:
     from urllib.parse import urlparse, urlencode
 
 
-__version__ = '0.2.9'
-
-
 class Omboddle(object):
+    """
+    Test initializer for py4web
+    Freely and largely inspired by boddle (https://github.com/keredson/boddle) and py4web TestAuth
+    """
 
     def __init__(self, session, keep_session=False, app_name="vidjil",
                  params={}, path=None, method=None, headers=None, json=None, url=None, body=None, query={}, auth=None, **extras):

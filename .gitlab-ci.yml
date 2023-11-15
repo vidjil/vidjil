@@ -248,18 +248,18 @@ code_quality_custom:
 # Server
 
 test_server_unit:
-    image: python:slim
+    image: python:3.8-slim
     stage: test_unit
     <<: *before_script_global_docker
     script:
       - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends gcc libldap2-dev libssl-dev libsasl2-dev python3-ijson libyajl2 python3-cffi wget unzip procps libffi-dev
-      - pip3 install -r requirements.txt
-      - make -C server/py4web install_py4web
-      - make -C server launch_fuse_server
+      - python3 -m pip install -U pip
+      - python3 -m pip install --no-cache -r server/unit_requirements.txt
+      - mkdir -p /mnt/upload/uploads/
       - make unit_server
     artifacts:
       reports:
-        junit: server/py4web/test-reports/TEST*xml
+        junit: server/unit_report.xml
     only:
       - /^feature-.*s.*\/.*$/
       - /^hotfix-.*s.*\/.*$/
