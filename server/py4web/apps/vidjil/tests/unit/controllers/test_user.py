@@ -47,7 +47,7 @@ class TestUserController(unittest.TestCase):
 
         # When : Calling index on users
         with self.assertRaises(HTTP) as context:
-            with Omboddle(self.session):
+            with Omboddle(self.session, params={"format": "json"}):
                 user_controller.index()
 
         # Then : We get a redirect
@@ -59,7 +59,7 @@ class TestUserController(unittest.TestCase):
         log_in_as_default_admin(self.session)
 
         # When : Calling index on users
-        with Omboddle(self.session, keep_session=True, params={"json": True}):
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}):
             json_result = user_controller.index()
 
         # Then : We get users list
