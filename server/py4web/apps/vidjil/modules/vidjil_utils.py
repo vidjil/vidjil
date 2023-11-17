@@ -73,7 +73,7 @@ def jsontransformer(func):
         result = func(*args, **kwargs)
         if isinstance(result, str):
             return result
-        if "json" in request.params.keys():
+        if "format" in request.params.keys() and request.params["format"] == "json":
             # remove some functions sometimes given to template but useless
             # !!! Can 'fields' be other thing and should be keeped ?
             if isinstance(result, dict):
