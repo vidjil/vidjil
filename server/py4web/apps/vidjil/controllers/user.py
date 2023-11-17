@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from sys import modules
 from .. import defs
-from ..modules import vidjil_utils
+from ..modules.vidjil_utils import jsontransformer
 from ..modules import tag
 from ..modules.stats_decorator import *
 from ..modules.controller_utils import error_message

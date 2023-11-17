@@ -153,5 +153,6 @@ def register_form():
               (new_user_id, new_user_email, new_user_group_id))
 
     res = {"redirect": "back",
-           "message": f"{request.params['email']} ({response['id']}) user added"}
+           "message": f"{request.params['email']} ({response['id']}) user added",
+           "user_id": response["id"]}
     return json.dumps(res, separators=(',', ':'))
