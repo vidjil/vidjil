@@ -52,6 +52,7 @@ def monitor():
 ## return admin_panel
 @action("/vidjil/admin/index", method=["POST", "GET"])
 @action.uses("admin/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     if auth.is_admin():
         p = subprocess.Popen(["uptime"], stdout=subprocess.PIPE)
@@ -78,6 +79,7 @@ def index():
 
 @action("/vidjil/admin/showlog", method=["POST", "GET"])
 @action.uses("admin/showlog.html", db, auth)
+@vidjil_utils.jsontransformer
 def showlog():
     if auth.is_admin():
          

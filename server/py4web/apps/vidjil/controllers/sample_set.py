@@ -91,6 +91,7 @@ def next_sample_set():
 ##
 @action("/vidjil/sample_set/index", method=["POST", "GET"])
 @action.uses("sample_set/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
 
     next_sample_set()
@@ -263,6 +264,7 @@ def index():
 ## return a list of generic sample_sets
 @action("/vidjil/sample_set/all", method=["POST", "GET"])
 @action.uses("sample_set/all.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def all():
     start = time.time()
     if request.query.get('type'):
@@ -347,6 +349,7 @@ def all():
 ## return form to create new set
 @action("/vidjil/sample_set/form", method=["POST", "GET"])
 @action.uses("sample_set/form.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def form():
     denied = False
     # edit set
@@ -525,6 +528,7 @@ def submit():
 
 @action("/vidjil/sample_set/custom", method=["POST", "GET"])
 @action.uses("sample_set/custom.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def custom():
     start = time.time()
 
@@ -653,6 +657,7 @@ def custom():
 
 @action("/vidjil/sample_set/confirm", method=["POST", "GET"])
 @action.uses("sample_set/confirm.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def confirm():
     if auth.can_modify_sample_set(int(request.query["id"])):
         sample_set = db.sample_set[request.query["id"]]
@@ -720,6 +725,7 @@ def delete():
 #
 @action("/vidjil/sample_set/permission", method=["POST", "GET"])
 @action.uses("sample_set/permission.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def permission():
     if (auth.can_modify_sample_set(int(request.query["id"])) ):
         sample_set = db.sample_set[request.query["id"]]
@@ -1049,7 +1055,7 @@ def multi_sample_stats():
     return dict(data=data)
 
 
-
+@vidjil_utils.jsontransformer
 def get_sample_set_list(stype, q):
     factory = ModelFactory()
     helper = factory.get_instance(type=stype)
@@ -1119,6 +1125,9 @@ def auto_complete():
 
 
 
+@action("/vidjil/sample_set/samples")
+@action.uses(db, auth.user)
+@vidjil_utils.jsontransformer
 def samples():
     '''
     API: List of samples, possibly filtered
@@ -1128,8 +1137,11 @@ def samples():
                   group_ids = res['group_ids'],
                   step = res['step'],
                   page = res['page'])
-    return response.json(export)
+    return sorted(export, key = lambda row : row.id)
 
+@action("/vidjil/sample_set/samplesetById")
+@action.uses(db, auth.user)
+@vidjil_utils.jsontransformer
 def samplesetById():
     '''
     API: Get a specific sample based on the set id

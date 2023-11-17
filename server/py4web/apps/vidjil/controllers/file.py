@@ -200,6 +200,7 @@ def form_response(data):
 ############################
 @action("/vidjil/file/form", method=["POST", "GET"])
 @action.uses("file/form.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def form():
     group_ids = []
     relevant_ids = {}
@@ -476,6 +477,7 @@ def upload():
   
 @action("/vidjil/file/confirm", method=["POST", "GET"])
 @action.uses("file/confirm.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def confirm():
     '''
     Request parameters:

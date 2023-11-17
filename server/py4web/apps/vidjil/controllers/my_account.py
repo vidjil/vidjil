@@ -4,6 +4,7 @@ import types
 
 from .. import defs
 from ..modules.tag import parse_search, TagDecorator, get_tag_prefix
+from ..modules import vidjil_utils
 from ..user_groups import get_involved_groups
 from datetime import timedelta 
 from io import StringIO
@@ -116,6 +117,7 @@ def get_most_used_tags(group_list):
 ############################
 @action("/vidjil/my_account/index", method=["POST", "GET"])
 @action.uses("my_account/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     start = time.time()
 
@@ -240,6 +242,7 @@ def index():
 
 @action("/vidjil/my_account/jobs", method=["POST", "GET"])
 @action.uses("my_account/jobs.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def jobs():
     since = datetime.date.today() - timedelta(days=30)
 

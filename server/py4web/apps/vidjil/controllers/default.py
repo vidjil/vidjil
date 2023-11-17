@@ -63,6 +63,7 @@ def help():
 ## default home page
 @action("/vidjil/default/home.html", method=["POST", "GET"])
 @action.uses("default/index.html", db, auth.user, cors)
+@vidjil_utils.jsontransformer
 def home():
     if auth.is_admin():
         redirect = URL('admin/index')
@@ -119,6 +120,7 @@ def logger():
 
 @action("/vidjil/default/init_db", method=["POST", "GET"])
 @action.uses("default/init_db.html", db, auth, cors)
+@vidjil_utils.jsontransformer
 def init_db():
     if (db(db.auth_user.id > 0).count() == 0) :
         return dict(message=T('create admin user and initialize database'),
@@ -734,6 +736,7 @@ def error():
 
 #@action("/vidjil/default/user/<path>", method=["POST", "GET"])
 @action.uses(db, session, "db_layout.html")
+@vidjil_utils.jsontransformer
 def user(path=None):
     """
     exposes:

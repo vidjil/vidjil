@@ -5,6 +5,8 @@ import datetime
 from datetime import date
 from .. import defs
 from ..common import auth, db, log
+from py4web import request, DAL
+import pydal
 
 def format_size(n, unit='B'):
     '''
@@ -45,6 +47,45 @@ def format_size(n, unit='B'):
         fmt = '%.2f'
 
     return fmt % size + ' ' + prefix + unit
+
+class EncoderAsdict(json.JSONEncoder):
+    """
+    Make a dump of values as json.
+    If object is not serializable, we try to make a as_dict call
+    Usefull for json.dump of unit test and API call
+    """
+    def default(self, obj):
+        if isinstance(obj, (datetime.datetime, datetime.time, datetime.date)):
+            return str(obj)
+        if isinstance(obj, pydal.objects.Rows):
+            return obj.as_list()
+        if hasattr(obj, 'as_dict'):
+            return obj.as_dict()
+        if callable(obj): # Eject pydal row object
+            return None
+        return str(obj)
+
+def jsontransformer(func):
+    """
+    take values to return to template. If request a json (api; unit test) bypass to return json dump
+    """
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if isinstance(result, str):
+            return result
+        if "format" in request.params.keys() and request.params["format"] == "json":
+            # remove some functions sometimes given to template but useless
+            # !!! Can 'fields' be other thing and should be keeped ?
+            if isinstance(result, dict):
+                for key in ["db","auth","helper", "fields"]: 
+                    if key in result.keys():
+                        del result[key]
+            return json.dumps(result, cls=EncoderAsdict)
+        return result
+        
+    return wrapper
+
+
 
 
 

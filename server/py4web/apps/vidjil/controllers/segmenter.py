@@ -2,6 +2,7 @@
 from sys import modules
 from .. import defs
 from ..modules.stats_decorator import *
+from ..modules import vidjil_utils
 from ..VidjilAuth import VidjilAuth
 from io import StringIO
 import json
