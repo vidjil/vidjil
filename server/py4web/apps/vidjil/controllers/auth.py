@@ -8,6 +8,7 @@ from datetime import datetime
 
 from .. import defs
 from ..modules.stats_decorator import *
+from ..modules import vidjil_utils
 from ..controllers.group import add_default_group_permissions
 import json
 from py4web import action, request, URL
@@ -35,6 +36,7 @@ def prevent_open_redirect(url):
 
 @action("/vidjil/auth/login", method=["POST", "GET"])
 @action.uses("auth/login.html", db, cors, flash)
+@vidjil_utils.jsontransformer
 def login():
 
     if (db(db.auth_user.id > 0).count() == 0):
@@ -98,6 +100,7 @@ def logout():
 
 @action("/vidjil/auth/register", method=["POST", "GET"])
 @action.uses("auth/register.html", db, auth)
+@vidjil_utils.jsontransformer
 def register():
     # only authentified admin user can access register view
     if auth.user:

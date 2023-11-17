@@ -38,6 +38,7 @@ ACCESS_DENIED = "access denied"
 
 @action("/vidjil/pre_process/index", method=["POST", "GET"])
 @action.uses("pre_process/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     if not auth.user : 
         res = {"redirect" : "default/user/login"}
@@ -69,6 +70,7 @@ def task_test2():
 
 @action("/vidjil/pre_process/add", method=["POST", "GET"])
 @action.uses("pre_process/add.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def add():
     if auth.can_create_pre_process():
         return dict(message=T('Add pre-process'), auth=auth, db=db)
@@ -111,6 +113,7 @@ def add_form():
 
 @action("/vidjil/pre_process/edit", method=["POST", "GET"])
 @action.uses("pre_process/edit.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def edit(): 
     if auth.can_modify_pre_process(int(request.query['id'])):
         return dict(message=T('edit config'), 
@@ -154,6 +157,7 @@ def edit_form():
 
 @action("/vidjil/pre_process/confirm", method=["POST", "GET"])
 @action.uses("pre_process/confirm.html",db, auth.user)
+@vidjil_utils.jsontransformer
 def confirm():
     if auth.can_modify_pre_process(int(request.query['id'])):
         query = db( (db.pre_process.id == request.query['id']) & (auth.vidjil_accessible_query(PermissionEnum.read_pre_process.value, db.pre_process) | auth.vidjil_accessible_query(PermissionEnum.admin_pre_process.value, db.pre_process) )  ).select()
@@ -183,6 +187,7 @@ def delete():
 ## need ["sample_set_id"]
 @action("/vidjil/pre_process/info", method=["POST", "GET"])
 @action.uses("pre_process/info.html",db, auth.user)
+@vidjil_utils.jsontransformer
 def info():
     if (auth.can_modify_sample_set(int(request.query["sample_set_id"]))):
         log.info("view pre process info", extra={'user_id': auth.user_id,
@@ -196,6 +201,7 @@ def info():
 
 @action("/vidjil/pre_process/permission", method=["POST", "GET"])
 @action.uses("pre_process/permission.html",db, auth.user)
+@vidjil_utils.jsontransformer
 def permission():
     if (not auth.can_modify_pre_process(int(request.query["id"])) ):
         res = {"message": ACCESS_DENIED}

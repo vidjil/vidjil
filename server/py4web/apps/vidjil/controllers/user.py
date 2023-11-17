@@ -25,6 +25,7 @@ ACCESS_DENIED = "access denied"
 ## return user list
 @action("/vidjil/user/index", method=["POST", "GET"])
 @action.uses("user/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     
     since = datetime.datetime.now() - timedelta(days=90)
@@ -85,6 +86,7 @@ def index():
 
 @action("/vidjil/user/edit", method=["POST", "GET"])
 @action.uses("user/edit.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def edit():
     if auth.can_modify_user(int(request.query['id'])):
         user = db.auth_user[request.query["id"]]
@@ -129,6 +131,7 @@ def edit_form():
 ## need ["id"]
 @action("/vidjil/user/info", method=["POST", "GET"])
 @action.uses("user/info.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def info():
     if "id" not in request.query:
         request.query["id"] = db().select(db.auth_user.ALL, orderby=~db.auth_user.id)[0].id

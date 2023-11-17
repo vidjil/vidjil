@@ -28,6 +28,7 @@ ACCESS_DENIED = "access denied"
 
 @action("/vidjil/config/index", method=["POST", "GET"])
 @action.uses("config/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     if not auth.user : 
         res = {"redirect" : "default/user/login"}
@@ -53,6 +54,7 @@ def index():
 
 @action("/vidjil/config/add", method=["POST", "GET"])
 @action.uses("config/add.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def add():
     if (auth.can_create_config()):
         classification = db( (db.classification) ).select()
@@ -105,6 +107,7 @@ def add_form():
 
 @action("/vidjil/config/edit", method=["POST", "GET"])
 @action.uses("config/edit.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def edit():
     if (auth.can_modify_config(int(request.query['id']))):
         mes = u"Load config edit form"
@@ -160,6 +163,7 @@ def edit_form():
 
 @action("/vidjil/config/confirm", method=["POST", "GET"])
 @action.uses("config/confirm.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def confirm():
     if (auth.can_modify_config(int(request.query['id']))):
         return dict(message=T('confirm config deletion'), auth=auth, db=db)
@@ -191,6 +195,7 @@ def delete():
 
 @action("/vidjil/config/permission", method=["POST", "GET"])
 @action.uses("config/permission.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def permission(): 
     if (auth.can_modify_config(int(request.query["id"])) ):
         

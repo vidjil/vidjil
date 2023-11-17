@@ -47,6 +47,7 @@ def get_data_list(table):
 ##################################
 @action("/vidjil/log/index", method=["POST", "GET"])
 @action.uses("log/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     if not auth.user:
         res = {"redirect" : URL('default', 'user', args='login', scheme=True,

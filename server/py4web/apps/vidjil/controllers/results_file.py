@@ -14,6 +14,7 @@ from ..common import db, session, T, flash, cache, authenticated, unauthenticate
 ## return admin_panel
 @action("/vidjil/results_file/index", method=["POST", "GET"])
 @action.uses("results_file/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     if auth.is_admin():
 
@@ -89,6 +90,7 @@ def run_all_patients():
 ## need ["results_file_id"]
 @action("/vidjil/results_file/info", method=["POST", "GET"])
 @action.uses("results_file/info.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def info():
     sample_set_id = get_sample_set_id_from_results_file(request.query["results_file_id"])
     if (auth.can_modify_sample_set(int(sample_set_id))):
@@ -111,6 +113,7 @@ def info():
 
 @action("/vidjil/results_file/output", method=["POST", "GET"])
 @action.uses("results_file/output.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def output():
     sample_set_id = get_sample_set_id_from_results_file(request.query["results_file_id"])
     if (auth.can_view_sample_set(int(sample_set_id))):
@@ -151,6 +154,7 @@ def download():
 
 @action("/vidjil/results_file/confirm", method=["POST", "GET"])
 @action.uses("results_file/confirm.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def confirm():
     sample_set_id = request.query['sample_set_id']
 
