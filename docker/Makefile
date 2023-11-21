@@ -14,9 +14,9 @@ clean_deploy:
 	# Erase old container data and strat a fresh deploy; fix rights on volumes
 	sudo echo "Make a clean and fresh deploy of server (minimal profile)"
 	docker-compose down || true
-	sudo rm -r ./volumes/vidjil_py4web_cypress || true
+	sudo rm -r ./volumes/vidjil_py4web* || true
 	COMPOSE_PROFILES=minimal docker-compose up -d
-	sudo chmod 777 -R ./volumes/vidjil_py4web_cypress
+	sudo chmod 777 -R ./volumes/vidjil_py4web*
 	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts"           docker_uwsgi_1 python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql
 	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" docker_uwsgi_1 python3 init_test_db.py
 	sleep 30

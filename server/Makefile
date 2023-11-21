@@ -13,7 +13,7 @@ install_web2py: download_web2py
 	cp web2py/applications/vidjil/modules/defs.py.sample web2py/applications/vidjil/modules/defs.py
 
 unit: clean_unit
-	PYDAL_URI='sqlite://storage.db' pytest py4web/apps/vidjil/tests/unit --junitxml=unit_report.xml
+	PYDAL_URI='sqlite://storage.db' pytest py4web/apps/vidjil/tests/unit --junitxml=unit_report.xml --cov=py4web/apps/vidjil --cov-report xml:unit_coverage.xml
 
 functional:
 	$(MAKE) -C web2py/applications/vidjil/tests functional
@@ -40,6 +40,7 @@ kill_fuse_server:
 
 clean_unit:
 	rm -f unit_report.xml
+	rm -f unit_coverage.xml
 
 cleanall: clean_unit
 

@@ -155,7 +155,7 @@ def add_patient(patient_number: int, user_id: int) -> int:
 
 # Sequence file management
 
-def add_sequence_file_to_patient(patient_id: int) -> int:
+def add_sequence_file_to_patient(patient_id: int, user_id: int) -> int:
     """Add a fake sequence file to a patient
 
     Args:
@@ -164,11 +164,13 @@ def add_sequence_file_to_patient(patient_id: int) -> int:
     Returns:
         int: corresponding sequence file id
     """
-    sequence_file_id = db.sequence_file.insert(sampling_date="2010-10-10",
+    sequence_file_id = db.sequence_file.insert(patient_id=patient_id,
+                                               sampling_date="2010-10-10",
                                                info="testf",
                                                filename="test_file.fasta",
                                                size_file=1024,
                                                network=False,
+                                               provider=user_id,
                                                data_file="test_sequence_file")
     db.sample_set_membership.insert(
         sample_set_id=patient_id, sequence_file_id=sequence_file_id)

@@ -135,4 +135,8 @@ firefox/
 *.pem
 #report
 *.xml 
-.vscode
+server/py4web/apps/password.txt
+docker/test/gosu
+server/unit_report.xml
+server/unit_coverage.xml
+server/.coverage
