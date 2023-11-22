@@ -25,7 +25,7 @@ from ..common import db, session, T, flash, cache, authenticated, unauthenticate
 
 ACCESS_DENIED = "access denied"
 
-def monitor():
+def _monitor():
     """
     >>> monitor().has_key('worker')
     True
@@ -67,7 +67,7 @@ def index():
         except:
             pass
         
-        d = monitor()
+        d = _monitor()
         return dict(d,
                     uptime=uptime,
                     disk_use=disk_use,
@@ -164,13 +164,13 @@ def repair_missing_files():
         return json.dumps(res, separators=(',',':'))
 
     
-def backup_database(stream):
+def _backup_database(stream):
     db.export_to_csv_file(stream)
 
 def make_backup():
     if auth.is_admin():
         
-        backup_database(open(defs.DB_BACKUP_FILE, 'wb'))
+        _backup_database(open(defs.DB_BACKUP_FILE, 'wb'))
                 
         res = {"success" : "true", "message" : "DB backup -> %s" % defs.DB_BACKUP_FILE}
         log.admin(res)

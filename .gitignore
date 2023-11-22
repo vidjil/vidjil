@@ -9,6 +9,7 @@ data/Stanford_S22.rc.fasta
 *.clntab
 *.tap
 *.log
+!server/py4web/apps/vidjil/tests/unit/resources/logs/**/*.log
 dep.mk
 *~
 *.o

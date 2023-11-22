@@ -124,14 +124,14 @@ class DBInitialiser(object):
             self.db.results_file.insert(
                 sequence_file_id=sf.id,
                 config_id=config.id,
-                run_date="2010-10-10 10:10:10:10",
+                run_date="2010-10-10 10:10:10",
                 scheduler_task_id=stid,
                 data_file="test_results_file"
             )
             self.db.fused_file.insert(
                 config_id=config.id,
                 sample_set_id=membership.sample_set_id,
-                fuse_date="2010-10-10 10:10:10:10",
+                fuse_date="2010-10-10 10:10:10",
                 status="COMPLETED",
                 sequence_file_list="%d_" % membership.sequence_file_id,
                 fused_file="test_fused_file"
