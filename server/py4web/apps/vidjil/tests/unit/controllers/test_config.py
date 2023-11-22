@@ -4,13 +4,9 @@ import unittest
 from ..utils.omboddle import Omboddle
 from py4web.core import _before_request, Session, HTTP
 from ...functional.db_initialiser import DBInitialiser
-from ..utils.db_manipulation_utils import add_indexed_user, log_in, get_indexed_user_email, get_indexed_user_password, log_in_as_default_admin, add_results_file
+from ..utils.db_manipulation_utils import *
 from ....common import db, auth
 from ....controllers import config as config_controller
-
-
-TEST_CONFIG_NAME = "test_config_plapipou"
-
 
 class TestConfigController(unittest.TestCase):
 
@@ -230,12 +226,7 @@ class TestConfigController(unittest.TestCase):
     def test_edit_id(self):
         # Given : Logged as admin and added config
         log_in_as_default_admin(self.session)
-        config_id = db.config.insert(name=TEST_CONFIG_NAME,
-                                     info="plop_info",
-                                     command="plop_command",
-                                     fuse_command="plop_fuse_command",
-                                     program="plop.cpp",
-                                     classification=None)
+        config_id = add_config()
 
         # When : Calling edit with no id in params
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": config_id}):
@@ -269,12 +260,7 @@ class TestConfigController(unittest.TestCase):
         log_in_as_default_admin(self.session)
         classification_id = db.classification.insert(
             name="test_classification", info="test_classification_info")
-        config_id = db.config.insert(name=TEST_CONFIG_NAME,
-                                     info="plop_info",
-                                     command="plop_command",
-                                     fuse_command="plop_fuse_command",
-                                     program="plop.cpp",
-                                     classification=None)
+        config_id = add_config()
 
         # When : adding a new config
         with Omboddle(self.session, keep_session=True, params={"format": "json",
@@ -333,12 +319,7 @@ class TestConfigController(unittest.TestCase):
     def test_confirm_id(self):
         # Given : Logged as admin and added config
         log_in_as_default_admin(self.session)
-        config_id = db.config.insert(name=TEST_CONFIG_NAME,
-                                     info="plop_info",
-                                     command="plop_command",
-                                     fuse_command="plop_fuse_command",
-                                     program="plop.cpp",
-                                     classification=None)
+        config_id = add_config()
 
         # When : Calling confirm with no id in params
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": config_id}):
@@ -382,12 +363,7 @@ class TestConfigController(unittest.TestCase):
     def test_delete_success(self):
         # Given : Logged as admin and added config and classification
         log_in_as_default_admin(self.session)
-        config_id = db.config.insert(name=TEST_CONFIG_NAME,
-                                     info="plop_info",
-                                     command="plop_command",
-                                     fuse_command="plop_fuse_command",
-                                     program="plop.cpp",
-                                     classification=None)
+        config_id = add_config()
         assert db.config[config_id] != None
 
         # When : deleting config
@@ -403,12 +379,7 @@ class TestConfigController(unittest.TestCase):
     def test_delete_used_config(self):
         # Given : Logged as admin and added config and classification
         log_in_as_default_admin(self.session)
-        config_id = db.config.insert(name=TEST_CONFIG_NAME,
-                                     info="plop_info",
-                                     command="plop_command",
-                                     fuse_command="plop_fuse_command",
-                                     program="plop.cpp",
-                                     classification=None)
+        config_id = add_config()
         assert db.config[config_id] != None
         results_file_id = add_results_file(config_id=config_id)
         assert db.results_file[results_file_id] != None
@@ -498,12 +469,7 @@ class TestConfigController(unittest.TestCase):
     def test_change_permission_missing_group_id(self):
         # Given : Logged as admin
         log_in_as_default_admin(self.session)
-        config_id = db.config.insert(name=TEST_CONFIG_NAME,
-                                     info="plop_info",
-                                     command="plop_command",
-                                     fuse_command="plop_fuse_command",
-                                     program="plop.cpp",
-                                     classification=None)
+        config_id = add_config()
 
         # When : Calling change_permission with no id in params
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"config_id": config_id}):
@@ -520,12 +486,7 @@ class TestConfigController(unittest.TestCase):
         log_in(self.session,
                get_indexed_user_email(1),
                get_indexed_user_password(1))
-        config_id = db.config.insert(name=TEST_CONFIG_NAME,
-                                     info="plop_info",
-                                     command="plop_command",
-                                     fuse_command="plop_fuse_command",
-                                     program="plop.cpp",
-                                     classification=None)
+        config_id = add_config()
         user_group_id = db(db.auth_group.role ==
                            f"user_{user_1_id}").select()[0].id
 
@@ -541,12 +502,7 @@ class TestConfigController(unittest.TestCase):
         # Given : a user and config
         log_in_as_default_admin(self.session)
         user_1_id = add_indexed_user(self.session, 1)
-        config_id = db.config.insert(name=TEST_CONFIG_NAME,
-                                     info="plop_info",
-                                     command="plop_command",
-                                     fuse_command="plop_fuse_command",
-                                     program="plop.cpp",
-                                     classification=None)
+        config_id = add_config()
         user_group_id = db(db.auth_group.role ==
                            f"user_{user_1_id}").select()[0].id
         assert auth.get_group_access(
@@ -566,12 +522,7 @@ class TestConfigController(unittest.TestCase):
         # Given : a user and config
         log_in_as_default_admin(self.session)
         user_1_id = add_indexed_user(self.session, 1)
-        config_id = db.config.insert(name=TEST_CONFIG_NAME,
-                                     info="plop_info",
-                                     command="plop_command",
-                                     fuse_command="plop_fuse_command",
-                                     program="plop.cpp",
-                                     classification=None)
+        config_id = add_config()
         user_group_id = db(db.auth_group.role ==
                            f"user_{user_1_id}").select()[0].id
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"config_id": config_id, "group_id": user_group_id}):

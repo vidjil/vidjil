@@ -2,7 +2,7 @@ import os
 import json
 import unittest
 from ..utils.omboddle import Omboddle
-from ..utils.db_manipulation_utils import add_indexed_user, add_patient, add_sequence_file_to_patient, log_in, get_indexed_user_email, get_indexed_user_password, log_in_as_default_admin
+from ..utils.db_manipulation_utils import *
 from ...functional.db_initialiser import DBInitialiser, TEST_ADMIN_EMAIL
 from py4web import request
 from py4web.core import _before_request, Session, HTTP
@@ -36,7 +36,7 @@ class TestUserController(unittest.TestCase):
         # add second user, 1 associated patient with a file
         self.user_2_id = add_indexed_user(self.session, 2)
         patient_id = add_patient(3, self.user_2_id)
-        add_sequence_file_to_patient(patient_id, self.user_2_id)
+        add_sequence_file(patient_id, self.user_2_id)
 
         # add 3rd user, with no associated patient, and login to change last log date
         self.user_3_id = add_indexed_user(self.session, 3)

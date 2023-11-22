@@ -136,16 +136,19 @@ def add_indexed_user(session: Session, user_index: int) -> int:
 # Patient management
 
 
-def add_patient(patient_number: int, user_id: int) -> int:
+def add_patient(patient_number: int, user_id: int = -1) -> int:
     """Add a patient to a user
 
     Args:
         patient_id (int): patient number (for unique naming purpose)
-        user_id (int): user id
+        user_id (int, optional): user id. Defaults to -1.
 
     Returns:
         int: corresponding sample set id
     """
+    if user_id == -1:
+        user_id = db(db.auth_user).select().first().id
+        
     sample_set_id = db.sample_set.insert(
         sample_type=defs.SET_TYPE_PATIENT)
     patient_id_in_db = db.patient.insert(id_label="", first_name="patient", last_name=patient_number, birth="2010-10-10",
@@ -155,15 +158,23 @@ def add_patient(patient_number: int, user_id: int) -> int:
 # Sequence file management
 
 
-def add_sequence_file_to_patient(patient_id: int, user_id: int) -> int:
+def add_sequence_file(patient_id: int = -1, user_id: int = -1) -> int:
     """Add a fake sequence file to a patient
 
     Args:
-        patient_id (int): patient id
+        patient_id (int, optional): patient id. Defaults to -1.
+        user_id (int, optional): user id. Defaults to -1.
 
     Returns:
         int: corresponding sequence file id
     """
+    
+    if patient_id == -1:
+        patient_id = db(db.patient).select().first().id
+    
+    if user_id == -1:
+        user_id = db(db.auth_user).select().first().id
+    
     sequence_file_id = db.sequence_file.insert(patient_id=patient_id,
                                                sampling_date="2010-10-10",
                                                info="testf",
@@ -175,6 +186,21 @@ def add_sequence_file_to_patient(patient_id: int, user_id: int) -> int:
     db.sample_set_membership.insert(
         sample_set_id=patient_id, sequence_file_id=sequence_file_id)
     return sequence_file_id
+
+# config management
+
+
+TEST_CONFIG_NAME = "test_config_plapipou"
+
+
+def add_config():
+    config_id = db.config.insert(name=TEST_CONFIG_NAME,
+                                 info="plop_info",
+                                 command="plop_command",
+                                 fuse_command="plop_fuse_command",
+                                 program="none",
+                                 classification=None)
+    return config_id
 
 # Results file management
 

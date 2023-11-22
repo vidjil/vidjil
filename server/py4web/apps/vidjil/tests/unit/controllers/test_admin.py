@@ -2,11 +2,10 @@ import os
 import json
 from pathlib import Path
 import unittest
-
 from ..utils.omboddle import Omboddle
 from py4web.core import _before_request, Session, HTTP
 from ...functional.db_initialiser import DBInitialiser
-from ..utils.db_manipulation_utils import add_indexed_user, log_in, get_indexed_user_email, get_indexed_user_password, log_in_as_default_admin
+from ..utils.db_manipulation_utils import *
 from ....common import db, auth
 from .... import defs
 from ....controllers import admin as admin_controller

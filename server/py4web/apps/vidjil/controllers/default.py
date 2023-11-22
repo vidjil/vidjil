@@ -51,11 +51,13 @@ from ..common import db, session, cors, T, flash, cache, authenticated, unauthen
 
 #########################################################################
 ##return the default index page for vidjil (redirect to the browser)
+@vidjil_utils.jsontransformer
 def index():
     return dict(message=T('hello world'))
 
 #########################################################################
 ##return the view default/help.html
+@vidjil_utils.jsontransformer
 def help():
     return dict(message=T('help i\'m lost'))
 
@@ -74,6 +76,7 @@ def home():
 
 @action("/vidjil/default/whoami", method=["POST", "GET"])
 @action.uses(db, session)
+@vidjil_utils.jsontransformer
 def whoami():
     """
     Return some informations about logged in user (id, names, groups, admin status)
@@ -179,21 +182,20 @@ def init_from_csv():
 @action("/vidjil/default/run_request", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def run_request():
-    error = ""
     check_space(defs.DIR_RESULTS, "Runs")
 
-    ##TODO check
+    error = []
     if not "sequence_file_id" in request.query :
-        error += "id sequence file needed, "
+        error.append("id sequence file needed")
     elif not "sample_set_id" in request.query:
-        error += "sample set ID needed, "
+        error.append("sample set ID needed")
     if not "config_id" in request.query:
-        error += "id config needed, "
+        error.append("id config needed")
         id_config = None
     else:
         id_config = int(request.query["config_id"])
     if not auth.can_process_sample_set(int(request.query['sample_set_id'])):
-        error += "permission needed"
+        error.append("permission needed")
 
     id_sample_set = int(request.query["sample_set_id"])
 
@@ -206,24 +208,23 @@ def run_request():
         grep_reads = None
 
     if not auth.can_modify_sample_set(id_sample_set) :
-        error += "you do not have permission to launch process for this sample_set ("+str(id_sample_set)+"), "
+        error.append("you do not have permission to launch process for this sample_set ("+str(id_sample_set)+")")
 
     if id_config:
         if not auth.can_use_config(id_config) :
-            error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
+            error.append("you do not have permission to launch process for this config ("+str(id_config)+")")
         else:
-            extra_info += 'with config '+db.config[id_config].name
+            extra_info += 'with config ' + db.config[id_config].name
 
-    if error == "" :
-        res = schedule_run(request.query["sequence_file_id"], id_config, grep_reads)
-        log.info("run requested "+extra_info, extra={'user_id': auth.user_id, 'record_id': request.query['sequence_file_id'], 'table_name': 'sequence_file'})
-        return json.dumps(res, separators=(',',':'))
-
-    else :
-        res = {"success" : "false",
-               "message" : "default/run_request "+extra_info+" : " + error}
+    if error:
+        res = {"success" : "false", "message" :  "default/run_request "+extra_info+" : "+", ".join(error)}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
+        
+    res = schedule_run(request.query["sequence_file_id"], id_config, grep_reads)
+    log.info("run requested "+extra_info, extra={'user_id': auth.user_id, 'record_id': request.query['sequence_file_id'], 'table_name': 'sequence_file'})
+    return json.dumps(res, separators=(',',':'))
+
 
 @action("/vidjil/default/run_all_request", method=["POST", "GET"])
 @action.uses(db, auth.user)
@@ -548,8 +549,8 @@ def get_custom_data():
     if error == "" :
         try:
             data = custom_fuse(samples)
-        except IOError:
-            return error_message(str(error))
+        except IOError as io_error:
+            return error_message(str(io_error))
         
         generic_info = "Compare samples" if len(samples) > 1 else "Sample %s" % samples[0]
         data["sample_name"] = generic_info
