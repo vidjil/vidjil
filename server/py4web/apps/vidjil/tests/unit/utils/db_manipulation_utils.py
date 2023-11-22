@@ -152,8 +152,8 @@ def add_patient(patient_number: int, user_id: int) -> int:
                                          info=f"test patient {patient_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
     return patient_id_in_db
 
-
 # Sequence file management
+
 
 def add_sequence_file_to_patient(patient_id: int, user_id: int) -> int:
     """Add a fake sequence file to a patient
@@ -175,3 +175,33 @@ def add_sequence_file_to_patient(patient_id: int, user_id: int) -> int:
     db.sample_set_membership.insert(
         sample_set_id=patient_id, sequence_file_id=sequence_file_id)
     return sequence_file_id
+
+# Results file management
+
+
+def add_results_file(sequence_file_id: int = -1, config_id: int = -1, scheduler_task_id: int = -1) -> int:
+    """Add a fake result file
+
+    Args:
+        sequence_file_id (int, optional): sequence file id to use. If -1, use the first sequence file id in DB. Defaults to -1.
+        config_id (int, optional): config id to use. If -1, use the first config id in DB. Defaults to -1.
+        scheduler_task_id (int, optional): scheduler task id to use. If -1, use the first scheduler task id in DB. Defaults to -1.
+
+    Returns:
+        int: id of the added results file
+    """
+    if sequence_file_id == -1:
+        sequence_file_id = db(db.sequence_file).select().first().id
+
+    if config_id == -1:
+        config_id = db(db.config).select().first().id
+
+    if scheduler_task_id == -1:
+        scheduler_task_id = db(db.scheduler_task).select().first().id
+
+    results_file_id = db.results_file.insert(sequence_file_id=sequence_file_id,
+                                             config_id=config_id,
+                                             run_date="2010-10-10 10:10:10",
+                                             scheduler_task_id=scheduler_task_id,
+                                             data_file="test_results_file")
+    return results_file_id
