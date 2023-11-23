@@ -1,9 +1,11 @@
 """ Helper to manipulate db for tests"""
 import json
+
 from .omboddle import Omboddle
 from ....controllers import auth as auth_controller
 from ....common import db
-from .... import defs
+from ....modules.permission_enum import PermissionEnum
+from .... import defs, VidjilAuth
 from ...functional.db_initialiser import TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD
 from py4web.core import Session
 
@@ -136,24 +138,29 @@ def add_indexed_user(session: Session, user_index: int) -> int:
 # Patient management
 
 
-def add_patient(patient_number: int, user_id: int = -1) -> int:
+def add_patient(patient_number: int, user_id: int = -1, auth : VidjilAuth = None) -> tuple[int, int]:
     """Add a patient to a user
 
     Args:
         patient_id (int): patient number (for unique naming purpose)
         user_id (int, optional): user id. Defaults to -1.
+        auth (VidjilAuth, optional): auth to add rights. Defaults to None.
 
     Returns:
-        int: corresponding sample set id
+        tuple[int, int]: corresponding patient id and sample set id
     """
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
-        
+
     sample_set_id = db.sample_set.insert(
-        sample_type=defs.SET_TYPE_PATIENT)
+        creator=user_id, sample_type=defs.SET_TYPE_PATIENT)
     patient_id_in_db = db.patient.insert(id_label="", first_name="patient", last_name=patient_number, birth="2010-10-10",
                                          info=f"test patient {patient_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
-    return patient_id_in_db
+    if (auth != None):
+        user_group_id = db(db.auth_group.role == f"user_{user_id}").select()[0].id
+        auth.add_permission(user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+    
+    return patient_id_in_db, sample_set_id
 
 # Sequence file management
 
@@ -168,13 +175,13 @@ def add_sequence_file(patient_id: int = -1, user_id: int = -1) -> int:
     Returns:
         int: corresponding sequence file id
     """
-    
+
     if patient_id == -1:
         patient_id = db(db.patient).select().first().id
-    
+
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
-    
+
     sequence_file_id = db.sequence_file.insert(patient_id=patient_id,
                                                sampling_date="2010-10-10",
                                                info="testf",

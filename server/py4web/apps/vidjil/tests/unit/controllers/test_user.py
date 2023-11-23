@@ -35,7 +35,7 @@ class TestUserController(unittest.TestCase):
 
         # add second user, 1 associated patient with a file
         self.user_2_id = add_indexed_user(self.session, 2)
-        patient_id = add_patient(3, self.user_2_id)
+        patient_id = add_patient(3, self.user_2_id)[0]
         add_sequence_file(patient_id, self.user_2_id)
 
         # add 3rd user, with no associated patient, and login to change last log date

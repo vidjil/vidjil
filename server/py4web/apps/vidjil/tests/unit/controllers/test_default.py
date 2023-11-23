@@ -1,5 +1,6 @@
 import os
 import json
+import tempfile
 import unittest
 from pathlib import Path
 from ..utils.omboddle import Omboddle
@@ -221,13 +222,13 @@ class TestDefaultController(unittest.TestCase):
     #     resp = run_request()
     #     self.assertNotEqual(resp.find('process requested'), -1, "run_request doesn't return a valid message")
     #     self.assertEqual(db((db.fused_file.config_id == fake_config_id) & (db.fused_file.sample_set_id == patient.sample_set_id)).count(), 1)
-    
+
     # TODO: add other tests !
 
     ##################################
     # Tests on default_controller.run_all_request()
     ##################################
-    
+
     # TODO : Tests on default_controller.run_all_request()
 
     ##################################
@@ -273,7 +274,7 @@ class TestDefaultController(unittest.TestCase):
     #     self.assertNotEqual(resp.find('segmented":[742377'), -1, "get_data doesn't return a valid json " + resp)
     #     self.assertNotEqual(resp.find('(config_test_popipo)'), -1, "get_data doesn't return a valid json")
     #     self.assertNotEqual(resp.find('this is a fake log msg'), -1, "get_data file doesn't contain expected log data")
-    
+
     # TODO: add other tests !
 
     ##################################
@@ -334,6 +335,53 @@ class TestDefaultController(unittest.TestCase):
     #         self.assertEqual(resp['reads']['segmented'][0], resp['reads']['segmented'][2], "get_custom_data doesn't return a valid json")
     #         self.assertEqual(resp['sample_name'], 'Compare samples')
 
+    # TODO: add other tests !
+
+    ##################################
+    # Tests on default_controller.get_analysis()
+    ##################################
+
+    # TODO: add tests for default_controller.get_analysis()
+
+    ##################################
+    # Tests on default_controller.save_analysis()
+    ##################################
+
+    # TODO : add tests for default_controller.save_analysis() --> issue with files...
+    # def test_save_analysis(self):
+    #     # Given : Logged as other user, and add corresponding config, ...
+    #     user_id = add_indexed_user(self.session, 1)
+    #     log_in(self.session,
+    #            get_indexed_user_email(1),
+    #            get_indexed_user_password(1))
+    #     patient_id, sample_set_id = add_patient(1, user_id, auth)
+    #     sequence_file_id = add_sequence_file(patient_id, user_id)
+
+    #     class emptyClass(object):
+    #         pass
+
+    #     plop = emptyClass()
+    #     analysis = tempfile.NamedTemporaryFile()
+    #     analysis.write(
+    #         b'{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}')
+    #     setattr(plop, 'file', open(analysis.name, 'rb'))
+    #     setattr(plop, 'filename', 'plopapou')
+
+    #     # When : Calling run_request
+    #     with Omboddle(self.session, keep_session=True,
+    #                   params={"format": "json",
+    #                           "fileToUpload": {"file": open(analysis.name, 'rb'), "filename": "plopapou"}},
+    #                   query={"patient": patient_id,
+    #                          "info": "fake info",
+    #                          "samples_id": str(sequence_file_id),
+    #                          "samples_info": "fake sample info",
+    #                          "sample_set_id": sample_set_id}):
+    #         json_result = default_controller.save_analysis()
+
+    #     # Then : Check result
+    #     result = json.loads(json_result)
+    #     print(result)
+
     # def testSaveAnalysis(self):
     #     class emptyClass( object ):
     #         pass
@@ -357,14 +405,16 @@ class TestDefaultController(unittest.TestCase):
     #     self.assertEqual(len(resp), 1, "should have one analysis for that patient %d"%len(resp))
     #     self.assertEqual(resp[0].sample_set_id, fake_sample_set_id, "get_analysis doesn't have the correct sample_set")
 
-    # def _get_fake_analysis_file(self):
-    #     file = tempfile.TemporaryFile()
-    #     file.write('{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}')
-    #     file.seek(0)
-    #     return file
+    # TODO: add other tests for rights, user, ...
 
-    # def testGetCleanAnalysis(self):
-    #     analysis = get_clean_analysis(self._get_fake_analysis_file())
-    #     self.assertEqual(analysis['clones']['id'], 'AATA', 'Bad clone id')
-    #     self.assertEqual(analysis['tags'], {}, 'Bad tags entry in analysis')
-    #     self.assertEqual(analysis['vidjil_json_version'], '2014.09', 'Bad vidjil_json_version string')
+    ##################################
+    # Tests on default_controller.impersonate()
+    ##################################
+
+    # TODO: add tests for default_controller.impersonate()
+
+    ##################################
+    # Tests on default_controller.stop_impersonate()
+    ##################################
+
+    # TODO: add tests for default_controller.stop_impersonate()
