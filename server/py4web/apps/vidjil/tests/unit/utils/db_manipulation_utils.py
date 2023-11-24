@@ -138,13 +138,13 @@ def add_indexed_user(session: Session, user_index: int) -> int:
 # Patient management
 
 
-def add_patient(patient_number: int, user_id: int = -1, auth : VidjilAuth = None) -> tuple[int, int]:
+def add_patient(patient_number: int, user_id: int = -1, auth = None):
     """Add a patient to a user
 
     Args:
         patient_id (int): patient number (for unique naming purpose)
-        user_id (int, optional): user id. Defaults to -1.
-        auth (VidjilAuth, optional): auth to add rights. Defaults to None.
+        user_id (int, optional): user id - if -1, takes the first user. Defaults to -1.
+        auth (VidjilAuth, optional): auth to add rights, if None, do not set rights. Defaults to None.
 
     Returns:
         tuple[int, int]: corresponding patient id and sample set id

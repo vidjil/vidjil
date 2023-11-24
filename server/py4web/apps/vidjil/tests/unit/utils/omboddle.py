@@ -1,15 +1,11 @@
 import io
 import json as lib_json
+from urllib.parse import urlparse, urlencode
 from base64 import b64encode
+
 from py4web import request
 from py4web.core import _before_request
 from ....common import auth
-
-try:
-    from urlparse import urlparse
-    from urllib import urlencode
-except ImportError:
-    from urllib.parse import urlparse, urlencode
 
 
 class Omboddle(object):

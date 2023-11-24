@@ -7,7 +7,7 @@ from ..utils.omboddle import Omboddle
 from py4web import URL
 from py4web.core import _before_request, Session, HTTP
 from ...functional.db_initialiser import DBInitialiser
-from ..utils.db_manipulation_utils import *
+from ..utils import db_manipulation_utils
 from ....common import db, auth
 from ....controllers import default as default_controller
 
@@ -75,7 +75,7 @@ class TestDefaultController(unittest.TestCase):
 
     def test_home_admin(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling home
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -88,10 +88,11 @@ class TestDefaultController(unittest.TestCase):
 
     def test_home_user(self):
         # Given : Logged as other user
-        add_indexed_user(self.session, 1)
-        log_in(self.session,
-               get_indexed_user_email(1),
-               get_indexed_user_password(1))
+        db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(self.session,
+                                     db_manipulation_utils.get_indexed_user_email(
+                                         1),
+                                     db_manipulation_utils.get_indexed_user_password(1))
 
         # When : Calling home
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -121,7 +122,7 @@ class TestDefaultController(unittest.TestCase):
 
     def test_whoami_admin(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling whoami
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -135,10 +136,11 @@ class TestDefaultController(unittest.TestCase):
 
     def test_whoami_user(self):
         # Given : Logged as other user
-        user_id = add_indexed_user(self.session, 1)
-        log_in(self.session,
-               get_indexed_user_email(1),
-               get_indexed_user_password(1))
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(self.session,
+                                     db_manipulation_utils.get_indexed_user_email(
+                                         1),
+                                     db_manipulation_utils.get_indexed_user_password(1))
 
         # When : Calling whoami
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -147,7 +149,8 @@ class TestDefaultController(unittest.TestCase):
         # Then : We get a result
         result = json.loads(json_result)
         assert result["id"] == user_id
-        assert result["email"] == get_indexed_user_email(1)
+        assert result["email"] == db_manipulation_utils.get_indexed_user_email(
+            1)
         assert result["admin"] == False
         assert result["groups"] is not None
 
@@ -295,7 +298,7 @@ class TestDefaultController(unittest.TestCase):
 
     def test_get_custom_data_missing_arguments(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling get_custom_data
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -308,8 +311,8 @@ class TestDefaultController(unittest.TestCase):
 
     def test_get_custom_data_one_file(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
-        results_file_id = add_results_file()
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        results_file_id = db_manipulation_utils.add_results_file()
 
         # When : Calling get_custom_data
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"custom": results_file_id}):
@@ -357,20 +360,17 @@ class TestDefaultController(unittest.TestCase):
     #     patient_id, sample_set_id = add_patient(1, user_id, auth)
     #     sequence_file_id = add_sequence_file(patient_id, user_id)
 
-    #     class emptyClass(object):
-    #         pass
-
-    #     plop = emptyClass()
     #     analysis = tempfile.NamedTemporaryFile()
     #     analysis.write(
     #         b'{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}')
-    #     setattr(plop, 'file', open(analysis.name, 'rb'))
-    #     setattr(plop, 'filename', 'plopapou')
+    #     # setattr(plop, 'file', open(analysis.name, 'rb'))
+    #     # setattr(plop, 'filename', 'plopapou')
 
     #     # When : Calling run_request
     #     with Omboddle(self.session, keep_session=True,
     #                   params={"format": "json",
-    #                           "fileToUpload": {"file": open(analysis.name, 'rb'), "filename": "plopapou"}},
+    #                           "fileToUpload": open(analysis.name, 'rb')},
+    #                   headers={"filename": "plopapou"},
     #                   query={"patient": patient_id,
     #                          "info": "fake info",
     #                          "samples_id": str(sequence_file_id),

@@ -4,9 +4,10 @@ import unittest
 from ..utils.omboddle import Omboddle
 from py4web.core import _before_request, Session, HTTP
 from ...functional.db_initialiser import DBInitialiser
-from ..utils.db_manipulation_utils import *
+from ..utils import db_manipulation_utils
 from ....common import db, auth
 from ....controllers import config as config_controller
+
 
 class TestConfigController(unittest.TestCase):
 
@@ -41,7 +42,7 @@ class TestConfigController(unittest.TestCase):
 
     def test_index_admin(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -75,7 +76,7 @@ class TestConfigController(unittest.TestCase):
 
     def test_add_admin(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling add
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -106,7 +107,7 @@ class TestConfigController(unittest.TestCase):
 
     def test_add_form_admin_incomplete(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling add_form with no parameters
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -119,11 +120,11 @@ class TestConfigController(unittest.TestCase):
 
     def test_add_form_admin_config_no_classification(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : adding a new config
         with Omboddle(self.session, keep_session=True, params={"format": "json",
-                                                               "config_name": TEST_CONFIG_NAME,
+                                                               "config_name": db_manipulation_utils.TEST_CONFIG_NAME,
                                                                "config_info": "plop_info",
                                                                "config_command": "plop_command",
                                                                "config_fuse_command": "plop_fuse_command",
@@ -134,9 +135,9 @@ class TestConfigController(unittest.TestCase):
         # Then : check config was added
         result = json.loads(json_result)
         assert result["redirect"] == "config/index"
-        assert result["message"] == f"config '{TEST_CONFIG_NAME}' added"
+        assert result["message"] == f"config '{db_manipulation_utils.TEST_CONFIG_NAME}' added"
         config = db.config[result["config_id"]]
-        assert config["name"] == TEST_CONFIG_NAME
+        assert config["name"] == db_manipulation_utils.TEST_CONFIG_NAME
         assert config["info"] == "plop_info"
         assert config["command"] == "plop_command"
         assert config["fuse_command"] == "plop_fuse_command"
@@ -145,13 +146,13 @@ class TestConfigController(unittest.TestCase):
 
     def test_add_form_admin_config_classification(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         classification_id = db.classification.insert(
             name="test_classification", info="test_classification_info")
 
         # When : adding a new config
         with Omboddle(self.session, keep_session=True, params={"format": "json",
-                                                               "config_name": TEST_CONFIG_NAME,
+                                                               "config_name": db_manipulation_utils.TEST_CONFIG_NAME,
                                                                "config_info": "plop_info",
                                                                "config_command": "plop_command",
                                                                "config_fuse_command": "plop_fuse_command",
@@ -162,9 +163,9 @@ class TestConfigController(unittest.TestCase):
         # Then : check config was added
         result = json.loads(json_result)
         assert result["redirect"] == "config/index"
-        assert result["message"] == f"config '{TEST_CONFIG_NAME}' added"
+        assert result["message"] == f"config '{db_manipulation_utils.TEST_CONFIG_NAME}' added"
         config = db.config[result["config_id"]]
-        assert config["name"] == TEST_CONFIG_NAME
+        assert config["name"] == db_manipulation_utils.TEST_CONFIG_NAME
         assert config["info"] == "plop_info"
         assert config["command"] == "plop_command"
         assert config["fuse_command"] == "plop_fuse_command"
@@ -173,13 +174,13 @@ class TestConfigController(unittest.TestCase):
 
     def test_add_form_admin_config_classification_not_existing(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         classification_id = db.classification.insert(
             name="test_classification", info="test_classification_info")
 
         # When : adding a new config
         with Omboddle(self.session, keep_session=True, params={"format": "json",
-                                                               "config_name": TEST_CONFIG_NAME,
+                                                               "config_name": db_manipulation_utils.TEST_CONFIG_NAME,
                                                                "config_info": "plop_info",
                                                                "config_command": "plop_command",
                                                                "config_fuse_command": "plop_fuse_command",
@@ -212,7 +213,7 @@ class TestConfigController(unittest.TestCase):
 
     def test_edit_no_id(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling edit with no id in params
         with self.assertRaises(KeyError) as context:
@@ -225,8 +226,8 @@ class TestConfigController(unittest.TestCase):
 
     def test_edit_id(self):
         # Given : Logged as admin and added config
-        log_in_as_default_admin(self.session)
-        config_id = add_config()
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        config_id = db_manipulation_utils.add_config()
 
         # When : Calling edit with no id in params
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": config_id}):
@@ -257,15 +258,15 @@ class TestConfigController(unittest.TestCase):
 
     def test_edit_form_success(self):
         # Given : Logged as admin and added config and classification
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         classification_id = db.classification.insert(
             name="test_classification", info="test_classification_info")
-        config_id = add_config()
+        config_id = db_manipulation_utils.add_config()
 
         # When : adding a new config
         with Omboddle(self.session, keep_session=True, params={"format": "json",
                                                                "id": config_id,
-                                                               "config_name": f"{TEST_CONFIG_NAME}_mod",
+                                                               "config_name": f"{db_manipulation_utils.TEST_CONFIG_NAME}_mod",
                                                                "config_info": "plop_info_mod",
                                                                "config_command": "plop_command_mod",
                                                                "config_fuse_command": "plop_fuse_command_mod",
@@ -276,9 +277,9 @@ class TestConfigController(unittest.TestCase):
         # Then : check config was added
         result = json.loads(json_result)
         assert result["redirect"] == "config/index"
-        assert result["message"] == f"config '{TEST_CONFIG_NAME}_mod' updated"
+        assert result["message"] == f"config '{db_manipulation_utils.TEST_CONFIG_NAME}_mod' updated"
         config = db.config[config_id]
-        assert config["name"] == f"{TEST_CONFIG_NAME}_mod"
+        assert config["name"] == f"{db_manipulation_utils.TEST_CONFIG_NAME}_mod"
         assert config["info"] == "plop_info_mod"
         assert config["command"] == "plop_command_mod"
         assert config["fuse_command"] == "plop_fuse_command_mod"
@@ -305,7 +306,7 @@ class TestConfigController(unittest.TestCase):
 
     def test_confirm_no_id(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling confirm with no id in params
         with self.assertRaises(KeyError) as context:
@@ -318,8 +319,8 @@ class TestConfigController(unittest.TestCase):
 
     def test_confirm_id(self):
         # Given : Logged as admin and added config
-        log_in_as_default_admin(self.session)
-        config_id = add_config()
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        config_id = db_manipulation_utils.add_config()
 
         # When : Calling confirm with no id in params
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": config_id}):
@@ -349,7 +350,7 @@ class TestConfigController(unittest.TestCase):
 
     def test_delete_no_id(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling delete with no id in params
         with self.assertRaises(KeyError) as context:
@@ -362,8 +363,8 @@ class TestConfigController(unittest.TestCase):
 
     def test_delete_success(self):
         # Given : Logged as admin and added config and classification
-        log_in_as_default_admin(self.session)
-        config_id = add_config()
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        config_id = db_manipulation_utils.add_config()
         assert db.config[config_id] != None
 
         # When : deleting config
@@ -378,10 +379,11 @@ class TestConfigController(unittest.TestCase):
 
     def test_delete_used_config(self):
         # Given : Logged as admin and added config and classification
-        log_in_as_default_admin(self.session)
-        config_id = add_config()
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        config_id = db_manipulation_utils.add_config()
         assert db.config[config_id] != None
-        results_file_id = add_results_file(config_id=config_id)
+        results_file_id = db_manipulation_utils.add_results_file(
+            config_id=config_id)
         assert db.results_file[results_file_id] != None
 
         # When : deleting config
@@ -413,7 +415,7 @@ class TestConfigController(unittest.TestCase):
 
     def test_permission_no_id(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling permission with no id in params
         with self.assertRaises(KeyError) as context:
@@ -426,7 +428,7 @@ class TestConfigController(unittest.TestCase):
 
     def test_permission_id_first_config(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         first_config_id = db(db.config).select().first().id
 
         # When : Calling permission with no id in params
@@ -455,7 +457,7 @@ class TestConfigController(unittest.TestCase):
 
     def test_change_permission_no_config_id(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling change_permission with no id in params
         with self.assertRaises(KeyError) as context:
@@ -468,8 +470,8 @@ class TestConfigController(unittest.TestCase):
 
     def test_change_permission_missing_group_id(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
-        config_id = add_config()
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        config_id = db_manipulation_utils.add_config()
 
         # When : Calling change_permission with no id in params
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"config_id": config_id}):
@@ -482,11 +484,12 @@ class TestConfigController(unittest.TestCase):
 
     def test_change_permission_access_denied(self):
         # Given : a user and config
-        user_1_id = add_indexed_user(self.session, 1)
-        log_in(self.session,
-               get_indexed_user_email(1),
-               get_indexed_user_password(1))
-        config_id = add_config()
+        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(self.session,
+                                     db_manipulation_utils.get_indexed_user_email(
+                                         1),
+                                     db_manipulation_utils.get_indexed_user_password(1))
+        config_id = db_manipulation_utils.add_config()
         user_group_id = db(db.auth_group.role ==
                            f"user_{user_1_id}").select()[0].id
 
@@ -500,9 +503,9 @@ class TestConfigController(unittest.TestCase):
 
     def test_change_permission_granted(self):
         # Given : a user and config
-        log_in_as_default_admin(self.session)
-        user_1_id = add_indexed_user(self.session, 1)
-        config_id = add_config()
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        config_id = db_manipulation_utils.add_config()
         user_group_id = db(db.auth_group.role ==
                            f"user_{user_1_id}").select()[0].id
         assert auth.get_group_access(
@@ -520,9 +523,9 @@ class TestConfigController(unittest.TestCase):
 
     def test_change_permission_deleted(self):
         # Given : a user and config
-        log_in_as_default_admin(self.session)
-        user_1_id = add_indexed_user(self.session, 1)
-        config_id = add_config()
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        config_id = db_manipulation_utils.add_config()
         user_group_id = db(db.auth_group.role ==
                            f"user_{user_1_id}").select()[0].id
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"config_id": config_id, "group_id": user_group_id}):

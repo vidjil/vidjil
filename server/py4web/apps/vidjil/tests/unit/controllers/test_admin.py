@@ -5,7 +5,7 @@ import unittest
 from ..utils.omboddle import Omboddle
 from py4web.core import _before_request, Session, HTTP
 from ...functional.db_initialiser import DBInitialiser
-from ..utils.db_manipulation_utils import *
+from ..utils import db_manipulation_utils
 from ....common import db, auth
 from .... import defs
 from ....controllers import admin as admin_controller
@@ -27,7 +27,7 @@ class TestAdminController(unittest.TestCase):
         initialiser.run()
 
         # add a user
-        self.user_1_id = add_indexed_user(self.session, 1)
+        self.user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
 
     ##################################
     # Tests on admin_controller.index()
@@ -47,9 +47,9 @@ class TestAdminController(unittest.TestCase):
 
     def test_index_logged_as_other(self):
         # Given : Logged as user 1
-        log_in(self.session,
-               get_indexed_user_email(1),
-               get_indexed_user_password(1))
+        db_manipulation_utils.log_in(self.session,
+               db_manipulation_utils.get_indexed_user_email(1),
+               db_manipulation_utils.get_indexed_user_password(1))
 
         # When : Calling index
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -61,7 +61,7 @@ class TestAdminController(unittest.TestCase):
 
     def test_index(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -92,7 +92,7 @@ class TestAdminController(unittest.TestCase):
 
     def test_showlog_vidjil(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         saved_dir_log = defs.DIR_LOG
         defs.DIR_LOG = self._get_resources_log_path()
 
@@ -114,7 +114,7 @@ class TestAdminController(unittest.TestCase):
 
     def test_showlog_vidjil_debug(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         saved_dir_log = defs.DIR_LOG
         defs.DIR_LOG = self._get_resources_log_path()
 
@@ -136,7 +136,7 @@ class TestAdminController(unittest.TestCase):
 
     def test_showlog_raw_access_log(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         saved_dir_log = defs.DIR_LOG
         defs.DIR_LOG = self._get_resources_log_path()
 
@@ -158,7 +158,7 @@ class TestAdminController(unittest.TestCase):
 
     def test_showlog_raw_error_log(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         saved_dir_log = defs.DIR_LOG
         defs.DIR_LOG = self._get_resources_log_path()
 

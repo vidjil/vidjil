@@ -2,7 +2,7 @@ import os
 import json
 import unittest
 from ..utils.omboddle import Omboddle
-from ..utils.db_manipulation_utils import *
+from ..utils import db_manipulation_utils
 from ...functional.db_initialiser import DBInitialiser, TEST_ADMIN_EMAIL
 from py4web import request
 from py4web.core import _before_request, Session, HTTP
@@ -29,20 +29,24 @@ class TestUserController(unittest.TestCase):
         initialiser.run()
 
         # add first user and 2 associated patients with no files
-        self.user_1_id = add_indexed_user(self.session, 1)
-        add_patient(1, self.user_1_id)
-        add_patient(2, self.user_1_id)
+        self.user_1_id = db_manipulation_utils.add_indexed_user(
+            self.session, 1)
+        db_manipulation_utils.add_patient(1, self.user_1_id)
+        db_manipulation_utils.add_patient(2, self.user_1_id)
 
         # add second user, 1 associated patient with a file
-        self.user_2_id = add_indexed_user(self.session, 2)
-        patient_id = add_patient(3, self.user_2_id)[0]
-        add_sequence_file(patient_id, self.user_2_id)
+        self.user_2_id = db_manipulation_utils.add_indexed_user(
+            self.session, 2)
+        patient_id = db_manipulation_utils.add_patient(3, self.user_2_id)[0]
+        db_manipulation_utils.add_sequence_file(patient_id, self.user_2_id)
 
         # add 3rd user, with no associated patient, and login to change last log date
-        self.user_3_id = add_indexed_user(self.session, 3)
-        log_in(self.session,
-               get_indexed_user_email(3),
-               get_indexed_user_password(3))
+        self.user_3_id = db_manipulation_utils.add_indexed_user(
+            self.session, 3)
+        db_manipulation_utils.log_in(self.session,
+                                     db_manipulation_utils.get_indexed_user_email(
+                                         3),
+                                     db_manipulation_utils.get_indexed_user_password(3))
 
     ##################################
     # Tests on user_controller.index()
@@ -62,9 +66,10 @@ class TestUserController(unittest.TestCase):
 
     def test_index_logged_as_other(self):
         # Given : Logged as user 3
-        log_in(self.session,
-               get_indexed_user_email(3),
-               get_indexed_user_password(3))
+        db_manipulation_utils.log_in(self.session,
+                                     db_manipulation_utils.get_indexed_user_email(
+                                         3),
+                                     db_manipulation_utils.get_indexed_user_password(3))
 
         # When : Calling index on users
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -80,7 +85,7 @@ class TestUserController(unittest.TestCase):
 
     def test_index_default(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index on users
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -93,13 +98,16 @@ class TestUserController(unittest.TestCase):
         assert query is not None
         assert len(query) == 4
         assert query[0]["email"] == TEST_ADMIN_EMAIL
-        assert query[1]["email"] == get_indexed_user_email(1)
-        assert query[2]["email"] == get_indexed_user_email(2)
-        assert query[3]["email"] == get_indexed_user_email(3)
+        assert query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1)
+        assert query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
+            2)
+        assert query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+            3)
 
     def test_index_sort_files(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index on users, sorted by files
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sort": "files"}):
@@ -112,17 +120,18 @@ class TestUserController(unittest.TestCase):
         assert query is not None
         assert len(query) == 4
         # the first 3 are equals
-        assert query[0]["email"] == TEST_ADMIN_EMAIL or query[0]["email"] == get_indexed_user_email(
-            1) or query[0]["email"] == get_indexed_user_email(3)
-        assert query[1]["email"] == TEST_ADMIN_EMAIL or query[1]["email"] == get_indexed_user_email(
-            1) or query[1]["email"] == get_indexed_user_email(3)
-        assert query[2]["email"] == TEST_ADMIN_EMAIL or query[2]["email"] == get_indexed_user_email(
-            1) or query[2]["email"] == get_indexed_user_email(3)
-        assert query[3]["email"] == get_indexed_user_email(2)
+        assert query[0]["email"] == TEST_ADMIN_EMAIL or query[0]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[0]["email"] == db_manipulation_utils.get_indexed_user_email(3)
+        assert query[1]["email"] == TEST_ADMIN_EMAIL or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(3)
+        assert query[2]["email"] == TEST_ADMIN_EMAIL or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(3)
+        assert query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+            2)
 
     def test_index_sort_files_reverse(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index on users, sorted by files, reversed
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sort": "files", "reverse": "true"}):
@@ -134,17 +143,18 @@ class TestUserController(unittest.TestCase):
         query = result["query"]
         assert query is not None
         assert len(query) == 4
-        assert query[0]["email"] == get_indexed_user_email(2)
-        assert query[1]["email"] == TEST_ADMIN_EMAIL or query[1]["email"] == get_indexed_user_email(
-            1) or query[1]["email"] == get_indexed_user_email(3)
-        assert query[2]["email"] == TEST_ADMIN_EMAIL or query[2]["email"] == get_indexed_user_email(
-            1) or query[2]["email"] == get_indexed_user_email(3)
-        assert query[3]["email"] == TEST_ADMIN_EMAIL or query[3]["email"] == get_indexed_user_email(
-            1) or query[3]["email"] == get_indexed_user_email(3)
+        assert query[0]["email"] == db_manipulation_utils.get_indexed_user_email(
+            2)
+        assert query[1]["email"] == TEST_ADMIN_EMAIL or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(3)
+        assert query[2]["email"] == TEST_ADMIN_EMAIL or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(3)
+        assert query[3]["email"] == TEST_ADMIN_EMAIL or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(3)
 
     def test_index_sort_patients(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index on users, sorted by patients
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sort": "patients"}):
@@ -156,14 +166,17 @@ class TestUserController(unittest.TestCase):
         query = result["query"]
         assert query is not None
         assert len(query) == 4
-        assert query[0]["email"] == get_indexed_user_email(3)
-        assert query[1]["email"] == get_indexed_user_email(2)
-        assert query[2]["email"] == get_indexed_user_email(1)
+        assert query[0]["email"] == db_manipulation_utils.get_indexed_user_email(
+            3)
+        assert query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
+            2)
+        assert query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1)
         assert query[3]["email"] == TEST_ADMIN_EMAIL
 
     def test_index_sort_patients_reverse(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index on users, sorted by patients, reversed
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sort": "patients", "reverse": "true"}):
@@ -176,13 +189,16 @@ class TestUserController(unittest.TestCase):
         assert query is not None
         assert len(query) == 4
         assert query[0]["email"] == TEST_ADMIN_EMAIL
-        assert query[1]["email"] == get_indexed_user_email(1)
-        assert query[2]["email"] == get_indexed_user_email(2)
-        assert query[3]["email"] == get_indexed_user_email(3)
+        assert query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1)
+        assert query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
+            2)
+        assert query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+            3)
 
     def test_index_sort_login(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index on users
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sort": "login"}):
@@ -195,18 +211,18 @@ class TestUserController(unittest.TestCase):
         assert query is not None
         assert len(query) == 4
         # as the test in done in seconds, not sure what will get first
-        assert query[0]["email"] == get_indexed_user_email(
-            1) or query[0]["email"] == get_indexed_user_email(2)
-        assert query[1]["email"] == get_indexed_user_email(
-            1) or query[1]["email"] == get_indexed_user_email(2)
-        assert query[2]["email"] == TEST_ADMIN_EMAIL or query[2]["email"] == get_indexed_user_email(
+        assert query[0]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[0]["email"] == db_manipulation_utils.get_indexed_user_email(2)
+        assert query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(2)
+        assert query[2]["email"] == TEST_ADMIN_EMAIL or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
             3)
-        assert query[3]["email"] == TEST_ADMIN_EMAIL or query[3]["email"] == get_indexed_user_email(
+        assert query[3]["email"] == TEST_ADMIN_EMAIL or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
             3)
 
     def test_index_sort_login_reverse(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index on users, sorted by login, reversed
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sort": "login", "reverse": "true"}):
@@ -219,14 +235,14 @@ class TestUserController(unittest.TestCase):
         assert query is not None
         assert len(query) == 4
         # as the test in done in seconds, not sure what will get first
-        assert query[0]["email"] == TEST_ADMIN_EMAIL or query[0]["email"] == get_indexed_user_email(
+        assert query[0]["email"] == TEST_ADMIN_EMAIL or query[0]["email"] == db_manipulation_utils.get_indexed_user_email(
             3)
-        assert query[1]["email"] == TEST_ADMIN_EMAIL or query[1]["email"] == get_indexed_user_email(
+        assert query[1]["email"] == TEST_ADMIN_EMAIL or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
             3)
-        assert query[2]["email"] == get_indexed_user_email(
-            1) or query[2]["email"] == get_indexed_user_email(2)
-        assert query[3]["email"] == get_indexed_user_email(
-            1) or query[3]["email"] == get_indexed_user_email(2)
+        assert query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(2)
+        assert query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(2)
 
     ##################################
     # Tests on user_controller.edit()
@@ -247,9 +263,10 @@ class TestUserController(unittest.TestCase):
 
     def test_edit_logged_as_other(self):
         # Given : Logged as user 3
-        log_in(self.session,
-               get_indexed_user_email(3),
-               get_indexed_user_password(3))
+        db_manipulation_utils.log_in(self.session,
+                                     db_manipulation_utils.get_indexed_user_email(
+                                         3),
+                                     db_manipulation_utils.get_indexed_user_password(3))
 
         # When : Trying and edit user 1
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": self.user_1_id}):
@@ -263,9 +280,10 @@ class TestUserController(unittest.TestCase):
 
     def test_edit_myself(self):
         # Given : Logged as user 3
-        log_in(self.session,
-               get_indexed_user_email(3),
-               get_indexed_user_password(3))
+        db_manipulation_utils.log_in(self.session,
+                                     db_manipulation_utils.get_indexed_user_email(
+                                         3),
+                                     db_manipulation_utils.get_indexed_user_password(3))
 
         # When : Trying and edit user 3
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": self.user_3_id}):
@@ -276,11 +294,12 @@ class TestUserController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "Edit user"
         assert result["user"] is not None
-        assert result["user"]["email"] == get_indexed_user_email(3)
+        assert result["user"]["email"] == db_manipulation_utils.get_indexed_user_email(
+            3)
 
     def test_edit_as_admin(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Trying and edit user 3
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": self.user_3_id}):
@@ -291,7 +310,8 @@ class TestUserController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "Edit user"
         assert result["user"] is not None
-        assert result["user"]["email"] == get_indexed_user_email(3)
+        assert result["user"]["email"] == db_manipulation_utils.get_indexed_user_email(
+            3)
 
     ##################################
     # Tests on user_controller.edit_form()
@@ -312,9 +332,10 @@ class TestUserController(unittest.TestCase):
 
     def test_edit_form_logged_as_other(self):
         # Given : Logged as user 3
-        log_in(self.session,
-               get_indexed_user_email(3),
-               get_indexed_user_password(3))
+        db_manipulation_utils.log_in(self.session,
+                                     db_manipulation_utils.get_indexed_user_email(
+                                         3),
+                                     db_manipulation_utils.get_indexed_user_password(3))
 
         # When : Trying and edit user 1
         with Omboddle(self.session, keep_session=True, params={"format": "json", "id": self.user_1_id}):
@@ -328,9 +349,10 @@ class TestUserController(unittest.TestCase):
 
     def test_edit_form_myself_OK(self):
         # Given : Logged as user 3
-        log_in(self.session,
-               get_indexed_user_email(3),
-               get_indexed_user_password(3))
+        db_manipulation_utils.log_in(self.session,
+                                     db_manipulation_utils.get_indexed_user_email(
+                                         3),
+                                     db_manipulation_utils.get_indexed_user_password(3))
 
         # When : Trying and edit user 3
         with Omboddle(self.session, keep_session=True, params={"format": "json",
@@ -350,13 +372,13 @@ class TestUserController(unittest.TestCase):
         assert user_3["first_name"] == "modified_first_name"
         assert user_3["last_name"] == "modified_last_name"
         assert user_3["email"] == "modified@email.com"
-        log_in(self.session,
-               "modified@email.com",
-               "ComplicatedModifiedPassword")
+        db_manipulation_utils.log_in(self.session,
+                                     "modified@email.com",
+                                     "ComplicatedModifiedPassword")
 
     def test_edit_form_as_admin_OK(self):
         # Given : Logged as admin
-        log_in_as_default_admin(self.session)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Trying and edit user 3
         with Omboddle(self.session, keep_session=True, params={"format": "json",
@@ -376,9 +398,9 @@ class TestUserController(unittest.TestCase):
         assert user_3["first_name"] == "modified_first_name"
         assert user_3["last_name"] == "modified_last_name"
         assert user_3["email"] == "modified@email.com"
-        log_in(self.session,
-               "modified@email.com",
-               "ComplicatedModifiedPassword")
+        db_manipulation_utils.log_in(self.session,
+                                     "modified@email.com",
+                                     "ComplicatedModifiedPassword")
 
     ##################################
     # Tests on user_controller.info()
