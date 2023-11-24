@@ -138,7 +138,7 @@ def add_indexed_user(session: Session, user_index: int) -> int:
 # Patient management
 
 
-def add_patient(patient_number: int, user_id: int = -1, auth = None):
+def add_patient(patient_number: int, user_id: int = -1, auth=None):
     """Add a patient to a user
 
     Args:
@@ -154,13 +154,17 @@ def add_patient(patient_number: int, user_id: int = -1, auth = None):
 
     sample_set_id = db.sample_set.insert(
         creator=user_id, sample_type=defs.SET_TYPE_PATIENT)
-    patient_id_in_db = db.patient.insert(id_label="", first_name="patient", last_name=patient_number, birth="2010-10-10",
-                                         info=f"test patient {patient_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
+    patient_id = db.patient.insert(id_label="", first_name="patient", last_name=patient_number, birth="2010-10-10",
+                                   info=f"test patient {patient_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
     if (auth != None):
-        user_group_id = db(db.auth_group.role == f"user_{user_id}").select()[0].id
-        auth.add_permission(user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
-    
-    return patient_id_in_db, sample_set_id
+        user_group_id = db(db.auth_group.role ==
+                           f"user_{user_id}").select()[0].id
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, 'patient', patient_id)
+
+    return patient_id, sample_set_id
 
 # Sequence file management
 
@@ -178,6 +182,7 @@ def add_sequence_file(patient_id: int = -1, user_id: int = -1) -> int:
 
     if patient_id == -1:
         patient_id = db(db.patient).select().first().id
+    sample_set_id = db.patient[patient_id].sample_set_id
 
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
@@ -191,7 +196,8 @@ def add_sequence_file(patient_id: int = -1, user_id: int = -1) -> int:
                                                provider=user_id,
                                                data_file="test_sequence_file")
     db.sample_set_membership.insert(
-        sample_set_id=patient_id, sequence_file_id=sequence_file_id)
+        sample_set_id=sample_set_id, sequence_file_id=sequence_file_id)
+    
     return sequence_file_id
 
 # config management
@@ -238,3 +244,17 @@ def add_results_file(sequence_file_id: int = -1, config_id: int = -1, scheduler_
                                              scheduler_task_id=scheduler_task_id,
                                              data_file="test_results_file")
     return results_file_id
+
+# pre-process management
+
+
+def add_pre_process() -> int:
+    """Add a fake pre-process
+
+    Returns:
+        int: corresponding pre_process_id
+    """
+    pre_process_id = db.pre_process.insert(name="foobar",
+                                           command="cat &file1& &file2& > &result&",
+                                           info="barfoo")
+    return pre_process_id

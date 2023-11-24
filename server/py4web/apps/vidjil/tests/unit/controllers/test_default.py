@@ -207,8 +207,6 @@ class TestDefaultController(unittest.TestCase):
     #         # Then : Check result
     #         result = json.loads(json_result)
     #         print(result)
-    #     except:
-    #         raise
     #     finally:
     #         defs.DIR_RESULTS = saved_dir_results
 

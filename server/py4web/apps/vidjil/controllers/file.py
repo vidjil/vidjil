@@ -176,7 +176,7 @@ def form_response(data):
     upload_group_ids = list(set([int(gid) for gid in get_upload_group_ids(auth)]))
     group_ids = get_involved_groups()
     pre_process_list = get_pre_process_list()
-    return dict(message=T("an error occured"),
+    return dict(message=T("Form response"),
            pre_process_list = pre_process_list,
            files = data['file'],
            sets = data['sets'],
@@ -275,7 +275,8 @@ def form():
 @action("/vidjil/file/submit", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def submit():
-    data = json.loads(request.params['data'], encoding='utf-8')
+    data = json.loads(request.params['data'])
+    # data = json.loads(request.params['data'], encoding='utf-8')
     error = False
 
     pre_process = None
