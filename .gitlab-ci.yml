@@ -25,6 +25,7 @@ before_script:
 stages:
   - test_tools
   - test_quality
+  - build_test_server_docker
   - test_unit
   - deploy_review
   - test_germlines
@@ -104,7 +105,7 @@ include:
 
 ### Server part should not containt client stage
 .need_for_moderate_server:
-  needs: [test_tools, test_server_unit]
+  needs: [test_tools, test_server_unit, build_test_server_docker]
 .need_for_late_server:
   needs: [server1-ff-supported, tuto-s1-ff-supported]
 .need_for_staged_server:
@@ -267,13 +268,16 @@ test_server_unit:
 .setup_docker_server:
     # Build specific version of docker images
     - echo "CI_COMMIT_REF_NAME - $CI_COMMIT_REF_NAME"
-    ### Build specific version of docker-compose files
-    - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/server:test" docker/vidjil-server
-    - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=TEST -t "vidjil/client:test" docker/vidjil-client
+    ### Use released py4web server image as base
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT
+    - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
+    - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test
+    - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test
     - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
     - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml 
     - echo -e "volumes:\n    databases:" >> docker/docker-compose.yml
-    - sed -i 's/\:latest/\:test/g' ./docker/docker-compose.yml
+    - sed -i 's/latest/test/g' ./docker/docker-compose.yml
 
     # Replace path for some volumes
     # Use http version of config
@@ -334,6 +338,9 @@ test_server_unit:
     - mkdir -p logs/after; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/after/${service}.log 2>&1; done
     - cd docker && docker-compose down -v
     - docker rmi "vidjil/server:test" "vidjil/client:test"
+  variables:
+    IMAGE_NAME_CLIENT: dev-client/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    IMAGE_NAME_SERVER: dev-server/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
@@ -380,7 +387,12 @@ deploy_review_server:
     - cp docker/vidjil-client/conf/*.cgi browser/cgi
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
-    - sed -i 's/vidjil\/server\:latest/registry.gitlab.inria.fr\/vidjil\/vidjil\/server\:py4web/g' docker-compose.yml
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT
+    - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
+    - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test
+    - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test
+    - sed -i 's/latest/test/g' ./docker/docker-compose.yml
     - sed -i "s/virtual_host/${CI_COMMIT_REF_SLUG}/" docker-compose-ci-review.yml
     - mv docker-compose-ci.yml docker-compose.override.yml
     - cp .env-default .env
@@ -416,6 +428,11 @@ deploy_review_server:
     - /^hotfix-.*s.*\/.*$/
   extends:
     - .need_for_independant_test
+  variables:
+    IMAGE_NAME_CLIENT: dev-client/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    IMAGE_NAME_SERVER: dev-server/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+  needs:
+    - [build_test_server_docker]
 
 deploy_client:
   stage: deploy_prod
@@ -448,6 +465,48 @@ deploy_client:
   needs:
     - deploy_docker
   
+    
+build_test_server_docker:
+  stage: build_test_server_docker
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script: []
+  script:
+    - echo $CI_REGISTRY_IMAGE:$IMAGE_NAME
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+    # build and push the image to be used in subsequent stages
+    - 'docker build 
+        --no-cache
+        --build-arg git_branch=$CI_COMMIT_REF_NAME 
+        --build-arg build_env=PRODUCTION 
+        -t ${CI_REGISTRY_IMAGE}/$IMAGE_NAME
+        docker/vidjil-$TYPE'
+
+    # Push image as commit and branch name to allow to use cache if another commit come to this branch
+    - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
+  parallel:
+    matrix:
+      - TYPE: [client, server]
+  variables:
+    IMAGE_NAME: dev-$TYPE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+  only:
+    - /^prod-server/
+    - /^prod-client/
+    - /^feature-.*s.*\/.*$/
+    - /^feature-.*c.*\/.*$/
+    - /^feature-.*t.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^hotfix-.*c.*\/.*$/
+    - /^hotfix-.*t.*\/.*$/
+    - dev
+  tags:
+    - ci.inria.fr
+    - small
+  needs:
+    - []
+
     
 deploy_docker:
   stage: publish_release

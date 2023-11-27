@@ -48,8 +48,7 @@
     - /^hotfix-.*s.*\/.*$/
     - /^prod-server/
     - dev
-  needs:
-    - []
+
 
 
 ## Cypress with server
@@ -60,7 +59,7 @@ server1-ff-supported:
   variables:
     BROWSER: firefox_supported/firefox
   needs:
-    - []
+    - [build_test_server_docker]
 
 ## Cypress with server
 s2:
@@ -98,7 +97,7 @@ tuto-s1-ff-supported:
   variables:
     BROWSER: firefox_supported/firefox
   needs:
-    - []
+    - [build_test_server_docker]
 
 
 ## Cypress with server
