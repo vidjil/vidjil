@@ -4,10 +4,10 @@ import tempfile
 import unittest
 from pathlib import Path
 from ..utils.omboddle import Omboddle
-from py4web import URL
+from py4web import URL, request
 from py4web.core import _before_request, Session, HTTP
 from ...functional.db_initialiser import DBInitialiser
-from ..utils import db_manipulation_utils
+from ..utils import db_manipulation_utils, test_utils
 from ....common import db, auth
 from ....controllers import default as default_controller
 
@@ -348,60 +348,51 @@ class TestDefaultController(unittest.TestCase):
     # Tests on default_controller.save_analysis()
     ##################################
 
-    # TODO : add tests for default_controller.save_analysis() --> issue with files...
-    # def test_save_analysis(self):
-    #     # Given : Logged as other user, and add corresponding config, ...
-    #     user_id = add_indexed_user(self.session, 1)
-    #     log_in(self.session,
-    #            get_indexed_user_email(1),
-    #            get_indexed_user_password(1))
-    #     patient_id, sample_set_id = add_patient(1, user_id, auth)
-    #     sequence_file_id = add_sequence_file(patient_id, user_id)
+    def test_save_analysis(self):
+        # Given : Logged as other user, and add corresponding config, ...
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id, auth)
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            patient_id, user_id)
+        json_content_to_upload = '{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}'
+        with tempfile.NamedTemporaryFile(mode='w', delete=False) as analysis:
+            analysis.write(json_content_to_upload)
+        with open(analysis.name, 'rb') as file:
+            upload_helper = test_utils.UploadHelper(file, "plopapou")
+            save_upload_folder = db.analysis_file.analysis_file.uploadfolder
+            try:
+                db.analysis_file.analysis_file.uploadfolder = test_utils.get_results_path()
 
-    #     analysis = tempfile.NamedTemporaryFile()
-    #     analysis.write(
-    #         b'{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}')
-    #     # setattr(plop, 'file', open(analysis.name, 'rb'))
-    #     # setattr(plop, 'filename', 'plopapou')
+                # When : Calling run_request
+                with Omboddle(self.session, keep_session=True,
+                              params={"format": "json"},
+                              query={"patient": patient_id,
+                                     "info": "fake info",
+                                     "samples_id": str(sequence_file_id),
+                                     "samples_info": "fake sample info",
+                                     "sample_set_id": sample_set_id}):
+                    request.files["fileToUpload"] = upload_helper
+                    json_result = default_controller.save_analysis()
 
-    #     # When : Calling run_request
-    #     with Omboddle(self.session, keep_session=True,
-    #                   params={"format": "json",
-    #                           "fileToUpload": open(analysis.name, 'rb')},
-    #                   headers={"filename": "plopapou"},
-    #                   query={"patient": patient_id,
-    #                          "info": "fake info",
-    #                          "samples_id": str(sequence_file_id),
-    #                          "samples_info": "fake sample info",
-    #                          "sample_set_id": sample_set_id}):
-    #         json_result = default_controller.save_analysis()
-
-    #     # Then : Check result
-    #     result = json.loads(json_result)
-    #     print(result)
-
-    # def testSaveAnalysis(self):
-    #     class emptyClass( object ):
-    #         pass
-
-    #     plop = emptyClass()
-    #     analysis = tempfile.NamedTemporaryFile()
-    #     analysis.write('{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}')
-    #     setattr(plop, 'file',  open(analysis.name, 'rb'))
-    #     setattr(plop, 'filename', 'plopapou')
-
-    #     request.vars['fileToUpload'] = plop
-    #     request.vars['patient'] = fake_patient_id
-    #     request.vars['info'] = "fake info"
-    #     request.vars['samples_id'] = str(fake_file_id)
-    #     request.vars['samples_info'] = "fake sample info"
-    #     request.vars['sample_set_id'] = fake_sample_set_id
-
-    #     resp = save_analysis()
-
-    #     resp = get_analysis_from_sample_set(fake_sample_set_id)
-    #     self.assertEqual(len(resp), 1, "should have one analysis for that patient %d"%len(resp))
-    #     self.assertEqual(resp[0].sample_set_id, fake_sample_set_id, "get_analysis doesn't have the correct sample_set")
+                # Then : Check result
+                result = json.loads(json_result)
+                assert result["success"] == "true"
+                assert result["message"] == f"({sample_set_id}): analysis saved"
+                analysis_file = db(
+                    db.analysis_file.sample_set_id == sample_set_id).select().first()
+                result_file = Path(test_utils.get_results_path(),
+                                   analysis_file["analysis_file"])
+                assert result_file.exists()
+                assert result_file.read_text() == json_content_to_upload
+                os.remove(result_file)
+            finally:
+                db.analysis_file.analysis_file.uploadfolder = save_upload_folder
+        os.remove(analysis.name)
 
     # TODO: add other tests for rights, user, ...
 
