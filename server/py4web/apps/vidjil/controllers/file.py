@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import base64
 import datetime
+import pathlib
 from sys import modules
 
 
@@ -455,15 +456,14 @@ def upload():
             mes += " | p%s start pre_process %s " % (request.params['pre_process'], request.params['id'] + "-" +request.params['pre_process'])
 
         if data_file is not None :
-            seq_file = defs.DIR_SEQUENCES + data_file
+            seq_file = pathlib.Path(db.sequence_file.data_file.uploadfolder, data_file)
             # Compute and store file size
             size = os.path.getsize(seq_file)
             mes += ' (%s)' % vidjil_utils.format_size(size)
             db(db.sequence_file.id == request.params["id"]).update(size_file = size)
 
-
         if data_file2 is not None :
-            seq_file2 = defs.DIR_SEQUENCES + data_file2
+            seq_file2 = pathlib.Path(db.sequence_file.data_file2.uploadfolder, data_file2)
             size2 = os.path.getsize(seq_file2)
             mes += ' (%s)' % vidjil_utils.format_size(size2)
             db(db.sequence_file.id == request.params["id"]).update(size_file2 = size2)
@@ -496,7 +496,7 @@ def confirm():
     if sequence_file.data_file == None:
         delete_results = True
     if auth.can_modify_sample_set(int(request.query['redirect_sample_set_id'])):
-        return dict(message=T('choose what you would like to delete'),
+        return dict(message=T('Choose what you would like to delete'),
                     delete_only_sequence = delete_only_sequence,
                     delete_results = delete_results,
                     auth=auth,
@@ -505,16 +505,14 @@ def confirm():
         return error_message("you need admin permission to delete this file")
 
 def delete_sequence_file(seq_id):
+    if not auth.can_modify_file(seq_id):
+        return error_message('you need admin permission to delete this file')
+    
     sequence = db.sequence_file[seq_id]
     seq_filename = sequence.data_file
-
-    if auth.can_modify_file(seq_id):
-        if seq_filename is not None:
-            log.debug('Deleting '+defs.DIR_SEQUENCES+seq_filename+' with ID'+str(seq_id))
-        db.sequence_file[seq_id] = dict(data_file = None)
-    else:
-        return error_message('you need admin permission to delete this file')
-
+    if seq_filename is not None:
+        log.debug(f"Deleting {db.sequence_file.data_file.uploadfolder}{seq_filename} with ID {seq_id}")
+    db.sequence_file[seq_id].update_record(data_file = None)
 
 @action("/vidjil/file/delete", method=["POST", "GET"])
 @action.uses(db, auth.user)
@@ -585,16 +583,6 @@ def producer_list():
     res = {"producer": producer_list}
     return json.dumps(res, separators=(',',':'))
 
-
-
-
-
-
-
-
-
-
-
 def restart_pre_process():
     if "sequence_file_id" not in request.query or request.query['sequence_file_id'] is None:
         return error_message("missing parameter")
@@ -602,7 +590,7 @@ def restart_pre_process():
     if sequence_file is None or not auth.can_modify_file(sequence_file.id):
         return error_message("Permission denied")
     pre_process = db.pre_process[sequence_file.pre_process_id]
-    db.sequence_file[sequence_file.id] = dict(pre_process_flag = 'WAIT')
+    db.sequence_file[sequence_file.id].update_record(pre_process_flag = 'WAIT')
     db.commit()
     res = schedule_pre_process(sequence_file.id, pre_process.id)
     log.debug("restart pre process", extra={'user_id': auth.user_id,

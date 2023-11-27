@@ -1,5 +1,6 @@
 import os
 import json
+import shutil
 import unittest
 import pathlib
 
@@ -451,21 +452,44 @@ class TestFileController(unittest.TestCase):
     # Tests on file_controller.upload()
     ##################################
 
-    # TODO : file_controller.upload() : How to deal with files ? --> same problem as in test_default
+    def test_upload(self):
+        # Given : Logged as other user, and add corresponding config, ...
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id = db_manipulation_utils.add_patient(
+            1, user_id, auth)[0]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            patient_id, user_id)
+        file_to_upload = pathlib.Path(
+            test_utils.get_resources_path(), "analysis-example.vidjil")
+        with file_to_upload.open("rb") as file:
+            upload_helper = test_utils.UploadHelper(file, "plopapou")
+            save_upload_folder = db.sequence_file.data_file.uploadfolder
+            try:
+                db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+                # When : Calling uplaod
+                with Omboddle(self.session, keep_session=True,
+                              params={"id": sequence_file_id,
+                                      "file_number": 1,
+                                      "format": "json"}):
+                    request.files["file"] = upload_helper
+                    json_result = file_controller.upload()
 
-    # def testUpload(self):
-    #     class emptyClass( object ):
-    #         pass
+                # Then : Check result
+                result = json.loads(json_result)
+                assert result["message"].startswith(
+                    f" file {{{sequence_file_id}}} upload finished (plopapou)")
+                result_file = pathlib.Path(test_utils.get_results_path(),
+                                           db.sequence_file[sequence_file_id].data_file)
+                assert result_file.exists()
+                os.remove(result_file)
+            finally:
+                db.sequence_file.data_file.uploadfolder = save_upload_folder
 
-    #     plop = emptyClass()
-    #     setattr(plop, 'file',  open("../../doc/analysis-example.vidjil", 'rb'))
-    #     setattr(plop, 'filename', 'plopapi')
-
-    #     request.vars['file'] = plop
-    #     request.vars['id'] = fake_file_id
-
-    #     resp = upload()
-    #     self.assertNotEqual(resp.find('upload finished'), -1, "testUpload() failed")
+    # TODO: more tests for upload ? use data_file_2 ? preprocess ?
 
     ##################################
     # Tests on file_controller.confirm()
@@ -490,71 +514,218 @@ class TestFileController(unittest.TestCase):
         assert result["success"] == "false"
         assert result["message"] == "The requested file doesn't exist"
 
-    # def testConfirmSuccess(self):
-    #     test_file_id = self.createDumbSequenceFile()
-    #     request.vars['id'] = test_file_id
+    def test_confirm_success(self):
+        # Given : Logged as other user, and add corresponding config, ...
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id, auth)
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            patient_id, user_id)
 
-    #     request.vars['redirect_sample_set_id'] = fake_sample_set_id
+        # When : Calling confirm
+        with Omboddle(self.session, keep_session=True, params={"format": "json"},
+                      query={"id": sequence_file_id, "redirect_sample_set_id": sample_set_id}):
+            json_result = file_controller.confirm()
 
-    #     resp = confirm()
-    #     self.assertTrue(resp.has_key('message'), "confirm() fails to confirm deletion of a file")
+        # Then : We get users list
+        result = json.loads(json_result)
+        assert result["message"] == "Choose what you would like to delete"
+        assert result["delete_only_sequence"] == False
+        assert result["delete_results"] == False
 
-    # def testDelete(self):
-    #     test_file_id = self.createDumbSequenceFile()
+    ##################################
+    # Tests on file_controller.delete()
+    ##################################
 
-    #     result_id = db.results_file.insert(sequence_file_id = test_file_id,
-    #                                        config_id = fake_config_id,
-    #                                        run_date = '2015-04-23 00:00:00')
+    def test_delete_only_file(self):
+        # Given : Logged as other user, and add corresponding config, ...
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id, auth)
+        save_upload_folder = db.sequence_file.data_file.uploadfolder
+        save_auto_delete = db.sequence_file.data_file.autodelete
+        try:
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+            db.sequence_file.data_file.autodelete = True
+            sequence_file_id = db_manipulation_utils.add_sequence_file(
+                patient_id, user_id, use_real_file=True)
+            data_file = pathlib.Path(test_utils.get_results_path(),
+                                     db.sequence_file[sequence_file_id].data_file)
+            assert data_file.exists()
 
-    #     db.sample_set_membership.insert(sample_set_id = fake_sample_set_id, sequence_file_id = test_file_id)
-    #     self.assertTrue(db.sequence_file[test_file_id].filename == "babibou" , "file have been added")
+            # When : Calling confirm
+            with Omboddle(self.session, keep_session=True, params={"format": "json"},
+                          query={"id": sequence_file_id, "redirect_sample_set_id": sample_set_id}):
+                json_result = file_controller.delete()
 
-    #     request.vars['id'] = test_file_id
-    #     request.vars['redirect_sample_set_id'] = fake_sample_set_id
+            # Then : We get users list
+            result = json.loads(json_result)
+            assert result["message"] == f"sequence file ({sequence_file_id}) deleted"
+            assert not data_file.exists()
+            assert db.sequence_file[sequence_file_id] != None
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_upload_folder
+            db.sequence_file.data_file.autodelete = save_auto_delete
 
-    #     resp = delete()
-    #     self.assertTrue(db.sequence_file[test_file_id].data_file == None , "file only should have been deleted")
-    #     self.assertTrue(db.results_file[result_id] <> None, "result file should not have been deleted")
+    def test_delete_delete_results(self):
+        # Given : Logged as other user, and add corresponding config, ...
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id, auth)
+        save_upload_folder = db.sequence_file.data_file.uploadfolder
+        save_auto_delete = db.sequence_file.data_file.autodelete
+        try:
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+            db.sequence_file.data_file.autodelete = True
+            sequence_file_id = db_manipulation_utils.add_sequence_file(
+                patient_id, user_id, use_real_file=True)
+            data_file = pathlib.Path(test_utils.get_results_path(),
+                                     db.sequence_file[sequence_file_id].data_file)
+            assert data_file.exists()
 
-    #     request.vars['delete_results'] = 'True'
-    #     resp = delete()
-    #     self.assertTrue(db.sequence_file[test_file_id] == None, "sequence entry in DB should have been deleted")
-    #     self.assertTrue(db.results_file[result_id] == None, "result file should have been deleted")
+            # When : Calling confirm
+            with Omboddle(self.session, keep_session=True, params={"format": "json"},
+                          query={"id": sequence_file_id, "redirect_sample_set_id": sample_set_id, "delete_results": True}):
+                json_result = file_controller.delete()
 
-    # def testSequencerList(self):
+            # Then : We get users list
+            result = json.loads(json_result)
+            assert result["message"] == f"sequence file ({sequence_file_id}) deleted"
+            assert not data_file.exists()
+            assert db.sequence_file[sequence_file_id] == None
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_upload_folder
+            db.sequence_file.data_file.autodelete = save_auto_delete
 
-    #     resp = sequencer_list()
-    #     self.assertNotEqual(resp.find('"sequencer":['), -1, "sequencer_list() doesn't return a valid json")
+    # TODO : add tests on rights ?
 
-    # def testPcrList(self):
+    ##################################
+    # Tests on file_controller.sequencer_list()
+    ##################################
 
-    #     resp = pcr_list()
-    #     self.assertNotEqual(resp.find('"pcr":['), -1, "pcr_list() doesn't return a valid json")
+    def test_sequencer_list_empty(self):
+        # Given : Logged as default admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
-    # def testProducerList(self):
+        # When : Calling sequencer_list
+        with Omboddle(self.session, keep_session=True):
+            json_result = file_controller.sequencer_list()
 
-    #     resp = producer_list()
-    #     self.assertNotEqual(resp.find('"producer":['), -1, "producer_list() doesn't return a valid json")
+        # Then : We get sequencer_list
+        result = json.loads(json_result)
+        assert result["sequencer"] == []
 
-    # def testUpdateNameOfSequenceFile(self):
-    #     sequence_id = self.createDumbSequenceFile()
-    #     data_file = db.sequence_file[sequence_id].data_file
+    def test_sequencer_list_one_result(self):
+        # Given : Logged as default admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        sequence_file_id = db_manipulation_utils.add_sequence_file()
+        db.sequence_file[sequence_file_id].update_record(
+            sequencer="dummy_sequencer")
 
-    #     update_name_of_sequence_file(sequence_id, 'toto.txt', 'LICENSE')
+        # When : Calling sequencer_list
+        with Omboddle(self.session, keep_session=True):
+            json_result = file_controller.sequencer_list()
 
-    #     current_sequence = db.sequence_file[sequence_id]
-    #     self.assertEquals(current_sequence.size_file, os.path.getsize('LICENSE'))
-    #     self.assertEquals(current_sequence.data_file, 'LICENSE')
-    #     self.assertEquals(current_sequence.filename, 'toto.txt')
+        # Then : We get sequencer_list
+        result = json.loads(json_result)
+        assert len(result["sequencer"]) == 1
+        assert "dummy_sequencer" in result["sequencer"]
 
-    # def testGetNewUploaddedFilename(self):
-    #     sequence_id = self.createDumbSequenceFile()
-    #     data_file = db.sequence_file[sequence_id].data_file
+    ##################################
+    # Tests on file_controller.pcr_list()
+    ##################################
 
-    #     filename = get_new_uploaded_filename(data_file, "truc.def")
+    def test_pcr_list_empty(self):
+        # Given : Logged as default admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
-    #     self.assertEquals(filename[-4:], ".def")
-    #     self.assertTrue(filename.find(base64.b16encode('truc.def').lower() + ".def") > -1)
+        # When : Calling pcr_list
+        with Omboddle(self.session, keep_session=True):
+            json_result = file_controller.pcr_list()
+
+        # Then : We get pcr_list
+        result = json.loads(json_result)
+        assert result["pcr"] == []
+
+    def test_pcr_list_one_result(self):
+        # Given : Logged as default admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        sequence_file_id = db_manipulation_utils.add_sequence_file()
+        db.sequence_file[sequence_file_id].update_record(pcr="dummy_pcr")
+
+        # When : Calling pcr_list
+        with Omboddle(self.session, keep_session=True):
+            json_result = file_controller.pcr_list()
+
+        # Then : We get pcr_list
+        result = json.loads(json_result)
+        assert len(result["pcr"]) == 1
+        assert "dummy_pcr" in result["pcr"]
+
+    ##################################
+    # Tests on file_controller.producer_list()
+    ##################################
+
+    def test_producer_list_empty(self):
+        # Given : Logged as default admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        # When : Calling producer_list
+        with Omboddle(self.session, keep_session=True):
+            json_result = file_controller.producer_list()
+
+        # Then : We get producer_list
+        result = json.loads(json_result)
+        assert result["producer"] == []
+
+    def test_producer_list_one_result(self):
+        # Given : Logged as default admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        sequence_file_id = db_manipulation_utils.add_sequence_file()
+        db.sequence_file[sequence_file_id].update_record(
+            producer="dummy_producer")
+
+        # When : Calling producer_list
+        with Omboddle(self.session, keep_session=True):
+            json_result = file_controller.producer_list()
+
+        # Then : We get producer_list
+        result = json.loads(json_result)
+        assert len(result["producer"]) == 1
+        assert "dummy_producer" in result["producer"]
+
+    ##################################
+    # Tests on file_controller.restart_pre_process()
+    ##################################
+
+    # TODO : how to deal with tasks ? see with default too
+    # def test_restart_pre_process(self):
+    #     # Given :
+    #     db_manipulation_utils.log_in_as_default_admin(self.session)
+    #     pre_process_id = db_manipulation_utils.add_pre_process()
+    #     sequence_file_id = db_manipulation_utils.add_sequence_file()
+    #     db.sequence_file[sequence_file_id].update_record(pre_process_id=pre_process_id)
+
+    #     # When : Calling producer_list
+    #     with Omboddle(self.session, keep_session=True, query={"sequence_file_id": sequence_file_id}):
+    #         json_result = file_controller.restart_pre_process()
+
+    #     # Then : pre process was restarted
+    #     result = json.loads(json_result)
+    #     assert len(result["producer"]) == 1
+    #     assert "dummy_producer" in result["producer"]
 
     # def testRestartPreProcess(self):
     #     fake_task = db.scheduler_task[fake_task_id]
@@ -574,3 +745,65 @@ class TestFileController(unittest.TestCase):
     #         res = restart_pre_process()
     #         print(res)
     #     self.assertNotEqual(res.find('"success":"false"'), -1, 'missing message in response')
+
+    ##################################
+    # Tests on file_controller.filesystem()
+    ##################################
+
+    def test_filesystem_no_node(self):
+        # Given : initialized data
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        save_file_source = defs.FILE_SOURCE
+        try:
+            defs.FILE_SOURCE = test_utils.get_resources_path()
+
+            # When : Calling submit
+            with Omboddle(self.session, keep_session=True):
+                json_result = file_controller.filesystem()
+
+            # Then : We get file list
+            result = json_result[0]
+            assert result["text"] == "/"
+            assert result["id"] == "/"
+            assert result["children"] == True
+        finally:
+            defs.FILE_SOURCE = save_file_source
+
+    def test_filesystem_empty_node(self):
+        # Given : initialized data
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        save_file_source = defs.FILE_SOURCE
+        try:
+            defs.FILE_SOURCE = str(test_utils.get_resources_path())
+
+            # When : Calling submit
+            with Omboddle(self.session, keep_session=True, query={"node": ""}):
+                result = file_controller.filesystem()
+
+            # Then : We get file list (with a filter on file type and directories)
+            assert len(result) == 3
+            assert result[0]["li_attr"]["title"] == "Demo-X5.fa"
+            assert result[1]["li_attr"]["title"] == "results"
+            assert result[2]["li_attr"]["title"] == "logs"
+        finally:
+            defs.FILE_SOURCE = save_file_source
+
+    def test_filesystem_logs(self):
+        # Given : initialized data
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        save_file_source = defs.FILE_SOURCE
+        try:
+            defs.FILE_SOURCE = str(test_utils.get_resources_path())
+
+            # When : Calling submit
+            with Omboddle(self.session, keep_session=True, query={"node": "/logs"}):
+                result = file_controller.filesystem()
+
+            # Then : We get file list (with a filter on file type and directories)
+            assert len(result) == 1
+            assert result[0]["li_attr"]["title"] == "nginx"
+        finally:
+            defs.FILE_SOURCE = save_file_source

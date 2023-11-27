@@ -1,11 +1,13 @@
 """ Helper to manipulate db for tests"""
 import json
+import pathlib
 
+from . import test_utils
 from .omboddle import Omboddle
 from ....controllers import auth as auth_controller
 from ....common import db
 from ....modules.permission_enum import PermissionEnum
-from .... import defs, VidjilAuth
+from .... import defs
 from ...functional.db_initialiser import TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD
 from py4web.core import Session
 
@@ -169,7 +171,7 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
 # Sequence file management
 
 
-def add_sequence_file(patient_id: int = -1, user_id: int = -1) -> int:
+def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bool = False) -> int:
     """Add a fake sequence file to a patient
 
     Args:
@@ -187,17 +189,27 @@ def add_sequence_file(patient_id: int = -1, user_id: int = -1) -> int:
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
 
+    if use_real_file:
+        filename = "analysis-example.vidjil"
+        file = pathlib.Path(test_utils.get_resources_path(),
+                            "analysis-example.vidjil")
+        with file.open("rb") as stream:
+            data_file = db.sequence_file.data_file.store(stream, filename)
+    else:
+        filename = "test_file.fasta"
+        data_file = "/test/sequence/test_file.fasta"
+
     sequence_file_id = db.sequence_file.insert(patient_id=patient_id,
                                                sampling_date="2010-10-10",
                                                info="testf",
-                                               filename="test_file.fasta",
+                                               filename=filename,
                                                size_file=1024,
                                                network=False,
                                                provider=user_id,
-                                               data_file="test_sequence_file")
+                                               data_file=data_file)
     db.sample_set_membership.insert(
         sample_set_id=sample_set_id, sequence_file_id=sequence_file_id)
-    
+
     return sequence_file_id
 
 # config management

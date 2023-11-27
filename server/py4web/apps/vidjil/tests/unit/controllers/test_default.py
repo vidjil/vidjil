@@ -368,7 +368,7 @@ class TestDefaultController(unittest.TestCase):
             try:
                 db.analysis_file.analysis_file.uploadfolder = test_utils.get_results_path()
 
-                # When : Calling run_request
+                # When : Calling save_analysis
                 with Omboddle(self.session, keep_session=True,
                               params={"format": "json"},
                               query={"patient": patient_id,
