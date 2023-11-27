@@ -43,9 +43,11 @@ else
 	echo "=====\n"
 fi
 
+echo "TIME - Before cypress - $(date)"
 echo -e "$ ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec $@ --env workdir=vidjil,host=$HOST,initiated_database=false"
 ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec $@ --env workdir=vidjil,host=$HOST,initiated_database=true
 ECODE=$?
+echo "TIME - After cypress - $(date)"
 
 # Rename reports with name of testing script
 apt-get update -qq && apt-get install -y -qq libxml2-utils
