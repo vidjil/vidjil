@@ -96,6 +96,7 @@ class Vidjil:
         self.url_client = url_client if url_client != None else url_server
         self.ssl = ssl
         print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
+        self.last_request = {} # Will store results of request; for api tests
         self.session = requests.Session()
         self.auth_deletion = False
         cookie = requests.cookies.RequestsCookieJar()
@@ -125,33 +126,38 @@ class Vidjil:
         """
         print()
         print('### %s (%s)' % (self.url_server, email))
-        response = self.session.get(self.url_server + '/default/user/login', verify=self.ssl)
+        response = self.session.get(self.url_server + '/auth/login', verify=self.ssl)
 
-        if not "auth_user_email__row" in str(response.content):
-            raise Exception( "Login; server don't return a correct login form.\nPlease verify your url and certificate parameters.")
+        if not "auth_user_email__row" in str(response.content) and not "login__label" in str(response.content):
+            print( response.content)
+            raise Exception( "Login; server don't return a correct login form.\nPlease verify your url and certificate parameters and that you point to py4web server.")
 
-        data = { "email":email, "password":password, 'remember_me':"on" }
-        BS = BeautifulSoup(response.text, 'html.parser')
+
+        print(f"Communication with server etablish...")
+        # data include email (web2py) and lgin (py4web)
+        data = { "login":email,  "email":email, "password":password, 'remember_me':"on" }
+        BS   = BeautifulSoup(response.text, 'html.parser')
         for i, e in enumerate(BS.select('input[name]')):
             # print(i, e)
             if (e['name'][0] == '_'):
                 data[e['name']] = e['value']
         m = MultipartEncoder(fields=data)
         headers = {'Content-Type': m.content_type }
-        response = self.session.post(self.url_server + '/default/user/login', data = m, headers = headers, verify=self.ssl)
+        response = self.session.post(self.url_server + '/auth/submit', data = m, headers = headers, verify=self.ssl)
 
-        if response.status_code != 200 or "auth_user_email__row" in str(response.content):
+        if response.status_code != 200 or "login__label" in str(response.content) or "Invalid Credentials" in str(response.content):
             self.logged = False
-            if "auth_user_email__row" in str(response.content):
+            if "login__label" in str(response.content) or "Invalid Credentials" in str(response.content):
                 raise Exception( "Login; error at login step.\nVerify your user name and password.")
             raise Exception( "Login; error at login step.\nStatus code is %s and content is '%s'."  % (response.status_code, response.content))
         else:
             self.logged = True
-            print( "Successful login as %s" % email)
-            print()
             whoami = self.whoami()
             self.user_id    = whoami["id"]
             self.user_email = whoami["email"]
+            self.is_admin   = whoami["admin"]
+            print( "Successful login as %s (%sadmin)" % (email, "not " if not whoami["admin"] else "") )
+            print()
             # todo; print admin status; groups ?
 
     def impersonate( self, impersonate_id:int):
@@ -202,19 +208,24 @@ class Vidjil:
         Returns:
             dict: A json conversion of server response
         """
+        self.last_request = {}
+        url += f"{'&' if not url.endswith('&') else ''}format=json" if '&' in url else ""
+
         if method == "get":
             response = self.session.get(url, verify=self.ssl)
         elif method == "post":
             response = self.session.post(url, verify=self.ssl)
         else:
             raise("Error. request function don't get correct method argument")
-
+            
+        self.last_request["response"] = response
         if response.content in [b"Forbidden", b"Not Authorized"] :
             print(f"This call is '{response.content}'. \nVerify that you try to access to a data that EXIST, of your OWN or that you use an ADMIN account.", file=sys.stderr)
             exit()
 
         try:
             content  = json.loads(response.content)
+            self.last_request["content"] = content
         except Exception as e:
             print( url )
             print( response.content)
@@ -261,7 +272,7 @@ class Vidjil:
             return -1
         set_type   = "" if set_type   == None else "type="+prettyUrl(set_type)+"&"
         filter_val = "" if filter_val == None else "filter="+prettyUrl(filter_val)+"&"
-        new_url  = self.url_server+"/sample_set/all.json?&%s%s&" % (set_type, filter_val)
+        new_url  = self.url_server+"/sample_set/all?&%s%s&" % (set_type, filter_val)
         return self.request(new_url, "get")
 
     def getSetById(self, set_id:int, set_type:str=None):
@@ -365,18 +376,17 @@ class Vidjil:
 
     def whoami(self, verbose=False):
         """Return a json with user informations on the server for logged user"""
-        new_url = self.url_server + "/default/whoami.json"
+        new_url = self.url_server + "/default/whoami"
         error_msg = "Error of login; WHOAMI function present on server ?"
         user = self.request(new_url, "get", error_msg=error_msg, bypass_error=True)
         for key_to_del in ["ignored_fields", "registration_id", "reset_password_key", "password", "registration_key"]:
             user.pop(key_to_del, None)
-
         if verbose:
             print( "whoami: %s" % user)
         return user
 
     def getSamplesOfSet(self, set_id, config_id=-1):
-        new_url  = self.url_server+"/sample_set/index.json?id=%s&config_id=%s" % (set_id, config_id)
+        new_url  = self.url_server+"/sample_set/index?id=%s&config_id=%s" % (set_id, config_id)
         return self.request(new_url, "get")
 
     def launchAnalysisBunchesSet(self, list_sets:list, config_id:int, force:bool=False, retry:bool=False, verbose:bool=False):
@@ -590,7 +600,7 @@ class Vidjil:
             "sample_type":sample_type
         }
         url_data = json.dumps(data).replace(" ", "")
-        new_url  = self.url_server + "/file/submit.json?data=%s" % url_data
+        new_url  = self.url_server + "/file/submit?data=%s" % url_data
         error_msg = "Error in creation of sample in set %s" % sample_set_id
         content   = self.request(new_url, "post", error_msg=error_msg, bypass_error=False)
         file_ids  = content["file_ids"][0]
@@ -622,7 +632,7 @@ class Vidjil:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), filepath+"/"+filename)
 
         data     = {'pre_process': pre_process, 'id': sample_id, 'file_number': file_number}
-        new_url  = self.url_server + "/file/upload.json"
+        new_url  = self.url_server + "/file/upload"
         response = self.session.post(new_url, data = data, files={'file':(filename, open(filepath+"/"+filename,'rb'))}, verify=self.ssl)
         if response.status_code != 200:
             raise Exception('uploadSample', "Error in upload of sample")
@@ -715,7 +725,7 @@ if  __name__ =='__main__':
 
     print("#", ' '.join(sys.argv))
 
-    DESCRIPTION = 'Vidjil utility to access server by API script'
+    DESCRIPTION = 'Vidjil utility to access server by API script. This version is only compatible with py4web version of vidjil server (release 2023.12)'
     
     #### Argument parser (argparse)
 

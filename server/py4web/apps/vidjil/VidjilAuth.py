@@ -881,7 +881,7 @@ class VidjilAuth(Auth):
 
     def has_membership(self, group_id=None, user_id=None, role=None, cached=False):
         if not user_id and self.user:
-            user_id = self.user.id
+            user_id = self.user_id
 
         if cached:
             id_role = group_id or role
@@ -909,7 +909,7 @@ class VidjilAuth(Auth):
             group_id = self.id_group(group_id)  # interpret group_id as a role
 
         if not user_id and self.user:
-            user_id = self.user.id
+            user_id = self.user_id
         if not group_id:
             raise ValueError('group_id not provided or invalid')
         if not user_id:

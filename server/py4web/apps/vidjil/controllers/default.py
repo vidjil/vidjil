@@ -85,7 +85,7 @@ def whoami():
             "id": auth.user_id,
             "email": auth.current_user.get('email'),
             "uuid": session["uuid"],
-            "admin": auth.is_admin(auth.user_id)
+            "admin": auth.is_admin()
         }
 
         membership = auth.table_membership()

@@ -129,3 +129,10 @@ browser/js/germline.js
 cypress
 browser/js/git-sha1.js
 firefox/
+
+*.key
+*.crt
+*.pem
+#report
+*.xml 
+.vscode
