@@ -10,9 +10,6 @@ from ....common import db, auth
 from ....modules.permission_enum import PermissionEnum
 from ....controllers import group as group_controller
 
-import logging
-LOGGER = logging.getLogger(__name__)
-
 
 class TestFileController(unittest.TestCase):
 
