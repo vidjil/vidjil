@@ -20,3 +20,4 @@ python3 -m pytest ${PATH_VIDJIL}/tools/tests/test_api.py  \
     --junitxml=${PATH_VIDJIL}/tools/tests/test_api_report.xml \
     --cov --cov-report term \
     --cov-report xml:${PATH_VIDJIL}/tools/tests/api_coverage.xml \
+    --cov-config ${PATH_VIDJIL}/docker/ci/.coveragerc

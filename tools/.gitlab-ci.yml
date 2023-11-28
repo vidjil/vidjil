@@ -17,6 +17,7 @@ test_server_api:
       -v $PWD:/app/vidjil
       -v "$PWD/docker/ci/cypress.json":"/app/cypress.json"
       -v "$PWD/docker/ci/script_api.bash":"/app/script.bash"
+      -v "$PWD/docker/ci/.coveragerc":"/app/.coveragerc"
       --env HOST=$HOST
       --env PROJECT=$PROJECT
       --env URL=$URL

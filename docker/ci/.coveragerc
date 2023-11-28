@@ -1,2 +1,8 @@
 [run]
-omit = *tests*
+omit = 
+	# testing script
+	*tests/*.py
+	/app/vidjil/tools/tests/*.py
+	# python lib
+	/usr/local/lib/*
+	/usr/lib/python3/*
