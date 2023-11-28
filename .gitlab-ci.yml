@@ -32,6 +32,7 @@ stages:
   - test_cypress_client
   - test_cypress_external
   - test_cypress_server
+  - test_server_api
   - test_tutorial
   - test_tutorial_server
   - test_shouldvdj
@@ -83,6 +84,7 @@ include:
   - local: 'algo/.gitlab-ci.yml' # Vidjil-algo pipelines
   - local: 'browser/.gitlab-ci.yml' # Client pipelines
   - local: 'server/.gitlab-ci.yml' # Server pipelines
+  - local: 'tools/.gitlab-ci.yml' # Tools/API pipelines
   - template: Code-Quality.gitlab-ci.yml # Code quality
 
 ###########################
