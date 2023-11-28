@@ -198,7 +198,6 @@ class TestFileController(unittest.TestCase):
         assert json_result is not None
         result = json.loads(json_result)
         assert result["message"] == "successfully added/edited file(s)"
-        # TODO : check more things ?
 
     def test_submit_nfs(self):
         # Given : initialized data
@@ -223,7 +222,6 @@ class TestFileController(unittest.TestCase):
             assert json_result is not None
             result = json.loads(json_result)
             assert result["message"] == "successfully added/edited file(s)"
-            # TODO : check more things ?
         finally:
             defs.FILE_SOURCE = save_file_source
 
@@ -251,7 +249,6 @@ class TestFileController(unittest.TestCase):
             assert json_result is not None
             result = json.loads(json_result)
             assert result["message"] == "successfully added/edited file(s)"
-            # TODO : check more things ?
         finally:
             defs.FILE_SOURCE = save_file_source
 
@@ -434,8 +431,6 @@ class TestFileController(unittest.TestCase):
         finally:
             defs.FILE_SOURCE = save_file_source
 
-    # TODO : add missing cases ?
-
     ##################################
     # Tests on file_controller.upload()
     ##################################
@@ -596,8 +591,6 @@ class TestFileController(unittest.TestCase):
         finally:
             db.sequence_file.data_file.uploadfolder = save_upload_folder
             db.sequence_file.data_file.autodelete = save_auto_delete
-
-    # TODO : add tests on rights ?
 
     ##################################
     # Tests on file_controller.sequencer_list()
@@ -774,7 +767,8 @@ class TestFileController(unittest.TestCase):
             assert len(result) == 3
             titles = [item["li_attr"]["title"] for item in result]
             expected_titles = ["Demo-X5.fa", "results", "logs"]
-            assert collections.Counter(titles) == collections.Counter(expected_titles)
+            assert collections.Counter(
+                titles) == collections.Counter(expected_titles)
         finally:
             defs.FILE_SOURCE = save_file_source
 

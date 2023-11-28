@@ -86,5 +86,3 @@ class TestLogController(unittest.TestCase):
         patient_from_db = db.patient[patient_id]
         assert patient["first_name"] == patient_from_db.first_name
         assert patient["last_name"] == patient_from_db.last_name
-        
-    # TODO : to enrich with more tests

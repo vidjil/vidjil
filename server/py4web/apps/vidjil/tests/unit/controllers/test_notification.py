@@ -495,5 +495,5 @@ class TestMyAccountController(unittest.TestCase):
         assert len(result) == 3
         assert ("title notif" in notification["title"]
                 for notification in result)
-        
+
     # TODO : test memoize ? currently deactivated

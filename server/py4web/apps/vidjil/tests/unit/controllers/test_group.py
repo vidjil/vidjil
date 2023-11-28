@@ -304,8 +304,6 @@ class TestGroupController(unittest.TestCase):
         assert group.role == "modified name"
         assert group.description == "modified info"
 
-    # TODO : more tests, with rights, ...
-
     ##################################
     # Tests on group_controller.confirm()
     ##################################
@@ -481,8 +479,6 @@ class TestGroupController(unittest.TestCase):
         assert result["message"] == f"user '{user_1_id}' added to group '1'"
         assert auth.has_membership(1, user_1_id)
 
-    # TODO : add tests when no access
-
     ##################################
     # Tests on group_controller.kick()
     ##################################
@@ -503,8 +499,6 @@ class TestGroupController(unittest.TestCase):
         assert result["redirect"] == "group/info"
         assert result["message"] == f"user '{user_1_id}' removed from group '1'"
         assert not auth.has_membership(1, user_1_id)
-
-    # TODO : add tests when no access
 
     ##################################
     # Tests on group_controller.rights()
@@ -542,5 +536,3 @@ class TestGroupController(unittest.TestCase):
         assert result["redirect"] == "group/info"
         assert result["message"] == f"remove '{PermissionEnum.upload.value}' permission on 'test' for group {db.auth_group[1].role}"
         assert not auth.has_permission(group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
-
-    # TODO : add tests when no access

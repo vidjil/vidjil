@@ -394,8 +394,6 @@ class TestDefaultController(unittest.TestCase):
                 db.analysis_file.analysis_file.uploadfolder = save_upload_folder
         os.remove(analysis.name)
 
-    # TODO: add other tests for rights, user, ...
-
     ##################################
     # Tests on default_controller.impersonate()
     ##################################

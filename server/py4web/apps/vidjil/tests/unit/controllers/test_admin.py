@@ -165,8 +165,6 @@ class TestAdminController(unittest.TestCase):
         assert result["format"] == "raw"
         assert len(result["raw"]) == 5765
 
-    # TODO: test access control, test filter, may be test more carefully result["lines"] and result["raw"]
-
     ##################################
     # Tests on admin_controller.repair_missing_files()
     ##################################

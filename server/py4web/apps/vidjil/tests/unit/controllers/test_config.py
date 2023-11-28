@@ -56,8 +56,6 @@ class TestConfigController(unittest.TestCase):
         assert result["used_configs"][0] == 1
         assert len(result["classification"]) == 6
 
-    # TODO : test with other user
-
     ##################################
     # Tests on config_controller.add()
     ##################################
@@ -86,8 +84,6 @@ class TestConfigController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "Add config"
         assert len(result["classification"]) == 6
-
-    # TODO : test with other user
 
     ##################################
     # Tests on config_controller.add_form()
@@ -193,8 +189,6 @@ class TestConfigController(unittest.TestCase):
         assert result["success"] == "false"
         assert result["message"] == "classification id don't exist"
 
-    # TODO : test with other user
-
     ##################################
     # Tests on config_controller.edit()
     ##################################
@@ -237,8 +231,6 @@ class TestConfigController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "edit config"
         assert len(result["classification"]) == 6
-
-    # TODO : test no access, to not existing id
 
     ##################################
     # Tests on config_controller.edit_form()
@@ -329,8 +321,6 @@ class TestConfigController(unittest.TestCase):
         # Then : we get a valid result
         result = json.loads(json_result)
         assert result["message"] == "confirm config deletion"
-
-    # TODO : test no access, to not existing id
 
     ##################################
     # Tests on config_controller.delete()
