@@ -302,7 +302,7 @@ Database.prototype = {
         }
 
         if (quiet == undefined){
-            this.warn(name +": " + status + " - " + url.replace(this.db_address, '') + "?" + this.argsToStr(args))
+            this.warn(name +": " + status + " - " + url.replace(this.db_address, '') + "?" + args != undefined ? this.argsToStr(args) : "")
         }
 
         if (type != undefined){
