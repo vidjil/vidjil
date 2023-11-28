@@ -269,13 +269,13 @@ test_server_unit:
     # Build specific version of docker images
     - echo "CI_COMMIT_REF_NAME - $CI_COMMIT_REF_NAME"
     ### Use released py4web server image as base
-    - echo "TIME - before pulling docker images - $(date)" >> time.log
+    - echo "TIME $(date) - before pulling docker images" >> time.log
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT
     - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
     - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test
     - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test
-    - echo "TIME - after pulling docker images - $(date)" >> time.log
+    - echo "TIME $(date) - after pulling docker images" >> time.log
     - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
     - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml 
     - echo -e "volumes:\n    databases:" >> docker/docker-compose.yml
@@ -297,7 +297,7 @@ test_server_unit:
     - docker-compose up -d mysql
     - docker-compose down ## restart for write right error on DB
     - docker-compose up -d mysql uwsgi
-    - echo "TIME - after first compose up - $(date)" >> ../time.log
+    - echo "TIME $(date) - after first compose up" >> ../time.log
     # Set rights
     - docker exec docker_uwsgi_1 mkdir -p /usr/share/vidjil/server/py4web/apps/vidjil/errors/
     - docker exec docker_mysql_1 chmod 0777 /var/lib/mysql/vidjil -R
@@ -322,7 +322,7 @@ test_server_unit:
     # Change File source definition in defs.py file 
     - docker exec docker_nginx_1 make -C /usr/share/vidjil browser # init browser content
     - cd .. # Go to root git directory
-    - echo "TIME - before other server script - $(date)" >> time.log
+    - echo "TIME $(date) - before other server script" >> time.log
 
 
 .test_server_base_dind:
@@ -337,6 +337,7 @@ test_server_unit:
     - apk add docker docker-compose make wget tar
     - !reference [.setup_docker_server]
   after_script:
+    - echo "TIME $(date) - END OF SERVER JOB" >> time.log
     - docker cp docker_uwsgi_1:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
     - docker ps
     - mkdir -p logs/after; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/after/${service}.log 2>&1; done

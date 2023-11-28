@@ -8,9 +8,9 @@
     - docker exec docker_uwsgi_1  chmod a+w /usr/share/vidjil/server/py4web/apps/vidjil/errors
     - docker exec docker_uwsgi_1  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
     - mkdir -p logs/before; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/before/${service}.log 2>&1; done
-    - echo "TIME - Before pulling cypress docker image - $(date)" >> time.log
+    - echo "TIME $(date) - Before pulling cypress docker image" >> time.log
     - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest"
-    - echo "TIME - After pulling cypress docker image - $(date)" >> time.log
+    - echo "TIME $(date) - After pulling cypress docker image" >> time.log
     - >
       docker run
       -v $PWD/$CYPRESS_PATH:/app/cypress
@@ -28,7 +28,6 @@
       --shm-size=1GB
       --network="host"
       "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
-    - echo "TIME - END OF JOB - $(date)" >> time.log
   artifacts:
     reports:
       junit: $CYPRESS_PATH/reports/test-cypress-*.xml
