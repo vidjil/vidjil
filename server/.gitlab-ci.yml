@@ -9,7 +9,7 @@
     - docker exec docker_uwsgi_1  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
     - mkdir -p logs/before; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/before/${service}.log 2>&1; done
     - echo "TIME - Before pulling cypress docker image - $(date)" >> time.log
-    - docker pull "vidjilci/cypress_with_browsers:latest"
+    - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest"
     - echo "TIME - After pulling cypress docker image - $(date)" >> time.log
     - >
       docker run
