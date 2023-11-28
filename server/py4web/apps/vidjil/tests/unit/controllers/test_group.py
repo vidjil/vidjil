@@ -11,7 +11,7 @@ from ....modules.permission_enum import PermissionEnum
 from ....controllers import group as group_controller
 
 
-class TestFileController(unittest.TestCase):
+class TestGroupController(unittest.TestCase):
 
     def setUp(self):
         # init env

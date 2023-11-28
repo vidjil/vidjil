@@ -10,7 +10,7 @@ from ....common import db, auth
 from ....controllers import log as log_controller
 
 
-class TestFileController(unittest.TestCase):
+class TestLogController(unittest.TestCase):
 
     def setUp(self):
         # init env
