@@ -8,7 +8,9 @@
     - docker exec docker_uwsgi_1  chmod a+w /usr/share/vidjil/server/py4web/apps/vidjil/errors
     - docker exec docker_uwsgi_1  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
     - mkdir -p logs/before; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/before/${service}.log 2>&1; done
-    - docker pull "vidjilci/cypress_with_browsers:latest"
+    - echo "TIME $(date) - Before pulling cypress docker image" >> time.log
+    - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest"
+    - echo "TIME $(date) - After pulling cypress docker image" >> time.log
     - >
       docker run
       -v $PWD/$CYPRESS_PATH:/app/cypress
@@ -36,6 +38,7 @@
       - browser/js/conf.js
       - browser/test/cypress
       - server/py4web/apps/vidjil/errors/*
+      - time.log
       - logs
     expire_in: 7 day
     when: always
@@ -48,8 +51,7 @@
     - /^hotfix-.*s.*\/.*$/
     - /^prod-server/
     - dev
-  needs:
-    - []
+
 
 
 ## Cypress with server
@@ -60,7 +62,7 @@ server1-ff-supported:
   variables:
     BROWSER: firefox_supported/firefox
   needs:
-    - []
+    - [build_test_server_docker]
 
 ## Cypress with server
 s2:
@@ -98,7 +100,7 @@ tuto-s1-ff-supported:
   variables:
     BROWSER: firefox_supported/firefox
   needs:
-    - []
+    - [build_test_server_docker]
 
 
 ## Cypress with server
