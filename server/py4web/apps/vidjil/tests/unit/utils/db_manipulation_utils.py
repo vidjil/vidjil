@@ -159,8 +159,7 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
     patient_id = db.patient.insert(id_label="", first_name="patient", last_name=patient_number, birth="2010-10-10",
                                    info=f"test patient {patient_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
     if (auth != None):
-        user_group_id = db(db.auth_group.role ==
-                           f"user_{user_id}").select()[0].id
+        user_group_id = test_utils.get_user_group_id(db, user_id)
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
         auth.add_permission(

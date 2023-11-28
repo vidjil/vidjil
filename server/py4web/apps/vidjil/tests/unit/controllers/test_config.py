@@ -4,7 +4,7 @@ import unittest
 from ..utils.omboddle import Omboddle
 from py4web.core import _before_request, Session, HTTP
 from ...functional.db_initialiser import DBInitialiser
-from ..utils import db_manipulation_utils
+from ..utils import db_manipulation_utils, test_utils
 from ....common import db, auth
 from ....controllers import config as config_controller
 
@@ -490,8 +490,7 @@ class TestConfigController(unittest.TestCase):
                                          1),
                                      db_manipulation_utils.get_indexed_user_password(1))
         config_id = db_manipulation_utils.add_config()
-        user_group_id = db(db.auth_group.role ==
-                           f"user_{user_1_id}").select()[0].id
+        user_group_id = test_utils.get_user_group_id(db, user_1_id)
 
         # When : Calling change_permission with no id in params
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"config_id": config_id, "group_id": user_group_id}):
@@ -506,8 +505,7 @@ class TestConfigController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         config_id = db_manipulation_utils.add_config()
-        user_group_id = db(db.auth_group.role ==
-                           f"user_{user_1_id}").select()[0].id
+        user_group_id = test_utils.get_user_group_id(db, user_1_id)
         assert auth.get_group_access(
             "config", config_id, user_group_id) == False
 
@@ -526,8 +524,7 @@ class TestConfigController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         config_id = db_manipulation_utils.add_config()
-        user_group_id = db(db.auth_group.role ==
-                           f"user_{user_1_id}").select()[0].id
+        user_group_id = test_utils.get_user_group_id(db, user_1_id)
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"config_id": config_id, "group_id": user_group_id}):
             json_result = config_controller.change_permission()
         assert auth.get_group_access(

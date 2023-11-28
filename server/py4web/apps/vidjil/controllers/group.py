@@ -26,13 +26,13 @@ from ..common import db, session, T, flash, cache, authenticated, unauthenticate
 # HELPERS
 ###########################
 def add_default_group_permissions(auth, group_id, anon=False):
-    auth.add_permission(group_id, PermissionEnum.create.value, 'sample_set', 0);
-    auth.add_permission(group_id, PermissionEnum.read.value, 'sample_set', 0);
-    auth.add_permission(group_id, PermissionEnum.admin.value, 'sample_set', 0);
-    auth.add_permission(group_id, PermissionEnum.upload.value, 'sample_set', 0);
-    auth.add_permission(group_id, PermissionEnum.save.value, 'sample_set', 0);
+    auth.add_permission(group_id, PermissionEnum.create.value, 'sample_set', 0)
+    auth.add_permission(group_id, PermissionEnum.read.value, 'sample_set', 0)
+    auth.add_permission(group_id, PermissionEnum.admin.value, 'sample_set', 0)
+    auth.add_permission(group_id, PermissionEnum.upload.value, 'sample_set', 0)
+    auth.add_permission(group_id, PermissionEnum.save.value, 'sample_set', 0)
     if anon:
-        auth.add_permission(group_id, PermissionEnum.anon.value, 'sample_set', 0);
+        auth.add_permission(group_id, PermissionEnum.anon.value, 'sample_set', 0)
 
 ACCESS_DENIED = "access denied"
 
@@ -137,11 +137,12 @@ def add_form():
         add_default_group_permissions(auth, id)
 
         res = {"redirect": "group/index",
+               "group_id": id,
                "message" : "group '%s' (%s) created" % (id, request.params["group_name"])}
 
         log.info(res, extra={'user_id': auth.user_id,
-                'record_id': id,
-                'table_name': "group"})
+                             'record_id': id,
+                             'table_name': "group"})
         log.admin(res)
         return json.dumps(res, separators=(',',':'))
 
@@ -364,14 +365,13 @@ def kick():
 def rights():
     if auth.is_admin():
         group_id = request.query["id"]
-        msg = ""
 
         if request.query["value"] == "true" :
             auth.add_permission(group_id, request.query["right"], request.query["name"], 0)
-            msg += "add '" + request.query["right"] + "' permission on '" + request.query["name"] + "' for group " + db.auth_group[group_id].role
+            msg = "add '" + request.query["right"] + "' permission on '" + request.query["name"] + "' for group " + db.auth_group[group_id].role
         else :
             auth.del_permission(group_id, request.query["right"], request.query["name"], 0)
-            msg += "remove '" + request.query["right"] + "' permission on '" + request.query["name"] + "' for group " + db.auth_group[group_id].role
+            msg = "remove '" + request.query["right"] + "' permission on '" + request.query["name"] + "' for group " + db.auth_group[group_id].role
 
         res = { "redirect": "group/info",
                 "args" : {"id" : group_id },

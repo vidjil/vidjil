@@ -1,6 +1,5 @@
 import os
 import json
-import shutil
 import unittest
 import pathlib
 
@@ -31,18 +30,6 @@ class TestFileController(unittest.TestCase):
         # init db
         initialiser = DBInitialiser(db)
         initialiser.run()
-
-    # def createDumbSequenceFile(self):
-    #     return db.sequence_file.insert(sampling_date="1903-02-02",
-    #                                    info="plop",
-    #                                    pcr="plop",
-    #                                    sequencer="plop",
-    #                                    producer="plop",
-    #                                    patient_id=fake_patient_id,
-    #                                    pre_process_id=fake_pre_process_id,
-    #                                    filename="babibou",
-    #                                    provider=user_id,
-    #                                    data_file =  db.sequence_file.data_file.store(open("../../doc/analysis-example.vidjil", 'rb'), "babibou"))
 
     ##################################
     # Tests on file_controller.form()
