@@ -183,7 +183,7 @@ Database.prototype = {
                  self.connected = true;
              }, 
              error: function (request, status, error) {
-                self.error_log(request, status, error, name="callProcess", msg=undefined, url=url, args=args, type="flash") 
+                self.error_log(request, status, error, name="callProcess", url=url, msg=undefined, args=args, type="flash") 
              }
          });
      },
@@ -217,7 +217,7 @@ Database.prototype = {
                  
              }, 
              error: function (request, status, error) {
-                self.error_log(request, status, error, name="waitProcess", msg=undefined, url=this.url, args=undefined, type="flash")
+                self.error_log(request, status, error, name="waitProcess", url=this.url, msg=undefined, args=undefined, type="flash")
              }
          });
      },
@@ -274,7 +274,7 @@ Database.prototype = {
                 self.m.updateIcon()
             }, 
             error: function (request, status, error) {
-                self.error_log(request, status, error, name="callUrl", msg=undefined, url=url, args=args, type="flash")
+                self.error_log(request, status, error, name="callUrl", url=url, msg=undefined, args=args, type="flash")
                 this.m.loading_is_pending = false
                 this.m.updateIcon()
             }
@@ -293,7 +293,7 @@ Database.prototype = {
      * args: args added to called url
      * type: type of log printed (flash; popup or undefined)
      */
-    error_log: function(request, status, error, name, msg=undefined, url, args, type="flash", quiet=true){
+    error_log: function(request, status, error, name, url, msg=undefined, args=undefined, type="flash", quiet=true){
         if (status === "timeout") {
             console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
         } else {
@@ -327,7 +327,7 @@ Database.prototype = {
                 self.connected = true;
             },
             error: function (request, status, error) {
-                self.error_log(request, status, error, name="callUrlJson", msg=undefined, url, args, type=undefined)
+                self.error_log(request, status, error, name="callUrlJson", url, msg=undefined, args, type=undefined)
             }
 
         });
@@ -539,7 +539,7 @@ Database.prototype = {
                     self.connected = true;
                 },
                 error: function (request, status, error) {
-                    self.error_log(request, status, error, name="init_ajaxform (data_form)", msg=undefined, url=$(this).attr('action'), args=undefined, type="popup")
+                    self.error_log(request, status, error, name="init_ajaxform (data_form)", url=$(this).attr('action'), msg=undefined, args=undefined, type="popup")
                 }
             });
         }
@@ -561,7 +561,7 @@ Database.prototype = {
                         self.connected = true;
                     },
                     error: function (request, status, error) {
-                        self.error_log(request, status, error, name="init_ajaxform (object_form)", msg=undefined, url=$('#object_form').attr('action'), args=undefined, type="popup")
+                        self.error_log(request, status, error, name="init_ajaxform (object_form)", url=$('#object_form').attr('action'), msg=undefined, args=undefined, type="popup")
                     }
                 });
                 return false;
@@ -606,7 +606,7 @@ Database.prototype = {
                     self.call(next, args)
                 },
                 error: function (request, status, error) {
-                    self.error_log(request, status, error, name="init_ajaxform (login_form)", url=$(this).attr('action'), args=undefined, type=undefined)
+                    self.error_log(request, status, error, name="init_ajaxform (login_form)", url=$(this).attr('action'), msg=undefined, args=undefined, type=undefined)
                     if (status != "timeout") {
                         self.call(next, args)
                     }
@@ -682,7 +682,7 @@ Database.prototype = {
                         }
                     },
                     error: function (request, status, error) {
-                        self.error_log(request, status, error, name="init_ajaxform (upload_sample_form)", msg=undefined, url=$(this).attr('action'), args=undefined, type="popup")
+                        self.error_log(request, status, error, name="init_ajaxform (upload_sample_form)", url=$(this).attr('action'), msg=undefined, args=undefined, type="popup")
                     }
                 });
                 return false;
@@ -906,7 +906,7 @@ Database.prototype = {
             error: function (request, status, error) {
                 if (quiet == undefined) {
                     // This triggers another request() call, but this time with quiet=true
-                    self.error_log(request, status, error, name="request", msg=undefined, url, args, type="popup", quiet=quiet)
+                    self.error_log(request, status, error, name="request", url, msg=undefined, args, type="popup", quiet=quiet)
                 }
                 if (status != "timeout") {
                     self.call("default/home")
@@ -1000,7 +1000,7 @@ Database.prototype = {
                 // self.callCloneDB()
             },
             error: function (request, status, error) {
-                self.error_log(request, status, error, name="load_data", msg=undefined, url=$(this).attr('url'), args=undefined, type="popup")
+                self.error_log(request, status, error, name="load_data", url=$(this).attr('url'), msg=undefined, args=undefined, type="popup")
             }
         });
     },
@@ -1057,7 +1057,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 // var url=
-                self.error_log(request, status, error, name="load_custom_data", msg=undefined, url=$(this).attr('url'), args=undefined, type="popup")
+                self.error_log(request, status, error, name="load_custom_data", url=$(this).attr('url'), msg=undefined, args=undefined, type="popup")
                 self.m.resume()
             }
         });
@@ -1078,7 +1078,7 @@ Database.prototype = {
                 console.log('=== load_analysis: success ===');
             },
             error: function (request, status, error) {
-                self.error_log(request, status, error, name="load_analysis", msg=undefined, url=$(this).attr('url'), args=undefined, type="popup")
+                self.error_log(request, status, error, name="load_analysis", url=$(this).attr('url'), msg=undefined, args=undefined, type="popup")
             }
         });
     },
@@ -1130,7 +1130,7 @@ Database.prototype = {
                     } else {
                         msg = "server error<br/>" +request.responseText
                     }
-                    self.error_log(request, status, error, name="Save analysis", msg=msg, this.url, args=self.last_file, type="popup")
+                    self.error_log(request, status, error, name="Save analysis", this.url, msg=msg, args=self.last_file, type="popup")
                 }
             });
         }else{
@@ -1155,7 +1155,7 @@ Database.prototype = {
 		            
 		        }, 
 		        error: function (request, status, error) {
-                           self.error_log(request, status, error, name="loadNotifications", msg="unable to get notifications", url=undefined, args=undefined, type=undefined)
+                           self.error_log(request, status, error, name="loadNotifications", url=undefined, msg="unable to get notifications", args=undefined, type=undefined)
 		        }
 		    });
 		} else {
