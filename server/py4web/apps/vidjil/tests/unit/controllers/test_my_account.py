@@ -1,9 +1,7 @@
 import os
-import json
 import unittest
 
 from ..utils.omboddle import Omboddle
-from ..utils import db_manipulation_utils
 from ...functional.db_initialiser import DBInitialiser
 from py4web.core import _before_request, Session, HTTP
 from ....common import db, auth

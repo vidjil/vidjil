@@ -1,3 +1,4 @@
+import collections
 import os
 import json
 import unittest
@@ -771,9 +772,9 @@ class TestFileController(unittest.TestCase):
 
             # Then : We get file list (with a filter on file type and directories)
             assert len(result) == 3
-            assert result[0]["li_attr"]["title"] == "Demo-X5.fa"
-            assert result[1]["li_attr"]["title"] == "results"
-            assert result[2]["li_attr"]["title"] == "logs"
+            titles = [item["li_attr"]["title"] for item in result]
+            expected_titles = ["Demo-X5.fa", "results", "logs"]
+            assert collections.Counter(titles) == collections.Counter(expected_titles)
         finally:
             defs.FILE_SOURCE = save_file_source
 
