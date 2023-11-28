@@ -96,6 +96,7 @@ class Vidjil:
         self.url_client = url_client if url_client != None else url_server
         self.ssl = ssl
         print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
+        self.last_request = {} # Will store results of request; for api tests
         self.session = requests.Session()
         self.auth_deletion = False
         cookie = requests.cookies.RequestsCookieJar()
@@ -207,6 +208,7 @@ class Vidjil:
         Returns:
             dict: A json conversion of server response
         """
+        self.last_request = {}
         url += f"{'&' if not url.endswith('&') else ''}format=json" if '&' in url else ""
 
         if method == "get":
@@ -216,13 +218,14 @@ class Vidjil:
         else:
             raise("Error. request function don't get correct method argument")
             
-
+        self.last_request["response"] = response
         if response.content in [b"Forbidden", b"Not Authorized"] :
             print(f"This call is '{response.content}'. \nVerify that you try to access to a data that EXIST, of your OWN or that you use an ADMIN account.", file=sys.stderr)
             exit()
 
         try:
             content  = json.loads(response.content)
+            self.last_request["content"] = content
         except Exception as e:
             print( url )
             print( response.content)
