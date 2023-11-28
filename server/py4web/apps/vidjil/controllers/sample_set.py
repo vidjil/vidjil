@@ -1154,7 +1154,7 @@ def samplesetById():
     helper  = factory.get_instance(type=type)
     slist   = SampleSetList(helper, setid=set_id)
 
-    return response.json(slist.result)
+    return slist.result
 
 
 @action("/vidjil/sample_set/stats", method=["POST", "GET"])
