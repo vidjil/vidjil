@@ -91,18 +91,19 @@ def add_form():
 
     if error=="" :
         
-        pre_proc_id = db.pre_process.insert(name=request.params['pre_process_name'],
+        pre_process_id = db.pre_process.insert(name=request.params['pre_process_name'],
                         info=request.params['pre_process_info'],
                         command=request.params['pre_process_command']
                         )
 
-        auth.add_permission(auth.user_group(), PermissionEnum.read_pre_process.value, db.pre_process, pre_proc_id)
+        auth.add_permission(auth.user_group(), PermissionEnum.read_pre_process.value, db.pre_process, pre_process_id)
 
         res = {"redirect": "pre_process/index",
-               "message": "pre_process '%s' added" % request.params['pre_process_name']}
+               "message": "pre_process '%s' added" % request.params['pre_process_name'],
+               "pre_process_id": pre_process_id}
         log.admin(res)
         log.info(res, extra={'user_id': auth.user_id,
-                'record_id': pre_proc_id,
+                'record_id': pre_process_id,
                 'table_name': "pre_process"})
         return json.dumps(res, separators=(',',':'))
         
@@ -116,7 +117,7 @@ def add_form():
 @vidjil_utils.jsontransformer
 def edit(): 
     if auth.can_modify_pre_process(int(request.query['id'])):
-        return dict(message=T('edit config'), 
+        return dict(message=T('edit pre_process'), 
                     info = db.pre_process[request.query["id"]],
                     auth=auth,
                     db=db)
@@ -183,7 +184,6 @@ def delete():
     return json.dumps(res, separators=(',',':'))
 
 
-## need ["sequence_file_id"]
 ## need ["sample_set_id"]
 @action("/vidjil/pre_process/info", method=["POST", "GET"])
 @action.uses("pre_process/info.html",db, auth.user)

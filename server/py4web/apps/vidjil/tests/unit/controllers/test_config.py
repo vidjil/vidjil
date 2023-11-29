@@ -7,6 +7,7 @@ from ...functional.db_initialiser import DBInitialiser
 from ..utils import db_manipulation_utils, test_utils
 from ....common import db, auth
 from ....controllers import config as config_controller
+from ....modules.permission_enum import PermissionEnum
 
 
 class TestConfigController(unittest.TestCase):
@@ -503,9 +504,9 @@ class TestConfigController(unittest.TestCase):
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"config_id": config_id, "group_id": user_group_id}):
             json_result = config_controller.change_permission()
 
-        # Then : Error expected
+        # Then : access granted
         result = json.loads(json_result)
-        assert result["message"] == "c9: access 'access' granted to 'user_2'"
+        assert result["message"] == f"c{config_id}: access '{PermissionEnum.access.value}' granted to '{db.auth_group[user_group_id].role}'"
         assert auth.get_group_access(
             "config", config_id, user_group_id) == True
 
@@ -524,8 +525,8 @@ class TestConfigController(unittest.TestCase):
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"config_id": config_id, "group_id": user_group_id}):
             json_result = config_controller.change_permission()
 
-        # Then : Error expected
+        # Then : access deleted
         result = json.loads(json_result)
-        assert result["message"] == "c9: access 'access' deleted to 'user_2'"
+        assert result["message"] == f"c{config_id}: access '{PermissionEnum.access.value}' deleted to '{db.auth_group[user_group_id].role}'"
         assert auth.get_group_access(
             "config", config_id, user_group_id) == False
