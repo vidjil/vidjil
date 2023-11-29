@@ -507,10 +507,11 @@ class TestGroupController(unittest.TestCase):
     def test_rights_add(self):
         # Given : logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        assert not auth.has_permission(group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
+        assert not auth.has_permission(
+            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
 
         # When : Calling rights
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, 
+        with Omboddle(self.session, keep_session=True, params={"format": "json"},
                       query={"id": 1, "value": "true", "right": PermissionEnum.upload.value, "name": "test"}):
             json_result = group_controller.rights()
 
@@ -518,16 +519,19 @@ class TestGroupController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["redirect"] == "group/info"
         assert result["message"] == f"add '{PermissionEnum.upload.value}' permission on 'test' for group {db.auth_group[1].role}"
-        assert auth.has_permission(group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
+        assert auth.has_permission(
+            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
 
     def test_rights_remove(self):
         # Given : logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        assert auth.add_permission(group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
-        assert auth.has_permission(group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
+        assert auth.add_permission(
+            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
+        assert auth.has_permission(
+            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
 
         # When : Calling rights
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, 
+        with Omboddle(self.session, keep_session=True, params={"format": "json"},
                       query={"id": 1, "value": "false", "right": PermissionEnum.upload.value, "name": "test"}):
             json_result = group_controller.rights()
 
@@ -535,4 +539,5 @@ class TestGroupController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["redirect"] == "group/info"
         assert result["message"] == f"remove '{PermissionEnum.upload.value}' permission on 'test' for group {db.auth_group[1].role}"
-        assert not auth.has_permission(group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
+        assert not auth.has_permission(
+            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)

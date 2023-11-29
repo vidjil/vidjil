@@ -112,13 +112,15 @@ class TestDefaultController(unittest.TestCase):
         # Given : not logged
 
         # When : Calling whoami
-        with self.assertRaises(AttributeError) as context:
-            with Omboddle(self.session, keep_session=True, params={"format": "json"}):
-                default_controller.whoami()
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}):
+            json_result = default_controller.whoami()
 
         # Then : We get a redirect
-        exception = context.exception
-        assert exception.args[0] == "'AuthEnforcer' object has no attribute 'id'"
+        result = json.loads(json_result)
+        assert result["id"] == None
+        assert result["email"] == None
+        assert result["admin"] == False
+        assert result["groups"] == []
 
     def test_whoami_admin(self):
         # Given : Logged as admin
@@ -130,9 +132,10 @@ class TestDefaultController(unittest.TestCase):
 
         # Then : We get a result
         result = json.loads(json_result)
+        assert result["id"] == 1
         assert result["email"] == "plop@plop.com"
         assert result["admin"] == True
-        assert result["groups"] is not None
+        assert result["groups"][0]["role"] == "admin"
 
     def test_whoami_user(self):
         # Given : Logged as other user

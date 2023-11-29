@@ -15,7 +15,7 @@ cache.free = 0
 from ....controllers import notification as notification_controller
 
 
-class TestMyAccountController(unittest.TestCase):
+class TestNotificationController(unittest.TestCase):
 
     def setUp(self):
         # init env
