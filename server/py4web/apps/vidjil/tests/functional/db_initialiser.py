@@ -103,7 +103,8 @@ class DBInitialiser(object):
                     filename="test_file.fasta",
                     size_file=1024,
                     network=False,
-                    data_file="test_sequence_file"
+                    data_file="test_sequence_file",
+                    producer="vidjil"
                 )
                 self.db.sample_set_membership.insert(sample_set_id=sample_set.id, sequence_file_id=sfid)
                 self.db.tag_ref.insert(tag_id=tag_id, table_name=self.db.sequence_file, record_id=sfid)
