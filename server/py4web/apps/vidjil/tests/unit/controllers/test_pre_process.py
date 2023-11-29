@@ -6,11 +6,8 @@ from ..utils.omboddle import Omboddle
 from ..utils import db_manipulation_utils, test_utils
 from ...functional.db_initialiser import DBInitialiser
 from py4web.core import _before_request, Session, HTTP
-from ....common import db, auth, cache
+from ....common import db, auth
 from ....modules.permission_enum import PermissionEnum
-
-# Hack to prevent use of cache
-cache.free = 0
 
 from ....controllers import pre_process as pre_process_controller
 
