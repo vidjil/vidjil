@@ -52,5 +52,5 @@ test_server_api:
     - /^prod-server/
     - dev
   needs:
-    - []
+    - [build_test_server_docker]
 
