@@ -6,8 +6,8 @@ pip install requests bs4 tabulate requests-toolbelt urllib3 pytest pytest-cov
 
 ### Download SSL certificate of target Vidjil server.
 # Use only for local test. CI env sue http so don't needed for the moment
-# SERVERNAME=localhost
-# echo -n | openssl s_client -connect $SERVERNAME:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /app/vidjil/tools/tests/cert_$SERVERNAME-chain.pem
+SERVERNAME=localhost
+echo -n | openssl s_client -connect $SERVERNAME:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /app/vidjil/tools/tests/cert_$SERVERNAME-chain.pem
 
 cd /app/vidjil
 make demo
