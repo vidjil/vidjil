@@ -814,6 +814,7 @@ def impersonate() :
             redirect_url = URL('default', 'home.html', scheme=True)
         log.debug(f"redirect_url {redirect_url}")
         auth.start_impersonating(request.query["id"], redirect_url) 
+        log.debug({"success" : "true", "message" : f"impersonated user_id {request.query['id']}"})
     res = {"redirect": "reload"}
     return json.dumps(res, separators=(',',':'))
 
