@@ -26,8 +26,8 @@ LOCAL_PASSWORD = "foobartest"
 LOCAL_SERVER = "http://localhost/vidjil/"
 LOCAL_SSL = False
 ## If launch locally
-LOCAL_SERVER = "https://localhost/vidjil/"
-LOCAL_SSL = current+"/cert_localhost-chain.pem"
+# LOCAL_SERVER = "https://localhost/vidjil/"
+# LOCAL_SSL = current+"/cert_localhost-chain.pem"
 
 # ========================
 
