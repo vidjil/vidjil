@@ -1,7 +1,8 @@
 import os
 import json
+import pathlib
 import tempfile
-import unittest
+import pytest
 from pathlib import Path
 from ..utils.omboddle import Omboddle
 from py4web import URL, request
@@ -9,11 +10,14 @@ from py4web.core import _before_request, Session, HTTP
 from ...functional.db_initialiser import DBInitialiser
 from ..utils import db_manipulation_utils, test_utils
 from ....common import db, auth
+from .... import defs
+from ....modules.permission_enum import PermissionEnum
 from ....controllers import default as default_controller
 
 
-class TestDefaultController(unittest.TestCase):
+class TestDefaultController():
 
+    @pytest.fixture(autouse=True)
     def setUp(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
@@ -65,12 +69,12 @@ class TestDefaultController(unittest.TestCase):
         # Given : not logged
 
         # When : Calling home
-        with self.assertRaises(HTTP) as context:
+        with pytest.raises(HTTP) as excinfo:
             with Omboddle(self.session, keep_session=True, params={"format": "json"}):
                 default_controller.home()
 
         # Then : We get a redirect
-        exception = context.exception
+        exception = excinfo.value
         assert exception.status == 303
 
     def test_home_admin(self):
@@ -177,63 +181,156 @@ class TestDefaultController(unittest.TestCase):
         # Given : not logged
 
         # When : Calling run_request
-        with self.assertRaises(HTTP) as context:
+        with pytest.raises(HTTP) as excinfo:
             with Omboddle(self.session, keep_session=True, params={"format": "json"}):
                 default_controller.run_request()
 
         # Then : We get a redirect
-        exception = context.exception
+        exception = excinfo.value
         assert exception.status == 303
 
-    # TODO : try and manage to get this working: currently it looks like it goes away in celery...
-    # def test_run_request(self):
-    #     # Given : Logged as other user, and add corresponding config, ...
-    #     user_id = add_indexed_user(self.session, 1)
-    #     log_in(self.session,
-    #            get_indexed_user_email(1),
-    #            get_indexed_user_password(1))
-    #     patient_id = add_patient(1, user_id)
-    #     sequence_file_id = add_sequence_file(patient_id, user_id)
-    #     config_id = add_config()
-    #     saved_dir_results = defs.DIR_RESULTS
-    #     defs.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
-    #                                 "..",
-    #                                 "resources"))
+    def test_run_request_no_permission(self):
+        # Given : Logged as other user, and add corresponding config, ...
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id)
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            patient_id, user_id)
+        config_id = db_manipulation_utils.add_config()
+        saved_dir_results = defs.DIR_RESULTS
 
-    #     # When : Calling run_request
-    #     try:
-    #         with Omboddle(self.session, keep_session=True,
-    #                       params={"format": "json"},
-    #                       query={"sequence_file_id": sequence_file_id, "sample_set_id": patient_id, "config_id": config_id}):
-    #             json_result = default_controller.run_request()
+        try:
+            defs.DIR_RESULTS = test_utils.get_resources_path()
 
-    #         # Then : Check result
-    #         result = json.loads(json_result)
-    #         print(result)
-    #     finally:
-    #         defs.DIR_RESULTS = saved_dir_results
+            # When : Calling run_request
+            with Omboddle(self.session, keep_session=True,
+                          params={"format": "json"},
+                          query={"sequence_file_id": sequence_file_id, "sample_set_id": sample_set_id, "config_id": config_id}):
+                json_result = default_controller.run_request()
 
-    # def testRunRequest(self):
-    #     #this will test only the scheduller not the worker
-    #     request.vars['config_id'] = fake_config_id
-    #     request.vars['sequence_file_id'] = fake_file_id
-    #     patient = db((db.sequence_file.id == fake_file_id)
-        # 	& (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-    #             & (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
-        # ).select(db.patient.ALL).first()
-        # request.vars['sample_set_id'] = patient.sample_set_id
+            # Then : Check result
+            result = json.loads(json_result)
+            assert result["success"] == "false"
+            assert result[
+                "message"] == f"default/run_request  : permission needed, you do not have permission to launch process for this sample_set ({sample_set_id}), you do not have permission to launch process for this config ({config_id})"
+        finally:
+            defs.DIR_RESULTS = saved_dir_results
 
-    #     resp = run_request()
-    #     self.assertNotEqual(resp.find('process requested'), -1, "run_request doesn't return a valid message")
-    #     self.assertEqual(db((db.fused_file.config_id == fake_config_id) & (db.fused_file.sample_set_id == patient.sample_set_id)).count(), 1)
+    def test_run_request(self, mocker):
+        # Given : Logged as other user, and add corresponding config, ...
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = test_utils.get_user_group_id(db, user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.run.value, db.sample_set, 0)
+        auth.add_permission(
+            user_group_id, PermissionEnum.run.value, db.sample_set, sample_set_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.run.value, db.patient, patient_id)
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            patient_id, user_id)
+        config_id = db_manipulation_utils.add_config()
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, db.config, config_id)
+        saved_dir_results = defs.DIR_RESULTS
+        defs.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
+                                    "..",
+                                    "resources"))
+        mocked_run_process = mocker.patch(
+            "apps.vidjil.tasks.run_process.delay", return_value="SUCCESS")
 
-    # TODO: add other tests !
+        # When : Calling run_request
+        try:
+            with Omboddle(self.session, keep_session=True,
+                          params={"format": "json"},
+                          query={"sequence_file_id": sequence_file_id, "sample_set_id": sample_set_id, "config_id": config_id}):
+                json_result = default_controller.run_request()
+
+            # Then : Check result
+            result = json.loads(json_result)
+            assert result["redirect"] == "reload"
+            results_file_id = result["results_file_id"]
+            assert result["message"] == f"[{results_file_id}] c{config_id}: process requested - None {db.sequence_file[sequence_file_id].filename}"
+            mocked_run_process.assert_called_once()
+        finally:
+            defs.DIR_RESULTS = saved_dir_results
 
     ##################################
     # Tests on default_controller.run_all_request()
     ##################################
 
-    # TODO : Tests on default_controller.run_all_request()
+    def test_run_all_request_not_logged(self):
+        # Given : not logged
+
+        # When : Calling run_all_request
+        with pytest.raises(HTTP) as excinfo:
+            with Omboddle(self.session, keep_session=True, params={"format": "json"}):
+                default_controller.run_all_request()
+
+        # Then : We get a redirect
+        exception = excinfo.value
+        assert exception.status == 303
+
+    def test_run_all_request(self, mocker):
+        # Given : Logged as other user, and add corresponding config, ...
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = test_utils.get_user_group_id(db, user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.run.value, db.sample_set, 0)
+        auth.add_permission(
+            user_group_id, PermissionEnum.run.value, db.sample_set, sample_set_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.run.value, db.patient, patient_id)
+        sequence_file_id_1 = db_manipulation_utils.add_sequence_file(
+            patient_id, user_id)
+        sequence_file_id_2 = db_manipulation_utils.add_sequence_file(
+            patient_id, user_id)
+        config_id = db_manipulation_utils.add_config()
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, db.config, config_id)
+        saved_dir_results = defs.DIR_RESULTS
+        defs.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
+                                    "..",
+                                    "resources"))
+        mocked_run_process = mocker.patch(
+            "apps.vidjil.tasks.run_process.delay", return_value="SUCCESS")
+
+        # When : Calling run_all_request
+        try:
+            with Omboddle(self.session, keep_session=True,
+                          params={"format": "json"},
+                          query={"sample_set_id": sample_set_id, "config_id": config_id}):
+                # Don't know how to pass a list in query, do it this way...
+                request.query["sequence_file_ids"] = [
+                    sequence_file_id_1, sequence_file_id_2]
+                json_result = default_controller.run_all_request()
+
+            # Then : Check result
+            result = json.loads(json_result)
+            assert result["success"] == "true"
+            assert result["redirect"] == "reload"
+            assert mocked_run_process.call_count == 2
+        finally:
+            defs.DIR_RESULTS = saved_dir_results
 
     ##################################
     # Tests on default_controller.get_data()
@@ -243,43 +340,60 @@ class TestDefaultController(unittest.TestCase):
         # Given : not logged
 
         # When : Calling get_data
-        with self.assertRaises(HTTP) as context:
+        with pytest.raises(HTTP) as excinfo:
             with Omboddle(self.session, keep_session=True, params={"format": "json"}):
                 default_controller.get_data()
 
         # Then : We get a redirect
-        exception = context.exception
+        exception = excinfo.value
         assert exception.status == 303
 
     # TODO : try and manage to get this working: should we use a real fused file ? where to get one ?
-    # def test_get_data(self):
-    #     # Given : Logged as other user
-    #     user_id = add_indexed_user(self.session, 1)
-    #     log_in(self.session,
-    #            get_indexed_user_email(1),
-    #            get_indexed_user_password(1))
-    #     patient_id = add_patient(1, user_id)
+    def test_get_data(self):
+        # Given : Logged as other user
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = test_utils.get_user_group_id(db, user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
+        config_id = db_manipulation_utils.add_config()
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            patient_id, user_id)
+        saved_dir_results = defs.DIR_RESULTS
+        save_upload_folder = db.fused_file.fused_file.uploadfolder
+        fused_file_id = -1
 
-    #     # When : Calling whoami
-    #     with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"patient": patient_id}):
-    #         json_result = default_controller.get_data()
+        try:
+            defs.DIR_RESULTS = str(test_utils.get_results_path())
+            db.fused_file.fused_file.uploadfolder = test_utils.get_results_path()
+            fused_file_id = db_manipulation_utils.add_fused_file(
+                sample_set_id, sequence_file_id, config_id, use_real_file=True)
 
-    #     # Then : We get a result
-    #     result = json.loads(json_result)
-    #     assert result["email"] == "plop@plop.com"
-    #     assert result["admin"] == True
-    #     assert result["groups"] is not None
+            # When : Calling get_data
+            with Omboddle(self.session, keep_session=True, params={"format": "json"},
+                          query={"sample_set_id": sample_set_id, "config": config_id}):
+                json_result = default_controller.get_data()
 
-    # def testGetData(self):
-    #     request.vars['config'] = fake_config_id
-    #     request.vars['sample_set_id'] = fake_sample_set_id
-
-    #     resp = get_data()
-    #     self.assertNotEqual(resp.find('segmented":[742377'), -1, "get_data doesn't return a valid json " + resp)
-    #     self.assertNotEqual(resp.find('(config_test_popipo)'), -1, "get_data doesn't return a valid json")
-    #     self.assertNotEqual(resp.find('this is a fake log msg'), -1, "get_data file doesn't contain expected log data")
-
-    # TODO: add other tests !
+            # Then : We get a result
+            result = json.loads(json_result)
+            assert result["group_id"] == user_group_id
+            assert result["patient_id"] == patient_id
+            assert result["sample_set_id"] == sample_set_id
+            assert result["config_name"] == db.config[config_id].name
+            assert result["reads"]["segmented"] == [742377, 0]
+            assert result["reads"]["total"] == [786861, 200]
+        finally:
+            if fused_file_id != -1:
+                fused_file = pathlib.Path(
+                    defs.DIR_RESULTS, db.fused_file[fused_file_id].fused_file)
+                fused_file.unlink(missing_ok=True)
+            defs.DIR_RESULTS = saved_dir_results
+            db.fused_file.fused_file.uploadfolder = save_upload_folder
 
     ##################################
     # Tests on default_controller.get_custom_data()
@@ -289,12 +403,12 @@ class TestDefaultController(unittest.TestCase):
         # Given : not logged
 
         # When : Calling get_custom_data
-        with self.assertRaises(HTTP) as context:
+        with pytest.raises(HTTP) as excinfo:
             with Omboddle(self.session, keep_session=True, params={"format": "json"}):
                 default_controller.get_custom_data()
 
         # Then : We get a redirect
-        exception = context.exception
+        exception = excinfo.value
         assert exception.status == 303
 
     def test_get_custom_data_missing_arguments(self):
@@ -310,19 +424,20 @@ class TestDefaultController(unittest.TestCase):
         assert result["success"] == "false"
         assert result["message"] == "default/get_custom_data : no file selected, "
 
-    def test_get_custom_data_one_file(self):
-        # Given : Logged as admin
-        db_manipulation_utils.log_in_as_default_admin(self.session)
-        results_file_id = db_manipulation_utils.add_results_file()
+    # TODO : make this work with custom fuse... mock ?
+    # def test_get_custom_data_one_file(self):
+    #     # Given : Logged as admin
+    #     db_manipulation_utils.log_in_as_default_admin(self.session)
+    #     results_file_id = db_manipulation_utils.add_results_file()
 
-        # When : Calling get_custom_data
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"custom": results_file_id}):
-            json_result = default_controller.get_custom_data()
+    #     # When : Calling get_custom_data
+    #     with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"custom": results_file_id}):
+    #         json_result = default_controller.get_custom_data()
 
-        # Then : We get a redirect
-        result = json.loads(json_result)
-        assert result["success"] == "false"
-        # assert result["message"] == "[Errno 13] Permission denied: '/mnt/result'"
+    #     # Then : We get a redirect
+    #     result = json.loads(json_result)
+    #     assert result["success"] == "false"
+    #     # assert result["message"] == "[Errno 13] Permission denied: '/mnt/result'"
 
     # def testCustomDataOneFile(self):
     #     request.vars['custom'] = str(fake_result_id)

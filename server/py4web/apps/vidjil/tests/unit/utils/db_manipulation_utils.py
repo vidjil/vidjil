@@ -229,7 +229,7 @@ def add_config():
 # Results file management
 
 
-def add_results_file(sequence_file_id: int = -1, config_id: int = -1, scheduler_task_id: int = -1) -> int:
+def add_results_file(sequence_file_id: int = -1, config_id: int = -1, scheduler_task_id: int = -1, use_real_file: bool = False) -> int:
     """Add a fake result file
 
     Args:
@@ -249,11 +249,20 @@ def add_results_file(sequence_file_id: int = -1, config_id: int = -1, scheduler_
     if scheduler_task_id == -1:
         scheduler_task_id = db(db.scheduler_task).select().first().id
 
+    if use_real_file:
+        filename = "analysis-example.vidjil"
+        file = pathlib.Path(test_utils.get_resources_path(),
+                            "analysis-example.vidjil")
+        with file.open("rb") as stream:
+            data_file = db.results_file.data_file.store(stream, filename)
+    else:
+        data_file = "/test/sequence/test_file.fasta"
+
     results_file_id = db.results_file.insert(sequence_file_id=sequence_file_id,
                                              config_id=config_id,
                                              run_date="2010-10-10 10:10:10",
                                              scheduler_task_id=scheduler_task_id,
-                                             data_file="test_results_file")
+                                             data_file=data_file)
     return results_file_id
 
 # pre-process management
@@ -269,3 +278,47 @@ def add_pre_process() -> int:
                                            command="cat &file1& &file2& > &result&",
                                            info="barfoo")
     return pre_process_id
+
+# Fused file management
+
+
+def add_fused_file(sample_set_id: int = -1, sequence_file_id: int = -1, config_id: int = -1, scheduler_task_id: int = -1, use_real_file: bool = False) -> int:
+    """Add a fake fused file
+
+    Args:
+        sequence_file_id (int, optional): sequence file id to use. If -1, use the first sequence file id in DB. Defaults to -1.
+        config_id (int, optional): config id to use. If -1, use the first config id in DB. Defaults to -1.
+        scheduler_task_id (int, optional): scheduler task id to use. If -1, use the first scheduler task id in DB. Defaults to -1.
+
+    Returns:
+        int: id of the added fused file
+    """
+    if sample_set_id == -1:
+        sample_set_id = db(db.sample_set).select().first().id
+
+    if sequence_file_id == -1:
+        sequence_file_id = db(db.sequence_file).select().first().id
+
+    if config_id == -1:
+        config_id = db(db.config).select().first().id
+
+    if scheduler_task_id == -1:
+        scheduler_task_id = db(db.scheduler_task).select().first().id
+
+    if use_real_file:
+        filename = "analysis-example.vidjil"
+        file = pathlib.Path(test_utils.get_resources_path(),
+                            "analysis-example.vidjil")
+        with file.open("rb") as stream:
+            fused_file = db.fused_file.fused_file.store(stream, filename)
+    else:
+        fused_file = "/test/fuse/test_file.fasta"
+
+    fused_file_id = db.fused_file.insert(
+        config_id=config_id,
+        sample_set_id=sample_set_id,
+        fuse_date="2010-10-10 10:10:10",
+        status="COMPLETED",
+        sequence_file_list="%d_" % sequence_file_id,
+        fused_file=fused_file)
+    return fused_file_id
