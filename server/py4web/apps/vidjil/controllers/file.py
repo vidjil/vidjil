@@ -483,11 +483,11 @@ def upload():
 @action.uses("file/confirm.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def confirm():
-    '''
+    """
     Request parameters:
-    \param delete_results: (optional) boolean
-    \param id: sequence file ID
-    '''
+    delete_results: (optional) boolean
+    id: sequence file ID
+    """
     delete_only_sequence = ('delete_only_sequence' in request.query and request.query['delete_only_sequence'] == 'True')
     delete_results = ('delete_results' in request.query and request.query['delete_results'] == 'True')
     sequence_file = db.sequence_file[request.query['id']]
@@ -519,8 +519,8 @@ def delete_sequence_file(seq_id):
 def delete():
     '''
     Called (via request) with:
-    \param: id (the sequence ID)
-    \param: delete_results: (optional) boolean stating if we also want to delete the results.
+    id: the sequence ID
+    delete_results: (optional) boolean stating if we also want to delete the results.
     '''
     delete_results = ('delete_results' in request.query and request.query['delete_results'] == "True")
     sample_set = db.sample_set[request.query["redirect_sample_set_id"]]
