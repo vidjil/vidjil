@@ -659,7 +659,7 @@ class TestFileController(unittest.TestCase):
     # Tests on file_controller.producer_list()
     ##################################
 
-    def test_producer_list_empty(self):
+    def test_producer_list_default(self):
         # Given : Logged as default admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
 
@@ -669,9 +669,9 @@ class TestFileController(unittest.TestCase):
 
         # Then : We get producer_list
         result = json.loads(json_result)
-        assert result["producer"] == []
+        assert result["producer"] == ['vidjil']
 
-    def test_producer_list_one_result(self):
+    def test_producer_list_new(self):
         # Given : Logged as default admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
         sequence_file_id = db_manipulation_utils.add_sequence_file()
@@ -684,8 +684,8 @@ class TestFileController(unittest.TestCase):
 
         # Then : We get producer_list
         result = json.loads(json_result)
-        assert len(result["producer"]) == 1
-        assert "dummy_producer" in result["producer"]
+        assert len(result["producer"]) == 2
+        assert collections.Counter(result["producer"]) == collections.Counter(["vidjil", "dummy_producer"])
 
     ##################################
     # Tests on file_controller.restart_pre_process()
@@ -695,8 +695,8 @@ class TestFileController(unittest.TestCase):
     # def test_restart_pre_process(self):
     #     # Given :
     #     db_manipulation_utils.log_in_as_default_admin(self.session)
-    #     pre_process_id = db_manipulation_utils.add_pre_process()
     #     sequence_file_id = db_manipulation_utils.add_sequence_file()
+    #     pre_process_id = db_manipulation_utils.add_pre_process()
     #     db.sequence_file[sequence_file_id].update_record(pre_process_id=pre_process_id)
 
     #     # When : Calling producer_list
