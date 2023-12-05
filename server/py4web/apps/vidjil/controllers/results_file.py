@@ -166,7 +166,7 @@ def confirm():
         & auth.can_process_sample_set(int(sample_set_id))):
         return dict(message=T('result confirm'), auth=auth, db=db)
     else :
-        res = {"message": "acces denied"}
+        res = {"message": ACCESS_DENIED}
         return json.dumps(res, separators=(',',':'))
     
 @action("/vidjil/results_file/delete", method=["POST", "GET"])
@@ -200,11 +200,11 @@ def delete():
                "args" : { "id" : sample_set_id,
                           "config_id" : config_id},
                "success": "true",
-               "message": "[%s] (%s) c%s: process deleted " % (request.query["results_file_id"], sample_set_id, config_id)}
+               "message": "[%s] (%s) c%s: process deleted" % (request.query["results_file_id"], sample_set_id, config_id)}
         log.info(res, extra={'user_id': auth.user_id,
                 'record_id': request.query["results_file_id"],
                 'table_name': "results_file"})
         return json.dumps(res, separators=(',',':'))
     else :
-        res = {"message": "acces denied"}
+        res = {"message": ACCESS_DENIED}
         return json.dumps(res, separators=(',',':'))

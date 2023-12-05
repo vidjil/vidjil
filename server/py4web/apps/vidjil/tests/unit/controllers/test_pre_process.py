@@ -318,7 +318,7 @@ class TestPreProcessController(unittest.TestCase):
         exception = context.exception
         assert exception.status == 303
 
-    def test_confirm_no_rights(self):
+    def test_delete_no_rights(self):
         # Given : Logged as other user
         db_manipulation_utils.log_in_as_default_admin(self.session)
         pre_process_id = db.pre_process.insert(name="pre process name",
@@ -335,7 +335,7 @@ class TestPreProcessController(unittest.TestCase):
                       params={"format": "json"}, query={"id": pre_process_id}):
             json_result = pre_process_controller.delete()
 
-        # Then : edit is authorized
+        # Then : access denied
         result = json.loads(json_result)
         assert result["message"] == pre_process_controller.ACCESS_DENIED
 
