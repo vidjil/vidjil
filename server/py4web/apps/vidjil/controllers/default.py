@@ -40,7 +40,7 @@ from ..VidjilAuth import VidjilAuth
 from py4web.utils.auth import Auth, AuthAPI
 import types
 
-from ..common import db, session, cors, T, flash, cache, authenticated, unauthenticated, auth, log
+from ..common import db, session, cors, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
 
 #if request.environ.get("HTTP_ORIGIN") :
 #    response.headers['Access-Control-Allow-Origin'] = request.environ.get("HTTP_ORIGIN")
@@ -800,29 +800,37 @@ def user(path=None):
 
     return dict(form=auth())
 
+@action("/vidjil/default/impersonate", method=["POST", "GET"])
+@action.uses(db, auth, session)
 def impersonate() :
     if auth.is_impersonating() :
-        stop_impersonate()
+        log.debug("impersonate << stop")
+        auth.stop_impersonating(request.url)
     if request.query["id"] != 0 :
-        log.debug({"success" : "true", "message" : "impersonate >> %s" % request.query["id"]})
-        auth.impersonate(request.query["id"]) 
-        log.debug({"success" : "true", "message" : "impersonated"})
-    if not 'admin' in request.query['next']:
-        res = {"redirect": "reload"}
-    else:
-        res = {"redirect" : URL('patient', 'index', scheme=True)}
+        log.debug(f"impersonate >> {request.query['id']}")
+        if "next" in request.query :
+            redirect_url = request.query["next"]
+        else :
+            redirect_url = URL('default', 'home.html', scheme=True)
+        log.debug(f"redirect_url {redirect_url}")
+        auth.start_impersonating(request.query["id"], redirect_url) 
+        log.debug({"success" : "true", "message" : f"impersonated user_id {request.query['id']}"})
+    res = {"redirect": "reload"}
     return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/default/stop_impersonate", method=["POST", "GET"])
+@action.uses(db, auth, session)
 def stop_impersonate() :
     if auth.is_impersonating() :
         log.debug({"success" : "true", "message" : "impersonate << stop"})
-        auth.impersonate(0) 
-        # force clean login (default impersonate don't restore everything :/ )
-        auth.login_user(db.auth_user(auth.user_id))
-
+        if "next" in request.query :
+            redirect_url = request.query["next"]
+        else :
+            redirect_url = URL('default', 'home.html', scheme=True)
+        log.debug(f"redirect_url {redirect_url}")
+        auth.stop_impersonating(redirect_url)
     res = {"redirect" : "reload"}
     return json.dumps(res, separators=(',',':'))
-
 
 
 ## TODO make custom download for .data et .analysis

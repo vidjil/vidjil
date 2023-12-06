@@ -27,6 +27,12 @@ ACCESS_DENIED = "access denied"
 @action.uses("user/index.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def index():
+    if not auth.is_admin():
+        res = {"success" : "false",
+               "message" : ACCESS_DENIED,
+               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+        log.info(res)
+        return json.dumps(res, separators=(',',':'))
     
     since = datetime.datetime.now() - timedelta(days=90)
 
