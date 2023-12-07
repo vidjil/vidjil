@@ -396,13 +396,7 @@ deploy_review_server:
     - cp docker/vidjil-client/conf/*.cgi browser/cgi
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
-    - echo "TIME - before pulling docker images - $(date)"
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT
-    - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
-    - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test
-    - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test
-    - echo "TIME - after pulling docker images - $(date)"
+    
     - sed -i 's/latest/test/g' ./docker-compose.yml
     - sed -i "s/virtual_host/${CI_COMMIT_REF_SLUG}/" docker-compose-ci-review.yml
     - mv docker-compose-ci.yml docker-compose.override.yml
@@ -414,6 +408,13 @@ deploy_review_server:
     - 'ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER;
         ./install_certs.sh ${CI_COMMIT_REF_SLUG}; 
         cd ${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; 
+        echo "TIME - before pulling docker images - $(date)"
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT
+        docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
+        docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test
+        docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test
+        echo "TIME - after pulling docker images - $(date)"
         mkdir -p postfix/ssl; 
         cat docker-compose.yml; 
         ls; 
