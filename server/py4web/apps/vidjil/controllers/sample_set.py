@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
@@ -383,11 +384,9 @@ def form():
         return json.dumps(res, separators=(',',':'))
 
     message = '%s %s' % (action, set_type)
-    sets = {
-            'patient': [],
-            'run': [],
-            'generic': []
-            }
+    sets = {defs.SET_TYPE_PATIENT: [],
+            defs.SET_TYPE_RUN: [],
+            defs.SET_TYPE_GENERIC: []}
     # We add a None object to the desired set type to initialise an empty form in the template.
     sets[set_type].append(sset)
     log.info("load form " + message, extra=extra)
@@ -1031,7 +1030,7 @@ def multi_sample_stats():
     if not isinstance(custom_result, list):
         custom_result = [custom_result]
 
-    custom_result = [long(i) for i in custom_result]
+    custom_result = [int(i) for i in custom_result]
 
     permitted_results = db(
         (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &
