@@ -491,7 +491,7 @@ build_test_server_docker:
     - 'docker build 
         --no-cache
         --build-arg git_branch=$CI_COMMIT_REF_NAME 
-        --build-arg build_env=PRODUCTION 
+        --build-arg build_env=TEST 
         -t ${CI_REGISTRY_IMAGE}/$IMAGE_NAME
         docker/vidjil-$TYPE'
 
