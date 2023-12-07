@@ -403,7 +403,7 @@ deploy_review_server:
     - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test
     - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test
     - echo "TIME - after pulling docker images - $(date)"
-    - sed -i 's/latest/test/g' ./docker/docker-compose.yml
+    - sed -i 's/latest/test/g' ./docker-compose.yml
     - sed -i "s/virtual_host/${CI_COMMIT_REF_SLUG}/" docker-compose-ci-review.yml
     - mv docker-compose-ci.yml docker-compose.override.yml
     - cp .env-default .env
