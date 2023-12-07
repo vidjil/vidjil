@@ -70,7 +70,7 @@ def update_task(task_id, status):
     db._adapter.reconnect()
     db.scheduler_task[task_id].update_record(status = status)
     db.commit()
-
+    return
 
 
 
@@ -612,7 +612,8 @@ def run_refuse(args):
 @scheduler.task()
 def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
-    
+    db._adapter.reconnect()
+
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
     output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data + '-%s' % sample_set_id
     
@@ -629,12 +630,14 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
     output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
     sequence_file_list = ""
+
     query2 = db( ( db.results_file.sequence_file_id == db.sequence_file.id )
                    & ( db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                    & ( db.sample_set_membership.sample_set_id == sample_set_id)
                    & ( db.results_file.config_id == id_config )
                    & ( db.results_file.hidden == False)
                    ).select( orderby=db.sequence_file.id|~db.results_file.run_date) 
+
     query = []
     sequence_file_id = 0
     for row in query2 : 
@@ -687,6 +690,7 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
     fused_files = db( ( db.fused_file.config_id == id_config ) &
                      ( db.fused_file.sample_set_id == sample_set_id )
                  ).select()
+
     existing_fused_file = None
     if len(fused_files) > 0:
         fused_file = fused_files[0]
@@ -696,7 +700,7 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
         id_fuse = db.fused_file.insert(sample_set_id = sample_set_id,
                                        config_id = id_config)
 
-    db.fused_file[id_fuse] = dict(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+    db.fused_file[id_fuse].update_record( fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                  fused_file = stream,
                                  sequence_file_list = sequence_file_list)
     db.commit()
