@@ -56,6 +56,11 @@ test_tools:
     - apt-get update && apt-get install -y python3-pip
     - pip3 install beautifulsoup4 bs4 tabulate requests requests-toolbelt urllib3
     - make -C tools/tests
+  artifacts:
+    reports:
+      junit: tools/tests/should.xml
+    expire_in: 7 day
+    when: always
   extends:
     - .need_for_quick_test
   tags:
