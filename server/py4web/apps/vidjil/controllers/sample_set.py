@@ -407,8 +407,9 @@ def form():
 ## return a flash error message if fail
 @action("/vidjil/sample_set/submit", method=["POST", "GET"])
 @action.uses(db, auth.user)
+@vidjil_utils.jsontransformer
 def submit():
-    data = json.loads(request.params['data'], encoding='utf-8')
+    data = json.loads(request.params['data'])
     mf = ModelFactory()
 
     error = False
@@ -438,19 +439,23 @@ def submit():
             name = helper.get_name(p)
 
             # edit
-            if (p['sample_set_id'] != "" and auth.can_modify_sample_set(int(p['sample_set_id']))):
-                reset = True
-                sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
-                db[set_type][sset.id] = p
-                id_sample_set = sset['sample_set_id']
-
-                if (sset.info != p['info']):
-                    group_id = get_set_group(id_sample_set)
-                    register = True
+            if (p['sample_set_id'] != ""):
+                if auth.can_modify_sample_set(int(p['sample_set_id'])):
                     reset = True
+                    sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
+                    db[set_type][sset.id] = p
+                    id_sample_set = sset['sample_set_id']
 
-                action = "edit"
+                    if (sset.info != p['info']):
+                        group_id = get_set_group(id_sample_set)
+                        register = True
+                        reset = True
 
+                    action = "edit"
+                else:
+                    p['error'].append("permission denied")
+                    error = True
+                    
             # add
             elif (auth.can_create_patient()):
 

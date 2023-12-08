@@ -1,3 +1,5 @@
+import collections
+import datetime
 import os
 import json
 import pathlib
@@ -11,12 +13,14 @@ from py4web.core import _before_request, Session, HTTP
 from ....common import db, auth
 from .... import defs
 from ....modules.permission_enum import PermissionEnum
+from ....modules import tag
 
 from ....controllers import sample_set as sample_set_controller
 
 
 class TestSampleSetController():
 
+    # TODO: mutualize ?
     @pytest.fixture(autouse=True)
     def init_env_and_db(self):
         # init env
@@ -230,125 +234,120 @@ class TestSampleSetController():
     ##################################
     # Tests on sample_set_controller.submit()
     ##################################
-    
 
-    # def _initialize_json_submit_data(self) -> str:
-    #     sets = {defs.SET_TYPE_PATIENT: [],
-    #             defs.SET_TYPE_RUN: [],
-    #             defs.SET_TYPE_GENERIC: []}
+    patient_tag_1 = "patienttest1"
+    patient_tag_2 = "patienttest2"
+    patient_add_data = {"first_name": "Jane", "last_name": "Doe", "birth": "",
+                        "info": f"info with tag #{patient_tag_1}", "sample_set_id": "", "id": "", "error": []}
+    patient_edit_data = {"first_name": "John", "last_name": "Snow", "birth": "2001-09-11",
+                         "info": f"info with tag #{patient_tag_2}", "sample_set_id": "", "id": "", "error": []}
+
+    def _initialize_json_submit_data(self, user_group_id: int, patient_id: int, patient_sample_set_id: int) -> str:
+        sets = {defs.SET_TYPE_PATIENT: [],
+                defs.SET_TYPE_RUN: [],
+                defs.SET_TYPE_GENERIC: [],
+                "group": user_group_id}
+
+        sets[defs.SET_TYPE_PATIENT].append(self.patient_add_data)
+        self.patient_edit_data["sample_set_id"] = patient_sample_set_id
+        self.patient_edit_data["id"] = patient_id
+        sets[defs.SET_TYPE_PATIENT].append(self.patient_edit_data)
+
+        return json.dumps(sets)
+
+    def test_submit_not_logged(self):
+        # Given : not logged
+
+        # When : Calling submit
+        with pytest.raises(HTTP) as excinfo:
+            with Omboddle(self.session, keep_session=True, params={"format": "json"}):
+                sample_set_controller.submit()
+
+        # Then : We get a redirect
+        exception = excinfo.value
+        assert exception.status == 303
+
+    def test_submit(self):
+        # Given : logged as other user
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = test_utils.get_user_group_id(db, user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id, patient_sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.read.value, db.sample_set, patient_sample_set_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, db.sample_set, patient_sample_set_id)
+        json_submit_data = self._initialize_json_submit_data(
+            user_group_id, patient_id, patient_sample_set_id)
+
+        # When : Calling form
+        with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}):
+            json_result = sample_set_controller.submit()
+
+        # Then : We get results_file list
+        result = json.loads(json_result)
+        assert result["message"] == "successfully added/edited set(s)"
+        assert result["redirect"] == "sample_set/all"
+        patient = db.patient[patient_id]
+        assert patient["first_name"] == self.patient_edit_data["first_name"]
+        assert patient["last_name"] == self.patient_edit_data["last_name"]
+        assert patient["birth"] == datetime.datetime.strptime(
+            self.patient_edit_data["birth"], "%Y-%m-%d").date()
+        tags = tag.get_tags(db, [user_group_id])
+        tag_names_for_group = [result["tag"]["name"]
+                               for result in tags if result["group_tag"]["group_id"] == user_group_id]
+        expected_tag_names = [self.patient_tag_1, self.patient_tag_2]
+        assert collections.Counter(
+            tag_names_for_group) == collections.Counter(expected_tag_names)
+
+    def test_submit_access_denied(self):
+        # Given : logged as other user
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = test_utils.get_user_group_id(db, user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        patient_id, patient_sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id)
+        auth.del_permission(
+            user_group_id, PermissionEnum.read.value, db.sample_set, patient_sample_set_id)
+        auth.del_permission(
+            user_group_id, PermissionEnum.access.value, db.sample_set, patient_sample_set_id)
+        json_submit_data = self._initialize_json_submit_data(
+            user_group_id, patient_id, patient_sample_set_id)
+
+        # When : Calling form
+        with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}):
+            json_result = sample_set_controller.submit()
+
+        # Then : We get results_file list
+        result = json.loads(json_result)
+        assert result["message"] == "an error occured"
+        patients = result["sets"][defs.SET_TYPE_PATIENT]
+        assert len(patients) == 2
+        # Patient add was added
+        patient_add = next(
+            patient for patient in patients if patient["last_name"] == self.patient_add_data["last_name"])
+        assert len(patient_add["error"]) == 0
+        patient_add_in_db = db.patient[patient_add["id"]]
+        assert patient_add_in_db["first_name"] == self.patient_add_data["first_name"]
+        assert patient_add_in_db["last_name"] == self.patient_add_data["last_name"]
+        assert patient_add_in_db["birth"] == None
+        # patient edit was not modified
+        patient_edit = next(
+            patient for patient in patients if patient["last_name"] == self.patient_edit_data["last_name"])
+        assert len(patient_edit["error"]) == 1
+        assert patient_edit["id"] == patient_id
+        patient_edit_in_db = db.patient[patient_edit["id"]]
+        assert patient_edit_in_db["first_name"] != self.patient_edit_data["first_name"]
+        assert patient_edit_in_db["last_name"] != self.patient_edit_data["last_name"]
         
-    #     patient_data={"first_name": "Jane", "last_name": "Doe"}
-        
-    #     return json.dumps(sets)
-
-    # def test_submit_not_logged(self):
-    #     # Given : not logged
-
-    #     # When : Calling submit
-    #     with pytest.raises(HTTP) as excinfo:
-    #         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
-    #             sample_set_controller.submit()
-
-    #     # Then : We get a redirect
-    #     exception = excinfo.value
-    #     assert exception.status == 303
-
-    # def test_submit_add(self):
-    #     # Given : logged as other user
-    #     user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-    #     user_group_id = test_utils.get_user_group_id(db, user_id)
-    #     db_manipulation_utils.log_in(
-    #         self.session,
-    #         db_manipulation_utils.get_indexed_user_email(1),
-    #         db_manipulation_utils.get_indexed_user_password(1))
-
-    #     # When : Calling form
-    #     with Omboddle(self.session, keep_session=True, params={"format": "json", "data": }):
-    #         json_result = sample_set_controller.submit()
-
-    #     # Then : We get results_file list
-    #     result = json.loads(json_result)
-    #     assert result["message"] == "add patient"
-    #     assert result["isEditing"] == False
-    #     groups = result["groups"]
-    #     assert len(groups) == 1
-    #     assert groups[0]["id"] == user_group_id
-
-    # def test_submit_access_denied(self):
-    #     # Given : logged as other user, add a results file with the wrong rights
-    #     user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-    #     user_group_id = test_utils.get_user_group_id(db, user_id)
-    #     db_manipulation_utils.log_in(
-    #         self.session,
-    #         db_manipulation_utils.get_indexed_user_email(1),
-    #         db_manipulation_utils.get_indexed_user_password(1))
-    #     patient_id, sample_set_id = db_manipulation_utils.add_patient(
-    #         1, user_id)
-    #     auth.del_permission(
-    #         user_group_id, PermissionEnum.read.value, 'sample_set', sample_set_id)
-    #     auth.del_permission(
-    #         user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
-    #     sequence_file_id = db_manipulation_utils.add_sequence_file(
-    #         patient_id, user_id)
-    #     results_file_id = db_manipulation_utils.add_results_file(
-    #         sequence_file_id=sequence_file_id)
-
-    #     # When : Calling submit
-    #     with Omboddle(self.session, keep_session=True, params={"format": "json"},
-    #                   query={"results_file_id": results_file_id}):
-    #         json_result = sample_set_controller.submit()
-
-    #     # Then : We get an error
-    #     result = json.loads(json_result)
-    #     assert result["success"] == "false"
-    #     assert result["message"] == sample_set_controller.ACCESS_DENIED
-
-    # def test_submit(self):
-    #     # Given : logged as other user, add a results file with rights
-    #     user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-    #     user_group_id = test_utils.get_user_group_id(db, user_id)
-    #     db_manipulation_utils.log_in(
-    #         self.session,
-    #         db_manipulation_utils.get_indexed_user_email(1),
-    #         db_manipulation_utils.get_indexed_user_password(1))
-    #     patient_id, sample_set_id = db_manipulation_utils.add_patient(
-    #         1, user_id)
-    #     auth.add_permission(
-    #         user_group_id, PermissionEnum.read.value, db.sample_set, sample_set_id)
-    #     auth.add_permission(
-    #         user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
-    #     sequence_file_id = db_manipulation_utils.add_sequence_file(
-    #         patient_id, user_id)
-    #     save_dir_out_vidjil_id = defs.DIR_OUT_VIDJIL_ID
-    #     try:
-    #         results_file_id = db_manipulation_utils.add_results_file(
-    #             sequence_file_id=sequence_file_id)
-    #         defs.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
-    #             test_utils.get_results_path(), f"out-{defs.BASENAME_OUT_VIDJIL_ID}")) + os.sep
-    #         results_file_directory = pathlib.Path(
-    #             defs.DIR_OUT_VIDJIL_ID % results_file_id)
-    #         results_file_directory.mkdir(parents=True, exist_ok=True)
-    #         results_filename = "test_result_file.res"
-    #         results_content = "test_content"
-    #         pathlib.Path(results_file_directory,
-    #                      results_filename).write_text(results_content)
-
-    #         # When : Calling submit
-    #         with Omboddle(self.session, keep_session=True, params={"format": "json"},
-    #                       query={"results_file_id": results_file_id}):
-    #             json_result = sample_set_controller.submit()
-
-    #         # Then : We get the correct list of files
-    #         result = json.loads(json_result)
-    #         assert result["message"] == "submit files"
-    #         assert result["results_file_id"] == results_file_id
-    #         files = result["files"]
-    #         assert len(files) == 1
-    #         assert files[0]["filename"] == results_filename
-    #         assert files[0]["size"] == f"{len(results_content)} B"
-    #     finally:
-    #         defs.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
-    #         shutil.rmtree(results_file_directory)
+    # TODO : add tests for other defs.SET_TYPE
 
     # ##################################
     # # Tests on sample_set_controller.download()
