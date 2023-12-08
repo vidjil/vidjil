@@ -18,7 +18,7 @@ Cypress.Commands.add('login', (host) => {
 
 
 Cypress.Commands.add('fillLogin', (user, password) => { 
-    cy.get('.db_div')
+    cy.get('.db_div', { timeout: 10000 })
       .should("be.visible")
 
     cy.document().then(($document) => {
