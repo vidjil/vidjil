@@ -346,6 +346,7 @@ test_server_unit:
     - cd docker && docker-compose down -v
     - cd .. && cat time.log
     - docker rmi "vidjil/server:test" "vidjil/client:test"
+    - docker rmi $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
   variables:
     IMAGE_NAME_CLIENT: dev-client/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     IMAGE_NAME_SERVER: dev-server/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
@@ -395,14 +396,8 @@ deploy_review_server:
     - cp docker/vidjil-client/conf/*.cgi browser/cgi
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
-    - echo "TIME - before pulling docker images - $(date)"
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT
-    - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
-    - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test
-    - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test
-    - echo "TIME - after pulling docker images - $(date)"
-    - sed -i 's/latest/test/g' ./docker/docker-compose.yml
+    
+    - sed -i 's/latest/test/g' ./docker-compose.yml
     - sed -i "s/virtual_host/${CI_COMMIT_REF_SLUG}/" docker-compose-ci-review.yml
     - mv docker-compose-ci.yml docker-compose.override.yml
     - cp .env-default .env
@@ -413,6 +408,13 @@ deploy_review_server:
     - 'ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER;
         ./install_certs.sh ${CI_COMMIT_REF_SLUG}; 
         cd ${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; 
+        echo "TIME - before pulling docker images - $(date)";
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY;
+        docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT;
+        docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER;
+        docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test;
+        docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test;
+        echo "TIME - after pulling docker images - $(date)";
         mkdir -p postfix/ssl; 
         cat docker-compose.yml; 
         ls; 
@@ -490,7 +492,7 @@ build_test_server_docker:
     - 'docker build 
         --no-cache
         --build-arg git_branch=$CI_COMMIT_REF_NAME 
-        --build-arg build_env=PRODUCTION 
+        --build-arg build_env=TEST 
         -t ${CI_REGISTRY_IMAGE}/$IMAGE_NAME
         docker/vidjil-$TYPE'
 
