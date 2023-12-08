@@ -248,7 +248,7 @@ def jobs():
 
     if auth.is_admin() and 'group_ids' in request.query and request.query['group_ids'] is not None:
         group_list = request.query['group_ids']
-        if isinstance(group_list, types.StringTypes):
+        if isinstance(group_list, str):
             group_list = [group_list]
     else:
         group_list = [int(g.id) for g in auth.get_user_groups() + auth.get_user_group_parents()]

@@ -30,7 +30,7 @@
       "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
   artifacts:
     reports:
-      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+      junit: $CYPRESS_PATH/reports/report_*.xml
     paths:
       - $CYPRESS_PATH
       - docker/*.yml

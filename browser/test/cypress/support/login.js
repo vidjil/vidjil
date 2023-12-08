@@ -18,6 +18,19 @@ Cypress.Commands.add('login', (host) => {
 
 
 Cypress.Commands.add('fillLogin', (user, password) => { 
+    cy.get('.db_div')
+      .should("be.visible")
+
+    cy.document().then(($document) => {
+      const documentResult = $document.querySelector('#logout_button')
+      if (documentResult) {
+          cy.log("CHECK - already logged")
+          cy.logout()
+      } else {
+        cy.log("CHECK - not logged")
+      }
+    })
+
     cy.get('#login', { timeout: 10000 })
       .should('exist').should('be.visible')
       .type(user)
