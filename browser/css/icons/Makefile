@@ -36,7 +36,7 @@ fontsave:
 	rm -rf .fontello.src .fontello.zip
 	curl --silent --show-error --fail --output .fontello.zip \
 		--insecure  ${FONTELLO_HOST}/`cat .fontello`/get
-	unzip .fontello.zip -d .fontello.src
+	unzip -o .fontello.zip -d .fontello.src
 	rm -rf "${FONT_DIR}"
 	mkdir -p "${FONT_DIR}"
 	mv `find ./.fontello.src -maxdepth 1 -name 'fontello-*'`/* ${FONT_DIR}
