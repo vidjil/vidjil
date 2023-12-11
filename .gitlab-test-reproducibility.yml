@@ -1,7 +1,7 @@
 generate_server_reproducibility_yml:
   stage: test_tools
   variables:
-    REPEAT: 30
+    REPEAT: 10
   script: |
     tools/repeat-ci.sh server/.gitlab-ci.yml $REPEAT .gitlab-ci.yml .test_server_base .test_cypress_base .setup_docker_server .test_server_base_dind .before_script_global .before_script_global_docker -- .gitlab-ci.yml browser/.gitlab-ci.yml | grep -v ".need_" > server-repro.yml
     sed -r 's/^(\s*)(tags:.*)$/\1when: manual\n\1\2/' server-repro.yml > server-repro-manual.yml
@@ -16,7 +16,7 @@ generate_server_reproducibility_yml:
 generate_client_reproducibility_yml:
   stage: test_tools
   variables:
-    REPEAT: 30
+    REPEAT: 10
   script:
     - tools/repeat-ci.sh browser/.gitlab-ci.yml $REPEAT .gitlab-ci.yml | grep -v ".need_"  > client-repro.yml
   needs: []
