@@ -71,6 +71,7 @@ describe('Creation of users and groups', function () {
         // groups of users should be annon.
         cy.createPatient("", `owner ${owner_user1}`,  "test3", "2000-01-03", `Cypress; Patient to test owner ${owner_user1}`, owner_user1, `tes (`)
         cy.createPatient("", `owner ${owner_user2}`,  "test4", "2000-01-04", `Cypress; Patient to test owner ${owner_user2}`, owner_user2, `tes (`)
+        cy.goToPatientPage()
         return
     })
 
