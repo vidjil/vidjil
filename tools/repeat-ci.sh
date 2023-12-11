@@ -19,6 +19,7 @@ STAGES=$(sed -rn '/^stages:/,/^$/p' $MAIN)
 BEFORE_SCRIPT_GLOBAL=$(sed -rn '/^.before_script_global:/,/^$/p' $MAIN)
 BEFORE_SCRIPT_DOCKER=$(sed -rn '/^.before_script_global_docker:/,/^$/p' $MAIN)
 BEFORE_SCRIPT=$(sed -rn '/^before_script:/,/^$/p' $MAIN)
+BUILD_DOCKER=$(sed -rn '/^build_test_server_docker:/,/^$/p' $MAIN)
 
 template_names=()
 if [ $# -gt 0 ]; then
@@ -57,6 +58,10 @@ echo -e "# ======\n"
 echo "$TEMPLATES"
 echo -e "# ======\n"
 echo "$BEFORE_SCRIPT" 
+echo -e "# ======\n"
+echo "$BUILD_DOCKER" 
+
+echo -e "\n# ====== REPEATS $REPEATSx \n"
 cat $NEW_CI.*
 rm -f $NEW_CI.*
 
