@@ -959,6 +959,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 
 @scheduler.task()
 def run_process(task_id, program, args):
+    db._adapter.reconnect()
     if program == "vidjil" :
         run_vidjil(task_id, args[0],args[1],args[2],args[3])
     elif program == "none" :
