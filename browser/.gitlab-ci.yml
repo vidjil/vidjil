@@ -25,6 +25,7 @@
       junit: $CYPRESS_PATH/reports/test-cypress-*.xml
     paths:
       - $CYPRESS_PATH
+      - docker/volumes/vidjil/log
     expire_in: 7 day
     when: always
   tags:

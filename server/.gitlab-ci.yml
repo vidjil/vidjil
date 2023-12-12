@@ -40,6 +40,7 @@
       - server/py4web/apps/vidjil/errors/*
       - time.log
       - logs
+      - docker/volumes/vidjil/log
     expire_in: 7 day
     when: always
   variables:
