@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline -r 1 -z 0 $VIDJIL_DATA/multi-complete.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --min-clones-per-locus 10 -g $VIDJIL_DIR/germline -r 1 -z 0 $VIDJIL_DATA/multi-complete.fa
 
 
 1:TRAV.*TRAJ
@@ -29,7 +29,7 @@ j:clones[4].seg.5
 j:clones[5].seg.5
 j:clones[6].seg.5
 
-!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline -r 1 $VIDJIL_DATA/multi-complete.fa -z 0 --max-clones-per-locus 0
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline -r 1 $VIDJIL_DATA/multi-complete.fa -z 0 --min-clones-per-locus 0
 
 0:TRAV.*TRAJ
 0:TRBV.*TRBJ
