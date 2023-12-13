@@ -52,8 +52,6 @@ class TestMyAccountController(unittest.TestCase):
     #     result = json.loads(json_result)
     #     query = result["query"]
 
-    # TODO : to enrich with more tests on the various cases
-
     ##################################
     # Tests on my_account_controller.jobs()
     ##################################
@@ -82,5 +80,3 @@ class TestMyAccountController(unittest.TestCase):
     #     # Then : We get groups list
     #     result = json.loads(json_result)
     #     query = result["query"]
-
-    # TODO : to enrich with more tests on the various cases

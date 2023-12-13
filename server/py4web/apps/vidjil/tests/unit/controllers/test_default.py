@@ -348,7 +348,6 @@ class TestDefaultController():
         exception = excinfo.value
         assert exception.status == 303
 
-    # TODO : try and manage to get this working: should we use a real fused file ? where to get one ?
     def test_get_data(self):
         # Given : Logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)

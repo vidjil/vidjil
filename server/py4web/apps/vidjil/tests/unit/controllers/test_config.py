@@ -279,8 +279,6 @@ class TestConfigController(unittest.TestCase):
         assert config["program"] == "plop_mod.cpp"
         assert config["classification"] == classification_id
 
-    # TODO : test more cases, missing or wrong ID, partial update, user rights, classification, ...
-
     ##################################
     # Tests on config_controller.confirm()
     ##################################
