@@ -83,7 +83,7 @@
 #define DEFAULT_MIN_READS_CLONE 5
 #define DEFAULT_MAX_REPRESENTATIVES 100
 #define DEFAULT_MAX_CLONES 100
-#define DEFAULT_MAX_CLONES_PER_LOCUS 10
+#define DEFAULT_MIN_CLONES_PER_LOCUS 10
 #define DEFAULT_RATIO_READS_CLONE 0.0
 #define DEFAULT_LIMIT_RATIO_TOP_PER_LOCUS .01
 #define NO_LIMIT "all"
@@ -471,7 +471,7 @@ int main (int argc, char **argv)
       -> group(group);
 
   int max_clones = DEFAULT_MAX_CLONES ;
-  int max_clones_per_locus = DEFAULT_MAX_CLONES_PER_LOCUS;
+  int min_clones_per_locus = DEFAULT_MIN_CLONES_PER_LOCUS;
   int max_representatives = DEFAULT_MAX_REPRESENTATIVES ;
 
   app.add_option("--max-consensus,-y", max_representatives,
@@ -489,7 +489,7 @@ int main (int argc, char **argv)
                  "maximal number of clones to be analyzed with a full V(D)J designation ('" NO_LIMIT "': no limit, do not use)")
     -> group(group) -> type_name("INT=" + string_of_int(max_clones));
 
-  app.add_option("--max-clones-per-locus", max_clones_per_locus, "number of guaranteed output clones per locus (" + to_string(DEFAULT_MAX_CLONES_PER_LOCUS)+ ", default)")
+  app.add_option("--min-clones-per-locus", min_clones_per_locus, "number of guaranteed output clones per locus (" + to_string(DEFAULT_MIN_CLONES_PER_LOCUS)+ ", default)")
       -> group(group) -> type_name("INT");
   
   app.add_flag_function("--all", [&](int64_t n) {
@@ -1492,7 +1492,7 @@ int main (int argc, char **argv)
       string label = windowsStorage->getLabel(it->first);
       string window_str = ">" + clone_id + "--window" + " " + label + '\n' + it->first + '\n' ;
 
-      bool in_top_by_locus = ((int)nb_output_clones_by_locus[segmented_germline->code] < max_clones_per_locus &&
+      bool in_top_by_locus = ((int)nb_output_clones_by_locus[segmented_germline->code] < min_clones_per_locus &&
                               we.getNbReadsGermline(segmented_germline->code) >= DEFAULT_LIMIT_RATIO_TOP_PER_LOCUS*nb_segmented);
 
       // interesting junctions are always handled
