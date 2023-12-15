@@ -126,7 +126,6 @@ describe('Manipulate patient, sample and launch analysis', function () {
 
         var firstname = "first name"
         cy.deleteSet("patient", 27, firstname+"_1")
-        cy.goToPatientPage()
     })
 
 
