@@ -321,7 +321,6 @@ test_server_unit:
     # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
     - docker exec docker_uwsgi_1 bash -c "cd /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ && python3 init_test_db.py"
     # Change File source definition in defs.py file 
-    - docker exec docker_nginx_1 make -C /usr/share/vidjil browser # init browser content
     - cd .. # Go to root git directory
     - echo "TIME $(date) - before other server script" >> time.log
 

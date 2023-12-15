@@ -18,6 +18,7 @@ copy ./conf/Gemfile /usr/share/vidjil/Gemfile
 copy ./conf/align.cgi /usr/share/vidjil/browser/cgi/align.cgi
 copy ./conf/similarity.cgi /usr/share/vidjil/browser/cgi/similarity.cgi
 
+run cd /usr/share/vidjil/ && make demo 
 run cd /usr/share/vidjil/browser/ && make icons sha1
 
 arg build_env='PRODUCTION'
