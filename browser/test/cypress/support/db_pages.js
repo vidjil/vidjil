@@ -478,7 +478,7 @@ Cypress.Commands.add('fillCommonSet', (iter, common_set) => {
     if (common_set != undefined){
       cy.get(`#token_input_${iter}`)
         .type(common_set) // a value to search a common set
-        .wait(500) // server answer
+        .wait(1000) // server answer
         .type("{enter}")
     }
 
