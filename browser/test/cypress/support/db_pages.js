@@ -606,6 +606,7 @@ Cypress.Commands.add('deleteSet', (set_type, set_id, name) => {
 
     cy.get('[onclick="db.call(\'sample_set/delete\', {\'id\' :\''+set_id+'\'} )"]')
       .click()
+    cy.wait(['@getActivities'])
 })
 
 
