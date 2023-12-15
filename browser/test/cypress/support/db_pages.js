@@ -675,7 +675,7 @@ Cypress.Commands.add('saveAnalysis', () => {
 
 Cypress.Commands.add('newSet', (set_type) => {
   // Availalble types: patient, run, generic
-  cy.get(`#create_new_set_type_${set_type}`).click()
+  cy.get(`#create_new_set_type_${set_type}`)
     .should("exist")
     .click({force: true})
   cy.update_icon()
