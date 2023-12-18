@@ -607,6 +607,11 @@ Cypress.Commands.add('deleteSet', (set_type, set_id, name) => {
     cy.get('[onclick="db.call(\'sample_set/delete\', {\'id\' :\''+set_id+'\'} )"]')
       .click()
     cy.wait(['@getActivities'])
+    
+    cy.update_icon(100)
+    cy.get('#db_menu > .'+set_type+'_token')
+      .contains(''+set_type+'s')
+      .should('be.visible')
 })
 
 
