@@ -149,7 +149,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     filename= db.sequence_file[id_sequence].filename
 
     res = {"redirect": "reload",
-           #"processId": task.id,
+           "results_file_id": data_id,
            "message": "[%s] c%s: process requested - %s %s" % (data_id, id_config, grep_reads, filename)}
 
     log.info(res)
@@ -279,8 +279,8 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads,
     ## Parse some info in .log
     vidjil_log_file.close()
 
-    segmented = re.compile("==> segmented (\d+) reads \((\d*\.\d+|\d+)%\)")
-    windows = re.compile("==> found (\d+) .*-windows in .* segments .* inside (\d+) sequences")
+    segmented = re.compile(r"==> segmented (\d+) reads \((\d*\.\d+|\d+)%\)")
+    windows = re.compile(r"==> found (\d+) .*-windows in .* segments .* inside (\d+) sequences")
     info = ''
     reads = None
     segs = None
@@ -570,9 +570,9 @@ def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fals
     try:
         stream = open(results_filepath, 'rb')
         update_task(task_id, "COMPLETED")
-    except IOError:
+    except IOError as error:
         print("!!! 'copy' failed, no file")
-        res = {"message": "[%s] c%s: 'copy' FAILED - %s - %s" % (id_data, id_config, info, out_folder)}
+        res = {"message": "[%s] c%s: 'copy' FAILED - %s - %s" % (id_data, id_config, error, out_folder)}
         log.error(res)
         raise IOError
     
@@ -795,7 +795,7 @@ def fill_field(dest, value, field, parent="", append=False):
         dest[field].append(value)
 
 def extract_total_reads(report):
-    reads_matcher = re.compile("Total Reads analysed: [0-9]+")
+    reads_matcher = re.compile(r"Total Reads analysed: [0-9]+")
     reads_line = reads_matcher.search(report).group()
     return reads_line.split(' ')[-1]
 

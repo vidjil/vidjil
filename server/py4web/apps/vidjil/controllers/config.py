@@ -65,45 +65,44 @@ def add():
 @action("/vidjil/config/add_form", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def add_form(): 
-    error =""
     if (not auth.can_create_config()):
         return error_message(ACCESS_DENIED)
+    
+    error = []
 
     required_fields = ['config_name', 'config_command', 'config_fuse_command', 'config_program']
     for field in required_fields:
-        if request.params[field] == "" :
-            error += field+" needed, "
+        if field not in request.params or request.params[field] == "" :
+            error.append(f"{field} needed")
 
     ## test if classification id exist
-    if  request.params["config_classification"] != "-1":
+    if "config_classification" in request.params and request.params["config_classification"] != "-1":
         classification = db(db.classification.id ==  request.params["config_classification"]).count()
         if classification == 0:
-            error += "classification id don't exist, "
+            error.append("classification id don't exist")
     else :
         request.params["config_classification"] = None
 
-    if error=="" :
-        
-        config_id = db.config.insert(name=request.params['config_name'],
-                        info=request.params['config_info'],
-                        command=request.params['config_command'],
-                        fuse_command=request.params['config_fuse_command'],
-                        program=request.params['config_program'],
-                        classification=request.params['config_classification']
-                        )
-
-        mes = u"Added config"
-        log.info(mes, extra={'user_id': auth.user_id, 'record_id': config_id, 'table_name': 'config'})
-
-        res = {"redirect": "config/index",
-               "message": "config '%s' added" % request.params['config_name']}
-        log.info(res)
-        return json.dumps(res, separators=(',',':'))
-        
-    else :
-        res = {"success" : "false", "message" : error}
+    if error:
+        res = {"success" : "false", "message" : ", ".join(error)}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
+        
+    config_id = db.config.insert(name=request.params['config_name'],
+                    info=request.params['config_info'],
+                    command=request.params['config_command'],
+                    fuse_command=request.params['config_fuse_command'],
+                    program=request.params['config_program'],
+                    classification=request.params['config_classification']
+                    )
+
+    log.info(u"Added config", extra={'user_id': auth.user_id, 'record_id': config_id, 'table_name': 'config'})
+
+    res = {"redirect": "config/index",
+           "message": "config '%s' added" % request.params['config_name'],
+           "config_id": config_id}
+    log.info(res)
+    return json.dumps(res, separators=(',',':'))
 
 @action("/vidjil/config/edit", method=["POST", "GET"])
 @action.uses("config/edit.html", db, auth.user)
@@ -119,47 +118,43 @@ def edit():
 @action("/vidjil/config/edit_form", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def edit_form(): 
-    error =""
-
     if (not auth.can_modify_config(int(request.params['id']))):
         error += "ACCESS_DENIED"
+    
+    error = []
 
     required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
     for field in required_fields:
         if request.params[field] == "" :
-            error += field+" needed, "
+            error.append(f"{field} needed")
     
     ## test if classification id exist
     if  request.params["config_classification"] != "-1":
         classification = db(db.classification.id ==  request.params["config_classification"]).count()
         if classification == 0:
-            error += "classification id don't exist, "
+            error.append("classification id don't exist")
     else :
         request.params["config_classification"] = None
 
-
-    if error=="" :
-
-        db(db.config.id == request.params["id"]).update(name=request.params['config_name'],
-                                             info=request.params['config_info'],
-                                             command=request.params['config_command'],
-                                             fuse_command=request.params['config_fuse_command'],
-                                             program=request.params['config_program'],
-                                             classification=request.params['config_classification']
-                                             )
-
-        res = {"redirect": "config/index",
-               "message": "config '%s' updated" % request.params['config_name']}
-
-        log.admin(res)
-        mes = u"Submit config edit form"
-        log.info(mes, extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'config'})
-        return json.dumps(res, separators=(',',':'))
-
-    else :
-        res = {"success" : "false", "message" : error}
+    if error:
+        res = {"success" : "false", "message" : ", ".join(error)}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
+
+    db(db.config.id == request.params["id"]).update(name=request.params['config_name'],
+                                            info=request.params['config_info'],
+                                            command=request.params['config_command'],
+                                            fuse_command=request.params['config_fuse_command'],
+                                            program=request.params['config_program'],
+                                            classification=request.params['config_classification']                                            )
+
+    res = {"redirect": "config/index",
+            "message": "config '%s' updated" % request.params['config_name']}
+
+    log.admin(res)
+    mes = u"Submit config edit form"
+    log.info(mes, extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'config'})
+    return json.dumps(res, separators=(',',':'))
 
 @action("/vidjil/config/confirm", method=["POST", "GET"])
 @action.uses("config/confirm.html", db, auth.user)
@@ -173,24 +168,25 @@ def confirm():
 @action("/vidjil/config/delete", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def delete():
-    if (auth.can_modify_config(int(request.query['id']))):
-        count = db(db.results_file.config_id==request.query["id"]).count()
+    if (not auth.can_modify_config(int(request.query['id']))):
+        return error_message(ACCESS_DENIED)
+    
+    count = db(db.results_file.config_id==request.query["id"]).count()
 
-        if (count == 0):
-            #delete config
-            db(db.config.id==request.query["id"]).delete()
+    if (count == 0):
+        #delete config
+        db(db.config.id==request.query["id"]).delete()
 
-            res = {"redirect": "config/index",
-                   "message": "config '%s' deleted" % request.query["id"]}
-            log.admin(res)
-            mes = u"Delete config"
-            log.info(mes, extra={'user_id': auth.user_id, 'record_id': request.query['id'], 'table_name': 'config'})
-        else:
-            res = {"redirect": "config/index",
-                    "success": "false",
-                    "message": "cannot delete a config that has been used"}
-        return json.dumps(res, separators=(',',':'))
-    return error_message(ACCESS_DENIED)
+        res = {"redirect": "config/index",
+                "message": "config '%s' deleted" % request.query["id"]}
+        log.admin(res)
+        mes = u"Delete config"
+        log.info(mes, extra={'user_id': auth.user_id, 'record_id': request.query['id'], 'table_name': 'config'})
+    else:
+        res = {"redirect": "config/index",
+                "success": "false",
+                "message": "cannot delete a config that has been used"}
+    return json.dumps(res, separators=(',',':'))
 
 
 @action("/vidjil/config/permission", method=["POST", "GET"])
@@ -236,30 +232,30 @@ def permission():
 @action("/vidjil/config/change_permission", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def change_permission():
-    if (auth.can_modify_config(int(request.query["config_id"])) ):
-        error = ""
-        if request.query["group_id"] == "" :
-            error += "missing group_id, "
-        if request.query["config_id"] == "" :
-            error += "missing patient_id, "
-
-        if error=="":
-            if auth.get_group_access(db.config, int(request.query["config_id"]), int(request.query["group_id"])):
-                auth.del_permission(request.query["group_id"], PermissionEnum.access.value, db.config, request.query["config_id"])
-                res = {"message" : "c%s: access '%s' deleted to '%s'" % (request.query["config_id"],
-                                                                         PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
-            else :
-                auth.add_permission(request.query["group_id"], PermissionEnum.access.value, db.config, request.query["config_id"])
-                res = {"message" : "c%s: access '%s' granted to '%s'" % (request.query["config_id"],
-                                                                         PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
-            
-            log.admin(res, extra={'user_id': auth.user_id, 'record_id': request.query['config_id'], 'table_name': 'config'})
-            return json.dumps(res, separators=(',',':'))
-        else :
-            res = {"message": "incomplete request : "+error }
-            log.error(res)
-            return json.dumps(res, separators=(',',':'))
-    else :
+    if (not auth.can_modify_config(int(request.query["config_id"]))):
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
+    
+    error = []
+    if "group_id" not in request.query or request.query["group_id"] == "" :
+        error.append("missing group_id")
+    if "config_id" not in request.query or request.query["config_id"] == "" :
+        error.append("missing config_id")
+        
+    if error:
+        res = {"success" : "false", "message" : ", ".join(error)}
+        log.error(res)
+        return json.dumps(res, separators=(',',':'))
+
+    if auth.get_group_access(db.config, int(request.query["config_id"]), int(request.query["group_id"])):
+        auth.del_permission(request.query["group_id"], PermissionEnum.access.value, db.config, request.query["config_id"])
+        res = {"message" : "c%s: access '%s' deleted to '%s'" % (request.query["config_id"],
+                                                                    PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
+    else :
+        auth.add_permission(request.query["group_id"], PermissionEnum.access.value, db.config, request.query["config_id"])
+        res = {"message" : "c%s: access '%s' granted to '%s'" % (request.query["config_id"],
+                                                                    PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
+    
+    log.admin(res, extra={'user_id': auth.user_id, 'record_id': request.query['config_id'], 'table_name': 'config'})
+    return json.dumps(res, separators=(',',':'))

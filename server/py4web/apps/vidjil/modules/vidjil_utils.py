@@ -112,9 +112,6 @@ def age_years_months(birth, months_below_year=4):
 
 def anon_birth(patient_id, user_id):
     '''Anonymize birth date. Only the 'anon' access see the full birth date.'''
-    db = current.db
-    auth=current.auth
-
     birth = db.patient[patient_id].birth
 
     if birth is None:
@@ -364,15 +361,15 @@ def extract_fields_from_json(json_fields, pos_in_list, filename, max_bytes = Non
         else:
             json_dict = json.loads(cleanup_json_sample(open(filename).read(max_bytes)))
     except IOError:
-        current.log.debug('JSON loading failed')
+        log.debug('JSON loading failed')
         json_dict = {}
     except ValueError as e:
-        current.log.debug(str(e))
+        log.debug(str(e))
     matched_keys = {}
     for field in json_fields:
         value = extract_value_from_json_path(json_fields[field], json_dict)
         if value is not None:
-            if  not isinstance(value, basestring) and pos_in_list is not None\
+            if  not isinstance(value, str) and pos_in_list is not None\
                 and len(value) > pos_in_list:
                 matched_keys[field] = value[pos_in_list]
             else:
@@ -392,21 +389,21 @@ def stats(samples):
 
     stats_regex = [
         # found 771265 40-windows in 2620561 segments (85.4%) inside 3068713 sequences # before 1f501e13 (-> 2015.05)
-        'in (?P<seg>\d+) segments \((?P<seg_ratio>.*?)\) inside (?P<reads>\d+) sequences',
+        r'in (?P<seg>\d+) segments \((?P<seg_ratio>.*?)\) inside (?P<reads>\d+) sequences',
 
         # found 10750 50-windows in 13139 reads (99.9% of 13153 reads)
-        'windows in (?P<seg>\d+) reads \((?P<seg_ratio>.*?) of (?P<reads>\d+) reads\)',
+        r'windows in (?P<seg>\d+) reads \((?P<seg_ratio>.*?) of (?P<reads>\d+) reads\)',
 
         # segmentation causes
-        'log.* SEG_[+].*?-> (?P<SEG_plus>.*?).n',
-        'log.* SEG_[-].*?-> (?P<SEG_minus>.*?).n',
+        r'log.* SEG_[+].*?-> (?P<SEG_plus>.*?).n',
+        r'log.* SEG_[-].*?-> (?P<SEG_minus>.*?).n',
     ]
 
     # stats by locus
     for locus in defs.LOCUS:
         locus_regex = locus.replace('+', '[+]')
         locus_group = locus.replace('+', 'p')
-        stats_regex += [ 'log.* %(locus)s.*?->\s*?(?P<%(locus_g)s_reads>\d+)\s+(?P<%(locus_g)s_av_len>[0-9.]+)\s+(?P<%(locus_g)s_clones>\d+)\s+(?P<%(locus_g)s_av_reads>[0-9.]+)\s*.n'
+        stats_regex += [ r'log.* %(locus)s.*?->\s*?(?P<%(locus_g)s_reads>\d+)\s+(?P<%(locus_g)s_av_len>[0-9.]+)\s+(?P<%(locus_g)s_clones>\d+)\s+(?P<%(locus_g)s_av_reads>[0-9.]+)\s*.n'
                          % { 'locus': locus_regex, 'locus_g': locus_group } ]
 
     json_paths = {
@@ -447,7 +444,7 @@ def stats(samples):
         row_result = search_first_regex_in_file(regex, f_result, STATS_READLINES)
         row['result'] = row_result # TMP, for debug
         try:
-            row_result_json = extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + results_f, STATS_MAXBYTES)
+            row_result_json = extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + f_result, STATS_MAXBYTES)
         except:
             row_result_json = []
 
@@ -508,10 +505,10 @@ SOURCES_DIR = {
 }
 
 
-log_patient = re.compile('\((\d+)\)')
-log_config = re.compile(' c(\d+)')
-log_task = re.compile('\[(\d+)\]')
-log_py = re.compile('(.*[.]py):(\d+)')
+log_patient = re.compile(r'\((\d+)\)')
+log_config = re.compile(r' c(\d+)')
+log_task = re.compile(r'\[(\d+)\]')
+log_py = re.compile(r'(.*[.]py):(\d+)')
 
 def log_links(s):
     '''Add HTML links to a log string

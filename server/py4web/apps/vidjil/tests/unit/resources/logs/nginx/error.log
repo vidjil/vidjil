@@ -1,0 +1,53 @@
+2023/11/21 13:23:04 [notice] 107#107: using the "epoll" event method
+2023/11/21 13:23:04 [notice] 107#107: nginx/1.21.6
+2023/11/21 13:23:04 [notice] 107#107: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2023/11/21 13:23:04 [notice] 107#107: OS: Linux 6.5.10-200.fc38.x86_64
+2023/11/21 13:23:04 [notice] 107#107: getrlimit(RLIMIT_NOFILE): 1073741816:1073741816
+2023/11/21 13:23:04 [notice] 107#107: start worker processes
+2023/11/21 13:23:04 [notice] 107#107: start worker process 108
+2023/11/21 13:23:04 [notice] 107#107: start worker process 109
+2023/11/21 13:23:04 [notice] 107#107: start worker process 110
+2023/11/21 13:23:04 [notice] 107#107: start worker process 111
+2023/11/21 13:23:04 [notice] 107#107: start worker process 112
+2023/11/21 13:23:04 [notice] 107#107: start worker process 113
+2023/11/21 13:23:04 [notice] 107#107: start worker process 114
+2023/11/21 13:23:04 [notice] 107#107: start worker process 115
+2023/11/21 13:23:04 [notice] 107#107: start worker process 116
+2023/11/21 13:23:04 [notice] 107#107: start worker process 117
+2023/11/21 13:23:04 [notice] 107#107: start worker process 118
+2023/11/21 13:23:04 [notice] 107#107: start worker process 119
+2023/11/21 13:23:08 [error] 108#108: *1 uwsgi could not be resolved (2: Server failure), client: 127.0.0.1, server: 8a4eb3938413, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:23:30 [error] 109#109: *3 uwsgi could not be resolved (2: Server failure), client: 127.0.0.1, server: 8a4eb3938413, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:24:03 [error] 110#110: *5 uwsgi could not be resolved (3: Host not found), client: 127.0.0.1, server: 8a4eb3938413, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:24:37 [error] 111#111: *7 uwsgi could not be resolved (3: Host not found), client: 127.0.0.1, server: 8a4eb3938413, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:25:11 [error] 112#112: *9 uwsgi could not be resolved (2: Server failure), client: 127.0.0.1, server: 8a4eb3938413, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:25:45 [error] 113#113: *11 uwsgi could not be resolved (3: Host not found), client: 127.0.0.1, server: 8a4eb3938413, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:25:45 [error] 114#114: *13 uwsgi could not be resolved (3: Host not found), client: 172.27.0.1, server: 8a4eb3938413, request: "GET /vidjil/notification/get_active_notifications HTTP/1.1", host: "localhost", referrer: "https://localhost/"
+2023/11/21 13:26:19 [error] 116#116: *16 uwsgi could not be resolved (2: Server failure), client: 127.0.0.1, server: 8a4eb3938413, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:28:04 [notice] 108#108: using the "epoll" event method
+2023/11/21 13:28:04 [notice] 108#108: nginx/1.21.6
+2023/11/21 13:28:04 [notice] 108#108: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2023/11/21 13:28:04 [notice] 108#108: OS: Linux 6.5.10-200.fc38.x86_64
+2023/11/21 13:28:04 [notice] 108#108: getrlimit(RLIMIT_NOFILE): 1073741816:1073741816
+2023/11/21 13:28:04 [notice] 108#108: start worker processes
+2023/11/21 13:28:04 [notice] 108#108: start worker process 109
+2023/11/21 13:28:04 [notice] 108#108: start worker process 110
+2023/11/21 13:28:04 [notice] 108#108: start worker process 111
+2023/11/21 13:28:04 [notice] 108#108: start worker process 112
+2023/11/21 13:28:04 [notice] 108#108: start worker process 113
+2023/11/21 13:28:04 [notice] 108#108: start worker process 114
+2023/11/21 13:28:04 [notice] 108#108: start worker process 115
+2023/11/21 13:28:04 [notice] 108#108: start worker process 116
+2023/11/21 13:28:04 [notice] 108#108: start worker process 117
+2023/11/21 13:28:04 [notice] 108#108: start worker process 118
+2023/11/21 13:28:04 [notice] 108#108: start worker process 119
+2023/11/21 13:28:04 [notice] 108#108: start worker process 120
+2023/11/21 13:28:09 [error] 109#109: *1 uwsgi could not be resolved (3: Host not found), client: 127.0.0.1, server: 6acb0ba457a1, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:28:35 [error] 110#110: *3 uwsgi could not be resolved (2: Server failure), client: 127.0.0.1, server: 6acb0ba457a1, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:29:09 [error] 111#111: *5 uwsgi could not be resolved (3: Host not found), client: 127.0.0.1, server: 6acb0ba457a1, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:29:43 [error] 112#112: *7 uwsgi could not be resolved (3: Host not found), client: 127.0.0.1, server: 6acb0ba457a1, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:30:17 [error] 113#113: *9 uwsgi could not be resolved (3: Host not found), client: 127.0.0.1, server: 6acb0ba457a1, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:30:45 [error] 114#114: *11 uwsgi could not be resolved (2: Server failure), client: 172.28.0.1, server: 6acb0ba457a1, request: "GET /vidjil/notification/get_active_notifications HTTP/1.1", host: "localhost", referrer: "https://localhost/"
+2023/11/21 13:30:50 [error] 115#115: *13 uwsgi could not be resolved (2: Server failure), client: 127.0.0.1, server: 6acb0ba457a1, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:31:24 [error] 116#116: *15 uwsgi could not be resolved (2: Server failure), client: 127.0.0.1, server: 6acb0ba457a1, request: "GET /vidjil//user/ HTTP/1.1", host: "localhost"
+2023/11/21 13:40:00 [error] 109#109: *74 open() "/usr/share/vidjil/browser/js/git-sha1.js" failed (2: No such file or directory), client: 172.28.0.1, server: 6acb0ba457a1, request: "GET /js/git-sha1.js HTTP/1.1", host: "localhost", referrer: "https://localhost/"

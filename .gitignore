@@ -9,6 +9,7 @@ data/Stanford_S22.rc.fasta
 *.clntab
 *.tap
 *.log
+!server/py4web/apps/vidjil/tests/unit/resources/logs/**/*.log
 dep.mk
 *~
 *.o
@@ -88,6 +89,7 @@ server/web2py/handlers
 
 
 *.vidjil
+!server/py4web/apps/vidjil/tests/unit/resources/**/*.vidjil
 *.fastq
 *.fastq.gz
 *.gz
@@ -135,4 +137,9 @@ firefox/
 *.pem
 #report
 *.xml 
-.vscode
+server/py4web/apps/password.txt
+docker/test/gosu
+server/unit_report.xml
+server/unit_coverage.xml
+server/.coverage
+server/py4web/apps/vidjil/tests/unit/resources/results/*

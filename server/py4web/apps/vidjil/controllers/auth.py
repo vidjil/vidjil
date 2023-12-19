@@ -145,6 +145,7 @@ def register_form():
     db.auth_membership.insert(user_id=new_user_id, group_id=new_user_group_id)
     # Default permissions
     add_default_group_permissions(auth, new_user_group_id, anon=True)
+    auth.add_permission(new_user_group_id, PermissionEnum.access.value, 'auth_group', new_user_group_id)
     # Join public group
     public_group_id = db(db.auth_group.role == 'public').select()[0].id
     db.auth_membership.insert(user_id=new_user_id, group_id=public_group_id)
@@ -153,5 +154,6 @@ def register_form():
               (new_user_id, new_user_email, new_user_group_id))
 
     res = {"redirect": "back",
-           "message": f"{request.params['email']} ({response['id']}) user added"}
+           "message": f"{request.params['email']} ({response['id']}) user added",
+           "user_id": response["id"]}
     return json.dumps(res, separators=(',', ':'))

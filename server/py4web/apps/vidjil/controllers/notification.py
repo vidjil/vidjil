@@ -28,9 +28,9 @@ NOTIFICATION_CACHE_PREFIX = 'notification_'
 @vidjil_utils.jsontransformer
 def index():
     user_id = auth.user_id if auth.user else None    
-    query = None
+    notification = None
     if "id" in request.query:
-        query = db.notification[request.query['id']]
+        notification = db.notification[request.query['id']]
         log.debug('read notification %s' % request.query["id"])
     else:
         request.query['id'] = None
@@ -49,11 +49,11 @@ def index():
     notifications = db(db.notification).select(orderby=~db.notification.id)
 
     m_content =""
-    if query and "message_content" in query:
-        m_content = query["message_content"]
+    if notification and "message_content" in notification:
+        m_content = notification["message_content"]
 
     return dict(message="News",
-                query=query,
+                query=notification,
                 m_content=m_content,
                 notifications=notifications,
                 auth=auth,

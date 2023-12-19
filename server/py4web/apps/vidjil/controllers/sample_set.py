@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
@@ -383,11 +384,9 @@ def form():
         return json.dumps(res, separators=(',',':'))
 
     message = '%s %s' % (action, set_type)
-    sets = {
-            'patient': [],
-            'run': [],
-            'generic': []
-            }
+    sets = {defs.SET_TYPE_PATIENT: [],
+            defs.SET_TYPE_RUN: [],
+            defs.SET_TYPE_GENERIC: []}
     # We add a None object to the desired set type to initialise an empty form in the template.
     sets[set_type].append(sset)
     log.info("load form " + message, extra=extra)
@@ -408,8 +407,9 @@ def form():
 ## return a flash error message if fail
 @action("/vidjil/sample_set/submit", method=["POST", "GET"])
 @action.uses(db, auth.user)
+@vidjil_utils.jsontransformer
 def submit():
-    data = json.loads(request.params['data'], encoding='utf-8')
+    data = json.loads(request.params['data'])
     mf = ModelFactory()
 
     error = False
@@ -439,19 +439,23 @@ def submit():
             name = helper.get_name(p)
 
             # edit
-            if (p['sample_set_id'] != "" and auth.can_modify_sample_set(int(p['sample_set_id']))):
-                reset = True
-                sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
-                db[set_type][sset.id] = p
-                id_sample_set = sset['sample_set_id']
-
-                if (sset.info != p['info']):
-                    group_id = get_set_group(id_sample_set)
-                    register = True
+            if (p['sample_set_id'] != ""):
+                if auth.can_modify_sample_set(int(p['sample_set_id'])):
                     reset = True
+                    sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
+                    db[set_type][sset.id] = p
+                    id_sample_set = sset['sample_set_id']
 
-                action = "edit"
+                    if (sset.info != p['info']):
+                        group_id = get_set_group(id_sample_set)
+                        register = True
+                        reset = True
 
+                    action = "edit"
+                else:
+                    p['error'].append("permission denied")
+                    error = True
+                    
             # add
             elif (auth.can_create_patient()):
 
@@ -1031,7 +1035,7 @@ def multi_sample_stats():
     if not isinstance(custom_result, list):
         custom_result = [custom_result]
 
-    custom_result = [long(i) for i in custom_result]
+    custom_result = [int(i) for i in custom_result]
 
     permitted_results = db(
         (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &

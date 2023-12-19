@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from sys import modules
 from .. import defs
-from ..modules import vidjil_utils
+from ..modules.vidjil_utils import jsontransformer
 from ..modules import tag
 from ..modules.stats_decorator import *
 from ..modules.controller_utils import error_message
@@ -22,7 +22,6 @@ from ..common import db, session, T, flash, cache, authenticated, unauthenticate
 
 ACCESS_DENIED = "access denied"
         
-## return user list
 @action("/vidjil/user/index", method=["POST", "GET"])
 @action.uses("user/index.html", db, auth.user)
 @vidjil_utils.jsontransformer
@@ -105,14 +104,13 @@ def edit():
 @action.uses(db, auth.user)
 def edit_form():
     if not auth.can_modify_user(int(request.params['id'])):
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-        return json.dumps(res, separators=(',',':'))
+        log.error(ACCESS_DENIED)
+        return error_message(ACCESS_DENIED)
 
     if request.params["confirm_password"] != request.params["password"]:
-        res = {"success": "false", "message": "password fields must match"}
-        log.error(res)
-        return json.dumps(res, separators=(',', ':'))
+        error_to_display = "password fields must match"
+        log.error(error_to_display)
+        return error_message(error_to_display)
 
     updated_user = dict(first_name = request.params["first_name"],
                         last_name = request.params["last_name"],
@@ -139,6 +137,7 @@ def edit_form():
 @action.uses("user/info.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def info():
+    # In case no ID is given, user the last added user ID
     if "id" not in request.query:
         request.query["id"] = db().select(db.auth_user.ALL, orderby=~db.auth_user.id)[0].id
     log.info("view info for user (%d)" % int(request.query['id']),

@@ -1,0 +1,5 @@
+py4web
+pytest
+pytest-cov
+pytest-mock
+celery
