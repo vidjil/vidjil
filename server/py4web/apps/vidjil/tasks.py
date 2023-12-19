@@ -182,6 +182,7 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads,
                clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     from datetime import timedelta as timed
+    db._adapter.reconnect()
 
     if db.sequence_file[id_file] == None:
         print("Sequence file not found in DB (delay of upload/processing ?)")
@@ -541,6 +542,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
 
 def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
+    db._adapter.reconnect()
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     upload_folder = defs.DIR_SEQUENCES
@@ -959,6 +961,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
 
 @scheduler.task()
 def run_process(task_id, program, args):
+    db._adapter.reconnect()
     if program == "vidjil" :
         run_vidjil(task_id, args[0],args[1],args[2],args[3])
     elif program == "none" :

@@ -10,6 +10,7 @@ describe('Creation of users and groups', function () {
         cy.close_tips()
     })
     beforeEach(function () {
+
     })
     afterEach(function () {
     })
@@ -71,11 +72,14 @@ describe('Creation of users and groups', function () {
         // groups of users should be annon.
         cy.createPatient("", `owner ${owner_user1}`,  "test3", "2000-01-03", `Cypress; Patient to test owner ${owner_user1}`, owner_user1, `tes (`)
         cy.createPatient("", `owner ${owner_user2}`,  "test4", "2000-01-04", `Cypress; Patient to test owner ${owner_user2}`, owner_user2, `tes (`)
+        cy.goToPatientPage()
         return
     })
 
 
     it('04-impersonate from list',  function() {
+        // Don't know why, but user seem to be not logged at starting of test 04
+        cy.login(Cypress.env('host'))
 
         cy.goToPatientPage()
 
@@ -109,7 +113,7 @@ describe('Creation of users and groups', function () {
 
 
     it('05-impersonate from table',  function() {
-
+        cy.login(Cypress.env('host'))
         cy.openDBPage()
         cy.goToUsersPage()
 

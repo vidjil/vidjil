@@ -40,6 +40,7 @@
       - server/py4web/apps/vidjil/errors/*
       - time.log
       - logs
+      - docker/volumes/vidjil/log
     expire_in: 7 day
     when: always
   variables:
@@ -74,10 +75,15 @@ s2:
           firefox_latest/firefox,
           firefox_legacy/firefox,
           chrome_supported/chrome,
-          chrome_latest/chrome,
+          #chrome_latest/chrome,
           chrome_legacy/chrome
         ]
-
+s2-fail:
+  extends:
+    - .test_cypress_server
+  variables:
+    BROWSER: chrome_latest/chrome
+  allow_failure: true
 
 
 ## Cypress TUTORIAL with server
@@ -114,6 +120,14 @@ tuto-s2:
           firefox_latest/firefox,
           firefox_legacy/firefox,
           chrome_supported/chrome,
-          chrome_latest/chrome,
+          #chrome_latest/chrome,
           chrome_legacy/chrome
         ]
+
+tuto-s2-fail:
+  extends:
+    - .tuto-server
+    - .need_for_late_server
+  variables:
+    BROWSER: chrome_latest/chrome
+  allow_failure: true

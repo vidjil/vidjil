@@ -478,7 +478,7 @@ Cypress.Commands.add('fillCommonSet', (iter, common_set) => {
     if (common_set != undefined){
       cy.get(`#token_input_${iter}`)
         .type(common_set) // a value to search a common set
-        .wait(500) // server answer
+        .wait(1000) // server answer
         .type("{enter}")
     }
 
@@ -606,6 +606,12 @@ Cypress.Commands.add('deleteSet', (set_type, set_id, name) => {
 
     cy.get('[onclick="db.call(\'sample_set/delete\', {\'id\' :\''+set_id+'\'} )"]')
       .click()
+    cy.wait(['@getActivities'])
+    
+    cy.update_icon(100)
+    cy.get('#db_menu > .'+set_type+'_token')
+      .contains(''+set_type+'s')
+      .should('be.visible')
 })
 
 
@@ -675,7 +681,7 @@ Cypress.Commands.add('saveAnalysis', () => {
 
 Cypress.Commands.add('newSet', (set_type) => {
   // Availalble types: patient, run, generic
-  cy.get(`#create_new_set_type_${set_type}`).click()
+  cy.get(`#create_new_set_type_${set_type}`)
     .should("exist")
     .click({force: true})
   cy.update_icon()
