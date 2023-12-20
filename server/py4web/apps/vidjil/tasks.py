@@ -812,7 +812,7 @@ def schedule_pre_process(sequence_file_id, pre_process_id):
     task_id = register_task("pre_process", args)
     db.sequence_file[sequence_file_id] = dict(pre_process_scheduler_task_id = task_id)
     
-    run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_after=False)
+    run_pre_process.delay(pre_process_id, sequence_file_id, clean_before=True, clean_after=False)
 
 
     res = {"redirect": "reload",
