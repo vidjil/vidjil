@@ -4,7 +4,6 @@ include .env
 
 include .env-default
 include .env
-include .env-web2py
 	
 up:
 	COMPOSE_PROFILES=minimal docker-compose up -d

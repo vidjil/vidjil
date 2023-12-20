@@ -18,6 +18,7 @@ RUN apt-get update ; apt-get install --no-install-recommends --no-install-sugges
 	pip3 install rocket3 && \
 	pip3 install uwsgi && \
 	pip3 install markdown && \
+	pip3 install --upgrade pip && \
 	pip3 install flower && \
 	pip3 install coverage && \
     pip3 install -U py4web
