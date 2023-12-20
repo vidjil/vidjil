@@ -15,29 +15,6 @@ import apps.vidjil.modules.tools_utils as tools_utils
 from .modules.sequenceFile import get_original_filename
 from .common import settings, scheduler, db, Field, log
 
-@scheduler.task
-def periodic_task():
-    try:
-        db._adapter.reconnect()
-        db.patient[28815].update_record( info = db.patient[28815]['info']+"z")
-        print('POUET')
-        db.commit()
-    except:
-        db.rollback()
-
-
-# run task_test every 100 seconds
-scheduler.conf.beat_schedule = {
-    "periodic_task": {
-        "task": "apps.vidjil.tasks.periodic_task",
-        "schedule": 100.0,
-        "args": (),
-    },
-}
-
-
-
-
 def assert_scheduler_task_does_not_exist(args):
     ##check scheduled run
     row = db( ( db.scheduler_task.args == args)
