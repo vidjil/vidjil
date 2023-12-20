@@ -449,7 +449,7 @@ def upload():
             db.sequence_file[request.params["id"]].update(pre_process_flag = "WAIT")
             old_task_id = db.sequence_file[request.params["id"]].pre_process_scheduler_task_id
             if db.scheduler_task[old_task_id] != None:
-                scheduler.stop_task(old_task_id)
+                scheduler.control.revoke(old_task_id, terminate=True)
                 db(db.scheduler_task.id == old_task_id).delete()
                 db.commit()
             schedule_pre_process(int(request.params['id']), int(request.params['pre_process']))

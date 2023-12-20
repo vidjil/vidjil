@@ -52,7 +52,7 @@ cmd = ['%s/flash2' % args.flash2_dir,
 cmd += shlex.split( f_opt )
 print( "# %s" % cmd )
 
-p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+p = subprocess.Popen(cmd, stdout=subprocess.PIPE, text=True)
 
 (stdoutdata, stderrdata) = p.communicate()
 
@@ -77,10 +77,9 @@ try :
         os.remove(f_out+'.hist')
         os.remove(f_out+'.histogram')
 
-    with tempfile.NamedTemporaryFile() as logfile:
+    with tempfile.NamedTemporaryFile(mode="w+") as logfile:
         logfile.write(stdoutdata)
         logfile.seek(0)
-
 
         output_file = '%s/pre_process.vidjil' % path_head
         log_parser  = FlashLogParser(logfile)
