@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from ..modules import vidjil_utils
 from ..modules.permission_enum import PermissionEnum
 from .. import defs

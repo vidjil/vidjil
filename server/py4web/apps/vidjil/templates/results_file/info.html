@@ -1,10 +1,10 @@
-{{extend 'db_layout.html'}}
+[[extend 'db_layout.html']]
 
-{{('message' in globals())}}
-{{if 'message' in globals():}}
+[[('message' in globals())]]
+[[if 'message' in globals():]]
 
-{{
-results_file_id = request.vars["results_file_id"]
+[[
+results_file_id = request.query["results_file_id"]
 results_file = db.results_file[results_file_id]
 
 config_id = db.results_file[results_file_id].config_id
@@ -13,13 +13,13 @@ config = db.config[config_id]
 sequence_file_id = db.results_file[results_file_id].sequence_file_id
 sequence_file = db.sequence_file[sequence_file_id]
 
-run = db(db.scheduler_run.task_id == results_file.scheduler_task_id).select().first()
+task = db.scheduler_task[results_file.scheduler_task_id]
 
-}}
+]]
 
 <div>
 
-    <h3>Information for process #{{=results_file_id}} {{=sequence_file.filename}} ({{=config.name }}) ({{=results_file.run_date}}) </h3>
+    <h3>Information for process #[[=results_file_id]] [[=sequence_file.filename]] ([[=config.name ]]) ([[=results_file.run_date]]) </h3>
 
     <div class="db_block">
         <div class="db_block_left">
@@ -31,34 +31,35 @@ run = db(db.scheduler_run.task_id == results_file.scheduler_task_id).select().fi
 
 </div>
 
-{{if run:}}
+[[if task:]]
 <div id="db_table_container">
    <table>
        <tr>
            <td>status :</td>
-           <td>{{=run.status}}</td>
+           <td>[[=task.status]]</td>
        </tr>
        <tr>
            <td>start :</td>
-           <td>{{=run.start_time}}</td>
+           <td>[[=task.start_time]]</td>
        </tr>
        <tr>
            <td>stop :</td>
-           <td>{{=run.stop_time}}</td>
+           <td>[[=task.stop_time]]</td>
        </tr>
+        [[ if content_log == None : ]]
+        <tr>
+           <td>Processus: </td>
+           <td>still in Queued</td>
+       </tr>
+       [[ pass ]]
     </table>
-    <table class='log'>
-       <tr><td>result : <b>{{if run.run_result:}}{{=run.run_result.replace('\r', '')}}{{pass}}</b>
-       </textarea></td></tr>
-       <tr><td>output :</td></tr>
-       <tr><td><textarea class="text" rows="25">{{if run.run_output:}}{{=run.run_output.replace('\r', '')}}{{pass}}
-       </textarea></td></tr>
-       <tr><td>traceback :</td></tr>
-       <tr><td><textarea class="text" rows="10">{{if run.traceback:}}{{=run.traceback.replace('\r', '')}}{{pass}}
-       </textarea></td></tr>
-    </table>
+
+    [[ if content_log: ]]
+        <pre style="height:calc(90%); width:calc(90%); overflow-y:scroll; overflow-x:scroll; background-color:gray; color:white;">[[=content_log]]</pre>
+    [[ pass]]
+
 </div>
-{{pass}}
+[[pass]]
 
 <div class="db_block">
     <div class="db_block_left">
@@ -68,8 +69,8 @@ run = db(db.scheduler_run.task_id == results_file.scheduler_task_id).select().fi
     </div>
 </div>
 
-{{elif 'content' in globals():}}
-{{=content}}
-{{else:}}
-{{=BEAUTIFY(response._vars)}}
-{{pass}}
+[[elif 'content' in globals():]]
+[[=content]]
+[[else:]]
+[[=BEAUTIFY(response._vars)]]
+[[pass]]

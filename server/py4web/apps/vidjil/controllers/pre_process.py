@@ -1,10 +1,9 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import base64
 import datetime
 from sys import modules
 
 
-#from apps.vidjil.modules import jstree
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules import tag
@@ -39,6 +38,7 @@ ACCESS_DENIED = "access denied"
 
 @action("/vidjil/pre_process/index", method=["POST", "GET"])
 @action.uses("pre_process/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     if not auth.user : 
         res = {"redirect" : "default/user/login"}
@@ -70,6 +70,7 @@ def task_test2():
 
 @action("/vidjil/pre_process/add", method=["POST", "GET"])
 @action.uses("pre_process/add.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def add():
     if auth.can_create_pre_process():
         return dict(message=T('Add pre-process'), auth=auth, db=db)
@@ -90,18 +91,19 @@ def add_form():
 
     if error=="" :
         
-        pre_proc_id = db.pre_process.insert(name=request.params['pre_process_name'],
+        pre_process_id = db.pre_process.insert(name=request.params['pre_process_name'],
                         info=request.params['pre_process_info'],
                         command=request.params['pre_process_command']
                         )
 
-        auth.add_permission(auth.user_group(), PermissionEnum.read_pre_process.value, db.pre_process, pre_proc_id)
+        auth.add_permission(auth.user_group(), PermissionEnum.read_pre_process.value, db.pre_process, pre_process_id)
 
         res = {"redirect": "pre_process/index",
-               "message": "pre_process '%s' added" % request.params['pre_process_name']}
+               "message": "pre_process '%s' added" % request.params['pre_process_name'],
+               "pre_process_id": pre_process_id}
         log.admin(res)
         log.info(res, extra={'user_id': auth.user_id,
-                'record_id': pre_proc_id,
+                'record_id': pre_process_id,
                 'table_name': "pre_process"})
         return json.dumps(res, separators=(',',':'))
         
@@ -112,9 +114,10 @@ def add_form():
 
 @action("/vidjil/pre_process/edit", method=["POST", "GET"])
 @action.uses("pre_process/edit.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def edit(): 
     if auth.can_modify_pre_process(int(request.query['id'])):
-        return dict(message=T('edit config'), 
+        return dict(message=T('edit pre_process'), 
                     info = db.pre_process[request.query["id"]],
                     auth=auth,
                     db=db)
@@ -155,6 +158,7 @@ def edit_form():
 
 @action("/vidjil/pre_process/confirm", method=["POST", "GET"])
 @action.uses("pre_process/confirm.html",db, auth.user)
+@vidjil_utils.jsontransformer
 def confirm():
     if auth.can_modify_pre_process(int(request.query['id'])):
         query = db( (db.pre_process.id == request.query['id']) & (auth.vidjil_accessible_query(PermissionEnum.read_pre_process.value, db.pre_process) | auth.vidjil_accessible_query(PermissionEnum.admin_pre_process.value, db.pre_process) )  ).select()
@@ -180,10 +184,10 @@ def delete():
     return json.dumps(res, separators=(',',':'))
 
 
-## need ["sequence_file_id"]
 ## need ["sample_set_id"]
 @action("/vidjil/pre_process/info", method=["POST", "GET"])
 @action.uses("pre_process/info.html",db, auth.user)
+@vidjil_utils.jsontransformer
 def info():
     if (auth.can_modify_sample_set(int(request.query["sample_set_id"]))):
         log.info("view pre process info", extra={'user_id': auth.user_id,
@@ -197,6 +201,7 @@ def info():
 
 @action("/vidjil/pre_process/permission", method=["POST", "GET"])
 @action.uses("pre_process/permission.html",db, auth.user)
+@vidjil_utils.jsontransformer
 def permission():
     if (not auth.can_modify_pre_process(int(request.query["id"])) ):
         res = {"message": ACCESS_DENIED}

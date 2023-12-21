@@ -1,0 +1,56 @@
+
+test_server_api:
+  stage: test_server_api
+  extends:
+    - .test_server_base_dind
+  script: &test_cypress_server_script
+    - docker exec docker_uwsgi_1  chmod a+w /usr/share/vidjil/server/py4web/apps/vidjil/errors
+    - docker exec docker_uwsgi_1  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
+    - mkdir -p logs/before; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/before/${service}.log 2>&1; done
+    - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest"
+    - >
+      docker run
+      -v $PWD/$CYPRESS_PATH:/app/cypress
+      -v $PWD/browser/test/data:/app/cypress/fixtures/data
+      -v $PWD/doc:/app/cypress/fixtures/doc
+      -v $PWD/demo:/app/cypress/fixtures/demo
+      -v $PWD:/app/vidjil
+      -v "$PWD/docker/ci/cypress.json":"/app/cypress.json"
+      -v "$PWD/docker/ci/script_api.bash":"/app/script.bash"
+      -v "$PWD/docker/ci/.coveragerc":"/app/.coveragerc"
+      --env HOST=$HOST
+      --env PROJECT=$PROJECT
+      --env URL=$URL
+      --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
+      --shm-size=1GB
+      --network="host"
+      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    reports:
+      junit: tools/tests/test_api_report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: tools/tests/api_coverage.xml
+    paths:
+      - docker/*.yml
+      - docker/vidjil-*
+      - browser/js/conf.js
+      - server/py4web/apps/vidjil/errors/*
+      - tools/tests/test_api_report.xml
+      - logs
+      - coverage.xml
+    expire_in: 7 day
+    when: always
+  variables:
+    HOST: local
+  only: &onlyServerBranches
+    - /^feature-.*s.*\/.*$/
+    - /^feature-.*t.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^hotfix-.*t.*\/.*$/
+    - /^prod-server/
+    - dev
+  needs:
+    - [build_test_server_docker]
+

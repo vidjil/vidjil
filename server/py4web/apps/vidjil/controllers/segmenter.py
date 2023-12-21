@@ -1,7 +1,8 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 from sys import modules
 from .. import defs
 from ..modules.stats_decorator import *
+from ..modules import vidjil_utils
 from ..VidjilAuth import VidjilAuth
 from io import StringIO
 import json
@@ -41,7 +42,7 @@ def segment_sequences(sequences):
     text_result = "{}"
     
     check = check_sequences(sequences)
-    if check is not None:
+    if check != None:
         text_result = '{"error": "%s"}' % check
     else:
         with TemporaryDirectory() as folder_path:
@@ -80,12 +81,12 @@ def segment_sequences(sequences):
 
 def check_sequences(sequences):
     #fasta format ?
-    if sequences[0] is '>':
+    if sequences[0] == '>':
         if len(sequences.split('>')) > limit_max+1 :
             return "too many sequences (limit : " + str(limit_max) + ")"
 
     #fastq format ?
-    elif sequences[0] is '@':
+    elif sequences[0] == '@':
         if len(sequences.split('\n')) > 4*(limit_max+1) :
             return "too many sequences (limit : " + str(limit_max) + ")"
 

@@ -7,7 +7,7 @@ with a full installation of the Vidjil client."
 run sed -i 's/^\(user .*\)$/user www-data;/' /etc/nginx/nginx.conf
 
 run set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends wget make unzip git sudo curl ca-certificates fcgiwrap && rm -rf /var/lib/apt/lists/*
+	&& apt-get update && apt-get install -y --no-install-recommends wget make unzip git sudo curl ca-certificates fcgiwrap htop nano && rm -rf /var/lib/apt/lists/*
 
 arg git_branch=dev
 arg remote_repo=https://gitlab.inria.fr/vidjil/vidjil.git
@@ -18,6 +18,7 @@ copy ./conf/Gemfile /usr/share/vidjil/Gemfile
 copy ./conf/align.cgi /usr/share/vidjil/browser/cgi/align.cgi
 copy ./conf/similarity.cgi /usr/share/vidjil/browser/cgi/similarity.cgi
 
+run cd /usr/share/vidjil/ && make demo 
 run cd /usr/share/vidjil/browser/ && make icons sha1
 
 arg build_env='PRODUCTION'
@@ -36,3 +37,5 @@ run ln -s /usr/share/vidjil/browser /usr/share/vidjil/b
 copy ./scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
 run chown -R www-data:www-data /usr/share/vidjil
 run useradd -ms /bin/bash vidjil && usermod -aG sudo vidjil
+
+RUN echo 'if [ "$ENV" = "production" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc; echo 'export PS1="🐳 $prompt_color$SERVICE_NAME \e[32m[ \w ]# \e[0m"' >> ~/.bashrc

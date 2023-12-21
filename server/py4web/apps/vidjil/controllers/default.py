@@ -1,5 +1,6 @@
 
 
+
 # -*- coding: utf-8 -*-
 # this file is released under public domain and you can use without limitations
 
@@ -20,11 +21,13 @@ from ..modules.sequenceFile import *
 from ..modules.sampleSet import get_sample_set_id_from_results_file
 from ..modules.analysis_file import get_analysis_data
 from ..controllers.group import add_default_group_permissions
+from ..tasks import custom_fuse
 from io import StringIO
 import logging
 import json
 import os
 import time
+import datetime
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from ..tasks import schedule_run
 from yatl.helpers import INPUT, H1, HTML, BODY, A, DIV
@@ -37,7 +40,7 @@ from ..VidjilAuth import VidjilAuth
 from py4web.utils.auth import Auth, AuthAPI
 import types
 
-from ..common import db, session, cors, T, flash, cache, authenticated, unauthenticated, auth, log
+from ..common import db, session, cors, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
 
 #if request.environ.get("HTTP_ORIGIN") :
 #    response.headers['Access-Control-Allow-Origin'] = request.environ.get("HTTP_ORIGIN")
@@ -48,11 +51,13 @@ from ..common import db, session, cors, T, flash, cache, authenticated, unauthen
 
 #########################################################################
 ##return the default index page for vidjil (redirect to the browser)
+@vidjil_utils.jsontransformer
 def index():
     return dict(message=T('hello world'))
 
 #########################################################################
 ##return the view default/help.html
+@vidjil_utils.jsontransformer
 def help():
     return dict(message=T('help i\'m lost'))
 
@@ -60,6 +65,7 @@ def help():
 ## default home page
 @action("/vidjil/default/home.html", method=["POST", "GET"])
 @action.uses("default/index.html", db, auth.user, cors)
+@vidjil_utils.jsontransformer
 def home():
     if auth.is_admin():
         redirect = URL('admin/index')
@@ -67,6 +73,42 @@ def home():
         redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)
     res = {"redirect" : redirect}
     return json.dumps(res, separators=(',',':'))
+
+@action("/vidjil/default/whoami", method=["POST", "GET"])
+@action.uses(db, session)
+@vidjil_utils.jsontransformer
+def whoami():
+    """
+    Return some informations about logged in user (id, names, groups, admin status)
+    Use for API
+    """
+
+    if auth.user:
+        user_data = {
+            "id": auth.user_id,
+            "email": auth.current_user.get('email'),
+            "uuid": session["uuid"],
+            "admin": auth.is_admin()
+        }
+
+        membership = auth.table_membership()
+        permission = auth.table_permission()
+        action = "create"
+        groups = db(
+                (db.auth_user.id == user_data["id"]) &
+                (membership.user_id == user_data["id"]) &
+                (membership.group_id == permission.group_id) & (permission.record_id == 0) &
+                (permission.table_name == "sample_set") &
+                (db.auth_membership.group_id == db.auth_group.id) &
+                (permission.name == action)
+            ).select()
+        transform_groups = []
+        for elt in groups:
+            transform_groups.append({"role": elt["auth_group"].role, "id": str(elt["auth_group"].id), "description": elt["auth_group"].description })
+
+        user_data["groups"] = transform_groups
+        return user_data
+    return {}
 
 def logger():
     '''Log to the server'''
@@ -81,6 +123,7 @@ def logger():
 
 @action("/vidjil/default/init_db", method=["POST", "GET"])
 @action.uses("default/init_db.html", db, auth, cors)
+@vidjil_utils.jsontransformer
 def init_db():
     if (db(db.auth_user.id > 0).count() == 0) :
         return dict(message=T('create admin user and initialize database'),
@@ -139,21 +182,20 @@ def init_from_csv():
 @action("/vidjil/default/run_request", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def run_request():
-    error = ""
     check_space(defs.DIR_RESULTS, "Runs")
 
-    ##TODO check
+    error = []
     if not "sequence_file_id" in request.query :
-        error += "id sequence file needed, "
+        error.append("id sequence file needed")
     elif not "sample_set_id" in request.query:
-        error += "sample set ID needed, "
+        error.append("sample set ID needed")
     if not "config_id" in request.query:
-        error += "id config needed, "
+        error.append("id config needed")
         id_config = None
     else:
         id_config = int(request.query["config_id"])
     if not auth.can_process_sample_set(int(request.query['sample_set_id'])):
-        error += "permission needed"
+        error.append("permission needed")
 
     id_sample_set = int(request.query["sample_set_id"])
 
@@ -166,29 +208,32 @@ def run_request():
         grep_reads = None
 
     if not auth.can_modify_sample_set(id_sample_set) :
-        error += "you do not have permission to launch process for this sample_set ("+str(id_sample_set)+"), "
+        error.append("you do not have permission to launch process for this sample_set ("+str(id_sample_set)+")")
 
     if id_config:
         if not auth.can_use_config(id_config) :
-            error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
+            error.append("you do not have permission to launch process for this config ("+str(id_config)+")")
         else:
-            extra_info += 'with config '+db.config[id_config].name
+            extra_info += 'with config ' + db.config[id_config].name
 
-    if error == "" :
-        res = schedule_run(request.query["sequence_file_id"], id_config, grep_reads)
-        log.info("run requested "+extra_info, extra={'user_id': auth.user_id, 'record_id': request.query['sequence_file_id'], 'table_name': 'sequence_file'})
-        return json.dumps(res, separators=(',',':'))
-
-    else :
-        res = {"success" : "false",
-               "message" : "default/run_request "+extra_info+" : " + error}
+    if error:
+        res = {"success" : "false", "message" :  "default/run_request "+extra_info+" : "+", ".join(error)}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
+        
+    res = schedule_run(request.query["sequence_file_id"], id_config, grep_reads)
+    log.info("run requested "+extra_info, extra={'user_id': auth.user_id, 'record_id': request.query['sequence_file_id'], 'table_name': 'sequence_file'})
+    return json.dumps(res, separators=(',',':'))
 
+
+@action("/vidjil/default/run_all_request", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def run_all_request():
     error = ""
     extra_info = ''
     check_space(defs.DIR_RESULTS, "Runs")
+    
+    id_sample_set = int(request.query["sample_set_id"])
 
     if not "sequence_file_ids" in request.query:
         error += "sequence file ids required "
@@ -226,17 +271,6 @@ def run_all_request():
         schedule_run(s_id, id_config)
     return json.dumps({'success': 'true', 'redirect': 'reload'}, separators=(',',':'))
 
-    
-def run_contamination():
-    task = scheduler.queue_task('compute_contamination', pvars=dict(sequence_file_id=request.query["sequence_file_id"],
-                                                                    results_file_id=request.query["results_file_id"],
-                                                                    config_id=request.query["config_id"]),
-             repeats = 1, timeout = defs.TASK_TIMEOUT,immediate=True)
-    
-    res = {"success" : "true",
-           "processId" : task.id}
-    log.debug(str(res))
-    return json.dumps(res, separators=(',',':'))
 
 def run_extra():
     task = scheduler.queue_task('compute_extra', pvars=dict(id_file=request.query["sequence_file_id"],
@@ -473,7 +507,9 @@ def get_data():
         dumped_json = json.dumps(data, separators=(',',':'))
 
         if download:
-             return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.query['filename'])
+            response.headers['Content-Type'] = "application/json"  # Removed to force file download
+            response.headers['Content-Disposition'] = f'attachment; filename="{str(request.query["filename"])}"'
+            return dumped_json
 
         return dumped_json
     else :
@@ -483,6 +519,8 @@ def get_data():
         return json.dumps(res, separators=(',',':'))
     
 #########################################################################
+@action("/vidjil/default/get_custom_data", method=["POST", "GET"])
+@action.uses( db, auth.user)
 def get_custom_data():
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
@@ -511,8 +549,8 @@ def get_custom_data():
     if error == "" :
         try:
             data = custom_fuse(samples)
-        except IOError:
-            return error_message(str(error))
+        except IOError as io_error:
+            return error_message(str(io_error))
         
         generic_info = "Compare samples" if len(samples) > 1 else "Sample %s" % samples[0]
         data["sample_name"] = generic_info
@@ -591,7 +629,9 @@ def get_analysis():
         log.info("load analysis", extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
 
         if download:
-            return response.stream(StringIO.StringIO(dumped_json), attachment = True, filename = request.query['filename'])
+            response.headers['Content-Type'] = "application/json"  # Removed to force file download
+            response.headers['Content-Disposition'] = f'attachment; filename="{str(request.query["filename"])}"'
+            return dumped_json
 
         return dumped_json
 
@@ -606,23 +646,25 @@ def get_analysis():
 ## upload .analysis file and store it on the database
 # need patient_id, fileToUpload
 # need patient admin permission
+@action("/vidjil/default/save_analysis", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def save_analysis():
     error = ""
 
-    if "patient" in request.query :
-        request.query["sample_set_id"] = db.patient[request.query["patient"]].sample_set_id
+    if "patient" in request.params :
+        request.params["sample_set_id"] = db.patient[request.params["patient"]].sample_set_id
 
-    if "run" in request.query :
-        request.query["sample_set_id"] = db.run[request.query["run"]].sample_set_id
+    if "run" in request.params :
+        request.params["sample_set_id"] = db.run[request.params["run"]].sample_set_id
 
-    if not auth.can_save_sample_set(request.query['sample_set_id']) :
+    if not auth.can_save_sample_set(request.params['sample_set_id']) :
         error += "you do not have permission to save changes on this sample set"
 
     if error == "" :
-        f = request.query['fileToUpload']
+        f = request.files['fileToUpload']
         ts = time.time()
         
-        sample_set_id = request.query['sample_set_id']
+        sample_set_id = request.params['sample_set_id']
         
         analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
                                               sample_set_id = sample_set_id,
@@ -630,16 +672,17 @@ def save_analysis():
                                               )
 
         sample_type = db.sample_set[sample_set_id].sample_type
-        if (request.query['info'] is not None):
+        if ('info' in request.params and request.params['info'] is not None):
             if (sample_type == defs.SET_TYPE_PATIENT) :
-                db(db.patient.sample_set_id == sample_set_id).update(info = request.query['info']);
+                db(db.patient.sample_set_id == sample_set_id).update(info = request.params['info']);
 
             if (sample_type == defs.SET_TYPE_RUN) :
-                db(db.run.sample_set_id == sample_set_id).update(info = request.query['info']);
+                db(db.run.sample_set_id == sample_set_id).update(info = request.params['info']);
 
-        if (request.query['samples_id'] is not None and request.query['samples_info'] is not None):
-            ids = request.query['samples_id'].split(',')
-            infos = request.query['samples_info'].split(',')
+        if ('samples_id' in request.params and request.params['samples_id'] is not None
+             and 'samples_info' in request.params and request.params['samples_info'] is not None):
+            ids = request.params['samples_id'].split(',')
+            infos = request.params['samples_info'].split(',')
         
         
             # TODO find way to remove loop ?
@@ -647,7 +690,7 @@ def save_analysis():
                 if(len(ids[i]) > 0):
                     db(db.sequence_file.id == int(ids[i])).update(info = infos[i])
 
-        #patient_name = db.patient[request.query['patient']].first_name + " " + db.patient[request.query['patient']].last_name
+        #patient_name = db.patient[request.params['patient']].first_name + " " + db.patient[request.params['patient']].last_name
 
         res = {"success" : "true",
                "message" : "(%s): analysis saved" % (sample_set_id)}
@@ -694,6 +737,7 @@ def error():
 
 #@action("/vidjil/default/user/<path>", method=["POST", "GET"])
 @action.uses(db, session, "db_layout.html")
+@vidjil_utils.jsontransformer
 def user(path=None):
     """
     exposes:
@@ -757,40 +801,50 @@ def user(path=None):
 
     return dict(form=auth())
 
+@action("/vidjil/default/impersonate", method=["POST", "GET"])
+@action.uses(db, auth, session)
 def impersonate() :
     if auth.is_impersonating() :
-        stop_impersonate()
+        log.debug("impersonate << stop")
+        auth.stop_impersonating(request.url)
     if request.query["id"] != 0 :
-        log.debug({"success" : "true", "message" : "impersonate >> %s" % request.query["id"]})
-        auth.impersonate(request.query["id"]) 
-        log.debug({"success" : "true", "message" : "impersonated"})
-    if not 'admin' in request.query['next']:
-        res = {"redirect": "reload"}
-    else:
-        res = {"redirect" : URL('patient', 'index', scheme=True)}
+        log.debug(f"impersonate >> {request.query['id']}")
+        if "next" in request.query :
+            redirect_url = request.query["next"]
+        else :
+            redirect_url = URL('default', 'home.html', scheme=True)
+        log.debug(f"redirect_url {redirect_url}")
+        auth.start_impersonating(request.query["id"], redirect_url) 
+        log.debug({"success" : "true", "message" : f"impersonated user_id {request.query['id']}"})
+    res = {"redirect": "reload"}
     return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/default/stop_impersonate", method=["POST", "GET"])
+@action.uses(db, auth, session)
 def stop_impersonate() :
     if auth.is_impersonating() :
         log.debug({"success" : "true", "message" : "impersonate << stop"})
-        auth.impersonate(0) 
-        # force clean login (default impersonate don't restore everything :/ )
-        auth.login_user(db.auth_user(auth.user_id))
-
+        if "next" in request.query :
+            redirect_url = request.query["next"]
+        else :
+            redirect_url = URL('default', 'home.html', scheme=True)
+        log.debug(f"redirect_url {redirect_url}")
+        auth.stop_impersonating(redirect_url)
     res = {"redirect" : "reload"}
     return json.dumps(res, separators=(',',':'))
 
 
-
 ## TODO make custom download for .data et .analysis
-#@cache.action()
-def download():
-    """
-    allows downloading of uploaded files
-    http://..../[app]/default/download/[filename]
-    """
-    return response.download(request, db, download_filename=request.query.filename)
+@action("/vidjil/default/download/<filename>", method=["POST", "GET"])
+@action.uses(db, session)
+def download(filename=None):
+    from ombott import static_file
 
+    return static_file(filename, root=defs.DIR_RESULTS, download=request.query.filename)
+
+
+@action("/vidjil/default/download_data", method=["POST", "GET"])
+@action.uses(db, session)
 def download_data():
 
     file = "test"

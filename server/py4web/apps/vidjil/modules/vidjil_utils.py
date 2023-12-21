@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-import math
 import re
-from apps.vidjil import defs
 import json
 import datetime
 from datetime import date
-from ..common import auth, db
+from .. import defs
+from ..common import auth, db, log
+from py4web import request, DAL
+import pydal
 
 def format_size(n, unit='B'):
     '''
@@ -47,6 +48,45 @@ def format_size(n, unit='B'):
 
     return fmt % size + ' ' + prefix + unit
 
+class EncoderAsdict(json.JSONEncoder):
+    """
+    Make a dump of values as json.
+    If object is not serializable, we try to make a as_dict call
+    Usefull for json.dump of unit test and API call
+    """
+    def default(self, obj):
+        if isinstance(obj, (datetime.datetime, datetime.time, datetime.date)):
+            return str(obj)
+        if isinstance(obj, pydal.objects.Rows):
+            return obj.as_list()
+        if hasattr(obj, 'as_dict'):
+            return obj.as_dict()
+        if callable(obj): # Eject pydal row object
+            return None
+        return str(obj)
+
+def jsontransformer(func):
+    """
+    take values to return to template. If request a json (api; unit test) bypass to return json dump
+    """
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if isinstance(result, str):
+            return result
+        if "format" in request.params.keys() and request.params["format"] == "json":
+            # remove some functions sometimes given to template but useless
+            # !!! Can 'fields' be other thing and should be keeped ?
+            if isinstance(result, dict):
+                for key in ["db","auth","helper", "fields"]: 
+                    if key in result.keys():
+                        del result[key]
+            return json.dumps(result, cls=EncoderAsdict)
+        return result
+        
+    return wrapper
+
+
+
 
 
 
@@ -72,9 +112,6 @@ def age_years_months(birth, months_below_year=4):
 
 def anon_birth(patient_id, user_id):
     '''Anonymize birth date. Only the 'anon' access see the full birth date.'''
-    db = current.db
-    auth=current.auth
-
     birth = db.patient[patient_id].birth
 
     if birth is None:
@@ -106,12 +143,10 @@ def anon_names(sample_set_id, first_name, last_name, can_view=None):
     is provided (to tell if one can view the patient's personal informations)
     '''
 
-    ln = last_name
-    fn = first_name
     if can_view or (can_view == None and auth.can_view_info('sample_set', sample_set_id)):
-        name = ln + " " + fn
+        name = last_name + " " + first_name
     else:
-        name = ln[:3]
+        name = last_name[:3]
 
     return name
 
@@ -146,7 +181,7 @@ def safe_encoding(string):
     returns the string.
     '''
     try:
-        return str(string, 'utf-8')
+        return string.encode(encoding = 'UTF-8')
     except UnicodeDecodeError:
         return string
 
@@ -326,15 +361,15 @@ def extract_fields_from_json(json_fields, pos_in_list, filename, max_bytes = Non
         else:
             json_dict = json.loads(cleanup_json_sample(open(filename).read(max_bytes)))
     except IOError:
-        current.log.debug('JSON loading failed')
+        log.debug('JSON loading failed')
         json_dict = {}
     except ValueError as e:
-        current.log.debug(str(e))
+        log.debug(str(e))
     matched_keys = {}
     for field in json_fields:
         value = extract_value_from_json_path(json_fields[field], json_dict)
         if value is not None:
-            if  not isinstance(value, basestring) and pos_in_list is not None\
+            if  not isinstance(value, str) and pos_in_list is not None\
                 and len(value) > pos_in_list:
                 matched_keys[field] = value[pos_in_list]
             else:
@@ -354,21 +389,21 @@ def stats(samples):
 
     stats_regex = [
         # found 771265 40-windows in 2620561 segments (85.4%) inside 3068713 sequences # before 1f501e13 (-> 2015.05)
-        'in (?P<seg>\d+) segments \((?P<seg_ratio>.*?)\) inside (?P<reads>\d+) sequences',
+        r'in (?P<seg>\d+) segments \((?P<seg_ratio>.*?)\) inside (?P<reads>\d+) sequences',
 
         # found 10750 50-windows in 13139 reads (99.9% of 13153 reads)
-        'windows in (?P<seg>\d+) reads \((?P<seg_ratio>.*?) of (?P<reads>\d+) reads\)',
+        r'windows in (?P<seg>\d+) reads \((?P<seg_ratio>.*?) of (?P<reads>\d+) reads\)',
 
         # segmentation causes
-        'log.* SEG_[+].*?-> (?P<SEG_plus>.*?).n',
-        'log.* SEG_[-].*?-> (?P<SEG_minus>.*?).n',
+        r'log.* SEG_[+].*?-> (?P<SEG_plus>.*?).n',
+        r'log.* SEG_[-].*?-> (?P<SEG_minus>.*?).n',
     ]
 
     # stats by locus
     for locus in defs.LOCUS:
         locus_regex = locus.replace('+', '[+]')
         locus_group = locus.replace('+', 'p')
-        stats_regex += [ 'log.* %(locus)s.*?->\s*?(?P<%(locus_g)s_reads>\d+)\s+(?P<%(locus_g)s_av_len>[0-9.]+)\s+(?P<%(locus_g)s_clones>\d+)\s+(?P<%(locus_g)s_av_reads>[0-9.]+)\s*.n'
+        stats_regex += [ r'log.* %(locus)s.*?->\s*?(?P<%(locus_g)s_reads>\d+)\s+(?P<%(locus_g)s_av_len>[0-9.]+)\s+(?P<%(locus_g)s_clones>\d+)\s+(?P<%(locus_g)s_av_reads>[0-9.]+)\s*.n'
                          % { 'locus': locus_regex, 'locus_g': locus_group } ]
 
     json_paths = {
@@ -409,7 +444,7 @@ def stats(samples):
         row_result = search_first_regex_in_file(regex, f_result, STATS_READLINES)
         row['result'] = row_result # TMP, for debug
         try:
-            row_result_json = extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + results_f, STATS_MAXBYTES)
+            row_result_json = extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + f_result, STATS_MAXBYTES)
         except:
             row_result_json = []
 
@@ -470,10 +505,10 @@ SOURCES_DIR = {
 }
 
 
-log_patient = re.compile('\((\d+)\)')
-log_config = re.compile(' c(\d+)')
-log_task = re.compile('\[(\d+)\]')
-log_py = re.compile('(.*[.]py):(\d+)')
+log_patient = re.compile(r'\((\d+)\)')
+log_config = re.compile(r' c(\d+)')
+log_task = re.compile(r'\[(\d+)\]')
+log_py = re.compile(r'(.*[.]py):(\d+)')
 
 def log_links(s):
     '''Add HTML links to a log string
@@ -704,6 +739,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
             info = 'Export all clones in the tabular AIRR format. The results can not be browsed online. See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output',
             classification = 3
         )
+        db.commit()
 
         ## permission
         ## system admin have admin/read/create rights on all patients, groups and configs
@@ -767,7 +803,8 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
         for tag in tags:
             tid  = db.tag.insert(name=tag)
             db.group_tag.insert(group_id=id_public_group, tag_id=tid)
-
+        db.commit()
+    return
 
 def publicGroupIsInList(db, group_ids):
     """ Return True if the first public group is in list """

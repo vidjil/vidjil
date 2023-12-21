@@ -40,7 +40,7 @@ function VidjilAutoComplete(datasource) {
 
 // static methods
 
-VidjilAutoComplete.defaultLoadingData = ['<i>loading...</i>'];
+VidjilAutoComplete.defaultLoadingData = ['<i class="icon-spin4" ></i>loading...'];
 
 VidjilAutoComplete.isLoading = function(data) {
     dataToInspect = data;

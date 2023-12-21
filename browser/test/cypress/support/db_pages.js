@@ -1,6 +1,7 @@
 Cypress.Commands.add('initDatabase', (host) => {
   // init database if button is present at opening of page
   if (host=="local"){
+    cy.log(`initiated_database: ${Cypress.env('initiated_database')}`)
     if (Cypress.env('initiated_database') === false){ // allow to bypass waiting
 
       cy.visit('http://localhost/browser')
@@ -130,16 +131,16 @@ Cypress.Commands.add('goToSetPage', () => {
 
 
 /**
- * Create a patient and fill it informations
+ * Create a patient and fill its informations
  */
-Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, informations) => {
+Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, informations, owner, expected_display_name = "") => {
   cy.goToTokenPage("patient")
 
   cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'patient\'})"]')
     .click()
   cy.update_icon()
   cy.get('h3').should("contain", "Add patients, runs, or sets")
-  cy.fillPatient(0, id, firstname, lastname, birthday, informations)
+  cy.fillPatient(0, id, firstname, lastname, birthday, informations, owner)
 
   cy.get('.btn').click()
   cy.update_icon()
@@ -147,9 +148,12 @@ Cypress.Commands.add('createPatient', (id, firstname, lastname, birthday, inform
   cy.get('.db_div')
       .should('contain', ' + add samples')
 
-  cy.get('.set_token')
-    .should('contain', lastname+" "+firstname)
+  if (expected_display_name == "") {
+    expected_display_name = lastname+" "+firstname
+  }
 
+  cy.get('.set_token')
+    .should('contain', expected_display_name)
 })
 /**
  * Edit informations of a patient
@@ -173,11 +177,10 @@ Cypress.Commands.add('editPatient', (set_id, id, firstname, lastname, birthday, 
 
   cy.get('.set_token')
     .should('contain', lastname+" "+firstname)
-
 })
 
 
-Cypress.Commands.add('controlPatientInfos', (index, id, firstname, lastname, birthday, informations) => {
+Cypress.Commands.add('controlPatientInfos', (index, id, firstname, lastname, birthday, informations, owner="") => {
 
   cy.get('h3 > .set_token').should("contain", lastname+" "+firstname)
 
@@ -187,12 +190,19 @@ Cypress.Commands.add('controlPatientInfos', (index, id, firstname, lastname, bir
   if (informations != ""){
     cy.get('#db_table_container').should("contain", informations)
   }
-
+  if (owner != null){
+      // For the moment, test only one owner, but a sample can belong to multiple owner.
+      // In this case; launch mulitple time this function
+      cy.get('.owner').should("contain", owner)
+  }
 })
 
 
 
-Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, informations) => {
+Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, informations, owner) => {
+  if (owner != null){
+    cy.get('#group_select').select(owner)
+  }  
   if (id != ""){
     cy.get('#patient_id_label_'  + index.toString()).clear().type(id)
   }
@@ -210,12 +220,15 @@ Cypress.Commands.add('fillPatient', (index, id, firstname, lastname, birthday, i
 /**
  * Create a run and fill it informations
  */
-Cypress.Commands.add('createRun', (id, run_name, date, informations) => {
+Cypress.Commands.add('createRun', (id, run_name, date, informations, owner) => {
   cy.goToTokenPage("run")
 
   cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'run\'})"]')
     .click()
   cy.update_icon()
+  if (owner != null){
+    cy.get('#group_select').select(owner)
+  }
   cy.fillRun(0, id, run_name, date, informations)
 
   cy.get('.btn').click()
@@ -377,7 +390,7 @@ Cypress.Commands.add('fillSampleLine', (iter, preprocess, storage, filename1, fi
 
 
     if (preprocess != undefined){
-      cy.selectPreprocess('#pre_process')
+      cy.selectPreprocess(pre_process)
     }
 
     if (storage == "computer"){
@@ -390,23 +403,10 @@ Cypress.Commands.add('fillSampleLine', (iter, preprocess, storage, filename1, fi
         cy.get(`#file_upload_2_${iter}`).uploadFile(filename2)
       }
     } else if (storage == "nfs"){
-      cy.get(`#jstree_field_1_${iter}`).click()
-      
-      cy.get('body').then(($body) => {
-        if ($body.find('[id="\/"][aria-expanded="false"]').length) {
-          cy.get('.jstree-ocl').click()
-          cy.wait(1000)
-        }
-      })
-      
-      cy.get('.jstree-anchor').contains(filename1)
-        .click( { force: true} )
-
-      cy.get('#jstree_button')
-        .contains('ok')
-        .should('be.visible')
-        .click()
-
+      cy.addNfsSample(iter, 1, filename1)
+      if (filename2 != undefined){
+        cy.addNfsSample(iter, 2, filename2)
+      }
     }
 
     if (common_set != undefined){
@@ -414,6 +414,30 @@ Cypress.Commands.add('fillSampleLine', (iter, preprocess, storage, filename1, fi
     }
 
 
+})
+
+
+/**
+ * Open NFS loader panel and select correct file
+ */
+Cypress.Commands.add('addNfsSample', (iter, position, filename) => {
+    // don't click to change storage to nfs, that should be already seleted
+    cy.get(`#jstree_field_${position}_${iter}`).click()
+
+    cy.get('body').then(($body) => {
+      if ($body.find('[id="\/"][aria-expanded="false"]').length) {
+        cy.get('.jstree-ocl').click()
+        cy.wait(1000)
+      }
+    })
+
+    cy.get('.jstree-anchor').contains(filename)
+      .click( { force: true} )
+
+    cy.get('#jstree_button')
+      .contains('ok')
+      .should('be.visible')
+      .click()
 })
 
 
@@ -454,7 +478,7 @@ Cypress.Commands.add('fillCommonSet', (iter, common_set) => {
     if (common_set != undefined){
       cy.get(`#token_input_${iter}`)
         .type(common_set) // a value to search a common set
-        .wait(500) // server answer
+        .wait(1000) // server answer
         .type("{enter}")
     }
 
@@ -582,6 +606,12 @@ Cypress.Commands.add('deleteSet', (set_type, set_id, name) => {
 
     cy.get('[onclick="db.call(\'sample_set/delete\', {\'id\' :\''+set_id+'\'} )"]')
       .click()
+    cy.wait(['@getActivities'])
+    
+    cy.update_icon(100)
+    cy.get('#db_menu > .'+set_type+'_token')
+      .contains(''+set_type+'s')
+      .should('be.visible')
 })
 
 
@@ -611,7 +641,10 @@ Cypress.Commands.add('waitAnalysisCompleted', (config_id, sequence_file_id, star
   cy.sampleStatusValue(sequence_file_id, config_id).then($status => {
         cy.log(`status: '**${$status.trimRight().trimLeft()}**'`);
         var now = new Date().getTime()
-        if ($status.trimRight().trimLeft() != 'COMPLETED') {
+        if ($status.trimRight().trimLeft() == 'FAILED') {
+            cy.log("waitAnalysisCompleted; Process have FAILED").then(() => {
+                throw new Error("waitAnalysisCompleted; Process have FAILED");});
+        } else if ($status.trimRight().trimLeft() != 'COMPLETED') {
          if ( (now - start)/1000 > nb_retry){
             cy.log("waitAnalysisCompleted; Timeout without COMPLETED status").then(() => {
                 throw new Error("waitAnalysisCompleted; Timeout without COMPLETED status");});
@@ -648,7 +681,7 @@ Cypress.Commands.add('saveAnalysis', () => {
 
 Cypress.Commands.add('newSet', (set_type) => {
   // Availalble types: patient, run, generic
-  cy.get(`#create_new_set_type_${set_type}`).click()
+  cy.get(`#create_new_set_type_${set_type}`)
     .should("exist")
     .click({force: true})
   cy.update_icon()

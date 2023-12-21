@@ -1,0 +1,29 @@
+version: '2.4'
+
+# See https://docs.docker.com/compose/extends/ for more information
+services:
+    uwsgi:
+        command: bash /entrypoints/uwsgi-entrypoint.sh
+        volumes:
+            # Local volume path
+            - $VOLUME_PATH/results:/mnt/result
+            - $VOLUME_PATH/results/results:/mnt/result/results
+            - $VOLUME_PATH/tmp:/mnt/result/tmp
+            - $VOLUME_PATH/uploads:/mnt/upload/uploads
+            - $VOLUME_PATH/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
+            # Use local vidjil repository
+            - ../algo:/usr/share/vidjil/algo
+            - ../browser:/usr/share/vidjil/browser
+            - ../demo:/usr/share/vidjil/demo
+            - ../doc:/usr/share/vidjil/doc
+            - ./:/usr/share/vidjil/docker
+            - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
+            - ../tools:/usr/share/vidjil/tools
+    nginx:
+        volumes:
+            - ../browser:/usr/share/vidjil/browser
+            - ./:/usr/share/vidjil/docker
+
+
+volumes:
+    databases:

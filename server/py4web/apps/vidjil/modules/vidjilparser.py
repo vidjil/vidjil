@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+# -*- coding: utf-8 -*-
+
 import ijson
 from six import string_types
 from enum import Enum

@@ -1,7 +1,7 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 from sys import modules
 from .. import defs
-from ..modules import vidjil_utils
+from ..modules.vidjil_utils import jsontransformer
 from ..modules import tag
 from ..modules.stats_decorator import *
 from ..modules.controller_utils import error_message
@@ -10,6 +10,8 @@ import json
 import re
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
+import datetime
+from datetime import timedelta 
 
 from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
@@ -20,13 +22,22 @@ from ..common import db, session, T, flash, cache, authenticated, unauthenticate
 
 ACCESS_DENIED = "access denied"
         
-## return user list
 @action("/vidjil/user/index", method=["POST", "GET"])
 @action.uses("user/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
+    if not auth.is_admin():
+        res = {"success" : "false",
+               "message" : ACCESS_DENIED,
+               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+        log.info(res)
+        return json.dumps(res, separators=(',',':'))
     
+    since = datetime.datetime.now() - timedelta(days=90)
+
     query = db(db.auth_user).select()
 
+    groups =  {g.id: {'id': g.id, 'role': g.role, 'description': g.description} for g in db(db.auth_group.id).select()}
     for row in query :
         row.created = db( db.patient.creator == row.id ).count()
         
@@ -35,7 +46,7 @@ def index():
 
         q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select()]
         q.sort()
-        row.groups = ' '.join([str(g) for g in q])
+        row.groups = q
 
         row.size = 0
         row.files = 0
@@ -52,6 +63,8 @@ def index():
         
         row.first_login = str(last_logins[-1].time_stamp) if len(last_logins) > 0 else '-'
         row.last_login = str(last_logins[0].time_stamp) if len(last_logins) > 0 else '-'
+        # login status between never ('-'), recent (True) and old (False)
+        row.login_status =  datetime.datetime.strptime(row.last_login, '%Y-%m-%d %H:%M:%S') > since if row.last_login != "-" else "-"
 
     ##sort query
     reverse = False
@@ -71,12 +84,14 @@ def index():
 
     log.info("view user list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': 'auth_user'})
     return dict(query=query,
-    			reverse=reverse,
+                groups=groups,
+                reverse=reverse,
                 auth=auth,
                 db=db)
 
 @action("/vidjil/user/edit", method=["POST", "GET"])
 @action.uses("user/edit.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def edit():
     if auth.can_modify_user(int(request.query['id'])):
         user = db.auth_user[request.query["id"]]
@@ -88,54 +103,41 @@ def edit():
 @action("/vidjil/user/edit_form", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def edit_form():
-    if auth.can_modify_user(int(request.params['id'])):
-        error = []
-        if request.params["first_name"] == "" :
-            error.append("first name needed")
-        if request.params["last_name"] == "" :
-            error.append("last name needed")
-        if request.params["email"] == "":
-            error.append("email cannot be empty")
-        elif not re.match(r"[^@]+@[^@]+\.[^@]+", request.params["email"]):
-            error.append("incorrect email format")
+    if not auth.can_modify_user(int(request.params['id'])):
+        log.error(ACCESS_DENIED)
+        return error_message(ACCESS_DENIED)
 
-        if request.params["password"] != "":
-            if request.params["confirm_password"] != request.params["password"]:
-                error.append("password fields must match")
-            else:
-                password = db.auth_user.password.validate(request.params["password"])[0]
-                if not password:
-                    error.append("Password is too short, should be at least of length "+str(auth.settings.password_min_length))
+    if request.params["confirm_password"] != request.params["password"]:
+        error_to_display = "password fields must match"
+        log.error(error_to_display)
+        return error_message(error_to_display)
 
-        if len(error) == 0:
-            data = dict(first_name = request.params["first_name"],
-                                                    last_name = request.params["last_name"],
-                                                    email = request.params["email"])
-            if 'password' in vars():
-                data["password"] = password
-
-            db.auth_user[request.params['id']] = data
-            db.commit()
-            res = {"redirect": "back",
-                    "message": "%s (%s) user edited" % (request.params["email"], request.params["id"])}
-            log.info(res,
-                extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'auth_user'})
-            return json.dumps(res, separators=(',',':'))
-
-        else :
-            res = {"success" : "false", "message" : ', '.join(error)}
-            log.error(res)
-            return json.dumps(res, separators=(',',':'))
-    else :
-        res = {"message": ACCESS_DENIED}
+    updated_user = dict(first_name = request.params["first_name"],
+                        last_name = request.params["last_name"],
+                        email = request.params["email"])
+    if request.params["password"] != "":
+        updated_user["password"] = request.params["password"] 
+    log.debug(f"updated_user : {updated_user}")
+    response = db(db.auth_user.id == request.params['id']).validate_and_update(**updated_user)
+    errors = response.get("errors")
+    if errors:
+        res = {"success": "false", "message": json.dumps(errors)}
         log.error(res)
-        return json.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(',', ':'))
+    
+    res = {"redirect": "back",
+            "message": "%s (%s) user edited" % (request.params["email"], request.params["id"])}
+    log.info(res,
+        extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'auth_user'})
+    return json.dumps(res, separators=(',',':'))
 
 ## return user information
 ## need ["id"]
 @action("/vidjil/user/info", method=["POST", "GET"])
 @action.uses("user/info.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def info():
+    # In case no ID is given, user the last added user ID
     if "id" not in request.query:
         request.query["id"] = db().select(db.auth_user.ALL, orderby=~db.auth_user.id)[0].id
     log.info("view info for user (%d)" % int(request.query['id']),

@@ -1,6 +1,7 @@
 # Init css files
 make -C browser/css/icons
 make -C demo
+# Germline file cannot be intergrated on our docker image for licenece reasons.
 make germline
 
 # Create symbolic links for cypress (to avoid "--project" param error)

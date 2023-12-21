@@ -18,19 +18,33 @@ Cypress.Commands.add('login', (host) => {
 
 
 Cypress.Commands.add('fillLogin', (user, password) => { 
-    cy.get('#auth_user_email', { timeout: 10000 })
+    cy.get('.db_div', { timeout: 10000 })
+      .should("be.visible")
+    cy.close_tips()
+
+    cy.document().then(($document) => {
+      const documentResult = $document.querySelector('#logout_button')
+      if (documentResult) {
+          cy.log("CHECK - already logged")
+          cy.logout()
+      } else {
+        cy.log("CHECK - not logged")
+      }
+    })
+
+    cy.get('#login', { timeout: 10000 })
       .should('exist').should('be.visible')
       .type(user)
-    cy.get('#auth_user_password')
+    cy.get('#password')
       .type(password)
-    cy.get('#submit_record__row > .w2p_fw > input').click()
+    cy.get('#submit_login').click()
     cy.update_icon()
 
     cy.verifyLogin()
 })
 
 
-Cypress.Commands.add('verifyLogin', (host) => { 
+Cypress.Commands.add('verifyLogin', () => { 
   cy.get('body').should('not.contain', 'You can request an account')
   cy.get('body').should('contain', 'logout')
 })
@@ -38,13 +52,13 @@ Cypress.Commands.add('verifyLogin', (host) => {
 
 // LOGOUT
 Cypress.Commands.add('logout', (host) => {
-  cy.get('#login-container')
+  cy.get('#logout_button')
     .should('exist')
   cy.intercept({
         method: 'GET', // Route all GET requests
         url: 'get_active_notifications*',
       }).as('getActivities')
-  cy.get('#login-container > .button')
+  cy.get('#logout_button')
     .click()
   cy.wait(['@getActivities'])
 
@@ -55,7 +69,7 @@ Cypress.Commands.add('logout', (host) => {
 
 
 Cypress.Commands.add('verifyLogout', (host) => {
-  cy.get('#auth_user_email', { timeout: 10000 })
+  cy.get('#login', { timeout: 10000 })
       .should('exist')
       .should('be.visible')
   cy.get('body').should('contain', 'You can request an account')

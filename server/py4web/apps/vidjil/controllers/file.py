@@ -1,10 +1,10 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import base64
 import datetime
+import pathlib
 from sys import modules
 
 
-#from apps.vidjil.modules import jstree
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules import tag
@@ -16,7 +16,8 @@ from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets, g
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
-from ..tasks import schedule_pre_process, task_test
+import apps.vidjil.modules.jstree as jstree
+from ..tasks import schedule_pre_process
 from ..user_groups import get_upload_group_ids, get_involved_groups
 from ..VidjilAuth import VidjilAuth
 from io import StringIO
@@ -34,6 +35,7 @@ from ..common import db, session, T, flash, cache, authenticated, unauthenticate
 # HELPERS
 ###########################
 def extract_set_type(target):
+    log.debug(f"extract_set_type for {target}")
     mapping = {
         'p': 'patient',
         'r': 'run',
@@ -53,9 +55,9 @@ def manage_filename(filename):
         filepath = defs.FILE_SOURCE + '/' + filename
         split_file = myfilename.split('.')
         uuid_key = db.uuid().replace('-', '')[-16:]
-        encoded_filename = base64.b16encode('.'.join(split_file[0:-1])).lower()
+        encoded_filename = base64.b16encode('.'.join(split_file[0:-1]).encode('utf-8')).lower()
         data_file = "sequence_file.data_file.%s.%s.%s" % (
-                uuid_key, encoded_filename, split_file[-1]
+                uuid_key, str(encoded_filename.decode('utf-8')), split_file[-1]
             )
         data['data_file'] = data_file
 
@@ -107,6 +109,8 @@ def validate_sets(set_ids):
     id_dict = {}
     sets = []
     errors = []
+    
+    log.debug(f"validate_sets for {set_ids}")
 
     if len(set_ids) == 0:
         errors.append("missing set association")
@@ -170,10 +174,10 @@ def form_response(data):
                                                or len(data['file']) == 0    \
                                                or data['file'][0].network)
     # should be true only when we want to use the network view
-    upload_group_ids = [int(gid) for gid in get_upload_group_ids(auth)]
+    upload_group_ids = list(set([int(gid) for gid in get_upload_group_ids(auth)]))
     group_ids = get_involved_groups()
     pre_process_list = get_pre_process_list()
-    return dict(message=T("an error occured"),
+    return dict(message=T("Form response"),
            pre_process_list = pre_process_list,
            files = data['file'],
            sets = data['sets'],
@@ -200,6 +204,7 @@ def form_response(data):
 ############################
 @action("/vidjil/file/form", method=["POST", "GET"])
 @action.uses("file/form.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def form():
     group_ids = []
     relevant_ids = {}
@@ -271,7 +276,8 @@ def form():
 @action("/vidjil/file/submit", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def submit():
-    data = json.loads(request.params['data'], encoding='utf-8')
+    data = json.loads(request.params['data'])
+    # data = json.loads(request.params['data'], encoding='utf-8')
     error = False
 
     pre_process = None
@@ -353,7 +359,8 @@ def submit():
                 db(db.results_file.sequence_file_id == fid).delete()
                 mes += " file was replaced"
 
-            file_data, filepath = manage_filename(f["filename"])
+            filename, filepath = manage_filename(f["filename"])
+            file_data.update(filename)
             if 'data_file' in file_data and file_data['data_file'] is not None:
                 os.symlink(filepath, defs.DIR_SEQUENCES + file_data['data_file'])
                 file_data['size_file'] = os.path.getsize(filepath)
@@ -368,7 +375,10 @@ def submit():
 
         link_to_sample_sets(fid, id_dict)
 
-        db.sequence_file[fid] = file_data
+        row = db.sequence_file[fid]
+        for key in file_data.keys():
+            row.update( **{key: file_data[key]} )
+        row.update_record()
 
         # pre-process for nfs files can be started immediately
         data_file = db.sequence_file[fid].data_file
@@ -377,7 +387,7 @@ def submit():
             if data_file is not None and data_file2 is not None and pre_process != '0':
                 schedule_pre_process(fid, pre_process)
 
-        log.info(mes, extra={'user_id': auth.user_id,
+        log.info(mes, extra={'user_id': auth.current_user.get('id'),
                 'record_id': f['id'],
                 'table_name': "sequence_file"})
 
@@ -393,7 +403,7 @@ def submit():
         return error_message("add_form() failed")
 
 
-@action("/vidjil/file/up", method=["POST", "GET", "OPTIONS"])
+@action("/vidjil/file/upload", method=["POST", "GET", "OPTIONS"])
 @action.uses(db, auth.user)
 def upload(): 
     #session.forget(response)
@@ -446,15 +456,17 @@ def upload():
             mes += " | p%s start pre_process %s " % (request.params['pre_process'], request.params['id'] + "-" +request.params['pre_process'])
 
         if data_file is not None :
-            seq_file = defs.DIR_SEQUENCES + data_file
+            seq_file = pathlib.Path(db.sequence_file.data_file.uploadfolder, data_file)
             # Compute and store file size
             size = os.path.getsize(seq_file)
             mes += ' (%s)' % vidjil_utils.format_size(size)
-            db.sequence_file[request.params["id"]].update(size_file = size)
+            db(db.sequence_file.id == request.params["id"]).update(size_file = size)
 
         if data_file2 is not None :
-            seq_file2 = defs.DIR_SEQUENCES + data_file2
-            #TODO
+            seq_file2 = pathlib.Path(db.sequence_file.data_file2.uploadfolder, data_file2)
+            size2 = os.path.getsize(seq_file2)
+            mes += ' (%s)' % vidjil_utils.format_size(size2)
+            db(db.sequence_file.id == request.params["id"]).update(size_file2 = size2)
         
     # Log and exit
     res = {"message": error + mes}
@@ -469,12 +481,13 @@ def upload():
   
 @action("/vidjil/file/confirm", method=["POST", "GET"])
 @action.uses("file/confirm.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def confirm():
-    '''
+    """
     Request parameters:
-    \param delete_results: (optional) boolean
-    \param id: sequence file ID
-    '''
+    delete_results: (optional) boolean
+    id: sequence file ID
+    """
     delete_only_sequence = ('delete_only_sequence' in request.query and request.query['delete_only_sequence'] == 'True')
     delete_results = ('delete_results' in request.query and request.query['delete_results'] == 'True')
     sequence_file = db.sequence_file[request.query['id']]
@@ -483,7 +496,7 @@ def confirm():
     if sequence_file.data_file == None:
         delete_results = True
     if auth.can_modify_sample_set(int(request.query['redirect_sample_set_id'])):
-        return dict(message=T('choose what you would like to delete'),
+        return dict(message=T('Choose what you would like to delete'),
                     delete_only_sequence = delete_only_sequence,
                     delete_results = delete_results,
                     auth=auth,
@@ -492,24 +505,22 @@ def confirm():
         return error_message("you need admin permission to delete this file")
 
 def delete_sequence_file(seq_id):
+    if not auth.can_modify_file(seq_id):
+        return error_message('you need admin permission to delete this file')
+    
     sequence = db.sequence_file[seq_id]
     seq_filename = sequence.data_file
-
-    if auth.can_modify_file(seq_id):
-        if seq_filename is not None:
-            log.debug('Deleting '+defs.DIR_SEQUENCES+seq_filename+' with ID'+str(seq_id))
-        db.sequence_file[seq_id] = dict(data_file = None)
-    else:
-        return error_message('you need admin permission to delete this file')
-
+    if seq_filename is not None:
+        log.debug(f"Deleting {db.sequence_file.data_file.uploadfolder}{seq_filename} with ID {seq_id}")
+    db.sequence_file[seq_id].update_record(data_file = None)
 
 @action("/vidjil/file/delete", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def delete():
     '''
     Called (via request) with:
-    \param: id (the sequence ID)
-    \param: delete_results: (optional) boolean stating if we also want to delete the results.
+    id: the sequence ID
+    delete_results: (optional) boolean stating if we also want to delete the results.
     '''
     delete_results = ('delete_results' in request.query and request.query['delete_results'] == "True")
     sample_set = db.sample_set[request.query["redirect_sample_set_id"]]
@@ -572,16 +583,6 @@ def producer_list():
     res = {"producer": producer_list}
     return json.dumps(res, separators=(',',':'))
 
-
-
-
-
-
-
-
-
-
-
 def restart_pre_process():
     if "sequence_file_id" not in request.query or request.query['sequence_file_id'] is None:
         return error_message("missing parameter")
@@ -589,7 +590,7 @@ def restart_pre_process():
     if sequence_file is None or not auth.can_modify_file(sequence_file.id):
         return error_message("Permission denied")
     pre_process = db.pre_process[sequence_file.pre_process_id]
-    db.sequence_file[sequence_file.id] = dict(pre_process_flag = 'WAIT')
+    db.sequence_file[sequence_file.id].update_record(pre_process_flag = 'WAIT')
     db.commit()
     res = schedule_pre_process(sequence_file.id, pre_process.id)
     log.debug("restart pre process", extra={'user_id': auth.user_id,
@@ -601,9 +602,12 @@ def match_filetype(filename, extension):
     ext_len = len(extension)
     return ext_len == 0 or filename[-ext_len:] == extension
 
+
+@action("/vidjil/file/filesystem", method=["GET"])
+@action.uses(db, auth.user)
 def filesystem():
     json = []
-    id = "" if request.query["node"] is None else request.query["node"] + '/'
+    id = "" if ("node" not in request.query.keys() or request.query["node"] is None) else request.query["node"] + '/'
     if id == "":
         json = [{"text": "/", "id": "/",  "children": True}]
     else:
@@ -621,10 +625,5 @@ def filesystem():
                 if correct_type: json_node['icon'] = 'jstree-file'
                 json_node['li_attr']['title'] = f
                 json.append(json_node)
-    return json.dumps(json, separators=(',',':'))
+    return json
 
-
-@action("/vidjil/file/test_run", method=["POST", "GET"])
-@action.uses(db, auth.user)
-def form():
-    task_test()

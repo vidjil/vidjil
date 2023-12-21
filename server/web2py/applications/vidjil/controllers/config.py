@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import gluon.contrib.simplejson
 from controller_utils import error_message
 if request.env.http_origin:

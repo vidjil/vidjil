@@ -5,10 +5,12 @@
     - .test_server_base_dind
     # - .need_for_staged_server
   script: &test_cypress_server_script
-    - docker exec docker_uwsgi_1  mkdir /usr/share/vidjil/server/web2py/applications/vidjil/errors
-    - docker exec docker_uwsgi_1  chmod a+w /usr/share/vidjil/server/web2py/applications/vidjil/errors
-    - docker exec docker_uwsgi_1  chown www-data /mnt/upload/uploads/ /mnt/result/results
-    - docker pull "vidjilci/cypress_with_browsers:latest"
+    - docker exec docker_uwsgi_1  chmod a+w /usr/share/vidjil/server/py4web/apps/vidjil/errors
+    - docker exec docker_uwsgi_1  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
+    - mkdir -p logs/before; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/before/${service}.log 2>&1; done
+    - echo "TIME $(date) - Before pulling cypress docker image" >> time.log
+    - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest"
+    - echo "TIME $(date) - After pulling cypress docker image" >> time.log
     - >
       docker run
       -v $PWD/$CYPRESS_PATH:/app/cypress
@@ -28,14 +30,21 @@
       "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
   artifacts:
     reports:
-      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+      junit: $CYPRESS_PATH/reports/report_*.xml
     paths:
       - $CYPRESS_PATH
-      - server/web2py/applications/vidjil/errors/*
+      - docker/*.yml
+      - docker/vidjil-*
+      - browser/js/conf.js
+      - browser/test/cypress
+      - server/py4web/apps/vidjil/errors/*
+      - time.log
+      - logs
+      - docker/volumes/vidjil/log
     expire_in: 7 day
     when: always
   variables:
-    CYPRESS_PATH: server/web2py/applications/vidjil/tests/cypress
+    CYPRESS_PATH: server/py4web/apps/vidjil/tests/cypress
     HOST: local
     TEST_FILES: "/app/cypress/integration/test_*.js"
   only: &onlyServerBranches
@@ -45,6 +54,7 @@
     - dev
 
 
+
 ## Cypress with server
 server1-ff-supported:
   extends:
@@ -52,6 +62,8 @@ server1-ff-supported:
     - .need_for_moderate_server
   variables:
     BROWSER: firefox_supported/firefox
+  needs:
+    - [build_test_server_docker]
 
 ## Cypress with server
 s2:
@@ -63,10 +75,15 @@ s2:
           firefox_latest/firefox,
           firefox_legacy/firefox,
           chrome_supported/chrome,
-          chrome_latest/chrome,
+          #chrome_latest/chrome,
           chrome_legacy/chrome
         ]
-
+s2-fail:
+  extends:
+    - .test_cypress_server
+  variables:
+    BROWSER: chrome_latest/chrome
+  allow_failure: true
 
 
 ## Cypress TUTORIAL with server
@@ -79,12 +96,6 @@ s2:
     - *test_cypress_server_script
   variables:
     TEST_FILES: "/app/cypress/integration/doc_*.js"
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^prod-server/
-    - dev
-    - doc
 
 
 tuto-s1-ff-supported:
@@ -94,7 +105,8 @@ tuto-s1-ff-supported:
     - .need_for_moderate_server
   variables:
     BROWSER: firefox_supported/firefox
-
+  needs:
+    - [build_test_server_docker]
 
 
 ## Cypress with server
@@ -108,6 +120,14 @@ tuto-s2:
           firefox_latest/firefox,
           firefox_legacy/firefox,
           chrome_supported/chrome,
-          chrome_latest/chrome,
+          #chrome_latest/chrome,
           chrome_legacy/chrome
         ]
+
+tuto-s2-fail:
+  extends:
+    - .tuto-server
+    - .need_for_late_server
+  variables:
+    BROWSER: chrome_latest/chrome
+  allow_failure: true

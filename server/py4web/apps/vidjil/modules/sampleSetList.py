@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from .permission_enum import PermissionEnum
 from .sampleSet import *
 

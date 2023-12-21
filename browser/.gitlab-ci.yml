@@ -25,6 +25,7 @@
       junit: $CYPRESS_PATH/reports/test-cypress-*.xml
     paths:
       - $CYPRESS_PATH
+      - docker/volumes/vidjil/log
     expire_in: 7 day
     when: always
   tags:
@@ -52,6 +53,8 @@ client1-ff-supported:
     - .need_for_moderate_client
   variables:
     BROWSER: firefox_supported/firefox
+  needs:
+    - []
 
 c2:
   extends:
@@ -72,6 +75,8 @@ external1-ff-supported:
     - .need_for_moderate_client
   variables:
     BROWSER: firefox_supported/firefox
+  needs:
+    - []
 
 external2:
   extends:
@@ -115,6 +120,8 @@ tuto-c1-ff-supported:
     - .need_for_moderate_client
   variables:
     BROWSER: firefox_supported/firefox
+  needs:
+    - []
 
 tuto-c2:
   extends:

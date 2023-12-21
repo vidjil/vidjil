@@ -18,7 +18,6 @@ query = db(
         <h3 id="user_info">[[=message]] [[=db.auth_user[id].first_name]] [[=db.auth_user[id].last_name]] </h3>
     </div>
     
-    
     <div id="db_table_container">
         <table class="db_table" id="table">
             <thead>
@@ -45,8 +44,8 @@ query = db(
         </table>
         <table class="db_table" id="db_fixed_header"></table>
     </div>
-    
-    <span class="button" onclick="db.call('user/index')"> back to list </span>
+    <br>
+    <span class="button2" onclick="db.call('user/index')">Back to list</span>
     
 </div>
 

@@ -1,4 +1,5 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
+import datetime
 from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
@@ -20,6 +21,8 @@ import os
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
 import math
+import mimetypes
+from ombott import static_file
 
 from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
 
@@ -42,7 +45,7 @@ def getConfigsByClassification():
                 classification["%02d_%s" % (i, class_elt)]["info"]    = class_elt.info
                 classification["%02d_%s" % (i, class_elt)]["configs"] = configs
             i += 1
-        classification["%02d_noclass" % i]["name"]    = "–"
+        classification["%02d_noclass" % i]["name"]    = "-"
         classification["%02d_noclass" % i]["info"]    = ""
         classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
     return classification
@@ -89,6 +92,7 @@ def next_sample_set():
 ##
 @action("/vidjil/sample_set/index", method=["POST", "GET"])
 @action.uses("sample_set/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
 
     next_sample_set()
@@ -98,6 +102,12 @@ def index():
         return json.dumps(res, separators=(',',':'))
 
     sample_set = db.sample_set[request.query["id"]]
+    owners = db((db.auth_permission.record_id == request.query["id"])
+        & (db.auth_permission.name == "access")
+        & (db.auth_permission.table_name == "sample_set")
+        & (db.auth_group.id == db.auth_permission.group_id)
+        ).select(db.auth_group.id,db.auth_group.role, db.auth_permission.table_name,db.auth_permission.record_id)
+
     sample_set_id = sample_set.id
     factory = ModelFactory()
     helper = factory.get_instance(type=sample_set.sample_type)
@@ -148,25 +158,25 @@ def index():
         analysis_file = analysis
         analysis_filename = info_file["filename"]+"_"+ config_name + ".analysis"
         
-    query =[]
-    
-    query2 = db(
-        (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-        & (db.sample_set_membership.sample_set_id == sample_set_id)
-    ).select(
-        left=db.results_file.on(
-            (db.results_file.sequence_file_id==db.sequence_file.id)
-            & (db.results_file.config_id==str(config_id))
-            & (db.results_file.hidden == False)
-        ), 
-        orderby = db.sequence_file.id|~db.results_file.run_date
-    )
+        query =[]
         
-    previous=-1
-    for row in query2 :
-        if row.sequence_file.id != previous : 
-            query.append(row)
-            previous=row.sequence_file.id
+        query2 = db(
+            (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            & (db.sample_set_membership.sample_set_id == sample_set_id)
+        ).select(
+            left=db.results_file.on(
+                (db.results_file.sequence_file_id==db.sequence_file.id)
+                & (db.results_file.config_id==str(config_id))
+                & (db.results_file.hidden == False)
+            ),
+            orderby = db.sequence_file.id|~db.results_file.run_date
+        )
+
+        previous=-1
+        for row in query2 :
+            if row.sequence_file.id != previous :
+                query.append(row)
+                previous=row.sequence_file.id
 
     else:
         fused_count = 0
@@ -231,6 +241,7 @@ def index():
         'table_name': "sample_set"})
     #if (auth.can_view_patient(request.query["id"]) ):
     return dict(query=query,
+                owners=owners,
                 has_shared_sets = len(shared_sets) > 0,
                 pre_process_list=pre_process_list,
                 config_id=config_id,
@@ -254,6 +265,7 @@ def index():
 ## return a list of generic sample_sets
 @action("/vidjil/sample_set/all", method=["POST", "GET"])
 @action.uses("sample_set/all.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def all():
     start = time.time()
     if request.query.get('type'):
@@ -338,6 +350,7 @@ def all():
 ## return form to create new set
 @action("/vidjil/sample_set/form", method=["POST", "GET"])
 @action.uses("sample_set/form.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def form():
     denied = False
     # edit set
@@ -371,11 +384,9 @@ def form():
         return json.dumps(res, separators=(',',':'))
 
     message = '%s %s' % (action, set_type)
-    sets = {
-            'patient': [],
-            'run': [],
-            'generic': []
-            }
+    sets = {defs.SET_TYPE_PATIENT: [],
+            defs.SET_TYPE_RUN: [],
+            defs.SET_TYPE_GENERIC: []}
     # We add a None object to the desired set type to initialise an empty form in the template.
     sets[set_type].append(sset)
     log.info("load form " + message, extra=extra)
@@ -396,8 +407,9 @@ def form():
 ## return a flash error message if fail
 @action("/vidjil/sample_set/submit", method=["POST", "GET"])
 @action.uses(db, auth.user)
+@vidjil_utils.jsontransformer
 def submit():
-    data = json.loads(request.params['data'], encoding='utf-8')
+    data = json.loads(request.params['data'])
     mf = ModelFactory()
 
     error = False
@@ -427,19 +439,23 @@ def submit():
             name = helper.get_name(p)
 
             # edit
-            if (p['sample_set_id'] != "" and auth.can_modify_sample_set(int(p['sample_set_id']))):
-                reset = True
-                sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
-                db[set_type][sset.id] = p
-                id_sample_set = sset['sample_set_id']
-
-                if (sset.info != p['info']):
-                    group_id = get_set_group(id_sample_set)
-                    register = True
+            if (p['sample_set_id'] != ""):
+                if auth.can_modify_sample_set(int(p['sample_set_id'])):
                     reset = True
+                    sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
+                    db[set_type][sset.id] = p
+                    id_sample_set = sset['sample_set_id']
 
-                action = "edit"
+                    if (sset.info != p['info']):
+                        group_id = get_set_group(id_sample_set)
+                        register = True
+                        reset = True
 
+                    action = "edit"
+                else:
+                    p['error'].append("permission denied")
+                    error = True
+                    
             # add
             elif (auth.can_create_patient()):
 
@@ -516,6 +532,7 @@ def submit():
 
 @action("/vidjil/sample_set/custom", method=["POST", "GET"])
 @action.uses("sample_set/custom.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def custom():
     start = time.time()
 
@@ -644,6 +661,7 @@ def custom():
 
 @action("/vidjil/sample_set/confirm", method=["POST", "GET"])
 @action.uses("sample_set/confirm.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def confirm():
     if auth.can_modify_sample_set(int(request.query["id"])):
         sample_set = db.sample_set[request.query["id"]]
@@ -711,6 +729,7 @@ def delete():
 #
 @action("/vidjil/sample_set/permission", method=["POST", "GET"])
 @action.uses("sample_set/permission.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def permission():
     if (auth.can_modify_sample_set(int(request.query["id"])) ):
         sample_set = db.sample_set[request.query["id"]]
@@ -1016,7 +1035,7 @@ def multi_sample_stats():
     if not isinstance(custom_result, list):
         custom_result = [custom_result]
 
-    custom_result = [long(i) for i in custom_result]
+    custom_result = [int(i) for i in custom_result]
 
     permitted_results = db(
         (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &
@@ -1040,7 +1059,7 @@ def multi_sample_stats():
     return dict(data=data)
 
 
-
+@vidjil_utils.jsontransformer
 def get_sample_set_list(stype, q):
     factory = ModelFactory()
     helper = factory.get_instance(type=stype)
@@ -1068,11 +1087,14 @@ def get_sample_set_list(stype, q):
         ss_list.append({'name':tmp, 'id': row.sample_set_id, 'type': stype})
     return ss_list
 
+
+@action("/vidjil/sample_set/auto_complete", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def auto_complete():
-    if "keys" not in request.query:
+    if "keys" not in request.params:
         return error_message("missing group ids")
 
-    query = json.loads(request.query['keys'])[0]
+    query = json.loads(request.params["keys"])[0]
     sample_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
     result = []
     for sample_type in sample_types:
@@ -1107,6 +1129,9 @@ def auto_complete():
 
 
 
+@action("/vidjil/sample_set/samples")
+@action.uses(db, auth.user)
+@vidjil_utils.jsontransformer
 def samples():
     '''
     API: List of samples, possibly filtered
@@ -1116,8 +1141,11 @@ def samples():
                   group_ids = res['group_ids'],
                   step = res['step'],
                   page = res['page'])
-    return response.json(export)
+    return sorted(export, key = lambda row : row.id)
 
+@action("/vidjil/sample_set/samplesetById")
+@action.uses(db, auth.user)
+@vidjil_utils.jsontransformer
 def samplesetById():
     '''
     API: Get a specific sample based on the set id
@@ -1130,7 +1158,7 @@ def samplesetById():
     helper  = factory.get_instance(type=type)
     slist   = SampleSetList(helper, setid=set_id)
 
-    return response.json(slist.result)
+    return slist.result
 
 
 @action("/vidjil/sample_set/stats", method=["POST", "GET"])
@@ -1322,3 +1350,10 @@ def mystats():
     log.debug("mystats (%.3fs) %s" % (time.time()-start, request.query["filter"]))
     # Return
     return json.dumps(d, separators=(',',':'))
+
+@action("/vidjil/sample_set/download_sequence_file/<filename>", method=["POST", "GET"])
+@action.uses(db, session)
+def download(filename=None):
+    mimetype = mimetypes.guess_type(defs.DIR_SEQUENCES+filename)
+    return static_file(filename, root=defs.DIR_SEQUENCES, download=request.query.filename, mimetype=mimetype[1])
+    

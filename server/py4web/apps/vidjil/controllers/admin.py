@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import subprocess
 from sys import modules
 from .. import defs
@@ -8,6 +8,7 @@ from ..VidjilAuth import VidjilAuth
 from io import StringIO
 import json
 import os
+import re
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
 from collections import defaultdict
 RUNNING ="RUNNING"
@@ -24,7 +25,7 @@ from ..common import db, session, T, flash, cache, authenticated, unauthenticate
 
 ACCESS_DENIED = "access denied"
 
-def monitor():
+def _monitor():
     """
     >>> monitor().has_key('worker')
     True
@@ -51,6 +52,7 @@ def monitor():
 ## return admin_panel
 @action("/vidjil/admin/index", method=["POST", "GET"])
 @action.uses("admin/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     if auth.is_admin():
         p = subprocess.Popen(["uptime"], stdout=subprocess.PIPE)
@@ -65,7 +67,7 @@ def index():
         except:
             pass
         
-        d = monitor()
+        d = _monitor()
         return dict(d,
                     uptime=uptime,
                     disk_use=disk_use,
@@ -76,7 +78,8 @@ def index():
 
 
 @action("/vidjil/admin/showlog", method=["POST", "GET"])
-@action.uses("admin/showlog.html", db, auth.user)
+@action.uses("admin/showlog.html", db, auth)
+@vidjil_utils.jsontransformer
 def showlog():
     if auth.is_admin():
          
@@ -139,7 +142,7 @@ def showlog():
             if len(lines) >= MAX_LOG_LINES :
                 break
             
-        return {'lines': lines, 'format': log_format}
+        return {'lines': lines, 'format': log_format, "auth": auth, "db":db}
 
 ## to use after change in the upload folder
 def repair_missing_files():
@@ -161,13 +164,13 @@ def repair_missing_files():
         return json.dumps(res, separators=(',',':'))
 
     
-def backup_database(stream):
+def _backup_database(stream):
     db.export_to_csv_file(stream)
 
 def make_backup():
     if auth.is_admin():
         
-        backup_database(open(defs.DB_BACKUP_FILE, 'wb'))
+        _backup_database(open(defs.DB_BACKUP_FILE, 'wb'))
                 
         res = {"success" : "true", "message" : "DB backup -> %s" % defs.DB_BACKUP_FILE}
         log.admin(res)

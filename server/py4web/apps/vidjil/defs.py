@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ###
 ### Vidjil server, main configuration file
 ### This file must be named 'modules/defs.py' to be taken into account
@@ -55,6 +56,7 @@ DIR_GERMLINE_NEXT = '/usr/share/vidjil/germline'
 DIR_PEAR = '/usr/share/tools/'
 DIR_FLASH2 = DIR_PEAR
 DIR_CLONEDB = '/usr/share/clonedb/'
+DIR_BINARIES = "/binaries/"
 
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py

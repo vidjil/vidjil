@@ -66,6 +66,8 @@ functional_browser_cypress:
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v `pwd`/browser/test/cypress/screenshots:/app/cypress/screenshots \
+		-v `pwd`/browser/test/cypress/reports:/app/cypress/reports \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
 		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
@@ -80,6 +82,8 @@ functional_tutorial_browser_cypress:
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
+		-v `pwd`/browser/test/cypress/screenshots:/app/cypress/screenshots \
+		-v `pwd`/browser/test/cypress/reports:/app/cypress/reports \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
 		-v `pwd`/tools/:/app/cypress/fixtures/tools/  \
@@ -103,7 +107,7 @@ functional_browser_external_cypress:
 		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:latest" bash script.bash "/app/cypress/integration/external_*.js"
 
 functional_server_cypress_open:
-	ln -sf server/web2py/applications/vidjil/tests/cypress/ .
+	ln -sf server/py4web/apps/vidjil/tests/cypress/ .
 	rm -r cypress/fixtures  cypress/plugins  cypress/support  cypress.json || true
 	ln -sf ../../../../../../browser/test/cypress/fixtures cypress/fixtures
 	ln -sf ../../../../../../browser/test/cypress/plugins  cypress/plugins
@@ -117,7 +121,9 @@ functional_tutorial_server_cypress:
 	# Need to have a local server deploy with the ci data integrated
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/server/web2py/applications/vidjil/tests/cypress/integration:/app/cypress/integration \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/integration:/app/cypress/integration \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/screenshots:/app/cypress/screenshots \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/reports:/app/cypress/reports \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
@@ -133,7 +139,9 @@ functional_server_cypress:
 	# Need to have a local server deploy with the ci data integrated
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/server/web2py/applications/vidjil/tests/cypress/integration:/app/cypress/integration \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/integration:/app/cypress/integration \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/screenshots:/app/cypress/screenshots \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/reports:/app/cypress/reports \
 		-v `pwd`/browser/test/data/:/app/cypress/fixtures/data/  \
 		-v `pwd`/doc/:/app/cypress/fixtures/doc/  \
 		-v `pwd`/demo/:/app/cypress/fixtures/demo/  \
@@ -152,6 +160,9 @@ tutorial-test.rb:
 	$(MAKE) -C doc/tutorial tutorial-test.rb
 ###
 
+init_repository:
+	git config --local core.hooksPath .githooks/
+
 data:
 	$(MAKE) -C algo/tests/data
 
@@ -164,8 +175,7 @@ cleanall: clean
 	$(MAKE) -C $(VIDJIL_ALGO_SRC) cleanall
 	$(MAKE) -C server cleanall
 
-.PHONY: all test should clean cleanall distrib data demo germline unit_coverage should_coverage coverage data germline browser server doc algo
-
+.PHONY: all test should clean cleanall distrib init_repository data demo germline unit_coverage should_coverage coverage data germline browser server doc algo
 
 
 # Browser

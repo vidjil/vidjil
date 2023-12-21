@@ -42,7 +42,8 @@ beforeEach(() => {
 })
 
 before(function() {
-  // runs once before all tests in the block
+    // runs once before all tests in the block
+    Cypress.Cookies.defaults({ preserve: "auth_test_session" })
     cy.initDatabase(Cypress.env('host'))
 })
 

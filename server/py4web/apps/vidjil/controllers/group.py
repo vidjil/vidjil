@@ -1,10 +1,9 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 import base64
 import datetime
 from sys import modules
 
 
-#from apps.vidjil.modules import jstree
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules import tag
@@ -27,13 +26,13 @@ from ..common import db, session, T, flash, cache, authenticated, unauthenticate
 # HELPERS
 ###########################
 def add_default_group_permissions(auth, group_id, anon=False):
-    auth.add_permission(group_id, PermissionEnum.create.value, 'sample_set', 0);
-    auth.add_permission(group_id, PermissionEnum.read.value, 'sample_set', 0);
-    auth.add_permission(group_id, PermissionEnum.admin.value, 'sample_set', 0);
-    auth.add_permission(group_id, PermissionEnum.upload.value, 'sample_set', 0);
-    auth.add_permission(group_id, PermissionEnum.save.value, 'sample_set', 0);
+    auth.add_permission(group_id, PermissionEnum.create.value, 'sample_set', 0)
+    auth.add_permission(group_id, PermissionEnum.read.value, 'sample_set', 0)
+    auth.add_permission(group_id, PermissionEnum.admin.value, 'sample_set', 0)
+    auth.add_permission(group_id, PermissionEnum.upload.value, 'sample_set', 0)
+    auth.add_permission(group_id, PermissionEnum.save.value, 'sample_set', 0)
     if anon:
-        auth.add_permission(group_id, PermissionEnum.anon.value, 'sample_set', 0);
+        auth.add_permission(group_id, PermissionEnum.anon.value, 'sample_set', 0)
 
 ACCESS_DENIED = "access denied"
 
@@ -45,6 +44,7 @@ ACCESS_DENIED = "access denied"
 ## return group list
 @action("/vidjil/group/index", method=["POST", "GET"])
 @action.uses("group/index.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     count = db.auth_group.id.count()
     user_count = db.auth_user.id.count()
@@ -83,6 +83,7 @@ def index():
 ## return an html form to add a group
 @action("/vidjil/group/add", method=["POST", "GET"])
 @action.uses("group/add.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def add():
     if auth.is_admin():
         groups = db(db.auth_group).select()
@@ -136,11 +137,12 @@ def add_form():
         add_default_group_permissions(auth, id)
 
         res = {"redirect": "group/index",
+               "group_id": id,
                "message" : "group '%s' (%s) created" % (id, request.params["group_name"])}
 
         log.info(res, extra={'user_id': auth.user_id,
-                'record_id': id,
-                'table_name': "group"})
+                             'record_id': id,
+                             'table_name': "group"})
         log.admin(res)
         return json.dumps(res, separators=(',',':'))
 
@@ -151,6 +153,7 @@ def add_form():
 
 @action("/vidjil/group/edit", method=["POST", "GET"])
 @action.uses("group/edit.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def edit():
     if auth.is_admin() or auth.has_permission(PermissionEnum.admin.value, db.auth_group, request.query["id"]):
         group = db.auth_group[request.query["id"]]
@@ -194,6 +197,7 @@ def edit_form():
 ## need ["id"]
 @action("/vidjil/group/confirm", method=["POST", "GET"])
 @action.uses("group/confirm.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def confirm():
     if auth.can_modify_group(int(request.query["id"])):
         return dict(message=T('confirm group deletion'), auth=auth, db=db)
@@ -224,6 +228,7 @@ def delete():
 ## need ["id"]
 @action("/vidjil/group/info", method=["POST", "GET"])
 @action.uses("group/info.html", db, auth.user)
+@vidjil_utils.jsontransformer
 def info():
     if auth.can_view_group(int(request.query["id"])):
         log.info("access user list", extra={'user_id': auth.user_id,
@@ -360,14 +365,13 @@ def kick():
 def rights():
     if auth.is_admin():
         group_id = request.query["id"]
-        msg = ""
 
         if request.query["value"] == "true" :
             auth.add_permission(group_id, request.query["right"], request.query["name"], 0)
-            msg += "add '" + request.query["right"] + "' permission on '" + request.query["name"] + "' for group " + db.auth_group[group_id].role
+            msg = "add '" + request.query["right"] + "' permission on '" + request.query["name"] + "' for group " + db.auth_group[group_id].role
         else :
             auth.del_permission(group_id, request.query["right"], request.query["name"], 0)
-            msg += "remove '" + request.query["right"] + "' permission on '" + request.query["name"] + "' for group " + db.auth_group[group_id].role
+            msg = "remove '" + request.query["right"] + "' permission on '" + request.query["name"] + "' for group " + db.auth_group[group_id].role
 
         res = { "redirect": "group/info",
                 "args" : {"id" : group_id },
