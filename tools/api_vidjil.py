@@ -181,7 +181,7 @@ class Vidjil:
             print(f"Old server version, no available groups filled.\nTry to set given group id but without certification of access (id={group_id}).")
             self.group = str(group_id)
             return
-        grp = [g for g in self.groups if int(g["id"]) == group_id]
+        grp = [g for g in self.groups if int(g["id"]) == int(group_id)]
         if not len(grp) or not len(self.groups):
             raise Exception(f"Selected group id is not in list of accessible group (id={group_id})")
         self.group = group_id
