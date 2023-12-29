@@ -58,7 +58,7 @@ def whoami():
                      db.auth_user.email, db.auth_group.id,db.auth_group.role,db.auth_group.description)
         transform_groups = []
         for elt in groups:
-            transform_groups.append({"role": elt["auth_group"].role, "id": str(elt["auth_group"].id), "description": elt["auth_group"].description })
+            transform_groups.append({"role": elt["auth_group"].role, "id": int(elt["auth_group"].id), "description": elt["auth_group"].description })
 
         user = dict(auth.user)
         user["groups"] = transform_groups
