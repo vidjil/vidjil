@@ -29,6 +29,7 @@ import os
 import time
 import datetime
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from ombott import static_file
 from ..tasks import schedule_run
 from yatl.helpers import INPUT, H1, HTML, BODY, A, DIV
 from py4web.utils.param import Param
@@ -835,18 +836,4 @@ def stop_impersonate() :
 @action("/vidjil/default/download/<filename>", method=["POST", "GET"])
 @action.uses(db, session)
 def download(filename=None):
-    from ombott import static_file
-
-    return static_file(filename, root=defs.DIR_RESULTS, download=request.query.filename)
-
-
-@action("/vidjil/default/download_data", method=["POST", "GET"])
-@action.uses(db, session)
-def download_data():
-
-    file = "test"
-    return response.stream( file, chunk_size=4096, filename=request.query.filename)
-
-
-
-#########################################################################
+    return static_file(filename, root=defs.DIR_RESULTS, download=True)

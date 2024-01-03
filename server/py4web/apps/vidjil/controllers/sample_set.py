@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import pathlib
 from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
@@ -73,16 +74,6 @@ def next_sample_set():
                 request.query["id"] = str(res[0].id)
         except:
             pass
-
-
-
-
-
-
-
-
-
-
 
 ##################################
 # CONTROLLERS
@@ -1270,38 +1261,35 @@ def result_files():
         helpers[t] = mf.get_instance(type=t)
 
     filename = "export_%s_%s.zip" % ('-'.join(sample_set_ids), str(datetime.date.today()))
-    filedir = defs.DIR_SEQUENCES + '/' + filename
+    full_path_file = pathlib.Path(defs.DIR_SEQUENCES, filename)
     try:
-        zipfile = ZipFile(filedir, 'w')
-        metadata = []
-        for res in results:
-            metadata.append({'id': res.sample_set.id,
-                'name': helpers[res.sample_set.sample_type].get_name(res[res.sample_set.sample_type]),
-                'file': res.results_file.data_file,
-                'set_info': res[res.sample_set.sample_type].info,
-                'sample_info': res.sequence_file.info,
-                'sequence_file': res.sequence_file.filename})
-            path = defs.DIR_RESULTS + res.results_file.data_file
-            zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
+        with ZipFile(full_path_file, 'w') as zipfile:
+            metadata = []
+            for res in results:
+                metadata.append({'id': res.sample_set.id,
+                    'name': helpers[res.sample_set.sample_type].get_name(res[res.sample_set.sample_type]),
+                    'file': res.results_file.data_file,
+                    'set_info': res[res.sample_set.sample_type].info,
+                    'sample_info': res.sequence_file.info,
+                    'sequence_file': res.sequence_file.filename})
+                path = defs.DIR_RESULTS + res.results_file.data_file
+                zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
+            zipfile.writestr('metadata.json', json.dumps(metadata))
+            zipfile.close()
 
-        zipfile.writestr('metadata.json', json.dumps(metadata))
-
-        zipfile.close()
-
-        response.headers['Content-Type'] = "application/zip"
-        response.headers['Content-Disposition'] = 'attachment; filename=%s' % filename# to force download as attachment
+        response.headers['Content-Type'] = "application/json"  # Removed to force file download
+        response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
         log.info("extract results files (%s)" % sample_set_ids, extra={'user_id': auth.user_id,
             'record_id': None,
             'table_name': "sample_set"})
-
-        return response.stream(open(filedir), chunk_size=4096)
+        return static_file(filename, defs.DIR_SEQUENCES, download=True)
     except:
         res = {"message": "an error occurred"}
         log.error("An error occured when creating archive of sample_sets %s" % str(sample_set_ids))
         return json.dumps(res, separators=(',',':'))
     finally:
         try:
-            os.unlink(filedir)
+            os.unlink(full_path_file)
         except OSError:
             pass
 
