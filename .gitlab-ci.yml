@@ -301,10 +301,8 @@ test_server_unit:
     - cd docker
     - cp .env-default .env
     - echo "UWSGI_POOL=1" >> .env
-    - docker-compose config
     - mkdir -p volumes
-    - docker-compose up -d mysql
-    - docker-compose down ## restart for write right error on DB
+    - docker-compose config
     - docker-compose up -d mysql uwsgi
     - echo "TIME $(date) - after first compose up" >> ../time.log
     # Set rights
@@ -316,9 +314,7 @@ test_server_unit:
     - docker exec docker_uwsgi_1 chmod 0777 /mnt/upload/uploads   -R
     - docker exec docker_uwsgi_1 chmod 0777 /usr/share/tools      -R
     - chmod 777 -R volumes/vidjil/
-    # Start docker images
-    - docker-compose restart uwsgi
-    - sleep 60 && docker ps
+    # Start other docker images
     - docker-compose up -d
     # Show some information on current states of docker services
     - docker ps
@@ -344,7 +340,7 @@ test_server_unit:
     - echo "TIME $(date) - END OF SERVER JOB" >> time.log
     - docker cp docker_uwsgi_1:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
     - docker ps
-    - mkdir -p logs/after; for service in mysql fuse uwsgi workers celery flower nginx; do docker logs docker_${service}_1  > logs/after/${service}.log 2>&1; done
+    - mkdir -p logs/after; for service in mysql fuse uwsgi workers flower nginx; do docker logs docker_${service}_1  > logs/after/${service}.log 2>&1; done
     - cd docker && docker-compose down -v
     - cd .. && cat time.log
     - docker rmi "vidjil/server:test" "vidjil/client:test"
@@ -421,7 +417,7 @@ deploy_review_server:
         ls; 
         docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml config; 
         docker-compose --version; 
-        docker-compose stop && docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml up -d mysql fuse nginx uwsgi workers celery flower; 
+        docker-compose stop && docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml up -d mysql fuse nginx uwsgi workers flower; 
         sleep 20s; 
         docker exec docker_${CI_COMMIT_REF_SLUG}_mysql_1 bash -c ''chmod 0777 /var/lib/mysql/vidjil -R'';
         docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R'';
@@ -465,8 +461,6 @@ deploy_client:
          && make germline
          && cp doc/analysis-example.vidjil browser/
          && cd docker
-         && docker-compose pull nginx
-         && docker-compose down
          && docker-compose up -d nginx"
   environment:
     name: production
