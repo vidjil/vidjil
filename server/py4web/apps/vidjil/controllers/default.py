@@ -360,9 +360,7 @@ def get_data():
                ).select(db.fused_file.ALL, orderby=db.fused_file.fuse_date).last()
     if query is not None:
         fused_file = defs.DIR_RESULTS+'/'+query.fused_file
-        sequence_file_list = query.sequence_file_list
-
-    if not 'fused_file' in locals():
+    else:
         error += "file not found"
 
     if error == "" :
@@ -623,13 +621,12 @@ def get_analysis():
         
         ## récupération des infos se trouvant dans le fichier .analysis
         analysis_data = get_analysis_data(request.query['sample_set_id'])
-        #analysis_data["info_patient"] = db.patient[request.query["patient"]].info
         dumped_json = json.dumps(analysis_data, separators=(',',':'))
 
         log.info("load analysis", extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
 
         if download:
-            response.headers['Content-Type'] = "application/json"  # Removed to force file download
+            response.headers['Content-Type'] = "application/json" 
             response.headers['Content-Disposition'] = f'attachment; filename="{str(request.query["filename"])}"'
             return dumped_json
 
