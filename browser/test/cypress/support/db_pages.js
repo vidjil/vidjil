@@ -390,7 +390,7 @@ Cypress.Commands.add('fillSampleLine', (iter, preprocess, storage, filename1, fi
 
 
     if (preprocess != undefined){
-      cy.selectPreprocess(pre_process)
+      cy.selectPreprocess(preprocess)
     }
 
     if (storage == "computer"){
