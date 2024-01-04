@@ -29,7 +29,7 @@
                         <select id="choose_user" name="user" onchange="db.call('default/impersonate', {'id' : this.value, 'next': '[[=request.url]]'})">
                             <option value="0" selected> --- </option>
                             [[for row in db(db.auth_user.id >1).select() :]]
-                                <option value="[[=row.id ]]" [[if row.id==auth.user_id:]]selected [[pass]]>
+                                <option value="[[=row.id ]]" [[if int(row.id)==int(auth.user_id):]]selected [[pass]]>
                                     [[=row.id]] &ndash; [[=row.first_name]] [[=row.last_name]]
                                 </option> [[pass]]
                         </select>
