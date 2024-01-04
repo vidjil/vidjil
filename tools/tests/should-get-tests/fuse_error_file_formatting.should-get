@@ -14,4 +14,4 @@
 !EXIT_CODE: 1
 !LAUNCH: python ../../fuse.py $FUSE_OPTIONS ../data/warnings/w81_sample_1.vidjil  ../data/flash2.log -o fuse_error_file_formatting.vidjil
 
-1:Did it is in correct vidjil format
+1:Is it in correct vidjil format ?

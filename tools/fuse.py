@@ -805,7 +805,7 @@ class ListWindows(VidjilJson):
                 self.init_data(json.load(f, object_hook=self.toPython))
                 self.check_version(file_path)
             except ValueError:
-                print("\n\nError at loading file %s.\nDid it is in correct vidjil format ?" % file_path)
+                print("\n\nError at loading file %s.\nIs it in correct vidjil format ?" % file_path)
                 exit(1)
 
 
@@ -828,8 +828,8 @@ class ListWindows(VidjilJson):
         try:
             self.init_data(json.loads(string, object_hook=self.toPython))
         except ValueError:
-                print("\n\nError at loading file %s.\nDid it is in correct vidjil format ?" % file_path)
-                exit(1)
+            print("\n\nError at loading content %s.\nIs it in correct vidjil format ?" % string)
+            exit(1)
 
     def load_pre_process(self, file_path, verbose = True):
         '''init listWindows with the pre_process data file'''

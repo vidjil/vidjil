@@ -1,4 +1,4 @@
-.PHONY : set_rights restart restore_data
+.PHONY : up down clean_deploy reset_database set_rights restart backup_mysql restore_mysql_data backup_volume restore_volume build_server deploy_web2py
 
 include .env-default
 include .env
@@ -12,7 +12,7 @@ up_with_times:
 	date +%H:%M:%S >> times.log
 
 down:
-	docker compose down
+	docker-compose down
 
 clean_deploy:
 	# Erase old container data and strat a fresh deploy; fix rights on volumes
@@ -35,7 +35,6 @@ set_rights:
 restart:
 	docker-compose restart
 
-
 ###############################
 ### Backup/restore MYSQL volume
 backup_mysql:
@@ -55,6 +54,7 @@ backup_volume:
 restore_volume:
 	[ -d ./${VOLUME_PATH}_backup  ] && sudo rm -r ./${VOLUME_PATH}  && sudo cp -R ./${VOLUME_PATH}_backup   ./${VOLUME_PATH}  && echo 'Restored volume backup (${VOLUME_PATH})' || echo "No available volume backup (${VOLUME_PATH})"
 	docker-compose restart uwsgi mysql workers fuse
+
 
 build-server:
 	docker build -t vidjil/server:py4web ./vidjil-server/

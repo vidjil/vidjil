@@ -1,13 +1,10 @@
-from SimpleXMLRPCServer import SimpleXMLRPCServer
+import os
+from xmlrpc.server import SimpleXMLRPCServer
 from subprocess import *
-
-import sys
-sys.path.insert(0, './py4web/apps/vidjil')
 import defs
-import os.path
 
 def fuse(cmd, output_dir, filename):
-    from subprocess import Popen, PIPE, STDOUT, os
+    print(f"Start fuse with command {cmd}")
 
     fuse_log_file = open(output_dir+'/'+filename+'.fuse.log', 'w')
     output_file = output_dir+'/'+filename+'.fused'
@@ -17,10 +14,14 @@ def fuse(cmd, output_dir, filename):
     (stdoutdata, stderrdata) = p.communicate()
     fuse_filepath = os.path.abspath(output_file)
     p.wait()
+    
+    print(f"fuse finished - fuse_filepath : {fuse_filepath} - stdoutdata : {stdoutdata} - stderrdata {stderrdata}")
     return fuse_filepath
 
 def main():
-    server = SimpleXMLRPCServer((defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
+    server_address = (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER)
+    print(f"Starting fuse server, with address {server_address}")
+    server = SimpleXMLRPCServer(server_address)
     server.register_function(fuse, "fuse")
     while True:
         server.handle_request()
