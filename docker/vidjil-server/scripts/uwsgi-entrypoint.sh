@@ -15,13 +15,19 @@ ls /usr/share/vidjil/server/py4web/apps/
 
 echo "==== Change owner of vidjil directories: $user"
 echo "     .../database"
-chown www-data:www-data -R /usr/share/vidjil/server/py4web/apps/vidjil/databases/
+chown $user:$user -R /usr/share/vidjil/server/py4web/apps/vidjil/databases/
 
 if [[ -v UWSGI_POOL ]]; then
     echo "==== Change number of threads: '$UWSGI_POOL'"
     sed -i "s/processes = 6/processes = $UWSGI_POOL/g" /etc/uwsgi/sites/uwsgi.ini
 fi
 
+
+echo "==== Start healthcheck ==="
+bash /healthchecks/healthcheck_uwsgi.bash
+
+
 echo -e "\n======================="
 echo -e "=== Start uwsgi === `date +'%Y/%m/%d %H:%M:%S`"; echo
+
 gosu $user uwsgi /etc/uwsgi/sites/uwsgi.ini
