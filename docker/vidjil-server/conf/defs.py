@@ -46,7 +46,7 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 ### Directory for program used in task.py
 ### relative path start from server/web2py
 DIR_VIDJIL = '/usr/share/vidjil/'
-DIR_FUSE = '../../tools'
+DIR_FUSE = '/usr/share/vidjil//tools'
 DIR_MIXCR = '/usr/bin'
 DIR_IGREC = '/usr/local/bin/'
 DIR_GERMLINE = '/usr/share/vidjil/germline'

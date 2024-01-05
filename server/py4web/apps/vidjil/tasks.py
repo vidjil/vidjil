@@ -856,6 +856,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         cmd = cmd.replace( "&result&", output_file)
         cmd = cmd.replace("&pear&", defs.DIR_PEAR)
         cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
+        cmd = cmd.replace("&binaries&", defs.DIR_BINARIES)
         # Example of template to add some preprocess shortcut
         # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
         # Where &preprocess_template& is the shortcut to change and
@@ -878,11 +879,14 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         filepath = os.path.abspath(output_file)
 
         stream = open(filepath, 'rb')
+        update_task(pre_process_id, "COMPLETED")
+
     except:
         print("!!! Pre-process failed, no result file")
         res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
         log.error(res)
         db.sequence_file[sequence_file_id] = dict(pre_process_flag = "FAILED")
+        update_task(pre_process_id, "FAILED")
         db.commit()
         raise
 
