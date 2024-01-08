@@ -261,5 +261,14 @@ describe('Manipulate patient, sample and launch analysis', function () {
         cy.multiSamplesAdd([sample_to_add_2, sample_to_add_3])
     })
 
+    it('13-Call custom fuse', function() {
+        cy.goToPatientPage()
+        var uid = 26
+        var sample_id = 50
 
+        cy.openSet(uid)
+        cy.openSampleResult(sample_id)
+
+        cy.getCloneInList(0).should('have.text', "IGKV3-7*04 1/GTGGA/11 KDE")
+    })
 })

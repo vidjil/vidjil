@@ -176,4 +176,5 @@ tools/tests/data/pear_strucured_waring.json
 tools/tests/data/pear_strucured.json
 tools/tests/should-get-tests/fuse_export_airr.airr
 tools/tests/should-get-tests/vidjil-to-fasta-with-sequences.fasta
+doc/analysis-example2.analysis
 tools/flash2

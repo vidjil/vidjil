@@ -536,6 +536,10 @@ Cypress.Commands.add('deleteProcessButton', (sequence_file_id) => {
   return cy.get('#delete_process_'+sequence_file_id+' > .icon-erase')
 })
 
+Cypress.Commands.add('openSampleResultButton', (sequence_file_id) => {
+  return cy.get('#open_sample_result_'+sequence_file_id)
+})
+
 
 
 /**
@@ -585,6 +589,16 @@ Cypress.Commands.add('deleteProcess', (config_id, sequence_file_id) => {
       .should('not.exist')
     cy.sampleStatus(sequence_file_id, config_id)
       .should('have.text', '')
+})
+
+
+/**
+ * Open sample result
+ */
+Cypress.Commands.add('openSampleResult', (sequence_file_id) => {
+    cy.log(`openSampleResult(${sequence_file_id})`)
+    cy.openSampleResultButton(sequence_file_id)
+        .click()
 })
 
 /**
