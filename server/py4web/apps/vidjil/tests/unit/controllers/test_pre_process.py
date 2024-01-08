@@ -8,7 +8,7 @@ from ...functional.db_initialiser import DBInitialiser
 from py4web.core import _before_request, Session, HTTP
 from ....common import db, auth
 from ....modules.permission_enum import PermissionEnum
-
+from .... import defs
 from ....controllers import pre_process as pre_process_controller
 
 
@@ -393,14 +393,49 @@ class TestPreProcessController(unittest.TestCase):
     def test_info_ok(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
+        sequence_file_id = db_manipulation_utils.add_sequence_file(use_real_file=False, preprocess=True, preprocess_conf_id=1)
+        task_id = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status="PENDING", args=[sequence_file_id, 1])
 
-        # When : Calling info
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": 1}):
+        defs.DIR_PRE_VIDJIL_ID = str(test_utils.get_resources_path()) + '/results/tmp/pre/out-%06d/'
+        directory1 = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
+        os.makedirs(directory1, exist_ok=True)
+
+        
+        #### When : Calling info
+        ## Case 1; no log for this preprocess
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": 1, "sequence_file_id":sequence_file_id}):
             json_result = pre_process_controller.info()
 
         # Then : authorized
         result = json.loads(json_result)
         assert result["message"] == "result info"
+        assert result["content_log"] == None # no log file exist
+        os.rmdir(directory1)
+
+
+        ## Case 1; Log exist for this preprocess, should return raw content of the log
+        sequence_file_id2 = db_manipulation_utils.add_sequence_file(use_real_file=False, preprocess=True, preprocess_conf_id=1)
+        task_id2 = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status="PENDING", args=[sequence_file_id, 1])
+        directory2 = defs.DIR_PRE_VIDJIL_ID % sequence_file_id2
+        file_log  = directory2 + "/file.pre.log"
+        os.makedirs(directory2, exist_ok=True)
+
+        with open(file_log, "w") as f_log:
+            f_log.write( "some log values")
+
+
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": 1, "sequence_file_id":sequence_file_id2}):
+            json_result = pre_process_controller.info()
+
+        result = json.loads(json_result)
+        assert result["message"] == "result info"
+        assert result["content_log"] != None # log file exist
+        assert result["content_log"] == "some log values" # log file exist
+        os.remove(file_log)
+        os.rmdir(directory2)
+
+        return
+
 
     ##################################
     # Tests on pre_process_controller.permission()
