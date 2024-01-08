@@ -29,6 +29,7 @@ import os
 import time
 import datetime
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from ombott import static_file
 from ..tasks import schedule_run
 from yatl.helpers import INPUT, H1, HTML, BODY, A, DIV
 from py4web.utils.param import Param
@@ -360,9 +361,7 @@ def get_data():
                ).select(db.fused_file.ALL, orderby=db.fused_file.fuse_date).last()
     if query is not None:
         fused_file = defs.DIR_RESULTS+'/'+query.fused_file
-        sequence_file_list = query.sequence_file_list
-
-    if not 'fused_file' in locals():
+    else:
         error += "file not found"
 
     if error == "" :
@@ -623,13 +622,12 @@ def get_analysis():
         
         ## récupération des infos se trouvant dans le fichier .analysis
         analysis_data = get_analysis_data(request.query['sample_set_id'])
-        #analysis_data["info_patient"] = db.patient[request.query["patient"]].info
         dumped_json = json.dumps(analysis_data, separators=(',',':'))
 
         log.info("load analysis", extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
 
         if download:
-            response.headers['Content-Type'] = "application/json"  # Removed to force file download
+            response.headers['Content-Type'] = "application/json" 
             response.headers['Content-Disposition'] = f'attachment; filename="{str(request.query["filename"])}"'
             return dumped_json
 
@@ -838,18 +836,4 @@ def stop_impersonate() :
 @action("/vidjil/default/download/<filename>", method=["POST", "GET"])
 @action.uses(db, session)
 def download(filename=None):
-    from ombott import static_file
-
-    return static_file(filename, root=defs.DIR_RESULTS, download=request.query.filename)
-
-
-@action("/vidjil/default/download_data", method=["POST", "GET"])
-@action.uses(db, session)
-def download_data():
-
-    file = "test"
-    return response.stream( file, chunk_size=4096, filename=request.query.filename)
-
-
-
-#########################################################################
+    return static_file(filename, root=defs.DIR_RESULTS, download=True)

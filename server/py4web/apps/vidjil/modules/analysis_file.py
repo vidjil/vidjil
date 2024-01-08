@@ -21,13 +21,13 @@ def get_analysis_data(sample_set_id):
     '''
     Return an analysis file (if any, or a default file) for the given patient.
     '''
-    result = get_default_analysis()
     analysis_query = get_analysis_from_sample_set(sample_set_id)
     if len(analysis_query) > 0:
         row = analysis_query.first()
         f = open(defs.DIR_RESULTS+'/'+row.analysis_file, "r")
         return get_clean_analysis(f)
-    return result
+    else:
+        return get_default_analysis()
         
 def get_clean_analysis(filehandle):
     '''

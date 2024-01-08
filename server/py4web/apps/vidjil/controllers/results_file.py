@@ -8,6 +8,7 @@ from ..modules.sampleSet import get_sample_set_id_from_results_file
 from ..modules.controller_utils import error_message
 from ..tasks import schedule_run, schedule_fuse
 from py4web import action, request, abort, redirect, URL, Field, HTTP, response
+from ombott import static_file
 from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
 
 
@@ -140,17 +141,18 @@ def output():
                     auth=auth, db=db)
     return error_message("access denied")
 
+@action("/vidjil/results_file/download", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def download():
     sample_set_id = get_sample_set_id_from_results_file(request.query["results_file_id"])
     if auth.can_view_sample_set(int(sample_set_id)) and not '..' in request.query['filename']:
         results_id = int(request.query["results_file_id"])
         directory = defs.DIR_OUT_VIDJIL_ID % results_id
-        filepath = directory + request.query['filename']
         try:
             log.info("Downloaded results file", extra={'user_id': auth.user_id,
                 'record_id': request.query["results_file_id"],
                 'table_name': "results_file"})
-            return response.stream(open(filepath), attachment = True, filename = request.query['filename'], chunk_size=10**6)
+            return static_file(request.query['filename'], directory, download=True)
         except IOError:
             return error_message("File could not be read")
     return error_message("access denied")
