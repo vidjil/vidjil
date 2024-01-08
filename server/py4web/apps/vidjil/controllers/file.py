@@ -449,7 +449,7 @@ def upload():
             db.sequence_file[request.params["id"]].update(pre_process_flag = "WAIT")
             old_task_id = db.sequence_file[request.params["id"]].pre_process_scheduler_task_id
             if db.scheduler_task[old_task_id] != None:
-                scheduler.stop_task(old_task_id)
+                scheduler.control.revoke(old_task_id, terminate=True)
                 db(db.scheduler_task.id == old_task_id).delete()
                 db.commit()
             schedule_pre_process(int(request.params['id']), int(request.params['pre_process']))
@@ -583,16 +583,31 @@ def producer_list():
     res = {"producer": producer_list}
     return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/file/restart_pre_process", method=["POST"])
+@action.uses(db, auth.user)
 def restart_pre_process():
-    if "sequence_file_id" not in request.query or request.query['sequence_file_id'] is None:
+    if "sequence_file_id" not in request.params or request.params['sequence_file_id'] is None:
         return error_message("missing parameter")
-    sequence_file = db.sequence_file[request.query["sequence_file_id"]]
+    sequence_file = db.sequence_file[request.params["sequence_file_id"]]
+
     if sequence_file is None or not auth.can_modify_file(sequence_file.id):
         return error_message("Permission denied")
+
+    ### Delete previous preprocess
+    db.sequence_file[sequence_file.id].update_record(pre_process_flag = "WAIT")
+    old_task_id = sequence_file.pre_process_scheduler_task_id
+    if db.scheduler_task[old_task_id] != None:
+        print( f"Delete old preprocess: {old_task_id}")
+        scheduler.control.revoke(old_task_id, terminate=True)
+        db(db.scheduler_task.id == old_task_id).delete()
+        db.commit()
+
+    ### Launch new preprocess
     pre_process = db.pre_process[sequence_file.pre_process_id]
-    db.sequence_file[sequence_file.id].update_record(pre_process_flag = 'WAIT')
-    db.commit()
+    print( f"sequence_file.id: {sequence_file.id}, pre_process.id: {pre_process.id}")
     res = schedule_pre_process(sequence_file.id, pre_process.id)
+
+
     log.debug("restart pre process", extra={'user_id': auth.user_id,
                 'record_id': sequence_file.id,
                 'table_name': "sequence_file"})

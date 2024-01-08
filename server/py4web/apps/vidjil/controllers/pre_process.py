@@ -15,7 +15,7 @@ from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets, g
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
-from ..tasks import schedule_pre_process
+from ..tasks import schedule_pre_process, get_preprocessed_filename, get_original_filename
 from ..user_groups import get_upload_group_ids, get_involved_groups
 from ..VidjilAuth import VidjilAuth
 from io import StringIO
@@ -193,7 +193,25 @@ def info():
         log.info("view pre process info", extra={'user_id': auth.user_id,
                 'record_id': request.query["sample_set_id"],
                 'table_name': "sample_set_id"})
-        return dict(message=T('result info'), auth=auth, db=db)
+        sequence_file_id = request.query["sequence_file_id"]
+        sequence_file = db.sequence_file[sequence_file_id]
+        run = db(db.scheduler_task.id == sequence_file.pre_process_scheduler_task_id).select(db.scheduler_task.ALL).first()
+
+        content = None
+        out_folder = defs.DIR_PRE_VIDJIL_ID % int(sequence_file_id)
+        for filepath in os.listdir(out_folder+"/"):
+            if ".pre.log" in filepath:
+                if os.path.exists(f"{out_folder+'/'+filepath}"):
+                    with open(f"{out_folder+'/'+filepath}", 'r', encoding='utf-8') as f:
+                        content = f.read()
+
+        return dict(message=T('result info'),
+            auth=auth, db=db,
+            sequence_file_id=sequence_file_id,
+            sequence_file=sequence_file,
+            run=run,
+            content_log=content
+        )
     else :
         res = {"message": "acces denied"}
         return json.dumps(res, separators=(',',':'))

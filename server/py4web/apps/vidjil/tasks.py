@@ -15,29 +15,6 @@ import apps.vidjil.modules.tools_utils as tools_utils
 from .modules.sequenceFile import get_original_filename
 from .common import settings, scheduler, db, Field, log
 
-@scheduler.task
-def periodic_task():
-    try:
-        db._adapter.reconnect()
-        db.patient[28815].update_record( info = db.patient[28815]['info']+"z")
-        print('POUET')
-        db.commit()
-    except:
-        db.rollback()
-
-
-# run task_test every 100 seconds
-scheduler.conf.beat_schedule = {
-    "periodic_task": {
-        "task": "apps.vidjil.tasks.periodic_task",
-        "schedule": 100.0,
-        "args": (),
-    },
-}
-
-
-
-
 def assert_scheduler_task_does_not_exist(args):
     ##check scheduled run
     row = db( ( db.scheduler_task.args == args)
@@ -812,7 +789,7 @@ def schedule_pre_process(sequence_file_id, pre_process_id):
     task_id = register_task("pre_process", args)
     db.sequence_file[sequence_file_id] = dict(pre_process_scheduler_task_id = task_id)
     
-    run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_after=False)
+    run_pre_process.delay(pre_process_id, sequence_file_id, clean_before=True, clean_after=False)
 
 
     res = {"redirect": "reload",
@@ -879,6 +856,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         cmd = cmd.replace( "&result&", output_file)
         cmd = cmd.replace("&pear&", defs.DIR_PEAR)
         cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
+        cmd = cmd.replace("&binaries&", defs.DIR_BINARIES)
         # Example of template to add some preprocess shortcut
         # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
         # Where &preprocess_template& is the shortcut to change and
@@ -901,11 +879,14 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         filepath = os.path.abspath(output_file)
 
         stream = open(filepath, 'rb')
+        update_task(pre_process_id, "COMPLETED")
+
     except:
         print("!!! Pre-process failed, no result file")
         res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
         log.error(res)
         db.sequence_file[sequence_file_id] = dict(pre_process_flag = "FAILED")
+        update_task(pre_process_id, "FAILED")
         db.commit()
         raise
 

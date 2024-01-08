@@ -170,12 +170,15 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
 # Sequence file management
 
 
-def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bool = False) -> int:
+def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bool = False, preprocess: bool = False, preprocess_conf_id: int=-1) -> int:
     """Add a fake sequence file to a patient
 
     Args:
         patient_id (int, optional): patient id. Defaults to -1.
         user_id (int, optional): user id. Defaults to -1.
+        use_real_file (bool, optional): If set to false, use a simple string value. If set to True, really load a file in db. Default to False
+        preprocess (bool, optional): Swtich preprocess status. If set to False, don't fill preprocess fields of db. If set to True, fill them with values given (preprocess conf and task id; load 2 file instead of one. Default to False
+        preprocess_conf_id (int, optional): Preprocess conf id. if not set, don't used
 
     Returns:
         int: corresponding sequence file id
@@ -194,9 +197,13 @@ def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bo
                             "analysis-example.vidjil")
         with file.open("rb") as stream:
             data_file = db.sequence_file.data_file.store(stream, filename)
+            data_file2 = db.sequence_file.data_file2.store(stream, filename) if preprocess else None
+            preprocess_file = db.sequence_file.preprocess_file.store(stream, filename) if preprocess else None
     else:
         filename = "test_file.fasta"
         data_file = "/test/sequence/test_file.fasta"
+        data_file2 = "/test/sequence/test_file2.fasta" if preprocess else None
+        preprocess_file = "/test/sequence/preprocess_test_file.fasta" if preprocess else None
 
     sequence_file_id = db.sequence_file.insert(patient_id=patient_id,
                                                sampling_date="2010-10-10",
@@ -205,7 +212,11 @@ def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bo
                                                size_file=1024,
                                                network=False,
                                                provider=user_id,
-                                               data_file=data_file)
+                                               data_file=data_file,
+                                               data_file2=data_file2,
+                                               pre_process_id=preprocess_conf_id if preprocess else None,
+                                               pre_process_file=preprocess_file if preprocess else None,
+                                               )
     db.sample_set_membership.insert(
         sample_set_id=sample_set_id, sequence_file_id=sequence_file_id)
 
@@ -322,3 +333,35 @@ def add_fused_file(sample_set_id: int = -1, sequence_file_id: int = -1, config_i
         sequence_file_list="%d_" % sequence_file_id,
         fused_file=fused_file)
     return fused_file_id
+
+
+def add_scheduler_task(task_name: str, sequence_file_id: int, status: str, args: list, start_time: str="2024-01-01 10:00:00") -> int:
+    """Add a fake scheduler task in db
+
+    Args:
+        task_name (str): String to pick between pre_process and process
+        sequence_file_id (int): Sequence file id of the task
+        status (str): String to pick between COMPLETED and PENDING
+        args (list): Aray depending of task name value:
+            * For process: [sequence_file_id, configuration_id, result_id, None]
+            * For preprocess: [preprocess_conf_id, sequence_file_id]
+        start_time (str, optional): A date string value for order; default to "2024-01-01 10:00:00"
+
+    Returns:
+        int: id of the added task
+    """
+    task_id = db.scheduler_task.insert(
+        # application_name
+        task_name=task_name,
+        # group_name
+        status=status,
+        # enabled
+        args=args,
+        start_time=start_time
+    )
+
+    if task_name == "pre_process":
+        # insert in sequence_file table values for preprocess
+        db.sequence_file[sequence_file_id].update(dict(preprocess_task_id=task_id))
+
+    return task_id

@@ -169,3 +169,4 @@ server/unit_report.xml
 server/unit_coverage.xml
 server/.coverage
 server/py4web/apps/vidjil/tests/unit/resources/results/*
+tools/flash2
