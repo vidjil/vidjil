@@ -44,7 +44,7 @@ backup_mysql:
 
 restore_mysql_data:
 	[ -d ./${VOLUME_PATH}/mysql_backup  ] && sudo rm -r ./${VOLUME_PATH}/mysql  && sudo cp -R ./${VOLUME_PATH}/mysql_backup  ./${VOLUME_PATH}/mysql  && echo 'Restored mysql backup (${VOLUME_PATH})' || echo "No available mysql backup (${VOLUME_PATH})"
-	docker compose restart uwsgi mysql workers
+	docker-compose restart uwsgi mysql workers
 
 ##############################
 ### Backup/restore FULL volume
