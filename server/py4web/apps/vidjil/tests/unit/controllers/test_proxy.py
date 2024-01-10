@@ -2,6 +2,7 @@ import collections
 import os
 import json
 import unittest
+from bs4 import BeautifulSoup
 from ..utils.omboddle import Omboddle
 from ..utils import db_manipulation_utils, test_utils
 from ...functional.db_initialiser import DBInitialiser
@@ -41,4 +42,43 @@ class TestProxyController(unittest.TestCase):
         result = json.loads(json_result)
         assert result == "index()"
 
-    # TODO : test other methods of proxy_controller --> how to do it in the test env
+    ##################################
+    # Tests on proxy_controller.imgt()
+    ##################################
+
+    def test_imgt_no_content(self):
+        # Given : Logged as admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        # When : Calling index
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}, method="POST"):
+            result = proxy_controller.imgt()
+
+        # Then : We get a result
+        assert result.status_code == 200
+        assert result.url == "https://www.imgt.org/IMGT_vquest/analysis"
+        bs = BeautifulSoup(result.text, "lxml")
+        assert bs is not None
+        
+    # TODO : add a test with real content
+
+    ##################################
+    # Tests on proxy_controller.assign_subsets()
+    ##################################
+
+    def test_assign_subsets_no_content(self):
+        # Given : Logged as admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        # When : Calling index
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}, method="POST"):
+            result = proxy_controller.assign_subsets()
+
+        # Then : Check result is containing a valid URL
+        str_result = str(result)
+        assert "https://bat.infspire.org/arrest/assignsubsets_results/" in str_result
+        
+        
+    # TODO : add a test with real content
+    
+    
