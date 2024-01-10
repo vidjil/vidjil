@@ -1,10 +1,11 @@
 version: '2.1'
 services:
-   
+
     mysql:
         ports:
             - "4306:3306"
             - "43060:33060"
+
     uwsgi:
         image: vidjil/server:py4web
         command: bash /entrypoints/uwsgi-entrypoint.sh
@@ -24,6 +25,7 @@ services:
             - ./:/usr/share/vidjil/docker
             - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
             - ../tools:/usr/share/vidjil/tools
+
     nginx:
         volumes:
             - ../browser:/usr/share/vidjil/browser
@@ -32,9 +34,12 @@ services:
 
     fuse:
         image: vidjil/server:py4web
+
     workers:
         image: vidjil/server:py4web
-    celery:
-        image: vidjil/server:py4web
+
+    # celery:
+    #     image: vidjil/server:py4web
+
     flower:
         image: vidjil/server:py4web

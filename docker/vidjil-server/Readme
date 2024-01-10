@@ -8,7 +8,7 @@ make install
 make init
 ```
 
-## step 1 
+## step 1
 
 build docker image
 From `/vidjil/docker/vidjil-server`
@@ -18,7 +18,7 @@ docker build --no-cache -t vidjil/server:py4web .
 
 ## step 2
 
-Make sure `vidjil/docker/volumes/databases` and `vidjil/docker/volumes/mysql2` folders 
+Make sure `vidjil/docker/volumes/databases` and `vidjil/docker/volumes/mysql` folders
 are empty (in case you mounted those volumes in your docker-compose)
 
 From `/vidjil/docker`
@@ -30,7 +30,7 @@ mkdir -p volumes/mysql
 ## step 3
 
 From `/vidjil/docker`
-start mysql service first 
+start mysql service first
 ```
 docker-compose up -d mysql
 ```
