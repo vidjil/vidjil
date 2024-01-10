@@ -78,10 +78,6 @@ tools/*.txt
 
 out
 
-vidjil
-
-vidjil-algo
-
 # Tests
 cypress
 cypress/
@@ -169,4 +165,16 @@ server/unit_report.xml
 server/unit_coverage.xml
 server/.coverage
 server/py4web/apps/vidjil/tests/unit/resources/results/*
+algo/tools/similarity
+algo/tools/vdj_assign
+vidjil-algo
+algo/tests/data/analysis-with-windows.analysis.formatted
+algo/tests/data/analysis-with-windows.analysis.new.new.formatted
+tools/tests/should.retry
+tools/tests/should.warned.retry
+tools/tests/data/pear_strucured_waring.json
+tools/tests/data/pear_strucured.json
+tools/tests/should-get-tests/fuse_export_airr.airr
+tools/tests/should-get-tests/vidjil-to-fasta-with-sequences.fasta
+doc/analysis-example2.analysis
 tools/flash2

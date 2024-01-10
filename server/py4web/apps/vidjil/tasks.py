@@ -731,7 +731,7 @@ def custom_fuse(file_list):
             files += " "
     
     try:
-        cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
+        cmd = "python "+ os.path.abspath(os.path.join(defs.DIR_FUSE, "fuse.py")) + " -o " + output_file + " -t 100 " + files
         proc_srvr = xmlrpc.client.ServerProxy("http://%s:%d" % (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
         fuse_filepath = proc_srvr.fuse(cmd, out_folder, output_filename)
     
