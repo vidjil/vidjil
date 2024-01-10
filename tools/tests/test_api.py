@@ -260,7 +260,7 @@ class TestStringMethods(unittest.TestCase):
         """create a sample, check content- returned; upload a file; launch an analysis; download result file (none present a db fake init)
         
         """
-        patient_data  = self.vidjil.createPatient(group=1, "Jane", "Austen", info="Patient from Winchester hospital, #LAL-B")
+        patient_data  = self.vidjil.createPatient("Jane", "Austen", group=1, info="Patient from Winchester hospital, #LAL-B")
         setid_patient = patient_data["args"]["id"]
         self.assertEqual(patient_data["redirect"], 'sample_set/index')
         self.assertEqual(patient_data["args"], {'id': 28}) # !!! Each launch will change returned id; local tests will failed
