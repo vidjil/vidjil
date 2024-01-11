@@ -2,4 +2,6 @@ py4web
 pytest
 pytest-cov
 pytest-mock
+bs4
+lxml
 celery
