@@ -335,7 +335,7 @@ class TestStringMethods(unittest.TestCase):
     def test_12_Groups(self):
         groups = self.vidjil.groups
         self.assertEqual(len(groups), 1, "groups; only one group available")
-        self.assertEqual(self.vidjil.group, 1, "as only one group available, automatic set of it")
+        self.assertEqual(self.vidjil.group, '1', "as only one group available, automatic set of it")
         with self.assertRaises(Exception):
             self.vidjil.setGroup(5)
         return
