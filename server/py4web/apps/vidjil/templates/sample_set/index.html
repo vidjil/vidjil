@@ -114,7 +114,7 @@
                           [[if auth.can_process_sample_set(int(request.query['id'])) and (config_id > 0 and auth.can_use_config(config_id)) :]]
 
                               [[ launch_sequence_files_unavailable = [ int(row.sequence_file.id) for row in query if row.results_file.status in ["FAILED",''] ] ]]
-                           [[pass]]
+
                               [[ if len(launch_sequence_files_unavailable) > 0: ]]
                                <span class="pointer" 
                                 id="launch_all_unanalyzed_samples_[[=config_id]]"
