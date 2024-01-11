@@ -29,7 +29,6 @@ algo/tools/dynprog
 algo/tools/segmentD
 
 browser/css/*.css
-browser/cgi/align.cgi
 browser/js/conf.js
 browser/js/germline.js
 browser/js/git-sha1.js
