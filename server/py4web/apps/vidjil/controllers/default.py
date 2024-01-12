@@ -111,6 +111,8 @@ def whoami():
         return user_data
     return {}
 
+@action("/vidjil/default/logger", method=["POST", "GET"])
+@vidjil_utils.jsontransformer
 def logger():
     '''Log to the server'''
     res = {"success" : "false",
@@ -121,6 +123,7 @@ def logger():
     except:
         lvl = logging.INFO
     log.log(lvl, res)
+    return res
 
 @action("/vidjil/default/init_db", method=["POST", "GET"])
 @action.uses("default/init_db.html", db, auth, cors)
