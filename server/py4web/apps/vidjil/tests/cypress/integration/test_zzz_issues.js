@@ -153,8 +153,36 @@ describe('Manipulate db page', function () {
 
         cy.get('.popup_msg')
           .should("contain", "An error occured (Internal Server Error; code 500)")
-        
+    })
 
+    it('5213 - open analysis without bug',  function() {
+        // Creat an analysys, tag some clones, save it on the server, and reopen it. Check if tag is present
+
+        // Pre existant config
+        var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
+        var config_id = 2
+
+        // Open an analysis
+        cy.goToPatientPage()
+        cy.openSet(uid)
+        cy.openAnalysisFromSetPage(uid, config_id)
+
+        // Tag clone and save analysis
+        cy.selectCloneMulti([4, 5, 6])
+        cy.get("#tag_icon__multiple").click()
+        cy.get('.tagName_custom_2').click()
+        cy.save_analysis()
+
+
+        // Re-open an analysis
+        cy.goToPatientPage()
+        cy.openSet(uid)
+        cy.openAnalysisFromSetPage(uid, config_id)
+
+        // check that clone have a tag color
+        cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
+        cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
+        cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
     })
 
 })
