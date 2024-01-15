@@ -339,6 +339,7 @@ Builder.prototype = {
 
         if (typeof this.m.sample_set_id != 'undefined') {
             var open_patient = document.createElement('a');
+            open_patient.id = "patientSelector_open"
             open_patient.className = "buttonSelector";
             open_patient.appendChild(document.createTextNode("open"));
 	    open_patient.onclick = function() {
@@ -353,6 +354,7 @@ Builder.prototype = {
             var save_analysis = document.createElement("a");
             save_analysis.className = "buttonSelector"
             if (typeof this.m.custom != 'undefined') save_analysis.className = "buttonSelector devel-mode"
+            save_analysis.id = "patientSelector_save"
             save_analysis.appendChild(document.createTextNode("save"));
             save_analysis.onclick = function() {
                 db.save_analysis();

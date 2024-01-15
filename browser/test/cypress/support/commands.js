@@ -76,6 +76,14 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis, timeout) => {
   cy.update_icon(0, timeout)
 })
 
+Cypress.Commands.add('save_analysis', () => { 
+  cy.get('#patientSelector_save').click({force: true})
+  cy.get(".flash_1")
+    .first()
+    .should("contain", "analysis saved")
+})
+
+
 /**
  * Allow to wait for update icon to be not visible
  */
