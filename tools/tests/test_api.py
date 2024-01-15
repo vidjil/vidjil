@@ -260,7 +260,7 @@ class TestStringMethods(unittest.TestCase):
         """create a sample, check content- returned; upload a file; launch an analysis; download result file (none present a db fake init)
         
         """
-        patient_data  = self.vidjil.createPatient("Jane", "Austen", info="Patient from Winchester hospital, #LAL-B")
+        patient_data  = self.vidjil.createPatient("Jane", "Austen", group=1, info="Patient from Winchester hospital, #LAL-B")
         setid_patient = patient_data["args"]["id"]
         self.assertEqual(patient_data["redirect"], 'sample_set/index')
         self.assertEqual(patient_data["args"], {'id': 28}) # !!! Each launch will change returned id; local tests will failed
@@ -331,6 +331,33 @@ class TestStringMethods(unittest.TestCase):
         content = self.vidjil.last_request["content"]
         self.assertEqual(len(content["query"]), 0)
         return
+
+    def test_12_Groups(self):
+        groups = self.vidjil.groups
+        self.assertEqual(len(groups), 1, "groups; only one group available")
+        self.assertEqual(self.vidjil.group, '1', "as only one group available, automatic set of it")
+        with self.assertRaises(Exception):
+            self.vidjil.setGroup(5)
+        return
+
+    ## TODO; fix server part before
+    #def test_13_createPatientWithWrongGroup(self):
+    #    # group 5 should not exist, so we can't create patient for it.
+    #    patient_data  = self.vidjil.createPatient("Jane", "Austen", group=5, info="Patient from Winchester hospital, #LAL-B")
+    #    print( patient_data)
+    #    self.assertEqual(patient_data["redirect"], 'sample_set/index')
+    #    self.assertNotEqual(patient_data["args"], {'id': 28}) # !!! Each launch will change returned id; local tests will failed
+    #    self.assertNotEqual(patient_data["message"], 'successfully added/edited set(s)')
+    #    return
+
+    #def test_14_createPatientForGroupWithoutRight(self):
+    #    # group 5 should not exist, so we can't create patient for it.
+    #    patient_data  = self.vidjil.createPatient("Jane", "Austen", group=5, info="Patient from Winchester hospital, #LAL-B")
+    #    print( patient_data)
+    #    self.assertEqual(patient_data["redirect"], 'sample_set/index')
+    #    self.assertNotEqual(patient_data["args"], {'id': 28}) # !!! Each launch will change returned id; local tests will failed
+    #    self.assertNotEqual(patient_data["message"], 'successfully added/edited set(s)')
+    #    return
 
 
     def test_20_printInfoSet(self):

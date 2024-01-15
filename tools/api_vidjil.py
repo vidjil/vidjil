@@ -10,6 +10,7 @@ import argparse
 import getpass
 import errno
 from collections import defaultdict
+from warnings import warn
 
 ### Particular module to load
 import subprocess
@@ -158,7 +159,50 @@ class Vidjil:
             self.is_admin   = whoami["admin"]
             print( "Successful login as %s (%sadmin)" % (email, "not " if not whoami["admin"] else "") )
             print()
-            # todo; print admin status; groups ?
+
+            self.groups     = whoami["groups"] if "groups" in whoami.keys() else None
+            if self.groups == None: # old verison of server, previous 2023/10
+                warn('You use old version of server that not return list of avaialble user.\nThis will be deprecate.\nPlease update your server.', DeprecationWarning, stacklevel=2)
+            elif len(self.groups) == 1:
+                print(f"Only one group available. Automatic set ({self.groups[0]})")
+                self.setGroup(self.groups[0]["id"])
+            elif len(self.groups) > 1:
+                print(f"Multiple groups available. No automatic set.\nPlease call `vidjil.setGroup` with corresponding id (needed for sets creation).")
+                self.getGroups()
+
+
+    def setGroup(self, group_id:int):
+        """Set default group to use for the user. Usefull for sets creation
+
+        Args:
+            group_id (int): Number of group to use as default group
+        """
+        if self.groups == None:
+            print(f"Old server version, no available groups filled.\nTry to set given group id but without certification of access (id={group_id}).")
+            self.group = str(group_id)
+            return
+        grp = [g for g in self.groups if int(g["id"]) == int(group_id)]
+        if not len(grp) or not len(self.groups):
+            raise Exception(f"Selected group id is not in list of accessible group (id={group_id})")
+        self.group = group_id
+        return
+
+    def getGroups(self):
+        """ Print a "tabulate" of list of group available for the connected user
+
+        Returns:
+            groups (list): Array of available group, with values for id, role and description for each entries
+        """
+        if not self.logged:
+            print( "Should be logged")
+            return -1
+        d = []
+        headers = ["role", "id", "description"]
+        for grp in self.groups:
+            d.append([grp["role"], grp["id"], grp["description"]])
+        print(tabulate(d, showindex=False, headers=headers))
+        return self.groups
+
 
     def impersonate( self, impersonate_id:int):
         """Lauch impersonating action. If not allowed to imperosnate, server will raise an error 'Forbidden' and the script will end.
@@ -293,12 +337,13 @@ class Vidjil:
             raise Exception( "getSetById error. \nNo sample found with this id '%s' and type '%s'" % (set_id, set_type))
         return content
 
-    def createPatient(self, first_name:str, last_name:str, sample_set_id:int=None, id:int=None, id_label:int=None, birth_date:str=None, info:str=None):
+    def createPatient(self, first_name:str, last_name:str, group:int=None, sample_set_id:int=None, id:int=None, id_label:int=None, birth_date:str=None, info:str=None):
         """Take information to create a patient under the default group of the user
 
         Args:
             first_name (str): First name of the patient
             last_name (str): Last name of the patient
+            group (int, optional): Group owner of the patient. If not setted, use the default group of user. Defaults to None.
             sample_set_id (int, optional): Sample set id to use. Defaults to None.
             id (int, optional): Id given by laboratory. Defaults to None.
             id_label (int, optional): _description_. Defaults to None.
@@ -308,7 +353,8 @@ class Vidjil:
         Returns:
             dict: ???
         """
-        data = {"group":"1","patient":[{
+        data = {"group":group if group else self.group,
+                "patient":[{
                     'id': id if id else "",
                     'sample_set_id': sample_set_id if sample_set_id else "",
                     'id_label': id_label if id_label else "",
@@ -321,11 +367,12 @@ class Vidjil:
         new_url  = self.url_server + "/sample_set/submit?data=%s" % json.dumps(data).replace(" ", "")
         return self.request(new_url, "post")
 
-    def createRun(self, name:str, sample_set_id:int=None, id:int=None, id_label:int=None, run_date:string=None, info:str=None, sequencer:str=None, pcr:str=None):
+    def createRun(self, name:str, group:int=None, sample_set_id:int=None, id:int=None, id_label:int=None, run_date:string=None, info:str=None, sequencer:str=None, pcr:str=None):
         """Create a new run set on the server filled with given informations
 
         Args:
             name (str): Name of the run
+            group (int, optional): Group owner of the run. If not setted, use the default group of user. Defaults to None.
             sample_set_id (int, optional): Sample set id to use. Defaults to None.
             id (int, optional): Id given by laboratory. Defaults to None.
             id_label (int, optional): ???. Defaults to None.
@@ -337,7 +384,8 @@ class Vidjil:
         Returns:
             dict: ???
         """
-        data = {"group":"1","run":[{
+        data = {"group":group if group else self.group,
+                "run":[{
                     'id': id if id else "",
                     'sample_set_id': sample_set_id if sample_set_id else "",
                     'id_label': id_label if id_label else "",
@@ -351,11 +399,12 @@ class Vidjil:
         new_url  = self.url_server + "/sample_set/submit?data=%s" % json.dumps(data).replace(" ", "")
         return self.request(new_url, "post")
 
-    def createSet(self, name:str, sample_set_id:int=None, id:int=None, info:str=None):
+    def createSet(self, name:str, group:int=None, sample_set_id:int=None, id:int=None, info:str=None):
         """Create a new generic set on the server filled with given informations
 
         Args:
             name (str): Name of the run
+            group (int, optional): Group owner of the set. If not setted, use the default group of user. Defaults to None.
             sample_set_id (int, optional): Sample set id to use. Defaults to None.
             id (int, optional): Id given by laboratory. Defaults to None.
             info (str, optional): Some information  to fill information field of run, can include tags. Defaults to None.
@@ -363,7 +412,8 @@ class Vidjil:
         Returns:
             dict: ???
         """
-        data = {"group":"1","generic":[{
+        data = {"group":group if group else self.group,
+                "generic":[{
                     'id': id if id else "",
                     'sample_set_id': sample_set_id if sample_set_id else "",
                     'name': name, # mandatory
