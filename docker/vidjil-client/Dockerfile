@@ -15,8 +15,6 @@ run cd /usr/share/ && git config --global http.sslVerify false && git clone -b $
 
 add ./scripts/install.sh /opt/install_scripts/install.sh
 copy ./conf/Gemfile /usr/share/vidjil/Gemfile
-copy ./conf/align.cgi /usr/share/vidjil/browser/cgi/align.cgi
-copy ./conf/similarity.cgi /usr/share/vidjil/browser/cgi/similarity.cgi
 
 run cd /usr/share/vidjil/ && make demo 
 run cd /usr/share/vidjil/browser/ && make icons sha1
