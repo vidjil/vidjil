@@ -1,3 +1,4 @@
+import logging
 import os
 import json
 import pathlib
@@ -160,6 +161,27 @@ class TestDefaultController():
             1)
         assert result["admin"] == False
         assert result["groups"] is not None
+
+    ##################################
+    # Tests on default_controller.logger()
+    ##################################
+
+    def test_logger(self, mocker):
+        # Given : Logged as admin, prepare mocker
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        mocked_log = mocker.patch(
+            "apps.vidjil.controllers.default.log.log")
+        message = "Test logger"
+
+        # When : Calling logger
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"msg": message, "lvl": logging.WARNING}):
+            json_result = default_controller.logger()
+
+        # Then : We get a result
+        expected_res = {"success": "false", "message": f"/client/: {message}"}
+        result = json.loads(json_result)
+        assert result == expected_res
+        mocked_log.assert_called_once_with(logging.WARNING, expected_res)
 
     ##################################
     # Tests on default_controller.init_db()
