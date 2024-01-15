@@ -225,7 +225,7 @@ def put_properties_in_dict(src_dict, dest_dict, properties):
     >>> put_properties_in_dict({'toto': [1, 2], 'tutu': 'A'}, {'toto': 3, 'machin': 2}, {'toto': 'toto', 'titi': 'titi', 'tutu': 'truc'}) == {'toto': [1, 2], 'truc': 'A', 'machin': 2}
     True
     '''
-    for key in properties.iterkeys():
+    for key in properties.keys():
         if key in src_dict:
             dest_dict[properties[key]] = src_dict[key]
     return dest_dict
