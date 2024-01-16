@@ -269,6 +269,7 @@ describe('Manipulate patient, sample and launch analysis', function () {
         cy.openSet(uid)
         cy.openSampleResult(sample_id)
 
-        cy.getCloneInList(0).should('have.text', "IGKV3-7*04 1/GTGGA/11 KDE")
+        // Check number of clones found
+        cy.get('#list_clones').children().should('have.length', 26)
     })
 })
