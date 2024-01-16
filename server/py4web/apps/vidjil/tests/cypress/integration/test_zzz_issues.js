@@ -158,7 +158,7 @@ describe('Manipulate db page', function () {
     it('5213 - open analysis without bug',  function() {
         // Creat an analysys, tag some clones, save it on the server, and reopen it. Check if tag is present
 
-        if (Cypress.browser.name === 'firefox' && Cypress.browser.version.split(".")[0] == "62") {
+        if (Cypress.browser.name === 'firefox' && Cypress.browser.version.split(".")[0] == "78") {
           // Skip old version of firefox (~62) that don't work on cypress for this test
           this.skip
         }
