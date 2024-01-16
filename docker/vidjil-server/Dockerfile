@@ -4,9 +4,7 @@ LABEL version="1.1"
 LABEL description="An Ubuntu based docker image which comes \
 with a full installation of the Vidjil algorithm and browser/server."
 
-
 #INSTALL REQUIREMENTS
-#ARG user=py4web
 RUN apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python python3.8 python3-pip python3-dev python3-gdbm python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached htop nano libffi-dev gosu && \
     service memcached restart && \
 	pip3 install --upgrade pip && \
@@ -23,13 +21,14 @@ RUN apt-get update ; apt-get install --no-install-recommends --no-install-sugges
 	pip3 install coverage && \
     pip3 install -U py4web
 
-#RUN apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y -q sudo curl apt-utils uwsgi-plugin-python
+# SET PYTHON3 AS DEFAULT PYTHON
+RUN rm -Rf /usr/bin/python
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # COPY LATEST VIDJIL REPOSITORY
 ARG git_branch=dev
 ARG remote_repo=https://gitlab.inria.fr/vidjil/vidjil.git
 RUN cd /usr/share/ && git config --global http.sslVerify false && git clone -b $git_branch $remote_repo
-
 
 # SETUP PY4WEB
 RUN cd /usr/share/vidjil/server/py4web && make install
