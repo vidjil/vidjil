@@ -158,6 +158,11 @@ describe('Manipulate db page', function () {
     it('5213 - open analysis without bug',  function() {
         // Creat an analysys, tag some clones, save it on the server, and reopen it. Check if tag is present
 
+        if (Cypress.browser.name === 'firefox' && Cypress.browser.version.split(".")[0] == "62") {
+          // Skip old version of firefox (~62) that don't work on cypress for this test
+          this.skip
+        }
+
         // Pre existant config
         var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
         var config_id = 2
