@@ -142,4 +142,19 @@ describe('Manipulate db page', function () {
         //   .should('contain', '>clone-001')
     })
 
+    it('5178 - bad render when request error occured',  function() {
+        // Before fixing, request return error has HTML and are badly interpreted and break DOM page
+
+        cy.goToPatientPage()
+        // cy.screenshot('debug_5070_1_patient_page')
+
+        cy.get('#result_sample_set_13_config_1')
+          .click()
+
+        cy.get('.popup_msg')
+          .should("contain", "An error occured (Internal Server Error; code 500)")
+        
+
+    })
+
 })
