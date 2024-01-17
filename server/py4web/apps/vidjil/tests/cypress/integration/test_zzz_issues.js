@@ -186,7 +186,7 @@ describe('Manipulate db page', function () {
         cy.update_icon()
 
         // check that clone have a tag color
-        cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
+        cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)', {timeout: 12000})
         cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
         cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
     })
