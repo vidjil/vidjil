@@ -183,6 +183,7 @@ describe('Manipulate db page', function () {
         cy.goToPatientPage()
         cy.openSet(uid)
         cy.openAnalysisFromSetPage(uid, config_id)
+        cy.update_icon()
 
         // check that clone have a tag color
         cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
