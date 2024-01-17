@@ -186,7 +186,9 @@ def init_from_csv():
 @action("/vidjil/default/run_request", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def run_request():
-    check_space(defs.DIR_RESULTS, "Runs")
+    error_space = check_space(defs.DIR_RESULTS, "Runs")
+    if error_space is not None:
+        return error_space
 
     error = []
     if not "sequence_file_id" in request.query :
@@ -235,7 +237,9 @@ def run_request():
 def run_all_request():
     error = ""
     extra_info = ''
-    check_space(defs.DIR_RESULTS, "Runs")
+    error_space = check_space(defs.DIR_RESULTS, "Runs")
+    if error_space is not None:
+        return error_space
     
     id_sample_set = int(request.query["sample_set_id"])
 

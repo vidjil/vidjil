@@ -218,7 +218,9 @@ def form():
             return error_message("you don't have right to upload files")
 
         sample_type = sample_set.sample_type
-        check_space(defs.DIR_SEQUENCES, "Uploads")
+        error_space = check_space(defs.DIR_SEQUENCES, "Uploads")
+        if error_space is not None:
+            return error_space
 
         row = db(db[sample_set.sample_type].sample_set_id == request.query["sample_set_id"]).select().first()
         stype = sample_set.sample_type
