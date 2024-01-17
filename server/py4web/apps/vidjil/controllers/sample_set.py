@@ -359,7 +359,7 @@ def form():
         extra['record_id'] = request.query["id"]
 
     # new set
-    elif (auth.can_create_patient()):
+    elif (auth.can_create_sample_set()):
         sset = None
         set_type = request.query["type"]
         creation_group_tuple = get_default_creation_group(auth)
@@ -424,7 +424,7 @@ def submit():
                 error = True
                 continue
 
-            register = False
+            should_register_tags = False
             reset = False
 
             name = helper.get_name(p)
@@ -439,7 +439,7 @@ def submit():
 
                     if (sset.info != p['info']):
                         group_id = get_set_group(id_sample_set)
-                        register = True
+                        should_register_tags = True
                         reset = True
 
                     action = "edit"
@@ -448,39 +448,36 @@ def submit():
                     error = True
                     
             # add
-            elif (auth.can_create_patient()):
+            elif (auth.can_create_sample_set_in_group(int(data["group"]))):
                 group_id = int(data["group"])
+                id_sample_set = db.sample_set.insert(sample_type=set_type)
 
-                if group_id not in auth.get_permission_groups("create"):
-                    p['error'].append("unknow group or permission denied on this group") 
-                    error = True
-                else:
-                    id_sample_set = db.sample_set.insert(sample_type=set_type)
+                p['creator'] = auth.user_id
+                p['sample_set_id'] = id_sample_set
+                p['id'] = db[set_type].insert(**p)
+                should_register_tags = True
 
-                    p['creator'] = auth.user_id
-                    p['sample_set_id'] = id_sample_set
-                    p['id'] = db[set_type].insert(**p)
-                    register = True
+                #patient creator automaticaly has all rights
+                auth.add_permission(group_id, PermissionEnum.access.value, 'sample_set', p['sample_set_id'])
 
-                    #patient creator automaticaly has all rights
-                    auth.add_permission(group_id, PermissionEnum.access.value, 'sample_set', p['sample_set_id'])
-
-                    action = "add"
+                action = "add"
 
                 #if (p['id'] % 100) == 0:
                 #    mail.send(to=defs.ADMIN_EMAILS,
                 #    subject=defs.EMAIL_SUBJECT_START+" %d" % p['id'],
                 #    message="The %dth %s has just been created." % (p['id'], set_type))
-                    p['message'] = []
-                    mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
-                    p['message'].append(mes)
-                    log.info(mes, extra={'user_id': auth.user_id, 'record_id': id_sample_set, 'table_name': 'sample_set'})
-                    if register:
-                        tag.register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
 
             else :
                 p['error'].append("permission denied")
                 error = True
+            
+            
+            mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
+            p['message'] = [mes]
+            log.info(mes, extra={'user_id': auth.user_id, 'record_id': id_sample_set, 'table_name': 'sample_set'})
+            if should_register_tags:
+                tag.register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
+            
     if not error:
         if not bool(length_mapping):
             creation_group_tuple = get_default_creation_group(auth)

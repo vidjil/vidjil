@@ -42,7 +42,7 @@ def index():
         row.created = db( db.patient.creator == row.id ).count()
         
         row.access = ''
-        if auth.can_create_patient(user=row.id): row.access += 'c'
+        if auth.can_create_sample_set(user=row.id): row.access += 'c'
 
         q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select()]
         q.sort()
