@@ -176,6 +176,7 @@ describe('Manipulate db page', function () {
         cy.selectCloneMulti([4, 5, 6])
         cy.get("#tag_icon__multiple").click()
         cy.get('.tagName_custom_2').click()
+        cy.clone_rename("4", "un clone")
         cy.save_analysis()
 
 
@@ -185,7 +186,11 @@ describe('Manipulate db page', function () {
         cy.openAnalysisFromSetPage(uid, config_id)
         cy.update_icon()
 
+        // Check renaming of clone
+        cy.get('#listElem_4 > .nameBox')
+          .should("contain", "un clone")
         // check that clone have a tag color
+        cy.selectClone(1) // MAde a selection between load of analysis and assertion control
         cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)', {timeout: 12000})
         cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
         cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
