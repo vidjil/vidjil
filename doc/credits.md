@@ -19,6 +19,7 @@ Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
   - Florian Thonier, 2015-2024
   - Ryan Herbert, 2015-2020
   - Aurélien Béliard, 2016-2017
+  - Clément Chesnin, 2023-2024
 
 ## Other contributors
 
@@ -29,8 +30,14 @@ Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
   - Amina Boussalia and Fabien Fache, 2016
   - Eddy El Khatib and Nicolas Berveglieri, 2017
   - Téo Vasseur, 2017
+  - Armand Bour, 2017
+  - Joao Meidanis, 2018-2024
   - Cyprien Borée, 2018
   - Alexia Omietanski, 2018
+  - Guilherme Giusti, 2020-2024
+  - Axel Mercier, 2021
+  - Agathe Bancquart, 2023
+
 
 ## `.should-vdj.fa` tests with curated V(D)J designations
 
@@ -45,11 +52,19 @@ Our special thanks go to:
   - Marine Armand
   - Jack Bartram
   - Aurélie Caillault
+  - Frédéric Davi
+  - Éric Delabesse
   - Yann Ferret
   - Alice Fievet
   - Martin Figeac
   - Nathalie Grardel
   - Michaela Kotrová
+  - Anton W. Langerak
+  - Yannick Le Bris
+  - Anne Langlois de Septenville
+  - Elizabeth Macintyre
+  - David Margery
+  - Cédric Pastoret
   - Claude Preudhomme
   - Shéhérazade Sebda
 
