@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2022 by VidjilNet consortium and Bonsai bioinformatics
+ * Copyright (C) 2013-2024 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Antonette Carin <antonin.carette@etudiant.univ-lille1.fr>
