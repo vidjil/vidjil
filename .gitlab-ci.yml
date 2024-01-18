@@ -415,7 +415,7 @@ deploy_review_server:
         ls; 
         docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml config; 
         docker-compose --version; 
-        docker-compose stop && docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml up -d mysql fuse nginx uwsgi workers flower; 
+        docker-compose down && docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml up -d; 
         sleep 20s; 
         docker exec docker_${CI_COMMIT_REF_SLUG}_mysql_1 bash -c ''chmod 0777 /var/lib/mysql/vidjil -R'';
         docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R'';
