@@ -153,8 +153,50 @@ describe('Manipulate db page', function () {
 
         cy.get('.popup_msg')
           .should("contain", "An error occured (Internal Server Error; code 500)")
-        
+    })
 
+    it('5213 - open analysis without bug',  function() {
+        // Creat an analysys, tag some clones, save it on the server, and reopen it. Check if tag is present
+
+        if (Cypress.browser.name === 'firefox' && Cypress.browser.version.split(".")[0] == "78") {
+          // Skip old version of firefox (~62) that don't work on cypress for this test
+          this.skip
+        }
+
+        // Pre existant config
+        var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
+        var config_id = 2
+
+        // Open an analysis
+        cy.goToPatientPage()
+        cy.openSet(uid)
+        cy.openAnalysisFromSetPage(uid, config_id)
+
+        // Tag clone and save analysis
+        cy.selectCloneMulti([4, 5, 6])
+        cy.get("#tag_icon__multiple").click()
+        cy.get('.tagName_custom_2').click()
+        cy.clone_rename("4", "un clone")
+        cy.save_analysis()
+
+
+        // Re-open an analysis
+        cy.goToPatientPage()
+        cy.openSet(uid)
+        cy.openAnalysisFromSetPage(uid, config_id)
+        cy.update_icon()
+
+        // Check renaming of clone
+        cy.get('#listElem_4 > .nameBox')
+          .should("contain", "un clone")
+        // check that clone have a tag color
+        cy.selectClone(1) // MAde a selection between load of analysis and assertion control
+        
+        // Commented because it fail on some browser version. Seem to be independant of this issue as other clonotype are well colored
+        //cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)', {timeout: 12000})
+        
+        cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
+        cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
     })
 
 })

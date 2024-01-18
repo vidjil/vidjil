@@ -908,9 +908,6 @@ Database.prototype = {
                     // This triggers another request() call, but this time with quiet=true
                     self.error_log(request, status, error, name="request", url, msg=undefined, args, type="popup", quiet=quiet)
                 }
-                if (status != "timeout") {
-                    self.call("default/home")
-                }
             }
         });
     },
