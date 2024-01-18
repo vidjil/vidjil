@@ -644,6 +644,24 @@ def custom():
     log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
 
+    ## Get a list of each config and a list of all last samples analysis 
+    config_names = defaultdict(lambda: {"samples":[]})
+    for row in query:
+        config_names[row.results_file.config_id]["id"]   = row.results_file.config_id
+        config_names[row.results_file.config_id]["name"] = row.config.name
+        config_names[row.results_file.config_id]["samples"].append([int(row.sequence_file.id), int(row.results_file.id), str(row.results_file.run_date)])
+    # Compute a list of checkbox idx to select
+    for name in config_names.keys():
+        config_names[name]["last"] = {}
+        for sample in config_names[name]["samples"]:
+            if not sample[0] in config_names[name]["last"]:
+                config_names[name]["last"][sample[0]] = sample
+            elif config_names[name]["last"][sample[0]][2] < sample[2]:
+                config_names[name]["last"][sample[0]] = sample
+    for name in config_names.keys():
+        config_names[name]["idx"] = map(lambda x : "checkbox_sample_%s" % config_names[name]["last"][x][1], config_names[name]["last"].keys())
+
+
     classification   = getConfigsByClassification()
 
     return dict(query=query,
@@ -652,6 +670,7 @@ def custom():
                 helper=helper,
                 tag_decorator=tag_decorator,
                 classification=classification,
+                config_names=dict(config_names),
                 group_ids=group_ids,
                 auth=auth,
                 db=db)
@@ -817,6 +836,10 @@ def change_permission():
 
 
 def getStatHeaders():
+    """ return a list of header/collumns to use for stats
+    Each header also have a decorator function tha tallow to correclty interpret the values
+    """
+
     m = StatDecorator()
     s = SetsDecorator()
     b = BooleanDecorator()
@@ -826,22 +849,34 @@ def getStatHeaders():
     g = GenescanDecorator()
     l = LociListDecorator()
     return [('sets', 'db', s),
+            ('samples', 'parser', m),
+            ('config names', 'parser', m),
             #('reads', 'parser', m),
             ('mapped reads', 'parser', m),
-            ('merged reads', 'parser', m),
             #('mapped_percent', 'parser', p),
+            ('mean length', 'parser', m),
             ('read lengths', 'parser', g),
             #('bool', 'parser', b),
             #('bool_true', 'parser', b),
             ('loci', 'parser', l),
             #('distribution', 'parser', lbc),
-            #('clones_five_percent', 'parser', m),
+            ('clones_five_percent', 'parser', m),
+            ('clones_five_percent_locus', 'parser', m),
+            ('intra-contamination', 'parser', m),
             ('main clone', 'parser', m),
-            ('pre process', 'parser', m)
+            ('merged reads', 'parser', m),
+            ('pre process', 'parser', m),
+            ("Shannon\'s diversity", 'parser', m),
+            ("Pielou\'s evenness", 'parser', m),
+            ("Simpson\'s diversity", 'parser', m),
             #('abundance', 'parser', lbc)
         ]
 
 def getFusedStats(fuse):
+    """ Return data of a fused file
+    Compute some extra data
+    """
+
     log.debug("getFusedStats()")
     file_path = "%s%s" % (defs.DIR_RESULTS, fuse['fused_file_name'])
     results_files = fuse['results_files']
@@ -865,55 +900,101 @@ def getFusedStats(fuse):
                     # No corresponding data (old file ?), we skip this result_file
                     continue
 
-            sorted_clones = sorted(top_clones, key=lambda clone: clone['reads'][result_index], reverse=True)
-            if 'name' in sorted_clones[0]:
-                dest['main clone'] = sorted_clones[0]['name']
-            else:
-                dest['main clone'] = sorted_clones[0]['germline']
+            
             reads = data['reads']['total'][result_index]
-            # dest['reads'] = reads
             mapped_reads = data['reads']['segmented'][result_index]
-            dest['mapped reads'] = "%d / %d (%.2f %%)" % (mapped_reads, reads, 100.0*mapped_reads/reads if reads else 0)
+            dest['mapped reads'] = "%.2f %% (%d / %d)" % (100.0*mapped_reads/reads if reads else 0, mapped_reads, reads)
             dest['mapped_percent'] = 100.0 * (float(data['reads']['segmented'][result_index])/float(reads))
-            dest['abundance'] = [(key, 100.0*data['reads']['germline'][key][result_index]/reads) for key in data['reads']['germline']]
             if 'merged' in data['reads']:
                 dest['merged reads'] = data['reads']['merged'][result_index]
             else:
                 dest['merged reads'] = None
 
-            tmp = {}
-            for c in data['clones']:
-                try:
-                    arl = int(math.ceil(c['_average_read_length'][result_index]))
-                except:
-                    continue
-                if arl > 0:
-                    if arl not in tmp:
-                        tmp[arl] = 0.0
-                    tmp[arl] += float(c['reads'][result_index])
-            min_len = 100 #int(min(tmp.keys()))
-            max_len = 600 #int(max(tmp.keys()))
-            tmp_list = []
+            ## Case of file without one reads seen segmented
+            if not data["reads"]["segmented"][result_index]:
+                dest['abundance']     = "na"
+                dest['main clone']    = "na"
+                dest['mean length']   = "na"
+                dest['read lengths']  = []
+                dest['intra-contamination'] = "na"
+                dest['loci'] = ["na"]
+                dest['clones_five_percent']   = "na"
+                dest['clones_five_percent_locus'] = "na"
+                dest['Shannon\'s diversity']  = "na"
+                dest["Pielou\'s evenness"]    = "na"
+                dest["Simpson\'s diversity"]  = "na"
 
-            if mapped_reads == 0:
-                mapped_reads = 1
-            for i in range(min_len, max_len):
-                if i in tmp:
-                    if tmp[i]:
-                        scaled_val = (2.5 + math.log10(tmp[i]/mapped_reads)) / 2
-                        display_val = max(0.01, min(1, scaled_val)) * 100
+            else:
+                sorted_clones = sorted(top_clones, key=lambda clone: clone['reads'][result_index], reverse=True)
+                if 'name' in sorted_clones[0]:
+                    dest['main clone'] = str(sorted_clones[0]['name'])
+                else:
+                    dest['main clone'] = str(sorted_clones[0]['germline'])
+
+                dest['abundance'] = [[str(key), 100.0*data['reads']['germline'][key][result_index]/data['reads']["segmented"][result_index]] for key in data['reads']['germline']]
+
+
+                mean_length = {"reads": 0, "sum_length":0} # Allow to count reads length; not perfect as based on present clonotype only
+
+                tmp = {}
+                for c in data['clones']:
+                    try:
+                        arl = int(math.ceil(float(c['_average_read_length'][result_index])))
+                        mean_length["reads"]      += c["reads"][result_index]
+                        mean_length["sum_length"] += c["reads"][result_index] * float(c['_average_read_length'][result_index])
+                    except:
+                        continue
+                    if arl > 0:
+                        if arl not in tmp:
+                            tmp[arl] = 0.0
+                        tmp[arl] += float(c['reads'][result_index])
+                if mean_length["reads"]:
+                    dest['mean length'] = round( (mean_length["sum_length"] / mean_length["reads"]), 2)
+                else:
+                    dest['mean length'] = "na"
+                min_len = 100 #int(min(tmp.keys()))
+                max_len = 600 #int(max(tmp.keys()))
+                tmp_list = []
+
+                if mapped_reads == 0:
+                    mapped_reads = 1
+                for i in range(min_len, max_len):
+                    if i in tmp:
+                        if tmp[i]:
+                            scaled_val = (2.5 + math.log10(tmp[i]/mapped_reads)) / 2
+                            display_val = max(0.01, min(1, scaled_val)) * 100
+                        else:
+                            display_val = 0
+                        real_val = 100.0*(tmp[i]/mapped_reads)
                     else:
                         display_val = 0
-                    real_val = 100.0*(tmp[i]/mapped_reads)
-                else:
-                    display_val = 0
-                    real_val = 0
-                tmp_list.append((i, display_val, real_val))
-            dest['read lengths'] = tmp_list
+                        real_val = 0
+                    tmp_list.append((i, display_val, real_val))
+                dest['read lengths'] = tmp_list
 
-            #dest['bool'] = False
-            #dest['bool_true'] = True
-            dest['loci'] = sorted([x for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
+                dest['loci'] = sorted([str(x) for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
+
+
+                dest['clones_five_percent'] = len([c for c in data['clones'] if (float(c["reads"][result_index]) / data["reads"]["segmented"][result_index]) > 0.05])
+
+                dest['clones_five_percent_locus'] = {}
+                for locus in data["reads"]["germline"].keys():
+                    dest['clones_five_percent_locus'][locus] = len([c for c in data['clones'] if (c["germline"] == locus and data["reads"]["germline"][locus][result_index] and float(c["reads"][result_index]) / data["reads"]["germline"][locus][result_index]) > 0.05])
+
+                # !!! Contamination definition  : if pos != result_index, C present more than 0,01% and C bigger in result_index sample
+                # !!! WARNING, contamination is computed only on current fused file ! So available for ONE shared set and ONE shared config
+                dest['intra-contamination'] = len([c for c in data['clones'] if len([pos for pos in range(len(c["reads"])) if \
+                            pos != result_index and\
+                            data["reads"]["segmented"][pos] and\
+                            (float(c["reads"][pos])/data["reads"]["segmented"][pos]) > 0.0001 and\
+                            (float(c["reads"][result_index])/data["reads"]["segmented"][result_index]) > (float(c["reads"][pos])/data["reads"]["segmented"][pos]) ]) 
+                ])
+
+                if "diversity" in data:
+                    dest['Shannon\'s diversity'] = round( (data["diversity"]["index_H_entropy"][result_index]), 3)      if "index_H_entropy"      in data["diversity"] else "na"
+                    dest["Pielou\'s evenness"]   = round( (data["diversity"]["index_E_equitability"][result_index]), 3) if "index_E_equitability" in data["diversity"] else "na"
+                    dest["Simpson\'s diversity"] = round( (data["diversity"]["index_Ds_diversity"][result_index]), 3)   if "index_Ds_diversity"   in data["diversity"] else "na"
+
             dest['clones_five_percent'] = sum([data['reads']['distribution'][key][result_index] for key in data['reads']['germline']  if key in data['reads']['distribution']])
             if 'pre_process' in data['samples']:
                 dest['pre process'] = data['samples']['pre_process']['producer'][result_index]
@@ -958,6 +1039,7 @@ def getStatData(results_file_ids):
             db.results_file.sequence_file_id, db.results_file.config_id,
             db.results_file.data_file.with_alias("data_file"), db.results_file.id.with_alias("results_file_id"),
             db.sequence_file.data_file.with_alias("sequence_file"),
+            db.sequence_file.filename.with_alias("filename"),
             db.sample_set.id.with_alias("set_id"),
             db.sample_set.sample_type.with_alias("sample_type"),
             db.fused_file.fused_file.with_alias("fused_file"), db.fused_file.fused_file.with_alias("fused_file_id"),
@@ -973,6 +1055,14 @@ def getStatData(results_file_ids):
                 db.generic.on(db.generic.sample_set_id == db.sample_set.id)
             ]
         )
+
+    # Create a hash of position in query for each sample file
+    sample_query_pos = defaultdict(lambda: [])
+    for pos in range(len(query)):
+        res = query[pos]
+        sample_query_pos[str(res["results_file"])].append(pos)
+
+
 
     tmp_data = {}
     for res in query:
@@ -995,15 +1085,25 @@ def getStatData(results_file_ids):
         else:
             tmp = tmp_fuse['results_files'][res['results_file_id']]
 
-        sample_set = {}
-        sample_set['id'] = res['set_id']
-        sample_set['name'] = helpers[set_type].get_name(res[set_type])
-        sample_set['info'] = res['set_info']
-        sample_set['type'] = set_type
-        tmp['sets'].append(sample_set)
+                # Create a list of set with this sample
+        for sub_pos_set in sample_query_pos[str(res["results_file"])]:
+
+            sub_res    = query[sub_pos_set]
+            sample_set = {}
+            sample_set['set_type'] = sub_res['sample_type']
+            sample_set['id']   = sub_res['set_id']
+            sample_set['name'] = helpers[sub_res['sample_type']].get_name(sub_res[sub_res['sample_type']])
+            print( sample_set['name'] )
+            sample_set['info'] = sub_res['set_info']
+            sample_set['type'] = sub_res['sample_type']
+            tmp['sets'].append(sample_set)
+        # Reorder set by type
+        tmp['sets'] = sorted(tmp['sets'], key=lambda _set: set_types.index(_set['set_type']), reverse=False)
+
 
 
     data = []
+    data_json = []
     for fuse_id in tmp_data:
         fuse = tmp_data[fuse_id]
         d = getFusedStats(fuse)
@@ -1012,6 +1112,8 @@ def getStatData(results_file_ids):
         for results_file_id in d:
             res = fuse['results_files'][results_file_id]
             r = d[results_file_id]
+            data_json.append(r.copy() )
+
             for head, htype, model in headers:
                 if htype == 'db':
                     r[head] = res[head]
@@ -1020,15 +1122,35 @@ def getStatData(results_file_ids):
                 else: 
                     r[head] = ""
             r['sequence_file_id'] = res['results_file']['sequence_file_id']
-            r['config_id'] = res['results_file']['config_id']
+            r['samples']          = [x for x in  headers if x[0] == "samples"][0][2].decorate(res['filename'])
+            r['config names']     = [x for x in  headers if x[0] == "config names"][0][2].decorate(res['config']["name"])
+            r['config_id']        = res['results_file']['config_id']
             data.append(r)
-    return data
 
+            ## Data in pure json for TSV export from client
+            data_json[-1]["sequence_file_id"] = res['results_file']['sequence_file_id']
+            data_json[-1]["samples"] = res['filename']
+            data_json[-1]["config names"] = res['config']["name"]
+            data_json[-1]["config_id"] = res['results_file']['config_id']
+            data_json[-1]["sets"] = [str("%s (%s, id %s)" % (x["name"], x["type"], x["id"])) for x in res['sets']]
+
+            data_json[-1]["Shannon diversity"] = data_json[-1].pop('Shannon\'s diversity')
+            data_json[-1]["Pielou evenness"]   = data_json[-1].pop('Pielou\'s evenness')
+            data_json[-1]["Simpson diversity"] = data_json[-1].pop('Simpson\'s diversity')
+            del data_json[-1]['read lengths']
+
+    return data, data_json
+
+@action("/vidjil/sample_set/multi_sample_stats", method=["POST", "GET"])
+@action.uses("sample_set/multi_sample_stats.html", db, auth.user)
 def multi_sample_stats():
     data = {}
     data['headers'] = [h for h, t, m in getStatHeaders()]
     results = []
     custom_result = request.query['custom_result']
+    print( " === MULTI_SAMPLE_STATS")
+    print( request.query)
+    print( request.params)
     if not isinstance(custom_result, list):
         custom_result = [custom_result]
 
@@ -1040,20 +1162,23 @@ def multi_sample_stats():
         (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id) &
         (db.results_file.id.belongs(custom_result))
     ).select(
-            db.results_file.id.with_alias('results_file_id')
+            # db.results_file.id.with_alias('results_file_id')
         )
 
-    permitted_results_ids = [r.results_file_id for r in permitted_results]
+    print( "===================\n============ PERMITTED_RESULTS ===")
+    print( permitted_results)
+    permitted_results_ids = [r.results_file.id for r in permitted_results]
     if set(permitted_results_ids) != set(custom_result):
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
 
-    results = getStatData(custom_result)
+    results, data_raw = getStatData(custom_result)
     data['results'] = results
     log.info("load multi sample stats (%s)" % str(custom_result),
             extra={'user_id': auth.user_id, 'record_id': None, 'table_name': 'results_file'})
-    return dict(data=data)
+    return dict(data=data, data_raw=data_raw, auth=auth, db=db, permitted_results=permitted_results,
+permitted_results_ids=permitted_results_ids)
 
 
 @vidjil_utils.jsontransformer

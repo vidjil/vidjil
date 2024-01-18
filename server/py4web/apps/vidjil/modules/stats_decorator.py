@@ -14,7 +14,13 @@ class StatDecorator(object):
         pass
 
     def decorate(self, data):
-        return data if data is not None else ""
+        txt = data if data is not None else ""
+
+        if isinstance(data, dict):
+            title = "\n".join(["\t%s: %s" % (key, data[key]) for key in sorted(data.keys())])
+        else:
+            title = txt
+        return DIV(txt, _title=title)
 
 class BooleanDecorator(StatDecorator):
 
@@ -94,7 +100,7 @@ class SetsDecorator(StatDecorator):
             d = DIV(s,
                     sample_set['name'],
                     _onclick="db.call('sample_set/index', {'id': '%d'})" % sample_set['id'], 
-                    _style="opacity: .5;",
+                    _style="",
                     _class="pointer set_token %s_token" % sample_set['type'])
             ssets.append(d)
         return DIV(*ssets)

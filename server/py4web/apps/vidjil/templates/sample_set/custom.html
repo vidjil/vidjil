@@ -12,7 +12,18 @@
 	        <h3>Preview or compare samples</h3>
     [[pass]]
 
-    <p>Select up to 10 samples to be compared.</p>
+    <!-- <p>Select up to 10 samples to be compared.</p> -->
+    <div class="db_block">
+        Select each last analysis of config :
+        <div class="db_block_right">
+            [[for id in config_names.keys() :]]
+                <span class="button2"
+                    onclick="selectListOfCheckbox([[=config_names[id]['idx']]], true)"
+                > [[=config_names[id]["name"]]] </span>
+            [[pass]]
+        </div>
+    </div>
+
 
     <div class="db_block">
 
@@ -76,8 +87,9 @@
 
             [[for row in query :]]
 
-                 <tr>
-                    <td> <input type="checkbox" name="custom_result[]" value="[[=row.results_file.id]]" [[if row.checked :]] checked [[pass]]> </td>
+                <tr id="compare_line_sample_[[=row.results_file.id]]">
+                    <td> <input type="checkbox" id="checkbox_sample_[[=row.results_file.id]]" name="custom_result[]" value="[[=row.results_file.id]]" [[if row.checked :]] checked [[pass]]> </td>
+
                     <td> [[=row.names]] </td>
                     <td [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]]  [[pass]] id="sequence_file_[[=row.sequence_file.id]]">
                          [[=row.sequence_file.filename]]
@@ -109,7 +121,7 @@
     </div>
 
     <div class="db_block_right">
-        <span class="devel-mode button2" onclick="db.call('sample_set/multi_sample_stats', {'custom_result': db.getListInput('custom_result[]') })" >preview / quality control</span>
+        <span class="button2" onclick="db.call('sample_set/multi_sample_stats', {'custom_result': db.getListInput('custom_result[]') })" >preview / quality control</span>
         <span class="button2" 
           [[if request.query["id"] != None: ]]
             onclick="myUrl.loadCustomUrl(db, {'sample_set_id':[[=request.query["id"] ]] })" 

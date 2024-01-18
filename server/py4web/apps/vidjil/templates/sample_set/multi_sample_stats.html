@@ -1,34 +1,57 @@
-{{extend 'db_layout.html'}}
+[[extend 'db_layout.html']]
 
 <h3></h3>
+
+<div>
+    [[ for i in range(len(data['headers'])): ]]
+        <span onclick="toogleColumn('db_table_container', [[=i+1]], 'checkbox_header_[[=data['headers'][i].replace("'","")]]')">
+            <input type="checkbox" id="checkbox_header_[[=data['headers'][i].replace("'","")]]" name="Toggle visibility of column [[=data['headers'][i]]]" value="[[=data['headers'][i]]]" checked>
+            [[=data['headers'][i]]]
+        </span>
+    [[pass]]
+</div>
+
 
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
 	    <tr>
-            {{ for h in data['headers']: }}
-            <td class="{{=h}}">
-                <span class="toggle {{=h}}"onclick="$('.content.{{=h}}').toggle(function() {if ($('.content.{{=h}}').is(':visible')) {$('.{{=h}}').width(''); $('.toggle.{{=h}}').text('[-]')} else {$('.{{=h}}').width('20px'); $('.toggle.{{=h}}').text('[+]')}})">[-]</span>
-                <span class="content {{=h}}">{{=h}}</span>
-            </td>
-            {{ pass }}
-            <td class="column_20 devel-mode"></td>
+            [[ for h in data['headers']: ]]
+                <th class="content [[=h]]">
+                    [[=h]]
+                </th>
+            [[ pass ]]
+            <th class="column_25"></th>
         </tr>
         </thead>
         <tbody>
-            {{ for res in data['results']: }}
+            [[ for pos in range(len(data['results'])): ]]
+                [[res=data['results'][pos]]]
+                [[row=permitted_results[pos]]]
                 <tr>
-                    {{ for h in data['headers']: }}
-                    <td class="{{=h}}">
-                        <span class="content {{=h}}">{{=res[h]}}</span>
+                    [[ for h in data['headers']: ]]
+                    <td class="[[=h]]">
+                        <span class="content [[=h]]">[[=res[h]]]</span>
                     </td>
-                    {{ pass }}
-                    <td class="devel-mode">
-                       <span class="pointer" onclick="db.call('default/run_extra', { 'sequence_file_id' : '{{=res["sequence_file_id"]}}', 'config_id' : {{=res["config_id"]}} } )"><i class="icon-cog-2" title="Run the selected configuration for this file"></i></span>
+                    [[ pass ]]
+                    <td>
+                       <!-- [[=row.sample_set_membership.id]]  -->
+                       <a id="open_sample_result_[[=row.sample_set_membership.sequence_file_id]]" class="button"  type="text/html"
+                       href="[ [= http_origin]]?custom=[[=row.results_file.id]]&sample_set_id=[[=row.sample_set_membership.sample_set_id]]&config=[[=row.results_file.config_id]]"
+                       onclick= "event.preventDefault();
+                            if( event.which == 2 ) { window.open(this.href); }
+                            else { myUrl.loadCustomUrl(db, {'custom': '[[=row.results_file.id]]', 'sample_set_id' : [[=row.sample_set_membership.sample_set_id]], 'config' : [[=row.results_file.config_id]]  } ); } "  >
+                            <i class="icon-forward" title="open this sample results in client"></i>
+                        </a>
                     </td>
                 </tr>
-            {{ pass }}
+            [[ pass ]]
         </tbody>
     </table>
     <table class="db_table" id="db_fixed_header"></table>
+
+    <div> Download table in <a class="button" id="download_statsQC" onclick='m.exportStatsQC("[[=data_raw]]")'>TSV format</a>
+    </div>
+
+
 </div>
