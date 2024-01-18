@@ -128,6 +128,10 @@ to learn the essential features of Vidjil.
     By hovering the mouse, one also sees the *total*
     number of reads for that sample.
 
+  - The info “🛈” button opens the *sample information panel*, that includes
+    metadata on the sample and its analysis.
+    It includes information on the version and the parameters
+    of the analysis software.
 <figure markdown>
   ![Image title](..//pictures/panel_info.png){ align=right }
   <figcaption>The information panel.
@@ -933,7 +937,7 @@ With DNA-Seq sequencing with specific V(D)J primers,
 ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
 On the other side, capture with many probes or RNA-Seq strategies usually lead to datasets with less than 0.1% V(D)J recombinations.
 
-The “info“ button further detail the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [vidjil-algo documentation](vidjil-algo/#reads-without-detected-recombinations).
+The sample information panel (“info“ button) further details the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [vidjil-algo documentation](vidjil-algo/#reads-without-detected-recombinations).
 There can be several causes leading to low ratios:
 
 #### Analysis or biological causes
