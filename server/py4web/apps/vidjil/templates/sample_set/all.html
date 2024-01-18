@@ -69,7 +69,7 @@
 <div class="db_block">
     <div class="db_block_left">
 
-[[if auth.can_create_patient():]]
+[[if auth.can_create_sample_set():]]
 <span class="button2" id="create_new_set_type_[[=helper.type]]" onclick="db.call('sample_set/form', {'type': '[[=helper.type]]'})"> + new [[=helper.get_type_display()]]s </span>
 <span class="button2 devel-mode" onclick="db.call('sample_set/custom', {'filter': '[[=request.query['filter']]]' })"> compare samples/patients </span>
 [[else:]]
