@@ -321,7 +321,7 @@ class VidjilAuth(Auth):
         Returns:
             bool: true if the user can create sample sets in a given group, false otherwise
         """
-        if (self.can_create_sample_set(user) and group_id in self.get_permission_groups("create")):
+        if self.is_admin(user) or (self.can_create_sample_set(user) and group_id in self.get_permission_groups("create")):
             return True
         else:
             return False
