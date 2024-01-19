@@ -698,6 +698,20 @@ function nice_number_digits(x, sd)
     }
 }
 
+function nice_display(x, precision)
+{
+    if (precision <= 6) {
+        return x.toFixed(precision)
+    } else {
+        if (x<=0) {
+            exponential_precision = 0
+        } else {
+            var number_of_decimals = -1*Math.floor(Math.log10(x))
+            exponential_precision = Math.max(0, precision-number_of_decimals)
+        }
+        return x.toExponential(exponential_precision)
+    }
+}
 
 /**
  * Sends error to the specified database reference.

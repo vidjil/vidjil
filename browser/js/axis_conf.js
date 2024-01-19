@@ -414,16 +414,19 @@ AXIS_DEFAULT = {
     "EValue": {
         doc:        "evalue by default",
         fct:        function(clone) { return clone.getEValue() },
+        scale:      {   mode: "log"},
         autofill:   true
     },
     "EValue Left": {
         doc:        "evalue left",
         fct:        function(clone) { return clone.getEValue('evalue_left') },
+        scale:      {   mode: "log"},
         autofill:   true
     },
     "EValue Right": {
         doc:        "evalue right",
         fct:        function(clone) { return clone.getEValue('evalue_right') },
+        scale:      {   mode: "log"},
         autofill:   true
     },
     "J/3' del'": {

@@ -222,8 +222,8 @@ Axis.prototype = {
     compute_scale_labels: function(){
         this.steps = [1,2,5]
         this.step = 1
-        var max = this.maxLabel - Object.keys(this.labels).length
-        if (max < 4) max = 5
+        var max_number_of_labels = this.maxLabel - Object.keys(this.labels).length
+        if (max_number_of_labels < 4) max_number_of_labels = 5
 
 
         if (this.scale){
@@ -241,33 +241,33 @@ Axis.prototype = {
 
             if (this.scale.mode == "linear"){
                 
-                var nice = nice_min_max_steps(smin, smax, max)
-                if (typeof this.min_step == "undefined") this.min_step = nice.step
-                this.step = Math.max(nice.step, this.min_step)
+                var nice_linear = nice_min_max_steps(smin, smax, max_number_of_labels)
+                if (typeof this.min_step == "undefined") this.min_step = nice_linear.step
+                this.step = Math.max(nice_linear.step, this.min_step)
                 this.precision = nice_number_digits(this.step, 1)
 
 
-                this.scale.nice_min = nice.min
-                var l = nice.min.toFixed(this.precision)
+                this.scale.nice_min = nice_linear.min
+                var l = nice_display(nice_linear.min, this.precision)
                 if (l == 0) l = "0"
                 this.scale.nice_min_label = l+"_l"
 
-                this.scale.nice_max = nice.max
-                l = nice.max.toFixed(this.precision)
+                this.scale.nice_max = nice_linear.max
+                l = nice_display(nice_linear.max, this.precision)
                 if (l == 0) l = "0"
                 this.scale.nice_max_label = l+"_l"
 
-                //add labels for each steps between min and max
+                // add labels for each steps between min and max
                 if (this.scale.reverse){
                     for (var i = this.scale.nice_max; 
-                         parseFloat(this.scale.nice_min.toFixed(this.precision)) <= parseFloat((i+this.step/2).toFixed(this.precision)); 
+                         parseFloat(nice_display(this.scale.nice_min, this.precision)) <= nice_display(parseFloat((i+this.step/2), this.precision)); 
                          i=i-this.step){
                         this.addScaleLabel(i, "linearScale")
                         labelCount++
                     }
                 }else{
                     for (var j = this.scale.nice_min; 
-                         parseFloat(j.toFixed(this.precision)) <= parseFloat(this.scale.nice_max.toFixed(this.precision)); 
+                         parseFloat(nice_display(j - this.step/2, this.precision)) <= parseFloat(nice_display(this.scale.nice_max, this.precision)); 
                          j+= this.step){
                         this.addScaleLabel(j, "linearScale")
                         labelCount++
@@ -276,11 +276,11 @@ Axis.prototype = {
             }
 
             if (this.scale.mode == "log"){
+                // Compute min/max
                 this.scale.nice_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(this.scale.max))))
                 this.scale.nice_min = Math.pow(10, Math.floor(Math.log10(Math.abs(this.scale.min_p))))
                 this.scale.nice_custom_max = Math.pow(10, Math.ceil (Math.log10(Math.abs(smax))))
                 this.scale.nice_custom_min = Math.pow(10, Math.floor(Math.log10(Math.abs(smin))))
-                
                 var nmax=this.scale.nice_max;
                 var nmin=this.scale.nice_min;
                 if (this.useCustomScale){
@@ -288,27 +288,56 @@ Axis.prototype = {
                     nmin = this.scale.nice_custom_min;
                 }
 
-                this.scale.nice_min_label = (nmin).toFixed(nice_number_digits(nmin, 1)) + "_l"
-                this.scale.nice_max_label = (nmax).toFixed(nice_number_digits(nmax, 1)) + "_l"
+                // Fix min/max/step for nice axis
+                var max_number_of_decimals = Math.log10(Math.abs(nmax))
+                var min_number_of_decimals = Math.log10(Math.abs(nmin))
+                var nice_log = nice_min_max_steps(min_number_of_decimals, max_number_of_decimals, max_number_of_labels)
+                nmax = Math.pow(10, nice_log.max)
+                nmin = Math.pow(10, nice_log.min)
+                if (this.useCustomScale) {
+                    this.scale.nice_custom_max = nice_display(nmax, nice_number_digits(nmax, 1))
+                    this.scale.nice_custom_min = nice_display(nmin, nice_number_digits(nmin, 1))
+                } else {
+                    this.scale.nice_max = nice_display(nmax, nice_number_digits(nmax, 1))
+                    this.scale.nice_min = nice_display(nmin, nice_number_digits(nmin, 1))
+                }
 
-                //add labels
+                // Add labels
+                labelCount = 0
+                var label = "empty"
+                this.scale.nice_min_label = nice_display(nmin, nice_number_digits(nmin, 1)) + "_l"
+                this.scale.nice_max_label = nice_display(nmax, nice_number_digits(nmax, 1)) + "_l"
                 if (this.scale.reverse){
-                    if (this.labels[0] == undefined)
+                    if (this.labels[0] == undefined) {
                         this.labels[0] = {text: "0", type:"slim", side: "right", color : "#657b83"}
-                    for (var k = nmax; k >= nmin; k=k/10){
-                        this.addScaleLabel(k, "logScale")
+                    }
+                    for (var k = nice_log.max; k >= nice_log.min; k-=nice_log.step) {
+                        this.addScaleLabel(Math.pow(10, k), "logScale")
                         labelCount++
                     } 
-                }else{
-                    for (var z = nmin; z <= nmax; z=z*10){
-                        this.addScaleLabel(z, "logScale")
+                    // check min_label is OK
+                    if (label != "empty") {
+                        if (label != this.scale.nice_min_label) {
+                            this.scale.nice_min_label = label
+                        }
+                    }
+                } else {
+                    for (var z = nice_log.min; z <= nice_log.max; z+=nice_log.step) {
+                        label = this.addScaleLabel(Math.pow(10, z), "logScale")
                         labelCount++
-                    } 
-                    if (this.labels[0] == undefined)
+                    }
+                    // check max_label is OK
+                    if (label != "empty") {
+                        if (label != this.scale.nice_max_label) {
+                            this.scale.nice_max_label = label
+                        }
+                    }
+                    if (this.labels[0] == undefined) {
                         this.labels[0] = {text: "0", type:"slim", side: "left" , color : "#657b83"}
+                    }
                 }
             }
-            this.scaledMargin = max/labelCount
+            this.scaledMargin = max_number_of_labels/labelCount
         }
 
         return this
@@ -316,11 +345,11 @@ Axis.prototype = {
 
     addScaleLabel: function(v, type){        
         var l = v
-        var text = v.toFixed(this.precision) 
+        var text = nice_display(v, this.precision) 
 
         if (type == "linearScale"){
 
-            l = v.toFixed(this.precision) 
+            l = nice_display(v, this.precision) 
             if (l == 0){    
                 l = "0"
                 v = 0
@@ -329,7 +358,7 @@ Axis.prototype = {
             if (this.scale.display == "percent"){
                 var percent_precision = this.precision - 2
                 if (percent_precision < 0) percent_precision = 0
-                text = (v*100).toFixed(percent_precision) + "%"
+                text = nice_display(v*100, percent_precision) + "%"
             }
 
             if (typeof this.scale.display === "function")
@@ -338,21 +367,22 @@ Axis.prototype = {
 
         if (type == "logScale"){
             
-            l = v.toFixed(nice_number_digits(v, 1))
+            l = nice_display(v, nice_number_digits(v, 1))
             if (l == 0){    
                 l = "0"
                 v = 0
             }
 
-            text = (v).toFixed(nice_number_digits(v, 1))
+            text = nice_display(v, nice_number_digits(v, 1))
 
             if (this.scale.display == "percent")
-                text = (v*100).toFixed(nice_number_digits(v*100, 1)) + "%"
+                text = nice_display(v*100, nice_number_digits(v*100, 1)) + "%"
             
             if (typeof this.scale.display === "function")
                 text = this.scale.display(v)   
         }
         this.labels[l+"_l"] = {text: text, type: type}
+        return l+"_1"
     },
 
     sorted_keys: function(){
