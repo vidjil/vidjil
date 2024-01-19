@@ -359,7 +359,7 @@ def form():
         extra['record_id'] = request.query["id"]
 
     # new set
-    elif (auth.can_create_patient()):
+    elif (auth.can_create_sample_set()):
         sset = None
         set_type = request.query["type"]
         creation_group_tuple = get_default_creation_group(auth)
@@ -418,69 +418,68 @@ def submit():
             if p is None:
                 continue
             errors = helper.validate(p)
+            p['error'] = errors
             action = "add"
-            if len(errors) > 0:
-                p['error'] = errors
-                error = True
-                continue
+            if len(errors) == 0:
+                should_register_tags = False
+                reset = False
 
-            register = False
-            reset = False
+                name = helper.get_name(p)
 
-            name = helper.get_name(p)
-
-            # edit
-            if (p['sample_set_id'] != ""):
-                if auth.can_modify_sample_set(int(p['sample_set_id'])):
-                    reset = True
-                    sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
-                    db[set_type][sset.id] = p
-                    id_sample_set = sset['sample_set_id']
-
-                    if (sset.info != p['info']):
-                        group_id = get_set_group(id_sample_set)
-                        register = True
+                # edit
+                if (p['sample_set_id'] != ""):
+                    if auth.can_modify_sample_set(int(p['sample_set_id'])):
                         reset = True
+                        sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
+                        db[set_type][sset.id] = p
+                        id_sample_set = sset['sample_set_id']
 
-                    action = "edit"
-                else:
+                        if (sset.info != p['info']):
+                            group_id = get_set_group(id_sample_set)
+                            should_register_tags = True
+                            reset = True
+
+                        action = "edit"
+                    else:
+                        p['error'].append("permission denied")
+                        error = True
+                        
+                # add
+                elif (auth.can_create_sample_set_in_group(int(data["group"]))):
+                    group_id = int(data["group"])
+                    id_sample_set = db.sample_set.insert(sample_type=set_type)
+
+                    p['creator'] = auth.user_id
+                    p['sample_set_id'] = id_sample_set
+                    p['id'] = db[set_type].insert(**p)
+                    should_register_tags = True
+
+                    #patient creator automaticaly has all rights
+                    auth.add_permission(group_id, PermissionEnum.access.value, 'sample_set', p['sample_set_id'])
+
+                    action = "add"
+
+                    #if (p['id'] % 100) == 0:
+                    #    mail.send(to=defs.ADMIN_EMAILS,
+                    #    subject=defs.EMAIL_SUBJECT_START+" %d" % p['id'],
+                    #    message="The %dth %s has just been created." % (p['id'], set_type))
+
+                else :
                     p['error'].append("permission denied")
                     error = True
-                    
-            # add
-            elif (auth.can_create_patient()):
-
-                id_sample_set = db.sample_set.insert(sample_type=set_type)
-
-                p['creator'] = auth.user_id
-                p['sample_set_id'] = id_sample_set
-                p['id'] = db[set_type].insert(**p)
-
-                group_id = int(data["group"])
-
-                register = True
-
-                #patient creator automaticaly has all rights
-                auth.add_permission(group_id, PermissionEnum.access.value, 'sample_set', p['sample_set_id'])
-
-                action = "add"
-
-                #if (p['id'] % 100) == 0:
-                #    mail.send(to=defs.ADMIN_EMAILS,
-                #    subject=defs.EMAIL_SUBJECT_START+" %d" % p['id'],
-                #    message="The %dth %s has just been created." % (p['id'], set_type))
-
-            else :
-                p['error'].append("permission denied")
+            else:
                 error = True
-
-            p['message'] = []
-            mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
-            p['message'].append(mes)
+            
+            if error:
+                mes = f"error occured : {p['error']}"
+                id_sample_set = -1
+            else:
+                mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
+            p['message'] = [mes]
             log.info(mes, extra={'user_id': auth.user_id, 'record_id': id_sample_set, 'table_name': 'sample_set'})
-            if register:
+            if should_register_tags:
                 tag.register_tags(db, set_type, p["id"], p["info"], group_id, reset=reset)
-
+            
     if not error:
         if not bool(length_mapping):
             creation_group_tuple = get_default_creation_group(auth)
@@ -514,12 +513,14 @@ def submit():
                 'run': data['run'] if 'run' in data else [],
                 'generic': data['generic'] if 'generic' in data else []
                 }
+        log.info("an error occured")
         #response.view = 'sample_set/form.html'
-        return dict(message=T("an error occured"),
-                groups=[{'name': 'foobar', 'id': int(data['group'])}],
-                master_group=data['group'],
-                sets=sets,
-                isEditing = (action=='edit'))
+        return json.dumps(dict(message="an error occured",
+                               groups=[{'name': 'foobar', 'id': int(data['group'])}],
+                               master_group=data['group'],
+                               sets=sets,
+                               isEditing = (action=='edit')), 
+                          separators=(',',':'))
 
 @action("/vidjil/sample_set/custom", method=["POST", "GET"])
 @action.uses("sample_set/custom.html", db, auth.user)

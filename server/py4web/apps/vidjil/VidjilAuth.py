@@ -301,14 +301,30 @@ class VidjilAuth(Auth):
         '''
         return group in self.groups
 
-    def can_create_patient(self, user = None):
+    def can_create_sample_set(self, user = None):
         '''
-        Returns True if the user can create new patients.
+        Returns True if the user can create new sample_sets.
 
         If the user is None, the current user is taken into account
         '''
         return self.get_permission(PermissionEnum.create.value, 'sample_set', user = user)\
             or self.is_admin(user)
+    
+    def can_create_sample_set_in_group(self, group_id: int, user = None) -> bool:
+        """
+        Returns true if the user can create sample sets in a given group
+
+        Args:
+            group_id (int): ID of the group to create sample set in
+            user (_type_, optional): If the user is None, the current user is taken into account. Defaults to None.
+
+        Returns:
+            bool: true if the user can create sample sets in a given group, false otherwise
+        """
+        if self.is_admin(user) or (self.can_create_sample_set(user) and group_id in self.get_permission_groups("create")):
+            return True
+        else:
+            return False
 
     def can_create_config(self, user = None):
         '''
