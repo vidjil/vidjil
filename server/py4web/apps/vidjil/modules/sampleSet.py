@@ -64,16 +64,17 @@ class SampleSet(object):
         if request.environ.get("HTTP_ORIGIN") is not None:
             http_origin = request.environ.get("HTTP_ORIGIN") + "/"
         key = get_conf_list_select()
-        conf_list = [] if data._extra[key] is None else data._extra[key].split(',')
+        conf_list = [] if data["_extra"][key] is None else data["_extra"][key].split(',')
         for conf in conf_list:
             c = conf.split(';')
+            c_id= c[0]
+            c_name = c[1]
+            c_fused = c[2]
             filename =  "(%s %s)" % (self.get_name(data), c[0])
-            config_name = data._extra['GROUP_CONCAT(DISTINCT config.name)']
-            config_id = data._extra['GROUP_CONCAT(DISTINCT config.id)']
             configs.append(
-                    str(A(config_name,
-                        _href="index.html?sample_set_id=%d&config=%s" % (data['sample_set_id'], config_id), _type="text/html",  _id="result_sample_set_%d_config_%s" % (data['sample_set_id'], c[0]),
-                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], config_id, filename))))
+                    str(A(c_name,
+                        _href=f"index.html?sample_set_id={int(data['sample_set_id'])}&config={c_id}", _type="text/html",  _id=f"result_sample_set_{int(data['sample_set_id'])}_config_{c_id}",
+                        _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c_id, filename))))
 
         return XML(", ".join(configs))
 
