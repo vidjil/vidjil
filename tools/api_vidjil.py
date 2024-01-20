@@ -779,6 +779,12 @@ class Vidjil:
         print()
         return
 
+    def metrics(self):
+        """ Ask data to server; if user is in group metrics, return some metrics of server instance to be interpreted by metrics/grafana side project """
+        new_url  = self.url_server + "metrics"
+        response = self.request(new_url, "get")
+        return response
+
 #########################
 ### Some utils functions
 #########################
