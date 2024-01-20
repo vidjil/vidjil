@@ -44,7 +44,7 @@ from ..common import db, session, cors, T, flash, cache, authenticated, unauthen
 #########################################################################
 ##return the default index page for vidjil (redirect to the browser)
 @action("/vidjil/metrics", method=["POST", "GET"])
-@action.uses(db)
+@action.uses(auth, db)
 def metrics():
     if auth.is_admin(): # WARNING !!! Iconsistency, switch between mutiple call to admin/not admin. (tested with API)
         message = 'status ADMIN'
@@ -52,17 +52,30 @@ def metrics():
             "message"     : message,
             "users_count" : len(db().select(db.auth_user.ALL,   db.auth_user.id.count(),  groupby=db.auth_user.id )),
             "group_count" : len(db().select(db.auth_group.ALL,  db.auth_group.id.count(), groupby=db.auth_group.id )),
-            "login_count" : len(db().select(db.auth_event.ALL,  db.auth_event.id.count(), groupby=db.auth_event.id )), # not fill for the moment
+            "login_count" : db(db.auth_event.user_id==db.auth_user.id 
+                ).select(db.auth_event.ALL,  db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description ), # not fill for the moment
 
             # Patients; runs; sets
             "set_patients_count" : len(db().select(db.patient.ALL, db.patient.id.count(), groupby=db.patient.id )),
             "set_runs_count"     : len(db().select(db.run.ALL,     db.run.id.count(),     groupby=db.run.id )),
             "set_generic_count"  : len(db().select(db.generic.ALL, db.generic.id.count(), groupby=db.generic.id )),
 
+            # Patients; runs; sets
+            "set_patients" : db().select(db.patient.ALL, db.patient.id.count(), groupby=db.patient.id ),
+            "set_runs"     : db().select(db.run.ALL,     db.run.id.count(),     groupby=db.run.id ),
+            "set_generic"  : db().select(db.generic.ALL, db.generic.id.count(), groupby=db.generic.id ),
+
             # Samples, analysis
             "sequence_count" : len(db().select(db.sequence_file.ALL, db.sequence_file.id.count(), groupby=db.sequence_file.id )),
             "results_count"  : len(db().select(db.results_file.ALL,  db.results_file.id.count(),  groupby=db.results_file.id )),
+
+            # Samples, analysis
+            "sequence" : db().select(db.sequence_file.ALL, db.sequence_file.id.count(), groupby=db.sequence_file.id ),
+            "results"  : db().select(db.results_file.ALL,  db.results_file.id.count(),  groupby=db.results_file.id ),
+
+            "config_analysis" : db(db.results_file.config_id==db.config.id).select(db.results_file.config_id, db.config.name, db.config.program, db.results_file.id.count(),  groupby=db.results_file.config_id ), 
         }
+        print( data )
     else:
         data = {"message": 'status NOT admin'}
     return data
