@@ -7,7 +7,6 @@ Users should consult the [Web Platform User Manual](user.md).
 
 ## Configuring pre-processes, processes and post-processes
 
-
 ### Pre-processes (after sample upload)
 
 Custom pre-processing steps can be added.
@@ -31,12 +30,12 @@ Steps may differ if you use a plain-installation or a docker image.
   - (Command-line) You need to add the executable or preprocessing script to the path
     of vidjil to be callable. For this, give the correct path of it into the defs.py files.
   - You need to modifiy the function "run<sub>preprocess</sub>" in the
-    script "server/web2py/application/vidjil/models/task.py". This part allow
+    script "server/py4web/apps/vidjil/tasks.py". This part allow
     to use specific shortcut (files names for example) into the command line
     constructed by the server when calling the preprocess
   - (Web) You need to add the preprocess to the list of available process into the
     vidjil server interface. To do this, you need an admin account. You will
-    see the pre-process tab in the list of admin tabs.
+    see the pre-process config tab in the list of admin tabs.
 
 Here is an example with a fictive paired-end merger: "mymerger".
 
@@ -52,7 +51,7 @@ Here is an example with a fictive paired-end merger: "mymerger".
     the docker installation, you need to uncomment the binaries volume into the
     docker-compose.yml file (service fuse); and copy the executable into the
     corresponding local directory (by default vidjil/docker/binaries/). After this, you should
-    inquire the path into the **defs.py** file (relative path start from server/web2py).
+    inquire the path into the **defs.py** file (relative path start from server/py4web/apps/vidjil).
   - After that, you will need to adapt the function "run<sub>preprocess</sub>" of task.py.
     The goal here is to add some shortcut that will be use by the server to adapt the
     calling of preprocess to replace the file names or path of the executable. For
@@ -110,7 +109,9 @@ This can be useful to further process the result files, possibly taking into acc
     as for example in `-t 100 --pre spike-normalization.py`.
     A `--pre` script will be called on each `.vidjil` file, before the actual fusing,
     whereas a `--post` script will be called on the combined `.vidjil` file after the fusing.
-  - Multiple scripts can be call. To do that, concatenate commands to use inside fuse line to call with a '&&' separator. `-t 100 --pre 'scriptA --opt optvalA && scriptB --opt optvalB`. This can be done for prefuse and postfuse step.
+
+  - Multiple scripts can be called. To do that, concatenate commands to use inside fuse line to call with a '&&' separator.
+    `-t 100 --pre 'scriptA --opt optvalA && scriptB --opt optvalB`. This can be done for prefuse and postfuse step.
 
 When the users select this config, these pre- and post-processes will also be called.
 
@@ -163,7 +164,7 @@ or removed from groups whenever it is convenient
   - Create group, for example `lab_xxx` (select `None` for parent group).
   - Create sub-group for roles (eg. `Technician`, `Engineer`, `Doctor`). Be sure to select
     `lab_xxx` as the parent group.
-  - From the group's detailed view, 
+  - From the group's detailed view,
     set the permissions for the newly created groups `Technician`, `Engineer` and `Doctor`.
     Be sure to
     assign at least the 'view patient' permission or members will not be able
@@ -183,7 +184,7 @@ The following procedure makes that whole data uploaded by the user will be avail
 to the whole group.
 
 - Modify the personal group of this user by renaming it to a group account, such as `lab_xxx`
-- Create the new users 
+- Create the new users
 - Attach them to the first group `lab_xxx`.
 
 If needed, you can also recreate a personal group for the user.
@@ -215,7 +216,7 @@ This should be done only with explicit authorization of the group manager.
 
 ### Removing an user from a group
 
-To remove  a user from a group, 
+To remove a user from a group,
 open the corresponding group and click on the cross at the end of the line.
 Data will still be accessible for other users of this group.
 

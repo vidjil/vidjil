@@ -3,16 +3,17 @@
     We publish here notes to help to update these images.  
     See <http://www.vidjil.org/doc/server>
 
-## 2023-01-23
+## 2024-01-23
+
+**vidjil/server**:
 
 !!! danger
-    A complete rewriting of backend server come with this release. 
+    A complete rewriting of backend server come with this release.
     We also change in depth the docker-compose file. Read this changelog to get more information.
 
-A complete rewriting of backend server from web2py to py4web come with releases `2024.01`.
-We completly change launched services, path of some volumes and we now use an dedicated `.env` environement file. 
-Please don't made upgrade of your vidjil server for the moment and wait 
-to refer to migration documentation that will be released on 2022.02.02.
+A complete rewriting of backend server from web2py to py4web comes with releases `2024.01`.
+We completly change launched services, path of some volumes and we now use an dedicated `.env` environement file.
+Please don't made upgrade of your vidjil server for the moment and wait to refer to migration documentation that will be released on 2024-02-02.
 
 ## 2022-06-28
 
