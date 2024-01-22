@@ -380,6 +380,7 @@ deploy_review:
     - web
   extends:
     - .need_for_independant_test
+  allow_failure: true
 
 deploy_review_server:
   stage: deploy_review
@@ -441,6 +442,7 @@ deploy_review_server:
     IMAGE_NAME_SERVER: dev-server/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
   needs:
     - [build_test_server_docker]
+  allow_failure: true
 
 deploy_client:
   stage: deploy_prod
