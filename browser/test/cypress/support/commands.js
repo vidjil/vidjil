@@ -35,11 +35,9 @@ Cypress.Commands.add('closeFlash', (flash_class) => {
 
 Cypress.Commands.add('setBrowser', (url) => {
   cy.visit(url)
-  cy.update_icon() // Add time to load model and component.
-  cy.wait(1000)
 
   // close disclamer only for direct opening of the index.html file
-  if (url.indexOf("index.html") != -1){
+  if (true){ //url.indexOf("index.html") != -1){
     cy.close_disclamer()
     cy.close_tips()
     cy.closeFlash('.flash_1')
