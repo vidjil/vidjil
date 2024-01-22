@@ -146,9 +146,7 @@ From image `vidjil/server`
   - `workers` The Py4web Scheduler workers in charge of executing vidjil users' samples
   - `redis` Allow to dispatch jobs to workers
   - `flowers` A server to monitoring workers status
-
   - `fuse` The XmlRPCServer that handles queries for comparing samples
-
   - `restic` Starts a cron job to schedule regular backups
   - `reporter` A monitoring utility that can be configured to send monitoring information to a remote server
   - `postfix` A mail relay to allow `uwsgi` to send error notifications
@@ -234,6 +232,7 @@ Then `docker ps` should display seven running containers for a localhost usage:
 `docker_nginx_1`, `docker_uwsgi_1`, `docker_mysql_1`, `docker_fuse_1`, `docker_workers_1`, `docker_flowers_1`, `docker_redis_1`.
 Service `restic`, `reporter` and `postfix` are usefull for backup and email communication and need to be started for regular installation.
 
+
   - Vidjil also need germline files.
       - You can use IMGT germline files if you accept IMGT licence.
         For this, from the `vidjil` directory (root of the git repository),
@@ -247,6 +246,8 @@ Service `restic`, `reporter` and `postfix` are usefull for backup and email comm
 Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
 
+
+- Once these main service are set, you can also set docker service for backup and mail communication.
 
 - Once these main service are set, you can also set docker service for backup and mail communication.
 
