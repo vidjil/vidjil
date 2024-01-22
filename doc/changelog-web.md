@@ -9,13 +9,13 @@
 ??? note "Milestone 2024-01"
 	  Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/8).
 
-Main change of this release is based under the hood , with conversion of backend server from an old framework `web2py` to a new implementation `py4web`.
+Main change of this release is based under the hood, with conversion of backend server from an old framework `web2py` to a new implementation `py4web`.
 Mains ideas are shared between these framworks.
-It ask a lot of hard work.
+It requires d lot of hard work.
 
-We also change the docker-compose file to adapt it to new `docker services`. Be aware when you make migration to this release to have a good understanding of change in this file. See [docker changelog](changelog-docker) to get more information.
+We also changed the docker-compose file to adapt it to new `docker services`. Be aware when you make migration to this release to have a good understanding of change in this file. See [docker changelog](changelog-docker.md) to get more information.
 
-Other improvment and client and server are very limited.
+Other improvments of client and server are limited.
 
 **Improve analysis**
 

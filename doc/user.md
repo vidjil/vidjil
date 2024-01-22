@@ -133,7 +133,7 @@ to learn the essential features of Vidjil.
     It includes information on the version and the parameters
     of the analysis software.
 <figure markdown>
-  ![Image title](..//pictures/panel_info.png){ align=right }
+  ![Image title](./pictures/panel_info.png){ align=right }
   <figcaption>The information panel.
       The patient/run/set or sample information may contain tags such as `#T-ALL`.
       In this sample, V(D)J recombinations were detected in about 82% of the reads.
@@ -177,7 +177,7 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
       but has been detected in another sample that is not currently displayed.
 
 <figure markdown>
-  ![Image title](..//pictures/panel_list.png)
+  ![Image title](./pictures/panel_list.png)
   <figcaption>The list of clonotypes.
     The main clonotype is `IGHV3-9*01 7/CCCGGA/17 IGHJ6*02`,
     with 7 deletions on the 3' side of the V, 17 deletions on the 5' side of the J,
@@ -237,7 +237,7 @@ It shows the most frequent clonotypes of each sample, tracked into every sample.
 
 
 <figure markdown>
-  ![Image title](..//pictures/panel_graph.png)
+  ![Image title](./pictures/panel_graph.png)
   <figcaption>This sample graph show the evolution of a T-ALL patient relapsing at D+268/D+308 with a clonotype that was not the main one at the diagnosis.  
   The view was filtered to show only clonotypes of interest.
   </figcaption>
@@ -261,7 +261,7 @@ When there is only one sample, two such views are shown.
   - On the bar plots, the Y axis corresponds to the order of clonotypes inside each bar.
 
 <figure markdown>
-  ![Image title](..//pictures/panel_scatterplot.png){ width="500" }
+  ![Image title](./pictures/panel_scatterplot.png){ width="500" }
   <figcaption>Grid view with the default axes (V/5' and J/3' gene) focusing on the TRG locus. 
     The TRGV10/TRGJP10 clonotype appears in red because it has been tagged as `clone 1` from the clonotype list.  
     Clicking on IGH focus on the IGH locus.
@@ -280,7 +280,7 @@ The "Similarity by nucleotides" preset computes the similarity between each pair
     In most cases, the more dissimilarity there is among the clonotypes of the sample, the better the clonotypes are grouped.
 
   <figure> <p style="text-align:center">
-      <img src="..//pictures/scatterplot_similarity.png"/>
+      <img src="./pictures/scatterplot_similarity.png"/>
       <p style="text-align:center">A) Artificial sample with only 5 clonotypes, divergent by only one mismatch, but
       here displayed far apart. <br/>B)
       Same clonotypes in a large polyclonal sample with one hundred clonotypes. The five clonotypes are clusterized.</p>
@@ -313,7 +313,7 @@ The sequence panel shows, for the selected clonotypes:
 
 
 <figure markdown>
-  ![Image title](..//pictures/panel_sequence.png)
+  ![Image title](./pictures/panel_sequence.png)
   <figcaption>
       For each clonotype, name and sequences are shown. You can align sequences and see differences between them. Here the two first sequences seem identical on the region displayed though they actually differ. The third and fifth sequences differ by a deletion and an insertion in the junction, within a stretch of cytosine. From here you can remove more divergent clonotypes (using the cross on the left side) and cluster others with the corresponding button. You can also choose to show some available features on the seuqence as primers, visible here under sequence on 3' extremities.
   </figcaption>
@@ -337,7 +337,7 @@ with the first (largest) selected clonotype acting as its representative.
 
 
 <figure markdown>
-  ![Image title](..//pictures/panel_list_merge_2.png)
+  ![Image title](./pictures/panel_list_merge_2.png)
   <figcaption>
     The top clonotype is actually a cluster of several sub-clonotypes. It is still possible to access to all the information of such sub-clonotype. Clicking on "x" remove a sub-clonotype from the cluster.
   </figcaption>
@@ -423,7 +423,7 @@ Then select `export report` inside the menu `ìmport/export`.
 
 
 <figure markdown>
-  ![Image title](..//pictures/report_menu_default.png)
+  ![Image title](./pictures/report_menu_default.png)
   <figcaption> The report menu with some default templates. </figcaption>
 </figure>
 
@@ -459,7 +459,7 @@ The warning view (new in release 2023.03) lists global and clonotype warnings.
 Clonotypes with a specific warning can be selected (🔍), either from the current sample or from all samples.
 
 <figure> <p style="text-align:center">
-      <img src="..//pictures/warnings_view.png"/>
+      <img src="./pictures/warnings_view.png"/>
   </figure>
   <i>
       The most frequent warning in this sample, W69, tells that some clonotypes
@@ -489,7 +489,7 @@ you can process your data and save the results of your analysis.
 ### Patients
 
 <figure markdown>
-  ![Image title](..//pictures/table_db_content_patient_list.png)
+  ![Image title](./pictures/table_db_content_patient_list.png)
   <figcaption>
     The main page on the sample database show a list of patients, or runs or sets,
     with links to the samples and the results.
@@ -571,7 +571,7 @@ You can see which samples have been processed with the selected
 process, and access to the results (`See results`, bottom right).
 
 <figure markdown>
-  ![Image title](..//pictures/table_db_content_patient_0_multi_config.png)
+  ![Image title](./pictures/table_db_content_patient_0_multi_config.png)
   <figcaption>
     The demo patient LIL-L3, available from the demo account, has 5 samples 
     here analyzed with the default `multi+inc+xxx` configuration.
@@ -721,7 +721,7 @@ be manually clustered or not -- and the choice may depend on the purpose of her 
 
 In **MiXCR**, clonotypes are defined based on the amino-acid CDR3 sequence, on the V
 gene used and on the hypermutations.
-Other software may have other definitions, see also [What is a clone ?](/vidjil-format/#what-is-a-clone).
+Other software may have other definitions, see also [What is a clone ?](vidjil-format.md#what-is-a-clone).
 
 ### What is the sequence displayed for each clonotype ?
 
@@ -785,7 +785,7 @@ Sometimes, the "same" clonotype shows different properties between different sam
 as for exemple different V(D)J designations or productivity prediction.
 Warnings [W81 and W82](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) are now raised for such situations.
 
-Such differences may come from [the way sequences are clustered](/vidjil-format/#what-is-a-clone).
+Such differences may come from [the way sequences are clustered](vidjil-format.md#what-is-a-clone).
 When different sequences are clustered in a "same" clone,
 some of them may actually have different mutations or lengths even if they share the same window.
 This can also be due to clustering results of different analysis programs, for example
@@ -878,7 +878,7 @@ Several indices are computed on the full list of clonotypes to assess the divers
 
 
 <figure markdown>
-  ![Image title](..//pictures/diversity_splitted_by_locus.png)
+  ![Image title](./pictures/diversity_splitted_by_locus.png)
   <figcaption>
     The diversity section of sample information panel.
     Since algo release `2022.03`, diversity is also splitted by locus.
@@ -937,7 +937,7 @@ With DNA-Seq sequencing with specific V(D)J primers,
 ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
 On the other side, capture with many probes or RNA-Seq strategies usually lead to datasets with less than 0.1% V(D)J recombinations.
 
-The sample information panel (“info“ button) further details the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [vidjil-algo documentation](vidjil-algo/#reads-without-detected-recombinations).
+The sample information panel (“info“ button) further details the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [vidjil-algo documentation](vidjil-algo.md#reads-without-detected-recombinations).
 There can be several causes leading to low ratios:
 
 #### Analysis or biological causes
@@ -1031,7 +1031,7 @@ clonotype, instead of the info icon.
 
 ### Displaying primers
 
-Library preparation may involve some [usual sets of primers](locus.md).
+Library preparation may involve some [usual sets of primers](http://www.vidjil.org/doc/locus/).
 To display the primers,
 select such a primer set with ``settings -> primer set``.
 This aligns the clonotype sequences against the selected primer set.
