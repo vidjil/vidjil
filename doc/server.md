@@ -9,7 +9,7 @@
 The supported way to install, run, and maintain a Vidjil server
 is to use **Docker containers**.
 We are developping and deploying them since 2018, and,
-as of 2023, these Docker containers are used on all our servers (healthcare, public)
+as of 2024, these Docker containers are used on all our servers (healthcare, public)
 as well as in some partner hospitals.
 See the [hosting options](http://wwW.vidjil.org/doc/healthcare/),
 including support and remote maintenance
@@ -78,7 +78,7 @@ is now the main constraint** in our environment.
 
 Depending on the sequencer, files can weigh several GB.
 Depending of the number of users, a full installation's total storage should thus be serveral hundred GB, or even several TB
-(as of the end of 2018, 4 TB for the public server).
+(as of the end of 2023, 10 TB for the public server).
 We recommend a **RAID setup** of at least **2x2TB** to allow for user files and at least one backup.
 
 User files (results, annotations) as well as the metadata database are quite smaller
@@ -142,11 +142,11 @@ From image `vidjil/client`
 From image `vidjil/server`
 
   - `mysql` The database
-  - `uwsgi` The Web2py backend server
-  - `workers` The Web2py Scheduler workers in charge of executing vidjil users' samples
+  - `uwsgi` The Py4web backend server
+  - `workers` The Py4web Scheduler workers in charge of executing vidjil users' samples
 
   - `fuse` The XmlRPCServer that handles queries for comparing samples
-  - `backup` Starts a cron job to schedule regular backups
+  - `restic` Starts a cron job to schedule regular backups
   - `reporter` A monitoring utility that can be configured to send monitoring information to a remote server
   - `postfix` A mail relay to allow `uwsgi` to send error notifications
 
@@ -226,9 +226,8 @@ The first time, this container creates the database and it takes some time.
 
 - When `mysql` is launched,
 you can safely launch `docker-compose up`.
-Then `docker ps` should display five running containers:
-`docker_nginx_1`, `docker_uwsgi_1`, `docker_workers_1`, `docker_fuse_1`, `docker_mysql_1`
-
+Then `docker ps` should display eight running containers:
+`docker_nginx_1`, `docker_uwsgi_1`, `docker_mysql_1`, `docker_fuse_1`, `docker_workers_1`, `docker_celery_1`, `docker_flowers_1`, `docker_redis_1`
 
   - Vidjil also need germline files.
       - You can use IMGT germline files if you accept IMGT licence.
@@ -243,6 +242,8 @@ Then `docker ps` should display five running containers:
 Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
 It will be also the web2py admin password.
+
+- Once these main service are set, you can also set docker service for backup and mail communication.
 
 *notice* : By default, Nginx HTTP server listens for incoming connection and binds on port 80 on the host, if you encounter the following message error:
 ```
@@ -277,10 +278,8 @@ the container and starts uwsgi
   - `sites/nginx` configuration required when running vidjil with nginx
   - `service` (not currently in use)
 
-Here are some notable configuration changes you should consider:
-
-  -  mysql root password (`mysql.environment` in `docker-compose.yml`),  mysql vidjil password (`docker-compose.yml` and  `vidjil-server/conf/defs.py`),
-     as mentionned above
+Here are some notable configuration changes you should consider. Main change can be done by editing `docker/.env` configuration file. List of settable variable is in `docker/.env-default`. Some other should be done in `vidjil-server/conf/defs.py` file.
+  -  mysql root and vidjil password can be setted as mentionned above
 
   - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
     They are used for admin emails monitoring the server an reporting errors.
@@ -382,19 +381,14 @@ cd /usr/share/vidjil/server
 sh backup.sh vidjil /mnt/backup >> /var/log/cron.log 2>&1
 ```
 
-#### I can't connect to the web2py administration site
-The URL to this site is https://mywebsite/admin/default/.
-The password should be given in the `docker-compose.yml` file.
-Otherwise a random password is generated. You can still modify
-this password by connecting to the server (in the `uwsgi` container).
-Go in the the `/usr/share/vidjil/server/web2py` directory and then
-launch Python.
-```python
-from gluon.main import save_password
-save_password(PASSWORD, 443)
-```
+#### I can't connect to the py4web administration site
+The URL to this site is https://mywebsite/_dashboard.
+The password should be given in the docker `.env` environment file.
+
 This password will not persist when the container will be restarted.
 For a persistent password, please use the environment variable.
+
+Each time you relaunch uwsgi server, the password is update to last value present in `.env`.
 
 ### Updating a Docker installation
 
@@ -402,7 +396,7 @@ For a persistent password, please use the environment variable.
 
 #### Before the update
 
-We post news on image updates at <http://gitlab.vidjil.org/tree/dev/docker/CHANGELOG>.
+We post news on image updates at [changelogs docker](changelog-docker.md).
 Check there whether the new image require any configuration change.
 
 By security, we please you to always make a backup (see "Backups", below) before doing this process.
@@ -485,389 +479,8 @@ the Dockerhub page](https://hub.docker.com/r/vidjil/server/tags/).
 
     We used this installation on the public server between 2014 and 2018.
     This installation is not supported anymore.
-    We rather advise to use the Docker containers (see above).
+    Only available installation should use docker service and docker containers (see above).
 
-### Requirements (for Ubuntu 16.04)
-
-``` bash
-apt-get install git
-apt-get install g++
-apt-get install make
-apt-get install unzip
-apt-get install python-dev python-pip
-apt-get install libyajl2 libyajl-dev
-pip install unittest2
-pip install unittest-xml-reporting
-pip install enum34
-pip install ijson cffi
-```
-
-### Server installation and initialization
-
-Enter in the `server/` directory.
-
-If you just want to do some tests without installing a real web server,
-then launch `make install_web2py_standalone`. In the other case, launch
-`make install_web2py`.
-
-
-### Detailed manual server installation and browser linking
-
-Requirements:
-ssh, zip unzip, tar, openssh-server, build-essential, python, python-dev,
-mysql, python2.5-psycopg2, postfix, wget, python-matplotlib, python-reportlab,
-python-enum34, mercurial, git
-
-If you want to run Vidjil with an Apache webserver you will also need:
-apache2, libapache2-mod-wsgi
-
-Or if you want to use Nginx:
-nginx-full, fcgiwrap
-
-For simplicity this guide will assume you are installing to `/home/www-data`
-
-Clone <https://github.com/vidjil/vidjil.git>
-
-Download and unzip web2py. Copy the contents of web2py to the server/web2py
-folder of you Vidjil installation
-(in this case /home/www-data/vidjil/server/web2py) and give ownership to www-data:
-
-``` bash
-chown -R www-data:www-data /home/www-data/vidjil
-```
-
-If you are using apache, you can run the following commands to make sure all the apache modules you need
-are activated:
-
-``` bash
-a2enmod ssl
-a2enmod proxy
-a2enmod proxy_http
-a2enmod headers
-a2enmod expires
-a2enmod wsgi
-a2enmod rewrite  # for 14.04
-```
-
-In order to setup the SSL encryption a key to give to apache. The safest option
-is to get a certicate from a trusted Certificate Authority, but for testing
-purposes you can generate your own:
-
-``` bash
-mkdir /etc/<webserver>/ssl
-openssl genrsa 1024 > /etc/<webserver>/ssl/self_signed.key
-chmod 400 /etc/<webserver>/ssl/self_signed.key
-openssl req -new -x509 -nodes -sha1 -days 365 -key
-    /etc/<webserver>/ssl/self_signed.key > /etc/apache2/ssl/self_signed.cert
-openssl x509 -noout -fingerprint -text <
-    /etc/<webserver>/ssl/self_signed.cert > /etc/<webserver>/ssl/self_signed.info
-```
-
-\<webserver\> should be replaced with the appropriate webserver name
-(ie. apache2 or nginx)
-
-Given that Vidjil is a two-part application, one that serves routes from a server
-and one that is served statically, we need to configure the apache to do so.
-Therefore we tell the apache to:
-
-  - Start web2py as a wsgi daemon (allows apache to serve the application).
-  - Reserve two virtual hosts (one to be served with ssl encryption, and one not).
-  - We configure the first host to serve static content and prevent overriding
-    by the sever (otherwise all routes are redirected through web2py) and to follow symlinks
-    this allows us to symlink to our browser app in the /var/www directory and keep both parts
-    of Vidjil together.
-  - The second is set to use SSL encryption, and only serve very specific folders statically (such
-    as javascript files and images because we don't want to create a controller to serve that kind of data)
-
-you can replace your apache default config with the following
-(/etc/apache2/sites-available/default.conf - remember to make a backup just in case):
-
-``` example
-WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
-
-<VirtualHost *:80>
-
-  DocumentRoot /var/www
-  <Directory />
-    Options FollowSymLinks
-    AllowOverride None
-  </Directory>
-
-  <Directory /var/www/>
-    Options Indexes FollowSymLinks MultiViews
-    AllowOverride all
-    Order allow,deny
-    allow from all
-  </Directory>
-
-  ScriptAlias /cgi/ /usr/lib/cgi-bin/
-
-  <Directory /usr/lib/cgi-bin/>
-    Options Indexes FollowSymLinks
-    Options +ExecCGI
-    #AllowOverride None
-    Require all granted
-    AddHandler cgi-script cgi pl
-  </Directory>
-
-  <Directory /home/www-data/vidjil/browser>
-    AllowOverride None
-  </Directory>
-
-  CustomLog /var/log/apache2/access.log common
-  ErrorLog /var/log/apache2/error.log
-</VirtualHost>
-
-
-<VirtualHost *:443>
-  SSLEngine on
-  SSLCertificateFile /etc/apache2/ssl/self_signed.cert
-  SSLCertificateKeyFile /etc/apache2/ssl/self_signed.key
-
-  WSGIProcessGroup web2py
-  WSGIScriptAlias / /home/www-data/vidjil/server/web2py/wsgihandler.py
-  WSGIPassAuthorization On
-
-  <Directory /home/www-data/vidjil/server/web2py>
-    AllowOverride None
-    Require all denied
-    <Files wsgihandler.py>
-      Require all granted
-    </Files>
-  </Directory>
-
-  AliasMatch ^/([^/]+)/static/(?:_[\d]+.[\d]+.[\d]+/)?(.*) \
-        /home/www-data/vidjil/server/web2py/applications/$1/static/$2
-
-  <Directory /home/www-data/vidjil/server/web2py/applications/*/static/>
-    Options -Indexes
-    ExpiresActive On
-    ExpiresDefault "access plus 1 hour"
-    Require all granted
-  </Directory>
-
-  CustomLog /var/log/apache2/ssl-access.log common
-  ErrorLog /var/log/apache2/error.log
-</VirtualHost>
-```
-
-Now we want to activate some more apache mods:
-
-``` bash
-a2ensite default                   # FOR 14.04
-a2enmod cgi
-```
-
-Restart the server in order to make sure the config is taken into account.
-
-And create some symlinks to avoid splitting our app:
-
-``` bash
-ln -s /home/www-data/vidjil/browser /var/www/browser
-ln -s /home/www-data/vidjil/browser/cgi/align.cgi /usr/lib/cgi-bin
-ln -s /home/www-data/vidjil/germline /var/www/germline
-ln -s /home/www-data/vidjil/data /var/www/data
-```
-
-If you are using Nginx, the configuration is the following:
-
-``` example
-server {
-    listen 80;
-    server_name \$hostname;
-    return 301 https://\$hostname$request_uri;
-
-}
-server {
-        listen 443 default_server ssl;
-        server_name     \$hostname;
-        ssl_certificate         /etc/nginx/ssl/web2py.crt;
-        ssl_certificate_key     /etc/nginx/ssl/web2py.key;
-        ssl_prefer_server_ciphers on;
-        ssl_session_cache shared:SSL:10m;
-        ssl_session_timeout 10m;
-        ssl_ciphers ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA;
-        ssl_protocols TLSv1.2 TLSv1.3;
-        keepalive_timeout    70;
-        location / {
-            #uwsgi_pass      127.0.0.1:9001;
-            uwsgi_pass      unix:///tmp/web2py.socket;
-            include         uwsgi_params;
-            uwsgi_param     UWSGI_SCHEME \$scheme;
-            uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
-            ###remove the comments to turn on if you want gzip compression of your pages
-            # include /etc/nginx/conf.d/web2py/gzip.conf;
-            ### end gzip section
-
-            proxy_read_timeout 600;
-            client_max_body_size 20G;
-            ###
-        }
-        ## if you serve static files through https, copy here the section
-        ## from the previous server instance to manage static files
-
-        location /browser {
-            root /home/www-data/vidjil/;
-            expires 1h;
-
-            error_page 405 = $uri;
-        }
-
-        location /germline {
-            root $CWD/../;
-            expires 1h;
-
-            error_page 405 = $uri;
-        }
-
-        ###to enable correct use of response.static_version
-        #location ~* ^/(\w+)/static(?:/_[\d]+\.[\d]+\.[\d]+)?/(.*)$ {
-        #    alias /home/www-data/vidjil/server/web2py/applications/\$1/static/\$2;
-        #    expires max;
-        #}
-        ###
-
-        location ~* ^/(\w+)/static/ {
-            root /home/www-data/vidjil/server/web2py/applications/;
-            expires max;
-            ### if you want to use pre-gzipped static files (recommended)
-            ### check scripts/zip_static_files.py and remove the comments
-            # include /etc/nginx/conf.d/web2py/gzip_static.conf;
-            ###
-        }
-
-        client_max_body_size 20G;
-
-        location /cgi/ {
-            gzip off;
-            root  /home/www-data/vidjil/browser/;
-            # Fastcgi socket
-            fastcgi_pass  unix:/var/run/fcgiwrap.socket;
-            # Fastcgi parameters, include the standard ones
-            include /etc/nginx/fastcgi_params;
-            # Adjust non standard parameters (SCRIPT_FILENAME)
-            fastcgi_param SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
-        }
-
-}
-```
-
-We also do not create symlinks since all references are managed
-correctly.
-
-Now we need to configure the database connection parameters:
-
-  - create a file called conf.js in /home/www-data/vidjil/browser/js containing:
-    
-    ``` example
-    var config = {
-        /*cgi*/
-        "cgi_address" : "default",
-    
-        /*database */
-        "use_database" : true,
-        "db_address" : "default",
-    
-        "debug_mode" : false
-    }
-    ```
-
-This tells the browser to access the server on the current domain.
-You may also add a variable called `server_id` in order to name different
-instances and environments; it will be displayed in the top menu.
-
-  - copy vidjil/server/web2py/applications/vidjil/modules/defs.py.sample
-    to vidjil/server/web2py/applications/vidjil/modules/defs.py
-    and change the value of DB<sub>ADDRESS</sub> to reference your database.
-
-You can now access your app.
-All that is left to do is click on the init database link above the login page.
-This creates a default admin user: plop@plop.com and password: 1234 (make sure to
-remove this user in your production environment) and creates the configurations you can have
-for files and results.
-
-### Testing the server
-
-If you develop on the server, or just want to check if everything is ok, you
-should launch the server tests.
-
-First, you should have a working fuse server by launching `make
-  launch_fuse_server` (just launch it once, then it is running in the
-background and can be killed with `make kill_fuse_server`).
-
-Then you can launch the tests with `make unit`.
-
-# Troubleshootings
-
-## Web2py runs but does not allow any connection
-
-Check whether the relevant disks are properly mounted.
-Disks failures or other events could have triggered a read-only partition.
-
-##### Jobs stay in `QUEUED`, workers seem to be stuck
-
-For some reasons, that are not clear yet, it may happen that workers are not
-assigned any additional jobs even if they don't have any ongoing jobs.
-
-In such a (rare) case, it may be useful to restart the workers by clicking on
-the *reset workers* link in the Vidjil administration interface. Restarting
-workers won't be performed if jobs are currently running or assigned.
-
-A cron job is executed by UWSGI that periodically checks whether jobs remain
-queued for too long. By default the cron task is run every 20 min and restart
-the workers as soon as jobs are queued for at least 1 hour. Those values can
-be modified in the `docker/vidjil-server/conf/uwsgi.ini` (changing it requires
-to restart the UWSGI container).
-
-
-##### Debugging Web2py workers
-
-One can launch the workers by hand (see in the `/etc/init` script and add a
-`-D 0` option. It prints debugging information on what the workers are doing.
-
-The most useful information are from the TICKER worker: the one that
-assigns jobs to workers. So you'd better first kill all the workers and
-then launch one by hand to be sure that it will be the ticker.
-
-##### Restarting web2py
-
-Just touch the file `/etc/uwsgi/web2py.ini`.
-
-Another of restarting it is by touching the file
-`server/web2py/applications/vidjil/modules/defs.py`.
-This will tell `uwsgi` to restart web2py (including the workers).
-
-##### Restarting uwsgi
-
-When one modifies an uwsgi config file (usually in `/etc/uwsgi` directory, it
-may be necessary to restart uwsgi so that the modifications are taken into
-account. This can be done using
-
-``` bash
-initctl restart uwsgi-emperor
-```
-
-##### Logging database queries
-
-MySQL
-
-One can see some [insightful SO post](https://stackoverflow.com/questions/650238/how-to-show-the-last-queries-executed-on-mysql).
-To summarize, this can either be done at runtime:
-
-``` sql
-SET GLOBAL log_output = "FILE";
-SET GLOBAL general_log_file = "/path/to/your/logfile.log";
-SET GLOBAL general_log = 'ON';
-```
-
-Or directly in the configuration file (less recommended):
-
-``` conf
-general_log_file        = /var/log/mysql/mysql.log
-general_log             = 1
-```
-
-In that case the server must be restarted afterwards.
 
 ## Running the server in a production environment
 
@@ -878,9 +491,9 @@ precautionnary mesures, in order to ensure production can either be rolled
 back to a previous version or simply that any encurred loss of data can be
 retrieved.
 
-Web2py and Vidjil are no exception to this rule.
+PY4web and Vidjil are no exception to this rule.
 
-### <a name="makingbackups"></a> Making backups
+### Making backups
 
 The top priority is to backup *files created during the analysis*
 (either by a software or a human).
@@ -913,44 +526,6 @@ access to referenced files.
 Taking two mesures to prevent file loss might seem like overkill, but
 securing data is more important than the small amount of extra time spent
 putting these mesures into place.
-
-# Plain server installation -- updating the server
-
-**(information to be updated)**
-
-Currently deploying changes to production is analogous to merging into the
-rbx branch and pulling from the server.
-
-Once this has been done, it is important that any database migrations have
-been applied.
-This can be verified by refreshing the server (calling a controller) and
-then looking at the database.
-
-## Step by Step
-
-  - Check permissions on the uploads folder (set to 100)
-      - you can also check the amount of files present at this point for future
-        reference
-  - Backup database: Archive old backup.csv and then from admin page: backup
-    db
-  - pull rbx (if already merged dev)
-  - Check the database (for missing data or to ensure mmigrations have been
-    applied)
-  - Check files to ensure no files are missing
-  - Reset the folder permissions on uploads (755 seems to be the minimum
-    requirement for web2py)
-  - Run unit tests (Simply a precaution: Continuous Integration renders this
-    step redundant but it's better to be sure)
-  - Check site functionnality
-
-# Resetting user passwords
-
-Currently there is not easy way of resetting a user's password.
-The current method is the following:
-```bash
-cd server/web2py
-python web2py -S vidjil -M db.auth_user[<user-id>].update_record(password=CRYPT(key=auth.settings.hmac_key)('<password>')[0],reset_password_key='')
-```
 
 ### Migrating Data
 
@@ -1120,7 +695,7 @@ Indeed, it keeps track of database migrations and errors will occur if
 tables exist which it considers it needs to create.
 
 In order to import the data into an installation you first need to ensure
-the tables have been created by Web2py this can be achieved by simply
+the tables have been created by Py4web. This can be achieved by simply
 accessing a non-static page.
 
 !!! warning
@@ -1145,6 +720,14 @@ this is not the recommended course of action.
 
 
 ## Using CloneDB [Under development]
+
+!!! note
+
+  This documentation is not suitable for py4web version of server.
+  Please wait for release 2024.06 to be fixed.
+  If you need to use it until this date, please contact us at support@vidjil.org.
+
+
 The [CloneDB](https://gitlab.inria.fr/vidjil/clonedb) has to be installed
 independently of the Vidjil platform.
 
