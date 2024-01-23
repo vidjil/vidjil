@@ -1,5 +1,6 @@
 .install-algo-dependencies:
   before_script:
+    - sed -i '/security.*(jessie|buster)/d;s/(jessie|buster)/bullseye/g' /etc/apt/sources.list
     - apt-get update
     - apt-get install -y time valgrind python2.7 python3 wget tar make zlib1g-dev
     - ln -sf /usr/bin/python2.7 /usr/bin/python
