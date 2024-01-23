@@ -46,6 +46,12 @@ Cypress.Commands.add('setBrowser', (url) => {
   }
 })
 
+Cypress.Commands.add('closeFlashAll', () => { 
+  cy.closeFlash('.flash_1')
+  cy.closeFlash('.flash_2')
+  cy.closeFlash('.flash_3')
+})
+
 Cypress.Commands.add('open_menu', (id) => { 
   cy.get('#'+id+'> .selector').invoke('show')
 })
