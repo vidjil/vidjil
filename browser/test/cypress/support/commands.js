@@ -37,7 +37,7 @@ Cypress.Commands.add('setBrowser', (url) => {
   cy.visit(url)
 
   // close disclamer only for direct opening of the index.html file
-  if (true){ //url.indexOf("index.html") != -1){
+  if (url.indexOf("index.html") != -1){
     cy.close_disclamer()
     cy.close_tips()
     cy.closeFlash('.flash_1')
