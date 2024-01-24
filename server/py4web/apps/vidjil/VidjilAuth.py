@@ -882,9 +882,9 @@ class VidjilAuth(Auth):
 
     def user_group_role(self, user_id=None):
         if user_id:
-            return  'user_%(id)04d' % {'id' : user_id }
+            return  'user_%(id)04d' % {'id' : int(user_id) }
         else:
-            return  'user_%(id)04d' % {'id' : self.user_id }
+            return  'user_%(id)04d' % {'id' : int(self.user_id) }
         
 
     def has_membership(self, group_id=None, user_id=None, role=None, cached=False):
