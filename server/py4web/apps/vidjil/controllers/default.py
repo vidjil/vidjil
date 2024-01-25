@@ -71,7 +71,7 @@ def home():
     if auth.is_admin():
         redirect = URL('admin/index')
     else:
-        redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)
+        redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0})
     res = {"redirect" : redirect}
     return json.dumps(res, separators=(',',':'))
 
