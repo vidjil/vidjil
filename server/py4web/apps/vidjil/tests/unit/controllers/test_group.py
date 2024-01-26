@@ -59,7 +59,7 @@ class TestGroupController(unittest.TestCase):
         assert query[0]["access"] == "ec"
         assert query[1]["role"] == "public"
         assert query[1]["access"] == ""
-        assert query[2]["role"] == "user_1"
+        assert query[2]["role"] == "user_0001"
         assert query[2]["access"] == ""
 
     def test_index_other_user(self):
@@ -83,9 +83,9 @@ class TestGroupController(unittest.TestCase):
         assert query[0]["access"] == "ec"
         assert query[1]["role"] == "public"
         assert query[1]["access"] == ""
-        assert query[2]["role"] == "user_1"
+        assert query[2]["role"] == "user_0001"
         assert query[2]["access"] == ""
-        assert query[3]["role"] == "user_2"
+        assert query[3]["role"] == "user_0002"
         assert query[3]["access"] == "eacsu"
         # TODO : check that it is expected that we get all groups here (not only the group user has access to)
 
@@ -119,7 +119,7 @@ class TestGroupController(unittest.TestCase):
         groups = result["groups"]
         assert len(groups) == 7
         assert groups[0]["role"] == "admin"
-        assert groups[1]["role"] == "user_1"
+        assert groups[1]["role"] == "user_0001"
         assert groups[2]["role"] == "public"
 
     def test_add_other_user(self):
@@ -140,7 +140,7 @@ class TestGroupController(unittest.TestCase):
         groups = result["groups"]
         assert len(groups) == 2
         assert groups[0]["role"] == "public"
-        assert groups[1]["role"] == "user_2"
+        assert groups[1]["role"] == "user_0002"
 
     ##################################
     # Tests on group_controller.add_form()
@@ -284,12 +284,12 @@ class TestGroupController(unittest.TestCase):
 
     def test_edit_form(self):
         # Given : not logged
-        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_0001_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_0001_id)
 
         # When : Calling edit_form
         with Omboddle(self.session, keep_session=True,
@@ -339,12 +339,12 @@ class TestGroupController(unittest.TestCase):
 
     def test_confirm_ok(self):
         # Given : Logged as other user, and add corresponding config, ...
-        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_0001_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_0001_id)
 
         # When : Calling confirm
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": user_group_id}):
@@ -389,12 +389,12 @@ class TestGroupController(unittest.TestCase):
 
     def test_delete_ok(self):
         # Given : Logged as other user, and add corresponding config, ...
-        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_0001_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_0001_id)
         assert db.auth_group[user_group_id] != None
 
         # When : Calling delete
@@ -442,12 +442,12 @@ class TestGroupController(unittest.TestCase):
 
     def test_info_ok(self):
         # Given : Logged as other user, and add corresponding config, ...
-        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_0001_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_0001_id)
 
         # When : Calling info
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": user_group_id}):
@@ -457,7 +457,7 @@ class TestGroupController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "group info"
         assert result["group"]["id"] == user_group_id
-        assert result["result"][str(user_1_id)]["auth_user"]["id"] == user_1_id
+        assert result["result"][str(user_0001_id)]["auth_user"]["id"] == user_0001_id
 
     ##################################
     # Tests on group_controller.invite()
@@ -465,19 +465,19 @@ class TestGroupController(unittest.TestCase):
 
     def test_invite(self):
         # Given : logged as admin
-        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_0001_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        assert not auth.has_membership(1, user_1_id)
+        assert not auth.has_membership(1, user_0001_id)
 
         # When : Calling invite
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"group_id": 1, "user_id": user_1_id}):
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"group_id": 1, "user_id": user_0001_id}):
             json_result = group_controller.invite()
 
         # Then : user is added in group
         result = json.loads(json_result)
         assert result["redirect"] == "group/info"
-        assert result["message"] == f"user '{user_1_id}' added to group '1'"
-        assert auth.has_membership(1, user_1_id)
+        assert result["message"] == f"user '{user_0001_id}' added to group '1'"
+        assert auth.has_membership(1, user_0001_id)
 
     ##################################
     # Tests on group_controller.kick()
@@ -485,20 +485,20 @@ class TestGroupController(unittest.TestCase):
 
     def test_kick(self):
         # Given : logged as admin
-        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_0001_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        auth.add_membership(1, user_1_id)
-        assert auth.has_membership(1, user_1_id)
+        auth.add_membership(1, user_0001_id)
+        assert auth.has_membership(1, user_0001_id)
 
         # When : Calling kick
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"group_id": 1, "user_id": user_1_id}):
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"group_id": 1, "user_id": user_0001_id}):
             json_result = group_controller.kick()
 
         # Then : user is added in group
         result = json.loads(json_result)
         assert result["redirect"] == "group/info"
-        assert result["message"] == f"user '{user_1_id}' removed from group '1'"
-        assert not auth.has_membership(1, user_1_id)
+        assert result["message"] == f"user '{user_0001_id}' removed from group '1'"
+        assert not auth.has_membership(1, user_0001_id)
 
     ##################################
     # Tests on group_controller.rights()
