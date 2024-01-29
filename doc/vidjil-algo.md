@@ -131,7 +131,7 @@ make germline
    # get IMGT germline databases (IMGT/GENE-DB) -- you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
    # and cited as "IMGT®, the international ImMunoGeneTics information system® 
-   # http://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
+   # https://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
    # Lefranc, M.-P., IMGT®, the international ImMunoGeneTics database,
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 

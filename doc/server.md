@@ -373,7 +373,7 @@ you can look into:
 
 #### Launching manually the backup
 
-The backup should be handled by the backup container, see [*Making backups* below](#makingbackups). Otherwise you can use the `backup.sh` script by connecting to the `backup` or `uwsgi` container (for a full backup, otherwise add the `-i` option when
+The backup should be handled by the backup container, see [*Making backups* below](#making-backups). Otherwise you can use the `backup.sh` script by connecting to the `backup` or `uwsgi` container (for a full backup, otherwise add the `-i` option when
 running `backup.sh`):
 
 ```sh

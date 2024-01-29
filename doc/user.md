@@ -308,7 +308,7 @@ or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
 The sequence panel shows, for the selected clonotypes:
 
- - the nucleotide or amino acid *sequences* -- see below "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clone)"
+ - the nucleotide or amino acid *sequences* -- see below "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clonotype)"
  - some *features* on these sequences
 
 
@@ -373,7 +373,7 @@ The data columns `‖` menu allows to select such data.
 This sub menu display a range of other analysis software available online used for RepSeq studies.
 These buttons will send the sequences of selected clonotypes to them for analysis and open the resulting page in another window/tab.
 
-  - [`❯ IMGT/V-QUEST`](http://www.imgt.org/IMGT_vquest):
+  - [`❯ IMGT/V-QUEST`](https://www.imgt.org/IMGT_vquest):
     The reference analysis from IMGT®, including search for subset `#2` and `#8`.
     See [below](#imgt-sequence-features)
 
@@ -910,7 +910,7 @@ Parsing the `.vidjil` files gives then all information computed on each clonotyp
 
 ### Going back to the analyzed reads
 
-The web application displays one consensus sequence per clonotype (see [Representative](#what-is-the-sequence-displayed-for-each-clone) above).
+The web application displays one consensus sequence per clonotype (see [Representative](#what-is-the-sequence-displayed-for-each-clonotype) above).
 In some situations, one may want to go back to the reads.
 
 For **vidjil-algo**, analyzing a dataset with the *default + extract reads* process
@@ -998,7 +998,7 @@ In **vidjil-algo**,
 the clonotype coverage is the ratio of the length of the clonotype consensus sequence
 to the median read length in the clonotype.
 A consensus sequence is
-displayed for each clonotype (see [What is the sequence displayed for each clone?](#what-is-the-sequence-displayed-for-each-clone)).
+displayed for each clonotype (see [What is the sequence displayed for each clonotype?](#what-is-the-sequence-displayed-for-each-clonotype)).
 Its length should be representative of the read lengths among that clonotype. A
 clonotype can be constituted of thousands of reads of various lengths. We
 expect the consensus sequence to be close to the median read length of the
@@ -1329,7 +1329,7 @@ The last release is 2021.01.
 
 ##### Multi + contigs 
 Experimental;  default mutli+inc+xxx configuration + pre-fuse script for creation of contigs on the top 5 of clones from raw reads.
-Run script `capture_contigs.py` available in contribution repository and developped with Nantes CHU team ([publication xxx & al](xxx)).
+Run script `capture_contigs.py` available in contribution repository and developped with Nantes CHU team (publication to come).
 
 ??? Parameters
         program: `vidjil`
