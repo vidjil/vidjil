@@ -13,7 +13,7 @@ from contextlib import contextmanager
 import tempfile
 import shutil
 
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+from ..common import cors, log
 
 
 ##################################
@@ -101,12 +101,10 @@ def check_sequences(sequences):
 ##################################
 
 @action("/vidjil/segmenter/index", method=["POST", "GET"])
-@action.uses(db, auth.user)
+@action.uses(cors)
 def index():
     if request.query['sequences'] == None or request.query['sequences'] == '':
         return None
 
     sequences = request.query['sequences']
     return segment_sequences(sequences)
-
-

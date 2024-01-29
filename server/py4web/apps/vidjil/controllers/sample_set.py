@@ -1341,7 +1341,7 @@ def mystats():
     return json.dumps(d, separators=(',',':'))
 
 @action("/vidjil/sample_set/download_sequence_file/<filename>", method=["POST", "GET"])
-@action.uses(db, session)
+@action.uses(db, session, auth.user)
 def download(filename=None):
     mimetype = mimetypes.guess_type(defs.DIR_SEQUENCES+filename)
     return static_file(filename, root=defs.DIR_SEQUENCES, download=request.query.filename, mimetype=mimetype[1])

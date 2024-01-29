@@ -76,7 +76,7 @@ def home():
     return json.dumps(res, separators=(',',':'))
 
 @action("/vidjil/default/whoami", method=["POST", "GET"])
-@action.uses(db, session)
+@action.uses(db, auth.user, session)
 @vidjil_utils.jsontransformer
 def whoami():
     """
@@ -112,6 +112,7 @@ def whoami():
     return {}
 
 @action("/vidjil/default/logger", method=["POST", "GET"])
+@action.uses(cors)
 @vidjil_utils.jsontransformer
 def logger():
     '''Log to the server'''
@@ -841,6 +842,6 @@ def stop_impersonate() :
 
 ## TODO make custom download for .data et .analysis
 @action("/vidjil/default/download/<filename>", method=["POST", "GET"])
-@action.uses(db, session)
+@action.uses(db, session, auth.user)
 def download(filename=None):
     return static_file(filename, root=defs.DIR_RESULTS, download=True)
