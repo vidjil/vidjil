@@ -1,10 +1,7 @@
 import os
-import json
-from pathlib import Path
 import pathlib
 import pytest
-from .utils.omboddle import Omboddle
-from py4web.core import _before_request, Session, HTTP
+from py4web.core import _before_request, Session
 from ..functional.db_initialiser import DBInitialiser
 from .utils import db_manipulation_utils, test_utils
 from ...common import db, auth
@@ -15,7 +12,7 @@ from ... import tasks
 
 
 class TestTasks():
-    
+
     # TODO: mutualize ?
     @pytest.fixture(autouse=True)
     def init_env_and_db(self):
@@ -30,7 +27,7 @@ class TestTasks():
         # init db
         initialiser = DBInitialiser(db)
         initialiser.run()
-        
+
     fuse_cmd = ""
     fuse_out_folder = ""
     fuse_output_filename = ""
@@ -48,7 +45,7 @@ class TestTasks():
     def test_custom_fuse(self, mocker):
         # Given : add a result file and mock call to rpc
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -65,13 +62,13 @@ class TestTasks():
             patient_id, user_id)
         results_file_id = db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
-        
+
         mocked_server_proxy = mocker.patch(
             "xmlrpc.client.ServerProxy", return_value=self)
-        
+
         saved_dir_results = defs.DIR_RESULTS
         saved_dir_out_vidjil_id = defs.DIR_OUT_VIDJIL_ID
-        
+
         try:
             defs.DIR_RESULTS = str(test_utils.get_results_path())
             defs.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
@@ -82,7 +79,8 @@ class TestTasks():
 
             # Then : fuse was correctly called, directory was removed and we get a result
             mocked_server_proxy.assert_called_once()
-            assert TestTasks.fuse_cmd.startswith(f"python {os.path.abspath(os.path.join(defs.DIR_FUSE, 'fuse.py'))}")
+            assert TestTasks.fuse_cmd.startswith(
+                f"python {os.path.abspath(os.path.join(defs.DIR_FUSE, 'fuse.py'))}")
             assert not os.path.exists(TestTasks.fuse_out_folder)
             assert result["vidjil_json_version"] == "2014.10"
         finally:

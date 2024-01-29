@@ -140,7 +140,7 @@ def register_form():
     new_user_id = response["id"]
     new_user_email = request.params["email"]
     # create new user default group
-    new_user_group_id = db.auth_group.insert(role="user_%i" % (new_user_id),
+    new_user_group_id = db.auth_group.insert(role=auth.user_group_role(new_user_id),
                                              description="Group uniquely assigned to user %i" % (new_user_id))
     db.auth_membership.insert(user_id=new_user_id, group_id=new_user_group_id)
     # Default permissions

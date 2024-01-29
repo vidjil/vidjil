@@ -620,7 +620,7 @@ def reset_db(db):
         if mysql:
             db.executesql('SET FOREIGN_KEY_CHECKS = 1;')
 
-def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_password="1234"):
+def init_db_helper(db, auth, admin_email, admin_password, force=False):
     from ..modules.permission_enum import PermissionEnum
     if (force) or (db(db.auth_user.id > 0).count() == 0) : 
         if force:
@@ -638,7 +638,7 @@ def init_db_helper(db, auth, force=False, admin_email="plop@plop.com", admin_pas
 
         ## création des groupes de base
         id_admin_group=db.auth_group.insert(role='admin')
-        id_sa_group=db.auth_group.insert(role='user_1')
+        id_sa_group=db.auth_group.insert(role=auth.user_group_role(id_first_user))
         id_public_group=db.auth_group.insert(role="public")
 
         db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)

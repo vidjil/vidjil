@@ -245,7 +245,7 @@ class TestDefaultController():
     def test_run_request(self, mocker):
         # Given : Logged as other user, and add corresponding config, ...
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -307,7 +307,7 @@ class TestDefaultController():
     def test_run_all_request(self, mocker):
         # Given : Logged as other user, and add corresponding config, ...
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -373,7 +373,7 @@ class TestDefaultController():
     def test_get_data(self):
         # Given : Logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),

@@ -479,7 +479,7 @@ class TestConfigController(unittest.TestCase):
                                          1),
                                      db_manipulation_utils.get_indexed_user_password(1))
         config_id = db_manipulation_utils.add_config()
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_1_id)
 
         # When : Calling change_permission with no id in params
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"config_id": config_id, "group_id": user_group_id}):
@@ -494,7 +494,7 @@ class TestConfigController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         config_id = db_manipulation_utils.add_config()
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_1_id)
         assert auth.get_group_access(
             "config", config_id, user_group_id) == False
 
@@ -513,7 +513,7 @@ class TestConfigController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         config_id = db_manipulation_utils.add_config()
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_1_id)
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"config_id": config_id, "group_id": user_group_id}):
             json_result = config_controller.change_permission()
         assert auth.get_group_access(

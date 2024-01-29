@@ -509,7 +509,7 @@ class TestPreProcessController(unittest.TestCase):
         pre_process_id = db.pre_process.insert(name="pre process name",
                                                info="pre process info",
                                                command="pre process command")
-        user_group_id = test_utils.get_user_group_id(db, 1)
+        user_group_id = auth.user_group()
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.pre_process, pre_process_id)
 
@@ -563,7 +563,7 @@ class TestPreProcessController(unittest.TestCase):
                                          1),
                                      db_manipulation_utils.get_indexed_user_password(1))
         pre_process_id = db_manipulation_utils.add_pre_process()
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_1_id)
 
         # When : Calling change_permission with no id in params
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"pre_process_id": pre_process_id, "group_id": user_group_id}):
@@ -578,7 +578,7 @@ class TestPreProcessController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         pre_process_id = db_manipulation_utils.add_pre_process()
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_1_id)
         assert auth.get_group_access(
             "pre_process", pre_process_id, user_group_id) == False
 
@@ -597,7 +597,7 @@ class TestPreProcessController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         pre_process_id = db_manipulation_utils.add_pre_process()
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_1_id)
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"pre_process_id": pre_process_id, "group_id": user_group_id}):
             json_result = pre_process_controller.change_permission()
         assert auth.get_group_access(
