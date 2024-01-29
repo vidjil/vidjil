@@ -1,8 +1,10 @@
 
-Here are aggregated notes forming a part of the developer documentation on vidjil-algo.
-These notes are a work-in-progress, they are not as polished as the user documentation.
-Developers should also have a look at the [documentation for bioinformaticians and server administrators](/),
-at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
+!!! note
+    Here are aggregated notes forming a part of the developer documentation on the vidjil-algo.  
+    These notes are a work-in-progress, they are not as polished as the user documentation.  
+    Developers should also have a look at the documentation for [bioinformaticians](/doc/vidjil-algo/) and [server administrators](/doc/admin/),
+    at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
+
 
 # Development notes -- Vidjil-algo
 
