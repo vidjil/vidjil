@@ -13,14 +13,20 @@ info = db.notification[request.query["id"] ]
             <tr>
                 <td ><label for="notification_message_type" id="notification_message_type__label">type: </label></td>
                 <td >
-	                [[=SELECT(OPTION('Login page', _value='login'),OPTION('Header', _value='header'),value=info.message_type,_name="message_type")]]
+                    <select name="message_type">
+                        <option value='login' [[if info.message_type=='login':]]selected[[pass]]>Login page</option>
+                        <option value='header' [[if info.message_type=='header':]]selected[[pass]]>Header</option>
+                    </select>
 	                <span>*</span></td>
                 <td ></td>
             </tr>
             <tr>
                 <td><label for="notification_priority" id="notification_priority__label">priority: </label></td>
                 <td>
-	                [[=SELECT(OPTION('Information', _value='info'),OPTION('Urgent', _value='urgent'),value=info.priority,_name="priority")]]
+                    <select name="priority">
+                        <option value='info' [[if info.priority=='info':]]selected[[pass]]>Information</option>
+                        <option value='urgent' [[if info.priority=='urgent':]]selected[[pass]]>Urgent</option>
+                    </select>
 	                <span>*</span></td>
                 <td></td>
             </tr>
