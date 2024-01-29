@@ -58,11 +58,13 @@ Vidjil-algo is open-source, released under GNU GPLv3+ license.
 
 ## Performance
 
-To run with the default options on a 1GB .fastq file,
+To run with the default options on a 1GB .fastq file issue from amplicon protocol,
 vidjil-algo typically uses approximately 1.2GB of RAM
 and will take approx. 5+ minutes on a standard core at a few GHz.
-The actual performance mainly depends on the size of the input file,
-the number of processed germlines, and on some parameters.
+The actual performance mainly depends on the size of the input file, the number of expected clonotype,
+the number of processed germlines, and on some parameters 
+(eg: A file of rnaseq with few clonotype will take less memory than a file with polyclonal repertoire from amplicon protocol).
+
 
 Anyway, to process occasional requests from a single user with a few samples,
 a laptop or a desktop computer with any standard multi-core processor
