@@ -4,17 +4,22 @@ Vidjil is an open-source platform for the analysis of high-throughput sequencing
 the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille) 
 and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
 
+Vidjil is used in routine clinical practice in hospitals around the world, in particular for the diagnosis of patients suffering Acute Lymphoblastic Leukemia (ALL). Since 2015, around 50,000 routine samples were analyzed with Vidjil.
+As of 2024, Vidjil is used in 40+ studies on hemopathies (ALL, CLL, lymphomas, WM...) and immunology topics involving T-cell or B-cell repertoires.
+Vidjil was awarded an honourable mention at the French 2022 Open Science Awards for Open Source Research Software, in the Community category. 
+
 Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
 ## Vidjil core development
 
-  - Mathieu Giraud, 2011-2023
-  - Mikaël Salson, 2011-2023
+  - Mathieu Giraud, 2011-2024
+  - Mikaël Salson, 2011-2024
   - Marc Duez, 2012-2016, 2019-2022
   - Tatiana Rocher, 2014-2017
-  - Florian Thonier, 2015-2023
+  - Florian Thonier, 2015-2024
   - Ryan Herbert, 2015-2020
   - Aurélien Béliard, 2016-2017
+  - Clément Chesnin, 2023-2024
 
 ## Other contributors
 
@@ -25,8 +30,14 @@ Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
   - Amina Boussalia and Fabien Fache, 2016
   - Eddy El Khatib and Nicolas Berveglieri, 2017
   - Téo Vasseur, 2017
+  - Armand Bour, 2017
+  - Joao Meidanis, 2018-2024
   - Cyprien Borée, 2018
   - Alexia Omietanski, 2018
+  - Guilherme Giusti, 2020-2024
+  - Axel Mercier, 2021
+  - Agathe Bancquart, 2023
+
 
 ## `.should-vdj.fa` tests with curated V(D)J designations
 
@@ -41,11 +52,19 @@ Our special thanks go to:
   - Marine Armand
   - Jack Bartram
   - Aurélie Caillault
+  - Frédéric Davi
+  - Éric Delabesse
   - Yann Ferret
   - Alice Fievet
   - Martin Figeac
   - Nathalie Grardel
   - Michaela Kotrová
+  - Anton W. Langerak
+  - Yannick Le Bris
+  - Anne Langlois de Septenville
+  - Elizabeth Macintyre
+  - David Margery
+  - Cédric Pastoret
   - Claude Preudhomme
   - Shéhérazade Sebda
 
@@ -65,7 +84,7 @@ The development of Vidjil is funded by:
   - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
   - Inria Lille, 2015-2018
   - InCA, 2016-2019
-  - VidjilNet consortium at Inria, 2018-2023
+  - VidjilNet consortium at Inria, 2018-2024  
 
 
 ## References
