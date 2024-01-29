@@ -18,9 +18,20 @@ the [VidjilNet consortium](http://www.vidjil.net/).
 
 ## Requirements
 
-### CPU, RAM
+## CPU, RAM, Platform
 
-The recommended hardware depends on your needs.
+### Minimal
+
+The minimal requirements for Vidjil-algo
+(standard multi-core processor, 2GB RAM, recent distribution)
+are detailed in [vidjil-algo.md](vidjil-algo.md).
+
+### Recommended
+
+When choosing hardware for your server it is important to know the scale
+of usage you require.
+If you have many users that use the app on a daily basis, you will need to
+have multiple cores to ensure the worker queues don't build up.
 
 One worker will occupy one core completely when running vidjil-algo (which is
 currently single-threaded).
