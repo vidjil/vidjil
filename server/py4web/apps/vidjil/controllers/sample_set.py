@@ -420,8 +420,8 @@ def submit():
             errors = helper.validate(p)
             p['error'] = errors
             action = "add"
+            should_register_tags = False
             if len(errors) == 0:
-                should_register_tags = False
                 reset = False
 
                 name = helper.get_name(p)
