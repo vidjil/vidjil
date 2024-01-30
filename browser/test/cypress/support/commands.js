@@ -40,9 +40,7 @@ Cypress.Commands.add('setBrowser', (url) => {
   if (url.indexOf("index.html") != -1){
     cy.close_disclamer()
     cy.close_tips()
-    cy.closeFlash('.flash_1')
-    cy.closeFlash('.flash_2')
-    cy.closeFlash('.flash_3')
+    cy.closeFlashAll()
   }
 })
 
