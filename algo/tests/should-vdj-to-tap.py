@@ -117,8 +117,8 @@ def should_pattern_to_regex(p):
                 pass
 
             if args.ignore_N or args.ignore_del:
-                trim_left = '[[:digit:]]*'
-                trim_right = '[[:digit:]]*'
+                trim_left = '\d*'
+                trim_right = '\d*'
             if args.ignore_N:
                 n_region = '[ACGT]*'
 
@@ -130,7 +130,7 @@ def should_pattern_to_regex(p):
         # Gene name, possibly without allele information
         if not '*' in term:
             # Some 'genes', such as KDE, do not have allele information
-            term += '([*][[:digit:]]*)?'
+            term += '([*]\d*)?'
         else:
             gene, allele = term.split('*')
 
@@ -138,11 +138,11 @@ def should_pattern_to_regex(p):
                 gene = gene.replace('/', '/?')
 
             if args.ignore_D and ('IGHD' in gene or 'TRBD' in gene or 'TRDD' in gene):
-                gene = '[^[:space:]]*'
-                allele = '[[:digit:]]*'
+                gene = '\S*'
+                allele = '\d*'
 
             if args.ignore_allele:
-                allele = '[[:digit:]]*'
+                allele = '\d*'
 
             allele_separator = '[*]'
             if args.ignore_D or args.ignore_allele:
@@ -161,7 +161,7 @@ def should_pattern_to_regex(p):
         re1 = should_pattern_to_regex(m.group(1)).pattern
         re2 = '('+should_pattern_to_regex(m.group(2)).pattern+')'
         re3 = should_pattern_to_regex(m.group(3)).pattern
-        regex_pattern = '[[:space:]]*'.join(x for x in [re1, re2, re3])
+        regex_pattern = '\s*'.join(x for x in [re1, re2, re3])
     else:
         # We have a parenthesis free expression
         for term in p.split():
