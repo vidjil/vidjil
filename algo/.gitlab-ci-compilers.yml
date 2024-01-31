@@ -8,7 +8,8 @@
   extends: .install-algo-dependencies
   stage: multiple_tests
   tags:
-    - cidocker
+    - ci.inria.fr
+    - medium
   script:
     - $CXX --version
     - make demo data germline
