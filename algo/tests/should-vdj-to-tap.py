@@ -18,7 +18,7 @@ import sys
 import re
 import ansi
 
-PY_REQUIRED = (2, 7)
+PY_REQUIRED = (3, 8)
 if sys.version_info < PY_REQUIRED:
     print("This script requires Python >= %d.%d." % (PY_REQUIRED))
     sys.exit(1)
@@ -180,8 +180,8 @@ def should_pattern_to_regex(p):
         sys.exit(4)
 
     if args.verbose:
-        print
-        print '      ', p, '->', regex_pattern
+        print()
+        print('      ', p, '->', regex_pattern)
 
     return regex
 
@@ -382,25 +382,25 @@ def should_to_tap_one_file(f_should, args):
     f_vdj = f_should + PROG_TAG + '.vdj'
     f_vdj = f_vdj.replace(SHOULD_SUFFIX, '')
 
-    print "<== %s" % f_should
+    print("<== %s" % f_should)
 
     vdj = repseq_vdj.VDJ_File()
     cmd = args.program.replace('{directory}',args.directory).replace('{e_value}', args.e_value)
     if args.verbose:
-        print cmd
+        print(cmd)
     vdj.parse_from_gen(repseq_vdj.should_results_from_vidjil(cmd, f_should, f_log))
 
-    print "==> %s" % f_vdj
+    print("==> %s" % f_vdj)
     vdj.write(open(f_vdj, 'w'))
 
     write_should_results_to_tap(vdj, f_tap)
 
 
 def write_should_results_to_tap(should_results, f_tap):
-    print "==> %s" % f_tap
+    print("==> %s" % f_tap)
 
     if not(should_results):
-        print "Error. There is no results in this file."
+        print("Error. There is no results in this file.")
         sys.exit(2)
 
     with open(f_tap, 'w') as ff:
@@ -410,7 +410,7 @@ def write_should_results_to_tap(should_results, f_tap):
             tap_line = should_result_to_tap(should, result, tap_id+1)
             if tap_line is not None:
                 if args.verbose or '#!' in tap_line:
-                    print tap_line
+                    print(tap_line)
                 ff.write(tap_line + '\n')
 
 
@@ -434,21 +434,21 @@ if __name__ == '__main__':
             f_should_rc = f_should + '.rc'
             os.system('python ../../germline/revcomp-fasta.py < %s > %s' % (f_should, f_should_rc))
             should_to_tap_one_file(f_should_rc, args)
-        print
+        print()
 
-    print "=== Summary, should-vdj tests ===" + (' (only locus)' if args.after_two else '')
-    print "                 tested     passed      bug     failed (todo)"
+    print("=== Summary, should-vdj tests ===" + (' (only locus)' if args.after_two else ''))
+    print("                 tested     passed      bug     failed (todo)")
     for locus in sorted(global_stats):
-        print "    %-10s     %4d       %4d     %4d       %4d   %4s" % (locus, global_stats[locus], global_stats[locus] - global_stats_failed[locus], global_stats_bug[locus], global_stats_failed[locus],
-                                                              ("(%d)" % global_stats_todo[locus] if global_stats_todo[locus] else ''))
-    print "    ==========     %4d       %4d     %4d       %4d   %4s" % (sum(global_stats.values()), sum(global_stats.values()) - sum(global_stats_failed.values()), sum(global_stats_bug.values()), sum(global_stats_failed.values()),
-                                                           "(%d)" % sum(global_stats_todo.values()))
-    print
+        print("    %-10s     %4d       %4d     %4d       %4d   %4s" % (locus, global_stats[locus], global_stats[locus] - global_stats_failed[locus], global_stats_bug[locus], global_stats_failed[locus],
+                                                              ("(%d)" % global_stats_todo[locus] if global_stats_todo[locus] else '')))
+    print("    ==========     %4d       %4d     %4d       %4d   %4s" % (sum(global_stats.values()), sum(global_stats.values()) - sum(global_stats_failed.values()), sum(global_stats_bug.values()), sum(global_stats_failed.values()),
+                                                           "(%d)" % sum(global_stats_todo.values())))
+    print()
 
     global_bug = sum(global_stats_bug.values())
     if global_bug < global_failed:
-        print "! We were expecting %s failed tests, but there are %s such failures." % (global_bug, global_failed)
+        print("! We were expecting %s failed tests, but there are %s such failures." % (global_bug, global_failed))
         sys.exit(1)
     if global_bug > global_failed:
-        print "! There were less failed sequences that expected. Please update the files accordingly!"
+        print("! There were less failed sequences that expected. Please update the files accordingly!")
         sys.exit(2)
