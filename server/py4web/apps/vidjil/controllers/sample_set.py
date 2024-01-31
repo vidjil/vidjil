@@ -130,7 +130,6 @@ def index():
 
     if config :
         config_name = db.config[config_id].name
-        print( "===  config_name: %s" % config_name)
 
         fused = db(
             (db.fused_file.sample_set_id == sample_set_id)
@@ -526,6 +525,12 @@ def submit():
 @action.uses("sample_set/custom.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def custom():
+    if "id" not in request.query:
+        # TODO : better deal with this case, but it fails for now
+        res = {"success": "false", "message": "Missing field id"}
+        log.error(res)
+        return json.dumps(res, separators=(',',':'))
+    
     start = time.time()
 
     if "config_id" in request.query and request.query["config_id"] != "-1" :
