@@ -20,9 +20,10 @@ import ansi
 
 NO_LOCUS = '?'
 
-PY_REQUIRED = (3, 8)
+PY_REQUIRED = (3, 5)
 if sys.version_info < PY_REQUIRED:
     print("This script requires Python >= %d.%d." % (PY_REQUIRED))
+    print(sys.version_info)
     sys.exit(1)
 
 from subprocess import Popen, PIPE, STDOUT
