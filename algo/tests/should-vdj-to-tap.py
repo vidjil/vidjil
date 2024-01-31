@@ -18,6 +18,8 @@ import sys
 import re
 import ansi
 
+NO_LOCUS = '?'
+
 PY_REQUIRED = (3, 8)
 if sys.version_info < PY_REQUIRED:
     print("This script requires Python >= %d.%d." % (PY_REQUIRED))
@@ -321,6 +323,9 @@ def should_result_to_tap(should_pattern, result, tap_id):
                           % (result.replace("'", "'\\''"),
                              should_regex.pattern.replace("'", "'\\''")))
         found = (match == 0) and not ('UNSEG' in result)
+
+    if locus is None:
+        locus = NO_LOCUS
 
     globals()['global_stats'][locus] += 1
 
