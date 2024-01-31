@@ -312,10 +312,10 @@ def all():
     ##sort result
     reverse = False
     if "reverse" in request.query:
-        reverse = request.query["reverse"]
+        reverse = True
 
     if "sort" in request.query:
-        result = sorted(result, key = sort_fields[request.query["sort"]]['call'], reverse=reverse)
+        result = sorted(result, key = sort_fields[request.query['sort']]['sort_call'], reverse=reverse)
     else:
         request.query["sort"] = ""
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
