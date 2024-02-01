@@ -57,26 +57,35 @@ class SampleSet(object):
 
     def get_stats_path(self):
         return '/sample_set/stats'
-
-    def get_config_urls(self, data):
+    
+    def get_splitted_configs(self, data):
         configs = []
-        http_origin = ""
-        if request.environ.get("HTTP_ORIGIN") is not None:
-            http_origin = request.environ.get("HTTP_ORIGIN") + "/"
         key = get_conf_list_select()
         conf_list = [] if data["_extra"][key] is None else data["_extra"][key].split(',')
         for conf in conf_list:
-            c = conf.split(';')
-            c_id= c[0]
-            c_name = c[1]
-            c_fused = c[2]
-            filename =  "(%s %s)" % (self.get_name(data), c[0])
+            configs.append(conf.split(';'))
+        return configs
+
+    def get_config_urls(self, data):
+        configs = []
+        splitted_configs = self.get_splitted_configs(data)
+        for splitted_conf in splitted_configs:
+            c_id = splitted_conf[0]
+            c_name = splitted_conf[1]
+            filename =  "(%s %s)" % (self.get_name(data), c_id)
             configs.append(
                     str(A(c_name,
                         _href=f"index.html?sample_set_id={int(data['sample_set_id'])}&config={c_id}", _type="text/html",  _id=f"result_sample_set_{int(data['sample_set_id'])}_config_{c_id}",
                         _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c_id, filename))))
 
         return XML(", ".join(configs))
+    
+    def get_sort_configs(self, data):
+        conf_names = []        
+        splitted_configs = self.get_splitted_configs(data)
+        for splitted_conf in splitted_configs:
+            conf_names.append(splitted_conf[1])
+        return(",".join(conf_names))
 
     def get_groups(self, data):
         key = get_group_names_select()
@@ -90,10 +99,13 @@ class SampleSet(object):
     def get_creator(self, data):
         return data['creator']
 
+    def get_file_count(self, data):
+        return data['file_count']
+
     def get_files_values(self, data):
         key = get_file_sizes_select()
         size = 0 if data._extra[key] is None else data._extra[key]
-        file_count = data.file_count
+        file_count = self.get_file_count(data)
         return file_count, size
 
     def get_files(self, data):
@@ -102,13 +114,13 @@ class SampleSet(object):
 
     def get_fields(self):
         fields = []
-        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_display_name, 'width': 200, 'public': True})
-        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_tagged_info, 'width': None, 'public': True})
-        fields.append({'name': 'results', 'sort': 'confs', 'call': self.get_config_urls, 'width': None, 'public': True})
+        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_display_name, 'sort_call': self.get_name, 'width': 200, 'public': True})
+        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_tagged_info, 'sort_call': self.get_info, 'width': None, 'public': True})
+        fields.append({'name': 'results', 'sort': 'confs', 'call': self.get_config_urls, 'sort_call': self.get_sort_configs, 'width': None, 'public': True})
         if self.auth.is_admin() or len(get_group_list(self.auth)) > 1:
-            fields.append({'name': 'groups', 'sort': 'groups', 'call': self.get_groups_string, 'width': 100, 'public': True})
-            fields.append({'name': 'creator', 'sort': 'creator', 'call': self.get_creator, 'width': 100, 'public': True})
-        fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'width': 100, 'public': True})
+            fields.append({'name': 'groups', 'sort': 'groups', 'call': self.get_groups_string, 'sort_call': self.get_groups_string, 'width': 100, 'public': True})
+            fields.append({'name': 'creator', 'sort': 'creator', 'call': self.get_creator, 'sort_call': self.get_creator, 'width': 100, 'public': True})
+        fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'sort_call': self.get_file_count, 'width': 100, 'public': True})
         return fields
 
     def get_sort_fields(self):
@@ -119,9 +131,9 @@ class SampleSet(object):
 
     def get_reduced_fields(self):
         fields = []
-        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'width': 200, 'public': True})
-        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_stats_tagged_info, 'width': None, 'public': True})
-        fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'width': 100, 'public': True})
+        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'sort_call': self.get_name, 'width': 200, 'public': True})
+        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_stats_tagged_info, 'sort_call': self.get_info, 'width': None, 'public': True})
+        fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'sort_call': self.get_file_count, 'width': 100, 'public': True})
         return fields
 
     def get_sequence_count(self, data):
