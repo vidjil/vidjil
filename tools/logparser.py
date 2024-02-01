@@ -44,11 +44,14 @@ class LogParser:
         Can be redefined in child classes
         """
         parsed_log = {}
+        parsed_log['stats'] = {}
+        parsed_log['parameters'] = {}
         log_line = self.readline(strip=True) # strip to remove trailling spaces
         while log_line:
-            if log_line != "":
+            if log_line != "" and ":" in log_line:
                 key, value = self.getkeyvalue(log_line)
-                parsed_log[key] = [value]
+                # print( f"KEY: {key}; VALUE {value}; LOGLINE: {log_line};")
+                parsed_log["stats"][key] = [value]
             log_line = self.readline(True)
 
         result = {'pre_process': parsed_log}
@@ -90,7 +93,7 @@ class LogParser:
         return first element as key and try an automatic conversion of the second
         """
         split_line = line.split(':')
-        key = split_line[0].lower().strip().replace(' ', '_').replace('"', '')
+        key = split_line[0].lower().strip().replace(' ', '_').replace('"', '').replace('__', '_')
         value = split_line[1].strip()
         value = self.convert(value)
         return (key,value)
