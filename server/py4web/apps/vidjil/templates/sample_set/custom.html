@@ -21,7 +21,8 @@
             <input id="db_filter_input" type="text" value="[[=request.query["filter"] ]]" 
                    onchange="db.call('sample_set/custom', {'config_id' : '[[=config_id]]', 
                                                       'filter' : this.value, 
-                                                      'custom_list' : db.getListInput('custom_result[]')} )"
+                                                      'custom_list' : db.getListInput('custom_result[]'),
+                                                      'id' : '[[='' if request.query["id"] is None else request.query["id"] ]]'} )"
                    onfocus="new VidjilAutoComplete().setupTags(this);"
                    data-needs-atwho="true" data-keys="[[=group_ids]]">
         </div>
