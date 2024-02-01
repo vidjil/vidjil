@@ -117,15 +117,13 @@ class TestDefaultController():
         # Given : not logged
 
         # When : Calling whoami
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}):
-            json_result = default_controller.whoami()
+        with pytest.raises(HTTP) as excinfo:
+            with Omboddle(self.session, keep_session=True, params={"format": "json"}):
+                default_controller.whoami()
 
         # Then : We get a redirect
-        result = json.loads(json_result)
-        assert result["id"] == None
-        assert result["email"] == None
-        assert result["admin"] == False
-        assert result["groups"] == []
+        exception = excinfo.value
+        assert exception.status == 303
 
     def test_whoami_admin(self):
         # Given : Logged as admin
