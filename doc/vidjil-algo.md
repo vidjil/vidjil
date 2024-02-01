@@ -80,7 +80,7 @@ Vidjil-algo is systematically tested with the following compilers :
   - gcc/g++ 7.5, 8.4, 9.3, 10.1, 11
   - clang 6.0, 7.0, 11.0, 12.0
 
-We support all gcc/clang versions released in the last 3 years.
+We aim to support all gcc/clang versions released in the last 3 years.
 These compilers are available on recent OS X and on the following Linux distributions:
 
   - CentOS 8, CentOS Stream (installation possible on CentOS 7)
