@@ -3,6 +3,7 @@ console.log( Cypress.env('workdir') )
 var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
 console.log( url )
 
+var TIMEOUT_IMGT = 30000
 
 describe('External Aligner', function () {
     beforeEach(function () {
@@ -42,7 +43,7 @@ describe('External Aligner', function () {
     cy.get('#toIMGT').click({force:true})
 
     //check content
-    cy.title().should('eq', 'IMGT/V-QUEST')
+    cy.title({ timeout: TIMEOUT_IMGT }).should('eq', 'IMGT/V-QUEST')
     cy.get('.sequences_number').contains("Number of analysed sequences: 1")
     cy.get('.summary_synthesis').contains("Homsap TRBV28*01 F")
     cy.get('.summary_synthesis').contains("Homsap TRBJ2-5*01 F")
@@ -61,7 +62,7 @@ describe('External Aligner', function () {
     cy.get('#toIMGT').click({force:true})
 
     //check content
-    cy.title().should('eq', 'IMGT/V-QUEST')
+    cy.title({ timeout: TIMEOUT_IMGT }).should('eq', 'IMGT/V-QUEST')
     cy.get('.sequences_number').contains("Number of analysed sequences: 1")
     cy.get('.summary_synthesis').contains("Homsap IGHV3-9*01")
     cy.get('.summary_synthesis').contains("Homsap IGHJ6*02")
@@ -166,7 +167,7 @@ describe('External Aligner', function () {
       .click({force:true})
 
     // Both clonotype have a result
-    cy.get('#seq1 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad')
+    cy.get('#seq1 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad', { timeout: TIMEOUT_IMGT })
       .should("be.visible") // IGH locus
     cy.get('#seq4 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad')
       .should("be.visible") // TRG locus
@@ -190,7 +191,7 @@ describe('External Aligner', function () {
 
     cy.get('#toIMGTseg').click({force:true})
 
-    cy.get('.identityBad')
+    cy.get('.identityBad', { timeout: TIMEOUT_IMGT })
       .should("be.visible")
 
     cy.get('#align-refresh-button > span > i')
@@ -238,7 +239,7 @@ describe('External Aligner', function () {
 
     cy.get('#toIMGTseg').click({force:true})
 
-    cy.get('.identityBad')
+    cy.get('.identityBad', { timeout: TIMEOUT_IMGT })
       .should("be.visible")
 
     cy.get('#align-refresh-button > span > i')
@@ -277,7 +278,7 @@ describe('External Aligner', function () {
       .click({force:true})
 
     // Make test on aligner before to be sure that data have been received
-    cy.get('#seq4 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad')
+    cy.get('#seq4 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad', { timeout: TIMEOUT_IMGT })
       .should("be.visible") // TRG locus
       .should("not.have.text", "100%") // If use ins/del, value is not 100%
 
