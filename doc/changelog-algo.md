@@ -2,9 +2,15 @@
 !!! note
 	This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+## Algo 2024-02-02
+
+* New option --top-by-locus, reporting a minimum number of clonotypes per recombination system !1335
+* Improved .json output, with number of clones by locus !1146
+* Use global similarity for similarity matrix computation !1284
+
 ## Algo 2022-03-14
 
-* Fix a regression from the previous release, correcly handling absolute paths in germlines !1144
+* Fix a regression from the previous release, correctly handling absolute paths in germlines !1144
 
 ## Algo 2022-02-21
 
