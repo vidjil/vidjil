@@ -10,7 +10,7 @@ describe('Creation of users and groups', function () {
         cy.close_tips()
     })
     beforeEach(function () {
-
+      cy.closeFlashAll()
     })
     afterEach(function () {
     })
