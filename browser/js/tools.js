@@ -1153,7 +1153,7 @@ var toggleDisplay = function (element) {
  *  @param {string}  checkbox_id - Specific id of the checkbox to switch (if action is called by a checkbox)
  */
 function toogleColumn(tableid, pos, checkbox_id) {
-  document.querySelectorAll(`#${tableid} th:nth-child(${pos})`).forEach(toggleDisplay);
+  document.querySelectorAll(`#${tableid} td:nth-child(${pos})`).forEach(toggleDisplay);
   if (checkbox_id != undefined){
     var checkbox = document.getElementById(checkbox_id)
     checkbox.checked = !checkbox.checked

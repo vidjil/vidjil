@@ -22,7 +22,6 @@ function TagManager(model) {
         "clonotype_4":          {"color" : "#b58900", "display" : true, name: "clonotype 4"},
         "clonotype_5":          {"color" : "#d0b000", "display" : true, name: "clonotype 5"},
         "standard":             {"color" : "#268bd2", "display" : true, name: "standard / spike"},
-        "standard_1":             {"color" : "#268bd2", "display" : true, name: "standard / spike"},
         "noise":                {"color" : "#6c71c4", "display" : true, name: "noise"},
         "dimer":                {"color" : "#3c4194", "display" : true, name: "dimer"},
         "custom_1":             {"color" : "#2aa198", "display" : true, name: "custom 1"},
