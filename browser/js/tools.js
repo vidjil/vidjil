@@ -1135,9 +1135,9 @@ var row_cast_content = function(title, content, time_length, clone) {
  * Use for selection in compare samples
  */
 var selectListOfCheckbox = function(idx, state){
-    for (var pos in idx){
-        document.getElementById(idx[pos]).checked = state
-    }
+  for (var pos in idx){
+    document.getElementById(idx[pos]).checked = state
+  }
 }
 
 /**
@@ -1153,10 +1153,9 @@ var toggleDisplay = function (element) {
  *  @param {string}  checkbox_id - Specific id of the checkbox to switch (if action is called by a checkbox)
  */
 function toogleColumn(tableid, pos, checkbox_id) {
-    document.querySelectorAll(`#${tableid} th:nth-child(${pos})`).forEach(toggleDisplay);
-    document.querySelectorAll(`#${tableid} td:nth-child(${pos})`).forEach(toggleDisplay);
-    if (checkbox_id != undefined){
-        var checkbox = document.getElementById(checkbox_id)
-        checkbox.checked = !checkbox.checked
-    }
+  document.querySelectorAll(`#${tableid} th:nth-child(${pos})`).forEach(toggleDisplay);
+  if (checkbox_id != undefined){
+    var checkbox = document.getElementById(checkbox_id)
+    checkbox.checked = !checkbox.checked
+  }
 }

@@ -4,21 +4,21 @@
 
 <div>
     [[ for i in range(len(data['headers'])): ]]
-        <span onclick="toogleColumn('db_table_container', [[=i+1]], 'checkbox_header_[[=data['headers'][i].replace("'","")]]')">
-            <input type="checkbox" id="checkbox_header_[[=data['headers'][i].replace("'","")]]" name="Toggle visibility of column [[=data['headers'][i]]]" value="[[=data['headers'][i]]]" checked>
-            [[=data['headers'][i]]]
-        </span>
+        <input type="checkbox" id="checkbox_header_[[=data['headers'][i].replace("'","")]]" onclick="toogleColumn('db_table_container', [[=i+1]])" name="Toggle visibility of column [[=data['headers'][i]]]" value="[[=data['headers'][i]]]" checked>
+        <span onclick="toogleColumn('db_table_container', [[=i+1]], 'checkbox_header_[[=data['headers'][i].replace("'","")]]')">[[=data['headers'][i]]]</span>
     [[pass]]
 </div>
+
+[[=data['headers']]]
 
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
 	    <tr>
             [[ for h in data['headers']: ]]
-                <th class="content [[=h]]">
+                <td class="content [[=h]]">
                     [[=h]]
-                </th>
+                </td>
             [[ pass ]]
             <th class="column_25"></th>
         </tr>
