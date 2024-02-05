@@ -22,8 +22,8 @@ We recommend to either regularly update one's web browsers,
 or to use long-term releases, such as [Firefox ESR](https://www.mozilla.org/en-US/firefox/enterprise).
 As of January 2024, we recommend using Firefox or Chrome/Chromium :
 
-  - Firefox, *version \>= 102 ESR*
-  - Chrome, *version \>= 102 LTS* 
+  - Firefox, *version \>= 115 ESR*
+  - Chrome, *version \>= 115* 
 
 These platforms will be supported to at least *April 2026*.
 Within our quality process, we test several of these versions 
@@ -33,8 +33,8 @@ through [tests and continuous integration](https://www.vidjil.org/doc/quality/#t
 
 We also provide an extended support on
 
-  - Firefox, versions 78 to 85
-  - Chrome, version 79 to 80
+  - Firefox, versions 78 to 114
+  - Chrome, version 79 to 114
 
 Some of these legacy platforms are also tested through our continuous integration pipelines.
 However, old platforms have security flaws and are not recommended for routine usage involving clinical data.
