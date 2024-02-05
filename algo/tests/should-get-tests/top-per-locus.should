@@ -9,6 +9,7 @@
 1:IGKV.*IGKJ
 1:IGLV.*IGLJ
 
+!NO_LAUNCHER:
 !LAUNCH: cat out/multi-complete.tsv
 
 1:TRAV.*TRAJ
@@ -19,6 +20,7 @@
 1:IGKV.*IGKJ
 1:IGLV.*IGLJ
 
+!NO_LAUNCHER:
 !LAUNCH: cat out/multi-complete.vidjil
 
 j:clones[0].seg.5
@@ -39,6 +41,7 @@ j:clones[6].seg.5
 0:IGKV.*IGKJ
 0:IGLV.*IGLJ
 
+!NO_LAUNCHER:
 !LAUNCH: cat out/multi-complete.tsv
 
 0:TRAV.*TRAJ
@@ -49,6 +52,7 @@ j:clones[6].seg.5
 0:IGKV.*IGKJ
 0:IGLV.*IGLJ
 
+!NO_LAUNCHER:
 !LAUNCH: cat out/multi-complete.vidjil
 
 j0:clones[0].seg.5
