@@ -232,7 +232,6 @@ Then `docker ps` should display seven running containers for a localhost usage:
 `docker_nginx_1`, `docker_uwsgi_1`, `docker_mysql_1`, `docker_fuse_1`, `docker_workers_1`, `docker_flowers_1`, `docker_redis_1`.
 Service `restic`, `reporter` and `postfix` are usefull for backup and email communication and need to be started for regular installation.
 
-
   - Vidjil also need germline files.
       - You can use IMGT germline files if you accept IMGT licence.
         For this, from the `vidjil` directory (root of the git repository),
@@ -527,6 +526,7 @@ To work well, you need to create a dedicated user `backup` in your MySQL databas
     User name and password can be change. 
     These change should be include to modify also values used by restic service. 
     To do that, edit file `docker/backup/conf/backup.cnf`.
+
 
 
 1. Open a terminal, open mysql interface inside docker image
