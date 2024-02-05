@@ -144,8 +144,11 @@ From image `vidjil/server`
   - `mysql` The database
   - `uwsgi` The Py4web backend server
   - `workers` The Py4web Scheduler workers in charge of executing vidjil users' samples
+  - `redis` Allow to dispatch jobs to workers
+  - `flowers` A server to monitoring workers status
 
   - `fuse` The XmlRPCServer that handles queries for comparing samples
+
   - `restic` Starts a cron job to schedule regular backups
   - `reporter` A monitoring utility that can be configured to send monitoring information to a remote server
   - `postfix` A mail relay to allow `uwsgi` to send error notifications
@@ -216,8 +219,9 @@ forget to make a backup of any file you replace.)
 ### First configuration and first launch
 
   - Set the SSL certificates (see above)
-  - Change the mysql root password, mysql user password and the web2py admin password in `.env` file
+  - Change the mysql root password, mysql user password and the py4web admin password in `.env` file
   - Set the desired mail domain and credentials for the `postfix` container in `.env`
+  - Set the number of workers in `.env`. Keep at least one threads not used to not overload server
 
   - Comment reporter services in `docker-compose.yml`
 
@@ -225,9 +229,10 @@ forget to make a backup of any file you replace.)
 The first time, this container creates the database and it takes some time.
 
 - When `mysql` is launched,
-you can safely launch `docker-compose up`.
-Then `docker ps` should display eight running containers:
-`docker_nginx_1`, `docker_uwsgi_1`, `docker_mysql_1`, `docker_fuse_1`, `docker_workers_1`, `docker_celery_1`, `docker_flowers_1`, `docker_redis_1`
+you can safely launch `docker-compose up -d`.
+Then `docker ps` should display seven running containers for a localhost usage:
+`docker_nginx_1`, `docker_uwsgi_1`, `docker_mysql_1`, `docker_fuse_1`, `docker_workers_1`, `docker_flowers_1`, `docker_redis_1`.
+Service `restic`, `reporter` and `postfix` are usefull for backup and email communication and need to be started for regular installation.
 
   - Vidjil also need germline files.
       - You can use IMGT germline files if you accept IMGT licence.
@@ -298,11 +303,12 @@ Here are some notable configuration changes you should consider. Main change can
     In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
     Users will still be allowed to upload their own files.
 
-  - By default all files that
-    require saving outside of the containers (the database, uploads, vidjil
-    results and log files) are stored in `/opt/vidjil`.
-    This can be changed in the `volumes` in `docker-compose.yml`.
-    this by editing the paths in the volumes.
+  - By default path directory for files that
+    require saving outside of the containers (the database, third party binaries, uploads, vidjil
+    results and log files) is settable in `.env` file. 
+    Default path is set in `.env-default` at `VOLUME_PATH` variable.
+    Default value is `./volumes/vidjil/` relative to docker directory.
+    Change can also be done in `volumes` in `docker-compose.yml` for various services.
     See also <a href="#storage">Requirements / Storage</a> above.
 
   - Configure the reporter. Ideally this container should be positioned
@@ -317,9 +323,14 @@ Here are some notable configuration changes you should consider. Main change can
 
 Some software can be added to Vidjil for pre-processing or even processing if the
 software outputs data compatible with the `.vidjil` or AIRR format.
-We recommend you add software by adding a volume to your `docker-compose.yml`.
-By default we add our external files to `/opt/vidjil` on the host machine. You can then
-reference the executable in `vidjil-server/conf/defs.py`.
+A dedicated `binaries` volumes is created at your `$VOLUME_PATH`.
+Executable should be automatically detected inside your container. 
+
+!!! Warning
+    Some binaries working on your computer may not work inside container environment.
+    For compatibilities reasons, 
+    keep in mind that some softwares need to be build inside a docker image to get correct libraries and compillers.
+
 
 When the software has compatible inputs and outputs, it will be enough
 to configure then the appropriate `pre process` or `analysis config` (to be documented).
@@ -501,26 +512,93 @@ Should the data be lost, valuable man-hours would be lost.
 In order to prevent this, we make several times a day incremental backups of the
 data stored on the public Vidjil servers.
 
-This does not apply to uploaded files. We inform users that they should
+This task is done by `restic` service.
+
+To work well, you need to create a dedicated user `backup` in your MySQL database and to give it access to vidjil database.
+
+#### Set backup service
+
+1. Modify user name and password
+
+The `docker/backup/conf/backup.cnf` gives the authentication information to the database so that 
+a backup user (read rights only required) can connect to the database.  
+User name and password can be change. 
+These change should be include to modify also values used by restic service. 
+To do that, edit file `docker/backup/conf/backup.cnf`.
+
+
+1. Open a terminal, open mysql interface inside docker image
+```
+# open terminal in your MySQL container
+docker exec -it docker_mysql_1 bash
+
+# Connect to Mysql as root. 
+mysql -u root -p 
+# Fill asked password with root password (variable `MYSQL_ROOT_PASSWORD` in .env file)
+```
+
+
+1. Create backup user and grant access to vidjil database
+
+A backup use should be created indise MySQL database. 
+Apply value `backup` and `password` according to change made at previous step.
+
+```
+CREATE USER 'backup'@'localhost' IDENTIFIED BY 'password';
+```
+
+1. Set host availability to connection 
+
+Host value (ip) of newly created user should be set. 
+Use '%' to allow access from everywhere.
+A more restrictive ip could be use for security, but check that your ip should be fixed and do not change regulary.
+
+```
+UPDATE mysql.user SET Host = "%" WHERE User = "backup";
+FLUSH PRIVILEGES;
+```
+
+1. Add right to read 'vidjil' database content to make backup of data.
+```
+GRANT SELECT, LOCK TABLES ON `mysql`.* TO 'backup'@'%';
+GRANT SELECT, LOCK TABLES, SHOW VIEW, EVENT, TRIGGER ON `vidjil`.* TO 'backup'@'%';
+```
+
+1. Check that everything is setted and available.
+```
+SHOW GRANTS FOR backup;
+```
+
+1. Restast restic service
+
+Backup is done by restic service. 
+It need to be restarted to take into account change made on configuration file `docker/backup/conf/backup.cnf`.
+
+Read docker logs for restic service to see if everything working well.
+
+#### Note on backup content
+
+Backup does not apply to uploaded files. 
+We inform users that they should
 keep a backup of their original sequence files.
 
-To ease the backup, the `backup.sh` script provides an example. 
-It can be used through the backup container, for which you have two configuration files to update.
-
-The `docker/backup/conf/backup.cnf` gives the authentication information to the database so that a backup user (read rights only required) can connect to the database.
 
 Then the backup strategy can be configured in the `docker/backup/conf/backup-cron` file. The cron file states how often the backup script will be called. There are three options: backing up all results/analyses since yesterday, since the start of the month, since forever. On top of that the database is exported under two formats (CSV and SQL).
 
 ### Autodelete and Permissions
 
-Web2py has a handy feature called `AutoDelete` which allows the administrator
+!!! warning
+    Behavior not checked for py4web; 
+    TODO
+
+Py4web has a handy feature called `AutoDelete` which allows the administrator
 to state that file reference deletions should be cascaded if no other
 references to the file exist.
 When deploying to production one needs to make sure `AutoDelete` is
 deactivated.
-This is the case for the default Vijdil installation (see `server/web2py/applications/vidjil/models/db.py`).
+This is the case for the default Vijdil installation (see `server/py4web/apps/vidjil/models.py`).
 
-As a second precaution it is also wise to temporarily restrict web2py's
+As a second precaution it is also wise to temporarily restrict py4web's
 access to referenced files.
 
 Taking two mesures to prevent file loss might seem like overkill, but
@@ -537,7 +615,7 @@ whether it be a single patient/run/set or a list of them, or even all the sample
 associated to a group (or to a user).
 The script takes care both of database, but also of results and analysis files (see below for sequence files).
 
-See `server/web2py/applications/vidjil/scripts/migrator.py --help`
+See `server/scripts-web2py/migrator.py --help`
 
 #### Exporting an archive
 
@@ -554,7 +632,7 @@ Keep the `[GROUP_ID]` you can find on the group page (displayed between parenthe
 
 ##### step 3 : run export command
 
-A script `migrator.sh` can be found in vidjil, if you are using the docker version, it can be found at this location in the vidjil-server container: `/usr/share/vidjil/server/web2py/applications/vidjil/scripts`.
+A script `migrator.sh` can be found in vidjil, if you are using the docker version, it can be found at this location in the vidjil-server container: `/usr/share/vidjil/server/scripts-web2py/scripts`.
 
 ```bash
 sh migrator.sh -p [EXPORT_DIRECTORY] -s [WEB2PY_RESULTS_DIRECTORY] export group [GROUP_ID]
@@ -653,7 +731,7 @@ Proceed as in step 3 for pre-process configs. The file to edit is named `pproces
 The import takes place inside the vidjil-server container
 ```sh
 docker exec -it docker_uwsgi_1 bash
-cd usr/share/vidjil/server/web2py/applications/vidjil/scripts/
+cd usr/share/vidjil/server/scripts-web2py/
 sh migrator.sh -p [RESULTS DIRECTORY] -s [EXPORT DIRECTORY] import --config [CONFIG.JSON FILE] --pre-process [PPROCESS.JSON FILE] [GROUP ID]
 ```
 
