@@ -37,11 +37,13 @@ VIDJIL_JSON_VERSION = '2014.09';
 BROWSER_COMPATIBILITY = {
     "Firefox": {
         "legacy": 78,
-        "supported": 115
+        "supported": 102,
+        "latest": 115
     },
     "Chrome": {
         "legacy": 79,
-        "supported":  115
+        "supported":  102,
+        "latest":  115
     }
 }
 BROWSER_SUPPORTED_UNTIL = "May 2024"
@@ -232,7 +234,7 @@ Model.prototype = {
             if (BROWSER_COMPATIBILITY[browserName].legacy > browserVersion){ // < firefox 78
                 msg += ", as a legacy browser is no more supported."
                 priority = 3
-            } else if (BROWSER_COMPATIBILITY[browserName].supported > browserVersion){ // < firefox 86
+            } else if (BROWSER_COMPATIBILITY[browserName].supported > browserVersion){ // < firefox 102
                 // msg += ", as a legacy browser, is only partially supported."
                 msg += `, is a supported browser until ${BROWSER_SUPPORTED_UNTIL}. The support will be dropped in a few months.`
                 // msg += "\n<br />Some features will not be available and the support will be dropped in a few months."
@@ -242,7 +244,7 @@ Model.prototype = {
 
             if (priority >= 2)
             {
-                msg += "\n<br />We recommend using " + browserName + " " + BROWSER_COMPATIBILITY[browserName].supported + " or later, or other modern browsers, "
+                msg += "\n<br />We recommend using " + browserName + " " + BROWSER_COMPATIBILITY[browserName].latest + " or later, or other modern browsers, "
                 msg += "that will be supported until at least " + BROWSER_SUPPORTED_UNTIL_NEXT + "."
                 msg += "\n<br />See our documentation on <a target='_blank' href='http://www.vidjil.org/doc/user/#supported-browsers'>supported browsers</a>."
                 console.log({ msg: msg, type: "flash", priority: priority, timeout:15000 });
