@@ -667,7 +667,6 @@ New services have come (redis, flowers).
 
 We also change environment variable declaration.  
 Now variable at set to restricted places:
-
 * vidjil-client/conf/conf.js: As previous, conf for browser are done in this file
 * vidjil-server/conf/defs.py: As previous, conf for server are done in this file. Note some change in `DIR_xxx` default declaration
 * `.env-default` and `.env` files: Docker environment variable are loaded from these 2 files. First one hav edefault values and explanation about effect, the second are made to store your overload values of these variable. For the moment, at least one variable should be set in `.env` file to work.
