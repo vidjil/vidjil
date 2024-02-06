@@ -13,7 +13,9 @@
 
 A complete rewriting of backend server from web2py to py4web comes with releases `2024.01`.
 We completly change launched services, path of some volumes and we now use an dedicated `.env` environement file.
-Please don't made upgrade of your vidjil server for the moment and wait to refer to migration documentation that will be released on 2024-02-02.
+**Please follow migration documentation**.
+
+See more information at [Migrating from Web2py to Py4web](dev-server.md#migrating-from-web2py-to-py4web).
 
 ## 2022-06-28
 
