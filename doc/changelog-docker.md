@@ -11,8 +11,8 @@
     A complete rewriting of backend server come with this release.
     We also change in depth the docker-compose file. Read this changelog to get more information.
 
-A complete rewriting of backend server from web2py to py4web comes with releases `2024.01`.
-We completly change launched services, path of some volumes and we now use an dedicated `.env` environement file.
+A complete rewriting of backend server from web2py to py4web comes with releases `2024.01`.  
+We completly change launched services, path of some volumes and we now use an dedicated `.env` environement file.  
 **Please follow migration documentation**.
 
 See more information at [Migrating from Web2py to Py4web](dev-server.md#migrating-from-web2py-to-py4web).
