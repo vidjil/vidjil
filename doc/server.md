@@ -269,6 +269,7 @@ section of the `docker-compose.yml` file or by stopping the service using port
 
 The following configuration files are found in the `vidjil/docker` directory:
 
+  - `.env-default` and `.env` various variables use and transmit by docker to container: path, password, pool of workers, ...
   - `vidjil-client/conf/conf.js` various variables for the vidjil client
   - `vidjil-client/conf/nginx_gzip.conf` configuration for gzip in nginx
   - `vidjil-client/conf/nginx_gzip_static.conf`  same as the previous but for static resources
@@ -520,11 +521,11 @@ To work well, you need to create a dedicated user `backup` in your MySQL databas
 
 1. Modify user name and password
 
-The `docker/backup/conf/backup.cnf` gives the authentication information to the database so that 
-a backup user (read rights only required) can connect to the database.  
-User name and password can be change. 
-These change should be include to modify also values used by restic service. 
-To do that, edit file `docker/backup/conf/backup.cnf`.
+    The `docker/backup/conf/backup.cnf` gives the authentication information to the database so that 
+    a backup user (read rights only required) can connect to the database.  
+    User name and password can be change. 
+    These change should be include to modify also values used by restic service. 
+    To do that, edit file `docker/backup/conf/backup.cnf`.
 
 
 1. Open a terminal, open mysql interface inside docker image
@@ -540,41 +541,42 @@ mysql -u root -p
 
 1. Create backup user and grant access to vidjil database
 
-A backup use should be created indise MySQL database. 
-Apply value `backup` and `password` according to change made at previous step.
+    A backup use should be created indise MySQL database. 
+    Apply value `backup` and `password` according to change made at previous step.
 
-```
-CREATE USER 'backup'@'localhost' IDENTIFIED BY 'password';
-```
+    ```
+    CREATE USER 'backup'@'localhost' IDENTIFIED BY 'password';
+    ```
 
 1. Set host availability to connection 
 
-Host value (ip) of newly created user should be set. 
-Use '%' to allow access from everywhere.
-A more restrictive ip could be use for security, but check that your ip should be fixed and do not change regulary.
+    Host value (ip) of newly created user should be set. 
+    Use '%' to allow access from everywhere.
+    A more restrictive ip could be use for security, but check that your ip should be fixed and do not change regulary.
 
-```
-UPDATE mysql.user SET Host = "%" WHERE User = "backup";
-FLUSH PRIVILEGES;
-```
+    ```
+    UPDATE mysql.user SET Host = "%" WHERE User = "backup";
+    FLUSH PRIVILEGES;
+    ```
 
 1. Add right to read 'vidjil' database content to make backup of data.
-```
-GRANT SELECT, LOCK TABLES ON `mysql`.* TO 'backup'@'%';
-GRANT SELECT, LOCK TABLES, SHOW VIEW, EVENT, TRIGGER ON `vidjil`.* TO 'backup'@'%';
-```
+    ```
+    GRANT SELECT, LOCK TABLES ON `mysql`.* TO 'backup'@'%';
+    GRANT SELECT, LOCK TABLES, SHOW VIEW, EVENT, TRIGGER ON `vidjil`.* TO 'backup'@'%';
+    ```
 
 1. Check that everything is setted and available.
-```
-SHOW GRANTS FOR backup;
-```
+    ```
+    SHOW GRANTS FOR backup;
+    ```
 
 1. Restast restic service
 
-Backup is done by restic service. 
-It need to be restarted to take into account change made on configuration file `docker/backup/conf/backup.cnf`.
+    Backup is done by restic service. 
+    It need to be restarted to take into account change made on configuration file `docker/backup/conf/backup.cnf`.
 
-Read docker logs for restic service to see if everything working well.
+!!! note
+    Read docker logs for restic service to see if everything working well.
 
 #### Note on backup content
 
