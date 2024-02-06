@@ -640,3 +640,74 @@ make functional_server_cypress_open
   By default, test on CI are launch on a http adress. 
   Cypress take into account this and try to visit localhost as a http.
   If an error occur, you should modify the url in `browser/test/cypress/support/login.js` to change `http` to `https`.
+
+
+# Migrating from Web2py to Py4web
+
+!!! danger
+    At release 2024.01, we migrate our backend server from Web2py to Py4web.
+    This section described the way to update your anterior server.
+    We **HIGHLY** recommand to use a second server with duplicate content to set correctly docker-compose files.
+
+Since release 2024.01, we migrate to a new framwork: Py4web.
+We also made a major refactoring of docker-compose organisation.
+We try to make it the most transparent but some major change in volumes and docker declaration still needed.
+
+**MADE BACKUP BEFORE MIGRATING YOUR SERVER**
+
+
+## docker compose organisation. 
+  
+Pull an version of vidjil repository of release 2024.01.
+
+Service have change, but you could use more or less default configuration.
+You will need to update path for volume declaration.
+Note that now volumes declaration move from `fuse` to `uwsgi` docker service.
+New services have come (redis, flowers).
+
+We also change environment variable declaration.
+Now variable at set to restricted places:
+* vidjil-client/conf/conf.js: As previous, conf for browser are done in this file
+* vidjil-server/conf/defs.py: As previous, conf for server are done in this file. Note some change in `DIR_xxx` default declaration
+* `.env-default` and `.env` files: Docker environment variable are loaded from these 2 files. First one hav edefault values and explanation about effect, the second are made to store your overload values of these variable. For the moment, at least one variable should be set in `.env` file to work.
+* backup/conf/backup.cnf: user and password to use for backup. Will be move to `.env` files at next release.
+
+In docker-compose volume, you should not have to change volume path except one refer to web2py.
+A typical needed change is the path for database destination in volume: change `/usr/share/vidjil/server/web2py/applications/vidjil/databases` to `/usr/share/vidjil/server/py4web/apps/vidjil/databases`.
+
+Please, use for migration an image target of release 2024.01 and do not jump directly to an higher release image. 
+To do so, change `vidjil-server:latest` to `vidjil-server:release-2024.01`. Do the same for client.
+
+## Update server image
+
+Once again, if not already done, **make backup** before going further.
+
+Once docker-compose change is made, you can simply launch update as usually:
+
+```bash
+# Stop current running server and other service
+docker-compose down
+
+# Pull new version of images. 
+docker-compose pull
+
+# Start again 
+docker-compose up -d
+```
+
+## Troubleshooting
+
+Sometimes, migration of database don't work well between web2py and py4web.
+We don't isolate origin of this inconvenience.
+
+In this case, the simpler way to pass through is to use a new MySQL database and to reimpmort backup inside.
+
+In this case, follow these step:
+* shutdown server. 
+* Move your current mysql volume to another place or change path of mysql volume in your docker-compose.
+* Add volume path to include your sql backup in mysql service 
+* Start again mysql and uwsgi service. Default init of mysql should be done when uwsgi finish his stating step. 
+* Connect inside you mysql container to import your backup file (see server.md) and launch import: `mysql -u vidjil -p vidjil < backup_file`.
+* Don't forget to recreate your mysql backup user (see server.md)
+
+If everything work well, you should now be able to connect to your server with your usual credential and to see your data.
