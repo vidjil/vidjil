@@ -49,7 +49,9 @@ can manage, upload, analyze and annotate their runs directly on the web applicai
 
 # Code and license
 
-Vidjil is open-source, released under GNU GPLv3 license.
+Vidjil is open-source, released under the GPL version 3 or any later version.
+Licenses of third-party software and librairies are described
+in [doc/license.md](http://git.vidjil.org/blob/master/doc/license.md).
 You are welcome to redistribute it under [certain conditions](http://git.vidjil.org/blob/master/LICENSE).
 This software is for research use only and comes with no warranty.
 
