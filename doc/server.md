@@ -246,7 +246,7 @@ Service `restic`, `reporter` and `postfix` are usefull for backup and email comm
   - Open a web browser to `https://localhost`, or to your FQDN if you configured it (see above).
 Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
-It will be also the web2py admin password.
+
 
 - Once these main service are set, you can also set docker service for backup and mail communication.
 
@@ -452,7 +452,7 @@ docker-compose up
 ```
 
 By default, all previous volumes will be reused and no data will be lost.
-If the database schema was updated, web2py will update it on your database.
+If the database schema was updated, py4web will update it on your database.
 Check that the containers run well, and that you still manage to log on Vidjil
 and to access the database, and to see a result from a sample.
 
@@ -635,11 +635,11 @@ Keep the `[GROUP_ID]` you can find on the group page (displayed between parenthe
 A script `migrator.sh` can be found in vidjil, if you are using the docker version, it can be found at this location in the vidjil-server container: `/usr/share/vidjil/server/scripts-web2py/scripts`.
 
 ```bash
-sh migrator.sh -p [EXPORT_DIRECTORY] -s [WEB2PY_RESULTS_DIRECTORY] export group [GROUP_ID]
+sh migrator.sh -p [EXPORT_DIRECTORY] -s [PY4WEB_RESULTS_DIRECTORY] export group [GROUP_ID]
 ```
 
 - `[EXPORT_DIRECTORY]`:  path to the export directory inside the vidjil-server container you should have prepared in step 1.
-- `[WEB2PY_RESULTS_DIRECTORY]`: the results directory path inside the container, it should be defined in your `docker-compose.yml`, by default it is `/mnt/result/results/`
+- `[PY4WEB_RESULTS_DIRECTORY]`: the results directory path inside the container, it should be defined in your `docker-compose.yml`, by default it is `/mnt/result/results/`
 - `[GROUP_ID]`: id of the group owning the results to be exported (see step 2)
 
 The config analyses and pre-processes are currently not exported as they may already exist on the recipient server and are depending on tools that can be missing or installed differently. Config and pre-processes must therefore be recreated or mapped manually to existing one on the recipient server (see next section step 3-4).
@@ -750,7 +750,7 @@ sh migrator.sh -p /mnt/result/results/ -s /etc/vidjil/export/XXXX/ import --conf
 
 #### Exporting/importing input sequence files
 
-Note that web2py and the Vidjil server are robust to missing *input* files.
+Note that py4web and the Vidjil server are robust to missing *input* files.
 These files are not backuped and may be removed from the server at any time.
 Most of the time, these large files won't be migrated along with the database, the results and the analysis files.
 
@@ -768,7 +768,7 @@ When a full database migration is needed, it can be done with the following comm
 mysqldump -u <user> -p <db> -c --no-create-info > <file>
 ```
 
-The `--no-create-info` option is important because web2py needs to be allowed to create tables itself.
+The `--no-create-info` option is important because py4web needs to be allowed to create tables itself.
 Indeed, it keeps track of database migrations and errors will occur if
 tables exist which it considers it needs to create.
 
@@ -810,7 +810,7 @@ The [CloneDB](https://gitlab.inria.fr/vidjil/clonedb) has to be installed
 independently of the Vidjil platform.
 
 Then one can easily extract data to be used with CloneDB. A script is provided
-(`server/web2py/applications/vidjil/scripts/create_clone_db.py`) which
+(`server/scripts-web2py/create_clone_db.py`) which
 produces a FASTA file to be indexed with CloneDB. This script takes as
 parameter the FASTA output file and one (or many) group IDs, which correspond
 to the groups having access to the datasets. Note that for the moment the Vidjil platform only allow a per group access to the CloneDB.
