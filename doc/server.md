@@ -245,9 +245,6 @@ Service `restic`, `reporter` and `postfix` are usefull for backup and email comm
 Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
 
-
-- Once these main service are set, you can also set docker service for backup and mail communication.
-
 - Once these main service are set, you can also set docker service for backup and mail communication.
 
 *notice* : By default, Nginx HTTP server listens for incoming connection and binds on port 80 on the host, if you encounter the following message error:
