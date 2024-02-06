@@ -10,16 +10,16 @@ Vidjil was awarded an honourable mention at the French 2022 Open Science Awards 
 
 Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
-## Vidjil core development
+## Vidjil core authors/developers
 
-  - Mathieu Giraud, 2011-2024
-  - Mikaël Salson, 2011-2024
-  - Marc Duez, 2012-2016, 2019-2022
-  - Tatiana Rocher, 2014-2017
-  - Florian Thonier, 2015-2024
-  - Ryan Herbert, 2015-2020
-  - Aurélien Béliard, 2016-2017
-  - Clément Chesnin, 2023-2024
+  - Mathieu Giraud (CNRS), 2011-2024
+  - Mikaël Salson (Univ. Lille), 2011-2024,
+  - Marc Duez (Univ. Lille, CHU Lille, Inria), 2012-2016, 2019-2022
+  - Tatiana Rocher (Univ. Lille), 2014-2017
+  - Florian Thonier (CHU Necker, Inria), 2015-2024
+  - Ryan Herbert (Inria), 2015-2020
+  - Aurélien Béliard (CHU Lille), 2016-2017
+  - Clément Chesnin (Inria), 2023-2024
 
 ## Other contributors
 
