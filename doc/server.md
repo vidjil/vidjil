@@ -525,7 +525,6 @@ To work well, you need to create a dedicated user `backup` in your MySQL databas
     To do that, edit file `docker/backup/conf/backup.cnf`.
 
 
-
 1. Open a terminal, open mysql interface inside docker image
 ```
 # open terminal in your MySQL container
