@@ -69,7 +69,7 @@ specialised to Vidjil's characteristics through the `VidjilAuth` class.
 ### Export
 
 ``` bash
-mysqldump -u \<user\> -p \<database\> -c –no-create-info \> \<file\>
+mysqldump -u <user> -p <database> -c –no-create-info > <file>
 ```
 
 ### Import
@@ -85,7 +85,7 @@ of colliding primary keys again.
 
 Then run:
 ```bash
-mysql -u \<user\> -p \<database\> \< file
+mysql -u <user> -p <database> < file
 ```
 
 ### VidjilAuth
@@ -101,25 +101,20 @@ Also some user characteristics are preloaded (groups and whether the person
 is an admin), which also prevents may DB calls.
 
 ## Scheduler
-The scheduler is handled by Web2py. Here we summarise the way it works.
+The scheduler is handled by Py4web. Here we summarise the way it works.
 
-Web2py has several workers. Its number is determined by the number of items
-given after the `-K` parameter to `web2py.py`. One of them is called the
-*ticker*. It is the master worker that will assign tasks to all the workers
-(including itself).
+Py4web has several workers. Its number is determined by the value of `WORKERS_POOL` given 
+in `docker/.env-default`/`docker/.env` file. 
+Redis and flowers service are associated to workers to work.
 
 At regular interval the worker signals that it is still alive (it is called
 the heartbeat and can be customised in Vidjil through the
 `SCHEDULER_HEARTBEAT` parameter in `defs.py`).
 
-Every 5 heartbeats (it is hardcoded in web2py in `gluon/scheduler.py`) the
-*ticker* will assign jobs. Each worker will also try to remove the dead
-workers. In our case it often produces an “*Error cleaning up*” error in the
-logs (see #3558).
 
-When a job timeouts it is not killed (see #2213). In `gluon/scheduler.py` a
-worker seems to be able to kill a process when the worker's state (and not the
-task's state) is `STOP_TASK`.
+<!-- When a job timeouts it is not killed (see #2213). In `gluon/scheduler.py` a -->
+<!-- worker seems to be able to kill a process when the worker's state (and not the -->
+<!-- task's state) is `STOP_TASK`. -->
 
 ## Batch creation of patients/runs/sets
 
@@ -139,9 +134,10 @@ In that cases, a textarea is provided.
 
 - task.py: chargé du traitement des fichiers => Si le fichier devient compromis (erreur développeur, intervention inattendue par un tiers, ...), celà pourrait entrainer une fuite de données, une perte de données, voire des traitements malicieux.
 - VidjilAuth: chargé de la gestion des permissions et (par hérritage), du login/logout des utilisateurs => fichier compromis (erreur dev, ou accès non-anticipé) peut mener à des fuites de données, voire à un accès admin pour un utilisateur inattendu.
+- La base de données est elle-même protégé par un mot de passe.
 - defs.py: fichier de config, contient le mot de passe de la BDD. => potentiel de fuite de données, voire de l'utilisation de logiciels modifiés pour les traitements (DIR_VIDJIL, DIR_PEAR, etc.)
+  - on pourrait utiliser les secrets de docker pour limité l'accès et visibilité de ces valeurs.
 - conf.js: fichier chargé de faire pointer le client sur le serveur. => un conf.js compromis peut engendrer un client qui pointe vers un serveur avec de mauvaises intentions (man-in-the-middle, phishing de mot de passe, etc.)
-- XXX La base de données elle-même XXX Elle est protégé par un mot de passe ?
 
 
 # Packaging
@@ -308,16 +304,17 @@ composed of several different services this allows us to easily start and
 stop individual services.
 The services are as follows:
 
-  - mysql The database
-  - uwsgi The Web2py backend server
-  - fuse The XmlRPCServer that handles custom fuses (for comparing
-    samples)
-  - nginx The web server
-  - workers The Web2py Scheduler workers in charge of executing vidjil
-    users' samples
-  - backup Starts a cron job to schedule regular backups
-  - reporter A monitoring utility that can be configured to send
-    monitoring information to a remote server
+|Services | function       |
+|:--------| :--------------|
+|mysql    | The database   |
+|uwsgi    | The Py4web backend server |
+|fuse     | The XmlRPCServer that handles custom fuses (for comparing     samples)|
+|nginx    | The web server |
+|workers  | The Py4web Scheduler workers in charge of executing vidjil users' samples and other pre/post-process |
+|flower   |   |
+|redis    |   |
+|backup   | Starts a cron job to schedule regular backups |
+|reporter | A monitoring utility that can be configured to send monitoring information to a remote server |
 
 For more information about Docker Compose and how to install it check out
 <https://docs.docker.com/compose/>
@@ -332,6 +329,12 @@ You may also want to uncomment the volume in the fuse volume block `-
 ./vidjil/conf:/etc/vidjil` this will provide easier access to all of the
 configuration files, allowing for tweaks.
 
+You may also set some variable values in order to get configuration that you want : volume path, pool of thread for server, pool of workers, passwords, ...
+This variables are defined inside `docker/.env-default` and can be set in `docker/.env`.
+
+You can also change some docker behavior as volume declaration or ports by modifying `docker-compose.override.yml` file.
+Each declaration in this file will be take into account as an overload of default values setted in `docker-compose.yml` file.
+
 Running the following command will automatically download any missing
 images and start the environment:
 
@@ -339,7 +342,7 @@ images and start the environment:
 docker-compose up
 ```
 
-If you are using the backup and reporter images, then you need to first
+If you are using the reporter images, then you need to first
 build these from the image you are using by running the following:
 
 ``` bash
@@ -353,60 +356,16 @@ This will also start the environment for you.
 You may want to make some modification into the code of Vidjil web application, server, browser or tools side.
 In these cases, you should get a copy of the vidjil repository where you will be able to make your changes, and also set some modifiaction into the `docker-compose.yml`.
 
-### Clone another vidjil repository into a subdirectory of vidjil. 
+A specific docker-compose file is provided under `docker-compose-dev.yml` file. 
+It overload some volume declaration to use script and content of the local repository from the launch directory.
 
-In this example, the repository will be located into `vidjil/code/`
-
-```bash
-# clone a new vidjil repository
-git clone https://gitlab.inria.fr/vidjil/vidjil.git  code/
-# move into this new repository
-cd code
-# init this repository with server
-make server browser germline
-```
-
-### Update the docker-compose.yml
-
-After cloning a clean repository, you must add modifications in the `docker-compose.yml` file into fuse and nginx volumes.
-
-Modifications for `fuse volumes` declaration.
-```
- # Link to server files
- - ../code/server/web2py/applications/vidjil/controllers:/usr/share/vidjil/server/web2py/applications/vidjil/controllers
- - ../code/server/web2py/applications/vidjil/models:/usr/share/vidjil/server/web2py/applications/vidjil/models
- - ../code/server/web2py/applications/vidjil/modules:/usr/share/vidjil/server/web2py/applications/vidjil/modules
- - ../code/server/web2py/applications/vidjil/scripts:/usr/share/vidjil/server/web2py/applications/vidjil/scripts
- - ../code/server/web2py/applications/vidjil/static:/usr/share/vidjil/server/web2py/applications/vidjil/static
- - ../code/server/web2py/applications/vidjil/tests:/usr/share/vidjil/server/web2py/applications/vidjil/tests
- - ../code/server/web2py/applications/vidjil/views:/usr/share/vidjil/server/web2py/applications/vidjil/views   
- # Browser & tools
- - ../code/browser:/usr/share/vidjil/tools:Z
-```
-
-Modifications for `nginx volumes` declaration.
-```
-- ../code/browser:/usr/share/vidjil/browser:Z
-```
-
-
-### Add configuration files into the code/ repository
-
-As some files are virtualy linked into docker image from the docker directory, you should add them into `code/`.
-```bash
-cp docker/vidjil-client/conf/conf.js code/browser/js/
-cp docker/vidjil-server/conf/defs.py code/server/web2py/applications/vidjil/modules/
-```
-
-### Restart docker-compose
-
-After that, you should restart your docker instance to apply these new settings.
 
 ``` bash
-docker-compose up
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
 ```
-From now, the code present into `code/` will be use for the server and the browser.
-You will be able to test modifications before staging them into the repository.
+If you don't want to have to give path for docker-compose files, you can rename `docker-compose-dev.yml` as `docker-compose.override.yml`.
+In will then be automatically apply at launch.
+
 
 
 ## Building images for DockerHub
@@ -463,12 +422,12 @@ archive.ubuntu.org then you may need to add your dns to /etc/docker/daemon.json
    $ mysqldump -u <user> -p <db> -c --no-create-info > <file>
 
    An important element to note here is the --no-create-info we add this
-   parameter because web2py needs to be allowed to create tables itself
+   parameter because py4web needs to be allowed to create tables itself
    because it keeps track of database migrations and errors will occur if
    tables exist which it considers it needs to create.
 
    In order to import the data into an installation you first need to ensure
-   the tables have been created by Web2py this can be achieved by simply
+   the tables have been created by Py4web this can be achieved by simply
    accessing a non-static page.
 
    /!\ If the database has been initialised from the interface you will
