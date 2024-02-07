@@ -49,8 +49,10 @@ can manage, upload, analyze and annotate their runs directly on the web applicai
 
 # Code and license
 
-Vidjil is open-source, released under GNU GPLv3 license.
-You are welcome to redistribute it under [certain conditions](http://git.vidjil.org/blob/master/doc/LICENSE).
+Vidjil is open-source, released under the GPL version 3 or any later version.
+Licenses of third-party software and librairies are described
+in [doc/license.md](http://git.vidjil.org/blob/master/doc/license.md).
+You are welcome to redistribute it under [certain conditions](http://git.vidjil.org/blob/master/LICENSE).
 This software is for research use only and comes with no warranty.
 
 The development code is available on <http://gitlab.vidjil.org/>.
@@ -66,9 +68,10 @@ Thank you for your support \!
 Vidjil is developed and maintained by
 the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille)
 and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
-See [doc/credits.md](doc/credits.md) for the full list of contributors, collaborators, and funders.
+The full list of authors/developers and contributors is found in [doc/credits.md](http://git.vidjil.org/blob/master/doc/credits.md).
+See also [codemeta.json](http://git.vidjil.org/blob/master/codemeta.json).
 
-Contact: Marc Duez, Florian Thonier, [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org).
+Contact: Clément Chesnin, Florian Thonier, [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org).
 
 # References
 
