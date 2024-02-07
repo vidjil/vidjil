@@ -28,11 +28,11 @@ def extract_tangle(content, names=None, regex_template = REGEX):
     Extract a tangle from an .org file
 
     >>> extract_tangle('\n#+BEGIN_SRC sh :tangle ex1 :var ex=2\necho $ex\n#+END_SRC', regex_template=REGEX_TANGLE_ORG)
-    [{'content': 'echo $ex', 'filename': 'ex1'}]
+    [{'filename': 'ex1', 'content': 'echo $ex'}]
     >>> extract_tangle('\n#+BEGIN_SRC sh :tangle ex2 :var ex=2\necho $ex\n#+END_SRC', ['ex2'], regex_template=REGEX_TANGLE_ORG)
-    [{'content': 'echo $ex', 'filename': 'ex2'}]
+    [{'filename': 'ex2', 'content': 'echo $ex'}]
     >>> extract_tangle('foo \n<!-- tangle: hello --> \n``` console \nworld\n``` \n bar', ['hello'])
-    [{'content': 'world', 'filename': 'hello'}]
+    [{'filename': 'hello', 'content': 'world'}]
     '''
     if names == None:
         names = ['[^ \t\n]+']
