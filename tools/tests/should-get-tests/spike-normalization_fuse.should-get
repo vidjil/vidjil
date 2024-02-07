@@ -1,7 +1,7 @@
 
 
 ##### Test on fuse file with spike normalization
-!LAUNCH: python ../../fuse.py spike_out2.vidjil spike_out2.vidjil -o spike_fuse_2_2.vidjil  && cat spike_fuse_2_2.vidjil
+!LAUNCH: $PYTHON ../../fuse.py spike_out2.vidjil spike_out2.vidjil -o spike_fuse_2_2.vidjil  && cat spike_fuse_2_2.vidjil
 
 $ clones in the output, same as in the input
 8: "seg_stat"
@@ -22,7 +22,7 @@ $ ampl_coeff value is present 2 time
 
 ##### Test on fuse file with NO spike normalization (or no MRD)
 !OUTPUT_FILE: spike_fuse_1_1.vidjil
-!LAUNCH: python ../../fuse.py spike_out1.vidjil spike_out1.vidjil -o spike_fuse_1_1.vidjil;
+!LAUNCH: $PYTHON ../../fuse.py spike_out1.vidjil spike_out1.vidjil -o spike_fuse_1_1.vidjil;
 
 $ MRD key is NOT present
 j0:mrd
@@ -30,7 +30,7 @@ j0:mrd
 
 ### One file without MRD + 1 file with MRD
 !OUTPUT_FILE: spike_fuse_1_2.vidjil
-!LAUNCH: python ../../fuse.py spike_out1.vidjil spike_out2.vidjil -o spike_fuse_1_2.vidjil;
+!LAUNCH: $PYTHON ../../fuse.py spike_out1.vidjil spike_out2.vidjil -o spike_fuse_1_2.vidjil;
 
 $ MRD firld is present at top level
 j:mrd

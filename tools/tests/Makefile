@@ -14,12 +14,12 @@ should-ijson:
 
 doctests:
 	@echo "*** Launching python tests..."
-	python -m doctest -v ../fuse.py
-	python -m doctest -v ../utils.py
-	python -m doctest -v ../vidjil-to-fasta.py
-	python -m doctest -v ../../algo/tests/should-vdj-to-tap.py
-	python -m doctest -v ../../algo/tests/repseq_vdj.py
-	python ../org-babel-tangle.py --test
+	python3 -m doctest -v ../fuse.py
+	python3 -m doctest -v ../utils.py
+	python3 -m doctest -v ../vidjil-to-fasta.py
+	python2.7 -m doctest -v ../../algo/tests/should-vdj-to-tap.py
+	python2.7 -m doctest -v ../../algo/tests/repseq_vdj.py
+	python3 ../org-babel-tangle.py --test
 	@echo "*** All python tests passed"
 
 force:

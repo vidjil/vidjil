@@ -1,5 +1,6 @@
 
 
+from __future__ import print_function
 import json
 
 from utils import *
@@ -28,8 +29,8 @@ class Analysis(VidjilJson):
             self.id_lengths[len(clone['id'])] += 1
 
 
-        print "%% run_t ->", self.d['samples']['producer'], self.d['samples']['run_timestamp'], self.d['samples']['commandline']
-        print "%% lengths ->", self.id_lengths
+        print( "%% run_t ->", self.d['samples']['producer'], self.d['samples']['run_timestamp'], self.d['samples']['commandline'] )
+        print( "%% lengths ->", self.id_lengths )
 
     def missing_clones(self, lw):
         '''Return a set of the clones described in this .analysis but not present into the .vidjil'''
@@ -46,10 +47,10 @@ class Analysis(VidjilJson):
                     s = self.data[c].d["reads"][point]
                     sizes += [s]
                 except AttributeError:
-                    print "!! missing from cluster", c
+                    print( "!! missing from cluster", c )
 
             if sizes:
-                print "%% cluster: max is %.3f of the sum, len %d" % (float(max(sizes)) / float(sum(sizes)), len(sizes))
+                print( "%% cluster: max is %.3f of the sum, len %d" % (float(max(sizes)) / float(sum(sizes)), len(sizes)) )
 
 
     def info_of_clone(self, w):

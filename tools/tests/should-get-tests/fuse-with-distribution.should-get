@@ -1,5 +1,5 @@
 ### Without distributions computing
-!LAUNCH: python3 ../../fuse.py --output fused_with_distrib_step1.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_with_distrib_step1.vidjil
+!LAUNCH: $PYTHON ../../fuse.py --output fused_with_distrib_step1.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_with_distrib_step1.vidjil
 
 $ Get correct file name in original_names field
 1:"/some/file_1"
@@ -15,7 +15,7 @@ $ should not have distribution if not asked
 
 ### With distributions computing
 #rm fused.vidjil
-!LAUNCH: python3 ../../fuse.py --output fused_with_distrib_step2.vidjil -D ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_with_distrib_step2.vidjil
+!LAUNCH: $PYTHON ../../fuse.py --output fused_with_distrib_step2.vidjil -D ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_with_distrib_step2.vidjil
 
 $ Get correct file name in original_names field and distributions
 2:"/some/file_1"
