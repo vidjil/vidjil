@@ -225,10 +225,10 @@
                    </td>
                    
                     [[if row.results_file.id and row.results_file.data_file:]]
-                    <td><a id="open_sample_result_[[=row.sequence_file.id]]" class="button" href="[[=http_origin]]?custom=[[=row.results_file.id]]&sample_set_id=[[=request.query["id"]]]&config=[[=config_id]]" type="text/html"
+                    <td><a id="open_sample_result_[[=row.sequence_file.id]]" class="button" href="[[=http_origin]]?custom=[[=row.results_file.id]]&sample_set_id=[[=request.query['id']]]&config=[[=config_id]]" type="text/html"
                                 onclick= "event.preventDefault();
                                         if( event.which == 2 ) { window.open(this.href); }
-                                        else { myUrl.loadCustomUrl(db, {'custom': '[[=row.results_file.id]]', 'sample_set_id' : [[=request.query["id"]]], 'config' : [[=config_id]]  } ); } " >
+                                        else { myUrl.loadCustomUrl(db, {'custom': '[[=row.results_file.id]]', 'sample_set_id' : [[=request.query['id']]], 'config' : [[=config_id]]  } ); } " >
                             <i class="icon-forward" title="open this sample results in client"></i>
                         
                     </a></td>

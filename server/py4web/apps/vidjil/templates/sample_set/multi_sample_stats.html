@@ -2,12 +2,20 @@
 
 <h3></h3>
 
+[[ 
+def get_checkbox_header_name(data, i):
+    sanitized_header = data["headers"][i].replace("'","")
+    return f"checkbox_header_{sanitized_header}"
+]]
+
 <div>
     [[ for i in range(len(data['headers'])): ]]
-        <input type="checkbox" id="checkbox_header_[[=data['headers'][i].replace("'","")]]" onclick="toogleColumn('db_table_container', [[=i+1]])" name="Toggle visibility of column [[=data['headers'][i]]]" value="[[=data['headers'][i]]]" checked>
-        <span onclick="toogleColumn('db_table_container', [[=i+1]], 'checkbox_header_[[=data['headers'][i].replace("'","")]]')">[[=data['headers'][i]]]</span>
+        <input type="checkbox" id='[[=get_checkbox_header_name(data, i)]]' onclick="toggleColumn('db_table_container', [[=i+1]])" name="Toggle visibility of column [[=data['headers'][i]]]" value="[[=data['headers'][i]]]" checked>
+        <span onclick="toggleColumn('db_table_container', [[=i+1]], '[[=get_checkbox_header_name(data, i)]]')">[[=data['headers'][i]]]</span>
     [[pass]]
 </div>
+
+<br>
 
 <div id="db_table_container">
     <table class="db_table" id="table">
@@ -33,11 +41,11 @@
                     [[ pass ]]
                     <td>
                        <!-- [[=row.sample_set_membership.id]]  -->
-                       <a id="open_sample_result_[[=row.sample_set_membership.sequence_file_id]]" class="button" type="text/html"
-                       href="[ [= http_origin]]?custom=[[=row.results_file.id]]&sample_set_id=[[=row.sample_set_membership.sample_set_id]]&config=[[=row.results_file.config_id]]"
-                       onclick= "event.preventDefault();
-                            if( event.which == 2 ) { window.open(this.href); }
-                            else { myUrl.loadCustomUrl(db, {'custom': '[[=row.results_file.id]]', 'sample_set_id' : [[=row.sample_set_membership.sample_set_id]], 'config' : [[=row.results_file.config_id]]  } ); } "  >
+                        <a id="open_sample_result_[[=row.sample_set_membership.sequence_file_id]]" class="button" type="text/html"
+                           href="[[=http_origin]]?custom=[[=row.results_file.id]]&sample_set_id=[[=row.sample_set_membership.sample_set_id]]&config=[[=row.results_file.config_id]]"
+                           onclick= "event.preventDefault();
+                                     if ( event.which == 2 ) { window.open(this.href); }
+                                     else { myUrl.loadCustomUrl(db, {'custom': '[[=row.results_file.id]]', 'sample_set_id' : [[=row.sample_set_membership.sample_set_id]], 'config' : [[=row.results_file.config_id]] });}">
                             <i class="icon-forward" title="open this sample results in client"></i>
                         </a>
                     </td>
@@ -48,6 +56,7 @@
     <table class="db_table" id="db_fixed_header"></table>
 
     <br>
+
     <div> Download table in<a class="button" id="download_statsQC" onclick='m.exportStatsQC("[[=data_raw]]")'>TSV format</a>
     </div>
 

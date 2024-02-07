@@ -1134,10 +1134,8 @@ var row_cast_content = function(title, content, time_length, clone) {
  * Change check status of each checkbox from a given list of id
  * Use for selection in compare samples
  */
-var selectListOfCheckbox = function(idx, state){
-  for (var pos in idx){
-    document.getElementById(idx[pos]).checked = state
-  }
+var selectListOfCheckbox = function(ids, state){
+  ids.forEach(id => document.getElementById(`checkbox_sample_${id}`).checked = state)
 }
 
 /**
@@ -1152,7 +1150,7 @@ var toggleDisplay = function (element) {
  *  @param {integer} pos         - Specific pos of the column to switch
  *  @param {string}  checkbox_id - Specific id of the checkbox to switch (if action is called by a checkbox)
  */
-function toogleColumn(tableid, pos, checkbox_id) {
+function toggleColumn(tableid, pos, checkbox_id) {
   document.querySelectorAll(`#${tableid} td:nth-child(${pos})`).forEach(toggleDisplay);
   if (checkbox_id != undefined){
     var checkbox = document.getElementById(checkbox_id)

@@ -1164,45 +1164,41 @@ def get_stat_data(results_file_ids):
 @action("/vidjil/sample_set/multi_sample_stats", method=["POST", "GET"])
 @action.uses("sample_set/multi_sample_stats.html", db, auth.user)
 def multi_sample_stats():
-    data = {}
-    data['headers'] = [header[0] for header in get_stat_headers()]
-    results = []
-    custom_result = request.query['custom_result']
-    print(" === MULTI_SAMPLE_STATS")
-    print(request.query)
-    print(request.params)
+    
+    custom_result = request.query["custom_result"]
     if not isinstance(custom_result, list):
         custom_result = [custom_result]
-
     custom_result = [int(i) for i in custom_result]
 
-    permitted_results = db(
-        (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) &
-        (db.sample_set.id == db.sample_set_membership.sample_set_id) &
-        (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id) &
-        (db.results_file.id.belongs(custom_result))
-    ).select(
-        # db.results_file.id.with_alias('results_file_id')
-    )
+    data = {}
+    data["headers"] = [header[0] for header in get_stat_headers()]
+    results, data_raw = get_stat_data(custom_result)
+    data["results"] = results
 
-    print("===================\n============ PERMITTED_RESULTS ===")
-    print(permitted_results)
-    permitted_results_ids = [r.results_file.id for r in permitted_results]
+    permitted_results = db((auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) & 
+                           (db.sample_set.id == db.sample_set_membership.sample_set_id) &
+                           (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id) &
+                           (db.results_file.id.belongs(custom_result))
+                           ).select()
+    permitted_results_ids = [permitted_result.results_file.id for permitted_result in permitted_results]
     if set(permitted_results_ids) != set(custom_result):
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return json.dumps(res, separators=(',', ':'))
-
-    results, data_raw = get_stat_data(custom_result)
-    data['results'] = results
+    
+    http_origin = ""
+    if "HTTP_ORIGIN" in request.environ :
+        http_origin = request.environ["HTTP_ORIGIN"] + os.sep
+    
     log.info(f"load multi sample stats ({str(custom_result)})",
-             extra={'user_id': auth.user_id, 'record_id': None, 'table_name': 'results_file'})
+             extra={"user_id": auth.user_id, "record_id": None, "table_name": "results_file"})
     return dict(data=data,
                 data_raw=data_raw,
                 auth=auth,
                 db=db,
                 permitted_results=permitted_results,
-                permitted_results_ids=permitted_results_ids)
+                permitted_results_ids=permitted_results_ids,
+                http_origin=http_origin)
 
 
 @vidjil_utils.jsontransformer
@@ -1250,31 +1246,6 @@ def auto_complete():
     res[query] = result
     return json.dumps(res)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @action("/vidjil/sample_set/samples")
 @action.uses(db, auth.user)
 @vidjil_utils.jsontransformer
@@ -1313,8 +1284,7 @@ def stats():
     start = time.time()
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True,
-                    vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True)))
-            }
+                                vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True)))}
         return json.dumps(res, separators=(',',':'))
 
     isAdmin = auth.is_admin()
@@ -1323,7 +1293,7 @@ def stats():
     else :
         type = defs.SET_TYPE_GENERIC
 
-    ##filter
+    ## filter
     if "filter" not in request.query :
         request.query["filter"] = ""
 
@@ -1338,7 +1308,7 @@ def stats():
 
     fields = helper.get_reduced_fields()
 
-    ##sort result
+    ## sort result
     reverse = False
     if "reverse" in request.query:
         reverse = request.query["reverse"]
@@ -1360,7 +1330,7 @@ def stats():
                 helper = helper,
                 group_ids = group_ids,
                 isAdmin = isAdmin,
-                classification=classification,
+                classification = classification,
                 reverse = False)
 
 @action("/vidjil/sample_set/result_files", method=["POST", "GET"])
