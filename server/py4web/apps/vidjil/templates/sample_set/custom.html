@@ -13,21 +13,17 @@
     [[pass]]
 
     <div class="db_block">
-        Select each last analysis of config :
-        <div class="db_block_right">
-            [[for id in config_names :]]
-                <span class="button2" onclick="checkSampleCheckboxes([[=[sample[1] for sample in config_names[id]['samples']]]], true)"                > 
-                    [[=config_names[id]["name"]]]
-                </span>
-            [[pass]]
-        </div>
+        Select analysises of config :
+        [[for name in config_samples :]]
+            <input type="checkbox" id="checkbox_config_[[=name]]" onchange="checkSampleCheckboxes([[=config_samples[name]]], this.checked, [[=config_samples]])">
+            <label for="checkbox_config_[[=name]]"> [[=name]]  </label>
+        [[pass]]
     </div>
-
 
     <div class="db_block">
 
         <div class="db_block_left">
-            search
+            Search: 
             <input id="db_filter_input" type="text" value="[[=request.query["filter"] ]]" 
                    onchange="db.call('sample_set/custom', {'config_id' : '[[=config_id]]', 
                                                       'filter' : this.value, 
@@ -37,18 +33,16 @@
                    data-needs-atwho="true" data-keys="[[=group_ids]]">
         </div>
 
-
         <div class="db_block_right">
-        [[if auth.has_permission(PermissionEnum.run.value, 'sample_set', 0) :]]
-            config
+        [[if auth.has_permission(PermissionEnum.run.value, 'sample_set', request.query['id']) :]]
+            Config : 
             <span>
                 <select id="choose_config" name="config" onchange="db.call('sample_set/custom', {'config_id' : this.value, 
                                                                    'filter' : '[[=request.query["filter"] ]]',
                                                                   'custom_list' : db.getListInput('custom_result[]'),
                                                                   'id' : '[[='' if request.query["id"] is None else request.query["id"] ]]' })">
                     <option value="-1" [[if not config :]]selected[[pass]]> --- </option>
-                    [[ for class_name in classification.keys(): ]]
-                      [[ class_elt = classification[class_name] ]]
+                    [[ for class_elt in classification.values(): ]]
                       <optgroup label="[[ =class_elt['name'] ]]"  title="[[ =class_elt['info'] ]]">
                         [[ for row in class_elt['configs']: ]]
                             <option value="[[=row.id ]]" [[if row.id==config_id:]]selected[[pass]] title="[[=row.info]]" >
@@ -68,7 +62,7 @@
 <div id="db_table_container">
     <table class="db_table table_compare" id="table">
         <thead>
-            <tr><td class="column_20"> <input type="checkbox" class="checkbox_all" onchange="checkSampleCheckboxes([[=[row.results_file.id for row in query]]], this.checked)"> </td>
+            <tr><td class="column_20"> <input type="checkbox" class="checkbox_all" onchange="checkSampleCheckboxes([[=[row.results_file.id for row in query]]], this.checked, [[=config_samples]])"> </td>
 	            [[ if not request.query['id']: ]]
                     <td class="column_200"> [[=helper.get_type_display() if helper is not None else "name"]] </td>
                 [[ pass ]]
@@ -89,19 +83,19 @@
             [[for row in query :]]
 
                 <tr id="compare_line_sample_[[=row.results_file.id]]">
-                    <td> <input type="checkbox" id="checkbox_sample_[[=row.results_file.id]]" name="custom_result[]" value="[[=row.results_file.id]]" onchange="updateCheckboxAllIndeterminateState()" [[if row.checked :]] checked [[pass]]> </td>
+                    <td> <input type="checkbox" id="checkbox_sample_[[=row.results_file.id]]" name="custom_result[]" value="[[=row.results_file.id]]" onchange="updateSampleSetCustomIndermediateStates([[=config_samples]])" [[if row.checked :]] checked [[pass]]> </td>
                     [[ if not request.query['id']: ]]
                         <td onclick=''> [[=row.names]] </td>
                     [[ pass ]]
-                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])' [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]]  [[pass]] id="sequence_file_[[=row.sequence_file.id]]">
+                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]], [[=config_samples]])' [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]]  [[pass]] id="sequence_file_[[=row.sequence_file.id]]">
                          [[=row.sequence_file.filename]]
                     </td>
-                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])'> [[=row.sequence_file.sampling_date]] </td>
-                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])'> [[=tag_decorator.sanitize(tag_decorator.decorate(row.sequence_file.info, 'tag', 'sequence_file', '/sample_set/custom'))]] </td>
-                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])'> [[=row.sequence_file.pcr]] </td>
-                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])' [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]] [[pass]] >
-                        [[=vidjil_utils.format_size(row.sequence_file.size_file)]] </td>
-		            <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])'> [[=row.config.name]]
+                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]], [[=config_samples]])'> [[=row.sequence_file.sampling_date]] </td>
+                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]]), [[=config_samples]]'> [[=tag_decorator.sanitize(tag_decorator.decorate(row.sequence_file.info, 'tag', 'sequence_file', '/sample_set/custom'))]] </td>
+                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]], [[=config_samples]])'> [[=row.sequence_file.pcr]] </td>
+                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]], [[=config_samples]])' [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]] [[pass]] >
+                         [[=vidjil_utils.format_size(row.sequence_file.size_file)]] </td>
+		            <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]], [[=config_samples]])'> [[=row.config.name]]
                     
                     <td class="column_sep"></td>
                     
@@ -120,10 +114,6 @@
 
 <div class="db_block">
 
-    <div class="db_block_left">
-
-    </div>
-
     <div class="db_block_right">
         <span class="button2" onclick="db.call('sample_set/multi_sample_stats', {'custom_result': db.getListInput('custom_result[]') })" >preview / quality control</span>
         <span class="button2" 
@@ -134,8 +124,5 @@
           [[pass]]
           > see results </span>
     </div>
-
-</div>
-
 
 </div>

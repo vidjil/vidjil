@@ -535,13 +535,10 @@ def custom():
 
     if "config_id" in request.query and request.query["config_id"] != "-1" :
         config_id = int(request.query["config_id"])
-        config_name = db.config[request.query["config_id"]].name
         config = True
-        
     else:
         request.query["config_id"] = -1
-        config_id = -1
-        config_name = None
+        config_id = -1 
         config = False
         
     if "custom_list" not in request.query :
@@ -556,7 +553,6 @@ def custom():
         factory = ModelFactory()
         helper = factory.get_instance(type=sample_set.sample_type)
         qq = (db.sample_set.id == request.query["id"])
-        
     else:
         qq = (auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set))
         myGroupBy = db.sequence_file.id|db.patient.id|db.run.id|db.generic.id|db.results_file.config_id
@@ -602,20 +598,19 @@ def custom():
                 count]
 
         query = db(q).select(
-                *select,
-                left = left_join,
-                orderby = db.sequence_file.id|db.results_file.run_date,
-                groupby = db.tag_ref.table_name|db.tag_ref.record_id,
-                having = count >= len(tags)
-            )
-
+                    *select,
+                    left = left_join,
+                    orderby = db.sequence_file.id|db.results_file.run_date,
+                    groupby = db.tag_ref.table_name|db.tag_ref.record_id,
+                    having = count >= len(tags)
+                )
     else:
         query = db(q).select(
-                *select,
-                left = left_join,
-                orderby = db.sequence_file.id|db.results_file.run_date,
-                groupby = myGroupBy
-            )
+                    *select,
+                    left = left_join,
+                    orderby = db.sequence_file.id|db.results_file.run_date,
+                    groupby = myGroupBy
+                )
 
     for row in query :
         row.checked = False
@@ -633,9 +628,9 @@ def custom():
             row.names = row.generic.name
             info = row.generic.info
         row.string = [row.names, row.sequence_file.filename, str(row.sequence_file.sampling_date), str(row.sequence_file.pcr), str(row.config.name), str(row.results_file.run_date), info]
+    
     query = query.find(lambda row : ( vidjil_utils.advanced_filter(row.string,search) or row.checked) )
 
-    
     if config :
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.query["custom_list"])) )
     
@@ -643,26 +638,14 @@ def custom():
     log.info("load compare list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': "results_file"})
     log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
-
-    ## Get a list of each config and a list of all last samples analysis 
-    config_names = defaultdict(lambda: {"samples":[]})
+    ## Get a list of each config and a list of all samples analysises
+    config_samples = dict()
     for row in query:
-        config_names[row.results_file.config_id]["id"]   = row.results_file.config_id
-        config_names[row.results_file.config_id]["name"] = row.config.name
-        config_names[row.results_file.config_id]["samples"].append([int(row.sequence_file.id), int(row.results_file.id), str(row.results_file.run_date)])
-    # Compute a list of checkbox idx to select
-    for name in config_names.keys():
-        config_names[name]["last"] = {}
-        for sample in config_names[name]["samples"]:
-            if not sample[0] in config_names[name]["last"]:
-                config_names[name]["last"][sample[0]] = sample
-            elif config_names[name]["last"][sample[0]][2] < sample[2]:
-                config_names[name]["last"][sample[0]] = sample
-    for name in config_names.keys():
-        config_names[name]["idx"] = map(lambda x : "checkbox_sample_%s" % config_names[name]["last"][x][1], config_names[name]["last"].keys())
+        if row.config.name not in config_samples:
+            config_samples[row.config.name] = []
+        config_samples[row.config.name].append(int(row.results_file.id))
 
-
-    classification   = getConfigsByClassification()
+    classification = getConfigsByClassification()
 
     return dict(query=query,
                 config_id=config_id,
@@ -670,7 +653,7 @@ def custom():
                 helper=helper,
                 tag_decorator=tag_decorator,
                 classification=classification,
-                config_names=dict(config_names),
+                config_samples=config_samples,
                 group_ids=group_ids,
                 auth=auth,
                 db=db)
