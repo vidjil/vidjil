@@ -1131,19 +1131,35 @@ var row_cast_content = function(title, content, time_length, clone) {
 }
 
 /**
- * Change check status of each checkbox from a given list of id
- * Use for selection in compare samples
+ * Update a checkbox indeterminate and checked states according to a list of checkboxes
+ * @param {checkbox} checkboxToUpdate 
+ * @param {Array<checkbox>} checkboxes 
  */
-var selectListOfCheckbox = function(ids, state){
-  ids.forEach(id => document.getElementById(`checkbox_sample_${id}`).checked = state)
+function updateIndeterminateState(checkboxToUpdate, checkboxes) {
+    numberOfChecked = 0;
+    for (var checkbox of checkboxes) {
+        if (checkbox.checked) {
+            numberOfChecked++;
+        }
+    }
+    if (numberOfChecked == 0) {
+        checkboxToUpdate.checked = false;
+        checkboxToUpdate.indeterminate = false;
+    } else if (numberOfChecked == checkboxes.length) {
+        checkboxToUpdate.checked = true;
+        checkboxToUpdate.indeterminate = false;
+    } else {
+        checkboxToUpdate.indeterminate = true;
+    }
 }
 
 /**
- * Functions that allow to switch display status of a DOm element
+ * Function that allows to switch display status of a DOM element
  */
 var toggleDisplay = function (element) {
-  element.style.display = (element.style.display === 'none')? '':'none';
+    element.style.display = (element.style.display === 'none') ? '' : 'none';
 }
+
 /**
  * Function that allow to call toogleDisplay on each cells of a table for a given column
  *  @param {string}  tableid     - Specific id of the table to use
@@ -1151,9 +1167,9 @@ var toggleDisplay = function (element) {
  *  @param {string}  checkbox_id - Specific id of the checkbox to switch (if action is called by a checkbox)
  */
 function toggleColumn(tableid, pos, checkbox_id) {
-  document.querySelectorAll(`#${tableid} td:nth-child(${pos})`).forEach(toggleDisplay);
-  if (checkbox_id != undefined){
-    var checkbox = document.getElementById(checkbox_id)
-    checkbox.checked = !checkbox.checked
-  }
+    document.querySelectorAll(`#${tableid} td:nth-child(${pos})`).forEach(toggleDisplay);
+    if (checkbox_id != undefined) {
+        var checkbox = document.getElementById(checkbox_id)
+        checkbox.checked = !checkbox.checked
+    }
 }

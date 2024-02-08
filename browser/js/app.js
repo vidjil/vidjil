@@ -105,6 +105,7 @@ function loadAfterConf() {
                                          "js/indexedDom",
                                          "js/warnings",
                                          "js/warnings_data",
+                                         "js/sample_set_custom.js",
                                          // Speed test
                                          "js/speed_test",
                                          "js/form_builder",

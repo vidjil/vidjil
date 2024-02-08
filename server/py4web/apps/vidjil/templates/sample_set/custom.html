@@ -16,7 +16,7 @@
         Select each last analysis of config :
         <div class="db_block_right">
             [[for id in config_names :]]
-                <span class="button2" onclick="selectListOfCheckbox([[=[sample[1] for sample in config_names[id]['samples']]]], true)"                > 
+                <span class="button2" onclick="checkSampleCheckboxes([[=[sample[1] for sample in config_names[id]['samples']]]], true)"                > 
                     [[=config_names[id]["name"]]]
                 </span>
             [[pass]]
@@ -68,7 +68,7 @@
 <div id="db_table_container">
     <table class="db_table table_compare" id="table">
         <thead>
-            <tr><td class="column_20"> </td>
+            <tr><td class="column_20"> <input type="checkbox" class="checkbox_all" onchange="checkSampleCheckboxes([[=[row.results_file.id for row in query]]], this.checked)"> </td>
 	            [[ if not request.query['id']: ]]
                     <td class="column_200"> [[=helper.get_type_display() if helper is not None else "name"]] </td>
                 [[ pass ]]
@@ -89,19 +89,19 @@
             [[for row in query :]]
 
                 <tr id="compare_line_sample_[[=row.results_file.id]]">
-                    <td> <input type="checkbox" id="checkbox_sample_[[=row.results_file.id]]" name="custom_result[]" value="[[=row.results_file.id]]" [[if row.checked :]] checked [[pass]]> </td>
+                    <td> <input type="checkbox" id="checkbox_sample_[[=row.results_file.id]]" name="custom_result[]" value="[[=row.results_file.id]]" onchange="updateCheckboxAllIndeterminateState()" [[if row.checked :]] checked [[pass]]> </td>
                     [[ if not request.query['id']: ]]
-                        <td onclick='checkbox_sample_[[=row.results_file.id]].checked = !checkbox_sample_[[=row.results_file.id]].checked'> [[=row.names]] </td>
+                        <td onclick=''> [[=row.names]] </td>
                     [[ pass ]]
-                    <td onclick='checkbox_sample_[[=row.results_file.id]].checked = !checkbox_sample_[[=row.results_file.id]].checked' [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]]  [[pass]] id="sequence_file_[[=row.sequence_file.id]]">
+                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])' [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]]  [[pass]] id="sequence_file_[[=row.sequence_file.id]]">
                          [[=row.sequence_file.filename]]
                     </td>
-                    <td onclick='checkbox_sample_[[=row.results_file.id]].checked = !checkbox_sample_[[=row.results_file.id]].checked'> [[=row.sequence_file.sampling_date]] </td>
-                    <td onclick='checkbox_sample_[[=row.results_file.id]].checked = !checkbox_sample_[[=row.results_file.id]].checked'> [[=tag_decorator.sanitize(tag_decorator.decorate(row.sequence_file.info, 'tag', 'sequence_file', '/sample_set/custom'))]] </td>
-                    <td onclick='checkbox_sample_[[=row.results_file.id]].checked = !checkbox_sample_[[=row.results_file.id]].checked'> [[=row.sequence_file.pcr]] </td>
-                    <td onclick='checkbox_sample_[[=row.results_file.id]].checked = !checkbox_sample_[[=row.results_file.id]].checked' [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]] [[pass]] >
+                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])'> [[=row.sequence_file.sampling_date]] </td>
+                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])'> [[=tag_decorator.sanitize(tag_decorator.decorate(row.sequence_file.info, 'tag', 'sequence_file', '/sample_set/custom'))]] </td>
+                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])'> [[=row.sequence_file.pcr]] </td>
+                    <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])' [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]] [[pass]] >
                         [[=vidjil_utils.format_size(row.sequence_file.size_file)]] </td>
-		            <td onclick='checkbox_sample_[[=row.results_file.id]].checked = !checkbox_sample_[[=row.results_file.id]].checked'> [[=row.config.name]]
+		            <td onclick='reverseSampleCheckboxChecked([[=row.results_file.id]])'> [[=row.config.name]]
                     
                     <td class="column_sep"></td>
                     
