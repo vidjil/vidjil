@@ -1,8 +1,7 @@
 !!! note
     Here are aggregated notes forming a part of the developer documentation on the Vidjil web client.  
     These notes are a work-in-progress, they are not as polished as the user documentation.  
-    Developers should also have a look at the documentation for [bioinformaticians](/doc/vidjil-algo/) and [server administrators](/doc/admin/),
-    at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
+    Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md), at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
 
 # Development notes -- Client
 
@@ -12,7 +11,7 @@ Run a `make` into `browser/` to get the necessary files.
 This will in particular get the germline files as well as the icon files.
 
 Opening the `browser/index.html` file is then enough to get a functionning client,
-able to open `.vidjil` files with the `import/export` menu.
+able to open `.vidjil` files with the `import/export`dev-ger menu.
 
 To work with actual data, the easiest way is to copy `js/conf.js.sample` to `js/conf.js`.
 This will unlock the `patients` menu and allow your local client
@@ -428,12 +427,12 @@ DEBUG=nightmare*,electron:* node nightmare.js
 
     Watir tests is currently under suppression and it is replaced by **Cypress** testing pipeline.  
     Migration of client side is already done, and server side is in progress.   
-    Please go to [Functional tests with Cypress](/doc/dev-client/#functional-tests-with-cypress) for server/client testing. 
+    Please go to [Functional tests with Cypress](#functional-tests-with-cypress) for server/client testing. 
     Some part of documentation on Watir still true, notably for installation and server testing part, but a major part of it is no longer usable.
     The documentation remains until Watir is completely removed.
 
 #### Architecture
-    
+
 The client functional testing is done in the directory
 `browser/tests/functional`, with Watir.
 The functional tests are built using two base files:
@@ -456,7 +455,7 @@ all the files matching the previous pattern. It also backs up the test
 reports as `ci_reporter` removes them before each file is run.
 
 #### Installation
-    
+
 The following instructions are for Ubuntu.
 For OS X, see <https://github.com/watir/watirbook/blob/master/manuscript/installation/mac.md>.
 

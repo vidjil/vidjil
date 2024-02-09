@@ -327,7 +327,7 @@ Executable should be automatically detected inside your container.
 !!! Warning
     Some binaries working on your computer may not work inside container environment.
     For compatibilities reasons, 
-    keep in mind that some softwares need to be build inside a docker image to get correct libraries and compillers.
+    keep in mind that some softwares need to be build inside a docker image to get correct libraries and compilers.
 
 
 When the software has compatible inputs and outputs, it will be enough
@@ -567,17 +567,17 @@ mysql -u root -p
     SHOW GRANTS FOR backup;
     ```
 
-1. Restast restic service
+1. Restart restic service
 
-    Backup is done by restic service. 
-    It need to be restarted to take into account change made on configuration file `docker/backup/conf/backup.cnf`.
+    Backup is done by restic service.
+    It needs to be restarted to take into account change made on configuration file `docker/backup/conf/backup.cnf`.
 
 !!! note
     Read docker logs for restic service to see if everything working well.
 
 #### Note on backup content
 
-Backup does not apply to uploaded files. 
+Backup does not apply to uploaded files.
 We inform users that they should
 keep a backup of their original sequence files.
 
@@ -681,7 +681,7 @@ This `config.json` file initially contains a list of the analysis configs from t
 - `"description"` :  the original config parameters (only for information, they are ignoed in the import)
 - `"link_local"`  :  the config ID that will be used on the new server
 
-In the `config.json` file, you have to replace all` link_local` values with the corresponding config ID
+In the `config.json` file, you have to replace all `link_local` values with the corresponding config ID
 of a similar config on your server (if you don't have a similar one you should create one).
 
 If much of your imported data was on `old` configs, that you do not intend to run anymore,
@@ -728,6 +728,7 @@ Proceed as in step 3 for pre-process configs. The file to edit is named `pproces
 ##### Step 5 : import
 
 The import takes place inside the vidjil-server container
+
 ```sh
 docker exec -it docker_uwsgi_1 bash
 cd usr/share/vidjil/server/scripts-web2py/
@@ -741,6 +742,7 @@ sh migrator.sh -p [RESULTS DIRECTORY] -s [EXPORT DIRECTORY] import --config [CON
 - `[GROUP ID]`                         ID of the group you should have created/selected during step 2
 
 Usually, the command is thus:
+
 ```sh
 sh migrator.sh -p /mnt/result/results/ -s /etc/vidjil/export/XXXX/ import --config/etc/vidjil/exportXXXX/config.json --pre-process /etc/vidjil/export/XXXX/pprocess.json  4
 ```

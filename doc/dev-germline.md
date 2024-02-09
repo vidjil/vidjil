@@ -1,18 +1,17 @@
 
-
 # Germline genes
 
-Vidjil-algo can use [algo.md#custom-germlineg-presets](custom germline presets).
+Vidjil-algo can use [custom germline presets](algo.md#custom-germlineg-presets).
 This developer documentation focuses on updating or adding the *default* germline files.
 
 The germlines are compiled with `germline/split-germlines.py`.
 They come from various sources:
- - [IMGT/GENE-DB](http://www.imgt.org/download/GENE-DB/). 
+ - [IMGT/GENE-DB](http://www.imgt.org/download/GENE-DB/).
    See in particular the [data updates](http://www.imgt.org/IMGTgenedbdoc/dataupdates.html)
  - Genomic sequences through the [NCBI E-utilities API]
  - A few static files
 
-It is advised to regularly retrieve the new sequences. 
+It is advised to regularly retrieve the new sequences.
 However doing so may break some tests and requires some time and to fix things by hand.
 
 ### On a `feature-g/` branch
