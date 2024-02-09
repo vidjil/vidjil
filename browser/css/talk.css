@@ -459,7 +459,7 @@ ul {
   overflow: hidden;
 }
 .vidjil-panels-left {
-  width: calc(100% - -64px);
+  width: calc(100% - 6px - 70px);
 }
 .vidjil-panels-full {
   width: 100%;
@@ -2746,6 +2746,7 @@ div.tooltip {
 .dropdown-check-list ul.rs-items li {
   list-style: none;
   display: flex;
+  cursor: pointer;
 }
 .dropdown-check-list.visible .rs-anchor {
   color: #0094ff;
@@ -2755,7 +2756,7 @@ div.tooltip {
   display: block;
 }
 .warning_span {
-  min-width: 100px;
+  min-width: 120px;
   display: inline-block;
   text-align: right;
   cursor: pointer;
@@ -2763,9 +2764,13 @@ div.tooltip {
 .warning_span:hover {
   color: #002b36;
   font-style: oblique;
+  font-weight: bold;
 }
 .warnings_section_unpresent {
   color: #93a1a1;
+}
+.afterAjaxScript {
+  display: none;
 }
 #mid-container {
   font-size: 125%;

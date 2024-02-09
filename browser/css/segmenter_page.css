@@ -459,7 +459,7 @@ ul {
   overflow: hidden;
 }
 .vidjil-panels-left {
-  width: calc(100% - -64px);
+  width: calc(100% - 6px - 70px);
 }
 .vidjil-panels-full {
   width: 100%;
@@ -2116,7 +2116,7 @@ table.log textarea {
   text-align: center;
 }
 .urgent_message {
-  border: 2px solid #8b0000;
+  border: 2px solid darkred;
   margin: 3px;
   font-weight: bold;
   background-color: #F2DEDE;
@@ -2746,6 +2746,7 @@ div.tooltip {
 .dropdown-check-list ul.rs-items li {
   list-style: none;
   display: flex;
+  cursor: pointer;
 }
 .dropdown-check-list.visible .rs-anchor {
   color: #0094ff;
@@ -2754,12 +2755,22 @@ div.tooltip {
 .dropdown-check-list.visible .rs-items {
   display: block;
 }
+.warning_span {
+  min-width: 120px;
+  display: inline-block;
+  text-align: right;
+  cursor: pointer;
+}
+.warning_span:hover {
+  color: #002b36;
+  font-style: oblique;
+  font-weight: bold;
+}
 .warnings_section_unpresent {
   color: #93a1a1;
 }
-.warnings_line {
-  display: flex;
-  margin: 4px;
+.afterAjaxScript {
+  display: none;
 }
 body {
   line-height: 20px;

@@ -459,7 +459,7 @@ ul {
   overflow: hidden;
 }
 .vidjil-panels-left {
-  width: calc(100% - -64px);
+  width: calc(100% - 6px - 70px);
 }
 .vidjil-panels-full {
   width: 100%;
@@ -2756,7 +2756,7 @@ div.tooltip {
   display: block;
 }
 .warning_span {
-  min-width: 100px;
+  min-width: 120px;
   display: inline-block;
   text-align: right;
   cursor: pointer;
@@ -2764,7 +2764,11 @@ div.tooltip {
 .warning_span:hover {
   color: #fdf6e3;
   font-style: oblique;
+  font-weight: bold;
 }
 .warnings_section_unpresent {
   color: #586e75;
+}
+.afterAjaxScript {
+  display: none;
 }

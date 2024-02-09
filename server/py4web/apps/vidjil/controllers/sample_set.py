@@ -531,6 +531,8 @@ def custom():
         log.error(res)
         return json.dumps(res, separators=(',',':'))
     
+    print(f"----- custom -- {request.query=}")
+    
     start = time.time()
 
     if "config_id" in request.query and request.query["config_id"] != "-1" :

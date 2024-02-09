@@ -459,7 +459,7 @@ ul {
   overflow: hidden;
 }
 .vidjil-panels-left {
-  width: calc(100% - -64px);
+  width: calc(100% - 6px - 70px);
 }
 .vidjil-panels-full {
   width: 100%;
@@ -1084,7 +1084,7 @@ line {
   transition-delay: 0s, 0s;
 }
 #add_clone_menu > #addclone_input.error {
-  border: 1px solid #8b0000;
+  border: 1px solid darkred;
 }
 #menu_right_part {
   float: right;
@@ -2116,7 +2116,7 @@ table.log textarea {
   text-align: center;
 }
 .urgent_message {
-  border: 2px solid #8b0000;
+  border: 2px solid darkred;
   margin: 3px;
   font-weight: bold;
   background-color: #F2DEDE;
@@ -2756,7 +2756,7 @@ div.tooltip {
   display: block;
 }
 .warning_span {
-  min-width: 100px;
+  min-width: 120px;
   display: inline-block;
   text-align: right;
   cursor: pointer;
@@ -2764,7 +2764,11 @@ div.tooltip {
 .warning_span:hover {
   color: #002b36;
   font-style: oblique;
+  font-weight: bold;
 }
 .warnings_section_unpresent {
   color: #93a1a1;
+}
+.afterAjaxScript {
+  display: none;
 }
