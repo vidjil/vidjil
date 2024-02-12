@@ -531,8 +531,6 @@ def custom():
         log.error(res)
         return json.dumps(res, separators=(',',':'))
     
-    print(f"----- custom -- {request.query=}")
-    
     start = time.time()
 
     if "config_id" in request.query and request.query["config_id"] != "-1" :
@@ -1090,7 +1088,6 @@ def get_stat_data(results_file_ids):
             sample_set['id'] = sub_res['set_id']
             sample_set['name'] = helpers[sub_res['sample_type']
                                          ].get_name(sub_res[sub_res['sample_type']])
-            print(sample_set['name'])
             sample_set['info'] = sub_res['set_info']
             sample_set['type'] = sub_res['sample_type']
             tmp['sets'].append(sample_set)
