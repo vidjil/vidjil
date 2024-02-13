@@ -36,17 +36,18 @@ VIDJIL_JSON_VERSION = '2014.09';
 // See also doc/user.md and docker/ci/Dockerfile
 BROWSER_COMPATIBILITY = {
     "Firefox": {
-        "legacy": 62,
-        "supported": 78,
-        "latest": 89
-    }, 
+        "legacy": 78,
+        "supported": 102,
+        "latest": 115
+    },
     "Chrome": {
-        "legacy": 75,
-        "supported":  79,
-        "latest": 93
+        "legacy": 79,
+        "supported":  102,
+        "latest":  115
     }
 }
-BROWSER_SUPPORTED_UNTIL = "April 2024"
+BROWSER_SUPPORTED_UNTIL = "May 2024"
+BROWSER_SUPPORTED_UNTIL_NEXT = "April 2026"
 
 SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
 
@@ -230,19 +231,21 @@ Model.prototype = {
         var priority = 0;
         if (BROWSER_COMPATIBILITY[browserName] != undefined){
             console.log("Detected browser: " + msg)
-            if (BROWSER_COMPATIBILITY[browserName].legacy > browserVersion){
-                msg += " is not supported."
+            if (BROWSER_COMPATIBILITY[browserName].legacy > browserVersion){ // < firefox 78
+                msg += ", as a legacy browser is no more supported."
                 priority = 3
-            } else if (BROWSER_COMPATIBILITY[browserName].supported > browserVersion){
-                msg += ", as a legacy browser, is only partially supported."
-                msg += "\n<br />Some features will not be available and the support will be dropped in a few months."
+            } else if (BROWSER_COMPATIBILITY[browserName].supported > browserVersion){ // < firefox 102
+                // msg += ", as a legacy browser, is only partially supported."
+                msg += `, is a supported browser until ${BROWSER_SUPPORTED_UNTIL}. The support will be dropped in a few months.`
+                // msg += "\n<br />Some features will not be available and the support will be dropped in a few months."
                 priority = 2
             }
 
+
             if (priority >= 2)
             {
-                msg += "\n<br />We recommend using " + browserName + " " + BROWSER_COMPATIBILITY[browserName].supported + " or later, or other modern browsers, "
-                msg += "that will be supported until at least " + BROWSER_SUPPORTED_UNTIL + "."
+                msg += "\n<br />We recommend using " + browserName + " " + BROWSER_COMPATIBILITY[browserName].latest + " or later, or other modern browsers, "
+                msg += "that will be supported until at least " + BROWSER_SUPPORTED_UNTIL_NEXT + "."
                 msg += "\n<br />See our documentation on <a target='_blank' href='http://www.vidjil.org/doc/user/#supported-browsers'>supported browsers</a>."
                 console.log({ msg: msg, type: "flash", priority: priority, timeout:15000 });
             }

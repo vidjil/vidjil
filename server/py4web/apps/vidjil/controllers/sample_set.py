@@ -130,7 +130,6 @@ def index():
 
     if config :
         config_name = db.config[config_id].name
-        print( "===  config_name: %s" % config_name)
 
         fused = db(
             (db.fused_file.sample_set_id == sample_set_id)
@@ -312,10 +311,10 @@ def all():
     ##sort result
     reverse = False
     if "reverse" in request.query:
-        reverse = request.query["reverse"]
+        reverse = True
 
     if "sort" in request.query:
-        result = sorted(result, key = sort_fields[request.query["sort"]]['call'], reverse=reverse)
+        result = sorted(result, key = sort_fields[request.query['sort']]['sort_call'], reverse=reverse)
     else:
         request.query["sort"] = ""
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
@@ -420,8 +419,8 @@ def submit():
             errors = helper.validate(p)
             p['error'] = errors
             action = "add"
+            should_register_tags = False
             if len(errors) == 0:
-                should_register_tags = False
                 reset = False
 
                 name = helper.get_name(p)
@@ -526,6 +525,12 @@ def submit():
 @action.uses("sample_set/custom.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def custom():
+    if "id" not in request.query:
+        # TODO : better deal with this case, but it fails for now
+        res = {"success": "false", "message": "Missing field id"}
+        log.error(res)
+        return json.dumps(res, separators=(',',':'))
+    
     start = time.time()
 
     if "config_id" in request.query and request.query["config_id"] != "-1" :
@@ -1341,7 +1346,7 @@ def mystats():
     return json.dumps(d, separators=(',',':'))
 
 @action("/vidjil/sample_set/download_sequence_file/<filename>", method=["POST", "GET"])
-@action.uses(db, session)
+@action.uses(db, session, auth.user)
 def download(filename=None):
     mimetype = mimetypes.guess_type(defs.DIR_SEQUENCES+filename)
     return static_file(filename, root=defs.DIR_SEQUENCES, download=request.query.filename, mimetype=mimetype[1])

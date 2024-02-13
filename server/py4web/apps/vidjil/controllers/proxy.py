@@ -3,6 +3,7 @@ import json
 import requests
 import re
 from py4web import action, request
+from ..common import cors
 
 ##################################
 # HELPERS
@@ -47,15 +48,18 @@ def proxy_request(url, headers={}, handler=None):
 # CONTROLLERS
 ##################################
 @action("/vidjil/proxy/index", method=["POST", "GET"])
+@action.uses(cors)
 def index():
     return json.dumps("index()")
 
 
 @action("/vidjil/proxy/imgt", method=["POST"])
+@action.uses(cors)
 def imgt():
     return proxy_request(IMGT_URL)
 
 
 @action("/vidjil/proxy/assign_subsets", method=["POST"])
+@action.uses(cors)
 def assign_subsets():
     return proxy_request(ASSIGN_SUBSET_CGI, {'referer': ASSIGN_SUBSET_URL}, assign_subset_response_handler)

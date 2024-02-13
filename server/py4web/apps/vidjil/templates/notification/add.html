@@ -9,14 +9,20 @@
             <tr>
                 <td ><label for="notification_message_type" id="notification_message_type__label">type: </label></td>
                 <td >
-	                [[=SELECT(OPTION('Login page', _value='login'),OPTION('Header', _value='header'),_name="message_type")]]
+                    <select name="message_type">
+                        <option value='login'>Login page</option>
+                        <option value='header'>Header</option>
+                    </select>
 	                <span>*</span></td>
                 <td ></td>
             </tr>
             <tr>
                 <td><label for="notification_priority" id="notification_priority__label">priority: </label></td>
                 <td>
-	                [[=SELECT(OPTION('Information', _value='info'),OPTION('Urgent', _value='urgent'),_name="priority")]]
+                    <select name="priority">
+                        <option value='info'>Information</option>
+                        <option value='urgent'>Urgent</option>
+                    </select>
 	                <span>*</span></td>
                 <td></td>
             </tr>

@@ -11,7 +11,7 @@ sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 This is the help of the [Vidjil web application](http://app.vidjil.org/).
 Further help can always be asked to <support@vidjil.org>. We can also arrange phone or video meeting.
 
-The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
+The Vidjil team (Mathieu, Mikaël, Aurélien, Clément, Florian, Marc, Ryan and Tatiana)
 
 ## Requirements
 
@@ -20,12 +20,12 @@ The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Ryan and Tatiana)
 The Vidjil web application runs in any modern browser.
 We recommend to either regularly update one's web browsers,
 or to use long-term releases, such as [Firefox ESR](https://www.mozilla.org/en-US/firefox/enterprise).
-As of September 2020, we recommend using Firefox or Chrome/Chromium :
+As of January 2024, we recommend using Firefox or Chrome/Chromium :
 
-  - Firefox, *version \>= 78 ESR*
-  - Chrome, *version \>= 79*
+  - Firefox, *version \>= 115 ESR*
+  - Chrome, *version \>= 115* 
 
-These platforms will be supported to at least *April 2024*.
+These platforms will be supported to at least *April 2026*.
 Within our quality process, we test several of these versions 
 through [tests and continuous integration](https://www.vidjil.org/doc/quality/#tests-1).
 
@@ -33,19 +33,19 @@ through [tests and continuous integration](https://www.vidjil.org/doc/quality/#t
 
 We also provide an extended support on
 
-  - Firefox, versions 62 to 77
-  - Chrome, version 75 to 78
+  - Firefox, versions 78 to 114
+  - Chrome, version 79 to 114
 
 Some of these legacy platforms are also tested through our continuous integration pipelines.
 However, old platforms have security flaws and are not recommended for routine usage involving clinical data.
-They may not get the new features, and *this extended support will be dropped in May 2022*.
+They may not get the new features, and *this extended support will be dropped in May 2024*.
 
 Before dropping support to any platform,
 we display during at least six months a warning on those legacy browsers.
 
 ### Other browsers
 
-Vidjil is also reported to work with recent Edge, IE (version >= 10.0), Opera or Safari browsers,
+Vidjil is also reported to work with recent Edge, Opera or Safari browsers,
 but these browsers are not officialy supported.
 Note that Vidjil will not run on IE 9.0 or below.
 

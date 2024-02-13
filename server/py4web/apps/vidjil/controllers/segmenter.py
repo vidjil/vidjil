@@ -13,7 +13,7 @@ from contextlib import contextmanager
 import tempfile
 import shutil
 
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+from ..common import cors, log
 
 
 ##################################
@@ -74,10 +74,12 @@ def segment_sequences(sequences):
                 with open(result_path, 'r') as myfile:
                     text_result = myfile.read()
             else:
-                return response.json({'error': 'Error while processing the file'})
+                res = {"success": "false", "message": "Error while processing the file"}
+                log.error(res)
+                return json.dumps(res, separators=(',', ':'))
 
     log.debug("segment sequences %s" % str(sequences))
-    return response.json(json.loads(text_result))
+    return text_result
 
 def check_sequences(sequences):
     #fasta format ?
@@ -101,12 +103,12 @@ def check_sequences(sequences):
 ##################################
 
 @action("/vidjil/segmenter/index", method=["POST", "GET"])
-@action.uses(db, auth.user)
+@action.uses(cors)
+@vidjil_utils.jsontransformer
 def index():
-    if request.query['sequences'] == None or request.query['sequences'] == '':
+    if "sequences" not in request.params or request.params['sequences'] == '':
+        log.error("no sequences in segmenter request")
         return None
 
-    sequences = request.query['sequences']
+    sequences = request.params['sequences']
     return segment_sequences(sequences)
-
-

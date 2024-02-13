@@ -7,6 +7,7 @@ describe('Manipulate patient, sample and launch analysis', function () {
         cy.close_tips()
     })
     beforeEach(function () {
+      cy.closeFlashAll()
     })
     afterEach(function () {
     })

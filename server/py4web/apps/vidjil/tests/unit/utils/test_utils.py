@@ -1,5 +1,5 @@
 import pathlib
-from py4web import DAL
+from .... import VidjilAuth
 
 
 class UploadHelper():
@@ -24,8 +24,3 @@ def get_results_path() -> str:
     results_path = pathlib.Path(get_resources_path(), "results")
     results_path.mkdir(exist_ok=True)
     return results_path
-
-
-def get_user_group_id(db: DAL, user_id: int) -> int:
-    user_group_id = db(db.auth_group.role == f"user_{user_id}").select()[0].id
-    return user_group_id

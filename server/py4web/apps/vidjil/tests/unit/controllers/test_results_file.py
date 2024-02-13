@@ -135,7 +135,7 @@ class TestResultsFileController():
     def test_info(self):
         # Given : logged as other user, add a results file with the correct rights
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -162,7 +162,7 @@ class TestResultsFileController():
     def test_info_access_denied(self):
         # Given : logged as other user, add a results file with the wrong rights
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -207,7 +207,7 @@ class TestResultsFileController():
     def test_output_access_denied(self):
         # Given : logged as other user, add a results file with the wrong rights
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -236,7 +236,7 @@ class TestResultsFileController():
     def test_output(self):
         # Given : logged as other user, add a results file with rights
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -297,7 +297,7 @@ class TestResultsFileController():
     # def test_download(self, mocker):
     #     # Given : logged as other user, add a results file with rights
     #     user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-    #     user_group_id = test_utils.get_user_group_id(db, user_id)
+    #     user_group_id = auth.user_group(user_id)
     #     db_manipulation_utils.log_in(
     #         self.session,
     #         db_manipulation_utils.get_indexed_user_email(1),
@@ -374,7 +374,7 @@ class TestResultsFileController():
     def test_confirm(self):
         # Given : logged as other user, add a results file with the correct rights
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -435,7 +435,7 @@ class TestResultsFileController():
     def test_delete(self):
         # Given : logged as other user, add a results file with the correct rights
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
