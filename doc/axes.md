@@ -12,9 +12,9 @@ and used by the *color by* menu.
 * **size (other sample)**: Ratio of the number of reads of the clone to the total number of reads in the selected locus, on a second sample
 (applicable when there are several samples)
 
-* **locus**: Locus or recombination system, as detailed [here](locus.md)
+* **locus**: Locus or recombination system, as detailed [here](https://www.vidjil.org/doc/locus)
 
-* **V/5' gene, D gene, J/3' gene**: V, D, and J genes (or 5' and 3' segments for [incomplete or special recombinations](locus.md)), regardless of the allele
+* **V/5' gene, D gene, J/3' gene**: V, D, and J genes (or 5' and 3' segments for [incomplete or special recombinations](https://www.vidjil.org/doc/locus)), regardless of the allele
 * **V/5' allele, D allele, J/3' allele**: Same as above, but taking into acount each allele
 
 * **clone consensus length**: Length of the consensus sequence
@@ -85,4 +85,3 @@ These values require to have some setup on some instances of the server.
 | V/5' ratio               |    x         |            |          |
 | cloneDB occurrences      |    x         |            |          |
 | cloneDB patients/runs/sets occurrences| |            |          |
-

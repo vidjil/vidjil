@@ -40,21 +40,22 @@ Each new feature or release is carefully tested and goes through the following t
 
 ### Roadmap
 
-We develop the web application (both client and server) to wrap or to link several software to pre-process, process, or post-process RepSeq data. 
+We develop the web application (both client and server) to wrap or to link several software to pre-process, process, or post-process RepSeq data.
 
 Developed in Javascript with jQuery and d3.js, the web client is made for the visualization, inspection and analysis of clonotypes and their tracking along the time in a MRD setup or in a immunological study. It visualizes data processed by vidjil-algo or any RepSeq clonotype gathering software as soon as they output a compliant JSON format (documented on <http://vidjil.org/doc/vidjil-format>). This gives some modularity to users if they need to combine Vidjil-algo results with other data, coming from either personal an analysis or other software or scripts.
 
-A sample database links the web application and the algorithmic part, allowing users to upload sequence files and manage their jobs directly from the web application. When uploading files, the user can choose some predefined preprocess to be launch on her data. A server, implemented in Python with the web2py framework (<http://web2py.com>), queues the job requests, allowing many jobs to be scheduled without overloading the server.
+A sample database links the web application and the algorithmic part, allowing users to upload sequence files and manage their jobs directly from the web application. When uploading files, the user can choose some predefined preprocess to be launch on her data. A server, implemented in Python with the py4web framework (<https://py4web.com/>), queues the job requests, allowing many jobs to be scheduled without overloading the server.
 
 ### Tests
 
  - *Web client unit tests.*. [700+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/QUnit/testFiles) on atomic functions of the web application
- - *Web client functional tests.* [350+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/functional) web automation with [Cypress](https://www.cypress.io/). 
+ - *Web client functional tests.* [350+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/functional) web automation with [Cypress](https://www.cypress.io/).
  We test several [supported versions](user.md#supported-browsers) of Firefox and Chrome, and possibly legacy versions
- (see the [Dockerfile](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/docker/ci/Dockerfile)). 
+ (see the [Dockerfile](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/docker/ci/Dockerfile)).
  The tests are launched on the web application, loading data and testing common features (clustering, renaming, tagging, sending to other sites, generating reports, etc.).
- - *Web server unit tests* [80+ tests](http://gitlab.vidjil.org/-/tree/dev/server/web2py/applications/vidjil/tests/unit) on atomic functions of the web server
- - *Web server functional tests* [140+ tests](http://gitlab.vidjil.org/-/tree/dev/server/web2py/applications/vidjil/tests/functional) simulating actual data exchange and queries to the web server throughout its API
+ - *Web server unit tests* [230+ tests](http://gitlab.vidjil.org/-/tree/dev/server/py4web/apps/vidjil/tests/unit) on atomic functions of the web server
+ - *Web server functional tests* [30+ tests](http://gitlab.vidjil.org/-/tree/dev/server/py4web/apps/vidjil/tests/functional) simulating actual data exchange and queries to the web server using the web client with [Cypress](https://www.cypress.io/).
+ - *Web server API tests* [15+ tests](http://gitlab.vidjil.org/-/tree/dev/tools/tests) simulating actual data exchange and queries to the web server using the API
  - *Hosting monitoring.*  We monitor our public server as well as remote maintened servers.
  
 
@@ -72,10 +73,9 @@ However, on production servers used in routine analysis, we do not use CD but ra
 
 Both bug reports and feature requests are followed on our public bugtracker, <http://gitlab.vidjil.org>.
 
- - Most issues are public. Issues with confidential content, including support for the members,
-   are limited to the core developer team.
+ - Most issues are public. Issues with confidential content, including support for the members, are limited to the core developer team.
  - Most of the discussion takes place in the issue. To better track code history, we do not rely on e-mail discussions but rather put the content on the issue tracker.
- - We document each code modification (commits and branches) and link each of them to the related issues
+ - We document each code modification (commits and branches) and link each of them to the related issues.
  
  
 ## Human and Team processes
@@ -85,8 +85,8 @@ Both bug reports and feature requests are followed on our public bugtracker, <ht
  - There are at least two channels to join us : <support@vidjil.org> or the issue tracker. We can also arrange audio meetings.
  - We answer to each request: Even if we cannot solve the request, we acknowledge the request and create issues when needed.
  
- - We have quarterly audio meetings with active members of our community
- - We organize every 18 months meetings with our users (March 2015, November 2017, March 2019, September 2020, see <http://www.vidjil.org>)
+ - We have quarterly audio meetings with active members of our community.
+ - We organize every 18 months meetings with our users (March 2015, November 2017, March 2019, September 2020, see <http://www.vidjil.org>).
 
 Members of the VidjilNet consortium have access to the support with guaranteed response time.
 
@@ -106,7 +106,7 @@ Interactions between the developers are frequent:
 ### Developer relations
 
 The Vidjil platform aims to interact with other RepSeq software.
-We both use and propose APIs to work within a ecosystem of RepSeq software. 
+We both use and propose APIs to work within a ecosystem of RepSeq software.
 We contribute to open formats to exchange RepSeq data.
 
 
@@ -117,7 +117,7 @@ This server is only for test and should not be used for clinical purposes.
 
 Throughout the VidjilNet consortium, we propose two options for production servers with clinical and patient data:
 
- - remote maintenance of self-hosted instance of the platform in hospitals or other centers
+ - remote maintenance of self-hosted instance of the platform in hospitals or other centers.
  - shared hosting (HDS, hébergement de données de santé), complying with French and EU regulations.
 
 ### Backups and incidents
@@ -134,5 +134,3 @@ On the public test server, the backup strategy is as follows:
  - Four times a day (1:00 CEST, 10:00 CEST, 14:00 CEST, 18:00 CEST), the full database, and the diff between the last full backup for the results and analyses
  - Original sequences files (such as .fastq) are not backuped (and the users are informed)
  - Backups are stored on an external secured server
- 
-

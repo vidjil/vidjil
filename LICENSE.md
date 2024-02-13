@@ -59,14 +59,14 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 * @link             <https://github.com/lh3/bioseq-js>
 * @license          MIT
 
-**d3-v3**		        : framework svg
+**d3-v3**               : framework svg
 
 * @version          5.14.1 (2019)
 * @author           Michael Bostock
 * @link             <http://d3js.org/>
 * @license          BSD
 
-**jQuery**		        : fast, small, and feature-rich JavaScript library
+**jQuery**              : fast, small, and feature-rich JavaScript library
 
 * @version          3.3.1 (2018-01-20)
 * @author           John Resig and jQuery team
@@ -77,7 +77,7 @@ x is "current version" at time of release
 => 2.1.1:
 => 3.x:
 
-**file.js**  		    : load/save cross-navigator
+**file.js**             : load/save cross-navigator
 
 * @version          (<= 2014)
 * @author           Eli Grey
@@ -91,7 +91,7 @@ x is "current version" at time of release
 * @link             <https://www.jstree.com/>
 * @license          MIT
 
-**less**  		        : dynamic stylesheet
+**less**                : dynamic stylesheet
 
 * @version          less-1.5.0
 * @author           Alexis Sellier
@@ -112,7 +112,7 @@ x is "current version" at time of release
 * @link             <https://github.com/twada/qunit-tap>
 * @license          MIT/GPLv2
 
-**require.js**  	    : JavaScript file and module loader
+**require.js**          : JavaScript file and module loader
 
 * @version          2.3.6 (2018-08-27)
 * @author           The Dojo Foundation All Rights Reserved.
@@ -120,13 +120,12 @@ x is "current version" at time of release
 * @license          MIT
 * @compatibility    IE 6+, Firefox 2+, Safari 3.2+, Chrome 3+, Opera 10+
 
-
 **seedrandom.js**       : A replacement of Math.random of javascript that allow to get fixed seed
+
 * @author           David Bau + external contributor
 * @version          3.0.5
 * @link             <https://github.com/davidbau/seedrandom>
 * @license          BSD
-
 
 **svgExport.js**        : Export SVG to PNG
 
@@ -151,9 +150,10 @@ x is "current version" at time of release
 
 ### Base docker image
 
-**nginx:1.15.0**        : docker image used as base for vidjil-client docker image
+**nginx**               : docker image used as base for vidjil-client docker image
 
 * @license          BSD
+* @version          1.21
 
 ### Additional packages installed in the image
 
@@ -192,15 +192,15 @@ x is "current version" at time of release
 
 ### Software and libraries included in Vidjil repository
 
-**web2py**              : python CMS
+**py4web**              : python CMS
 
+* @license          BSD
+* @link             <https://github.com/web2py/py4web/blob/master/LICENSE.md>
 * @author           Massimo Di Pierro & al
-* @link             <http://www.web2py.com/init/default/license>
-* @license          LGPLv3
 
 ### Base docker image
 
-**ubuntu 18.04**        : docker image used as base for vidjil-server docker image
+**ubuntu 20.04**        : docker image used as base for vidjil-server docker image
 
 * @license          <https://ubuntu.com/licensing>
 
