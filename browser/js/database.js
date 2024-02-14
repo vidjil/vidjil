@@ -937,7 +937,7 @@ Database.prototype = {
     },
 
     executeAfterAjaxScript: function() {
-        eval($(".afterAjaxScript").html());
+        $.globalEval($(".afterAjaxScript").html());
     },
 
     clear_login_info: function() {
