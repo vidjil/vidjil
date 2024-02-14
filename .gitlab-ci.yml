@@ -428,11 +428,15 @@ deploy_review_server:
     - /^hotfix-.*s.*\/.*$/
   extends:
     - .need_for_independant_test
+  artifacts:
+    paths:
+      - docker_${CI_BUILD_REF_SLUG}
   variables:
     IMAGE_NAME_CLIENT: dev-client/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     IMAGE_NAME_SERVER: dev-server/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
   needs:
     - [build_test_server_docker]
+
 
 deploy_client:
   stage: deploy_prod
