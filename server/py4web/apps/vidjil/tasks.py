@@ -2,11 +2,9 @@
 from __future__ import print_function
 
 import json
-import os
 import pathlib
 import apps.vidjil.defs as defs
 import re
-import os.path
 import time
 import sys
 import datetime
@@ -14,7 +12,7 @@ import random
 import xmlrpc.client
 import apps.vidjil.modules.tools_utils as tools_utils
 from .modules.sequenceFile import get_original_filename
-from .common import settings, scheduler, db, Field, log
+from .common import scheduler, db, log
 
 # Task status
 STATUS_PENDING = "PENDING"
@@ -36,6 +34,7 @@ def assert_scheduler_task_does_not_exist(args):
     row = db( ( db.scheduler_task.args == args)
          & ( db.scheduler_task.status != STATUS_FAILED )
          & ( db.scheduler_task.status != STATUS_COMPLETED )
+         & ( db.scheduler_task.status != STATUS_TIMEOUT )
          ).select()
 
     if len(row) > 0 :
