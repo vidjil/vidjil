@@ -180,3 +180,5 @@ tools/flash2
 
 site/*
 docker/scripts/
+tools/scripts/
+binaries/
