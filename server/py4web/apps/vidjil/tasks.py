@@ -871,7 +871,7 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         out_log = out_folder+'/'+output_filename+'.pre.log'
         log_file = open(out_log, 'w')
 
-        os.chdir(defs.DIR_FUSE)
+        os.chdir(defs.DIR_PREPROCESS)
         p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
         (stdoutdata, stderrdata) = p.communicate()
         print("Output log in " + out_log)
