@@ -84,6 +84,7 @@ class Vidjil:
     SET = "generic"
 
     COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
 
     def __init__(self, url_server:str, url_client:str=None, ssl:str=True):
         """_summary_
@@ -490,11 +491,11 @@ class Vidjil:
             sequence_file_id = sample["sequence_file"]["id"]
             result  = sample["results_file"]
             pre_str = "sample_set_id: %s; config %s; sequence_file_id = %s" % (sample_set_id, config_id, sequence_file_id)
-            if result["status"] == "" or (result["status"] == "FAILED" and retry==True) or force==True:
+            if result["status"] == "" or (result["status"] == vidjil.FAILED and retry==True) or force==True:
                 string = "%s\n\tanalysis will be launch" % (pre_str)
                 if sample["sequence_file"]["data_file"] != None:
                     self.launchAnalysisOnSample(sample_set_id, sequence_file_id, config_id)
-                    if result["status"] == "FAILED":
+                    if result["status"] == vidjil.FAILED:
                         result["status"] = "launched (after failed)"
                     else:
                         result["status"] = "launched"

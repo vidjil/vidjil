@@ -8,6 +8,7 @@ from ....controllers import auth as auth_controller
 from ....common import db
 from ....modules.permission_enum import PermissionEnum
 from .... import defs
+from .... import tasks
 from ...functional.db_initialiser import TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD
 from py4web.core import Session
 
@@ -329,7 +330,7 @@ def add_fused_file(sample_set_id: int = -1, sequence_file_id: int = -1, config_i
         config_id=config_id,
         sample_set_id=sample_set_id,
         fuse_date="2010-10-10 10:10:10",
-        status="COMPLETED",
+        status=tasks.STATUS_COMPLETED,
         sequence_file_list="%d_" % sequence_file_id,
         fused_file=fused_file)
     return fused_file_id
