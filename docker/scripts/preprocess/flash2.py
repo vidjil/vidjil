@@ -7,7 +7,6 @@ import subprocess
 import argparse
 import shlex
 import os
-from logparser import FlashLogParser
 import tempfile
 import json
 from datetime import datetime

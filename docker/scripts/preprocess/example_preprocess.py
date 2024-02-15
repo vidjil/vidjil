@@ -28,7 +28,6 @@ parent = os.path.dirname(os.path.dirname(current))
 sys.path.append(parent)
 # ==========================
 from logparser import *
-from logparser import FlashLogParser
 # ==========================
 
 
