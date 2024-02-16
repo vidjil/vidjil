@@ -51,6 +51,8 @@ services:
           - ./vidjil-server/scripts:/entrypoints
           - ./vidjil-server/healthchecks:/healthchecks
           - ./vidjil-server/conf/defs.py:/usr/share/vidjil/server/py4web/apps/vidjil/defs.py
+          - ./vidjil-server/conf/defs-tools.py:/usr/share/vidjil/tools/defs.py
+          - ./scripts/:/usr/share/vidjil/tools/scripts
           - $VOLUME_PATH/results:/mnt/result/results
           - $VOLUME_PATH/tmp:/mnt/result/tmp
           - $VOLUME_PATH/uploads:/mnt/upload/uploads

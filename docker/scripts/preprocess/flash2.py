@@ -7,10 +7,21 @@ import subprocess
 import argparse
 import shlex
 import os
-from logparser import FlashLogParser
 import tempfile
 import json
 from datetime import datetime
+
+# ===========================================
+### Import script from tools parent directory
+# Add parent path to sys
+import sys
+import os
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(os.path.dirname(current))
+sys.path.append(parent)
+# ==========================
+from logparser import *
+# ==========================
 
 parser = argparse.ArgumentParser(description='Use FLASH2 read merger to make a new fastq file and keep unmerged reads')
 

@@ -2,7 +2,7 @@
 
 # Not satisfactory
 cp ../../defs.py defs.py.tmp
-echo "PRE_PROCESS_DIR='tests/data/pre_process'" >> ../../defs.py
+echo "DIR_FUSE_PRE='tests/data/pre_process'" >> ../../defs.py
 
 ### Use a script to verify that an external script can be triggered
 

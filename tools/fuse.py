@@ -1760,7 +1760,7 @@ def main():
         print("Pre-processing files...")
         pre_processed_files = []
         for f in files:
-            out_name = exec_command(args.pre, PRE_PROCESS_DIR, f)
+            out_name = exec_command(args.pre, DIR_FUSE_PRE, f)
             pre_processed_files.append(out_name)
         files = pre_processed_files
 
@@ -1903,7 +1903,7 @@ def main():
     if args.post:
         print("Post-processing files...")
         jlist_fused.save_json(args.output)
-        post_out_name = exec_command(args.post, PRE_PROCESS_DIR, args.output)
+        post_out_name = exec_command(args.post, DIR_FUSE_POST, args.output)
         # reload post processed file
         jlist_fused = ListWindows()
         jlist_fused.load(post_out_name, args.pipeline)

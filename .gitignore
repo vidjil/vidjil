@@ -179,3 +179,6 @@ doc/analysis-example2.analysis
 tools/flash2
 
 site/*
+docker/scripts/
+tools/scripts/
+binaries/
