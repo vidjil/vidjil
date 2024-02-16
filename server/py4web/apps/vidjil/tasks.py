@@ -767,18 +767,13 @@ def schedule_pre_process(sequence_file_id, pre_process_id):
 
     args = [pre_process_id, sequence_file_id]
 
-    log.debug(f"start schedule_pre_process {sequence_file_id=}, {pre_process_id=}")
-
     err = assert_scheduler_task_does_not_exist(str(args))
     if err:
         log.error(err)
         return err
 
     task_id = register_task("pre_process", args)
-    log.debug(f"{db.sequence_file[sequence_file_id]=}")
     db.sequence_file[sequence_file_id] = dict(pre_process_scheduler_task_id = task_id)
-    log.debug(f"{db.sequence_file[sequence_file_id]=}")
-    log.debug(f"after register schedule_pre_process {sequence_file_id=}, {pre_process_id=}, {task_id=}")
 
     update_task(task_id, STATUS_QUEUED)
     run_pre_process.delay(pre_process_id, sequence_file_id, task_id, clean_before=True, clean_after=False)
@@ -816,8 +811,6 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
     put the output back in sequence_file.data_file.
     '''
     from subprocess import Popen, PIPE, STDOUT, os
-    
-    log.debug(f"start run_pre_process {pre_process_id=}, {sequence_file_id=}, {task_id=}")
 
     try:
         db._adapter.reconnect()
