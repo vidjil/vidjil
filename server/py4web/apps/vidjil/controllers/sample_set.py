@@ -1283,8 +1283,6 @@ def result_files():
             zipfile.writestr('metadata.json', json.dumps(metadata))
             zipfile.close()
 
-        response.headers['Content-Type'] = "application/json"  # Removed to force file download
-        response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
         log.info("extract results files (%s)" % sample_set_ids, extra={'user_id': auth.user_id,
             'record_id': None,
             'table_name': "sample_set"})
@@ -1348,6 +1346,5 @@ def mystats():
 @action("/vidjil/sample_set/download_sequence_file/<filename>", method=["POST", "GET"])
 @action.uses(db, session, auth.user)
 def download(filename=None):
-    mimetype = mimetypes.guess_type(defs.DIR_SEQUENCES+filename)
-    return static_file(filename, root=defs.DIR_SEQUENCES, download=request.query.filename, mimetype=mimetype[1])
+    return static_file(filename, root=defs.DIR_SEQUENCES, download=True)
     

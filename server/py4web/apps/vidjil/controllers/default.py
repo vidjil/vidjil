@@ -840,7 +840,6 @@ def stop_impersonate() :
     return json.dumps(res, separators=(',',':'))
 
 
-## TODO make custom download for .data et .analysis
 @action("/vidjil/default/download/<filename>", method=["POST", "GET"])
 @action.uses(db, session, auth.user)
 def download(filename=None):
