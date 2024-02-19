@@ -735,8 +735,9 @@ def error():
     user_str = user_str.replace('<','').replace('>','').strip()
 
     mail.send(to=defs.ADMIN_EMAILS,
-              subject=defs.EMAIL_SUBJECT_START+" Server error - %s" % user_str,
-              message="<html>Ticket: %s<br/>At: %s<br />User: %s</html>" % (ticket_url, requested_uri, user_str))
+              subject=f"{defs.EMAIL_SUBJECT_START} Server error - {user_str}",
+              body=(f"Ticket: {ticket_url} - At: {requested_uri} - User: {user_str}",
+                    f"<html>Ticket: {ticket_url}<br/>At: {requested_uri}<br />User: {user_str}</html>"))
 
     return "Server error"
 
