@@ -436,7 +436,7 @@ Database.prototype = {
      * */
     display_result: function (result, url, args) {
         //rétablissement de l'adresse pour les futures requetes
-        result = result.replace("DB_ADDRESS/", this.db_address);
+        result = result.replace(/DB_ADDRESS\//g, this.db_address);
         result = result.replace("action=\"#\"", "action=\""+url+"\"");
 
         var res;

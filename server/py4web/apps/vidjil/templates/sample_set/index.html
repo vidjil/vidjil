@@ -181,7 +181,7 @@
                       <td></td>
                     [[pass]]
                         <td> <a [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]]
-                                [[else:]] href="[[=URL('sample_set','download_sequence_file', row.sequence_file.data_file, vars=dict(filename=row.sequence_file.filename), scheme='https')]]" [[pass]]  ><i class="icon-down" title="Download sequence file"></i></a></td>
+                                [[else:]] href="DB_ADDRESS[[=URL('sample_set','download_sequence_file', row.sequence_file.data_file, vars=dict(filename=row.sequence_file.filename), use_appname=False)]]" [[pass]]  ><i class="icon-down" title="Download sequence file"></i></a></td>
                     [[if can_modify:]]
                         <td class="pointer" onclick="db.call('file/confirm', {'id' :'[[=row.sequence_file.id ]]', 'redirect_sample_set_id' : '[[=request.query["id"]]]'} )" >  <i class="icon-erase" title="delete sample"></i> </td>
                     [[else:]]<td></td>[[pass]]
@@ -205,7 +205,7 @@
                          </td>
                      <td>
                         [[if row.results_file.data_file:]]
-                            <a href=[[=URL('default', 'download', row.results_file.data_file, scheme='https', vars=dict(filename='result-%s-%s.txt' % (request.query['id'], row.results_file.id)))]]
+                            <a href="DB_ADDRESS[[=URL('default', 'download', row.results_file.data_file, vars=dict(filename='result-%s-%s.txt' % (request.query['id'], row.results_file.id)), use_appname=False)]]"
                                type="application/octet-stream"><i class="icon-down" title="Download result file"></i></a>
                         [[pass]]
                      </td>
@@ -309,9 +309,9 @@
     <div class="db_block_right">
         [[if fused_file is not None :]]
             download [[=db.config[config_id].name]]
-            <a class="button" href=[[=URL('default', 'get_data', scheme='https', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=fused_filename))]]> .vidjil </a>
+            <a class="button" href="DB_ADDRESS[[=URL('default', 'get_data', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=fused_filename), use_appname=False)]]"> .vidjil </a>
             [[if analysis_count >0:]]
-            <a class="button" href=[[=URL('default', 'get_analysis', scheme='https', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=analysis_filename))]]> .analysis </a>
+            <a class="button" href="DB_ADDRESS[[=URL('default', 'get_analysis', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=analysis_filename), use_appname=False)]]"> .analysis </a>
             [[pass]]
         [[pass]]
     </div>
