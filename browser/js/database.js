@@ -470,6 +470,15 @@ Database.prototype = {
 
             return 0 ;
         }
+
+        //the json result contain a flash message
+        if (res.message) {
+            priority = res.success == 'false' ? 2 : 1
+            priority = typeof res.priority == 'undefined' ? priority : res.priority
+            console.log({"type": "flash",
+                             "msg": "database : " + res.message,
+                             "priority": priority})
+        }
         
         //the json result contain a hack redirection
         if (res.redirect){
@@ -502,18 +511,8 @@ Database.prototype = {
         if (typeof res.clones != "undefined" && typeof res.reads == "undefined" ){
             this.m.parseJsonAnalysis(result)
         }
-        //the json result contain a flash message
-        if (res.message) {
-	    priority = res.success == 'false' ? 2 : 1
-	    priority = typeof res.priority == 'undefined' ? priority : res.priority
-	    console.log({"type": "flash",
-                         "msg": "database : " + res.message,
-                         "priority": priority}) // res.success can be 'undefined'
-	}
-        return res
 
-        
-        if (this.url.length == 1) $("#db_back").addClass("inactive");
+        return res
     },
     
     /** 

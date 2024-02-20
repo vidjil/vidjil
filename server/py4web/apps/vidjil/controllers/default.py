@@ -22,6 +22,7 @@ from ..modules.sampleSet import get_sample_set_id_from_results_file
 from ..modules.analysis_file import get_analysis_data
 from ..controllers.group import add_default_group_permissions
 from ..tasks import custom_fuse
+from .. import tasks
 from io import StringIO
 import logging
 import json
@@ -300,7 +301,7 @@ def checkProcess():
         sample_set_id = get_sample_set_id_from_results_file(results_file.id)
     if not results_file or not auth.can_view_sample_set(sample_set_id):
         msg = "You don't have access to this sample"
-    if sample_set_id > -1 and task.status == "COMPLETED" :
+    if sample_set_id > -1 and task.status == tasks.STATUS_COMPLETED :
         run = db( db.scheduler_run.task_id == task.id ).select()[0]
     
         res = {"success" : "true",
@@ -312,7 +313,7 @@ def checkProcess():
     else :
         if len(msg) > 0:
             res = {"success" : "false",
-                   "status" : "FAILED",
+                   "status" : tasks.STATUS_FAILED,
                    "message": msg,
                    "processId" : task.id}
         else:

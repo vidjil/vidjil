@@ -2,10 +2,9 @@
 from __future__ import print_function
 
 import json
-import os
+import pathlib
 import apps.vidjil.defs as defs
 import re
-import os.path
 import time
 import sys
 import datetime
@@ -13,15 +12,29 @@ import random
 import xmlrpc.client
 import apps.vidjil.modules.tools_utils as tools_utils
 from .modules.sequenceFile import get_original_filename
-from .common import settings, scheduler, db, Field, log
+from .common import scheduler, db, log
+
+# Task status
+STATUS_PENDING = "PENDING"
+STATUS_QUEUED = "QUEUED"
+STATUS_WAITING = "WAITING"
+STATUS_RUNNING = "RUNNING"
+STATUS_COMPLETED = "COMPLETED"
+STATUS_FAILED = "FAILED"
+# TODO: implement TIMEOUT...
+STATUS_TIMEOUT = "TIMEOUT"
+
+# Task names
+TASK_NAME_PROCESS = "process"
+TASK_NAME_PRE_PROCESS = "pre_process"
+
 
 def assert_scheduler_task_does_not_exist(args):
-    ##check scheduled run
+    ## check already scheduled run
     row = db( ( db.scheduler_task.args == args)
-         & ( db.scheduler_task.status != "FAILED"  )
-         & ( db.scheduler_task.status != "EXPIRED"  )
-         & ( db.scheduler_task.status != "TIMEOUT"  )
-         & ( db.scheduler_task.status != "COMPLETED"  )
+         & ( db.scheduler_task.status != STATUS_FAILED )
+         & ( db.scheduler_task.status != STATUS_COMPLETED )
+         & ( db.scheduler_task.status != STATUS_TIMEOUT )
          ).select()
 
     if len(row) > 0 :
@@ -31,16 +44,12 @@ def assert_scheduler_task_does_not_exist(args):
     return None
 
 def register_task(task_name, args):
-    ##check scheduled run
     db._adapter.reconnect()
-
     timestamp = time.time()
     task_id = db.scheduler_task.insert( task_name = task_name,
                                         args = args,
-                                        status = "PENDING",
-                                        start_time = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S'),
-                                        )
-
+                                        status = STATUS_PENDING,
+                                        start_time = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S') )
     return task_id
 
 def update_task(task_id, status):
@@ -49,19 +58,19 @@ def update_task(task_id, status):
     db.commit()
     return
 
-
-
 def compute_extra(id_file, id_config, min_threshold):
     result = {}
     d = None
+    
     results_file = db((db.results_file.sequence_file_id == id_file) &
                       (db.results_file.hidden == False) &
                       (db.results_file.config_id == id_config)
                     ).select(orderby=~db.results_file.run_date).first()
-    filename = defs.DIR_RESULTS+results_file.data_file
-    with open(filename, "rb") as rf:
+    
+    filename = pathlib.Path(defs.DIR_RESULTS, results_file.data_file)
+    with open(filename, "rb") as file:
         try:
-            d = json.load(rf)
+            d = json.load(file)
             loci_min = {}
 
             if 'reads' in d and 'germline' in d['reads']:
@@ -83,19 +92,14 @@ def compute_extra(id_file, id_config, min_threshold):
         except ValueError as e:
             print('invalid_json')
             return "FAIL"
+    
     d['reads']['distribution'] = result
     with open(filename, 'w') as extra:
         json.dump(d, extra)
     return "SUCCESS"
 
-
 def schedule_run(id_sequence, id_config, grep_reads=None):
-    from subprocess import Popen, PIPE, STDOUT, os
-
-    #check results_file
-    db( ( db.results_file.config_id == id_config ) & 
-             ( db.results_file.sequence_file_id == id_sequence )  
-             ).update(hidden = True)
+    db._adapter.reconnect()
     
     ts = time.time()
     data_id = db.results_file.insert(sequence_file_id = id_sequence,
@@ -112,77 +116,66 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
 
     program = db.config[id_config].program
 
-    ##add task to scheduler
-    task_id = register_task("process", args)
+    ## add task to scheduler
+    task_id = register_task(TASK_NAME_PROCESS, args)
     db.results_file[data_id] = dict(scheduler_task_id = task_id)
+    update_task(task_id, STATUS_QUEUED)
     run_process.delay(task_id, program, args)
-    update_task(task_id,"QUEUED")
 
-    
-    #if db.sequence_file[id_sequence].pre_process_flag not in ["COMPLETED", "DONE"] and db.sequence_file[id_sequence].pre_process_flag :
-    #    db.scheduler_task[task.id] = dict(status ="STOPPED")
-    #db.results_file[data_id] = dict(scheduler_task_id = task.id)
-
-    filename= db.sequence_file[id_sequence].filename
-
+    filename = db.sequence_file[id_sequence].filename
     res = {"redirect": "reload",
            "results_file_id": data_id,
            "message": "[%s] c%s: process requested - %s %s" % (data_id, id_config, grep_reads, filename)}
-
     log.info(res)
     return res
 
 
 def schedule_fuse(sample_set_ids, config_ids):
-    args = []
     for sample_set_id in sample_set_ids:
         for config_id in config_ids:
+            
             row = db((db.sample_set_membership.sample_set_id == sample_set_id)
                    & (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id)
                    & (db.results_file.config_id == config_id)
                    & (db.results_file.hidden == False)
                 ).select(db.sample_set_membership.sample_set_id, db.sample_set_membership.sequence_file_id,
                         db.results_file.id, db.results_file.config_id).first()
+            
             if row:
-                run_fuse.delay( row.sample_set_membership.sequence_file_id, 
-                row.results_file.config_id, 
-                row.results_file.id, 
-                row.sample_set_membership.sample_set_id, 
-                clean_before = False)
+                run_fuse.delay(
+                    row.sample_set_membership.sequence_file_id, 
+                    row.results_file.config_id, 
+                    row.results_file.id, 
+                    row.sample_set_membership.sample_set_id, 
+                    clean_before = False)
 
-
-def schedule_compute_extra(id_file, id_config, min_threshold):
-    args = [id_file, id_config,  min_threshold]
-    task = scheduler.queue_task('compute_extra', args, repeats=1, timeout=defs.TASK_TIMEOUT)
-
-def run_vidjil(task_id, id_file, id_config, id_data, grep_reads,
-               clean_before=False, clean_after=False):
+def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
-    from datetime import timedelta as timed
     db._adapter.reconnect()
+    
+    print("run_vidjil start")
 
     if db.sequence_file[id_file] == None:
         print("Sequence file not found in DB (delay of upload/processing ?)")
-        update_task(task_id, "FAILED")
+        update_task(task_id, STATUS_FAILED)
         raise ValueError('Process has failed, no entrie in DB for this sequence file')
 
-    if db.sequence_file[id_file].pre_process_flag == "FAILED" :
+    if db.sequence_file[id_file].pre_process_flag == STATUS_FAILED :
         print("Pre-process has failed")
-        update_task(task_id, "FAIL")
+        update_task(task_id, STATUS_FAILED)
         raise ValueError('pre-process has failed')
     
     ## re schedule if pre_process is still pending
-    if db.sequence_file[id_file].pre_process_flag not in ["COMPLETED", "DONE"] and db.sequence_file[id_file].pre_process_flag:
+    if db.sequence_file[id_file].pre_process_flag and db.sequence_file[id_file].pre_process_flag != STATUS_COMPLETED:
         
         print("Pre-process is still pending, re-schedule")
     
         args = [id_file, id_config, id_data, grep_reads]
         run_process.apply_async((task_id, "vidjil", args), countdown=1200)
-        update_task(task_id, "WAIT")
+        update_task(task_id, STATUS_WAITING)
         return
 
-    update_task(task_id, "RUNNING")
-
+    update_task(task_id, STATUS_RUNNING)
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     upload_folder = defs.DIR_SEQUENCES
@@ -250,7 +243,7 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads,
         print("!!! Vidjil failed, no result file")
         res = {"message": "[%s] c%s: Vidjil FAILED - %s; log at %s/%s.vidjil.log" % (id_data, id_config, out_folder, out_folder, output_filename)}
         log.error(res)
-        update_task(task_id, "FAIL")
+        update_task(task_id, STATUS_FAILED)
         raise
     
     ## Parse some info in .log
@@ -282,12 +275,8 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads,
 
     ## insertion dans la base de donnée
     ts = time.time()
-    
-    db.results_file[id_data] = dict(status = "ready",
-                                 run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
-                                 data_file = stream
-                                )
-    
+    db.results_file[id_data] = dict(run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                    data_file = stream)
     db.commit()
     
     if clean_after:
@@ -298,8 +287,6 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads,
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
 
-    config_name = db.config[id_config].name
-
     if not grep_reads:
         for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
             sample_set_id = row.sample_set_id
@@ -308,7 +295,7 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads,
             run_fuse.delay(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
     os.remove(results_filepath)
-    update_task(task_id, "COMPLETED")
+    update_task(task_id, STATUS_COMPLETED)
 
 def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
@@ -546,7 +533,7 @@ def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fals
 
     try:
         stream = open(results_filepath, 'rb')
-        update_task(task_id, "COMPLETED")
+        update_task(task_id, STATUS_COMPLETED)
     except IOError as error:
         print("!!! 'copy' failed, no file")
         res = {"message": "[%s] c%s: 'copy' FAILED - %s - %s" % (id_data, id_config, error, out_folder)}
@@ -578,7 +565,6 @@ def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fals
         sample_set_id = row.sample_set_id
         print(row.sample_set_id)
         run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
-
 
     return "SUCCESS"
 
@@ -639,7 +625,7 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
         print("!!! Fuse failed: no files to fuse")
         res = {"message": "[%s] c%s: 'fuse' FAILED - %s no files to fuse" % (id_data, id_config, output_file)}
         log.error(res)
-        return "FAILED"
+        return STATUS_FAILED
 
     try:
         fuse_cmd = db.config[id_config].fuse_command
@@ -788,9 +774,9 @@ def schedule_pre_process(sequence_file_id, pre_process_id):
 
     task_id = register_task("pre_process", args)
     db.sequence_file[sequence_file_id] = dict(pre_process_scheduler_task_id = task_id)
-    
-    run_pre_process.delay(pre_process_id, sequence_file_id, clean_before=True, clean_after=False)
 
+    update_task(task_id, STATUS_QUEUED)
+    run_pre_process.delay(pre_process_id, sequence_file_id, task_id, clean_before=True, clean_after=False)
 
     res = {"redirect": "reload",
            "message": "{%s} (%s): process requested" % (sequence_file_id, pre_process_id)}
@@ -819,7 +805,7 @@ def get_preprocessed_filename(filename1, filename2):
 
 
 @scheduler.task()
-def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_after=False):
+def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True, clean_after=False):
     '''
     Run a pre-process on sequence_file.data_file (and possibly sequence_file.data_file+2),
     put the output back in sequence_file.data_file.
@@ -829,11 +815,11 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     try:
         db._adapter.reconnect()
         sequence_file = db.sequence_file[sequence_file_id]
-        db.sequence_file[sequence_file_id] = dict(pre_process_flag = "RUN")
+        db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_RUNNING)
+        update_task(task_id, STATUS_RUNNING)
         db.commit()
     except:
         db.rollback()
-
     
     out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
     output_filename = get_preprocessed_filename(get_original_filename(sequence_file.data_file),
@@ -879,14 +865,13 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         filepath = os.path.abspath(output_file)
 
         stream = open(filepath, 'rb')
-        update_task(pre_process_id, "COMPLETED")
 
     except:
         print("!!! Pre-process failed, no result file")
         res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
         log.error(res)
-        db.sequence_file[sequence_file_id] = dict(pre_process_flag = "FAILED")
-        update_task(pre_process_id, "FAILED")
+        db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
+        update_task(task_id, STATUS_FAILED)
         db.commit()
         raise
 
@@ -901,20 +886,17 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
     db._adapter.reconnect()
     db.sequence_file[sequence_file_id] = dict(data_file = stream,
                                               data_file2 = None,
-                                              pre_process_flag = "COMPLETED",
+                                              pre_process_flag = STATUS_COMPLETED,
                                               pre_process_file = pre_process_output)
     db.commit()
-    #resume STOPPED task for this sequence file
-    stopped_task = db(
-        (db.results_file.sequence_file_id == sequence_file_id)
-        & (db.results_file.scheduler_task_id == db.scheduler_task.id)
-        & (db.scheduler_task.status == "STOPPED")
-    ).select()
+    update_task(task_id, STATUS_COMPLETED)
     
-    db._adapter.reconnect()
-    for row in stopped_task :
-        db.scheduler_task[row.scheduler_task.id] = dict(status = "QUEUED")
-    db.commit()
+    # resume WAITING task for this sequence file
+    waiting_tasks = db((db.results_file.sequence_file_id == sequence_file_id) & 
+                       (db.results_file.scheduler_task_id == db.scheduler_task.id) & 
+                       (db.scheduler_task.status == STATUS_WAITING)).select()
+    for row in waiting_tasks :
+        update_task(row.scheduler_task.id, STATUS_QUEUED)
 
     # Dump log in scheduler_run.run_output
     log_file.close()

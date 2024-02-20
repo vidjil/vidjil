@@ -6,6 +6,7 @@ from datetime import datetime
 
 sys.path.append("../../../../")
 from apps.vidjil import defs
+from apps.vidjil import tasks
 from apps.vidjil.modules import vidjil_utils
 from apps.vidjil.common import auth
 from apps.vidjil.modules.permission_enum import PermissionEnum
@@ -119,7 +120,7 @@ class DBInitialiser(object):
             membership = self.db(self.db.sample_set_membership.sequence_file_id == sf.id).select(limitby=(0,1)).first()
             stid = self.db.scheduler_task.insert(
                 application_name="vidjil",
-                status="COMPLETED",
+                status=tasks.STATUS_COMPLETED,
                 start_time=datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
             )
             self.db.results_file.insert(
@@ -133,7 +134,7 @@ class DBInitialiser(object):
                 config_id=config.id,
                 sample_set_id=membership.sample_set_id,
                 fuse_date="2010-10-10 10:10:10",
-                status="COMPLETED",
+                status=tasks.STATUS_COMPLETED,
                 sequence_file_list="%d_" % membership.sequence_file_id,
                 fused_file="test_fused_file"
             )
