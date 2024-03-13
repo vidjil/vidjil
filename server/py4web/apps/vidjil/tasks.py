@@ -172,7 +172,7 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_after=Fal
         print("Pre-process is still pending, re-schedule")
     
         args = [id_file, id_config, id_data, grep_reads]
-        run_process.apply_async((task_id, "vidjil", args), countdown=1200)
+        run_process.apply_async((task_id, "vidjil", args), countdown=60)
         update_task(task_id, STATUS_WAITING)
         return
 
@@ -242,8 +242,8 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_after=Fal
 
             stream = open(results_filepath, 'rb')
         except:
-            print("!!! Vidjil failed, no result file")
-            res = {"message": "[%s] c%s: Vidjil FAILED - %s; log at %s/%s.vidjil.log" % (id_data, id_config, out_folder, out_folder, output_filename)}
+            error_message = f"!!! Vidjil failed : {traceback.format_exc()}\n\nSetting status to Failed."
+            res = {"message": f"[{id_data}] c{id_config}: {error_message}; log at {out_folder}/{output_filename}.vidjil.log"}
             log.error(res)
             update_task(task_id, STATUS_FAILED)
             raise
