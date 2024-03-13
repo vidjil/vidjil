@@ -240,7 +240,7 @@ def clean_workers_status():
     inspect_task_lists = [inspect.scheduled(), inspect.active(), inspect.reserved()]
     for inspect_task_list in inspect_task_lists:
         for task_list in inspect_task_list.values():
-            current_task_ids+=[task["args"][0] for task in task_list]
+            current_task_ids+=[task["args"][0] for task in task_list if "args" in task]
             
     # Get tasks in progress in DB
     in_progress_task_ids = db((db.scheduler_task.status != tasks.STATUS_FAILED) & 
