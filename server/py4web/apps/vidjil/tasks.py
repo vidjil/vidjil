@@ -6,6 +6,7 @@ import pathlib
 import apps.vidjil.defs as defs
 import re
 import time
+import traceback
 import sys
 import datetime
 import random
@@ -177,125 +178,132 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_after=Fal
 
     update_task(task_id, STATUS_RUNNING)
     
-    ## les chemins d'acces a vidjil / aux fichiers de sequences
-    upload_folder = defs.DIR_SEQUENCES
-    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
-    
-    cmd = "rm -rf "+out_folder 
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    p.wait()
-    
-    ## filepath du fichier de séquence
-    row = db(db.sequence_file.id==id_file).select()
-    filename = row[0].data_file
-    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
-    seq_file = upload_folder+filename
-
-    ## config de vidjil
-    vidjil_cmd = db.config[id_config].command
-
-    if 'next' in vidjil_cmd:
-        vidjil_cmd = vidjil_cmd.replace('next', '')
-        vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE_NEXT)
-        cmd = defs.DIR_VIDJIL_NEXT + '/vidjil-algo '
-    else:
-        vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE)
-        cmd = defs.DIR_VIDJIL + '/vidjil-algo '
-
-    if grep_reads:
-        if re.match(r"^[acgtnACGTN]+$", grep_reads):
-            vidjil_cmd += ' --out-clone-files --grep-reads "%s" ' % grep_reads
-    
-    os.makedirs(out_folder)
-    out_log = out_folder+'/'+output_filename+'.vidjil.log'
-    vidjil_log_file = open(out_log, 'w')
-
     try:
-        ## commande complete
-        cmd += ' -o  ' + out_folder + " -b " + output_filename
-        cmd += ' ' + vidjil_cmd + ' '+ seq_file
+        ## les chemins d'acces a vidjil / aux fichiers de sequences
+        upload_folder = defs.DIR_SEQUENCES
+        out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+        
+        cmd = "rm -rf "+out_folder 
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+        p.wait()
+        
+        ## filepath du fichier de séquence
+        row = db(db.sequence_file.id==id_file).select()
+        filename = row[0].data_file
+        output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
+        seq_file = upload_folder+filename
 
-        ## execute la commande vidjil
-        print("=== Launching Vidjil ===")
-        print(cmd)    
-        print("========================")
-        sys.stdout.flush()
+        ## config de vidjil
+        vidjil_cmd = db.config[id_config].command
 
-        p = Popen(cmd, shell=True, stdin=PIPE, stdout=vidjil_log_file, stderr=STDOUT, close_fds=True)
-
-        (stdoutdata, stderrdata) = p.communicate()
-
-        print("Output log in " + out_log)
-        sys.stdout.flush()
-        db.commit()
-
-        ## Get result file
-        if grep_reads:
-            out_results = out_folder + '/seq/clone.fa-1'
+        if 'next' in vidjil_cmd:
+            vidjil_cmd = vidjil_cmd.replace('next', '')
+            vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE_NEXT)
+            cmd = defs.DIR_VIDJIL_NEXT + '/vidjil-algo '
         else:
-            out_results = out_folder + '/' + output_filename + '.vidjil'
+            vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE)
+            cmd = defs.DIR_VIDJIL + '/vidjil-algo '
 
-        print("===>", out_results)
-        results_filepath = os.path.abspath(out_results)
+        if grep_reads:
+            if re.match(r"^[acgtnACGTN]+$", grep_reads):
+                vidjil_cmd += ' --out-clone-files --grep-reads "%s" ' % grep_reads
+        
+        os.makedirs(out_folder)
+        out_log = out_folder+'/'+output_filename+'.vidjil.log'
+        vidjil_log_file = open(out_log, 'w')
 
-        stream = open(results_filepath, 'rb')
+        try:
+            ## commande complete
+            cmd += ' -o  ' + out_folder + " -b " + output_filename
+            cmd += ' ' + vidjil_cmd + ' '+ seq_file
+
+            ## execute la commande vidjil
+            print("=== Launching Vidjil ===")
+            print(cmd)    
+            print("========================")
+            sys.stdout.flush()
+
+            p = Popen(cmd, shell=True, stdin=PIPE, stdout=vidjil_log_file, stderr=STDOUT, close_fds=True)
+
+            (stdoutdata, stderrdata) = p.communicate()
+
+            print("Output log in " + out_log)
+            sys.stdout.flush()
+            db.commit()
+
+            ## Get result file
+            if grep_reads:
+                out_results = out_folder + '/seq/clone.fa-1'
+            else:
+                out_results = out_folder + '/' + output_filename + '.vidjil'
+
+            print("===>", out_results)
+            results_filepath = os.path.abspath(out_results)
+
+            stream = open(results_filepath, 'rb')
+        except:
+            print("!!! Vidjil failed, no result file")
+            res = {"message": "[%s] c%s: Vidjil FAILED - %s; log at %s/%s.vidjil.log" % (id_data, id_config, out_folder, out_folder, output_filename)}
+            log.error(res)
+            update_task(task_id, STATUS_FAILED)
+            raise
+        
+        ## Parse some info in .log
+        vidjil_log_file.close()
+
+        segmented = re.compile(r"==> segmented (\d+) reads \((\d*\.\d+|\d+)%\)")
+        windows = re.compile(r"==> found (\d+) .*-windows in .* segments .* inside (\d+) sequences")
+        info = ''
+        reads = None
+        segs = None
+        ratio = None
+        wins = None
+        for l in open(out_log, 'r', encoding='utf-8'):
+            m = segmented.search(l)
+            if m:
+                print(l, end=' ')
+                segs = int(m.group(1))
+                ratio = m.group(2)
+                info = "%d segmented (%s%%)" % (segs, ratio)
+                continue
+            m = windows.search(l)
+            if m:
+                print(l, end=' ')
+                wins = int(m.group(1))
+                reads = int(m.group(2))
+                info = "%d reads, " % reads + info + ", %d windows" % wins
+                break
+
+
+        ## insertion dans la base de donnée
+        ts = time.time()
+        db.results_file[id_data] = dict(run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                        data_file = stream)
+        db.commit()
+        
+        if clean_after:
+            clean_cmd = "rm -rf " + out_folder 
+            p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+            p.wait()
+        
+        ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
+        ## TODO parse result success/fail
+
+        if not grep_reads:
+            for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
+                sample_set_id = row.sample_set_id
+                print(row.sample_set_id)
+                compute_extra(id_file, id_config, 5)
+                run_fuse.delay(id_file, id_config, id_data, sample_set_id, clean_before = False)
+
+        os.remove(results_filepath)
+        update_task(task_id, STATUS_COMPLETED)
     except:
-        print("!!! Vidjil failed, no result file")
-        res = {"message": "[%s] c%s: Vidjil FAILED - %s; log at %s/%s.vidjil.log" % (id_data, id_config, out_folder, out_folder, output_filename)}
-        log.error(res)
+        error_message = f"Error in run_vidjil : {traceback.format_exc()}\n\nSetting status to Failed."
+        print(error_message)
+        log.error(error_message)
         update_task(task_id, STATUS_FAILED)
         raise
-    
-    ## Parse some info in .log
-    vidjil_log_file.close()
-
-    segmented = re.compile(r"==> segmented (\d+) reads \((\d*\.\d+|\d+)%\)")
-    windows = re.compile(r"==> found (\d+) .*-windows in .* segments .* inside (\d+) sequences")
-    info = ''
-    reads = None
-    segs = None
-    ratio = None
-    wins = None
-    for l in open(out_log, 'r', encoding='utf-8'):
-        m = segmented.search(l)
-        if m:
-            print(l, end=' ')
-            segs = int(m.group(1))
-            ratio = m.group(2)
-            info = "%d segmented (%s%%)" % (segs, ratio)
-            continue
-        m = windows.search(l)
-        if m:
-            print(l, end=' ')
-            wins = int(m.group(1))
-            reads = int(m.group(2))
-            info = "%d reads, " % reads + info + ", %d windows" % wins
-            break
-
-
-    ## insertion dans la base de donnée
-    ts = time.time()
-    db.results_file[id_data] = dict(run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
-                                    data_file = stream)
-    db.commit()
-    
-    if clean_after:
-        clean_cmd = "rm -rf " + out_folder 
-        p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-        p.wait()
-    
-    ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
-    ## TODO parse result success/fail
-
-    if not grep_reads:
-        compute_extra(id_file, id_config, 5)
-        for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
-            sample_set_id = row.sample_set_id
-            print(row.sample_set_id)
-            run_fuse.delay(id_file, id_config, id_data, sample_set_id, clean_before = False)
-
-    os.remove(results_filepath)
-    update_task(task_id, STATUS_COMPLETED)
 
 def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
@@ -317,6 +325,7 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
     seq_file = upload_folder+filename
 
     ## config de vidjil
+
     arg_cmd = db.config[id_config].command
 
     os.makedirs(out_folder)
@@ -508,65 +517,75 @@ def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fals
     from subprocess import Popen, PIPE, STDOUT, os
     db._adapter.reconnect()
     
-    ## les chemins d'acces a vidjil / aux fichiers de sequences
-    upload_folder = defs.DIR_SEQUENCES
-    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
-    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+    update_task(task_id, STATUS_RUNNING)
     
-    cmd = "rm -rf "+out_folder 
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    p.wait()
-    
-    ## filepath du fichier de séquence
-    row = db(db.sequence_file.id==id_file).select()
-    filename = row[0].data_file
-    
-    os.makedirs(out_folder)
-    vidjil_log_file = open(out_folder+'/'+output_filename+'.vidjil.log', 'w')
-
-    print("Output log in "+out_folder+'/'+output_filename+'.vidjil.log')
-    sys.stdout.flush()
-    db.commit()
-    
-    ## récupération du fichier 
-    results_filepath = os.path.abspath(defs.DIR_SEQUENCES+row[0].data_file)
-
     try:
-        stream = open(results_filepath, 'rb')
-        update_task(task_id, STATUS_COMPLETED)
-    except IOError as error:
-        print("!!! 'copy' failed, no file")
-        res = {"message": "[%s] c%s: 'copy' FAILED - %s - %s" % (id_data, id_config, error, out_folder)}
-        log.error(res)
-        raise IOError
-    
-    ## insertion dans la base de donnée
-    ts = time.time()
-    
-    db.results_file[id_data] = dict(status = "ready",
-                                 run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
-                                 #data_file = row[0].data_file
-                                 data_file = db.results_file.data_file.store(stream, row[0].filename)
-                                )
-    db.commit()
-    
-    if clean_after:
-        clean_cmd = "rm -rf " + out_folder 
-        p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+        ## les chemins d'acces a vidjil / aux fichiers de sequences
+        upload_folder = defs.DIR_SEQUENCES
+        output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
+        out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+        
+        cmd = "rm -rf "+out_folder 
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         p.wait()
-    
-    ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
-    ## TODO parse result success/fail
+        
+        ## filepath du fichier de séquence
+        row = db(db.sequence_file.id==id_file).select()
+        filename = row[0].data_file
+        
+        os.makedirs(out_folder)
+        vidjil_log_file = open(out_folder+'/'+output_filename+'.vidjil.log', 'w')
 
-    res = {"message": "[%s] c%s: 'copy' finished - %s" % (id_data, id_config, filename)}
-    log.info(res)
+        print("Output log in "+out_folder+'/'+output_filename+'.vidjil.log')
+        sys.stdout.flush()
+        db.commit()
+        
+        ## récupération du fichier 
+        results_filepath = os.path.abspath(defs.DIR_SEQUENCES+row[0].data_file)
 
-    for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
-        sample_set_id = row.sample_set_id
-        print(row.sample_set_id)
-        run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
+        try:
+            stream = open(results_filepath, 'rb')
+        except IOError as error:
+            print("!!! 'copy' failed, no file")
+            res = {"message": "[%s] c%s: 'copy' FAILED - %s - %s" % (id_data, id_config, error, out_folder)}
+            log.error(res)
+            update_task(task_id, STATUS_FAILED)
+            raise IOError
+        
+        ## insertion dans la base de donnée
+        ts = time.time()
+        
+        db.results_file[id_data] = dict(status = "ready",
+                                    run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                    #data_file = row[0].data_file
+                                    data_file = db.results_file.data_file.store(stream, row[0].filename)
+                                    )
+        db.commit()
+        
+        if clean_after:
+            clean_cmd = "rm -rf " + out_folder 
+            p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+            p.wait()
+        
+        ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
+        ## TODO parse result success/fail
 
-    return "SUCCESS"
+        res = {"message": "[%s] c%s: 'copy' finished - %s" % (id_data, id_config, filename)}
+        log.info(res)
+
+        for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
+            sample_set_id = row.sample_set_id
+            print(row.sample_set_id)
+            run_fuse(id_file, id_config, id_data, sample_set_id, clean_before = False)
+
+        update_task(task_id, STATUS_COMPLETED)
+        return "SUCCESS"
+    except:
+        error_message = f"Error in run_copy : {traceback.format_exc()}\n\nSetting status to Failed."
+        print(error_message)
+        log.error(error_message)
+        update_task(task_id, STATUS_FAILED)
+        raise
 
 
 def run_refuse(args):
@@ -645,8 +664,9 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
 
         stream = open(fuse_filepath, 'rb')
     except:
-        print("!!! Fuse failed, no .fused file")
-        res = {"message": "[%s] c%s: 'fuse' FAILED - %s" % (id_data, id_config, output_file)}
+        error_message = f"!!! Fuse failed : {traceback.format_exc()}."
+        print(error_message)
+        res = {"message": f"[{id_data}] c{id_config}: {output_file=} - {error_message}"}
         log.error(res)
         raise
 
@@ -820,76 +840,98 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
         db.commit()
     except:
         db.rollback()
+        return "FAILED"
     
-    out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
-    output_filename = get_preprocessed_filename(get_original_filename(sequence_file.data_file),
-                                                get_original_filename(sequence_file.data_file2))
-    
-    if clean_before:
-        cmd = "rm -rf "+out_folder 
-        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-        p.wait()
-        os.makedirs(out_folder)    
-
-    output_file = out_folder+'/'+output_filename
-            
-    pre_process = db.pre_process[pre_process_id]
-
     try:
-        cmd = pre_process.command.replace( "&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
-        if sequence_file.data_file2:
-            cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
-        cmd = cmd.replace( "&result&", output_file)
-        cmd = cmd.replace("&pear&", defs.DIR_PEAR)
-        cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
-        cmd = cmd.replace("&binaries&", defs.DIR_BINARIES)
-        # Example of template to add some preprocess shortcut
-        # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
-        # Where &preprocess_template& is the shortcut to change and
-        # defs.DIR_preprocess_template the variable to set into the file defs.py. 
-        # The value should be the path to access to the preprocess software.
+        out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
+        output_filename = get_preprocessed_filename(get_original_filename(sequence_file.data_file),
+                                                    get_original_filename(sequence_file.data_file2))
+        
+        if clean_before:
+            cmd = "rm -rf "+out_folder 
+            p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+            p.wait()
+            os.makedirs(out_folder)    
 
-        print("=== Pre-process %s ===" % pre_process_id)
-        print(cmd)
-        print("===============")
-        sys.stdout.flush()
+        output_file = out_folder+'/'+output_filename
+                
+        pre_process = db.pre_process[pre_process_id]
 
-        out_log = out_folder+'/'+output_filename+'.pre.log'
-        log_file = open(out_log, 'w')
+        try:
+            cmd = pre_process.command.replace("&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
+            if sequence_file.data_file2:
+                cmd = cmd.replace("&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
+            cmd = cmd.replace("&result&", output_file)
+            cmd = cmd.replace("&pear&", defs.DIR_PEAR)
+            cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
+            cmd = cmd.replace("&binaries&", defs.DIR_BINARIES)
+            # Example of template to add some preprocess shortcut
+            # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
+            # Where &preprocess_template& is the shortcut to change and
+            # defs.DIR_preprocess_template the variable to set into the file defs.py. 
+            # The value should be the path to access to the preprocess software.
 
-        os.chdir(defs.DIR_PREPROCESS)
-        p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
-        (stdoutdata, stderrdata) = p.communicate()
-        print("Output log in " + out_log)
+            print("=== Pre-process %s ===" % pre_process_id)
+            print(cmd)
+            print("===============")
+            sys.stdout.flush()
 
-        filepath = os.path.abspath(output_file)
+            out_log = out_folder+'/'+output_filename+'.pre.log'
+            log_file = open(out_log, 'w')
 
-        stream = open(filepath, 'rb')
+            os.chdir(defs.DIR_PREPROCESS)
+            p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
+            (stdoutdata, stderrdata) = p.communicate()
+            print("Output log in " + out_log)
 
-    except:
-        print("!!! Pre-process failed, no result file")
-        res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
-        log.error(res)
-        db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
-        update_task(task_id, STATUS_FAILED)
+            filepath = os.path.abspath(output_file)
+
+            stream = open(filepath, 'rb')
+
+        except:
+            print("!!! Pre-process failed, no result file")
+            res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
+            log.error(res)
+            db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
+            db.commit()
+            update_task(task_id, STATUS_FAILED)
+            # cancel WAITING task for this sequence file
+            waiting_tasks = db((db.results_file.sequence_file_id == sequence_file_id) & 
+                            (db.results_file.scheduler_task_id == db.scheduler_task.id) & 
+                            (db.scheduler_task.status == STATUS_WAITING)).select()
+            for row in waiting_tasks :
+                update_task(row.scheduler_task.id, STATUS_FAILED)
+            raise
+
+        pre_process_filepath = '%s/pre_process.vidjil' % out_folder
+        try:
+            pre_process_output = open(pre_process_filepath, 'rb')
+        except FileNotFoundError:
+            pre_process_output = None
+
+        # Now we update the sequence file with the result of the pre-process
+        # We forget the initial data_file (and possibly data_file2)
+        db._adapter.reconnect()
+        db.sequence_file[sequence_file_id] = dict(data_file = stream,
+                                                data_file2 = None,
+                                                pre_process_flag = STATUS_COMPLETED,
+                                                pre_process_file = pre_process_output)
         db.commit()
+        update_task(task_id, STATUS_COMPLETED)
+    except:
+        error_message = f"Error in run_pre_process : {traceback.format_exc()}\n\nSetting status to Failed."
+        print(error_message)
+        log.error(error_message)
+        db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
+        db.commit()
+        update_task(task_id, STATUS_FAILED)
+        # cancel WAITING task for this sequence file
+        waiting_tasks = db((db.results_file.sequence_file_id == sequence_file_id) & 
+                        (db.results_file.scheduler_task_id == db.scheduler_task.id) & 
+                        (db.scheduler_task.status == STATUS_WAITING)).select()
+        for row in waiting_tasks :
+            update_task(row.scheduler_task.id, STATUS_FAILED)
         raise
-
-    pre_process_filepath = '%s/pre_process.vidjil' % out_folder
-    try:
-        pre_process_output = open(pre_process_filepath, 'rb')
-    except FileNotFoundError:
-        pre_process_output = None
-
-    # Now we update the sequence file with the result of the pre-process
-    # We forget the initial data_file (and possibly data_file2)
-    db._adapter.reconnect()
-    db.sequence_file[sequence_file_id] = dict(data_file = stream,
-                                              data_file2 = None,
-                                              pre_process_flag = STATUS_COMPLETED,
-                                              pre_process_file = pre_process_output)
-    db.commit()
-    update_task(task_id, STATUS_COMPLETED)
     
     # resume WAITING task for this sequence file
     waiting_tasks = db((db.results_file.sequence_file_id == sequence_file_id) & 
