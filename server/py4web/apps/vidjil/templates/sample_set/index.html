@@ -1,6 +1,7 @@
 [[extend 'db_layout.html']]
 [[from apps.vidjil.modules import vidjil_utils]]
 [[from apps.vidjil.modules.permission_enum import PermissionEnum]]
+[[from apps.vidjil import tasks]]
 
 
 <div>
@@ -90,7 +91,7 @@
 
                 <td class="column2"></td>
                 <td class="column_100" style="padding: 2px 5px">
-                    [[ launch_sequence_files = [(int(row.sequence_file.id) for row in query if row.results_file.status in ["FAILED",''])]  ]]
+                    [[ launch_sequence_files = [(int(row.sequence_file.id) for row in query if row.results_file.status in ["tasks.STATUS_FAILED",""])]  ]]
                     [[ if len(launch_sequence_files) > 0 and (config_id > 0 and auth.can_use_config(config_id)): ]]
                          Run all
                     [[pass]]
@@ -98,22 +99,20 @@
                 <td class="column5"></td>
                 <td class="column5"></td>
                 <td class="column5" id="footer_run_icon_all">
-                       [[if config_id > 0 and auth.can_use_config(config_id) :]]
-                       [[if auth.can_process_sample_set(int(request.query['id'])) and (config_id > 0 and auth.can_use_config(config_id)) :]]
-                              [[ launch_sequence_files_all = [ int(row.sequence_file.id) for row in query ] ]]
-                              <span class="pointer devel-mode" 
-                                id="launch_all_samples_[[=config_id]]"
-                               onclick="db.call('default/run_all_request', {'sequence_file_ids' : [[=launch_sequence_files_all]], 'sample_set_id': [[=request.query["id"]]], 'config_id' : [[=config_id]] } ) "
-                              ><i class="icon-cog-2" title="Run the selected configuration for all samples">
-                               </i></span>
-                           [[pass]]
-                      [[pass]]
+                        [[if auth.can_process_sample_set(int(request.query['id'])) and (config_id > 0 and auth.can_use_config(config_id)) :]]
+                            [[ launch_sequence_files_all = [ int(row.sequence_file.id) for row in query ] ]]
+                            <span class="pointer devel-mode" 
+                            id="launch_all_samples_[[=config_id]]"
+                            onclick="db.call('default/run_all_request', {'sequence_file_ids' : [[=launch_sequence_files_all]], 'sample_set_id': [[=request.query["id"]]], 'config_id' : [[=config_id]] } ) "
+                            ><i class="icon-cog-2" title="Run the selected configuration for all samples">
+                            </i></span>
+                        [[pass]]
                 </td>
                 <td class="column5" id="footer_run_icon">
                        [[if config_id > 0 and auth.can_use_config(config_id) :]]
                           [[if auth.can_process_sample_set(int(request.query['id'])) and (config_id > 0 and auth.can_use_config(config_id)) :]]
 
-                              [[ launch_sequence_files_unavailable = [ int(row.sequence_file.id) for row in query if row.results_file.status in ["FAILED",''] ] ]]
+                              [[ launch_sequence_files_unavailable = [ int(row.sequence_file.id) for row in query if row.results_file.status in [tasks.STATUS_FAILED,""] ] ]]
 
                               [[ if len(launch_sequence_files_unavailable) > 0: ]]
                                <span class="pointer" 
@@ -163,10 +162,10 @@
                         title="View more information on the pre-process [[=pre_process_list[row.sequence_file.pre_process_id]]]"[[pass]]
                         [[if has_pre_process:]] onclick="db.call('pre_process/info', {'sequence_file_id' :'[[=row.sequence_file.id ]]', 'sample_set_id' : '[[=request.query["id"]]]'} )" [[pass]]
                         >
-                        [[if row.sequence_file.pre_process_flag == "RUN" :]]<i class="icon-spin4" style="animation: spin 2s 1000 linear;
+                        [[if row.sequence_file.pre_process_flag == "tasks.STATUS_RUNNING" :]]<i class="icon-spin4" style="animation: spin 2s 1000 linear;
     display: inline-block;" title="running pre_processs"></i>[[pass]] 
-                        [[if row.sequence_file.pre_process_flag == "WAIT" :]][queued][[pass]] 
-                        [[if row.sequence_file.pre_process_flag == "FAILED" :]][failed] <span class="button" onclick="db.call('file/restart_pre_process', {sequence_file_id: [[=row.sequence_file.id]]})">try again</span>[[pass]]
+                        [[if row.sequence_file.pre_process_flag == "tasks.STATUS_WAITING" :]][queued][[pass]] 
+                        [[if row.sequence_file.pre_process_flag == "tasks.STATUS_FAILED" :]][failed] <span class="button" onclick="db.call('file/restart_pre_process', {sequence_file_id: [[=row.sequence_file.id]]})">try again</span>[[pass]]
                         [[ if has_pre_process and row.sequence_file.pre_process_flag is None and row.sequence_file.data_file2 is None: ]]<span title="All the files have not been properly received yet. It this persists, please edit the sample to reupload them.">[waiting file]</span>[[pass]]
                         [[if row.sequence_file.pre_process_id != None :]] [[=pre_process_list[row.sequence_file.pre_process_id]]] [[pass]]
                      </td>
@@ -180,7 +179,7 @@
                       <td></td>
                     [[pass]]
                         <td> <a [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]]
-                                [[else:]] href="[[=URL('sample_set','download_sequence_file', row.sequence_file.data_file, vars=dict(filename=row.sequence_file.filename), scheme='https')]]" [[pass]]  ><i class="icon-down" title="Download sequence file"></i></a></td>
+                                [[else:]] href="DB_ADDRESS[[=URL('sample_set','download_sequence_file', row.sequence_file.data_file, vars=dict(filename=row.sequence_file.filename), use_appname=False)]]" [[pass]]  ><i class="icon-down" title="Download sequence file"></i></a></td>
                     [[if can_modify:]]
                         <td class="pointer" onclick="db.call('file/confirm', {'id' :'[[=row.sequence_file.id ]]', 'redirect_sample_set_id' : '[[=request.query["id"]]]'} )" >  <i class="icon-erase" title="delete sample"></i> </td>
                     [[else:]]<td></td>[[pass]]
@@ -204,11 +203,11 @@
                          </td>
                      <td>
                         [[if row.results_file.data_file:]]
-                            <a href=[[=URL('default', 'download', row.results_file.data_file, scheme='https', vars=dict(filename='result-%s-%s.txt' % (request.query['id'], row.results_file.id)))]]
+                            <a href="DB_ADDRESS[[=URL('default', 'download', row.results_file.data_file, vars=dict(filename='result-%s-%s.txt' % (request.query['id'], row.results_file.id)), use_appname=False)]]"
                                type="application/octet-stream"><i class="icon-down" title="Download result file"></i></a>
                         [[pass]]
                      </td>
-                     <td [[if status in ["COMPLETED", "FAILED"]:]] class="pointer" onclick="db.call('results_file/output', { 'results_file_id' : '[[=row.results_file.id]]' }) " [[else:]] class="inactive" [[pass]]><i class="icon-docs" title="See the output files"></i></td>
+                     <td [[if status in [tasks.STATUS_COMPLETED, tasks.STATUS_FAILED]:]] class="pointer" onclick="db.call('results_file/output', { 'results_file_id' : '[[=row.results_file.id]]' }) " [[else:]] class="inactive" [[pass]]><i class="icon-docs" title="See the output files"></i></td>
                     [[if can_modify and auth.can_process_sample_set(int(request.query['id'])):]]
                      <td id="delete_process_[[=row.sequence_file.id]]" class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'[[=row.results_file.id]]', 'sample_set_id': '[[=request.query["id"]]]'})" >  <i class="icon-erase" title="delete process"></i> </td>
                     [[else:]]
@@ -218,7 +217,7 @@
                      <td id="status_[[=row.sequence_file.id]]_[[=config_id]]"></td><td></td><td></td><td></td>
                    [[pass]]
                    <td>
-                   [[if row.sequence_file.data_file != None and ( row.results_file.id != None or ( status not in ["RUNNING", "QUEUED", "ASSIGNED"]) ) and (not has_pre_process or (row.sequence_file.pre_process_flag != None and row.sequence_file.pre_process_flag != "FAILED")) :]]
+                   [[if row.sequence_file.data_file != None and (status not in [tasks.STATUS_RUNNING, tasks.STATUS_QUEUED, tasks.STATUS_QUEUED, tasks.STATUS_WAITING]) and (not has_pre_process or (row.sequence_file.pre_process_flag != None and row.sequence_file.pre_process_flag != tasks.STATUS_FAILED)) :]]
                        [[if auth.can_process_sample_set(int(request.query['id'])) and (config_id > 0 and auth.can_use_config(config_id)) :]]
                            <span class="pointer" id="launch_[[=row.sequence_file.id]]_[[=config_id]]"  onclick="db.call('default/run_request', { 'sequence_file_id' : '[[=row.sequence_file.id]]', 'sample_set_id' : [[=request.query["id"]]], 'config_id' : [[=config_id]] } )"><i class="icon-cog-2" title="Run a process with the selected configuration for this file"></i></span>
                        [[pass]]
@@ -308,9 +307,9 @@
     <div class="db_block_right">
         [[if fused_file is not None :]]
             download [[=db.config[config_id].name]]
-            <a class="button" href=[[=URL('default', 'get_data', scheme='https', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=fused_filename))]]> .vidjil </a>
+            <a class="button" href="DB_ADDRESS[[=URL('default', 'get_data', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=fused_filename), use_appname=False)]]"> .vidjil </a>
             [[if analysis_count >0:]]
-            <a class="button" href=[[=URL('default', 'get_analysis', scheme='https', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=analysis_filename))]]> .analysis </a>
+            <a class="button" href="DB_ADDRESS[[=URL('default', 'get_analysis', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=analysis_filename), use_appname=False)]]"> .analysis </a>
             [[pass]]
         [[pass]]
     </div>

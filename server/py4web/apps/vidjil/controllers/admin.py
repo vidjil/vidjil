@@ -1,28 +1,21 @@
 # -*- coding: utf-8 -*-
 import subprocess
-from sys import modules
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules.stats_decorator import *
-from ..VidjilAuth import VidjilAuth
-from io import StringIO
 import json
 import os
 import re
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
-RUNNING ="RUNNING"
-QUEUED = "QUEUED"
-ASSIGNED ="ASSIGNED"
-MAX_LOG_LINES = 500
-
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+from py4web import action, request
+from .. import tasks
+from ..common import db, auth, log, scheduler
 
 
 ##################################
 # HELPERS
 ##################################
 
+MAX_LOG_LINES = 500
 ACCESS_DENIED = "access denied"
 
 def _monitor():
@@ -31,17 +24,18 @@ def _monitor():
     True
     
     """
-    # External monitor
+    
+    # Get last results
     last_results = ''
-    for res in db(db.scheduler_task.id == db.results_file.scheduler_task_id).select(orderby=~db.results_file.id,
-                                                                                    limitby=(0,10)):
+    last_tasks = db(db.scheduler_task.id == db.results_file.scheduler_task_id).select(
+        orderby=~db.results_file.id, limitby=(0,10));
+    for res in last_tasks:
         last_results += res.scheduler_task.status[0]
-
-
+        
     return dict (worker = len(db().select(db.scheduler_worker.ALL)),
-                 queued = len(db(db.scheduler_task.status==QUEUED).select()),
-                 assigned = len(db(db.scheduler_task.status==ASSIGNED).select()),
-                 running = len(db(db.scheduler_task.status==RUNNING).select()),
+                 queued = len(db(db.scheduler_task.status==tasks.STATUS_QUEUED).select()),
+                 assigned = 0,
+                 running = len(db(db.scheduler_task.status==tasks.STATUS_RUNNING).select()),
                  last_results = last_results)
     
 
@@ -220,7 +214,7 @@ def repair():
 
 def reset_workers():
     if auth.is_admin():
-        running_jobs = db((db.scheduler_task.status == RUNNING) | (db.scheduler_task.status == ASSIGNED)).count()
+        running_jobs = db(db.scheduler_task.status == tasks.STATUS_RUNNING).count()
         if running_jobs == 0:
             db(db.scheduler_worker.id > 0).delete()
             scheduler.die()
@@ -230,3 +224,35 @@ def reset_workers():
             res = {"success" : "false", "message" : "Jobs are currently running or assigned. I don't want to restart workers"}
         log.admin(res)
         return json.dumps(res, separators=(',',':'))
+
+@action("/vidjil/admin/clean_workers_status", method=["POST", "GET"])
+@action.uses(db, auth.user)
+@vidjil_utils.jsontransformer
+def clean_workers_status():
+    if not auth.is_admin():
+        res = {"success": "false", "message": ACCESS_DENIED}
+        log.error(res)
+        return json.dumps(res, separators=(',', ':'))
+    
+    # Get tasks in progress in scheduler
+    current_task_ids=[]
+    inspect = scheduler.control.inspect()
+    inspect_task_lists = [inspect.scheduled(), inspect.active(), inspect.reserved()]
+    for inspect_task_list in inspect_task_lists:
+        for task_list in inspect_task_list.values():
+            current_task_ids+=[task["args"][0] for task in task_list]
+            
+    # Get tasks in progress in DB
+    in_progress_task_ids = db((db.scheduler_task.status != tasks.STATUS_FAILED) & 
+                              (db.scheduler_task.status != tasks.STATUS_COMPLETED) & 
+                              (db.scheduler_task.status != tasks.STATUS_TIMEOUT)).select(db.scheduler_task.id)
+    
+    # Set not corresponding tasks status to FAILED in DB
+    dangling_task_ids = [in_progress_task.id for in_progress_task in in_progress_task_ids if in_progress_task.id not in current_task_ids]
+    log.debug(f"{current_task_ids=}, {in_progress_task_ids=}")
+    for dangling_task_id in dangling_task_ids:
+        db.scheduler_task[dangling_task_id].update_record(status=tasks.STATUS_FAILED)
+    
+    res = {"redirect": "reload", "success": "true", "message": f"Dangling tasks set to failed: {dangling_task_ids}"}
+    log.info(res)
+    return json.dumps(res, separators=(',', ':'))

@@ -1,4 +1,5 @@
 [[extend 'db_layout.html']]
+[[from apps.vidjil import tasks]]
 
 
 <h3>Hi</h3>
@@ -48,7 +49,7 @@
                <td> [[=row.status]] </td>
                <td onclick="db.call('results_file/confirm', {'results_file_id' :'[[=row.results_file.id]]'})" > <i class="icon-erase" title="delete process"></i> </td>
                <td>
-               [[if row.results_file.id == None or ( row.status != "RUNNING" and row.status != "QUEUED" and row.status != "ASSIGNED"):]]
+               [[if row.results_file.id == None or ( row.status != "tasks.STATUS_RUNNING" and row.status != "tasks.STATUS_QUEUED"):]]
                    [[if auth.can_process_file() :]]
                        <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '[[=row.sequence_file.id]]', 'config_id' : [[=row.config.id]] } )"> run >> </span>
                    [[else:]]<span class="button inactive" title="you don't have permission to schedule runs"> run >> </span>[[pass]]

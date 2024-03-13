@@ -7,10 +7,11 @@
 
 </br>Database maintenance:
 <a class="button" href="/_dashboard">administration</a>
-<a class="button" onclick="db.call('admin/repair_missing_files');">fix missing files</a>
-<a class="button" onclick="db.call('admin/repair');">repair db</a>
-<a class="button" onclick="db.call('admin/make_backup');">make backup</a>
-<a class="button" title="When jobs remain QUEUED, restarting workers may help" onclick="db.call('admin/reset_workers');">reset workers</a>
+<a class="button devel-mode" onclick="db.call('admin/repair_missing_files');">fix missing files</a>
+<a class="button devel-mode" onclick="db.call('admin/repair');">repair db</a>
+<a class="button devel-mode" onclick="db.call('admin/make_backup');">make backup</a>
+<a class="button devel-mode" title="When jobs remain QUEUED, restarting workers may help" onclick="db.call('admin/reset_workers');">reset workers</a>
+<a class="button" onclick="db.call('admin/clean_workers_status');">clean workers status</a>
 
 </br>
 

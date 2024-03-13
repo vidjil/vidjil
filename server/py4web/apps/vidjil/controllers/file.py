@@ -6,6 +6,7 @@ from sys import modules
 
 
 from .. import defs
+from .. import tasks
 from ..modules import vidjil_utils
 from ..modules import tag
 from ..modules.stats_decorator import *
@@ -17,7 +18,6 @@ from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
 import apps.vidjil.modules.jstree as jstree
-from ..tasks import schedule_pre_process
 from ..user_groups import get_upload_group_ids, get_involved_groups
 from ..VidjilAuth import VidjilAuth
 from io import StringIO
@@ -283,7 +283,7 @@ def submit():
     error = False
 
     pre_process = None
-    pre_process_flag = "COMPLETED"
+    pre_process_flag = tasks.STATUS_COMPLETED
     if 'pre_process' in data and data['pre_process'] is not None and\
        int(data['pre_process']) > 0:
         pre_process = int(data['pre_process'])
@@ -387,7 +387,7 @@ def submit():
         data_file2 = db.sequence_file[fid].data_file2
         if data["source"] == "nfs" :
             if data_file is not None and data_file2 is not None and pre_process != '0':
-                schedule_pre_process(fid, pre_process)
+                tasks.schedule_pre_process(fid, pre_process)
 
         log.info(mes, extra={'user_id': auth.current_user.get('id'),
                 'record_id': f['id'],
@@ -454,7 +454,7 @@ def upload():
                 scheduler.control.revoke(old_task_id, terminate=True)
                 db(db.scheduler_task.id == old_task_id).delete()
                 db.commit()
-            schedule_pre_process(int(request.params['id']), int(request.params['pre_process']))
+            tasks.schedule_pre_process(int(request.params['id']), int(request.params['pre_process']))
             mes += " | p%s start pre_process %s " % (request.params['pre_process'], request.params['id'] + "-" +request.params['pre_process'])
 
         if data_file is not None :
@@ -607,7 +607,7 @@ def restart_pre_process():
     ### Launch new preprocess
     pre_process = db.pre_process[sequence_file.pre_process_id]
     print( f"sequence_file.id: {sequence_file.id}, pre_process.id: {pre_process.id}")
-    res = schedule_pre_process(sequence_file.id, pre_process.id)
+    res = tasks.schedule_pre_process(sequence_file.id, pre_process.id)
 
 
     log.debug("restart pre process", extra={'user_id': auth.user_id,

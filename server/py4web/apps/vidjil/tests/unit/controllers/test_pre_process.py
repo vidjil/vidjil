@@ -9,6 +9,7 @@ from py4web.core import _before_request, Session, HTTP
 from ....common import db, auth
 from ....modules.permission_enum import PermissionEnum
 from .... import defs
+from .... import tasks
 from ....controllers import pre_process as pre_process_controller
 
 
@@ -394,7 +395,7 @@ class TestPreProcessController(unittest.TestCase):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
         sequence_file_id = db_manipulation_utils.add_sequence_file(use_real_file=False, preprocess=True, preprocess_conf_id=1)
-        task_id = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status="PENDING", args=[sequence_file_id, 1])
+        task_id = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status=tasks.STATUS_PENDING, args=[sequence_file_id, 1])
 
         defs.DIR_PRE_VIDJIL_ID = str(test_utils.get_resources_path()) + '/results/tmp/pre/out-%06d/'
         directory1 = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
@@ -415,7 +416,7 @@ class TestPreProcessController(unittest.TestCase):
 
         ## Case 1; Log exist for this preprocess, should return raw content of the log
         sequence_file_id2 = db_manipulation_utils.add_sequence_file(use_real_file=False, preprocess=True, preprocess_conf_id=1)
-        task_id2 = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status="PENDING", args=[sequence_file_id, 1])
+        task_id2 = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status=tasks.STATUS_PENDING, args=[sequence_file_id, 1])
         directory2 = defs.DIR_PRE_VIDJIL_ID % sequence_file_id2
         file_log  = directory2 + "/file.pre.log"
         os.makedirs(directory2, exist_ok=True)
