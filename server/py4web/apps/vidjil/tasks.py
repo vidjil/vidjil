@@ -288,10 +288,10 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_after=Fal
     ## TODO parse result success/fail
 
     if not grep_reads:
+        compute_extra(id_file, id_config, 5)
         for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
             sample_set_id = row.sample_set_id
             print(row.sample_set_id)
-            compute_extra(id_file, id_config, 5)
             run_fuse.delay(id_file, id_config, id_data, sample_set_id, clean_before = False)
 
     os.remove(results_filepath)
