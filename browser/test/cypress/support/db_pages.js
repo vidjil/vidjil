@@ -319,7 +319,7 @@ Cypress.Commands.add('multiSamplesAdd', (array_samples) => {
       .click()
     cy.update_icon()
 
-
+    // warning; Check only last value
     array_samples.reverse().forEach( (sample, index) => {
       var last_id = cy.get('#db_table_container')
         .find('tbody')
@@ -334,6 +334,8 @@ Cypress.Commands.add('multiSamplesAdd', (array_samples) => {
           // Control values
           var filename1    = sample[2]
           var filename2    = sample[3]
+          var samplingdate = sample[4]
+          var informations = sample[5]
           var common_set   = sample[6]
 
           cy.get('#db_table_container')
@@ -356,6 +358,12 @@ Cypress.Commands.add('multiSamplesAdd', (array_samples) => {
               .then( (filename) => {
                 cy.log( `sample added number: ${filename.split("(")[1].split(")")[0]}` )
               })
+              cy.get('#db_table_container')
+                .find(`#row_sequence_file_${current_id}`)
+                .contains(samplingdate)
+              cy.get('#db_table_container')
+                .find(`#row_sequence_file_${current_id}`)
+                .contains(informations)
           }
         })
     })
