@@ -172,7 +172,7 @@ class vdj_recombination:
 def random_sequence(characters, length):
     return ''.join([random.choice(characters) for x in range(length)])
 
-def mutate_sequence(sequence, probability):
+def mutate_sequence(sequence, probability, ratio_indel):
     '''
     Mutate the original DNA sequence given in parameter.
     The probability is a per nucleotide probability.
@@ -183,7 +183,15 @@ def mutate_sequence(sequence, probability):
     nucleotides = ['A', 'C', 'G', 'T']
     for nt in sequence:
         if random.random() < probability:
-            if nt.upper() in nucleotides:
+            if random.random() < ratio_indel:
+                # Indel
+                if random.random() < .5:
+                    # Deletion
+                    nt = ''
+                else:
+                    # Indel
+                    nt = random.choice(nucleotides) + nt
+            elif nt.upper() in nucleotides:
                 nt = nucleotides[nucleotides.index(nt.upper()) - random.randint(1, 3)]
             else:
                 nt = random.choice(nucleotides)
@@ -252,7 +260,8 @@ if __name__ == '__main__':
     parser.add_argument('--random-deletions', '-D', type=list_random_tuple, help='List of random deletions at junctions under the format mean,standard_deviation (or single value, if the number is the same everywhere')
     parser.add_argument('--random-insertions', '-I', type=list_random_tuple, help='List of the number of insertions at junctions under the format mean,standard_deviation (or single value, if the number is the same everywhere')
     parser.add_argument('-n', '--nb-recombinations', type=int, default=5, help='Number of times each recombination (with insertions/deletions) is generated')
-    parser.add_argument('-e', '--error', type=float, default = 0., help='Probability of substitution at the nucleotide level')
+    parser.add_argument('-e', '--error', type=float, default = 0., help='Probability of error (substitution or indel) at the nucleotide level')
+    parser.add_argument('--error-indel', type=float, default = 0., help='Ratio of indels among the errors (default %(default)s). Only 1-bp indels are simulated')
     parser.add_argument('-b', '--basename', default='generated', help='Basename used for generated filenames')
 
     args = parser.parse_args()
@@ -294,7 +303,7 @@ if __name__ == '__main__':
             deletions = args.deletions if args.random_deletions is None else args.random_deletions
             insertions = args.insertions if args.random_insertions is None else args.random_insertions
 
-            recombination5 = vdj_recombination(deletions=deletions, insertions=insertions, processing = [(lambda s: mutate_sequence(s, args.error))])
+            recombination5 = vdj_recombination(deletions=deletions, insertions=insertions, processing = [(lambda s: mutate_sequence(s, args.error, args.error_indel))])
 
             generate_to_file(repertoire, recombination5, code, '../data/gen/%s-%s.should-vdj.fa' % (args.basename, code_in_filename), args.nb_recombinations)
 
