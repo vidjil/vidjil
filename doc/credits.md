@@ -201,6 +201,11 @@ Isadoral Heraud et al.,
 Annales de Biologie Clinique, 2023,
 <https://www.jle.com./fr/revues/abc/e-docs/monoclonal_b_cell_lymphocytosis_with_a_non_cll_immunophenotype_review_of_34_cases_330642/article.phtml?tab=texte>
 
+Vincent Javaugue et al.,
+*RNA-based immunoglobulin repertoire sequencing is a new tool for the management of monoclonal gammopathy of renal (kidney) significance*
+Kidney International, 2022
+<https://www.sciencedirect.com/science/article/abs/pii/S0085253821010334>
+
 Irene Jo et al.,
 *Considerations for monitoring minimal residual disease using immunoglobulin clonality in patients with precursor B-cell lymphoblastic leukemia*,
 Clinica Chimica Acta, 2019,
