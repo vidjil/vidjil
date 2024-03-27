@@ -585,7 +585,7 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::max12(const set<
 #ifdef DEBUG
       cerr << "affect/proba: " << affect << " " << proba << endl;
 #endif
-      if (fabs(proba - best_proba) < (proba+best_proba)/1e10) {
+      if (fabs(proba - best_proba) <= (proba+best_proba)/1e10) {
 #ifdef DEBUG
         cerr << "proba = " << proba << ", best_proba = " << best_proba << ", fabs = " << fabs(proba - best_proba)
              << ", threshold = " << (proba+best_proba)/1e10 << endl;
@@ -628,7 +628,7 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::max12(const set<
 #ifdef DEBUG
         cerr << affect << "\t" << proba << "\t" << (best_bitset & affectations.find(affect)->second) << endl;
 #endif
-        if (fabs(proba - second_best_proba) < (proba+second_best_proba)/1e10) {
+        if (fabs(proba - second_best_proba) <= (proba+second_best_proba)/1e10) {
           // Test if values are (almost) equal
           second_best_proba = min(proba, second_best_proba);
           second_best_affect.insert(affect);
