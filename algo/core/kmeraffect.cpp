@@ -220,7 +220,7 @@ bool operator!=(const KmerAffect &a1, const KmerAffect &a2) {
 }
 
 ostream &operator<<(ostream &os, const KmerAffect &kmer) {
-  os << kmer.affect;
+  os << kmer.affect << " " << (int)kmer.affect.c << " " << (int)kmer.affect.length;
   return os;
 }
 

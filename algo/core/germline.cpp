@@ -42,8 +42,9 @@ void Germline::init(string _code, char _shortcut,
   used_shortcuts.insert(jShortcut);
 
   if (filename_shortcut.count(rep_5.name) == 0)
-    for (auto filename: rep_5.filenames)
+    for (auto filename: rep_5.filenames) {
       filename_shortcut[filename] = vShortcut;
+    }
   if (filename_shortcut.count(rep_3.name) == 0)
     for (auto filename: rep_3.filenames)
       filename_shortcut[filename] = jShortcut;
@@ -279,16 +280,15 @@ char Germline::get_new_shortcut_when_conflict(char shortcut, BioReader &reader) 
   }
 
   bool common_files = false;
-  for (auto filename: reader.filenames) {
-    if (filename_shortcut.count(filename) > 0) {
-      common_files = true;
-      break;
-    }
-  }
+  // for (auto filename: reader.filenames) {
+  //   if (filename_shortcut.count(filename) > 0) {
+  //     common_files = true;
+  //   }
+  // }
   if (! common_files && reader.filenames.size() > 0) {
     // We have the same shortcut, but different files
     do {
-      shortcut = ((shortcut + 30) % 120) + 8;
+      shortcut = ((shortcut + 30) % 113) + 8;
     } while (used_shortcuts.count(shortcut) > 0);
   }
   shortcut_conversion[shortcut] = original_shortcut;

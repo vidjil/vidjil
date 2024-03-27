@@ -370,6 +370,18 @@ class KmerSegmenter : public Segmenter
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
                            double threshold, double multiplier);
+
+  /**
+   * Choose the right germline that is common to the sets of Kmeraffect before and after
+   */
+  void chooseGermline(set<KmerAffect> &before_set, set<KmerAffect> &after_set, int strand);
+
+  /**
+   * Sets the attributes `before` and `after` based on `segmented_germline` or based on the germline given in parameter.
+   */
+  void setBeforeAfter(set<KmerAffect> &before_set, set<KmerAffect> &after_set, int strand,
+                      Germline *before_germline = nullptr, Germline *after_germline = nullptr);
+
 };
 
 

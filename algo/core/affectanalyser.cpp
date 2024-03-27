@@ -540,10 +540,11 @@ const string &MultipleAffectAnalyser::getSequence() const{
   return seq;
 }
 
-pair <KmerAffect, KmerAffect> MultipleAffectAnalyser::sortLeftRight(const pair <KmerAffect, KmerAffect> ka12) const {
+pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::sortLeftRight(const pair <set<KmerAffect>, set<KmerAffect>> ka12) const {
 
-  KmerAffect ka1 = ka12.first;
-  KmerAffect ka2 = ka12.second;
+  // We assume that even with several affectations, the affectations will be positioned similarly
+  KmerAffect ka1 = *(ka12.first.begin());
+  KmerAffect ka2 = *(ka12.second.begin());
 
   int ka1_count = 0; int ka1_pos = 0;
   int ka2_count = 0; int ka2_pos = 0;
@@ -566,14 +567,14 @@ pair <KmerAffect, KmerAffect> MultipleAffectAnalyser::sortLeftRight(const pair <
   // Is ka1 'more on the left' than ka2 ?
   // We check for (k1_pos / ka1_count > ka2_pos / ka2_count), but without floats
   if (ka1_pos * ka2_count < ka2_pos * ka1_count)
-    return make_pair(ka1, ka2);
+    return ka12;
   else
-    return make_pair(ka2, ka1);
+    return make_pair(ka12.second, ka12.first);
 }
 
-pair <KmerAffect, KmerAffect> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
+pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
   assert(affectations.size() >= 2);
-  KmerAffect best_affect;
+  set<KmerAffect> best_affect;
   double best_proba = 2;
 
   // Get the best affect first (with lowest proba)
@@ -581,23 +582,36 @@ pair <KmerAffect, KmerAffect> MultipleAffectAnalyser::max12(const set<KmerAffect
     if (forbidden.count(affect) == 0) {
       uint64_t count = this->count(affect);
       double proba = getProbabilityAtLeastOrAbove(affect, count);
-      if (proba < best_proba) {
+#ifdef DEBUG
+      cerr << "affect/proba: " << affect << " " << proba << endl;
+#endif
+      if (fabs(proba - best_proba) < (proba+best_proba)/1e10) {
+#ifdef DEBUG
+        cerr << "proba = " << proba << ", best_proba = " << best_proba << ", fabs = " << fabs(proba - best_proba)
+             << ", threshold = " << (proba+best_proba)/1e10 << endl;
+#endif
+        // Test if values are (almost) equal
+        best_proba = min(proba, best_proba);
+        best_affect.insert(affect);
+      } else if (proba < best_proba) {
         best_proba = proba;
-        best_affect = affect;
+        best_affect.clear();
+        best_affect.insert(affect);
       }
     }
   }
 
 #ifdef DEBUG
-  PRINT_VAR(this->count(best_affect));
   PRINT_VAR(best_proba);
-  PRINT_VAR(best_affect);
+  for (auto best: best_affect)
+    PRINT_VAR(best);
 #endif
   
-  // Now get the second best proba but removes positions that are common with the best
+  // Now get the second best proba but removes positions that are common with the best (we can only take the first one
+  // as all should have the same bitset).
   double second_best_proba = 2;
-  KmerAffect second_best_affect;
-  BitSet best_bitset = (affectations.find(best_affect)->second);
+  set<KmerAffect> second_best_affect;
+  BitSet best_bitset = (affectations.find(*(best_affect.begin()))->second);
 #ifdef DEBUG
   PRINT_VAR(best_bitset);
   PRINT_VAR(best_bitset.size());
@@ -608,27 +622,35 @@ pair <KmerAffect, KmerAffect> MultipleAffectAnalyser::max12(const set<KmerAffect
 #endif
   for (KmerAffect affect: getAffectations()) {
     if (forbidden.count(affect) == 0) {
-      if (affect != best_affect) {
+      if (best_affect.find(affect) == best_affect.end()) {
         uint64_t count = (best_bitset & affectations.find(affect)->second).count();
         double proba = getProbabilityAtLeastOrAbove(affect, count);
 #ifdef DEBUG
         cerr << affect << "\t" << proba << "\t" << (best_bitset & affectations.find(affect)->second) << endl;
 #endif
-        if (proba < second_best_proba) {
+        if (fabs(proba - second_best_proba) < (proba+second_best_proba)/1e10) {
+          // Test if values are (almost) equal
+          second_best_proba = min(proba, second_best_proba);
+          second_best_affect.insert(affect);
+        } else if (proba < second_best_proba) {
           second_best_proba = proba;
-          second_best_affect = affect;
+          second_best_affect.clear();
+          second_best_affect.insert(affect);
         }
-      
       }
     }
   }
 #ifdef DEBUG
   PRINT_VAR(second_best_proba);
-  PRINT_VAR(second_best_affect);
+  for (auto second_best: second_best_affect)
+    PRINT_VAR(second_best);
 #endif
-  if (best_proba == 2 || second_best_proba == 2)
-    return make_pair(KmerAffect::getAmbiguous(), KmerAffect::getAmbiguous());
-  
+  if (best_proba == 2 || second_best_proba == 2) {
+    best_affect.clear();
+    best_affect.insert(KmerAffect::getAmbiguous());
+    second_best_affect.clear();
+    second_best_affect.insert(KmerAffect::getAmbiguous());
+  }
   return make_pair(best_affect, second_best_affect);
 }
 

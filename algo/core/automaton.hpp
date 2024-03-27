@@ -362,7 +362,8 @@ map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bo
   for (auto it: bitsets) {
     KmerAffect info = it.first;
     cerr << info << "\t" << (int)info.getLength() << "\t" <<
-    this->getIndexLoad(info) << "\tin getAllResults" << endl
+      this->getIndexLoad(info) << "\tin getAllResults " << this->kmers_inserted.at((Info)info) << " kmers" << endl
+         << "\t" << it.second << endl
 	 << "\t" << it.second.size()<< endl;
     
   }

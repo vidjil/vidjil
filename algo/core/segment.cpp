@@ -469,6 +469,8 @@ KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
 
 KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold, double multiplier)
 {
+  set<KmerAffect> before_set, after_set;
+  
   box_V = new AlignBox("5", V_COLOR);
   box_D = new AlignBox();
   box_J = new AlignBox("3", J_COLOR);
@@ -563,7 +565,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   if (true || (germline->seg_method == SEG_METHOD_MAX12)
       || (germline->seg_method == SEG_METHOD_MAX1U))
     { // Pseudo-germline, MAX12 and MAX1U
-      pair <KmerAffect, KmerAffect> max12 ;
+      pair <set<KmerAffect>, set<KmerAffect>> max12 ;
 
       set<KmerAffect> forbidden;
       forbidden.insert(KmerAffect::getAmbiguous());
@@ -582,13 +584,15 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
             unique_affect = *(kaa->getAffectations().begin());
           } else {
             max12 = kaa->max12(forbidden);
-            if (max12.first.isAmbiguous()) {
+            if (max12.first.size() &&
+                max12.first.begin()->isAmbiguous()) {
               because = UNSEG_TOO_FEW_ZERO ;
               return ;
             }
-            if (max12.second.isAmbiguous()) {
+            if (max12.first.size() &&
+                max12.second.begin()->isAmbiguous()) {
               nb_affects = 1;
-              unique_affect = max12.first;
+              unique_affect = *(max12.first.begin());
             }
           }
           if (nb_affects == 1) {
@@ -616,13 +620,13 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
               because = UNSEG_TOO_FEW_ZERO ;
               return ;
             }
-          max12 = make_pair(max, KmerAffect::getUnknown());
+          max12 = make_pair(set<KmerAffect>({max}), set<KmerAffect>({KmerAffect::getUnknown()}));
         }
 
-      pair <KmerAffect, KmerAffect> before_after =  kaa->sortLeftRight(max12);
+      pair <set<KmerAffect>, set<KmerAffect>> before_after =  kaa->sortLeftRight(max12);
 
-      before = before_after.first ;
-      after = before_after.second ;
+      before_set = before_after.first;
+      after_set = before_after.second;
 
       // This strand computation is only a heuristic, especially for chimera +/- reads
       // Anyway, it allows to gather such reads and their reverse complement into a unique window...
@@ -650,8 +654,35 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
     } // endif Pseudo-germline
 
-  set<Germline *> left_g = segmented_germline->index->getLabel(before);
-  set<Germline *> right_g = segmented_germline->index->getLabel(after);
+  chooseGermline(before_set, after_set, strand);
+  // TODO : FIXME FIXME FIXME must not pass before.begin and after.begin()
+  if (because == 0)
+  computeSegmentation(strand, before, after, threshold, multiplier);
+}
+
+void KmerSegmenter::chooseGermline(set<KmerAffect> &before_set, set<KmerAffect> &after_set, int strand) {
+  
+  set<Germline *> left_g, right_g;
+
+  for (auto val: before_set) {
+    set<Germline *> s = segmented_germline->index->getLabel(val);
+    left_g.insert(s.begin(), s.end());
+  }
+  for (auto val: after_set) {
+    set<Germline *> s = segmented_germline->index->getLabel(val);
+    right_g.insert(s.begin(), s.end());
+  }
+
+#ifdef DEBUG
+  // PRINT_VAR(before);
+  // PRINT_VAR(after);
+  for (auto left: left_g) {
+    PRINT_VAR(left->code);
+  }
+  for (auto right: right_g) {
+    PRINT_VAR(right->code);
+  }
+#endif
   vector<Germline *> common ;
   set_intersection(left_g.begin(), left_g.end(), right_g.begin(), right_g.end(),
                    inserter(common, common.begin()));
@@ -659,27 +690,91 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   // If germlines differ take the longest one
   // if one is prefix of the other.
   //  (works for IGH/IGH+ for instance, what about TRA+D?)
-  if (before.getStrand() == after.getStrand()) {
-    if (common.size() > 0)
+  if (before_set.begin()->getStrand() == after_set.begin()->getStrand()) {
+    if (common.size() > 0) {
       segmented_germline = common.front();
-    else if (segmented_germline->get_multigermline() != nullptr) {
+      setBeforeAfter(before_set, after_set, strand);
+    } else if (segmented_germline->get_multigermline() != nullptr) {
       Germline *trd = segmented_germline->get_multigermline()->get_germline("TRD");
       Germline *trad = segmented_germline->get_multigermline()->get_germline("TRA+D");
       Germline *tra = segmented_germline->get_multigermline()->get_germline("TRA");
-      if ((left_g.count(trd) && right_g.count(trad)) ||
-          ((left_g.count(trad) || left_g.count(tra)) && right_g.count(trd)))
+      if (left_g.count(trd) && right_g.count(trad)) {
         segmented_germline = trad;
+        setBeforeAfter(before_set, after_set, strand, trd, trad);
+      } else if ((left_g.count(trad) || left_g.count(tra)) && right_g.count(trd)) {
+        segmented_germline = trad;
+        setBeforeAfter(before_set, after_set, strand, trad, trd);
+      } else {
+        // Unexpected germline
+        before = *(before_set.begin());
+        after = *(after_set.begin());
+      }
     }
   } else if (segmented_germline->code != PSEUDO_UNEXPECTED) {
     because = UNSEG_STRAND_NOT_CONSISTENT;
     return;
-  }
+  } else {
+    before = *(before_set.begin());
+    after = *(after_set.begin());
+  }    
 #ifdef DEBUG
   PRINT_VAR(segmented_germline->code);
   PRINT_VAR(segmented_germline);
-  PRINT_VAR(multiplier);
+  PRINT_VAR(before);
+  PRINT_VAR(after);
+  // PRINT_VAR(multiplier);
 #endif
-  computeSegmentation(strand, before, after, threshold, multiplier);
+
+}
+
+void KmerSegmenter::setBeforeAfter(set<KmerAffect> &before_set, set<KmerAffect> &after_set, int strand,
+                                   Germline *before_germline, Germline *after_germline) {
+  if (! before_germline)
+    before_germline = segmented_germline;
+  if (!after_germline)
+    after_germline = segmented_germline;
+  KmerAffect expected_before(before_germline->affect_5, strand);
+#ifdef DEBUG
+  PRINT_VAR(expected_before);
+#endif
+  bool found = false;
+  for (auto affect: before_set) {
+    if (affect.affect.c == expected_before.affect.c) {
+      before = affect;
+      found = true;
+    }
+  }
+  if (! found) {
+    for (auto affect: before_set) {
+      if (affect_char(affect.affect) == affect_char(expected_before.affect)) {
+        before = affect;
+        found = true;
+      }
+    }
+    if (! found)
+      before = *(before_set.begin());
+  }
+  KmerAffect expected_after = KmerAffect(segmented_germline->affect_3, strand);  
+#ifdef DEBUG
+  PRINT_VAR(expected_after);
+#endif
+  found = false;
+  for (auto affect: after_set) {
+    if (affect.affect.c == expected_after.affect.c) {
+      after = affect;
+      found = true;
+    }
+  }
+  if (! found) {
+    for (auto affect: after_set) {
+      if (affect_char(affect.affect) == affect_char(expected_after.affect)) {
+        after = affect;
+        found = true;
+      }
+    }
+    if (! found)
+      after = *(after_set.begin());
+  }    
 }
 
 KmerSegmenter::~KmerSegmenter() {

@@ -123,8 +123,8 @@ class AffectAnalyser {
   virtual int last(const KmerAffect &affect) const  = 0;
 
   /*
-   * @return the two affectations that are seen the most frequently in the sequence
-   *         taken apart the forbidden ones.
+   * @return the affectations that are seen the most frequently in the sequence
+   *         taken apart the forbidden ones. A set is returned as we may have several affectations with the same proba.
    * @complexity n + m log m where n is the input sequence length and m the number 
    *            of affectations
    */
@@ -221,8 +221,8 @@ class KmerAffectAnalyser: public AffectAnalyser {
   const string &getSequence() const;
 
   /**
-   * @param  A pair of KmerAffects
-   * @return The same pair of KmerAffects, but sorted.
+   * @param  A pair of KmerAffect sets
+   * @return The same pair of KmerAffect sets, but sorted.
    *         The first one is 'more on the left' than the second one.
    */
   pair <KmerAffect, KmerAffect> sortLeftRight(const pair <KmerAffect, KmerAffect> ka12) const;
@@ -408,9 +408,9 @@ class MultipleAffectAnalyser {
    * @return The same pair of KmerAffects, but sorted.
    *         The first one is 'more on the left' than the second one.
    */
-  pair <KmerAffect, KmerAffect> sortLeftRight(const pair <KmerAffect, KmerAffect> ka12) const;
+  pair <set<KmerAffect>, set<KmerAffect>> sortLeftRight(const pair <set<KmerAffect>, set<KmerAffect>> ka12) const;
 
-  pair <KmerAffect, KmerAffect> max12(const set<KmerAffect> forbidden) const;
+  pair <set<KmerAffect>, set<KmerAffect>> max12(const set<KmerAffect> forbidden) const;
 
   string toString() const;
 
