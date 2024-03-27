@@ -687,17 +687,25 @@ void KmerSegmenter::chooseGermline(set<KmerAffect> &before_set, set<KmerAffect> 
   set_intersection(left_g.begin(), left_g.end(), right_g.begin(), right_g.end(),
                    inserter(common, common.begin()));
   
-  // If germlines differ take the longest one
-  // if one is prefix of the other.
-  //  (works for IGH/IGH+ for instance, what about TRA+D?)
+  Germline *trd = segmented_germline->get_multigermline()->get_germline("TRD");
+  Germline *trad = segmented_germline->get_multigermline()->get_germline("TRA+D");
+  Germline *tra = segmented_germline->get_multigermline()->get_germline("TRA");
   if (before_set.begin()->getStrand() == after_set.begin()->getStrand()) {
     if (common.size() > 0) {
-      segmented_germline = common.front();
+      Germline *best = common[0];
+      // Get the shorter germline code
+      for (size_t i = 1; i < common.size(); i++) {
+        if (common[i]->code.size() < best->code.size())
+          best = common[i];
+      }
+      // This is due to the TRA/D V gene. As we have more genes in TRAV than in TRDV
+      // TRDV will be chosen instead of TRAV and this will result in a spurious TRA+V
+      if (best->code == "TRA+D" && left_g.count(trd) && right_g.count(tra)) {
+        best = tra;
+      }
+      segmented_germline = best;
       setBeforeAfter(before_set, after_set, strand);
     } else if (segmented_germline->get_multigermline() != nullptr) {
-      Germline *trd = segmented_germline->get_multigermline()->get_germline("TRD");
-      Germline *trad = segmented_germline->get_multigermline()->get_germline("TRA+D");
-      Germline *tra = segmented_germline->get_multigermline()->get_germline("TRA");
       if (left_g.count(trd) && right_g.count(trad)) {
         segmented_germline = trad;
         setBeforeAfter(before_set, after_set, strand, trd, trad);
