@@ -167,9 +167,12 @@
             "description": "Human immunoglobulin, kappa locus (2p11.2), Vk-KDE and Intron-KDE recombinations",
             "follows": "IGK",
             "recombinations": [ {
-                "5": ["IGKV.fa", "IGK-INTRON.fa"],
+                "5": ["IGKV.fa"],
                 "3": ["IGK-KDE.fa"]
-            } ],
+            }, {
+                "5": ["IGK-INTRON.fa"],
+                "3": ["IGK-KDE.fa"]
+            }],
             "parameters": {
                 "seed": "10s",
                 "seed_3": "10s"
