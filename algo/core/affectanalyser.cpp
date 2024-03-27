@@ -612,6 +612,14 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::max12(const set<
   double second_best_proba = 2;
   set<KmerAffect> second_best_affect;
   BitSet best_bitset = (affectations.find(*(best_affect.begin()))->second);
+  uint64_t best_bitset_count = best_bitset.count();
+  for (auto it = best_affect.begin(); it != best_affect.end(); ) {
+    uint64_t count = (best_bitset & affectations.find(*it)->second).count();
+    if (llabs(count - best_bitset_count) > .1 * best_bitset_count)
+      it = best_affect.erase(it);
+    else
+      it++;
+  }
 #ifdef DEBUG
   PRINT_VAR(best_bitset);
   PRINT_VAR(best_bitset.size());
