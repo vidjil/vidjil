@@ -234,7 +234,7 @@ void Germline::update_index(IKmerStore<KmerAffect> *_index)
   if (!_index) _index = index ;
 
   _index->insert(rep_5, affect_5, this, max_indexing, seed_5);
-  _index->insert(rep_4, affect_4, this, 0, seed_4);
+  // _index->insert(rep_4, affect_4, this, 0, seed_4);
   _index->insert(rep_3, affect_3, this, -max_indexing, seed_3);
 }
 
