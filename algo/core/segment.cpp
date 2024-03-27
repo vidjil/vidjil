@@ -688,6 +688,7 @@ void KmerSegmenter::chooseGermline(set<KmerAffect> &before_set, set<KmerAffect> 
                    inserter(common, common.begin()));
   
   Germline *trd = segmented_germline->get_multigermline()->get_germline("TRD");
+  Germline *trdp = segmented_germline->get_multigermline()->get_germline("TRD+");
   Germline *trad = segmented_germline->get_multigermline()->get_germline("TRA+D");
   Germline *tra = segmented_germline->get_multigermline()->get_germline("TRA");
   if (before_set.begin()->getStrand() == after_set.begin()->getStrand()) {
@@ -706,7 +707,10 @@ void KmerSegmenter::chooseGermline(set<KmerAffect> &before_set, set<KmerAffect> 
       segmented_germline = best;
       setBeforeAfter(before_set, after_set, strand);
     } else if (segmented_germline->get_multigermline() != nullptr) {
-      if (left_g.count(trd) && right_g.count(trad)) {
+      if (left_g.count(trdp) && right_g.count(trad)) {
+        segmented_germline = trad;
+        setBeforeAfter(before_set, after_set, strand, trdp, trad);
+      } else if (left_g.count(trd) && right_g.count(trad)) {
         segmented_germline = trad;
         setBeforeAfter(before_set, after_set, strand, trd, trad);
       } else if ((left_g.count(trad) || left_g.count(tra)) && right_g.count(trd)) {
