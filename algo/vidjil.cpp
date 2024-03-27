@@ -952,15 +952,15 @@ int main (int argc, char **argv)
 
     cout << endl ;
 
-    if (multi_germline_one_unique_index) {
-      multigermline->build_with_one_index(seed, true);
-    }
+    // if (multi_germline_one_unique_index) {
+    //   multigermline->build_with_one_index(seed, true);
+    // }
 
-      if (multi_germline_unexpected_recombinations_12 || multi_germline_unexpected_recombinations_1U) {
-        if (!multigermline->index) {
-          multigermline->build_with_one_index(seed, false);
-        }
-      }
+      // if (multi_germline_unexpected_recombinations_12 || multi_germline_unexpected_recombinations_1U) {
+      //   if (!multigermline->index) {
+      //     multigermline->build_with_one_index(seed, false);
+      //   }
+      // }
 
       if (multi_germline_unexpected_recombinations_12) {
         Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", "", "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
@@ -984,7 +984,7 @@ int main (int argc, char **argv)
                                        FIRST_IF_UNCHANGED("", seed, seed_changed),
                                        FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), (kmer_threshold != NO_LIMIT_VALUE));
       if ((! multigermline->one_index_per_germline) && (command != CMD_GERMLINES)) {
-        multigermline->insert_in_one_index(multigermline->index, true);
+        multigermline->build_with_one_index(seed, true);
       }
     }
 
