@@ -4,5 +4,14 @@
         "server"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "cSpell.words": [
+        "clonotype",
+        "genescan",
+        "germline",
+        "ijson",
+        "Pielou",
+        "sampleset",
+        "zmodel"
+    ]
 }

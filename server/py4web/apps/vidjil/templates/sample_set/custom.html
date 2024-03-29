@@ -4,10 +4,12 @@
 [[from apps.vidjil.modules.permission_enum import PermissionEnum]]
 
 <div class="afterAjaxScript">
-    updateSampleSetCustomIndermediateStates([[=config_samples]]);
+    updateSampleSetCustomIntermediateStates([[=config_samples]]);
 </div>
 
 <div>
+    [[=config_samples]]
+
 
 	[[ if request.query['id']: ]]
 		<h3>Preview or compare samples from [[=helper.get_type_display()]] [[=get_sample_name(request.query["id"])]]</h3>
@@ -16,7 +18,7 @@
     [[pass]]
 
     <div class="db_block">
-        Select all analyses of config :
+        Select all last analyses of config :
         [[for name in config_samples :]]
             <input type="checkbox" id="checkbox_config_[[=name]]" onchange="checkSampleCheckboxes([[=config_samples[name]]], this.checked, [[=config_samples]])">
             <label for="checkbox_config_[[=name]]"> [[=name]]  </label>
@@ -86,7 +88,7 @@
             [[for row in query :]]
 
                 <tr id="compare_line_sample_[[=row.results_file.id]]">
-                    <td> <input type="checkbox" id="checkbox_sample_[[=row.results_file.id]]" name="custom_result[]" value="[[=row.results_file.id]]" onchange="updateSampleSetCustomIndermediateStates([[=config_samples]])" [[if row.checked :]] onload="updateSampleSetCustomIndermediateStates([[=config_samples]])" checked [[pass]]> </td>
+                    <td> <input type="checkbox" id="checkbox_sample_[[=row.results_file.id]]" name="custom_result[]" value="[[=row.results_file.id]]" onchange="updateSampleSetCustomIntermediateStates([[=config_samples]])" [[if row.checked :]] onload="updateSampleSetCustomIntermediateStates([[=config_samples]])" checked [[pass]]> </td>
                     [[ if not request.query['id']: ]]
                         <td onclick=''> [[=row.names]] </td>
                     [[ pass ]]

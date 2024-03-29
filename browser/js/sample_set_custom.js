@@ -2,7 +2,7 @@
  * Update all intermediate state for the custom page
  * @param {Dictionary<string, Array<int>>} configSamples
  */
-function updateSampleSetCustomIndermediateStates(configSamples) {
+function updateSampleSetCustomIntermediateStates(configSamples) {
   updateCheckboxAllIndeterminateState();
   const mapIdToCheckboxSelector = (id) => "#" + getSampleCheckboxID(id);
   for (const [name, ids] of Object.entries(configSamples)) {
@@ -44,7 +44,7 @@ function checkSampleCheckboxes(sample_ids, checked, configSamples) {
       (document.getElementById(getSampleCheckboxID(sample_id)).checked =
         checked)
   );
-  updateSampleSetCustomIndermediateStates(configSamples);
+  updateSampleSetCustomIntermediateStates(configSamples);
 }
 
 /**
@@ -55,5 +55,5 @@ function checkSampleCheckboxes(sample_ids, checked, configSamples) {
 function reverseSampleCheckboxChecked(sample_id, configSamples) {
   checkbox = document.getElementById(getSampleCheckboxID(sample_id));
   checkbox.checked = !checkbox.checked;
-  updateSampleSetCustomIndermediateStates(configSamples);
+  updateSampleSetCustomIntermediateStates(configSamples);
 }
