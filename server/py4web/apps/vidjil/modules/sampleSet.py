@@ -87,6 +87,18 @@ class SampleSet(object):
             conf_names.append(splitted_conf[1])
         return(",".join(conf_names))
 
+    def get_stats_qc(self, data):
+        configs = []
+        splitted_configs = self.get_splitted_configs(data)
+        for splitted_conf in splitted_configs:
+            config_id = splitted_conf[0]
+            config_name = splitted_conf[1]
+            configs.append(str(A(
+                config_name,
+                _onclick=f"db.call('sample_set/multi_sample_stats', {{'config_id': {config_id}, 'sample_set_id': {int(data['sample_set_id'])}}})")))
+
+        return XML(", ".join(configs))
+
     def get_groups(self, data):
         key = get_group_names_select()
         return data._extra[key]
@@ -117,6 +129,7 @@ class SampleSet(object):
         fields.append({'name': 'name', 'sort': 'name', 'call': self.get_display_name, 'sort_call': self.get_name, 'width': 200, 'public': True})
         fields.append({'name': 'info', 'sort': 'info', 'call': self.get_tagged_info, 'sort_call': self.get_info, 'width': None, 'public': True})
         fields.append({'name': 'results', 'sort': 'confs', 'call': self.get_config_urls, 'sort_call': self.get_sort_configs, 'width': None, 'public': True})
+        fields.append({'name': 'preview / quality control', 'sort': 'confs', 'call': self.get_stats_qc, 'sort_call': self.get_sort_configs, 'width': None, 'public': True})
         if self.auth.is_admin() or len(get_group_list(self.auth)) > 1:
             fields.append({'name': 'groups', 'sort': 'groups', 'call': self.get_groups_string, 'sort_call': self.get_groups_string, 'width': 100, 'public': True})
             fields.append({'name': 'creator', 'sort': 'creator', 'call': self.get_creator, 'sort_call': self.get_creator, 'width': 100, 'public': True})

@@ -490,9 +490,9 @@ def submit():
                 'run': data['run'] if 'run' in data else [],
                 'generic': data['generic'] if 'generic' in data else []
                 }
-        log.info("an error occured")
+        log.info("an error occurred")
         #response.view = 'sample_set/form.html'
-        return json.dumps(dict(message="an error occured",
+        return json.dumps(dict(message="an error occurred",
                                groups=[{'name': 'foobar', 'id': int(data['group'])}],
                                master_group=data['group'],
                                sets=sets,
@@ -831,23 +831,48 @@ def change_permission():
 @action.uses("sample_set/multi_sample_stats.html", db, auth.user)
 def multi_sample_stats():
     
-    custom_result = request.query["custom_result"]
-    if not isinstance(custom_result, list):
-        custom_result = [custom_result]
-    custom_result = [int(i) for i in custom_result]
+    if "results_ids" in request.query:
+        results_ids = request.query["results_ids"]
+        if not isinstance(results_ids, list):
+            results_ids = [results_ids]
+        results_ids = [int(i) for i in results_ids]
+    else:
+        if "config_id" in request.query and "sample_set_id" in request.query:
+            config_id = request.query["config_id"]
+            sample_set_id = request.query["sample_set_id"]
+            query = db((db.sequence_file.id == db.sample_set_membership.sequence_file_id) & 
+                        (db.sample_set_membership.sample_set_id == sample_set_id)).select(
+                            left=db.results_file.on(
+                                (db.results_file.sequence_file_id==db.sequence_file.id)
+                                & (db.results_file.config_id==str(config_id))
+                                & (db.results_file.hidden == False)
+                            ),
+                        orderby = db.sequence_file.id|~db.results_file.run_date)
+
+            results_ids=[]
+            previous=-1
+            for row in query :
+                if row.sequence_file.id != previous :
+                    if row.results_file.id:
+                        results_ids.append(int(row.results_file.id))
+                        previous=row.sequence_file.id
+        else:
+            res = {"message": "Missing results_ids or config_id and sample_set_id in query"}
+            log.error(res)
+            return json.dumps(res, separators=(',',':'))
 
     data = {}
     data["headers"] = [header[0] for header in stats_qc_utils.get_stat_headers()]
-    results, data_raw = stats_qc_utils.get_stat_data(custom_result)
+    results, data_raw = stats_qc_utils.get_stat_data(results_ids)
     data["results"] = results
 
     permitted_results = db((auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) & 
                            (db.sample_set.id == db.sample_set_membership.sample_set_id) &
                            (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id) &
-                           (db.results_file.id.belongs(custom_result))
+                           (db.results_file.id.belongs(results_ids))
                            ).select()
     permitted_results_ids = [permitted_result.results_file.id for permitted_result in permitted_results]
-    if set(permitted_results_ids) != set(custom_result):
+    if set(permitted_results_ids) != set(results_ids):
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return json.dumps(res, separators=(',', ':'))
@@ -856,7 +881,7 @@ def multi_sample_stats():
     if "HTTP_ORIGIN" in request.environ :
         http_origin = request.environ["HTTP_ORIGIN"] + os.sep
     
-    log.info(f"load multi sample stats ({str(custom_result)})",
+    log.info(f"load multi sample stats ({str(results_ids)})",
              extra={"user_id": auth.user_id, "record_id": None, "table_name": "results_file"})
     return dict(data=data,
                 data_raw=data_raw,

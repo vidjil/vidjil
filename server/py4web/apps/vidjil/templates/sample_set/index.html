@@ -307,7 +307,7 @@
     <div class="db_block_right">
         [[if fused_file is not None :]]
             [[=db.config[config_id].name]]:
-            <a class="button" onclick="db.call('sample_set/multi_sample_stats', {'custom_result': [[=[row.results_file.id for row in query if (row.results_file.id and (row.results_file.status == tasks.STATUS_COMPLETED))]]] })">preview / quality control</a>
+            <a class="button" onclick="db.call('sample_set/multi_sample_stats', {'results_ids': [[=[row.results_file.id for row in query if (row.results_file.id and (row.results_file.status == tasks.STATUS_COMPLETED))]]] })">preview / quality control</a>
             <a class="button" href="DB_ADDRESS[[=URL('default', 'get_data', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=fused_filename), use_appname=False)]]">download .vidjil</a>
             [[if analysis_count >0:]]
             <a class="button" href="DB_ADDRESS[[=URL('default', 'get_analysis', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=analysis_filename), use_appname=False)]]">download .analysis</a>
