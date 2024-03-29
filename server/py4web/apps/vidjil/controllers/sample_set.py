@@ -30,25 +30,7 @@ from ..common import db, session, T, auth, log
 
 ACCESS_DENIED = "access denied"
 
-def getConfigsByClassification():
-    """ Return list of available and auth config, classed by classification values """
-    i = 0
-    classification   = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
-    if auth.can_process_sample_set(int(request.query['id'])) :
-        for class_elt in db( (db.classification)).select(orderby=db.classification.id):
-            configs = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
-            if len(configs): # don't show empty optgroup
-                classification["%02d_%s" % (i, class_elt)]["name"]    = class_elt.name
-                classification["%02d_%s" % (i, class_elt)]["info"]    = class_elt.info
-                classification["%02d_%s" % (i, class_elt)]["configs"] = configs
-            i += 1
-        classification["%02d_noclass" % i]["name"]    = "-"
-        classification["%02d_noclass" % i]["info"]    = ""
-        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
-    return classification
 
-#
-#
 def next_sample_set():
     '''
     Process request, possibly changing request.query['id'] depending on request.query['next']
@@ -188,8 +170,8 @@ def index():
 
     (shared_sets, sample_sets) = get_associated_sample_sets(all_sequence_files, [sample_set_id])
     
-    samplesets = SampleSets(sample_sets.keys())
-    sets_names = samplesets.get_names()
+    sample_sets = SampleSets(sample_sets.keys())
+    sets_names = sample_sets.get_names()
 
     scheduler_ids = {}
     
@@ -216,7 +198,7 @@ def index():
     for row in query_pre_process:
         pre_process_list[row.id] = row.name
 
-    classification   = getConfigsByClassification()
+    classification   = get_configs_by_classification()
 
     http_origin = ""
     if 'HTTP_ORIGIN' in request.environ :
@@ -580,7 +562,7 @@ def custom():
         db.patient.id, db.patient.sample_set_id, db.patient.info, db.patient.first_name, db.patient.last_name,
         db.run.id, db.run.info, db.run.name,
         db.generic.id, db.generic.info, db.generic.name,
-        db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
+        db.results_file.id, db.results_file.config_id, db.results_file.hidden, db.sequence_file.sampling_date,
         db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
         db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
         db.sequence_file.size_file
@@ -608,22 +590,22 @@ def custom():
                     groupby = myGroupBy
                 )
 
-    for row in query :
-        row.checked = False
-        if (str(row.results_file.id) in request.query["custom_list"]) :
-            row.checked = True
+    for visible_row in query :
+        visible_row.checked = False
+        if (str(visible_row.results_file.id) in request.query["custom_list"]) :
+            visible_row.checked = True
 
-        if row.patient.id is not None:
+        if visible_row.patient.id is not None:
             #TODO use helper.
-            row.names = vidjil_utils.display_names(row.patient.sample_set_id, row.patient.first_name, row.patient.last_name)
-            info = row.patient.info
-        elif row.run.id is not None:
-            row.names = row.run.name
-            info = row.run.info
-        elif row.generic.id is not None:
-            row.names = row.generic.name
-            info = row.generic.info
-        row.string = [row.names, row.sequence_file.filename, str(row.sequence_file.sampling_date), str(row.sequence_file.pcr), str(row.config.name), str(row.results_file.run_date), info]
+            visible_row.names = vidjil_utils.display_names(visible_row.patient.sample_set_id, visible_row.patient.first_name, visible_row.patient.last_name)
+            info = visible_row.patient.info
+        elif visible_row.run.id is not None:
+            visible_row.names = visible_row.run.name
+            info = visible_row.run.info
+        elif visible_row.generic.id is not None:
+            visible_row.names = visible_row.generic.name
+            info = visible_row.generic.info
+        visible_row.string = [visible_row.names, visible_row.sequence_file.filename, str(visible_row.sequence_file.sampling_date), str(visible_row.sequence_file.pcr), str(visible_row.config.name), str(visible_row.results_file.run_date), info]
     
     query = query.find(lambda row : ( vidjil_utils.advanced_filter(row.string,search) or row.checked) )
 
@@ -634,10 +616,10 @@ def custom():
     log.info("load compare list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': "results_file"})
     log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
-    ## For each config, get a list of all samples last analyses
-    config_samples = get_config_samples(query)
+    classification = get_configs_by_classification()
 
-    classification = getConfigsByClassification()
+    ## For each config, get a list of all samples last analyses, ie not hidden
+    config_samples = get_config_samples(query)
 
     return dict(query=query,
                 config_id=config_id,
@@ -649,7 +631,26 @@ def custom():
                 group_ids=group_ids,
                 auth=auth,
                 db=db)
+    
 
+
+def get_configs_by_classification():
+    """ Return list of available and auth config, classed by classification values """
+    i = 0
+    classification   = defaultdict( lambda: {"info":"", "name":"", "configs":[]} )
+    if auth.can_process_sample_set(int(request.query['id'])) :
+        for class_elt in db( (db.classification)).select(orderby=db.classification.id):
+            configs = db( (db.config.classification == class_elt.id) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
+            if len(configs): # don't show empty optgroup
+                classification["%02d_%s" % (i, class_elt)]["name"]    = class_elt.name
+                classification["%02d_%s" % (i, class_elt)]["info"]    = class_elt.info
+                classification["%02d_%s" % (i, class_elt)]["configs"] = configs
+            i += 1
+        classification["%02d_noclass" % i]["name"]    = "-"
+        classification["%02d_noclass" % i]["info"]    = ""
+        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
+    return classification
+   
 
 def get_config_samples(query):
     """
@@ -982,7 +983,7 @@ def stats():
     else:
         result = sorted(result, key = lambda row : row.id, reverse=not reverse)
 
-    classification   = getConfigsByClassification()
+    classification   = get_configs_by_classification()
 
     result = helper.filter(search, result)
     log.info("%s stat list %s" % (request.query["type"], search), extra={'user_id': auth.user_id,
