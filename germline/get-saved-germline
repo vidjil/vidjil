@@ -22,3 +22,10 @@ tar xzmfv germline-${germline_id}.tar.gz --strip-components=1 germline/
 if [ -d "$dir/../browser" ]; then
     tar xzmfv germline-${germline_id}.tar.gz --strip-components=1 -C $dir/../browser/ browser/
 fi
+
+tmpfile=$(mktemp)
+awk '$0 ~ /^>/ { if ($0 ~ /\/DV/) {dv=1} else {dv=0}}  dv==1{print > "homo-sapiens/TRADV.fa"; next} {print}' homo-sapiens/TRAV.fa  > $tmpfile
+mv $tmpfile homo-sapiens/TRAV.fa
+awk '$0 ~ /^>/ { if ($0 ~ /\/DV/) {dv=1} else {dv=0}}  dv==1{print > "homo-sapiens/TRADV.fa"; next} {print}' homo-sapiens/TRDV.fa  > $tmpfile
+mv $tmpfile homo-sapiens/TRDV.fa
+

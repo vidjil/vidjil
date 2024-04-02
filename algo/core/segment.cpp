@@ -699,11 +699,6 @@ void KmerSegmenter::chooseGermline(set<KmerAffect> &before_set, set<KmerAffect> 
         if (common[i]->code.size() < best->code.size())
           best = common[i];
       }
-      // This is due to the TRA/D V gene. As we have more genes in TRAV than in TRDV
-      // TRDV will be chosen instead of TRAV and this will result in a spurious TRA+V
-      if (best->code == "TRA+D" && left_g.count(trd) && right_g.count(tra)) {
-        best = tra;
-      }
       segmented_germline = best;
       setBeforeAfter(before_set, after_set, strand);
     } else if (segmented_germline->get_multigermline() != nullptr) {

@@ -13,7 +13,7 @@
             "color" : "#268bd2",
             "description": "Human T-cell receptor, alpha locus (14q11.2)",
             "recombinations": [ {
-                "5": ["TRAV.fa"],
+                "5": ["TRAV.fa", "TRADV.fa"],
                 "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
@@ -71,7 +71,7 @@
             "color" : "#b58900",
             "description": "Human T-cell receptor, delta locus (14q11.2)",
             "recombinations": [ {
-                "5": ["TRDV.fa"],
+                "5": ["TRDV.fa", "TRADV.fa"],
                 "4": ["TRDD.fa"],
                 "3": ["TRDJ+down.fa"]
             } ],
