@@ -143,7 +143,7 @@
                 "3": ["IGHJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s",
+                "seed": "9c",
                 "seed_3": "10s"
             }
         },
