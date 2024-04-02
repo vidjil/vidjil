@@ -110,7 +110,10 @@
             "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 recombinations",
             "follows": "TRD",
             "recombinations": [ {
-                "5": ["TRDV.fa", "TRADV.fa"],
+                "5": ["TRDV.fa"],
+                "3": ["TRDD3+down.fa"]
+            }, {
+                "5": ["TRADV.fa"],
                 "3": ["TRDD3+down.fa"]
             }, {
                 "5": ["TRDD2+up.fa"],
