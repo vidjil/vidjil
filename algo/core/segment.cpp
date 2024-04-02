@@ -1183,6 +1183,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
 
   bool reverse_V = false ;
   bool reverse_J = false ;
+  Germline *g_left, *g_right;
 
   if ((germline->seg_method == SEG_METHOD_MAX12) || (germline->seg_method == SEG_METHOD_MAX1U))
     {
@@ -1203,8 +1204,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
           code = "Unexpected ";
 
           // TODO: don't choose the first one
-          Germline *g_left = *(germline->index->getLabel(left).begin());
-          Germline *g_right = *(germline->index->getLabel(right).begin());
+          g_left = *(germline->index->getLabel(left).begin());
+          g_right = *(germline->index->getLabel(right).begin());
           code += left.toStringSigns() + g_left->rep_5.basename;
           code += "/";
           code += right.toStringSigns() + g_right->rep_3.basename;
@@ -1213,23 +1214,21 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
           if (germline->seg_method == SEG_METHOD_MAX1U)
             return ;
 
-          germline->override_rep5_rep3_from_labels(left, right);
         }
       else
         {
           delete kseg ;
           return ;
         }
-    }
-
-  // Strand determination, with KmerSegmenter (with default e-value parameters)
-  // Note that we use only the 'strand' component
-  // When the KmerSegmenter fails, continue with positive strand
-  // TODO: flag to force a strand / to test both strands ?
-
-  KmerSegmenter *kseg = new KmerSegmenter(seq, germline, THRESHOLD_NB_EXPECTED, 1);
-  reversed = kseg->isReverse();
-  delete kseg ;
+    } else {
+    // Strand determination, with KmerSegmenter (with default e-value parameters)
+    // Note that we use only the 'strand' component
+    // When the KmerSegmenter fails, continue with positive strand
+    // TODO: flag to force a strand / to test both strands ?
+    KmerSegmenter *kseg = new KmerSegmenter(seq, germline, THRESHOLD_NB_EXPECTED, 1);
+    reversed = kseg->isReverse();
+    delete kseg ;
+  }
   
   sequence_or_rc = revcomp(sequence, reversed); // sequence, possibly reversed
 
@@ -1239,7 +1238,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
   /* Read mapping */
   if (germline->seg_method == SEG_METHOD_ONE)
     {
-      align_against_collection(sequence_or_rc, germline->rep_4, NO_FORBIDDEN_ID, false, false,
+      align_against_collection(sequence_or_rc, g_left->rep_4, NO_FORBIDDEN_ID, false, false,
                                true, // local
                                box_D, segment_cost, false, standardised_threshold_evalue);
 
@@ -1260,20 +1259,20 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
 
   /* Regular 53 Segmentation */
   if(kmer_threshold != NO_LIMIT_VALUE){
-    FilterWithACAutomaton* f = germline->getFilter_5();
+    FilterWithACAutomaton* f = g_left->getFilter_5();
     this->filtered_rep_5 = f->filterBioReaderWithACAutomaton(sequence_or_rc, kmer_threshold);
     align_against_collection(sequence_or_rc, this->filtered_rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                                    box_V, segment_cost, false, standardised_threshold_evalue);
   }else{
-    align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
+    align_against_collection(sequence_or_rc, g_left->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                              box_V, segment_cost, false, standardised_threshold_evalue);
   }
-  align_against_collection(sequence_or_rc, germline->rep_3, NO_FORBIDDEN_ID, reverse_J, !reverse_J, false,
+  align_against_collection(sequence_or_rc, g_right->rep_3, NO_FORBIDDEN_ID, reverse_J, !reverse_J, false,
                            box_J, segment_cost, false, standardised_threshold_evalue);
 
   /* E-values */
-  evalue_left  = multiplier * sequence.size() * germline->rep_5.totalSize() * segment_cost.toPValue(box_V->score[0].first);
-  evalue_right = multiplier * sequence.size() * germline->rep_3.totalSize() * segment_cost.toPValue(box_J->score[0].first);
+  evalue_left  = multiplier * sequence.size() * g_left->rep_5.totalSize() * segment_cost.toPValue(box_V->score[0].first);
+  evalue_right = multiplier * sequence.size() * g_right->rep_3.totalSize() * segment_cost.toPValue(box_J->score[0].first);
   evalue = evalue_left + evalue_right ;
 
   /* Unsegmentation causes */
