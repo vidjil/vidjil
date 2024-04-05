@@ -1482,6 +1482,9 @@ h3 .uid {
   height: calc(100% - 30px);
   position: relative;
 }
+#db_table_container.border_columns td + td {
+  border-left: 1px solid #333333;
+}
 #db_fixed_header {
   position: absolute;
   top: 0px;

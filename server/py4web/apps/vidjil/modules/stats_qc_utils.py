@@ -69,12 +69,12 @@ def get_fused_stats(fuse):
                 result_index = data['samples']['results_file_id'].index(
                     results_file_id)
             elif "original_names" in data['samples']:
-                basenames = [os.path.basename(
+                base_names = [os.path.basename(
                     x) for x in data['samples']['original_names']]
                 result_basename = os.path.basename(
                     res['sequence_file']) if res['sequence_file'] else None
-                if result_basename in basenames:
-                    result_index = basenames.index(result_basename)
+                if result_basename in base_names:
+                    result_index = base_names.index(result_basename)
                 else:
                     # No corresponding data (old file ?), we skip this result_file
                     continue
@@ -92,7 +92,7 @@ def get_fused_stats(fuse):
                 dest['merged reads'] = None
 
             if not data["reads"]["segmented"][result_index]:
-                # Case of file without one reads seen segmented
+                # Case of file without one read seen segmented
                 dest['abundance'] = "na"
                 dest['main clone'] = "na"
                 dest['mean length'] = "na"
@@ -117,41 +117,41 @@ def get_fused_stats(fuse):
 
                 # Allow to count reads length; not perfect as based on present clonotype only
                 mean_length = {"reads": 0, "sum_length": 0}
-
-                tmp = {}
+                reads_per_length = {}
                 for clone in data['clones']:
                     try:
-                        arl = int(
+                        average_read_length = int(
                             math.ceil(float(clone['_average_read_length'][result_index])))
                         mean_length["reads"] += clone["reads"][result_index]
                         mean_length["sum_length"] += clone["reads"][result_index] * \
                             float(clone['_average_read_length'][result_index])
                     except:
                         continue
-                    if arl > 0:
-                        if arl not in tmp:
-                            tmp[arl] = 0.0
-                        tmp[arl] += float(clone['reads'][result_index])
+                    if average_read_length > 0:
+                        if average_read_length not in reads_per_length:
+                            reads_per_length[average_read_length] = 0.0
+                        reads_per_length[average_read_length] += float(
+                            clone['reads'][result_index])
                 if mean_length["reads"]:
                     dest['mean length'] = round(
                         (mean_length["sum_length"] / mean_length["reads"]), 2)
                 else:
                     dest['mean length'] = "na"
+
                 min_len = 100  # int(min(tmp.keys()))
                 max_len = 600  # int(max(tmp.keys()))
                 tmp_list = []
-
                 if mapped_reads == 0:
                     mapped_reads = 1
                 for i in range(min_len, max_len):
-                    if i in tmp:
-                        if tmp[i]:
+                    if i in reads_per_length:
+                        if reads_per_length[i]:
                             scaled_val = (
-                                2.5 + math.log10(tmp[i] / mapped_reads)) / 2
+                                2.5 + math.log10(reads_per_length[i] / mapped_reads)) / 2
                             display_val = max(0.01, min(1, scaled_val)) * 100
                         else:
                             display_val = 0
-                        real_val = 100.0 * (tmp[i] / mapped_reads)
+                        real_val = 100.0 * (reads_per_length[i] / mapped_reads)
                     else:
                         display_val = 0
                         real_val = 0
@@ -187,11 +187,11 @@ def get_fused_stats(fuse):
                         (data["diversity"]["index_Ds_diversity"][result_index]), 3) if "index_Ds_diversity" in data["diversity"] else "na"
 
             dest['clones 5%'] = sum([data['reads']['distribution'][key][result_index]
-                                              for key in data['reads']['germline'] if key in data['reads']['distribution']])
+                                     for key in data['reads']['germline'] if key in data['reads']['distribution']])
             if 'pre_process' in data['samples']:
                 dest['pre process'] = data['samples']['pre_process']['producer'][result_index]
             d[results_file_id] = dest
-            
+
     return d
 
 
@@ -260,32 +260,32 @@ def get_stat_data(results_file_ids):
     # Create a hash of position in query for each sample file
     sample_query_pos = defaultdict(lambda: [])
     for position in range(len(query)):
-        res = query[position]
-        sample_query_pos[str(res["results_file"])].append(position)
+        result_fuse = query[position]
+        sample_query_pos[str(result_fuse["results_file"])].append(position)
 
-    tmp_data = {}
-    for res in query:
-        set_type = res['sample_type']
-        if res.fused_file_id not in tmp_data:
+    fuse_data = {}
+    for result_fuse in query:
+        set_type = result_fuse['sample_type']
+        if result_fuse.fused_file_id not in fuse_data:
             tmp_fuse = {}
             tmp_fuse['results_files'] = {}
-            tmp_fuse['fused_file_name'] = res.fused_file
-            tmp_data[res.fused_file_id] = tmp_fuse
+            tmp_fuse['fused_file_name'] = result_fuse.fused_file
+            fuse_data[result_fuse.fused_file_id] = tmp_fuse
         else:
-            tmp_fuse = tmp_data[res.fused_file_id]
+            tmp_fuse = fuse_data[result_fuse.fused_file_id]
 
-        if res.results_file_id not in tmp_fuse['results_files']:
-            tmp = res.copy()
+        if result_fuse.results_file_id not in tmp_fuse['results_files']:
+            tmp = result_fuse.copy()
             tmp['sets'] = []
             tmp_fuse['results_files'][tmp['results_file_id']] = tmp
             tmp.pop('set_id', None)
             tmp.pop(set_type, None)
             tmp.pop('set_info', None)
         else:
-            tmp = tmp_fuse['results_files'][res['results_file_id']]
+            tmp = tmp_fuse['results_files'][result_fuse['results_file_id']]
 
         # Create a list of set with this sample
-        for sub_pos_set in sample_query_pos[str(res["results_file"])]:
+        for sub_pos_set in sample_query_pos[str(result_fuse["results_file"])]:
             sub_res = query[sub_pos_set]
             sample_set = {}
             sample_set['set_type'] = sub_res['sample_type']
@@ -304,37 +304,38 @@ def get_stat_data(results_file_ids):
 
     data = []
     data_json = []
-    for fuse_id in tmp_data:
-        fuse = tmp_data[fuse_id]
+    for fuse_id in fuse_data:
+        fuse = fuse_data[fuse_id]
         fused_stats = get_fused_stats(fuse)
         headers = get_stat_headers()
         for results_file_id in fused_stats:
-            res = fuse['results_files'][results_file_id]
-            r = fused_stats[results_file_id]
-            data_json.append(r.copy())
+            result_fuse = fuse['results_files'][results_file_id]
+            result_fused_stats = fused_stats[results_file_id]
+            data_json.append(result_fused_stats.copy())
 
-            for head, htype, model in headers:
-                if htype == 'db':
-                    r[head] = res[head]
-                if head in r.keys():
-                    r[head] = model.decorate(r[head])
+            for header_name, header_type, decorator in headers:
+                if header_type == 'db':
+                    result_fused_stats[header_name] = result_fuse[header_name]
+                if header_name in result_fused_stats.keys():
+                    result_fused_stats[header_name] = decorator.decorate(
+                        result_fused_stats[header_name])
                 else:
-                    r[head] = ""
-            r['sequence_file_id'] = res['results_file']['sequence_file_id']
-            r['samples'] = [x for x in headers if x[0] ==
-                            "samples"][0][2].decorate(res['filename'])
-            r['config names'] = [x for x in headers if x[0] ==
-                                 "config names"][0][2].decorate(res['config']["name"])
-            r['config_id'] = res['results_file']['config_id']
-            data.append(r)
+                    result_fused_stats[header_name] = ""
+            result_fused_stats['sequence_file_id'] = result_fuse['results_file']['sequence_file_id']
+            result_fused_stats['samples'] = [x for x in headers if x[0] ==
+                                             "samples"][0][2].decorate(result_fuse['filename'])
+            result_fused_stats['config names'] = [x for x in headers if x[0] ==
+                                                  "config names"][0][2].decorate(result_fuse['config']["name"])
+            result_fused_stats['config_id'] = result_fuse['results_file']['config_id']
+            data.append(result_fused_stats)
 
             # Data in pure json for TSV export from client
-            data_json[-1]["sequence_file_id"] = res['results_file']['sequence_file_id']
-            data_json[-1]["samples"] = res['filename']
-            data_json[-1]["config names"] = res['config']["name"]
-            data_json[-1]["config_id"] = res['results_file']['config_id']
+            data_json[-1]["sequence_file_id"] = result_fuse['results_file']['sequence_file_id']
+            data_json[-1]["samples"] = result_fuse['filename']
+            data_json[-1]["config names"] = result_fuse['config']["name"]
+            data_json[-1]["config_id"] = result_fuse['results_file']['config_id']
             data_json[-1]["sets"] = [str("%s (%s, id %s)" %
-                                         (x["name"], x["type"], x["id"])) for x in res['sets']]
+                                         (x["name"], x["type"], x["id"])) for x in result_fuse['sets']]
 
             data_json[-1]["Shannon diversity"] = data_json[-1].pop(
                 'Shannon\'s diversity')

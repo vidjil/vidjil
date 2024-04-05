@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ..modules import vidjil_utils
-from ..modules.permission_enum import PermissionEnum
-from .. import defs
-from ..common import db, auth
-
-from yatl.helpers import I, DIV, SPAN, XML
-from py4web import request
+from yatl.helpers import I, DIV, SPAN
 
 class StatDecorator(object):
 
@@ -29,10 +23,10 @@ class BooleanDecorator(StatDecorator):
 
     def decorate(self, data):
         if data:
-            myclass = "icon-ok"
+            my_class = "icon-ok"
         else:
-            myclass = "icon-cancel"
-        return I(_class=myclass)
+            my_class = "icon-cancel"
+        return I(_class=my_class)
 
 class BarDecorator(StatDecorator):
 
@@ -61,8 +55,8 @@ class LabeledBarChartDecorator(BarChartDecorator):
 
     def decorate(self, data):
         bars = []
+        percentage_per_item = (1.0/len(data))*100
         for t in data:
-            percentage_per_item = (1.0/len(data))*100
             # We want larger bars to better see them. However we may not want that with wide labeled bar charts
             style = "height: %f%%; width: %f%%; margin-right: -%f%%" % (t[1], percentage_per_item * 2, percentage_per_item)
             if t[1]:
@@ -81,7 +75,6 @@ class GenescanDecorator(LabeledBarChartDecorator):
         super(GenescanDecorator, self).__init__()
 
     def decorate(self, data):
-        import operator
         new_values = []
         for t in data:
             new_key = "%.1f%% at %dbp" % (t[2], t[0])
@@ -94,7 +87,7 @@ class SetsDecorator(StatDecorator):
         super(SetsDecorator, self).__init__()
 
     def decorate(self, data):
-        ssets = []
+        sample_sets = []
         for sample_set in data:
             s = SPAN("%d " % sample_set['id'], _style='font-size:70%')
             d = DIV(s,
@@ -102,8 +95,8 @@ class SetsDecorator(StatDecorator):
                     _onclick="db.call('sample_set/index', {'id': '%d'})" % sample_set['id'], 
                     _style="",
                     _class="pointer set_token %s_token" % sample_set['type'])
-            ssets.append(d)
-        return DIV(*ssets)
+            sample_sets.append(d)
+        return DIV(*sample_sets)
 
 class LociListDecorator(StatDecorator):
 

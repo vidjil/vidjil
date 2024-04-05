@@ -17,7 +17,7 @@ def get_checkbox_header_name(data, i):
 
 <br>
 
-<div id="db_table_container">
+<div id="db_table_container" class="border_columns">
     <table class="db_table" id="table">
         <thead>
 	    <tr>
@@ -40,7 +40,6 @@ def get_checkbox_header_name(data, i):
                     </td>
                     [[ pass ]]
                     <td>
-                       <!-- [[=row.sample_set_membership.id]]  -->
                         <a id="open_sample_result_[[=row.sample_set_membership.sequence_file_id]]" class="button" type="text/html"
                            href="[[=http_origin]]?custom=[[=row.results_file.id]]&sample_set_id=[[=row.sample_set_membership.sample_set_id]]&config=[[=row.results_file.config_id]]"
                            onclick= "event.preventDefault();
