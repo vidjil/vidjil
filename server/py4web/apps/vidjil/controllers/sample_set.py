@@ -57,7 +57,7 @@ def next_sample_set():
 # CONTROLLERS
 ##################################
 
-## return patient file list
+## return samples list for a sample set
 ##
 @action("/vidjil/sample_set/index", method=["POST", "GET"])
 @action.uses("sample_set/index.html", db, auth.user)
@@ -67,7 +67,7 @@ def index():
     next_sample_set()
     if not auth.can_view_sample_set(int(request.query["id"])):
         res = {"message": ACCESS_DENIED}
-        log.error(res)
+        log.error(res)  
         return json.dumps(res, separators=(',',':'))
 
     sample_set = db.sample_set[request.query["id"]]
@@ -266,22 +266,22 @@ def all():
     helper = factory.get_instance(type)
 
     f = time.time()
-    slist = SampleSetList(helper, page, step, tags, search)
+    sample_set_list = SampleSetList(helper, page, step, tags, search)
 
     log.debug("list loaded (%.3fs)" % (time.time() - f))
 
     mid = time.time()
 
-    set_ids = set([s.sample_set_id for s in slist.result])
+    set_ids = set([s.sample_set_id for s in sample_set_list.result])
     admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set) &  (db.sample_set.id.belongs(set_ids))).select(db.sample_set.id)]
     admin_permissions = list(set(admin_permissions))
 
     log.debug("permission load (%.3fs)" % (time.time() - mid))
 
     # failsafe if filtered display all results
-    step = len(slist) if step is None else step
+    step = len(sample_set_list) if step is None else step
     page = 0 if page is None else page
-    result = slist.result
+    result = sample_set_list.result
 
     fields = helper.get_fields()
     sort_fields = helper.get_sort_fields()
