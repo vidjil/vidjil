@@ -1152,24 +1152,3 @@ function updateIndeterminateState(checkboxToUpdate, checkboxes) {
         checkboxToUpdate.indeterminate = true;
     }
 }
-
-/**
- * Function that allows to switch display status of a DOM element
- */
-var toggleDisplay = function (element) {
-    element.style.display = (element.style.display === 'none') ? '' : 'none';
-}
-
-/**
- * Function that allow to call toogleDisplay on each cells of a table for a given column
- *  @param {string}  tableid     - Specific id of the table to use
- *  @param {integer} pos         - Specific pos of the column to switch
- *  @param {string}  checkbox_id - Specific id of the checkbox to switch (if action is called by a checkbox)
- */
-function toggleColumn(tableid, pos, checkbox_id) {
-    document.querySelectorAll(`#${tableid} td:nth-child(${pos})`).forEach(toggleDisplay);
-    if (checkbox_id != undefined) {
-        var checkbox = document.getElementById(checkbox_id)
-        checkbox.checked = !checkbox.checked
-    }
-}

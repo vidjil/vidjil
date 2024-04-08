@@ -862,7 +862,8 @@ def multi_sample_stats():
             return json.dumps(res, separators=(',',':'))
 
     data = {}
-    data["headers"] = [header[0] for header in stats_qc_utils.get_stat_headers()]
+    data["headers"] = [header.name for header in stats_qc_utils.get_stat_headers().values()]
+    data["default_hidden_columns"] = [index+1 for index, header in enumerate(stats_qc_utils.get_stat_headers().values()) if header.hidden_by_default]
     results, data_raw = stats_qc_utils.get_stat_data(results_ids)
     data["results"] = results
 

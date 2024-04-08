@@ -106,6 +106,7 @@ function loadAfterConf() {
                                          "js/warnings",
                                          "js/warnings_data",
                                          "js/sample_set_custom.js",
+                                         "js/sample_set_multi_sample_stats.js",
                                          // Speed test
                                          "js/speed_test",
                                          "js/form_builder",

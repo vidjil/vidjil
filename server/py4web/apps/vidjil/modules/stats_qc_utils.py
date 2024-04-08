@@ -1,18 +1,28 @@
 from collections import defaultdict
+from dataclasses import dataclass
 import json
 import math
 import os
 import pathlib
+from typing import Dict
 from .. import defs
 from ..common import db
 from . import zmodel_factory
 from . import stats_decorator
 
 
-def get_stat_headers():
+@dataclass(frozen=True)
+class HeaderConfig:
+    name: str
+    type: str
+    decorator: stats_decorator.StatDecorator
+    hidden_by_default: bool
+
+
+def get_stat_headers() -> Dict[str, HeaderConfig]:
     """ 
     Returns a list of headers/columns to use for stats
-    Each header also has a decorator function that allows to correctly interpret the values
+    Each header also has a decorator function that allows to correctly display the values
     """
 
     stat_decorator = stats_decorator.StatDecorator()
@@ -23,29 +33,30 @@ def get_stat_headers():
     # labeled_bar_chart_decorator = stats_decorator.LabeledBarChartDecorator()
     genescan_decorator = stats_decorator.GenescanDecorator()
     loci_list_decorator = stats_decorator.LociListDecorator()
-    return [('sets', 'db', sets_decorator),
-            ('samples', 'parser', stat_decorator),
-            ('config names', 'parser', stat_decorator),
-            # ('reads', 'parser', stat_decorator),
-            ('mapped reads', 'parser', stat_decorator),
-            # ('mapped_percent', 'parser', bar_decorator),
-            ('mean length', 'parser', stat_decorator),
-            ('read lengths', 'parser', genescan_decorator),
-            # ('bool', 'parser', boolean_decorator),
-            # ('bool_true', 'parser', boolean_decorator),
-            ('loci', 'parser', loci_list_decorator),
-            # ('distribution', 'parser', labeled_bar_chart_decorator),
-            ('clones 5%', 'parser', stat_decorator),
-            ('clones 5% locus', 'parser', stat_decorator),
-            ('intra-contamination', 'parser', stat_decorator),
-            ('main clone', 'parser', stat_decorator),
-            ('merged reads', 'parser', stat_decorator),
-            ('pre process', 'parser', stat_decorator),
-            ("Shannon\'s diversity", 'parser', stat_decorator),
-            ("Pielou\'s evenness", 'parser', stat_decorator),
-            ("Simpson\'s diversity", 'parser', stat_decorator),
-            # ('abundance', 'parser', labeled_bar_chart_decorator)
-            ]
+    return {
+        'sets': HeaderConfig('sets', 'db', sets_decorator, True),
+        'samples': HeaderConfig('samples', 'parser', stat_decorator, False),
+        'config_names': HeaderConfig('config names', 'parser', stat_decorator, False),
+        'mapped_reads': HeaderConfig('mapped reads', 'parser', stat_decorator, False),
+        'mean_length': HeaderConfig('mean length', 'parser', stat_decorator, False),
+        'read_lengths': HeaderConfig('read lengths', 'parser', genescan_decorator, False),
+        'loci': HeaderConfig('loci', 'parser', loci_list_decorator, False),
+        'clones_5': HeaderConfig('clones 5%', 'parser', stat_decorator, False),
+        'clones_5_locus': HeaderConfig('clones 5% locus', 'parser', stat_decorator, True),
+        'intra-contamination': HeaderConfig('intra-contamination', 'parser', stat_decorator, False),
+        'main_clone': HeaderConfig('main clone', 'parser', stat_decorator, False),
+        'merged_reads': HeaderConfig('merged reads', 'parser', stat_decorator, True),
+        'pre_process': HeaderConfig('pre process', 'parser', stat_decorator, True),
+        "shannon_diversity": HeaderConfig("Shannon\'s diversity", 'parser', stat_decorator, False),
+        "pielou_evenness": HeaderConfig("Pielou\'s evenness", 'parser', stat_decorator, True),
+        "simpson_diversity": HeaderConfig("Simpson\'s diversity", 'parser', stat_decorator, True),
+    }
+    # 'reads' : HeaderConfig('reads', 'parser', stat_decorator, False),
+    # HeaderConfig('mapped_percent', 'parser', bar_decorator, False),
+    # HeaderConfig('bool', 'parser', boolean_decorator, False),
+    # HeaderConfig('bool_true', 'parser', boolean_decorator, False),
+    # HeaderConfig('distribution', 'parser', labeled_bar_chart_decorator, False),
+    # HeaderConfig('abundance', 'parser', labeled_bar_chart_decorator, False),
 
 
 def get_fused_stats(fuse):
@@ -313,19 +324,17 @@ def get_stat_data(results_file_ids):
             result_fused_stats = fused_stats[results_file_id]
             data_json.append(result_fused_stats.copy())
 
-            for header_name, header_type, decorator in headers:
-                if header_type == 'db':
-                    result_fused_stats[header_name] = result_fuse[header_name]
-                if header_name in result_fused_stats.keys():
-                    result_fused_stats[header_name] = decorator.decorate(
-                        result_fused_stats[header_name])
+            for header in headers.values():
+                if header.type == 'db':
+                    result_fused_stats[header.name] = result_fuse[header.name]
+                if header.name in result_fused_stats.keys():
+                    result_fused_stats[header.name] = header.decorator.decorate(
+                        result_fused_stats[header.name])
                 else:
-                    result_fused_stats[header_name] = ""
+                    result_fused_stats[header.name] = ""
             result_fused_stats['sequence_file_id'] = result_fuse['results_file']['sequence_file_id']
-            result_fused_stats['samples'] = [x for x in headers if x[0] ==
-                                             "samples"][0][2].decorate(result_fuse['filename'])
-            result_fused_stats['config names'] = [x for x in headers if x[0] ==
-                                                  "config names"][0][2].decorate(result_fuse['config']["name"])
+            result_fused_stats['samples'] = headers['samples'].decorator.decorate(result_fuse['filename'])
+            result_fused_stats['config names'] = headers['config_names'].decorator.decorate(result_fuse['config']["name"])
             result_fused_stats['config_id'] = result_fuse['results_file']['config_id']
             data.append(result_fused_stats)
 

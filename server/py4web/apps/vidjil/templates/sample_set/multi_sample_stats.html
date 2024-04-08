@@ -1,17 +1,17 @@
 [[extend 'db_layout.html']]
 
-<h3></h3>
+<div class="afterAjaxScript">
+    updateDisplayAccordingToConfig([[=data["default_hidden_columns"]]])
+</div>
 
-[[ 
-def get_checkbox_header_name(data, i):
-    sanitized_header = data["headers"][i].replace("'","")
-    return f"checkbox_header_{sanitized_header}"
-]]
+[[=data["default_hidden_columns"]]]
+
+<h3></h3>
 
 <div>
     [[ for i in range(len(data['headers'])): ]]
-        <input type="checkbox" id='[[=get_checkbox_header_name(data, i)]]' onclick="toggleColumn('db_table_container', [[=i+1]])" name="Toggle visibility of column [[=data['headers'][i]]]" value="[[=data['headers'][i]]]" checked>
-        <span onclick="toggleColumn('db_table_container', [[=i+1]], '[[=get_checkbox_header_name(data, i)]]')">[[=data['headers'][i]]]</span>
+        <input type="checkbox" id='[[=f"checkbox_header_{i+1}"]]' onclick="toggleColumn([[=i+1]], m.localStorage)" name="Toggle visibility of column [[=data['headers'][i]]]" value="[[=data['headers'][i]]]" checked>
+        <span onclick="toggleColumn([[=i+1]], m.localStorage)">[[=data['headers'][i]]]</span>
     [[pass]]
 </div>
 
@@ -22,9 +22,9 @@ def get_checkbox_header_name(data, i):
         <thead>
 	    <tr>
             [[ for h in data['headers']: ]]
-                <td class="content [[=h]]">
+                <th class="content [[=h]]">
                     [[=h]]
-                </td>
+                </th>
             [[ pass ]]
             <th class="column_25"></th>
         </tr>
