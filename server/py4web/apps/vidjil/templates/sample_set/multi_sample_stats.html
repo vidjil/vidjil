@@ -9,9 +9,9 @@
 <h3></h3>
 
 <div>
-    [[ for i in range(len(data['headers'])): ]]
-        <input type="checkbox" id='[[=f"checkbox_header_{i+1}"]]' onclick="toggleColumn([[=i+1]], m.localStorage)" name="Toggle visibility of column [[=data['headers'][i]]]" value="[[=data['headers'][i]]]" checked>
-        <span onclick="toggleColumn([[=i+1]], m.localStorage)">[[=data['headers'][i]]]</span>
+    [[ for i, header in enumerate(data['headers'].values()) : ]]
+        <input type="checkbox" id='[[=f"checkbox_header_{i+1}"]]' onclick="toggleColumn([[=i+1]], m.localStorage)" name="Toggle visibility of column [[=header.display_name]]" value="[[=header.display_name]]" checked>
+        <span onclick="toggleColumn([[=i+1]], m.localStorage)">[[=header.display_name]]</span>
     [[pass]]
 </div>
 
@@ -21,9 +21,9 @@
     <table class="db_table" id="table">
         <thead>
 	    <tr>
-            [[ for h in data['headers']: ]]
-                <th class="content [[=h]]">
-                    [[=h]]
+            [[ for name, header in data['headers'].items(): ]]
+                <th class="content [[=name]]">
+                    [[=header.display_name]]
                 </th>
             [[ pass ]]
             <th class="column_25"></th>
@@ -34,10 +34,10 @@
                 [[res=data['results'][pos]]]
                 [[row=permitted_results[pos]]]
                 <tr>
-                    [[ for h in data['headers']: ]]
-                    <td class="[[=h]]">
-                        <span class="content [[=h]]">[[=res[h]]]</span>
-                    </td>
+                    [[ for name, header in data['headers'].items(): ]]
+                        <td class="[[=name]]">
+                            <span class="content [[=header.display_name]]">[[=res[name]]]</span>
+                        </td>
                     [[ pass ]]
                     <td>
                         <a id="open_sample_result_[[=row.sample_set_membership.sequence_file_id]]" class="button" type="text/html"

@@ -13,7 +13,7 @@ from . import stats_decorator
 
 @dataclass(frozen=True)
 class HeaderConfig:
-    name: str
+    display_name: str
     type: str
     decorator: stats_decorator.StatDecorator
     hidden_by_default: bool
@@ -42,7 +42,6 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
         'read_lengths': HeaderConfig('read lengths', 'parser', genescan_decorator, False),
         'loci': HeaderConfig('loci', 'parser', loci_list_decorator, False),
         'clones_5': HeaderConfig('clones 5%', 'parser', stat_decorator, False),
-        'clones_5_locus': HeaderConfig('clones 5% locus', 'parser', stat_decorator, True),
         'intra-contamination': HeaderConfig('intra-contamination', 'parser', stat_decorator, False),
         'main_clone': HeaderConfig('main clone', 'parser', stat_decorator, False),
         'merged_reads': HeaderConfig('merged reads', 'parser', stat_decorator, True),
@@ -92,36 +91,36 @@ def get_fused_stats(fuse):
 
             reads = data['reads']['total'][result_index]
             mapped_reads = data['reads']['segmented'][result_index]
-            dest['mapped reads'] = "%.2f %% (%d / %d)" % (
+            dest['mapped_reads'] = "%.2f %% (%d / %d)" % (
                 100.0 * mapped_reads / reads if reads else 0, mapped_reads, reads)
             dest['mapped_percent'] = 100.0 * \
                 (float(data['reads']['segmented']
                  [result_index]) / float(reads))
             if 'merged' in data['reads']:
-                dest['merged reads'] = data['reads']['merged'][result_index]
+                dest['merged_reads'] = data['reads']['merged'][result_index]
             else:
-                dest['merged reads'] = None
+                dest['merged_reads'] = None
 
+            clones_5_title = None
             if not data["reads"]["segmented"][result_index]:
                 # Case of file without one read seen segmented
                 dest['abundance'] = "na"
-                dest['main clone'] = "na"
-                dest['mean length'] = "na"
-                dest['read lengths'] = []
+                dest['main_clone'] = "na"
+                dest['mean_length'] = "na"
+                dest['read_lengths'] = []
                 dest['intra-contamination'] = "na"
                 dest['loci'] = ["na"]
-                dest['clones 5%'] = "na"
-                dest['clones 5% locus'] = "na"
-                dest['Shannon\'s diversity'] = "na"
-                dest["Pielou\'s evenness"] = "na"
-                dest["Simpson\'s diversity"] = "na"
+                dest['clones_5'] = "na"
+                dest['shannon_diversity'] = "na"
+                dest["pielou_evenness"] = "na"
+                dest["simpson_diversity"] = "na"
             else:
                 sorted_clones = sorted(
                     top_clones, key=lambda clone: clone['reads'][result_index], reverse=True)
                 if 'name' in sorted_clones[0]:
-                    dest['main clone'] = str(sorted_clones[0]['name'])
+                    dest['main_clone'] = str(sorted_clones[0]['name'])
                 else:
-                    dest['main clone'] = str(sorted_clones[0]['germline'])
+                    dest['main_clone'] = str(sorted_clones[0]['germline'])
 
                 dest['abundance'] = [[str(key), 100.0 * data['reads']['germline'][key][result_index] /
                                       data['reads']["segmented"][result_index]] for key in data['reads']['germline']]
@@ -144,10 +143,10 @@ def get_fused_stats(fuse):
                         reads_per_length[average_read_length] += float(
                             clone['reads'][result_index])
                 if mean_length["reads"]:
-                    dest['mean length'] = round(
+                    dest['mean_length'] = round(
                         (mean_length["sum_length"] / mean_length["reads"]), 2)
                 else:
-                    dest['mean length'] = "na"
+                    dest['mean_length'] = "na"
 
                 min_len = 100  # int(min(tmp.keys()))
                 max_len = 600  # int(max(tmp.keys()))
@@ -167,17 +166,14 @@ def get_fused_stats(fuse):
                         display_val = 0
                         real_val = 0
                     tmp_list.append((i, display_val, real_val))
-                dest['read lengths'] = tmp_list
+                dest['read_lengths'] = tmp_list
 
                 dest['loci'] = sorted(
                     [str(x) for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
 
-                dest['clones 5%'] = len([c for c in data['clones'] if (float(
-                    c["reads"][result_index]) / data["reads"]["segmented"][result_index]) > 0.05])
-
-                dest['clones 5% locus'] = {}
+                clones_5_title = {}
                 for locus in data["reads"]["germline"].keys():
-                    dest['clones 5% locus'][locus] = len([c for c in data['clones'] if (c["germline"] == locus and data["reads"]["germline"][locus][result_index] and float(
+                    clones_5_title[locus] = len([c for c in data['clones'] if (c["germline"] == locus and data["reads"]["germline"][locus][result_index] and float(
                         c["reads"][result_index]) / data["reads"]["germline"][locus][result_index]) > 0.05])
 
                 # !!! Contamination definition  : if pos != result_index, C present more than 0,01% and C bigger in result_index sample
@@ -190,17 +186,22 @@ def get_fused_stats(fuse):
                                                    ])
 
                 if "diversity" in data:
-                    dest['Shannon\'s diversity'] = round(
+                    dest['shannon_diversity'] = round(
                         (data["diversity"]["index_H_entropy"][result_index]), 3) if "index_H_entropy" in data["diversity"] else "na"
-                    dest["Pielou\'s evenness"] = round(
+                    dest["pielou_evenness"] = round(
                         (data["diversity"]["index_E_equitability"][result_index]), 3) if "index_E_equitability" in data["diversity"] else "na"
-                    dest["Simpson\'s diversity"] = round(
+                    dest["simpson_diversity"] = round(
                         (data["diversity"]["index_Ds_diversity"][result_index]), 3) if "index_Ds_diversity" in data["diversity"] else "na"
 
-            dest['clones 5%'] = sum([data['reads']['distribution'][key][result_index]
+            clones_5_txt = sum([data['reads']['distribution'][key][result_index]
                                      for key in data['reads']['germline'] if key in data['reads']['distribution']])
+            if clones_5_title is not None:
+                dest['clones_5'] = stats_decorator.DataWithTitle(clones_5_txt, clones_5_title)
+            else:
+                dest['clones_5'] = clones_5_txt            
+            
             if 'pre_process' in data['samples']:
-                dest['pre process'] = data['samples']['pre_process']['producer'][result_index]
+                dest['pre_process'] = data['samples']['pre_process']['producer'][result_index]
             d[results_file_id] = dest
 
     return d
@@ -324,34 +325,36 @@ def get_stat_data(results_file_ids):
             result_fused_stats = fused_stats[results_file_id]
             data_json.append(result_fused_stats.copy())
 
-            for header in headers.values():
+            for name, header in headers.items():
                 if header.type == 'db':
-                    result_fused_stats[header.name] = result_fuse[header.name]
-                if header.name in result_fused_stats.keys():
-                    result_fused_stats[header.name] = header.decorator.decorate(
-                        result_fused_stats[header.name])
+                    result_fused_stats[name] = result_fuse[name]
+                if name in result_fused_stats.keys():
+                    result_fused_stats[name] = header.decorator.decorate(
+                        result_fused_stats[name])
                 else:
-                    result_fused_stats[header.name] = ""
+                    result_fused_stats[name] = ""
             result_fused_stats['sequence_file_id'] = result_fuse['results_file']['sequence_file_id']
-            result_fused_stats['samples'] = headers['samples'].decorator.decorate(result_fuse['filename'])
-            result_fused_stats['config names'] = headers['config_names'].decorator.decorate(result_fuse['config']["name"])
+            result_fused_stats['samples'] = headers['samples'].decorator.decorate(
+                result_fuse['filename'])
+            result_fused_stats['config_names'] = headers['config_names'].decorator.decorate(
+                result_fuse['config']["name"])
             result_fused_stats['config_id'] = result_fuse['results_file']['config_id']
             data.append(result_fused_stats)
 
             # Data in pure json for TSV export from client
             data_json[-1]["sequence_file_id"] = result_fuse['results_file']['sequence_file_id']
             data_json[-1]["samples"] = result_fuse['filename']
-            data_json[-1]["config names"] = result_fuse['config']["name"]
+            data_json[-1]["config_names"] = result_fuse['config']["name"]
             data_json[-1]["config_id"] = result_fuse['results_file']['config_id']
             data_json[-1]["sets"] = [str("%s (%s, id %s)" %
                                          (x["name"], x["type"], x["id"])) for x in result_fuse['sets']]
 
             data_json[-1]["Shannon diversity"] = data_json[-1].pop(
-                'Shannon\'s diversity')
+                'shannon_diversity')
             data_json[-1]["Pielou evenness"] = data_json[-1].pop(
-                'Pielou\'s evenness')
+                'pielou_evenness')
             data_json[-1]["Simpson diversity"] = data_json[-1].pop(
-                'Simpson\'s diversity')
-            del data_json[-1]['read lengths']
+                'simpson_diversity')
+            del data_json[-1]['read_lengths']
 
     return data, data_json
