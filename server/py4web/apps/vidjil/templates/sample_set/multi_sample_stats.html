@@ -4,8 +4,6 @@
     updateDisplayAccordingToConfig([[=data["default_hidden_columns"]]])
 </div>
 
-[[=data["default_hidden_columns"]]]
-
 <h3></h3>
 
 <div>
@@ -22,7 +20,7 @@
         <thead>
 	    <tr>
             [[ for name, header in data['headers'].items(): ]]
-                <th class="content [[=name]]">
+                <th class="content [[=name]]" [[if header.column_size != 0:]] style="width: [[=header.column_size]]px" [[pass]]>
                     [[=header.display_name]]
                 </th>
             [[ pass ]]
@@ -39,7 +37,7 @@
                             <span class="content [[=header.display_name]]">[[=res[name]]]</span>
                         </td>
                     [[ pass ]]
-                    <td>
+                    <td class="column_25">
                         <a id="open_sample_result_[[=row.sample_set_membership.sequence_file_id]]" class="button" type="text/html"
                            href="[[=http_origin]]?custom=[[=row.results_file.id]]&sample_set_id=[[=row.sample_set_membership.sample_set_id]]&config=[[=row.results_file.config_id]]"
                            onclick= "event.preventDefault();

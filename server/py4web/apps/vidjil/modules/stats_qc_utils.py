@@ -10,12 +10,30 @@ from ..common import db
 from . import zmodel_factory
 from . import stats_decorator
 
+SETS_COLUMN_NAME = "sets"
+SAMPLE_COLUMN_NAME = "sample"
+CONFIG_NAME_COLUMN_NAME = "config_name"
+MAPPED_READS_COLUMN_NAME = "mapped_reads"
+MAPPED_READS_NUMBER_COLUMN_NAME = "mapped_reads_number"
+MEAN_LENGTH_COLUMN_NAME = "mean_length"
+READ_LENGTHS_COLUMN_NAME = "read_lengths"
+LOCI_COLUMN_NAME = "loci"
+CLONES_5_COLUMN_NAME = "clones_5"
+INTRA_CONTAMINATION_COLUMN_NAME = "intra_contamination"
+MAIN_CLONE_COLUMN_NAME = "main_clone"
+MERGED_READS_COLUMN_NAME = "merged_reads"
+PRE_PROCESS_COLUMN_NAME = "pre_process"
+SHANNON_DIVERSITY_COLUMN_NAME = "shannon_diversity"
+PIELOU_EVENNESS_COLUMN_NAME = "pielou_evenness"
+SIMPSON_DIVERSITY_COLUMN_NAME = "simpson_diversity"
+
 
 @dataclass(frozen=True)
 class HeaderConfig:
     display_name: str
     type: str
     decorator: stats_decorator.StatDecorator
+    column_size: int
     hidden_by_default: bool
 
 
@@ -34,21 +52,22 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
     genescan_decorator = stats_decorator.GenescanDecorator()
     loci_list_decorator = stats_decorator.LociListDecorator()
     return {
-        'sets': HeaderConfig('sets', 'db', sets_decorator, True),
-        'samples': HeaderConfig('samples', 'parser', stat_decorator, False),
-        'config_names': HeaderConfig('config names', 'parser', stat_decorator, False),
-        'mapped_reads': HeaderConfig('mapped reads', 'parser', stat_decorator, False),
-        'mean_length': HeaderConfig('mean length', 'parser', stat_decorator, False),
-        'read_lengths': HeaderConfig('read lengths', 'parser', genescan_decorator, False),
-        'loci': HeaderConfig('loci', 'parser', loci_list_decorator, False),
-        'clones_5': HeaderConfig('clones 5%', 'parser', stat_decorator, False),
-        'intra-contamination': HeaderConfig('intra-contamination', 'parser', stat_decorator, False),
-        'main_clone': HeaderConfig('main clone', 'parser', stat_decorator, False),
-        'merged_reads': HeaderConfig('merged reads', 'parser', stat_decorator, True),
-        'pre_process': HeaderConfig('pre process', 'parser', stat_decorator, True),
-        "shannon_diversity": HeaderConfig("Shannon\'s diversity", 'parser', stat_decorator, False),
-        "pielou_evenness": HeaderConfig("Pielou\'s evenness", 'parser', stat_decorator, True),
-        "simpson_diversity": HeaderConfig("Simpson\'s diversity", 'parser', stat_decorator, True),
+        SETS_COLUMN_NAME: HeaderConfig('sets', 'db', sets_decorator, 200, True),
+        SAMPLE_COLUMN_NAME: HeaderConfig('sample', 'parser', stat_decorator, 200, False),
+        CONFIG_NAME_COLUMN_NAME: HeaderConfig('config name', 'parser', stat_decorator, 100, False),
+        MAPPED_READS_COLUMN_NAME: HeaderConfig('mapped reads', 'parser', stat_decorator, 70, False),
+        MAPPED_READS_NUMBER_COLUMN_NAME: HeaderConfig('mapped reads number', 'parser', stat_decorator, 150, True),
+        MEAN_LENGTH_COLUMN_NAME: HeaderConfig('mean length', 'parser', stat_decorator, 60, False),
+        READ_LENGTHS_COLUMN_NAME: HeaderConfig('read lengths', 'parser', genescan_decorator, 200, False),
+        LOCI_COLUMN_NAME: HeaderConfig('loci', 'parser', loci_list_decorator, 200, False),
+        CLONES_5_COLUMN_NAME: HeaderConfig('clones 5%', 'parser', stat_decorator, 70, False),
+        INTRA_CONTAMINATION_COLUMN_NAME: HeaderConfig('intra-contamination', 'parser', stat_decorator, 100, False),
+        MAIN_CLONE_COLUMN_NAME: HeaderConfig('main clone', 'parser', stat_decorator, 400, False),
+        MERGED_READS_COLUMN_NAME: HeaderConfig('merged reads', 'parser', stat_decorator, 80, True),
+        PRE_PROCESS_COLUMN_NAME: HeaderConfig('pre process', 'parser', stat_decorator, 80, True),
+        SHANNON_DIVERSITY_COLUMN_NAME: HeaderConfig("Shannon\'s diversity", 'parser', stat_decorator, 80, False),
+        PIELOU_EVENNESS_COLUMN_NAME: HeaderConfig("Pielou\'s evenness", 'parser', stat_decorator, 80, True),
+        SIMPSON_DIVERSITY_COLUMN_NAME: HeaderConfig("Simpson\'s diversity", 'parser', stat_decorator, 80, True),
     }
     # 'reads' : HeaderConfig('reads', 'parser', stat_decorator, False),
     # HeaderConfig('mapped_percent', 'parser', bar_decorator, False),
@@ -91,39 +110,43 @@ def get_fused_stats(fuse):
 
             reads = data['reads']['total'][result_index]
             mapped_reads = data['reads']['segmented'][result_index]
-            dest['mapped_reads'] = "%.2f %% (%d / %d)" % (
-                100.0 * mapped_reads / reads if reads else 0, mapped_reads, reads)
-            dest['mapped_percent'] = 100.0 * \
-                (float(data['reads']['segmented']
-                 [result_index]) / float(reads))
+            
+            mapped_reads_percent = 100.0 * mapped_reads / reads if reads else 0
+            dest[MAPPED_READS_COLUMN_NAME] = stats_decorator.DataWithTitle(f"{mapped_reads_percent:.2f}%", f"{mapped_reads_percent:.2f}% ({mapped_reads} / {reads})")
+            dest[MAPPED_READS_NUMBER_COLUMN_NAME] = f"({mapped_reads} / {reads})"
+            # dest['mapped_percent'] = 100.0 * \
+            #     (float(data['reads']['segmented']
+            #      [result_index]) / float(reads))
             if 'merged' in data['reads']:
-                dest['merged_reads'] = data['reads']['merged'][result_index]
+                dest[MERGED_READS_COLUMN_NAME] = data['reads']['merged'][result_index]
             else:
-                dest['merged_reads'] = None
+                dest[MERGED_READS_COLUMN_NAME] = None
 
             clones_5_title = None
             if not data["reads"]["segmented"][result_index]:
                 # Case of file without one read seen segmented
-                dest['abundance'] = "na"
-                dest['main_clone'] = "na"
-                dest['mean_length'] = "na"
-                dest['read_lengths'] = []
-                dest['intra-contamination'] = "na"
-                dest['loci'] = ["na"]
-                dest['clones_5'] = "na"
-                dest['shannon_diversity'] = "na"
-                dest["pielou_evenness"] = "na"
-                dest["simpson_diversity"] = "na"
+                # dest['abundance'] = "na"
+                dest[MAIN_CLONE_COLUMN_NAME] = "na"
+                dest[MEAN_LENGTH_COLUMN_NAME] = "na"
+                dest[READ_LENGTHS_COLUMN_NAME] = []
+                dest[INTRA_CONTAMINATION_COLUMN_NAME] = "na"
+                dest[LOCI_COLUMN_NAME] = ["na"]
+                dest[CLONES_5_COLUMN_NAME] = "na"
+                dest[SHANNON_DIVERSITY_COLUMN_NAME] = "na"
+                dest[PIELOU_EVENNESS_COLUMN_NAME] = "na"
+                dest[SIMPSON_DIVERSITY_COLUMN_NAME] = "na"
             else:
                 sorted_clones = sorted(
                     top_clones, key=lambda clone: clone['reads'][result_index], reverse=True)
                 if 'name' in sorted_clones[0]:
-                    dest['main_clone'] = str(sorted_clones[0]['name'])
+                    dest[MAIN_CLONE_COLUMN_NAME] = str(
+                        sorted_clones[0]['name'])
                 else:
-                    dest['main_clone'] = str(sorted_clones[0]['germline'])
+                    dest[MAIN_CLONE_COLUMN_NAME] = str(
+                        sorted_clones[0]['germline'])
 
-                dest['abundance'] = [[str(key), 100.0 * data['reads']['germline'][key][result_index] /
-                                      data['reads']["segmented"][result_index]] for key in data['reads']['germline']]
+                # dest['abundance'] = [[str(key), 100.0 * data['reads']['germline'][key][result_index] /
+                #                       data['reads']["segmented"][result_index]] for key in data['reads']['germline']]
 
                 # Allow to count reads length; not perfect as based on present clonotype only
                 mean_length = {"reads": 0, "sum_length": 0}
@@ -143,10 +166,10 @@ def get_fused_stats(fuse):
                         reads_per_length[average_read_length] += float(
                             clone['reads'][result_index])
                 if mean_length["reads"]:
-                    dest['mean_length'] = round(
+                    dest[MEAN_LENGTH_COLUMN_NAME] = round(
                         (mean_length["sum_length"] / mean_length["reads"]), 2)
                 else:
-                    dest['mean_length'] = "na"
+                    dest[MEAN_LENGTH_COLUMN_NAME] = "na"
 
                 min_len = 100  # int(min(tmp.keys()))
                 max_len = 600  # int(max(tmp.keys()))
@@ -166,9 +189,9 @@ def get_fused_stats(fuse):
                         display_val = 0
                         real_val = 0
                     tmp_list.append((i, display_val, real_val))
-                dest['read_lengths'] = tmp_list
+                dest[READ_LENGTHS_COLUMN_NAME] = tmp_list
 
-                dest['loci'] = sorted(
+                dest[LOCI_COLUMN_NAME] = sorted(
                     [str(x) for x in data['reads']['germline'] if data['reads']['germline'][x][result_index] > 0])
 
                 clones_5_title = {}
@@ -178,52 +201,53 @@ def get_fused_stats(fuse):
 
                 # !!! Contamination definition  : if pos != result_index, C present more than 0,01% and C bigger in result_index sample
                 # !!! WARNING, contamination is computed only on current fused file ! So available for ONE shared set and ONE shared config
-                dest['intra-contamination'] = len([c for c in data['clones'] if len([pos for pos in range(len(c["reads"])) if
-                                                                                     pos != result_index and
-                                                                                     data["reads"]["segmented"][pos] and
-                                                                                     (float(c["reads"][pos]) / data["reads"]["segmented"][pos]) > 0.0001 and
-                                                                                     (float(c["reads"][result_index]) / data["reads"]["segmented"][result_index]) > (float(c["reads"][pos]) / data["reads"]["segmented"][pos])])
-                                                   ])
+                dest[INTRA_CONTAMINATION_COLUMN_NAME] = len([c for c in data['clones'] if len([pos for pos in range(len(c["reads"])) if
+                                                                                               pos != result_index and
+                                                                                               data["reads"]["segmented"][pos] and
+                                                                                               (float(c["reads"][pos]) / data["reads"]["segmented"][pos]) > 0.0001 and
+                                                                                               (float(c["reads"][result_index]) / data["reads"]["segmented"][result_index]) > (float(c["reads"][pos]) / data["reads"]["segmented"][pos])])
+                                                             ])
 
                 if "diversity" in data:
-                    dest['shannon_diversity'] = round(
+                    dest[SHANNON_DIVERSITY_COLUMN_NAME] = round(
                         (data["diversity"]["index_H_entropy"][result_index]), 3) if "index_H_entropy" in data["diversity"] else "na"
-                    dest["pielou_evenness"] = round(
+                    dest[PIELOU_EVENNESS_COLUMN_NAME] = round(
                         (data["diversity"]["index_E_equitability"][result_index]), 3) if "index_E_equitability" in data["diversity"] else "na"
-                    dest["simpson_diversity"] = round(
+                    dest[SIMPSON_DIVERSITY_COLUMN_NAME] = round(
                         (data["diversity"]["index_Ds_diversity"][result_index]), 3) if "index_Ds_diversity" in data["diversity"] else "na"
 
             clones_5_txt = sum([data['reads']['distribution'][key][result_index]
-                                     for key in data['reads']['germline'] if key in data['reads']['distribution']])
+                                for key in data['reads']['germline'] if key in data['reads']['distribution']])
             if clones_5_title is not None:
-                dest['clones_5'] = stats_decorator.DataWithTitle(clones_5_txt, clones_5_title)
+                dest[CLONES_5_COLUMN_NAME] = stats_decorator.DataWithTitle(
+                    clones_5_txt, clones_5_title)
             else:
-                dest['clones_5'] = clones_5_txt            
-            
-            if 'pre_process' in data['samples']:
-                dest['pre_process'] = data['samples']['pre_process']['producer'][result_index]
+                dest[CLONES_5_COLUMN_NAME] = clones_5_txt
+
+            if PRE_PROCESS_COLUMN_NAME in data['samples']:
+                dest[PRE_PROCESS_COLUMN_NAME] = data['samples']['pre_process']['producer'][result_index]
             d[results_file_id] = dest
 
     return d
 
 
-def get_results_stats(file_name, dest):
-    import ijson.backends.yajl2_cffi as ijson
-    file_path = pathlib.Path(defs.DIR_RESULTS, file_name)
-    distributions = []
-    with open(file_path, 'rb') as results:
-        i = "1"
-        while True:
-            results.seek(0, 0)
-            tmp = [d for d in ijson.items(
-                results, f"reads-distribution-{i}.item")]
-            if len(tmp) == 0:
-                break
-            else:
-                distributions.append((i, tmp[0]))
-                i += "0"
-    dest['distribution'] = distributions
-    return dest
+# def get_results_stats(file_name, dest):
+#     import ijson.backends.yajl2_cffi as ijson
+#     file_path = pathlib.Path(defs.DIR_RESULTS, file_name)
+#     distributions = []
+#     with open(file_path, 'rb') as results:
+#         i = "1"
+#         while True:
+#             results.seek(0, 0)
+#             tmp = [d for d in ijson.items(
+#                 results, f"reads-distribution-{i}.item")]
+#             if len(tmp) == 0:
+#                 break
+#             else:
+#                 distributions.append((i, tmp[0]))
+#                 i += "0"
+#     dest['distribution'] = distributions
+#     return dest
 
 
 def get_stat_data(results_file_ids):
@@ -288,7 +312,7 @@ def get_stat_data(results_file_ids):
 
         if result_fuse.results_file_id not in tmp_fuse['results_files']:
             tmp = result_fuse.copy()
-            tmp['sets'] = []
+            tmp[SETS_COLUMN_NAME] = []
             tmp_fuse['results_files'][tmp['results_file_id']] = tmp
             tmp.pop('set_id', None)
             tmp.pop(set_type, None)
@@ -306,13 +330,11 @@ def get_stat_data(results_file_ids):
                                          ].get_name(sub_res[sub_res['sample_type']])
             sample_set['info'] = sub_res['set_info']
             sample_set['type'] = sub_res['sample_type']
-            tmp['sets'].append(sample_set)
+            tmp[SETS_COLUMN_NAME].append(sample_set)
 
         # Reorder set by type
-        tmp['sets'] = sorted(tmp['sets'],
-                             key=lambda _set: set_types.index(
-                                 _set['set_type']),
-                             reverse=False)
+        tmp[SETS_COLUMN_NAME] = sorted(tmp[SETS_COLUMN_NAME],
+                                      key=lambda _set: set_types.index(_set['set_type']), reverse=False)
 
     data = []
     data_json = []
@@ -334,9 +356,9 @@ def get_stat_data(results_file_ids):
                 else:
                     result_fused_stats[name] = ""
             result_fused_stats['sequence_file_id'] = result_fuse['results_file']['sequence_file_id']
-            result_fused_stats['samples'] = headers['samples'].decorator.decorate(
+            result_fused_stats[SAMPLE_COLUMN_NAME] = headers[SAMPLE_COLUMN_NAME].decorator.decorate(
                 result_fuse['filename'])
-            result_fused_stats['config_names'] = headers['config_names'].decorator.decorate(
+            result_fused_stats[CONFIG_NAME_COLUMN_NAME] = headers[CONFIG_NAME_COLUMN_NAME].decorator.decorate(
                 result_fuse['config']["name"])
             result_fused_stats['config_id'] = result_fuse['results_file']['config_id']
             data.append(result_fused_stats)
@@ -344,17 +366,17 @@ def get_stat_data(results_file_ids):
             # Data in pure json for TSV export from client
             data_json[-1]["sequence_file_id"] = result_fuse['results_file']['sequence_file_id']
             data_json[-1]["samples"] = result_fuse['filename']
-            data_json[-1]["config_names"] = result_fuse['config']["name"]
+            data_json[-1][CONFIG_NAME_COLUMN_NAME] = result_fuse['config']["name"]
             data_json[-1]["config_id"] = result_fuse['results_file']['config_id']
-            data_json[-1]["sets"] = [str("%s (%s, id %s)" %
-                                         (x["name"], x["type"], x["id"])) for x in result_fuse['sets']]
+            data_json[-1][SETS_COLUMN_NAME] = [str("%s (%s, id %s)" %
+                                                  (x["name"], x["type"], x["id"])) for x in result_fuse['sets']]
 
-            data_json[-1]["Shannon diversity"] = data_json[-1].pop(
-                'shannon_diversity')
-            data_json[-1]["Pielou evenness"] = data_json[-1].pop(
-                'pielou_evenness')
-            data_json[-1]["Simpson diversity"] = data_json[-1].pop(
-                'simpson_diversity')
-            del data_json[-1]['read_lengths']
+            data_json[-1][SHANNON_DIVERSITY_COLUMN_NAME] = data_json[-1].pop(
+                SHANNON_DIVERSITY_COLUMN_NAME)
+            data_json[-1][PIELOU_EVENNESS_COLUMN_NAME] = data_json[-1].pop(
+                PIELOU_EVENNESS_COLUMN_NAME)
+            data_json[-1][SIMPSON_DIVERSITY_COLUMN_NAME] = data_json[-1].pop(
+                SIMPSON_DIVERSITY_COLUMN_NAME)
+            del data_json[-1][READ_LENGTHS_COLUMN_NAME]
 
     return data, data_json
