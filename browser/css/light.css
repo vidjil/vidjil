@@ -1816,6 +1816,9 @@ h3 .uid {
 #db_table_container.border_columns td + td {
   border-left: 1px solid #ddd;
 }
+#db_table_container_x_scroll {
+  overflow-x: scroll;
+}
 #db_fixed_header {
   position: absolute;
   top: 0px;

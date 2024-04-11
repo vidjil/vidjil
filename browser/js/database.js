@@ -1187,10 +1187,15 @@ Database.prototype = {
         
         $("#db_table_container").bind("scroll", function() {
             var offset = $(this).scrollTop();
-
             fixedHeader.css("top", offset)
-
         });
+
+        if ($("#db_table_container_x_scroll").length > 0) {
+            $("#db_table_container_x_scroll").bind("scroll", function() {
+                var offset = $(this).scrollLeft();
+                fixedHeader.css("left", -1*offset)
+            });
+        }
     },
     
     group_rights: function (value, name, right, id) {
