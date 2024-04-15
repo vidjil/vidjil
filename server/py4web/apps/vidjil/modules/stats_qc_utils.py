@@ -69,7 +69,7 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             "read lengths", genescan_decorator, 200, False
         ),
         LOCI_COLUMN_NAME: HeaderConfig("loci", loci_list_decorator, 200, False),
-        CLONES_5_COLUMN_NAME: HeaderConfig("clones 5%", stat_decorator, 70, False),
+        CLONES_5_COLUMN_NAME: HeaderConfig("clones ≥5%", stat_decorator, 70, False),
         INTRA_CONTAMINATION_COLUMN_NAME: HeaderConfig(
             "intra-contamination", stat_decorator, 100, False
         ),
