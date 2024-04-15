@@ -4,7 +4,6 @@ import pathlib
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules import tag
-from ..modules.stats_decorator import *
 from ..modules.sampleSet import get_set_group
 from ..modules.sampleSets import SampleSets
 from ..modules.sampleSetList import SampleSetList, filter_by_tags
@@ -50,7 +49,7 @@ def next_sample_set():
                     db.sample_set.id, orderby=~db.sample_set.id, limitby=(0,1))
             if (len(res) > 0):
                 request.query["id"] = str(res[0].id)
-        except:
+        except Exception:
             pass
 
 ##################################
@@ -135,7 +134,7 @@ def index():
             left=db.results_file.on(
                 (db.results_file.sequence_file_id==db.sequence_file.id)
                 & (db.results_file.config_id==str(config_id))
-                & (db.results_file.hidden == False)
+                & (db.results_file.hidden == False)  # noqa: E712
             ),
             orderby = db.sequence_file.id|~db.results_file.run_date
         )
@@ -161,7 +160,7 @@ def index():
                 left=db.results_file.on(
                     (db.results_file.sequence_file_id==db.sequence_file.id)
                     & (db.results_file.config_id==str(config_id))
-                    & (db.results_file.hidden == False)
+                    & (db.results_file.hidden == False)  # noqa: E712
                 )
             )
 
@@ -326,9 +325,9 @@ def form():
     if("id" in request.query):
         sample_set = db.sample_set[request.query["id"]]
         set_type = sample_set.sample_type
-        sset = db(db[set_type].sample_set_id == sample_set.id).select().first()
-        if(auth.can_modify_sample_set(sset.sample_set_id)):
-            groups = [get_set_group(sset.sample_set_id)]
+        sample_set = db(db[set_type].sample_set_id == sample_set.id).select().first()
+        if(auth.can_modify_sample_set(sample_set.sample_set_id)):
+            groups = [get_set_group(sample_set.sample_set_id)]
             action = 'edit'
             max_group = None
         else:
@@ -337,7 +336,7 @@ def form():
 
     # new set
     elif (auth.can_create_sample_set()):
-        sset = None
+        sample_set = None
         set_type = request.query["type"]
         creation_group_tuple = get_default_creation_group(auth)
         groups = creation_group_tuple[0]
@@ -356,7 +355,7 @@ def form():
             defs.SET_TYPE_RUN: [],
             defs.SET_TYPE_GENERIC: []}
     # We add a None object to the desired set type to initialise an empty form in the template.
-    sets[set_type].append(sset)
+    sets[set_type].append(sample_set)
     log.info("load form " + message, extra=extra)
     return dict(message=T(message),
                 groups=groups,
@@ -407,11 +406,11 @@ def submit():
                 if (p['sample_set_id'] != ""):
                     if auth.can_modify_sample_set(int(p['sample_set_id'])):
                         reset = True
-                        sset = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
-                        db[set_type][sset.id] = p
-                        id_sample_set = sset['sample_set_id']
+                        sample_set = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
+                        db[set_type][sample_set.id] = p
+                        id_sample_set = sample_set['sample_set_id']
 
-                        if (sset.info != p['info']):
+                        if (sample_set.info != p['info']):
                             group_id = get_set_group(id_sample_set)
                             should_register_tags = True
                             reset = True
@@ -431,7 +430,7 @@ def submit():
                     p['id'] = db[set_type].insert(**p)
                     should_register_tags = True
 
-                    #patient creator automaticaly has all rights
+                    #patient creator automatically has all rights
                     auth.add_permission(group_id, PermissionEnum.access.value, 'sample_set', p['sample_set_id'])
 
                     action = "add"
@@ -448,7 +447,7 @@ def submit():
                 error = True
             
             if error:
-                mes = f"error occured : {p['error']}"
+                mes = f"error occurred : {p['error']}"
                 id_sample_set = -1
             else:
                 mes = u"%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
@@ -521,7 +520,7 @@ def custom():
         
     if "custom_list" not in request.query :
         request.query["custom_list"] = []
-    if type(request.query["custom_list"]) is str :
+    if isinstance(request.query["custom_list"], str) :
         request.query["custom_list"] = [request.query["custom_list"]]
         
     myGroupBy = None
@@ -541,7 +540,7 @@ def custom():
         & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
         & (db.results_file.sequence_file_id==db.sequence_file.id)
         & (db.results_file.data_file != '')
-        & (db.results_file.hidden == False)
+        & (db.results_file.hidden == False)  # noqa: E712
         & (db.config.id==db.results_file.config_id))
 
     group_ids = get_involved_groups()
@@ -648,7 +647,7 @@ def get_configs_by_classification():
             i += 1
         classification["%02d_noclass" % i]["name"]    = "-"
         classification["%02d_noclass" % i]["info"]    = ""
-        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification == None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
+        classification["%02d_noclass" % i]["configs"] = db( (db.config.classification is None) & (auth.vidjil_accessible_query(PermissionEnum.read.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config) ) ).select(orderby=db.config.name)
     return classification
    
 
@@ -707,7 +706,7 @@ def delete():
         sample_set = db.sample_set[request.query["id"]]
         sample_type = sample_set.sample_type
         if sample_set is None:
-            res = {"message": 'An error occured. This sample_set may have already been deleted'}
+            res = {"message": 'An error occurred. This sample_set may have already been deleted'}
             log.error(res)
             return json.dumps(res, separators=(',',':'))
 
@@ -727,7 +726,7 @@ def delete():
             & (db.sample_set_membership.sample_set_id == sample_set.id)
             ).select(db.sequence_file.id)
         for row in query :
-            if not row.id in sequence_file_id_sample_sets: 
+            if row.id not in sequence_file_id_sample_sets: 
                 sample_sets = get_sequence_file_sample_sets(row.id)
                 sequence_file_id_sample_sets[row.id] = sample_sets
             if len(sequence_file_id_sample_sets[row.id]) == 1:
@@ -754,11 +753,11 @@ def delete():
 def permission():
     if (auth.can_modify_sample_set(int(request.query["id"])) ):
         sample_set = db.sample_set[request.query["id"]]
-        stype = sample_set.sample_type
+        sample_type = sample_set.sample_type
         factory = ModelFactory()
-        helper = factory.get_instance(type=stype)
+        helper = factory.get_instance(type=sample_type)
 
-        data = db(db[stype].sample_set_id == sample_set.id).select().first()
+        data = db(db[sample_type].sample_set_id == sample_set.id).select().first()
 
         query = db( db.auth_group.role != 'admin' ).select()
 
@@ -774,7 +773,7 @@ def permission():
                     (db.auth_permission.table_name == db.sample_set)).select()
             row.perms = ', '.join(map(lambda x: x.name, permissions))
 
-            row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[stype], request.query['id'], group=row.id))
+            row.parent_access = ', '.join(str(value) for value in auth.get_access_groups(db[sample_type], request.query['id'], group=row.id))
             row.read =  auth.get_group_access("sample_set", request.query["id"] , row.id)
 
         log.info("load permission page for sample_set (%s)" % request.query["id"],
@@ -794,25 +793,23 @@ def permission():
 @action.uses(db, auth.user)
 def change_permission():
     if (auth.can_modify_sample_set(int(request.query["sample_set_id"])) ):
-        ssid = request.query["sample_set_id"]
-        sample_set = db.sample_set[ssid]
-        sample_type = sample_set.sample_type
+        sample_set_id = request.query["sample_set_id"]
 
         error = ""
         if request.query["group_id"] == "" :
             error += "missing group_id, "
-        if ssid == "" :
+        if sample_set_id == "" :
             error += "missing sample_set_id, "
 
         if error=="":
             if auth.get_group_access("sample_set",
-                      ssid,
+                      sample_set_id,
                       int(request.query["group_id"])):
-                auth.del_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
+                auth.del_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], sample_set_id)
                 res = {"message" : "access '%s' deleted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
             else :
 
-                auth.add_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], ssid)
+                auth.add_permission(request.query["group_id"], PermissionEnum.access.value, db["sample_set"], sample_set_id)
                 res = {"message" : "access '%s' granted to '%s'" % (PermissionEnum.access.value, db.auth_group[request.query["group_id"]].role)}
 
             log.info(res, extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
@@ -845,7 +842,7 @@ def multi_sample_stats():
                             left=db.results_file.on(
                                 (db.results_file.sequence_file_id==db.sequence_file.id)
                                 & (db.results_file.config_id==str(config_id))
-                                & (db.results_file.hidden == False)
+                                & (db.results_file.hidden == False)  # noqa: E712
                             ),
                         orderby = db.sequence_file.id|~db.results_file.run_date)
 
@@ -864,8 +861,8 @@ def multi_sample_stats():
     data = {}
     data["headers"] = stats_qc_utils.get_stat_headers()
     data["default_hidden_columns"] = [index+1 for index, header in enumerate(stats_qc_utils.get_stat_headers().values()) if header.hidden_by_default]
-    results, data_raw = stats_qc_utils.get_stat_data(results_ids)
-    data["results"] = results
+    display_stats_results, json_stats_data = stats_qc_utils.get_stat_data(results_ids)
+    data["results"] = display_stats_results
 
     permitted_results = db((auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) & 
                            (db.sample_set.id == db.sample_set_membership.sample_set_id) &
@@ -885,7 +882,7 @@ def multi_sample_stats():
     log.info(f"load multi sample stats ({str(results_ids)})",
              extra={"user_id": auth.user_id, "record_id": None, "table_name": "results_file"})
     return dict(data=data,
-                data_raw=data_raw,
+                json_stats_data=json_stats_data,
                 auth=auth,
                 db=db,
                 permitted_results=permitted_results,
@@ -995,8 +992,8 @@ def stats():
     factory = ModelFactory()
     helper = factory.get_instance(type=type)
 
-    slist = SampleSetList(helper, tags=tags)
-    result = slist.result
+    sample_set_list = SampleSetList(helper, tags=tags)
+    result = sample_set_list.result
 
     fields = helper.get_reduced_fields()
 
@@ -1030,7 +1027,6 @@ def stats():
 def result_files():
     from zipfile import ZipFile
     import types
-    errors = []
     config_id = request.query['config_id']
     sample_set_ids = []
     if 'sample_set_ids' in request.query:
@@ -1063,8 +1059,8 @@ def result_files():
             (db.sample_set_membership.sample_set_id == db.sample_set.id) &
             (db.sequence_file.id == db.sample_set_membership.sequence_file_id) &
             (db.results_file.sequence_file_id == db.sequence_file.id) &
-            (db.results_file.data_file != None) &
-            (db.results_file.hidden == False) &
+            (db.results_file.data_file != None) &  # noqa: E711
+            (db.results_file.hidden == False) &  # noqa: E712
             config_query
         )
 
@@ -1098,9 +1094,9 @@ def result_files():
             'record_id': None,
             'table_name': "sample_set"})
         return static_file(filename, defs.DIR_SEQUENCES, download=True)
-    except:
+    except Exception as exception:
         res = {"message": "an error occurred"}
-        log.error("An error occurred when creating archive of sample_sets %s" % str(sample_set_ids))
+        log.error(f"An error occurred when creating archive of sample_sets {sample_set_ids} : {exception}")
         return json.dumps(res, separators=(',',':'))
     finally:
         try:

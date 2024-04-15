@@ -3868,7 +3868,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param  {Array}  data    Data to convert in csv format
      */
     exportStatsQC: function(data){
-        console.default.log( "exportStatsQC" )
+        console.default.log( "exportStatsQC " + data )
         // Replace some caracters of the json string to be compliant with json parsing
         data  = data.replaceAll('\'', '"').replaceAll('None', 'null').replaceAll('L, "', ', "')
         jdata = JSON.parse(data)

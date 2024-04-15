@@ -36,7 +36,7 @@
                     <tr>
                         [[ for name, header in data['headers'].items(): ]]
                             <td class="[[=name]]">
-                                <span class="content [[=header.display_name]]">[[=res[name]]]</span>
+                                <span class="content [[=header.display_name]]">[[=header.decorator.decorate(res[name])]]</span>
                             </td>
                         [[ pass ]]
                         <td class="column_20">
@@ -58,7 +58,7 @@
 
 
     <div>
-        Download table in<a class="button" id="download_statsQC" onclick='m.exportStatsQC("[[=data_raw]]")'>TSV format</a>
+        Download table in<a class="button" id="download_statsQC" onclick='m.exportStatsQC("[[=json_stats_data]]")'>TSV format</a>
     </div>
 
 </div>
