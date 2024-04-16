@@ -291,9 +291,11 @@ def run_extra():
     log.debug(str(res))
     return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/default/checkProcess", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def checkProcess():
     task = db.scheduler_task[request.query["processId"]]
-    results_file = db(db.results_file.scheduler_task_id == task.id).select().first()
+    results_file = db(db.results_file.id == task.id).select().first()
 
     msg = ''
     sample_set_id = -1
@@ -301,15 +303,17 @@ def checkProcess():
         sample_set_id = get_sample_set_id_from_results_file(results_file.id)
     if not results_file or not auth.can_view_sample_set(sample_set_id):
         msg = "You don't have access to this sample"
-    if sample_set_id > -1 and task.status == tasks.STATUS_COMPLETED :
-        run = db( db.scheduler_run.task_id == task.id ).select()[0]
-    
-        res = {"success" : "true",
-               "status" : task.status,
-               "data" : {'run_result': run.run_result,
-                         'result_id': results_file.id
-                         },
-               "processId" : task.id}
+     if sample_set_id > -1 and task.status == tasks.STATUS_COMPLETED:
+        if results_file.data_file == None:
+            res = {"status": tasks.STATUS_RUNNING}
+        else:        
+            res = {"success" : "true",
+                   "status" : task.status,
+                   "data" : {
+                        'data_file': results_file.data_file,
+                        'result_id': task.id
+                    },
+                   "processId" : task.id}
     else :
         if len(msg) > 0:
             res = {"success" : "false",

@@ -179,7 +179,7 @@ Database.prototype = {
              xhrFields: {withCredentials: true},
              success: function (result) {
                  result = jQuery.parseJSON(result)
-                 setTimeout(function(){ self.waitProcess(result.processId, 5000, callback)}, 5000);
+                 setTimeout(function(){ self.waitProcess(result.results_file_id, 5000, callback)}, 5000);
                  self.connected = true;
              }, 
              error: function (request, status, error) {
