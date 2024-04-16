@@ -140,14 +140,7 @@ Database.prototype = {
 				// Link to result file and launch download
                              var file_name = "reads__"+clone_id+"__file_id_"+"_"+sequence_file_id+".fa"
                              var path_data = DB_ADDRESS+"/default/download/"+a.data_file+"?filename="+file_name
-                             var anchor = document.createElement('a');
-                             anchor.setAttribute("download", file_name);
-                             anchor.setAttribute("href",     path_data);
-                             anchor.style = 'display: none';
-                             self.ajax_indicator_stop()
-                             document.body.appendChild(anchor);
-                             anchor.click();
-                             document.body.removeChild(anchor);
+                             downloadFile(path_data, file_name)
 			 });
     },
 
