@@ -303,7 +303,7 @@ def checkProcess():
         sample_set_id = get_sample_set_id_from_results_file(results_file.id)
     if not results_file or not auth.can_view_sample_set(sample_set_id):
         msg = "You don't have access to this sample"
-     if sample_set_id > -1 and task.status == tasks.STATUS_COMPLETED:
+    if sample_set_id > -1 and task.status == tasks.STATUS_COMPLETED:
         if results_file.data_file == None:
             res = {"status": tasks.STATUS_RUNNING}
         else:        
