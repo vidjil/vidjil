@@ -506,7 +506,7 @@ function nice_ceil(x, force_pow10)
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
  
-        return Math.ceil(x / floor_power10) * floor_power10
+        return discard_float_approximation(Math.ceil(x / floor_power10) * floor_power10)
     }
     catch(e) {
         // Always return something
@@ -522,6 +522,7 @@ function nice_ceil(x, force_pow10)
 
 function nice_1_2_5_ceil(x)
 {
+    x = discard_float_approximation(x);
     if (x <= 0) return x
 
     try {
@@ -551,7 +552,7 @@ function nice_floor(x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
-        return Math.floor(x / floor_power10) * floor_power10
+        return discard_float_approximation(Math.floor(x / floor_power10) * floor_power10)
     }
     catch(e) {
         // Always return something
@@ -579,6 +580,15 @@ function compareNumericalArrays(arrA, arrB){
 }
 
 
+/**
+ * Simplify a float to prevent approximation issues.
+ */
+function discard_float_approximation(float) {
+    // This assumes that the float is represented on 64 bits
+    // and that it will be made with 15 digits in total.
+    // This therefore discards the 3 least significant digits.
+    return parseFloat(float.toFixed(12));
+}
 
 /**
  * Give nice min/max/step numbers including the given [min, max] interval in order that steps are also nice,
@@ -602,7 +612,7 @@ function nice_min_max_steps(min, max, nb_max_steps)
     var n_max = nice_ceil(max, basic_step)
 
     var step = nice_1_2_5_ceil((n_max - n_min) / nb_max_steps)
-    var nb_steps = Math.ceil((n_max - n_min) / step)
+    var nb_steps = Math.ceil(discard_float_approximation((n_max - n_min) / step))
 
     // In some rare cases, we try another loop of rounding
     var overlength = nb_steps * step - (n_max - n_min)
@@ -610,7 +620,7 @@ function nice_min_max_steps(min, max, nb_max_steps)
     {
         n_min = nice_floor(min, step)
         n_max = nice_ceil(max, step)
-        nb_steps = Math.ceil((n_max - n_min) / step)
+        nb_steps = Math.ceil(discard_float_approximation((n_max - n_min) / step))
     }
 
     return {min: n_min, max: n_max, step: step, nb_steps: nb_steps}
