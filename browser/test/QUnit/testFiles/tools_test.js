@@ -193,6 +193,11 @@ QUnit.test("test rounding functions", function(assert) {
     }
 );
 
+QUnit.test("test discard_float_approximation", function(assert) {
+    assert.equal(discard_float_approximation(.1+.2), .3, ".1+.2");
+    assert.equal(discard_float_approximation(.000000001+.000000002), .000000003, ".000000001+.000000002");
+});
+
 QUnit.test("test nice_min_max_steps", function(assert) {
     assert.deepEqual(nice_min_max_steps(347.34, 354.23, 10), {min: 347, max: 355, step: 1, nb_steps: 8}, "347.34..354.23 (10)");
     assert.deepEqual(nice_min_max_steps(17, 305, 20), {min: 0, max: 320, step: 20, nb_steps: 16}, "17..305 (20)");
@@ -211,6 +216,9 @@ QUnit.test("test nice_min_max_steps", function(assert) {
     assert.deepEqual(nice_min_max_steps(43, 103, 3), {min: 0, max: 150, step: 50, nb_steps: 3}, "43..103 (3)");
 
     assert.deepEqual(nice_min_max_steps(42, 42, 20), {min: 40, max: 50, step: 10, nb_steps: 1}, "42..42 (20)");
+
+    assert.deepEqual(nice_min_max_steps(0, 0.5691940206503312, 12), {min:0, max: 0.6, step: 0.05, nb_steps: 12}, "Example from issue #5276");
+    assert.deepEqual(nice_min_max_steps(0, 0.5691940206503312, 11), {min:0, max: 0.6, step: 0.1, nb_steps: 6}, "Example from issue #5276");
 });
 
 QUnit.test("prepend_path_if_not_web", function(assert) {
