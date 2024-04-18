@@ -126,10 +126,10 @@ def validate_sets(set_ids):
             set_type = extract_set_type(sid)
             if set_type not in id_dict:
                 helpers[set_type] = mf.get_instance(set_type)
-                id_dict[set_type] = []
+                id_dict[set_type] = set()
             sets.append({'type': set_type, 'id': sid})
             set_id = helpers[set_type].parse_id_string(sid)
-            id_dict[set_type].append(set_id)
+            id_dict[set_type].add(set_id)
             if not auth.can_modify_sample_set(set_id) :
                 errors.append("missing permission for %s %d" % (set_type, set_id))
         except ValueError:
@@ -279,7 +279,6 @@ def form():
 @action.uses(db, auth.user)
 def submit():
     data = json.loads(request.params['data'])
-    # data = json.loads(request.params['data'], encoding='utf-8')
     error = False
 
     pre_process = None
@@ -307,7 +306,7 @@ def submit():
             error = True
             continue
 
-        if not 'sampling_date' in f:
+        if 'sampling_date' not in f:
             f['sampling_date'] = ''
 
         file_data = dict(sampling_date=f['sampling_date'],
@@ -320,13 +319,11 @@ def submit():
         if (f["id"] != ""):
             reupload = True
             fid = int(f["id"])
-            sequence_file = db.sequence_file[fid]
             if f['filename'] == '':
                 # If we don't reupload a new file
                 file_data.pop('pre_process_flag')
             
-            sequence_file = file_data
-            #remove previous membership
+            # Remove previous membership
             db( db.sample_set_membership.sequence_file_id == fid).delete()
             db.commit()
             action = "edit"
@@ -347,8 +344,8 @@ def submit():
 
         for key in f['id_dict']:
             if key not in id_dict:
-                id_dict[key] = []
-            id_dict[key] += f['id_dict'][key]
+                id_dict[key] = set()
+            id_dict[key].update(f['id_dict'][key])
 
         for key in id_dict:
             for sid in id_dict[key]:
@@ -394,8 +391,9 @@ def submit():
                 'table_name': "sequence_file"})
 
     if not error:
+        # Redirect to first set
         set_type = data['sets'][0]['type']
-        set_id = id_dict[set_type][0]
+        set_id = next(iter(id_dict[set_type]))
         res = { "file_ids": [f['id'] for f in data['file']],
                 "redirect": "sample_set/index",
                 "args" : { "id" : set_id, "config_id": -1},
