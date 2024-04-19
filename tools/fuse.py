@@ -790,6 +790,15 @@ class ListWindows(VidjilJson):
         for clone in self:
             self.id_lengths[len(clone.d['id'])] += 1
         print ("%% lengths .vidjil -> ", self.id_lengths)
+
+
+        if "config" in self.d.keys() and "min-clones-per-locus" in self.d["config"]:
+            self.limit_per_locus = int(self.d["config"]["min-clones-per-locus"])
+            self.per_locus = defaultdict(lambda: 0)
+            print("Min per locus detected: " + str(self.limit_per_locus))
+        else:
+            self.limit_per_locus = 0
+
         try:
             print("%% run_v ->", self.d["samples"].d["producer"], self.d["samples"].d["run_timestamp"])
         except KeyError:
@@ -844,11 +853,22 @@ class ListWindows(VidjilJson):
                 exit(1)
 
     def getTop(self, top):
+        '''
+        Filter list of clones to keep only clonotype under the top filter
+        Will also take care of min-per-locus bypass if present
+        '''
         result = []
-        
+
+        # reorder list of clones by top value; if not, filter per locus will not work
+        self.d["clones"] = sorted(self.d["clones"], key=lambda c: c.d["top"])
+
+
         for clone in self:
-            if clone.d["top"] <= top :
-                result.append(clone.d["id"])
+            if clone.d["top"] <= top \
+                or (clone.d["top"] > top and self.limit_per_locus and self.per_locus[clone.d["germline"]] < self.limit_per_locus) :
+                    result.append(clone.d["id"])
+                    if self.limit_per_locus:
+                        self.per_locus[clone.d["germline"]] += 1
         return result
         
     def filter(self, f):
@@ -992,10 +1012,11 @@ class ListWindows(VidjilJson):
         others = OtherWindows(nb_points)
 
         for clone in self:
-            if (int(clone.d["top"]) <= limit or limit == 0) :
-                w.append(clone)
-            #else:
-                #others += clone
+            if (int(clone.d["top"]) <= limit or limit == 0) \
+                or ("limit_per_locus" in self.__dict__ and self.limit_per_locus and clone.d["top"] > limit and self.limit_per_locus and self.per_locus[clone.d["germline"]] < self.limit_per_locus) :
+                    w.append(clone)
+                    if "limit_per_locus" in self.__dict__ and self.limit_per_locus:
+                        self.per_locus[clone.d["germline"]] += 1
 
         self.d["clones"] = w #+ list(others) 
 
