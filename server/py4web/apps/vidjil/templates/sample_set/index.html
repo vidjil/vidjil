@@ -292,7 +292,7 @@
                         else { myUrl.loadUrl(db, { 'sample_set_id' : '[[=request.query["id"]]]' , 'config' : [[=row.config.id]] }, '[[=info["filename"]]]' ) }" >
                 [[=row.config.name]] <span class="icon-chart-bar"></span>
             </a>
-            <a class="button2" type="text/html" id="qc_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]" title="Preview / quality control"
+            <a class="button2_next" type="text/html" id="qc_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]" title="Preview / quality control"
                 onclick="event.preventDefault()
                         db.call('sample_set/multi_sample_stats', {'results_ids': [[=[row.results_file.id for row in query if (row.results_file.id and (row.results_file.status == tasks.STATUS_COMPLETED))]]] })" >
                 <span class="icon-table"></span>

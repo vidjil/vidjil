@@ -84,7 +84,7 @@ class SampleSet(object):
                       _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c_id, filename))))
             configs.append(
                 str(A("", SPAN(_class="icon-table"),
-                      _class="button2", _title="Preview / quality control",
+                      _class="button2_next", _title="Preview / quality control",
                       _onclick=f"db.call('sample_set/multi_sample_stats', {{'sample_set_id': {data['sample_set_id']}, 'config_id' : {c_id} }})")))
 
         return XML(" ".join(configs))
