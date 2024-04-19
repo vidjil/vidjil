@@ -1,64 +1,82 @@
 [[extend 'db_layout.html']]
 
 <div class="afterAjaxScript">
-    updateDisplayAccordingToConfig([[=data["default_hidden_columns"]]])
+  updateDisplayAccordingToConfig([[=data["default_hidden_columns"]]])
 </div>
+
+[[ bar_chart_div_start = """<div class="bar_chart">""" ]]
 
 <h3></h3>
 
 <div>
-    [[ for i, header in enumerate(data['headers'].values()) : ]]
-        <input type="checkbox" id='[[=f"checkbox_header_{i+1}"]]' onclick="toggleColumn([[=i+1]], m.localStorage)" name="Toggle visibility of column [[=header.display_name]]" value="[[=header.display_name]]" checked>
-        <span onclick="toggleColumn([[=i+1]], m.localStorage)">[[=header.display_name]]</span>
-    [[pass]]
+  [[ for i, header in enumerate(data['headers'].values()) : ]]
+  <input
+    type="checkbox"
+    id='[[=f"checkbox_header_{i+1}"]]'
+    onclick="toggleColumn([[=i+1]], m.localStorage)"
+    name="Toggle visibility of column [[=header.display_name]]"
+    value="[[=header.display_name]]"
+    checked
+  />
+  <span onclick="toggleColumn([[=i+1]], m.localStorage)"
+    >[[=header.display_name]]</span
+  >
+  [[pass]]
 </div>
 
-<br>
+<br />
 
 <div id="db_table_container" class="border_columns">
-        
-    <div id="db_table_container_x_scroll">
-        <table class="db_table" id="table">
-            <thead>
-                <tr>
-                    [[ for name, header in data['headers'].items(): ]]
-                        <th class="content [[=name]]" [[if header.column_size != 0:]] style="width: [[=header.column_size]]px" [[pass]]>
-                            [[=header.display_name]]
-                        </th>
-                    [[ pass ]]
-                    <th class="column_20"></th>
-                </tr>
-            </thead>
-            <tbody>
-                [[ for pos in range(len(data['results'])): ]]
-                    [[res=data['results'][pos]]]
-                    [[row=permitted_results[pos]]]
-                    <tr>
-                        [[ for name, header in data['headers'].items(): ]]
-                            <td class="[[=name]]">
-                                <span class="content [[=header.display_name]]">[[=header.decorator.decorate(res[name])]]</span>
-                            </td>
-                        [[ pass ]]
-                        <td class="column_20">
-                            <a id="open_sample_result_[[=row.sample_set_membership.sequence_file_id]]" class="button" type="text/html"
-                            href="[[=http_origin]]?custom=[[=row.results_file.id]]&sample_set_id=[[=row.sample_set_membership.sample_set_id]]&config=[[=row.results_file.config_id]]"
-                            onclick= "event.preventDefault();
-                                        if ( event.which == 2 ) { window.open(this.href); }
-                                        else { myUrl.loadCustomUrl(db, {'custom': '[[=row.results_file.id]]', 'sample_set_id' : [[=row.sample_set_membership.sample_set_id]], 'config' : [[=row.results_file.config_id]] });}">
-                                <i class="icon-forward" title="open this sample results in client"></i>
-                            </a>
-                        </td>
-                    </tr>
-                [[ pass ]]
-            </tbody>
-        </table>
-        <table class="db_table" id="db_fixed_header"></table>
-        <br>
-    </div>
+  <div id="db_table_container_x_scroll">
+    <table class="db_table" id="table">
+      <thead>
+        <tr>
+          [[ for name, header in data['headers'].items(): ]]
+            <th
+                class="content [[=name]]"
+                [[if header.column_size != 0:]]
+                    style="width: [[=header.column_size]]px"
+                [[pass]]
+            >
+                [[=header.display_name]]
+            </th>
+          [[ pass ]]
+          <th class="column_20"></th>
+        </tr>
+      </thead>
+      <tbody>
+        [[ for pos in range(len(data['results'])): ]]
+            [[ res=data['results'][pos] ]] 
+            [[ row=permitted_results[pos] ]]
+            <tr>
+            [[ for name, header in data['headers'].items(): ]]
+                [[ decorated_content = header.decorator.decorate(res[name]) ]]
+                <td class="[[=name]] [[if decorated_content['_class'] == 'bar_chart':]]bar_chart_zoom[[pass]]">
+                    <span class="content [[=header.display_name]]">[[=decorated_content]]</span>
+                </td>
+            [[ pass ]]
+            <td class="column_20">
+                <a
+                id="open_sample_result_[[=row.sample_set_membership.sequence_file_id]]"
+                class="button"
+                type="text/html"
+                href="[[=http_origin]]?custom=[[=row.results_file.id]]&sample_set_id=[[=row.sample_set_membership.sample_set_id]]&config=[[=row.results_file.config_id]]"
+                onclick="event.preventDefault();
+                                            if ( event.which == 2 ) { window.open(this.href); }
+                                            else { myUrl.loadCustomUrl(db, {'custom': '[[=row.results_file.id]]', 'sample_set_id' : [[=row.sample_set_membership.sample_set_id]], 'config' : [[=row.results_file.config_id]] });}"
+                >
+                    <i class="icon-forward" title="open this sample results in client"></i>
+                </a>
+            </td>
+            </tr>
+        [[ pass ]]
+      </tbody>
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
+    <br />
+  </div>
 
-
-    <div>
-        Download table in<a class="button" id="download_statsQC" onclick='m.exportStatsQC("[[=json_stats_data]]")'>TSV format</a>
-    </div>
-
+  <div>
+    Download table in<a class="button" id="download_statsQC" onclick='m.exportStatsQC("[[=json_stats_data]]")'>TSV format</a>
+  </div>
 </div>

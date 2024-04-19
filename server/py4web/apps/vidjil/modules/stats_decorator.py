@@ -132,4 +132,4 @@ class LociListDecorator(StatDecorator):
         for locus in data:
             span = SPAN(locus, _class="stats_locus")
             loci.append(span)
-        return DIV(*loci)
+        return DIV(*loci, _title=data)

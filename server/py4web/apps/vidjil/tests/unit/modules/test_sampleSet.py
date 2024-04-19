@@ -60,17 +60,17 @@ class TestAdminController(unittest.TestCase):
         string_config = str(config_url)
 
         list_assertion = [
-            # config 2
-            'href="index.html?sample_set_id=2&amp;config=2"',
-            'id="result_sample_set_2_config_2"',
-            "A patient first and last name 2",
-            'type="text/html">multi+inc+xxx</a>',
+            # config 2 results
+            "myUrl.loadUrl(db, { &#x27;sample_set_id&#x27; : &#x27;2&#x27;, &#x27;config&#x27; :  2 }, &#x27;(A patient first and last name 2)&#x27; );",
             
-            # config 3
-            'href="index.html?sample_set_id=2&amp;config=3"',
-            'id="result_sample_set_2_config_3"',
-            "A patient first and last name 3",
-            'type="text/html">multi+inc</a>',
+            # config 2 QC stats
+            "db.call(&#x27;sample_set/multi_sample_stats&#x27;, {&#x27;sample_set_id&#x27;: 2, &#x27;config_id&#x27; : 2 })",
+            
+            # config 3 results
+            "myUrl.loadUrl(db, { &#x27;sample_set_id&#x27; : &#x27;2&#x27;, &#x27;config&#x27; :  3 }, &#x27;(A patient first and last name 3)&#x27; ); }",
+            
+            # config 3 QC stats
+            "db.call(&#x27;sample_set/multi_sample_stats&#x27;, {&#x27;sample_set_id&#x27;: 2, &#x27;config_id&#x27; : 3 })",
             ]
         for test in list_assertion:
             assert test in string_config

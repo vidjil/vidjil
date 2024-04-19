@@ -167,9 +167,9 @@ def index():
 
     all_sequence_files = [r.sample_set_membership.sequence_file_id for r in query]
 
-    (shared_sets, sample_sets) = get_associated_sample_sets(all_sequence_files, [sample_set_id])
+    (shared_sets, sample_sets_dict) = get_associated_sample_sets(all_sequence_files, [sample_set_id])
     
-    sample_sets = SampleSets(sample_sets.keys())
+    sample_sets = SampleSets(sample_sets_dict.keys())
     sets_names = sample_sets.get_names()
 
     scheduler_ids = {}
@@ -180,7 +180,7 @@ def index():
         if row.sequence_file.id in shared_sets:
             for elt in shared_sets[row.sequence_file.id]:
                 values = {"title": sets_names[elt],
-                          "sample_type": sample_sets[elt].sample_type, "id":elt}
+                          "sample_type": sample_sets_dict[elt].sample_type, "id":elt}
                 row.list_share_set.append(values)
         if row.results_file.scheduler_task_id:
             scheduler_ids[row.results_file.scheduler_task_id] = row.results_file

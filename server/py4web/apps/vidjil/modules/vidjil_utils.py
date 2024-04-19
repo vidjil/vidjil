@@ -5,7 +5,7 @@ import datetime
 from datetime import date
 from .. import defs
 from ..common import auth, db, log
-from py4web import request, DAL
+from py4web import request
 import pydal
 
 def format_size(n, unit='B'):
@@ -809,7 +809,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
 def publicGroupIsInList(db, group_ids):
     """ Return True if the first public group is in list """
     public_group = getPublicGroupId(db)
-    if public_group != None and public_group not in group_ids:
+    if public_group is not None and public_group not in group_ids:
         return False
     return True
 

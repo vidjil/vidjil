@@ -2569,6 +2569,20 @@ form {
     }
 }
 
+.bar_chart_zoom {
+	-webkit-transition: -webkit-transform 0.2s;
+	transition: -webkit-transform 0.2s;
+	transition: transform 0.2s;
+	transition: transform 0.2s, -webkit-transform 0.2s;
+}
+
+.bar_chart_zoom:hover {
+  -webkit-transform: scale(2);
+  transform: scale(2);
+  background-color: @background;
+  cursor: pointer;
+}
+
 .stats_locus {
     margin: 2px;
 }

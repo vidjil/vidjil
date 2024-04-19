@@ -1,15 +1,10 @@
-# -*- coding: utf-8 -*-
-from sys import modules
-from .. import defs
-
-from ..modules.stats_decorator import *
-from ..modules import vidjil_utils
 import json
-
+from yatl.helpers import XML
 from datetime import datetime
 from datetime import date 
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+from py4web import action, request
+from ..modules import vidjil_utils
+from ..common import db, T, cache, auth, log
 
 ##################################
 # HELPERS
@@ -26,8 +21,7 @@ NOTIFICATION_CACHE_PREFIX = 'notification_'
 @action("/vidjil/notification/index", method=["POST", "GET"])
 @action.uses("notification/index.html", db, auth.user)
 @vidjil_utils.jsontransformer
-def index():
-    user_id = auth.user_id if auth.user else None    
+def index():  
     notification = None
     if "id" in request.query:
         notification = db.notification[request.query['id']]
@@ -36,7 +30,7 @@ def index():
         request.query['id'] = None
         log.debug('notification list')
 
-    if auth.user and not 'redirected' in request.query:
+    if auth.user and 'redirected' not in request.query:
         rows = db((db.user_preference.user_id==auth.user_id)
             &(db.user_preference.preference=='mail')
             &(db.user_preference.val==request.query['id'])).select()

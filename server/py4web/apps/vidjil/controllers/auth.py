@@ -6,9 +6,10 @@ import time
 import uuid
 from datetime import datetime
 
+
 from .. import defs
-from ..modules.stats_decorator import *
 from ..modules import vidjil_utils
+from ..modules.permission_enum import PermissionEnum
 from ..controllers.group import add_default_group_permissions
 import json
 from py4web import action, request, URL

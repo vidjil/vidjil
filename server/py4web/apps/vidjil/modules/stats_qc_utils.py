@@ -56,7 +56,7 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
         SETS_COLUMN_NAME: HeaderConfig("sets", sets_decorator, 200, True),
         SAMPLE_COLUMN_NAME: HeaderConfig("sample", stat_decorator, 200, False),
         CONFIG_NAME_COLUMN_NAME: HeaderConfig(
-            "config name", stat_decorator, 100, False
+            "config name", stat_decorator, 150, False
         ),
         MAPPED_READS_COLUMN_NAME: HeaderConfig(
             "mapped reads", stat_decorator, 70, False
@@ -68,7 +68,7 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
         READ_LENGTHS_COLUMN_NAME: HeaderConfig(
             "read lengths", genescan_decorator, 200, False
         ),
-        LOCI_COLUMN_NAME: HeaderConfig("loci", loci_list_decorator, 200, False),
+        LOCI_COLUMN_NAME: HeaderConfig("loci", loci_list_decorator, 150, False),
         CLONES_5_COLUMN_NAME: HeaderConfig("clones ≥5%", stat_decorator, 70, False),
         INTRA_CONTAMINATION_COLUMN_NAME: HeaderConfig(
             "intra-contamination", stat_decorator, 100, False
@@ -559,5 +559,4 @@ def format_json_data(data_to_format):
         formatted_data = "; ".join(
             [f"{key}: {data_to_format[key]}" for key in sorted(data_to_format.keys())]
         )
-    log.debug(f"{data_to_format=}, {formatted_data=}")
     return formatted_data

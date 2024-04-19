@@ -3024,13 +3024,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {string} system - system string ('trg', 'igh', ...)
      * @return {dom_element} span
      * */
-    systemBox: function (system){
+    systemBox: function (system, forceColor = false){
         
         var span = document.createElement('span')
         span.className = "systemBoxMenu";
         if ((typeof system != 'undefined')){
             span.appendChild(document.createTextNode(this.germlineList.getShortcut(system)));
-            if (this.system_selected.indexOf(system) != -1) 
+            if (forceColor || (this.system_selected.indexOf(system) != -1) )
                 span.style.background = this.germlineList.getColor(system)
             span.title = system
         }else{
