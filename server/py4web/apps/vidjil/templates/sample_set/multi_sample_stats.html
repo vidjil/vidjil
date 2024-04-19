@@ -34,6 +34,7 @@
           [[ for name, header in data['headers'].items(): ]]
             <th
                 class="content [[=name]]"
+                title="[[=header.display_tooltip]]"
                 [[if header.column_size != 0:]]
                     style="width: [[=header.column_size]]px"
                 [[pass]]

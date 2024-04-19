@@ -6,7 +6,7 @@ import os
 import pathlib
 from typing import Dict, List
 from .. import defs
-from ..common import db, log
+from ..common import db
 from . import zmodel_factory
 from . import stats_decorator
 
@@ -27,12 +27,13 @@ SHANNON_DIVERSITY_COLUMN_NAME = "shannon_diversity"
 PIELOU_EVENNESS_COLUMN_NAME = "pielou_evenness"
 SIMPSON_DIVERSITY_COLUMN_NAME = "simpson_diversity"
 
-NOT_APPLICABLE = "na"
+NOT_APPLICABLE = "N/A"
 
 
 @dataclass(frozen=True)
 class HeaderConfig:
     display_name: str
+    display_tooltip: str
     decorator: stats_decorator.StatDecorator
     column_size: int
     hidden_by_default: bool
@@ -53,39 +54,39 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
     genescan_decorator = stats_decorator.GenescanDecorator()
     loci_list_decorator = stats_decorator.LociListDecorator()
     return {
-        SETS_COLUMN_NAME: HeaderConfig("sets", sets_decorator, 200, True),
-        SAMPLE_COLUMN_NAME: HeaderConfig("sample", stat_decorator, 200, False),
+        SETS_COLUMN_NAME: HeaderConfig("Sets", "Sets", sets_decorator, 200, True),
+        SAMPLE_COLUMN_NAME: HeaderConfig("Sample", "Analyzed sample", stat_decorator, 200, False),
         CONFIG_NAME_COLUMN_NAME: HeaderConfig(
-            "config name", stat_decorator, 150, False
+            "Config name", "Name of the configuration used", stat_decorator, 120, False
         ),
         MAPPED_READS_COLUMN_NAME: HeaderConfig(
-            "mapped reads", stat_decorator, 70, False
+            "Mapped reads", "Percentage of mapped reads", stat_decorator, 55, False
         ),
         MAPPED_READS_NUMBER_COLUMN_NAME: HeaderConfig(
-            "mapped reads number", stat_decorator, 150, True
+            "Mapped reads number", "Number of mapped reads / Total number of reads", stat_decorator, 100, True
         ),
-        MEAN_LENGTH_COLUMN_NAME: HeaderConfig("mean length", stat_decorator, 60, False),
+        MEAN_LENGTH_COLUMN_NAME: HeaderConfig("Mean length", "Mean length of the reads", stat_decorator, 50, False),
         READ_LENGTHS_COLUMN_NAME: HeaderConfig(
-            "read lengths", genescan_decorator, 200, False
+            "Reads lengths", "Distribution of reads lengths", genescan_decorator, 200, False
         ),
-        LOCI_COLUMN_NAME: HeaderConfig("loci", loci_list_decorator, 150, False),
-        CLONES_5_COLUMN_NAME: HeaderConfig("clones ≥5%", stat_decorator, 70, False),
+        LOCI_COLUMN_NAME: HeaderConfig("Loci", "Loci found in the analysis", loci_list_decorator, 150, False),
+        CLONES_5_COLUMN_NAME: HeaderConfig("clones ≥5%", "Number of clones ≥5% found for each loci", stat_decorator, 50, False),
         INTRA_CONTAMINATION_COLUMN_NAME: HeaderConfig(
-            "intra-contamination", stat_decorator, 100, False
+            "Conta.", "Intra-contamination", stat_decorator, 50, False
         ),
-        MAIN_CLONE_COLUMN_NAME: HeaderConfig("main clone", stat_decorator, 400, False),
+        MAIN_CLONE_COLUMN_NAME: HeaderConfig("Main clone", "Main clone found", stat_decorator, 400, False),
         MERGED_READS_COLUMN_NAME: HeaderConfig(
-            "merged reads", stat_decorator, 80, True
+            "Merged reads", "Merged reads", stat_decorator, 50, True
         ),
-        PRE_PROCESS_COLUMN_NAME: HeaderConfig("pre process", stat_decorator, 80, True),
+        PRE_PROCESS_COLUMN_NAME: HeaderConfig("Pre process", "Pre process", stat_decorator, 50, True),
         SHANNON_DIVERSITY_COLUMN_NAME: HeaderConfig(
-            "Shannon's diversity", stat_decorator, 80, False
+            "Shannon's diversity", "Shannon's diversity", stat_decorator, 70, False
         ),
         PIELOU_EVENNESS_COLUMN_NAME: HeaderConfig(
-            "Pielou's evenness", stat_decorator, 80, True
+            "Pielou's evenness", "Pielou's evenness", stat_decorator, 70, True
         ),
         SIMPSON_DIVERSITY_COLUMN_NAME: HeaderConfig(
-            "Simpson's diversity", stat_decorator, 80, True
+            "Simpson's diversity", "Pielou's evenness", stat_decorator, 70, True
         ),
     }
     # 'reads' : HeaderConfig('reads', 'parser', stat_decorator, False),
