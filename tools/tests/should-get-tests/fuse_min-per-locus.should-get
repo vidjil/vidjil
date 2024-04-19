@@ -2,6 +2,17 @@
 !LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS -t 20 ../data/results_file_min_per_locus.vidjil  -o fuse_min_per_locus.vidjil
 
 
-$ Correct number of clonotype of each germline
+$ Correct number of clonotype of each germline (TRB)
 20: "germline": "TRB"
+$ Correct number of clonotype of each germline (IGH)
+10: "germline": "IGH"
+
+
+!OUTPUT_FILE: fuse_min_per_locus_couple.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS -t 20 ../data/results_file_min_per_locus.vidjil  ../data/results_file_min_per_locus.vidjil  -o fuse_min_per_locus_couple.vidjil
+
+
+$ Correct number of clonotype of each germline if couple of vidjil (TRB)
+20: "germline": "TRB"
+$ Correct number of clonotype of each germline if couple of vidjil (IGH)
 10: "germline": "IGH"
