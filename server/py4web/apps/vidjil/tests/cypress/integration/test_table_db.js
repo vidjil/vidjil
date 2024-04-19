@@ -150,8 +150,9 @@ describe('Manipulate patient, sample and launch analysis', function () {
         cy.getTableLength('#db_table_container').should('eq', previous_length+3)
 
         var uid = 33 // last created patient, with only one tag
-        cy.get(`#sample_set_open_${uid}_config_id_-1 > :nth-child(4) > [data-linkable-name="#tagXXX"]`)
+        cy.get(`#sample_set_open_${uid}_config_id_-1 > :nth-child(4) > span > a`)
           .should("exist")
+          .should("have.attr", "data-linkable-name", "#tagXXX")
           .should("contain", "#tagXXX")
           .click({force: true})
           

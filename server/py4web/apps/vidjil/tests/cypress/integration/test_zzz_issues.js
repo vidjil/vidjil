@@ -103,16 +103,13 @@ describe('Manipulate db page', function () {
         cy.goToPatientPage()
         cy.openSet(uid)
 
-        cy.get('#db_content > :nth-child(4) > .db_block_right a')
-          .eq(0)
+        cy.get('.db_fixed_footer > tr > :nth-child(13) > a')
           .should("have.attr", "href")
           .and("match", /get_data\?/)
           .and("match", /config=9/)
           .and("match", /sample_set_id=25/)
 
-        
-        cy.get('#db_content > :nth-child(4) > .db_block_right a')
-          .eq(1)
+        cy.get('.db_fixed_footer > tr > :nth-child(14) > a')
           .should("have.attr", "href")
           .and("match", /get_analysis\?/)
           .and("match", /config=9/)
