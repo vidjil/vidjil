@@ -1,0 +1,7 @@
+!OUTPUT_FILE: fuse_min_per_locus.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS -t 20 ../data/results_file_min_per_locus.vidjil  -o fuse_min_per_locus.vidjil
+
+
+$ Correct number of clonotype of each germline
+20: "germline": "TRB"
+10: "germline": "IGH"
