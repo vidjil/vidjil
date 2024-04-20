@@ -709,6 +709,7 @@ class ListWindows(VidjilJson):
         self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
         self.d["producer"] = FUSE_VERSION
         self.d["timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.limit_per_locus = 0
         
     def __str__(self):
         return "<ListWindows: %s %d>" % ( self.d["reads"].d["segmented"], len(self) )
@@ -794,10 +795,7 @@ class ListWindows(VidjilJson):
 
         if "config" in self.d.keys() and "min-clones-per-locus" in self.d["config"]:
             self.limit_per_locus = int(self.d["config"]["min-clones-per-locus"])
-            self.per_locus = defaultdict(lambda: 0)
             print("Min per locus detected: " + str(self.limit_per_locus))
-        else:
-            self.limit_per_locus = 0
 
         try:
             print("%% run_v ->", self.d["samples"].d["producer"], self.d["samples"].d["run_timestamp"])
@@ -861,14 +859,14 @@ class ListWindows(VidjilJson):
 
         # reorder list of clones by top value; if not, filter per locus will not work
         self.d["clones"] = sorted(self.d["clones"], key=lambda c: c.d["top"])
-
+        per_locus = defaultdict(lambda: 0)
 
         for clone in self:
             if clone.d["top"] <= top \
-                or (clone.d["top"] > top and self.limit_per_locus and self.per_locus[clone.d["germline"]] < self.limit_per_locus) :
+                or (clone.d["top"] > top and self.limit_per_locus and per_locus[clone.d["germline"]] < self.limit_per_locus) :
                     result.append(clone.d["id"])
                     if self.limit_per_locus:
-                        self.per_locus[clone.d["germline"]] += 1
+                        per_locus[clone.d["germline"]] += 1
         return result
         
     def filter(self, f):
@@ -892,8 +890,6 @@ class ListWindows(VidjilJson):
         obj = ListWindows()
         # min-per-locus: assume that limit is always the same
         obj.limit_per_locus = self.limit_per_locus
-        if "per_locus" in self.__dict__.keys():
-            obj.per_locus       = self.per_locus
         l1 = len(self.d["reads"].d['segmented'])
         l2 = len(other.d["reads"].d['segmented'])
 
@@ -1014,13 +1010,14 @@ class ListWindows(VidjilJson):
         w=[]
 
         others = OtherWindows(nb_points)
+        per_locus = defaultdict(lambda: 0)
 
         for clone in self:
             if (int(clone.d["top"]) <= limit or limit == 0) \
-                or ("limit_per_locus" in self.__dict__ and self.limit_per_locus and clone.d["top"] > limit and self.limit_per_locus and self.per_locus[clone.d["germline"]] < self.limit_per_locus) :
+                or ("limit_per_locus" in self.__dict__ and self.limit_per_locus and clone.d["top"] > limit and self.limit_per_locus and per_locus[clone.d["germline"]] < self.limit_per_locus) :
                     w.append(clone)
                     if "limit_per_locus" in self.__dict__ and self.limit_per_locus:
-                        self.per_locus[clone.d["germline"]] += 1
+                        per_locus[clone.d["germline"]] += 1
 
         # Cut only at first loading of a file, not merged one (error on top and limit_per_locus)
         if len(w[0].d["reads"]) == 1:
