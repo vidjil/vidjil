@@ -890,6 +890,10 @@ class ListWindows(VidjilJson):
     def __add__(self, other): 
         '''Combine two ListWindows into a unique ListWindows'''
         obj = ListWindows()
+        # min-per-locus: assume that limit is always the same
+        obj.limit_per_locus = self.limit_per_locus
+        if "per_locus" in self.__dict__.keys():
+            obj.per_locus       = self.per_locus
         l1 = len(self.d["reads"].d['segmented'])
         l2 = len(other.d["reads"].d['segmented'])
 
@@ -1018,7 +1022,9 @@ class ListWindows(VidjilJson):
                     if "limit_per_locus" in self.__dict__ and self.limit_per_locus:
                         self.per_locus[clone.d["germline"]] += 1
 
-        self.d["clones"] = w #+ list(others) 
+        # Cut only at first loading of a file, not merged one (error on top and limit_per_locus)
+        if len(w[0].d["reads"]) == 1:
+            self.d["clones"] = w #+ list(others) 
 
         print("### Cut merged file, keeping window in the top %d for at least one point" % limit)
         return self

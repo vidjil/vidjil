@@ -21,8 +21,11 @@ $ Correct number of clonotype of each germline (IGH)
 # Top 10 of TRB from first samples are modifier as TRG, included windows
 
 $ Correct number of clonotype of each germline if couple of vidjil (TRB)
-20: "germline": "TRB" # top 10 present only in samples 1, 11 to 20 present in both samples
+# top 10 present only in samples 1, 11 to 20 present in both samples
+20: "germline": "TRB" 
 $ Correct number of clonotype of each germline if couple of vidjil (TRB)
-10: "germline": "TRG" # Top 10 of second samples
+# Top 10 of second samples
+10: "germline": "TRG" 
 $ Correct number of clonotype of each germline if couple of vidjil (IGH)
-13: "germline": "IGH" # 1-3 fro msamples 1 present only in first samples, ~1 to 3 from second sample present only in second, and 4 to 10 present in both.
+# 1-3 fro msamples 1 present only in first samples, ~1 to 3 from second sample present only in second, and 4 to 10 present in both.
+13: "germline": "IGH" 
