@@ -201,6 +201,10 @@ Isadoral Heraud et al.,
 Annales de Biologie Clinique, 2023,
 <https://www.jle.com./fr/revues/abc/e-docs/monoclonal_b_cell_lymphocytosis_with_a_non_cll_immunophenotype_review_of_34_cases_330642/article.phtml?tab=texte>
 
+Ying-Jung Huang et al.,
+*Evaluation of next-generation sequencing for measurable residual disease monitoring in three major fusion transcript subtypes of B-precursor acute lymphoblastic leukaemia*, Pathology, 2024,
+<https://doi.org/10.1016/j.pathol.2024.02.008>
+
 Vincent Javaugue et al.,
 *RNA-based immunoglobulin repertoire sequencing is a new tool for the management of monoclonal gammopathy of renal (kidney) significance*
 Kidney International, 2022
@@ -266,6 +270,11 @@ Ming Liang Oon et al.,
 Cancers, 2021, 13(2), 340,
 <https://dx.doi.org/10.3390/cancers13020340>
 
+Marie Materna et al.,
+*The immunopathological landscape of human pre-TCRα deficiency: From rare to common variants*,
+Science, 2024,
+<https://doi.org/10.1126/science.adh4059>
+
 Alejandro Medina et al.,
 *Comparison of next-generation sequencing (NGS) and next-generation flow (NGF) for minimal residual disease (MRD) assessment in multiple myeloma*,
 Blood Cancer Journal, 10, 108, 2020,
@@ -300,6 +309,14 @@ Cédric Pastoret et al.,
 *Molecular mechanisms underlying transformation of large granular lymphocytic leukemia to high-grade T-cell lymphoma*,
 Leukemia, 2023,
 <https://www.nature.com/articles/s41375-023-01922-z>
+
+Olivier Pellé et al.,
+*Combined germline and somatic human FADD mutations cause autoimmune lymphoproliferative syndrome*, Journal of Allergy and Clinical Immunology, 2024,
+<https://doi.org/10.1016/j.jaci.2023.09.028>
+
+Maria Rodrigo Riestra et al.,
+*Human Autosomal Recessive DNA Polymerase Delta 3 Deficiency Presenting as Omenn Syndrome*, Journal of Clinical Immunology, 2024,
+<https://doi.org/10.1007/s10875-023-01627-z>
 
 Mikaël Salson et al.,
 *High-throughput sequencing in acute lymphoblastic leukemia: Follow-up of minimal residual disease and emergence of new clones*,
