@@ -205,6 +205,11 @@ Ying-Jung Huang et al.,
 *Evaluation of next-generation sequencing for measurable residual disease monitoring in three major fusion transcript subtypes of B-precursor acute lymphoblastic leukaemia*, Pathology, 2024,
 <https://doi.org/10.1016/j.pathol.2024.02.008>
 
+Natalia Izotova et al.,
+*Long-term lymphoid progenitors independently sustain naïve T and NK cell production in humans*,
+Nature Communications, 2021,
+<https://doi.org/10.1038/s41467-021-21834-9>
+
 Vincent Javaugue et al.,
 *RNA-based immunoglobulin repertoire sequencing is a new tool for the management of monoclonal gammopathy of renal (kidney) significance*
 Kidney International, 2022
@@ -215,20 +220,15 @@ Irene Jo et al.,
 Clinica Chimica Acta, 2019,
 <https://doi.org/10.1016/j.cca.2018.10.037>
 
-Natalia Izotova et al.,
-*Long-term lymphoid progenitors independently sustain naïve T and NK cell production in humans*,
-Nature Communications, 2021,
-<https://doi.org/10.1038/s41467-021-21834-9>
-
-Vincent Jauvague et al.,
-*RNA-based immunoglobulin repertoire sequencing is a new tool for the management of monoclonal gammopathy of renal (kidney) significance.*
-Kidney International, 2022, 101(2), 331-337,
-<https://doi.org/10.1016/j.kint.2021.10.017>
-
 Takashi Kanamori et al.,
 *Genomic analysis of multiple myeloma using targeted capture sequencing in the Japanese cohort*,
 British Journal of Haematology, 2020,
 <https://doi.org/10.1111/bjh.16720>
+
+Rathana Kim et al.,
+*Adult T-cell acute lymphoblastic leukemias with IL7R pathway mutations are slow-responders who do not benefit from allogeneic stem-cell transplantation*,
+Leukemia, 2020, 34, 1730-1740,
+<https://dx.doi.org/10.1038/s41375-019-0685-4>
 
 Kenji Kimura et al.,
 *Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next-Generation Sequencing*,
@@ -294,16 +294,6 @@ Edit Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
 Blood, 2018,
 <https://dx.doi.org/10.1182/blood-2017-10-810739>
-
-Natalia Izotova et al.,
-*Long-term lymphoid progenitors independently sustain naïve T and NK cell production in humans*,
-Nature Communications, 2021, 12:1622,
-<https://doi.org/10.1038/s41467-021-21834-9>
-
-Rathana Kim et al.,
-*Adult T-cell acute lymphoblastic leukemias with IL7R pathway mutations are slow-responders who do not benefit from allogeneic stem-cell transplantation*,
-Leukemia, 2020, 34, 1730-1740,
-<https://dx.doi.org/10.1038/s41375-019-0685-4>
 
 Cédric Pastoret et al.,
 *Molecular mechanisms underlying transformation of large granular lymphocytic leukemia to high-grade T-cell lymphoma*,
