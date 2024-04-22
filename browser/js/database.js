@@ -237,8 +237,14 @@ Database.prototype = {
         }
         var arg = "";
         if (typeof args != "undefined" && Object.keys(args).length) {
+            // Append args
             arg = this.argsToStr(args)
-            url += "?" + arg;
+            if (url.includes("?")) {
+                url += "&"
+            } else {
+                url += "?"
+            }
+            url += arg;
         }
 
         //hack to process both web2py and py4web redirected url

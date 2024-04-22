@@ -502,6 +502,8 @@ def submit():
 @action.uses("sample_set/custom.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def custom():
+    log.debug(f"Calling custom with {request.query=}")
+    
     if "id" not in request.query:
         # TODO : better deal with this case, but it fails for now
         res = {"success": "false", "message": "Missing field id"}

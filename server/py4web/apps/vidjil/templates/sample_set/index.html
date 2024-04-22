@@ -140,7 +140,7 @@
                         [[=row.sequence_file.sampling_date]] 
                         [[pass]]
                     </td>
-                    <td> [[=tag_decorator.sanitize(tag_decorator.decorate(row.sequence_file.info, 'tag', 'sequence_file', '/sample_set/custom'))]] </td>
+                    <td> [[=tag_decorator.sanitize(tag_decorator.decorate(row.sequence_file.info, 'tag', 'sequence_file', '/sample_set/custom?id=' + request.query['id']))]] </td>
                     <td [[if row.sequence_file.data_file == None :]] [[=XML("class='inactive' title='file is missing' ")]] [[pass]] >
                         [[=vidjil_utils.format_size(row.sequence_file.size_file)]] 
                     </td>
