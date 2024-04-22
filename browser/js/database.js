@@ -29,10 +29,10 @@ function Database(model, address) {
     
     
     if (DB_ADDRESS !== ""){
-        var fileref=document.createElement('script')
-        fileref.setAttribute("type","text/javascript")
-        fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
-        document.getElementsByTagName("head")[0].appendChild(fileref)
+        // var fileref=document.createElement('script')
+        // fileref.setAttribute("type","text/javascript")
+        // fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
+        // document.getElementsByTagName("head")[0].appendChild(fileref)
         
         this.db_address = DB_ADDRESS;
         this.upload = {};
@@ -237,8 +237,14 @@ Database.prototype = {
         }
         var arg = "";
         if (typeof args != "undefined" && Object.keys(args).length) {
+            // Append args
             arg = this.argsToStr(args)
-            url += "?" + arg;
+            if (url.includes("?")) {
+                url += "&"
+            } else {
+                url += "?"
+            }
+            url += arg;
         }
 
         //hack to process both web2py and py4web redirected url
@@ -443,7 +449,7 @@ Database.prototype = {
         try {
             res = jQuery.parseJSON(result);
         }
-        catch(err)//it's not a json so we just display the result as an html page
+        catch (err)//it's not a json so we just display the result as an html page
         {
             //affichage résultat
             this.display(result)
@@ -454,9 +460,10 @@ Database.prototype = {
             
             //
             this.fixed_header()
-            adress=DB_ADDRESS + 'notification/get_active_notifications'
+
             // New page displayed, attempt to display header and login notifications
-            this.loadNotifications(adress);
+            let address=DB_ADDRESS + 'notification/get_active_notifications'
+            this.loadNotifications(address);
 
             $("#menu-container").addClass('disabledClass');
 
@@ -467,6 +474,7 @@ Database.prototype = {
             for (var i = list_select.length - 1; i >= 0; i--) {
                 $('#'+list_select[i]).select2();
             }
+            this.executeAfterAjaxScript()
 
             return 0 ;
         }
@@ -516,7 +524,7 @@ Database.prototype = {
     },
     
     /** 
-     * link html forms to their coresponding ajax handler 
+     * link html forms to their corresponding ajax handler 
      * */
     init_ajaxform: function () {
         var self = this
@@ -934,6 +942,10 @@ Database.prototype = {
         }
     },
 
+    executeAfterAjaxScript: function() {
+        $.globalEval($(".afterAjaxScript").html());
+    },
+
     clear_login_info: function() {
         document.getElementById('login-container').innerHTML = '';
     },
@@ -1161,11 +1173,23 @@ Database.prototype = {
 
     //affiche la fenetre de dialogue avec le serveur et affiche ses réponses
     display: function (msg) {
+        console.log("display")
         this.div.style.display = "block";
         this.msg.innerHTML = msg;
-            
+        
         this.extract_login_info();
-        this.uploader.display()
+        this.uploader.display();
+        this.update_stats_locus_display();
+    },
+
+    update_stats_locus_display:function() {
+        console.log("update_stats_locus_display")
+        console.log("document.querySelectorAll(\".stats_locus\") : " + document.querySelectorAll(".stats_locus").length)
+        document.querySelectorAll(".stats_locus").forEach(function (element) {
+            locus = element.innerHTML
+            element.innerHTML = ""
+            element.appendChild(self.m.systemBox(locus, true))
+        })
     },
 
     //efface et ferme la fenetre de dialogue avec le serveur
@@ -1181,10 +1205,15 @@ Database.prototype = {
         
         $("#db_table_container").bind("scroll", function() {
             var offset = $(this).scrollTop();
-
             fixedHeader.css("top", offset)
-
         });
+
+        if ($("#db_table_container_x_scroll").length > 0) {
+            $("#db_table_container_x_scroll").bind("scroll", function() {
+                var offset = $(this).scrollLeft();
+                fixedHeader.css("left", -1*offset)
+            });
+        }
     },
     
     group_rights: function (value, name, right, id) {

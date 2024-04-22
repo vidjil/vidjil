@@ -1078,7 +1078,8 @@ div.button {
     margin-right: -27px;
 }
 
-.button2 {
+.button2,
+.button2_next {
     border: solid;
     border-width: 1px;
     padding: 3px;
@@ -1090,6 +1091,10 @@ div.button {
     text-align: center;
     padding-left: 10px;
     padding-right: 10px;
+}
+
+.button2_next {
+  margin-left: -8px;
 }
 
 .clipboard-button {
@@ -1693,6 +1698,12 @@ h3 .uid {
     overflow-x: hidden;
     height: calc(~"100% - 30px");
     position: relative;
+}
+
+#db_table_container.border_columns td + td { border-left:1px solid  @border; }
+
+#db_table_container_x_scroll {
+    overflow-x: scroll;
 }
 
 #db_fixed_header {
@@ -2563,6 +2574,20 @@ form {
     }
 }
 
+.bar_chart_zoom {
+	-webkit-transition: -webkit-transform 0.2s;
+	transition: -webkit-transform 0.2s;
+	transition: transform 0.2s;
+	transition: transform 0.2s, -webkit-transform 0.2s;
+}
+
+.bar_chart_zoom:hover {
+  -webkit-transform: scale(2);
+  transform: scale(2);
+  background-color: @background;
+  cursor: pointer;
+}
+
 .stats_locus {
     margin: 2px;
 }
@@ -2824,4 +2849,8 @@ div.tooltip {
 }
 .warnings_section_unpresent {
   color: @secondary
+}
+
+.afterAjaxScript {
+  display: none;
 }

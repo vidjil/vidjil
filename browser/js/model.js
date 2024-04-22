@@ -3024,13 +3024,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {string} system - system string ('trg', 'igh', ...)
      * @return {dom_element} span
      * */
-    systemBox: function (system){
+    systemBox: function (system, forceColor = false){
         
         var span = document.createElement('span')
         span.className = "systemBoxMenu";
         if ((typeof system != 'undefined')){
             span.appendChild(document.createTextNode(this.germlineList.getShortcut(system)));
-            if (this.system_selected.indexOf(system) != -1) 
+            if (forceColor || (this.system_selected.indexOf(system) != -1) )
                 span.style.background = this.germlineList.getColor(system)
             span.title = system
         }else{
@@ -3861,6 +3861,29 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         var filename = "clone_" + cloneIds.join("_") + "." + file_format
         download_csv(data, filename);
+    },
+
+    /**
+     * Export statQC data from a json string
+     * @param  {Array}  data    Data to convert in csv format
+     */
+    exportStatsQC: function(data){
+        console.default.log( "exportStatsQC " + data )
+        // Replace some caracters of the json string to be compliant with json parsing
+        data  = data.replaceAll('\'', '"').replaceAll('None', 'null').replaceAll('L, "', ', "')
+        jdata = JSON.parse(data)
+
+        var headers  = Object.keys(jdata[0])
+        var new_data = [headers.join("\t")]
+
+        for (var i = 0; i < jdata.length; i++) {
+            const elt = jdata[i]
+            var tsv_line = headers.map(x => elt[x])
+            new_data.push(tsv_line.join("\t"))
+        }
+
+        var filename = "vidjil_statsQC.tsv"
+        download_csv(new_data.join("\n"), filename);
     },
 
     /**

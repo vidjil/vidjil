@@ -352,7 +352,7 @@ class TestSampleSetController():
 
         # Then : We get results_file list
         result = json.loads(json_result)
-        assert result["message"] == "an error occured"
+        assert result["message"] == "an error occurred"
         patients = result["sets"][defs.SET_TYPE_PATIENT]
         assert len(patients) == 2
         # Patient add was added
@@ -362,7 +362,7 @@ class TestSampleSetController():
         patient_add_in_db = db.patient[patient_add["id"]]
         assert patient_add_in_db["first_name"] == self.patient_add_data["first_name"]
         assert patient_add_in_db["last_name"] == self.patient_add_data["last_name"]
-        assert patient_add_in_db["birth"] == None
+        assert patient_add_in_db["birth"] is None
         # patient edit was not modified
         patient_edit = next(
             patient for patient in patients if patient["last_name"] == self.patient_edit_data["last_name"])

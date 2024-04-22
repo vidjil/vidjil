@@ -1139,3 +1139,26 @@ var row_cast_content = function(title, content, time_length, clone) {
         }
     }
 }
+
+/**
+ * Update a checkbox indeterminate and checked states according to a list of checkboxes
+ * @param {checkbox} checkboxToUpdate 
+ * @param {Array<checkbox>} checkboxes 
+ */
+function updateIndeterminateState(checkboxToUpdate, checkboxes) {
+    numberOfChecked = 0;
+    for (var checkbox of checkboxes) {
+        if (checkbox.checked) {
+            numberOfChecked++;
+        }
+    }
+    if (numberOfChecked == 0) {
+        checkboxToUpdate.checked = false;
+        checkboxToUpdate.indeterminate = false;
+    } else if (numberOfChecked == checkboxes.length) {
+        checkboxToUpdate.checked = true;
+        checkboxToUpdate.indeterminate = false;
+    } else {
+        checkboxToUpdate.indeterminate = true;
+    }
+}

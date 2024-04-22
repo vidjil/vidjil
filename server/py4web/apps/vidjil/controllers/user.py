@@ -1,19 +1,12 @@
-# -*- coding: utf-8 -*-
-from sys import modules
 from .. import defs
-from ..modules.vidjil_utils import jsontransformer
-from ..modules import tag
-from ..modules.stats_decorator import *
+from ..modules import vidjil_utils
 from ..modules.controller_utils import error_message
-from ..modules.permission_enum import PermissionEnum
 import json
-import re
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
+from py4web import action, request, URL
 import datetime
 from datetime import timedelta 
 
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+from ..common import db, T, auth, log
 
 
 ##################################

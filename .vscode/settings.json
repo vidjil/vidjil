@@ -4,5 +4,24 @@
         "server"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "cSpell.words": [
+        "airr",
+        "atwho",
+        "Clonality",
+        "clonotype",
+        "genescan",
+        "germline",
+        "germlines",
+        "ijson",
+        "jsontransformer",
+        "noclass",
+        "ombott",
+        "Pielou",
+        "pydal",
+        "recombinations",
+        "sampleset",
+        "yatl",
+        "zmodel"
+    ]
 }
