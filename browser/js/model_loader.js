@@ -306,18 +306,45 @@ Model_loader.prototype = {
         if (data.clones == null) {
             data.clones = []
         }
-        for (var i = 0; i < data.clones.length; i++) {
-            if (data.clones[i].top <= limit) {
+        
+        // bypass limit if we have min-per-locus defined in config
+        per_locus = {}
+        console.debug(data)
+        if (data.samples["commandline"][0].indexOf("--min-clones-per-locus") != -1 ){
+            console.debug(" HAVE --min-clones-per-locus")
+            console.debug(data.samples["commandline"][0])
+            limit_per_locus = data.config["min-per-locus"]
+        } else {
+            console.debug(" HAVE NOT NOT NOT --min-clones-per-locus")
+            limit_per_locus = 0
+        }
+
+        data.clones.forEach(clone => {
+            if (per_locus[clone.germline] == undefined) {
+             per_locus[clone.germline] = Array.from({length: data.samples.number}, (v, i) => 0) 
+            }
+
+            if (limit_per_locus){
+                var relativeValueOfReads    = Array.apply(null, Array(clone.reads.length)).map(function (x, i) { return x/data.reads.segmented[i]; })
+                console.debug( `relativeValueOfReads ${relativeValueOfReads}; indexOfMaxRelativeValue ${indexOfMaxRelativeValue}`)
+                var indexOfMaxRelativeValue = relativeValueOfReads.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+                console.debug( `relativeValueOfReads ${relativeValueOfReads}; indexOfMaxRelativeValue ${indexOfMaxRelativeValue}`)
+            }
+
+            if (clone.top <= limit ||
+                (limit_per_locus && per_locus[clone.germline][indexOfMaxRelativeValue] < limit_per_locus)
+                ) {
                 // real
                 var c_attributes = C_CLUSTERIZABLE
                        | C_INTERACTABLE
                        | C_IN_SCATTERPLOT
                        | C_SIZE_CONSTANT
-                var clone = new Clone(data.clones[i], self, index, c_attributes)
-                self.mapID[data.clones[i].id] = index;
+                var clone = new Clone(clone, self, index, c_attributes)
+                self.mapID[clone.id] = index;
                 index++
+                per_locus[clone.germline][indexOfMaxRelativeValue] += 1
             }
-        }
+        })
         
         //init clusters
         this.loadCluster(this.data_clusters)
