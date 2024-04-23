@@ -68,11 +68,11 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis, timeout) => {
   cy.log(`file_analysis: ${file_analysis}`)
   // Upload vidjil file
   cy.get("input[id=upload_json]")
-    .then(($btn) => { cy.get("input[id=upload_json]").uploadFile(file_vidjil); })
+    .then(($btn) => { cy.get("input[id=upload_json]").selectFile(file_vidjil, {force: true}); })
   // Upload analysis file (if given)
   if (file_analysis != undefined) {
     cy.get("input[id=upload_pref]")
-      .then(($btn) => {cy.get("input[id=upload_pref]").uploadFile(file_analysis); })
+      .then(($btn) => {cy.get("input[id=upload_pref]").selectFile(file_analysis, {force: true}); })
   }
   // Launch loading
   cy.get("button[id=start_import_json]")

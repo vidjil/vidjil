@@ -145,7 +145,7 @@ describe('List', function () {
   it('05-hide_distrib_clones_with_tagspan',  function() {
 
     //// Issue 4375; hide distrib clone by tag
-    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
     // # id     0 --> biggest clone, IGHV1, IGHJ1, _average_read_length==162
     //  # id 15/16 --> other clone (TRD, IGH)
     //  # id    18 --> lenSeqAverage/_average_read_length == 162
@@ -189,7 +189,7 @@ describe('List', function () {
 
 
   it('06-name_distrib_clone',  function() {
-    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
 
     // Tests on size after top change
     cy.get("#top_slider")
@@ -226,7 +226,7 @@ describe('List', function () {
 
 
   it('07-focus_clone',  function() {
-    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
     cy.changePreset("visu", "read length distribution")
     cy.get("#top_slider")
       .invoke('val', 5)
@@ -267,7 +267,7 @@ describe('List', function () {
 
 
   it('08-cluster clone',  function() {
-    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
     cy.changePreset("visu", "read length distribution")
     cy.get("#top_slider")
       .invoke('val', 5)
@@ -300,7 +300,7 @@ describe('List', function () {
 
 
   it('09-filter clone',  function() {
-    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
 
     cy.get('#filter_input').type('acag{enter}') // All real clone have this sequence, no distrib clonotype
     cy.update_icon()
@@ -311,7 +311,7 @@ describe('List', function () {
 
 
   it('10-lock',  function() {
-    cy.openAnalysis("/doc/analysis-example2.vidjil")
+    cy.openAnalysis("doc/analysis-example2.vidjil")
 
     cy.get('#div_sortLock')
       .should('have.class', "icon-lock-1 list_lock_on")
@@ -393,7 +393,7 @@ describe('List', function () {
 
 
   it('12-smaller clonotype in list',  function() {
-    cy.openAnalysis("/doc/analysis-example.vidjil")
+    cy.openAnalysis("doc/analysis-example.vidjil")
 
     // Correct text and number
     cy.getCloneInList(100).should("have.text", "TRB smaller clonotypes").should('be.visible')
@@ -410,8 +410,7 @@ describe('List', function () {
   })
 
   it('13-xxx',  function() {
-    cy.openAnalysis("/doc/analysis-example.vidjil")
-    
+    cy.openAnalysis("doc/analysis-example.vidjil")
 
     var clone_list = ["6", "4", "20", "22"]
     // # clone with seg & sequence (6)
@@ -438,12 +437,12 @@ describe('List', function () {
 
   it('issue-5040-Open an analysis file mix old/new/unknow tag',  function() {
     // Without analysis
-    cy.openAnalysis("data/demo_lil_l3_tutorial.vidjil")
+    cy.openAnalysis("browser/test/data/demo_lil_l3_tutorial.vidjil")
     cy.get('#listElem_1 > .nameBox').should("have.text", "IGHV3-9 7/CCCGGA/17 J6*02")
 
     
     // With analysis; various type of tags
-    cy.openAnalysis("data/demo_lil_l3_tutorial.vidjil", "data/5040.analysis")
+    cy.openAnalysis("browser/test/data/demo_lil_l3_tutorial.vidjil", "browser/test/data/5040.analysis")
     cy.get('#listElem_1 > .nameBox').should("have.text", "IGHV3-9 7/CCCGGA/17 J6*02")
 
     cy.getCloneInList(1).should('have.css', 'color', 'rgb(192, 48, 56)')  // tag "0" -> clonotype_1

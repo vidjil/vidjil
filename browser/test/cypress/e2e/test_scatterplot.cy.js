@@ -160,7 +160,7 @@ describe('Scatterplot', function () {
       .should("have.text", "T8045-BC082-fu12019-12-27+10300 000 reads (65.53%)") //Correct text in tshe sample tooltip
 
     // mouseover_without_dates
-    cy.openAnalysis("/doc/analysis-example.vidjil")
+    cy.openAnalysis("doc/analysis-example.vidjil")
 
     cy.get('#time0')
       .trigger('mouseover')
@@ -172,7 +172,7 @@ describe('Scatterplot', function () {
 
   it('05-labels',  function() {
     // Issue 4472; model precision is incorect if distributions clones are set
-    cy.openAnalysis("/data/issues/4472.vidjil")
+    cy.openAnalysis("browser/test/data/issues/4472.vidjil")
     cy.get('#text_container > [y="40"]').should("have.text", "100%")
 
     // First label is 100% with TRG, and 10% TRG hide
@@ -182,7 +182,7 @@ describe('Scatterplot', function () {
   })
 
   it('06-Axis selector in menus',  function() {
-    cy.openAnalysis("/doc/analysis-example.vidjil")
+    cy.openAnalysis("doc/analysis-example.vidjil")
     cy.get("#visu_V5_gene")
       .should('have.attr', 'title', "V gene (or 5' segment), gathering all alleles")
   })

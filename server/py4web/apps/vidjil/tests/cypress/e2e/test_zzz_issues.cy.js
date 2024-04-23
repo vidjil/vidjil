@@ -109,6 +109,7 @@ describe('Manipulate db page', function () {
           .and("match", /config=9/)
           .and("match", /sample_set_id=25/)
 
+        
         cy.get('.db_fixed_footer > tr > :nth-child(14) > a')
           .should("have.attr", "href")
           .and("match", /get_analysis\?/)

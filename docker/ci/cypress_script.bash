@@ -1,3 +1,6 @@
+# This script will launch cypress testing pipeline on specs files
+# will also create some symbolic links for server side.
+
 echo "Arguments: $@"
 
 echo "$ change chmod of cypress directory"
@@ -12,13 +15,20 @@ ls /app/cypress/fixtures/demo
 echo "==> ls /app/cypress/fixtures/tools/tests/data"
 ls /app/cypress/fixtures/tools/tests/data
 
+# for server side
+ln -sf $PWD/browser /app/browser || true
+ln -sf $PWD/doc  /app/doc        || true
+ln -sf $PWD/demo /app/demo       || true
+ln -sf $PWD/tools /app/tools     || true
+
+
 echo "==> PWD: `pwd`"
 
 echo "==> ls /app/vidjil/browser/test/data/addons: `ls /app/vidjil/browser/test/data/addons`"
 
 
 # Move addons to the correct path for test
-if [[ $1 == /app/cypress/integration/external* ]]
+if [[ $1 == /app/cypress/e2e/external* ]]
 then
 	echo "External test, no configuration loaded"
 else
@@ -42,6 +52,28 @@ else
 	cat /app/vidjil/browser/js/conf.js
 	echo "=====\n"
 fi
+
+
+
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+echo -e "${CYAN}==> ls /app${NC}"
+ls /app
+
+echo -e "${CYAN}==> ls /app/browser/test/data${NC}"
+ls /app/browser/test/data
+echo -e "${CYAN}==> ls /app/doc${NC}"
+ls /app/doc
+echo -e "${CYAN}==> ls /app/demo${NC}"
+ls /app/demo
+echo -e "${CYAN}==> ls /app/tools${NC}"
+ls /app/tools
+
+echo -e "${CYAN}==> ls cypress/e2e/${NC}"
+ls cypress/e2e/
+
+
 
 echo "TIME - Before cypress - $(date)"
 echo -e "$ ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec $@ --env workdir=vidjil,host=$HOST,initiated_database=false"

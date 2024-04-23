@@ -1,3 +1,6 @@
+# This file is only need for client side setup.
+# Will create various links
+
 # Init css files
 make -C browser/css/icons
 make -C demo
@@ -10,17 +13,28 @@ ln -sf $PWD/$CYPRESS_PATH /app/cypress
 ln -sf $PWD/docker/ci/cypress.json /app/cypress.json
 ln -sf $PWD/docker/ci/cypress_script.bash /app/script.bash
 
-echo "==> ls /app"
+
+mkdir -p /app/browser/test/  || true
+ln -sf $PWD/browser/test/data /app/browser/test/data || true
+ln -sf $PWD/doc  /app/doc    || true
+ln -sf $PWD/demo /app/demo   || true
+ln -sf $PWD/tools /app/tools || true
+
+
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+echo -e "${CYAN}==> ls /app${NC}"
 ls /app
-echo "==> ls /app/cypress"
-ls /app/cypress
 
-ln -sf $PWD/browser/test/data /app/cypress/fixtures/data || true
-ln -sf $PWD/doc  /app/cypress/fixtures/doc  || true
-ln -sf $PWD/demo /app/cypress/fixtures/demo || true
-ln -sf $PWD/tools /app/cypress/fixtures/tools || true
+echo -e "${CYAN}==> ls /app/browser/test/data${NC}"
+ls /app/browser/test/data
+echo -e "${CYAN}==> ls /app/doc${NC}"
+ls /app/doc
+echo -e "${CYAN}==> ls /app/demo${NC}"
+ls /app/demo
+echo -e "${CYAN}==> ls /app/tools${NC}"
+ls /app/tools
 
-echo "==> ls /app/vidjil/demo"
-ls /app/vidjil/demo
-echo "==> ls /app/vidjil/tools/tests"
-ls /app/vidjil/tools/tests
+echo -e "${CYAN}==> ls cypress/e2e/${NC}"
+ls cypress/e2e/

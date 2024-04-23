@@ -45,6 +45,9 @@ Cypress.Commands.add('goToProcessPage', () => {
 Cypress.Commands.add('goToNewsPage', () => {
   cy.goToDbPage("#db_page_news", "#page_news", "News")
 })
+Cypress.Commands.add('goToLogsPage', () => {
+  cy.goToDbPage("#db_page_logs", "#page_user_logs", "Logs")
+})
 
 
 /////////////////

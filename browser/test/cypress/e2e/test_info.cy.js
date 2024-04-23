@@ -10,7 +10,7 @@ describe('Colors', function () {
 
   //check color and info panel are updated after selecting a new axis as color
   it('00-info',  function() {
-    cy.openAnalysis("/data/issues/4070_diversity_null.vidjil")
+    cy.openAnalysis("browser/test/data/issues/4070_diversity_null.vidjil")
     cy.get('.button > .icon-info').click()
 
     cy.get('#modal_line_value_index_Ds_diversity')
@@ -19,7 +19,7 @@ describe('Colors', function () {
 
   //check color and info panel are updated after selecting a new axis as color
   it('01-overlap index',  function() {
-    cy.openAnalysis("/data/issues/4422.vidjil")
+    cy.openAnalysis("browser/test/data/issues/4422.vidjil")
     cy.get('.button > .icon-info').click()
 
     cy.get("#overlap_morisita")
@@ -30,7 +30,7 @@ describe('Colors', function () {
   
 
   it('02-info informations',  function() {
-    cy.openAnalysis("/doc/analysis-example.vidjil")
+    cy.openAnalysis("doc/analysis-example.vidjil")
 
     cy.get('#info_segmented > :nth-child(2)')
       .should("have.text", '742 377 (94.35%)') // Incorrect number of segmented reads

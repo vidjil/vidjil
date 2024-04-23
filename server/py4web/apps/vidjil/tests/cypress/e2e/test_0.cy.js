@@ -18,7 +18,8 @@ describe('Before all step', function () {
 
     it('01-Remove anon for public grp',  function() {
         cy.login(Cypress.env('host'))
-        cy.close_tips()
+        cy.visitpage(Cypress.env('host'))
+
 
         cy.goToGroupsPage()
         var grp_public = 3

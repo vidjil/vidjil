@@ -46,7 +46,7 @@ describe('Test menu', function () {
 
   it('00-normalization_none',  function() {
     // test_00_normalization_none
-    cy.openAnalysis("/doc/analysis-example.vidjil")
+    cy.openAnalysis("doc/analysis-example.vidjil")
     
     cy.open_menu_settings()
     cy.get('#normalize_list').should("be.visible") // "After clicking normalize_list form should be visible"
@@ -87,7 +87,7 @@ describe('Test menu', function () {
 
 
   it('01-sample_name',  function() {
-    cy.openAnalysis("/doc/analysis-example2.vidjil")
+    cy.openAnalysis("doc/analysis-example2.vidjil")
 
     // def test_01_names_sample
     var type_name = "sampling_date"
@@ -116,14 +116,14 @@ describe('Test menu', function () {
     // Test the slider value and reset after loading/reloading of analysis (issue #2583)
     // also reset other
 
-    cy.openAnalysis("/data/issues/2583_noclone.vidjil")
+    cy.openAnalysis("browser/test/data/issues/2583_noclone.vidjil")
     cy.open_menu_filter()
 
     cy.get("#top_label").should("have.text", "0 clones (top 0)") // Correct slider label text when no clone
     cy.get("#top_slider").should("have.value", "1") // correct slider value if no clone (minimum allowed value)
 
     // ## Load data with enough clone to change top value
-    cy.openAnalysis("/data/issues/2583_25Xclones.vidjil")
+    cy.openAnalysis("browser/test/data/issues/2583_25Xclones.vidjil")
     cy.open_menu_filter()
 
     cy.get("#top_label").should("have.text", "20 clones (top 20)" ) // Correct slider label text when clones are present
@@ -132,7 +132,7 @@ describe('Test menu', function () {
 
   it('03-cluster by V - issue 4495',  function() {
     // Issue 4495; Erreurs lors d'un cluster by V; cluster_clone undefined
-    cy.openAnalysis("/data/issues/4495.vidjil", "/data/issues/4495.analysis")
+    cy.openAnalysis("browser/test/data/issues/4495.vidjil", "browser/test/data/issues/4495.analysis")
 
     cy.open_menu_cluster()
     cy.get("#clusterBy_5").click()
@@ -145,7 +145,7 @@ describe('Test menu', function () {
   it('04-Colorize',  function() {
     cy.viewport(1280, 766) // change size of viewport to show some clonotype in list
 
-    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
 
     cy.changePreset("visu", "read length distribution")
     cy.update_icon()
@@ -167,7 +167,7 @@ describe('Test menu', function () {
 
 
   it('05-palette css',  function() {
-    cy.openAnalysis("/doc/analysis-example2.vidjil")
+    cy.openAnalysis("doc/analysis-example2.vidjil")
 
     cy.get("body")
       .should('have.css', 'background-color')

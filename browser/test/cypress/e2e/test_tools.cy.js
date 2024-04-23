@@ -13,7 +13,7 @@ describe('Test tools', function () {
 
 
   it('00-action on vertical-separator',  function() {
-    cy.openAnalysis("/doc/analysis-example.vidjil")
+    cy.openAnalysis("doc/analysis-example.vidjil")
 
     cy.get("#left-container").should("be.visible")// left menu should be visible
     cy.get("#vertical-separator").click()

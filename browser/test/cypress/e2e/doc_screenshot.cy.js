@@ -76,7 +76,7 @@ describe('Test screenshot client', function () {
 
 
         // Splitted diversity
-        cy.openAnalysis("data/fused_diversity_splitted.vidjil")
+        cy.openAnalysis("browser/test/data/fused_diversity_splitted.vidjil")
         cy.get('.button > .icon-info').click()
         cy.get('#modal_header_index_Ds_diversity > .header')
           .scrollIntoView()

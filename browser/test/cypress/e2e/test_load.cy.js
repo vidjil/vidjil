@@ -166,7 +166,7 @@ describe('Load', function () {
 
     it('loading-vidjil_analysis_order_1',  function() {
       // load_first_config_without_analysis; 3 samples; analysis based on these files
-      cy.openAnalysis("/data/issues/4407_config_1.vidjil")
+      cy.openAnalysis("browser/test/data/issues/4407_config_1.vidjil")
 
       // Test line in graph, only show if analysis loading end without error
       cy.get("#polyline4")
@@ -176,7 +176,7 @@ describe('Load', function () {
         })
 
       // load_first_config; 3 samples; analysis based on these files
-      cy.openAnalysis("/data/issues/4407_config_1.vidjil", "/data/issues/4407_.analysis")
+      cy.openAnalysis("browser/test/data/issues/4407_config_1.vidjil", "browser/test/data/issues/4407_.analysis")
       // Test line in graph, only show if analysis loading end without error
       cy.get("#polyline4")
         .invoke('attr', 'd')
@@ -185,7 +185,7 @@ describe('Load', function () {
         })
 
       // load_second_config, not present in loaded analysis
-      cy.openAnalysis("/data/issues/4407_config_2.vidjil", "/data/issues/4407_.analysis")
+      cy.openAnalysis("browser/test/data/issues/4407_config_2.vidjil", "browser/test/data/issues/4407_.analysis")
       // Test line in graph, only show if analysis loading end without error
       cy.get("#polyline4")
         .invoke('attr', 'd')
@@ -200,7 +200,7 @@ describe('Load', function () {
       // Issue 4541; Vidijl file with 3 samples, only 6 clones keeped
 
       // load_analysis_simple_reorder
-      cy.openAnalysis("/data/issues/issues_4541/4541.vidjil", "/data/issues/issues_4541/4541_00_stock.analysis")
+      cy.openAnalysis("browser/test/data/issues/issues_4541/4541.vidjil", "browser/test/data/issues/issues_4541/4541_00_stock.analysis")
       cy.get('#visu2_title').should("have.text", "2 / 3" )// Ratio show is correct at init
       cy.get('#time0').should("exist")
         .should("have.text", 'file0_name')
@@ -210,7 +210,7 @@ describe('Load', function () {
 
       // Samples here haven't stock_order field (old one)
       // load_analysis_hidden_sample
-      cy.openAnalysis("/data/issues/issues_4541/4541.vidjil", "/data/issues/issues_4541/4541_01.analysis")
+      cy.openAnalysis("browser/test/data/issues/issues_4541/4541.vidjil", "browser/test/data/issues/issues_4541/4541_01.analysis")
       cy.get('#visu2_title').should("have.text", "2 / 3" )// Ratio show is correct at init
       cy.get('#time0').should("exist")
         .should("have.text", 'file0_name')
@@ -219,7 +219,7 @@ describe('Load', function () {
         .should("have.text", 'file2_name')
 
       // load_analysis_one_more_sample
-      cy.openAnalysis("/data/issues/issues_4541/4541_02.vidjil", "/data/issues/issues_4541/4541_01.analysis")
+      cy.openAnalysis("browser/test/data/issues/issues_4541/4541_02.vidjil", "browser/test/data/issues/issues_4541/4541_01.analysis")
       cy.get('#visu2_title').should("have.text", "3 / 4" )// Ratio show is correct at init
       cy.get('#time0').should("exist")
         .should("have.text", 'file0_name')
@@ -230,14 +230,14 @@ describe('Load', function () {
         .should("have.text", 'file3_name')
 
       // load_analysis_deleted_sample
-      cy.openAnalysis("/data/issues/issues_4541/4541_03_deleted_sample.vidjil", "/data/issues/issues_4541/4541_00_stock.analysis")
+      cy.openAnalysis("browser/test/data/issues/issues_4541/4541_03_deleted_sample.vidjil", "browser/test/data/issues/issues_4541/4541_00_stock.analysis")
       cy.get('#visu2_title').should("have.text", "1 / 2" )// Ratio show is correct at init
       cy.get('#time0').should("exist")
         .should("have.text", 'file0_name')
       cy.get('#time1').should("not.exist")
 
       // load_analysis_all_new_samples
-      cy.openAnalysis("/data/issues/issues_4541/4541.vidjil", "/data/issues/issues_4541/4541_04_all_new_samples.analysis")
+      cy.openAnalysis("browser/test/data/issues/issues_4541/4541.vidjil", "browser/test/data/issues/issues_4541/4541_04_all_new_samples.analysis")
       cy.get('#visu2_title').should("have.text", "3 / 3" )// Ratio show is correct at init
       cy.get('#time0').should("exist")
         .should("have.text", 'file0_name')
@@ -247,7 +247,7 @@ describe('Load', function () {
         .should("have.text", 'file2_name')
 
       // load_analysis_duplicate_in_order
-      cy.openAnalysis("/data/issues/issues_4541/4541.vidjil", "/data/issues/issues_4541/4541_05_duplicate_in_order.analysis")
+      cy.openAnalysis("browser/test/data/issues/issues_4541/4541.vidjil", "browser/test/data/issues/issues_4541/4541_05_duplicate_in_order.analysis")
       cy.get('#visu2_title').should("have.text", "2 / 3" )// Ratio show is correct at init
       cy.get('#time0').should("exist")
         .should("have.text", 'file0_name')
@@ -256,7 +256,7 @@ describe('Load', function () {
         .should("have.text", 'file2_name')
 
       // load_analysis_duplicate_in_order
-      cy.openAnalysis("/data/issues/issues_4541/4541_06.fused", "/data/issues/issues_4541/4541_06.analysis")
+      cy.openAnalysis("browser/test/data/issues/issues_4541/4541_06.fused", "browser/test/data/issues/issues_4541/4541_06.analysis")
       cy.get('#visu2_title').should("have.text", "4 / 5" )// Ratio show is correct at init
       cy.get('#time4').should("exist")
         .should("have.text", 'Rechute')
@@ -272,7 +272,7 @@ describe('Load', function () {
 
   it('loading-vidjil_empty_distributions',  function() {
     // load_data_without_mrd
-    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
     cy.get('#listElem_1 > #clone_infoBox_1 > .icon-info').click()
 
     cy.get("#modal_line_mrd_family").should("not.exist") //modal line mrd_family NOT exist for clone without mrd
@@ -282,8 +282,8 @@ describe('Load', function () {
     cy.get('.info-container > .closeButton > .icon-cancel').click()
 
     // load_data_with_mrd
-    cy.openAnalysis("/data/issues/issue_mrd.vidjil")
-    cy.get('#listElem_1 > #clone_infoBox_1 > .icon-info').click()
+    cy.openAnalysis("browser/test/data/issues/issue_mrd.vidjil")
+    cy.get('#listElem_0 > #clone_infoBox_0 > .icon-info').click()
 
     cy.get("#modal_line_mrd_family").should("exist") //modal line mrd_family exist for clone with mrd
     cy.get("#modal_line_mrd_pearson").should("exist") //modal line mrd_pearson exist for clone with mrd
@@ -307,7 +307,7 @@ describe('Load', function () {
 
 
   it('loading-vidjil_empty_distributions',  function() {
-    cy.openAnalysis("/data/issues/4632.vidjil")
+    cy.openAnalysis("browser/test/data/issues/4632.vidjil")
     // ### Issue 4632; issue with empty distributions field (case in mixcr)
     cy.getCloneInList('0').should("exist")
   })

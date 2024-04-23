@@ -13,7 +13,7 @@ describe('Test sandbox', function () {
 
 
   it('00-distrib_splitted_by_locus',  function() {
-    cy.openAnalysis("data/fused_multiple_distrib_locus.vidjil")
+    cy.openAnalysis("browser/test/data/fused_multiple_distrib_locus.vidjil")
   
     // Tests on size after top change
     cy.get("#top_slider")
@@ -61,7 +61,7 @@ describe('Test sandbox', function () {
 
   it('01-hide_clone',  function() {
     cy.viewport(1000, 600) // restore old viewport, old firefox seem to have probleme of superposition of DOM element
-    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
     cy.getCloneInList(1).should('be.visible')
 
     cy.selectClone(1)
@@ -78,7 +78,7 @@ describe('Test sandbox', function () {
 
 
   it('02-download AIRR from getHtmlInfo',  function() {
-    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
     cy.openCloneInfo(0)
     cy.get('#download_info_0_airr').should("be.visible")
   })

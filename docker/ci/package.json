@@ -4,6 +4,6 @@
   "private": true,
   "eslintConfig": {},
   "devDependencies": {
-    "cypress": "^7.2.0"
+    "cypress": "^12.9.0"
   }
 }

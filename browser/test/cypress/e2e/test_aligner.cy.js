@@ -224,7 +224,7 @@ describe('Aligner', function () {
 
 
   it('01-Aligner stats',  function() {
-    cy.openAnalysis("/tools/tests/data/fused_multiple.vidjil")
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
 
     cy.get("#top_slider")
       .invoke('val', 5)
@@ -251,7 +251,7 @@ describe('Aligner', function () {
   })
 
   it('02-Merge play',  function() {
-    cy.openAnalysis("/doc/analysis-example.vidjil")
+    cy.openAnalysis("doc/analysis-example.vidjil")
 
     cy.selectCloneMulti([2, 3, 5]) // Select 3 clonotype with sequence, and under top filter to be visible
     cy.get('#cluster').click()
