@@ -121,6 +121,11 @@ describe('Manipulate db page', function () {
 
 
     it('5070 - get_reads',  function() {
+        if (Cypress.browser.name === 'firefox' && Cypress.browser.version.split(".")[0] > "80") {
+          // Skip old versions of firefox that don't work on cypress for this test (
+          // cypress loose pupetter after downlaod of a file
+          this.skip
+        }
         var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
         var config_id = 2
 
