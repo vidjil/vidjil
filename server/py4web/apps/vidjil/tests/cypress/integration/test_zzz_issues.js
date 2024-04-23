@@ -121,7 +121,7 @@ describe('Manipulate db page', function () {
 
 
     it('5070 - get_reads',  function() {
-        if (Cypress.browser.name === 'firefox' && Cypress.browser.version.split(".")[0] > "80") {
+        if (Cypress.browser.name === 'firefox' && Number(Cypress.browser.version.split(".")[0]) > 80) {
           // Skip old versions of firefox that don't work on cypress for this test (
           // cypress loose pupetter after downlaod of a file
           this.skip
