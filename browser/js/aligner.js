@@ -832,7 +832,7 @@ Aligner.prototype = {
 
         var request = "";
         var system;
-        var max=0;
+        var max;
         var c;
 
         var sample_set_id = "(---)"
@@ -845,7 +845,7 @@ Aligner.prototype = {
         for (var l_pos = 0; l_pos < list.length; l_pos++) {
             if (this.isClone(list[l_pos])) {
                 c = this.m.clone(list[l_pos]);
-                if (c.getSize()>max){
+                if (c.getSize()>max || !max){
                     system = c.getLocus();
                     if (systems[system] == undefined){
                         systems[system] = [list[l_pos]]
@@ -884,7 +884,7 @@ Aligner.prototype = {
                     request += c.getSequence() + "\n";
                 }
                 
-                if (c.getSize()>max){
+                if (c.getSize()>max || !max){
                     system = c.getLocus();
                     max=c.getSize();
                 }
@@ -1093,6 +1093,7 @@ Aligner.prototype = {
         var length = 0;
         var nb_clones_not_constant = 0;
         var lastActiveClone = 0;
+        var extra_info_system;
             
         //verifier que les points sélectionnés sont dans une germline courante
         for (var i = 0; i < list.length ; i++){
@@ -1127,8 +1128,6 @@ Aligner.prototype = {
                 t += " (" + percentageStr + ")";
             if (length == 1){
                 extra_info_system = lastActiveClone.getStrAllSystemSize(this.m.t, true);
-            } else {
-                extra_info_system = "";
             }
             t += " ";
         }
@@ -1136,12 +1135,12 @@ Aligner.prototype = {
         $(".stats_content").text(t);
         if (length == 1) {
             s = '';
-            if (extra_info_system.systemGroup !== undefined) {
+            if (extra_info_system != undefined && extra_info_system.systemGroup !== undefined) {
                 s = extra_info_system.systemGroup;
                 if (extra_info_system.system !== undefined)
                     s += ', ';
             }
-            if (extra_info_system.system !== undefined) {
+            if (extra_info_system != undefined && extra_info_system.system !== undefined) {
                 s += extra_info_system.system;
             }
             $(".stats_content").prop('title', s);
