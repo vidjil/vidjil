@@ -457,22 +457,28 @@ def export_group_data(filesrc, filepath, groupids, log):
 
 def export_sample_set_data(filesrc, filepath, sample_type, sample_ids, log):
     log.info("exporting sample set data")
-    ext = SampleSetExtractor(db, log)
+    extractor = SampleSetExtractor(db, log)
 
     tables = {}
 
-    rows = ext.getAccessible(sample_type, sample_ids)
-    tables[sample_type], sample_set_ids = ext.populateSets(rows)
+    rows = extractor.getAccessible(sample_type, sample_ids)
+    tables[sample_type], sample_set_ids = extractor.populateSets(rows)
 
-    tables = export_peripheral_data(ext, tables, sample_set_ids, log=log)
+    tables = export_peripheral_data(extractor, tables, sample_set_ids, log=log)
 
     log.infoConfig(tables)
+    mapped_configs = export_configs(extractor, tables, log)
+    mapped_pre_process_configs = export_pre_process_configs(extractor, tables, log)
 
     if not os.path.exists(filepath):
         os.makedirs(filepath)
 
     with open(filepath + "/export.json", "w") as outfile:
         json.dump(tables, outfile, ensure_ascii=False)
+    with open(filepath + "/config.json", "w") as outfile:
+        json.dump(mapped_configs, outfile, ensure_ascii=False)
+    with open(filepath + "/pprocess.json", "w") as outfile:
+        json.dump(mapped_pre_process_configs, outfile, ensure_ascii=False)
 
     files_filepath = get_files_filepath(filepath)
     log.info(f"copying files from {filesrc} to {files_filepath}")
