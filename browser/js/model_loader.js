@@ -309,7 +309,7 @@ Model_loader.prototype = {
         
         // bypass limit if we have min-per-locus defined in config
         per_locus = {}
-        if (data.samples["commandline"][0].indexOf("--min-clones-per-locus") != -1 ){
+        if (data.samples.commandline[0].indexOf("--min-clones-per-locus") != -1 ){
             limit_per_locus = data.config["min-per-locus"]
         } else {
             limit_per_locus = 0
@@ -320,10 +320,11 @@ Model_loader.prototype = {
              per_locus[clone.germline] = Array.from({length: data.samples.number}, (v, i) => 0) 
             }
 
+            var relativeValueOfReads, indexOfMaxRelativeValue;
             if (limit_per_locus){
                 // Get samples where clonotype is at max
-                var relativeValueOfReads    = Array.apply(null, Array(clone.reads.length)).map(function (x, i) { return x/data.reads.segmented[i]; })
-                var indexOfMaxRelativeValue = relativeValueOfReads.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+                relativeValueOfReads    = Array.apply(null, Array(clone.reads.length)).map(function (x, i) { return x/data.reads.segmented[i]; })
+                indexOfMaxRelativeValue = relativeValueOfReads.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
             }
 
             if (clone.top <= limit ||
@@ -334,11 +335,11 @@ Model_loader.prototype = {
                        | C_INTERACTABLE
                        | C_IN_SCATTERPLOT
                        | C_SIZE_CONSTANT
-                var clone = new Clone(clone, self, index, c_attributes)
-                self.mapID[clone.id] = index;
+                var imported_clone = new Clone(clone, self, index, c_attributes)
+                self.mapID[imported_clone.id] = index;
                 index++
                 // in each case; count clonotype in his sample for per locus limit
-                per_locus[clone.germline][indexOfMaxRelativeValue] += 1
+                per_locus[imported_clone.germline][indexOfMaxRelativeValue] += 1
             }
         })
         
