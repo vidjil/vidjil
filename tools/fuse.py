@@ -862,7 +862,7 @@ class ListWindows(VidjilJson):
         per_locus = defaultdict(lambda: 0)
 
         for clone in self:
-            if clone.d["top"] <= top \
+            if clone.d["top"] <= top or top == 0 \
                 or (clone.d["top"] > top and self.limit_per_locus and per_locus[clone.d["germline"]] < self.limit_per_locus) :
                     result.append(clone.d["id"])
                     if self.limit_per_locus:
@@ -1004,24 +1004,19 @@ class ListWindows(VidjilJson):
         return result
         
     
-    def cut(self, limit, nb_points):
+    def cut(self, limit):
         '''Remove information from sequence/windows who never enter in the most represented sequences. Put this information in 'other' windows.'''
 
         w=[]
-
-        others = OtherWindows(nb_points)
-        per_locus = defaultdict(lambda: 0)
+        clones = self.getTop(limit)
 
         for clone in self:
-            if (int(clone.d["top"]) <= limit or limit == 0) \
-                or ("limit_per_locus" in self.__dict__ and self.limit_per_locus and clone.d["top"] > limit and self.limit_per_locus and per_locus[clone.d["germline"]] < self.limit_per_locus) :
-                    w.append(clone)
-                    if "limit_per_locus" in self.__dict__ and self.limit_per_locus:
-                        per_locus[clone.d["germline"]] += 1
+            if clone.d["id"] in clones :
+                w.append(clone)
 
         # Cut only at first loading of a file, not merged one (error on top and limit_per_locus)
         if len(w[0].d["reads"]) == 1:
-            self.d["clones"] = w #+ list(others) 
+            self.d["clones"] = w
 
         print("### Cut merged file, keeping window in the top %d for at least one point" % limit)
         return self
@@ -1890,7 +1885,7 @@ def main():
     
     print()
     if not args.multi:
-        jlist_fused.cut(args.top, jlist_fused.d["samples"].d["number"])
+        jlist_fused.cut(args.top)
     print("\t", jlist_fused) 
     print()
 
