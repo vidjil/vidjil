@@ -309,13 +309,9 @@ Model_loader.prototype = {
         
         // bypass limit if we have min-per-locus defined in config
         per_locus = {}
-        console.debug(data)
         if (data.samples["commandline"][0].indexOf("--min-clones-per-locus") != -1 ){
-            console.debug(" HAVE --min-clones-per-locus")
-            console.debug(data.samples["commandline"][0])
             limit_per_locus = data.config["min-per-locus"]
         } else {
-            console.debug(" HAVE NOT NOT NOT --min-clones-per-locus")
             limit_per_locus = 0
         }
 
@@ -325,10 +321,9 @@ Model_loader.prototype = {
             }
 
             if (limit_per_locus){
+                // Get samples where clonotype is at max
                 var relativeValueOfReads    = Array.apply(null, Array(clone.reads.length)).map(function (x, i) { return x/data.reads.segmented[i]; })
-                console.debug( `relativeValueOfReads ${relativeValueOfReads}; indexOfMaxRelativeValue ${indexOfMaxRelativeValue}`)
                 var indexOfMaxRelativeValue = relativeValueOfReads.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
-                console.debug( `relativeValueOfReads ${relativeValueOfReads}; indexOfMaxRelativeValue ${indexOfMaxRelativeValue}`)
             }
 
             if (clone.top <= limit ||
@@ -342,6 +337,7 @@ Model_loader.prototype = {
                 var clone = new Clone(clone, self, index, c_attributes)
                 self.mapID[clone.id] = index;
                 index++
+                // in each case; count clonotype in his sample for per locus limit
                 per_locus[clone.germline][indexOfMaxRelativeValue] += 1
             }
         })
