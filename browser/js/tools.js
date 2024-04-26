@@ -298,6 +298,38 @@ function prepend_path_if_not_web(file, path) {
     return path + file;
 }
 
+
+/**
+ * Function to download file located to another server.
+ * Classic <a> link to download don't allow to give a name to downloaded fiel if url call en external url. 
+ * See note at https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
+ */
+function downloadFile(url, nomLocal) {
+    var xhr = new XMLHttpRequest();
+
+    // µDefine response type as 'blob' (binary)
+    xhr.responseType = 'blob';
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var blob = xhr.response;
+            var url = window.URL.createObjectURL(blob);
+
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = nomLocal;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    };
+
+    // Envoyer la requête
+    xhr.open('GET', url);
+    xhr.send();
+}
+
+
 /**
  * Take in parameter the JSON result of CloneDB for one clone
  * Return a hash whose keys are URLs to sample sets and configs.
