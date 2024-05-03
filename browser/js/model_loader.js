@@ -309,7 +309,7 @@ Model_loader.prototype = {
         
         // bypass limit if we have min-per-locus defined in config
         per_locus = {}
-        if (data.samples.commandline[0].indexOf("--min-clones-per-locus") != -1 ){
+        if (data.samples.commandline != undefined && data.samples.commandline[0].indexOf("--min-clones-per-locus") != -1 ){
             limit_per_locus = data.config["min-per-locus"]
         } else {
             limit_per_locus = 0
