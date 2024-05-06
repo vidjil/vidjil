@@ -1,0 +1,31 @@
+# results_file_min_per_locus: 60 clones, 50 TRB, 10 IGH. IGH are below top 100
+# results_file_min_per_locus2; some TRB are change as TRG, 3 IGH windows are modified
+
+
+!OUTPUT_FILE: fuse_min_per_locus.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS -t 20 ../data/results_file_min_per_locus.vidjil  -o fuse_min_per_locus.vidjil
+
+
+$ Correct number of clonotype of each germline (TRB)
+20: "germline": "TRB"
+$ Correct number of clonotype of each germline (IGH)
+10: "germline": "IGH"
+$ Correct number of clonotype of each germline (IGH)
+0: "germline": "TRG"
+
+
+!OUTPUT_FILE: fuse_min_per_locus_couple.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS -t 20 ../data/results_file_min_per_locus.vidjil  ../data/results_file_min_per_locus2.vidjil  -o fuse_min_per_locus_couple.vidjil
+
+# Should find 20 TRG from sample1, 10 IGH from sample 1, 3 new IGH from sample 2, 7 IGh from sample 2 are shared with sample 1
+# Top 10 of TRB from first samples are modifier as TRG, included windows
+
+$ Correct number of clonotype of each germline if couple of vidjil (TRB)
+# top 10 present only in samples 1, 11 to 20 present in both samples
+20: "germline": "TRB" 
+$ Correct number of clonotype of each germline if couple of vidjil (TRB)
+# Top 10 of second samples
+10: "germline": "TRG" 
+$ Correct number of clonotype of each germline if couple of vidjil (IGH)
+# 1-3 fro msamples 1 present only in first samples, ~1 to 3 from second sample present only in second, and 4 to 10 present in both.
+13: "germline": "IGH" 

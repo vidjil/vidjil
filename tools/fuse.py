@@ -709,6 +709,7 @@ class ListWindows(VidjilJson):
         self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
         self.d["producer"] = FUSE_VERSION
         self.d["timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.limit_per_locus = 0
         
     def __str__(self):
         return "<ListWindows: %s %d>" % ( self.d["reads"].d["segmented"], len(self) )
@@ -790,6 +791,12 @@ class ListWindows(VidjilJson):
         for clone in self:
             self.id_lengths[len(clone.d['id'])] += 1
         print ("%% lengths .vidjil -> ", self.id_lengths)
+
+
+        if "config" in self.d.keys() and "min-clones-per-locus" in self.d["config"]:
+            self.limit_per_locus = int(self.d["config"]["min-clones-per-locus"])
+            print("Min per locus detected: " + str(self.limit_per_locus))
+
         try:
             print("%% run_v ->", self.d["samples"].d["producer"], self.d["samples"].d["run_timestamp"])
         except KeyError:
@@ -844,11 +851,22 @@ class ListWindows(VidjilJson):
                 exit(1)
 
     def getTop(self, top):
+        '''
+        Filter list of clones to keep only clonotype under the top filter
+        Will also take care of min-per-locus bypass if present
+        '''
         result = []
-        
+
+        # reorder list of clones by top value; if not, filter per locus will not work
+        self.d["clones"] = sorted(self.d["clones"], key=lambda c: c.d["top"])
+        per_locus = defaultdict(lambda: 0)
+
         for clone in self:
-            if clone.d["top"] <= top :
-                result.append(clone.d["id"])
+            if clone.d["top"] <= top or top == 0 \
+                or (clone.d["top"] > top and self.limit_per_locus and per_locus[clone.d["germline"]] < self.limit_per_locus) :
+                    result.append(clone.d["id"])
+                    if self.limit_per_locus:
+                        per_locus[clone.d["germline"]] += 1
         return result
         
     def filter(self, f):
@@ -870,6 +888,8 @@ class ListWindows(VidjilJson):
     def __add__(self, other): 
         '''Combine two ListWindows into a unique ListWindows'''
         obj = ListWindows()
+        # min-per-locus: assume that limit is always the same
+        obj.limit_per_locus = self.limit_per_locus
         l1 = len(self.d["reads"].d['segmented'])
         l2 = len(other.d["reads"].d['segmented'])
 
@@ -984,20 +1004,19 @@ class ListWindows(VidjilJson):
         return result
         
     
-    def cut(self, limit, nb_points):
+    def cut(self, limit):
         '''Remove information from sequence/windows who never enter in the most represented sequences. Put this information in 'other' windows.'''
 
         w=[]
-
-        others = OtherWindows(nb_points)
+        clones = self.getTop(limit)
 
         for clone in self:
-            if (int(clone.d["top"]) <= limit or limit == 0) :
+            if clone.d["id"] in clones :
                 w.append(clone)
-            #else:
-                #others += clone
 
-        self.d["clones"] = w #+ list(others) 
+        # Cut only at first loading of a file, not merged one (error on top and limit_per_locus)
+        if len(w[0].d["reads"]) == 1:
+            self.d["clones"] = w
 
         print("### Cut merged file, keeping window in the top %d for at least one point" % limit)
         return self
@@ -1866,7 +1885,7 @@ def main():
     
     print()
     if not args.multi:
-        jlist_fused.cut(args.top, jlist_fused.d["samples"].d["number"])
+        jlist_fused.cut(args.top)
     print("\t", jlist_fused) 
     print()
 
