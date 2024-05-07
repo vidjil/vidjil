@@ -310,10 +310,19 @@ Model_loader.prototype = {
         // bypass limit if we have min-per-locus defined in config
         per_locus = {}
         if (data.samples.commandline != undefined && data.samples.commandline[0].indexOf("--min-clones-per-locus") != -1 ){
-            limit_per_locus = data.config["min-per-locus"]
+            // Get min per locus value
+            var args = data.samples.commandline[0].split(" ")
+            var pos = args.indexOf("--min-clones-per-locus")
+            limit_per_locus = args[pos + 1]
         } else {
             limit_per_locus = 0
         }
+
+        data.clones.sort((a, b) => a.top - b.top) // Sort clonotype by top for next loop
+
+        // Top need to be recomputed and reajust, without it, filter slider will show max top value
+        var over_top = Array(data.samples.length).map(function (x) { return limit+1; })
+
 
         data.clones.forEach(clone => {
             if (per_locus[clone.germline] == undefined) {
@@ -323,8 +332,9 @@ Model_loader.prototype = {
             var relativeValueOfReads, indexOfMaxRelativeValue;
             if (limit_per_locus){
                 // Get samples where clonotype is at max
-                relativeValueOfReads    = Array.apply(null, Array(clone.reads.length)).map(function (x, i) { return x/data.reads.segmented[i]; })
-                indexOfMaxRelativeValue = relativeValueOfReads.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+                var clone_reads = [...clone.reads]                                                                             // hard copy data
+                var relativeValueOfReads    = clone_reads.map(function (x, i) { return x/data.reads.segmented[i]; })           // get percentage by sample
+                var indexOfMaxRelativeValue = relativeValueOfReads.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);   // Choose sample with better size (so top sample)
             }
 
             if (clone.top <= limit ||
@@ -335,9 +345,17 @@ Model_loader.prototype = {
                        | C_INTERACTABLE
                        | C_IN_SCATTERPLOT
                        | C_SIZE_CONSTANT
+
+                if (clone.top > limit){
+                    // Recompute top value, as sorted previously, use over_top value
+                    clone.top = over_top[indexOfMaxRelativeValue]
+                    over_top[indexOfMaxRelativeValue]++
+                }
+
                 var imported_clone = new Clone(clone, self, index, c_attributes)
                 self.mapID[imported_clone.id] = index;
                 index++
+
                 // in each case; count clonotype in his sample for per locus limit
                 per_locus[imported_clone.germline][indexOfMaxRelativeValue] += 1
             }
