@@ -333,8 +333,8 @@ Model_loader.prototype = {
             if (limit_per_locus){
                 // Get samples where clonotype is at max
                 var clone_reads = [...clone.reads]                                                                             // hard copy data
-                var relativeValueOfReads    = clone_reads.map(function (x, i) { return x/data.reads.segmented[i]; })           // get percentage by sample
-                var indexOfMaxRelativeValue = relativeValueOfReads.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);   // Choose sample with better size (so top sample)
+                relativeValueOfReads    = clone_reads.map(function (x, i) { return x/data.reads.segmented[i]; })           // get percentage by sample
+                indexOfMaxRelativeValue = relativeValueOfReads.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);   // Choose sample with better size (so top sample)
             }
 
             if (clone.top <= CLONOTYPE_TOP_LIMIT ||
