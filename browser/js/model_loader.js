@@ -102,7 +102,7 @@ Model_loader.prototype = {
      * @param {string} analysis - id of the form (html element) linking to the analysis file
      * @param {int} limit - minimum top value to keep a clone
      * */
-    load: function (id, analysis, limit) {
+    load: function (id, analysis) {
         var self = this;
 
         console.log("load()");
@@ -120,7 +120,7 @@ Model_loader.prototype = {
         oFReader.onload = function (oFREvent) {
             self.reset();
             self.setAll()
-            self.parseJsonData(oFREvent.target.result, limit);
+            self.parseJsonData(oFREvent.target.result);
             self.loadGermline()
                 .initClones()
             self.loadAnalysis(analysis)
@@ -208,7 +208,7 @@ Model_loader.prototype = {
             success: function (result) {
                 self.reset();
                 self.setAll();
-                self.parseJsonData(result, 100)
+                self.parseJsonData(result)
                     .loadGermline()
                     .initClones()
                 self.update_selected_system()
@@ -266,7 +266,7 @@ Model_loader.prototype = {
      * @param {string} data - json_text / content of .vidjil file
      * @param {int} limit - minimum top value to keep a clone
      * */
-    parseJsonData: function (data, limit) {
+    parseJsonData: function (data) {
         self = this;
         this.is_ready = false
         
@@ -321,7 +321,7 @@ Model_loader.prototype = {
         data.clones.sort((a, b) => a.top - b.top) // Sort clonotype by top for next loop
 
         // Top need to be recomputed and reajust, without it, filter slider will show max top value
-        var over_top = Array(data.samples.length).map(function (x) { return limit+1; })
+        var over_top = Array(data.samples.length).map(function (x) { return CLONOTYPE_TOP_LIMIT+1; })
 
 
         data.clones.forEach(clone => {
@@ -337,7 +337,7 @@ Model_loader.prototype = {
                 var indexOfMaxRelativeValue = relativeValueOfReads.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);   // Choose sample with better size (so top sample)
             }
 
-            if (clone.top <= limit ||
+            if (clone.top <= CLONOTYPE_TOP_LIMIT ||
                 (limit_per_locus && per_locus[clone.germline][indexOfMaxRelativeValue] < limit_per_locus)
                 ) {
                 // real
@@ -346,7 +346,7 @@ Model_loader.prototype = {
                        | C_IN_SCATTERPLOT
                        | C_SIZE_CONSTANT
 
-                if (clone.top > limit){
+                if (clone.top > CLONOTYPE_TOP_LIMIT){
                     // Recompute top value, as sorted previously, use over_top value
                     clone.top = over_top[indexOfMaxRelativeValue]
                     over_top[indexOfMaxRelativeValue]++
