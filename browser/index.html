@@ -224,7 +224,8 @@
                         <div class="menu_box">
                             <span id="top_label"></span></br>
                             <input id="top_slider" type="range" min="1" max="100" step="1" value="10"
-                                onchange="m.filter.add('Top', '>', parseInt(this.value))" />
+                                onchange="m.filter.add('Top', '>', parseInt(this.value));" />
+                            <div id="top_slider_min_per_locus_warning" style="color: orangered; display: none;">Top over limit due to min per locus</div>
                         </div>
                         <div class="menu_box">
                             <div id="filter_list">
