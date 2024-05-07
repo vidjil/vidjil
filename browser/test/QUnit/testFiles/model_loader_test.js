@@ -64,3 +64,34 @@ QUnit.test("copySampleFields", function(assert) {
     assert.deepEqual(loaded.order,           [0,3], "order" )
     assert.deepEqual(loaded.stock_order,     [0,1,2,5,4,3], "stock_order" )
 });
+
+
+
+QUnit.test("limit loaded clonotype", function(assert) {
+    console.log( json_data_min_per_locus )
+    assert.deepEqual(json_data_min_per_locus.clones.length,  110, "Correct number of clonotype in raw data" )
+
+    CLONOTYPE_TOP_LIMIT = 100
+    // No min per locus, so limit to CLONOTYPE_TOP_LIMIT value (100) +1 smaller (only TRG locus)
+    var m = new Model();
+    m.parseJsonData(json_data_min_per_locus)
+    m.initClones()
+    assert.deepEqual(m.clones.length,  101, "clones loaded limited to clonotype_top_limit" )
+
+
+    // min per locus to 100, so should load top 100 + 10 clonotype + 2 smaller (both locus)
+    json_data_min_per_locus.samples.commandline[0] += "--min-clones-per-locus 10"
+    var m = new Model();
+    m.parseJsonData(json_data_min_per_locus)
+    m.initClones()
+    assert.deepEqual(m.clones.length,  112, "clones loaded over limit due to min per locus" )
+
+
+    // min per locus to 5, so should load top 100 + only 5 (even if more is present in sample) + 2 smaller (both locus)
+    json_data_min_per_locus.samples.commandline[0] = json_data_min_per_locus.samples.commandline[0].replace("--min-clones-per-locus 10", "--min-clones-per-locus 5")
+    var m = new Model();
+    m.parseJsonData(json_data_min_per_locus)
+    m.initClones()
+    assert.deepEqual(m.clones.length,  107, "clones loaded over limit due to min per locus, with min per locus value" )
+
+});
