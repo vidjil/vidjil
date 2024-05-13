@@ -55,7 +55,9 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
     loci_list_decorator = stats_decorator.LociListDecorator()
     return {
         SETS_COLUMN_NAME: HeaderConfig("Sets", "Sets", sets_decorator, 200, True),
-        SAMPLE_COLUMN_NAME: HeaderConfig("Sample", "Analyzed sample", stat_decorator, 200, False),
+        SAMPLE_COLUMN_NAME: HeaderConfig(
+            "Sample", "Analyzed sample", stat_decorator, 200, False
+        ),
         CONFIG_NAME_COLUMN_NAME: HeaderConfig(
             "Config name", "Name of the configuration used", stat_decorator, 120, False
         ),
@@ -63,22 +65,44 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             "Mapped reads", "Percentage of mapped reads", stat_decorator, 55, False
         ),
         MAPPED_READS_NUMBER_COLUMN_NAME: HeaderConfig(
-            "Mapped reads number", "Number of mapped reads / Total number of reads", stat_decorator, 100, True
+            "Mapped reads number",
+            "Number of mapped reads / Total number of reads",
+            stat_decorator,
+            100,
+            True,
         ),
-        MEAN_LENGTH_COLUMN_NAME: HeaderConfig("Mean length", "Mean length of the reads", stat_decorator, 50, False),
+        MEAN_LENGTH_COLUMN_NAME: HeaderConfig(
+            "Mean length", "Mean length of the reads", stat_decorator, 50, False
+        ),
         READ_LENGTHS_COLUMN_NAME: HeaderConfig(
-            "Reads lengths", "Distribution of reads lengths", genescan_decorator, 200, False
+            "Reads lengths",
+            "Distribution of reads lengths",
+            genescan_decorator,
+            200,
+            False,
         ),
-        LOCI_COLUMN_NAME: HeaderConfig("Loci", "Loci found in the analysis", loci_list_decorator, 150, False),
-        CLONES_5_COLUMN_NAME: HeaderConfig("clones ≥5%", "Number of clones ≥5% found for each loci", stat_decorator, 50, False),
+        LOCI_COLUMN_NAME: HeaderConfig(
+            "Loci", "Loci found in the analysis", loci_list_decorator, 150, False
+        ),
+        CLONES_5_COLUMN_NAME: HeaderConfig(
+            "clones ≥5%",
+            "Number of clones ≥5% found for each loci",
+            stat_decorator,
+            50,
+            False,
+        ),
         INTRA_CONTAMINATION_COLUMN_NAME: HeaderConfig(
             "Conta.", "Intra-contamination", stat_decorator, 50, False
         ),
-        MAIN_CLONE_COLUMN_NAME: HeaderConfig("Main clone", "Main clone found", stat_decorator, 400, False),
+        MAIN_CLONE_COLUMN_NAME: HeaderConfig(
+            "Main clone", "Main clone found", stat_decorator, 400, False
+        ),
         MERGED_READS_COLUMN_NAME: HeaderConfig(
             "Merged reads", "Merged reads", stat_decorator, 50, True
         ),
-        PRE_PROCESS_COLUMN_NAME: HeaderConfig("Pre process", "Pre process", stat_decorator, 50, True),
+        PRE_PROCESS_COLUMN_NAME: HeaderConfig(
+            "Pre process", "Pre process", stat_decorator, 50, True
+        ),
         SHANNON_DIVERSITY_COLUMN_NAME: HeaderConfig(
             "Shannon's diversity", "Shannon's diversity", stat_decorator, 70, False
         ),
@@ -397,33 +421,17 @@ def get_fused_stats(fuse):
 
                 if "diversity" in fuse_data:
                     result_stats["shannon_diversity"] = (
-                        round(
-                            (fuse_data["diversity"]["index_H_entropy"][result_index]), 3
-                        )
+                        round(fuse_data["diversity"]["index_H_entropy"][result_index]["all"], 3)
                         if "index_H_entropy" in fuse_data["diversity"]
                         else NOT_APPLICABLE
                     )
                     result_stats["pielou_evenness"] = (
-                        round(
-                            (
-                                fuse_data["diversity"]["index_E_equitability"][
-                                    result_index
-                                ]
-                            ),
-                            3,
-                        )
+                        round(fuse_data["diversity"]["index_E_equitability"][result_index]['all'], 3)
                         if "index_E_equitability" in fuse_data["diversity"]
                         else NOT_APPLICABLE
                     )
                     result_stats["simpson_diversity"] = (
-                        round(
-                            (
-                                fuse_data["diversity"]["index_Ds_diversity"][
-                                    result_index
-                                ]
-                            ),
-                            3,
-                        )
+                        round(fuse_data["diversity"]["index_Ds_diversity"][result_index]['all'], 3)
                         if "index_Ds_diversity" in fuse_data["diversity"]
                         else NOT_APPLICABLE
                     )

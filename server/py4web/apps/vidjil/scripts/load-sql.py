@@ -14,7 +14,7 @@ import defs
 # connect to db
 # #######################################################
 db = DAL(
-    defs.DB_ADDRESS,
+    settings.DB_URI,
     folder=settings.DB_FOLDER,
     pool_size=settings.DB_POOL_SIZE,
     migrate=settings.DB_MIGRATE,
