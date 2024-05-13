@@ -54,15 +54,15 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
     genescan_decorator = stats_decorator.GenescanDecorator()
     loci_list_decorator = stats_decorator.LociListDecorator()
     return {
-        SETS_COLUMN_NAME: HeaderConfig("Sets", "Sets", sets_decorator, 200, True),
+        SETS_COLUMN_NAME: HeaderConfig("Sets", "Sets", sets_decorator, 120, True),
         SAMPLE_COLUMN_NAME: HeaderConfig(
-            "Sample", "Analyzed sample", stat_decorator, 200, False
+            "Sample", "Analyzed sample", stat_decorator, 120, False
         ),
         CONFIG_NAME_COLUMN_NAME: HeaderConfig(
             "Config name", "Name of the configuration used", stat_decorator, 120, False
         ),
         MAPPED_READS_COLUMN_NAME: HeaderConfig(
-            "Mapped reads", "Percentage of mapped reads", stat_decorator, 55, False
+            "Mapped reads", "Percentage of mapped reads", stat_decorator, 45, False
         ),
         MAPPED_READS_NUMBER_COLUMN_NAME: HeaderConfig(
             "Mapped reads number",
@@ -72,11 +72,11 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             True,
         ),
         MEAN_LENGTH_COLUMN_NAME: HeaderConfig(
-            "Mean length", "Mean length of the reads", stat_decorator, 50, False
+            "Mean length", "Mean length of the reads", stat_decorator, 40, False
         ),
         READ_LENGTHS_COLUMN_NAME: HeaderConfig(
             "Reads lengths",
-            "Distribution of reads lengths",
+            "Distribution of reads lengths (from 100 to 600b)",
             genescan_decorator,
             200,
             False,
@@ -88,29 +88,29 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             "clones ≥5%",
             "Number of clones ≥5% found for each loci",
             stat_decorator,
-            50,
+            40,
             False,
         ),
         INTRA_CONTAMINATION_COLUMN_NAME: HeaderConfig(
-            "Conta.", "Intra-contamination", stat_decorator, 50, False
+            "Conta.", "Intra-contamination", stat_decorator, 40, False
         ),
         MAIN_CLONE_COLUMN_NAME: HeaderConfig(
-            "Main clone", "Main clone found", stat_decorator, 400, False
+            "Main clone", "Main clone found", stat_decorator, 200, False
         ),
         MERGED_READS_COLUMN_NAME: HeaderConfig(
-            "Merged reads", "Merged reads", stat_decorator, 50, True
+            "Merged reads", "Merged reads", stat_decorator, 40, True
         ),
         PRE_PROCESS_COLUMN_NAME: HeaderConfig(
-            "Pre process", "Pre process", stat_decorator, 50, True
+            "Pre process", "Pre process", stat_decorator, 40, True
         ),
         SHANNON_DIVERSITY_COLUMN_NAME: HeaderConfig(
-            "Shannon's diversity", "Shannon's diversity", stat_decorator, 70, False
+            "Shannon's diversity", "Shannon's diversity", stat_decorator, 60, False
         ),
         PIELOU_EVENNESS_COLUMN_NAME: HeaderConfig(
-            "Pielou's evenness", "Pielou's evenness", stat_decorator, 70, True
+            "Pielou's evenness", "Pielou's evenness", stat_decorator, 60, True
         ),
         SIMPSON_DIVERSITY_COLUMN_NAME: HeaderConfig(
-            "Simpson's diversity", "Pielou's evenness", stat_decorator, 70, True
+            "Simpson's diversity", "Pielou's evenness", stat_decorator, 60, True
         ),
     }
     # 'reads' : HeaderConfig('reads', 'parser', stat_decorator, False),
@@ -303,6 +303,7 @@ def get_fused_stats(fuse):
                     key=lambda clone: clone["reads"][result_index],
                     reverse=True,
                 )
+                print(f"{sorted_clones[0]=}")
                 if "name" in sorted_clones[0]:
                     result_stats["main_clone"] = sorted_clones[0]["name"]
                 else:
@@ -346,7 +347,7 @@ def get_fused_stats(fuse):
 
                 min_len = 100  # int(min(tmp.keys()))
                 max_len = 600  # int(max(tmp.keys()))
-                tmp_list = []
+                read_lengths = []
                 if mapped_reads == 0:
                     mapped_reads = 1
                 for i in range(min_len, max_len):
@@ -362,8 +363,8 @@ def get_fused_stats(fuse):
                     else:
                         display_val = 0
                         real_val = 0
-                    tmp_list.append((i, display_val, real_val))
-                result_stats["read_lengths"] = tmp_list
+                    read_lengths.append((i, display_val, real_val))
+                result_stats["read_lengths"] = read_lengths
 
                 result_stats["loci"] = sorted(
                     [

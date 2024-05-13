@@ -82,15 +82,15 @@
     </div>
 </div>
         
+[[ if page > 0 or len(query) > step: ]]
 <div class="db_block_center">
-    [[ if page > 0 or len(query) > step: ]]
-        page:
-        [[ if page > 0: ]]
-            <i class="icon-left-open-1" onclick="db.call('sample_set/all', {'type': '[[=helper.get_type()]]', 'filter': '[[=request.query['filter']]]', 'page': [[=page-1]]})"></i>
-        [[ pass ]]
-        [[= page + 1 ]]
-        [[if len(query) > step : ]]
-            <i class="icon-right-open-1" onclick="db.call('sample_set/all', {'type': '[[=helper.get_type()]]', 'filter': '[[=request.query['filter']]]', 'page': [[=page+1]]})"></i>
-        [[ pass ]]
+    page:
+    [[ if page > 0: ]]
+        <i class="icon-left-open-1" onclick="db.call('sample_set/all', {'type': '[[=helper.get_type()]]', 'filter': '[[=request.query['filter']]]', 'page': [[=page-1]]})"></i>
+    [[ pass ]]
+    [[= page + 1 ]]
+    [[if len(query) > step : ]]
+        <i class="icon-right-open-1" onclick="db.call('sample_set/all', {'type': '[[=helper.get_type()]]', 'filter': '[[=request.query['filter']]]', 'page': [[=page+1]]})"></i>
     [[ pass ]]
 </div>
+[[ pass ]]
