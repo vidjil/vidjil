@@ -151,7 +151,7 @@ describe('External Aligner', function () {
   it('Aligner external provider - mix locus',  function() {
     cy.openAnalysis("data/demo_lil_l3_0.vidjil")
 
-    cy.selectCloneMulti([1, 4]) // Locus IGH && TRG
+    cy.selectCloneMulti([0, 1]) // Locus IGH && TRG
 
     cy.get('#align-refresh-button')
       .should("be.visible")
@@ -167,9 +167,9 @@ describe('External Aligner', function () {
       .click({force:true})
 
     // Both clonotype have a result
-    cy.get('#seq1 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad', { timeout: TIMEOUT_IMGT })
+    cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad', { timeout: TIMEOUT_IMGT })
       .should("be.visible") // IGH locus
-    cy.get('#seq4 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad')
+    cy.get('#seq1 > .sequence-holder > .seq-fixed > .axisBox > .VIdentity > .identityBox > .identityBad')
       .should("be.visible") // TRG locus
 
     return
@@ -261,7 +261,7 @@ describe('External Aligner', function () {
 
   it('Aligner external provider - Get Correct Videntity',  function() {
     // Use ins/del event if available
-    cy.openAnalysis("data/demo_lil_l3_tutorial.vidjil")
+    cy.openAnalysis("doc/demo_lil_l3_tutorial.vidjil")
 
     cy.selectClone(4)
 
