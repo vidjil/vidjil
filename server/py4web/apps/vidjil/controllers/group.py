@@ -46,6 +46,13 @@ ACCESS_DENIED = "access denied"
 @action.uses("group/index.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def index():
+    if not auth.is_admin():
+        res = {"success" : "false",
+               "message" : ACCESS_DENIED,
+               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+        log.info(res)
+        return json.dumps(res, separators=(',',':'))
+    
     count = db.auth_group.id.count()
     user_count = db.auth_user.id.count()
     query = db(
@@ -104,7 +111,11 @@ def add():
 @action.uses(db, auth.user)
 def add_form():
     if not auth.is_admin():
-        return error_message(ACCESS_DENIED)
+        res = {"success" : "false",
+               "message" : ACCESS_DENIED,
+               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+        log.info(res)
+        return json.dumps(res, separators=(',',':'))
 
     error = ""
 

@@ -76,18 +76,9 @@ class TestGroupController(unittest.TestCase):
 
         # Then : We get groups list
         result = json.loads(json_result)
-        assert result["message"] == "Groups"
-        query = result["query"]
-        assert len(query) == 4
-        assert query[0]["role"] == "admin"
-        assert query[0]["access"] == "ec"
-        assert query[1]["role"] == "public"
-        assert query[1]["access"] == ""
-        assert query[2]["role"] == "user_0001"
-        assert query[2]["access"] == ""
-        assert query[3]["role"] == "user_0002"
-        assert query[3]["access"] == "eacsu"
-        # TODO : check that it is expected that we get all groups here (not only the group user has access to)
+        assert result["message"] == group_controller.ACCESS_DENIED
+        assert result["success"] == "false"
+        assert result["redirect"] == "http://127.0.0.1/vidjil/sample_set/all?type=patient&page=0"
 
     ##################################
     # Tests on group_controller.add()
