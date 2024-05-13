@@ -54,11 +54,11 @@ describe('Test menu', function () {
     cy.close_menu()
 
     // test_01_normalization_expected
-    cy.getCloneSize("25").should("have.text", '0.129%') // Span show correct size before normalization"
-    cy.get('#tag_icon_25').click()
+    cy.getCloneSize("0").should("have.text", '0.129%') // Span show correct size before normalization"
+    cy.get('#tag_icon_0').click()
 
     cy.get('#norm_button').type('10{enter}')
-    cy.getCloneSize("25").should("have.text", '10.00%') //Span show correct normalized size
+    cy.getCloneSize("0").should("have.text", '10.00%') //Span show correct normalized size
 
     cy.open_menu_settings()
     cy.get('#normalize_list').should("be.visible") // "After clicking normalize_list form should be visible"
@@ -67,19 +67,19 @@ describe('Test menu', function () {
     cy.pressKey("escape")
     cy.close_menu()
 
-    cy.getCloneSize("25").should("have.text", '0.129%') // Span show correct size after reset normalization
+    cy.getCloneSize("0").should("have.text", '0.129%') // Span show correct size after reset normalization
 
     // test_02_normalization_external
-    cy.getCloneSize("1").should("have.text", '0.081%') // Span show correct size after reset normalization
+    cy.getCloneSize("6").should("have.text", '0.081%') // Span show correct size after reset normalization
 
     cy.open_menu_settings()
     cy.get('#normalize_list').should("be.visible") // After clicking normalize_list form should be visible
     cy.get('#normalize_external').should("be.visible")// Form have the input for external normalization
-    cy.get('#normalizetest25').should("be.visible")// Form still have the input for expected normalization
+    cy.get('#normalizetest0').should("be.visible")// Form still have the input for expected normalization
     cy.get('#normalize_external').click()
     cy.close_menu()
     
-    cy.getCloneSize("1").should("have.text", '0.122%') // Span should show correct normalized size (external) (" + $b.clone_info('1')[:size].text+")"
+    cy.getCloneSize("6").should("have.text", '0.122%') // Span should show correct normalized size (external) (" + $b.clone_info('1')[:size].text+")"
 
   })
 
