@@ -412,11 +412,6 @@ describe('List', function () {
   it('13-xxx',  function() {
     cy.openAnalysis("/doc/analysis-example.vidjil")
     
-    // table of previous and new order
-    // 1  TRBV29 2/3/2 D2 2/3/5 J2-7      6
-    // 24 ACCYTGTGCYGYGYTGYYYYAGYTYTTTGG  20
-    // 32 TRBV26 4//4 D1 5/5/0 J1-4*02    4
-    // 68 GYCTYTGTGCYGYGCYYAYYYAGYTYTTT   22
 
     var clone_list = ["6", "4", "20", "22"]
     // # clone with seg & sequence (6)

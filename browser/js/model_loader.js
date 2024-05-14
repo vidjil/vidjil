@@ -100,7 +100,6 @@ Model_loader.prototype = {
      * load the selected vidjil/analysis file from an html input file
      * @param {string} id - id of the form (html element) linking to the vidjil file
      * @param {string} analysis - id of the form (html element) linking to the analysis file
-     * @param {int} limit - minimum top value to keep a clone
      * */
     load: function (id, analysis) {
         var self = this;
@@ -264,7 +263,6 @@ Model_loader.prototype = {
     /**
      * parse a json or a json_text and init the model with it 
      * @param {string} data - json_text / content of .vidjil file
-     * @param {int} limit - minimum top value to keep a clone
      * */
     parseJsonData: function (data) {
         self = this;

@@ -80,7 +80,7 @@ QUnit.test("limit loaded clonotype", function(assert) {
     assert.deepEqual(m.clones.length,  101, "clones loaded limited to clonotype_top_limit" )
 
 
-    // min per locus to 100, so should load top 100 + 10 clonotype + 2 smaller (both locus)
+    // min per locus to 10, so should load top 100 + 10 clonotype + 2 smaller (both locus)
     json_data_min_per_locus.samples.commandline[0] += "--min-clones-per-locus 10"
     var m = new Model();
     m.parseJsonData(json_data_min_per_locus)
