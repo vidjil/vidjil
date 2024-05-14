@@ -6,7 +6,9 @@ markdown
 flower
 uwsgi
 py4web == 1.20240428.1
+pymysql
 celery
+celery[redis]
 
 
 requests==2.20.0
