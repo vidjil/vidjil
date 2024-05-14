@@ -229,7 +229,7 @@ The first time, this container creates the database and it takes some time.
 - When `mysql` is launched,
 you can safely launch `docker-compose up -d`.
 Then `docker ps` should display seven running containers for a localhost usage:
-`docker_nginx_1`, `docker_uwsgi_1`, `docker_mysql_1`, `docker_fuse_1`, `docker_workers_1`, `docker_flowers_1`, `docker_redis_1`.
+`vidjil-nginx`, `vidjil-uwsgi`, `vidjil-mysql`, `vidjil-fuse`, `vidjil-workers`, `vidjil-flowers`, `vidjil-redis`.
 Service `restic`, `reporter` and `postfix` are usefull for backup and email communication and need to be started for regular installation.
 
   - Vidjil also need germline files.
@@ -251,7 +251,7 @@ This account is the main root account of the server. Other administrators could 
 ```
 ERROR: for nginx
 Cannot start service nginx: driver failed programming external
-connectivity on endpoint docker_nginx_1
+connectivity on endpoint vidjil-nginx
 (236d0696ed5077c002718541a9703adeee0dfac66fb880d193690de6fa5c462e):
 Error starting userland proxy: listen tcp 0.0.0.0:80: bind: address already in use
 ```
@@ -362,12 +362,12 @@ you can look into:
  the mysql user: `vidjil`.
  If you are not sure, you can check with the following:
  ```sh
- docker exec -it docker_mysql_1 bash
+ docker exec -it vidjil-mysql bash
  mysql -u vidjil -p vidjil
  ```
  or reset it:
  ```sh
- docker exec -it docker_mysql_1 bash
+ docker exec -it vidjil-mysql bash
  mysql -u root -p
  SET PASSWORD FOR vidjil = PASSWORD('<new password>');
  ```
@@ -375,7 +375,7 @@ you can look into:
  - Ensure the database was created correctly. This should have been done automatically,
  but just in case, you can check the console output, or check the database:
  ```sh
- docker exec -it docker_mysql_1 bash
+ docker exec -it vidjil-mysql bash
  mysql -u vidjil -p vidjil
  ```
  If the database does not exist, mysql will display an error after logging in.
@@ -528,7 +528,7 @@ To work well, you need to create a dedicated user `backup` in your MySQL databas
 1. Open a terminal, open mysql interface inside docker image
 ```
 # open terminal in your MySQL container
-docker exec -it docker_mysql_1 bash
+docker exec -it vidjil-mysql bash
 
 # Connect to Mysql as root. 
 mysql -u root -p 
@@ -730,7 +730,7 @@ Proceed as in step 3 for pre-process configs. The file to edit is named `pproces
 The import takes place inside the vidjil-server container
 
 ```sh
-docker exec -it docker_uwsgi_1 bash
+docker exec -it vidjil-uwsgi bash
 cd usr/share/vidjil/server/scripts-web2py/
 sh migrator.sh -p [RESULTS DIRECTORY] -s [EXPORT DIRECTORY] import --config [CONFIG.JSON FILE] --pre-process [PPROCESS.JSON FILE] [GROUP ID]
 ```

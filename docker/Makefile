@@ -22,12 +22,14 @@ clean_deploy:
 	docker-compose up -d mysql uwsgi
 	sudo chmod 777 -R ${VOLUME_PATH}
 	docker-compose up -d
-	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" docker_uwsgi_1 python3 init_test_db.py
+	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts" vidjil-uwsgi python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql
+	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" vidjil-uwsgi python3 init_test_db.py
 	docker ps
 	
 reset_database:
 	# Make a call to truncate db and refill with example/testing data
-	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" docker_uwsgi_1 python3 init_test_db.py
+	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts" vidjil-uwsgi python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql
+	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" vidjil-uwsgi python3 init_test_db.py
 
 set_rights:
 	sudo chmod 777 -R ${VOLUME_PATH}
