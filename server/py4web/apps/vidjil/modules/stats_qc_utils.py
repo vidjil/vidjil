@@ -54,19 +54,19 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
     genescan_decorator = stats_decorator.GenescanDecorator()
     loci_list_decorator = stats_decorator.LociListDecorator()
     return {
-        SETS_COLUMN_NAME: HeaderConfig("Sets", "Sets", sets_decorator, 120, True),
+        SETS_COLUMN_NAME: HeaderConfig("Sets", "Patients, runs, sets", sets_decorator, 120, True),
         SAMPLE_COLUMN_NAME: HeaderConfig(
-            "Sample", "Analyzed sample", stat_decorator, 120, False
+            "Sample name", "Sample name", stat_decorator, 120, False
         ),
         CONFIG_NAME_COLUMN_NAME: HeaderConfig(
-            "Config name", "Name of the configuration used", stat_decorator, 120, False
+            "Config name", "Analysis configuration", stat_decorator, 120, False
         ),
         MAPPED_READS_COLUMN_NAME: HeaderConfig(
-            "Mapped reads", "Percentage of mapped reads", stat_decorator, 45, False
+            "Reads (%)", "Percentage of analyzed reads", stat_decorator, 45, False
         ),
         MAPPED_READS_NUMBER_COLUMN_NAME: HeaderConfig(
-            "Mapped reads number",
-            "Number of mapped reads / Total number of reads",
+            "Reads",
+            "Number of analyzed reads / Total number of reads",
             stat_decorator,
             100,
             True,
@@ -75,18 +75,18 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             "Mean length", "Mean length of the reads", stat_decorator, 40, False
         ),
         READ_LENGTHS_COLUMN_NAME: HeaderConfig(
-            "Reads lengths",
-            "Distribution of reads lengths (from 100 to 600b)",
+            "Read length distribution",
+            "Read length distribution (between 100bp and 600bp)",
             genescan_decorator,
             200,
             False,
         ),
         LOCI_COLUMN_NAME: HeaderConfig(
-            "Loci", "Loci found in the analysis", loci_list_decorator, 150, False
+            "Recombinations", "Recombinations / loci", loci_list_decorator, 150, False
         ),
         CLONES_5_COLUMN_NAME: HeaderConfig(
-            "clones ≥5%",
-            "Number of clones ≥5% found for each loci",
+            "Clonotypes ≥5%",
+            "Number of clonotypes above 5% in their recombination/locus",
             stat_decorator,
             40,
             False,
@@ -95,22 +95,22 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             "Conta.", "Intra-contamination", stat_decorator, 40, False
         ),
         MAIN_CLONE_COLUMN_NAME: HeaderConfig(
-            "Main clone", "Main clone found", stat_decorator, 200, False
+            "Main clonotype", "Main clonotype", stat_decorator, 200, False
         ),
         MERGED_READS_COLUMN_NAME: HeaderConfig(
-            "Merged reads", "Merged reads", stat_decorator, 40, True
+            "Reads (merged)", "Number of merged reads", stat_decorator, 40, True
         ),
         PRE_PROCESS_COLUMN_NAME: HeaderConfig(
-            "Pre process", "Pre process", stat_decorator, 40, True
+            "Pre-process", "Pre-process", stat_decorator, 40, True
         ),
         SHANNON_DIVERSITY_COLUMN_NAME: HeaderConfig(
-            "Shannon's diversity", "Shannon's diversity", stat_decorator, 60, False
+            "Shannon", "Shannon's diversity (0: no diversity, 3-5+: full diversity)", stat_decorator, 60, False
         ),
         PIELOU_EVENNESS_COLUMN_NAME: HeaderConfig(
-            "Pielou's evenness", "Pielou's evenness", stat_decorator, 60, True
+            "Pielou", "Pielou's evenness (0: no diversity, 1: full diversity)", stat_decorator, 60, True
         ),
         SIMPSON_DIVERSITY_COLUMN_NAME: HeaderConfig(
-            "Simpson's diversity", "Pielou's evenness", stat_decorator, 60, True
+            "Simpson", "Simpson's diversity (0: no diversity, 1: full diversity)", stat_decorator, 60, True
         ),
     }
     # 'reads' : HeaderConfig('reads', 'parser', stat_decorator, False),
