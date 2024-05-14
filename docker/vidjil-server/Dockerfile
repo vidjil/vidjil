@@ -4,7 +4,9 @@ LABEL version="1.1"
 LABEL description="An Ubuntu based docker image which comes \
 with a full installation of the Vidjil algorithm and browser/server."
 
-COPY ../../requirements.txt ./requirements.txt
+# This file need to be in the directory used to launch the docker image build
+# If you build it manually, copy this file here from vidjil root directory 
+COPY ./requirements.txt ./requirements.txt
 
 #INSTALL REQUIREMENTS
 RUN apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python python3.8 python3-pip python3-dev python3-gdbm python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached htop nano libffi-dev gosu && \

@@ -484,6 +484,7 @@ build_test_server_docker:
   script:
     - echo $CI_REGISTRY_IMAGE:$IMAGE_NAME
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cp requirements.txt docker/vidjil-server/
     # build and push the image to be used in subsequent stages
     - 'docker build 
         --no-cache
