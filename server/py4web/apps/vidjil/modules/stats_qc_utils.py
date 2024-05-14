@@ -92,7 +92,7 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             False,
         ),
         INTRA_CONTAMINATION_COLUMN_NAME: HeaderConfig(
-            "Conta.", "Intra-contamination", stat_decorator, 40, False
+            "Common", "Common clonotypes ≥0.01% with other samples of this set", stat_decorator, 40, False
         ),
         MAIN_CLONE_COLUMN_NAME: HeaderConfig(
             "Main clonotype", "Main clonotype", stat_decorator, 200, False
