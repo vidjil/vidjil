@@ -4,6 +4,7 @@ LABEL version="1.1"
 LABEL description="An Ubuntu based docker image which comes \
 with a full installation of the Vidjil algorithm and browser/server."
 
+
 # This file need to be in the directory used to launch the docker image build
 # If you build it manually, copy this file here from vidjil root directory 
 COPY ./requirements.txt ./requirements.txt
