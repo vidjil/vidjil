@@ -4,23 +4,13 @@ LABEL version="1.1"
 LABEL description="An Ubuntu based docker image which comes \
 with a full installation of the Vidjil algorithm and browser/server."
 
+COPY ./requirements.txt ./requirements.txt
+
 #INSTALL REQUIREMENTS
 RUN apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python python3.8 python3-pip python3-dev python3-gdbm python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached htop nano libffi-dev gosu && \
     service memcached restart && \
 	pip3 install --upgrade pip && \
-	pip3 install setuptools  && \
-	pip3 install setuptools-rust && \
-	pip3 install wheel && \
-	pip3 install renoir==1.5.2 && \
-	pip3 install ombott && \
-	pip3 install rocket3 && \
-	pip3 install uwsgi && \
-	pip3 install markdown && \
-	pip3 install --upgrade pip && \
-	pip3 install flower && \
-	pip3 install coverage && \
-    pip3 install -U py4web && \
-    pip3 install pandas
+	pip3 install -r requirements.txt
 
 # SET PYTHON3 AS DEFAULT PYTHON
 RUN rm -Rf /usr/bin/python
