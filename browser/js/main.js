@@ -29,6 +29,7 @@ AJAX_TIMEOUT_MSG2  = 30000                // Delay before second message
 var timeout;
 var ajaxOn = 0;
 var devel_mode = false;
+CLONOTYPE_TOP_LIMIT = 100
 
 /* Console (optional)
  * Setting here a console replaces the default javascript console with a custom one.

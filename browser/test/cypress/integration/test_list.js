@@ -411,24 +411,25 @@ describe('List', function () {
 
   it('13-xxx',  function() {
     cy.openAnalysis("/doc/analysis-example.vidjil")
+    
 
-    var clone_list = ["1", "32", "24", "68"]
-    // # clone with seg & sequence (1)
+    var clone_list = ["6", "4", "20", "22"]
+    // # clone with seg & sequence (6)
     cy.getCloneInScatterplot(clone_list[0]).click()
     cy.update_icon()
     cy.get('#seq'+clone_list[0]).should("be.visible")// Clone %s (seg+/seq+) is in segmenter" % clone_list[0]
     
-    // # clone with seg & not sequence (32)
+    // # clone with seg & not sequence (4)
     cy.getCloneInScatterplot(clone_list[1]).click()
     cy.update_icon()
     cy.get('#seq'+clone_list[1]).should("not.exist")// Clone %s (seg+/seq-) is NOT in segmenter" % clone_list[1]
 
-    // # clone without seg & sequence (24)
+    // # clone without seg & sequence (20)
     cy.getCloneInScatterplot(clone_list[2]).click()
     cy.update_icon()
     cy.get('#seq'+clone_list[2]).should("not.exist")// Clone %s (seg-/seq-) is NOT in segmenter" % clone_list[2]
 
-    // # clone without seg & sequence (68)
+    // # clone without seg & sequence (22)
     cy.getCloneInScatterplot(clone_list[3]).click()
     cy.update_icon()
     cy.get('#seq'+clone_list[3]).should("be.visible")// Clone %s (seg-/seq+) is in segmenter" % clone_list[3]

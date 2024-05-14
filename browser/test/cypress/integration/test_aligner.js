@@ -253,27 +253,27 @@ describe('Aligner', function () {
   it('02-Merge play',  function() {
     cy.openAnalysis("/doc/analysis-example.vidjil")
 
-    cy.selectCloneMulti([1, 37, 90])
+    cy.selectCloneMulti([2, 3, 5]) // Select 3 clonotype with sequence, and under top filter to be visible
     cy.get('#cluster').click()
 
-    cy.getCloneInSegmenter(90)
-      .should("be.visible") // Main clone of the cluster should be clone 90
-    cy.getCloneInScatterplot(90)
+    cy.getCloneInSegmenter(2)
+      .should("be.visible") // Main clone of the cluster should be the lower top value (clonotype 2 as now reorder at import)
+    cy.getCloneInScatterplot(2)
       .should('have.class','circle_select')
 
-    cy.getCloneInSegmenter(1)
+    cy.getCloneInSegmenter(5)
       .should("not.be.visible")
 
-    cy.open_cluster(90)
+    cy.open_cluster(2)
 
-    cy.getCloneInScatterplot(1)
+    cy.getCloneInScatterplot(5)
       .should("be.visible")
       .should('have.class','circle_select')
 
-    cy.removeCloneFromCluster(1)
-    cy.removeCloneFromCluster(37)
+    cy.removeCloneFromCluster(3)
+    cy.removeCloneFromCluster(5)
 
-    cy.getCloneInScatterplot(1)
+    cy.getCloneInScatterplot(3)
       .should("be.visible")
   })
 

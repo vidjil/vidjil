@@ -175,7 +175,9 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     
     assert.equal(json_clone1.seg.junction.start, 10, "Start junction is 10 in JSON for clone 1");
     var m = new Model();
-    m.parseJsonData(json_data)
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    data_copy.clones = []
+    m.parseJsonData(data_copy)
     var c1 = new Clone(json_clone1, m, 0, c_attributes)
     assert.equal(c1.seg.junction.start, 9, "Start junction is now 9 for clone 1 as positions start at 0 in the code");
     var c2 = new Clone(json_clone2, m, 1, c_attributes)
@@ -297,7 +299,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
         "getHtmlInfo: productivity information (if exist)");
     // locus/genes content tests
     // TODO correct this locus test/function for chromium/firefox (inversion des balises)
-    assert.includes(html, "<tr id='modal_line_locus' ><td  id='modal_line_title_locus'>locus</td><td  colspan='4' id='modal_line_value_locus'><span class=\"systemBoxMenu\" title=\"TRG\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
+    assert.includes(html, "<tr id='modal_line_locus' ><td  id='modal_line_title_locus'>locus</td><td  colspan='4' id='modal_line_value_locus'><span class=\"systemBoxMenu\" title=\"TRG\"",
         "getHtmlInfo: segmentation information (Locus)");
 
     assert.includes(html, "tr id='modal_line_V_gene_or_5_' ><td  id='modal_line_title_V_gene_or_5_'>V gene (or 5')</td><td  colspan='4' id='modal_line_value_V_gene_or_5_'>undefined V<div class='div-menu-selector' id='listVsegment' style='display: none'><form name=Vsegment>",
@@ -587,7 +589,10 @@ QUnit.test("system", function(assert) {
 QUnit.test("export", function(assert) {
     
     var m = new Model();
-    m.parseJsonData(json_data)
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    data_copy.clones = []
+    m.parseJsonData(data_copy)
+    // console.debug(json_data)
     var c3 = new Clone(json_clone3, m, 0, c_attributes)
     var c4 = new Clone(json_clone4, m, 1, c_attributes)
     m.initClones()

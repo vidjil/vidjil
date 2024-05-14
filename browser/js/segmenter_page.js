@@ -4,6 +4,8 @@ var segmenter;
 var scatter;
 var console;
 
+var CLONOTYPE_TOP_LIMIT = 100
+
 /**
  * Validates the form, and returns the data if it was successfully validated.
  * Display errors if the form is invalid.
