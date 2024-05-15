@@ -1,5 +1,4 @@
 
- 
 Quality relies both on **software engineering methods** (agile development, systematic testing, continuous integration and delivery) and on **human and team processes**. We plan to be as efficient as possible while keeping a friendly and open attitude.
 
 This document details our current quality assurance policy.
@@ -11,8 +10,8 @@ We develop Vidjil with *systematic testing and continuous integration*.
 As of 2020, we have **2700+ tests** spanning all components of the platform.
 We always want to extend the test coverage and to improve our development policy. We aim to provide
 
- - regular stable releases of the platform, including new features of the algorithm vidjil-algo
- - deliver continuously the web application, but also provide regular releases
+- regular stable releases of the platform, including new features of the algorithm vidjil-algo
+- deliver continuously the web application, but also provide regular releases
 
 ## Vidjil-algo
 
@@ -26,19 +25,18 @@ The original algorithm was published in [BMC Genomics 2014], and extension to se
 
 Each new feature or release is carefully tested and goes through the following tests:
 
- - *Unit tests.* [150+ tests](http://gitlab.vidjil.org/-/tree/dev/algo/tests/unit-tests) on the behaviour of minimal algorithmic bricks.
- - *Functional tests.* 850+ tests in [100+ tests sets](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-get-tests) with [should-test](https://www.should-test.net/). We check that the command-line vidjil-algo has the expected behaviour in various conditions and options.
- - *Functional tests on curated sequences.* [500+ sequences](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-vdj-tests) with curated V(D)J designations. We check that the algorithm gives an expected result. Specific complex sequences that are known to fail are tagged in the dataset.
- - *Functional tests on full datasets.*
-        We run tests on datasets we distribute on <http://www.vidjil.org/data> (LIL-L3, LIL-L4, T-ALL diagnosis and relapse) 
-        as well as on other public datasets (Stanford S22).
-        Some of these last tests are currently manual. There will be always some human control on these tests,
-        but we will nevertheless soon add a part of automation to check more things.
-    
+- *Unit tests.* [150+ tests](http://gitlab.vidjil.org/-/tree/dev/algo/tests/unit-tests) on the behaviour of minimal algorithmic bricks.
+- *Functional tests.* 850+ tests in [100+ tests sets](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-get-tests) with [should-test](https://www.should-test.net/). We check that the command-line vidjil-algo has the expected behaviour in various conditions and options.
+- *Functional tests on curated sequences.* [500+ sequences](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-vdj-tests) with curated V(D)J designations. We check that the algorithm gives an expected result. Specific complex sequences that are known to fail are tagged in the dataset.
+- *Functional tests on full datasets.*
+      We run tests on datasets we distribute on <http://www.vidjil.org/data> (LIL-L3, LIL-L4, T-ALL diagnosis and relapse) 
+      as well as on other public datasets (Stanford S22).
+      Some of these last tests are currently manual. There will be always some human control on these tests,
+      but we will nevertheless soon add a part of automation to check more things.
 
 ## Vidjil web application
 
-### Roadmap
+### Web application roadmap
 
 We develop the web application (both client and server) to wrap or to link several software to pre-process, process, or post-process RepSeq data.
 
@@ -46,50 +44,47 @@ Developed in Javascript with jQuery and d3.js, the web client is made for the vi
 
 A sample database links the web application and the algorithmic part, allowing users to upload sequence files and manage their jobs directly from the web application. When uploading files, the user can choose some predefined preprocess to be launch on her data. A server, implemented in Python with the py4web framework (<https://py4web.com/>), queues the job requests, allowing many jobs to be scheduled without overloading the server.
 
-### Tests
+### Web application tests
 
- - *Web client unit tests.*. [700+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/QUnit/testFiles) on atomic functions of the web application
- - *Web client functional tests.* [350+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/functional) web automation with [Cypress](https://www.cypress.io/).
- We test several [supported versions](user.md#supported-browsers) of Firefox and Chrome, and possibly legacy versions
- (see the [Dockerfile](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/docker/ci/Dockerfile)).
- The tests are launched on the web application, loading data and testing common features (clustering, renaming, tagging, sending to other sites, generating reports, etc.).
- - *Web server unit tests* [230+ tests](http://gitlab.vidjil.org/-/tree/dev/server/py4web/apps/vidjil/tests/unit) on atomic functions of the web server
- - *Web server functional tests* [30+ tests](http://gitlab.vidjil.org/-/tree/dev/server/py4web/apps/vidjil/tests/functional) simulating actual data exchange and queries to the web server using the web client with [Cypress](https://www.cypress.io/).
- - *Web server API tests* [15+ tests](http://gitlab.vidjil.org/-/tree/dev/tools/tests) simulating actual data exchange and queries to the web server using the API
- - *Hosting monitoring.*  We monitor our public server as well as remote maintened servers.
- 
+- *Web client unit tests.*. [700+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/QUnit/testFiles) on atomic functions of the web application
+- *Web client functional tests.* [350+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/functional) web automation with [Cypress](https://www.cypress.io/).
+We test several [supported versions](user.md#supported-browsers) of Firefox and Chrome, and possibly legacy versions
+(see the [Dockerfile](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/docker/ci/Dockerfile)).
+The tests are launched on the web application, loading data and testing common features (clustering, renaming, tagging, sending to other sites, generating reports, etc.).
+- *Web server unit tests* [230+ tests](http://gitlab.vidjil.org/-/tree/dev/server/py4web/apps/vidjil/tests/unit) on atomic functions of the web server
+- *Web server functional tests* [30+ tests](http://gitlab.vidjil.org/-/tree/dev/server/py4web/apps/vidjil/tests/functional) simulating actual data exchange and queries to the web server using the web client with [Cypress](https://www.cypress.io/).
+- *Web server API tests* [15+ tests](http://gitlab.vidjil.org/-/tree/dev/tools/tests) simulating actual data exchange and queries to the web server using the API
+- *Hosting monitoring.*  We monitor our public server as well as remote maintained servers.
 
-## Sofware engeneering methods
+## Software engineering methods
 
 ### Continuous integration, continuous or qualified delivery
 
 Continuous integration (CI) consists in systematically testing the modification brought to the code (either on the algorithm or on the web application). This is used since 2017, and the test coverage regularly improves.
 
-Continuous delivery (CD) consists in systematically deploying new releases when the tests succeed. We aim at reaching this point on the public test server (app.vidjil.org). As of 2020, we have automated delivery that is still triggered by the core developpers.
+Continuous delivery (CD) consists in systematically deploying new releases when the tests succeed. We aim at reaching this point on the public test server (app.vidjil.org). As of 2020, we have automated delivery that is still triggered by the core developers.
 
 However, on production servers used in routine analysis, we do not use CD but rather qualified delivery. In collaboration with members of the consortium, we identify releases to be deployed. Some consortium members have also they own qualification tests to double-check new releases, and we provide to them additional qualification documents, for example for certification purposes.
 
 ### Tracking issues
 
-Both bug reports and feature requests are followed on our public bugtracker, <http://gitlab.vidjil.org>.
+Both bug reports and feature requests are followed on our public bug-tracker, <http://gitlab.vidjil.org>.
 
- - Most issues are public. Issues with confidential content, including support for the members, are limited to the core developer team.
- - Most of the discussion takes place in the issue. To better track code history, we do not rely on e-mail discussions but rather put the content on the issue tracker.
- - We document each code modification (commits and branches) and link each of them to the related issues.
- 
- 
+- Most issues are public. Issues with confidential content, including support for the members, are limited to the core developer team.
+- Most of the discussion takes place in the issue. To better track code history, we do not rely on e-mail discussions but rather put the content on the issue tracker.
+- We document each code modification (commits and branches) and link each of them to the related issues.
+
 ## Human and Team processes
- 
+
 ### User relations
 
- - There are at least two channels to join us : <support@vidjil.org> or the issue tracker. We can also arrange audio meetings.
- - We answer to each request: Even if we cannot solve the request, we acknowledge the request and create issues when needed.
- 
- - We have quarterly audio meetings with active members of our community.
- - We organize every 18 months meetings with our users (March 2015, November 2017, March 2019, September 2020, see <http://www.vidjil.org>).
+- There are at least two channels to join us : <support@vidjil.org> or the issue tracker. We can also arrange audio meetings.
+- We answer to each request: Even if we cannot solve the request, we acknowledge the request and create issues when needed.
+
+- We have quarterly audio meetings with active members of our community.
+- We organize every 18 months meetings with our users (March 2015, November 2017, March 2019, September 2020, see <http://www.vidjil.org>).
 
 Members of the VidjilNet consortium have access to the support with guaranteed response time.
-
 
 ### Team organization
 
@@ -97,18 +92,15 @@ The Vidjil Team works remotely, in Lille, Rennes, and in other places in the wor
 
 Interactions between the developers are frequent:
 
- - daily interactions through the issue tracker (avoiding, when possible, e-mails)
- - weekly meeting between each developer and one of the architects
- - weekly conference call (all the team)
- - quarterly 2-days physical meetings (all the team)
- 
+- daily interactions through direct messaging or the issue tracker
+- bi-weekly conference call (all the team)
+- quarterly 2-days physical meetings (all the team)
 
 ### Developer relations
 
 The Vidjil platform aims to interact with other RepSeq software.
 We both use and propose APIs to work within a ecosystem of RepSeq software.
 We contribute to open formats to exchange RepSeq data.
-
 
 ## Maintenance and hosting
 
@@ -117,8 +109,8 @@ This server is only for test and should not be used for clinical purposes.
 
 Throughout the VidjilNet consortium, we propose two options for production servers with clinical and patient data:
 
- - remote maintenance of self-hosted instance of the platform in hospitals or other centers.
- - shared hosting (HDS, hébergement de données de santé), complying with French and EU regulations.
+- remote maintenance of self-hosted instance of the platform in hospitals or other centers.
+- shared hosting (HDS, *hébergement de données de santé*), complying with French and EU regulations.
 
 ### Backups and incidents
 
@@ -130,7 +122,7 @@ We have improved our backup strategy to lower the likelihood of such an event.
 
 On the public test server, the backup strategy is as follows:
 
- - Twice a month, the full database, results and analyses
- - Four times a day (1:00 CEST, 10:00 CEST, 14:00 CEST, 18:00 CEST), the full database, and the diff between the last full backup for the results and analyses
- - Original sequences files (such as .fastq) are not backuped (and the users are informed)
- - Backups are stored on an external secured server
+- Twice a month, the full database, results and analyses
+- Four times a day (1:00 CEST, 10:00 CEST, 14:00 CEST, 18:00 CEST), the full database, and the diff between the last full backup for the results and analyses
+- Original sequences files (such as .fastq) are not backuped (and the users are informed)
+- Backups are stored on an external secured server

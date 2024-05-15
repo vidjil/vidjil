@@ -19,7 +19,7 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 
 ## vidjil-algo
 
-### Software and libraries included in Vidjil repository
+### Software and libraries included in Vidjil-algo repository
 
 **CLI11**               : Command line parser for C++11
 
@@ -50,7 +50,7 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 
 ## vidjil-client
 
-### Software and libraries included in Vidjil repository
+### Software and libraries included in Vidjil-client repository
 
 **bioseq.js**           : fast and lightweight javascript library for affine-gap local and banded global pairwise alignment (Smith-Waterman)
 
@@ -130,7 +130,7 @@ x is "current version" at time of release
 **svgExport.js**        : Export SVG to PNG
 
 * @author           Nikita Rokotyan, adapted by the Vidjil Team
-* @version          retrieven on 2018-09-14
+* @version          retrieved on 2018-09-14
 * @link             <http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177>
 * @license          MIT
 
@@ -148,14 +148,14 @@ x is "current version" at time of release
 * @link             <https://github.com/select2/select2>
 * @license          MIT
 
-### Base docker image
+### Client base docker image
 
 **nginx**               : docker image used as base for vidjil-client docker image
 
 * @license          BSD
 * @version          1.21
 
-### Additional packages installed in the image
+### Additional packages installed in the client image
 
 **wget**
 
@@ -187,10 +187,9 @@ x is "current version" at time of release
 * @license  MIT
 * @link     <https://github.com/gnosek/fcgiwrap>
 
-
 ## vidjil-server
 
-### Software and libraries included in Vidjil repository
+### Software and libraries included in Vidjil-server repository
 
 **py4web**              : python CMS
 
@@ -198,13 +197,13 @@ x is "current version" at time of release
 * @link             <https://github.com/web2py/py4web/blob/master/LICENSE.md>
 * @author           Massimo Di Pierro & al
 
-### Base docker image
+### Server base docker image
 
 **ubuntu 20.04**        : docker image used as base for vidjil-server docker image
 
 * @license          <https://ubuntu.com/licensing>
 
-### Additional packages installed in the image
+### Additional packages installed in the server image
 
 **wget**
 
@@ -295,7 +294,6 @@ x is "current version" at time of release
 
 * @license  GPLv2
 * @link     <https://pypi.org/project/pyuwsgi/>
-
 
 ## Germline/sequence databases
 
