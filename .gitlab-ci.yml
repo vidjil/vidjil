@@ -287,7 +287,6 @@ test_server_unit:
     - echo "TIME $(date) - after pulling docker images" >> time.log
     - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
     - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml 
-    - echo -e "volumes:\n    databases:" >> docker/docker-compose.yml
     - sed -i 's/latest/test/g' ./docker/docker-compose.yml
     # Replace path for some volumes
     # Use http version of config
