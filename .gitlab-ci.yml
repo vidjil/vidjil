@@ -304,20 +304,20 @@ test_server_unit:
     - docker-compose up -d mysql uwsgi
     - echo "TIME $(date) - after first compose up" >> ../time.log
     # Set rights
-    - docker exec docker_uwsgi_1 mkdir -p /usr/share/vidjil/server/py4web/apps/vidjil/errors/
-    - docker exec docker_mysql_1 chmod 0777 /var/lib/mysql/vidjil -R
-    - docker exec docker_uwsgi_1 chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R
-    - docker exec docker_uwsgi_1 chmod 0777 /mnt/result/results   -R
-    - docker exec docker_uwsgi_1 chmod 0777 /mnt/result/tmp
-    - docker exec docker_uwsgi_1 chmod 0777 /mnt/upload/uploads   -R
-    - docker exec docker_uwsgi_1 chmod 0777 /usr/share/tools      -R
+    - docker exec vidjil-uwsgi mkdir -p /usr/share/vidjil/server/py4web/apps/vidjil/errors/
+    - docker exec vidjil-mysql chmod 0777 /var/lib/mysql/vidjil -R
+    - docker exec vidjil-uwsgi chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R
+    - docker exec vidjil-uwsgi chmod 0777 /mnt/result/results   -R
+    - docker exec vidjil-uwsgi chmod 0777 /mnt/result/tmp
+    - docker exec vidjil-uwsgi chmod 0777 /mnt/upload/uploads   -R
+    - docker exec vidjil-uwsgi chmod 0777 /usr/share/tools      -R
     - chmod 777 -R volumes/vidjil/
     # Start other docker images
     - docker-compose up -d
     # Show some information on current states of docker services
     - docker ps
     # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
-    - docker exec docker_uwsgi_1 bash -c "cd /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ && python3 init_test_db.py"
+    - docker exec vidjil-uwsgi bash -c "cd /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ && python3 init_test_db.py"
     # Change File source definition in defs.py file 
     - cd .. # Go to root git directory
     - echo "TIME $(date) - before other server script" >> time.log
@@ -336,9 +336,9 @@ test_server_unit:
     - !reference [.setup_docker_server]
   after_script:
     - echo "TIME $(date) - END OF SERVER JOB" >> time.log
-    - docker cp docker_uwsgi_1:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
+    - docker cp vidjil-uwsgi:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
     - docker ps
-    - mkdir -p logs/after; for service in mysql fuse uwsgi workers flower nginx; do docker logs docker_${service}_1  > logs/after/${service}.log 2>&1; done
+    - mkdir -p logs/after; for service in mysql fuse uwsgi workers flower nginx; do docker logs vidjil-${service} > logs/after/${service}.log 2>&1; done
     - cd docker && docker-compose down -v
     - cd .. && cat time.log
     - docker rmi "vidjil/server:test" "vidjil/client:test"
