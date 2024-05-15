@@ -1,0 +1,18 @@
+!OUTPUT_FILE: fuse_airr_no_clones.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS  ../../../demo/Demo-X5.airr -o fuse_airr_no_clones.vidjil
+
+# check read segmented until "shouldget" can test empty list (bug/feature)
+$ check no clones 
+j: reads.segmented: [0]
+
+
+!OUTPUT_FILE: fuse_airr_no_clones2.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS  ../../../demo/Demo-X5-no-clone.vidjil -o fuse_airr_no_clones2.vidjil
+
+# No clones present in list, but some reads segmenteed in reads.segmented
+# if fuse work well, a fused file should be at least created
+$ check no clones 
+j: reads.segmented: [14]
+
+
+

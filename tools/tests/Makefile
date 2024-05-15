@@ -9,6 +9,9 @@ data/fused_multiple.vidjil: data/fused_multiple.vidjil.gz
 should: should-get-tests/fuse-doc.tap
 	python3 ../should.py should-get-tests/*.should-get
 
+should_clean: 
+	rm should-get-tests/*.log should-get-tests/*.vidjil should-get-tests/*.airr should-get-tests/*.tap should-get-tests/*.fasta
+
 should-ijson: 
 	python3 ../should.py --var FUSE_OPTIONS=--ijson should-get-tests/fuse-*.should-get
 
