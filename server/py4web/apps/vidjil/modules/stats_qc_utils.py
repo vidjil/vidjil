@@ -62,7 +62,7 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             "Config name", "Analysis configuration", stat_decorator, 120, False
         ),
         MAPPED_READS_COLUMN_NAME: HeaderConfig(
-            "Reads (%)", "Percentage of analyzed reads", stat_decorator, 45, False
+            "Reads (%)", "Percentage of analyzed reads", stat_decorator, 50, False
         ),
         MAPPED_READS_NUMBER_COLUMN_NAME: HeaderConfig(
             "Reads",
@@ -82,35 +82,35 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             False,
         ),
         LOCI_COLUMN_NAME: HeaderConfig(
-            "Recombinations", "Recombinations / loci", loci_list_decorator, 150, False
+            "Recombinations", "Recombinations / loci", loci_list_decorator, 140, False
         ),
         CLONES_5_COLUMN_NAME: HeaderConfig(
             "Clonotypes ≥5%",
             "Number of clonotypes above 5% in their recombination/locus",
             stat_decorator,
-            40,
+            60,
             False,
         ),
         INTRA_CONTAMINATION_COLUMN_NAME: HeaderConfig(
-            "Common", "Common clonotypes ≥0.01% with other samples of this set", stat_decorator, 40, False
+            "Common", "Common clonotypes ≥0.01% with other samples of this set", stat_decorator, 50, False
         ),
         MAIN_CLONE_COLUMN_NAME: HeaderConfig(
-            "Main clonotype", "Main clonotype", stat_decorator, 200, False
+            "Main clonotype", "Main clonotype", stat_decorator, 180, False
         ),
         MERGED_READS_COLUMN_NAME: HeaderConfig(
-            "Reads (merged)", "Number of merged reads", stat_decorator, 40, True
+            "Reads (merged)", "Number of merged reads", stat_decorator, 50, True
         ),
         PRE_PROCESS_COLUMN_NAME: HeaderConfig(
-            "Pre-process", "Pre-process", stat_decorator, 40, True
+            "Pre-process", "Pre-process", stat_decorator, 45, True
         ),
         SHANNON_DIVERSITY_COLUMN_NAME: HeaderConfig(
-            "Shannon", "Shannon's diversity (0: no diversity, 3-5+: full diversity)", stat_decorator, 60, False
+            "Shannon", "Shannon's diversity (0: no diversity, 3-5+: full diversity)", stat_decorator, 45, False
         ),
         PIELOU_EVENNESS_COLUMN_NAME: HeaderConfig(
-            "Pielou", "Pielou's evenness (0: no diversity, 1: full diversity)", stat_decorator, 60, True
+            "Pielou", "Pielou's evenness (0: no diversity, 1: full diversity)", stat_decorator, 45, True
         ),
         SIMPSON_DIVERSITY_COLUMN_NAME: HeaderConfig(
-            "Simpson", "Simpson's diversity (0: no diversity, 1: full diversity)", stat_decorator, 60, True
+            "Simpson", "Simpson's diversity (0: no diversity, 1: full diversity)", stat_decorator, 45, True
         ),
     }
     # 'reads' : HeaderConfig('reads', 'parser', stat_decorator, False),
