@@ -30,10 +30,12 @@ ACCESS_DENIED = "access denied"
 @action.uses("config/index.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def index():
-    if not auth.user : 
-        res = {"redirect" : "default/user/login"}
+    if not auth.is_admin():
+        res = {"success" : "false",
+               "message" : ACCESS_DENIED,
+               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+        log.info(res)
         return json.dumps(res, separators=(',',':'))
-    
 
     query = db((auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) ).select(orderby=db.config.classification|db.config.name)
     used_query = db(db.results_file.config_id > 0).select(db.results_file.config_id, distinct=True)
