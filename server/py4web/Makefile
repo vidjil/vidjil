@@ -3,16 +3,8 @@ install: install_py4web
 
 install_py4web:
 	python3 -m pip install --upgrade py4web --no-cache-dir --user
-	pip3 install setuptools
-	pip3 install setuptools-rust
-	pip3 install wheel
-	pip3 install rocket3
-	pip3 install --upgrade pip
-	pip3 install ijson
-	pip3 install pymysql
-	pip3 install pytest
-	pip3 install pytest-cov
-	pip3 install "celery[redis]"
+	pip3 install -r ../../requirements.txt
+
 
 init:
 	py4web setup apps 
