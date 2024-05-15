@@ -38,7 +38,7 @@ describe('Creation of users and groups', function () {
         cy.get('#file_menu').should("not.be.visible")
         
         cy.get('.info-container').should("not.be.visible")
-        cy.openCloneInfo('20')
+        cy.openCloneInfo('1')
         cy.get('.info-container').should("be.visible")
 
         cy.openDBPage()
