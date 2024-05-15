@@ -4,6 +4,13 @@
     See <http://www.vidjil.org/doc/server>
 
 
+## 2024-05-15
+
+**vidjil/server**:
+
+- The containers are now named `vidjil-*service-name*`
+- Use requirements.txt to build image
+
 ## 2024-01-23
 
 **vidjil/server**:
@@ -13,7 +20,7 @@
     We also changed in depth the docker-compose file. Read this changelog to get more information.
 
 A complete rewriting of backend server from web2py to py4web comes with releases `2024.01`.  
-We completly changed launched services, path of some volumes and we now use an dedicated `.env` environement file.  
+We completely changed launched services, path of some volumes and we now use an dedicated `.env` environment file.  
 **Please follow migration documentation**.
 
 See more information at [Migrating from Web2py to Py4web](dev-server.md#migrating-from-web2py-to-py4web).
