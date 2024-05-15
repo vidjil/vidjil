@@ -1,10 +1,19 @@
-import json, argparse
-import logging, sys, datetime, os
+import pathlib
+import sys
+
+sys.path.append("../../../")
+
+import json
+import argparse
+import logging
+import datetime
+import os
 import shutil
 from pydal.helpers.classes import RecordDeleter, RecordUpdater
 from pydal.objects import LazySet
-import defs
-from applications.vidjil.models.VidjilAuth import PermissionEnum
+from apps.vidjil.common import db
+from apps.vidjil import defs
+from apps.vidjil.modules.permission_enum import PermissionEnum
 
 
 class MigrateLogger:
@@ -61,22 +70,24 @@ def get_dict_from_row(row):
             my_dict[key] = tmp
     return my_dict
 
-def reencode_dict(data):
-    '''
-    Recursively reencode the values and keys of a dict to utf-8.
-    Takes a dict loaded from json, assumes all keys are strings.
-    Values may be any type, only unicode values are reencoded
-    '''
-    if type(data) == dict:
-        tmp = {}
-        for key in data:
-            val = data[key]
-            tmp[key.encode('utf-8')] = reencode_dict(val)
-        return tmp
-    elif type(data) == unicode:
-        return data.encode('utf-8')
-    else:
-        return data 
+
+# def reencode_dict(data):
+#     """
+#     Recursively reencode the values and keys of a dict to utf-8.
+#     Takes a dict loaded from json, assumes all keys are strings.
+#     Values may be any type, only unicode values are reencoded
+#     """
+#     if type(data) == dict:
+#         tmp = {}
+#         for key in data:
+#             val = data[key]
+#             tmp[key.encode("utf-8")] = reencode_dict(val)
+#         return tmp
+#     elif type(data) == unicode:
+#         return data.encode("utf-8")
+#     else:
+#         return data
+
 
 class IdMapper:
     def __init__(self, log):
@@ -87,8 +98,8 @@ class IdMapper:
         if oid is None:
             return oid
         if oid not in self._mapping:
-            self._log.debug("id %d not in mapping, returning it" % oid)
-            self._log.debug("mapping: " + str(self._mapping.keys()))
+            self._log.debug(f"id {oid} not in mapping, returning it")
+            self._log.debug(f"mapping: {self._mapping}")
             return oid
         return self._mapping[oid]
 
@@ -106,13 +117,13 @@ class ConfigMapper(IdMapper):
     def load(self, cfile):
         self._mapping = {}
         with open(cfile, "r") as cfg:
-            config_map = json.load(cfg, encoding='utf-8')
+            config_map = json.load(cfg)
             for key in config_map:
                 if config_map[key]["link_local"]:
                     self._mapping[int(key)] = config_map[key]["link_local"]
 
-        self._log.info("mapping loaded for %s" % cfile)
-        self._log.debug("mapping: " + str(self._mapping.keys()))
+        self._log.info(f"mapping loaded for {cfile}")
+        self._log.debug(f"mapping: {self._mapping}")
 
 
 class Extractor:
@@ -254,7 +265,7 @@ class Importer:
                 self.mappings[table].setMatchingId(int(vid), oid)
     
     def get_mapping_id(self, table, id):
-        self.log.debug("Getting mapping for table %s and id %d" % (table, id))
+        self.log.debug(f"Getting mapping for table {table} and id {id}")
         return self.mappings[table].getMatchingId(id)
 
 
@@ -271,47 +282,54 @@ def copy_results_files(data, src, dest, log):
 
     for t in file_fields:
         for entry in data[t]:
-            if (data[t][entry][file_fields[t]] is not None):
-                try: 
-                    shutil.copy(src + '/' + data[t][entry][file_fields[t]], dest + '/' + data[t][entry][file_fields[t]])
-                    log.debug("Copying %s" % data[t][entry][file_fields[t]])
-                except:
-                    log.error("failed to copy file %s" % data[t][entry][file_fields[t]])
+            file_name = data[t][entry][file_fields[t]]
+            if file_name is not None:
+                try:
+                    shutil.copy(
+                        pathlib.Path(src, file_name), pathlib.Path(dest, file_name)
+                    )
+                    log.debug(f"Copying {file_name}")
+                except Exception as exception:
+                    log.error(f"failed to copy file {file_name}: {exception}")
 
 
 DIR_PRE_VIDJIL_ID_EXPORT = "out-%06d"
 
 
 def export_pre_process_log_files(tables, dest, log):
-    pre_file_path = dest + "/pre"
+    pre_file_path = pathlib.Path(dest, "pre")
     for sequence_file_id, sequence_file_entry in tables["sequence_file"].items():
         if sequence_file_entry["pre_process_id"] is not None:
             if not os.path.exists(pre_file_path):
                 os.makedirs(pre_file_path)
-            source_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
-            target_folder = pre_file_path + "/" + DIR_PRE_VIDJIL_ID_EXPORT % sequence_file_id
+            source_folder = pathlib.Path(defs.DIR_PRE_VIDJIL_ID % sequence_file_id)
+            target_folder = pathlib.Path(
+                pre_file_path, DIR_PRE_VIDJIL_ID_EXPORT % sequence_file_id
+            )
             try:
-                shutil.copytree(source_folder, target_folder)
-                log.debug("Copying %s to %s" % (source_folder, target_folder))
+                shutil.copytree(source_folder, target_folder, dirs_exist_ok=True)
+                log.debug(f"Copying {source_folder} to {target_folder}")
             except Exception as exception:
                 log.error(
-                    "failed to copy file %s to %s: %s" % (source_folder, target_folder, exception)
+                    f"failed to copy file {source_folder} to {target_folder}: {exception}"
                 )
 
 
-def import_pre_process_log_files(tables, src, importer, log):
-    pre_file_path = src + "/pre"
+def import_pre_process_log_files(tables: dict, src, importer: Importer, log: MigrateLogger):
+    pre_file_path = pathlib.Path(src, "pre")
     for sequence_file_id, sequence_file_entry in tables["sequence_file"].items():
         if sequence_file_entry["pre_process_id"] is not None:
-            source_folder = pre_file_path + "/" + DIR_PRE_VIDJIL_ID_EXPORT % int(sequence_file_id)
+            source_folder = pathlib.Path(
+                pre_file_path, DIR_PRE_VIDJIL_ID_EXPORT % int(sequence_file_id)
+            )
             mapped_sequence_file_id = importer.get_mapping_id("sequence_file", int(sequence_file_id))
-            target_folder = defs.DIR_PRE_VIDJIL_ID % int(mapped_sequence_file_id)
+            target_folder = pathlib.Path(defs.DIR_PRE_VIDJIL_ID % int(mapped_sequence_file_id))
             try:
-                shutil.copytree(source_folder, target_folder)
-                log.debug("Copying %s to %s" % (source_folder, target_folder))
+                shutil.copytree(source_folder, target_folder, dirs_exist_ok=True)
+                log.debug(f"Copying {source_folder} to {target_folder}")
             except Exception as exception:
                 log.error(
-                    "failed to copy file %s to %s: %s" % (source_folder, target_folder, exception)
+                    f"failed to copy file {source_folder} to {target_folder}: {exception}"
                 )
 
 
@@ -360,6 +378,7 @@ def export_configs(extractor, tables, log):
     mapped_configs = {
         key: {"description": value, "link_local": key} for key, value in configs.items()
     }
+    log.debug(f"{mapped_configs=}")
 
     return mapped_configs
 
@@ -387,12 +406,13 @@ def export_pre_process_configs(extractor, tables, log):
         key: {"description": value, "link_local": key}
         for key, value in pre_process_configs.items()
     }
+    log.debug(f"{mapped_pre_process_configs=}")
 
     return mapped_pre_process_configs
 
 
 def get_files_filepath(filepath):
-    return filepath + "/files"
+    return pathlib.Path(filepath, "files")
 
 
 def export_group_data(filesrc, filepath, groupids, log):
@@ -422,14 +442,14 @@ def export_group_data(filesrc, filepath, groupids, log):
         os.makedirs(filepath)
 
     with open(filepath + "/export.json", "w") as outfile:
-        json.dump(tables, outfile, ensure_ascii=False, encoding='utf-8')
+        json.dump(tables, outfile, ensure_ascii=False)
     with open(filepath + "/config.json", "w") as outfile:
-        json.dump(mapped_configs, outfile, ensure_ascii=False, encoding='utf-8')
+        json.dump(mapped_configs, outfile, ensure_ascii=False)
     with open(filepath + "/pprocess.json", "w") as outfile:
-        json.dump(mapped_pre_process_configs, outfile, ensure_ascii=False, encoding='utf-8')
+        json.dump(mapped_pre_process_configs, outfile, ensure_ascii=False)
 
     files_filepath = get_files_filepath(filepath)
-    log.info("copying files from %s to %s" % (filesrc, files_filepath))
+    log.info(f"copying files from {filesrc} to {files_filepath}")
     copy_results_files(tables, filesrc, files_filepath, log)
     export_pre_process_log_files(tables, files_filepath, log)
     log.info("done")
@@ -437,25 +457,31 @@ def export_group_data(filesrc, filepath, groupids, log):
 
 def export_sample_set_data(filesrc, filepath, sample_type, sample_ids, log):
     log.info("exporting sample set data")
-    ext = SampleSetExtractor(db, log)
+    extractor = SampleSetExtractor(db, log)
 
     tables = {}
 
-    rows = ext.getAccessible(sample_type, sample_ids)
-    tables[sample_type], sample_set_ids = ext.populateSets(rows)
+    rows = extractor.getAccessible(sample_type, sample_ids)
+    tables[sample_type], sample_set_ids = extractor.populateSets(rows)
 
-    tables = export_peripheral_data(ext, tables, sample_set_ids, log=log)
+    tables = export_peripheral_data(extractor, tables, sample_set_ids, log=log)
 
     log.infoConfig(tables)
+    mapped_configs = export_configs(extractor, tables, log)
+    mapped_pre_process_configs = export_pre_process_configs(extractor, tables, log)
 
     if not os.path.exists(filepath):
         os.makedirs(filepath)
 
     with open(filepath + "/export.json", "w") as outfile:
-        json.dump(tables, outfile, ensure_ascii=False, encoding='utf-8')
+        json.dump(tables, outfile, ensure_ascii=False)
+    with open(filepath + "/config.json", "w") as outfile:
+        json.dump(mapped_configs, outfile, ensure_ascii=False)
+    with open(filepath + "/pprocess.json", "w") as outfile:
+        json.dump(mapped_pre_process_configs, outfile, ensure_ascii=False)
 
     files_filepath = get_files_filepath(filepath)
-    log.info("copying files from %s to %s" % (filesrc, files_filepath))
+    log.info(f"copying files from {filesrc} to {files_filepath}")
     copy_results_files(tables, filesrc, files_filepath, log)
     export_pre_process_log_files(tables, files_filepath, log)
     log.info("done")
@@ -473,8 +499,8 @@ def import_data(
     log.info("importing data")
     data = {}
     with open(filesrc + "/export.json", "r") as infile:
-        tmp = json.load(infile, encoding='utf-8')
-        data = reencode_dict(tmp)
+        data = json.load(infile)
+        # data = reencode_dict(tmp)
 
     config_mapper = ConfigMapper(log)
     if config:
@@ -543,7 +569,7 @@ def import_data(
             db.commit()
             log.info("done")
     except Exception as exception:
-        log.error("something went wrong : %s" % exception)
+        log.error(f"something went wrong : {exception}")
         log.error("rolling back !")
         db.rollback()
         log.error("rollback was successful")
@@ -628,6 +654,8 @@ def main():
     log = MigrateLogger()
     if args.debug:
         log.getLogger().setLevel(logging.DEBUG)
+
+    log.debug(f"{args=}")
 
     if args.command == "export":
         if args.mode == "group":
