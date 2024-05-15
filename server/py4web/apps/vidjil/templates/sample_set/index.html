@@ -279,24 +279,28 @@
         <span class="button2" onclick="db.call('sample_set/custom', {'id': '[[=request.query['id']]]', 'filter': ''} )">compare some of these samples</span>
     </div>
 
-    <div class="db_block_right">
-        See results and preview/quality:
-        [[for row in db((db.fused_file.sample_set_id == request.query["id"]) & 
-                        (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) &
-                        (db.config.id ==db.fused_file.config_id)).select(db.config.name, db.config.id, db.fused_file.sample_set_id, distinct=True) :]]
-            <a class="button2" href="[[=http_origin]]?sample_set_id=[[=request.query["id"]]]&config=[[=row.config.id]]" type="text/html"
-                id="result_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]" title="Display results"
-                onclick="event.preventDefault()
-                        if (event.which == 2) { window.open(this.href) }
-                        else { myUrl.loadUrl(db, { 'sample_set_id' : '[[=request.query["id"]]]' , 'config' : [[=row.config.id]] }, '[[=info["filename"]]]' ) }" >
-                [[=row.config.name]] <span class="icon-chart-bar"></span>
-            </a>
-            <a class="button2_next" type="text/html" id="qc_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]" title="Preview / quality control"
-                onclick="event.preventDefault()
-                        db.call('sample_set/multi_sample_stats', {'results_ids': [[=[row.results_file.id for row in query if (row.results_file.id and (row.results_file.status == tasks.STATUS_COMPLETED))]]] })" >
-                <span class="icon-table"></span>
-            </a>
-        [[pass]]
-    </div>
+    [[results_rows = db((db.fused_file.sample_set_id == request.query["id"]) & 
+        (auth.vidjil_accessible_query(PermissionEnum.read_config.value, db.config) | auth.vidjil_accessible_query(PermissionEnum.admin_config.value, db.config) ) &
+        (db.config.id ==db.fused_file.config_id)).select(db.config.name, db.config.id, db.fused_file.sample_set_id, distinct=True)]]
+    [[if len(results_rows) > 0:]]
+        <div class="db_block_right">
+            See results and preview/quality:
+            [[for row in results_rows:]]
+                <span type="button" class="double_button">
+                    <span class="double_button__part1" href="[[=http_origin]]?sample_set_id=[[=request.query["id"]]]&config=[[=row.config.id]]" type="text/html"
+                        id="result_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]" title="Display results for config [[=row.config.name]]"
+                        onclick="event.preventDefault()
+                                if (event.which == 2) { window.open(this.href) }
+                                else { myUrl.loadUrl(db, { 'sample_set_id' : '[[=request.query["id"]]]' , 'config' : [[=row.config.id]] }, '[[=info["filename"]]]' ) }" >
+                        [[=row.config.name]] <span class="icon-chart-bar"></span>
+                    </span>
+                    <span class="double_button__part2" type="text/html" id="qc_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]" title="Preview / quality control for config [[=row.config.name]]"
+                        onclick="db.call('sample_set/multi_sample_stats', {'results_ids': [[=[row.results_file.id for row in query if (row.results_file.id and (row.results_file.status == tasks.STATUS_COMPLETED))]]] })" >
+                        <span class="icon-table"></span>
+                    </span>
+                </span>
+            [[pass]]
+        </div>
+    [[pass]]
 
 </div>

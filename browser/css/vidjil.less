@@ -930,7 +930,14 @@ line {
   text-align:left;
 }
 
-.systemBoxNameMenu:hover, .focus_selected:hover, .button:hover,.button_right:hover, .buttonSelector:hover, .button2:hover{
+.systemBoxNameMenu:hover, 
+.focus_selected:hover, 
+.button:hover,
+.button_right:hover, 
+.buttonSelector:hover, 
+.button2:hover, 
+.double_button__part1:hover,
+.double_button__part2:hover {
   background : @border;
   color : @select;
   cursor: pointer;
@@ -1079,22 +1086,38 @@ div.button {
 }
 
 .button2,
-.button2_next {
-    border: solid;
-    border-width: 1px;
-    padding: 3px;
-    margin: 3px;
-    display: inline-block;
-    cursor: pointer;
-    background: @border;
-    width: auto;
-    text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
+.double_button {
+  padding: 3px;
+  margin: 3px;
+	border-radius: 5px;
+  display: inline-block;
+  cursor: pointer;
+  background: @border;
+  width: auto;
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
-.button2_next {
-  margin-left: -8px;
+.double_button {
+  padding: 0;
+  display: inline-flex;
+  cursor: pointer;
+}
+.double_button__part1,
+.double_button__part2 {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px;
+}
+
+.double_button__part1 {
+	padding-left: 5px;
+}
+
+.double_button__part2 {
+	background: rgba(0, 0, 0, 0.05);
+	padding-right: 5px;
 }
 
 .clipboard-button {

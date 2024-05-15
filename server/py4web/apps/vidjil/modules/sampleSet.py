@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABCMeta, abstractmethod
-from apps.vidjil.modules.tag import TagDecorator, get_tag_prefix
-from apps.vidjil.user_groups import *
-from apps.vidjil.modules import vidjil_utils as v_u
-from yatl.helpers import SPAN, XML, A
-from py4web import request
+from yatl.helpers import SPAN, XML, A, BUTTON
 
+from ..modules.tag import TagDecorator, get_tag_prefix
 from ..modules import vidjil_utils
 from ..modules.permission_enum import PermissionEnum
-from .. import defs
+from .. import defs, user_groups
 from ..common import db, auth
 
 class SampleSet(object):
@@ -77,15 +74,16 @@ class SampleSet(object):
             filename =  f"({self.get_name(data)} {c_id})"
 
             configs.append(
-                str(A(c_name, SPAN(_class="icon-chart-bar"),
+                str(SPAN(
+                    SPAN(c_name, SPAN(_class="icon-chart-bar"),
                       _href=f"index.html?sample_set_id={int(data['sample_set_id'])}&config={c_id}", 
-                      _type="text/html",  _id=f"result_sample_set_{int(data['sample_set_id'])}_config_{c_id}",
-                      _class="button2", _title="Display results",
-                      _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c_id, filename))))
-            configs.append(
-                str(A("", SPAN(_class="icon-table"),
-                      _class="button2_next", _title="Preview / quality control",
-                      _onclick=f"db.call('sample_set/multi_sample_stats', {{'sample_set_id': {data['sample_set_id']}, 'config_id' : {c_id} }})")))
+                      _type="text/html", _id=f"result_sample_set_{int(data['sample_set_id'])}_config_{c_id}",
+                      _class="double_button__part1", _title=f"Display results for config {c_name}",
+                      _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c_id, filename)),
+                    SPAN(SPAN(_class="icon-table"),
+                      _class="double_button__part2", _title=f"Preview / quality control for config {c_name}",
+                      _onclick=f"db.call('sample_set/multi_sample_stats', {{'sample_set_id': {data['sample_set_id']}, 'config_id' : {c_id} }})"),
+                    _type="button", _class="double_button")))
 
         return XML(" ".join(configs))
     
@@ -124,18 +122,18 @@ class SampleSet(object):
 
     def get_files(self, data):
         file_count, size = self.get_files_values(data)
-        files_display = f"{file_count} ({v_u.format_size(size)})"
+        files_display = f"{file_count} ({vidjil_utils.format_size(size)})"
         return SPAN(files_display, _title=files_display)
 
     def get_fields(self):
         fields = []
-        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_display_name, 'sort_call': self.get_name, 'width': '200px', 'public': True})
-        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_tagged_info, 'sort_call': self.get_info, 'width': '300px', 'public': True})
-        fields.append({'name': 'results', 'sort': 'confs', 'call': self.get_config_urls, 'sort_call': self.get_sort_configs, 'width': None, 'public': True})
-        if self.auth.is_admin() or len(get_group_list(self.auth)) > 1:
-            fields.append({'name': 'groups', 'sort': 'groups', 'call': self.get_groups_string, 'sort_call': self.get_groups_string, 'width': '80px', 'public': True})
-            fields.append({'name': 'creator', 'sort': 'creator', 'call': self.get_creator_string, 'sort_call': self.get_creator, 'width': '100px', 'public': True})
-        fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'sort_call': self.get_file_count, 'width': '80px', 'public': True})
+        fields.append({'name': 'Name', 'sort': 'name', 'call': self.get_display_name, 'sort_call': self.get_name, 'width': '200px', 'public': True})
+        fields.append({'name': 'Info', 'sort': 'info', 'call': self.get_tagged_info, 'sort_call': self.get_info, 'width': '300px', 'public': True})
+        fields.append({'name': 'Results', 'sort': 'confs', 'call': self.get_config_urls, 'sort_call': self.get_sort_configs, 'width': None, 'public': True})
+        if self.auth.is_admin() or len(user_groups.get_group_list(self.auth)) > 1:
+            fields.append({'name': 'Groups', 'sort': 'groups', 'call': self.get_groups_string, 'sort_call': self.get_groups_string, 'width': '80px', 'public': True})
+            fields.append({'name': 'Creator', 'sort': 'creator', 'call': self.get_creator_string, 'sort_call': self.get_creator, 'width': '100px', 'public': True})
+        fields.append({'name': 'Files', 'sort': 'file_count', 'call': self.get_files, 'sort_call': self.get_file_count, 'width': '80px', 'public': True})
         return fields
 
     def get_sort_fields(self):
@@ -146,9 +144,9 @@ class SampleSet(object):
 
     def get_reduced_fields(self):
         fields = []
-        fields.append({'name': 'name', 'sort': 'name', 'call': self.get_name, 'sort_call': self.get_name, 'width': '200px', 'public': True})
-        fields.append({'name': 'info', 'sort': 'info', 'call': self.get_stats_tagged_info, 'sort_call': self.get_info, 'width': None, 'public': True})
-        fields.append({'name': 'files', 'sort': 'file_count', 'call': self.get_files, 'sort_call': self.get_file_count, 'width': '100px', 'public': True})
+        fields.append({'name': 'Name', 'sort': 'name', 'call': self.get_name, 'sort_call': self.get_name, 'width': '200px', 'public': True})
+        fields.append({'name': 'Info', 'sort': 'info', 'call': self.get_stats_tagged_info, 'sort_call': self.get_info, 'width': None, 'public': True})
+        fields.append({'name': 'Files', 'sort': 'file_count', 'call': self.get_files, 'sort_call': self.get_file_count, 'width': '100px', 'public': True})
         return fields
 
     def get_sequence_count(self, data):
@@ -178,7 +176,7 @@ class SampleSet(object):
     def get_name_filter_query(self, query):
         db = self.db
         if query is None or query == '':
-            return (db[self.type].name != None)
+            return (db[self.type].name is not None)
         return (db[self.type].name.like('%' + query + "%"))
 
     @abstractmethod

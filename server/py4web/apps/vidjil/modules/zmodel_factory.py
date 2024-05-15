@@ -69,12 +69,12 @@ class Patient(SampleSet):
 
     def get_fields(self):
         fields = super(Patient, self).get_fields()
-        fields.insert(1, {'name': 'birth', 'sort': 'birth', 'call': self.get_birth, 'sort_call': self.get_birth, 'width': '80px', 'public': True})
+        fields.insert(1, {'name': 'Birth date', 'sort': 'birth', 'call': self.get_birth, 'sort_call': self.get_birth, 'width': '80px', 'public': True})
         return fields
 
     def get_reduced_fields(self):
         fields = super(Patient, self).get_reduced_fields()
-        fields.insert(1, {'name': 'birth', 'sort': 'birth', 'call': self.get_birth, 'sort_call': self.get_birth, 'width': '80px', 'public': True})
+        fields.insert(1, {'name': 'Birth date', 'sort': 'birth', 'call': self.get_birth, 'sort_call': self.get_birth, 'width': '80px', 'public': True})
         return fields
 
     def get_name(self, data, anon=None):
@@ -166,12 +166,12 @@ class Run(SampleSet):
 
     def get_fields(self):
         fields = super(Run, self).get_fields()
-        fields.insert(1, {'name': 'run_date', 'sort': 'run_date', 'call': self.get_run_date, 'sort_call': self.get_run_date, 'width': '80px', 'public': True})
+        fields.insert(1, {'name': 'Run date', 'sort': 'run_date', 'call': self.get_run_date, 'sort_call': self.get_run_date, 'width': '80px', 'public': True})
         return fields
 
     def get_reduced_fields(self):
         fields = super(Run, self).get_reduced_fields()
-        fields.insert(1, {'name': 'run_date', 'sort': 'run_date', 'call': self.get_run_date, 'sort_call': self.get_run_date, 'width': '80px', 'public': True})
+        fields.insert(1, {'name': 'Run date', 'sort': 'run_date', 'call': self.get_run_date, 'sort_call': self.get_run_date, 'width': '80px', 'public': True})
         return fields
 
     def get_name(self, data):
