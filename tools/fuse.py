@@ -1015,7 +1015,7 @@ class ListWindows(VidjilJson):
                 w.append(clone)
 
         # Cut only at first loading of a file, not merged one (error on top and limit_per_locus)
-        if len(w[0].d["reads"]) == 1:
+        if len(self.d["clones"]) and len(w[0].d["reads"]) == 1:
             self.d["clones"] = w
 
         print("### Cut merged file, keeping window in the top %d for at least one point" % limit)

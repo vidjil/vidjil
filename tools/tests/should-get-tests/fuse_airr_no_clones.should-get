@@ -1,0 +1,6 @@
+!OUTPUT_FILE: fuse_airr_no_clones.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS  ../../../demo/Demo-X5.airr -o fuse_airr_no_clones.vidjil
+
+$ check no clones 
+j: clones: []
+ 
