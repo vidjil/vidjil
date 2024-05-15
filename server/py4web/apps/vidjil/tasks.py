@@ -905,6 +905,13 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
 
     # Remove data file from disk to save space (it is now saved elsewhere)
     os.remove(filepath)
+    # Remove original sequence file after preprocess as no more needed and avaialable
+    try:
+        os.remove(defs.DIR_SEQUENCES + sequence_file.data_file)
+        os.remove(defs.DIR_SEQUENCES + sequence_file.data_file2)
+    except:
+        log.error(f"[pre_process_id={pre_process_id}] [sequence_file_id={sequence_file_id}] Removing file at the end of preprocess failed.")
+
     try:
         os.remove(pre_process_filepath)
     except:
