@@ -630,6 +630,38 @@ The only thing you should not do is to close completely your web browser (or the
 Once a task is completed, a click on the `See results` link (bottom right) will open the main window to browse the clonotypes.
 A click on the `out` link at the right of every sample give access to the raw output file of the RepSeq software.
 
+### Statictics and quality control view
+
+New with release 2024.05!
+
+This view allow to see in one table various informations on results for multiple samples from one set.
+
+To add this new view, a direct dedicated button have been added on sets pages to allow a direct access to these results for a specified and already launched configuration.
+
+Here are details of avaialble columns:
+
+| Columns | Definitions |
+| :------ | :---------- |
+| Sets | Patients, runs, sets |
+| Sample name | Sample name |
+| Config name | Analysis configuration |
+| Reads (%) | Percentage of analyzed reads |
+| Reads | Number of analyzed reads / Total number of reads |
+| Mean length | Mean length of the reads |
+| Read length distribution | Read length distribution (between 100bp and 600bp) |
+| Recombinations | Recombinations / loci |
+| Clonotypes ≥5% | Number of clonotypes above 5% in their recombination/locus |
+| Common | Common clonotypes ≥0.01% with other samples of this set |
+| Main clonotype | Main clonotype |
+| Reads (merged) | Number of merged reads |
+| Pre-process | Pre-process |
+| Shannon | Shannon's diversity (0: no diversity, 3-5+: full diversity)|
+| Pielou | Pielou's evenness (0: no diversity, 1: full diversity)|
+| Simpson | Simpson's diversity (0: no diversity, 1: full diversity)|
+
+Selection of these columns are saved in local settings to allow you to easily find again your own configuration.
+
+
 ### Groups
 
 Each patient, run or set is assigned to at least one group.
