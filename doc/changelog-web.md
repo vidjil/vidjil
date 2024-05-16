@@ -10,14 +10,17 @@
 	  Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
 
 **QC stats**
+
 * Add a new feature for previewing Quality Control stats
 * Possibility to export data
-* See more information in (documentation)[doc/user/#statictics-and-quality-control-view]
+* See more information in [documentation](user.md#statistics-and-quality-control-view)
 
 **Min per locus**
+
 * Be able to set the minimum of clones to return per locus
 
 **Bug fixes**
+
 * Prevent bug when sampling date not filled
 * Prevent error on set opening
 * Prevent error when filtering samples
@@ -25,6 +28,7 @@
 * Prevent bug with duplicated entries that may lead to duplicated computations
 
 **Technical**
+
 * Follow-ups on py4web migration
 
 ## Web 2024-01
