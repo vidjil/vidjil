@@ -12,6 +12,7 @@
 **QC stats**
 * Add a new feature for previewing Quality Control stats
 * Possibility to export data
+* See more information in (documentation)[doc/user/#statictics-and-quality-control-view]
 
 **Min per locus**
 * Be able to set the minimum of clones to return per locus
