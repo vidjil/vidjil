@@ -10,6 +10,9 @@
 
 - The containers are now named `vidjil-*service-name*`
 - Use requirements.txt to build image
+- script directory for preprocess is reorganized and new variables is needed in `vidjil-server/confs/defs*` files.
+
+See more information at [Migrating from release 2024.01 to 2024.05](dev-server.md#migrating-py4web-release-202401-to-release-2024051)
 
 ## 2024-01-23
 
