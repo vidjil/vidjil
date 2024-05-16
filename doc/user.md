@@ -483,7 +483,7 @@ you can process your data and save the results of your analysis.
   ![Image title](./pictures/table_db_content_patient_list.png)
   <figcaption>
     The main page on the sample database show a list of patients, or runs or sets,
-    with links to the samples and the results.
+    with links to the samples, the results, and the preview/quality control.
   </figcaption>
 </figure>
 
@@ -619,35 +619,37 @@ The only thing you should not do is to close completely your web browser (or the
 Once a task is completed, a click on the `See results` link (bottom right) will open the main window to browse the clonotypes.
 A click on the `out` link at the right of every sample give access to the raw output file of the RepSeq software.
 
-### Statistics and quality control view
+### Displaying statistics, quality control
 
-New with release 2024.05!
+!!! New with release 2024.05
 
-This view allow to see in one table various information on results for multiple samples from one set.
+The "Preview / quality control" allow to see in one table various information on results for multiple samples from one patient, run, or set, for a specified configuration (that was already processed).
+The `Download table (.tsv)` button under the table allow you to process these statistics in an external tool.
 
 <figure markdown>
-  ![Image title](./pictures/stats_qc2.png)
+  ![Preview / Quality control](./pictures/stats_qc2.png)
   <figcaption>
-    The statistics and quality control view.
+    Preview / Quality control view.
   </figcaption>
 </figure>
 
-To add this new view, a direct dedicated button have been added on sets pages to allow a direct access to these results for a specified and already launched configuration.
+This page can be accessed through a button either from a patient/run/set page, or from the main page on the sample database listing patients/runs/sets
 
 <figure markdown>
-  ![Image title](./pictures/stats_qc1.png)
+  ![Home page](./pictures/stats_qc1.png)
   <figcaption>
-    New button to access results and statistics and quality control view.
+    Accessing results and preview/quality control from the main page of the sample database.
   </figcaption>
 </figure>
 
-Here are details of available columns:
+The columns (list below) can be showed or hidden using the checkboxes above the table.
+Displayed and hidden columns are saved in your local settings.
 
-| Columns | Definitions |
+| Columns | Explanation |
 | :------ | :---------- |
 | Sets | Patients, runs, sets |
 | Sample name | Sample name |
-| Config name | Analysis configuration |
+| Config name | Analysis configuration (such as `multi+inc+xxx`) |
 | Reads (%) | Percentage of analyzed reads |
 | Reads | Number of analyzed reads / Total number of reads |
 | Mean length | Mean length of the reads |
@@ -662,10 +664,6 @@ Here are details of available columns:
 | Pielou | Pielou's evenness (0: no diversity, 1: full diversity)|
 | Simpson | Simpson's diversity (0: no diversity, 1: full diversity)|
 
-The columns can be showed or hidden using the checkboxes above the table.
-Displayed and hidden columns are saved in local settings to allow you to tune your own configuration.
-
-A `tsv` export is also available through a button located under the table. This allows you to process results in an external tool.
 
 ### Groups
 
