@@ -21,7 +21,7 @@ and used by the *color by* menu.
 * **clone average read length**: Average length of the reads belonging to each clone
 * **primers**: Length of the consensus sequence between primers (inclusive), possibly interpolated, see [Working with primers](user.md#how-to-work-with-primers))
 
-* **clone consensus coverage**: Ratio of the length of the clone consensus sequence to the median read length of the clone. Coverage between .85 and 1.0 (or more) are good values. See [clone coverage](user.md#clone-coverage)
+* **clone consensus coverage**: Ratio of the length of the clone consensus sequence to the median read length of the clone. Coverage between .85 and 1.0 (or more) are good values. See [clone coverage](user.md#clonotype-coverage)
 * **GC content**: %GC content of the consensus sequence
 
 * **number of samples**: Number of samples sharing the clone
