@@ -1,13 +1,13 @@
 
 !!! note
 
-	This changelog concerns the Vidjil web application, client and server.
-	As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
+This changelog concerns the Vidjil web application, client and server.
+we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
 ## Web 2024-04
 
 ??? note "Milestone 2024-04"
-	  Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
+Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
 
 **QC stats**
 

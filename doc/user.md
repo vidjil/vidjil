@@ -1,4 +1,4 @@
-## Web platform, user manual
+# Web platform, user manual
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
 [V(D)J recombinations](http://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
@@ -625,7 +625,21 @@ New with release 2024.05!
 
 This view allow to see in one table various information on results for multiple samples from one set.
 
+<figure markdown>
+  ![Image title](./pictures/stats_qc2.png)
+  <figcaption>
+    The statistics and quality control view.
+  </figcaption>
+</figure>
+
 To add this new view, a direct dedicated button have been added on sets pages to allow a direct access to these results for a specified and already launched configuration.
+
+<figure markdown>
+  ![Image title](./pictures/stats_qc1.png)
+  <figcaption>
+    New button to access results and statistics and quality control view.
+  </figcaption>
+</figure>
 
 Here are details of available columns:
 
@@ -701,7 +715,7 @@ For each group, you will find:
 This page lists the last processes you ran, with information such as its configuration and its status.
 Each sample is provided with links to the related patient/runs/sets.
 
-### Edit my personal informations
+### Edit my personal information
 
 Your login is your email address.
 To update other personal information or your password,
