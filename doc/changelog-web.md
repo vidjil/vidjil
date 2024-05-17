@@ -30,6 +30,8 @@ Complete list of issue and change of this release can be found [here](https://gi
 **Technical**
 
 * Follow-ups on py4web migration
+* Raw preprocessing file are now deleted at end of preprocess.
+
 
 ## Web 2024-01
 
