@@ -75,11 +75,11 @@ class SampleSet(object):
 
             configs.append(
                 str(SPAN(
-                    SPAN(c_name, SPAN(_class="icon-chart-bar"),
+                    A(c_name, SPAN(_class="icon-chart-bar"),
                       _href=f"index.html?sample_set_id={int(data['sample_set_id'])}&config={c_id}", 
                       _type="text/html", _id=f"result_sample_set_{int(data['sample_set_id'])}_config_{c_id}",
                       _class="double_button__part1", _title=f"Display results for config {c_name}",
-                      _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c_id, filename)),
+                      _onclick="event.preventDefault();event.stopPropagation();if(event.which == 2) { window.open(this.href); } else { myUrl.loadUrl(db, { 'sample_set_id' : '%d', 'config' :  %s }, '%s' ); }" % (data['sample_set_id'], c_id, filename)),
                     SPAN(SPAN(_class="icon-table"),
                       _class="double_button__part2", _title=f"Preview / quality control for config {c_name}",
                       _onclick=f"db.call('sample_set/multi_sample_stats', {{'sample_set_id': {data['sample_set_id']}, 'config_id' : {c_id} }})"),
