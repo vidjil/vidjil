@@ -421,6 +421,9 @@ def get_fused_stats(fuse):
                 )
 
                 if "diversity" in fuse_data:
+                    # isinstance needed for old fused data. 
+                    # New format use a dict with value by locus+global, old have only a direct global float value
+
                     shannon_diversity = NOT_APPLICABLE
                     if "index_H_entropy" in fuse_data["diversity"]:
                         if isinstance(fuse_data["diversity"]["index_H_entropy"][result_index], dict):
