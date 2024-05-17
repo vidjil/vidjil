@@ -15,6 +15,10 @@ Complete list of issue and change of this release can be found [here](https://gi
 * Possibility to export data
 * See more information in [documentation](user.md#statistics-and-quality-control-view)
 
+**Improve analysis**
+
+* A direct download button allow to download fused vidjil file of a configuration
+
 **Min per locus**
 
 * Be able to set the minimum of clones to return per locus
