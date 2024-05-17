@@ -421,21 +421,29 @@ def get_fused_stats(fuse):
                 )
 
                 if "diversity" in fuse_data:
-                    result_stats["shannon_diversity"] = (
-                        round(fuse_data["diversity"]["index_H_entropy"][result_index]["all"], 3)
-                        if "index_H_entropy" in fuse_data["diversity"]
-                        else NOT_APPLICABLE
-                    )
-                    result_stats["pielou_evenness"] = (
-                        round(fuse_data["diversity"]["index_E_equitability"][result_index]['all'], 3)
-                        if "index_E_equitability" in fuse_data["diversity"]
-                        else NOT_APPLICABLE
-                    )
-                    result_stats["simpson_diversity"] = (
-                        round(fuse_data["diversity"]["index_Ds_diversity"][result_index]['all'], 3)
-                        if "index_Ds_diversity" in fuse_data["diversity"]
-                        else NOT_APPLICABLE
-                    )
+                    shannon_diversity = NOT_APPLICABLE
+                    if "index_H_entropy" in fuse_data["diversity"]:
+                        if isinstance(fuse_data["diversity"]["index_H_entropy"][result_index], dict):
+                            shannon_diversity = round(fuse_data["diversity"]["index_H_entropy"][result_index]["all"], 3)
+                        else:
+                            shannon_diversity = round(fuse_data["diversity"]["index_H_entropy"][result_index], 3)
+                    result_stats["shannon_diversity"] = shannon_diversity
+                    
+                    pielou_evenness = NOT_APPLICABLE
+                    if "index_E_equitability" in fuse_data["diversity"]:
+                        if isinstance(fuse_data["diversity"]["index_E_equitability"][result_index], dict):
+                            pielou_evenness = round(fuse_data["diversity"]["index_E_equitability"][result_index]["all"], 3)
+                        else:
+                            pielou_evenness = round(fuse_data["diversity"]["index_E_equitability"][result_index], 3)
+                    result_stats["pielou_evenness"] = pielou_evenness
+                    
+                    simpson_diversity = NOT_APPLICABLE
+                    if "index_E_equitability" in fuse_data["diversity"]:
+                        if isinstance(fuse_data["diversity"]["index_Ds_diversity"][result_index], dict):
+                            simpson_diversity = round(fuse_data["diversity"]["index_Ds_diversity"][result_index]["all"], 3)
+                        else:
+                            simpson_diversity = round(fuse_data["diversity"]["index_Ds_diversity"][result_index], 3)
+                    result_stats["simpson_diversity"] = simpson_diversity
 
             result_stats["clones_5"] = sum(
                 [
