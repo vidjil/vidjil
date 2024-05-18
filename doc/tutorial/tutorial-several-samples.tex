@@ -1,6 +1,6 @@
 
 
-\section{Tracking clones on several samples}
+\section{Tracking clonotypes on several samples}
 
 \label{sec:tracking}
 \begin{verbatim}
@@ -13,12 +13,12 @@
 \end{verbatim}
 
 Load now some data with several samples, such as again the \textit{Demo LIL-L3} dataset.
-The \textit{time graph} shows the evolution of the top clones of each sample into all the samples.
+The \textit{time graph} shows the evolution of the top clonotypes of each sample into all the samples.
 Bear in mind that to ensure readability at most 10 curves are displayed in this graph by time point.
 \marginpar{When loading data with only one sample, the time graph is replaced by a second bar/grid plot.}
 
 \question{Pass the mouse over the bubbles in the grid or over the lines in the time graph.
-  Click on some clone. What happens ?}
+  Click on some clonotype. What happens ?}
 \begin{verbatim}
 
   ////////////////////
@@ -35,7 +35,7 @@ Bear in mind that to ensure readability at most 10 curves are displayed in this 
 \end{verbatim}
 
 \question{Click on the label of the time graph to select another sample.
-  What happens to the number of analyzed reads ? to the size of the top clones
+  What happens to the number of analyzed reads ? to the size of the top clonotypes
   ?}
 \begin{verbatim}
   ////////////////////
@@ -98,14 +98,14 @@ the evolution of another information.
 
 \bigskip
 
-We remind that by default at most 50 clones are displayed
+We remind that by default at most 50 clonotypes are displayed
 % verifier ça.
 on the time graph. However the remaining of the application usually displays
-the 50 \textit{most abundant clones} at each sample (which can account to hundreds of
-clones, when having several samples).
+the 50 \textit{most abundant clonotypes} at each sample (which can account to hundreds of
+clonotypes, when having several samples).
 
 \question{Select a sample, order the list by size, and pass the mouse through the list
-  of top 50 clones. What happens in the graph when hovering clones that are not in the top 50 ?}
+  of top 50 clonotypes. What happens in the graph when hovering clonotypes that are not in the top 50 ?}
 \begin{verbatim}
   ////////////////////////////////////
   // test_C_samples_04_lock_order_list
@@ -136,8 +136,8 @@ If you have many samples, you may wish to reorder the samples.
 
 \end{verbatim}
 
-It is possible to hide some samples to have a better view of your analysis. This can be very usefull to hide for example samples without a clone.
-Another case of usage is to load a run analysis with a lot of sample, and to restrict the list of active samples to retain only one that share a particular clone.
+It is possible to hide some samples to have a better view of your analysis. This can be very usefull to hide for example samples without a clonotype.
+Another case of usage is to load a run analysis with a lot of sample, and to restrict the list of active samples to retain only one that share a particular clonotype.
 
 Open the menu to the upper right corner of graph. you can see that their are 3 buttons and 5 entries in the list corresponding to the list of samples.
 See the effet of the button here
@@ -175,7 +175,7 @@ You may also want to compare two samples, either to check a replicate, to check 
 compare different research or medical situations.
 
 \question{In the \com{color by} menu, choose \com{by size}. Select a different
-  sample. What happens ? Are there some clones with a significant different concentration in both samples ?
+  sample. What happens ? Are there some clonotypes with a significant different concentration in both samples ?
 Revert the color by choosing \com{by tag}.}
 \begin{verbatim}
   ///////////////////////////////////
@@ -194,7 +194,7 @@ Another option is to directly plot a log-log curve comparing two samples.
 
 \question{In the \com{plot} menu, choose the preset \com{compare two samples}. Click
   successively on two labels in the time graph to select the samples to be compared.
-  Are there again some clones with a significant different concentration in both samples ?}
+  Are there again some clonotypes with a significant different concentration in both samples ?}
 \begin{verbatim}
   ///////////////////////////////////
   // test_C_samples_09_compare_sample
