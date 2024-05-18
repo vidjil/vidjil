@@ -30,7 +30,7 @@
 
 \newcommand\com[1]{\textsf{#1}}
 
-\newcommand\question[1]{\par\noindent\textbf{\thequestionum}.~#1\addtocounter{questionum}{1}}
+\newcommand\question[1]{\refstepcounter{questionum}\par\noindent\textbf{\thequestionum}.~#1}
 \setlength{\marginparsep}{1em}
 \setlength{\marginparwidth}{4cm}
 
