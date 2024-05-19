@@ -43,6 +43,9 @@ build_tutorial_pdf:
   artifacts:
     paths:
       - doc/tutorial/mastering-vidjil.pdf
+  tags:
+    - ci.inria.fr
+    - medium
 
 build_tutorial_html:
   stage: tgz_release
@@ -57,6 +60,9 @@ build_tutorial_html:
   artifacts:
     paths:
       - doc/tutorial/mastering-vidjil.html
+  tags:
+    - ci.inria.fr
+    - medium
 
 deploy_tutorial:
   stage: deploy_prod
