@@ -1,16 +1,15 @@
-\documentclass[11pt]{article}
+\documentclass[11pt]{report}
 \usepackage[english]{babel}
 \input{common-headers}
 
-\title{Mastering the Vidjil web application \\[1ex] Part 1 --
-  Browsing and analysing clones
+\title{Mastering the Vidjil web application
 }
+
 
 \widowpenalty10000
 \clubpenalty10000
 
 \begin{document}
-
 
 \begin{verbatim}
 # coding: utf-8
@@ -53,10 +52,32 @@ or by any other algorithm.}
 \bigskip
 
 
-\centerline{\includegraphics[width=\textwidth]{../../../vdj/vdj/doc/com/screenshots/vidjil-11-TRG-combined.png}}
+\centerline{\includegraphics[width=\textwidth]{vidjil-combined.jpg}}
 
 \bigskip
 
+This tutorial is composed of two parts: the first one about the visualisation
+part for browsing and analysing clones, the second part
+(p.~\pageref{sec:part2}) on the usage of multiple samples and on exporting
+data.
+
+You can directly go to the part of the tutorials you are more interested in
+but bear in mind that the first part of the software uses a dataset that is
+available on \texttt{app.vidjil.org}, while the second part uses a toy dataset
+that is provided at the start of the second part.
+
+\tableofcontents
+
+\chapter{Part 1 --  Browsing and analysing clones}
+% In the first part we explain the following points:
+% \begin{itemize}
+%   \item Assessing the quality of the run and of the analysis
+% (p.~\pageref{sec:run-quality}).
+% \item Viewing and filtering clonotypes (p.~\pageref{sec:viewing-clonotypes}).
+
+%   \end{itemize}
+
+\bigskip
 
 \question{Connect to the public server (\url{https://app.vidjil.org}), either with your account
 or the demo account (\texttt{demo@vidjil.org} / \texttt{demo}),
@@ -94,19 +115,17 @@ The section~\ref{sec:tracking} will deal with the comparison of several samples.
 
 \newpage
 
-\title{Mastering the Vidjil web application \\[1ex] Part 2 -- Dealing with
-  samples and exporting data
+\chapter{Part 2 -- Dealing with samples and exporting data
 }
-\maketitle
 
 \input{tutorial-server}
 \input{tutorial-several-samples}
 \input{tutorial-export}
-
+\input{tutorial-qc}
 
 \vfill
-\flushright \it Aurélien Béliard, Aurélie Caillault, Marc Duez, Mathieu Giraud, Tatiana Rocher, Mikaël Salson, Florian Thonier
-\\ \texttt{contact@vidjil.org}
+\flushright \it Aurélien Béliard, Aurélie Caillault, Clément Chesnin, Marc Duez, Mathieu Giraud, Tatiana Rocher, Mikaël Salson, Florian Thonier
+\\ \texttt{support@vidjil.org}
 
 
 \begin{verbatim}
