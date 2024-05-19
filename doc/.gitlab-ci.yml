@@ -39,7 +39,7 @@ build_tutorial_pdf:
       - doc/tutorial/**/*
       when: always
   script:
-    - make mastering-vidjil.pdf
+    - make -C doc/tutorial mastering-vidjil.pdf
   artifacts:
     paths:
       - doc/tutorial/mastering-vidjil.pdf
@@ -53,7 +53,7 @@ build_tutorial_html:
       - doc/tutorial/**/*
       when: always
   script:
-    - make mastering-vidjil.html
+    - make -C doc/tutorial mastering-vidjil.html
   artifacts:
     paths:
       - doc/tutorial/mastering-vidjil.html
