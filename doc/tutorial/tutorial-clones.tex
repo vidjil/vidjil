@@ -1,4 +1,5 @@
 \section{Viewing and filtering clonotypes}
+\label{sec:viewing-clonotypes}
 
 First-time users are advised to have a look at \href{https://www.vidjil.org/doc/user/#the-elements-of-the-vidjil-web-application}{\tt the-elements-of-the-vidjil-web-application} that describes the main elements of Vidjil.
 % Le mettre en amont ? 
@@ -406,7 +407,7 @@ It is also possible to filter samples that do not contain a clonotype.  When you
 have lots of samples it helps to keep the sample of interest.  Here the number
 of sample is quite limited, so the feature may appear less useful.
 
-\question{\new Click on the \com{IGHV3-11 / IGHJ6} clonotype in the last sample, whose
+\question{Click on the \com{IGHV3-11 / IGHJ6} clonotype in the last sample, whose
   abundance is around 10\,\%.
   Then go in the menu at the upper-right corner of the graph (where \com{5/5}
   is written) and select \com{focus on selected clonotypes}.
@@ -624,7 +625,7 @@ When the primers are not found in the consensus sequence, their position is
 extrapolated from the germline sequence.
 
 \question{Select the preset \textit{Primers gap} and observe the starting position of each clonotype.}
-\question{Open the settings menu and select the primer set \textit{Biomed2}.}
+\question{Open the settings menu and select the primer set \textit{Biomed2}.\label{q:biomed}}
 
 
 \begin{verbatim}
@@ -652,7 +653,7 @@ This happens for some particular segment, as \textit{IGH J6} .}
 
 As a proxy to sequence similarity we used the V and J genes, however there are
 other ways to assess sequence similarity that may be more pertinent.
-Moreover you may want to plot other metrics on the lymphocyte population.
+Moreover you may want to plot other metrics of the lymphocyte population.
 %
 For instance we can choose to plot the V genes versus the length of the N
 insertions.
@@ -976,33 +977,33 @@ There may have several reasons:
 You can view those values for any clonotype by clicking the \textit{i} icon on the
 right side, in the list of clonotypes.
 
-The existing warnings are listed on [https://www.vidjil.org/doc/warnings/](https://www.vidjil.org/doc/warnings/).
+The existing warnings are listed on \href{https://www.vidjil.org/doc/warnings/}{www.vidjil.org/doc/warnings/}.
 
 \subsection{Show sequence features and information}
 
 When you select a clonotype, you first see, in the aligner, the DNA sequence and its V, (D), and J segments.
-Next to the "align" button, menus allow to display more features or information about the sequences.
+Next to the "align" button, several menus allow to display more features or information about the sequences. We will explore those menus.
  
-\question{Select the first clonotypes both in IGH and TRG. Then in the \textit{Data columns} menu, click on \textit{productivity}.}
+\question{Select the first clonotypes both in IGH and TRG. Then in the \textit{Data columns} menu (the first on the left after the align button), click on \textit{productivity}.}
 
 \question{Now, click on the spin icon.}
 
 This queries external tools to process the selected sequences (as for example IMGT/V-QUEST)
 and, after a short time, will add the results to the clonotypes (as for example productivity computed by IMGT/V-QUEST, which is displayed by default).
 
-Contact us if you have need to query other sofrware.
+Contact us if you need to query other software.
 
 
-\question{Open the \textit{sequence feature} menu. Click on "CDR3" and "quality".}
+\question{Open the \textit{sequence feature} menu (the one before the last button). Click on "CDR3" and "quality".}
 
 In the aligner, there are now two new overlays on sequences. 
-Above the sequence, the CDR3 is shown.
-Under the sequence, the base quality of each position is show, with a gradient color, from green (correct quality) to red (insuficent quality). The quality is now shown for the window centered on the CDR3.
+Above the sequence, the CDR3 is shown (you may have to move the horizontal scrollbar to view the CDR3).
+Under the sequence, the base quality of each position is shown, with a gradient color, from green (high quality) to red (low quality). The quality is shown for the window centered on the CDR3.
 
-You should align sequence and see whether mutations between similar clonotypes may come from a technological artifact... or not.
+When aligning sequences, the quality color may help you to discriminate between potential biological mutations and sequencing errors (note that the current dataset is quite old and was sequenced with Ion Torrent, now the quality is usually much better).
 
 
-Note that some features, such as \textit{primers} or \textit{IMGT productivity}, are available only after some additional compution.
+Note that some features, such as \textit{primers} or \textit{IMGT productivity}, are available only after some additional computations.
 
 
 
@@ -1150,3 +1151,4 @@ switch between those normalizations.
 It is also possible to set up normalization against external data,
 contact us if you are interested.
 
+\textit{Please note that we have more advanced features to include your own spike-ins and to take into account spike-ins for different gene families. Contact us if you are interested.}
