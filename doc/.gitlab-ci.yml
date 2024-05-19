@@ -29,3 +29,43 @@ deploy_doc:
   only:
       - /^[^\/]*doc[^\/]*\//
       - /^feature-.*a.*\/release$/
+
+build_tutorial_pdf:
+  stage: tgz_release
+  image: leplusorg/latex:main
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+      - doc/tutorial/**/*
+      when: always
+  script:
+    - make mastering-vidjil.pdf
+  artifacts:
+    paths:
+      - doc/tutorial/mastering-vidjil.pdf
+
+build_tutorial_html:
+  stage: tgz_release
+  image: leplusorg/latex:main
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+      - doc/tutorial/**/*
+      when: always
+  script:
+    - make mastering-vidjil.html
+  artifacts:
+    paths:
+      - doc/tutorial/mastering-vidjil.html
+
+deploy_tutorial:
+  stage: deploy_prod
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+      - doc/tutorial/**/*
+      when: manual
+  script:
+    - scp -r doc/tutorial/* $VIDJIL_WWW:/var/www/static/doc/tutorial/
+      
+  
