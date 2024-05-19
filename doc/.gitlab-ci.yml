@@ -33,6 +33,7 @@ deploy_doc:
 build_tutorial_pdf:
   stage: tgz_release
   image: leplusorg/latex:main
+  before_script: []
   rules:
     - if: $CI_COMMIT_BRANCH
       changes:
@@ -50,6 +51,7 @@ build_tutorial_pdf:
 build_tutorial_html:
   stage: tgz_release
   image: leplusorg/latex:main
+  before_script: []
   rules:
     - if: $CI_COMMIT_BRANCH
       changes:
@@ -66,6 +68,7 @@ build_tutorial_html:
 
 deploy_tutorial:
   stage: deploy_prod
+  before_script: []
   rules:
     - if: $CI_COMMIT_BRANCH
       changes:
