@@ -6,7 +6,7 @@
 \usepackage{color}
 \usepackage{multirow}
 %\usepackage{fourier-orns}
-\usepackage{hyperref}
+\usepackage[colorlinks]{hyperref}
 \newlength\myleftmargin
 \setlength{\myleftmargin}{2cm}
 \usepackage[margin=3.5cm, top=2.5cm, bottom=2cm,left=\myleftmargin,right=5.5cm,a4paper]{geometry}
@@ -15,12 +15,19 @@
 \usepackage{array}
 \usepackage{fancyvrb}
 \usepackage{xparse}
+\usepackage{titlesec}
 
 \setlength{\parskip}{2mm}
 \setlength{\parindent}{0pt}
 
 \usepackage{enumitem}
 \setlist[itemize]{noitemsep, topsep=0pt}
+
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\sf} % format
+  {}                          % label
+  {0pt}                       % separation from title
+  {\Huge}                     % before code (title style)
 
 \newcounter{questionum}
 \setcounter{questionum}{0}
