@@ -56,55 +56,39 @@ or by any other algorithm.}
 
 \bigskip
 
-This tutorial is composed of two parts: the first one about the visualisation
+This tutorial is composed of three parts:
+
+the first one about uploading and managing data from several samples on the platform,
+and the two last ones about the visualisation
 part for browsing and analysing clones, the second part
 (p.~\pageref{sec:part2}) on the usage of multiple samples and on exporting
 data.
 
 You can directly go to the part of the tutorials you are more interested in
-but bear in mind that the first part of the software uses a dataset that is
-available on \texttt{app.vidjil.org}, while the second part uses a toy dataset
-that is provided at the start of the second part.
+but bear in mind
+that the first part of the software uses a dataset that is
+provided at the start
+while the other parts uses a toy dataset
+already available on \texttt{app.vidjil.org}.
+% that is provided at the start of the second part.
 
 \tableofcontents
 
-\chapter{Part 1 --  Browsing and analysing clones}
-% In the first part we explain the following points:
-% \begin{itemize}
-%   \item Assessing the quality of the run and of the analysis
-% (p.~\pageref{sec:run-quality}).
-% \item Viewing and filtering clonotypes (p.~\pageref{sec:viewing-clonotypes}).
 
-%   \end{itemize}
+\chapter{Part 1 -- Dealing with samples/patients/runs, controlling quality
+}
+
+\input{tutorial-server}
+\input{tutorial-qc}
+
+
+
+\chapter{Part 2 --  Browsing and analyzing clones in one sample}
 
 \bigskip
 
-\question{Connect to the public server (\url{https://app.vidjil.org}), either with your account
-or the demo account (\texttt{demo@vidjil.org} / \texttt{demo}),
-select the \textit{Demo LIL-L3 (tutorial)} patient.
-If you don't see it, search for \com{\#Demo} in the top-left search box.
-Then click on the bottom right link, \com{see results: multi-inc-xxx}.
-Do not open the \textit{Demo LIL-L3 (analyzed)} patient: this one contains the complete
-analysis.
-The Vidjil web application opens.}
-
-This patient (patient 063 from \href{http://dx.doi.org/10.1016/j.leukres.2016.11com.009}{Lille study on the feasibility of MRD using HTS}) suffering T-ALL has one diagnosis sample,
-with dominant clones both in IGH and TRG,
-and four follow-up samples, including a relapse.
-
-\question{In the \com{settings} menu, try the various options for \com{sample key}.
-  The five samples can be labeled by their name, their date of sampling or by the number of days after the first sample.
-}
-
-In the following sections, we focus on the diagnosis sample.
-% and explore how to assess the quality of the data
-% how to view and filter clones and
-The section~\ref{sec:tracking} will deal with the comparison of several samples. 
-
-
+\input{tutorial-intro-L3.tex}
 \input{tutorial-quality}
-
-
 \input{tutorial-clones}
 
 \bigskip
@@ -115,13 +99,11 @@ The section~\ref{sec:tracking} will deal with the comparison of several samples.
 
 \newpage
 
-\chapter{Part 2 -- Dealing with samples and exporting data
-}
+\chapter{Part 3 -- Analyzing multiple samples, exporting data}
 
-\input{tutorial-server}
 \input{tutorial-several-samples}
 \input{tutorial-export}
-\input{tutorial-qc}
+
 
 \vfill
 \flushright \it Aurélien Béliard, Aurélie Caillault, Clément Chesnin, Marc Duez, Mathieu Giraud, Tatiana Rocher, Mikaël Salson, Florian Thonier
