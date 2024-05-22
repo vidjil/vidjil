@@ -109,6 +109,6 @@ extra:
     - icon: fontawesome/brands/gitlab
       link: https://gitlab.inria.fr/vidjil/vidjil
     - icon: fontawesome/solid/paper-plane
-      link: mailto:<contact@vidjil.org>
+      link: mailto:contact@vidjil.org
 
 

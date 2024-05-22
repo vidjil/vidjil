@@ -1,12 +1,12 @@
 # Credits
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes, developed and maintained by
-the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille) 
+the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille)
 and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
 
 Vidjil is used in routine clinical practice in hospitals around the world, in particular for the diagnosis of patients suffering Acute Lymphoblastic Leukemia (ALL). Since 2015, around 50,000 routine samples were analyzed with Vidjil.
 As of 2024, Vidjil is used in 40+ studies on hemopathies (ALL, CLL, lymphomas, WM...) and immunology topics involving T-cell or B-cell repertoires.
-Vidjil was awarded an honourable mention at the French 2022 Open Science Awards for Open Source Research Software, in the Community category. 
+Vidjil was awarded an honorable mention at the French 2022 Open Science Awards for Open Source Research Software, in the Community category.
 
 In addition to the core developers, we thank the many people who contribute to Vidjil across various aspects. Contributions span development, creation and maintenance of tests, documentation, as well as providing valuable usage reports, bug reports, and suggestions.
 See also [codemeta.json](http://git.vidjil.org/blob/master/codemeta.json).
@@ -15,80 +15,78 @@ Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
 ## Vidjil core authors/developers
 
-  - Mathieu Giraud (CNRS), 2011-2024
-  - Mikaël Salson (Univ. Lille), 2011-2024,
-  - Marc Duez (Univ. Lille, CHU Lille, Inria), 2012-2016, 2019-2022
-  - Tatiana Rocher (Univ. Lille), 2014-2017
-  - Florian Thonier (CHU Necker, Inria), 2015-2024
-  - Ryan Herbert (Inria), 2015-2020
-  - Aurélien Béliard (CHU Lille), 2016-2017
-  - Clément Chesnin (Inria), 2023-2024
+- Mathieu Giraud (CNRS), 2011-2024
+- Mikaël Salson (Univ. Lille), 2011-2024,
+- Marc Duez (Univ. Lille, CHU Lille, Inria), 2012-2016, 2019-2022
+- Tatiana Rocher (Univ. Lille), 2014-2017
+- Florian Thonier (CHU Necker, Inria), 2015-2024
+- Ryan Herbert (Inria), 2015-2020
+- Aurélien Béliard (CHU Lille), 2016-2017
+- Clément Chesnin (Inria), 2023-2024
 
 ## Other contributors
 
-  - David Chatel, 2011-2012
-  - Antonin Carette, 2014
-  - Loïc Breton and Jordan Gilliot, 2014
-  - François Dubiez, 2015-2016
-  - Amina Boussalia and Fabien Fache, 2016
-  - Eddy El Khatib and Nicolas Berveglieri, 2017
-  - Téo Vasseur, 2017
-  - Armand Bour, 2017
-  - Joao Meidanis, 2018-2024
-  - Cyprien Borée, 2018
-  - Alexia Omietanski, 2018
-  - Guilherme Giusti, 2020-2024
-  - Axel Mercier, 2021
-  - Agathe Bancquart, 2023
-
+- David Chatel, 2011-2012
+- Antonin Carette, 2014
+- Loïc Breton and Jordan Gilliot, 2014
+- François Dubiez, 2015-2016
+- Amina Boussalia and Fabien Fache, 2016
+- Eddy El Khatib and Nicolas Berveglieri, 2017
+- Téo Vasseur, 2017
+- Armand Bour, 2017
+- Joao Meidanis, 2018-2024
+- Cyprien Borée, 2018
+- Alexia Omietanski, 2018
+- Guilherme Giusti, 2020-2024
+- Axel Mercier, 2021
+- Agathe Bancquart, 2023
 
 ## `.should-vdj.fa` tests with curated V(D)J designations
 
-  - Yann Ferret (CHRU Lille), 2014-2015
-  - Florian Thonier (Inserm, Paris Necker), 2015-2016
+- Yann Ferret (CHRU Lille), 2014-2015
+- Florian Thonier (Inserm, Paris Necker), 2015-2016
 
 ## Acknowledgements
 
 We thank all our users, collaborators and colleagues who provided feedback on Vidjil and proposed new ideas.
 Our special thanks go to:
 
-  - Marine Armand
-  - Jack Bartram
-  - Aurélie Caillault
-  - Frédéric Davi
-  - Éric Delabesse
-  - Yann Ferret
-  - Alice Fievet
-  - Martin Figeac
-  - Nathalie Grardel
-  - Michaela Kotrová
-  - Anton W. Langerak
-  - Yannick Le Bris
-  - Anne Langlois de Septenville
-  - Elizabeth Macintyre
-  - David Margery
-  - Cédric Pastoret
-  - Claude Preudhomme
-  - Shéhérazade Sebda
+- Marine Armand
+- Jack Bartram
+- Aurélie Caillault
+- Frédéric Davi
+- Éric Delabesse
+- Yann Ferret
+- Alice Fievet
+- Martin Figeac
+- Nathalie Grardel
+- Michaela Kotrová
+- Anton W. Langerak
+- Yannick Le Bris
+- Anne Langlois de Septenville
+- Elizabeth Macintyre
+- David Margery
+- Cédric Pastoret
+- Claude Preudhomme
+- Shéhérazade Sebda
 
 Vidjil is developed in collaboration or in connection with the following groups:
 
-  - department of Hematology of CHRU Lille
-  - Functional and Structural Genomic Platform (U. Lille 2, IFR-114, IRCL)
-  - Institut Necker Enfants Malades, Paris
-  - EuroClonality-NGS working group
+- department of Hematology of CHRU Lille
+- Functional and Structural Genomic Platform (U. Lille 2, IFR-114, IRCL)
+- Institut Necker Enfants Malades, Paris
+- EuroClonality-NGS working group
 
 ## Funding
 
 The development of Vidjil is funded by:
 
-  - Région Nord-Pas-de-Calais/Hauts-de-France, 2012-2017
-  - Université Lille 1, 2014-2017
-  - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
-  - Inria Lille, 2015-2018
-  - InCA, 2016-2019
-  - VidjilNet consortium at Inria, 2018-2024  
-
+- Région Nord-Pas-de-Calais/Hauts-de-France, 2012-2017
+- Université Lille 1, 2014-2017
+- SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
+- Inria Lille, 2015-2018
+- InCA, 2016-2019
+- VidjilNet consortium at Inria, 2018-2024  
 
 ## References
 
@@ -116,7 +114,6 @@ Anne Langlois de Septenville et al.,
 *Immunoglobulin Gene Mutational Status Assessment by Next Generation Sequencing in Chronic Lymphocytic Leukemia*,
 Immunogenetics, Methods in Molecular Biology 2453, 2022, pp. 153-167,
 <http://dx.doi.org/10.1007/978-1-0716-2115-8_10>
-
 
 ## Some publications using Vidjil
 
@@ -180,14 +177,14 @@ Journal of Neuroimmunology, 2015, S0165-5728(15)30065-5,
 *Test trial of spike-in immunoglobulin heavy-chain (IGH) controls for next generation sequencing quantification of minimal residual disease in acute lymphoblastic leukaemia*,
 British Journal of Haematology, 2020, 189: e150-e154,
 <https://doi.org/10.1111/bjh.16571>
-1.  Heraud et al.,
+1. Heraud et al.,
 *Monoclonal B-cell lymphocytosis with a non-CLL immunophenotype–Review of 34 cases*
 Annales de Biologie Clinique, 2023,
 <https://www.jle.com./fr/revues/abc/e-docs/monoclonal_b_cell_lymphocytosis_with_a_non_cll_immunophenotype_review_of_34_cases_330642/article.phtml?tab=texte>
-1. -Jung Huang et al.,
+1. Jung Huang et al.,
 *Evaluation of next-generation sequencing for measurable residual disease monitoring in three major fusion transcript subtypes of B-precursor acute lymphoblastic leukaemia*, Pathology, 2024,
 <https://doi.org/10.1016/j.pathol.2024.02.008>
-1.  Izotova et al.,
+1. Izotova et al.,
 *Long-term lymphoid progenitors independently sustain naïve T and NK cell production in humans*,
 Nature Communications, 2021,
 <https://doi.org/10.1038/s41467-021-21834-9>
@@ -203,19 +200,19 @@ Clinica Chimica Acta, 2019,
 *Genomic analysis of multiple myeloma using targeted capture sequencing in the Japanese cohort*,
 British Journal of Haematology, 2020,
 <https://doi.org/10.1111/bjh.16720>
-1.  Kim et al.,
+1. Kim et al.,
 *Adult T-cell acute lymphoblastic leukemias with IL7R pathway mutations are slow-responders who do not benefit from allogeneic stem-cell transplantation*,
 Leukemia, 2020, 34, 1730-1740,
 <https://dx.doi.org/10.1038/s41375-019-0685-4>
-1.  Kimura et al.,
+1. Kimura et al.,
 *Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next-Generation Sequencing*,
 Experimental Hematology, 2021, 101:34-41.e4
 <https://doi.org/10.1016/j.exphem.2021.08.001>
-1.  Kotrova et al.,
+1. Kotrova et al.,
 *The predictive strength of next-generation sequencing MRD detection for relapse compared with current methods in childhood ALL*,
 Blood, 2015, 126:1045-1047,
 <http://dx.doi.org/10.1182/blood-2015-07-655159>
-1.  Kotrova et al.,
+1. Kotrova et al.,
 *Next‐generation amplicon TRB locus sequencing can overcome limitations of flow‐cytometric Vβ expression analysis and confirms clonality in all T‐cell ,prolymphocytic leukemia cases*,
 Cytometry Part A, 93(11):1118-1124, 2018,
 <http://dx.doi.org/10.1002/cyto.a.23604>
@@ -223,7 +220,7 @@ Cytometry Part A, 93(11):1118-1124, 2018,
 *High-Throughput Immunogenetics for Clinical and Research Applications in Immunohematology: Potential and Challenges*,
 Journal of Immunology, 2017, 198(10):3765-3774,
 <https://dx.doi.org/10.4049/jimmunol.1602050>
-1.  Le Bris et al.,
+1. Le Bris et al.,
 *Single Capture High Throughput Sequencing Assay for Combined V(D)J Clonality Analysis and Oncogene Mutations in the Diagnosis of T and B Lymphoid Malignancies*,
 ASH 2021, Blood, 138(S1):2404,
 <https://doi.org/10.1182/blood-2021-151083>
@@ -235,11 +232,11 @@ Leukemia, 2020, 34:2418-2429,
 *Thymocyte-derived BDNF influences T-cell maturation at the DN3/DN4 transition stage*,
 European Journal of Immunology, 2015, 45, 1326-1338,
 <http://dx.doi.org/10.1002/eji.201444985>
-1.  Liang Oon et al.,
+1. Liang Oon et al.,
 *T-Cell Lymphoma Clonality by Copy Number Variation Analysis of T-Cell Receptor Genes*,
 Cancers, 2021, 13(2), 340,
 <https://dx.doi.org/10.3390/cancers13020340>
-1.  Materna et al.,
+1. Materna et al.,
 *The immunopathological landscape of human pre-TCRα deficiency: From rare to common variants*,
 Science, 2024,
 <https://doi.org/10.1126/science.adh4059>
@@ -247,19 +244,19 @@ Science, 2024,
 *Comparison of next-generation sequencing (NGS) and next-generation flow (NGF) for minimal residual disease (MRD) assessment in multiple myeloma*,
 Blood Cancer Journal, 10, 108, 2020,
 <https://doi.org/10.1038/s41408-020-00377-0>
-1.  Nishijima et al.,
+1. Nishijima et al.,
 *Capture Sequencing Is a Useful Method for Comprehensive Clonality Analysis Based on Ig/TCR Gene Rearrangements in Acute Lymphoblastic Leukemia*,
 ASH 2018, Blood, 132(S1):1543,
 <https://doi.org/10.1182/blood-2018-99-115624>
-1.  Piedrafita et al.,
+1. Piedrafita et al.,
 *Spectrum of Kidney Disorders Associated with T-Cell Immunoclones*,
 Journal of Clinical Medicine, 2022, 11(3), 604,
 <https://doi.org/10.3390/jcm11030604>
-1.  Porpaczy et al.,
+1. Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
 Blood, 2018,
 <https://dx.doi.org/10.1182/blood-2017-10-810739>
-1.  Pastoret et al.,
+1. Pastoret et al.,
 *Molecular mechanisms underlying transformation of large granular lymphocytic leukemia to high-grade T-cell lymphoma*,
 Leukemia, 2023,
 <https://www.nature.com/articles/s41375-023-01922-z>
