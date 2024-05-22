@@ -1,7 +1,9 @@
 \section{Dealing with samples and patients}
-We will see how to make the best use of the patient and sample database and
+
+In this tutorial, we will see how to make 
+the best use of the patient and sample database of Vidjil and
 how to use it efficiently.
-For this sake you need an \textit{account} on the public server with the rights to create new patients,
+You need an \textit{account} on the public server with the rights to create new patients,
 runs, sets, to upload data and, preferably, to run analyses.
 Therefore the demo account is not suitable.
 
@@ -38,13 +40,13 @@ them to a same \com{run} and each of them to a single \com{patient}.
 
 \end{verbatim}
 
-Note that usually you should check whether the patient has
+In a routine clinical setting, you should check whether the patient has
 already been created by searching her/his name in the search box at the
-upper left corner
+upper left corner.
 
 \question{
   You are now on the  creation page for patients, runs, and sets.
-  You can create as many patients, runs and sets as you want.
+  You can create there at once several patients, runs and sets.
   \marginpar{Patients, runs and sets are just different ways to
     group samples. 
     The names are just used to add some semantic so that you
@@ -71,7 +73,7 @@ upper left corner
   the right hand side.
 
 \question{
-  For instance click on the cross corresponding to Patient 3.
+  Click on the cross corresponding to Patient 3.
   The line has now been removed.
   Click again on \com{add patient} so that the line appears again (it is now
   called Patient 4).
@@ -112,23 +114,23 @@ upper left corner
 
 \end{verbatim}
 
-The last field is optional but it is very important (the field called
-\com{patient/run information (\#tags can be used)}.
+The last field, \com{patient/run information (\#tags can be used)},
+is optional but highly recommended.
+You can enter any information relevant to this set of samples
+in plain language, but also with \emph{tags} (starting with a \#).
+Tags allow you to keep more structured information,
+to organize your patients/runs/sets, and to search across them.
 
-Here you can enter any information relevant to this set of samples.
-More specifically you can enter tags (starting with a \#) that will allow
-you to search very easily and quickly all the patients/runs/sets sharing
-this tag.
-By default when you enter a \# in this field, some tags appear and the
+When you enter a \# in this field, some tags appear and the
 suggestions are  updated while you enter other characters.
-Note that a tag cannot contain any space.
-Also note that you can create other tags just by entering whatever you would
-like in the field preceded with a \#. Thus any tag you enter is saved (and
-can be suggested later on).
+\marginpar{A tag cannot contain any space.}
 
-\question{For patient 1 in this last field, enter \texttt{\#diagnosis of
-    patient with \#B-ALL}. For patient 2, enter \texttt{\#blood sample \#CLL}.
-  For patient 4, enter \texttt{bone \#marrow \#B-ALL}}
+There are predefined tags (such as \#ALL or \#diagnosis),
+but you can also create your own tags (always starting with \#).
+Your custom tags will also be saved and will be suggested later on.
+
+\question{Enter information for the three patients, such as \texttt{\#diagnosis \#B-ALL} for a patient, \texttt{\#blood \#CLL}
+for another one, and \texttt{bone \#marrow \#B-ALL} for the last one.}
 \begin{verbatim}
   cy.log("// test_005_change_description")
     // Fill forms
@@ -147,8 +149,14 @@ can be suggested later on).
 
 \end{verbatim}
 
-\marginpar{{\bf New!}
- Note that patients (and runs and samples) can also be created at once by
+
+\question{Now go back to the \com{patients} page. You can filter the page
+  using the tags you entered previously.
+  Enter \texttt{\#B-ALL} in the search box (notice the autocompletion that helps you)
+  and validate with \com{Enter}.}
+
+
+\marginpar{Patients (and runs and samples) can also be created at once by
 pasting a table from a spreadsheet editor. See specification at \href{https://www.vidjil.org/doc/user/\#batch-creation-of-patientsrunssets}{\tt batch-creation-of-patientsrunssets}}
 
 Now the three patients and the run have been created but we have not uploaded
@@ -175,8 +183,9 @@ want on this page.
 
 \end{verbatim}
 
-\question{For sample 1, choose the file corresponding to patient 1 (and
-  respectively for patient 2 and 3). You can also add extra information, including
+\question{For sample 1, choose the file corresponding to the 
+first patient, and do the same for the other patients.
+  You can also add extra information, including
   tags, as previously.}
 \begin{verbatim}
   cy.log("// test_008_upload_new_samples_in_run")
@@ -226,7 +235,10 @@ Now you are back on the page of the run where you should see the three samples
 that are being uploaded.
 
 \question{When the upload is finished you launch the analysis by selecting the
-configuration in the drop down at the right (\com{multi+inc+xxx}) and then
+configuration in the drop down at the right (\com{multi+inc+xxx}) 
+\marginpar{\com{multi+inc+xxx} is the default configuration to
+process all human V(D)J recombinations}
+and then
 clicking on the gearwheel.}
 \begin{verbatim}
   cy.log("// test_011_launch_analysis_sample")
@@ -238,7 +250,7 @@ clicking on the gearwheel.}
 You can have a coffee, a tea, or something else, while the process is
 launched.
 
-\question{To regularly check the status of your job you can click
+\question{To check the status of your job you can click
   on the \com{reload} button at the bottom left of the page.
   Your process usually goes through the following stages: \com{QUEUED},
   (possibly \com{STOPPED}), \com{RUNNING}, \com{COMPLETED} (or
@@ -249,13 +261,12 @@ launched.
 
 \end{verbatim}
 
-Then you can view the results as explained before.
-Instead we will remain on the server.
+When the job is COMPLETED, 
+you can visualize the clonotype populations on Vidjil
+(see the other parts on the tutorial).
 
-\question{Now go back to the \com{patients} page. You can filter the page
-  using the tags you entered previously.
-  Enter \texttt{\#B-ALL} in the search box (notice the autocompletion that helps you)
-  and validate with \com{Enter}.}
+
+  %%% à déplacer, filter B-ALL
 \begin{verbatim}
   cy.log("// test_013_patient_page_and_filter")
     cy.goToPatientPage()
