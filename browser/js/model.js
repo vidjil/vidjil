@@ -2717,6 +2717,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
     },
 
+    /**
+     * Export localStorage content as a json string
+     * This content is download with an anchor
+     */
+    settingsExport(){
+        var settings = JSON.stringify(localStorage);
+        download_csv(settings, "vidjil_settings.json", "json")
+    },
+
+
 
     NB_READS_THRESHOLD_QUANTIFIABLE: 5,
 
