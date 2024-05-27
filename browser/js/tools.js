@@ -1008,29 +1008,21 @@ function bsa_cigar2match(cigar)
     return sum
 }
 
-function download_csv(csv, filename) {
-    var csvFile;
+function download_csv(content, filename, type="csv") {
+    var contentFile;
     var downloadLink;
 
-    // CSV FILE
-    csvFile = new Blob([csv], {type: "text/csv"});
+    contentFile = new Blob([content], {type: `text/${type}`});
 
-    // Download link
     downloadLink = document.createElement("a");
-
-    // File name
     downloadLink.download = filename;
 
     // We have to create a link to the file
-    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.href = window.URL.createObjectURL(contentFile);
 
-    // Make sure that the link is not displayed
     downloadLink.style.display = "none";
 
-    // Add the link to your DOM
-    document.body.appendChild(downloadLink);
-
-    // Lanzamos
+    document.body.appendChild(downloadLink);  // Add the link to your DOM
     downloadLink.click();
 }
 
