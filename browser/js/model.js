@@ -2727,6 +2727,64 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
 
+    /**
+     * Import a localStorage saved file
+     * Overload existing data
+     */
+    settingsImport(){
+        var self = this;
+        var settings_import_id = "upload_settings"
+
+        var input = document.getElementById(settings_import_id)
+
+        if (input.files.length !== 0) {
+            var oFReader = new FileReader();
+            var oFile    = input.files[0];
+
+            var imported_settings = input.files[0].name;
+
+            oFReader.readAsText(oFile);
+            oFReader.onload = function (oFREvent) {
+                var text_settings = oFREvent.target.result;
+                let importedSettings;
+
+                try {
+                    importedSettings = JSON.parse(text_settings);
+                } catch (e) {
+                    console.error('Invalid JSON at import settings', e);
+                    return;
+                }
+
+                for (let key in importedSettings) {
+                    let existing_value;
+                    try {
+                        existing_value = JSON.parse(localStorage.getItem(key));
+                    } catch (e) {
+                        existing_value = localStorage.getItem(key);
+                    }
+
+                    try {
+                        imported_value = JSON.parse(importedSettings[key]);
+                    } catch (e) {
+                        imported_value = importedSettings[key];
+                    }
+
+                    if (existing_value !== null) {
+                        if (typeof existing_value === 'object' && existing_value !== null && typeof imported_value === 'object' && imported_value !== null) {
+                            var merged = mergeDictionaries(existing_value, imported_value)
+                            localStorage.setItem(key, JSON.stringify(merged));
+                        }
+                    } else {
+                        localStorage.setItem(key, importedSettings[key]);
+                    }
+                }
+                m.update()
+            }
+        }
+
+        return this;
+    },
+
 
     NB_READS_THRESHOLD_QUANTIFIABLE: 5,
 

@@ -1,4 +1,5 @@
 <!doctype html>
+<!doctype html>
 
 <!-- 
   This file is part of Vidjil <http://www.vidjil.org>, High-throughput Analysis of V(D)J Immune Repertoire
@@ -246,7 +247,6 @@
             <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();"> settings
                 <div class="selector">
                     <div>
-
                         <div class="menu_box">
                             normalization
                             <form name="normalize_list" id="normalize_list">
@@ -331,6 +331,7 @@
                         <div class="menu_box">
                             <a class="buttonSelector" onclick="m.resetSettings();">reset settings</a>
                             <a class="buttonSelector" id="settings_export" onclick="m.settingsExport()">export settings</a>
+                            import settings <input id="upload_settings" type="file" name="json"> <button id="start_import_json" onclick="m.settingsImport()">load</button>
                         </div>
                         <!--
                         <div class="submenu" id="system_menu" style="display:none">
