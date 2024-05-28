@@ -374,6 +374,7 @@ def get_fused_stats(fuse):
                     ]
                 )
 
+                result_stats["clones_5"] = 0
                 result_stats["clones_5_details"] = {}
                 for locus in fuse_data["reads"]["germline"].keys():
                     result_stats["clones_5_details"][locus] = len(
@@ -389,6 +390,7 @@ def get_fused_stats(fuse):
                             > 0.05
                         ]
                     )
+                    result_stats["clones_5"] += result_stats["clones_5_details"][locus]
 
                 # !!! Contamination definition  : if pos != result_index, C present more than 0,01% and C bigger in result_index sample
                 # !!! WARNING, contamination is computed only on current fused file ! So available for ONE shared set and ONE shared config
@@ -447,14 +449,6 @@ def get_fused_stats(fuse):
                         else:
                             simpson_diversity = round(fuse_data["diversity"]["index_Ds_diversity"][result_index], 3)
                     result_stats["simpson_diversity"] = simpson_diversity
-
-            result_stats["clones_5"] = sum(
-                [
-                    fuse_data["reads"]["distribution"][key][result_index]
-                    for key in fuse_data["reads"]["germline"]
-                    if key in fuse_data["reads"]["distribution"]
-                ]
-            )
 
             if "pre_process" in fuse_data["samples"]:
                 result_stats["pre_process"] = fuse_data["samples"]["pre_process"][
