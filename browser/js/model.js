@@ -2733,7 +2733,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      */
     settingsImport(){
         var self = this;
-        var settings_import_id = "upload_settings"
+        var settings_import_id = "settings_import"
 
         var input = document.getElementById(settings_import_id)
 
@@ -2773,13 +2773,18 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         if (typeof existing_value === 'object' && existing_value !== null && typeof imported_value === 'object' && imported_value !== null) {
                             var merged = mergeDictionaries(existing_value, imported_value)
                             localStorage.setItem(key, JSON.stringify(merged));
+                        } else {
+                            localStorage.setItem(key, imported_value);
                         }
                     } else {
-                        localStorage.setItem(key, importedSettings[key]);
+                        localStorage.setItem(key, imported_value);
                     }
+                    
                 }
-                m.update()
+                m.applySettings()
+                console.log({ msg: "user preferences have been imported", type: "flash", priority: 1 });
             }
+
         }
 
         return this;
