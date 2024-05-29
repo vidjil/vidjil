@@ -331,8 +331,8 @@
                         <div class="menu_box">
                             Settings<br/>
                             <a class="buttonSelector" id="settings_export" onclick="m.settingsExport()">export</a>
-                            import <input id="upload_settings" type="file" name="json"> <button id="start_import_json" onclick="m.settingsImport()">load</button>
-                            <a class="buttonSelector" onclick="m.resetSettings();">reset</a>
+                            import <input id="settings_import" type="file" name="json" onchange="m.settingsImport()">
+                            <a id="settings_reset" class="buttonSelector" onclick="m.resetSettings();">reset</a>
                         </div>
                         <!--
                         <div class="submenu" id="system_menu" style="display:none">
