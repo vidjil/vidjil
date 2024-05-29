@@ -303,7 +303,6 @@ def get_fused_stats(fuse):
                     key=lambda clone: clone["reads"][result_index],
                     reverse=True,
                 )
-                print(f"{sorted_clones[0]=}")
                 if "name" in sorted_clones[0]:
                     result_stats["main_clone"] = sorted_clones[0]["name"]
                 else:
