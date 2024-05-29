@@ -75,7 +75,7 @@ function Model() {
     this.reset();
     this.filter = new Filter(this)
     this.color = new Color(this)
-    this.setAll();
+    this.applySettings();
     this.checkBrowser();
     this.germlineList = new GermlineList()
     this.build();
@@ -259,9 +259,7 @@ Model.prototype = {
     /**
      * Set all the properties. Called in the constructor.
      */
-    setAll: function () {
-        this.system_selected = []
-        this.top = 50
+    applySettings: function () {
 
         try {
             if (this.localStorage){
@@ -361,6 +359,9 @@ Model.prototype = {
         if (this.filter != undefined){
             this.filter.filters = [{axis: "Top", operator:">", value:50}]
         }
+
+        this.system_selected = []
+        this.top = 50
     },
     
     
