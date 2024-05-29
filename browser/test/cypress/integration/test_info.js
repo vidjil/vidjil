@@ -54,4 +54,31 @@ describe('Colors', function () {
     cy.close_sample_info()
   })
 
+  it('03-info shortcut',  function() {
+    cy.openAnalysis("/doc/analysis-example.vidjil")
+
+    // check BEFORE number of reads available
+    cy.get('#info_selected_locus > :nth-child(2)')
+      .should("contain", "741 684 (94.26%)")
+
+
+    // check hide one system
+    cy.get('#toogleLocusSystemBox_TRB').click({shiftKey: false})
+    cy.get('#info_selected_locus > :nth-child(2)')
+      .should("contain", "25 648 (3.26%)")
+
+
+    // check AFTER number of reads available
+    cy.get('#toogleLocusSystemBox_TRB').click({shiftKey: true})
+    cy.get('#info_selected_locus > :nth-child(2)')
+      .should("contain", "716 036 (91.00%)")
+
+
+    // check GET BACK to all avaialable system
+    cy.get('#toogleLocusSystemBox_TRB').click({shiftKey: true})
+    cy.get('#info_selected_locus > :nth-child(2)')
+      .should("contain", "741 684 (94.26%)")
+    
+  })
+
 })

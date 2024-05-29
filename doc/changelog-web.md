@@ -1,8 +1,41 @@
 
 !!! note
 
-	This changelog concerns the Vidjil web application, client and server.
-	As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
+This changelog concerns the Vidjil web application, client and server.
+we are using continuous integration and deployment, some features are pushed on our servers between these releases.
+
+## Web 2024-04
+
+??? note "Milestone 2024-04"
+Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
+
+**QC stats**
+
+* Add a new feature for previewing Quality Control stats
+* Possibility to export data
+* See more information in [documentation](user.md#statistics-and-quality-control-view)
+
+**Improve analysis**
+
+* A direct download button allow to download fused vidjil file of a configuration
+
+**Min per locus**
+
+* Be able to set the minimum of clones to return per locus
+
+**Bug fixes**
+
+* Prevent bug when sampling date not filled
+* Prevent error on set opening
+* Prevent error when filtering samples
+* Prevent wrong size in reads length distribution in some cases
+* Prevent bug with duplicated entries that may lead to duplicated computations
+
+**Technical**
+
+* Follow-ups on py4web migration
+* Raw preprocessing file are now deleted at end of preprocess.
+
 
 ## Web 2024-01
 
@@ -14,7 +47,7 @@ Mains ideas are shared between these frameworks, yet it required a lot of hard w
 
 We also changed the docker-compose file to adapt it to new `docker services`. Be aware when you make migration to this release to have a good understanding of change in this file. See [docker changelog](changelog-docker.md) to get more information.
 
-Other improvments of client and server are limited.
+Other improvements of client and server are limited.
 
 **Improve analysis**
 * New axis with size of clonotype inside his locus. Also add an associated preset `Size within each locus (17)`.

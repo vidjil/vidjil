@@ -9,7 +9,7 @@ enables the deep sequencing of a lymphoid population with dedicated
 sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
 This is the help of the [Vidjil web application](http://app.vidjil.org/).
-Further help can always be asked to <support@vidjil.org>. We can also arrange phone or video meeting.
+Further help can always be asked to [support@vidjil.org](mailto:support@vidjil.org). We can also arrange phone or video meeting.
 
 The Vidjil team (Mathieu, Mikaël, Aurélien, Clément, Florian, Marc, Ryan and Tatiana)
 
@@ -22,19 +22,19 @@ We recommend to either regularly update one's web browsers,
 or to use long-term releases, such as [Firefox ESR](https://www.mozilla.org/en-US/firefox/enterprise).
 As of January 2024, we recommend using Firefox or Chrome/Chromium :
 
-  - Firefox, *version \>= 115 ESR*
-  - Chrome, *version \>= 115* 
+- Firefox, *version \>= 115 ESR*
+- Chrome, *version \>= 115*
 
 These platforms will be supported to at least *April 2026*.
-Within our quality process, we test several of these versions 
+Within our quality process, we test several of these versions
 through [tests and continuous integration](https://www.vidjil.org/doc/quality/#tests-1).
 
 ### Legacy browsers
 
 We also provide an extended support on
 
-  - Firefox, versions 78 to 114
-  - Chrome, version 79 to 114
+- Firefox, versions 78 to 114
+- Chrome, version 79 to 114
 
 Some of these legacy platforms are also tested through our continuous integration pipelines.
 However, old platforms have security flaws and are not recommended for routine usage involving clinical data.
@@ -46,9 +46,8 @@ we display during at least six months a warning on those legacy browsers.
 ### Other browsers
 
 Vidjil is also reported to work with recent Edge, Opera or Safari browsers,
-but these browsers are not officialy supported.
+but these browsers are not officially supported.
 Note that Vidjil will not run on IE 9.0 or below.
-
 
 ### Getting .vidjil files
 
@@ -62,44 +61,44 @@ manage, process your samples (`.fasta`, `.fastq`, `.gz`, `.bam`, or `.clntab` fi
 database computes these `.vidjil` files with vidjil-algo.
 Otherwise, such `.vidjil` files can be obtained either:
 
-  - running vidjil-algo from the command line (starting from
-    `.fasta`, `.fastq` or `.gz` files, see [vidjil-algo documentation](http://www.vidjil.org/doc/vidjil-algo/)).
-    To gather several `.vidjil` files, you have to use the [fuse.py](http://git.vidjil.org/blob/master/tools/fuse.py) script
-  - or by any other V(D)J analysis pipelines able to output files
-    respecting the `.vidjil` [file format](http://www.vidjil.org/doc/vidjil-format/)
-  - or by using the [fuse.py](http://git.vidjil.org/blob/master/tools/fuse.py) script on the standard [AIRR representation](http://docs.airr-community.org/en/latest/datarep/overview.html#format-specification)
+- running vidjil-algo from the command line (starting from
+  `.fasta`, `.fastq` or `.gz` files, see [vidjil-algo documentation](http://www.vidjil.org/doc/vidjil-algo/)).
+  To gather several `.vidjil` files, you have to use the [fuse.py](http://git.vidjil.org/blob/master/tools/fuse.py) script
+- or by any other V(D)J analysis pipelines able to output files
+  respecting the `.vidjil` [file format](http://www.vidjil.org/doc/vidjil-format/)
+- or by using the [fuse.py](http://git.vidjil.org/blob/master/tools/fuse.py) script on the standard [AIRR representation](http://docs.airr-community.org/en/latest/datarep/overview.html#format-specification)
 
 Contact us if you want help on converting such data.
 
 ## First aid
 
-  - Open data by:
-    
-      - either with “samples”/“open samples” if you are connected to a sample database, such as on <http://app.vidjil.org/> or <http://health.vidjil.org/>.
-        In these cases, there are always some "Demo" datasets for demonstration purposes.
-        Once a patient/run/set is selected, you can access the results by clicking on the link near `See results` (bottom right).
-    
-      - or with “file”/“import/export”, manually selecting a `.vidjil` file
+- Open data by:
+  
+  - either with “samples”/“open samples” if you are connected to a sample database, such as on <http://app.vidjil.org/> or <http://health.vidjil.org/>.
+    In these cases, there are always some "Demo" datasets for demonstration purposes.
+    Once a patient/run/set is selected, you can access the results by clicking on the link near `See results` (bottom right).
 
-  - You can change the number of displayed clonotypes by moving the slider “number of clonotypes” (menu “filter”).
-    The maximal number of clonotypes that can be displayed depends on the processing step before.
-    See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
+  - or with “file”/“import/export”, manually selecting a `.vidjil` file
 
-  - clonotypes can be selected by clicking on them either in the list, on the sample graph,
-    or the grid (simple selection or rectangle selection).
+- You can change the number of displayed clonotypes by moving the slider “number of clonotypes” (menu “filter”).
+  The maximal number of clonotypes that can be displayed depends on the processing step before.
+  See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
 
-  - There are often very similar clonotypes, coming from either somatic hypermutations or from sequencing errors.
-    You can select such clonotypes (for example those sharing a same V and a same J), then:
-    
-      - inspect the sequences in the lower panel (possibly using the “align” function),
-      - remove some of these sequences from the selection (clicking on their name in the lower panel)
-      - cluster them (button “cluster”) in a unique clonotype.
-        Once several clonotypes are clustered, you can still visualize them by clicking on “+” in the list of clonotypes.
+- clonotypes can be selected by clicking on them either in the list, on the sample graph,
+  or the grid (simple selection or rectangle selection).
 
-  - Your analysis (clonotype tagging, renaming, clustering) can be saved:
-    
-      - either with “samples”/“save analysis” if you are connected to a sample database
-      - or with “file”/“export .analysis”
+- There are often very similar clonotypes, coming from either somatic hypermutations or from sequencing errors.
+  You can select such clonotypes (for example those sharing a same V and a same J), then:
+  
+  - inspect the sequences in the lower panel (possibly using the “align” function),
+  - remove some of these sequences from the selection (clicking on their name in the lower panel)
+  - cluster them (button “cluster”) in a unique clonotype.
+    Once several clonotypes are clustered, you can still visualize them by clicking on “+” in the list of clonotypes.
+
+- Your analysis (clonotype tagging, renaming, clustering) can be saved:
+  
+  - either with “samples”/“save analysis” if you are connected to a sample database
+  - or with “file”/“export .analysis”
 
 You are advised to go through to the tutorial available from <http://www.vidjil.org/doc>
 to learn the essential features of Vidjil.
@@ -108,30 +107,31 @@ to learn the essential features of Vidjil.
 
 ### The info panel (upper left panel)
 
-  - *patient/run/set information.*
-  - *locus.* Germline(s) used for analyzing the data. In case of multi-locus
-    data, you can select what locus should be displayed (see [Libraries and recombinations](libraries-recombinations.md))
-  - *analysis.*   Name (without extension) of the loaded file.
-  - *sample.* Name of the current sample.
+- *patient/run/set information.*
+- *locus.* Germline(s) used for analyzing the data. In case of multi-locus
+  data, you can select what locus should be displayed (see [Libraries and recombinations](libraries-recombinations.md))
+- *analysis.*   Name (without extension) of the loaded file.
+- *sample.* Name of the current sample.
 
 <!-- The name can be edited (“edit”). -->
 
-  - *date.* Date of the current sample
-    (can be edited in the database, on the patient/run/set tab).
-    When displaying multiple samples from a same patient/run/set,
-    you can change the sample viewed by clicking on the `←` and `→` buttons,
-    or cycle trough them by clicking on the "▶" button.
+- *date.* Date of the current sample
+  (can be edited in the database, on the patient/run/set tab).
+  When displaying multiple samples from a same patient/run/set,
+  you can change the sample viewed by clicking on the `←` and `→` buttons,
+  or cycle trough them by clicking on the "▶" button.
 
-  - *analyzed reads.* Number of reads where the underlying RepSeq algorithm
-    found a V(D)J recombination, for that sample.
-    See *Number of analyzed reads* below.
-    By hovering the mouse, one also sees the *total*
-    number of reads for that sample.
+- *analyzed reads.* Number of reads where the underlying RepSeq algorithm
+  found a V(D)J recombination, for that sample.
+  See *Number of analyzed reads* below.
+  By hovering the mouse, one also sees the *total*
+  number of reads for that sample.
 
-  - The info “🛈” button opens the *sample information panel*, that includes
-    metadata on the sample and its analysis.
-    It includes information on the version and the parameters
-    of the analysis software.
+- The info “🛈” button opens the *sample information panel*, that includes
+  metadata on the sample and its analysis.
+  It includes information on the version and the parameters
+  of the analysis software.
+
 <figure markdown>
   ![Image title](./pictures/panel_info.png){ align=right }
   <figcaption>The information panel.
@@ -139,7 +139,6 @@ to learn the essential features of Vidjil.
       In this sample, V(D)J recombinations were detected in about 82% of the reads.
   </figcaption>
 </figure>
-
 
 ### The list of clonotypes (left panel)
 
@@ -150,31 +149,31 @@ the V gene `TRGV3*01`, with `2` nucleotides deleted at its end (3'),
 followed by a N region with the three nucleotides `ATC`,
 then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its start (5').
 
-  - You can adjust the way that these clonotype names are displayed through
-    the menu options “settings > N regions in clonotype names”
-    and “settings > alleles in clonotype names”.
+- You can adjust the way that these clonotype names are displayed through
+  the menu options “settings > N regions in clonotype names”
+  and “settings > alleles in clonotype names”.
 
-  - You can assign other tags with colors to clonotypes using the “★” button.
-    The “filter” menu allows to further filter clonotypes by tags.
+- You can assign other tags with colors to clonotypes using the “★” button.
+  The “filter” menu allows to further filter clonotypes by tags.
 
-  - Under the “★” button it is possible to normalize clonotype concentrations
-    according to this clonotype. You must specify the expected concentration in the
-    “expected size” field (e.g. 0.01 for 1%). See *Control with standard/spike* below.
+- Under the “★” button it is possible to normalize clonotype concentrations
+  according to this clonotype. You must specify the expected concentration in the
+  “expected size” field (e.g. 0.01 for 1%). See *Control with standard/spike* below.
 
-  - The list can be sorted on V genes, J genes or clonotype abundance.
-    The “+” and “-” allow respectively to un-cluster or re-cluster all clonotypes that have
-    already been clustered.
+- The list can be sorted on V genes, J genes or clonotype abundance.
+  The “+” and “-” allow respectively to un-cluster or re-cluster all clonotypes that have
+  already been clustered.
 
-  - Clonotypes can be searched (“search” box) by either their name, their custom name,
-    their DNA sequence, their (partial) CDR3 amino acid sequence.
+- Clonotypes can be searched (“search” box) by either their name, their custom name,
+  their DNA sequence, their (partial) CDR3 amino acid sequence.
 
-  - The concentration of some clonotypes may not be displayed.
-    - A clonotype with a plus symbol `+` has been detected in that sample,
-      but with only a few reads, typically less than five.
-      Its concentration ratio is thus not significant, and
-      this clonotype would appear in the gray zone in the sample graph.
-    - A clonotype with a minus symbol `−` has not been detected in that sample,
-      but has been detected in another sample that is not currently displayed.
+- The concentration of some clonotypes may not be displayed.
+  - A clonotype with a plus symbol `+` has been detected in that sample,
+    but with only a few reads, typically less than five.
+    Its concentration ratio is thus not significant, and
+    this clonotype would appear in the gray zone in the sample graph.
+  - A clonotype with a minus symbol `−` has not been detected in that sample,
+    but has been detected in another sample that is not currently displayed.
 
 <figure markdown>
   ![Image title](./pictures/panel_list.png)
@@ -189,11 +188,12 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
 </figure>
 
 #### Detailed information on each clonotype
+
 The “🛈” button opens a window showing detailed information (V(D)J designation,
 e-value, number of reads) about each clonotype.
 
 In addition, depending on what the user launched on this clonotype, we may also
-find detailed informations retrieved from IMGT or from CloneDB.
+find detailed information retrieved from IMGT or from CloneDB.
 
 #### Detailed information from CloneDB
 
@@ -210,31 +210,30 @@ calculated over all the samples in the sample set.
 The sample graph is displayed as soon as there are at least two samples.
 It shows the most frequent clonotypes of each sample, tracked into every sample.
 
-  - The current sample is highlighted with a vertical gray bar. You can select another sample by clicking on it or using `←` and `→`.
+- The current sample is highlighted with a vertical gray bar. You can select another sample by clicking on it or using `←` and `→`.
 
-  - By default, the graph shows clonotypes present in the top 20 of any sample.
-    See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
-    You can instead choose to show only the clonotypes present in the current sample
-    with “filter \> focus on clonotypes of one sample“.
+- By default, the graph shows clonotypes present in the top 20 of any sample.
+  See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
+  You can instead choose to show only the clonotypes present in the current sample
+  with “filter \> focus on clonotypes of one sample“.
 
-  - When a clonotype gathers very few reads, typically less than five,
-    its concentration ratio is not significant and it is shown by a `+` in the clonotype list.
-    Such clonotypes appear in the sample graph in a *gray zone*.
-    They should be considered as “detected, but not quantifiable“,
-    and different concentrations in the gray zone should not be compared.
+- When a clonotype gathers very few reads, typically less than five,
+  its concentration ratio is not significant and it is shown by a `+` in the clonotype list.
+  Such clonotypes appear in the sample graph in a *gray zone*.
+  They should be considered as “detected, but not quantifiable“,
+  and different concentrations in the gray zone should not be compared.
 
-  - Samples can be reordered by dragging their label.
+- Samples can be reordered by dragging their label.
 
-  - Samples can be hidden by double-clicking on their label.
-    At the top-right of the graph, a button such as `5/8`
-    shows how many samples are displayed (here `5`) and the total number of samples (here `8`).
-    This button reveals a menu where
-    each sample can be selected (single click),
-    shown or hidden (double click),
-    as well as options to show or to hide all samples.
+- Samples can be hidden by double-clicking on their label.
+  At the top-right of the graph, a button such as `5/8`
+  shows how many samples are displayed (here `5`) and the total number of samples (here `8`).
+  This button reveals a menu where
+  each sample can be selected (single click),
+  shown or hidden (double click),
+  as well as options to show or to hide all samples.
 
-  - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
-
+- If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 
 <figure markdown>
   ![Image title](./pictures/panel_graph.png)
@@ -248,17 +247,17 @@ It shows the most frequent clonotypes of each sample, tracked into every sample.
 The grid view shows the clonotypes scattered according to some axes.
 When there is only one sample, two such views are shown.
 
-  - The default view, by V/J genes, focus on one recombination system within one locus.
-    All the analyzes locus are on the right of the grid. You can select another locus by clicking on it or by using the associated shortcuts (see *Keyboard shortcuts* below).
+- The default view, by V/J genes, focus on one recombination system within one locus.
+  All the analyzes locus are on the right of the grid. You can select another locus by clicking on it or by using the associated shortcuts (see *Keyboard shortcuts* below).
 
-  - The “plot“ menu allows to customize the plots, by selecting the X and Y axes,
-    by switching between grid and bar plots, and also by saving plots for the next report.
-    There are [20+ available axes](axes.md) to study the clonotypes.
-    Some presets are available.
-    For example, the preset 4, similar to a "Genescan analysis", shows a bar plot of the clonotypes according to the length of their consensus sequence,
-    and the preset 7 shows the distribution of CDR3 lengths.
+- The “plot“ menu allows to customize the plots, by selecting the X and Y axes,
+  by switching between grid and bar plots, and also by saving plots for the next report.
+  There are [20+ available axes](axes.md) to study the clonotypes.
+  Some presets are available.
+  For example, the preset 4, similar to a "Genescan analysis", shows a bar plot of the clonotypes according to the length of their consensus sequence,
+  and the preset 7 shows the distribution of CDR3 lengths.
 
-  - On the bar plots, the Y axis corresponds to the order of clonotypes inside each bar.
+- On the bar plots, the Y axis corresponds to the order of clonotypes inside each bar.
 
 <figure markdown>
   ![Image title](./pictures/panel_scatterplot.png){ width="500" }
@@ -273,49 +272,48 @@ When there is only one sample, two such views are shown.
 A particular preset for similarity is available.  
 Similarity values are now computed on vidjil *windows* sequences (centered on CDR3 of the clonotype, with a length depending of analysis preset).
 
-The "Similarity by nucleotides" preset computes the similarity between each pair of clonotypes, and displays clonotypes on a 2D plane, split by locus, with the [tSNE algorithm](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding). 
+The "Similarity by nucleotides" preset computes the similarity between each pair of clonotypes, and displays clonotypes on a 2D plane, split by locus, with the [tSNE algorithm](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding).
 
 !!! warning
     The similarity is computed only on clonotypes present on the current samples. The same clonotypes will thus be displayed further apart on smaller samples with more similar clones.
     In most cases, the more dissimilarity there is among the clonotypes of the sample, the better the clonotypes are grouped.
 
-  <figure> <p style="text-align:center">
-      <img src="./pictures/scatterplot_similarity.png"/>
-      <p style="text-align:center">A) Artificial sample with only 5 clonotypes, divergent by only one mismatch, but
-      here displayed far apart. <br/>B)
-      Same clonotypes in a large polyclonal sample with one hundred clonotypes. The five clonotypes are clusterized.</p>
-    </p>
-  </figure>
+<figure> <p style="text-align:center">
+    <img src="./pictures/scatterplot_similarity.png"/>
+    <p style="text-align:center">A) Artificial sample with only 5 clonotypes, divergent by only one mismatch, but
+    here displayed far apart. <br/>B)
+    Same clonotypes in a large polyclonal sample with one hundred clonotypes. The five clonotypes are clusterized.</p>
+  </p>
+</figure>
 
 Note that when another analysis produce a slightly different list of clonotypes (launching another configuration, adding samples...), the tSNE algorithm will be relaunched and the 2D projection may look slightly different.
 
 ### Status bar
 
-  - At the bottom of the plot view, the “status bar“ displays information
-    on the selected clonotype.
+- At the bottom of the plot view, the “status bar“ displays information
+  on the selected clonotype.
 
-  - The “focus“ button (status bar, bottom right) allows to further analyze a selection of clonotypes, and the “hide” button allows to hide some clonotypes.
-    To exit the focus/hide mode, click on the “X” near the search box.
+- The “focus“ button (status bar, bottom right) allows to further analyze a selection of clonotypes, and the “hide” button allows to hide some clonotypes.
+  To exit the focus/hide mode, click on the “X” near the search box.
 To further analyze a set of clonotypes sharing a same V and J, it is often useful
 to focus on the clonotypes, then to display them according either to their “clonotype length”
 or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
-   - The “★” button (status bar, bottom right) allows
-   to tag at once all the selected clonotypes
-   and/or to select them for the next report.
+- The “★” button (status bar, bottom right) allows
+to tag at once all the selected clonotypes
+and/or to select them for the next report.
 
 ### The sequence panel (bottom panel)
 
 The sequence panel shows, for the selected clonotypes:
 
- - the nucleotide or amino acid *sequences* -- see below "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clonotype)"
- - some *features* on these sequences
-
+- the nucleotide or amino acid *sequences* -- see below "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clonotype)"
+- some *features* on these sequences
 
 <figure markdown>
   ![Image title](./pictures/panel_sequence.png)
   <figcaption>
-      For each clonotype, name and sequences are shown. You can align sequences and see differences between them. Here the two first sequences seem identical on the region displayed though they actually differ. The third and fifth sequences differ by a deletion and an insertion in the junction, within a stretch of cytosine. From here you can remove more divergent clonotypes (using the cross on the left side) and cluster others with the corresponding button. You can also choose to show some available features on the seuqence as primers, visible here under sequence on 3' extremities.
+      For each clonotype, name and sequences are shown. You can align sequences and see differences between them. Here the two first sequences seem identical on the region displayed though they actually differ. The third and fifth sequences differ by a deletion and an insertion in the junction, within a stretch of cytosine. From here you can remove more divergent clonotypes (using the cross on the left side) and cluster others with the corresponding button. You can also choose to show some available features on the sequence as primers, visible here under sequence on 3' extremities.
   </figcaption>
 </figure>
 
@@ -323,18 +321,17 @@ The sequence panel shows, for the selected clonotypes:
 
 Clonotypes can be (un)selected by several ways:
 
-  - Select one clonotype: click on its representative element in any panel (a plot in the gridpanel, a line in the graph panel, or an entry in the list panel)
-  - Select multiple clonotypes at once:  click-and-drag a rectangular selection of an area of the grid panel
-  - Add a clonotype to the selection : Ctrl+click
-  - Remove a clonotype from the selection : click on the 'X' at the left
-  - Remove all selected clonotypes : click on the background of the grid panel
+- Select one clonotype: click on its representative element in any panel (a plot in the gridpanel, a line in the graph panel, or an entry in the list panel)
+- Select multiple clonotypes at once:  click-and-drag a rectangular selection of an area of the grid panel
+- Add a clonotype to the selection : Ctrl+click
+- Remove a clonotype from the selection : click on the 'X' at the left
+- Remove all selected clonotypes : click on the background of the grid panel
 
 #### Cluster: regroup clonotypes
 
 The `cluster` button will create a cluster with the selected clonotypes
 Such a cluster will appear as a single clonotype,
 with the first (largest) selected clonotype acting as its representative.
-
 
 <figure markdown>
   ![Image title](./pictures/panel_list_merge_2.png)
@@ -348,19 +345,18 @@ with the first (largest) selected clonotype acting as its representative.
 The `align` button aligns all the selected sequences,
 the sequence of the first (largest) clonotype used as a reference.
 
-  - `.` is a match
-  - `-` is a gap
-  - a single line under a character is a nucleotide mismatch
-  - a double line under a character is a silent nucelotide mismatch (not impacting the resulting amino acid sequence)
-  - `*` in an amino acid sequence indicates a stop codon
-  - `#` in an amino acid sequence indicates a frameshift in the junction (and thus an unproductive sequence)
+- `.` is a match
+- `-` is a gap
+- a single line under a character is a nucleotide mismatch
+- a double line under a character is a silent nucleotide mismatch (not impacting the resulting amino acid sequence)
+- `*` in an amino acid sequence indicates a stop codon
+- `#` in an amino acid sequence indicates a frameshift in the junction (and thus an unproductive sequence)
 
-The alignment settings `⚙` menu allows to customize such alignements, by
+The alignment settings `⚙` menu allows to customize such alignments, by
 
- - highlighting mismatches
- - hiding matches
- - switching between amino acid and nucleotide sequences
-
+- highlighting mismatches
+- hiding matches
+- switching between amino acid and nucleotide sequences
 
 #### Data Columns
 
@@ -368,44 +364,43 @@ The analysis software, on some configurations, may provide additional [data
 axes](axes.md) for each clonotype.
 The data columns `‖` menu allows to select such data.
 
-
 #### External Analysis: Further sequence analysis with external software
+
 This sub menu display a range of other analysis software available online used for RepSeq studies.
 These buttons will send the sequences of selected clonotypes to them for analysis and open the resulting page in another window/tab.
 
-  - [`❯ IMGT/V-QUEST`](https://www.imgt.org/IMGT_vquest):
-    The reference analysis from IMGT®, including search for subset `#2` and `#8`.
-    See [below](#imgt-sequence-features)
+- [`❯ IMGT/V-QUEST`](https://www.imgt.org/IMGT_vquest):
+  The reference analysis from IMGT®, including search for subset `#2` and `#8`.
+  See [below](#imgt-sequence-features)
 
-  - [`❯ IgBlast`](https://www.ncbi.nlm.nih.gov/igblast/):
-    Nucleotide alignment with IG/TR germline sequences
+- [`❯ IgBlast`](https://www.ncbi.nlm.nih.gov/igblast/):
+  Nucleotide alignment with IG/TR germline sequences
 
-  - `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
+- `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
 
-  - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
-    Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
+- [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
+  Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
 
-  - [`❯ AssignSubsets`](https://station1.arrest.tools/subsets) (availaible for clones with IGH recombinations):
-    Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
-    of stereotyped antigen receptor sequences for CLL
-
+- [`❯ AssignSubsets`](https://station1.arrest.tools/subsets) (available for clones with IGH recombinations):
+  Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
+  of stereotyped antigen receptor sequences for CLL
 
 #### Sequence Features
 
 Depending on the analysis software and on its configuration, there can be positions of genes or specific regions of interest that can be highlighted.
 The sequence feature `☰` menu usually contains at least the following genes/regions:
 
-  - V/D/J genes
-  - CDR3 position
-  - Primers as computed after selection of a primer set
+- V/D/J genes
+- CDR3 position
+- Primers as computed after selection of a primer set
 
 #### IMGT Sequence Features
 
 The `☰ IMGT` menu further allows to select features provided by IMGT/V-QUEST:
 
-  - V/D/J genes
-  - FR1/FR2/FR3/FR4
-  - CDR1/CDR2/CDR3 
+- V/D/J genes
+- FR1/FR2/FR3/FR4
+- CDR1/CDR2/CDR3
 
 To avoid overloading the IMGT servers that provide us this feature,
 after adding new clonotypes to the selection,
@@ -415,12 +410,11 @@ one has to click on the refresh `↻` button to request the features for the new
 
 To export reports from your data, you may first select clonotypes and/or plots:
 
- - Select some clonotypes by using the “★” button (status bar, bottom right), and `add to next report`.
+- Select some clonotypes by using the “★” button (status bar, bottom right), and `add to next report`.
 
- - On any grid or bar plot, open the “plot“ menu and again `add to next report`. The report will show these plots with the same parameters (X/Y axes, clonotype/axes filters).
+- On any grid or bar plot, open the “plot“ menu and again `add to next report`. The report will show these plots with the same parameters (X/Y axes, clonotype/axes filters).
 
-Then select `export report` inside the menu `ìmport/export`.
-
+Then select `export report` inside the menu `import/export`.
 
 <figure markdown>
   ![Image title](./pictures/report_menu_default.png)
@@ -430,16 +424,15 @@ Then select `export report` inside the menu `ìmport/export`.
 The report menu allows to select a *template* and to load a previously saved *report*,
 and to customize the report by:
 
-* Showing or hiding any *sample*
-* Showing or hiding any *locus*
-* Selecting the *colors* for all clonotypes and for selected clonotypes
-* Updating the *clonotypes* you previously selected (with “★”),  possibly removing them for the report
-* Adding, moving, or deleting *reports sections*, including plots you previously selected (within the “plot“ menu)
+- Showing or hiding any *sample*
+- Showing or hiding any *locus*
+- Selecting the *colors* for all clonotypes and for selected clonotypes
+- Updating the *clonotypes* you previously selected (with “★”),  possibly removing them for the report
+- Adding, moving, or deleting *reports sections*, including plots you previously selected (within the “plot“ menu)
 
 This (possibly customized) report can be saved for later reuse.
 Saved reports are stored when you "save" the analysis on a patient/sample.
 If you need other customized templates, please contact us.
-
 
 #### Show report
 
@@ -452,7 +445,6 @@ to *add a comment section* where you can enter a free text.
 
 Both regular and comment sections will be saved when you save the report.
 
-
 ## Warnings view
 
 The warning view (new in release 2023.03) lists global and clonotype warnings.
@@ -464,7 +456,7 @@ Clonotypes with a specific warning can be selected (🔍), either from the curre
   <i>
       The most frequent warning in this sample, W69, tells that some clonotypes
       may have alternate V(D)J designation.
-      Clonotypes with this warnings can be selected (🔍): 
+      Clonotypes with this warnings can be selected (🔍):
       here most of them have VXXX or VXX, and that is expected due to the sequences.
       The warning was then muted.
   </i>
@@ -472,7 +464,6 @@ Clonotypes with a specific warning can be selected (🔍), either from the curre
 
 Warnings can be muted by unchecking the checkbox.
 Muted warnings are still listed on the clonotype information panel or on hover of the “🛈” icon of each clonotype.
-
 
 # The sample database and the server
 
@@ -492,7 +483,7 @@ you can process your data and save the results of your analysis.
   ![Image title](./pictures/table_db_content_patient_list.png)
   <figcaption>
     The main page on the sample database show a list of patients, or runs or sets,
-    with links to the samples and the results.
+    with links to the samples, the results, and the preview/quality control.
   </figcaption>
 </figure>
 
@@ -547,7 +538,6 @@ Do not copy any header row, but only the data rows.
 | CohortCLL | Retrospective 2015-2019 |
 | Mouse1604 |                         |
 
-
 ### Permanent address (URL) to a set of samples
 
 Addresses such as <http://app.vidjil.org/3241-25> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
@@ -558,7 +548,7 @@ to your local IT staff or to the Vidjil team.
 
 ### Samples and pre-processes
 
-Clicking on a patient, a run or a set give acccess to the "samples" page. Each sample is
+Clicking on a patient, a run or a set give access to the "samples" page. Each sample is
 a `.fasta`, `.fastq`, `.gz` or `.clntab` file that will be processed by one or several
 pipelines with one or several *process configurations* that set software options.
 
@@ -578,7 +568,6 @@ process, and access to the results (`See results`, bottom right).
   </figcaption>
 </figure>
 
-
 #### Adding a sample
 
 To add a sample (`+ add samples`), you must add at least one sample file. Each sample file must
@@ -586,40 +575,40 @@ be linked to a patient, a run or a set. One of those fields will be automaticall
 completed depending on whether you accessed the sample page.
 These fields provide autocompletion to help you enter the correct
 patient, run or sets. It is advised to fill in both fields (when it makes
-sense). However please note that the correspondig patients, runs and sets must have
+sense). However please note that the corresponding patients, runs and sets must have
 been created beforehand.
 
 #### Pre-processing
 
 The sample files may be preprocessed, by selecting a *pre-process scenario* when adding a sample.
-At the moment the only preprocess avalaible on the public server (<http://app.vidjil.org>) are the paired-end read merging.
+At the moment the only preprocess available on the public server (<http://app.vidjil.org>) are the paired-end read merging.
 
-1.  Read merging
-    
-    People using Illumina sequencers may sequence paired-end R1/R2 fragments. It is
-    **highly** recommended to merge those reads in order to have a read that consists
-    of the whole DNA fragment instead of split fragments.
-    To merge R1/R2 fragments, select an adapted *pre-process scenario* and provide both R1/R2 files at once when adding a sample.
-    On the public test server, the default scenarios use the [Flash2](https://academic.oup.com/bioinformatics/article/27/21/2957/217265) read merger with the option `-M 300`.
-    
-    There are two scenarios to merge reads. Indeed in case the merging is not
-    possible for some paired-end reads we must keep only one of the fragments (either R1 or
-    R2). We cannot keep both because it would bias the quantification (as there
-    would be two unmerged reads instead of one). Depending on the sequencing
-    strategy it could be better to keep R1 or R2 in such a case. Therefore it
-    really depends on users and their sequencing protocols. You must choose to keep the fragment that most
-    probably contains both a part of the V and the J genes.
+1. Read merging
+
+  People using Illumina sequencers may sequence paired-end R1/R2 fragments. It is
+  **highly** recommended to merge those reads in order to have a read that consists
+  of the whole DNA fragment instead of split fragments.
+  To merge R1/R2 fragments, select an adapted *pre-process scenario* and provide both R1/R2 files at once when adding a sample.
+  On the public test server, the default scenarios use the [Flash2](https://academic.oup.com/bioinformatics/article/27/21/2957/217265) read merger with the option `-M 300`.
+  
+  There are two scenarios to merge reads. Indeed in case the merging is not
+  possible for some paired-end reads we must keep only one of the fragments (either R1 or
+  R2). We cannot keep both because it would bias the quantification (as there
+  would be two unmerged reads instead of one). Depending on the sequencing
+  strategy it could be better to keep R1 or R2 in such a case. Therefore it
+  really depends on users and their sequencing protocols. You must choose to keep the fragment that most
+  probably contains both a part of the V and the J genes.
 
 ### Processing samples and process configurations
 
 Depending on your granted accesses, you can schedule a processing for a sequence file (select a config and `run`).
 The processing can take a few seconds to a few hours, depending on the
-software lauched, the options set in the process configuration, the size of the sample and the server load.
+software launched, the options set in the process configuration, the size of the sample and the server load.
 
 The base human configurations with **vidjil-algo** are « TRG », « IGH », « multi » (`-g germline`), « multi+inc » (`-g germline -i`), « multi+inc+xxx » (`-g germline -i -2`, default advised configuration).
 See [Libraries and recombinations](libraries-recombinations.md) for information on these processes.
 There are also processes for other species and for other RepSeq algorithms, such as « MiXCR ».
-The server mainteners can add new process configurations tailored to specific needs, contact us if you have other needs.
+The server maintainers can add new process configurations tailored to specific needs, contact us if you have other needs.
 
 The « reload » button (bottom left) updates the view. It is useful to see if the status of the task changed.
 It should do `PREPROCESSING (optional)` → `QUEUED` → `RUNNING` → `COMPLETED`.
@@ -629,6 +618,52 @@ The only thing you should not do is to close completely your web browser (or the
 
 Once a task is completed, a click on the `See results` link (bottom right) will open the main window to browse the clonotypes.
 A click on the `out` link at the right of every sample give access to the raw output file of the RepSeq software.
+
+### Displaying statistics, quality control
+
+!!! New with release 2024.05
+
+The "Preview / quality control" allow to see in one table various information on results for multiple samples from one patient, run, or set, for a specified configuration (that was already processed).
+The `Download table (.tsv)` button under the table allow you to process these statistics in an external tool.
+
+<figure markdown>
+  ![Preview / Quality control](./pictures/stats_qc2.png)
+  <figcaption>
+    Preview / Quality control view.
+  </figcaption>
+</figure>
+
+This page can be accessed through a button either from a patient/run/set page, or from the main page on the sample database listing patients/runs/sets
+
+<figure markdown>
+  ![Home page](./pictures/stats_qc1.png)
+  <figcaption>
+    Accessing results and preview/quality control from the main page of the sample database.
+  </figcaption>
+</figure>
+
+The columns (list below) can be showed or hidden using the checkboxes above the table.
+Displayed and hidden columns are saved in your local settings.
+
+| Columns | Explanation |
+| :------ | :---------- |
+| Sets | Patients, runs, sets |
+| Sample name | Sample name |
+| Config name | Analysis configuration (such as `multi+inc+xxx`) |
+| Reads (%) | Percentage of analyzed reads |
+| Reads | Number of analyzed reads / Total number of reads |
+| Mean length | Mean length of the reads |
+| Read length distribution | Read length distribution (between 100bp and 600bp) |
+| Recombinations | Recombinations / loci |
+| Clonotypes ≥5% | Number of clonotypes above 5% in their recombination/locus |
+| Common | Common clonotypes ≥0.01% with other samples of this set |
+| Main clonotype | Main clonotype |
+| Reads (merged) | Number of merged reads |
+| Pre-process | Pre-process |
+| Shannon | Shannon's diversity (0: no diversity, 3-5+: full diversity)|
+| Pielou | Pielou's evenness (0: no diversity, 1: full diversity)|
+| Simpson | Simpson's diversity (0: no diversity, 1: full diversity)|
+
 
 ### Groups
 
@@ -650,12 +685,12 @@ another organization.
 
 The different permissions that can be attributed are:
 
-  - Read: Permissions to view patients/runs/sets to which a group or organization has access to
-  - Create: Permissions to create patients/runs/sets
-  - Upload: Permissions to upload samples to the patients/runs/sets of a group
-  - Run: Permissions to run Vidjil on an uploaded samples to the patients/runs/sets of a group
-  - (Anon) View Details: Permissions to view patient/run/set data in an unencrypted manner for the patients/runs/sets of a group
-  - Save: Permissions to save an analysis for the patients/runs/sets of a group
+- Read: Permissions to view patients/runs/sets to which a group or organization has access to
+- Create: Permissions to create patients/runs/sets
+- Upload: Permissions to upload samples to the patients/runs/sets of a group
+- Run: Permissions to run Vidjil on an uploaded samples to the patients/runs/sets of a group
+- (Anon) View Details: Permissions to view patient/run/set data in an unencrypted manner for the patients/runs/sets of a group
+- Save: Permissions to save an analysis for the patients/runs/sets of a group
 
 ### Usage and processes pages
 
@@ -666,19 +701,19 @@ These pages allow to follow your activity and the activity of your groups.
 The usage page detail, for each of your groups, data usage and last processes.
 For each group, you will find:
 
-  - A reminder of your permissions in that group (full permissions: admin anon create read run save upload,
-    or some more restricted permissions)
-  - The number of each type of sets (patient/runs/sets), with the number of processes done the last month and their status
-    (`C`: completed, `F`: failed, `Q`: queued, `S`: stopped)
-  - The list of the most frequent tags
-  - Links to last processes
+- A reminder of your permissions in that group (full permissions: admin anon create read run save upload,
+  or some more restricted permissions)
+- The number of each type of sets (patient/runs/sets), with the number of processes done the last month and their status
+  (`C`: completed, `F`: failed, `Q`: queued, `S`: stopped)
+- The list of the most frequent tags
+- Links to last processes
 
 #### Processes page
 
 This page lists the last processes you ran, with information such as its configuration and its status.
 Each sample is provided with links to the related patient/runs/sets.
 
-### Edit my personal informations
+### Edit my personal information
 
 Your login is your email address.
 To update other personal information or your password,
@@ -708,9 +743,9 @@ even when they occur for a single nucleotide in the V gene or elsewhere.
 In **vidjil-algo** (Giraud, Salson, BMC Genomics 2014),
 sequences are gathered into a same clonotype as long as they share the
 same 50bp DNA sequence around the CDR3 sequence.
-In a first step, the algorithm has a quick heuristic which detects approximatively
+In a first step, the algorithm has a quick heuristic which detects approximately
 where the CDR3 lies and extracts a 50bp nucleotide sequence centered on that
-region. This region is called a **window** in vijdil-algo. When two
+region. This region is called a **window** in vidjil-algo. When two
 sequences share the same window, they belong to the same clonotype. Therefore
 in vidjil-algo clonotypes are only defined based on the (conservative) exact match of a long DNA
 sequence. This explains why some small clonotypes can be seen around larger
@@ -765,7 +800,6 @@ coming from full RNA-seq or whole-genome sequencing.
 Once these clonotypes as selected, you can send their sequences to **Blast** or to **IgBlast** and/or to share us these sequences
 (with `help > get support`, see below) for further inspection.
 
-
 ### How is productivity computed? Why do I have some discrepancies with other software?
 
 Vidjil-algo reports CDR3 as *productive* when they come from
@@ -778,11 +812,10 @@ other software. For instance, as of September 2019, IMGT/V-QUEST removes by defa
 insertions and deletions from the sequences to compute the productivity, as it
 considers them as sequencing errors.
 
-
 ### How can there be discrepancies in annotations of a same clonotype in different samples?
 
 Sometimes, the "same" clonotype shows different properties between different samples --
-as for exemple different V(D)J designations or productivity prediction.
+as for example different V(D)J designations or productivity prediction.
 Warnings [W81 and W82](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) are now raised for such situations.
 
 Such differences may come from [the way sequences are clustered](vidjil-format.md#what-is-a-clone).
@@ -825,11 +858,11 @@ one that never reach the 50 first clonotypes. With a default installation,
 the slider can be set to display clonotypes until the "top 100" on the grid
 (and, on the graph, until "top 20").
 
-However, in some cames, one may want to track some known clonotypes that are
+However, in some cases, one may want to track some known clonotypes that are
 never in the "top 100", as for example:
 
-  - a standard/spike with low concentration
-  - a clonotype tracked in a follow-up sample of a patient without the diagnosis sample
+- a standard/spike with low concentration
+- a clonotype tracked in a follow-up sample of a patient without the diagnosis sample
 
 In these situations, a solution is to create a `.fasta` file with this sequences to be tracked
 and upload it as another sample in the same patient/run/set.
@@ -871,17 +904,16 @@ Several indices are computed on the full list of clonotypes to assess the divers
   [Shannon's diversity](https://en.wikipedia.org/wiki/Diversity_index#Shannon_index),
   [Pielou's evenness](https://en.wikipedia.org/wiki/Species_evenness),
   and [Simpson's diversity](https://en.wikipedia.org/wiki/Diversity_index#Simpson_index),
-  as computed by [vijdil-algo](vidjil-algo.md#diversity-measures).
+  as computed by [vidjil-algo](vidjil-algo.md#diversity-measures).
   Pielou's evenness and Simpson's diversity have values between 0
   (no diversity, one clonotype clusters all analyzed reads)
   and 1 (full diversity, each analyzed read belongs to a different clonotype).
-
 
 <figure markdown>
   ![Image title](./pictures/diversity_splitted_by_locus.png)
   <figcaption>
     The diversity section of sample information panel.
-    Since algo release `2022.03`, diversity is also splitted by locus.
+    Since algo release `2022.03`, diversity is also split by locus.
     The section contain only locus present in sample and active in analysis.
   </figcaption>
 </figure>
@@ -906,7 +938,6 @@ Note that results can then not be visualized on the main Vidjil window.
 For more specific analyses, we advise to work with bioinformaticians.
 The full list of clonotypes can be retrieved by launching the command-line `vidjil-algo` (see [documentation](vidjil-algo.md)),
 Parsing the `.vidjil` files gives then all information computed on each clonotype (see [documentation](vidjil-format.md)).
-
 
 ### Going back to the analyzed reads
 
@@ -937,60 +968,60 @@ With DNA-Seq sequencing with specific V(D)J primers,
 ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
 On the other side, capture with many probes or RNA-Seq strategies usually lead to datasets with less than 0.1% V(D)J recombinations.
 
-The sample information panel (“info“ button) further details the causes of non-analysis (for vijdil-algo, `UNSEG`, see detail on [vidjil-algo documentation](vidjil-algo.md#reads-without-detected-recombinations).
+The sample information panel (“info“ button) further details the causes of non-analysis (for vidjil-algo, `UNSEG`, see detail on [vidjil-algo documentation](vidjil-algo.md#reads-without-detected-recombinations).
 There can be several causes leading to low ratios:
 
 #### Analysis or biological causes
 
-  - The data actually contains other germline/locus that what was searched for
-    (solution: relauch the processing, or ask that we relaunch it, with the correct germline sequences).
-    See [locus documentation](http://www.vidjil.org/doc/locus/) for information on the analyzable human locus with vidjil-algo,
-    and contact us if you would like to analyze data from species that are not currently available.
+- The data actually contains other germline/locus that what was searched for
+  (solution: relaunch the processing, or ask that we relaunch it, with the correct germline sequences).
+  See [locus documentation](http://www.vidjil.org/doc/locus/) for information on the analyzable human locus with vidjil-algo,
+  and contact us if you would like to analyze data from species that are not currently available.
 
-  - There are incomplete/exceptional recombinations
-    (Vidjil can analyze some of them with the process `multi+inc`, see [locus documentation](http://www.vidjil.org/doc/locus/) for details)
+- There are incomplete/exceptional recombinations
+  (Vidjil can analyze some of them with the process `multi+inc`, see [locus documentation](http://www.vidjil.org/doc/locus/) for details)
 
-  - There are too many hypersomatic mutations
-    (usually Vidjil can process mutations until 10% mutation rate… above that threshold, some sequences may be lost).
+- There are too many hypersomatic mutations
+  (usually Vidjil can process mutations until 10% mutation rate… above that threshold, some sequences may be lost).
 
-  - There are chimeric sequences or translocations
-    (Vidjil does not process all of these sequences).
+- There are chimeric sequences or translocations
+  (Vidjil does not process all of these sequences).
 
 #### PCR or sequencing causes
 
-  - The read length is too short and the reads do not span the junction zone
-    (see also comments on read length concerning [library preparation and sequencing](http://www.vidjil.org/doc/locus#read-length)).
-    Vidjil-algo detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be
-    that long centered on the junction.
-    Reads with no similarity to either V or J are reported as not analyzed (`UNSEG only V/J` or even `UNSEG too few V/J`).
-    Reads with a V/J junction detected but not long enough are also reported as not analyzed (`UNSEG too short w`).
-    Finally, some slightly short reads are analyzed but with slightly shifted or shortened windows (`SEG changed w`).
-    The related clonotypes are marked with a [W50](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) warning,
-    as they may, in some cases, falsely cluster reads from different clonotypes.
+- The read length is too short and the reads do not span the junction zone
+  (see also comments on read length concerning [library preparation and sequencing](http://www.vidjil.org/doc/locus#read-length)).
+  Vidjil-algo detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be
+  that long centered on the junction.
+  Reads with no similarity to either V or J are reported as not analyzed (`UNSEG only V/J` or even `UNSEG too few V/J`).
+  Reads with a V/J junction detected but not long enough are also reported as not analyzed (`UNSEG too short w`).
+  Finally, some slightly short reads are analyzed but with slightly shifted or shortened windows (`SEG changed w`).
+  The related clonotypes are marked with a [W50](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) warning,
+  as they may, in some cases, falsely cluster reads from different clonotypes.
 
-  - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region.
-    Solutions are to merge the ends with very conservative parameters (see *Read merging* above),
-    to ignore this end, or to extend the read length.
+- In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region.
+  Solutions are to merge the ends with very conservative parameters (see *Read merging* above),
+  to ignore this end, or to extend the read length.
 
-  - There were too many PCR or sequencing errors
-    (this can be asserted by inspecting the related clonotypes, checking if there is a large dispersion around the main clonotype)
+- There were too many PCR or sequencing errors
+  (this can be asserted by inspecting the related clonotypes, checking if there is a large dispersion around the main clonotype)
 
 ### Control with standard/spike
 
-  - If your sample included a standard/spike control, you should first
-    identify the main standard sequence (if that is not already done) and
-    specify its expected concentration (by clicking on the “★” button).
-    Then the data is normalized according to that sequence.
-  - You can (de)activate normalization in the settings menu.
+- If your sample included a standard/spike control, you should first
+  identify the main standard sequence (if that is not already done) and
+  specify its expected concentration (by clicking on the “★” button).
+  Then the data is normalized according to that sequence.
+- You can (de)activate normalization in the settings menu.
 
 ### Steadiness verification
 
-  - When assessing different PCR primers, PCR enzymes, PCR cycles, one may want to see how regular the concentrations are among the samples.
-  - When following a patient one may want to identify any clonotype that is emerging.
-  - To do so, you may want to change the color system, in the “color by” menu
-    select “abundance”. The color ranges from red
-    (high concentration) to purple (low concentration) and allows to easily
-    spot on the graph any large change in concentration.
+- When assessing different PCR primers, PCR enzymes, PCR cycles, one may want to see how regular the concentrations are among the samples.
+- When following a patient one may want to identify any clonotype that is emerging.
+- To do so, you may want to change the color system, in the “color by” menu
+  select “abundance”. The color ranges from red
+  (high concentration) to purple (low concentration) and allows to easily
+  spot on the graph any large change in concentration.
 
 ### Clonotype coverage
 
@@ -1039,23 +1070,23 @@ It works even with approximate matches and/or degenerate primers.
 Note that retrieving the positions may take a few seconds to about one minute when many clonotypes and/or samples are opened.
 
 Primers are then displayed
+
 - on the clone information panel (line `Primer 5` or `Primer 3`)
 - on the sequence aligner (`☰ Sequences features` > `Primers`)
 
 Moreover, when one or both primers are not found in the clonotype sequence,
-their position will nevertheless be estimed "outside" of the read, based on the germline sequence
+their position will nevertheless be estimated "outside" of the read, based on the germline sequence
 (but this is not displayed).
 This will allow to estimate an `interpolated length` for such clonotypes,
 that is plot in a Genescan-like view (preset `Primer gap`).
 
 ### Removing primers before external analysis
 
-As they are (mostly) conserved across reads, primers can bias some analyses such as the hypermutation rate.
+As they are (mostly) conserved across reads, primers can bias some analyses such as the hypermutations rate.
 They can be removed before sending the sequence to external tools (IMGT/V-Quest, IgBlast, Blast, or AssignSubset).
 You should have previously select a primer set,
 open the settings menu, select `trim primers for external tools`.
 The sequences sent for external analysis will then be trimmed at primers positions, even if only one primer was found.
-
 
 ## How can I have further support or help on a specific sample or on some sequences?
 
@@ -1077,10 +1108,10 @@ possibly users of the same groups if such groups were defined, and the server ma
 
 The settings menu allows to set:
 
- - the clonotype size format     [scientific notation / percentage]
- - the sample key            [sample name / shortened name / sampling date / day since first sampling]
- - the format for clonotype junction [junction length / AA sequence / mixed (display AA sequence only for short junction)]
- - the format for clonotype alleles  [hide alleles / display alleles / mixed (display only for marginal alleles)]
+- the clonotype size format     [scientific notation / percentage]
+- the sample key            [sample name / shortened name / sampling date / day since first sampling]
+- the format for clonotype junction [junction length / AA sequence / mixed (display AA sequence only for short junction)]
+- the format for clonotype alleles  [hide alleles / display alleles / mixed (display only for marginal alleles)]
 
 These settings, together with the color option, are kept in your web browser ``localStorage'' between several sessions.
 
@@ -1138,17 +1169,19 @@ These description include vidjil-algo and fuse parameters if you want to recreat
 | Command| Parameters given to vidjil-algo|
 | Fuse command| Parameter given to fuse script|
 
-If you want have access to configuration listed below, 
-or ask for a specific configuration fitting your need, 
+If you want have access to configuration listed below,
+or ask for a specific configuration fitting your need,
 it can be done by email us at [contact@vidjil.org](mailto:contact@vidjil.org).
 
-Note that some specifics, in progress or unmaintained existants configurations are not shown here.  
+Note that some specifics, in progress or unmaintained existent configurations are not shown here.  
 
 #### Group 'Human V(D)J recombinations'
-Analysis with vidjil-algo of human TR/IG recombinations. 
+
+Analysis with vidjil-algo of human TR/IG recombinations.
 This is a group of most common configurations to use for analysis.
 
 ##### multi+inc+xxx (default configuration)
+
 default: multi-locus, with some incomplete/unusual/unexpected recombinations
 
 ??? Parameters
@@ -1156,7 +1189,8 @@ default: multi-locus, with some incomplete/unusual/unexpected recombinations
         command: -c clones -z 100 -r 1 -g germline/homo-sapiens.g  -e 1 -2 -d -w 50 -y all --no-airr
         fuse_command: -t 100 -d lenSeqAverage --overlaps
 
-##### IGH 
+##### IGH
+
 Locus IGH, Vh(Dh)Jh
 
 ??? Parameters
@@ -1164,8 +1198,8 @@ Locus IGH, Vh(Dh)Jh
         command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH  -d -y all  --no-airr`
         fuse_command: `-t 100 -d lenSeqAverage --overlaps`
 
+##### TRG
 
-##### TRG 
 Locus TRG, VgJg
 
 ??? Parameters
@@ -1173,7 +1207,8 @@ Locus TRG, VgJg
         command: `-c clones -z 100 -r 1 -g germline/homo-sapiens.g:TRG  -y all --no-airr`
         fuse_command: `-t 100 -d lenSeqAverage --overlaps`
 
-##### multi 
+##### multi
+
 Multi-locus, only complete locus
 
 ??? Parameters
@@ -1181,8 +1216,9 @@ Multi-locus, only complete locus
         command: `-c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD  -e 1 -w 50  -d -y all --no-airr`
         fuse_command: `-t 100 -d lenSeqAverage --overlaps`
 
-##### Clonality 
-Incomplete germlines + larger window (90bp), thus 20bp more on each side. 
+##### Clonality
+
+Incomplete germlines + larger window (90bp), thus 20bp more on each side.
 This configuration is advised for studies on IGH clonality
 
 ??? Parameters
@@ -1190,7 +1226,8 @@ This configuration is advised for studies on IGH clonality
         command: `-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -w 90 -y all --no-airr`
         fuse_command: `-t 100 -d lenSeqAverage --overlaps`
 
-##### IGK 
+##### IGK
+
 Locus IGK, including KDE and Intron recombinations
 
 ??? Parameters
@@ -1198,7 +1235,8 @@ Locus IGK, including KDE and Intron recombinations
         command: `-c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGK,IGK+ -y all --no-airr`
         fuse_command: `-t 100 -d lenSeqAverage --overlaps`
 
-##### IGL 
+##### IGL
+
 Locus IGL
 
 ??? Parameters
@@ -1206,11 +1244,13 @@ Locus IGL
         command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGL  -d -y all  --no-airr`
         fuse_command: `-t 100 -d lenSeqAverage --overlaps`
 
-#### Group 'Other recombinations'
+#### Group 'Other recombinations
+
 Analysis with vidjil-algo of human non-V(D)J recombinations
 This set of configurations includes some specific analysis.
 
-##### IGH/isotypes 
+##### IGH/isotypes
+
 Multi-locus, with IgH constant chains
 
 (before:  -g /home/vidjil-ci/custom-germlines/germlines-classes.data)
@@ -1220,23 +1260,26 @@ Multi-locus, with IgH constant chains
         command: `-c clones -z 100 -r 1 -g germline/homo-sapiens-isotypes.g  -e 1 -2 -d -w 50 --no-airr`
         fuse_command: `-t 100 --overlaps`
 
-##### IKZF1/ERG 
+##### IKZF1/ERG
+
 Experimental search of intronic deletions (IKZF1, ERG)
 
 ??? Parameters
         program: `vidjil`
-        command: `  -c clones -z 100 -g germline/homo-sapiens-isoforms.g -e 1 -2 -d -w 50 -r 1 -y all  --no-airr`
+        command: `-c clones -z 100 -g germline/homo-sapiens-isoforms.g -e 1 -2 -d -w 50 -r 1 -y all  --no-airr`
         fuse_command: `-t 100 -d lenSeqAverage --overlaps`
 
-##### IGH+ 
+##### IGH+
+
 Locus IGH+ (DJ)
 
 ??? Parameters
         program: `vidjil`
-        command: ` -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH+ -e 1 -2 -d -w 50 -y all --no-airr`
-        fuse_command: ` -t 100 -d lenSeqAverage  --overlaps`
+        command: `-c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH+ -e 1 -2 -d -w 50 -y all --no-airr`
+        fuse_command: `-t 100 -d lenSeqAverage  --overlaps`
 
-##### IGH/IGH+ 
+##### IGH/IGH+
+
 Locus IGH, Vh(Dh)Jh
 
 ??? Parameters
@@ -1244,7 +1287,8 @@ Locus IGH, Vh(Dh)Jh
         command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGH+  -d -y all  --no-airr`
         fuse_command: `-t 100 -d lenSeqAverage --overlaps`
 
-##### IGL/IGK 
+##### IGL/IGK
+
 Locus IGK/IGH+; IGL
 
 ??? Parameters
@@ -1253,10 +1297,12 @@ Locus IGK/IGH+; IGL
         fuse_command: `-t 100 -d lenSeqAverage --overlaps`
 
 #### Group 'Analysis with/for other software'
+
 Analysis that use other repertoire software or generate with vidjil-algo compatible output formats
 
-##### MiXCR 
-MiXCR. Run a version of MixCR from 2018. 
+##### MiXCR
+
+MiXCR. Run a version of MixCR from 2018.
 A new version will be release based on AIRR format should be released soon
 
 ??? Parameters
@@ -1264,30 +1310,31 @@ A new version will be release based on AIRR format should be released soon
         command: `| -OaddReadsCountOnClustering=true |`
         fuse_command: `-t 100`
 
-##### Export all clones (AIRR) 
-Export all clones in the tabular AIRR format. 
-A threshold of 5 reads is set to report a clonotype. 
-The results can not be browsed online. 
+##### Export all clones (AIRR)
 
-See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output
+Export all clones in the tabular AIRR format.
+A threshold of 5 reads is set to report a clonotype.
+The results can not be browsed online.
+
+See <http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output>
 
 Another similar configuration with a limit set to 1 reads is available but only on demand and for small set of sequences.
 
-
 The results can not be browsed online.
-See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output
-
+See <http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output>
 
 ??? Parameters
         program: `vidjil`
-        command: ` -c clones -y all -z all  -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -r 5 --no-vidjil`
-        fuse_command: `-t 100 `
+        command: `-c clones -y all -z all  -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -r 5 --no-vidjil`
+        fuse_command: `-t 100`
 
 #### Group 'Other species'
-Analysis with vidjil-algo of V(D)J recombinations for other species. 
-Contact us at support@vidjil.org should you need other species.
 
-##### Mus musculus 
+Analysis with vidjil-algo of V(D)J recombinations for other species.
+Contact us at [support@vidjil.org](mailto:support@vidjil.org) should you need other species.
+
+##### Mus musculus
+
 Mus musculus, multiple locus
 
 ??? Parameters
@@ -1295,19 +1342,20 @@ Mus musculus, multiple locus
         command: `-c clones -z 100 -r 1 -g germline/mus-musculus.g -d --no-airr`
         fuse_command: `-t 100 --overlaps`
 
-##### Gallus gallus 
+##### Gallus gallus
+
 Analyze IGH and IGL recombinations for Gallus gallus
 Analyze also some incomplete/unusual/unexpected recombinations.
 
-
 ??? Parameters
         program: `vidjil`
-        command: ` -c clones -z 100 -r 1 -g germline/gallus-gallus.g -e 1 -2 -d -w 50 --no-airr`
+        command: `-c clones -z 100 -r 1 -g germline/gallus-gallus.g -e 1 -2 -d -w 50 --no-airr`
         fuse_command: `-t 100  --overlaps`
 
-##### Sus Scrofa 
+##### Sus Scrofa
+
 Analyze IGH, IGL and TRB recombinations for Sus scrofa.
-Analyze also some incomplete/unusual/unexpected recombinations. 
+Analyze also some incomplete/unusual/unexpected recombinations.
 
 ??? Parameters
         program: `vidjil`
@@ -1315,10 +1363,12 @@ Analyze also some incomplete/unusual/unexpected recombinations.
         fuse_command: `-t 100 --overlaps`
 
 #### Group 'Experimental configs'
+
 Experimental analyses, under development.
 These configuration may evolve or moved into other groups without notice.
 
-##### vidjil-algo-next 
+##### vidjil-algo-next
+
 Default configuration, beta release of next vidjil-algo engine.
 The last release is 2021.01.
 
@@ -1327,16 +1377,18 @@ The last release is 2021.01.
         command: `next -c clones --no-airr -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 --no-airr`
         fuse_command: `-t 100`
 
-##### Multi + contigs 
-Experimental;  default mutli+inc+xxx configuration + pre-fuse script for creation of contigs on the top 5 of clones from raw reads.
-Run script `capture_contigs.py` available in contribution repository and developped with Nantes CHU team (publication to come).
+##### Multi + contigs
+
+Experimental;  default multi+inc+xxx configuration + pre-fuse script for creation of contigs on the top 5 of clones from raw reads.
+Run script `capture_contigs.py` available in contribution repository and developed with Nantes CHU team (publication to come).
 
 ??? Parameters
         program: `vidjil`
         command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g -d -y all --no-airr`
         fuse_command: ` -t 100 -d lenSeqAverage --overlaps --pre "rnaseq_contigs.py --adaptater-length 6" `
 
-##### IGH + contigs 
+##### IGH + contigs
+
 Same as Multi+contigs, but limit to IGH complete locus.
 
 ??? Parameters
@@ -1344,11 +1396,12 @@ Same as Multi+contigs, but limit to IGH complete locus.
         command: `-w 60 -c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH -d -y all --no-airr`
         fuse_command: ` -t 100 -d lenSeqAverage --overlaps --pre "rnaseq_contigs.py --adaptater-length 6" `
 
-#####  Export all clones (AIRR), limit 1 read 
-Export all clones in the tabular AIRR format, from 1 read. 
+##### Export all clones (AIRR), limit 1 read
+
+Export all clones in the tabular AIRR format, from 1 read.
 Use wisely on file with few clonotypes.
-The results can not be browsed online. 
-See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output 
+The results can not be browsed online.
+See <http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output>
 
 ??? Parameters
         program: `vidjil`

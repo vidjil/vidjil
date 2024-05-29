@@ -15,19 +15,19 @@ and used by the *color by* menu.
 * **locus**: Locus or recombination system, as detailed [here](https://www.vidjil.org/doc/locus)
 
 * **V/5' gene, D gene, J/3' gene**: V, D, and J genes (or 5' and 3' segments for [incomplete or special recombinations](https://www.vidjil.org/doc/locus)), regardless of the allele
-* **V/5' allele, D allele, J/3' allele**: Same as above, but taking into acount each allele
+* **V/5' allele, D allele, J/3' allele**: Same as above, but taking into account each allele
 
 * **clone consensus length**: Length of the consensus sequence
 * **clone average read length**: Average length of the reads belonging to each clone
 * **primers**: Length of the consensus sequence between primers (inclusive), possibly interpolated, see [Working with primers](user.md#how-to-work-with-primers))
 
-* **clone consensus coverage**: Ratio of the length of the clone consensus sequence to the median read length of the clone. Coverage between .85 and 1.0 (or more) are good values. See [clone coverage](user.md#clone-coverage)
+* **clone consensus coverage**: Ratio of the length of the clone consensus sequence to the median read length of the clone. Coverage between .85 and 1.0 (or more) are good values. See [clone coverage](user.md#clonotype-coverage)
 * **GC content**: %GC content of the consensus sequence
 
 * **number of samples**: Number of samples sharing the clone
 * **tag**: Tag, as defined by the user with the `★` button in the [list of clones](user.md#the-list-of-clonotypes-left-panel)
 
-* **VIdentity IMGT**: V identity (as computed by IMGT/V-QUEST, availabe when the clonotypes have been submited there)
+* **VIdentity IMGT**: V identity (as computed by IMGT/V-QUEST, available when the clonotypes have been submitted there)
 * **V ratio**: coverage ratio of germline sequence of V segment. A complete coverage return 1.
 
 ### N-region / CDR3 analysis
@@ -41,7 +41,7 @@ and used by the *color by* menu.
 * **productivity detailed**: Same as above, but with further detail on the non-productivity cause: `stop-codon`, `out-of-frame`, `no-{WP}GxG-pattern`,
 following ERIC guidelines ([Rosenquist et al., 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5508071/)).
 
-* **productivity IMGT**: roductivity (as computed by IMGT/V-QUEST, availabe when the clonotypes have been submited there)
+* **productivity IMGT**: Productivity (as computed by IMGT/V-QUEST, available when the clonotypes have been submitted there)
 
 ## Other axes
 
@@ -49,8 +49,6 @@ These values require to have some setup on some instances of the server.
 
 * **cloneDB occurrences**: number of occurrences in cloneDB
 * **cloneDB patients/runs/sets occurrences**:  "number of patients/runs/sets sharing clones in cloneDB
-
-
 
 ## Availability of axes
 

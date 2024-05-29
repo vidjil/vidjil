@@ -355,7 +355,11 @@ Info.prototype = {
 
         var span_onclick = function (e) {
             if (e.shiftKey) {
-                m.keep_one_active_system(this.firstChild.nextSibling.textContent);
+                if (m.system_selected.length == 1 && this.firstChild.nextSibling.textContent == m.system_selected[0]){
+                    m.toggle_all_systems(true)
+                } else {
+                    m.keep_one_active_system(this.firstChild.nextSibling.textContent);
+                }
             } else {
                 this.firstChild.nextSibling.click();
             }
