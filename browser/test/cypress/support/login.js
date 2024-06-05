@@ -14,11 +14,13 @@ Cypress.Commands.add('login', (host) => {
       cy.fillLogin('demo@vidjil.org','demo')
     }
     cy.close_tips()
-  // },
-  // {
-  //   validate() {
-  //     cy.request('/whoami').its('status').should('eq', 200)
-  //   },
+  },
+  {
+    validate() {
+      cy.visitpage(Cypress.env('host'))
+      cy.get('#db_auth_name')
+        .should('exist').should('be.visible')
+    },
   }
   )
 })
