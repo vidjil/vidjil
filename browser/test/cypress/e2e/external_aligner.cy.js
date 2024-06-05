@@ -33,7 +33,7 @@ describe('External Aligner', function () {
     cy.openAnalysis("doc/analysis-example.vidjil")
 
     //select clone
-    cy.get('#listElem_25').click()
+    cy.get('#listElem_0').click()
 
     //disable open in another tab
     cy.newTabDisabler()
@@ -52,7 +52,7 @@ describe('External Aligner', function () {
     cy.openAnalysis("doc/analysis-example.vidjil")
 
     //select clone
-    cy.get('#listElem_26').click()
+    cy.get('#listElem_13').click()
 
     //disable open in another tab
     cy.newTabDisabler()
@@ -75,7 +75,7 @@ describe('External Aligner', function () {
     cy.openAnalysis("doc/analysis-example.vidjil")
 
     //select clone
-    cy.get('#listElem_25').click()
+    cy.get('#listElem_0').click()
 
     //disable open in another tab
     cy.newTabDisabler()
@@ -93,7 +93,7 @@ describe('External Aligner', function () {
     cy.openAnalysis("doc/analysis-example.vidjil")
 
     //select clone
-    cy.get('#listElem_26').click()
+    cy.get('#listElem_13').click()
 
     //disable open in another tab
     cy.newTabDisabler()
@@ -114,7 +114,7 @@ describe('External Aligner', function () {
     cy.openAnalysis("doc/analysis-example.vidjil")
 
     //select clone
-    cy.get('#listElem_25').click()
+    cy.get('#listElem_0').click()
 
     //disable open in another tab, change target from _blank to _self
     cy.newTabDisabler()
@@ -133,7 +133,7 @@ describe('External Aligner', function () {
   it('Aligner send to Arrest',{ browser: 'chromium' },  function() {
     cy.openAnalysis("doc/analysis-example.vidjil")
 
-    cy.get('#listElem_26').click()
+    cy.get('#listElem_13').click()
 
     // disable open in another tab
     cy.newTabDisabler()
@@ -143,7 +143,7 @@ describe('External Aligner', function () {
 
     cy.title().should('eq', 'ARResT/AssignSubsets @ the BAT cave | results')
     cy.get('fieldset').contains("0 / 1 / 1 were assigned / 'healthy' / submitted")
-    cy.get('fieldset').contains('#26_IGHV3-9*01_7/CCCGGA/17_IGHJ6*02')
+    cy.get('fieldset').contains('#13_IGHV3-9*01_7/CCCGGA/17_IGHJ6*02')
 
     return
   })
