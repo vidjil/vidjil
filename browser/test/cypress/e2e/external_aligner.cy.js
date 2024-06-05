@@ -37,13 +37,13 @@ describe('External Aligner', function () {
     cy.get('#listElem_25').click()
 
     //disable open in another tab
-    cy.get('#post_target_blank').click({force:true})
+    cy.newTabDisabler()
 
     //toIMGT
     cy.get('#toIMGT').click({force:true})
 
     //check content
-    cy.title({ timeout: TIMEOUT_IMGT }).should('eq', 'IMGT/V-QUEST')
+    cy.url().should('include', 'www.imgt.org/IMGT_vquest/analysis')
     cy.get('.sequences_number').contains("Number of analysed sequences: 1")
     cy.get('.summary_synthesis').contains("Homsap TRBV28*01 F")
     cy.get('.summary_synthesis').contains("Homsap TRBJ2-5*01 F")
@@ -56,13 +56,14 @@ describe('External Aligner', function () {
     cy.get('#listElem_26').click()
 
     //disable open in another tab
-    cy.get('#post_target_blank').click({force:true})
+    cy.newTabDisabler()
 
     //toIMGT
     cy.get('#toIMGT').click({force:true})
 
     //check content
-    cy.title({ timeout: TIMEOUT_IMGT }).should('eq', 'IMGT/V-QUEST')
+    // cy.title({ timeout: TIMEOUT_IMGT }).should('eq', 'IMGT/V-QUEST')
+    cy.url().should('include', 'www.imgt.org/IMGT_vquest/analysis')
     cy.get('.sequences_number').contains("Number of analysed sequences: 1")
     cy.get('.summary_synthesis').contains("Homsap IGHV3-9*01")
     cy.get('.summary_synthesis').contains("Homsap IGHJ6*02")
@@ -78,12 +79,12 @@ describe('External Aligner', function () {
     cy.get('#listElem_25').click()
 
     //disable open in another tab
-    cy.get('#post_target_blank').click({force:true})
+    cy.newTabDisabler()
 
     //toIgBlast
     cy.get('#toIgBlast').click({force:true})
 
-    cy.title().should('eq', 'IgBLAST Search Results')
+    cy.url().should('include', 'www.ncbi.nlm.nih.gov/igblast/igblast.cgi')
     cy.get('pre').contains("Length=180")
     cy.get('pre').contains("TRBV28*01")
     cy.get('pre').contains("TRBJ2-5*01")
@@ -96,12 +97,13 @@ describe('External Aligner', function () {
     cy.get('#listElem_26').click()
 
     //disable open in another tab
-    cy.get('#post_target_blank').click({force:true})
+    cy.newTabDisabler()
 
     //toIgBlast
     cy.get('#toIgBlast').click({force:true})
 
-    cy.title().should('eq', 'IgBLAST Search Results')
+    // cy.title().should('eq', 'IgBLAST Search Results')
+    cy.url().should('include', 'www.ncbi.nlm.nih.gov/igblast/igblast.cgi')
     cy.get('pre').contains("Length=318")
     cy.get('pre').contains("IGHV3-9*01")
     cy.get('pre').contains("IGHJ6*02")
@@ -115,14 +117,16 @@ describe('External Aligner', function () {
     //select clone
     cy.get('#listElem_25').click()
 
-    //disable open in another tab
-    cy.get('#post_target_blank').click({force:true})
-
-    //toIgBlast
+    //disable open in another tab, change target from _blank to _self
+    cy.newTabDisabler()
+      
     cy.get('#toBlast').click({force:true})
-
-    cy.title().should('contains', 'BLAST/BLAT search - Homo_sapiens - Ensembl genome browser') // can have a version number at the end, so use contain and not eq
-    cy.get('.seq-wrapper').contains('>25#TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01')
+      
+    // cy.title().should('contains', 'BLAST/BLAT search - Homo_sapiens - Ensembl genome browser') // can have a version number at the end, so use contain and not eq
+    cy.url().should('include', 'www.ensembl.org/Multi/Tools/Blast?db=core')
+    cy.get('.popup > :nth-child(1)')
+      .should("contain", "BLAST/BLAT search")
+    cy.get('.seq-wrapper').contains('#0 TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01')
 
     return
   })
@@ -133,7 +137,7 @@ describe('External Aligner', function () {
     cy.get('#listElem_26').click()
 
     // disable open in another tab
-    cy.get('#post_target_blank').click({force:true})
+    cy.newTabDisabler()
 
     // send to Arrest/AssignSbset
     cy.get('#toAssignSubsets').click({force:true})

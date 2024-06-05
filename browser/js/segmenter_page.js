@@ -172,7 +172,7 @@ function disableFeatures(disabled) {
  */
 function prepareButtons() {
     var exportFastaBtn = document.getElementById('btn_exportfasta');
-    var form = document.getElementById('form_block');
+    var form = document.getElementById('form');
 
     exportFastaBtn.addEventListener('click', function () {
         model.exportFasta();

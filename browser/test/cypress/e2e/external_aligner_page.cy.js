@@ -46,7 +46,7 @@ describe('Aligner', function () {
     cy.submitSegmenterNetwork()
     cy.get('#scatter_container_circle0', { timeout: 10000 }).should('exist')
 
-    cy.get('#post_target_blank').click({force:true})
+    cy.newTabDisabler("#form")
     cy.get('#btn_exportfasta').click();
 
     cy.get('body').contains(">TRGV5*01 5/GGGCCAG/5 TRGJ1*01    200 nt, 1 read")
