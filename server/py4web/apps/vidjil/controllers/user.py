@@ -108,9 +108,9 @@ def edit_form():
     updated_user = dict(first_name = request.params["first_name"],
                         last_name = request.params["last_name"],
                         email = request.params["email"])
+    log.debug(f"updated_user : {updated_user}")
     if request.params["password"] != "":
         updated_user["password"] = request.params["password"] 
-    log.debug(f"updated_user : {updated_user}")
     response = db(db.auth_user.id == request.params['id']).validate_and_update(**updated_user)
     errors = response.get("errors")
     if errors:
