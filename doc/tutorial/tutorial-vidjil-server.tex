@@ -3,20 +3,11 @@
 /// <reference types="cypress" />
 
 describe('Tutorial server', function () {
-    before(function () {
-        cy.login(Cypress.env('host'))
-        cy.close_tips()
-    })
     beforeEach(function () {
-        cy.login(Cypress.env('host'))
-        cy.visitpage(Cypress.env('host'))
-        cy.closeFlashAll()
-    })
-    afterEach(function () {
-    })
-    after(function () {
-        cy.clearCookies()
-    })
+      cy.login(Cypress.env('host'))
+      cy.visitpage(Cypress.env('host'))
+      cy.closeFlashAll()
+  })
 
 
   // ######################################
