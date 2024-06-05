@@ -10,12 +10,10 @@ make germline
 # Create symbolic links for cypress (to avoid "--project" param error)
 ln -sf $PWD /app/vidjil
 ln -sf $PWD/$CYPRESS_PATH /app/cypress
-ln -sf $PWD/docker/ci/cypress.json /app/cypress.json
 ln -sf $PWD/docker/ci/cypress_script.bash /app/script.bash
 
 
-mkdir -p /app/browser/test/  || true
-ln -sf $PWD/browser/test/data /app/browser/test/data || true
+ln -sf $PWD/browser /app/browser || true
 ln -sf $PWD/doc  /app/doc    || true
 ln -sf $PWD/demo /app/demo   || true
 ln -sf $PWD/tools /app/tools || true
@@ -27,8 +25,12 @@ NC='\033[0m' # No Color
 echo -e "${CYAN}==> ls /app${NC}"
 ls /app
 
+echo -e "${CYAN}==> ls /app/browser${NC}"
+ls /app/browser
 echo -e "${CYAN}==> ls /app/browser/test/data${NC}"
 ls /app/browser/test/data
+echo -e "${CYAN}==> ls /app/data${NC}"
+ls /app/data
 echo -e "${CYAN}==> ls /app/doc${NC}"
 ls /app/doc
 echo -e "${CYAN}==> ls /app/demo${NC}"

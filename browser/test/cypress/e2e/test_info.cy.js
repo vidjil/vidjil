@@ -55,7 +55,7 @@ describe('Colors', function () {
   })
 
   it('03-info shortcut',  function() {
-    cy.openAnalysis("/doc/analysis-example.vidjil")
+    cy.openAnalysis("doc/analysis-example.vidjil")
 
     // check BEFORE number of reads available
     cy.get('#info_selected_locus > :nth-child(2)')

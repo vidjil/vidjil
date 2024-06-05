@@ -15,7 +15,7 @@ describe('List', function () {
 
   it('00-Axis size in locus',  function() {
     // Test for axis "Size in locus" and "Size in locus (+inc)"
-    cy.openAnalysis("data/issues/issues_4541/4541.vidjil") // Locus loaded in client TRD+, IGH, IGH+, IGK+
+    cy.openAnalysis("browser/test/data/issues/issues_4541/4541.vidjil") // Locus loaded in client TRD+, IGH, IGH+, IGK+
     cy.wait(200)
 
     // Initial state

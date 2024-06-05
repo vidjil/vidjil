@@ -115,7 +115,7 @@ describe('Filters', function () {
 
 
   it('min per locus',  function() {
-    cy.openAnalysis("data/min_per_locus_100_and_10_clonotypes.vidjil")
+    cy.openAnalysis("browser/test/data/min_per_locus_100_and_10_clonotypes.vidjil")
 
     cy.get('#list_clones').find("li").should('have.length', 112)
     return

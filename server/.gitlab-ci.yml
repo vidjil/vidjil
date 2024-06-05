@@ -13,20 +13,22 @@
     - >
       docker run
       -v $PWD/$CYPRESS_PATH:/app/cypress
-      -v $PWD/browser/test/data:/app/cypress/fixtures/data
-      -v $PWD/doc:/app/cypress/fixtures/doc
-      -v $PWD/demo:/app/cypress/fixtures/demo
+      -v $PWD/browser:/app/browser
+      -v $PWD/doc:/app/doc
+      -v $PWD/demo:/app/demo
+      -v $PWD/tools:/app/tools
       -v $PWD:/app/vidjil
-      -v "$PWD/docker/ci/cypress.json":"/app/cypress.json"
+      -v "$PWD/docker/ci/cypress.config.js":"/app/cypress.config.js"
       -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash"
       --env BROWSER=browsers/$BROWSER
       --env HOST=$HOST
       --env PROJECT=$PROJECT
       --env URL=$URL
+      --env TEST_FILES_PATTERN=$TEST_FILES_PATTERN
       --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
       --shm-size=1GB
       --network="host"
-      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
+      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9" bash script.bash $TEST_FILES_PATTERN
   artifacts:
     reports:
       junit: $CYPRESS_PATH/reports/report_*.xml
@@ -45,7 +47,7 @@
   variables:
     CYPRESS_PATH: server/py4web/apps/vidjil/tests/cypress
     HOST: local
-    TEST_FILES: "/app/cypress/e2e/test_*.js"
+    TEST_FILES_PATTERN: "/app/cypress/e2e/test_*.js"
   only: &onlyServerBranches
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
@@ -88,7 +90,7 @@ s2:
     - make -C doc/tutorial/ build_tutorial_cypress_server
     - *test_cypress_server_script
   variables:
-    TEST_FILES: "/app/cypress/e2e/doc_*.js"
+    TEST_FILES_PATTERN: "/app/cypress/e2e/doc_*.js"
 
 
 tuto-s1-ff-supported:

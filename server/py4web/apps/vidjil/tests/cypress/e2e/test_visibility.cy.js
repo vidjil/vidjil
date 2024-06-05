@@ -36,7 +36,7 @@ describe('Creation of users and groups', function () {
 
         cy.get('#file_menu').should("be.visible")
 
-        cy.openAnalysis("data/demo_lil_l3_0.vidjil", undefined, 90000)
+        cy.openAnalysis("browser/test/data/demo_lil_l3_0.vidjil", undefined, 90000)
         cy.get('#file_menu').should("not.be.visible")
         
         cy.get('.info-container').should("not.be.visible")

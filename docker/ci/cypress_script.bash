@@ -76,14 +76,16 @@ ls cypress/e2e/
 
 
 echo "TIME - Before cypress - $(date)"
-echo -e "$ ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec $@ --env workdir=vidjil,host=$HOST,initiated_database=false"
-./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec $@ --env workdir=vidjil,host=$HOST,initiated_database=true
+spec_files=`ls -1 $TEST_FILES_PATTERN | paste -sd ','`
+echo TEST_FILES_PATTERN: $TEST_FILES_PATTERN, $spec_files 
+echo -e "$ ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec "$TEST_FILES_PATTERN" --env workdir=vidjil,host=$HOST,initiated_database=false"
+./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec "$TEST_FILES_PATTERN" --env workdir=vidjil,host=$HOST,initiated_database=true
 ECODE=$?
 echo "TIME - After cypress - $(date)"
 
-# Rename reports with name of testing script
-apt-get update -qq && apt-get install -y -qq libxml2-utils
-for file in `ls /app/cypress/reports/*.xml`; do mv $file /app/cypress/reports/report_`xmllint --xpath 'string(/testsuites/testsuite/@file)' $file | cut -f3 -d"/" | cut -f1 -d"."`.xml; done
+# # Rename reports with name of testing script
+# apt-get update -qq && apt-get install -y -qq libxml2-utils
+# for file in `ls /app/cypress/reports/*.xml`; do mv $file /app/cypress/reports/report_`xmllint --xpath 'string(/testsuites/testsuite/@file)' $file | cut -f3 -d"/" | cut -f1 -d"."`.xml; done
 
 echo "$ change again chmod of cypress directory (include new directories)" 
 chmod 777 cypress -R 
