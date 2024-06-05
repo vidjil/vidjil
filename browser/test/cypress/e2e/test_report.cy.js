@@ -20,7 +20,7 @@ describe('Report', function () {
     cy.get('#listElem_1').click({ctrlKey: true})
 
     // export inside current page body -> target blank
-    cy.get('#post_target_blank').click({force:true})
+    cy.newTabDisabler()
     cy.get('#export_fasta').click({force:true});
 
     // check result
