@@ -6,6 +6,7 @@ describe('Screenshot on server', function () {
     })
     beforeEach(function () {
       cy.login(Cypress.env('host'))
+      cy.visitpage(Cypress.env('host'))
       cy.closeFlashAll()
     })
     afterEach(function () {

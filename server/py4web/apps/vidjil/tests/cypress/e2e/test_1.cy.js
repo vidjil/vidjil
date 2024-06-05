@@ -11,6 +11,8 @@ describe('Manipulate db page (for cypress pipeline)', function () {
         cy.closeFlashAll()
     })
     beforeEach(function () {
+        cy.login(Cypress.env('host'))
+        cy.visitpage(Cypress.env('host'))
         cy.closeFlashAll()
     })
     afterEach(function () {
@@ -56,7 +58,8 @@ describe('Manipulate db page (for cypress pipeline)', function () {
 
 
     it('02-Open db3; start from correct point from previous',  function() {
-        cy.isDbPageVisible().should('equal', false)
+        // As login + visit at beforeeach, should land on main admin db page
+        cy.isDbPageVisible().should('equal', true)
 
         // These function get their own should inside to verify that correct db element is present and visible
         cy.openDBPage()

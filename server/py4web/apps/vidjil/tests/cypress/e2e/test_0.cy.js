@@ -3,23 +3,26 @@
 
 describe('Before all step', function () {
 
+    beforeEach(function () {
+        cy.login(Cypress.env('host'))
+        cy.visitpage(Cypress.env('host'))
+        cy.closeFlashAll()
+    })
     after(function () {
         cy.screenshot('screenshot_after_all')
     })
-
+    
+    
     it('00-Before all launching',  function() {
         // Cypress can't navigate between multiple superdomain (even http/https)
         // This test allow to launch the before all test, with init database (only available at http)
         // See https://docs.cypress.io/guides/guides/web-security#Same-superdomain-per-test
         assert.isTrue(true, "Should init database (error visit https after http)")
         cy.screenshot('screenshot_end_test')
-
     })
 
-    it('01-Remove anon for public grp',  function() {
-        cy.login(Cypress.env('host'))
-        cy.visitpage(Cypress.env('host'))
 
+    it('01-Remove anon for public grp',  function() {
 
         cy.goToGroupsPage()
         var grp_public = 3

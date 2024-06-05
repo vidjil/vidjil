@@ -7,6 +7,8 @@ describe('Manipulate db page', function () {
         cy.close_tips()
     })
     beforeEach(function () {
+      cy.login(Cypress.env('host'))
+      cy.visitpage(Cypress.env('host'))
       cy.closeFlashAll()
     })
     afterEach(function () {

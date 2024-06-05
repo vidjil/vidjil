@@ -10,6 +10,8 @@ describe('Creation of users and groups', function () {
         cy.close_tips()
     })
     beforeEach(function () {
+      cy.login(Cypress.env('host'))
+      cy.visitpage(Cypress.env('host'))
       cy.closeFlashAll()
     })
     afterEach(function () {
@@ -79,7 +81,6 @@ describe('Creation of users and groups', function () {
 
     it('04-impersonate from list',  function() {
         // Don't know why, but user seem to be not logged at starting of test 04
-        cy.login(Cypress.env('host'))
 
         cy.goToPatientPage()
 
@@ -113,8 +114,6 @@ describe('Creation of users and groups', function () {
 
 
     it('05-impersonate from table',  function() {
-        cy.login(Cypress.env('host'))
-        cy.openDBPage()
         cy.goToUsersPage()
 
         cy.get('#db_auth_name')

@@ -1,4 +1,5 @@
 Cypress.Commands.add('login', (host) => { 
+  cy.session(['login'], () => {
     if (host=="local"){
         cy.visit('http://localhost/browser')
         cy.update_icon()
@@ -13,6 +14,13 @@ Cypress.Commands.add('login', (host) => {
       cy.fillLogin('demo@vidjil.org','demo')
     }
     cy.close_tips()
+  // },
+  // {
+  //   validate() {
+  //     cy.request('/whoami').its('status').should('eq', 200)
+  //   },
+  }
+  )
 })
 
 
