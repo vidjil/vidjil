@@ -1,6 +1,5 @@
 var localhost = true
-console.log( Cypress.env('workdir') )
-var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
+var url = "./browser/index.html"
 console.log( url )
 
 /*only check that interface interaction trigger a change in clone's colors

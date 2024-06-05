@@ -1,8 +1,7 @@
 /// <reference types="cypress" />
 
 var localhost = true
-console.log( Cypress.env('workdir') )
-var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
+var url = "./browser/index.html"
 console.log( url )
 
 // those tests are opening different .vidjil files with or without .analysis and check the expected data have been loaded
@@ -283,7 +282,7 @@ describe('Load', function () {
 
     // load_data_with_mrd
     cy.openAnalysis("browser/test/data/issues/issue_mrd.vidjil")
-    cy.get('#listElem_0 > #clone_infoBox_0 > .icon-info').click()
+    cy.get('#listElem_1 > #clone_infoBox_1 > .icon-info').click()
 
     cy.get("#modal_line_mrd_family").should("exist") //modal line mrd_family exist for clone with mrd
     cy.get("#modal_line_mrd_pearson").should("exist") //modal line mrd_pearson exist for clone with mrd

@@ -1,6 +1,5 @@
 var localhost = true
-console.log( Cypress.env('workdir') )
-var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
+var url = "./browser/index.html"
 console.log( url )
 
 

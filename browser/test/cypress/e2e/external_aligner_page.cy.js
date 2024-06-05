@@ -1,6 +1,5 @@
 var localhost = true
-console.log( Cypress.env('workdir') )
-var url = "./"+ Cypress.env('workdir')+"/browser/segmenter_page.html"
+var url = "./browser/segmenter_page.html"
 console.log( url )
 
 
