@@ -224,26 +224,26 @@ ALL_METRICS = {
 #########################################################################
 @action("/vidjil/metrics_fast", method=["POST", "GET"])
 @action.uses(auth, db)
-def metrics_fast():
+def metricsFast():
     fast_metrics = [key for key in ALL_METRICS.keys() if ALL_METRICS[key]["fast"] ]
     return getMetricsList(fast_metrics, auth)
 
 
 @action("/vidjil/metrics_long", method=["POST", "GET"])
 @action.uses(auth, db)
-def metrics_long():
+def metricsLong():
     long_metrics = [key for key in ALL_METRICS.keys() if ALL_METRICS[key]["long"] ]
     return getMetricsList(long_metrics, auth)
 
 @action("/vidjil/metrics_all", method=["POST", "GET"])
 @action.uses(auth, db)
-def metrics_long():
+def metricsAll():
     all_metrics = [key for key in ALL_METRICS.keys()]
     return getMetricsList(all_metrics, auth)
 
 @action("/vidjil/metrics_by_name", method=["POST", "GET"])
 @action.uses(auth, db)
-def metrics():
+def metricsByName():
     """ Allow to get metrics asked by a given list in url (',' jointure') """
     metrics =  request.params['metric'].split(",")
     print( f"Ask metrics list: {metrics}")

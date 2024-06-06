@@ -16,9 +16,22 @@ USER_TEST = 'user@test.com'
 
 class TestMetricsController(unittest.TestCase):
     
-    def get_metrics(self):
+    def get_metrics(self, metrics_set:str):
+        if not metrics_set in ["fast", "long", "all"]:
+            raise Exception("not correct metrics set")
+
         with Omboddle(self.session, keep_session=True):
-            result = metrics_controller.metrics()
+            if metrics_set == "fast":
+                result = metrics_controller.metricsFast()
+            if metrics_set == "long":
+                result = metrics_controller.metricsLong()
+            if metrics_set == "all":
+                result = metrics_controller.metricsAll()
+        return result
+    
+    def getMetricsByName(self, metric:str):
+        with Omboddle(self.session, keep_session=True, params={"metric": metric}):
+            result = metrics_controller.metricsByName()
         return result
     
     def setUp(self):
@@ -50,7 +63,7 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
         
         #When
-        result = self.get_metrics()
+        result = self.get_metrics("fast")
         
         #Then
         assert result['message'] == "status METRICS"
@@ -62,7 +75,7 @@ class TestMetricsController(unittest.TestCase):
         
         
         #When
-        result = self.get_metrics()
+        result = self.getMetricsByName("set_patients_count")
         
         #Then
         assert result is not None
@@ -74,7 +87,7 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_user(self.session, 'new', 'user', USER_TEST, PWD_TEST)
         
         #When
-        result = self.get_metrics()
+        result = self.getMetricsByName("users_count")
         
         #Then
         assert result["users_count"] == 3
@@ -89,7 +102,7 @@ class TestMetricsController(unittest.TestCase):
         
         
         #When
-        result = self.get_metrics()
+        result = self.getMetricsByName("set_patients_by_user")
         print(result["set_patients_by_user"][0])
         print(result["set_patients_by_user"][1])
         #Then
@@ -105,7 +118,7 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.log_in(self.session, USER_TEST, PWD_TEST)
         
         #When
-        result = self.get_metrics()
+        result = self.getMetricsByName("set_patients_count")
         
         #Then
         assert result is not None
@@ -117,7 +130,7 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_group('group_test')
         
         #When
-        result = self.get_metrics()
+        result = self.getMetricsByName("group_count")
         
         #Then
         assert result["group_count"] == 5
@@ -133,7 +146,7 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_results_file(-1, -1, -1, False)
         
         #When
-        result = self.get_metrics()
+        result = self.getMetricsByName("config_analysis")
         print(result['config_analysis'][0])
         print(result['config_analysis'][0]["_extra"].keys())
         
@@ -154,7 +167,7 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_results_file(-1, 2, -1, False)
         
         #When
-        result = self.get_metrics()
+        result = self.getMetricsByName("config_analysis")
         print(result['config_analysis'][0])
         print(result['config_analysis'][0]["_extra"].keys())
         
@@ -171,11 +184,10 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_patient(1,2)
         db_manipulation_utils.add_sequence_file(-1, -1, False, False, -1)
         
-        #When
-        result = self.get_metrics()
-        
         #Then
+        result = self.getMetricsByName("group_count")
         assert result["group_count"] == 4
+        result = self.getMetricsByName("sequence_count")
         assert result["sequence_count"] == 1
         
     def test_metrics_result(self):
@@ -187,11 +199,12 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_results_file(-1, -1, -1, False)
         
         #When
-        result = self.get_metrics()
+        result_1 = self.getMetricsByName("group_count")
+        result_2 = self.getMetricsByName("results_count")
         
         #Then
-        assert result["group_count"] == 4
-        assert result["results_count"] == 1
+        assert result_1["group_count"] == 4
+        assert result_2["results_count"] == 1
         
     def test_metrics_login(self):
         #Given
@@ -200,7 +213,7 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
         
         #When
-        result = self.get_metrics()
+        result = self.getMetricsByName("login_count")
         
         #Then
         
@@ -213,7 +226,7 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_run(-1)
         
         #When
-        result = self.get_metrics()
+        result = self.getMetricsByName("set_runs_count")
         print(result)
         
         #Then 
@@ -229,7 +242,7 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_scheduler_task('pre_process', 1, 'PENDING', [1, 1], "2024-01-01 10:00:00")
         
         #When
-        result = self.get_metrics()
+        result = self.getMetricsByName("status_analysis")
         print(result)
         
         #Then 
