@@ -5,7 +5,7 @@
 #   server: server_firefox_supported, tuto-s1-ff-supported
 # Step 3, late, longer or tricky: 
 variables:
-  CYPRESS_DOCKER_VERSION: "12.9"
+  CYPRESS_DOCKER_VERSION: "13.10"
 
 .before_script_global: &before_script_global
   # - make demo
