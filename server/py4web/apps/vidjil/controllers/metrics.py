@@ -52,8 +52,9 @@ def metrics():
             "message"     : message,
             "users_count" : len(db().select(db.auth_user.ALL,   db.auth_user.id.count(),  groupby=db.auth_user.id )),
             "group_count" : len(db().select(db.auth_group.ALL,  db.auth_group.id.count(), groupby=db.auth_group.id )),
-            "login_count" : db(db.auth_event.user_id==db.auth_user.id
-                ).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description ), # not fill for the moment
+            "group_count_w/o_test" : len(db(db.auth_group.role.like('test%')).select(db.auth_group.ALL, db.auth_group.id.count(), groupby=db.auth_group.id)), #pas fini
+
+            "login_count" : db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description ), # not fill for the moment
 
             # Patients; runs; sets
             "set_patients_count" : len(db().select(db.patient.ALL, db.patient.id.count(), groupby=db.patient.id )),
@@ -81,6 +82,7 @@ def metrics():
                 groupby=db.sequence_file.provider),
 
             "config_analysis" : db(db.results_file.config_id==db.config.id).select(db.results_file.config_id, db.config.name, db.config.program, db.results_file.id.count(),  groupby=db.results_file.config_id ), 
+            "config_analysis_by_groups" : db(db.results_file.config_id==db.config.id).select(db.results_file.config_id, db.config.name, db.config.program, db.results_file.id.count(),db.auth_group.role , groupby=db.results_file.id|db.auth_group.role ), #pas fini
         }
         print( data )
     else:

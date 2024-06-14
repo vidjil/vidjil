@@ -1,8 +1,11 @@
 
+import string
 from api_vidjil import Vidjil
 import argparse
 import os
 import getpass
+import random
+import time
 
 TAGS = []
 TAGS_UNDEFINED = []
@@ -20,6 +23,8 @@ LOCAL_SERVER = "https://localhost/vidjil/"
 LOCAL_SSL = False #"cert_localhost.pem" 
 LOCAL_USER = "plop@plop.com"
 LOCAL_PASSWORD = "foobartest"
+LOCAL_USER_2 = "test@prometheus.com"
+LOCAL_PASSWORD_2 = "testprom35"
 
 parser = argparse.ArgumentParser(description= 'Vidjil API Demo')
 parser.add_argument('--stress', '-s', action='store_true', help='Demo on public server, stress test (do not abuse)')
@@ -155,8 +160,79 @@ def demoWriteRunOnServer(server, ssl, user, password):
     analysis  = vidjil.launchAnalysisOnSample(setid_generic, file_id, config_id)
     print("Launch analysis: %s" % analysis)
 
+def create_patient_or_user(server, ssl):
 
-if  __name__ =='__main__':
+    list_users = ['user1@test.com', 'user2@test.com', 'user3@test.com', 'user4@test.com', 'user5@test.com']
+    current_password = 'usertest35'
+
+    print("la fonction create patient or user se lance : " , list_users , " | " , current_password)
+
+    # else :
+    current_user = random.choice(list_users)
+
+    vidjil = Vidjil(server, ssl=ssl)
+    vidjil.login(current_user, current_password)
+
+    vidjil.getGroups() 
+    # Select default group id to use for creation of sets 
+    # vidjil.setGroup(0) # 1 is the default group of admin, use another if you want from the list return from "vidjil.getGroups()" above
+    
+    # Create patient/run/set
+    patient_data = vidjil.createPatient("Jane", "Austen",
+                        info="Patient from Winchester hospital, #LAL-B")
+    
+    run_data = vidjil.createRun("Run 2022-072",
+                    run_date="2022-04-01")
+
+    set_data = vidjil.createSet("Set for API tests",
+                                info="Libraries with EuroClonality-NGS 2019 primers")
+
+
+    setid_patient = patient_data["args"]["id"]
+    setid_run = run_data["args"]["id"]
+    setid_generic = set_data["args"]["id"]
+
+    print( "==> new set patient: %s" % setid_patient)
+    print( "==> new set run: %s" % setid_run)
+    print( "==> new set generic: %s" % setid_generic)
+
+    # Show newly created set
+    set_new = vidjil.getSetById(setid_generic, vidjil.SET)
+    vidjil.infoSets("Set %s" % setid_generic, set_new, vidjil.SET, verbose=True)
+    samples   = vidjil.getSamplesOfSet(setid_generic)
+    vidjil.infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
+
+    # set_ids filed take value in a specific format: ':$set+($id)'
+    # Multiple field should be separated with a '|' as above
+    # With :
+    #   $set can be 's' (generic set), 'p' (patient), or 'r' (run)
+    #   $id is the id of the set 
+    sample = vidjil.createSample(source="computer",
+                pre_process= "0",
+                set_ids= ":s+(%s)|:r+(%s)|:p+(%s)" % (setid_patient, setid_run, setid_generic),
+                file_filename= "../demo/Demo-X5.fa",
+                file_filename2= "",
+                file_id= "",
+                file_sampling_date= "2016-01-13",
+                file_info= "Uploaded by API" ,
+                file_set_ids= "",
+                sample_set_id= setid_generic,
+                sample_type= "set")
+
+    file_id  = sample["file_ids"][0]  ## Uploaded file
+    print( "==> new file %s" % file_id)
+
+    # Show again the set, now with one sample
+    samples  = vidjil.getSamplesOfSet(setid_generic)
+    vidjil.infoSamples("getSamplesOfSet(%s)" % setid_generic, samples)
+
+    ### Get status of sample of this set
+    
+    config_id = random.randint(1,5) ## multi+inc+xxx
+    analysis  = vidjil.launchAnalysisOnSample(setid_generic, file_id, config_id)
+    print("Launch analysis: %s" % analysis)
+
+if __name__ =='__main__':
     """Examples using Vidjil API"""
 
     args = parser.parse_args()
@@ -178,20 +254,15 @@ if  __name__ =='__main__':
             print( "Attempted to log as '%s' on local server" % LOCAL_USER)
             LOCAL_PASSWORD = getpass.getpass("Password for local server:")
 
-
-    if args.stress:
-        failures = 0
-        total = 20
-        for i in range(total):
-            try:
-                demoReadFromServer(PUBLIC_SERVER, PUBLIC_SSL, PUBLIC_USER, PUBLIC_PASSWORD,
-                                   only_fast_tests = True)
-            except Exception:
-                failures += 1
-        print('==> %s/%s failures' % (failures, total))
-
-    if args.public:
-        demoReadFromServer(PUBLIC_SERVER, PUBLIC_SSL, PUBLIC_USER, PUBLIC_PASSWORD)
-
     if args.local:
-        demoWriteRunOnServer(LOCAL_SERVER, LOCAL_SSL, LOCAL_USER, LOCAL_PASSWORD)
+
+        # create_patient_or_user(LOCAL_SERVER, LOCAL_SSL) 
+
+        # demoWriteRunOnServer(LOCAL_SERVER, LOCAL_SSL, LOCAL_USER, LOCAL_PASSWORD)
+    
+        while(True):
+
+            create_patient_or_user(LOCAL_SERVER, LOCAL_SSL)   
+
+            time.sleep(90)
+
