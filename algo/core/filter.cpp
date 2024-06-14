@@ -91,7 +91,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
 
   //All k-mers selected : iterate over all map
   if(kmer_threshold == ALL_KMERS_VALUE || kmer_threshold > (int)mapAho.size()){
-    for(auto const mx: mapAho){
+    for(auto const &mx: mapAho){
       if(mx.first.isGeneric()){
         transferBioReaderSequences(originalBioReader, result, mx.first);
       }

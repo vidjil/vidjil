@@ -1183,7 +1183,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,
 
   bool reverse_V = false ;
   bool reverse_J = false ;
-  Germline *g_left, *g_right;
+  Germline *g_left=NULL, *g_right=NULL;
 
   if ((germline->seg_method == SEG_METHOD_MAX12) || (germline->seg_method == SEG_METHOD_MAX1U))
     {
