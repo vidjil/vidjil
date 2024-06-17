@@ -295,7 +295,7 @@
                         [[=row.config.name]] <span class="icon-chart-bar"></span>
                     </a>
                     <span class="double_button__part2" type="text/html" id="qc_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]" title="Preview / quality control for config [[=row.config.name]]"
-                        onclick="db.call('sample_set/multi_sample_stats', {'results_ids': [[=[row.results_file.id for row in query if (row.results_file.id and (row.results_file.status == tasks.STATUS_COMPLETED))]]] })" >
+                        onclick="db.call('sample_set/multi_sample_stats',{'sample_set_id': [[=request.query['id']]], 'config_id' : [[=row.config.id]]})" >
                         <span class="icon-table"></span>
                     </span>
                 </span>
