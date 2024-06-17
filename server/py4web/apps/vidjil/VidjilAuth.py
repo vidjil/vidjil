@@ -202,13 +202,12 @@ class VidjilAuth(Auth):
             return self.get_user_access_groups(object_of_action, oid, user)
         return self.get_group_access_groups(object_of_action, oid, group)
 
-    def get_permission_groups(self, action, user=None):
+    def get_permission_groups(self, action, user_id=None):
         '''
         Returns all the groups for which a user has a given permission
         '''
-        is_current_user = user == None
-        if is_current_user:
-            user = self.user_id
+        if user_id is None:
+            user_id = self.user_id
 
         db = self.db
 
@@ -216,14 +215,24 @@ class VidjilAuth(Auth):
         permission = db.auth_permission
 
         groups = db(
-                (membership.user_id == user) &
+                (membership.user_id == user_id) &
                 (membership.group_id == permission.group_id) &
                 (permission.record_id == 0) &
                 (permission.name == action)
             ).select(membership.group_id)
         group_list = [g.group_id for g in groups]
+        
+        parent_groups = db(
+                (membership.user_id == user_id) &
+                (membership.group_id == permission.group_id) &
+                (permission.record_id == 0) &
+                (permission.name == action) &
+                (membership.group_id == db.group_assoc.second_group_id)
+            ).select(db.group_assoc.first_group_id)
+        parent_list = [g.first_group_id for g in parent_groups]
 
-        return list(set(group_list))
+        final_list = group_list + parent_list
+        return list(set(final_list))
 
     def get_group_access(self, object_of_action, id, group):
         perm = self.has_permission(PermissionEnum.access.value, object_of_action, id, group_id = group)
@@ -251,27 +260,32 @@ class VidjilAuth(Auth):
         if id == 0:
             return has_action
         return has_action and self.get_group_access(object_of_action, id, group)
-
-    def get_permission(self, action, object_of_action, object_id = 0, user = None):
-        '''
-        Returns whether the current user has the permission 
+    
+    def get_groups_with_permission(self, action: str, object_of_action: str, object_id: int = 0, user_id = None):
+        """
+        Returns list of groups the user has the permission 
         to perform the action on the object_of_action.
+        """  
+        
+        # Use current user as default user
+        if (user_id is None):
+            user_id = self.user_id
 
-        The result is cached to avoid DB calls.
-        '''
-        is_current_user = (user == None) or (user == self.user_id)
-        if is_current_user:
-            user = self.user_id
-
-
-        # if not is_current_user or missing_value:
-        perm_groups = self.get_permission_groups(action, user)
+        perm_groups = self.get_permission_groups(action, user_id)
         if int(object_id) > 0:
-            access_groups = self.get_access_groups(object_of_action, object_id, user)
+            access_groups = self.get_access_groups(object_of_action, object_id, user_id)
             intersection = set(access_groups).intersection(perm_groups)
         else :
             intersection = perm_groups
-        return len(intersection) > 0
+        return intersection
+
+    def get_permission(self, action, object_of_action, object_id = 0, user = None):
+        '''
+        Returns whether the user has the permission 
+        to perform the action on the object_of_action.
+        '''
+        groups_with_permission = self.get_groups_with_permission(action, object_of_action, object_id, user)
+        return len(groups_with_permission) > 0
 
     def load_permissions(self, action, object_of_action):
         '''
@@ -310,21 +324,19 @@ class VidjilAuth(Auth):
         return self.get_permission(PermissionEnum.create.value, 'sample_set', user = user)\
             or self.is_admin(user)
     
-    def can_create_sample_set_in_group(self, group_id: int, user = None) -> bool:
+    def can_create_sample_set_in_group(self, group_id: int, user_id = None) -> bool:
         """
         Returns true if the user can create sample sets in a given group
 
         Args:
             group_id (int): ID of the group to create sample set in
-            user (_type_, optional): If the user is None, the current user is taken into account. Defaults to None.
+            user_id (int, optional): If the user is None, the current user is taken into account. Defaults to None.
 
         Returns:
             bool: true if the user can create sample sets in a given group, false otherwise
         """
-        if self.is_admin(user) or (self.can_create_sample_set(user) and group_id in self.get_permission_groups("create")):
-            return True
-        else:
-            return False
+        can_create_sample_set_in_group = self.is_admin(user_id) or group_id in self.get_groups_with_permission(PermissionEnum.create.value, 'sample_set', user_id = user_id)
+        return can_create_sample_set_in_group
 
     def can_create_config(self, user = None):
         '''

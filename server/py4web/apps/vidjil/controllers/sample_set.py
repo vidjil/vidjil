@@ -421,7 +421,7 @@ def submit():
                         error = True
                         
                 # add
-                elif (auth.can_create_sample_set()):
+                elif (auth.can_create_sample_set_in_group(int(data["group"]))):
                     group_id = int(data["group"])
                     id_sample_set = db.sample_set.insert(sample_type=set_type)
 
