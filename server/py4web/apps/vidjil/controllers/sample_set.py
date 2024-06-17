@@ -830,40 +830,40 @@ def change_permission():
 @action.uses("sample_set/multi_sample_stats.html", db, auth.user)
 def multi_sample_stats():
     
-    if "results_ids" in request.query:
+    if "results_ids" in request.query and "sample_set_id" in request.query:
         results_ids = request.query["results_ids"]
         if not isinstance(results_ids, list):
             results_ids = [results_ids]
         results_ids = [int(i) for i in results_ids]
-    else:
-        if "config_id" in request.query and "sample_set_id" in request.query:
-            config_id = request.query["config_id"]
-            sample_set_id = request.query["sample_set_id"]
-            query = db((db.sequence_file.id == db.sample_set_membership.sequence_file_id) & 
-                        (db.sample_set_membership.sample_set_id == sample_set_id)).select(
-                            left=db.results_file.on(
-                                (db.results_file.sequence_file_id==db.sequence_file.id)
-                                & (db.results_file.config_id==str(config_id))
-                                & (db.results_file.hidden == False)  # noqa: E712
-                            ),
-                        orderby = db.sequence_file.id|~db.results_file.run_date)
+        sample_set_id = request.query["sample_set_id"]
+    elif "config_id" in request.query and "sample_set_id" in request.query:
+        config_id = request.query["config_id"]
+        sample_set_id = request.query["sample_set_id"]
+        query = db((db.sequence_file.id == db.sample_set_membership.sequence_file_id) & 
+                    (db.sample_set_membership.sample_set_id == sample_set_id)).select(
+                        left=db.results_file.on(
+                            (db.results_file.sequence_file_id==db.sequence_file.id)
+                            & (db.results_file.config_id==str(config_id))
+                            & (db.results_file.hidden == False)  # noqa: E712
+                        ),
+                    orderby = db.sequence_file.id|~db.results_file.run_date)
 
-            results_ids=[]
-            previous=-1
-            for row in query :
-                if row.sequence_file.id != previous :
-                    if row.results_file.id:
-                        results_ids.append(int(row.results_file.id))
-                        previous=row.sequence_file.id
-        else:
-            res = {"message": "Missing results_ids or config_id and sample_set_id in query"}
-            log.error(res)
-            return json.dumps(res, separators=(',',':'))
+        results_ids=[]
+        previous=-1
+        for row in query :
+            if row.sequence_file.id != previous :
+                if row.results_file.id:
+                    results_ids.append(int(row.results_file.id))
+                    previous=row.sequence_file.id
+    else:
+        res = {"message": "Missing sample_set_id and results_ids or config_id in query"}
+        log.error(res)
+        return json.dumps(res, separators=(',',':'))
 
     data = {}
     data["headers"] = stats_qc_utils.get_stat_headers()
     data["default_hidden_columns"] = [index+1 for index, header in enumerate(stats_qc_utils.get_stat_headers().values()) if header.hidden_by_default]
-    display_stats_results, json_stats_data = stats_qc_utils.get_stat_data(results_ids)
+    display_stats_results, json_stats_data = stats_qc_utils.get_stat_data(sample_set_id, results_ids)
     data["results"] = display_stats_results
 
     permitted_results = db((auth.vidjil_accessible_query(PermissionEnum.read.value, db.sample_set)) & 
