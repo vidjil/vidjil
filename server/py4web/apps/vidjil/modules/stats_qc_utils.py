@@ -121,9 +121,11 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
     # HeaderConfig('abundance', 'parser', labeled_bar_chart_decorator, False),
 
 
-def get_stat_data(results_file_ids):
+def get_stat_data(sample_set_id, results_file_ids: List[int]):
     # Get fuse_data
-    fuse_data = get_fuse_data(results_file_ids)
+    if isinstance(sample_set_id, str):
+        sample_set_id = int(sample_set_id)
+    fuse_data = get_fuse_data(sample_set_id, results_file_ids)
 
     # Prepare stats
     display_stats_data = []
@@ -143,14 +145,13 @@ def get_stat_data(results_file_ids):
     return display_stats_data, json_stats_data
 
 
-def get_fuse_data(results_file_ids: List[int]) -> dict:
+def get_fuse_data(sample_set_id: int, results_file_ids: List[int]) -> dict:
     # Get raw data
     query = db(
         (db.results_file.id.belongs(results_file_ids))
         & (db.sequence_file.id == db.results_file.sequence_file_id)
         & (db.config.id == db.results_file.config_id)
-        & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-        & (db.sample_set.id == db.sample_set_membership.sample_set_id)
+        & (db.sample_set.id == sample_set_id)
         & (db.fused_file.sample_set_id == db.sample_set.id)
         & (db.fused_file.config_id == db.config.id)
     ).select(
@@ -191,7 +192,20 @@ def get_fuse_data(results_file_ids: List[int]) -> dict:
     helpers = {}
     for set_type in set_types:
         helpers[set_type] = model_factory.get_instance(set_type)
-
+        
+    # Get set infos
+    sample_set = {}
+    print(f"{sample_set_id=} - {query[0]['set_id']=} - {query[0]['set_id'] == sample_set_id}")
+    if len(query) > 0 and query[0]["set_id"] == sample_set_id:
+        first_result_fuse = query[0]
+        sample_set["set_type"] = first_result_fuse["sample_type"]
+        sample_set["id"] = first_result_fuse["set_id"]
+        sample_set["name"] = helpers[first_result_fuse["sample_type"]].get_name(
+            first_result_fuse[first_result_fuse["sample_type"]]
+        )
+        sample_set["info"] = first_result_fuse["set_info"]
+        sample_set["type"] = first_result_fuse["sample_type"]
+        
     fuse_data = {}
     for result_fuse in query:
         set_type = result_fuse["sample_type"]
@@ -205,7 +219,6 @@ def get_fuse_data(results_file_ids: List[int]) -> dict:
 
         if result_fuse.results_file_id not in tmp_fuse["results_files"]:
             tmp = result_fuse.copy()
-            tmp["sets"] = []
             tmp_fuse["results_files"][tmp["results_file_id"]] = tmp
             tmp.pop("set_id", None)
             tmp.pop(set_type, None)
@@ -213,24 +226,7 @@ def get_fuse_data(results_file_ids: List[int]) -> dict:
         else:
             tmp = tmp_fuse["results_files"][result_fuse["results_file_id"]]
 
-        # Create a list of set with this sample
-        for sub_pos_set in sample_query_pos[str(result_fuse["results_file"])]:
-            sub_res = query[sub_pos_set]
-            sample_set = {}
-            sample_set["set_type"] = sub_res["sample_type"]
-            sample_set["id"] = sub_res["set_id"]
-            sample_set["name"] = helpers[sub_res["sample_type"]].get_name(
-                sub_res[sub_res["sample_type"]]
-            )
-            sample_set["info"] = sub_res["set_info"]
-            sample_set["type"] = sub_res["sample_type"]
-            tmp["sets"].append(sample_set)
-        # Reorder set by type
-        tmp["sets"] = sorted(
-            tmp[SETS_COLUMN_NAME],
-            key=lambda _set: set_types.index(_set["set_type"]),
-            reverse=False,
-        )
+        tmp["sets"] = [sample_set]
 
     return fuse_data
 
