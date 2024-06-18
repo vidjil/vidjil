@@ -89,6 +89,8 @@ string spaced(const string &input, const string &seed) {
 
 string path_join(string path1, string path2)
 {
+  if (path2[0]=='/')
+    return path2;
   return path1 + (path1.empty() ? "" : "/") + path2 ;
 }
 
