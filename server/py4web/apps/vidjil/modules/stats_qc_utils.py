@@ -270,8 +270,8 @@ def get_fused_stats(fuse):
             reads = fuse_data["reads"]["total"][result_index]
             mapped_reads = fuse_data["reads"]["segmented"][result_index]
 
-            result_stats["mapped_reads"] = mapped_reads
-            result_stats["total_reads"] = reads
+            result_stats["mapped_reads"] = int(mapped_reads)
+            result_stats["total_reads"] = int(reads)
 
             if "merged" in fuse_data["reads"]:
                 result_stats["merged_reads"] = fuse_data["reads"]["merged"][
@@ -280,20 +280,20 @@ def get_fused_stats(fuse):
             else:
                 result_stats["merged_reads"] = NOT_APPLICABLE
 
-            if not fuse_data["reads"]["segmented"][result_index]:
-                # Case of file without one read seen segmented
-                result_stats["main_clone"] = NOT_APPLICABLE
-                result_stats["abundance"] = NOT_APPLICABLE
-                result_stats["mean_length"] = NOT_APPLICABLE
-                result_stats["read_lengths"] = []
-                result_stats["loci"] = [NOT_APPLICABLE]
-                result_stats["clones_5"] = NOT_APPLICABLE
-                result_stats["clones_5_details"] = NOT_APPLICABLE
-                result_stats["intra_contamination"] = NOT_APPLICABLE
-                result_stats["shannon_diversity"] = NOT_APPLICABLE
-                result_stats["pielou_evenness"] = NOT_APPLICABLE
-                result_stats["simpson_diversity"] = NOT_APPLICABLE
-            else:
+            # Init default values
+            result_stats["main_clone"] = NOT_APPLICABLE
+            result_stats["abundance"] = NOT_APPLICABLE
+            result_stats["mean_length"] = NOT_APPLICABLE
+            result_stats["read_lengths"] = []
+            result_stats["loci"] = [NOT_APPLICABLE]
+            result_stats["clones_5"] = NOT_APPLICABLE
+            result_stats["clones_5_details"] = NOT_APPLICABLE
+            result_stats["intra_contamination"] = NOT_APPLICABLE
+            result_stats["shannon_diversity"] = NOT_APPLICABLE
+            result_stats["pielou_evenness"] = NOT_APPLICABLE
+            result_stats["simpson_diversity"] = NOT_APPLICABLE
+                
+            if fuse_data["reads"]["segmented"][result_index]:
                 sorted_clones = sorted(
                     top_clones,
                     key=lambda clone: clone["reads"][result_index],
@@ -304,6 +304,7 @@ def get_fused_stats(fuse):
                 else:
                     result_stats["main_clone"] = sorted_clones[0]["germline"]
 
+                # Note that `fuse_data["reads"]["segmented"][result_index]` is already tested above
                 result_stats["abundance"] = {
                     str(key): 100.0
                     * fuse_data["reads"]["germline"][key][result_index]
@@ -399,6 +400,7 @@ def get_fused_stats(fuse):
                                 for pos in range(len(c["reads"]))
                                 if pos != result_index
                                 and fuse_data["reads"]["segmented"][pos]
+                                and fuse_data["reads"]["segmented"][result_index]
                                 and (
                                     float(c["reads"][pos])
                                     / fuse_data["reads"]["segmented"][pos]
@@ -424,25 +426,25 @@ def get_fused_stats(fuse):
                     shannon_diversity = NOT_APPLICABLE
                     if "index_H_entropy" in fuse_data["diversity"]:
                         if isinstance(fuse_data["diversity"]["index_H_entropy"][result_index], dict):
-                            shannon_diversity = round(fuse_data["diversity"]["index_H_entropy"][result_index]["all"], 3)
+                            shannon_diversity = round(float(fuse_data["diversity"]["index_H_entropy"][result_index]["all"]), 3)
                         else:
-                            shannon_diversity = round(fuse_data["diversity"]["index_H_entropy"][result_index], 3)
+                            shannon_diversity = round(float(fuse_data["diversity"]["index_H_entropy"][result_index]), 3)
                     result_stats["shannon_diversity"] = shannon_diversity
                     
                     pielou_evenness = NOT_APPLICABLE
                     if "index_E_equitability" in fuse_data["diversity"]:
                         if isinstance(fuse_data["diversity"]["index_E_equitability"][result_index], dict):
-                            pielou_evenness = round(fuse_data["diversity"]["index_E_equitability"][result_index]["all"], 3)
+                            pielou_evenness = round(float(fuse_data["diversity"]["index_E_equitability"][result_index]["all"]), 3)
                         else:
-                            pielou_evenness = round(fuse_data["diversity"]["index_E_equitability"][result_index], 3)
+                            pielou_evenness = round(float(fuse_data["diversity"]["index_E_equitability"][result_index]), 3)
                     result_stats["pielou_evenness"] = pielou_evenness
                     
                     simpson_diversity = NOT_APPLICABLE
                     if "index_E_equitability" in fuse_data["diversity"]:
                         if isinstance(fuse_data["diversity"]["index_Ds_diversity"][result_index], dict):
-                            simpson_diversity = round(fuse_data["diversity"]["index_Ds_diversity"][result_index]["all"], 3)
+                            simpson_diversity = round(float(fuse_data["diversity"]["index_Ds_diversity"][result_index]["all"]), 3)
                         else:
-                            simpson_diversity = round(fuse_data["diversity"]["index_Ds_diversity"][result_index], 3)
+                            simpson_diversity = round(float(fuse_data["diversity"]["index_Ds_diversity"][result_index]), 3)
                     result_stats["simpson_diversity"] = simpson_diversity
 
             if "pre_process" in fuse_data["samples"]:
@@ -469,10 +471,14 @@ def format_display_stats(result_fuse: dict, result_fused_stats: dict) -> None:
     )
     display_stats_data[MAPPED_READS_COLUMN_NAME] = stats_decorator.DataWithTitle(
         f"{mapped_reads_percent:.2f}%",
-        f"{mapped_reads_percent:.2f}% ({result_fused_stats['mapped_reads']} / {result_fused_stats['total_reads']})",
+        f"{mapped_reads_percent:.2f}% ({result_fused_stats['mapped_reads']} / {result_fused_stats['total_reads']})"
+        if result_fused_stats['total_reads']
+        else f"{mapped_reads_percent:.2f}%",
     )
     display_stats_data[MAPPED_READS_NUMBER_COLUMN_NAME] = (
         f"{result_fused_stats['mapped_reads']} / {result_fused_stats['total_reads']}"
+        if result_fused_stats['total_reads']
+        else NOT_APPLICABLE
     )
 
     display_stats_data[MEAN_LENGTH_COLUMN_NAME] = result_fused_stats["mean_length"]
