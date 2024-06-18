@@ -37,13 +37,25 @@ string expand_seed(const string &seed)
 
   if (seed.find(SEED_YES) == std::string::npos)
     {
-      if (seedMap.find(seed) == seedMap.end())
-        throw invalid_argument("Unknown seed: " + seed);
-      else
+      if (seedMap.find(seed) != seedMap.end())
         return seedMap[seed];
     }
+  
+  // Extract the last character
+  char lastChar = seed.back();
+  std::string remaining = seed.substr(0, seed.size() - 1);
 
-  return seed ;
+  if (lastChar == 'c' || lastChar == 's') {
+    // Attempt to convert the remaining string to an integer
+    try {
+      int n = std::stoi(remaining);
+      if (lastChar == 'c')
+        return std::string(n, '#');
+      return std::string(n-((int)n/2), '#')+'-'+ std::string((int)n/2, '#');
+    } catch (...) {
+    }
+  }
+  throw invalid_argument("Unknown seed: " + seed);
 }
 
 
