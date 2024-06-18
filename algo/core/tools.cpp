@@ -39,23 +39,25 @@ string expand_seed(const string &seed)
     {
       if (seedMap.find(seed) != seedMap.end())
         return seedMap[seed];
-    }
   
-  // Extract the last character
-  char lastChar = seed.back();
-  std::string remaining = seed.substr(0, seed.size() - 1);
-
-  if (lastChar == 'c' || lastChar == 's') {
-    // Attempt to convert the remaining string to an integer
-    try {
-      int n = std::stoi(remaining);
-      if (lastChar == 'c')
-        return std::string(n, '#');
-      return std::string(n-((int)n/2), '#')+'-'+ std::string((int)n/2, '#');
-    } catch (...) {
+      // Extract the last character
+      char lastChar = seed.back();
+      std::string remaining = seed.substr(0, seed.size() - 1);
+      
+      if (lastChar == 'c' || lastChar == 's') {
+        // Attempt to convert the remaining string to an integer
+        try {
+          int n = std::stoi(remaining);
+          if (lastChar == 'c')
+            return std::string(n, SEED_YES);
+          return std::string(n-((int)n/2), SEED_YES)+'-'+ std::string((int)n/2, SEED_YES);
+        } catch (...) {
+        }
+      }
+      throw invalid_argument("Unknown seed: " + seed);
     }
-  }
-  throw invalid_argument("Unknown seed: " + seed);
+
+  return seed;
 }
 
 
