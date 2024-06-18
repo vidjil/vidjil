@@ -536,8 +536,15 @@ void testExpandSeed() {
   TAP_TEST_EQUAL(expand_seed("20s"), "##########-##########", TEST_EXPAND_SEED, "");
   TAP_TEST_EQUAL(expand_seed("21s"), "###########-##########", TEST_EXPAND_SEED, "");
   TAP_TEST_EQUAL(expand_seed("13s"), "#######-######", TEST_EXPAND_SEED, "");
+  TAP_TEST_EQUAL(expand_seed("##"), "##", TEST_EXPAND_SEED, "");
   try {
-    expand_seed("5s");
+    expand_seed("xxc");
+    TAP_TEST(1==0, TEST_EXPAND_SEED, "Exception should have been raised for non existent seed");
+  } catch (std::invalid_argument &s) {
+    TAP_TEST(1==1, TEST_EXPAND_SEED, "");
+  }
+  try {
+    expand_seed("xxx");
     TAP_TEST(1==0, TEST_EXPAND_SEED, "Exception should have been raised for non existent seed");
   } catch (std::invalid_argument &s) {
     TAP_TEST(1==1, TEST_EXPAND_SEED, "");
