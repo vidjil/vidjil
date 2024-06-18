@@ -530,6 +530,20 @@ void testExtractGeneName(){
 	"Fail to extract gene name from:" << example_3 << " result:" << extractGeneName(example_3));
 }
 
+void testExpandSeed() {
+  TAP_TEST_EQUAL(expand_seed("7c"), "#######", TEST_EXPAND_SEED, "");
+  TAP_TEST_EQUAL(expand_seed("20c"), "####################", TEST_EXPAND_SEED, "");
+  TAP_TEST_EQUAL(expand_seed("20s"), "##########-##########", TEST_EXPAND_SEED, "");
+  TAP_TEST_EQUAL(expand_seed("21s"), "###########-##########", TEST_EXPAND_SEED, "");
+  TAP_TEST_EQUAL(expand_seed("13s"), "#######-######", TEST_EXPAND_SEED, "");
+  try {
+    expand_seed("5s");
+    TAP_TEST(1==0, TEST_EXPAND_SEED, "Exception should have been raised for non existent seed");
+  } catch (std::invalid_argument &s) {
+    TAP_TEST(1==1, TEST_EXPAND_SEED, "");
+  }
+}
+
 void testConversions(){  
   TAP_TEST_EQUAL(string_of_int(12), "12", TEST_CONVERSIONS, "");
   TAP_TEST_EQUAL(string_of_int(12, 4), "0012", TEST_CONVERSIONS, "");
@@ -561,4 +575,5 @@ void testTools() {
   testIsStopCodon();
 	testExtractGeneName();
   testConversions();
+  testExpandSeed();
 }
