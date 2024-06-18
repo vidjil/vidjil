@@ -84,18 +84,18 @@ def submit():
 @action("/vidjil/auth/logout", method=["POST", "GET"])
 @action.uses(db, session, auth, cors, flash)
 def logout():
-    user_id = auth.session["user"]["id"]
+    if "user" in auth.session and "id" in auth.session["user"]:
+        user_id = auth.session["user"]["id"]
+        auth_event_data = dict(time_stamp=str(datetime.now()),
+                            client_ip=request.remote_addr,
+                            user_id=user_id,
+                            origin="auth",
+                            description='User ' + str(user_id) + ' Logged-out')
+        db.auth_event.insert(**auth_event_data)
+        
     session.clear()
     res = {"redirect": URL('default/home.html')}
-    log.info("Logout ", 
-             extra={'user_id': auth.current_user.get('id'), 
-                    "timestamp": calendar.timegm(time.gmtime())})
-    auth_event_data = dict(time_stamp=str(datetime.now()),
-                           client_ip=request.remote_addr,
-                           user_id=user_id,
-                           origin="auth",
-                           description='User ' + str(user_id) + ' Logged-out')
-    db.auth_event.insert(**auth_event_data)
+    log.info("Logout")
     return json.dumps(res, separators=(',', ':'))
 
 
