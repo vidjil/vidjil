@@ -88,7 +88,7 @@ inline int spaced_int(int *input, const string &seed) {
 
   int index_word = 0;
 
-  for (size_t i = 0; i < seed.length(); i++) 
+  for (size_t i = 0; i < seed.length(); i++)
     if (seed[i] == SEED_YES)
 	index_word = (index_word << 2) | input[i] ;
 
@@ -100,6 +100,14 @@ inline int spaced_int(int *input, const string &seed) {
 
 }
 
+
+/*
+  Join path1 and path2,
+  inserting a "/" only when path1 is not empty.
+  And join them only if path2 is not an absolute path.
+*/
+string path_join(string path1, string path2);
+
 /* Signal handling */
 
 
@@ -107,7 +115,7 @@ extern bool global_interrupted;
 
 void sigintHandler(int sig_num);
 
-/* 
+/*
 	Extract the gene name from a label. This take the whole part
 	before the star and returns it. If there is no star in the
 	name the whole label is returned.
@@ -215,7 +223,7 @@ vector<string> generate_all_seeds(const string &str, const string &seed);
 /**
  * remove_trailing_whitespaces removes the whitespaces (ie. ' ', '\t', '\r')
  * that may be at the end of the string
- * @param str: the string 
+ * @param str: the string
  * @return the number of whitespaces removed
  */
 int remove_trailing_whitespaces(string &str);
@@ -261,7 +269,7 @@ string reverse(const string &text);
  * @param frame (0, 1 or 2) depending on where the position of the first codon
  *        in the sequence starts
  * @return true iff a stop codon is in-frame.
- */ 
+ */
 bool hasInFrameStopCodon(const string &sequence, int frame);
 
 /**

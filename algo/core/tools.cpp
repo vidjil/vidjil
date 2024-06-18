@@ -9,7 +9,7 @@ string seed_contiguous(int k)
 {
   string seed = "" ;
 
-  for (int i = 0; i < k; i++) 
+  for (int i = 0; i < k; i++)
     seed += SEED_YES;
 
   return seed ;
@@ -40,11 +40,11 @@ string expand_seed(const string &seed)
     {
       if (seedMap.find(seed) != seedMap.end())
         return seedMap[seed];
-  
+
       // Extract the last character
       char lastChar = seed.back();
       std::string remaining = seed.substr(0, seed.size() - 1);
-      
+
       if (lastChar == 'c' || lastChar == 's') {
         // Attempt to convert the remaining string to an integer
         try {
@@ -75,10 +75,10 @@ string spaced(const string &input, const string &seed) {
   // cout << input << endl << seed << endl ;
   assert(input.length() == seed.length());
 
-  for (size_t i = 0; i < input.length(); i++) 
+  for (size_t i = 0; i < input.length(); i++)
     if (seed[i] == SEED_YES)
       spaced_buf[j++] = input[i] ;
-  
+
   spaced_buf[j] = (char) 0;
 
 #ifdef DEBUG_SPACED
@@ -88,6 +88,12 @@ string spaced(const string &input, const string &seed) {
   return string(spaced_buf);
 }
 
+string path_join(string path1, string path2)
+{
+  if (path2[0]=='/')
+    return path2;
+  return path1 + (path1.empty() ? "" : "/") + path2 ;
+}
 
 string string_of_int(int number, int w)
 {
@@ -253,7 +259,7 @@ string extract_from_label(string str, int field, string separator)
 
   if (found2 == (int) string::npos)
     return str ;
-  
+
   return str.substr(found1+1, found2-found1-1);
 }
 
@@ -321,7 +327,7 @@ string subsequence(const string &seq, int start, int end) {
 }
 
 string revcomp(const string &dna, bool do_revcomp) {
-  
+
   if (!do_revcomp)
     return dna;
 
@@ -420,12 +426,12 @@ void trimSequence(string &sequence, size_t &start_pos, size_t &length,
 
     // prefix_score = PERCENT_TOO_MANY_N * |p| - 100 * (number of N in p),
     // where p = sequence[start_prefix..i]
-    
+
     if (sequence[i] == 'N') {
       prefix_score -= 100;
       suffix_score -= 100;
     }
-    
+
     prefix_score += PERCENT_TOO_MANY_N;
     suffix_score += PERCENT_TOO_MANY_N;
 
@@ -503,7 +509,7 @@ void sigintHandler(int sig_num)
 #pragma GCC diagnostic pop
 
 
-/* 
+/*
 	 Return the part of label before the star
 	 For example:
 	 IGHV5-51*01 -> IGHV5-51
@@ -528,7 +534,7 @@ string extractGeneName(string label){
 */
 std::ostream* new_ofgzstream(string &f, bool gz, string message)
 {
-  
+
   if (gz)
   {
     f += GZ_SUFFIX;
