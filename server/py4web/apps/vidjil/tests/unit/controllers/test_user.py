@@ -332,10 +332,10 @@ class TestUserController(unittest.TestCase):
 
     def test_edit_form_logged_as_other(self):
         # Given : Logged as user 3
-        db_manipulation_utils.log_in(self.session,
-                                     db_manipulation_utils.get_indexed_user_email(
-                                         3),
-                                     db_manipulation_utils.get_indexed_user_password(3))
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3))
 
         # When : Trying and edit user 1
         with Omboddle(self.session, keep_session=True, params={"format": "json", "id": self.user_1_id}):
@@ -349,10 +349,10 @@ class TestUserController(unittest.TestCase):
 
     def test_edit_form_myself_OK(self):
         # Given : Logged as user 3
-        db_manipulation_utils.log_in(self.session,
-                                     db_manipulation_utils.get_indexed_user_email(
-                                         3),
-                                     db_manipulation_utils.get_indexed_user_password(3))
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3))
 
         # When : Trying and edit user 3
         with Omboddle(self.session, keep_session=True, params={"format": "json",
@@ -368,6 +368,8 @@ class TestUserController(unittest.TestCase):
         assert json_result is not None
         result = json.loads(json_result)
         assert result["redirect"] == "back"
+        assert result["message"].startswith("modified@email.com (")
+        assert result["message"].endswith(") user edited")
         user_3 = db.auth_user[self.user_3_id]
         assert user_3["first_name"] == "modified_first_name"
         assert user_3["last_name"] == "modified_last_name"
@@ -394,13 +396,105 @@ class TestUserController(unittest.TestCase):
         assert json_result is not None
         result = json.loads(json_result)
         assert result["redirect"] == "back"
+        assert result["message"].startswith("modified@email.com (")
+        assert result["message"].endswith(") user edited")
         user_3 = db.auth_user[self.user_3_id]
         assert user_3["first_name"] == "modified_first_name"
         assert user_3["last_name"] == "modified_last_name"
         assert user_3["email"] == "modified@email.com"
-        db_manipulation_utils.log_in(self.session,
-                                     "modified@email.com",
-                                     "ComplicatedModifiedPassword")
+        log_in_result = db_manipulation_utils.log_in(
+            self.session, "modified@email.com", "ComplicatedModifiedPassword")
+        assert not log_in_result["error"]
+
+    def test_edit_form_myself_wrong_email(self):
+        # Given : Logged as user 3
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3))
+
+        # When : Trying and edit user 3
+        with Omboddle(self.session, keep_session=True, params={"format": "json",
+                                                               "id": self.user_3_id,
+                                                               "first_name": "modified_first_name",
+                                                               "last_name": "modified_last_name",
+                                                               "email": "modified_email.com",
+                                                               "password": "ComplicatedModifiedPassword",
+                                                               "confirm_password": "ComplicatedModifiedPassword"}):
+            json_result = user_controller.edit_form()
+
+        # Then : An error occurred
+        assert json_result is not None
+        result = json.loads(json_result)
+        assert result["success"] == "false"
+        assert result["message"] == "new_email: Enter a valid email address"
+        user_3 = db.auth_user[self.user_3_id]
+        assert user_3["first_name"] != "modified_first_name"
+        assert user_3["last_name"] != "modified_last_name"
+        assert user_3["email"] != "modified_email.com"
+        log_in_result = db_manipulation_utils.log_in(
+            self.session, "modified_email.com", "ComplicatedModifiedPassword")
+        assert log_in_result["error"] == "Invalid Credentials"
+
+    def test_edit_form_myself_wrong_confirm_password(self):
+        # Given : Logged as user 3
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3))
+
+        # When : Trying and edit user 3
+        with Omboddle(self.session, keep_session=True, params={"format": "json",
+                                                               "id": self.user_3_id,
+                                                               "first_name": "modified_first_name",
+                                                               "last_name": "modified_last_name",
+                                                               "email": "modified@email.com",
+                                                               "password": "ComplicatedModifiedPassword",
+                                                               "confirm_password": "ComplicatedModifiedPassword2"}):
+            json_result = user_controller.edit_form()
+
+        # Then : An error occurred
+        assert json_result is not None
+        result = json.loads(json_result)
+        assert result["success"] == "false"
+        assert result["message"] == "password fields must match"
+        user_3 = db.auth_user[self.user_3_id]
+        assert user_3["first_name"] != "modified_first_name"
+        assert user_3["last_name"] != "modified_last_name"
+        assert user_3["email"] != "modified@email.com"
+        log_in_result = db_manipulation_utils.log_in(
+            self.session, "modified@email.com", "ComplicatedModifiedPassword")
+        assert log_in_result["error"] == "Invalid Credentials"
+
+    def test_edit_form_myself_too_weak_password(self):
+        # Given : Logged as user 3
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3))
+
+        # When : Trying and edit user 3
+        with Omboddle(self.session, keep_session=True, params={"format": "json",
+                                                               "id": self.user_3_id,
+                                                               "first_name": "modified_first_name",
+                                                               "last_name": "modified_last_name",
+                                                               "email": "modified@email.com",
+                                                               "password": "simple",
+                                                               "confirm_password": "simple"}):
+            json_result = user_controller.edit_form()
+
+        # Then : An error occurred
+        assert json_result is not None
+        result = json.loads(json_result)
+        assert result["success"] == "false"
+        assert result["message"] == "new_password: Password too simple (30.0/50)"
+        user_3 = db.auth_user[self.user_3_id]
+        assert user_3["first_name"] != "modified_first_name"
+        assert user_3["last_name"] != "modified_last_name"
+        assert user_3["email"] != "modified@email.com"
+        log_in_result = db_manipulation_utils.log_in(
+            self.session, "modified@email.com", "simple")
+        assert log_in_result["error"] == "Invalid Credentials"
 
     ##################################
     # Tests on user_controller.info()
