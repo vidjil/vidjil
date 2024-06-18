@@ -57,7 +57,21 @@ string expand_seed(const string &seed)
       throw invalid_argument("Unknown seed: " + seed);
     }
 
-  return seed;
+  // Extract the last character
+  char lastChar = seed.back();
+  std::string remaining = seed.substr(0, seed.size() - 1);
+
+  if (lastChar == 'c' || lastChar == 's') {
+    // Attempt to convert the remaining string to an integer
+    try {
+      int n = std::stoi(remaining);
+      if (lastChar == 'c')
+        return std::string(n, '#');
+      return std::string(n-((int)n/2), '#')+'-'+ std::string((int)n/2, '#');
+    } catch (...) {
+    }
+  }
+  throw invalid_argument("Unknown seed: " + seed);
 }
 
 
