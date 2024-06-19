@@ -1,6 +1,7 @@
 """ Helper to manipulate db for tests"""
 import json
 import pathlib
+from typing import Any
 
 from . import test_utils
 from .omboddle import Omboddle
@@ -24,7 +25,7 @@ def log_in_as_default_admin(session: Session) -> None:
     log_in(session, TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD)
 
 
-def log_in(session: Session, email: str, password: str) -> None:
+def log_in(session: Session, email: str, password: str) -> Any:
     """Log in
 
     Args:
@@ -33,7 +34,8 @@ def log_in(session: Session, email: str, password: str) -> None:
         password (str): user password
     """
     with Omboddle(session, keep_session=True, params={"login": email, "password": password}):
-        auth_controller.submit()
+        json_result = auth_controller.submit()
+        return json.loads(json_result)
 
 
 def logout(session: Session) -> None:
