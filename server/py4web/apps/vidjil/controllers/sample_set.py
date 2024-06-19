@@ -69,7 +69,12 @@ def index():
         log.error(res)  
         return json.dumps(res, separators=(',',':'))
 
-    sample_set = db.sample_set[request.query["id"]]
+    sample_set = db.sample_set[int(request.query["id"])]
+    if sample_set is None:
+        res = { "success": "true", "message": f"Could not get a sample set with id {int(request.query['id'])}"}
+        log.error(res)  
+        return json.dumps(res, separators=(',',':'))
+    
     owners = db((db.auth_permission.record_id == request.query["id"])
         & (db.auth_permission.name == "access")
         & (db.auth_permission.table_name == "sample_set")
@@ -403,19 +408,24 @@ def submit():
                 name = helper.get_name(p)
 
                 # edit
-                if (p['sample_set_id'] != ""):
+                if p['sample_set_id']:
                     if auth.can_modify_sample_set(int(p['sample_set_id'])):
                         reset = True
-                        sample_set = db(db[set_type].sample_set_id == p['sample_set_id']).select().first()
-                        db[set_type][sample_set.id] = p
-                        id_sample_set = sample_set['sample_set_id']
+                        rows = db(db[set_type].sample_set_id == p['sample_set_id']).select()
+                        if len(rows) > 0:
+                            sample_set = rows.first()
+                            db[set_type][sample_set.id] = p
+                            id_sample_set = sample_set['sample_set_id']
 
-                        if (sample_set.info != p['info']):
-                            group_id = get_set_group(id_sample_set)
-                            should_register_tags = True
-                            reset = True
+                            if (sample_set.info != p['info']):
+                                group_id = get_set_group(id_sample_set)
+                                should_register_tags = True
+                                reset = True
 
-                        action = "edit"
+                            action = "edit"
+                        else:
+                            p['error'].append(f"Could not find a {set_type} with sample_set_id {p['sample_set_id']}")
+                            error = True
                     else:
                         p['error'].append("permission denied")
                         error = True
