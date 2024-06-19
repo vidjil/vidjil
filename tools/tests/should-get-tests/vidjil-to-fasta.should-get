@@ -1,4 +1,5 @@
-!LAUNCH: $PYTHON ../../vidjil-to-fasta.py -o vidjil-to-fasta.fasta ../../../data/no_clones.vidjil > /dev/null; cat vidjil-to-fasta.fasta
+!REQUIRES: python2 $VIDJIL_DIR/tools/check_python_version.py
+!LAUNCH: python2 ../../vidjil-to-fasta.py -o vidjil-to-fasta.fasta ../../../data/no_clones.vidjil > /dev/null; cat vidjil-to-fasta.fasta
 
 $ No data should be found
 0:.
