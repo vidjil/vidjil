@@ -402,9 +402,17 @@ class TestUserController(unittest.TestCase):
         assert user_3["first_name"] == "modified_first_name"
         assert user_3["last_name"] == "modified_last_name"
         assert user_3["email"] == "modified@email.com"
+        # can no longer log in with old credentials
+        log_in_result = db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3))
+        assert log_in_result["error"] == "Invalid Credentials"
+        # can log in with new credentials
         log_in_result = db_manipulation_utils.log_in(
             self.session, "modified@email.com", "ComplicatedModifiedPassword")
         assert not log_in_result["error"]
+        
 
     def test_edit_form_myself_wrong_email(self):
         # Given : Logged as user 3
@@ -432,9 +440,16 @@ class TestUserController(unittest.TestCase):
         assert user_3["first_name"] != "modified_first_name"
         assert user_3["last_name"] != "modified_last_name"
         assert user_3["email"] != "modified_email.com"
+        # cannot log in with new credentials
         log_in_result = db_manipulation_utils.log_in(
             self.session, "modified_email.com", "ComplicatedModifiedPassword")
         assert log_in_result["error"] == "Invalid Credentials"
+        # can log in with old credentials
+        log_in_result = db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3))
+        assert not log_in_result["error"]
 
     def test_edit_form_myself_wrong_confirm_password(self):
         # Given : Logged as user 3
@@ -462,9 +477,16 @@ class TestUserController(unittest.TestCase):
         assert user_3["first_name"] != "modified_first_name"
         assert user_3["last_name"] != "modified_last_name"
         assert user_3["email"] != "modified@email.com"
+        # cannot log in with new credentials
         log_in_result = db_manipulation_utils.log_in(
-            self.session, "modified@email.com", "ComplicatedModifiedPassword")
+            self.session, "modified_email.com", "ComplicatedModifiedPassword")
         assert log_in_result["error"] == "Invalid Credentials"
+        # can log in with old credentials
+        log_in_result = db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3))
+        assert not log_in_result["error"]
 
     def test_edit_form_myself_too_weak_password(self):
         # Given : Logged as user 3
@@ -492,9 +514,16 @@ class TestUserController(unittest.TestCase):
         assert user_3["first_name"] != "modified_first_name"
         assert user_3["last_name"] != "modified_last_name"
         assert user_3["email"] != "modified@email.com"
+        # cannot log in with new credentials
         log_in_result = db_manipulation_utils.log_in(
-            self.session, "modified@email.com", "simple")
+            self.session, "modified_email.com", "ComplicatedModifiedPassword")
         assert log_in_result["error"] == "Invalid Credentials"
+        # can log in with old credentials
+        log_in_result = db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3))
+        assert not log_in_result["error"]
 
     ##################################
     # Tests on user_controller.info()
