@@ -85,6 +85,7 @@ def metrics():
             "config_analysis_by_groups" : db(db.results_file.config_id==db.config.id).select(db.results_file.config_id, db.config.name, db.config.program, db.results_file.id.count(),db.auth_group.role , groupby=db.results_file.id|db.auth_group.role ), #pas fini
         }
         print( data )
+        
     else:
         data = {"message": 'status NOT in metrics group'}
     return data

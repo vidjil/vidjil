@@ -649,8 +649,8 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
 
         ## création du user metrics
         id_metrics_user=db.auth_user.insert(
-            password = db.auth_user.password.validate(os.getenv("METRICS_USER_PASSWORD"))[0],
-            email = os.getenv("METRICS_USER_EMAIL"),
+            password = db.auth_user.password.validate(admin_password)[0],
+            email = "metrics@vidjil.org", #os.getenv("METRICS_USER_EMAIL"),
             first_name = os.getenv("METRICS_USER_FIRSTNAME"),
             last_name = os.getenv("METRICS_USER_LASTNAME")
         )

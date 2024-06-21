@@ -170,6 +170,15 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
 
     return patient_id, sample_set_id
 
+# Group management
+
+def add_group(group_name : str, user_id : int = -1) : 
+    if user_id == -1:
+        user_id = db(db.auth_user).select().first().id
+
+    group_id = db.auth_group.insert(id="", role=group_name, description="")
+
+
 # Sequence file management
 
 
