@@ -54,13 +54,15 @@ class TestGroupController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "Groups"
         query = result["query"]
-        assert len(query) == 3
+        assert len(query) == 4
         assert query[0]["role"] == "admin"
         assert query[0]["access"] == "ec"
-        assert query[1]["role"] == "public"
+        assert query[1]["role"] == "metrics"
         assert query[1]["access"] == ""
-        assert query[2]["role"] == "user_0001"
+        assert query[2]["role"] == "public"
         assert query[2]["access"] == ""
+        assert query[3]["role"] == "user_0001"
+        assert query[3]["access"] == ""
 
     def test_index_other_user(self):
         # Given : Logged as other user, and add corresponding config, ...
@@ -108,10 +110,11 @@ class TestGroupController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "New group"
         groups = result["groups"]
-        assert len(groups) == 7
+        assert len(groups) == 8
         assert groups[0]["role"] == "admin"
         assert groups[1]["role"] == "user_0001"
         assert groups[2]["role"] == "public"
+        assert groups[3]["role"] == "metrics"
 
     def test_add_other_user(self):
         # Given : Logged as other user, and add corresponding config, ...
@@ -131,7 +134,7 @@ class TestGroupController(unittest.TestCase):
         groups = result["groups"]
         assert len(groups) == 2
         assert groups[0]["role"] == "public"
-        assert groups[1]["role"] == "user_0002"
+        assert groups[1]["role"] == "user_0003"
 
     ##################################
     # Tests on group_controller.add_form()

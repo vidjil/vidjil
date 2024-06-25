@@ -249,6 +249,13 @@ def add_config():
                                  classification=None)
     return config_id
 
+def add_run(patient_id : int = -1):
+    if patient_id == -1:
+        patient_id = db(db.patient).select().first().id
+    sample_set_id = db.patient[patient_id].sample_set_id
+    run_id = db.run.insert(id="", name="add_run_test", info= "",creator= 1, sample_set_id = sample_set_id)
+    return run_id 
+
 # Results file management
 
 

@@ -55,7 +55,7 @@ class TestFileController(unittest.TestCase):
         assert result["pre_process_list"][0]["name"] == "public pre-process"
         assert result["sets"][0]["type"] == defs.SET_TYPE_PATIENT
         assert result["sample_type"] == defs.SET_TYPE_PATIENT
-        assert result["upload_group_ids"][0] == 8
+        assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) == 1
         assert result["isEditing"] == False
 
@@ -82,7 +82,7 @@ class TestFileController(unittest.TestCase):
         assert result["pre_process_list"][0]["name"] == "public pre-process"
         assert result["sets"][0]["type"] == defs.SET_TYPE_PATIENT
         assert result["sample_type"] == defs.SET_TYPE_PATIENT
-        assert result["upload_group_ids"][0] == 8
+        assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) > 1
         assert result["files"][0]["id"] == sequence_file_id
         assert result["isEditing"] == False
@@ -110,7 +110,7 @@ class TestFileController(unittest.TestCase):
         assert result["pre_process_list"][0]["name"] == "public pre-process"
         assert result["sets"][0]["type"] == defs.SET_TYPE_PATIENT
         assert result["sample_type"] == defs.SET_TYPE_PATIENT
-        assert result["upload_group_ids"][0] == 8
+        assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) > 1
         assert result["files"][0]["id"] == sequence_file_id
         assert result["isEditing"] == True

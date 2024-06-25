@@ -479,7 +479,7 @@ class TestPreProcessController(unittest.TestCase):
         # Then : check result
         result = json.loads(json_result)
         query = result["query"]
-        assert len(query) == 6
+        assert len(query) == 7
         # only read access is for public groups
         read_permissions = [row["role"] for row in query if row["read"]]
         assert len(read_permissions) == 1
@@ -499,7 +499,7 @@ class TestPreProcessController(unittest.TestCase):
         # Then : check result
         result = json.loads(json_result)
         query = result["query"]
-        assert len(query) == 6
+        assert len(query) == 7
         # no access
         read_permissions = [row["role"] for row in query if row["read"]]
         assert len(read_permissions) == 0
@@ -521,7 +521,7 @@ class TestPreProcessController(unittest.TestCase):
         # Then : check result
         result = json.loads(json_result)
         query = result["query"]
-        assert len(query) == 6
+        assert len(query) == 7
         # no access
         read_permissions = [row["role"] for row in query if row["read"]]
         assert len(read_permissions) == 1

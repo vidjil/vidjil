@@ -3,7 +3,7 @@ import json
 import unittest
 from ..utils.omboddle import Omboddle
 from ..utils import db_manipulation_utils
-from ...functional.db_initialiser import DBInitialiser, TEST_ADMIN_EMAIL
+from ...functional.db_initialiser import DBInitialiser, TEST_ADMIN_EMAIL, TEST_METRICS_EMAIL
 from py4web import request
 from py4web.core import _before_request, Session, HTTP
 from ....common import db, auth, T
@@ -96,13 +96,14 @@ class TestUserController(unittest.TestCase):
         result = json.loads(json_result)
         query = result["query"]
         assert query is not None
-        assert len(query) == 4
+        assert len(query) == 5
         assert query[0]["email"] == TEST_ADMIN_EMAIL
-        assert query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
-            1)
+        assert query[1]["email"] == TEST_METRICS_EMAIL
         assert query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
-            2)
+            1)
         assert query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+            2)
+        assert query[4]["email"] == db_manipulation_utils.get_indexed_user_email(
             3)
 
     def test_index_sort_files(self):
@@ -118,15 +119,17 @@ class TestUserController(unittest.TestCase):
         result = json.loads(json_result)
         query = result["query"]
         assert query is not None
-        assert len(query) == 4
-        # the first 3 are equals
+        assert len(query) == 5
+        # the first 4 are equals
         assert query[0]["email"] == TEST_ADMIN_EMAIL or query[0]["email"] == db_manipulation_utils.get_indexed_user_email(
-            1) or query[0]["email"] == db_manipulation_utils.get_indexed_user_email(3)
+            1) or query[0]["email"] == db_manipulation_utils.get_indexed_user_email(3) or query[0]["email"] == TEST_METRICS_EMAIL
         assert query[1]["email"] == TEST_ADMIN_EMAIL or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
-            1) or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(3)
+            1) or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(3) or query[1]["email"] == TEST_METRICS_EMAIL
         assert query[2]["email"] == TEST_ADMIN_EMAIL or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
-            1) or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(3)
-        assert query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(3) or query[2]["email"] == TEST_METRICS_EMAIL
+        assert query[3]["email"] == TEST_ADMIN_EMAIL or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(3) or query[3]["email"] == TEST_METRICS_EMAIL
+        assert query[4]["email"] == db_manipulation_utils.get_indexed_user_email(
             2)
 
     def test_index_sort_files_reverse(self):
@@ -142,15 +145,17 @@ class TestUserController(unittest.TestCase):
         result = json.loads(json_result)
         query = result["query"]
         assert query is not None
-        assert len(query) == 4
+        assert len(query) == 5
         assert query[0]["email"] == db_manipulation_utils.get_indexed_user_email(
             2)
         assert query[1]["email"] == TEST_ADMIN_EMAIL or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
-            1) or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(3)
+            1) or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(3) or query[1]["email"] == TEST_METRICS_EMAIL
         assert query[2]["email"] == TEST_ADMIN_EMAIL or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
-            1) or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(3)
+            1) or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(3) or query[2]["email"] == TEST_METRICS_EMAIL
         assert query[3]["email"] == TEST_ADMIN_EMAIL or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
-            1) or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(3)
+            1) or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(3) or query[3]["email"] == TEST_METRICS_EMAIL
+        assert query[4]["email"] == TEST_ADMIN_EMAIL or query[4]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[4]["email"] == db_manipulation_utils.get_indexed_user_email(3) or query[4]["email"] == TEST_METRICS_EMAIL
 
     def test_index_sort_patients(self):
         # Given : Logged as admin
@@ -165,14 +170,15 @@ class TestUserController(unittest.TestCase):
         result = json.loads(json_result)
         query = result["query"]
         assert query is not None
-        assert len(query) == 4
-        assert query[0]["email"] == db_manipulation_utils.get_indexed_user_email(
-            3)
+        assert len(query) == 5
+        assert query[0]["email"] == TEST_METRICS_EMAIL
         assert query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
-            2)
+            3)
         assert query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
+            2)
+        assert query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
             1)
-        assert query[3]["email"] == TEST_ADMIN_EMAIL
+        assert query[4]["email"] == TEST_ADMIN_EMAIL
 
     def test_index_sort_patients_reverse(self):
         # Given : Logged as admin
@@ -187,13 +193,14 @@ class TestUserController(unittest.TestCase):
         result = json.loads(json_result)
         query = result["query"]
         assert query is not None
-        assert len(query) == 4
+        assert len(query) == 5
         assert query[0]["email"] == TEST_ADMIN_EMAIL
         assert query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
             1)
         assert query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
             2)
-        assert query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+        assert query[3]["email"] == TEST_METRICS_EMAIL
+        assert query[4]["email"] == db_manipulation_utils.get_indexed_user_email(
             3)
 
     def test_index_sort_login(self):
@@ -209,15 +216,17 @@ class TestUserController(unittest.TestCase):
         result = json.loads(json_result)
         query = result["query"]
         assert query is not None
-        assert len(query) == 4
+        assert len(query) == 5
         # as the test in done in seconds, not sure what will get first
-        assert query[0]["email"] == db_manipulation_utils.get_indexed_user_email(
+        assert query[0]["email"] == TEST_METRICS_EMAIL or db_manipulation_utils.get_indexed_user_email(
             1) or query[0]["email"] == db_manipulation_utils.get_indexed_user_email(2)
-        assert query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
+        assert query[1]["email"] == TEST_METRICS_EMAIL or db_manipulation_utils.get_indexed_user_email(
             1) or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(2)
-        assert query[2]["email"] == TEST_ADMIN_EMAIL or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
+        assert query[2]["email"] == TEST_METRICS_EMAIL or TEST_ADMIN_EMAIL or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
             3)
-        assert query[3]["email"] == TEST_ADMIN_EMAIL or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+        assert query[3]["email"] == TEST_METRICS_EMAIL or TEST_ADMIN_EMAIL or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
+            3)
+        assert query[4]["email"] == TEST_METRICS_EMAIL or TEST_ADMIN_EMAIL or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
             3)
 
     def test_index_sort_login_reverse(self):
@@ -233,16 +242,18 @@ class TestUserController(unittest.TestCase):
         result = json.loads(json_result)
         query = result["query"]
         assert query is not None
-        assert len(query) == 4
+        assert len(query) == 5
         # as the test in done in seconds, not sure what will get first
         assert query[0]["email"] == TEST_ADMIN_EMAIL or query[0]["email"] == db_manipulation_utils.get_indexed_user_email(
             3)
         assert query[1]["email"] == TEST_ADMIN_EMAIL or query[1]["email"] == db_manipulation_utils.get_indexed_user_email(
             3)
-        assert query[2]["email"] == db_manipulation_utils.get_indexed_user_email(
+        assert query[2]["email"] == TEST_METRICS_EMAIL or db_manipulation_utils.get_indexed_user_email(
             1) or query[2]["email"] == db_manipulation_utils.get_indexed_user_email(2)
         assert query[3]["email"] == db_manipulation_utils.get_indexed_user_email(
             1) or query[3]["email"] == db_manipulation_utils.get_indexed_user_email(2)
+        assert query[4]["email"] == db_manipulation_utils.get_indexed_user_email(
+            1) or query[4]["email"] == db_manipulation_utils.get_indexed_user_email(2)
 
     ##################################
     # Tests on user_controller.edit()

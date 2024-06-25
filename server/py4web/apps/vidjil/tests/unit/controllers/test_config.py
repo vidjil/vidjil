@@ -426,7 +426,7 @@ class TestConfigController(unittest.TestCase):
 
         # Then : check result
         result = json.loads(json_result)
-        assert len(result["query"]) == 6
+        assert len(result["query"]) == 7
 
     ##################################
     # Tests on config_controller.change_permission()
