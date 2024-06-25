@@ -79,21 +79,25 @@ class TestMetricsController(unittest.TestCase):
         #Then
         assert result["users_count"] == 3
         
-    # def test_metrics_patients_by_user(self):
-    #     #Given
-    #     db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
-    #     db_manipulation_utils.add_patient(1,2)
-    #     db_manipulation_utils.add_patient(1,2)
+    def test_metrics_patients_by_user(self):
+        #Given
+        db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
+        db_manipulation_utils.add_patient(1,2)
+        db_manipulation_utils.add_patient(1,2)
         
-    #     db_manipulation_utils.log_in_as_default_admin(self.session)
-    #     db_manipulation_utils.add_patient(1,2)
+        db_manipulation_utils.add_patient(1,1)
         
         
-    #     #When
-    #     result = self.get_metrics()
-        
-    #     #Then
-    #     assert result["set_patients_by_user"][0]["_extra"]['COUNT("auth_event"."id")'] == 3 
+        #When
+        result = self.get_metrics()
+        print(result["set_patients_by_user"][0])
+        print(result["set_patients_by_user"][1])
+        #Then
+        assert result["set_patients_by_user"][0]["user_id"] == 1 
+        assert result["set_patients_by_user"][0]['count'] == 1 
+        assert result["set_patients_by_user"][1]["user_id"] == 2 
+        assert result["set_patients_by_user"][1]['count'] == 2 
+        assert len(result["set_patients_by_user"]) == 2
         
     def test_metrics_not_metrics(self):
         #Given
@@ -122,19 +126,22 @@ class TestMetricsController(unittest.TestCase):
         #Given
         db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
         db_manipulation_utils.add_config()
-        db_manipulation_utils.add_config()
-        db_manipulation_utils.add_config()
         db_manipulation_utils.add_patient(1,2)
         db_manipulation_utils.add_sequence_file(-1, -1, False, False, -1)
         db_manipulation_utils.add_scheduler_task('pre_process', 1, 'COMPLETED', [1, 1], "2024-01-01 10:00:00")
         db_manipulation_utils.add_results_file(-1, -1, -1, False)
-        db_manipulation_utils.add_fused_file(-1, -1, -1, -1, False)
+        db_manipulation_utils.add_results_file(-1, -1, -1, False)
         
         #When
         result = self.get_metrics()
+        print(result['config_analysis'][0])
+        print(result['config_analysis'][0]["_extra"].keys())
         
         #Then
-        assert result["config_analysis"][0]["_extra"]['COUNT(`results_file`.`id`)'] == 11   
+        assert result["config_analysis"][0]["results_file"]['config_id'] == 1
+        assert result["config_analysis"][0]["config"]['name'] == "default + extract reads"
+        assert result["config_analysis"][0]["config"]['program'] == 'vidjil'
+        assert result["config_analysis"][0]["_extra"]['COUNT("results_file"."id")'] == 2
         
     def test_metrics_sequence_file(self):
         #Given
@@ -180,15 +187,14 @@ class TestMetricsController(unittest.TestCase):
     def test_metrics_run(self):
         #Given
         db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
-        db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
-        db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
+        db_manipulation_utils.add_patient(1,2)
+        db_manipulation_utils.add_run(-1)
         
         #When
         result = self.get_metrics()
+        print(result)
         
-        #Then
-        for key in result :
-            if key == '_extra' :
-                assert result[key] == 3 
-                
-    
+        #Then 
+        assert result["set_runs_count"] == 1
+        
+        
