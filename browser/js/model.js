@@ -3311,7 +3311,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (menu == undefined){ // case of unit testing
             return
         }
-        menu.innerHTML = "Primers sets<br/>"
+        menu.innerHTML = "primers sets<br/>"
 
         primersSetData = Object.keys(this.primersSetData)
         for (var i = 0; i < primersSetData.length; i++) {
