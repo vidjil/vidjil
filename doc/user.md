@@ -656,7 +656,7 @@ Displayed and hidden columns are saved in your local settings.
 | Read length distribution | Read length distribution (between 100bp and 600bp) |
 | Recombinations | Recombinations / loci |
 | Clonotypes ≥5% | Number of clonotypes above 5% in their recombination/locus |
-| Common | Common clonotypes ≥0.01% with other samples of this set |
+| Common | Common clonotypes ≥0.01% with other samples of this set. Note that these are the common clonotypes with all samples of the set, even if they are not displayed. |
 | Main clonotype | Main clonotype |
 | Reads (merged) | Number of merged reads |
 | Pre-process | Pre-process |

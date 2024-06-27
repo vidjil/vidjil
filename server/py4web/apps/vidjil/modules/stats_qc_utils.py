@@ -92,7 +92,7 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             False,
         ),
         INTRA_CONTAMINATION_COLUMN_NAME: HeaderConfig(
-            "Common", "Common clonotypes ≥0.01% with other samples of this set", stat_decorator, 50, False
+            "Common", "Common clonotypes ≥0.01% with other samples of this set.\nNB: These are the common clonotypes with all samples of the set, even if they are not displayed.", stat_decorator, 50, False
         ),
         MAIN_CLONE_COLUMN_NAME: HeaderConfig(
             "Main clonotype", "Main clonotype", stat_decorator, 180, False
@@ -121,9 +121,11 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
     # HeaderConfig('abundance', 'parser', labeled_bar_chart_decorator, False),
 
 
-def get_stat_data(results_file_ids):
+def get_stat_data(sample_set_id, results_file_ids: List[int]):
     # Get fuse_data
-    fuse_data = get_fuse_data(results_file_ids)
+    if isinstance(sample_set_id, str):
+        sample_set_id = int(sample_set_id)
+    fuse_data = get_fuse_data(sample_set_id, results_file_ids)
 
     # Prepare stats
     display_stats_data = []
@@ -143,14 +145,13 @@ def get_stat_data(results_file_ids):
     return display_stats_data, json_stats_data
 
 
-def get_fuse_data(results_file_ids: List[int]) -> dict:
+def get_fuse_data(sample_set_id: int, results_file_ids: List[int]) -> dict:
     # Get raw data
     query = db(
         (db.results_file.id.belongs(results_file_ids))
         & (db.sequence_file.id == db.results_file.sequence_file_id)
         & (db.config.id == db.results_file.config_id)
-        & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-        & (db.sample_set.id == db.sample_set_membership.sample_set_id)
+        & (db.sample_set.id == sample_set_id)
         & (db.fused_file.sample_set_id == db.sample_set.id)
         & (db.fused_file.config_id == db.config.id)
     ).select(
@@ -191,7 +192,20 @@ def get_fuse_data(results_file_ids: List[int]) -> dict:
     helpers = {}
     for set_type in set_types:
         helpers[set_type] = model_factory.get_instance(set_type)
-
+        
+    # Get set infos
+    sample_set = {}
+    print(f"{sample_set_id=} - {query[0]['set_id']=} - {query[0]['set_id'] == sample_set_id}")
+    if len(query) > 0 and query[0]["set_id"] == sample_set_id:
+        first_result_fuse = query[0]
+        sample_set["set_type"] = first_result_fuse["sample_type"]
+        sample_set["id"] = first_result_fuse["set_id"]
+        sample_set["name"] = helpers[first_result_fuse["sample_type"]].get_name(
+            first_result_fuse[first_result_fuse["sample_type"]]
+        )
+        sample_set["info"] = first_result_fuse["set_info"]
+        sample_set["type"] = first_result_fuse["sample_type"]
+        
     fuse_data = {}
     for result_fuse in query:
         set_type = result_fuse["sample_type"]
@@ -205,7 +219,6 @@ def get_fuse_data(results_file_ids: List[int]) -> dict:
 
         if result_fuse.results_file_id not in tmp_fuse["results_files"]:
             tmp = result_fuse.copy()
-            tmp["sets"] = []
             tmp_fuse["results_files"][tmp["results_file_id"]] = tmp
             tmp.pop("set_id", None)
             tmp.pop(set_type, None)
@@ -213,24 +226,7 @@ def get_fuse_data(results_file_ids: List[int]) -> dict:
         else:
             tmp = tmp_fuse["results_files"][result_fuse["results_file_id"]]
 
-        # Create a list of set with this sample
-        for sub_pos_set in sample_query_pos[str(result_fuse["results_file"])]:
-            sub_res = query[sub_pos_set]
-            sample_set = {}
-            sample_set["set_type"] = sub_res["sample_type"]
-            sample_set["id"] = sub_res["set_id"]
-            sample_set["name"] = helpers[sub_res["sample_type"]].get_name(
-                sub_res[sub_res["sample_type"]]
-            )
-            sample_set["info"] = sub_res["set_info"]
-            sample_set["type"] = sub_res["sample_type"]
-            tmp["sets"].append(sample_set)
-        # Reorder set by type
-        tmp["sets"] = sorted(
-            tmp[SETS_COLUMN_NAME],
-            key=lambda _set: set_types.index(_set["set_type"]),
-            reverse=False,
-        )
+        tmp["sets"] = [sample_set]
 
     return fuse_data
 
@@ -274,8 +270,8 @@ def get_fused_stats(fuse):
             reads = fuse_data["reads"]["total"][result_index]
             mapped_reads = fuse_data["reads"]["segmented"][result_index]
 
-            result_stats["mapped_reads"] = mapped_reads
-            result_stats["total_reads"] = reads
+            result_stats["mapped_reads"] = int(mapped_reads)
+            result_stats["total_reads"] = int(reads)
 
             if "merged" in fuse_data["reads"]:
                 result_stats["merged_reads"] = fuse_data["reads"]["merged"][
@@ -284,31 +280,31 @@ def get_fused_stats(fuse):
             else:
                 result_stats["merged_reads"] = NOT_APPLICABLE
 
-            if not fuse_data["reads"]["segmented"][result_index]:
-                # Case of file without one read seen segmented
-                result_stats["main_clone"] = NOT_APPLICABLE
-                result_stats["abundance"] = NOT_APPLICABLE
-                result_stats["mean_length"] = NOT_APPLICABLE
-                result_stats["read_lengths"] = []
-                result_stats["loci"] = [NOT_APPLICABLE]
-                result_stats["clones_5"] = NOT_APPLICABLE
-                result_stats["clones_5_details"] = NOT_APPLICABLE
-                result_stats["intra_contamination"] = NOT_APPLICABLE
-                result_stats["shannon_diversity"] = NOT_APPLICABLE
-                result_stats["pielou_evenness"] = NOT_APPLICABLE
-                result_stats["simpson_diversity"] = NOT_APPLICABLE
-            else:
+            # Init default values
+            result_stats["main_clone"] = NOT_APPLICABLE
+            result_stats["abundance"] = NOT_APPLICABLE
+            result_stats["mean_length"] = NOT_APPLICABLE
+            result_stats["read_lengths"] = []
+            result_stats["loci"] = [NOT_APPLICABLE]
+            result_stats["clones_5"] = NOT_APPLICABLE
+            result_stats["clones_5_details"] = NOT_APPLICABLE
+            result_stats["intra_contamination"] = NOT_APPLICABLE
+            result_stats["shannon_diversity"] = NOT_APPLICABLE
+            result_stats["pielou_evenness"] = NOT_APPLICABLE
+            result_stats["simpson_diversity"] = NOT_APPLICABLE
+                
+            if fuse_data["reads"]["segmented"][result_index]:
                 sorted_clones = sorted(
                     top_clones,
                     key=lambda clone: clone["reads"][result_index],
                     reverse=True,
                 )
-                print(f"{sorted_clones[0]=}")
                 if "name" in sorted_clones[0]:
                     result_stats["main_clone"] = sorted_clones[0]["name"]
                 else:
                     result_stats["main_clone"] = sorted_clones[0]["germline"]
 
+                # Note that `fuse_data["reads"]["segmented"][result_index]` is already tested above
                 result_stats["abundance"] = {
                     str(key): 100.0
                     * fuse_data["reads"]["germline"][key][result_index]
@@ -374,6 +370,7 @@ def get_fused_stats(fuse):
                     ]
                 )
 
+                result_stats["clones_5"] = 0
                 result_stats["clones_5_details"] = {}
                 for locus in fuse_data["reads"]["germline"].keys():
                     result_stats["clones_5_details"][locus] = len(
@@ -389,6 +386,7 @@ def get_fused_stats(fuse):
                             > 0.05
                         ]
                     )
+                    result_stats["clones_5"] += result_stats["clones_5_details"][locus]
 
                 # !!! Contamination definition  : if pos != result_index, C present more than 0,01% and C bigger in result_index sample
                 # !!! WARNING, contamination is computed only on current fused file ! So available for ONE shared set and ONE shared config
@@ -402,6 +400,7 @@ def get_fused_stats(fuse):
                                 for pos in range(len(c["reads"]))
                                 if pos != result_index
                                 and fuse_data["reads"]["segmented"][pos]
+                                and fuse_data["reads"]["segmented"][result_index]
                                 and (
                                     float(c["reads"][pos])
                                     / fuse_data["reads"]["segmented"][pos]
@@ -421,29 +420,32 @@ def get_fused_stats(fuse):
                 )
 
                 if "diversity" in fuse_data:
-                    result_stats["shannon_diversity"] = (
-                        round(fuse_data["diversity"]["index_H_entropy"][result_index]["all"], 3)
-                        if "index_H_entropy" in fuse_data["diversity"]
-                        else NOT_APPLICABLE
-                    )
-                    result_stats["pielou_evenness"] = (
-                        round(fuse_data["diversity"]["index_E_equitability"][result_index]['all'], 3)
-                        if "index_E_equitability" in fuse_data["diversity"]
-                        else NOT_APPLICABLE
-                    )
-                    result_stats["simpson_diversity"] = (
-                        round(fuse_data["diversity"]["index_Ds_diversity"][result_index]['all'], 3)
-                        if "index_Ds_diversity" in fuse_data["diversity"]
-                        else NOT_APPLICABLE
-                    )
+                    # isinstance needed for old fused data. 
+                    # New format use a dict with value by locus+global, old have only a direct global float value
 
-            result_stats["clones_5"] = sum(
-                [
-                    fuse_data["reads"]["distribution"][key][result_index]
-                    for key in fuse_data["reads"]["germline"]
-                    if key in fuse_data["reads"]["distribution"]
-                ]
-            )
+                    shannon_diversity = NOT_APPLICABLE
+                    if "index_H_entropy" in fuse_data["diversity"]:
+                        if isinstance(fuse_data["diversity"]["index_H_entropy"][result_index], dict):
+                            shannon_diversity = round(float(fuse_data["diversity"]["index_H_entropy"][result_index]["all"]), 3)
+                        else:
+                            shannon_diversity = round(float(fuse_data["diversity"]["index_H_entropy"][result_index]), 3)
+                    result_stats["shannon_diversity"] = shannon_diversity
+                    
+                    pielou_evenness = NOT_APPLICABLE
+                    if "index_E_equitability" in fuse_data["diversity"]:
+                        if isinstance(fuse_data["diversity"]["index_E_equitability"][result_index], dict):
+                            pielou_evenness = round(float(fuse_data["diversity"]["index_E_equitability"][result_index]["all"]), 3)
+                        else:
+                            pielou_evenness = round(float(fuse_data["diversity"]["index_E_equitability"][result_index]), 3)
+                    result_stats["pielou_evenness"] = pielou_evenness
+                    
+                    simpson_diversity = NOT_APPLICABLE
+                    if "index_E_equitability" in fuse_data["diversity"]:
+                        if isinstance(fuse_data["diversity"]["index_Ds_diversity"][result_index], dict):
+                            simpson_diversity = round(float(fuse_data["diversity"]["index_Ds_diversity"][result_index]["all"]), 3)
+                        else:
+                            simpson_diversity = round(float(fuse_data["diversity"]["index_Ds_diversity"][result_index]), 3)
+                    result_stats["simpson_diversity"] = simpson_diversity
 
             if "pre_process" in fuse_data["samples"]:
                 result_stats["pre_process"] = fuse_data["samples"]["pre_process"][
@@ -469,10 +471,14 @@ def format_display_stats(result_fuse: dict, result_fused_stats: dict) -> None:
     )
     display_stats_data[MAPPED_READS_COLUMN_NAME] = stats_decorator.DataWithTitle(
         f"{mapped_reads_percent:.2f}%",
-        f"{mapped_reads_percent:.2f}% ({result_fused_stats['mapped_reads']} / {result_fused_stats['total_reads']})",
+        f"{mapped_reads_percent:.2f}% ({result_fused_stats['mapped_reads']} / {result_fused_stats['total_reads']})"
+        if result_fused_stats['total_reads']
+        else f"{mapped_reads_percent:.2f}%",
     )
     display_stats_data[MAPPED_READS_NUMBER_COLUMN_NAME] = (
         f"{result_fused_stats['mapped_reads']} / {result_fused_stats['total_reads']}"
+        if result_fused_stats['total_reads']
+        else NOT_APPLICABLE
     )
 
     display_stats_data[MEAN_LENGTH_COLUMN_NAME] = result_fused_stats["mean_length"]

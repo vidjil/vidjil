@@ -287,15 +287,15 @@
             See results and preview/quality:
             [[for row in results_rows:]]
                 <span type="button" class="double_button">
-                    <span class="double_button__part1" href="[[=http_origin]]?sample_set_id=[[=request.query["id"]]]&config=[[=row.config.id]]" type="text/html"
+                    <a class="double_button__part1" href="[[=http_origin]]?sample_set_id=[[=request.query["id"]]]&config=[[=row.config.id]]" type="text/html"
                         id="result_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]" title="Display results for config [[=row.config.name]]"
                         onclick="event.preventDefault()
                                 if (event.which == 2) { window.open(this.href) }
                                 else { myUrl.loadUrl(db, { 'sample_set_id' : '[[=request.query["id"]]]' , 'config' : [[=row.config.id]] }, '[[=info["filename"]]]' ) }" >
                         [[=row.config.name]] <span class="icon-chart-bar"></span>
-                    </span>
+                    </a>
                     <span class="double_button__part2" type="text/html" id="qc_sample_set_id_[[=request.query['id']]]_config_[[=row.config.id]]" title="Preview / quality control for config [[=row.config.name]]"
-                        onclick="db.call('sample_set/multi_sample_stats', {'results_ids': [[=[row.results_file.id for row in query if (row.results_file.id and (row.results_file.status == tasks.STATUS_COMPLETED))]]] })" >
+                        onclick="db.call('sample_set/multi_sample_stats',{'sample_set_id': [[=request.query['id']]], 'config_id' : [[=row.config.id]]})" >
                         <span class="icon-table"></span>
                     </span>
                 </span>

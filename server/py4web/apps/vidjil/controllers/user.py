@@ -106,20 +106,32 @@ def edit_form():
         return error_message(error_to_display)
 
     updated_user = dict(first_name = request.params["first_name"],
-                        last_name = request.params["last_name"],
-                        email = request.params["email"])
-    if request.params["password"] != "":
-        updated_user["password"] = request.params["password"] 
+                        last_name = request.params["last_name"])
+    
+    email = request.params["email"]
+    if email != "":
+        new_email, error = db.auth_user.email.validate(email)
+        if error:
+            res = {"success": "false", "message": f"new_email: {error}"}
+            log.error(res)
+            return json.dumps(res, separators=(',', ':'))
+        updated_user["email"] = new_email
     log.debug(f"updated_user : {updated_user}")
-    response = db(db.auth_user.id == request.params['id']).validate_and_update(**updated_user)
-    errors = response.get("errors")
-    if errors:
-        res = {"success": "false", "message": json.dumps(errors)}
-        log.error(res)
-        return json.dumps(res, separators=(',', ':'))
+    
+    new_password = request.params["password"]
+    if new_password != "":
+        new_pwd, error = db.auth_user.password.validate(new_password)
+        if error:
+            res = {"success": "false", "message": f"new_password: {error}"}
+            log.error(res)
+            return json.dumps(res, separators=(',', ':'))
+        updated_user["password"] = new_pwd
+        updated_user["last_password_change"] = datetime.datetime.now()
+    
+    db(db.auth_user.id == request.params['id']).update(**updated_user)
     
     res = {"redirect": "back",
-            "message": "%s (%s) user edited" % (request.params["email"], request.params["id"])}
+            "message": f"{request.params['email']} ({request.params['id']}) user edited"}
     log.info(res,
         extra={'user_id': auth.user_id, 'record_id': request.params['id'], 'table_name': 'auth_user'})
     return json.dumps(res, separators=(',',':'))
