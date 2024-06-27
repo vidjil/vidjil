@@ -207,6 +207,25 @@ Report.prototype = {
     },
 
     /**
+     * Apply in local settings values present in localStorage
+     * Usefull when a new template is added by settings import
+     */
+    updateLocalStorage: function(){
+        if (localStorage && localStorage.getItem('report_templates')){
+            this.local_settings = JSON.parse(localStorage.getItem('report_templates'))
+        }
+        this.initSave()
+    },
+
+    /**
+     * Reset settings template to an empty dict.
+     * Don't update view element
+     */
+    resetSettings: function(){
+        this.local_settings = {}
+    },
+
+    /**
      * Open confirmBox to ask user to fill a name for report/template
      * Close confirmBox only if save succesed
      */
@@ -314,7 +333,7 @@ Report.prototype = {
         }
 
         var save_select = $("#report-settings-save")
-
+        save_select.empty() // Erase previous value to not create ducplication of select list
         var div = $('<div/>',   {}).appendTo(save_select);
 
         var select = $('<select/>', { name: 'rs-save-select',

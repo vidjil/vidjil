@@ -279,6 +279,9 @@ Model.prototype = {
         this.changeTimeFormat(this.time_type,       false)
         this.changeAlleleNotation(this.alleleNotation, false)
         this.changeCloneNotation(this.cloneNotationType, false)
+        if (report){
+            report.updateLocalStorage()
+        }
     },
     /**
      * remove all elements from the previous .vidjil file but keep current user parameters and linked views
@@ -2722,8 +2725,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * Export localStorage content as a json string
      * This content is download with an anchor
      */
-    settingsExport(){
-        var settings = JSON.stringify(localStorage);
+    settingsExport: function(key){
+        var settings;
+        if (key == undefined){
+            settings = JSON.stringify(localStorage);
+        } else {
+            var export_settings = {}
+            export_settings[key] = localStorage.getItem(key)
+            settings = JSON.stringify(export_settings);
+        }
+
         download_csv(settings, "vidjil_settings.json", "json")
     },
 
@@ -2778,7 +2789,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                             localStorage.setItem(key, imported_value);
                         }
                     } else {
-                        localStorage.setItem(key, imported_value);
+                        if (typeof imported_value === 'string' || typeof imported_value === 'number' || typeof imported_value === 'boolean') {
+                            localStorage.setItem(key, imported_value);
+                        } else {
+                            localStorage.setItem(key, JSON.stringify(imported_value));
+                        }
+
+                    }
+                    div_import_settings_results.innerHTML += `import ${key}: ${imported_value.toString()}<br/>`
+                    if (key == "report_templates") {
+                        console.log({ msg: `Import templates: ${Object.keys(imported_value)}`, type: "flash", priority: 1 });
                     }
                     
                 }
@@ -2976,6 +2996,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.changeAlleleNotation("when_not_01", false)
         this.changeCloneNotation("short_sequence", false)
         console.log({ msg: "user preferences have been reset", type: "flash", priority: 1 });
+        if (report) { report.resetSettings() }
+        this.applySettings()
     },
     
     /**
