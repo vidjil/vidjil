@@ -602,6 +602,17 @@ function compareNumericalArrays(arrA, arrB){
 
 
 /**
+ * Return in a select list the corresponding value to check
+ */
+function checkSelectOptionByValue(selectId, valueToCheck) {
+    let selectElement = document.getElementById(selectId);
+    console.debug(selectElement)
+    var option = Array.from(selectElement.options).find(option => option.value === valueToCheck);
+    console.debug(option)
+    if (option) { option.selected = true}
+}
+
+/**
  * Simplify a float to prevent approximation issues.
  */
 function discard_float_approximation(float) {
