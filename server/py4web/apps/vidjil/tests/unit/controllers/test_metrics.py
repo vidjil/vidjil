@@ -143,6 +143,28 @@ class TestMetricsController(unittest.TestCase):
         assert result["config_analysis"][0]["config"]['program'] == 'vidjil'
         assert result["config_analysis"][0]["_extra"]['COUNT("results_file"."id")'] == 2
         
+    def test_metrics_config_by_groups(self):
+        #Given
+        db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
+        db_manipulation_utils.add_patient(1,2)
+        db_manipulation_utils.add_sequence_file(-1, -1, False, False, -1)
+        db_manipulation_utils.add_scheduler_task('pre_process', 1, 'COMPLETED', [1, 1], "2024-01-01 10:00:00")
+        db_manipulation_utils.add_results_file(-1, 1, -1, False)
+        db_manipulation_utils.add_results_file(-1, 2, -1, False)
+        db_manipulation_utils.add_results_file(-1, 2, -1, False)
+        
+        #When
+        result = self.get_metrics()
+        print(result['config_analysis'][0])
+        print(result['config_analysis'][0]["_extra"].keys())
+        
+        #Then
+        assert result["config_analysis"][0]["results_file"]['config_id'] == 1
+        assert result["config_analysis"][0]["config"]['name'] == "default + extract reads"
+        assert result["config_analysis"][0]["config"]['program'] == 'vidjil'
+        assert result["config_analysis"][0]["_extra"]['COUNT("results_file"."id")'] == 1
+        assert result["config_analysis"][1]["_extra"]['COUNT("results_file"."id")'] == 2
+        
     def test_metrics_sequence_file(self):
         #Given
         db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
@@ -197,4 +219,19 @@ class TestMetricsController(unittest.TestCase):
         #Then 
         assert result["set_runs_count"] == 1
         
+    def test_status_analysis(self):
+         #Given
+        db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
+        db_manipulation_utils.add_patient(1,2)
+        db_manipulation_utils.add_sequence_file(-1, -1, False, False, -1)
+        db_manipulation_utils.add_scheduler_task('pre_process', 1, 'COMPLETED', [1, 1], "2024-01-01 10:00:00")
+        db_manipulation_utils.add_scheduler_task('pre_process', 1, 'PENDING', [1, 1], "2024-01-01 10:00:00")
+        db_manipulation_utils.add_scheduler_task('pre_process', 1, 'PENDING', [1, 1], "2024-01-01 10:00:00")
         
+        #When
+        result = self.get_metrics()
+        print(result)
+        
+        #Then 
+        assert result["status_analysis"][0]["_extra"]['COUNT("scheduler_task"."id")'] == 1
+        assert result["status_analysis"][1]["_extra"]['COUNT("scheduler_task"."id")'] == 2    

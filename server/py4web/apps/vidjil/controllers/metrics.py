@@ -49,10 +49,11 @@ def metrics():
     if "metrics" in auth.groups or auth.is_admin(): # WARNING !!! Iconsistency, switch between mutiple call to admin/not admin. (tested with API)
         message = 'status METRICS'
         data = {
+                     
             "message"     : message,
             "users_count" : len(db().select(db.auth_user.ALL,   db.auth_user.id.count(),  groupby=db.auth_user.id )),
             "group_count" : len(db().select(db.auth_group.ALL,  db.auth_group.id.count(), groupby=db.auth_group.id )),
-            "group_count_w/o_test" : len(db(db.auth_group.role.like('test%')).select(db.auth_group.ALL, db.auth_group.id.count(), groupby=db.auth_group.id)), #pas fini
+            "group_count_only_test" : len(db(db.auth_group.role.like('test%')).select(db.auth_group.ALL, db.auth_group.id.count(), groupby=db.auth_group.id)), #pas fini
 
             "login_count" : db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description ), # not fill for the moment
 
@@ -72,6 +73,7 @@ def metrics():
             # Samples, analysis Globally
             "sequence_count" : len(db().select(db.sequence_file.ALL, db.sequence_file.id.count(), groupby=db.sequence_file.id )),
             "results_count"  : len(db().select(db.results_file.ALL,  db.results_file.id.count(),  groupby=db.results_file.id )),
+            "status_analysis" : db().select(db.scheduler_task.status, db.scheduler_task.id.count(), db.scheduler_task.task_name, groupby=db.scheduler_task.task_name|db.scheduler_task.status ),
 
             # Samples, analysis
             "sequence_by_user" : db().select(db.sequence_file.provider.with_alias("user_id"), 
@@ -82,12 +84,19 @@ def metrics():
                 groupby=db.sequence_file.provider),
 
             "config_analysis" : db(db.results_file.config_id==db.config.id).select(db.results_file.config_id, db.config.name, db.config.program, db.results_file.id.count(),  groupby=db.results_file.config_id ), 
-            "config_analysis_by_groups" : db(db.results_file.config_id==db.config.id).select(db.results_file.config_id, db.config.name, db.config.program, db.results_file.id.count(),db.auth_group.role , groupby=db.results_file.id|db.auth_group.role ), #pas fini
+            "config_analysis_by_groups" : 
+                db((db.config.id==db.results_file.config_id) & 
+                (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
+                (db.sample_set_membership.sample_set_id==db.patient.sample_set_id) & 
+                (db.patient.creator==db.auth_membership.user_id) & 
+                (db.auth_membership.group_id==db.auth_group.id))
+                .select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), db.auth_group.role, groupby=(db.results_file.config_id|db.auth_group.id))
         }
-        print( data )
+        print( data )   
         
     else:
         data = {"message": 'status NOT in metrics group'}
     return data
 
 #########################################################################
+
