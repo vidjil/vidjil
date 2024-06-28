@@ -502,10 +502,8 @@ build_test_server_docker:
     - /^prod-server/
     - /^prod-client/
     - /^feature-.*s.*\/.*$/
-    - /^feature-.*c.*\/.*$/
     - /^feature-.*t.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
     - /^hotfix-.*t.*\/.*$/
     - dev
   tags:
