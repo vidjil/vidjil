@@ -124,6 +124,8 @@ describe('Settings', function () {
         .should("be.visible")
         .then(($btn) => { cy.get("#settings_import").selectFile(settings_file_report); })
 
+      cy.get('.flash_container > :nth-child(1)')
+        .should("contain", "Import templates: own_template_XXX")
 
       cy.get('#export_report_menu').click({force: true})
 
