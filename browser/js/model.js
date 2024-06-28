@@ -279,7 +279,6 @@ Model.prototype = {
         this.changeTimeFormat(this.time_type,       false)
         this.changeAlleleNotation(this.alleleNotation, false)
         this.changeCloneNotation(this.cloneNotationType, false)
-        // console.debug(report)
         if (typeof report !== 'undefined'){
             report.updateLocalStorage()
         }

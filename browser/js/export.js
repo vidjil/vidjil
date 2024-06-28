@@ -333,7 +333,7 @@ Report.prototype = {
         }
 
         var save_select = $("#report-settings-save")
-        save_select.empty() // Erase previous value to not create ducplication of select list
+        $("#rs-save-select").empty() // Erase previous values to not create ducplication of select list
         var div = $('<div/>',   {}).appendTo(save_select);
 
         var select = $('<select/>', { name: 'rs-save-select',
