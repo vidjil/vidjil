@@ -69,8 +69,8 @@ describe('Settings', function () {
       cy.openAnalysis("doc/analysis-example2.vidjil")
       // cy.open_menu_settings()
       cy.openSettingsManager()
-      var settings_file_short = "data/vidjil_settings_format_short.json"
-      var settings_file_delta = "data/vidjil_settings_format_delta.json"
+      var settings_file_short = "browser/test/cypress/data/vidjil_settings_format_short.json"
+      var settings_file_delta = "browser/test/cypress/data/vidjil_settings_format_delta.json"
 
 
       // Before import; correct time format selected (time delta)
@@ -115,11 +115,8 @@ describe('Settings', function () {
 
     it('04 - import settings files - report',  function() {
       cy.openAnalysis("doc/analysis-example2.vidjil")
-      // cy.open_menu_settings()
       cy.openSettingsManager()
-      var settings_file_short = "data/vidjil_settings_format_short.json"
-      var settings_file_delta = "data/vidjil_settings_format_delta.json"
-      var settings_file_report = "data/vidjil_settings_with_report.json"
+      var settings_file_report = "browser/test/cypress/data/vidjil_settings_with_report.json"
 
 
       cy.openSettingsManager()
