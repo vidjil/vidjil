@@ -2796,7 +2796,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         }
 
                     }
-                    div_import_settings_results.innerHTML += `import ${key}: ${imported_value.toString()}<br/>`
                     if (key == "report_templates") {
                         console.log({ msg: `Import templates: ${Object.keys(imported_value)}`, type: "flash", priority: 1 });
                     }
