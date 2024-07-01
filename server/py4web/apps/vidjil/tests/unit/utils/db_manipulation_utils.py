@@ -1,6 +1,7 @@
 """ Helper to manipulate db for tests"""
 import json
 import pathlib
+from typing import Any
 
 from . import test_utils
 from .omboddle import Omboddle
@@ -8,6 +9,7 @@ from ....controllers import auth as auth_controller
 from ....common import db
 from ....modules.permission_enum import PermissionEnum
 from .... import defs
+from .... import tasks
 from ...functional.db_initialiser import TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD
 from py4web.core import Session
 
@@ -23,7 +25,7 @@ def log_in_as_default_admin(session: Session) -> None:
     log_in(session, TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD)
 
 
-def log_in(session: Session, email: str, password: str) -> None:
+def log_in(session: Session, email: str, password: str) -> Any:
     """Log in
 
     Args:
@@ -32,7 +34,8 @@ def log_in(session: Session, email: str, password: str) -> None:
         password (str): user password
     """
     with Omboddle(session, keep_session=True, params={"login": email, "password": password}):
-        auth_controller.submit()
+        json_result = auth_controller.submit()
+        return json.loads(json_result)
 
 
 def logout(session: Session) -> None:
@@ -159,7 +162,7 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
     patient_id = db.patient.insert(id_label="", first_name="patient", last_name=patient_number, birth="2010-10-10",
                                    info=f"test patient {patient_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
     if (auth != None):
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
         auth.add_permission(
@@ -329,7 +332,7 @@ def add_fused_file(sample_set_id: int = -1, sequence_file_id: int = -1, config_i
         config_id=config_id,
         sample_set_id=sample_set_id,
         fuse_date="2010-10-10 10:10:10",
-        status="COMPLETED",
+        status=tasks.STATUS_COMPLETED,
         sequence_file_list="%d_" % sequence_file_id,
         fused_file=fused_file)
     return fused_file_id

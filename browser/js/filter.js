@@ -26,6 +26,8 @@ Filter.prototype = {
         
         // init slider
         var top_slider = document.getElementById("top_slider")
+        var div_warning = document.getElementById("top_slider_min_per_locus_warning")
+
         if (top_slider) 
             top_slider.max = ""+max_top;
         
@@ -38,9 +40,19 @@ Filter.prototype = {
                 top = max_top
                 this.filters[topFilterId].value = max_top;
             }
-            if (top_slider) 
+            if (top_slider) {
                 top_slider.value = top;
 
+                // If min per locus defined, value can be set over limit, in this case, show a warning message and a change color of slider
+                if (top > CLONOTYPE_TOP_LIMIT){
+                    top_slider.style.accentColor = "orangered";
+                    div_warning.style.display = "";
+                } else {
+                    top_slider.style.accentColor = ""
+                    div_warning.style.display = "none"
+                }
+            }
+                
             var html_label = document.getElementById('top_label');
             if (html_label !== null) {
                 var count = 0;

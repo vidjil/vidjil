@@ -647,3 +647,42 @@ json_data_productivity.clones = [
     }
 ]
 
+
+
+
+
+
+
+
+
+
+json_data_min_per_locus = JSON.parse(JSON.stringify(json_data_raw));
+json_data_min_per_locus.vidjil_json_version = "2016b"
+json_data_min_per_locus.data = null
+json_data_min_per_locus.reads = {
+    "segmented": [110000],
+    "total": [110000],
+    "germline": {"TRG": [100000], "IGH": [10000] },
+    "clones": {"IGH": [10], "TRG": [100] }
+  }
+json_data_min_per_locus.samples = {
+    "run_timestamp": ["2024-05-01 13:59:02"],
+    "commandline": ["./vidjil -c clones -g germline/ -r 1 -o ./out3 -z 200 -n 5 Diag.fa "],
+    "number": 1,
+    "original_names": ["Diag.fa"],
+    "log": [" log\n "]
+}
+
+for (var i = 1; i <= 110; i++) {
+  if (i <= 100) {var locus = "TRG"} else {var locus = "IGH"}
+
+  var clone = {
+    "sequence": `sequence_${locus}_${i}`,
+    "name":     `Name ${locus} - ${i}`,
+    "id":       `Id ${locus} - ${i}`,
+    "reads":    [1000 - i],
+    "top":      i,
+    "germline": locus,
+  }
+  json_data_min_per_locus.clones.push(clone)
+}

@@ -322,7 +322,7 @@ if settings.USE_CELERY:
         "apps.%s.tasks" % settings.APP_NAME, broker=settings.CELERY_BROKER,
         backend='redis://redis' 
     )
-
+    
 
 # #######################################################
 # Enable authentication

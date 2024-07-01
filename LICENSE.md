@@ -1,8 +1,8 @@
 
 # Vidjil: open-source and licenses
 
-Vidjil is open-source, released under GNU GPLv3+ license.
-You are welcome to redistribute it under [certain conditions](http://git.vidjil.org/blob/master/doc/LICENSE).
+Vidjil is open-source, released under the GPL version 3 or any later version.
+You are welcome to redistribute it under [certain conditions](http://git.vidjil.org/blob/master/LICENSE).
 This software is for research use only and comes with no warranty.
 
 The development code is available on <http://gitlab.vidjil.org/>.
@@ -19,7 +19,7 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 
 ## vidjil-algo
 
-### Software and libraries included in Vidjil repository
+### Software and libraries included in Vidjil-algo repository
 
 **CLI11**               : Command line parser for C++11
 
@@ -50,7 +50,7 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 
 ## vidjil-client
 
-### Software and libraries included in Vidjil repository
+### Software and libraries included in Vidjil-client repository
 
 **bioseq.js**           : fast and lightweight javascript library for affine-gap local and banded global pairwise alignment (Smith-Waterman)
 
@@ -59,14 +59,14 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 * @link             <https://github.com/lh3/bioseq-js>
 * @license          MIT
 
-**d3-v3**		        : framework svg
+**d3-v3**               : framework svg
 
 * @version          5.14.1 (2019)
 * @author           Michael Bostock
 * @link             <http://d3js.org/>
 * @license          BSD
 
-**jQuery**		        : fast, small, and feature-rich JavaScript library
+**jQuery**              : fast, small, and feature-rich JavaScript library
 
 * @version          3.3.1 (2018-01-20)
 * @author           John Resig and jQuery team
@@ -77,7 +77,7 @@ x is "current version" at time of release
 => 2.1.1:
 => 3.x:
 
-**file.js**  		    : load/save cross-navigator
+**file.js**             : load/save cross-navigator
 
 * @version          (<= 2014)
 * @author           Eli Grey
@@ -91,7 +91,7 @@ x is "current version" at time of release
 * @link             <https://www.jstree.com/>
 * @license          MIT
 
-**less**  		        : dynamic stylesheet
+**less**                : dynamic stylesheet
 
 * @version          less-1.5.0
 * @author           Alexis Sellier
@@ -112,7 +112,7 @@ x is "current version" at time of release
 * @link             <https://github.com/twada/qunit-tap>
 * @license          MIT/GPLv2
 
-**require.js**  	    : JavaScript file and module loader
+**require.js**          : JavaScript file and module loader
 
 * @version          2.3.6 (2018-08-27)
 * @author           The Dojo Foundation All Rights Reserved.
@@ -120,18 +120,17 @@ x is "current version" at time of release
 * @license          MIT
 * @compatibility    IE 6+, Firefox 2+, Safari 3.2+, Chrome 3+, Opera 10+
 
-
 **seedrandom.js**       : A replacement of Math.random of javascript that allow to get fixed seed
+
 * @author           David Bau + external contributor
 * @version          3.0.5
 * @link             <https://github.com/davidbau/seedrandom>
 * @license          BSD
 
-
 **svgExport.js**        : Export SVG to PNG
 
 * @author           Nikita Rokotyan, adapted by the Vidjil Team
-* @version          retrieven on 2018-09-14
+* @version          retrieved on 2018-09-14
 * @link             <http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177>
 * @license          MIT
 
@@ -149,13 +148,14 @@ x is "current version" at time of release
 * @link             <https://github.com/select2/select2>
 * @license          MIT
 
-### Base docker image
+### Client base docker image
 
-**nginx:1.15.0**        : docker image used as base for vidjil-client docker image
+**nginx**               : docker image used as base for vidjil-client docker image
 
 * @license          BSD
+* @version          1.21
 
-### Additional packages installed in the image
+### Additional packages installed in the client image
 
 **wget**
 
@@ -187,24 +187,23 @@ x is "current version" at time of release
 * @license  MIT
 * @link     <https://github.com/gnosek/fcgiwrap>
 
-
 ## vidjil-server
 
-### Software and libraries included in Vidjil repository
+### Software and libraries included in Vidjil-server repository
 
-**web2py**              : python CMS
+**py4web**              : python CMS
 
+* @license          BSD
+* @link             <https://github.com/web2py/py4web/blob/master/LICENSE.md>
 * @author           Massimo Di Pierro & al
-* @link             <http://www.web2py.com/init/default/license>
-* @license          LGPLv3
 
-### Base docker image
+### Server base docker image
 
-**ubuntu 18.04**        : docker image used as base for vidjil-server docker image
+**ubuntu 20.04**        : docker image used as base for vidjil-server docker image
 
 * @license          <https://ubuntu.com/licensing>
 
-### Additional packages installed in the image
+### Additional packages installed in the server image
 
 **wget**
 
@@ -295,7 +294,6 @@ x is "current version" at time of release
 
 * @license  GPLv2
 * @link     <https://pypi.org/project/pyuwsgi/>
-
 
 ## Germline/sequence databases
 

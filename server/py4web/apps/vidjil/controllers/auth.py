@@ -6,9 +6,10 @@ import time
 import uuid
 from datetime import datetime
 
+
 from .. import defs
-from ..modules.stats_decorator import *
 from ..modules import vidjil_utils
+from ..modules.permission_enum import PermissionEnum
 from ..controllers.group import add_default_group_permissions
 import json
 from py4web import action, request, URL
@@ -83,18 +84,18 @@ def submit():
 @action("/vidjil/auth/logout", method=["POST", "GET"])
 @action.uses(db, session, auth, cors, flash)
 def logout():
-    user_id = auth.session["user"]["id"]
+    if "user" in auth.session and "id" in auth.session["user"]:
+        user_id = auth.session["user"]["id"]
+        auth_event_data = dict(time_stamp=str(datetime.now()),
+                            client_ip=request.remote_addr,
+                            user_id=user_id,
+                            origin="auth",
+                            description='User ' + str(user_id) + ' Logged-out')
+        db.auth_event.insert(**auth_event_data)
+        
     session.clear()
     res = {"redirect": URL('default/home.html')}
-    log.info("Logout ", 
-             extra={'user_id': auth.current_user.get('id'), 
-                    "timestamp": calendar.timegm(time.gmtime())})
-    auth_event_data = dict(time_stamp=str(datetime.now()),
-                           client_ip=request.remote_addr,
-                           user_id=user_id,
-                           origin="auth",
-                           description='User ' + str(user_id) + ' Logged-out')
-    db.auth_event.insert(**auth_event_data)
+    log.info("Logout")
     return json.dumps(res, separators=(',', ':'))
 
 
@@ -140,7 +141,7 @@ def register_form():
     new_user_id = response["id"]
     new_user_email = request.params["email"]
     # create new user default group
-    new_user_group_id = db.auth_group.insert(role="user_%i" % (new_user_id),
+    new_user_group_id = db.auth_group.insert(role=auth.user_group_role(new_user_id),
                                              description="Group uniquely assigned to user %i" % (new_user_id))
     db.auth_membership.insert(user_id=new_user_id, group_id=new_user_group_id)
     # Default permissions

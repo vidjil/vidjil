@@ -47,6 +47,7 @@ QUnit.test("read details", function(assert) {
     top_info.id = "top_info"
     document.getElementById('info').appendChild(top_info)
 
+    // Simulate shift+click with all systems available
     m.keep_one_active_system('IGH')
     info.update();
     var sbnm = document.getElementsByClassName('systemBoxNameMenu')
@@ -56,4 +57,15 @@ QUnit.test("read details", function(assert) {
     var reads = document.getElementsByClassName('reads_details')[0]
     assert.includes(reads.outerHTML, 'analyzed reads</span><span>200 (100.00%)', 'read details: analyzed reads (same than before)')
     assert.includes(reads.outerHTML, 'selected locus</span><span>100 (50.00%)', 'read details: selected locus (only IGH now)')
+
+    // Simulate shift+click with only one system available
+    m.toggle_all_systems(true)
+    info.update();
+    var sbnm = document.getElementsByClassName('systemBoxNameMenu')
+    assert.includes(sbnm[0].outerHTML, '<span class=\"systemBoxNameMenu TRG\" id=\"toogleLocusSystemBox_TRG\">', 'system box TRG is active again')
+    assert.includes(sbnm[1].outerHTML, '<span class=\"systemBoxNameMenu IGH\" id=\"toogleLocusSystemBox_IGH\">', 'system box IGH is still active')
+
+    var reads = document.getElementsByClassName('reads_details')[0]
+    assert.includes(reads.outerHTML, 'analyzed reads</span><span>200 (100.00%)', 'read details: analyzed reads (same than before)')
+    assert.includes(reads.outerHTML, 'selected locus</span><span>200 (100.00%)', 'read details: selected locus (TRG + IGH again)')
 });

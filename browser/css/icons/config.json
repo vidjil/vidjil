@@ -1,8 +1,10 @@
 {
   "name": "",
-  "hinting": true,
-  "css_use_suffix": false,
   "css_prefix_text": "icon-",
+  "css_use_suffix": false,
+  "hinting": true,
+  "units_per_em": 1000,
+  "ascent": 850,
   "glyphs": [
     {
       "src": "entypo",
@@ -1341,8 +1343,18 @@
       "css": "chart-bar",
       "code": 59402,
       "src": "fontawesome"
+    },
+    {
+      "uid": "8fb55fd696d9a0f58f3b27c1d8633750",
+      "css": "table",
+      "code": 61646,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "c53068fe21c8410b0a098b4c52c3d37e",
+      "css": "down-circled2",
+      "code": 61647,
+      "src": "fontawesome"
     }
-  ],
-  "ascent": 850,
-  "units_per_em": 1000
+  ]
 }

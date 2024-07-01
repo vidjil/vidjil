@@ -10,7 +10,7 @@ describe('Creation of users and groups', function () {
         cy.close_tips()
     })
     beforeEach(function () {
-
+      cy.closeFlashAll()
     })
     afterEach(function () {
     })
@@ -64,8 +64,8 @@ describe('Creation of users and groups', function () {
     it('03-owner_set', function() {
         var owner_public = "public"
         var owner_admin  = "admin"
-        var owner_user1  = "user_1"
-        var owner_user2  = "user_2"
+        var owner_user1  = "Personal Group"
+        var owner_user2  = "user_0002"
 
         cy.createPatient("", `owner ${owner_public}`, "test", "2000-01-01", `Cypress; Patient to test owner ${owner_public}`, owner_public, `test owner ${owner_public}`)
         cy.createPatient("", `owner ${owner_admin}`,  "test2", "2000-01-02", `Cypress; Patient to test owner ${owner_admin}`, owner_admin, `test2 owner ${owner_admin}`)

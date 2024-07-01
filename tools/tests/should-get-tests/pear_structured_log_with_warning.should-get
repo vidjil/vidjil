@@ -1,4 +1,4 @@
-!LAUNCH: python ../../pear_structured_log.py -i ../data/pear_log_warning.log -o ../data/pear_strucured_waring.json; cat ../data/pear_strucured_waring.json
+!LAUNCH: $PYTHON ../../pear_structured_log.py -i ../data/pear_log_warning.log -o ../data/pear_strucured_waring.json; cat ../data/pear_strucured_waring.json
 
 $ Correct percentage of reads
 1:"percentage_assembled": 32.4, 

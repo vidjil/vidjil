@@ -117,15 +117,13 @@ class TestDefaultController():
         # Given : not logged
 
         # When : Calling whoami
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}):
-            json_result = default_controller.whoami()
+        with pytest.raises(HTTP) as excinfo:
+            with Omboddle(self.session, keep_session=True, params={"format": "json"}):
+                default_controller.whoami()
 
         # Then : We get a redirect
-        result = json.loads(json_result)
-        assert result["id"] == None
-        assert result["email"] == None
-        assert result["admin"] == False
-        assert result["groups"] == []
+        exception = excinfo.value
+        assert exception.status == 303
 
     def test_whoami_admin(self):
         # Given : Logged as admin
@@ -245,7 +243,7 @@ class TestDefaultController():
     def test_run_request(self, mocker):
         # Given : Logged as other user, and add corresponding config, ...
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -307,7 +305,7 @@ class TestDefaultController():
     def test_run_all_request(self, mocker):
         # Given : Logged as other user, and add corresponding config, ...
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -373,7 +371,7 @@ class TestDefaultController():
     def test_get_data(self):
         # Given : Logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),

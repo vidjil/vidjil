@@ -6,7 +6,7 @@ var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
 console.log( url )
 
 // those tests are opening different .vidjil files with or without .analysis and check the expected data have been loaded
-describe('Test 00 Init', function () {
+describe('Load', function () {
     beforeEach(function () {
         cy.setBrowser(url)
     })
@@ -283,7 +283,7 @@ describe('Test 00 Init', function () {
 
     // load_data_with_mrd
     cy.openAnalysis("/data/issues/issue_mrd.vidjil")
-    cy.get('#listElem_0 > #clone_infoBox_0 > .icon-info').click()
+    cy.get('#listElem_1 > #clone_infoBox_1 > .icon-info').click()
 
     cy.get("#modal_line_mrd_family").should("exist") //modal line mrd_family exist for clone with mrd
     cy.get("#modal_line_mrd_pearson").should("exist") //modal line mrd_pearson exist for clone with mrd
@@ -297,7 +297,7 @@ describe('Test 00 Init', function () {
     cy.get("#modal_line_value_mrd_prevalent_on_spike_0").should("have.text", "64.89233726998077") //modal line mrd_prevalent_on_spike content is correct
     cy.get('.info-container > .closeButton > .icon-cancel').click()
 
-    cy.get('#listElem_1 > #clone_infoBox_1 > .icon-info').click()
+    cy.get('#listElem_0 > #clone_infoBox_0 > .icon-info').click()
     cy.get("#modal_line_mrd_family").should("not.exist") //modal line mrd_family NOT exist for clone without mrd
     cy.get("#modal_line_mrd_pearson").should("not.exist") //modal line mrd_pearson NOT exist for clone without mrd
     cy.get("#modal_line_mrd_prevalent").should("not.exist") //modal line mrd_prevalent NOT exist for clone without mrd

@@ -29,3 +29,52 @@ deploy_doc:
   only:
       - /^[^\/]*doc[^\/]*\//
       - /^feature-.*a.*\/release$/
+
+build_tutorial_pdf:
+  stage: tgz_release
+  image: leplusorg/latex:main
+  before_script: []
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+      - doc/tutorial/**/*
+      when: always
+  script:
+    - make -C doc/tutorial mastering-vidjil.pdf
+  artifacts:
+    paths:
+      - doc/tutorial/mastering-vidjil.pdf
+  tags:
+    - ci.inria.fr
+    - medium
+
+build_tutorial_html:
+  stage: tgz_release
+  image: leplusorg/latex:main
+  before_script: []
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+      - doc/tutorial/**/*
+      when: always
+  script:
+    - make -C doc/tutorial mastering-vidjil.html
+  artifacts:
+    paths:
+      - doc/tutorial/mastering-vidjil.html
+  tags:
+    - ci.inria.fr
+    - medium
+
+deploy_tutorial:
+  stage: deploy_prod
+  before_script: []
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+      - doc/tutorial/**/*
+      when: manual
+  script:
+    - scp -r doc/tutorial/* $VIDJIL_WWW:/var/www/static/doc/tutorial/
+      
+  

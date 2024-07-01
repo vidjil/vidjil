@@ -19,13 +19,13 @@ j0: reads.total
 
 
 $ field 1; string
-j: pre_process.preprocess: ["generic_script"]
+j: pre_process.stats.preprocess: ["generic_script"]
 
 $ field 2; datetime string
-j: pre_process.date[0]: 2022-12-22
+j: pre_process.stats.date[0]: 2022-12-22
 
 $ field 3; integer
-j: pre_process.reads_found: [1000]
+j: pre_process.stats.reads_found: [1000]
 
 $ field 4; string "XXX field"
-j: pre_process.computed: [234]
+j: pre_process.stats.computed: [234]

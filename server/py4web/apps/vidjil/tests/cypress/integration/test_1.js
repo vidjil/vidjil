@@ -8,8 +8,10 @@ describe('Manipulate db page (for cypress pipeline)', function () {
             this.l3data = l3data
         })
         cy.close_tips()
+        cy.closeFlashAll()
     })
     beforeEach(function () {
+        cy.closeFlashAll()
     })
     afterEach(function () {
     })

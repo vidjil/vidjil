@@ -54,7 +54,7 @@ class TestSampleSetController():
     def test_index_access_denied(self):
         # Given : logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -74,7 +74,7 @@ class TestSampleSetController():
     def test_index_no_config(self):
         # Given : logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -162,7 +162,7 @@ class TestSampleSetController():
     def test_form_add(self):
         # Given : logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -180,11 +180,36 @@ class TestSampleSetController():
         groups = result["groups"]
         assert len(groups) == 1
         assert groups[0]["id"] == user_group_id
+        assert result["master_group"] == user_group_id
+
+    def test_form_add_multiple_groups(self):
+        # Given : logged as other user, user added in group
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = auth.user_group(user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        auth.add_membership(2, user_id)
+
+        # When : Calling form
+        with Omboddle(self.session, keep_session=True, params={"format": "json"},
+                      query={"type": defs.SET_TYPE_PATIENT}):
+            json_result = sample_set_controller.form()
+
+        # Then : We get results_file list
+        result = json.loads(json_result)
+        assert result["message"] == "add patient"
+        assert result["isEditing"] == False
+        groups = result["groups"]
+        assert len(groups) == 1
+        assert groups[0]["id"] == user_group_id
+        assert result["master_group"] == user_group_id
 
     def test_form_edit(self):
         # Given : logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -212,7 +237,7 @@ class TestSampleSetController():
     def test_form_edit_access_denied(self):
         # Given : logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -270,7 +295,7 @@ class TestSampleSetController():
     def test_submit(self):
         # Given : logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -307,7 +332,7 @@ class TestSampleSetController():
     def test_submit_access_denied(self):
         # Given : logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        user_group_id = test_utils.get_user_group_id(db, user_id)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
@@ -327,7 +352,7 @@ class TestSampleSetController():
 
         # Then : We get results_file list
         result = json.loads(json_result)
-        assert result["message"] == "an error occured"
+        assert result["message"] == "an error occurred"
         patients = result["sets"][defs.SET_TYPE_PATIENT]
         assert len(patients) == 2
         # Patient add was added
@@ -337,7 +362,7 @@ class TestSampleSetController():
         patient_add_in_db = db.patient[patient_add["id"]]
         assert patient_add_in_db["first_name"] == self.patient_add_data["first_name"]
         assert patient_add_in_db["last_name"] == self.patient_add_data["last_name"]
-        assert patient_add_in_db["birth"] == None
+        assert patient_add_in_db["birth"] is None
         # patient edit was not modified
         patient_edit = next(
             patient for patient in patients if patient["last_name"] == self.patient_edit_data["last_name"])
@@ -366,7 +391,7 @@ class TestSampleSetController():
     # # def test_download(self, mocker):
     # #     # Given : logged as other user, add a results file with rights
     # #     user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-    # #     user_group_id = test_utils.get_user_group_id(db, user_id)
+    # #     user_group_id = auth.user_group(user_id)
     # #     db_manipulation_utils.log_in(
     # #         self.session,
     # #         db_manipulation_utils.get_indexed_user_email(1),
@@ -443,7 +468,7 @@ class TestSampleSetController():
     # def test_confirm(self):
     #     # Given : logged as other user, add a results file with the correct rights
     #     user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-    #     user_group_id = test_utils.get_user_group_id(db, user_id)
+    #     user_group_id = auth.user_group(user_id)
     #     db_manipulation_utils.log_in(
     #         self.session,
     #         db_manipulation_utils.get_indexed_user_email(1),
@@ -504,7 +529,7 @@ class TestSampleSetController():
     # def test_delete(self):
     #     # Given : logged as other user, add a results file with the correct rights
     #     user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-    #     user_group_id = test_utils.get_user_group_id(db, user_id)
+    #     user_group_id = auth.user_group(user_id)
     #     db_manipulation_utils.log_in(
     #         self.session,
     #         db_manipulation_utils.get_indexed_user_email(1),

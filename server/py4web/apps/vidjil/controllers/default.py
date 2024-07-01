@@ -22,6 +22,7 @@ from ..modules.sampleSet import get_sample_set_id_from_results_file
 from ..modules.analysis_file import get_analysis_data
 from ..controllers.group import add_default_group_permissions
 from ..tasks import custom_fuse
+from .. import tasks
 from io import StringIO
 import logging
 import json
@@ -71,12 +72,12 @@ def home():
     if auth.is_admin():
         redirect = URL('admin/index')
     else:
-        redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)
+        redirect = URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0})
     res = {"redirect" : redirect}
     return json.dumps(res, separators=(',',':'))
 
 @action("/vidjil/default/whoami", method=["POST", "GET"])
-@action.uses(db, session)
+@action.uses(db, auth.user, session)
 @vidjil_utils.jsontransformer
 def whoami():
     """
@@ -112,6 +113,7 @@ def whoami():
     return {}
 
 @action("/vidjil/default/logger", method=["POST", "GET"])
+@action.uses(cors)
 @vidjil_utils.jsontransformer
 def logger():
     '''Log to the server'''
@@ -289,9 +291,11 @@ def run_extra():
     log.debug(str(res))
     return json.dumps(res, separators=(',',':'))
 
+@action("/vidjil/default/checkProcess", method=["POST", "GET"])
+@action.uses(db, auth.user)
 def checkProcess():
     task = db.scheduler_task[request.query["processId"]]
-    results_file = db(db.results_file.scheduler_task_id == task.id).select().first()
+    results_file = db(db.results_file.id == task.id).select().first()
 
     msg = ''
     sample_set_id = -1
@@ -299,19 +303,21 @@ def checkProcess():
         sample_set_id = get_sample_set_id_from_results_file(results_file.id)
     if not results_file or not auth.can_view_sample_set(sample_set_id):
         msg = "You don't have access to this sample"
-    if sample_set_id > -1 and task.status == "COMPLETED" :
-        run = db( db.scheduler_run.task_id == task.id ).select()[0]
-    
-        res = {"success" : "true",
-               "status" : task.status,
-               "data" : {'run_result': run.run_result,
-                         'result_id': results_file.id
-                         },
-               "processId" : task.id}
+    if sample_set_id > -1 and task.status == tasks.STATUS_COMPLETED:
+        if results_file.data_file == None:
+            res = {"status": tasks.STATUS_RUNNING}
+        else:        
+            res = {"success" : "true",
+                   "status" : task.status,
+                   "data" : {
+                        'data_file': results_file.data_file,
+                        'result_id': task.id
+                    },
+                   "processId" : task.id}
     else :
         if len(msg) > 0:
             res = {"success" : "false",
-                   "status" : "FAILED",
+                   "status" : tasks.STATUS_FAILED,
                    "message": msg,
                    "processId" : task.id}
         else:
@@ -734,8 +740,9 @@ def error():
     user_str = user_str.replace('<','').replace('>','').strip()
 
     mail.send(to=defs.ADMIN_EMAILS,
-              subject=defs.EMAIL_SUBJECT_START+" Server error - %s" % user_str,
-              message="<html>Ticket: %s<br/>At: %s<br />User: %s</html>" % (ticket_url, requested_uri, user_str))
+              subject=f"{defs.EMAIL_SUBJECT_START} Server error - {user_str}",
+              body=(f"Ticket: {ticket_url} - At: {requested_uri} - User: {user_str}",
+                    f"<html>Ticket: {ticket_url}<br/>At: {requested_uri}<br />User: {user_str}</html>"))
 
     return "Server error"
 
@@ -839,8 +846,7 @@ def stop_impersonate() :
     return json.dumps(res, separators=(',',':'))
 
 
-## TODO make custom download for .data et .analysis
 @action("/vidjil/default/download/<filename>", method=["POST", "GET"])
-@action.uses(db, session)
+@action.uses(db, session, auth.user)
 def download(filename=None):
     return static_file(filename, root=defs.DIR_RESULTS, download=True)

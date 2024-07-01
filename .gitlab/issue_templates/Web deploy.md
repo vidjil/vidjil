@@ -19,9 +19,9 @@ Tuesday XX (D-8)
 On `feature-cs/release`:
 - [ ] Bikeshed strings
 - [ ] List all the changes, checking that the milestone contains all relevant issues/MR
-- [ ] Finalize `CHANGELOG.web`
+- [ ] Finalize `changelog-web`
 - [ ] Finalize ~doc
-- [ ] Finalize `docker/CHANGELOG`
+- [ ] Finalize `changelog-docker`
 
 Tuesday XX (D-1)
 - [ ] MR Freeze (everything)

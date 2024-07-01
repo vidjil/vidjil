@@ -1,4 +1,4 @@
-!LAUNCH: python ../../diff.py ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil
+!LAUNCH: $PYTHON ../../diff.py ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil
 
 $ Clone id-1 has a different number of reads 
 1:[+] .* Not the same number or reads: id-1

@@ -1,8 +1,67 @@
 
 !!! note
 
-	This changelog concerns the Vidjil web application, client and server.
-	As we are using continuous integration and deployment, some features are pushed on our servers between these releases.
+This changelog concerns the Vidjil web application, client and server.
+we are using continuous integration and deployment, some features are pushed on our servers between these releases.
+
+## Web 2024-04
+
+??? note "Milestone 2024-04"
+Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
+
+**QC stats**
+
+* Add a new feature for previewing Quality Control stats
+* Possibility to export data
+* See more information in [documentation](user.md#statistics-and-quality-control-view)
+
+**Improve analysis**
+
+* A direct download button allow to download fused vidjil file of a configuration
+
+**Min per locus**
+
+* Be able to set the minimum of clones to return per locus
+
+**Bug fixes**
+
+* Prevent bug when sampling date not filled
+* Prevent error on set opening
+* Prevent error when filtering samples
+* Prevent wrong size in reads length distribution in some cases
+* Prevent bug with duplicated entries that may lead to duplicated computations
+
+**Technical**
+
+* Follow-ups on py4web migration
+* Raw preprocessing file are now deleted at end of preprocess.
+
+
+## Web 2024-01
+
+??? note "Milestone 2024-01"
+	  Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/8).
+
+Main change of this release is based under the hood, with conversion of backend server from an old framework `web2py` to a new implementation `py4web`.
+Mains ideas are shared between these frameworks, yet it required a lot of hard work.
+
+We also changed the docker-compose file to adapt it to new `docker services`. Be aware when you make migration to this release to have a good understanding of change in this file. See [docker changelog](changelog-docker.md) to get more information.
+
+Other improvements of client and server are limited.
+
+**Improve analysis**
+* New axis with size of clonotype inside his locus. Also add an associated preset `Size within each locus (17)`.
+
+**API**, <https://www.vidjil.org/doc/api>
+* API have be adapted to new version of server. If you want to use it with previous web2py version, please use script in `web2py-stable` branch.
+* Now a group number can be specified. If your account is member of only one group, the selection will be done automatically. If you are member of multiple groups, a list of them will be print and you will have to select which one you want to use.
+
+**Bugs corrected**
+* AssignSubset link if now fixed
+
+**Continuous integration**
+* A complete rewriting of unit tests on server have been done.
+
 
 ## Web 2023-03
 

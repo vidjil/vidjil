@@ -1,4 +1,4 @@
-!LAUNCH: python ../../latex.py ../../../algo/tests/data/results-two-clones-1-2.vidjil 
+!LAUNCH: $PYTHON ../../latex.py ../../../algo/tests/data/results-two-clones-1-2.vidjil 
 
 $ Display the name of the .vidjil file
 2: data/results-two-clones-1-2.vidjil

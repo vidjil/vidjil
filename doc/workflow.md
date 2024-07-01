@@ -82,5 +82,4 @@ It can be used to check how the filtering works before a full run.
    Some reads can be of poor quality, or have poor quality on extremities.
    Trimming these reads may remove some artifact mutations.
 
-See also [Working with primers](xxx).
-
+See also [Working with primers](user.md#how-to-work-with-primers).

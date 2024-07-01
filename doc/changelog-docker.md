@@ -3,9 +3,30 @@
     We publish here notes to help to update these images.  
     See <http://www.vidjil.org/doc/server>
 
-## 2023-03-29
 
+## 2024-05-15
 
+**vidjil/server**:
+
+- The containers are now named `vidjil-*service-name*`
+- Use requirements.txt to build image
+- script directory for preprocess is reorganized and new variables is needed in `vidjil-server/confs/defs*` files.
+
+See more information at [Migrating from release 2024.01 to 2024.05](dev-server.md#migrating-py4web-release-202401-to-release-2024051)
+
+## 2024-01-23
+
+**vidjil/server**:
+
+!!! danger
+    A complete rewriting of backend server comes with this release.
+    We also changed in depth the docker-compose file. Read this changelog to get more information.
+
+A complete rewriting of backend server from web2py to py4web comes with releases `2024.01`.  
+We completely changed launched services, path of some volumes and we now use an dedicated `.env` environment file.  
+**Please follow migration documentation**.
+
+See more information at [Migrating from Web2py to Py4web](dev-server.md#migrating-from-web2py-to-py4web).
 
 ## 2022-06-28
 

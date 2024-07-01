@@ -29,10 +29,10 @@ function Database(model, address) {
     
     
     if (DB_ADDRESS !== ""){
-        var fileref=document.createElement('script')
-        fileref.setAttribute("type","text/javascript")
-        fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
-        document.getElementsByTagName("head")[0].appendChild(fileref)
+        // var fileref=document.createElement('script')
+        // fileref.setAttribute("type","text/javascript")
+        // fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
+        // document.getElementsByTagName("head")[0].appendChild(fileref)
         
         this.db_address = DB_ADDRESS;
         this.upload = {};
@@ -140,14 +140,7 @@ Database.prototype = {
 				// Link to result file and launch download
                              var file_name = "reads__"+clone_id+"__file_id_"+"_"+sequence_file_id+".fa"
                              var path_data = DB_ADDRESS+"/default/download/"+a.data_file+"?filename="+file_name
-                             var anchor = document.createElement('a');
-                             anchor.setAttribute("download", file_name);
-                             anchor.setAttribute("href",     path_data);
-                             anchor.style = 'display: none';
-                             self.ajax_indicator_stop()
-                             document.body.appendChild(anchor);
-                             anchor.click();
-                             document.body.removeChild(anchor);
+                             downloadFile(path_data, file_name)
 			 });
     },
 
@@ -179,7 +172,7 @@ Database.prototype = {
              xhrFields: {withCredentials: true},
              success: function (result) {
                  result = jQuery.parseJSON(result)
-                 setTimeout(function(){ self.waitProcess(result.processId, 5000, callback)}, 5000);
+                 setTimeout(function(){ self.waitProcess(result.results_file_id, 5000, callback)}, 5000);
                  self.connected = true;
              }, 
              error: function (request, status, error) {
@@ -237,8 +230,14 @@ Database.prototype = {
         }
         var arg = "";
         if (typeof args != "undefined" && Object.keys(args).length) {
+            // Append args
             arg = this.argsToStr(args)
-            url += "?" + arg;
+            if (url.includes("?")) {
+                url += "&"
+            } else {
+                url += "?"
+            }
+            url += arg;
         }
 
         //hack to process both web2py and py4web redirected url
@@ -436,14 +435,14 @@ Database.prototype = {
      * */
     display_result: function (result, url, args) {
         //rétablissement de l'adresse pour les futures requetes
-        result = result.replace("DB_ADDRESS/", this.db_address);
+        result = result.replace(/DB_ADDRESS\//g, this.db_address);
         result = result.replace("action=\"#\"", "action=\""+url+"\"");
 
         var res;
         try {
             res = jQuery.parseJSON(result);
         }
-        catch(err)//it's not a json so we just display the result as an html page
+        catch (err)//it's not a json so we just display the result as an html page
         {
             //affichage résultat
             this.display(result)
@@ -454,9 +453,10 @@ Database.prototype = {
             
             //
             this.fixed_header()
-            adress=DB_ADDRESS + 'notification/get_active_notifications'
+
             // New page displayed, attempt to display header and login notifications
-            this.loadNotifications(adress);
+            let address=DB_ADDRESS + 'notification/get_active_notifications'
+            this.loadNotifications(address);
 
             $("#menu-container").addClass('disabledClass');
 
@@ -467,8 +467,18 @@ Database.prototype = {
             for (var i = list_select.length - 1; i >= 0; i--) {
                 $('#'+list_select[i]).select2();
             }
+            this.executeAfterAjaxScript()
 
             return 0 ;
+        }
+
+        //the json result contain a flash message
+        if (res.message) {
+            priority = res.success == 'false' ? 2 : 1
+            priority = typeof res.priority == 'undefined' ? priority : res.priority
+            console.log({"type": "flash",
+                             "msg": "database : " + res.message,
+                             "priority": priority})
         }
         
         //the json result contain a hack redirection
@@ -502,22 +512,12 @@ Database.prototype = {
         if (typeof res.clones != "undefined" && typeof res.reads == "undefined" ){
             this.m.parseJsonAnalysis(result)
         }
-        //the json result contain a flash message
-        if (res.message) {
-	    priority = res.success == 'false' ? 2 : 1
-	    priority = typeof res.priority == 'undefined' ? priority : res.priority
-	    console.log({"type": "flash",
-                         "msg": "database : " + res.message,
-                         "priority": priority}) // res.success can be 'undefined'
-	}
-        return res
 
-        
-        if (this.url.length == 1) $("#db_back").addClass("inactive");
+        return res
     },
     
     /** 
-     * link html forms to their coresponding ajax handler 
+     * link html forms to their corresponding ajax handler 
      * */
     init_ajaxform: function () {
         var self = this
@@ -935,6 +935,10 @@ Database.prototype = {
         }
     },
 
+    executeAfterAjaxScript: function() {
+        $.globalEval($(".afterAjaxScript").html());
+    },
+
     clear_login_info: function() {
         document.getElementById('login-container').innerHTML = '';
     },
@@ -1162,11 +1166,23 @@ Database.prototype = {
 
     //affiche la fenetre de dialogue avec le serveur et affiche ses réponses
     display: function (msg) {
+        console.log("display")
         this.div.style.display = "block";
         this.msg.innerHTML = msg;
-            
+        
         this.extract_login_info();
-        this.uploader.display()
+        this.uploader.display();
+        this.update_stats_locus_display();
+    },
+
+    update_stats_locus_display:function() {
+        console.log("update_stats_locus_display")
+        console.log("document.querySelectorAll(\".stats_locus\") : " + document.querySelectorAll(".stats_locus").length)
+        document.querySelectorAll(".stats_locus").forEach(function (element) {
+            locus = element.innerHTML
+            element.innerHTML = ""
+            element.appendChild(self.m.systemBox(locus, true))
+        })
     },
 
     //efface et ferme la fenetre de dialogue avec le serveur
@@ -1182,10 +1198,15 @@ Database.prototype = {
         
         $("#db_table_container").bind("scroll", function() {
             var offset = $(this).scrollTop();
-
             fixedHeader.css("top", offset)
-
         });
+
+        if ($("#db_table_container_x_scroll").length > 0) {
+            $("#db_table_container_x_scroll").bind("scroll", function() {
+                var offset = $(this).scrollLeft();
+                fixedHeader.css("left", -1*offset)
+            });
+        }
     },
     
     group_rights: function (value, name, right, id) {

@@ -35,6 +35,25 @@ describe('Test sandbox', function () {
     return
   })
 
+  it('4892; views update after aligner sequence deletion',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+    
+    cy.get('#listElem_0 > .nameBox')
+    cy.get('#listElem_3 > .nameBox').click( {ctrlKey: true} )
+    cy.get('#listElem_4 > .nameBox').click( {ctrlKey: true} )
+    cy.get('#listElem_5 > .nameBox').click( {ctrlKey: true} )
+
+    cy.get('#seq5 > .sequence-holder > .seq-fixed > .nameBox > .delBox > .icon-cancel')
+      .click()
+
+    cy.get('#seq4 > .sequence-holder > .seq-fixed > .nameBox > .nameBox2')
+      .should('be.visible') // information should still be present
+
+    cy.get('#seq5 > .sequence-holder > .seq-fixed > .nameBox > .nameBox2')
+      .should("not.be.visible")
+    
+    return
+  })
 
   it('error_with_wrong_analysis_format',  function() {
     // With analysis; wrong formated json string

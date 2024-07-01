@@ -21,7 +21,6 @@ The consortium also maintains a private issue tracker tracking requests by users
 including specific requests on user data.
 These data will never be used, nor shared with third-parties, without your explicit consent.
 
-
 ## Data on the public servers
 
 Accounts on the public server are provided free of charge to everyone for research use.
@@ -40,7 +39,6 @@ In any case, such data will never be used, nor shared with third-parties, withou
 Finally, IP addresses, user agent, connection times, and logs of some client and server operations are collected
 for server maintenance, usage statistics, traceability, and diagnosis to improve the platform.
 You can ask at any time for the removal of all these data.
-
 
 ## Data on the Healthcare server
 
@@ -75,4 +73,3 @@ you can [contact us](mailto:support@vidjil.org?subject=Personal data).
 
 Please clearly state the nature of your request (verifying, modifying, exporting, or deleting personal data)
 and, if applicable, include the URL of the data your request refers to.
-

@@ -13,6 +13,7 @@ make init
 build docker image
 From `/vidjil/docker/vidjil-server`
 ```
+cp ../../requirements.txt .
 docker build --no-cache -t vidjil/server:py4web .
 ```
 

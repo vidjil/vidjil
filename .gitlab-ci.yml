@@ -173,8 +173,7 @@ copy_release:
         scp algo/releases/vidjil-algo*.tar.gz algo/releases/vidjil-algo*/vidjil-algo-*_* $repo
       done
       release_name=$(cat algo/release)
-      ssh $VIDJIL_WWW "cd /var/www/html/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-algo-latest.tgz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-algo-latest_x86_64"
-      ssh $VIDJIL_BONSAI "cd /bio1/www/html/vidjil; scp vidjil-algo-${release_name}* $VIDJIL_BONSAI_PROD:/bio1/www/html/vidjil"
+      ssh $VIDJIL_WWW "cd /var/www/static/releases; ln -sf vidjil-algo-${release_name}.tar.gz vidjil-algo-latest.tar.gz; ln -sf vidjil-algo-${release_name}_x86_64 vidjil-algo-latest_x86_64"
   when: manual
   only:
     - /^feature-.*a.*\/release$/
@@ -248,8 +247,11 @@ test_server_unit:
     script:
       - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends gcc libldap2-dev libssl-dev libsasl2-dev python3-ijson libyajl2 python3-cffi wget unzip procps libffi-dev
       - python3 -m pip install -U pip
-      - python3 -m pip install --no-cache -r server/unit_requirements.txt
+      - python3 -m pip install --no-cache -r requirements.txt
+      - python3 -m pip install --no-cache -r requirements_tests.txt
+      - python3 -m pip freeze > pip_freeze_requirements.txt
       - mkdir -p /mnt/upload/uploads/
+      - wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 vidjil-algo && chmod +x vidjil-algo
       - make unit_server
     coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
     artifacts:
@@ -258,6 +260,8 @@ test_server_unit:
         coverage_report:
           coverage_format: cobertura
           path: server/unit_coverage.xml
+      paths:
+        - pip_freeze_requirements.txt
     only:
       - /^feature-.*s.*\/.*$/
       - /^hotfix-.*s.*\/.*$/
@@ -283,7 +287,6 @@ test_server_unit:
     - echo "TIME $(date) - after pulling docker images" >> time.log
     - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
     - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml 
-    - echo -e "volumes:\n    databases:" >> docker/docker-compose.yml
     - sed -i 's/latest/test/g' ./docker/docker-compose.yml
     # Replace path for some volumes
     # Use http version of config
@@ -300,20 +303,20 @@ test_server_unit:
     - docker-compose up -d mysql uwsgi
     - echo "TIME $(date) - after first compose up" >> ../time.log
     # Set rights
-    - docker exec docker_uwsgi_1 mkdir -p /usr/share/vidjil/server/py4web/apps/vidjil/errors/
-    - docker exec docker_mysql_1 chmod 0777 /var/lib/mysql/vidjil -R
-    - docker exec docker_uwsgi_1 chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R
-    - docker exec docker_uwsgi_1 chmod 0777 /mnt/result/results   -R
-    - docker exec docker_uwsgi_1 chmod 0777 /mnt/result/tmp
-    - docker exec docker_uwsgi_1 chmod 0777 /mnt/upload/uploads   -R
-    - docker exec docker_uwsgi_1 chmod 0777 /usr/share/tools      -R
+    - docker exec vidjil-uwsgi mkdir -p /usr/share/vidjil/server/py4web/apps/vidjil/errors/
+    - docker exec vidjil-mysql chmod 0777 /var/lib/mysql/vidjil -R
+    - docker exec vidjil-uwsgi chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R
+    - docker exec vidjil-uwsgi chmod 0777 /mnt/result/results   -R
+    - docker exec vidjil-uwsgi chmod 0777 /mnt/result/tmp
+    - docker exec vidjil-uwsgi chmod 0777 /mnt/upload/uploads   -R
+    - docker exec vidjil-uwsgi chmod 0777 /usr/share/tools      -R
     - chmod 777 -R volumes/vidjil/
     # Start other docker images
     - docker-compose up -d
     # Show some information on current states of docker services
     - docker ps
     # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
-    - docker exec docker_uwsgi_1 bash -c "cd /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ && python3 init_test_db.py"
+    - docker exec vidjil-uwsgi bash -c "cd /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ && python3 init_test_db.py"
     # Change File source definition in defs.py file 
     - cd .. # Go to root git directory
     - echo "TIME $(date) - before other server script" >> time.log
@@ -332,9 +335,9 @@ test_server_unit:
     - !reference [.setup_docker_server]
   after_script:
     - echo "TIME $(date) - END OF SERVER JOB" >> time.log
-    - docker cp docker_uwsgi_1:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
+    - docker cp vidjil-uwsgi:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
     - docker ps
-    - mkdir -p logs/after; for service in mysql fuse uwsgi workers flower nginx; do docker logs docker_${service}_1  > logs/after/${service}.log 2>&1; done
+    - mkdir -p logs/after; for service in mysql fuse uwsgi workers flower nginx; do docker logs vidjil-${service} > logs/after/${service}.log 2>&1; done
     - cd docker && docker-compose down -v
     - cd .. && cat time.log
     - docker rmi "vidjil/server:test" "vidjil/client:test"
@@ -373,6 +376,7 @@ deploy_review:
     - web
   extends:
     - .need_for_independant_test
+  allow_failure: true
 
 deploy_review_server:
   stage: deploy_review
@@ -429,11 +433,16 @@ deploy_review_server:
     - /^hotfix-.*s.*\/.*$/
   extends:
     - .need_for_independant_test
+  artifacts:
+    paths:
+      - docker_${CI_BUILD_REF_SLUG}
   variables:
     IMAGE_NAME_CLIENT: dev-client/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     IMAGE_NAME_SERVER: dev-server/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
   needs:
     - [build_test_server_docker]
+  allow_failure: true
+
 
 deploy_client:
   stage: deploy_prod
@@ -474,6 +483,7 @@ build_test_server_docker:
   script:
     - echo $CI_REGISTRY_IMAGE:$IMAGE_NAME
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cp requirements.txt docker/vidjil-server/
     # build and push the image to be used in subsequent stages
     - 'docker build 
         --no-cache
@@ -513,6 +523,7 @@ deploy_docker:
     - export SHA=`echo $CI_COMMIT_SHA | awk '{ print substr($0, 0, 8) }'`
     - export TAG="vidjil/$TYPE:$CUR_DATE-$SHA"
     - docker login -u "$CI_DOCKER_USER" -p "$CI_DOCKER_PASSWORD" $CI_DOCKER
+    - cp requirements.txt docker/vidjil-$TYPE/
     - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=PRODUCTION -t $TAG docker/vidjil-$TYPE
     - docker push $TAG
     - docker tag $TAG "vidjil/$TYPE:latest"

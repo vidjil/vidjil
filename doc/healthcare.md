@@ -2,7 +2,7 @@
 # Hosting options and healthcare compliance
 
 The Vidjil platform is open-source.
-We gladly help any people to install or use the platform, notably through the [http://vidjil.org/doc](documentation).
+We gladly help any people to install or use the platform, notably through the [documentation](http://vidjil.org/doc).
 Through the VidjilNet consortium, we also offer options for data hosting, data processing,
 dedicated training of biologists (platform usage),
 and dedicated support for IT staff (platform administration and maintenance).

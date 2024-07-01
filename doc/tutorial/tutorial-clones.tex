@@ -1,9 +1,10 @@
-\section{Viewing and filtering clones}
+\section{Viewing and filtering clonotypes}
+\label{sec:viewing-clonotypes}
 
 First-time users are advised to have a look at \href{https://www.vidjil.org/doc/user/#the-elements-of-the-vidjil-web-application}{\tt the-elements-of-the-vidjil-web-application} that describes the main elements of Vidjil.
 % Le mettre en amont ? 
 
-\subsection{Looking at a clone}
+\subsection{Looking at a clonotype}
 \begin{verbatim}
 
 
@@ -14,16 +15,16 @@ First-time users are advised to have a look at \href{https://www.vidjil.org/doc/
 \end{verbatim}
 
 
-Each RepSeq algorithm has its own definition of what a clone is (or, more precisely
+Each RepSeq algorithm has its own definition of what a clonotype is (or, more precisely
 a clonotype), and on how to output its sequence and how to assign a V(D)J designation.
 
-In this file, the most abundant clone
+In this sample, the most abundant clonotype
 is \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
 
-\question{Select this clone, either by clicking on the list or on the grid.
-  How many reads do this clone represent? (see again the bottom part to the right)}
+\question{Select this clonotype, either by clicking on the list or on the grid.
+  How many reads do this clonotype represent? (see again the bottom part to the right)}
 
-\reponse{The bottom panel display information about currently selected clones \fl 189 991 reads (9.665\,\%)}
+\reponse{The bottom panel display information about currently selected clonotypes \fl 189 991 reads (9.665\,\%)}
 
 \begin{verbatim}
   /////////////////////////
@@ -69,7 +70,7 @@ There are several options to display the V(D)J designation.
 
 \end{verbatim}
 
-\question{Try also the options  \com{alleles in clonotype names} : by selecting \com{always}, the clone
+\question{Try also the options  \com{alleles in clonotype names} : by selecting \com{always}, the clonotype
   V gene is displayed as \com{IGHV3-9*01}. Revert to the default \com{when not
     *01}. This setting, which is the default, allows to have a more condensed
   V(D)J designation that doesn't make the \com{*01} appear (it is implicit).}
@@ -98,15 +99,15 @@ There are several options to display the V(D)J designation.
 
 \end{verbatim}
 
-\subsection{Showing more clones}
+\subsection{Showing more clonotypes}
 
-By default Vidjil displays, at each time point, the 50 most abundant clones in the grid, and the 10 most abundant clones in the timeline graph.
-With five time points, we may therefore have from 50 to 250 clones displayed
+By default Vidjil displays, at each time point, the 50 most abundant clonotypes in the grid, and the 10 most abundant clonotypes in the timeline graph.
+With five time points, we may therefore have from 50 to 250 clonotypes displayed
 depending if the top 50 are always the same or always different or, more
 realistically, in-between.
-This number can be increased to a maximum of 100 clones by going to the \com{filter} menu and by putting the
+This number can be increased to a maximum of 100 clonotypes by going to the \com{filter} menu and by putting the
 slider to its right end.
-\question{Notice how the IGH smaller clonotypes percentage (second clone displayed in the list) changes. What was its
+\question{Notice how the IGH smaller clonotypes percentage (second clonotype displayed in the list) changes. What was its
   initial value? What is it now?}
 
 \reponse{filter set to 50 \fl IGH smaller clonotypes 10.11\,\%\\*
@@ -140,15 +141,15 @@ slider to its right end.
 
 \end{verbatim}
 
-The \textit{smaller clonotypes} correspond to clones that are not displayed
+The \textit{smaller clonotypes} correspond to clonotypes that are not displayed
 because they are never among the most abundant ones.
 
 
-\subsection{Tagging and filtering clones}
+\subsection{Tagging and filtering clonotypes}
 
-Consider the most abundant clones in the list:  \texttt{IGHV3-9 7/CCCGGA/17 J6*02} and  \texttt{TRGV10 13//5 JP1}.
+Consider the most abundant clonotypes in the list:  \texttt{IGHV3-9 7/CCCGGA/17 J6*02} and  \texttt{TRGV10 13//5 JP1}.
 Usually we may want to tag them in order to remember and follow them later on.
-\question{Click on the star and choose colored tags for these two clones, such as \texttt{clonotype 1} or \texttt{clonotype 2}.
+\question{Click on the star and choose colored tags for these two clonotypes, such as \texttt{clonotype 1} or \texttt{clonotype 2}.
   Notice how the color applies throughout all the views.}
 
 \begin{verbatim}
@@ -169,7 +170,7 @@ Usually we may want to tag them in order to remember and follow them later on.
 
 \end{verbatim}
 
-Later you may want to filter clones depending on the tags you have chosen.
+Later you may want to filter clonotypes depending on the tags you have chosen.
 
 \question{In the upper left part, click on the little dark gray square (the
   second coloured square starting from the right). What happens? What if you click again?}
@@ -195,11 +196,11 @@ Later you may want to filter clones depending on the tags you have chosen.
 
 \end{verbatim}
 
-This is a way of filtering some clones. This may be useful when we want to
-focus on some specific clones. Some other way of doing so are to filter them by
+This is a way of filtering some clonotypes. This may be useful when we want to
+focus on some specific clonotypes. Some other way of doing so are to filter them by
 their gene names, by their DNA sequences, 
 by their locus,
-or directly by hidding/focusing some clones.
+or directly by hidding/focusing some clonotypes.
 \question{In the search box,
   enter \texttt{GGAGTCGGGG} and validate with \texttt{Enter}.  How many sequences are
   left?}
@@ -219,8 +220,8 @@ Note that the search is performed both on the forward and the reverse strand.
 You can compose several filters:
 The menu filter shows the list of currently active filters.
 
-\question{How can you cancel this filter and view again all the clones?}
-\reponse{In the filter menu, you can remove filters one by one. You can also remove the text filter by clicking on the cross above the clone list.}
+\question{How can you cancel this filter and view again all the clonotypes?}
+\reponse{In the filter menu, you can remove filters one by one. You can also remove the text filter by clicking on the cross above the clonotype list.}
 \begin{verbatim}
   //////////////////////////////////////
   cy.log("// test_B_clones_07_filter_search_area")
@@ -251,9 +252,9 @@ The menu filter shows the list of currently active filters.
 \end{verbatim}  
 \bigskip
 
-Another solution to tag a specific clone is to rename it.
-\question{Double click on the name of a clone (in the list of clones) and
-  choose another name (\textit{e.g.} interesting clone) and validate using
+Another solution to tag a specific clonotype is to rename it.
+\question{Double click on the name of a clonotype (in the list of clonotypes) and
+  choose another name (\textit{e.g.} interesting clonotype) and validate using
   \texttt{Enter}.}
 \begin{verbatim}
   /////////////////////////////////////
@@ -272,9 +273,9 @@ Another solution to tag a specific clone is to rename it.
 
 \bigskip
 
-After this rename, you can see that the clone is still selected.
-\question{Click on several clones by holding the \texttt{Ctrl} key to select
-  more. Each time you add a new clone to the selection, its sequence
+After this rename, you can see that the clonotype is still selected.
+\question{Click on several clonotypes by holding the \texttt{Ctrl} key to select
+  more. Each time you add a new clonotype to the selection, its sequence
   is added in the bottom part.}
 \begin{verbatim}
   //////////////////////////////////
@@ -293,7 +294,7 @@ After this rename, you can see that the clone is still selected.
 
 \end{verbatim}
 
-\question{How many clones are selected? How many reads do those clones
+\question{How many clonotypes are selected? How many reads do those clonotypes
   represent?}
 \begin{verbatim}
   //////////////////////////////////////////////
@@ -305,8 +306,8 @@ After this rename, you can see that the clone is still selected.
 \end{verbatim}
 
 \question{ Notice the star at the right of the screen, near the number
-  of reads. You can also tag clones using this icon. In that way, you will be able to tag
-  all the selected clones at once.}
+  of reads. You can also tag clonotypes using this icon. In that way, you will be able to tag
+  all the selected clonotypes at once.}
 \begin{verbatim}
   ////////////////////////////////
   cy.log("// test_B_clones_11_multiple_tag")
@@ -325,10 +326,10 @@ After this rename, you can see that the clone is still selected.
 
 \end{verbatim}
 
-\question{When you want to focus on the selected clones, you can click on the
-  focus button (eye icon) on the right, next to the number of selected clones.
-  This feature is useful when you want to analyse some clones more thoroughly
-  without being annoyed by other clones.}
+\question{When you want to focus on the selected clonotypes, you can click on the
+  focus button (eye icon) on the right, next to the number of selected clonotypes.
+  This feature is useful when you want to analyse some clonotypes more thoroughly
+  without being annoyed by other clonotypes.}
 \begin{verbatim}
   /////////////////////////
   cy.log("// test_B_clones_12_focus")
@@ -371,10 +372,10 @@ After this rename, you can see that the clone is still selected.
 
 \end{verbatim}
 
-Sometimes, one wants to hide noisy or unrelated clones.
+Sometimes, one wants to hide noisy or unrelated clonotypes.
 
-\question{Select a clone or several clones and click on the \com{hide} button (slashed eye icon), near the \com{focus} button. Show again these
-  clones by clicking on the cross in the corresponding line in filter menu.}
+\question{Select a clonotype or several clonotypes and click on the \com{hide} button (slashed eye icon), near the \com{focus} button. Show again these
+  clonotypes by clicking on the cross in the corresponding line in filter menu.}
 \begin{verbatim}
   /////////////////////////////////
   cy.log("// test_B_clones_15_hide_selected")
@@ -399,17 +400,17 @@ Sometimes, one wants to hide noisy or unrelated clones.
 
 \end{verbatim}
 
-% Another way to hide clonesis to assign is to change the tag of it as ``standard (niose)`` and choose to uncheck this tag by clicking on the corresponding tile on the list of tiles at the informatons panel to switch them from a visible state to a filter one.
+% Another way to hide clonotypesis to assign is to change the tag of it as ``standard (niose)`` and choose to uncheck this tag by clicking on the corresponding tile on the list of tiles at the informatons panel to switch them from a visible state to a filter one.
 %%% Voir ci-dessus, déjà mis
 
-It is also possible to filter samples that do not contain a clone.  When you
+It is also possible to filter samples that do not contain a clonotype.  When you
 have lots of samples it helps to keep the sample of interest.  Here the number
 of sample is quite limited, so the feature may appear less useful.
 
-\question{\new Click on the \com{IGHV3-11 / IGHJ6} clone in the last sample, whose
+\question{Click on the \com{IGHV3-11 / IGHJ6} clonotype in the last sample, whose
   abundance is around 10\,\%.
   Then go in the menu at the upper-right corner of the graph (where \com{5/5}
-  is written) and select \com{focus on selected clones}.
+  is written) and select \com{focus on selected clonotypes}.
 }
 \begin{verbatim}
   ////////////////////////////////////
@@ -431,7 +432,7 @@ of sample is quite limited, so the feature may appear less useful.
 
 \end{verbatim}
 
-By selecting this, the samples where this clone doesn't appear are hidden.
+By selecting this, the samples where this clonotype doesn't appear are hidden.
 This is useful for instance to assess the contamination among dozens of
 samples.
 
@@ -459,22 +460,22 @@ samples.
 
 \end{verbatim}
 
-\section{Analysing clone populations}
+\section{Analysing clonotype populations}
 
-\subsection{Clustering clones through inspection of their sequences}
+\subsection{Clustering clonotypes through inspection of their sequences}
 
-The first thing to be done is to see if some clones should be clustered (because
+The first thing to be done is to see if some clonotypes should be clustered (because
 of sequencing or PCR errors for instance). This step could be automatized
 but, in any case, the automatic clustering would need to be checked by an expert
 eye.
 
-By default in the bottom plot (the \textit{grid}), the clones
+By default in the bottom plot (the \textit{grid}), the clonotypes
   are displayed according to their V and J genes (or more generally to their
   5' and 3' genes). 
 
-\question{Identify in the grid the clones with an
+\question{Identify in the grid the clonotypes with an
   \textit{IGHV-3-13}~\textit{IGHJ6} recombination and select them
-  all. You can do so either by holding \texttt{Ctrl} or by drawing a rectangle around the clones while
+  all. You can do so either by holding \texttt{Ctrl} or by drawing a rectangle around the clonotypes while
   maintaining down the left button of the mouse.}
 \begin{verbatim}
   /////////////////////////////////////////////////////
@@ -494,8 +495,8 @@ By default in the bottom plot (the \textit{grid}), the clones
 
 \end{verbatim}
 
-The sequences of the clones now appear in the bottom part of the browser (the
-\textit{sequence panel}). If many clones are selected you can view more sequences
+The sequences of the clonotypes now appear in the bottom part of the browser (the
+\textit{sequence panel}). If many clonotypes are selected you can view more sequences
 by clicking on the \textit{flat up arrow} in the middle of menu bar of sequence panel.
  
 Then, the sequences in the sequence panel can be visually compared but you can also align
@@ -535,7 +536,7 @@ differences could be due to sequencing or PCR errors.
 These artifacts (mutations, homopolymers, insertions, deletions)
 depend on the sequencer and the PCR technique.
 
-\question{Cluster all those clones in a single clone by clicking on the ``Cluster''
+\question{Cluster all those clonotypes in a single clonotype by clicking on the ``Cluster''
   button, next to the \com{Align} button.}
 \begin{verbatim}
   //////////////////////////////////
@@ -551,9 +552,9 @@ depend on the sequencer and the PCR technique.
 
 \end{verbatim}
 
-All the clustered sequences now appear within a same clone. That can be seen
-in the list: the clone which hosts the subclones appears with a $+$ on its
-left. You can click on the $+$ to see the subclones that have been clustered in
+All the clustered sequences now appear within a same clonotype. That can be seen
+in the list: the clonotype which hosts the subclonotypes appears with a $+$ on its
+left. You can click on the $+$ to see the subclonotypes that have been clustered in
 the main one.
 \question{Click on the $+$ and observe the changes in the grid.}
 \begin{verbatim}
@@ -564,11 +565,11 @@ the main one.
 
 \end{verbatim}
 
-As you may have noticed the subclones appear again in the grid. You can
+As you may have noticed the subclonotypes appear again in the grid. You can
 compare their sequences again if you'd like (for example to double check that
-you were right to cluster them). You can also remove some subclones from the
+you were right to cluster them). You can also remove some subclonotypes from the
 cluster by clicking on the cross at their left in the list.
-\question{For the sake of the exercise, remove the last clone of the cluster.}
+\question{For the sake of the exercise, remove the last clonotype of the cluster.}
 \begin{verbatim}
   ///////////////////
   cy.log("// test_B_clones_23")
@@ -580,7 +581,7 @@ cluster by clicking on the cross at their left in the list.
 \question{%
 %For the next step, choose the preset \com{V distribution} (keyboard shortcut \com{5}).
 % On n'a pas encore parlé ici des presets. 
-Open the \com{cluster} menu at the top of the page, and choose \com{cluster by V/5}. What happened ? There are now two clones with TRGV2. Why ?}
+Open the \com{cluster} menu at the top of the page, and choose \com{cluster by V/5}. What happened ? There are now two clonotypes with TRGV2. Why ?}
 \reponse{These two clonotypes have been clustered on their V gene, but they differ by their allele. You can verify this by changing scatterplot preset by `V/J (allele)`.}
 %%  Confirm this by changing the x axis into ``V allele``.
 %%% -> Problème, on n'a pas encore parlé des axes à cet endroit.
@@ -624,7 +625,7 @@ When the primers are not found in the consensus sequence, their position is
 extrapolated from the germline sequence.
 
 \question{Select the preset \textit{Primers gap} and observe the starting position of each clonotype.}
-\question{Open the settings menu and select the primer set \textit{Biomed2}.}
+\question{Open the settings menu and select the primer set \textit{Biomed2}.\label{q:biomed}}
 
 
 \begin{verbatim}
@@ -648,11 +649,11 @@ This plot show only top clontypes, limited to the top 100 by default.
 This happens for some particular segment, as \textit{IGH J6} .}
 
 
-\subsection{Other metrics and analysis on the clones}
+\subsection{Other metrics and analysis on the clonotypes}
 
 As a proxy to sequence similarity we used the V and J genes, however there are
 other ways to assess sequence similarity that may be more pertinent.
-Moreover you may want to plot other metrics on the lymphocyte population.
+Moreover you may want to plot other metrics of the lymphocyte population.
 %
 For instance we can choose to plot the V genes versus the length of the N
 insertions.
@@ -673,10 +674,10 @@ insertions.
 
 \end{verbatim}
 
-Then you can continue aligning and clustering clones if necessary.
+Then you can continue aligning and clustering clonotypes if necessary.
 
 \question{You can also try the preset \com{read length/GC content}
-  which tends to separate quite nicely the distinct clones.}
+  which tends to separate quite nicely the distinct clonotypes.}
 \begin{verbatim}
   ///////////////////////////////////
   cy.log("// test_B_clones_27_change_preset_2")
@@ -692,7 +693,7 @@ Then you can continue aligning and clustering clones if necessary.
 
 Note that you can choose any axis to be plotted: just go the \com{plot} menu and
 select any value you would like for the $x$ axis and for the $y$ axis.
-For bar charts, the box sizes always relates to the clone size,
+For bar charts, the box sizes always relates to the clonotype size,
 and the $y$ axis selects the order of the boxes sharing a same $x$).
 
 %% \item Regarder les stats disponibles, mettre n°7 (taille des reads)
@@ -847,7 +848,7 @@ with the \com{color by} menu.
 
 \end{verbatim}
   
-\marginpar{We apologize to color blinds: the colors are not yet color-blind friendly.}Clones that are close on the grid with similar colors are likely to
+\marginpar{We apologize to color blinds: the colors are not yet color-blind friendly.}Clonotypes that are close on the grid with similar colors are likely to
 be similar.
 % hum hum, voir si c'est bien vrai. Juste avec le Nlength ?
 
@@ -870,12 +871,12 @@ Continuous axes are shown with a radient color.
 
 \end{verbatim}
 
-\question{ Instead of coloring by clone size, you could also color by
-  \com{clonotype}. When coloring by \com{clonotype}, each clone has a random color. Thus in
+\question{ Instead of coloring by clonotype size, you could also color by
+  \com{clonotype}. When coloring by \com{clonotype}, each clonotype has a random color. Thus in
   a bar plot, it is a convenient color mode to see the peaks that are due to a
-  single clone or to several clones.
-  However clones may be very similar. Another option is to color by
-  \com{CDR3}. In such case all clones with the same CDR3 will have the same
+  single clonotype or to several clonotypes.
+  However clonotypes may be very similar. Another option is to color by
+  \com{CDR3}. In such case all clonotypes with the same CDR3 will have the same
   color (note that, due to a lack of available colors two different CDR3s
   could share the same color just by chance).}
   % CDR3 par AA ? sinon comment puisqu'il doit y a voir au moins une variation...
@@ -898,7 +899,7 @@ Using those different features you should be able to analyse how similar your
 sequences are, and potentially you could cluster them if you'd like or tag them.
 
 \question{
-  Select the most abundant clone. It now appears in the sequence panel.
+  Select the most abundant clonotype. It now appears in the sequence panel.
   Now we would like to compare the sequence with the germline genes.
   We can add the germline genes to the sequence panel by going
   to the \com{import/export} menu and by clicking on \com{add germline genes}.
@@ -929,8 +930,8 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
 
 \textit{This part is specific to samples analyzed with Vidjil-algo.}
 
-Some clones may be less trustable than other ones\dots{} Let's see how to spot them.
-\question{In the clone list, search clones with an orange warning at the
+Some clonotypes may be less trustable than other ones\dots{} Let's see how to spot them.
+\question{In the clonotype list, search clonotypes with an orange warning at the
   right side. Click on the warning. What are the warnings due to?}
 \begin{verbatim}
   ///////////////////
@@ -959,50 +960,50 @@ Some clones may be less trustable than other ones\dots{} Let's see how to spot t
 There may have several reasons: 
 \begin{itemize}
 \item average coverage: in that case the clonal sequence displayed is short
-  compared to the reads in the clone. This may be the case when too different
-  sequences have been put in a clone. The value is generally $\geq 80\,\%$.
+  compared to the reads in the clonotype. This may be the case when too different
+  sequences have been put in a clonotype. The value is generally $\geq 80\,\%$.
   % nuancer, toujours valable ? Si merge ou non ?
 \item $e$-value: It is a statistical value computed to ensure that
   recombinations have not been spot by chance. This value is generally much
   lower than 1 ($<10^{-5}$).
-\item Clone similar to another one: In that case Vidjil-algo tells you that
-  other clones have the same genes and may be similar
+\item Clonotype similar to another one: In that case Vidjil-algo tells you that
+  other clonotypes have the same genes and may be similar
 \item Several genes with equal probability: The algorithm found several alleles or genes with the exact same e-value. This may happen when the sequence is too short.
 \item Non-recombined sequences: Some known unrecombined sequences are tagged
   so that you can spot them easily. We tag the unrecombined IGHD7-27/IGHJ1
   sequences that may be amplified.
 \end{itemize}
 
-You can view those values for any clone by clicking the \textit{i} icon on the
-right side, in the list of clones.
+You can view those values for any clonotype by clicking the \textit{i} icon on the
+right side, in the list of clonotypes.
 
-The existing warnings are listed on [https://www.vidjil.org/doc/warnings/](https://www.vidjil.org/doc/warnings/).
+The existing warnings are listed on \href{https://www.vidjil.org/doc/warnings/}{www.vidjil.org/doc/warnings/}.
 
 \subsection{Show sequence features and information}
 
 When you select a clonotype, you first see, in the aligner, the DNA sequence and its V, (D), and J segments.
-Next to the "align" button, menus allow to display more features or information about the sequences.
+Next to the "align" button, several menus allow to display more features or information about the sequences. We will explore those menus.
  
-\question{Select the first clonotypes both in IGH and TRG. Then in the \textit{Data columns} menu, click on \textit{productivity}.}
+\question{Select the first clonotypes both in IGH and TRG. Then in the \textit{Data columns} menu (the first on the left after the align button), click on \textit{productivity}.}
 
 \question{Now, click on the spin icon.}
 
 This queries external tools to process the selected sequences (as for example IMGT/V-QUEST)
-and, after a short time, will add the results to the clonotyoes (as for example productivity computed by IMGT/V-QUEST, which is displayed by default).
+and, after a short time, will add the results to the clonotypes (as for example productivity computed by IMGT/V-QUEST, which is displayed by default).
 
-Contact us if you have need to query other sofrware.
+Contact us if you need to query other software.
 
 
-\question{Open the \textit{sequence feature} menu. Click on "CDR3" and "quality".}
+\question{Open the \textit{sequence feature} menu (the one before the last button). Click on "CDR3" and "quality".}
 
 In the aligner, there are now two new overlays on sequences. 
-Above the sequence, the CDR3 is shown.
-Under the sequence, the base quality of each position is show, with a gradient color, from green (correct quality) to red (insuficent quality). The quality is now shown for the window centered on the CDR3.
+Above the sequence, the CDR3 is shown (you may have to move the horizontal scrollbar to view the CDR3).
+Under the sequence, the base quality of each position is shown, with a gradient color, from green (high quality) to red (low quality). The quality is shown for the window centered on the CDR3.
 
-You should align sequence and see whether mutations between similar clonotypes may come from a technological artifact... or not.
+When aligning sequences, the quality color may help you to discriminate between potential biological mutations and sequencing errors (note that the current dataset is quite old and was sequenced with Ion Torrent, now the quality is usually much better).
 
 
-Note that some features, such as \textit{primers} or \textit{IMGT productivity}, are available only after some additional compution.
+Note that some features, such as \textit{primers} or \textit{IMGT productivity}, are available only after some additional computations.
 
 
 
@@ -1090,14 +1091,14 @@ right part of the grid.
 
 \end{verbatim}
 
-\subsection{Clone quantification (using spike-ins)}
+\subsection{Clonotype quantification (using spike-ins)}
 
 Sometimes you may include spike-ins in your sample to allow a more reliable
 quantification.
-Let us assume that the main clone with IGHV-3-9 / IGHJ5 is a spike-in whose
+Let us assume that the main clonotype with IGHV-3-9 / IGHJ5 is a spike-in whose
 expected concentration is 1\% (.01).
 
-\question{First let's color this clone with the \com{standard} tag.}
+\question{First let's color this clonotype with the \com{standard} tag.}
 \begin{verbatim}
   ///////////////////////////////////
   cy.log("// test_B_clones_39_reset_color_tag")
@@ -1109,7 +1110,7 @@ expected concentration is 1\% (.01).
 
 \question{ Now we will set its concentration to 1\% as expected. Click again on
   the star. In the \com{normalize to} field enter \com{1} and click \com{ok}.
-  Now, in the graph, this clone should correspond to a straight line at 1\%.}
+  Now, in the graph, this clonotype should correspond to a straight line at 1\%.}
   % on pourrait indiquer dans le champs la valeur en pourcent ou non, ce n'est pas clair 
   % l'iunclur en placeholder ? 
 \begin{verbatim}
@@ -1133,7 +1134,7 @@ expected concentration is 1\% (.01).
 
 \end{verbatim}
 
-\question{ Notice how the concentrations of the other clones have changed
+\question{ Notice how the concentrations of the other clonotypes have changed
   accordingly.
   You can go to the \com{settings} menu to disable this normalization and to
   go back to the raw concentrations.}
@@ -1145,8 +1146,9 @@ expected concentration is 1\% (.01).
 
 \end{verbatim}
 
-Then you can set expected concentrations for other clones and you are free to
+Then you can set expected concentrations for other clonotypes and you are free to
 switch between those normalizations.
 It is also possible to set up normalization against external data,
 contact us if you are interested.
 
+\textit{Please note that we have more advanced features to include your own spike-ins and to take into account spike-ins for different gene families. Contact us if you are interested.}

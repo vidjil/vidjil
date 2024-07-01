@@ -5,9 +5,18 @@
 
 <div id="block_left">
     table:
-    [[=SELECT(*[OPTION(elem, _selected=(elem==request.query.table)) for elem in ['all', 'patient', 'run'] ], _id="table_selector", _name="table", _onchange="db.call('log/index', {'table': this.value})", value=stable)]]
+    <select id="table_selector" name="table" onchange="db.call('log/index', {'table': this.value})" value=stable>
+    [[for elem in ['all', 'patient', 'run']:]]
+        <option [[if elem==request.query.table:]]selected[[pass]]>[[ =elem ]] </option>
+    [[pass]]
+    </select>
+
     id:
-    [[=SELECT(*[OPTION(tup[1], _value=tup[0], _selected=(str(tup[0])==request.query.id)) for tup in ([(0, 'None')] + data_list)], _id="id_selector", _name="id", _onchange="db.call('log/index', {'table': $('#table_selector').val(), 'id': this.value})", value=sid)]]
+    <select id="id_selector" name="id" onchange="db.call('log/index', {'table': $('#table_selector').val(), 'id': this.value})" value=sid>
+        [[for tup in ([(0, 'None')] + data_list):]]
+            <option value="[[ =tup[0] ]]" [[if str(tup[0])==request.query.id:]]selected[[pass]]>[[ =tup[1] ]] </option>
+        [[pass]]
+    </select>
 </div>
 <div id="db_table_container">
     <table class="db_table" id="table">

@@ -298,6 +298,27 @@ function prepend_path_if_not_web(file, path) {
     return path + file;
 }
 
+
+/**
+ * Function to download file located to another server.
+ * For the moment, XHR variante is bypassed as not working with cross-domain (see issue https://gitlab.inria.fr/vidjil/vidjil/-/issues/5287)
+ * Classic <a> link to download don't allow to give a name to downloaded fiel if url call en external url. 
+ * See note at https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
+ */
+function downloadFile(url, nomLocal) {
+
+    var anchor = document.createElement('a');
+    anchor.setAttribute("download", file_name);
+    anchor.setAttribute("href",     path_data);
+    anchor.style = 'display: none';
+    self.ajax_indicator_stop()
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+
+}
+
+
 /**
  * Take in parameter the JSON result of CloneDB for one clone
  * Return a hash whose keys are URLs to sample sets and configs.
@@ -506,7 +527,7 @@ function nice_ceil(x, force_pow10)
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
  
-        return Math.ceil(x / floor_power10) * floor_power10
+        return discard_float_approximation(Math.ceil(x / floor_power10) * floor_power10)
     }
     catch(e) {
         // Always return something
@@ -522,6 +543,7 @@ function nice_ceil(x, force_pow10)
 
 function nice_1_2_5_ceil(x)
 {
+    x = discard_float_approximation(x);
     if (x <= 0) return x
 
     try {
@@ -551,7 +573,7 @@ function nice_floor(x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
-        return Math.floor(x / floor_power10) * floor_power10
+        return discard_float_approximation(Math.floor(x / floor_power10) * floor_power10)
     }
     catch(e) {
         // Always return something
@@ -579,6 +601,15 @@ function compareNumericalArrays(arrA, arrB){
 }
 
 
+/**
+ * Simplify a float to prevent approximation issues.
+ */
+function discard_float_approximation(float) {
+    // This assumes that the float is represented on 64 bits
+    // and that it will be made with 15 digits in total.
+    // This therefore discards the 3 least significant digits.
+    return parseFloat(float.toFixed(12));
+}
 
 /**
  * Give nice min/max/step numbers including the given [min, max] interval in order that steps are also nice,
@@ -602,7 +633,7 @@ function nice_min_max_steps(min, max, nb_max_steps)
     var n_max = nice_ceil(max, basic_step)
 
     var step = nice_1_2_5_ceil((n_max - n_min) / nb_max_steps)
-    var nb_steps = Math.ceil((n_max - n_min) / step)
+    var nb_steps = Math.ceil(discard_float_approximation((n_max - n_min) / step))
 
     // In some rare cases, we try another loop of rounding
     var overlength = nb_steps * step - (n_max - n_min)
@@ -610,7 +641,7 @@ function nice_min_max_steps(min, max, nb_max_steps)
     {
         n_min = nice_floor(min, step)
         n_max = nice_ceil(max, step)
-        nb_steps = Math.ceil((n_max - n_min) / step)
+        nb_steps = Math.ceil(discard_float_approximation((n_max - n_min) / step))
     }
 
     return {min: n_min, max: n_max, step: step, nb_steps: nb_steps}
@@ -1127,5 +1158,28 @@ var row_cast_content = function(title, content, time_length, clone) {
         if (nt_seq !== '') {
             return row_1(title, clone.getSegNtSequence(title), undefined, time_length)
         }
+    }
+}
+
+/**
+ * Update a checkbox indeterminate and checked states according to a list of checkboxes
+ * @param {checkbox} checkboxToUpdate 
+ * @param {Array<checkbox>} checkboxes 
+ */
+function updateIndeterminateState(checkboxToUpdate, checkboxes) {
+    numberOfChecked = 0;
+    for (var checkbox of checkboxes) {
+        if (checkbox.checked) {
+            numberOfChecked++;
+        }
+    }
+    if (numberOfChecked == 0) {
+        checkboxToUpdate.checked = false;
+        checkboxToUpdate.indeterminate = false;
+    } else if (numberOfChecked == checkboxes.length) {
+        checkboxToUpdate.checked = true;
+        checkboxToUpdate.indeterminate = false;
+    } else {
+        checkboxToUpdate.indeterminate = true;
     }
 }

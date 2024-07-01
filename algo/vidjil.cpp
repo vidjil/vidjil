@@ -217,7 +217,7 @@ int main (int argc, char **argv)
        << "# VidjilNet consortium" << endl 
        << endl
        << "# " << PROGNAME << " is free software, and you are welcome to redistribute it" << endl
-       << "# under certain conditions -- see http://git.vidjil.org/blob/master/doc/LICENSE" << endl
+       << "# under certain conditions -- see http://git.vidjil.org/blob/master/LICENSE" << endl
        << "# No lymphocyte was harmed in the making of this software," << endl
        << "# however this software is for research use only and comes with no warranty." << endl
        << endl

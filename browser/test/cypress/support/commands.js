@@ -35,14 +35,19 @@ Cypress.Commands.add('closeFlash', (flash_class) => {
 
 Cypress.Commands.add('setBrowser', (url) => {
   cy.visit(url)
+
   // close disclamer only for direct opening of the index.html file
   if (url.indexOf("index.html") != -1){
     cy.close_disclamer()
     cy.close_tips()
-    cy.closeFlash('.flash_1')
-    cy.closeFlash('.flash_2')
-    cy.closeFlash('.flash_3')
+    cy.closeFlashAll()
   }
+})
+
+Cypress.Commands.add('closeFlashAll', () => { 
+  cy.closeFlash('.flash_1')
+  cy.closeFlash('.flash_2')
+  cy.closeFlash('.flash_3')
 })
 
 Cypress.Commands.add('open_menu', (id) => { 

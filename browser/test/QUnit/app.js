@@ -5,6 +5,8 @@ requirejs.config({
     waitSeconds: 0
 });
 
+CLONOTYPE_TOP_LIMIT = 100
+
 var lib = [         "js/lib/jquery-3.3.1.min",
                     "js/lib/blanket.1.1.9",
                     "js/lib/file",

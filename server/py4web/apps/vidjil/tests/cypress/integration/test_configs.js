@@ -7,6 +7,7 @@ describe('Manipulate db page', function () {
         cy.close_tips()
     })
     beforeEach(function () {
+        cy.closeFlashAll()
     })
     afterEach(function () {
     })

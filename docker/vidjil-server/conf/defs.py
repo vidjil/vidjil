@@ -47,6 +47,7 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 ### relative path start from server/web2py
 DIR_VIDJIL = '/usr/share/vidjil/'
 DIR_FUSE = '/usr/share/vidjil/tools'
+DIR_PREPROCESS = '/usr/share/vidjil/tools/scripts/preprocess/'
 DIR_MIXCR = '/usr/bin'
 DIR_IGREC = '/usr/local/bin/'
 DIR_GERMLINE = '/usr/share/vidjil/germline'

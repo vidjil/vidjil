@@ -1,5 +1,5 @@
 !OUTPUT_FILE: ../data/pear_strucured.json
-!LAUNCH: python ../../pear_structured_log.py -i ../data/pear_log.log -o ../data/pear_strucured.json
+!LAUNCH: $PYTHON ../../pear_structured_log.py -i ../data/pear_log.log -o ../data/pear_strucured.json
 
 !OPTIONS: --mod jR
 

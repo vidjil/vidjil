@@ -8,6 +8,7 @@ describe('Tutorial server', function () {
         cy.close_tips()
     })
     beforeEach(function () {
+        cy.closeFlashAll()
     })
     afterEach(function () {
     })
@@ -49,6 +50,7 @@ describe('Tutorial server', function () {
 
   it('02-tutorial-server',  function() {
         cy.login(Cypress.env('host')) // Hack on random "logout"
+        cy.closeFlashAll()
 
 
 

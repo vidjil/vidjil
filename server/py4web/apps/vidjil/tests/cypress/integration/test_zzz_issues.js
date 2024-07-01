@@ -7,6 +7,7 @@ describe('Manipulate db page', function () {
         cy.close_tips()
     })
     beforeEach(function () {
+      cy.closeFlashAll()
     })
     afterEach(function () {
     })
@@ -102,45 +103,47 @@ describe('Manipulate db page', function () {
         cy.goToPatientPage()
         cy.openSet(uid)
 
-        cy.get('#db_content > :nth-child(4) > .db_block_right a')
-          .eq(0)
+        cy.get('.db_fixed_footer > tr > :nth-child(13) > a')
           .should("have.attr", "href")
           .and("match", /get_data\?/)
           .and("match", /config=9/)
           .and("match", /sample_set_id=25/)
 
-        
-        cy.get('#db_content > :nth-child(4) > .db_block_right a')
-          .eq(1)
+        cy.get('.db_fixed_footer > tr > :nth-child(14) > a')
           .should("have.attr", "href")
           .and("match", /get_analysis\?/)
           .and("match", /config=9/)
           .and("match", /sample_set_id=25/)
     })
 
+    // TODO : remove bypass when cypress >= 12.9 deployed
+    // it('5070 - get_reads',  function() {
+    //     if (Cypress.browser.name === 'firefox') {
+    //       // Skip old versions of firefox that don't work on cypress for this test (
+    //       // cypress loose pupetter after downlaod of a file
+    //       this.skip
+    //     }
+    //     var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
+    //     var config_id = 2
 
-    it('5070 - get_reads',  function() {
-        var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
-        var config_id = 2
+    //     cy.goToPatientPage()
+    //     // cy.screenshot('debug_5070_1_patient_page')
 
-        cy.goToPatientPage()
-        // cy.screenshot('debug_5070_1_patient_page')
+    //     cy.openSet(uid)
+    //     // cy.screenshot('debug_5070_2_open_set')
 
-        cy.openSet(uid)
-        // cy.screenshot('debug_5070_2_open_set')
+    //     cy.openAnalysisFromSetPage(uid, config_id)
+    //     cy.openCloneInfo(1)
+    //     // cy.screenshot('debug_5070_3_clone_panel')
+    //     cy.get(':nth-child(2) > .icon-down').click()
 
-        cy.openAnalysisFromSetPage(uid, config_id)
-        cy.openCloneInfo(1)
-        // cy.screenshot('debug_5070_3_clone_panel')
-        cy.get(':nth-child(2) > .icon-down').click()
+    //     const downloadsFolder = Cypress.config('downloadsFolder')
+    //     const downloadedFilename = downloadsFolder+'/reads__1__file_id__'+uid+'.fa'
 
-        const downloadsFolder = Cypress.config('downloadsFolder')
-        const downloadedFilename = downloadsFolder+'/reads__1__file_id__'+uid+'.fa'
-
-        // Don't work on gitlab, but work locally...
-        // cy.readFile(downloadedFilename, { timeout: 120000 })
-        //   .should('contain', '>clone-001')
-    })
+    //     // Don't work on gitlab, but work locally...
+    //     // cy.readFile(downloadedFilename, { timeout: 120000 })
+    //     //   .should('contain', '>clone-001')
+    // })
 
     it('5178 - bad render when request error occured',  function() {
         // Before fixing, request return error has HTML and are badly interpreted and break DOM page

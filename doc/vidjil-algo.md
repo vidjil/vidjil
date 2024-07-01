@@ -131,7 +131,7 @@ make germline
    # get IMGT germline databases (IMGT/GENE-DB) -- you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
    # and cited as "IMGT®, the international ImMunoGeneTics information system® 
-   # http://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
+   # https://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
    # Lefranc, M.-P., IMGT®, the international ImMunoGeneTics database,
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 
@@ -790,7 +790,7 @@ We also propose in [fuse.py](tools.md) a way to convert AIRR format to the `.vid
 
 Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
 By default (`-c clones`), we thus report in the AIRR format *clones*.
-See also [What is a clone ?](vidjil-format/#what-is-a-clone).
+See also [What is a clone ?](vidjil-format.md#what-is-a-clone).
 Using `-c designations` trigger a separate analysis for each read, but this is usually not advised for large datasets. 
 
 

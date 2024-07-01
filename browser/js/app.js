@@ -35,7 +35,7 @@ require(["jquery",
 
 
 // Show git_sha1, when it exists
-require(["js/git-sha1"], function () { console.log("Vidjil client " + git_sha1) }, function(err) { })
+// require(["js/git-sha1"], function () { console.log("Vidjil client " + git_sha1) }, function(err) { })
 
 
 function loadAfterConf() {
@@ -105,6 +105,8 @@ function loadAfterConf() {
                                          "js/indexedDom",
                                          "js/warnings",
                                          "js/warnings_data",
+                                         "js/sample_set_custom.js",
+                                         "js/sample_set_multi_sample_stats.js",
                                          // Speed test
                                          "js/speed_test",
                                          "js/form_builder",

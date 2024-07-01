@@ -24,7 +24,7 @@ def get_analysis_data(sample_set_id):
     analysis_query = get_analysis_from_sample_set(sample_set_id)
     if len(analysis_query) > 0:
         row = analysis_query.first()
-        f = open(defs.DIR_RESULTS+'/'+row.analysis_file, "r")
+        f = open(defs.DIR_RESULTS+'/'+row.analysis_file, "r", encoding="utf-8")
         return get_clean_analysis(f)
     else:
         return get_default_analysis()

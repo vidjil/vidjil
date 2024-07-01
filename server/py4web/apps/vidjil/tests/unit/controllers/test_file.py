@@ -150,7 +150,8 @@ class TestFileController(unittest.TestCase):
                                      filename2: str = "",
                                      pre_process_id: int = 0,
                                      sequence_file_id: int = -1,
-                                     sample_type: str = "") -> str:
+                                     sample_type: str = "",
+                                     use_set_id_in_file: bool = False) -> str:
         data = {}
         # TODO : should we use patient_id or sample_set_id ? In the web2py case it seems like we used a patient id
         # but in code it looks like we are looking for a sample set id...
@@ -164,6 +165,7 @@ class TestFileController(unittest.TestCase):
         if sequence_file_id == -1:
             sequence_file_id = ""
 
+        file_set_ids = data["set_ids"] if use_set_id_in_file else ""
         myfile = {
             "id": sequence_file_id,
             "sampling_date": "1992-02-02",
@@ -173,7 +175,7 @@ class TestFileController(unittest.TestCase):
             "producer": "plop",
             "filename": filename,
             "filename2": filename2,
-            "set_ids": ""
+            "set_ids": file_set_ids
         }
         data["file"] = [myfile]
         return json.dumps(data)
@@ -194,10 +196,38 @@ class TestFileController(unittest.TestCase):
         with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
             json_result = file_controller.submit()
 
-        # Then : We get users list
+        # Then : We get a good result
         assert json_result is not None
         result = json.loads(json_result)
         assert result["message"] == "successfully added/edited file(s)"
+
+    def test_submit_vidjil_same_sets(self):
+        # Test a sequence file is not associated multiple times to the same sample_set
+        
+        # Given : initialized data
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1))
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+
+        json_submit_data = self._initialize_json_submit_data(
+            sample_set_id, "computer", "plopapi", use_set_id_in_file=True)
+
+        # When : Calling submit
+        with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+            json_result = file_controller.submit()
+
+        # Then : Check we get only one association
+        assert json_result is not None
+        result = json.loads(json_result)
+        assert result["message"] == "successfully added/edited file(s)"
+        file_ids = result["file_ids"]
+        assert len(file_ids) == 1
+        file_id = file_ids[0]
+        rows = db(db.sample_set_membership.sequence_file_id==file_id and db.sample_set_membership.sample_set_id==sample_set_id).select()
+        assert len(rows) == 1
 
     def test_submit_nfs(self):
         # Given : initialized data

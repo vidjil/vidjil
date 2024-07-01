@@ -1,3 +1,6 @@
+from __future__ import print_function
+from utils import *
+from defs import *
 import fuse
 import argparse
 import base64
@@ -39,7 +42,7 @@ def get_recombination_type(clone):
     i = 0
     D_seq = ""
     for d in number_of_Ds:
-        if clone.d['seg'].has_key(d):
+        if d in clone.d['seg'].keys():
             D_seq = "D" * (len(number_of_Ds) - i)
             break
         i += 1
@@ -85,16 +88,16 @@ def get_gene_positions(clone, end, gene_name):
     >>> get_gene_positions(clone, 'start', '4b')
     13
     '''
-    if not clone.d.has_key('seg'):
+    if not 'seg' in clone.d.keys():
         return None
     seg = clone.d['seg']
-    if seg.has_key(gene_name+end):
+    if gene_name+end in seg.keys():
         return seg[gene_name+end]
-    if end == 'stop' and seg.has_key(gene_name+'end'):
+    if end == 'stop' and gene_name+'end' in seg.keys():
         return seg[gene_name+'end']
-    elif seg.has_key(gene_name) \
+    elif gene_name in seg.keys()\
          and isinstance(seg[gene_name], dict) \
-         and seg[gene_name].has_key(end):
+         and end in seg[gene_name].keys():
         return seg[gene_name][end]
     else:
         return None
@@ -144,7 +147,7 @@ def get_vdj_positions(recombination_type, clone):
 
     '''
     positions = [1]
-    if not clone.d.has_key('seg'):
+    if not 'seg' in clone.d.keys():
         return None
     seg = clone.d['seg']
     gene_pos_stop_5 = get_gene_positions(clone, 'stop', '5')
@@ -159,7 +162,7 @@ def get_vdj_positions(recombination_type, clone):
             d_name = '4'
         else:
             d_name = '4'+chr(ord('a')+i)
-        if not seg.has_key(d_name) and d_name == '4a':
+        if not d_name in seg.keys() and d_name == '4a':
             d_name = '4'
         gene_pos_start_4 = get_gene_positions(clone, 'start', d_name)
         gene_pos_stop_4 = get_gene_positions(clone, 'stop', d_name)
@@ -168,7 +171,7 @@ def get_vdj_positions(recombination_type, clone):
             positions.append(gene_pos_stop_4+1)
             i+=1
     positions.append(gene_pos_start_3+1)
-    if (clone.d.has_key('sequence')):
+    if ('sequence' in clone.d.keys()):
         positions.append(len(clone.d['sequence']))
     else:
         # Arbitrary end
@@ -195,15 +198,15 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
         spacer = ' '
 
     for clone in data:
-        if clone.d.has_key('sequence') and isinstance(clone.d['sequence'], basestring)\
-        and len(clone.d['sequence']) > 0 and clone.d.has_key('seg'):
+        if 'sequence' in clone.d.keys() and isinstance(clone.d['sequence'], str)\
+            and len(clone.d['sequence']) > 0 and 'seg' in clone.d.keys():
             recombination = get_recombination_type(clone)
             name = recombination+spacer
             positions = get_vdj_positions(recombination, clone)
             if positions is None:
                 continue
             name += spacer.join(map(str, positions))+spacer
-            if not clone.d.has_key('name'):
+            if not 'name' in clone.d.keys():
                 name += "Anonymous"
             else:
                 name += clone.d['name'].replace(' ', spacer)
@@ -261,7 +264,7 @@ def process_files(args):
             data = fuse.ListWindows()
             data.load(vidjil, "")
         except Exception:
-            print "** Warning ** file %s could not be loaded" % vidjil
+            print( "** Warning ** file %s could not be loaded" % vidjil )
         else:
             write_fuse_to_fasta(data, outfile, used_names, vidjil, args, args.metadata[current_file])
         current_file += 1

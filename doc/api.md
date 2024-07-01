@@ -3,20 +3,21 @@
 These APIs were first released in 2022, and continue to improve as of 2023.
 Please [contact us](mailto:contact@vidjil.org) for additional details.
 
-# Vidjil server API
+## Vidjil server API
 
 This API and the Python Vidjil library allows to interact with a Vidjil server, notably:
-- to automate parts of your workflows (patient/sample/run creation, data upload, analysis lauch),
+
+- to automate parts of your workflows (patient/sample/run creation, data upload, analysis launch),
 - and to perform batch analysis of data.
 
 Code examples can be found in `tools/api_demo.py`, and first steps are below.
 
 !!! warning
     When interacting with a production server (such as Vidjil public servers), please be very careful
-    on requests you send, espacially when updating or deleting data.
+    on requests you send, especially when updating or deleting data.
     Do not spam the Vidjil public servers.
 
-## First steps
+### First steps
 
 Install required libraries
 
@@ -55,13 +56,11 @@ sets_demo = vidjil.getSetById(sample_set_id, vidjil.PATIENT)
 vidjil.infoSets("Set %s" % sample_set_id, sets_demo, set_type=vidjil.PATIENT, verbose=True)
 ```
 
-## Further use
+### Further use
 
 The `api_demo.py` has more examples, especially in the `demoWriteRunOnServer`function.
 
-
-# Vidjil-algo analyze API
-
+## Vidjil-algo analyze API
 
 This API runs `vidjil-algo` with the default parameters to compute V(D)J assignations on DNA sequences.
 It takes a limited number of Fasta sequence (up to 10)

@@ -11,7 +11,11 @@
 <form id="object_form" action="DB_ADDRESS/sample_set/submit" enctype="multipart/form-data" method="post" onkeypress="return event.keyCode != 13;">
     <div [[ if len(groups) <= 1: ]] class="hiddenCheckBox" [[pass]]>
         <label for="group_select" id="patient_group__label">Owner Group: </label>
-        [[= SELECT(*[OPTION(g['name'], _value=g['id']) for g in groups], _id="group_select", _name="group", _value=master_group, value=master_group) ]]
+        <select id="group_select" name="group">
+        [[for group in groups:]]
+            <option value="[[ =group['id'] ]]" [[if group['id']==master_group:]]selected[[pass]]>[[ =group['name'] ]] </option>
+        [[pass]]
+        </select>
     </div>
 [[ if isEditing: ]]
 [[ else: ]]

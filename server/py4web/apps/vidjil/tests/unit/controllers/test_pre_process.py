@@ -9,6 +9,7 @@ from py4web.core import _before_request, Session, HTTP
 from ....common import db, auth
 from ....modules.permission_enum import PermissionEnum
 from .... import defs
+from .... import tasks
 from ....controllers import pre_process as pre_process_controller
 
 
@@ -394,7 +395,7 @@ class TestPreProcessController(unittest.TestCase):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
         sequence_file_id = db_manipulation_utils.add_sequence_file(use_real_file=False, preprocess=True, preprocess_conf_id=1)
-        task_id = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status="PENDING", args=[sequence_file_id, 1])
+        task_id = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status=tasks.STATUS_PENDING, args=[sequence_file_id, 1])
 
         defs.DIR_PRE_VIDJIL_ID = str(test_utils.get_resources_path()) + '/results/tmp/pre/out-%06d/'
         directory1 = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
@@ -415,7 +416,7 @@ class TestPreProcessController(unittest.TestCase):
 
         ## Case 1; Log exist for this preprocess, should return raw content of the log
         sequence_file_id2 = db_manipulation_utils.add_sequence_file(use_real_file=False, preprocess=True, preprocess_conf_id=1)
-        task_id2 = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status="PENDING", args=[sequence_file_id, 1])
+        task_id2 = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status=tasks.STATUS_PENDING, args=[sequence_file_id, 1])
         directory2 = defs.DIR_PRE_VIDJIL_ID % sequence_file_id2
         file_log  = directory2 + "/file.pre.log"
         os.makedirs(directory2, exist_ok=True)
@@ -509,7 +510,7 @@ class TestPreProcessController(unittest.TestCase):
         pre_process_id = db.pre_process.insert(name="pre process name",
                                                info="pre process info",
                                                command="pre process command")
-        user_group_id = test_utils.get_user_group_id(db, 1)
+        user_group_id = auth.user_group()
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.pre_process, pre_process_id)
 
@@ -563,7 +564,7 @@ class TestPreProcessController(unittest.TestCase):
                                          1),
                                      db_manipulation_utils.get_indexed_user_password(1))
         pre_process_id = db_manipulation_utils.add_pre_process()
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_1_id)
 
         # When : Calling change_permission with no id in params
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"pre_process_id": pre_process_id, "group_id": user_group_id}):
@@ -578,7 +579,7 @@ class TestPreProcessController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         pre_process_id = db_manipulation_utils.add_pre_process()
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_1_id)
         assert auth.get_group_access(
             "pre_process", pre_process_id, user_group_id) == False
 
@@ -597,7 +598,7 @@ class TestPreProcessController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         pre_process_id = db_manipulation_utils.add_pre_process()
-        user_group_id = test_utils.get_user_group_id(db, user_1_id)
+        user_group_id = auth.user_group(user_1_id)
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"pre_process_id": pre_process_id, "group_id": user_group_id}):
             json_result = pre_process_controller.change_permission()
         assert auth.get_group_access(

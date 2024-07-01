@@ -930,7 +930,14 @@ line {
   text-align:left;
 }
 
-.systemBoxNameMenu:hover, .focus_selected:hover, .button:hover,.button_right:hover, .buttonSelector:hover, .button2:hover{
+.systemBoxNameMenu:hover, 
+.focus_selected:hover, 
+.button:hover,
+.button_right:hover, 
+.buttonSelector:hover, 
+.button2:hover, 
+.double_button__part1:hover,
+.double_button__part2:hover {
   background : @border;
   color : @select;
   cursor: pointer;
@@ -1078,18 +1085,39 @@ div.button {
     margin-right: -27px;
 }
 
-.button2 {
-    border: solid;
-    border-width: 1px;
-    padding: 3px;
-    margin: 3px;
-    display: inline-block;
-    cursor: pointer;
-    background: @border;
-    width: auto;
-    text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
+.button2,
+.double_button {
+  padding: 3px;
+  margin: 3px;
+	border-radius: 5px;
+  display: inline-block;
+  cursor: pointer;
+  background: @border;
+  width: auto;
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.double_button {
+  padding: 0;
+  display: inline-flex;
+  cursor: pointer;
+}
+.double_button__part1,
+.double_button__part2 {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px;
+}
+
+.double_button__part1 {
+	padding-left: 5px;
+}
+
+.double_button__part2 {
+	background: rgba(0, 0, 0, 0.05);
+	padding-right: 5px;
 }
 
 .clipboard-button {
@@ -1693,6 +1721,12 @@ h3 .uid {
     overflow-x: hidden;
     height: calc(~"100% - 30px");
     position: relative;
+}
+
+#db_table_container.border_columns td + td { border-left:1px solid  @border; }
+
+#db_table_container_x_scroll {
+    overflow-x: scroll;
 }
 
 #db_fixed_header {
@@ -2563,6 +2597,20 @@ form {
     }
 }
 
+.bar_chart_zoom {
+	-webkit-transition: -webkit-transform 0.2s;
+	transition: -webkit-transform 0.2s;
+	transition: transform 0.2s;
+	transition: transform 0.2s, -webkit-transform 0.2s;
+}
+
+.bar_chart_zoom:hover {
+  -webkit-transform: scale(2);
+  transform: scale(2);
+  background-color: @background;
+  cursor: pointer;
+}
+
 .stats_locus {
     margin: 2px;
 }
@@ -2824,4 +2872,8 @@ div.tooltip {
 }
 .warnings_section_unpresent {
   color: @secondary
+}
+
+.afterAjaxScript {
+  display: none;
 }
