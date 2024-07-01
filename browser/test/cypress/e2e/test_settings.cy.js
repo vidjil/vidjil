@@ -49,7 +49,6 @@ describe('Settings', function () {
         .should("be.visible")
         .click()
 
-      // TODO; testing content after update to cypress > 10
       cy.readFile('cypress/downloads/vidjil_settings.json')
         .its('timeFormat').should('eq', "short_name")
 
@@ -58,9 +57,9 @@ describe('Settings', function () {
       cy.get('#settings_export')
         .should("be.visible")
         .click()
-      // TODO; testing content after update to cypress > 10
 
-      cy.readFile('cypress/downloads/vidjil_settings.json')
+      var increase = Cypress.browser.name === 'firefox' ? "(1)" : "" // Downaloded file name increase on firefox, but not on chrome
+      cy.readFile(`cypress/downloads/vidjil_settings${increase}.json`)
         .its('timeFormat').should("eq", undefined)
     })
 
