@@ -10,6 +10,7 @@ module.exports = defineConfig({
   video: false,
   pageLoadTimeout: 120000,
   chromeWebSecurity: false,
+  downloadsFolder: "cypress/downloads",
   viewportWidth: 1366,
   viewportHeight: 800,
   e2e: {
