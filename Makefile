@@ -55,45 +55,41 @@ functional_browser_cypress_open:
 functional_browser_cypress:
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/browser/test/cypress/screenshots:/app/cypress/screenshots \
-		-v `pwd`/browser/test/cypress/reports:/app/cypress/reports \
-		-v `pwd`/browser/test/data/:/app/browser/test/data/  \
+		-v `pwd`/browser/:/browser/  \
 		-v `pwd`/doc/:/app/doc/  \
 		-v `pwd`/demo/:/app/demo/  \
 		-v `pwd`/tools/:/app/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
-		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.config.js" \
+		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.js"
 
 functional_tutorial_browser_cypress:
 	$(MAKE) -C doc/tutorial build_tutorial_cypress_client
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/browser/test/cypress/screenshots:/app/cypress/screenshots \
-		-v `pwd`/browser/test/cypress/reports:/app/cypress/reports \
-		-v `pwd`/browser/test/data/:/app/browser/test/data/  \
+		-v `pwd`/browser/:/browser/  \
 		-v `pwd`/doc/:/app/doc/  \
 		-v `pwd`/demo/:/app/demo/  \
 		-v `pwd`/tools/:/app/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
-		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.config.js" \
+		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/doc_*.js"
 
 functional_browser_external_cypress:
 	docker run \
 		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/browser/test/data/:/app/browser/test/data/  \
+		-v `pwd`/browser/:/browser/  \
 		-v `pwd`/doc/:/app/doc/  \
 		-v `pwd`/demo/:/app/demo/  \
 		-v `pwd`/tools/:/app/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
-		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.config.js" \
+		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/external_*.js"
 
 functional_server_cypress_open:
@@ -113,14 +109,14 @@ functional_tutorial_server_cypress:
 		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/e2e:/app/cypress/e2e \
 		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/screenshots:/app/cypress/screenshots \
 		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/reports:/app/cypress/reports \
-		-v `pwd`/browser/test/data/:/app/browser/test/data/  \
+		-v `pwd`/browser/:/browser/  \
 		-v `pwd`/doc/:/app/doc/  \
 		-v `pwd`/demo/:/app/demo/  \
 		-v `pwd`/tools/:/app/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
-		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.config.js" \
+		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--network="host" \
 		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/doc_*.js"
 
@@ -131,14 +127,14 @@ functional_server_cypress:
 		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/e2e:/app/cypress/e2e \
 		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/screenshots:/app/cypress/screenshots \
 		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/reports:/app/cypress/reports \
-		-v `pwd`/browser/test/data/:/app//browser/test/data/  \
+		-v `pwd`/browser/:/browser/  \
 		-v `pwd`/doc/:/app/doc/  \
 		-v `pwd`/demo/:/app/demo/  \
 		-v `pwd`/tools/:/app/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
-		-v "`pwd`/docker/ci/cypress.json":"/app/cypress.config.js" \
+		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--network="host" \
 		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.js"
 
