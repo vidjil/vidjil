@@ -60,4 +60,4 @@ Cypress.on('log:changed', (log) => {
 
 after(() => {
   cy.writeFile(`cypress/logs/${Cypress.spec.name}.log.json`, logs)
-
+}
