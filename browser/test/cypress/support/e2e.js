@@ -48,8 +48,16 @@ before(function() {
 })
 
 
-afterEach(() => {
-  //Code to Handle the Sesssions in cypress.
-  //Keep the Session alive when you jump to another test
-  // not needed anymore: session have now a new behavior
+const logs = {}
+Cypress.on('log:added', (log) => {
+  let message = log.name + ' - ' + log.message;
+  logs[log.id] = message
 })
+Cypress.on('log:changed', (log) => {
+  let message = log.name + ' - ' + log.message
+  logs[log.id] = message
+})
+
+after(() => {
+  cy.writeFile(`cypress/logs/${Cypress.spec.name}.log.json`, logs)
+
