@@ -36,6 +36,12 @@ describe('Settings', function () {
 
 
     it('02 - export file',  function() {
+      if (Cypress.browser.name === 'firefox' && Cypress.browser.version.split(".")[0] == "86") {
+        // Skip old version of firefox (~86) cypress download directory is not found (maybe resolve on cypress > 12.9)
+        this.skip
+      }
+      cy.log(`${Cypress.browser.name === 'firefox'} -- ${Cypress.browser.version} -- ${Cypress.browser.version.split(".")[0] == "86"}`)
+      
       cy.openAnalysis("doc/analysis-example2.vidjil")
 
       var type_name = "short_name"
