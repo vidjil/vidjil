@@ -84,8 +84,8 @@ ECODE=$?
 echo "TIME - After cypress - $(date)"
 
 # # Rename reports with name of testing script
-# apt-get update -qq && apt-get install -y -qq libxml2-utils
-# for file in `ls /app/cypress/reports/*.xml`; do mv $file /app/cypress/reports/report_`xmllint --xpath 'string(/testsuites/testsuite/@file)' $file | cut -f3 -d"/" | cut -f1 -d"."`.xml; done
+apt-get update -qq && apt-get install -y -qq libxml2-utils
+for file in `ls /app/cypress/reports/*.xml`; do mv $file /app/cypress/reports/report_`xmllint --xpath 'string(/testsuites/testsuite/@file)' $file | cut -f3 -d"/" | cut -f1 -d"."`.xml; done
 
 echo "$ change again chmod of cypress directory (include new directories)" 
 chmod 777 cypress -R 
