@@ -20,11 +20,20 @@ echo "     .../database"
 if [[ -v CHANGE_OWNER ]]; then
     echo "==== Change owner of directories to owner '`id -nu $user` (id $user)': '$CHANGE_OWNER'"
     echo "     - databases"
-    chown $user:$user -R /usr/share/vidjil/server/py4web/apps/vidjil/databases
+    current_user=$(stat -c '%u' /usr/share/vidjil/server/py4web/apps/vidjil/databases)
+    if [ $current_user -ne $user ]; then
+      chown $user:$user -R /usr/share/vidjil/server/py4web/apps/vidjil/databases
+    fi
     echo "     - uploads"
-    chown $user:$user -R /mnt/upload/
+    current_user=$(stat -c '%u' /mnt/upload/)
+    if [ $current_user -ne $user ]; then
+      chown $user:$user -R /mnt/upload/
+    fi
     echo "     - results"
-    chown $user:$user -R /mnt/result
+    current_user=$(stat -c '%u' /mnt/result)
+    if [ $current_user -ne $user ]; then
+      chown $user:$user -R /mnt/result
+    fi
 fi
 
 echo "check owner:"
