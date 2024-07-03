@@ -8,6 +8,7 @@ module.exports = defineConfig({
     toConsole: true,
   },
   video: false,
+  pageLoadTimeout: 120000,
   chromeWebSecurity: false,
   viewportWidth: 1280,
   viewportHeight: 720,
