@@ -17,7 +17,7 @@ ls /usr/share/vidjil/server/py4web/apps/
 echo "==== Change owner of vidjil directories: $user"
 echo "     .../database"
 
-if [[ -v CHANGE_OWNER ]]; then
+if [[ "$CHANGE_OWNER" == "true" ]]; then
     echo "==== Change owner of directories to owner '`id -nu $user` (id $user)': '$CHANGE_OWNER'"
     echo "     - databases"
     current_user=$(stat -c '%u' /usr/share/vidjil/server/py4web/apps/vidjil/databases)
