@@ -44,9 +44,6 @@ class CORS(Fixture):
         if request.method == "OPTIONS":
             raise HTTP(200)
 
-    def on_success(self, status=200):
-        response.set_cookie('auth_test_session', 'bar', samesite='Lax', secure=True);
-
 # set the origin to where ever your frontend server is running,
 # use host and port rather than "localhost" as the browser session
 # cookies may not be set otherwise preventing auth usage.
@@ -103,7 +100,7 @@ flash = Flash()
 # pick the session type that suits you best
 # #######################################################
 if settings.SESSION_TYPE == "cookies":
-    session = Session(secret=settings.SESSION_SECRET_KEY, same_site="None")
+    session = Session(secret=settings.SESSION_SECRET_KEY)
 elif settings.SESSION_TYPE == "redis":
     import redis
 
@@ -115,16 +112,16 @@ elif settings.SESSION_TYPE == "redis":
         if ct(k) >= 0
         else cs(k, v, e)
     )
-    session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn, same_site="None")
+    session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn)
 elif settings.SESSION_TYPE == "memcache":
     import memcache, time
 
     conn = memcache.Client(settings.MEMCACHE_CLIENTS, debug=0)
-    session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn, same_site="None")
+    session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn)
 elif settings.SESSION_TYPE == "database":
     from py4web.utils.dbstore import DBStore
 
-    session = Session(secret=settings.SESSION_SECRET_KEY, storage=DBStore(db), same_site="None")
+    session = Session(secret=settings.SESSION_SECRET_KEY, storage=DBStore(db))
     
 
 # #######################################################
