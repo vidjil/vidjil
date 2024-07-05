@@ -114,9 +114,6 @@ services:
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
-        depends_on:
-            uwsgi:
-                condition: service_healthy
         networks:
             - vidjil
 
