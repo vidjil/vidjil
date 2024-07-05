@@ -90,10 +90,10 @@ def metrics():
                 (db.sample_set_membership.sample_set_id==db.patient.sample_set_id) & 
                 (db.patient.creator==db.auth_membership.user_id) & 
                 (db.auth_membership.group_id==db.auth_group.id))
-                .select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), db.auth_group.role, groupby=(db.results_file.config_id|db.auth_group.id))
+                .select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), db.auth_group.role, groupby=(db.results_file.config_id|db.auth_group.id)),
         }
         print( data )   
-        
+    
     else:
         data = {"message": 'status NOT in metrics group'}
     return data
