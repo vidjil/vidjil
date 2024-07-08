@@ -75,22 +75,10 @@ s2:
       - BROWSER: [
           firefox_latest/firefox,
           firefox_legacy/firefox,
-          # chrome_supported/chrome,
-          # chrome_latest/chrome,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
           chrome_legacy/chrome
         ]
-
-       
-s2-fail:
-  extends:
-    - .test_cypress_server
-  parallel:
-    matrix:
-      - BROWSER: [
-          chrome_supported/chrome,
-          chrome_latest/chrome
-        ]
-  allow_failure: true
 
 
 ## Cypress TUTORIAL with server
@@ -126,20 +114,8 @@ tuto-s2:
       - BROWSER: [
           firefox_latest/firefox,
           firefox_legacy/firefox,
-          # chrome_supported/chrome,
-          # chrome_latest/chrome,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
           chrome_legacy/chrome
         ]
 
-
-tuto-s2-fail:
-  extends:
-    - .tuto-server
-    - .need_for_late_server
-  parallel:
-    matrix:
-      - BROWSER: [
-          chrome_supported/chrome,
-          chrome_latest/chrome
-        ]
-  allow_failure: true
