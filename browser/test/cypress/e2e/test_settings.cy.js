@@ -35,12 +35,13 @@ describe('Settings', function () {
     })
 
 
-    it('02 - export file',  function() {
+    it('02 - export file', { browser: 'chromium' }, function() {
+      // Skip old version of firefox (~86) cypress download directory is not found (maybe resolve on cypress > 12.9)
       if (Cypress.browser.name === 'firefox' && Cypress.browser.version.split(".")[0] == "86") {
-        // Skip old version of firefox (~86) cypress download directory is not found (maybe resolve on cypress > 12.9)
+        // don't know why, but this condition don't work
+        cy.log(`${Cypress.browser.name === 'firefox'} -- ${Cypress.browser.version} -- ${Cypress.browser.version.split(".")[0] == "86"}`) // return true -- 86.0 -- true
         this.skip
       }
-      cy.log(`${Cypress.browser.name === 'firefox'} -- ${Cypress.browser.version} -- ${Cypress.browser.version.split(".")[0] == "86"}`)
       
       cy.openAnalysis("doc/analysis-example2.vidjil")
 
