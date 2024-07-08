@@ -4,6 +4,13 @@
     See <http://www.vidjil.org/doc/server>
 
 
+## 2024-10-xx
+
+**vidjil/server**:
+- Owner of volumes will be automatically set to `www-data` for right reasons.  
+  On an already existant instance, a `chown change` will be call on various directories (see file docker/vidjil-server/scripts/uwsgi-entrypoint)
+  A parameter `CHANGE_OWNER` is given in `.env-default` conf file to prevent this behavior
+
 ## 2024-05-15
 
 **vidjil/server**:
