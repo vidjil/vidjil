@@ -493,3 +493,54 @@ QUnit.test("compareNumericalArrays", function(assert) {
     assert.equal(compareNumericalArrays([5,4, 3, 4], [5, 5]), -1, "compareNumericalArrays, [5,4, 3, 4] < [5, 5]")
     assert.equal(compareNumericalArrays([5, 5], [5, 5]),0 , "compareNumericalArrays, [5, 5] == [5, 5]")
 });
+
+
+QUnit.test("mergeDictionaries", function(assert) {
+        
+    // Merge 2 dicts with various values
+    var dict1 = {
+        a: 1,
+        b: "text",
+        c: {d: 3, e: "another text"},
+        h: "only in dict1"
+    };
+
+    var dict2 = {
+        a: 2,
+        b: "new text",
+        c: {e: "updated text", f: 4 },
+        g: true
+    };
+
+    var mergedDict = mergeDictionaries(dict1, dict2);
+    var expected= {
+        "a": 2,
+        "b": "new text",
+        "c": {"d": 3, "e": "updated text", "f": 4 },
+        "h": "only in dict1",
+        "g": true
+    }
+    assert.deepEqual(mergedDict, expected, "mergeDictionaries: dict vs dict")
+
+
+    // One dict null (first)
+    dict1 = {a: 1, b: "text"};
+    dict2 = null;
+    mergedDict = mergeDictionaries(dict1, dict2);
+    expected   = dict1
+    assert.deepEqual(mergedDict, expected, "mergeDictionaries: One dict is null (first)")
+
+
+    // One dict null (second)
+    mergedDict = mergeDictionaries(dict2, dict1);
+    expected   = dict1
+    assert.deepEqual(mergedDict, expected, "mergeDictionaries: One dict is null (second)")
+
+
+    // One dict is a string
+    dict1 = {a: 1, b: "text"};
+    dict2 = "text valeur 2";
+    mergedDict = mergeDictionaries(dict1, dict2);
+    assert.deepEqual(mergedDict, undefined, "mergeDictionaries: One dict is a string")
+
+});

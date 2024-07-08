@@ -75,7 +75,7 @@ function Model() {
     this.reset();
     this.filter = new Filter(this)
     this.color = new Color(this)
-    this.setAll();
+    this.applySettings();
     this.checkBrowser();
     this.germlineList = new GermlineList()
     this.build();
@@ -259,9 +259,7 @@ Model.prototype = {
     /**
      * Set all the properties. Called in the constructor.
      */
-    setAll: function () {
-        this.system_selected = []
-        this.top = 50
+    applySettings: function () {
 
         try {
             if (this.localStorage){
@@ -281,6 +279,9 @@ Model.prototype = {
         this.changeTimeFormat(this.time_type,       false)
         this.changeAlleleNotation(this.alleleNotation, false)
         this.changeCloneNotation(this.cloneNotationType, false)
+        if (typeof report !== 'undefined'){
+            report.updateLocalStorage()
+        }
     },
     /**
      * remove all elements from the previous .vidjil file but keep current user parameters and linked views
@@ -361,6 +362,9 @@ Model.prototype = {
         if (this.filter != undefined){
             this.filter.filters = [{axis: "Top", operator:">", value:50}]
         }
+
+        this.system_selected = []
+        this.top = 50
     },
     
     
@@ -2717,6 +2721,95 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
     },
 
+    /**
+     * Export localStorage content as a json string
+     * This content is download with an anchor
+     */
+    settingsExport: function(key){
+        var settings;
+        if (key == undefined){
+            settings = JSON.stringify(localStorage);
+        } else {
+            var export_settings = {}
+            export_settings[key] = localStorage.getItem(key)
+            settings = JSON.stringify(export_settings);
+        }
+
+        download_csv(settings, "vidjil_settings.json", "json")
+    },
+
+
+    /**
+     * Import a localStorage saved file
+     * Overload existing data
+     */
+    settingsImport(){
+        var self = this;
+        var settings_import_id = "settings_import"
+
+        var input = document.getElementById(settings_import_id)
+
+        if (input.files.length !== 0) {
+            var oFReader = new FileReader();
+            var oFile    = input.files[0];
+
+            var imported_settings = input.files[0].name;
+
+            oFReader.readAsText(oFile);
+            oFReader.onload = function (oFREvent) {
+                var text_settings = oFREvent.target.result;
+                let importedSettings;
+
+                try {
+                    importedSettings = JSON.parse(text_settings);
+                } catch (e) {
+                    console.error('Invalid JSON at import settings', e);
+                    return;
+                }
+
+                for (let key in importedSettings) {
+                    let existing_value;
+                    try {
+                        existing_value = JSON.parse(localStorage.getItem(key));
+                    } catch (e) {
+                        existing_value = localStorage.getItem(key);
+                    }
+
+                    try {
+                        imported_value = JSON.parse(importedSettings[key]);
+                    } catch (e) {
+                        imported_value = importedSettings[key];
+                    }
+
+                    if (existing_value !== null) {
+                        if (typeof existing_value === 'object' && existing_value !== null && typeof imported_value === 'object' && imported_value !== null) {
+                            var merged = mergeDictionaries(existing_value, imported_value)
+                            localStorage.setItem(key, JSON.stringify(merged));
+                        } else {
+                            localStorage.setItem(key, imported_value);
+                        }
+                    } else {
+                        if (typeof imported_value === 'string' || typeof imported_value === 'number' || typeof imported_value === 'boolean') {
+                            localStorage.setItem(key, imported_value);
+                        } else {
+                            localStorage.setItem(key, JSON.stringify(imported_value));
+                        }
+
+                    }
+                    if (key == "report_templates") {
+                        console.log({ msg: `Import templates: ${Object.keys(imported_value)}`, type: "flash", priority: 1 });
+                    }
+                    
+                }
+                m.applySettings()
+                console.log({ msg: "user preferences have been imported", type: "flash", priority: 1 });
+            }
+
+        }
+
+        return this;
+    },
+
 
     NB_READS_THRESHOLD_QUANTIFIABLE: 5,
 
@@ -2902,6 +2995,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.changeAlleleNotation("when_not_01", false)
         this.changeCloneNotation("short_sequence", false)
         console.log({ msg: "user preferences have been reset", type: "flash", priority: 1 });
+        if (report) { report.resetSettings() }
+        this.applySettings()
     },
     
     /**
@@ -3215,7 +3310,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         if (menu == undefined){ // case of unit testing
             return
         }
-        menu.innerHTML = "Primers sets<br/>"
+        menu.innerHTML = "primers sets<br/>"
 
         primersSetData = Object.keys(this.primersSetData)
         for (var i = 0; i < primersSetData.length; i++) {

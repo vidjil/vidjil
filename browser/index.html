@@ -1,4 +1,5 @@
 <!doctype html>
+<!doctype html>
 
 <!-- 
   This file is part of Vidjil <http://www.vidjil.org>, High-throughput Analysis of V(D)J Immune Repertoire
@@ -97,6 +98,35 @@
         <button id="start_import_json" onclick="document.getElementById('file_menu').style.display='none';
             m.load('upload_json','upload_pref')">start</button>
     </div>
+
+    <div id="settings_export_menu" style="display: none;" >
+        <span class="closeButton" onclick="cancel();"><i class="icon-cancel" title=""></i></span>
+
+        <h2>Manage settings and templates</h2>
+
+        <p class='help'>
+            You can export and import report templates
+            and other settings,
+            for example to share them in a lab.
+        </p>
+
+        <br />
+        Export:
+            <button onclick="m.settingsExport()" id="settings_export" style="display: inline;">all settings, including templates</i></button>
+            <button onclick="m.settingsExport('report_templates')" id="settings_export" style="display: inline;">only report templates</button>
+
+        <br />
+        <br />
+        <br />
+        Import settings: <input id="settings_import" type="file" name="json" onchange="m.settingsImport()" style="display: inline;">
+
+        <button id="settings_reset" onclick="m.resetSettings();">Reset settings</button>  <p class='help'  style="display: inline;">
+        <p class="help">
+            ⚠️ All settings will be reset to their default values.
+        </p>
+        </div>
+    </div>
+
 
         <div id="axis_choice" >
             <span class="closeButton" onclick="cancel();"><i class="icon-cancel" title=""></i></span>
@@ -246,7 +276,6 @@
             <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();"> settings
                 <div class="selector">
                     <div>
-
                         <div class="menu_box">
                             normalization
                             <form name="normalize_list" id="normalize_list">
@@ -329,7 +358,17 @@
 
 
                         <div class="menu_box">
-                            <a class="buttonSelector" onclick="m.resetSettings();">reset settings</a>
+<<<<<<< HEAD
+                            Settings<br/>
+                            <a id="manage_settings_anchor" class="buttonSelector" onclick="loadSettings()"
+                                title="Import, export or reset settings."
+                                >Manage settings</a>
+=======
+                            <a id="import_settings_anchor" class="buttonSelector" onclick="loadSettings()"
+                                title="Import, export or reset settings and templates   "
+                                >manage settings and templates</a>
+>>>>>>> a79311544 (index.html: bikeshed 'manage settings' panel)
+
                         </div>
                         <!--
                         <div class="submenu" id="system_menu" style="display:none">

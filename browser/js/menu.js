@@ -99,6 +99,19 @@ function loadData() {
         .style.display = "none";
     document.getElementById("add_clone_menu")
         .style.display = "none";
+    document.getElementById("settings_export_menu")
+        .style.display = "none";
+}
+
+function loadSettings() {
+    document.getElementById("file_menu")
+        .style.display = "none";
+    document.getElementById("axis_choice")
+        .style.display = "none";
+    document.getElementById("add_clone_menu")
+        .style.display = "none";
+    document.getElementById("settings_export_menu")
+        .style.display = "block";
 }
 
 function loadAnalysis() {
@@ -108,6 +121,8 @@ function loadAnalysis() {
         .style.display = "none";
     document.getElementById("add_clone_menu")
         .style.display = "none";
+        document.getElementById("settings_export_menu")
+        .style.display = "none";
 }
 
 function cancel() {
@@ -116,6 +131,8 @@ function cancel() {
     document.getElementById("file_menu")
         .style.display = "none";
     document.getElementById("add_clone_menu")
+        .style.display = "none";
+    document.getElementById("settings_export_menu")
         .style.display = "none";
 }
 
@@ -150,6 +167,8 @@ function showAddManualCloneMenu(error) {
     document.getElementById("axis_choice")
         .style.display = "none";
     document.getElementById("file_menu")
+        .style.display = "none";
+    document.getElementById("settings_export_menu")
         .style.display = "none";
 }
 /**
