@@ -57,4 +57,10 @@ class TestUserGroups():
 
         # Then : we get the correct group and max_group
         groups, max_group = result
-        assert len(groups) == 4
+        assert len(groups) == 5
+
+        assert {'id': 1, 'name': 'admin'} in groups
+        assert {'id': 2, 'name': 'Personal Group'} in groups
+        assert {'id': 3, 'name': 'public'} in groups
+        assert {'id': 4, 'name': 'metrics'} in groups
+        # {'id': 5, 'name': 'test parent'}
