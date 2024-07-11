@@ -56,14 +56,14 @@ def metrics():
         data["message"] = message
         request_times = []
         timer_count = 1
-        data["users_count"] = len(db().select(db.auth_user.id.count(),  groupby=db.auth_user.id )),
+        data["users_count"] = len(db().select(db.auth_user.id.count(),  groupby=db.auth_user.id ))
         request_times.append([f"{timer_count}_users_count", time.time()  - delta_time]); delta_time = time.time(); timer_count+=1
-        data["group_count"] = len(db().select(db.auth_group.id.count(), groupby=db.auth_group.id )),
+        data["group_count"] = len(db().select(db.auth_group.id.count(), groupby=db.auth_group.id ))
         request_times.append([f"{timer_count}_group_count", time.time()  - delta_time]); delta_time = time.time(); timer_count+=1
-        data["group_count_only_test"] = len(db(db.auth_group.role.like('test%')).select(db.auth_group.ALL, db.auth_group.id.count(), groupby=db.auth_group.id)), #pas fini
+        data["group_count_only_test"] = len(db(db.auth_group.role.like('test%')).select(db.auth_group.ALL, db.auth_group.id.count(), groupby=db.auth_group.id)) #pas fini
         request_times.append([f"{timer_count}_group_count_only_test", time.time()  - delta_time]); delta_time = time.time(); timer_count+=1
 
-        data["login_count"] = db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description ), # not fill for the moment
+        data["login_count"] = db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description ) # not fill for the moment
         request_times.append([f"{timer_count}_login_count", time.time()  - delta_time]); delta_time = time.time(); timer_count+=1
 
         # # # Patients; runs; sets
@@ -90,13 +90,13 @@ def metrics():
         request_times.append([f"{timer_count}_sequence_count", time.time()  - delta_time]); delta_time = time.time(); timer_count+=1
         data["results_count"] = db(db.results_file).count()
         request_times.append([f"{timer_count}_results_count", time.time()  - delta_time]); delta_time = time.time(); timer_count+=1
-        data["status_analysis"] = db().select(db.scheduler_task.status, db.scheduler_task.id.count(), db.scheduler_task.task_name, groupby=db.scheduler_task.task_name|db.scheduler_task.status ),
+        data["status_analysis"] = db().select(db.scheduler_task.status, db.scheduler_task.id.count(), db.scheduler_task.task_name, groupby=db.scheduler_task.task_name|db.scheduler_task.status )
         request_times.append([f"{timer_count}_status_analysis", time.time()  - delta_time]); delta_time = time.time(); timer_count+=1
 
         # # Samples, analysis
         data["sequence_by_user"] = db().select(db.sequence_file.provider.with_alias("user_id"), 
                 db.sequence_file.id.count().with_alias("count_sequence"), 
-                groupby=db.sequence_file.provider),
+                groupby=db.sequence_file.provider)
         request_times.append([f"{timer_count}_sequence_by_user", time.time()  - delta_time]); delta_time = time.time(); timer_count+=1
         data["sequence_size_by_user"] = db().select(db.sequence_file.provider.with_alias("user_id"), 
                 (db.sequence_file.size_file.sum()+db.sequence_file.size_file2.sum()).with_alias("size_file_sum"), 
