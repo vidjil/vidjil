@@ -105,7 +105,7 @@ services:
         ports:
             - "80:80"
             - "443:443"
-        command: bash /entrypoints/nginx-entrypoint.sh"
+        command: bash /entrypoints/nginx-entrypoint.sh
         volumes:
             - ./vidjil-client/scripts:/entrypoints
             - ./vidjil-client/healthchecks:/healthchecks
