@@ -390,11 +390,8 @@ deploy_review_server:
     - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
-    - sed -i 's/latest/test/g' ./docker-compose.yml
     - sed -i "s/virtual_host/${CI_COMMIT_REF_SLUG}/" docker-compose-ci-review.yml
-    - mv docker-compose-ci.yml docker-compose.override.yml
     - cp .env-default .env
-    - sed -i '/ports/,+2d' docker-compose.yml
     - sed -i -r "s/py4web_admin_password/$REVIEW_SERVER_ADMIN_PASSWORD/" .env
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG} || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
@@ -408,18 +405,15 @@ deploy_review_server:
         docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test;
         docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test;
         echo "TIME - after pulling docker images - $(date)";
-        mkdir -p postfix/ssl; 
         cat docker-compose.yml; 
         ls; 
-        docker-compose --version; 
-        docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml config; 
-        docker-compose down && docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml up -d;
-        docker exec docker_${CI_COMMIT_REF_SLUG}_mysql_1 bash -c ''chmod 0777 /var/lib/mysql/vidjil -R'';
-        docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R'';
-        docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''chmod 0777 /mnt/result/results   -R'';
-        docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''chmod 0777 /mnt/result/tmp '';
-        docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''chmod 0777 /mnt/upload/uploads  -R'';
-        docker exec docker_${CI_COMMIT_REF_SLUG}_uwsgi_1 bash -c ''cd /usr/share/vidjil/server/py4web/apps/vidjil/scripts; python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci.sql'';
+        docker compose version; 
+        docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml config; 
+        docker compose down && docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml up -d;
+        docker compose exec mysql chmod -R 0777 /var/lib/mysql/vidjil ;
+        docker compose exec uwsgi chmod -R 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases /mnt/result/results /mnt/result/tmp /mnt/upload/uploads;
+        docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts" uwsgi python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql;
+        docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi python3 init_test_db.py;
         "'
   environment:
     name: review_server-$CI_COMMIT_REF_SLUG
@@ -568,7 +562,12 @@ stop_deploy_review:
 stop_deploy_review_server:
   stage: deploy_review
   script:
-    - ssh $REVIEW_SERVER "set -o xtrace; cd $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-review.yml down -v; cd ; rm -rf $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh ${CI_COMMIT_REF_SLUG}"
+    - 'ssh $REVIEW_SERVER "set -o xtrace; 
+        cd $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; 
+        docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml down -v; 
+        cd ; 
+        rm -rf $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh ${CI_COMMIT_REF_SLUG}
+        "'
   when: manual
   dependencies: []
   environment:

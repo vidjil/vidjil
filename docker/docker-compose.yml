@@ -54,6 +54,7 @@ services:
                 condition: service_healthy
         links:
             - mysql:mysql
+            - redis:redis
         volumes:
             - ./vidjil-server/scripts:/entrypoints
             - ./vidjil-server/healthchecks:/healthchecks
@@ -114,9 +115,8 @@ services:
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
-        depends_on:
-            uwsgi:
-                condition: service_healthy
+        links:
+            - uwsgi:uwsgi
         networks:
             - vidjil
 
@@ -162,6 +162,8 @@ services:
                 condition: service_healthy
             workers:
                 condition: service_started
+        links:
+            - mysql:mysql
         ports:
             - "5555:5555"
         networks:

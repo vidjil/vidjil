@@ -1,34 +1,51 @@
-version: '2.4'
+version: '3'
 
-# See https://docs.docker.com/compose/extends/ for more information
+# See https://docs.docker.com/compose/compose-file/13-merge/ for more information
 services:
     mysql:
+        container_name: !reset null
+        ports: !reset []
+        networks: !reset null
         network_mode: bridge
         volumes:
             - ./ci/mysql:/var/lib/mysql
     uwsgi:
+        image: vidjil/server:test
+        container_name: !reset null
+        ports: !reset []
+        networks: !reset null
         network_mode: bridge
         command: bash /entrypoints/uwsgi-entrypoint.sh --ci
-        
     fuse:
+        image: vidjil/server:test
+        container_name: !reset null
+        ports: !reset []
+        networks: !reset null
         network_mode: bridge
         extra_hosts:
           - "fuse:127.0.0.1"
     nginx:
+        image: vidjil/client:test
+        container_name: !reset null
+        ports: !reset []
+        networks: !reset null
         network_mode: bridge
-        expose:
-            - 443
         environment:
             - VIRTUAL_HOST=virtual_host.server.ci.vidjil.org
-            - VIRTUAL_PORT=443
-            - VIRTUAL_PROTO=https
-
     workers:
+        image: vidjil/server:test
+        container_name: !reset null
+        ports: !reset []
+        networks: !reset null
         network_mode: bridge
     redis:
+        container_name: !reset null
+        ports: !reset []
+        networks: !reset null
         network_mode: bridge
     flower:
+        image: vidjil/server:test
+        container_name: !reset null
+        ports: !reset []
+        networks: !reset null
         network_mode: bridge
-
-volumes:
-    databases:
