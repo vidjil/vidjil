@@ -205,6 +205,7 @@ test_browser_unit:
   artifacts:
     paths:
     - browser/
+    expire_in: 7 day
     when: always
   only:
     - /^feature-.*c.*\/.*$/
@@ -262,6 +263,7 @@ test_server_unit:
           path: server/unit_coverage.xml
       paths:
         - pip_freeze_requirements.txt
+      expire_in: 7 day
     only:
       - /^feature-.*s.*\/.*$/
       - /^hotfix-.*s.*\/.*$/
@@ -361,7 +363,6 @@ test_server_unit:
 deploy_review:
   stage: deploy_review
   script:
-    - make -C browser icons
     - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
     - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_COMMIT_REF_SLUG
   dependencies: []
@@ -381,7 +382,6 @@ deploy_review:
 deploy_review_server:
   stage: deploy_review
   script:
-    - make -C browser icons
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - sed -i -r "s/localhost/${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
     - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
@@ -408,9 +408,10 @@ deploy_review_server:
         docker compose version; 
         docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml config; 
         docker compose down && docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml up -d;
-        docker compose exec mysql chmod -R 0777 /var/lib/mysql/vidjil ;
-        docker compose exec uwsgi chmod -R 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases /mnt/result/results /mnt/result/tmp /mnt/upload/uploads;
-        docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts" uwsgi python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql;
+        docker compose exec mysql chown -R mysql:mysql /var/lib/mysql ;
+        docker compose exec uwsgi chown -R www-data:www-data /usr/share/vidjil/server/py4web/apps/vidjil/databases /mnt/result/results /mnt/result/tmp /mnt/upload/uploads;
+        docker compose restart uwsgi;
+        echo "TIME - after start - $(date)";
         docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi python3 init_test_db.py;
         "'
   environment:
@@ -426,13 +427,17 @@ deploy_review_server:
     - .need_for_independant_test
   artifacts:
     paths:
-      - docker_${CI_BUILD_REF_SLUG}
+      - docker_${CI_COMMIT_REF_SLUG}/docker-compose*
+      - docker_${CI_COMMIT_REF_SLUG}/vidjil-client/
+      - docker_${CI_COMMIT_REF_SLUG}/vidjil-server/
+    when: always
+    expire_in: 7 day
   variables:
     IMAGE_NAME_CLIENT: dev-client/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     IMAGE_NAME_SERVER: dev-server/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
   needs:
     - [build_test_server_docker]
-  allow_failure: true
+  allow_failure: false
 
 
 deploy_client:
@@ -561,17 +566,20 @@ stop_deploy_review_server:
   stage: deploy_review
   script:
     - 'ssh $REVIEW_SERVER "set -o xtrace; 
-        cd $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; 
+        cd $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG};
         docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml down -v; 
         cd ; 
-        rm -rf $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}; $REVIEW_SERVER_PATH_SERVER/uninstall_certs.sh ${CI_COMMIT_REF_SLUG}
+        sudo ./scripts/remove_server_folder.sh ${CI_COMMIT_REF_SLUG};:
+        docker system prune -af --filter until=20m;
         "'
   when: manual
-  dependencies: []
+  needs:
+    - [deploy_review_server]
   environment:
     name: review_server-$CI_COMMIT_REF_SLUG
     action: stop
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
+  allow_failure: true
 
