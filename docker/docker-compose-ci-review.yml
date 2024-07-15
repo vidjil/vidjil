@@ -31,7 +31,7 @@ services:
         networks: !reset null
         network_mode: bridge
         environment:
-            - VIRTUAL_HOST=virtual_host.server.ci.vidjil.org
+            - VIRTUAL_HOST=$VIRTUAL_HOST_NAME.server.ci.vidjil.org
     workers:
         image: vidjil/server:test
         container_name: !reset null

@@ -390,13 +390,12 @@ deploy_review_server:
     - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
-    - sed -i "s/virtual_host/${CI_COMMIT_REF_SLUG}/" docker-compose-ci-review.yml
     - cp .env-default .env
-    - sed -i -r "s/py4web_admin_password/$REVIEW_SERVER_ADMIN_PASSWORD/" .env
+    - echo "PY4WEB_ADMIN_PASSWORD=${REVIEW_SERVER_ADMIN_PASSWORD}" >> .env
+    - echo "VIRTUAL_HOST_NAME=${CI_COMMIT_REF_SLUG}" >> .env
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG} || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
     - 'ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER;
-        ./install_certs.sh ${CI_COMMIT_REF_SLUG}; 
         cd ${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; 
         echo "TIME - before pulling docker images - $(date)";
         docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY;
@@ -405,7 +404,6 @@ deploy_review_server:
         docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test;
         docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test;
         echo "TIME - after pulling docker images - $(date)";
-        cat docker-compose.yml; 
         ls; 
         docker compose version; 
         docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml config; 
