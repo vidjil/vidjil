@@ -14,7 +14,7 @@ $ First clone (-z 1)
 :clones[0].id: TGTATTACTGTGCGAGAGTGGGCAGCAGCTGGTCTGATGCTTTTGATTAT
 :clones[0]._average_read_length[0]: 233
 :clones[0]._average_read_length[1]: 233
-:clones[0].seg.evalue.val: 1.17e-95
+:clones[0].seg.evalue.val: 1.15e-95
 :clones[0].sequence:
 # See #3970 and !784: now fuse keeps the best 'top' or otherwise the first sequence
 f:clones[0].seg.5.name: IGHV1-3
