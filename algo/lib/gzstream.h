@@ -47,6 +47,7 @@ private:
     static const int bufferSize = 47+256;    // size of data buff
     // totals 512 bytes under g++ for igzstream at the end.
 
+    FILE*            fileh;              // original file handle
     gzFile           file;               // file handle for compressed file
     char             buffer[bufferSize]; // data buffer
     char             opened;             // open/close state of stream
@@ -64,6 +65,7 @@ public:
     int is_open() { return opened; }
     gzstreambuf* open( const char* name, int open_mode);
     gzstreambuf* close();
+    size_t tell() { return ftell(fileh); }
     ~gzstreambuf() { close(); }
     
     virtual int     overflow( int c = EOF);
@@ -95,6 +97,7 @@ public:
     igzstream( const char* name, int open_mode = std::ios::in)
       : std::istream( &buf), gzstreambase( name, open_mode) {}
     gzstreambuf* rdbuf() { return gzstreambase::rdbuf(); }
+    typename basic_istream<char>::pos_type tellg()  { return buf.tell(); }
     void open( const char* name, int open_mode = std::ios::in) {
         gzstreambase::open( name, open_mode);
     }
