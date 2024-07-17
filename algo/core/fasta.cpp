@@ -155,6 +155,12 @@ string OnlineFasta::getInterestingLine(int state) {
   return line;
 }
 
+unsigned long long OnlineFasta::getPos() {
+  if (input_allocated)
+    return dynamic_cast<igzstream*>(input)->tellg();
+  return char_nb;
+}
+
 void OnlineFasta::unexpectedEOF() {
   throw invalid_argument("Unexpected EOF while reading FASTA/FASTQ file");
 }

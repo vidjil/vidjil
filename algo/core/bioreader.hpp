@@ -108,7 +108,7 @@ public:
   /**
    * @return the position in the file
    */
-  unsigned long long getPos();
+  virtual unsigned long long getPos();
 
   /**
    * @return the current sequence or an undetermined sequence if the end
