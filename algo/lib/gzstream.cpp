@@ -21,8 +21,8 @@
 // Revision      : $Revision: 1.7 $
 // Revision_date : $Date: 2003/01/08 14:41:27 $
 // Author(s)     : Deepak Bandyopadhyay, Lutz Kettner
-// 
-// Standard streambuf implementation following Nicolai Josuttis, "The 
+//
+// Standard streambuf implementation following Nicolai Josuttis, "The
 // Standard C++ Library".
 // ============================================================================
 
@@ -59,8 +59,6 @@ gzstreambuf* gzstreambuf::open( const char* name, int open_mode) {
     *fmodeptr++ = 'b';
     *fmodeptr = '\0';
     fileh = fopen(name, fmode);
-    if (fileh == 0)
-        return (gzstreambuf*)0;
     file = gzdopen(fileno(fileh), fmode);
     if (file == 0)
         return (gzstreambuf*)0;
@@ -101,7 +99,7 @@ int gzstreambuf::underflow() { // used for input buffer only
           buffer + 4 + num);          // end of buffer
 
     // return next character
-    return * reinterpret_cast<unsigned char *>( gptr());    
+    return * reinterpret_cast<unsigned char *>( gptr());
 }
 
 int gzstreambuf::flush_buffer() {
