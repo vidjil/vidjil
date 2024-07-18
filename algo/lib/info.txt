@@ -12,7 +12,7 @@
     * @license          LGPL
 
     json                : Json library
-    * @version          2.1.1
+    * @version          3.11.3
     * @author           Niels Lohmann
     * @link             https://github.com/nlohmann/json
     * @license          MIT
