@@ -7,62 +7,62 @@
  * KmerStoreFactory is a factory that allows to create an index that best fits
  * your needs!
  */
-template<class T=KmerAffect>
+template<typename Tshortcut, class T=KmerAffect>
 class KmerStoreFactory {
  public:
-  static IKmerStore<T> *createIndex(IndexTypes indexType, string seed, bool revcomp=false);
-  static IKmerStore<T> *createIndex(IndexTypes indexType, int k, bool revcomp=false);
+  static IKmerStore<Tshortcut, T> *createIndex(IndexTypes indexType, string seed, bool revcomp=false);
+  static IKmerStore<Tshortcut, T> *createIndex(IndexTypes indexType, int k, bool revcomp=false);
 
 };
 
-template<class T=KmerAffect, IndexTypes type=KMER_INDEX>
+template<typename Tshortcut, class T=KmerAffect, IndexTypes type=KMER_INDEX>
 class _KmerStoreFactory {
  public:
-  static IKmerStore<T> *createIndex(string seed, bool revcomp=false);
-  static IKmerStore<T> *createIndex(int k, bool revcomp=false) {
+  static IKmerStore<Tshortcut, T> *createIndex(string seed, bool revcomp=false);
+  static IKmerStore<Tshortcut, T> *createIndex(int k, bool revcomp=false) {
     return createIndex(seed_contiguous(k), revcomp);
   }
 
 };
 
-template<class T>
-class _KmerStoreFactory<T, KMER_INDEX> {
+template<typename Tshortcut, class T>
+class _KmerStoreFactory<Tshortcut, T, KMER_INDEX> {
 public:
-  static IKmerStore<T> *createIndex(string seed, bool revcomp) {
-    IKmerStore<T> *index;
+  static IKmerStore<Tshortcut, T> *createIndex(string seed, bool revcomp) {
+    IKmerStore<Tshortcut, T> *index;
     try{
-      index = new ArrayKmerStore<T>(seed, revcomp);
+      index = new ArrayKmerStore<Tshortcut, T>(seed, revcomp);
     }catch(exception &e){
       cout << "  (using a MapKmer to fit into memory)" << endl;
-      index = new MapKmerStore<T>(seed, revcomp);
+      index = new MapKmerStore<Tshortcut, T>(seed, revcomp);
     }
 
     return index;
   }
 };
 
-template<class T>
-class _KmerStoreFactory<T, AC_AUTOMATON> {
+template<typename Tshortcut, class T>
+class _KmerStoreFactory<Tshortcut, T, AC_AUTOMATON> {
 public:
-  static IKmerStore<T> *createIndex(string seed, bool revcomp) {
-    return new PointerACAutomaton<T>(seed, revcomp, true);
+  static IKmerStore<Tshortcut, T> *createIndex(string seed, bool revcomp) {
+    return new PointerACAutomaton<Tshortcut, T>(seed, revcomp, true);
   }
 };
 
-template<class T>
-IKmerStore<T> *KmerStoreFactory<T>::createIndex(IndexTypes indexType, string seed,
+template<typename Tshortcut, class T>
+IKmerStore<Tshortcut, T> *KmerStoreFactory<Tshortcut, T>::createIndex(IndexTypes indexType, string seed,
                                                        bool revcomp) {
   if (indexType == KMER_INDEX) {
-    return _KmerStoreFactory<T, KMER_INDEX>::createIndex(seed, revcomp);
+    return _KmerStoreFactory<Tshortcut, T, KMER_INDEX>::createIndex(seed, revcomp);
   } else if (indexType == AC_AUTOMATON) {
-    return _KmerStoreFactory<T, AC_AUTOMATON>::createIndex(seed, revcomp);
+    return _KmerStoreFactory<Tshortcut, T, AC_AUTOMATON>::createIndex(seed, revcomp);
   } else {
     throw std::domain_error("No such index type");
   }
 }
 
-template<class T>
-IKmerStore<T> *KmerStoreFactory<T>::createIndex(IndexTypes indexType, int k,
+template<typename Tshortcut, class T>
+IKmerStore<Tshortcut, T> *KmerStoreFactory<Tshortcut, T>::createIndex(IndexTypes indexType, int k,
                                                        bool revcomp) {
   return createIndex(indexType, seed_contiguous(k), revcomp);
 }

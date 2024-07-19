@@ -14,7 +14,7 @@
 #include <string>
 #include "bioreader.hpp"
 #include "segment.h"
-#include "germline.h"
+#include "germline.hpp"
 #include "read_storage.h"
 #include "read_score.h"
 #include "representative.h"

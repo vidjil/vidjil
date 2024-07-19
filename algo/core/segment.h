@@ -9,6 +9,7 @@
 #include "tools.h"
 #include "output.h"
 #include "germline.h"
+#include "multi_germline.h"
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "affectanalyser.h"

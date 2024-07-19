@@ -1,0 +1,243 @@
+#ifndef MULTIGERMLINE_HPP
+#define MULTIGERMLINE_HPP
+
+#include "germline.hpp"
+
+enum GERMLINES_FILTER { GERMLINES_ALL,
+                        GERMLINES_REGULAR,
+                        GERMLINES_INCOMPLETE } ;
+
+
+template <typename Tshortcut, typename Affect>
+class MultiGermline {
+
+private:
+  std::list<Germline<Tshortcut, Affect> *> germlines;
+  IKmerStore<Tshortcut, Affect> *index;
+  
+public:
+
+  MultiGermline();
+  ~MultiGermline();
+
+  void addGermline(Germline<Tshortcut, Affect> *germline);
+
+  /**
+   * @return the codes of all the germlines that have been stored.
+   */
+  std::set<std::string> getCodes() const;
+
+  /**
+   * @return the germline that has a recombination involving the provided shortcuts or nullptr if no such germline exists
+   */
+  Germline<Tshortcut, Affect> *getGermline(const std::set<Tshortcut> &shortcuts) const;
+  
+  /**
+   * @return the germline that has the provided code (eg. IGH) or nullptr if no such germline exists
+   */
+  Germline<Tshortcut, Affect> *getGermline(const std::string &code) const;
+
+  /**
+   * @return all the germlines
+   */
+  std::list<Germline<Tshortcut, Affect> *> getGermlines() const;
+
+  /**
+   * @return the index that was built for the add_to_index. Returns nullptr if add_to_index() was not called yet or
+   * if an index was already provided to add_to_index()
+   */
+  IKmerStore<Tshortcut, Affect> *getIndex() const;
+
+  /**
+   * Build from a json .g germline file
+   *   path: path, such as 'germline/'
+   *   json_filename_and_filter: filename, optionally embedding a filter, such as 'homo-sapiens.g:IGH,TRG'
+   *   filter: see GERMLINES_FILTER
+   *   max_indexing: see constructor of Germline
+   *   build_automaton: tell for each segment whether an automaton should be built.
+   */
+  void buildFromJson(string path, string json_filename_and_filter, int filter,
+                       string default_seed="", int default_max_indexing=0, const std::map<std::string, bool> &build_automaton=std::map<std::string, bool>());
+
+  /**
+   * Add the germlines to the provided index. If no index is provided, it will create one.
+   * After adding the germlines to the index, the finish() method of each germline is called.
+   */
+  void addToIndex(IKmerStore<Tshortcut, Affect> *index=nullptr);
+
+};
+
+
+template <typename Tshortcut, typename Affect>
+MultiGermline<Tshortcut, Affect>::MultiGermline() : index(nullptr) {}
+
+template <typename Tshortcut, typename Affect>
+MultiGermline<Tshortcut, Affect>::~MultiGermline(){
+  if (index != nullptr)
+    delete index;
+}
+
+template <typename Tshortcut, typename Affect>
+void MultiGermline<Tshortcut, Affect>::addGermline(Germline<Tshortcut, Affect> *germline) {
+  germlines.push_back(germline);
+  germline->setMultiGermline(this);
+}
+
+template <typename Tshortcut, typename Affect>
+std::set<std::string> MultiGermline<Tshortcut, Affect>::getCodes() const {
+  std::set<std::string> shortcuts;
+  for (const auto& germline : germlines) {
+    shortcuts.insert(germline->getCode());
+  }
+  return shortcuts;  
+}
+
+template <typename Tshortcut, typename Affect>
+Germline<Tshortcut, Affect> *MultiGermline<Tshortcut, Affect>::getGermline(const std::set<Tshortcut> &shortcuts) const {
+  for (const auto& germline : germlines) {
+    if (germline->hasRecombination(shortcuts)) {
+      return germline;
+    }
+  }
+  return nullptr;
+}
+
+template <typename Tshortcut, typename Affect>
+Germline<Tshortcut, Affect> *MultiGermline<Tshortcut, Affect>::getGermline(const std::string &code) const {
+  for (const auto& germline : germlines) {
+    if (germline->getCode() == code) {
+      return germline;
+    }
+  }
+  return nullptr;
+}
+
+template <typename Tshortcut, typename Affect>
+std::list<Germline<Tshortcut, Affect> *> MultiGermline<Tshortcut, Affect>::getGermlines() const {
+  return germlines;
+}
+
+template <typename Tshortcut, typename Affect>
+IKmerStore<Tshortcut, Affect> *MultiGermline<Tshortcut, Affect>::getIndex() const {
+  return index;
+}
+
+template <typename Tshortcut, typename Affect>
+void MultiGermline<Tshortcut, Affect>::buildFromJson(std::string path, std::string json_filename_and_filter, int filter,
+                                                       std::string default_seed, int default_max_indexing,
+                                                       const std::map<std::string, bool> &build_automaton) {
+  GermlineElementRepository<Tshortcut, Affect> *repository = new GermlineElementRepository<Tshortcut, Affect>();
+
+  //extract json_filename and systems_filter
+  string json_filename = json_filename_and_filter;
+  string systems_filter = "";
+
+  size_t pos_lastcolon = json_filename_and_filter.find_last_of(':');
+  if (pos_lastcolon != std::string::npos) {
+    json_filename = json_filename_and_filter.substr(0, pos_lastcolon);
+    systems_filter = "," + json_filename_and_filter.substr(pos_lastcolon+1) + "," ;
+  }
+
+
+  //open and parse .g file
+  json germlines ;
+
+  try {
+    ifstream germline_data(path + "/" + json_filename);
+
+    string content( (std::istreambuf_iterator<char>(germline_data) ),
+                    (std::istreambuf_iterator<char>()    ) );
+
+    germlines = json::parse(content);
+
+  } catch (const invalid_argument &e) {
+    cerr << ERROR_STRING << "Vidjil cannot open .g file " << path + "/" + json_filename << ": " << e.what() << endl;
+    exit(1);
+  }
+
+  path += "/" + germlines["path"].get<std::string>();
+
+  json j = germlines["systems"];
+  
+  //for each germline
+  for (auto it = j.begin(); it != j.end(); it++) {
+    int max_indexing = default_max_indexing;
+      
+    json json_value = it.value();
+    json recombinations = json_value["recombinations"];
+    char shortcut = json_value["shortcut"].dump()[1];
+    string code = it.key();
+    json json_parameters = json_value["parameters"];
+    PRINT_VAR(json_parameters["search_recombinations"].dump());
+    std::map<std::string, std::map<std::string, std::string>> config;
+    std::vector<std::string> order;
+
+    for (auto item=recombinations[0].begin(); item!=recombinations[0].end(); item++) {
+      if (json_parameters.find("seed_"+item.key()) != json_parameters.end()) {
+        config[item.key()]["seed"] = json_parameters["seed_"+item.key()];
+      } else if (json_parameters.find("seed") != json_parameters.end()) {
+        config[item.key()]["seed"] = json_parameters["seed"];
+      } else {
+        config[item.key()]["seed"] = default_seed;
+      }
+      if (json_parameters.count("search_recombinations")>0) {
+        auto it = std::find(json_parameters["search_recombinations"].begin(), json_parameters["search_recombinations"].end(),
+                            item.key());
+        config[item.key()]["index"] = (it != json_parameters["search_recombinations"].end()) ? "1": "0";
+      }
+      std::string value = item.value()[0];
+      value = (value.size() > 3) ? to_string(value[3]) : "";
+      config[item.key()]["code"] = value;
+      config[item.key()]["build"] = (build_automaton.count(item.key()) > 0 && build_automaton.at(item.key())) ? "1" : "0";
+    }
+    
+    if (default_max_indexing == 0) {
+      if (json_parameters.count("trim_sequences") > 0) {
+        max_indexing = json_parameters["trim_sequences"];
+      }
+    }
+    if (json_parameters.count("search_recombinations")>0) {
+      order = json_parameters.at("search_recombinations").get<std::vector<std::string>>();
+    } else {
+      order.clear();
+      for (auto &i: config)
+        order.push_back(i.first);
+    }
+
+    if (systems_filter.size())
+      {
+        // match 'TRG' inside 'IGH,TRG'
+        // TODO: code a more flexible match, regex ?
+        if (systems_filter.find("," + code + ",") == string::npos)
+          continue ;
+      }
+
+    switch (filter) {
+    case GERMLINES_REGULAR:
+      if (code.find("+") != string::npos) continue ;
+      break ;
+
+    case GERMLINES_INCOMPLETE:
+      if (code.find("+") == string::npos) continue ;
+      break ;
+
+    default:
+      break ;
+    }
+
+    json configJson = {{"order", order}, {"segments", config}};
+    addGermline(new Germline<Tshortcut, Affect>(code, shortcut, path + "/", recombinations,
+                                                configJson, repository, max_indexing));
+  }
+
+}
+
+template <typename Tshortcut, typename Affect>
+void MultiGermline<Tshortcut, Affect>::addToIndex(IKmerStore<Tshortcut, Affect> *index) {
+  for (const auto& germline : germlines) {
+    germline->finish(index);
+  }
+  index->finish_building();
+}
+
+#endif

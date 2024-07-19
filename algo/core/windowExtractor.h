@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 #include "segment.h"
-#include "germline.h"
+#include "germline.hpp"
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "windows.h"
@@ -23,6 +23,7 @@ using namespace std;
  * This takes an OnlineBioReader reader as input and extract windows from the
  * sequences given in the input.
  */
+template <typename Tshortcut, typename Affect>
 class WindowExtractor {
  private:
   size_t nb_reads;
@@ -38,10 +39,10 @@ class WindowExtractor {
   Stats stats[STATS_SIZE];
   size_t max_reads_per_window;
 
-  MultiGermline *multigermline;
  public:
+  MultiGermline<Tshortcut, Affect> *multigermline;
 
-  WindowExtractor(MultiGermline *multigermline);
+  WindowExtractor(MultiGermline<Tshortcut, Affect> *multigermline);
 
   /**
    * Extract windows from the collection of input reads.

@@ -21,7 +21,8 @@
             } ],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "10s"
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -36,8 +37,8 @@
             } ],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "10s"
-                    
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "TRB+": {
@@ -51,7 +52,8 @@
             } ],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "10s"
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -65,7 +67,8 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "10s"
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -84,7 +87,8 @@
             }],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "10s"
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "TRA+D": {
@@ -101,7 +105,8 @@
             } ],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "10s"
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "TRD+": {
@@ -125,7 +130,8 @@
             } ],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "10s"
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -140,7 +146,8 @@
             } ],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "10s"
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "IGH+": {
@@ -154,7 +161,8 @@
             } ],
             "parameters": {
                 "seed": "9c",
-                "seed_3": "10s"
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -168,7 +176,8 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "10s"
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "IGK+": {
@@ -185,8 +194,8 @@
             }],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "10s"
-                    
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -200,7 +209,8 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "10s"
+                "seed_3": "10s",
+                "search_recombinations": ["5", "3"]
             }
         }
     }
