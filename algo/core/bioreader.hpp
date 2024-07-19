@@ -30,7 +30,7 @@
 #include <stdexcept>
 
 #define STDIN_FILENAME "-"
-#define SAMPLE_APPROX_NB_SEQUENCES 200
+#define SAMPLE_APPROX_NB_SEQUENCES 2000
 
 using namespace std;
 
@@ -108,7 +108,7 @@ public:
   /**
    * @return the position in the file
    */
-  unsigned long long getPos();
+  virtual unsigned long long getPos();
 
   /**
    * @return the current sequence or an undetermined sequence if the end

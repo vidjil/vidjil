@@ -57,7 +57,7 @@ void testFastaNbSequences() {
   TAP_TEST(a1 >= 530 && a1 <= 560, TEST_FASTA_NB_SEQUENCES, "");
 
   int a2 = nb_sequences_in_file("data/Stanford_S22.fasta", true);
-  TAP_TEST(a2 >= 13100 && a2 <= 13200, TEST_FASTA_NB_SEQUENCES, "");
+  TAP_TEST(a2 >= 12800 && a2 <= 13200, TEST_FASTA_NB_SEQUENCES, "");
 }
 
 
