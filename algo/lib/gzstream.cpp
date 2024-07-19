@@ -73,7 +73,8 @@ gzstreambuf * gzstreambuf::close() {
         sync();
         opened = 0;
         if ( gzclose( file) == Z_OK)
-            return this;
+            if (fclose( fileh) == 0)
+                return this;
     }
     return (gzstreambuf*)0;
 }
