@@ -382,7 +382,7 @@ Axis.prototype = {
                 text = this.scale.display(v)   
         }
         this.labels[l+"_l"] = {text: text, type: type}
-        return l+"_1"
+        return l+"_l"
     },
 
     sorted_keys: function(){
