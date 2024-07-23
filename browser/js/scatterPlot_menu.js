@@ -305,8 +305,8 @@ ScatterPlot_menu.prototype = {
                          .slider( "option", "max", this.convertLogToLoop(a,a.scale.max))
                          .slider( "option", "values", [ this.convertLogToLoop(a,a.scale_custom_min),
                                                         this.convertLogToLoop(a,a.scale_custom_max)])
-                $(slider_box).find(".sp_slider_left").html(a.scale_custom_min.toPrecision(1));
-                $(slider_box).find(".sp_slider_right").html(a.scale_custom_max.toPrecision(1));
+                $(slider_box).find(".sp_slider_left").html(Number(a.scale_custom_min).toPrecision(1));
+                $(slider_box).find(".sp_slider_right").html(Number(a.scale_custom_max).toPrecision(1));
                 $(slider_box).show();
                 return;
             }
