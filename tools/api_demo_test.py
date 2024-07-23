@@ -20,7 +20,7 @@ PUBLIC_PASSWORD = "demo"
 
 ### Local server (see doc/server.md)
 LOCAL_SERVER = "https://localhost/vidjil/"
-LOCAL_SSL = False #"cert_localhost.pem" 
+LOCAL_SSL = "cert_localhost.pem" 
 LOCAL_USER = "plop@plop.com"
 LOCAL_PASSWORD = "foobartest"
 LOCAL_USER_2 = "test@prometheus.com"
@@ -162,7 +162,8 @@ def demoWriteRunOnServer(server, ssl, user, password):
 
 def create_patient_or_user(server, ssl):
 
-    list_users = ['user1@test.com', 'user2@test.com', 'user3@test.com', 'user4@test.com', 'user5@test.com']
+    list_users = ['user1@test.com', 'user1@test.com', 'user2@test.com', 'user2@test.com', 'user3@test.com',
+        'user3@test.com', 'user4@test.com', 'user5@test.com', 'user5@test.com', 'user5@test.com']
     current_password = 'usertest35'
 
     print("la fonction create patient or user se lance : " , list_users , " | " , current_password)
@@ -177,6 +178,9 @@ def create_patient_or_user(server, ssl):
     # Select default group id to use for creation of sets 
     # vidjil.setGroup(0) # 1 is the default group of admin, use another if you want from the list return from "vidjil.getGroups()" above
     
+    should_return = random.choice([True, True, True, False])
+    if should_return:
+        return
     # Create patient/run/set
     patient_data = vidjil.createPatient("Jane", "Austen",
                         info="Patient from Winchester hospital, #LAL-B")
@@ -228,7 +232,7 @@ def create_patient_or_user(server, ssl):
 
     ### Get status of sample of this set
     
-    config_id = random.randint(1,5) ## multi+inc+xxx
+    config_id = random.choice([1, 2 ,2, 2, 3 ,4, 5]) # conf 2/default is more present
     analysis  = vidjil.launchAnalysisOnSample(setid_generic, file_id, config_id)
     print("Launch analysis: %s" % analysis)
 
@@ -264,6 +268,6 @@ if __name__ =='__main__':
 
             create_patient_or_user(LOCAL_SERVER, LOCAL_SSL)   
 
-            time.sleep(90)
+            time.sleep(60)
             
         
