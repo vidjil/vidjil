@@ -46,7 +46,7 @@ Cypress.Commands.add('changeColorby', (color_by) => {
 
 
 Cypress.Commands.add('openSettingsManager', () => {
-  cy.get('#manage_settings_anchor')
+  cy.get('#import_settings_anchor')
     .click({force: true})
 })
 
