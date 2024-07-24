@@ -22,7 +22,6 @@ else
     openssl x509 -noout -fingerprint -text < /etc/nginx/ssl/web2py.crt
 fi
 
-make -C /usr/share/vidjil/browser/
 
 # echo "==== Start healthcheck ==="
 # bash /healthchecks/healthcheck_nginx.bash &
