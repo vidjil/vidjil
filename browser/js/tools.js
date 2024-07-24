@@ -602,6 +602,17 @@ function compareNumericalArrays(arrA, arrB){
 
 
 /**
+ * Return in a select list the corresponding value to check
+ */
+function checkSelectOptionByValue(selectId, valueToCheck) {
+    let selectElement = document.getElementById(selectId);
+    console.debug(selectElement)
+    var option = Array.from(selectElement.options).find(option => option.value === valueToCheck);
+    console.debug(option)
+    if (option) { option.selected = true}
+}
+
+/**
  * Simplify a float to prevent approximation issues.
  */
 function discard_float_approximation(float) {
@@ -878,7 +889,8 @@ function fixDuplicateNames(names){
  * @param  {String} content Clones as fasta format
  */
 function openAndFillNewTab (content){
-    var w = window.open("", postTarget(), "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
+    var target = document.getElementById("form").target
+    var w = window.open("", target, "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
     
     var result = $('<div/>', {
         html: content
@@ -1007,32 +1019,54 @@ function bsa_cigar2match(cigar)
     return sum
 }
 
-function download_csv(csv, filename) {
-    var csvFile;
+function download_csv(content, filename, type="csv") {
+    var contentFile;
     var downloadLink;
 
-    // CSV FILE
-    csvFile = new Blob([csv], {type: "text/csv"});
+    contentFile = new Blob([content], {type: `text/${type}`});
 
-    // Download link
     downloadLink = document.createElement("a");
-
-    // File name
     downloadLink.download = filename;
 
     // We have to create a link to the file
-    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.href = window.URL.createObjectURL(contentFile);
 
-    // Make sure that the link is not displayed
     downloadLink.style.display = "none";
 
-    // Add the link to your DOM
-    document.body.appendChild(downloadLink);
-
-    // Lanzamos
+    document.body.appendChild(downloadLink);  // Add the link to your DOM
     downloadLink.click();
 }
 
+
+/**
+ * Recursive function to merge 2 dicts together , even if missing keys are present
+ * If one dict is null, or one object is not a dict, return undefined
+ */
+function mergeDictionaries(dict1, dict2) {
+    if ( (typeof dict1 !== 'object' && dict1 !== null) || (typeof dict2 !== 'object' && dict2 !== null)){
+        return undefined
+    }
+    if ( dict1 == null || dict1 == undefined){
+        dict1 = {}
+    }
+    if ( dict2 == null || dict2 == undefined){
+        dict2 = {}
+    }
+
+    for (let key in dict2) {
+        if (dict2.hasOwnProperty(key)) {
+            if (typeof dict2[key] === 'object' && dict2[key] !== null && !Array.isArray(dict2[key])) {
+                if (!dict1[key] || typeof dict1[key] !== 'object' || Array.isArray(dict1[key])) {
+                    dict1[key] = {}; // Crée un nouvel objet si la clé n'existe pas dans dict1 ou n'est pas un objet
+                }
+                mergeDictionaries(dict1[key], dict2[key]); // Appel récursif pour fusionner les objets
+            } else {
+                dict1[key] = dict2[key]; // Remplace la valeur
+            }
+        }
+    }
+    return dict1;
+}
 
 function translate_key_diversity(key_diversity){
     var table = {

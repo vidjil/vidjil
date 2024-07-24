@@ -5,6 +5,11 @@ Cypress.Commands.add('open_menu_settings', () => {
   cy.get('#settings_menu > .selector').invoke('show')
 })
 
+Cypress.Commands.add('close_menu_settings', () => { 
+  cy.get('#settings_menu').click()
+  cy.get('#settings_menu > .selector').invoke('hide')
+})
+
 Cypress.Commands.add('open_menu_filter', () => {
   cy.get('#filter_menu > .selector').invoke('show')
 })
@@ -37,5 +42,11 @@ Cypress.Commands.add('change_name_key', (type_name) => {
 Cypress.Commands.add('changeColorby', (color_by) => {
   cy.get('#color_menu_select')
     .select(color_by)
+})
+
+
+Cypress.Commands.add('openSettingsManager', () => {
+  cy.get('#manage_settings_anchor')
+    .click({force: true})
 })
 

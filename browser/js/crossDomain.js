@@ -78,15 +78,6 @@ function initIgBlastInput() {
     return igBlastInput;
 }
 
-function postTarget(){
-    var checkbox = $("#post_target_blank")[0]
-
-    if (checkbox && checkbox.checked)
-        return "_blank"
-    else 
-        return "_self"
-
-}
 
 function imgtPost(species, data, system) {
     var imgtInput = initImgtInput(species);
@@ -100,7 +91,6 @@ function imgtPost(species, data, system) {
     }
     var form = document.getElementById("form");
     form.removeAllChildren();
-    form.target = postTarget()
     form.action = "https://www.imgt.org/IMGT_vquest/analysis";
     form.method = "POST";
 
@@ -257,7 +247,6 @@ function igBlastPost(species, data, system) {
 
     var form = document.getElementById("form");
     form.removeAllChildren();
-    form.target = postTarget();
     form.action = "https://www.ncbi.nlm.nih.gov/igblast/igblast.cgi";
     form.method = "POST";
 
@@ -287,7 +276,6 @@ function arrestPost(species, data, system) {
 
     var form = document.getElementById("form");
     form.removeAllChildren();
-    form.target = postTarget();
     form.action = "http://tools.bat.infspire.org/cgi-bin/arrest/compile.junctions.online.pl";
     form.method = "POST";
 
@@ -335,7 +323,6 @@ function blastPost(species, data, system) {
 
     var form = document.getElementById("form");
     form.removeAllChildren();
-    form.target = postTarget();
     form.action = "http://www.ensembl.org/Multi/Tools/Blast?db=core";
     form.method = "POST";
 
@@ -359,7 +346,6 @@ function assignSubsetsPost(species, data, system) {
     } else {
         var form = document.getElementById("form");
         form.removeAllChildren();
-        form.target = postTarget();
         form.enctype = 'multipart/form-data';
         form.name = 'assignsubsets';
         form.action = getProxy()+"assign_subsets";

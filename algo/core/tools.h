@@ -105,6 +105,7 @@ inline int spaced_int(int *input, const string &seed) {
 /* 
   Join path1 and path2,
   inserting a "/" only when path1 is not empty.
+  And join them only if path2 is not an absolute path.
 */
 string path_join(string path1, string path2);
 

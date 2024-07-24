@@ -717,7 +717,8 @@ line {
 }
 #file_menu,
 #axis_choice,
-#add_clone_menu {
+#add_clone_menu,
+#settings_export_menu {
   z-index: 2;
   position: fixed;
   top: 200px;

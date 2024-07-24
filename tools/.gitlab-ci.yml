@@ -11,11 +11,12 @@ test_server_api:
     - >
       docker run
       -v $PWD/$CYPRESS_PATH:/app/cypress
-      -v $PWD/browser/test/data:/app/cypress/fixtures/data
-      -v $PWD/doc:/app/cypress/fixtures/doc
-      -v $PWD/demo:/app/cypress/fixtures/demo
+      -v $PWD/browser/test/data:/app/data
+      -v $PWD/doc:/app/doc
+      -v $PWD/demo:/app/demo
+      -v $PWD/tools:/app/tools
       -v $PWD:/app/vidjil
-      -v "$PWD/docker/ci/cypress.json":"/app/cypress.json"
+      -v "$PWD/docker/ci/cypress.config.js":"/app/cypress.config.js"
       -v "$PWD/docker/ci/script_api.bash":"/app/script.bash"
       -v "$PWD/docker/ci/.coveragerc":"/app/.coveragerc"
       --env HOST=$HOST
@@ -24,7 +25,7 @@ test_server_api:
       --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
       --shm-size=1GB
       --network="host"
-      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:latest" bash script.bash  $TEST_FILES
+      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9" bash script.bash  $TEST_FILES
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     reports:

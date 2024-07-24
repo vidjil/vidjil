@@ -1,3 +1,5 @@
+import Path from 'path'
+
 Cypress.Commands.add('initDatabase', (host) => {
   // init database if button is present at opening of page
   if (host=="local"){
@@ -405,10 +407,10 @@ Cypress.Commands.add('fillSampleLine', (iter, preprocess, storage, filename1, fi
       cy.get('#source_computer')
         .click({force: true})
       // Upload vidjil file
-      cy.get(`#file_upload_1_${iter}`).uploadFile(filename1)
+      cy.get(`#file_upload_1_${iter}`).selectFile(filename1)
 
       if (filename2 != undefined){
-        cy.get(`#file_upload_2_${iter}`).uploadFile(filename2)
+        cy.get(`#file_upload_2_${iter}`).selectFile(filename2)
       }
     } else if (storage == "nfs"){
       cy.addNfsSample(iter, 1, filename1)

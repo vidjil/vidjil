@@ -1,20 +1,42 @@
-
-
 Cypress.Commands.add('login', (host) => { 
-  if (host=="local"){
-      cy.visit('http://localhost/browser')
+  cy.session(['login'], () => {
+    if (host=="local"){
+        cy.visit('http://localhost/browser')
+        cy.update_icon()
+        cy.fillLogin('plop@plop.com','foobartest')
+    } else if (host=="review"){
+      cy.visit(Cypress.env('URL'))
       cy.update_icon()
-      cy.fillLogin('plop@plop.com','foobartest')
-  } else if (host=="review"){
-    cy.visit(Cypress.env('URL'))
-    cy.update_icon()
-    cy.fillLogin('test@vidjil.org',Cypress.env('CI_PASSWORD_TEST'))
-  } else if (host=="app"){
-    cy.visit('https://app.vidjil.org/')
-    cy.update_icon()
-    cy.fillLogin('demo@vidjil.org','demo')
+      cy.fillLogin('test@vidjil.org',Cypress.env('CI_PASSWORD_TEST'))
+    } else if (host=="app"){
+      cy.visit('https://app.vidjil.org/')
+      cy.update_icon()
+      cy.fillLogin('demo@vidjil.org','demo')
+    }
+    cy.close_tips()
+  },
+  {
+    validate() {
+      cy.visitpage(Cypress.env('host'))
+      cy.get('#db_auth_name')
+        .should('exist').should('be.visible')
+    },
   }
+  )
 })
+
+
+Cypress.Commands.add('visitpage', (host) => { 
+  if (host=="local"){
+    cy.setBrowser('http://localhost/browser')
+  } else if (host=="review"){
+    cy.setBrowser(Cypress.env('URL'))
+  }
+  cy.get('#db_page_patient', { timeout: 10000 })
+    .should('exist').should('be.visible')
+  cy.close_tips()
+})
+
 
 
 Cypress.Commands.add('fillLogin', (user, password) => { 

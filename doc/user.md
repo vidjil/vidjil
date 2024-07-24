@@ -1113,7 +1113,20 @@ The settings menu allows to set:
 - the format for clonotype junction [junction length / AA sequence / mixed (display AA sequence only for short junction)]
 - the format for clonotype alleles  [hide alleles / display alleles / mixed (display only for marginal alleles)]
 
-These settings, together with the color option, are kept in your web browser ``localStorage'' between several sessions.
+These settings, together with the color option, are kept in your web browser `localStorage` between several sessions.
+
+!!! note "Available in version 2024.10 and later"
+    This feature is only available starting from version 2024.10.
+
+A new panel to manage settings is included.
+This panel allows you to import and export your local settings.
+
+- Export: Two options are offered. You can choose to export all settings, including those from the settings menu, selection sequence features, and report templates. Alternatively, you can choose to export only the report templates.
+- Import: You can provide your exported settings file. A log of the imported values is displayed under a dedicated menu.
+- Reset: All settings are reset to their default values. Templates are also erased.
+
+This panel is availabe at the bottom of settings menu under "manage settings" entry.
+
 
 ## Keyboard shortcuts
 

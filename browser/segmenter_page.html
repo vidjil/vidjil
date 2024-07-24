@@ -26,7 +26,7 @@
 
         <div id="body_panel" class="flexbox">
             <div id="form_panel" class="panel twopanels_left">
-                <form id="form_block" name="form_sequences">
+                <form id="form" name="form_sequences" target="_blank">
                     <textarea autofocus id="form_sequences" name="sequences" rows="10" cols="80" placeholder="Enter up to 10 sequences in FASTA format..."></textarea>
                     <div id="bottom_form">
                         <input id="form_submit" type="button" value="Submit" />
@@ -118,10 +118,6 @@
                                     <a id="toAssignSubsets"
                                             title="Send sequences to ARResT/AssignSubsets to classify IGH sequence in a CLL subset"
                                             class="aligner-button" onclick="javascript:segment.sendTo('assignSubsets');"><i class="icon-forward-1"></i> AssignSubsets</a>
-                                    <span class="devel-mode"><label title="Open external tool in another tab" class="aligner-checkbox-label" for="post_target_blank">
-                                        <span><input class="aligner-checkbox-input" type="checkbox" id="post_target_blank" autocomplete="off" checked="true"></span>
-                                        <span class="aligner-checkbox-text">use new tab</span>
-                                    </label></span>
                             </div>
                     </div>
 

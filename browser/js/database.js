@@ -305,7 +305,8 @@ Database.prototype = {
         }
 
         if (type != undefined){
-            url = url.replace(this.db_address, '') + "?" + this.argsToStr(args)
+            url = (url != undefined) ? (url.replace(this.db_address, '') + "?" + this.argsToStr(args)) : ""
+
             text = msg !== undefined ? msg : `An error occured (${request.statusText}; code ${request.status})` //<br/>URL called: ${url}` // limit url to admin ?
             console.log({"type": type, "msg": text, "priority": 2});
         }

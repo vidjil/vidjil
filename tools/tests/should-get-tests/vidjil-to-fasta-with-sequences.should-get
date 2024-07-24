@@ -1,4 +1,5 @@
-!LAUNCH: $PYTHON ../../vidjil-to-fasta.py -o vidjil-to-fasta-with-sequences.fasta ../../../doc/analysis-example.vidjil; cat vidjil-to-fasta-with-sequences.fasta
+!REQUIRES: python2 $VIDJIL_DIR/tools/check_python_version.py
+!LAUNCH: python2 ../../vidjil-to-fasta.py -o vidjil-to-fasta-with-sequences.fasta ../../../doc/analysis-example.vidjil; cat vidjil-to-fasta-with-sequences.fasta
 
 $ 18 sequences with a seg field should be found
 18:^>

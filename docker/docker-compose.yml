@@ -54,6 +54,7 @@ services:
                 condition: service_healthy
         links:
             - mysql:mysql
+            - redis:redis
         volumes:
             - ./vidjil-server/scripts:/entrypoints
             - ./vidjil-server/healthchecks:/healthchecks
@@ -159,6 +160,8 @@ services:
                 condition: service_healthy
             workers:
                 condition: service_started
+        links:
+            - mysql:mysql
         ports:
             - "5555:5555"
         networks:
