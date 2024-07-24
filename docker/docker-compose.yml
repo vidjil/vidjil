@@ -115,8 +115,6 @@ services:
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
             - ../germline:/usr/share/vidjil/germline
-        links:
-            - uwsgi:uwsgi
         networks:
             - vidjil
 
