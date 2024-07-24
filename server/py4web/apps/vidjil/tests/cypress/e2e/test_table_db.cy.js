@@ -215,6 +215,8 @@ describe('Manipulate patient, sample and launch analysis', function () {
 
         cy.get('#db_filter_input')
           .type("{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{rightArrow}{enter}") // 11 calls to del + 1 space
+        cy.wait(['@getActivities'])
+        cy.get('#db_filter_input')
           .click({force: true})
 
         cy.wait(['@getActivities'])
