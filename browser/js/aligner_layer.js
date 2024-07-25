@@ -4,7 +4,7 @@ LAYERS = {
     'nuc':
     {
         'className': "seq_layer_text",
-        'condition': function (s,c) { return !LAYERS.amino.enabled; },
+        'condition': function (s,c) { return !LAYERS.amino.enabled && !LAYERS.affect_values.enabled; },
         'text': function (s,c) { return s.nucleoString(); },
         'enabled': true
     },
@@ -12,7 +12,17 @@ LAYERS = {
     'amino':
     {
         'className': "seq_layer_text",
+        'condition': function (s,c) { return !LAYERS.affect_values.enabled; },
         'text': function (s,c) { return s.aminoString(); },
+        'enabled': false
+    },
+
+
+    'affect_values':
+    {
+        'className': "seq_layer_text",
+        'condition': function (s,c) { return !LAYERS.amino.enabled; },
+        'text': function (s,c) { return s.affectValuesString(); },
         'enabled': false
     },
 

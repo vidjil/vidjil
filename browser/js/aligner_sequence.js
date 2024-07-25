@@ -184,6 +184,18 @@ Sequence.prototype = {
         }
     },
 
+    /**
+     * Return the assign string of clonotype
+     * */
+    affectValuesString: function () {
+        if (isNaN(this.id)) return ""
+                
+        var clone = this.m.clone(this.id);
+        if (!clone.hasSequence()) return "";
+        return clone.seg.affectValues.seq
+        
+    },
+
     aminoSplitString: function () {
         var start = -1;
         var stop = -1;
@@ -381,6 +393,8 @@ Sequence.prototype = {
             seq = this.align(this.seqAA.join(''), SYMBOL_VOID)
             var r = this.segmenter.sequence[this.segmenter.sequence_order[0]];
             ref = r.aminoString();
+        } else if (LAYERS.affect_values.enabled) {
+            return this.affectValuesString();
         } else {
             seq = this.seq;
             ref = this.segmenter.sequence[this.segmenter.sequence_order[0]].seq;

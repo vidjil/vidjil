@@ -75,6 +75,12 @@ ALIGNER_MENU = {
             'layers': ["amino"],
             'title': 'Show Amino Acid sequences (AA positions based on CDR3)',
             'enabled': false
+        },{
+            'id': 'affect_values',
+            'text': 'Use affect sequence',
+            'layers': ["affect_values"],
+            'title': 'Show affectation values sequences (Kmers that match against germline sequences)',
+            'enabled': false
         }]
     }
 };
