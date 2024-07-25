@@ -121,6 +121,7 @@ AXIS_COLOR = [
                     "D gene",
                     "J/3' gene",
                     "GC content",
+                    "EValue",
                     "Productivity",
                     "[IMGT] Productivity",
                     "[IMGT] VIdentity",
