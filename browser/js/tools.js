@@ -698,9 +698,17 @@ function nice_number_digits(x, sd)
     }
 }
 
+/**
+ * 
+ * @param {float} x Value to display nicely
+ * @param {*} precision Precision to use. use -1 to force exponential value; under 6, return x.toFiuxed, and under, compute exponential precision
+ * @returns X value nicely displayed to be print in scale ticks
+ */
 function nice_display(x, precision)
 {
-    if (precision <= 6) {
+    if (precision == -1) {
+        return x.toExponential()
+    } else if (precision <= 6) {
         return x.toFixed(precision)
     } else {
         if (x<=0) {
