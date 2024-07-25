@@ -372,8 +372,12 @@ Axis.prototype = {
                 l = "0"
                 v = 0
             }
-
-            text = nice_display(v, nice_number_digits(v, 1))
+            var min_precision = nice_number_digits(this.scale.nice_custom_min, 1)
+            if (min_precision > 6) {
+                text = nice_display(v, -1) // Case of very small number (as evalues << 1e-10)
+            } else {
+                text = nice_display(v, nice_number_digits(v, 1))
+            }
 
             if (this.scale.display == "percent")
                 text = nice_display(v*100, nice_number_digits(v*100, 1)) + "%"
