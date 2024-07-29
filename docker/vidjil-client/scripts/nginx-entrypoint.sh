@@ -22,9 +22,10 @@ else
     openssl x509 -noout -fingerprint -text < /etc/nginx/ssl/vidjil.crt
 fi
 
-# Set the DB address if set
+# Set the DB address if given
 if test -v "DB_ADDRESS"; then
-   sed -i "s/https:////localhost/${DB_ADDRESS}/g" /etc/vidjil/conf.js
+    echo "Setting DB address to $DB_ADDRESS"
+    sed -i "s/https:\/\/localhost/https:\/\/${DB_ADDRESS}/g" /etc/vidjil/conf.js
 fi
 
 # Set the DB address if set
