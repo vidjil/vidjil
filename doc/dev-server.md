@@ -576,12 +576,12 @@ echo "Install certificates for $BRANCH"
 cd $DIR/$BRANCH/docker_$BRANCH/vidjil-client/
 mkdir ssl
 cd ssl
-ln ~/nginx/certs/web2py.crt
-ln ~/nginx/certs/web2py.info
-ln ~/nginx/certs/web2py.key
-cp ~/nginx/certs/web2py.crt ~/nginx/certs/$BRANCH.server.ci.vidjil.org.crt
-cp ~/nginx/certs/web2py.info ~/nginx/certs/$BRANCH.server.ci.vidjil.org.info
-cp ~/nginx/certs/web2py.key ~/nginx/certs/$BRANCH.server.ci.vidjil.org.key
+ln ~/nginx/certs/vidjil.crt
+ln ~/nginx/certs/vidjil.info
+ln ~/nginx/certs/vidjil.key
+cp ~/nginx/certs/vidjil.crt ~/nginx/certs/$BRANCH.server.ci.vidjil.org.crt
+cp ~/nginx/certs/vidjil.info ~/nginx/certs/$BRANCH.server.ci.vidjil.org.info
+cp ~/nginx/certs/vidjil.key ~/nginx/certs/$BRANCH.server.ci.vidjil.org.key
 ```
 
 And the `uninstall_certs.sh`:
