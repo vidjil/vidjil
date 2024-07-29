@@ -1,20 +1,11 @@
 services:
-    mysql:
-        ports:
-            # Forward ports to be able to edit DB outside the containers
-            - "4306:3306"
-            - "43060:33060"
 
     uwsgi:
         image: vidjil/server:dev
         command: bash /entrypoints/uwsgi-entrypoint.sh
+        env_file:
+            - '.env.dev'
         volumes:
-            # Local volume path
-            - $VOLUME_PATH/results:/mnt/result
-            - $VOLUME_PATH/results/results:/mnt/result/results
-            - $VOLUME_PATH/tmp:/mnt/result/tmp
-            - $VOLUME_PATH/uploads:/mnt/upload/uploads
-            - $VOLUME_PATH/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
             # Use local vidjil repository
             - ../algo:/usr/share/vidjil/algo
             - ../browser:/usr/share/vidjil/browser
@@ -27,7 +18,11 @@ services:
 
     nginx:
         image: vidjil/client:dev
+        image: vidjil/client:py4web
+        env_file:
+            - '.env.dev'
         volumes:
+            # Use local vidjil repository
             - ../browser:/usr/share/vidjil/browser
             - ./:/usr/share/vidjil/docker
             - ./vidjil-client/conf/conf.js:/usr/share/vidjil/browser/js/conf.js
@@ -35,12 +30,18 @@ services:
 
     fuse:
         image: vidjil/server:dev
+        env_file:
+            - '.env.dev'
 
     workers:
         image: vidjil/server:dev
+        env_file:
+            - '.env.dev'
 
     flower:
         image: vidjil/server:dev
+        env_file:
+            - '.env.dev'
 
     restic:
         container_name: vidjil-restic

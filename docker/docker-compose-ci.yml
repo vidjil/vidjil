@@ -2,12 +2,6 @@
 services:
     uwsgi:
         volumes:
-            # Local volume path
-            - $VOLUME_PATH/results:/mnt/result
-            - $VOLUME_PATH/results/results:/mnt/result/results
-            - $VOLUME_PATH/tmp:/mnt/result/tmp
-            - $VOLUME_PATH/uploads:/mnt/upload/uploads
-            - $VOLUME_PATH/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
             # Use local vidjil repository
             - ../algo:/usr/share/vidjil/algo
             - ../browser:/usr/share/vidjil/browser
@@ -21,7 +15,6 @@ services:
         volumes:
             - ../browser:/usr/share/vidjil/browser
             - ./:/usr/share/vidjil/docker
-
 
 volumes:
     databases:
