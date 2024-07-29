@@ -392,6 +392,7 @@ deploy_review_server:
     - cp .env.docker-compose-interpolation .env
     - echo "PY4WEB_ADMIN_PASSWORD=${REVIEW_SERVER_ADMIN_PASSWORD}" >> .env.default
     - echo "VIRTUAL_HOST_NAME=${CI_COMMIT_REF_SLUG}" >> .env.default
+    - echo "FRONT_ADDRESS=${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org" >> .env.default
     - echo "DB_ADDRESS=${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org" >> .env.default
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG} || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
@@ -471,6 +472,7 @@ build_test_server_docker:
   before_script: []
   script:
     - echo $CI_REGISTRY_IMAGE:$IMAGE_NAME
+    - echo "TIME $(date) - before building docker image" >> time.log
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     # build and push the image to be used in subsequent stages
     - 'docker build 
@@ -480,7 +482,9 @@ build_test_server_docker:
         -f docker/vidjil-$TYPE/Dockerfile
         ./'
     # Push image as commit and branch name to allow to use cache if another commit come to this branch
+    - echo "TIME $(date) - before pushing docker image" >> time.log
     - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
+    - echo "TIME $(date) - after push" >> time.log
   parallel:
     matrix:
       - TYPE: [client, server]
@@ -497,6 +501,11 @@ build_test_server_docker:
   tags:
     - ci.inria.fr
     - small
+  artifacts:
+    paths:
+      - time.log
+    when: always
+    expire_in: 7 day
   needs:
     - []
 

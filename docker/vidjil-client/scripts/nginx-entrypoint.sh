@@ -22,6 +22,12 @@ else
     openssl x509 -noout -fingerprint -text < /etc/nginx/ssl/vidjil.crt
 fi
 
+# Set the front address if given
+if test -v "FRONT_ADDRESS"; then
+    echo "Setting front address to $FRONT_ADDRESS"
+    sed -i "s/server_name \$hostname;/server_name ${FRONT_ADDRESS};/g" /etc/vidjil/nginx_vidjil.conf
+fi
+
 # Set the DB address if given
 if test -v "DB_ADDRESS"; then
     echo "Setting DB address to $DB_ADDRESS"
