@@ -1,7 +1,7 @@
 .PHONY : up down clean_deploy reset_database set_rights restart backup_mysql restore_mysql_data backup_volume restore_volume build_server
 
-include .env-default
 include .env
+include .env.default
 	
 up:
 	docker compose up -d
@@ -73,5 +73,9 @@ backup_volume:
 	sudo cp -R ./${VOLUME_PATH} ./${VOLUME_PATH}_backup 
 
 restore_volume:
-	[ -d ./${VOLUME_PATH}_backup  ] && sudo rm -r ./${VOLUME_PATH}  && sudo cp -R ./${VOLUME_PATH}_backup   ./${VOLUME_PATH}  && echo 'Restored volume backup (${VOLUME_PATH})' || echo "No available volume backup (${VOLUME_PATH})"
+	[ -d ./${VOLUME_PATH}_backup  ] && sudo rm -r ./${VOLUME_PATH} && sudo cp -R ./${VOLUME_PATH}_backup ./${VOLUME_PATH} && echo 'Restored volume backup (${VOLUME_PATH})' || echo "No available volume backup (${VOLUME_PATH})"
 	docker-compose restart uwsgi mysql workers fuse
+
+deploy_web2py:
+	# Make a deploy with old fashion web2py server
+	docker-compose -f docker-compose-web2py.yml -f docker-compose.override.web2py.yml up -d

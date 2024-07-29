@@ -20,9 +20,7 @@
   6. Connect inside you mysql container to import your backup file (see server.md) and launch import: `mysql -u vidjil -p vidjil < backup_file.sql`.
   7. Don't forget to recreate your mysql backup user (see server.md)
 
-- Owner of volumes will be automatically set to `www-data` for right reasons.  
-  On an already existing instance, a `chown change` will be call on various directories (see file docker/vidjil-server/scripts/uwsgi-entrypoint.sh).
-  A parameter `CHANGE_OWNER` is given in `.env-default` conf file, that can be set to `false` to prevent this behavior.
+- Owner of volumes will be automatically set to `www-data` for right reasons. On an already existing instance, a `chown change` will be call on various directories (see file docker/vidjil-server/scripts/uwsgi-entrypoint.sh). A parameter `CHANGE_OWNER` is given in `.env.default` conf file, that can be set to `false` to prevent this behavior.
 
 ## 2024-05-15
 

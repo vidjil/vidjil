@@ -10,7 +10,7 @@ else
     mkdir "$DIR"
 fi
 
-# create a self signed ssl certificate if nothing specified
+# Create a self signed ssl certificate if nothing specified
 if test -e "/etc/nginx/ssl/vidjil.key"; then
     echo "ssl files already exists."
 else
@@ -20,6 +20,16 @@ else
              -subj "/C=FR/ST=Denial/L=Lille/O=VidjilNet/CN=www.vidjil.org" \
              -key /etc/nginx/ssl/vidjil.key > /etc/nginx/ssl/vidjil.crt
     openssl x509 -noout -fingerprint -text < /etc/nginx/ssl/vidjil.crt
+fi
+
+# Set the DB address if set
+if test -v "DB_ADDRESS"; then
+   sed -i "s/https:////localhost/${DB_ADDRESS}/g" /etc/vidjil/conf.js
+fi
+
+# Set the DB address if set
+if test -v "DB_ADDRESS"; then
+   sed -i "s/https:////localhost/${DB_ADDRESS}/g" /etc/vidjil/conf.js
 fi
 
 spawn-fcgi -U nginx -u nginx -G nginx -g nginx -s /var/run/fcgiwrap.socket /usr/bin/fcgiwrap

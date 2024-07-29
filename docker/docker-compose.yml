@@ -15,9 +15,9 @@ services:
             - ${VOLUME_PATH:-./volumes/vidjil/}/mysql:/var/lib/mysql
         healthcheck:
             test: "mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"
-            timeout: 5s
-            interval: 10s
-            retries: 40
+            timeout: 2s
+            interval: 2s
+            retries: 10
         networks:
             - vidjil
 
@@ -39,9 +39,9 @@ services:
         tty: true
         healthcheck:
             test: "bash /healthchecks/healthcheck_uwsgi.bash"
-            timeout: 5s
-            interval: 5s
-            retries: 5
+            timeout: 2s
+            interval: 2s
+            retries: 10
         depends_on:
             mysql:
                 condition: service_healthy

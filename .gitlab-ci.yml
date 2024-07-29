@@ -1,10 +1,9 @@
-# Step 0, independant: deploy_review, deploy_review_server
+# Step 0, independent: deploy_review, deploy_review_server
 # Step 1, quicker: test_tools, test_browser_unit, code_quality_custom, test_server_unit
 # Step 2, moderate:
 #   client: client_firefox_supported, tuto-c1-ff-supported
 #   server: server_firefox_supported, tuto-s1-ff-supported
-# Step 3, late, longuer or tricky: 
-
+# Step 3, late, longer or tricky: 
 
 .before_script_global: &before_script_global
   # - make demo
@@ -95,7 +94,7 @@ include:
 ###########################
 ###  Needs declaration  ###
 ###########################
-.need_for_independant_test:
+.need_for_independent_test:
   needs: []
 
 .need_for_quick_test:
@@ -298,8 +297,8 @@ test_server_unit:
     - sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" docker/vidjil-server/conf/defs.py
     # Up py4web
     - cd docker
-    - cp .env-default .env
-    - echo "UWSGI_POOL=1" >> .env
+    - cp .env.docker-compose-interpolation .env
+    - echo "UWSGI_POOL=1" >> .env.default
     - mkdir -p volumes
     - docker-compose config
     - docker-compose up -d mysql uwsgi
@@ -377,7 +376,7 @@ deploy_review:
   tags:
     - web
   extends:
-    - .need_for_independant_test
+    - .need_for_independent_test
   allow_failure: true
 
 deploy_review_server:
@@ -392,9 +391,9 @@ deploy_review_server:
     - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
-    - cp .env-default .env
-    - echo "PY4WEB_ADMIN_PASSWORD=${REVIEW_SERVER_ADMIN_PASSWORD}" >> .env
-    - echo "VIRTUAL_HOST_NAME=${CI_COMMIT_REF_SLUG}" >> .env
+    - cp .env.docker-compose-interpolation .env
+    - echo "PY4WEB_ADMIN_PASSWORD=${REVIEW_SERVER_ADMIN_PASSWORD}" >> .env.default
+    - echo "VIRTUAL_HOST_NAME=${CI_COMMIT_REF_SLUG}" >> .env.default
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG} || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
     - 'ssh $REVIEW_SERVER "
@@ -419,7 +418,7 @@ deploy_review_server:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
   extends:
-    - .need_for_independant_test
+    - .need_for_independent_test
   artifacts:
     paths:
       - docker_${CI_COMMIT_REF_SLUG}/docker-compose*

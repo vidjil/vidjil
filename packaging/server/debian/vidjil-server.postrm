@@ -21,17 +21,17 @@ if [ -f /usr/share/dbconfig-common/dpkg/postrm.mysql   ]; then
 fi
 
 purge_nginx() {
-    nginx_conf='/etc/nginx/conf.d/web2py'
+    nginx_conf='/etc/nginx/conf.d/vidjil'
     if [ -d "$nginx_conf"  ]; then
         rm -rf "$nginx_conf"
     fi
 
-    nginx_avail='/etc/nginx/sites-available/web2py'
+    nginx_avail='/etc/nginx/sites-available/vidjil'
     if [ -e "$nginx_avail" ]; then
         rm -f "$nginx_avail"
     fi
 
-    nginx_enabled='/etc/nginx/sites-enabled/web2py'
+    nginx_enabled='/etc/nginx/sites-enabled/vidjil'
     if [ -e "$nginx_enabled" ]; then
         rm -f "$nginx_enabled"
     fi

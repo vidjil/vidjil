@@ -258,7 +258,7 @@ section of the `docker-compose.yml` file or by stopping the service using port
 
 The following configuration files are found in the `vidjil/docker` directory:
 
-- `.env-default` and `.env` various variables use and transmit by docker to container: path, password, pool of workers, ...
+- `.env.default` various variables use and transmit by docker to container: path, password, pool of workers, ...
 - `vidjil-client/conf/conf.js` various variables for the vidjil client
 - `vidjil-client/conf/nginx_gzip.conf` configuration for gzip in nginx
 - `vidjil-client/conf/nginx_gzip_static.conf`  same as the previous but for static resources
@@ -273,8 +273,9 @@ the container and starts uwsgi
 - `sites/nginx` configuration required when running vidjil with nginx
 - `service` (not currently in use)
 
-Here are some notable configuration changes you should consider. Main change can be done by editing `docker/.env` configuration file. List of settable variable is in `docker/.env-default`. Some other should be done in `vidjil-server/conf/defs.py` file.
--  mysql root and vidjil password can be setted as mentionned above
+Here are some notable configuration changes you should consider. List of settable variable is in `docker/.env.default`. Some other should be done in `vidjil-server/conf/defs.py` file.
+
+- mysql root and vidjil password can be set as mentionned above
 
 - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
   They are used for admin emails monitoring the server an reporting errors.
@@ -293,13 +294,7 @@ Here are some notable configuration changes you should consider. Main change can
   In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
   Users will still be allowed to upload their own files.
 
-- By default path directory for files that
-  require saving outside of the containers (the database, third party binaries, uploads, vidjil
-  results and log files) is settable in `.env` file.
-  Default path is set in `.env-default` at `VOLUME_PATH` variable.
-  Default value is `./volumes/vidjil/` relative to docker directory.
-  Change can also be done in `volumes` in `docker-compose.yml` for various services.
-  See also [Requirements / Storage](#storage) above.
+- By default path directory for files that require saving outside of the containers (the database, third party binaries, uploads, vidjil results and log files) is settable in `.env.default` file. Default path is set in `.env.default` at `VOLUME_PATH` variable. Default value is `./volumes/vidjil/` relative to docker directory. Change can also be done directly in `volumes` in `docker-compose.yml` for various services or in `docker-compose.override.yml`. See also [Requirements / Storage](#storage) above.
 
 - Configure the reporter. Ideally this container should be positioned
   on a remote server in order to be able to report on a down server,
@@ -312,7 +307,7 @@ Here are some notable configuration changes you should consider. Main change can
 Some software can be added to Vidjil for pre-processing or even processing if the
 software outputs data compatible with the `.vidjil` or AIRR format.
 A dedicated `binaries` volumes is created at your `$VOLUME_PATH`.
-Executable should be automatically detected inside your container. 
+Executable should be automatically detected inside your container.
 
 !!! Warning
     Some binaries working on your computer may not work inside container environment.
