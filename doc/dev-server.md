@@ -103,8 +103,8 @@ is an admin), which also prevents may DB calls.
 
 The scheduler is handled by Py4web. Here we summarise the way it works.
 
-Py4web has several workers. Its number is determined by the value of `WORKERS_POOL` given 
-in `docker/.env-default`/`docker/.env` file. 
+Py4web has several workers. Its number is determined by the value of `WORKERS_POOL` given
+in `docker/.env-default`/`docker/.env` file.
 Redis and flowers service are associated to workers to work.
 
 At regular interval the worker signals that it is still alive (it is called
@@ -285,7 +285,7 @@ to manage people packaging software they haven't developed with changes
 they have made. To make things simpler, we simply package the current
 source as the reference archive and build the package with the script
 that can be obtained here: <https://people.debian.org/~wijnen/mkdeb> (Thanks
-to Bas Wijnen \<wijnen@debian.org\> for this script)
+to [Bas Wijnen](mailto:wijnen@debian.org) for this script)
 
 From the source directory, run that script to create the package.
 
@@ -352,9 +352,9 @@ This will also start the environment for you.
 ## Deploy a local version for developpment purpose
 
 You may want to make some modification into the code of Vidjil web application, server, browser or tools side.
-In these cases, you should get a copy of the vidjil repository where you will be able to make your changes, and also set some modifiaction into the `docker-compose.yml`.
+In these cases, you should get a copy of the vidjil repository where you will be able to make your changes, and also set some modifications into the `docker-compose.yml`.
 
-A specific docker-compose file is provided under `docker-compose-dev.yml` file. 
+A specific docker-compose file is provided under `docker-compose-dev.yml` file.
 It overload some volume declaration to use script and content of the local repository from the launch directory.
 
 ``` bash
@@ -598,7 +598,7 @@ DIR=$(dirname $0)
 echo "Uninstall certificates for $BRANCH"
 
 rm -f $DIR/$BRANCH/docker_$BRANCH/vidjil-client/ssl/web2py.{ctr,info,key}
-rm -f  ~/nginx/certs/$BRANCH.ci.vidjil.org.crt ~/nginx/certs/$BRANCH.ci.vidjil.org.info ~/nginx/certs/$BRANCH.ci.vidjil.org.key
+rm -f ~/nginx/certs/$BRANCH.ci.vidjil.org.crt ~/nginx/certs/$BRANCH.ci.vidjil.org.info ~/nginx/certs/$BRANCH.ci.vidjil.org.key
 ```
 
 ### Functional with cypress (release candidate)
@@ -661,16 +661,15 @@ docker-compose up -d
 !!! danger
     At release 2024.01, we migrate our backend server from Web2py to Py4web.  
     This section described the way to update your anterior server.  
-    We **HIGHLY** recommand to use a second server with duplicate content to set correctly docker-compose files.
+    We **HIGHLY** recommend to use a second server with duplicate content to set correctly docker-compose files.
 
-Since release 2024.01, we migrated to a new framwork: Py4web.  
-We also made a major refactoring of docker-compose organisation.  
+Since release 2024.01, we migrated to a new framework: Py4web.  
+We also made a major refactoring of docker-compose organization.  
 We tried to make it the most transparent but some major changes in volumes and docker declaration were still needed.
 
 **MAKE BACKUP BEFORE MIGRATING YOUR SERVER**
 
-
-##### docker compose organisation. 
+##### docker compose organization
   
 Pull a version of vidjil repository of release 2024.01.
 
@@ -682,12 +681,12 @@ New services were added (redis, flowers).
 We also changed environment variable declaration.  
 Now variable at set to restricted places:
 
-* vidjil-client/conf/conf.js: As previous, conf for browser are done in this file
-* vidjil-server/conf/defs.py: As previous, conf for server are done in this file. Note some change in `DIR_xxx` default declaration
-* `.env-default` and `.env` files: Docker environment variable are loaded from these 2 files. The first one have default values and explanation about effect, the second is meant to store your overload values of these variable. For the moment, at least one variable should be set in `.env` file to work.
-* backup/conf/backup.cnf: user and password to use for backup. Will likely be moved to `.env` files at next release.
+- vidjil-client/conf/conf.js: As previous, conf for browser are done in this file
+- vidjil-server/conf/defs.py: As previous, conf for server are done in this file. Note some change in `DIR_xxx` default declaration
+- `.env-default` and `.env` files: Docker environment variable are loaded from these 2 files. The first one have default values and explanation about effect, the second is meant to store your overload values of these variable. For the moment, at least one variable should be set in `.env` file to work.
+- backup/conf/backup.cnf: user and password to use for backup. Will likely be moved to `.env` files at next release.
 
-In docker-compose volume, you should not have to change volume path except the ones refering to web2py.
+In docker-compose volume, you should not have to change volume path except the ones referring to web2py.
 A typical needed change is the path for database destination in volume
 
 ```yaml title="docker/docker-compose.yml"
@@ -701,14 +700,13 @@ A typical needed change is the path for database destination in volume
 Please, use for migration an image target of release 2024.01 and do not jump directly to an higher release image.
 To do so, change `vidjil-server:latest` to `vidjil-server:release-2024.01`. Do the same for client.
 
-
 ##### Troubleshooting
 
-Sometimes, migration of database don't work immediatly between web2py and py4web. We didn't isolate origin of this inconvenience.
+Sometimes, migration of database don't work immediately between web2py and py4web. We didn't isolate origin of this inconvenience.
 
 In this case, the simpler way to pass through is to use a new MySQL database and to re-import backup inside.
 
-In this case, follow these step:
+In this case, follow these steps:
 
 1. shutdown server.
 1. Move your current mysql volume to another place or change path of mysql volume in your docker-compose.
@@ -719,12 +717,11 @@ In this case, follow these step:
 
 If everything works well, you should now be able to connect to your server with your usual credential and to see your data.
 
-
 #### Migrating Py4web release-2024.01 to release-2024.05.1
 
 This release don't have breaking change.
 
-Notable change is that now preproces, pre-fuse and post-fuse need to be declared in three differents directories and use the same organisation that [vidjil-contribs](https://gitlab.inria.fr/vidjil/contrib) repository.
+Notable change is that now preprocess, pre-fuse and post-fuse need to be declared in three different directories and use the same organization that [vidjil-contribs](https://gitlab.inria.fr/vidjil/contrib) repository.
 
 To unify this, a new value should be add to docker-compose in uwsgi volume:
 
@@ -735,6 +732,7 @@ To unify this, a new value should be add to docker-compose in uwsgi volume:
             - ./vidjil-server/conf/defs-tools.py:/usr/share/vidjil/tools/defs.py
             - ./scripts/:/usr/share/vidjil/tools/scripts
 ```
+
 `./scripts/` directory can be a path to a local clone of vidjil-contrib.
 
 These modifications are already present in last version of docker-compose file. If you compose your own version, think about to add it and adapt it yourself.
@@ -744,4 +742,4 @@ Please add it in directory for tasks section.
 
 ```py title="docker/vidjil-server/conf/defs.py"
 DIR_PREPROCESS = '/usr/share/vidjil/tools/scripts/preprocess/'
-``` 
+```

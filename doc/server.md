@@ -4,11 +4,9 @@
     Users should consult the [web application manual](http://www.vidjil.org/doc/user/)  
     Other documentation can also be found in [doc/](http://www.vidjil.org/doc/).  
 
-
-
 The supported way to install, run, and maintain a Vidjil server
 is to use **Docker containers**.
-We are developping and deploying them since 2018, and,
+We are developing and deploying them since 2018, and,
 as of 2024, these Docker containers are used on all our servers (healthcare, public)
 as well as in some partner hospitals.
 See the [hosting options](http://wwW.vidjil.org/doc/healthcare/),
@@ -67,8 +65,6 @@ as of 2023 (300+ users, including 50+ regular users).
 - Health certified server: 12 vCPUs, 14GB RAM, with redundant backups
 - Public server <https://app.vidjil.org>: 16 vCPUs (11 workers), 120GB RAM
 
-
-
 ### Storage
 
 #### Full upload of sequences
@@ -77,7 +73,7 @@ As for many high-throughput sequencing pipeline, **disk storage to store input d
 is now the main constraint** in our environment.
 
 Depending on the sequencer, files can weigh several GB.
-Depending of the number of users, a full installation's total storage should thus be serveral hundred GB, or even several TB
+Depending of the number of users, a full installation's total storage should thus be several hundred GB, or even several TB
 (as of the end of 2023, 10 TB for the public server).
 We recommend a **RAID setup** of at least **2x2TB** to allow for user files and at least one backup.
 
@@ -102,22 +98,20 @@ Contact us if you need help in setting such an authentication.
 Once installed, the server can run on a private network.
 However, the following network access are recommended:
 
-  - outbound access
-      - for users: several features using external platforms (IgBlast, IMGT/V-QUEST…)
-      - for server mainteners: upgrades and reports to a monitor server
-  - inbound access
-      - through the VidjilNet consortium (http://www.vidjil.net),
-        the team in Lille may help local server mainteners in some monitoring, maintenance and upgrade tasks,
-        provided a SSH access can be arranged, possibly over VPN.
-
+- outbound access
+  - for users: several features using external platforms (IgBlast, IMGT/V-QUEST…)
+  - for server maintainers: upgrades and reports to a monitor server
+- inbound access
+  - through the [VidjilNet consortium](http://www.vidjil.net),
+    the team in Lille may help local server maintainers in some monitoring, maintenance and upgrade tasks,
+    provided a SSH access can be arranged, possibly over VPN.
 
 ## Docker -- Installation
 
-All our images are hosted on DockerHub in the [vidjil/](https://hub.docker.com/r/vidjil) repositories.
+All our images are hosted on DockerHub in the [vidjil](https://hub.docker.com/r/vidjil) repositories.
 The last images are tagged with `vidjil/server:latest` and `vidjil/client:latest`.
 
 Individual services are started by docker-compose  (<https://docs.docker.com/compose/>).
-
 
 ### Before installation
 
@@ -137,93 +131,93 @@ The vidjil Docker environment is managed by `docker-compose`, who launches the f
 
 From image `vidjil/client`
 
-  - `nginx` The web server, containing the client web application
+- `nginx` The web server, containing the client web application
 
 From image `vidjil/server`
 
-  - `mysql` The database
-  - `uwsgi` The Py4web backend server
-  - `workers` The Py4web Scheduler workers in charge of executing vidjil users' samples
-  - `redis` Allow to dispatch jobs to workers
-  - `flowers` A server to monitoring workers status
-  - `fuse` The XmlRPCServer that handles queries for comparing samples
-  - `restic` Starts a cron job to schedule regular backups
-  - `reporter` A monitoring utility that can be configured to send monitoring information to a remote server
-  - `postfix` A mail relay to allow `uwsgi` to send error notifications
-
-
+- `mysql` The database
+- `uwsgi` The Py4web backend server
+- `workers` The Py4web Scheduler workers in charge of executing vidjil users' samples
+- `redis` Allow to dispatch jobs to workers
+- `flowers` A server to monitoring workers status
+- `fuse` The XmlRPCServer that handles queries for comparing samples
+- `restic` Starts a cron job to schedule regular backups
+- `reporter` A monitoring utility that can be configured to send monitoring information to a remote server
+- `postfix` A mail relay to allow `uwsgi` to send error notifications
 
 ### Network usage and SSL certificates
 
 *If you are simply using Vidjil from your computer for testing purposes you can skip the next two steps.*
 
-  - Step 1 : Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
-    replacing `$hostname` with your FQDN.
-  - Step 2 : Edit the `vidjil-client/conf/conf.js`
-        change all 'localhost' to the FQDN
+- Step 1 : Change the hostname in the nginx configuration `vidjil-client/conf/nginx_web2py`,
+  replacing `$hostname` with your FQDN.
+- Step 2 : Edit the `vidjil-client/conf/conf.js`
+      change all 'localhost' to the FQDN
 
 *You will need the following step whether you are using locally or not.*
 
 Vidjil uses HTTPS by default, and will therefore require SSL certificates.
 You can achieve this with the following steps:
 
-  - Configure the SSL certificates
-     - A fast option is to create a self-signed SSL certificate.
-       Note that it will trigger security warnings when accessing the client.
-       From the `docker/` directory:
-       ```
-       openssl genrsa 4096 > web2py.key
-       openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
-       openssl x509 -noout -fingerprint -text < web2py.crt
-       mkdir -p vidjil-client/ssl
-       mv web2py.* vidjil-client/ssl/
-      ```
+- Configure the SSL certificates
+  - A fast option is to create a self-signed SSL certificate.
+   Note that it will trigger security warnings when accessing the client.
+   From the `docker/` directory:
 
-     + If you are using the `postfix` container you may want to generate certificates (using the same process) and place them in `postfix/ssl`.
-       The certificates must bear the name of your mail domain (<maildomain>.crt and <maildomain>.key)
+   ```sh
+   openssl genrsa 4096 > web2py.key
+   openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
+   openssl x509 -noout -fingerprint -text < web2py.crt
+   mkdir -p vidjil-client/ssl
+   mv web2py.* vidjil-client/ssl/
+   ```
 
-  - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates.
-    One solution is to use `certbot` on the host to generate the certificates and to copy them in the right directory so that the container
-    can access it. 
-    See [Nginx and Let’s Encrypt with Docker](https://medium.com/@pentacent/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71).
-    To check the integrity of the host, `certbot` needs to set up a challenge. 
-    Thus, Nginx needs to provide specific files that are generated by `certbot`. 
-    To do so, you should tell `certbot` to put those files in the `/opt/vidjil/certs` 
-    directory (this can be changed in the `docker-compose.yml` file.
-    You can generate the certificates with the command `certbot certonly --webroot -w /opt/vidjil/certs -d myvidjil.org`. 
-    You'll need to update the Nginx configuration in `docker/vidjil-client/conf/nginx_web2py`
-    Then 
-    ```shell
-    cp /etc/letsencrypt/live/vdd.vidjil.org/fullchain.pem vidjil-client/ssl/web2py.crt
-    cp /etc/letsencrypt/live/vdd.vidjil.org/privkey.pem vidjil-client/ssl/web2py.key
-    ```
-    The certificates can be renewed with `certbot renew` to do so, you may wish to mount `/etc/letsencrypt` in the Docker image as a volume (*eg.* `/etc/letsencrypt:/etc/nginx/ssl`).
-    However beware, because you would not be able to start Nginx till the certificates are in place.
-    On certificate renewal (with `certbot`), you then need to restart the Nginx server. The following `cron` line can be used for certificate renewal (you may want to update the paths):
-    ```
-0 0 1 * * root (test -x /usr/bin/certbot && perl -e 'sleep int(rand(14400))' && certbot --webroot -w /opt/vidjil/certs renew && (cd /path/to/vidjil/docker/vidjil/docker; sudo -u vidjil docker-compose stop nginx && sudo -u vidjil docker-compose rm -f nginx && sudo -u vidjil docker-compose up -d nginx)) >> /var/log/certbot.log 2>&1
+  - If you are using the `postfix` container you may want to generate certificates (using the same process) and place them in `postfix/ssl`.
+    The certificates must bear the name of your mail domain (<maildomain>.crt and <maildomain>.key)
+
+- A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates.
+  One solution is to use `certbot` on the host to generate the certificates and to copy them in the right directory so that the container
+  can access it. 
+  See [Nginx and Let’s Encrypt with Docker](https://medium.com/@pentacent/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71).
+  To check the integrity of the host, `certbot` needs to set up a challenge.
+  Thus, Nginx needs to provide specific files that are generated by `certbot`.
+  To do so, you should tell `certbot` to put those files in the `/opt/vidjil/certs`
+  directory (this can be changed in the `docker-compose.yml` file).
+  You can generate the certificates with the command `certbot certonly --webroot -w /opt/vidjil/certs -d myvidjil.org`.
+  You'll need to update the Nginx configuration in `docker/vidjil-client/conf/nginx_web2py`
+  Then:
+
+  ```sh
+  cp /etc/letsencrypt/live/vdd.vidjil.org/fullchain.pem vidjil-client/ssl/web2py.crt
+  cp /etc/letsencrypt/live/vdd.vidjil.org/privkey.pem vidjil-client/ssl/web2py.key
   ```
 
-    
+  The certificates can be renewed with `certbot renew` to do so, you may wish to mount `/etc/letsencrypt` in the Docker image as a volume (*eg.* `/etc/letsencrypt:/etc/nginx/ssl`).
+  However beware, because you would not be able to start Nginx till the certificates are in place.
+  On certificate renewal (with `certbot`), you then need to restart the Nginx server. The following `cron` line can be used for certificate renewal (you may want to update the paths):
+
+  ```sh
+  0 0 1 * * root (test -x /usr/bin/certbot && perl -e 'sleep int(rand(14400))' && certbot --webroot -w /opt/vidjil/certs renew && (cd /path/to/vidjil/docker/vidjil/docker; sudo -u vidjil docker-compose stop nginx && sudo -u vidjil docker-compose rm -f nginx && sudo -u vidjil docker-compose up -d nginx)) >> /var/log/certbot.log 2>&1
+  ```
+
 If necessary, in `docker-compose.yml`, update `nginx.volumes`, line `./vidjil-client/ssl:/etc/nginx/ssl`, to set the directory with the certificates.
     The same can be done for the `postfix` container.
-
 
 If you would prefer to use the vidjil over HTTP (not recommended outside of testing purposes), you can
 use the provided configuration files in `docker/vidjil-server/conf` and `docker/vidjil-client/conf`. You will find several files
 that contain "http" in their name. Simply replace the existing config files with their HTTP counter-part (for safety reasons, don't
 forget to make a backup of any file you replace.)
- 
+
 ### First configuration and first launch
 
-  - Set the SSL certificates (see above)
-  - Change the mysql root password, mysql user password and the py4web admin password in `.env` file
-  - Set the desired mail domain and credentials for the `postfix` container in `.env`
-  - Set the number of workers in `.env`. Keep at least one threads not used to not overload server
+- Set the SSL certificates (see above)
+- Change the mysql root password, mysql user password and the py4web admin password in `.env` file
+- Set the desired mail domain and credentials for the `postfix` container in `.env`
+- Set the number of workers in `.env`. Keep at least one threads not used to not overload server
 
-  - Comment reporter services in `docker-compose.yml`
+- Comment reporter services in `docker-compose.yml`
 
-  - It is avised to first launch  with `docker-compose up mysql`.
+- It is advised to first launch  with `docker-compose up mysql`.
 The first time, this container creates the database and it takes some time.
 
 - When `mysql` is launched,
@@ -232,23 +226,23 @@ Then `docker ps` should display seven running containers for a localhost usage:
 `vidjil-nginx`, `vidjil-uwsgi`, `vidjil-mysql`, `vidjil-fuse`, `vidjil-workers`, `vidjil-flowers`, `vidjil-redis`.
 Service `restic`, `reporter` and `postfix` are usefull for backup and email communication and need to be started for regular installation.
 
-  - Vidjil also need germline files.
-      - You can use IMGT germline files if you accept IMGT licence.
-        For this, from the `vidjil` directory (root of the git repository),
-        run `make germline` to create `germline/` while checking the licence.
-      - These germlines are included in the server container with a volume in the fuse block
-        in your `docker-compose.yml`: `../germline:/usr/share/vidjil/germline`.
-      - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
+- Vidjil also need germline files.
+  - You can use IMGT germline files if you accept IMGT licence.
+    For this, from the `vidjil` directory (root of the git repository),
+    run `make germline` to create `germline/` while checking the licence.
+  - These germlines are included in the server container with a volume in the fuse block
+    in your `docker-compose.yml`: `../germline:/usr/share/vidjil/germline`.
+  - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
 
-
-  - Open a web browser to `https://localhost`, or to your FQDN if you configured it (see above).
+- Open a web browser to `https://localhost`, or to your FQDN if you configured it (see above).
 Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
 
 - Once these main service are set, you can also set docker service for backup and mail communication.
 
 *notice* : By default, Nginx HTTP server listens for incoming connection and binds on port 80 on the host, if you encounter the following message error:
-```
+
+```txt
 ERROR: for nginx
 Cannot start service nginx: driver failed programming external
 connectivity on endpoint vidjil-nginx
@@ -260,62 +254,58 @@ You can resolve it either by changing the port used by Vidjil in the `nginx.port
 section of the `docker-compose.yml` file or by stopping the service using port
 80.
 
-  
-
 ### Further configuration
 
 The following configuration files are found in the `vidjil/docker` directory:
 
-  - `.env-default` and `.env` various variables use and transmit by docker to container: path, password, pool of workers, ...
-  - `vidjil-client/conf/conf.js` various variables for the vidjil client
-  - `vidjil-client/conf/nginx_gzip.conf` configuration for gzip in nginx
-  - `vidjil-client/conf/nginx_gzip_static.conf`  same as the previous but for static resources
+- `.env-default` and `.env` various variables use and transmit by docker to container: path, password, pool of workers, ...
+- `vidjil-client/conf/conf.js` various variables for the vidjil client
+- `vidjil-client/conf/nginx_gzip.conf` configuration for gzip in nginx
+- `vidjil-client/conf/nginx_gzip_static.conf`  same as the previous but for static resources
 
-  - `vidjil-server/conf/defs.py` various variables for the vidjil server
-  - `vidjil-server/conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
-  - `vidjil-server/scripts/nginx-entrypoint.sh` entrypoint for the nginx
-  - `vidjil-server/scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi
+- `vidjil-server/conf/defs.py` various variables for the vidjil server
+- `vidjil-server/conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
+- `vidjil-server/scripts/nginx-entrypoint.sh` entrypoint for the nginx
+- `vidjil-server/scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi
 service. Ensures the owner of some relevant volumes are correct within
 the container and starts uwsgi
 
-  - `sites/nginx` configuration required when running vidjil with nginx
-  - `service` (not currently in use)
+- `sites/nginx` configuration required when running vidjil with nginx
+- `service` (not currently in use)
 
 Here are some notable configuration changes you should consider. Main change can be done by editing `docker/.env` configuration file. List of settable variable is in `docker/.env-default`. Some other should be done in `vidjil-server/conf/defs.py` file.
-  -  mysql root and vidjil password can be setted as mentionned above
+-  mysql root and vidjil password can be setted as mentionned above
 
-  - Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
-    They are used for admin emails monitoring the server an reporting errors.
-    Change also the `hosting` variable in `vidjil-client/conf/confs.js`.
+- Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
+  They are used for admin emails monitoring the server an reporting errors.
+  Change also the `hosting` variable in `vidjil-client/conf/confs.js`.
 
-  - <a name='healthcare'></a>
-    If, according yo your local regulations, the server is suitable for hosting clinical data,
-    you may update the `HEALTHCARE_COMPLIANCE` variable in `vidjil-server/conf/defs.py`
-    and the `healthcare` variable in `vidjil-client/conf/confs.js` to remove warnings related to non-healthcare compliance.
-    Updating this variable is the sole responsibility of the institution responsible for the server,
-    and should be done in accordance with the regulations that apply in your country.
-    See also the [hosting options](healthcare.md) offered by the VidjilNet consortium.
+- <a name='healthcare'></a>
+  If, according yo your local regulations, the server is suitable for hosting clinical data,
+  you may update the `HEALTHCARE_COMPLIANCE` variable in `vidjil-server/conf/defs.py`
+  and the `healthcare` variable in `vidjil-client/conf/confs.js` to remove warnings related to non-healthcare compliance.
+  Updating this variable is the sole responsibility of the institution responsible for the server,
+  and should be done in accordance with the regulations that apply in your country.
+  See also the [hosting options](healthcare.md) offered by the VidjilNet consortium.
 
-  - To allow users to select files from a mounted volume,
-    set `FILE_SOURCE` and `FILE_TYPES` in `vidjil-server/conf/defs.py`.
-    In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
-    Users will still be allowed to upload their own files.
+- To allow users to select files from a mounted volume,
+  set `FILE_SOURCE` and `FILE_TYPES` in `vidjil-server/conf/defs.py`.
+  In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
+  Users will still be allowed to upload their own files.
 
-  - By default path directory for files that
-    require saving outside of the containers (the database, third party binaries, uploads, vidjil
-    results and log files) is settable in `.env` file. 
-    Default path is set in `.env-default` at `VOLUME_PATH` variable.
-    Default value is `./volumes/vidjil/` relative to docker directory.
-    Change can also be done in `volumes` in `docker-compose.yml` for various services.
-    See also <a href="#storage">Requirements / Storage</a> above.
+- By default path directory for files that
+  require saving outside of the containers (the database, third party binaries, uploads, vidjil
+  results and log files) is settable in `.env` file.
+  Default path is set in `.env-default` at `VOLUME_PATH` variable.
+  Default value is `./volumes/vidjil/` relative to docker directory.
+  Change can also be done in `volumes` in `docker-compose.yml` for various services.
+  See also [Requirements / Storage](#storage) above.
 
-  - Configure the reporter. Ideally this container should be positioned
-    on a remote server in order to be able to report on a down server,
-    but we have packed it here for convenience.
-    You will also
-    need to change the `DB_ADDRESS` in `conf/defs.py` to match it.
-
-
+- Configure the reporter. Ideally this container should be positioned
+  on a remote server in order to be able to report on a down server,
+  but we have packed it here for convenience.
+  You will also
+  need to change the `DB_ADDRESS` in `conf/defs.py` to match it.
 
 ### Adding external software
 
@@ -326,9 +316,8 @@ Executable should be automatically detected inside your container.
 
 !!! Warning
     Some binaries working on your computer may not work inside container environment.
-    For compatibilities reasons, 
+    For compatibilities reasons,
     keep in mind that some softwares need to be build inside a docker image to get correct libraries and compilers.
-
 
 When the software has compatible inputs and outputs, it will be enough
 to configure then the appropriate `pre process` or `analysis config` (to be documented).
@@ -337,18 +326,16 @@ Contact us (<mailto:contact@vidjil.org>) to have more information and help.
 
 ### Troubleshooting
 
-
 ## CORS header 'Access-Control-Allow-Origin' missing
 
-Sometime, you want to split the client and the server on different server. 
+Sometime, you want to split the client and the server on different server.
 This type of configuration need to allow cross origin in nginx server.
 To do so, you need to modify nginx configuration files `vidjil-client/conf/nginx_web2py` or `.../nginx_web2py_http`.
-Adapt and add this line to server declaration: 
+Adapt and add this line to server declaration:
 
-```
+```nginx
 add_header 'Access-Control-Allow-Origin' 'your_other_domain';
 ```
-
 
 #### Error "Can't connect to MySQL server on 'mysql'"
 
@@ -401,8 +388,6 @@ Each time you relaunch uwsgi server, the password is update to last value presen
 
 ### Updating a Docker installation
 
-
-
 #### Before the update
 
 We post news on image updates at [changelogs docker](changelog-docker.md).
@@ -423,15 +408,17 @@ More tags are available at <https://hub.docker.com/r/vidjil/server/tags/>.
 
 If you do not have access to `hub.docker.com` on your server, then you
 should pull and extract the image onto a machine that does,
-send it to your server with your favourite method, and finally import
+send it to your server with your favorite method, and finally import
 the image on the server.
 
 Extract:
+
 ``` sh
 docker save -o <output_file> vidjil/server[:<version>] vidjil/client[:<version>]
 ```
 
 Import:
+
 ```sh
 docker load -i <input_file>
 ```
@@ -444,9 +431,10 @@ The latest versions of these files are available on our
 [Gitlab](http://gitlab.vidjil.org/).
 
 Once the images are pulled, you can relaunch the containers:
+
 ```sh
 docker-compose down
-docker-compose up
+docker-compose up -d
 ```
 
 By default, all previous volumes will be reused and no data will be lost.
@@ -456,7 +444,7 @@ and to access the database, and to see a result from a sample.
 
 If something is not working properly, you have still the option to rollback
 to the previous images (for example by tagging as `latest` a previous image),
-and possibly by reusing also your last databse backup if something went wrong.
+and possibly by reusing also your last datable backup if something went wrong.
 
 #### Launching a single container
 
@@ -464,13 +452,14 @@ When an update occurs on a single container, one may not want to relaunch all
 the containers, to save time. With `docker-compose` it is possible to do so.
 
 Stop the desired container (for instance the client):
-```
+
+```sh
 docker-compose stop nginx
 ```
 
 Then launch it again
 
-```
+```sh
 docker-compose up -d nginx
 ```
 
@@ -485,19 +474,17 @@ the Dockerhub page](https://hub.docker.com/r/vidjil/server/tags/).
 ## Plain server installation
 
 !!! warning
-
     We used this installation on the public server between 2014 and 2018.
     This installation is not supported anymore.
     Only available installation should use docker service and docker containers (see above).
-
 
 ## Running the server in a production environment
 
 ### Introduction
 
 When manipulating a production environment it is important to take certain
-precautionnary mesures, in order to ensure production can either be rolled
-back to a previous version or simply that any encurred loss of data can be
+precautionary measures, in order to ensure production can either be rolled
+back to a previous version or simply that any incurred loss of data can be
 retrieved.
 
 PY4web and Vidjil are no exception to this rule.
@@ -518,59 +505,60 @@ To work well, you need to create a dedicated user `backup` in your MySQL databas
 
 1. Modify user name and password
 
-    The `docker/backup/conf/backup.cnf` gives the authentication information to the database so that 
+    The `docker/backup/conf/backup.cnf` gives the authentication information to the database so that
     a backup user (read rights only required) can connect to the database.  
-    User name and password can be change. 
-    These change should be include to modify also values used by restic service. 
+    User name and password can be change.
+    These change should be include to modify also values used by restic service.
     To do that, edit file `docker/backup/conf/backup.cnf`.
 
-
 1. Open a terminal, open mysql interface inside docker image
-```
-# open terminal in your MySQL container
-docker exec -it vidjil-mysql bash
 
-# Connect to Mysql as root. 
-mysql -u root -p 
-# Fill asked password with root password (variable `MYSQL_ROOT_PASSWORD` in .env file)
-```
+  ```sh
+  # open terminal in your MySQL container
+  docker exec -it vidjil-mysql bash
 
+  # Connect to Mysql as root. 
+  mysql -u root -p 
+  # Fill asked password with root password (variable `MYSQL_ROOT_PASSWORD` in .env file)
+  ```
 
 1. Create backup user and grant access to vidjil database
 
-    A backup use should be created indise MySQL database. 
-    Apply value `backup` and `password` according to change made at previous step.
+  A backup use should be created inside MySQL database.
+  Apply value `backup` and `password` according to change made at previous step.
 
-    ```
-    CREATE USER 'backup'@'localhost' IDENTIFIED BY 'password';
-    ```
+  ```sql
+  CREATE USER 'backup'@'localhost' IDENTIFIED BY 'password';
+  ```
 
-1. Set host availability to connection 
+1. Set host availability to connection
 
-    Host value (ip) of newly created user should be set. 
-    Use '%' to allow access from everywhere.
-    A more restrictive ip could be use for security, but check that your ip should be fixed and do not change regulary.
+  Host value (ip) of newly created user should be set. 
+  Use '%' to allow access from everywhere.
+  A more restrictive ip could be use for security, but check that your ip should be fixed and do not change regulary.
 
-    ```
-    UPDATE mysql.user SET Host = "%" WHERE User = "backup";
-    FLUSH PRIVILEGES;
-    ```
+  ```sql
+  UPDATE mysql.user SET Host = "%" WHERE User = "backup";
+  FLUSH PRIVILEGES;
+  ```
 
 1. Add right to read 'vidjil' database content to make backup of data.
-    ```
-    GRANT SELECT, LOCK TABLES ON `mysql`.* TO 'backup'@'%';
-    GRANT SELECT, LOCK TABLES, SHOW VIEW, EVENT, TRIGGER ON `vidjil`.* TO 'backup'@'%';
-    ```
 
-1. Check that everything is setted and available.
-    ```
-    SHOW GRANTS FOR backup;
-    ```
+  ```sql
+  GRANT SELECT, LOCK TABLES ON `mysql`.* TO 'backup'@'%';
+  GRANT SELECT, LOCK TABLES, SHOW VIEW, EVENT, TRIGGER ON `vidjil`.* TO 'backup'@'%';
+  ```
+
+1. Check that everything is set and available.
+
+  ```sql
+  SHOW GRANTS FOR backup;
+  ```
 
 1. Restart restic service
 
-    Backup is done by restic service.
-    It needs to be restarted to take into account change made on configuration file `docker/backup/conf/backup.cnf`.
+  Backup is done by restic service.
+  It needs to be restarted to take into account change made on configuration file `docker/backup/conf/backup.cnf`.
 
 !!! note
     Read docker logs for restic service to see if everything working well.
@@ -581,13 +569,12 @@ Backup does not apply to uploaded files.
 We inform users that they should
 keep a backup of their original sequence files.
 
-
 Then the backup strategy can be configured in the `docker/backup/conf/backup-cron` file. The cron file states how often the backup script will be called. There are three options: backing up all results/analyses since yesterday, since the start of the month, since forever. On top of that the database is exported under two formats (CSV and SQL).
 
 ### Autodelete and Permissions
 
 !!! warning
-    Behavior not checked for py4web; 
+    Behavior not checked for py4web;
     TODO
 
 Py4web has a handy feature called `AutoDelete` which allows the administrator
@@ -595,17 +582,16 @@ to state that file reference deletions should be cascaded if no other
 references to the file exist.
 When deploying to production one needs to make sure `AutoDelete` is
 deactivated.
-This is the case for the default Vijdil installation (see `server/py4web/apps/vidjil/models.py`).
+This is the case for the default Vidjil installation (see `server/py4web/apps/vidjil/models.py`).
 
 As a second precaution it is also wise to temporarily restrict py4web's
 access to referenced files.
 
-Taking two mesures to prevent file loss might seem like overkill, but
+Taking two measures to prevent file loss might seem like overkill, but
 securing data is more important than the small amount of extra time spent
-putting these mesures into place.
+putting these measures into place.
 
 ### Migrating Data
-
 
 Usually, when extracting data for a given user or group, the whole database should not be
 copied over.
@@ -664,7 +650,7 @@ Vidjil analysis configs should not be directly transferred between servers. Inde
 
 This `config.json` file initially contains a list of the analysis configs from the original public server, such as:
 
-```
+```json
   "2": {
       "description": [
         "IGH",
@@ -678,7 +664,7 @@ This `config.json` file initially contains a list of the analysis configs from t
 ```
 
 - `"2"`           :  the original config ID on the server from which the data was exported
-- `"description"` :  the original config parameters (only for information, they are ignoed in the import)
+- `"description"` :  the original config parameters (only for information, they are ignored in the import)
 - `"link_local"`  :  the config ID that will be used on the new server
 
 In the `config.json` file, you have to replace all `link_local` values with the corresponding config ID
@@ -690,7 +676,7 @@ a solution is to create a generic `legacy` config for these old data.
 Below is an example of such a `config.json`, linking actual configuration on the public `app.vidjil.org` server to configs to a newly installed server.
 This should be completed by a mapping of other configs that were used in the migrated data.
 
-```
+```json
 {
   "2": {
     "description": [ "IGH", "vidjil",  "-c clones -3 -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -w 50 -d -y all", "-t 100 -d lenSeqAverage",  "multi-locus" ],
@@ -718,12 +704,9 @@ This should be completed by a mapping of other configs that were used in the mig
 }
 ```
 
-
-
 ##### Step 4 : prepare your server pre-process configs
 
 Proceed as in step 3 for pre-process configs. The file to edit is named `pprocess.json`.
-
 
 ##### Step 5 : import
 
@@ -747,19 +730,15 @@ Usually, the command is thus:
 sh migrator.sh -p /mnt/result/results/ -s /etc/vidjil/export/XXXX/ import --config/etc/vidjil/exportXXXX/config.json --pre-process /etc/vidjil/export/XXXX/pprocess.json  4
 ```
 
-
-
 #### Exporting/importing input sequence files
 
 Note that py4web and the Vidjil server are robust to missing *input* files.
-These files are not backuped and may be removed from the server at any time.
+These files are not backed up and may be removed from the server at any time.
 Most of the time, these large files won't be migrated along with the database, the results and the analysis files.
 
 However, they can simply be copied over to the new installation. Their filenames
 are stored in the database and should therefore be accessible as long as
 they are in the correct directories.
-
-
 
 #### Exporting/importing a full database
 
@@ -778,10 +757,9 @@ the tables have been created by Py4web. This can be achieved by simply
 accessing a non-static page.
 
 !!! warning
-
-    If the database has been initialised from the interface you will
+    If the database has been initialized from the interface you will
     likely encounter primary key collisions or duplicated data, so it is best
-    to skip the initialisation altogether.
+    to skip the initialization altogether.
 
 Once the tables have been created, the data can be imported as follows:
 
@@ -797,15 +775,12 @@ skipped, the usual admin account won't be present.
 It is also possible to create a user directly from the database although
 this is not the recommended course of action.
 
-
 ## Using CloneDB [Under development]
 
 !!! note
-
   This documentation is not suitable for py4web version of server.
   Please wait for release 2024.06 to be fixed.
-  If you need to use it until this date, please contact us at support@vidjil.org.
-
+  If you need to use it until this date, please [contact us](mailto:support@vidjil.org).
 
 The [CloneDB](https://gitlab.inria.fr/vidjil/clonedb) has to be installed
 independently of the Vidjil platform.
