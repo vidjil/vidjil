@@ -12,7 +12,6 @@ describe('Before all step', function () {
     })
     
     it('01-Remove anon for public grp',  function() {
-
         cy.goToGroupsPage()
         var grp_public = 3
         var grp_admin  = 1
@@ -26,6 +25,5 @@ describe('Before all step', function () {
         cy.goToGroupsPage()
         cy.get('#row_group_'+grp_public+' > #col_access_'+grp_public)
           .should("contain", "a //")
-
     })
 })

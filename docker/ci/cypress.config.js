@@ -14,5 +14,16 @@ module.exports = defineConfig({
   viewportWidth: 1366,
   viewportHeight: 800,
   e2e: {
+    setupNodeEvents(on, config) {
+      on('task', {
+        testTimings (attributes) {
+          console.log('Test "%s" has finished in %dms', 
+            attributes.title, attributes.duration)
+          console.table(attributes.commands)
+    
+          return null
+        },
+      })
+    },
   }
 })

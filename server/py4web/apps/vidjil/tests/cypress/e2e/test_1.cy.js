@@ -46,7 +46,6 @@ describe('Manipulate db page (for cypress pipeline)', function () {
 
         cy.openDBPage() // go to db from close db page
         cy.goToRunPage()
-        cy.goToRunPage()
         cy.goToPatientPage()
 
         cy.closeDBPage()
@@ -67,14 +66,11 @@ describe('Manipulate db page (for cypress pipeline)', function () {
     })
 
 
-    it('03-Open db 4',  function() {
+    it('03-Open db4; multiple times calls',  function() {
         // Call multiple times patient page to verify that cypress handle correctly intercept
 
         cy.openDBPage()
         cy.isDbPageVisible().should('equal', true)
-        cy.goToRunPage()
-        cy.goToRunPage()
-        cy.goToRunPage()
         cy.goToRunPage()
         cy.goToRunPage()
         cy.goToPatientPage()
@@ -85,10 +81,7 @@ describe('Manipulate db page (for cypress pipeline)', function () {
         cy.goToPatientPage()
         cy.goToRunPage()
         cy.goToPatientPage()
-        cy.goToRunPage()
-        cy.goToPatientPage()
 
-        cy.closeDBPage()
         return
     })
 

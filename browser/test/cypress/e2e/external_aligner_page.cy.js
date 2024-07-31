@@ -10,7 +10,7 @@ describe('Aligner', function () {
 
   
   it('Aligner page submit',  function() {
-    cy.update_icon(2000)
+    cy.update_icon(0, 2000)
     cy.get('#form_sequences').type( ">seq1 \n" +
                                     "CGTCTTCTGTACTATGACGTCTCCAACTCAAAGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGGGGCCAGATTATAAGAAACTCTTTGGCAGTGGAACAACAC\n" +
                                     "\n" +
@@ -34,7 +34,7 @@ describe('Aligner', function () {
   })
 
   it('Aligner page export fasta',  function() {
-    cy.update_icon(2000)
+    cy.update_icon(0, 2000)
     cy.get('#form_sequences').type( ">seq1 \n" +
                                     "CGTCTTCTGTACTATGACGTCTCCAACTCAAAGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGGGGCCAGATTATAAGAAACTCTTTGGCAGTGGAACAACAC\n" +
                                     "\n" +
@@ -55,7 +55,7 @@ describe('Aligner', function () {
   })
 
   it('Aligner page error bad query',  function() {
-    cy.update_icon(2000)
+    cy.update_icon(0, 2000)
     cy.get('#form_sequences').type( "blabla")
     
 
@@ -67,7 +67,7 @@ describe('Aligner', function () {
   })
 
   it('Aligner page error unseg',  function() {
-    cy.update_icon(2000)
+    cy.update_icon(0, 2000)
     cy.get('#form_sequences').type( ">seq1 \n"+
                                     "CGTCTT",
                                     {delay:0})

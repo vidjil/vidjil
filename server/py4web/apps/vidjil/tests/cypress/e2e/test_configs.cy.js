@@ -17,7 +17,7 @@ describe('Manipulate db page', function () {
     })
 
 
-    it('00-config_airr', function() {
+    it('00-new_config', function() {
         var config_name  = ".vidjil/.clntab"
         var config_class = ["3", "Analysis with/for other software"]
         var config_soft  = undefined

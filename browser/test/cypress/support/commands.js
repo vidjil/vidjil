@@ -93,7 +93,6 @@ Cypress.Commands.add('save_analysis', () => {
  * Allow to wait for update icon to be not visible
  */
 Cypress.Commands.add("update_icon", (delay=0, timeout=undefined) => {
-  let visible_icon = false;
   cy.get('#updateIcon')
     .then( ($icon) => {
       if ($icon.is(":visible")) { 
@@ -127,5 +126,5 @@ Cypress.Commands.add('changePreset', (sp_id, value) => {
   cy.get(`#${sp_id}_select_preset`)
     .select(value, {force: true})
     .trigger('change', {force: true})
-  cy.update_icon(10000)
+  cy.update_icon(0, 10000)
 })
