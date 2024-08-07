@@ -74,6 +74,7 @@ Database.prototype = {
         
         this.div = document.createElement("div")
         this.div.className = "db_div";
+        this.div.setAttribute("data-cy", "db_div")
         
         var close_popup = document.createElement("span")
         close_popup.onclick = function(){

@@ -1,38 +1,48 @@
 Cypress.Commands.add('login', (host) => { 
+
+  cy.intercept({
+    method: "GET",
+    url: "get_active_notifications*",
+  }).as("getActivities");
+  
   cy.session(['login'], () => {
     if (host=="local"){
-        cy.visit('http://localhost/browser')
-        cy.update_icon()
-        cy.fillLogin('plop@plop.com','foobartest')
+      cy.visit('http://localhost')
+      cy.wait(["@getActivities"]);
+      // cy.update_icon();
+      cy.fillLogin('plop@plop.com','foobartest')
     } else if (host=="review"){
       cy.visit(Cypress.env('URL'))
-      cy.update_icon()
+      cy.wait(["@getActivities"]);
+      // cy.update_icon();
       cy.fillLogin('test@vidjil.org',Cypress.env('CI_PASSWORD_TEST'))
     } else if (host=="app"){
       cy.visit('https://app.vidjil.org/')
-      cy.update_icon()
+      cy.wait(["@getActivities"]);
+      // cy.update_icon();
       cy.fillLogin('demo@vidjil.org','demo')
     }
     cy.close_tips()
   },
-  {
-    validate() {
-      cy.visitpage(Cypress.env('host'))
-      cy.get('#db_auth_name')
-        .should('exist').should('be.visible')
-    },
-    cacheAcrossSpecs: true,
-  })
+  // {
+  //   validate() {
+  //     cy.visitpage(Cypress.env('host'))
+  //     cy.get('#db_auth_name')
+  //       .should('exist').should('be.visible')
+  //   },
+  //   cacheAcrossSpecs: true,
+  //}
+  )
 })
 
 
 Cypress.Commands.add('visitpage', (host) => { 
   if (host=="local"){
-    cy.setBrowser('http://localhost/browser')
+    cy.setBrowser('http://localhost')
   } else if (host=="review"){
     cy.setBrowser(Cypress.env('URL'))
   }
-  cy.get('#db_page_patient', { timeout: 10000 })
+  cy.get('[data-cy="db_page_patient"]', { timeout: 10000 })
     .should('exist').should('be.visible')
   cy.close_tips()
 })
@@ -40,27 +50,27 @@ Cypress.Commands.add('visitpage', (host) => {
 
 
 Cypress.Commands.add('fillLogin', (user, password) => { 
-    cy.get('.db_div', { timeout: 10000 })
+    cy.get('[data-cy="db_div"]', { timeout: 10000 })
       .should("be.visible")
     cy.close_tips()
 
     cy.document().then(($document) => {
       const documentResult = $document.querySelector('#logout_button')
       if (documentResult) {
-          cy.log("CHECK - already logged")
-          cy.logout()
+        cy.log("CHECK - already logged")
+        cy.logout()
       } else {
         cy.log("CHECK - not logged")
       }
     })
 
     cy.get('#login', { timeout: 10000 })
-      .should('exist').should('be.visible')
       .type(user)
     cy.get('#password')
       .type(password)
     cy.get('#submit_login').click()
-    cy.update_icon()
+    cy.wait(["@getActivities"]);
+    // cy.update_icon();
 
     cy.verifyLogin()
 })

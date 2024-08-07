@@ -52,8 +52,8 @@ describe('Manipulate patient, sample and launch analysis', function () {
     } 
 
     before(function () {
-        cy.login(Cypress.env('host'))
-        cy.close_tips()
+      // cy.login(Cypress.env('host'))
+      // cy.close_tips()
     })
     beforeEach(function () {
       sendTestTimings()
@@ -68,27 +68,32 @@ describe('Manipulate patient, sample and launch analysis', function () {
         sendTestTimings()
     })
 
+    it("01-Launch and delete analysis and check logs", function () {
+      var id = "";
+      var firstname = "fn";
+      var lastname = "ln";
+      var birthday = "2000-01-01";
+      var informations = "cy";
+      var group = "public";
+      cy.createPatient(id, firstname, lastname, birthday, informations, group);
 
+      var preprocess = undefined;
+      var filename1 = "Demo-X5.fa";
+      var filename2 = undefined;
+      var samplingdate = "2021-01-01";
+      var informations = "cy; #cy";
+      cy.addSample(
+        preprocess,
+        "nfs",
+        filename1,
+        filename2,
+        samplingdate,
+        informations
+      ).then((sample_id) => {
+        cy.log("added sample " + sample_id)
 
-    it('00-Launch analysis and check logs',  function() {
-        var id          = ""
-        var firstname   = "first name"
-        var lastname    = "last name"
-        var birthday    = "2000-01-01"
-        var informations= "a patient created by cypress"
-        cy.createPatient(id, firstname, lastname, birthday, informations, "public")
-        var sample_set_id = 26
-
-        var preprocess   = undefined
-        var filename1    = "Demo-X5.fa"
-        var filename2    = undefined
-        var samplingdate = "2021-01-01"
-        var informations = "un set d'information; #tag_sample"
-        cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations)
-
-        var sample_id = 50
-        cy.launchProcess("2", sample_id)
-        cy.waitAnalysisCompleted("2", sample_id)
+        cy.launchProcess("2", sample_id);
+        cy.waitAnalysisCompleted("2", sample_id);
 
         cy.goToLogsPage()
 
@@ -99,19 +104,10 @@ describe('Manipulate patient, sample and launch analysis', function () {
           .should("contain", "file (" + sample_id + ") //Demo-X5.fa added")
         cy.get('#db_table_container')
           .should("contain", "patient (" + sample_set_id + ") las added")
-    })
 
-    it('01-Delete analysis',  function() {
-        cy.goToPatientPage()
-        var uid = 26; // TODO; reuse previous uid // async
-        var sample_id = 50
-
-        cy.openSet(uid)
         cy.deleteProcess("2", sample_id)
-
-        cy.launchProcess("2", sample_id) // suppl for later tests
-    })
-
+      })
+    });
 
     it('02-Use search field',  function() {
         cy.goToPatientPage()
@@ -127,32 +123,73 @@ describe('Manipulate patient, sample and launch analysis', function () {
         })
     })
 
+    it("03-Association between sets", function () {
+      // Create sets
+      var id = "";
+      var firstname = "fn";
+      var lastname = "ln";
+      var birthday = "2000-01-01";
+      var informations = "cy";
+      var group = "public";
+      cy.createPatient(
+        id,
+        firstname + "_1",
+        lastname + "_1",
+        birthday,
+        informations + " (1)",
+        group
+      );
+      cy.createPatient(
+        id,
+        firstname + "_2",
+        lastname + "_2",
+        birthday,
+        informations + " (2)",
+        group
+      );
+      cy.createPatient(
+        id,
+        firstname + "_3",
+        lastname + "_3",
+        birthday,
+        informations + " (3)",
+        group
+      );
+      cy.createRun(id, "run link", "2023-01-01", "cy", group);
 
-    it('03-Association between sets',  function() {
-        cy.goToPatientPage()
-        
-        var id          = ""
-        var firstname   = "first name"
-        var lastname    = "last name"
-        var birthday    = "2000-01-01"
-        var informations= "a patient created by cypress"
-        cy.createPatient(id, firstname+"_1", lastname+"_1", birthday, informations + " (iter 1)", "public")
-        cy.createPatient(id, firstname+"_2", lastname+"_2", birthday, informations + " (iter 2)", "public")
-        cy.createPatient(id, firstname+"_3", lastname+"_3", birthday, informations + " (iter 3)", "public")
-        cy.createRun(id, "run with samples linked to some patients", "2023-01-01", "A run created by cypress", "public")
-
-        cy.goToTokenPage("run")
-        cy.openSet(30)
-
-        var preprocess   = undefined
-        var filename1    = "Demo-X5.fa"
-        var filename2    = undefined
-        var samplingdate = "2021-01-01"
-        var informations = "Sample from a fictive patient"
-        cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations+" (1) #tag_sample", firstname+"_1")
-        cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations+" (2)", firstname+"_2")
-        cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations+" (3)")
-    })
+      // Add sample with association
+      var preprocess = undefined;
+      var filename1 = "Demo-X5.fa";
+      var filename2 = undefined;
+      var samplingdate = "2021-01-01";
+      var informations = "cy";
+      cy.addSample(
+        preprocess,
+        "nfs",
+        filename1,
+        filename2,
+        samplingdate,
+        informations + " (1) #cy",
+        firstname + "_1"
+      );
+      cy.addSample(
+        preprocess,
+        "nfs",
+        filename1,
+        filename2,
+        samplingdate,
+        informations + " (2)",
+        firstname + "_2"
+      );
+      cy.addSample(
+        preprocess,
+        "nfs",
+        filename1,
+        filename2,
+        samplingdate,
+        informations + " (3)"
+      );
+    });
 
 
     it('04-Association between sets; jump',  function() {

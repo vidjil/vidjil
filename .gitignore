@@ -168,6 +168,8 @@ site/*
 docker/scripts/
 tools/scripts/
 binaries/
+cypress.config.js
+
 docker/vidjil-server/requirements.txt
 
 

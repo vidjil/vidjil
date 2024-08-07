@@ -93,21 +93,16 @@ Cypress.Commands.add('save_analysis', () => {
  * Allow to wait for update icon to be not visible
  */
 Cypress.Commands.add("update_icon", (delay=0, timeout=undefined) => {
-  cy.get('#updateIcon')
-    .then( ($icon) => {
-      if ($icon.is(":visible")) { 
-        // cy.log( "wait icon already visible")
-        delay = 0 // Don't use delay if icon already visible
+  if (delay) {
+    cy.get("#updateIcon").then(($icon) => {
+      if ($icon.is(":hidden")) {
+        cy.wait(delay);
       }
-      if (delay){
-        cy.wait(delay)
-      }
-    }
-  )
+    });
+  }
   timeout = (timeout!=undefined) ? timeout : 6000
   cy.get('#updateIcon', { timeout: timeout })
     .should("not.visible")
-
 })
 
 Cypress.Commands.add('getById', (input) => {
