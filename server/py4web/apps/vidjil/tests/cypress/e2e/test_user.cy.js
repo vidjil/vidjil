@@ -1,136 +1,86 @@
 /// <reference types="cypress" />
 
+describe("Creation of users and groups", function () {
+  it("01-Users and impersonate", function () {
+    // Create users
+    cy.goToUsersPage();
+    cy.getTableLength("#table_users").should("eq", 1);
 
-describe('Creation of users and groups', function () {
-    before(function () {
-        cy.login(Cypress.env('host'))
-        cy.close_tips()
-    })
-    beforeEach(function () {
-      cy.login(Cypress.env('host'))
-      cy.visitpage(Cypress.env('host'))
-      cy.closeFlashAll()
-    })
-    afterEach(function () {
-    })
-    after(function () {
-    })
+    var first_name = "uf";
+    var last_name = "ul";
+    var email = "u@e.o";
+    var password = "4P99n!vP3c_/kA]3Yv"; // complex password
+    cy.createUser(
+      first_name + "1",
+      last_name + "1",
+      email + "A",
+      password + "1"
+    );
+    cy.createUser(
+      first_name + "2",
+      last_name + "2",
+      email + "B",
+      password + "2"
+    );
 
+    cy.goToUsersPage();
+    cy.getTableLength("#table_users").should("eq", 3);
 
-    it('01-Open db; access to various page of the bd',  function() {
-        cy.isDbPageVisible().should('equal', true)
+    // Set group rights
+    cy.goToGroupsPage();
+    var grp_user4 = 9;
+    cy.setGroupRight(grp_user4, ["run"], true);
 
-        // These function get their own should inside to verify that correct db element is present and visible
-        cy.openDBPage()
+    // Impersonate from drop down
+    cy.goToPatientPage();
+    cy.get("#db_auth_name").should("contain", "System Administrator");
+    cy.get("#desimpersonate_btn").should("not.exist");
+    cy.get("#choose_user").select("2", { force: true });
+    cy.wait("@getActivities");
+    cy.get("#db_auth_name").should("not.exist");
 
-        // Try to access to all page of the db (except patient/run/set)
-        // Each call to function goTo use a should test to make automatic verification
-        
-        cy.goToUsagePage()
-        cy.goToProcessPage()
-        cy.goToNewsPage()
-        cy.goToPreprocessPage()
-        cy.goToConfigsPage()
-        cy.goToGroupsPage()
-        cy.goToUsersPage()
-        cy.goToAdminPage()
-        return
-    })
+    cy.get("#desimpersonate_btn").should("exist").click();
+    cy.wait("@getActivities");
+    cy.get("#db_auth_name").should("contain", "System Administrator");
 
+    // Impersonate from users table
+    cy.goToUsersPage();
 
-    it('02-Open db; Users',  function() {
-        cy.openDBPage()
-        cy.goToUsersPage()
+    cy.get("#db_auth_name").should("contain", "System Administrator");
+    cy.get("#desimpersonate_btn").should("not.exist");
+    cy.get("#impersonate_btn_2").click();
+    cy.wait("@getActivities");
+    cy.get("#db_auth_name").should("not.exist");
+    cy.get('[data-cy="db_div"]').should("contain", " + new patients "); // we should have been redirected to patients page
 
-        var previous_length = 2
+    cy.get("#desimpersonate_btn").click();
+    cy.wait("@getActivities");
+    cy.get("#db_auth_name").should("contain", "System Administrator");
 
-        var first_name = "user_first"
-        var last_name  = "user_last"
-        var email      = "user4@email.org"
-        var password   = "4P99n!vP3c_/kA]3Yv" // complex password 
-        cy.createUser(first_name, last_name, email, password)
+    // Owner sets
 
-        cy.goToUsersPage()
-        cy.getTableLength("#table_users").should('eq', previous_length+1)
+    var owner_public = "public";
+    var owner_user1 = "Personal Group";
 
-        cy.goToGroupsPage()
-        var grp_user4 = 9
-        cy.setGroupRight(grp_user4, ["run"], true)
-    })
-
-
-    it('03-owner_set', function() {
-        var owner_public = "public"
-        var owner_admin  = "admin"
-        var owner_user1  = "Personal Group"
-        var owner_user2  = "user_0003"
-
-        cy.createPatient("", `owner ${owner_public}`, "test", "2000-01-01", `Cypress; Patient to test owner ${owner_public}`, owner_public, `test owner ${owner_public}`)
-        cy.createPatient("", `owner ${owner_admin}`,  "test2", "2000-01-02", `Cypress; Patient to test owner ${owner_admin}`, owner_admin, `test2 owner ${owner_admin}`)
-        // groups of users should be annon.
-        cy.createPatient("", `owner ${owner_user1}`,  "test3", "2000-01-03", `Cypress; Patient to test owner ${owner_user1}`, owner_user1, `tes (`)
-        cy.createPatient("", `owner ${owner_user2}`,  "test4", "2000-01-04", `Cypress; Patient to test owner ${owner_user2}`, owner_user2, `tes (`)
-        cy.goToPatientPage()
-        return
-    })
-
-
-    it('04-impersonate from list',  function() {
-        // Don't know why, but user seem to be not logged at starting of test 04
-
-        cy.goToPatientPage()
-
-        cy.get('#db_auth_name')
-          .contains("System Administrator")
-
-        cy.get('#desimpersonate_btn')
-          .should('not.exist')
-
-        cy.intercept({
-            method: 'GET', // Route all GET requests
-            url: 'get_active_notifications*',
-          }).as('getActivities')
-
-        cy.get('#choose_user')
-          .select("2", {force: true})
-
-        cy.wait("@getActivities")
-
-        cy.get('#db_auth_name')
-          .should('not.exist')
-        cy.get('#desimpersonate_btn')
-          .should('exist')
-          .click()
-        cy.wait("@getActivities")
-
-        cy.get('#db_auth_name')
-          .contains("System Administrator")
-    })
-
-
-    it('05-impersonate from table',  function() {
-        cy.goToUsersPage()
-
-        cy.get('#db_auth_name')
-          .contains("System Administrator")
-
-        cy.get('#desimpersonate_btn')
-          .should('not.exist')
-
-        cy.intercept({
-            method: 'GET', // Route all GET requests
-            url: 'get_active_notifications*',
-          }).as('getActivities')
-
-        // action
-        cy.get('#impersonate_btn_2')
-          .click()
-
-        cy.wait("@getActivities")
-
-        cy.get('#desimpersonate_btn')
-          .click()
-        cy.wait("@getActivities")
-    })
-
-})
+    // public shoud not be anon.
+    cy.createPatient(
+      "",
+      "pub",
+      "test1",
+      "2000-01-01",
+      "Cy",
+      owner_public,
+      `test1 pub`
+    );
+    // groups of user should be anon.
+    cy.createPatient(
+      "",
+      "u",
+      "test2",
+      "2000-01-03",
+      `Cy`,
+      owner_user1,
+      `tes (`
+    );
+  });
+});

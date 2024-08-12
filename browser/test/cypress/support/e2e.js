@@ -41,15 +41,70 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     return false
 })
 
+
+let commands = []
+let testAttributes
+
+Cypress.on('test:before:run', () => {
+  commands.length = 0
+})
+
+Cypress.on('test:after:run', (attributes) => {
+  /* eslint-disable no-console */
+  console.log('Test "%s" has finished in %dms', 
+    attributes.title, attributes.duration)
+  console.table(commands)
+  testAttributes = {
+    title: attributes.title,
+    duration: attributes.duration,
+    commands: Cypress._.cloneDeep(commands),
+  }
+})
+
+Cypress.on('command:start', (c) => {
+  commands.push({
+    name: c.attributes.name,
+    started: +new Date(),
+  })
+})
+
+Cypress.on('command:end', (c) => {
+  const lastCommand = commands[commands.length - 1]
+
+  if (lastCommand.name !== c.attributes.name) {
+    throw new Error('Last command is wrong')
+  }
+
+  lastCommand.endedAt = +new Date()
+  lastCommand.elapsed = lastCommand.endedAt - lastCommand.started
+})
+
+// sends test results to the plugins process
+// using cy.task https://on.cypress.io/task
+const sendTestTimings = () => {
+  if (!testAttributes) {
+    return
+  }
+
+  const attr = testAttributes
+  testAttributes = null
+  cy.task('testTimings', attr)
+} 
+
 beforeEach(() => {
   cy.on("window:before:load", (win) => {
     cy.spy(win.console, "log");
   })
+  sendTestTimings()
+  cy.login(Cypress.env('host'))
+  cy.initTestDb(Cypress.env('host'))
+  cy.visitpage(Cypress.env('host'))
+  cy.closeFlashAll()
 })
 
 before(function() {
   // runs once before all tests in the block
-    cy.initDatabase(Cypress.env('host'))
+  cy.initDatabase(Cypress.env('host'))
 })
 
 
@@ -64,5 +119,7 @@ Cypress.on('log:changed', (log) => {
 })
 
 after(() => {
+  cy.clearCookies()
+  sendTestTimings()
   cy.writeFile(`cypress/logs/${Cypress.spec.name}.log.json`, logs)
 })

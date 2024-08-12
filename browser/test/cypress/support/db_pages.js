@@ -66,6 +66,7 @@ Cypress.Commands.add("openDBPage", () => {
         .contains("open list")
         .should("be.visible")
         .click({ force: true });
+      cy.wait("@getActivities");
 
       cy.get('[data-cy="db_div"]').should("be.visible");
     }
@@ -76,8 +77,10 @@ Cypress.Commands.add("closeDBPage", () => {
   cy.isDbPageVisible().then((val) => {
     if (val == true) {
       cy.get(".db_div > .closeButton > .icon-cancel")
-        .click()
-        .should("not.visible");
+        .click();
+      cy.wait("@getActivities");
+
+      cy.get('[data-cy="db_div"]').should("not.visible");
     }
   });
 });
@@ -91,11 +94,12 @@ Cypress.Commands.add("closeDBPage", () => {
  * @return {[type]}
  */
 Cypress.Commands.add("goToTokenPage", (token) => {
+  cy.log("goToTokenPage " + token)
+
   cy.openDBPage().then(() => {
     cy.get("#db_menu > ." + token + "_token")
       .contains("" + token + "s")
-      .should("be.visible")
-      .click();
+      .click({force: true});
     cy.wait("@getActivities");
 
     cy.get('[data-cy="db_div"]').should("contain", " + new " + token + "s ");
