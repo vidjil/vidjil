@@ -1,11 +1,4 @@
 
-
-Cypress.Commands.add('waitForUpdates', () => { 
-  cy.wait(1000)
-})
-
-
-
 Cypress.Commands.add("text", { prevSubject: true }, (subject, options) => {
   return subject.text();
 });

@@ -1166,7 +1166,7 @@ Database.prototype = {
 
     //affiche la fenetre de dialogue avec le serveur et affiche ses réponses
     display: function (msg) {
-        console.log("display")
+        // console.log("display")
         this.div.style.display = "block";
         this.msg.innerHTML = msg;
         
@@ -1176,8 +1176,8 @@ Database.prototype = {
     },
 
     update_stats_locus_display:function() {
-        console.log("update_stats_locus_display")
-        console.log("document.querySelectorAll(\".stats_locus\") : " + document.querySelectorAll(".stats_locus").length)
+        // console.log("update_stats_locus_display")
+        // console.log("document.querySelectorAll(\".stats_locus\") : " + document.querySelectorAll(".stats_locus").length)
         document.querySelectorAll(".stats_locus").forEach(function (element) {
             locus = element.innerHTML
             element.innerHTML = ""

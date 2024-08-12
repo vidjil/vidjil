@@ -94,15 +94,14 @@ describe('Creation of users and groups', function () {
         cy.get('#choose_user')
           .select("2", {force: true})
 
-        cy.wait(['@getActivities'])
-        cy.update_icon(100)
+        cy.wait("@getActivities")
 
         cy.get('#db_auth_name')
           .should('not.exist')
         cy.get('#desimpersonate_btn')
           .should('exist')
           .click()
-        cy.wait(['@getActivities'])
+        cy.wait("@getActivities")
 
         cy.get('#db_auth_name')
           .contains("System Administrator")
@@ -127,12 +126,11 @@ describe('Creation of users and groups', function () {
         cy.get('#impersonate_btn_2')
           .click()
 
-        cy.wait(['@getActivities'])
-        cy.update_icon(100)
+        cy.wait("@getActivities")
 
         cy.get('#desimpersonate_btn')
           .click()
-        cy.wait(['@getActivities'])
+        cy.wait("@getActivities")
     })
 
 })

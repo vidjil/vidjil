@@ -13,17 +13,11 @@
  */
 Cypress.Commands.add('goToDbPage', (dbpage, page, page_header) => {
   cy.openDBPage().then(() => {
-    cy.intercept({
-        method: 'GET', // Route all GET requests
-        url: 'get_active_notifications*', // that have a URL that matches '/users/*'
-      }).as('getActivities')
-
     cy.get(dbpage)
       .should('be.visible')
       .click( { force: true} )
 
-    cy.wait(['@getActivities'])
-    cy.update_icon()
+    cy.wait("@getActivities")
 
     cy.get(page)
       .should('exist')
@@ -81,21 +75,19 @@ Cypress.Commands.add('createUser', (first_name, last_name, email, password) => {
 
   cy.get('#create_user_button')
     .click()
-
-  cy.update_icon()
+  cy.wait("@getActivities")
   
   cy.get('#register_user')
     .should('exist')
     .should("contain", "Register new user")
-  cy.update_icon()  
 
   cy.fillUser(first_name, last_name, email, password)
 
   cy.get('#sign_up')
     .should("contain", "Sign up")
     .click()
+  cy.wait("@getActivities")
 
-  cy.update_icon()  
   cy.get('#table_users')
     .should('exist')
     .should("contain", `${first_name} ${last_name}`)
@@ -122,16 +114,10 @@ Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
     }
 
     cy.goToGroupsPage()
-    cy.intercept({
-        method: 'GET', // Route all GET requests
-        url: 'get_active_notifications*',
-      }).as('getActivities')
 
     cy.get('#row_group_'+grp_id)
       .click()
-
-    cy.wait(['@getActivities'])
-    cy.update_icon(100)
+    cy.wait("@getActivities")
 
     var rights_list = ["create", "read", "admin", "upload", "run", "save", "anon"]
     for (var i = rights.length - 1; i >= 0; i--) {

@@ -632,29 +632,26 @@ def get_found_types(data):
     return known_types.intersection(present_types)
 
 def reset_db(db):
+    log.debug("reset_db !")
     mysql = db._uri[:5] == "mysql"
     # if using mysql disable foreign keys to be able to truncate
     if mysql:
         db.executesql('SET FOREIGN_KEY_CHECKS = 0;')
     try:
         for table in db :
-            r = None
+            log.debug(f"Try and truncate table {table}")
             try:
-                # check if table exists (db can contain tables that don't exist, like auth_cas)
-                r = db(table.id > 0).select(limitby = (0,1))
-            except:
-                pass
-            if r is not None:
                 table.truncate()
-    except:
-        raise
+            except Exception as exception:
+                log.info(f"Exception when truncating table {table} : {exception}")
     finally:
-        # lets not forget to renable foreign keys
+        # lets not forget to re-enable foreign keys
         if mysql:
             db.executesql('SET FOREIGN_KEY_CHECKS = 1;')
 
 def init_db_helper(db, auth, admin_email, admin_password, force=False):
     from ..modules.permission_enum import PermissionEnum
+    log.debug("init_db_helper !")
     if (force) or (db(db.auth_user.id > 0).count() == 0) : 
         if force:
             reset_db(db)
@@ -717,7 +714,6 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             name = 'Old configs, do not use',
             info = '"Old configurations. We do not recommend to use them. Should you need something, contact us at  support@vidijl.org'
         )
-
 
         ## base Vidjil configs
 
@@ -847,8 +843,8 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
                 'BCL2',
                 'PAX5']
         for tag in tags:
-            tid  = db.tag.insert(name=tag)
-            db.group_tag.insert(group_id=id_public_group, tag_id=tid)
+            tag_id = db.tag.insert(name=tag)
+            db.group_tag.insert(group_id=id_public_group, tag_id=tag_id)
         db.commit()
     return
 

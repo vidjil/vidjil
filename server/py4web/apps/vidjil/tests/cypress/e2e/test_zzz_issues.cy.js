@@ -35,13 +35,13 @@ describe('Manipulate db page', function () {
         cy.get('#add_sample_button')
           .should('contain', ' + add samples')
           .click()
-        cy.update_icon()
+        cy.wait("@getActivities")
 
         cy.get('#upload_sample_form > :nth-child(1)')
           .should('contain', 'Add samples')
           .click()
-
-        cy.update_icon()
+        cy.wait("@getActivities")
+        
         cy.get('#submit_samples_btn')
           .click()
 
