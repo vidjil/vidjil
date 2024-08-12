@@ -1,5 +1,4 @@
 Cypress.Commands.add("initDatabase", (host) => {
-
   cy.intercept({
     method: "GET",
     url: "get_active_notifications*",
@@ -43,7 +42,7 @@ Cypress.Commands.add("initDatabase", (host) => {
 
 Cypress.Commands.add("initTestDb", (host) => {
   if (host == "local") {
-    cy.request("http://localhost/vidjil/admin/init_test_db")
+    cy.request("http://localhost/vidjil/admin/init_test_db");
   }
 });
 
@@ -76,8 +75,7 @@ Cypress.Commands.add("openDBPage", () => {
 Cypress.Commands.add("closeDBPage", () => {
   cy.isDbPageVisible().then((val) => {
     if (val == true) {
-      cy.get(".db_div > .closeButton > .icon-cancel")
-        .click();
+      cy.get(".db_div > .closeButton > .icon-cancel").click();
       cy.wait("@getActivities");
 
       cy.get('[data-cy="db_div"]').should("not.visible");
@@ -94,13 +92,18 @@ Cypress.Commands.add("closeDBPage", () => {
  * @return {[type]}
  */
 Cypress.Commands.add("goToTokenPage", (token) => {
-  cy.log("goToTokenPage " + token)
+  cy.log("goToTokenPage " + token);
 
   cy.openDBPage().then(() => {
+    cy.intercept({
+      method: "POST",
+      url: "**/sample_set/all*",
+    }).as("postAllSampleSets");
+
     cy.get("#db_menu > ." + token + "_token")
       .contains("" + token + "s")
-      .click({force: true});
-    cy.wait("@getActivities");
+      .click({ force: true });
+    cy.wait(["@postAllSampleSets", "@getActivities"]);
 
     cy.get('[data-cy="db_div"]').should("contain", " + new " + token + "s ");
   });
@@ -145,14 +148,14 @@ Cypress.Commands.add(
 
     cy.get(`#create_new_set_type_patient`).click();
     cy.wait("@getActivities");
-    
+
     cy.get("h3").should("contain", "Add patients, runs, or sets");
     cy.fillPatient(0, id, firstname, lastname, birthday, informations, owner);
 
     cy.get(".btn").click();
     cy.wait("@getActivities");
 
-    cy.get(".db_div").as("db_div")
+    cy.get(".db_div").as("db_div");
 
     cy.get("@db_div").should("contain", " + add samples");
 
@@ -162,10 +165,12 @@ Cypress.Commands.add(
     cy.get(".set_token").should("contain", expected_display_name);
 
     var uid_value = 0;
-    cy.get("@db_div").find(".uid").then(($uid) => {
-      uid_value = $uid[0].innerText;
-      return cy.wrap(uid_value);
-    })
+    cy.get("@db_div")
+      .find(".uid")
+      .then(($uid) => {
+        uid_value = $uid[0].innerText;
+        return cy.wrap(uid_value);
+      });
   }
 );
 /**
@@ -184,7 +189,16 @@ Cypress.Commands.add(
 
     cy.get("h3").should("contain", "Edit patient, run, or set");
 
-    cy.fillPatient(0, id, firstname, lastname, birthday, informations, null, true);
+    cy.fillPatient(
+      0,
+      id,
+      firstname,
+      lastname,
+      birthday,
+      informations,
+      null,
+      true
+    );
 
     cy.get(".btn").click();
     cy.wait("@getActivities");
@@ -226,7 +240,16 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   "fillPatient",
-  (index, id, firstname, lastname, birthday, informations, owner, clear = false) => {
+  (
+    index,
+    id,
+    firstname,
+    lastname,
+    birthday,
+    informations,
+    owner,
+    clear = false
+  ) => {
     if (owner != null) {
       cy.get("#group_select").select(owner);
     }
@@ -237,7 +260,11 @@ Cypress.Commands.add(
         cy.get("#patient_id_label_" + index.toString()).clear();
       }
     }
-    cy.clearAndType("#patient_first_name_" + index.toString(), firstname, clear);
+    cy.clearAndType(
+      "#patient_first_name_" + index.toString(),
+      firstname,
+      clear
+    );
     cy.clearAndType("#patient_last_name_" + index.toString(), lastname, clear);
     cy.clearAndType("#patient_birth_" + index.toString(), birthday, clear);
     if (informations != "") {
@@ -250,14 +277,17 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add("clearAndType", (input_get_pattern, value_to_type, clear=false) => {
-  cy.get(input_get_pattern).then(($input)=> {
-    if (clear) {
-      cy.wrap($input).clear();
-    }
-    cy.wrap($input).type(value_to_type);
-  })
-})
+Cypress.Commands.add(
+  "clearAndType",
+  (input_get_pattern, value_to_type, clear = false) => {
+    cy.get(input_get_pattern).then(($input) => {
+      if (clear) {
+        cy.wrap($input).clear();
+      }
+      cy.wrap($input).type(value_to_type);
+    });
+  }
+);
 
 /**
  * Create a run and fill it informations
@@ -282,16 +312,12 @@ Cypress.Commands.add("createRun", (id, run_name, date, informations, owner) => {
 
 Cypress.Commands.add("fillRun", (index, id, run_name, date, informations) => {
   if (id != "") {
-    cy.get("#run_id_label_" + index.toString())
-      .type(id);
+    cy.get("#run_id_label_" + index.toString()).type(id);
   }
-  cy.get("#run_name_" + index.toString())
-    .type(run_name);
-  cy.get("#run_date_" + index.toString())
-    .type(date);
+  cy.get("#run_name_" + index.toString()).type(run_name);
+  cy.get("#run_date_" + index.toString()).type(date);
   if (informations != "") {
-    cy.get("#run_info_" + index.toString())
-      .type(informations);
+    cy.get("#run_info_" + index.toString()).type(informations);
   }
 });
 
@@ -330,14 +356,16 @@ Cypress.Commands.add(
  * Open a sample addition form
  * To be called from an opened set
  */
-Cypress.Commands.add("openSampleAddPage", () => { 
+Cypress.Commands.add("openSampleAddPage", () => {
   // Open add sample page
   cy.get("#add_sample_button").should("contain", " + add samples").click();
   cy.wait("@getActivities");
 
   // Check page title
-  cy.get("#upload_sample_form > :nth-child(1)")
-    .should("contain", "Add samples");
+  cy.get("#upload_sample_form > :nth-child(1)").should(
+    "contain",
+    "Add samples"
+  );
 });
 
 /**
@@ -376,59 +404,59 @@ Cypress.Commands.add("multiSamplesAdd", (array_samples) => {
   cy.wait("@getActivities");
 
   cy.get("#db_table_container")
-  .find("tbody")
-  .find("tr")
-  .last()
-  .invoke("text")
-  .then((filename) => {
-    var last_id = Number(filename.split("(")[1].split(")")[0]);
-    const sample_ids = []
-    array_samples.reverse().forEach((sample, index) => {
-      // Get current id for given sample
-      var current_id = last_id - index;
-      cy.log(`Sample number: ${current_id}`);
-      sample_ids.push(current_id)
+    .find("tbody")
+    .find("tr")
+    .last()
+    .invoke("text")
+    .then((filename) => {
+      var last_id = Number(filename.split("(")[1].split(")")[0]);
+      const sample_ids = [];
+      array_samples.reverse().forEach((sample, index) => {
+        // Get current id for given sample
+        var current_id = last_id - index;
+        cy.log(`Sample number: ${current_id}`);
+        sample_ids.push(current_id);
 
-      // Control values
-      var filename1 = sample[2];
-      var filename2 = sample[3];
-      var samplingdate = sample[4];
-      var informations = sample[5];
-      var common_set = sample[6];
+        // Control values
+        var filename1 = sample[2];
+        var filename2 = sample[3];
+        var samplingdate = sample[4];
+        var informations = sample[5];
+        var common_set = sample[6];
 
-      cy.get("#db_table_container")
-        .find(`#row_sequence_file_${current_id}`)
-        .should("contain", filename1);
-
-      if (common_set != undefined) {
         cy.get("#db_table_container")
           .find(`#row_sequence_file_${current_id}`)
-          .should("contain", common_set);
-      }
+          .should("contain", filename1);
 
-      // Work only if one file given (else filename will be changed)
-      // Allow to get curent number if case of upload position modification
-      if (filename2 == undefined) {
-        cy.get("#db_table_container")
-          .find(`#row_sequence_file_${current_id}`)
-          .contains(filename1)
-          .invoke("text")
-          .then((filename) => {
-            cy.log(
-              `sample added number: ${filename.split("(")[1].split(")")[0]}`
-            );
-          });
-        cy.get("#db_table_container")
-          .find(`#row_sequence_file_${current_id}`)
-          .contains(samplingdate);
-        cy.get("#db_table_container")
-          .find(`#row_sequence_file_${current_id}`)
-          .contains(informations);
-      }
+        if (common_set != undefined) {
+          cy.get("#db_table_container")
+            .find(`#row_sequence_file_${current_id}`)
+            .should("contain", common_set);
+        }
+
+        // Work only if one file given (else filename will be changed)
+        // Allow to get curent number if case of upload position modification
+        if (filename2 == undefined) {
+          cy.get("#db_table_container")
+            .find(`#row_sequence_file_${current_id}`)
+            .contains(filename1)
+            .invoke("text")
+            .then((filename) => {
+              cy.log(
+                `sample added number: ${filename.split("(")[1].split(")")[0]}`
+              );
+            });
+          cy.get("#db_table_container")
+            .find(`#row_sequence_file_${current_id}`)
+            .contains(samplingdate);
+          cy.get("#db_table_container")
+            .find(`#row_sequence_file_${current_id}`)
+            .contains(informations);
+        }
+      });
+
+      return cy.wrap(sample_ids);
     });
-
-    return cy.wrap(sample_ids);
-  });
 });
 
 /**
@@ -549,32 +577,35 @@ Cypress.Commands.add("removeCommonSet", (sample_id, set_type, common_set) => {
  */
 Cypress.Commands.add("fillCommonSet", (iter, common_set) => {
   if (common_set != undefined) {
+    // function waitForRequestBodyContain(alias, expected, maxRequests, level = 0) {
+    //   if (level === maxRequests) {
+    //     throw `${maxRequests} requests exceeded`
+    //   }
+    //   cy.wait(alias).then(interception => {
+    //     cy.log("interception.request.body " + interception.request.body + " expected " + expected)
+    //     cy.get("#at-view-samples > ul > li").then(list => {
+    //       cy.log("listingCount: " + list.length)
+    //     })
+    //     if (interception.request.body.includes(expected)) {
+    //       // Wait a bit longer to let the front end update
+    //       cy.wait(100)
+    //     } else {
+    //       // Not found, wait again
+    //       waitForRequestBodyContain(alias, expected, maxRequests, level+1)
+    //     }
+    //   })
+    // }
 
+    // cy.intercept({
+    //   method: "POST",
+    //   url: "auto_complete*",
+    // }).as("postAutoComplete");
 
-    function waitForRequestBodyContain(alias, expected, maxRequests, level = 0) {
-      if (level === maxRequests) {
-        throw `${maxRequests} requests exceeded`
-      }
-      cy.wait(alias).then(interception => {
-        cy.log("interception.request.body " + interception.request.body + " expected " + expected)
-        if (interception.request.body.includes(expected)) {
-          // Wait a bit longer to let the front end update
-          cy.wait(100)
-        } else {
-          // Not found, wait again
-          waitForRequestBodyContain(alias, expected, maxRequests, level+1)
-        }
-      })
-    }
-
-    cy.intercept({
-      method: "POST",
-      url: "auto_complete*",
-    }).as("postAutoComplete");
-
+    // Did not manage to work with wait for post as there seems to be a sort of cache and autocomplete is sometimes not called...
     cy.get(`#token_input_${iter}`)
       .type(common_set) // a value to search a common set
-    waitForRequestBodyContain('@postAutoComplete', common_set, 20)
+      .wait(500);
+    // waitForRequestBodyContain("@postAutoComplete", common_set, 20)
     cy.get(`#token_input_${iter}`).type("{enter}");
   }
 });
@@ -804,6 +835,10 @@ Cypress.Commands.add("dbPageFilter", (value) => {
     url: "all*",
   }).as("postAllSampleSets");
 
-  cy.get("#db_filter_input").should("exist").clear().type(value).type("{enter}");
+  cy.get("#db_filter_input")
+    .should("exist")
+    .clear()
+    .type(value)
+    .type("{enter}");
   cy.wait(["@postAllSampleSets", "@getActivities"]);
 });

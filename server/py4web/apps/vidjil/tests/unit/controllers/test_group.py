@@ -58,7 +58,7 @@ class TestGroupController(unittest.TestCase):
         assert query[0]["role"] == "admin"
         assert query[0]["access"] == "ec"
         assert query[1]["role"] == "public"
-        assert query[1]["access"] == ""
+        assert query[1]["access"] == "a"
         assert query[2]["role"] == "user_0001"
         assert query[2]["access"] == ""
 

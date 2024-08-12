@@ -105,7 +105,7 @@ Cypress.Commands.add(
 
     cy.get("#new_preprocess_btn")
       .should("contain", " + new pre-process")
-      .click();
+      .click({force: true});
     cy.wait("@getActivities");
 
     cy.fillPreprocess(config_name, config_cmd, config_info);

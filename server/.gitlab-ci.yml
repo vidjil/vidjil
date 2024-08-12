@@ -18,6 +18,7 @@
       -v $PWD:/app/vidjil
       -v "$PWD/docker/ci/cypress.config.js":"/app/cypress.config.js"
       -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash"
+      --env SERVER=true
       --env BROWSER=browsers/$BROWSER
       --env HOST=$HOST
       --env PROJECT=$PROJECT

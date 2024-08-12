@@ -9,6 +9,7 @@ from py4web import request, URL
 
 from . import sampleSet
 from .. import settings
+from ..modules.permission_enum import PermissionEnum
 from ..common import auth, db, log
 
 
@@ -56,7 +57,7 @@ class EncoderAsdict(json.JSONEncoder):
     """
     Make a dump of values as json.
     If object is not serializable, we try to make a as_dict call
-    Usefull for json.dump of unit test and API call
+    Useful for json.dump of unit test and API call
     """
     def default(self, obj):
         if isinstance(obj, (datetime.datetime, datetime.time, datetime.date)):
@@ -152,8 +153,8 @@ def anon_names(sample_set_id, first_name, last_name, can_view=None):
     '''
     Anonymize the given names of the patient whose ID is patient_id.
     This function performs at most one db call (to know if we can see
-    the patient's personal informations). None is performed if can_view
-    is provided (to tell if one can view the patient's personal informations)
+    the patient's personal information). None is performed if can_view
+    is provided (to tell if one can view the patient's personal information
     '''
 
     if can_view or (can_view == None and auth.can_view_info('sample_set', sample_set_id)):
@@ -167,7 +168,7 @@ def display_names(sample_set_id, first_name, last_name, can_view=None):
     '''
     Return the name as displayed to a user or admin of a patient
     whose ID is patient_id.
-    It makes use of anon_names which will return an anonymised version
+    It makes use of anon_names which will return an anonymized version
     of the patient name if the user doesn't have permission to see the real name.
     Admins will also see the patient id.
     '''
@@ -251,7 +252,7 @@ def search_first_regex_in_file(regex, filename, max_nb_line=None):
             results = open(filename).readlines()
         else:
             results = open(filename).readlines(max_nb_line)
-    except IOError as e:
+    except IOError:
         results = []
 
     matched_keys = {}
@@ -358,7 +359,7 @@ def extract_value_from_json_path(json_path, json):
 
     Takes a path (for instance field1/field2/field3) and returns
     the value at that path.
-    The path also support indexed opeations (such as field1/field2[3]/field4)
+    The path also support indexed operations (such as field1/field2[3]/field4)
 
     If the value doesn't exist None will be returned.
     '''
@@ -373,7 +374,7 @@ def extract_value_from_json_path(json_path, json):
                 elem = elem.get(x)[index]
             else:
                 elem = elem.get(x)
-    except:
+    except Exception:
         pass
 
     return elem
@@ -478,7 +479,7 @@ def stats(samples):
         row['result'] = row_result # TMP, for debug
         try:
             row_result_json = extract_fields_from_json(json_paths['result_file'], None, settings.DIR_RESULTS + f_result, STATS_MAXBYTES)
-        except:
+        except Exception:
             row_result_json = []
 
         if f_fused:
@@ -515,7 +516,7 @@ def stats(samples):
             try:
                 row['IGH_av_clones'] = '%.4f' % (1.0 / float(row['IGH_av_reads']))
                 found['IGH_av_clones'] = True
-            except:
+            except Exception:
                 pass
 
     # Keep only non-empty columns
@@ -632,14 +633,12 @@ def get_found_types(data):
     return known_types.intersection(present_types)
 
 def reset_db(db):
-    log.debug("reset_db !")
     mysql = db._uri[:5] == "mysql"
     # if using mysql disable foreign keys to be able to truncate
     if mysql:
         db.executesql('SET FOREIGN_KEY_CHECKS = 0;')
     try:
         for table in db :
-            log.debug(f"Try and truncate table {table}")
             try:
                 table.truncate()
             except Exception as exception:
@@ -650,15 +649,13 @@ def reset_db(db):
             db.executesql('SET FOREIGN_KEY_CHECKS = 1;')
 
 def init_db_helper(db, auth, admin_email, admin_password, force=False):
-    from ..modules.permission_enum import PermissionEnum
-    log.debug("init_db_helper !")
     if (force) or (db(db.auth_user.id > 0).count() == 0) : 
         if force:
             reset_db(db)
 
         id_first_user=""
 
-        ## création du premier user
+        ## Create admin user
         id_first_user=db.auth_user.insert(
             password = db.auth_user.password.validate(admin_password)[0],
             email = admin_email,
@@ -666,8 +663,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             last_name = 'Administrator'
         )
 
-
-        ## création des groupes de base
+        ## Create base groups
         id_admin_group=db.auth_group.insert(role='admin')
         id_sa_group=db.auth_group.insert(role=auth.user_group_role(id_first_user))
         id_public_group=db.auth_group.insert(role="public")
@@ -676,7 +672,6 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
         db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)
         db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
         db.auth_membership.insert(user_id=id_first_user, group_id=id_public_group)        
-
 
         ## Create a dedicated metrics user if environment variable declared
         if os.getenv("METRICS_USER_EMAIL") is not None and os.getenv("METRICS_USER_PASSWORD") is not None:
@@ -716,7 +711,6 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
         )
 
         ## base Vidjil configs
-
         db.config.insert(
             name = 'default + extract reads',
             program = 'vidjil',
@@ -783,7 +777,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
         )
         db.commit()
 
-        ## permission
+        ## Permissions
         ## system admin have admin/read/create rights on all patients, groups and configs
         auth.add_permission(id_admin_group, PermissionEnum.access.value, db.sample_set, 0)
         auth.add_permission(id_admin_group, PermissionEnum.access.value, db.patient, 0)
@@ -820,6 +814,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
         for pre_process in db(db.pre_process.id > 0).select():
             auth.add_permission(id_public_group, PermissionEnum.access.value, db.pre_process, pre_process.id)
 
+        ## Tags
         tags = ['ALL', 'T-ALL',  'B-ALL',
                 'pre-B-ALL','pro-B-ALL', 'mature-B-ALL',
                 'CML', 'HCL', 'MZL', 'T-PLL',

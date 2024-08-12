@@ -78,7 +78,7 @@ echo "TIME - Before cypress - $(date)"
 spec_files=`ls -1 $TEST_FILES_PATTERN | paste -sd ','`
 echo TEST_FILES_PATTERN: $TEST_FILES_PATTERN, $spec_files 
 echo -e "$ ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec "$TEST_FILES_PATTERN" --env workdir=vidjil,host=$HOST,initiated_database=false"
-./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec "$TEST_FILES_PATTERN" --env workdir=vidjil,host=$HOST,initiated_database=true
+./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec "$TEST_FILES_PATTERN" --env workdir=vidjil,host=$HOST,initiated_database=true,server=$SERVER
 ECODE=$?
 echo "TIME - After cypress - $(date)"
 
