@@ -7,7 +7,7 @@ version: '3.3'
 services:
     mysql:
         container_name: vidjil-mysql
-        image: mysql:5.7
+        image: mysql:8.4
         environment:
             - SERVICE_NAME=$SERVICE_PREFIX_NAME MYSQL
         env_file:
