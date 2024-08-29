@@ -523,10 +523,8 @@ Database.prototype = {
     init_ajaxform: function () {
         var self = this
         
-        //submit formulaire sans fichier
+        //submit for without files
         if ( document.getElementById('data_form') ){
-            //$('#data_form').on('submit',self.data_form ); //doesn't work :/
-            
             $('#data_form').ajaxForm({
                 type: "POST",
                 cache: false,
@@ -569,7 +567,7 @@ Database.prototype = {
             });
         }
         
-        //login_form
+        // login form
         if ( document.getElementById('login_form') ){
             //$('#login_form').on('submit',self.login_form );
             var action = $('#login_form').attr('action');
@@ -617,7 +615,7 @@ Database.prototype = {
         }
 
         
-        //submit formulaire avec fichier
+        // submit form with files
         if ( document.getElementById('upload_sample_form') ){
             $('#upload_sample_form').on('submit', function(e) {
                 e.preventDefault();
@@ -628,7 +626,7 @@ Database.prototype = {
                 $("#submit_samples_btn").addClass("disabledClass");
                 setTimeout(function(){$("#submit_samples_btn").removeClass("disabledClass")}, 3000)
 
-                //clear empty values before submiting data
+                // clear empty values before submitting data
                 var upload_sample_form = $('#upload_sample_form').serializeObject()
                 if ("file" in upload_sample_form)
                     upload_sample_form.file = upload_sample_form.file.filter(function(el) {
@@ -645,7 +643,7 @@ Database.prototype = {
                     data     : {'data': data},
                     success  : function(result) {
                         var js = self.display_result(result)
-                        var id, fileSelect, files, file, filename;
+                        var id, fileSelect, files, file, filename, filename2;
                         if (typeof js.file_ids !== 'undefined'){
                             for (var k = 0; k < js.file_ids.length; k++) {
                                 id = js.file_ids[k];
@@ -677,7 +675,8 @@ Database.prototype = {
                                     data2.append('id', id);
                                     data2.append('file_number', 2)
                                     data2.append('pre_process', document.getElementById('pre_process').value)
-                                    self.uploader.add(id+"_2", data2, filename, 2)
+                                    filename2 = document.getElementById('file_filename2_' + k).value;
+                                    self.uploader.add(id+"_2", data2, filename2, 2)
                                 }
                             }
                         }
@@ -800,7 +799,7 @@ Database.prototype = {
         upload_fields.closest("div").show();
         upload_fields.prop("disabled", false);
 
-        // hide/disabe unnecessary field for selected upload source
+        // hide/disable unnecessary field for selected upload source
         if (this.upload_source == "nfs"){
             upload_fields.closest("div").hide();            
             upload_fields.prop("disabled", true);
@@ -1408,25 +1407,26 @@ Database.prototype = {
 }
 
 function Uploader() {
-    var self = this
-    this.queue = {}
-    this.max_upload = 2 //max simultaneous upload allowed
-    
+    var self = this;
+    this.keys = [];
+    this.queue = {};
+    this.max_upload = 2;
+
     setInterval(function(){
         if (self.is_uploading){
-            self.update_percent()
+            self.update_percent();
         }
-    },200)
-
+    }, 200);
 }
 
 Uploader.prototype = {
-    
-    //add an upload to the queue
+
+    // Adds an upload to the queue
     add : function (id, data, filename, file_number) {
-        var div_parent = $("#upload_summary_selector").children()[0]
+        var div_parent = $("#upload_summary_selector").children()[0];
         var div = $('<div/>').appendTo(div_parent);
         
+        this.keys.push(id);
         this.queue[id] = {
             "id" : id, 
             "data" : data, 
@@ -1435,41 +1435,48 @@ Uploader.prototype = {
             "status" : "queued",
             "percent" : 0,
             "div" : div
-        } 
-        this.display_summary()
-        this.next()
+        };
+        this.display_summary();
+        this.next();
     },
     
-    //find the next file to upload in the queue and check if we can start it
+    // Finds the next file to upload in the queue and check if we can start it
     next : function () {
-        var upload_in_progress = 0
-        var next_upload = -1
+        var upload_in_progress = 0;
+        var next_upload = -1;
+
+        this.keys.forEach((key) => {
+            var status = this.queue[key].status
+            if (status == "queued" && next_upload == -1) {
+                next_upload = key;
+            }
+            if (status == "upload") {
+                upload_in_progress++;
+            }
+        });
         
-        for (var key in this.queue){
-            if (this.queue[key].status == "queued" && next_upload == -1) next_upload = key
-            if (this.queue[key].status == "upload") upload_in_progress++
+        if (upload_in_progress < this.max_upload && next_upload != -1) {
+            this.upload_file(next_upload);
+        } else if (upload_in_progress == 0 && next_upload == -1) {
+            this.clear();
         }
-        
-        if (upload_in_progress < this.max_upload && next_upload != -1) 
-            this.upload_file(next_upload)
     },
     
     //
     upload_file : function (id) {
         var self = this;
         
-        var url = db.db_address + "file/upload"
-        //url = url.replace("https://", "http://");
+        var url = db.db_address + "file/upload";
         $.ajax({
             xhr: function(){
                 var xhr = new window.XMLHttpRequest();
                 xhr.upload.addEventListener("progress", function(evt){
                     if (evt.lengthComputable) {
-                        var percentComplete = Math.floor((evt.loaded / evt.total)*100)
-                        self.queue[id].percent = percentComplete
+                        var percentComplete = Math.floor((evt.loaded / evt.total)*100);
+                        self.queue[id].percent = percentComplete;
                         if (percentComplete == 100) {
-                            self.queue[id].status = "server_check"
-                            self.display()
+                            self.queue[id].status = "server_check";
+                            self.display();
                         }
                     }
                 }, false);
@@ -1483,25 +1490,27 @@ Uploader.prototype = {
             contentType: false,
             data: self.queue[id].data,
             xhrFields: {withCredentials: true},
-            beforeSend: function(jqxhr){
-                self.queue[id].status = "upload"
-                self.queue[id].jqXHR = jqxhr
+            beforeSend: function(jqXHR){
+                self.queue[id].status = "upload";
+                self.queue[id].jqXHR = jqXHR;
             },
             success: function (result) {
-                db.info("upload completed - " + self.queue[id].filename)
-                self.queue[id].status = "completed"
-                self.next()
-                self.reload(id)
-                db.display_result(result, url)
+                db.info("Upload completed for " + self.queue[id].filename);
+                self.queue[id].status = "completed";
+                self.next();
+                self.reload(id);
+                db.display_result(result, url);
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
+                    db.warn("Upload timed out for " + self.queue[id].filename);
+                    self.queue[id].status = "upload_error"
                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
                     if (status !== "abort"){
-                        db.warn("upload may have failed - " + self.queue[id].filename)
-                        self.queue[id].status = "upload_error"
-                        console.log({"type": "flash", "msg": "upload " + self.queue[id].filename + " : " + status , "priority": 2});
+                        db.warn("Upload may have failed for " + self.queue[id].filename + ": " + status + " - " + error);
+                        self.queue[id].status = "upload_error";
+                        console.log({"type": "flash", "msg": "Upload " + self.queue[id].filename + " : " + status , "priority": 2});
                     }
                 }
                 self.display();
@@ -1510,106 +1519,111 @@ Uploader.prototype = {
     },
     
     cancel: function (id) {
-        db.warn("upload canceled - " + this.queue[id].filename)
-        console.log({"type": "flash", "msg": "upload canceled : " + this.queue[id].filename, "priority": 1});
-        this.queue[id].jqXHR.abort()
-        this.queue[id].status = "canceled"
-        this.reload(id)
+        db.warn("Upload canceled - " + this.queue[id].filename);
+        console.log({"type": "flash", "msg": "Upload canceled : " + this.queue[id].filename, "priority": 1});
+        this.queue[id].jqXHR.abort();
+        this.queue[id].status = "canceled";
+        this.reload(id);
     },
     
     retry : function (id) {
-        this.queue[id].status = "queued"
-        this.next()
-        this.reload(id)
+        this.queue[id].status = "queued";
+        this.next();
+        this.reload(id);
     },
     
-    //reload page if neccesary
+    // reload page if necessary
     reload : function (id) {
-        var status = this.queue[id].status
-        if ( document.getElementById("sequence_file_"+id) ){
-            db.reload()
+        if (document.getElementById("sequence_file_"+id)) {
+            db.reload();
         }
-        this.display_summary()
+        this.display_summary();
     },
     
     update_percent : function () {
-        for (var key in this.queue){
-            if ( this.queue[key].status == "upload"){
-                $(".loading_"+key).width(this.queue[key].percent+"%")
+        this.keys.forEach((key) => {
+            if (this.queue[key].status == "upload") {
+                $(".loading_"+key).width(this.queue[key].percent+"%");
             }
-        }
+        });
     },
     
     display : function () {
-        if ($("#table_container")){
-            
-            for (var key in this.queue){
-                var status = this.queue[key].status
-
-                var html = this.statusHtml(key)
-                
-                if (status != "completed") $("#sequence_file_"+key).html(html)
-            }
+        if ($("#table_container")) {
+            this.keys.forEach((key) => {
+                var status = this.queue[key].status;
+                if (status != "completed") {
+                    var html = this.statusHtml(key);
+                    $("#sequence_file_"+key).html(html);
+                }
+            });
         }
-        this.display_summary()
+        this.display_summary();
     },
     
     display_summary : function () {
         
-        if (this.is_uploading()){
-            $("#upload_summary").css("display","block")
-            $("#upload_summary_label").html("<span class='loading_seq'>uploading</span>")
-        }else{
-            $("#upload_summary_label").html("<span class='loading_status'>uploads</span>")
+        if (this.is_uploading()) {
+            $("#upload_summary").css("display","block");
+            $("#upload_summary_label").html("<span class='loading_seq'>uploading</span>");
+        } else {
+            $("#upload_summary_label").html("<span class='loading_status'>uploads</span>");
         }
         
-        for (var key in this.queue){
-            var status = this.queue[key].status
+        this.keys.forEach((key) => {
+            var queue_element = this.queue[key];
             
-            var html = "<span class='summary_filename'>" + this.queue[key].filename + "</span>"
-                html += this.statusHtml(key)
-            
-            if (status == "completed") html += "<span class='loading_status'> completed </span>"
-            this.queue[key].div.html(html)
-        }
+            var html = "<span class='summary_filename'>" + queue_element.filename + "</span>";
+            html += this.statusHtml(key);
+            if (queue_element.status == "completed") {
+                html += "<span class='loading_status'> completed </span>";
+            }
+            queue_element.div.html(html);
+        });
     },
     
     statusHtml : function (id) {
-        var status = this.queue[id].status
+        var status = this.queue[id].status;
+        var html = "";
         
-        var html = ""
-        
-        switch(status) {
+        switch (status) {
             case "queued":
-                html += "<span class='loading_seq'>queued</span> "
-                html += "<span class='button' onclick='db.uploader.cancel("+id+")'>cancel</span>"
+                html += "<span class='loading_seq'>queued</span>";
+                html += "<span class='button2' onclick='db.uploader.cancel("+id+")'>cancel</span>";
                 break;
             case "upload":
-                html += "<span class='loading_gauge'><span class='loading_"+id+" loading_bar'></span></span> "
-                html += "<span class='button' onclick='db.uploader.cancel("+id+")'>cancel</span>"
+                html += "<span class='loading_gauge'><span class='loading_"+id+" loading_bar'></span></span>";
+                html += "<span class='button2' onclick='db.uploader.cancel("+id+")'>cancel</span>";
                 break;
             case "server_check":
-                html += "<span class='loading_seq'> processing file </span>"
+                html += "<span class='loading_seq'> processing file </span>";
                 break;
             case "canceled":
-                html += "<span class='loading_status'> canceled by user </span>"
-                html += "<span class='button' onclick='db.uploader.retry("+id+")'>try again</span>"
+                html += "<span class='loading_status'> canceled by user </span>";
+                html += "<span class='button2' onclick='db.uploader.retry("+id+")'>try again</span>";
                 break;
             case "upload_error":
-                html += "<span class='loading_status'> upload failed </span>"
-                html += "<span class='button' onclick='db.uploader.retry("+id+")'>try again</span>"
+                html += "<span class='loading_status'> upload failed </span>";
+                html += "<span class='button2' onclick='db.uploader.retry("+id+")'>try again</span>";
                 break;
         }
         
-        return html
+        return html;
     },
     
     is_uploading : function () {
-        for (var key in this.queue){
-            var status = this.queue[key].status 
-            if (status == "upload" || status == "queued" || status == "server_check") return true
-        }
-        return false
-    }
+        this.keys.forEach((key) => {
+            var status = this.queue[key].status;
+            if (status == "upload" || status == "queued" || status == "server_check") {
+                return true;
+            }
+        });
+        return false;
+    },
+
+    clear : function () {
+        this.keys = [];
+        this.queue = {};
+    },
 }
 
