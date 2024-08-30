@@ -10,7 +10,7 @@ class FilterWithACAutomaton {
 
   private:
     vector<int>* indexes;
-    AbstractACAutomaton<S, KmerAffect>* automaton;
+    AbstractACAutomaton<S, KmerStringAffect>* automaton;
 
   public:
     BioReader &originalBioReader;
@@ -21,7 +21,7 @@ class FilterWithACAutomaton {
     /* The size of the BioReader returned after filtering.*/
 
     int filtered_sequences_nb;
-    FilterWithACAutomaton(BioReader &origin, string seed, float keys_compress);
+    FilterWithACAutomaton(BioReader &origin, string seed, float keys_compress=1.0);
 
     ~FilterWithACAutomaton();
 
@@ -105,7 +105,7 @@ class FilterWithACAutomaton {
   /**
   * Return the automaton stored.
   */
-  AbstractACAutomaton<S, KmerAffect>* getAutomaton() const;
+  AbstractACAutomaton<S, KmerStringAffect>* getAutomaton() const;
 
 
   /**
@@ -116,7 +116,7 @@ class FilterWithACAutomaton {
   * The label stored in the K-mer is used to select sequences. For more informations
   * about how the label is used, see buildACAutomatonToFilterBioReader's doc.
   */
-  void transferBioReaderSequences(const BioReader &src, BioReader &dst, const KmerAffect k) const;
+  void transferBioReaderSequences(const BioReader &src, BioReader &dst, const KmerStringAffect k) const;
 
   template<typename Shortcut>
   friend ostream &operator<<(ostream&, const FilterWithACAutomaton<Shortcut>&);
@@ -126,7 +126,7 @@ class FilterWithACAutomaton {
    * Get the size of the longest sequence among the sequences that were just
    * transferred to the BioReader reader.
    */
-  int getSizeLongestTransferredSequence(const BioReader &reader, KmerAffect k) const;
+  int getSizeLongestTransferredSequence(const BioReader &reader, KmerStringAffect k) const;
 };
 
 template <typename S>
@@ -307,7 +307,7 @@ vector<int>* FilterWithACAutomaton<S>::getIndexes() const{
 }
 
 template <typename S>
-AbstractACAutomaton<S, KmerAffect>* FilterWithACAutomaton<S>::getAutomaton() const{
+AbstractACAutomaton<S, KmerStringAffect>* FilterWithACAutomaton<S>::getAutomaton() const{
   return this->automaton;
 }
 
