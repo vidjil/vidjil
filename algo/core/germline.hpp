@@ -184,7 +184,7 @@ Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
         } else {
           element = new GermlineElement<Tshortcut, Affect>(code, item.key(), current_shortcut, affect, filename, seed,
                                                            max_indexing,
-                                                           config[item.key()].count("index") > 0 && config[item.key()]["index"] == "1");
+                                                           config[item.key()].count("build") > 0 && config[item.key()]["build"] == "1");
           repository->add(filename, seed, element);
           allocated[element] = true;
         }
