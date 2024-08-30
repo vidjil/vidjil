@@ -61,7 +61,7 @@ class WindowExtractor {
    * @post Statistics on segmentation will be provided through the getSegmentationStats() methods
    *       and getAverageSegmentationLength().
    */
-  WindowsStorage *extract(OnlineBioReader *reads,
+  WindowsStorage<Tshortcut, Affect> *extract(OnlineBioReader *reads,
                           size_t w,
                           map<string, string> &windows_labels, bool only_labeled_windows=false,
                           bool keep_unsegmented_as_clone=false,
@@ -175,7 +175,7 @@ class WindowExtractor {
   /*
    * Fill the stats_clone member of the different Germlines
    */
-  void fillStatsClones(WindowsStorage *storage);
+  void fillStatsClones(WindowsStorage<Tshortcut, Affect> *storage);
 };
 
 #endif

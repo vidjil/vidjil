@@ -394,7 +394,7 @@ string KmerAffectAnalyser<S>::toStringSigns() const{
 
 
 template <typename S>
-CountKmerAffectAnalyser<S>::CountKmerAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq): KmerAffectAnalyser(kms, seq) {
+CountKmerAffectAnalyser<S>::CountKmerAffectAnalyser(IKmerStore<S, KmerAffect> &kms, const string &seq): KmerAffectAnalyser<S>(kms, seq) {
   buildCounts();
   overlap=0;
 }
@@ -539,7 +539,7 @@ void CountKmerAffectAnalyser<S>::buildCounts() {
 
 
 template <typename S>
-MultipleAffectAnalyser<S>::MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq)
+MultipleAffectAnalyser<S>::MultipleAffectAnalyser(IKmerStore<S, KmerAffect> &kms, const string &seq)
   :kms(kms), seq(seq),  affectations(kms.getAllResults(seq, true)) 
  {
   assert(seq.length() >=  (size_t)kms.getS());

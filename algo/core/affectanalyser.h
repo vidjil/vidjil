@@ -246,7 +246,7 @@ class KmerAffectAnalyser: public AffectAnalyser {
  * before or after a given point.
  */
 template <typename S>
-class CountKmerAffectAnalyser: public KmerAffectAnalyser {
+class CountKmerAffectAnalyser: public KmerAffectAnalyser<S> {
  private:
   map<KmerAffect, int* >counts;
   int overlap;

@@ -300,7 +300,7 @@ void WindowsStorage<Tshortcut, Affect>::sortedWindowsToOutput(SampleOutput *outp
     clone->set("id", it->first);
     clone->set("reads", { it->second });
     clone->set("top", top++);
-    clone->set("germline", germline_by_window[it->first]->code);
+    clone->set("germline", germline_by_window[it->first]->getCode());
 
     if (delete_all) {
       germline_by_window.erase(it->first);

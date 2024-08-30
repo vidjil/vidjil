@@ -332,6 +332,23 @@ int revcomp_int(int word, int size) {
   return revcomp;
 }
 
+std::string to_string(char c) {
+  return std::string(1, c);
+}
+
+template<>
+char first_shortcut<char>() {
+  return 'A';
+}
+
+template<>
+char next_shortcut<char>(char c) {
+  c = c+1;
+  if (c > 'Z' && c < 'a')
+    return 'a';
+  return c;
+}
+
 bool hasInFrameStopCodon(const string &sequence, int frame) {
   list<string> stop_codons {"TAG", "TAA", "TGA"};
 

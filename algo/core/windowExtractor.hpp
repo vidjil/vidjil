@@ -1,31 +1,32 @@
 #ifndef WINDOW_EXTRACTOR_HPP
 #define WINDOW_EXTRACTOR_HPP
 #include "windowExtractor.h"
-#include "segment.h"
+#include "segment.hpp"
 #include "tools.h"
 
 template <typename Tshortcut, typename Affect>
 WindowExtractor<Tshortcut, Affect>::WindowExtractor(MultiGermline<Tshortcut, Affect> *multigermline)
   : out_segmented(NULL), out_unsegmented(NULL), out_unsegmented_detail(NULL), out_affects(NULL),
     max_reads_per_window(~0), multigermline(multigermline) {
-  for (auto &germline: multigermline.getGermlines()) {
-    stats_reads[germline->getCode()].init(NB_BINS, MAX_VALUE_BINS, NULL, true);
-    stats_reads[germline->getCode()].setLabel(germline->getCode());
-    stats_clones[germline->getCode()].init(NB_BINS_CLONES, MAX_VALUE_BINS_CLONES, NULL, true);
+  for (auto &germline: multigermline->getGermlines()) {
+    std::string code = germline->getCode();
+    stats_reads[code].init(NB_BINS, MAX_VALUE_BINS, NULL, true);
+    stats_reads[code].setLabel(code);
+    stats_clones[code].init(NB_BINS_CLONES, MAX_VALUE_BINS_CLONES, NULL, true);
   }
 }
 
 template <typename Tshortcut, typename Affect>
-WindowsStorage* WindowExtractor<Tshortcut, Affect>::extract(OnlineBioReader *reads,
-                                                            size_t w,
-                                                            map<string, string> &windows_labels, bool only_labeled_windows,
-                                                            bool keep_unsegmented_as_clone,
-                                                            double nb_expected, int nb_reads_for_evalue,
-                                                            VirtualReadScore *scorer,
-                                                            SampleOutput *output) {
+WindowsStorage<Tshortcut, Affect>* WindowExtractor<Tshortcut, Affect>::extract(OnlineBioReader *reads,
+                                                                               size_t w,
+                                                                               map<string, string> &windows_labels, bool only_labeled_windows,
+                                                                               bool keep_unsegmented_as_clone,
+                                                                               double nb_expected, int nb_reads_for_evalue,
+                                                                               VirtualReadScore *scorer,
+                                                                               SampleOutput *output) {
   init_stats();
 
-  WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
+  WindowsStorage<Tshortcut, Affect> *windowsStorage = new WindowsStorage<Tshortcut, Affect>(windows_labels);
   windowsStorage->setScorer(scorer);
   windowsStorage->setMaximalNbReadsPerWindow(max_reads_per_window);
 
@@ -56,9 +57,11 @@ WindowsStorage* WindowExtractor<Tshortcut, Affect>::extract(OnlineBioReader *rea
       *out_affects << reads->getSequence();
     }
 
-    KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, out_affects, nb_expected, nb_reads_for_evalue);
-
-    KmerSegmenter *seg = kmseg.the_kseg;
+    KmerSegmenter<Tshortcut, Affect> *seg = new KmerSegmenter<Tshortcut, Affect>(reads->getSequence(), multigermline->getIndex(),
+                                                                                 multigermline->getGermlines().front()->getSegmentationMethod(),
+                                                                                 multigermline, nullptr,
+                                                                                 out_affects, nb_expected,
+                                                                                 multigermline->getGermlines().size()*nb_reads_for_evalue);
 
     // Window length threshold
     junction junc;
@@ -88,7 +91,7 @@ WindowsStorage* WindowExtractor<Tshortcut, Affect>::extract(OnlineBioReader *rea
       stats[TOTAL_SEG_AND_WINDOW].insert(read_length);
       if (seg->isJunctionChanged())
         stats[SEG_CHANGED_WINDOW].insert(read_length);
-      stats_reads[seg->segmented_germline->code].addScore(read_length);
+      stats_reads[seg->segmented_germline->getCode()].addScore(read_length);
 
       if (out_segmented) {
         *out_segmented << *seg; // KmerSegmenter output (V/N/J)
@@ -187,13 +190,13 @@ void WindowExtractor<Tshortcut, Affect>::setAffectsOutput(ostream *out) {
 }
 
 template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::fillStatsClones(WindowsStorage *storage) {
+void WindowExtractor<Tshortcut, Affect>::fillStatsClones(WindowsStorage<Tshortcut, Affect> *storage) {
   for (auto it = storage->begin(); it != storage->end(); ++it) {
     junction junc = it->first;
     int nb_reads = it->second.getNbInserted();
     Germline<Tshortcut, Affect> *germline = storage->getGermline(junc);
 
-    stats_clones[germline->code].addScore(nb_reads);
+    stats_clones[germline->getCode()].addScore(nb_reads);
   }
 }
 

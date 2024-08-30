@@ -38,17 +38,19 @@
 #include "core/check-compiler.h"
 #include "core/tools.h"
 #include "core/json.h"
-#include "core/germline.h"
+#include "core/germline.hpp"
+#include "core/multi_germline.hpp"
 #include "core/kmerstore.h"
+#include "core/kmerstorefactory.hpp"
 #include "core/fasta.h"
 #include "core/bioreader.hpp"
-#include "core/segment.h"
-#include "core/windows.h"
+#include "core/segment.hpp"
+#include "core/windows.hpp"
 #include "core/cluster-junctions.h"
 #include "core/dynprog.h"
 #include "core/read_score.h"
 #include "core/read_chooser.h"
-#include "core/compare-all.h"
+#include "core/compare-all.hpp"
 #include "core/mkdir.h"
 #include "core/labels.h"
 #include "core/list_utils.h"
@@ -150,6 +152,9 @@ enum { CMD_DETECT, CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define WIDTH_NB_READS 7
 #define WIDTH_NB_CLONES 3
 #define PAD_HELP "\n                              "
+
+#define PSEUDO_NOT_ANALYZED       "not analyzed"
+#define PSEUDO_NOT_ANALYZED_CODE  "z"
 
 using namespace std ;
 using json = nlohmann::json;
@@ -410,15 +415,10 @@ int main (int argc, char **argv)
   group = "Recombination detection, experimental options (do not use)";
 
   bool multi_germline_mark = false;
-  bool multi_germline_one_unique_index = false;
   bool multi_germline_unexpected_recombinations_1U = false;
 
   app.add_flag("-I", multi_germline_mark,
                "ignore k-mers common to different germline systems (experimental, do not use)")
-    -> group(group) -> level();
-
-  app.add_flag("-1", multi_germline_one_unique_index,
-               "use a unique index for all germline systems (experimental, do not use)")
     -> group(group) -> level();
 
   app.add_flag("-4", multi_germline_unexpected_recombinations_1U,
@@ -636,7 +636,6 @@ int main (int argc, char **argv)
       cmd = COMMAND_DETECT;
       output_segmented = true;
       expected_value = EVALUE_FILTER_READS ;
-      multi_germline_one_unique_index = true;
       multi_germline_unexpected_recombinations_12 = true;
       return true;
     },
@@ -913,10 +912,10 @@ int main (int argc, char **argv)
   if (command == CMD_GERMLINES)
     {
       multi_germline = true ;
-      multi_germline_one_unique_index = true ;
     }
 
-  MultiGermline *multigermline = new MultiGermline(indexType, !multi_germline_one_unique_index);
+  std::map<std::string, bool> do_filter_automata = {{"5", (kmer_threshold != NO_LIMIT_VALUE)}};
+  MultiGermline<char, KmerAffect> *multigermline = new MultiGermline<char, KmerAffect>();
 
     {
       cout << "Load germlines and build Kmer indexes" << endl ;
@@ -926,9 +925,9 @@ int main (int argc, char **argv)
           for (pair <string, string> path_file: multi_germline_paths_and_files)
             {
               try {
-                multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_REGULAR,
+                multigermline->buildFromJson(path_file.first, path_file.second, GERMLINES_REGULAR,
                                                FIRST_IF_UNCHANGED("", seed, seed_changed),
-                                               FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), (kmer_threshold != NO_LIMIT_VALUE));
+                                             FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), do_filter_automata);
               } catch (std::exception& e) {
                 cerr << ERROR_STRING << PROGNAME << " cannot properly read " << path_file.first << "/" << path_file.second << ": " << e.what() << endl;
                 delete multigermline;
@@ -939,59 +938,46 @@ int main (int argc, char **argv)
       else
 	{
 	  // Custom germline
-	  Germline *germline;
-	  germline = new Germline("custom", 'X',
-                                  f_reps_V, f_reps_D, f_reps_J,
-                                  seed, seed, seed, trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
-
-          germline->new_index(indexType);
-
-	  multigermline->insert(germline);
+	  Germline<char, KmerAffect> *germline;
+	  germline = new Germline<char, KmerAffect>("custom", 'X', "", 
+                                                    json({{"5", {f_reps_V}}, {"4", {f_reps_D}}, {"3", {f_reps_J}}}),
+                                                    json({{"order", {"5", "4", "3"}},
+                                                     {"segments", {{"5", {{"seed", seed}, {"code", "V"}, {"build", kmer_threshold != NO_LIMIT_VALUE}, {"index", "1"}}},
+                                                                   {"4", {{"seed", seed}, {"code", "D"}, {"build", "0"}, {"index", "0"}}},
+                                                                   {"3", {{"seed", seed}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}}),
+                                  NULL,
+                                  trim_sequences);
+	  multigermline->addGermline(germline);
 	}
     }
 
     cout << endl ;
 
-    // if (multi_germline_one_unique_index) {
-    //   multigermline->build_with_one_index(seed, true);
+    // TODO : make it work?
+    //   if (multi_germline_unexpected_recombinations_12) {
+    //     Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", "", "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
+    //     pseudo->seg_method = SEG_METHOD_MAX12 ;
+    //     pseudo->set_index(multigermline->index);
+    //     multigermline->germlines.push_back(pseudo);
+    //   }
+
+    //   if (multi_germline_unexpected_recombinations_1U) {
+    //     Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", "", "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
+    //     pseudo_u->seg_method = SEG_METHOD_MAX1U ;
+    //     // TODO: there should be more up/downstream regions for the PSEUDO_UNEXPECTED germline. And/or smaller seeds ?
+    //     pseudo_u->set_index(multigermline->index);
+    //     multigermline->germlines.push_back(pseudo_u);
     // }
-
-      // if (multi_germline_unexpected_recombinations_12 || multi_germline_unexpected_recombinations_1U) {
-      //   if (!multigermline->index) {
-      //     multigermline->build_with_one_index(seed, false);
-      //   }
-      // }
-
-      if (multi_germline_unexpected_recombinations_12) {
-        Germline *pseudo = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", "", "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
-        pseudo->seg_method = SEG_METHOD_MAX12 ;
-        pseudo->set_index(multigermline->index);
-        multigermline->germlines.push_back(pseudo);
-      }
-
-      if (multi_germline_unexpected_recombinations_1U) {
-        Germline *pseudo_u = new Germline(PSEUDO_UNEXPECTED, PSEUDO_UNEXPECTED_CODE, "", "", "", trim_sequences, (kmer_threshold != NO_LIMIT_VALUE));
-        pseudo_u->seg_method = SEG_METHOD_MAX1U ;
-        // TODO: there should be more up/downstream regions for the PSEUDO_UNEXPECTED germline. And/or smaller seeds ?
-        pseudo_u->set_index(multigermline->index);
-        multigermline->germlines.push_back(pseudo_u);
-    }
 
       // Should come after the initialization of regular (and possibly pseudo) germlines
     {
       for (pair <string, string> path_file: multi_germline_paths_and_files)
-        multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE,
+        multigermline->buildFromJson(path_file.first, path_file.second, GERMLINES_INCOMPLETE,
                                        FIRST_IF_UNCHANGED("", seed, seed_changed),
-                                       FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), (kmer_threshold != NO_LIMIT_VALUE));
-      if ((! multigermline->one_index_per_germline) && (command != CMD_GERMLINES)) {
-        multigermline->build_with_one_index(seed, true);
-      }
+                                     FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), do_filter_automata);
     }
 
-    if (multi_germline_mark)
-      multigermline->mark_cross_germlines_as_ambiguous();
-
-    multigermline->finish();
+    multigermline->addToIndex(KmerStoreFactory<char>::createIndex(indexType, seed, true));
     cout << "Germlines loaded: " ;
     cout << *multigermline ;
     cout << endl ;
@@ -1042,11 +1028,11 @@ int main (int argc, char **argv)
   if (command == CMD_GERMLINES)
     {
       map <char, int> stats_kmer, stats_max;
-      IKmerStore<KmerAffect> *index = multigermline->index ;
+      IKmerStore<char, KmerAffect> *index = multigermline->getIndex() ;
 
       // Initialize statistics, with two additional categories
-      index->labels[KmerAffect::getAmbiguous()] = set<Germline*>();
-      index->labels[KmerAffect::getUnknown()] = set<Germline*>();
+      index->labels[KmerAffect::getAmbiguous()].clear();
+      index->labels[KmerAffect::getUnknown()].clear();
       
       for (auto it: index->labels)
 	{
@@ -1075,7 +1061,7 @@ int main (int argc, char **argv)
 	  string seq = reads->getSequence().sequence;
 	  total_length += seq.length() - s + 1;
 
-	  KmerAffectAnalyser *kaa = new KmerAffectAnalyser(*index, seq);
+	  KmerAffectAnalyser<char> *kaa = new KmerAffectAnalyser<char>(*index, seq);
 
 	  for (int i = 0; i < kaa->count(); i++) 
 	    { 
@@ -1085,7 +1071,7 @@ int main (int argc, char **argv)
 
           delete kaa;
 
-	  CountKmerAffectAnalyser ckaa(*index, seq);
+	  CountKmerAffectAnalyser<char> ckaa(*index, seq);
 	  ckaa.setAllowedOverlap(kmer_size-1);
 
 	  stats_max[affect_char(ckaa.max(forbidden).affect)]++ ;
@@ -1119,7 +1105,8 @@ int main (int argc, char **argv)
 
 	  cout << "     " << key << " ";
           for (auto g_it: it.second)
-            cout << g_it->code << " ";
+            for (auto loc: g_it->getLocus())
+              cout << loc << " ";
           cout << endl;
 	}
       
@@ -1148,7 +1135,7 @@ int main (int argc, char **argv)
     ostream *out_unsegmented_detail[STATS_SIZE];
     ostream *out_affects = NULL;
  
-    WindowExtractor we(multigermline);
+    WindowExtractor<char, KmerAffect> we(multigermline);
     if (! output_sequences_by_cluster)
       we.setMaximalNbReadsPerWindow(max_auditionned);
  
@@ -1189,7 +1176,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, wmer_size,
+    WindowsStorage<char, KmerAffect> *windowsStorage = we.extract(reads, wmer_size,
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
                                                 expected_value_kmer, nb_reads_for_evalue,
@@ -1404,14 +1391,14 @@ int main (int argc, char **argv)
 
       bool clone_on_stdout = (num_clone <= CLONES_ON_STDOUT) || verbose;
 
-      Germline *segmented_germline = windowsStorage->getGermline(it->first);
+      Germline<char, KmerAffect> *segmented_germline = windowsStorage->getGermline(it->first);
       
       //$$ Computing labels
 
       // Clone label
       ostringstream oss;
       oss << "clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone
-	  << "--" << segmented_germline->code
+	  << "--" << segmented_germline->getCode()
 	  << "--" << setfill('0') << setw(WIDTH_NB_READS) << clone_nb_reads 
 	  << "--" << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%" ;
       string clone_id = oss.str();
@@ -1512,8 +1499,11 @@ int main (int argc, char **argv)
 
 	  
         // Re-launch also a KmerMultiSegmenter, for control purposes (affectations, evalue)
-        KmerMultiSegmenter kmseg(representative, multigermline, 0, expected_value_kmer, nb_reads_for_evalue);
-        KmerSegmenter *kseg = kmseg.the_kseg ;
+          KmerSegmenter<char, KmerAffect> *kseg = new KmerSegmenter<char, KmerAffect>(representative, multigermline->getIndex(),
+                                                                                      multigermline->getGermlines().front()->getSegmentationMethod(),
+                                                                                      multigermline, nullptr,
+                                                                                      nullptr, expected_value_kmer,
+                                                                                      multigermline->getGermlines().size()*nb_reads_for_evalue);
         if (verbose)
           cout << "KmerSegmenter: " << kseg->getInfoLine() << endl;
 
@@ -1570,9 +1560,9 @@ int main (int argc, char **argv)
         // When --e-value-kmer is not set, the multiplier is 1.0. See #3594.
         double fine_evalue_multiplier = MIN(expected_value_kmer, nb_fine_segmented);
 
-        FineSegmenter seg(representative, segmented_germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
+        FineSegmenter<char, KmerAffect> seg(representative, segmented_germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
-        if (segmented_germline->seg_method == SEG_METHOD_543)
+        if (segmented_germline->getGermlineElements("4").size() > 0)
           seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
 
         if (detect_CDR3)
@@ -1618,11 +1608,11 @@ int main (int argc, char **argv)
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
         if (output_clone_files)
         {
-              if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543))
+              if ((segmented_germline->getSegmentationMethod() == SEG_METHOD_MAX12))
                 *out_clone << ">" << seg.box_V->ref_label << endl << seg.box_V->ref << endl ;
-              if ((segmented_germline->seg_method == SEG_METHOD_543) || (segmented_germline->seg_method == SEG_METHOD_ONE))
+              if (segmented_germline->getGermlineElements("4").size() > 0)
                 *out_clone << ">" << seg.box_D->ref_label << endl << seg.box_D->ref << endl ;
-              if ((segmented_germline->seg_method == SEG_METHOD_53) || (segmented_germline->seg_method == SEG_METHOD_543))
+              if ((segmented_germline->getSegmentationMethod() == SEG_METHOD_MAX12))
                 *out_clone << ">" << seg.box_J->ref_label << endl << seg.box_J->ref << endl ;
               *out_clone << endl;
         }
@@ -1729,9 +1719,8 @@ int main (int argc, char **argv)
     windowsStorage->sortedWindowsToOutput(&output, max_clones_id);
     
     json reads_germline;
-    for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
-        Germline *germline = *it ;
-        reads_germline[germline->code] = {we.getNbReadsGermline(germline->code)};
+    for (auto &germline:  multigermline->getGermlines()){
+      reads_germline[germline->getCode()] = {we.getNbReadsGermline(germline->getCode())};
     }
 
 
@@ -1745,9 +1734,9 @@ int main (int argc, char **argv)
             {"germline", reads_germline}
     });
     output.set("germlines", json_germlines);
-    output.set("germlines", "ref", multigermline->ref);
-    output.set("germlines", "species", multigermline->species) ;
-    output.set("germlines", "species_taxon_id", multigermline->species_taxon_id) ;
+    output.set("germlines", "ref", multigermline->getReference());
+    output.set("germlines", "species", multigermline->getSpecies()) ;
+    output.set("germlines", "species_taxon_id", multigermline->getTaxonId()) ;
 
     if (epsilon || forced_edges.size()){
         output.set("clusters", comp.toJson(clones_windows));
@@ -1786,8 +1775,6 @@ int main (int argc, char **argv)
     int nb_segmented = 0 ;
     map <string, int> nb_segmented_by_germline ;
 
-    Germline *not_segmented = new Germline(PSEUDO_NOT_ANALYZED, PSEUDO_NOT_ANALYZED_CODE);
-
     // Multiplier is 1.0, we expect that the sequences are actual recombinations. See #3594.
     double fine_evalue_multiplier = 1.0 ;
 
@@ -1797,11 +1784,14 @@ int main (int argc, char **argv)
         reads->next();
 
         Sequence seq = reads->getSequence() ;
-        KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, NULL); //  out_unsegmented);
-        KmerSegmenter *seg = kmseg.the_kseg ;
-        Germline *germline = seg->segmented_germline ;
+        KmerSegmenter<char, KmerAffect> *seg = new KmerSegmenter<char, KmerAffect>(reads->getSequence(), multigermline->getIndex(),
+                                                                                   multigermline->getGermlines().front()->getSegmentationMethod(),
+                                                                                   multigermline, nullptr,
+                                                                                   nullptr, expected_value_kmer,
+                                                                                   multigermline->getGermlines().size()*nb_reads_for_evalue);
+        Germline<char, KmerAffect> *germline = seg->segmented_germline ;
 
-        FineSegmenter s(seq, germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
+        FineSegmenter<char, KmerAffect> s(seq, germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
         string id = string_of_int(nb, 6);
         CloneOutput *clone = new CloneOutput();
@@ -1811,13 +1801,13 @@ int main (int argc, char **argv)
         clone->set("sequence", seq.sequence);
         clone->set("reads", { 1 });
         clone->set("top", 0);
-        Germline *g ;
+        Germline<char, KmerAffect> *g ;
 
             if (s.isSegmented()) 
               {
                 nb_segmented++ ;
 
-                if (germline->seg_method == SEG_METHOD_543)
+                if (germline->getGermlineElements("4").size() > 0)
                   s.FineSegmentD(germline, several_D, expected_value_D, fine_evalue_multiplier);
 
                 if (detect_CDR3)
@@ -1827,13 +1817,17 @@ int main (int argc, char **argv)
               }
         else
           {
-            g = not_segmented ;
+            g = NULL ;
           }
 
         s.toOutput(clone);
         s.checkWarnings(clone);
-        clone->set("germline", g->code);
-        nb_segmented_by_germline[g->code]++ ;
+        std::string code = PSEUDO_NOT_ANALYZED_CODE;
+        if (g != NULL) {
+          code = g->getCode();
+        }
+        clone->set("germline", code);
+        nb_segmented_by_germline[code]++ ;
 
         cout << s ;
 
@@ -1847,12 +1841,11 @@ int main (int argc, char **argv)
     output.set("reads", "segmented", { nb_segmented }) ;
     output.set("reads", "total", { nb }) ;
 
-    multigermline->insert(not_segmented);
-    for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
-      Germline *germline = *it ;
-      if (nb_segmented_by_germline[germline->code])
-        output.set("reads", "germline", germline->code, { nb_segmented_by_germline[germline->code] });
+    for (auto &germline : multigermline->getGermlines()){
+      if (nb_segmented_by_germline[germline->getCode()])
+        output.set("reads", "germline", germline->getCode(), { nb_segmented_by_germline[germline->getCode()] });
     }
+    output.set("reads", "germline", PSEUDO_NOT_ANALYZED_CODE, { nb_segmented_by_germline[PSEUDO_NOT_ANALYZED_CODE] });
 
   } else {
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
@@ -1862,13 +1855,16 @@ int main (int argc, char **argv)
   //$ Output statistics on filter()
   if (verbose && (kmer_threshold != NO_LIMIT_VALUE)) {
     cout << "Statistics on clone analysis (-Z):" << endl;
-    for(list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
-      FilterWithACAutomaton *f =  (*it)->getFilter_5();
-      if (f)
-        if (f->filtered_sequences_nb)
-          cout << "\t" << (*it)->code << "\t" << *f;
+    for(auto &germline : multigermline->getGermlines()){
+      for (auto &elem: germline->getGermlineElements("5")) {
+        FilterWithACAutomaton<char> *f =  elem->getFilter();
+        if (f)
+          if (f->filtered_sequences_nb) {
+            for (auto &locus: elem->getLocus())
+              cout << "\t" << locus << "\t" << *f << endl;
+          }
+      }
     }
-    cout << endl;
   }
 
   //$ Output AIRR .tsv(.gz)

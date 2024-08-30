@@ -14,6 +14,10 @@ class MultiGermline {
 private:
   std::list<Germline<Tshortcut, Affect> *> germlines;
   IKmerStore<Tshortcut, Affect> *index;
+  GermlineElementRepository<Tshortcut, Affect> *repository;
+  std::string ref;
+  std::string species;
+  int species_taxon_id;
   
 public:
 
@@ -39,6 +43,7 @@ public:
 
   /**
    * @return all the germlines
+   * @complexity O(1)
    */
   std::list<Germline<Tshortcut, Affect> *> getGermlines() const;
 
@@ -48,6 +53,23 @@ public:
    */
   IKmerStore<Tshortcut, Affect> *getIndex() const;
 
+  /**
+   * @return the reference to the germline
+   */
+  std::string getReference() const;
+
+  GermlineElementRepository<Tshortcut, Affect> *getRepository() const;
+
+  /**
+   * @return the reference species
+   */
+  std::string getSpecies() const;
+
+  /**
+   * @return the taxon ID
+   */
+  int getTaxonId() const;
+  
   /**
    * Build from a json .g germline file
    *   path: path, such as 'germline/'
@@ -65,16 +87,20 @@ public:
    */
   void addToIndex(IKmerStore<Tshortcut, Affect> *index=nullptr);
 
+  template <typename S, typename A>
+  friend ostream &operator<<(ostream &out, const MultiGermline<S, A> &germline);
 };
 
 
 template <typename Tshortcut, typename Affect>
-MultiGermline<Tshortcut, Affect>::MultiGermline() : index(nullptr) {}
+MultiGermline<Tshortcut, Affect>::MultiGermline() : index(nullptr),repository(nullptr),ref("custom"),species("custom"),species_taxon_id(0) {}
 
 template <typename Tshortcut, typename Affect>
 MultiGermline<Tshortcut, Affect>::~MultiGermline(){
   if (index != nullptr)
     delete index;
+  if (repository != nullptr)
+    delete repository;
 }
 
 template <typename Tshortcut, typename Affect>
@@ -123,10 +149,31 @@ IKmerStore<Tshortcut, Affect> *MultiGermline<Tshortcut, Affect>::getIndex() cons
 }
 
 template <typename Tshortcut, typename Affect>
+std::string MultiGermline<Tshortcut, Affect>::getReference() const {
+  return ref;
+}
+
+template <typename Tshortcut, typename Affect>
+GermlineElementRepository<Tshortcut, Affect> *MultiGermline<Tshortcut, Affect>::getRepository() const {
+  return repository;
+}
+
+template <typename Tshortcut, typename Affect>
+std::string MultiGermline<Tshortcut, Affect>::getSpecies() const {
+  return species;
+}
+
+template <typename Tshortcut, typename Affect>
+int MultiGermline<Tshortcut, Affect>::getTaxonId() const {
+  return species_taxon_id;
+}
+
+template <typename Tshortcut, typename Affect>
 void MultiGermline<Tshortcut, Affect>::buildFromJson(std::string path, std::string json_filename_and_filter, int filter,
                                                        std::string default_seed, int default_max_indexing,
                                                        const std::map<std::string, bool> &build_automaton) {
-  GermlineElementRepository<Tshortcut, Affect> *repository = new GermlineElementRepository<Tshortcut, Affect>();
+  if (repository == nullptr)
+    repository = new GermlineElementRepository<Tshortcut, Affect>();
 
   //extract json_filename and systems_filter
   string json_filename = json_filename_and_filter;
@@ -158,6 +205,12 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(std::string path, std::stri
   path += "/" + germlines["path"].get<std::string>();
 
   json j = germlines["systems"];
+
+  ref = germlines["ref"].get<std::string>();
+  species = germlines["species"].get<std::string>();
+  species_taxon_id = germlines["species_taxon_id"];
+
+  std::cerr << "Build from JSON" << std::endl;
   
   //for each germline
   for (auto it = j.begin(); it != j.end(); it++) {
@@ -168,7 +221,6 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(std::string path, std::stri
     char shortcut = json_value["shortcut"].dump()[1];
     string code = it.key();
     json json_parameters = json_value["parameters"];
-    PRINT_VAR(json_parameters["search_recombinations"].dump());
     std::map<std::string, std::map<std::string, std::string>> config;
     std::vector<std::string> order;
 
@@ -238,6 +290,15 @@ void MultiGermline<Tshortcut, Affect>::addToIndex(IKmerStore<Tshortcut, Affect> 
     germline->finish(index);
   }
   index->finish_building();
+  this->index = index;
+}
+
+template <typename S, typename A>
+ostream &operator<<(ostream &out, const MultiGermline<S, A> &germline) {
+  for (auto &g: germline.getGermlines()) {
+    out << *g << std::endl;
+  }
+  return out;
 }
 
 #endif

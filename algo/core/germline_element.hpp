@@ -2,8 +2,10 @@
 #define GERMLINE_ELEMENT_HPP
 #include "bioreader.hpp"
 #include "kmerstore.h"
+#include "filter.hpp"
 #include <algorithm>
 #include <string>
+#include <memory>
 
 // JUNCTION/CDR3 extraction from gapped V/J sequences
 #define        CYS104_IN_GAPPED_V  310   // First nucleotide of Cys104
@@ -23,23 +25,38 @@ private:
   std::string filename;         // Filename containing the sequences
   Tshortcut shortcut;           // The shortcut
   int max_indexing;
+  std::shared_ptr<BioReader> reader;
+  bool build_filter;
+  FilterWithACAutomaton<Tshortcut> * filter;
   
 public:
   GermlineElement(std::string locus, std::string segment, Tshortcut shortcut, std::string affect,
-                  std::string filename, std::string seed="", int max_indexing=0);
-
+                  std::string filename, std::string seed="", int max_indexing=0, bool build_filter=false);
+  ~GermlineElement();
+  
   std::string getAffect() const;
   /**
    * @return code of the locus
    */
   std::set<std::string> getLocus() const;
   std::string getFilename() const;
+  FilterWithACAutomaton<Tshortcut> *getFilter() const;
+  /**
+   * @return the marked position used for CDR3 computation (returns 0 when !isRegular()
+   */
+  int getMarkPos() const;
+  std::shared_ptr<BioReader> getReader() const;
   std::string getSeed() const;
   /**
    * @return the segment code (ie. "5" or "3")
    */
   std::set<std::string> getSegment() const;
   Tshortcut getShortcut() const;
+
+  /**
+   * @return true iff all the loci are regular loci instead of incomplete
+   */
+  bool isRegular() const;
 
   void add(std::string locus, std::string segment);
   
@@ -52,9 +69,15 @@ public:
 
 template<typename Tshortcut, typename Affect>
 GermlineElement<Tshortcut, Affect>::GermlineElement(std::string locus, std::string segment, Tshortcut shortcut, std::string affect,
-                                       std::string filename, std::string seed, int max_indexing)
-  :locus({locus}), segment({segment}), affect(affect), seed(seed), filename(filename), shortcut(shortcut), max_indexing(max_indexing)
+                                                    std::string filename, std::string seed, int max_indexing, bool build_filter)
+  :locus({locus}), segment({segment}), affect(affect), seed(seed), filename(filename), shortcut(shortcut), max_indexing(max_indexing), build_filter(build_filter), filter(nullptr)
 {}
+
+template<typename Tshortcut, typename Affect>
+GermlineElement<Tshortcut, Affect>::~GermlineElement() {
+  if (build_filter)
+    delete filter;
+}
 
 template<typename Tshortcut, typename Affect>
 std::string GermlineElement<Tshortcut, Affect>::getAffect() const {
@@ -69,6 +92,28 @@ std::set<std::string> GermlineElement<Tshortcut, Affect>::getLocus() const {
 template<typename Tshortcut, typename Affect>
 std::string GermlineElement<Tshortcut, Affect>::getFilename() const {
   return filename;
+}
+
+template<typename Tshortcut, typename Affect>
+FilterWithACAutomaton<Tshortcut> *GermlineElement<Tshortcut, Affect>::getFilter() const {
+  return filter;
+}
+
+template<typename Tshortcut, typename Affect>
+int GermlineElement<Tshortcut, Affect>::getMarkPos() const {
+  int mark_pos = 0;
+  if (isRegular()) {
+    if (segment.count("5")>0)
+      mark_pos = CYS104_IN_GAPPED_V;
+    else if (segment.count("3") > 0)
+      mark_pos = PHE118_TRP118_IN_GAPPED_J;
+  }
+  return mark_pos;
+}
+
+template<typename Tshortcut, typename Affect>
+std::shared_ptr<BioReader> GermlineElement<Tshortcut, Affect>::getReader() const {
+  return reader;
 }
 
 template<typename Tshortcut, typename Affect>
@@ -87,6 +132,11 @@ Tshortcut GermlineElement<Tshortcut, Affect>::getShortcut() const {
 }
 
 template<typename Tshortcut, typename Affect>
+bool GermlineElement<Tshortcut, Affect>::isRegular() const {
+  return ! (std::all_of(locus.begin(), locus.end(), [](const std::string &s) {return s.find("+") != std::string::npos;}));
+}
+
+template<typename Tshortcut, typename Affect>
 void GermlineElement<Tshortcut, Affect>::add(std::string locus, std::string segment) {
   this->locus.insert(locus);
   this->segment.insert(segment);
@@ -94,22 +144,13 @@ void GermlineElement<Tshortcut, Affect>::add(std::string locus, std::string segm
 
 template<typename Tshortcut, typename Affect>
 void GermlineElement<Tshortcut, Affect>::addToIndex(IKmerStore<Tshortcut, Affect> *index) {
-  bool regular = ! (std::all_of(locus.begin(), locus.end(), [](const std::string &s) {return s.find("+") != std::string::npos;}));
-  int mark_pos = 0;
-  if (regular) {
-    if (segment.count("5")>0)
-      mark_pos = CYS104_IN_GAPPED_V;
-    else if (segment.count("3") > 0)
-      mark_pos = PHE118_TRP118_IN_GAPPED_J;
-  }
-  BioReader reader(2, "|", mark_pos);
-  reader.add(filename);
+  reader = std::make_shared<BioReader>(2, "|", getMarkPos());
+  reader->add(filename);
   std::cerr << "Insert " << affect << std::endl;
-  index->insert(reader, affect, this, max_indexing, seed);
+  index->insert(*reader, affect, this, max_indexing, seed);
+  if (build_filter) {
+    filter = new FilterWithACAutomaton<Tshortcut>(*reader, seed);
+  }
 }
 
-
-std::string to_string(char c) {
-  return std::string(1, c);
-}
 #endif

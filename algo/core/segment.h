@@ -8,13 +8,14 @@
 #include "dynprog.h"
 #include "tools.h"
 #include "output.h"
-#include "germline.h"
-#include "multi_germline.h"
+#include "germline.hpp"
+#include "multi_germline.hpp"
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "affectanalyser.h"
 #include "../lib/json_fwd.hpp"
-#include "filter.h"
+#include "filter.hpp"
+#include <memory>
 
 // #define DEBUG_EVALUE
 
@@ -102,7 +103,7 @@ const char* const segmented_mesg[] = { "?",
 class AlignBox
 {
  public:
-  BioReader *rep;
+  std::shared_ptr<BioReader> rep;
   string key;
   string color;
 
@@ -197,6 +198,7 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                                  Cost segment_cost, bool reverse_V = false,
                                  bool reverse_J = false);
 
+template <typename Shortcut, typename Affect>
 class Segmenter {
 protected:
   string sequence;
@@ -227,7 +229,7 @@ protected:
   bool finishSegmentationD();
 
  public:
-  Germline *segmented_germline;
+  Germline<Shortcut, Affect> *segmented_germline;
   string label;
   string code;
   string info;        // .vdj.fa header, fixed fields
@@ -326,19 +328,22 @@ protected:
    */
   void setSegmentationStatus(int status);
 
-  friend ostream &operator<<(ostream &out, const Segmenter &s);
+  template <typename S, typename A>
+  friend ostream &operator<<(ostream &out, const Segmenter<S, A> &s);
 };
 
 
 
-ostream &operator<<(ostream &out, const Segmenter &s);
+template <typename Shortcut, typename Affect>
+ostream &operator<<(ostream &out, const Segmenter<Shortcut, Affect> &s);
 
 
 
-class KmerSegmenter : public Segmenter
+template <typename Shortcut, typename Affect>
+class KmerSegmenter : public Segmenter<Shortcut, Affect>
 {
  private:
-  MultipleAffectAnalyser *kaa;
+  MultipleAffectAnalyser<Shortcut> *kaa;
  protected:
   string affects;
 
@@ -352,9 +357,13 @@ class KmerSegmenter : public Segmenter
   /**
    * Build a segmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
-   * @param germline: the germline
+   * @param index: the index of all the germlines
+   * @param segmentation_method: the segmentation method (see enum SEGMENTATION_METHODS)
+   * @param germlines: the germlines index in the index
+   * @param required_germline: the germline that should be used to segment (null if no requirement and if all the index should be used)
+   * @param out_unsegmented: ptr to an output stream for the unsegmented sequences (nullptr if no output needed)
    */
-  KmerSegmenter(Sequence seq, Germline *germline, double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
+  KmerSegmenter(Sequence seq, IKmerStore<Shortcut, Affect> *index, int segmentation_method, MultiGermline<Shortcut, Affect> *germlines, Germline<Shortcut, Affect> *required_germline=nullptr, ostream *out_unsegmented=nullptr, double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
 
   KmerSegmenter(const KmerSegmenter &seg);
 
@@ -363,7 +372,7 @@ class KmerSegmenter : public Segmenter
   /**
    * @return the KmerAffectAnalyser of the current sequence.
    */
-  MultipleAffectAnalyser *getKmerAffectAnalyser() const;
+  MultipleAffectAnalyser<Shortcut> *getKmerAffectAnalyser() const;
 
   string getInfoLineWithAffects() const;
   void toOutput(CloneOutput *clone);
@@ -375,38 +384,13 @@ class KmerSegmenter : public Segmenter
   /**
    * Choose the right germline that is common to the sets of Kmeraffect before and after
    */
-  void chooseGermline(set<KmerAffect> &before_set, set<KmerAffect> &after_set, int strand);
-
-  /**
-   * Sets the attributes `before` and `after` based on `segmented_germline` or based on the germline given in parameter.
-   */
-  void setBeforeAfter(set<KmerAffect> &before_set, set<KmerAffect> &after_set, int strand,
-                      Germline *before_germline = nullptr, Germline *after_germline = nullptr);
+  void chooseGermline(MultiGermline<Shortcut, Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set, int strand);
 
 };
 
 
-class KmerMultiSegmenter
-{
- private:
-  double threshold_nb_expected;
- public:
-  /**
-   * @param seq: An object read from a FASTA/FASTQ file
-   * @param multigermline: the multigerm
-   * @param threshold: threshold of randomly expected segmentation
-   */
-  KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented,
-                     double threshold = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1);
-
-  ~KmerMultiSegmenter();
-
-  KmerSegmenter *the_kseg;
-  MultiGermline *multi_germline;
-};
-
-
-class FineSegmenter : public Segmenter
+template <typename Shortcut, typename Affect>
+class FineSegmenter : public Segmenter<Shortcut, Affect>
 {
  private:
   BioReader filtered_rep_5;
@@ -429,7 +413,7 @@ class FineSegmenter : public Segmenter
    *   for the filtering.
    * By default this parameter doesn't filter the germline.
    */
-   FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost,
+  FineSegmenter(Sequence seq, Germline<Shortcut, Affect> *germline, Cost segment_cost,
                  double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0,
                 int kmer_threshold=NO_LIMIT_VALUE, int alternative_genes=NO_LIMIT_VALUE);
 
@@ -439,10 +423,10 @@ class FineSegmenter : public Segmenter
   * extend segmentation from VJ to VDJ
   * @param germline: germline used
   */
-  void FineSegmentD(Germline *germline, bool several_D,
+  void FineSegmentD(Germline<Shortcut, Affect> *germline, bool several_D,
                     double threshold = THRESHOLD_NB_EXPECTED_D, double multiplier=1.0);
 
-  bool FineSegmentD(Germline *germline,
+  bool FineSegmentD(Germline<Shortcut, Affect> *germline,
                     AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
                     int forbidden_id,
                     int extend_DD_on_Y, int extend_DD_on_Z,
@@ -479,7 +463,7 @@ class FineSegmenter : public Segmenter
  * @param evalue_threshold: threshold for randomly expected segmentation (evalue) to relaunch a full DP without banded_dp
  * @post  box is filled
  */
-void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
+void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
                               AlignBox *box, Cost segment_cost, bool banded_dp=true,
                               double evalue_threshold=1.);

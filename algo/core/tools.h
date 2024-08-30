@@ -225,6 +225,20 @@ int remove_trailing_whitespaces(string &str);
  */
 string subsequence(const string &text, int start, int end);
 
+std::string to_string(char c);
+
+/**
+ * Determines the first shortcut for a given type
+ */
+template <typename Tshortcut>
+Tshortcut first_shortcut();
+
+/**
+ * Determines the shortcut following a given shortcut.
+ */
+template <typename Tshortcut>
+Tshortcut next_shortcut(Tshortcut);
+
 /**
  * @return reverse(complement(dna)) if do_revcomp, otherwise dna
  */

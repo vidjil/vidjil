@@ -167,6 +167,7 @@ void FilterWithACAutomaton<S>::buildACAutomatonToFilterBioReader(string seed){
   for(int i = 1;i < originalBioReader.size(); ++i){
     currentLabel = extractGeneName(originalBioReader.label(i));
     if(currentLabel != previousLabel){
+      PRINT_VAR(currentLabel);
       indexes->push_back(i);
       asciiNumber++;
     }
