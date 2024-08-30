@@ -36,7 +36,7 @@ public:
   /**
    * @return the shortcut of the corresponding shortcut of the affectation or raise std::invalid_argument
    */
-  Tshortcut getShortcut(const Affect &affect) const;
+  Tshortcut getShortcut(Affect affect) const;
 
   void add(const std::string &filename, const std::string &seed, GermlineElement<Tshortcut, Affect> *germline);
   
@@ -83,8 +83,10 @@ Tshortcut GermlineElementRepository<Tshortcut, Affect>::getNextShortcut() const 
 }
 
 template <typename Tshortcut, typename Affect>
-Tshortcut GermlineElementRepository<Tshortcut, Affect>::getShortcut(const Affect &affect) const {
+Tshortcut GermlineElementRepository<Tshortcut, Affect>::getShortcut(Affect affect) const {
   try {
+    // Ignore strand
+    affect.affect.c |= 128;
     return affect_to_shortcuts.at(affect);
   } catch (std::out_of_range &) {
     throw new std::invalid_argument("No such affect: "+affect.toString());
