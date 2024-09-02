@@ -3,6 +3,7 @@ from ..modules import vidjil_utils
 from ..modules.controller_utils import error_message
 import json
 from py4web import action, request, URL
+import time
 import datetime
 from datetime import timedelta 
 
@@ -27,35 +28,36 @@ def index():
         return json.dumps(res, separators=(',',':'))
     
     since = datetime.datetime.now() - timedelta(days=90)
-
+    
     query = db(db.auth_user).select()
 
-    groups =  {g.id: {'id': g.id, 'role': g.role, 'description': g.description} for g in db(db.auth_group.id).select()}
+    groups =  {g.id: {'id': g.id, 'role': g.role, 'description': g.description} for g in db(db.auth_group).select()}
+    
     for row in query :
         row.created = db( db.patient.creator == row.id ).count()
         
         row.access = ''
-        if auth.can_create_sample_set(user=row.id): row.access += 'c'
+        if auth.can_create_sample_set(user=row.id): 
+            row.access += 'c'
 
-        q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select()]
+        q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select(db.auth_membership.group_id)]
         q.sort()
         row.groups = q
-
-        row.size = 0
-        row.files = 0
-        query_size = db( db.sequence_file.provider == row.id ).select()
         
-        for row2 in query_size:
-            row.files += 1
-            row.size += row2.size_file
+        count_files = db.sequence_file.size_file.count()
+        sum_files = db.sequence_file.size_file.sum() + db.sequence_file.size_file2.sum()
+        size_res = db( db.sequence_file.provider == row.id ).select(count_files, sum_files).first()
+        row.files = size_res[count_files] if size_res[count_files] is not None else 0
+        row.size = size_res[sum_files] if size_res[sum_files] is not None else 0
 
-        last_logins = db((db.auth_event.user_id==row.id)
-                        &(db.auth_event.description=='User ' + str(row.id) + ' Logged-in')
-                        &(db.auth_event.origin=='auth')).select(db.auth_event.time_stamp,
-                                                                orderby=~db.auth_event.time_stamp)
-        
-        row.first_login = str(last_logins[-1].time_stamp) if len(last_logins) > 0 else '-'
-        row.last_login = str(last_logins[0].time_stamp) if len(last_logins) > 0 else '-'
+        max_logins = db.auth_event.time_stamp.max()
+        min_logins = db.auth_event.time_stamp.min()
+        logins = db((db.auth_event.user_id==row.id) &
+                         (db.auth_event.origin=="auth") &
+                         (db.auth_event.description==f"User {row.id} Logged-in")
+                        ).select(min_logins, max_logins).first()
+        row.first_login = str(logins[min_logins]) if logins[min_logins] is not None else "-"
+        row.last_login = str(logins[max_logins]) if logins[max_logins] is not None else "-"
         # login status between never ('-'), recent (True) and old (False)
         row.login_status =  datetime.datetime.strptime(row.last_login, '%Y-%m-%d %H:%M:%S') > since if row.last_login != "-" else "-"
 
