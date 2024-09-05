@@ -1,5 +1,3 @@
-version: '3.3'
-
 # See https://docs.docker.com/compose/extends/ for more information
 services:
     uwsgi:
