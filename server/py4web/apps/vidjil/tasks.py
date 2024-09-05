@@ -10,7 +10,7 @@ import sys
 import datetime
 import random
 import xmlrpc.client
-from subprocess import Popen, PIPE, STDOUT, os
+from subprocess import Popen, PIPE, STDOUT
 from apps.vidjil import defs
 from apps.vidjil.modules import tools_utils
 from .modules.sequenceFile import get_original_filename
@@ -39,7 +39,6 @@ READS_MATCHER_REGEX = re.compile(r"Total Reads analysed: [0-9]+")
 def schedule_run(id_sequence, id_config, grep_reads=None):
     
     ts = time.time()
-    db._adapter.reconnect()
     data_id = db.results_file.insert(sequence_file_id = id_sequence,
                                      run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                      hidden = grep_reads is not None, 
@@ -57,6 +56,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     ## add task to scheduler
     task_id = register_task(TASK_NAME_PROCESS, args)
     db.results_file[data_id] = dict(scheduler_task_id = task_id)
+    db.commit()
     update_task(task_id, STATUS_QUEUED)
     run_process.delay(task_id, program, args)
 
@@ -68,7 +68,6 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     return res
 
 def schedule_fuse(sample_set_ids, config_ids):
-    db._adapter.reconnect()
     for sample_set_id in sample_set_ids:
         for config_id in config_ids:
             row = db((db.sample_set_membership.sample_set_id == sample_set_id)
@@ -86,22 +85,22 @@ def schedule_fuse(sample_set_ids, config_ids):
                     clean_before = False)
 
 def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=False, clean_after=False):
-    db._adapter.reconnect()
-    
     print("run_vidjil start")
 
-    if db.sequence_file[id_file] == None:
+    sequence_file = db.sequence_file[id_file]
+
+    if sequence_file is None:
         print("Sequence file not found in DB (delay of upload/processing ?)")
         update_task(task_id, STATUS_FAILED)
-        raise ValueError('Process has failed, no entrie in DB for this sequence file')
+        raise ValueError('Process has failed, no entry in DB for this sequence file')
 
-    if db.sequence_file[id_file].pre_process_flag == STATUS_FAILED :
+    if sequence_file.pre_process_flag == STATUS_FAILED :
         print("Pre-process has failed")
         update_task(task_id, STATUS_FAILED)
         raise ValueError('pre-process has failed')
     
     ## re schedule if pre_process is still pending
-    if db.sequence_file[id_file].pre_process_flag and db.sequence_file[id_file].pre_process_flag != STATUS_COMPLETED:
+    if sequence_file.pre_process_flag and sequence_file.pre_process_flag != STATUS_COMPLETED:
         print("Pre-process is still pending, re-schedule")
         args = [id_file, id_config, id_data, grep_reads]
         run_process.apply_async((task_id, "vidjil", args), countdown=60)
@@ -111,22 +110,21 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
     update_task(task_id, STATUS_RUNNING)
     
     try:
-        ## les chemins d'acces a vidjil / aux fichiers de sequences
+        ## Path to vidjil/sequence files
         upload_folder = defs.DIR_SEQUENCES
         out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
-        row = db(db.sequence_file.id==id_file).select()
-        filename = row[0].data_file
+        filename = sequence_file.data_file
         seq_file = upload_folder + filename
         
         ## Clean
         shutil.rmtree(out_folder, ignore_errors=True)
         os.makedirs(out_folder)
         
-        ## filepath des fichiers de sortie
+        ## output file paths
         output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
         out_log = out_folder+'/'+output_filename+'.vidjil.log'
 
-        ## config de vidjil
+        ## Vidjil config
         vidjil_cmd = db.config[id_config].command
         if 'next' in vidjil_cmd:
             vidjil_cmd = vidjil_cmd.replace('next', '')
@@ -144,7 +142,7 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
         cmd += ' ' + vidjil_cmd + ' '+ seq_file
 
         try:
-            ## execute la commande vidjil
+            ## execute vidjil command
             print("=== Launching Vidjil ===")
             print(cmd)    
             print("========================")
@@ -196,10 +194,9 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
                     info = "%d reads, " % reads + info + ", %d windows" % wins
                     break
 
-        ## insertion dans la base de donnée
+        ## Insert in database
         with open(results_filepath, 'rb') as stream:
             ts = time.time()
-            db._adapter.reconnect()
             db.results_file[id_data] = dict(run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                             data_file = stream)
             db.commit()
@@ -224,8 +221,6 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
     
 
 def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False):
-    db._adapter.reconnect()
-
     upload_folder = defs.DIR_SEQUENCES
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
 
@@ -287,7 +282,6 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
     ## insertion dans la base de donnée
     with open(results_filepath, 'rb') as stream:
         ts = time.time()
-        db._adapter.reconnect()
         db.results_file[id_data] = dict(status = "ready",
                                         run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                         data_file = stream)
@@ -304,8 +298,6 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
     return "SUCCESS"
 
 def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False):
-    db._adapter.reconnect()
-    
     upload_folder = defs.DIR_SEQUENCES
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
 
@@ -391,7 +383,6 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     ## insertion dans la base de donnée
     with open(results_filepath, 'rb') as stream:
         ts = time.time()
-        db._adapter.reconnect()
         db.results_file[id_data] = dict(status = "ready",
                                         run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                         data_file = stream)
@@ -409,8 +400,6 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     return "SUCCESS"
 
 def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=False, clean_after=False):
-    db._adapter.reconnect()
-    
     update_task(task_id, STATUS_RUNNING)
     
     try:
@@ -436,7 +425,6 @@ def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fals
         ## insertion dans la base de donnée
         with open(results_filepath, 'rb') as stream:
             ts = time.time()
-            db._adapter.reconnect()
             db.results_file[id_data] = dict(status = "ready",
                                             run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                             data_file = db.results_file.data_file.store(stream, row[0].filename))
@@ -468,106 +456,111 @@ def run_refuse(args):
 
 @scheduler.task()
 def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clean_after=False):
+    log.debug("run_fuse Start !")
     db._adapter.reconnect()
-
-    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
-    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data + '-%s' % sample_set_id
-    
-    if clean_before:
-        shutil.rmtree(out_folder, ignore_errors=True)
-        os.makedirs(out_folder)    
-    
-    ## fuse.py 
-    output_file = out_folder+'/'+output_filename+'.fused'
-    files = ""
-    sequence_file_list = ""
-
-    query2 = db( ( db.results_file.sequence_file_id == db.sequence_file.id )
-                   & ( db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                   & ( db.sample_set_membership.sample_set_id == sample_set_id)
-                   & ( db.results_file.config_id == id_config )
-                   & ( db.results_file.hidden == False)
-                   ).select( orderby=db.sequence_file.id|~db.results_file.run_date) 
-
-    query = []
-    sequence_file_id = 0
-    for row in query2 : 
-        if row.sequence_file.id != sequence_file_id :
-            query.append(row)
-            sequence_file_id = row.sequence_file.id
-            
-    for row in query :
-        if row.results_file.data_file is not None :
-            res_file = defs.DIR_RESULTS + row.results_file.data_file
-            if row.sequence_file.pre_process_file:
-                pre_file = "%s/%s" % (defs.DIR_RESULTS, row.sequence_file.pre_process_file)
-                files += "%s,%s" % (res_file, pre_file)
-            else:
-                files += res_file
-            files += " "
-            sequence_file_list += str(row.results_file.sequence_file_id) + "_"
-            
-    if files == "":
-        print("!!! Fuse failed: no files to fuse")
-        res = {"message": "[%s] c%s: 'fuse' FAILED - %s no files to fuse" % (id_data, id_config, output_file)}
-        log.error(res)
-        return STATUS_FAILED
-    
-    fuse_cmd = db.config[id_config].fuse_command
-    cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
-
     try:
-        print("=== fuse.py ===")
-        print(cmd)
-        print("===============")
-        sys.stdout.flush()
 
-        fuse_log_file_path = out_folder+'/'+output_filename+'.fuse.log'
-        with open(fuse_log_file_path, 'w') as fuse_log_file:
-            p = Popen(cmd, shell=True, stdin=PIPE, stdout=fuse_log_file, stderr=STDOUT, close_fds=True)
-            p.communicate()
-            print(f"Output log in {fuse_log_file_path}")
+        out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+        output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data + '-%s' % sample_set_id
+        
+        if clean_before:
+            shutil.rmtree(out_folder, ignore_errors=True)
+            os.makedirs(out_folder)    
+        
+        ## fuse.py 
+        output_file = out_folder+'/'+output_filename+'.fused'
+        files = ""
+        sequence_file_list = ""
 
-        fuse_filepath = os.path.abspath(output_file)
-        if not os.path.exists(fuse_filepath):
-            raise IOError(filename=fuse_filepath)
+        query2 = db( (db.results_file.sequence_file_id == db.sequence_file.id)
+                    & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                    & (db.sample_set_membership.sample_set_id == sample_set_id)
+                    & (db.results_file.config_id == id_config)
+                    & (db.results_file.hidden == False)
+                    ).select( orderby=db.sequence_file.id|~db.results_file.run_date) 
+
+        query = []
+        sequence_file_id = 0
+        for row in query2 : 
+            if row.sequence_file.id != sequence_file_id :
+                query.append(row)
+                sequence_file_id = row.sequence_file.id
+                
+        for row in query :
+            if row.results_file.data_file is not None :
+                res_file = defs.DIR_RESULTS + row.results_file.data_file
+                if row.sequence_file.pre_process_file:
+                    pre_file = "%s/%s" % (defs.DIR_RESULTS, row.sequence_file.pre_process_file)
+                    files += "%s,%s" % (res_file, pre_file)
+                else:
+                    files += res_file
+                files += " "
+                sequence_file_list += str(row.results_file.sequence_file_id) + "_"
+                
+        if files == "":
+            print("!!! Fuse failed: no files to fuse")
+            res = {"message": "[%s] c%s: 'fuse' FAILED - %s no files to fuse" % (id_data, id_config, output_file)}
+            log.error(res)
+            return STATUS_FAILED
+        
+        fuse_cmd = db.config[id_config].fuse_command
+        cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
+
+        try:
+            print("=== fuse.py ===")
+            print(cmd)
+            print("===============")
+            sys.stdout.flush()
+
+            fuse_log_file_path = out_folder+'/'+output_filename+'.fuse.log'
+            with open(fuse_log_file_path, 'w') as fuse_log_file:
+                p = Popen(cmd, shell=True, stdin=PIPE, stdout=fuse_log_file, stderr=STDOUT, close_fds=True)
+                p.communicate()
+                print(f"Output log in {fuse_log_file_path}")
+
+            fuse_filepath = os.path.abspath(output_file)
+            if not os.path.exists(fuse_filepath):
+                raise IOError(filename=fuse_filepath)
+        except:
+            error_message = f"!!! Fuse failed : {traceback.format_exc()}."
+            res = {"message": f"[{id_data}] c{id_config}: {output_file=} - {error_message}"}
+            log.error(res)
+            raise
+
+        fused_files = db((db.fused_file.config_id == id_config) &
+                        (db.fused_file.sample_set_id == sample_set_id)).select()
+        if len(fused_files) > 0:
+            fused_file = fused_files[0]
+            id_fuse = fused_file.id
+        else:
+            id_fuse = db.fused_file.insert(sample_set_id = sample_set_id,
+                                        config_id = id_config)
+            db.commit()
+
+        with open(fuse_filepath, 'rb') as stream:
+            ts = time.time()
+            db.fused_file[id_fuse].update_record(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                                fused_file = stream,
+                                                sequence_file_list = sequence_file_list)
+            db.commit()
+        # Remove temporary fused file
+        os.remove(output_file)
+
+        if clean_after:
+            shutil.rmtree(out_folder, ignore_errors=True)
+        
+        res = {"message": "[%s] c%s: 'fuse' finished - %s" % (id_data, id_config, db.fused_file[id_fuse].fused_file)}
+        log.info(res)
+
+        return "SUCCESS"
     except:
-        error_message = f"!!! Fuse failed : {traceback.format_exc()}."
-        print(error_message)
-        res = {"message": f"[{id_data}] c{id_config}: {output_file=} - {error_message}"}
-        log.error(res)
+        db.rollback()
         raise
-
-    db._adapter.reconnect()
-    fused_files = db((db.fused_file.config_id == id_config) &
-                     (db.fused_file.sample_set_id == sample_set_id)).select()
-    if len(fused_files) > 0:
-        fused_file = fused_files[0]
-        id_fuse = fused_file.id
-    else:
-        id_fuse = db.fused_file.insert(sample_set_id = sample_set_id,
-                                       config_id = id_config)
-
-    with open(fuse_filepath, 'rb') as stream:
-        ts = time.time()
-        db._adapter.reconnect()
-        db.fused_file[id_fuse].update_record(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
-                                             fused_file = stream,
-                                             sequence_file_list = sequence_file_list)
-        db.commit()
-    # Remove temporary fused file
-    os.remove(output_file)
-
-    if clean_after:
-        shutil.rmtree(out_folder, ignore_errors=True)
-    
-    res = {"message": "[%s] c%s: 'fuse' finished - %s" % (id_data, id_config, db.fused_file[id_fuse].fused_file)}
-    log.info(res)
-
-    return "SUCCESS"
+    finally:
+        db.close()
+        log.debug("run_fuse End !")
 
 def custom_fuse(file_list):
-    db._adapter.reconnect()
     
     if defs.PORT_FUSE_SERVER is None:
         raise IOError('This server cannot fuse custom data')
@@ -585,9 +578,10 @@ def custom_fuse(file_list):
     output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
     for id in file_list :
-        if db.results_file[id].data_file is not None :
-            files += os.path.abspath(defs.DIR_RESULTS + db.results_file[id].data_file)
-            seq_file = db.sequence_file[db.results_file[id].sequence_file_id]
+        result_file = db.results_file[id]
+        if result_file.data_file is not None :
+            files += os.path.abspath(defs.DIR_RESULTS + result_file.data_file)
+            seq_file = db.sequence_file[result_file.sequence_file_id]
             if seq_file.pre_process_file is not None:
                 files += ",%s" % os.path.abspath(defs.DIR_RESULTS + seq_file.pre_process_file)
             files += " "
@@ -612,7 +606,6 @@ def custom_fuse(file_list):
     return data
 
 def schedule_pre_process(sequence_file_id, pre_process_id):
-    db._adapter.reconnect()
     args = [pre_process_id, sequence_file_id]
 
     err = assert_scheduler_task_does_not_exist(str(args))
@@ -639,62 +632,92 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
     Run a pre-process on sequence_file.data_file (and possibly sequence_file.data_file+2),
     put the output back in sequence_file.data_file.
     '''
+    log.debug("run_pre_process Start !")
     db._adapter.reconnect()
     try:
-        sequence_file = db.sequence_file[sequence_file_id]
-        db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_RUNNING)
-        db.commit()
-    except:
-        db.rollback()
-        return "FAILED"
-    update_task(task_id, STATUS_RUNNING)
-    
-    try:
-        out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
-        output_filename = get_preprocessed_filename(get_original_filename(sequence_file.data_file),
-                                                    get_original_filename(sequence_file.data_file2))
-        
-        if clean_before:
-            shutil.rmtree(out_folder, ignore_errors=True)
-            os.makedirs(out_folder)    
-
-        output_file = out_folder+'/'+output_filename
-        pre_process = db.pre_process[pre_process_id]
-        out_log = out_folder+'/'+output_filename+'.pre.log'
-        
-        cmd = pre_process.command.replace("&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
-        if sequence_file.data_file2:
-            cmd = cmd.replace("&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
-        cmd = cmd.replace("&result&", output_file)
-        cmd = cmd.replace("&pear&", defs.DIR_PEAR)
-        cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
-        cmd = cmd.replace("&binaries&", defs.DIR_BINARIES)
-        # Example of template to add some preprocess shortcut
-        # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
-        # Where &preprocess_template& is the shortcut to change and
-        # defs.DIR_preprocess_template the variable to set into the file defs.py. 
-        # The value should be the path to access to the preprocess software.
-
         try:
-            print("=== Pre-process %s ===" % pre_process_id)
-            print(cmd)
-            print("===============")
-            sys.stdout.flush()
+            sequence_file = db.sequence_file[sequence_file_id]
+            db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_RUNNING)
+            db.commit()
+        except Exception as exception:
+            log.error(f"Error when starting pre-process: {exception}")
+            db.rollback()
+            return "FAILED"
+        update_task(task_id, STATUS_RUNNING)
+        
+        try:
+            out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
+            output_filename = get_preprocessed_filename(get_original_filename(sequence_file.data_file),
+                                                        get_original_filename(sequence_file.data_file2))
+            
+            if clean_before:
+                shutil.rmtree(out_folder, ignore_errors=True)
+                os.makedirs(out_folder)    
 
-            os.chdir(defs.DIR_PREPROCESS)
-            with open(out_log, 'w') as log_file:
-                p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
-                p.communicate()
-            print("Output log in " + out_log)
+            output_file = out_folder+'/'+output_filename
+            pre_process = db.pre_process[pre_process_id]
+            out_log = out_folder+'/'+output_filename+'.pre.log'
+            
+            cmd = pre_process.command.replace("&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
+            if sequence_file.data_file2:
+                cmd = cmd.replace("&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
+            cmd = cmd.replace("&result&", output_file)
+            cmd = cmd.replace("&pear&", defs.DIR_PEAR)
+            cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
+            cmd = cmd.replace("&binaries&", defs.DIR_BINARIES)
+            # Example of template to add some preprocess shortcut
+            # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
+            # Where &preprocess_template& is the shortcut to change and
+            # defs.DIR_preprocess_template the variable to set into the file defs.py. 
+            # The value should be the path to access to the preprocess software.
 
-            filepath = os.path.abspath(output_file)
-            if not os.path.exists(filepath):
-                raise IOError(filename=filepath)
+            try:
+                print("=== Pre-process %s ===" % pre_process_id)
+                print(cmd)
+                print("===============")
+                sys.stdout.flush()
+
+                os.chdir(defs.DIR_PREPROCESS)
+                with open(out_log, 'w') as log_file:
+                    p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
+                    p.communicate()
+                print("Output log in " + out_log)
+
+                filepath = os.path.abspath(output_file)
+                if not os.path.exists(filepath):
+                    raise IOError(filename=filepath)
+            except:
+                print("!!! Pre-process failed, no result file")
+                res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
+                log.error(res)
+                db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
+                db.commit()
+                update_task(task_id, STATUS_FAILED)
+                
+                # cancel WAITING task for this sequence file
+                set_tasks_status_for_sequence_file(sequence_file_id, STATUS_FAILED)
+                raise
+
+
+            # Now we update the sequence file with the result of the pre-process
+            # We forget the initial data_file (and possibly data_file2)
+            pre_process_filepath = '%s/pre_process.vidjil' % out_folder
+            try:
+                pre_process_output = open(pre_process_filepath, 'rb')
+            except FileNotFoundError:
+                pre_process_output = None
+            with open(filepath, 'rb') as stream:
+                db.sequence_file[sequence_file_id] = dict(data_file = stream,
+                                                        data_file2 = None,
+                                                        pre_process_flag = STATUS_COMPLETED,
+                                                        pre_process_file = pre_process_output)
+                db.commit()
+            if pre_process_output is not None:
+                pre_process_output.close()
+            update_task(task_id, STATUS_COMPLETED)
         except:
-            print("!!! Pre-process failed, no result file")
-            res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
-            log.error(res)
-            db._adapter.reconnect()
+            error_message = f"Error in run_pre_process : {traceback.format_exc()}\n\nSetting status to Failed."
+            log.error(error_message)
             db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
             db.commit()
             update_task(task_id, STATUS_FAILED)
@@ -702,82 +725,89 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
             # cancel WAITING task for this sequence file
             set_tasks_status_for_sequence_file(sequence_file_id, STATUS_FAILED)
             raise
-
-
-        # Now we update the sequence file with the result of the pre-process
-        # We forget the initial data_file (and possibly data_file2)
-        pre_process_filepath = '%s/pre_process.vidjil' % out_folder
-        try:
-            pre_process_output = open(pre_process_filepath, 'rb')
-        except FileNotFoundError:
-            pre_process_output = None
-        db._adapter.reconnect()
-        with open(filepath, 'rb') as stream:
-            db.sequence_file[sequence_file_id] = dict(data_file = stream,
-                                                    data_file2 = None,
-                                                    pre_process_flag = STATUS_COMPLETED,
-                                                    pre_process_file = pre_process_output)
-            db.commit()
-        if pre_process_output != None:
-            pre_process_output.close()
-        update_task(task_id, STATUS_COMPLETED)
-    except:
-        error_message = f"Error in run_pre_process : {traceback.format_exc()}\n\nSetting status to Failed."
-        print(error_message)
-        log.error(error_message)
-        db._adapter.reconnect()
-        db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
-        db.commit()
-        update_task(task_id, STATUS_FAILED)
         
-        # cancel WAITING task for this sequence file
-        set_tasks_status_for_sequence_file(sequence_file_id, STATUS_FAILED)
+        # resume WAITING task for this sequence file
+        set_tasks_status_for_sequence_file(sequence_file_id, STATUS_QUEUED)
+
+        # Dump log in scheduler_run.run_output
+        with open(out_log) as log_file:
+            for line in log_file:
+                print(line, end=' ')
+
+        # Remove data file from disk to save space (it is now saved elsewhere)
+        os.remove(filepath)
+
+        # Remove original sequence file after preprocess as no more needed and avaialable
+        try:
+            os.remove(defs.DIR_SEQUENCES + sequence_file.data_file)
+            os.remove(defs.DIR_SEQUENCES + sequence_file.data_file2)
+            os.remove(pre_process_filepath)
+        except Exception as exception:
+            log.error(f"[pre_process_id={pre_process_id}] [sequence_file_id={sequence_file_id}] Removing files at the end of preprocess failed with exception {exception}.")
+        
+        if clean_after:
+            shutil.rmtree(out_folder, ignore_errors=True)
+        
+        res = {"message": "{%s} p%s: 'pre_process' finished - %s" % (sequence_file_id, pre_process_id, output_file)}
+        log.info(res)
+
+        return "SUCCESS"
+    except:
+        db.rollback()
+        try:
+            update_task(task_id, STATUS_FAILED)
+            # cancel WAITING task for this sequence file
+            set_tasks_status_for_sequence_file(sequence_file_id, STATUS_FAILED)
+        except:
+            db.rollback()
+            raise
         raise
-    
-    # resume WAITING task for this sequence file
-    set_tasks_status_for_sequence_file(sequence_file_id, STATUS_QUEUED)
-
-    # Dump log in scheduler_run.run_output
-    with open(out_log) as log_file:
-        for line in log_file:
-            print(line, end=' ')
-
-    # Remove data file from disk to save space (it is now saved elsewhere)
-    os.remove(filepath)
-
-    # Remove original sequence file after preprocess as no more needed and avaialable
-    try:
-        os.remove(defs.DIR_SEQUENCES + sequence_file.data_file)
-        os.remove(defs.DIR_SEQUENCES + sequence_file.data_file2)
-    except:
-        log.error(f"[pre_process_id={pre_process_id}] [sequence_file_id={sequence_file_id}] Removing file at the end of preprocess failed.")
-
-    try:
-        os.remove(pre_process_filepath)
-    except:
-        pass
-    
-    if clean_after:
-        shutil.rmtree(out_folder, ignore_errors=True)
-    
-    res = {"message": "{%s} p%s: 'pre_process' finished - %s" % (sequence_file_id, pre_process_id, output_file)}
-    log.info(res)
-
-    return "SUCCESS"
+    finally:
+        # Check status do not stay in running
+        try:
+            if db.scheduler_task[task_id].status == STATUS_RUNNING:
+                update_task(task_id, STATUS_FAILED)
+                set_tasks_status_for_sequence_file(sequence_file_id, STATUS_FAILED)
+        except:
+            db.rollback()
+            raise
+        
+        db.close()
+        log.debug("run_pre_process End !")
+        
 
 @scheduler.task()
 def run_process(task_id, program, args):
+    log.debug("run_process Start !")
     db._adapter.reconnect()
-    if program == "vidjil" :
-        run_vidjil(task_id, args[0],args[1],args[2],args[3])
-    elif program == "none" :
-        run_copy(task_id, args[0],args[1],args[2],args[3])
+    try:
+        if program == "vidjil" :
+            run_vidjil(task_id, args[0],args[1],args[2],args[3])
+        elif program == "none" :
+            run_copy(task_id, args[0],args[1],args[2],args[3])
+    except:
+        db.rollback()
+        try:
+            update_task(task_id, STATUS_FAILED)
+        except:
+            raise
+        raise
+    finally:
+        # Check status do not stay in running
+        try:
+            if db.scheduler_task[task_id].status == STATUS_RUNNING:
+                update_task(task_id, STATUS_FAILED)
+        except:
+            db.rollback()
+            raise
+        
+        db.close()
+        log.debug("run_process End !")
 
 
 # UTILS
 def assert_scheduler_task_does_not_exist(args):
     ## check already scheduled run
-    db._adapter.reconnect()
     row = db( ( db.scheduler_task.args == args)
          & ( db.scheduler_task.status != STATUS_FAILED )
          & ( db.scheduler_task.status != STATUS_COMPLETED )
@@ -792,7 +822,6 @@ def assert_scheduler_task_does_not_exist(args):
 
 def register_task(task_name, args):
     timestamp = time.time()
-    db._adapter.reconnect()
     task_id = db.scheduler_task.insert( task_name = task_name,
                                         args = args,
                                         status = STATUS_PENDING,
@@ -801,7 +830,6 @@ def register_task(task_name, args):
     return task_id
 
 def update_task(task_id, status):
-    db._adapter.reconnect()
     db.scheduler_task[task_id].update_record(status = status)
     db.commit()
     return
@@ -810,7 +838,6 @@ def compute_extra(id_file, id_config, min_threshold):
     result = {}
     data = None
     
-    db._adapter.reconnect()
     results_file = db((db.results_file.sequence_file_id == id_file) &
                       (db.results_file.hidden == False) &
                       (db.results_file.config_id == id_config)
@@ -838,8 +865,8 @@ def compute_extra(id_file, id_config, min_threshold):
                 # Be robust against 'null' values for clones
                 data["clones"] = []
             
-        except ValueError as e:
-            print('invalid_json')
+        except ValueError as exception:
+            print(f"invalid_json: {exception}")
             return "FAIL"
     
     data['reads']['distribution'] = result
