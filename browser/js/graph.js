@@ -647,8 +647,11 @@ Graph.prototype = {
      *
      * */
     updateElemStyle: function (list) {
+        var self=this;
         if (this.m.focus != -1 && this.m.clone(this.m.focus).hasSizeConstant()) {
             var line = document.getElementById("polyline" + this.m.focus);
+            line.ondblclick = function(){ self.m.displayInfoBox(self.m.focus) };
+
             document.getElementById("clones_container")
                 .appendChild(line);
         }
