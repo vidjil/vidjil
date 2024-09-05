@@ -146,6 +146,28 @@ describe('Graph', function () {
     return
   })
 
+
+  it('Graph open clonotype panel',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+
+    //check correct number of samples are present in graph [2])
+    cy.get('#time0').should('have.length', 1)
+    cy.get('#time1').should('have.length', 1)
+    cy.get('#time2').should('have.length', 0)
+
+    cy.get('.info-container')
+      .should("not.be.visible")
+    
+    cy.get('#polyline1').click({force: true})
+    cy.get('#polyline1').dblclick({force: true})
+
+    cy.get('.info-container')
+      .should("be.visible")
+      .should("contain", "clone2")
+
+    return
+  })
+
   //test polylines class / css
   it('Graph clone',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
