@@ -699,13 +699,18 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
   
   std::set<Shortcut> before_shortcuts, after_shortcuts;
   std::list<Germline<Shortcut, Affect> *> possible_germlines;
-  std::list<std::pair<Shortcut, Shortcut>> matching_shortcuts;
+  std::list<std::pair<KmerAffect, KmerAffect>> matching_affects;
+  std::map<Shortcut, KmerAffect> shortcut_affect;
 
   for (auto val: before_set) {
-    before_shortcuts.insert(germlines->getRepository()->getShortcut(val));
+    Shortcut c = germlines->getRepository()->getShortcut(val);
+    before_shortcuts.insert(c);
+    shortcut_affect[c] = val;
   }
   for (auto val: after_set) {
-    after_shortcuts.insert(germlines->getRepository()->getShortcut(val));
+    Shortcut c = germlines->getRepository()->getShortcut(val);
+    after_shortcuts.insert(c);
+    shortcut_affect[c] = val;
   }
 
   assert(germlines != nullptr);
@@ -716,7 +721,7 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
       Germline<Shortcut, Affect> *possible_germline = germlines->getGermline(shortcuts);
       if (possible_germline != nullptr) {
         possible_germlines.push_back(possible_germline);
-        matching_shortcuts.push_back(std::make_pair(left, right));
+        matching_affects.push_back(std::make_pair(shortcut_affect[left], shortcut_affect[right]));
       }
     }
   }
@@ -727,18 +732,16 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
 
   if (possible_germlines.size() >= 1) {
     this->segmented_germline = possible_germlines.front();
-    std::pair<Shortcut, Shortcut> shortcuts = matching_shortcuts.front();
+    std::pair<KmerAffect, KmerAffect> affects = matching_affects.front();
     std::list<std::string> segments = this->segmented_germline->getSegments();
-    if (this->segmented_germline->getGermlineElement(shortcuts.first)->getSegment().count(segments.front()) > 0) {
-      before = Affect(this->segmented_germline->getGermlineElement(shortcuts.first)->getAffect(), strand,
-                      this->segmented_germline->getGermlineElement(shortcuts.first)->getSeed().size());
-      after = Affect(this->segmented_germline->getGermlineElement(shortcuts.second)->getAffect(), strand,
-                     this->segmented_germline->getGermlineElement(shortcuts.second)->getSeed().size());
+    if (this->segmented_germline->getGermlineElement(germlines->getRepository()->getShortcut(affects.first))->getSegment().count(segments.front()) > 0) {
+      before = affects.first;
+      after = affects.second;
+      this->reversed = false;
     } else {
-      before = Affect(this->segmented_germline->getGermlineElement(shortcuts.second)->getAffect(), strand,
-                      this->segmented_germline->getGermlineElement(shortcuts.second)->getSeed().size());
-      after = Affect(this->segmented_germline->getGermlineElement(shortcuts.first)->getAffect(), strand,
-                     this->segmented_germline->getGermlineElement(shortcuts.first)->getSeed().size());
+      before = affects.second;
+      after = affects.first;
+      this->reversed = true;
     }
   } else {
         // Unexpected germline ?
