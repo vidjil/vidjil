@@ -531,7 +531,7 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
   kaa = new MultipleAffectAnalyser<Shortcut>(*(index), this->sequence);
   
   // Check strand consistency among the affectations.
-  int strand;
+  int strand=0;
   int nb_strand[2] = {0,0};     // In cell 0 we'll put the number of negative
                                 // strand, while in cell 1 we'll put the
                                 // positives
@@ -663,29 +663,30 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
       strand = this->reversed ? -1 : 1 ;
     }
 
-  else
-    { // Regular germline
 
-  // Test on which strand we are, select the before and after KmerAffects
-  if (nb_strand[0] == 0 && nb_strand[1] == 0) {
-    this->because = UNSEG_TOO_FEW_ZERO ;
-    return ;
-  } else if (nb_strand[0] < RATIO_STRAND * nb_strand[1] &&
-             nb_strand[1] < RATIO_STRAND * nb_strand[0]) {
-    // Ambiguous information: we have positive and negative strands
-    // and there is not enough difference to put them apart.
-    if (nb_strand[0] + nb_strand[1] >= DETECT_THRESHOLD_STRAND)
-      this->because = UNSEG_STRAND_NOT_CONSISTENT ;
-    else
-      this->because = UNSEG_TOO_FEW_ZERO ;
-    return ;
+  if (this->because == 0) {
+    chooseGermline(germlines, before_set, after_set, strand);
+
+    if (this->segmented_germline) {
+      // Test on which strand we are
+      if (nb_strand[0] == 0 && nb_strand[1] == 0) {
+        this->because = UNSEG_TOO_FEW_ZERO ;
+        return ;
+      } else if (nb_strand[0] < RATIO_STRAND * nb_strand[1] &&
+                 nb_strand[1] < RATIO_STRAND * nb_strand[0]) {
+        // Ambiguous information: we have positive and negative strands
+        // and there is not enough difference to put them apart.
+        if (nb_strand[0] + nb_strand[1] >= DETECT_THRESHOLD_STRAND)
+          this->because = UNSEG_STRAND_NOT_CONSISTENT ;
+        else
+          this->because = UNSEG_TOO_FEW_ZERO ;
+      }
+    } else
+      this->segmented_germline = Germline<Shortcut, Affect>::getUnseg();
   }
-
-    } // endif Pseudo-germline
-
-  chooseGermline(germlines, before_set, after_set, strand);
   if (this->because == 0)
-  computeSegmentation(strand, before, after, threshold, multiplier);
+    computeSegmentation(strand, before, after, threshold, multiplier);
+
   if (out_unsegmented)
     {
       // Debug, display k-mer affectation and segmentation result for this germline
