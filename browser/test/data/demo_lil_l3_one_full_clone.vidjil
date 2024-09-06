@@ -1,710 +1,191 @@
 {
-  "germlines": {
-    "species_taxon_id": 9606, 
-    "ref": "http://www.vidjil.org/germlines/germline-2021-01-21.tar.gz", 
-    "species": "Homo sapiens", 
-    "custom": {
-      "3": [], 
-      "5": [], 
-      "4": [], 
-      "shortcut": "X"
-    }
-  }, 
-  "diversity": {
-    "index_H_entropy": [
-      5.688690639121887
-    ], 
-    "index_E_equitability": [
-      0.39255398511886597
-    ], 
-    "index_Ds_diversity": [
-      0.9644120931625366
-    ]
-  }, 
-  "similarity": [
-    [
-      0.0, 
-      27.0, 
-      28.0, 
-      26.0, 
-      27.0, 
-      28.0, 
-      29.0, 
-      27.0, 
-      26.0, 
-      27.0, 
-      31.0, 
-      26.0, 
-      20.0, 
-      27.0, 
-      25.0, 
-      31.0, 
-      22.0, 
-      26.0, 
-      28.0, 
-      27.0
-    ], 
-    [
-      27.0, 
-      0.0, 
-      20.0, 
-      2.0, 
-      22.0, 
-      20.0, 
-      33.0, 
-      30.0, 
-      26.0, 
-      33.0, 
-      27.0, 
-      22.0, 
-      28.0, 
-      33.0, 
-      29.0, 
-      29.0, 
-      29.0, 
-      4.0, 
-      30.0, 
-      22.0
-    ], 
-    [
-      28.0, 
-      20.0, 
-      0.0, 
-      20.0, 
-      2.0, 
-      2.0, 
-      34.0, 
-      31.0, 
-      27.0, 
-      32.0, 
-      33.0, 
-      28.0, 
-      29.0, 
-      32.0, 
-      29.0, 
-      25.0, 
-      24.0, 
-      20.0, 
-      30.0, 
-      4.0
-    ], 
-    [
-      26.0, 
-      2.0, 
-      20.0, 
-      0.0, 
-      20.0, 
-      20.0, 
-      33.0, 
-      30.0, 
-      26.0, 
-      34.0, 
-      29.0, 
-      23.0, 
-      29.0, 
-      34.0, 
-      30.0, 
-      29.0, 
-      29.0, 
-      2.0, 
-      30.0, 
-      20.0
-    ], 
-    [
-      27.0, 
-      22.0, 
-      2.0, 
-      20.0, 
-      0.0, 
-      4.0, 
-      34.0, 
-      31.0, 
-      27.0, 
-      33.0, 
-      33.0, 
-      29.0, 
-      29.0, 
-      33.0, 
-      27.0, 
-      25.0, 
-      25.0, 
-      20.0, 
-      30.0, 
-      2.0
-    ], 
-    [
-      28.0, 
-      20.0, 
-      2.0, 
-      20.0, 
-      4.0, 
-      0.0, 
-      33.0, 
-      30.0, 
-      27.0, 
-      32.0, 
-      33.0, 
-      28.0, 
-      30.0, 
-      32.0, 
-      28.0, 
-      26.0, 
-      23.0, 
-      22.0, 
-      30.0, 
-      2.0
-    ], 
-    [
-      29.0, 
-      33.0, 
-      34.0, 
-      33.0, 
-      34.0, 
-      33.0, 
-      0.0, 
-      6.0, 
-      33.0, 
-      26.0, 
-      31.0, 
-      27.0, 
-      34.0, 
-      26.0, 
-      26.0, 
-      23.0, 
-      18.0, 
-      34.0, 
-      8.0, 
-      33.0
-    ], 
-    [
-      27.0, 
-      30.0, 
-      31.0, 
-      30.0, 
-      31.0, 
-      30.0, 
-      6.0, 
-      0.0, 
-      32.0, 
-      28.0, 
-      33.0, 
-      30.0, 
-      30.0, 
-      27.0, 
-      28.0, 
-      24.0, 
-      18.0, 
-      30.0, 
-      2.0, 
-      30.0
-    ], 
-    [
-      26.0, 
-      26.0, 
-      27.0, 
-      26.0, 
-      27.0, 
-      27.0, 
-      33.0, 
-      32.0, 
-      0.0, 
-      30.0, 
-      33.0, 
-      23.0, 
-      26.0, 
-      31.0, 
-      11.0, 
-      27.0, 
-      30.0, 
-      27.0, 
-      33.0, 
-      27.0
-    ], 
-    [
-      27.0, 
-      33.0, 
-      32.0, 
-      34.0, 
-      33.0, 
-      32.0, 
-      26.0, 
-      28.0, 
-      30.0, 
-      0.0, 
-      30.0, 
-      32.0, 
-      34.0, 
-      2.0, 
-      29.0, 
-      28.0, 
-      26.0, 
-      35.0, 
-      28.0, 
-      33.0
-    ], 
-    [
-      31.0, 
-      27.0, 
-      33.0, 
-      29.0, 
-      33.0, 
-      33.0, 
-      31.0, 
-      33.0, 
-      33.0, 
-      30.0, 
-      0.0, 
-      30.0, 
-      29.0, 
-      31.0, 
-      32.0, 
-      31.0, 
-      32.0, 
-      30.0, 
-      33.0, 
-      33.0
-    ], 
-    [
-      26.0, 
-      22.0, 
-      28.0, 
-      23.0, 
-      29.0, 
-      28.0, 
-      27.0, 
-      30.0, 
-      23.0, 
-      32.0, 
-      30.0, 
-      0.0, 
-      32.0, 
-      32.0, 
-      25.0, 
-      31.0, 
-      28.0, 
-      24.0, 
-      32.0, 
-      29.0
-    ], 
-    [
-      20.0, 
-      28.0, 
-      29.0, 
-      29.0, 
-      29.0, 
-      30.0, 
-      34.0, 
-      30.0, 
-      26.0, 
-      34.0, 
-      29.0, 
-      32.0, 
-      0.0, 
-      35.0, 
-      30.0, 
-      29.0, 
-      33.0, 
-      30.0, 
-      30.0, 
-      30.0
-    ], 
-    [
-      27.0, 
-      33.0, 
-      32.0, 
-      34.0, 
-      33.0, 
-      32.0, 
-      26.0, 
-      27.0, 
-      31.0, 
-      2.0, 
-      31.0, 
-      32.0, 
-      35.0, 
-      0.0, 
-      30.0, 
-      29.0, 
-      25.0, 
-      35.0, 
-      29.0, 
-      33.0
-    ], 
-    [
-      25.0, 
-      29.0, 
-      29.0, 
-      30.0, 
-      27.0, 
-      28.0, 
-      26.0, 
-      28.0, 
-      11.0, 
-      29.0, 
-      32.0, 
-      25.0, 
-      30.0, 
-      30.0, 
-      0.0, 
-      23.0, 
-      24.0, 
-      30.0, 
-      28.0, 
-      27.0
-    ], 
-    [
-      31.0, 
-      29.0, 
-      25.0, 
-      29.0, 
-      25.0, 
-      26.0, 
-      23.0, 
-      24.0, 
-      27.0, 
-      28.0, 
-      31.0, 
-      31.0, 
-      29.0, 
-      29.0, 
-      23.0, 
-      0.0, 
-      22.0, 
-      30.0, 
-      24.0, 
-      26.0
-    ], 
-    [
-      22.0, 
-      29.0, 
-      24.0, 
-      29.0, 
-      25.0, 
-      23.0, 
-      18.0, 
-      18.0, 
-      30.0, 
-      26.0, 
-      32.0, 
-      28.0, 
-      33.0, 
-      25.0, 
-      24.0, 
-      22.0, 
-      0.0, 
-      29.0, 
-      20.0, 
-      24.0
-    ], 
-    [
-      26.0, 
-      4.0, 
-      20.0, 
-      2.0, 
-      20.0, 
-      22.0, 
-      34.0, 
-      30.0, 
-      27.0, 
-      35.0, 
-      30.0, 
-      24.0, 
-      30.0, 
-      35.0, 
-      30.0, 
-      30.0, 
-      29.0, 
-      0.0, 
-      30.0, 
-      22.0
-    ], 
-    [
-      28.0, 
-      30.0, 
-      30.0, 
-      30.0, 
-      30.0, 
-      30.0, 
-      8.0, 
-      2.0, 
-      33.0, 
-      28.0, 
-      33.0, 
-      32.0, 
-      30.0, 
-      29.0, 
-      28.0, 
-      24.0, 
-      20.0, 
-      30.0, 
-      0.0, 
-      30.0
-    ], 
-    [
-      27.0, 
-      22.0, 
-      4.0, 
-      20.0, 
-      2.0, 
-      2.0, 
-      33.0, 
-      30.0, 
-      27.0, 
-      33.0, 
-      33.0, 
-      29.0, 
-      30.0, 
-      33.0, 
-      27.0, 
-      26.0, 
-      24.0, 
-      22.0, 
-      30.0, 
-      0.0
-    ]
-  ], 
-  "vidjil_json_version": "2016b", 
-  "reads": {
-    "germline": {
-      "unexpected": [
-        707
-      ], 
-      "TRD+": [
-        0
-      ], 
-      "TRA": [
-        0
-      ], 
-      "TRB": [
-        0
-      ], 
-      "IGH": [
-        562048
-      ], 
-      "TRD": [
-        0
-      ], 
-      "TRG": [
-        1402539
-      ], 
-      "IGK+": [
-        0
-      ], 
-      "TRB+": [
-        0
-      ], 
-      "IGL": [
-        0
-      ], 
-      "IGK": [
-        0
-      ], 
-      "IGH+": [
-        655
-      ], 
-      "TRA+D": [
-        0
-      ]
-    }, 
-    "distribution": {
-      "unexpected": [
-        0
-      ], 
-      "TRD+": [
-        0
-      ], 
-      "0.000001": [
-        153609
-      ], 
-      "TRA": [
-        0
-      ], 
-      "0.01": [
-        1148834
-      ], 
-      "TRB": [
-        0
-      ], 
-      "0.00001": [
-        225324
-      ], 
-      "TRD": [
-        0
-      ], 
-      "TRG": [
-        7
-      ], 
-      "0.1": [
-        0
-      ], 
-      "IGK+": [
-        0
-      ], 
-      "0.0000001": [
-        71374
-      ], 
-      "TRA+D": [
-        0
-      ], 
-      "TRB+": [
-        0
-      ], 
-      "0.0001": [
-        175200
-      ], 
-      "IGL": [
-        0
-      ], 
-      "IGK": [
-        0
-      ], 
-      "IGH+": [
-        0
-      ], 
-      "0.001": [
-        191608
-      ], 
-      "IGH": [
-        2
-      ]
-    }, 
-    "total": [
-      2390273
-    ], 
-    "segmented": [
-      1965949
-    ]
-  }, 
-  "samples": {
-    "log": [
-      "  ==> junction detected in 1965949 reads (82.2%)\n  ==> found 105324 windows in 1965949 reads (82.2% of 2390273 reads)\n                          reads av. len     clones clo/rds\n  IGH               ->   562048   314.5      31487   0.056\n  IGH+              ->      655   110.4        408   0.623\n  IGK               ->        0       -          0       -\n  IGK+              ->        0       -          0       -\n  IGL               ->        0       -          0       -\n  TRA               ->        0       -          0       -\n  TRA+D             ->        0       -          0       -\n  TRB               ->        0       -          0       -\n  TRB+              ->        0       -          0       -\n  TRD               ->        0       -          0       -\n  TRD+              ->        0       -          0       -\n  TRG               ->  1402539   197.6      72896   0.052\n  unexpected        ->      707   191.7        533   0.757\n\n  SEG               ->  1965949   231.0\n  SEG_+             ->  1015609   218.5\n  SEG_-             ->   950340   244.4\n  SEG changed w     ->    16733   213.6\n\n  UNSEG too short   ->     5203    10.0\n  UNSEG strand      ->      534    78.1\n  UNSEG too few V/J ->    30302    85.3\n  UNSEG only V/5'   ->   334169   191.2\n  UNSEG only J/3'   ->    54012    55.4\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->      104   376.6\n  UNSEG too short w ->        0       -\n"
-    ], 
-    "producer": [
-      "vidjil-algo 2021.04"
-    ], 
-    "timestamp": [
-      "2022-01-12 16:06:16"
-    ], 
-    "commandline": [
-      "../..//vidjil-algo -o /mnt/result/tmp/out-000006/ -b 000006 -c clones -z 100 -r 1 -g../../germline//homo-sapiens.g -e 1 -2 -d -w 50 /mnt/upload/uploads/sequence_file.data_file.bb7444cf5ff3e50e.4c494c2d4c332d302e6661737471.gz "
-    ], 
-    "number": 1, 
-    "original_names": [
-      "/mnt/upload/uploads/sequence_file.data_file.bb7444cf5ff3e50e.4c494c2d4c332d302e6661737471.gz"
-    ], 
-    "run_timestamp": [
-      "2021-12-13 13:50:28"
-    ]
-  }, 
-  "clones": [{
-      "germline": "IGH", 
+  "clones": [
+    {
       "_average_read_length": [
         "317.35"
-      ], 
-      "name": "IGHV3-9*01 7/CCCGGA/17 IGHJ6*02", 
-      "_coverage_info": [
-        "324 bp (102% of 317.3 bp)"
-      ], 
-      "sequence": "GGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT", 
+      ],
       "_coverage": [
         1.0209637880325317
-      ], 
-      "top": 1, 
-      "seg": {
-        "junction": {
-          "aa": "CAPGGMDVW", 
-          "start": 265, 
-          "productive": true, 
-          "stop": 291
-        }, 
-        "cdr3": {
-          "aa": "APGGMDV", 
-          "start": 268, 
-          "stop": 288, 
-          "seq": "GCACCCGGAGGTATGGACGTC"
-        }, 
-        "quality": {
-          "start": 1, 
-          "stop": 324, 
-          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!@??:A;B;???B<BBBBBA@@?8@>7>;5:::?:@@@A@@<0==<6?9>6!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        }, 
-        "evalue": {
-          "val": "6.18e-135"
-        }, 
-        "N": 6, 
-        "3": {
-          "start": 277, 
-          "delLeft": 17, 
-          "stop": 321, 
-          "name": "IGHJ6*02", 
-          "delRight": 60
-        }, 
-        "affectSigns": {
-          "start": 1, 
-          "stop": 324, 
-          "seq": " -----------------------------------                 ------------------------------- ------------------------------------ ----------------------------------------- ------------------------------------------------------------------------------------------------ ---------------------------------------------------            "
-        }, 
-        "5": {
-          "stop": 270, 
-          "name": "IGHV3-9*01", 
-          "delRight": 7
-        }, 
-        "evalue_right": {
-          "val": "0.00e+00"
-        }, 
-        "evalue_left": {
-          "val": "6.18e-135"
-        }, 
-        "affectValues": {
-          "start": 1, 
-          "stop": 324, 
-          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH____________"
-        }
-      }, 
+      ],
+      "_coverage_info": [
+        "324 bp (102% of 317.3 bp)"
+      ],
+      "germline": "IGH",
+      "id": "CACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAG",
+      "name": "IGHV3-9*01 7/CCCGGA/17 IGHJ6*02",
       "reads": [
         189991
-      ], 
-      "id": "CACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAG"
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 17,
+          "delRight": 60,
+          "name": "IGHJ6*02",
+          "start": 277,
+          "stop": 321
+        },
+        "5": {
+          "delRight": 7,
+          "name": "IGHV3-9*01",
+          "stop": 270
+        },
+        "N": 6,
+        "affectSigns": {
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++                 +++++++++++++++++++++++++++++++++++             ",
+          "start": 1,
+          "stop": 324
+        },
+        "affectValues": {
+          "seq": "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH_________________hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_____________",
+          "start": 1,
+          "stop": 324
+        },
+        "cdr3": {
+          "aa": "APGGMDV",
+          "seq": "GCACCCGGAGGTATGGACGTC",
+          "start": 268,
+          "stop": 288
+        },
+        "evalue": {
+          "val": "3.07e-136"
+        },
+        "evalue_left": {
+          "val": "0.00e+00"
+        },
+        "evalue_right": {
+          "val": "3.07e-136"
+        },
+        "junction": {
+          "aa": "CAPGGMDVW",
+          "productive": true,
+          "start": 265,
+          "stop": 291
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!=>>?8?8>7=??@8>>=>==>=>?2<6;?9>=>=9?>:;;==>>.<4:4:!!!!!!!!!!!!!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 324
+        }
+      },
+      "sequence": "GGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT",
+      "top": 1
     }
-  ], 
+  ],
   "config": {
-    "all": false, 
-    "out-detected": false, 
-    "verbose": false, 
-    "no-airr": false, 
-    "min-ratio": "0", 
-    "analysis-e-value-D": "0.05", 
-    "out-reads": false, 
-    "e-value-kmer": "-1", 
-    "not-analyzed-as-clones": false, 
-    "alternative-genes": "0", 
-    "show-junction": false, 
-    "clean-memory": false, 
-    "cluster-save-matrix": false, 
-    "window": "50", 
-    "e-value": "1", 
-    "max-consensus": "100", 
-    "germline": "../../germline//homo-sapiens.g", 
-    "filter-reads": false, 
-    "several-D": true, 
-    "label-filter": false, 
-    "cluster-N": "10", 
-    "gz": false, 
-    "plain-index": false, 
-    "no-vidjil": false, 
-    "base": "000006", 
-    "cluster-epsilon": "0", 
-    "cluster-load-matrix": false, 
-    "out-clone-files": false, 
-    "out-affects": false, 
-    "out-undetected": false, 
-    "min-reads": "1", 
-    "out-details": false, 
-    "consensus-on-longest-sequences": false, 
-    "analysis-filter": "1", 
-    "max-designations": "100", 
-    "help-advanced": false, 
-    "dir": "/mnt/result/tmp/out-000006/", 
-    "out-vdjfa": false
-  }
+    "all": false,
+    "alternative-genes": "0",
+    "analysis-e-value-D": "0.05",
+    "analysis-filter": "1",
+    "clean-memory": false,
+    "cluster-N": "10",
+    "cluster-epsilon": "0",
+    "cluster-load-matrix": false,
+    "cluster-save-matrix": false,
+    "consensus-on-longest-sequences": false,
+    "dir": "lil-l3-0-clone0",
+    "e-value": "1",
+    "e-value-kmer": "-1",
+    "filter-reads": false,
+    "germline": "germline/homo-sapiens.g",
+    "gz": false,
+    "help-advanced": false,
+    "label-filter": false,
+    "max-consensus": "100",
+    "min-ratio": "0",
+    "min-reads": "5",
+    "no-airr": false,
+    "no-vidjil": false,
+    "not-analyzed-as-clones": false,
+    "out-affects": false,
+    "out-clone-files": false,
+    "out-details": false,
+    "out-detected": false,
+    "out-reads": false,
+    "out-undetected": false,
+    "out-vdjfa": false,
+    "plain-index": false,
+    "several-D": false,
+    "show-junction": false,
+    "verbose": false
+  },
+  "diversity": {
+    "index_Ds_diversity": 0.0,
+    "index_E_equitability": 0.0,
+    "index_H_entropy": 0.0
+  },
+  "germlines": {
+    "ref": "https://www.vidjil.org/germlines/germline-2021-01-21.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "germline": {
+      "IGH": [
+        189991
+      ],
+      "IGH+": [
+        0
+      ],
+      "IGK": [
+        0
+      ],
+      "IGK+": [
+        0
+      ],
+      "IGL": [
+        0
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        0
+      ],
+      "TRB+": [
+        0
+      ],
+      "TRD": [
+        0
+      ],
+      "TRD+": [
+        0
+      ],
+      "TRG": [
+        0
+      ]
+    },
+    "segmented": [
+      189991
+    ],
+    "total": [
+      189995
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "vidjil-algo -g germline/homo-sapiens.g -o lil-l3-0-clone0 full_reads_forward_reverse.fastq "
+    ],
+    "log": [
+      "  ==> junction detected in 189991 reads (100%)\n  ==> found 1 windows in 189991 reads (100% of 189995 reads)\n                          reads av. len     clones clo/rds\n  IGH               ->   189991   317.3          1   0.000\n  IGH+              ->        0       -          0       -\n  IGK               ->        0       -          0       -\n  IGK+              ->        0       -          0       -\n  IGL               ->        0       -          0       -\n  TRA               ->        0       -          0       -\n  TRA+D             ->        0       -          0       -\n  TRB               ->        0       -          0       -\n  TRB+              ->        0       -          0       -\n  TRD               ->        0       -          0       -\n  TRD+              ->        0       -          0       -\n  TRG               ->        0       -          0       -\n\n  SEG               ->   189991   317.3\n  SEG_+             ->    55411   340.2\n  SEG_-             ->   134580   308.0\n  SEG changed w     ->        0       -\n\n  UNSEG too short   ->        0       -\n  UNSEG strand      ->        4   208.8\n  UNSEG too few V/J ->        0       -\n  UNSEG only V/5'   ->        0       -\n  UNSEG only J/3'   ->        0       -\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->        0       -\n  UNSEG too short w ->        0       -\n"
+    ],
+    "number": 1,
+    "original_names": [
+      "full_reads_forward_reverse.fastq"
+    ],
+    "producer": [
+      "vidjil-algo dev b59846a2a (2022-01-11)"
+    ],
+    "run_timestamp": [
+      "2024-09-06 14:32:25"
+    ]
+  },
+  "similarity": [
+    [
+      0.0
+    ]
+  ],
+  "vidjil_json_version": "2016b"
 }
