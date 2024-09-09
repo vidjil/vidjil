@@ -1,5 +1,3 @@
-version: '3.3'
-
 # ## Docker-compose
 # You can set variables (as $MYSQL_ROOT_PASSWORD) values inside .env file
 # Path variable and folders trees can be modified to your liking.

@@ -1,11 +1,4 @@
-version: '3.3'
 services:
-
-    mysql:
-        ports:
-            - "4306:3306"
-            - "43060:33060"
-
     uwsgi:
         image: vidjil/server:py4web
         command: bash /entrypoints/uwsgi-entrypoint.sh

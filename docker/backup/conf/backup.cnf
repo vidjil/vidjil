@@ -1,4 +1,0 @@
-[client]                                                                                                            
-user = backup
-password = "database password for backup user"
-host = mysql
