@@ -300,6 +300,11 @@ json_data.clones = [
             "5end": 178,
             "5start": 0,
             "N": 4,
+            "affectValues": {
+              "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG_____gggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+              "start": 1,
+              "stop": 324
+            },
             "imgt": {
                 "Sequence ID": "TRGV3*01_-0/4/-5_TRGJP2*01",
                 "Functionality": "productive",

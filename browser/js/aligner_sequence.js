@@ -192,7 +192,10 @@ Sequence.prototype = {
                 
         var clone = this.m.clone(this.id);
         if (!clone.hasSequence()) return "";
-        return clone.seg.affectValues.seq
+        if (clone.seg.affectValues != undefined && clone.seg.affectValues.seq != undefined){
+            return clone.seg.affectValues.seq
+        }
+        return ""
         
     },
 

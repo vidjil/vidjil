@@ -185,6 +185,12 @@ QUnit.test("sequence", function(assert) {
     var amino4 = seq4.aminoString().replace(/(?=\s)[^\r\n\t]/g, '_');
     assert.equal(amino4,      "__I_##_H__D__A__T__I__L__?", amino4 + " amino sequence");
 
+    var affect3 = seq3.affectValuesString()
+    assert.equal(affect3,      "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG_____gggggggggggggggggggggggggggggggggggggggggggggggggggggggggg", "coorect affect sequence");
+
+    var affect4 = seq4.affectValuesString()
+    assert.equal(affect4,      "", "affect sequence (not present in clone data)");
+
     var aminoSplit4 = seq4.aminoSplitString().replace(/(?=\s)[^\r\n\t]/g, '_');
     assert.equal(aminoSplit4, "___|_|__|__|__|__|__|__|_|", aminoSplit4 + " aminoSplit sequence ");
 
