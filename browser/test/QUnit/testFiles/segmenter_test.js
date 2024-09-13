@@ -76,7 +76,7 @@ QUnit.test("segmenter", function(assert) {
     }, delay+=step);
 
     setTimeout( function() {
-        assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "f1", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
+        assert.deepEqual(segment.findPotentialField(), ["","cdr3","fr1", "5", "affectValues", "f1", "V-REGION","J-REGION","D-REGION","CDR3-IMGT"], "potentialField : Ok")
 
         m.select(0)
         m.focusIn(0)
