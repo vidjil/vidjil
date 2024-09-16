@@ -8,12 +8,17 @@ template <typename Tshortcut, typename Affect>
 WindowExtractor<Tshortcut, Affect>::WindowExtractor(MultiGermline<Tshortcut, Affect> *multigermline)
   : out_segmented(NULL), out_unsegmented(NULL), out_unsegmented_detail(NULL), out_affects(NULL),
     max_reads_per_window(~0), multigermline(multigermline) {
+  std::string code;
   for (auto &germline: multigermline->getGermlines()) {
-    std::string code = germline->getCode();
+    code = germline->getCode();
     stats_reads[code].init(NB_BINS, MAX_VALUE_BINS, NULL, true);
     stats_reads[code].setLabel(code);
     stats_clones[code].init(NB_BINS_CLONES, MAX_VALUE_BINS_CLONES, NULL, true);
   }
+  code = PSEUDO_UNEXPECTED;
+  stats_reads[code].init(NB_BINS, MAX_VALUE_BINS, NULL, true);
+  stats_reads[code].setLabel(code);
+  stats_clones[code].init(NB_BINS_CLONES, MAX_VALUE_BINS_CLONES, NULL, true);
 }
 
 template <typename Tshortcut, typename Affect>

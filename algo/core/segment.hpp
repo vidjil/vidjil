@@ -657,16 +657,12 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
       before_set = before_after.first;
       after_set = before_after.second;
 
-      // This strand computation is only a heuristic, especially for chimera +/- reads
-      // Anyway, it allows to gather such reads and their reverse complement into a unique window...
-      // ... except when the read is quite different outside the window
-      strand = this->reversed ? -1 : 1 ;
     }
 
 
   if (this->because == 0) {
     chooseGermline(germlines, before_set, after_set, strand);
-
+    strand = this->reversed ? -1 : 1 ;
     if (this->segmented_germline) {
       // Test on which strand we are
       if (nb_strand[0] == 0 && nb_strand[1] == 0) {

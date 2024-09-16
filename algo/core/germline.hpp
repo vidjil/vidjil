@@ -46,6 +46,17 @@ private:
   // which they are used. The integers denote the number of the recombination
   IKmerStore<Tshortcut, Affect> *index;
 public:
+
+  /**
+   * @return an Unsegmented germline
+   */
+  static Germline<Tshortcut, Affect>* getUnseg();
+  
+  /**
+   * Builds an unexpected germline
+   */
+  Germline();
+  
   /**
    * Build a germline provided:
    * @param code: the code of the germline (eg. IGH)
@@ -142,6 +153,15 @@ public:
   friend ostream &operator<<(ostream &out, const Germline<S, A> &germline);
   
 };
+
+template <typename Tshortcut, typename Affect>
+Germline<Tshortcut, Affect>::Germline() {
+  shortcut = PSEUDO_UNEXPECTED_CODE;
+  code = PSEUDO_UNEXPECTED;
+  repository = nullptr;
+  multi = nullptr;
+  index = nullptr;
+}
 
 template <typename Tshortcut, typename Affect>
 Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
@@ -313,6 +333,8 @@ bool Germline<Tshortcut, Affect>::hasRecombination(const std::set<Tshortcut> &sh
 
 template <typename Tshortcut, typename Affect>
 void Germline<Tshortcut, Affect>::finish(IKmerStore<Tshortcut, Affect> *index) {
+  if (code == PSEUDO_UNEXPECTED)
+    return;
   this->index = index;
   for (const auto &key_val : allocated) {
     for (auto &segment: key_val.first->getSegment()) {
@@ -391,5 +413,12 @@ ostream &operator<<(ostream &out, const Germline<Tshortcut, Affect> &germline)
   }
   return out;
 }
+
+template<typename Tshortcut, typename Affect>
+Germline<Tshortcut, Affect>* Germline<Tshortcut, Affect>::getUnseg() {
+  static Germline<Tshortcut, Affect> unseg;
+  return &unseg;
+}
+
 
 #endif
