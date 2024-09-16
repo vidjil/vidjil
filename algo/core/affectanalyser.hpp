@@ -610,7 +610,8 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser<S>::sortLeftRight
   }
 
   // Is ka1 'more on the left' than ka2 ?
-  // We check for (k1_pos / ka1_count > ka2_pos / ka2_count), but without floats
+  // We check for the average position in both cases,
+  // ie for (k1_pos / ka1_count > ka2_pos / ka2_count), but without floats
   if (ka1_pos * ka2_count < ka2_pos * ka1_count)
     return ka12;
   else
