@@ -10,6 +10,7 @@ import sys
 import datetime
 import random
 import xmlrpc.client
+import subprocess
 from subprocess import Popen, PIPE, STDOUT
 from apps.vidjil import defs
 from apps.vidjil.modules import tools_utils
@@ -23,8 +24,7 @@ STATUS_WAITING = "WAITING"
 STATUS_RUNNING = "RUNNING"
 STATUS_COMPLETED = "COMPLETED"
 STATUS_FAILED = "FAILED"
-# TODO: implement TIMEOUT...
-STATUS_TIMEOUT = "TIMEOUT"
+STATUS_UPLOAD_FAILED = "UPLOAD_FAILED"
 
 # Task names
 TASK_NAME_PROCESS = "process"
@@ -632,7 +632,7 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
     Run a pre-process on sequence_file.data_file (and possibly sequence_file.data_file+2),
     put the output back in sequence_file.data_file.
     '''
-    log.debug("run_pre_process Start !")
+    log.debug(f"run_pre_process {pre_process_id} Start !")
     db._adapter.reconnect()
     try:
         try:
@@ -671,33 +671,19 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
             # defs.DIR_preprocess_template the variable to set into the file defs.py. 
             # The value should be the path to access to the preprocess software.
 
-            try:
-                print("=== Pre-process %s ===" % pre_process_id)
-                print(cmd)
-                print("===============")
-                sys.stdout.flush()
+            log.info("=== Pre-process %s ===" % pre_process_id)
+            log.info(cmd)
+            log.info("===============")
+            sys.stdout.flush()
 
-                os.chdir(defs.DIR_PREPROCESS)
-                with open(out_log, 'w') as log_file:
-                    p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
-                    p.communicate()
-                print("Output log in " + out_log)
+            with open(out_log, 'w') as log_file:
+                completed_process = subprocess.run(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, cwd=defs.DIR_PREPROCESS)
+            log.info("Output log in " + out_log)
+            completed_process.check_returncode()
 
-                filepath = os.path.abspath(output_file)
-                if not os.path.exists(filepath):
-                    raise IOError(filename=filepath)
-            except:
-                print("!!! Pre-process failed, no result file")
-                res = {"message": "{%s} p%s: 'pre_process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
-                log.error(res)
-                db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
-                db.commit()
-                update_task(task_id, STATUS_FAILED)
-                
-                # cancel WAITING task for this sequence file
-                set_tasks_status_for_sequence_file(sequence_file_id, STATUS_FAILED)
-                raise
-
+            filepath = os.path.abspath(output_file)
+            if not os.path.exists(filepath):
+                raise IOError(filename=filepath)
 
             # Now we update the sequence file with the result of the pre-process
             # We forget the initial data_file (and possibly data_file2)
@@ -715,9 +701,11 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
             if pre_process_output is not None:
                 pre_process_output.close()
             update_task(task_id, STATUS_COMPLETED)
-        except:
-            error_message = f"Error in run_pre_process : {traceback.format_exc()}\n\nSetting status to Failed."
-            log.error(error_message)
+        except Exception as exception:
+            log.error(f"Error in run_pre_process {pre_process_id} for sequence {sequence_file_id}: {exception}")
+            log.error(traceback.format_exc())
+            log.error("Setting status to Failed.")
+            
             db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
             db.commit()
             update_task(task_id, STATUS_FAILED)
@@ -737,7 +725,7 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
         # Remove data file from disk to save space (it is now saved elsewhere)
         os.remove(filepath)
 
-        # Remove original sequence file after preprocess as no more needed and avaialable
+        # Remove original sequence file after preprocess as no more needed and available
         try:
             os.remove(defs.DIR_SEQUENCES + sequence_file.data_file)
             os.remove(defs.DIR_SEQUENCES + sequence_file.data_file2)
@@ -755,6 +743,8 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
     except:
         db.rollback()
         try:
+            db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
+            db.commit()
             update_task(task_id, STATUS_FAILED)
             # cancel WAITING task for this sequence file
             set_tasks_status_for_sequence_file(sequence_file_id, STATUS_FAILED)
@@ -766,6 +756,8 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
         # Check status do not stay in running
         try:
             if db.scheduler_task[task_id].status == STATUS_RUNNING:
+                db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
+                db.commit()
                 update_task(task_id, STATUS_FAILED)
                 set_tasks_status_for_sequence_file(sequence_file_id, STATUS_FAILED)
         except:
@@ -773,7 +765,7 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
             raise
         
         db.close()
-        log.debug("run_pre_process End !")
+        log.debug(f"run_pre_process {pre_process_id} End !")
         
 
 @scheduler.task()
@@ -811,7 +803,6 @@ def assert_scheduler_task_does_not_exist(args):
     row = db( ( db.scheduler_task.args == args)
          & ( db.scheduler_task.status != STATUS_FAILED )
          & ( db.scheduler_task.status != STATUS_COMPLETED )
-         & ( db.scheduler_task.status != STATUS_TIMEOUT )
          ).select()
 
     if len(row) > 0 :

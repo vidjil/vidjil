@@ -283,10 +283,9 @@ def submit():
 
     pre_process = None
     pre_process_flag = tasks.STATUS_COMPLETED
-    if 'pre_process' in data and data['pre_process'] is not None and\
-       int(data['pre_process']) > 0:
+    if 'pre_process' in data and data['pre_process'] is not None and int(data['pre_process']) > 0:
         pre_process = int(data['pre_process'])
-        pre_process_flag = "WAIT"
+        pre_process_flag = tasks.STATUS_WAITING
 
     sets, common_id_dict, errors = validate_sets(data['set_ids'])
     data['sets'] = sets
@@ -405,15 +404,17 @@ def submit():
 
 @action("/vidjil/file/upload", method=["POST", "GET", "OPTIONS"])
 @action.uses(db, auth.user)
-def upload(): 
-    #session.forget(response)
+def upload():
     mes = ""
     error = ""
 
-    if not 'id' in request.params:
+    if "id" not in request.params:
         error += "missing id"
     elif db.sequence_file[request.params["id"]] is None:
         error += "no sequence file with this id"
+    elif "status" in request.params and request.params["upload_error"]:
+        error += "Upload error"
+        db.sequence_file[request.params["id"]].update(pre_process_flag = tasks.UPLOAD_FAILED)
 
     if not error:
         mes += " file {%s} " % (request.params['id'])
@@ -446,7 +447,7 @@ def upload():
                                                     pre_process_result=None)
 
         if data_file is not None and data_file2 is not None and 'pre_process' in request.params and request.params['pre_process'] != '0':
-            db.sequence_file[request.params["id"]].update(pre_process_flag = "WAIT")
+            db.sequence_file[request.params["id"]].update(pre_process_flag = tasks.STATUS_WAITING)
             old_task_id = db.sequence_file[request.params["id"]].pre_process_scheduler_task_id
             if db.scheduler_task[old_task_id] != None:
                 scheduler.control.revoke(old_task_id, terminate=True)
@@ -476,7 +477,6 @@ def upload():
         log.error(res)
     else:
         log.info(res)
-        log.debug("#TODO log all relevant info to database")
     return json.dumps(res, separators=(',',':'))
   
 @action("/vidjil/file/confirm", method=["POST", "GET"])
@@ -594,7 +594,7 @@ def restart_pre_process():
         return error_message("Permission denied")
 
     ### Delete previous preprocess
-    db.sequence_file[sequence_file.id].update_record(pre_process_flag = "WAIT")
+    db.sequence_file[sequence_file.id].update_record(pre_process_flag = tasks.STATUS_WAITING)
     old_task_id = sequence_file.pre_process_scheduler_task_id
     if db.scheduler_task[old_task_id] != None:
         print( f"Delete old preprocess: {old_task_id}")

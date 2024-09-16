@@ -202,22 +202,26 @@ def info():
 
         content = None
         out_folder = defs.DIR_PRE_VIDJIL_ID % int(sequence_file_id)
+        if not os.path.exists(out_folder):
+            log.error(f"Try to open pre-process info, but did not find {out_folder}")
+            return error_message("Output folder does not exist, pre-process did not run correctly")
+        
         for filepath in os.listdir(out_folder+"/"):
             if ".pre.log" in filepath:
-                if os.path.exists(f"{out_folder+'/'+filepath}"):
                     with open(f"{out_folder+'/'+filepath}", 'r', encoding='utf-8') as f:
                         content = f.read()
 
-        return dict(message=T('result info'),
-            auth=auth, db=db,
+        return dict(
+            message=T('result info'),
+            auth=auth, 
+            db=db,
             sequence_file_id=sequence_file_id,
             sequence_file=sequence_file,
             run=run,
             content_log=content
         )
     else :
-        res = {"message": "acces denied"}
-        return json.dumps(res, separators=(',',':'))
+        return error_message(ACCESS_DENIED)
 
 
 @action("/vidjil/pre_process/permission", method=["POST", "GET"])

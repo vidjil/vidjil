@@ -1457,8 +1457,6 @@ Uploader.prototype = {
         
         if (upload_in_progress < this.max_upload && next_upload != -1) {
             this.upload_file(next_upload);
-        } else if (upload_in_progress == 0 && next_upload == -1) {
-            this.clear();
         }
     },
     
@@ -1620,10 +1618,4 @@ Uploader.prototype = {
         });
         return false;
     },
-
-    clear : function () {
-        this.keys = [];
-        this.queue = {};
-    },
 }
-
