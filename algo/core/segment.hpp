@@ -730,13 +730,11 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
     this->segmented_germline = possible_germlines.front();
     std::pair<KmerAffect, KmerAffect> affects = matching_affects.front();
     std::list<std::string> segments = this->segmented_germline->getSegments();
+    before = affects.first;
+    after = affects.second;
     if (this->segmented_germline->getGermlineElement(germlines->getRepository()->getShortcut(affects.first))->getSegment().count(segments.front()) > 0) {
-      before = affects.first;
-      after = affects.second;
       this->reversed = false;
     } else {
-      before = affects.second;
-      after = affects.first;
       this->reversed = true;
     }
   } else {
