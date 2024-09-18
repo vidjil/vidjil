@@ -1,4 +1,10 @@
 services:
+    mysql:
+        ports:
+            # Forward ports to be able to edit DB outside the containers
+            - "4306:3306"
+            - "43060:33060"
+
     uwsgi:
         image: vidjil/server:py4web
         command: bash /entrypoints/uwsgi-entrypoint.sh

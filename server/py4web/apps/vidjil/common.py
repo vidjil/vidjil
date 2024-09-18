@@ -138,22 +138,25 @@ class MsgUserAdapter(logging.LoggerAdapter):
                 msg = msg['message']
             else:
                 msg = '?'
-        ip = request.remote_addr
-        if ip:
-            for ip_prefix in ips:
-                if ip.startswith(ip_prefix):
-                    ip = "%s/%s" % (ip, ips[ip_prefix])
-
-        usern = ''
-        try:
-            usern = (str(auth.user_id)) if auth.user else ''
-            usern = usern.replace(' ','-')
-            if auth.is_impersonating():
-                usern = 'team!' + usern
-        except:
-            pass
         
-        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % usern), msg)
+        ip = "N/A"
+        user_id = "N/A"
+        if request is not None:
+            ip = request.remote_addr
+            if ip:
+                for ip_prefix in ips:
+                    if ip.startswith(ip_prefix):
+                        ip = "%s/%s" % (ip, ips[ip_prefix])
+
+            try:
+                user_id = (str(auth.user_id)) if auth.user else ''
+                user_id = user_id.replace(' ','-')
+                if auth.is_impersonating():
+                    user_id = 'team!' + user_id
+            except:
+                pass
+        
+        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % user_id), msg)
         return new_msg, kwargs
     
     def admin(self, msg, extra=None):

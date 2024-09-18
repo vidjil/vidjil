@@ -389,7 +389,7 @@ class TestPreProcessController(unittest.TestCase):
 
         # Then : We get an error
         result = json.loads(json_result)
-        assert result["message"] == "acces denied"
+        assert result["message"] == "access denied"
 
     def test_info_ok(self):
         # Given : Logged as admin

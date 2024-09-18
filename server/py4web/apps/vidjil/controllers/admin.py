@@ -255,8 +255,7 @@ def clean_workers_status():
             
     # Get tasks in progress in DB
     in_progress_task_ids = db((db.scheduler_task.status != tasks.STATUS_FAILED) & 
-                              (db.scheduler_task.status != tasks.STATUS_COMPLETED) & 
-                              (db.scheduler_task.status != tasks.STATUS_TIMEOUT)).select(db.scheduler_task.id)
+                              (db.scheduler_task.status != tasks.STATUS_COMPLETED)).select(db.scheduler_task.id)
     
     # Set not corresponding tasks status to FAILED in DB
     dangling_task_ids = [in_progress_task.id for in_progress_task in in_progress_task_ids if in_progress_task.id not in current_task_ids]
