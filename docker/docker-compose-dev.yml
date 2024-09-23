@@ -33,8 +33,13 @@ services:
         env_file:
             - '.env.dev'
 
-    workers:
-        image: vidjil/server:dev
+    workers-all:
+        image: vidjil/server:py4web
+        env_file:
+            - '.env.dev'
+
+    workers-short:
+        image: vidjil/server:py4web
         env_file:
             - '.env.dev'
 
