@@ -605,8 +605,8 @@ def custom_fuse(file_list):
 
     return data
 
-def schedule_pre_process(sequence_file_id, pre_process_id):
-    args = [pre_process_id, sequence_file_id]
+def schedule_pre_process(sequence_file_id, pre_process_config_id):
+    args = [pre_process_config_id, sequence_file_id]
 
     err = assert_scheduler_task_does_not_exist(str(args))
     if err:
@@ -618,21 +618,21 @@ def schedule_pre_process(sequence_file_id, pre_process_id):
     db.commit()
 
     update_task(task_id, STATUS_QUEUED)
-    run_pre_process.delay(pre_process_id, sequence_file_id, task_id, clean_before=True, clean_after=False)
+    run_pre_process.delay(pre_process_config_id, sequence_file_id, task_id, clean_before=True, clean_after=False)
 
     res = {"redirect": "reload",
-           "message": "{%s} (%s): process requested" % (sequence_file_id, pre_process_id)}
+           "message": "{%s} (%s): process requested" % (sequence_file_id, pre_process_config_id)}
     log.info(res)
     return res
 
 
 @scheduler.task()
-def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True, clean_after=False):
+def run_pre_process(pre_process_config_id, sequence_file_id, task_id, clean_before=True, clean_after=False):
     '''
     Run a pre-process on sequence_file.data_file (and possibly sequence_file.data_file+2),
     put the output back in sequence_file.data_file.
     '''
-    log.debug(f"run_pre_process Start !{pre_process_id=} {task_id=} {sequence_file_id=}")
+    log.debug(f"run_pre_process Start !{pre_process_config_id=} {task_id=} {sequence_file_id=}")
     db._adapter.reconnect()
     try:
         sequence_file = db.sequence_file[sequence_file_id]
@@ -651,7 +651,7 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
             os.makedirs(out_folder)    
 
         output_file = out_folder+'/'+output_filename
-        pre_process = db.pre_process[pre_process_id]
+        pre_process = db.pre_process[pre_process_config_id]
         out_log = out_folder+'/'+output_filename+'.pre.log'
         
         cmd = pre_process.command.replace("&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
@@ -667,7 +667,7 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
         # defs.DIR_preprocess_template the variable to set into the file defs.py. 
         # The value should be the path to access to the preprocess software.
 
-        log.info("=== Pre-process %s ===" % pre_process_id)
+        log.info("=== Pre-process %s ===" % pre_process_config_id)
         log.info(cmd)
         log.info("===============")
         sys.stdout.flush()
@@ -705,18 +705,18 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
         # Remove data file from disk to save space (it is now saved elsewhere)
         os.remove(filepath)
 
-        # Remove original sequence file after preprocess as no more needed and available
+        # Remove original sequence file after preprocess as no longer needed and available
         try:
-            os.remove(defs.DIR_SEQUENCES + sequence_file.data_file)
-            os.remove(defs.DIR_SEQUENCES + sequence_file.data_file2)
-            os.remove(pre_process_filepath)
+            pathlib.Path(pre_process_filepath).unlink(missing_ok=True)
+            pathlib.Path(defs.DIR_SEQUENCES + sequence_file.data_file).unlink(missing_ok=True)
+            pathlib.Path(defs.DIR_SEQUENCES + sequence_file.data_file2).unlink(missing_ok=True)
         except Exception as exception:
-            log.error(f"[pre_process_id={pre_process_id}] [sequence_file_id={sequence_file_id}] Removing files at the end of preprocess failed with exception {exception}.")
+            log.error(f"[pre_process_id={pre_process_config_id}] [sequence_file_id={sequence_file_id}] Removing files at the end of preprocess failed with exception {exception}.")
         
         if clean_after:
             shutil.rmtree(out_folder, ignore_errors=True)
         
-        res = {"message": "{%s} p%s: 'pre_process' finished - %s" % (sequence_file_id, pre_process_id, output_file)}
+        res = {"message": "{%s} p%s: 'pre_process' finished - %s" % (sequence_file_id, pre_process_config_id, output_file)}
         log.info(res)
 
         return "SUCCESS"
@@ -749,7 +749,7 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
             raise
         
         db.close()
-        log.debug(f"run_pre_process End !{pre_process_id=} {task_id=} {sequence_file_id=}")
+        log.debug(f"run_pre_process End !{pre_process_config_id=} {task_id=} {sequence_file_id=}")
         
 
 @scheduler.task()
