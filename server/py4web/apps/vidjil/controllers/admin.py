@@ -156,11 +156,11 @@ def repair_missing_files():
             seq_file = defs.DIR_SEQUENCES+row.data_file
             
             if not os.path.exists(seq_file) :
-                db.sequence_file[row.id] = dict(data_file = None)
+                db.sequence_file[row.id].update_record(data_file = None)
                 flist += " : " + str(row.filename)
             else :
                 size = os.path.getsize(seq_file)
-                db.sequence_file[row.id] = dict(size_file = size)
+                db.sequence_file[row.id].update_record(size_file = size)
                 
         res = {"success" : "true", "message" : "DB: references to missing files have been removed: "+flist}
         log.admin(res)
@@ -190,24 +190,24 @@ def repair():
         flist = "fix creator "
         for row in db(db.patient.creator == None).select() : 
             flist += " : " + str(row.id)
-            db.patient[row.id] = dict(creator = auth.user_id)
+            db.patient[row.id].update_record(creator = auth.user_id)
             
         flist += "fix event "
         for row in db(db.auth_event.user_id == None).select() : 
             flist += " : " + str(row.id)
-            db.auth_event[row.id] = dict(user_id = auth.user_id)
+            db.auth_event[row.id].update_record(user_id = auth.user_id)
             
         flist += "fix permission "
-        db(db.auth_permission.group_id == None).delete();
+        db(db.auth_permission.group_id == None).delete()
         
         flist += "fix sequence_file provider "
         for row in db(db.sequence_file.provider == None).select() :
             flist += " : " + str(row.id)
-            db.sequence_file[row.id] = dict(provider = auth.user_id)
+            db.sequence_file[row.id].update_record(provider = auth.user_id)
       
         flist += "fix sequence_file patient "
         db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-           & (db.sample_set_membership.sample_set_id == None)).delete();
+           & (db.sample_set_membership.sample_set_id == None)).delete()
         
         flist += "fix results_file "
         db(db.results_file.sequence_file_id == None).delete()
@@ -215,7 +215,7 @@ def repair():
         flist += "fix fused file "
         for row in db(db.fused_file.fuse_date == None).select() :
             flist += " : " + str(row.id)
-            db.fused_file[row.id] = dict(fuse_date = "1970-01-01 00:00:00")
+            db.fused_file[row.id].update_record(fuse_date = "1970-01-01 00:00:00")
         
         res = {"success" : "true", "message" : "DB repaired: " + flist}
         log.admin(res)

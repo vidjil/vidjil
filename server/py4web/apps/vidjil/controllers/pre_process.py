@@ -140,10 +140,9 @@ def edit_form():
 
     if error=="" :
 
-        db.pre_process[request.params["id"]] = dict(name=request.params['pre_process_name'],
+        db.pre_process[request.params["id"]].update_record(name=request.params['pre_process_name'],
                         info=request.params['pre_process_info'],
-                        command=request.params['pre_process_command']
-                        )
+                        command=request.params['pre_process_command'])
 
         res = {"redirect": "pre_process/index",
                "message": "pre_process '%s' updated" % request.params['pre_process_name']}

@@ -55,7 +55,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
 
     ## add task to scheduler
     task_id = register_task(TASK_NAME_PROCESS, args)
-    db.results_file[data_id] = dict(scheduler_task_id = task_id)
+    db.results_file[data_id].update_record(scheduler_task_id = task_id)
     db.commit()
     update_task(task_id, STATUS_QUEUED)
     run_process.delay(task_id, program, args)
@@ -88,6 +88,7 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
     print("run_vidjil start")
 
     sequence_file = db.sequence_file[id_file]
+    log.debug(f"{sequence_file=}")
 
     if sequence_file is None:
         print("Sequence file not found in DB (delay of upload/processing ?)")
@@ -197,8 +198,9 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
         ## Insert in database
         with open(results_filepath, 'rb') as stream:
             ts = time.time()
-            db.results_file[id_data] = dict(run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
-                                            data_file = stream)
+            db.results_file[id_data].update_record(
+                run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                data_file = stream)
             db.commit()
         os.remove(results_filepath)
 
@@ -282,7 +284,7 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
     ## insertion dans la base de donnée
     with open(results_filepath, 'rb') as stream:
         ts = time.time()
-        db.results_file[id_data] = dict(status = "ready",
+        db.results_file[id_data].update_record(status = "ready",
                                         run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                         data_file = stream)
         db.commit()
@@ -383,7 +385,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     ## insertion dans la base de donnée
     with open(results_filepath, 'rb') as stream:
         ts = time.time()
-        db.results_file[id_data] = dict(status = "ready",
+        db.results_file[id_data].update_record(status = "ready",
                                         run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                         data_file = stream)
         db.commit()
@@ -425,7 +427,7 @@ def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fals
         ## insertion dans la base de donnée
         with open(results_filepath, 'rb') as stream:
             ts = time.time()
-            db.results_file[id_data] = dict(status = "ready",
+            db.results_file[id_data].update_record(status = "ready",
                                             run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                             data_file = db.results_file.data_file.store(stream, row[0].filename))
             db.commit()
@@ -614,7 +616,7 @@ def schedule_pre_process(sequence_file_id, pre_process_id):
         return err
 
     task_id = register_task("pre_process", args)
-    db.sequence_file[sequence_file_id] = dict(pre_process_scheduler_task_id = task_id)
+    db.sequence_file[sequence_file_id].update_record(pre_process_scheduler_task_id = task_id)
     db.commit()
 
     update_task(task_id, STATUS_QUEUED)
@@ -636,7 +638,7 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
     db._adapter.reconnect()
     try:
         sequence_file = db.sequence_file[sequence_file_id]
-        db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_RUNNING)
+        db.sequence_file[sequence_file_id].update_record(pre_process_flag = STATUS_RUNNING)
         db.commit()
        
         update_task(task_id, STATUS_RUNNING)
