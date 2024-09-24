@@ -79,18 +79,21 @@ def validate(myfile, id , pre_process):
     reupload = id != ""
     error = []
 
+    db_preprocess = db.pre_process[pre_process] if pre_process != None else None
+    required_files = vidjil_utils.getPreprocessRequiredFiles(db_preprocess)
+
     # 0 or two filename must be provided to update a file with pre-process
     if reupload and pre_process is not None:
         if myfile['filename'] == "" and myfile['filename2'] != "" :
             error.append("missing filename")
-        if myfile['filename2'] == "" and myfile['filename'] != "" :
+        if required_files == 2 and myfile['filename2'] == "" and myfile['filename'] != "" :
             error.append("missing filename2")
 
     # both filename must be provided to add a file with pre-process
     if not reupload and pre_process is not None:
         if myfile['filename'] == "" :
             error.append("missing filename")
-        if myfile['filename2'] == "":
+        if required_files == 2 and myfile['filename2'] == "":
             error.append("missing filename2")
 
     # a single filename must be provided to add a file without pre_process
@@ -399,6 +402,7 @@ def submit():
                 "message": "successfully added/edited file(s)"}
         return json.dumps(res, separators=(',',':'))
     else:
+        print( f['errors'])
         return error_message("add_form() failed")
 
 
@@ -446,15 +450,18 @@ def upload():
         db.sequence_file[request.params["id"]].update(pre_process_flag=None,
                                                     pre_process_result=None)
 
-        if data_file is not None and data_file2 is not None and 'pre_process' in request.params and request.params['pre_process'] != '0':
-            db.sequence_file[request.params["id"]].update(pre_process_flag = tasks.STATUS_WAITING)
-            old_task_id = db.sequence_file[request.params["id"]].pre_process_scheduler_task_id
-            if db.scheduler_task[old_task_id] != None:
-                scheduler.control.revoke(old_task_id, terminate=True)
-                db(db.scheduler_task.id == old_task_id).delete()
-                db.commit()
-            tasks.schedule_pre_process(int(request.params['id']), int(request.params['pre_process']))
-            mes += " | p%s start pre_process %s " % (request.params['pre_process'], request.params['id'] + "-" +request.params['pre_process'])
+        preprocess = db.pre_process[request.params['pre_process']] if request.params['pre_process'] != '0' else None
+        required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
+        if 'pre_process' in request.params and request.params['pre_process'] != '0':
+            if data_file is not None and (data_file2 is not None if required_files == 2 else True):
+                db.sequence_file[request.params["id"]].update(pre_process_flag = tasks.STATUS_WAITING)
+                old_task_id = db.sequence_file[request.params["id"]].pre_process_scheduler_task_id
+                if db.scheduler_task[old_task_id] != None:
+                    scheduler.control.revoke(old_task_id, terminate=True)
+                    db(db.scheduler_task.id == old_task_id).delete()
+                    db.commit()
+                tasks.schedule_pre_process(int(request.params['id']), int(request.params['pre_process']))
+                mes += " | p%s start pre_process %s " % (request.params['pre_process'], request.params['id'] + "-" +request.params['pre_process'])
 
         if data_file is not None :
             seq_file = pathlib.Path(db.sequence_file.data_file.uploadfolder, data_file)

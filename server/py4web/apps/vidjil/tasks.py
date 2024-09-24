@@ -13,7 +13,7 @@ import xmlrpc.client
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
 from apps.vidjil import defs
-from apps.vidjil.modules import tools_utils
+from apps.vidjil.modules import tools_utils, vidjil_utils
 from .modules.sequenceFile import get_original_filename
 from .common import scheduler, db, log
 
@@ -643,9 +643,17 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
         
 
         out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
-        output_filename = get_preprocessed_filename(get_original_filename(sequence_file.data_file),
-                                                    get_original_filename(sequence_file.data_file2))
-        
+
+        preprocess = db.pre_process[pre_process_id]
+        required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
+
+        if required_files == 2:
+            output_filename = get_preprocessed_filename(get_original_filename(sequence_file.data_file),
+                                                        get_original_filename(sequence_file.data_file2))
+        else:
+            output_filename = get_original_filename(sequence_file.data_file)
+
+
         if clean_before:
             shutil.rmtree(out_folder, ignore_errors=True)
             os.makedirs(out_folder)    
@@ -727,7 +735,7 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
         db.rollback()
         db._adapter.reconnect()
         try:
-            db.sequence_file[sequence_file_id].update_record(pre_process_flag = STATUS_QUEUED)
+            db.sequence_file[sequence_file_id].update_record(pre_process_flag = STATUS_FAILED)
             db.commit()
             update_task(task_id, STATUS_FAILED)
             # cancel WAITING task for this sequence file
