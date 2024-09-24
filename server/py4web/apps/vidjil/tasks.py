@@ -632,95 +632,75 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
     Run a pre-process on sequence_file.data_file (and possibly sequence_file.data_file+2),
     put the output back in sequence_file.data_file.
     '''
-    log.debug(f"run_pre_process {pre_process_id} Start !")
+    log.debug(f"run_pre_process Start !{pre_process_id=} {task_id=} {sequence_file_id=}")
     db._adapter.reconnect()
     try:
-        try:
-            sequence_file = db.sequence_file[sequence_file_id]
-            db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_RUNNING)
-            db.commit()
-        except Exception as exception:
-            log.error(f"Error when starting pre-process: {exception}")
-            db.rollback()
-            return "FAILED"
+        sequence_file = db.sequence_file[sequence_file_id]
+        db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_RUNNING)
+        db.commit()
+       
         update_task(task_id, STATUS_RUNNING)
         
+
+        out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
+        output_filename = get_preprocessed_filename(get_original_filename(sequence_file.data_file),
+                                                    get_original_filename(sequence_file.data_file2))
+        
+        if clean_before:
+            shutil.rmtree(out_folder, ignore_errors=True)
+            os.makedirs(out_folder)    
+
+        output_file = out_folder+'/'+output_filename
+        pre_process = db.pre_process[pre_process_id]
+        out_log = out_folder+'/'+output_filename+'.pre.log'
+        
+        cmd = pre_process.command.replace("&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
+        if sequence_file.data_file2:
+            cmd = cmd.replace("&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
+        cmd = cmd.replace("&result&", output_file)
+        cmd = cmd.replace("&pear&", defs.DIR_PEAR)
+        cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
+        cmd = cmd.replace("&binaries&", defs.DIR_BINARIES)
+        # Example of template to add some preprocess shortcut
+        # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
+        # Where &preprocess_template& is the shortcut to change and
+        # defs.DIR_preprocess_template the variable to set into the file defs.py. 
+        # The value should be the path to access to the preprocess software.
+
+        log.info("=== Pre-process %s ===" % pre_process_id)
+        log.info(cmd)
+        log.info("===============")
+        sys.stdout.flush()
+
+        with open(out_log, 'w') as log_file:
+            completed_process = subprocess.run(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, cwd=defs.DIR_PREPROCESS)
+        log.info("Output log in " + out_log)
+        completed_process.check_returncode()
+
+        filepath = os.path.abspath(output_file)
+        if not os.path.exists(filepath):
+            raise IOError(filename=filepath)
+
+        # Now we update the sequence file with the result of the pre-process
+        # We forget the initial data_file (and possibly data_file2)
+        pre_process_filepath = '%s/pre_process.vidjil' % out_folder
         try:
-            out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
-            output_filename = get_preprocessed_filename(get_original_filename(sequence_file.data_file),
-                                                        get_original_filename(sequence_file.data_file2))
-            
-            if clean_before:
-                shutil.rmtree(out_folder, ignore_errors=True)
-                os.makedirs(out_folder)    
-
-            output_file = out_folder+'/'+output_filename
-            pre_process = db.pre_process[pre_process_id]
-            out_log = out_folder+'/'+output_filename+'.pre.log'
-            
-            cmd = pre_process.command.replace("&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
-            if sequence_file.data_file2:
-                cmd = cmd.replace("&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
-            cmd = cmd.replace("&result&", output_file)
-            cmd = cmd.replace("&pear&", defs.DIR_PEAR)
-            cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
-            cmd = cmd.replace("&binaries&", defs.DIR_BINARIES)
-            # Example of template to add some preprocess shortcut
-            # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
-            # Where &preprocess_template& is the shortcut to change and
-            # defs.DIR_preprocess_template the variable to set into the file defs.py. 
-            # The value should be the path to access to the preprocess software.
-
-            log.info("=== Pre-process %s ===" % pre_process_id)
-            log.info(cmd)
-            log.info("===============")
-            sys.stdout.flush()
-
-            with open(out_log, 'w') as log_file:
-                completed_process = subprocess.run(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, cwd=defs.DIR_PREPROCESS)
-            log.info("Output log in " + out_log)
-            completed_process.check_returncode()
-
-            filepath = os.path.abspath(output_file)
-            if not os.path.exists(filepath):
-                raise IOError(filename=filepath)
-
-            # Now we update the sequence file with the result of the pre-process
-            # We forget the initial data_file (and possibly data_file2)
-            pre_process_filepath = '%s/pre_process.vidjil' % out_folder
-            try:
-                pre_process_output = open(pre_process_filepath, 'rb')
-            except FileNotFoundError:
-                pre_process_output = None
-            with open(filepath, 'rb') as stream:
-                db.sequence_file[sequence_file_id] = dict(data_file = stream,
-                                                        data_file2 = None,
-                                                        pre_process_flag = STATUS_COMPLETED,
-                                                        pre_process_file = pre_process_output)
-                db.commit()
-            if pre_process_output is not None:
-                pre_process_output.close()
-            update_task(task_id, STATUS_COMPLETED)
-        except Exception as exception:
-            log.error(f"Error in run_pre_process {pre_process_id} for sequence {sequence_file_id}: {exception}")
-            log.error(traceback.format_exc())
-            log.error("Setting status to Failed.")
-            
-            db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
+            pre_process_output = open(pre_process_filepath, 'rb')
+        except FileNotFoundError:
+            pre_process_output = None
+        with open(filepath, 'rb') as stream:
+            db.sequence_file[sequence_file_id].update_record(data_file = stream,
+                                                    data_file2 = None,
+                                                    pre_process_flag = STATUS_COMPLETED,
+                                                    pre_process_file = pre_process_output)
             db.commit()
-            update_task(task_id, STATUS_FAILED)
-            
-            # cancel WAITING task for this sequence file
-            set_tasks_status_for_sequence_file(sequence_file_id, STATUS_FAILED)
-            raise
+        if pre_process_output is not None:
+            pre_process_output.close()
+        update_task(task_id, STATUS_COMPLETED)
         
         # resume WAITING task for this sequence file
         set_tasks_status_for_sequence_file(sequence_file_id, STATUS_QUEUED)
 
-        # Dump log in scheduler_run.run_output
-        with open(out_log) as log_file:
-            for line in log_file:
-                print(line, end=' ')
 
         # Remove data file from disk to save space (it is now saved elsewhere)
         os.remove(filepath)
@@ -740,10 +720,14 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
         log.info(res)
 
         return "SUCCESS"
-    except:
+    except Exception as exception:
+        log.error(f"Error in run_pre_process {pre_process_id} for sequence {sequence_file_id}: {exception}")
+        log.error(traceback.format_exc())
+        log.error("Setting status to Failed.")
         db.rollback()
+        db._adapter.reconnect()
         try:
-            db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
+            db.sequence_file[sequence_file_id].update_record(pre_process_flag = STATUS_QUEUED)
             db.commit()
             update_task(task_id, STATUS_FAILED)
             # cancel WAITING task for this sequence file
@@ -756,7 +740,7 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
         # Check status do not stay in running
         try:
             if db.scheduler_task[task_id].status == STATUS_RUNNING:
-                db.sequence_file[sequence_file_id] = dict(pre_process_flag = STATUS_FAILED)
+                db.sequence_file[sequence_file_id].update_record(pre_process_flag = STATUS_FAILED)
                 db.commit()
                 update_task(task_id, STATUS_FAILED)
                 set_tasks_status_for_sequence_file(sequence_file_id, STATUS_FAILED)
@@ -765,7 +749,7 @@ def run_pre_process(pre_process_id, sequence_file_id, task_id, clean_before=True
             raise
         
         db.close()
-        log.debug(f"run_pre_process {pre_process_id} End !")
+        log.debug(f"run_pre_process End !{pre_process_id=} {task_id=} {sequence_file_id=}")
         
 
 @scheduler.task()
