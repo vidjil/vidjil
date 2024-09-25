@@ -156,7 +156,7 @@ def edit_form():
             error += "date (wrong format)"
 
     if error=="" :
-        db.notification[request.params['id']] = dict(title=request.params["title"],
+        db.notification[request.params['id']].update_record(title=request.params["title"],
                             message_content=XML(request.params["message_content"], sanitize=True).xml(),
                             message_type=request.params["message_type"],
                             priority=request.params["priority"],

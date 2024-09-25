@@ -79,9 +79,10 @@ def update_name_of_sequence_file(id, filename, new_data_filename):
 
     The size is updated with the new filename.
     '''
-    db.sequence_file[id] = dict(filename = filename,\
-                                data_file = os.path.basename(new_data_filename),\
-                                size_file = os.path.getsize(new_data_filename))
+    db.sequence_file[id].update_record(
+        filename = filename,
+        data_file = os.path.basename(new_data_filename),
+        size_file = os.path.getsize(new_data_filename))
 
 def get_patient_id(file_id):
     ''' 
