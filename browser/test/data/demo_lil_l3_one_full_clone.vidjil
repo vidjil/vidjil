@@ -1,0 +1,191 @@
+{
+  "clones": [
+    {
+      "_average_read_length": [
+        "317.35"
+      ],
+      "_coverage": [
+        1.0209637880325317
+      ],
+      "_coverage_info": [
+        "324 bp (102% of 317.3 bp)"
+      ],
+      "germline": "IGH",
+      "id": "CACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAG",
+      "name": "IGHV3-9*01 7/CCCGGA/17 IGHJ6*02",
+      "reads": [
+        189991
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 17,
+          "delRight": 60,
+          "name": "IGHJ6*02",
+          "start": 277,
+          "stop": 321
+        },
+        "5": {
+          "delRight": 7,
+          "name": "IGHV3-9*01",
+          "stop": 270
+        },
+        "N": 6,
+        "affectSigns": {
+          "seq": "+++++++++++++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++++++++++++ ++++++++++++++++++++++++++++++++++++ +++++++++++++++++++++++++++++++                 +++++++++++++++++++++++++++++++++++             ",
+          "start": 1,
+          "stop": 324
+        },
+        "affectValues": {
+          "seq": "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH_________________hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_____________",
+          "start": 1,
+          "stop": 324
+        },
+        "cdr3": {
+          "aa": "APGGMDV",
+          "seq": "GCACCCGGAGGTATGGACGTC",
+          "start": 268,
+          "stop": 288
+        },
+        "evalue": {
+          "val": "3.07e-136"
+        },
+        "evalue_left": {
+          "val": "0.00e+00"
+        },
+        "evalue_right": {
+          "val": "3.07e-136"
+        },
+        "junction": {
+          "aa": "CAPGGMDVW",
+          "productive": true,
+          "start": 265,
+          "stop": 291
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!=>>?8?8>7=??@8>>=>==>=>?2<6;?9>=>=9?>:;;==>>.<4:4:!!!!!!!!!!!!!!!!!!!!!!!!!!",
+          "start": 1,
+          "stop": 324
+        }
+      },
+      "sequence": "GGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT",
+      "top": 1
+    }
+  ],
+  "config": {
+    "all": false,
+    "alternative-genes": "0",
+    "analysis-e-value-D": "0.05",
+    "analysis-filter": "1",
+    "clean-memory": false,
+    "cluster-N": "10",
+    "cluster-epsilon": "0",
+    "cluster-load-matrix": false,
+    "cluster-save-matrix": false,
+    "consensus-on-longest-sequences": false,
+    "dir": "lil-l3-0-clone0",
+    "e-value": "1",
+    "e-value-kmer": "-1",
+    "filter-reads": false,
+    "germline": "germline/homo-sapiens.g",
+    "gz": false,
+    "help-advanced": false,
+    "label-filter": false,
+    "max-consensus": "100",
+    "min-ratio": "0",
+    "min-reads": "5",
+    "no-airr": false,
+    "no-vidjil": false,
+    "not-analyzed-as-clones": false,
+    "out-affects": false,
+    "out-clone-files": false,
+    "out-details": false,
+    "out-detected": false,
+    "out-reads": false,
+    "out-undetected": false,
+    "out-vdjfa": false,
+    "plain-index": false,
+    "several-D": false,
+    "show-junction": false,
+    "verbose": false
+  },
+  "diversity": {
+    "index_Ds_diversity": 0.0,
+    "index_E_equitability": 0.0,
+    "index_H_entropy": 0.0
+  },
+  "germlines": {
+    "ref": "https://www.vidjil.org/germlines/germline-2021-01-21.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "germline": {
+      "IGH": [
+        189991
+      ],
+      "IGH+": [
+        0
+      ],
+      "IGK": [
+        0
+      ],
+      "IGK+": [
+        0
+      ],
+      "IGL": [
+        0
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        0
+      ],
+      "TRB+": [
+        0
+      ],
+      "TRD": [
+        0
+      ],
+      "TRD+": [
+        0
+      ],
+      "TRG": [
+        0
+      ]
+    },
+    "segmented": [
+      189991
+    ],
+    "total": [
+      189995
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "vidjil-algo -g germline/homo-sapiens.g -o lil-l3-0-clone0 full_reads_forward_reverse.fastq "
+    ],
+    "log": [
+      "  ==> junction detected in 189991 reads (100%)\n  ==> found 1 windows in 189991 reads (100% of 189995 reads)\n                          reads av. len     clones clo/rds\n  IGH               ->   189991   317.3          1   0.000\n  IGH+              ->        0       -          0       -\n  IGK               ->        0       -          0       -\n  IGK+              ->        0       -          0       -\n  IGL               ->        0       -          0       -\n  TRA               ->        0       -          0       -\n  TRA+D             ->        0       -          0       -\n  TRB               ->        0       -          0       -\n  TRB+              ->        0       -          0       -\n  TRD               ->        0       -          0       -\n  TRD+              ->        0       -          0       -\n  TRG               ->        0       -          0       -\n\n  SEG               ->   189991   317.3\n  SEG_+             ->    55411   340.2\n  SEG_-             ->   134580   308.0\n  SEG changed w     ->        0       -\n\n  UNSEG too short   ->        0       -\n  UNSEG strand      ->        4   208.8\n  UNSEG too few V/J ->        0       -\n  UNSEG only V/5'   ->        0       -\n  UNSEG only J/3'   ->        0       -\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->        0       -\n  UNSEG too short w ->        0       -\n"
+    ],
+    "number": 1,
+    "original_names": [
+      "full_reads_forward_reverse.fastq"
+    ],
+    "producer": [
+      "vidjil-algo dev b59846a2a (2022-01-11)"
+    ],
+    "run_timestamp": [
+      "2024-09-06 14:32:25"
+    ]
+  },
+  "similarity": [
+    [
+      0.0
+    ]
+  ],
+  "vidjil_json_version": "2016b"
+}

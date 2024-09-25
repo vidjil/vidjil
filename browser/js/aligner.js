@@ -279,7 +279,7 @@ Aligner.prototype = {
 
     connect_checkbox: function(elem, title, layers){
         var self = this;
-        
+
         //connect event to checkbox and checkbox_label
         $(function () {
             $(elem).find('input').unbind("click");
@@ -289,6 +289,15 @@ Aligner.prototype = {
                     localStorage.setItem(`aligner_layers_${title}`, input.checked)
                 } 
                 self.toggleLayers(layers, input.checked, true);
+
+                var exclusive = ["amino", "affect_values"]
+                exclusive.forEach( (layer, index) => {
+                    var to_exclude = index === 0 ? exclusive[1]: exclusive[0]
+                    if (input.checked && layers[0] == layer){
+                        var checkbox = document.getElementById(`aligner_checkbox_${to_exclude}`)
+                        if (checkbox.checked) {checkbox.click()} // disable affect; click on corresponding button
+                    }
+                })
                 e.stopPropagation();
             });
         });

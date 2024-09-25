@@ -20,7 +20,7 @@ describe('Aligner', function () {
     cy.get('#segmenter_axis_select').children().should('have.length', 10)
 
     cy.get('#align-settings').click({force:true})
-    cy.get('#align-settings_select').children().should('have.length', 4)
+    cy.get('#align-settings_select').children().should('have.length', 5)
 
     cy.get('#align-segment-info').click({force:true})
     cy.get('#align-segment-info_select').children().should('have.length', 7)
@@ -218,6 +218,57 @@ describe('Aligner', function () {
 
     return
   })
+
+
+
+
+  it('Aligner layers, see affect and amino (and exclusive)',  function() {
+    cy.openAnalysis("browser/test/data/demo_lil_l3_one_full_clone.vidjil")
+    cy.selectClone(0)
+    cy.get('#seq0 > .sequence-holder > .seq-fixed > .axisBox > .Size > .sizeBox')
+      .should("exist")
+      .should("be.visible")
+
+    // Initial view
+    cy.get('.seq_layer_nuc')
+      .should("contain", "GGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT")
+    
+    // First check affect
+    cy.get("#aligner_checkbox_affect_values")
+      .check({force: true})
+    cy.get('.seq_layer_affect_values')
+      .should("contain", "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH_________________hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_____________")
+      
+    cy.get("#aligner_checkbox_amino")
+      .should('not.be.checked');
+
+    // Check amino 
+    cy.get("#aligner_checkbox_amino")
+      .check({force: true})
+      
+    cy.get('.seq_layer_amino')
+      .contains("G") // exclusive letter neither in nucleotide or affect
+    cy.get("#aligner_checkbox_affect_values")
+      .should('not.be.checked');
+
+    // Check again affect
+    cy.get("#aligner_checkbox_affect_values")
+      .check({force: true})
+    cy.get('.seq_layer_affect_values')
+      .should("contain", "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH_________________hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_____________")
+    cy.get("#aligner_checkbox_amino")
+      .should('not.be.checked');
+      
+      
+    // Uncheck affect, should return to raw sequence
+    cy.get("#aligner_checkbox_affect_values")
+      .check({force: true})
+      
+    cy.get('.seq_layer_nuc')
+      .should("contain", "GGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT")
+      
+  })
+
 
   //menu in aligner top right corner (focus/hide/tag) are already tested in test_filter.js
 
