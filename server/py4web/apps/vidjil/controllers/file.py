@@ -450,7 +450,7 @@ def upload():
         db.sequence_file[request.params["id"]].update(pre_process_flag=None,
                                                     pre_process_result=None)
 
-        preprocess = db.pre_process[request.params['pre_process']] if request.params['pre_process'] != '0' else None
+        preprocess = db.pre_process[request.params['pre_process']] if 'pre_process' in request.params and request.params['pre_process'] != '0' else None
         required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
         if 'pre_process' in request.params and request.params['pre_process'] != '0':
             if data_file is not None and (data_file2 is not None if required_files == 2 else True):
