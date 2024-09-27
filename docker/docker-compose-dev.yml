@@ -41,7 +41,6 @@ services:
     flower:
         image: vidjil/server:dev
 
-
     restic:
         container_name: vidjil-restic
         image: mazzolino/restic
@@ -49,7 +48,7 @@ services:
         env_file:
             - '.env-default'
             - '.env'
-        environment:            
+        environment:
             RUN_ON_STARTUP: "true"
             BACKUP_CRON: "0 0 2 * * *"
             PRE_COMMANDS: "sh /root/scripts/export_db.sh"
@@ -57,17 +56,12 @@ services:
             RESTIC_COMPRESSION: max
             RESTIC_BACKUP_SOURCES: /mnt/volumes
             RESTIC_BACKUP_ARGS: >-
-                --tag docker-volumes
-                --exclude='*.tmp'
-                --verbose
+                --tag health-data --exclude='*.tmp' --limit-download 10000 --limit-upload 10000 --verbose
             RESTIC_FORGET_ARGS: >-
-                --keep-last 50
-                --keep-daily 30
-                --keep-weekly 15
-                --keep-monthly 36
-                --keep-yearly 10
-            TZ: Europe/Paris
+                --keep-last 50 --keep-daily 30 --keep-weekly 15 --keep-monthly 36 --keep-yearly 10
+            RESTIC_READ_CONCURRENCY: 1
             GOMAXPROCS: 1
+            TZ: Europe/Paris
         volumes:
             - ./backup/scripts/:/root/scripts/
             - $VOLUME_PATH/backup/sql:/mnt/volumes/sql
@@ -80,4 +74,3 @@ services:
             - mysql:mysql
         networks:
             - vidjil
-
