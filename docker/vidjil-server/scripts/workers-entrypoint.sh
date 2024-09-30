@@ -16,7 +16,6 @@ DEFAULT_POOL=$(($(nproc) - 1))
 if [[ -v WORKERS_POOL ]]
 then
     POOL="$WORKERS_POOL"
-    echo "Pool of worker setted: $POOL"
     # Check if not greater than number of available threads.
     if [[ $POOL -gt $DEFAULT_POOL ]]
     then
@@ -45,7 +44,8 @@ then
     NB_WORKERS=$SHORT_JOBS_WORKERS_POOL
     QUEUES="short"
 else
-    NB_WORKERS=($POOL - $SHORT_JOBS_WORKERS_POOL)
+    NB_WORKERS=$(($POOL - $SHORT_JOBS_WORKERS_POOL))
+    echo "POOL : $POOL - SHORT_JOBS_WORKERS_POOL : $SHORT_JOBS_WORKERS_POOL - NB_WORKERS : $NB_WORKERS"
     QUEUES="short,long"
 fi
 
@@ -53,7 +53,7 @@ if [[ NB_WORKERS -gt 0 ]]
 then
     echo "==== Pool of workers: $NB_WORKERS for queues $QUEUES"
     gosu $user bash -c "source /usr/share/vidjil/venv/bin/activate && \
-        cd /usr/share/vidjil/server/py4web && celery -b redis://redis:6379/0 -A apps.vidjil.tasks worker -Q $QUEUES--concurrency=$NB_WORKERS"
+        cd /usr/share/vidjil/server/py4web && celery -b redis://redis:6379/0 -A apps.vidjil.tasks worker -Q $QUEUES--concurrency=$NB_WORKERS --prefetch-multiplier -1"
 else
     echo "No workers to start, exiting"
 fi

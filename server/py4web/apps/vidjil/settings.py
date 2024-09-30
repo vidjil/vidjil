@@ -1,33 +1,30 @@
 # -*- coding: utf-8 -*-
 import os
 
+def string_to_bool(string_to_convert: str) -> bool:
+    return string_to_convert.lower() == 'true'
+
 # db settings
 APP_FOLDER = os.path.dirname(__file__)
 APP_NAME = os.path.split(APP_FOLDER)[-1]
+
 # DB_FOLDER:    Sets the place where migration files will be created
 #               and is the store location for SQLite databases
 DB_FOLDER = os.path.join(APP_FOLDER, "databases")
 
-DB_URI=os.environ.get('PYDAL_URI')
-if (DB_URI is None):
-    #DB_URI = "sqlite://storage.db"
-    DB_URI = "mysql://vidjil:rootpass@localhost:3307/vidjil"
-    #DB_URI = "mysql://vidjil:rootpass@mysql/vidjil"
-
-#DB_URI = "mysql://vidjil_user:password@localhost/vidjil"
-DB_POOL_SIZE = 1
-DB_MIGRATE = True
-DB_FAKE_MIGRATE = False  # maybe?
+DB_URI = os.getenv("PYDAL_URI", default="mysql://vidjil:rootpass@mysql/vidjil")
+DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE", default="1"))
+DB_MIGRATE = string_to_bool(os.getenv("DB_MIGRATE", default="True"))
+DB_FAKE_MIGRATE = string_to_bool(os.getenv("DB_MIGRATE", default="False"))  # maybe?
 
 # location where to store uploaded files:
 ### Upload directory for .fasta/.fastq.
 ### Old sequences files could be thrown away.
 ### No regular backup.
-DIR_SEQUENCES = '/mnt/upload/uploads/'
-#UPLOAD_FOLDER = os.path.join(APP_FOLDER, "uploads")
-UPLOAD_FOLDER = '/mnt/upload/uploads/'
+DIR_SEQUENCES = os.getenv("DIR_SEQUENCES", default="/mnt/upload/uploads/")
+UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", default="/mnt/upload/uploads/")
 
-# send email on regstration
+# send email on registration
 VERIFY_EMAIL = False
 
 # account requires to be approved ?
@@ -73,11 +70,6 @@ LDAP_SETTINGS = {
 T_FOLDER = os.path.join(APP_FOLDER, "translations")
 
 # Celery settings
-USE_CELERY = True
-CELERY_BROKER = "redis://redis:6379/0"
-
-# try import private settings
-try:
-    from .settings_private import *
-except:
-    pass
+USE_CELERY = string_to_bool(os.getenv("USE_CELERY", default="True"))
+CELERY_BROKER = os.getenv("CELERY_BROKER", default="redis://redis:6379/0")
+CELERY_SIZE_LIMIT_SHORT_LONG = int(os.getenv("CELERY_SIZE_LIMIT_SHORT_LONG", default="100000000"))

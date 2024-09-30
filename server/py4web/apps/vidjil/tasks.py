@@ -12,7 +12,7 @@ import random
 import xmlrpc.client
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
-from apps.vidjil import defs
+from apps.vidjil import defs, settings
 from apps.vidjil.modules import tools_utils, vidjil_utils
 from .modules.sequenceFile import get_original_filename
 from .common import scheduler, db, log
@@ -29,6 +29,10 @@ STATUS_UPLOAD_FAILED = "UPLOAD_FAILED"
 # Task names
 TASK_NAME_PROCESS = "process"
 TASK_NAME_PRE_PROCESS = "pre_process"
+
+# Queues names
+QUEUE_SHORT="short"
+QUEUE_LONG="long"
 
 # REGEX
 SEGMENTED_REGEX = re.compile(r"==> segmented (\d+) reads \((\d*\.\d+|\d+)%\)")
@@ -58,7 +62,8 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     db.results_file[data_id].update_record(scheduler_task_id = task_id)
     db.commit()
     update_task(task_id, STATUS_QUEUED)
-    run_process.delay(task_id, program, args)
+    log.debug(f"Prepare job for {(task_id, program, args)} in queue {get_celery_queue_to_use(id_sequence)}")
+    run_process.apply_async((task_id, program, args), queue=get_celery_queue_to_use(id_sequence))
 
     filename = db.sequence_file[id_sequence].filename
     res = {"redirect": "reload",
@@ -77,26 +82,35 @@ def schedule_fuse(sample_set_ids, config_ids):
                 ).select(db.sample_set_membership.sample_set_id, db.sample_set_membership.sequence_file_id,
                         db.results_file.id, db.results_file.config_id).first()
             if row:
-                run_fuse.delay(
-                    row.sample_set_membership.sequence_file_id, 
-                    row.results_file.config_id, 
-                    row.results_file.id, 
-                    row.sample_set_membership.sample_set_id, 
-                    clean_before = False)
+                run_fuse.apply_async(
+                    args=[row.sample_set_membership.sequence_file_id, 
+                          row.results_file.config_id, 
+                          row.results_file.id,
+                          row.sample_set_membership.sample_set_id],
+                    kwargs={"clean_before": False}, 
+                    queue=QUEUE_SHORT)
+                
+def get_celery_queue_to_use(sequence_file_id: int) -> str:
+    sequence_file = db.sequence_file[sequence_file_id]
+    queue_to_use = QUEUE_SHORT
+    
+    if (sequence_file.size_file > settings.CELERY_SIZE_LIMIT_SHORT_LONG):
+        queue_to_use = QUEUE_LONG
+    
+    return queue_to_use
 
 def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=False, clean_after=False):
-    log.info("run_vidjil start")
+    log.debug(f"run_vidjil starts for {task_id=} {id_file=} {id_config=} {id_data=}")
 
     sequence_file = db.sequence_file[id_file]
-    log.debug(f"{sequence_file=}")
 
     if sequence_file is None:
-        log.info("Sequence file not found in DB (delay of upload/processing ?)")
+        log.error("Sequence file not found in DB (delay of upload/processing ?)")
         update_task(task_id, STATUS_FAILED)
         raise ValueError('Process has failed, no entry in DB for this sequence file')
 
     if sequence_file.pre_process_flag == STATUS_FAILED :
-        log.info("Pre-process has failed")
+        log.error("Pre-process has failed")
         update_task(task_id, STATUS_FAILED)
         raise ValueError('pre-process has failed')
     
@@ -104,7 +118,7 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
     if sequence_file.pre_process_flag and sequence_file.pre_process_flag != STATUS_COMPLETED:
         log.info("Pre-process is still pending, re-schedule")
         args = [id_file, id_config, id_data, grep_reads]
-        run_process.apply_async((task_id, "vidjil", args), countdown=60)
+        run_process.apply_async((task_id, "vidjil", args), countdown=60, queue=get_celery_queue_to_use(id_file))
         update_task(task_id, STATUS_WAITING)
         return
 
@@ -154,7 +168,7 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
                 p.communicate()
                 sys.stdout.flush()
                 
-            log.info("Vidjil done, output logs in " + out_log)
+            log.info(f"Vidjil done, output logs in {out_log}")
 
             ## Get result file
             if grep_reads:
@@ -259,7 +273,7 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
         sys.stdout.flush()
 
         ## Get result file
-        log.info("===>", out_results)
+        log.info(f"===> {out_results}")
         results_filepath = os.path.abspath(out_results)
         if not os.path.exists(results_filepath):
             raise IOError(filename=results_filepath)
@@ -332,6 +346,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     except:
         log.error(arg_cmd)
         log.error("! Bad arguments, we expect args_align | args_assemble | args_exportClones")
+        raise
         
     mixcr = defs.DIR_MIXCR + 'mixcr'
     cmd = mixcr + ' align --save-reads -t 1 -r ' + align_report + ' ' + args_1 + ' ' + seq_file  + ' ' + out_alignments
@@ -355,7 +370,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
         sys.stdout.flush()
 
         ## Get result file
-        log.info("===>", out_results)
+        log.info(f"===> {out_results}")
         results_filepath = os.path.abspath(out_results)
         if not os.path.exists(results_filepath):
             raise IOError(filename=results_filepath)
@@ -456,7 +471,7 @@ def run_refuse(args):
 
 @scheduler.task()
 def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clean_after=False):
-    log.debug("run_fuse Start !")
+    log.debug(f"run_fuse starts for {id_file=} {id_config=} {id_data=} {sample_set_id=}")
     db._adapter.reconnect()
     try:
 
@@ -558,7 +573,7 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
         raise
     finally:
         db.close()
-        log.debug("run_fuse End !")
+        log.debug(f"run_fuse ends for {id_file=} {id_config=} {id_data=} {sample_set_id=}")
 
 def custom_fuse(file_list):
     
@@ -618,7 +633,10 @@ def schedule_pre_process(sequence_file_id, pre_process_config_id):
     db.commit()
 
     update_task(task_id, STATUS_QUEUED)
-    run_pre_process.delay(pre_process_config_id, sequence_file_id, task_id, clean_before=True, clean_after=False)
+    run_pre_process.apply_async(
+        args=[pre_process_config_id, sequence_file_id, task_id],
+        kwargs={"clean_before": True, "clean_after": False}, 
+        queue=get_celery_queue_to_use(sequence_file_id))
 
     res = {"redirect": "reload",
            "message": "{%s} (%s): process requested" % (sequence_file_id, pre_process_config_id)}
@@ -632,7 +650,7 @@ def run_pre_process(pre_process_config_id, sequence_file_id, task_id, clean_befo
     Run a pre-process on sequence_file.data_file (and possibly sequence_file.data_file+2),
     put the output back in sequence_file.data_file.
     '''
-    log.debug(f"run_pre_process Start !{pre_process_config_id=} {task_id=} {sequence_file_id=}")
+    log.debug(f"run_pre_process starts for {pre_process_config_id=} {task_id=} {sequence_file_id=}")
     db._adapter.reconnect()
     try:
         sequence_file = db.sequence_file[sequence_file_id]
@@ -729,7 +747,7 @@ def run_pre_process(pre_process_config_id, sequence_file_id, task_id, clean_befo
 
         return "SUCCESS"
     except Exception as exception:
-        log.error(f"Error in run_pre_process {pre_process_id} for sequence {sequence_file_id}: {exception}")
+        log.error(f"Error in run_pre_process {pre_process_config_id} for sequence {sequence_file_id}: {exception}")
         log.error(traceback.format_exc())
         log.error("Setting status to Failed.")
         db.rollback()
@@ -757,12 +775,12 @@ def run_pre_process(pre_process_config_id, sequence_file_id, task_id, clean_befo
             raise
         
         db.close()
-        log.debug(f"run_pre_process End !{pre_process_config_id=} {task_id=} {sequence_file_id=}")
+        log.debug(f"run_pre_process ends for {pre_process_config_id=} {task_id=} {sequence_file_id=}")
         
 
 @scheduler.task()
 def run_process(task_id, program, args):
-    log.debug("run_process Start !")
+    log.debug(f"run_process starts for {task_id=} {program=} {args=}")
     db._adapter.reconnect()
     try:
         if program == "vidjil" :
@@ -786,7 +804,7 @@ def run_process(task_id, program, args):
             raise
         
         db.close()
-        log.debug("run_process End !")
+        log.debug(f"run_process ends for {task_id=}, {program=} and {args=}")
 
 
 # UTILS
@@ -861,7 +879,10 @@ def run_fuse_for_sequence_file(sequence_file_id : int, config_id: int, data_id: 
     for row in db(db.sample_set_membership.sequence_file_id==sequence_file_id).select() :
         sample_set_id = row.sample_set_id
         log.info(f"Run fuse for sample {sample_set_id}")
-        run_fuse.delay(sequence_file_id, config_id, data_id, sample_set_id, clean_before = False)
+        run_fuse.apply_async(
+            args=[sequence_file_id, config_id, data_id, sample_set_id],
+            kwargs={"clean_before": False}, 
+            queue=QUEUE_SHORT)
 
 def set_tasks_status_for_sequence_file(sequence_file_id: int, status: str):
     waiting_tasks = db((db.results_file.sequence_file_id == sequence_file_id) & 

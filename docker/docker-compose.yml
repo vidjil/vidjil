@@ -120,8 +120,6 @@ services:
         volumes_from:
             - uwsgi
         depends_on:
-            redis:
-                condition: service_started
             mysql:
                 condition: service_healthy
         links:
