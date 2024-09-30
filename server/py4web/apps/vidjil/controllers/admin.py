@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import subprocess
-from .. import defs
-from ..modules import vidjil_utils
+
+import redis
 import json
 import os
 import re
+import ast
 from py4web import action, request, URL
-from .. import tasks
+from .. import defs, tasks
+from ..modules import vidjil_utils
 from ..common import db, auth, log, scheduler
 
 
@@ -245,8 +247,19 @@ def clean_workers_status():
         log.info(res)
         return json.dumps(res, separators=(',',':'))
     
-    # Get tasks in progress in scheduler
     current_task_ids=[]
+    
+    # Get tasks from redis
+    my_redis = redis.Redis(host="redis")
+    redis_tasks = my_redis.lrange("short", 0, -1) + my_redis.lrange("long", 0, -1)
+    log.debug(f"{redis_tasks=}")
+    for redis_task in redis_tasks:
+        redis_task = json.loads(redis_task)
+        if "headers" in redis_task and "argsrepr" in redis_task["headers"]:
+            args = ast.literal_eval(redis_task["headers"]["argsrepr"])
+            current_task_ids.append(args[0])
+    
+    # Get tasks from celery
     inspect = scheduler.control.inspect()
     inspect_task_lists = [inspect.scheduled(), inspect.active(), inspect.reserved()]
     for inspect_task_list in inspect_task_lists:
@@ -258,10 +271,9 @@ def clean_workers_status():
                               (db.scheduler_task.status != tasks.STATUS_COMPLETED)).select(db.scheduler_task.id)
     
     # Set not corresponding tasks status to FAILED in DB
+    log.debug(f"{current_task_ids=}, {in_progress_task_ids.as_list()=}")
     dangling_task_ids = [in_progress_task.id for in_progress_task in in_progress_task_ids if in_progress_task.id not in current_task_ids]
-    log.debug(f"{current_task_ids=}, {in_progress_task_ids=}")
-    for dangling_task_id in dangling_task_ids:
-        db.scheduler_task[dangling_task_id].update_record(status=tasks.STATUS_FAILED)
+    db(db.scheduler_task.id.belongs(dangling_task_ids)).update(status=tasks.STATUS_FAILED)
     
     res = {"redirect": "reload", "success": "true", "message": f"Dangling tasks set to failed: {dangling_task_ids}"}
     log.info(res)
