@@ -268,7 +268,7 @@ class TestDefaultController():
                                     "..",
                                     "resources"))
         mocked_run_process = mocker.patch(
-            "apps.vidjil.tasks.run_process.delay", return_value="SUCCESS")
+            "apps.vidjil.tasks.run_process.apply_async", return_value="SUCCESS")
 
         # When : Calling run_request
         try:
@@ -332,7 +332,7 @@ class TestDefaultController():
                                     "..",
                                     "resources"))
         mocked_run_process = mocker.patch(
-            "apps.vidjil.tasks.run_process.delay", return_value="SUCCESS")
+            "apps.vidjil.tasks.run_process.apply_async", return_value="SUCCESS")
 
         # When : Calling run_all_request
         try:

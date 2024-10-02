@@ -6,7 +6,7 @@ test_server_api:
   script: &test_cypress_server_script
     - docker exec vidjil-uwsgi  chmod a+w /usr/share/vidjil/server/py4web/apps/vidjil/errors
     - docker exec vidjil-uwsgi  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
-    - mkdir -p logs/before; for service in mysql fuse uwsgi workers flower nginx; do docker logs vidjil-${service}  > logs/before/${service}.log 2>&1; done
+    - mkdir -p logs/before; cd docker; for service in `docker compose config | yq '.services[]|key'`; do docker logs vidjil-${service} > ../logs/before/${service}.log 2>&1; done; cd ..
     - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9"
     - >
       docker run
@@ -34,6 +34,7 @@ test_server_api:
         coverage_format: cobertura
         path: tools/tests/api_coverage.xml
     paths:
+      - docker/.env*
       - docker/*.yml
       - docker/vidjil-*
       - browser/js/conf.js

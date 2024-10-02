@@ -38,6 +38,9 @@ then
     then
         SHORT_JOBS_WORKERS_POOL=$POOL - 1
     fi
+else
+    # No dedicated workers
+    SHORT_JOBS_WORKERS_POOL=0
 fi
 if [[ "$INSTANCE_TYPE" == "short" ]]
 then

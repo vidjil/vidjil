@@ -332,14 +332,14 @@ test_server_unit:
     - docker:dind
   before_script:
     - apk update
-    - apk add docker docker-compose make wget tar
+    - apk add docker docker-compose make wget tar yq
     - !reference [.setup_docker_server]
   after_script:
     - echo "TIME $(date) - END OF SERVER JOB" >> time.log
     - docker cp vidjil-uwsgi:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
     - docker ps
-    - mkdir -p logs/after; for service in mysql fuse uwsgi workers flower nginx; do docker logs vidjil-${service} > logs/after/${service}.log 2>&1; done
-    - cd docker && docker-compose down -v
+    - mkdir -p logs/after; cd docker; for service in `docker compose config | yq '.services[]|key'`; do docker logs vidjil-${service} > ../logs/after/${service}.log 2>&1; done
+    - docker-compose down -v
     - cd .. && cat time.log
     - docker rmi "vidjil/server:test" "vidjil/client:test"
     - docker rmi $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
@@ -421,6 +421,7 @@ deploy_review_server:
     - .need_for_independent_test
   artifacts:
     paths:
+      - docker_${CI_COMMIT_REF_SLUG}/.env*
       - docker_${CI_COMMIT_REF_SLUG}/docker-compose*
       - docker_${CI_COMMIT_REF_SLUG}/vidjil-client/
       - docker_${CI_COMMIT_REF_SLUG}/vidjil-server/
