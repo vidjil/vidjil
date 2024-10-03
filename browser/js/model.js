@@ -1946,7 +1946,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                     var present_locus = this.getLocusPresentInTop(timeID)
                     for (locus in diversity) {
                         if( present_locus.indexOf(locus) != -1 || locus == "all"){
-                            data.push([row_1, `${this.systemBox(locus).outerHTML} locus`, diversity[locus], `${key_diversity}_${locus}`, 1])
+                            data.push([row_1, `${this.systemBox(locus).outerHTML} ${locus}`, diversity[locus], `${key_diversity}_${locus}`, 1])
                         }
                     }
                 }
