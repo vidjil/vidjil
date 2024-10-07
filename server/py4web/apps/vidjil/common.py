@@ -321,9 +321,13 @@ if settings.USE_CELERY:
         "apps.%s.tasks" % settings.APP_NAME, 
         broker=settings.CELERY_BROKER,
         backend='redis://redis',
-        loader=single_task_loader.SingleTaskLoader
+        loader=single_task_loader.SingleTaskLoader,
     )
     
+    scheduler.conf.update(
+        broker_connection_retry_on_startup=True,
+        worker_send_task_event=False
+    )
 
 # #######################################################
 # Enable authentication
