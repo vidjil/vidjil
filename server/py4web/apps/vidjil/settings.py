@@ -72,4 +72,5 @@ T_FOLDER = os.path.join(APP_FOLDER, "translations")
 # Celery settings
 USE_CELERY = string_to_bool(os.getenv("USE_CELERY", default="True"))
 CELERY_BROKER = os.getenv("CELERY_BROKER", default="redis://redis:6379/0")
+# From which size will the work be considered long ? Default is 100M
 CELERY_SIZE_LIMIT_SHORT_LONG = int(os.getenv("CELERY_SIZE_LIMIT_SHORT_LONG", default="100000000"))

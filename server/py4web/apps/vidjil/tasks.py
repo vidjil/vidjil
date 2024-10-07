@@ -714,11 +714,15 @@ def run_pre_process(pre_process_config_id, sequence_file_id, task_id, clean_befo
             pre_process_output = open(pre_process_filepath, 'rb')
         except FileNotFoundError:
             pre_process_output = None
+        new_size = os.path.getsize(filepath)
         with open(filepath, 'rb') as stream:
-            db.sequence_file[sequence_file_id].update_record(data_file = stream,
-                                                    data_file2 = None,
-                                                    pre_process_flag = STATUS_COMPLETED,
-                                                    pre_process_file = pre_process_output)
+            db.sequence_file[sequence_file_id].update_record(
+                data_file = stream,
+                size_file = new_size,
+                data_file2 = None,
+                size_file2 = 0,
+                pre_process_flag = STATUS_COMPLETED,
+                pre_process_file = pre_process_output)
             db.commit()
         if pre_process_output is not None:
             pre_process_output.close()
