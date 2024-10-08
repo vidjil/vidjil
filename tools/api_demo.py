@@ -21,7 +21,6 @@ LOCAL_SSL = "localhost-chain.pem"
 LOCAL_USER = "demo@vidjil.org"
 LOCAL_PASSWORD = "demo"
 
-
 parser = argparse.ArgumentParser(description= 'Vidjil API Demo')
 parser.add_argument('--stress', '-s', action='store_true', help='Demo on public server, stress test (do not abuse)')
 parser.add_argument('--public', '-p', action='store_true', help='Demo on public server')

@@ -42,193 +42,237 @@ import types
 from ..common import db, session, cors, T, flash, cache, authenticated, unauthenticated, auth, log
 
 
-#########################################################################
-##return the default index page for vidjil (redirect to the browser)
-@action("/vidjil/metrics_fast", method=["POST", "GET"])
-@action.uses(auth, db)
-def metrics():
+def getMetricByName(metric_name):
     if "metrics" in auth.groups or auth.is_admin(): # WARNING !!! Iconsistency, switch between mutiple call to admin/not admin. (tested with API)
-        message = 'status METRICS'
-        start_time = time.time()
-        delta_time = time.time()
-        data = {}
-                     
-        data["message"] = message
-        request_times = {}
-        timer_count = 1
-        data["users_count"] = len(db().select(db.auth_user.id.count(),  groupby=db.auth_user.id ))
-        request_times["users_count"] = time.time()  - delta_time; delta_time = time.time();
-        data["group_count"] = len(db().select(db.auth_group.id.count(), groupby=db.auth_group.id ))
-        request_times["group_count"] = time.time()  - delta_time; delta_time = time.time();
-        data["group_count_only_test"] = len(db(db.auth_group.role.like('test%')).select(db.auth_group.ALL, db.auth_group.id.count(), groupby=db.auth_group.id)) #pas fini
-        request_times["group_count_only_test"] = time.time()  - delta_time; delta_time = time.time();
-
+ 
+        if metric_name == "users_count":
+            return len(db().select(db.auth_user.id.count(),  groupby=db.auth_user.id ))
         
-
-        request_times["total"] =time.time() - start_time
-        data["request_times"] = request_times
-        log.debug("METRICS loaded (%.3fs)" % (time.time() - start_time))
-    
-    else:
-        data = {"message": 'status NOT in metrics group'}
-    return data
-
-#########################################################################
-
-
-#########################################################################
-##return the default index page for vidjil (redirect to the browser)
-@action("/vidjil/metrics_long", method=["POST", "GET"])
-@action.uses(auth, db)
-def metrics():
-    if "metrics" in auth.groups or auth.is_admin(): # WARNING !!! Iconsistency, switch between mutiple call to admin/not admin. (tested with API)
-        message = 'status METRICS'
-        start_time = time.time()
-        delta_time = time.time()
-        data = {}
-                     
-        data["message"] = message
-        request_times = {}
-        timer_count = 1
+        elif metric_name == "group_count":
+            return len(db().select(db.auth_group.id.count(), groupby=db.auth_group.id ))
         
-        if not "key" in request.params or request.params["key"] == "users_count":
-                data["users_count"] = len(db().select(db.auth_user.id.count(),  groupby=db.auth_user.id ))
-                request_times["users_count"] = time.time()  - delta_time; delta_time = time.time();
-        
-        if not "key" in request.params or request.params["key"] == "group_count":
-                data["group_count"] = len(db().select(db.auth_group.id.count(), groupby=db.auth_group.id ))
-                request_times["group_count"] = time.time()  - delta_time; delta_time = time.time();
-        
-        if not "key" in request.params or request.params["key"] == "group_count_only_test":
-                data["group_count_only_test"] = len(db(db.auth_group.role.like('test%')).select(db.auth_group.ALL, db.auth_group.id.count(), groupby=db.auth_group.id)) #pas fini
-                request_times["group_count_only_test"] = time.time()  - delta_time; delta_time = time.time();
-
-        if not "key" in request.params or request.params["key"] == "login_count":
-                data["login_count"] = db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description ) # not fill for the moment
-                request_times["login_count"] = time.time()  - delta_time; delta_time = time.time();
-
+        elif metric_name == "group_count_only_test":
+            return len(db(db.auth_group.role.like('test%')).select(db.auth_group.ALL, db.auth_group.id.count(), groupby=db.auth_group.id)) #pas fini
+ 
+        elif metric_name == "login_count":
+            return db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description ) # not fill for the moment
+ 
         # # Patients; runs; sets
-        if not "key" in request.params or request.params["key"] == "set_patients_count":
-                data["set_patients_count"] = db(db.patient).count()
-                request_times["set_patients_count"] = time.time()  - delta_time; delta_time = time.time();
+        elif metric_name == "set_patients_count":
+            return db(db.patient).count()
         
-        if not "key" in request.params or request.params["key"] == "set_runs_count":
-                data["set_runs_count"] = db(db.run).count()
-                request_times["set_runs_count"] = time.time()  - delta_time; delta_time = time.time();
+        elif metric_name == "set_runs_count":
+            return db(db.run).count()
         
-        if not "key" in request.params or request.params["key"] == "set_generic_count":
-                data["set_generic_count"] = db(db.generic).count()
-                request_times["set_generic_count"] = time.time()  - delta_time; delta_time = time.time();
+        elif metric_name == "set_generic_count":
+            return db(db.generic).count()
                 
         # Patients; runs; sets By USER
-        if not "key" in request.params or request.params["key"] == "set_patients_by_user":
-                data["set_patients_by_user"] = db((db.patient.sample_set_id==db.sample_set.id) & (db.sample_set.sample_type=="patient")
+        elif metric_name == "set_patients_by_user":
+            return db((db.patient.sample_set_id==db.sample_set.id) & (db.sample_set.sample_type=="patient")
                         ).select(db.patient.creator.with_alias("user_id"), db.patient.id.count().with_alias("count"), groupby=db.patient.creator )
-                request_times["set_patients_by_user"] = time.time()  - delta_time; delta_time = time.time();
         
-        if not "key" in request.params or request.params["key"] == "set_runs_by_user":
-                data["set_runs_by_user"] = db((db.run.sample_set_id==db.sample_set.id) & (db.sample_set.sample_type=="run")
+        elif metric_name == "set_runs_by_user":
+            return db((db.run.sample_set_id==db.sample_set.id) & (db.sample_set.sample_type=="run")
                         ).select(db.run.creator.with_alias("user_id"), db.run.id.count().with_alias("count"), groupby=db.run.creator )
-                request_times["set_runs_by_user"] = time.time()  - delta_time; delta_time = time.time();
         
-        if not "key" in request.params or request.params["key"] == "set_generic_by_user":
-                data["set_generic_by_user"] = db((db.generic.sample_set_id==db.sample_set.id) & (db.sample_set.sample_type=="generic")
+        elif metric_name == "set_generic_by_user":
+            return db((db.generic.sample_set_id==db.sample_set.id) & (db.sample_set.sample_type=="generic")
                         ).select(db.generic.creator.with_alias("user_id"), db.generic.id.count().with_alias("count"), groupby=db.generic.creator )
-                request_times["set_generic_by_user"] = time.time()  - delta_time; delta_time = time.time();
-
+ 
         # Samples, analysis Globally
-        if not "key" in request.params or request.params["key"] == "sequence_count":
-                data["sequence_count"] = db(db.sequence_file).count()
-                request_times["sequence_count"] = time.time()  - delta_time; delta_time = time.time();
-        if not "key" in request.params or request.params["key"] == "results_count":
-                data["results_count"] = db(db.results_file).count()
-                request_times["results_count"] = time.time()  - delta_time; delta_time = time.time();
-        if not "key" in request.params or request.params["key"] == "status_analysis":
-                data["status_analysis"] = db().select(db.scheduler_task.status, db.scheduler_task.id.count(), db.scheduler_task.task_name, groupby=db.scheduler_task.task_name|db.scheduler_task.status )
-                request_times["status_analysis"] = time.time()  - delta_time; delta_time = time.time();
-
+        elif metric_name == "sequence_count":
+            return db(db.sequence_file).count()
+        elif metric_name == "results_count":
+            return db(db.results_file).count()
+        elif metric_name == "status_analysis":
+            return db(db.scheduler_task.status != "COMPLETED").select(db.scheduler_task.status, db.scheduler_task.id.count(), db.scheduler_task.task_name, groupby=db.scheduler_task.task_name|db.scheduler_task.status )
+ 
         # Samples, analysis
-        if not "key" in request.params or request.params["key"] == "sequence_by_user":
-                data["sequence_by_user"] = db().select(db.sequence_file.provider.with_alias("user_id"), 
+        elif metric_name == "sequence_by_user":
+            return db().select(db.sequence_file.provider.with_alias("user_id"), 
                         db.sequence_file.id.count().with_alias("count_sequence"), 
                         groupby=db.sequence_file.provider)
-                request_times["sequence_by_user"] = time.time()  - delta_time; delta_time = time.time();
-        if not "key" in request.params or request.params["key"] == "sequence_size_by_user":
-                data["sequence_size_by_user"] = db().select(db.sequence_file.provider.with_alias("user_id"), 
+        elif metric_name == "sequence_size_by_user":
+            return db().select(db.sequence_file.provider.with_alias("user_id"), 
                         (db.sequence_file.size_file.sum()+db.sequence_file.size_file2.sum()).with_alias("size_file_sum"), 
                         groupby=db.sequence_file.provider)
-                request_times["sequence_size_by_user"] = time.time()  - delta_time; delta_time = time.time();
+ 
+        elif metric_name == "config_analysis":
+            return db(db.results_file.config_id==db.config.id).select(db.results_file.config_id, db.config.name, db.config.program, db.results_file.id.count(),  groupby=db.results_file.config_id )
+ 
 
-        if not "key" in request.params or request.params["key"] == "config_analysis":
-                data["config_analysis"] = db(db.results_file.config_id==db.config.id).select(db.results_file.config_id, db.config.name, db.config.program, db.results_file.id.count(),  groupby=db.results_file.config_id )
-                request_times["config_analysis"] = time.time()  - delta_time; delta_time = time.time();
+         # Patients; runs; sets By GROUP
+        elif metric_name == "set_patients_by_group":
+            return db((db.sample_set.sample_type=="patient") & 
+                      (db.sample_set.creator==db.auth_membership.user_id)  & 
+                      (db.auth_membership.group_id==db.auth_group.id)
+                    ).select(db.auth_group.id.with_alias("group_id"), 
+                             db.auth_group.role.with_alias("group_name"), 
+                             db.sample_set.id.count().with_alias("count"), 
+                             groupby=db.auth_group.id 
+                            )
+        
+        elif metric_name == "set_runs_by_group":
+            return db((db.sample_set.sample_type=="run") & 
+                      (db.sample_set.creator==db.auth_membership.user_id)  & 
+                      (db.auth_membership.group_id==db.auth_group.id)
+                    ).select(db.auth_group.id.with_alias("group_id"), 
+                             db.auth_group.role.with_alias("group_name"), 
+                             db.sample_set.id.count().with_alias("count"), 
+                             groupby=db.auth_group.id 
+                            )
+
+        elif metric_name == "set_generic_by_group":
+            return db((db.sample_set.sample_type=="generc") & 
+                      (db.sample_set.creator==db.auth_membership.user_id)  & 
+                      (db.auth_membership.group_id==db.auth_group.id)
+                    ).select(db.auth_group.id.with_alias("group_id"), 
+                             db.auth_group.role.with_alias("group_name"), 
+                             db.sample_set.id.count().with_alias("count"), 
+                             groupby=db.auth_group.id 
+                            )
+
+
 
         # Very very long on app database. Don't use for the moment
-        # if not "key" in request.params or request.params["key"] == "config_analysis_by_groups":
-        #         data["config_analysis_by_groups"] = db((db.config.id==db.results_file.config_id) & 
-        #                 (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
-        #                 (   ((db.sample_set_membership.sample_set_id==db.patient.sample_set_id) & (db.patient.creator==db.auth_membership.user_id)) |
-        #                     ((db.sample_set_membership.sample_set_id==db.run.sample_set_id) & (db.run.creator==db.auth_membership.user_id)) |
-        #                     ((db.sample_set_membership.sample_set_id==db.generic.sample_set_id) & (db.generic.creator==db.auth_membership.user_id))
-        #                 )  & 
-        #                 (db.auth_membership.group_id==db.auth_group.id)).select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), db.auth_group.role, groupby=(db.results_file.config_id|db.auth_group.id))
-        #         request_times["config_analysis_by_groups"] = time.time()  - delta_time; delta_time = time.time();
+        elif metric_name == "config_analysis_by_groups":
+            return db((db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
+                        (db.sample_set_membership.sample_set_id==db.sample_set.id) &
+                        (db.sample_set.creator==db.auth_membership.user_id)  & 
+                        (db.auth_membership.group_id==db.auth_group.id) &
+                        (db.config.id==db.results_file.config_id)
+                        ).select(db.config.name, 
+                                    db.config.program, 
+                                    db.results_file.config_id, 
+                                    db.results_file.id.count(), 
+                                    db.auth_group.role, 
+                                    db.sample_set.sample_type, 
+                                    groupby=(db.results_file.config_id|db.auth_group.id| db.sample_set.sample_type))
+ 
 
-        if not "key" in request.params or request.params["key"] == "config_analysis_by_groups_patients":
-                data["config_analysis_by_groups_patients"] = db((db.config.id==db.results_file.config_id) & 
-                        (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
-                        (   ((db.sample_set_membership.sample_set_id==db.patient.sample_set_id) & (db.patient.creator==db.auth_membership.user_id))
-                        )  & 
-                        (db.auth_membership.group_id==db.auth_group.id)).select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), db.auth_group.role, groupby=(db.results_file.config_id|db.auth_group.id))
-                request_times["config_analysis_by_groups_patients"] = time.time()  - delta_time; delta_time = time.time();
-
-        if not "key" in request.params or request.params["key"] == "config_analysis_by_groups_runs":
-                data["config_analysis_by_groups_runs"] = db((db.config.id==db.results_file.config_id) & 
-                        (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
-                        (    ((db.sample_set_membership.sample_set_id==db.run.sample_set_id) & (db.run.creator==db.auth_membership.user_id))
-                        )  & 
-                        (db.auth_membership.group_id==db.auth_group.id)).select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), db.auth_group.role, groupby=(db.results_file.config_id|db.auth_group.id))
-                request_times["config_analysis_by_groups_runs"] = time.time()  - delta_time; delta_time = time.time();
-
-        if not "key" in request.params or request.params["key"] == "config_analysis_by_groups_generic":
-                data["config_analysis_by_groups_generic"] = db((db.config.id==db.results_file.config_id) & 
-                        (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
-                        (    ((db.sample_set_membership.sample_set_id==db.generic.sample_set_id) & (db.generic.creator==db.auth_membership.user_id))
-                        )  & 
-                        (db.auth_membership.group_id==db.auth_group.id)).select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), db.auth_group.role, groupby=(db.results_file.config_id|db.auth_group.id))
-                request_times["config_analysis_by_groups_generic"] = time.time()  - delta_time; delta_time = time.time();
-
-
-
-        if not "key" in request.params or request.params["key"] == "config_analysis_by_users_patients":
-                data["config_analysis_by_users_patients"] = db((db.config.id==db.results_file.config_id) & 
+        elif metric_name == "config_analysis_by_users_patients":
+            return db((db.config.id==db.results_file.config_id) & 
                         (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
                         (db.sample_set_membership.sample_set_id==db.patient.sample_set_id)
                         ).select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), groupby=(db.results_file.config_id))
-                request_times["config_analysis_by_users_patients"] = time.time()  - delta_time; delta_time = time.time();
 
-        if not "key" in request.params or request.params["key"] == "config_analysis_by_users_runs":
-                data["config_analysis_by_users_runs"] = db((db.config.id==db.results_file.config_id) & 
+        elif metric_name == "config_analysis_by_users_runs":
+            return db((db.config.id==db.results_file.config_id) & 
                         (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
                         (db.sample_set_membership.sample_set_id==db.run.sample_set_id)
                         ).select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), groupby=(db.results_file.config_id))
-                request_times["config_analysis_by_users_runs"] = time.time()  - delta_time; delta_time = time.time();
 
-        if not "key" in request.params or request.params["key"] == "config_analysis_by_users_generic":
-                data["config_analysis_by_users_generic"] = db((db.config.id==db.results_file.config_id) & 
+        elif metric_name == "config_analysis_by_users_generic":
+            return db((db.config.id==db.results_file.config_id) & 
                         (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
                         (db.sample_set_membership.sample_set_id==db.generic.sample_set_id)
                         ).select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), groupby=(db.results_file.config_id))
-                request_times["config_analysis_by_users_generic"] = time.time()  - delta_time; delta_time = time.time();
+
+        else:
+            raise Exception("Metric name asked don't exist: {metric_name}")
+    return None
 
 
-        request_times["total"] = time.time() - start_time
-        data["request_times"] = request_times
-        log.debug("METRICS loaded (%.3fs)" % (time.time() - start_time))
-    
+
+
+def getMetricsList(metrics_list, auth):
+    if "metrics" in auth.groups or auth.is_admin(): # WARNING !!! Iconsistency, switch between mutiple call to admin/not admin. (tested with API)
+        message = 'status METRICS'
+        start_time = time.time()
+        delta_time = time.time()
+        data = {"request_times": {}}                 
+        data["message"] = message
+
+        for metric in metrics_list:
+            data[metric] = getMetricByName(metric)
+            data["request_times"][metric] = time.time() - delta_time
+            delta_time = time.time();
+
+        data["request_times"]["total"] = time.time() - start_time
+        log.debug("METRICS loaded (%.3fs)" % (time.time() - start_time))    
     else:
         data = {"message": 'status NOT in metrics group'}
     return data
 
+
+#########################################################################
+ALL_METRICS = {
+	"group_count":                       {"fast": True,  "long": False},
+	"group_count_only_test":             {"fast": True,  "long": False},
+	"login_count":                       {"fast": True,  "long": False},
+	"set_patients_count":                {"fast": True,  "long": False},
+	"set_runs_count":                    {"fast": True,  "long": False},
+	"set_generic_count":                 {"fast": True,  "long": False},
+	"set_patients_by_user":              {"fast": True,  "long": False},
+	"set_runs_by_user":                  {"fast": True,  "long": False},
+	"set_generic_by_user":               {"fast": True,  "long": False},
+	"sequence_count":                    {"fast": True,  "long": False},
+	"results_count":                     {"fast": True,  "long": False},
+	"status_analysis":                   {"fast": True,  "long": False},
+	"sequence_by_user":                  {"fast": True,  "long": False},
+	"sequence_size_by_user":             {"fast": True,  "long": False},
+	"config_analysis":                   {"fast": True,  "long": False},
+	"config_analysis_by_users_patients": {"fast": True,  "long": False},
+	"config_analysis_by_users_runs":     {"fast": True,  "long": False},
+	"config_analysis_by_users_generic":  {"fast": True,  "long": False},
+	"set_patients_by_group":             {"fast": False, "long": True},
+	"set_runs_by_group":                 {"fast": False, "long": True},
+	"set_generic_by_group":              {"fast": False, "long": True},
+	"config_analysis_by_groups":         {"fast": False, "long": True},
+}
+#########################################################################
+@action("/vidjil/metrics_fast", method=["POST", "GET"])
+@action.uses(auth, db)
+def metrics_fast():
+    fast_metrics = [key for key in ALL_METRICS.keys() if ALL_METRICS[key]["fast"] ]
+    return getMetricsList(fast_metrics, auth)
+
+
+@action("/vidjil/metrics_long", method=["POST", "GET"])
+@action.uses(auth, db)
+def metrics_long():
+    long_metrics = [key for key in ALL_METRICS.keys() if ALL_METRICS[key]["long"] ]
+    return getMetricsList(long_metrics, auth)
+
+@action("/vidjil/metrics_all", method=["POST", "GET"])
+@action.uses(auth, db)
+def metrics_long():
+    all_metrics = [key for key in ALL_METRICS.keys()]
+    return getMetricsList(all_metrics, auth)
+
+@action("/vidjil/metrics_by_name", method=["POST", "GET"])
+@action.uses(auth, db)
+def metrics():
+    """ Allow to get metrics asked by a given list in url (',' jointure') """
+    metrics =  request.params['metric'].split(",")
+    print( f"Ask metrics list: {metrics}")
+    return getMetricsList(metrics, auth)
+
 #########################################################################
 
+
+
+@action("/vidjil/set_creator_samples_set", method=["POST", "GET"])
+@action.uses(auth, db)
+def set_creator_samples_set():
+    """
+    Function to launch to fill creator field of sample_set table from content of field creator of each set type
+    Fill only empty value. 
+    To be lauch once at release 2024.10
+    After that, this field will be filled automatically at each set creation
+    """
+
+    # Get data for each sample_set
+    for set_type in ["patient", "run", "generic"]:
+        subquery_patient = db((db.sample_set.sample_type == set_type) & 
+              (db.sample_set.creator == None) & 
+              (db.sample_set.id == db[set_type].sample_set_id) &
+              (db[set_type].creator == db.auth_user.id)
+            ).select(db.sample_set.id, db.sample_set.creator, db[set_type].id, db[set_type].creator, db.auth_user.id)
+
+        # Update sample_set creator
+        for elt in subquery_patient:
+            db.sample_set[elt.sample_set.id].update_record(creator=elt.auth_user.id )
+            db.commit()
+    return
