@@ -11,6 +11,8 @@
 #define        CYS104_IN_GAPPED_V  310   // First nucleotide of Cys104
 #define PHE118_TRP118_IN_GAPPED_J   38   // Last nucleotide of Phe118/Trp118
 
+#define KEYS_COMPRESS  1.65   //  enough for ~208 *01 genes (191 IGHV + ...) / 127
+
 // Tshortcut should be a type as small as possible that can be converted to string.
 // By default it should be a char.
 template <typename Tshortcut, typename Affect>
@@ -149,7 +151,7 @@ void GermlineElement<Tshortcut, Affect>::addToIndex(IKmerStore<Tshortcut, Affect
   std::cerr << "Insert " << affect << std::endl;
   index->insert(*reader, affect, this, max_indexing, seed);
   if (build_filter) {
-    filter = new FilterWithACAutomaton<Tshortcut>(*reader, seed);
+    filter = new FilterWithACAutomaton<Tshortcut>(*reader, seed, KEYS_COMPRESS);
   }
 }
 
