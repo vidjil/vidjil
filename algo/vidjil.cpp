@@ -1526,6 +1526,7 @@ int main (int argc, char **argv)
             {"seq", repComp.getQuality()}
         });
 
+        delete kseg;
         if (repComp.getCoverage() < WARN_COVERAGE)
           clone->add_warning(W51_LOW_COVERAGE, "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3), LEVEL_WARN, clone_on_stdout);
 
