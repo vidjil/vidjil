@@ -133,6 +133,7 @@ WindowsStorage<Tshortcut, Affect>* WindowExtractor<Tshortcut, Affect>::extract(O
 
       cout.flush();
     }
+    delete seg;
   }
   signal(SIGINT, SIG_DFL);
 
