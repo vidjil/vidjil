@@ -76,7 +76,7 @@ public:
    * @param max_indexing: the maximal number of bases to index (default: 0, everything).
    */
   Germline(std::string code, Tshortcut shortcut, std::string path, json filenames,
-           json config, GermlineElementRepository<Tshortcut, Affect> *repository = NULL,
+           json &config, GermlineElementRepository<Tshortcut, Affect> *repository = NULL,
            int max_indexing = 0);
 
   ~Germline();
