@@ -176,7 +176,6 @@ void FilterWithACAutomaton<S>::buildACAutomatonToFilterBioReader(string seed, fl
 
     if (asciiNumber > previousAsciiNumber)
     {      
-      PRINT_VAR(currentLabel);
       indexes->push_back(i);
       previousAsciiNumber = asciiNumber;
     }
