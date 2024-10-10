@@ -137,6 +137,11 @@ public:
   std::set<Tshortcut> getAllShortcuts() const;
 
   /**
+   * @return true iff the germline has a segment with this name
+  */
+  bool hasSegment(const std::string &segment) const;
+
+  /**
    * @return whether a recombination with all the shortcuts provided in parameter correspond to an existing recombination in the
    * current germline. At least nb_match shortcuts must correspond to the recombination.
    */ 
@@ -299,6 +304,11 @@ std::list<std::string> Germline<Tshortcut, Affect>::getSegments() const {
 template <typename Tshortcut, typename Affect>
 Tshortcut Germline<Tshortcut, Affect>::getShortcut() const {
   return shortcut;
+}
+
+template <typename Tshortcut, typename Affect>
+bool Germline<Tshortcut, Affect>::hasSegment(const std::string &segment) const {
+  return config.count(segment) > 0;
 }
 
 template <typename Tshortcut, typename Affect>

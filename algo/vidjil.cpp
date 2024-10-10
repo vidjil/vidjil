@@ -1563,7 +1563,8 @@ int main (int argc, char **argv)
 
         FineSegmenter<char, KmerAffect> seg(representative, segmented_germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
-        if (segmented_germline->getGermlineElements("4").size() > 0)
+        if (segmented_germline->hasSegment("4")
+            && segmented_germline->getGermlineElements("4").size() > 0)
           seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
 
         if (detect_CDR3)
