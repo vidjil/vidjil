@@ -303,22 +303,19 @@ Tshortcut Germline<Tshortcut, Affect>::getShortcut() const {
 
 template <typename Tshortcut, typename Affect>
 bool Germline<Tshortcut, Affect>::hasRecombination(const std::set<Tshortcut> &shortcuts, size_t nb_match) const {
-  std::set<size_t> result;
   auto it = shortcuts.begin();
-  try {
-    result = shortcuts_to_identifier.at(*it);
-  } catch (const std::out_of_range &) {
+  auto set_it = shortcuts_to_identifier.find(*it);
+  if (set_it == shortcuts_to_identifier.end())
     return false;
-  }
+  std::set<size_t> result = set_it->second;
   it++;
   for (; it != shortcuts.end(); it++) {
     std::set<size_t> temp;
-    std::set<size_t> newSet;
-    try {
-      newSet = shortcuts_to_identifier.at(*it);
-    } catch(const std::out_of_range &) {
+    auto set_it = shortcuts_to_identifier.find(*it);
+    if (set_it == shortcuts_to_identifier.end())
       return false;
-    }
+    std::set<size_t> newSet = set_it->second;
+    
     std::set_intersection(result.begin(), result.end(),
                           newSet.begin(), newSet.end(),
                           std::inserter(temp, temp.begin()));
