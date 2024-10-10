@@ -58,4 +58,4 @@ restore_volume:
 
 
 build-server:
-	docker build -t vidjil/server:py4web ./vidjil-server/
+	docker build --progress=plain -t vidjil/server:py4web ./vidjil-server/

@@ -242,15 +242,16 @@ code_quality_custom:
 # Server
 
 test_server_unit:
-    image: python:3.8-slim
+    image: python:3.12-slim
     stage: test_unit
     <<: *before_script_global_docker
     script:
-      - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends gcc libldap2-dev libssl-dev libsasl2-dev python3-ijson libyajl2 python3-cffi wget unzip procps libffi-dev
+      - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends build-essential gcc wget unzip procps
       - python3 -m pip install -U pip
       - python3 -m pip install --no-cache -r requirements.txt
       - python3 -m pip install --no-cache -r requirements_tests.txt
       - python3 -m pip freeze > pip_freeze_requirements.txt
+      - uptime
       - mkdir -p /mnt/upload/uploads/
       - wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 vidjil-algo && chmod +x vidjil-algo
       - make unit_server
