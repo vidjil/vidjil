@@ -1080,6 +1080,9 @@ FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, 
   this->JUNCTIONstart = -1;
   this->JUNCTIONend = -1;
 
+  if (germline == Germline<Shortcut, Affect>::getUnseg())
+    return;
+
   bool reverse_V = false ;
   bool reverse_J = false ;
   GermlineElement<Shortcut, Affect> *g_left=NULL, *g_right=NULL;
