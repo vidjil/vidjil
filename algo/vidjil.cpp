@@ -948,6 +948,7 @@ int main (int argc, char **argv)
                                   NULL,
                                   trim_sequences);
 	  multigermline->addGermline(germline);
+    multigermline->setRepository(germline->getRepository());
 	}
     }
 

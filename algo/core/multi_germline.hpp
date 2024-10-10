@@ -87,6 +87,11 @@ public:
    */
   void addToIndex(IKmerStore<Tshortcut, Affect> *index=nullptr);
 
+  /**
+   * Sets the repository of the MultiGermline
+   */
+  void setRepository(GermlineElementRepository<Tshortcut, Affect> *);
+
   template <typename S, typename A>
   friend ostream &operator<<(ostream &out, const MultiGermline<S, A> &germline);
 };
@@ -291,6 +296,11 @@ void MultiGermline<Tshortcut, Affect>::addToIndex(IKmerStore<Tshortcut, Affect> 
   }
   index->finish_building();
   this->index = index;
+}
+
+template <typename Tshortcut, typename Affect>
+void MultiGermline<Tshortcut, Affect>::setRepository(GermlineElementRepository<Tshortcut, Affect> *repo) {
+  repository = repo;
 }
 
 template <typename S, typename A>
