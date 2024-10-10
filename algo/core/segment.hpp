@@ -722,12 +722,17 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
     }
   }
 
-  if (possible_germlines.size() > 1) {
-    std::cerr << "WARNING: several possible germlines" << std::endl;
-  }
-
   if (possible_germlines.size() >= 1) {
-    this->segmented_germline = possible_germlines.front();
+    if (possible_germlines.size() > 1) {
+      // Select shorter codes as it will favor complete over incomplete recombinations
+      auto min_germline = std::min_element(possible_germlines.begin(), possible_germlines.end(),
+                                           [](Germline<Shortcut, Affect>* a, Germline<Shortcut, Affect>* b) {
+                                             return a->getCode().length() < b->getCode().length();
+                                           });
+      this->segmented_germline = *min_germline;
+    } else {
+      this->segmented_germline = possible_germlines.front();
+    }
     std::pair<KmerAffect, KmerAffect> affects = matching_affects.front();
     std::list<std::string> segments = this->segmented_germline->getSegments();
     before = affects.first;
