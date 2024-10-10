@@ -53,7 +53,7 @@ typedef string junction ;
 using json = nlohmann::json;
 using namespace std;
 
-#define PRINT_VAR(v) cerr << #v << " = " << v << endl
+#define PRINT_VAR(v) cerr << #v << " = " << v << " (" << __FILE__ << ":" << __LINE__ << ")" << endl
 
 #define NB_N_CHOOSE_K_STORED 500
 
