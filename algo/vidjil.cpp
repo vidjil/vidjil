@@ -939,13 +939,14 @@ int main (int argc, char **argv)
 	{
 	  // Custom germline
 	  Germline<char, KmerAffect> *germline;
-	  germline = new Germline<char, KmerAffect>("custom", 'X', "", 
-                                                    json({{"5", {f_reps_V}}, {"4", {f_reps_D}}, {"3", {f_reps_J}}}),
-                                                    json({{"order", {"5", "4", "3"}},
+          json jsonConfig = json({{"order", {"5", "4", "3"}},
                                                      {"segments", {{"5", {{"seed", seed}, {"code", "V"}, {"build", kmer_threshold != NO_LIMIT_VALUE}, {"index", "1"}}},
                                                                    {"4", {{"seed", seed}, {"code", "D"}, {"build", "0"}, {"index", "0"}}},
-                                                                   {"3", {{"seed", seed}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}}),
-                                  NULL,
+                                                                   {"3", {{"seed", seed}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}});
+	  germline = new Germline<char, KmerAffect>("custom", 'X', "", 
+                                              json::array({{{"5", f_reps_V}, {"4", f_reps_D}, {"3", f_reps_J}}}),
+                                                    jsonConfig,
+                                  nullptr,
                                   trim_sequences);
 	  multigermline->addGermline(germline);
     multigermline->setRepository(germline->getRepository());
