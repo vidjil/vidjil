@@ -18,6 +18,7 @@ private:
   std::string ref;
   std::string species;
   int species_taxon_id;
+  bool repository_allocated;
   
 public:
 
@@ -98,13 +99,14 @@ public:
 
 
 template <typename Tshortcut, typename Affect>
-MultiGermline<Tshortcut, Affect>::MultiGermline() : index(nullptr),repository(nullptr),ref("custom"),species("custom"),species_taxon_id(0) {}
+MultiGermline<Tshortcut, Affect>::MultiGermline() : index(nullptr),repository(nullptr),ref("custom"),species("custom"),species_taxon_id(0),repository_allocated(false) {
+}
 
 template <typename Tshortcut, typename Affect>
 MultiGermline<Tshortcut, Affect>::~MultiGermline(){
   if (index != nullptr)
     delete index;
-  if (repository != nullptr)
+  if (repository_allocated)
     delete repository;
 }
 
@@ -177,8 +179,10 @@ template <typename Tshortcut, typename Affect>
 void MultiGermline<Tshortcut, Affect>::buildFromJson(std::string path, std::string json_filename_and_filter, int filter,
                                                        std::string default_seed, int default_max_indexing,
                                                        const std::map<std::string, bool> &build_automaton) {
-  if (repository == nullptr)
+  if (repository == nullptr) {
     repository = new GermlineElementRepository<Tshortcut, Affect>();
+    repository_allocated = true;
+  }
 
   //extract json_filename and systems_filter
   string json_filename = json_filename_and_filter;
