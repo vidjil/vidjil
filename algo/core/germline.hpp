@@ -193,7 +193,7 @@ Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
         std::string segment_code = (config[item.key()].count("code") > 0) ? config[item.key()]["code"].get<std::string>() : "";
         Tshortcut current_shortcut = repository->getNextShortcut();
         std::string affect = to_string(current_shortcut)+"-"+code+segment_code;
-        std::cerr << filenam << "\t" << affect << "\t" << multi << std::endl;
+        std::cerr << filenam << "\t" << affect << std::endl;
         GermlineElement<Tshortcut, Affect>* element;
         std::string filename = path + filenam;
         if (repository->has(filename, seed)) {
