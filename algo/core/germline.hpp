@@ -271,7 +271,7 @@ std::shared_ptr<BioReader> Germline<Tshortcut, Affect>::getReader(const std::str
   std::set<GermlineElement<Tshortcut, Affect>*> elements = getGermlineElements(segment);
   std::shared_ptr<BioReader> reader = std::make_shared<BioReader>(2, "|", (*(elements.begin()))->getMarkPos());
   for (auto &element: elements) {
-    reader->add(element->getFilename());
+    reader->add(element->getFilename(), false);
   }
   return reader;
 }
