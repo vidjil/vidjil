@@ -108,6 +108,9 @@ MultiGermline<Tshortcut, Affect>::~MultiGermline(){
     delete index;
   if (repository_allocated)
     delete repository;
+  for (auto& germline : germlines) {
+    delete germline;
+  }
 }
 
 template <typename Tshortcut, typename Affect>
