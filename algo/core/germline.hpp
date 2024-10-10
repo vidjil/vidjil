@@ -166,10 +166,10 @@ Germline<Tshortcut, Affect>::Germline() {
 template <typename Tshortcut, typename Affect>
 Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
                                       std::string path, json filenames,
-                                      json jconfig,
-                                      GermlineElementRepository<Tshortcut, Affect> *repository,
+                                      json &jconfig,
+                                      GermlineElementRepository<Tshortcut, Affect> *repo,
                                       int max_indexing)
-  : segments(jconfig["order"].get<std::list<std::string>>()), config(jconfig["segments"]), repository(repository), shortcut(shortcut), code(code),
+  : segments(jconfig["order"].get<std::list<std::string>>()), config(jconfig["segments"]), repository(repo), shortcut(shortcut), code(code),
                                                              max_indexing(max_indexing),
                                                              multi(nullptr), index(nullptr) {
 
