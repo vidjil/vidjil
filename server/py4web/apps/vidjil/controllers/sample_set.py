@@ -1,6 +1,12 @@
-# -*- coding: utf-8 -*-
+
 import datetime
 import pathlib
+import json
+import os
+from collections import defaultdict
+from ombott import static_file
+from py4web import action, request, URL
+
 from .. import defs
 from ..modules import vidjil_utils
 from ..modules import tag
@@ -13,13 +19,6 @@ from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
 from ..modules import stats_qc_utils
 from ..user_groups import get_default_creation_group, get_involved_groups
-import json
-import time
-import os
-from py4web import action, request, URL
-from collections import defaultdict
-from ombott import static_file
-
 from ..common import db, session, T, auth, log
 
 
@@ -239,7 +238,6 @@ def index():
 @action.uses("sample_set/all.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def all():
-    start = time.time()
     if request.query.get('type'):
         type = request.query.get('type')
     else :
@@ -269,18 +267,11 @@ def all():
     factory = ModelFactory()
     helper = factory.get_instance(type)
 
-    f = time.time()
     sample_set_list = SampleSetList(helper, page, step, tags, search)
-
-    log.debug("list loaded (%.3fs)" % (time.time() - f))
-
-    mid = time.time()
 
     set_ids = set([s.sample_set_id for s in sample_set_list.result])
     admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set) &  (db.sample_set.id.belongs(set_ids))).select(db.sample_set.id)]
     admin_permissions = list(set(admin_permissions))
-
-    log.debug("permission load (%.3fs)" % (time.time() - mid))
 
     # failsafe if filtered display all results
     step = len(sample_set_list) if step is None else step
@@ -304,7 +295,6 @@ def all():
     log.info("%s list %s" % (type, search), extra={'user_id': auth.user_id,
         'record_id': None,
         'table_name': "sample_set"})
-    log.debug("sample_set list (%.3fs)" % (time.time()-start))
 
     return dict(query= result,
                 fields= fields,
@@ -519,8 +509,6 @@ def custom():
         res = {"success": "false", "message": "Missing field id"}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
-    
-    start = time.time()
 
     if "config_id" in request.query and request.query["config_id"] != "-1" :
         config_id = int(request.query["config_id"])
@@ -625,7 +613,6 @@ def custom():
     
     tag_decorator = tag.TagDecorator(tag.get_tag_prefix())
     log.info("load compare list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': "results_file"})
-    log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
     classification = get_configs_by_classification()
 
@@ -982,7 +969,6 @@ def samplesetById():
 @action("/vidjil/sample_set/stats", method=["POST", "GET"])
 @action.uses("sample_set/stats.html", db, auth.user)
 def stats():
-    start = time.time()
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True,
                                 vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True)))}
@@ -1024,7 +1010,6 @@ def stats():
     log.info("%s stat list %s" % (request.query["type"], search), extra={'user_id': auth.user_id,
         'record_id': None,
         'table_name': "sample_set"})
-    log.debug("stat list (%.3f s)" % (time.time()-start))
 
     return dict(query = result,
                 fields = fields,
