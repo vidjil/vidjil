@@ -109,6 +109,17 @@ inline int spaced_int(int *input, const string &seed) {
 */
 string path_join(string path1, string path2);
 
+/* Get a json .g from a path and filename */
+json parse_json_g(string path, string json_filename);
+
+/* Load a json .g
+   - into an existing json_germlins
+   - from a path and filename
+   - possibly filtering some systems
+ */
+void load_json_g(json &json_germlines, string path, string json_filename, string systems_filter);
+
+
 /* Signal handling */
 
 
