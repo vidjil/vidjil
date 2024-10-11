@@ -203,7 +203,8 @@ Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
         std::string filename = path_join(path, filenam);
         if (repository->has(filename, seed)) {
           element = repository->get(filename, seed);
-          allocated[element] = false;
+          if (allocated.count(element) == 0)
+            allocated[element] = false;
           current_shortcut = element->getShortcut();
           element->add(code, item.key());
         } else {
