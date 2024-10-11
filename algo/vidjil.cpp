@@ -646,7 +646,7 @@ int main (int argc, char **argv)
   int verbose = 0 ;
   app.add_flag_function("--verbose,-v", [&](int64_t n) { COUNT(n); verbose += n ; }, "verbose mode") -> group(group);
 
-  bool __only_on_exit__clean_memory; // Do not use except on exit, see #3729
+  bool __only_on_exit__clean_memory = false; // Do not use except on exit, see #3729
   app.add_flag("--clean-memory", __only_on_exit__clean_memory, "clean memory on exit") -> group(group) -> level();
 
   // ----------------------------------------------------------------------------------------------------------------------
