@@ -1512,8 +1512,8 @@ int main (int argc, char **argv)
       string label = windowsStorage->getLabel(it->first);
       string window_str = ">" + clone_id + "--window" + " " + label + '\n' + it->first + '\n' ;
 
-      bool in_top_by_locus = ((int)nb_output_clones_by_locus[segmented_germline->code] < min_clones_per_locus &&
-                              we.getNbReadsGermline(segmented_germline->code) >= DEFAULT_LIMIT_RATIO_TOP_PER_LOCUS*nb_segmented);
+      bool in_top_by_locus = ((int)nb_output_clones_by_locus[segmented_germline->getCode()] < min_clones_per_locus &&
+                              we.getNbReadsGermline(segmented_germline->getCode()) >= DEFAULT_LIMIT_RATIO_TOP_PER_LOCUS*nb_segmented);
 
       // interesting junctions are always handled
       if (!windowsStorage->isInterestingJunction(it->first))
@@ -1535,7 +1535,7 @@ int main (int argc, char **argv)
       }
 
 
-      nb_output_clones_by_locus[segmented_germline->code]++;
+      nb_output_clones_by_locus[segmented_germline->getCode()]++;
       if (clone_on_stdout)
         {
           cout << clone_id_human << endl ;
@@ -1611,12 +1611,11 @@ int main (int argc, char **argv)
         output.addClone(it->first, clone);
 
         // Basic information that will always be output
-        clone->set("germline", segmented_germline->code);
+        clone->set("germline", segmented_germline->getCode());
         clone->set("_average_read_length", { fixed_string_of_float(windowsStorage->getAverageLength(it->first), 2) });
         clone->set("sequence", kseg->getSequence().sequence);
         clone->set("_coverage", { repComp.getCoverage() });
 
-        delete kseg;
         if (repComp.getCoverage() < WARN_COVERAGE)
           clone->add_warning(W51_LOW_COVERAGE, "Low coverage: " + fixed_string_of_float(repComp.getCoverage(), 3), LEVEL_WARN, clone_on_stdout);
 
@@ -1641,6 +1640,8 @@ int main (int argc, char **argv)
             {"seq", repComp.getQuality()}
         });
         }
+        delete kseg;
+
 
         if (stop_analysis)
           {
@@ -1715,7 +1716,7 @@ int main (int argc, char **argv)
      else
      {
         // We remember that the KmerSegmenter detected that sequence and raise W68
-        seg.code = "Possibly " + segmented_germline->code;
+        seg.code = "Possibly " + segmented_germline->getCode();
         seg.info = seg.code + seg.info;
         clone->add_warning("W68", "V(D)J designation failed, possibly complex or not recombined sequence", LEVEL_WARN, clone_on_stdout);
 	   } // end if (seg.isSegmented())

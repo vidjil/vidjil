@@ -452,10 +452,10 @@ string KmerSegmenter<Shortcut, Affect>::getInfoLineWithAffects() const
 {
    stringstream ss;
 
-   ss << "= " << right << setw(10) << segmented_germline->code << " "
+   ss << "= " << right << setw(10) << this->segmented_germline->getCode() << " "
       << right << setw(3) << score << " "
       << left << setw(30)
-      << getInfoLine();
+      << this->getInfoLine();
 
    if (this->getSegmentationStatus() != UNSEG_TOO_SHORT)
      ss << this->getKmerAffectAnalyser()->toString();
@@ -1444,14 +1444,14 @@ void FineSegmenter<Shortcut, Affect>::findCDR3(){
   // Reminder: JUNCTIONstart is 1-based
 
   // IGH without a {WP}GxG pattern
-  if (JUNCTIONproductive && (segmented_germline->code.find("IGH") != string::npos))
+  if (this->JUNCTIONproductive && (this->segmented_germline->getCode().find("IGH") != string::npos))
   {
-    string FR4aastart = nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, CDR3end+1+11));
+    string FR4aastart = nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3end+1, this->CDR3end+1+11));
 
     if (!WPGxG(FR4aastart))
     {
-      JUNCTIONproductive = false;
-      JUNCTIONunproductive = UNPROD_NO_WPGxG;
+      this->JUNCTIONproductive = false;
+      this->JUNCTIONunproductive = UNPROD_NO_WPGxG;
     }
   }
 }
@@ -1542,16 +1542,16 @@ void KmerSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone, bool details)
     json seg;
     int sequenceSize = this->sequence.size();
 
-    if (evalue > NO_LIMIT_VALUE)
-      clone->setSeg("evalue", toJsonSegVal(scientific_string_of_double(evalue)));
+    if (this->evalue > NO_LIMIT_VALUE)
+      clone->setSeg("evalue", toJsonSegVal(scientific_string_of_double(this->evalue)));
 
     if (!details)
       return ;
 
-    if (evalue_left > NO_LIMIT_VALUE)
-      clone->setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(evalue_left)));
-    if (evalue_right > NO_LIMIT_VALUE)
-      clone->setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(evalue_right)));
+    if (this->evalue_left > NO_LIMIT_VALUE)
+      clone->setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(this->evalue_left)));
+    if (this->evalue_right > NO_LIMIT_VALUE)
+      clone->setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(this->evalue_right)));
 
     if (getKmerAffectAnalyser() != NULL) {
       clone->setSeg("affectValues", {

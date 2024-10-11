@@ -255,7 +255,7 @@ json WindowsStorage<Tshortcut, Affect>::computeDiversity(map <string, size_t> nb
   for (auto it = seqs_by_window.begin(); it != seqs_by_window.end(); ++it)
   {
     size_t clone_nb_reads = it->second.getNbInserted();
-    string code = getGermline(it->first)->code;
+    string code = getGermline(it->first)->getCode();
 
     float ratio_all  = (float) clone_nb_reads / nb_segmented[ALL_LOCI] ;
     float ratio_code = (float) clone_nb_reads / nb_segmented[code] ;
@@ -321,7 +321,7 @@ void WindowsStorage<Tshortcut, Affect>::sortedWindowsToOutput(SampleOutput *outp
 
   for (auto it = sort_all_windows.begin(); it != sort_all_windows.end();) {
 
-    CloneOutput *clone = output->getClone(it->first, germline_by_window[it->first]->code);
+    CloneOutput *clone = output->getClone(it->first, germline_by_window[it->first]->getCode());
 
     if (status_by_window[it->first][SEG_CHANGED_WINDOW])
       clone->add_warning(W50_WINDOW, "Short or shifted window", LEVEL_WARN, false);
