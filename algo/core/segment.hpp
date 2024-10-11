@@ -1491,6 +1491,7 @@ void FineSegmenter<Shortcut, Affect>::showAlignments(ostream &out){
 
 template <typename Shortcut, typename Affect>
 void FineSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone, bool details){
+  UNUSED(details);
   json seg;
 
   for (AlignBox *box: boxes)
