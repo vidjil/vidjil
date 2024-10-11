@@ -20,7 +20,7 @@ RUN mkdir -p /usr/share/vidjil /etc/uwsgi/sites /var/vidjil && chown www-data:ww
 # Switch to www-data user
 USER www-data:www-data
 
-# Copy vidjil data and prepare data
+# Copy vidjil data
 COPY --chown=www-data:www-data server/py4web/apps/ /usr/share/vidjil/server/py4web/apps/
 COPY --chown=www-data:www-data tools/ /usr/share/vidjil/tools/
 COPY --chown=www-data:www-data germline/ /usr/share/vidjil/germline/

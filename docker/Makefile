@@ -4,7 +4,7 @@ include .env-default
 include .env
 	
 up:
-	COMPOSE_PROFILES=minimal docker compose up -d
+	docker compose up -d
 
 up_with_times:
 	date +%H:%M:%S > times.log
@@ -17,23 +17,37 @@ down:
 restart:
 	docker compose restart
 
-set_rights:dockr
+set_rights:
 	sudo chmod 777 -R ${VOLUME_PATH}
-	
+
+build-server:
+	docker build --progress=plain -t vidjil/server:dev -f ./vidjil-server/Dockerfile ../
+
+build-client:
+	docker build --progress=plain -t vidjil/client:dev -f ./vidjil-client/Dockerfile ../
+
 reset_database:
 	# Make a call to truncate db and refill with example/testing data
 	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts" vidjil-uwsgi python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql
 	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" vidjil-uwsgi python3 init_test_db.py
 
 clean_deploy:
-	# Erase old container data and strat a fresh deploy; fix rights on volumes
-	sudo echo "Make a clean and fresh deploy of server (minimal profile) - path : ${VOLUME_PATH}"
-	docker compose down || true
+	# Erase old container data and startt a fresh deploy; fix rights on volumes
+	sudo echo "Make a clean and fresh deploy of server - path : ${VOLUME_PATH}"
+	$(MAKE) down
 	sudo rm -r ${VOLUME_PATH} || true
 	docker compose up -d mysql uwsgi
 	$(MAKE) set_rights
 	$(MAKE) up
 	$(MAKE) reset_database
+	docker ps
+
+build_and_run_dev:
+	ln -s docker-compose-dev.yml docker-compose.override.yml
+	$(MAKE) build-server build-client
+	docker compose up -d mysql uwsgi
+	$(MAKE) set_rights
+	$(MAKE) up
 	docker ps
 
 ###############################
@@ -55,7 +69,3 @@ backup_volume:
 restore_volume:
 	[ -d ./${VOLUME_PATH}_backup  ] && sudo rm -r ./${VOLUME_PATH}  && sudo cp -R ./${VOLUME_PATH}_backup   ./${VOLUME_PATH}  && echo 'Restored volume backup (${VOLUME_PATH})' || echo "No available volume backup (${VOLUME_PATH})"
 	docker-compose restart uwsgi mysql workers fuse
-
-
-build-server:
-	docker build --progress=plain -t vidjil/server:py4web -f ./vidjil-server/Dockerfile ../

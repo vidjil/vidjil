@@ -1,58 +1,39 @@
 # First start
 
-## step 0
+## Step 1 : Build and start docker in dev config
 
-From `/vidjil/server/py4web`
-```
-make install
-make init
-```
+From `vidjil/docker`
 
-## step 1
-
-build docker image
-From `/vidjil/docker/vidjil-server`
-```
-cp ../../requirements.txt .
-docker build --no-cache -t vidjil/server:py4web .
+```bash
+make build_and_run_dev
 ```
 
-## step 2
+Or more manually
 
-Make sure `vidjil/docker/volumes/databases` and `vidjil/docker/volumes/mysql` folders
-are empty (in case you mounted those volumes in your docker-compose)
-
-From `/vidjil/docker`
-```
-mkdir -p volumes/databases
-mkdir -p volumes/mysql
+```bash
+ln -s docker-compose-dev.yml docker-compose.override.yml
+make build-client build-client
+docker compose up -d
 ```
 
-## step 3
+## Step 2 (optional) : Load data
 
-From `/vidjil/docker`
-start mysql service first
-```
-docker-compose up -d mysql
-```
+Either initialize with default test data :
 
-## step 4
-
-start docker 
-```
-docker-compose up -d
-```
-(Potentially run twice, down then up !)
-
-## step 5 (optional)
-
-load backup `.sql` file (un fichier de backup se trouve sur `bbi:/mnt/data/export/db-backup.sql`)
-```
-scp -pr bbi:/mnt/data/export/db-backup.sql .
-mysql --protocol=TCP --port=3307 -u vidjil -prootpass vidjil < db-backup.sql
+```bash
+make reset-database
 ```
 
-localhost               > vidjil/browser
-localhost/vidjil        > vidjil/server
-localhost/_dashboard    > py4web admin panel (default password : password)
-localhost:5555          > flower / celery monitoring tool
+Or load backup `.sql` file
+
+```bash
+cp backup.sql vidjil/docker/volumes/vidjil/mysql/
+docker exec -it vidjil-mysql bash
+mysql -u vidjil -p vidjil < /var/lib/mysql/backup.sql
+```
+
+## Step 3 : Load dev test websites
+
+- [Vidjil](https://localhost)
+- [Dashboard](https://localhost/_dashboard)
+- [Flower (Celery monitoring tool)](https://localhost:5555)
