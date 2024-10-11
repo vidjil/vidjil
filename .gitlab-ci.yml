@@ -280,7 +280,6 @@ test_server_unit:
 .setup_docker_server:
     # Build specific version of docker images
     - echo "CI_COMMIT_REF_NAME - $CI_COMMIT_REF_NAME"
-    ### Use released py4web server image as base
     - echo "TIME $(date) - before pulling docker images" >> time.log
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT
@@ -295,7 +294,6 @@ test_server_unit:
     # Use http version of config
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
-    - mkdir -p docker/postfix/ssl
     - sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" docker/vidjil-server/conf/defs.py
     # Up py4web
     - cd docker

@@ -624,7 +624,7 @@ def filesystem():
     json = []
     id = "" if ("node" not in request.query.keys() or request.query["node"] is None) else request.query["node"] + '/'
     if id == "":
-        json = [{"text": "/", "id": "/",  "children": True}]
+        json = [{"text": "/", "id": "/", "children": True}]
     else:
         root_folder = defs.FILE_SOURCE + id
         for idx, f in enumerate(os.listdir(root_folder)):
@@ -636,9 +636,10 @@ def filesystem():
             is_dir = os.path.isdir(root_folder + f)
             if correct_type or is_dir:
                 json_node = jstree.Node(f, id + f).jsonData()
-                if is_dir : json_node['children'] = True
-                if correct_type: json_node['icon'] = 'jstree-file'
+                if is_dir:
+                    json_node['children'] = True
+                if correct_type:
+                    json_node['icon'] = 'jstree-file'
                 json_node['li_attr']['title'] = f
                 json.append(json_node)
     return json
-

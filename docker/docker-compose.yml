@@ -160,6 +160,7 @@ services:
                 condition: service_started
         links:
             - mysql:mysql
+            - redis:redis
         ports:
             - "5555:5555"
         networks:

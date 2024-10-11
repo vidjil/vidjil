@@ -24,6 +24,7 @@ USER www-data:www-data
 COPY --chown=www-data:www-data server/py4web/apps/ /usr/share/vidjil/server/py4web/apps/
 COPY --chown=www-data:www-data tools/ /usr/share/vidjil/tools/
 COPY --chown=www-data:www-data germline/ /usr/share/vidjil/germline/
+COPY --chown=www-data:www-data demo/ /usr/share/vidjil/demo/
 COPY --chown=www-data:www-data docker/vidjil-server/conf/uwsgi.ini /etc/uwsgi/sites/uwsgi.ini
 COPY --chown=www-data:www-data docker/vidjil-server/scripts/* /entrypoints/
 RUN rm -Rf /usr/share/vidjil/server/py4web/apps/vidjil/databases && mkdir /usr/share/vidjil/server/py4web/apps/vidjil/databases && touch /usr/share/vidjil/server/py4web/apps/vidjil/databases/sql.log && \
@@ -32,9 +33,10 @@ RUN rm -Rf /usr/share/vidjil/server/py4web/apps/vidjil/databases && mkdir /usr/s
 # Setup py4web
 RUN cd /usr/share/vidjil/server/py4web && py4web setup -Y apps && rm -Rf apps/_default apps/_minimal apps/_scaffold apps/_documentation apps/showcase 
 
-# Install latest vidjil algo and build germline
+# Install latest vidjil algo and build stuffs
 RUN cd /usr/share/vidjil && wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 vidjil-algo && chmod +x vidjil-algo
-RUN cd /usr/share/vidjil/germline/ && make
+RUN cd /usr/share/vidjil/germline/ && make && \
+    cd /usr/share/vidjil/demo/ && make
 
 # Switch back to root to perform operations in entrypoints
 USER root:root
