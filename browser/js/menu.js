@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2024 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -43,7 +43,7 @@ function initMenu () {
                 url: prepend_path_if_not_web(config.file_menu.file[0], config.file_menu.path),
                 success: function (result) {
                     $('#static_file_menu').css("display", "")
-                    var demo_file = document.getElementById("fileSelector").firstChild
+                    var demo_file = document.getElementById("fileSelector").firstElementChild
 
                     var buildConfigLink = function (i) {
 
@@ -99,6 +99,19 @@ function loadData() {
         .style.display = "none";
     document.getElementById("add_clone_menu")
         .style.display = "none";
+    document.getElementById("settings_export_menu")
+        .style.display = "none";
+}
+
+function loadSettings() {
+    document.getElementById("file_menu")
+        .style.display = "none";
+    document.getElementById("axis_choice")
+        .style.display = "none";
+    document.getElementById("add_clone_menu")
+        .style.display = "none";
+    document.getElementById("settings_export_menu")
+        .style.display = "block";
 }
 
 function loadAnalysis() {
@@ -107,6 +120,8 @@ function loadAnalysis() {
     document.getElementById("file_menu")
         .style.display = "none";
     document.getElementById("add_clone_menu")
+        .style.display = "none";
+        document.getElementById("settings_export_menu")
         .style.display = "none";
 }
 
@@ -117,27 +132,8 @@ function cancel() {
         .style.display = "none";
     document.getElementById("add_clone_menu")
         .style.display = "none";
-}
-
-function showSelector(elem) {
-        $('.selector')
-            .stop()
-        $('.selector')
-            .css('display', 'none');
-        $('#' + elem)
-            .css('display', 'block')
-            .animate({
-                height: $('#' + elem).children(":first").height()
-            }, 100);
-}
-
-function hideSelector() {
-    $('.selector')
-        .stop()
-        .animate({
-            height: "hide",
-            display: "none"
-        }, 100);
+    document.getElementById("settings_export_menu")
+        .style.display = "none";
 }
 
 function showDisplayMenu() {
@@ -171,6 +167,8 @@ function showAddManualCloneMenu(error) {
     document.getElementById("axis_choice")
         .style.display = "none";
     document.getElementById("file_menu")
+        .style.display = "none";
+    document.getElementById("settings_export_menu")
         .style.display = "none";
 }
 /**

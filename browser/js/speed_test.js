@@ -76,7 +76,7 @@ function speedTest(m) {
         log += "init+load time : " + elapsedTime + "ms\n";
         
         for (var j = 20; j < i + 1; j = j + 20) {
-            m.displayTop(j);
+            m.filter.add("Top",">",j);
             startTime = new Date()
                 .getTime();
             elapsedTime = 0;

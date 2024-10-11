@@ -1,0 +1,216 @@
+{
+  "germlines": {}, 
+  "diversity": {
+    "index_H_entropy": [
+      {
+        "all": 5.685521833966959, 
+        "IGH+": 5.630409009754658, 
+        "TRG": 5.251430198730304, 
+        "IGH": 4.6659245018527145
+      }, 
+      5.688690639121887
+    ], 
+    "index_E_equitability": [
+      {
+        "all": 0.39234431286307087, 
+        "IGH+": 0.8682691940502169, 
+        "TRG": 0.3710257284862601, 
+        "IGH": 0.3524275802230387
+      }, 
+      0.39255398511886597
+    ], 
+    "index_Ds_diversity": [
+      {
+        "all": 0.9643881817723228, 
+        "IGH+": 0.9948222331162313, 
+        "TRG": 0.9505217377100443, 
+        "IGH": 0.8727130704274034
+      }, 
+      0.9644120931625366
+    ]
+  }, 
+  "producer": "vidjil fuse", 
+  "timestamp": "2022-01-12 16:11:25", 
+  "vidjil_json_version": "2016b", 
+  "reads": {
+    "segmented": [
+      1965297, 
+      1965949
+    ], 
+    "distribution": {
+      "IGK+": [
+        0, 
+        0
+      ], 
+      "unexpected": [
+        0, 
+        0
+      ], 
+      "IGH": [
+        0, 
+        2
+      ], 
+      "TRD+": [
+        0, 
+        0
+      ], 
+      "TRB": [
+        0, 
+        0
+      ], 
+      "0.000001": [
+        109036, 
+        153609
+      ], 
+      "0.1": [
+        0, 
+        0
+      ], 
+      "0.01": [
+        1148840, 
+        1148834
+      ], 
+      "0.00001": [
+        225329, 
+        225324
+      ], 
+      "TRD": [
+        0, 
+        0
+      ], 
+      "TRG": [
+        0, 
+        7
+      ], 
+      "TRA": [
+        0, 
+        0
+      ], 
+      "0.0000001": [
+        0, 
+        71374
+      ], 
+      "TRB+": [
+        0, 
+        0
+      ], 
+      "0.0001": [
+        175201, 
+        175200
+      ], 
+      "IGL": [
+        0, 
+        0
+      ], 
+      "IGK": [
+        0, 
+        0
+      ], 
+      "IGH+": [
+        0, 
+        0
+      ], 
+      "0.001": [
+        191609, 
+        191608
+      ], 
+      "TRA+D": [
+        0, 
+        0
+      ]
+    }, 
+    "total": [
+      2390273, 
+      2390273
+    ], 
+    "germline": {
+      "IGH+": [
+        655, 
+        655
+      ], 
+      "TRD+": [
+        0, 
+        0
+      ], 
+      "TRA": [
+        0, 
+        0
+      ], 
+      "TRB": [
+        0, 
+        0
+      ], 
+      "TRD": [
+        0, 
+        0
+      ], 
+      "TRG": [
+        1402570, 
+        1402539
+      ], 
+      "IGK+": [
+        0, 
+        0
+      ], 
+      "unexpected": [
+        0, 
+        707
+      ], 
+      "TRB+": [
+        0, 
+        0
+      ], 
+      "IGL": [
+        0, 
+        0
+      ], 
+      "IGK": [
+        0, 
+        0
+      ], 
+      "IGH": [
+        562072, 
+        562048
+      ], 
+      "TRA+D": [
+        0, 
+        0
+      ]
+    }
+  }, 
+  "samples": {
+    "log": ["log 1", "log 2"],
+    "producer": ["vidjil-algo dev 42c62f97e (2022-01-10)", "vidjil-algo 2021.04"],
+    "timestamp": ["2022-01-12 14:52:47", "2022-01-12 16:06:16"],
+    "commandline": ["./vidjil-algo .../LIL-L3-0.fastq.gz ", "./vidjil-algo .../LIL-L3-0.fastq.gz "],
+    "number": 2, 
+    "original_names": ["demo_lil3/LIL-L3-0.fastq.gz", "demo_lil3/LIL-L3-0.fastq.gz"],
+    "run_timestamp": ["2022-01-12 14:49:30", "2021-12-13 13:50:28"]
+  }, 
+  "clones": [
+      {
+            "germline": "TRG",
+            "_average_read_length": [249.0, 247.0 ],
+            "name": "TRGV2*01 0/CCGAGG/0 TRGJP1*01",
+            "_coverage_info": ["", "249 bp (100% of 247.4 bp)"],
+            "sequence": "GGAAGGCCCC",
+            "_coverage": [1.03, 0.0],
+            "top": 9,
+            "seg": {},
+            "reads": [135, 0],
+            "id": "ATTACTGTGCCACCTGGGACGGGCCGAGGATACCACTGGTTGGTTCAAGA"
+      }, {
+            "germline": "IGH",
+            "_average_read_length": [249.0, 247.0 ],
+            "name": "TRGV2*01 0/CCGAGG/0 TRGJP1*01",
+            "_coverage_info": ["", "249 bp (100% of 247.4 bp)"],
+            "sequence": "GGAAGGCCCC",
+            "_coverage": [1.03, 0.0],
+            "top": 9,
+            "seg": {},
+            "reads": [135, 0],
+            "id": "ATTACTGTGCCACCTGGGACGGGCCGAGGATACCACTGGTTGGTTCAAGA"
+      }
+  ], 
+  "clusters": []
+}

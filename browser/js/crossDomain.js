@@ -84,14 +84,14 @@ function imgtPost(species, data, system) {
     imgtInput.sequences = data;
     if (system[0] == "I") {
         imgtInput.receptorOrLocusType = "IG";
+        imgtInput.cllSubsetSearch = "true";
     }
     if (system[0] == "T") {
         imgtInput.receptorOrLocusType = "TR";
     }
     var form = document.getElementById("form");
     form.removeAllChildren();
-    form.target = "_blank";
-    form.action = "http://www.imgt.org/IMGT_vquest/analysis";
+    form.action = "https://www.imgt.org/IMGT_vquest/analysis";
     form.method = "POST";
 
     for (var k in imgtInput) {
@@ -114,23 +114,17 @@ function imgtPost(species, data, system) {
  * @param data
  * @param system
  */
-function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_options) {
+function imgtPostForSegmenter(species, data, system, override_imgt_options, callback) {
     var imgtInput = initImgtInput(species);
     if (typeof override_imgt_options != 'undefined') {
         append_to_object(override_imgt_options, imgtInput)
     }
-    var imgt4segButton= document.getElementById("toIMGTSeg");
+
     //limit #request to #
     var pos, nb = 1;
     pos = 0;
     while ((pos = data.indexOf(">", pos + 1)) > 0) {
         nb++;
-    }
-
-    //update imgt button according to request processing
-    if (typeof imgt4segButton != "undefined"){
-        imgt4segButton.removeAllChildren();
-        imgt4segButton.appendChild(icon('icon-spin4 animate-spin', 'Sequences sent to IMGT/V-QUEST'));
     }
 
     //process to first 10 sequences then alert user about the remaining part
@@ -189,7 +183,7 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
                 //merge clone from segmenter and imgtinfo
                 //loop through the model maintained selection list
                 seq_id = imgtArray[i]["Sequence ID"]
-                cloneIdx= seq_id.substr(0,seq_id.indexOf('#'))
+                cloneIdx= seq_id.split("_")[1].substr(1) // ($sample)_#$cloneIdx_IGHV3-9*01_7/CCCGGA/17_IGHJ6*02
                 logmsg += cloneIdx + ",";
                 //remove unneeded info coz relative to # of selected items
                 delete  imgtArray[i]["Sequence number"];
@@ -203,81 +197,17 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
                                  modelRef.clones[cloneIdx].seg.imgt2display);
                 //toggle save in analysis file
                 modelRef.clones[cloneIdx].segEdited = true;
+                modelRef.clones[cloneIdx].seg.imgt.trimming_before   = modelRef.trimming_before_external
+                modelRef.clones[cloneIdx].seg.imgt.trimming_primer   = modelRef.primerSetCurrent
             }
             modelRef.updateElemStyle(modelRef.getSelected());
 
-            var imgt4segButton= document.getElementById("toIMGTSeg");
-            if (typeof imgt4segButton != "undefined"){
-                imgt4segButton.innerHTML = '▼';
-            }
             console.log({
                 "type": "log",
                 "msg": logmsg+ ")" + httpRequest.statusText
             });
 
-            // sai : segmenter axis inputs ; activate productivity-IMGT and VIdentity-IMGT
-            var sai = document.getElementById('segmenter_axis_select').getElementsByTagName('input');
-            for (var index in sai) {
-                if (!sai[index].checked && (sai[index].value == "productivity IMGT" || sai[index].value == "VIdentity IMGT"))
-                    sai[index].click();
-            }
-
-            var span = document.getElementById('highlightCheckboxes');
-            span.removeAllChildren();
-            var input = document.createElement('input');
-            input.type = 'checkbox';
-            input.id = 'imgt_cdr3_input_check';
-            input.checked = false;
-            $(input).on("click", function() {
-                if(this.checked) {
-                    segmenter.highlight[1].field = "CDR3-IMGT";
-                    segmenter.highlight[1].color = "red";
-
-                } else {
-                    segmenter.highlight[1].field = "";
-                }
-                    segmenter.update();
-
-            });
-            var label = document.createElement('label');
-            label.setAttribute("for", 'imgt_cdr3_input_check');
-            label.innerHTML = 'CDR3-IMGT';
-
-            input.setAttribute("title", 'Display CDR3 computed by IMGT/V-QUEST');
-            label.setAttribute("title", 'Display CDR3 computed by IMGT/V-QUEST');
-
-            span.appendChild(input);
-            span.appendChild(label);
-
-            input = document.createElement('input');
-            input.type = 'checkbox';
-            input.id = 'imgt_vdj_input_check';
-            input.checked = false;
-            $(input).on("click", function() {
-                if(this.checked) {
-                    segmenter.highlight[2].field = "V-REGION";
-                    segmenter.highlight[2].color = "#4b4";
-                    segmenter.highlight[3].field = "D-REGION";
-                    segmenter.highlight[3].color = "#b44";
-                    segmenter.highlight[4].field = "J-REGION";
-                    segmenter.highlight[4].color = "#aa2";
-                } else {
-                    segmenter.highlight[2].field = "";
-                    segmenter.highlight[3].field = "";
-                    segmenter.highlight[4].field = "";
-
-                }
-                    segmenter.update();
-
-            });
-            label = document.createElement('label');
-            label.setAttribute("for", 'imgt_vdj_input_check');
-            label.innerHTML = "V/D/J-IMGT";
-            input.setAttribute("title", "Display 5'V-REGION, D-REGION and 3'J-REGION computed by IMGT/V-QUEST");
-            label.setAttribute("title", "Display 5'V-REGION, D-REGION and 3'J-REGION computed by IMGT/V-QUEST");
-
-            span.appendChild(input);
-            span.appendChild(label);
+            if (callback) callback()
         }
     };
     httpRequest.onerror = function () {
@@ -286,11 +216,8 @@ function imgtPostForSegmenter(species, data, system, segmenter, override_imgt_op
             "msg": "imgtPostForSegmenter: error while requesting IMGT website: " + httpRequest.statusText,
             "priority": 2
         });
-        var imgt4segButton= document.getElementById("toIMGTSeg");
-        if (typeof imgt4segButton != "undefined"){
-            imgt4segButton.removeAttribute("style");
-            imgt4segButton.textContent=imgt4segButton.textContent.replace(" (loading)","");
-        }
+
+        if (callback) callback()
     };
 
     //test with a local file
@@ -320,7 +247,6 @@ function igBlastPost(species, data, system) {
 
     var form = document.getElementById("form");
     form.removeAllChildren();
-    form.target = "_blank";
     form.action = "https://www.ncbi.nlm.nih.gov/igblast/igblast.cgi";
     form.method = "POST";
 
@@ -350,7 +276,6 @@ function arrestPost(species, data, system) {
 
     var form = document.getElementById("form");
     form.removeAllChildren();
-    form.target = "_blank";
     form.action = "http://tools.bat.infspire.org/cgi-bin/arrest/compile.junctions.online.pl";
     form.method = "POST";
 
@@ -398,7 +323,6 @@ function blastPost(species, data, system) {
 
     var form = document.getElementById("form");
     form.removeAllChildren();
-    form.target = "_blank";
     form.action = "http://www.ensembl.org/Multi/Tools/Blast?db=core";
     form.method = "POST";
 
@@ -422,7 +346,6 @@ function assignSubsetsPost(species, data, system) {
     } else {
         var form = document.getElementById("form");
         form.removeAllChildren();
-        form.target = "_blank";
         form.enctype = 'multipart/form-data';
         form.name = 'assignsubsets';
         form.action = getProxy()+"assign_subsets";

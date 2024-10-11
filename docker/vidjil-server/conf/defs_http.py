@@ -5,7 +5,7 @@
 
 ### Email notifications for server errors
 SMTP_SERVER = 'postfix'
-SMTP_CREDENTIALS = 'vidjil:smtp_pass' # set to None if no auth required
+SMTP_CREDENTIALS = 'smtp_user' # set to None if no auth required
 # SMTP_SERVER = 'logging' # no mail
 FROM_EMAIL = 'notifications@vidjil.org'
 ADMIN_EMAILS = ['notifications@vidjil.org']
@@ -43,7 +43,7 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 ### Directory for program used in task.py
 ### relative path start from server/web2py
 DIR_VIDJIL = '/usr/share/vidjil/'
-DIR_FUSE = '../../tools'
+DIR_FUSE = '/usr/share/vidjil/tools/'
 DIR_MIXCR = '/usr/bin'
 DIR_IGREC = '/usr/local/bin/'
 DIR_GERMLINE = '/usr/share/vidjil/germline'
@@ -75,7 +75,7 @@ SCHEDULER_HEARTBEAT = 5
 
 # Directory to search for files
 FILE_SOURCE = '/mnt/data/src'
-FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa']
+FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa', 'tsv', 'airr', 'AIRR']
 
 SET_TYPE_PATIENT = 'patient'
 SET_TYPE_RUN= 'run'
@@ -83,3 +83,17 @@ SET_TYPE_GENERIC = 'generic'
 
 REQUIRE_HTTPS = False
 BROWSER_PATH = 'browser/index.html'
+
+# LDAP authentification
+LDAP = False
+# online test server available for test purposes
+# account:  euler@ldap.forumsys.com
+# password: password
+LDAP_CONF = {
+    "mode" :            'custom',
+    "server":           'ldap.forumsys.com',    
+    "base_dn":          'dc=example,dc=com',   
+    "logging_level":    'debug',
+    "username_attrib":  'mail',
+    "custom_scope":     'subtree'
+}

@@ -7,4 +7,8 @@ server {
         client_max_body_size 20G;
 
         include /etc/vidjil/*_location.conf;
+
+        ## Enable  CORS from one domain
+        # add_header Access-Control-Allow-Origin "example.com";
+
 }

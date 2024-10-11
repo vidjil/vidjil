@@ -1,0 +1,62 @@
+{
+    "tags":
+    {},
+    "vidjil_json_version": "2014.09",
+    "custom":
+    [],
+    "samples":
+    {
+        "info":
+        [
+            "#diagnosis",
+            "",
+            "Follow-up 1.",
+            "Follow-up 2",
+            "#relapse"
+        ],
+        "names":
+        [
+            "LIL-L3-0",
+            "LIL-L3-1",
+            "LIL-L3-2",
+            "LIL-L3-3",
+            "LIL-L3-4"
+        ],
+        "stock_order":
+        [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "id":
+        [
+            "sequence_file.data_file.99a1cde4ae44777d.4c494c2d4c332d302e66617374712e677a.gz",
+            "sequence_file.data_file.ba01c4b637d57a5d.4c494c2d4c332d312e66617374712e677a.gz",
+            "sequence_file.data_file.b1b3f52eef8dd7ea.4c494c2d4c332d322e66617374712e677a.gz",
+            "sequence_file.data_file.8cb7543fec865a3a.4c494c2d4c332d332e66617374712e677a.gz",
+            "sequence_file.data_file.805db44dc62434b5.4c494c2d4c332d342e66617374712e677a.gz"
+        ],
+        "order":
+        [
+            0,
+            1,
+            2,
+            3,
+            4
+        ]
+    },
+    "clones":
+    [
+        {
+            "tag": "dominant",
+            "id": "CCGTTTTACTACTGTGCTGCGTGTCTGGGGATTGGATCAAGACGTTTTGC"
+            // a comment not compatible with json format
+        }
+    ],
+    "clusters":
+    [
+       
+    ]
+}

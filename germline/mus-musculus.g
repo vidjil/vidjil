@@ -1,5 +1,5 @@
 {
-    "ref": "http://www.vidjil.org/germlines/germline-49.tar.gz",
+    "ref": "https://www.vidjil.org/germlines/germline-2021-01-21.tar.gz",
 
     "species": "Mus musculus",
     "species_taxon_id": 10090,

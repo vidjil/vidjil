@@ -1,0 +1,9 @@
+[9] 2023-11-21 13:26:59,542    DEBUG - common.py:215	Creating logger
+[8] 2023-11-21 13:26:59,676    DEBUG - common.py:215	Creating logger
+[8] 2023-11-21 13:26:59,930    DEBUG - common.py:215	Creating logger
+[8] 2023-11-21 13:27:00,011     INFO - common.py:371	                          None           <> rebuild indexes
+[55] 2023-11-21 13:27:01,249    DEBUG - common.py:215	Creating logger
+[8] 2023-11-21 13:32:04,029    DEBUG - common.py:215	Creating logger
+[9] 2023-11-21 13:32:04,236    DEBUG - common.py:215	Creating logger
+[8] 2023-11-21 13:32:04,384    DEBUG - common.py:215	Creating logger
+[328] 2023-11-21 13:43:45,522    DEBUG - common.py:215	Creating logger

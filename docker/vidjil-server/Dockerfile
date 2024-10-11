@@ -1,52 +1,54 @@
-from ubuntu:18.04
+FROM ubuntu:20.04
 
-label version="1.1"
-label description="An Ubuntu based docker image which comes \
-with a full installation of the Vidjil algoright and browser/server."
+LABEL version="1.1"
+LABEL description="An Ubuntu based docker image which comes \
+with a full installation of the Vidjil algorithm and browser/server."
 
-env GOSU_VERSION 1.10
-run set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates wget cron unzip make python ipython python-enum34 python-requests git python-ijson libyajl2 python-cffi gnupg2 && rm -rf /var/lib/apt/lists/* \
-	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
-	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
-	&& export GNUPGHOME="$(mktemp -d)" \
-	&& for i in $(seq 1 3); do \
-              gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-              && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-              && break || sleep 5; \
-           done\
-	&& rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu
 
-run apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y -q sudo curl apt-utils uwsgi-plugin-python
+# This file need to be in the directory used to launch the docker image build
+# If you build it manually, copy this file here from vidjil root directory 
+COPY ./requirements.txt ./requirements.txt
 
-arg git_branch=dev
-arg remote_repo=https://gitlab.inria.fr/vidjil/vidjil.git
-run cd /usr/share/ && git config --global http.sslVerify false && git clone -b $git_branch $remote_repo
-run cd /usr/share/vidjil/server && make download_web2py && unzip web2py_src.zip && unlink web2py_src.zip
+#INSTALL REQUIREMENTS
+RUN apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python python3.8 python3-pip python3-dev python3-gdbm python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached htop nano libffi-dev gosu && \
+    service memcached restart && \
+	pip3 install --upgrade pip && \
+	pip3 install -r ./requirements.txt
 
-add ./scripts/install.sh /opt/install_scripts/install.sh
-copy ./conf/defs.py /opt/vidjil_conf/defs.py
-copy ./conf/defs_http.py /opt/vidjil_conf/defs_http.py
-copy ./conf/base.py /usr/share/vidjil/server/web2py/gluon/packages/dal/pydal/base.py
+# SET PYTHON3 AS DEFAULT PYTHON
+RUN rm -Rf /usr/bin/python
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
-arg build_env='PRODUCTION'
-env BUILD_ENV $build_env
+# COPY LATEST VIDJIL REPOSITORY
+ARG git_branch=dev
+ARG remote_repo=https://gitlab.inria.fr/vidjil/vidjil.git
+RUN cd /usr/share/ && git config --global http.sslVerify false && git clone -b $git_branch $remote_repo
 
-copy ./conf/uwsgi.ini /etc/uwsgi/apps-enabled/web2py.ini
-run mkdir /etc/vidjil
-copy ./conf/wsgihandler.py /etc/vidjil/wsgihandler.py
-run chmod +x /opt/install_scripts/install.sh; sync && /opt/install_scripts/install.sh
-run ln -s /etc/vidjil/defs.py /usr/share/vidjil/server/web2py/applications/vidjil/modules/defs.py
-run ln -s /etc/vidjil/wsgihandler.py /usr/share/vidjil/server/web2py/wsgihandler.py
+# SETUP PY4WEB
+RUN cd /usr/share/vidjil/server/py4web && make install
+RUN cd /usr/share/vidjil/server/py4web && py4web setup -Y apps && rm -Rf apps/_default apps/_minimal apps/_scaffold apps/_documentation apps/showcase 
 
-run wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 /usr/share/vidjil/vidjil-algo && cd /usr/share/vidjil/ && chmod +x vidjil-algo
+# INSTALL UWSGI
+RUN mkdir /usr/lib/uwsgi
+RUN mkdir /usr/lib/uwsgi/plugins
+RUN PYTHON=python3.8 uwsgi --build-plugin "/usr/src/uwsgi/plugins/python python38"
+RUN mv python38_plugin.so /usr/lib/uwsgi/plugins/python38_plugin.so
+RUN chmod 644 /usr/lib/uwsgi/plugins/python38_plugin.so
+RUN mkdir -p /etc/uwsgi/sites
+COPY ./conf/uwsgi.ini /etc/uwsgi/sites/uwsgi.ini
 
-copy ./scripts/uwsgi-entrypoint.sh /entrypoints/uwsgi-entrypoint.sh
-copy ./scripts/fuse-entrypoint.sh /entrypoints/fuse-entrypoint.sh
-run mkdir /usr/share/vidjil/server/web2py/applications/vidjil/databases && touch /usr/share/vidjil/server/web2py/applications/vidjil/databases/sql.log
-run mkdir /var/vidjil
-run touch /var/vidjil/vidjil.log && touch /var/vidjil/vidjil-debug.log
-run PASSWORD=`openssl rand -base64 10` && cd /usr/share/vidjil/server/web2py && python -c "from gluon.main import save_password; save_password('${PASSWORD}',443)"
-run chown -R www-data:www-data /usr/share/vidjil
-run useradd -ms /bin/bash vidjil && usermod -aG sudo vidjil
+# INSTALL LATEST VIDJIL ALGO
+RUN wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 /usr/share/vidjil/vidjil-algo && cd /usr/share/vidjil/ && chmod +x vidjil-algo
+RUN cd /usr/share/vidjil/germline/ && make
+
+COPY ./scripts/* /entrypoints/
+RUN mkdir /usr/share/vidjil/server/py4web/apps/vidjil/databases && touch /usr/share/vidjil/server/py4web/apps/vidjil/databases/sql.log
+RUN mkdir /var/vidjil
+RUN touch /var/vidjil/vidjil.log && touch /var/vidjil/vidjil-debug.log
+RUN chown -R www-data:www-data /usr/share/vidjil
+RUN chown -R www-data:www-data /usr/share/vidjil/server/py4web/apps/vidjil/databases
+RUN chmod 644 -R /usr/share/vidjil/server/py4web/apps/vidjil/databases
+
+RUN useradd -ms /bin/bash vidjil && usermod -aG sudo vidjil
+
+RUN echo 'if [ "$ENV" = "production" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc; echo 'export PS1="🐳 $prompt_color$SERVICE_NAME \e[32m[ \w ]# \e[0m"' >> ~/.bashrc

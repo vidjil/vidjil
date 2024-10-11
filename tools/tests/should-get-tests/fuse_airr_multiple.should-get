@@ -1,4 +1,4 @@
-!LAUNCH: python ../../fuse.py  ../data/airr_output/Demo-X5-x100.vidjil ../data/airr_output/airr_vidjil.tsv -o fuse_airr_multiple.vidjil ; cat fuse_airr_multiple.vidjil
+!LAUNCH: $PYTHON ../../fuse.py  ../data/airr_output/Demo-X5-x100.vidjil ../data/airr_output/airr_vidjil.tsv -o fuse_airr_multiple.vidjil ; cat fuse_airr_multiple.vidjil
 
 
 $ check original names. .vidjil
@@ -52,7 +52,7 @@ r28: 100%.*bp
 
 
 ### ===========================================================================================================
-!LAUNCH: python ../../fuse.py  ../data/airr_output/airr_vidjil.tsv ../data/airr_output/Demo-X5-x100.vidjil -o fuse_airr_multiple_invert.vidjil ; cat fuse_airr_multiple_invert.vidjil
+!LAUNCH: $PYTHON ../../fuse.py  ../data/airr_output/airr_vidjil.tsv ../data/airr_output/Demo-X5-x100.vidjil -o fuse_airr_multiple_invert.vidjil ; cat fuse_airr_multiple_invert.vidjil
 $ check original names. .vidjil
 1: "Demo-X5-x100.fasta"
 $ check original names: .tsv

@@ -115,7 +115,7 @@ class VDJ_Formatter():
                     return 'TRD+'
 
         return 'unexpected'
-    
+
     def genes_to_vdj(self, genes):
         if not genes:
             return ''
@@ -134,7 +134,7 @@ class VDJ_Formatter():
 
     def locus_to_vdj(self, s):
         return ' [%s]' % s if s else ''
-    
+
 
     def to_vdj(self):
         if not self.result:
@@ -346,7 +346,7 @@ class Vidjil_Result(Result):
         self.result = self.parse(l)
         if self.result:
             self.populate()
-    
+
     def parse(self, l):
         self.labels = vidjil_labels
         return l
@@ -377,7 +377,7 @@ def header_vidjil_results(ff_fasta, ff_vidjil):
     f_fasta = open(ff_fasta).__iter__()
     vidjil = json.load(open(ff_vidjil))
 
-    
+
     globals()['vidjil_labels'] = vidjil["clones"][0].keys()
     clone_nb = 0
 

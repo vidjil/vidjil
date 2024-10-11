@@ -1,6 +1,6 @@
  /* This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2024 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors:
  *     Marc Duez <marc.duez@vidjil.org>
@@ -29,6 +29,7 @@ AJAX_TIMEOUT_MSG2  = 30000                // Delay before second message
 var timeout;
 var ajaxOn = 0;
 var devel_mode = false;
+CLONOTYPE_TOP_LIMIT = 100
 
 /* Console (optional)
  * Setting here a console replaces the default javascript console with a custom one.
@@ -37,6 +38,9 @@ var devel_mode = false;
  * */
 console = new Com(console)
 
+if (config.load_error){
+    console.log({"type": "flash", "msg": "Loading of conf.js has failed.<br/>Does this script exist?", "priority": 3});
+}
 
 /* Model
  * The model is the main object of the Vidjil browser.
@@ -90,9 +94,11 @@ try {
     var graph = new Graph("visu2", m, db);               // Time graph
     var list_clones = new List("list", "data", m, db);   // List of clones
     var sp = new ScatterPlot("visu", m, db);             // Scatterplot (both grid and bar plot view)
-    var sp2 = new View(m, "visu3"); // Dummy view
-    // var sp2 = new ScatterPlot("visu3", m, db, 5);
-    var segment = new Segment("segmenter", m, db);   // Segmenter
+    var sp2;
+    var segment   = new Aligner("segmenter", m, db);      // Segmenter
+    var sp_export = new ScatterPlot("visu3", m, db, undefined, hidden=true);     // Scatterplot used for export render
+    var warnings  = new Warnings("warnings_list", m, db); // Warnings menu
+    m.warnings = warnings
 
 
     /* Similarity
@@ -139,9 +145,28 @@ try {
 }
 
 if (typeof config !== 'undefined' && typeof config.alert !== 'undefined') {
-    $("#top-container").addClass("alert")
-    $("#alert").append(config.alert)
-    $("#alert").click(function () { console.log({'type': 'popup', 'default': config.alert}) })
+    var alert_title, alert_msg;
+
+    if (typeof config.alert == 'string'){
+        alert_title = config.alert;
+        alert_msg = undefined;
+    }else{
+        alert_title = config.alert.title;
+        alert_msg = config.alert.msg;
+    }
+
+    $("#top-container").addClass("alert");
+    $("#alert").append(alert_title);
+
+    if (alert_msg){
+        console.log({'type': 'flash', priority:3, 'msg': alert_msg})
+        $("#alert").click(function () { console.log({'type': 'flash', priority:2, 'msg': alert_msg}) })
+    }
+}
+
+if (typeof config !== 'undefined' && (config.healthcare || false))
+{
+    document.getElementById("logospan").innerHTML = "(health)";
 }
 
 console.log("=== main.js finished ===");

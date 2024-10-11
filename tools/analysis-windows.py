@@ -19,7 +19,7 @@ def change_window(clone, w):
         print("! Clone without window in 'id' - clone '%s' unchanged" % old_window)
         return
 
-    new_start = pos + (len(old_window) - w) / 2
+    new_start = int(pos + (len(old_window) - w) / 2)
 
     if new_start < 0 or new_start+w > len(clone['sequence']):
         print("! Sequence too short for new window - clone '%s' unchanged" % old_window)

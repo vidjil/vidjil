@@ -1,5 +1,5 @@
 {
-    "ref": "http://www.vidjil.org/germlines/germline-xxx.tar.gz",
+    "ref": "https://www.vidjil.org/germlines/germline-2021-01-21.tar.gz",
 
     "species": "Gallus gallus; including red junglefowl",
     "species_taxon_id": 9031,
@@ -29,7 +29,7 @@
             "follows": "IGH",
             "recombinations": [ {
                 "5": ["IGHD+up.fa"],
-                "3": ["IGHJ+down.fa"]
+                "3": ["IGHJ.fa"]
             } ],
             "parameters": {
                 "seed": "12s"

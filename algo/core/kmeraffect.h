@@ -71,14 +71,14 @@ public:
 
   /**
    * Copy constructor
-   */ 
+   */
   KmerAffect(const KmerAffect &ka);
 
   /*
    * Copy constructor, possibly reversing the strand if 'reverse' is true
    */
   KmerAffect(const KmerAffect &ka, bool reverse);
-     
+
   /**
    * Construct an affectation as stated by the parameters
    * @post affect_strand(affect) == strand AND affect_char(affect) == kmer[0] AND
@@ -131,7 +131,7 @@ public:
    * @return the maximal hash value we can set
    */
   static uint getMaxHashValue();
-  
+
   /**
    * @return the unknown affectation
    */
@@ -157,7 +157,7 @@ public:
    * @return true iff the value is the same as the one given by default constructor
    */
   bool isNull() const;
-  
+
   /**
   * @return true if the K-mer is not odd (ambiguous or unknown)
   */
@@ -189,7 +189,7 @@ namespace std {
   };
 }
 
-  
+
 
 #define AFFECT_NOT_UNKNOWN_SYMBOL "*"
 #define AFFECT_AMBIGUOUS_SYMBOL "\0"

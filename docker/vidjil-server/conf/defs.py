@@ -46,10 +46,14 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 ### Directory for program used in task.py
 ### relative path start from server/web2py
 DIR_VIDJIL = '/usr/share/vidjil/'
-DIR_FUSE = '../../tools'
+DIR_FUSE = '/usr/share/vidjil/tools'
+DIR_PREPROCESS = '/usr/share/vidjil/tools/scripts/preprocess/'
 DIR_MIXCR = '/usr/bin'
 DIR_IGREC = '/usr/local/bin/'
 DIR_GERMLINE = '/usr/share/vidjil/germline'
+DIR_BINARIES = "/binaries/"
+DIR_FLASH2 = "/binaries/"
+DIR_PEAR = "/binaries/"
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py
 FUSE_SERVER = 'fuse'
@@ -78,7 +82,7 @@ SCHEDULER_HEARTBEAT = 5
 
 # Directory to search for files
 FILE_SOURCE = '/mnt/data/src'
-FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa']
+FILE_TYPES = ['fasta', 'fastq', 'fastq.gz', 'fa', 'tsv', 'airr', 'AIRR']
 
 SET_TYPE_PATIENT = 'patient'
 SET_TYPE_RUN= 'run'
@@ -86,3 +90,17 @@ SET_TYPE_GENERIC = 'generic'
 
 REQUIRE_HTTPS = True
 BROWSER_PATH = 'browser/index.html'
+
+# LDAP authentification
+LDAP = False
+# online test server available for test purposes
+# account:  euler@ldap.forumsys.com
+# password: password
+LDAP_CONF = {
+    "mode" :            'custom',
+    "server":           'ldap.forumsys.com',    
+    "base_dn":          'dc=example,dc=com',   
+    "logging_level":    'debug',
+    "username_attrib":  'mail',
+    "custom_scope":     'subtree'
+}

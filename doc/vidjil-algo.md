@@ -1,11 +1,9 @@
-# vidjil-algo 2022.03
-**Command-line manual**
 
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
 
 ```
   Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire -- [[http://www.vidjil.org]]
-  Copyright (C) 2011-2021 by Bonsai bioinformatics
+  Copyright (C) 2011-2022 by Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   and VidjilNet consortium.
   contact@vidjil.org
@@ -14,10 +12,11 @@
 This is the help of vidjil-algo, for command-line usage.
 This manual can be browsed online:
 
- - <http://www.vidjil.org/doc/vidjil-algo>                (last stable release)
+ - <https://www.vidjil.org/doc/vidjil-algo>                (last stable release)
  - <http://gitlab.vidjil.org/blob/dev/doc/vidjil-algo.md> (development version)
 
-Other documentation (users and administrators of the web application, developpers) can be found from <http://www.vidjil.org/doc/>.
+Other documentations for life scientists, bioinformaticians, server administrators, and developers
+can be found at <https://www.vidjil.org/doc/>.
 
 
 ## About
@@ -26,7 +25,7 @@ Other documentation (users and administrators of the web application, developper
 diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
-With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
+With adapted [library preparation and sequencing](https://www.vidjil.org/doc/locus),
 high-throughput sequencing (NGS/HTS) now
 enables the deep sequencing of a lymphoid population with dedicated
 sequencing methods and software, called either Rep-Seq or AIRR-Seq.
@@ -57,50 +56,68 @@ Vidjil-algo is open-source, released under GNU GPLv3+ license.
 
 # Requirements and installation
 
+## Performance
+
+To run with the default options on a 1GB .fastq file issue from amplicon protocol,
+vidjil-algo typically uses approximately 1.2GB of RAM
+and will take approx. 5+ minutes on a standard core at a few GHz.
+The actual performance mainly depends on the size of the input file, the number of expected clonotype,
+the number of processed germlines, and on some parameters 
+(eg: A file of rnaseq with few clonotype will take less memory than a file with polyclonal repertoire from amplicon protocol).
+
+
+Anyway, to process occasional requests from a single user with a few samples,
+a laptop or a desktop computer with any standard multi-core processor
+and 2GB RAM will be enough.
+Requirements for running a server handling more regular requests
+are detailed in [server.md](server.md#requirements).
+
+
 ## Supported platforms
 
 Vidjil-algo is systematically tested with the following compilers :
 
-  - gcc/g++ 4.8, 5.3, 6.3, 7.3, 8.4, 9.3, 10.1
-  - clang 3.4, 4.0, 6.0, 7.0
+  - gcc/g++ 7.5, 8.4, 9.3, 10.1, 11
+  - clang 6.0, 7.0, 11.0, 12.0
 
+We aim to support all gcc/clang versions released in the last 3 years.
 These compilers are available on recent OS X and on the following Linux distributions:
-  - CentOS 7, 8
-  - Debian Jessie 8.0, Stretch 9.0, Buster 10.0
-  - FreeBSD 9.2, 10, 11, 12
-  - Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS
+
+  - CentOS 8, CentOS Stream (installation possible on CentOS 7)
+  - Debian Stretch 9.0, Buster 10.0, Bullseye 11
+  - FreeBSD 12.2, 12.3, 13.0
+  - Ubuntu 18.04 LTS, 20.04 LTS
 
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
 The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) for that,
 and the tested compilers are run through Docker containers described in `.gitlab-ci-compilers.yml`.
 
-## Build requirements (optional)
 
-This paragraph details the requirements to build Vidjil-algo from source.
-You can also download a static binary, see [installation](#installation).
+## Installation (from source)
+
+### Build requirements
 
 To compile Vidjil-algo, make sure:
 
   - to be on a POSIX system ;
-  - to have a C++11 compiler (as `g++` 4.8 or above, or `clang` 3.4 or above).
+  - to have a C++11 compiler (as `g++` 7.5 or above, or `clang` 6.0 or above).
   - to have the `zlib` installed (`zlib1g-dev` package under Debian/Ubuntu,
     `zlib-devel` package under Fedora/CentOS).
-  - to have GNU make (`gmake` under FreeBSD). On some FreeBSD distributions, it was required to use commands such as
-``` bash
-make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
-```
-    The `gcc49` at the end of the command line is to be replaced by the `gcc` version used.
+  - to have GNU make (`gmake` under FreeBSD).
 
-
-## Installation
 
 ### Download
 
-These instructions targets *stable releases* of vidjil-algo, as downloaded from <http://www.vidjil.org/releases>
-or <http://bioinfo.lifl.fr/vidjil/>.
+These instructions target *stable releases* of vidjil-algo, as downloaded from <https://www.vidjil.org/releases>.
 
-Development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
-and compiling and running vidjil-algo on the development code can involve slightly different commands,
+``` sh
+curl -O https://www.vidjil.org/releases/vidjil-algo-latest.tar.gz
+tar xvfz vidjil-algo-latest.tar.gz
+cd vidjil-algo-*
+```
+
+Note that development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
+and compiling and running vidjil-algo on the development code can involve slightly different commands than below,
 including replacing `src` by `algo`.
 
 ### Compiling
@@ -114,13 +131,13 @@ make germline
    # get IMGT germline databases (IMGT/GENE-DB) -- you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
    # and cited as "IMGT®, the international ImMunoGeneTics information system® 
-   # http://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
+   # https://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
    # Lefranc, M.-P., IMGT®, the international ImMunoGeneTics database,
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 
 
 make -C src              # build vijil-algo from the sources (see the requirements,
-                         # another option is: wget http://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
+                         # another option is: wget https://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -O vidjil-algo
                          # to download a static binary (built for x86_64 architectures)
 
 make demo                # download demo files (S22 and L4, see demo/get-sequences)
@@ -132,9 +149,10 @@ On some older systems you may need to replace the `make` commands with:
 
 ``` bash
 make LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
+make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"   ### old FreeBSD
 ```
 
-## Self-tests (optional)
+### Self-tests (optional)
 
 You can run the tests with the following commands:
 
@@ -147,6 +165,35 @@ make -C src/tests/data
 
 make -C src test                # run self-tests (can take 5 to 60 minutes)
 ```
+
+
+## Installation (static binaries, x86_64 platforms)
+
+Run the following commands:
+
+``` sh
+curl https://www.vidjil.org/releases/vidjil-algo-latest_x86_64 -o vidjil-algo
+chmod 755 vidjil-algo
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/doc/vidjil-algo.md
+
+### Germlines
+mkdir germline
+cd germline
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/homo-sapiens.g
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/germline_id
+curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/germline/get-saved-germline | sh
+cd ..
+
+### Demo sequences (optional)
+mkdir demo
+cd demo
+curl -O https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/Demo-X5.fa
+curl https://gitlab.inria.fr/vidjil/vidjil/-/raw/master/demo/get-sequences | sh
+cd ..
+
+./vidjil-algo -h
+```
+
 
 # Input and parameters
 
@@ -195,7 +242,7 @@ It is thus generally safe to run `--sampled-reads 1000` to have a fast insight o
 ## Germline presets: locus and recombination selection
 
 ``` diff
-Germline/recombination selection (at least one -g or -V/(-D)/-J option must be given)
+Germline/recombination selection (at least one -g, -V/(-D)/-J, or --find option must be given)
   -g, --germline GERMLINES ...
 
          -g <.g FILE>(:FOCUS) ...
@@ -208,6 +255,7 @@ Germline/recombination selection (at least one -g or -V/(-D)/-J option must be g
   -V FILE ...                 custom V germline multi-fasta file(s)
   -D FILE ...                 custom D germline multi-fasta file(s) for V(D)J designation
   -J FILE ...                 custom V germline multi-fasta file(s)
+  --find FILE ...             custom multi-fasta file(s) for non-recombined alignments
   -2                          try to detect unexpected recombinations
 ```
 
@@ -215,7 +263,7 @@ The `germline/*.g` presets configure the analyzed recombinations.
 The following presets are provided:
 
   - `germline/homo-sapiens.g`: Homo sapiens, TR (`TRA`, `TRB`, `TRG`, `TRD`) and Ig (`IGH`, `IGK`, `IGL`) locus,
-    including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see <locus.md>.
+    including incomplete/unusal recombinations (`TRA+D`, `TRB+`, `TRD+`, `IGH+`, `IGK+`, see <libraries-recombinations.md>.
   - `germline/homo-sapiens-isotypes.g`: Homo sapiens heavy chain locus, looking for sequences with, on one side, IGHJ (or even IGHV) genes,
     and, on the other side, an IGH constant chain.
   - `germline/homo-sapiens-isoforms.g`: Homo sapiens IKZF1 and ERG recombinations.
@@ -232,7 +280,22 @@ The following presets are provided:
 
   - Using `-2` further test unexpected recombinations (tagged as `xxx`), as in `-g germline/homo-sapiens.g -2`.
 
-Finally, the advanced `-V/(-D)/-J` options enable to select custom V, (D) and J repertoires given as `.fasta` files.
+## Custom reference sequences
+
+Some advanced options enable to indicate custom reference sequences,
+given as `.fasta` files:
+
+- The `-V/(-D)/-J` options indicates a (related) custom repertoire,
+  for V(D)J or V(D)J-like recombinations.
+
+- The `--find` option indicates reference sequences,
+  for detection of similarities/alignment of sequences *without recombinations*.
+
+Several `-g`/ `-V/(-D)/-J` / `--find` options can be used at the same time,
+describing different systems of (non-)recombinations that will be detected.
+However, it is not advised to use several time the same reference sequences.
+More generally, putting many sequences as `--find` will generate hits
+that may hide actual recombinations.
 
 ## Custom `germline/*.g` presets
 
@@ -272,7 +335,7 @@ The optional `4` entry  (`IGHD.fa`) is taken only there into account.
 However, if a D is not detected and designated, the read will be designated as VJ.
 
 
-The `TRD+` entry, for incomplete recombinations (see <locus.md>), shows an example where
+The `TRD+` entry, for incomplete recombinations (see <libraries-recombinations.md>), shows an example where
 both Vd-Dd3, Dd2-Jd (possibly Dd2-Dd-Jd), and Dd2-Dd3 recombinations are searched:
 
 ```json
@@ -289,19 +352,14 @@ both Vd-Dd3, Dd2-Jd (possibly Dd2-Dd-Jd), and Dd2-Dd3 recombinations are searche
     } ]
 ```
 
-There is also an experimental sequence analysis mode, called `1`,
-that detects similarities and designates sequences *without recombinations*,
+The sequence analysis mode `1`, as the command line option `--find`,
+detects similarities and designates sequences *without recombinations*,
 as in `germline/homo-sapiens-cd.g`:
 
 ```json
      "recombinations": [ { "1": ["CD-sorting.fa"] } ]
 ```
 
-This mode can also be called from the command line with arguments such as  `--find CD-sorting.fa`.
-This can be used to detect non-recombined known sequences,
-as shown here with usual CD sequences in RNA-seq data.
-However, putting too many sequences here may generate many hits
-that may hide actual recombinations.
 
 ## Main algorithm parameters
 
@@ -410,7 +468,7 @@ consensus (see below), but you can safely put `--max-consensus all` if you want
 to compute all consensus sequences.
 
 The `--max-designations` option limits the number of clones that are fully analyzed,
-*with their V(D)J designation and possibly a CDR3 detection*,
+*with their V(D)J designation and an analysis of their CDR3*,
 in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis).
@@ -450,6 +508,27 @@ The default `--analysis-filter 3` is generally safe.
 Setting `--analysis-filter all` removes this pre-processing step, running a full dynamic programming
 with all germline sequences that is much slower.
 
+## CDR3 analysis
+
+The full analysis of clones beyond the `--max-designations` threshold also includes
+a CDR3/JUNCTION detection and productivity estimation based on the position
+of Cys104 and Phe118/Trp118 amino acids. The detection relies on alignment
+with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
+as provided by `make germline`.
+The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
+
+CDR3 are reported as *productive* when they come from an in-frame recombination,
+the sequence does not contain any in-frame stop codons,
+and, for IGH recombinations, when the FR4 begins with the `{WP}-GxG` pattern.
+This follows the ERIC guidelines ([Rosenquist et al., 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5508071/)).
+When a clone is reported as non-productive, the cause is detailed in the `seg.junction.unproductive` field
+of the `.vidjil` output and also in some fields of the AIRR output.
+Note that some other software only consider stop codons in the CDR3,
+and may thus under-estimate non-productivity.
+When the sequence is long enough to start before the start of the V gene
+or to end after the end of the J gene, vidjil-algo do not consider these intronic sequences
+in the productivity estimation.
+
 ## Sequences of interest
 
 Vidjil-algo allows to indicate that specific sequences should be followed and output,
@@ -485,38 +564,22 @@ with the `--grep-reads <sequence>` preset, equivalent to
 All the reads with the windows related to the sequence will be extracted 
 to files such as `out/seq/clone.fa-1`.
 
-## Further clone analysis: V(D)J designation, CDR3 detection
 Note that such sequences must have been detected as a V(D)J (or V(D)J-like) recombination
 in the first pass: the `--label`, `-label-file`, or `--label-filter` options can not
  detect a recombination that was not detected when removing all the thresholds with `--all`.
+
 To increase the sensitivity, see above the `--e-value` option, or,
-to look for non-recombined sequences, see above the experimental `1` sequence analysis.
+to look for non-recombined sequences, see above the `--find` sequence analysis.
 
-``` diff
-Clone analysis (second pass)
-  -d, --several-D             try to detect several D (experimental)
-  -3, --cdr3                  CDR3/JUNCTION detection (requires gapped V/J germlines)
-```
+## Options for further clone analysis
 
-The `-3` option launches a CDR3/JUNCTION detection based on the position
-of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
-with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
-as provided by `make germline`.
-The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
-
-CDR3 are reported as *productive* when they come from an in-frame recombination
-and when the sequence does not contain any in-frame stop codons.
-Note that some other software only consider stop codons in the CDR3,
-and may thus under-estimate non-productivity.
-When the sequence is long enough to start before the start of the V gene
-or to end after the end of the J gene, vidjil-algo do not consider these intronic sequences
-in the productivity estimation.
+The `--several-D` option tries to detect several D.
 
 The advanced `--analysis-cost` option sets the parameters used in the comparisons between
 the clone sequence and the V(D)J germline genes. The default values should work.
 
 The e-value set by `-e` is also applied to the V/J designation.
-The `-E` option further sets the e-value for the detection of D segments.
+The `-E` advanced option further sets the e-value for the detection of D segments.
 
 ## Further clustering (experimental)
 
@@ -558,7 +621,7 @@ The default output of Vidjil-algo (with the default `-c clones` command) are the
     The web application takes this `.vidjil` file ([possibly merged with `fuse.py`](#following-clones-in-several-samples)) for the *visualization and analysis* of clones and their
     tracking along different samples (for example time points in a MRD
     setup or in a immunological study).
-    Please see the [web application user manual](http://www.vidjil.org/doc/user) for more information.
+    Please see the [web application user manual](https://www.vidjil.org/doc/user) for more information.
 
   - The `.tsv` file is the AIRR output, for compatibility with other software
     using the same format. See [below](#airr-tsv-output) for details.
@@ -638,7 +701,8 @@ The `--out-reads` option produces large files, and is not recommended in general
 
 ## Diversity measures
 
-Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are reported, both on the standard output and in the `.vidjil` file:
+Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are reported, both on the standard output and in the `.vidjil` file,
+for each germline/locus as well as for the entire data:
 
   - H (`index_H_entropy`): Shannon's diversity
   - E (`index_E_equitability`): [Pielou's evenness J'](https://en.wikipedia.org/wiki/Species_evenness) (also known as Shannon's equitability)
@@ -646,7 +710,7 @@ Several [diversity indices](https://en.wikipedia.org/wiki/Diversity_index) are r
 
 E ans Ds values are between 0 (no diversity, one clone clusters all analyzed reads)
 and 1 (full diversity, each analyzed read belongs to a different clone).
-These values are now computed on the windows, before any further clustering.
+These values are computed on the full list of clones, before any further clustering.
 PCR and sequencing errors can thus lead to slightly over-estimate the diversity.
 
 ## Reads without detected recombinations
@@ -716,6 +780,8 @@ When processing large datasets, such as RNA-Seq or capture, one may want to pre-
 In such a case, the recommanded option is to use the `--filter-reads` preset, that launches Vidjil-algo without clone clustering and analysis,
 while outputing a `out/basename.detected.vdj.fa` file. This file contains reads /that may have V(D)J recombinations/, evaluated with a very permissive threshold.
 The resulting file is usually much smaller on such datasets and can then be transferred or analysed in-depth more easily.
+This filtering can also be part of a [post-sequencer workflow](https://www.vidjil.org/doc/workflow/).
+
 ## AIRR .tsv output
 
 Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
@@ -724,13 +790,13 @@ We also propose in [fuse.py](tools.md) a way to convert AIRR format to the `.vid
 
 Note that Vidjil-algo is designed to efficiently gather reads from large datasets into clones. 
 By default (`-c clones`), we thus report in the AIRR format *clones*.
-See also [What is a clone ?](vidjil-format/#what-is-a-clone).
+See also [What is a clone ?](vidjil-format.md#what-is-a-clone).
 Using `-c designations` trigger a separate analysis for each read, but this is usually not advised for large datasets. 
 
 
 | Name  | Type | AIRR 1.2 Description <br /> *vidjil-algo implementation* |
 | ----- | ---- |  ------------------------------------------------------- |
-| locus | string | Gene locus (chain type). For example, `IGH`, `IGK`, `IGL`, `TRA`, `TRB`, `TRD`, or `TRG`.<br />*Vidjil-algo outputs all these loci. Moreover, the incomplete recombinations analyzed by vidjil-algo are reported as `IGH+`, `IGK+`, `TRA+D`, `TRB+`, `TRD+`, and `xxx` for unexpected recombinations. See  <locus.md>.*
+| locus | string | Gene locus (chain type). For example, `IGH`, `IGK`, `IGL`, `TRA`, `TRB`, `TRD`, or `TRG`.<br />*Vidjil-algo outputs all these loci. Moreover, the incomplete recombinations analyzed by vidjil-algo are reported as `IGH+`, `IGK+`, `TRA+D`, `TRB+`, `TRD+`, and `xxx` for unexpected recombinations. See  <libraries-recombinations.md>.*
 | duplicate_count | number | Number of reads contributing to the (UMI) consensus for this sequence. For example, the sum of the number of reads for all UMIs that contribute to the query sequence. <br />*Number of reads gathered in the clone.*
 | sequence_id | string  | Unique query sequence identifier within the file. Most often this will be the input sequence header or a substring thereof, but may also be a custom identifier defined by the tool in cases where query sequences have been combined in some fashion prior to alignment. <br />*This identifier is the (50 bp by default) window extacted around the junction.* |
 | clone_id 	| string | 	Clonal cluster assignment for the query sequence. <br />*This identifier is again the (50 bp by default) window extacted around the junction.*
@@ -830,27 +896,27 @@ The following commands work in both cases, detecting the locus for each recombin
 clustering such reads into clones, and further analyzing the clones.
 
 ``` bash
-./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -3 -r 1  demo/Demo-X5.fa
+./vidjil-algo -c clones   -g germline/homo-sapiens.g -2 -r 1  demo/Demo-X5.fa
   # Detect the locus for each read, cluster and report clones starting from the first read (-r 1).
-  # including unexpected recombinations (-2). Assign the V(D)J genes and try to detect the CDR3s (-3).
+  # including unexpected recombinations (-2). Designate the V(D)J genes and analyze the CDR3s.
   # Demo-X5 is a collection of sequences on all human locus, including some incomplete or unusual recombinations:
   # IGH (VDJ, DJ), IGK (VJ, V-KDE, Intron-KDE), IGL, TRA, TRB (VJ, DJ), TRG and TRD (VDDJ, Dd2-Dd3, Vd-Ja).
 ```
 
 ``` bash
-./vidjil-algo -g germline/homo-sapiens.g:IGH -3 demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g:IGH demo/Stanford_S22.fasta
    # Cluster the reads and report the clones, based on windows overlapping IGH CDR3s.
-   # Assign the V(D)J genes and try to detect the CDR3 of each clone.
+   # Designate the V(D)J genes and analyze the CDR3 of each clone.
    # Main output files are both out/Stanford_S22.vidjil and out/Stanford_S22.tsv.
    # Summary of clones is available on stdout.
 
 ```
 
 ``` bash
-./vidjil-algo -g germline/homo-sapiens.g -2 -3 -d demo/Stanford_S22.fasta
+./vidjil-algo -g germline/homo-sapiens.g -2 -d demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
-   # Assign the VDJ genes (including multiple D) and try to detect the CDR3 of each clone.
+   # Designate the VDJ genes (including multiple D) and analyze the CDR3 of each clone.
    # Main output files are both out/reads.vidjil and out/reads.tsv.
    # Summary of clones is available on stdout.
 ```
@@ -861,7 +927,7 @@ clustering such reads into clones, and further analyzing the clones.
 ./vidjil-algo -g germline/homo-sapiens.g -2 -U demo/Stanford_S22.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Cluster the reads into clones, again based on windows overlapping the detected CDR3s.
-   # Assign the VDJ genes and try to detect the CDR3 of each clone.
+   # Designate the VDJ genes and analyze the CDR3 of each clone.
    # The out/reads.detected.vdj.fa include all reads where a V(D)J recombination was found
 ```
 
@@ -889,8 +955,8 @@ It is also possible to explicitly require V(D)J designation for each read (`-c d
 no clone clustering, not recommended for large datasets)
 
 ``` bash
-./vidjil-algo -c designations -g germline/homo-sapiens.g -2 -3 -d -x 50 demo/Stanford_S22.fasta
-   # Detailed V(D)J designation, including multiple D, and CDR3 detection on the first 50 reads, without clone clustering
+./vidjil-algo -c designations -g germline/homo-sapiens.g -2 -d -x 50 demo/Stanford_S22.fasta
+   # Detailed V(D)J designation, including multiple D, and CDR3 analysis on the first 50 reads, without clone clustering
    # (this is not as efficient as '-c clones', no clustering)
 ```
 

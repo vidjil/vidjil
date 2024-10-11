@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 
 import collections
-import defs
 import sys
+try :
+    import apps.vidjil.modules.defs
+except:
+    import defs
+    pass
 
 #### Utilities on dictionaries
 
@@ -9,7 +14,6 @@ import sys
 def ordered(d, key=None):
     '''sorts a dictionary into an OrderedDict'''
     return collections.OrderedDict([(k, d[k]) for k in sorted(d, key=key)])
-
 
 def concatenate_with_padding(d,
                              d1, d1_size,
@@ -33,6 +37,9 @@ def concatenate_with_padding(d,
     [11, 22, 0, 0, 0, 0, 0]
     >>> d['c']
     [0, 0, 333, 444, 555]
+    >>> d = {}
+    >>> d1 = { 'a': [1, 2], 'b': [11, 22], 'z':17 }
+    >>> d2 = { 'a': [3, 4, 5], 'c': [333, 444, 555] }
     >>> concatenate_with_padding(d, d1, 2, d2, 5, ['z'], none_init=True)
     >>> d['a']
     [1, 2, 3, 4, 5]
@@ -44,6 +51,7 @@ def concatenate_with_padding(d,
 
     t1=[]
     t2=[]
+    dict_keys = []
 
     if ignore_keys == None:
         ignore_keys = []
@@ -58,6 +66,7 @@ def concatenate_with_padding(d,
         if key in ignore_keys:
             continue
         if type(d1[key]) is not list:
+            dict_keys.append(key)
             continue
 
         d[key] = d1[key]
@@ -69,7 +78,6 @@ def concatenate_with_padding(d,
                     if not none_init:
                         d[key] += [type(d1[key][0])()]*d2_size # here
                     else:
-                        print( "NONE INIT key 2")
                         d[key] += [None]*d2_size # here
                 else:
                     d[key] += t2
@@ -80,6 +88,7 @@ def concatenate_with_padding(d,
         if key in ignore_keys:
             continue
         if type(d2[key]) is not list:
+            dict_keys.append(key)
             continue
 
         if key not in d:
@@ -88,7 +97,6 @@ def concatenate_with_padding(d,
                     if not none_init:
                         d[key] = ([type(d2[key][0])()]*d1_size) + d2[key]
                     else:
-                        print( "NONE INIT key 1")
                         d[key] = ([None]*d1_size) + d2[key]
                 else:
                     d[key] = t1 + d2[key]

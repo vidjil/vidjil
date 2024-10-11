@@ -1,0 +1,1345 @@
+{
+  "clones": [
+    {
+      "germline": "TRB",
+      "id": "id_TRB_3",
+      "name": "Name_TRB_3",
+      "reads": [
+        3997
+      ],
+      "sequence": "sequence_3",
+      "top": 3
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_9",
+      "name": "Name_TRB_9",
+      "reads": [
+        2008
+      ],
+      "sequence": "sequence_9",
+      "top": 9
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_18",
+      "name": "Name_TRB_18",
+      "reads": [
+        1398
+      ],
+      "sequence": "sequence_18",
+      "top": 18
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_64",
+      "name": "Name_TRB_64",
+      "reads": [
+        596
+      ],
+      "sequence": "sequence_64",
+      "top": 64
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_86",
+      "name": "Name_TRB_86",
+      "reads": [
+        485
+      ],
+      "sequence": "sequence_86",
+      "top": 86
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_55",
+      "name": "Name_TRB_55",
+      "reads": [
+        627
+      ],
+      "sequence": "sequence_55",
+      "top": 55
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_8",
+      "name": "Name_TRB_8",
+      "reads": [
+        2159
+      ],
+      "sequence": "sequence_8",
+      "top": 8
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_23",
+      "name": "Name_TRB_23",
+      "reads": [
+        1012
+      ],
+      "sequence": "sequence_23",
+      "top": 23
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_36",
+      "name": "Name_TRB_36",
+      "reads": [
+        777
+      ],
+      "sequence": "sequence_36",
+      "top": 36
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_48",
+      "name": "Name_TRB_48",
+      "reads": [
+        659
+      ],
+      "sequence": "sequence_48",
+      "top": 48
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_43",
+      "name": "Name_TRB_43",
+      "reads": [
+        715
+      ],
+      "sequence": "sequence_43",
+      "top": 43
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_84",
+      "name": "Name_TRB_84",
+      "reads": [
+        494
+      ],
+      "sequence": "sequence_84",
+      "top": 84
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_80",
+      "name": "Name_TRB_80",
+      "reads": [
+        520
+      ],
+      "sequence": "sequence_80",
+      "top": 80
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_14",
+      "name": "Name_TRB_14",
+      "reads": [
+        1674
+      ],
+      "sequence": "sequence_14",
+      "top": 14
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_40",
+      "name": "Name_TRB_40",
+      "reads": [
+        754
+      ],
+      "sequence": "sequence_40",
+      "top": 40
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_89",
+      "name": "Name_TRB_89",
+      "reads": [
+        461
+      ],
+      "sequence": "sequence_89",
+      "top": 89
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_17",
+      "name": "Name_TRB_17",
+      "reads": [
+        1445
+      ],
+      "sequence": "sequence_17",
+      "top": 17
+    },
+    {
+      "germline": "IGH",
+      "id": "id_IGH_148",
+      "name": "Name_IGH_148",
+      "reads": [
+        296
+      ],
+      "sequence": "sequence_148",
+      "top": 148
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_92",
+      "name": "Name_TRB_92",
+      "reads": [
+        453
+      ],
+      "sequence": "sequence_92",
+      "top": 92
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_70",
+      "name": "Name_TRB_70",
+      "reads": [
+        547
+      ],
+      "sequence": "sequence_70",
+      "top": 70
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_53",
+      "name": "Name_TRB_53",
+      "reads": [
+        637
+      ],
+      "sequence": "sequence_53",
+      "top": 53
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_5",
+      "name": "Name_TRB_5",
+      "reads": [
+        2933
+      ],
+      "sequence": "sequence_5",
+      "top": 5
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_74",
+      "name": "Name_TRB_74",
+      "reads": [
+        539
+      ],
+      "sequence": "sequence_74",
+      "top": 74
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_73",
+      "name": "Name_TRB_73",
+      "reads": [
+        539
+      ],
+      "sequence": "sequence_73",
+      "top": 73
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_2",
+      "name": "Name_TRB_2",
+      "reads": [
+        5976
+      ],
+      "sequence": "sequence_2",
+      "top": 2
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_10",
+      "name": "Name_TRB_10",
+      "reads": [
+        1878
+      ],
+      "sequence": "sequence_10",
+      "top": 10
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_54",
+      "name": "Name_TRB_54",
+      "reads": [
+        629
+      ],
+      "sequence": "sequence_54",
+      "top": 54
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_27",
+      "name": "Name_TRB_27",
+      "reads": [
+        945
+      ],
+      "sequence": "sequence_27",
+      "top": 27
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_32",
+      "name": "Name_TRB_32",
+      "reads": [
+        867
+      ],
+      "sequence": "sequence_32",
+      "top": 32
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_78",
+      "name": "Name_TRB_78",
+      "reads": [
+        521
+      ],
+      "sequence": "sequence_78",
+      "top": 78
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_83",
+      "name": "Name_TRB_83",
+      "reads": [
+        496
+      ],
+      "sequence": "sequence_83",
+      "top": 83
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_100",
+      "name": "Name_TRB_100",
+      "reads": [
+        429
+      ],
+      "sequence": "sequence_100",
+      "top": 100
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_50",
+      "name": "Name_TRB_50",
+      "reads": [
+        648
+      ],
+      "sequence": "sequence_50",
+      "top": 50
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_99",
+      "name": "Name_TRB_99",
+      "reads": [
+        434
+      ],
+      "sequence": "sequence_99",
+      "top": 99
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_62",
+      "name": "Name_TRB_62",
+      "reads": [
+        602
+      ],
+      "sequence": "sequence_62",
+      "top": 62
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_45",
+      "name": "Name_TRB_45",
+      "reads": [
+        676
+      ],
+      "sequence": "sequence_45",
+      "top": 45
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_75",
+      "name": "Name_TRB_75",
+      "reads": [
+        534
+      ],
+      "sequence": "sequence_75",
+      "top": 75
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_49",
+      "name": "Name_TRB_49",
+      "reads": [
+        653
+      ],
+      "sequence": "sequence_49",
+      "top": 49
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_4",
+      "name": "Name_TRB_4",
+      "reads": [
+        3528
+      ],
+      "sequence": "sequence_4",
+      "top": 4
+    },
+    {
+      "germline": "IGH",
+      "id": "id_IGH_411",
+      "name": "Name_IGH_411",
+      "reads": [
+        121
+      ],
+      "sequence": "sequence_411",
+      "top": 411
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_66",
+      "name": "Name_TRB_66",
+      "reads": [
+        587
+      ],
+      "sequence": "sequence_66",
+      "top": 66
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_81",
+      "name": "Name_TRB_81",
+      "reads": [
+        507
+      ],
+      "sequence": "sequence_81",
+      "top": 81
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_65",
+      "name": "Name_TRB_65",
+      "reads": [
+        595
+      ],
+      "sequence": "sequence_65",
+      "top": 65
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_61",
+      "name": "Name_TRB_61",
+      "reads": [
+        603
+      ],
+      "sequence": "sequence_61",
+      "top": 61
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_41",
+      "name": "Name_TRB_41",
+      "reads": [
+        737
+      ],
+      "sequence": "sequence_41",
+      "top": 41
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_68",
+      "name": "Name_TRB_68",
+      "reads": [
+        557
+      ],
+      "sequence": "sequence_68",
+      "top": 68
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_63",
+      "name": "Name_TRB_63",
+      "reads": [
+        597
+      ],
+      "sequence": "sequence_63",
+      "top": 63
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_34",
+      "name": "Name_TRB_34",
+      "reads": [
+        847
+      ],
+      "sequence": "sequence_34",
+      "top": 34
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_31",
+      "name": "Name_TRB_31",
+      "reads": [
+        903
+      ],
+      "sequence": "sequence_31",
+      "top": 31
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_87",
+      "name": "Name_TRB_87",
+      "reads": [
+        478
+      ],
+      "sequence": "sequence_87",
+      "top": 87
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_26",
+      "name": "Name_TRB_26",
+      "reads": [
+        968
+      ],
+      "sequence": "sequence_26",
+      "top": 26
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_97",
+      "name": "Name_TRB_97",
+      "reads": [
+        440
+      ],
+      "sequence": "sequence_97",
+      "top": 97
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_47",
+      "name": "Name_TRB_47",
+      "reads": [
+        670
+      ],
+      "sequence": "sequence_47",
+      "top": 47
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_98",
+      "name": "Name_TRB_98",
+      "reads": [
+        437
+      ],
+      "sequence": "sequence_98",
+      "top": 98
+    },
+    {
+      "germline": "IGH",
+      "id": "id_IGH_417",
+      "name": "Name_IGH_417",
+      "reads": [
+        119
+      ],
+      "sequence": "sequence_417",
+      "top": 417
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_21",
+      "name": "Name_TRB_21",
+      "reads": [
+        1087
+      ],
+      "sequence": "sequence_21",
+      "top": 21
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_51",
+      "name": "Name_TRB_51",
+      "reads": [
+        646
+      ],
+      "sequence": "sequence_51",
+      "top": 51
+    },
+    {
+      "germline": "IGH",
+      "id": "id_IGH_260",
+      "name": "Name_IGH_260",
+      "reads": [
+        170
+      ],
+      "sequence": "sequence_260",
+      "top": 260
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_72",
+      "name": "Name_TRB_72",
+      "reads": [
+        540
+      ],
+      "sequence": "sequence_72",
+      "top": 72
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_44",
+      "name": "Name_TRB_44",
+      "reads": [
+        688
+      ],
+      "sequence": "sequence_44",
+      "top": 44
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_16",
+      "name": "Name_TRB_16",
+      "reads": [
+        1488
+      ],
+      "sequence": "sequence_16",
+      "top": 16
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_6",
+      "name": "Name_TRB_6",
+      "reads": [
+        2250
+      ],
+      "sequence": "sequence_6",
+      "top": 6
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_7",
+      "name": "Name_TRB_7",
+      "reads": [
+        2182
+      ],
+      "sequence": "sequence_7",
+      "top": 7
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_46",
+      "name": "Name_TRB_46",
+      "reads": [
+        675
+      ],
+      "sequence": "sequence_46",
+      "top": 46
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_13",
+      "name": "Name_TRB_13",
+      "reads": [
+        1681
+      ],
+      "sequence": "sequence_13",
+      "top": 13
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_42",
+      "name": "Name_TRB_42",
+      "reads": [
+        728
+      ],
+      "sequence": "sequence_42",
+      "top": 42
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_85",
+      "name": "Name_TRB_85",
+      "reads": [
+        490
+      ],
+      "sequence": "sequence_85",
+      "top": 85
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_20",
+      "name": "Name_TRB_20",
+      "reads": [
+        1101
+      ],
+      "sequence": "sequence_20",
+      "top": 20
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_76",
+      "name": "Name_TRB_76",
+      "reads": [
+        529
+      ],
+      "sequence": "sequence_76",
+      "top": 76
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_88",
+      "name": "Name_TRB_88",
+      "reads": [
+        467
+      ],
+      "sequence": "sequence_88",
+      "top": 88
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_57",
+      "name": "Name_TRB_57",
+      "reads": [
+        621
+      ],
+      "sequence": "sequence_57",
+      "top": 57
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_15",
+      "name": "Name_TRB_15",
+      "reads": [
+        1627
+      ],
+      "sequence": "sequence_15",
+      "top": 15
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_60",
+      "name": "Name_TRB_60",
+      "reads": [
+        605
+      ],
+      "sequence": "sequence_60",
+      "top": 60
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_59",
+      "name": "Name_TRB_59",
+      "reads": [
+        608
+      ],
+      "sequence": "sequence_59",
+      "top": 59
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_79",
+      "name": "Name_TRB_79",
+      "reads": [
+        520
+      ],
+      "sequence": "sequence_79",
+      "top": 79
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_12",
+      "name": "Name_TRB_12",
+      "reads": [
+        1727
+      ],
+      "sequence": "sequence_12",
+      "top": 12
+    },
+    {
+      "germline": "IGH",
+      "id": "id_IGH_130",
+      "name": "Name_IGH_130",
+      "reads": [
+        326
+      ],
+      "sequence": "sequence_130",
+      "top": 130
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_11",
+      "name": "Name_TRB_11",
+      "reads": [
+        1823
+      ],
+      "sequence": "sequence_11",
+      "top": 11
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_71",
+      "name": "Name_TRB_71",
+      "reads": [
+        541
+      ],
+      "sequence": "sequence_71",
+      "top": 71
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_22",
+      "name": "Name_TRB_22",
+      "reads": [
+        1024
+      ],
+      "sequence": "sequence_22",
+      "top": 22
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_33",
+      "name": "Name_TRB_33",
+      "reads": [
+        863
+      ],
+      "sequence": "sequence_33",
+      "top": 33
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_52",
+      "name": "Name_TRB_52",
+      "reads": [
+        641
+      ],
+      "sequence": "sequence_52",
+      "top": 52
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_93",
+      "name": "Name_TRB_93",
+      "reads": [
+        446
+      ],
+      "sequence": "sequence_93",
+      "top": 93
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_24",
+      "name": "Name_TRB_24",
+      "reads": [
+        991
+      ],
+      "sequence": "sequence_24",
+      "top": 24
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_82",
+      "name": "Name_TRB_82",
+      "reads": [
+        504
+      ],
+      "sequence": "sequence_82",
+      "top": 82
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_39",
+      "name": "Name_TRB_39",
+      "reads": [
+        754
+      ],
+      "sequence": "sequence_39",
+      "top": 39
+    },
+    {
+      "germline": "IGH",
+      "id": "id_IGH_429",
+      "name": "Name_IGH_429",
+      "reads": [
+        115
+      ],
+      "sequence": "sequence_429",
+      "top": 429
+    },
+    {
+      "germline": "IGH",
+      "id": "id_IGH_397",
+      "name": "Name_IGH_397",
+      "reads": [
+        123
+      ],
+      "sequence": "sequence_397",
+      "top": 397
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_91",
+      "name": "Name_TRB_91",
+      "reads": [
+        455
+      ],
+      "sequence": "sequence_91",
+      "top": 91
+    },
+    {
+      "germline": "IGH",
+      "id": "id_IGH_383",
+      "name": "Name_IGH_383",
+      "reads": [
+        127
+      ],
+      "sequence": "sequence_383",
+      "top": 383
+    },
+    {
+      "germline": "IGH",
+      "id": "id_IGH_419",
+      "name": "Name_IGH_419",
+      "reads": [
+        118
+      ],
+      "sequence": "sequence_419",
+      "top": 419
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_29",
+      "name": "Name_TRB_29",
+      "reads": [
+        912
+      ],
+      "sequence": "sequence_29",
+      "top": 29
+    },
+    {
+      "germline": "IGH",
+      "id": "id_IGH_382",
+      "name": "Name_IGH_382",
+      "reads": [
+        127
+      ],
+      "sequence": "sequence_382",
+      "top": 382
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_90",
+      "name": "Name_TRB_90",
+      "reads": [
+        459
+      ],
+      "sequence": "sequence_90",
+      "top": 90
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_38",
+      "name": "Name_TRB_38",
+      "reads": [
+        762
+      ],
+      "sequence": "sequence_38",
+      "top": 38
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_94",
+      "name": "Name_TRB_94",
+      "reads": [
+        442
+      ],
+      "sequence": "sequence_94",
+      "top": 94
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_28",
+      "name": "Name_TRB_28",
+      "reads": [
+        919
+      ],
+      "sequence": "sequence_28",
+      "top": 28
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_30",
+      "name": "Name_TRB_30",
+      "reads": [
+        906
+      ],
+      "sequence": "sequence_30",
+      "top": 30
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_67",
+      "name": "Name_TRB_67",
+      "reads": [
+        583
+      ],
+      "sequence": "sequence_67",
+      "top": 67
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_56",
+      "name": "Name_TRB_56",
+      "reads": [
+        625
+      ],
+      "sequence": "sequence_56",
+      "top": 56
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_19",
+      "name": "Name_TRB_19",
+      "reads": [
+        1176
+      ],
+      "sequence": "sequence_19",
+      "top": 19
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_95",
+      "name": "Name_TRB_95",
+      "reads": [
+        441
+      ],
+      "sequence": "sequence_95",
+      "top": 95
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_96",
+      "name": "Name_TRB_96",
+      "reads": [
+        440
+      ],
+      "sequence": "sequence_96",
+      "top": 96
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_58",
+      "name": "Name_TRB_58",
+      "reads": [
+        619
+      ],
+      "sequence": "sequence_58",
+      "top": 58
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_1",
+      "name": "Name_TRB_1",
+      "reads": [
+        9704
+      ],
+      "sequence": "sequence_1",
+      "top": 1
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_69",
+      "name": "Name_TRB_69",
+      "reads": [
+        555
+      ],
+      "sequence": "sequence_69",
+      "top": 69
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_77",
+      "name": "Name_TRB_77",
+      "reads": [
+        522
+      ],
+      "sequence": "sequence_77",
+      "top": 77
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_25",
+      "name": "Name_TRB_25",
+      "reads": [
+        984
+      ],
+      "sequence": "sequence_25",
+      "top": 25
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_35",
+      "name": "Name_TRB_35",
+      "reads": [
+        823
+      ],
+      "sequence": "sequence_35",
+      "top": 35
+    },
+    {
+      "germline": "TRB",
+      "id": "id_TRB_37",
+      "name": "Name_TRB_37",
+      "reads": [
+        769
+      ],
+      "sequence": "sequence_37",
+      "top": 37
+    }
+  ],
+  "config": {
+    "all": false,
+    "alternative-genes": "0",
+    "analysis-e-value-D": "0.05",
+    "analysis-filter": "1",
+    "base": "160222",
+    "clean-memory": false,
+    "cluster-N": "10",
+    "cluster-epsilon": "0",
+    "cluster-load-matrix": false,
+    "cluster-save-matrix": false,
+    "consensus-on-longest-sequences": false,
+    "dir": "/mnt/result/tmp/out-160222/",
+    "e-value": "1",
+    "e-value-kmer": "-1",
+    "filter-reads": false,
+    "germline": "/usr/share/vidjil/germline/homo-sapiens.g",
+    "gz": false,
+    "help-advanced": false,
+    "label-filter": false,
+    "max-consensus": "-1",
+    "max-designations": "100",
+    "min-clones-per-locus": "10",
+    "min-ratio": "0",
+    "min-reads": "1",
+    "no-airr": true,
+    "no-vidjil": false,
+    "not-analyzed-as-clones": false,
+    "out-affects": false,
+    "out-clone-files": false,
+    "out-details": false,
+    "out-detected": false,
+    "out-reads": false,
+    "out-undetected": false,
+    "out-vdjfa": false,
+    "plain-index": false,
+    "several-D": true,
+    "show-junction": false,
+    "verbose": false,
+    "window": "50"
+  },
+  "diversity": {
+    "index_Ds_diversity": {
+      "IGH": 0.9997555960445741,
+      "IGH+": 0.36996834011759383,
+      "IGK+": 0.9926470588235294,
+      "IGL": 1.0,
+      "TRB": 0.9958188826226898,
+      "TRB+": 1.0,
+      "TRD": 0.9523809523809523,
+      "TRD+": 0.5461380724538619,
+      "TRG": 1.0,
+      "all": 0.9984480501509226
+    },
+    "index_E_equitability": {
+      "IGH": 0.729475267216521,
+      "IGH+": 0.8176879077558203,
+      "IGK+": 0.9712175844951575,
+      "IGL": 1.0000000027478353,
+      "TRB": 0.5696445173439098,
+      "TRB+": 1.0000000451810074,
+      "TRD": 0.8982265605241363,
+      "TRD+": 0.37741684493201677,
+      "TRG": 1.0000000051821447,
+      "all": 0.6512987119410651
+    },
+    "index_H_entropy": {
+      "IGH": 8.771056757934275,
+      "IGH+": 3.4381263107061386,
+      "IGK+": 2.751666620373726,
+      "IGL": 0.6931471824645996,
+      "TRB": 7.084719631126063,
+      "TRB+": 1.0986123383045197,
+      "TRD": 1.7478681802749634,
+      "TRD+": 1.6394253373146057,
+      "TRG": 3.1354942321777344,
+      "all": 8.431230245136248
+    }
+  },
+  "germlines": {
+    "ref": "https://www.vidjil.org/germlines/germline-2021-01-21.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "clones": {
+      "IGH": [
+        24317
+      ],
+      "IGH+": [
+        42
+      ],
+      "IGK": [
+        0
+      ],
+      "IGK+": [
+        16
+      ],
+      "IGL": [
+        2
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        17310
+      ],
+      "TRB+": [
+        3
+      ],
+      "TRD": [
+        6
+      ],
+      "TRD+": [
+        24
+      ],
+      "TRG": [
+        23
+      ],
+      "unexpected": [
+        1
+      ]
+    },
+    "distribution": {
+      "IGH": [
+        0
+      ],
+      "IGH+": [
+        4
+      ],
+      "IGK": [
+        0
+      ],
+      "IGK+": [
+        16
+      ],
+      "IGL": [
+        2
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        0
+      ],
+      "TRB+": [
+        3
+      ],
+      "TRD": [
+        6
+      ],
+      "TRD+": [
+        1
+      ],
+      "TRG": [
+        0
+      ],
+      "unexpected": [
+        1
+      ]
+    },
+    "germline": {
+      "IGH": [
+        166673
+      ],
+      "IGH+": [
+        67
+      ],
+      "IGK": [
+        0
+      ],
+      "IGK+": [
+        17
+      ],
+      "IGL": [
+        2
+      ],
+      "TRA": [
+        0
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB": [
+        251976
+      ],
+      "TRB+": [
+        3
+      ],
+      "TRD": [
+        7
+      ],
+      "TRD+": [
+        77
+      ],
+      "TRG": [
+        23
+      ],
+      "unexpected": [
+        1
+      ]
+    },
+    "segmented": [
+      418846
+    ],
+    "total": [
+      423578
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "/usr/share/vidjil-algo/next//vidjil-algo -o /mnt/result/tmp/out-160222/ -b 160222 -c clones -z 100 -r 1 -g/usr/share/vidjil/germline/homo-sapiens.g -e 1 -2 -d -w 50 -y all --no-airr --min-clones-per-locus 10 /mnt/upload/uploads/sequence_file.data_file.9a2ebd244f9d325d.3631323230313033313738392d5355524d4f5f5331315f4c3030315f525f3030312e66617374712e677a.gz "
+    ],
+    "log": [
+      "  ==> junction detected in 418846 reads (98.9%)\n  ==> found 41744 windows in 418846 reads (98.9% of 423578 reads)\n                          reads av. len     clones clo/rds\n  IGH               ->   166673   328.7      24317   0.146\n  IGH+              ->       67   205.0         42   0.359\n  IGK               ->        0       -          0       -\n  IGK+              ->       17   159.7         16   0.941\n  IGL               ->        2   251.0          2   1.000\n  TRA               ->        0       -          0       -\n  TRA+D             ->        0       -          0       -\n  TRB               ->   251976   157.2      17310   0.069\n  TRB+              ->        3   213.7          3   1.000\n  TRD               ->        7   182.1          6   0.857\n  TRD+              ->       77   163.7         24   0.312\n  TRG               ->       23   177.6         23   1.000\n  unexpected        ->        1   251.0          1   1.000\n\n  SEG               ->   418846   225.5\n  SEG_+             ->   417423   225.4\n  SEG_-             ->     1423   251.0\n  SEG changed w     ->    10941    51.8\n\n  UNSEG too short   ->        0       -\n  UNSEG strand      ->        7   251.0\n  UNSEG too few V/J ->     2321   244.1\n  UNSEG only V/5'   ->     1801   229.8\n  UNSEG only J/3'   ->      587   208.2\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->       16   235.8\n  UNSEG too short w ->        0       -\n"
+    ],
+    "number": 1,
+    "original_names": [
+      "/mnt/upload/uploads/sequence_file.data_file.9a2ebd244f9d325d.3631323230313033313738392d5355524d4f5f5331315f4c3030315f525f3030312e66617374712e677a.gz"
+    ],
+    "producer": [
+      "vidjil-algo 2024.02"
+    ],
+    "run_timestamp": [
+      "2024-04-17 21:36:55"
+    ]
+  },
+  "vidjil_json_version": "2016b",
+  "warn": [
+    {
+      "code": "W21",
+      "level": "warn",
+      "msg": "Bad e-value multiplier."
+    }
+  ]
+}

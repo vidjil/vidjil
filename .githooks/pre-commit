@@ -1,0 +1,15 @@
+#! /bin/sh -e
+
+RED='\033[0;31m'
+BBlack='\033[1;30m' # Bold Black
+BRed='\033[1;31m'   # Bold Red
+NC='\033[0m'        # No Color; no bold
+
+# detect if docker/.env file is present is staged and prevent it to be add; Remove it from staged and make commit as failed that should be relaunch
+excluded_settings_files="docker/.env browser/js/conf.js"
+for excluded_file in $excluded_settings_files
+do
+	git diff --name-only --cached| grep -qx $excluded_file && git restore --staged $excluded_file && { echo "${RED}Excluded file ${BRed}'${excluded_file}'${RED} included in the commit.\nThis file as been removed from staged area and you should relaunch your commit.${NC}" >&2; exit 1; }
+done
+
+exit 0

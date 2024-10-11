@@ -1,1 +1,0 @@
-../../../../../../browser/test/functional/vidjil_browser.rb

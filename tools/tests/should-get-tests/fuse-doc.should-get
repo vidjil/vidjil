@@ -1,4 +1,4 @@
-!LAUNCH: python ../../fuse.py ../../../doc/analysis-example1.vidjil ../../../doc/analysis-example2.vidjil; cat fused.vidjil | python ../../format_json.py -1 -u
+!LAUNCH: $PYTHON ../../fuse.py ../../../doc/analysis-example1.vidjil ../../../doc/analysis-example2.vidjil; cat fused.vidjil | $PYTHON ../../format_json.py -1 -u
 
 $ Fuse the two examples (three samples, two identical)
 :"segmented": \[335662, 335662, 410124\]
@@ -8,13 +8,13 @@ $ IGH and TRG germlines
 
 
 ### Test the number of clones getted
-!LAUNCH: python ../../fuse.py ../../../doc/analysis-example2.vidjil ; cat fused.vidjil
+!LAUNCH: $PYTHON ../../fuse.py ../../../doc/analysis-example2.vidjil ; cat fused.vidjil
 
 # !! If doc change, number should sometimes be updated
 $ Default top threshold is set to 50, so each clone should be present
 7:"sequence"
 
-!LAUNCH: python ../../fuse.py --top 3 ../../../doc/analysis-example2.vidjil ; cat fused.vidjil
+!LAUNCH: $PYTHON ../../fuse.py --top 3 ../../../doc/analysis-example2.vidjil ; cat fused.vidjil
 $ Change top to 3 (for 4 clones present)
 3:"sequence"
 

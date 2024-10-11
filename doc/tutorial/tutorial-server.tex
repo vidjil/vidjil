@@ -1,7 +1,9 @@
 \section{Dealing with samples and patients}
-We will see how to make the best use of the patient and sample database and
+
+In this tutorial, we will see how to make 
+the best use of the patient and sample database of Vidjil and
 how to use it efficiently.
-For this sake you need an \textit{account} on the public server with the rights to create new patients,
+You need an \textit{account} on the public server with the rights to create new patients,
 runs, sets, to upload data and, preferably, to run analyses.
 Therefore the demo account is not suitable.
 
@@ -29,14 +31,22 @@ them to a same \com{run} and each of them to a single \com{patient}.
   Go at the bottom of the page and click on \com{+ new patients} to create the
   three patients.
 }
+\begin{verbatim}
 
-Note that usually you should check whether the patient has
+  cy.goToUsersPage()
+  cy.log(`There are ${cy.getTableLength("#table_users")} patients`)
+  cy.getTableLength("#table_users").should('be.lt', 20)
+
+
+\end{verbatim}
+
+In a routine clinical setting, you should check whether the patient has
 already been created by searching her/his name in the search box at the
-upper left corner
+upper left corner.
 
 \question{
   You are now on the  creation page for patients, runs, and sets.
-  You can create as many patients, runs and sets as you want.
+  You can create there at once several patients, runs and sets.
   \marginpar{Patients, runs and sets are just different ways to
     group samples. 
     The names are just used to add some semantic so that you
@@ -47,6 +57,15 @@ upper left corner
   We want to create two additional patients and one run.
   Thus click twice on \com{add patient} and once on \com{add run}.
 }
+\begin{verbatim}
+  ///////////////////////////
+  cy.log("// test_002_add_new_patient")
+    cy.goToPatientPage()
+    cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'patient\'})"]')
+    .click()
+
+
+\end{verbatim}
 
   Now you should have three lines with Patient 1, Patient 2, Patient 3 and one
   line with Run 1.
@@ -54,52 +73,125 @@ upper left corner
   the right hand side.
 
 \question{
-  For instance click on the cross corresponding to Patient 3.
+  Click on the cross corresponding to Patient 3.
   The line has now been removed.
   Click again on \com{add patient} so that the line appears again (it is now
   called Patient 4).
 }
+\begin{verbatim}
+  ///////////////////////////
+  cy.log("// test_003_add_new_patient")
+    // Add 2 new patients + run lines
+    cy.get("#patient_button").click()
+    cy.get("#patient_button").click()
+
+    // delete last line
+    cy.get(':nth-child(3) > .icon-cancel').click()
+
+    // add another new line
+    cy.get("#patient_button").click()
+
+\end{verbatim}
 
 \question{ Now you can fill the mandatory fields (circled with red) and,
   optionally, the other fields.}
+\begin{verbatim}
+  ////////////////////////////
+  cy.log("// test_004_fill_new_patient")
+    // Add 2 new patients + run lines
+    cy.get('#run_button').click()
+    cy.get('#group_select')
+      .select("public")
+      .trigger("change")
 
-The last field is optional but it is very important (the field called
-\com{patient/run information (\#tags can be used)}.
 
-Here you can enter any information relevant to this set of samples.
-More specifically you can enter tags (starting with a \#) that will allow
-you to search very easily and quickly all the patients/runs/sets sharing
-this tag.
-By default when you enter a \# in this field, some tags appear and the
+    // Fill forms
+    cy.fillPatient(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "")
+    cy.fillPatient(1, "id_p2", "First_name_2", "Last_name_2", "2000-01-01", "")
+    cy.fillPatient(3, "id_p3", "First_name_3", "Last_name_3", "2000-01-01", "")
+    cy.fillRun(0, "id_r1", "run_name 1", "2010-01-01", "run informations #tagtest")
+ 
+
+\end{verbatim}
+
+The last field, \com{patient/run information (\#tags can be used)},
+is optional but highly recommended.
+You can enter any information relevant to this set of samples
+in plain language, but also with \emph{tags} (starting with a \#).
+Tags allow you to keep more structured information,
+to organize your patients/runs/sets, and to search across them.
+
+When you enter a \# in this field, some tags appear and the
 suggestions are  updated while you enter other characters.
-Note that a tag cannot contain any space.
-Also note that you can create other tags just by entering whatever you would
-like in the field preceded with a \#. Thus any tag you enter is saved (and
-can be suggested later on).
+\marginpar{A tag cannot contain any space.}
 
-\question{For patient 1 in this last field, enter \texttt{\#diagnosis of
-    patient with \#B-ALL}. For patient 2, enter \texttt{\#blood sample \#CLL}.
-  For patient 4, enter \texttt{bone \#marrow \#B-ALL}}
+There are predefined tags (such as \#ALL or \#diagnosis),
+but you can also create your own tags (always starting with \#).
+Your custom tags will also be saved and will be suggested later on.
 
-\marginpar{{\bf New!}
- Note that patients (and runs and samples) can also be created at once by
-pasting a table from a spreadsheet editor.}
+\question{Enter information for the three patients, such as \texttt{\#diagnosis \#B-ALL} for a patient, \texttt{\#blood \#CLL}
+for another one, and \texttt{bone \#marrow \#B-ALL} for the last one.}
+\begin{verbatim}
+  cy.log("// test_005_change_description")
+    // Fill forms
+    cy.fillPatient(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "#diagnosis of patient with #B-ALL")
+    cy.fillPatient(1, "id_p2", "First_name_2", "Last_name_2", "2000-01-01", "#blood sample #CLL")
+    cy.fillPatient(3, "id_p3", "First_name_3", "Last_name_3", "2000-01-01", "bone #marrow #B-ALL")
+
+    cy.get('#object_form > .btn')
+      .should("have.value", "save")
+      .click()
+
+    // land on patient page
+    cy.get('tr').contains("Last_name_1 First_name_1 ")
+    cy.get('tr').contains("Last_name_2 First_name_2 ")
+    cy.get('tr').contains("Last_name_3 First_name_3 ")
+
+\end{verbatim}
+
+
+\question{Now go back to the \com{patients} page. You can filter the page
+  using the tags you entered previously.
+  Enter \texttt{\#B-ALL} in the search box (notice the autocompletion that helps you)
+  and validate with \com{Enter}.}
+
+
+\marginpar{Patients (and runs and samples) can also be created at once by
+pasting a table from a spreadsheet editor. See specification at \href{https://www.vidjil.org/doc/user/\#batch-creation-of-patientsrunssets}{\tt batch-creation-of-patientsrunssets}}
 
 Now the three patients and the run have been created but we have not uploaded
 the sequence files yet.
 
 \question{Now go to the \com{runs} page. You should see the run you have just
   created. Click on it. Then click on \com{+ add samples}.}
+\begin{verbatim}
+  cy.log("// test_006_add_new_run")
+    cy.goToRunPage()
+    cy.get('tr').contains("run_name 1")
+      .click()
+
+\end{verbatim}
 
 Similarly to the patient/run creation page, we can add as many samples as we
 want on this page.
 
 \question{As we need to upload three samples, click twice on the \com{add
     other sample} button so that you have three lines to add a sample.}
+\begin{verbatim}
+  cy.log("// test_007_add_new_samples_line_in_run")
+    // Do by the next cypress function call
 
-\question{For sample 1, choose the file corresponding to patient 1 (and
-  respectively for patient 2 and 3). You can also add extra information, with
+\end{verbatim}
+
+\question{For sample 1, choose the file corresponding to the 
+first patient, and do the same for the other patients.
+  You can also add extra information, including
   tags, as previously.}
+\begin{verbatim}
+  cy.log("// test_008_upload_new_samples_in_run")
+    // Do by the next cypress function call
+
+\end{verbatim}
 
 Note the \com{common sets} field. This field means that all the samples will
 be added to this run (the one you created). If you would like to \textbf{all}
@@ -112,30 +204,86 @@ need to modify this field.
   it. A list should appear with the last patients/runs/sets you created.
   Either click on the correct patient or type the first letters of her/his
   name. Then validate with \com{Enter} or by clicking on the correct entry.}
+\begin{verbatim}
+ 
+  cy.log("// test_009_upload_sample_set_common_sets")
+    // Do by the next cypress function call
+
+\end{verbatim}
 
 \question{When you have associated each sample to its corresponding patient
   you can upload the samples by clicking on the \com{Submit samples} button.}
+\begin{verbatim}
+  cy.log("// test_010_upload_sample_submit")
+    var preprocess   = undefined
+    var filename1    = "Demo-X5.fa"
+    var filename2    = undefined
+    var informations = " from tutorial server tests #functional #tutorial"
+
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2010-01-01", "Solo; Sample 1"+informations, "Last_name_1")
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2011-01-01", "Solo; Sample 2"+informations, "Last_name_2")
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2012-01-01", "Solo; Sample 3"+informations, "Last_name_3")
+
+    var sample_to_add_1 = [preprocess, "nfs", filename1, filename2, "2010-01-01", "Batch; Sample 1x #functional #tutorial; multiple add", "Last_name_1"]
+    var sample_to_add_2 = [preprocess, "nfs", filename1, filename2, "2011-01-01", "Batch; Sample 2x #functional #tutorial; multiple add", "Last_name_2"]
+    var sample_to_add_3 = [preprocess, "nfs", filename1, filename2, "2012-01-01", "Batch; Sample 3x #functional #tutorial; multiple add", "Last_name_3"]
+    cy.multiSamplesAdd([sample_to_add_1, sample_to_add_2, sample_to_add_3])
+
+\end{verbatim}
 
 Now you are back on the page of the run where you should see the three samples
 that are being uploaded.
 
 \question{When the upload is finished you launch the analysis by selecting the
-configuration in the drop down at the right (\com{multi+inc+xxx}) and then
+configuration in the drop down at the right (\com{multi+inc+xxx}) 
+\marginpar{\com{multi+inc+xxx} is the default configuration to
+process all human V(D)J recombinations}
+and then
 clicking on the gearwheel.}
+\begin{verbatim}
+  cy.log("// test_011_launch_analysis_sample")
+    var sample_id = 49
+    cy.launchProcess("2", sample_id)
+
+\end{verbatim}
 
 You can have a coffee, a tea, or something else, while the process is
 launched.
 
-\question{To regularly check the status of your job you can click
+\question{To check the status of your job you can click
   on the \com{reload} button at the bottom left of the page.
   Your process usually goes through the following stages: \com{QUEUED},
-  (possibly \com{STOPPED}), \com{ASSIGNED}, \com{RUNNING}, \com{COMPLETED} (or
+  (possibly \com{STOPPED}), \com{RUNNING}, \com{COMPLETED} (or
   \com{FAILED} when there is an issue, in such a case please contact us)}
+\begin{verbatim}
+  cy.log("// test_012_sample_analysis")
+    cy.waitAnalysisCompleted("2", sample_id)
 
-Then you can view the results as explained before.
-Instead we will remain on the server.
+\end{verbatim}
 
-\question{Now go back to the \com{patients} page. You can filter the page
-  using the tags you entered previously.
-  Enter \texttt{\#B-ALL} in the search box (notice the autocompletion that helps you)
-  and validate with \com{Enter}.}
+When the job is COMPLETED, 
+you can visualize the clonotype populations on Vidjil
+(see the other parts on the tutorial).
+
+
+  %%% à déplacer, filter B-ALL
+\begin{verbatim}
+  cy.log("// test_013_patient_page_and_filter")
+    cy.goToPatientPage()
+  
+    var value_filter = "#B-ALL"
+    cy.dbPageFilter(value_filter)
+
+    cy.get('#db_table_container')
+      .find('tbody')
+      .find('tr').each(($el, index, $list) => {// $el is a wrapped jQuery element
+          // wrap this element so we can use cypress commands on it
+          cy.wrap($el).should("contain", value_filter)
+    })
+    
+    var uid_sample2 = 33
+    cy.get(`#sample_set_open_${uid_sample2}_config_id_-1`)
+      .should("not.exist")
+
+\end{verbatim}
+

@@ -34,21 +34,24 @@ can manage, upload, analyze and annotate their runs directly on the web applicai
 
 ## Vidjil-algo
 
-  - Stable releases can be downloaded from <http://bioinfo.lille.inria.fr/vidjil> and <http://www.vidjil.org/releases>
+  - Stable releases can be downloaded from <http://www.vidjil.org/releases>
   - Development code is under *algo/*
   - Documentation, compilation and installation instructions: *doc/vidjil-algo.md*
 
 ## The web application
 
-  - Access at <https://app.vidjil.org/> (demo login: demo@vidjil.org, password: vidjil)
+  - Public test server at <https://app.vidjil.org/> (demo login: `demo@vidjil.org`, password: `vidjil`)
   - Please contact us if you would like to test your data and have a full account on the web server
+  - We offer hosting solutions for [healthcare compliance](http://www.vidjil.org/doc/healthcare/)
   - Development code is under *browser/* and *server/* (a `make` in those directories
     will get the necessary files)
   - Documentation is in *doc/*, it is also available from <http://www.vidjil.org/doc>
 
 # Code and license
 
-Vidjil is open-source, released under GNU GPLv3 license.
+Vidjil is open-source, released under the GPL version 3 or any later version.
+Licenses of third-party software and librairies are described
+in [doc/license.md](http://git.vidjil.org/blob/master/doc/license.md).
 You are welcome to redistribute it under [certain conditions](http://git.vidjil.org/blob/master/LICENSE).
 This software is for research use only and comes with no warranty.
 
@@ -62,17 +65,13 @@ Thank you for your support \!
 
 # The Vidjil team
 
-Vidjil is developed by Aurélien Béliard, [Mathieu Giraud](http://cristal.univ-lille.fr/~giraud), Ryan Herbert, Tatiana Rocher and [Mikaël Salson](http://cristal.univ-lille.fr/~salson)
-from the [Bonsai bioinformatics team](http://cristal.univ-lille.fr/bonsai) (CRIStAL, CNRS, U. Lille, Inria Lille).
-Vidjil is also developed by external colleagues:
-Marc Duez located in Bristol (School of Social and Community Medicine, University of Bristol)
-and Florian Thonier located in Rennes (department of hematology)
-Vidjil is developed in collaboration with
-the [department of Hematology](http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html) of CHRU Lille,
-the [Functional and Structural Genomic Platform](http://www.ircl.org/plate-forme-genomique.html) (U. Lille 2, IFR-114, IRCL),
-and the [EuroClonality-NGS](http://www.euroclonality.org/) working group.
-The research is supported by SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), by Région Nord-Pas-de-Calais/Hauts-de-France (ABILES),
-by Inria and by InCA.
+Vidjil is developed and maintained by
+the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille)
+and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
+The full list of authors/developers and contributors is found in [doc/credits.md](http://git.vidjil.org/blob/master/doc/credits.md).
+See also [codemeta.json](http://git.vidjil.org/blob/master/codemeta.json).
+
+Contact: Clément Chesnin, Florian Thonier, [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org).
 
 # References
 
@@ -88,10 +87,4 @@ Mathieu Giraud, Mikaël Salson, et al.,
 BMC Genomics 2014, 15:409
 <http://dx.doi.org/10.1186/1471-2164-15-409>
 
-You may also be interested in the following publication for the diagnosis of
-acute lymphoblastic leukemia with high-throughput sequencing:
-
-Yann Ferret, Aurélie Caillault, et al., “Multi-loci diagnosis of acute
-lymphoblastic leukaemia with high-throughput sequencing and bioinformatics
-analysis”, British Journal of Haematology 2016
-<http://dx.doi.org/10.1111/bjh.13981>
+The Vidjil platform has been utilised in [35+ publications](doc/credits.md#some-publications-using-vidjil) in oncology, hematology, and immunology.

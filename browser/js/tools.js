@@ -1,3 +1,6 @@
+var SYMBOL_VOID = "–";
+var SYMBOL_MATCH = "·";
+
 var SILENT="silent";
 var SUBST="substitution";
 var INS="insertion";
@@ -5,6 +8,9 @@ var DEL="deletion";
 var END_CODON = "end-codon ";
 var END_CODON_NOT_FIRST = "end-codon-not-first ";
 var LOCUS_ORDER = [ "TRA", "TRB", "TRB+", "TRG", "TRD", "TRA+D", "TRD+", "IGH", "IGH+", "IGK", "IGK+", "IGL"]
+
+var BIOSEQ_MATRIX = [ 2, -2]
+var BIOSEQ_GAPS   = [-2, -2]
 /**
  * Get codons from two aligned sequences
  * @pre both sequences are aligned together ref.length == seq.length
@@ -33,7 +39,7 @@ function get_codons(ref, seq, frame) {
 
     // Search first nucleotide pos
     for (pos; pos < ref.length; pos++) {
-        if (ref[pos] != '-') {
+        if (ref[pos] != SYMBOL_VOID) {
             if (frame == 0)
                 break;
             frame--;
@@ -52,7 +58,7 @@ function get_codons(ref, seq, frame) {
     var nb_nuc = 0;
     for (; pos < ref.length; pos++) {
         if (nb_nuc == 3 ||
-            (ref[pos] != '-' && current_codon_seq.length > 0 &&
+            (ref[pos] != SYMBOL_VOID && current_codon_seq.length > 0 &&
              nb_nuc == 0)) {
             codons_ref.push(current_codon_ref);
             codons_seq.push(current_codon_seq);
@@ -61,9 +67,9 @@ function get_codons(ref, seq, frame) {
             nb_nuc = 0;
         }
 
-        if (ref[pos] == '-') {
+        if (ref[pos] == SYMBOL_VOID) {
             current_codon_seq += seq[pos];
-            current_codon_ref += '-';
+            current_codon_ref += SYMBOL_VOID;
         } else {
             current_codon_ref += ref[pos];
             current_codon_seq += seq[pos];
@@ -95,9 +101,9 @@ function get_mutations(ref, seq, frame, with_end_codon) {
     for (var i = 0; i < codons.ref.length ; i++) {
         for (var p = 0; p < codons.ref[i].length; p++) {
             if (codons.ref[i][p] != codons.seq[i][p]) {
-                if (codons.ref[i][p] == '-') {
+                if (codons.ref[i][p] == SYMBOL_VOID) {
                     mutations[nb_pos] = INS;
-                } else if (codons.seq[i][p] == '-') {
+                } else if (codons.seq[i][p] == SYMBOL_VOID) {
                     mutations[nb_pos] = DEL;
                 } else {
                     var codon1 = codons.ref[i];
@@ -109,7 +115,7 @@ function get_mutations(ref, seq, frame, with_end_codon) {
                         // other sequences) that need to be ignored
                         for (var j = 0; j < codons.ref[i].length; j++) {
                             if (codons.ref[i][j] != codons.seq[i][j] ||
-                                codons.ref[i][j] != '-') {
+                                codons.ref[i][j] != SYMBOL_VOID) {
                                 codon1 += codons.ref[i][j];
                                 codon2 += codons.seq[i][j];
                             }
@@ -185,14 +191,27 @@ function tsvToArray(allText) {
 
     for (var i = 1; i < allTextLines.length; i++) {
         var data = $.trim(allTextLines[i]).split('	');
-        if (data.length == headers.length) {
-            var tarr = {};
-            for (var j = 0; j < headers.length; j++) {
-                if (headers[j] !== "") {
-                    tarr[headers[j]] = data[j];
+        var tarr = {};
+        switch (data.length) {
+            case headers.length:
+                // imgt prodcuced a complete results -> copy each columns
+                for (var j = 0; j < headers.length; j++) {
+                    if (headers[j] !== "") {
+                        tarr[headers[j]] = data[j];
+                    }
                 }
-            }
-            lines.push(tarr);
+                lines.push(tarr);
+                break;
+            case 1:
+                // empty data line -> do nothing
+                break;
+            default:
+                // imgt returned no results or incomplete results for a sequence
+                // -> copy only first two column (Sequence number + ID)
+                tarr[headers[0]] = data[0];
+                tarr[headers[1]] = data[1];
+                lines.push(tarr);
+                break;
         }
     }
     return lines;
@@ -279,6 +298,27 @@ function prepend_path_if_not_web(file, path) {
     return path + file;
 }
 
+
+/**
+ * Function to download file located to another server.
+ * For the moment, XHR variante is bypassed as not working with cross-domain (see issue https://gitlab.inria.fr/vidjil/vidjil/-/issues/5287)
+ * Classic <a> link to download don't allow to give a name to downloaded fiel if url call en external url.
+ * See note at https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
+ */
+function downloadFile(url, nomLocal) {
+
+    var anchor = document.createElement('a');
+    anchor.setAttribute("download", file_name);
+    anchor.setAttribute("href",     path_data);
+    anchor.style = 'display: none';
+    self.ajax_indicator_stop()
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+
+}
+
+
 /**
  * Take in parameter the JSON result of CloneDB for one clone
  * Return a hash whose keys are URLs to sample sets and configs.
@@ -342,7 +382,7 @@ function processCloneDBContents(results,model) {
         final_results['Non viewable samples'] = count_non_viewable;
 
     if (Object.keys(final_results).length === 0)
-        final_results['–'] = "No occurrence of this clone in CloneDB"
+        final_results['–'] = "No occurrence of this clonotype in CloneDB"
 
     final_results.original = results;
     final_results.clones_names = clones_results;
@@ -436,6 +476,25 @@ function append_to_object(data, append_to) {
     }
 }
 
+/**
+ * Allow to copy passed content into the clipboard
+ */
+function copyTextToClipboard(text, field, elem) {
+    if (!navigator.clipboard) {
+        console.log({ msg: "Unable to copy content into clipboard. Maybe cause by an old browser", type: "flash", priority: 3 });
+        return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+        var msg_field = (field != undefined) ? ` field: <B>${field}</B>` : ""
+        console.log({ msg: 'Copied '+msg_field, type: "flash", priority: 1 });
+        elem.title = 'Copied!'
+        setTimeout(function() { elem.title = "Copy to clipboard"}, 3000);
+
+    }, function(err) {
+        console.log({ msg: 'Could not copy to clipboard: '+ err, type: "flash", priority: 2 });
+    });
+}
+
 
 /**
  * Floor the given number to a power of 10
@@ -468,7 +527,7 @@ function nice_ceil(x, force_pow10)
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
 
-        return Math.ceil(x / floor_power10) * floor_power10
+        return discard_float_approximation(Math.ceil(x / floor_power10) * floor_power10)
     }
     catch(e) {
         // Always return something
@@ -484,6 +543,7 @@ function nice_ceil(x, force_pow10)
 
 function nice_1_2_5_ceil(x)
 {
+    x = discard_float_approximation(x);
     if (x <= 0) return x
 
     try {
@@ -513,7 +573,7 @@ function nice_floor(x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
-        return Math.floor(x / floor_power10) * floor_power10
+        return discard_float_approximation(Math.floor(x / floor_power10) * floor_power10)
     }
     catch(e) {
         // Always return something
@@ -521,9 +581,46 @@ function nice_floor(x, force_pow10)
     }
 }
 
+/**
+ * Return 1 if array A is "bigger" than array B, else -1 if it is smaller, and 0 is there are equal
+ */
+function compareNumericalArrays(arrA, arrB){
+    for (var i = 0; i < arrA.length; i++) {
+        if (arrB[i] == undefined) {
+            return 1
+        }
+        if (arrA[i] > arrB[i]){
+            return 1
+        }
+        if (arrA[i] < arrB[i]){
+            return -1
+        }
+        // else should be equal, so continue for one more depth
+    }
+    return 0
+}
 
 
+/**
+ * Return in a select list the corresponding value to check
+ */
+function checkSelectOptionByValue(selectId, valueToCheck) {
+    let selectElement = document.getElementById(selectId);
+    console.debug(selectElement)
+    var option = Array.from(selectElement.options).find(option => option.value === valueToCheck);
+    console.debug(option)
+    if (option) { option.selected = true}
+}
 
+/**
+ * Simplify a float to prevent approximation issues.
+ */
+function discard_float_approximation(float) {
+    // This assumes that the float is represented on 64 bits
+    // and that it will be made with 15 digits in total.
+    // This therefore discards the 3 least significant digits.
+    return parseFloat(float.toFixed(12));
+}
 
 /**
  * Give nice min/max/step numbers including the given [min, max] interval in order that steps are also nice,
@@ -547,7 +644,7 @@ function nice_min_max_steps(min, max, nb_max_steps)
     var n_max = nice_ceil(max, basic_step)
 
     var step = nice_1_2_5_ceil((n_max - n_min) / nb_max_steps)
-    var nb_steps = Math.ceil((n_max - n_min) / step)
+    var nb_steps = Math.ceil(discard_float_approximation((n_max - n_min) / step))
 
     // In some rare cases, we try another loop of rounding
     var overlength = nb_steps * step - (n_max - n_min)
@@ -555,7 +652,7 @@ function nice_min_max_steps(min, max, nb_max_steps)
     {
         n_min = nice_floor(min, step)
         n_max = nice_ceil(max, step)
-        nb_steps = Math.ceil((n_max - n_min) / step)
+        nb_steps = Math.ceil(discard_float_approximation((n_max - n_min) / step))
     }
 
     return {min: n_min, max: n_max, step: step, nb_steps: nb_steps}
@@ -633,6 +730,14 @@ warnLevels = {
 }
 
 warnTexts = { }
+warnText  = {
+    0: "",
+    1: "warn",
+    2: "alert",
+    3: "error",
+    4: "fatal",
+    5: "ok"
+}
 
 for (var key in warnLevels) {
     warnTexts[warnLevels[key]] = key ;
@@ -710,18 +815,95 @@ function locus_cmp(valA, valB){
 }
 
 
+
+/**
+ * Compare two labels to sort them against a predefined list of labels.
+ * The list is ordered on a preordered list of labels).
+ * By this way, labels that are not in this list will be added at the end of it.
+ * @param  {String} valA   One label value
+ * @param  {String} valB   Another label value to compare
+ * @param  {Array}  labels List of predefined labels
+ * @return {Number}        A number -1 if A before B, else 1
+ */
+function sortFromList(valA, valB, labels){
+    // Ordered list of all generic label
+    var index_A = labels.indexOf(valA)
+    var index_B = labels.indexOf(valB)
+
+    if (index_A == -1 && index_B == -1){
+        // Neither A or B are present in labels
+        return valA < valB
+    } else if (index_A != -1 && index_B == -1){
+        // Only A is present in labels
+        return -1
+    } else if (index_A == -1 && index_B != -1){
+        // Only B is present in labels
+        return 1
+    } else if (index_A != -1 && index_B != -1){
+        // A & B are present in labels
+        return index_A - index_B
+    }
+    return 0
+}
+
+function getAllIndexes(arr, val) {
+    var indexes = [], i = -1;
+    while ((i = arr.indexOf(val, i+1)) != -1){
+        indexes.push(i);
+    }
+    return indexes;
+}
+
+
+/**
+ * Fix error when a same file is analysed multiple time
+ * In this case, order will fail or graph will not be clear, so rename original_names
+ * @param  {[type]} clone [description]
+ * @return {[type]}       [description]
+ */
+function fixDuplicateNames(names){
+    var copy = JSON.parse(JSON.stringify(names))
+    copy = removeDuplicate(names)
+    if (copy.length != names.length){
+        for (var i = 0; i < names.length; i++) {
+            var name = names[i]
+            var idx  = getAllIndexes(names, name)
+            var start = 1
+            for (var j = 1; j < idx.length; j++) {
+                var new_name = name + "("+start+")"
+                while ( (names.indexOf(new_name, idx[j]) != -1) || start > names.length ){
+                    start += 1
+                }
+                names[idx[j]] = new_name
+                start += 1
+            }
+        }
+    }
+    return names
+}
+
+
 /**
  * Open a new tab and put content in it.
  * This function is use to show fasta export
  * @param  {String} content Clones as fasta format
  */
 function openAndFillNewTab (content){
-    var w = window.open("", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
+    var target = document.getElementById("form").target
+    var w = window.open("", target, "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
 
     var result = $('<div/>', {
         html: content
     }).appendTo(w.document.body);
     return
+}
+
+/**
+ * Return a copy of the given object
+ */
+function copyHard(obj){
+    if (obj == undefined){return undefined}
+    return JSON.parse(JSON.stringify(obj))
 }
 
 /**
@@ -837,32 +1019,54 @@ function bsa_cigar2match(cigar)
     return sum
 }
 
-function download_csv(csv, filename) {
-    var csvFile;
+function download_csv(content, filename, type="csv") {
+    var contentFile;
     var downloadLink;
 
-    // CSV FILE
-    csvFile = new Blob([csv], {type: "text/csv"});
+    contentFile = new Blob([content], {type: `text/${type}`});
 
-    // Download link
     downloadLink = document.createElement("a");
-
-    // File name
     downloadLink.download = filename;
 
     // We have to create a link to the file
-    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.href = window.URL.createObjectURL(contentFile);
 
-    // Make sure that the link is not displayed
     downloadLink.style.display = "none";
 
-    // Add the link to your DOM
-    document.body.appendChild(downloadLink);
-
-    // Lanzamos
+    document.body.appendChild(downloadLink);  // Add the link to your DOM
     downloadLink.click();
 }
 
+
+/**
+ * Recursive function to merge 2 dicts together , even if missing keys are present
+ * If one dict is null, or one object is not a dict, return undefined
+ */
+function mergeDictionaries(dict1, dict2) {
+    if ( (typeof dict1 !== 'object' && dict1 !== null) || (typeof dict2 !== 'object' && dict2 !== null)){
+        return undefined
+    }
+    if ( dict1 == null || dict1 == undefined){
+        dict1 = {}
+    }
+    if ( dict2 == null || dict2 == undefined){
+        dict2 = {}
+    }
+
+    for (let key in dict2) {
+        if (dict2.hasOwnProperty(key)) {
+            if (typeof dict2[key] === 'object' && dict2[key] !== null && !Array.isArray(dict2[key])) {
+                if (!dict1[key] || typeof dict1[key] !== 'object' || Array.isArray(dict1[key])) {
+                    dict1[key] = {}; // Crée un nouvel objet si la clé n'existe pas dans dict1 ou n'est pas un objet
+                }
+                mergeDictionaries(dict1[key], dict2[key]); // Appel récursif pour fusionner les objets
+            } else {
+                dict1[key] = dict2[key]; // Remplace la valeur
+            }
+        }
+    }
+    return dict1;
+}
 
 function translate_key_diversity(key_diversity){
     var table = {
@@ -873,31 +1077,98 @@ function translate_key_diversity(key_diversity){
     return table[key_diversity]
 }
 
+/**
+ * Get relative zindex of an element, as a list of zindexs by depth from parents to children
+ * Return null if element is not visible
+ */
+function getRelativeZindex(elem){
+    if (!$(elem).is(":visible")){
+        return null
+    }
+
+    var body = document.getElementsByTagName("body")[0]
+    var getZindex = (elem) => {return window.getComputedStyle(elem).zIndex}
+    var zindexs   = []
+
+    while (elem != body){
+        if (Number.isInteger( parseFloat(getZindex(elem)))) {
+            zindexs.unshift( parseFloat(getZindex(elem)) )
+        }
+        elem = elem.parentNode
+    }
+    return zindexs
+}
 
 ///////////////////////////
 /// Fct to fill info table
 ///////////////////
 var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
 
-var header = function(content, title, time_length) {
+/**
+ * Create a header line for info table
+ *  @param {String} content - String to show in the header
+ *  @param {string} title - Specific DOM id to give to the line
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ */
+var header = function(content, title, time_length, class_line, class_cell) {
+    class_line = class_line != undefined ? `class='${class_line}'` : ""
+    class_cell = class_cell != undefined ? `class='${class_cell} header'` : "class='header'"
     title = (title == undefined) ? clean_title(content) : clean_title(title)
-    return "<tr id='modal_header_"+title+"'><td class='header' colspan='" + (time_length + 1) + "'>" + content + "</td></tr>" ;
+    return `<tr id='modal_header_${title}' ${class_line}><td ${class_cell} colspan='${(time_length + 1)}'>${content}</td></tr>` ;
 }
-var row_1  = function(item, content, title, time_length) {
+
+/**
+ * Create a table row with given content
+ *  @param {} item - Content of the first cell of the line
+ *  @param {} content - content to show on the second cell of the line (value)
+ *  @param {string} title - Specific title id to give as extension of the DOM id of the line; can be undefined
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ */
+var row_1  = function(item, content, title, time_length, class_line, class_cell_first, class_cell_other, allow_copy=false) {
+    class_line = class_line != undefined ? `class='${class_line}'` : ""
+    class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
+    class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
     title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
-    return "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>" + item + "</td><td colspan='" + time_length + "' id='modal_line_value_"+title+"'>" + content + "</td></tr>" ;
+    var copy = ""
+    if (allow_copy == true) {
+        copy = "<i class='icon-docs' style='cursor: copy' "+
+                   `id='modal_line_title_${title}_clipboard' `+
+                   `onclick='copyTextToClipboard("${content}", "${item}", this)' `+
+                   "title='Copy to clipboard'>"+
+               "</i>"
+    }
+    return `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}${copy}</td><td ${class_cell_other} colspan='${time_length}' id='modal_line_value_${title}'>${content}</td></tr>`;
 }
-var row_from_list  = function(item, content, title, time_length) {
+
+/**
+ * Create a html row element from given item and list of values
+ *  @param {String} item - Content of first row of the line
+ *  @param {} content - Array of value to put on each other cells of the line
+ *  @param {string} title - Specific title id to give to the line
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ */
+var row_from_list  = function(item, content, title, time_length, class_line, class_cell_first, class_cell_other) {
+    class_line = class_line != undefined ? `class='${class_line}'` : ""
+    class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
+    class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
     title = (title == undefined) ?clean_title(item) : clean_title(title)
-    var div = "<tr id='modal_line_"+title+"'><td id='modal_line_title_"+title+"'>"+ item + "</td>"
+    var div = `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}</td>`
     for (var i = 0; i < content.length; i++) {
         col  = content[i]
-        div += "<td id='modal_line_value_"+title+"_"+i+"'>" + col + "</td>"
+        div += `<td ${class_cell_other} id='modal_line_value_${title}_${i}'>${col}</td>`
     }
     div += "</tr>" ;
     return div;
 }
 
+
+/**
+ * Create cell content by casting given parameter to be showable in table
+ *  @param {string} title - Specific title id to give to the line
+ *  @param {} content - Content that will be automatically casted
+ *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
+ *  @param {} clone
+ */
 var row_cast_content = function(title, content, time_length, clone) {
     if (content == undefined) {
         return ""
@@ -921,5 +1192,28 @@ var row_cast_content = function(title, content, time_length, clone) {
         if (nt_seq !== '') {
             return row_1(title, clone.getSegNtSequence(title), undefined, time_length)
         }
+    }
+}
+
+/**
+ * Update a checkbox indeterminate and checked states according to a list of checkboxes
+ * @param {checkbox} checkboxToUpdate
+ * @param {Array<checkbox>} checkboxes
+ */
+function updateIndeterminateState(checkboxToUpdate, checkboxes) {
+    numberOfChecked = 0;
+    for (var checkbox of checkboxes) {
+        if (checkbox.checked) {
+            numberOfChecked++;
+        }
+    }
+    if (numberOfChecked == 0) {
+        checkboxToUpdate.checked = false;
+        checkboxToUpdate.indeterminate = false;
+    } else if (numberOfChecked == checkboxes.length) {
+        checkboxToUpdate.checked = true;
+        checkboxToUpdate.indeterminate = false;
+    } else {
+        checkboxToUpdate.indeterminate = true;
     }
 }

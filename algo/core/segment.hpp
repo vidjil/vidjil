@@ -458,7 +458,14 @@ string KmerSegmenter<Shortcut, Affect>::getInfoLineWithAffects() const
       << this->getInfoLine();
 
    if (this->getSegmentationStatus() != UNSEG_TOO_SHORT)
-     ss << this->getKmerAffectAnalyser()->toString();
+   {
+     ss << endl;
+     ss << "# " << right << setw(10) << this->segmented_germline->getCode() << " "
+        << this->getKmerAffectAnalyser()->toStringValues();
+     ss << endl;
+     ss << "$ " << right << setw(10) << this->segmented_germline->getCode() << " "
+        << this->getKmerAffectAnalyser()->toStringSigns();
+   }
 
    return ss.str();
 }

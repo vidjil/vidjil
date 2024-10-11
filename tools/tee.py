@@ -21,10 +21,10 @@ parser.add_argument('file', nargs='*', help='''output file(s)''')
 
 def unbuffered_read(f):
     # see http://stackoverflow.com/a/1183654
-    l = f.readline()
+    l = f.readline().decode("utf-8")
     while l:
         yield l
-        l = f.readline()
+        l = f.readline().decode("utf-8")
 
 def tee(cmd, outputs):
     '''Runs 'cmd', pipe the output to 'outputs', and returns the exit code of 'cmd' '''

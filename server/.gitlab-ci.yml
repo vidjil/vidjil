@@ -1,0 +1,121 @@
+
+.test_cypress_server:
+  stage: test_cypress_server
+  extends:
+    - .test_server_base_dind
+  script: &test_cypress_server_script
+    - docker exec vidjil-uwsgi  chmod a+w /usr/share/vidjil/server/py4web/apps/vidjil/errors
+    - docker exec vidjil-uwsgi  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
+    - mkdir -p logs/before; for service in mysql fuse uwsgi workers flower nginx; do docker logs vidjil-${service} > logs/before/${service}.log 2>&1; done
+    - echo "TIME $(date) - Before pulling cypress docker image" >> time.log
+    - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9"
+    - echo "TIME $(date) - After pulling cypress docker image" >> time.log
+    - >
+      docker run
+      -v $PWD/$CYPRESS_PATH:/app/cypress
+      -v $PWD/browser:/app/browser
+      -v $PWD/doc:/app/doc
+      -v $PWD/demo:/app/demo
+      -v $PWD/tools:/app/tools
+      -v $PWD:/app/vidjil
+      -v "$PWD/docker/ci/cypress.config.js":"/app/cypress.config.js"
+      -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash"
+      --env BROWSER=browsers/$BROWSER
+      --env HOST=$HOST
+      --env PROJECT=$PROJECT
+      --env URL=$URL
+      --env TEST_FILES_PATTERN=$TEST_FILES_PATTERN
+      --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
+      --shm-size=1GB
+      --network="host"
+      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9" bash script.bash $TEST_FILES_PATTERN
+  artifacts:
+    reports:
+      junit: $CYPRESS_PATH/reports/report_*.xml
+    paths:
+      - $CYPRESS_PATH
+      - docker/*.yml
+      - docker/vidjil-*
+      - browser/js/conf.js
+      - browser/test/cypress
+      - server/py4web/apps/vidjil/errors/*
+      - time.log
+      - logs
+      - docker/volumes/vidjil/log
+    expire_in: 7 day
+    when: always
+  variables:
+    CYPRESS_PATH: server/py4web/apps/vidjil/tests/cypress
+    HOST: local
+    TEST_FILES_PATTERN: "/app/cypress/e2e/test_*.js"
+  only: &onlyServerBranches
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^prod-server/
+    - dev
+
+
+
+## Cypress with server
+server1-ff-supported:
+  extends:
+    - .test_cypress_server
+    - .need_for_moderate_server
+  variables:
+    BROWSER: firefox_supported/firefox
+  needs:
+    - [build_test_server_docker]
+
+## Cypress with server
+s2:
+  extends:
+    - .test_cypress_server
+  parallel:
+    matrix:
+      - BROWSER: [
+          firefox_latest/firefox,
+          firefox_legacy/firefox,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
+          chrome_legacy/chrome
+        ]
+
+
+## Cypress TUTORIAL with server
+.tuto-server:
+  stage: test_tutorial
+  extends:
+    - .test_cypress_server
+  script:
+    - make -C doc/tutorial/ build_tutorial_cypress_server
+    - *test_cypress_server_script
+  variables:
+    TEST_FILES_PATTERN: "/app/cypress/e2e/doc_*.js"
+
+
+tuto-s1-ff-supported:
+  stage: test_tutorial
+  extends:
+    - .tuto-server
+    - .need_for_moderate_server
+  variables:
+    BROWSER: firefox_supported/firefox
+  needs:
+    - [build_test_server_docker]
+
+
+## Cypress with server
+tuto-s2:
+  extends:
+    - .tuto-server
+    - .need_for_late_server
+  parallel:
+    matrix:
+      - BROWSER: [
+          firefox_latest/firefox,
+          firefox_legacy/firefox,
+          chrome_supported/chrome,
+          chrome_latest/chrome,
+          chrome_legacy/chrome
+        ]
+

@@ -1,0 +1,40 @@
+
+\begin{verbatim}
+/// <reference types="cypress" />
+
+var localhost = true
+console.log( Cypress.env('workdir') )
+var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
+console.log( url )
+
+// This script allow to make some action in a sandbox to quicly change made on the client when you code
+describe('Tutorial browser', function () {
+    beforeEach(function () {
+        cy.setBrowser(url)
+    })
+
+  it('00-tutorial-browser',  function() {
+    cy.openAnalysis("doc/demo_lil_l3_tutorial.vidjil", undefined, 90000)
+
+
+\end{verbatim}
+
+
+\input{tutorial-quality}
+
+\input{tutorial-clones}
+
+\input{tutorial-several-samples}
+
+\input{tutorial-export}
+
+\begin{verbatim}
+*/
+
+    return
+  })
+})
+
+\end{verbatim}
+
+

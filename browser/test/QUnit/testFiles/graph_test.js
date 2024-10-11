@@ -33,7 +33,7 @@ QUnit.test("init", function(assert) {
     
     graph.initData()
     assert.deepEqual(graph.data_data[0], {"active": false,
-                                    "color": "#cb4b16",
+                                    "color": "rgb(153,153,61)",
                                     "name": "dataTest1",
                                     "tab": [45,60,52,60]},
         "initData")

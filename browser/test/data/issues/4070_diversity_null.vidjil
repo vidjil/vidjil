@@ -1,0 +1,79 @@
+{
+  "clones": [
+    {
+      
+      "germline": "IGH+",
+      "id": "CTCCTCAATTACGATATTTTGACTGGTTATCCTACTGGGGCCAGGGAACC",
+      "name": "seq name",
+      "reads": [
+        1
+      ],
+      "sequence": "ACACAGCCACGTATTACTGCCCCTTGGCCTCCTCAATTACGATATTTTGACTGGTTATCCTACTGGGGCCAGGGAACCCT",
+      "top": 1
+    }
+  ],
+  "clusters": [],
+  "config_name": "config",
+  "dataFileName": "filename",
+  "diversity": {
+    "index_Ds_diversity": [
+      null
+    ],
+    "index_E_equitability": [
+      null
+    ],
+    "index_H_entropy": [
+      0.0
+    ]
+  },
+  "germlines": {},
+  "producer": "vidjil fuse",
+  "reads": {
+    "germline": {
+      "IGH+": [
+        1
+      ]
+    },
+    "segmented": [
+      1
+    ],
+    "total": [
+      25
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "cmdline"
+    ],
+    "id": [
+      6
+    ],
+    "log": [
+      "log 1"
+    ],
+    "names": [
+      "test_diversity_null"
+    ],
+    "number": 1,
+    "original_names": [
+      "sequence_file.fa"
+    ],
+    "producer": [
+      "vidjil-algo 2020.06"
+    ],
+    "results_file_id": [
+      7
+    ],
+    "run_timestamp": [
+      "2021-02-05 10:21:46"
+    ],
+    "sample_name": [
+      6
+    ],
+    "timestamp": [
+      "None"
+    ]
+  },
+  "timestamp": "2021-02-05 10:21:50",
+  "vidjil_json_version": "2016b"
+}

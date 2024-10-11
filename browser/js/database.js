@@ -14,6 +14,7 @@ var SEQ_LENGTH_CLONEDB = 40; // Length of the sequence retrieved for CloneDB
  * */
 function Database(model, address) {
     var self = this;
+    this.uploader = new Uploader()
     
     //check if a default address is available in config.js
     if (typeof config !== 'undefined' && config.use_database !== undefined && config.use_database) {
@@ -28,16 +29,15 @@ function Database(model, address) {
     
     
     if (DB_ADDRESS !== ""){
-        var fileref=document.createElement('script')
-        fileref.setAttribute("type","text/javascript")
-        fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
-        document.getElementsByTagName("head")[0].appendChild(fileref)
+        // var fileref=document.createElement('script')
+        // fileref.setAttribute("type","text/javascript")
+        // fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
+        // document.getElementsByTagName("head")[0].appendChild(fileref)
         
         this.db_address = DB_ADDRESS;
         this.upload = {};
         this.url = []
         this.m = model
-        this.uploader = new Uploader()
         this.build()
         this.m.db = this
         
@@ -138,16 +138,9 @@ Database.prototype = {
 			  'grep_reads': window},
 			 function(a) {
 				// Link to result file and launch download
-                             var path_data = DB_ADDRESS+"/results_file/download?filename=seq/clone.fa-1&results_file_id="+a.result_id
                              var file_name = "reads__"+clone_id+"__file_id_"+"_"+sequence_file_id+".fa"
-                             var anchor = document.createElement('a');
-                             anchor.setAttribute("download", file_name);
-                             anchor.setAttribute("href",     path_data);
-                             anchor.style = 'display: none';
-                             self.ajax_indicator_stop()
-                             document.body.appendChild(anchor);
-                             anchor.click();
-                             document.body.removeChild(anchor);
+                             var path_data = DB_ADDRESS+"/default/download/"+a.data_file+"?filename="+file_name
+                             downloadFile(path_data, file_name)
 			 });
     },
 
@@ -159,7 +152,7 @@ Database.prototype = {
      callProcess : function (page, args, callback){
          var self=this;
          this.temporarilyDisableClickedLink();
-	 
+
          var arg = "";
          if (typeof args != "undefined" && Object.keys(args).length) 
              arg = this.argsToStr(args)
@@ -179,17 +172,11 @@ Database.prototype = {
              xhrFields: {withCredentials: true},
              success: function (result) {
                  result = jQuery.parseJSON(result)
-                 setTimeout(function(){ self.waitProcess(result.processId, 5000, callback)}, 5000);
+                 setTimeout(function(){ self.waitProcess(result.results_file_id, 5000, callback)}, 5000);
                  self.connected = true;
              }, 
              error: function (request, status, error) {
-                 self.connected = false;
-                 if (status === "timeout") {
-                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                 } else {
-                     self.check_cert()
-                 }
-                 self.warn("callProcess: " + status + " - " + url.replace(self.db_address, '') + "?" + this.argsToStr(args))
+                self.error_log(request, status, error, name="callProcess", url=url, msg=undefined, args=args, type="flash") 
              }
          });
      },
@@ -211,7 +198,7 @@ Database.prototype = {
              xhrFields: {withCredentials: true},
              success: function (result) {
                  self.connected = true;
-		 console.log(result);
+                 console.log(result);
                  result = jQuery.parseJSON(result)
                  if (result.status == "COMPLETED"){
                      callback(result.data);
@@ -223,13 +210,7 @@ Database.prototype = {
                  
              }, 
              error: function (request, status, error) {
-                 self.connected = false;
-                 if (status === "timeout") {
-                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                 } else {
-                     self.check_cert()
-                 }
-                 self.warn("waitProcess: " + status )
+                self.error_log(request, status, error, name="waitProcess", url=this.url, msg=undefined, args=undefined, type="flash")
              }
          });
      },
@@ -241,7 +222,7 @@ Database.prototype = {
      * */
     call: function (page, args) {
         var self = this;
-	this.temporarilyDisableClickedLink()
+        this.temporarilyDisableClickedLink()
         
         var url = self.db_address + page
         if (page.substr(0,4).toLowerCase() == "http") {
@@ -249,10 +230,19 @@ Database.prototype = {
         }
         var arg = "";
         if (typeof args != "undefined" && Object.keys(args).length) {
+            // Append args
             arg = this.argsToStr(args)
-            url += "?" + arg;
+            if (url.includes("?")) {
+                url += "&"
+            } else {
+                url += "?"
+            }
+            url += arg;
         }
 
+        //hack to process both web2py and py4web redirected url
+        url = url.replace("vidjil/vidjil", "vidjil")
+        url = url.replace("vidjil//vidjil", "vidjil")
         
         this.callUrl(url, args)
     },
@@ -264,7 +254,10 @@ Database.prototype = {
      * */
     callUrl : function (url, args){
         var self=this;
-        
+
+        this.m.loading_is_pending = true
+        this.m.updateIcon()
+
         $.ajax({
             type: "POST",
             crossDomain: true,
@@ -276,19 +269,47 @@ Database.prototype = {
             success: function (result) {
                 self.display_result(result, url, args)
                 self.connected = true;
+                self.m.loading_is_pending = false
+                self.m.updateIcon()
             }, 
             error: function (request, status, error) {
-                self.connected = false;
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                } else {
-                    self.check_cert()
-                }
-
-		self.warn("callUrl: " + status + " - " + url.replace(self.db_address, '') + "?" + this.argsToStr(args))
+                self.error_log(request, status, error, name="callUrl", url=url, msg=undefined, args=args, type="flash")
+                this.m.loading_is_pending = false
+                this.m.updateIcon()
             }
             
         });
+    },
+
+    /**
+     * error_log; Function launched when a request failed. 
+     * Search reason of fail (timeout, unavailable db server, internal server error)
+     * Log reason on error, called url and args, open a flash/popup (optional)
+     * request, status, error: values given by ajax in case of fail
+     * name: name of the function/component calling request
+     * msg: optional; a message to log instead of default url/args values
+     * url: url called; cleaned of db adress
+     * args: args added to called url
+     * type: type of log printed (flash; popup or undefined)
+     */
+    error_log: function(request, status, error, name, url, msg=undefined, args=undefined, type="flash", quiet=true){
+        if (status === "timeout") {
+            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+        } else {
+            // this.check_cert()
+            console.default.log(request.statusText)
+        }
+
+        if (quiet == undefined){
+            this.warn(name +": " + status + " - " + url.replace(this.db_address, '') + "?" + args != undefined ? this.argsToStr(args) : "")
+        }
+
+        if (type != undefined){
+            url = (url != undefined) ? (url.replace(this.db_address, '') + "?" + this.argsToStr(args)) : ""
+
+            text = msg !== undefined ? msg : `An error occured (${request.statusText}; code ${request.status})` //<br/>URL called: ${url}` // limit url to admin ?
+            console.log({"type": type, "msg": text, "priority": 2});
+        }
     },
 
     callUrlJson : function(url, args) {
@@ -306,13 +327,7 @@ Database.prototype = {
                 self.connected = true;
             },
             error: function (request, status, error) {
-                self.connected = false;
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                } else {
-                    self.check_cert()
-                }
-                self.warn("callUrlJson: " + status + " - " + url.replace(self.db_address, '') + "?" + self.argsToStr(args))
+                self.error_log(request, status, error, name="callUrlJson", url, msg=undefined, args, type=undefined)
             }
 
         });
@@ -337,7 +352,7 @@ Database.prototype = {
      * Send the given clones to CloneDB
      * @param {int list} clones - list of clones (if undefined, call on all clones)
      * */
-    callCloneDB: function(clones) {
+    callCloneDB: function(clones, callback) {
 
         if (typeof clones === 'undefined')
         {
@@ -346,14 +361,14 @@ Database.prototype = {
 
         console.log("Send to cloneDB: " + clones)
         var windows = [];
-	var self = this;
-	var kept_clones = [];
+        var self = this;
+        var kept_clones = [];
         for (var i = 0; i < clones.length; i++) {
             var clone = this.m.clones[clones[i]];
             if (clone.hasSeg('5', '3')) {
                 var middle_pos = Math.round((clone.seg['5'].stop + clone.seg['3'].start)/2);
                 windows.push(clone.sequence.substr(middle_pos - Math.round(SEQ_LENGTH_CLONEDB/2), SEQ_LENGTH_CLONEDB));
-		kept_clones.push(clones[i]);
+                kept_clones.push(clones[i]);
             }
         }
 
@@ -367,22 +382,29 @@ Database.prototype = {
 		    res = jQuery.parseJSON(result);
 		    result = res;
 		} catch (err) {}
-                self.connected = true;
-		if (typeof result.success !== 'undefined' && result.success == 'false') {
-                    console.log({
-			"type": "flash",
-			"msg": result.message,
-			"priority": 2
-                    });
-                    self.connected = false;
+
+        self.connected = true;
+        if (typeof result.error == 'string' ) {
+            console.log({
+                "type": "flash",
+                "msg": "CloneDB: " +result.error,
+                "priority": 2
+            });
+            self.connected = false;
+        } else if (typeof result.success !== 'undefined' && result.success == 'false') {
+            console.log({
+                "type": "flash",
+                "msg": "CloneDB: " +result.message,
+                "priority": 2
+            });
+            self.connected = false;
 		} else { 
 	            for (var i = 0; i < kept_clones.length; i++) {
 			self.m.clones[kept_clones[i]].seg.clonedb = processCloneDBContents(result[i], self.m);
 	            }
-                    m.shouldRefresh()
                     m.update()
 		}
-		
+                if (callback) callback();
             },
             error: function() {
                 self.connected = false;
@@ -391,28 +413,9 @@ Database.prototype = {
                     "msg": "Error while requesting CloneDB",
                     "priority": 2
                 });
+                if (callback) callback();
             }
         });
-    },
-    
-    
-    pre_process_onChange : function (field) {
-        var $option = $(field).find(":selected");
-        if ($option.attr('required_files') == "1"){
-            $(".file_2").hide();
-            $(".upload_file").val("");
-            $(".upload_field").each(function() {
-                $(this).prop("required", false);
-            });
-        }else{
-            $(".file_2").show();
-            if ($(".is_editing").length == 0) {
-                // Not editing a sample, but creating new ones
-                $(".upload_field").each(function() {
-                    $(this).prop("required", true);
-                });
-            }
-        }
     },
 
     upload_file_onChange : function (target_id, value) {
@@ -433,14 +436,14 @@ Database.prototype = {
      * */
     display_result: function (result, url, args) {
         //rétablissement de l'adresse pour les futures requetes
-        result = result.replace("DB_ADDRESS/", this.db_address);
+        result = result.replace(/DB_ADDRESS\//g, this.db_address);
         result = result.replace("action=\"#\"", "action=\""+url+"\"");
 
         var res;
         try {
             res = jQuery.parseJSON(result);
         }
-        catch(err)//it's not a json so we just display the result as an html page
+        catch (err)//it's not a json so we just display the result as an html page
         {
             //affichage résultat
             this.display(result)
@@ -451,16 +454,32 @@ Database.prototype = {
             
             //
             this.fixed_header()
-            adress=DB_ADDRESS + 'notification/get_active_notifications'
+
             // New page displayed, attempt to display header and login notifications
-            this.loadNotifications(adress);
+            let address=DB_ADDRESS + 'notification/get_active_notifications'
+            this.loadNotifications(address);
 
             $("#menu-container").addClass('disabledClass');
 
             // Hax !
             $('.jstree').trigger('load');
 
+            var list_select = ["choose_user", "select_user"]
+            for (var i = list_select.length - 1; i >= 0; i--) {
+                $('#'+list_select[i]).select2();
+            }
+            this.executeAfterAjaxScript()
+
             return 0 ;
+        }
+
+        //the json result contain a flash message
+        if (res.message) {
+            priority = res.success == 'false' ? 2 : 1
+            priority = typeof res.priority == 'undefined' ? priority : res.priority
+            console.log({"type": "flash",
+                             "msg": "database : " + res.message,
+                             "priority": priority})
         }
         
         //the json result contain a hack redirection
@@ -485,6 +504,8 @@ Database.prototype = {
             this.last_file = args
             this.close()
             this.m.db_key = args
+            if (typeof report != "undefined") 
+                report.reset()
             return;
         }
         
@@ -492,30 +513,18 @@ Database.prototype = {
         if (typeof res.clones != "undefined" && typeof res.reads == "undefined" ){
             this.m.parseJsonAnalysis(result)
         }
-        //the json result contain a flash message
-        if (res.message) {
-	    priority = res.success == 'false' ? 2 : 1
-	    priority = typeof res.priority == 'undefined' ? priority : res.priority
-	    console.log({"type": "flash",
-                         "msg": "database : " + res.message,
-                         "priority": priority}) // res.success can be 'undefined'
-	}
-        return res
 
-        
-        if (this.url.length == 1) $("#db_back").addClass("inactive");
+        return res
     },
     
     /** 
-     * link html forms to their coresponding ajax handler 
+     * link html forms to their corresponding ajax handler 
      * */
     init_ajaxform: function () {
         var self = this
         
-        //submit formulaire sans fichier
+        //submit for without files
         if ( document.getElementById('data_form') ){
-            //$('#data_form').on('submit',self.data_form ); //doesn't work :/
-            
             $('#data_form').ajaxForm({
                 type: "POST",
                 cache: false,
@@ -529,12 +538,7 @@ Database.prototype = {
                     self.connected = true;
                 },
                 error: function (request, status, error) {
-                    self.connected = false;
-                    if (status === "timeout") {
-                        console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                    } else {
-                        console.log({"type": "popup", "msg": request.responseText})
-                    }
+                    self.error_log(request, status, error, name="init_ajaxform (data_form)", url=$(this).attr('action'), msg=undefined, args=undefined, type="popup")
                 }
             });
         }
@@ -556,19 +560,14 @@ Database.prototype = {
                         self.connected = true;
                     },
                     error: function (request, status, error) {
-                        self.connected = false;
-                        if (status === "timeout") {
-                            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                        } else {
-                            console.log({"type": "popup", "msg": request.responseText})
-                        }
+                        self.error_log(request, status, error, name="init_ajaxform (object_form)", url=$('#object_form').attr('action'), msg=undefined, args=undefined, type="popup")
                     }
                 });
                 return false;
             });
         }
         
-        //login_form
+        // login form
         if ( document.getElementById('login_form') ){
             //$('#login_form').on('submit',self.login_form );
             var action = $('#login_form').attr('action');
@@ -606,10 +605,8 @@ Database.prototype = {
                     self.call(next, args)
                 },
                 error: function (request, status, error) {
-                    if (status === "timeout") {
-                        console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                    } else {
-                        console.log(args)
+                    self.error_log(request, status, error, name="init_ajaxform (login_form)", url=$(this).attr('action'), msg=undefined, args=undefined, type=undefined)
+                    if (status != "timeout") {
                         self.call(next, args)
                     }
                 }
@@ -618,18 +615,24 @@ Database.prototype = {
         }
 
         
-        //submit formulaire avec fichier
-        if ( document.getElementById('upload_form') ){
-            $('#upload_form').on('submit', function(e) {
+        // submit form with files
+        if ( document.getElementById('upload_sample_form') ){
+            $('#upload_sample_form').on('submit', function(e) {
                 e.preventDefault();
 
-                //clear empty values before submiting data
-                var upload_form = $('#upload_form').serializeObject()
-                if ("file" in upload_form)
-                    upload_form.file = upload_form.file.filter(function(el) {
+                self.update_upload_fields();
+                if (!self.check_upload_fields()) return;
+            
+                $("#submit_samples_btn").addClass("disabledClass");
+                setTimeout(function(){$("#submit_samples_btn").removeClass("disabledClass")}, 3000)
+
+                // clear empty values before submitting data
+                var upload_sample_form = $('#upload_sample_form').serializeObject()
+                if ("file" in upload_sample_form)
+                    upload_sample_form.file = upload_sample_form.file.filter(function(el) {
                         return typeof el != "object" || Array.isArray(el) || Object.keys(el).length > 0;
                     });
-                var data = JSON.stringify(upload_form)
+                var data = JSON.stringify(upload_sample_form)
 
                 $.ajax({
                     type     : "POST",
@@ -640,7 +643,7 @@ Database.prototype = {
                     data     : {'data': data},
                     success  : function(result) {
                         var js = self.display_result(result)
-                        var id, fileSelect, files, file, filename;
+                        var id, fileSelect, files, file, filename, filename2;
                         if (typeof js.file_ids !== 'undefined'){
                             for (var k = 0; k < js.file_ids.length; k++) {
                                 id = js.file_ids[k];
@@ -672,17 +675,14 @@ Database.prototype = {
                                     data2.append('id', id);
                                     data2.append('file_number', 2)
                                     data2.append('pre_process', document.getElementById('pre_process').value)
-                                    self.uploader.add(id+"_2", data2, filename, 2)
+                                    filename2 = document.getElementById('file_filename2_' + k).value;
+                                    self.uploader.add(id+"_2", data2, filename2, 2)
                                 }
                             }
                         }
                     },
                     error: function (request, status, error) {
-                        if(status==="timeout") {
-                            console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                        } else {
-                            console.log({"type": "popup", "msg": request + " " + status + " " + error});
-                        }
+                        self.error_log(request, status, error, name="init_ajaxform (upload_sample_form)", url=$(this).attr('action'), msg=undefined, args=undefined, type="popup")
                     }
                 });
                 return false;
@@ -693,7 +693,7 @@ Database.prototype = {
 
     set_jstree: function(elem) {
         elem.jstree({
-            "plugins" : ["sort"],
+            "plugins" : ["sort", "search"],
             'core' : {
                 'multiple': false,
                 'data' : {
@@ -706,62 +706,156 @@ Database.prototype = {
                 },
             }
         });
+        // Action for selection of a node
         elem.on('select_node.jstree', function(event, data){
+            if( data.node.icon != "jstree-file"){
+                // folder seletcion; disable submit button
+                document.getElementById("jstree_button").classList.add( "disabledClass" )
+                return
+            }
+            document.getElementById("jstree_button").classList.remove( "disabledClass" )
             $('#file_filename').val(data.selected);
             var split_file = data.selected.toString().split('/');
             var file = split_file[split_file.length - 1];
             $('#file_indicator').text(file);
         });
+        // Search action
+        $("#jstree_search_form").submit(function(e) {
+          e.preventDefault();
+          elem.jstree(true).search($("#jstree_search_input").val());
+        });
     },
 
-    display_jstree: function(caller_index) {
-        $("#jstree_button").data("index", caller_index);
+    display_jstree: function(file_index, upload_index) {
+        $("#jstree_button").data("file_index", file_index);
+        $("#jstree_button").data("upload_index", upload_index);
         $("#jstree_container").show();
-        $('#file_indicator_' + caller_index).text("");
-        $('#file_filename_' + caller_index).val("");
+        $('#file_indicator_' + file_index + "_" + upload_index).text("");
+        $('#file_filename_' + upload_index).val("");
     },
 
     close_jstree: function() {
         $("#jstree_container").hide();
     },
 
-    select_jstree: function(caller_index) {
-        $('#file_indicator_' + caller_index).text($('#file_indicator').text());
-        $('#file_filename_' + caller_index).val($('#file_filename').val());
+    select_jstree: function(file_index, upload_index)  {
+        $('#file_indicator_' + file_index + "_" + upload_index).text($('#file_indicator').text());
+        $('#file_indicator_' + file_index + "_" + upload_index).prop('title', $('#file_filename').prop("value"));
+        $('#file_filename_' + file_index + "_" + upload_index).val($('#file_filename').val());
         $("#jstree_container").hide();
     },
 
-    toggle_upload_fields: function() {
-        var elem = $('.upload_field');
-        var disable = !elem.prop('disabled');
-        elem.prop('disabled', disable);
-        if (disable) {
-            elem.closest("div").hide();
-            elem.val(undefined);
-            $('.filename').val(undefined);
-        } else {
-            elem.closest("div").show();
+    check_upload_fields: function(){
+        file1 = $("[id^=file_filename_]");
+        file2 = $("[id^=file_filename2_]");
+
+        if ( $("#submitForm_isEditing").prop("checked")){
+            if (this.pprocess_required_file >1)
+                if ((file1[0].value == "" && file2[0].value != "") ||
+                    (file1[0].value != "" && file2[0].value == "")){
+                    console.log({"type": "flash",
+                        "msg" : "missing file: both file fields must be filled if you wish to update current uploaded file.", 
+                        "priority": 2});  
+                    return false;
+                }
+
+        }else{
+            var flag = true;
+            for (var i=0; i<file1.length; i++)
+                if (file1[i].value == "" ) flag = false;
+            
+            if (this.pprocess_required_file >1)
+                for (var j=0; j<file2.length; j++)
+                    if (file2[j].value == "" ) flag = false;
+
+            if (!flag) {
+                console.log({"type": "flash",
+                "msg" : "missing file: please ensure all file fields are filled before submitting.", 
+                "priority": 2});  
+                return false
+            } 
         }
 
-        var pre_process = $('#pre_process');
-        pre_process.prop('disabled', disable);
-        pre_process.closest("div").prop('hidden', disable);
-
-        if (!disable) {
-            this.pre_process_onChange(pre_process);
-        }
+        return true;
     },
 
-    toggle_jstree: function(){
+    update_upload_fields: function() {     
+        //retrieve current radio buttons value
+        var radios = document.getElementsByName("source");
+        for (var i=0; i<radios.length; i++) 
+            if (radios[i].checked)
+                this.upload_source = radios[i].value;
+
+        var option = $("#pre_process").find(":selected");
+        this.pprocess_required_file = parseInt(option.attr('required_files'))
+        
+        // retrieve upload fields
+        var upload_fields = $('.upload_field');
+        var jstree_fields = $('.jstree_field');
+
+        // reset field, display/enable all upload field
+        jstree_fields.closest("div").show();
+        jstree_fields.prop("disabled", false);
+        upload_fields.closest("div").show();
+        upload_fields.prop("disabled", false);
+
+        // hide/disable unnecessary field for selected upload source
+        if (this.upload_source == "nfs"){
+            upload_fields.closest("div").hide();            
+            upload_fields.prop("disabled", true);
+        }
+        if (this.upload_source == "computer"){
+            jstree_fields.closest("div").hide();            
+            jstree_fields.prop("disabled", true);
+        }
+
+        // hide/disable unnecessary field for selected pre-process
+        if (this.pprocess_required_file == 1){
+            upload_fields.filter('.file_2').closest("div").hide();            
+            upload_fields.filter('.file_2').prop("disabled", true);
+            jstree_fields.closest("div").filter('.file_2').hide();            
+            jstree_fields.filter('.file_2').prop("disabled", true);
+        }
+        
+        this.update_hidden_fields();
+        this.update_jstree();
+    },
+
+    update_hidden_fields:function(){
+        //reset default filename
+        var forms = $('.form_line')
+        for (var i=0; i<forms.length; i++){
+            var filename="";
+            var filename2="";
+            
+                if (this.upload_source == "computer"){
+                    filename = $(forms[i]).find(".upload_field.file_1")[0].value;
+                    var lastIndex = filename.lastIndexOf('\\');
+                    if (lastIndex > 0) filename = filename.substring(lastIndex + 1);
+
+                    filename2 = $(forms[i]).find(".upload_field.file_2")[0].value;
+                    var lastIndex2 = filename2.lastIndexOf('\\');
+                    if (lastIndex2 > 0) filename2 = filename2.substring(lastIndex2 + 1);
+                }   
+    
+                if (this.upload_source == "nfs"){
+                    filename = $(forms[i]).find("[id^=file_indicator_1]").prop('title');
+                    filename2 = $(forms[i]).find("[id^=file_indicator_2]").prop('title');
+                }
+            
+
+            $(forms[i]).find("[id^=file_filename_]")[0].value = filename;
+            $(forms[i]).find("[id^=file_filename2_]")[0].value = filename2;
+        }
+        
+    },
+
+    update_jstree: function(){
         var tree = $('.jstree_field');
-        var enable = tree.prop('hidden');
+        var enable = this.upload_source == "nfs";
         tree.prop('hidden', !enable);
     },
 
-    toggle_file_source: function() {
-        this.toggle_upload_fields();
-        this.toggle_jstree()
-    },
     
     /**
      * reload the current db page
@@ -810,41 +904,22 @@ Database.prototype = {
                 console.log({"type": "flash", "msg": result , "priority": 1});
             },
             error: function (request, status, error) {
-                if (typeof quiet == 'undefined')
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                } else {
-                    self.call("default/home")
+                if (quiet == undefined) {
+                    // This triggers another request() call, but this time with quiet=true
+                    self.error_log(request, status, error, name="request", url, msg=undefined, args, type="popup", quiet=quiet)
                 }
-
-                if (typeof quiet == 'undefined') {
-		    // This triggers another request() call, but this time with quiet=true
-		    self.warn("request: " + status + " - " + url)
-		}
             }
         });
     },
 
     logout: function() {
-        var self = this;
-        $.ajax({
-            type: "POST",
-            timeout: DB_TIMEOUT_CALL,
-            crossDomain: true,
-            url: self.db_address + 'default/user/logout',
-            xhrField: {withCredentials: true},
-            success: function (result) {
-                db.call("default/home");
-                db.clear_login_info();
-            },
-            error: function (request, status, error) {
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-                } else {
-                    self.call("default/home");
-                }
-            }
-        });
+        document.getElementById('login-container').innerHTML = "";
+        var dbc = document.getElementById('db_content');
+        if (dbc) {
+            document.getElementById('db_auth').innerHTML = "";
+            dbc.innerHTML = "";
+        }
+        db.call('auth/logout');
     },
 
     extract_login_info: function() {
@@ -860,6 +935,10 @@ Database.prototype = {
         }
     },
 
+    executeAfterAjaxScript: function() {
+        $.globalEval($(".afterAjaxScript").html());
+    },
+
     clear_login_info: function() {
         document.getElementById('login-container').innerHTML = '';
     },
@@ -872,6 +951,7 @@ Database.prototype = {
         var self = this;
         
         var list = document.getElementById("last_loaded_file")
+        if (list == null) return;
         var children = list.children
         
         var flag = false
@@ -921,12 +1001,7 @@ Database.prototype = {
                 // self.callCloneDB()
             },
             error: function (request, status, error) {
-                self.connected = false;
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "msg" : " - unable to access patient data" , "priority": 2});
-                } else {
-                    console.log({"type": "popup", "msg": request.responseText});
-                }
+                self.error_log(request, status, error, name="load_data", url=$(this).attr('url'), msg=undefined, args=undefined, type="popup")
             }
         });
     },
@@ -954,20 +1029,19 @@ Database.prototype = {
             return
         }
         
-        if (typeof args == 'undefined'){
-            args={}
-            args.custom = this.getListInput("custom_result[]")
-        }
+        if (typeof args == 'undefined') args={};
+        if (typeof args.custom == 'undefined') args.custom = this.getListInput("custom_result[]");
         
         console.log("db : custom data "+list)
         
+
+        var id_vars = ["sample_set_id", "patient_id", "run_id", "config", "custom"];
+        for (var j = 0; j < id_vars.length; j++) {
+            this.m[id_vars[j]] = args[id_vars[j]];
+        }
+
         var arg = this.argsToStr(args)
         this.m.custom = arg;
-
-        var id_vars = ["sample_set_id", "patient_id", "run_id", "config"];
-        for (var j = 0; j < id_vars.length; j++) {
-            this.m[id_vars[j]] = undefined;
-        }
         
         this.m.wait("Comparing samples...")
         $.ajax({
@@ -983,13 +1057,9 @@ Database.prototype = {
                 self.connected = true;
             },
             error: function (request, status, error) {
-                self.connected = false;
+                // var url=
+                self.error_log(request, status, error, name="load_custom_data", url=$(this).attr('url'), msg=undefined, args=undefined, type="popup")
                 self.m.resume()
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 2});
-                } else {
-                    console.log({"type": "popup", "msg": request.responseText});
-                }
             }
         });
     },
@@ -1009,17 +1079,19 @@ Database.prototype = {
                 console.log('=== load_analysis: success ===');
             },
             error: function (request, status, error) {
-                if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 2});
-                } else {
-                    console.log({"type": "popup", "msg": request.responseText});
-                }
+                self.error_log(request, status, error, name="load_analysis", url=$(this).attr('url'), msg=undefined, args=undefined, type="popup")
             }
         });
     },
     
     save_analysis: function () {
         var self = this;
+
+        if (typeof this.m.custom != 'undefined' &&
+            getComputedStyle(document.querySelector('.devel-mode')).display != "block"){
+            console.log({ msg: "'save' has been disabled for custom file. <br/> Use the complete related sample set (patient/run) if you wish to keep your modification.", type: "flash", priority: 2 });
+            return
+        }
         
         if (self.last_file == self.m.db_key){
             
@@ -1030,8 +1102,11 @@ Database.prototype = {
             var fd = new FormData();
             fd.append("fileToUpload", blob);
             fd.append("info", self.m.info);
-            fd.append("samples_info", self.m.samples.info);
-            fd.append("samples_id", self.m.samples.id);
+
+            if (self.m.sample != undefined && self.m.samples.info != undefined && self.m.samples.id != undefined){
+                fd.append("samples_info", self.m.samples.info);
+                fd.append("samples_id", self.m.samples.id);
+            }
             
             $.ajax({
                 type: "POST",
@@ -1052,10 +1127,11 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to save analysis" , "priority": 2});
+                        msg = "database_timeout - unable to save analysis"
                     } else {
-                        console.log({"type": "flash", "msg": "server : save analysis error : "+request.responseText , "priority": 2});
+                        msg = "server error<br/>" +request.responseText
                     }
+                    self.error_log(request, status, error, name="Save analysis", this.url, msg=msg, args=self.last_file, type="popup")
                 }
             });
         }else{
@@ -1065,7 +1141,7 @@ Database.prototype = {
 
     // periodically query the server for notifications
     // And loads them into elements with id 'header_messages' and 'login_messages'
-	// TODO : Tidy up
+    // TODO : Tidy up
     loadNotifications: function(adress) {
     	var self = this;
 		if (adress !== "") {
@@ -1080,11 +1156,7 @@ Database.prototype = {
 		            
 		        }, 
 		        error: function (request, status, error) {
-		            if (status === "timeout") {
-		                console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-		            } else {
-		                console.log("unable to get notifications");
-		            }
+                           self.error_log(request, status, error, name="loadNotifications", url=undefined, msg="unable to get notifications", args=undefined, type=undefined)
 		        }
 		    });
 		} else {
@@ -1094,11 +1166,23 @@ Database.prototype = {
 
     //affiche la fenetre de dialogue avec le serveur et affiche ses réponses
     display: function (msg) {
+        console.log("display")
         this.div.style.display = "block";
         this.msg.innerHTML = msg;
-            
+        
         this.extract_login_info();
-        this.uploader.display()
+        this.uploader.display();
+        this.update_stats_locus_display();
+    },
+
+    update_stats_locus_display:function() {
+        console.log("update_stats_locus_display")
+        console.log("document.querySelectorAll(\".stats_locus\") : " + document.querySelectorAll(".stats_locus").length)
+        document.querySelectorAll(".stats_locus").forEach(function (element) {
+            locus = element.innerHTML
+            element.innerHTML = ""
+            element.appendChild(self.m.systemBox(locus, true))
+        })
     },
 
     //efface et ferme la fenetre de dialogue avec le serveur
@@ -1114,10 +1198,15 @@ Database.prototype = {
         
         $("#db_table_container").bind("scroll", function() {
             var offset = $(this).scrollTop();
-
             fixedHeader.css("top", offset)
-
         });
+
+        if ($("#db_table_container_x_scroll").length > 0) {
+            $("#db_table_container_x_scroll").bind("scroll", function() {
+                var offset = $(this).scrollLeft();
+                fixedHeader.css("left", -1*offset)
+            });
+        }
     },
     
     group_rights: function (value, name, right, id) {
@@ -1214,7 +1303,7 @@ Database.prototype = {
     },
 
     temporarilyDisableClickedLink: function() {
-	var self = this;
+        var self = this;
         try {
             var event = window.event;
             if (typeof(event) === 'undefined') {
@@ -1318,25 +1407,26 @@ Database.prototype = {
 }
 
 function Uploader() {
-    var self = this
-    this.queue = {}
-    this.max_upload = 2 //max simultaneous upload allowed
-    
+    var self = this;
+    this.keys = [];
+    this.queue = {};
+    this.max_upload = 2;
+
     setInterval(function(){
         if (self.is_uploading){
-            self.update_percent()
+            self.update_percent();
         }
-    },200)
-
+    }, 200);
 }
 
 Uploader.prototype = {
-    
-    //add an upload to the queue
+
+    // Adds an upload to the queue
     add : function (id, data, filename, file_number) {
-        var div_parent = $("#upload_summary_selector").children()[0]
+        var div_parent = $("#upload_summary_selector").children()[0];
         var div = $('<div/>').appendTo(div_parent);
         
+        this.keys.push(id);
         this.queue[id] = {
             "id" : id, 
             "data" : data, 
@@ -1345,73 +1435,80 @@ Uploader.prototype = {
             "status" : "queued",
             "percent" : 0,
             "div" : div
-        } 
-        this.display_summary()
-        this.next()
+        };
+        this.display_summary();
+        this.next();
     },
     
-    //find the next file to upload in the queue and check if we can start it
+    // Finds the next file to upload in the queue and check if we can start it
     next : function () {
-        var upload_in_progress = 0
-        var next_upload = -1
+        var upload_in_progress = 0;
+        var next_upload = -1;
+
+        this.keys.forEach((key) => {
+            var status = this.queue[key].status
+            if (status == "queued" && next_upload == -1) {
+                next_upload = key;
+            }
+            if (status == "upload") {
+                upload_in_progress++;
+            }
+        });
         
-        for (var key in this.queue){
-            if (this.queue[key].status == "queued" && next_upload == -1) next_upload = key
-            if (this.queue[key].status == "upload") upload_in_progress++
+        if (upload_in_progress < this.max_upload && next_upload != -1) {
+            this.upload_file(next_upload);
         }
-        
-        if (upload_in_progress < this.max_upload && next_upload != -1) 
-            this.upload_file(next_upload)
     },
     
     //
     upload_file : function (id) {
         var self = this;
         
-        var url = db.db_address + "file/upload"
-        //url = url.replace("https://", "http://");
+        var url = db.db_address + "file/upload";
         $.ajax({
             xhr: function(){
                 var xhr = new window.XMLHttpRequest();
                 xhr.upload.addEventListener("progress", function(evt){
                     if (evt.lengthComputable) {
-                        var percentComplete = Math.floor((evt.loaded / evt.total)*100)
-                        self.queue[id].percent = percentComplete
+                        var percentComplete = Math.floor((evt.loaded / evt.total)*100);
+                        self.queue[id].percent = percentComplete;
                         if (percentComplete == 100) {
-                            self.queue[id].status = "server_check"
-                            self.display()
+                            self.queue[id].status = "server_check";
+                            self.display();
                         }
                     }
                 }, false);
                 return xhr;
             },
             type: "POST",
-            cache: false,
             crossDomain: true,
+            context: self,      
             url: url,
             processData: false,
             contentType: false,
             data: self.queue[id].data,
-            xhrFields: {withCredentials: false},
-            beforeSend: function(jqxhr){
-                self.queue[id].status = "upload"
-                self.queue[id].jqXHR = jqxhr
+            xhrFields: {withCredentials: true},
+            beforeSend: function(jqXHR){
+                self.queue[id].status = "upload";
+                self.queue[id].jqXHR = jqXHR;
             },
             success: function (result) {
-                db.info("upload completed - " + self.queue[id].filename)
-                self.queue[id].status = "completed"
-                self.next()
-                self.reload(id)
-                db.display_result(result, url)
+                db.info("Upload completed for " + self.queue[id].filename);
+                self.queue[id].status = "completed";
+                self.next();
+                self.reload(id);
+                db.display_result(result, url);
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
+                    db.warn("Upload timed out for " + self.queue[id].filename);
+                    self.queue[id].status = "upload_error"
                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
                     if (status !== "abort"){
-                        db.warn("upload may have failed - " + self.queue[id].filename)
-                        self.queue[id].status = "upload_error"
-                        console.log({"type": "flash", "msg": "upload " + self.queue[id].filename + " : " + status , "priority": 2});
+                        db.warn("Upload may have failed for " + self.queue[id].filename + ": " + status + " - " + error);
+                        self.queue[id].status = "upload_error";
+                        console.log({"type": "flash", "msg": "Upload " + self.queue[id].filename + " : " + status , "priority": 2});
                     }
                 }
                 self.display();
@@ -1420,106 +1517,105 @@ Uploader.prototype = {
     },
     
     cancel: function (id) {
-        db.warn("upload canceled - " + this.queue[id].filename)
-        console.log({"type": "flash", "msg": "upload canceled : " + this.queue[id].filename, "priority": 1});
-        this.queue[id].jqXHR.abort()
-        this.queue[id].status = "canceled"
-        this.reload(id)
+        db.warn("Upload canceled - " + this.queue[id].filename);
+        console.log({"type": "flash", "msg": "Upload canceled : " + this.queue[id].filename, "priority": 1});
+        this.queue[id].jqXHR.abort();
+        this.queue[id].status = "canceled";
+        this.reload(id);
     },
     
     retry : function (id) {
-        this.queue[id].status = "queued"
-        this.next()
-        this.reload(id)
+        this.queue[id].status = "queued";
+        this.next();
+        this.reload(id);
     },
     
-    //reload page if neccesary
+    // reload page if necessary
     reload : function (id) {
-        var status = this.queue[id].status
-        if ( document.getElementById("sequence_file_"+id) ){
-            db.reload()
+        if (document.getElementById("sequence_file_"+id)) {
+            db.reload();
         }
-        this.display_summary()
+        this.display_summary();
     },
     
     update_percent : function () {
-        for (var key in this.queue){
-            if ( this.queue[key].status == "upload"){
-                $(".loading_"+key).width(this.queue[key].percent+"%")
+        this.keys.forEach((key) => {
+            if (this.queue[key].status == "upload") {
+                $(".loading_"+key).width(this.queue[key].percent+"%");
             }
-        }
+        });
     },
     
     display : function () {
-        if ($("#table_container")){
-            
-            for (var key in this.queue){
-                var status = this.queue[key].status
-
-                var html = this.statusHtml(key)
-                
-                if (status != "completed") $("#sequence_file_"+key).html(html)
-            }
+        if ($("#table_container")) {
+            this.keys.forEach((key) => {
+                var status = this.queue[key].status;
+                if (status != "completed") {
+                    var html = this.statusHtml(key);
+                    $("#sequence_file_"+key).html(html);
+                }
+            });
         }
-        this.display_summary()
+        this.display_summary();
     },
     
     display_summary : function () {
         
-        if (this.is_uploading()){
-            $("#upload_summary").css("display","block")
-            $("#upload_summary_label").html("<span class='loading_seq'>uploading</span>")
-        }else{
-            $("#upload_summary_label").html("<span class='loading_status'>uploads</span>")
+        if (this.is_uploading()) {
+            $("#upload_summary").css("display","block");
+            $("#upload_summary_label").html("<span class='loading_seq'>uploading</span>");
+        } else {
+            $("#upload_summary_label").html("<span class='loading_status'>uploads</span>");
         }
         
-        for (var key in this.queue){
-            var status = this.queue[key].status
+        this.keys.forEach((key) => {
+            var queue_element = this.queue[key];
             
-            var html = "<span class='summary_filename'>" + this.queue[key].filename + "</span>"
-                html += this.statusHtml(key)
-            
-            if (status == "completed") html += "<span class='loading_status'> completed </span>"
-            this.queue[key].div.html(html)
-        }
+            var html = "<span class='summary_filename'>" + queue_element.filename + "</span>";
+            html += this.statusHtml(key);
+            if (queue_element.status == "completed") {
+                html += "<span class='loading_status'> completed </span>";
+            }
+            queue_element.div.html(html);
+        });
     },
     
     statusHtml : function (id) {
-        var status = this.queue[id].status
+        var status = this.queue[id].status;
+        var html = "";
         
-        var html = ""
-        
-        switch(status) {
+        switch (status) {
             case "queued":
-                html += "<span class='loading_seq'>queued</span> "
-                html += "<span class='button' onclick='db.uploader.cancel("+id+")'>cancel</span>"
+                html += "<span class='loading_seq'>queued</span>";
+                html += "<span class='button2' onclick='db.uploader.cancel("+id+")'>cancel</span>";
                 break;
             case "upload":
-                html += "<span class='loading_gauge'><span class='loading_"+id+" loading_bar'></span></span> "
-                html += "<span class='button' onclick='db.uploader.cancel("+id+")'>cancel</span>"
+                html += "<span class='loading_gauge'><span class='loading_"+id+" loading_bar'></span></span>";
+                html += "<span class='button2' onclick='db.uploader.cancel("+id+")'>cancel</span>";
                 break;
             case "server_check":
-                html += "<span class='loading_seq'> processing file </span>"
+                html += "<span class='loading_seq'> processing file </span>";
                 break;
             case "canceled":
-                html += "<span class='loading_status'> canceled by user </span>"
-                html += "<span class='button' onclick='db.uploader.retry("+id+")'>try again</span>"
+                html += "<span class='loading_status'> canceled by user </span>";
+                html += "<span class='button2' onclick='db.uploader.retry("+id+")'>try again</span>";
                 break;
             case "upload_error":
-                html += "<span class='loading_status'> upload failed </span>"
-                html += "<span class='button' onclick='db.uploader.retry("+id+")'>try again</span>"
+                html += "<span class='loading_status'> upload failed </span>";
+                html += "<span class='button2' onclick='db.uploader.retry("+id+")'>try again</span>";
                 break;
         }
         
-        return html
+        return html;
     },
     
     is_uploading : function () {
-        for (var key in this.queue){
-            var status = this.queue[key].status 
-            if (status == "upload" || status == "queued" || status == "server_check") return true
-        }
-        return false
-    }
+        this.keys.forEach((key) => {
+            var status = this.queue[key].status;
+            if (status == "upload" || status == "queued" || status == "server_check") {
+                return true;
+            }
+        });
+        return false;
+    },
 }
-

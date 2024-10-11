@@ -8,6 +8,9 @@
 // create main global object
 var tsnejs = tsnejs || { REVISION: 'ALPHA' };
 
+// Added to get a constant seed. Use seedrandom (https://github.com/davidbau/seedrandom)
+var seededRandom = new Math.seedrandom('tsneRandomSeed.');
+
 (function(global) {
   "use strict";
 
@@ -33,8 +36,8 @@ var tsnejs = tsnejs || { REVISION: 'ALPHA' };
       return_v = false;
       return v_val;
     }
-    var u = 2*Math.random()-1;
-    var v = 2*Math.random()-1;
+    var u = 2*seededRandom()-1;
+    var v = 2*seededRandom()-1;
     var r = u*u + v*v;
     if(r == 0 || r > 1) return gaussRandom();
     var c = Math.sqrt(-2*Math.log(r)/r);

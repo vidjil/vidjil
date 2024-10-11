@@ -3,7 +3,7 @@ build_doc:
   image: python:3.8
   stage: tgz_release
   before_script:
-    - pip3 install mkdocs-gitlab-plugin requests
+    - pip3 install mkdocs mkdocs-gitlab-plugin requests mkdocs-material
   script:
     - make -C doc html
     - cd tools ; python validate-links.py
@@ -11,6 +11,7 @@ build_doc:
     paths:
       - site/
     expire_in: 1 month
+    when: always
   only:
       - /^[^\/]*doc[^\/]*\//
       # branch name should contain doc before the first /
@@ -28,3 +29,52 @@ deploy_doc:
   only:
       - /^[^\/]*doc[^\/]*\//
       - /^feature-.*a.*\/release$/
+
+build_tutorial_pdf:
+  stage: tgz_release
+  image: leplusorg/latex:main
+  before_script: []
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+      - doc/tutorial/**/*
+      when: always
+  script:
+    - make -C doc/tutorial mastering-vidjil.pdf
+  artifacts:
+    paths:
+      - doc/tutorial/mastering-vidjil.pdf
+  tags:
+    - ci.inria.fr
+    - medium
+
+build_tutorial_html:
+  stage: tgz_release
+  image: leplusorg/latex:main
+  before_script: []
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+      - doc/tutorial/**/*
+      when: always
+  script:
+    - make -C doc/tutorial mastering-vidjil.html
+  artifacts:
+    paths:
+      - doc/tutorial/mastering-vidjil.html
+  tags:
+    - ci.inria.fr
+    - medium
+
+deploy_tutorial:
+  stage: deploy_prod
+  before_script: []
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+      - doc/tutorial/**/*
+      when: manual
+  script:
+    - scp -r doc/tutorial/* $VIDJIL_WWW:/var/www/static/doc/tutorial/
+      
+  

@@ -2,6 +2,7 @@ QUnit.module("Tools", {
 });
 
 QUnit.test("test get_codons", function(assert) {
+    SYMBOL_VOID = "-"; // overwrite default "–"
     var r = 'ATGATAGAC';
     var s = 'AAACCCGGG';
     var codons = get_codons(r, s, 0);
@@ -192,6 +193,11 @@ QUnit.test("test rounding functions", function(assert) {
     }
 );
 
+QUnit.test("test discard_float_approximation", function(assert) {
+    assert.equal(discard_float_approximation(.1+.2), .3, ".1+.2");
+    assert.equal(discard_float_approximation(.000000001+.000000002), .000000003, ".000000001+.000000002");
+});
+
 QUnit.test("test nice_min_max_steps", function(assert) {
     assert.deepEqual(nice_min_max_steps(347.34, 354.23, 10), {min: 347, max: 355, step: 1, nb_steps: 8}, "347.34..354.23 (10)");
     assert.deepEqual(nice_min_max_steps(17, 305, 20), {min: 0, max: 320, step: 20, nb_steps: 16}, "17..305 (20)");
@@ -201,7 +207,7 @@ QUnit.test("test nice_min_max_steps", function(assert) {
     assert.deepEqual(nice_min_max_steps(190, 310, 15), {min: 190, max: 310, step: 10, nb_steps: 12}, "190..310 (15)");
     assert.deepEqual(nice_min_max_steps(190, 310, 3), {min: 150, max: 350, step: 100, nb_steps: 2}, "190..310 (3)");
 
-    assert.deepEqual(nice_min_max_steps(0.54, 1.05, 7), {min: 0.5, max: 1.1, step: 0.1, nb_steps: 7}, "0.54..1.05 (7)");
+    assert.deepEqual(nice_min_max_steps(0.54, 1.05, 7), {min: 0.5, max: 1.1, step: 0.1, nb_steps: 6}, "0.54..1.05 (7)");
 
     assert.deepEqual(nice_min_max_steps(0.03, 19.24, 5), {min: 0, max: 20, step: 5, nb_steps: 4}, "0.03..19.24 (5)");
     assert.deepEqual(nice_min_max_steps(0, 7, 4), {min: 0, max: 8, step: 2, nb_steps: 4}, "0..7 (4)");
@@ -210,6 +216,9 @@ QUnit.test("test nice_min_max_steps", function(assert) {
     assert.deepEqual(nice_min_max_steps(43, 103, 3), {min: 0, max: 150, step: 50, nb_steps: 3}, "43..103 (3)");
 
     assert.deepEqual(nice_min_max_steps(42, 42, 20), {min: 40, max: 50, step: 10, nb_steps: 1}, "42..42 (20)");
+
+    assert.deepEqual(nice_min_max_steps(0, 0.5691940206503312, 12), {min:0, max: 0.6, step: 0.05, nb_steps: 12}, "Example from issue #5276");
+    assert.deepEqual(nice_min_max_steps(0, 0.5691940206503312, 11), {min:0, max: 0.6, step: 0.1, nb_steps: 6}, "Example from issue #5276");
 });
 
 QUnit.test("prepend_path_if_not_web", function(assert) {
@@ -225,7 +234,7 @@ QUnit.test("processCloneDBContents", function(assert) {
 
     assert.deepEqual(processCloneDBContents(emptyResult, m), {'original': [],
                                                            'clones_names': {},
-                                                           '–': 'No occurrence of this clone in CloneDB'},
+                                                           '–': 'No occurrence of this clonotype in CloneDB'},
                      "processing empty result");
     
     var singleResult = [{'tags': {'sample_set_viewable': [true, true],
@@ -310,7 +319,7 @@ QUnit.test("processCloneDBContents", function(assert) {
 
 QUnit.test("processImgtContents", function(assert) {
     var ready = assert.async();
-    assert.expect(5);
+    assert.expect(6);
 
     var xhr = $.ajax({
             url: 'testFiles/vquest_imgt.html',
@@ -322,6 +331,7 @@ QUnit.test("processImgtContents", function(assert) {
             assert.ok(imgtArray[0]["Sequence number"] == "1", "first line is sequence 1");
             assert.ok(imgtArray[0]["CDR3-IMGT"] == "gcggcggaaactc", "CDR3-IMGT's seq 1 is gcggcggaaactc");
             assert.ok(imgtArray[3]["Sequence number"] == "4", "4th ligne is seq 4");
+            assert.ok(imgtArray[3]["CDR3-IMGT"] == undefined, "imgt did not return a cdr3 result for line 4");
             assert.ok(imgtArray.length == 5, "5 sequences were identified");
             ready();
         });
@@ -373,8 +383,8 @@ QUnit.test("computeStartStop(arrayToProcess,sequence)", function(assert) {
             "CDR3-IMGT": {
                 "seq": "",
                 "tooltip": "CDR3-IMGT",
-                "start": 124,
-                "stop": 111
+                "start": 111,
+                "stop": 124
             }
 
         };
@@ -441,4 +451,96 @@ QUnit.test("remove elt in decrease", function(assert) {
 
   var listel = [0,1,2,4,5,7,8]
   assert.deepEqual(removeEltAndDecrease(listel, 3), [0,1,2,3,4,6,7], "correct array after removeEltAndDecrease (3)")
+});
+
+
+QUnit.test("localCompare behavior", function(assert) {
+
+    var list1 = ["TRGV1", "TRGV2", "TRGV10"]
+    var list2 = ["TRGV1*01", "TRGV2*02","TRGV1*02", "TRGV2*11", "TRGV10"]
+    var list3 = ["intron-42*42", "intron-312*42", "intron-42*40", "intron-16*42"]
+    var list4 = ["24Bla2", "24Bla1", "154Bla"]
+
+    var sorted_list1 = ["TRGV1", "TRGV2", "TRGV10"]
+    var sorted_list2 = ["TRGV1*01","TRGV1*02", "TRGV2*02", "TRGV2*11", "TRGV10"]
+    var sorted_list3 = ["intron-16*42", "intron-42*40", "intron-42*42", "intron-312*42"]
+    var sorted_list4 = ["24Bla1", "24Bla2", "154Bla"]
+
+    var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+    list1.sort(collator.compare)
+    list2.sort(collator.compare)
+    list3.sort(collator.compare)
+    list4.sort(collator.compare)
+
+    assert.deepEqual(list1, sorted_list1, "localCompare, test on list1, simple genes")
+    assert.deepEqual(list2, sorted_list2, "localCompare, test on list2, genes and alleles")
+    assert.deepEqual(list3, sorted_list3, "localCompare, test on list3, introns")
+    assert.deepEqual(list4, sorted_list4, "localCompare, test on list4, other genes")
+});
+
+
+QUnit.test("fixDuplicateNames", function(assert) {
+    var source   = ["test", "test",    "test",    "testing", "test",    "testing",    "test"    ]
+    var expected = ["test", "test(1)", "test(2)", "testing", "test(3)", "testing(1)", "test(4)" ]
+    fixDuplicateNames(source)
+
+    assert.deepEqual(source, expected)
+});
+
+
+QUnit.test("compareNumericalArrays", function(assert) {
+    assert.equal(compareNumericalArrays([5,4, 3, 4], [5, 4]), 1, "compareNumericalArrays, [5,4, 3, 4] > [5, 4]")
+    assert.equal(compareNumericalArrays([5,4, 3, 4], [5, 5]), -1, "compareNumericalArrays, [5,4, 3, 4] < [5, 5]")
+    assert.equal(compareNumericalArrays([5, 5], [5, 5]),0 , "compareNumericalArrays, [5, 5] == [5, 5]")
+});
+
+
+QUnit.test("mergeDictionaries", function(assert) {
+        
+    // Merge 2 dicts with various values
+    var dict1 = {
+        a: 1,
+        b: "text",
+        c: {d: 3, e: "another text"},
+        h: "only in dict1"
+    };
+
+    var dict2 = {
+        a: 2,
+        b: "new text",
+        c: {e: "updated text", f: 4 },
+        g: true
+    };
+
+    var mergedDict = mergeDictionaries(dict1, dict2);
+    var expected= {
+        "a": 2,
+        "b": "new text",
+        "c": {"d": 3, "e": "updated text", "f": 4 },
+        "h": "only in dict1",
+        "g": true
+    }
+    assert.deepEqual(mergedDict, expected, "mergeDictionaries: dict vs dict")
+
+
+    // One dict null (first)
+    dict1 = {a: 1, b: "text"};
+    dict2 = null;
+    mergedDict = mergeDictionaries(dict1, dict2);
+    expected   = dict1
+    assert.deepEqual(mergedDict, expected, "mergeDictionaries: One dict is null (first)")
+
+
+    // One dict null (second)
+    mergedDict = mergeDictionaries(dict2, dict1);
+    expected   = dict1
+    assert.deepEqual(mergedDict, expected, "mergeDictionaries: One dict is null (second)")
+
+
+    // One dict is a string
+    dict1 = {a: 1, b: "text"};
+    dict2 = "text valeur 2";
+    mergedDict = mergeDictionaries(dict1, dict2);
+    assert.deepEqual(mergedDict, undefined, "mergeDictionaries: One dict is a string")
+
 });

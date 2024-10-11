@@ -1,0 +1,14 @@
+{
+    "warn_filter_contigs_gene_V": "false",
+    "report_templates": "{\"own_template_XXX\":{\"name\":\"own_template\",\"selected_color\":\"unique\",\"blocks\":[{\"blockType\":\"file_info\"},{\"blockType\":\"sample_info\"},{\"blockType\":\"reads_stats\"},{\"blockType\":\"monitor\"},{\"blockType\":\"scatterplot\",\"axisX\":\"V/5' gene\",\"axisY\":\"J/3' gene\",\"locus\":\"\",\"mode\":\"grid\"},{\"blockType\":\"clones\",\"info\":[\"productivity\",\"hypermutation\",\"5length\"]},{\"blockType\":\"log_db\"},{\"blockType\":\"comments\"}],\"clones_fields\":[\"productivity\",\"hypermutation\",\"5length\"],\"clones\":[]}}",
+    "colorAxis": "Tag",
+    "aligner_axis_Size in locus (+inc)": "true",
+    "aligner_layers_Highlight CDR3": "true",
+    "warn_filter_contigs_process": "false",
+    "aligner_axis_Productivity": "true",
+    "aligner_axis_Sequence length": "false",
+    "aligner_layers_Quality score of representative sequence": "true",
+    "vidjil.tips.seen": "[\"I10\",\"I11\"]",
+    "aligner_layers_Show Amino Acid sequences (AA positions based on CDR3)": "false",
+    "timeFormat": "short_name"
+}

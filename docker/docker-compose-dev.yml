@@ -1,0 +1,41 @@
+services:
+    mysql:
+        ports:
+            # Forward ports to be able to edit DB outside the containers
+            - "4306:3306"
+            - "43060:33060"
+
+    uwsgi:
+        image: vidjil/server:py4web
+        command: bash /entrypoints/uwsgi-entrypoint.sh
+        volumes:
+            # Local volume path
+            - $VOLUME_PATH/results:/mnt/result
+            - $VOLUME_PATH/results/results:/mnt/result/results
+            - $VOLUME_PATH/tmp:/mnt/result/tmp
+            - $VOLUME_PATH/uploads:/mnt/upload/uploads
+            - $VOLUME_PATH/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
+            # Use local vidjil repository
+            - ../algo:/usr/share/vidjil/algo
+            - ../browser:/usr/share/vidjil/browser
+            - ../demo:/usr/share/vidjil/demo
+            - ../demo:/mnt/data/src
+            - ../doc:/usr/share/vidjil/doc
+            - ./:/usr/share/vidjil/docker
+            - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
+            - ../tools:/usr/share/vidjil/tools
+
+    nginx:
+        volumes:
+            - ../browser:/usr/share/vidjil/browser
+            - ./:/usr/share/vidjil/docker
+            - ./vidjil-client/conf/conf.js:/usr/share/vidjil/browser/js/conf.js
+
+    fuse:
+        image: vidjil/server:py4web
+
+    workers:
+        image: vidjil/server:py4web
+
+    flower:
+        image: vidjil/server:py4web

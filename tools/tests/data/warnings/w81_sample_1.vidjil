@@ -25,5 +25,14 @@
          "timestamp": ["2018-04-06 13:48:48"]}, 
     "timestamp": "2019-04-08 15:18:00", 
     "vidjil_json_version": "2016b", 
-    "warn": []
+    "warn": [{
+      "msg": "Bad e-value multiplier.",
+      "code": "W21",
+      "level": "warn"
+    },
+    {
+      "msg": "Very few V(D)J recombinations found: 0.10%",
+      "code": "W20",
+      "level": "warn"
+    }]
  }

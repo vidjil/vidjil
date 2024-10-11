@@ -1,7 +1,7 @@
 /*
  * This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
- * Copyright (C) 2013-2017 by Bonsai bioinformatics
+ * Copyright (C) 2013-2024 by VidjilNet consortium and Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
  * Contributors: 
  *     Marc Duez <marc.duez@vidjil.org>
@@ -86,7 +86,7 @@ function Graph(id, model, database) {
 
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
     this.marge2 = 0.05; //marge gauche derniere colonne/bord du graph
-    this.marge3 = 70; //marge droite (non influencé par le resize)
+    this.marge3 = 30; //marge droite (non influencé par le resize)
     this.marge4 = 70; //marge gauche (non influencé par le resize)
     this.marge5 = 40; //marge top (non influencé par le resize)
 
@@ -330,7 +330,7 @@ Graph.prototype = {
         line_content   = document.createElement("td")
         line_content.id = this.id +"_listElem_hideNotShare"
         line_content.classList.add("graph_listAll")
-        line_content.textContent = "focus on selected clones"
+        line_content.textContent = "focus on selected clonotypes"
         line_content.colSpan = "2"
         line.appendChild(line_content)
         table.appendChild(line)
@@ -360,10 +360,17 @@ Graph.prototype = {
             list_content.appendChild(line_content_text)
 
             // Add all descripion of sample keys as tooltip
-            var tooltip = this.m.getStrTime(i, "names")
-            tooltip    += String.fromCharCode(13) + this.m.getStrTime(i, "sampling_date")
-            tooltip    += String.fromCharCode(13) + this.m.getStrTime(i, "delta_date")
+            var tooltip = this.getTooltip(i, false)
             list_content.title = tooltip
+
+            /* jshint ignore:start */
+            list_content.onmouseover = function() {
+                self.graphListFocus(this.dataset.time)
+            };
+            list_content.onmouseout = function() {
+                self.graphListFocus(undefined)
+            };
+            /* jshint ignore:end */
 
             table.appendChild(list_content) 
         }
@@ -551,6 +558,7 @@ Graph.prototype = {
         speed = typeof speed !== 'undefined' ? speed : 500;
         this.updateListElemSelected();
         this.updateCountActiveSample();
+        this.graphListFocus(undefined)
         if (this.m.samples.number > 1){
             this.updateList()
         }
@@ -639,8 +647,11 @@ Graph.prototype = {
      *
      * */
     updateElemStyle: function (list) {
+        var self=this;
         if (this.m.focus != -1 && this.m.clone(this.m.focus).hasSizeConstant()) {
             var line = document.getElementById("polyline" + this.m.focus);
+            line.ondblclick = function(){ self.m.displayInfoBox(self.m.focus) };
+
             document.getElementById("clones_container")
                 .appendChild(line);
         }
@@ -808,13 +819,8 @@ Graph.prototype = {
         var value_selected_point = this.m.clone(id).getSize(selected_point)
 
         for (var i = 0; i < this.graph_col.length; i++) {
-            // bypass clone size if it is not present in the current timepoint; TODO, add a switch on this behavior
-            if (this.m.show_only_one_sample && value_selected_point == 0) {
-                size[i] = 0
-            } else {
-                if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
-                else          size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
-            }
+            if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
+            else          size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
         }
 
         var x = this.graph_col[0];
@@ -1139,8 +1145,6 @@ Graph.prototype = {
             time_name = this.m.getStrTime(l);
             if (time_name.length > maxchar+3) time_name = time_name.substring(0,maxchar)+" ..."
             if (l == this.m.t) time_name = this.m.getStrTime(l);
-            // If focus on this sample only (todo: #4221; add an search icon, hard with d3js)
-            if (this.m.show_only_one_sample && l == this.m.t) time_name += " *"
 
             d.type = "axis_v";
             d.text = time_name;
@@ -1433,6 +1437,13 @@ Graph.prototype = {
                 return d['class']
             })
 
+        if (document.getElementById(this.id + "_tooltip") == null){
+            d3.select("body").append("div")
+              .attr("class", "tooltip")
+              .attr("id", this.id + "_tooltip")
+              .style("opacity", 0);
+        }
+
         this.text_container.selectAll("text")
             .on("click", function (d) {
                 if (d.type == "axis_v" || d.type == "axis_v2") return self.m.changeTime(d.time)
@@ -1453,7 +1464,25 @@ Graph.prototype = {
                 }
 
             })
-        
+            .on("mouseover", function(d) {
+                var div = d3.select("#"+self.id + "_tooltip")
+                var time = d.time
+                var tooltip = self.getTooltip(time, true)
+                div.transition()
+                    .delay(1000)
+                    .duration(200)
+                    .style("opacity", 1);
+                div .html(tooltip)
+                    .style("left", (d3.event.pageX + 24) + "px")
+                    .style("top", (d3.event.pageY - 32) + "px");
+                })
+            .on("mouseout", function(d) {
+                var div = d3.select("#"+self.id + "_tooltip")
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
         return this
     },
     
@@ -1598,6 +1627,49 @@ Graph.prototype = {
         this.init();
         this.smartUpdate();
         this.resize();
+    },
+
+    getTooltip: function(time, htmlFormat){
+        if (time == undefined){ // Zaxis label; percentage, bypass
+            return
+        }
+
+        var breakChar
+        if (htmlFormat){
+            breakChar = "<br/>"
+        } else {
+            breakChar = String.fromCharCode(13)
+        }
+        var tooltip = "";
+        tooltip    += this.m.getStrTime(time, "names")
+        var sampling_date = this.m.getStrTime(time, "sampling_date")
+        var delta_date    = this.m.getStrTime(time, "delta_date")
+        tooltip    += ( (sampling_date != "-/-") ? (breakChar + sampling_date) : "" )
+        tooltip    += ( (delta_date != "-/-") ? (breakChar + delta_date) : "" )
+        // duplicate from info; refactor
+        var read_number = this.m.reads.segmented
+        var percent = (read_number[time] / this.m.reads.total[time]) * 100;
+        var reads   = this.m.toStringThousands(read_number[time]) + " reads (" + percent.toFixed(2) + "%)";
+        tooltip    += breakChar + reads
+        return tooltip
+    },
+
+    graphListFocus: function(timeFocus){
+        var div;
+        for (var time = 0; time < this.m.samples.number; time++) {
+            div = document.getElementById("time"+time)
+            if (div != null){ // at init of graph, these div could be not already created
+                div.classList.remove("labelFocusMinor")
+                div.classList.remove("labelFocusMajor")
+                if (timeFocus != undefined ){
+                    if (timeFocus == time){
+                        div.classList.add("labelFocusMajor")
+                    } else {
+                        div.classList.add("labelFocusMinor")
+                    }
+                }
+            }
+        }
     }
 
 

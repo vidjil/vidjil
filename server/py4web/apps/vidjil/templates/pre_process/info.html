@@ -1,0 +1,62 @@
+[[extend 'db_layout.html']]
+
+[[('message' in globals())]]
+[[if 'message' in globals():]]
+
+[[
+
+
+]]
+
+<div>
+
+    <h3>info pre_process [[=sequence_file.filename]] </h3>
+
+    <div class="db_block">
+        <div class="db_block_left">
+        </div>
+
+        <div class="db_block_right">
+        </div>
+    </div>
+
+</div>
+
+[[if run:]]
+<div id="db_table_container">
+   <table>
+       <tr>
+           <td>status :</td>
+           <td>[[=run.status]]</td>
+       </tr>
+       <tr>
+           <td>start :</td>
+           <td>[[=run.start_time]]</td>
+       </tr>
+       <tr>
+           <td>stop :</td>
+           <td>[[=run.stop_time]]</td>
+       </tr>
+    </table>
+
+    [[ if content_log: ]]
+        <pre style="height:calc(90%); width:calc(90%); overflow-y:scroll; overflow-x:scroll; background-color:gray; color:white;">[[=content_log]]</pre>
+    [[ else:]]
+        <b>No log to show<b>
+    [[ pass]]
+</div>
+[[pass]]
+
+<div class="db_block">
+    <div class="db_block_left">
+    </div>
+
+    <div class="db_block_right">
+    </div>
+</div>
+
+[[elif 'content' in globals():]]
+[[=content]]
+[[else:]]
+[[=BEAUTIFY(response._vars)]]
+[[pass]]

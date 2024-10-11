@@ -19,7 +19,7 @@ fontopen:
 		exit 128 ; \
 		fi
 	curl --silent --show-error --fail --output .fontello \
-		--form "config=@${FONT_DIR}/config.json" \
+		--insecure --form "config=@${FONT_DIR}/config.json" \
 		${FONTELLO_HOST}
 	# x-www-browser ${FONTELLO_HOST}/`cat .fontello`
 
@@ -35,8 +35,8 @@ fontsave:
 		fi
 	rm -rf .fontello.src .fontello.zip
 	curl --silent --show-error --fail --output .fontello.zip \
-		${FONTELLO_HOST}/`cat .fontello`/get
-	unzip .fontello.zip -d .fontello.src
+		--insecure  ${FONTELLO_HOST}/`cat .fontello`/get
+	unzip -o .fontello.zip -d .fontello.src
 	rm -rf "${FONT_DIR}"
 	mkdir -p "${FONT_DIR}"
 	mv `find ./.fontello.src -maxdepth 1 -name 'fontello-*'`/* ${FONT_DIR}

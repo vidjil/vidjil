@@ -1,0 +1,28 @@
+setuptools
+setuptools-rust
+wheel
+ombott >= 0.0.10
+click
+colorama
+cryptography
+portalocker
+tornado
+renoir >= 1.4.0
+requests
+threadsafevariable >= 1.2
+pyjwt >= 2.0.1
+pycryptodome
+pluralize >= 0.1.9
+rocket3
+yatl >= 20211217.1
+pydal >= 20220807.1
+watchgod >= 0.6
+
+# optional modules:
+# gunicorn
+# gevent
+# gevent-websocket
+# python-memcached # used for testing or for optionally actually accessing memcache
+
+### for documentation only ###
+# use also docs/requirements.txt
