@@ -48,7 +48,7 @@ b1: 72 91 102 103
 bf1: 1 72 91 102 103 147
 
 $ cdr3 start/end positions of the first clone
-b1: 69 137
+b1: 73 111
 
 $ V/J e-values of the first clone
 rb1: 1[.][0-9]*e[-]67 8[.][0-9]*e[-]25
