@@ -45,6 +45,7 @@ private:
   std::map<Tshortcut, std::set<size_t>> shortcuts_to_identifier; // bind shortcuts to the recombinations in
   // which they are used. The integers denote the number of the recombination
   IKmerStore<Tshortcut, Affect> *index;
+  std::vector<std::set<std::string>> segments_by_recomb; // Store for each recombination the set of segments it has
 public:
 
   /**
@@ -137,9 +138,13 @@ public:
   std::set<Tshortcut> getAllShortcuts() const;
 
   /**
+   * @param segment: the segment to query
+   * @param shortcuts: will additionally require that the segment exists for a recombination involving
+   *        the provided shortcuts
    * @return true iff the germline has a segment with this name
   */
-  bool hasSegment(const std::string &segment) const;
+  bool hasSegment(const std::string &segment,
+                  const std::set<Tshortcut> &shortcuts=std::set<Tshortcut>()) const;
 
   /**
    * @return whether a recombination with all the shortcuts provided in parameter correspond to an existing recombination in the
@@ -156,7 +161,12 @@ public:
 
   template <typename S, typename A>
   friend ostream &operator<<(ostream &out, const Germline<S, A> &germline);
-  
+
+  private:
+    /**
+     * @return the recombination numbers that contain all the given shortcuts
+     */
+    std::set<size_t> getRecombinationsNb(const std::set<Tshortcut> &shortcuts) const;
 };
 
 template <typename Tshortcut, typename Affect>
@@ -192,13 +202,15 @@ Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
 
   for (const auto& filename_map : filenames) {
     for (const auto& item: filename_map.items()) {
+      segments_by_recomb.push_back(std::set<std::string>());
+
       for (const std::string filenam : item.value()) {
         std::string seed = (config[item.key()].count("seed") > 0) ? expand_seed(config[item.key()]["seed"].get<std::string>()) : "";
+        segments_by_recomb[recombination_nb].insert(item.key());
         config[item.key()]["seed"] = seed;
         std::string segment_code = (config[item.key()].count("code") > 0) ? config[item.key()]["code"].get<std::string>() : "";
         Tshortcut current_shortcut = repository->getNextShortcut();
         std::string affect = to_string(current_shortcut)+"-"+code+segment_code;
-        std::cerr << filenam << "\t" << affect << std::endl;
         GermlineElement<Tshortcut, Affect>* element;
         std::string filename = path_join(path, filenam);
         if (repository->has(filename, seed)) {
@@ -308,30 +320,26 @@ Tshortcut Germline<Tshortcut, Affect>::getShortcut() const {
 }
 
 template <typename Tshortcut, typename Affect>
-bool Germline<Tshortcut, Affect>::hasSegment(const std::string &segment) const {
-  return config.count(segment) > 0;
+bool Germline<Tshortcut, Affect>::hasSegment(const std::string &segment,
+                                             const std::set<Tshortcut> &shortcuts) const {
+  bool segment_exists = config.count(segment) > 0;
+  if (! segment_exists)
+    return false;
+  bool found = false;
+  if (shortcuts.size() > 0) {
+    std::set<size_t> recomb_id = getRecombinationsNb(shortcuts);
+    for (auto id: recomb_id)
+      if (segments_by_recomb[id].count("4") > 0)
+        found = true;
+  } else
+    found = true;
+
+  return found;
 }
 
 template <typename Tshortcut, typename Affect>
 bool Germline<Tshortcut, Affect>::hasRecombination(const std::set<Tshortcut> &shortcuts, size_t nb_match) const {
-  auto it = shortcuts.begin();
-  auto set_it = shortcuts_to_identifier.find(*it);
-  if (set_it == shortcuts_to_identifier.end())
-    return false;
-  std::set<size_t> result = set_it->second;
-  it++;
-  for (; it != shortcuts.end(); it++) {
-    std::set<size_t> temp;
-    auto set_it = shortcuts_to_identifier.find(*it);
-    if (set_it == shortcuts_to_identifier.end())
-      return false;
-    std::set<size_t> newSet = set_it->second;
-    
-    std::set_intersection(result.begin(), result.end(),
-                          newSet.begin(), newSet.end(),
-                          std::inserter(temp, temp.begin()));
-    result = std::move(temp);
-  }
+  std::set<size_t> result = getRecombinationsNb(shortcuts);
 
   if (result.size() == 0)
     return false;
@@ -361,16 +369,41 @@ void Germline<Tshortcut, Affect>::setMultiGermline(MultiGermline<Tshortcut, Affe
 }
 
 template <typename Tshortcut, typename Affect>
+std::set<size_t> Germline<Tshortcut, Affect>::getRecombinationsNb(const std::set<Tshortcut> &shortcuts) const{
+auto it = shortcuts.begin();
+  auto set_it = shortcuts_to_identifier.find(*it);
+  if (set_it == shortcuts_to_identifier.end())
+    return std::set<size_t>();
+  std::set<size_t> result = set_it->second;
+  it++;
+  for (; it != shortcuts.end(); it++) {
+    std::set<size_t> temp;
+    auto set_it = shortcuts_to_identifier.find(*it);
+    if (set_it == shortcuts_to_identifier.end())
+      return std::set<size_t>();
+    std::set<size_t> newSet = set_it->second;
+
+    std::set_intersection(result.begin(), result.end(),
+                          newSet.begin(), newSet.end(),
+                          std::inserter(temp, temp.begin()));
+    result = std::move(temp);
+  }
+  return result;
+}
+
+template <typename Tshortcut, typename Affect>
 ostream &operator<<(ostream &out, const Germline<Tshortcut, Affect> &germline)
 {
-  out << setw(5) << left << germline.getCode() << right << " '" << germline.getShortcut() << "' "
-      << " " << std::endl;
-
+  const size_t locus_width = 10;
+  const size_t locus_shortcut = 4;
   const size_t shortcut_width = 4;
   const size_t index_load_width = 9;
   const size_t l_k_width = 4;
   const size_t seed_width = 21;
-  const size_t segment_width = shortcut_width + index_load_width + l_k_width * 2 + seed_width;
+  const size_t segment_width = // locus_width + locus_shortcut
+    shortcut_width + index_load_width + l_k_width * 2 + seed_width;
+
+  out << setw(locus_width-1) << right << germline.getCode() << " '" << germline.getShortcut() << "' ";
 
   // for (auto &s : germline.getSegments()) {
   //   size_t width = segment_width / 2 + s.size() / 2;
