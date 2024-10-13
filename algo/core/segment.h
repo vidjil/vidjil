@@ -102,13 +102,14 @@ const char* const segmented_mesg[] = { "?",
 /**
  * An alignment box (AlignBox) gather all parameters for a recombined gene segment (V, D, J, other D...)
  **/
-
+template<typename Affect>
 class AlignBox
 {
  public:
   std::shared_ptr<BioReader> rep;
   string key;
   string color;
+  Affect affect;
 
 
   /**
@@ -176,10 +177,14 @@ class AlignBox
 /**
  * Show sequence, and possibly alignments against the germline genes, possibly adding the ANSI colors
  */
-void show_colored_read(ostream &out, Sequence seq, const AlignBox *boxV, const AlignBox *boxJ, int start_5, int end_3);
-void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int max_gene_align);
 
-ostream &operator<<(ostream &out, const AlignBox &box);
+template<typename Affect>
+void show_colored_read(ostream &out, Sequence seq, const AlignBox<Affect> *boxV, const AlignBox<Affect> *boxJ, int start_5, int end_3);
+template<typename Affect>
+void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox<Affect> *box_V, const AlignBox<Affect> *box_J, int max_gene_align);
+
+template<typename Affect>
+ostream &operator<<(ostream &out, const AlignBox<Affect> &box);
 
 /**
  * Check whether there is an overlap between two boxes,
@@ -196,8 +201,9 @@ ostream &operator<<(ostream &out, const AlignBox &box);
  * @return                                 the N segment
  */
 
+template<typename Affect>
 string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
-                                 AlignBox *box_left, AlignBox *box_right,
+                                 AlignBox<Affect> *box_left, AlignBox<Affect> *box_right,
                                  Cost segment_cost, bool reverse_V = false,
                                  bool reverse_J = false);
 
@@ -239,7 +245,7 @@ protected:
   string info_extra;  // .vdj.fa header, other information, at the end of the header
   string seg_V, seg_N, seg_J, system;
 
-  AlignBox *box_V, *box_D, *box_J;
+  AlignBox<Affect> *box_V, *box_D, *box_J;
 
   double evalue;
   double evalue_left;
@@ -403,7 +409,7 @@ class FineSegmenter : public Segmenter<Shortcut, Affect>
    vector<pair<int, int> > score_D;
    vector<pair<int, int> > score_J;
 
-   vector <AlignBox*> boxes ;
+   vector <AlignBox<Affect>*> boxes ;
 
    /**
    * Build a fineSegmenter based on KmerSegmentation
@@ -430,7 +436,7 @@ class FineSegmenter : public Segmenter<Shortcut, Affect>
                     double threshold = THRESHOLD_NB_EXPECTED_D, double multiplier=1.0);
 
   bool FineSegmentD(Germline<Shortcut, Affect> *germline,
-                    AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
+                    AlignBox<Affect> *box_Y, AlignBox<Affect> *box_DD, AlignBox<Affect> *box_Z,
                     int forbidden_id,
                     int extend_DD_on_Y, int extend_DD_on_Z,
                     double threshold = THRESHOLD_NB_EXPECTED_D, double multiplier=1.0);
@@ -466,9 +472,10 @@ class FineSegmenter : public Segmenter<Shortcut, Affect>
  * @param evalue_threshold: threshold for randomly expected segmentation (evalue) to relaunch a full DP without banded_dp
  * @post  box is filled
  */
+template<typename Affect>
 void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
-                              AlignBox *box, Cost segment_cost, bool banded_dp=true,
+                              AlignBox<Affect> *box, Cost segment_cost, bool banded_dp=true,
                               double evalue_threshold=1.);
 
 #endif

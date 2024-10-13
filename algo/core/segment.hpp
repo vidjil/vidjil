@@ -40,7 +40,8 @@
 #include <string>
 #define NO_FORBIDDEN_ID (-1)
 
-AlignBox::AlignBox(string _key, string _color) {
+template<typename Affect>
+AlignBox<Affect>::AlignBox(string _key, string _color) {
   key = _key;
   color = _color;
 
@@ -54,7 +55,8 @@ AlignBox::AlignBox(string _key, string _color) {
   ref_label = "";
 }
 
-void AlignBox::reverse() {
+template<typename Affect>
+void AlignBox<Affect>::reverse() {
   int start_ = start;
   start = seq_length - end - 1;
   end = seq_length - start_ - 1;
@@ -64,11 +66,13 @@ void AlignBox::reverse() {
   del_right = del_left_;
 }
 
-int AlignBox::getLength() {
+template<typename Affect>
+int AlignBox<Affect>::getLength() {
   return end - start + 1 ;
 }
 
-char AlignBox::getInitial() {
+template<typename Affect>
+char AlignBox<Affect>::getInitial() {
 
   // TRGV -> V, IGHD -> D...
   if (ref_label.size() > 4)
@@ -80,21 +84,25 @@ char AlignBox::getInitial() {
   return '?' ;
 }
 
-string AlignBox::getSequence(string sequence) {
+template<typename Affect>
+string AlignBox<Affect>::getSequence(string sequence) {
   return sequence.substr(start, end-start+1);
 }
 
-bool AlignBox::CoverFirstPos()
+template<typename Affect>
+bool AlignBox<Affect>::CoverFirstPos()
 {
   return (start <= 0);
 }
 
-bool AlignBox::CoverLastPos()
+template<typename Affect>
+bool AlignBox<Affect>::CoverLastPos()
 {
   return (end >= seq_length - 1);
 }
 
-void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
+template<typename Affect>
+void AlignBox<Affect>::addToOutput(CloneOutput *clone, int alternative_genes) {
 
   json j;
   j["name"] = ref_label;
@@ -127,7 +135,8 @@ void AlignBox::addToOutput(CloneOutput *clone, int alternative_genes) {
   }
 }
 
-int AlignBox::posInRef(int i) const {
+template<typename Affect>
+int AlignBox<Affect>::posInRef(int i) const {
   // Works now only for V/J boxes
 
   if (del_left >= 0) // J
@@ -139,7 +148,8 @@ int AlignBox::posInRef(int i) const {
   return -99;
 }
 
-string AlignBox::refToString(int from, int to) const {
+template<typename Affect>
+string AlignBox<Affect>::refToString(int from, int to) const {
 
   stringstream s;
 
@@ -177,7 +187,8 @@ string AlignBox::refToString(int from, int to) const {
   return s.str();
 }
 
-void show_colored_read(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int start_5, int end_3)
+template<typename Affect>
+void show_colored_read(ostream &out, Sequence seq, const AlignBox<Affect> *box_V, const AlignBox<Affect> *box_J, int start_5, int end_3)
 {
   out << left << setw(SHOW_NAME_WIDTH) << seq.label.substr(0,SHOW_NAME_WIDTH) << " "
       << right << setw(4) << start_5 << " " ;
@@ -192,7 +203,8 @@ void show_colored_read(ostream &out, Sequence seq, const AlignBox *box_V, const 
   out << right << setw(4) << end_3 << endl ;
 }
 
-void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int max_gene_align)
+template<typename Affect>
+void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox<Affect> *box_V, const AlignBox<Affect> *box_J, int max_gene_align)
 {
   int align_V_length = min(max_gene_align, box_V->end - box_V->start + 1);
   int align_J_length = min(max_gene_align, (int)seq.sequence.size() - box_J->start + 1);
@@ -205,7 +217,8 @@ void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox *box
 }
 
 
-ostream &operator<<(ostream &out, const AlignBox &box)
+template<typename Affect>
+ostream &operator<<(ostream &out, const AlignBox<Affect> &box)
 {
   out << "[/" << box.del_left << " " ;
   out << "@" << box.start << " " ;
@@ -216,7 +229,8 @@ ostream &operator<<(ostream &out, const AlignBox &box)
   return out ;
 }
 
-string codeFromBoxes(vector <AlignBox*> boxes, string sequence)
+template<typename Affect>
+string codeFromBoxes(vector <AlignBox<Affect>*> boxes, string sequence)
 {
   string code = "";
 
@@ -237,7 +251,8 @@ string codeFromBoxes(vector <AlignBox*> boxes, string sequence)
   return code;
 }
 
-string posFromBoxes(vector <AlignBox*> boxes)
+template<typename Affect>
+string posFromBoxes(vector <AlignBox<Affect>*> boxes)
 {
   string poss = "";
   string initials = "";
@@ -502,9 +517,9 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
 {
   set<KmerAffect> before_set, after_set;
 
-  this->box_V = new AlignBox("5", V_COLOR);
-  this->box_D = new AlignBox();
-  this->box_J = new AlignBox("3", J_COLOR);
+  this->box_V = new AlignBox<Affect>("5", V_COLOR);
+  this->box_D = new AlignBox<Affect>();
+  this->box_J = new AlignBox<Affect>("3", J_COLOR);
 
   this->CDR3start = -1;
   this->CDR3end = -1;
@@ -816,6 +831,8 @@ void KmerSegmenter<Shortcut, Affect>::computeSegmentation(int strand, KmerAffect
      this->box_V->end = this->sequence.size() - this->box_J->start - 1;
      this->box_J->start = tmp;
    }
+   this->box_V->affect = before;
+   this->box_J->affect = after;
 
   // Yes, it is segmented
   this->segmented = true;
@@ -854,8 +871,9 @@ void Segmenter<Shortcut, Affect>::setSegmentationStatus(int status) {
 // FineSegmenter
 
 
+template<typename Affect>
 string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
-                                 AlignBox *box_left, AlignBox *box_right,
+                                 AlignBox<Affect> *box_left, AlignBox<Affect> *box_right,
                                  Cost segment_cost, bool reverse_V, bool reverse_J)
 {
   // Overlap size
@@ -955,9 +973,10 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
 }
 
 
+template<typename Affect>
 void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
-                              AlignBox *box, Cost segment_cost, bool banded_dp,
+                              AlignBox<Affect> *box, Cost segment_cost, bool banded_dp,
                               double evalue_threshold)
 {
 
@@ -1063,9 +1082,9 @@ template <typename Shortcut, typename Affect>
 FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, Affect> *germline, Cost segment_c,
                 double threshold, double multiplier, int kmer_threshold, int alternative_genes)
 {
-  this->box_V = new AlignBox("5");
-  this->box_D = new AlignBox("4");
-  this->box_J = new AlignBox("3");
+  this->box_V = new AlignBox<Affect>("5");
+  this->box_D = new AlignBox<Affect>("4");
+  this->box_J = new AlignBox<Affect>("3");
   this->alternative_genes = alternative_genes;
   this->segmented = false;
   this->dSegmented = false;
@@ -1232,7 +1251,7 @@ FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, 
 
 template <typename Shortcut, typename Affect>
 bool FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *germline,
-                                 AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
+                                 AlignBox<Affect> *box_Y, AlignBox<Affect> *box_DD, AlignBox<Affect> *box_Z,
                                  int forbidden_id,
                                  int extend_DD_on_Y, int extend_DD_on_Z,
                                  double evalue_threshold, double multiplier){
@@ -1337,7 +1356,7 @@ void FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *g
 
     if (several_D && (this->box_D->start - this->box_V->end >= DD_MIN_SEARCH))
       {
-        AlignBox *box_D1 = new AlignBox("4a");
+        AlignBox<Affect> *box_D1 = new AlignBox<Affect>("4a");
 
         bool d1 = FineSegmentD(germline,
                                this->box_V, box_D1, this->box_D,
@@ -1355,7 +1374,7 @@ void FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *g
 
     if (several_D && (this->box_J->start - this->box_D->end >= DD_MIN_SEARCH))
       {
-        AlignBox *box_D2 = new AlignBox("4b");
+        AlignBox<Affect> *box_D2 = new AlignBox<Affect>("4b");
 
         bool d2 = FineSegmentD(germline,
                                this->box_D, box_D2, this->box_J,
@@ -1501,7 +1520,7 @@ void FineSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone, bool details)
   UNUSED(details);
   json seg;
 
-  for (AlignBox *box: boxes)
+  for (AlignBox<Affect> *box: boxes)
     {
       box->addToOutput(clone, this->alternative_genes);
     }
@@ -1581,12 +1600,12 @@ template <typename Shortcut, typename Affect>
 FineSegmenter<Shortcut, Affect>::~FineSegmenter() {
 
   // Push box_V, box_D, box_J in boxes if they are not already there
-  for (AlignBox* box: {this->box_V, this->box_D, this->box_J})
+  for (AlignBox<Affect>* box: {this->box_V, this->box_D, this->box_J})
     if (std::find(boxes.begin(), boxes.end(), box) == boxes.end())
       boxes.push_back(box);
 
   // Delete all boxes
-  for (AlignBox* box: boxes)
+  for (AlignBox<Affect>* box: boxes)
     delete box;
 }
 
