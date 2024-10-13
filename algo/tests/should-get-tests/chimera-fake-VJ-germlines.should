@@ -8,7 +8,7 @@ $ Loads from 'chimera-fake-VJ-germlines.data' a custom germline
 1: Y-.* l14 k13
 
 $ Loads from 'chimera-fake-VJ-germlines.data' a custom germline with two possibilities of recombinations
-2: Z-.* l13 k12
+1: Z-.* l13 k12
 
 $ The KmerSegmenter segments the three chimera reads
 1:Y-.* -> .* 1
