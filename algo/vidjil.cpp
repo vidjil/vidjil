@@ -1618,7 +1618,9 @@ int main (int argc, char **argv)
 
         FineSegmenter<char, KmerAffect> seg(representative, segmented_germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
-        if (segmented_germline->hasSegment("4")
+        char left_shortcut = segmented_germline->getRepository()->getShortcut(kseg->box_V->affect),
+          right_shortcut = segmented_germline->getRepository()->getShortcut(kseg->box_J->affect);
+        if (segmented_germline->hasSegment("4", std::set<char>({left_shortcut, right_shortcut}))
             && segmented_germline->getGermlineElements("4").size() > 0)
           seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
 
@@ -1846,7 +1848,10 @@ int main (int argc, char **argv)
               {
                 nb_segmented++ ;
 
-                if (germline->getGermlineElements("4").size() > 0)
+                char left_shortcut = germline->getRepository()->getShortcut(seg->box_V->affect),
+                  right_shortcut = germline->getRepository()->getShortcut(seg->box_J->affect);
+                if (germline->hasSegment("4", std::set<char>({left_shortcut, right_shortcut}))
+                    && germline->getGermlineElements("4").size() > 0)
                   s.FineSegmentD(germline, several_D, expected_value_D, fine_evalue_multiplier);
 
                 s.findCDR3();
