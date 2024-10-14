@@ -18,7 +18,8 @@
             } ],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "8c"
+                "seed_3": "8c",
+                "search_recombinations": ["5", "3"]
             }   
         }
     }
