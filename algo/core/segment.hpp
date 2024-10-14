@@ -683,7 +683,7 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
 
 
   if (this->because == 0) {
-    chooseGermline(germlines, before_set, after_set, strand);
+    chooseGermline(germlines, before_set, after_set);
     strand = this->reversed ? -1 : 1 ;
     if (this->segmented_germline) {
       // Test on which strand we are
@@ -713,7 +713,7 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
 }
 
 template <typename Shortcut, typename Affect>
-void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set, int strand) {
+void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set) {
 
   std::set<Shortcut> before_shortcuts, after_shortcuts;
   std::list<Germline<Shortcut, Affect> *> possible_germlines;

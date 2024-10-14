@@ -393,7 +393,7 @@ class KmerSegmenter : public Segmenter<Shortcut, Affect>
   /**
    * Choose the right germline that is common to the sets of Kmeraffect before and after
    */
-  void chooseGermline(MultiGermline<Shortcut, Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set, int strand);
+  void chooseGermline(MultiGermline<Shortcut, Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set);
 
 };
 
