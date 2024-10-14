@@ -1853,7 +1853,9 @@ int main (int argc, char **argv)
                                                                                    nullptr, expected_value_kmer,
                                                                                    multigermline->getGermlines().size()*nb_reads_for_evalue);
         Germline<char, KmerAffect> *germline = seg->segmented_germline ;
-
+        if (! germline) {
+          germline = Germline<char, KmerAffect>::getUnseg();
+        }
         FineSegmenter<char, KmerAffect> s(seq, germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
         string id = string_of_int(nb, 6);
