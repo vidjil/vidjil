@@ -424,6 +424,8 @@ ostream &operator<<(ostream &out, const Germline<Tshortcut, Affect> &germline)
   while (! finished) {
     finished = true;
     for (auto &s: germline.getSegments()) {
+      if (current_index > 0 && current_index % 2 == 0)
+        out << std::string(locus_width + locus_shortcut, ' ');
       if (iterators[s] == end_iterators[s]) {
         out << std::string(segment_width, ' ');
       } else {
@@ -447,9 +449,9 @@ ostream &operator<<(ostream &out, const Germline<Tshortcut, Affect> &germline)
           finished = false;
       }
       out << "|";
+      current_index++;
     }
     out << std::endl;
-    current_index++;
   }
   return out;
 }
