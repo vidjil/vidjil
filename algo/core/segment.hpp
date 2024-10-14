@@ -49,6 +49,8 @@ AlignBox<Affect>::AlignBox(string _key, string _color) {
   start = 0 ;
   end = 0 ;
   del_right = 0 ;
+  affect = Affect::getUnknown();
+
 
   ref_nb = 0 ;
   ref = "";
