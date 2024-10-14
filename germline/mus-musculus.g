@@ -17,7 +17,8 @@
                 "3": ["TRAJ.fa"]
             } ],
             "parameters": {
-                "seed": "13s"
+                "seed": "13s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -31,7 +32,8 @@
                 "3": ["TRBJ.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -44,7 +46,8 @@
                 "3": ["TRGJ.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -58,7 +61,8 @@
                 "3": ["TRDJ.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "TRA+D": {
@@ -71,7 +75,8 @@
                 "3": ["TRAJ.fa"]
             } ],
             "parameters": {
-                "seed": "13s"
+                "seed": "13s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -85,7 +90,8 @@
                 "3": ["IGHJ.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -99,7 +105,8 @@
                 "3": ["IGHJ.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -112,7 +119,8 @@
                 "3": ["IGKJ.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -125,7 +133,8 @@
                 "3": ["IGLJ.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         }
     }

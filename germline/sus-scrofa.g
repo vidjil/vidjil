@@ -18,7 +18,8 @@
                 "3": ["TRBJ.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "TRB+": {
@@ -31,7 +32,8 @@
                 "3": ["TRBJ.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "IGH": {
@@ -44,7 +46,8 @@
                 "3": ["IGHJ.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },     
         "IGHC": {
@@ -69,7 +72,8 @@
                 ]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "IGH+": {
@@ -82,7 +86,8 @@
                 "3": ["IGHJ.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -96,7 +101,8 @@
                 "3": ["IGLJ.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         }
     }
