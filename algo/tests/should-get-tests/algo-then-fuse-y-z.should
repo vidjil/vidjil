@@ -14,7 +14,7 @@ $ First clone (-z 1)
 :clones[0].id: TGTATTACTGTGCGAGAGTGGGCAGCAGCTGGTCTGATGCTTTTGATTAT
 :clones[0]._average_read_length[0]: 233
 :clones[0]._average_read_length[1]: 233
-:clones[0].seg.evalue.val: 1.15e-95
+:clones[0].seg.evalue.val: 7.72e-85
 :clones[0].sequence:
 # See #3970 and !784: now fuse keeps the best 'top' or otherwise the first sequence
 f:clones[0].seg.5.name: IGHV1-3
@@ -23,7 +23,7 @@ $ Second clone
 :clones[1].id: GCGAGAGCGATCCCCCGGTATTACTATGATACTAGTGGCCCAAACGACTA
 :clones[1]._average_read_length[0]: 243
 :clones[1]._average_read_length[1]: 243
-:clones[1].seg.evalue.val: 5.83e-97
+:clones[1].seg.evalue.val: 3.05e-86
 :clones[1].sequence:
 0:clones[1].seg.5.name:
 
