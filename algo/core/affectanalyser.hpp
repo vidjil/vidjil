@@ -718,7 +718,7 @@ affect_infos MultipleAffectAnalyser<S>::getMaximum(const KmerAffect &before,
   
   /* currentValue is the  { affectations[t] == before | t \in 1..i  } - | { affectations[i] == after | t \in 1..i }  */
   int currentValue;
-  int span = kms.getS();
+  int span = before.getLength();
   int length = seq.size();
 
   if (maxOverlap > span)
