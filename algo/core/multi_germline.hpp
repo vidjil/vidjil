@@ -218,9 +218,9 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines, int filter,
         config[item.key()]["seed"] = json_parameters["seed_"+item.key()];
       } else if (json_parameters.find("seed") != json_parameters.end()) {
         config[item.key()]["seed"] = json_parameters["seed"];
-      } else {
-        config[item.key()]["seed"] = default_seed;
       }
+      if (default_seed.size() > 0)
+        config[item.key()]["seed"] = default_seed;
       if (json_parameters.count("search_recombinations")>0) {
         auto it = std::find(json_parameters["search_recombinations"].begin(), json_parameters["search_recombinations"].end(),
                             item.key());
