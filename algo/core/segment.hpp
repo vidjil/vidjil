@@ -740,8 +740,10 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
       std::set<Shortcut> shortcuts = {left, right};
       Germline<Shortcut, Affect> *possible_germline = germlines->getGermline(shortcuts);
       if (possible_germline != nullptr && possible_germline->hasRecombination(shortcuts)) {
-        possible_germlines.push_back(possible_germline);
-        matching_affects.push_back(std::make_pair(shortcut_affect[left], shortcut_affect[right]));
+        if (shortcut_affect[left].getStrand() == shortcut_affect[right].getStrand()) {
+          possible_germlines.push_back(possible_germline);
+          matching_affects.push_back(std::make_pair(shortcut_affect[left], shortcut_affect[right]));
+        }
       }
     }
   }
