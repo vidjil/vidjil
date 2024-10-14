@@ -734,6 +734,7 @@ int main (int argc, char **argv)
   list <string> f_reps_align(v_reps_align.begin(), v_reps_align.end());
 
   list <pair <string, string>> multi_germline_paths_and_files ;
+  bool multi_germline = false;
 
   for (string arg: multi_germlines)
     {
@@ -948,36 +949,8 @@ int main (int argc, char **argv)
       }
 
       load_json_g(json_germlines, path_file.first, json_filename, systems_filter);
-
-      if (! multi_germline) {
-          // Custom germline
-          json_germlines = {{"ref", "custom germlines"},
-                            {"species", "custom germlines"},
-                            {"species_taxon_id", 0},
-                            {"path", "."}};
-          // Custom -V/(-D)/-J germline
-          if (f_reps_V.size())
-          {
-            // multi_germline_one_unique_index = true;
-
-            json_germlines["systems"]["custom"] = {{"shortcut", "X"},
-                                                   {"recombinations", {{{"5", f_reps_V},
-                                                                        {"4", f_reps_D},
-                                                                        {"3", f_reps_J}}}},
-                                                   {"parameters", {{"seed", seed},
-                                                                   {"search_recombinations", {"5", "3"}}}
-                                                 }};
-          }
-          // Custom --find germline
-          if (f_reps_align.size())
-          {
-            json_germlines["systems"]["align"] = {{"shortcut", "Y"},
-                                                  {"recombinations", {{
-                                                  {"1", f_reps_align}}}}};
-          }
-      }
       try {
-        multigermline->buildFromJson(json_germlines, GERMLINES_REGULAR,
+        multigermline->buildFromJson(json_germlines, GERMLINES_ALL,
                                      FIRST_IF_UNCHANGED("", seed, seed_changed),
                                      FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), do_filter_automata);
       } catch (std::exception& e) {
@@ -986,6 +959,54 @@ int main (int argc, char **argv)
         return 1;
       }
   }
+
+  if (! multi_germline) {
+    // Custom germline
+    json_germlines = {{"ref", "custom germlines"},
+                      {"species", "custom germlines"},
+                      {"species_taxon_id", 0},
+                      {"path", "."}};
+    // Custom -V/(-D)/-J germline
+    if (f_reps_V.size())
+    {
+      // multi_germline_one_unique_index = true;
+
+      map<string, list<string>> recombinations;
+      if (f_reps_V.size())
+        recombinations["5"] = f_reps_V;
+      if (f_reps_D.size())
+        recombinations["4"] = f_reps_D;
+      if (f_reps_J.size())
+        recombinations["3"] = f_reps_J;
+      json_germlines["systems"]["custom"] = {{"shortcut", "X"},
+                                             {"recombinations", {recombinations}},
+                                             {"parameters", {{"seed", seed},
+                                                             {"search_recombinations", {"5", "3"}}}
+                                           }};
+    }
+    // Custom --find germline
+    if (f_reps_align.size())
+    {
+      json_germlines["systems"]["align"] = {{"shortcut", "Y"},
+                                            {"recombinations", {{
+                                            {"1", f_reps_align}}}}};
+    }
+    try {
+      multigermline->buildFromJson(json_germlines, GERMLINES_REGULAR,
+                                   FIRST_IF_UNCHANGED("", seed, seed_changed),
+                                   FIRST_IF_UNCHANGED(0, trim_sequences, trim_sequences_changed), do_filter_automata);
+    } catch (std::exception& e) {
+      cerr << ERROR_STRING << PROGNAME << " cannot properly read sequences files" << endl
+        << e.what() << endl;
+      delete multigermline;
+      return 1;
+    }
+  }
+
+   if (multigermline->getGermlines().size() == 0) {
+      return app.exit(CLI::ConstructionError("At least one germline must be given with -g or -V/(-D)/-J.", 1));
+    }
+
 
 
     // TODO : make it work?
