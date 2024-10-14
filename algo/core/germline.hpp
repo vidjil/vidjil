@@ -228,7 +228,7 @@ Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
         }
         germline_elements[item.key()].insert(element);
         if (config[item.key()]["build"] == "1") {
-          readers[item.key()].add(filename);
+          readers[item.key()].add(filename, false);
         }
         if (config[item.key()].count("index") > 0 && config[item.key()]["index"] == "1")
           shortcuts_to_identifier[current_shortcut].insert(recombination_nb);
@@ -354,7 +354,6 @@ void Germline<Tshortcut, Affect>::finish(IKmerStore<Tshortcut, Affect> *index) {
   this->index = index;
   for (const auto &key_val : allocated) {
     for (auto &segment: key_val.first->getSegment()) {
-      std::cerr << key_val.second << " " << config[segment].count("index") << " " << config[segment]["index"] << std::endl;
       if (key_val.second
           && config[segment].count("index") > 0
           && config[segment]["index"] == "1")

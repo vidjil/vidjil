@@ -148,7 +148,6 @@ template<typename Tshortcut, typename Affect>
 void GermlineElement<Tshortcut, Affect>::addToIndex(IKmerStore<Tshortcut, Affect> *index) {
   reader = std::make_shared<BioReader>(2, "|", getMarkPos());
   reader->add(filename);
-  std::cerr << "Insert " << affect << std::endl;
   index->insert(*reader, affect, this, max_indexing, seed);
   if (build_filter) {
     filter = new FilterWithACAutomaton<Tshortcut>(*reader, seed, KEYS_COMPRESS);

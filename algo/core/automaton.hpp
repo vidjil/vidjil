@@ -16,8 +16,6 @@ AbstractACAutomaton<Shortcut, Info>::AbstractACAutomaton():IKmerStore<Shortcut, 
 template <typename Shortcut, class Info>
 void AbstractACAutomaton<Shortcut, Info>::finish_building() {
   if (! IKmerStore<Shortcut, Info>::finished_building) {
-    std::cerr << "!!!!!!!!!!" << std::endl;
-    std::cerr << kmers_inserted.size() << std::endl;
     IKmerStore<Shortcut, Info>::finish_building();
     build_failure_functions();
     all_index_load = 0;
@@ -26,11 +24,7 @@ void AbstractACAutomaton<Shortcut, Info>::finish_building() {
       if (iter.first.getStrand())
         all_index_load += getIndexLoad(iter.first);
     }
-    for (auto &x : kmers_inserted) {
-      std::cerr << x.first << " " << x.second << std::endl;
-    }
   }
-  std::cerr << "**********" << std::endl;
 }
 
 template<typename Shortcut, class Info>

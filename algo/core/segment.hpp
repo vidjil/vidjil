@@ -1007,7 +1007,6 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
 			   segment_cost, // DNA
 			   reverse_both, reverse_both,
                           rep->read(r).marked_pos);
-
       int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
 
       if (score > best_score)
