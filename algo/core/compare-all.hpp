@@ -4,8 +4,8 @@
 #include "compare-all.h"
 
 /*Function which permit to compare all windows in windowsStorage*/
-template <typename S, typename A>
-SimilarityMatrix compare_windows(WindowsStorage<S, A> &windowsStorage, const Cost theCost, int nb_clones) {
+template <typename A>
+SimilarityMatrix compare_windows(WindowsStorage<A> &windowsStorage, const Cost theCost, int nb_clones) {
 
     //Creation of a nb_clones matrix
     SimilarityMatrix matrix(nb_clones);

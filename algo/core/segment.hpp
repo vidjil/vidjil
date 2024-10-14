@@ -273,11 +273,11 @@ string posFromBoxes(vector <AlignBox<Affect>*> boxes)
 }
 
 
-template <typename Shortcut, typename Affect>
-Segmenter<Shortcut, Affect>::~Segmenter() {}
+template <typename Affect>
+Segmenter<Affect>::~Segmenter() {}
 
-template <typename Shortcut, typename Affect>
-Sequence Segmenter<Shortcut, Affect>::getSequence() const {
+template <typename Affect>
+Sequence Segmenter<Affect>::getSequence() const {
   Sequence s ;
   s.label_full = info ;
   if (segmented) {
@@ -290,8 +290,8 @@ Sequence Segmenter<Shortcut, Affect>::getSequence() const {
   return s ;
 }
 
-template <typename Shortcut, typename Affect>
-string Segmenter<Shortcut, Affect>::getJunction(int l, int shift) {
+template <typename Affect>
+string Segmenter<Affect>::getJunction(int l, int shift) {
   assert(isSegmented());
 
   junctionChanged = false;
@@ -302,7 +302,7 @@ string Segmenter<Shortcut, Affect>::getJunction(int l, int shift) {
   // Regular '-w'
   int central_pos = (getLeft() + getRight())/2 + shift;
 
-  pair<int, int> length_shift = WindowExtractor<Shortcut, Affect>::get_best_length_shifts(getSequence().sequence.size(),
+  pair<int, int> length_shift = WindowExtractor<Affect>::get_best_length_shifts(getSequence().sequence.size(),
                                                                         l, central_pos,
                                                                         DEFAULT_WINDOW_SHIFT);
   // Yield UNSEG_TOO_SHORT_FOR_WINDOW into windowExtractor
@@ -320,54 +320,54 @@ string Segmenter<Shortcut, Affect>::getJunction(int l, int shift) {
   return getSequence().sequence.substr(central_pos + length_shift.second - length_shift.first / 2, length_shift.first);
 }
 
-template <typename Shortcut, typename Affect>
-int Segmenter<Shortcut, Affect>::getLeft() const {
+template <typename Affect>
+int Segmenter<Affect>::getLeft() const {
   return box_V->end;
 }
 
-template <typename Shortcut, typename Affect>
-int Segmenter<Shortcut, Affect>::getRight() const {
+template <typename Affect>
+int Segmenter<Affect>::getRight() const {
   return box_J->start;
 }
 
-template <typename Shortcut, typename Affect>
-int Segmenter<Shortcut, Affect>::getMidLength() const {
+template <typename Affect>
+int Segmenter<Affect>::getMidLength() const {
   return box_J->start - box_V->end - 1;
 }
 
-template <typename Shortcut, typename Affect>
-int Segmenter<Shortcut, Affect>::getLeftD() const {
+template <typename Affect>
+int Segmenter<Affect>::getLeftD() const {
   return box_D->start;
 }
 
-template <typename Shortcut, typename Affect>
-int Segmenter<Shortcut, Affect>::getRightD() const {
+template <typename Affect>
+int Segmenter<Affect>::getRightD() const {
   return box_D->end;
 }
 
-template <typename Shortcut, typename Affect>
-bool Segmenter<Shortcut, Affect>::isReverse() const {
+template <typename Affect>
+bool Segmenter<Affect>::isReverse() const {
   return reversed;
 }
 
-template <typename Shortcut, typename Affect>
-bool Segmenter<Shortcut, Affect>::isSegmented() const {
+template <typename Affect>
+bool Segmenter<Affect>::isSegmented() const {
   return segmented;
 }
 
-template <typename Shortcut, typename Affect>
-bool Segmenter<Shortcut, Affect>::isDSegmented() const {
+template <typename Affect>
+bool Segmenter<Affect>::isDSegmented() const {
   return dSegmented;
 }
 
-template <typename Shortcut, typename Affect>
-bool Segmenter<Shortcut, Affect>::isJunctionChanged() const {
+template <typename Affect>
+bool Segmenter<Affect>::isJunctionChanged() const {
   return junctionChanged;
 }
 // E-values
 
-template <typename Shortcut, typename Affect>
-void Segmenter<Shortcut, Affect>::checkLeftRightEvaluesThreshold(double threshold, int strand)
+template <typename Affect>
+void Segmenter<Affect>::checkLeftRightEvaluesThreshold(double threshold, int strand)
 {
   if (threshold == NO_LIMIT_VALUE)
     return ;
@@ -385,8 +385,8 @@ void Segmenter<Shortcut, Affect>::checkLeftRightEvaluesThreshold(double threshol
 
 // Chevauchement
 
-template <typename Shortcut, typename Affect>
-string Segmenter<Shortcut, Affect>::removeChevauchement()
+template <typename Affect>
+string Segmenter<Affect>::removeChevauchement()
 {
   assert(isSegmented());
 
@@ -406,8 +406,8 @@ string Segmenter<Shortcut, Affect>::removeChevauchement()
 // Prettyprint
 
 
-template <typename Shortcut, typename Affect>
-bool Segmenter<Shortcut, Affect>::finishSegmentation()
+template <typename Affect>
+bool Segmenter<Affect>::finishSegmentation()
 {
   assert(isSegmented());
 
@@ -424,8 +424,8 @@ bool Segmenter<Shortcut, Affect>::finishSegmentation()
   return true ;
 }
 
-template <typename Shortcut, typename Affect>
-bool Segmenter<Shortcut, Affect>::finishSegmentationD()
+template <typename Affect>
+bool Segmenter<Affect>::finishSegmentationD()
 {
   string seq = getSequence().sequence;
 
@@ -439,8 +439,8 @@ bool Segmenter<Shortcut, Affect>::finishSegmentationD()
   return true ;
 }
 
-template <typename Shortcut, typename Affect>
-string Segmenter<Shortcut, Affect>::getInfoLine() const
+template <typename Affect>
+string Segmenter<Affect>::getInfoLine() const
 {
   string s = "" ;
 
@@ -464,8 +464,8 @@ string Segmenter<Shortcut, Affect>::getInfoLine() const
   return s ;
 }
 
-template <typename Shortcut, typename Affect>
-string KmerSegmenter<Shortcut, Affect>::getInfoLineWithAffects() const
+template <typename Affect>
+string KmerSegmenter<Affect>::getInfoLineWithAffects() const
 {
    stringstream ss;
 
@@ -489,8 +489,8 @@ string KmerSegmenter<Shortcut, Affect>::getInfoLineWithAffects() const
 }
 
 
-template <typename Shortcut, typename Affect>
-ostream &operator<<(ostream &out, const Segmenter<Shortcut, Affect> &s)
+template <typename Affect>
+ostream &operator<<(ostream &out, const Segmenter<Affect> &s)
 {
   out << ">" << s.label << " " ;
   out << s.getInfoLine() << endl;
@@ -512,11 +512,11 @@ ostream &operator<<(ostream &out, const Segmenter<Shortcut, Affect> &s)
 
 // KmerSegmenter (Cheap)
 
-template <typename Shortcut, typename Affect>
-KmerSegmenter<Shortcut, Affect>::KmerSegmenter() { kaa = 0 ; }
+template <typename Affect>
+KmerSegmenter<Affect>::KmerSegmenter() { kaa = 0 ; }
 
-template <typename Shortcut, typename Affect>
-KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut, Affect> *index, int segmentation_method, MultiGermline<Shortcut, Affect> *germlines, Germline<Shortcut, Affect> *required_germline, ostream *out_unsegmented, double threshold, double multiplier)
+template <typename Affect>
+KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, int segmentation_method, MultiGermline<Affect> *germlines, Germline<Affect> *required_germline, ostream *out_unsegmented, double threshold, double multiplier)
 {
   set<KmerAffect> before_set, after_set;
 
@@ -553,7 +553,7 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
       return ;
     }
 
-  kaa = new MultipleAffectAnalyser<Shortcut>(*(index), this->sequence);
+  kaa = new MultipleAffectAnalyser(*(index), this->sequence);
 
   // Check strand consistency among the affectations.
   int strand=0;
@@ -575,10 +575,10 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
 
   if (segmentation_method == SEG_METHOD_ONE) {
 
-    KmerAffectAnalyser<Shortcut> ka(*(index), this->sequence);
+    KmerAffectAnalyser ka(*(index), this->sequence);
 
-    std::set<GermlineElement<Shortcut, Affect>*> elements = required_germline->getGermlineElements("4");
-    GermlineElement<Shortcut, Affect> *element = *(elements.begin());
+    std::set<GermlineElement<Affect>*> elements = required_germline->getGermlineElements("4");
+    GermlineElement<Affect> *element = *(elements.begin());
     if (elements.size() > 1)
       std::cerr << "WARNING: only one Germline element from segment 4 will be taken into account ("
                 << element->getFilename() << ")" << std::endl;
@@ -666,7 +666,7 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
       else
         // MAX1U: the maximum k-mers (no unknown) + unknown
         {
-          CountKmerAffectAnalyser<Shortcut> ckaa(*(index), this->sequence);
+          CountKmerAffectAnalyser ckaa(*(index), this->sequence);
           KmerAffect max = ckaa.max(forbidden);
 
           if (max.isUnknown())
@@ -703,7 +703,7 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
           this->because = UNSEG_TOO_FEW_ZERO ;
       }
     } else
-      this->segmented_germline = Germline<Shortcut, Affect>::getUnseg();
+      this->segmented_germline = Germline<Affect>::getUnseg();
   }
   if (this->because == 0)
     computeSegmentation(strand, before, after, threshold, multiplier);
@@ -715,21 +715,21 @@ KmerSegmenter<Shortcut, Affect>::KmerSegmenter(Sequence seq, IKmerStore<Shortcut
     }
 }
 
-template <typename Shortcut, typename Affect>
-void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set) {
+template <typename Affect>
+void KmerSegmenter<Affect>::chooseGermline(MultiGermline<Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set) {
 
-  std::set<Shortcut> before_shortcuts, after_shortcuts;
-  std::list<Germline<Shortcut, Affect> *> possible_germlines;
+  std::set<Tshortcut> before_shortcuts, after_shortcuts;
+  std::list<Germline<Affect> *> possible_germlines;
   std::list<std::pair<KmerAffect, KmerAffect>> matching_affects;
-  std::map<Shortcut, KmerAffect> shortcut_affect;
+  std::map<Tshortcut, KmerAffect> shortcut_affect;
 
   for (auto val: before_set) {
-    Shortcut c = germlines->getRepository()->getShortcut(val);
+    Tshortcut c = germlines->getRepository()->getShortcut(val);
     before_shortcuts.insert(c);
     shortcut_affect[c] = val;
   }
   for (auto val: after_set) {
-    Shortcut c = germlines->getRepository()->getShortcut(val);
+    Tshortcut c = germlines->getRepository()->getShortcut(val);
     after_shortcuts.insert(c);
     shortcut_affect[c] = val;
   }
@@ -738,13 +738,14 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
 
   for (auto left: before_shortcuts) {
     for (auto right: after_shortcuts) {
-      std::set<Shortcut> shortcuts = {left, right};
-      Germline<Shortcut, Affect> *possible_germline = germlines->getGermline(shortcuts);
+      std::set<Tshortcut> shortcuts = {left, right};
+      Germline<Affect> *possible_germline = germlines->getGermline(shortcuts);
       if (possible_germline != nullptr && possible_germline->hasRecombination(shortcuts)) {
         if (shortcut_affect[left].getStrand() == shortcut_affect[right].getStrand()) {
           possible_germlines.push_back(possible_germline);
           matching_affects.push_back(std::make_pair(shortcut_affect[left], shortcut_affect[right]));
         }
+        // TODO: check segment order consistency
       }
     }
   }
@@ -753,7 +754,7 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
     if (possible_germlines.size() > 1) {
       // Select shorter codes as it will favor complete over incomplete recombinations
       auto min_germline = std::min_element(possible_germlines.begin(), possible_germlines.end(),
-                                           [](Germline<Shortcut, Affect>* a, Germline<Shortcut, Affect>* b) {
+                                           [](Germline<Affect>* a, Germline<Affect>* b) {
                                              return a->getCode().length() < b->getCode().length();
                                            });
       this->segmented_germline = *min_germline;
@@ -764,7 +765,7 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
     std::list<std::string> segments = this->segmented_germline->getSegments();
     before = affects.first;
     after = affects.second;
-    GermlineElement<Shortcut, Affect> *germlineElem = this->segmented_germline->getGermlineElement(germlines->getRepository()->getShortcut(affects.first));
+    GermlineElement<Affect> *germlineElem = this->segmented_germline->getGermlineElement(germlines->getRepository()->getShortcut(affects.first));
     if (germlineElem && germlineElem->getSegment().count(segments.front()) > 0) {
       this->reversed = false;
     } else {
@@ -786,8 +787,8 @@ void KmerSegmenter<Shortcut, Affect>::chooseGermline(MultiGermline<Shortcut, Aff
 }
 
 
-template <typename Shortcut, typename Affect>
-KmerSegmenter<Shortcut, Affect>::~KmerSegmenter() {
+template <typename Affect>
+KmerSegmenter<Affect>::~KmerSegmenter() {
   if (kaa)
     delete kaa;
 
@@ -796,8 +797,8 @@ KmerSegmenter<Shortcut, Affect>::~KmerSegmenter() {
   delete this->box_J;
 }
 
-template <typename Shortcut, typename Affect>
-void KmerSegmenter<Shortcut, Affect>::computeSegmentation(int strand, KmerAffect before, KmerAffect after,
+template <typename Affect>
+void KmerSegmenter<Affect>::computeSegmentation(int strand, KmerAffect before, KmerAffect after,
                                         double threshold, double multiplier) {
   // Try to segment, computing 'box_V->end' and 'box_J->start'
   // If not segmented, put the cause of unsegmentation in 'because'
@@ -858,18 +859,18 @@ void KmerSegmenter<Shortcut, Affect>::computeSegmentation(int strand, KmerAffect
   return ;
 }
 
-template <typename Shortcut, typename Affect>
-MultipleAffectAnalyser<Shortcut> *KmerSegmenter<Shortcut, Affect>::getKmerAffectAnalyser() const {
+template <typename Affect>
+MultipleAffectAnalyser *KmerSegmenter<Affect>::getKmerAffectAnalyser() const {
   return kaa;
 }
 
-template <typename Shortcut, typename Affect>
-int Segmenter<Shortcut, Affect>::getSegmentationStatus() const {
+template <typename Affect>
+int Segmenter<Affect>::getSegmentationStatus() const {
   return because;
 }
 
-template <typename Shortcut, typename Affect>
-void Segmenter<Shortcut, Affect>::setSegmentationStatus(int status) {
+template <typename Affect>
+void Segmenter<Affect>::setSegmentationStatus(int status) {
   because = status;
   segmented = (status == SEG_PLUS || status == SEG_MINUS);
 }
@@ -1083,8 +1084,8 @@ string format_del(int deletions)
   return deletions ? *"(" + string_of_int(deletions) + " del)" : "" ;
 }
 
-template <typename Shortcut, typename Affect>
-FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, Affect> *germline, Cost segment_c,
+template <typename Affect>
+FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, Cost segment_c,
                 double threshold, double multiplier, int kmer_threshold, int alternative_genes)
 {
   this->box_V = new AlignBox<Affect>("5");
@@ -1111,17 +1112,17 @@ FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, 
   this->JUNCTIONstart = -1;
   this->JUNCTIONend = -1;
 
-  if (germline == Germline<Shortcut, Affect>::getUnseg())
+  if (germline == Germline<Affect>::getUnseg())
     return;
 
   bool reverse_V = false ;
   bool reverse_J = false ;
-  GermlineElement<Shortcut, Affect> *g_left=NULL, *g_right=NULL;
+  GermlineElement<Affect> *g_left=NULL, *g_right=NULL;
 
   if ((germline->getSegmentationMethod() == SEG_METHOD_MAX12) || (germline->getSegmentationMethod() == SEG_METHOD_MAX1U))
     {
       // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
-      KmerSegmenter<Shortcut, Affect> *kseg = new KmerSegmenter<Shortcut, Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(), germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
+      KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(), germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
       if (kseg->isSegmented())
         {
           this->reversed = kseg->isReverse();
@@ -1158,7 +1159,7 @@ FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, 
     // Note that we use only the 'strand' component
     // When the KmerSegmenter fails, continue with positive strand
     // TODO: flag to force a strand / to test both strands ?
-    KmerSegmenter<Shortcut, Affect> *kseg = new KmerSegmenter<Shortcut, Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(), germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
+    KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(), germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
     this->reversed = kseg->isReverse();
     delete kseg ;
   }
@@ -1195,7 +1196,7 @@ FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, 
     rightReader = g_right->getReader();
   /* Regular 53 Segmentation */
   if(kmer_threshold != NO_LIMIT_VALUE && g_left->getFilter() != nullptr ){
-    FilterWithACAutomaton<Shortcut>* f = g_left->getFilter();
+    FilterWithACAutomaton* f = g_left->getFilter();
     this->filtered_rep_5 = f->filterBioReaderWithACAutomaton(this->sequence_or_rc, kmer_threshold);
     align_against_collection(this->sequence_or_rc, std::make_shared<BioReader>(this->filtered_rep_5), NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                                    this->box_V, this->segment_cost, false, standardised_threshold_evalue);
@@ -1254,8 +1255,8 @@ FineSegmenter<Shortcut, Affect>::FineSegmenter(Sequence seq, Germline<Shortcut, 
   this->finishSegmentation();
 }
 
-template <typename Shortcut, typename Affect>
-bool FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *germline,
+template <typename Affect>
+bool FineSegmenter<Affect>::FineSegmentD(Germline<Affect> *germline,
                                  AlignBox<Affect> *box_Y, AlignBox<Affect> *box_DD, AlignBox<Affect> *box_Z,
                                  int forbidden_id,
                                  int extend_DD_on_Y, int extend_DD_on_Z,
@@ -1342,8 +1343,8 @@ bool FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *g
     return true;
 }
 
-template <typename Shortcut, typename Affect>
-void FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *germline, bool several_D,
+template <typename Affect>
+void FineSegmenter<Affect>::FineSegmentD(Germline<Affect> *germline, bool several_D,
                                  double evalue_threshold, double multiplier){
 
   if (this->segmented){
@@ -1404,8 +1405,8 @@ void FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *g
   }
 }
 
-template <typename Shortcut, typename Affect>
-void FineSegmenter<Shortcut, Affect>::findCDR3(){
+template <typename Affect>
+void FineSegmenter<Affect>::findCDR3(){
 
   this->JUNCTIONstart = this->box_V->marked_pos;
   this->JUNCTIONend = this->box_J->marked_pos;
@@ -1490,8 +1491,8 @@ void FineSegmenter<Shortcut, Affect>::findCDR3(){
   }
 }
 
-template <typename Shortcut, typename Affect>
-void FineSegmenter<Shortcut, Affect>::checkWarnings(CloneOutput *clone, bool phony)
+template <typename Affect>
+void FineSegmenter<Affect>::checkWarnings(CloneOutput *clone, bool phony)
 {
   if (this->isSegmented())
     {
@@ -1518,13 +1519,13 @@ void FineSegmenter<Shortcut, Affect>::checkWarnings(CloneOutput *clone, bool pho
     }
 }
 
-template <typename Shortcut, typename Affect>
-void FineSegmenter<Shortcut, Affect>::showAlignments(ostream &out){
+template <typename Affect>
+void FineSegmenter<Affect>::showAlignments(ostream &out){
   show_colored_read_germlines(out, this->getSequence(), this->box_V, this->box_J, SHOW_MAX_GENE_ALIGNMENT);
 }
 
-template <typename Shortcut, typename Affect>
-void FineSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone, bool details){
+template <typename Affect>
+void FineSegmenter<Affect>::toOutput(CloneOutput *clone, bool details){
   UNUSED(details);
   json seg;
 
@@ -1572,8 +1573,8 @@ json toJsonSegVal(string s) {
   return {{"val", s}};
 }
 
-template <typename Shortcut, typename Affect>
-void KmerSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone, bool details) {
+template <typename Affect>
+void KmerSegmenter<Affect>::toOutput(CloneOutput *clone, bool details) {
     json seg;
     int sequenceSize = this->sequence.size();
 
@@ -1604,8 +1605,8 @@ void KmerSegmenter<Shortcut, Affect>::toOutput(CloneOutput *clone, bool details)
 }
 
 
-template <typename Shortcut, typename Affect>
-FineSegmenter<Shortcut, Affect>::~FineSegmenter() {
+template <typename Affect>
+FineSegmenter<Affect>::~FineSegmenter() {
 
   // Push box_V, box_D, box_J in boxes if they are not already there
   for (AlignBox<Affect>* box: {this->box_V, this->box_D, this->box_J})

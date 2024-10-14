@@ -32,8 +32,7 @@ ostream &operator<<(ostream &out, const affect_infos &a)
 }
 
 
-template <typename S>
-KmerAffectAnalyser<S>::KmerAffectAnalyser(IKmerStore<S, KmerAffect> &kms, 
+KmerAffectAnalyser::KmerAffectAnalyser(IKmerStore<KmerAffect> &kms,
                                        const string &seq)
   :kms(kms), seq(seq) {
   assert(seq.length() >=  (size_t)kms.getS());
@@ -41,25 +40,21 @@ KmerAffectAnalyser<S>::KmerAffectAnalyser(IKmerStore<S, KmerAffect> &kms,
 }
 
 
-template <typename S>
-KmerAffectAnalyser<S>::KmerAffectAnalyser(IKmerStore<S, KmerAffect> &kms,
+KmerAffectAnalyser::KmerAffectAnalyser(IKmerStore<KmerAffect> &kms,
                                           const string &seq,
                                           vector <KmerAffect> a):
 kms(kms), seq(seq), affectations(a){}
 
 
-template <typename S>
-KmerAffectAnalyser<S>::~KmerAffectAnalyser(){}
+KmerAffectAnalyser::~KmerAffectAnalyser(){}
 
 
-template <typename S>
-int KmerAffectAnalyser<S>::count() const{
+int KmerAffectAnalyser::count() const{
   return affectations.size();
 }
 
 
-template <typename S>
-int KmerAffectAnalyser<S>::count(const KmerAffect &affect) const{
+int KmerAffectAnalyser::count(const KmerAffect &affect) const{
   int count = 0;
   for (vector<KmerAffect>::const_iterator it = affectations.begin(); 
        it < affectations.end(); it++) {
@@ -70,8 +65,7 @@ int KmerAffectAnalyser<S>::count(const KmerAffect &affect) const{
 }
 
 
-template <typename S>
-int KmerAffectAnalyser<S>::minimize(const KmerAffect &affect, int margin, int width) const {
+int KmerAffectAnalyser::minimize(const KmerAffect &affect, int margin, int width) const {
   int i = margin ;
   int i_stop = MIN(affectations.size() - margin - kms.getS(), seq.length() - width);
 
@@ -100,15 +94,13 @@ int KmerAffectAnalyser<S>::minimize(const KmerAffect &affect, int margin, int wi
 }
 
 
-template <typename S>
-const KmerAffect&KmerAffectAnalyser<S>::getAffectation(int i) const{
+const KmerAffect&KmerAffectAnalyser::getAffectation(int i) const{
   assert(i >= 0 && i < count());
   return affectations[i];
 }
 
 
-template <typename S>
-vector<KmerAffect> KmerAffectAnalyser<S>::getAllAffectations(affect_options_t options) const{
+vector<KmerAffect> KmerAffectAnalyser::getAllAffectations(affect_options_t options) const{
   if (options == AO_NONE)
     return affectations;
   vector<KmerAffect> result;
@@ -124,8 +116,7 @@ vector<KmerAffect> KmerAffectAnalyser<S>::getAllAffectations(affect_options_t op
 }
 
 
-template <typename S>
-set<KmerAffect> KmerAffectAnalyser<S>::getDistinctAffectations() const{
+set<KmerAffect> KmerAffectAnalyser::getDistinctAffectations() const{
   set<KmerAffect> result;
   for (size_t i = 0; i < affectations.size(); i++) {    
     result.insert(affectations[i]);
@@ -133,13 +124,11 @@ set<KmerAffect> KmerAffectAnalyser<S>::getDistinctAffectations() const{
   return result;
 }
 
-template <typename S>
-IKmerStore<S, KmerAffect> &KmerAffectAnalyser<S>::getIndex() const{
+IKmerStore<KmerAffect> &KmerAffectAnalyser::getIndex() const{
   return kms;
 }
 
-template <typename S>
-affect_infos KmerAffectAnalyser<S>::getMaximum(const KmerAffect &before, 
+affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
                                                const KmerAffect &after, 
                                                float ratioMin,
                                                int maxOverlap) {
@@ -261,24 +250,20 @@ affect_infos KmerAffectAnalyser<S>::getMaximum(const KmerAffect &before,
 }
 
 
-template <typename S>
-double KmerAffectAnalyser<S>::getProbabilityAtLeastOrAbove(const KmerAffect &kmer, int at_least) const {
+double KmerAffectAnalyser::getProbabilityAtLeastOrAbove(const KmerAffect &kmer, int at_least) const {
   return kms.getProbabilityAtLeastOrAbove(kmer, at_least, seq.size());
 }
 
-template <typename S>
-pair <double, double> KmerAffectAnalyser<S>::getLeftRightProbabilityAtLeastOrAbove() const {
+pair <double, double> KmerAffectAnalyser::getLeftRightProbabilityAtLeastOrAbove() const {
   return make_pair(left_evalue, right_evalue);
 }
 
-template <typename S>
-const string &KmerAffectAnalyser<S>::getSequence() const{
+const string &KmerAffectAnalyser::getSequence() const{
   return seq;
 }
 
 
-template <typename S>
-pair <KmerAffect, KmerAffect> KmerAffectAnalyser<S>::sortLeftRight(const pair <KmerAffect, KmerAffect> ka12) const {
+pair <KmerAffect, KmerAffect> KmerAffectAnalyser::sortLeftRight(const pair <KmerAffect, KmerAffect> ka12) const {
 
   KmerAffect ka1 = ka12.first;
   KmerAffect ka2 = ka12.second;
@@ -307,8 +292,7 @@ pair <KmerAffect, KmerAffect> KmerAffectAnalyser<S>::sortLeftRight(const pair <K
 }
 
 
-template <typename S>
-int KmerAffectAnalyser<S>::first(const KmerAffect &affect) const{
+int KmerAffectAnalyser::first(const KmerAffect &affect) const{
   for (size_t i = 0; i < affectations.size(); i++) 
     if (affect == affectations[i])
       return i;
@@ -316,8 +300,7 @@ int KmerAffectAnalyser<S>::first(const KmerAffect &affect) const{
 }
 
 
-template <typename S>
-int KmerAffectAnalyser<S>::last(const KmerAffect &affect) const{
+int KmerAffectAnalyser::last(const KmerAffect &affect) const{
   for (size_t i = affectations.size(); i > 0;  i--) 
     if (affect == affectations[i-1])
       return i-1;
@@ -325,8 +308,7 @@ int KmerAffectAnalyser<S>::last(const KmerAffect &affect) const{
 }
 
 
-template <typename S>
-pair <KmerAffect, KmerAffect> KmerAffectAnalyser<S>::max12(const set<KmerAffect> forbidden) const {
+pair <KmerAffect, KmerAffect> KmerAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
   pair<KmerAffect, int> max_counts[2] = {make_pair(KmerAffect::getUnknown(), -1),
                                          make_pair(KmerAffect::getUnknown(), -1)};
   float proba_max[2] = {1, 1};  // Probabilities associated with the max_counts
@@ -360,8 +342,7 @@ pair <KmerAffect, KmerAffect> KmerAffectAnalyser<S>::max12(const set<KmerAffect>
   return make_pair(max_counts[0].first, max_counts[1].first);
 }
 
-template <typename S>
-string KmerAffectAnalyser<S>::toString() const{
+string KmerAffectAnalyser::toString() const{
   string kmer;
   for (size_t i = 0; i < affectations.size(); i++) {
     kmer += affectations[i].toString();
@@ -372,8 +353,7 @@ string KmerAffectAnalyser<S>::toString() const{
   return kmer;
 }
 
-template <typename S>
-string KmerAffectAnalyser<S>::toStringValues() const{
+string KmerAffectAnalyser::toStringValues() const{
   string kmer;
   for (size_t i = 0; i < affectations.size(); i++) {
     kmer += affectations[i].toStringValues();
@@ -381,8 +361,7 @@ string KmerAffectAnalyser<S>::toStringValues() const{
   return kmer;
 }
 
-template <typename S>
-string KmerAffectAnalyser<S>::toStringSigns() const{
+string KmerAffectAnalyser::toStringSigns() const{
   string kmer;
   for (size_t i = 0; i < affectations.size(); i++) {
     kmer += affectations[i].toStringSigns();
@@ -393,38 +372,33 @@ string KmerAffectAnalyser<S>::toStringSigns() const{
 /* CountKmerAffectAnalyser */
 
 
-template <typename S>
-CountKmerAffectAnalyser<S>::CountKmerAffectAnalyser(IKmerStore<S, KmerAffect> &kms, const string &seq): KmerAffectAnalyser<S>(kms, seq) {
+CountKmerAffectAnalyser::CountKmerAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq): KmerAffectAnalyser(kms, seq) {
   buildCounts();
   overlap=0;
 }
 
 
-template <typename S>
-CountKmerAffectAnalyser<S>::~CountKmerAffectAnalyser() {
+CountKmerAffectAnalyser::~CountKmerAffectAnalyser() {
   for (auto it : counts) {
     delete [] it.second;
   }  
 }
 
 
-template <typename S>
-int CountKmerAffectAnalyser<S>::count() const {
-  return KmerAffectAnalyser<S>::count();
+int CountKmerAffectAnalyser::count() const {
+  return KmerAffectAnalyser::count();
 }
 
 
-template <typename S>
-int CountKmerAffectAnalyser<S>::count(const KmerAffect &affect) const {
+int CountKmerAffectAnalyser::count(const KmerAffect &affect) const {
   if (counts.count(affect) == 0)
     return 0;
 
-  return counts.find(affect)->second[KmerAffectAnalyser<S>::count() - 1];
+  return counts.find(affect)->second[KmerAffectAnalyser::count() - 1];
 }
 
 
-template <typename S>
-KmerAffect CountKmerAffectAnalyser<S>::max(const set<KmerAffect> forbidden) const {
+KmerAffect CountKmerAffectAnalyser::max(const set<KmerAffect> forbidden) const {
   map<KmerAffect, int* >::const_iterator it = counts.begin();
   KmerAffect max_affect = KmerAffect::getUnknown();
   int max_count = -1;
@@ -442,60 +416,53 @@ KmerAffect CountKmerAffectAnalyser<S>::max(const set<KmerAffect> forbidden) cons
   return max_affect;
 }
 
-template <typename S>
-int CountKmerAffectAnalyser<S>::countBefore(const KmerAffect&affect, int pos) const {
+int CountKmerAffectAnalyser::countBefore(const KmerAffect&affect, int pos) const {
   if (pos == 0 || counts.count(affect) == 0)
     return 0;
   return counts.find(affect)->second[pos-1];
 }
 
 
-template <typename S>
-int CountKmerAffectAnalyser<S>::countAfter(const KmerAffect&affect, int pos) const {
+int CountKmerAffectAnalyser::countAfter(const KmerAffect&affect, int pos) const {
   if (counts.count(affect) == 0)
     return 0;
-  int length = KmerAffectAnalyser<S>::count();
+  int length = KmerAffectAnalyser::count();
   map<KmerAffect, int*>::const_iterator it = counts.find(affect);
   return it->second[length-1] - it->second[pos];
 }  
 
 
-template <typename S>
-int CountKmerAffectAnalyser<S>::firstMax(const KmerAffect&before, const KmerAffect&after, 
+int CountKmerAffectAnalyser::firstMax(const KmerAffect&before, const KmerAffect&after,
                                          int start, int min) const {
-  return searchMax(before, after, start, KmerAffectAnalyser<S>::count()-1,1, min);
+  return searchMax(before, after, start, KmerAffectAnalyser::count()-1,1, min);
 }
 
 
-template <typename S>
-int CountKmerAffectAnalyser<S>::lastMax(const KmerAffect&before, const KmerAffect&after, 
+int CountKmerAffectAnalyser::lastMax(const KmerAffect&before, const KmerAffect&after,
                                         int end, int min) const {
   if (end == -1)
-    end = KmerAffectAnalyser<S>::count()-1;
+    end = KmerAffectAnalyser::count()-1;
   return searchMax(before, after, end, 0, -1, min);
 }
 
 
-template <typename S>
-int CountKmerAffectAnalyser<S>::getAllowedOverlap() {
+int CountKmerAffectAnalyser::getAllowedOverlap() {
   return overlap;
 }
 
 
-template <typename S>
-void CountKmerAffectAnalyser<S>::setAllowedOverlap(int overlap) {
+void CountKmerAffectAnalyser::setAllowedOverlap(int overlap) {
   this->overlap = overlap;
 }
 
 
-template <typename S>
-int CountKmerAffectAnalyser<S>::searchMax(const KmerAffect&before, const KmerAffect& after,
+int CountKmerAffectAnalyser::searchMax(const KmerAffect&before, const KmerAffect& after,
                                           int start, int end, int iter, int min) const {
   if (count(before) == 0 || count(after) == 0)
     return -1;
   int first_pos_max = -1;
   int max_value = min;
-  int shift = KmerAffectAnalyser<S>::kms.getS() - overlap - 1;
+  int shift = KmerAffectAnalyser::kms.getS() - overlap - 1;
   int shiftedStart = start, shiftedEnd = end;
   if (iter == 1)
     shiftedStart += shift;
@@ -514,9 +481,8 @@ int CountKmerAffectAnalyser<S>::searchMax(const KmerAffect&before, const KmerAff
 }
 
 
-template <typename S>
-void CountKmerAffectAnalyser<S>::buildCounts() {
-  int length = KmerAffectAnalyser<S>::count();
+void CountKmerAffectAnalyser::buildCounts() {
+  int length = KmerAffectAnalyser::count();
   set<KmerAffect> affects = this->getDistinctAffectations();
 
   for (set<KmerAffect>::iterator it = affects.begin(); 
@@ -538,54 +504,46 @@ void CountKmerAffectAnalyser<S>::buildCounts() {
 }
 
 
-template <typename S>
-MultipleAffectAnalyser<S>::MultipleAffectAnalyser(IKmerStore<S, KmerAffect> &kms, const string &seq)
+MultipleAffectAnalyser::MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq)
   :kms(kms), seq(seq),  affectations(kms.getAllResults(seq, true)) 
  {
   assert(seq.length() >=  (size_t)kms.getS());
  }
 
-template <typename S>
-int MultipleAffectAnalyser<S>::countUnique() const {
+int MultipleAffectAnalyser::countUnique() const {
   return affectations.size();
 }
 
-template <typename S>
-int MultipleAffectAnalyser<S>::count(const KmerAffect &affect) const{
+int MultipleAffectAnalyser::count(const KmerAffect &affect) const{
   auto it = affectations.find(affect);
   if (it == affectations.end())
     return 0;
   return it->second.count();
 }
 
-template <typename S>
-set<KmerAffect> MultipleAffectAnalyser<S>::getAffectations() const {
+set<KmerAffect> MultipleAffectAnalyser::getAffectations() const {
   set<KmerAffect> affects;
   for (auto it = affectations.begin(); it != affectations.end(); it++)
     affects.insert(it->first);
   return affects;
 }
 
-template <typename S>
-double MultipleAffectAnalyser<S>::getProbabilityAtLeastOrAbove(const KmerAffect &kmer, int at_least) const {
+double MultipleAffectAnalyser::getProbabilityAtLeastOrAbove(const KmerAffect &kmer, int at_least) const {
   // TODO: Same as KmerAffectAnalyser's → Factorization
   return kms.getProbabilityAtLeastOrAbove(kmer, at_least, seq.size());
 }
 
-template <typename S>
-pair <double, double> MultipleAffectAnalyser<S>::getLeftRightProbabilityAtLeastOrAbove() const {
+pair <double, double> MultipleAffectAnalyser::getLeftRightProbabilityAtLeastOrAbove() const {
   // TODO: Same as KmerAffectAnalyser's → Factorization
   return make_pair(left_evalue, right_evalue);
 }
 
-template <typename S>
-const string &MultipleAffectAnalyser<S>::getSequence() const{
+const string &MultipleAffectAnalyser::getSequence() const{
   // TODO: Same as KmerAffectAnalyser's → Factorization
   return seq;
 }
 
-template <typename S>
-pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser<S>::sortLeftRight(const pair <set<KmerAffect>, set<KmerAffect>> ka12) const {
+pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::sortLeftRight(const pair <set<KmerAffect>, set<KmerAffect>> ka12) const {
 
   // We assume that even with several affectations, the affectations will be positioned similarly
   KmerAffect ka1 = *(ka12.first.begin());
@@ -618,8 +576,7 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser<S>::sortLeftRight
     return make_pair(ka12.second, ka12.first);
 }
 
-template <typename S>
-pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser<S>::max12(const set<KmerAffect> forbidden) const {
+pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
   assert(affectations.size() >= 2);
   set<KmerAffect> best_affect;
   double best_proba = 2;
@@ -709,8 +666,7 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser<S>::max12(const s
   return make_pair(best_affect, second_best_affect);
 }
 
-template <typename S>
-affect_infos MultipleAffectAnalyser<S>::getMaximum(const KmerAffect &before, 
+affect_infos MultipleAffectAnalyser::getMaximum(const KmerAffect &before,
                                                 const KmerAffect &after, 
                                                 float ratioMin,
                                                 int maxOverlap) {
@@ -831,13 +787,11 @@ affect_infos MultipleAffectAnalyser<S>::getMaximum(const KmerAffect &before,
   return results;
 }
 
-template <typename S>
-string MultipleAffectAnalyser<S>::toString() const {
+string MultipleAffectAnalyser::toString() const {
   return toStringValues();
 }
 
-template <typename S>
-string MultipleAffectAnalyser<S>::toStringValues() const {
+string MultipleAffectAnalyser::toStringValues() const {
   std::stringstream result;
   for (KmerAffect affect: getAffectations()) {
     result << setw(6) << affect.toString();
@@ -849,8 +803,7 @@ string MultipleAffectAnalyser<S>::toStringValues() const {
   return result.str();
 }
 
-template <typename S>
-string MultipleAffectAnalyser<S>::toStringSigns() const {
+string MultipleAffectAnalyser::toStringSigns() const {
   // TODO
   return "";
 }

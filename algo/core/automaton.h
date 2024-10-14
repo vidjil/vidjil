@@ -19,8 +19,8 @@ using namespace std;
  * This abstract class represents an Aho-Corasick automaton.
  * Each final state can store some information.
  */
-template <typename shortcut, class Info>
-class AbstractACAutomaton: public IKmerStore<shortcut, Info> {
+template <class Info>
+class AbstractACAutomaton: public IKmerStore<Info> {
 public:
   Info null_info;
   
@@ -128,8 +128,8 @@ public:
  * PointerACAutomaton builds state which points to other states.
  * Each state stores at least one information (but possibly more).
  */
-template <typename Shortcut, class Info>
-class PointerACAutomaton: public AbstractACAutomaton<Shortcut, Info> {
+template <class Info>
+class PointerACAutomaton: public AbstractACAutomaton<Info> {
 private:
   bool multiple_info;
   BitSet **lookup_bitsets;      // Use for getAllResults
@@ -138,7 +138,7 @@ private:
   void free_automaton(pointer_state<Info> *);
   void init(string seed, bool revcomp, bool multiple_info);
 public:
-  using IKmerStore<Shortcut, Info>::insert;
+  using IKmerStore<Info>::insert;
 
   /**
    * @param revcomp: should the revcomp of the sequences also be indexed

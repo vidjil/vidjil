@@ -4,8 +4,8 @@
 #include "segment.hpp"
 #include "tools.h"
 
-template <typename Tshortcut, typename Affect>
-WindowExtractor<Tshortcut, Affect>::WindowExtractor(MultiGermline<Tshortcut, Affect> *multigermline)
+template <typename Affect>
+WindowExtractor<Affect>::WindowExtractor(MultiGermline<Affect> *multigermline)
   : out_segmented(NULL), out_unsegmented(NULL), out_unsegmented_detail(NULL), out_affects(NULL),
     max_reads_per_window(~0), multigermline(multigermline) {
   std::string code;
@@ -21,8 +21,8 @@ WindowExtractor<Tshortcut, Affect>::WindowExtractor(MultiGermline<Tshortcut, Aff
   stats_clones[code].init(NB_BINS_CLONES, MAX_VALUE_BINS_CLONES, NULL, true);
 }
 
-template <typename Tshortcut, typename Affect>
-WindowsStorage<Tshortcut, Affect>* WindowExtractor<Tshortcut, Affect>::extract(OnlineBioReader *reads,
+template <typename Affect>
+WindowsStorage<Affect>* WindowExtractor<Affect>::extract(OnlineBioReader *reads,
                                                                                size_t w,
                                                                                map<string, string> &windows_labels, bool only_labeled_windows,
                                                                                bool keep_unsegmented_as_clone,
@@ -31,7 +31,7 @@ WindowsStorage<Tshortcut, Affect>* WindowExtractor<Tshortcut, Affect>::extract(O
                                                                                SampleOutput *output) {
   init_stats();
 
-  WindowsStorage<Tshortcut, Affect> *windowsStorage = new WindowsStorage<Tshortcut, Affect>(windows_labels);
+  WindowsStorage<Affect> *windowsStorage = new WindowsStorage<Affect>(windows_labels);
   windowsStorage->setScorer(scorer);
   windowsStorage->setMaximalNbReadsPerWindow(max_reads_per_window);
 
@@ -64,7 +64,7 @@ WindowsStorage<Tshortcut, Affect>* WindowExtractor<Tshortcut, Affect>::extract(O
                    << setw(23) << " " << seq.sequence << endl;
     }
 
-    KmerSegmenter<Tshortcut, Affect> *seg = new KmerSegmenter<Tshortcut, Affect>(reads->getSequence(), multigermline->getIndex(),
+    KmerSegmenter<Affect> *seg = new KmerSegmenter<Affect>(reads->getSequence(), multigermline->getIndex(),
                                                                                  multigermline->getGermlines().front()->getSegmentationMethod(),
                                                                                  multigermline, nullptr,
                                                                                  out_affects, nb_expected,
@@ -148,90 +148,90 @@ WindowsStorage<Tshortcut, Affect>* WindowExtractor<Tshortcut, Affect>::extract(O
   return windowsStorage;
 }
 
-template <typename Tshortcut, typename Affect>
-float WindowExtractor<Tshortcut, Affect>::getAverageSegmentationLength(SEGMENTED seg) {
+template <typename Affect>
+float WindowExtractor<Affect>::getAverageSegmentationLength(SEGMENTED seg) {
   return stats[seg].getAverage();
 }
 
-template <typename Tshortcut, typename Affect>
-size_t WindowExtractor<Tshortcut, Affect>::getMaximalNbReadsPerWindow() {
+template <typename Affect>
+size_t WindowExtractor<Affect>::getMaximalNbReadsPerWindow() {
   return max_reads_per_window;
 }
 
-template <typename Tshortcut, typename Affect>
-size_t WindowExtractor<Tshortcut, Affect>::getNbReads() {
+template <typename Affect>
+size_t WindowExtractor<Affect>::getNbReads() {
   return nb_reads;
 }
 
-template <typename Tshortcut, typename Affect>
-size_t WindowExtractor<Tshortcut, Affect>::getNbSegmented(SEGMENTED seg) {
+template <typename Affect>
+size_t WindowExtractor<Affect>::getNbSegmented(SEGMENTED seg) {
   return stats[seg].nb;
 }
 
-template <typename Tshortcut, typename Affect>
-size_t WindowExtractor<Tshortcut, Affect>::getNbReadsGermline(string germline) {
+template <typename Affect>
+size_t WindowExtractor<Affect>::getNbReadsGermline(string germline) {
   return stats_reads[germline].getNbScores();
 }
 
-template <typename Tshortcut, typename Affect>
-size_t WindowExtractor<Tshortcut, Affect>::getNbClonesGermline(string germline) {
+template <typename Affect>
+size_t WindowExtractor<Affect>::getNbClonesGermline(string germline) {
   return stats_clones[germline].getNbScores();
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::setMaximalNbReadsPerWindow(size_t max_reads) {
+template <typename Affect>
+void WindowExtractor<Affect>::setMaximalNbReadsPerWindow(size_t max_reads) {
   max_reads_per_window = max_reads;
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::setSegmentedOutput(ostream *out) {
+template <typename Affect>
+void WindowExtractor<Affect>::setSegmentedOutput(ostream *out) {
   out_segmented = out;
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::setUnsegmentedOutput(ostream *out) {
+template <typename Affect>
+void WindowExtractor<Affect>::setUnsegmentedOutput(ostream *out) {
   out_unsegmented = out;
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::setUnsegmentedDetailOutput(ostream **outs, bool unsegmented_detail_full) {
+template <typename Affect>
+void WindowExtractor<Affect>::setUnsegmentedDetailOutput(ostream **outs, bool unsegmented_detail_full) {
   out_unsegmented_detail = outs;
   this->unsegmented_detail_full = unsegmented_detail_full;
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::setAffectsOutput(ostream *out) {
+template <typename Affect>
+void WindowExtractor<Affect>::setAffectsOutput(ostream *out) {
   out_affects = out;
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::fillStatsClones(WindowsStorage<Tshortcut, Affect> *storage) {
+template <typename Affect>
+void WindowExtractor<Affect>::fillStatsClones(WindowsStorage<Affect> *storage) {
   for (auto it = storage->begin(); it != storage->end(); ++it) {
     junction junc = it->first;
     int nb_reads = it->second.getNbInserted();
-    Germline<Tshortcut, Affect> *germline = storage->getGermline(junc);
+    Germline<Affect> *germline = storage->getGermline(junc);
 
     stats_clones[germline->getCode()].addScore(nb_reads);
   }
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::init_stats() {
+template <typename Affect>
+void WindowExtractor<Affect>::init_stats() {
   for (int i = 0; i < STATS_SIZE; i++) {
     stats[i].label = segmented_mesg[i];
   }
   nb_reads = 0;
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::out_stats(ostream &out) {
+template <typename Affect>
+void WindowExtractor<Affect>::out_stats(ostream &out) {
   out_stats_germlines(out);
   out << endl;
   out_stats_segmentation(out);
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::out_stats_segmentation(ostream &out) {
+template <typename Affect>
+void WindowExtractor<Affect>::out_stats_segmentation(ostream &out) {
   for (int i = 0; i < STATS_SIZE; i++) {
     // stats[NOT_PROCESSED] should equal to 0
     if (i == NOT_PROCESSED && (!stats[i].nb))
@@ -244,8 +244,8 @@ void WindowExtractor<Tshortcut, Affect>::out_stats_segmentation(ostream &out) {
   }
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowExtractor<Tshortcut, Affect>::out_stats_germlines(ostream &out) {
+template <typename Affect>
+void WindowExtractor<Affect>::out_stats_germlines(ostream &out) {
   out << "                          ";
   out << "reads av. len     clones clo/rds";
   out << endl;
@@ -257,8 +257,8 @@ void WindowExtractor<Tshortcut, Affect>::out_stats_germlines(ostream &out) {
   }
 }
 
-template <typename Tshortcut, typename Affect>
-pair<int, int> WindowExtractor<Tshortcut, Affect>::get_best_length_shifts(size_t read_length,
+template <typename Affect>
+pair<int, int> WindowExtractor<Affect>::get_best_length_shifts(size_t read_length,
                                                                           size_t max_window_length,
                                                                           int central_pos,
                                                                           int shift) {

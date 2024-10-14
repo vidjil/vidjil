@@ -23,7 +23,7 @@ using namespace std;
  * This takes an OnlineBioReader reader as input and extract windows from the
  * sequences given in the input.
  */
-template <typename Tshortcut, typename Affect>
+template <typename Affect>
 class WindowExtractor {
  private:
   size_t nb_reads;
@@ -40,9 +40,9 @@ class WindowExtractor {
   size_t max_reads_per_window;
 
  public:
-  MultiGermline<Tshortcut, Affect> *multigermline;
+  MultiGermline<Affect> *multigermline;
 
-  WindowExtractor(MultiGermline<Tshortcut, Affect> *multigermline);
+  WindowExtractor(MultiGermline<Affect> *multigermline);
 
   /**
    * Extract windows from the collection of input reads.
@@ -61,7 +61,7 @@ class WindowExtractor {
    * @post Statistics on segmentation will be provided through the getSegmentationStats() methods
    *       and getAverageSegmentationLength().
    */
-  WindowsStorage<Tshortcut, Affect> *extract(OnlineBioReader *reads,
+  WindowsStorage<Affect> *extract(OnlineBioReader *reads,
                           size_t w,
                           map<string, string> &windows_labels, bool only_labeled_windows=false,
                           bool keep_unsegmented_as_clone=false,
@@ -182,7 +182,7 @@ class WindowExtractor {
   /*
    * Fill the stats_clone member of the different Germlines
    */
-  void fillStatsClones(WindowsStorage<Tshortcut, Affect> *storage);
+  void fillStatsClones(WindowsStorage<Affect> *storage);
 };
 
 #endif

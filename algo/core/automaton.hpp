@@ -8,15 +8,15 @@
 #include <list>
 //////////////////// IMPLEMENTATIONS ////////////////////
 
-template <typename Shortcut, class Info>
-AbstractACAutomaton<Shortcut, Info>::AbstractACAutomaton():IKmerStore<Shortcut, Info>() {
+template <class Info>
+AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {
   null_info = Info();
 }
 
-template <typename Shortcut, class Info>
-void AbstractACAutomaton<Shortcut, Info>::finish_building() {
-  if (! IKmerStore<Shortcut, Info>::finished_building) {
-    IKmerStore<Shortcut, Info>::finish_building();
+template <class Info>
+void AbstractACAutomaton<Info>::finish_building() {
+  if (! IKmerStore<Info>::finished_building) {
+    IKmerStore<Info>::finish_building();
     build_failure_functions();
     all_index_load = 0;
     for(auto iter: kmers_inserted) {
@@ -27,16 +27,16 @@ void AbstractACAutomaton<Shortcut, Info>::finish_building() {
   }
 }
 
-template<typename Shortcut, class Info>
-float AbstractACAutomaton<Shortcut, Info>::computeIndexLoad(Info kmer) const {
+template<class Info>
+float AbstractACAutomaton<Info>::computeIndexLoad(Info kmer) const {
   double nb_inserted = kmers_inserted.at(kmer);
   if (this->revcomp_indexed)
     nb_inserted *= 2;
   return min(1., nb_inserted / pow(4.0, kmer.getLength()));
 }
 
-template<typename Shortcut, class Info>
-float AbstractACAutomaton<Shortcut, Info>::getIndexLoad(Info kmer) const {
+template<class Info>
+float AbstractACAutomaton<Info>::getIndexLoad(Info kmer) const {
   if (kmers_inserted.count(kmer) == 0) {
     return (kmer.isUnknown()) ? 1 - all_index_load : all_index_load;
   } else {
@@ -44,18 +44,18 @@ float AbstractACAutomaton<Shortcut, Info>::getIndexLoad(Info kmer) const {
   }
 }
 
-template<typename S, class T>
-bool AbstractACAutomaton<S, T>::hasDifferentKmerTypes() const {
+template<class T>
+bool AbstractACAutomaton<T>::hasDifferentKmerTypes() const {
   return true;
 }
 
-template <typename Shortcut, class Info>
-bool AbstractACAutomaton<Shortcut, Info>::isInitialState(void *state) {
+template <class Info>
+bool AbstractACAutomaton<Info>::isInitialState(void *state) {
   return state == initialState;
 }
 
-template <typename Shortcut, class Info>
-void *AbstractACAutomaton<Shortcut, Info>::goto_state(const string &seq, void *starting_state) {
+template <class Info>
+void *AbstractACAutomaton<Info>::goto_state(const string &seq, void *starting_state) {
   void *current_state = starting_state;
   size_t seq_length = seq.length();
 
@@ -71,23 +71,23 @@ void *AbstractACAutomaton<Shortcut, Info>::goto_state(const string &seq, void *s
 
 ///////////////////////
 
-template <typename Shortcut, class Info>
-PointerACAutomaton<Shortcut, Info>::PointerACAutomaton(bool revcomp, bool multiple_info):AbstractACAutomaton<Shortcut, Info>(){
+template <class Info>
+PointerACAutomaton<Info>::PointerACAutomaton(bool revcomp, bool multiple_info):AbstractACAutomaton<Info>(){
   init("##########",revcomp, multiple_info);
 }
 
-template <typename Shortcut, class Info>
-PointerACAutomaton<Shortcut, Info>::PointerACAutomaton(string seed, bool revcomp, bool multiple_info):AbstractACAutomaton<Shortcut, Info>() {
+template <class Info>
+PointerACAutomaton<Info>::PointerACAutomaton(string seed, bool revcomp, bool multiple_info):AbstractACAutomaton<Info>() {
   init(seed, revcomp, multiple_info);
 }
 
-template <typename Shortcut, class Info>
-PointerACAutomaton<Shortcut, Info>::PointerACAutomaton(int k, bool revcomp, bool multiple_info):AbstractACAutomaton<Shortcut, Info>() {
+template <class Info>
+PointerACAutomaton<Info>::PointerACAutomaton(int k, bool revcomp, bool multiple_info):AbstractACAutomaton<Info>() {
   init(seed_contiguous(k), revcomp, multiple_info);
 }
 
-template <typename Shortcut, class Info>
-void PointerACAutomaton<Shortcut, Info>::init(string seed, bool revcomp, bool multiple_info) {
+template <class Info>
+void PointerACAutomaton<Info>::init(string seed, bool revcomp, bool multiple_info) {
   if (revcomp && Info::hasRevcompSymetry()) {
     cerr << "PointerACAutomaton cannot deal with revcomp symmetry at the moment."
          << endl;
@@ -104,14 +104,14 @@ void PointerACAutomaton<Shortcut, Info>::init(string seed, bool revcomp, bool mu
   this->lookup_bitsets = (BitSet **) calloc(Info::getMaxHashValue(), sizeof(BitSet*));
 }
 
-template <typename Shortcut, class Info>
-PointerACAutomaton<Shortcut, Info>::~PointerACAutomaton() {
+template <class Info>
+PointerACAutomaton<Info>::~PointerACAutomaton() {
   free(lookup_bitsets);
   free_automaton(this->getInitialState());
 }
 
-template <typename Shortcut, class Info>
-void PointerACAutomaton<Shortcut, Info>::free_automaton(pointer_state<Info> *state) {
+template <class Info>
+void PointerACAutomaton<Info>::free_automaton(pointer_state<Info> *state) {
   set<void *> deleted_states;
   stack<pointer_state<Info> *> states_stacked;
   deleted_states.insert(state);
@@ -132,8 +132,8 @@ void PointerACAutomaton<Shortcut, Info>::free_automaton(pointer_state<Info> *sta
   }
 }
 
-template <typename Shortcut, class Info>
-void PointerACAutomaton<Shortcut, Info>::build_failure_functions() {
+template <class Info>
+void PointerACAutomaton<Info>::build_failure_functions() {
   queue<pair<pointer_state<Info>*,pointer_state<Info>*> > q;
   pointer_state<Info> *current_state = this->getInitialState();
 
@@ -173,24 +173,24 @@ void PointerACAutomaton<Shortcut, Info>::build_failure_functions() {
   }
 }
 
-template <typename Shortcut, class Info>
-vector<Info> &PointerACAutomaton<Shortcut, Info>::getInfo(void *state) {
+template <class Info>
+vector<Info> &PointerACAutomaton<Info>::getInfo(void *state) {
   return ((pointer_state<Info> *)state)->informations;
 }
 
-template <typename Shortcut, class Info>
-pointer_state<Info>* PointerACAutomaton<Shortcut, Info>::getInitialState() {
+template <class Info>
+pointer_state<Info>* PointerACAutomaton<Info>::getInitialState() {
   return (pointer_state<Info>*) this->initialState;
 }
 
-template <typename Shortcut, class Info>
-pointer_state<Info>* PointerACAutomaton<Shortcut, Info>::goto_state(const string &seq,
+template <class Info>
+pointer_state<Info>* PointerACAutomaton<Info>::goto_state(const string &seq,
                                                           void *starting_state) {
-  return (pointer_state<Info>*) AbstractACAutomaton<Shortcut, Info>::goto_state(seq, starting_state);
+  return (pointer_state<Info>*) AbstractACAutomaton<Info>::goto_state(seq, starting_state);
 }
 
-template <typename Shortcut, class Info>
-void PointerACAutomaton<Shortcut, Info>::insert(const seqtype &seq, Info info) {
+template <class Info>
+void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
   pointer_state<Info> *state = getInitialState();
   size_t seq_length = seq.length();
   size_t i;
@@ -227,8 +227,8 @@ void PointerACAutomaton<Shortcut, Info>::insert(const seqtype &seq, Info info) {
   }
 }
 
-template <typename Shortcut, class Info>
-void PointerACAutomaton<Shortcut, Info>::insert(const seqtype &sequence, const string &label,
+template <class Info>
+void PointerACAutomaton<Info>::insert(const seqtype &sequence, const string &label,
                                       bool ignore_extended_nucleotides,
                                       int keep_only,
                                       string seed) {
@@ -272,13 +272,13 @@ void PointerACAutomaton<Shortcut, Info>::insert(const seqtype &sequence, const s
   }
 }
 
-template <typename Shortcut, class Info>
-bool PointerACAutomaton<Shortcut, Info>::isFinalState(void *state) {
+template <class Info>
+bool PointerACAutomaton<Info>::isFinalState(void *state) {
   return ((pointer_state<Info> *)state)->is_final;
 }
 
-template <typename Shortcut, class Info>
-void *PointerACAutomaton<Shortcut, Info>::next(void *state, char c) {
+template <class Info>
+void *PointerACAutomaton<Info>::next(void *state, char c) {
   void *next_state = state;
   c = toupper(c);
   void *accessed_state = ((pointer_state<Info> *)next_state)->transition(c);
@@ -287,8 +287,8 @@ void *PointerACAutomaton<Shortcut, Info>::next(void *state, char c) {
 }
 
 
-template <typename Shortcut, class Info>
-vector<Info> PointerACAutomaton<Shortcut, Info>::getResults(const seqtype &seq, bool no_revcomp, string seed) {
+template <class Info>
+vector<Info> PointerACAutomaton<Info>::getResults(const seqtype &seq, bool no_revcomp, string seed) {
   UNUSED(no_revcomp);
   UNUSED(seed);
   // TODO: what should we do with several info at the same place?
@@ -321,8 +321,8 @@ vector<Info> PointerACAutomaton<Shortcut, Info>::getResults(const seqtype &seq, 
   return result;
 }
 
-template <typename Shortcut, class Info>
-map<Info, BitSet> PointerACAutomaton<Shortcut, Info>::getAllResults(const seqtype &seq, bool no_revcomp, string seed) {
+template <class Info>
+map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bool no_revcomp, string seed) {
   UNUSED(no_revcomp);
   UNUSED(seed);
 
@@ -372,8 +372,8 @@ map<Info, BitSet> PointerACAutomaton<Shortcut, Info>::getAllResults(const seqtyp
   return bitsets;
 }
 
-template <typename Shortcut, class Info>
-map<Info, int> PointerACAutomaton<Shortcut, Info>::getMultiResults(const seqtype &seq, bool no_revcomp, string seed) {
+template <class Info>
+map<Info, int> PointerACAutomaton<Info>::getMultiResults(const seqtype &seq, bool no_revcomp, string seed) {
   UNUSED(no_revcomp);
   UNUSED(seed);
   pointer_state<Info>* current_state = getInitialState();
@@ -398,16 +398,16 @@ map<Info, int> PointerACAutomaton<Shortcut, Info>::getMultiResults(const seqtype
   return results;
 }
 
-template <typename Shortcut, class Info>
-Info& PointerACAutomaton<Shortcut, Info>::get(seqtype &word) {
+template <class Info>
+Info& PointerACAutomaton<Info>::get(seqtype &word) {
   pointer_state<Info> *state = (pointer_state<Info> *)this->goto_state(word);
   if (state->informations.size() > 0)
     return state->informations.front();
   return this->null_info;
 }
 
-template <typename Shortcut, class Info>
-Info &PointerACAutomaton<Shortcut, Info>::operator[](seqtype &word) {
+template <class Info>
+Info &PointerACAutomaton<Info>::operator[](seqtype &word) {
   return get(word);
 }
 

@@ -207,7 +207,7 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                                  Cost segment_cost, bool reverse_V = false,
                                  bool reverse_J = false);
 
-template <typename Shortcut, typename Affect>
+template <typename Affect>
 class Segmenter {
 protected:
   string sequence;
@@ -238,7 +238,7 @@ protected:
   bool finishSegmentationD();
 
  public:
-  Germline<Shortcut, Affect> *segmented_germline;
+  Germline<Affect> *segmented_germline;
   string label;
   string code;
   string info;        // .vdj.fa header, fixed fields
@@ -337,22 +337,22 @@ protected:
    */
   void setSegmentationStatus(int status);
 
-  template <typename S, typename A>
-  friend ostream &operator<<(ostream &out, const Segmenter<S, A> &s);
+  template <typename A>
+  friend ostream &operator<<(ostream &out, const Segmenter<A> &s);
 };
 
 
 
-template <typename Shortcut, typename Affect>
-ostream &operator<<(ostream &out, const Segmenter<Shortcut, Affect> &s);
+template <typename Affect>
+ostream &operator<<(ostream &out, const Segmenter<Affect> &s);
 
 
 
-template <typename Shortcut, typename Affect>
-class KmerSegmenter : public Segmenter<Shortcut, Affect>
+template <typename Affect>
+class KmerSegmenter : public Segmenter<Affect>
 {
  private:
-  MultipleAffectAnalyser<Shortcut> *kaa;
+  MultipleAffectAnalyser *kaa;
  protected:
   string affects;
 
@@ -372,7 +372,7 @@ class KmerSegmenter : public Segmenter<Shortcut, Affect>
    * @param required_germline: the germline that should be used to segment (null if no requirement and if all the index should be used)
    * @param out_unsegmented: ptr to an output stream for the unsegmented sequences (nullptr if no output needed)
    */
-  KmerSegmenter(Sequence seq, IKmerStore<Shortcut, Affect> *index, int segmentation_method, MultiGermline<Shortcut, Affect> *germlines, Germline<Shortcut, Affect> *required_germline=nullptr, ostream *out_unsegmented=nullptr, double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
+  KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, int segmentation_method, MultiGermline<Affect> *germlines, Germline<Affect> *required_germline=nullptr, ostream *out_unsegmented=nullptr, double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
 
   KmerSegmenter(const KmerSegmenter &seg);
 
@@ -381,7 +381,7 @@ class KmerSegmenter : public Segmenter<Shortcut, Affect>
   /**
    * @return the KmerAffectAnalyser of the current sequence.
    */
-  MultipleAffectAnalyser<Shortcut> *getKmerAffectAnalyser() const;
+  MultipleAffectAnalyser *getKmerAffectAnalyser() const;
 
   string getInfoLineWithAffects() const;
   void toOutput(CloneOutput *clone, bool details=true);
@@ -393,13 +393,13 @@ class KmerSegmenter : public Segmenter<Shortcut, Affect>
   /**
    * Choose the right germline that is common to the sets of Kmeraffect before and after
    */
-  void chooseGermline(MultiGermline<Shortcut, Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set);
+  void chooseGermline(MultiGermline<Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set);
 
 };
 
 
-template <typename Shortcut, typename Affect>
-class FineSegmenter : public Segmenter<Shortcut, Affect>
+template <typename Affect>
+class FineSegmenter : public Segmenter<Affect>
 {
  private:
   BioReader filtered_rep_5;
@@ -422,7 +422,7 @@ class FineSegmenter : public Segmenter<Shortcut, Affect>
    *   for the filtering.
    * By default this parameter doesn't filter the germline.
    */
-  FineSegmenter(Sequence seq, Germline<Shortcut, Affect> *germline, Cost segment_cost,
+  FineSegmenter(Sequence seq, Germline<Affect> *germline, Cost segment_cost,
                  double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0,
                 int kmer_threshold=NO_LIMIT_VALUE, int alternative_genes=NO_LIMIT_VALUE);
 
@@ -432,10 +432,10 @@ class FineSegmenter : public Segmenter<Shortcut, Affect>
   * extend segmentation from VJ to VDJ
   * @param germline: germline used
   */
-  void FineSegmentD(Germline<Shortcut, Affect> *germline, bool several_D,
+  void FineSegmentD(Germline<Affect> *germline, bool several_D,
                     double threshold = THRESHOLD_NB_EXPECTED_D, double multiplier=1.0);
 
-  bool FineSegmentD(Germline<Shortcut, Affect> *germline,
+  bool FineSegmentD(Germline<Affect> *germline,
                     AlignBox<Affect> *box_Y, AlignBox<Affect> *box_DD, AlignBox<Affect> *box_Z,
                     int forbidden_id,
                     int extend_DD_on_Y, int extend_DD_on_Z,

@@ -29,12 +29,12 @@
 using namespace std;
 using json = nlohmann::json;
 
-template <typename S, typename A>
+template <typename A>
 class WindowsStorage {
  private:
   map<junction, BinReadStorage > seqs_by_window;
   map<junction, vector<int> > status_by_window;
-  map<junction, Germline<S, A>* > germline_by_window;
+  map<junction, Germline<A>* > germline_by_window;
   map<string, string> windows_labels;
   list<pair <junction, size_t> > sort_all_windows;
   map<junction, int> id_by_window;
@@ -56,7 +56,7 @@ class WindowsStorage {
    * @return a pointer to the germline of the window
    *         or NULL if the window doesn't exist.
    */
-  Germline<S, A> *getGermline(junction window);
+  Germline<A> *getGermline(junction window);
 
   map<junction, BinReadStorage>::iterator begin();
   map<junction, BinReadStorage>::iterator end();
@@ -186,7 +186,7 @@ class WindowsStorage {
    * @param status: the segmentation status
    * @param germline: the germline where this sequence has been segmented
    */
-  void add(junction window, Sequence sequence, int status, Germline<S, A> *germline,
+  void add(junction window, Sequence sequence, int status, Germline<A> *germline,
            list<int> extra_statuses = list<int>{});
 
   /**
@@ -203,7 +203,7 @@ class WindowsStorage {
    *                   must be supported by.
    * @return a set of the most abundant germlines.
    */
-  set<Germline<S, A> *> getTopGermlines(size_t top, size_t min_reads=1);
+  set<Germline<A> *> getTopGermlines(size_t top, size_t min_reads=1);
 
   /**
    * Only keep windows that are interesting.  Those windows are windows

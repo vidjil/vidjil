@@ -8,46 +8,46 @@
 #include "representative.h"
 #include "segment.h"
 
-template <typename Tshortcut, typename Affect>
-WindowsStorage<Tshortcut, Affect>::WindowsStorage(map<string, string> &labels)
+template <typename Affect>
+WindowsStorage<Affect>::WindowsStorage(map<string, string> &labels)
   : windows_labels(labels), max_reads_per_window(~0), scorer(&DEFAULT_READ_SCORE), nb_bins(NB_BINS), max_value_bins(MAX_VALUE_BINS) {}
 
-template <typename Tshortcut, typename Affect>
-list<pair<junction, size_t>> &WindowsStorage<Tshortcut, Affect>::getSortedList() {
+template <typename Affect>
+list<pair<junction, size_t>> &WindowsStorage<Affect>::getSortedList() {
   return sort_all_windows;
 }
 
-template <typename Tshortcut, typename Affect>
-map<junction, BinReadStorage>::iterator WindowsStorage<Tshortcut, Affect>::begin() {
+template <typename Affect>
+map<junction, BinReadStorage>::iterator WindowsStorage<Affect>::begin() {
   return seqs_by_window.begin();
 }
 
-template <typename Tshortcut, typename Affect>
-map<junction, BinReadStorage>::iterator WindowsStorage<Tshortcut, Affect>::end() {
+template <typename Affect>
+map<junction, BinReadStorage>::iterator WindowsStorage<Affect>::end() {
   return seqs_by_window.end();
 }
 
-template <typename Tshortcut, typename Affect>
-float WindowsStorage<Tshortcut, Affect>::getAverageLength(junction window) {
+template <typename Affect>
+float WindowsStorage<Affect>::getAverageLength(junction window) {
   assert(hasWindow(window));
   return seqs_by_window[window].getAverageLength();
 }
 
-template <typename Tshortcut, typename Affect>
-Germline<Tshortcut, Affect>* WindowsStorage<Tshortcut, Affect>::getGermline(junction window) {
+template <typename Affect>
+Germline<Affect>* WindowsStorage<Affect>::getGermline(junction window) {
   auto result = germline_by_window.find(window);
   if (result == germline_by_window.end())
     return NULL;
   return result->second;
 }
 
-template <typename Tshortcut, typename Affect>
-size_t WindowsStorage<Tshortcut, Affect>::getMaximalNbReadsPerWindow() {
+template <typename Affect>
+size_t WindowsStorage<Affect>::getMaximalNbReadsPerWindow() {
   return max_reads_per_window;
 }
 
-template <typename Tshortcut, typename Affect>
-json WindowsStorage<Tshortcut, Affect>::statusToJson(junction window) {
+template <typename Affect>
+json WindowsStorage<Affect>::statusToJson(junction window) {
   json result;
     
   for (unsigned int i = 0; i < status_by_window[window].size(); i++) {
@@ -61,19 +61,19 @@ json WindowsStorage<Tshortcut, Affect>::statusToJson(junction window) {
   return result;
 }
 
-template <typename Tshortcut, typename Affect>
-size_t WindowsStorage<Tshortcut, Affect>::getNbReads(junction window) {
+template <typename Affect>
+size_t WindowsStorage<Affect>::getNbReads(junction window) {
   assert(hasWindow(window));
   return seqs_by_window[window].getNbInserted();
 }
 
-template <typename Tshortcut, typename Affect>
-list<Sequence> WindowsStorage<Tshortcut, Affect>::getReads(junction window) {
+template <typename Affect>
+list<Sequence> WindowsStorage<Affect>::getReads(junction window) {
   return seqs_by_window[window].getReads();
 }
 
-template <typename Tshortcut, typename Affect>
-KmerRepresentativeComputer WindowsStorage<Tshortcut, Affect>::getRepresentativeComputer(junction window,
+template <typename Affect>
+KmerRepresentativeComputer WindowsStorage<Affect>::getRepresentativeComputer(junction window,
                                                                                         string seed, size_t min_cover, 
                                                                                         float percent_cover,
                                                                                         size_t nb_sampled) {
@@ -97,16 +97,16 @@ KmerRepresentativeComputer WindowsStorage<Tshortcut, Affect>::getRepresentativeC
   return repComp;
 }
 
-template <typename Tshortcut, typename Affect>
-list<Sequence> WindowsStorage<Tshortcut, Affect>::getSample(junction window, size_t nb_sampled) {
+template <typename Affect>
+list<Sequence> WindowsStorage<Affect>::getSample(junction window, size_t nb_sampled) {
   return seqs_by_window[window].getBestReads(nb_sampled);
 }
 
-template <typename Tshortcut, typename Affect>
-set<Germline<Tshortcut, Affect>*> WindowsStorage<Tshortcut, Affect>::getTopGermlines(size_t top, size_t min_reads) {
+template <typename Affect>
+set<Germline<Affect>*> WindowsStorage<Affect>::getTopGermlines(size_t top, size_t min_reads) {
   assert(sort_all_windows.size() == seqs_by_window.size());
 
-  set<Germline<Tshortcut, Affect>*> top_germlines;
+  set<Germline<Affect>*> top_germlines;
   size_t count = 0;
 
   for (auto it = sort_all_windows.begin(); it != sort_all_windows.end() && count < top && (size_t)it->second >= min_reads; ++it, ++count) {
@@ -116,19 +116,19 @@ set<Germline<Tshortcut, Affect>*> WindowsStorage<Tshortcut, Affect>::getTopGerml
   return top_germlines;
 }
 
-template <typename Tshortcut, typename Affect>
-bool WindowsStorage<Tshortcut, Affect>::hasLimitForReadsPerWindow() {
+template <typename Affect>
+bool WindowsStorage<Affect>::hasLimitForReadsPerWindow() {
   return max_reads_per_window != (size_t)~0;
 }
 
-template <typename Tshortcut, typename Affect>
-bool WindowsStorage<Tshortcut, Affect>::hasWindow(junction window) {
+template <typename Affect>
+bool WindowsStorage<Affect>::hasWindow(junction window) {
   auto result = germline_by_window.find(window);
   return (result != germline_by_window.end());
 }
 
-template <typename Tshortcut, typename Affect>
-string WindowsStorage<Tshortcut, Affect>::getLabel(junction window) {
+template <typename Affect>
+string WindowsStorage<Affect>::getLabel(junction window) {
   bool found = false;
   for (auto it : windows_labels) {
     string sequence_of_interest = it.first;
@@ -145,24 +145,24 @@ string WindowsStorage<Tshortcut, Affect>::getLabel(junction window) {
   return "";
 }
 
-template <typename Tshortcut, typename Affect>
-bool WindowsStorage<Tshortcut, Affect>::isInterestingJunction(junction window) {
+template <typename Affect>
+bool WindowsStorage<Affect>::isInterestingJunction(junction window) {
   return (getLabel(window).length() != 0);
 }
 
-template <typename Tshortcut, typename Affect>
-size_t WindowsStorage<Tshortcut, Affect>::size() {
+template <typename Affect>
+size_t WindowsStorage<Affect>::size() {
   return seqs_by_window.size();
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowsStorage<Tshortcut, Affect>::setBinParameters(size_t nb, size_t max_value) {
+template <typename Affect>
+void WindowsStorage<Affect>::setBinParameters(size_t nb, size_t max_value) {
   nb_bins = nb;
   max_value_bins = max_value;
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowsStorage<Tshortcut, Affect>::setIdToAll() {
+template <typename Affect>
+void WindowsStorage<Affect>::setIdToAll() {
   int id = 0;
   for (auto it = seqs_by_window.begin(); it != seqs_by_window.end(); ++it) {
     id_by_window.insert(make_pair(it->first, id));
@@ -170,13 +170,13 @@ void WindowsStorage<Tshortcut, Affect>::setIdToAll() {
   }
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowsStorage<Tshortcut, Affect>::setScorer(VirtualReadScore *scorer) {
+template <typename Affect>
+void WindowsStorage<Affect>::setScorer(VirtualReadScore *scorer) {
   this->scorer = scorer;
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowsStorage<Tshortcut, Affect>::add(junction window, Sequence sequence, int status, Germline<Tshortcut, Affect> *germline, list<int> extra_statuses) {
+template <typename Affect>
+void WindowsStorage<Affect>::add(junction window, Sequence sequence, int status, Germline<Affect> *germline, list<int> extra_statuses) {
   if (!hasWindow(window)) {
     // First time we see that window: init
     status_by_window[window].resize(STATS_SIZE);
@@ -193,8 +193,8 @@ void WindowsStorage<Tshortcut, Affect>::add(junction window, Sequence sequence, 
   germline_by_window[window] = germline;
 }
 
-template <typename Tshortcut, typename Affect>
-pair<int, size_t> WindowsStorage<Tshortcut, Affect>::keepInterestingWindows(size_t min_reads_window) {
+template <typename Affect>
+pair<int, size_t> WindowsStorage<Affect>::keepInterestingWindows(size_t min_reads_window) {
   int removes = 0;
   size_t nb_reads = 0;
 
@@ -220,13 +220,13 @@ pair<int, size_t> WindowsStorage<Tshortcut, Affect>::keepInterestingWindows(size
   return make_pair(removes, nb_reads);
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowsStorage<Tshortcut, Affect>::setMaximalNbReadsPerWindow(size_t max_reads) {
+template <typename Affect>
+void WindowsStorage<Affect>::setMaximalNbReadsPerWindow(size_t max_reads) {
   max_reads_per_window = max_reads;
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowsStorage<Tshortcut, Affect>::sort() {
+template <typename Affect>
+void WindowsStorage<Affect>::sort() {
   sort_all_windows.clear();
   for (auto it = seqs_by_window.begin(); it != seqs_by_window.end(); ++it) {
     sort_all_windows.push_back(make_pair(it->first, it->second.getNbInserted()));
@@ -235,8 +235,8 @@ void WindowsStorage<Tshortcut, Affect>::sort() {
   sort_all_windows.sort(pair_occurrence_sort<junction>);
 }
 
-template <typename Tshortcut, typename Affect>
-ostream &WindowsStorage<Tshortcut, Affect>::printSortedWindows(ostream &os) {
+template <typename Affect>
+ostream &WindowsStorage<Affect>::printSortedWindows(ostream &os) {
   int num_seq = 0;
 
   for (auto it = sort_all_windows.begin(); it != sort_all_windows.end(); ++it) {
@@ -246,8 +246,8 @@ ostream &WindowsStorage<Tshortcut, Affect>::printSortedWindows(ostream &os) {
   return os;
 }
 
-template <typename Tshortcut, typename Affect>
-json WindowsStorage<Tshortcut, Affect>::computeDiversity(map <string, size_t> nb_segmented) {
+template <typename Affect>
+json WindowsStorage<Affect>::computeDiversity(map <string, size_t> nb_segmented) {
 
   map <string, double> index_H_entropy;
   map <string, double> index_1_minus_Ds_diversity;
@@ -309,13 +309,13 @@ json WindowsStorage<Tshortcut, Affect>::computeDiversity(map <string, size_t> nb
   return jsonDiversity;
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowsStorage<Tshortcut, Affect>::clearSequences() {
+template <typename Affect>
+void WindowsStorage<Affect>::clearSequences() {
   seqs_by_window.clear();
 }
 
-template <typename Tshortcut, typename Affect>
-void WindowsStorage<Tshortcut, Affect>::sortedWindowsToOutput(SampleOutput *output, int max_output, bool delete_all) {
+template <typename Affect>
+void WindowsStorage<Affect>::sortedWindowsToOutput(SampleOutput *output, int max_output, bool delete_all) {
 
   int top = 1;
 
@@ -342,8 +342,8 @@ void WindowsStorage<Tshortcut, Affect>::sortedWindowsToOutput(SampleOutput *outp
   }
 }
 
-template <typename Tshortcut, typename Affect>
-ostream &WindowsStorage<Tshortcut, Affect>::windowToStream(ostream &os, junction window, int num_seq, size_t size) {
+template <typename Affect>
+ostream &WindowsStorage<Affect>::windowToStream(ostream &os, junction window, int num_seq, size_t size) {
   os << ">" << size << "--window--" << num_seq << " " << getLabel(window) << endl;
   os << window << endl;
   return os;

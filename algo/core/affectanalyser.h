@@ -136,10 +136,9 @@ class AffectAnalyser {
   virtual string toString() const  = 0;
 };
 
-template <typename S>
 class KmerAffectAnalyser: public AffectAnalyser {
  protected:
-  IKmerStore<S, KmerAffect> &kms;
+  IKmerStore<KmerAffect> &kms;
   const string &seq;
   vector<KmerAffect> affectations;
   double left_evalue, right_evalue;
@@ -150,7 +149,7 @@ class KmerAffectAnalyser: public AffectAnalyser {
    *             (parameter is not copied)
    * @param seq: the sequence to analyse (parameter is not copied)
    */
-  KmerAffectAnalyser(IKmerStore<S, KmerAffect> &kms, const string &seq);
+  KmerAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq);
 
   /**
    * This constructor must be seen as a “toy” constructor, used for 
@@ -161,7 +160,7 @@ class KmerAffectAnalyser: public AffectAnalyser {
    * @param seq: basically not used in the class
    * @param a: the affectation we must use.
    */
-  KmerAffectAnalyser(IKmerStore<S, KmerAffect> &kms, const string &seq, vector<KmerAffect> a);
+  KmerAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq, vector<KmerAffect> a);
 
   ~KmerAffectAnalyser();
 
@@ -184,7 +183,7 @@ class KmerAffectAnalyser: public AffectAnalyser {
 
   set<KmerAffect> getDistinctAffectations() const;
 
-  IKmerStore<S, KmerAffect> &getIndex() const;
+  IKmerStore<KmerAffect> &getIndex() const;
 
   /**
    * @param maxOverlap: if greater than kms.getS(), it is automatically set
@@ -245,14 +244,13 @@ class KmerAffectAnalyser: public AffectAnalyser {
  * Class that allows to count in constant time the number of affectations
  * before or after a given point.
  */
-template <typename S>
-class CountKmerAffectAnalyser: public KmerAffectAnalyser<S> {
+class CountKmerAffectAnalyser: public KmerAffectAnalyser {
  private:
   map<KmerAffect, int* >counts;
   int overlap;
  public:
 
-  CountKmerAffectAnalyser(IKmerStore<S, KmerAffect> &kms, const string &seq);
+  CountKmerAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq);
   ~CountKmerAffectAnalyser();
 
   int count() const;
@@ -353,10 +351,9 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser<S> {
  * and then we do a second pass on the BitSets to determine the most probable remaining
  * affectation.
  */
-template <typename S>
 class MultipleAffectAnalyser {
  protected:
-  IKmerStore<S, KmerAffect> &kms;
+  IKmerStore<KmerAffect> &kms;
   const string &seq;
   map<KmerAffect, BitSet> affectations;
   double left_evalue, right_evalue;
@@ -367,7 +364,7 @@ class MultipleAffectAnalyser {
    *             (parameter is not copied)
    * @param seq: the sequence to analyse (parameter is not copied)
    */
-  MultipleAffectAnalyser(IKmerStore<S, KmerAffect> &kms, const string &seq);
+  MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq);
 
   /**
    * Count the number of unique affectations (excluding the unknown one)

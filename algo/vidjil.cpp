@@ -933,7 +933,7 @@ int main (int argc, char **argv)
     }
 
   std::map<std::string, bool> do_filter_automata = {{"5", (kmer_threshold != NO_LIMIT_VALUE)}};
-  MultiGermline<char, KmerAffect> *multigermline = new MultiGermline<char, KmerAffect>();
+  MultiGermline<KmerAffect> *multigermline = new MultiGermline<KmerAffect>();
 
   json json_germlines;
 
@@ -1025,7 +1025,7 @@ int main (int argc, char **argv)
     //     multigermline->germlines.push_back(pseudo_u);
     // }
 
-    multigermline->addToIndex(KmerStoreFactory<char>::createIndex(indexType, seed, true));
+    multigermline->addToIndex(KmerStoreFactory<KmerAffect>::createIndex(indexType, seed, true));
     cout << "Germlines loaded: " ;
     cout << *multigermline ;
     cout << endl ;
@@ -1076,7 +1076,7 @@ int main (int argc, char **argv)
   if (command == CMD_GERMLINES)
     {
       map <char, int> stats_kmer, stats_max;
-      IKmerStore<char, KmerAffect> *index = multigermline->getIndex() ;
+      IKmerStore<KmerAffect> *index = multigermline->getIndex() ;
 
       // Initialize statistics, with two additional categories
       index->labels[KmerAffect::getAmbiguous()].clear();
@@ -1109,7 +1109,7 @@ int main (int argc, char **argv)
 	  string seq = reads->getSequence().sequence;
 	  total_length += seq.length() - s + 1;
 
-	  KmerAffectAnalyser<char> *kaa = new KmerAffectAnalyser<char>(*index, seq);
+	  KmerAffectAnalyser *kaa = new KmerAffectAnalyser(*index, seq);
 
 	  for (int i = 0; i < kaa->count(); i++)
 	    {
@@ -1119,7 +1119,7 @@ int main (int argc, char **argv)
 
           delete kaa;
 
-	  CountKmerAffectAnalyser<char> ckaa(*index, seq);
+	  CountKmerAffectAnalyser ckaa(*index, seq);
 	  ckaa.setAllowedOverlap(kmer_size-1);
 
 	  stats_max[affect_char(ckaa.max(forbidden).affect)]++ ;
@@ -1183,7 +1183,7 @@ int main (int argc, char **argv)
     ostream *out_unsegmented_detail[STATS_SIZE];
     ostream *out_affects = NULL;
 
-    WindowExtractor<char, KmerAffect> we(multigermline);
+    WindowExtractor<KmerAffect> we(multigermline);
     if (! output_sequences_by_cluster)
       we.setMaximalNbReadsPerWindow(max_auditionned);
 
@@ -1224,7 +1224,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage<char, KmerAffect> *windowsStorage = we.extract(reads, wmer_size,
+    WindowsStorage<KmerAffect> *windowsStorage = we.extract(reads, wmer_size,
                                                 windows_labels, only_labeled_windows,
                                                 keep_unsegmented_as_clone,
                                                 expected_value_kmer, nb_reads_for_evalue,
@@ -1296,7 +1296,7 @@ int main (int argc, char **argv)
     json clones_germline;
     map <string, size_t> nb_segmented_by_germline;
     for (auto it : multigermline->getGermlines()){
-        Germline<char, KmerAffect> *germline = it ;
+        Germline<KmerAffect> *germline = it ;
         size_t nb = we.getNbReadsGermline(germline->getCode());
         nb_segmented_by_germline[germline->getCode()] = nb;
         reads_germline[germline->getCode()] = {nb};
@@ -1453,7 +1453,7 @@ int main (int argc, char **argv)
 
       bool clone_on_stdout = (num_clone <= CLONES_ON_STDOUT) || verbose;
 
-      Germline<char, KmerAffect> *segmented_germline = windowsStorage->getGermline(it->first);
+      Germline<KmerAffect> *segmented_germline = windowsStorage->getGermline(it->first);
 
       //$$ Computing labels
 
@@ -1564,7 +1564,7 @@ int main (int argc, char **argv)
 
 
         // Re-launch also a KmerMultiSegmenter, for control purposes (affectations, evalue)
-          KmerSegmenter<char, KmerAffect> *kseg = new KmerSegmenter<char, KmerAffect>(representative, multigermline->getIndex(),
+          KmerSegmenter<KmerAffect> *kseg = new KmerSegmenter<KmerAffect>(representative, multigermline->getIndex(),
                                                                                       multigermline->getGermlines().front()->getSegmentationMethod(),
                                                                                       multigermline, nullptr,
                                                                                       nullptr, expected_value_kmer,
@@ -1634,16 +1634,16 @@ int main (int argc, char **argv)
         // When --e-value-kmer is not set, the multiplier is 1.0. See #3594.
         double fine_evalue_multiplier = MIN(expected_value_kmer, nb_fine_segmented);
 
-        FineSegmenter<char, KmerAffect> seg(representative, segmented_germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
+        FineSegmenter<KmerAffect> seg(representative, segmented_germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
 
         if (seg.isSegmented()) {
 
           if (! kseg->box_V->affect.isUnknown() && ! kseg->box_J->affect.isUnknown()
-              && segmented_germline != Germline<char, KmerAffect>::getUnseg()) {
-            char left_shortcut = segmented_germline->getRepository()->getShortcut(kseg->box_V->affect),
+              && segmented_germline != Germline<KmerAffect>::getUnseg()) {
+            Tshortcut left_shortcut = segmented_germline->getRepository()->getShortcut(kseg->box_V->affect),
               right_shortcut = segmented_germline->getRepository()->getShortcut(kseg->box_J->affect);
-            if (segmented_germline->hasSegment("4", std::set<char>({left_shortcut, right_shortcut}))
+            if (segmented_germline->hasSegment("4", std::set<Tshortcut>({left_shortcut, right_shortcut}))
                 && segmented_germline->getGermlineElements("4").size() > 0)
               seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
           }
@@ -1847,16 +1847,16 @@ int main (int argc, char **argv)
         reads->next();
 
         Sequence seq = reads->getSequence() ;
-        KmerSegmenter<char, KmerAffect> *seg = new KmerSegmenter<char, KmerAffect>(reads->getSequence(), multigermline->getIndex(),
+        KmerSegmenter<KmerAffect> *seg = new KmerSegmenter<KmerAffect>(reads->getSequence(), multigermline->getIndex(),
                                                                                    multigermline->getGermlines().front()->getSegmentationMethod(),
                                                                                    multigermline, nullptr,
                                                                                    nullptr, expected_value_kmer,
                                                                                    multigermline->getGermlines().size()*nb_reads_for_evalue);
-        Germline<char, KmerAffect> *germline = seg->segmented_germline ;
+        Germline<KmerAffect> *germline = seg->segmented_germline ;
         if (! germline) {
-          germline = Germline<char, KmerAffect>::getUnseg();
+          germline = Germline<KmerAffect>::getUnseg();
         }
-        FineSegmenter<char, KmerAffect> s(seq, germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
+        FineSegmenter<KmerAffect> s(seq, germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
         string id = string_of_int(nb, 6);
         CloneOutput *clone = new CloneOutput();
@@ -1865,17 +1865,17 @@ int main (int argc, char **argv)
         clone->set("sequence", seq.sequence);
         clone->set("reads", { 1 });
         clone->set("top", 0);
-        Germline<char, KmerAffect> *g ;
+        Germline<KmerAffect> *g ;
 
             if (s.isSegmented())
               {
                 nb_segmented++ ;
 
                 if (! seg->box_V->affect.isUnknown() && ! seg->box_J->affect.isUnknown()
-                    && germline != Germline<char, KmerAffect>::getUnseg()) {
-                  char left_shortcut = germline->getRepository()->getShortcut(seg->box_V->affect),
+                    && germline != Germline<KmerAffect>::getUnseg()) {
+                  Tshortcut left_shortcut = germline->getRepository()->getShortcut(seg->box_V->affect),
                     right_shortcut = germline->getRepository()->getShortcut(seg->box_J->affect);
-                  if (germline->hasSegment("4", std::set<char>({left_shortcut, right_shortcut}))
+                  if (germline->hasSegment("4", std::set<Tshortcut>({left_shortcut, right_shortcut}))
                       && germline->getGermlineElements("4").size() > 0)
                     s.FineSegmentD(germline, several_D, expected_value_D, fine_evalue_multiplier);
                 }
@@ -1887,7 +1887,7 @@ int main (int argc, char **argv)
           {
            // Not designated, will output label as 'name' in .vidjil
             s.code = seq.label;
-            g = Germline<char, KmerAffect>::getUnseg();
+            g = Germline<KmerAffect>::getUnseg();
           }
 
         s.toOutput(clone);
@@ -1913,7 +1913,7 @@ int main (int argc, char **argv)
     output.set("reads", "total", { nb }) ;
 
     // TODO keep this line or not?
-    multigermline->addGermline(Germline<char, KmerAffect>::getUnseg());
+    multigermline->addGermline(Germline<KmerAffect>::getUnseg());
 
     for (auto &germline : multigermline->getGermlines()){
       if (nb_segmented_by_germline[germline->getCode()])
@@ -1931,7 +1931,7 @@ int main (int argc, char **argv)
     cout << "Statistics on filtered genes for clone analysis (--analysis-filter):" << endl;
     for(auto &germline : multigermline->getGermlines()){
       for (auto &elem: germline->getGermlineElements("5")) {
-        FilterWithACAutomaton<char> *f =  elem->getFilter();
+        FilterWithACAutomaton *f =  elem->getFilter();
         if (f)
           if (f->filtered_sequences_nb) {
             for (auto &locus: elem->getLocus())

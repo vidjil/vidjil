@@ -103,9 +103,9 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
     nb_seeds = 1;
 
   // First create an index on the set of reads
-  IKmerStore<char, Kmer> *index[nb_seeds];
+  IKmerStore<Kmer> *index[nb_seeds];
   for (size_t i = 0; i < nb_seeds; i++) {
-    index[i] = new MapKmerStore<char, Kmer>(seeds[i], revcomp);
+    index[i] = new MapKmerStore<Kmer>(seeds[i], revcomp);
   }
 
   // Add sequences to the index, allowing extended nucleotides (false)

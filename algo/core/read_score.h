@@ -29,16 +29,15 @@ class VirtualReadScore {
  * given the affectation found in this sequence.
  * The more affectation will be found, the better the score will be.
  */
-template<typename S>
 class KmerAffectReadScore : public VirtualReadScore {
 private:
-  IKmerStore<S, KmerAffect> &index;
+  IKmerStore<KmerAffect> &index;
   float unambiguous_score, ambiguous_score, unknown_score;
 public:
   /**
    * @param idx: The KmerAffect index for computing the score.
    */
-  KmerAffectReadScore(IKmerStore<S, KmerAffect> &idx, float unambiguous_score=1.,
+  KmerAffectReadScore(IKmerStore<KmerAffect> &idx, float unambiguous_score=1.,
                       float ambiguous_score=0.5, float unknown_score=0.);
   ~KmerAffectReadScore();
   
@@ -50,7 +49,7 @@ public:
 
   // Getters
   float getAmbiguousScore() const;
-  const IKmerStore<S, KmerAffect> &getIndex() const;
+  const IKmerStore<KmerAffect> &getIndex() const;
   float getUnambiguousScore() const;
   float getUnknownScore() const;
 

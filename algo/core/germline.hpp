@@ -13,8 +13,8 @@
 #include <string>
 #include "germline.h"
 
-template <typename Tshortcut, typename Affect>
-Germline<Tshortcut, Affect>::Germline() {
+template <typename Affect>
+Germline<Affect>::Germline() {
   shortcut = PSEUDO_UNEXPECTED_CODE;
   code = PSEUDO_UNEXPECTED;
   repository = nullptr;
@@ -22,11 +22,11 @@ Germline<Tshortcut, Affect>::Germline() {
   index = nullptr;
 }
 
-template <typename Tshortcut, typename Affect>
-Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
+template <typename Affect>
+Germline<Affect>::Germline(std::string code, Tshortcut shortcut,
                                       std::string path, json filenames,
                                       json &jconfig,
-                                      GermlineElementRepository<Tshortcut, Affect> *repo,
+                                      GermlineElementRepository<Affect> *repo,
                                       int max_indexing)
   : segments(jconfig["order"].get<std::list<std::string>>()), config(jconfig["segments"]), repository(repo), shortcut(shortcut), code(code),
                                                              max_indexing(max_indexing),
@@ -36,7 +36,7 @@ Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
     throw runtime_error("config and filenames list differ in size");
   
   if (!repository) {
-    this->repository = new GermlineElementRepository<Tshortcut, Affect>();
+    this->repository = new GermlineElementRepository<Affect>();
   }
 
   std::map<std::string, BioReader> readers;
@@ -55,7 +55,7 @@ Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
         std::string segment_code = (config[item.key()].count("code") > 0) ? config[item.key()]["code"].get<std::string>() : "";
         Tshortcut current_shortcut = repository->getNextShortcut();
         std::string affect = to_string(current_shortcut)+"-"+code+segment_code;
-        GermlineElement<Tshortcut, Affect>* element;
+        GermlineElement<Affect>* element;
         std::string filename = path_join(path, filenam);
         if (repository->has(filename, seed)) {
           element = repository->get(filename, seed);
@@ -64,7 +64,7 @@ Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
           current_shortcut = element->getShortcut();
           element->add(code, item.key());
         } else {
-          element = new GermlineElement<Tshortcut, Affect>(code, item.key(), current_shortcut, affect, filename, seed,
+          element = new GermlineElement<Affect>(code, item.key(), current_shortcut, affect, filename, seed,
                                                            max_indexing,
                                                            config[item.key()].count("build") > 0 && config[item.key()]["build"] == "1");
           repository->add(filename, seed, element);
@@ -82,16 +82,16 @@ Germline<Tshortcut, Affect>::Germline(std::string code, Tshortcut shortcut,
   }
 }
 
-template <typename Tshortcut, typename Affect>
-Germline<Tshortcut, Affect>::~Germline() {
+template <typename Affect>
+Germline<Affect>::~Germline() {
   for (const auto &key_val : allocated) {
     if (key_val.second)
       delete key_val.first;
   }
 }
 
-template <typename Tshortcut, typename Affect>
-std::set<Tshortcut> Germline<Tshortcut, Affect>::getAllShortcuts() const {
+template <typename Affect>
+std::set<Tshortcut> Germline<Affect>::getAllShortcuts() const {
   std::set<Tshortcut> keys;
 
   std::transform(shortcuts_to_identifier.begin(), shortcuts_to_identifier.end(), std::inserter(keys, keys.begin()),
@@ -100,37 +100,37 @@ std::set<Tshortcut> Germline<Tshortcut, Affect>::getAllShortcuts() const {
   return keys;
 }
 
-template <typename Tshortcut, typename Affect>
-std::string Germline<Tshortcut, Affect>::getCode() const {
+template <typename Affect>
+std::string Germline<Affect>::getCode() const {
   return code;
 }
 
-template <typename Tshortcut, typename Affect>
-GermlineElement<Tshortcut, Affect>* Germline<Tshortcut, Affect>::getGermlineElement(const Tshortcut &shortcut) const {
-  GermlineElement<Tshortcut, Affect>* element = getRepository()->get(shortcut);
+template <typename Affect>
+GermlineElement<Affect>* Germline<Affect>::getGermlineElement(const Tshortcut &shortcut) const {
+  GermlineElement<Affect>* element = getRepository()->get(shortcut);
   if (element != nullptr && allocated.count(element) > 0)
     return element;
   return nullptr;
 }
 
-template <typename Tshortcut, typename Affect>
-std::set<GermlineElement<Tshortcut, Affect>*> Germline<Tshortcut, Affect>::getGermlineElements(const std::string &code) const {
+template <typename Affect>
+std::set<GermlineElement<Affect>*> Germline<Affect>::getGermlineElements(const std::string &code) const {
   return germline_elements.at(code);
 }
 
-template <typename Tshortcut, typename Affect>
-IKmerStore<Tshortcut, Affect> *Germline<Tshortcut, Affect>::getIndex() const {
+template <typename Affect>
+IKmerStore<Affect> *Germline<Affect>::getIndex() const {
   return index;
 }
 
-template <typename Tshortcut, typename Affect>
-MultiGermline<Tshortcut, Affect> *Germline<Tshortcut, Affect>::getMultiGermline() const {
+template <typename Affect>
+MultiGermline<Affect> *Germline<Affect>::getMultiGermline() const {
   return multi;
 }
 
-template <typename Tshortcut, typename Affect>
-std::shared_ptr<BioReader> Germline<Tshortcut, Affect>::getReader(const std::string &segment) const {
-  std::set<GermlineElement<Tshortcut, Affect>*> elements = getGermlineElements(segment);
+template <typename Affect>
+std::shared_ptr<BioReader> Germline<Affect>::getReader(const std::string &segment) const {
+  std::set<GermlineElement<Affect>*> elements = getGermlineElements(segment);
   std::shared_ptr<BioReader> reader = std::make_shared<BioReader>(2, "|", (*(elements.begin()))->getMarkPos());
   for (auto &element: elements) {
     reader->add(element->getFilename(), false);
@@ -138,33 +138,33 @@ std::shared_ptr<BioReader> Germline<Tshortcut, Affect>::getReader(const std::str
   return reader;
 }
 
-template <typename Tshortcut, typename Affect>
-GermlineElementRepository<Tshortcut, Affect> *Germline<Tshortcut, Affect>::getRepository() const {
+template <typename Affect>
+GermlineElementRepository<Affect> *Germline<Affect>::getRepository() const {
   return repository;
 }
 
-template <typename Tshortcut, typename Affect>
-std::string Germline<Tshortcut, Affect>::getSeed(const std::string &segment) const {
+template <typename Affect>
+std::string Germline<Affect>::getSeed(const std::string &segment) const {
   return config[segment]["seed"];
 }
 
-template <typename Tshortcut, typename Affect>
-int Germline<Tshortcut, Affect>::getSegmentationMethod() const {
+template <typename Affect>
+int Germline<Affect>::getSegmentationMethod() const {
   return seg_method;
 }
 
-template <typename Tshortcut, typename Affect>
-std::list<std::string> Germline<Tshortcut, Affect>::getSegments() const {
+template <typename Affect>
+std::list<std::string> Germline<Affect>::getSegments() const {
   return segments;
 }
 
-template <typename Tshortcut, typename Affect>
-Tshortcut Germline<Tshortcut, Affect>::getShortcut() const {
+template <typename Affect>
+Tshortcut Germline<Affect>::getShortcut() const {
   return shortcut;
 }
 
-template <typename Tshortcut, typename Affect>
-bool Germline<Tshortcut, Affect>::hasSegment(const std::string &segment,
+template <typename Affect>
+bool Germline<Affect>::hasSegment(const std::string &segment,
                                              const std::set<Tshortcut> &shortcuts) const {
   bool segment_exists = config.count(segment) > 0;
   if (! segment_exists)
@@ -181,8 +181,8 @@ bool Germline<Tshortcut, Affect>::hasSegment(const std::string &segment,
   return found;
 }
 
-template <typename Tshortcut, typename Affect>
-bool Germline<Tshortcut, Affect>::hasRecombination(const std::set<Tshortcut> &shortcuts, size_t nb_match) const {
+template <typename Affect>
+bool Germline<Affect>::hasRecombination(const std::set<Tshortcut> &shortcuts, size_t nb_match) const {
   std::set<size_t> result = getRecombinationsNb(shortcuts);
 
   if (result.size() == 0)
@@ -191,8 +191,8 @@ bool Germline<Tshortcut, Affect>::hasRecombination(const std::set<Tshortcut> &sh
   return result.size() > 0 && shortcuts.size() >= nb_match;
 }
 
-template <typename Tshortcut, typename Affect>
-void Germline<Tshortcut, Affect>::finish(IKmerStore<Tshortcut, Affect> *index) {
+template <typename Affect>
+void Germline<Affect>::finish(IKmerStore<Affect> *index) {
   if (code == PSEUDO_UNEXPECTED)
     return;
   this->index = index;
@@ -206,13 +206,13 @@ void Germline<Tshortcut, Affect>::finish(IKmerStore<Tshortcut, Affect> *index) {
   }
 }
 
-template <typename Tshortcut, typename Affect>
-void Germline<Tshortcut, Affect>::setMultiGermline(MultiGermline<Tshortcut, Affect> *multi) {
+template <typename Affect>
+void Germline<Affect>::setMultiGermline(MultiGermline<Affect> *multi) {
   this->multi = multi;
 }
 
-template <typename Tshortcut, typename Affect>
-std::set<size_t> Germline<Tshortcut, Affect>::getRecombinationsNb(const std::set<Tshortcut> &shortcuts) const{
+template <typename Affect>
+std::set<size_t> Germline<Affect>::getRecombinationsNb(const std::set<Tshortcut> &shortcuts) const{
 auto it = shortcuts.begin();
   auto set_it = shortcuts_to_identifier.find(*it);
   if (set_it == shortcuts_to_identifier.end())
@@ -234,8 +234,8 @@ auto it = shortcuts.begin();
   return result;
 }
 
-template <typename Tshortcut, typename Affect>
-ostream &operator<<(ostream &out, const Germline<Tshortcut, Affect> &germline)
+template <typename Affect>
+ostream &operator<<(ostream &out, const Germline<Affect> &germline)
 {
   const size_t locus_width = 10;
   const size_t locus_shortcut = 4;
@@ -257,8 +257,8 @@ ostream &operator<<(ostream &out, const Germline<Tshortcut, Affect> &germline)
   bool finished = false;
   size_t current_index = 0;
 
-  std::map<std::string, typename std::set<GermlineElement<Tshortcut, Affect>*>::iterator> iterators;
-  std::map<std::string, typename std::set<GermlineElement<Tshortcut, Affect>*>::iterator> end_iterators;
+  std::map<std::string, typename std::set<GermlineElement<Affect>*>::iterator> iterators;
+  std::map<std::string, typename std::set<GermlineElement<Affect>*>::iterator> end_iterators;
 
   for (auto& kv : germline.germline_elements) {
       iterators[kv.first] = kv.second.begin();
@@ -275,7 +275,7 @@ ostream &operator<<(ostream &out, const Germline<Tshortcut, Affect> &germline)
       } else {
         std::string seed = germline.getSeed(s);
         double index_load = 0;
-        GermlineElement<Tshortcut, Affect>* element = *(iterators[s]);
+        GermlineElement<Affect>* element = *(iterators[s]);
         out << std::setw(shortcut_width-1) << element->getShortcut()
             << dec << setfill(' ') << " " ;
         if (germline.index) {
@@ -300,9 +300,9 @@ ostream &operator<<(ostream &out, const Germline<Tshortcut, Affect> &germline)
   return out;
 }
 
-template<typename Tshortcut, typename Affect>
-Germline<Tshortcut, Affect>* Germline<Tshortcut, Affect>::getUnseg() {
-  static Germline<Tshortcut, Affect> unseg;
+template<typename Affect>
+Germline<Affect>* Germline<Affect>::getUnseg() {
+  static Germline<Affect> unseg;
   return &unseg;
 }
 

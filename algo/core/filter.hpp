@@ -5,12 +5,11 @@
 #include "automaton.hpp"
 #include "math.hpp"
 
-template <typename S>
 class FilterWithACAutomaton {
 
   private:
     vector<int>* indexes;
-    AbstractACAutomaton<S, KmerStringAffect>* automaton;
+    AbstractACAutomaton<KmerStringAffect>* automaton;
 
   public:
     BioReader &originalBioReader;
@@ -105,7 +104,7 @@ class FilterWithACAutomaton {
   /**
   * Return the automaton stored.
   */
-  AbstractACAutomaton<S, KmerStringAffect>* getAutomaton() const;
+  AbstractACAutomaton<KmerStringAffect>* getAutomaton() const;
 
 
   /**
@@ -118,8 +117,7 @@ class FilterWithACAutomaton {
   */
   void transferBioReaderSequences(const BioReader &src, BioReader &dst, const KmerStringAffect k) const;
 
-  template<typename Shortcut>
-  friend ostream &operator<<(ostream&, const FilterWithACAutomaton<Shortcut>&);
+  friend ostream &operator<<(ostream&, const FilterWithACAutomaton&);
 
  private:
   /**
@@ -129,15 +127,13 @@ class FilterWithACAutomaton {
   int getSizeLongestTransferredSequence(const BioReader &reader, KmerStringAffect k) const;
 };
 
-template <typename S>
-FilterWithACAutomaton<S>::FilterWithACAutomaton(BioReader &origin, string seed, float keys_compress) : originalBioReader(origin){
+FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed, float keys_compress) : originalBioReader(origin){
   this->filtered_sequences_nb = 0;
   this->filtered_sequences_calls = 0;
   buildACAutomatonToFilterBioReader(seed, keys_compress);
 }
 
-template <typename S>
-FilterWithACAutomaton<S>::~FilterWithACAutomaton(){
+FilterWithACAutomaton::~FilterWithACAutomaton(){
     if(automaton){
       delete automaton;
     }
@@ -146,8 +142,7 @@ FilterWithACAutomaton<S>::~FilterWithACAutomaton(){
     }
 }
 
-template <typename S>
-void FilterWithACAutomaton<S>::buildACAutomatonToFilterBioReader(string seed, float keys_compress){
+void FilterWithACAutomaton::buildACAutomatonToFilterBioReader(string seed, float keys_compress){
   unsigned int asciiNumber;
   string currentLabel;
   string previousLabel;
@@ -157,7 +152,7 @@ void FilterWithACAutomaton<S>::buildACAutomatonToFilterBioReader(string seed, fl
     indexes = nullptr;
     return;
   }
-  automaton = new PointerACAutomaton<S, KmerStringAffect>(seed, false, true);
+  automaton = new PointerACAutomaton<KmerStringAffect>(seed, false, true);
   indexes = new vector<int>();
   asciiNumber = SPECIFIC_KMERS_NUMBER;
   automaton->insert(originalBioReader.sequence(0), std::to_string(asciiNumber), true, 0, seed);
@@ -190,8 +185,7 @@ void FilterWithACAutomaton<S>::buildACAutomatonToFilterBioReader(string seed, fl
   Takes a built automaton and a vector of indexes and build a BioReader
   based on it.
 */
-template <typename S>
-BioReader FilterWithACAutomaton<S>::filterBioReaderWithACAutomaton(
+BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     seqtype &seq, int kmer_threshold, int pvalue){
 
   BioReader result;
@@ -272,8 +266,7 @@ BioReader FilterWithACAutomaton<S>::filterBioReaderWithACAutomaton(
   return (result.size() == 0) ? originalBioReader : result;
 }
 
-template <typename S>
-void FilterWithACAutomaton<S>::transferBioReaderSequences(const BioReader &src, BioReader &dst, KmerStringAffect k) const{
+void FilterWithACAutomaton::transferBioReaderSequences(const BioReader &src, BioReader &dst, KmerStringAffect k) const{
   unsigned int asciiNum = stoi(k.getLabel());
 
   if(asciiNum > indexes->size() || !k.isGeneric()){
@@ -284,8 +277,7 @@ void FilterWithACAutomaton<S>::transferBioReaderSequences(const BioReader &src, 
   }
 }
 
-template <typename S>
-int FilterWithACAutomaton<S>::getSizeLongestTransferredSequence(const BioReader &reader, KmerStringAffect k) const{
+int FilterWithACAutomaton::getSizeLongestTransferredSequence(const BioReader &reader, KmerStringAffect k) const{
   unsigned int asciiNum = stoi(k.getLabel());
 
   if(asciiNum > indexes->size() || !k.isGeneric()){
@@ -300,18 +292,15 @@ int FilterWithACAutomaton<S>::getSizeLongestTransferredSequence(const BioReader 
   return longest;
 }
 
-template <typename S>
-vector<int>* FilterWithACAutomaton<S>::getIndexes() const{
+vector<int>* FilterWithACAutomaton::getIndexes() const{
   return this->indexes;
 }
 
-template <typename S>
-AbstractACAutomaton<S, KmerStringAffect>* FilterWithACAutomaton<S>::getAutomaton() const{
+AbstractACAutomaton<KmerStringAffect>* FilterWithACAutomaton::getAutomaton() const{
   return this->automaton;
 }
 
-template <typename S>
-ostream &operator<<(ostream &out, const FilterWithACAutomaton<S>& obj){
+ostream &operator<<(ostream &out, const FilterWithACAutomaton& obj){
   int origin_bioreader_size = obj.originalBioReader.size();
   int total_sequences_filtered = obj.filtered_sequences_nb;
   int total_filtered_calls = obj.filtered_sequences_calls;
