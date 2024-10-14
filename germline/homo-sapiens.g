@@ -20,8 +20,7 @@
                 "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s",
-                "seed_3": "10s",
+                "seed": "13s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -37,7 +36,6 @@
             } ],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "10s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -52,7 +50,6 @@
             } ],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "10s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -67,7 +64,6 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "10s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -86,8 +82,7 @@
                 "3": ["TRDJ+down.fa"]
             }],
             "parameters": {
-                "seed": "12s",
-                "seed_3": "10s",
+                "seed": "13s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -104,8 +99,7 @@
                 "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s",
-                "seed_3": "10s",
+                "seed": "13s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -129,8 +123,7 @@
                 "3": ["TRDD3+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s",
-                "seed_3": "10s",
+                "seed": "13s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -146,7 +139,6 @@
             } ],
             "parameters": {
                 "seed": "12s",
-                "seed_3": "10s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -160,8 +152,7 @@
                 "3": ["IGHJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "9c",
-                "seed_3": "10s",
+                "seed": "12s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -176,7 +167,6 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "10s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -194,7 +184,6 @@
             }],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "10s",
                 "search_recombinations": ["5", "3"]
             }
         },
@@ -209,7 +198,6 @@
             } ],
             "parameters": {
                 "seed": "10s",
-                "seed_3": "10s",
                 "search_recombinations": ["5", "3"]
             }
         }
