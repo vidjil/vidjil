@@ -6,7 +6,8 @@
 #include <cstdlib>
 #include <stdlib.h>   
 #include <core/dynprog.h>
-#include <core/segment.h>
+#include <core/segment.hpp>
+#include <core/kmeraffect.h>
 
 using namespace std;
 
@@ -76,16 +77,16 @@ int main(int argc, const char** argv)
     exit(2);
   }
 
-  AlignBox box_V("5", V_COLOR);
-  AlignBox box_J("3", J_COLOR);
+  AlignBox<KmerAffect> box_V("5", V_COLOR);
+  AlignBox<KmerAffect> box_J("3", J_COLOR);
 
   if (read == "-") {
     // Read on stdin
     read = read_sequence(cin);
   }
 
-  align_against_collection(read, interestingV, -1, false, false, false, &box_V, VDJ);
-  align_against_collection(read, interestingJ, -1, false, true, false, &box_J, VDJ);
+  align_against_collection(read, std::shared_ptr<BioReader>(&interestingV), -1, false, false, false, &box_V, VDJ);
+  align_against_collection(read, std::shared_ptr<BioReader>(&interestingJ), -1, false, true, false, &box_J, VDJ);
 
   Sequence seq = create_sequence("read", "read", read, "");
 
