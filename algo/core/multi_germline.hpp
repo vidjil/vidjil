@@ -212,6 +212,8 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines, int filter,
       s_path = path_join(path, json_parameters["path"].get<std::string>());
 
     for (auto item=recombinations[0].begin(); item!=recombinations[0].end(); item++) {
+      if (item.value().size() == 0)
+        continue;
       if (json_parameters.find("seed_"+item.key()) != json_parameters.end()) {
         config[item.key()]["seed"] = json_parameters["seed_"+item.key()];
       } else if (json_parameters.find("seed") != json_parameters.end()) {
@@ -223,6 +225,8 @@ void MultiGermline<Tshortcut, Affect>::buildFromJson(json germlines, int filter,
         auto it = std::find(json_parameters["search_recombinations"].begin(), json_parameters["search_recombinations"].end(),
                             item.key());
         config[item.key()]["index"] = (it != json_parameters["search_recombinations"].end()) ? "1": "0";
+      } else {
+        throw std::invalid_argument("The property search_recombinations has not been filled in the germline file (parameters section)");
       }
       std::string value = item.value()[0];
       value = (value.size() > 3) ? to_string(value[3]) : "";
