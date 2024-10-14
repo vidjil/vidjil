@@ -1606,7 +1606,6 @@ int main (int argc, char **argv)
             {"seq", repComp.getQuality()}
         });
         }
-        delete kseg;
 
 
         if (stop_analysis)
@@ -1637,17 +1636,21 @@ int main (int argc, char **argv)
 
         FineSegmenter<char, KmerAffect> seg(representative, segmented_germline, segment_cost, expected_value, fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
-        char left_shortcut = segmented_germline->getRepository()->getShortcut(kseg->box_V->affect),
-          right_shortcut = segmented_germline->getRepository()->getShortcut(kseg->box_J->affect);
-        if (segmented_germline->hasSegment("4", std::set<char>({left_shortcut, right_shortcut}))
-            && segmented_germline->getGermlineElements("4").size() > 0)
-          seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
 
-        seg.findCDR3();
+        if (seg.isSegmented()) {
 
+          if (! kseg->box_V->affect.isUnknown() && ! kseg->box_J->affect.isUnknown()
+              && segmented_germline != Germline<char, KmerAffect>::getUnseg()) {
+            char left_shortcut = segmented_germline->getRepository()->getShortcut(kseg->box_V->affect),
+              right_shortcut = segmented_germline->getRepository()->getShortcut(kseg->box_J->affect);
+            if (segmented_germline->hasSegment("4", std::set<char>({left_shortcut, right_shortcut}))
+                && segmented_germline->getGermlineElements("4").size() > 0)
+              seg.FineSegmentD(segmented_germline, several_D, expected_value_D, fine_evalue_multiplier);
+          }
 
-        if (seg.isSegmented())
-	  {
+          seg.findCDR3();
+          delete kseg;
+
 	      // Check for identical code, outputs to out_edge
               string code = seg.code ;
               int cc = clones_codes[code];
@@ -1866,12 +1869,14 @@ int main (int argc, char **argv)
               {
                 nb_segmented++ ;
 
-                char left_shortcut = germline->getRepository()->getShortcut(seg->box_V->affect),
-                  right_shortcut = germline->getRepository()->getShortcut(seg->box_J->affect);
-                if (germline->hasSegment("4", std::set<char>({left_shortcut, right_shortcut}))
-                    && germline->getGermlineElements("4").size() > 0)
-                  s.FineSegmentD(germline, several_D, expected_value_D, fine_evalue_multiplier);
-
+                if (! seg->box_V->affect.isUnknown() && ! seg->box_J->affect.isUnknown()
+                    && germline != Germline<char, KmerAffect>::getUnseg()) {
+                  char left_shortcut = germline->getRepository()->getShortcut(seg->box_V->affect),
+                    right_shortcut = germline->getRepository()->getShortcut(seg->box_J->affect);
+                  if (germline->hasSegment("4", std::set<char>({left_shortcut, right_shortcut}))
+                      && germline->getGermlineElements("4").size() > 0)
+                    s.FineSegmentD(germline, several_D, expected_value_D, fine_evalue_multiplier);
+                }
                 s.findCDR3();
 
                 g = germline ;
@@ -1898,6 +1903,7 @@ int main (int argc, char **argv)
           s.showAlignments(cout);
 
         cout << endl ;
+        delete seg;
       }
 
     // Finish output preparation
