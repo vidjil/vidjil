@@ -1257,6 +1257,9 @@ bool FineSegmenter<Shortcut, Affect>::FineSegmentD(Germline<Shortcut, Affect> *g
                                  int forbidden_id,
                                  int extend_DD_on_Y, int extend_DD_on_Z,
                                  double evalue_threshold, double multiplier){
+  // TODO
+  // For the moment we align on all D repertoire but depending on the recombinations we may have
+  // only some repertoires that should be used with the V and J found so far.
 
     // Create a zone where to look for D, adding some nucleotides on both sides
     int l = box_Y->end - extend_DD_on_Y;
