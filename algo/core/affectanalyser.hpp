@@ -833,21 +833,20 @@ affect_infos MultipleAffectAnalyser<S>::getMaximum(const KmerAffect &before,
 
 template <typename S>
 string MultipleAffectAnalyser<S>::toString() const {
-  std::stringstream result;
-  for (KmerAffect affect: getAffectations()) {
-    result << affect.toString() << "\t";
-    result << count(affect) << "\t";
-    result << getProbabilityAtLeastOrAbove(affect, count(affect)) << "\t";
-    result << affectations.find(affect)->second;
-    result << std::endl;
-  }
-  return result.str();
+  return toStringValues();
 }
 
 template <typename S>
 string MultipleAffectAnalyser<S>::toStringValues() const {
-  // TODO
-  return "";
+  std::stringstream result;
+  for (KmerAffect affect: getAffectations()) {
+    result << setw(6) << affect.toString();
+    result << setw(4) << right << count(affect);
+    result << setw(12) << getProbabilityAtLeastOrAbove(affect, count(affect)) << " ";
+    result << affectations.find(affect)->second;
+    result << std::endl;
+  }
+  return result.str();
 }
 
 template <typename S>

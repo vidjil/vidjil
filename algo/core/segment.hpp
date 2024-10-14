@@ -444,7 +444,7 @@ string Segmenter<Shortcut, Affect>::getInfoLine() const
 
   s += (segmented ? "" : "\t ! ") + info ;
   s += " " + info_extra ;
-  s += " " + segmented_germline->getCode() ;
+  s += " " + (segmented_germline?segmented_germline->getCode():"(none)") ;
   s += " " + string(segmented_mesg[because]) ;
 
   if (evalue > NO_LIMIT_VALUE)
@@ -467,7 +467,7 @@ string KmerSegmenter<Shortcut, Affect>::getInfoLineWithAffects() const
 {
    stringstream ss;
 
-   ss << "= " << right << setw(10) << this->segmented_germline->getCode() << " "
+   ss << "= " << right << setw(9) << this->segmented_germline->getCode() << " "
       << right << setw(3) << score << " "
       << left << setw(30)
       << this->getInfoLine();
@@ -475,10 +475,10 @@ string KmerSegmenter<Shortcut, Affect>::getInfoLineWithAffects() const
    if (this->getSegmentationStatus() != UNSEG_TOO_SHORT)
    {
      ss << endl;
-     ss << "# " << right << setw(10) << this->segmented_germline->getCode() << " "
+     ss << "# " << right << setw(9) << this->segmented_germline->getCode() << endl
         << this->getKmerAffectAnalyser()->toStringValues();
      ss << endl;
-     ss << "$ " << right << setw(10) << this->segmented_germline->getCode() << " "
+     ss << "$ " << right << setw(9) << this->segmented_germline->getCode() << endl
         << this->getKmerAffectAnalyser()->toStringSigns();
    }
 

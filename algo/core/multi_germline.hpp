@@ -279,8 +279,9 @@ void MultiGermline<Tshortcut, Affect>::setRepository(GermlineElementRepository<T
 
 template <typename S, typename A>
 ostream &operator<<(ostream &out, const MultiGermline<S, A> &germline) {
+  out << germline.getSpecies() << " (" << germline.getTaxonId() << ")" << std::endl;
   for (auto &g: germline.getGermlines()) {
-    out << *g << std::endl;
+    out << *g;
   }
   return out;
 }

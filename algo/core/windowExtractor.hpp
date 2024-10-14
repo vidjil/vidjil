@@ -61,7 +61,7 @@ WindowsStorage<Tshortcut, Affect>* WindowExtractor<Tshortcut, Affect>::extract(O
     if (out_affects) {
       Sequence seq = reads->getSequence();
       *out_affects << ">" << seq.label << endl
-                   << setw(13) << " " << seq.sequence << endl;
+                   << setw(23) << " " << seq.sequence << endl;
     }
 
     KmerSegmenter<Tshortcut, Affect> *seg = new KmerSegmenter<Tshortcut, Affect>(reads->getSequence(), multigermline->getIndex(),
