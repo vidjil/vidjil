@@ -1,6 +1,6 @@
 ###
 
-!LAUNCH: $VIDJIL_DIR/$EXEC --all -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD+ $VIDJIL_DATA/hard-kmers.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -k 9 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD+ $VIDJIL_DATA/hard-kmers.fa
 
 $ Detect 1 read
 1:junction detected in 1 read
@@ -10,7 +10,7 @@ $ Detect the exact recombination
 
 
 ### -e-value 1e12
-!LAUNCH: $VIDJIL_DIR/$EXEC --all --e-value 1e12 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD+ $VIDJIL_DATA/hard-kmers.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --all --e-value 1e12 -k 9 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD+ $VIDJIL_DATA/hard-kmers.fa
 
 $ Detect three sequences
 1:junction detected in 3 reads
@@ -27,7 +27,7 @@ $ Sadly, detect and designate the read with a random J but with a spurious k-mer
 
 
 ### --e-value-kmer 1e12
-!LAUNCH: $VIDJIL_DIR/$EXEC --all --e-value-kmer 1e12 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD+ $VIDJIL_DATA/hard-kmers.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --all --e-value-kmer 1e12 -k 9 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRD+ $VIDJIL_DATA/hard-kmers.fa
 
 $ Detect three sequences
 1:junction detected in 3 reads
