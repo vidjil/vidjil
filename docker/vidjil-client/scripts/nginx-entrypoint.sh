@@ -1,7 +1,7 @@
 # create a self signed ssl certificate if nothing specified
 echo -e "\n\e[34m=======================\e[0m"
 echo -e "\e[34m=== Start service nginx\e[0m"
-echo -e "\e[34m=== `date +'%Y/%m/%d; %H:%M'`\e[0m"; echo
+echo -e "\e[34m=== `date +'%Y/%m/%d; %H:%M'`\e[0m\n"
 
 DIR=/etc/nginx/ssl
 if test -e "$DIR"; then
@@ -22,9 +22,5 @@ else
     openssl x509 -noout -fingerprint -text < /etc/nginx/ssl/web2py.crt
 fi
 
-
-# echo "==== Start healthcheck ==="
-# bash /healthchecks/healthcheck_nginx.bash &
-
-spawn-fcgi -u www-data -s /var/run/fcgiwrap.socket /usr/sbin/fcgiwrap
+spawn-fcgi -U nginx -u nginx -G nginx -g nginx -s /var/run/fcgiwrap.socket /usr/bin/fcgiwrap
 nginx -g 'daemon off;'
