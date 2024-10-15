@@ -23,6 +23,9 @@ set_rights:
 build-server:
 	docker build --progress=plain -t vidjil/server:dev -f ./vidjil-server/Dockerfile ../
 
+build-server-alpine:
+	docker build --progress=plain -t vidjil/server:dev -f ./vidjil-server/Dockerfile-alpine ../
+
 build-client:
 	docker build --progress=plain -t vidjil/client:dev -f ./vidjil-client/Dockerfile ../
 
