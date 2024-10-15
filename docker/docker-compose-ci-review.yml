@@ -7,13 +7,15 @@ services:
         network_mode: bridge
         volumes:
             - ./ci/mysql:/var/lib/mysql
+
     uwsgi:
         image: vidjil/server:test
         container_name: !reset null
         ports: !reset []
         networks: !reset null
         network_mode: bridge
-        command: bash /entrypoints/uwsgi-entrypoint.sh --ci
+        command: bash /entrypoints/uwsgi-entrypoint.sh
+
     fuse:
         image: vidjil/server:test
         container_name: !reset null
@@ -22,6 +24,7 @@ services:
         network_mode: bridge
         extra_hosts:
           - "fuse:127.0.0.1"
+
     nginx:
         image: vidjil/client:test
         container_name: !reset null
@@ -30,17 +33,20 @@ services:
         network_mode: bridge
         environment:
             - VIRTUAL_HOST=$VIRTUAL_HOST_NAME.server.ci.vidjil.org
+
     workers:
         image: vidjil/server:test
         container_name: !reset null
         ports: !reset []
         networks: !reset null
         network_mode: bridge
+
     redis:
         container_name: !reset null
         ports: !reset []
         networks: !reset null
         network_mode: bridge
+
     flower:
         image: vidjil/server:test
         container_name: !reset null

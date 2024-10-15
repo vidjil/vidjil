@@ -6,6 +6,9 @@ all: $(FILES)
 $(FILES):
 	sh get-sequences
 
+light:
+	sh get-sequences --light
+
 clean:
 	rm -f $(FILES)
 
