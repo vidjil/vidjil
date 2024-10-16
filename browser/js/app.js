@@ -107,12 +107,12 @@ function loadAfterConf() {
                                          "js/warnings_data",
                                          "js/sample_set_custom.js",
                                          "js/sample_set_multi_sample_stats.js",
-                                         // Speed test
-                                         "js/speed_test",
                                          "js/form_builder",
                                          "js/vidjil_menu_decorator",
                                          "js/vidjil_vmi",
-                                         "test/QUnit/testFiles/data_test",
+                                         // Speed test
+                                        //  "js/speed_test",
+                                        //  "test/QUnit/testFiles/data_test",
                                         ], function(){
                                             
                                             if (typeof main == "undefined"){

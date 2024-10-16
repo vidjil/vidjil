@@ -22,5 +22,5 @@ user=33
 echo "user : `id -nu $user` (id $user)"
 
 echo "==== Start celery - Pool of workers: $POOL"
-gosu $user bash -c "cd usr/share/vidjil/server/py4web && source /usr/share/vidjil/venv/bin/activate && \
-    celery -b redis://redis:6379/0 -A apps.vidjil.tasks worker --loglevel=info --concurrency=$POOL"
+gosu $user bash -c "source /usr/share/vidjil/venv/bin/activate && \
+    cd /usr/share/vidjil/server/py4web && celery -b redis://redis:6379/0 -A apps.vidjil.tasks worker --loglevel=info --concurrency=$POOL"

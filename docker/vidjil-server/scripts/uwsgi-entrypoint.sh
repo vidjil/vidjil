@@ -35,8 +35,6 @@ if [[ -v UWSGI_POOL ]]; then
     sed -i "s/processes = 6/processes = $UWSGI_POOL/g" /etc/uwsgi/sites/uwsgi.ini
 fi
 
-bash /healthchecks/healthcheck_uwsgi.bash
-
 echo "==== Setup py4web password"
 gosu $user bash -c 'source /usr/share/vidjil/venv/bin/activate && cd /usr/share/vidjil/server/py4web/apps/ && py4web set_password --password "$PY4WEB_ADMIN_PASSWORD"'
 

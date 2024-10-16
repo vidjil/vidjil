@@ -317,7 +317,7 @@ test_server_unit:
     # Show some information on current states of docker services
     - docker ps
     # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
-    - docker compose exec -w "/usr/share/vidjil/" uwsgi bash -c "source venv/bin/activate && python3 server/py4web/apps/vidjil/tests/functional/init_test_db.py"
+    - docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 init_test_db.py"
     # Change File source definition in defs.py file 
     - cd .. # Go to root git directory
     - echo "TIME $(date) - before other server script" >> time.log
@@ -394,25 +394,7 @@ deploy_review_server:
     - echo "VIRTUAL_HOST_NAME=${CI_COMMIT_REF_SLUG}" >> .env
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG} || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
-    - 'ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER;
-        cd ${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; 
-        echo "TIME - before pulling docker images - $(date)";
-        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY;
-        docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT;
-        docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER;
-        docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test;
-        docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test;
-        echo "TIME - after pulling docker images - $(date)";
-        ls; 
-        docker compose version; 
-        docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml config; 
-        docker compose down && docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml up -d;
-        docker compose exec mysql chown -R mysql:mysql /var/lib/mysql ;
-        docker compose exec uwsgi chown -R www-data:www-data /usr/share/vidjil/server/py4web/apps/vidjil/databases /mnt/result/results /mnt/result/tmp /mnt/upload/uploads;
-        docker compose restart uwsgi;
-        echo "TIME - after start - $(date)";
-        docker compose exec -w "/usr/share/vidjil/" uwsgi bash -c "source venv/bin/activate && python3 server/py4web/apps/vidjil/tests/functional/init_test_db.py";
-        "'
+    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER/${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG} && bash ci/deploy_review_server.sh"
   environment:
     name: review_server-$CI_COMMIT_REF_SLUG
     url: http://$CI_COMMIT_REF_SLUG.server.ci.vidjil.org/
