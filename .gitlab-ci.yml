@@ -7,11 +7,11 @@
 
 
 .before_script_global: &before_script_global
-  - make demo
-  - make data
-  - make germline
-  - make -C browser sha1
-  - cp -p doc/analysis-example.vidjil browser/
+  # - make demo
+  # - make data
+  # - make germline
+  # - make -C browser sha1
+  # - cp -p doc/analysis-example.vidjil browser/
   - echo $CI_COMMIT_REF_SLUG
 
 .before_script_global_docker: &before_script_global_docker
@@ -201,6 +201,9 @@ test_browser_unit:
     - npm install --save-dev qunit
     - npm link nightmare --unsafe-perm=true ;
     - apt-get update && apt-get -y install xvfb grep
+    - make demo data germline
+    - make -C browser sha1
+    - cp -p doc/analysis-example.vidjil browser/
     - make unit_browser
   artifacts:
     paths:
@@ -244,16 +247,14 @@ code_quality_custom:
 test_server_unit:
     image: python:3.12-slim
     stage: test_unit
-    <<: *before_script_global_docker
     script:
       - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends build-essential gcc wget unzip procps
-      - python3 -m pip install -U pip
       - python3 -m pip install --no-cache -r requirements.txt
       - python3 -m pip install --no-cache -r requirements_tests.txt
       - python3 -m pip freeze > pip_freeze_requirements.txt
-      - uptime
       - mkdir -p /mnt/upload/uploads/
       - wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 vidjil-algo && chmod +x vidjil-algo
+      - make germline
       - make unit_server
     coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
     artifacts:
@@ -293,7 +294,7 @@ test_server_unit:
     # Replace path for some volumes
     # Use http version of config
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
-    - make germline && cp browser/js/germline.js docker/vidjil-client/conf
+    # - make germline && cp browser/js/germline.js docker/vidjil-client/conf
     - sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" docker/vidjil-server/conf/defs.py
     # Up py4web
     - cd docker

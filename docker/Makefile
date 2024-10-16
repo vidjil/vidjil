@@ -29,6 +29,9 @@ build-server-alpine:
 build-client:
 	docker build --progress=plain -t vidjil/client:dev -f ./vidjil-client/Dockerfile ../
 
+build-cypress:
+	docker build --progress=plain -t vidjil/cypress:dev ./ci
+
 reset_database:
 	# Make a call to truncate db and refill with example/testing data
 	docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql"
