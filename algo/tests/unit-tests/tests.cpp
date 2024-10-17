@@ -44,6 +44,5 @@ int main(void) {
   testMath();
   testProba();
   testBitSet();
-  testProba();
   TAP_END_TEST_EXIT
 }
