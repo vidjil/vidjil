@@ -192,7 +192,7 @@ bool Germline<Affect>::hasRecombination(const std::set<Tshortcut> &shortcuts, si
 }
 
 template <typename Affect>
-void Germline<Affect>::finish(IKmerStore<Affect> *index) {
+void Germline<Affect>::addToIndex(IKmerStore<Affect> *index) {
   if (code == PSEUDO_UNEXPECTED)
     return;
   this->index = index;
@@ -207,8 +207,20 @@ void Germline<Affect>::finish(IKmerStore<Affect> *index) {
 }
 
 template <typename Affect>
+void Germline<Affect>::finish() {
+  if (this->index)
+    this->index->finish_building();
+}
+
+template <typename Affect>
 void Germline<Affect>::setMultiGermline(MultiGermline<Affect> *multi) {
   this->multi = multi;
+}
+
+
+template <typename Affect>
+void Germline<Affect>::unsetIndex() {
+  this->index = nullptr;
 }
 
 template <typename Affect>

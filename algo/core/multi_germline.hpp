@@ -270,7 +270,7 @@ void MultiGermline<Affect>::buildFromJson(json germlines, int filter,
 template <typename Affect>
 void MultiGermline<Affect>::addToIndex(IKmerStore<Affect> *index) {
   for (const auto& germline : germlines) {
-    germline->finish(index);
+    germline->addToIndex(index);
   }
   index->finish_building();
   this->index = index;

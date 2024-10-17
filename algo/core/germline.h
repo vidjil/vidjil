@@ -29,6 +29,9 @@ enum SEGMENTATION_METHODS {
 template <typename Affect>
 class MultiGermline;
 
+/**
+ * A germline should always be integrated in a MultiGermline
+ */
 template <typename Affect>
 class Germline {
 private:
@@ -153,12 +156,24 @@ public:
   bool hasRecombination(const std::set<Tshortcut> &shortcuts, size_t nb_match=2) const;
 
   /**
-   * Finishes the construction of the germlines, which involves updating the index with the content of the germline
-   * (the germline elements which were not already added to the index) and finishes the construction of the index.
+   * Update the index with the content of the germline
+   * (the germline elements which were not already added to the index)
+   * @post getIndex() == index (unless getCode() == PSEUDO_UNEXPECTED)
    */
-  void finish(IKmerStore<Affect> *index);
+  void addToIndex(IKmerStore<Affect> *index);
+  /**
+   * Finishes the construction of the index.
+   * @pre addToIndex() must have been called before
+   */
+  void finish();
+
   void setMultiGermline(MultiGermline<Affect> *multi);
 
+  /**
+   * Unset the index
+   * @post getIndex() == NULL. The memory occupied by the index is not freed
+   */
+  void unsetIndex();
   template <typename A>
   friend ostream &operator<<(ostream &out, const Germline<A> &germline);
 
