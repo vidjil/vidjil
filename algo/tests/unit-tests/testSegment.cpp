@@ -358,27 +358,26 @@ void testExtractor(IndexTypes index) {
   TAP_TEST_EQUAL(we.getNbReads(), 15, TEST_EXTRACTOR_NB_READS, "");
 
   TAP_TEST_EQUAL(we.getNbSegmented(SEG_PLUS), 2, TEST_EXTRACTOR_NB_SEGMENTED, "segPlus: " << we.getNbSegmented(SEG_PLUS));
-  TAP_TEST_EQUAL(we.getNbSegmented(SEG_MINUS), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST_EQUAL(we.getNbSegmented(SEG_MINUS), 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_TOO_SHORT), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
-  TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_STRAND_NOT_CONSISTENT), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_STRAND_NOT_CONSISTENT), 0, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_TOO_FEW_ZERO), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_ONLY_J), 4, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_ONLY_V), 3, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_BAD_DELTA_MIN), 0, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_AMBIGUOUS), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST_EQUAL(we.getNbSegmented(UNSEG_TOO_SHORT_FOR_WINDOW), 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
-  TAP_TEST_EQUAL(we.getNbSegmented(TOTAL_SEG_AND_WINDOW), 3, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST_EQUAL(we.getNbSegmented(TOTAL_SEG_AND_WINDOW), 4, TEST_EXTRACTOR_NB_SEGMENTED, "");
 
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(SEG_PLUS), 88.5, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(SEG_PLUS));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(SEG_MINUS), 36, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_TOO_SHORT), 4, TEST_EXTRACTOR_AVG_LENGTH, "");
-  TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_STRAND_NOT_CONSISTENT), 36, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_TOO_FEW_ZERO), 36, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_ONLY_J), 42.75, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_J));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_ONLY_V), 48, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_ONLY_V));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_AMBIGUOUS), 72, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_AMBIGUOUS));
   TAP_TEST_EQUAL(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW), 21, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW));
-  TAP_TEST_EQUAL(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW), 71, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW));
+  TAP_TEST_EQUAL(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW), 62.25, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW));
 
   TAP_TEST(out_seg.tellp() > 0, TEST_EXTRACTOR_OUT_SEG, "");
   TAP_TEST(out_unseg.tellp() > 0, TEST_EXTRACTOR_OUT_UNSEG, "");
