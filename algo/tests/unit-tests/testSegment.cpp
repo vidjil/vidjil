@@ -480,32 +480,57 @@ void testBestLengthShifts() {
 // }
 
 void testDifferentSeeds(IndexTypes index) {
-  string v_seq = "AGAGAGAGAGAGAGAGAGAGAGAGAGAGAG";
-  string j_seq = "CACACACACACACACACACACACACACACA";
-  BioReader V, J;
-  V.add({"V", "V", v_seq, "", 0});
-  J.add({"J", "J", j_seq, "", 0});
   Sequence  seq = {"seq", "seq", "AGAGAGAGCACACACA", "", 0};
-  Germline germline_basic("Test1", 'T', V, BioReader(), J);
-  germline_basic.new_index(index);
-  germline_basic.finish();
-  
-  Germline germline_small_seed_5("Test1", 'T', V, BioReader(), J, "####", "", "");
-  germline_small_seed_5.new_index(index);
-  germline_small_seed_5.finish();
-  
-  Germline germline_small_seed_3("Test1", 'T', V, BioReader(), J, "", "", "####");
-  germline_small_seed_3.new_index(index);
-  germline_small_seed_3.finish();
 
-  Germline germline_small_seeds("Test1", 'T', V, BioReader(), J, "####", "", "####");
-  germline_small_seeds.new_index(index);
-  germline_small_seeds.finish();
+  json jconfig = {{"order", {"5", "3"}},
+                  {"segments", {{"5", {{"seed", ""}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                                {"3", {{"seed", ""}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+  Germline<KmerAffect> germline_basic("Test1", 'T', "data/",
+                                      {{{"5", {"toy_V2.fa"}}, {"3", {"toy_J2.fa"}}}},
+                                      jconfig);
 
-  KmerSegmenter ks1(seq, &germline_basic);
-  KmerSegmenter ks2(seq, &germline_small_seed_5);
-  KmerSegmenter ks3(seq, &germline_small_seed_3);
-  KmerSegmenter ks4(seq, &germline_small_seeds);
+  json jconfig_seed_5 = {{"order", {"5", "3"}},
+                         {"segments", {{"5", {{"seed", "4c"}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                                       {"3", {{"seed", ""}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+  Germline<KmerAffect> germline_small_seed_5("Test1", 'T', "data/",
+                                             {{{"5", {"toy_V2.fa"}}, {"3", {"toy_J2.fa"}}}},
+                                             jconfig_seed_5);
+
+  json jconfig_seed_3 = {{"order", {"5", "3"}},
+                         {"segments", {{"5", {{"seed", ""}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                                       {"3", {{"seed", "4c"}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+  Germline<KmerAffect> germline_small_seed_3("Test1", 'T', "data/",
+                                             {{{"5", {"toy_V2.fa"}}, {"3", {"toy_J2.fa"}}}},
+                                             jconfig_seed_3);
+
+  json jconfig_short = {{"order", {"5", "3"}},
+                        {"segments", {{"5", {{"seed", "4c"}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                                      {"3", {{"seed", "4c"}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+  Germline<KmerAffect> germline_small_seeds("Test1", 'T', "data/",
+                                            {{{"5", {"toy_V2.fa"}}, {"3", {"toy_J2.fa"}}}},
+                                            jconfig_short);
+
+  MultiGermline<KmerAffect> mg1;
+  mg1.addGermline(&germline_basic);
+  mg1.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline_basic.getSeed("5"), true));
+
+  MultiGermline<KmerAffect> mg2;
+  mg2.addGermline(&germline_small_seed_5);
+  mg2.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline_small_seed_5.getSeed("5"), true));
+
+  MultiGermline<KmerAffect> mg3;
+  mg3.addGermline(&germline_small_seed_3);
+  mg3.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline_small_seed_3.getSeed("5"), true));
+
+  MultiGermline<KmerAffect> mg4;
+  mg4.addGermline(&germline_small_seeds);
+  mg4.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline_small_seeds.getSeed("5"), true));
+
+
+  KmerSegmenter<KmerAffect> ks1(seq, mg1.getIndex(), SEG_METHOD_MAX12, &mg1, &germline_basic);
+  KmerSegmenter<KmerAffect> ks2(seq, mg2.getIndex(), SEG_METHOD_MAX12, &mg2, &germline_small_seed_5);
+  KmerSegmenter<KmerAffect> ks3(seq, mg3.getIndex(), SEG_METHOD_MAX12, &mg3, &germline_small_seed_3);
+  KmerSegmenter<KmerAffect> ks4(seq, mg4.getIndex(), SEG_METHOD_MAX12, &mg4, &germline_small_seeds);
 
   TAP_TEST(! ks1.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
   TAP_TEST(! ks2.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
