@@ -30,8 +30,6 @@ void AbstractACAutomaton<Info>::finish_building() {
 template<class Info>
 float AbstractACAutomaton<Info>::computeIndexLoad(Info kmer) const {
   double nb_inserted = kmers_inserted.at(kmer);
-  if (this->revcomp_indexed)
-    nb_inserted *= 2;
   return min(1., nb_inserted / pow(4.0, kmer.getLength()));
 }
 
