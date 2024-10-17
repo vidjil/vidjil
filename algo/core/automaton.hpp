@@ -264,7 +264,7 @@ void PointerACAutomaton<Info>::insert(const seqtype &sequence, const string &lab
     for (seqtype &seq: sequences) {
       insert(seq, Info(label, 1, seed_span));
     }
-    if (! Info::hasRevcompSymetry()) {
+    if (this->revcomp_indexed && ! Info::hasRevcompSymetry()) {
       for (seqtype &seq: sequences_rev) {
         insert(seq, Info(label, -1, seed_span));
       }
