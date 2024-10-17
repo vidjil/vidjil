@@ -469,8 +469,8 @@ template <typename Affect>
 string KmerSegmenter<Affect>::getInfoLineWithAffects() const
 {
    stringstream ss;
-
-   ss << "= " << right << setw(9) << this->segmented_germline->getCode() << " "
+   std::string germline = ((this->segmented_germline) ? this->segmented_germline->getCode() : "");
+   ss << "= " << right << setw(9) << germline << " "
       << right << setw(3) << score << " "
       << left << setw(30)
       << this->getInfoLine()
@@ -479,10 +479,10 @@ string KmerSegmenter<Affect>::getInfoLineWithAffects() const
    if (this->getSegmentationStatus() != UNSEG_TOO_SHORT)
    {
      ss << endl;
-     ss << "# " << right << setw(9) << this->segmented_germline->getCode() << endl
+     ss << "# " << right << setw(9) << germline << endl
         << this->getKmerAffectAnalyser()->toStringValues();
      ss << endl;
-     ss << "$ " << right << setw(9) << this->segmented_germline->getCode() << endl
+     ss << "$ " << right << setw(9) << germline << endl
         << this->getKmerAffectAnalyser()->toStringSigns();
    }
 
