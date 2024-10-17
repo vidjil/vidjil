@@ -13,6 +13,7 @@ class MultiGermline {
 
 private:
   std::list<Germline<Affect> *> germlines;
+  std::list<bool> allocated_germlines; // whether the germlines were allocated within the class
   IKmerStore<Affect> *index;
   GermlineElementRepository<Affect> *repository;
   std::string ref;
@@ -107,15 +108,22 @@ MultiGermline<Affect>::~MultiGermline(){
     delete index;
   if (repository_allocated)
     delete repository;
+  auto it_allocated = allocated_germlines.begin();
   for (auto& germline : germlines) {
-    delete germline;
+    if (*it_allocated)
+      delete germline;
+    it_allocated++;
   }
 }
 
 template <typename Affect>
 void MultiGermline<Affect>::addGermline(Germline<Affect> *germline) {
   germlines.push_back(germline);
+  allocated_germlines.push_back(false);
   germline->setMultiGermline(this);
+  if (! repository) {
+    repository = germline->getRepository();
+  }
 }
 
 template <typename Affect>
@@ -263,6 +271,7 @@ void MultiGermline<Affect>::buildFromJson(json germlines, int filter,
     json configJson = {{"order", order}, {"segments", config}};
     addGermline(new Germline<Affect>(code, shortcut, s_path, recombinations,
                                                 configJson, repository, max_indexing));
+    allocated_germlines.back() = true;
   }
 
 }
