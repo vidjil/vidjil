@@ -1,5 +1,5 @@
 #include "core/automaton.h"
-#include "core/filter.h"
+#include "core/filter.hpp"
 #include "core/germline.h"
 #include "core/tools.h"
 #include <algorithm>

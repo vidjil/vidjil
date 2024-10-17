@@ -1,8 +1,8 @@
 #include <core/bioreader.hpp>
 #include <core/kmerstore.h>
 #include <core/kmeraffect.h>
-#include <core/affectanalyser.h>
-#include <core/segment.h>
+#include <core/affectanalyser.hpp>
+#include <core/segment.hpp>
 #include <iostream>
 
 using namespace std;
@@ -12,17 +12,25 @@ void testSegmentationBug1(IndexTypes index) {
   BioReader seqV("../../germline/homo-sapiens/TRGV.fa");
   BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa");
 
-  Germline *germline ;
-  germline = new Germline("custom", 'x', seqV, seqV, seqJ,
-                          "#############", "#############", "#############");
-  germline->new_index(index);
-  germline->finish();
+  Germline<KmerAffect> *germline ;
+  json jconfig = {{"order", {"5", "3"}},
+    {"segments", {{"5", {{"seed", "13c"}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                  {"4", {{"seed", "13c"}, {"code", "D"}, {"build", "0"}, {"index", "0"}}},
+                  {"3", {{"seed", "13c"}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+  MultiGermline<KmerAffect> multig;
+  germline = new Germline<KmerAffect>("custom", 'x', "../../germline/homo-sapiens/",
+                                      {{{"5", {"TRGV.fa"}},
+                                        {"4", {"TRGV.fa"}},
+                                        {"3", {"TRGJ.fa"}}}},
+                                      jconfig);
+  multig.addGermline(germline);
+  multig.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline->getSeed("5"), true));
   
   OnlineFasta input(buggy_sequences);
 
   while (input.hasNext()) {
     input.next();
-    KmerAffectAnalyser *kaa = new KmerAffectAnalyser(*(germline->index), input.getSequence().sequence);
+    KmerAffectAnalyser *kaa = new KmerAffectAnalyser(*(germline->getIndex()), input.getSequence().sequence);
 
     set<KmerAffect> distinct_a = kaa->getDistinctAffectations();
     int strand = 0;
@@ -37,7 +45,10 @@ void testSegmentationBug1(IndexTypes index) {
       }
     }
 
-    KmerSegmenter *segment = new KmerSegmenter(input.getSequence(), germline);
+    KmerSegmenter<KmerAffect> *segment = new KmerSegmenter<KmerAffect>(input.getSequence(),
+                                                                       germline->getIndex(),
+                                                                       SEG_METHOD_MAX12,
+                                                                       &multig);
 
     if (strand == 2 
         || (strand == 1

@@ -1,14 +1,19 @@
-#include <core/windows.h>
-#include <core/germline.h>
+#include <core/windows.hpp>
+#include <core/germline.hpp>
 #include <core/bioreader.hpp>
 #include <core/read_score.h>
 #include <map>
 
 void testWSAdd() {
   map<string, string> labels;
-  WindowsStorage ws(labels);
+  WindowsStorage<KmerAffect> ws(labels);
   Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", 0};
-  Germline germline("Test", 't', "data/small_V.fa", "", "data/small_J.fa", "", "", "");
+  json jconfig = {{"order", {"5", "3"}},
+    {"segments", {{"5", {{"seed", ""}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                  {"3", {{"seed", ""}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+  Germline<KmerAffect> germline("Test", 't', "data/",
+                                {{{"5", {"small_V.fa"}}, {"4", {"data/small_J.fa"}}}},
+                                jconfig);
   
   TAP_TEST_EQUAL(ws.size(), 0, TEST_WS_SIZE_NONE, "");
 
@@ -50,7 +55,9 @@ void testWSAdd() {
   TAP_TEST_EQUAL(it->label_full, "other", TEST_WS_GET_READS, "");
   TAP_TEST_EQUAL(it->sequence, "TAAGATTAGCCACGGACT", TEST_WS_GET_READS, "");
 
-  Germline germline2("Other test", 'o', "data/small_V.fa", "", "data/small_J.fa", "", "", "");
+  Germline<KmerAffect> germline2("Other test", 'o', "data/",
+                                 {{{"5", {"small_V.fa"}}, {"4", {"data/small_J.fa"}}}},
+                                 jconfig);
   // Insert a sequence from another germline 2 times
   for (int i = 0; i < 2; i++) {
     ws.add("CATT", seq, SEG_MINUS, &germline2);
@@ -60,7 +67,9 @@ void testWSAdd() {
   TAP_TEST(ws.getGermline("ATTAG") == &germline,TEST_WS_GET_GERMLINE, "");
   TAP_TEST(ws.getGermline("CATT") == &germline2,TEST_WS_GET_GERMLINE, "");
 
-  Germline germline3("Another test", 'a', "data/small_V.fa", "", "data/small_J.fa", "", "", "");
+  Germline<KmerAffect> germline3("Another test", 'a', "data/",
+                                 {{{"5", {"small_V.fa"}}, {"4", {"data/small_J.fa"}}}},
+                                 jconfig);
   // Insert a sequence from another germline 6 times
   for (int i = 0; i < 6; i++) {
     ws.add("ATAGCAT", seq, SEG_MINUS, &germline3);
@@ -94,7 +103,7 @@ void testWSAdd() {
   it2++;
   TAP_TEST(it2 == sorted.end(), TEST_WS_SORT, "");
   
-  set<Germline *> germlines = ws.getTopGermlines(1);
+  set<Germline<KmerAffect> *> germlines = ws.getTopGermlines(1);
   TAP_TEST_EQUAL(germlines.size(), 1, TEST_WS_TOP_GERMLINES_ONE, "size = " << germlines.size());
   TAP_TEST(*(germlines.find(&germline)) == &germline, TEST_WS_TOP_GERMLINES_ONE, "");
 
@@ -110,14 +119,19 @@ void testWSAdd() {
 
 void testWSAddWithLimit() {
   map<string, string> labels;
-  WindowsStorage ws(labels);
+  WindowsStorage<KmerAffect> ws(labels);
   ReadQualityScore rqs;
   ws.setScorer(&rqs);
   ws.setMaximalNbReadsPerWindow(3);
   ws.setBinParameters(1, 20);
   Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", 0};
   Sequence seq_long = {"label", "l", "GATACATTAGACAGCTTATATATATATTTATAT", "", 0};
-  Germline germline("Test", 't', "data/small_V.fa", "", "data/small_J.fa", "", "", "");
+  json jconfig = {{"order", {"5", "3"}},
+    {"segments", {{"5", {{"seed", ""}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                  {"3", {{"seed", ""}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+  Germline<KmerAffect> germline("Test", 't', "data/",
+                                {{{"5", {"small_V.fa"}}, {"3", {"data/small_J.fa"}}}}
+                                ,jconfig);
 
   ws.add("ATTAG", seq, SEG_PLUS, &germline);
   ws.add("ATTAG", seq, SEG_PLUS, &germline);

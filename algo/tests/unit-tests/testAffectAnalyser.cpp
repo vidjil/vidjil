@@ -1,5 +1,5 @@
 #include "tests.h"
-#include <core/affectanalyser.h>
+#include <core/affectanalyser.hpp>
 #include <core/kmerstore.h>
 #include <core/kmeraffect.h>
 

@@ -2,11 +2,11 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "core/germline.h"
+#include "core/germline.hpp"
 #include "core/kmerstore.h"
 #include "core/dynprog.h"
 #include "core/bioreader.hpp"
-#include "core/segment.h"
+#include "core/segment.hpp"
 #include "core/output.h"
 #include "core/windowExtractor.h"
 #include "lib/json.hpp"
@@ -15,8 +15,8 @@ using namespace std;
 
 void testOverlap()
 {
-  AlignBox *box_A = new AlignBox() ;
-  AlignBox *box_C = new AlignBox() ;
+  AlignBox<KmerAffect> *box_A = new AlignBox<KmerAffect>() ;
+  AlignBox<KmerAffect> *box_C = new AlignBox<KmerAffect>() ;
 
   box_A->ref = "AAAAAAAAAA";
   box_C->ref = "TCCCCCCCCC";
@@ -52,16 +52,24 @@ void testFineSegment(IndexTypes index)
   data.next();
   data.next();
 
-  Germline *germline ;
-  germline = new Germline("IGH", 'G', seqV, seqD, seqJ,
-                          "########", "########", "########");
-  germline->new_index(index);
-  germline->finish();
+  Germline<KmerAffect> *germline ;
+  json jconfig = {{"order", {"5", "3"}},
+    {"segments", {{"5", {{"seed", "8c"}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                  {"4", {{"seed", "8c"}, {"code", "D"}, {"build", "0"}, {"index", "0"}}},
+                  {"3", {{"seed", "8c"}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+  germline = new Germline<KmerAffect>("IGH", 'G', "../../germline/homo-sapiens/",
+                                      {{{"5", {"IGHV.fa"}},
+                                        {"4", {"IGHD.fa"}},
+                                        {"3", {"IGHJ.fa"}}}},
+                                      jconfig);
+  MultiGermline<KmerAffect> mg;
+  mg.addGermline(germline);
+  mg.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline->getSeed("5"), true));
 
   Sequence seq = data.getSequence();
       
   //segmentation VJ
-  FineSegmenter s(seq, germline, VDJ);
+  FineSegmenter<KmerAffect> s(seq, germline, VDJ);
 	
   TAP_TEST(s.isSegmented(), TEST_SEGMENT_POSITION, "is segmented (VJ)") ;
   
@@ -72,7 +80,7 @@ void testFineSegment(IndexTypes index)
 
   // Revcomp sequence and tests that the results are the same.
   seq.sequence = revcomp(seq.sequence);
-  FineSegmenter s2(seq, germline, VDJ);
+  FineSegmenter<KmerAffect> s2(seq, germline, VDJ);
 
   TAP_TEST(s2.isSegmented(), TEST_SEGMENT_POSITION, "is segmented (VJ)") ;
   //segmentation D
@@ -104,29 +112,40 @@ void testSegmentOverlap(IndexTypes index)
   BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
   
   BioReader data("data/bug-segment-overlap.fa", 1, " ");
-  
-  Germline *germline1 ;
-  germline1 = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
-                           "##########", "##########", "##########");
-  germline1->new_index(index);
 
-  Germline *germline2 ;
-  germline2 = new Germline("TRG2", 'G', seqV, BioReader(), seqJ,
-                           "##########", "##########", "##########");
-  germline2->new_index(index);
+  json jconfig = {{"order", {"5", "3"}},
+    {"segments", {{"5", {{"seed", "10c"}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                  {"3", {{"seed", "10c"}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+
+  Germline<KmerAffect> *germline1 ;
+  germline1 = new Germline<KmerAffect>("TRG", 'G', "../../germline/homo-sapiens/",
+                           {{{"5", {"TRGV.fa"}}, {"3", {"TRGJ.fa"}}}},
+                           jconfig);
+
+  Germline<KmerAffect> *germline2 ;
+  germline2 = new Germline<KmerAffect>("TRG2", 'G', "../../germline/homo-sapiens/",
+                           {{{"5", {"TRGV.fa"}}, {"3", {"TRGJ.fa"}}}},
+                           jconfig);
 
   germline1->finish();
   germline2->finish();
 
+  MultiGermline<KmerAffect> mg;
+  mg.addGermline(germline1);
+  mg.addGermline(germline2);
+  mg.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline1->getSeed("5"), true));
+
+
   for (int i = 0; i < data.size(); i++) {
-    KmerSegmenter ks(data.read(i), germline1);
+    KmerSegmenter<KmerAffect> ks(data.read(i), germline1->getIndex(),
+                                    SEG_METHOD_MAX12, &mg, germline1);
 
     TAP_TEST(ks.seg_V + ks.seg_N + ks.seg_J == data.sequence(i)
              || ks.seg_V + ks.seg_N + ks.seg_J == revcomp(data.sequence(i)), 
              TEST_KMER_SEGMENT_OVERLAP,
              " V= " << ks.seg_V << ", N = " << ks.seg_N << ", J = " << ks.seg_J);
 
-    FineSegmenter fs(data.read(i), germline2, VDJ); 
+    FineSegmenter<KmerAffect> fs(data.read(i), germline2, VDJ);
     TAP_TEST(fs.seg_V + fs.seg_N + fs.seg_J == data.sequence(i)
              || fs.seg_V + fs.seg_N + fs.seg_J == revcomp(data.sequence(i)), 
              TEST_FINE_SEGMENT_OVERLAP,
@@ -143,16 +162,24 @@ void testSegmentationCause(IndexTypes index) {
   
   BioReader data("data/segmentation.fasta", 1, " ");
 
-  Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
-                          "##########", "##########", "##########");
-  germline->new_index(index);
-  germline->finish();
+  json jconfig = {{"order", {"5", "3"}},
+    {"segments", {{"5", {{"seed", "10c"}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                  {"3", {{"seed", "10c"}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+
+  Germline<KmerAffect> *germline ;
+  germline = new Germline<KmerAffect>("TRG", 'G', "../../germline/homo-sapiens/",
+                           {{{"5", {"TRGV.fa"}}, {"3", {"TRGJ.fa"}}}},
+                           jconfig);
+
+  MultiGermline<KmerAffect> mg;
+  mg.addGermline(germline);
+  mg.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline->getSeed("5"), true));
 
   int nb_checked = 0;
 
   for (int i = 0; i < data.size(); i++) {
-    KmerSegmenter ks(data.read(i), germline, 0.01);
+    KmerSegmenter<KmerAffect> ks(data.read(i), germline->getIndex(),
+                                 SEG_METHOD_MAX12, &mg, germline, nullptr, 0.01);
     
     if (data.read(i).label == "seq-seg+") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "seq is " << data.label(i));
@@ -270,14 +297,21 @@ void testBug2224(IndexTypes index) {
   Sequence s = {">label", ">label", "ATTATATA", "", 0};
   data.add(s);
 
+  json jconfig = {{"order", {"5", "3"}},
+    {"segments", {{"5", {{"seed", "11c"}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                  {"3", {{"seed", "11c"}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
 
-  Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
-                          "###########", "###########", "###########");
-  germline->new_index(index);
-  germline->finish();
+  Germline<KmerAffect> *germline ;
+  germline = new Germline<KmerAffect>("TRG", 'G', "../../germline/homo-sapiens/",
+                                      {{{"5", {"TRGV.fa"}}, {"3", {"TRGJ.fa"}}}},
+                                      jconfig);
 
-  KmerSegmenter ks(data.read(0), germline);
+  MultiGermline<KmerAffect> mg;
+  mg.addGermline(germline);
+  mg.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline->getSeed("5"), true));
+
+  KmerSegmenter<KmerAffect> ks(data.read(0), germline->getIndex(),
+                               SEG_METHOD_MAX12, &mg, germline);
   TAP_TEST(ks.getKmerAffectAnalyser() == NULL, TEST_BUG2224, "");
 
   CloneOutput clone ;
@@ -297,26 +331,28 @@ void testExtractor(IndexTypes index) {
   
   OnlineFasta data("data/segmentation.fasta", 1, " ");
 
-  Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, BioReader(), seqJ,
-                          "##########", "##########", "##########");
-  germline->new_index(index);
+  json jconfig = {{"order", {"5", "3"}},
+    {"segments", {{"5", {{"seed", "10c"}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
+                  {"3", {{"seed", "10c"}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
+  Germline<KmerAffect> *germline ;
+  germline = new Germline<KmerAffect>("TRG", 'G', "../../germline/homo-sapiens/",
+                                      {{{"5", {"TRGV.fa"}}, {"3", {"TRGJ.fa"}}}},
+                                      jconfig);
+  MultiGermline<KmerAffect> mg;
+  mg.addGermline(germline);
+  mg.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline->getSeed("5"), true));
 
-  MultiGermline *multi ;
-  multi = new MultiGermline(index);
-  multi->insert(germline);
-  multi->finish();
 
-  WindowExtractor we(multi);
+  WindowExtractor<KmerAffect> we(&mg);
   map<string, string> labels;
   ofstream out_seg("segmented.log");
   ofstream out_unseg("unsegmented.log");
   we.setSegmentedOutput(&out_seg);
   we.setUnsegmentedOutput(&out_unseg);
 
-  WindowsStorage *ws = we.extract(&data, 30, labels,
-                                  false, false,
-                                  0.01);
+  WindowsStorage<KmerAffect> *ws = we.extract(&data, 30, labels,
+                                              false, false,
+                                              0.01);
   // we.out_stats(cout);
 
   TAP_TEST_EQUAL(we.getNbReads(), 15, TEST_EXTRACTOR_NB_READS, "");
@@ -348,7 +384,6 @@ void testExtractor(IndexTypes index) {
   TAP_TEST(out_unseg.tellp() > 0, TEST_EXTRACTOR_OUT_UNSEG, "");
 
   delete ws;
-  delete multi;
 }
 
 void testBestLengthShifts() {
@@ -363,7 +398,7 @@ void testBestLengthShifts() {
   for (auto test: test_sets) {
     pair<int, int> param = test.first;
     pair<int, int> expected = test.second;
-    pair<int, int> result = WindowExtractor::get_best_length_shifts(100, 30,
+    pair<int, int> result = WindowExtractor<KmerAffect>::get_best_length_shifts(100, 30,
                                                                     param.first,
                                                                     param.second);
     TAP_TEST(result == expected, TEST_EXTRACTOR_LENGTH_SHIFT,
@@ -380,7 +415,7 @@ void testBestLengthShifts() {
 
   }
 
-  pair<int, int> result = WindowExtractor::get_best_length_shifts(20, 30, 9, 5);
+  pair<int, int> result = WindowExtractor<KmerAffect>::get_best_length_shifts(20, 30, 9, 5);
   TAP_TEST(result == make_pair(15, 0), TEST_EXTRACTOR_LENGTH_SHIFT, "");
 }
 

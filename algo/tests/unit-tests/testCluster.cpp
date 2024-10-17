@@ -1,7 +1,7 @@
 #include "core/tools.h"
-#include "core/windows.h"
+#include "core/windows.hpp"
 #include "core/bioreader.hpp"
-#include "core/segment.h"
+#include "core/segment.hpp"
 #include "core/cluster-junctions.h"
 #include "core/read_score.h"
 #include "core/read_chooser.h"
@@ -22,7 +22,7 @@ void testCluster() {
    string forced_edges = "" ;
 
    map<string, string> labels;
-   WindowsStorage windows = WindowsStorage(labels);
+   WindowsStorage<KmerAffect> windows = WindowsStorage<KmerAffect>(labels);
 
    Sequence seq = {"", "", "", "", 0};
 
