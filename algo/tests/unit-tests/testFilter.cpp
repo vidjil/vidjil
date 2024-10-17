@@ -301,7 +301,7 @@ void testFilterBioReaderWithACAutomaton(){
   //check filtered BioReaders content
   map<KmerStringAffect, int> m1 = a1->getMultiResults(sequence1);
   list<Sequence> l1 = filteredBioReader1.getAll();
-  for(auto const m : m1){
+  for(auto const &m : m1){
     KmerStringAffect tmpKmer = m.first;
     if(!tmpKmer.isGeneric()){
       continue;
@@ -314,7 +314,7 @@ void testFilterBioReaderWithACAutomaton(){
   }
   map<KmerStringAffect, int> m2 = a2->getMultiResults(sequence2);
   list<Sequence> l2 = filteredBioReader2.getAll();
-  for(auto const m : m2){
+  for(auto const &m : m2){
     KmerStringAffect tmpKmer = m.first;
     if(!tmpKmer.isGeneric()){
       continue;
@@ -327,7 +327,7 @@ void testFilterBioReaderWithACAutomaton(){
   }
   map<KmerStringAffect, int> m3 = a3->getMultiResults(sequence3);
   list<Sequence> l3 = filteredBioReader3.getAll();
-  for(auto const m : m3){
+  for(auto const &m : m3){
     KmerStringAffect tmpKmer = m.first;
     if(!tmpKmer.isGeneric()){
       continue;
