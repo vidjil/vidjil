@@ -632,20 +632,21 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
           size_t nb_affects = kaa->countUnique();
           KmerAffect unique_affect;
           if (nb_affects == 0) {
+            max12 = std::make_tuple(set<KmerAffect>({KmerAffect::getUnknown()}), set<KmerAffect>({KmerAffect::getUnknown()}), 1, 1);
             this->because = UNSEG_TOO_FEW_ZERO ;
-            return ;
+          } else if (nb_affects == 1) {
+              unique_affect = *(kaa->getAffectations().begin());
+              max12 = std::make_tuple(set<KmerAffect>({unique_affect}), set<KmerAffect>({KmerAffect::getUnknown()}), kaa->getProbabilityAtLeastOrAbove(unique_affect, kaa->count(unique_affect)), 1);
+          } else {
+            max12 = kaa->max12(forbidden);
           }
-          if (nb_affects == 1) {
-            unique_affect = *(kaa->getAffectations().begin());
-          }
-          max12 = kaa->max12(forbidden);
           if (std::get<0>(max12).size() &&
               std::get<0>(max12).begin()->isAmbiguous()) {
             this->because = UNSEG_TOO_FEW_ZERO ;
           } else if (std::get<0>(max12).size() &&
               std::get<1>(max12).begin()->isAmbiguous()) {
             nb_affects = 1;
-            unique_affect = *(std::get<1>(max12).begin());
+            unique_affect = *(std::get<0>(max12).begin());
           }
           if (nb_affects == 1 && this->because == 0) {
             char affect = unique_affect.getLabel()[0];
@@ -654,11 +655,10 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
                 this->because = (std::get<2>(max12)*multiplier > threshold) ? UNSEG_TOO_FEW_ZERO : UNSEG_ONLY_V;
                 break;
               } else if (g->getSegment().count("3") > 0 && g->getAffect()[0] == affect) {
-                this->because = (std::get<3>(max12)*multiplier > threshold) ? UNSEG_TOO_FEW_ZERO : UNSEG_ONLY_J;
+                this->because = (std::get<2>(max12)*multiplier > threshold) ? UNSEG_TOO_FEW_ZERO : UNSEG_ONLY_J;
                 break;
               }
             }
-            PRINT_VAR(this->because);
           }
         }
 
