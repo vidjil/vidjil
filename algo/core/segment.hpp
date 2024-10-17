@@ -3,9 +3,9 @@
   Copyright (C) 2011-2024 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors:
-      Mathieu Giraud <mathieu.giraud@vidjil.org>
-      Mikaël Salson <mikael.salson@vidjil.org>
-      Marc Duez <marc.duez@vidjil.org>
+  Mathieu Giraud <mathieu.giraud@vidjil.org>
+  Mikaël Salson <mikael.salson@vidjil.org>
+  Marc Duez <marc.duez@vidjil.org>
 
   "Vidjil" is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -111,16 +111,16 @@ void AlignBox<Affect>::addToOutput(CloneOutput *clone, int alternative_genes) {
   j["name"] = ref_label;
 
   if (key != "3" || !CoverLastPos()) // end information for J
-    {
-      j["stop"] = end + 1;
-      j["delRight"] = del_right;
-    }
+  {
+    j["stop"] = end + 1;
+    j["delRight"] = del_right;
+  }
 
   if (key != "5" || !CoverFirstPos()) // start information for V
-    {
-      j["start"] = start + 1;
-      j["delLeft"] = del_left;
-    }
+  {
+    j["start"] = start + 1;
+    j["delLeft"] = del_left;
+  }
 
   clone->setSeg(key, j) ;
 
@@ -304,8 +304,8 @@ string Segmenter<Affect>::getJunction(int l, int shift) {
   int central_pos = (getLeft() + getRight())/2 + shift;
 
   pair<int, int> length_shift = WindowExtractor<Affect>::get_best_length_shifts(getSequence().sequence.size(),
-                                                                        l, central_pos,
-                                                                        DEFAULT_WINDOW_SHIFT);
+                                                                                l, central_pos,
+                                                                                DEFAULT_WINDOW_SHIFT);
   // Yield UNSEG_TOO_SHORT_FOR_WINDOW into windowExtractor
   if (length_shift.first < MINIMAL_WINDOW_LENGTH && length_shift.first < l) {
     info += " w" + string_of_int(length_shift.first) + "/" + string_of_int(length_shift.second);
@@ -394,12 +394,12 @@ string Segmenter<Affect>::removeChevauchement()
   string chevauchement = "" ;
 
   if (box_V->end >= box_J->start)
-    {
-      int middle = (box_V->end + box_J->start) / 2 ;
-      chevauchement = " !ov " + string_of_int (box_V->end - box_J->start + 1);
-      box_V->end = middle ;
-      box_J->start = middle+1 ;
-    }
+  {
+    int middle = (box_V->end + box_J->start) / 2 ;
+    chevauchement = " !ov " + string_of_int (box_V->end - box_J->start + 1);
+    box_V->end = middle ;
+    box_J->start = middle+1 ;
+  }
 
   return chevauchement ;
 }
@@ -468,25 +468,25 @@ string Segmenter<Affect>::getInfoLine() const
 template <typename Affect>
 string KmerSegmenter<Affect>::getInfoLineWithAffects() const
 {
-   stringstream ss;
-   std::string germline = ((this->segmented_germline) ? this->segmented_germline->getCode() : "");
-   ss << "= " << right << setw(9) << germline << " "
-      << right << setw(3) << score << " "
-      << left << setw(30)
-      << this->getInfoLine()
-      << " " << this->box_V->affect << " " << this->box_J->affect;
+  stringstream ss;
+  std::string germline = ((this->segmented_germline) ? this->segmented_germline->getCode() : "");
+  ss << "= " << right << setw(9) << germline << " "
+     << right << setw(3) << score << " "
+     << left << setw(30)
+     << this->getInfoLine()
+     << " " << this->box_V->affect << " " << this->box_J->affect;
 
-   if (this->getSegmentationStatus() != UNSEG_TOO_SHORT)
-   {
-     ss << endl;
-     ss << "# " << right << setw(9) << germline << endl
-        << this->getKmerAffectAnalyser()->toStringValues();
-     ss << endl;
-     ss << "$ " << right << setw(9) << germline << endl
-        << this->getKmerAffectAnalyser()->toStringSigns();
-   }
+  if (this->getSegmentationStatus() != UNSEG_TOO_SHORT)
+ {
+   ss << endl;
+   ss << "# " << right << setw(9) << germline << endl
+      << this->getKmerAffectAnalyser()->toStringValues();
+   ss << endl;
+   ss << "$ " << right << setw(9) << germline << endl
+      << this->getKmerAffectAnalyser()->toStringSigns();
+ }
 
-   return ss.str();
+ return ss.str();
 }
 
 
@@ -497,15 +497,15 @@ ostream &operator<<(ostream &out, const Segmenter<Affect> &s)
   out << s.getInfoLine() << endl;
 
   if (s.segmented)
-    {
-      out << s.seg_V << endl ;
-      out << s.seg_N << endl ;
-      out << s.seg_J << endl ;
-    }
+  {
+    out << s.seg_V << endl ;
+    out << s.seg_N << endl ;
+    out << s.seg_J << endl ;
+  }
   else
-    {
-      out << s.getSequence().sequence << endl ;
-    }
+  {
+    out << s.getSequence().sequence << endl ;
+  }
 
   return out ;
 }
@@ -548,11 +548,11 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
   int length = this->sequence.length() ;
 
   if (length < s)
-    {
-      this->because = UNSEG_TOO_SHORT;
-      kaa = NULL;
-      return ;
-    }
+  {
+    this->because = UNSEG_TOO_SHORT;
+    kaa = NULL;
+    return ;
+  }
 
   kaa = new MultipleAffectAnalyser(*(index), this->sequence);
 
@@ -591,18 +591,18 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
     this->evalue = pvalue * multiplier ;
 
     if (this->evalue >= threshold)
-      {
-        this->because = UNSEG_TOO_FEW_ZERO ;
-        return ;
-      }
+    {
+      this->because = UNSEG_TOO_FEW_ZERO ;
+      return ;
+    }
 
     int pos = ka.minimize(kmer, DEFAULT_MINIMIZE_ONE_MARGIN, DEFAULT_MINIMIZE_WIDTH);
 
     if (pos == NO_MINIMIZING_POSITION)
-      {
-        this->because = UNSEG_TOO_SHORT_FOR_WINDOW;
-        return ;
-      }
+    {
+      this->because = UNSEG_TOO_SHORT_FOR_WINDOW;
+      return ;
+    }
 
     this->segmented = true ;
     this->because = this->reversed ? SEG_MINUS : SEG_PLUS ;
@@ -619,72 +619,72 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
 
   if ((segmentation_method == SEG_METHOD_MAX12)
       || (segmentation_method == SEG_METHOD_MAX1U))
-    { // Pseudo-germline, MAX12 and MAX1U
-      std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> max12 ;
+  { // Pseudo-germline, MAX12 and MAX1U
+    std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> max12 ;
 
-      set<KmerAffect> forbidden;
-      forbidden.insert(KmerAffect::getAmbiguous());
-      forbidden.insert(KmerAffect::getUnknown());
+    set<KmerAffect> forbidden;
+     forbidden.insert(KmerAffect::getAmbiguous());
+     forbidden.insert(KmerAffect::getUnknown());
 
-      if (segmentation_method == SEG_METHOD_MAX12)
-        // MAX12: two maximum k-mers (no unknown)
-        {
-          size_t nb_affects = kaa->countUnique();
-          KmerAffect unique_affect;
-          if (nb_affects == 0) {
-            max12 = std::make_tuple(set<KmerAffect>({KmerAffect::getUnknown()}), set<KmerAffect>({KmerAffect::getUnknown()}), 1, 1);
-            this->because = UNSEG_TOO_FEW_ZERO ;
-          } else if (nb_affects == 1) {
-              unique_affect = *(kaa->getAffectations().begin());
-              max12 = std::make_tuple(set<KmerAffect>({unique_affect}), set<KmerAffect>({KmerAffect::getUnknown()}), kaa->getProbabilityAtLeastOrAbove(unique_affect, kaa->count(unique_affect)), 1);
-          } else {
-            max12 = kaa->max12(forbidden);
-          }
-          if (std::get<0>(max12).size() &&
-              std::get<0>(max12).begin()->isAmbiguous()) {
-            this->because = UNSEG_TOO_FEW_ZERO ;
-          } else if (std::get<0>(max12).size() &&
-              std::get<1>(max12).begin()->isAmbiguous()) {
-            nb_affects = 1;
-            unique_affect = *(std::get<0>(max12).begin());
-          }
-          if (nb_affects == 1 && this->because == 0) {
-            char affect = unique_affect.getLabel()[0];
-            for (auto g: index->getLabel(unique_affect)) {
-              if (g->getSegment().count("5") > 0 && g->getAffect()[0] == affect) {
-                this->because = (std::get<2>(max12)*multiplier > threshold) ? UNSEG_TOO_FEW_ZERO : UNSEG_ONLY_V;
-                break;
-              } else if (g->getSegment().count("3") > 0 && g->getAffect()[0] == affect) {
-                this->because = (std::get<2>(max12)*multiplier > threshold) ? UNSEG_TOO_FEW_ZERO : UNSEG_ONLY_J;
-                break;
-              }
-            }
-          }
-        }
+     if (segmentation_method == SEG_METHOD_MAX12)
+       // MAX12: two maximum k-mers (no unknown)
+     {
+       size_t nb_affects = kaa->countUnique();
+       KmerAffect unique_affect;
+       if (nb_affects == 0) {
+         max12 = std::make_tuple(set<KmerAffect>({KmerAffect::getUnknown()}), set<KmerAffect>({KmerAffect::getUnknown()}), 1, 1);
+         this->because = UNSEG_TOO_FEW_ZERO ;
+       } else if (nb_affects == 1) {
+         unique_affect = *(kaa->getAffectations().begin());
+         max12 = std::make_tuple(set<KmerAffect>({unique_affect}), set<KmerAffect>({KmerAffect::getUnknown()}), kaa->getProbabilityAtLeastOrAbove(unique_affect, kaa->count(unique_affect)), 1);
+       } else {
+         max12 = kaa->max12(forbidden);
+       }
+       if (std::get<0>(max12).size() &&
+           std::get<0>(max12).begin()->isAmbiguous()) {
+         this->because = UNSEG_TOO_FEW_ZERO ;
+       } else if (std::get<0>(max12).size() &&
+                  std::get<1>(max12).begin()->isAmbiguous()) {
+         nb_affects = 1;
+         unique_affect = *(std::get<0>(max12).begin());
+       }
+       if (nb_affects == 1 && this->because == 0) {
+         char affect = unique_affect.getLabel()[0];
+         for (auto g: index->getLabel(unique_affect)) {
+           if (g->getSegment().count("5") > 0 && g->getAffect()[0] == affect) {
+             this->because = (std::get<2>(max12)*multiplier > threshold) ? UNSEG_TOO_FEW_ZERO : UNSEG_ONLY_V;
+             break;
+           } else if (g->getSegment().count("3") > 0 && g->getAffect()[0] == affect) {
+             this->because = (std::get<2>(max12)*multiplier > threshold) ? UNSEG_TOO_FEW_ZERO : UNSEG_ONLY_J;
+             break;
+           }
+         }
+       }
+     }
 
-      else
-        // MAX1U: the maximum k-mers (no unknown) + unknown
-        {
-          CountKmerAffectAnalyser ckaa(*(index), this->sequence);
-          KmerAffect max = ckaa.max(forbidden);
+     else
+         // MAX1U: the maximum k-mers (no unknown) + unknown
+       {
+         CountKmerAffectAnalyser ckaa(*(index), this->sequence);
+         KmerAffect max = ckaa.max(forbidden);
 
-          if (max.isUnknown())
-            {
-              this->because = UNSEG_TOO_FEW_ZERO ;
-              return ;
-            }
-          max12 = std::make_tuple(set<KmerAffect>({max}), set<KmerAffect>({KmerAffect::getUnknown()}), 1, 1);
-        }
+         if (max.isUnknown())
+         {
+           this->because = UNSEG_TOO_FEW_ZERO ;
+           return ;
+         }
+         max12 = std::make_tuple(set<KmerAffect>({max}), set<KmerAffect>({KmerAffect::getUnknown()}), 1, 1);
+       }
 
-      if (! this->because) {
-        pair <set<KmerAffect>, set<KmerAffect>> before_after =  kaa->sortLeftRight(std::get<0>(max12),
-                                                                                   std::get<1>(max12));
+     if (! this->because) {
+         pair <set<KmerAffect>, set<KmerAffect>> before_after =  kaa->sortLeftRight(std::get<0>(max12),
+                                                                                    std::get<1>(max12));
 
-        before_set = before_after.first;
-        after_set = before_after.second;
-      }
+         before_set = before_after.first;
+         after_set = before_after.second;
+       }
 
-    }
+  }
 
 
   if (this->because == 0) {
@@ -710,10 +710,10 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
     computeSegmentation(strand, before, after, threshold, multiplier);
 
   if (out_unsegmented)
-    {
-      // Debug, display k-mer affectation and segmentation result for this germline
-      *out_unsegmented << this->getInfoLineWithAffects() << endl ;
-    }
+  {
+    // Debug, display k-mer affectation and segmentation result for this germline
+    *out_unsegmented << this->getInfoLineWithAffects() << endl ;
+  }
 }
 
 template <typename Affect>
@@ -773,7 +773,7 @@ void KmerSegmenter<Affect>::chooseGermline(MultiGermline<Affect> *germlines, set
       this->reversed = true;
     }
   } else {
-        // Unexpected germline ?
+    // Unexpected germline ?
     before = *(before_set.begin());
     after = *(after_set.begin());
   }
@@ -800,7 +800,7 @@ KmerSegmenter<Affect>::~KmerSegmenter() {
 
 template <typename Affect>
 void KmerSegmenter<Affect>::computeSegmentation(int strand, KmerAffect before, KmerAffect after,
-                                        double threshold, double multiplier) {
+                                                double threshold, double multiplier) {
   // Try to segment, computing 'box_V->end' and 'box_J->start'
   // If not segmented, put the cause of unsegmentation in 'because'
 
@@ -830,9 +830,9 @@ void KmerSegmenter<Affect>::computeSegmentation(int strand, KmerAffect before, K
   }
 
 
-   // There was a good segmentation point
+  // There was a good segmentation point
 
-   this->box_V->end = max.first_pos_max;
+  this->box_V->end = max.first_pos_max;
    this->box_J->start = max.last_pos_max + 1;
    if (strand == -1) {
      int tmp = this->sequence.size() - this->box_V->end - 1;
@@ -842,22 +842,22 @@ void KmerSegmenter<Affect>::computeSegmentation(int strand, KmerAffect before, K
    this->box_V->affect = before;
    this->box_J->affect = after;
 
-  // Yes, it is segmented
-  this->segmented = true;
-  this->because = this->reversed ? SEG_MINUS : SEG_PLUS ;
+   // Yes, it is segmented
+   this->segmented = true;
+   this->because = this->reversed ? SEG_MINUS : SEG_PLUS ;
 
-  // TODO: this should also use possFromBoxes()... but 'boxes' is not defined here
-  this->info = "VJ \t"
-   + string_of_int(FIRST_POS) + " "
-   + string_of_int(this->box_V->end + FIRST_POS) + " "
-   + string_of_int(this->box_J->start + FIRST_POS) + " "
-   + string_of_int(this->sequence.size() - 1 + FIRST_POS) ;
+   // TODO: this should also use possFromBoxes()... but 'boxes' is not defined here
+   this->info = "VJ \t"
+     + string_of_int(FIRST_POS) + " "
+     + string_of_int(this->box_V->end + FIRST_POS) + " "
+     + string_of_int(this->box_J->start + FIRST_POS) + " "
+     + string_of_int(this->sequence.size() - 1 + FIRST_POS) ;
 
-  // removeChevauchement is called once info was already computed: it is only to output info_extra
-  this->info_extra += this->removeChevauchement();
-  this->finishSegmentation();
+   // removeChevauchement is called once info was already computed: it is only to output info_extra
+   this->info_extra += this->removeChevauchement();
+   this->finishSegmentation();
 
-  return ;
+   return ;
 }
 
 template <typename Affect>
@@ -888,39 +888,39 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
   int overlap = box_left->end - box_right->start + 1;
 
   if (overlap > 0)
-    {
-      string seq_left = seq.substr(seq_begin, box_left->end - seq_begin + 1);
-      string seq_right = seq.substr(box_right->start, seq_end - box_right->start + 1);
+  {
+    string seq_left = seq.substr(seq_begin, box_left->end - seq_begin + 1);
+    string seq_right = seq.substr(box_right->start, seq_end - box_right->start + 1);
 
-      int score_r[overlap+1];
-      int score_l[overlap+1];
+    int score_r[overlap+1];
+     int score_l[overlap+1];
 
-      //LEFT
-      DynProg dp_l = DynProg(seq_left, revcomp(box_left->ref, reverse_V),
-			   DynProg::Local, segment_cost);
-      score_l[0] = dp_l.compute();
-
-
-      //RIGHT
-      // reverse right sequence
-      string ref_right=string(box_right->ref.rbegin(), box_right->ref.rend());
-      ref_right = revcomp(ref_right, reverse_J);
-      seq_right=string(seq_right.rbegin(), seq_right.rend());
+     //LEFT
+     DynProg dp_l = DynProg(seq_left, revcomp(box_left->ref, reverse_V),
+                            DynProg::Local, segment_cost);
+     score_l[0] = dp_l.compute();
 
 
-      DynProg dp_r = DynProg(seq_right, ref_right,
-			   DynProg::Local, segment_cost);
-      score_r[0] = dp_r.compute();
+     //RIGHT
+     // reverse right sequence
+     string ref_right=string(box_right->ref.rbegin(), box_right->ref.rend());
+     ref_right = revcomp(ref_right, reverse_J);
+     seq_right=string(seq_right.rbegin(), seq_right.rend());
+
+
+     DynProg dp_r = DynProg(seq_right, ref_right,
+                            DynProg::Local, segment_cost);
+     score_r[0] = dp_r.compute();
 
 
 
-      int trim_l[overlap+1];
-      int trim_r[overlap+1];
+     int trim_l[overlap+1];
+     int trim_r[overlap+1];
 
-      for(size_t i=0; i<=(size_t)overlap; i++) {
-        score_l[i] = i < seq_left.size()  ? dp_l.best_score_on_i(seq_left.size()  - i, trim_l + i) : MINUS_INF ;
-        score_r[i] = i < seq_right.size() ? dp_r.best_score_on_i(seq_right.size() - i, trim_r + i) : MINUS_INF ;
-      }
+     for(size_t i=0; i<=(size_t)overlap; i++) {
+       score_l[i] = i < seq_left.size()  ? dp_l.best_score_on_i(seq_left.size()  - i, trim_l + i) : MINUS_INF ;
+       score_r[i] = i < seq_right.size() ? dp_r.best_score_on_i(seq_right.size() - i, trim_r + i) : MINUS_INF ;
+     }
 
 
 // #define DEBUG_OVERLAP
@@ -929,47 +929,47 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
      cout << seq << endl;
      cout << "boxes: " << *box_left << "/" << *box_right << endl ;
 
-      // cout << dp_l ;
-      // cout << dp_r ;
+     // cout << dp_l ;
+     // cout << dp_r ;
 
-      cout << "seq:" << seq_left << "\t\t" << seq_right << endl;
-      cout << "ref:" << box_left->ref << "\t\t" << ref_right << endl;
-      for(int i=0; i<=overlap; i++)
-        cout << i << "  left: " << score_l[i] << "/" << trim_l[i] << "     right: " << score_r[i] << "/" << trim_r[i] << endl;
+     cout << "seq:" << seq_left << "\t\t" << seq_right << endl;
+     cout << "ref:" << box_left->ref << "\t\t" << ref_right << endl;
+     for(int i=0; i<=overlap; i++)
+       cout << i << "  left: " << score_l[i] << "/" << trim_l[i] << "     right: " << score_r[i] << "/" << trim_r[i] << endl;
 #endif
 
-      int score = MINUS_INF;
-      int best_i = 0 ;
-      int best_j = 0 ;
+     int score = MINUS_INF;
+     int best_i = 0 ;
+     int best_j = 0 ;
 
 
-      // Find (i, j), with i+j >= overlap,
-      // maximizing score_l[j] + score_r[i]
-      for (int i=0; i<=overlap; i++){
-	for (int j=overlap-i; j<=overlap; j++){
-          int score_ij = score_l[i] + score_r[j];
+     // Find (i, j), with i+j >= overlap,
+     // maximizing score_l[j] + score_r[i]
+     for (int i=0; i<=overlap; i++){
+       for (int j=overlap-i; j<=overlap; j++){
+         int score_ij = score_l[i] + score_r[j];
 
-	  if (score_ij > score) {
-            best_i = i ;
-            best_j = j ;
-            box_left->del_right = box_left->ref.size() - trim_l[i];
-	    box_right->del_left = box_right->ref.size() - trim_r[j];
-	    score = score_ij;
-	  }
-	}
-      }
+         if (score_ij > score) {
+     best_i = i ;
+     best_j = j ;
+     box_left->del_right = box_left->ref.size() - trim_l[i];
+     box_right->del_left = box_right->ref.size() - trim_r[j];
+     score = score_ij;
+   }
+       }
+     }
 
-      box_left->end -= best_i ;
-      box_right->start += best_j ;
+     box_left->end -= best_i ;
+     box_right->start += best_j ;
 
 #ifdef DEBUG_OVERLAP
-      cout << "overlap: " << overlap << ", " << "best_overlap_split: " << score
-           << "    left: " << best_i << "-" << box_left->del_right << " @" << box_left->end
-           << "    right:" << best_j << "-" << box_right->del_left << " @" << box_right->start
-           << endl;
-      cout << "boxes: " << *box_left << " / " << *box_right << endl ;
+     cout << "overlap: " << overlap << ", " << "best_overlap_split: " << score
+          << "    left: " << best_i << "-" << box_left->del_right << " @" << box_left->end
+          << "    right:" << best_j << "-" << box_right->del_left << " @" << box_right->start
+          << endl;
+     cout << "boxes: " << *box_left << " / " << *box_right << endl ;
 #endif
-    } // end if (overlap > 0)
+  } // end if (overlap > 0)
 
   // From box_left->end + 1 to box_right->start - 1
   return seq.substr(box_left->end + 1, box_right->start - box_left->end - 1);
@@ -1006,44 +1006,44 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
   bool onlyBottomTriangle = !local && banded_dp ;
 
   for (int r = 0 ; r < rep->size() ; r++)
+  {
+    if (r == forbidden_rep_id)
+      continue;
+
+    DynProg dp = DynProg(sequence_or_rc, rep->sequence(r),
+                         dpMode, // DynProg::SemiGlobalTrans,
+                         segment_cost, // DNA
+                         reverse_both, reverse_both,
+                         rep->read(r).marked_pos);
+    int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
+
+    if (score > best_score)
     {
-      if (r == forbidden_rep_id)
-        continue;
+      dp.backtrack();
+      best_score = score ;
 
-      DynProg dp = DynProg(sequence_or_rc, rep->sequence(r),
-			   dpMode, // DynProg::SemiGlobalTrans,
-			   segment_cost, // DNA
-			   reverse_both, reverse_both,
-                          rep->read(r).marked_pos);
-      int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
+      // Reference identification
+      box->ref_nb = r ;
 
-      if (score > best_score)
-      {
-         dp.backtrack();
-         best_score = score ;
+      // Alignment positions *on the read*
+      box->start = dp.first_i;            // start position
+      box->end = dp.best_i ;              // end position
+      box->marked_pos = dp.marked_pos_i ; // marked position
 
-         // Reference identification
-         box->ref_nb = r ;
+      // Alignment positions *on the reference*
+      box->del_left = dp.first_j;     // around start position
+      best_best_j = dp.best_j;        // around end position
+    }
 
-         // Alignment positions *on the read*
-         box->start = dp.first_i;            // start position
-         box->end = dp.best_i ;              // end position
-         box->marked_pos = dp.marked_pos_i ; // marked position
+    score_r.push_back(make_pair(score, r));
 
-         // Alignment positions *on the reference*
-         box->del_left = dp.first_j;     // around start position
-         best_best_j = dp.best_j;        // around end position
-       }
-
-	score_r.push_back(make_pair(score, r));
-
-	// #define DEBUG_SEGMENT
+       // #define DEBUG_SEGMENT
 
 #ifdef DEBUG_SEGMENT
-	cout << rep->label(r) << " " << score << " " << dp.first_i <<  " " << dp.best_i << endl ;
+       cout << rep->label(r) << " " << score << " " << dp.first_i <<  " " << dp.best_i << endl ;
 #endif
 
-    }
+  }
 
   sort(score_r.begin(),score_r.end(),comp_pair);
   box->score = score_r;
@@ -1087,7 +1087,7 @@ string format_del(int deletions)
 
 template <typename Affect>
 FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, Cost segment_c,
-                double threshold, double multiplier, int kmer_threshold, int alternative_genes)
+                                     double threshold, double multiplier, int kmer_threshold, int alternative_genes)
 {
   this->box_V = new AlignBox<Affect>("5");
   this->box_D = new AlignBox<Affect>("4");
@@ -1121,41 +1121,41 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
   GermlineElement<Affect> *g_left=NULL, *g_right=NULL;
 
   if ((germline->getSegmentationMethod() == SEG_METHOD_MAX12) || (germline->getSegmentationMethod() == SEG_METHOD_MAX1U))
+  {
+    // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
+    KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(), germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
+    if (kseg->isSegmented())
     {
-      // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
-      KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(), germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
-      if (kseg->isSegmented())
-        {
-          this->reversed = kseg->isReverse();
+      this->reversed = kseg->isReverse();
 
-          KmerAffect left = this->reversed ? KmerAffect(kseg->after, true) : kseg->before ;
-          KmerAffect right = this->reversed ? KmerAffect(kseg->before, true) : kseg->after ;
+      KmerAffect left = this->reversed ? KmerAffect(kseg->after, true) : kseg->before ;
+         KmerAffect right = this->reversed ? KmerAffect(kseg->before, true) : kseg->after ;
 
-          delete kseg ;
+         delete kseg ;
 
-          reverse_V = (left.getStrand() == -1);
-          reverse_J = (right.getStrand() == -1);
+         reverse_V = (left.getStrand() == -1);
+         reverse_J = (right.getStrand() == -1);
 
-          this->code = "Unexpected ";
+         this->code = "Unexpected ";
 
-          // TODO: don't choose the first one
-          g_left = *(germline->getIndex()->getLabel(left).begin());
-          g_right = *(germline->getIndex()->getLabel(right).begin());
-          this->code += left.toStringSigns() + *(g_left->getLocus().begin());
-          this->code += "/";
-          this->code += right.toStringSigns() + *(g_right->getLocus().begin());
-          this->info_extra += " " + left.toString() + "/" + right.toString() + " (" + this->code + ")";
+         // TODO: don't choose the first one
+         g_left = *(germline->getIndex()->getLabel(left).begin());
+         g_right = *(germline->getIndex()->getLabel(right).begin());
+         this->code += left.toStringSigns() + *(g_left->getLocus().begin());
+         this->code += "/";
+         this->code += right.toStringSigns() + *(g_right->getLocus().begin());
+         this->info_extra += " " + left.toString() + "/" + right.toString() + " (" + this->code + ")";
 
-          if (germline->getSegmentationMethod() == SEG_METHOD_MAX1U)
-            return ;
+         if (germline->getSegmentationMethod() == SEG_METHOD_MAX1U)
+           return ;
 
-        }
-      else
-        {
-          delete kseg ;
-          return ;
-        }
-    } else {
+    }
+    else
+    {
+      delete kseg ;
+      return ;
+    }
+  } else {
     // Strand determination, with KmerSegmenter (with default e-value parameters)
     // Note that we use only the 'strand' component
     // When the KmerSegmenter fails, continue with positive strand
@@ -1172,25 +1172,25 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
 
   /* Read mapping */
   if (germline->getSegmentationMethod() == SEG_METHOD_ONE)
-    {
-      std::shared_ptr<BioReader> leftReader = g_left->getReader();
-      align_against_collection(this->sequence_or_rc, leftReader, NO_FORBIDDEN_ID, false, false,
-                               true, // local
-                               this->box_D, this->segment_cost, false, standardised_threshold_evalue);
+  {
+    std::shared_ptr<BioReader> leftReader = g_left->getReader();
+    align_against_collection(this->sequence_or_rc, leftReader, NO_FORBIDDEN_ID, false, false,
+                             true, // local
+                             this->box_D, this->segment_cost, false, standardised_threshold_evalue);
 
-      this->segmented = true ;
-      this->because = this->reversed ? SEG_MINUS : SEG_PLUS ;
+    this->segmented = true ;
+    this->because = this->reversed ? SEG_MINUS : SEG_PLUS ;
 
-      boxes.clear();
-      boxes.push_back(this->box_D);
-      this->code = codeFromBoxes(boxes, this->sequence_or_rc);
+    boxes.clear();
+    boxes.push_back(this->box_D);
+    this->code = codeFromBoxes(boxes, this->sequence_or_rc);
 
-      this->box_V->end = this->box_D->start;
-      this->box_J->start = this->box_D->end;
-      this->finishSegmentation();
+    this->box_V->end = this->box_D->start;
+    this->box_J->start = this->box_D->end;
+    this->finishSegmentation();
 
-      return;
-    }
+    return;
+  }
 
 
   std::shared_ptr<BioReader> leftReader = g_left->getReader(),
@@ -1200,7 +1200,7 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
     FilterWithACAutomaton* f = g_left->getFilter();
     this->filtered_rep_5 = f->filterBioReaderWithACAutomaton(this->sequence_or_rc, kmer_threshold);
     align_against_collection(this->sequence_or_rc, std::make_shared<BioReader>(this->filtered_rep_5), NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
-                                   this->box_V, this->segment_cost, false, standardised_threshold_evalue);
+                             this->box_V, this->segment_cost, false, standardised_threshold_evalue);
   }else{
     align_against_collection(this->sequence_or_rc, leftReader, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                              this->box_V, this->segment_cost, false, standardised_threshold_evalue);
@@ -1215,31 +1215,31 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
 
   /* Unsegmentation causes */
   if (this->box_V->end == (int) string::npos)
-    {
-      this->evalue_left = BAD_EVALUE ;
-    }
+  {
+    this->evalue_left = BAD_EVALUE ;
+  }
 
   if (this->box_J->start == (int) string::npos)
-    {
-      this->evalue_right = BAD_EVALUE ;
-    }
+  {
+    this->evalue_right = BAD_EVALUE ;
+  }
 
   this->checkLeftRightEvaluesThreshold(threshold, this->reversed ? -1 : 1);
 
   if (this->because != NOT_PROCESSED)
-    {
-      this->segmented = false;
-      this->info = this->code + " @" + string_of_int (this->box_V->end + FIRST_POS) + "  @" + string_of_int(this->box_J->start + FIRST_POS) ;
-      return ;
-    }
+  {
+    this->segmented = false;
+    this->info = this->code + " @" + string_of_int (this->box_V->end + FIRST_POS) + "  @" + string_of_int(this->box_J->start + FIRST_POS) ;
+    return ;
+  }
 
   /* The sequence is segmented */
   this->segmented = true ;
   this->because = this->reversed ? SEG_MINUS : SEG_PLUS ;
 
-    //overlap VJ
+  //overlap VJ
   this->seg_N = check_and_resolve_overlap(this->sequence_or_rc, 0, this->sequence_or_rc.length(),
-                                    this->box_V, this->box_J, this->segment_cost, reverse_V, reverse_J);
+                                          this->box_V, this->box_J, this->segment_cost, reverse_V, reverse_J);
 
   // Why could this happen ?
   if (this->box_J->start>=(int) this->sequence.length())
@@ -1258,103 +1258,103 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
 
 template <typename Affect>
 bool FineSegmenter<Affect>::FineSegmentD(Germline<Affect> *germline,
-                                 AlignBox<Affect> *box_Y, AlignBox<Affect> *box_DD, AlignBox<Affect> *box_Z,
-                                 int forbidden_id,
-                                 int extend_DD_on_Y, int extend_DD_on_Z,
-                                 double evalue_threshold, double multiplier){
+                                         AlignBox<Affect> *box_Y, AlignBox<Affect> *box_DD, AlignBox<Affect> *box_Z,
+                                         int forbidden_id,
+                                         int extend_DD_on_Y, int extend_DD_on_Z,
+                                         double evalue_threshold, double multiplier){
   // TODO
   // For the moment we align on all D repertoire but depending on the recombinations we may have
   // only some repertoires that should be used with the V and J found so far.
 
-    // Create a zone where to look for D, adding some nucleotides on both sides
-    int l = box_Y->end - extend_DD_on_Y;
-    if (l<0)
-      l=0 ;
+  // Create a zone where to look for D, adding some nucleotides on both sides
+  int l = box_Y->end - extend_DD_on_Y;
+  if (l<0)
+    l=0 ;
 
-    int r = box_Z->start + extend_DD_on_Z;
+  int r = box_Z->start + extend_DD_on_Z;
 
-    string seq = this->getSequence().sequence; // segmented sequence, possibly rev-comped
+  string seq = this->getSequence().sequence; // segmented sequence, possibly rev-comped
 
-    if (r > (int) seq.length())
-      r = seq.length();
+  if (r > (int) seq.length())
+    r = seq.length();
 
-    string str = seq.substr(l, r-l);
+  string str = seq.substr(l, r-l);
 
-    // the threshold is lowered by the number of independent tests made
-    double standardised_threshold_evalue = evalue_threshold / multiplier;
+  // the threshold is lowered by the number of independent tests made
+  double standardised_threshold_evalue = evalue_threshold / multiplier;
 
-    // Align
-    std::shared_ptr<BioReader> reader_4 = germline->getReader("4");
-    align_against_collection(str, reader_4, forbidden_id, false, false, true,
-                             box_DD, this->segment_cost, false, standardised_threshold_evalue);
+  // Align
+  std::shared_ptr<BioReader> reader_4 = germline->getReader("4");
+  align_against_collection(str, reader_4, forbidden_id, false, false, true,
+                           box_DD, this->segment_cost, false, standardised_threshold_evalue);
 
-    box_DD->start += l ;
-    box_DD->end += l ;
+  box_DD->start += l ;
+  box_DD->end += l ;
 
-    float evalue_D = multiplier * (r-l) * reader_4->totalSize() * this->segment_cost.toPValue(box_DD->score[0].first);
-
-#ifdef DEBUG_EVALUE
-    cout << "multiplier " << multiplier
-         << ", length " << (r-l)
-         << ", D rep size " << germline->rep_4.totalSize()
-         << " ==> e-value (D) " << std::scientific << evalue_D << std::fixed << endl ;
-#endif
-
-    if (evalue_D > evalue_threshold)
-      return false;
-
-    int save_box_Y_end = box_Y->end ;
-    int save_box_Y_del_right = box_Y->del_right ;
-    int save_box_Z_del_left = box_Z->del_left;
-    int save_box_Z_start = box_Z->start ;
-
-    //overlap VD
-    this->seg_N1 = check_and_resolve_overlap(seq, 0, box_DD->end,
-                                       box_Y, box_DD, this->segment_cost);
-
-    //overlap DJ
-    this->seg_N2 = check_and_resolve_overlap(seq, box_DD->start, seq.length(),
-                                       box_DD, box_Z, this->segment_cost);
-
-    // Realign D to see whether the score is enough
-    DynProg dp = DynProg(box_DD->getSequence(seq), box_DD->ref,
-                         DynProg::SemiGlobal, this->segment_cost, false, false);
-    int score_new = dp.compute();
-
-    float evalue_DD_new = multiplier * box_DD->getLength() * box_DD->ref.size() * this->segment_cost.toPValue(score_new);
+  float evalue_D = multiplier * (r-l) * reader_4->totalSize() * this->segment_cost.toPValue(box_DD->score[0].first);
 
 #ifdef DEBUG_EVALUE
-    cout << "multiplier " << multiplier
-         << ", length " << box_DD->getLength()
-         << ", D size " << box_DD->ref.size()
-         << " ==> e-value (DD) " << std::scientific << evalue_DD_new << std::fixed << endl ;
+  cout << "multiplier " << multiplier
+       << ", length " << (r-l)
+       << ", D rep size " << germline->rep_4.totalSize()
+       << " ==> e-value (D) " << std::scientific << evalue_D << std::fixed << endl ;
 #endif
 
-    if (evalue_DD_new > evalue_threshold)
-      {
-        // Restore box_Y and box_Z
-        box_Y->end =  save_box_Y_end;
-        box_Y->del_right = save_box_Y_del_right;
-        box_Z->del_left = save_box_Z_del_left;
-        box_Z->start = save_box_Z_start;
+  if (evalue_D > evalue_threshold)
+    return false;
 
-        return false ;
-      }
+  int save_box_Y_end = box_Y->end ;
+  int save_box_Y_del_right = box_Y->del_right ;
+  int save_box_Z_del_left = box_Z->del_left;
+  int save_box_Z_start = box_Z->start ;
 
-    return true;
+  //overlap VD
+  this->seg_N1 = check_and_resolve_overlap(seq, 0, box_DD->end,
+                                           box_Y, box_DD, this->segment_cost);
+
+  //overlap DJ
+  this->seg_N2 = check_and_resolve_overlap(seq, box_DD->start, seq.length(),
+                                           box_DD, box_Z, this->segment_cost);
+
+  // Realign D to see whether the score is enough
+  DynProg dp = DynProg(box_DD->getSequence(seq), box_DD->ref,
+                       DynProg::SemiGlobal, this->segment_cost, false, false);
+  int score_new = dp.compute();
+
+  float evalue_DD_new = multiplier * box_DD->getLength() * box_DD->ref.size() * this->segment_cost.toPValue(score_new);
+
+#ifdef DEBUG_EVALUE
+  cout << "multiplier " << multiplier
+       << ", length " << box_DD->getLength()
+       << ", D size " << box_DD->ref.size()
+       << " ==> e-value (DD) " << std::scientific << evalue_DD_new << std::fixed << endl ;
+#endif
+
+  if (evalue_DD_new > evalue_threshold)
+  {
+    // Restore box_Y and box_Z
+    box_Y->end =  save_box_Y_end;
+    box_Y->del_right = save_box_Y_del_right;
+    box_Z->del_left = save_box_Z_del_left;
+    box_Z->start = save_box_Z_start;
+
+    return false ;
+  }
+
+  return true;
 }
 
 template <typename Affect>
 void FineSegmenter<Affect>::FineSegmentD(Germline<Affect> *germline, bool several_D,
-                                 double evalue_threshold, double multiplier){
+                                         double evalue_threshold, double multiplier){
 
   if (this->segmented){
 
     this->dSegmented = FineSegmentD(germline,
-                              this->box_V, this->box_D, this->box_J,
-                              NO_FORBIDDEN_ID,
-                              EXTEND_D_ZONE, EXTEND_D_ZONE,
-                              evalue_threshold, multiplier);
+                                    this->box_V, this->box_D, this->box_J,
+                                    NO_FORBIDDEN_ID,
+                                    EXTEND_D_ZONE, EXTEND_D_ZONE,
+                                    evalue_threshold, multiplier);
 
     if (!this->dSegmented)
       return ;
@@ -1365,38 +1365,38 @@ void FineSegmenter<Affect>::FineSegmentD(Germline<Affect> *germline, bool severa
     boxes.push_back(this->box_V);
 
     if (several_D && (this->box_D->start - this->box_V->end >= DD_MIN_SEARCH))
-      {
-        AlignBox<Affect> *box_D1 = new AlignBox<Affect>("4a");
+    {
+      AlignBox<Affect> *box_D1 = new AlignBox<Affect>("4a");
 
-        bool d1 = FineSegmentD(germline,
-                               this->box_V, box_D1, this->box_D,
-                               this->box_D->ref_nb,
-                               EXTEND_D_ZONE, 0,
-                               evalue_threshold, multiplier);
+      bool d1 = FineSegmentD(germline,
+                             this->box_V, box_D1, this->box_D,
+                             this->box_D->ref_nb,
+                             EXTEND_D_ZONE, 0,
+                             evalue_threshold, multiplier);
 
-        if (d1)
-          boxes.push_back(box_D1);
-        else
-          delete box_D1;
-      }
+      if (d1)
+        boxes.push_back(box_D1);
+      else
+        delete box_D1;
+    }
 
     boxes.push_back(this->box_D);
 
     if (several_D && (this->box_J->start - this->box_D->end >= DD_MIN_SEARCH))
-      {
-        AlignBox<Affect> *box_D2 = new AlignBox<Affect>("4b");
+    {
+      AlignBox<Affect> *box_D2 = new AlignBox<Affect>("4b");
 
-        bool d2 = FineSegmentD(germline,
-                               this->box_D, box_D2, this->box_J,
-                               this->box_D->ref_nb,
-                               0, EXTEND_D_ZONE,
-                               evalue_threshold, multiplier);
+      bool d2 = FineSegmentD(germline,
+                             this->box_D, box_D2, this->box_J,
+                             this->box_D->ref_nb,
+                             0, EXTEND_D_ZONE,
+                             evalue_threshold, multiplier);
 
-        if (d2)
-          boxes.push_back(box_D2);
-        else
-          delete box_D2;
-      }
+      if (d2)
+        boxes.push_back(box_D2);
+      else
+        delete box_D2;
+    }
 
     boxes.push_back(this->box_J);
     this->code = codeFromBoxes(boxes, this->sequence_or_rc);
@@ -1444,35 +1444,35 @@ void FineSegmenter<Affect>::findCDR3(){
   this->CDR3nuc = subsequence(this->getSequence().sequence, this->CDR3start, this->CDR3end);
 
   if (this->CDR3nuc.length() % 3 == 0)
-    {
-      this->CDR3aa = nuc_to_aa(this->CDR3nuc);
-      string sequence_startV_stopJ = subsequence(this->getSequence().sequence, this->box_V->start+1, this->box_J->end+1);
-      int frame = (this->JUNCTIONstart-1 - this->box_V->start) % 3;
+  {
+    this->CDR3aa = nuc_to_aa(this->CDR3nuc);
+    string sequence_startV_stopJ = subsequence(this->getSequence().sequence, this->box_V->start+1, this->box_J->end+1);
+    int frame = (this->JUNCTIONstart-1 - this->box_V->start) % 3;
 
-      if (hasInFrameStopCodon(sequence_startV_stopJ, frame))
-      {
-        // Non-productive CDR3
-        this->JUNCTIONunproductive = UNPROD_STOP_CODON;
-      }
-      else
-      {
-        // Productive CDR3
-        this->JUNCTIONproductive = true;
-      }
-    }
-  else
+    if (hasInFrameStopCodon(sequence_startV_stopJ, frame))
     {
       // Non-productive CDR3
-      this->JUNCTIONunproductive = UNPROD_OUT_OF_FRAME;
-
-      // We want to output a '#' somewhere around the end of the N, and then restart
-      // at the start of the first codon fully included in the germline J
-      int CDR3startJfull = this->JUNCTIONend - ((this->JUNCTIONend - this->box_J->start) / 3) * 3 + 1 ;
-
-      this->CDR3aa =
-        nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3start, CDR3startJfull-1)) +
-        nuc_to_aa(subsequence(this->getSequence().sequence, CDR3startJfull, this->CDR3end));
+      this->JUNCTIONunproductive = UNPROD_STOP_CODON;
     }
+    else
+    {
+      // Productive CDR3
+      this->JUNCTIONproductive = true;
+    }
+  }
+  else
+  {
+    // Non-productive CDR3
+    this->JUNCTIONunproductive = UNPROD_OUT_OF_FRAME;
+
+    // We want to output a '#' somewhere around the end of the N, and then restart
+    // at the start of the first codon fully included in the germline J
+    int CDR3startJfull = this->JUNCTIONend - ((this->JUNCTIONend - this->box_J->start) / 3) * 3 + 1 ;
+
+    this->CDR3aa =
+      nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3start, CDR3startJfull-1)) +
+      nuc_to_aa(subsequence(this->getSequence().sequence, CDR3startJfull, this->CDR3end));
+  }
 
   this->JUNCTIONaa = nuc_to_aa(subsequence(this->getSequence().sequence, this->JUNCTIONstart, this->CDR3start-1))
     + this->CDR3aa + nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3end+1, this->JUNCTIONend));
@@ -1496,28 +1496,28 @@ template <typename Affect>
 void FineSegmenter<Affect>::checkWarnings(CloneOutput *clone, bool phony)
 {
   if (this->isSegmented())
+  {
+    // Non-recombined D7-27/J1 sequence
+    if ((this->box_V->ref_label.find("IGHD7-27") != string::npos)
+        && (this->box_J->ref_label.find("IGHJ1") != string::npos)
+        && ((this->getMidLength() >= 90) && (this->getMidLength() <= 94)))
     {
-      // Non-recombined D7-27/J1 sequence
-      if ((this->box_V->ref_label.find("IGHD7-27") != string::npos)
-          && (this->box_J->ref_label.find("IGHJ1") != string::npos)
-          && ((this->getMidLength() >= 90) && (this->getMidLength() <= 94)))
-        {
-          clone->add_warning(W61_NON_RECOMBINED_D7_27_J1, "Non-recombined D7-27/J1 sequence", LEVEL_ERROR, phony);
-        }
+      clone->add_warning(W61_NON_RECOMBINED_D7_27_J1, "Non-recombined D7-27/J1 sequence", LEVEL_ERROR, phony);
+    }
 
-      // Multiple candidate assignations
-      for (auto box: {this->box_V, this->box_J})
-      {
-        if ((box->score.size() > 1) && (box->score[0].first == box->score[1].first)) {
-          string genes = "";
-          for (auto it: box->score) {
-            if (it.first < box->score[0].first) break;
-            genes += " " + box->rep->label(it.second);
-          }
-          clone->add_warning("W69", "Several genes with equal probability:" + genes, LEVEL_WARN, phony);
+    // Multiple candidate assignations
+    for (auto box: {this->box_V, this->box_J})
+    {
+      if ((box->score.size() > 1) && (box->score[0].first == box->score[1].first)) {
+        string genes = "";
+        for (auto it: box->score) {
+          if (it.first < box->score[0].first) break;
+          genes += " " + box->rep->label(it.second);
         }
+        clone->add_warning("W69", "Several genes with equal probability:" + genes, LEVEL_WARN, phony);
       }
     }
+  }
 }
 
 template <typename Affect>
@@ -1531,9 +1531,9 @@ void FineSegmenter<Affect>::toOutput(CloneOutput *clone, bool details){
   json seg;
 
   for (AlignBox<Affect> *box: boxes)
-    {
-      box->addToOutput(clone, this->alternative_genes);
-    }
+  {
+    box->addToOutput(clone, this->alternative_genes);
+  }
 
   clone->set("name", this->code);
 
@@ -1547,25 +1547,25 @@ void FineSegmenter<Affect>::toOutput(CloneOutput *clone, bool details){
     }
 
     if (this->CDR3start >= 0) {
-        clone->setSeg("cdr3", {
-            {"start", this->CDR3start},
-            {"stop", this->CDR3end},
-            {"seq", this->CDR3nuc},
-            {"aa", this->CDR3aa}
-        });
+      clone->setSeg("cdr3", {
+        {"start", this->CDR3start},
+        {"stop", this->CDR3end},
+        {"seq", this->CDR3nuc},
+        {"aa", this->CDR3aa}
+      });
     }
 
     if (this->JUNCTIONstart >= 0) {
-        clone->setSeg("junction", {
-            {"start", this->JUNCTIONstart},
-            {"stop", this->JUNCTIONend},
-            {"aa", this->JUNCTIONaa},
-            {"productive", this->JUNCTIONproductive}
-        });
-        if (this->JUNCTIONunproductive.length())
-        {
-          clone->set(KEY_SEG, "junction", "unproductive", this->JUNCTIONunproductive);
-        }
+      clone->setSeg("junction", {
+        {"start", this->JUNCTIONstart},
+        {"stop", this->JUNCTIONend},
+        {"aa", this->JUNCTIONaa},
+        {"productive", this->JUNCTIONproductive}
+      });
+      if (this->JUNCTIONunproductive.length())
+      {
+        clone->set(KEY_SEG, "junction", "unproductive", this->JUNCTIONunproductive);
+      }
     }
   }
 }
@@ -1576,33 +1576,33 @@ json toJsonSegVal(string s) {
 
 template <typename Affect>
 void KmerSegmenter<Affect>::toOutput(CloneOutput *clone, bool details) {
-    json seg;
-    int sequenceSize = this->sequence.size();
+  json seg;
+  int sequenceSize = this->sequence.size();
 
-    if (this->evalue > NO_LIMIT_VALUE)
-      clone->setSeg("evalue", toJsonSegVal(scientific_string_of_double(this->evalue)));
+  if (this->evalue > NO_LIMIT_VALUE)
+    clone->setSeg("evalue", toJsonSegVal(scientific_string_of_double(this->evalue)));
 
-    if (!details)
-      return ;
+  if (!details)
+    return ;
 
-    if (this->evalue_left > NO_LIMIT_VALUE)
-      clone->setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(this->evalue_left)));
-    if (this->evalue_right > NO_LIMIT_VALUE)
-      clone->setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(this->evalue_right)));
+  if (this->evalue_left > NO_LIMIT_VALUE)
+    clone->setSeg("evalue_left",  toJsonSegVal(scientific_string_of_double(this->evalue_left)));
+  if (this->evalue_right > NO_LIMIT_VALUE)
+    clone->setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(this->evalue_right)));
 
-    if (getKmerAffectAnalyser() != NULL) {
-      clone->setSeg("affectValues", {
-        {"start", 1},
-        {"stop", sequenceSize},
-        {"seq", getKmerAffectAnalyser()->toStringValues()}
-      });
+  if (getKmerAffectAnalyser() != NULL) {
+    clone->setSeg("affectValues", {
+      {"start", 1},
+      {"stop", sequenceSize},
+      {"seq", getKmerAffectAnalyser()->toStringValues()}
+    });
 
-      clone->setSeg("affectSigns", {
-        {"start", 1},
-        {"stop", sequenceSize},
-        {"seq", getKmerAffectAnalyser()->toStringSigns()}
-      });
-    }
+    clone->setSeg("affectSigns", {
+      {"start", 1},
+      {"stop", sequenceSize},
+      {"seq", getKmerAffectAnalyser()->toStringSigns()}
+    });
+  }
 }
 
 
