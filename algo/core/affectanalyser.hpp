@@ -543,11 +543,11 @@ const string &MultipleAffectAnalyser::getSequence() const{
   return seq;
 }
 
-pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::sortLeftRight(const pair <set<KmerAffect>, set<KmerAffect>> ka12) const {
+pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::sortLeftRight(const set<KmerAffect> &ka1_set, const set<KmerAffect> & ka2_set) const {
 
   // We assume that even with several affectations, the affectations will be positioned similarly
-  KmerAffect ka1 = *(ka12.first.begin());
-  KmerAffect ka2 = *(ka12.second.begin());
+  KmerAffect ka1 = *(ka1_set.begin());
+  KmerAffect ka2 = *(ka2_set.begin());
 
   int ka1_count = 0; int ka1_pos = 0;
   int ka2_count = 0; int ka2_pos = 0;
@@ -571,12 +571,12 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::sortLeftRight(co
   // We check for the average position in both cases,
   // ie for (k1_pos / ka1_count > ka2_pos / ka2_count), but without floats
   if (ka1_pos * ka2_count < ka2_pos * ka1_count)
-    return ka12;
+    return make_pair(ka1_set, ka2_set);
   else
-    return make_pair(ka12.second, ka12.first);
+    return make_pair(ka2_set, ka1_set);
 }
 
-pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
+std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
   assert(affectations.size() >= 2);
   set<KmerAffect> best_affect;
   double best_proba = 2;
@@ -663,7 +663,7 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::max12(const set<
     second_best_affect.clear();
     second_best_affect.insert(KmerAffect::getAmbiguous());
   }
-  return make_pair(best_affect, second_best_affect);
+  return std::tuple<std::set<KmerAffect>, std::set<KmerAffect>, double, double>(best_affect, second_best_affect, best_proba, second_best_proba);
 }
 
 affect_infos MultipleAffectAnalyser::getMaximum(const KmerAffect &before,

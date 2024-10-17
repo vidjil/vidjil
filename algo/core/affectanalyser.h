@@ -11,6 +11,7 @@
 #include <map>
 #include <iostream>
 #include <iomanip>
+#include <tuple>
 
 #define NO_MINIMIZING_POSITION -1
 
@@ -406,9 +407,9 @@ class MultipleAffectAnalyser {
    * @return The same pair of KmerAffects, but sorted.
    *         The first one is 'more on the left' than the second one.
    */
-  pair <set<KmerAffect>, set<KmerAffect>> sortLeftRight(const pair <set<KmerAffect>, set<KmerAffect>> ka12) const;
+  pair <set<KmerAffect>, set<KmerAffect>> sortLeftRight(const set<KmerAffect> &ka1_set, const set<KmerAffect> & ka2_set) const;
 
-  pair <set<KmerAffect>, set<KmerAffect>> max12(const set<KmerAffect> forbidden) const;
+  std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> max12(const set<KmerAffect> forbidden) const;
 
   string toString() const;
 

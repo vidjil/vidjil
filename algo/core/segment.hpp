@@ -38,6 +38,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <tuple>
 #define NO_FORBIDDEN_ID (-1)
 
 template<typename Affect>
@@ -619,7 +620,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
   if ((segmentation_method == SEG_METHOD_MAX12)
       || (segmentation_method == SEG_METHOD_MAX1U))
     { // Pseudo-germline, MAX12 and MAX1U
-      pair <set<KmerAffect>, set<KmerAffect>> max12 ;
+      std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> max12 ;
 
       set<KmerAffect> forbidden;
       forbidden.insert(KmerAffect::getAmbiguous());
@@ -674,7 +675,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
               this->because = UNSEG_TOO_FEW_ZERO ;
               return ;
             }
-          max12 = make_pair(set<KmerAffect>({max}), set<KmerAffect>({KmerAffect::getUnknown()}));
+          max12 = std::make_tuple(set<KmerAffect>({max}), set<KmerAffect>({KmerAffect::getUnknown()}), 1, 1);
         }
 
       pair <set<KmerAffect>, set<KmerAffect>> before_after =  kaa->sortLeftRight(max12);
