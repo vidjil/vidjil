@@ -54,9 +54,9 @@ void testGermline() {
 
   testGermline1(g1);
   testIndexLoad(g1, KMER_INDEX, 0.40);
-  testIndexLoad(g1, AC_AUTOMATON, 0.20);
   delete g1->getIndex();
   g1->unsetIndex();
+  testIndexLoad(g1, AC_AUTOMATON, 0.30);
 
   delete g1;
 }
