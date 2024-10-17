@@ -637,30 +637,28 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
           }
           if (nb_affects == 1) {
             unique_affect = *(kaa->getAffectations().begin());
-          } else {
-            max12 = kaa->max12(forbidden);
-            if (max12.first.size() &&
-                max12.first.begin()->isAmbiguous()) {
-              this->because = UNSEG_TOO_FEW_ZERO ;
-              return ;
-            }
-            if (max12.first.size() &&
-                max12.second.begin()->isAmbiguous()) {
-              nb_affects = 1;
-              unique_affect = *(max12.first.begin());
-            }
           }
-          if (nb_affects == 1) {
+          max12 = kaa->max12(forbidden);
+          if (std::get<0>(max12).size() &&
+              std::get<0>(max12).begin()->isAmbiguous()) {
+            this->because = UNSEG_TOO_FEW_ZERO ;
+          } else if (std::get<0>(max12).size() &&
+              std::get<1>(max12).begin()->isAmbiguous()) {
+            nb_affects = 1;
+            unique_affect = *(std::get<1>(max12).begin());
+          }
+          if (nb_affects == 1 && this->because == 0) {
             char affect = unique_affect.getLabel()[0];
             for (auto g: index->getLabel(unique_affect)) {
               if (g->getSegment().count("5") > 0 && g->getAffect()[0] == affect) {
-                this->because = UNSEG_ONLY_V;
-                return;
+                this->because = (std::get<2>(max12)*multiplier > threshold) ? UNSEG_TOO_FEW_ZERO : UNSEG_ONLY_V;
+                break;
               } else if (g->getSegment().count("3") > 0 && g->getAffect()[0] == affect) {
-                this->because = UNSEG_ONLY_J;
-                return;
+                this->because = (std::get<3>(max12)*multiplier > threshold) ? UNSEG_TOO_FEW_ZERO : UNSEG_ONLY_J;
+                break;
               }
             }
+            PRINT_VAR(this->because);
           }
         }
 
@@ -678,10 +676,13 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
           max12 = std::make_tuple(set<KmerAffect>({max}), set<KmerAffect>({KmerAffect::getUnknown()}), 1, 1);
         }
 
-      pair <set<KmerAffect>, set<KmerAffect>> before_after =  kaa->sortLeftRight(max12);
+      if (! this->because) {
+        pair <set<KmerAffect>, set<KmerAffect>> before_after =  kaa->sortLeftRight(std::get<0>(max12),
+                                                                                   std::get<1>(max12));
 
-      before_set = before_after.first;
-      after_set = before_after.second;
+        before_set = before_after.first;
+        after_set = before_after.second;
+      }
 
     }
 
@@ -693,7 +694,6 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
       // Test on which strand we are
       if (nb_strand[0] == 0 && nb_strand[1] == 0) {
         this->because = UNSEG_TOO_FEW_ZERO ;
-        return ;
       } else if (nb_strand[0] < RATIO_STRAND * nb_strand[1] &&
                  nb_strand[1] < RATIO_STRAND * nb_strand[0]) {
         // Ambiguous information: we have positive and negative strands
