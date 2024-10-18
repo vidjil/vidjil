@@ -87,7 +87,16 @@ def jsontransformer(func):
 
 
 
-
+def getPreprocessRequiredFiles(pre_process):
+    """
+    Get the number of preprocess required files
+    """
+    if pre_process == None:
+        return 1
+    elif "&file2&" in pre_process.command:
+        return 2
+    else:
+        return 1
 
 
 def age_years_months(birth, months_below_year=4):
