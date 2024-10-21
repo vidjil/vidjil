@@ -1,0 +1,14 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH  --out-detected -uuu $VIDJIL_DATA/input.fastq; cat out/input.detected.vdj.fa out/input.undetected.vdj.fa
+
+$ Find the first sequence segmented
+1:@seq1 .* VJ .*          IGH SEG_+
+
+$ Find its quality
+1:[DI]{250}
+
+$ Find the sequence sequence unsegmented
+1:@seq2.*UNSEG
+0:@seq2.*IGH
+
+$ Find its quality
+1:[A-H]{250}

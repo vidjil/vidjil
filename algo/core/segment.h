@@ -212,6 +212,7 @@ class Segmenter {
 protected:
   string sequence;
   string sequence_or_rc;
+  string quality;
 
   // JUNCTIONstart/end and CDR3start/end are 1-based
   int JUNCTIONstart, JUNCTIONend;
@@ -346,6 +347,9 @@ protected:
 template <typename Affect>
 ostream &operator<<(ostream &out, const Segmenter<Affect> &s);
 
+std::ostream& fasta(std::ostream& os);
+
+std::ostream& fastq(std::ostream& os);
 
 
 template <typename Affect>
