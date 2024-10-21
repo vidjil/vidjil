@@ -961,7 +961,7 @@ QUnit.test("getPointHtmlInfo", function(assert) {
     assert.includes(html_info, "<tr id='modal_header_index_E_equitability' ><td class='header' colspan='5'>Pielou's evenness</td></tr>")
     assert.includes(html_info, "<tr id='modal_header_index_Ds_diversity' ><td class='header' colspan='5'>Simpson's diversity</td></tr>")
     // each present locus id visible
-    assert.includes(html_info, "<tr id='modal_line_index_Ds_diversity_all' ><td  id='modal_line_title_index_Ds_diversity_all'><span class=\"systemBoxMenu\" title=\"all\">x</span> locus</td><td  colspan='1' id='modal_line_value_index_Ds_diversity_all'>0.964</td></tr>")
-    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_TRG' ><td  id='modal_line_title_index_H_entropy_TRG'><span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> locus</td><td  colspan='1' id='modal_line_value_index_H_entropy_TRG'>5.251</td></tr>")
-    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_IGH' ><td  id='modal_line_title_index_H_entropy_IGH'><span class=\"systemBoxMenu\" title=\"IGH\" style=\"background: rgb(108, 113, 196);\">H</span> locus</td><td  colspan='1' id='modal_line_value_index_H_entropy_IGH'>4.666</td></tr>")
+    assert.includes(html_info, "<tr id='modal_line_index_Ds_diversity_all' ><td  id='modal_line_title_index_Ds_diversity_all'><span class=\"systemBoxMenu\" title=\"all\">x</span> all</td><td  colspan='1' id='modal_line_value_index_Ds_diversity_all'>0.964</td></tr>")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_TRG' ><td  id='modal_line_title_index_H_entropy_TRG'><span class=\"systemBoxMenu\" title=\"TRG\" style=\"background: rgb(220, 50, 47);\">G</span> TRG</td><td  colspan='1' id='modal_line_value_index_H_entropy_TRG'>5.251</td></tr>")
+    assert.includes(html_info, "<tr id='modal_line_index_H_entropy_IGH' ><td  id='modal_line_title_index_H_entropy_IGH'><span class=\"systemBoxMenu\" title=\"IGH\" style=\"background: rgb(108, 113, 196);\">H</span> IGH</td><td  colspan='1' id='modal_line_value_index_H_entropy_IGH'>4.666</td></tr>")
 });
