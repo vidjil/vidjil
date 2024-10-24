@@ -12,7 +12,7 @@ Or more manually
 
 ```bash
 ln -s docker-compose-dev.yml docker-compose.override.yml
-make build-client build-client
+make build-client build-server
 docker compose up -d
 ```
 
