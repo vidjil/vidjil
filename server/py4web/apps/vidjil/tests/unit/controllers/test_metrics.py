@@ -62,11 +62,18 @@ class TestMetricsController(unittest.TestCase):
         #Given
         db_manipulation_utils.log_in(self.session, 'metrics@vidjil.org', 'foobartest')
         
-        #When
         result = self.get_metrics("fast")
-        
-        #Then
         assert result['message'] == "status METRICS"
+
+        result = self.get_metrics("long")
+        assert result['message'] == "status METRICS"
+
+        result = self.get_metrics("all")
+        assert result['message'] == "status METRICS"
+
+        result = self.getMetricsByName("config_analysis")
+        assert result['message'] == "status METRICS"
+        return
         
     def test_metrics_patients(self):
         #Given
@@ -247,4 +254,7 @@ class TestMetricsController(unittest.TestCase):
         
         #Then 
         assert result["status_analysis"][0]["_extra"]['COUNT("scheduler_task"."id")'] == 1
+        assert result["status_analysis"][0]["scheduler_task"]['status'] == "COMPLETED"
+
         assert result["status_analysis"][1]["_extra"]['COUNT("scheduler_task"."id")'] == 2    
+        assert result["status_analysis"][1]["scheduler_task"]['status'] == "PENDING"

@@ -86,7 +86,7 @@ def getMetricByName(metric_name):
         elif metric_name == "results_count":
             return db(db.results_file).count()
         elif metric_name == "status_analysis":
-            return db(db.scheduler_task.status != "COMPLETED").select(db.scheduler_task.status, db.scheduler_task.id.count(), db.scheduler_task.task_name, groupby=db.scheduler_task.task_name|db.scheduler_task.status )
+            return db(db.scheduler_task.status).select(db.scheduler_task.status, db.scheduler_task.id.count(), db.scheduler_task.task_name, groupby=db.scheduler_task.task_name|db.scheduler_task.status )
  
         # Samples, analysis
         elif metric_name == "sequence_by_user":
