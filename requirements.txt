@@ -15,4 +15,3 @@ requests
 ijson
 beautifulsoup4
 tabulate
-pandas
