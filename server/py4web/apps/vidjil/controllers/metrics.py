@@ -51,8 +51,6 @@ def getMetricByName(metric_name):
         elif metric_name == "group_count":
             return len(db().select(db.auth_group.id.count(), groupby=db.auth_group.id ))
         
-        elif metric_name == "group_count_only_test":
-            return len(db(db.auth_group.role.like('test%')).select(db.auth_group.ALL, db.auth_group.id.count(), groupby=db.auth_group.id)) #pas fini
  
         elif metric_name == "login_count":
             return db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description ) # not fill for the moment
@@ -64,7 +62,7 @@ def getMetricByName(metric_name):
         elif metric_name == "set_runs_count":
             return db(db.run).count()
         
-        elif metric_name == "set_generic_count":
+        elif metric_name == "set_generics_count":
             return db(db.generic).count()
                 
         # Patients; runs; sets By USER
@@ -76,7 +74,7 @@ def getMetricByName(metric_name):
             return db((db.run.sample_set_id==db.sample_set.id) & (db.sample_set.sample_type=="run")
                         ).select(db.run.creator.with_alias("user_id"), db.run.id.count().with_alias("count"), groupby=db.run.creator )
         
-        elif metric_name == "set_generic_by_user":
+        elif metric_name == "set_generics_by_user":
             return db((db.generic.sample_set_id==db.sample_set.id) & (db.sample_set.sample_type=="generic")
                         ).select(db.generic.creator.with_alias("user_id"), db.generic.id.count().with_alias("count"), groupby=db.generic.creator )
  
@@ -106,7 +104,8 @@ def getMetricByName(metric_name):
         elif metric_name == "set_patients_by_group":
             return db((db.sample_set.sample_type=="patient") & 
                       (db.sample_set.creator==db.auth_membership.user_id)  & 
-                      (db.auth_membership.group_id==db.auth_group.id)
+                      (db.auth_membership.group_id==db.auth_group.id) &
+                      (db.auth_group.role != "public")
                     ).select(db.auth_group.id.with_alias("group_id"), 
                              db.auth_group.role.with_alias("group_name"), 
                              db.sample_set.id.count().with_alias("count"), 
@@ -116,17 +115,19 @@ def getMetricByName(metric_name):
         elif metric_name == "set_runs_by_group":
             return db((db.sample_set.sample_type=="run") & 
                       (db.sample_set.creator==db.auth_membership.user_id)  & 
-                      (db.auth_membership.group_id==db.auth_group.id)
+                      (db.auth_membership.group_id==db.auth_group.id) &
+                      (db.auth_group.role != "public")
                     ).select(db.auth_group.id.with_alias("group_id"), 
                              db.auth_group.role.with_alias("group_name"), 
                              db.sample_set.id.count().with_alias("count"), 
                              groupby=db.auth_group.id 
                             )
 
-        elif metric_name == "set_generic_by_group":
-            return db((db.sample_set.sample_type=="generc") & 
+        elif metric_name == "set_generics_by_group":
+            return db((db.sample_set.sample_type=="generic") & 
                       (db.sample_set.creator==db.auth_membership.user_id)  & 
-                      (db.auth_membership.group_id==db.auth_group.id)
+                      (db.auth_membership.group_id==db.auth_group.id) &
+                      (db.auth_group.role != "public")
                     ).select(db.auth_group.id.with_alias("group_id"), 
                              db.auth_group.role.with_alias("group_name"), 
                              db.sample_set.id.count().with_alias("count"), 
@@ -154,20 +155,44 @@ def getMetricByName(metric_name):
         elif metric_name == "config_analysis_by_users_patients":
             return db((db.config.id==db.results_file.config_id) & 
                         (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
-                        (db.sample_set_membership.sample_set_id==db.patient.sample_set_id)
-                        ).select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), groupby=(db.results_file.config_id))
+                        (db.sample_set_membership.sample_set_id==db.sample_set.id) &
+                        (db.sample_set.creator==db.auth_membership.user_id)  & 
+                        (db.sample_set.sample_type=="patient") 
+                        # (db.sample_set_membership.sample_set_id==db.patient.sample_set_id)
+                        ).select(db.config.name.with_alias("config_name"),
+                            db.auth_membership.user_id.with_alias("user_id"), 
+                            db.results_file.config_id.with_alias("config_id"), 
+                            db.results_file.id.count().with_alias("count"), 
+                            groupby=(db.results_file.config_id | db.auth_membership.user_id)
+                        )
 
         elif metric_name == "config_analysis_by_users_runs":
             return db((db.config.id==db.results_file.config_id) & 
                         (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
-                        (db.sample_set_membership.sample_set_id==db.run.sample_set_id)
-                        ).select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), groupby=(db.results_file.config_id))
+                        (db.sample_set_membership.sample_set_id==db.sample_set.id) &
+                        (db.sample_set.creator==db.auth_membership.user_id)  & 
+                        (db.sample_set.sample_type=="run") 
+                        # (db.sample_set_membership.sample_set_id==db.run.sample_set_id)
+                        ).select(db.config.name.with_alias("config_name"),
+                            db.auth_membership.user_id.with_alias("user_id"), 
+                            db.results_file.config_id.with_alias("config_id"), 
+                            db.results_file.id.count().with_alias("count"), 
+                            groupby=(db.results_file.config_id | db.auth_membership.user_id)
+                        )
 
         elif metric_name == "config_analysis_by_users_generic":
             return db((db.config.id==db.results_file.config_id) & 
                         (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
-                        (db.sample_set_membership.sample_set_id==db.generic.sample_set_id)
-                        ).select(db.config.name, db.config.program, db.results_file.config_id, db.results_file.id.count(), groupby=(db.results_file.config_id))
+                        (db.sample_set_membership.sample_set_id==db.sample_set.id) &
+                        (db.sample_set.creator==db.auth_membership.user_id)  & 
+                        (db.sample_set.sample_type=="generic") 
+                        # (db.sample_set_membership.sample_set_id==db.generic.sample_set_id)
+                        ).select(db.config.name.with_alias("config_name"),
+                            db.auth_membership.user_id.with_alias("user_id"), 
+                            db.results_file.config_id.with_alias("config_id"), 
+                            db.results_file.id.count().with_alias("count"), 
+                            groupby=(db.results_file.config_id | db.auth_membership.user_id)
+                        )
 
         else:
             raise Exception("Metric name asked don't exist: {metric_name}")
@@ -199,14 +224,14 @@ def getMetricsList(metrics_list, auth):
 #########################################################################
 ALL_METRICS = {
 	"group_count":                       {"fast": True,  "long": False},
-	"group_count_only_test":             {"fast": True,  "long": False},
+	# "group_count_only_test":             {"fast": True,  "long": False},
 	"login_count":                       {"fast": True,  "long": False},
 	"set_patients_count":                {"fast": True,  "long": False},
 	"set_runs_count":                    {"fast": True,  "long": False},
-	"set_generic_count":                 {"fast": True,  "long": False},
+	"set_generics_count":                {"fast": True,  "long": False},
 	"set_patients_by_user":              {"fast": True,  "long": False},
 	"set_runs_by_user":                  {"fast": True,  "long": False},
-	"set_generic_by_user":               {"fast": True,  "long": False},
+	"set_generics_by_user":              {"fast": True,  "long": False},
 	"sequence_count":                    {"fast": True,  "long": False},
 	"results_count":                     {"fast": True,  "long": False},
 	"status_analysis":                   {"fast": True,  "long": False},
@@ -218,7 +243,7 @@ ALL_METRICS = {
 	"config_analysis_by_users_generic":  {"fast": True,  "long": False},
 	"set_patients_by_group":             {"fast": False, "long": True},
 	"set_runs_by_group":                 {"fast": False, "long": True},
-	"set_generic_by_group":              {"fast": False, "long": True},
+	"set_generics_by_group":             {"fast": False, "long": True},
 	"config_analysis_by_groups":         {"fast": False, "long": True},
 }
 #########################################################################

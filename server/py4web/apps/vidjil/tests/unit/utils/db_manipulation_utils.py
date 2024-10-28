@@ -179,6 +179,14 @@ def add_group(group_name : str, user_id : int = -1) :
     group_id = db.auth_group.insert(id="", role=group_name, description="")
 
 
+def add_user_to_group(group_id : int, user_id : int) : 
+    db.auth_membership.insert(id="", group_id=group_id, user_id=user_id)
+
+def remove_user_from_group(group_id : int, user_id : int):
+    db((db.auth_membership.group_id==group_id) & (db.auth_membership.user_id==user_id)).delete()
+
+
+
 # Sequence file management
 
 
@@ -249,12 +257,65 @@ def add_config():
                                  classification=None)
     return config_id
 
-def add_run(patient_id : int = -1):
-    if patient_id == -1:
-        patient_id = db(db.patient).select().first().id
-    sample_set_id = db.patient[patient_id].sample_set_id
-    run_id = db.run.insert(id="", name="add_run_test", info= "",creator= 1, sample_set_id = sample_set_id)
-    return run_id 
+# def add_run(run_id : int = -1):
+    
+def add_run(run_number: int = -1, user_id: int = -1, auth=None):
+    """Add a run set to a user
+
+    Args:
+        run_number_id (int): run number (for unique naming purpose)
+        user_id (int, optional): user id - if -1, takes the first user. Defaults to -1.
+        auth (VidjilAuth, optional): auth to add rights, if None, do not set rights. Defaults to None.
+
+    Returns:
+        tuple[int, int]: corresponding patient id and sample set id
+    """
+    if user_id == -1:
+        user_id = db(db.auth_user).select().first().id
+
+    sample_set_id = db.sample_set.insert(creator=user_id, sample_type=defs.SET_TYPE_RUN)
+    run_id = db.run.insert(name=f"run_{run_number}", info=f"test run {run_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
+    if (auth != None):
+        user_group_id = auth.user_group(user_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, 'run', run_id)
+
+    return run_id, sample_set_id
+    
+def add_generic(generic_number: int = -1, user_id: int = -1, auth=None):
+    """Add a generic set to a user
+
+    Args:
+        generic_number_id (int): generic number (for unique naming purpose)
+        user_id (int, optional): user id - if -1, takes the first user. Defaults to -1.
+        auth (VidjilAuth, optional): auth to add rights, if None, do not set rights. Defaults to None.
+
+    Returns:
+        tuple[int, int]: corresponding patient id and sample set id
+    """
+    if user_id == -1:
+        user_id = db(db.auth_user).select().first().id
+
+    sample_set_id = db.sample_set.insert(creator=user_id, sample_type=defs.SET_TYPE_GENERIC)
+    generic_id = db.generic.insert(name=f"generic_{generic_number}", info=f"test generic {generic_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
+    if (auth != None):
+        user_group_id = auth.user_group(user_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, 'generic', generic_id)
+
+    return generic_id, sample_set_id
+
+
+# def add_generic(generic_id : int = -1):
+#     if generic_id == -1:
+#         generic_id = db(db.generic).select().first().id
+#     sample_set_id = db.generic[generic_id].sample_set_id
+#     new_generic_id = db.generic.insert(id="", name="add_generic_test", info= "",creator= 1, sample_set_id = sample_set_id)
+#     return new_generic_id 
 
 # Results file management
 
