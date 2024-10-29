@@ -146,9 +146,15 @@ class Patient(SampleSet):
         return [table.first_name, table.last_name, table.birth]
 
     def get_filtered_fields(self, search):
+        search_array = search.split()
         table = self.db[self.type]
-        return (table.first_name.contains(search) |
-                table.last_name.contains(search))
+        query = None
+        for subsearch in search_array:
+            if query == None:
+                query  = (table.birth.like(subsearch) | table.first_name.contains(subsearch) | table.last_name.contains(subsearch) )
+            else:
+                query &= (table.birth.like(subsearch) | table.first_name.contains(subsearch) | table.last_name.contains(subsearch) )
+        return query
 
     def get_name_filter_query(self, query):
         if query is None or query == '':
