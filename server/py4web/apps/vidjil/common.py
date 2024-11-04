@@ -3,14 +3,12 @@
 This file defines cache, session, and translator T object for the app
 These are fixtures that every app needs so probably you will not be editing this file
 """
-from ast import Try
 import os
 import sys
 import logging
 from . import defs
 from py4web import Session, Cache, Translator, Flash, DAL, Field, action
 from py4web.utils.mailer import Mailer
-from py4web.utils.auth import Auth
 from py4web.utils.downloader import downloader
 from pydal.tools.tags import Tags
 from py4web.utils.factories import ActionFactory
@@ -52,7 +50,7 @@ cors = CORS(origin='https://localhost:8000/vidjil', headers="Content-Type")
 
 
 # #######################################################
-# implement custom loggers form settings.LOGGERS
+# implement custom loggers from settings.LOGGERS
 # #######################################################
 logger = logging.getLogger("py4web:" + settings.APP_NAME)
 formatter = logging.Formatter(
@@ -132,29 +130,33 @@ logging.addLevelName(logging.ADMIN, 'ADMIN')
 
 class MsgUserAdapter(logging.LoggerAdapter):
 
-    def process(self, msg, kwargs):
+    def process(self, msg, kwargs):        
         if type(msg) is dict:
             if 'message' in msg:
                 msg = msg['message']
             else:
                 msg = '?'
         
-        ip = "N/A"
-        user_id = "N/A"
-        if request is not None:
-            ip = request.remote_addr
-            if ip:
-                for ip_prefix in ips:
-                    if ip.startswith(ip_prefix):
-                        ip = "%s/%s" % (ip, ips[ip_prefix])
+        ip = request.remote_addr
+        if ip:
+            for ip_prefix in ips:
+                if ip.startswith(ip_prefix):
+                    ip = "%s/%s" % (ip, ips[ip_prefix])
+        else:
+            ip = "N/A"
 
-            try:
-                user_id = (str(auth.user_id)) if auth.user else ''
-                user_id = user_id.replace(' ','-')
-                if auth.is_impersonating():
-                    user_id = 'team!' + user_id
-            except:
-                pass
+        try:
+            # Set level of default logger to ERROR to prevent messages from py4web
+            previous_level = logging.getLogger().getEffectiveLevel()
+            logging.getLogger().setLevel(logging.ERROR)
+            user_id = (str(auth.user_id)) if auth.user else "N/A"
+            logging.getLogger().setLevel(previous_level)
+            user_id = user_id.replace(' ','-')
+            if auth.is_impersonating():
+                user_id = 'team!' + user_id
+        except Exception:
+            # Ignore exception, this may occur when logging from worker or client
+            pass
         
         new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % user_id), msg)
         return new_msg, kwargs
@@ -190,13 +192,11 @@ def _init_log():
     adapted from http://article.gmane.org/gmane.comp.python.web2py/11091
     """
 
-    import logging
-    import sys
-
     def create_handler(filename, level):
         try:
             handler = logging.FileHandler(filename)
-        except:
+        except Exception as exception:
+            print(f"Error when trying to create logger to {filename}: {exception=}")
             handler = logging.StreamHandler(sys.stderr)
         else:
             handler.setLevel(level)
@@ -211,8 +211,6 @@ def _init_log():
         logger.addHandler(create_handler(defs.LOG_DEBUG, logging.DEBUG))
         logger.addHandler(create_handler(defs.LOG_INFO, logging.INFO))
         logger.addHandler(UserLogHandler())
-
-        logger.debug("Creating logger")
     return MsgUserAdapter(logger, {})
 
 log = _init_log()

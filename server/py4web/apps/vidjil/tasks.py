@@ -85,24 +85,24 @@ def schedule_fuse(sample_set_ids, config_ids):
                     clean_before = False)
 
 def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=False, clean_after=False):
-    print("run_vidjil start")
+    log.info("run_vidjil start")
 
     sequence_file = db.sequence_file[id_file]
     log.debug(f"{sequence_file=}")
 
     if sequence_file is None:
-        print("Sequence file not found in DB (delay of upload/processing ?)")
+        log.info("Sequence file not found in DB (delay of upload/processing ?)")
         update_task(task_id, STATUS_FAILED)
         raise ValueError('Process has failed, no entry in DB for this sequence file')
 
     if sequence_file.pre_process_flag == STATUS_FAILED :
-        print("Pre-process has failed")
+        log.info("Pre-process has failed")
         update_task(task_id, STATUS_FAILED)
         raise ValueError('pre-process has failed')
     
     ## re schedule if pre_process is still pending
     if sequence_file.pre_process_flag and sequence_file.pre_process_flag != STATUS_COMPLETED:
-        print("Pre-process is still pending, re-schedule")
+        log.info("Pre-process is still pending, re-schedule")
         args = [id_file, id_config, id_data, grep_reads]
         run_process.apply_async((task_id, "vidjil", args), countdown=60)
         update_task(task_id, STATUS_WAITING)
@@ -144,9 +144,9 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
 
         try:
             ## execute vidjil command
-            print("=== Launching Vidjil ===")
-            print(cmd)    
-            print("========================")
+            log.info("=== Launching Vidjil ===")
+            log.info(cmd)    
+            log.info("========================")
             sys.stdout.flush()
 
             with open(out_log, 'w') as vidjil_log_file:
@@ -154,14 +154,14 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
                 p.communicate()
                 sys.stdout.flush()
                 
-            print("Vidjil done, output logs in " + out_log)
+            log.info("Vidjil done, output logs in " + out_log)
 
             ## Get result file
             if grep_reads:
                 out_results = out_folder + '/seq/clone.fa-1'
             else:
                 out_results = out_folder + '/' + output_filename + '.vidjil'
-            print("===>", out_results)
+            log.info(f"===> {out_results}")
             results_filepath = os.path.abspath(out_results)
             if not os.path.exists(results_filepath):
                 raise IOError(filename=results_filepath)
@@ -182,14 +182,14 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
             for line in log_file:
                 match = SEGMENTED_REGEX.search(line)
                 if match:
-                    print(line, end=' ')
+                    log.info(line, end=' ')
                     segs = int(match.group(1))
                     ratio = match.group(2)
                     info = "%d segmented (%s%%)" % (segs, ratio)
                     continue
                 match = WINDOWS_REGEX.search(line)
                 if match:
-                    print(line, end=' ')
+                    log.info(line, end=' ')
                     wins = int(match.group(1))
                     reads = int(match.group(2))
                     info = "%d reads, " % reads + info + ", %d windows" % wins
@@ -216,7 +216,6 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
         update_task(task_id, STATUS_COMPLETED)
     except:
         error_message = f"Error in run_vidjil : {traceback.format_exc()}\n\nSetting status to Failed."
-        print(error_message)
         log.error(error_message)
         update_task(task_id, STATUS_FAILED)
         raise
@@ -244,28 +243,28 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
     try:
         igrec = defs.DIR_IGREC + '/igrec.py'
         if not os.path.isfile(igrec):
-            print("!!! IgReC binary file not found")
+            log.error("!!! IgReC binary file not found")
         cmd = "%s -s %s -o %s/out %s" % (igrec, seq_file, out_folder, arg_cmd)
 
         ## execute la commande IgReC
-        print("=== Launching IgReC ===")
-        print(cmd)
-        print("========================")
+        log.info("=== Launching IgReC ===")
+        log.info(cmd)
+        log.info("========================")
         sys.stdout.flush()
 
         with open(out_log, 'w') as log_file:
             p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=STDOUT, close_fds=True)
             p.wait()
-        print("Output log in " + out_log)
+        log.info("Output log in " + out_log)
         sys.stdout.flush()
 
         ## Get result file
-        print("===>", out_results)
+        log.info("===>", out_results)
         results_filepath = os.path.abspath(out_results)
         if not os.path.exists(results_filepath):
             raise IOError(filename=results_filepath)
     except:
-        print("!!! IgReC failed, no result file")
+        log.error("!!! IgReC failed, no result file")
         res = {"message": "[%s] c%s: IgReC FAILED - %s" % (id_data, id_config, out_folder)}
         log.error(res)
         raise
@@ -331,8 +330,8 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     try:
         args_1, args_2, args_3 = arg_cmds
     except:
-        print(arg_cmd)
-        print("! Bad arguments, we expect args_align | args_assemble | args_exportClones")
+        log.error(arg_cmd)
+        log.error("! Bad arguments, we expect args_align | args_assemble | args_exportClones")
         
     mixcr = defs.DIR_MIXCR + 'mixcr'
     cmd = mixcr + ' align --save-reads -t 1 -r ' + align_report + ' ' + args_1 + ' ' + seq_file  + ' ' + out_alignments
@@ -344,24 +343,24 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
 
     try:
         ## execute la commande MiXCR
-        print("=== Launching MiXCR ===")
-        print(cmd)
-        print("========================")
+        log.info("=== Launching MiXCR ===")
+        log.info(cmd)
+        log.info("========================")
         sys.stdout.flush()
 
         with open(out_log, 'w') as log_file:
             p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=STDOUT, close_fds=True)
             p.wait()
-        print("Output log in " + out_log)
+        log.info("Output log in " + out_log)
         sys.stdout.flush()
 
         ## Get result file
-        print("===>", out_results)
+        log.info("===>", out_results)
         results_filepath = os.path.abspath(out_results)
         if not os.path.exists(results_filepath):
             raise IOError(filename=results_filepath)
     except:
-        print("!!! MiXCR failed, no result file")
+        log.error("!!! MiXCR failed, no result file")
         res = {"message": "[%s] c%s: MiXCR FAILED - %s" % (id_data, id_config, out_folder)}
         log.error(res)
         raise
@@ -418,7 +417,7 @@ def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fals
         ## récupération du fichier 
         results_filepath = os.path.abspath(defs.DIR_SEQUENCES+row[0].data_file)
         if not os.path.exists(results_filepath):
-            print("!!! 'copy' failed, no file")
+            log.error("!!! 'copy' failed, no file")
             res = {"message": "[%s] c%s: 'copy' FAILED - %s - %s" % (id_data, id_config, out_folder)}
             log.error(res)
             update_task(task_id, STATUS_FAILED)
@@ -445,7 +444,6 @@ def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fals
         return "SUCCESS"
     except:
         error_message = f"Error in run_copy : {traceback.format_exc()}\n\nSetting status to Failed."
-        print(error_message)
         log.error(error_message)
         update_task(task_id, STATUS_FAILED)
         raise
@@ -500,7 +498,7 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
                 sequence_file_list += str(row.results_file.sequence_file_id) + "_"
                 
         if files == "":
-            print("!!! Fuse failed: no files to fuse")
+            log.error("!!! Fuse failed: no files to fuse")
             res = {"message": "[%s] c%s: 'fuse' FAILED - %s no files to fuse" % (id_data, id_config, output_file)}
             log.error(res)
             return STATUS_FAILED
@@ -509,16 +507,16 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
         cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
 
         try:
-            print("=== fuse.py ===")
-            print(cmd)
-            print("===============")
+            log.info("=== fuse.py ===")
+            log.info(cmd)
+            log.info("===============")
             sys.stdout.flush()
 
             fuse_log_file_path = out_folder+'/'+output_filename+'.fuse.log'
             with open(fuse_log_file_path, 'w') as fuse_log_file:
                 p = Popen(cmd, shell=True, stdin=PIPE, stdout=fuse_log_file, stderr=STDOUT, close_fds=True)
                 p.communicate()
-                print(f"Output log in {fuse_log_file_path}")
+                log.info(f"Output log in {fuse_log_file_path}")
 
             fuse_filepath = os.path.abspath(output_file)
             if not os.path.exists(fuse_filepath):
@@ -851,7 +849,7 @@ def compute_extra(id_file, id_config, min_threshold):
                 data["clones"] = []
             
         except ValueError as exception:
-            print(f"invalid_json: {exception}")
+            log.error(f"invalid_json: {exception}")
             return "FAIL"
     
     data['reads']['distribution'] = result
@@ -862,7 +860,7 @@ def compute_extra(id_file, id_config, min_threshold):
 def run_fuse_for_sequence_file(sequence_file_id : int, config_id: int, data_id: int) -> None:
     for row in db(db.sample_set_membership.sequence_file_id==sequence_file_id).select() :
         sample_set_id = row.sample_set_id
-        print(f"Run fuse for sample {sample_set_id}")
+        log.info(f"Run fuse for sample {sample_set_id}")
         run_fuse.delay(sequence_file_id, config_id, data_id, sample_set_id, clean_before = False)
 
 def set_tasks_status_for_sequence_file(sequence_file_id: int, status: str):
