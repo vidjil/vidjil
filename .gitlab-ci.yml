@@ -242,15 +242,16 @@ code_quality_custom:
 # Server
 
 test_server_unit:
-    image: python:3.8-slim
+    image: python:3.12-slim
     stage: test_unit
     <<: *before_script_global_docker
     script:
-      - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends gcc libldap2-dev libssl-dev libsasl2-dev python3-ijson libyajl2 python3-cffi wget unzip procps libffi-dev
+      - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends build-essential gcc wget unzip procps
       - python3 -m pip install -U pip
       - python3 -m pip install --no-cache -r requirements.txt
       - python3 -m pip install --no-cache -r requirements_tests.txt
       - python3 -m pip freeze > pip_freeze_requirements.txt
+      - uptime
       - mkdir -p /mnt/upload/uploads/
       - wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 vidjil-algo && chmod +x vidjil-algo
       - make unit_server
@@ -279,7 +280,6 @@ test_server_unit:
 .setup_docker_server:
     # Build specific version of docker images
     - echo "CI_COMMIT_REF_NAME - $CI_COMMIT_REF_NAME"
-    ### Use released py4web server image as base
     - echo "TIME $(date) - before pulling docker images" >> time.log
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT
@@ -294,7 +294,6 @@ test_server_unit:
     # Use http version of config
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
     - make germline && cp browser/js/germline.js docker/vidjil-client/conf
-    - mkdir -p docker/postfix/ssl
     - sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" docker/vidjil-server/conf/defs.py
     # Up py4web
     - cd docker
@@ -479,14 +478,13 @@ build_test_server_docker:
   script:
     - echo $CI_REGISTRY_IMAGE:$IMAGE_NAME
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - cp requirements.txt docker/vidjil-server/
     # build and push the image to be used in subsequent stages
     - 'docker build 
         --no-cache
-        --build-arg git_branch=$CI_COMMIT_REF_NAME 
         --build-arg build_env=TEST 
         -t ${CI_REGISTRY_IMAGE}/$IMAGE_NAME
-        docker/vidjil-$TYPE'
+        -f docker/vidjil-$TYPE/Dockerfile
+        ./'
     # Push image as commit and branch name to allow to use cache if another commit come to this branch
     - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
   parallel:
@@ -517,8 +515,7 @@ deploy_docker:
     - export SHA=`echo $CI_COMMIT_SHA | awk '{ print substr($0, 0, 8) }'`
     - export TAG="vidjil/$TYPE:$CUR_DATE-$SHA"
     - docker login -u "$CI_DOCKER_USER" -p "$CI_DOCKER_PASSWORD" $CI_DOCKER
-    - cp requirements.txt docker/vidjil-$TYPE/
-    - docker build --no-cache --build-arg git_branch=$CI_COMMIT_REF_NAME --build-arg build_env=PRODUCTION -t $TAG docker/vidjil-$TYPE
+    - docker build --no-cache --build-arg build_env=PRODUCTION -t $TAG -f docker/vidjil-$TYPE/Dockerfile ./
     - docker push $TAG
     - docker tag $TAG "vidjil/$TYPE:latest"
     - docker push "vidjil/$TYPE:latest"

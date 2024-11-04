@@ -1,54 +1,42 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
-LABEL version="1.1"
-LABEL description="An Ubuntu based docker image which comes \
+LABEL version="1.2"
+LABEL description="An Ubuntu 24 based docker image which comes \
 with a full installation of the Vidjil algorithm and browser/server."
-
 
 # This file need to be in the directory used to launch the docker image build
 # If you build it manually, copy this file here from vidjil root directory 
 COPY ./requirements.txt ./requirements.txt
 
-#INSTALL REQUIREMENTS
-RUN apt-get update ; apt-get install --no-install-recommends --no-install-suggests -y ca-certificates wget cron unzip make git python python3.8 python3-pip python3-dev python3-gdbm python3-setuptools uwsgi-src uuid-dev libcap-dev libpcre3-dev gcc memcached htop nano libffi-dev gosu && \
-    service memcached restart && \
-	pip3 install --upgrade pip && \
-	pip3 install -r ./requirements.txt
+# Install requirements and clean-up
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y wget make gosu python-is-python3 python3-pip python3-dev gcc && \ 
+    pip install -r ./requirements.txt --break-system-packages --no-cache-dir && \
+    apt-get remove -y gcc && apt-get autoremove -y && apt-get autoclean -y && rm -rf /var/lib/apt/lists/*
+# Prepare install directories and prompt
+RUN mkdir -p /usr/share/vidjil /etc/uwsgi/sites /var/vidjil && chown www-data:www-data -R /usr/share/vidjil /etc/uwsgi/sites /var/vidjil && \
+    echo 'if [ "$ENV" = "production" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc; echo 'export PS1="🐳 $prompt_color$SERVICE_NAME \e[32m[ \w ]# \e[0m"' >> ~/.bashrc
 
-# SET PYTHON3 AS DEFAULT PYTHON
-RUN rm -Rf /usr/bin/python
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# Switch to www-data user
+USER www-data:www-data
 
-# COPY LATEST VIDJIL REPOSITORY
-ARG git_branch=dev
-ARG remote_repo=https://gitlab.inria.fr/vidjil/vidjil.git
-RUN cd /usr/share/ && git config --global http.sslVerify false && git clone -b $git_branch $remote_repo
+# Copy vidjil data
+COPY --chown=www-data:www-data server/py4web/apps/ /usr/share/vidjil/server/py4web/apps/
+COPY --chown=www-data:www-data tools/ /usr/share/vidjil/tools/
+COPY --chown=www-data:www-data germline/ /usr/share/vidjil/germline/
+COPY --chown=www-data:www-data demo/ /usr/share/vidjil/demo/
+COPY --chown=www-data:www-data docker/vidjil-server/conf/uwsgi.ini /etc/uwsgi/sites/uwsgi.ini
+COPY --chown=www-data:www-data docker/vidjil-server/scripts/* /entrypoints/
+RUN rm -Rf /usr/share/vidjil/server/py4web/apps/vidjil/databases && mkdir /usr/share/vidjil/server/py4web/apps/vidjil/databases && touch /usr/share/vidjil/server/py4web/apps/vidjil/databases/sql.log && \
+    touch /var/vidjil/vidjil.log && touch /var/vidjil/vidjil-debug.log
 
-# SETUP PY4WEB
-RUN cd /usr/share/vidjil/server/py4web && make install
+# Setup py4web
 RUN cd /usr/share/vidjil/server/py4web && py4web setup -Y apps && rm -Rf apps/_default apps/_minimal apps/_scaffold apps/_documentation apps/showcase 
 
-# INSTALL UWSGI
-RUN mkdir /usr/lib/uwsgi
-RUN mkdir /usr/lib/uwsgi/plugins
-RUN PYTHON=python3.8 uwsgi --build-plugin "/usr/src/uwsgi/plugins/python python38"
-RUN mv python38_plugin.so /usr/lib/uwsgi/plugins/python38_plugin.so
-RUN chmod 644 /usr/lib/uwsgi/plugins/python38_plugin.so
-RUN mkdir -p /etc/uwsgi/sites
-COPY ./conf/uwsgi.ini /etc/uwsgi/sites/uwsgi.ini
+# Install latest vidjil algo and build stuffs
+RUN cd /usr/share/vidjil && wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 vidjil-algo && chmod +x vidjil-algo
+RUN cd /usr/share/vidjil/germline/ && make && \
+    cd /usr/share/vidjil/demo/ && make
 
-# INSTALL LATEST VIDJIL ALGO
-RUN wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 /usr/share/vidjil/vidjil-algo && cd /usr/share/vidjil/ && chmod +x vidjil-algo
-RUN cd /usr/share/vidjil/germline/ && make
-
-COPY ./scripts/* /entrypoints/
-RUN mkdir /usr/share/vidjil/server/py4web/apps/vidjil/databases && touch /usr/share/vidjil/server/py4web/apps/vidjil/databases/sql.log
-RUN mkdir /var/vidjil
-RUN touch /var/vidjil/vidjil.log && touch /var/vidjil/vidjil-debug.log
-RUN chown -R www-data:www-data /usr/share/vidjil
-RUN chown -R www-data:www-data /usr/share/vidjil/server/py4web/apps/vidjil/databases
-RUN chmod 644 -R /usr/share/vidjil/server/py4web/apps/vidjil/databases
-
-RUN useradd -ms /bin/bash vidjil && usermod -aG sudo vidjil
-
-RUN echo 'if [ "$ENV" = "production" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc; echo 'export PS1="🐳 $prompt_color$SERVICE_NAME \e[32m[ \w ]# \e[0m"' >> ~/.bashrc
+# Switch back to root to perform operations in entrypoints
+USER root:root

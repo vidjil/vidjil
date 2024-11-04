@@ -6,7 +6,7 @@ services:
             - "43060:33060"
 
     uwsgi:
-        image: vidjil/server:py4web
+        image: vidjil/server:dev
         command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes:
             # Local volume path
@@ -26,16 +26,17 @@ services:
             - ../tools:/usr/share/vidjil/tools
 
     nginx:
+        image: vidjil/client:dev
         volumes:
             - ../browser:/usr/share/vidjil/browser
             - ./:/usr/share/vidjil/docker
             - ./vidjil-client/conf/conf.js:/usr/share/vidjil/browser/js/conf.js
 
     fuse:
-        image: vidjil/server:py4web
+        image: vidjil/server:dev
 
     workers:
-        image: vidjil/server:py4web
+        image: vidjil/server:dev
 
     flower:
-        image: vidjil/server:py4web
+        image: vidjil/server:dev

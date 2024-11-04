@@ -1,7 +1,7 @@
 setuptools
 setuptools-rust
 wheel
-renoir==1.5.2 
+renoir
 markdown 
 flower
 uwsgi
@@ -11,9 +11,7 @@ celery
 celery[redis]
 
 
-requests==2.20.0
-ijson==2.3
+requests
+ijson
 beautifulsoup4
-pandas
-tabulate==0.8.10
-
+tabulate

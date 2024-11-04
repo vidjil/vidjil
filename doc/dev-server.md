@@ -367,19 +367,15 @@ In will then be automatically apply at launch.
 ## Building images for DockerHub
 
 Make sure your Dockerfile is up to date with any changes you may want to
-make to the containers. The Dockerfile accepts some build arguments:
+make in the containers. The Dockerfile accepts some build arguments:
 
 - build-env: TEST or PRODUCTION. If unspecified, PRODUCTION is assumed.
   The main difference is that TEST will build the image with an HTTP
   configuration whereas PRODUCTION uses HTTPS.
-- git<sub>repo</sub> : The repository to build the image from. By default, our main
-  repository is assumed.
-- git<sub>branch</sub> : The git branch to clone from the repository. By default:
-  dev.
 
 ``` bash
-docker build --build-arg build_env=PRODUCTION --build-arg git_branch=<my_feature_branch> docker/vidjil-client -t vidjil/client:<version>
-docker build --build-arg build_env=PRODUCTION --build-arg git_branch=<my_feature_branch> docker/vidjil-server -t vidjil/server:<version>
+docker build --build-arg build_env=PRODUCTION -t vidjil/client:<version> -f docker/vidjil-client/Dockerfile ../
+docker build --build-arg build_env=PRODUCTION -t vidjil/server:<version> -f docker/vidjil-server/Dockerfile ../
 ```
 
 Tag the image you have just built:

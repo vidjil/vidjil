@@ -1,20 +1,10 @@
-# -*- coding: utf-8 -*-
 import datetime
-import types
 
-from .. import defs
+from py4web import action, request
+from ..common import db, auth
 from ..modules.tag import parse_search, TagDecorator, get_tag_prefix
 from ..modules import vidjil_utils
 from ..user_groups import get_involved_groups
-from datetime import timedelta 
-from io import StringIO
-import json
-import time
-import os
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
-
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
 
 
 ###########################
@@ -119,17 +109,13 @@ def get_most_used_tags(group_list):
 @action.uses("my_account/index.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def index():
-    start = time.time()
-
-    since = datetime.date.today() - timedelta(days=30)
+    since = datetime.date.today() - datetime.timedelta(days=30)
 
     if auth.is_admin() and 'data' in request.query:
         import json
         group_list = json.loads(request.query['data'])['group_ids']
     else:
         group_list = [int(g.id) for g in auth.get_user_groups() + auth.get_user_group_parents()]
-
-    log.debug("group_list: %s" % group_list)
 
     if "filter" not in request.query :
         request.query["filter"] = ""
@@ -232,7 +218,6 @@ def index():
 
     keys = sorted(result.keys(), key=lambda x: (result[x]['patient']['count']['num_sets'] + result[x]['run']['count']['num_sets'] + result[x]['set']['count']['num_sets']), reverse=True)
 
-    log.debug("my account list (%.3fs)" % (time.time()-start))
     return dict(keys = keys,
                 result=result,
                 group_ids = group_list,
@@ -244,7 +229,7 @@ def index():
 @action.uses("my_account/jobs.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def jobs():
-    since = datetime.date.today() - timedelta(days=30)
+    since = datetime.date.today() - datetime.timedelta(days=30)
 
     if auth.is_admin() and 'group_ids' in request.query and request.query['group_ids'] is not None:
         group_list = request.query['group_ids']
@@ -252,8 +237,6 @@ def jobs():
             group_list = [group_list]
     else:
         group_list = [int(g.id) for g in auth.get_user_groups() + auth.get_user_group_parents()]
-
-    log.debug("group_list: %s" % group_list)
 
     if "filter" not in request.query :
         request.query["filter"] = ""
@@ -303,9 +286,7 @@ def jobs():
     for key in queries:
         result += queries[key]
 
-    sorted_start = time.time()
     result = sorted(result, key=lambda x: x.time, reverse=True)
-    log.debug("jobs list sort (%.3fs)" % (time.time() - sorted_start))
 
     return dict(result=result,
                 group_ids = group_list,
