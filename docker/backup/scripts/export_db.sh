@@ -1,6 +1,6 @@
 #!/bin/sh
 
-apk update && apk add mysql-client
+apk update && apk add mysql-client mariadb-connector-c
 
 rm -rf /mnt/volumes/sql/*
 echo "[mysqldump]" > additional_conf.cnf
