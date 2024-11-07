@@ -101,7 +101,7 @@ def validate(myfile, id , pre_process):
         if myfile['filename'] == "" :
             error.append("missing filename")
     
-    if "sampling date" in myfile and myfile['sampling_date'] != '' :
+    if "sampling_date" in myfile and myfile['sampling_date'] != '' :
         try:
             datetime.datetime.strptime(""+myfile['sampling_date'], '%Y-%m-%d')
         except ValueError:
