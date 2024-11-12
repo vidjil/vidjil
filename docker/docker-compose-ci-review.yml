@@ -31,6 +31,8 @@ services:
         ports: !reset []
         networks: !reset null
         network_mode: bridge
+        links:
+            - uwsgi:uwsgi
         environment:
             - VIRTUAL_HOST=$VIRTUAL_HOST_NAME.server.ci.vidjil.org
 

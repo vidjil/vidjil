@@ -364,7 +364,8 @@ deploy_review:
   stage: deploy_review
   script:
     - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
-    - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_COMMIT_REF_SLUG
+    - make browser
+    - rsync -av --delete browser doc/analysis-example.vidjil $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_COMMIT_REF_SLUG
   dependencies: []
   environment:
     name: review-$CI_BUILD_REF_NAME
@@ -382,6 +383,7 @@ deploy_review:
 deploy_review_server:
   stage: deploy_review
   script:
+    - make browser demo
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - sed -i -r "s/localhost/${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
     - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
@@ -395,7 +397,18 @@ deploy_review_server:
     - echo "VIRTUAL_HOST_NAME=${CI_COMMIT_REF_SLUG}" >> .env
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG} || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
-    - ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER/${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG} && bash ci/deploy_review_server.sh"
+    - 'ssh $REVIEW_SERVER "
+        cd $REVIEW_SERVER_PATH_SERVER;
+        cd ${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; 
+        echo "TIME - before pulling docker images - $(date)";
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY;
+        docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT;
+        docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER;
+        docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test;
+        docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test;
+        echo "TIME - after pulling docker images - $(date)";
+        bash ci/start_review_server.sh;
+      "'
   environment:
     name: review_server-$CI_COMMIT_REF_SLUG
     url: http://$CI_COMMIT_REF_SLUG.server.ci.vidjil.org/
@@ -549,7 +562,7 @@ stop_deploy_review_server:
         cd $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG};
         docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml down -v; 
         cd ; 
-        sudo ./scripts/remove_server_folder.sh ${CI_COMMIT_REF_SLUG};:
+        sudo ./scripts/remove_server_folder.sh ${CI_COMMIT_REF_SLUG};
         docker system prune -af --filter until=20m;
         "'
   when: manual
