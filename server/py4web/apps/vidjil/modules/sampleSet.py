@@ -32,7 +32,7 @@ class SampleSet(object):
         return data['name']
 
     def get_display_name(self, data):
-        return SPAN(self.get_name(data), _class="set_token generic_token")
+        return SPAN(self.get_name(data), _title=self.get_name(data), _class="set_token generic_token")
 
     def get_info(self, data):
         return data['info']
