@@ -34,8 +34,8 @@ RUN apk update && \
 # Prepare install directories and prompt
 ARG build_env='PRODUCTION'
 ENV BUILD_ENV=$build_env
-RUN mkdir -p /usr/share/vidjil /opt/install_scripts /etc/vidjil /etc/nginx/conf.d/web2py && \
-	chown nginx:nginx /usr/share/vidjil /opt/install_scripts /etc/vidjil /etc/nginx/conf.d/web2py/ && \
+RUN mkdir -p /usr/share/vidjil /opt/install_scripts /etc/vidjil /etc/nginx/conf.d/vidjil && \
+	chown nginx:nginx /usr/share/vidjil /opt/install_scripts /etc/vidjil /etc/nginx/conf.d/vidjil && \
 	ln -s /usr/share/vidjil /vidjil && \
 	rm /etc/nginx/conf.d/default.conf && chown nginx:nginx /etc/nginx/conf.d/ && \
 	echo 'if [ "$ENV" = "production" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc && \
@@ -54,11 +54,7 @@ COPY --chown=nginx:nginx docker/vidjil-client/scripts/nginx-entrypoint.sh /entry
 COPY --chown=nginx:nginx docker/vidjil-client/scripts/install.sh /opt/install_scripts/install.sh
 
 # Prepare
-RUN bash /opt/install_scripts/install.sh && \
-	ln -s /etc/vidjil/nginx_gzip_static.conf /etc/nginx/conf.d/web2py/gzip_static.conf && \
-	ln -s /etc/vidjil/nginx_gzip.conf /etc/nginx/conf.d/web2py/gzip.conf && \
-	ln -s /etc/vidjil/uwsgi.conf /etc/nginx/conf.d/web2py/uwsgi.conf && \
-	ln -s browser b
+RUN bash /opt/install_scripts/install.sh
 
 # Switch back to root to perform operations in entrypoints
 USER root:root

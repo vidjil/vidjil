@@ -41,14 +41,14 @@ PIPPATH=`which pip`
 $PIPPATH install --upgrade uwsgi
 
 # Create common nginx sections
-mkdir /etc/nginx/conf.d/web2py
+mkdir /etc/nginx/conf.d/vidjil
 echo '
 gzip_static on;
 gzip_http_version   1.1;
 gzip_proxied        expired no-cache no-store private auth;
 gzip_disable        "MSIE [1-6]\.";
 gzip_vary           on;
-' > /etc/nginx/conf.d/web2py/gzip_static.conf
+' > /etc/nginx/conf.d/vidjil/gzip_static.conf
 
 echo '
 gzip on;
@@ -59,7 +59,7 @@ gzip_comp_level 6;
 gzip_buffers 16 8k;
 gzip_http_version 1.1;
 gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
-' > /etc/nginx/conf.d/web2py/gzip.conf
+' > /etc/nginx/conf.d/vidjil/gzip.conf
 
 echo '
 #uwsgi_pass      127.0.0.1:9001;
@@ -68,9 +68,9 @@ include         uwsgi_params;
 uwsgi_param     UWSGI_SCHEME \$scheme;
 uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
 ###remove the comments to turn on if you want gzip compression of your pages
-# include /etc/nginx/conf.d/web2py/gzip.conf;
+# include /etc/nginx/conf.d/vidjil/gzip.conf;
 ### end gzip section
-' > /etc/nginx/conf.d/web2py/uwsgi.conf
+' > /etc/nginx/conf.d/vidjil/uwsgi.conf
 
 # Create configuration file /etc/nginx/sites-available/web2py
 echo "server {
