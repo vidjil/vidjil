@@ -23,13 +23,19 @@ set_rights:
 build-server:
 	docker build --progress=plain -t vidjil/server:dev -f ./vidjil-server/Dockerfile ../
 
+build-server-alpine:
+	docker build --progress=plain -t vidjil/server:dev -f ./vidjil-server/Dockerfile-alpine ../
+
 build-client:
 	docker build --progress=plain -t vidjil/client:dev -f ./vidjil-client/Dockerfile ../
 
+build-cypress:
+	docker build --progress=plain -t vidjil/cypress:dev ./ci
+
 reset_database:
 	# Make a call to truncate db and refill with example/testing data
-	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts" vidjil-uwsgi python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql
-	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" vidjil-uwsgi python3 init_test_db.py
+	docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql"
+	docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 server/py4web/apps/vidjil/tests/functional/init_test_db.py"
 
 clean_deploy:
 	# Erase old container data and startt a fresh deploy; fix rights on volumes

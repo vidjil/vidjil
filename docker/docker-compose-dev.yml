@@ -31,6 +31,7 @@ services:
             - ../browser:/usr/share/vidjil/browser
             - ./:/usr/share/vidjil/docker
             - ./vidjil-client/conf/conf.js:/usr/share/vidjil/browser/js/conf.js
+            - ../germline:/usr/share/vidjil/germline
 
     fuse:
         image: vidjil/server:dev

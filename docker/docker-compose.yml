@@ -112,7 +112,6 @@ services:
             - $VOLUME_PATH/certs:/etc/letsencrypt/well-known
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
-            - ../germline:/usr/share/vidjil/germline
         networks:
             - vidjil
 

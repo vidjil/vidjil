@@ -1,0 +1,11 @@
+*.pyc
+browser/test
+tools/tests
+tools/*.cgi
+server/py4web/apps/.service
+server/py4web/apps/password.txt
+server/py4web/apps/vidjil/databases
+server/py4web/apps/vidjil/tests
+!server/py4web/apps/vidjil/tests/functional
+server/tests
+**/__pycache__

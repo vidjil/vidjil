@@ -1,17 +1,12 @@
 #!/bin/bash
 echo -e "\n\e[34m===========================\e[0m"
 echo -e "\e[34m=== Start service uwsgi ===\e[0m"
-echo -e "\e[34m=== `date +'%Y/%m/%d %H:%M:%S'` ===\e[0m"
-echo -e "\e[34m===========================\e[0m\n"
+echo -e "\e[34m=== `date +'%Y/%m/%d %H:%M:%S'` ===\e[0m\n"
 
 mkdir -p /mnt/backup/ /mnt/data/ /mnt/result/ /mnt/upload/
 
 user=33
 echo "user : `id -nu $user` (id $user)"
-
-echo "==== Setup password"
-cd /usr/share/vidjil/server/py4web/apps/
-gosu $user py4web set_password --password "$PY4WEB_ADMIN_PASSWORD"
 
 echo "==== Change owner of vidjil directories: $user"
 echo "     .../database"
@@ -40,5 +35,8 @@ if [[ -v UWSGI_POOL ]]; then
     sed -i "s/processes = 6/processes = $UWSGI_POOL/g" /etc/uwsgi/sites/uwsgi.ini
 fi
 
-echo
-gosu $user uwsgi /etc/uwsgi/sites/uwsgi.ini
+echo "==== Setup py4web password"
+gosu $user bash -c 'source /usr/share/vidjil/venv/bin/activate && cd /usr/share/vidjil/server/py4web/apps/ && py4web set_password --password "$PY4WEB_ADMIN_PASSWORD"'
+
+echo "==== Start uwsgi"
+gosu $user bash -c 'source /usr/share/vidjil/venv/bin/activate && uwsgi /etc/uwsgi/sites/uwsgi.ini'

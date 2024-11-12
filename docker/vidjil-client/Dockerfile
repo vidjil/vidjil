@@ -1,39 +1,64 @@
-FROM nginx:1.27
+FROM nginx:1.27-alpine-slim AS builder
+
+# Install requirements and clean-up
+RUN apk update && \
+	apk add --no-interactive --progress --purge curl make unzip tar wget gcc musl-dev g++ zlib-dev
+
+RUN mkdir -p /usr/share/vidjil
+WORKDIR /usr/share/vidjil/
+
+# Copy vidjil data
+COPY --chown=nginx:nginx browser/ browser/
+COPY --chown=nginx:nginx germline/ germline/
+COPY --chown=nginx:nginx tools/ tools/
+
+# Build and prepare
+RUN cd browser/ && make icons sha1 && \
+	cd ../germline/ && make
+
+# Build cgi (if need be)
+# COPY --chown=nginx:nginx algo/ algo/
+# RUN cd algo/ && make forcedep && make all &&  \
+# 	cd ../tools && cp align.cgi ../browser/cgi/ && cp similarity.cgi ../browser/cgi/
+
+FROM nginx:1.27-alpine-slim
 
 LABEL version="1.2"
-LABEL description="An NGINX based docker image which comes \
+LABEL description="An NGINX-alpine-slim based docker image which comes \
 with a full installation of the Vidjil client."
 
 # Install requirements and clean-up
-RUN apt-get update && \
-	apt-get install -y --no-install-recommends --no-install-suggests make unzip wget fcgiwrap spawn-fcgi && \ 
-	apt-get autoremove -y && apt-get autoclean -y && rm -rf /var/lib/apt/lists/*
+RUN apk update && \
+	apk add --no-interactive --progress --purge libstdc++ openssl bash fcgiwrap spawn-fcgi
 
 # Prepare install directories and prompt
 ARG build_env='PRODUCTION'
 ENV BUILD_ENV=$build_env
 RUN mkdir -p /usr/share/vidjil /opt/install_scripts /etc/vidjil /etc/nginx/conf.d/web2py && \
-	chown www-data:www-data /usr/share/vidjil /opt/install_scripts /etc/vidjil /etc/nginx/conf.d/web2py/ && \
-	rm /etc/nginx/conf.d/default.conf && chown www-data:www-data /etc/nginx/conf.d/ && \
-	echo 'if [ "$ENV" = "production" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc; echo 'export PS1="🐳 $prompt_color$SERVICE_NAME \e[32m[ \w ]# \e[0m"' >> ~/.bashrc
+	chown nginx:nginx /usr/share/vidjil /opt/install_scripts /etc/vidjil /etc/nginx/conf.d/web2py/ && \
+	ln -s /usr/share/vidjil /vidjil && \
+	rm /etc/nginx/conf.d/default.conf && chown nginx:nginx /etc/nginx/conf.d/ && \
+	echo 'if [ "$ENV" = "production" ]; then prompt_color="\e[91m"; else prompt_color="\e[34m"; fi' >> ~/.bashrc && \
+	echo 'export PS1="🐳 $prompt_color$SERVICE_NAME \e[32m[ \w ]# \e[0m"' >> ~/.bashrc
 
-# Switch to www-data user
-RUN sed -i 's/^\(user .*\)$/user www-data;/' /etc/nginx/nginx.conf
-USER www-data:www-data
+# Switch to nginx user
+RUN sed -i 's/^\(user .*\)$/user nginx;/' /etc/nginx/nginx.conf
+USER nginx:nginx
+WORKDIR /usr/share/vidjil/
 
 # Copy vidjil data
-COPY --chown=www-data:www-data browser/ /usr/share/vidjil/browser/
-COPY --chown=www-data:www-data germline/ /usr/share/vidjil/germline/
-COPY --chown=www-data:www-data tools/ /usr/share/vidjil/tools/
-COPY --chown=www-data:www-data docker/vidjil-client/conf/Gemfile /usr/share/vidjil/Gemfile
-COPY --chown=www-data:www-data docker/vidjil-client/scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
-COPY --chown=www-data:www-data docker/vidjil-client/scripts/install.sh /opt/install_scripts/install.sh
+COPY --from=builder --chown=nginx:nginx /usr/share/vidjil/browser/ browser/
+COPY --from=builder --chown=nginx:nginx /usr/share/vidjil/germline/ germline/
+COPY --chown=nginx:nginx docker/vidjil-client/conf/Gemfile Gemfile
+COPY --chown=nginx:nginx docker/vidjil-client/scripts/nginx-entrypoint.sh /entrypoints/nginx-entrypoint.sh
+COPY --chown=nginx:nginx docker/vidjil-client/scripts/install.sh /opt/install_scripts/install.sh
 
-# Build and prepare
-RUN cd /usr/share/vidjil/browser/ && make icons sha1 && \
-	cd /usr/share/vidjil/germline/ && make && \
-	bash /opt/install_scripts/install.sh && \
-	ln -s /etc/vidjil/nginx_gzip_static.conf /etc/nginx/conf.d/web2py/gzip_static.conf && ln -s /etc/vidjil/nginx_gzip.conf /etc/nginx/conf.d/web2py/gzip.conf && ln -s /etc/vidjil/uwsgi.conf /etc/nginx/conf.d/web2py/uwsgi.conf && ln -s /usr/share/vidjil/browser /usr/share/vidjil/b
+# Prepare
+RUN bash /opt/install_scripts/install.sh && \
+	ln -s /etc/vidjil/nginx_gzip_static.conf /etc/nginx/conf.d/web2py/gzip_static.conf && \
+	ln -s /etc/vidjil/nginx_gzip.conf /etc/nginx/conf.d/web2py/gzip.conf && \
+	ln -s /etc/vidjil/uwsgi.conf /etc/nginx/conf.d/web2py/uwsgi.conf && \
+	ln -s browser b
 
 # Switch back to root to perform operations in entrypoints
 USER root:root

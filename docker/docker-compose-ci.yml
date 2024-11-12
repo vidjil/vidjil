@@ -1,7 +1,6 @@
 # See https://docs.docker.com/compose/extends/ for more information
 services:
     uwsgi:
-        command: bash /entrypoints/uwsgi-entrypoint.sh
         volumes:
             # Local volume path
             - $VOLUME_PATH/results:/mnt/result
@@ -17,6 +16,7 @@ services:
             - ./:/usr/share/vidjil/docker
             - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
             - ../tools:/usr/share/vidjil/tools
+
     nginx:
         volumes:
             - ../browser:/usr/share/vidjil/browser

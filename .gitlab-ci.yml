@@ -7,11 +7,11 @@
 
 
 .before_script_global: &before_script_global
-  - make demo
-  - make data
-  - make germline
-  - make -C browser sha1
-  - cp -p doc/analysis-example.vidjil browser/
+  # - make demo
+  # - make data
+  # - make germline
+  # - make -C browser sha1
+  # - cp -p doc/analysis-example.vidjil browser/
   - echo $CI_COMMIT_REF_SLUG
 
 .before_script_global_docker: &before_script_global_docker
@@ -201,6 +201,9 @@ test_browser_unit:
     - npm install --save-dev qunit
     - npm link nightmare --unsafe-perm=true ;
     - apt-get update && apt-get -y install xvfb grep
+    - make demo data germline
+    - make -C browser sha1
+    - cp -p doc/analysis-example.vidjil browser/
     - make unit_browser
   artifacts:
     paths:
@@ -244,16 +247,14 @@ code_quality_custom:
 test_server_unit:
     image: python:3.12-slim
     stage: test_unit
-    <<: *before_script_global_docker
     script:
       - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends build-essential gcc wget unzip procps
-      - python3 -m pip install -U pip
       - python3 -m pip install --no-cache -r requirements.txt
       - python3 -m pip install --no-cache -r requirements_tests.txt
       - python3 -m pip freeze > pip_freeze_requirements.txt
-      - uptime
       - mkdir -p /mnt/upload/uploads/
       - wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 vidjil-algo && chmod +x vidjil-algo
+      - make germline
       - make unit_server
     coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
     artifacts:
@@ -293,7 +294,7 @@ test_server_unit:
     # Replace path for some volumes
     # Use http version of config
     - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
-    - make germline && cp browser/js/germline.js docker/vidjil-client/conf
+    # - make germline && cp browser/js/germline.js docker/vidjil-client/conf
     - sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" docker/vidjil-server/conf/defs.py
     # Up py4web
     - cd docker
@@ -317,7 +318,7 @@ test_server_unit:
     # Show some information on current states of docker services
     - docker ps
     # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
-    - docker exec vidjil-uwsgi bash -c "cd /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ && python3 init_test_db.py"
+    - docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 init_test_db.py"
     # Change File source definition in defs.py file 
     - cd .. # Go to root git directory
     - echo "TIME $(date) - before other server script" >> time.log
@@ -363,7 +364,8 @@ deploy_review:
   stage: deploy_review
   script:
     - echo "$REVIEW_CONFIG_JS" > browser/js/conf.js
-    - rsync -av --delete browser $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_COMMIT_REF_SLUG
+    - make browser
+    - rsync -av --delete browser doc/analysis-example.vidjil $REVIEW_SERVER:$REVIEW_SERVER_PATH$CI_COMMIT_REF_SLUG
   dependencies: []
   environment:
     name: review-$CI_BUILD_REF_NAME
@@ -381,6 +383,7 @@ deploy_review:
 deploy_review_server:
   stage: deploy_review
   script:
+    - make browser demo
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - sed -i -r "s/localhost/${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org/g" ./browser/js/conf.js
     - 'sed -i "s/\"server_id\" : \"\"/\"server_id\" : \"${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org\"/" ./browser/js/conf.js'
@@ -394,7 +397,8 @@ deploy_review_server:
     - echo "VIRTUAL_HOST_NAME=${CI_COMMIT_REF_SLUG}" >> .env
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG} || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
-    - 'ssh $REVIEW_SERVER "cd $REVIEW_SERVER_PATH_SERVER;
+    - 'ssh $REVIEW_SERVER "
+        cd $REVIEW_SERVER_PATH_SERVER;
         cd ${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG}; 
         echo "TIME - before pulling docker images - $(date)";
         docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY;
@@ -403,16 +407,8 @@ deploy_review_server:
         docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test;
         docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test;
         echo "TIME - after pulling docker images - $(date)";
-        ls; 
-        docker compose version; 
-        docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml config; 
-        docker compose down && docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml up -d;
-        docker compose exec mysql chown -R mysql:mysql /var/lib/mysql ;
-        docker compose exec uwsgi chown -R www-data:www-data /usr/share/vidjil/server/py4web/apps/vidjil/databases /mnt/result/results /mnt/result/tmp /mnt/upload/uploads;
-        docker compose restart uwsgi;
-        echo "TIME - after start - $(date)";
-        docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi python3 init_test_db.py;
-        "'
+        bash ci/start_review_server.sh;
+      "'
   environment:
     name: review_server-$CI_COMMIT_REF_SLUG
     url: http://$CI_COMMIT_REF_SLUG.server.ci.vidjil.org/
@@ -566,7 +562,7 @@ stop_deploy_review_server:
         cd $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG};
         docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml down -v; 
         cd ; 
-        sudo ./scripts/remove_server_folder.sh ${CI_COMMIT_REF_SLUG};:
+        sudo ./scripts/remove_server_folder.sh ${CI_COMMIT_REF_SLUG};
         docker system prune -af --filter until=20m;
         "'
   when: manual
