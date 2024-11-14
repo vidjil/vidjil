@@ -11,11 +11,11 @@ import getpass
 import errno
 from collections import defaultdict
 from warnings import warn
+from datetime import datetime
 
 ### Particular module to load
 import subprocess
 import pkg_resources
-
 required  = {'requests', 'bs4', 'tabulate', 'requests-toolbelt', 'urllib3'}
 installed = {pkg.key for pkg in pkg_resources.working_set}
 missing   = required - installed
@@ -45,6 +45,23 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 TAGS = []
 TAGS_UNDEFINED = []
 url  = "https://localhost/vidjil/"
+
+def is_valid_date(date_str):
+    """ Test string of date to check if it is a correct value
+    Think about test before launching pipeline to not create twice run, patient or sample if need to relaunch after a fail in script
+    
+    Args:
+        date_str (str): date in string format (YYYY-MM-DD)
+
+    Returns:
+        bool: True if date is in correct format
+    """
+    try:
+        # Try to convert string value in date object
+        datetime.strptime(date_str, "%Y-%m-%d")
+        return True
+    except ValueError:
+        return False
 
 def prettyUrl(string: str):
     """Transform a string to use url compatible character
@@ -354,6 +371,9 @@ class Vidjil:
         Returns:
             dict: ???
         """
+        if (birth_date and not is_valid_date(birth_date)):
+            raise Exception(f"Patient creation: bad value for birth_date ({birth_date})")
+
         data = {"group":group if group else self.group,
                 "patient":[{
                     'id': id if id else "",
@@ -385,6 +405,9 @@ class Vidjil:
         Returns:
             dict: ???
         """
+        if (run_date and not is_valid_date(run_date)):
+            raise Exception(f"Run creation: bad value for run_date ({run_date})")
+
         data = {"group":group if group else self.group,
                 "run":[{
                     'id': id if id else "",
@@ -611,7 +634,7 @@ class Vidjil:
 
         return
 
-    def createSample(self, set_ids:list, sample_set_id:str, sample_type:str, file_filename:str, file_filename2:str, file_info:str, file_sampling_date:str, file_id:int="", file_set_ids:list="", source:str="computer", pre_process="0"):
+    def createSample(self, set_ids:list, sample_set_id:str, sample_type:str, file_filename:str, file_filename2:str, file_info:str, file_sampling_date:str=None, file_id:int="", file_set_ids:list="", source:str="computer", pre_process="0"):
         """Create a sample on the server, link it to various sets, and upload dat aas last part
 
         Args:
@@ -633,6 +656,10 @@ class Vidjil:
         head_f1, tail_f1 = os.path.split(file_filename)
         head_f2, tail_f2 = os.path.split(file_filename2)
 
+        if (file_sampling_date and not is_valid_date(file_sampling_date)):
+            raise Exception(f"Sampling creation: bad value for sampling date ({file_sampling_date})")
+
+
         data = {
             "source":source,
             "pre_process":pre_process,
@@ -642,7 +669,7 @@ class Vidjil:
                     "filename":tail_f1,
                     "filename2":tail_f2,
                     "id":file_id,
-                    "sampling_date":file_sampling_date,
+                    "sampling_date":file_sampling_date if file_sampling_date else "",
                     "info": prettyUrl(file_info if file_info else ""),         # ex: "test+#age=25+#cat=val",
                     "set_ids": prettyUrl(file_set_ids if file_set_ids else "") # ex: ":p+tes+(2)"
                 }
