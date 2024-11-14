@@ -43,7 +43,7 @@ from operator import itemgetter, le
 from utils import *
 from defs import *
 from collections import defaultdict
-from pipes import quote
+from shlex import quote
 
 FUSE_VERSION = "vidjil fuse"
 
