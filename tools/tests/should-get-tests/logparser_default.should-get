@@ -1,5 +1,5 @@
 !OUTPUT_FILE: logparser_list.log
-!LAUNCH: python ../../logparser.py -list > logparser_list.log;
+!LAUNCH: $PYTHON ../../logparser.py -list > logparser_list.log;
 
 $ Description of available parsers is printed
 1: List of available parsers
@@ -8,7 +8,7 @@ $ Description of available parsers is printed
 
 
 !OUTPUT_FILE: logparser_generic.vidjil
-!LAUNCH: python ../../logparser.py -i ../data/preprocess_generic.log -o logparser_generic.vidjil;
+!LAUNCH: $PYTHON ../../logparser.py -i ../data/preprocess_generic.log -o logparser_generic.vidjil;
 
 $ Reads field is defined
 j0: reads # in fact; reads == {}
