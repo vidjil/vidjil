@@ -205,4 +205,40 @@ describe('Manipulate db page', function () {
         cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
     })
 
-})
+
+
+
+    it('5388 - Precise patient search',  function() {
+      cy.goToPatientPage()
+      cy.get('#db_filter_input')
+        .type("first_name Last_name_test 2000-01-01")
+        .type("{enter}")
+      cy.wait(['@getActivities'])
+
+      // patient don't exist for the moment, no empty db table, no tbody present
+      cy.get('#db_table_container').find("tbody").should("not.exist") // Empty table ,so not present
+
+      cy.createPatient("", "first_name", "Last_name_test", "2000-01-01", "Cypress; Patient test for a precise search", "public")
+
+      cy.goToPatientPage()
+      cy.get('#db_filter_input')
+        .type("first_name Last_name_test 2000-01-01")
+        .type("{enter}")
+      cy.wait(['@getActivities'])
+
+      // patient now exist, so a line in table is present, so tbody exist
+      cy.get('#db_table_container').find("tbody").should("exist")
+      
+      cy.goToPatientPage()
+      cy.get('#db_filter_input')
+        .type("first_name Last_name_test 2001-01-01")
+        .type("{enter}")
+      cy.wait(['@getActivities'])
+
+      // Bad birth date, so should be empty
+      cy.get('#db_table_container').find("tbody").should("not.exist")
+      
+    })
+
+
+  })
