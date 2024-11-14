@@ -25,10 +25,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 
-from __future__ import print_function
-from __future__ import division
 
-import check_python_version
 import sys
 import json
 import argparse

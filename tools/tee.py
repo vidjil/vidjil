@@ -3,7 +3,6 @@ Launches a command, copyies its output both to standard output and in zero or mo
 and finally exits with the same exit code of the command.
 '''
 
-from __future__ import print_function
 
 import sys
 import subprocess
