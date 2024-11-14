@@ -88,35 +88,35 @@ ssl_install() {
             -sha1 \
             -x509 \
             -subj "/C=$country/ST=$state/L=$locality/O=$organisation/CN=$name" \
-            -keyout "$ssl_dir/web2py.key" \
-            -out "$ssl_dir/web2py.crt"
-    chmod 400 "$ssl_dir/web2py.key"
-    openssl x509 -noout -fingerprint -text < "$ssl_dir/web2py.crt" > "$ssl_dir/web2py.info"
+            -keyout "$ssl_dir/vidjil.key" \
+            -out "$ssl_dir/vidjil.crt"
+    chmod 400 "$ssl_dir/vidjil.key"
+    openssl x509 -noout -fingerprint -text < "$ssl_dir/vidjil.crt" > "$ssl_dir/vidjil.info"
 }
 
 nginx_install() {
     echo "configuring nginx"
-    if [ ! -d /etc/nginx/conf.d/web2py ] ; then
-        mkdir /etc/nginx/conf.d/web2py
+    if [ ! -d /etc/nginx/conf.d/vidjil ] ; then
+        mkdir /etc/nginx/conf.d/vidjil
     fi
 
-    gzip_static='/etc/nginx/conf.d/web2py/gzip_static.conf'
+    gzip_static='/etc/nginx/conf.d/vidjil/gzip_static.conf'
     if [ \( ! -e "$gzip_static" \) -a \( ! -L "$gzip_static" \) ] ; then
         ln -s /etc/vidjil/nginx_gzip_static.conf "$gzip_static"
     fi
 
-    gzip='/etc/nginx/conf.d/web2py/gzip.conf'
+    gzip='/etc/nginx/conf.d/vidjil/gzip.conf'
     if [ \( ! -e "$gzip" \) -a \( ! -L "$gzip" \) ] ; then
         ln -s /etc/vidjil/nginx_gzip.conf "$gzip"
     fi
 
-    web2py='/etc/nginx/sites-available/web2py'
-    if [ \( ! -e "$web2py" \) -a \( ! -L "$web2py" \) ] ; then
-        ln -s /etc/vidjil/nginx_web2py "$web2py"
-        if [ -e /etc/nginx/sites-enabled/web2py ] ; then
-            rm -f /etc/nginx/sites-enabled/web2py
+    vidjil='/etc/nginx/sites-available/vidjil'
+    if [ \( ! -e "$vidjil" \) -a \( ! -L "$vidjil" \) ] ; then
+        ln -s /etc/vidjil/nginx_vidjil "$vidjil"
+        if [ -e /etc/nginx/sites-enabled/vidjil ] ; then
+            rm -f /etc/nginx/sites-enabled/vidjil
         fi
-        ln -s /etc/nginx/sites-available/web2py /etc/nginx/sites-enabled/web2py
+        ln -s /etc/nginx/sites-available/vidjil /etc/nginx/sites-enabled/vidjil
     fi
 
     if [ -e /etc/nginx/sites-enabled/default ] ; then

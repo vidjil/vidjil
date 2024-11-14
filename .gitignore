@@ -42,6 +42,8 @@ demo/*.fasta
 
 docker/vidjil-client/ssl/web2py.crt
 docker/vidjil-client/ssl/web2py.key
+docker/vidjil-client/ssl/vidjil.crt
+docker/vidjil-client/ssl/vidjil.key
 docker/volumes/
 
 firefox/

@@ -41,14 +41,14 @@ PIPPATH=`which pip`
 $PIPPATH install --upgrade uwsgi
 
 # Create common nginx sections
-mkdir /etc/nginx/conf.d/web2py
+mkdir /etc/nginx/conf.d/vidjil
 echo '
 gzip_static on;
 gzip_http_version   1.1;
 gzip_proxied        expired no-cache no-store private auth;
 gzip_disable        "MSIE [1-6]\.";
 gzip_vary           on;
-' > /etc/nginx/conf.d/web2py/gzip_static.conf
+' > /etc/nginx/conf.d/vidjil/gzip_static.conf
 
 echo '
 gzip on;
@@ -59,7 +59,7 @@ gzip_comp_level 6;
 gzip_buffers 16 8k;
 gzip_http_version 1.1;
 gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
-' > /etc/nginx/conf.d/web2py/gzip.conf
+' > /etc/nginx/conf.d/vidjil/gzip.conf
 
 echo '
 #uwsgi_pass      127.0.0.1:9001;
@@ -68,9 +68,9 @@ include         uwsgi_params;
 uwsgi_param     UWSGI_SCHEME \$scheme;
 uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
 ###remove the comments to turn on if you want gzip compression of your pages
-# include /etc/nginx/conf.d/web2py/gzip.conf;
+# include /etc/nginx/conf.d/vidjil/gzip.conf;
 ### end gzip section
-' > /etc/nginx/conf.d/web2py/uwsgi.conf
+' > /etc/nginx/conf.d/vidjil/uwsgi.conf
 
 # Create configuration file /etc/nginx/sites-available/web2py
 echo "server {
@@ -82,8 +82,8 @@ echo "server {
 server {
         listen 443 default_server ssl;
         server_name     \$hostname;
-        ssl_certificate         /etc/nginx/ssl/web2py.crt;
-        ssl_certificate_key     /etc/nginx/ssl/web2py.key;
+        ssl_certificate         /etc/nginx/ssl/vidjil.crt;
+        ssl_certificate_key     /etc/nginx/ssl/vidjil.key;
         ssl_prefer_server_ciphers on;
         ssl_session_cache shared:SSL:10m;
         ssl_session_timeout 10m;
@@ -104,7 +104,7 @@ server {
         }
 
         location /vidjil {
-            include /etc/nginx/conf.d/web2py/uwsgi.conf
+            include /etc/nginx/conf.d/vidjil/uwsgi.conf
             proxy_read_timeout 600;
             client_max_body_size 20G;
             ###
@@ -131,17 +131,17 @@ server {
 
         ###to enable correct use of response.static_version
         #location ~* ^/(\w+)/static(?:/_[\d]+\.[\d]+\.[\d]+)?/(.*)$ {
-        #    alias $CWD//web2py/applications/\$1/static/\$2;
+        #    alias $CWD//vidjil/applications/\$1/static/\$2;
         #    expires max;
         #}
         ###
 
         location ~* ^/(\w+)/static/ {
-            root $CWD/web2py/applications/;
+            root $CWD/vidjil/applications/;
             expires max;
             ### if you want to use pre-gzipped static files (recommended)
             ### check scripts/zip_static_files.py and remove the comments
-            # include /etc/nginx/conf.d/web2py/gzip_static.conf;
+            # include /etc/nginx/conf.d/vidjil/gzip_static.conf;
             ###
         }
 
@@ -159,22 +159,22 @@ server {
         }
 
         location /vidjil/file/upload {
-            include /etc/nginx/conf.d/web2py/uwsgi.conf
+            include /etc/nginx/conf.d/vidjil/uwsgi.conf
             uwsgi_read_timeout 10m;
             client_max_body_size 20G;
         }
 
-}" >/etc/nginx/sites-available/web2py
+}" >/etc/nginx/sites-available/vidjil
 
-ln -s /etc/nginx/sites-available/web2py /etc/nginx/sites-enabled/web2py
+ln -s /etc/nginx/sites-available/vidjil /etc/nginx/sites-enabled/vidjil
 rm /etc/nginx/sites-enabled/default
 mkdir /etc/nginx/ssl
 cd /etc/nginx/ssl
 
-openssl genrsa 1024 > web2py.key
-chmod 400 web2py.key
-openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
-openssl x509 -noout -fingerprint -text < web2py.crt > web2py.info
+openssl genrsa 1024 > vidjil.key
+chmod 400 vidjil.key
+openssl req -new -x509 -nodes -sha1 -days 1780 -key vidjil.key > vidjil.crt
+openssl x509 -noout -fingerprint -text < vidjil.crt > vidjil.info
 
 # Prepare folder for vidjil log
 sudo mkdir /var/vidjil
@@ -186,11 +186,11 @@ sudo chown -R www-data:www-data /var/vidjil
 sudo mkdir /etc/uwsgi
 sudo mkdir /var/log/uwsgi
 
-# Create configuration file /etc/uwsgi/web2py.xml
+# Create configuration file /etc/uwsgi/vidjil.xml
 echo "[uwsgi]
 
-socket = /tmp/web2py.socket
-pythonpath = $CWD/web2py/
+socket = /tmp/vidjil.socket
+pythonpath = $CWD/vidjil/
 mount = /=wsgihandler:application
 processes = 4
 master = true
@@ -202,14 +202,14 @@ max-requests = 2000
 limit-as = 512
 reload-on-as = 256
 reload-on-rss = 192
-touch-reload = $CWD/web2py/applications/vidjil/modules/defs.py
+touch-reload = $CWD/vidjil/applications/vidjil/modules/defs.py
 uid = www-data
 gid = www-data
-cron = 0 0 -1 -1 -1 python $CWD/web2py/web2py.py -Q -S welcome -M -R scripts/sessions2trash.py -A -o
+cron = 0 0 -1 -1 -1 python $CWD/vidjil/vidjil.py -Q -S welcome -M -R scripts/sessions2trash.py -A -o
 no-orphans = true
 ignore-sigpipe = true
 env = TMPDIR=/mnt/data/tmp
-" >/etc/uwsgi/web2py.ini
+" >/etc/uwsgi/vidjil.ini
 
 #Create a configuration file for uwsgi in emperor-mode
 #for Upstart in /etc/init/uwsgi-emperor.conf

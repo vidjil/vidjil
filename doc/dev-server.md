@@ -103,17 +103,8 @@ is an admin), which also prevents may DB calls.
 
 The scheduler is handled by Py4web. Here we summarise the way it works.
 
-Py4web has several workers. Its number is determined by the value of `WORKERS_POOL` given
-in `docker/.env-default`/`docker/.env` file.
+Py4web has several workers. Its number is determined by the value of `WORKERS_POOL` given in `docker/.env.default` file.
 Redis and flowers service are associated to workers to work.
-
-At regular interval the worker signals that it is still alive (it is called
-the heartbeat and can be customised in Vidjil through the
-`SCHEDULER_HEARTBEAT` parameter in `defs.py`).
-
-<!-- When a job timeouts it is not killed (see #2213). In `gluon/scheduler.py` a -->
-<!-- worker seems to be able to kill a process when the worker's state (and not the -->
-<!-- task's state) is `STOP_TASK`. -->
 
 ## Batch creation of patients/runs/sets
 
@@ -328,7 +319,7 @@ You may also want to uncomment the volume in the fuse volume block `-
 configuration files, allowing for tweaks.
 
 You may also set some variable values in order to get configuration that you want : volume path, pool of thread for server, pool of workers, passwords, ...
-This variables are defined inside `docker/.env-default` and can be set in `docker/.env`.
+This variables are defined inside `docker/.env.default`.
 
 You can also change some docker behavior as volume declaration or ports by modifying `docker-compose.override.yml` file.
 Each declaration in this file will be taken into account as an overload of default values set in `docker-compose.yml` file.
@@ -576,12 +567,12 @@ echo "Install certificates for $BRANCH"
 cd $DIR/$BRANCH/docker_$BRANCH/vidjil-client/
 mkdir ssl
 cd ssl
-ln ~/nginx/certs/web2py.crt
-ln ~/nginx/certs/web2py.info
-ln ~/nginx/certs/web2py.key
-cp ~/nginx/certs/web2py.crt ~/nginx/certs/$BRANCH.server.ci.vidjil.org.crt
-cp ~/nginx/certs/web2py.info ~/nginx/certs/$BRANCH.server.ci.vidjil.org.info
-cp ~/nginx/certs/web2py.key ~/nginx/certs/$BRANCH.server.ci.vidjil.org.key
+ln ~/nginx/certs/vidjil.crt
+ln ~/nginx/certs/vidjil.info
+ln ~/nginx/certs/vidjil.key
+cp ~/nginx/certs/vidjil.crt ~/nginx/certs/$BRANCH.server.ci.vidjil.org.crt
+cp ~/nginx/certs/vidjil.info ~/nginx/certs/$BRANCH.server.ci.vidjil.org.info
+cp ~/nginx/certs/vidjil.key ~/nginx/certs/$BRANCH.server.ci.vidjil.org.key
 ```
 
 And the `uninstall_certs.sh`:
@@ -679,8 +670,8 @@ Now variable at set to restricted places:
 
 - vidjil-client/conf/conf.js: As previous, conf for browser are done in this file
 - vidjil-server/conf/defs.py: As previous, conf for server are done in this file. Note some change in `DIR_xxx` default declaration
-- `.env-default` and `.env` files: Docker environment variable are loaded from these 2 files. The first one have default values and explanation about effect, the second is meant to store your overload values of these variable. For the moment, at least one variable should be set in `.env` file to work.
-- backup/conf/backup.cnf: user and password to use for backup. Will likely be moved to `.env` files at next release.
+- `.env.default` files: Docker environment variable are loaded from this files. It contains default values and explanation about effect. It can be overriden using `docker compose` command line or `env_files` in `docker-compose.yml` or `docker-compose.override.yml`. 
+- backup/conf/backup.cnf: user and password to use for backup. Will likely be moved to `.env.default` files at next release.
 
 In docker-compose volume, you should not have to change volume path except the ones referring to web2py.
 A typical needed change is the path for database destination in volume

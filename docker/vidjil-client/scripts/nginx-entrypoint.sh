@@ -1,4 +1,3 @@
-# create a self signed ssl certificate if nothing specified
 echo -e "\n\e[34m=======================\e[0m"
 echo -e "\e[34m=== Start service nginx\e[0m"
 echo -e "\e[34m=== `date +'%Y/%m/%d; %H:%M'`\e[0m\n"
@@ -11,15 +10,33 @@ else
     mkdir "$DIR"
 fi
 
-if test -e "/etc/nginx/ssl/web2py.key"; then
+# Create a self signed ssl certificate if nothing specified
+if test -e "/etc/nginx/ssl/vidjil.key"; then
     echo "ssl files already exists."
 else
     echo "Create a self signed SSL cerificate for this install (please update your config if you wish to use your own certificates)"
-    openssl genrsa 4096 > /etc/nginx/ssl/web2py.key
+    openssl genrsa 4096 > /etc/nginx/ssl/vidjil.key
     openssl req -new -x509 -nodes -sha1 -days 1780 \
              -subj "/C=FR/ST=Denial/L=Lille/O=VidjilNet/CN=www.vidjil.org" \
-             -key /etc/nginx/ssl/web2py.key > /etc/nginx/ssl/web2py.crt
-    openssl x509 -noout -fingerprint -text < /etc/nginx/ssl/web2py.crt
+             -key /etc/nginx/ssl/vidjil.key > /etc/nginx/ssl/vidjil.crt
+    openssl x509 -noout -fingerprint -text < /etc/nginx/ssl/vidjil.crt
+fi
+
+# Set the front address if given
+if test -v "FRONT_ADDRESS"; then
+    echo "Setting front address to $FRONT_ADDRESS"
+    sed -i "s/server_name \$hostname;/server_name ${FRONT_ADDRESS};/g" /etc/vidjil/nginx_vidjil.conf
+fi
+
+# Set the DB address if given
+if test -v "DB_ADDRESS"; then
+    echo "Setting DB address to $DB_ADDRESS"
+    sed -i "s/https:\/\/localhost/https:\/\/${DB_ADDRESS}/g" /etc/vidjil/conf.js
+fi
+
+# Set the DB address if set
+if test -v "DB_ADDRESS"; then
+   sed -i "s/https:////localhost/${DB_ADDRESS}/g" /etc/vidjil/conf.js
 fi
 
 spawn-fcgi -U nginx -u nginx -G nginx -g nginx -s /var/run/fcgiwrap.socket /usr/bin/fcgiwrap

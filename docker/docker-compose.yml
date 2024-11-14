@@ -7,27 +7,23 @@ services:
         container_name: vidjil-mysql
         image: mysql:8.4
         environment:
-            - SERVICE_NAME=$SERVICE_PREFIX_NAME MYSQL
+            - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} MYSQL
         env_file:
-            - '.env-default'
-            - '.env'
+            - '.env.default'
         volumes:
             - ./mysql/:/docker-entrypoint-initdb.d/
-            - $VOLUME_PATH/mysql:/var/lib/mysql
+            - ${VOLUME_PATH:-./volumes/vidjil/}/mysql:/var/lib/mysql
         healthcheck:
             test: "mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"
-            timeout: 5s
-            start_period: 30s
-            retries: 40
+            timeout: 2s
+            interval: 2s
+            retries: 10
         networks:
             - vidjil
 
     redis:
         container_name: vidjil-redis
         image: redis
-        restart: always
-        ports:
-            - '6379:6379'
         networks:
             - vidjil
 
@@ -35,18 +31,17 @@ services:
         container_name: vidjil-uwsgi
         image: vidjil/server:latest
         environment:
-            - SERVICE_NAME=$SERVICE_PREFIX_NAME UWSGI
+            - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} UWSGI
         env_file:
-            - '.env-default'
-            - '.env'
+            - '.env.default'
         command: bash /entrypoints/uwsgi-entrypoint.sh
         stdin_open: true
         tty: true
         healthcheck:
             test: "bash /healthchecks/healthcheck_uwsgi.bash"
-            timeout: 20s
-            start_period: 0s
-            retries: 2
+            timeout: 2s
+            interval: 2s
+            retries: 10
         depends_on:
             mysql:
                 condition: service_healthy
@@ -59,14 +54,14 @@ services:
             - ./vidjil-server/conf/defs.py:/usr/share/vidjil/server/py4web/apps/vidjil/defs.py
             - ./vidjil-server/conf/defs-tools.py:/usr/share/vidjil/tools/defs.py
             - ./scripts/:/usr/share/vidjil/tools/scripts
-            - $VOLUME_PATH/results:/mnt/result/results
-            - $VOLUME_PATH/tmp:/mnt/result/tmp
-            - $VOLUME_PATH/uploads:/mnt/upload/uploads
-            - $VOLUME_PATH/tools:/usr/share/tools
-            - $VOLUME_PATH/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
-            - $VOLUME_PATH/log:/var/vidjil
-            - $VOLUME_PATH/log/uwsgi:/var/log/uwsgi
-            - $VOLUME_PATH/backup:/mnt/backup
+            - ${VOLUME_PATH:-./volumes/vidjil/}/results:/mnt/result/results
+            - ${VOLUME_PATH:-./volumes/vidjil/}/tmp:/mnt/result/tmp
+            - ${VOLUME_PATH:-./volumes/vidjil/}/uploads:/mnt/upload/uploads
+            - ${VOLUME_PATH:-./volumes/vidjil/}/tools:/usr/share/tools
+            - ${VOLUME_PATH:-./volumes/vidjil/}/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
+            - ${VOLUME_PATH:-./volumes/vidjil/}/log:/var/vidjil
+            - ${VOLUME_PATH:-./volumes/vidjil/}/log/uwsgi:/var/log/uwsgi
+            - ${VOLUME_PATH:-./volumes/vidjil/}/backup:/mnt/backup
         networks:
             - vidjil
 
@@ -74,11 +69,10 @@ services:
         container_name: vidjil-fuse
         image: vidjil/server:latest
         environment:
-            - SERVICE_NAME=$SERVICE_PREFIX_NAME FUSE
+            - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} FUSE
         command: bash /entrypoints/fuse-entrypoint.sh
         env_file:
-            - '.env-default'
-            - '.env'
+            - '.env.default'
         volumes_from:
             - uwsgi
         depends_on:
@@ -88,7 +82,6 @@ services:
                 condition: service_healthy
         links:
             - mysql:mysql
-            - redis:redis
             - uwsgi:uwsgi
         networks:
             - vidjil
@@ -97,10 +90,9 @@ services:
         container_name: vidjil-nginx
         image: vidjil/client:latest
         environment:
-            - SERVICE_NAME=$SERVICE_PREFIX_NAME NGINX
+            - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} NGINX
         env_file:
-            - '.env-default'
-            - '.env'
+            - '.env.default'
         ports:
             - "80:80"
             - "443:443"
@@ -108,8 +100,8 @@ services:
         volumes:
             - ./vidjil-client/scripts:/entrypoints
             - ./vidjil-client/healthchecks:/healthchecks
-            - $VOLUME_PATH/log/nginx:/var/log/nginx
-            - $VOLUME_PATH/certs:/etc/letsencrypt/well-known
+            - ${VOLUME_PATH:-./volumes/vidjil/}/log/nginx:/var/log/nginx
+            - ${VOLUME_PATH:-./volumes/vidjil/}/certs:/etc/letsencrypt/well-known
             - ./vidjil-client/ssl:/etc/nginx/ssl
             - ./vidjil-client/conf:/etc/vidjil
         networks:
@@ -119,10 +111,9 @@ services:
         container_name: vidjil-workers
         image: vidjil/server:latest
         environment:
-            - SERVICE_NAME=$SERVICE_PREFIX_NAME WORKERS
+            - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} WORKERS
         env_file:
-            - '.env-default'
-            - '.env'
+            - '.env.default'
         stdin_open: true
         tty: true
         command: bash /entrypoints/workers-entrypoint.sh
@@ -145,20 +136,16 @@ services:
         container_name: vidjil-flower
         image: vidjil/server:latest
         environment:
-            - SERVICE_NAME=$SERVICE_PREFIX_NAME FLOWER
+            - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} FLOWER
         env_file:
-            - '.env-default'
-            - '.env'
+            - '.env.default'
         command: bash /entrypoints/flower-entrypoint.sh
         volumes_from:
             - uwsgi
         depends_on:
-            uwsgi:
-                condition: service_healthy
             workers:
                 condition: service_started
         links:
-            - mysql:mysql
             - redis:redis
         ports:
             - "5555:5555"
