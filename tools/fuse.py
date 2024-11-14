@@ -25,10 +25,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 
-from __future__ import print_function
-from __future__ import division
 
-import check_python_version
 import sys
 import json
 import argparse
@@ -43,7 +40,7 @@ from operator import itemgetter, le
 from utils import *
 from defs import *
 from collections import defaultdict
-from pipes import quote
+from shlex import quote
 
 FUSE_VERSION = "vidjil fuse"
 

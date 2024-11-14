@@ -5,7 +5,6 @@
 # Script by Florian Thonier
 # florian@vidjil.org
 # ===============================
-from __future__ import division
 import operator
 import sys, os
 import json
