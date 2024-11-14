@@ -185,3 +185,4 @@ docker/scripts/
 tools/scripts/
 binaries/
 docker/vidjil-server/requirements.txt
+cypress.config.js
