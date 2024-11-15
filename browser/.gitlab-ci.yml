@@ -23,7 +23,7 @@
     TEST_FILES_PATTERN: "/app/cypress/e2e/test_*.js"
   artifacts:
     reports:
-      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+      junit: $CYPRESS_PATH/reports/report_test_*.xml
     paths:
       - $CYPRESS_PATH
       - docker/volumes/vidjil/log
