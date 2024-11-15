@@ -84,7 +84,9 @@ class Patient(SampleSet):
         return vidjil_utils.anon_names(sample_set_id, data['first_name'], data['last_name'], anon)
 
     def get_display_name(self, data, anon=None):
-        return SPAN(vidjil_utils.display_names(data.sample_set_id, data.first_name, data.last_name, anon), _class="set_token patient_token")
+        return SPAN(vidjil_utils.display_names(data.sample_set_id, data.first_name, data.last_name, anon), 
+            _title=vidjil_utils.display_names(data.sample_set_id, data.first_name, data.last_name, anon),
+            _class="set_token patient_token")
 
     def get_birth(self, data):
         return "%s" % str(data['birth']) if data['birth'] is not None else ''
@@ -184,7 +186,9 @@ class Run(SampleSet):
         return data['name']
 
     def get_display_name(self, data):
-        return SPAN(self.get_name(data), _class="set_token run_token")
+        return SPAN(self.get_name(data), 
+            _title=self.get_name(data),
+            _class="set_token run_token")
 
     def get_embellished_name(self, data):
         return 'run: %s' % data['name']

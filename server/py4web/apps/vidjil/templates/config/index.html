@@ -39,11 +39,11 @@
                     <td  id="config_classification_[[=row.id ]]" title="Not defined">Not defined</td>
                 [[pass]]
 
-                <td id="config_name_[[=row.id ]]"> [[=row.name ]] </td>
-                <td id="config_program_[[=row.id ]]"> [[=row.program ]] </td>
-                <td id="config_command_[[=row.id ]]"> [[=row.command ]] </td>
-                <td id="config_fuse_command_[[=row.id ]]"> [[=row.fuse_command ]] </td>
-                <td id="config_info_[[=row.id ]]"> [[=row.info ]] </td>
+                <td id="config_name_[[=row.id ]]" title="[[=row.name ]]" > [[=row.name ]] </td>
+                <td id="config_program_[[=row.id ]]" title="[[=row.program ]]" > [[=row.program ]] </td>
+                <td id="config_command_[[=row.id ]]" title="[[=row.command ]]" > [[=row.command ]] </td>
+                <td id="config_fuse_command_[[=row.id ]]" title="[[=row.fuse_command ]]" > [[=row.fuse_command ]] </td>
+                <td id="config_info_[[=row.id ]]" title="[[=row.info ]]" > [[=row.info ]] </td>
 
             [[if isAdmin:]]
                 <td onclick="db.call('config/permission', {'id' :'[[=row.id]]'} )" >
