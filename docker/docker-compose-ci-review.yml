@@ -36,7 +36,14 @@ services:
         environment:
             - VIRTUAL_HOST=$VIRTUAL_HOST_NAME.server.ci.vidjil.org
 
-    workers:
+    workers-all:
+        image: vidjil/server:test
+        container_name: !reset null
+        ports: !reset []
+        networks: !reset null
+        network_mode: bridge
+
+    workers-short:
         image: vidjil/server:test
         container_name: !reset null
         ports: !reset []

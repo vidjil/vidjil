@@ -28,6 +28,11 @@ if [[ "$CHANGE_OWNER" == "true" ]]; then
     if [ $current_user -ne $user ]; then
       chown $user:$user -R /mnt/result
     fi
+    echo "     - logs"
+    current_user=$(stat -c '%u' /var/vidjil)
+    if [ $current_user -ne $user ]; then
+      chown $user:$user -R /var/vidjil
+    fi
 fi
 
 if [[ -v UWSGI_POOL ]]; then

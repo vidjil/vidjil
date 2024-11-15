@@ -1,7 +1,4 @@
 .PHONY : up down clean_deploy reset_database set_rights restart backup_mysql restore_mysql_data backup_volume restore_volume build_server
-
-include .env
-include .env.default
 	
 up:
 	docker compose up -d
@@ -35,7 +32,7 @@ build-cypress:
 reset_database:
 	# Make a call to truncate db and refill with example/testing data
 	docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql"
-	docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 server/py4web/apps/vidjil/tests/functional/init_test_db.py"
+	docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 init_test_db.py"
 
 clean_deploy:
 	# Erase old container data and startt a fresh deploy; fix rights on volumes
