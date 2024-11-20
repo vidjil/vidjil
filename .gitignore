@@ -1,18 +1,22 @@
-*.data
-*.clntab
-*.tap
-*.log
-!server/py4web/apps/vidjil/tests/unit/resources/logs/**/*.log
+
 *~
-*.o
 *.a
-*.pyc
-*.vidjil
+*.bak
+*.crt
+*.clntab
+*.data
 *.fastq
 *.fastq.gz
 *.gz
+*.key
+*.log
+*.o
+*.pem
+*.pyc
 *.swp
-*.bak
+*.tap
+*.vidjil
+*.xml
 dep.mk
 .directory
 
@@ -27,6 +31,12 @@ algo/tools/compareV
 algo/tools/cut
 algo/tools/dynprog
 algo/tools/segmentD
+algo/tools/similarity
+algo/tools/vdj_assign
+
+binaries/
+
+builds/
 
 browser/css/*.css
 browser/js/conf.js
@@ -40,11 +50,13 @@ data/Stanford_S22.rc.fasta
 demo/*.fa
 demo/*.fasta
 
-docker/vidjil-client/ssl/web2py.crt
-docker/vidjil-client/ssl/web2py.key
+doc/analysis-example2.analysis
+
+docker/volumes/
 docker/vidjil-client/ssl/vidjil.crt
 docker/vidjil-client/ssl/vidjil.key
-docker/volumes/
+docker/vidjil-server/requirements.txt
+docker/scripts/
 
 firefox/
 
@@ -68,24 +80,31 @@ server/py4web/apps/_minimal/
 server/py4web/apps/_scaffold/
 server/py4web/apps/examples/
 server/py4web/apps/vidjil/databases/
+server/py4web/apps/password.txt
 server/py4web/password.txt
+
+site/
 
 tools/align.cgi
 tools/similarity.cgi
+tools/flash2
+tools/scripts/
 tools/*.txt
 
-out
+out/
+
+vidjil-algo/
 
 # Tests
-cypress
-cypress/
-cypress/reports
-cypress/screenshots
-cypress/videos
+./cypress
+cypress.config.js
+algo/tests/should-get-tests/out/*
+algo/tests/data/analysis-with-windows.analysis.formatted
+algo/tests/data/analysis-with-windows.analysis.new.new.formatted
 browser/test/cypress/reports
 browser/test/cypress/screenshots
 browser/test/cypress/videos
-algo/tests/should-get-tests/out/*
+browser/test/cypress/logs
 browser/test/*.png
 browser/test/test/TEST*
 
@@ -150,11 +169,8 @@ server/unit_report.xml
 server/unit_coverage.xml
 server/.coverage
 server/py4web/apps/vidjil/tests/unit/resources/results/*
-algo/tools/similarity
-algo/tools/vdj_assign
-vidjil-algo
-algo/tests/data/analysis-with-windows.analysis.formatted
-algo/tests/data/analysis-with-windows.analysis.new.new.formatted
+!server/py4web/apps/vidjil/tests/unit/resources/**/*.vidjil
+!server/py4web/apps/vidjil/tests/unit/resources/logs/**/*.log
 tools/tests/should.retry
 tools/tests/should.warned.retry
 tools/tests/data/pear_strucured_waring.json

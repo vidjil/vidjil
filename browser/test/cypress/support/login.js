@@ -4,6 +4,11 @@ Cypress.Commands.add('login', (host) => {
     method: "GET",
     url: "get_active_notifications*",
   }).as("getActivities");
+
+  cy.intercept({
+    method: "POST",
+    url: "**/sample_set/all*",
+  }).as("postAllSampleSets");
   
   cy.session(['login'], () => {
     if (host=="local"){

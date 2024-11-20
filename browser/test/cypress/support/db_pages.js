@@ -4,6 +4,11 @@ Cypress.Commands.add("initDatabase", (host) => {
     url: "get_active_notifications*",
   }).as("getActivities");
 
+  cy.intercept({
+    method: "POST",
+    url: "**/sample_set/all*",
+  }).as("postAllSampleSets");
+
   // init database if button is present at opening of page
   if (host == "local") {
     cy.log(`initiated_database: ${Cypress.env("initiated_database")}`);
@@ -95,11 +100,6 @@ Cypress.Commands.add("goToTokenPage", (token) => {
   cy.log("goToTokenPage " + token);
 
   cy.openDBPage().then(() => {
-    cy.intercept({
-      method: "POST",
-      url: "**/sample_set/all*",
-    }).as("postAllSampleSets");
-
     cy.get("#db_menu > ." + token + "_token")
       .contains("" + token + "s")
       .click({ force: true });
@@ -830,11 +830,6 @@ Cypress.Commands.add("openAnalysisFromSetPage", (sample_set_id, config_id) => {
 });
 
 Cypress.Commands.add("dbPageFilter", (value) => {
-  cy.intercept({
-    method: "POST",
-    url: "all*",
-  }).as("postAllSampleSets");
-
   cy.get("#db_filter_input")
     .should("exist")
     .clear()

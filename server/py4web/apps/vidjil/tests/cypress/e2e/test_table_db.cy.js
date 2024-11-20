@@ -215,11 +215,6 @@ describe("Manipulate patient, sample and launch analysis", function () {
       informations + "(6) #t1",
       group
     ).then((patient_id) => {
-      cy.intercept({
-        method: "POST",
-        url: "all*",
-      }).as("postAllSampleSets");
-
       // From inside the patient
       cy.get(".tag-link") // work only if one tag available
         .should("contain", "#t1")
