@@ -305,16 +305,18 @@ function prepend_path_if_not_web(file, path) {
  * Classic <a> link to download don't allow to give a name to downloaded fiel if url call en external url. 
  * See note at https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
  */
-function downloadFile(url, nomLocal) {
+function downloadFile(url, file_name, type="txt") {
 
-    var anchor = document.createElement('a');
-    anchor.setAttribute("download", file_name);
-    anchor.setAttribute("href",     path_data);
-    anchor.style = 'display: none';
-    self.ajax_indicator_stop()
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
+    var downloadLink = document.createElement('a');
+    downloadLink.download = file_name;
+    downloadLink.href = `${url}&filename=${file_name}`;
+    downloadLink.style = 'display: none';
+    console.default.log( downloadLink)
+
+    db.ajax_indicator_stop()
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
 
 }
 
