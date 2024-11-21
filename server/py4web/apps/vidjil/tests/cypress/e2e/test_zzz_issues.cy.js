@@ -120,33 +120,36 @@ describe('Manipulate db page', function () {
     })
 
     // TODO : remove bypass when cypress >= 12.9 deployed
-    // it('5070 - get_reads',  function() {
-    //     if (Cypress.browser.name === 'firefox') {
-    //       // Skip old versions of firefox that don't work on cypress for this test (
-    //       // cypress loose pupetter after downlaod of a file
-    //       this.skip
-    //     }
-    //     var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
-    //     var config_id = 2
+    it('5070 - get_reads',  function() {
+        if (Cypress.browser.name === 'firefox') {
+          // Skip old versions of firefox that don't work on cypress for this test (
+          // cypress loose pupetter after downlaod of a file
+          this.skip
+        }
+        var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
+        var sampleid = 45
+        var config_id = 2
 
-    //     cy.goToPatientPage()
-    //     // cy.screenshot('debug_5070_1_patient_page')
+        cy.goToPatientPage()
+        // cy.screenshot('debug_5070_1_patient_page')
 
-    //     cy.openSet(uid)
-    //     // cy.screenshot('debug_5070_2_open_set')
+        cy.openSet(uid)
+        // cy.screenshot('debug_5070_2_open_set')
 
-    //     cy.openAnalysisFromSetPage(uid, config_id)
-    //     cy.openCloneInfo(1)
-    //     // cy.screenshot('debug_5070_3_clone_panel')
-    //     cy.get(':nth-child(2) > .icon-down').click()
+        cy.openAnalysisFromSetPage(uid, config_id)
+        cy.openCloneInfo(1)
+        // cy.screenshot('debug_5070_3_clone_panel')
+        cy.get(':nth-child(2) > .icon-down').click()
 
-    //     const downloadsFolder = Cypress.config('downloadsFolder')
-    //     const downloadedFilename = downloadsFolder+'/reads__1__file_id__'+uid+'.fa'
+        const downloadsFolder = Cypress.config('downloadsFolder')
+        cy.log( Cypress.config('downloadsFolder') )
+        const downloadedFilename = downloadsFolder+'/reads_1__file_id_'+sampleid+'.fa'
+        cy.log( downloadedFilename  )
 
-    //     // Don't work on gitlab, but work locally...
-    //     // cy.readFile(downloadedFilename, { timeout: 120000 })
-    //     //   .should('contain', '>clone-001')
-    // })
+        // Don't work on gitlab, but work locally...
+        cy.readFile(downloadedFilename, { timeout: 20000 })
+          .should('contain', '>IGKV3-7*04 1/GTGGA/11 KDE')
+    })
 
     it('5178 - bad render when request error occured',  function() {
         // Before fixing, request return error has HTML and are badly interpreted and break DOM page
@@ -241,4 +244,4 @@ describe('Manipulate db page', function () {
     })
 
 
-  })
+})
