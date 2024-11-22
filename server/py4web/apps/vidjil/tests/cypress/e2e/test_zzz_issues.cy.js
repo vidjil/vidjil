@@ -127,7 +127,7 @@ describe('Manipulate db page', function () {
           this.skip
         }
         var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
-        var sampleid = 45
+        var sampleid = 50
         var config_id = 2
 
         cy.goToPatientPage()
