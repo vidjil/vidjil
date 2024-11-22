@@ -288,7 +288,7 @@ Database.prototype = {
      * request, status, error: values given by ajax in case of fail
      * name: name of the function/component calling request
      * msg: optional; a message to log instead of default url/args values
-     * url: url called; cleaned of db adress
+     * url: url called; cleaned of db address
      * args: args added to called url
      * type: type of log printed (flash; popup or undefined)
      */
@@ -305,9 +305,9 @@ Database.prototype = {
         }
 
         if (type != undefined){
-            // url = url.replace(this.db_address, '') + "?" + this.argsToStr(args)
-            // text = msg !== undefined ? msg : `An error occured (${request.statusText}; code ${request.status})` //<br/>URL called: ${url}` // limit url to admin ?
-            // console.log({"type": type, "msg": text, "priority": 2});
+            url = (url != undefined) ? (url.replace(this.db_address, '') + "?" + this.argsToStr(args)) : ""
+            text = msg !== undefined ? msg : `An error occurred (${request.statusText}; code ${request.status})`
+            console.log({"type": type, "msg": text + " - Called url: " + url, "priority": 2});
         }
     },
 
