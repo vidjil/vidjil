@@ -1,49 +1,49 @@
-
-
-# -*- coding: utf-8 -*-
-# this file is released under public domain and you can use without limitations
-
-#########################################################################
-## This is a sample controller
-## - index is the default action of any application
-## - user is required for authentication and authorization
-## - download is for downloading files uploaded in the db (does streaming)
-## - call exposes all registered services (none by default)
-#########################################################################
-
-from sys import modules
-from collections import OrderedDict
-from .. import defs
-from ..modules import vidjil_utils
-from ..modules.controller_utils import error_message
-from ..modules.sampleSet import get_set_group
-from ..modules.sequenceFile import *
-from ..modules.sampleSet import get_sample_set_id_from_results_file
-from ..modules.analysis_file import get_analysis_data
-from ..controllers.group import add_default_group_permissions
-from ..tasks import custom_fuse
-from io import StringIO
-import logging
-import json
-import os
 import time
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from ..tasks import schedule_run
-from yatl.helpers import INPUT, H1, HTML, BODY, A, DIV
-from py4web.utils.param import Param
-from ..settings import SESSION_SECRET_KEY
-from ..modules.permission_enum import PermissionEnum
-from ..modules.sequenceFile import check_space
-from ..user_groups import get_default_creation_group
-from ..VidjilAuth import VidjilAuth
-from py4web.utils.auth import Auth, AuthAPI
-import types
+from py4web import action, request
 
-from ..common import db, session, cors, T, flash, cache, authenticated, unauthenticated, auth, log
+from ..common import db, auth, log
 
+#########################################################################
+ALL_METRICS = {
+	"group_count":                       {"fast": True,  "long": False},
+	# "group_count_only_test":             {"fast": True,  "long": False},
+	"login_count":                       {"fast": True,  "long": False},
+	"set_patients_count":                {"fast": True,  "long": False},
+	"set_runs_count":                    {"fast": True,  "long": False},
+	"set_generics_count":                {"fast": True,  "long": False},
+	"set_patients_by_user":              {"fast": True,  "long": False},
+	"set_runs_by_user":                  {"fast": True,  "long": False},
+	"set_generics_by_user":              {"fast": True,  "long": False},
+	"sequence_count":                    {"fast": True,  "long": False},
+	"results_count":                     {"fast": True,  "long": False},
+	"status_analysis":                   {"fast": True,  "long": False},
+	"sequence_by_user":                  {"fast": True,  "long": False},
+	"sequence_size_by_user":             {"fast": True,  "long": False},
+	"config_analysis":                   {"fast": True,  "long": False},
+	"config_analysis_by_users_patients": {"fast": True,  "long": False},
+	"config_analysis_by_users_runs":     {"fast": True,  "long": False},
+	"config_analysis_by_users_generic":  {"fast": True,  "long": False},
+	"set_patients_by_group":             {"fast": False, "long": True},
+	"set_runs_by_group":                 {"fast": False, "long": True},
+	"set_generics_by_group":             {"fast": False, "long": True},
+	"config_analysis_by_groups":         {"fast": False, "long": True},
+}
+#########################################################################
+
+def get_config_analysis_by_user(sample_set_type:str):
+    return db((db.config.id==db.results_file.config_id) & 
+                (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
+                (db.sample_set_membership.sample_set_id==db.sample_set.id) &
+                (db.sample_set.sample_type==sample_set_type)
+                ).select(db.config.name.with_alias("config_name"),
+                    db.sample_set.creator.with_alias("user_id"), 
+                    db.results_file.config_id.with_alias("config_id"), 
+                    db.results_file.id.count().with_alias("count"), 
+                    groupby=(db.results_file.config_id | db.sample_set.creator)
+                )
 
 def getMetricByName(metric_name):
-    if "metrics" in auth.groups or auth.is_admin(): # WARNING !!! Iconsistency, switch between mutiple call to admin/not admin. (tested with API)
+    if "metrics" in auth.groups or auth.is_admin(): # WARNING !!! Consistency, switch between multiple call to admin/not admin. (tested with API)
  
         if metric_name == "users_count":
             return len(db().select(db.auth_user.id.count(),  groupby=db.auth_user.id ))
@@ -134,8 +134,6 @@ def getMetricByName(metric_name):
                              groupby=db.auth_group.id 
                             )
 
-
-
         # Very very long on app database. Don't use for the moment
         elif metric_name == "config_analysis_by_groups":
             return db((db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
@@ -153,53 +151,17 @@ def getMetricByName(metric_name):
  
 
         elif metric_name == "config_analysis_by_users_patients":
-            return db((db.config.id==db.results_file.config_id) & 
-                        (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
-                        (db.sample_set_membership.sample_set_id==db.sample_set.id) &
-                        (db.sample_set.creator==db.auth_membership.user_id)  & 
-                        (db.sample_set.sample_type=="patient") 
-                        # (db.sample_set_membership.sample_set_id==db.patient.sample_set_id)
-                        ).select(db.config.name.with_alias("config_name"),
-                            db.auth_membership.user_id.with_alias("user_id"), 
-                            db.results_file.config_id.with_alias("config_id"), 
-                            db.results_file.id.count().with_alias("count"), 
-                            groupby=(db.results_file.config_id | db.auth_membership.user_id)
-                        )
+            return get_config_analysis_by_user("patient")
 
         elif metric_name == "config_analysis_by_users_runs":
-            return db((db.config.id==db.results_file.config_id) & 
-                        (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
-                        (db.sample_set_membership.sample_set_id==db.sample_set.id) &
-                        (db.sample_set.creator==db.auth_membership.user_id)  & 
-                        (db.sample_set.sample_type=="run") 
-                        # (db.sample_set_membership.sample_set_id==db.run.sample_set_id)
-                        ).select(db.config.name.with_alias("config_name"),
-                            db.auth_membership.user_id.with_alias("user_id"), 
-                            db.results_file.config_id.with_alias("config_id"), 
-                            db.results_file.id.count().with_alias("count"), 
-                            groupby=(db.results_file.config_id | db.auth_membership.user_id)
-                        )
+            return get_config_analysis_by_user("run")
 
         elif metric_name == "config_analysis_by_users_generic":
-            return db((db.config.id==db.results_file.config_id) & 
-                        (db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
-                        (db.sample_set_membership.sample_set_id==db.sample_set.id) &
-                        (db.sample_set.creator==db.auth_membership.user_id)  & 
-                        (db.sample_set.sample_type=="generic") 
-                        # (db.sample_set_membership.sample_set_id==db.generic.sample_set_id)
-                        ).select(db.config.name.with_alias("config_name"),
-                            db.auth_membership.user_id.with_alias("user_id"), 
-                            db.results_file.config_id.with_alias("config_id"), 
-                            db.results_file.id.count().with_alias("count"), 
-                            groupby=(db.results_file.config_id | db.auth_membership.user_id)
-                        )
+            return get_config_analysis_by_user("generic")
 
         else:
             raise Exception("Metric name asked don't exist: {metric_name}")
     return None
-
-
-
 
 def getMetricsList(metrics_list, auth):
     if "metrics" in auth.groups or auth.is_admin(): # WARNING !!! Iconsistency, switch between mutiple call to admin/not admin. (tested with API)
@@ -212,7 +174,7 @@ def getMetricsList(metrics_list, auth):
         for metric in metrics_list:
             data[metric] = getMetricByName(metric)
             data["request_times"][metric] = time.time() - delta_time
-            delta_time = time.time();
+            delta_time = time.time()
 
         data["request_times"]["total"] = time.time() - start_time
         log.debug("METRICS loaded (%.3fs)" % (time.time() - start_time))    
@@ -220,39 +182,11 @@ def getMetricsList(metrics_list, auth):
         data = {"message": 'status NOT in metrics group'}
     return data
 
-
-#########################################################################
-ALL_METRICS = {
-	"group_count":                       {"fast": True,  "long": False},
-	# "group_count_only_test":             {"fast": True,  "long": False},
-	"login_count":                       {"fast": True,  "long": False},
-	"set_patients_count":                {"fast": True,  "long": False},
-	"set_runs_count":                    {"fast": True,  "long": False},
-	"set_generics_count":                {"fast": True,  "long": False},
-	"set_patients_by_user":              {"fast": True,  "long": False},
-	"set_runs_by_user":                  {"fast": True,  "long": False},
-	"set_generics_by_user":              {"fast": True,  "long": False},
-	"sequence_count":                    {"fast": True,  "long": False},
-	"results_count":                     {"fast": True,  "long": False},
-	"status_analysis":                   {"fast": True,  "long": False},
-	"sequence_by_user":                  {"fast": True,  "long": False},
-	"sequence_size_by_user":             {"fast": True,  "long": False},
-	"config_analysis":                   {"fast": True,  "long": False},
-	"config_analysis_by_users_patients": {"fast": True,  "long": False},
-	"config_analysis_by_users_runs":     {"fast": True,  "long": False},
-	"config_analysis_by_users_generic":  {"fast": True,  "long": False},
-	"set_patients_by_group":             {"fast": False, "long": True},
-	"set_runs_by_group":                 {"fast": False, "long": True},
-	"set_generics_by_group":             {"fast": False, "long": True},
-	"config_analysis_by_groups":         {"fast": False, "long": True},
-}
-#########################################################################
 @action("/vidjil/metrics_fast", method=["POST", "GET"])
 @action.uses(auth, db)
 def metricsFast():
     fast_metrics = [key for key in ALL_METRICS.keys() if ALL_METRICS[key]["fast"] ]
     return getMetricsList(fast_metrics, auth)
-
 
 @action("/vidjil/metrics_long", method=["POST", "GET"])
 @action.uses(auth, db)
@@ -276,15 +210,13 @@ def metricsByName():
 
 #########################################################################
 
-
-
 @action("/vidjil/set_creator_samples_set", method=["POST", "GET"])
 @action.uses(auth, db)
 def set_creator_samples_set():
     """
     Function to launch to fill creator field of sample_set table from content of field creator of each set type
     Fill only empty value. 
-    To be lauch once at release 2024.10
+    To be launch once at release 2024.10
     After that, this field will be filled automatically at each set creation
     """
 

@@ -140,12 +140,11 @@ class TestResultsFileController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         results_file_id = db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
 
@@ -167,12 +166,11 @@ class TestResultsFileController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.del_permission(
             user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         results_file_id = db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
 
@@ -212,14 +210,13 @@ class TestResultsFileController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.del_permission(
             user_group_id, PermissionEnum.read.value, 'sample_set', sample_set_id)
         auth.del_permission(
             user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         results_file_id = db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
 
@@ -241,14 +238,13 @@ class TestResultsFileController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
             user_group_id, PermissionEnum.read.value, db.sample_set, sample_set_id)
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         save_dir_out_vidjil_id = defs.DIR_OUT_VIDJIL_ID
         try:
             results_file_id = db_manipulation_utils.add_results_file(
@@ -440,8 +436,7 @@ class TestResultsFileController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
         auth.add_permission(
@@ -449,10 +444,10 @@ class TestResultsFileController():
         auth.add_permission(
             user_group_id, PermissionEnum.run.value, db.sample_set, 0)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         results_file_id = db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
-        assert db.results_file[results_file_id] != None
+        assert db.results_file[results_file_id] is not None
 
         # When : Calling delete
         with Omboddle(self.session, keep_session=True,
@@ -463,6 +458,7 @@ class TestResultsFileController():
         result = json.loads(json_result)
         assert result["success"] == "true"
         assert result["redirect"] == "sample_set/index"
-        assert result["message"] == f"[{results_file_id}] ({sample_set_id}) c1: process deleted"
+        assert result["message"] == f"[{
+            results_file_id}] ({sample_set_id}) c1: process deleted"
         assert result["args"]["id"] == str(sample_set_id)
         assert db.results_file[results_file_id] == None

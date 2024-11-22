@@ -79,15 +79,14 @@ class TestSampleSetController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
             user_group_id, PermissionEnum.read.value, db.sample_set, sample_set_id)
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
-        results_file_id = db_manipulation_utils.add_results_file(
+            sample_set_id, user_id)
+        db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
 
         # When : Calling index:
@@ -97,13 +96,13 @@ class TestSampleSetController():
         # Then : We get an error
         result = json.loads(json_result)
         assert result["sample_type"] == "patient"
-        assert result["config"] == False
+        assert not result["config"]
         assert len(result["query"])
         first_query_result = result["query"][0]
         assert first_query_result["sequence_file"]["id"] == sequence_file_id
         assert first_query_result["sample_set_membership"]["sample_set_id"] == sample_set_id
         assert first_query_result["sample_set_membership"]["sequence_file_id"] == sequence_file_id
-        assert first_query_result["results_file"]["id"] == None
+        assert first_query_result["results_file"]["id"] is None
         # TODO : Shouldn't this be results_file_id ? According to config management, it is coherent, but is it what we want ?
 
     # TODO : check more things in results, and add more test for sort, reverse, ...
@@ -371,7 +370,7 @@ class TestSampleSetController():
         patient_edit_in_db = db.patient[patient_edit["id"]]
         assert patient_edit_in_db["first_name"] != self.patient_edit_data["first_name"]
         assert patient_edit_in_db["last_name"] != self.patient_edit_data["last_name"]
-        
+
     # TODO : add tests for other defs.SET_TYPE
 
     # ##################################

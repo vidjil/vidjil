@@ -57,7 +57,7 @@ class TestFileController(unittest.TestCase):
         assert result["sample_type"] == defs.SET_TYPE_PATIENT
         assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) == 1
-        assert result["isEditing"] == False
+        assert not result["isEditing"]
 
     def test_form_with_file(self):
         # Given : Logged as other user, and add corresponding config, ...
@@ -66,10 +66,9 @@ class TestFileController(unittest.TestCase):
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id, auth)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
 
         # When : Calling form
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": sample_set_id, "file_id": sequence_file_id}):
@@ -95,9 +94,9 @@ class TestFileController(unittest.TestCase):
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
         # pass auth to correctly set the rights
-        patient_id = db_manipulation_utils.add_patient(1, user_id, auth)[0]
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
 
         # When : Calling form
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file_id": sequence_file_id, "sample_type": defs.SET_TYPE_PATIENT}):
@@ -113,7 +112,7 @@ class TestFileController(unittest.TestCase):
         assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) > 1
         assert result["files"][0]["id"] == sequence_file_id
-        assert result["isEditing"] == True
+        assert result["isEditing"]
 
     def test_form_edit_file_no_rights(self):
         # Given : Logged as other user, and add corresponding config, ...
@@ -123,9 +122,9 @@ class TestFileController(unittest.TestCase):
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
         # do not pass auth not to add the rights
-        patient_id = db_manipulation_utils.add_patient(1, user_id)[0]
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
 
         # When : Calling form
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file_id": sequence_file_id}):
@@ -203,7 +202,7 @@ class TestFileController(unittest.TestCase):
 
     def test_submit_vidjil_same_sets(self):
         # Test a sequence file is not associated multiple times to the same sample_set
-        
+
         # Given : initialized data
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
@@ -226,7 +225,8 @@ class TestFileController(unittest.TestCase):
         file_ids = result["file_ids"]
         assert len(file_ids) == 1
         file_id = file_ids[0]
-        rows = db(db.sample_set_membership.sequence_file_id==file_id and db.sample_set_membership.sample_set_id==sample_set_id).select()
+        rows = db(db.sample_set_membership.sequence_file_id ==
+                  file_id and db.sample_set_membership.sample_set_id == sample_set_id).select()
         assert len(rows) == 1
 
     def test_submit_nfs(self):
@@ -349,10 +349,9 @@ class TestFileController(unittest.TestCase):
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id, auth)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
 
         json_submit_data = self._initialize_json_submit_data(
             sample_set_id, "computer", filename="plopapi", sample_type=defs.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id)
@@ -377,7 +376,7 @@ class TestFileController(unittest.TestCase):
         patient_id, sample_set_id = db_manipulation_utils.add_patient(
             1, user_id, auth)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
 
         save_file_source = defs.FILE_SOURCE
         try:
@@ -405,10 +404,9 @@ class TestFileController(unittest.TestCase):
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id, auth)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         pre_process_id = db_manipulation_utils.add_pre_process()
 
         save_file_source = defs.FILE_SOURCE
@@ -436,10 +434,9 @@ class TestFileController(unittest.TestCase):
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id, auth)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         pre_process_id = db_manipulation_utils.add_pre_process()
 
         save_file_source = defs.FILE_SOURCE
@@ -472,10 +469,9 @@ class TestFileController(unittest.TestCase):
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id = db_manipulation_utils.add_patient(
-            1, user_id, auth)[0]
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         file_to_upload = pathlib.Path(
             test_utils.get_resources_path(), "analysis-example.vidjil")
         with file_to_upload.open("rb") as file:
@@ -534,10 +530,9 @@ class TestFileController(unittest.TestCase):
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id, auth)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
 
         # When : Calling confirm
         with Omboddle(self.session, keep_session=True, params={"format": "json"},
@@ -547,8 +542,8 @@ class TestFileController(unittest.TestCase):
         # Then : We get users list
         result = json.loads(json_result)
         assert result["message"] == "Choose what you would like to delete"
-        assert result["delete_only_sequence"] == False
-        assert result["delete_results"] == False
+        assert not result["delete_only_sequence"]
+        assert not result["delete_results"]
 
     ##################################
     # Tests on file_controller.delete()
@@ -561,15 +556,14 @@ class TestFileController(unittest.TestCase):
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id, auth)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         save_upload_folder = db.sequence_file.data_file.uploadfolder
         save_auto_delete = db.sequence_file.data_file.autodelete
         try:
             db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
             db.sequence_file.data_file.autodelete = True
             sequence_file_id = db_manipulation_utils.add_sequence_file(
-                patient_id, user_id, use_real_file=True)
+                sample_set_id, user_id, use_real_file=True)
             data_file = pathlib.Path(test_utils.get_results_path(),
                                      db.sequence_file[sequence_file_id].data_file)
             assert data_file.exists()
@@ -581,9 +575,10 @@ class TestFileController(unittest.TestCase):
 
             # Then : We get users list
             result = json.loads(json_result)
-            assert result["message"] == f"sequence file ({sequence_file_id}) deleted"
+            assert result["message"] == f"sequence file ({
+                sequence_file_id}) deleted"
             assert not data_file.exists()
-            assert db.sequence_file[sequence_file_id] != None
+            assert db.sequence_file[sequence_file_id] is not None
         finally:
             db.sequence_file.data_file.uploadfolder = save_upload_folder
             db.sequence_file.data_file.autodelete = save_auto_delete
@@ -595,15 +590,14 @@ class TestFileController(unittest.TestCase):
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id, auth)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         save_upload_folder = db.sequence_file.data_file.uploadfolder
         save_auto_delete = db.sequence_file.data_file.autodelete
         try:
             db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
             db.sequence_file.data_file.autodelete = True
             sequence_file_id = db_manipulation_utils.add_sequence_file(
-                patient_id, user_id, use_real_file=True)
+                sample_set_id, user_id, use_real_file=True)
             data_file = pathlib.Path(test_utils.get_results_path(),
                                      db.sequence_file[sequence_file_id].data_file)
             assert data_file.exists()
@@ -615,9 +609,10 @@ class TestFileController(unittest.TestCase):
 
             # Then : We get users list
             result = json.loads(json_result)
-            assert result["message"] == f"sequence file ({sequence_file_id}) deleted"
+            assert result["message"] == f"sequence file ({
+                sequence_file_id}) deleted"
             assert not data_file.exists()
-            assert db.sequence_file[sequence_file_id] == None
+            assert db.sequence_file[sequence_file_id] is None
         finally:
             db.sequence_file.data_file.uploadfolder = save_upload_folder
             db.sequence_file.data_file.autodelete = save_auto_delete
@@ -641,7 +636,9 @@ class TestFileController(unittest.TestCase):
     def test_sequencer_list_one_result(self):
         # Given : Logged as default admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        sequence_file_id = db_manipulation_utils.add_sequence_file()
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(sample_set_id)
         db.sequence_file[sequence_file_id].update_record(
             sequencer="dummy_sequencer")
 
@@ -673,7 +670,9 @@ class TestFileController(unittest.TestCase):
     def test_pcr_list_one_result(self):
         # Given : Logged as default admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        sequence_file_id = db_manipulation_utils.add_sequence_file()
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(sample_set_id)
         db.sequence_file[sequence_file_id].update_record(pcr="dummy_pcr")
 
         # When : Calling pcr_list
@@ -704,7 +703,9 @@ class TestFileController(unittest.TestCase):
     def test_producer_list_new(self):
         # Given : Logged as default admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        sequence_file_id = db_manipulation_utils.add_sequence_file()
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(sample_set_id)
         db.sequence_file[sequence_file_id].update_record(
             producer="dummy_producer")
 
@@ -715,7 +716,8 @@ class TestFileController(unittest.TestCase):
         # Then : We get producer_list
         result = json.loads(json_result)
         assert len(result["producer"]) == 2
-        assert collections.Counter(result["producer"]) == collections.Counter(["vidjil", "dummy_producer"])
+        assert collections.Counter(result["producer"]) == collections.Counter([
+            "vidjil", "dummy_producer"])
 
     ##################################
     # Tests on file_controller.restart_pre_process()

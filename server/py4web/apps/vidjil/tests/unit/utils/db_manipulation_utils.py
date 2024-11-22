@@ -172,11 +172,12 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
 
 # Group management
 
-def add_group(group_name : str, user_id : int = -1) : 
+def add_group(group_name : str, user_id : int = -1) -> int : 
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
 
     group_id = db.auth_group.insert(id="", role=group_name, description="")
+    return group_id
 
 
 def add_user_to_group(group_id : int, user_id : int) : 
@@ -190,23 +191,19 @@ def remove_user_from_group(group_id : int, user_id : int):
 # Sequence file management
 
 
-def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bool = False, preprocess: bool = False, preprocess_conf_id: int=-1) -> int:
+def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool = False, preprocess: bool = False, preprocess_conf_id: int=-1) -> int:
     """Add a fake sequence file to a patient
 
     Args:
-        patient_id (int, optional): patient id. Defaults to -1.
+        sample_set_id (int): sample set id.
         user_id (int, optional): user id. Defaults to -1.
         use_real_file (bool, optional): If set to false, use a simple string value. If set to True, really load a file in db. Default to False
-        preprocess (bool, optional): Swtich preprocess status. If set to False, don't fill preprocess fields of db. If set to True, fill them with values given (preprocess conf and task id; load 2 file instead of one. Default to False
-        preprocess_conf_id (int, optional): Preprocess conf id. if not set, don't used
+        preprocess (bool, optional): Switch preprocess status. If set to False, don't fill preprocess fields of db. If set to True, fill them with values given (preprocess conf and task id; load 2 file instead of one. Default to False
+        preprocess_conf_id (int, optional): Preprocess conf id. if not set, not used
 
     Returns:
         int: corresponding sequence file id
     """
-
-    if patient_id == -1:
-        patient_id = db(db.patient).select().first().id
-    sample_set_id = db.patient[patient_id].sample_set_id
 
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
@@ -225,7 +222,7 @@ def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bo
         data_file2 = "/test/sequence/test_file2.fasta" if preprocess else None
         preprocess_file = "/test/sequence/preprocess_test_file.fasta" if preprocess else None
 
-    sequence_file_id = db.sequence_file.insert(patient_id=patient_id,
+    sequence_file_id = db.sequence_file.insert(patient_id=None,
                                                sampling_date="2010-10-10",
                                                info="testf",
                                                filename=filename,
@@ -248,8 +245,8 @@ def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bo
 TEST_CONFIG_NAME = "test_config_plapipou"
 
 
-def add_config():
-    config_id = db.config.insert(name=TEST_CONFIG_NAME,
+def add_config(name : int = TEST_CONFIG_NAME) -> int:
+    config_id = db.config.insert(name=name,
                                  info="plop_info",
                                  command="plop_command",
                                  fuse_command="plop_fuse_command",
@@ -338,7 +335,9 @@ def add_results_file(sequence_file_id: int = -1, config_id: int = -1, scheduler_
         config_id = db(db.config).select().first().id
 
     if scheduler_task_id == -1:
-        scheduler_task_id = db(db.scheduler_task).select().first().id
+        first_scheduler_task = db(db.scheduler_task).select().first()
+        if first_scheduler_task is not None:
+            scheduler_task_id = first_scheduler_task.id
 
     if use_real_file:
         filename = "analysis-example.vidjil"

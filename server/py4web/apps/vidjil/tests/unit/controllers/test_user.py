@@ -37,16 +37,16 @@ class TestUserController(unittest.TestCase):
         # add second user, 1 associated patient with a file
         self.user_2_id = db_manipulation_utils.add_indexed_user(
             self.session, 2)
-        patient_id = db_manipulation_utils.add_patient(3, self.user_2_id)[0]
-        db_manipulation_utils.add_sequence_file(patient_id, self.user_2_id)
+        sample_set_id = db_manipulation_utils.add_patient(3, self.user_2_id)[1]
+        db_manipulation_utils.add_sequence_file(sample_set_id, self.user_2_id)
 
         # add 3rd user, with no associated patient, and login to change last log date
         self.user_3_id = db_manipulation_utils.add_indexed_user(
             self.session, 3)
-        db_manipulation_utils.log_in(self.session,
-                                     db_manipulation_utils.get_indexed_user_email(
-                                         3),
-                                     db_manipulation_utils.get_indexed_user_password(3))
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3))
 
     ##################################
     # Tests on user_controller.index()
@@ -423,7 +423,6 @@ class TestUserController(unittest.TestCase):
         log_in_result = db_manipulation_utils.log_in(
             self.session, "modified@email.com", "ComplicatedModifiedPassword")
         assert not log_in_result["error"]
-        
 
     def test_edit_form_myself_wrong_email(self):
         # Given : Logged as user 3
