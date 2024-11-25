@@ -225,7 +225,7 @@ If the user should no longer have access to an account, you can after that delet
 Some monitoring features are accessible through the web application with the adding of a new dedicated controller, allowing to ask some metrics on an instance of a vidjil server.
 A full list of available will be described below.
 
-Goal of this metrics is to get regulary called by an [API instance](https://gitlab.inria.fr/vidjil/metrics/metrics-instance) to be added to an external monitoring service. The tools retain in our pipeline is a combination of [Vidjil API](xxx) for metrics requests, [Prometheus](https://prometheus.io/) for metrics storage and [Grafana](https://grafana.com/) for visualisation.  
+Goal of this metrics is to get regulary called by an [API instance](https://gitlab.inria.fr/vidjil/metrics/metrics-instance) to be added to an external monitoring service. The tools retain in our pipeline is a combination of [Vidjil API](/doc/api/) for metrics requests, [Prometheus](https://prometheus.io/) for metrics storage and [Grafana](https://grafana.com/) for visualisation.  
 
 
 
@@ -256,14 +256,23 @@ A dedicated configuration of these tools can be found at this [page](https://git
 
 A set of three steps/conditions should be filled:
 
-* Add a dedicated user that will only see metrics informations.
-  Creation of a dedicated group called `metrics` is also needed. Add the dedicated user to this group. You should remove all other right of this groups.
+#### Add a dedicated user and group 
+
+This new group will only see metrics informations.
+
+If you start from a fresh installation initialised from scratch, a dedicated group nammed *metrics* will be automatically created.
+If not, you will have to create it by you own (see [Creating groups](/doc/admin/#creating-groups)), named it *metrics* and remove all rights in it. 
+
+An automatic creation of this user can be set at database initialisation. To be done, various metrics variables should be setted in `docker/.env.default` at initialisation of database (`METRICS_USER_PASSWORD`, `METRICS_USER_EMAIL`).
+If you already have made database initialisation or do server upgrade, you can also create a dedicated user and add it to this group.
+
+
 * A metrics server instance that will launch the combination of Vidjil API/Prometheus/Grafana to monitor server. 
   More documentation on this last points will be found on [dedicated repository](https://gitlab.inria.fr/vidjil/metrics/metrics-server) and updated regulary with usage adoption.
 
 
- a call to `set_creator_samples_set` should be done at migration. 
- This allow to modify previous database to change loacatio of an information splitted between 3 child tables.
+ A call to `set_creator_samples_set` should be done at migration. 
+ This allow to modify previous database to change loacation of an information splitted between 3 child tables.
 ### Available metrics
 
 A complete list of available metrics is detailled here. 
