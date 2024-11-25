@@ -136,7 +136,7 @@ def getMetricByName(metric_name):
                              groupby=db.auth_group.id 
                             )
 
-        # Very very long on app database. Don't use for the moment
+
         elif metric_name == "config_analysis_by_groups":
             return db((db.results_file.sequence_file_id==db.sample_set_membership.sequence_file_id) & 
                         (db.sample_set_membership.sample_set_id==db.sample_set.id) &
