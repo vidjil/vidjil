@@ -135,10 +135,6 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
             vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE)
             cmd = defs.DIR_VIDJIL + '/vidjil-algo '
 
-        if grep_reads:
-            if re.match(r"^[acgtnACGTN]+$", grep_reads):
-                vidjil_cmd += ' --out-clone-files --grep-reads "%s" ' % grep_reads
-                
         if sequence_file.pre_process_file:
             # reads json preprocess file to get number of reads
             preprocess_data = json.load(open(defs.DIR_RESULTS+"/"+sequence_file.pre_process_file))
@@ -147,6 +143,17 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
 
         cmd += ' -o  ' + out_folder + " -b " + output_filename
         cmd += ' ' + vidjil_cmd + ' '+ seq_file
+
+
+        if grep_reads != None:
+            print( f"{grep_reads=}")
+            print( f"{seq_file=}")
+
+            if re.match(r"^[acgtnACGTN]+$", grep_reads):
+                zipped   = "z" if seq_file.endswith(".gz") else ""
+                get_quality = "" if (seq_file.endswith(".fasta") or seq_file.endswith(".fa")) else "-A2" # bam file ?
+                cmd = f"mkdir -p {out_folder}/seq; {zipped}grep -B1 {get_quality} --no-group-separator -E '{grep_reads}|{vidjil_utils.get_reverse_complement(grep_reads)}' {seq_file} > {out_folder}/seq/clone.fa-1"
+                
 
         try:
             ## execute vidjil command

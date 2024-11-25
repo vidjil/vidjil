@@ -326,6 +326,26 @@ def cleanup_json_sample(json_string):
 
     return json_string + ''.join(end_delimiter_stack)
 
+def get_reverse_complement(seq):
+    """
+    Returns the reverse complement of a given nucleotide sequence.
+
+    Args:
+        seq (str): A string representing the nucleotide sequence.
+                 It should only contain 'A', 'C', 'G', and 'T'.
+
+    Returns:
+        str: The reverse complement of the input sequence.
+
+    
+    >>>get_reverse_complement("AATTCCGGA")
+    "TCCGGAATT"
+    """
+
+    complements = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
+    reverse_comp_seq = [complements[base] for base in seq][::-1]
+
+    return ''.join(reverse_comp_seq)
 
 
 def extract_value_from_json_path(json_path, json):
