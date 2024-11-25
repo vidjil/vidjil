@@ -59,6 +59,7 @@ cmd = ['%s/flash2' % args.flash2_dir,
  "-d", path_head,
  "-o", path_file,
  "-t", "1",
+ "--compress" 
 ]
 cmd += shlex.split( f_opt )
 print( "# %s" % cmd )
@@ -71,22 +72,28 @@ if p.returncode > 0:
     raise EnvironmentError("Flash2 failed")
 
 try :
-    with gzip.open(f_out, 'w') as outFile:
-        with open(f_out+'.extendedFrags.fastq', 'rb') as f1:
-            shutil.copyfileobj(f1, outFile)
+    if args.keep:
+        shutil.copy(f_out+'.extendedFrags.fastq.gz', f_out+'.extendedFrags.fastq.gz.bak')
+
+    with open(f_out+'.extendedFrags.fastq.gz', 'wb') as base_file:
         if (args.keep_r1):
-            with open(f_out+'.notCombined_1.fastq', 'rb') as f2:
-                shutil.copyfileobj(f2, outFile)
+            with open(f_out+'.notCombined_1.fastq.gz', 'rb') as f2:
+                shutil.copyfileobj(f2, base_file)
         if (args.keep_r2):
-            with open(f_out+'.notCombined_2.fastq', 'rb') as f3:
-                shutil.copyfileobj(f3, outFile)
-        if not args.keep:
-            os.remove(f_out+'.extendedFrags.fastq')
-            os.remove(f_out+'.notCombined_1.fastq')
-            os.remove(f_out+'.notCombined_2.fastq')
+            with open(f_out+'.notCombined_2.fastq.gz', 'rb') as f3:
+                shutil.copyfileobj(f3, base_file)
+
+    shutil.move(f_out+'.extendedFrags.fastq.gz', f_out)
+    if not args.keep:
+        os.remove(f_out+'.notCombined_1.fastq.gz')
+        os.remove(f_out+'.notCombined_2.fastq.gz')
         ## Remove the histogram provide by Flash2
         os.remove(f_out+'.hist')
         os.remove(f_out+'.histogram')
+    else:
+        shutil.move(f_out+'.extendedFrags.fastq.gz.bak', f_out+'.extendedFrags.fastq.gz')
+    
+
 
     with tempfile.NamedTemporaryFile(mode="w+") as logfile:
         logfile.write(stdoutdata)
@@ -100,3 +107,6 @@ try :
 except IOError :
     os.remove(f_out)
     raise
+
+os.remove(f_r1)
+os.remove(f_r2)
