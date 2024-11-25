@@ -219,8 +219,82 @@ If the user should no longer have access to an account, you can after that delet
 
 ## Server Monitoring
 
-Some monitoring features are accessible through the web application :
-XXX TODO XXX
+![New with release 2024.12](https://img.shields.io/badge/Release-2024.12-blue)
+
+
+Some monitoring features are accessible through the web application with the adding of a new dedicated controller, allowing to ask some metrics on an instance of a vidjil server.
+A full list of available will be described below.
+
+Goal of this metrics is to get regulary called by an [API instance](https://gitlab.inria.fr/vidjil/metrics/metrics-instance) to be added to an external monitoring service. The tools retain in our pipeline is a combination of [Vidjil API](xxx) for metrics requests, [Prometheus](https://prometheus.io/) for metrics storage and [Grafana](https://grafana.com/) for visualisation.  
+
+
+
+``` mermaid
+graph TB
+    subgraph Metrics servers
+    D[Grafana<br>viewer] -- ask<br>metrics  --> C;
+    C -- serve<br>metrics  --> D;
+    C -- timmed<br>requests  --> B;
+    B -- formatted<br>metrics --> C[Prometheus<br>DB];
+    end
+
+    V1 ~~~ V2;
+    V1 ~~~ VX;
+    V2 ~~~ VX;
+
+    V1(**Vidjil<br>server 1**) -- raw<br>metrics --> B[API<br>server];
+    V2(**Vidjil<br>server 2**) -- raw<br>metrics --> B[API<br>server];
+    VX(**Vidjil<br>server X**) -- raw<br>metrics --> B[API<br>server];
+    B -- request<br>metrics --> V1;
+    B -- request<br>metrics --> V2;
+    B -- request<br>metrics --> VX;
+```
+
+A dedicated configuration of these tools can be found at this [page](https://gitlab.inria.fr/vidjil/metrics/metrics-server) and could be set up with a simple docker configuration.
+
+### Set up monitoring
+
+A set of three steps/conditions should be filled:
+
+* Add a dedicated user that will only see metrics informations.
+  Creation of a dedicated group called `metrics` is also needed. Add the dedicated user to this group. You should remove all other right of this groups.
+* A metrics server instance that will launch the combination of Vidjil API/Prometheus/Grafana to monitor server. 
+  More documentation on this last points will be found on [dedicated repository](https://gitlab.inria.fr/vidjil/metrics/metrics-server) and updated regulary with usage adoption.
+
+
+ a call to `set_creator_samples_set` should be done at migration. 
+ This allow to modify previous database to change loacatio of an information splitted between 3 child tables.
+### Available metrics
+
+A complete list of available metrics is detailled here. 
+Note that some metrics are more computational instensive than other. We choose to split metrics in 3 lists: `fast`, `long` and `all`.
+Note that metrics server will call by default only `fast/long` list at a specific recurence.
+
+| Metrics                           | List | Descriptions                                                                                        |
+|:----------------------------------|:-----|:----------------------------------------------------------------------------------------------------|
+| group_count                       | fast | Get number of groups                                                                                |
+| set_patients_count                | fast | Get number of patients for all users                                                                |
+| set_runs_count                    | fast | Get number of runs for all users                                                                    |
+| set_generics_count                | fast | Get number of generic sets for all users                                                            |
+| set_patients_by_user              | fast | Get number of patients splitted by user id                                                          |
+| set_runs_by_user                  | fast | Get number of runs splitted by user id                                                              |
+| set_generics_by_user              | fast | Get number of generic splitted by user id                                                           |
+| sequence_count                    | fast | Get number of sequences files                                                                       |
+| results_count                     | fast | Get number of results present on server                                                             |
+| sequence_by_user                  | fast | Get number of sequences files by user                                                               |
+| sequence_size_by_user             | fast | Get sump of sequence files by users                                                                 |
+| config_analysis                   | fast | Get list of analysis splitted by configurations                                                     |
+| config_analysis_by_users_patients | fast | Get list of analysis, splitted by configurations, only for patients                                 |
+| config_analysis_by_users_runs     | fast | Get list of analysis, splitted by configurations, only for runs                                     |
+| config_analysis_by_users_generic  | fast | Get list of analysis, splitted by configurations, only for genrics sets                             |
+| login_count                       | fast | Get number of login count, group by user id                                                         |
+| status_analysis                   | fast | Get number of analysis grouped by status (allow to see pending, finish, running or failed analysis) |
+| set_patients_by_group             | long | Get number of patients splitted by group                                                            |
+| set_runs_by_group                 | long | Get number of runs splitted by group                                                                |
+| set_generics_by_group             | long | Get number of generic splitted by group                                                             |
+| config_analysis_by_groups         | long | Get number of analysis splitted by config and by groups                                             |
+
+
 
 ## Plugins
 
