@@ -212,13 +212,13 @@ def metricsByName():
 
 #########################################################################
 
-@action("/vidjil/set_creator_samples_set", method=["POST", "GET"])
+
 @action.uses(auth, db)
 def set_creator_samples_set():
     """
     Function to launch to fill creator field of sample_set table from content of field creator of each set type
     Fill only empty value. 
-    To be launch once at release 2024.10
+    To be launch once at release 2024.12
     After that, this field will be filled automatically at each set creation
     """
 
