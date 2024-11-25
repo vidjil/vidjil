@@ -7,26 +7,27 @@ from ..common import db, auth, log
 ALL_METRICS = {
 	"group_count":                       {"fast": True,  "long": False},
 	# "group_count_only_test":             {"fast": True,  "long": False},
-	"login_count":                       {"fast": True,  "long": False},
 	"set_patients_count":                {"fast": True,  "long": False},
 	"set_runs_count":                    {"fast": True,  "long": False},
 	"set_generics_count":                {"fast": True,  "long": False},
-	"set_patients_by_user":              {"fast": True,  "long": False},
 	"set_runs_by_user":                  {"fast": True,  "long": False},
 	"set_generics_by_user":              {"fast": True,  "long": False},
 	"sequence_count":                    {"fast": True,  "long": False},
 	"results_count":                     {"fast": True,  "long": False},
-	"status_analysis":                   {"fast": True,  "long": False},
 	"sequence_by_user":                  {"fast": True,  "long": False},
 	"sequence_size_by_user":             {"fast": True,  "long": False},
 	"config_analysis":                   {"fast": True,  "long": False},
 	"config_analysis_by_users_patients": {"fast": True,  "long": False},
 	"config_analysis_by_users_runs":     {"fast": True,  "long": False},
 	"config_analysis_by_users_generic":  {"fast": True,  "long": False},
+	"login_count":                       {"fast": True,  "long": False},
+	"set_patients_by_user":              {"fast": True,  "long": False},
+	"status_analysis":                   {"fast": True,  "long": False},
 	"set_patients_by_group":             {"fast": False, "long": True},
 	"set_runs_by_group":                 {"fast": False, "long": True},
 	"set_generics_by_group":             {"fast": False, "long": True},
 	"config_analysis_by_groups":         {"fast": False, "long": True},
+
 }
 #########################################################################
 
