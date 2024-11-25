@@ -4,9 +4,6 @@
 describe('Creation of users and groups', function () {
     before(function () {
         cy.login(Cypress.env('host'))
-        cy.fixture('l3.json').then(function (l3data) {
-            this.l3data = l3data
-        })
         cy.close_tips()
     })
     beforeEach(function () {
@@ -45,8 +42,7 @@ describe('Creation of users and groups', function () {
         cy.openDBPage()
         cy.goToUsersPage()
 
-        var previous_length = 1 // 1
-        // cy.getTableLength("#table_users").should('eq', previous_length)
+        var previous_length = 2
 
         var first_name = "user_first"
         var last_name  = "user_last"
@@ -58,7 +54,7 @@ describe('Creation of users and groups', function () {
         cy.getTableLength("#table_users").should('eq', previous_length+1)
 
         cy.goToGroupsPage()
-        var grp_user4 = 8
+        var grp_user4 = 9
         cy.setGroupRight(grp_user4, ["run"], true)
     })
 
@@ -67,7 +63,7 @@ describe('Creation of users and groups', function () {
         var owner_public = "public"
         var owner_admin  = "admin"
         var owner_user1  = "Personal Group"
-        var owner_user2  = "user_0002"
+        var owner_user2  = "user_0003"
 
         cy.createPatient("", `owner ${owner_public}`, "test", "2000-01-01", `Cypress; Patient to test owner ${owner_public}`, owner_public, `test owner ${owner_public}`)
         cy.createPatient("", `owner ${owner_admin}`,  "test2", "2000-01-02", `Cypress; Patient to test owner ${owner_admin}`, owner_admin, `test2 owner ${owner_admin}`)
