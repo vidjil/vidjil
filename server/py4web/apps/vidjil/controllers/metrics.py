@@ -54,7 +54,8 @@ def getMetricByName(metric_name):
         
  
         elif metric_name == "login_count":
-            return db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description ) # not fill for the moment
+            # TODO: For the moment, the event are stored in a builded string in "description" field. Can be improve by adding a specific event field
+            return db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description )
  
         # # Patients; runs; sets
         elif metric_name == "set_patients_count":
