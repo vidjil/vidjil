@@ -43,6 +43,12 @@ else
     SHORT_JOBS_WORKERS_POOL=0
 fi
 echo "POOL : $POOL - SHORT_JOBS_WORKERS_POOL : $SHORT_JOBS_WORKERS_POOL - NB_WORKERS : $NB_WORKERS"
+# Display limit (100000000 if not set)
+if [[ -z "${CELERY_SIZE_LIMIT_FOR_LONG_JOB+set}" ]]
+then
+    CELERY_SIZE_LIMIT_FOR_LONG_JOB=100000000
+fi
+echo "Size limit to be considered as a long job: `numfmt --to=iec $CELERY_SIZE_LIMIT_FOR_LONG_JOB`"
 if [[ "$INSTANCE_TYPE" == "short" ]]
 then
     NB_WORKERS=$SHORT_JOBS_WORKERS_POOL
