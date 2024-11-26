@@ -49,7 +49,8 @@ function ScatterPlot_menu(default_preset) {
         "Primers gap" :             { "x": "Primers gap",                               mode: "bar"},
         "Similarity by nucleotides (locus)":    { "x" : "Similarity (CDR3, nucleotide)",   "y": "TSNEY_LOCUS_NT",  mode: "tsne"},
         // "Similarity AA (locus)":    { "x" : "Similarity (CDR3, amino acid)",   "y": "TSNEY_LOCUS_AA",  mode: "tsne"}, // Uncomment after change of smiliarity CGI from local to global
-        "Size within each locus":   { "x": "Locus",              "y": "Size in locus",  mode: "grid"}
+        "Size within each locus":   { "x": "Locus",              "y": "Size in locus",  mode: "grid"},
+        "LLC gene V analysis":      { "x": "V/5' length",        "y": "V/5' ratio",     mode: "grid"},
     };
 
     this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset 

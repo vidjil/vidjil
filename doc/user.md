@@ -621,7 +621,7 @@ A click on the `out` link at the right of every sample give access to the raw ou
 
 ### Displaying statistics, quality control
 
-!!! New with release 2024.05
+![New with release 2024.05](https://img.shields.io/badge/Release-2024.05-blue)
 
 The "Preview / quality control" allow to see in one table various information on results for multiple samples from one patient, run, or set, for a specified configuration (that was already processed).
 The `Download table (.tsv)` button under the table allow you to process these statistics in an external tool.

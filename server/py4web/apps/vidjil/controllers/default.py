@@ -41,6 +41,8 @@ from ..user_groups import get_default_creation_group
 from ..VidjilAuth import VidjilAuth
 from py4web.utils.auth import Auth, AuthAPI
 import types
+import re
+from ast import literal_eval
 
 from ..common import db, session, cors, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
 
@@ -294,8 +296,17 @@ def run_extra():
 @action("/vidjil/default/checkProcess", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def checkProcess():
-    task = db.scheduler_task[request.query["processId"]]
-    results_file = db(db.results_file.id == task.id).select().first()
+    results_file = db(db.results_file.id == request.query['processId']).select().first()
+    task = db.scheduler_task[results_file["scheduler_task_id"]]
+    
+    args = literal_eval(task.args)
+    if args[3] != None and re.match(r"^[acgtnACGTN]+$", args[3]):
+        # We check a grep_reads process
+        seq_file = db (db.sequence_file.id == int(args[0]) ).select().first()["filename"]
+        is_fasta = True if (seq_file.endswith(".fasta") or seq_file.endswith(".fa")) else False # TODO: and BAM ?
+        results_file_format = "fa" if is_fasta else "fastq"
+    else: 
+        results_file_format = "vidjil"
 
     msg = ''
     sample_set_id = -1
@@ -311,7 +322,8 @@ def checkProcess():
                    "status" : task.status,
                    "data" : {
                         'data_file': results_file.data_file,
-                        'result_id': task.id
+                        'result_id': task.id,
+                        'format': results_file_format
                     },
                    "processId" : task.id}
     else :

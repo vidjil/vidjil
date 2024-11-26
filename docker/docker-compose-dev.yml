@@ -1,4 +1,9 @@
 services:
+    mysql:
+        ports:
+            - "4306:3306"
+        env_file:
+            - '.env.dev'
 
     uwsgi:
         image: vidjil/server:dev
@@ -18,7 +23,6 @@ services:
 
     nginx:
         image: vidjil/client:dev
-        image: vidjil/client:py4web
         env_file:
             - '.env.dev'
         volumes:
@@ -48,8 +52,8 @@ services:
         image: mazzolino/restic
         hostname: docker
         env_file:
-            - '.env-default'
-            - '.env'
+            - '.env.default'
+            - '.env.dev'
         environment:
             RUN_ON_STARTUP: "true"
             BACKUP_CRON: "0 0 2 * * *"
@@ -66,10 +70,10 @@ services:
             TZ: Europe/Paris
         volumes:
             - ./backup/scripts/:/root/scripts/
-            - $VOLUME_PATH/backup/sql:/mnt/volumes/sql
-            - $VOLUME_PATH/databases:/mnt/volumes/database:ro
-            - $VOLUME_PATH/result/results:/mnt/volumes/result/results:ro
-            - $VOLUME_PATH/result/tmp:/mnt/volumes/result/tmp:ro
+            - ${VOLUME_PATH:-./volumes/vidjil/}/backup/sql:/mnt/volumes/sql
+            - ${VOLUME_PATH:-./volumes/vidjil/}/databases:/mnt/volumes/database:ro
+            - ${VOLUME_PATH:-./volumes/vidjil/}/result/results:/mnt/volumes/result/results:ro
+            - ${VOLUME_PATH:-./volumes/vidjil/}/result/tmp:/mnt/volumes/result/tmp:ro
             - ./volumes/backup:/mnt/backup
             - /var/run/docker.sock:/var/run/docker.sock
         links:

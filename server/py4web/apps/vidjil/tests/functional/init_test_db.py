@@ -2,8 +2,7 @@
 import sys
 sys.path.append("../../../../")
 
-from apps.vidjil.modules.vidjil_utils import *
-from apps.vidjil.common import *
+from apps.vidjil.common import db
 from db_initialiser import DBInitialiser
 
 initialiser = DBInitialiser(db)

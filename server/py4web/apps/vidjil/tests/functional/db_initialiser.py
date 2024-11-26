@@ -14,6 +14,7 @@ from apps.vidjil.modules.permission_enum import PermissionEnum
 
 TEST_ADMIN_EMAIL = "plop@plop.com"
 TEST_ADMIN_PASSWORD = "foobartest"
+TEST_METRICS_EMAIL = "metrics@vidjil.org"
 
 class DBInitialiser(object):
 

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import re
 import json
+import os
 import datetime
 from datetime import date
 from .. import defs
 from ..common import auth, db, log
 from py4web import request
 import pydal
+
 
 def format_size(n, unit='B'):
     '''
@@ -326,6 +328,26 @@ def cleanup_json_sample(json_string):
 
     return json_string + ''.join(end_delimiter_stack)
 
+def get_reverse_complement(seq):
+    """
+    Returns the reverse complement of a given nucleotide sequence.
+
+    Args:
+        seq (str): A string representing the nucleotide sequence.
+                 It should only contain 'A', 'C', 'G', and 'T'.
+
+    Returns:
+        str: The reverse complement of the input sequence.
+
+    
+    >>>get_reverse_complement("AATTCCGGA")
+    "TCCGGAATT"
+    """
+
+    complements = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
+    reverse_comp_seq = [complements[base] for base in seq][::-1]
+
+    return ''.join(reverse_comp_seq)
 
 
 def extract_value_from_json_path(json_path, json):
@@ -645,14 +667,27 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             last_name = 'Administrator'
         )
 
+
         ## création des groupes de base
         id_admin_group=db.auth_group.insert(role='admin')
         id_sa_group=db.auth_group.insert(role=auth.user_group_role(id_first_user))
         id_public_group=db.auth_group.insert(role="public")
+        id_metrics_group=db.auth_group.insert(role='metrics')
 
         db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)
         db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
-        db.auth_membership.insert(user_id=id_first_user, group_id=id_public_group)
+        db.auth_membership.insert(user_id=id_first_user, group_id=id_public_group)        
+
+
+        ## Create a dedicated metrics user if environment variable declared
+        if os.getenv("METRICS_USER_EMAIL") is not None and os.getenv("METRICS_USER_PASSWORD") is not None:
+            id_metrics_user=db.auth_user.insert(
+                password = db.auth_user.password.validate(os.getenv("METRICS_USER_PASSWORD"))[0],
+                email = os.getenv("METRICS_USER_EMAIL"),
+                first_name = os.getenv("METRICS_USER_FIRSTNAME", default="metrics"),
+                last_name = os.getenv("METRICS_USER_LASTNAME", default="vidjil")
+            )
+            db.auth_membership.insert(user_id=id_metrics_user, group_id=id_metrics_group)
 
 
         ### Base config classification
