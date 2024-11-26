@@ -366,13 +366,17 @@ mail = Mailer(
     )
 
 # #######################################################
-# try to create an index on these un-indexed columns, if it fails, we assume they already exist
+# try to create an index on these un-indexed columns
 # #######################################################
-try:
-    db.executesql('CREATE INDEX table_name_index ON tag_ref (table_name);')
-    db.executesql('CREATE INDEX record_id_index ON tag_ref (record_id);')
-    db.executesql('CREATE INDEX name_index ON auth_permission (name);')
-    db.executesql('CREATE INDEX record_id_index ON auth_permission (record_id);')
-    log.info("rebuild indexes")
-except:
+def try_create_index(index_sql: str):
+    try:
+        db.executesql(index_sql)
+    except Exception:
+        # If problem occurs, assume it is already created
         pass
+
+try_create_index("CREATE INDEX table_name_index ON tag_ref (table_name);")
+try_create_index("CREATE INDEX record_id_index ON tag_ref (record_id);")
+try_create_index("CREATE INDEX name_index ON auth_permission (name);")
+try_create_index("CREATE INDEX record_id_index ON auth_permission (record_id);")
+try_create_index("CREATE INDEX scheduler_task_status_index ON scheduler_task (status);")

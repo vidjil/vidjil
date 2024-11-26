@@ -216,10 +216,9 @@ class TestDefaultController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         config_id = db_manipulation_utils.add_config()
         saved_dir_results = defs.DIR_RESULTS
 
@@ -259,7 +258,7 @@ class TestDefaultController():
         auth.add_permission(
             user_group_id, PermissionEnum.run.value, db.patient, patient_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         config_id = db_manipulation_utils.add_config()
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.config, config_id)
@@ -281,7 +280,8 @@ class TestDefaultController():
             result = json.loads(json_result)
             assert result["redirect"] == "reload"
             results_file_id = result["results_file_id"]
-            assert result["message"] == f"[{results_file_id}] c{config_id}: process requested - None {db.sequence_file[sequence_file_id].filename}"
+            assert result["message"] == f"[{results_file_id}] c{
+                config_id}: process requested - None {db.sequence_file[sequence_file_id].filename}"
             mocked_run_process.assert_called_once()
         finally:
             defs.DIR_RESULTS = saved_dir_results
@@ -321,9 +321,9 @@ class TestDefaultController():
         auth.add_permission(
             user_group_id, PermissionEnum.run.value, db.patient, patient_id)
         sequence_file_id_1 = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         sequence_file_id_2 = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         config_id = db_manipulation_utils.add_config()
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.config, config_id)
@@ -382,7 +382,7 @@ class TestDefaultController():
             user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
         config_id = db_manipulation_utils.add_config()
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         saved_dir_results = defs.DIR_RESULTS
         save_upload_folder = db.fused_file.fused_file.uploadfolder
         fused_file_id = -1
@@ -495,7 +495,7 @@ class TestDefaultController():
         patient_id, sample_set_id = db_manipulation_utils.add_patient(
             1, user_id, auth)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         json_content_to_upload = '{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}'
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as analysis:
             analysis.write(json_content_to_upload)
@@ -519,7 +519,8 @@ class TestDefaultController():
                 # Then : Check result
                 result = json.loads(json_result)
                 assert result["success"] == "true"
-                assert result["message"] == f"({sample_set_id}): analysis saved"
+                assert result["message"] == f"({
+                    sample_set_id}): analysis saved"
                 analysis_file = db(
                     db.analysis_file.sample_set_id == sample_set_id).select().first()
                 result_file = Path(test_utils.get_results_path(),

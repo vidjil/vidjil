@@ -21,8 +21,8 @@ Cypress.Commands.add('login', (host) => {
       cy.get('#db_auth_name')
         .should('exist').should('be.visible')
     },
-  }
-  )
+    cacheAcrossSpecs: true,
+  })
 })
 
 

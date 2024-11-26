@@ -8,7 +8,7 @@
     - docker exec vidjil-uwsgi  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
     - mkdir -p logs/before; cd docker; for service in `docker compose config | yq '.services[]|key'`; do docker logs vidjil-${service} > ../logs/before/${service}.log 2>&1; done; cd ..
     - echo "TIME $(date) - Before pulling cypress docker image" >> time.log
-    - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9"
+    - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:$CYPRESS_DOCKER_VERSION"
     - echo "TIME $(date) - After pulling cypress docker image" >> time.log
     - >
       docker run
@@ -26,9 +26,9 @@
       --env URL=$URL
       --env TEST_FILES_PATTERN=$TEST_FILES_PATTERN
       --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
-      --shm-size=1GB
+      --shm-size=2GB
       --network="host"
-      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9" bash script.bash $TEST_FILES_PATTERN
+      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:$CYPRESS_DOCKER_VERSION" bash script.bash $TEST_FILES_PATTERN
   artifacts:
     reports:
       junit: $CYPRESS_PATH/reports/report_*.xml

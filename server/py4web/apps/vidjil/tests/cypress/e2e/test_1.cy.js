@@ -4,9 +4,6 @@
 describe('Manipulate db page (for cypress pipeline)', function () {
     before(function () {
         cy.login(Cypress.env('host'))
-        cy.fixture('l3.json').then(function (l3data) {
-            this.l3data = l3data
-        })
         cy.close_tips()
         cy.closeFlashAll()
     })

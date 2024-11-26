@@ -1,4 +1,9 @@
 services:
+    mysql:
+        ports:
+            - "4306:3306"
+        env_file:
+            - '.env.dev'
 
     uwsgi:
         image: vidjil/server:dev

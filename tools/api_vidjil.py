@@ -779,6 +779,32 @@ class Vidjil:
         print()
         return
 
+    def metrics(self, metrics_list:str = "fast"):
+        """ 
+        Ask data to server; if user is in group metrics, return some metrics of server instance to be interpreted by metrics/grafana side project 
+        A specific metrics can be asked if a key is provided
+        format: Choose between long, fast or all
+        """
+        list_available = ["fast", "long", "all"]
+        if metrics_list not in list_available:
+            raise Exception(f"metrics_list value not available: {metrics_list} not in {list_available}")
+        new_url  = f"{self.url_server}metrics_{metrics_list}" 
+        response = self.request(new_url, "get")
+        return response
+
+    def metricsByName(self, keys_metrics:list):
+        """ 
+        Ask data to server; if user is in group metrics, return some metrics of server instance to be interpreted by metrics/grafana side project 
+        A specific metrics can be asked if a key is provided
+        """
+        if not keys_metrics or not isinstance(keys_metrics, list):
+            raise Exception("MEtrics asked not in correct format")
+        formated_keys = ",".join(keys_metrics)
+        print( f"{formated_keys=}" )
+        new_url  = self.url_server + "metrics_by_name" + f"?metric={formated_keys}"
+        response = self.request(new_url, "get")
+        return response
+
 #########################
 ### Some utils functions
 #########################
