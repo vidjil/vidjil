@@ -94,7 +94,7 @@ def get_celery_queue_to_use(sequence_file_id: int) -> str:
     sequence_file = db.sequence_file[sequence_file_id]
     queue_to_use = QUEUE_SHORT
     
-    if (sequence_file.size_file > settings.CELERY_SIZE_LIMIT_SHORT_LONG):
+    if (sequence_file.size_file > settings.CELERY_SIZE_LIMIT_FOR_LONG_JOB):
         queue_to_use = QUEUE_LONG
     
     return queue_to_use
