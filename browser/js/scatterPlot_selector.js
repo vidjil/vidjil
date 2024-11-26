@@ -136,7 +136,8 @@ ScatterPlot_selector.prototype = {
 
     getTooltip: function(d){
         var clone = this.m.clone(d.id)
-        return `${this.axisX["name"]}: ${this.axisX["fct"](clone)}<br>${this.axisY["name"]}: ${this.axisY["fct"](clone)}`
+        var time  = this.m.getTime()
+        return `${clone.getName()}<br>size: ${clone.getPrintableSize(time)}; top ${clone.top}<br>${this.axisX.name}: ${this.axisX.fct(clone)}<br>${this.axisY.name}: ${this.axisY.fct(clone)}`
     },
 
     dragstarted: function(d)
