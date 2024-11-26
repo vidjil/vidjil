@@ -17,7 +17,7 @@ services:
             test: "mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"
             timeout: 2s
             interval: 2s
-            retries: 10
+            retries: 100
         networks:
             - vidjil
 
@@ -41,7 +41,7 @@ services:
             test: "bash /healthchecks/healthcheck_uwsgi.bash"
             timeout: 2s
             interval: 2s
-            retries: 10
+            retries: 100
         depends_on:
             mysql:
                 condition: service_healthy
