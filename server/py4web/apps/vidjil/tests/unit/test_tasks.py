@@ -50,8 +50,7 @@ class TestTasks():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
         auth.add_permission(
@@ -59,7 +58,7 @@ class TestTasks():
         auth.add_permission(
             user_group_id, PermissionEnum.run.value, db.sample_set, 0)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         results_file_id = db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
 

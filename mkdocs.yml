@@ -24,6 +24,12 @@ markdown_extensions:
   - toc:
       permalink: ⚓︎
       toc_depth: 4
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
 
 repo_url: https://gitlab.inria.fr/vidjil/vidjil
 repo_name: gitlab

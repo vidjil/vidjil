@@ -8,7 +8,7 @@ assert py4web.check_compatible("0.1.20190709.1")
 from .models import db
 
 # by importing controllers you expose the actions defined in it
-from .controllers import  default, sample_set, file, results_file, group, my_account, pre_process, config, user, log, notification, admin, tag, proxy, segmenter, auth
+from .controllers import  default, sample_set, file, results_file, group, metrics, my_account, pre_process, config, user, log, notification, admin, tag, proxy, segmenter, auth
 #from .controllers import sampleset_generic, sampleset_patient, sampleset_run,sampleset,
 from .modules import zmodel_factory, tag, vidjil_utils, sampleSet, sampleSetList, dictobj, jstree
 

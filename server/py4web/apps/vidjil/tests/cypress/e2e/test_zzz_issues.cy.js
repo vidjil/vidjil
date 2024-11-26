@@ -152,7 +152,7 @@ describe('Manipulate db page', function () {
         //  .should('contain', '>IGKV3-7*04 1/GTGGA/11 KDE')
     })
 
-    it('5178 - bad render when request error occured',  function() {
+    it('5178 - bad render when request error occurred',  function() {
         // Before fixing, request return error has HTML and are badly interpreted and break DOM page
 
         cy.goToPatientPage()
@@ -162,7 +162,7 @@ describe('Manipulate db page', function () {
           .click()
 
         cy.get('.popup_msg')
-          .should("contain", "An error occured (Internal Server Error; code 500)")
+          .should("contain", "An error occurred (Internal Server Error; code 500)")
     })
 
     it('5213 - open analysis without bug',  function() {

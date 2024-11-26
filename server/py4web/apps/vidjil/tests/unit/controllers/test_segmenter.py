@@ -95,6 +95,7 @@ class TestSegmenterController():
 
             # Then : We get a result
             result = json.loads(json_result)
+            print(result)
             assert len(result["clones"]) == 1
             assert result["clones"][0]["sequence"] == "CGTCTT"
         finally:

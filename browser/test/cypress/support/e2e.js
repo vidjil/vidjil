@@ -31,7 +31,12 @@ import './external'
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
 Cypress.on('uncaught:exception', (err, runnable) => {
-    // returning false here prevents Cypress from failing the test
+    if (err.message.includes('ResizeObserver')) {
+      // returning false here prevents Cypress from failing the test
+      return false;
+    }
+
+    // idem
     if (resizeObserverLoopErrRe.test(err.message)) { return false }
     return false
 })

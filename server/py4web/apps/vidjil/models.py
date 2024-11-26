@@ -31,20 +31,10 @@
 """
 This file defines the database models
 """
-import datetime
 import apps.vidjil.defs as defs
 
-from .common import db, Field, T, auth
-from pydal.validators import *
-from py4web.utils.populate import populate
-
-# Used for examples of forms.
-def get_user_email():
-    return None if auth.current_user is None else auth.current_user.get('email')
-
-
-def get_time():
-    return datetime.datetime.utcnow()
+from .common import db, Field
+from pydal import validators
 
 ## AUTH old tables for import
 
@@ -110,7 +100,7 @@ db.define_table("patient",
                 Field('info','text'),
                 Field('id_label','string'),
                 Field('creator','reference auth_user', ondelete='SET NULL',
-                                    requires=IS_NULL_OR(IS_IN_DB(db, 'auth_user.id',
+                                    requires=validators.IS_NULL_OR(validators.IS_IN_DB(db, 'auth_user.id',
                                     '%(first_name)s',
                                     zero='..')),
                                     filter_out=lambda x: x.first_name if x else ''),
