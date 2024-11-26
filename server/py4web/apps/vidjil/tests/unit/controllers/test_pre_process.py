@@ -65,12 +65,6 @@ class TestPreProcessController(unittest.TestCase):
         assert result["isAdmin"] == True
 
     ##################################
-    # Tests on pre_process_controller.task_test2()
-    ##################################
-
-    # TODO : remove the controller method ? or test it...
-
-    ##################################
     # Tests on pre_process_controller.add()
     ##################################
 

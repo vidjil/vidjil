@@ -14,6 +14,7 @@ from pydal.tools.tags import Tags
 from py4web.utils.factories import ActionFactory
 from . import settings
 from .VidjilAuth import VidjilAuth
+from .modules import single_task_loader
 
 from py4web.core import HTTP, Fixture, request, response
 
@@ -317,10 +318,16 @@ if settings.USE_CELERY:
     # to use "from .common import scheduler" and then use it according
     # to celery docs
     scheduler = Celery(
-        "apps.%s.tasks" % settings.APP_NAME, broker=settings.CELERY_BROKER,
-        backend='redis://redis' 
+        "apps.%s.tasks" % settings.APP_NAME, 
+        broker=settings.CELERY_BROKER,
+        backend='redis://redis',
+        loader=single_task_loader.SingleTaskLoader,
     )
     
+    scheduler.conf.update(
+        broker_connection_retry_on_startup=True,
+        worker_send_task_event=False
+    )
 
 # #######################################################
 # Enable authentication

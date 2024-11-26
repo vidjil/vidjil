@@ -18,7 +18,7 @@ services:
             - ../demo:/mnt/data/src
             - ../doc:/usr/share/vidjil/doc
             - ./:/usr/share/vidjil/docker
-            - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
+            - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
             - ../tools:/usr/share/vidjil/tools
 
     nginx:
@@ -37,7 +37,12 @@ services:
         env_file:
             - '.env.dev'
 
-    workers:
+    workers-all:
+        image: vidjil/server:dev
+        env_file:
+            - '.env.dev'
+
+    workers-short:
         image: vidjil/server:dev
         env_file:
             - '.env.dev'

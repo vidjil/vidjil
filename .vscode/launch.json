@@ -6,13 +6,29 @@
     "configurations": [
         {
             "name": "Python: Debug Tests",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "purpose": ["debug-test"],
             "env": {"PYDAL_URI":"sqlite://storage.db"},
             "console": "integratedTerminal",
             "justMyCode": false
-        }
+        }, 
+        {
+            "name": "Python: Remote Attach via 10001",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "127.0.0.1",
+                "port": 10001
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/server/py4web/apps",
+                    "remoteRoot": "/usr/share/vidjil/server/py4web/apps"
+                }
+            ],
+            "justMyCode": false,
+        },
     ]
 }

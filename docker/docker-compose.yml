@@ -107,23 +107,40 @@ services:
         networks:
             - vidjil
 
-    workers:
-        container_name: vidjil-workers
+    workers-all:
+        container_name: vidjil-workers-all
         image: vidjil/server:latest
         environment:
-            - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} WORKERS
+            - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} WORKERS ALL
         env_file:
             - '.env.default'
         stdin_open: true
         tty: true
-        command: bash /entrypoints/workers-entrypoint.sh
+        command: bash /entrypoints/workers-entrypoint.sh all
         volumes_from:
             - uwsgi
         depends_on:
-            uwsgi:
+            mysql:
                 condition: service_healthy
-            redis:
-                condition: service_started
+        links:
+            - redis:redis
+            - mysql:mysql
+        networks:
+            - vidjil
+
+    workers-short:
+        container_name: vidjil-workers-short
+        image: vidjil/server:latest
+        environment:
+            - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} WORKERS SHORT
+        env_file:
+            - '.env.default'
+        stdin_open: true
+        tty: true
+        command: bash /entrypoints/workers-entrypoint.sh short
+        volumes_from:
+            - uwsgi
+        depends_on:
             mysql:
                 condition: service_healthy
         links:
@@ -143,10 +160,13 @@ services:
         volumes_from:
             - uwsgi
         depends_on:
-            workers:
+            workers-all:
+                condition: service_started
+            workers-short:
                 condition: service_started
         links:
-            - redis:redis
+            - workers-all:workers-all
+            - workers-short:workers-short
         ports:
             - "5555:5555"
         networks:
