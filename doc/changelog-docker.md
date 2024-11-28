@@ -44,7 +44,7 @@ A complete rewriting of backend server from web2py to py4web comes with releases
 We completely changed launched services, path of some volumes and we now use an dedicated `.env` environment file.  
 **Please follow migration documentation**.
 
-See more information at [Migrating from Web2py to Py4web](dev-server.md#migrating-from-web2py-to-py4web).
+See more information at [Migrating from Web2py to Py4web](dev-server.md#migrating-from-web2py-to-py4web-release-202401).
 
 ## 2022-06-28
 

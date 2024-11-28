@@ -379,9 +379,9 @@ These buttons will send the sequences of selected clonotypes to them for analysi
 - `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
 
 - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
-  Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
+  Nucleotide alignment against the Homo sapiens genome and other nucleotide collections
 
-- [`❯ AssignSubsets`](https://station1.arrest.tools/subsets) (available for clones with IGH recombinations):
+- [`❯ AssignSubsets`](https://bat.infspire.org/arrest/subsets/) (available for clones with IGH recombinations):
   Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
   of stereotyped antigen receptor sequences for CLL
 

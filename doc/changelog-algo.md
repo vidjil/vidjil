@@ -90,7 +90,7 @@ This will bring further speed-ups in a future release
 ## Algo 2020-01-24
 
 * Improved e-value estimation, -e is now the global e-value, new advanced option --e-value-kmer
-Sequences on larger datasets will now be better analyzed #3594 !538
+Sequences on larger datasets will now be better analyzed BF 3594 !538
 * Added 'seg.cdr3.seq' output with nucleotide sequence #4017
 * Improved 'name' output on sequences not fully analyzed with '-c designations' #3890
 * Limit on 50 clones on stdout, as the main output is the .vidjil file #3302 !530
@@ -116,7 +116,7 @@ Sequences on larger datasets will now be better analyzed #3594 !538
 * New --consensus-on-random-sample experimental option (core/representative.cpp) #3764
 * Aho-Corasick automaton used by default (vidjil.cpp) #2566, will bring speed-ups in a future release
 * Refactored command and option names, deprecate some short options names (vidjil.cpp) #3295 #3772
-* Bug closed (incorrect deletion reported on unexpected recombinations, core/segment.cpp) #3518
+* Bug closed (incorrect deletion reported on unexpected recombinations, core/segment.cpp) BF 3518
 * Updated documentation
 * Improved test framework (tools/should.py), updating code coverage, test compilation warnings #1233
 * New and updated unit and functional tests
@@ -161,7 +161,7 @@ Processes with `-c segment` or with large `-z` values will be between 2x and 15x
 ## Algo 2018-06-14
 
 * New experimental option -Z to speed-up the full analysis with a pre-processing based on k-mers (core/filter.cpp) #920
-* New experimental analysis of Ikaros/ERG recombinations (germline/homo-sapiens-ikaros.g) #2139
+* New experimental analysis of Ikaros/ERG recombinations (germline/homo-sapiens-ikaros.g) BF 2139
 * Improved analysis with large number of mutations in V or J genes (core/dynprog.cpp) #3066
 * Added levels to warnings, lowering level for W53 (core/tools.cpp) #3136 #3137
 * Refactored the functional test framework (tools/should.py) #3105

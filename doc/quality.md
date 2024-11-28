@@ -25,11 +25,11 @@ The original algorithm was published in [BMC Genomics 2014], and extension to se
 
 Each new feature or release is carefully tested and goes through the following tests:
 
-- *Unit tests.* [150+ tests](http://gitlab.vidjil.org/-/tree/dev/algo/tests/unit-tests) on the behaviour of minimal algorithmic bricks.
-- *Functional tests.* 850+ tests in [100+ tests sets](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-get-tests) with [should-test](https://www.should-test.net/). We check that the command-line vidjil-algo has the expected behaviour in various conditions and options.
+- *Unit tests.* [150+ tests](http://gitlab.vidjil.org/-/tree/dev/algo/tests/unit-tests) on the behavior of minimal algorithmic bricks.
+- *Functional tests.* 850+ tests in [100+ tests sets](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-get-tests) with [should-test](https://gitlab.inria.fr/vidjil/should). We check that the command-line vidjil-algo has the expected behavior in various conditions and options.
 - *Functional tests on curated sequences.* [500+ sequences](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-vdj-tests) with curated V(D)J designations. We check that the algorithm gives an expected result. Specific complex sequences that are known to fail are tagged in the dataset.
 - *Functional tests on full datasets.*
-      We run tests on datasets we distribute on <http://www.vidjil.org/data> (LIL-L3, LIL-L4, T-ALL diagnosis and relapse) 
+      We run tests on datasets we distribute on <http://www.vidjil.org/data> (LIL-L3, LIL-L4, T-ALL diagnosis and relapse)
       as well as on other public datasets (Stanford S22).
       Some of these last tests are currently manual. There will be always some human control on these tests,
       but we will nevertheless soon add a part of automation to check more things.

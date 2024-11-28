@@ -58,7 +58,7 @@ Configurations are essentially parameters for:
 
 - **running Vidjil-algo or other V(D)J analysis software on each sample**,  which generates a .vidjil file for each sample. The default installation includes pre-configured settings that should suit most applications.
 
-- **"Fusing" (ie. merging) these results into a single `.vidjil` file using fuse.py.** By default, the option `-t 100` is used. Additional options can be found in the fuse.py help, with the possibility of adding pre- and post-processing steps (see [below](#pre--and-post-processes-around-fuse)).
+- **"Fusing" (ie. merging) these results into a single `.vidjil` file using fuse.py.** By default, the option `-t 100` is used. Additional options can be found in the fuse.py help, with the possibility of adding pre- and post-processing steps (see [below](#pre-and-post-processes-around-fuse)).
 
 You can now set permissions to grant users access to this process configuration. To do this, click on the key icon in the list of configurations. This will open a panel where you can configure access permissions for the configuration.
 
@@ -66,7 +66,7 @@ You can now set permissions to grant users access to this process configuration.
 - To give access to all users on the server, simply assign permission to the public group.
 - You can also grant access to specific users from the list.
 
-### Pre- and post-processes (around fuse)
+### Pre and post-processes (around fuse)
 
 It is possible to run further pre- or post-process scripts around the "fusing" of results
 by giving `--pre` and/or `--post` options to fuse.
@@ -215,7 +215,7 @@ As an administrator, to be able to check some users issues, you can impersonate 
 
 Some monitoring features are accessible through the web application with the addition of a new dedicated controller, allowing the retrieval of metrics from a Vidjil server instance. A full list of available metrics will be described below.
 
-The goal of these metrics is to be regularly called by an [API instance](https://gitlab.inria.fr/vidjil/metrics/metrics-instance) to be integrated into an external monitoring service. The tools used in our pipeline combine the [Vidjil API](/doc/api/) for metrics requests, [Prometheus](https://prometheus.io/) for metrics storage, and [Grafana](https://grafana.com/) for visualization.
+The goal of these metrics is to be regularly called by an [API instance](https://gitlab.inria.fr/vidjil/metrics/metrics-instance) to be integrated into an external monitoring service. The tools used in our pipeline combine the [Vidjil API](api.md) for metrics requests, [Prometheus](https://prometheus.io/) for metrics storage, and [Grafana](https://grafana.com/) for visualization.
 
 ``` mermaid
 graph TB
@@ -249,7 +249,7 @@ A set of three steps/conditions should be filled:
 This new group will only see metrics information.
 
 If you start from a fresh installation initialized from scratch, a dedicated group named *metrics* will be automatically created.  
-If not, you will have to create it yourself (see [Creating groups](/doc/admin/#creating-groups)), name it *metrics*, and remove all rights in it.
+If not, you will have to create it yourself (see [Creating groups](#creating-groups)), name it *metrics*, and remove all rights in it.
 
 An automatic creation of this user can be set at database initialization. To do this, various metrics variables should be set in `docker/.env.default` at the initialization of the database (`METRICS_USER_PASSWORD`, `METRICS_USER_EMAIL`).  
 If you have already initialized the database or done a server upgrade, you can also create a dedicated user and add it to this group.
