@@ -379,9 +379,9 @@ These buttons will send the sequences of selected clonotypes to them for analysi
 - `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
 
 - [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
-  Nucleotide alignement against the Homo sapiens genome and other nucleotide collections
+  Nucleotide alignment against the Homo sapiens genome and other nucleotide collections
 
-- [`❯ AssignSubsets`](https://station1.arrest.tools/subsets) (available for clones with IGH recombinations):
+- [`❯ AssignSubsets`](https://bat.infspire.org/arrest/subsets/) (available for clones with IGH recombinations):
   Assignment to the [19 known major subsets](https://www.ncbi.nlm.nih.gov/pubmed/22415752)
   of stereotyped antigen receptor sequences for CLL
 
@@ -1428,9 +1428,9 @@ If you use Vidjil for your research, please cite the following references:
 Marc Duez et al.,
 “Vidjil: A web platform for analysis of high-throughput repertoire sequencing”,
 PLOS ONE 2016, 11(11):e0166126
-<http://dx.doi.org/10.1371/journal.pone.0166126>
+<https://doi.org/10.1371/journal.pone.0166126>
 
 Mathieu Giraud, Mikaël Salson, et al.,
 “Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing”,
 BMC Genomics 2014, 15:409
-<http://dx.doi.org/10.1186/1471-2164-15-409>
+<https://doi.org/10.1186/1471-2164-15-409>

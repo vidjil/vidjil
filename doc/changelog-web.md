@@ -13,7 +13,7 @@ Complete list of issue and change of this release can be found [here](https://gi
 
 * Add a new feature for previewing Quality Control stats
 * Possibility to export data
-* See more information in [documentation](user.md#statistics-and-quality-control-view)
+* See more information in [documentation](user.md#displaying-statistics-quality-control)
 
 **Improve analysis**
 

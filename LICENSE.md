@@ -170,7 +170,7 @@ x is "current version" at time of release
 **unzip**
 
 * @license  BSD like
-* @link     <ftp://ftp.info-zip.org/pub/infozip/UnZip.html>
+* @link     <https://infozip.sourceforge.net/UnZip.html>
 
 **git**
 
@@ -309,4 +309,4 @@ You should ensure that you comply with the provisions of the databases you downl
 **IMGT/GENE-DB**
 
 * @license  CC BY-NC-ND 4.0 for academic users and not-profit organizations
-* @link     <http://www.imgt.org/about/termsofuse.php#conditions>
+* @link     <https://www.imgt.org/about/termsofuse.php#conditions>

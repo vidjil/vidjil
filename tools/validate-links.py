@@ -54,8 +54,12 @@ def check_url(url, ids=[], dirname=''):
     try:
         req = requests.get(url, headers = USER_AGENT)
         return (req.status_code < 400)
-    except:
-        return False
+    except Exception:
+        if url == "https://fonts.gstatic.com":
+            # Ignore this preconnect error
+            return True
+        else:
+            return False
     
 
 def check_file(f):
@@ -66,15 +70,15 @@ def check_file(f):
     ids = REGEX_ID.findall(content)
 
     for url in REGEX_HREF.findall(content):
-        ok = check_url(url, ids, dirname)
-        print(STATUS[ok] + '    ' + url)
-        globals()['stats'][ok] += 1
+        result = check_url(url, ids, dirname)
+        print(STATUS[result] + '    ' + url)
+        globals()['stats'][result] += 1
 
         msg = "%s: %s" % (f.replace(BASE_PATH,''), url)
-        if ok == False:
-            failed.append(msg)
-        if ok == None:
+        if result is None:
             not_checked.append(msg)
+        elif not result:
+            failed.append(msg)
     print()
 
 
