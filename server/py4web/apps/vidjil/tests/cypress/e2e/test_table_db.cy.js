@@ -19,14 +19,14 @@ describe('Manipulate patient, sample and launch analysis', function () {
 
 
 
-    it('00-Launch analysis',  function() {
+    it('00-Launch analysis and check logs',  function() {
         var id          = ""
         var firstname   = "first name"
         var lastname    = "last name"
         var birthday    = "2000-01-01"
         var informations= "a patient created by cypress"
         cy.createPatient(id, firstname, lastname, birthday, informations, "public")
-
+        var sample_set_id = 26
 
         var preprocess   = undefined
         var filename1    = "Demo-X5.fa"
@@ -39,7 +39,15 @@ describe('Manipulate patient, sample and launch analysis', function () {
         cy.launchProcess("2", sample_id)
         cy.waitAnalysisCompleted("2", sample_id)
 
-        return
+        cy.goToLogsPage()
+
+        // Log are tested in reverse order as last is shown first
+        cy.get('#db_table_container')
+          .should("contain", "run requested with config multi+inc+xxx")
+        cy.get('#db_table_container')
+          .should("contain", "file (" + sample_id + ") //Demo-X5.fa added")
+        cy.get('#db_table_container')
+          .should("contain", "patient (" + sample_set_id + ") las added")
     })
 
     it('01-Delete analysis',  function() {
