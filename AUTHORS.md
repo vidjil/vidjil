@@ -4,4 +4,3 @@ the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL 
 and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
 
 The full list of authors/developers and contributors is found in [doc/credits.md](http://git.vidjil.org/blob/master/doc/credits.md).
-See also [codemeta.json](http://git.vidjil.org/blob/master/codemeta.json).

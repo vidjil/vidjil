@@ -69,7 +69,6 @@ Vidjil is developed and maintained by
 the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille)
 and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
 The full list of authors/developers and contributors is found in [doc/credits.md](http://git.vidjil.org/blob/master/doc/credits.md).
-See also [codemeta.json](http://git.vidjil.org/blob/master/codemeta.json).
 
 Contact: Clément Chesnin, Florian Thonier, [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org).
 

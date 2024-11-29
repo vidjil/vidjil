@@ -1,17 +1,16 @@
 # Credits
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes, developed and maintained by
-the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille)
-and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
+the [Bonsai bioinformatics lab](https://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille)
+and the [VidjilNet consortium](https://www.vidjil.net) at Inria.
 
 Vidjil is used in routine clinical practice in hospitals around the world, in particular for the diagnosis of patients suffering Acute Lymphoblastic Leukemia (ALL). Since 2015, around 50,000 routine samples were analyzed with Vidjil.
 As of 2024, Vidjil is used in 40+ studies on hemopathies (ALL, CLL, lymphomas, WM...) and immunology topics involving T-cell or B-cell repertoires.
 Vidjil was awarded an honorable mention at the French 2022 Open Science Awards for Open Source Research Software, in the Community category.
 
 In addition to the core developers, we thank the many people who contribute to Vidjil across various aspects. Contributions span development, creation and maintenance of tests, documentation, as well as providing valuable usage reports, bug reports, and suggestions.
-See also [codemeta.json](http://git.vidjil.org/blob/master/codemeta.json).
 
-Contact: [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
+Contact: Clément Chesnin, Florian Thonier, [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org)
 
 ## Vidjil core authors/developers
 
@@ -98,22 +97,22 @@ and [Septenville 2022] (assessment of mutational status in CLL).
 Marc Duez et al.,
 *Vidjil: A web platform for analysis of high-throughput repertoire sequencing*,
 PLOS ONE 2016, 11(11):e0166126
-<http://dx.doi.org/10.1371/journal.pone.0166126>
+<https://doi.org/10.1371/journal.pone.0166126>
 
 Mathieu Giraud, Mikaël Salson, et al.,
 *Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing*,
 BMC Genomics 2014, 15:409
-<http://dx.doi.org/10.1186/1471-2164-15-409>
+<https://doi.org/10.1186/1471-2164-15-409>
 
 Patrick Villarese et al.,
 *One-Step Next-Generation Sequencing of Immunoglobulin and T-Cell Receptor Gene Recombinations for MRD Marker Identification in Acute Lymphoblastic Leukemia*,
 Immunogenetics, Methods in Molecular Biology 2453, 2022, pp. 43-59,
-<http://dx.doi.org/10.1007/978-1-0716-2115-8_3>
+<https://doi.org/10.1007/978-1-0716-2115-8_3>
 
 Anne Langlois de Septenville et al.,
 *Immunoglobulin Gene Mutational Status Assessment by Next Generation Sequencing in Chronic Lymphocytic Leukemia*,
 Immunogenetics, Methods in Molecular Biology 2453, 2022, pp. 153-167,
-<http://dx.doi.org/10.1007/978-1-0716-2115-8_10>
+<https://doi.org/10.1007/978-1-0716-2115-8_10>
 
 ## Some publications using Vidjil
 
@@ -124,7 +123,7 @@ Blood, 2020, 136(9):1105–1107,
 1. Jean-Sebastien Allain et al.,
 *IGHV segment utilization in immunoglobulin gene rearrangement differentiates patients with anti-myelin-associated glycoprotein neuropathy from others immunoglobulin M-gammopathies*,
 Haematologica, 2018, 103:e207-e210,
-<http://dx.doi.org/10.3324/haematol.2017.177444>
+<https://doi.org/10.3324/haematol.2017.177444>
 1. Kristian Assing et al.,
 *A Novel CDC42 Variant with Impaired Thymopoiesis, IL-7R Signaling, PAK1 Binding, and TCR Repertoire Diversity*
 Journal of Clinical Immunology, 2023,
@@ -132,7 +131,7 @@ Journal of Clinical Immunology, 2023,
 1. Jack Bartram et al.,
 *High throughput sequencing in acute lymphoblastic leukemia reveals clonal architecture of central nervous system and bone marrow compartments*,
 Haematologica, 2018,
-<https://dx.doi.org/10.3324%2Fhaematol.2017.174987>
+<https://doi.org/10.3324%2Fhaematol.2017.174987>
 1. Sébastien Bender et al.,
 *Immunoglobulin variable domain high-throughput sequencing reveals specific novel mutational patterns in POEMS syndrome*,
 Blood, 2020,
@@ -172,7 +171,7 @@ British Journal of Haematology, 2016, 173, 413–420,
 1. Henrike J. Fischer et al.,
 *Modulation of CNS autoimmune responses by CD8+ T cells coincides with their oligoclonal expansion*,
 Journal of Neuroimmunology, 2015, S0165-5728(15)30065-5,
-<http://dx.doi.org/10.1016/j.jneuroim.2015.10.020>
+<https://doi.org/10.1016/j.jneuroim.2015.10.020>
 1. Navarro Nilo Giusti et al.,
 *Test trial of spike-in immunoglobulin heavy-chain (IGH) controls for next generation sequencing quantification of minimal residual disease in acute lymphoblastic leukaemia*,
 British Journal of Haematology, 2020, 189: e150-e154,
@@ -203,7 +202,7 @@ British Journal of Haematology, 2020,
 1. Kim et al.,
 *Adult T-cell acute lymphoblastic leukemias with IL7R pathway mutations are slow-responders who do not benefit from allogeneic stem-cell transplantation*,
 Leukemia, 2020, 34, 1730-1740,
-<https://dx.doi.org/10.1038/s41375-019-0685-4>
+<https://doi.org/10.1038/s41375-019-0685-4>
 1. Kimura et al.,
 *Identification of Clonal Immunoglobulin λ Light-Chain Gene Rearrangements in AL Amyloidosis Using Next-Generation Sequencing*,
 Experimental Hematology, 2021, 101:34-41.e4
@@ -211,15 +210,15 @@ Experimental Hematology, 2021, 101:34-41.e4
 1. Kotrova et al.,
 *The predictive strength of next-generation sequencing MRD detection for relapse compared with current methods in childhood ALL*,
 Blood, 2015, 126:1045-1047,
-<http://dx.doi.org/10.1182/blood-2015-07-655159>
+<https://doi.org/10.1182/blood-2015-07-655159>
 1. Kotrova et al.,
 *Next‐generation amplicon TRB locus sequencing can overcome limitations of flow‐cytometric Vβ expression analysis and confirms clonality in all T‐cell ,prolymphocytic leukemia cases*,
 Cytometry Part A, 93(11):1118-1124, 2018,
-<http://dx.doi.org/10.1002/cyto.a.23604>
+<https://doi.org/10.1002/cyto.a.23604>
 1. Anton W. Langerak,
 *High-Throughput Immunogenetics for Clinical and Research Applications in Immunohematology: Potential and Challenges*,
 Journal of Immunology, 2017, 198(10):3765-3774,
-<https://dx.doi.org/10.4049/jimmunol.1602050>
+<https://doi.org/10.4049/jimmunol.1602050>
 1. Le Bris et al.,
 *Single Capture High Throughput Sequencing Assay for Combined V(D)J Clonality Analysis and Oncogene Mutations in the Diagnosis of T and B Lymphoid Malignancies*,
 ASH 2021, Blood, 138(S1):2404,
@@ -227,15 +226,15 @@ ASH 2021, Blood, 138(S1):2404,
 1. Zhenhua Li et al.,
 *Identifying IGH disease clones for MRD monitoring in childhood B-cell acute lymphoblastic leukemia using RNA-Seq*,
 Leukemia, 2020, 34:2418-2429,
-<http://dx.doi.org/10.1038/s41375-020-0774-4>
+<https://doi.org/10.1038/s41375-020-0774-4>
 1. Ralf A. Linker et al.,
 *Thymocyte-derived BDNF influences T-cell maturation at the DN3/DN4 transition stage*,
 European Journal of Immunology, 2015, 45, 1326-1338,
-<http://dx.doi.org/10.1002/eji.201444985>
+<https://doi.org/10.1002/eji.201444985>
 1. Liang Oon et al.,
 *T-Cell Lymphoma Clonality by Copy Number Variation Analysis of T-Cell Receptor Genes*,
 Cancers, 2021, 13(2), 340,
-<https://dx.doi.org/10.3390/cancers13020340>
+<https://doi.org/10.3390/cancers13020340>
 1. Materna et al.,
 *The immunopathological landscape of human pre-TCRα deficiency: From rare to common variants*,
 Science, 2024,
@@ -255,7 +254,7 @@ Journal of Clinical Medicine, 2022, 11(3), 604,
 1. Porpaczy et al.,
 *Aggressive B-cell lymphomas in patients with myelofibrosis receiving JAK1/2 inhibitor therapy*,
 Blood, 2018,
-<https://dx.doi.org/10.1182/blood-2017-10-810739>
+<https://doi.org/10.1182/blood-2017-10-810739>
 1. Pastoret et al.,
 *Molecular mechanisms underlying transformation of large granular lymphocytic leukemia to high-grade T-cell lymphoma*,
 Leukemia, 2023,
@@ -269,7 +268,7 @@ Leukemia, 2023,
 1. Mikaël Salson et al.,
 *High-throughput sequencing in acute lymphoblastic leukemia: Follow-up of minimal residual disease and emergence of new clones*,
 Leukemia Research, 2017, 53, 1–7,
-<http://dx.doi.org/10.1016/j.leukres.2016.11.009>
+<https://doi.org/10.1016/j.leukres.2016.11.009>
 1. Masashi Sanada et al.,
 *Targeted-Capture Sequencing Is a Useful Method for MRD Markers Screening in KMT2A (MLL) Rearranged Leukemia*,
 ASH 2019, Blood, 134(S1):2759,
@@ -277,7 +276,7 @@ ASH 2019, Blood, 134(S1):2759,
 1. Florian Scherer et al.,
 *Distinct biological subtypes and patterns of genome evolution in lymphoma revealed by circulating tumor DNA*,
 Science Translational Medicine, 2016, 8, 364ra155,
-<http://dx.doi.org/10.1126/scitranslmed.aai8545>
+<https://doi.org/10.1126/scitranslmed.aai8545>
 1. V. Seitz et al.,
 *Evidence for a role of RUNX1 as recombinase cofactor for TCRβ rearrangements and pathological deletions in ETV6-RUNX1 ALL*
 Scientific Reports, 2020, 10:10024,
@@ -317,4 +316,4 @@ The Journal of Pathology, 2019,
 1. Yasuda et al.,
 *Clinical utility of target capture‐based panel sequencing in hematological malignancies: A multicenter feasibility study*,
 Cancer Science, 2020, 111(9):3367-3378,
-<https://dx.doi.org/10.1111/cas.14552>
+<https://doi.org/10.1111/cas.14552>

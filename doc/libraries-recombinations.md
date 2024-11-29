@@ -1,6 +1,6 @@
 ## Sequencing and analyzing human immune repertoires
 
-[V(D)J recombinations](http://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
+[V(D)J recombinations](https://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
 High-throughput sequencing (NGS/HTS) now
 enables the deep sequencing of a lymphoid population with dedicated
@@ -9,7 +9,7 @@ sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 ## Library preparation and sequencing for human AIRR/RepSeq studies
 
 Choosing library preparation and sequencing for immune repertoire analysis
-is a challenging task [(Langerak 2017)](http://dx.doi.org/10.4049/jimmunol.1602050)
+is a challenging task [(Langerak 2017)](https://doi.org/10.4049/jimmunol.1602050)
 and depends of multiple factors: aim of the study, people, sequencers, reagents, costs...
 We do not aim here to be authoritative,
 but give a few links to commonly used strategies for library preparation and sequencing.
@@ -22,29 +22,29 @@ and quantify immune recombinations.
 - As of 2022, the reference protocols
   for library preparation on Illumina MiSeq using **EuroClonality-NGS** primers
   and analysis with Vidjil are described
-  in [(Villarese, 2022)](http://dx.doi.org/10.1007/978-1-0716-2115-8_3)
+  in [(Villarese, 2022)](https://doi.org/10.1007/978-1-0716-2115-8_3)
   (marker identification in ALL,
   1-step, IGH FR2, IGH+, IGK/IGK+, TRB, TRB+, TRD/TRD+, TRG)
-  and [(de Septenville, 2022)](http://dx.doi.org/10.1007/978-1-0716-2115-8_10)
+  and [(de Septenville, 2022)](https://doi.org/10.1007/978-1-0716-2115-8_10)
   (assessment of mutational status in CLL,
   24+1 primers in 1 tube, IGHV-leader/IGHJ).
   They can be adapted for other sequencers.
 
 - The reference for **EuroClonality-NGS** primer sets
-  are [(Brüggemann, 2019)](http://dx.doi.org/10.1038/s41375-019-0496-7)
+  are [(Brüggemann, 2019)](https://doi.org/10.1038/s41375-019-0496-7)
   (2-step, 138 primers in 8 tubes, IGH FR1, IGH+, IGK, IGK+, TRB, TRB+, TRD/TRD+, TRG)
-  and [(Scheijen, 2019)](http://dx.doi.org/10.1038/s41375-019-0508-7)
+  and [(Scheijen, 2019)](https://doi.org/10.1038/s41375-019-0508-7)
   (1-step, 53 primers in 3 tubes, IGH FR3, IGH+, IGK, IGK+).
   The EuroClonality-NGS consortium also published previous
-  [protocols](http://www.euroclonality.org/ngs/protocols)
+  [protocols](https://euroclonality.org/ngs/protocols/)
   for Illumina MiSeq and Ion Torrent.
   <br />
-  Download: [2019-EuroClonality-NGS-primers.csv](http://www.vidjil.org/data/2019-EuroClonality-NGS-primers.csv)
+  Download: [2019-EuroClonality-NGS-primers.csv](https://www.vidjil.org/data/2019-EuroClonality-NGS-primers.csv)
 
 - Previously, many studies were successfully using primer sets based on
   the older **EuroClonality/BIOMED-2** sets
-  published in [(van Dongen, 2003)](http://dx.doi.org/10.1038/sj.leu.2403202).
-  See for example [(Ferret, 2016)](http://dx.doi.org/10.1111/bjh.13981)
+  published in [(van Dongen, 2003)](https://doi.org/10.1038/sj.leu.2403202).
+  See for example [(Ferret, 2016)](https://doi.org/10.1111/bjh.13981)
   (1-step, 23 primers in 5 tubes, TRG, TRD/TRD+, IGK, IGK+).
 
 These primer sets were designed and evaluated in multi-center validation studies
@@ -54,11 +54,11 @@ Such primer sets or DNA-Seq (or even on RNA-Seq) are very specific,
 leading to usually datasets with more than 90% or 99% of reads with V(D)J recombinations.
 
 One-step approaches may be used even with the 2-steps primers,
-see [(Brüggemann, 2019)](http://dx.doi.org/10.1038/s41375-019-0496-7) for discussion.
+see [(Brüggemann, 2019)](https://doi.org/10.1038/s41375-019-0496-7) for discussion.
 Some labs do sequence independently the tubes with barcoding,
 but for many applications the contents of the tubes can be pooled and sequenced at once.
 Using the full depth of a recent sequencer with spike-in control sequences,
-precise MRD quantification can be achieved [(Knecht 2019)](http://dx.doi.org/10.1038/s41375-019-0499-4).
+precise MRD quantification can be achieved [(Knecht 2019)](https://doi.org/10.1038/s41375-019-0499-4).
 When the goal is only to detect a few dominant clones,
 many samples (10 to 100, or even more)
 can be pooled with proper barcoding in a same sequencing run.
@@ -82,7 +82,7 @@ With datasets with billions of reads,
 this is usually enough to detect dominant clones
 with something like a few hundred reads,
 but quantification is more limited.
-For such libraries, it may be worth to set up a [post-sequencer workflow](http://www.vidjil.org/doc/workflow/)
+For such libraries, it may be worth to set up a [post-sequencer workflow](https://www.vidjil.org/doc/workflow/)
 to work with smaller files.
 
 ### Read length
