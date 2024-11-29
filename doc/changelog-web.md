@@ -53,7 +53,7 @@ We made plenty change on docker usage, allowing to be more efficient, more robus
 * #5393 vidjil · fuse: depreciated pipes quote
 * #4266 vidjil · Passer à Ubuntu 24.04 LTS
 * #3582 vidjil · Utiliser mysql 8 pour notre image Docker
-* #2019 vidjil · Interface d'administration : liens inutiles, obsolètes, dangereux
+* BF 2019 vidjil · Interface d'administration : liens inutiles, obsolètes, dangereux
 
 CI
 

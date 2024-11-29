@@ -57,7 +57,7 @@ def check_url(url, ids=[], dirname=''):
             return True
         else:
             req = requests.get(url, headers = USER_AGENT)
-            return (req.status_code < 400)
+            return (req.status_code < 400) or (req.status_code == 403)
     except Exception:
         return False
     
