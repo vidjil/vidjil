@@ -9,6 +9,69 @@ we are using continuous integration and deployment, some features are pushed on 
 ??? note "Milestone 2024-04"
 Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
 
+
+**Metrics** 
+
+We add a new componemt allowing to follow usage of a vidjil server. This will allow us to get more metrics on state of server and what is used and done by user.
+These metrics are pseudonomyze.
+* We add a dedicated controller serving these metrics. Need to be set (see XXX)
+* We created a configuration for a third party tool able to make visualization and throw warning (see link Prometheus / Grafana)
+
+**QC stats**
+
+* #5320 vidjil · Stats-qc : common clonotypes should be coherent with the selected samples                             server-qc-stats     
+
+**Improve analysis**
+* #5394 vidjil · Add a LLC dedicated preset for scatterplot (axes 5'/V length vs 5'/V ratio)
+* We add a possibility to export and import settings as a dedicated file. This will allow to save current configuration of report between computers #5318 (see XXX)
+* We create queues for worker, allowing to get dedicated workers for long analysis as capture without incidence on short and fastq amplicon analysis #5218
+* #5356 vidjil · Pre-process, WAITING, upload                             CRE-Créteil                             
+
+
+**Bug fixes**
+
+                             
+* We fix a and improve function allowing to download reads relative to a clonotype #5287
+* We return a better error message in case of bad answer froma a server #5253
+* Fix error on restic with some version of mysql database #5378
+* We improve performance of server when a backup is done #5377
+#5133 vidjil · No log in database                             server-logs user-traceability                             
+* Fix API to not allow to add bad date value (as 0000-00-00) leading to error when reading database #5263
+* Fix API to check if group exist and have correct rights before inserting information in it  #5212
+
+**Technical**
+
+We made plenty change on docker usage, allowing to be more efficient, more robust and easier to set-up.
+
+* We always fix rights inside docker to user www-data. See [migration 2024.12](/#migrationXXX). #5305 
+* We package `restic` backup tool in our docker-compose configuration #5347 
+* We refactored docker image construction to be more efficient, with correct user, rights and minimized dependancies #5351                             
+
+* We refactor usage of `.env` files. It will be now easier to set up variables of your vidjil server instance in one place #5272, #5256, #5231                             
+
+
+
+
+**dette technique**
+* #5393 vidjil · fuse: depreciated pipes quote                             !!-bug server server-fuse                             
+* #4266 vidjil · Passer à Ubuntu 24.04 LTS ?                             server-docker
+* #3582 vidjil · Utiliser mysql 8 pour notre image Docker un jour ?
+* #2019 vidjil · Interface d'administration : liens inutiles, obsolètes, dangereux ?                             !-easy *-go priority-2 !-security server-admin server-ergonomy                             
+
+
+CI
+
+* #5309 vidjil · Update Cypress version to 12.9 +                             dev-tests-cypress                             
+* #5186 vidjil · py4web; fix review server                             dev-ci dev-gitlab dev-network server                             
+
+
+
+
+## Web 2024-04
+
+??? note "Milestone 2024-04"
+Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
+
 **QC stats**
 
 * Add a new feature for previewing Quality Control stats
