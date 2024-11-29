@@ -52,14 +52,14 @@ def check_url(url, ids=[], dirname=''):
 
     # External http(s) links
     try:
-        req = requests.get(url, headers = USER_AGENT)
-        return (req.status_code < 400)
-    except Exception:
         if url == "https://fonts.gstatic.com":
             # Ignore this preconnect error
             return True
         else:
-            return False
+            req = requests.get(url, headers = USER_AGENT)
+            return (req.status_code < 400)
+    except Exception:
+        return False
     
 
 def check_file(f):
