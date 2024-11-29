@@ -14,8 +14,8 @@ Your personal data is never shared with third-parties without your explicit cons
 If you have any questions about the processing of your email and related personal data,
 do not hesitate to include them in your message.
 
-The VidjilNet consortium tracks issues related to the Vidjil software and the analysis of the users.
-The public issue tracker is available at  <http://gitlab.vidjil.org/issues>.
+The VidjilNet consortium tracks issues related to the Vidjil software and the analysis of the users
+in the [public issue tracker](https://gitlab.inria.fr/vidjil/vidjil/-/issues).
 The public issues are not disclosing any personal data or private research subjects.
 The consortium also maintains a private issue tracker tracking requests by users,
 including specific requests on user data.

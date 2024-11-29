@@ -1,15 +1,16 @@
 
 # Germline genes
 
-Vidjil-algo can use [custom germline presets](algo.md#custom-germlineg-presets).
+Vidjil-algo can use [custom germline presets](vidjil-algo.md#custom-germlineg-presets).
 This developer documentation focuses on updating or adding the *default* germline files.
 
 The germlines are compiled with `germline/split-germlines.py`.
 They come from various sources:
- - [IMGT/GENE-DB](http://www.imgt.org/download/GENE-DB/).
-   See in particular the [data updates](http://www.imgt.org/IMGTgenedbdoc/dataupdates.html)
- - Genomic sequences through the [NCBI E-utilities API]
- - A few static files
+
+- [IMGT/GENE-DB](https://www.imgt.org/download/GENE-DB/).
+  See in particular the [data updates](https://www.imgt.org/IMGTgenedbdoc/dataupdates.html)
+- Genomic sequences through the [NCBI E-utilities API]
+- A few static files
 
 It is advised to regularly retrieve the new sequences.
 However doing so may break some tests and requires some time and to fix things by hand.
@@ -20,10 +21,10 @@ We first prepare germlines on a `feature-g` branch.
 First you need to retrieve the new germlines.
 From the `germline/` directory of Vidjil:
 
-  - run `make get-all-data`
-  - run `make diff-from-saved` to see what changed since the previous release
-    Take inspiration from this diff to write an insightful commit message.
-  - when we add new features/germline pre-processing, we add tests to `germline/tests`
+- run `make get-all-data`
+- run `make diff-from-saved` to see what changed since the previous release
+  Take inspiration from this diff to write an insightful commit message.
+- when we add new features/germline pre-processing, we add tests to `germline/tests`
 
 It is also advised to work on tests on the algorithm (see below), but, at this stage, this is not enforced.
 

@@ -2,16 +2,16 @@
 # Vidjil: open-source and licenses
 
 Vidjil is open-source, released under the GPL version 3 or any later version.
-You are welcome to redistribute it under [certain conditions](http://git.vidjil.org/blob/master/LICENSE).
+You are welcome to redistribute it under [certain conditions](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/LICENSE).
 This software is for research use only and comes with no warranty.
 
-The development code is available on <http://gitlab.vidjil.org/>.
+The development code is available on <https://gitlab.inria.fr/vidjil/vidjil>.
 Bug reports, issues and patches are welcome.
 
 # Licenses for third-party software and databases
 
 Vidjil provide ready-to-use docker containers for a full client/server web application.
-See instructions on <http://www.vidjil.org/doc/server/#docker-installation>.
+See instructions on <https://www.vidjil.org/doc/server/#docker-installation>.
 The containers include third-party software and libraries under open-source licenses.
 
 Moreover, they allow to download and use germline sequences and other sequences originating from both NCBI and IMGT/GENE-DB.
@@ -32,7 +32,7 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 
 * @version          1.7 (2003, last available version as of 2022)
 * @author           Deepak Bandyopadhyay, Lutz Kettner
-* @link             <http://www.cs.unc.edu/Research/compgeom/gzstream/>
+* @link             <https://www.cs.unc.edu/Research/compgeom/gzstream/>
 * @license          LGPL
 
 **json**                : JSON for Modern C++
@@ -45,7 +45,7 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 **unbam (htslib)**      : Extract of htslib to only read BAM files
 
 * @version          ?? (<⁼ 2017)
-* @link             <http://www.htslib.org/>
+* @link             <https://www.htslib.org/>
 * @license          Modified BSD
 
 ## vidjil-client
@@ -63,14 +63,14 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 
 * @version          5.14.1 (2019)
 * @author           Michael Bostock
-* @link             <http://d3js.org/>
+* @link             <https://d3js.org/>
 * @license          BSD
 
 **jQuery**              : fast, small, and feature-rich JavaScript library
 
 * @version          3.3.1 (2018-01-20)
 * @author           John Resig and jQuery team
-* @link             <http://jquery.org>
+* @link             <https://jquery.org>
 * @license          MIT
 * @compatibility    IE 9+, Chrome (x-1)+, Firefox (x-1)+, Safari (x-1)+, Opera x+
 x is "current version" at time of release
@@ -81,7 +81,7 @@ x is "current version" at time of release
 
 * @version          (<= 2014)
 * @author           Eli Grey
-* @link             <http://eligrey.com>
+* @link             <https://eligrey.com>
 * @license          MIT
 
 **jstree**              : distant file explorator
@@ -95,14 +95,14 @@ x is "current version" at time of release
 
 * @version          less-1.5.0
 * @author           Alexis Sellier
-* @link             <self@cloudhead.net> / <http://lesscss.org/>
+* @link             <self@cloudhead.net> / <https://lesscss.org/>
 * @license          Apache v2
 
 **qunit.js**            : Unit testing
 
 * @version          2.9.1 (2019-01-07)
 * @author           QUnit team (Trent Willis et al)
-* @link             <http://qunitjs.com/>
+* @link             <https://qunitjs.com/>
 * @license          MIT
 
 **qunit-tap.js**        : TAP Output Producer Plugin for QUnit
@@ -116,7 +116,7 @@ x is "current version" at time of release
 
 * @version          2.3.6 (2018-08-27)
 * @author           The Dojo Foundation All Rights Reserved.
-* @link             <http://jrburke.com>, <http://requirejs.org/>
+* @link             <https://jrburke.com>, <https://requirejs.org/>
 * @license          MIT
 * @compatibility    IE 6+, Firefox 2+, Safari 3.2+, Chrome 3+, Opera 10+
 
@@ -131,7 +131,7 @@ x is "current version" at time of release
 
 * @author           Nikita Rokotyan, adapted by the Vidjil Team
 * @version          retrieved on 2018-09-14
-* @link             <http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177>
+* @link             <https://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177>
 * @license          MIT
 
 **tsne.js**             : Implementation of TSNE algorithm, adapted by the Vidjil Team for randomseed
@@ -238,7 +238,7 @@ x is "current version" at time of release
 **cron**
 
 * @license  GPLv2+
-* @link     <http://changelogs.ubuntu.com/changelogs/pool/main/c/cron/cron_3.0pl1-136ubuntu2/copyright>
+* @link     <https://changelogs.ubuntu.com/changelogs/pool/main/c/cron/cron_3.0pl1-136ubuntu2/copyright>
 
 **python**
 

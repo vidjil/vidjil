@@ -55,9 +55,16 @@ def check_url(url, ids=[], dirname=''):
         if url == "https://fonts.gstatic.com":
             # Ignore this preconnect error
             return True
+        elif url.startswith('http://'):
+            print(f"!!!!!!!!! http is insecure, use https instead: {url}")
+            return False
         else:
             req = requests.get(url, headers = USER_AGENT)
-            return (req.status_code < 400) or (req.status_code == 403)
+            if (req.status_code < 400) or (req.status_code == 403):
+                return True
+            else:
+                print(f"!!!!!!!!! wrong status code for {url}: {req.status_code}")
+                return False
     except Exception:
         return False
     

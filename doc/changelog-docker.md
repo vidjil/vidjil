@@ -1,7 +1,7 @@
 !!! note
     This CHANGELOG concerns the Docker images of vidjil.  
     We publish here notes to help to update these images.  
-    See <http://www.vidjil.org/doc/server>
+    See [server doc](server.md)
 
 ## 2024-10-xx
 

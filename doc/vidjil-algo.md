@@ -2,7 +2,7 @@
 *The Vidjil team (Mathieu, Mikaël, Aurélien, Florian, Marc, Tatiana and Rayan)*
 
 ```
-  Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire -- [[http://www.vidjil.org]]
+  Vidjil -- High-throughput Analysis of V(D)J Immune Repertoire -- [[https://www.vidjil.org]]
   Copyright (C) 2011-2022 by Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   and VidjilNet consortium.
@@ -12,12 +12,11 @@
 This is the help of vidjil-algo, for command-line usage.
 This manual can be browsed online:
 
- - <https://www.vidjil.org/doc/vidjil-algo>                (last stable release)
- - <http://gitlab.vidjil.org/blob/dev/doc/vidjil-algo.md> (development version)
+- <https://www.vidjil.org/doc/vidjil-algo>                (last stable release)
+- <https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/doc/vidjil-algo.md> (development version)
 
 Other documentations for life scientists, bioinformaticians, server administrators, and developers
 can be found at <https://www.vidjil.org/doc/>.
-
 
 ## About
 
@@ -25,7 +24,7 @@ can be found at <https://www.vidjil.org/doc/>.
 diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
-With adapted [library preparation and sequencing](https://www.vidjil.org/doc/locus),
+With adapted [library preparation and sequencing](libraries-recombinations.md),
 high-throughput sequencing (NGS/HTS) now
 enables the deep sequencing of a lymphoid population with dedicated
 sequencing methods and software, called either Rep-Seq or AIRR-Seq.
@@ -89,7 +88,7 @@ These compilers are available on recent OS X and on the following Linux distribu
   - Ubuntu 18.04 LTS, 20.04 LTS
 
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
-The development team internally uses [Gitlab CI](http://gitlab.vidjil.org/pipelines) for that,
+The development team internally uses [Gitlab CI](https://gitlab.inria.fr/vidjil/vidjil/-/pipelines) for that,
 and the tested compilers are run through Docker containers described in `.gitlab-ci-compilers.yml`.
 
 
@@ -116,7 +115,7 @@ tar xvfz vidjil-algo-latest.tar.gz
 cd vidjil-algo-*
 ```
 
-Note that development code is found at <http://gitlab.vidjil.org>, in the `algo` directory.
+Note that development code is found at <https://gitlab.inria.fr/vidjil/vidjil/>, in the `algo` directory.
 and compiling and running vidjil-algo on the development code can involve slightly different commands than below,
 including replacing `src` by `algo`.
 
@@ -784,7 +783,7 @@ This filtering can also be part of a [post-sequencer workflow](https://www.vidji
 
 ## AIRR .tsv output
 
-Since version 2018.10, vidjil-algo supports the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
+Since version 2018.10, vidjil-algo supports the [AIRR format](https://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
 We export all required fields, some optional fields, as also some custom fields (+).
 We also propose in [fuse.py](tools.md) a way to convert AIRR format to the `.vidjil` format.
 
@@ -800,7 +799,7 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 | duplicate_count | number | Number of reads contributing to the (UMI) consensus for this sequence. For example, the sum of the number of reads for all UMIs that contribute to the query sequence. <br />*Number of reads gathered in the clone.*
 | sequence_id | string  | Unique query sequence identifier within the file. Most often this will be the input sequence header or a substring thereof, but may also be a custom identifier defined by the tool in cases where query sequences have been combined in some fashion prior to alignment. <br />*This identifier is the (50 bp by default) window extacted around the junction.* |
 | clone_id 	| string | 	Clonal cluster assignment for the query sequence. <br />*This identifier is again the (50 bp by default) window extacted around the junction.*
-| warnings (+) | string | *Warnings associated to this clone. See <http://gitlab.vidjil.org/blob/dev/doc/warnings.md>.*
+| warnings (+) | string | *Warnings associated to this clone. See [warnings documentation](warnings.md).*
 | sequence  | string | The query nucleotide sequence. Usually, this is the unmodified input sequence, which may be reverse complemented if necessary. In some cases, this field may contain consensus sequences or other types of collapsed input sequences if these steps are performed prior to alignment. <br />*This contains the consensus/representative sequence of each clone.*
 | rev_comp  | boolean | True if the alignment is on the opposite strand (reverse complemented) with respect to the query sequence. If True then all output data, such as alignment coordinates and sequences, are based on the reverse complement of 'sequence'. <br />*Set to null, as vidjil-algo gather reads from both strands in clones* |
 | v_call, d_call, j_call  | string  | V/D/J gene with allele. For example, IGHV4-59\*01. <br /> *implemented. In the case of uncomplete/unexpected recombinations (locus with a `+`), we still use `v/d/j_call`. Note that this value can be null on clones beyond the `--max-designations` option.* |

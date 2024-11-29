@@ -232,7 +232,7 @@ Other improvements of client and server are limited.
 **Other points**
 
 * New server option to use an LDAP server
-* Warning for legacy or non supported browsers (see <http://www.vidjil.org/doc/user/#supported-browsers>)
+* Warning for legacy or non supported browsers (see [user documentation](user.md#supported-browsers)
 * Fix error in opening clone information after opening single analysis
 * Many other bug fixes
 

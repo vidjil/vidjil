@@ -1,7 +1,7 @@
 !!! note
     Here are aggregated notes forming a part of the developer documentation on the vidjil server.  
     These notes are a work-in-progress, they are not as polished as the user documentation.  
-    Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md), at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
+    Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md), at the [issues](https://gitlab.inria.fr/vidjil/vidjil), at the commit messages, and at the source code.
 
 ## Development notes -- Server
 
@@ -23,7 +23,7 @@ The cache is stored for each user and is updated only when a change occurs (mess
 ### Formatting
 
 Messages can be formatted by using the Markdown syntax. Syntax details are
-available here: <http://commonmark.org/help/>
+available here: <https://commonmark.org/help/>
 
 ### Priority
 
@@ -149,7 +149,7 @@ to add the package to a repository
 
 It is worth noting that while all packages can be built directly from the
 project sources, the algorithm is actually built from the releases found
-at <http://www.vidjil.org/releases>.
+at <https://www.vidjil.org/releases>.
 
 ## Packaging Vidjil into a Debian Binary Package
 
@@ -161,7 +161,7 @@ default Debian repositories.
 In this document we will not go over the fine details of debian packaging
 and the use of each file. For more information you can refer to this page
 from which this document was inspired:
-<http://www.tldp.org/HOWTO/html_single/Debian-Binary-Package-Building-HOWTO/>
+<https://www.tldp.org/HOWTO/html_single/Debian-Binary-Package-Building-HOWTO/>
 
 Being a binary package it will simply contain the vidjil binary which will
 be copied to the chosen location on installation.

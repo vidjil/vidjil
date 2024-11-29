@@ -1,6 +1,6 @@
 
-The development of the Vidjil platform is tracked with [gitlab](http://gitlab.vidjil.org).
-As of 2021, there are more than 1500 [open issues](http://gitlab.vidjil.org/issues),
+The development of the Vidjil platform is tracked with [gitlab](https://gitlab.inria.fr/vidjil/vidjil/).
+As of 2021, there are more than 1500 [open issues](https://gitlab.inria.fr/vidjil/vidjil/-/issues),
 but also... more than 2000 closed issues.
 Issues can be either in English or in French.
 
@@ -196,19 +196,19 @@ We often work on backend changes that eventually improve the efficiency on the p
 
 ## Human and administrative roadmap
 
-- Make the [VidjilNet Consortium](http://www.vidjil.net) grow
+- Make the [VidjilNet Consortium](https://www.vidjil.net) grow
   - Expand the community, make more members join (first General Assembly in December 2021 ⏳)
-  - Setup [healthcare data hosting](http://www.vidjil.org/doc/healthcare) (HDS, RGPD): Q3 2020 ✅
+  - Setup [healthcare data hosting](https://www.vidjil.org/doc/healthcare) (HDS, RGPD): Q3 2020 ✅
   - Regularly take into account user requests
 
 - Organize regularly Vidjil Workshops
   - Workshops organized in
-    [2016](http://www.vidjil.org/workshop-2016),
-    [2017](http://www.vidjil.org/workshop-2017),
-    [2019](http://www.vidjil.org/workshop-2019),
-    special edition [2020](http://vidjil.org/workshop-2020) ✅,
-    [2022](http://vidjil.org/workshop-2024) ✅
-    [2024](http://vidjil.org/workshop-2024) ✅
+    [2016](https://www.vidjil.org/workshop-2016),
+    [2017](https://www.vidjil.org/workshop-2017),
+    [2019](https://www.vidjil.org/workshop-2019),
+    special edition [2020](https://www.vidjil.org/workshop-2020) ✅,
+    [2022](https://www.vidjil.org/workshop-2022) ✅
+    [2024](https://www.vidjil.org/workshop-2024) ✅
 
 - Help the hospitals to get certification
   - First documents in 2020 for french COFRAC ✅

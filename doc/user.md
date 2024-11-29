@@ -1,14 +1,14 @@
 ## Web platform, user manual
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
-[V(D)J recombinations](http://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
+[V(D)J recombinations](https://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
 They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
-With adapted [library preparation and sequencing](http://www.vidjil.org/doc/locus),
+With adapted [library preparation and sequencing](libraries-recombinations.md),
 high-throughput sequencing (NGS/HTS) now
 enables the deep sequencing of a lymphoid population with dedicated
 sequencing methods and software, called either Rep-Seq or AIRR-Seq.
 
-This is the help of the [Vidjil web application](http://app.vidjil.org/).
+This is the help of the [Vidjil web application](https://app.vidjil.org/).
 Further help can always be asked to [support@vidjil.org](mailto:support@vidjil.org). We can also arrange phone or video meeting.
 
 The Vidjil team (Mathieu, Mikaël, Aurélien, Clément, Florian, Marc, Ryan and Tatiana)
@@ -54,7 +54,7 @@ Note that Vidjil will not run on IE 9.0 or below.
 The vidjil web application displays `.vidjil` files that summarize the V(D)J
 recombinations and the sequences found in one or several samples.
 
-The easiest way to get these files is to [request an account](http://app.vidjil.org/) on the public Vidjil test server.
+The easiest way to get these files is to [request an account](https://app.vidjil.org/) on the public Vidjil test server.
 You will then be able to upload,
 manage, process your samples (`.fasta`, `.fastq`, `.gz`, `.bam`, or `.clntab` files) directly on the web application
 (see *The sample database and the server*), and the server behind the sample
@@ -62,11 +62,11 @@ database computes these `.vidjil` files with vidjil-algo.
 Otherwise, such `.vidjil` files can be obtained either:
 
 - running vidjil-algo from the command line (starting from
-  `.fasta`, `.fastq` or `.gz` files, see [vidjil-algo documentation](http://www.vidjil.org/doc/vidjil-algo/)).
-  To gather several `.vidjil` files, you have to use the [fuse.py](http://git.vidjil.org/blob/master/tools/fuse.py) script
+  `.fasta`, `.fastq` or `.gz` files, see [vidjil-algo documentation](vidjil-algo.md)).
+  To gather several `.vidjil` files, you have to use the [fuse.py](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/tools/fuse.py) script
 - or by any other V(D)J analysis pipelines able to output files
-  respecting the `.vidjil` [file format](http://www.vidjil.org/doc/vidjil-format/)
-- or by using the [fuse.py](http://git.vidjil.org/blob/master/tools/fuse.py) script on the standard [AIRR representation](http://docs.airr-community.org/en/latest/datarep/overview.html#format-specification)
+  respecting the `.vidjil` [file format](vidjil-format.md)
+- or by using the [fuse.py](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/tools/fuse.py) script on the standard [AIRR representation](https://docs.airr-community.org/en/latest/datarep/overview.html#format-specification)
 
 Contact us if you want help on converting such data.
 
@@ -74,7 +74,7 @@ Contact us if you want help on converting such data.
 
 - Open data by:
   
-  - either with “samples”/“open samples” if you are connected to a sample database, such as on <http://app.vidjil.org/> or <http://health.vidjil.org/>.
+  - either with “samples”/“open samples” if you are connected to a sample database, such as on <https://app.vidjil.org/> or <https://health.vidjil.org/>.
     In these cases, there are always some "Demo" datasets for demonstration purposes.
     Once a patient/run/set is selected, you can access the results by clicking on the link near `See results` (bottom right).
 
@@ -100,7 +100,7 @@ Contact us if you want help on converting such data.
   - either with “samples”/“save analysis” if you are connected to a sample database
   - or with “file”/“export .analysis”
 
-You are advised to go through to the tutorial available from <http://www.vidjil.org/doc>
+You are advised to go through to the tutorial available from <https://www.vidjil.org/doc>
 to learn the essential features of Vidjil.
 
 ## The elements of the Vidjil web application
@@ -378,7 +378,7 @@ These buttons will send the sequences of selected clonotypes to them for analysi
 
 - `❯ CloneDB`.  See [above](#detailed-information-from-clonedb)
 
-- [`❯ Blast`](http://www.ensembl.org/Multi/Tools/Blast):
+- [`❯ Blast`](https://www.ensembl.org/Multi/Tools/Blast):
   Nucleotide alignment against the Homo sapiens genome and other nucleotide collections
 
 - [`❯ AssignSubsets`](https://bat.infspire.org/arrest/subsets/) (available for clones with IGH recombinations):
@@ -468,8 +468,8 @@ Muted warnings are still listed on the clonotype information panel or on hover o
 # The sample database and the server
 
 If a server with a sample database is configured with your
-installation of Vidjil (as on the public test server <http://app.vidjil.org/>
-or on the healthcare server <http://health.vidjil.org/>), the
+installation of Vidjil (as on the public test server <https://app.vidjil.org/>
+or on the healthcare server <https://health.vidjil.org/>), the
 'samples' menu gives you access to the server.
 
 With authentication, you can add 'patients', 'runs', or 'sets', they are just three different ways to group 'samples'.
@@ -488,9 +488,9 @@ you can process your data and save the results of your analysis.
 </figure>
 
 !!! warning
-    The public <http://app.vidjil.org/> server is for Research Use Only
+    The public <https://app.vidjil.org/> server is for Research Use Only
     and is not compliant for clinical use.
-    Clinical data have to be uploaded on a [certified healthcare server](http://www.vidjil.org/doc/healthcare).
+    Clinical data have to be uploaded on a [certified healthcare server](healthcare.md).
 
 Once you are authenticated, this page shows the patient list. Here you
 can see your patients and patients whose permission has been given to you.
@@ -540,7 +540,7 @@ Do not copy any header row, but only the data rows.
 
 ### Permanent address (URL) to a set of samples
 
-Addresses such as <http://app.vidjil.org/3241-25> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
+Addresses such as <https://app.vidjil.org/3241-25> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
 Moreover, the address may also encode other parameters, for instance <https://app.vidjil.org/3241-25?plot=clonotype%20average%20read%20length,J/3%27%20gene,bar&clone=30> (selected axes and selected clonotypes).
 
 To discuss on some results or to raise any issue, you can share such addresses with other users (with whom you share access grants, see below),
@@ -581,7 +581,7 @@ been created beforehand.
 #### Pre-processing
 
 The sample files may be preprocessed, by selecting a *pre-process scenario* when adding a sample.
-At the moment the only preprocess available on the public server (<http://app.vidjil.org>) are the paired-end read merging.
+At the moment the only preprocess available on the [public server](https://app.vidjil.org) are the paired-end read merging.
 
 1. Read merging
 
@@ -816,7 +816,7 @@ considers them as sequencing errors.
 
 Sometimes, the "same" clonotype shows different properties between different samples --
 as for example different V(D)J designations or productivity prediction.
-Warnings [W81 and W82](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) are now raised for such situations.
+Warnings [W81 and W82](warnings.md) are now raised for such situations.
 
 Such differences may come from [the way sequences are clustered](vidjil-format.md#what-is-a-clone).
 When different sequences are clustered in a "same" clone,
@@ -928,7 +928,7 @@ Contact us if you have other needs.
 ### Exporting the full list of clonotypes
 
 The `Export all clonotypes (AIRR)` process exports all clonotypes
-in the [AIRR format](http://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
+in the [AIRR format](https://docs.airr-community.org/en/latest/datarep/rearrangements.html#fields).
 Such a `.tsv` file that can be further processed or opened in any spreadsheet editor.
 The exported fields are described in the [documentation of vidjil-algo](vidjil-algo.md#airr-tsv-output).
 Once the process has run, click on `See the output files` (at the right of `COMPLETED`)
@@ -975,11 +975,11 @@ There can be several causes leading to low ratios:
 
 - The data actually contains other germline/locus that what was searched for
   (solution: relaunch the processing, or ask that we relaunch it, with the correct germline sequences).
-  See [locus documentation](http://www.vidjil.org/doc/locus/) for information on the analyzable human locus with vidjil-algo,
+  See [locus documentation](libraries-recombinations.md) for information on the analyzable human locus with vidjil-algo,
   and contact us if you would like to analyze data from species that are not currently available.
 
 - There are incomplete/exceptional recombinations
-  (Vidjil can analyze some of them with the process `multi+inc`, see [locus documentation](http://www.vidjil.org/doc/locus/) for details)
+  (Vidjil can analyze some of them with the process `multi+inc`, see [locus documentation](libraries-recombinations.md) for details)
 
 - There are too many hypersomatic mutations
   (usually Vidjil can process mutations until 10% mutation rate… above that threshold, some sequences may be lost).
@@ -990,13 +990,13 @@ There can be several causes leading to low ratios:
 #### PCR or sequencing causes
 
 - The read length is too short and the reads do not span the junction zone
-  (see also comments on read length concerning [library preparation and sequencing](http://www.vidjil.org/doc/locus#read-length)).
+  (see also comments on read length concerning [library preparation and sequencing](libraries-recombinations.md#read-length)).
   Vidjil-algo detects a “window” including the CDR3. By default this window is 50bp long, so the read needs be
   that long centered on the junction.
   Reads with no similarity to either V or J are reported as not analyzed (`UNSEG only V/J` or even `UNSEG too few V/J`).
   Reads with a V/J junction detected but not long enough are also reported as not analyzed (`UNSEG too short w`).
   Finally, some slightly short reads are analyzed but with slightly shifted or shortened windows (`SEG changed w`).
-  The related clonotypes are marked with a [W50](http://gitlab.vidjil.org/blob/dev/doc/warnings.md) warning,
+  The related clonotypes are marked with a [W50](warnings.md) warning,
   as they may, in some cases, falsely cluster reads from different clonotypes.
 
 - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region.
@@ -1062,7 +1062,7 @@ clonotype, instead of the info icon.
 
 ### Displaying primers
 
-Library preparation may involve some [usual sets of primers](http://www.vidjil.org/doc/locus/).
+Library preparation may involve some [usual sets of primers](libraries-recombinations.md).
 To display the primers,
 select such a primer set with ``settings -> primer set``.
 This aligns the clonotype sequences against the selected primer set.
@@ -1095,7 +1095,7 @@ link inside the web application.
 This opens a mail template with reference to the sample,
 and possibly with references to the selected clonotypes.
 
-Indeed, the address <http://app.vidjil.org/3241-25?clone=3>
+Indeed, the address <https://app.vidjil.org/3241-25?clone=3>
 reflects the sample you are studying with a given process configuration.
 When you select one or several clones, the address is updated.
 
@@ -1329,12 +1329,11 @@ Export all clones in the tabular AIRR format.
 A threshold of 5 reads is set to report a clonotype.
 The results can not be browsed online.
 
-See <http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output>
+See [documentation](vidjil-algo.md#airr-tsv-output)
 
 Another similar configuration with a limit set to 1 reads is available but only on demand and for small set of sequences.
 
 The results can not be browsed online.
-See <http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output>
 
 ??? Parameters
         program: `vidjil`
@@ -1414,7 +1413,7 @@ Same as Multi+contigs, but limit to IGH complete locus.
 Export all clones in the tabular AIRR format, from 1 read.
 Use wisely on file with few clonotypes.
 The results can not be browsed online.
-See <http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output>
+See [documentation](vidjil-algo.md#airr-tsv-output)
 
 ??? Parameters
         program: `vidjil`

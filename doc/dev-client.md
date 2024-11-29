@@ -1,7 +1,7 @@
 !!! note
     Here are aggregated notes forming a part of the developer documentation on the Vidjil web client.  
     These notes are a work-in-progress, they are not as polished as the user documentation.  
-    Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md), at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
+    Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md), at the [issues](https://gitlab.inria.fr/vidjil/vidjil), at the commit messages, and at the source code.
 
 # Development notes -- Client
 
@@ -15,7 +15,7 @@ able to open `.vidjil` files with the `import/export`dev-ger menu.
 
 To work with actual data, the easiest way is to copy `js/conf.js.sample` to `js/conf.js`.
 This will unlock the `patients` menu and allow your local client
-to access the public server at <http://app.vidjil.org/>.
+to access the public server at <https://app.vidjil.org/>.
 
 ## Installation with Docker
 
@@ -62,26 +62,26 @@ The client can be opened on a data file specified from a `data` attribute,
 and optionally on an analysis file specified from a `analysis` attribute,
 as in the following URLs on our test server:
 
-- <http://app.vidjil.org/browser/?data=test.vidjil>
-- <http://app.vidjil.org/browser/?data=test.vidjil&analysis=test.analysis>
-- <http://app.vidjil.org/browser/?data=http://app.vidjil.org/browser/test.vidjil>
+- <https://app.vidjil.org/browser/?data=test.vidjil>
+- <https://app.vidjil.org/browser/?data=test.vidjil&analysis=test.analysis>
+- <https://app.vidjil.org/browser/?data=https://app.vidjil.org/browser/test.vidjil>
 
 Both GET and POST requests are accepted.
 Note that the `browser/index.html` file and the `.vidjil/.analysis` files should be hosted on the same server.
 Otherwise, the server hosting the `.vidjil/.analysis` files must accept cross-domain queries.
 
 The client can also load data from a server (see below, requires logging) using url parameters to pass file identifiers,
-as in <http://app.vidjil.org/?set=3241&config=39>
+as in <https://app.vidjil.org/?set=3241&config=39>
 
 |             |               |
 | ----------- | ------------- |
 | `set=xx`    | sample set id |
 | `config=yy` | config id     |
 
-or directly inside the URL for a shortened version, as in <http://app.vidjil.org/3241-39/>
+or directly inside the URL for a shortened version, as in <https://app.vidjil.org/3241-39/>
 
 Older formats (patients, run…) are also supported for compatibility but deprecated.
-Moreover, the state of the client can be encoded in the URL, as in <http://app.vidjil.org/3241-39/?plot=v,size,bar&clone=11,31>
+Moreover, the state of the client can be encoded in the URL, as in <https://app.vidjil.org/3241-39/?plot=v,size,bar&clone=11,31>
 
 |                  |                       |
 | ---------------- | --------------------- |
@@ -262,7 +262,7 @@ following.
 
 1. Axis
 
-    In [axes.js](../browser/js/axes.js), the `AXIS_DEFAULT` object defines the dimensions that
+    In [axes.js](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/browser/js/axis.js), the `AXIS_DEFAULT` object defines the dimensions that
     can be displayed. It suffices to add an entry so that it will be proposed
     in the X and Y axis. This kind of way of doing should be generalized to
     the other components.
@@ -286,24 +286,24 @@ following.
 
     There is also other settings that can be used to customize even further labels appearance or display, please check the already defined axes in [axes.js] to learn more about them.
 
-1. Preset
+2. Preset
 
     The presets are defined in the `preset` object that can be found in [scatterPlot_menu.js].
 
-1. Color
+3. Color
 
     Adding a color needs slightly more work than adding a dimension in the
     scatterplot.
 
-    The function `updateColor` in file [clone.js](../browser/js/clone.js) must be modified to add our color method.
+    The function `updateColor` in file [clone.js](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/browser/js/clone.js) must be modified to add our color method.
     The variable `this.color` must contain a color (either in HTML or RGB, or…).
 
     Then a legend must be displayed to understand what the color represents.
-    For this sake, modify the `build_info_color` method in [info.js](../browser/js/info.js) file. By
+    For this sake, modify the `build_info_color` method in [info.js](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/browser/js/info.js) file. By
     default four spans are defined (that can be used) to display the legend:
     `span0`, …, `span3`.
 
-    Finally modify the [index.html](../browser/index.html) file to add the new color method in the
+    Finally modify the [index.html](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/browser/index.html) file to add the new color method in the
     select box (which is under the `color_menu` ID).
 
 ## Sequence panel
@@ -379,7 +379,7 @@ fields under the `seg` field are displayed as soon as they have a `start` and
 
 ### Code Quality
 
-Quality of code is checked using [JSHint](http://jshint.com/), by
+Quality of code is checked using [JSHint](https://jshint.com/), by
 running `make quality` from the `browser` directory.
 
 Install with `npm install -g jshint`
@@ -387,13 +387,13 @@ Install with `npm install -g jshint`
 ### Unit
 
 The unit tests in the client are managed by QUnit and launched using
-[nightmare](http://www.nightmarejs.org/), by launching `make unit` from the `browser/test` directory.
+[nightmare](https://www.npmjs.com/package/nightmare), by launching `make unit` from the `browser/test` directory.
 The tests are organized in the directory
-[browser/test/QUnit/testFiles](../browser/test/QUnit/testFiles). The file [data<sub>test</sub>.js](../browser/test/QUnit/testFiles/data_test.js) contains a toy
-dataset that is used in the tests.
+[browser/test/QUnit/testFiles](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/browser/test/QUnit/testFiles). The file [data<sub>test</sub>.js](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/browser//test/QUnit/testFiles/data_test.js)
+contains a toy dataset that is used in the tests.
 
 Unit tests can be launched using a real client (instead of nightmare). It
-suffices to open the file [test<sub>Qunit</sub>.html](../browser/test/QUnit/test_Qunit.html). In this HTML webpage it is
+suffices to open the file [test<sub>Qunit</sub>.html](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/browser/test/QUnit/test_Qunit.html). In this HTML webpage it is
 possible to see the coverage. It is important that all possible functions
 are covered by unit tests. Having the coverage displayed under Firefox
 needs to display the webpage using a web server for security
