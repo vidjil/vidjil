@@ -17,16 +17,18 @@ These metrics are pseudonymized.
 * We add a dedicated controller serving these metrics. Need to be set (see XXX)
 * We created a configuration for a third party tool able to make visualization and throw warning (see link Prometheus / Grafana)
 
-**QC stats**
-
-* #5320 vidjil · Stats-qc : common clonotypes should be coherent with the selected samples
-
 **Improve analysis**
 
-* #5394 vidjil · Add a LLC dedicated preset for scatterplot (axes 5'/V length vs 5'/V ratio)
+* Add a LLC dedicated preset for scatterplot (axes 5'/V length vs 5'/V ratio) #5394
 * We add a possibility to export and import settings as a dedicated file. This will allow to save current configuration of report between computers #5318 (see XXX)
 * We create queues for worker, allowing to get dedicated workers for long analysis as capture without incidence on short and fastq amplicon analysis #5218
-* #5356 vidjil · Pre-process, WAITING, upload
+* We change sample inforamtion returned by server to know if an upload failed or a preprocess is pending #5356
+* We improve patient search to include at the same time multiple fields (names, birthdate) #5388
+* Raw number of sequence files is keep after preprocessing to be set to vidjil-algo, improving statistical evaluation of kmers #5366
+* We now have 4 possible preprocess steps, linkable: UMI demultiplexing, merge of files R1/R2, VDJ prefilter and primer dimers. VDJ prefilter allow to keep only vdj reads from raw capture dataset, and primer dimers allow to remove reads under a threshold of 60nt (primer dimers).
+* We refactor preprossing script declaration to be more flexible, allowing to easily create specific preprocess by simple optioins on command line.
+* Contigs analysis: We now keep last definition value for clonotype in addition of warning if VDJ designation change after contigs creation
+* #5320 vidjil · Stats-qc : common clonotypes should be coherent with the selected samples
 
 **Bug fixes**
 
@@ -34,31 +36,18 @@ These metrics are pseudonymized.
 * We return a better error message in case of bad answer from a server #5253
 * Fix error on restic with some version of mysql database #5378
 * We improve performance of server when a backup is done #5377
-* #5133 vidjil · No log in database
-* Fix API to not allow to add bad date value (as 0000-00-00) leading to error when reading database #5263
+* We fix bug of missing log in database #5133
+* Fix API to not allow to add bad date value (as 0000-00-00) causing an error when reading database #5263
 * Fix API to check if group exist and have correct rights before inserting information in it  #5212
 
 **Technical**
 
-We made plenty change on docker usage, allowing to be more efficient, more robust and easier to set-up.
+* We made tools scripts compliant with last version of python 3.13 #5393
+* Source images for docker images are now ubuntu 24.04 LTS for server and client (#4266) and mysql 8.4 for database (#3582)
+* We clean some unmaitained buttons of admin interface (#2019)
+* We improve our continuous integration by updating cypress tools to version 12.9 and fix review server (#5186)
+* We highly refactor docker compose files to allow an easier configuration of server by overides and env files. See more details on changelog-docker page.
 
-* We always fix rights inside docker to user www-data. See [migration 2024.12](/#migrationXXX). #5305
-* We package `restic` backup tool in our docker-compose configuration #5347
-* We refactored docker image construction to be more efficient, with correct user, rights and minimized dependencies #5351
-
-* We refactor usage of `.env` files. It will be now easier to set up variables of your vidjil server instance in one place #5272, #5256, #5231
-
-**Technical debt**
-
-* #5393 vidjil · fuse: depreciated pipes quote
-* #4266 vidjil · Passer à Ubuntu 24.04 LTS
-* #3582 vidjil · Utiliser mysql 8 pour notre image Docker
-* BF 2019 vidjil · Interface d'administration : liens inutiles, obsolètes, dangereux
-
-CI
-
-* #5309 vidjil · Update Cypress version to 12.9 +
-* #5186 vidjil · py4web; fix review server
 
 ## Web 2024-04
 
