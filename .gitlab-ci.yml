@@ -249,7 +249,7 @@ test_server_unit:
     image: python:3.12-slim
     stage: test_unit
     script:
-      - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends build-essential gcc wget unzip procps
+      - apt-get update && apt-get install -y --no-install-recommends build-essential gcc wget unzip procps
       - python3 -m pip install --no-cache -r requirements.txt
       - python3 -m pip install --no-cache -r requirements_tests.txt
       - python3 -m pip freeze > pip_freeze_requirements.txt
