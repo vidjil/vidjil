@@ -515,6 +515,9 @@ build_test_server_docker:
     
 deploy_docker:
   stage: publish_release
+  image: docker:latest
+  services:
+    - docker:dind
   script:
     - export CUR_DATE=`date +%Y-%m-%d`
     - export TYPE=`echo $CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'`
