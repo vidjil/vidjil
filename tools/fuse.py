@@ -525,7 +525,8 @@ class Samples:
             concatenate_with_padding(obj.d["pre_process"], 
                                      self.d["pre_process"], self.d['number'], 
                                      other.d["pre_process"], other.d['number'],
-                                     [], recursive=True,
+                                     ["preprocess_workflow", "seqkit", "number"],
+                                     recursive=True,
                                      none_init=True)
 
         obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])

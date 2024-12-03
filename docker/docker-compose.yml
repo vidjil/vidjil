@@ -164,6 +164,7 @@ services:
                 condition: service_started
             workers-short:
                 condition: service_started
+                required: false
         links:
             - workers-all:workers-all
             - workers-short:workers-short

@@ -12,7 +12,14 @@ APP_NAME = os.path.split(APP_FOLDER)[-1]
 #               and is the store location for SQLite databases
 DB_FOLDER = os.path.join(APP_FOLDER, "databases")
 
-DB_URI = os.getenv("PYDAL_URI", default="mysql://vidjil:rootpass@mysql/vidjil")
+PYDAL_URI = os.getenv("PYDAL_URI")
+if PYDAL_URI:
+    DB_URI = PYDAL_URI
+else:
+    MYSQL_USER = os.getenv("MYSQL_USER", default="vidjil")
+    MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", default="mysql_vidjil_password")
+    MYSQL_DATABASE = os.getenv("MYSQL_DATABASE", default="vidjil")
+    DB_URI = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@mysql/{MYSQL_DATABASE}"
 DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE", default="1"))
 DB_MIGRATE = string_to_bool(os.getenv("DB_MIGRATE", default="True"))
 DB_FAKE_MIGRATE = string_to_bool(os.getenv("DB_MIGRATE", default="False"))  # maybe?

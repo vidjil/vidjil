@@ -675,7 +675,7 @@ def run_pre_process(pre_process_config_id, sequence_file_id, task_id, clean_befo
 
         out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
 
-        preprocess = db.pre_process[pre_process_id]
+        preprocess = db.pre_process[pre_process_config_id]
         required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
 
         if required_files == 2:

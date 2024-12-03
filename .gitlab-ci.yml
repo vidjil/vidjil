@@ -250,7 +250,7 @@ test_server_unit:
     image: python:3.12-slim
     stage: test_unit
     script:
-      - apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends build-essential gcc wget unzip procps
+      - apt-get update && apt-get install -y --no-install-recommends build-essential gcc wget unzip procps
       - python3 -m pip install --no-cache -r requirements.txt
       - python3 -m pip install --no-cache -r requirements_tests.txt
       - python3 -m pip freeze > pip_freeze_requirements.txt
@@ -516,6 +516,9 @@ build_test_server_docker:
     
 deploy_docker:
   stage: publish_release
+  image: docker:latest
+  services:
+    - docker:dind
   script:
     - export CUR_DATE=`date +%Y-%m-%d`
     - export TYPE=`echo $CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'`
@@ -528,12 +531,14 @@ deploy_docker:
     - docker push "vidjil/$TYPE:latest"
     - docker rmi $TAG "vidjil/$TYPE:latest"
   when: manual
+  extends:
+    - .need_for_independent_test
   only:
     - /^prod-server/
     - /^prod-client/
   tags:
-    - web
-    - docker
+    - ci.inria.fr
+    - small
 
 deploy_germlines:
   stage: deploy_prod
