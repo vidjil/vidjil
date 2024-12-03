@@ -533,8 +533,8 @@ deploy_docker:
     - /^prod-server/
     - /^prod-client/
   tags:
-    - web
-    - docker
+    - ci.inria.fr
+    - small
 
 deploy_germlines:
   stage: deploy_prod
