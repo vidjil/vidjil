@@ -527,6 +527,8 @@ deploy_docker:
     - docker push "vidjil/$TYPE:latest"
     - docker rmi $TAG "vidjil/$TYPE:latest"
   when: manual
+  extends:
+    - .need_for_independent_test
   only:
     - /^prod-server/
     - /^prod-client/
