@@ -10,7 +10,7 @@
 
 We made plenty change on docker usage, allowing to be more efficient, more robust and easier to set-up.
 
-* We always fix rights inside docker to user www-data. See [migration 2024.12](/#migrationXXX). #5305
+* We always fix rights inside docker to user www-data. See [migration 2024.12](dev-server.md#migrating-release-202405-to-release-202412). #5305
 * We package `restic` backup tool in our docker-compose configuration #5347
 * We refactored docker image construction to be more efficient, with correct user, rights and minimized dependencies #5351
 * We refactor usage of `.env` files. It will be now easier to set up variables of your vidjil server instance in one place #5272, #5256, #5231

@@ -14,7 +14,7 @@ Complete list of issue and change of this release can be found [here](https://gi
 We add a new component allowing to follow usage of a vidjil server. This will allow us to get more metrics on state of server and what is used and done by user.
 These metrics are pseudonymized.
 
-* We add a dedicated controller serving these metrics. Need to be set (see XXX)
+* We added a dedicated controller serving these metrics. Need to be set (see XXX)
 * We created a configuration for a third party tool able to make visualization and throw warning (see link Prometheus / Grafana)
 
 **Improve analysis**
@@ -22,31 +22,31 @@ These metrics are pseudonymized.
 * Add a LLC dedicated preset for scatterplot (axes 5'/V length vs 5'/V ratio) #5394
 * We add a possibility to export and import settings as a dedicated file. This will allow to save current configuration of report between computers #5318 (see XXX)
 * We create queues for worker, allowing to get dedicated workers for long analysis as capture without incidence on short and fastq amplicon analysis #5218
-* We change sample inforamtion returned by server to know if an upload failed or a preprocess is pending #5356
+* We change sample information returned by server to know if an upload failed or a preprocess is pending #5356
 * We improve patient search to include at the same time multiple fields (names, birthdate) #5388
 * Raw number of sequence files is keep after preprocessing to be set to vidjil-algo, improving statistical evaluation of kmers #5366
-* We now have 4 possible preprocess steps, linkable: UMI demultiplexing, merge of files R1/R2, VDJ prefilter and primer dimers. VDJ prefilter allow to keep only vdj reads from raw capture dataset, and primer dimers allow to remove reads under a threshold of 60nt (primer dimers).
-* We refactor preprossing script declaration to be more flexible, allowing to easily create specific preprocess by simple optioins on command line.
+* We now have 4 possible preprocess steps, linkable: UMI demultiplexing, merge of files R1/R2, VDJ pre-filter and primer dimers. VDJ pre-filter allows to keep only vdj reads from raw capture dataset, and primer dimers allow to remove reads under a threshold of 60nt (primer dimers).
+* We refactor preprocessing script declaration to be more flexible, allowing to easily create specific preprocess by simple options on command line.
 * Contigs analysis: We now keep last definition value for clonotype in addition of warning if VDJ designation change after contigs creation
 * #5320 vidjil · Stats-qc : common clonotypes should be coherent with the selected samples
 
 **Bug fixes**
 
-* We fix a and improve function allowing to download reads relative to a clonotype #5287
-* We return a better error message in case of bad answer from a server #5253
+* We fixed and improved function allowing to download reads relative to a clonotype #5287
+* We now return a better error message in case of bad answer from a server #5253
 * Fix error on restic with some version of mysql database #5378
-* We improve performance of server when a backup is done #5377
-* We fix bug of missing log in database #5133
+* We improved performance of server when a backup is done #5377
+* We fixed bug of missing log in database #5133
 * Fix API to not allow to add bad date value (as 0000-00-00) causing an error when reading database #5263
-* Fix API to check if group exist and have correct rights before inserting information in it  #5212
+* Fix API to check if group exist and have correct rights before inserting information in it #5212
 
 **Technical**
 
 * We made tools scripts compliant with last version of python 3.13 #5393
 * Source images for docker images are now ubuntu 24.04 LTS for server and client (#4266) and mysql 8.4 for database (#3582)
-* We clean some unmaitained buttons of admin interface (#2019)
-* We improve our continuous integration by updating cypress tools to version 12.9 and fix review server (#5186)
-* We highly refactor docker compose files to allow an easier configuration of server by overides and env files. See more details on changelog-docker page.
+* We cleaned some unmaintained buttons of admin interface (#2019)
+* We improved our continuous integration by updating cypress tools to version 12.9 and fix review server (#5186)
+* We highly refactored docker compose files to allow an easier configuration of server by override and env files. See more details on changelog-docker page.
 
 
 ## Web 2024-04
