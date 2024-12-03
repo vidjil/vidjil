@@ -22,6 +22,8 @@ These metrics are pseudonymized.
 * Add a LLC dedicated preset for scatterplot (axes 5'/V length vs 5'/V ratio) #5394
 * We add a possibility to export and import settings as a dedicated file. This will allow to save current configuration of report between computers #5318 (see XXX)
 * We create queues for worker, allowing to get dedicated workers for long analysis as capture without incidence on short and fastq amplicon analysis #5218
+* We had a new layer allowing to see affect values of a clonotype
+* You can open a clonotype information panel by double clicking on it from scatter plot and timeline views.
 * We change sample information returned by server to know if an upload failed or a preprocess is pending #5356
 * We improve patient search to include at the same time multiple fields (names, birthdate) #5388
 * Raw number of sequence files is keep after preprocessing to be set to vidjil-algo, improving statistical evaluation of kmers #5366
