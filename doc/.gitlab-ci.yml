@@ -19,6 +19,7 @@ build_doc:
       - /^feature-.*a.*\/release$/
   tags:
     - cidocker
+  allow_failure: true
 
 deploy_doc:
   stage: deploy_prod

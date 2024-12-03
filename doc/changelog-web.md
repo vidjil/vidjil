@@ -14,13 +14,13 @@ Complete list of issue and change of this release can be found [here](https://gi
 We add a new component allowing to follow usage of a vidjil server. This will allow us to get more metrics on state of server and what is used and done by user.
 These metrics are pseudonymized.
 
-* We added a dedicated controller serving these metrics. Need to be set (see XXX)
+* We added a dedicated controller serving these metrics #5156
 * We created a configuration for a third party tool able to make visualization and throw warning (see link Prometheus / Grafana)
 
 **Improve analysis**
 
 * Add a LLC dedicated preset for scatterplot (axes 5'/V length vs 5'/V ratio) #5394
-* We add a possibility to export and import settings as a dedicated file. This will allow to save current configuration of report between computers #5318 (see XXX)
+* We add a possibility to export and import settings as a dedicated file. This will allow to save current configuration of report between computers #5318
 * We create queues for worker, allowing to get dedicated workers for long analysis as capture without incidence on short and fastq amplicon analysis #5218
 * We had a new layer allowing to see affect values of a clonotype
 * You can open a clonotype information panel by double clicking on it from scatter plot and timeline views.
@@ -46,7 +46,7 @@ These metrics are pseudonymized.
 
 * We made tools scripts compliant with last version of python 3.13 #5393
 * Source images for docker images are now ubuntu 24.04 LTS for server and client (#4266) and mysql 8.4 for database (#3582)
-* We cleaned some unmaintained buttons of admin interface (#2019)
+* We cleaned some unmaintained buttons of admin interface
 * We improved our continuous integration by updating cypress tools to version 12.9 and fix review server (#5186)
 * We highly refactored docker compose files to allow an easier configuration of server by override and env files. See more details on changelog-docker page.
 
