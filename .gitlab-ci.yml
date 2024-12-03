@@ -40,6 +40,7 @@ stages:
   - test_shouldvdj
   - coverage
   - tgz_release
+  - build_doc
   - valgrind_unit
   - valgrind_functional
   - multiple_tests

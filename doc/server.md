@@ -1,18 +1,18 @@
 !!! note
     This is the help of the Vidjil server.  
     This help is intended for server administrators.  
-    Users should consult the [web application manual](http://www.vidjil.org/doc/user/)  
-    Other documentation can also be found in [doc/](http://www.vidjil.org/doc/).  
+    Users should consult the [web application manual](https://www.vidjil.org/doc/user/)  
+    Other documentation can also be found in [doc](https://www.vidjil.org/doc/).  
 
 The supported way to install, run, and maintain a Vidjil server
 is to use **Docker containers**.
 We are developing and deploying them since 2018, and,
 as of 2024, these Docker containers are used on all our servers (healthcare, public)
 as well as in some partner hospitals.
-See the [hosting options](http://wwW.vidjil.org/doc/healthcare/),
+See the [hosting options](https://wwW.vidjil.org/doc/healthcare/),
 including support and remote maintenance
 such in-hospital servers through
-the [VidjilNet consortium](http://www.vidjil.net/).
+the [VidjilNet consortium](https://www.vidjil.net/).
 
 ## Requirements
 
@@ -102,7 +102,7 @@ However, the following network access are recommended:
   - for users: several features using external platforms (IgBlast, IMGT/V-QUEST…)
   - for server maintainers: upgrades and reports to a monitor server
 - inbound access
-  - through the [VidjilNet consortium](http://www.vidjil.net),
+  - through the [VidjilNet consortium](https://www.vidjil.net),
     the team in Lille may help local server maintainers in some monitoring, maintenance and upgrade tasks,
     provided a SSH access can be arranged, possibly over VPN.
 
@@ -123,7 +123,7 @@ The users needing to access `docker` must belong to this group.
 Install `git`.
 Clone the [Vidjil git](https://gitlab.inria.fr/vidjil/vidjil) with `git clone https://gitlab.inria.fr/vidjil/vidjil.git`,
 and go to the directory [vidjil/docker](https://gitlab.inria.fr/vidjil/vidjil/tree/dev/docker).
-This contains both [docker-compose.yml](http://gitlab.vidjil.org/blob/dev/docker/docker-compose.yml) as well as configuration files.
+This contains both [docker-compose.yml](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/docker/docker-compose.yml) as well as configuration files.
 
 ### Docker environment
 
@@ -423,7 +423,7 @@ docker load -i <input_file>
 In some cases, you may need to update your `docker-compose.yml` file or some
 of the configuration files. We will describe the changes in the `CHANGELOG` file.
 The latest versions of these files are available on our
-[Gitlab](http://gitlab.vidjil.org/).
+[Gitlab](https://gitlab.inria.fr/vidjil/vidjil).
 
 Once the images are pulled, you can relaunch the containers:
 
@@ -639,7 +639,7 @@ From the admin web interface has, you can create a new group  ("groups" -> "+new
 
 ##### Step 3 : prepare your server analysis configs
 
-*This step may require bioinformatics support depending on your data, the config previously used, and the ones you intend to use on your new installation. We can offer support via the [VidjilNet consortium](http://www.vidjil.net) for help on setting that.*
+*This step may require bioinformatics support depending on your data, the config previously used, and the ones you intend to use on your new installation. We can offer support via the [VidjilNet consortium](https://www.vidjil.net) for help on setting that.*
 
 Vidjil analysis configs should not be directly transferred between servers. Indeed, they depend on the setup of each server setup (software, paths...) and can collide with existing configs on your installation. Before importing, you thus need to create the missing analysis configs on your server and edit the `config.json` file provided in the export folder.
 
