@@ -1,12 +1,11 @@
-from .. import defs
-from ..modules import vidjil_utils
-from ..modules.controller_utils import error_message
 import json
-from py4web import action, request, URL
-import time
 import datetime
 from datetime import timedelta 
+from py4web import action, request, URL
 
+from .. import settings
+from ..modules import vidjil_utils
+from ..modules.controller_utils import error_message
 from ..common import db, T, auth, log
 
 
@@ -23,7 +22,7 @@ def index():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
     

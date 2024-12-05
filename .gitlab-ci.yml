@@ -292,38 +292,20 @@ test_server_unit:
     - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test
     - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test
     - echo "TIME $(date) - after pulling docker images" >> time.log
-    - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
-    - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml 
-    - sed -i 's/latest/test/g' ./docker/docker-compose.yml
-    # Replace path for some volumes
-    # Use http version of config
-    - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
-    # - make germline && cp browser/js/germline.js docker/vidjil-client/conf
-    - sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" docker/vidjil-server/conf/defs.py
     # Up py4web
     - cd docker
     - cp .env.docker-compose-interpolation .env
-    - echo "UWSGI_POOL=1" >> .env.default
+    - ln -sf docker-compose-ci-tests.yml docker-compose.override.yml
     - mkdir -p volumes
     - docker-compose config
     - docker-compose up -d mysql uwsgi
     - echo "TIME $(date) - after first compose up" >> ../time.log
-    # Set rights
-    - docker exec vidjil-uwsgi mkdir -p /usr/share/vidjil/server/py4web/apps/vidjil/errors/
-    - docker exec vidjil-mysql chmod 0777 /var/lib/mysql/vidjil -R
-    - docker exec vidjil-uwsgi chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R
-    - docker exec vidjil-uwsgi chmod 0777 /mnt/result/results   -R
-    - docker exec vidjil-uwsgi chmod 0777 /mnt/result/tmp
-    - docker exec vidjil-uwsgi chmod 0777 /mnt/upload/uploads   -R
-    - docker exec vidjil-uwsgi chmod 0777 /usr/share/tools      -R
-    - chmod 777 -R volumes/vidjil/
     # Start other docker images
     - docker-compose up -d
-    # Show some information on current states of docker services
     - docker ps
-    # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
+    # Execute a script of init database and mock (fake ?) data inside; to launch before executing tests
+    - docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 load-sql.py -i /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ci_erase.sql"
     - docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 init_test_db.py"
-    # Change File source definition in defs.py file 
     - cd .. # Go to root git directory
     - echo "TIME $(date) - before other server script" >> time.log
 
@@ -341,7 +323,6 @@ test_server_unit:
     - !reference [.setup_docker_server]
   after_script:
     - echo "TIME $(date) - END OF SERVER JOB" >> time.log
-    - docker cp vidjil-uwsgi:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
     - docker ps
     - mkdir -p logs/after; cd docker; for service in `docker compose config | yq '.services[]|key'`; do docker logs vidjil-${service} > ../logs/after/${service}.log 2>&1; done
     - docker-compose down -v
@@ -389,16 +370,17 @@ deploy_review_server:
   script:
     - make browser demo
     - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
-    - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/py4web/apps/vidjil/defs.py
-    - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/py4web/apps/vidjil/defs.py
     - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
     - cp .env.docker-compose-interpolation .env
-    - echo "PY4WEB_ADMIN_PASSWORD=${REVIEW_SERVER_ADMIN_PASSWORD}" >> .env.default
-    - echo "VIRTUAL_HOST_NAME=${CI_COMMIT_REF_SLUG}" >> .env.default
-    - echo "FRONT_ADDRESS=${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org" >> .env.default
-    - echo "DB_ADDRESS=${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org" >> .env.default
+    - echo "SMTP_EMAIL_SUBJECT_START='[Vidjil/CI][${CI_COMMIT_REF_NAME}]'" >> .env.ci-review
+    - echo "PY4WEB_ADMIN_PASSWORD='${REVIEW_SERVER_ADMIN_PASSWORD}'" >> .env.ci-review
+    - echo "VIRTUAL_HOST_NAME='${CI_COMMIT_REF_SLUG}'" >> .env.ci-review
+    - echo "VIRTUAL_HOST='${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org'" >> .env.ci-review
+    - echo "FRONT_ADDRESS='${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org'" >> .env.ci-review
+    - echo "DB_ADDRESS='${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org'" >> .env.ci-review
+    - cat .env.ci-review
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG} || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
     - 'ssh $REVIEW_SERVER "
@@ -578,7 +560,7 @@ stop_deploy_review_server:
   script:
     - 'ssh $REVIEW_SERVER "set -o xtrace; 
         cd $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG};
-        docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml down -v; 
+        docker compose down -v; 
         cd ; 
         sudo ./scripts/remove_server_folder.sh ${CI_COMMIT_REF_SLUG};
         docker system prune -af --filter until=20m;

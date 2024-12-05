@@ -5,8 +5,8 @@ services:
         ports: !reset []
         networks: !reset null
         network_mode: bridge
-        volumes:
-            - ./ci/mysql:/var/lib/mysql
+        env_file:
+            - '.env.ci-review'
 
     uwsgi:
         image: vidjil/server:test
@@ -14,7 +14,8 @@ services:
         ports: !reset []
         networks: !reset null
         network_mode: bridge
-        command: bash /entrypoints/uwsgi-entrypoint.sh
+        env_file:
+            - '.env.ci-review'
 
     fuse:
         image: vidjil/server:test
@@ -22,8 +23,8 @@ services:
         ports: !reset []
         networks: !reset null
         network_mode: bridge
-        extra_hosts:
-          - "fuse:127.0.0.1"
+        env_file:
+            - '.env.ci-review'
 
     nginx:
         image: vidjil/client:test
@@ -31,10 +32,10 @@ services:
         ports: !reset []
         networks: !reset null
         network_mode: bridge
+        env_file:
+            - '.env.ci-review'
         links:
             - uwsgi:uwsgi
-        environment:
-            - VIRTUAL_HOST=$VIRTUAL_HOST_NAME.server.ci.vidjil.org
 
     workers-all:
         image: vidjil/server:test
@@ -42,6 +43,8 @@ services:
         ports: !reset []
         networks: !reset null
         network_mode: bridge
+        env_file:
+            - '.env.ci-review'
 
     workers-short:
         image: vidjil/server:test
@@ -49,12 +52,16 @@ services:
         ports: !reset []
         networks: !reset null
         network_mode: bridge
+        env_file:
+            - '.env.ci-review'
 
     redis:
         container_name: !reset null
         ports: !reset []
         networks: !reset null
         network_mode: bridge
+        env_file:
+            - '.env.ci-review'
 
     flower:
         image: vidjil/server:test
@@ -62,3 +69,5 @@ services:
         ports: !reset []
         networks: !reset null
         network_mode: bridge
+        env_file:
+            - '.env.ci-review'

@@ -2,12 +2,13 @@ import os
 import json
 from pathlib import Path
 import unittest
-from ..utils.omboddle import Omboddle
 from py4web.core import _before_request, Session, HTTP
+
+from ..utils.omboddle import Omboddle
 from ...functional.db_initialiser import DBInitialiser
 from ..utils import db_manipulation_utils, test_utils
 from ....common import db, auth
-from .... import defs
+from .... import settings
 from ....controllers import admin as admin_controller
 
 
@@ -90,8 +91,8 @@ class TestAdminController(unittest.TestCase):
     def test_showlog_vidjil(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        saved_dir_log = defs.DIR_LOG
-        defs.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
+        saved_dir_log = settings.DIR_LOG
+        settings.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
 
         try:
             # When : Calling showlog
@@ -99,7 +100,7 @@ class TestAdminController(unittest.TestCase):
             with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file": log_path, "format": "vidjil"}):
                 json_result = admin_controller.showlog()
         finally:
-            defs.DIR_LOG = saved_dir_log
+            settings.DIR_LOG = saved_dir_log
 
         # Then : We get a result
         result = json.loads(json_result)
@@ -110,8 +111,8 @@ class TestAdminController(unittest.TestCase):
     def test_showlog_vidjil_debug(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        saved_dir_log = defs.DIR_LOG
-        defs.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
+        saved_dir_log = settings.DIR_LOG
+        settings.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
 
         try:
             # When : Calling showlog
@@ -119,7 +120,7 @@ class TestAdminController(unittest.TestCase):
             with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file": log_path, "format": "vidjil"}):
                 json_result = admin_controller.showlog()
         finally:
-            defs.DIR_LOG = saved_dir_log
+            settings.DIR_LOG = saved_dir_log
 
         # Then : We get a result
         result = json.loads(json_result)
@@ -130,8 +131,8 @@ class TestAdminController(unittest.TestCase):
     def test_showlog_raw_access_log(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        saved_dir_log = defs.DIR_LOG
-        defs.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
+        saved_dir_log = settings.DIR_LOG
+        settings.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
 
         try:
             # When : Calling showlog
@@ -139,7 +140,7 @@ class TestAdminController(unittest.TestCase):
             with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file": log_path, "format": "raw"}):
                 json_result = admin_controller.showlog()
         finally:
-            defs.DIR_LOG = saved_dir_log
+            settings.DIR_LOG = saved_dir_log
 
         # Then : We get a result
         result = json.loads(json_result)
@@ -150,8 +151,8 @@ class TestAdminController(unittest.TestCase):
     def test_showlog_raw_error_log(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        saved_dir_log = defs.DIR_LOG
-        defs.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
+        saved_dir_log = settings.DIR_LOG
+        settings.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
 
         try:
             # When : Calling showlog
@@ -159,7 +160,7 @@ class TestAdminController(unittest.TestCase):
             with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file": log_path, "format": "raw"}):
                 json_result = admin_controller.showlog()
         finally:
-            defs.DIR_LOG = saved_dir_log
+            settings.DIR_LOG = saved_dir_log
 
         # Then : We get a result
         result = json.loads(json_result)

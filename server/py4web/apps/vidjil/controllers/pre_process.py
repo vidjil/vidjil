@@ -1,32 +1,12 @@
-# -*- coding: utf-8 -*-
-import base64
-import datetime
-from sys import modules
+import json
+import os
+from py4web import action, request, URL
 
-
-from .. import defs
+from .. import settings
 from ..modules import vidjil_utils
-from ..modules import tag
-from ..modules.stats_decorator import *
-from ..modules.sampleSet import SampleSet, get_set_group
-from ..modules.sampleSets import SampleSets
-from ..modules.sampleSetList import SampleSetList, filter_by_tags
-from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets, get_sequence_file_config_ids
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
-from ..modules.zmodel_factory import ModelFactory
-from ..tasks import schedule_pre_process, get_preprocessed_filename, get_original_filename
-from ..user_groups import get_upload_group_ids, get_involved_groups
-from ..VidjilAuth import VidjilAuth
-from io import StringIO
-import json
-import time
-import os
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
-import math
-
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
+from ..common import db, T, auth, log
 
 
 ###########################
@@ -43,7 +23,7 @@ def index():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
 
@@ -187,7 +167,7 @@ def info():
         run = db(db.scheduler_task.id == sequence_file.pre_process_scheduler_task_id).select(db.scheduler_task.ALL).first()
 
         content = None
-        out_folder = defs.DIR_PRE_VIDJIL_ID % int(sequence_file_id)
+        out_folder = settings.DIR_PRE_VIDJIL_ID % int(sequence_file_id)
         if not os.path.exists(out_folder):
             log.error(f"Try to open pre-process info, but did not find {out_folder}")
             return error_message("Output folder does not exist, pre-process did not run correctly")

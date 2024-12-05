@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
-
 import os
-import apps.vidjil.defs as defs
 import base64
-from ..modules import vidjil_utils, controller_utils
-from ..common import db, auth, mail
 from collections import defaultdict
+
+from .. import settings
+from ..modules import vidjil_utils, controller_utils
+from ..common import db, mail
 
 class SequenceFile():
     def __init__(self, data):
@@ -33,7 +32,7 @@ def get_accessible_sequence_files_in_set_type(group_ids, set_type):
     Get all the sequence files that can be accessed by any group of
     the list group_ids.
     The sequence files must be saved in one type of set
-    (defs.SET_TYPE_PATIENT, defs.SET_TYPE_GENERIC, defs.SET_TYPE_RUN)
+    (settings.SET_TYPE_PATIENT, settings.SET_TYPE_GENERIC, settings.SET_TYPE_RUN)
     '''
     seq_files_set_type =  db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                              & (db.sample_set_membership.sample_set_id == db.sample_set.id)
@@ -179,8 +178,8 @@ def check_space(directory, what):
     '''
     enough_space = vidjil_utils.check_enough_space(directory)
     if not enough_space:
-        mail.send(to=defs.ADMIN_EMAILS,
-                  subject=f"{defs.EMAIL_SUBJECT_START} Server space",
-                  body=f"The space in directory {directory} has passed below {defs.FS_LOCK_THRESHHOLD}%.")
+        mail.send(to=settings.ADMIN_EMAILS,
+                  subject=f"{settings.EMAIL_SUBJECT_START} Server space",
+                  body=f"The space in directory {directory} has passed below {settings.FS_LOCK_THRESHOLD}%.")
         return controller_utils.error_message("{} are temporarily disabled. System admins have been made aware of the situation.".format(what))
     

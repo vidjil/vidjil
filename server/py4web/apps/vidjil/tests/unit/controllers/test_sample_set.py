@@ -2,16 +2,14 @@ import collections
 import datetime
 import os
 import json
-import pathlib
-import shutil
-from typing import TextIO
 import pytest
-from ..utils.omboddle import Omboddle
-from ..utils import db_manipulation_utils, test_utils
-from ...functional.db_initialiser import DBInitialiser
 from py4web.core import _before_request, Session, HTTP
+
+from ..utils.omboddle import Omboddle
+from ..utils import db_manipulation_utils
+from ...functional.db_initialiser import DBInitialiser
 from ....common import db, auth
-from .... import defs
+from .... import settings
 from ....modules.permission_enum import PermissionEnum
 from ....modules import tag
 
@@ -169,13 +167,13 @@ class TestSampleSetController():
 
         # When : Calling form
         with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"type": defs.SET_TYPE_PATIENT}):
+                      query={"type": settings.SET_TYPE_PATIENT}):
             json_result = sample_set_controller.form()
 
         # Then : We get results_file list
         result = json.loads(json_result)
         assert result["message"] == "add patient"
-        assert result["isEditing"] == False
+        assert not result["isEditing"]
         groups = result["groups"]
         assert len(groups) == 1
         assert groups[0]["id"] == user_group_id
@@ -193,13 +191,13 @@ class TestSampleSetController():
 
         # When : Calling form
         with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"type": defs.SET_TYPE_PATIENT}):
+                      query={"type": settings.SET_TYPE_PATIENT}):
             json_result = sample_set_controller.form()
 
         # Then : We get results_file list
         result = json.loads(json_result)
         assert result["message"] == "add patient"
-        assert result["isEditing"] == False
+        assert not result["isEditing"]
         groups = result["groups"]
         assert len(groups) == 1
         assert groups[0]["id"] == user_group_id
@@ -267,15 +265,15 @@ class TestSampleSetController():
                          "info": f"info with tag #{patient_tag_2}", "sample_set_id": "", "id": "", "error": []}
 
     def _initialize_json_submit_data(self, user_group_id: int, patient_id: int, patient_sample_set_id: int) -> str:
-        sets = {defs.SET_TYPE_PATIENT: [],
-                defs.SET_TYPE_RUN: [],
-                defs.SET_TYPE_GENERIC: [],
+        sets = {settings.SET_TYPE_PATIENT: [],
+                settings.SET_TYPE_RUN: [],
+                settings.SET_TYPE_GENERIC: [],
                 "group": user_group_id}
 
-        sets[defs.SET_TYPE_PATIENT].append(self.patient_add_data)
+        sets[settings.SET_TYPE_PATIENT].append(self.patient_add_data)
         self.patient_edit_data["sample_set_id"] = patient_sample_set_id
         self.patient_edit_data["id"] = patient_id
-        sets[defs.SET_TYPE_PATIENT].append(self.patient_edit_data)
+        sets[settings.SET_TYPE_PATIENT].append(self.patient_edit_data)
 
         return json.dumps(sets)
 
@@ -283,13 +281,12 @@ class TestSampleSetController():
         # Given : not logged
 
         # When : Calling submit
-        with pytest.raises(HTTP) as excinfo:
+        with pytest.raises(HTTP) as exception:
             with Omboddle(self.session, keep_session=True, params={"format": "json"}):
                 sample_set_controller.submit()
 
         # Then : We get a redirect
-        exception = excinfo.value
-        assert exception.status == 303
+        assert exception.value.status == 303
 
     def test_submit(self):
         # Given : logged as other user
@@ -352,7 +349,7 @@ class TestSampleSetController():
         # Then : We get results_file list
         result = json.loads(json_result)
         assert result["message"] == "an error occurred"
-        patients = result["sets"][defs.SET_TYPE_PATIENT]
+        patients = result["sets"][settings.SET_TYPE_PATIENT]
         assert len(patients) == 2
         # Patient add was added
         patient_add = next(
@@ -371,7 +368,7 @@ class TestSampleSetController():
         assert patient_edit_in_db["first_name"] != self.patient_edit_data["first_name"]
         assert patient_edit_in_db["last_name"] != self.patient_edit_data["last_name"]
 
-    # TODO : add tests for other defs.SET_TYPE
+    # TODO : add tests for other settings.SET_TYPE
 
     # ##################################
     # # Tests on sample_set_controller.download()
@@ -403,14 +400,14 @@ class TestSampleSetController():
     # #         user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
     # #     sequence_file_id = db_manipulation_utils.add_sequence_file(
     # #         patient_id, user_id)
-    # #     save_dir_out_vidjil_id = defs.DIR_OUT_VIDJIL_ID
+    # #     save_dir_out_vidjil_id = settings.DIR_OUT_VIDJIL_ID
     # #     try:
     # #         results_file_id = db_manipulation_utils.add_results_file(
     # #             sequence_file_id=sequence_file_id)
-    # #         defs.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
-    # #             test_utils.get_results_path(), f"out-{defs.BASENAME_OUT_VIDJIL_ID}")) + os.sep
+    # #         settings.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
+    # #             test_utils.get_results_path(), f"out-{settings.BASENAME_OUT_VIDJIL_ID}")) + os.sep
     # #         results_file_directory = pathlib.Path(
-    # #             defs.DIR_OUT_VIDJIL_ID % results_file_id)
+    # #             settings.DIR_OUT_VIDJIL_ID % results_file_id)
     # #         results_file_directory.mkdir(parents=True, exist_ok=True)
     # #         results_filename = "test_result_file.res"
     # #         results_content = "test_content"
@@ -426,7 +423,7 @@ class TestSampleSetController():
     # #         assert result == "Response from mock"
     # #         assert TestResultsFileController.stream_log != None
     # #     finally:
-    # #         defs.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
+    # #         settings.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
     # #         shutil.rmtree(results_file_directory)
 
     # ##################################

@@ -5,10 +5,11 @@ import math
 import os
 import pathlib
 from typing import Dict, List
-from .. import defs
-from ..common import db
+
 from . import zmodel_factory
 from . import stats_decorator
+from .. import settings
+from ..common import db
 
 SETS_COLUMN_NAME = "sets"
 SAMPLE_COLUMN_NAME = "sample"
@@ -188,7 +189,7 @@ def get_fuse_data(sample_set_id: int, results_file_ids: List[int]) -> dict:
         sample_query_pos[str(result_fuse["results_file"])].append(position)
 
     model_factory = zmodel_factory.ModelFactory()
-    set_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
+    set_types = [settings.SET_TYPE_PATIENT, settings.SET_TYPE_RUN, settings.SET_TYPE_GENERIC]
     helpers = {}
     for set_type in set_types:
         helpers[set_type] = model_factory.get_instance(set_type)
@@ -237,7 +238,7 @@ def get_fused_stats(fuse):
     Computes some extra data
     """
 
-    fuse_file_path = pathlib.Path(defs.DIR_RESULTS, fuse["fused_file_name"])
+    fuse_file_path = pathlib.Path(settings.DIR_RESULTS, fuse["fused_file_name"])
     fuse_results_files = fuse["results_files"]
     fused_stats = {}
     with open(fuse_file_path, "r") as fuse_file:

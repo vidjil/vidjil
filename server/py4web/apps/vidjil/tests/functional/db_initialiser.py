@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 
 sys.path.append("../../../../")
-from apps.vidjil import defs
+from apps.vidjil import settings
 from apps.vidjil import tasks
 from apps.vidjil.modules import vidjil_utils
 from apps.vidjil.common import auth
@@ -57,10 +57,10 @@ class DBInitialiser(object):
 
 
     def get_set_dict(self, set_type, sample_set_id, i):
-        if set_type == defs.SET_TYPE_PATIENT:
+        if set_type == settings.SET_TYPE_PATIENT:
             return dict(id_label="", first_name="patient", last_name=i, birth="2010-10-10", info="test patient %d #test%d" % (i, i), sample_set_id=sample_set_id, creator=1)
         d = dict(name="%s %d" % (set_type, i), info="test %s %d #test%d" % (set_type, i, i), sample_set_id=sample_set_id, creator=1)
-        if set_type == defs.SET_TYPE_RUN:
+        if set_type == settings.SET_TYPE_RUN:
             d['id_label'] = ""
         return d
 
@@ -70,7 +70,7 @@ class DBInitialiser(object):
 
     @_needs_init
     def _init_sample_sets(self):
-        types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
+        types = [settings.SET_TYPE_PATIENT, settings.SET_TYPE_RUN, settings.SET_TYPE_GENERIC]
         public_group = self.db(self.db.auth_group.role == "public").select().first()
         for i in range(5):
             tag_id = self.db.tag.insert(name="test%d" % i)
@@ -162,7 +162,7 @@ class DBInitialiser(object):
 
     @_needs_init
     def _init_set_association_data(self):
-        types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
+        types = [settings.SET_TYPE_PATIENT, settings.SET_TYPE_RUN, settings.SET_TYPE_GENERIC]
         public_group = self.db(self.db.auth_group.role == "public").select().first()
         for i in range(3):
             tag_id = self.db.tag.insert(name="set_assoc_%d" % i)

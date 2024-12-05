@@ -7,7 +7,7 @@ from collections import defaultdict
 from ombott import static_file
 from py4web import action, request, URL
 
-from .. import defs
+from .. import settings
 from ..modules import vidjil_utils
 from ..modules import tag
 from ..modules.sampleSet import get_set_group
@@ -195,7 +195,7 @@ def index():
         scheduler_ids[s.id].status = s.status
     
 
-    tag_decorator = tag.TagDecorator(tag.get_tag_prefix())
+    tag_decorator = tag.TagDecorator(settings.TAG_PREFIX)
     query_pre_process = db( db.pre_process.id >0 ).select()
     pre_process_list = {}
     for row in query_pre_process:
@@ -241,7 +241,7 @@ def all():
     if request.query.get('type'):
         type = request.query.get('type')
     else :
-        type = defs.SET_TYPE_GENERIC
+        type = settings.SET_TYPE_GENERIC
 
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True,
@@ -346,9 +346,9 @@ def form():
         return json.dumps(res, separators=(',',':'))
 
     message = '%s %s' % (action, set_type)
-    sets = {defs.SET_TYPE_PATIENT: [],
-            defs.SET_TYPE_RUN: [],
-            defs.SET_TYPE_GENERIC: []}
+    sets = {settings.SET_TYPE_PATIENT: [],
+            settings.SET_TYPE_RUN: [],
+            settings.SET_TYPE_GENERIC: []}
     # We add a None object to the desired set type to initialise an empty form in the template.
     sets[set_type].append(sample_set)
     log.info("load form " + message, extra=extra)
@@ -436,8 +436,8 @@ def submit():
                     action = "add"
 
                     #if (p['id'] % 100) == 0:
-                    #    mail.send(to=defs.ADMIN_EMAILS,
-                    #    subject=defs.EMAIL_SUBJECT_START+" %d" % p['id'],
+                    #    mail.send(to=settings.ADMIN_EMAILS,
+                    #    subject=settings.EMAIL_SUBJECT_START+" %d" % p['id'],
                     #    message="The %dth %s has just been created." % (p['id'], set_type))
 
                 else :
@@ -611,7 +611,7 @@ def custom():
     if config :
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.query["custom_list"])) )
     
-    tag_decorator = tag.TagDecorator(tag.get_tag_prefix())
+    tag_decorator = tag.TagDecorator(settings.TAG_PREFIX)
     log.info("load compare list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': "results_file"})
 
     classification = get_configs_by_classification()
@@ -925,7 +925,7 @@ def auto_complete():
         return error_message("missing group ids")
 
     query = json.loads(request.params["keys"])[0]
-    sample_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
+    sample_types = [settings.SET_TYPE_PATIENT, settings.SET_TYPE_RUN, settings.SET_TYPE_GENERIC]
     result = []
     for sample_type in sample_types:
         result += get_sample_set_list(sample_type, query)
@@ -956,7 +956,7 @@ def samplesetById():
     API: Get a specific sample based on the set id
     Take two parameters: set id and set type
     '''
-    type = (request.query['type'] if ("type" in request.query.keys()) else defs.SET_TYPE_GENERIC )
+    type = (request.query['type'] if ("type" in request.query.keys()) else settings.SET_TYPE_GENERIC )
     set_id =  request.query['id']
 
     factory = ModelFactory()
@@ -971,14 +971,14 @@ def samplesetById():
 def stats():
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True,
-                                vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True)))}
+                                vars=dict(_next=URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT}, scheme=True)))}
         return json.dumps(res, separators=(',',':'))
 
     isAdmin = auth.is_admin()
     if request.query['type']:
         type = request.query['type']
     else :
-        type = defs.SET_TYPE_GENERIC
+        type = settings.SET_TYPE_GENERIC
 
     ## filter
     if "filter" not in request.query :
@@ -1071,7 +1071,7 @@ def result_files():
         helpers[t] = mf.get_instance(type=t)
 
     filename = "export_%s_%s.zip" % ('-'.join(sample_set_ids), str(datetime.date.today()))
-    full_path_file = pathlib.Path(defs.DIR_SEQUENCES, filename)
+    full_path_file = pathlib.Path(settings.DIR_SEQUENCES, filename)
     try:
         with ZipFile(full_path_file, 'w') as zipfile:
             metadata = []
@@ -1082,7 +1082,7 @@ def result_files():
                     'set_info': res[res.sample_set.sample_type].info,
                     'sample_info': res.sequence_file.info,
                     'sequence_file': res.sequence_file.filename})
-                path = defs.DIR_RESULTS + res.results_file.data_file
+                path = settings.DIR_RESULTS + res.results_file.data_file
                 zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
             zipfile.writestr('metadata.json', json.dumps(metadata))
             zipfile.close()
@@ -1090,7 +1090,7 @@ def result_files():
         log.info("extract results files (%s)" % sample_set_ids, extra={'user_id': auth.user_id,
             'record_id': None,
             'table_name': "sample_set"})
-        return static_file(filename, defs.DIR_SEQUENCES, download=True)
+        return static_file(filename, settings.DIR_SEQUENCES, download=True)
     except Exception as exception:
         res = {"message": "an error occurred"}
         log.error(f"An error occurred when creating archive of sample_sets {sample_set_ids} : {exception}")
@@ -1104,5 +1104,5 @@ def result_files():
 @action("/vidjil/sample_set/download_sequence_file/<filename>", method=["POST", "GET"])
 @action.uses(db, session, auth.user)
 def download(filename=None):
-    return static_file(filename, root=defs.DIR_SEQUENCES, download=True)
+    return static_file(filename, root=settings.DIR_SEQUENCES, download=True)
     

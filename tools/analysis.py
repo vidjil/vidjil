@@ -1,12 +1,10 @@
 
 import json
-
-from utils import *
-from defs import *
-
 from collections import defaultdict
 
-class Analysis(VidjilJson):
+import utils
+
+class Analysis(utils.VidjilJson):
 
 
     def __init__(self, data=None):
@@ -64,4 +62,3 @@ class Analysis(VidjilJson):
             except KeyError:
                 return None
         return None
-

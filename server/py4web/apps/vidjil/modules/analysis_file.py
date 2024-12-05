@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 import json
-from .. import defs
+
+from .. import settings
 from ..modules import vidjil_utils
-from ..common import db, auth
+from ..common import db
 
 def get_analysis_from_sample_set(sample_set_id, *fields, **kwargs):
     '''
@@ -24,7 +24,7 @@ def get_analysis_data(sample_set_id):
     analysis_query = get_analysis_from_sample_set(sample_set_id)
     if len(analysis_query) > 0:
         row = analysis_query.first()
-        f = open(defs.DIR_RESULTS+'/'+row.analysis_file, "r", encoding="utf-8")
+        f = open(settings.DIR_RESULTS+'/'+row.analysis_file, "r", encoding="utf-8")
         return get_clean_analysis(f)
     else:
         return get_default_analysis()
@@ -53,7 +53,7 @@ def get_analysis_info(json_paths, sample_set_id):
     results = []
 
     for analysis in analysis_file:
-        filename=defs.DIR_RESULTS + analysis.analysis_file
+        filename=settings.DIR_RESULTS + analysis.analysis_file
         results.append(vidjil_utils.extract_fields_from_json(json_paths, None, filename))
     return results
 

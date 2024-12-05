@@ -5,13 +5,14 @@ import pathlib
 import tempfile
 import pytest
 from pathlib import Path
-from ..utils.omboddle import Omboddle
 from py4web import URL, request
 from py4web.core import _before_request, Session, HTTP
+
+from ..utils.omboddle import Omboddle
 from ...functional.db_initialiser import DBInitialiser
 from ..utils import db_manipulation_utils, test_utils
 from ....common import db, auth
-from .... import defs
+from .... import settings
 from ....modules.permission_enum import PermissionEnum
 from ....controllers import default as default_controller
 
@@ -220,10 +221,10 @@ class TestDefaultController():
         sequence_file_id = db_manipulation_utils.add_sequence_file(
             sample_set_id, user_id)
         config_id = db_manipulation_utils.add_config()
-        saved_dir_results = defs.DIR_RESULTS
+        saved_dir_results = settings.DIR_RESULTS
 
         try:
-            defs.DIR_RESULTS = test_utils.get_resources_path()
+            settings.DIR_RESULTS = test_utils.get_resources_path()
 
             # When : Calling run_request
             with Omboddle(self.session, keep_session=True,
@@ -237,7 +238,7 @@ class TestDefaultController():
             assert result[
                 "message"] == f"default/run_request  : permission needed, you do not have permission to launch process for this sample_set ({sample_set_id}), you do not have permission to launch process for this config ({config_id})"
         finally:
-            defs.DIR_RESULTS = saved_dir_results
+            settings.DIR_RESULTS = saved_dir_results
 
     def test_run_request(self, mocker):
         # Given : Logged as other user, and add corresponding config, ...
@@ -262,8 +263,8 @@ class TestDefaultController():
         config_id = db_manipulation_utils.add_config()
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.config, config_id)
-        saved_dir_results = defs.DIR_RESULTS
-        defs.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
+        saved_dir_results = settings.DIR_RESULTS
+        settings.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
                                     "..",
                                     "resources"))
         mocked_run_process = mocker.patch(
@@ -284,7 +285,7 @@ class TestDefaultController():
                 config_id}: process requested - None {db.sequence_file[sequence_file_id].filename}"
             mocked_run_process.assert_called_once()
         finally:
-            defs.DIR_RESULTS = saved_dir_results
+            settings.DIR_RESULTS = saved_dir_results
 
     ##################################
     # Tests on default_controller.run_all_request()
@@ -327,8 +328,8 @@ class TestDefaultController():
         config_id = db_manipulation_utils.add_config()
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.config, config_id)
-        saved_dir_results = defs.DIR_RESULTS
-        defs.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
+        saved_dir_results = settings.DIR_RESULTS
+        settings.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
                                     "..",
                                     "resources"))
         mocked_run_process = mocker.patch(
@@ -350,7 +351,7 @@ class TestDefaultController():
             assert result["redirect"] == "reload"
             assert mocked_run_process.call_count == 2
         finally:
-            defs.DIR_RESULTS = saved_dir_results
+            settings.DIR_RESULTS = saved_dir_results
 
     ##################################
     # Tests on default_controller.get_data()
@@ -383,12 +384,12 @@ class TestDefaultController():
         config_id = db_manipulation_utils.add_config()
         sequence_file_id = db_manipulation_utils.add_sequence_file(
             sample_set_id, user_id)
-        saved_dir_results = defs.DIR_RESULTS
+        saved_dir_results = settings.DIR_RESULTS
         save_upload_folder = db.fused_file.fused_file.uploadfolder
         fused_file_id = -1
 
         try:
-            defs.DIR_RESULTS = str(test_utils.get_results_path())
+            settings.DIR_RESULTS = str(test_utils.get_results_path())
             db.fused_file.fused_file.uploadfolder = test_utils.get_results_path()
             fused_file_id = db_manipulation_utils.add_fused_file(
                 sample_set_id, sequence_file_id, config_id, use_real_file=True)
@@ -409,9 +410,9 @@ class TestDefaultController():
         finally:
             if fused_file_id != -1:
                 fused_file = pathlib.Path(
-                    defs.DIR_RESULTS, db.fused_file[fused_file_id].fused_file)
+                    settings.DIR_RESULTS, db.fused_file[fused_file_id].fused_file)
                 fused_file.unlink(missing_ok=True)
-            defs.DIR_RESULTS = saved_dir_results
+            settings.DIR_RESULTS = saved_dir_results
             db.fused_file.fused_file.uploadfolder = save_upload_folder
 
     ##################################
@@ -468,7 +469,7 @@ class TestDefaultController():
     #     resp = gluon.contrib.simplejson.loads(get_custom_data())
     #     print(resp)
     #     if resp.has_key('success') and resp['success'] == 'false':
-    #        self.assertTrue(defs.PORT_FUSE_SERVER is None, 'get_custom_data returns error without fuse server')
+    #        self.assertTrue(settings.PORT_FUSE_SERVER is None, 'get_custom_data returns error without fuse server')
     #     else:
     #         self.assertEqual(resp['reads']['segmented'][0], resp['reads']['segmented'][2], "get_custom_data doesn't return a valid json")
     #         self.assertEqual(resp['sample_name'], 'Compare samples')

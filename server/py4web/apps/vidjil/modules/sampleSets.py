@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
- 
 from collections import defaultdict
+
 from . import vidjil_utils
-import apps.vidjil.defs as defs
-from ..common import db, log
+from .. import settings
+from ..common import db
 
 class SampleSets:
     '''
@@ -39,7 +38,7 @@ class SampleSets:
 
         for stype in self.sample_types:
             stype_ids = self.get_sample_type_ids(stype)
-            if stype == defs.SET_TYPE_PATIENT:
+            if stype == settings.SET_TYPE_PATIENT:
                 patient_ids = db(db[stype].sample_set_id.belongs(stype_ids)).select(db[stype].id, db[stype].sample_set_id)
                 names = vidjil_utils.anon_ids([p.id for p in patient_ids])
                 for i, p_id in enumerate(patient_ids):

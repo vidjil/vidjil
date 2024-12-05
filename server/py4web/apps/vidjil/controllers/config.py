@@ -1,22 +1,12 @@
-# -*- coding: utf-8 -*-
-import base64
-import datetime
-from sys import modules
 
+import json
+from py4web import action, request, URL
 
-from .. import defs
+from .. import settings
 from ..modules import vidjil_utils
-from ..modules import tag
-from ..modules.stats_decorator import *
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
-from ..VidjilAuth import VidjilAuth
-from io import StringIO
-import json
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
-
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
+from ..common import db, T, auth, log
 
 
 ###########################
@@ -33,7 +23,7 @@ def index():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
 
@@ -119,12 +109,12 @@ def edit():
 
 @action("/vidjil/config/edit_form", method=["POST", "GET"])
 @action.uses(db, auth.user)
-def edit_form(): 
-    if (not auth.can_modify_config(int(request.params['id']))):
-        error += "ACCESS_DENIED"
-    
+def edit_form():
     error = []
 
+    if (not auth.can_modify_config(int(request.params['id']))):
+        error.append("ACCESS_DENIED")
+        
     required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
     for field in required_fields:
         if request.params[field] == "" :
