@@ -1,6 +1,6 @@
 ## Encoding clones with V(D)J recombinations with `.vidjil` files
 
-The following [.json](http://en.wikipedia.org/wiki/JSON) format (2016b) allows to
+The following [.json](https://en.wikipedia.org/wiki/JSON) format (2016b) allows to
 encode a set of clones (formally, clonotypes) with V(D)J immune recombinations,
 possibly with user annotations.
 
@@ -710,7 +710,7 @@ against them (not implemented now).
 ### Tagging some clones: `tags` list \[optional\]
 
 The `tags` list describe the custom tag names as well as tags that should be hidden by default.
-The default tag names are defined in [../browser/js/vidjil-style.js](http://gitlab.vidjil.org/-/blob/master/browser/js/vidjil-style.js).
+The default tag names are defined in [../browser/js/vidjil-style.js](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/browser/js/vidjil-style.js).
 
 ``` javascript
 "key" : "value"  // "key" is the tag id from 0 to 7 and "value" is the custom tag name attributed

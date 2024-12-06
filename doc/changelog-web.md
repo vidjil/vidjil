@@ -4,6 +4,53 @@
 This changelog concerns the Vidjil web application, client and server.
 we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
+## Web 2024-12
+
+??? note "Milestone 2024-12"
+Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/15).
+
+**Metrics**
+
+We add a new component allowing to follow usage of a vidjil server. This will allow us to get more metrics on state of server and what is used and done by user.
+These metrics are pseudonymized.
+
+* We added a dedicated controller serving these metrics #5156
+* We created a configuration for a third party tool able to make visualization and throw warning (see link Prometheus / Grafana)
+
+**Improve analysis**
+
+* Add a LLC dedicated preset for scatterplot (axes 5'/V length vs 5'/V ratio) #5394
+* We add a possibility to export and import settings as a dedicated file. This will allow to save current configuration of report between computers #5318
+* We create queues for worker, allowing to get dedicated workers for long analysis as capture without incidence on short and fastq amplicon analysis #5218
+* We had a new layer allowing to see affect values of a clonotype
+* You can open a clonotype information panel by double clicking on it from scatter plot and timeline views.
+* We change sample information returned by server to know if an upload failed or a preprocess is pending #5356
+* We improve patient search to include at the same time multiple fields (names, birthdate) #5388
+* Raw number of sequence files is keep after preprocessing to be set to vidjil-algo, improving statistical evaluation of kmers #5366
+* We now have 4 possible preprocess steps, linkable: UMI demultiplexing, merge of files R1/R2, VDJ pre-filter and primer dimers. VDJ pre-filter allows to keep only vdj reads from raw capture dataset, and primer dimers allow to remove reads under a threshold of 60nt (primer dimers).
+* We refactor preprocessing script declaration to be more flexible, allowing to easily create specific preprocess by simple options on command line.
+* Contigs analysis: We now keep last definition value for clonotype in addition of warning if VDJ designation change after contigs creation
+* #5320 vidjil · Stats-qc : common clonotypes should be coherent with the selected samples
+
+**Bug fixes**
+
+* We fixed and improved function allowing to download reads relative to a clonotype #5287
+* We now return a better error message in case of bad answer from a server #5253
+* Fix error on restic with some version of mysql database #5378
+* We improved performance of server when a backup is done #5377
+* We fixed bug of missing log in database #5133
+* Fix API to not allow to add bad date value (as 0000-00-00) causing an error when reading database #5263
+* Fix API to check if group exist and have correct rights before inserting information in it #5212
+
+**Technical**
+
+* We made tools scripts compliant with last version of python 3.13 #5393
+* Source images for docker images are now ubuntu 24.04 LTS for server and client (#4266) and mysql 8.4 for database (#3582)
+* We cleaned some unmaintained buttons of admin interface
+* We improved our continuous integration by updating cypress tools to version 12.9 and fix review server (#5186)
+* We highly refactored docker compose files to allow an easier configuration of server by override and env files. See more details on changelog-docker page.
+
+
 ## Web 2024-04
 
 ??? note "Milestone 2024-04"
@@ -13,7 +60,7 @@ Complete list of issue and change of this release can be found [here](https://gi
 
 * Add a new feature for previewing Quality Control stats
 * Possibility to export data
-* See more information in [documentation](user.md#statistics-and-quality-control-view)
+* See more information in [documentation](user.md#displaying-statistics-quality-control)
 
 **Improve analysis**
 
@@ -176,7 +223,7 @@ Other improvements of client and server are limited.
 **Other points**
 
 * New server option to use an LDAP server
-* Warning for legacy or non supported browsers (see <http://www.vidjil.org/doc/user/#supported-browsers>)
+* Warning for legacy or non supported browsers (see [user documentation](user.md#supported-browsers)
 * Fix error in opening clone information after opening single analysis
 * Many other bug fixes
 

@@ -1,7 +1,7 @@
 !!! note
     Here are aggregated notes forming a part of the developer documentation on the vidjil server.  
     These notes are a work-in-progress, they are not as polished as the user documentation.  
-    Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md), at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
+    Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md), at the [issues](https://gitlab.inria.fr/vidjil/vidjil), at the commit messages, and at the source code.
 
 ## Development notes -- Server
 
@@ -23,7 +23,7 @@ The cache is stored for each user and is updated only when a change occurs (mess
 ### Formatting
 
 Messages can be formatted by using the Markdown syntax. Syntax details are
-available here: <http://commonmark.org/help/>
+available here: <https://commonmark.org/help/>
 
 ### Priority
 
@@ -149,7 +149,7 @@ to add the package to a repository
 
 It is worth noting that while all packages can be built directly from the
 project sources, the algorithm is actually built from the releases found
-at <http://www.vidjil.org/releases>.
+at <https://www.vidjil.org/releases>.
 
 ## Packaging Vidjil into a Debian Binary Package
 
@@ -161,7 +161,7 @@ default Debian repositories.
 In this document we will not go over the fine details of debian packaging
 and the use of each file. For more information you can refer to this page
 from which this document was inspired:
-<http://www.tldp.org/HOWTO/html_single/Debian-Binary-Package-Building-HOWTO/>
+<https://www.tldp.org/HOWTO/html_single/Debian-Binary-Package-Building-HOWTO/>
 
 Being a binary package it will simply contain the vidjil binary which will
 be copied to the chosen location on installation.
@@ -340,7 +340,7 @@ docker-compose up --build
 
 This will also start the environment for you.
 
-## Deploy a local version for developpment purpose
+## Deploy a local version for development purpose
 
 You may want to make some modification into the code of Vidjil web application, server, browser or tools side.
 In these cases, you should get a copy of the vidjil repository where you will be able to make your changes, and also set some modifications into the `docker-compose.yml`.
@@ -394,72 +394,51 @@ archive.ubuntu.org then you may need to add your dns to /etc/docker/daemon.json
       {
           "dns":["dns1", "dns2"]
       }
-
-* Migrating Data
-** Database
-   The easiest way to perform a database migration is to first extract the
-   data with the following command:
-
-   $ mysqldump -u <user> -p <db> -c --no-create-info > <file>
-
-   An important element to note here is the --no-create-info we add this
-   parameter because py4web needs to be allowed to create tables itself
-   because it keeps track of database migrations and errors will occur if
-   tables exist which it considers it needs to create.
-
-   In order to import the data into an installation you first need to ensure
-   the tables have been created by Py4web this can be achieved by simply
-   accessing a non-static page.
-
-   /!\ If the database has been initialized from the interface you will
-   likely encounter primary key collisions or duplicated data, so it is best
-   to skip the initialization altogether.
-
-   Once the tables have been created, the data can be imported as follows:
-
-   $ mysql -u <user> -p <db> < <file>
-
-   Please note that with this method you should have at least one admin user
-   that is accessible in the imported data. Since the initialization is being
-   skipped, you will not have the usual admin account present.
-   It is also possible to create a user directly from the database although
-   this is not the recommended course of action.
-
-** Files
-   Files can simply be copied over to the new installation, their filenames
-   are stored in the database and should therefore be accessible as long as
-   they are in the correct directories.
-
-** Filtering data
-   When extracting data for a given user, the whole database should not be
-   copied over.
-   There are two courses of action:
-     - create a copy of the existing database and remove the users that are
-       irrelevant. The cascading delete should remove any unwanted data
-       barring a few exceptions (notably fused_file, groups and sample_set_membership)
-
-     - export the relevant data directly from the database. This method
-       requires multiple queries which will not be detailed here.
-
-  Once the database has been correctly extracted, a list of files can be
-  obtained from sequence_file, fused_file, results_file and analysis_file
-  with the following query:
-
-  #+BEGIN_SRC sql
-    SELECT <filename field>
-    FROM <table name>
-    INTO OUTFILE 'filepath'
-    FIELDS TERMINATED BY ','
-    ENCLOSED BY ''
-    LINES TERMINATED BY '\n'
 ```
 
-Note: We are managing filenames here which should not contain any
-character such as quotes or commas so we can afford to refrain from
-enclosing the data with quotes.
+## Migrating Data
 
-This query will output a csv file containing a filename on each line.
-Copying the files is now just a matter of running the following script:
+### Migrating Database
+
+The easiest way to perform a database migration is to first extract the
+data with the following command:
+
+```bash
+mysqldump -u <user> -p <db> -c --no-create-info > <file>
+```
+
+An important element to note here is the --no-create-info we add this
+parameter because py4web needs to be allowed to create tables itself
+because it keeps track of database migrations and errors will occur if
+tables exist which it considers it needs to create.
+
+In order to import the data into an installation you first need to ensure
+the tables have been created by Py4web this can be achieved by simply
+accessing a non-static page.
+
+/!\ If the database has been initialized from the interface you will
+likely encounter primary key collisions or duplicated data, so it is best
+to skip the initialization altogether.
+
+Once the tables have been created, the data can be imported as follows:
+
+```bash
+mysql -u <user> -p <db> < <file>
+```
+
+Please note that with this method you should have at least one admin user
+that is accessible in the imported data. Since the initialization is being
+skipped, you will not have the usual admin account present.
+It is also possible to create a user directly from the database although
+this is not the recommended course of action.
+
+### Migrating Files
+
+Files can simply be copied over to the new installation, their filenames
+are stored in the database and should therefore be accessible as long as
+they are in the correct directories.
+
+If one only want to migrate data for a user, see [below](#exporting-sample-sets)
 
 ## Exporting sample sets
 
@@ -626,7 +605,7 @@ make functional_server_cypress_open
 
 Once again, if not already done, **make backup** before going further.
 
-Generic case is the following. Please read section further to know for each upgrade how to make it since some specific change in docker-compose, file organisation or variable in configuration files can be made.
+Generic case is the following. Please read section further to know for each upgrade how to make it since some specific change in docker-compose, file organization or variable in configuration files can be made.
 
 Once docker-compose and configuration changes are made, you can simply launch update as usually:
 
@@ -646,7 +625,7 @@ docker-compose up -d
 #### Migrating from Web2py to Py4web (release-2024.01)
 
 !!! danger
-    At release 2024.01, we migrate our backend server from Web2py to Py4web.  
+    At release 2024.01, we migrated our backend server from Web2py to Py4web.  
     This section described the way to update your anterior server.  
     We **HIGHLY** recommend to use a second server with duplicate content to set correctly docker-compose files.
 
@@ -708,7 +687,7 @@ If everything works well, you should now be able to connect to your server with 
 
 This release don't have breaking change.
 
-Notable change is that now preprocess, pre-fuse and post-fuse need to be declared in three different directories and use the same organization that [vidjil-contribs](https://gitlab.inria.fr/vidjil/contrib) repository.
+Notable change is that now preprocess, pre-fuse and post-fuse need to be declared in three different directories and use the same organization that [vidjil-contrib](https://gitlab.inria.fr/vidjil/contrib) repository.
 
 To unify this, a new value should be add to docker-compose in uwsgi volume:
 
@@ -730,3 +709,18 @@ Please add it in directory for tasks section.
 ```py title="docker/vidjil-server/conf/defs.py"
 DIR_PREPROCESS = '/usr/share/vidjil/tools/scripts/preprocess/'
 ```
+
+#### Migrating release-2024.05 to release-2024.12
+
+The mysql version was bumped in this release. The easier way to migrate the database is described in the [changelog](changelog-docker.md#2024-12-03)
+
+Docker images, docker-compose files and env files have been modified in this release:
+
+- Regarding env files, we had a confusion between the way env files are used in docker-compose, either to [load environnement variables in the container](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/#use-the-env_file-attribute), or directly in the [docker-compose.yml file interpolation](https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/). We tried to be cleaner around this:
+  - we now have default values for interpolation in `docker-compose.yml`. It can still be override using `.env` file, using `.env.docker-compose-interpolation` as a base file.
+  - Variables to be used in containers are now listed in `.env.default` file. Most of your custom values are now located here. You can either modify `.env.default`, or in a cleaner way create a `.env.override` (or whatever name) file. In this last case, one can only override the needed variables, and load the file in `docker-compose.yml` directly, or in a `docker-compose.override.yml` file.
+- New variables were introduced in `.env.default` file:
+  - Some variables linked to the new metrics feature (see #5156)
+  - `CHANGE_OWNER`, true by default, to change the rights of the data files. This can takes some time at first start after migration, but this allows files rights management to be cleaner.
+  - `SHORT_JOBS_WORKERS_POOL` and `CELERY_SIZE_LIMIT_FOR_LONG_JOB`: as described in `.env.default` file, allow admin to configure some dedicated workers to allow short jobs to run even if many long jobs are already running. In most deployments, this won't be needed.
+- `docker-compose.yml` was cleaned. To migrate, compare it with the version you had built before or use it as a base for a `docker-compose.override.yml` file.

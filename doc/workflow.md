@@ -36,15 +36,15 @@ Work is underway to release this version for production.
 
 **Install `vidjil-algo`**
 
- - Requirements ([more documentation](vidjil-algo.md#installation)): on a recent Ubuntu system, `sudo apt-get install zlib1g-dev`
- - Download and extract <http://www.vidjil.org/releases/vidjil-algo-latest.tar.gz>  or <http://www.vidjil.org/releases/vidjil-algo-alpha.tar.gz>
- - Inside `vidjil-algo-...` directory, build it with `make`
-   (it boths compile `vijdil-algo` and fetches the `germline/` directory, with germlines genes repertoires created from IMGT and NCBI)
+- Requirements ([more documentation](vidjil-algo.md#requirements-and-installation)): on a recent Ubuntu system, `sudo apt-get install zlib1g-dev`
+- Download and extract <https://www.vidjil.org/releases/vidjil-algo-latest.tar.gz> or <https://www.vidjil.org/releases/vidjil-algo-alpha.tar.gz>
+- Inside `vidjil-algo-...` directory, build it with `make`
+ (it both compiles `vijdil-algo` and fetches the `germline/` directory, with germlines genes repertoires created from IMGT and NCBI)
 
 **Install `flash2`**
 
-  - Download and extract <https://github.com/dstreett/FLASH2/archive/master.zip>
-  - Inside `FLASH2-master` directory, build it with `make`
+- Download and extract <https://github.com/dstreett/FLASH2/archive/master.zip>
+- Inside `FLASH2-master` directory, build it with `make`
 
 You may copy `vidjil-algo` and `flash2`  binaries to folders available from your `$PATH`.
 

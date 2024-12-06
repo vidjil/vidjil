@@ -153,7 +153,8 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
             # reads json preprocess file to get number of reads
             preprocess_data = json.load(open(defs.DIR_RESULTS+"/"+sequence_file.pre_process_file))
             if "pre_process" in preprocess_data and "reads" in preprocess_data and "total" in preprocess_data["reads"] and len(preprocess_data['reads']['total']):
-                cmd += f" --read-number {preprocess_data['reads']['total'][0]} "
+                if preprocess_data['reads']['total'][0] != 0 : # Some case with first version of new preperocess pipeline
+                    cmd += f" --read-number {preprocess_data['reads']['total'][0]} "
 
         cmd += ' -o  ' + out_folder + " -b " + output_filename
         cmd += ' ' + vidjil_cmd + ' '+ seq_file

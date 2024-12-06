@@ -1,11 +1,20 @@
 !!! note
     This CHANGELOG concerns the Docker images of vidjil.  
     We publish here notes to help to update these images.  
-    See <http://www.vidjil.org/doc/server>
+    See [server doc](server.md)
 
-## 2024-10-xx
+## 2024-12-03
 
 **vidjil/server**:
+
+
+We made plenty change on docker usage, allowing to be more efficient, more robust and easier to set-up.
+
+* We always fix rights inside docker to user www-data. See [migration 2024.12](dev-server.md#migrating-release-202405-to-release-202412). #5305
+* We package `restic` backup tool in our docker-compose configuration #5347
+* We refactored docker image construction to be more efficient, with correct user, rights and minimized dependencies #5351
+* We refactor usage of `.env` files. It will be now easier to set up variables of your vidjil server instance in one place #5272, #5256, #5231
+* Images server and client are build on ubuntu 24.04
 
 !!! warning
     With the new version of mysql, it is required to migrate the database, ses below
@@ -44,7 +53,7 @@ A complete rewriting of backend server from web2py to py4web comes with releases
 We completely changed launched services, path of some volumes and we now use an dedicated `.env` environment file.  
 **Please follow migration documentation**.
 
-See more information at [Migrating from Web2py to Py4web](dev-server.md#migrating-from-web2py-to-py4web).
+See more information at [Migrating from Web2py to Py4web](dev-server.md#migrating-from-web2py-to-py4web-release-202401).
 
 ## 2022-06-28
 

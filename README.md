@@ -1,5 +1,5 @@
 [![](https://gitlab.inria.fr/vidjil/vidjil/badges/dev/build.svg)](https://gitlab.inria.fr/vidjil/vidjil/tree/dev)
-[![](http://img.shields.io/badge/license-GPLv3+-green.svg)](http://opensource.org/licenses/GPL-3.0)
+[![](https://img.shields.io/badge/license-GPLv3+-green.svg)](https://opensource.org/licenses/GPL-3.0)
 [<https://landscape.io/github/vidjil/vidjil/master/landscape.svg?style=flat>](https://landscape.io/github/vidjil/vidjil)
 
 V(D)J recombinations in lymphocytes are essential for immunological
@@ -7,10 +7,10 @@ diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
 High-throughput sequencing (NGS/HTS) now enables the deep sequencing
-of a lymphoid population with dedicated [Rep-Seq](http://omictools.com/rep-seq-c424-p1.html) methods and softwares.
+of a lymphoid population with dedicated [Rep-Seq](https://pmc.ncbi.nlm.nih.gov/articles/PMC3311040/) methods and softwares.
 
 The Vidjil platform contains three components.
-Vidjil-algo processes high-througput sequencing data to **extract V(D)J
+Vidjil-algo processes high-throughput sequencing data to **extract V(D)J
 junctions and gather them into clones**. Vidjil-algo starts
 from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
@@ -22,40 +22,40 @@ The Vidjil **web application** is made for the interactive visualization and
 analysis of clones and their tracking along the time in a MRD setup or
 in a immunological study. The web application can visualize data processed by
 the Vidjil algorithm or by other V(D)J analysis pipelines, and
-enables to explore further cluterings proposed
+enables to explore further clustering proposed
 by software and/or done manually done by the user.
 The web application can be linked to a **sample, experiment and patient database**
 able to store sequencing data and metadata, to run RepSeq software
 and to save annotations directly from the web application, with authentication.
 Clinicians or researchers in immunology or hematology
-can manage, upload, analyze and annotate their runs directly on the web applicaiton.
+can manage, upload, analyze and annotate their runs directly on the web application.
 
 # Vidjil components
 
 ## Vidjil-algo
 
-  - Stable releases can be downloaded from <http://www.vidjil.org/releases>
-  - Development code is under *algo/*
-  - Documentation, compilation and installation instructions: *doc/vidjil-algo.md*
+- Stable releases can be downloaded from <https://www.vidjil.org/releases>
+- Development code is under *algo/*
+- Documentation, compilation and installation instructions: *doc/vidjil-algo.md*
 
 ## The web application
 
-  - Public test server at <https://app.vidjil.org/> (demo login: `demo@vidjil.org`, password: `vidjil`)
-  - Please contact us if you would like to test your data and have a full account on the web server
-  - We offer hosting solutions for [healthcare compliance](http://www.vidjil.org/doc/healthcare/)
-  - Development code is under *browser/* and *server/* (a `make` in those directories
-    will get the necessary files)
-  - Documentation is in *doc/*, it is also available from <http://www.vidjil.org/doc>
+- Public test server at <https://app.vidjil.org/> (demo login: `demo@vidjil.org`, password: `vidjil`)
+- Please contact us if you would like to test your data and have a full account on the web server
+- We offer hosting solutions for [healthcare compliance](https://www.vidjil.org/doc/healthcare/)
+- Development code is under *browser/* and *server/* (a `make` in those directories
+  will get the necessary files)
+- Documentation is in *doc/*, it is also available from <https://www.vidjil.org/doc>
 
 # Code and license
 
 Vidjil is open-source, released under the GPL version 3 or any later version.
-Licenses of third-party software and librairies are described
-in [doc/license.md](http://git.vidjil.org/blob/master/doc/license.md).
-You are welcome to redistribute it under [certain conditions](http://git.vidjil.org/blob/master/LICENSE).
+Licenses of third-party software and libraries are described
+in [license.md](LICENSE.md).
+You are welcome to redistribute it under [certain conditions](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/LICENSE).
 This software is for research use only and comes with no warranty.
 
-The development code is available on <http://gitlab.vidjil.org/>.
+The development code is available on <https://gitlab.inria.fr/vidjil/vidjil>.
 Bug reports, issues and patches are welcome.
 
 # Donations
@@ -66,10 +66,9 @@ Thank you for your support \!
 # The Vidjil team
 
 Vidjil is developed and maintained by
-the [Bonsai bioinformatics lab](http://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille)
-and the [VidjilNet consortium](http://www.vidjil.net) at Inria.
-The full list of authors/developers and contributors is found in [doc/credits.md](http://git.vidjil.org/blob/master/doc/credits.md).
-See also [codemeta.json](http://git.vidjil.org/blob/master/codemeta.json).
+the [Bonsai bioinformatics lab](https://cristal.univ-lille.fr/bonsai) at CRIStAL (UMR CNRS 9189, Université Lille)
+and the [VidjilNet consortium](https://www.vidjil.net) at Inria.
+The full list of authors/developers and contributors is found in [doc/credits.md](doc/credits.md).
 
 Contact: Clément Chesnin, Florian Thonier, [Mathieu Giraud and Mikaël Salson](mailto:contact@vidjil.org).
 
@@ -80,11 +79,11 @@ If you use Vidjil for your research, please cite the following references:
 Marc Duez et al.,
 “Vidjil: A web platform for analysis of high-throughput repertoire sequencing”,
 PLOS ONE 2016, 11(11):e0166126
-<http://dx.doi.org/10.1371/journal.pone.0166126>
+<https://doi.org/10.1371/journal.pone.0166126>
 
 Mathieu Giraud, Mikaël Salson, et al.,
 “Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing”,
 BMC Genomics 2014, 15:409
-<http://dx.doi.org/10.1186/1471-2164-15-409>
+<https://doi.org/10.1186/1471-2164-15-409>
 
-The Vidjil platform has been utilised in [35+ publications](doc/credits.md#some-publications-using-vidjil) in oncology, hematology, and immunology.
+The Vidjil platform has been used in [35+ publications](doc/credits.md#some-publications-using-vidjil) in oncology, hematology, and immunology.

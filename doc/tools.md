@@ -27,7 +27,7 @@ The `mrd.vidjil` file can then be fed to the web client.
 
 ## Using AIRR data
 
-The AIRR community has published [a standard representation](http://docs.airr-community.org/en/latest/datarep/overview.html#format-specification) to describe results of immune receptor repertoire analysis.
+The AIRR community has published [a standard representation](https://docs.airr-community.org/en/latest/datarep/overview.html#format-specification) to describe results of immune receptor repertoire analysis.
 Used by an increasing number of software, this `.tsv` format allows to easily transfer immune repertoire data between pipelines.
 
 The [AIRR output of vidjil-algo](vidjil-algo.md#airr-tsv-output) enables to feed vidjil-algo output to other software.
