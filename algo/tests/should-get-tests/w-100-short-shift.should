@@ -7,24 +7,22 @@ $ Find the good number of "too short sequences" for windows of size 100
 1: UNSEG too short w ->      0
 
 $ Some reads have shortened or shifted windows
-1: SEG changed w -> 1924
+f1: SEG changed w -> 1924
 
 $ Most changed windows are just shifted
-1255: w100/-5
-522: w100/-10
+f1255: w100/-5
+f522: w100/-10
 
 $ Some changed windows are lighlty shortened
-95: w95/-10
-48: w90/-10
+f95: w95/-10
+f48: w90/-10
 
 $ Find the good number of detected sequences (including "too short sequences")
 1: junction detected in 13153 reads .100%.
 
 $ Find the good number of windows in Stanford S22
-1: found 11798 windows in 13153 reads
+f1: found 11798 windows in 13153 reads
 
 $ Find the correct number of clones with shifted of shortened windows
-1729: "Short or shifted window"
-1729: "W50"
-
-
+f1729: "Short or shifted window"
+f1729: "W50"

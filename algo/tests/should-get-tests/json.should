@@ -26,7 +26,7 @@ $ Most abundant window
 :clones[0].reads: [8]
 
 $ Affect values are over all the sequence
-:clones[0].seg.affectSigns.seq: \+\+\+\+\+\+\+\+\+\+\+   \+  \+\+  \+\+\+\+\+\+\+\+\+      \+      \+\+\+\+\+\+\+     \+\+     \+                       -----            \+                     \+\+\+\+\+\+\+\+            
+f:clones[0].seg.affectSigns.seq: \+\+\+\+\+\+\+\+\+\+\+   \+  \+\+  \+\+\+\+\+\+\+\+\+      \+      \+\+\+\+\+\+\+     \+\+     \+                       -----            \+                     \+\+\+\+\+\+\+\+
 :clones[0].seg.affectSigns.start: 1
 :clones[0].seg.affectSigns.stop: 145
 
@@ -92,7 +92,7 @@ $ Warning on common genes
 ######### Second clonotype
 
 $ Second clonotype have correct Id
-:clones[1].id: TGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTAC
+f:clones[1].id: TGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTAC
 
 $ Second sequence has a DNA sequence provided
 :clones[1].sequence

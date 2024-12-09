@@ -51,7 +51,7 @@ $ cdr3 start/end positions of the first clone
 b1: 73 111
 
 $ V/J e-values of the first clone
-rb1: 1[.][0-9]*e[-]55 2[.][0-9]*e[-]21
+frb1: 1[.][0-9]*e[-]55 2[.][0-9]*e[-]21
 
 $ The first clone has one warning
 1:TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG .* W69

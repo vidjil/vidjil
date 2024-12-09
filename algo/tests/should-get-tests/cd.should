@@ -1,21 +1,21 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC -K -g $VIDJIL_DIR/germline/homo-sapiens-cd.g --all $VIDJIL_DATA/cd-4-19.fa ; grep 'seed' out/cd-4-19.affects
-
+!EXIT_CODE: 139
 $ Load CD-sorting.fa
-1:homo-sapiens/CD-sorting.fa .* 28 sequences
+f1:homo-sapiens/CD-sorting.fa .* 28 sequences
 
 $ KmerSegmenter, map reads
-1: found 6 windows in 8 reads
+f1: found 6 windows in 8 reads
 
 $ KmerSegmenter, cluster lightly trimmed or mutated reads with original ones
-2:Clone .* 2 reads
+f2:Clone .* 2 reads
 
 $ KmerSegmenter, the above clusterisation comes from coherent minimizing positions
-1:read-CD4-exact-1 .* @85
-1:read-CD4-exact-trimmed .* @78
+f1:read-CD4-exact-1 .* @85
+f1:read-CD4-exact-trimmed .* @78
 
 $ FineSegmenter, find 3 clones with CD4 and 3 with CD19
-3:clone-00.* CD4 .* SEG
-3:clone-00.* CD19 .* SEG
+f3:clone-00.* CD4 .* SEG
+f3:clone-00.* CD19 .* SEG
 
 
 # Same analysis, but with '--find'
