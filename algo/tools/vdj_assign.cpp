@@ -13,6 +13,8 @@ using namespace std;
 
 #define GENE_ALIGN 20
 
+void null_deleter(BioReader *) {}
+
 
 void usage(int argc, const char **argv) {
   if (argc != 7) {
@@ -85,8 +87,8 @@ int main(int argc, const char** argv)
     read = read_sequence(cin);
   }
 
-  align_against_collection(read, std::shared_ptr<BioReader>(&interestingV), -1, false, false, false, &box_V, VDJ);
-  align_against_collection(read, std::shared_ptr<BioReader>(&interestingJ), -1, false, true, false, &box_J, VDJ);
+  align_against_collection(read, std::shared_ptr<BioReader>(&interestingV, null_deleter), -1, false, false, false, &box_V, VDJ);
+  align_against_collection(read, std::shared_ptr<BioReader>(&interestingJ, null_deleter), -1, false, true, false, &box_J, VDJ);
 
   Sequence seq = create_sequence("read", "read", read, "");
 
