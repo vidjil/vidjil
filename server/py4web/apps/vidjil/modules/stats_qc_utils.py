@@ -9,6 +9,7 @@ from typing import Dict, List
 from . import zmodel_factory
 from . import stats_decorator
 from .. import settings
+from ..modules import sampleSet
 from ..common import db
 
 SETS_COLUMN_NAME = "sets"
@@ -189,7 +190,7 @@ def get_fuse_data(sample_set_id: int, results_file_ids: List[int]) -> dict:
         sample_query_pos[str(result_fuse["results_file"])].append(position)
 
     model_factory = zmodel_factory.ModelFactory()
-    set_types = [settings.SET_TYPE_PATIENT, settings.SET_TYPE_RUN, settings.SET_TYPE_GENERIC]
+    set_types = [sampleSet.SET_TYPE_PATIENT, sampleSet.SET_TYPE_RUN, sampleSets.SET_TYPE_GENERIC]
     helpers = {}
     for set_type in set_types:
         helpers[set_type] = model_factory.get_instance(set_type)

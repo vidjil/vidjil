@@ -33,4 +33,4 @@ if __name__ == '__main__':
     output_file = sys.argv[1]
     group_ids = [int(group_id) for group_id in sys.argv[2:]]
 
-    create_clone_db_for_sequences(get_accessible_sequence_files_in_set_type(group_ids, settings.SET_TYPE_PATIENT), output_file)
+    create_clone_db_for_sequences(get_accessible_sequence_files_in_set_type(group_ids, sampleSet.SET_TYPE_PATIENT), output_file)

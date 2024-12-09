@@ -19,7 +19,7 @@ from ast import literal_eval
 from py4web import action, request, URL, response
 
 from .. import settings, tasks
-from ..modules import vidjil_utils
+from ..modules import vidjil_utils, sampleSet
 from ..modules.controller_utils import error_message
 from ..modules.sampleSet import get_set_group, get_sample_set_id_from_results_file
 from ..modules.sequenceFile import check_space, get_patient_id
@@ -55,7 +55,7 @@ def home():
     if auth.is_admin():
         redirect = URL('admin/index')
     else:
-        redirect = URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT, 'page': 0})
+        redirect = vidjil_utils.get_patient_redirect_url()
     res = {"redirect" : redirect}
     return json.dumps(res, separators=(',',':'))
 
@@ -383,7 +383,7 @@ def get_data():
 
         log_reference_id = request.query["sample_set_id"]
 
-        if (sample_set.sample_type == settings.SET_TYPE_GENERIC) :
+        if (sample_set.sample_type == sampleSet.SET_TYPE_GENERIC) :
             for row in db( db.generic.sample_set_id == request.query["sample_set_id"] ).select() :
                 log_reference_id = row.id
                 generic_name = db.generic[row.id].name
@@ -393,7 +393,7 @@ def get_data():
                 data["sample_name"] = generic_name
                 data["group_id"] = get_set_group(row.sample_set_id)
 
-        if (sample_set.sample_type == settings.SET_TYPE_PATIENT):
+        if (sample_set.sample_type == sampleSet.SET_TYPE_PATIENT):
             for row in db( db.patient.sample_set_id == request.query["sample_set_id"] ).select() :
                 log_reference_id = row.id
                 patient_name = vidjil_utils.anon_ids([row.id])[0]
@@ -403,7 +403,7 @@ def get_data():
                 data["sample_name"] = patient_name
                 data["group_id"] = get_set_group(row.sample_set_id)
 
-        if (sample_set.sample_type == settings.SET_TYPE_RUN) :
+        if (sample_set.sample_type == sampleSet.SET_TYPE_RUN) :
             for row in db( db.run.sample_set_id == request.query["sample_set_id"] ).select() :
                 log_reference_id = row.id
                 run_name = db.run[row.id].name
@@ -572,12 +572,12 @@ def get_custom_data():
             sample_set = db((db.sequence_file.id == sequence_file_id)
                             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
-                            & (db.sample_set.sample_type.belongs([settings.SET_TYPE_PATIENT, settings.SET_TYPE_RUN, settings.SET_TYPE_GENERIC]))
+                            & (db.sample_set.sample_type.belongs([sampleSet.SET_TYPE_PATIENT, sampleSet.SET_TYPE_RUN, sampleSet.SET_TYPE_GENERIC]))
                             ).select(db.sample_set.id, db.sample_set.sample_type).first()
 
             patient_run = db(db[sample_set.sample_type].sample_set_id == sample_set.id).select().first()
             config_id = db.results_file[id].config_id
-            name = vidjil_utils.anon_ids([patient_run.id])[0] if sample_set.sample_type == settings.SET_TYPE_PATIENT else patient_run.name
+            name = vidjil_utils.anon_ids([patient_run.id])[0] if sample_set.sample_type == sampleSet.SET_TYPE_PATIENT else patient_run.name
             filename = db.sequence_file[sequence_file_id].filename
             data["samples"]["original_names"].append(name + "_" + filename+ " ("+id+")")
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
@@ -670,17 +670,17 @@ def save_analysis():
         
         sample_set_id = request.params['sample_set_id']
         
-        analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
+        db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
                                               sample_set_id = sample_set_id,
                                               analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                                               )
 
         sample_type = db.sample_set[sample_set_id].sample_type
         if ('info' in request.params and request.params['info'] is not None):
-            if (sample_type == settings.SET_TYPE_PATIENT) :
+            if (sample_type == sampleSet.SET_TYPE_PATIENT) :
                 db(db.patient.sample_set_id == sample_set_id).update(info = request.params['info']);
 
-            if (sample_type == settings.SET_TYPE_RUN) :
+            if (sample_type == sampleSet.SET_TYPE_RUN) :
                 db(db.run.sample_set_id == sample_set_id).update(info = request.params['info']);
 
         if ('samples_id' in request.params and request.params['samples_id'] is not None

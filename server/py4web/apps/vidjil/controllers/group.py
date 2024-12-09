@@ -1,8 +1,7 @@
 
 import json
-from py4web import action, request, URL
+from py4web import action, request
 
-from .. import settings
 from ..modules import vidjil_utils
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
@@ -36,7 +35,7 @@ def index():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
     
@@ -100,7 +99,7 @@ def add_form():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
 

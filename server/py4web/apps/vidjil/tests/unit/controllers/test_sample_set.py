@@ -9,9 +9,8 @@ from ..utils.omboddle import Omboddle
 from ..utils import db_manipulation_utils
 from ...functional.db_initialiser import DBInitialiser
 from ....common import db, auth
-from .... import settings
 from ....modules.permission_enum import PermissionEnum
-from ....modules import tag
+from ....modules import sampleSet, tag
 
 from ....controllers import sample_set as sample_set_controller
 
@@ -167,7 +166,7 @@ class TestSampleSetController():
 
         # When : Calling form
         with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"type": settings.SET_TYPE_PATIENT}):
+                      query={"type": sampleSet.SET_TYPE_PATIENT}):
             json_result = sample_set_controller.form()
 
         # Then : We get results_file list
@@ -191,7 +190,7 @@ class TestSampleSetController():
 
         # When : Calling form
         with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"type": settings.SET_TYPE_PATIENT}):
+                      query={"type": sampleSet.SET_TYPE_PATIENT}):
             json_result = sample_set_controller.form()
 
         # Then : We get results_file list
@@ -265,15 +264,15 @@ class TestSampleSetController():
                          "info": f"info with tag #{patient_tag_2}", "sample_set_id": "", "id": "", "error": []}
 
     def _initialize_json_submit_data(self, user_group_id: int, patient_id: int, patient_sample_set_id: int) -> str:
-        sets = {settings.SET_TYPE_PATIENT: [],
-                settings.SET_TYPE_RUN: [],
-                settings.SET_TYPE_GENERIC: [],
+        sets = {sampleSet.SET_TYPE_PATIENT: [],
+                sampleSet.SET_TYPE_RUN: [],
+                sampleSet.SET_TYPE_GENERIC: [],
                 "group": user_group_id}
 
-        sets[settings.SET_TYPE_PATIENT].append(self.patient_add_data)
+        sets[sampleSet.SET_TYPE_PATIENT].append(self.patient_add_data)
         self.patient_edit_data["sample_set_id"] = patient_sample_set_id
         self.patient_edit_data["id"] = patient_id
-        sets[settings.SET_TYPE_PATIENT].append(self.patient_edit_data)
+        sets[sampleSet.SET_TYPE_PATIENT].append(self.patient_edit_data)
 
         return json.dumps(sets)
 
@@ -349,7 +348,7 @@ class TestSampleSetController():
         # Then : We get results_file list
         result = json.loads(json_result)
         assert result["message"] == "an error occurred"
-        patients = result["sets"][settings.SET_TYPE_PATIENT]
+        patients = result["sets"][sampleSet.SET_TYPE_PATIENT]
         assert len(patients) == 2
         # Patient add was added
         patient_add = next(
@@ -368,7 +367,7 @@ class TestSampleSetController():
         assert patient_edit_in_db["first_name"] != self.patient_edit_data["first_name"]
         assert patient_edit_in_db["last_name"] != self.patient_edit_data["last_name"]
 
-    # TODO : add tests for other settings.SET_TYPE
+    # TODO : add tests for other sampleSet.SET_TYPE
 
     # ##################################
     # # Tests on sample_set_controller.download()

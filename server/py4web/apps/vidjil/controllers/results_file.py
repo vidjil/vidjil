@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+from py4web import action, request
+from ombott import static_file
+
 from .. import settings
-from ..modules import vidjil_utils
+from ..modules import vidjil_utils, sampleSet
 from ..modules.sampleSet import get_sample_set_id_from_results_file
 from ..modules.controller_utils import error_message
 from ..tasks import schedule_run, schedule_fuse
-from py4web import action, request
-from ombott import static_file
 from ..common import db, T, auth, log
 
 
@@ -78,7 +79,7 @@ def run_all_patients():
         return error_message(ACCESS_DENIED)
     
     query = db(
-            (db.sample_set.sample_type == settings.SET_TYPE_PATIENT)
+            (db.sample_set.sample_type == sampleSet.SET_TYPE_PATIENT)
             & (db.sample_set_membership.sample_set_id == db.sample_set.id)
             & (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id)
             ).select(db.sample_set.id, db.results_file.sequence_file_id, db.results_file.id)

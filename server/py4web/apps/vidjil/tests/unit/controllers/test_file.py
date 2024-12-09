@@ -12,6 +12,7 @@ from ..utils import db_manipulation_utils, test_utils
 from ...functional.db_initialiser import DBInitialiser
 from .... import settings
 from ....common import db, auth
+from ....modules import sampleSet
 from ....controllers import file as file_controller
 
 
@@ -54,8 +55,8 @@ class TestFileController(unittest.TestCase):
         assert json_result is not None
         result = json.loads(json_result)
         assert result["pre_process_list"][0]["name"] == "public pre-process"
-        assert result["sets"][0]["type"] == settings.SET_TYPE_PATIENT
-        assert result["sample_type"] == settings.SET_TYPE_PATIENT
+        assert result["sets"][0]["type"] == sampleSet.SET_TYPE_PATIENT
+        assert result["sample_type"] == sampleSet.SET_TYPE_PATIENT
         assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) == 1
         assert not result["isEditing"]
@@ -80,12 +81,12 @@ class TestFileController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "Form response"
         assert result["pre_process_list"][0]["name"] == "public pre-process"
-        assert result["sets"][0]["type"] == settings.SET_TYPE_PATIENT
-        assert result["sample_type"] == settings.SET_TYPE_PATIENT
+        assert result["sets"][0]["type"] == sampleSet.SET_TYPE_PATIENT
+        assert result["sample_type"] == sampleSet.SET_TYPE_PATIENT
         assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) > 1
         assert result["files"][0]["id"] == sequence_file_id
-        assert result["isEditing"] == False
+        assert not result["isEditing"]
 
     def test_form_edit_file(self):
         # Given : Logged as other user, and add corresponding config, ...
@@ -100,7 +101,7 @@ class TestFileController(unittest.TestCase):
             sample_set_id, user_id)
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file_id": sequence_file_id, "sample_type": settings.SET_TYPE_PATIENT}):
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file_id": sequence_file_id, "sample_type": sampleSet.SET_TYPE_PATIENT}):
             json_result = file_controller.form()
 
         # Then : We get users list
@@ -108,8 +109,8 @@ class TestFileController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "Form response"
         assert result["pre_process_list"][0]["name"] == "public pre-process"
-        assert result["sets"][0]["type"] == settings.SET_TYPE_PATIENT
-        assert result["sample_type"] == settings.SET_TYPE_PATIENT
+        assert result["sets"][0]["type"] == sampleSet.SET_TYPE_PATIENT
+        assert result["sample_type"] == sampleSet.SET_TYPE_PATIENT
         assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) > 1
         assert result["files"][0]["id"] == sequence_file_id
@@ -296,7 +297,6 @@ class TestFileController(unittest.TestCase):
         try:
             settings.FILE_SOURCE = test_utils.get_resources_path()
 
-            data = {}
             # TODO : should we use patient_id or sample_set_id ? In the web2py case it seems like we used a patient id
             # but in code it looks like we are looking for a sample set id...
             # data['set_ids'] = ":p plapipou (" + str(patient_id) + ")"
@@ -355,7 +355,7 @@ class TestFileController(unittest.TestCase):
             sample_set_id, user_id)
 
         json_submit_data = self._initialize_json_submit_data(
-            sample_set_id, "computer", filename="plopapi", sample_type=settings.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id)
+            sample_set_id, "computer", filename="plopapi", sample_type=sampleSet.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id)
 
         # When : Calling submit
         with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
@@ -384,7 +384,7 @@ class TestFileController(unittest.TestCase):
             settings.FILE_SOURCE = test_utils.get_resources_path()
 
             json_submit_data = self._initialize_json_submit_data(
-                sample_set_id, "nfs", filename="Demo-X5.fa", sample_type=settings.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id)
+                sample_set_id, "nfs", filename="Demo-X5.fa", sample_type=sampleSet.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id)
 
             # When : Calling submit
             with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
@@ -414,7 +414,7 @@ class TestFileController(unittest.TestCase):
         try:
             settings.FILE_SOURCE = test_utils.get_resources_path()
             json_submit_data = self._initialize_json_submit_data(
-                sample_set_id, "nfs", filename="Demo-X5.fa", filename2="Demo-X5.fa", sample_type=settings.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id, pre_process_id=pre_process_id)
+                sample_set_id, "nfs", filename="Demo-X5.fa", filename2="Demo-X5.fa", sample_type=sampleSet.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id, pre_process_id=pre_process_id)
 
             # When : Calling submit
             with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
@@ -444,7 +444,7 @@ class TestFileController(unittest.TestCase):
         try:
             settings.FILE_SOURCE = test_utils.get_resources_path()
             json_submit_data = self._initialize_json_submit_data(
-                sample_set_id, "nfs", filename="", filename2="Demo-X5.fa", sample_type=settings.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id, pre_process_id=pre_process_id)
+                sample_set_id, "nfs", filename="", filename2="Demo-X5.fa", sample_type=sampleSet.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id, pre_process_id=pre_process_id)
 
             # When : Calling submit
             with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
@@ -780,7 +780,7 @@ class TestFileController(unittest.TestCase):
             result = json_result[0]
             assert result["text"] == "/"
             assert result["id"] == "/"
-            assert result["children"] == True
+            assert result["children"]
         finally:
             settings.FILE_SOURCE = save_file_source
 

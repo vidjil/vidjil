@@ -9,7 +9,8 @@ from .omboddle import Omboddle
 from ....controllers import auth as auth_controller
 from ....common import db
 from ....modules.permission_enum import PermissionEnum
-from .... import settings, tasks
+from ....modules import sampleSet
+from .... import tasks
 from ...functional.db_initialiser import TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD
 
 
@@ -157,7 +158,7 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
         user_id = db(db.auth_user).select().first().id
 
     sample_set_id = db.sample_set.insert(
-        creator=user_id, sample_type=settings.SET_TYPE_PATIENT)
+        creator=user_id, sample_type=sampleSet.SET_TYPE_PATIENT)
     patient_id = db.patient.insert(id_label="", first_name="patient", last_name=patient_number, birth="2010-10-10",
                                    info=f"test patient {patient_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
     if (auth != None):
@@ -269,7 +270,7 @@ def add_run(run_number: int = -1, user_id: int = -1, auth=None):
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
 
-    sample_set_id = db.sample_set.insert(creator=user_id, sample_type=settings.SET_TYPE_RUN)
+    sample_set_id = db.sample_set.insert(creator=user_id, sample_type=sampleSet.SET_TYPE_RUN)
     run_id = db.run.insert(name=f"run_{run_number}", info=f"test run {run_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
     if (auth != None):
         user_group_id = auth.user_group(user_id)
@@ -294,7 +295,7 @@ def add_generic(generic_number: int = -1, user_id: int = -1, auth=None):
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
 
-    sample_set_id = db.sample_set.insert(creator=user_id, sample_type=settings.SET_TYPE_GENERIC)
+    sample_set_id = db.sample_set.insert(creator=user_id, sample_type=sampleSet.SET_TYPE_GENERIC)
     generic_id = db.generic.insert(name=f"generic_{generic_number}", info=f"test generic {generic_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
     if (auth is not None):
         user_group_id = auth.user_group(user_id)

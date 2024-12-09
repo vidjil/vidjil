@@ -5,8 +5,9 @@ import os
 import datetime
 from datetime import date
 import pydal
-from py4web import request
+from py4web import request, URL
 
+from . import sampleSet
 from .. import settings
 from ..common import auth, db, log
 
@@ -626,7 +627,7 @@ def check_enough_space(directory):
     return result
 
 def get_found_types(data):
-    known_types = set([settings.SET_TYPE_PATIENT, settings.SET_TYPE_RUN, settings.SET_TYPE_GENERIC])
+    known_types = set([sampleSet.SET_TYPE_PATIENT, sampleSet.SET_TYPE_RUN, sampleSet.SET_TYPE_GENERIC])
     present_types = set(data.keys())
     return known_types.intersection(present_types)
 
@@ -858,7 +859,6 @@ def publicGroupIsInList(db, group_ids):
         return False
     return True
 
-
 def getPublicGroupId(db):
     """ Get public group id; Return only the first id of public groups"""
     public_group_name = settings.PUBLIC_GROUP_NAME
@@ -866,3 +866,7 @@ def getPublicGroupId(db):
     if len(public_group):
         return public_group[0].id
     return None
+
+def get_patient_redirect_url():
+    return URL('sample_set', 'all', vars={'type': sampleSet.SET_TYPE_PATIENT, 'page': 0}, scheme=True)
+    

@@ -1,13 +1,17 @@
-# -*- coding: utf-8 -*-
-
 from abc import ABCMeta, abstractmethod
 from yatl.helpers import SPAN, XML, A
 
 from .. import settings, user_groups
 from ..modules.tag import TagDecorator
-from ..modules import vidjil_utils
+from ..modules import vidjil_utils, sampleSet
 from ..modules.permission_enum import PermissionEnum
 from ..common import db, auth
+
+
+### Set types
+SET_TYPE_PATIENT = 'patient'
+SET_TYPE_RUN= 'run'
+SET_TYPE_GENERIC = 'generic'
 
 class SampleSet(object):
     __metaclass__ = ABCMeta
@@ -224,16 +228,16 @@ def get_sample_name(sample_set_id):
     patient) if any
     '''
     sample = db.sample_set[sample_set_id]
-    if sample is None or (sample.sample_type != settings.SET_TYPE_PATIENT \
-                          and sample.sample_type != settings.SET_TYPE_RUN \
-                          and sample.sample_type != settings.SET_TYPE_GENERIC):
+    if sample is None or (sample.sample_type != sampleSet.SET_TYPE_PATIENT \
+                          and sample.sample_type != sampleSet.SET_TYPE_RUN \
+                          and sample.sample_type != sampleSet.SET_TYPE_GENERIC):
         return None
 
     sample_type = sample.sample_type
     patient_or_run = db[sample_type](db[sample_type].sample_set_id == sample_set_id)
     if patient_or_run is None:
         return None
-    if sample.sample_type == settings.SET_TYPE_PATIENT:
+    if sample.sample_type == v.SET_TYPE_PATIENT:
         return vidjil_utils.anon_ids([patient_or_run.id])[0]
     return patient_or_run.name
 

@@ -8,8 +8,7 @@ from ombott import static_file
 from py4web import action, request, URL
 
 from .. import settings
-from ..modules import vidjil_utils
-from ..modules import tag
+from ..modules import vidjil_utils, tag
 from ..modules.sampleSet import get_set_group
 from ..modules.sampleSets import SampleSets
 from ..modules.sampleSetList import SampleSetList, filter_by_tags
@@ -17,7 +16,7 @@ from ..modules.sequenceFile import get_associated_sample_sets, get_sequence_file
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
-from ..modules import stats_qc_utils
+from ..modules import stats_qc_utils, sampleSet
 from ..user_groups import get_default_creation_group, get_involved_groups
 from ..common import db, session, T, auth, log
 
@@ -241,7 +240,7 @@ def all():
     if request.query.get('type'):
         type = request.query.get('type')
     else :
-        type = settings.SET_TYPE_GENERIC
+        type = sampleSet.SET_TYPE_GENERIC
 
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True,
@@ -346,9 +345,9 @@ def form():
         return json.dumps(res, separators=(',',':'))
 
     message = '%s %s' % (action, set_type)
-    sets = {settings.SET_TYPE_PATIENT: [],
-            settings.SET_TYPE_RUN: [],
-            settings.SET_TYPE_GENERIC: []}
+    sets = {sampleSet.SET_TYPE_PATIENT: [],
+            sampleSet.SET_TYPE_RUN: [],
+            sampleSet.SET_TYPE_GENERIC: []}
     # We add a None object to the desired set type to initialise an empty form in the template.
     sets[set_type].append(sample_set)
     log.info("load form " + message, extra=extra)
@@ -925,7 +924,7 @@ def auto_complete():
         return error_message("missing group ids")
 
     query = json.loads(request.params["keys"])[0]
-    sample_types = [settings.SET_TYPE_PATIENT, settings.SET_TYPE_RUN, settings.SET_TYPE_GENERIC]
+    sample_types = [sampleSet.SET_TYPE_PATIENT, sampleSet.SET_TYPE_RUN, sampleSet.SET_TYPE_GENERIC]
     result = []
     for sample_type in sample_types:
         result += get_sample_set_list(sample_type, query)
@@ -956,7 +955,7 @@ def samplesetById():
     API: Get a specific sample based on the set id
     Take two parameters: set id and set type
     '''
-    type = (request.query['type'] if ("type" in request.query.keys()) else settings.SET_TYPE_GENERIC )
+    type = (request.query['type'] if ("type" in request.query.keys()) else sampleSet.SET_TYPE_GENERIC )
     set_id =  request.query['id']
 
     factory = ModelFactory()
@@ -970,15 +969,14 @@ def samplesetById():
 @action.uses("sample_set/stats.html", db, auth.user)
 def stats():
     if not auth.user :
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True,
-                                vars=dict(_next=URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT}, scheme=True)))}
+        res = {"redirect" : vidjil_utils.get_patient_redirect_url()}
         return json.dumps(res, separators=(',',':'))
 
     isAdmin = auth.is_admin()
     if request.query['type']:
         type = request.query['type']
     else :
-        type = settings.SET_TYPE_GENERIC
+        type = sampleSet.SET_TYPE_GENERIC
 
     ## filter
     if "filter" not in request.query :

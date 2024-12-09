@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 import subprocess
-
 import redis
 import json
 import os
 import re
 import ast
-from py4web import action, request, URL
+from py4web import action, request
+
 from .. import settings, tasks
 from ..modules import vidjil_utils
 from ..common import db, auth, log, scheduler
@@ -52,7 +51,7 @@ def index():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
     
@@ -84,7 +83,7 @@ def showlog():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
          
@@ -243,7 +242,7 @@ def clean_workers_status():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': settings.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
     

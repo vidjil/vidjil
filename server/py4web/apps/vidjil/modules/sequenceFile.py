@@ -32,7 +32,6 @@ def get_accessible_sequence_files_in_set_type(group_ids, set_type):
     Get all the sequence files that can be accessed by any group of
     the list group_ids.
     The sequence files must be saved in one type of set
-    (settings.SET_TYPE_PATIENT, settings.SET_TYPE_GENERIC, settings.SET_TYPE_RUN)
     '''
     seq_files_set_type =  db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                              & (db.sample_set_membership.sample_set_id == db.sample_set.id)

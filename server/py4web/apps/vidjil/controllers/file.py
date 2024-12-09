@@ -6,8 +6,8 @@ import json
 import os
 from py4web import action, request
 
-from .. import settings, tasks
-from ..modules import vidjil_utils, jstree, tag, stats_decorator
+from .. import settings, sampleSet, tasks
+from ..modules import vidjil_utils, jstree, tag
 from ..modules.sampleSet import get_set_group
 from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets, get_sequence_file_config_ids
 from ..modules.controller_utils import error_message
@@ -151,7 +151,7 @@ def get_set_list(id_dict, helpers):
 
 def get_set_helpers():
     factory = ModelFactory()
-    sample_types = [settings.SET_TYPE_GENERIC, settings.SET_TYPE_PATIENT, settings.SET_TYPE_RUN]
+    sample_types = [sampleSet.SET_TYPE_GENERIC, sampleSet.SET_TYPE_PATIENT, sampleSet.SET_TYPE_RUN]
     helpers = {}
     for stype in sample_types:
         helpers[stype] = factory.get_instance(type=stype)
