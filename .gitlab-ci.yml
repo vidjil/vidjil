@@ -267,6 +267,8 @@ test_server_unit:
           path: server/unit_coverage.xml
       paths:
         - pip_freeze_requirements.txt
+        - server/unit_report.xml
+        - server/unit_coverage.xml
       expire_in: 7 day
     only:
       - /^feature-.*s.*\/.*$/
