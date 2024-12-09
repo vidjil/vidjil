@@ -36,5 +36,16 @@ if test -v "DB_ADDRESS"; then
     sed -i "s/:\/\/localhost/:\/\/${DB_ADDRESS}/g" /etc/vidjil/conf_http.js
 fi
 
+# Set the healthcare config is given
+if test -v "HEALTHCARE_COMPLIANCE"; then
+    if [ "$HEALTHCARE_COMPLIANCE" = "True" ]; then
+        echo "Setting HEALTHCARE_COMPLIANCE to True"
+        sed -i "s/healthcare: false/healthcare: true/g" /etc/vidjil/conf.js
+        sed -i "s/healthcare: false/healthcare: true/g" /etc/vidjil/conf_http.js
+        sed -i "s/\";*Research Use Only. This instance of Vidjil is hosted by.*/\"This server has been set up to be compliant for clinical use by the server maintainers. You should ensure that you comply with the applicable regulations in your country concerning storage and processing of healthcare data.\",/g" /etc/vidjil/conf.js
+        sed -i "s/\".*Research Use Only. This instance of Vidjil is hosted by.*/\"This server has been set up to be compliant for clinical use by the server maintainers. You should ensure that you comply with the applicable regulations in your country concerning storage and processing of healthcare data.\",/g" /etc/vidjil/conf_http.js
+    fi
+fi
+
 spawn-fcgi -U nginx -u nginx -G nginx -g nginx -s /var/run/fcgiwrap.socket /usr/bin/fcgiwrap
 nginx -g 'daemon off;'
