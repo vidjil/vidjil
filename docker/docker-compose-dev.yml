@@ -20,6 +20,8 @@ services:
             - ./:/usr/share/vidjil/docker
             - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
             - ../tools:/usr/share/vidjil/tools
+            # Use contrib folder
+            - ../../contrib:/usr/share/vidjil/tools/scripts
 
     nginx:
         image: vidjil/client:dev
