@@ -26,17 +26,14 @@ fi
 if test -v "FRONT_ADDRESS"; then
     echo "Setting front address to $FRONT_ADDRESS"
     sed -i "s/server_name \$hostname;/server_name ${FRONT_ADDRESS};/g" /etc/vidjil/nginx_vidjil.conf
+    sed -i "s/server_name \$hostname;/server_name ${FRONT_ADDRESS};/g" /etc/vidjil/nginx_vidjil_http.conf
 fi
 
 # Set the DB address if given
 if test -v "DB_ADDRESS"; then
     echo "Setting DB address to $DB_ADDRESS"
-    sed -i "s/https:\/\/localhost/https:\/\/${DB_ADDRESS}/g" /etc/vidjil/conf.js
-fi
-
-# Set the DB address if set
-if test -v "DB_ADDRESS"; then
-   sed -i "s/https:////localhost/${DB_ADDRESS}/g" /etc/vidjil/conf.js
+    sed -i "s/:\/\/localhost/:\/\/${DB_ADDRESS}/g" /etc/vidjil/conf.js
+    sed -i "s/:\/\/localhost/:\/\/${DB_ADDRESS}/g" /etc/vidjil/conf_http.js
 fi
 
 spawn-fcgi -U nginx -u nginx -G nginx -g nginx -s /var/run/fcgiwrap.socket /usr/bin/fcgiwrap

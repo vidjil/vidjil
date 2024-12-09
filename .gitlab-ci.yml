@@ -369,8 +369,9 @@ deploy_review_server:
   stage: deploy_review
   script:
     - make browser demo
-    - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
     - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
+    # Use https config in conf_http.js to prevent mixed content error
+    - mv ./docker/vidjil-client/conf/conf.js ./docker/vidjil-client/conf/conf_http.js
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
     - cp .env.docker-compose-interpolation .env
