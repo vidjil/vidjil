@@ -144,7 +144,7 @@ SMTP_EMAIL_SUBJECT_START = os.getenv("SMTP_EMAIL_SUBJECT_START", default="[Vidji
 
 ### Server healthcare compliance
 ### Please see <http://www.vidjil.org/doc/server#healthcare>
-HEALTHCARE_COMPLIANCE = string_to_bool(os.getenv("HEALTHCARE_COMPLIANCE", default="False"))
+HEALTHCARE_COMPLIANCE = string_to_bool(os.getenv("HEALTHCARE_COMPLIANCE", default="false"))
 
 ### Limited accounts
 LIMITED_ACCOUNTS = json.loads(os.getenv("LIMITED_ACCOUNTS", default='[]'))
