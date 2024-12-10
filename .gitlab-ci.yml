@@ -286,23 +286,21 @@ test_server_unit:
     # Build specific version of docker images
     - echo "CI_COMMIT_REF_NAME - $CI_COMMIT_REF_NAME"
     - echo "TIME $(date) - before pulling docker images" >> time.log
+    - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT
     - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
     - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test
     - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test
     - echo "TIME $(date) - after pulling docker images" >> time.log
-    # Up py4web
+    # Up docker compose
     - cd docker
-    - cp .env.docker-compose-interpolation .env
     - ln -sf docker-compose-ci-tests.yml docker-compose.override.yml
-    - mkdir -p volumes
+    - rm -Rf volumes && mkdir -p volumes
     - docker-compose config
-    - docker-compose up -d mysql uwsgi
-    - echo "TIME $(date) - after first compose up" >> ../time.log
-    # Start other docker images
     - docker-compose up -d
     - docker ps
+    - echo "TIME $(date) - after compose up" >> time.log
     # Execute a script of init database and mock (fake ?) data inside; to launch before executing tests
     - docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 load-sql.py -i /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ci_erase.sql"
     - docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 init_test_db.py"
@@ -316,7 +314,9 @@ test_server_unit:
     entrypoint: [""]
   stage: test_functional
   services:
-    - docker:dind
+    - name: docker:dind
+      alias: docker
+      command: ["--tls=false"]
   before_script:
     - apk update
     - apk add docker docker-compose make wget tar yq
@@ -332,6 +332,9 @@ test_server_unit:
   variables:
     IMAGE_NAME_CLIENT: dev-client/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     IMAGE_NAME_SERVER: dev-server/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
@@ -339,8 +342,7 @@ test_server_unit:
     - dev
     - schedules
   tags:
-    - ci.inria.fr
-    - medium
+    - lego
 
 
 # Deployment
@@ -374,7 +376,6 @@ deploy_review_server:
     - mv ./docker/vidjil-client/conf/conf.js ./docker/vidjil-client/conf/conf_http.js
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
-    - cp .env.docker-compose-interpolation .env
     - echo "SMTP_EMAIL_SUBJECT_START='[Vidjil/CI][${CI_COMMIT_REF_NAME}]'" >> .env.ci-review
     - echo "PY4WEB_ADMIN_PASSWORD='${REVIEW_SERVER_ADMIN_PASSWORD}'" >> .env.ci-review
     - echo "VIRTUAL_HOST_NAME='${CI_COMMIT_REF_SLUG}'" >> .env.ci-review
@@ -457,7 +458,9 @@ build_test_server_docker:
   stage: build_test_server_docker
   image: docker:latest
   services:
-    - docker:dind
+    - name: docker:dind
+      alias: docker
+      command: ["--tls=false"]
   before_script: []
   script:
     - echo $CI_REGISTRY_IMAGE:$IMAGE_NAME
@@ -479,6 +482,9 @@ build_test_server_docker:
       - TYPE: [client, server]
   variables:
     IMAGE_NAME: dev-$TYPE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
   only:
     - /^prod-server/
     - /^prod-client/
@@ -488,8 +494,7 @@ build_test_server_docker:
     - /^hotfix-.*t.*\/.*$/
     - dev
   tags:
-    - ci.inria.fr
-    - small
+    - cidocker
   artifacts:
     paths:
       - time.log
