@@ -1,0 +1,130 @@
+{
+    "pre_process":
+    {
+        "producer":
+        [
+            "classed_preprocess (version 0.2)"
+        ],
+        "preprocess_workflow": "raw file(s) -> flash2",
+        "input":
+        [
+            [
+                "/mnt/upload/uploads/sequence_file.data_file.811d99cd23c86842.MV9pbGx1bWluYV8yeDI1MF9kZW1vX1IxLmZhc3RxLmd6.gz",
+                "/mnt/upload/uploads/sequence_file.data_file.b1fa55e37296a84f.MV9pbGx1bWluYV8yeDI1MF9kZW1vX1IyLmZhc3RxLmd6.gz"
+            ]
+        ],
+        "output":
+        [
+            "/mnt/result/tmp/pre/out-146352//1_illumina_2x250_demo_R.fastq.gz"
+        ],
+        "commandline":
+        [
+            "/binaries//flash2 /mnt/upload/uploads/sequence_file.data_file.811d99cd23c86842.MV9pbGx1bWluYV8yeDI1MF9kZW1vX1IxLmZhc3RxLmd6.gz /mnt/upload/uploads/sequence_file.data_file.b1fa55e37296a84f.MV9pbGx1bWluYV8yeDI1MF9kZW1vX1IyLmZhc3RxLmd6.gz -d /mnt/result/tmp/pre/out-146352/tmp9rr_yuj6 -o flash2_7mq8zneh -t 1 --compress -M 300"
+        ],
+        "stats":
+        {
+            "flash2_":
+            {
+                "combined_pairs":
+                [
+                    2646
+                ],
+                "discarded_pairs":
+                [
+                    0
+                ],
+                "innie_pairs":
+                [
+                    1
+                ],
+                "outie_pairs":
+                [
+                    2645
+                ],
+                "percent_combined":
+                [
+                    "88.20%"
+                ],
+                "percent_discarded":
+                [
+                    "0.00%"
+                ],
+                "time_taken":
+                [
+                    1.8046081066131592
+                ],
+                "total_pairs":
+                [
+                    3000
+                ],
+                "uncombined_pairs":
+                [
+                    354
+                ]
+            }
+        },
+        "run_timestamp":
+        [
+            "2024-12-03 15:48:54"
+        ],
+        "number": 1,
+        "time_taken":
+        {
+            "flash2_":
+            [
+                1.8046081066131592
+            ]
+        },
+        "seqkit":
+        {
+            "avg_len":
+            {
+                "raw_files": 251,
+                "flash2_": 251
+            },
+            "format":
+            {
+                "raw_files": "FASTQ",
+                "flash2_": "FASTQ"
+            },
+            "max_len":
+            {
+                "raw_files": 251,
+                "flash2_": 251
+            },
+            "min_len":
+            {
+                "raw_files": 251,
+                "flash2_": 251
+            },
+            "num_seqs":
+            {
+                "raw_files": 3.0,
+                "flash2_": 354
+            },
+            "time_taken":
+            {
+                "raw_files": 0.061974525451660156,
+                "flash2_": 0.7316553592681885
+            },
+            "type":
+            {
+                "raw_files": "DNA",
+                "flash2_": "DNA"
+            }
+        }
+    },
+    "reads":
+    {
+        "merged":
+        [
+            0
+        ],
+        "total":
+        [
+            0
+        ],
+        "preprocess_step":
+        {}
+    }
+}

@@ -522,10 +522,18 @@ class Samples:
             if "pre_process" not in other.d.keys():
                 other.d["pre_process"] = {}
             obj.d["pre_process"] = {}
+
+            # Error of release 2024.12 and new preprocess pipeline, some file have wrong format of seqkit value
+            if "seqkit" in self.d["pre_process"] and not isinstance(self.d["pre_process"]["seqkit"]["avg_len"]["raw_files"], list)\
+                or "seqkit" in other.d["pre_process"] and not isinstance(other.d["pre_process"]["seqkit"]["avg_len"]["raw_files"], list):
+                    hidden_keys = ["preprocess_workflow", "seqkit", "number"]
+            else:
+                hidden_keys = []
+
             concatenate_with_padding(obj.d["pre_process"], 
                                      self.d["pre_process"], self.d['number'], 
                                      other.d["pre_process"], other.d['number'],
-                                     ["preprocess_workflow", "seqkit", "number"],
+                                     hidden_keys,
                                      recursive=True,
                                      none_init=True)
 
