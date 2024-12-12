@@ -53,7 +53,7 @@ FS_LOCK_THRESHOLD = int(os.getenv("FS_LOCK_THRESHOLD", default="1"))
 ### Directory for program used in task.py
 ### relative path start from server/web2py
 DIR_VIDJIL = os.getenv("DIR_VIDJIL", default="/usr/share/vidjil/")
-DIR_VIDJIL = os.getenv("DIR_VIDJIL_NEXT", default="/usr/share/vidjil/")
+DIR_VIDJIL_NEXT = os.getenv("DIR_VIDJIL_NEXT", default="/usr/share/vidjil/")
 DIR_FUSE = os.getenv("DIR_FUSE", default="/usr/share/vidjil/tools/")
 DIR_PREPROCESS = os.getenv("DIR_PREPROCESS", default="/usr/share/vidjil/tools/scripts/preprocess/")
 DIR_MIXCR = os.getenv("DIR_MIXCR", default="/usr/share/mixcr/")

@@ -237,7 +237,7 @@ def get_sample_name(sample_set_id):
     patient_or_run = db[sample_type](db[sample_type].sample_set_id == sample_set_id)
     if patient_or_run is None:
         return None
-    if sample.sample_type == v.SET_TYPE_PATIENT:
+    if sample.sample_type == sampleSet.SET_TYPE_PATIENT:
         return vidjil_utils.anon_ids([patient_or_run.id])[0]
     return patient_or_run.name
 
