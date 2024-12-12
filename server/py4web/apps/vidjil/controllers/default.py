@@ -861,4 +861,6 @@ def stop_impersonate() :
 @action("/vidjil/default/download/<filename>", method=["POST", "GET"])
 @action.uses(db, session, auth.user)
 def download(filename=None):
-    return static_file(filename, root=defs.DIR_RESULTS, download=True)
+    download = request.query["filename"] if "filename" in request.query else True
+    return static_file(filename, root=defs.DIR_RESULTS, download=download)
+
