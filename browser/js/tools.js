@@ -309,7 +309,7 @@ function downloadFile(url, file_name, type="txt") {
 
     var downloadLink = document.createElement('a');
     downloadLink.download = file_name;
-    downloadLink.href = `${url}&filename=${file_name}`;
+    downloadLink.href = `${url}?filename=${file_name}`;
     downloadLink.style = 'display: none';
     console.default.log( downloadLink)
 
