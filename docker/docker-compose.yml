@@ -122,6 +122,8 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
+            uwsgi:
+                condition: service_healthy
         links:
             - redis:redis
             - mysql:mysql
@@ -142,6 +144,8 @@ services:
             - uwsgi
         depends_on:
             mysql:
+                condition: service_healthy
+            uwsgi:
                 condition: service_healthy
         links:
             - redis:redis
