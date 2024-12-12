@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 This file defines cache, session, and translator T object for the app
 These are fixtures that every app needs so probably you will not be editing this file
@@ -6,8 +5,7 @@ These are fixtures that every app needs so probably you will not be editing this
 import os
 import sys
 import logging
-from . import defs
-from py4web import Session, Cache, Translator, Flash, DAL, Field, action
+from py4web import Session, Cache, Translator, Flash, DAL, action
 from py4web.utils.mailer import Mailer
 from py4web.utils.downloader import downloader
 from pydal.tools.tags import Tags
@@ -209,8 +207,8 @@ def _init_log():
         logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
 
-        logger.addHandler(create_handler(defs.LOG_DEBUG, logging.DEBUG))
-        logger.addHandler(create_handler(defs.LOG_INFO, logging.INFO))
+        logger.addHandler(create_handler(settings.LOG_DEBUG, logging.DEBUG))
+        logger.addHandler(create_handler(settings.LOG_INFO, logging.INFO))
         logger.addHandler(UserLogHandler())
     return MsgUserAdapter(logger, {})
 
@@ -234,13 +232,13 @@ auth.define_tables()
 # #######################################################
 # Configure email sender for auth
 # #######################################################
-if defs.SMTP_SERVER:
+if settings.SMTP_SERVER:
     auth.sender = Mailer(
-        server=defs.SMTP_SERVER,
-        sender=defs.FROM_EMAIL,
-        login=defs.SMTP_CREDENTIALS,
-        #tls=defs.SMTP_TLS,
-        #ssl=defs.SMTP_SSL,
+        server=settings.SMTP_SERVER,
+        sender=settings.SMTP_FROM_EMAIL,
+        login=settings.SMTP_CREDENTIALS,
+        #tls=settings.SMTP_SMTP_TLS,
+        #ssl=settings.SMTP_SMTP_SSL,
     )
 
 # #######################################################
@@ -348,7 +346,7 @@ authenticated = ActionFactory(cors, db, session, T, flash, auth.user)
 ips = {}
 
 try:
-    for l in open(defs.REVERSE_IP):
+    for l in open(settings.REVERSE_IP):
         ip, kw = l.split()
         ips[ip] = kw
 except:
@@ -358,11 +356,11 @@ except:
 # Configure mail
 # #######################################################
 mail = Mailer(
-        server=defs.SMTP_SERVER,
-        sender=defs.FROM_EMAIL,
-        login=defs.SMTP_CREDENTIALS
-        #tls=defs.SMTP_TLS,
-        #ssl=defs.SMTP_SSL
+        server=settings.SMTP_SERVER,
+        sender=settings.SMTP_FROM_EMAIL,
+        login=settings.SMTP_CREDENTIALS
+        #tls=settings.SMTP_SMTP_TLS,
+        #ssl=settings.SMTP_SMTP_SSL
     )
 
 # #######################################################

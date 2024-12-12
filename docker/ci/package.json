@@ -1,8 +1,0 @@
-{
-  "name": "cypress-with-some-browsers",
-  "version": "0.1.0",
-  "private": true,
-  "eslintConfig": {},
-  "devDependencies": {
-  }
-}

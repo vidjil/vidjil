@@ -1,7 +1,7 @@
 import sys
 print "#", ' '.join(sys.argv)
 
-import defs
+import settings
 import vidjil_utils
 import argparse
 
@@ -51,7 +51,7 @@ if args.sequences:
        our_id += 1
        f = "%5s.fa" % our_id
 
-    link("%s/%-20s" % (defs.DIR_SEQUENCES, res.sequence_file.data_file),
+    link("%s/%-20s" % (settings.DIR_SEQUENCES, res.sequence_file.data_file),
          f,
          "seq-%04d %-20s" % (res.sequence_file.id, res.sequence_file.filename)
          + "\t# %s" % patient_string(res.patient),
@@ -138,7 +138,7 @@ if gen_results:
                                                          seq.id, seq.sampling_date)
     our_id = our_id.replace(' ', '-')
 
-    link("%s/%-20s" % (defs.DIR_RESULTS, res.results_file.data_file),
+    link("%s/%-20s" % (settings.DIR_RESULTS, res.results_file.data_file),
          "%5s.vidjil" % our_id,
          "seq-%04d %-20s %-10s" % (seq.id, seq.filename, seq.sampling_date)
          + "\t# %s" % patient_string(res.patient),
@@ -153,7 +153,7 @@ if args.fused:
                                                                        fused.id, fused.fuse_date, fused.config_id)
         our_id = our_id.replace(' ', '-')
 
-        link("%s/%-20s" % (defs.DIR_RESULTS, fused.fused_file),
+        link("%s/%-20s" % (settings.DIR_RESULTS, fused.fused_file),
              "%5s.vidjil" % our_id,
              "fused-%04d %-20s %-10s" % (fused.id, fused.fused_file, fused.fuse_date)
              + "\t# %s" % patient_string(res.patient),
@@ -178,7 +178,7 @@ if args.analysis:
         our_id = "pat-%04d--%3s" % (res.patient.id, res.patient.last_name[:3])
         our_id = our_id.replace(' ', '-')
 
-        link("%s/%-20s" % (defs.DIR_RESULTS, res.analysis_file.analysis_file),
+        link("%s/%-20s" % (settings.DIR_RESULTS, res.analysis_file.analysis_file),
              "%s.analysis" % our_id,
              "%s" % res.analysis_file.analyze_date
              + "\t# %s" % patient_string(res.patient),

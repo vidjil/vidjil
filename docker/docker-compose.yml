@@ -51,7 +51,6 @@ services:
         volumes:
             - ./vidjil-server/scripts:/entrypoints
             - ./vidjil-server/healthchecks:/healthchecks
-            - ./vidjil-server/conf/defs.py:/usr/share/vidjil/server/py4web/apps/vidjil/defs.py
             - ./vidjil-server/conf/defs-tools.py:/usr/share/vidjil/tools/defs.py
             - ./scripts/:/usr/share/vidjil/tools/scripts
             - ${VOLUME_PATH:-./volumes/vidjil/}/results:/mnt/result/results
@@ -122,6 +121,8 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
+            uwsgi:
+                condition: service_healthy
         links:
             - redis:redis
             - mysql:mysql
@@ -143,6 +144,8 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
+            uwsgi:
+                condition: service_healthy
         links:
             - redis:redis
             - mysql:mysql
@@ -160,14 +163,10 @@ services:
         volumes_from:
             - uwsgi
         depends_on:
-            workers-all:
+            redis:
                 condition: service_started
-            workers-short:
-                condition: service_started
-                required: false
         links:
-            - workers-all:workers-all
-            - workers-short:workers-short
+            - redis
         ports:
             - "5555:5555"
         networks:

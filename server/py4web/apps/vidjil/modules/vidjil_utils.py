@@ -4,10 +4,12 @@ import json
 import os
 import datetime
 from datetime import date
-from .. import defs
-from ..common import auth, db, log
-from py4web import request
 import pydal
+from py4web import request, URL
+
+from . import sampleSet
+from .. import settings
+from ..common import auth, db, log
 
 
 def format_size(n, unit='B'):
@@ -431,7 +433,7 @@ def stats(samples):
     ]
 
     # stats by locus
-    for locus in defs.LOCUS:
+    for locus in settings.LOCUS:
         locus_regex = locus.replace('+', '[+]')
         locus_group = locus.replace('+', 'p')
         stats_regex += [ r'log.* %(locus)s.*?->\s*?(?P<%(locus_g)s_reads>\d+)\s+(?P<%(locus_g)s_av_len>[0-9.]+)\s+(?P<%(locus_g)s_clones>\d+)\s+(?P<%(locus_g)s_av_reads>[0-9.]+)\s*.n'
@@ -475,7 +477,7 @@ def stats(samples):
         row_result = search_first_regex_in_file(regex, f_result, STATS_READLINES)
         row['result'] = row_result # TMP, for debug
         try:
-            row_result_json = extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + f_result, STATS_MAXBYTES)
+            row_result_json = extract_fields_from_json(json_paths['result_file'], None, settings.DIR_RESULTS + f_result, STATS_MAXBYTES)
         except:
             row_result_json = []
 
@@ -592,7 +594,7 @@ def log_links(s):
 
     if task:
         call = "admin/showlog"
-        args = {'file': '../../' + defs.DIR_OUT_VIDJIL_ID % task + defs.BASENAME_OUT_VIDJIL_ID % task + '.vidjil.log', 'format': 'raw'}
+        args = {'file': '../../' + settings.DIR_OUT_VIDJIL_ID % task + settings.BASENAME_OUT_VIDJIL_ID % task + '.vidjil.log', 'format': 'raw'}
         (start, end) = m_task.span()
         start += 1
         end -= 1
@@ -621,11 +623,11 @@ def check_enough_space(directory):
     device, size, used, available, percent, mountpoint = output.decode().split("\n")[1].split()
     available = int(available)
     size = int(size)
-    result = available >= (size * (defs.FS_LOCK_THRESHHOLD/100))
+    result = available >= (size * (settings.FS_LOCK_THRESHOLD/100))
     return result
 
 def get_found_types(data):
-    known_types = set([defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC])
+    known_types = set([sampleSet.SET_TYPE_PATIENT, sampleSet.SET_TYPE_RUN, sampleSet.SET_TYPE_GENERIC])
     present_types = set(data.keys())
     return known_types.intersection(present_types)
 
@@ -857,11 +859,14 @@ def publicGroupIsInList(db, group_ids):
         return False
     return True
 
-
 def getPublicGroupId(db):
     """ Get public group id; Return only the first id of public groups"""
-    public_group_name = defs.PUBLIC_GROUP_NAME if hasattr(defs, 'PUBLIC_GROUP_NAME') else 'public'
+    public_group_name = settings.PUBLIC_GROUP_NAME
     public_group = db(db.auth_group.role == public_group_name).select()
     if len(public_group):
         return public_group[0].id
     return None
+
+def get_patient_redirect_url():
+    return URL('sample_set', 'all', vars={'type': sampleSet.SET_TYPE_PATIENT, 'page': 0}, scheme=True)
+    

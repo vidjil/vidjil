@@ -50,7 +50,7 @@ def get_json_patient(patient, config_id):
     return p
     
 def get_patient_filtered_data(filter, config_id):
-    request.vars["type"] = defs.SET_TYPE_PATIENT
+    request.vars["type"] = sampleSet.SET_TYPE_PATIENT
     request.vars["filter"] = filter
     execfile("applications/vidjil/controllers/sample_set.py", globals())
     results = all()

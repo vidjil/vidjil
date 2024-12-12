@@ -1,20 +1,24 @@
-# -*- coding: utf-8 -*-
-
 from abc import ABCMeta, abstractmethod
-from yatl.helpers import SPAN, XML, A, BUTTON
+from yatl.helpers import SPAN, XML, A
 
-from ..modules.tag import TagDecorator, get_tag_prefix
-from ..modules import vidjil_utils
+from .. import settings, user_groups
+from ..modules.tag import TagDecorator
+from ..modules import vidjil_utils, sampleSet
 from ..modules.permission_enum import PermissionEnum
-from .. import defs, user_groups
 from ..common import db, auth
+
+
+### Set types
+SET_TYPE_PATIENT = 'patient'
+SET_TYPE_RUN= 'run'
+SET_TYPE_GENERIC = 'generic'
 
 class SampleSet(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, type):
         self.type = type
-        prefix = get_tag_prefix()
+        prefix = settings.TAG_PREFIX
         self.tag_decorator = TagDecorator(prefix)
         self.db = db
         self.auth =auth
@@ -224,16 +228,16 @@ def get_sample_name(sample_set_id):
     patient) if any
     '''
     sample = db.sample_set[sample_set_id]
-    if sample is None or (sample.sample_type != defs.SET_TYPE_PATIENT \
-                          and sample.sample_type != defs.SET_TYPE_RUN \
-                          and sample.sample_type != defs.SET_TYPE_GENERIC):
+    if sample is None or (sample.sample_type != sampleSet.SET_TYPE_PATIENT \
+                          and sample.sample_type != sampleSet.SET_TYPE_RUN \
+                          and sample.sample_type != sampleSet.SET_TYPE_GENERIC):
         return None
 
     sample_type = sample.sample_type
     patient_or_run = db[sample_type](db[sample_type].sample_set_id == sample_set_id)
     if patient_or_run is None:
         return None
-    if sample.sample_type == defs.SET_TYPE_PATIENT:
+    if sample.sample_type == sampleSet.SET_TYPE_PATIENT:
         return vidjil_utils.anon_ids([patient_or_run.id])[0]
     return patient_or_run.name
 

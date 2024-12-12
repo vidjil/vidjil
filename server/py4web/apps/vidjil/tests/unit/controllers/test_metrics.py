@@ -1,13 +1,10 @@
 import os
-import json
-from pathlib import Path
 import unittest
+
+from py4web.core import _before_request, Session
 from ..utils.omboddle import Omboddle
-from py4web.core import _before_request, Session, HTTP
-from ...functional.db_initialiser import DBInitialiser
-from ..utils import db_manipulation_utils, test_utils
+from ..utils import db_manipulation_utils
 from ....common import db, auth
-from .... import defs
 from ....controllers import metrics as metrics_controller
 from ....modules.vidjil_utils import init_db_helper
 

@@ -1,26 +1,12 @@
-# -*- coding: utf-8 -*-
-import base64
-import datetime
-from sys import modules
 
+import json
+from py4web import action, request
 
-from .. import defs
 from ..modules import vidjil_utils
-from ..modules import tag
-from ..modules.stats_decorator import *
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
-from ..modules.zmodel_factory import ModelFactory
-from ..VidjilAuth import VidjilAuth, PermissionLetterMapping
-from io import StringIO
-import json
-import time
-import os
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
-import math
-
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
+from ..VidjilAuth import PermissionLetterMapping
+from ..common import db, T, auth, log
 
 ###########################
 # HELPERS
@@ -49,7 +35,7 @@ def index():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
     
@@ -113,7 +99,7 @@ def add_form():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
 

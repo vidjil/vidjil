@@ -1,4 +1,4 @@
-import defs
+import settings
 
 import os, sys
 import imp
@@ -16,7 +16,7 @@ def create_clone_db_for_sequences(sequences, output_file):
         for result in last_results:
             if result.data_file is not None:
                 vtf_metadata += ['-d', ' '.join(['sample_set='+str(s.sample_set_id) for s in sample_sets])+' '+'config_id='+str(result.config_id)]
-                vtf_result_files.append(defs.DIR_RESULTS+result.data_file)
+                vtf_result_files.append(settings.DIR_RESULTS+result.data_file)
 
     vidjil2fasta = imp.load_source('vidjil_to_fasta', vidjil_to_fasta_path+os.path.sep+'vidjil-to-fasta.py')
     args = vidjil2fasta.parser.parse_args(vtf_metadata + ['-w', '-o', output_file] + vtf_result_files)
@@ -33,4 +33,4 @@ if __name__ == '__main__':
     output_file = sys.argv[1]
     group_ids = [int(group_id) for group_id in sys.argv[2:]]
 
-    create_clone_db_for_sequences(get_accessible_sequence_files_in_set_type(group_ids, defs.SET_TYPE_PATIENT), output_file)
+    create_clone_db_for_sequences(get_accessible_sequence_files_in_set_type(group_ids, sampleSet.SET_TYPE_PATIENT), output_file)

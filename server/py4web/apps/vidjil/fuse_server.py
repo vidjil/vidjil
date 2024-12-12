@@ -2,7 +2,7 @@ import os
 import sys
 from xmlrpc.server import SimpleXMLRPCServer
 from subprocess import Popen, PIPE, STDOUT
-import defs
+import settings
 
 def fuse(cmd, output_dir, filename):
     print(f"Start fuse with command {cmd}")
@@ -20,7 +20,7 @@ def fuse(cmd, output_dir, filename):
     return fuse_filepath
 
 def main():
-    server_address = (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER)
+    server_address = (settings.FUSE_SERVER, settings.PORT_FUSE_SERVER)
     print(f"Starting fuse server, with address {server_address}")
     server = SimpleXMLRPCServer(server_address)
     server.register_function(fuse, "fuse")

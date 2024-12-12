@@ -43,7 +43,7 @@ log.info("Result files: ")
 log.info(results_files)
 
 with tarfile.open("/mnt/result/user_files_" + user_id + "_" + str(datetime.now()) + ".tar.gz", "w:gz") as tar:
-    for file_list in [(fused_files, defs.DIR_RESULTS),  (analysis_files, defs.DIR_RESULTS), (sequence_files, defs.DIR_SEQUENCES), (results_files, defs.DIR_RESULTS)]:
+    for file_list in [(fused_files, settings.DIR_RESULTS),  (analysis_files, settings.DIR_RESULTS), (sequence_files, settings.DIR_SEQUENCES), (results_files, settings.DIR_RESULTS)]:
         for my_file in file_list[0]:
             log.info("loading: " + file_list[1] + my_file.filename)
             tar.add(file_list[1] + my_file.filename)

@@ -13,10 +13,10 @@ do
 	fi
 done
 
-# check uwsgi is launched at least 1
-numprocesses=$(ps -aux | grep www | grep uwsgi.ini | wc -l)
-if [ $numprocesses -lt  1 ]
+# check uwsgi is launched at least 2 (the main process and a thread)
+num_processes=$(ps -aux | grep www | grep uwsgi.ini | wc -l)
+if [ $num_processes -lt  2 ]
 then 
-	echo "No uwsgi processus"
+	echo "No uwsgi thread started"
 	exit 1
 fi

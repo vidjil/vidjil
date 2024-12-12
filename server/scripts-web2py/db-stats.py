@@ -1,5 +1,5 @@
 
-import defs
+import settings
 import datetime
 LAST_HOURS = 24
 
@@ -10,11 +10,11 @@ def tmp_dir(scheduler_args):
     try:
         if len(ll) == 4:
             # ["8443", "26", 10501, null]
-            return defs.DIR_OUT_VIDJIL_ID % int(ll[2])
+            return settings.DIR_OUT_VIDJIL_ID % int(ll[2])
 
         if len(ll) == 2:
             # [1, 8483]
-            return defs.DIR_PRE_VIDJIL_ID % int(ll[1])
+            return settings.DIR_PRE_VIDJIL_ID % int(ll[1])
 
     except:
         pass

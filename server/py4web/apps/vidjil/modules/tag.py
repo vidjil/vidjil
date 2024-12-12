@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 
-import apps.vidjil.defs
 import re
 import json
-from apps.vidjil.modules.vidjil_utils import *
 from yatl.helpers import XML
 
-
+from . import vidjil_utils
+from .. import settings
+from ..common import db
 
 class TagManager(object):
 
@@ -86,22 +85,14 @@ class TagDecorator(TagManager):
                 permitted_tags=['a'],
                 allowed_attributes={'a':['class', 'href', 'onclick', 'data-sample-type', 'data-linkable-type', 'data-linkable-target-param', 'data-linkable-name']})
 
-def get_tag_prefix():
-    try:
-        tag_prefix = defs.TAG_PREFIX
-    except:
-        tag_prefix = '#'
-    return tag_prefix
-
 def register_tags(db, table, record_id, text, group_id, reset=False):
-    tag_prefix = get_tag_prefix()
-    tag_extractor = TagExtractor(tag_prefix, db)
-    tags = tag_extractor.execute(table, record_id, text, group_id, reset)
+    tag_extractor = TagExtractor(settings.TAG_PREFIX, db)
+    tag_extractor.execute(table, record_id, text, group_id, reset)
 
 def get_tags(db, group_ids):
-    pgid = getPublicGroupId(db)
-    if pgid != None :
-        group_ids.append(pgid)
+    public_group_id = vidjil_utils.getPublicGroupId(db)
+    if public_group_id is not None:
+        group_ids.append(public_group_id)
 
     return db((db.tag.id == db.group_tag.tag_id) &
               (db.group_tag.group_id.belongs(group_ids))
@@ -109,7 +100,6 @@ def get_tags(db, group_ids):
 
 def tags_to_json(tags, group_ids):
     tag_map = {}
-    prefix = get_tag_prefix()
     for row in tags:
         group_id = row.group_tag.group_id
         if group_id not in tag_map:
@@ -120,10 +110,10 @@ def tags_to_json(tags, group_ids):
         tag_map[group_id].append(tag_dict)
 
     # Public group hackiness. Mainly to clean up some other hackier hackiness
-    pgid = getPublicGroupId(db)
-    if pgid  != None and pgid in tag_map:
+    public_group_id = vidjil_utils.getPublicGroupId(db)
+    if public_group_id is not None and public_group_id in tag_map:
         for group_id in tag_map:
-            for tag in tag_map[pgid]:
+            for tag in tag_map[public_group_id]:
                 if tag not in tag_map[group_id]:
                     tag_map[group_id].append(tag)
 
@@ -131,7 +121,7 @@ def tags_to_json(tags, group_ids):
 
 def parse_search(search_string):
     split = search_string.split()
-    tag_prefix = get_tag_prefix()
+    tag_prefix = settings.TAG_PREFIX
     plen = len(tag_prefix)
     tags = [t[plen:] for t in split if t[:plen] == tag_prefix]
     searches = [s for s in split if s[:plen] != tag_prefix]

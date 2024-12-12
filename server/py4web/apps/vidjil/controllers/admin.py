@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 import subprocess
-
 import redis
 import json
 import os
 import re
 import ast
-from py4web import action, request, URL
-from .. import defs, tasks
+from py4web import action, request
+
+from .. import settings, tasks
 from ..modules import vidjil_utils
 from ..common import db, auth, log, scheduler
 
@@ -52,7 +51,7 @@ def index():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
     
@@ -84,12 +83,12 @@ def showlog():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
          
     lines = []
-    file = open(defs.DIR_LOG+request.query["file"])
+    file = open(settings.DIR_LOG+request.query["file"])
     log_format = request.query['format'] if 'format' in request.query else ''
 
     if log_format == 'raw':
@@ -155,7 +154,7 @@ def repair_missing_files():
         
         flist = ""
         for row in db(db.sequence_file.id>0 and db.sequence_file.data_file != None).select() : 
-            seq_file = defs.DIR_SEQUENCES+row.data_file
+            seq_file = settings.DIR_SEQUENCES+row.data_file
             
             if not os.path.exists(seq_file) :
                 db.sequence_file[row.id].update_record(data_file = None)
@@ -175,16 +174,16 @@ def _backup_database(stream):
 def make_backup():
     if auth.is_admin():
         
-        _backup_database(open(defs.DB_BACKUP_FILE, 'wb'))
+        _backup_database(open(settings.DB_BACKUP_FILE, 'wb'))
                 
-        res = {"success" : "true", "message" : "DB backup -> %s" % defs.DB_BACKUP_FILE}
+        res = {"success" : "true", "message" : "DB backup -> %s" % settings.DB_BACKUP_FILE}
         log.admin(res)
         return json.dumps(res, separators=(',',':'))
     
     
 def load_backup():
     if auth.is_admin():
-        db.import_from_csv_file(open(defs.DB_BACKUP_FILE,'rb'))
+        db.import_from_csv_file(open(settings.DB_BACKUP_FILE,'rb'))
     
 def repair():
     if auth.is_admin():
@@ -243,7 +242,7 @@ def clean_workers_status():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
     

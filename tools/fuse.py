@@ -34,13 +34,12 @@ import os
 import datetime
 import subprocess
 import tempfile
-import math
 import gzip
 from operator import itemgetter, le
-from utils import *
-from defs import *
 from collections import defaultdict
 from shlex import quote
+import utils
+import defs
 
 FUSE_VERSION = "vidjil fuse"
 
@@ -205,7 +204,7 @@ class Window:
         del obj.d["top"]
 
         # Data of type 'list'
-        concatenate_with_padding(obj.d,
+        utils.concatenate_with_padding(obj.d,
                                  self.d, len(self.d["reads"]),
                                  other.d, len(other.d["reads"]),
                                  myList)
@@ -239,7 +238,7 @@ class Window:
                     second[key] = second[key] * len(other.d["reads"])
 
             obj.d["mrd"] = {}
-            concatenate_with_padding(obj.d["mrd"],
+            utils.concatenate_with_padding(obj.d["mrd"],
                                      first, len(self.d["reads"]),
                                      second, len(other.d["reads"]))
                         
@@ -486,7 +485,7 @@ class PreProcesses:
 
         length_self = len(self.d['run_timestamp'])
         length_other = len(other.d['run_timestamp'])
-        concatenate_with_padding(obj.d,
+        utils.concatenate_with_padding(obj.d,
                                  self.d, length_self,
                                  other.d, length_other)
         return obj
@@ -510,7 +509,7 @@ class Samples:
     def __add__(self, other):
         obj=Samples()
 
-        concatenate_with_padding(obj.d, 
+        utils.concatenate_with_padding(obj.d, 
                                  self.d, self.d['number'], 
                                  other.d, other.d['number'],
                                  ['number', 'pre_process'],
@@ -522,7 +521,7 @@ class Samples:
             if "pre_process" not in other.d.keys():
                 other.d["pre_process"] = {}
             obj.d["pre_process"] = {}
-            concatenate_with_padding(obj.d["pre_process"], 
+            utils.concatenate_with_padding(obj.d["pre_process"], 
                                      self.d["pre_process"], self.d['number'], 
                                      other.d["pre_process"], other.d['number'],
                                      ["preprocess_workflow", "seqkit", "number"],
@@ -545,7 +544,7 @@ class MRD:
     def __add__(self, other):
         obj=MRD()
 
-        concatenate_with_padding(obj.d, 
+        utils.concatenate_with_padding(obj.d, 
                                  self.d, self.d['number'], 
                                  other.d, other.d['number'],
                                  ['number'])
@@ -593,11 +592,11 @@ class Reads:
     def __add__(self, other):
         obj=Reads()
 
-        concatenate_with_padding(obj.d['germline'], 
+        utils.concatenate_with_padding(obj.d['germline'], 
                                  self.d['germline'], len(self.d['total']),
                                  other.d['germline'], len(other.d['total']),
                                  ['total'])
-        concatenate_with_padding(obj.d['distribution'],
+        utils.concatenate_with_padding(obj.d['distribution'],
                                  self.d['distribution'], len(self.d['total']),
                                  other.d['distribution'], len(other.d['total']),
                                  ['total'])
@@ -664,7 +663,7 @@ class OtherWindows:
             print('  --[others]-->', w)
             yield w
         
-class ListWindows(VidjilJson):
+class ListWindows(utils.VidjilJson):
     '''storage class for sequences informations 
     
     >>> lw1.info()
@@ -704,7 +703,7 @@ class ListWindows(VidjilJson):
         self.d["clusters"] = []
         self.d["germlines"] = {}
         
-        self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
+        self.d["vidjil_json_version"] = defs.VIDJIL_JSON_VERSION
         self.d["producer"] = FUSE_VERSION
         self.d["timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.limit_per_locus = 0
@@ -891,7 +890,7 @@ class ListWindows(VidjilJson):
         l1 = len(self.d["reads"].d['segmented'])
         l2 = len(other.d["reads"].d['segmented'])
 
-        concatenate_with_padding(obj.d, 
+        utils.concatenate_with_padding(obj.d, 
                                  self.d, l1,
                                  other.d, l2,
                                  ["clones", "links", "germlines", "warn",
@@ -955,7 +954,7 @@ class ListWindows(VidjilJson):
             self.d["reads_segmented"][i] += other.d["reads_segmented"][i] 
         
         self.d["clones"] += other.d["clones"]
-        self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
+        self.d["vidjil_json_version"] = [defs.VIDJIL_JSON_VERSION]
         
         self.d["system_segmented"].update(other.d["system_segmented"])
         
@@ -1022,7 +1021,7 @@ class ListWindows(VidjilJson):
     def load_clntab(self, file_path, *args, **kwargs):
         '''Parser for .clntab file'''
 
-        self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
+        self.d["vidjil_json_version"] = [defs.VIDJIL_JSON_VERSION]
         self.d["samples"].d["original_names"] = [file_path]
         self.d["samples"].d["producer"] = ["EC-NGS central pipeline"]
         
@@ -1035,7 +1034,7 @@ class ListWindows(VidjilJson):
             if "clonotype" in ligne:
                 header_map = ligne.replace('\n', '').split('\t')
             else :
-                tab = AccessedDict()
+                tab = utils.AccessedDict()
                 for index, data in enumerate(ligne.split('\t')):
                     tab[header_map[index]] = data
                         
@@ -1104,7 +1103,7 @@ class ListWindows(VidjilJson):
         format: https://buildmedia.readthedocs.org/media/pdf/airr-standards/stable/airr-standards.pdf
         '''
 
-        self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
+        self.d["vidjil_json_version"] = [defs.VIDJIL_JSON_VERSION]
         self.d["samples"].d["original_names"] = [file_path]
         self.d["samples"].d["producer"]       = ["unknown (AIRR format)"]
         self.d["samples"].d["log"]            = ["Created from an AIRR format. No other information available"]
@@ -1777,7 +1776,7 @@ def main():
         print("Pre-processing files...")
         pre_processed_files = []
         for f in files:
-            out_name = exec_command(args.pre, DIR_FUSE_PRE, f)
+            out_name = exec_command(args.pre, defs.DIR_FUSE_PRE, f)
             pre_processed_files.append(out_name)
         files = pre_processed_files
 
@@ -1835,7 +1834,7 @@ def main():
                 jlist_fused = jlist_fused * jlist
                 
             print('\t==> merge to', jlist_fused)
-        jlist_fused.d["system_segmented"] = ordered(jlist_fused.d["system_segmented"], key=lambda sys: ((GERMLINES_ORDER + [sys]).index(sys), sys))
+        jlist_fused.d["system_segmented"] = utils.ordered(jlist_fused.d["system_segmented"], key=lambda sys: ((GERMLINES_ORDER + [sys]).index(sys), sys))
         
     else:
         print("### Read and merge input files")
@@ -1876,7 +1875,7 @@ def main():
         print()
         print("### Select point names")
         l = jlist_fused.d["samples"].d["original_names"]
-        ll = interesting_substrings(l)
+        ll = utils.interesting_substrings(l)
         print("  <==", l)
         print("  ==>", ll)
         jlist_fused.d["samples"].d["names"] = ll
@@ -1920,7 +1919,7 @@ def main():
     if args.post:
         print("Post-processing files...")
         jlist_fused.save_json(args.output)
-        post_out_name = exec_command(args.post, DIR_FUSE_POST, args.output)
+        post_out_name = exec_command(args.post, defs.DIR_FUSE_POST, args.output)
         # reload post processed file
         jlist_fused = ListWindows()
         jlist_fused.load(post_out_name, args.pipeline)
