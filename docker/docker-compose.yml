@@ -122,7 +122,7 @@ services:
             mysql:
                 condition: service_healthy
             uwsgi:
-                condition: service_healthy
+                condition: service_healthy # To prevent db creation racing issues
         links:
             - redis:redis
             - mysql:mysql
@@ -145,7 +145,7 @@ services:
             mysql:
                 condition: service_healthy
             uwsgi:
-                condition: service_healthy
+                condition: service_healthy # To prevent db creation racing issues
         links:
             - redis:redis
             - mysql:mysql
@@ -165,6 +165,8 @@ services:
         depends_on:
             redis:
                 condition: service_started
+            uwsgi:
+                condition: service_healthy # To prevent db creation racing issues
         links:
             - redis
         ports:
