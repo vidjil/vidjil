@@ -1,29 +1,14 @@
-# -*- coding: utf-8 -*-
-from sys import modules
-from .. import defs
-from ..modules import vidjil_utils
-from ..modules import tag
-from ..modules.stats_decorator import *
-from ..modules.sampleSet import SampleSet, get_set_group
+import sys
+import os
+from py4web import request, response
+
+from ..common import db, auth, log
+from .. import settings
+from ..modules import stats_decorator
 from ..modules.sampleSets import SampleSets
-from ..modules.sampleSetList import SampleSetList, filter_by_tags
-from ..modules.sequenceFile import get_associated_sample_sets, get_sequence_file_sample_sets
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
-from ..modules.zmodel_factory import ModelFactory
-from ..user_groups import get_default_creation_group, get_involved_groups
-from ..VidjilAuth import VidjilAuth
-from io import StringIO
-import json
-import sys
-import time
-import os
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
-import math
-
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
-
+from ..user_groups import get_default_creation_group
 
 ##################################
 # HELPERS
@@ -51,9 +36,9 @@ def index():
     return search_clonedb(request.query['sequences'].split(','), int(request.query['sample_set_id']))
 
 def search_clonedb(sequences, sample_set_id):
-    sys.path.insert(1, os.path.abspath(defs.DIR_CLONEDB))
+    sys.path.insert(1, os.path.abspath(settings.DIR_CLONEDB))
     import grep_clones
-    clonedb = imp.load_source('clonedb', defs.DIR_CLONEDB+os.path.sep+'clonedb.py')
+    clonedb = stats_decorator.imp.load_source('clonedb', settings.DIR_CLONEDB+os.path.sep+'clonedb.py')
 
     results = []
     parent_group = get_default_creation_group(auth)[1]
@@ -63,10 +48,10 @@ def search_clonedb(sequences, sample_set_id):
                                                      'index': 'clonedb_{}'.format(parent_group)})
     options += sequences[1:]
     args = grep_clones.parser.parse_args(options)
-    log.debug("Seaching {} sequences in CloneDB for group {}".format(len(sequences), parent_group))
+    log.debug("Searching {} sequences in CloneDB for group {}".format(len(sequences), parent_group))
     try:
         occurrences = grep_clones.launch_search(args)
-        # Get occurrences for each sample with informations on its corresponding sample sets
+        # Get occurrences for each sample with information on its corresponding sample sets
     except ValueError:
         return error_message('Are you sure your account has an enabled CloneDB?')
     except Exception as e:

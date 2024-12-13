@@ -1,8 +1,6 @@
-from utils import *
-from defs import *
 import fuse
+import utils
 import argparse
-import base64
 
 MAX_TOP=99999999999
 REPLACEMENT_WHITESPACE='~'
@@ -198,7 +196,7 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
 
     for clone in data:
         if 'sequence' in clone.d.keys() and \
-           (isinstance(clone.d['sequence'], str) or isinstance(clone.d['sequence'], unicode))\
+           (isinstance(clone.d['sequence'], str) or isinstance(clone.d['sequence'], utils.unicode))\
             and len(clone.d['sequence']) > 0 and 'seg' in clone.d.keys():
             recombination = get_recombination_type(clone)
             name = recombination+spacer

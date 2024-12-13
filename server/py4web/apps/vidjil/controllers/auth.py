@@ -5,15 +5,14 @@ import calendar
 import time
 import uuid
 from datetime import datetime
+import json
 
+from py4web import action, request, URL
 
-from .. import defs
+from .. import settings
 from ..modules import vidjil_utils
 from ..modules.permission_enum import PermissionEnum
 from ..controllers.group import add_default_group_permissions
-import json
-from py4web import action, request, URL
-
 from ..common import db, session, cors, T, flash, auth, log
 
 
@@ -51,7 +50,7 @@ def login():
     return dict(message="login page",
                 auth=auth,
                 db=db,
-                defs=defs)
+                settings=settings)
 
 
 @action("/vidjil/auth/submit", method=["POST", "GET"])

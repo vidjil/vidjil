@@ -1,8 +1,8 @@
 from __future__ import print_function
-import defs
 import os.path
 import base64
 import sys
+import settings
 
 def can_be_compressed(original_filename, server_filename):
     server_ext = os.path.splitext(server_filename)[1][1:].lower()
@@ -18,7 +18,7 @@ def compress_all_sequences(simulate):
     compressed = []
     for seq in sequences:
         if seq.data_file is not None:
-            data_file = defs.DIR_SEQUENCES+seq.data_file
+            data_file = settings.DIR_SEQUENCES+seq.data_file
             if can_be_compressed(seq.filename, data_file):
                 if not simulate:
                     os.system('gzip -9 '+data_file)

@@ -1,5 +1,5 @@
 from __future__ import print_function
-import defs
+import settings
 import os
 import sys
 
@@ -9,12 +9,12 @@ def fastq_to_fasta(files, simulate = False):
         seq = db(db.sequence_file.data_file == file).select().first()
         print (seq)
         if seq is not None and seq.filename is not None\
-           and seq.filename[-len(EXPECTED_EXT):] == EXPECTED_EXT and os.path.isfile(defs.DIR_SEQUENCES+seq.data_file):
+           and seq.filename[-len(EXPECTED_EXT):] == EXPECTED_EXT and os.path.isfile(settings.DIR_SEQUENCES+seq.data_file):
             new_filename = seq.filename[:-len(EXPECTED_EXT)] + ".fasta.gz"
             log.debug("fastq.gz > fasta.gz: Transform %s in %s" % (seq.filename, new_filename))
 
-            new_data_filename = get_new_uploaded_filename(defs.DIR_SEQUENCES+seq.data_file, new_filename)
-            cmd = "gunzip -c %s | sed -n '1~4s/^@/>/p;2~4p' | gzip -9 > %s" % (defs.DIR_SEQUENCES+seq.data_file,\
+            new_data_filename = get_new_uploaded_filename(settings.DIR_SEQUENCES+seq.data_file, new_filename)
+            cmd = "gunzip -c %s | sed -n '1~4s/^@/>/p;2~4p' | gzip -9 > %s" % (settings.DIR_SEQUENCES+seq.data_file,\
                                                                                new_data_filename)
             if simulate:
                 print (cmd)

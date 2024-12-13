@@ -2,33 +2,19 @@
 import base64
 import datetime
 import pathlib
-from sys import modules
+import json
+import os
+from py4web import action, request
 
-
-from .. import defs
-from .. import tasks
-from ..modules import vidjil_utils
-from ..modules import tag
-from ..modules.stats_decorator import *
-from ..modules.sampleSet import SampleSet, get_set_group
-from ..modules.sampleSets import SampleSets
-from ..modules.sampleSetList import SampleSetList, filter_by_tags
+from .. import settings, sampleSet, tasks
+from ..modules import vidjil_utils, jstree, tag
+from ..modules.sampleSet import get_set_group
 from ..modules.sequenceFile import check_space, get_sequence_file_sample_sets, get_sequence_file_config_ids
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
-import apps.vidjil.modules.jstree as jstree
 from ..user_groups import get_upload_group_ids, get_involved_groups
-from ..VidjilAuth import VidjilAuth
-from io import StringIO
-import json
-import time
-import os
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
-import math
-
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
+from ..common import db, T, auth, log, scheduler
 
 
 ###########################
@@ -52,7 +38,7 @@ def manage_filename(filename):
     data = dict(filename=myfilename, data_file=None)
 
     if len(name_list) > 1:
-        filepath = defs.FILE_SOURCE + '/' + filename
+        filepath = settings.FILE_SOURCE + '/' + filename
         split_file = myfilename.split('.')
         uuid_key = db.uuid().replace('-', '')[-16:]
         encoded_filename = base64.b16encode('.'.join(split_file[0:-1]).encode('utf-8')).lower()
@@ -165,14 +151,14 @@ def get_set_list(id_dict, helpers):
 
 def get_set_helpers():
     factory = ModelFactory()
-    sample_types = [defs.SET_TYPE_GENERIC, defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN]
+    sample_types = [sampleSet.SET_TYPE_GENERIC, sampleSet.SET_TYPE_PATIENT, sampleSet.SET_TYPE_RUN]
     helpers = {}
     for stype in sample_types:
         helpers[stype] = factory.get_instance(type=stype)
     return helpers
 
 def form_response(data):
-    source_module_active = hasattr(defs, 'FILE_SOURCE') and hasattr(defs, 'FILE_TYPES')
+    source_module_active = settings.FILE_SOURCE and settings.FILE_TYPES
     network_source = source_module_active and (data['action'] != 'edit'     \
                                                or len(data['file']) == 0    \
                                                or data['file'][0].network)
@@ -221,7 +207,7 @@ def form():
             return error_message("you don't have right to upload files")
 
         sample_type = sample_set.sample_type
-        error_space = check_space(defs.DIR_SEQUENCES, "Uploads")
+        error_space = check_space(settings.DIR_SEQUENCES, "Uploads")
         if error_space is not None:
             return error_space
 
@@ -363,7 +349,7 @@ def submit():
             filename, filepath = manage_filename(f["filename"])
             file_data.update(filename)
             if 'data_file' in file_data and file_data['data_file'] is not None:
-                os.symlink(filepath, defs.DIR_SEQUENCES + file_data['data_file'])
+                os.symlink(filepath, settings.DIR_SEQUENCES + file_data['data_file'])
                 file_data['size_file'] = os.path.getsize(filepath)
                 file_data['network']   = True
                 file_data['data_file'] = str(file_data['data_file'])
@@ -372,7 +358,7 @@ def submit():
                 file_data2, filepath2 = manage_filename(f["filename2"])
                 if 'data_file' in file_data2 and file_data2['data_file'] is not None:
                     file_data['data_file2'] = str(file_data2['data_file'])
-                    os.symlink(filepath2, defs.DIR_SEQUENCES + file_data2['data_file'])
+                    os.symlink(filepath2, settings.DIR_SEQUENCES + file_data2['data_file'])
 
         link_to_sample_sets(fid, id_dict)
 
@@ -633,10 +619,10 @@ def filesystem():
     if id == "":
         json = [{"text": "/", "id": "/", "children": True}]
     else:
-        root_folder = defs.FILE_SOURCE + id
+        root_folder = settings.FILE_SOURCE + id
         for idx, f in enumerate(os.listdir(root_folder)):
             correct_type = False
-            for ext in defs.FILE_TYPES:
+            for ext in settings.FILE_TYPES:
                 correct_type = match_filetype(f, ext)
                 if correct_type:
                     break

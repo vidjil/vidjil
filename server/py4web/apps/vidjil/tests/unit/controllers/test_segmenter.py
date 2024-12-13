@@ -2,12 +2,12 @@ import os
 import json
 import pathlib
 import pytest
+from py4web.core import _before_request, Session
+
 from ..utils.omboddle import Omboddle
 from ...functional.db_initialiser import DBInitialiser
-from py4web.core import _before_request, Session
 from ....common import db, auth
-from .... import defs
-
+from .... import settings
 from ....controllers import segmenter as segmenter_controller
 
 
@@ -46,8 +46,10 @@ class TestSegmenterController():
 
     def test_index_simple_sequence(self):
         # Given : correctly set vidjil path
-        saved_dir_vidjil = defs.DIR_VIDJIL
-        defs.DIR_VIDJIL = str(pathlib.Path(__file__).parent.parent.parent.parent.parent.parent.parent.parent.absolute())
+        saved_dir_vidjil = settings.DIR_VIDJIL
+        saved_dir_germline = settings.DIR_GERMLINE
+        settings.DIR_VIDJIL = str(pathlib.Path(__file__).parent.parent.parent.parent.parent.parent.parent.parent.absolute())
+        settings.DIR_GERMLINE = settings.DIR_VIDJIL + "/germline"
 
         # When : Calling index:
         try:
@@ -64,12 +66,15 @@ class TestSegmenterController():
             assert "TRGV5*01 5/GGGCCAG/5 TRGJ1*01" in clone_names
             assert "IGHV3-13*01 1/TGAGGCGGAGAGATCGGGGG/5 IGHD2-15*01 1/AACGGTAAGT/5 IGHJ5*02" in clone_names
         finally:
-            defs.DIR_VIDJIL = saved_dir_vidjil
+            settings.DIR_GERMLINE = saved_dir_germline
+            settings.DIR_VIDJIL = saved_dir_vidjil
 
     def test_index_invalid_sequence(self):
         # Given : correctly set vidjil path
-        saved_dir_vidjil = defs.DIR_VIDJIL
-        defs.DIR_VIDJIL = str(pathlib.Path(__file__).parent.parent.parent.parent.parent.parent.parent.parent.absolute())
+        saved_dir_vidjil = settings.DIR_VIDJIL
+        saved_dir_germline = settings.DIR_GERMLINE
+        settings.DIR_VIDJIL = str(pathlib.Path(__file__).parent.parent.parent.parent.parent.parent.parent.parent.absolute())
+        settings.DIR_GERMLINE = settings.DIR_VIDJIL + "/germline"
 
         # When : Calling index:
         try:
@@ -80,12 +85,15 @@ class TestSegmenterController():
             result = json.loads(json_result)
             assert result["error"] == "invalid sequences, please use fasta or fastq format"
         finally:
-            defs.DIR_VIDJIL = saved_dir_vidjil
+            settings.DIR_GERMLINE = saved_dir_germline
+            settings.DIR_VIDJIL = saved_dir_vidjil
 
     def test_index_unseg(self):
         # Given : correctly set vidjil path
-        saved_dir_vidjil = defs.DIR_VIDJIL
-        defs.DIR_VIDJIL = str(pathlib.Path(__file__).parent.parent.parent.parent.parent.parent.parent.parent.absolute())
+        saved_dir_vidjil = settings.DIR_VIDJIL
+        saved_dir_germline = settings.DIR_GERMLINE
+        settings.DIR_VIDJIL = str(pathlib.Path(__file__).parent.parent.parent.parent.parent.parent.parent.parent.absolute())
+        settings.DIR_GERMLINE = settings.DIR_VIDJIL + "/germline"
 
         # When : Calling index:
         try:
@@ -99,5 +107,6 @@ class TestSegmenterController():
             assert len(result["clones"]) == 1
             assert result["clones"][0]["sequence"] == "CGTCTT"
         finally:
-            defs.DIR_VIDJIL = saved_dir_vidjil
+            settings.DIR_GERMLINE = saved_dir_germline
+            settings.DIR_VIDJIL = saved_dir_vidjil
         

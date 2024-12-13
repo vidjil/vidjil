@@ -1,0 +1,34 @@
+services:
+    mysql:
+        env_file:
+            - '.env.ci-tests'
+
+    uwsgi:
+        image: vidjil/server:test
+        env_file:
+            - '.env.ci-tests'
+
+    nginx:
+        image: vidjil/client:test
+        env_file:
+            - '.env.ci-tests'
+
+    fuse:
+        image: vidjil/server:test
+        env_file:
+            - '.env.ci-tests'
+
+    workers-all:
+        image: vidjil/server:test
+        env_file:
+            - '.env.ci-tests'
+
+    workers-short:
+        image: vidjil/server:test
+        env_file:
+            - '.env.ci-tests'
+
+    flower:
+        image: vidjil/server:test
+        env_file:
+            - '.env.ci-tests'

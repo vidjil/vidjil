@@ -1,8 +1,9 @@
 import datetime
 
 from py4web import action, request
+from .. import settings
 from ..common import db, auth
-from ..modules.tag import parse_search, TagDecorator, get_tag_prefix
+from ..modules.tag import parse_search, TagDecorator
 from ..modules import vidjil_utils
 from ..user_groups import get_involved_groups
 
@@ -280,7 +281,7 @@ def jobs():
             )
 
     involved_group_ids = get_involved_groups() # for search autocomplete
-    tagdecorator = TagDecorator(get_tag_prefix())
+    tag_decorator = TagDecorator(settings.TAG_PREFIX)
 
     result = []
     for key in queries:
@@ -291,7 +292,7 @@ def jobs():
     return dict(result=result,
                 group_ids = group_list,
                 involved_group_ids = involved_group_ids,
-                tagdecorator = tagdecorator,
+                tagdecorator = tag_decorator,
                 names = names,
                 auth=auth,
                 db=db)

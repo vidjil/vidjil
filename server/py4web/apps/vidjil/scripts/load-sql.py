@@ -1,14 +1,12 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 import sys
 import argparse
+from py4web import DAL
+
 sys.path.append("../")
 sys.path.append("../modules")
 
-from py4web import *
 import settings
-import defs
+
 # from models import db
 # #######################################################
 # connect to db

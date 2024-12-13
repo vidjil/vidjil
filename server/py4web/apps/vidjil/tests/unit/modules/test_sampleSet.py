@@ -1,10 +1,5 @@
-import os
-import json
-from pathlib import Path
 import unittest
-# from ..utils.omboddle import Omboddle
-from .... import defs
-from ....controllers import admin as admin_controller
+
 from ....modules import sampleSet as sampleSet
 
 
@@ -28,7 +23,6 @@ class TestAdminController(unittest.TestCase):
 
         data_results = {
             ## Fictive data
-            "sample_set_id": "404",
             "name": "A patient first and last name",
             ## Data from a faked real db
             'id': 2, 

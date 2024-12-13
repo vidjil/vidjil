@@ -12,7 +12,7 @@ import random
 import xmlrpc.client
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
-from apps.vidjil import defs, settings
+from apps.vidjil import settings
 from apps.vidjil.modules import tools_utils, vidjil_utils
 from .modules.sequenceFile import get_original_filename
 from .common import scheduler, db, log
@@ -126,8 +126,8 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
     
     try:
         ## Path to vidjil/sequence files
-        upload_folder = defs.DIR_SEQUENCES
-        out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+        upload_folder = settings.DIR_SEQUENCES
+        out_folder = settings.DIR_OUT_VIDJIL_ID % id_data
         filename = sequence_file.data_file
         seq_file = upload_folder + filename
         
@@ -136,22 +136,22 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
         os.makedirs(out_folder)
         
         ## output file paths
-        output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
+        output_filename = settings.BASENAME_OUT_VIDJIL_ID % id_data
         out_log = out_folder+'/'+output_filename+'.vidjil.log'
 
         ## Vidjil config
         vidjil_cmd = db.config[id_config].command
         if 'next' in vidjil_cmd:
             vidjil_cmd = vidjil_cmd.replace('next', '')
-            vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE_NEXT)
-            cmd = defs.DIR_VIDJIL_NEXT + '/vidjil-algo '
+            vidjil_cmd = vidjil_cmd.replace(' germline' , settings.DIR_GERMLINE_NEXT)
+            cmd = settings.DIR_VIDJIL_NEXT + '/vidjil-algo '
         else:
-            vidjil_cmd = vidjil_cmd.replace(' germline' , defs.DIR_GERMLINE)
-            cmd = defs.DIR_VIDJIL + '/vidjil-algo '
+            vidjil_cmd = vidjil_cmd.replace(' germline' , settings.DIR_GERMLINE)
+            cmd = settings.DIR_VIDJIL + '/vidjil-algo '
 
         if sequence_file.pre_process_file:
             # reads json preprocess file to get number of reads
-            preprocess_data = json.load(open(defs.DIR_RESULTS+"/"+sequence_file.pre_process_file))
+            preprocess_data = json.load(open(settings.DIR_RESULTS+"/"+sequence_file.pre_process_file))
             if "pre_process" in preprocess_data and "reads" in preprocess_data and "total" in preprocess_data["reads"] and len(preprocess_data['reads']['total']):
                 if preprocess_data['reads']['total'][0] != 0 : # Some case with first version of new preperocess pipeline
                     cmd += f" --read-number {preprocess_data['reads']['total'][0]} "
@@ -250,8 +250,8 @@ def run_vidjil(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fa
     
 
 def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False):
-    upload_folder = defs.DIR_SEQUENCES
-    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+    upload_folder = settings.DIR_SEQUENCES
+    out_folder = settings.DIR_OUT_VIDJIL_ID % id_data
 
     shutil.rmtree(out_folder, ignore_errors=True)
     
@@ -269,7 +269,7 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
     out_results = out_folder + "/out/igrec.vidjil"
     ## commande complete
     try:
-        igrec = defs.DIR_IGREC + '/igrec.py'
+        igrec = settings.DIR_IGREC + '/igrec.py'
         if not os.path.isfile(igrec):
             log.error("!!! IgReC binary file not found")
         cmd = "%s -s %s -o %s/out %s" % (igrec, seq_file, out_folder, arg_cmd)
@@ -327,8 +327,8 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
     return "SUCCESS"
 
 def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False):
-    upload_folder = defs.DIR_SEQUENCES
-    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+    upload_folder = settings.DIR_SEQUENCES
+    out_folder = settings.DIR_OUT_VIDJIL_ID % id_data
 
     shutil.rmtree(out_folder, ignore_errors=True)
     os.makedirs(out_folder)
@@ -336,7 +336,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     ## filepath du fichier de séquence
     row = db(db.sequence_file.id==id_file).select()
     filename = row[0].data_file
-    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
+    output_filename = settings.BASENAME_OUT_VIDJIL_ID % id_data
     seq_file = upload_folder+filename
 
     ## config de mixcr
@@ -362,7 +362,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
         log.error("! Bad arguments, we expect args_align | args_assemble | args_exportClones")
         raise
         
-    mixcr = defs.DIR_MIXCR + 'mixcr'
+    mixcr = settings.DIR_MIXCR + 'mixcr'
     cmd = mixcr + ' align --save-reads -t 1 -r ' + align_report + ' ' + args_1 + ' ' + seq_file  + ' ' + out_alignments
     cmd += ' && '
     cmd += mixcr + ' assemble -t 1 -r ' + assembly_report + ' ' + args_2 + ' ' + out_alignments + ' ' + out_clones
@@ -434,7 +434,7 @@ def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fals
     
     try:
         ## les chemins d'acces a vidjil / aux fichiers de sequences
-        out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+        out_folder = settings.DIR_OUT_VIDJIL_ID % id_data
         
         shutil.rmtree(out_folder, ignore_errors=True)
         os.makedirs(out_folder)
@@ -444,7 +444,7 @@ def run_copy(task_id, id_file, id_config, id_data, grep_reads, clean_before=Fals
         filename = row[0].data_file
         
         ## récupération du fichier 
-        results_filepath = os.path.abspath(defs.DIR_SEQUENCES+row[0].data_file)
+        results_filepath = os.path.abspath(settings.DIR_SEQUENCES+row[0].data_file)
         if not os.path.exists(results_filepath):
             log.error("!!! 'copy' failed, no file")
             res = {"message": "[%s] c%s: 'copy' FAILED - %s - %s" % (id_data, id_config, out_folder)}
@@ -489,8 +489,8 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
     db._adapter.reconnect()
     try:
 
-        out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
-        output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data + '-%s' % sample_set_id
+        out_folder = settings.DIR_OUT_VIDJIL_ID % id_data
+        output_filename = settings.BASENAME_OUT_VIDJIL_ID % id_data + '-%s' % sample_set_id
         
         if clean_before:
             shutil.rmtree(out_folder, ignore_errors=True)
@@ -517,9 +517,9 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
                 
         for row in query :
             if row.results_file.data_file is not None :
-                res_file = defs.DIR_RESULTS + row.results_file.data_file
+                res_file = settings.DIR_RESULTS + row.results_file.data_file
                 if row.sequence_file.pre_process_file:
-                    pre_file = "%s/%s" % (defs.DIR_RESULTS, row.sequence_file.pre_process_file)
+                    pre_file = "%s/%s" % (settings.DIR_RESULTS, row.sequence_file.pre_process_file)
                     files += "%s,%s" % (res_file, pre_file)
                 else:
                     files += res_file
@@ -533,7 +533,7 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
             return STATUS_FAILED
         
         fuse_cmd = db.config[id_config].fuse_command
-        cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
+        cmd = "python "+settings.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
 
         try:
             log.info("=== fuse.py ===")
@@ -591,11 +591,11 @@ def run_fuse(id_file, id_config, id_data, sample_set_id, clean_before=True, clea
 
 def custom_fuse(file_list):
     
-    if defs.PORT_FUSE_SERVER is None:
+    if settings.PORT_FUSE_SERVER is None:
         raise IOError('This server cannot fuse custom data')
     random_id = random.randint(99999999,99999999999)
-    out_folder = os.path.abspath(defs.DIR_OUT_VIDJIL_ID % random_id)
-    output_filename = defs.BASENAME_OUT_VIDJIL_ID % random_id
+    out_folder = os.path.abspath(settings.DIR_OUT_VIDJIL_ID % random_id)
+    output_filename = settings.BASENAME_OUT_VIDJIL_ID % random_id
     
     shutil.rmtree(out_folder, ignore_errors=True)
     os.makedirs(out_folder)    
@@ -609,15 +609,15 @@ def custom_fuse(file_list):
     for id in file_list :
         result_file = db.results_file[id]
         if result_file.data_file is not None :
-            files += os.path.abspath(defs.DIR_RESULTS + result_file.data_file)
+            files += os.path.abspath(settings.DIR_RESULTS + result_file.data_file)
             seq_file = db.sequence_file[result_file.sequence_file_id]
             if seq_file.pre_process_file is not None:
-                files += ",%s" % os.path.abspath(defs.DIR_RESULTS + seq_file.pre_process_file)
+                files += ",%s" % os.path.abspath(settings.DIR_RESULTS + seq_file.pre_process_file)
             files += " "
     
     try:
-        cmd = "python "+ os.path.abspath(os.path.join(defs.DIR_FUSE, "fuse.py")) + " -o " + output_file + " -t 100 " + files
-        proc_srvr = xmlrpc.client.ServerProxy("http://%s:%d" % (defs.FUSE_SERVER, defs.PORT_FUSE_SERVER))
+        cmd = "python "+ os.path.abspath(os.path.join(settings.DIR_FUSE, "fuse.py")) + " -o " + output_file + " -t 100 " + files
+        proc_srvr = xmlrpc.client.ServerProxy("http://%s:%d" % (settings.FUSE_SERVER, settings.PORT_FUSE_SERVER))
         fuse_filepath = proc_srvr.fuse(cmd, out_folder, output_filename)
     
         with open(fuse_filepath, 'rb') as fuse_file:
@@ -674,7 +674,7 @@ def run_pre_process(pre_process_config_id, sequence_file_id, task_id, clean_befo
         update_task(task_id, STATUS_RUNNING)
         
 
-        out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
+        out_folder = settings.DIR_PRE_VIDJIL_ID % sequence_file_id
 
         preprocess = db.pre_process[pre_process_config_id]
         required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
@@ -694,17 +694,17 @@ def run_pre_process(pre_process_config_id, sequence_file_id, task_id, clean_befo
         pre_process = db.pre_process[pre_process_config_id]
         out_log = out_folder+'/'+output_filename+'.pre.log'
         
-        cmd = pre_process.command.replace("&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
+        cmd = pre_process.command.replace("&file1&", settings.DIR_SEQUENCES + sequence_file.data_file)
         if sequence_file.data_file2:
-            cmd = cmd.replace("&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
+            cmd = cmd.replace("&file2&", settings.DIR_SEQUENCES + sequence_file.data_file2)
         cmd = cmd.replace("&result&", output_file)
-        cmd = cmd.replace("&pear&", defs.DIR_PEAR)
-        cmd = cmd.replace("&flash2&", defs.DIR_FLASH2)
-        cmd = cmd.replace("&binaries&", defs.DIR_BINARIES)
+        cmd = cmd.replace("&pear&", settings.DIR_PEAR)
+        cmd = cmd.replace("&flash2&", settings.DIR_FLASH2)
+        cmd = cmd.replace("&binaries&", settings.DIR_BINARIES)
         # Example of template to add some preprocess shortcut
-        # cmd = cmd.replace("&preprocess_template&", defs.DIR_preprocess_template)
+        # cmd = cmd.replace("&preprocess_template&", settings.DIR_preprocess_template)
         # Where &preprocess_template& is the shortcut to change and
-        # defs.DIR_preprocess_template the variable to set into the file defs.py. 
+        # settings.DIR_preprocess_template the variable to set into the file settings.py. 
         # The value should be the path to access to the preprocess software.
 
         log.info("=== Pre-process %s ===" % pre_process_config_id)
@@ -713,7 +713,7 @@ def run_pre_process(pre_process_config_id, sequence_file_id, task_id, clean_befo
         sys.stdout.flush()
 
         with open(out_log, 'w') as log_file:
-            completed_process = subprocess.run(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, cwd=defs.DIR_PREPROCESS)
+            completed_process = subprocess.run(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, cwd=settings.DIR_PREPROCESS)
         log.info("Output log in " + out_log)
         completed_process.check_returncode()
 
@@ -752,8 +752,8 @@ def run_pre_process(pre_process_config_id, sequence_file_id, task_id, clean_befo
         # Remove original sequence file after preprocess as no longer needed and available
         try:
             pathlib.Path(pre_process_filepath).unlink(missing_ok=True)
-            pathlib.Path(defs.DIR_SEQUENCES + sequence_file.data_file).unlink(missing_ok=True)
-            pathlib.Path(defs.DIR_SEQUENCES + sequence_file.data_file2).unlink(missing_ok=True)
+            pathlib.Path(settings.DIR_SEQUENCES + sequence_file.data_file).unlink(missing_ok=True)
+            pathlib.Path(settings.DIR_SEQUENCES + sequence_file.data_file2).unlink(missing_ok=True)
         except Exception as exception:
             log.error(f"[pre_process_id={pre_process_config_id}] [sequence_file_id={sequence_file_id}] Removing files at the end of preprocess failed with exception {exception}.")
         
@@ -862,7 +862,7 @@ def compute_extra(id_file, id_config, min_threshold):
                       (db.results_file.config_id == id_config)
                     ).select(orderby=~db.results_file.run_date).first()
     
-    filename = pathlib.Path(defs.DIR_RESULTS, results_file.data_file)
+    filename = pathlib.Path(settings.   DIR_RESULTS, results_file.data_file)
     with open(filename, "rb") as file:
         try:
             data = json.load(file)
