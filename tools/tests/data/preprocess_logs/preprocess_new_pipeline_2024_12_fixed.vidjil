@@ -1,0 +1,194 @@
+{
+  "pre_process": {
+    "producer": [
+      "classed_preprocess (version 0.2)"
+    ],
+    "preprocess_workflow": [
+      "raw file(s) -> flash2 -> dimers"
+    ],
+    "input": [
+      [
+        "demo_R1.fastq.gz",
+        "demo_R2.fastq.gz"
+      ]
+    ],
+    "output": [
+      "results/post-release/"
+    ],
+    "commandline": [
+      [
+        "binaries//flash2 demo_R1.fastq.gz demo_R2.fastq.gz -d /home/florian/vidjil_contrib/preprocess/results/post-release/tmp4p_mjem_ -o flash2_9wrdadom -t 1 --compress -M 300",
+        "zcat /home/florian/vidjil_contrib/preprocess/results/post-release/tmp4p_mjem_/flash2_9wrdadom | awk  {if (NR % 4 == 1) { header = $0; } else if (NR % 4 == 2) { seq = $0; seq_len = length($0); } else if (NR % 4 == 3) { plus = $0; } else if (NR % 4 == 0) { qual = $0; if(seq_len >= 60) { print header; print seq; print plus; print qual; } } }  | gzip -c"
+      ]
+    ],
+    "stats": {
+      "flash2___combined_pairs": [
+        2646
+      ],
+      "flash2___discarded_pairs": [
+        0
+      ],
+      "flash2___innie_pairs": [
+        1
+      ],
+      "flash2___outie_pairs": [
+        2645
+      ],
+      "flash2___percent_combined": [
+        "88.20%"
+      ],
+      "flash2___percent_discarded": [
+        "0.00%"
+      ],
+      "flash2___time_taken": [
+        1.7970902919769287
+      ],
+      "flash2___total_pairs": [
+        3000
+      ],
+      "flash2___uncombined_pairs": [
+        354
+      ],
+      "dimers___end_reads": [
+        3000
+      ],
+      "dimers___start_reads": [
+        3000
+      ],
+      "dimers___time_taken": [
+        0.25943470001220703
+      ]
+    },
+    "parameters": {
+      "flash2___allow_outie_pairs": [
+        "true"
+      ],
+      "flash2___cap_mismatch_quals": [
+        "false"
+      ],
+      "flash2___combiner_threads": [
+        1
+      ],
+      "flash2___input_format": [
+        "FASTQ,"
+      ],
+      "flash2___max_mismatch_density": [
+        0.25
+      ],
+      "flash2___max_overlap": [
+        300
+      ],
+      "flash2___min_overlap": [
+        10
+      ],
+      "flash2___min_overlap_outie": [
+        35
+      ],
+      "flash2___output_format": [
+        "FASTQ,"
+      ]
+    },
+    "run_timestamp": [
+      "2024-12-06 12:31:30"
+    ],
+    "number": [
+      1
+    ],
+    "time_taken": {
+      "flash2_": [
+        1.7970902919769287
+      ],
+      "dimers_": [
+        0.25943470001220703
+      ]
+    },
+    "seqkit": {
+      "avg_len": {
+        "raw_files": [
+          251
+        ],
+        "flash2_": [
+          180.4
+        ],
+        "dimers_": [
+          180.4
+        ]
+      },
+      "format": {
+        "raw_files": [
+          "FASTQ"
+        ],
+        "flash2_": [
+          "FASTQ"
+        ],
+        "dimers_": [
+          "FASTQ"
+        ]
+      },
+      "max_len": {
+        "raw_files": [
+          251
+        ],
+        "flash2_": [
+          405
+        ],
+        "dimers_": [
+          405
+        ]
+      },
+      "min_len": {
+        "raw_files": [
+          251
+        ],
+        "flash2_": [
+          119
+        ],
+        "dimers_": [
+          119
+        ]
+      },
+      "num_seqs": {
+        "raw_files": [
+          3000
+        ],
+        "flash2_": [
+          3000
+        ],
+        "dimers_": [
+          3000
+        ]
+      },
+      "time_taken": {
+        "raw_files": [
+          0.06299901008605957
+        ],
+        "flash2_": [
+          0.04980874061584473
+        ],
+        "dimers_": [
+          0.04439830780029297
+        ]
+      },
+      "type": {
+        "raw_files": [
+          "DNA"
+        ],
+        "flash2_": [
+          "DNA"
+        ],
+        "dimers_": [
+          "DNA"
+        ]
+      }
+    }
+  },
+  "reads": {
+    "merged": [
+      3000
+    ],
+    "total": [
+      3000
+    ],
+    "preprocess_step": {}
+  }
+}
