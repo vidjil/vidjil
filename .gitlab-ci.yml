@@ -342,7 +342,7 @@ test_server_unit:
     - dev
     - schedules
   tags:
-    - lego
+    - cidocker
 
 
 # Deployment
