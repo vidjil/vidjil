@@ -64,7 +64,11 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis, timeout) => {
   //cy.open_menu("demo_file_menu")
   cy.get('#import_data_anchor').click({force: true})
   //cy.close_menu("demo_file_menu")
+  file_vidjil = "./" + Cypress.env('workdir') + "/" + `${file_vidjil}`
   cy.log(`file_vidjil: ${file_vidjil}`)
+  if (file_analysis != undefined) {
+    file_analysis = "./"+ Cypress.env('workdir') + "/" + `${file_analysis}`
+  }
   cy.log(`file_analysis: ${file_analysis}`)
   // Upload vidjil file
   cy.get("#upload_json")

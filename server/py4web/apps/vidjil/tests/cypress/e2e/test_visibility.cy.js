@@ -15,7 +15,6 @@ describe('Visibility of panels', function () {
         cy.wait("@getActivities");
         cy.get('.popup_container').should("not.be.visible")
         cy.get('.db_div > .closeButton > .icon-cancel').click()
-        cy.wait("@getActivities");
         cy.get('.db_div').should("not.be.visible")
 
         cy.get('#file_menu').should("not.be.visible")
@@ -34,8 +33,7 @@ describe('Visibility of panels', function () {
         cy.get('.info-container').should("not.be.visible")
     })
 
-    it('4494 - title in db table',  function() {
-        // Test visibility of some panel and z-index
+    it('02-title in db table (#4494)',  function() {
         cy.goToPatientPage()
         
         cy.get('#sample_set_open_22_config_id_-1 > :nth-child(2) > .set_token')
@@ -50,14 +48,12 @@ describe('Visibility of panels', function () {
           .should("have.attr", "title")
           .and("equal", "Display results for config default + extract reads")
 
-
         cy.openSet(22) // patient 
 
         cy.get('#sequence_file_48')
           .should("have.attr", "title").and("equal", "test_file.fasta")
 
         cy.get('[title="#set_assoc_2"]') // if getter work
-
 
         cy.goToConfigsPage()
         cy.get('#config_classification_7')
@@ -69,7 +65,6 @@ describe('Visibility of panels', function () {
         cy.get('#config_info_7')
           .should("have.attr", "title").and("equal", "incomplete germlines + larger window (90bp), thus 20bp more on each side. This configuration is advised for studies on IGH clonality")
 
-
         cy.goToPreprocessPage()
         cy.get('#preprocess_name_4')
           .should("have.attr", "title").and("equal", "test pre-process 2")
@@ -77,6 +72,5 @@ describe('Visibility of panels', function () {
           .should("have.attr", "title").and("equal", "dummy &file1& &file2& > &result&")
         cy.get('#preprocess_info_4')
           .should("have.attr", "title").and("equal", "test 2")
-        return
     })
 })

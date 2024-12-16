@@ -42,7 +42,6 @@ browser/css/*.css
 browser/js/conf.js
 browser/js/germline.js
 browser/js/git-sha1.js
-browser/chosen
 
 data/Stanford_S22.fasta
 data/Stanford_S22.rc.fasta
@@ -93,6 +92,7 @@ tools/*.txt
 
 out/
 
+vidjil-algo
 vidjil-algo/
 
 # Tests
@@ -107,87 +107,22 @@ browser/test/cypress/videos
 browser/test/cypress/logs
 browser/test/*.png
 browser/test/test/TEST*
-
-# Tutorial generated script
-browser/test/functional/tutorial-test.rb
-browser/test/cypress/integration/doc_tutorial_client.js
-browser/css/icons/*
-
-
-*.vidjil
-!server/py4web/apps/vidjil/tests/unit/resources/**/*.vidjil
-*.fastq
-*.fastq.gz
-*.gz
-
-tools/*.txt
-
-germline/*/*.fa
-
-
-browser/chosen
-demo/*.fa
-demo/*.fasta
-.directory
-
-# build of gitlab-runner
-builds/
-server/py4web/apps/.service/
-
-server/py4web/apps/_dashboard/
-
-server/py4web/apps/_default/
-
-server/py4web/apps/_documentation/
-
-server/py4web/apps/_minimal/
-
-server/py4web/apps/_scaffold/
-
-server/py4web/apps/examples/
-
-server/py4web/apps/vidjil/databases/
-
-server/py4web/password.txt
-
-docker/vidjil-server2/vidjil/
-
-browser/js/germline.js
-*.swp
-cypress
-browser/js/git-sha1.js
-firefox/
-
-*.key
-*.crt
-*.pem
-#report
-*.xml 
-server/py4web/apps/password.txt
-docker/test/gosu
-server/unit_report.xml
-server/unit_coverage.xml
+server/py4web/apps/vidjil/controllers/test_controller.py
+server/py4web/apps/vidjil/tests/cypress/logs/*
+server/py4web/apps/vidjil/tests/cypress/screenshots/*
+server/py4web/apps/vidjil/tests/cypress/fixtures
+server/py4web/apps/vidjil/tests/cypress/support
 server/.coverage
-server/py4web/apps/vidjil/tests/unit/resources/results/*
-!server/py4web/apps/vidjil/tests/unit/resources/**/*.vidjil
-!server/py4web/apps/vidjil/tests/unit/resources/logs/**/*.log
 tools/tests/should.retry
 tools/tests/should.warned.retry
 tools/tests/data/pear_strucured_waring.json
 tools/tests/data/pear_strucured.json
 tools/tests/should-get-tests/fuse_export_airr.airr
 tools/tests/should-get-tests/vidjil-to-fasta-with-sequences.fasta
-doc/analysis-example2.analysis
-tools/flash2
 
-site/*
-docker/scripts/
-tools/scripts/
-binaries/
-cypress.config.js
-
-docker/vidjil-server/requirements.txt
-
-
-.VSCodeCounter/*
-cypress.config.js
+# Tutorial generated script
+browser/test/functional/tutorial-test.rb
+browser/test/cypress/integration/doc_tutorial_client.js
+browser/css/icons/*
+browser/test/cypress/e2e/doc_tutorial_client.cy.js
+server/py4web/apps/vidjil/tests/cypress/e2e/doc_tutorial_server.cy.js

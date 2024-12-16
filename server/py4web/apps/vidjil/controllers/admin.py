@@ -9,7 +9,6 @@ from py4web import action, request
 from .. import settings, tasks
 from ..modules import vidjil_utils
 from ..common import db, auth, log, scheduler
-from ..tests.functional.db_initialiser import DBInitialiser
 
 ##################################
 # HELPERS
@@ -275,24 +274,5 @@ def clean_workers_status():
     db(db.scheduler_task.id.belongs(dangling_task_ids)).update(status=tasks.STATUS_FAILED)
     
     res = {"redirect": "reload", "success": "true", "message": f"Dangling tasks set to failed: {dangling_task_ids}"}
-    log.info(res)
-    return json.dumps(res, separators=(',', ':'))
-
-@action("/vidjil/admin/init_test_db", method=["POST", "GET"])
-@action.uses(db, auth.user)
-@vidjil_utils.jsontransformer
-def init_test_db():
-    if not auth.is_admin():
-        res = {"success": "false",
-               "message": ACCESS_DENIED,
-               "redirect": URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
-        log.info(res)
-        return json.dumps(res, separators=(',', ':'))
-
-    initialiser = DBInitialiser(db)
-    initialiser.run()
-
-    res = {"success": "true",
-           "message": "Database initialized with success"}
     log.info(res)
     return json.dumps(res, separators=(',', ':'))

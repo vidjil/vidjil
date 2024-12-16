@@ -11,10 +11,6 @@
     - >
       docker run --rm
       -v $PWD/$CYPRESS_PATH:/app/cypress
-      -v $PWD/browser:/app/browser
-      -v $PWD/doc:/app/doc
-      -v $PWD/demo:/app/demo
-      -v $PWD/tools:/app/tools
       -v $PWD:/app/vidjil
       -v "$PWD/docker/ci/cypress.config.js":"/app/cypress.config.js"
       -v "$PWD/docker/ci/cypress_script.bash":"/app/script.bash"

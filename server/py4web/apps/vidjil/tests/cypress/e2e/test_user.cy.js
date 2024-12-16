@@ -4,7 +4,8 @@ describe("Creation of users and groups", function () {
   it("01-Users and impersonate", function () {
     // Create users
     cy.goToUsersPage();
-    cy.getTableLength("#table_users").should("eq", 1);
+    // We have admin and metrics user
+    cy.getTableLength("#table_users").should("eq", 2);
 
     var first_name = "uf";
     var last_name = "ul";
@@ -24,7 +25,7 @@ describe("Creation of users and groups", function () {
     );
 
     cy.goToUsersPage();
-    cy.getTableLength("#table_users").should("eq", 3);
+    cy.getTableLength("#table_users").should("eq", 4);
 
     // Set group rights
     cy.goToGroupsPage();
@@ -32,10 +33,12 @@ describe("Creation of users and groups", function () {
     cy.setGroupRight(grp_user4, ["run"], true);
 
     // Impersonate from drop down
+    var user_id_to_impersonate = "3"
+
     cy.goToPatientPage();
     cy.get("#db_auth_name").should("contain", "System Administrator");
     cy.get("#desimpersonate_btn").should("not.exist");
-    cy.get("#choose_user").select("2", { force: true });
+    cy.get("#choose_user").select(user_id_to_impersonate, { force: true });
     cy.wait("@getActivities");
     cy.get("#db_auth_name").should("not.exist");
 
@@ -48,7 +51,7 @@ describe("Creation of users and groups", function () {
 
     cy.get("#db_auth_name").should("contain", "System Administrator");
     cy.get("#desimpersonate_btn").should("not.exist");
-    cy.get("#impersonate_btn_2").click();
+    cy.get("#impersonate_btn_" + user_id_to_impersonate).click();
     cy.wait("@getActivities");
     cy.get("#db_auth_name").should("not.exist");
     cy.get('[data-cy="db_div"]').should("contain", " + new patients "); // we should have been redirected to patients page
@@ -62,7 +65,7 @@ describe("Creation of users and groups", function () {
     var owner_public = "public";
     var owner_user1 = "Personal Group";
 
-    // public shoud not be anon.
+    // public should not be anon.
     cy.createPatient(
       "",
       "pub",

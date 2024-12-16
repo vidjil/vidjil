@@ -3,37 +3,18 @@
 
 echo "Arguments: $@"
 
-echo "$ change chmod of cypress directory"
-chmod 777 cypress -R 
-chmod 777 * -R
-chmod 777 /app/vidjil/server/py4web/apps/vidjil/databases -R
+TEST_FILES_PATTERN="$1"
 
-make -C /app/cypress/fixtures/demo
-mkdir -p /app/cypress/fixtures/demo/empty_directory
-echo "==> ls /app/cypress/fixtures/demo"
-ls /app/cypress/fixtures/demo
-echo "==> ls /app/cypress/fixtures/tools/tests/data"
-ls /app/cypress/fixtures/tools/tests/data
-
-# for server side
-ln -sf $PWD/browser /app/browser || true
-ln -sf $PWD/doc  /app/doc        || true
-ln -sf $PWD/demo /app/demo       || true
-ln -sf $PWD/tools /app/tools     || true
-
-
-echo "==> PWD: `pwd`"
-
-echo "==> ls /app/vidjil/browser/test/data/addons: `ls /app/vidjil/browser/test/data/addons`"
-
+ln -sf /app/vidjil/browser/test/cypress/support /app/cypress/support
+ln -sf /app/vidjil/browser/test/cypress/fixtures /app/cypress/fixtures
 
 # Move addons to the correct path for test
 if [[ $1 == /app/cypress/e2e/external* ]]
 then
 	echo "External test, no configuration loaded"
 else
-	mv /app/vidjil/browser/test/data/addons/* /app/vidjil/browser/js/addons/
-	mv /app/vidjil/browser/js/conf.js.sample /app/vidjil/browser/js/conf.js
+	cp /app/vidjil/browser/test/data/addons/* /app/vidjil/browser/js/addons/
+	cp /app/vidjil/browser/js/conf.js.sample /app/vidjil/browser/js/conf.js
 	files=`printf "'%s'," /app/vidjil/browser/js/addons/*`
 	echo -e "Copy addons file: $files"
 	sed -i "s|\"js/lib/important-lib.js\", \"js/myscript.js\"|$files|g" "/app/vidjil/browser/js/conf.js"
@@ -52,43 +33,49 @@ else
 	echo "=====\n"
 fi
 
-
-
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 echo -e "${CYAN}==> ls /app${NC}"
 ls /app
 
-echo -e "${CYAN}==> ls /app/browser/test/data${NC}"
-ls /app/browser/test/data
-echo -e "${CYAN}==> ls /app/doc${NC}"
-ls /app/doc
-echo -e "${CYAN}==> ls /app/demo${NC}"
-ls /app/demo
-echo -e "${CYAN}==> ls /app/tools${NC}"
-ls /app/tools
+echo -e "${CYAN}==> ls /app/cypress${NC}"
+ls /app/cypress
+echo -e "${CYAN}==> ls /app/cypress/e2e${NC}"
+ls /app/cypress/e2e
+echo -e "${CYAN}==> ls /app/cypress/support${NC}"
+ls /app/cypress/support
+echo -e "${CYAN}==> ls /app/cypress/fixtures${NC}"
+ls /app/cypress/fixtures
+echo -e "${CYAN}==> ls /app/vidjil/browser/test/data${NC}"
+ls /app/vidjil/browser/test/data
 
-echo -e "${CYAN}==> ls cypress/e2e/${NC}"
-ls cypress/e2e/
-
-
-
+# RUN CYPRESS
 echo "TIME - Before cypress - $(date)"
-spec_files=`ls -1 $TEST_FILES_PATTERN | paste -sd ','`
-echo TEST_FILES_PATTERN: $TEST_FILES_PATTERN, $spec_files 
+echo "TEST_FILES_PATTERN: $TEST_FILES_PATTERN"
+echo "HOST: $HOST"
 echo -e "$ ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec "$TEST_FILES_PATTERN" --env workdir=vidjil,host=$HOST,initiated_database=false"
 ./node_modules/cypress/bin/cypress run --browser $BROWSER --headless --spec "$TEST_FILES_PATTERN" --env workdir=vidjil,host=$HOST,initiated_database=true,server=$SERVER
 ECODE=$?
 echo "TIME - After cypress - $(date)"
 
-# # Rename reports with name of testing script
+# Rename reports with name of testing script
 apt-get update -qq && apt-get install -y -qq libxml2-utils
-for file in `ls /app/cypress/reports/*.xml`; do mv $file /app/cypress/reports/report_`xmllint --xpath 'string(/testsuites/testsuite/@file)' $file | cut -f3 -d"/" | cut -f1 -d"."`.xml; done
+for file in `ls /app/cypress/reports/*.xml`
+	do mv $file /app/cypress/reports/report_`xmllint --xpath 'string(/testsuites/testsuite/@file)' $file | cut -f3 -d"/" | cut -f1 -d"."`.xml
+done
 
-echo "$ change again chmod of cypress directory (include new directories)" 
-chmod 777 cypress -R 
-echo -e "exit code: $ECODE"
+# Remove created links
+if [ -L "/app/cypress/support" ]
+then
+	echo "remove /app/cypress/support"
+	rm -v "/app/cypress/support";
+fi
+if [ -L "/app/cypress/fixtures" ]
+then
+	echo "remove /app/cypress/fixtures"
+	rm -v "/app/cypress/fixtures";
+fi
 
 if [ "$ECODE" -ne 0 ]; then echo "command failed"; exit 1; fi
 exit 0

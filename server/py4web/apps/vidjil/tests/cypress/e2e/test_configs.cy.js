@@ -35,6 +35,8 @@ describe("Manipulate configs", function () {
         );
         cy.launchProcess("" + config_id, sample_id);
         cy.waitAnalysisCompleted(config_id, sample_id);
+        
+        cy.logout()
       });
     });
   });
@@ -70,5 +72,7 @@ describe("Manipulate configs", function () {
 
     // Delete a preprocess
     cy.deletePreprocess(7, pre_process_name_2); // second cypress created preprocess
+
+    cy.logout()
   });
 });

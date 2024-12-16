@@ -14,48 +14,39 @@ describe("Manipulate patient, sample and launch analysis", function () {
     cy.goToGroupsPage();
     cy.goToUsersPage();
     cy.goToAdminPage();
-    return;
+    cy.logout();
   });
 
   it("02-Launch, open, delete analysis and check logs", function () {
     var id = "";
-    var firstname = "fn";
-    var lastname = "ln";
+    var first_name = "fn";
+    var last_name = "ln";
     var birthday = "2000-01-01";
-    var informations = "cy";
+    var patient_information = "cy";
     var group = "public";
-    cy.createPatient(id, firstname, lastname, birthday, informations, group).as(
+    cy.createPatient(id, first_name, last_name, birthday, patient_information, group).as(
       "patient_id"
     );
 
     var preprocess = undefined;
     var filename1 = "Demo-X5.fa";
     var filename2 = undefined;
-    var samplingdate = "2021-01-01";
-    var informations = "cy; #cy";
+    var sampling_date = "2021-01-01";
+    var sample_information = "cy; #cy";
     cy.addSample(
       preprocess,
       "nfs",
       filename1,
       filename2,
-      samplingdate,
-      informations
+      sampling_date,
+      sample_information
     ).then((sample_id) => {
       cy.log("added sample " + sample_id);
 
-      // Launch process and wiath for result
+      // Launch process and wait for result
       cy.launchProcess("2", sample_id);
       cy.waitAnalysisCompleted("2", sample_id);
 
-      cy.goToLogsPage()
-
-      // Log are tested in reverse order as last is shown first
-      cy.get('#db_table_container')
-        .should("contain", "run requested with config multi+inc+xxx")
-      cy.get('#db_table_container')
-        .should("contain", "file (" + sample_id + ") //Demo-X5.fa added")
-      cy.get('#db_table_container')
-        .should("contain", "patient (" + sample_set_id + ") las added")
       // Open result
       cy.openSampleResult(sample_id);
       // Check number of clones found
@@ -67,94 +58,110 @@ describe("Manipulate patient, sample and launch analysis", function () {
         cy.openSet(patient_id);
         cy.deleteProcess("2", sample_id);
       });
+
+      // Check logs
+      cy.goToLogsPage()
+      // Log are tested in reverse order as last is shown first
+      cy.get('#db_table_container')
+      .should("contain", "process deleted")
+      cy.get('#db_table_container')
+        .should("contain", "run requested with config multi+inc+xxx")
+      cy.get('#db_table_container')
+        .should("contain", "file (" + sample_id + ") //Demo-X5.fa added")
+      cy.get("@patient_id").then((patient_id) => {
+        cy.get('#db_table_container')
+          .should("contain", "patient (" + patient_id + ") ln added")
+      });
+
+      cy.logout();
     });
   });
 
   it("03-Sets and samples creations, associations, deletions", function () {
     // Create, edit patients
     var id = "";
-    var firstname = "fn";
-    var lastname = "ln";
-    var birthday = "2000-01-01";
-    var informations = "cy";
+    var first_name = "fn";
+    var last_name = "ln";
+    var birthday = "";
+    var patient_information = "cy";
     var group = "public";
     cy.createPatient(
       id,
-      firstname + "_1",
-      lastname + "_1",
+      first_name + "1",
+      last_name + "1",
       birthday,
-      informations + " (1)",
+      patient_information + "1",
       group
     ).as("patient1");
-    const patient1_display_name = lastname + "_1" + " " + firstname + "_1";
+    const patient1_display_name = last_name + "1" + " " + first_name + "1";
     cy.createPatient(
       id,
-      firstname + "_2",
-      lastname + "_2",
+      first_name + "2",
+      last_name + "2",
       birthday,
-      informations + " (2)",
+      patient_information + "2",
       group
     );
     cy.createPatient(
       id,
-      firstname + "_3",
-      lastname + "_3",
+      first_name + "3",
+      last_name + "3",
       birthday,
-      informations + " (3)",
+      patient_information + "3",
       group
     ).then((uid) => {
       cy.editPatient(
         uid,
         id,
-        firstname + "_4",
-        lastname + "_4",
+        first_name + "4",
+        last_name + "4",
         birthday,
-        informations + " (4)"
+        patient_information + "4"
       );
     });
 
     // Filter patients
     cy.goToPatientPage();
-    cy.dbPageFilter(firstname + "_1");
+    cy.dbPageFilter(first_name + "1");
     cy.getTableLength("#db_table_container").should("eq", 1);
     cy.dbPageFilter("patient");
     cy.getTableLength("#db_table_container").should("eq", 8);
 
     // Create run
-    cy.createRun(id, "run link", "2023-01-01", "cy", group);
+    cy.createRun(id, "run", "2023-01-01", "cy", group);
 
     // Add samples and multi-samples with association
     var preprocess = undefined;
     var filename1 = "Demo-X5.fa";
     var filename2 = undefined;
-    var samplingdate = "2021-01-01";
-    var informations = "cy";
+    var sampling_date = "2024-01-01";
+    var sample_information = "cy";
     cy.addSample(
       preprocess,
       "nfs",
       filename1,
       filename2,
-      samplingdate,
-      informations + " (1) #cy",
-      firstname + "_1"
+      sampling_date,
+      sample_information + "1 #cy",
+      first_name + "1"
     ).as("sample_1");
     var sample_to_add_2 = [
       preprocess,
       "nfs",
       filename1,
       filename2,
-      samplingdate,
-      informations + " (2)",
-      firstname + "_2",
+      sampling_date,
+      patient_information + "2",
+      first_name + "2",
     ];
     var sample_to_add_3 = [
       preprocess,
       "nfs",
       filename1,
       filename2,
-      samplingdate,
-      informations + " (3)",
-      firstname + "_4",
+      sampling_date,
+      patient_information + "3",
+      first_name + "4",
     ];
     cy.multiSamplesAdd([sample_to_add_2, sample_to_add_3]);
 
@@ -178,41 +185,43 @@ describe("Manipulate patient, sample and launch analysis", function () {
     cy.get("@patient1").then((patient_id1) => {
       cy.deleteSet("patient", patient_id1, patient1_display_name);
     });
+
+    cy.logout();
   });
 
   it("04-Sets and samples with tags", function () {
     cy.goToPatientPage();
 
     var id = "";
-    var firstname = "ft";
-    var lastname = "lt";
-    var birthday = "2000-01-01";
-    var informations = "Cy-tag";
+    var first_name = "ft";
+    var last_name = "lt";
+    var birthday = "";
+    var patient_information = "Cy-tag";
     var group = "public";
 
     // Some with tag
     cy.createPatient(
       id,
-      firstname + "_4",
-      lastname + "_4",
+      first_name + "4",
+      last_name + "4",
       birthday,
-      informations + "(4) #t1 #t2",
+      patient_information + "4 #t1 #t2",
       group
     );
     cy.createPatient(
       id,
-      firstname + "_5",
-      lastname + "_5",
+      first_name + "5",
+      last_name + "5",
       birthday,
-      informations + "(5) #t1 #t2",
+      patient_information + "5 #t1 #t2",
       group
     );
     cy.createPatient(
       id,
-      firstname + "_6",
-      lastname + "_6",
+      first_name + "6",
+      last_name + "6",
       birthday,
-      informations + "(6) #t1",
+      patient_information + "6 #t1",
       group
     ).then((patient_id) => {
       // From inside the patient

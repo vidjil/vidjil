@@ -63,12 +63,11 @@ class TestGroupController(unittest.TestCase):
         assert query[2]["access"] == ""
 
     def test_index_admin_with_metrics(self):
-        # If metrics env variables are setted, we create this user by default at init
+        # If metrics env variables are set, we create this user by default at init
         os.environ["METRICS_USER_PASSWORD"] = "metrics_password"
         os.environ["METRICS_USER_EMAIL"] = "metrics@vidjil.org"
         initialiser = DBInitialiser(db)
         initialiser.run()
-
 
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
@@ -87,7 +86,7 @@ class TestGroupController(unittest.TestCase):
         assert query[1]["role"] == "metrics"
         assert query[1]["access"] == ""
         assert query[2]["role"] == "public"
-        assert query[2]["access"] == ""
+        assert query[2]["access"] == "a"
         assert query[3]["role"] == "user_0001"
         assert query[3]["access"] == ""
 

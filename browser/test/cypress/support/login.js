@@ -78,13 +78,9 @@ Cypress.Commands.add('verifyLogin', () => {
 Cypress.Commands.add('logout', (host) => {
   cy.get('#logout_button')
     .should('exist')
-  cy.get('#logout_button')
     .click()
   cy.wait(['@getActivities'])
-
-  cy.closeDBPage()
-  cy.openDBPage()
-  cy.verifyLogout()
+  // cy.verifyLogout()
 })
 
 

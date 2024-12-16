@@ -28,19 +28,14 @@ import "./aligner";
 import "./network";
 import "./external";
 
-const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
-Cypress.on('uncaught:exception', (err, runnable) => {
-    if (err.message.includes('ResizeObserver')) {
-      // returning false here prevents Cypress from failing the test
-      return false;
-    }
-
-    // idem
-    if (resizeObserverLoopErrRe.test(err.message)) {
-      return false;
-    }
+const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
+Cypress.on("uncaught:exception", (err, runnable) => {
+  // returning false here prevents Cypress from failing the test
+  if (resizeObserverLoopErrRe.test(err.message)) {
     return false;
-  });
+  }
+  return false;
+});
 
 let commands = [];
 let testAttributes;
@@ -114,8 +109,6 @@ beforeEach(() => {
 });
 
 before(function () {
-  // runs once before all tests in the block
-  cy.initDatabase(Cypress.env("host"));
 });
 
 const logs = {};
@@ -127,6 +120,13 @@ Cypress.on("log:changed", (log) => {
   let message = log.name + " - " + log.message;
   logs[log.id] = message;
 });
+
+// afterEach(() => {
+//   if (Cypress.env("server")) {
+//     cy.clearCookies();
+//     sendTestTimings();
+//   }
+// });
 
 after(() => {
   if (Cypress.env("server")) {

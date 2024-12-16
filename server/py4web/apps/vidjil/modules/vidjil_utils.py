@@ -8,7 +8,7 @@ import pydal
 from py4web import request, URL
 
 from . import sampleSet
-from .. import settings
+from .. import settings, models
 from ..modules.permission_enum import PermissionEnum
 from ..common import auth, db, log
 
@@ -632,26 +632,93 @@ def get_found_types(data):
     present_types = set(data.keys())
     return known_types.intersection(present_types)
 
+def try_truncate_table(table):
+    print(f"truncate {table=}")
+    try:
+        table.truncate()
+        db.commit()
+    except Exception as exception:
+        log.info(f"Exception when truncating table {table} : {exception}")
+        print(f"Exception when truncating table {table} : {exception}")
+        db.executesql("SHOW ENGINE INNODB STATUS;")
+        log.info("after SHOW ENGINE INNODB STATUS;")
+
 def reset_db(db):
+    # mysql = db._uri[:5] == "mysql"
+    # # if using mysql disable foreign keys to be able to truncate
+    # if mysql:
+    #     db.executesql('SET FOREIGN_KEY_CHECKS = 0;')
+    # try:
+    #     users = db(db.auth_user.id > 0).select()
+    #     print(f"{users=}")
+    #     for user in users:
+    #         print(f"Delete {user=}")
+    #         db(db.auth_user.id == user.id).delete()
+    #     db.executesql('ALTER TABLE auth_user AUTO_INCREMENT = 1')
+    #     for table in db :
+    #         try:
+    #             if table._tablename == "auth_user":
+    #                 print(f"Skip {table}")
+    #             else:
+    #                 print(f"Truncate {table=}")
+    #                 table.truncate()
+
+    #         except Exception as exception:
+    #             log.info(f"Exception when truncating table {table} : {exception}")
+    #             print(f"Exception when truncating table {table} : {exception}")
+    #             db.executesql("SHOW ENGINE INNODB STATUS;")
+    #             log.info("after SHOW ENGINE INNODB STATUS;")
+    # finally:
+    #     # lets not forget to re-enable foreign keys
+    #     print("finally")
+    #     if mysql:
+    #         db.executesql('SET FOREIGN_KEY_CHECKS = 1;')
+    #     db.commit()
     mysql = db._uri[:5] == "mysql"
     # if using mysql disable foreign keys to be able to truncate
     if mysql:
         db.executesql('SET FOREIGN_KEY_CHECKS = 0;')
-    try:
-        for table in db :
-            try:
-                table.truncate()
-            except Exception as exception:
-                log.info(f"Exception when truncating table {table} : {exception}")
-    finally:
-        # lets not forget to re-enable foreign keys
-        if mysql:
-            db.executesql('SET FOREIGN_KEY_CHECKS = 1;')
+        db.commit()
+    try_truncate_table(db.sample_set_membership)
+    try_truncate_table(db.results_file)
+    try_truncate_table(db.analysis_file)
+    try_truncate_table(db.sequence_file)
+    try_truncate_table(db.fused_file)
+    try_truncate_table(db.run)
+    try_truncate_table(db.generic)
+    try_truncate_table(db.patient)
+    try_truncate_table(db.user_preference)
+    try_truncate_table(db.user_log)
+    try_truncate_table(db.tag_ref)
+    try_truncate_table(db.scheduler_task_deps)
+    try_truncate_table(db.scheduler_run)
+    try_truncate_table(db.sample_set)
+    try_truncate_table(db.group_tag)
+    try_truncate_table(db.group_assoc)
+    try_truncate_table(db.config)
+    try_truncate_table(db.auth_user_tag_groups)
+    try_truncate_table(db.auth_permission)
+    try_truncate_table(db.auth_membership)
+    try_truncate_table(db.auth_event)
+    try_truncate_table(db.auth_cas)
+    try_truncate_table(db.notification)
+    try_truncate_table(db.pre_process)
+    try_truncate_table(db.classification)
+    try_truncate_table(db.auth_user)
+    try_truncate_table(db.scheduler_task)
+    try_truncate_table(db.scheduler_worker)
+    try_truncate_table(db.tag)
+    try_truncate_table(db.auth_group)
+    if mysql:
+        db.executesql('SET FOREIGN_KEY_CHECKS = 1;')
+        db.commit()
 
 def init_db_helper(db, auth, admin_email, admin_password, force=False):
     if (force) or (db(db.auth_user.id > 0).count() == 0) : 
+        log.debug("before reset_db")
         if force:
             reset_db(db)
+        log.debug("after reset_db")
 
         id_first_user=""
 
@@ -685,15 +752,15 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
 
 
         ### Base config classification
-        db.classification.insert(
+        id_classification_1 = db.classification.insert(
             name = 'Human V(D)J recombinations',
             info = 'Analysis with vidjil-algo of human TR/IG recombinations'
         )
-        db.classification.insert(
+        id_classification_2 = db.classification.insert(
             name = 'Other recombinations',
             info = 'Analysis with vidjil-algo of human non-V(D)J recombinations'
         )
-        db.classification.insert(
+        id_classification_3 = db.classification.insert(
             name = 'Analysis with/for other software',
             info = 'Analysis that use other repertoire software or generate with vidjil-algo compatible output formats'
         )
@@ -717,7 +784,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -U ',
             fuse_command = '-t 100',
             info = 'Same as the default "multi+inc+xxx" (multi-locus, with some incomplete/unusual/unexpected recombinations), and extract analyzed reads in the "out" temporary directory.',
-            classification = 1
+            classification = id_classification_1
         )
         db.config.insert(
             name = 'multi+inc+xxx',
@@ -725,7 +792,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, with some incomplete/unusual/unexpected recombinations',
-            classification = 1
+            classification = id_classification_1
         )
         db.config.insert(
             name = 'multi+inc',
@@ -733,7 +800,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, with some incomplete/unusual recombinations',
-            classification = 1
+            classification = id_classification_1
         )
         db.config.insert(
             name = 'multi',
@@ -741,7 +808,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g:IGH,IGK,IGL,TRA,TRB,TRG,TRD -e 1 -d -w 50 ',
             fuse_command = '-t 100',
             info = 'multi-locus, only complete recombinations',
-            classification = 2
+            classification = id_classification_2
         )
         db.config.insert(
             name = 'TRG',
@@ -749,7 +816,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g:TRG ',
             fuse_command = '-t 100',
             info = 'TRG, VgJg',
-            classification = 2
+            classification = id_classification_2
         )
         db.config.insert(
             name = 'IGH',
@@ -757,7 +824,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             command = '-c clones -w 60 -d -z 100 -r 1 -g germline/homo-sapiens.g:IGH ',
             fuse_command = '-t 100',
             info = 'IGH, Vh(Dh)Jh',
-            classification = 2
+            classification = id_classification_2
         )
         db.config.insert(
             name = 'Clonality',
@@ -765,7 +832,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             command = '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -w 90 -y all --no-airr',
             fuse_command = '-t 100 -d lenSeqAverage --overlaps',
             info = 'incomplete germlines + larger window (90bp), thus 20bp more on each side. This configuration is advised for studies on IGH clonality',
-            classification = 1
+            classification = id_classification_1
         )
         db.config.insert(
             name = 'Export all clones (AIRR)',
@@ -773,7 +840,7 @@ def init_db_helper(db, auth, admin_email, admin_password, force=False):
             command = '-c clones -y all -z all -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -r 5 --no-vidjil',
             fuse_command = '-t 100',
             info = 'Export all clones in the tabular AIRR format. The results can not be browsed online. See http://www.vidjil.org/doc/vidjil-algo/#airr-tsv-output',
-            classification = 3
+            classification = id_classification_3
         )
         db.commit()
 

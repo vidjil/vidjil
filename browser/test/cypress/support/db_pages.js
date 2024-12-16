@@ -1,13 +1,4 @@
 Cypress.Commands.add("initDatabase", (host) => {
-  cy.intercept({
-    method: "GET",
-    url: "get_active_notifications*",
-  }).as("getActivities");
-
-  cy.intercept({
-    method: "POST",
-    url: "**/sample_set/all*",
-  }).as("postAllSampleSets");
 
   // init database if button is present at opening of page
   if (host == "local") {
@@ -47,7 +38,7 @@ Cypress.Commands.add("initDatabase", (host) => {
 
 Cypress.Commands.add("initTestDb", (host) => {
   if (host == "local") {
-    cy.request("http://localhost/vidjil/admin/init_test_db");
+    cy.request("http://localhost/vidjil/test/init_test_db");
   }
 });
 
@@ -137,10 +128,10 @@ Cypress.Commands.add(
   "createPatient",
   (
     id,
-    firstname,
-    lastname,
+    first_name,
+    last_name,
     birthday,
-    informations,
+    information,
     owner,
     expected_display_name = ""
   ) => {
@@ -150,7 +141,7 @@ Cypress.Commands.add(
     cy.wait("@getActivities");
 
     cy.get("h3").should("contain", "Add patients, runs, or sets");
-    cy.fillPatient(0, id, firstname, lastname, birthday, informations, owner);
+    cy.fillPatient(0, id, first_name, last_name, birthday, information, owner);
 
     cy.get(".btn").click();
     cy.wait("@getActivities");
@@ -160,7 +151,7 @@ Cypress.Commands.add(
     cy.get("@db_div").should("contain", " + add samples");
 
     if (expected_display_name == "") {
-      expected_display_name = lastname + " " + firstname;
+      expected_display_name = last_name + " " + first_name;
     }
     cy.get(".set_token").should("contain", expected_display_name);
 
@@ -174,12 +165,12 @@ Cypress.Commands.add(
   }
 );
 /**
- * Edit informations of a patient
+ * Edit a patient
  * Take same parameter as create, except a first parameter set_id to update
  */
 Cypress.Commands.add(
   "editPatient",
-  (set_id, id, firstname, lastname, birthday, informations) => {
+  (set_id, id, first_name, last_name, birthday, info) => {
     cy.goToTokenPage("patient");
 
     cy.get(
@@ -192,10 +183,10 @@ Cypress.Commands.add(
     cy.fillPatient(
       0,
       id,
-      firstname,
-      lastname,
+      first_name,
+      last_name,
       birthday,
-      informations,
+      info,
       null,
       true
     );
@@ -205,14 +196,14 @@ Cypress.Commands.add(
 
     cy.get(".db_div").should("contain", " + add samples");
 
-    cy.get(".set_token").should("contain", lastname + " " + firstname);
+    cy.get(".set_token").should("contain", last_name + " " + first_name);
   }
 );
 
 Cypress.Commands.add(
   "controlPatientInfos",
-  (index, id, firstname, lastname, birthday, informations, owner = "") => {
-    cy.get("h3 > .set_token").should("contain", lastname + " " + firstname);
+  (index, id, first_name, last_name, birthday, info, owner = "") => {
+    cy.get("h3 > .set_token").should("contain", last_name + " " + first_name);
 
     if (id != "") {
       cy.get(":nth-child(1) > .db_block > .db_block_left").should(
@@ -227,12 +218,12 @@ Cypress.Commands.add(
       );
     }
 
-    if (informations != "") {
-      cy.get("#db_table_container").should("contain", informations);
+    if (info != "") {
+      cy.get("#db_table_container").should("contain", info);
     }
     if (owner != null) {
       // For the moment, test only one owner, but a sample can belong to multiple owner.
-      // In this case; launch mulitple time this function
+      // In this case; launch multiple time this function
       cy.get(".owner").should("contain", owner);
     }
   }
@@ -243,10 +234,10 @@ Cypress.Commands.add(
   (
     index,
     id,
-    firstname,
-    lastname,
+    first_name,
+    last_name,
     birthday,
-    informations,
+    info,
     owner,
     clear = false
   ) => {
@@ -262,13 +253,19 @@ Cypress.Commands.add(
     }
     cy.clearAndType(
       "#patient_first_name_" + index.toString(),
-      firstname,
+      first_name,
       clear
     );
-    cy.clearAndType("#patient_last_name_" + index.toString(), lastname, clear);
+    cy.clearAndType("#patient_last_name_" + index.toString(), last_name, clear);
+    if (birthday != "") {
     cy.clearAndType("#patient_birth_" + index.toString(), birthday, clear);
-    if (informations != "") {
-      cy.clearAndType("#patient_info_" + index.toString(), informations, clear);
+    } else {
+      if (clear) {
+        cy.get("#patient_birth_" + index.toString()).clear();
+      }
+    }
+    if (info != "") {
+      cy.clearAndType("#patient_info_" + index.toString(), info, clear);
     } else {
       if (clear) {
         cy.get("#patient_info_" + index.toString()).clear();
@@ -290,9 +287,9 @@ Cypress.Commands.add(
 );
 
 /**
- * Create a run and fill it informations
+ * Create a run
  */
-Cypress.Commands.add("createRun", (id, run_name, date, informations, owner) => {
+Cypress.Commands.add("createRun", (id, run_name, date, info, owner) => {
   cy.goToRunPage();
 
   cy.get(`#create_new_set_type_run`).click();
@@ -300,7 +297,7 @@ Cypress.Commands.add("createRun", (id, run_name, date, informations, owner) => {
   if (owner != null) {
     cy.get("#group_select").select(owner);
   }
-  cy.fillRun(0, id, run_name, date, informations);
+  cy.fillRun(0, id, run_name, date, info);
 
   cy.get(".btn").click();
   cy.wait("@getActivities");
@@ -310,14 +307,14 @@ Cypress.Commands.add("createRun", (id, run_name, date, informations, owner) => {
   cy.get(".set_token").should("contain", run_name);
 });
 
-Cypress.Commands.add("fillRun", (index, id, run_name, date, informations) => {
+Cypress.Commands.add("fillRun", (index, id, run_name, date, info) => {
   if (id != "") {
     cy.get("#run_id_label_" + index.toString()).type(id);
   }
   cy.get("#run_name_" + index.toString()).type(run_name);
   cy.get("#run_date_" + index.toString()).type(date);
-  if (informations != "") {
-    cy.get("#run_info_" + index.toString()).type(informations);
+  if (info != "") {
+    cy.get("#run_info_" + index.toString()).type(info);
   }
 });
 
@@ -332,8 +329,8 @@ Cypress.Commands.add(
     storage,
     filename1,
     filename2,
-    samplingdate,
-    informations,
+    sampling_date,
+    info,
     common_set
   ) => {
     cy.multiSamplesAdd([
@@ -342,8 +339,8 @@ Cypress.Commands.add(
         storage,
         filename1,
         filename2,
-        samplingdate,
-        informations,
+        sampling_date,
+        info,
         common_set,
       ],
     ]).then((sample_ids) => {
@@ -370,9 +367,9 @@ Cypress.Commands.add("openSampleAddPage", () => {
 
 /**
  * Take a list of sample to add and will make it.
- * Will create new form line of needed, will fill informations and check avec submit that each row is present
- * Parameter is an array of array herited from fillSampleLine function (see below)
- * Example: [[preprocess, storage, filename1, filename2, samplingdate, informations, common_set), ...]
+ * Will create new form line of needed, will fill information and check with submit that each row is present
+ * Parameter is an array of array inherited from fillSampleLine function (see below)
+ * Example: [[preprocess, storage, filename1, filename2, sampling_date, info, common_set), ...]
  **/
 Cypress.Commands.add("multiSamplesAdd", (array_samples) => {
   cy.openSampleAddPage();
@@ -384,8 +381,8 @@ Cypress.Commands.add("multiSamplesAdd", (array_samples) => {
     var storage = sample[1];
     var filename1 = sample[2];
     var filename2 = sample[3];
-    var samplingdate = sample[4];
-    var informations = sample[5];
+    var sampling_date = sample[4];
+    var info = sample[5];
     var common_set = sample[6];
     cy.fillSampleLine(
       pos_sample,
@@ -393,8 +390,8 @@ Cypress.Commands.add("multiSamplesAdd", (array_samples) => {
       storage,
       filename1,
       filename2,
-      samplingdate,
-      informations,
+      sampling_date,
+      info,
       common_set
     );
     pos_sample += 1;
@@ -420,8 +417,8 @@ Cypress.Commands.add("multiSamplesAdd", (array_samples) => {
         // Control values
         var filename1 = sample[2];
         var filename2 = sample[3];
-        var samplingdate = sample[4];
-        var informations = sample[5];
+        var sampling_date = sample[4];
+        var info = sample[5];
         var common_set = sample[6];
 
         cy.get("#db_table_container")
@@ -435,7 +432,7 @@ Cypress.Commands.add("multiSamplesAdd", (array_samples) => {
         }
 
         // Work only if one file given (else filename will be changed)
-        // Allow to get curent number if case of upload position modification
+        // Allow to get current number if case of upload position modification
         if (filename2 == undefined) {
           cy.get("#db_table_container")
             .find(`#row_sequence_file_${current_id}`)
@@ -448,10 +445,10 @@ Cypress.Commands.add("multiSamplesAdd", (array_samples) => {
             });
           cy.get("#db_table_container")
             .find(`#row_sequence_file_${current_id}`)
-            .contains(samplingdate);
+            .contains(sampling_date);
           cy.get("#db_table_container")
             .find(`#row_sequence_file_${current_id}`)
-            .contains(informations);
+            .contains(info);
         }
       });
 
@@ -484,12 +481,12 @@ Cypress.Commands.add(
     storage,
     filename1,
     filename2,
-    samplingdate,
-    informations,
+    sampling_date,
+    info,
     common_set
   ) => {
     cy.log(
-      `iter: ${iter}\n preprocess: ${preprocess}\n storage: ${storage}\n filename1: ${filename1}\n filename2: ${filename2}\n samplingdate: ${samplingdate}\n informations: ${informations}\n common_set: ${common_set}\n`
+      `iter: ${iter}\n preprocess: ${preprocess}\n storage: ${storage}\n filename1: ${filename1}\n filename2: ${filename2}\n sampling_date: ${sampling_date}\n info: ${info}\n common_set: ${common_set}\n`
     );
     if (iter > 0) {
       // Create a new sample line
@@ -498,8 +495,8 @@ Cypress.Commands.add(
 
     cy.get(`#file_sampling_date_${iter}`)
       .should("exist") // first field, control that correct line exist
-      .type(samplingdate);
-    cy.get(`#file_info_${iter}`).type(informations);
+      .type(sampling_date);
+    cy.get(`#file_info_${iter}`).type(info);
 
     if (preprocess != undefined) {
       cy.selectPreprocess(preprocess);
@@ -530,7 +527,7 @@ Cypress.Commands.add(
  * Open NFS loader panel and select correct file
  */
 Cypress.Commands.add("addNfsSample", (iter, position, filename) => {
-  // don't click to change storage to nfs, that should be already seleted
+  // don't click to change storage to nfs, that should be already selected
   cy.get(`#jstree_field_${position}_${iter}`).click();
 
   cy.get("body").then(($body) => {
@@ -724,7 +721,7 @@ Cypress.Commands.add("deleteSet", (set_type, set_id, name) => {
 /**
  * Wait for an analysis to be completed.
  * Make a recursive call from himself while status is not 'COMPLETED', in limit of given number of retry
- * Unfortunatly, last control will be called X times at the end, X as the depth of the recusive iteration
+ * Unfortunately, last control will be called X times at the end, X as the depth of the recursive iteration
  */
 Cypress.Commands.add(
   "waitAnalysisCompleted",

@@ -4,7 +4,7 @@ import unittest
 from ..utils.omboddle import Omboddle
 from py4web.core import _before_request, Session, HTTP
 from ...functional.db_initialiser import DBInitialiser
-from ..utils import db_manipulation_utils, test_utils
+from ..utils import db_manipulation_utils
 from ....common import db, auth
 from ....controllers import config as config_controller
 from ....modules.permission_enum import PermissionEnum
