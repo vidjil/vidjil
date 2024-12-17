@@ -8,7 +8,7 @@ test_server_api:
     - mkdir -p logs/before; cd docker; for service in `docker compose config | yq '.services[]|key'`; do docker logs vidjil-${service} > ../logs/before/${service}.log 2>&1; done; cd ..
     - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9"
     - >
-      docker run
+      docker run --rm
       -v $PWD/$CYPRESS_PATH:/app/cypress
       -v $PWD/browser/test/data:/app/data
       -v $PWD/doc:/app/doc

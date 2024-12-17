@@ -9,7 +9,7 @@
     - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:$CYPRESS_DOCKER_VERSION"
     - echo "TIME $(date) - After pulling cypress docker image" >> time.log
     - >
-      docker run
+      docker run --rm
       -v $PWD/$CYPRESS_PATH:/app/cypress
       -v $PWD/browser:/app/browser
       -v $PWD/doc:/app/doc
