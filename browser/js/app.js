@@ -46,12 +46,17 @@ function loadAfterConf() {
         config.use_database = false;
         // External provider to activate by default
         config.IMGT = true
+        config.server_version  = "2024.12"
 
         config.load_error   = true;
     } else {
         config.load_error   = false;
     }
 
+    // Print correct version on page
+    if (document.getElementById("logospan_index") != null && config.server_version != undefined){
+        document.getElementById("logospan_index").innerHTML = `(${config.server_version})`
+    }
 
     require(['doctips/tips'],
             function(){},

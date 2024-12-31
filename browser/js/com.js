@@ -88,9 +88,9 @@ function Com(default_console) {
             "</br> Please regenerate a newer .vidjil file. " +
             BUTTON_CLOSE_POPUP,
 
-        "welcome": " <h2>Vidjil <span class='logo'>" + ((typeof config !== 'undefined' && (config.healthcare || false)) ? "(health)" : "(beta)") + "</span></h2>" +
+        "welcome": " <h2>Vidjil <span class='logo'>" + ((typeof config !== 'undefined' && (config.healthcare || false)) ? "(health, " : "(") + config.server_version + ")</span></h2>" +
             "(c) 2011-2024, The Vidjil Team: " +
-            "Aurélien Béliard, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
+            "Aurélien Béliard, Clément Chesnin, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
             " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" +
             (typeof git_sha1 !== "undefined" ? " &ndash; " + git_sha1 : "") +
             "<br/><br/>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics lab</a> at CRIStAL (UMR 9189 CNRS, Univ. Lille) and the <a href='http://www.vidjil.net'>VidjilNet consortium</a> (Inria). " +
