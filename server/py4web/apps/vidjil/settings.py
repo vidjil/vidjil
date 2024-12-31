@@ -184,7 +184,7 @@ TAG_PREFIX = os.getenv("TAG_PREFIX", default="#")
 
 
 ### Personalization
-WELCOME_LOGINPAGE_MESSAGE = os.getenv("WELCOME_LOGINPAGE_MESSAGE", default="Welcome to a Vidjil server!")
+WELCOME_LOGINPAGE_MESSAGE = os.getenv("WELCOME_LOGINPAGE_MESSAGE", default="Welcome to Vidjil server!")
 
-SERVER_URL = os.getenv("SERVER_URL", default="app.vidjil.org") # Use conf.js value ?
+SERVER_URL = os.getenv("SERVER_URL", default="dev.vidjil.org") # Use conf.js value ?
 

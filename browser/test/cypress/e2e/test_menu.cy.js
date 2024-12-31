@@ -162,4 +162,25 @@ describe('Test menu', function () {
     // cy.get("#help_tutorial").invoke('removeAttr', 'target').click({force: true})
   })
 
+
+  it('07-Set version',  function() {
+    cy.get('#logospan_index')
+      .should('have.text', '(2024.12)')
+      .click()
+
+    cy.get('.popup_msg > h2')
+      .should('have.text', 'Vidjil (2024.12)')
+
+    cy.get('[style="display: block;"] > .closeButton > .icon-cancel')
+      .click()
+
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
+
+    //// Can't check value in report, but should be changed
+    // cy.get('#export_report_menu').click({force: true})
+    // cy.get('#report-menu > :nth-child(4) > button')
+    //   .click()
+
+  })
+
 })
