@@ -88,7 +88,7 @@ function Com(default_console) {
             "</br> Please regenerate a newer .vidjil file. " +
             BUTTON_CLOSE_POPUP,
 
-        "welcome": " <h2>Vidjil <span class='logo'>" + ((typeof config !== 'undefined' && (config.healthcare || false)) ? "(health, " : "(") + config.server_version + ")</span></h2>" +
+        "welcome": " <h2>Vidjil <span class='logo'>" + ((typeof config !== 'undefined' && (config.healthcare || false)) ? "(health, " : "(") + ((typeof config !== 'undefined' && config.server_version != undefined) ? config.server_version : "") + ")</span></h2>" +
             "(c) 2011-2024, The Vidjil Team: " +
             "Aurélien Béliard, Clément Chesnin, Marc Duez, Mathieu Giraud, Ryan Herbert, Mikaël Salson, Tatiana Rocher and Florian Thonier" +
             " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" +
