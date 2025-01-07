@@ -4,7 +4,7 @@ var lil_l3 = {"app": {"id":61, "config":2}, "localhost": {"id":3241, "config":25
 
 
 
-Cypress.Commands.add('close_disclamer', () => { 
+Cypress.Commands.add('close_disclaimer', () => { 
   cy.get("div.popup_container", { timeout: 10000 })
     .should('be.visible')
     .and('contain', 'The Vidjil Team')
@@ -36,9 +36,9 @@ Cypress.Commands.add('closeFlash', (flash_class) => {
 Cypress.Commands.add('setBrowser', (url) => {
   cy.visit(url)
 
-  // close disclamer only for direct opening of the index.html file
+  // close disclaimer only for direct opening of the index.html file
   if (url.indexOf("index.html") != -1){
-    cy.close_disclamer()
+    cy.close_disclaimer()
     cy.close_tips()
     cy.closeFlashAll()
   }

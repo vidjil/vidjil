@@ -1,5 +1,5 @@
 /**
- * Create a configuration and fill it informations
+ * Create a configuration and fill its info
  */
 Cypress.Commands.add(
   "createConfig",
@@ -28,41 +28,27 @@ Cypress.Commands.add(
     cy.get("#add_config_submit").click();
     cy.wait("@getActivities");
 
-    cy.get("#table_configs > tbody > tr")
-      .get("[id*=config_name_]")
-      .contains(config_name)
-      .parent()
-      .within(() => {
-        cy.get("td").first().should("have.text", " 9 ");
-        cy.get("td")
-          .first()
-          .text()
-          .then(parseInt)
-          .then((config_id) => {
-            cy.log("Created config id " + config_id);
+    cy.getBiggestId("#table_configs").then((config_id) => {
+      cy.log("Created config id " + config_id);
 
-            cy.get("#config_name_" + config_id).should("contain", config_name);
-            cy.get("#config_classification_" + config_id).should(
-              "contain",
-              config_class[1]
-            );
-            cy.get("#config_program_" + config_id).should(
-              "contain",
-              config_soft == undefined ? "none" : config_soft
-            );
-            cy.get("#config_command_" + config_id).should(
-              "contain",
-              config_cmd
-            );
-            cy.get("#config_fuse_command_" + config_id).should(
-              "contain",
-              config_fuse
-            );
-            cy.get("#config_info_" + config_id).should("contain", config_info);
+      cy.get("#config_name_" + config_id).should("contain", config_name);
+      cy.get("#config_classification_" + config_id).should(
+        "contain",
+        config_class[1]
+      );
+      cy.get("#config_program_" + config_id).should(
+        "contain",
+        config_soft == undefined ? "none" : config_soft
+      );
+      cy.get("#config_command_" + config_id).should("contain", config_cmd);
+      cy.get("#config_fuse_command_" + config_id).should(
+        "contain",
+        config_fuse
+      );
+      cy.get("#config_info_" + config_id).should("contain", config_info);
 
-            return cy.wrap(config_id);
-          });
-      });
+      return cy.wrap(config_id);
+    });
   }
 );
 
@@ -96,16 +82,16 @@ Cypress.Commands.add(
 );
 
 /**
- * Create a preprocess configuration and fill it informations
+ * Create a preprocess configuration and fill it information
  */
 Cypress.Commands.add(
   "createPreprocess",
-  (config_name, config_cmd, config_info, expected_id) => {
+  (config_name, config_cmd, config_info) => {
     cy.goToPreprocessPage();
 
     cy.get("#new_preprocess_btn")
       .should("contain", " + new pre-process")
-      .click({force: true});
+      .click({ force: true });
     cy.wait("@getActivities");
 
     cy.fillPreprocess(config_name, config_cmd, config_info);
@@ -113,9 +99,18 @@ Cypress.Commands.add(
     cy.get("#add_preprocess_submit").click();
     cy.wait("@getActivities");
 
-    if (expected_id != undefined) {
-      cy.controlPreprocess(expected_id, config_name, config_cmd, config_info);
-    }
+    cy.getBiggestId("#table").then((preprocess_id) => {
+        cy.log("Created preprocess id " + preprocess_id);
+
+        cy.controlPreprocess(
+          preprocess_id,
+          config_name,
+          config_cmd,
+          config_info
+        );
+
+        return cy.wrap(preprocess_id);
+      });
   }
 );
 
@@ -164,7 +159,7 @@ Cypress.Commands.add(
 );
 
 /**
- * Delete a preprocess by his id
+ * Delete a preprocess by its id
  */
 Cypress.Commands.add("deletePreprocess", (id, config_name) => {
   cy.goToPreprocessPage();
@@ -174,8 +169,8 @@ Cypress.Commands.add("deletePreprocess", (id, config_name) => {
 
   cy.get("#preprocess_name").should("contain", config_name);
   cy.get("#delete_preprocess_confirm_btn").click();
-
   cy.wait("@getActivities");
+  
   cy.get("#preprocess_line_" + id).should("not.exist");
 });
 

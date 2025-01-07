@@ -36,11 +36,11 @@ Cypress.Commands.add("initDatabase", (host) => {
   }
 });
 
-Cypress.Commands.add("initTestDb", (host) => {
-  if (host == "local") {
-    cy.request("http://localhost/vidjil/test/init_test_db");
-  }
-});
+// Cypress.Commands.add("initTestDb", (host) => {
+//   if (host == "local") {
+//     cy.request("http://localhost/vidjil/test/init_test_db");
+//   }
+// });
 
 Cypress.Commands.add("isDbPageVisible", () => {
   cy.get('[data-cy="db_div"]').then(($db_div) => {
@@ -120,6 +120,70 @@ Cypress.Commands.add("goToRunPage", () => {
 Cypress.Commands.add("goToSetPage", () => {
   cy.goToTokenPage("set");
 });
+
+/**
+ * Allow to openDBpage if needed and to go to the correct token (patient/run/set)
+ * Use an intercept on GET method to fire event after recept of request
+ * Allow to not get error if db table is render again between multiple call
+ * @param  {[type]} 'goToTokenPage' Name of function
+ * @param  {[type]} (token)         Token to call (patient, run or set)
+ * @return {[type]}
+ */
+Cypress.Commands.add('goToDbPage', (dbPage, page, page_header) => {
+  cy.openDBPage().then(() => {
+    cy.get(dbPage)
+      .should('be.visible')
+      .click( { force: true} )
+    cy.wait("@getActivities")
+
+    cy.get(page)
+      .should('exist')
+      .should('contain', page_header)
+  })
+})
+
+/**
+ * Go to db page
+ */
+
+Cypress.Commands.add('goToUsagePage', () => {
+  cy.goToDbPage("#db_page_usage", "#page_usage", "Usage")
+})
+Cypress.Commands.add('goToProcessPage', () => {
+  cy.goToDbPage("#db_page_processes", "#page_jobs", "")
+})
+
+Cypress.Commands.add('goToNewsPage', () => {
+  cy.goToDbPage("#db_page_news", "#page_news", "News")
+})
+Cypress.Commands.add('goToLogsPage', () => {
+  cy.goToDbPage("#db_page_logs", "#page_user_logs", "Logs")
+})
+
+Cypress.Commands.add('goToLogsPage', () => {
+  cy.goToDbPage("#db_page_logs", "#page_user_logs", "Logs")
+})
+
+/////////////////
+// Admin db page
+/////////////////
+
+Cypress.Commands.add('goToPreprocessPage', () => {
+  cy.goToDbPage("#db_page_preprocess", "#page_preprocess", "Pre-process list")
+})
+Cypress.Commands.add('goToConfigsPage', () => {
+  cy.goToDbPage("#db_page_configs", "#page_process", "Configs")
+})
+
+Cypress.Commands.add('goToGroupsPage', () => {
+  cy.goToDbPage("#db_page_groups", "#page_group", "Groups")
+})
+Cypress.Commands.add('goToUsersPage', () => {
+  cy.goToDbPage("#db_page_users", "#page_user", "Users")
+})
+Cypress.Commands.add('goToAdminPage', () => {
+  cy.goToDbPage("#db_page_admin", "#page_admin", "Admin")
+})
 
 /**
  * Create a patient and fill its information
@@ -294,6 +358,7 @@ Cypress.Commands.add("createRun", (id, run_name, date, info, owner) => {
 
   cy.get(`#create_new_set_type_run`).click();
   cy.wait("@getActivities");
+
   if (owner != null) {
     cy.get("#group_select").select(owner);
   }
@@ -666,7 +731,6 @@ Cypress.Commands.add("launchProcess", (config_id, sequence_file_id) => {
   cy.sampleStatus(sequence_file_id, config_id).should("have.text", "");
 
   cy.sampleLauncher(sequence_file_id, config_id)
-    // .should('be.visible')
     .click({ force: true });
   cy.wait("@getActivities");
 
@@ -679,8 +743,10 @@ Cypress.Commands.add("launchProcess", (config_id, sequence_file_id) => {
 Cypress.Commands.add("deleteProcess", (config_id, sequence_file_id) => {
   cy.log(`deleteProcess(${config_id}, ${sequence_file_id})`);
   cy.deleteProcessButton(sequence_file_id).click();
+  cy.wait("@getActivities");
 
   cy.get("#delete_button").click();
+  cy.wait("@getActivities");
 
   cy.deleteProcessButton(sequence_file_id).should("not.exist");
   cy.sampleStatus(sequence_file_id, config_id).should("have.text", "");

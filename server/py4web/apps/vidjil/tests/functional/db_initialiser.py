@@ -7,7 +7,7 @@ from datetime import datetime
 sys.path.append("../../../../")
 from apps.vidjil import tasks
 from apps.vidjil.modules import vidjil_utils, sampleSet
-from apps.vidjil.common import auth, log
+from apps.vidjil.common import auth
 from apps.vidjil.modules.permission_enum import PermissionEnum
 
 
@@ -23,24 +23,14 @@ class DBInitialiser(object):
         self.db = db
 
     def run(self):
-        log.debug("before all")
         self._init_users()
-        log.debug("after _init_users")
         self._init_pre_processes()
-        log.debug("after _init_pre_processes")
         self._init_groups()
-        log.debug("after _init_groups")
         self._init_sample_sets()
-        log.debug("after _init_sample_sets")
         self._init_sequence_files()
-        log.debug("after _init_sequence_files")
         self._init_results_files()
-        log.debug("after _init_results_files")
         self._init_notifications()
-        log.debug("after _init_notifications")
         self._init_set_association_data()
-        log.debug("after _init_set_association_data")
-
 
     def _needs_init(func):
         def check_init(self):

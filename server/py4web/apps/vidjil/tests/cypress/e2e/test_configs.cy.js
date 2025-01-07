@@ -15,8 +15,7 @@ describe("Manipulate configs", function () {
       config_cmd,
       config_fuse,
       config_info
-    ).then((config_row) => {
-      var config_id = config_row[0].cells[0].innerText;
+    ).then((config_id) => {
       cy.log("config_id: " + config_id);
       cy.createPatient("", "cairr", "t", "2000-01-01", "Cy", "public");
       cy.addSample(
@@ -35,8 +34,6 @@ describe("Manipulate configs", function () {
         );
         cy.launchProcess("" + config_id, sample_id);
         cy.waitAnalysisCompleted(config_id, sample_id);
-        
-        cy.logout()
       });
     });
   });
@@ -51,28 +48,21 @@ describe("Manipulate configs", function () {
       pre_process_name_1,
       pre_process_command,
       pre_process_info
-    ); // n°6
-    cy.createPreprocess(
-      pre_process_name_2,
-      pre_process_command,
-      pre_process_info
-    ); // n°7
+    ).then((preprocess_id) => {
+      // Edit a preprocess
+      cy.editPreprocess(
+        preprocess_id,
+        pre_process_name_2,
+        pre_process_command,
+        pre_process_info + "; edit"
+      );
 
-    // Edit a preprocess
-    cy.editPreprocess(
-      1,
-      pre_process_name_1,
-      pre_process_command,
-      pre_process_info + "; edit"
-    ); // n°1
+      // Change permissions for group public (id=3)
+      cy.permissionPreprocess(preprocess_id, 3, true);
+      cy.permissionPreprocess(preprocess_id, 3, false);
 
-    // Change permissions for group public (id=3)
-    cy.permissionPreprocess(2, 3, true);
-    cy.permissionPreprocess(2, 3, false);
-
-    // Delete a preprocess
-    cy.deletePreprocess(7, pre_process_name_2); // second cypress created preprocess
-
-    cy.logout()
+      // Delete preprocess
+      cy.deletePreprocess(preprocess_id, pre_process_name_2);
+    })
   });
 });

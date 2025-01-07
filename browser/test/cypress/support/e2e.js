@@ -102,7 +102,7 @@ beforeEach(() => {
   if (Cypress.env("server")) {
     sendTestTimings();
     cy.login(Cypress.env("host"));
-    cy.initTestDb(Cypress.env("host"));
+    // cy.initTestDb(Cypress.env("host"));
     cy.visitpage(Cypress.env("host"));
     cy.closeFlashAll();
   }
@@ -120,13 +120,6 @@ Cypress.on("log:changed", (log) => {
   let message = log.name + " - " + log.message;
   logs[log.id] = message;
 });
-
-// afterEach(() => {
-//   if (Cypress.env("server")) {
-//     cy.clearCookies();
-//     sendTestTimings();
-//   }
-// });
 
 after(() => {
   if (Cypress.env("server")) {
