@@ -152,14 +152,9 @@ Cypress.Commands.add('goToUsagePage', () => {
 Cypress.Commands.add('goToProcessPage', () => {
   cy.goToDbPage("#db_page_processes", "#page_jobs", "")
 })
-
 Cypress.Commands.add('goToNewsPage', () => {
   cy.goToDbPage("#db_page_news", "#page_news", "News")
 })
-Cypress.Commands.add('goToLogsPage', () => {
-  cy.goToDbPage("#db_page_logs", "#page_user_logs", "Logs")
-})
-
 Cypress.Commands.add('goToLogsPage', () => {
   cy.goToDbPage("#db_page_logs", "#page_user_logs", "Logs")
 })
@@ -322,7 +317,7 @@ Cypress.Commands.add(
     );
     cy.clearAndType("#patient_last_name_" + index.toString(), last_name, clear);
     if (birthday != "") {
-    cy.clearAndType("#patient_birth_" + index.toString(), birthday, clear);
+      cy.clearAndType("#patient_birth_" + index.toString(), birthday, clear);
     } else {
       if (clear) {
         cy.get("#patient_birth_" + index.toString()).clear();
@@ -799,37 +794,27 @@ Cypress.Commands.add(
     cy.log(
       `**waitAnalysisCompleted**: step ${iter} -- ${
         (new Date().getTime() - start) / 1000
-      } seconds`
+      } seconds elapsed`
     );
 
-    cy.get("#db_reload").trigger("click");
-
+    cy.get("#db_reload").click();
     cy.wait("@getActivities");
 
     // Check status
     cy.sampleStatusValue(sequence_file_id, config_id).then(($status) => {
       cy.log(`status: '**${$status.trimRight().trimLeft()}**'`);
-      var now = new Date().getTime();
       if ($status.trimRight().trimLeft() == "FAILED") {
         cy.log("waitAnalysisCompleted; Process have FAILED").then(() => {
           throw new Error("waitAnalysisCompleted; Process have FAILED");
         });
       } else if ($status.trimRight().trimLeft() != "COMPLETED") {
-        if ((now - start) / 1000 > nb_retry) {
-          cy.log(
-            "waitAnalysisCompleted; Timeout without COMPLETED status"
-          ).then(() => {
-            throw new Error(
-              "waitAnalysisCompleted; Timeout without COMPLETED status"
-            );
-          });
-        } else if (iter > nb_retry) {
+        if (iter > nb_retry) {
           cy.log("waitAnalysisCompleted; Number of retry reached").then(() => {
             throw new Error("waitAnalysisCompleted; Number of retry reached");
           });
         } else {
           cy.log(` wait ... `).then(() => {
-            cy.wait(200).then(() => {
+            cy.wait(500).then(() => {
               cy.waitAnalysisCompleted(
                 config_id,
                 sequence_file_id,

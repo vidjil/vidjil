@@ -96,8 +96,7 @@ vidjil-algo
 vidjil-algo/
 
 # Tests
-./cypress
-cypress
+cypress/
 cypress.config.js
 algo/tests/should-get-tests/out/*
 algo/tests/data/analysis-with-windows.analysis.formatted

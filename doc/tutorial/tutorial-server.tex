@@ -263,16 +263,11 @@ you can visualize the clonotype populations on Vidjil
 \begin{verbatim}
   cy.log("// test_013_patient_page_and_filter")
     cy.goToPatientPage()
-  
+
     var value_filter = "#B-ALL"
     cy.dbPageFilter(value_filter)
 
-    cy.get('#db_table_container')
-      .find('tbody')
-      .find('tr').each(($el, index, $list) => {// $el is a wrapped jQuery element
-          // wrap this element so we can use cypress commands on it
-          cy.wrap($el).should("contain", value_filter)
-    })
+    cy.getTableLength("#db_table_container").should('eq', 2)
     
     var uid_sample2 = 33
     cy.get(`#sample_set_open_${uid_sample2}_config_id_-1`)

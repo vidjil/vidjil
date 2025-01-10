@@ -52,7 +52,8 @@ Cypress.on("test:after:run", (attributes) => {
       attributes.title,
       attributes.duration
     );
-    console.table(commands);
+    // Reactivate to display timing details
+    // console.table(commands)
     testAttributes = {
       title: attributes.title,
       duration: attributes.duration,

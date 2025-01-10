@@ -2,22 +2,15 @@
 
 describe("Manipulate configs", function () {
   it("01-config", function () {
-    var config_name = "cy";
-    var config_class = ["3", "Analysis with/for other software"];
-    var config_soft = undefined;
-    var config_cmd = "x";
-    var config_fuse = "f";
-    var config_info = "inf";
     cy.createConfig(
-      config_name,
-      config_class,
-      config_soft,
-      config_cmd,
-      config_fuse,
-      config_info
+      "c",
+      ["3", "Analysis with/for other software"],
+      undefined,
+      "x",
+      "f",
+      "i"
     ).then((config_id) => {
-      cy.log("config_id: " + config_id);
-      cy.createPatient("", "cairr", "t", "2000-01-01", "Cy", "public");
+      cy.createPatient("", "airr", "t", "", "Cy", "public");
       cy.addSample(
         undefined,
         "nfs",
@@ -39,7 +32,7 @@ describe("Manipulate configs", function () {
   });
 
   it("02-preprocess_config", function () {
-    // Create a preprocess (with id == 2)
+    // Create a preprocess
     var pre_process_name_1 = "d1";
     var pre_process_name_2 = "d2";
     var pre_process_command = "d";
@@ -63,6 +56,6 @@ describe("Manipulate configs", function () {
 
       // Delete preprocess
       cy.deletePreprocess(preprocess_id, pre_process_name_2);
-    })
+    });
   });
 });

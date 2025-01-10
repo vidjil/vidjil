@@ -19,8 +19,8 @@ module.exports = defineConfig({
         testTimings (attributes) {
           console.log('Test "%s" has finished in %dms', 
             attributes.title, attributes.duration)
-          console.table(attributes.commands)
-    
+          // Reactivate to display timing details
+          // console.table(attributes.commands)
           return null
         },
       })

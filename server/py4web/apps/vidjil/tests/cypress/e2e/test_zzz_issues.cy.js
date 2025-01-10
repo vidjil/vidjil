@@ -85,7 +85,7 @@ describe("Test specific bugs", function () {
       cy.waitAnalysisCompleted(config_id, sample_id);
       cy.get("@sample_set_id").then((sample_set_id) => {
         cy.openAnalysisFromSetPage(sample_set_id, config_id)
-        
+
         // 5070 - get_reads
         cy.openCloneInfo(1);
         cy.get(":nth-child(2) > .icon-down").click();
@@ -100,7 +100,7 @@ describe("Test specific bugs", function () {
         // Don't work on gitlab, but work locally...
         //cy.readFile(downloadedFilename, { timeout: 20000 })
         //  .should('contain', '>IGKV3-7*04 1/GTGGA/11 KDE')
-  
+
         // 5213 - open analysis without bug
         // Tag clone and save analysis
         cy.selectCloneMulti([4, 5, 6]);
@@ -108,7 +108,7 @@ describe("Test specific bugs", function () {
         cy.get(".tagName_custom_2").click();
         cy.clone_rename("4", "un clone");
         cy.save_analysis();
-  
+
         // Re-open analysis
         cy.goToPatientPage()
         cy.openSet(sample_set_id)
@@ -148,36 +148,30 @@ describe("Test specific bugs", function () {
   });
 
   it("5388 - Precise patient search", function () {
+    let uuidPatient = Date.now();
+
     cy.goToPatientPage();
     cy.get("#db_filter_input")
-      .type("first_name Last_name_test 2000-01-02")
+      .type("fn " + uuidPatient + " 2000-01-02")
       .type("{enter}");
     cy.wait(["@postAllSampleSets", "@getActivities"]);
 
     // patient don't exist for the moment, no empty db table, no tbody present
     cy.get("#db_table_container").find("tbody").should("not.exist");
 
-    cy.createPatient(
-      "",
-      "first_name",
-      "Last_name_test",
-      "2000-01-02",
-      "C",
-      "public"
-    );
+    cy.createPatient("", "fn", uuidPatient, "2000-01-02", "C", "public");
 
     // patient now exists, so a line in table is present, so tbody exist
     cy.goToPatientPage();
     cy.get("#db_filter_input")
-      .type("first_name Last_name_test 2000-01-02")
+      .type("fn " + uuidPatient + " 2000-01-02")
       .type("{enter}");
     cy.wait(["@postAllSampleSets", "@getActivities"]);
     cy.get("#db_table_container").find("tbody").should("exist");
 
     // Bad birth date, so should be empty
-    cy.goToPatientPage();
     cy.get("#db_filter_input")
-      .type("first_name Last_name_test 2001-01-01")
+      .type("fn " + uuidPatient + " 2000-01-03")
       .type("{enter}");
     cy.wait(["@postAllSampleSets", "@getActivities"]);
     cy.get("#db_table_container").find("tbody").should("not.exist");
