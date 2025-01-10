@@ -1,220 +1,185 @@
 /// <reference types="cypress" />
-// Nb: These tests are launched at the end of other tests. this allow to get already present analysis on the server when they are executed
-// Should we keep these tests ? Should we always run them ? 
+// Should we keep these tests ? Should we always run them ?
 describe("Test specific bugs", function () {
+  it("2577_jstree_avoid_folder_selection", function () {
+    // Test behavior of jstree for file or folder
+    var filename1 = "/";
+    var filename2 = "Demo-X5.fa";
 
-  it('2577_jstree_avoid_folder_selection',  function() {
-      // Test behavior of jstree for file or folder
-      var filename1    = "/"
-      var filename2    = "Demo-X5.fa"
+    cy.createPatient("", "f", "l", "", "i");
 
-      cy.goToPatientPage()
-      var id          = ""
-      var firstname   = "jstree"
-      var lastname    = "issue 2577"
-      var birthday    = "2000-01-01"
-      var informations= "avoid_folder_selection"
-      cy.createPatient(id, firstname, lastname, birthday, informations)
+    // Open adding sample page
+    cy.get("#add_sample_button").should("contain", " + add samples").click();
+    cy.wait("@getActivities");
 
-      // Open adding sample page
-      cy.get('#add_sample_button')
-        .should('contain', ' + add samples')
-        .click()
-      cy.wait("@getActivities")
+    cy.get("#upload_sample_form > :nth-child(1)")
+      .should("contain", "Add samples")
+      .click();
+    cy.wait("@getActivities");
 
-      cy.get('#upload_sample_form > :nth-child(1)')
-        .should('contain', 'Add samples')
-        .click()
-      cy.wait("@getActivities")
-      
-      cy.get('#submit_samples_btn')
-        .click()
-        cy.wait("@getActivities")
+    cy.get("#jstree_field_1_0").click();
+    cy.get(".jstree-anchor").contains(filename1).click({ force: true });
+    cy.get("#jstree_button").should("have.class", "disabledClass");
 
-      cy.get('#jstree_field_1_0').click()
-      cy.get('.jstree-anchor').contains(filename1)
-        .click( { force: true} )
-      cy.get("#jstree_button")
-        .should('have.class','disabledClass');
+    // Open the root folder
+    cy.get(".jstree-ocl").click();
 
-      // Open the root folder
-      cy.get('.jstree-ocl').click()
+    // Control that file selection able submit button
+    cy.get(".jstree-anchor").contains(filename2).click({ force: true });
 
-      // Control that file selection able submit button
-      cy.get('.jstree-anchor').contains(filename2)
-        .click( { force: true} )
+    cy.get("#jstree_button").should("not.have.class", "disabledClass");
 
-      cy.get("#jstree_button")
-        .should('not.have.class','disabledClass');
+    ///////////////////////////
+    // Control search action
 
-      ///////////////////////////
-      // Control search action
+    // init state
+    cy.get(".jstree-anchor")
+      .contains(filename2)
+      .should("not.have.class", "jstree-search");
 
-      // init state
-      cy.get('.jstree-anchor').contains(filename2)
-        .should('not.have.class','jstree-search');
+    // put a search value
+    cy.get("#jstree_search_input").type("demo");
 
-      // put a search value
-      cy.get('#jstree_search_input')
-        .type("demo")
+    cy.get("#jstree_search_form > button").click();
 
-      cy.get('#jstree_search_form > button')
-        .click()
+    // Now it is highlighted by search action
+    cy.get(".jstree-anchor")
+      .contains(filename2)
+      .should("have.class", "jstree-search");
+  });
 
-      // Now it is highlighted by search action
-      cy.get('.jstree-anchor').contains(filename2)
-        .should('have.class','jstree-search');
-  })
+  it("5178 - bad render when request error occurred", function () {
+    // Before fixing, request return error has HTML and are badly interpreted and break DOM page
+    cy.goToPatientPage();
+    cy.get("#result_sample_set_13_config_1").click();
+    cy.get(".popup_msg").should(
+      "contain",
+      "An error occurred (Internal Server Error; code 500)"
+    );
+  });
 
-  // it('5069_download_link_of_result',  function() {
+  it("5070 + 5213 + 5069", function () {
+    // Create an analysis, tag some clones, save it on the server, and reopen it. Check if tag is present
 
-  //     var uid = 25; // TODO; reuse previous uid // async; first cypress created patient with real analysis
-  //     var config_id = 9 // not directly use for the moment (issue with cypress and variable in regexp)
+    if (
+      Cypress.browser.name === "firefox" &&
+      Cypress.browser.version.split(".")[0] == "78"
+    ) {
+      // Skip old version of firefox (~62) that don't work on cypress for this test
+      this.skip;
+    }
 
-  //     // Create analysis
-  //     cy.goToPatientPage()
-  //     cy.openAnalysisFromDbPage(uid, config_id)
-  //     cy.get('#top_info')
-  //       .should("contain", "test")
-  //     cy.saveAnalysis()
+    const config_id = "2";
 
-  //     // Test Link
-  //     cy.goToPatientPage()
-  //     cy.openSet(uid)
-  //     cy.get('.db_fixed_footer > tr > :nth-child(13) > a')
-  //       .should("have.attr", "href")
-  //       .and("match", /get_data\?/)
-  //       .and("match", /config=9/)
-  //       .and("match", /sample_set_id=25/)
-      
-  //     cy.get('.db_fixed_footer > tr > :nth-child(14) > a')
-  //       .should("have.attr", "href")
-  //       .and("match", /get_analysis\?/)
-  //       .and("match", /config=9/)
-  //       .and("match", /sample_set_id=25/)
-  // })
+    cy.createPatient("", "fn", "ln", "", "c", "public").as("sample_set_id")
+    cy.addSample(
+      undefined,
+      "nfs",
+      "Demo-X5.fa",
+      undefined,
+      "2021-01-01",
+      "c"
+    ).then((sample_id) => {
+      // Launch process and wait for result
+      cy.launchProcess(config_id, sample_id);
+      cy.waitAnalysisCompleted(config_id, sample_id);
+      cy.get("@sample_set_id").then((sample_set_id) => {
+        cy.openAnalysisFromSetPage(sample_set_id, config_id)
+        
+        // 5070 - get_reads
+        cy.openCloneInfo(1);
+        cy.get(":nth-child(2) > .icon-down").click();
 
-    // TODO : remove bypass when cypress >= 12.9 deployed
-    it('5070 - get_reads',  function() {
-        if (Cypress.browser.name === 'firefox') {
-          // Skip old versions of firefox that don't work on cypress for this test (
-          // cypress loose pupetter after downlaod of a file
-          this.skip
-        }
-        var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
-        var sampleid = 50
-        var config_id = 2
-
-        cy.goToPatientPage()
-        // cy.screenshot('debug_5070_1_patient_page')
-
-        cy.openSet(uid)
-        // cy.screenshot('debug_5070_2_open_set')
-
-        cy.openAnalysisFromSetPage(uid, config_id)
-        cy.openCloneInfo(1)
-        // cy.screenshot('debug_5070_3_clone_panel')
-        cy.get(':nth-child(2) > .icon-down').click()
-
-        const downloadsFolder = Cypress.config('downloadsFolder')
-        cy.log( Cypress.config('downloadsFolder') )
-        const downloadedFilename = downloadsFolder+'/reads_1__file_id_'+sampleid+'.fa'
-        cy.log( downloadedFilename  )
+        const downloadsFolder = Cypress.config("downloadsFolder");
+        cy.log(Cypress.config("downloadsFolder"));
+        const downloadedFilename =
+          downloadsFolder + "/reads_1__file_id_" + sample_id + ".fa";
+        cy.log(downloadedFilename);
 
         // TODO; fix this part to check file content
         // Don't work on gitlab, but work locally...
         //cy.readFile(downloadedFilename, { timeout: 20000 })
         //  .should('contain', '>IGKV3-7*04 1/GTGGA/11 KDE')
-    })
-
-    it('5178 - bad render when request error occurred',  function() {
-        // Before fixing, request return error has HTML and are badly interpreted and break DOM page
-
-        cy.goToPatientPage()
-        // cy.screenshot('debug_5070_1_patient_page')
-
-        cy.get('#result_sample_set_13_config_1')
-          .click()
-
-        cy.get('.popup_msg')
-          .should("contain", "An error occurred (Internal Server Error; code 500)")
-    })
-
-    it('5213 - open analysis without bug',  function() {
-        // Creat an analysys, tag some clones, save it on the server, and reopen it. Check if tag is present
-
-        if (Cypress.browser.name === 'firefox' && Cypress.browser.version.split(".")[0] == "78") {
-          // Skip old version of firefox (~62) that don't work on cypress for this test
-          this.skip
-        }
-
-        // Pre existant config
-        var uid = 26; // TODO; reuse previous uid // async; second patient created with cypress, real analysis multi+inc+xxx
-        var config_id = 2
-
-        // Open an analysis
-        cy.goToPatientPage()
-        cy.openSet(uid)
-        cy.openAnalysisFromSetPage(uid, config_id)
-
+  
+        // 5213 - open analysis without bug
         // Tag clone and save analysis
-        cy.selectCloneMulti([4, 5, 6])
-        cy.get("#tag_icon__multiple").click()
-        cy.get('.tagName_custom_2').click()
-        cy.clone_rename("4", "un clone")
-        cy.save_analysis()
+        cy.selectCloneMulti([4, 5, 6]);
+        cy.get("#tag_icon__multiple").click();
+        cy.get(".tagName_custom_2").click();
+        cy.clone_rename("4", "un clone");
+        cy.save_analysis();
+  
+        // Re-open analysis
+        cy.goToPatientPage()
+        cy.openSet(sample_set_id)
+        cy.openAnalysisFromSetPage(sample_set_id, config_id)
 
+        // Check renaming of clone
+        cy.get('#listElem_4 > .nameBox')
+          .should("contain", "un clone")
+        // check that clone have a tag color
+        cy.selectClone(1) // Made a selection between load of analysis and assertion control
 
-  //     // Re-open an analysis
-  //     cy.goToPatientPage()
-  //     cy.openSet(uid)
-  //     cy.openAnalysisFromSetPage(uid, config_id)
-  //     cy.update_icon()
+        // Commented because it fail on some browser version. Seem to be independent of this issue as other clonotype are well colored
+        //cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)', {timeout: 12000})
 
-  //     // Check renaming of clone
-  //     cy.get('#listElem_4 > .nameBox')
-  //       .should("contain", "un clone")
-  //     // check that clone have a tag color
-  //     cy.selectClone(1) // MAde a selection between load of analysis and assertion control
-      
-  //     // Commented because it fail on some browser version. Seem to be independant of this issue as other clonotype are well colored
-  //     //cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)', {timeout: 12000})
-      
-  //     cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
-  //     cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
-  // })
+        cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
+        cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
 
-  it('5388 - Precise patient search',  function() {
-    cy.goToPatientPage()
-    cy.get('#db_filter_input')
-      .type("first_name Last_name_test 2000-01-01")
-      .type("{enter}")
+        // 5069_download_link_of_result
+        // Test Link
+        cy.goToPatientPage()
+        cy.openSet(sample_set_id)
+        let config_regexp = new RegExp("config=" + config_id)
+        let sample_set_regexp = new RegExp("sample_set_id=" + sample_set_id)
+        cy.get('.db_fixed_footer > tr > :nth-child(13) > a')
+          .should("have.attr", "href")
+          .and("match", /get_data\?/)
+          .and("match", config_regexp)
+          .and("match", sample_set_regexp)
+
+        cy.get('.db_fixed_footer > tr > :nth-child(14) > a')
+          .should("have.attr", "href")
+          .and("match", /get_analysis\?/)
+          .and("match", config_regexp)
+          .and("match", sample_set_regexp)
+      })
+    })
+  });
+
+  it("5388 - Precise patient search", function () {
+    cy.goToPatientPage();
+    cy.get("#db_filter_input")
+      .type("first_name Last_name_test 2000-01-02")
+      .type("{enter}");
     cy.wait(["@postAllSampleSets", "@getActivities"]);
 
     // patient don't exist for the moment, no empty db table, no tbody present
-    cy.get('#db_table_container').find("tbody").should("not.exist") // Empty table ,so not present
+    cy.get("#db_table_container").find("tbody").should("not.exist");
 
-    cy.createPatient("", "first_name", "Last_name_test", "2000-01-01", "Cypress; Patient test for a precise search", "public")
+    cy.createPatient(
+      "",
+      "first_name",
+      "Last_name_test",
+      "2000-01-02",
+      "C",
+      "public"
+    );
 
-    cy.goToPatientPage()
-    cy.get('#db_filter_input')
-      .type("first_name Last_name_test 2000-01-01")
-      .type("{enter}")
+    // patient now exists, so a line in table is present, so tbody exist
+    cy.goToPatientPage();
+    cy.get("#db_filter_input")
+      .type("first_name Last_name_test 2000-01-02")
+      .type("{enter}");
     cy.wait(["@postAllSampleSets", "@getActivities"]);
+    cy.get("#db_table_container").find("tbody").should("exist");
 
-    // patient now exist, so a line in table is present, so tbody exist
-    cy.get('#db_table_container').find("tbody").should("exist")
-    
-    cy.goToPatientPage()
-    cy.get('#db_filter_input')
+    // Bad birth date, so should be empty
+    cy.goToPatientPage();
+    cy.get("#db_filter_input")
       .type("first_name Last_name_test 2001-01-01")
-      .type("{enter}")
+      .type("{enter}");
     cy.wait(["@postAllSampleSets", "@getActivities"]);
-
-      // Bad birth date, so should be empty
-      cy.get('#db_table_container').find("tbody").should("not.exist")
-      
-    })
-
-
-})
+    cy.get("#db_table_container").find("tbody").should("not.exist");
+  });
+});

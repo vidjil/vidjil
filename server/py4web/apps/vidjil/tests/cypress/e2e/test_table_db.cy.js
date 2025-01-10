@@ -17,13 +17,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
   });
 
   it("02-Launch, open, delete analysis and check logs", function () {
-    var id = "";
-    var first_name = "fn";
-    var last_name = "ln";
-    var birthday = "2000-01-01";
-    var patient_information = "cy";
-    var group = "public";
-    cy.createPatient(id, first_name, last_name, birthday, patient_information, group).as(
+    cy.createPatient("", "fn", "ln", "", "c", "public").as(
       "patient_id"
     );
 
@@ -31,7 +25,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
     var filename1 = "Demo-X5.fa";
     var filename2 = undefined;
     var sampling_date = "2021-01-01";
-    var sample_information = "cy; #cy";
+    var sample_information = "c #cy";
     cy.addSample(
       preprocess,
       "nfs",
