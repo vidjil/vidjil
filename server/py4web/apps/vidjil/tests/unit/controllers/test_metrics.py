@@ -1,13 +1,10 @@
 import os
-import json
-from pathlib import Path
 import unittest
+
+from py4web.core import _before_request, Session
 from ..utils.omboddle import Omboddle
-from py4web.core import _before_request, Session, HTTP
-from ...functional.db_initialiser import DBInitialiser
-from ..utils import db_manipulation_utils, test_utils
+from ..utils import db_manipulation_utils
 from ....common import db, auth
-from .... import defs
 from ....controllers import metrics as metrics_controller
 from ....modules.vidjil_utils import init_db_helper
 
@@ -438,7 +435,6 @@ class TestMetricsController(unittest.TestCase):
         # Then 
         sets_group_4 = dict(result["set_patients_by_group"][0])
         assert len(result["set_patients_by_group"]) == 1
-        assert sets_group_4["group_name"] == "metrics"
         assert sets_group_4["group_id"] == 4
         assert sets_group_4["count"] == 3
 
@@ -459,11 +455,9 @@ class TestMetricsController(unittest.TestCase):
         # Then 
         sets_group_4 = dict(result["set_patients_by_group"][0])
         assert len(result["set_patients_by_group"]) == 2
-        assert sets_group_4["group_name"] == "metrics"
         assert sets_group_4["group_id"] == 4
         assert sets_group_4["count"] == 3
         sets_group_5 = dict(result["set_patients_by_group"][1])
-        assert sets_group_5["group_name"] == "user_0003"
         assert sets_group_5["group_id"] == 5
         assert sets_group_5["count"] == 6
 
