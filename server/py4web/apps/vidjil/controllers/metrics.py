@@ -144,7 +144,7 @@ def getMetricByName(metric_name):
                                     db.config.program, 
                                     db.results_file.config_id, 
                                     db.results_file.id.count(), 
-                                    db.auth_group.role, 
+                                    db.auth_group.id,
                                     db.sample_set.sample_type, 
                                     groupby=(db.results_file.config_id|db.auth_group.id| db.sample_set.sample_type))
  
