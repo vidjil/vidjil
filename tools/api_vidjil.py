@@ -103,7 +103,7 @@ class Vidjil:
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
 
-    def __init__(self, url_server:str, url_client:str=None, ssl:str=True):
+    def __init__(self, url_server:str, url_client:str=None, ssl:str=True, silent=False):
         """_summary_
 
         Args:
@@ -114,7 +114,9 @@ class Vidjil:
         self.url_server = url_server
         self.url_client = url_client if url_client != None else url_server
         self.ssl = ssl
-        print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
+        self.silent = silent
+        if not self.silent:
+            print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
         self.last_request = {} # Will store results of request; for api tests
         self.session = requests.Session()
         self.auth_deletion = False
@@ -143,8 +145,9 @@ class Vidjil:
             Exception: Error of server that return an incorect exit code
 
         """
-        print()
-        print('### %s (%s)' % (self.url_server, email))
+        if not self.silent:
+            print()
+            print('### %s (%s)' % (self.url_server, email))
         response = self.session.get(self.url_server + '/auth/login', verify=self.ssl)
 
         if not "auth_user_email__row" in str(response.content) and not "login__label" in str(response.content):
@@ -152,7 +155,8 @@ class Vidjil:
             raise Exception( "Login; server don't return a correct login form.\nPlease verify your url and certificate parameters and that you point to py4web server.")
 
 
-        print(f"Communication with server etablish...")
+        if not self.silent:
+            print(f"Communication with server etablish...")
         # data include email (web2py) and lgin (py4web)
         data = { "login":email,  "email":email, "password":password, 'remember_me':"on" }
         BS   = BeautifulSoup(response.text, 'html.parser')
@@ -175,17 +179,20 @@ class Vidjil:
             self.user_id    = whoami["id"]
             self.user_email = whoami["email"]
             self.is_admin   = whoami["admin"]
-            print( "Successful login as %s (%sadmin)" % (email, "not " if not whoami["admin"] else "") )
-            print()
+            if not self.silent:
+                print( "Successful login as %s (%sadmin)" % (email, "not " if not whoami["admin"] else "") )
+                print()
 
             self.groups     = whoami["groups"] if "groups" in whoami.keys() else None
             if self.groups == None: # old verison of server, previous 2023/10
                 warn('You use old version of server that not return list of avaialble user.\nThis will be deprecate.\nPlease update your server.', DeprecationWarning, stacklevel=2)
             elif len(self.groups) == 1:
-                print(f"Only one group available. Automatic set ({self.groups[0]})")
+                if not self.silent:
+                    print(f"Only one group available. Automatic set ({self.groups[0]})")
                 self.setGroup(self.groups[0]["id"])
             elif len(self.groups) > 1:
-                print(f"Multiple groups available. No automatic set.\nPlease call `vidjil.setGroup` with corresponding id (needed for sets creation).")
+                if not self.silent:
+                    print(f"Multiple groups available. No automatic set.\nPlease call `vidjil.setGroup` with corresponding id (needed for sets creation).")
                 self.getGroups()
 
 

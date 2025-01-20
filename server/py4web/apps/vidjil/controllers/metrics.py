@@ -55,7 +55,7 @@ def getMetricByName(metric_name):
  
         elif metric_name == "login_count":
             # TODO: For the moment, the event are stored in a builded string in "description" field. Can be improve by adding a specific event field
-            return db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), db.auth_user.email, groupby=db.auth_event.user_id|db.auth_event.description )
+            return db(db.auth_event.user_id==db.auth_user.id).select(db.auth_event.user_id, db.auth_event.description, db.auth_event.id.count(), groupby=db.auth_event.user_id|db.auth_event.description )
  
         # # Patients; runs; sets
         elif metric_name == "set_patients_count":
@@ -109,7 +109,6 @@ def getMetricByName(metric_name):
                       (db.auth_membership.group_id==db.auth_group.id) &
                       (db.auth_group.role != "public")
                     ).select(db.auth_group.id.with_alias("group_id"), 
-                             db.auth_group.role.with_alias("group_name"), 
                              db.sample_set.id.count().with_alias("count"), 
                              groupby=db.auth_group.id 
                             )
@@ -120,7 +119,6 @@ def getMetricByName(metric_name):
                       (db.auth_membership.group_id==db.auth_group.id) &
                       (db.auth_group.role != "public")
                     ).select(db.auth_group.id.with_alias("group_id"), 
-                             db.auth_group.role.with_alias("group_name"), 
                              db.sample_set.id.count().with_alias("count"), 
                              groupby=db.auth_group.id 
                             )
@@ -131,7 +129,6 @@ def getMetricByName(metric_name):
                       (db.auth_membership.group_id==db.auth_group.id) &
                       (db.auth_group.role != "public")
                     ).select(db.auth_group.id.with_alias("group_id"), 
-                             db.auth_group.role.with_alias("group_name"), 
                              db.sample_set.id.count().with_alias("count"), 
                              groupby=db.auth_group.id 
                             )
@@ -147,7 +144,7 @@ def getMetricByName(metric_name):
                                     db.config.program, 
                                     db.results_file.config_id, 
                                     db.results_file.id.count(), 
-                                    db.auth_group.role, 
+                                    db.auth_group.id,
                                     db.sample_set.sample_type, 
                                     groupby=(db.results_file.config_id|db.auth_group.id| db.sample_set.sample_type))
  

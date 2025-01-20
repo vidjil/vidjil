@@ -2,7 +2,7 @@ FROM python:3.12-slim AS builder
 
 # Install system requirements for build
 RUN apt-get update && \
-    apt-get install --no-install-recommends --no-install-suggests -y wget make gcc build-essential
+    apt-get install --no-install-recommends --no-install-suggests -y wget make gcc build-essential bowtie2
 
 # Prepare install directories
 RUN mkdir -p /usr/share/vidjil/ /var/www/ && chown www-data:www-data -R /usr/share/vidjil/ /var/www/
