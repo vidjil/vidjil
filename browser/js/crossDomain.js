@@ -151,6 +151,8 @@ function imgtPostForSegmenter(species, data, system, override_imgt_options, call
     }
     var form = document.getElementById("form");
     form.removeAllChildren();
+    // Do not ope in new tab. Save old target to reset after.
+    let oldTarget = form.target;
     form.target = "";
     //disabled due to security concerns
     //form.action = "http://www.imgt.org/IMGT_vquest/vquest";
@@ -224,6 +226,9 @@ function imgtPostForSegmenter(species, data, system, override_imgt_options, call
     //httpRequest.open('GET', '/vidjil/data/vquest.data');
     httpRequest.open(form.method, form.action, true);
     httpRequest.send(new FormData(form));
+
+    // Reset to old target
+    form.target = oldTarget;
 }
 
 
@@ -276,7 +281,7 @@ function arrestPost(species, data, system) {
 
     var form = document.getElementById("form");
     form.removeAllChildren();
-    form.action = "http://tools.bat.infspire.org/cgi-bin/arrest/compile.junctions.online.pl";
+    form.action = "https://tools.bat.infspire.org/cgi-bin/arrest/compile.junctions.online.pl";
     form.method = "POST";
 
     for (var k in arrestInput) {
@@ -323,7 +328,7 @@ function blastPost(species, data, system) {
 
     var form = document.getElementById("form");
     form.removeAllChildren();
-    form.action = "http://www.ensembl.org/Multi/Tools/Blast?db=core";
+    form.action = "https://www.ensembl.org/Multi/Tools/Blast?db=core";
     form.method = "POST";
 
     for (var k in blastInput) {
