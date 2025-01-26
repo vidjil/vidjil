@@ -9,7 +9,7 @@ ccttcctac
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
 # same sequence, with some DD2 upstream
->TRDD2*01_0//0_TRDJ1*01  [TRD+]
+>TRDD2*01_0//0_TRDJ1*01  [TRD+]  BUG-LOCUS
 TGTGccttcctac
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
@@ -25,7 +25,7 @@ ccttcctac
 actgggggatacg
 
 # same sequence, with some DD2 upstream
->TRDD2*01_0//0_TRDD3*01  [TRD+]
+>TRDD2*01_0//0_TRDD3*01  [TRD+]  BUG-LOCUS
 GTGccttcctac
 actgggggatacg
 
