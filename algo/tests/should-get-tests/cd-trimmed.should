@@ -1,5 +1,6 @@
+!EXIT_CODE: 139
 !LAUNCH: $VIDJIL_DIR/$EXEC --all --out-reads -g $VIDJIL_DIR/germline/homo-sapiens-cd.g $VIDJIL_DATA/cd-19-trimmed.fa
-!EXIT_CODE: 1
+
 
 $ Load CD-sorting.fa
 1:homo-sapiens/CD-sorting.fa .* 28 sequences
