@@ -1817,7 +1817,7 @@ int main(int argc, char **argv) {
                                 out_clone->close();
                                 delete out_clone;
                             }
-
+                            delete kseg;
                             continue;
                         }
 
@@ -1854,7 +1854,6 @@ int main(int argc, char **argv) {
                             }
 
                             seg.findCDR3();
-                            delete kseg;
 
                             // Check for identical code, outputs to out_edge
                             string code = seg.code;
@@ -1905,6 +1904,7 @@ int main(int argc, char **argv) {
                                                "recombined sequence",
                                                LEVEL_WARN, clone_on_stdout);
                         } // end if (seg.isSegmented())
+                        delete kseg;
 
                         seg.checkWarnings(clone, clone_on_stdout);
                         // Output representative, possibly segmented...
