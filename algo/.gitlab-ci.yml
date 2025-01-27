@@ -4,6 +4,9 @@
   before_script:
     - apt-get update
     - apt-get install -y lcov time
+    - make germline
+    - make data
+    - make demo
     - !reference [.before_script_global]
   only:
     - /^feature-.*a.*\/.*$/
