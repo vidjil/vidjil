@@ -46,6 +46,7 @@ $ Third sequence Stanford
 # J : 10 del
 1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ 1 170 178 209 215 252 IGHV3-9.0. 0/AAATTGG/0 IGHD3-16.0. 5/TGGGT/10 IGHJ4.0.
 
+!NO_LAUNCHER:
 !LAUNCH: cat out/segment_S22.vidjil
 $ Json output
 j1:reads.germline.IGH:3
