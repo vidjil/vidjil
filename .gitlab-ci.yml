@@ -125,7 +125,7 @@ include:
 
 algo_valgrind_unit:
   stage: valgrind_unit
-  script: make -C algo valgrind_unit
+  script: make germline && make data && make -C algo valgrind_unit
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
@@ -134,7 +134,7 @@ algo_valgrind_unit:
 
 .snip_valgrind_functional: &valgrind_functional
   stage: valgrind_functional
-  script: make -C algo valgrind_should
+  script: make germline && make data && make -C algo valgrind_should
   tags:
     - valgrind
 
